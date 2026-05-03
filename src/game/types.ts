@@ -65,4 +65,9 @@ export type GameState = {
   trainingUsed: Record<string, number>; // horseId -> count today
   log: { day: number; text: string }[];
   pregnancies: Pregnancy[];
+  // Pace samples per 200m distance bucket (winner finish times in seconds).
+  paceSamples?: Record<number, number[]>;
+  // Calibrated par times per bucket, recomputed each season.
+  calibratedPars?: Record<number, number>;
+  lastCalibrationDay?: number;
 };

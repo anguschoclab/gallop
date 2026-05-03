@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import type { GameState, Horse, Race, Pregnancy } from "./types";
 import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
 import { GRADED_RACES } from "./gradedRaces";
-import { beyerFigure } from "./beyer";
+import { beyerFigure, distanceBucket, setCalibratedPars } from "./beyer";
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
@@ -11,6 +11,22 @@ const TRAINING_SLOTS_PER_DAY = 2;
 const STARTING_CASH = 5000;
 const BREEDING_FEE = 2000;
 const GESTATION_DAYS = 30;
+const SEASON_DAYS = 30;
+const MAX_SAMPLES_PER_BUCKET = 60;
+
+// Recompute par-time per distance bucket from collected winner finish times.
+// Uses a slightly-faster-than-median (40th percentile) to match the
+// "above-average winner" intent of Beyer par.
+function recomputePars(samples: Record<number, number[]>): Record<number, number> {
+  const out: Record<number, number> = {};
+  for (const [k, arr] of Object.entries(samples)) {
+    if (arr.length < 3) continue;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const idx = Math.floor(sorted.length * 0.4);
+    out[Number(k)] = sorted[idx];
+  }
+  return out;
+}
 
 type Actions = {
   newGame: () => void;
@@ -163,10 +179,20 @@ export const useGame = create<GameState & Actions>()(
             return `${h.name}: ${r.position}${ord(r.position)}`;
           })
           .join(", ");
+        // Record winner finish time into pace samples for this distance bucket.
+        const samples: Record<number, number[]> = { ...(s.paceSamples ?? {}) };
+        const winner = result.find((r) => r.position === 1);
+        if (winner && isFinite(winner.time) && winner.time > 0) {
+          const b = distanceBucket(race.distance);
+          const arr = [...(samples[b] ?? []), winner.time];
+          if (arr.length > MAX_SAMPLES_PER_BUCKET) arr.splice(0, arr.length - MAX_SAMPLES_PER_BUCKET);
+          samples[b] = arr;
+        }
         set({
           races: [...s.races],
           horses: [...s.horses],
           cash: s.cash + earned,
+          paceSamples: samples,
           log: [
             { day: s.day, text: `${race.name} — ${summary}${earned ? ` (won $${earned.toLocaleString()})` : ""}` },
             ...s.log,
@@ -269,6 +295,21 @@ export const useGame = create<GameState & Actions>()(
           newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
         }
 
+        // Seasonal Beyer par recalibration from collected pace samples.
+        let calibratedPars = s.calibratedPars;
+        let lastCalibrationDay = s.lastCalibrationDay ?? 0;
+        const seasonLog: { day: number; text: string }[] = [];
+        if (newDay - lastCalibrationDay >= SEASON_DAYS) {
+          const recomputed = recomputePars(s.paceSamples ?? {});
+          if (Object.keys(recomputed).length > 0) {
+            calibratedPars = recomputed;
+            setCalibratedPars(recomputed);
+            lastCalibrationDay = newDay;
+            const buckets = Object.keys(recomputed).length;
+            seasonLog.push({ day: newDay, text: `📊 Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.` });
+          }
+        }
+
         set({
           day: newDay,
           cash: s.cash - upkeep,
@@ -277,11 +318,18 @@ export const useGame = create<GameState & Actions>()(
           races: pruned,
           trainingUsed: {},
           pregnancies,
-          log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
+          calibratedPars,
+          lastCalibrationDay,
+          log: [...seasonLog, ...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
         });
       },
     }),
-    { name: "horse-racing-game-v1" }
+    {
+      name: "horse-racing-game-v1",
+      onRehydrateStorage: () => (state) => {
+        if (state?.calibratedPars) setCalibratedPars(state.calibratedPars);
+      },
+    }
   )
 );
 
