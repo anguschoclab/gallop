@@ -82,6 +82,7 @@ function RacesPage() {
                       {r?.minAge === r?.maxAge && r?.minAge !== undefined && <span>{r.minAge}YO only</span>}
                       {r?.minAge !== undefined && r?.maxAge === undefined && <span>{r.minAge}+ YO</span>}
                     </div>
+                    <BeyerExpectations race={race} horses={horses} />
                   </div>
                   <div className="flex flex-col gap-2 items-end min-w-[200px]">
                     {ownedEntry ? (
