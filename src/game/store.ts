@@ -236,14 +236,43 @@ export const useGame = create<GameState & Actions>()(
         // prune ancient resolved races
         const pruned = races.filter((r) => r.day >= newDay - 3);
 
+        // resolve births
+        const newLogs: { day: number; text: string }[] = [];
+        const pregnancies = s.pregnancies.map((p) => ({ ...p }));
+        let foals: Horse[] = [];
+        for (const p of pregnancies) {
+          if (p.resolved) continue;
+          if (newDay < p.dueDay) continue;
+          const sire = s.horses.find((h) => h.id === p.sireId);
+          const dam = s.horses.find((h) => h.id === p.damId);
+          const foal = generateHorse({ tier: "starter", owned: true });
+          foal.age = 0;
+          foal.sireName = p.sireName;
+          foal.damName = p.damName;
+          if (sire && dam) {
+            foal.stats = {
+              speed: Math.round((sire.stats.speed + dam.stats.speed) / 2 + (Math.random() * 10 - 5)),
+              stamina: Math.round((sire.stats.stamina + dam.stats.stamina) / 2 + (Math.random() * 10 - 5)),
+              acceleration: Math.round((sire.stats.acceleration + dam.stats.acceleration) / 2 + (Math.random() * 10 - 5)),
+              consistency: Math.round((sire.stats.consistency + dam.stats.consistency) / 2 + (Math.random() * 10 - 5)),
+            };
+            foal.potential = Math.min(100, Math.round((sire.potential + dam.potential) / 2 + (Math.random() * 8 - 2)));
+          }
+          p.resolved = true;
+          p.foalId = foal.id;
+          foals.push(foal);
+          newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
+        }
+
         set({
           day: newDay,
           cash: s.cash - upkeep,
-          horses,
+          horses: [...horses, ...foals],
           market,
           races: pruned,
           trainingUsed: {},
-          log: [{ day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
+          pregnancies,
+          log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
         });
       },
     }),
