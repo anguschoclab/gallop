@@ -60,6 +60,7 @@ export const useGame = create<GameState & Actions>()(
         const s = get();
         const horse = s.horses.find((h) => h.id === horseId);
         if (!horse) return;
+        if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
         const used = s.trainingUsed[horseId] ?? 0;
         if (used >= TRAINING_SLOTS_PER_DAY) return;
         if (kind === "rest") {
