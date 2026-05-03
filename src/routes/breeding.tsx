@@ -31,17 +31,15 @@ function BreedingPage() {
   const compatibility = sire && dam ? calculateBreedingCompatibility(sire, dam) : null;
 
   const onBreed = () => {
-    if (!sireId || !damId || sireId === damId) return;
-    const sire = adults.find((h) => h.id === sireId);
-    const dam = adults.find((h) => h.id === damId);
-    
-    // Check for covering sickness before breeding
-    if (sire?.healthStatus === "covering_sickness" || dam?.healthStatus === "covering_sickness") {
-      alert("Cannot breed: One or both horses have covering sickness (dourine), a sexually transmitted disease.");
+    if (!sireId || !damId) return;
+    const result = breed(sireId, damId, liveFoalGuarantee);
+    if (!result.ok) {
+      // Surface the rejection reason via the existing log feed (the breed
+      // action already pushes an entry); also alert for now to keep parity
+      // with the prior UX. Toast wiring can replace this incrementally.
+      alert(result.reason);
       return;
     }
-    
-    breed(sireId, damId, liveFoalGuarantee);
     setSireId(""); setDamId(""); setLiveFoalGuarantee(false);
   };
 

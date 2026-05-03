@@ -321,42 +321,42 @@ export function calculateInbreedingCoefficient(sireName: string, damName: string
     return { coefficient: 0, warning: "" };
   }
   
-  // Collect ancestors from both pedigrees (simplified - just sire line)
+  // BFS both pedigrees to depth 4 so dam-line ancestors aren't ignored.
   const sireAncestors = new Set<string>();
   const damAncestors = new Set<string>();
-  
-  // Get sire's ancestors
-  let currentSire = sire;
-  for (let gen = 0; gen < 4 && currentSire; gen++) {
-    sireAncestors.add(currentSire.name);
-    if (currentSire.sire) {
-      const nextSire = findHorseByName(currentSire.sire);
-      if (nextSire) {
-        currentSire = nextSire;
-      } else {
-        break;
+  // Without this, two horses sharing only a common dam-line ancestor would
+  // register as unrelated.
+  const collectAncestorsByDepth = (root: ReturnType<typeof findHorseByName>) => {
+    const depths = new Map<string, number>();
+    if (!root) return depths;
+    type Frontier = { node: typeof root; depth: number };
+    const queue: Frontier[] = [{ node: root, depth: 0 }];
+    while (queue.length) {
+      const item = queue.shift()!;
+      const node = item.node;
+      const depth = item.depth;
+      if (!node || depth > 4) continue;
+      if (!depths.has(node.name) || depths.get(node.name)! > depth) {
+        depths.set(node.name, depth);
       }
-    } else {
-      break;
-    }
-  }
-  
-  // Get dam's ancestors
-  let currentDam = dam;
-  for (let gen = 0; gen < 4 && currentDam; gen++) {
-    damAncestors.add(currentDam.name);
-    if (currentDam.sire) {
-      const nextDam = findHorseByName(currentDam.sire);
-      if (nextDam) {
-        currentDam = nextDam;
-      } else {
-        break;
+      if (depth >= 4) continue;
+      if (node.sire) {
+        const next = findHorseByName(node.sire);
+        if (next) queue.push({ node: next, depth: depth + 1 });
       }
-    } else {
-      break;
+      if (node.dam) {
+        const next = findHorseByName(node.dam);
+        if (next) queue.push({ node: next, depth: depth + 1 });
+      }
     }
-  }
-  
+    return depths;
+  };
+
+  const sireDepths = collectAncestorsByDepth(sire);
+  const damDepths = collectAncestorsByDepth(dam);
+  for (const k of sireDepths.keys()) sireAncestors.add(k);
+  for (const k of damDepths.keys()) damAncestors.add(k);
+
   // Find common ancestors
   const common = [...sireAncestors].filter(x => damAncestors.has(x));
   
@@ -364,53 +364,17 @@ export function calculateInbreedingCoefficient(sireName: string, damName: string
     return { coefficient: 0, warning: "" };
   }
   
-  // In reality, this is much more complex, but we'll use a simplified version
-  // Each common ancestor contributes based on generation depth
+  // Wright's coefficient: each common ancestor contributes (1/2)^(d_s + d_d + 1)
+  // where d_s and d_d are its shallowest depth in each pedigree (0 = self,
+  // which is filtered out below). Walking dam lines via BFS above means
+  // mare-side relatedness now contributes too.
   let coefficient = 0;
   for (const ancestor of common) {
-    // Find generation depth in each pedigree
-    let sireDepth = 0;
-    let damDepth = 0;
-  
-    currentSire = sire;
-    for (let gen = 1; gen <= 4 && currentSire; gen++) {
-      if (currentSire.name === ancestor) {
-        sireDepth = gen;
-        break;
-      }
-      if (currentSire.sire) {
-        const nextSire = findHorseByName(currentSire.sire);
-        if (nextSire) {
-          currentSire = nextSire;
-        } else {
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-  
-    currentDam = dam;
-    for (let gen = 1; gen <= 4 && currentDam; gen++) {
-      if (currentDam.name === ancestor) {
-        damDepth = gen;
-        break;
-      }
-      if (currentDam.sire) {
-        const nextDam = findHorseByName(currentDam.sire);
-        if (nextDam) {
-          currentDam = nextDam;
-        } else {
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-    if (sireDepth > 0 && damDepth > 0) {
-      // Wright's coefficient: (1/2)^(sireDepth + damDepth + 1)
-      coefficient += Math.pow(0.5, sireDepth + damDepth + 1);
-    }
+    const ds = sireDepths.get(ancestor);
+    const dd = damDepths.get(ancestor);
+    if (ds === undefined || dd === undefined) continue;
+    if (ds === 0 || dd === 0) continue; // skip the parents themselves
+    coefficient += Math.pow(0.5, ds + dd + 1);
   }
   
   // Warning for excessive inbreeding

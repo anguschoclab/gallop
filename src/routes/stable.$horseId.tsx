@@ -11,7 +11,7 @@ import { ArrowLeft } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
 import { BeyerChart } from "@/components/BeyerChart";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
 import { getGradeColorClass } from "@/core/race/grading";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
@@ -58,6 +58,24 @@ function HorseDetail() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{horse.name}</h1>
             <p className="text-muted-foreground">Age {horse.age} · OVR {calculateOverallRating(horse)} · Potential {horse.potential}</p>
+            {(() => {
+              const ability = getAbility(horse);
+              return (
+                <div className="flex flex-wrap items-center gap-2 mt-1 text-sm">
+                  <Badge variant="secondary">
+                    Current ability {ability.current} · grade {abilityGrade(ability.current)}
+                  </Badge>
+                  <Badge variant="outline">
+                    Potential {ability.potential} · grade {abilityGrade(ability.potential)}
+                  </Badge>
+                  {horse.runningStyle && (
+                    <Badge variant="outline" className="capitalize">
+                      Style: {horse.runningStyle.replace("-", " ")}
+                    </Badge>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import type { Horse, Race, RaceClass, Hemisphere, Conformation, Temperament, GeneticMarkers, HealthStatus, CoatColor, Weather, TrackCondition } from "./types";
+import type { Horse, Race, RaceClass, Hemisphere, Conformation, Temperament, GeneticMarkers, HealthStatus, CoatColor, Weather, TrackCondition, RunningStyle } from "./types";
 import { randomHorseName, randomSilk, randomRaceName } from "./names";
 import type { GradedRace } from "./gradedRaces";
 
@@ -47,6 +47,20 @@ function generateGeneticMarkers(): GeneticMarkers {
     immunity: randGeneticQuality(),
     geneticDiversity: Math.random() * 0.5 + 0.5, // Random diversity score 0.5-1.0
   };
+}
+
+// Pick a running style biased by the horse's stat profile. Speed/acceleration
+// tilt toward front-runner; stamina tilts toward closer; balanced horses lean
+// stalker. There's still randomness so identical-stat horses can differ.
+function rollRunningStyle(stats: { speed: number; stamina: number; acceleration: number }): RunningStyle {
+  const earlyBias = (stats.speed + stats.acceleration) / 2;
+  const lateBias = stats.stamina;
+  const tilt = earlyBias - lateBias; // ~ -50..+50
+  const r = Math.random() * 100 - tilt; // tilt shifts the distribution
+  if (r < 25) return "front-runner";
+  if (r < 55) return "stalker";
+  if (r < 80) return "mid-pack";
+  return "closer";
 }
 
 function generateHealthStatus(): HealthStatus {
@@ -100,6 +114,12 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
   const gender = age <= 2 ? (isMale ? "colt" : "filly") : (isMale ? "horse" : "mare");
   const hemisphere: Hemisphere = opts.hemisphere ?? (Math.random() < 0.5 ? "Northern" : "Southern");
 
+  const stats = {
+    speed: rand(lo, hi),
+    stamina: rand(lo, hi),
+    acceleration: rand(lo, hi),
+    consistency: rand(lo, hi),
+  };
   return {
     id: uid(),
     name: randomHorseName(),
@@ -107,12 +127,7 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     gender,
     hemisphere,
     silk: randomSilk(),
-    stats: {
-      speed: rand(lo, hi),
-      stamina: rand(lo, hi),
-      acceleration: rand(lo, hi),
-      consistency: rand(lo, hi),
-    },
+    stats,
     energy: 100,
     form: 0,
     potential: rand(pLo, pHi),
@@ -125,6 +140,7 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     geneticMarkers: generateGeneticMarkers(),
     healthStatus: "healthy",
     coatColor: randomCoatColor(),
+    runningStyle: rollRunningStyle(stats),
   };
 }
 

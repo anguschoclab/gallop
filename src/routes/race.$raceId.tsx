@@ -2,12 +2,11 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useGame } from "@/game/store";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { buildRunner, stepRunner, type Runner } from "@/game/raceSim";
-import type { Horse } from "@/game/types";
+import { stepRunner, computePaceContext, type Runner } from "@/game/raceSim";
 import { beyerFigure } from "@/game/beyer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { calculateClassBonus } from "@/core/common/classBonus";
-import { buildRaceField, simulateStep, type RaceSimulationDependencies } from "@/services/raceSimulationService";
+import { buildRaceField, rngForRace, type RaceSimulationDependencies } from "@/services/raceSimulationService";
 import type { Weather } from "@/game/types";
 
 // Track surface background mapping
@@ -100,11 +99,13 @@ function LiveRace() {
     );
   }
 
-  // Build full field: owner entries + AI fillers
+  // Build full field: owner entries + AI fillers. Seeded RNG keyed by race id
+  // means a re-loaded race produces the same finish order and times.
   const [runners] = useState<Runner[]>(() => {
     const deps: RaceSimulationDependencies = { race, horses };
     return buildRaceField(deps);
   });
+  const rngRef = useRef(rngForRace(race));
 
   const [tick, setTick] = useState(0);
   const [speed, setSpeed] = useState(1);
@@ -122,24 +123,37 @@ function LiveRace() {
   useEffect(() => {
     let raf = 0;
     let last = performance.now();
+    // Fixed timestep keeps the seeded RNG-driven outcome identical across
+    // reloads regardless of browser frame timing. Variable real-time dt is
+    // accumulated and drained in fixed slices.
+    const FIXED_DT = 0.05;
+    let accumulator = 0;
+    const MAX_STEPS_PER_FRAME = 64;
 
     const loop = (now: number) => {
       const real = (now - last) / 1000;
       last = now;
-      const dt = Math.min(0.1, real * speedRef.current);
-      simTimeRef.current += dt;
-      let stillRunning = false;
-      for (const r of runners) {
-        if (r.finishTime === null) {
-          stepRunner(r, dt, simTimeRef.current, race.distance);
-          if (r.finishTime !== null) {
-            finishOrderRef.current.push({
-              horseId: r.horseId,
-              position: finishOrderRef.current.length + 1,
-              time: r.finishTime,
-            });
-          } else {
-            stillRunning = true;
+      accumulator += real * speedRef.current;
+      let stillRunning = runners.some((r) => r.finishTime === null);
+      let steps = 0;
+      while (accumulator >= FIXED_DT && stillRunning && steps < MAX_STEPS_PER_FRAME) {
+        accumulator -= FIXED_DT;
+        simTimeRef.current += FIXED_DT;
+        steps++;
+        stillRunning = false;
+        const pace = computePaceContext(runners, race.distance);
+        for (const r of runners) {
+          if (r.finishTime === null) {
+            stepRunner(r, FIXED_DT, simTimeRef.current, race.distance, rngRef.current, runners, pace);
+            if (r.finishTime !== null) {
+              finishOrderRef.current.push({
+                horseId: r.horseId,
+                position: finishOrderRef.current.length + 1,
+                time: r.finishTime,
+              });
+            } else {
+              stillRunning = true;
+            }
           }
         }
       }

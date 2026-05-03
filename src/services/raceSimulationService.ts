@@ -1,7 +1,8 @@
 import type { Horse, Race } from "@/game/types";
-import { buildRunner, stepRunner, type Runner } from "@/game/raceSim";
+import { buildRunner, stepRunner, getConditionsModifier, type Runner } from "@/game/raceSim";
 import { generateHorse } from "@/game/horseGen";
 import { calculateClassBonus } from "@/core/common/classBonus";
+import { createRng, hashStr, type Rng } from "@/game/rng";
 
 /**
  * Race simulation orchestration with dependency injection
@@ -19,21 +20,29 @@ export interface SimulationResult {
   time: number;
 }
 
+// Seed any race simulation off the race id so reruns are reproducible.
+export function rngForRace(race: Pick<Race, "id">): Rng {
+  return createRng(hashStr(race.id));
+}
+
 /**
- * Build the full field of runners for a race
- * Includes owner entries + AI fillers to reach field size
+ * Build the full field of runners for a race.
+ * Owner entries first, then AI fillers up to fieldSize. Conditions
+ * (weather + track surface) bake into runner stats here so the per-step
+ * loop doesn't need to know about them.
  */
 export function buildRaceField(
   dependencies: RaceSimulationDependencies
 ): Runner[] {
   const { race, horses } = dependencies;
+  const conditions = getConditionsModifier(race);
   const built: Runner[] = [];
 
   // Add owner entries
   for (const entry of race.entries) {
     const horse = horses.find((h) => h.id === entry.horseId);
     if (horse) {
-      built.push(buildRunner(horse, true));
+      built.push(buildRunner(horse, true, conditions));
     }
   }
 
@@ -41,27 +50,35 @@ export function buildRaceField(
   while (built.length < race.fieldSize) {
     const tier = getTierForRaceClass(race.raceClass);
     const aiHorse = generateHorse({ tier: tier as never });
-    built.push(buildRunner(aiHorse, false));
+    built.push(buildRunner(aiHorse, false, conditions));
+  }
+
+  // Empty-field guard: a race must always have at least one runner. This
+  // can only happen if fieldSize was somehow set to 0; treat defensively.
+  if (built.length === 0) {
+    const aiHorse = generateHorse({ tier: getTierForRaceClass(race.raceClass) as never });
+    built.push(buildRunner(aiHorse, false, conditions));
   }
 
   return built;
 }
 
 /**
- * Simulate a single time step for all runners
+ * Simulate a single time step for all runners.
  */
 export function simulateStep(
   runners: Runner[],
   dt: number,
   simTime: number,
-  distance: number
+  distance: number,
+  rng: Rng
 ): { stillRunning: boolean; finishOrder: SimulationResult[] } {
   const finishOrder: SimulationResult[] = [];
   let stillRunning = false;
 
   for (const runner of runners) {
     if (runner.finishTime === null) {
-      stepRunner(runner, dt, simTime, distance);
+      stepRunner(runner, dt, simTime, distance, rng);
       if (runner.finishTime !== null) {
         finishOrder.push({
           horseId: runner.horseId,

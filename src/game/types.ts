@@ -8,6 +8,13 @@ export type HorseStats = {
 export type Conformation = "excellent" | "good" | "fair" | "poor";
 export type Temperament = "excellent" | "good" | "fair" | "poor";
 
+// Running style — preferred position and pace shape during a race.
+// front-runner: pacesetter, controls or sets early pace
+// stalker: sits 1-4 lengths off the leaders, most flexible
+// mid-pack: settles in the middle, can go either way
+// closer: held up at the back, surges late
+export type RunningStyle = "front-runner" | "stalker" | "mid-pack" | "closer";
+
 // Health status for horses
 export type HealthStatus = "healthy" | "covering_sickness" | "recovering" | "other_illness";
 
@@ -72,6 +79,8 @@ export type Horse = {
   blueHenStatus?: BlueHenStatus; // Blue hen status for exceptional broodmares
   foalsProduced?: string[]; // IDs of foals produced by this mare
   coatColor?: CoatColor; // Coat color for race viewer sprites
+  lastFoaledDay?: number; // Day the mare most recently foaled — gates re-breeding cooldown
+  runningStyle?: RunningStyle; // Preferred race tactics — affects pace shape and stamina use
 };
 
 export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
@@ -120,6 +129,7 @@ export type Pregnancy = {
   foalId?: string;
   liveFoalGuarantee?: boolean; // Whether live foal guarantee was purchased
   reBreedingAttempts?: number; // Number of re-breeding attempts used
+  refunded?: boolean; // True once Live Foal Guarantee has paid out for this pregnancy — prevents double refunds
 };
 
 export type GameState = {
