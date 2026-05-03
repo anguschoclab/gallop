@@ -14,6 +14,16 @@ const GESTATION_DAYS = 30;
 const SEASON_DAYS = 30;
 const MAX_SAMPLES_PER_BUCKET = 60;
 
+// Get race history limit from localStorage, default to 50
+function getRaceHistoryLimit(): number {
+  const saved = localStorage.getItem("raceHistoryLimit");
+  if (saved) {
+    const limit = parseInt(saved, 10);
+    if ([10, 20, 50].includes(limit)) return limit;
+  }
+  return 50;
+}
+
 // Recompute par-time per distance bucket from collected winner finish times.
 // Uses a slightly-faster-than-median (40th percentile) to match the
 // "above-average winner" intent of Beyer par.
@@ -130,7 +140,11 @@ export const useGame = create<GameState & Actions>()(
         if (race.entries.length >= race.fieldSize) return;
         const r = race.restrictions;
         if (r) {
-          if (r.minAge !== undefined && horse.age < r.minAge) return;
+          // Check hemisphere-specific age restrictions first
+          const minAgeToCheck = horse.hemisphere === "Northern" 
+            ? (r.minAgeNorthern ?? r.minAge) 
+            : (r.minAgeSouthern ?? r.minAge);
+          if (minAgeToCheck !== undefined && horse.age < minAgeToCheck) return;
           if (r.maxAge !== undefined && horse.age > r.maxAge) return;
         }
         race.entries.push({ horseId, owned: true });
@@ -162,7 +176,7 @@ export const useGame = create<GameState & Actions>()(
           if (!h) continue;
           h.energy = Math.max(0, h.energy - 25);
           const beyer = beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
-          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: result.length }, ...h.raceHistory].slice(0, 50);
+          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: result.length }, ...h.raceHistory].slice(0, getRaceHistoryLimit());
           // form change
           if (r.position === 1) h.form = Math.min(10, h.form + 3);
           else if (r.position <= 3) h.form = Math.min(10, h.form + 1);

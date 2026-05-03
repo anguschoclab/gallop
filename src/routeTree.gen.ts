@@ -9,17 +9,50 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UaeCalendarRouteImport } from './routes/uae-calendar'
+import { Route as TrackScheduleRouteImport } from './routes/track-schedule'
 import { Route as StableRouteImport } from './routes/stable'
+import { Route as SouthAmericanCalendarRouteImport } from './routes/south-american-calendar'
+import { Route as ScandinavianCalendarRouteImport } from './routes/scandinavian-calendar'
+import { Route as RecapRouteImport } from './routes/recap'
 import { Route as RacesRouteImport } from './routes/races'
 import { Route as MarketRouteImport } from './routes/market'
+import { Route as GermanCalendarRouteImport } from './routes/german-calendar'
+import { Route as CanadianCalendarRouteImport } from './routes/canadian-calendar'
+import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
 
+const UaeCalendarRoute = UaeCalendarRouteImport.update({
+  id: '/uae-calendar',
+  path: '/uae-calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackScheduleRoute = TrackScheduleRouteImport.update({
+  id: '/track-schedule',
+  path: '/track-schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StableRoute = StableRouteImport.update({
   id: '/stable',
   path: '/stable',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SouthAmericanCalendarRoute = SouthAmericanCalendarRouteImport.update({
+  id: '/south-american-calendar',
+  path: '/south-american-calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScandinavianCalendarRoute = ScandinavianCalendarRouteImport.update({
+  id: '/scandinavian-calendar',
+  path: '/scandinavian-calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecapRoute = RecapRouteImport.update({
+  id: '/recap',
+  path: '/recap',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RacesRoute = RacesRouteImport.update({
@@ -30,6 +63,21 @@ const RacesRoute = RacesRouteImport.update({
 const MarketRoute = MarketRouteImport.update({
   id: '/market',
   path: '/market',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GermanCalendarRoute = GermanCalendarRouteImport.update({
+  id: '/german-calendar',
+  path: '/german-calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CanadianCalendarRoute = CanadianCalendarRouteImport.update({
+  id: '/canadian-calendar',
+  path: '/canadian-calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BroodmaresRoute = BroodmaresRouteImport.update({
+  id: '/broodmares',
+  path: '/broodmares',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BreedingRoute = BreedingRouteImport.update({
@@ -56,18 +104,34 @@ const RaceRaceIdRoute = RaceRaceIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/breeding': typeof BreedingRoute
+  '/broodmares': typeof BroodmaresRoute
+  '/canadian-calendar': typeof CanadianCalendarRoute
+  '/german-calendar': typeof GermanCalendarRoute
   '/market': typeof MarketRoute
   '/races': typeof RacesRoute
+  '/recap': typeof RecapRoute
+  '/scandinavian-calendar': typeof ScandinavianCalendarRoute
+  '/south-american-calendar': typeof SouthAmericanCalendarRoute
   '/stable': typeof StableRouteWithChildren
+  '/track-schedule': typeof TrackScheduleRoute
+  '/uae-calendar': typeof UaeCalendarRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/breeding': typeof BreedingRoute
+  '/broodmares': typeof BroodmaresRoute
+  '/canadian-calendar': typeof CanadianCalendarRoute
+  '/german-calendar': typeof GermanCalendarRoute
   '/market': typeof MarketRoute
   '/races': typeof RacesRoute
+  '/recap': typeof RecapRoute
+  '/scandinavian-calendar': typeof ScandinavianCalendarRoute
+  '/south-american-calendar': typeof SouthAmericanCalendarRoute
   '/stable': typeof StableRouteWithChildren
+  '/track-schedule': typeof TrackScheduleRoute
+  '/uae-calendar': typeof UaeCalendarRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
 }
@@ -75,9 +139,17 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/breeding': typeof BreedingRoute
+  '/broodmares': typeof BroodmaresRoute
+  '/canadian-calendar': typeof CanadianCalendarRoute
+  '/german-calendar': typeof GermanCalendarRoute
   '/market': typeof MarketRoute
   '/races': typeof RacesRoute
+  '/recap': typeof RecapRoute
+  '/scandinavian-calendar': typeof ScandinavianCalendarRoute
+  '/south-american-calendar': typeof SouthAmericanCalendarRoute
   '/stable': typeof StableRouteWithChildren
+  '/track-schedule': typeof TrackScheduleRoute
+  '/uae-calendar': typeof UaeCalendarRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
 }
@@ -86,27 +158,51 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/breeding'
+    | '/broodmares'
+    | '/canadian-calendar'
+    | '/german-calendar'
     | '/market'
     | '/races'
+    | '/recap'
+    | '/scandinavian-calendar'
+    | '/south-american-calendar'
     | '/stable'
+    | '/track-schedule'
+    | '/uae-calendar'
     | '/race/$raceId'
     | '/stable/$horseId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/breeding'
+    | '/broodmares'
+    | '/canadian-calendar'
+    | '/german-calendar'
     | '/market'
     | '/races'
+    | '/recap'
+    | '/scandinavian-calendar'
+    | '/south-american-calendar'
     | '/stable'
+    | '/track-schedule'
+    | '/uae-calendar'
     | '/race/$raceId'
     | '/stable/$horseId'
   id:
     | '__root__'
     | '/'
     | '/breeding'
+    | '/broodmares'
+    | '/canadian-calendar'
+    | '/german-calendar'
     | '/market'
     | '/races'
+    | '/recap'
+    | '/scandinavian-calendar'
+    | '/south-american-calendar'
     | '/stable'
+    | '/track-schedule'
+    | '/uae-calendar'
     | '/race/$raceId'
     | '/stable/$horseId'
   fileRoutesById: FileRoutesById
@@ -114,19 +210,62 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BreedingRoute: typeof BreedingRoute
+  BroodmaresRoute: typeof BroodmaresRoute
+  CanadianCalendarRoute: typeof CanadianCalendarRoute
+  GermanCalendarRoute: typeof GermanCalendarRoute
   MarketRoute: typeof MarketRoute
   RacesRoute: typeof RacesRoute
+  RecapRoute: typeof RecapRoute
+  ScandinavianCalendarRoute: typeof ScandinavianCalendarRoute
+  SouthAmericanCalendarRoute: typeof SouthAmericanCalendarRoute
   StableRoute: typeof StableRouteWithChildren
+  TrackScheduleRoute: typeof TrackScheduleRoute
+  UaeCalendarRoute: typeof UaeCalendarRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/uae-calendar': {
+      id: '/uae-calendar'
+      path: '/uae-calendar'
+      fullPath: '/uae-calendar'
+      preLoaderRoute: typeof UaeCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/track-schedule': {
+      id: '/track-schedule'
+      path: '/track-schedule'
+      fullPath: '/track-schedule'
+      preLoaderRoute: typeof TrackScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stable': {
       id: '/stable'
       path: '/stable'
       fullPath: '/stable'
       preLoaderRoute: typeof StableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/south-american-calendar': {
+      id: '/south-american-calendar'
+      path: '/south-american-calendar'
+      fullPath: '/south-american-calendar'
+      preLoaderRoute: typeof SouthAmericanCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scandinavian-calendar': {
+      id: '/scandinavian-calendar'
+      path: '/scandinavian-calendar'
+      fullPath: '/scandinavian-calendar'
+      preLoaderRoute: typeof ScandinavianCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recap': {
+      id: '/recap'
+      path: '/recap'
+      fullPath: '/recap'
+      preLoaderRoute: typeof RecapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/races': {
@@ -141,6 +280,27 @@ declare module '@tanstack/react-router' {
       path: '/market'
       fullPath: '/market'
       preLoaderRoute: typeof MarketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/german-calendar': {
+      id: '/german-calendar'
+      path: '/german-calendar'
+      fullPath: '/german-calendar'
+      preLoaderRoute: typeof GermanCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/canadian-calendar': {
+      id: '/canadian-calendar'
+      path: '/canadian-calendar'
+      fullPath: '/canadian-calendar'
+      preLoaderRoute: typeof CanadianCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/broodmares': {
+      id: '/broodmares'
+      path: '/broodmares'
+      fullPath: '/broodmares'
+      preLoaderRoute: typeof BroodmaresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/breeding': {
@@ -188,11 +348,28 @@ const StableRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BreedingRoute: BreedingRoute,
+  BroodmaresRoute: BroodmaresRoute,
+  CanadianCalendarRoute: CanadianCalendarRoute,
+  GermanCalendarRoute: GermanCalendarRoute,
   MarketRoute: MarketRoute,
   RacesRoute: RacesRoute,
+  RecapRoute: RecapRoute,
+  ScandinavianCalendarRoute: ScandinavianCalendarRoute,
+  SouthAmericanCalendarRoute: SouthAmericanCalendarRoute,
   StableRoute: StableRouteWithChildren,
+  TrackScheduleRoute: TrackScheduleRoute,
+  UaeCalendarRoute: UaeCalendarRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

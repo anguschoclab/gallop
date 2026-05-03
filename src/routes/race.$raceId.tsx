@@ -3,11 +3,12 @@ import { useGame } from "@/game/store";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { buildRunner, stepRunner, type Runner } from "@/game/raceSim";
-import { generateHorse } from "@/game/horseGen";
 import type { Horse } from "@/game/types";
 import { SilkBadge } from "@/components/HorseBits";
 import { beyerFigure } from "@/game/beyer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { calculateClassBonus } from "@/core/common/classBonus";
+import { buildRaceField, simulateStep, type RaceSimulationDependencies } from "@/services/raceSimulationService";
 
 // Project a Beyer figure mid-race from current pace.
 // If finished: use real finish time. Otherwise: extrapolate remaining distance
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/race/$raceId")({
   notFoundComponent: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Race not found</h1>
-      <Link to="/races" className="text-primary underline">Back</Link>
+      <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all" }} className="text-primary underline">Back</Link>
     </div>
   ),
 });
@@ -44,28 +45,15 @@ function LiveRace() {
     return (
       <div className="p-8 text-center">
         <p className="text-muted-foreground">This race has already been run.</p>
-        <Link to="/races"><Button className="mt-4">Back to races</Button></Link>
+        <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all" }}><Button className="mt-4">Back to races</Button></Link>
       </div>
     );
   }
 
   // Build full field: owner entries + AI fillers
   const [runners] = useState<Runner[]>(() => {
-    const built: Runner[] = [];
-    for (const e of race.entries) {
-      const h = horses.find((hh) => hh.id === e.horseId);
-      if (h) built.push(buildRunner(h, true));
-    }
-    while (built.length < race.fieldSize) {
-      // generate AI horse scaled to class
-      const tier =
-        race.raceClass === "Group" ? "elite" :
-        race.raceClass === "Stakes" ? "mid" :
-        race.raceClass === "Allowance" ? "mid" : "budget";
-      const ai: Horse = generateHorse({ tier: tier as never });
-      built.push(buildRunner(ai, false));
-    }
-    return built;
+    const deps: RaceSimulationDependencies = { race, horses };
+    return buildRaceField(deps);
   });
 
   const [tick, setTick] = useState(0);
@@ -79,12 +67,7 @@ function LiveRace() {
   const speedRef = useRef(speed);
   speedRef.current = speed;
 
-  const classBonus =
-    race.graded?.grade === "G1" ? 8 :
-    race.graded?.grade === "G2" ? 5 :
-    race.graded?.grade === "G3" ? 3 :
-    race.raceClass === "Group" ? 4 :
-    race.raceClass === "Stakes" ? 2 : 0;
+  const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
 
   useEffect(() => {
     let raf = 0;
@@ -165,7 +148,7 @@ function LiveRace() {
             </>
           )}
           {finished && (
-            <Button size="sm" onClick={() => navigate({ to: "/races" })}>Back to races</Button>
+            <Button size="sm" onClick={() => navigate({ to: "/races", search: { grade: "all", country: "all", surface: "all", track: "all" } })}>Back to races</Button>
           )}
         </div>
       </div>
@@ -233,7 +216,7 @@ function LiveRace() {
         </div>
       </div>
 
-      {finished && <ResultOverlay race={race} runners={runners} onClose={() => navigate({ to: "/races" })} />}
+      {finished && <ResultOverlay race={race} runners={runners} onClose={() => navigate({ to: "/races", search: { grade: "all", country: "all", surface: "all", track: "all" } })} />}
     </div>
   );
 }

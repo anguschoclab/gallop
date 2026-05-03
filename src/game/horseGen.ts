@@ -1,4 +1,4 @@
-import type { Horse, Race, RaceClass } from "./types";
+import type { Horse, Race, RaceClass, Hemisphere } from "./types";
 import { randomHorseName, randomSilk, randomRaceName } from "./names";
 import type { GradedRace } from "./gradedRaces";
 
@@ -8,7 +8,7 @@ function rand(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean } = {}): Horse {
+export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere } = {}): Horse {
   const tier = opts.tier ?? "budget";
   const ranges: Record<string, [number, number]> = {
     starter: [30, 55],
@@ -24,11 +24,17 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     elite: [85, 100],
   };
   const [pLo, pHi] = potentialRanges[tier];
+  const age = rand(2, 6);
+  const isMale = Math.random() < 0.5;
+  const gender = age <= 2 ? (isMale ? "colt" : "filly") : (isMale ? "horse" : "mare");
+  const hemisphere: Hemisphere = opts.hemisphere ?? (Math.random() < 0.5 ? "Northern" : "Southern");
 
   return {
     id: uid(),
     name: randomHorseName(),
-    age: rand(2, 6),
+    age,
+    gender,
+    hemisphere,
     silk: randomSilk(),
     stats: {
       speed: rand(lo, hi),

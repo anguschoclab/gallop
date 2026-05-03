@@ -5,10 +5,16 @@ export type HorseStats = {
   consistency: number;
 };
 
+export type HorseGender = "colt" | "filly" | "horse" | "mare";
+
+export type Hemisphere = "Northern" | "Southern";
+
 export type Horse = {
   id: string;
   name: string;
   age: number;
+  gender: HorseGender;
+  hemisphere: Hemisphere;
   silk: string; // hex color
   stats: HorseStats;
   energy: number; // 0-100
@@ -41,7 +47,14 @@ export type Race = {
     track: string;
     surface: "Turf" | "Dirt" | "Synthetic";
   };
-  restrictions?: { minAge?: number; maxAge?: number };
+  restrictions?: { 
+    minAge?: number; 
+    maxAge?: number; 
+    gender?: "colt" | "filly" | "horse" | "mare" | "fillies" | "mares" | "colts" | "fillies-and-mares" | "colts-and-fillies";
+    // Hemisphere-specific age restrictions (e.g., for Dubai races)
+    minAgeNorthern?: number;
+    minAgeSouthern?: number;
+  };
 };
 
 export type Pregnancy = {

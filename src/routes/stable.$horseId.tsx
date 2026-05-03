@@ -1,12 +1,18 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HorseStats, overall, SilkBadge } from "@/components/HorseBits";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { HorseStats, SilkBadge } from "@/components/HorseBits";
 import { ArrowLeft } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
 import { BeyerChart } from "@/components/BeyerChart";
+import { calculateOverallRating } from "@/core/horse/stats";
+import { getGradeColorClass } from "@/core/race/grading";
+import { getOrdinalSuffix } from "@/core/common/ordinal";
+import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/localStorageService";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
@@ -26,6 +32,12 @@ function HorseDetail() {
   const cash = useGame((s) => s.cash);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const day = useGame((s) => s.day);
+  const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
+
+  // Persist raceHistoryLimit to localStorage
+  useEffect(() => {
+    saveRaceHistoryLimit(raceHistoryLimit);
+  }, [raceHistoryLimit]);
 
   if (!horse) throw notFound();
 
@@ -42,7 +54,7 @@ function HorseDetail() {
           <SilkBadge color={horse.silk} />
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{horse.name}</h1>
-            <p className="text-muted-foreground">Age {horse.age} · OVR {overall(horse)} · Potential {horse.potential}</p>
+            <p className="text-muted-foreground">Age {horse.age} · OVR {calculateOverallRating(horse)} · Potential {horse.potential}</p>
           </div>
         </div>
       </div>
@@ -113,13 +125,27 @@ function HorseDetail() {
       <GradedHistoryPanel history={horse.raceHistory} />
 
       <Card>
-        <CardHeader><CardTitle>Race history</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Race history</CardTitle>
+          <div className="flex items-center gap-2 mt-2">
+            <Select value={raceHistoryLimit.toString()} onValueChange={(v) => setRaceHistoryLimit(Number(v))}>
+              <SelectTrigger className="w-[120px] h-8 text-xs">
+                <SelectValue placeholder="History limit" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">Last 10</SelectItem>
+                <SelectItem value="20">Last 20</SelectItem>
+                <SelectItem value="50">Last 50</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
         <CardContent>
           {horse.raceHistory.length === 0 ? (
             <p className="text-sm text-muted-foreground">No races yet.</p>
           ) : (
             <div className="space-y-1">
-              {horse.raceHistory.map((r, i) => (
+              {horse.raceHistory.slice(0, raceHistoryLimit).map((r, i) => (
                 <div key={i} className="flex justify-between text-sm py-1 border-b last:border-0">
                   <span>{r.raceName}</span>
                   <span className="flex gap-3 items-center">
@@ -157,17 +183,6 @@ function HorseDetail() {
   );
 }
 
-function ord(n: number) {
-  const s = ["th", "st", "nd", "rd"];
-  const v = n % 100;
-  return s[(v - 20) % 10] || s[v] || s[0];
-}
-
-function gradeColor(g?: string) {
-  return g === "G1" ? "bg-yellow-500/15 text-yellow-700 border-yellow-500/40 dark:text-yellow-400"
-    : g === "G2" ? "bg-purple-500/15 text-purple-700 border-purple-500/40 dark:text-purple-400"
-    : "bg-blue-500/15 text-blue-700 border-blue-500/40 dark:text-blue-400";
-}
 
 function GradedHistoryPanel({ history }: { history: { raceName: string; position: number; day: number; beyer?: number; grade?: "G1" | "G2" | "G3"; distance?: number; surface?: string; fieldSize?: number }[] }) {
   const graded = history.filter((r) => r.grade);
@@ -191,7 +206,7 @@ function GradedHistoryPanel({ history }: { history: { raceName: string; position
           {(["G1", "G2", "G3"] as const).map((g) => (
             <div key={g} className="rounded-md border p-3">
               <div className="flex items-center justify-between mb-1">
-                <Badge variant="outline" className={gradeColor(g)}>{g}</Badge>
+                <Badge variant="outline" className={getGradeColorClass(g)}>{g}</Badge>
                 <span className="text-xs text-muted-foreground">{byGrade[g].length} run{byGrade[g].length !== 1 ? "s" : ""}</span>
               </div>
               <div className="text-sm">
@@ -214,7 +229,7 @@ function GradedHistoryPanel({ history }: { history: { raceName: string; position
             {graded.map((r, i) => (
               <div key={i} className="flex items-center justify-between gap-2 text-sm py-2 border-b last:border-0">
                 <div className="flex items-center gap-2 min-w-0">
-                  <Badge variant="outline" className={gradeColor(r.grade)}>{r.grade}</Badge>
+                  {r.grade && <Badge variant="outline" className={getGradeColorClass(r.grade)}>{r.grade}</Badge>}
                   <div className="min-w-0">
                     <div className="truncate">{r.raceName}</div>
                     <div className="text-xs text-muted-foreground">
@@ -230,7 +245,7 @@ function GradedHistoryPanel({ history }: { history: { raceName: string; position
                     </span>
                   )}
                   <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
-                    {r.position}{ord(r.position)}
+                    {r.position}{getOrdinalSuffix(r.position)}
                   </Badge>
                 </div>
               </div>
