@@ -77,11 +77,6 @@ function RacesPage() {
                       {race.minStat && <span>Min OVR {race.minStat}</span>}
                       {r?.minAge === r?.maxAge && r?.minAge !== undefined && <span>{r.minAge}YO only</span>}
                       {r?.minAge !== undefined && r?.maxAge === undefined && <span>{r.minAge}+ YO</span>}
-                      {race.graded?.key && (() => {
-                        // surface note from gradedRaces metadata isn't on race object;
-                        // skip — note appears via name where applicable
-                        return null;
-                      })()}
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 items-end min-w-[200px]">
