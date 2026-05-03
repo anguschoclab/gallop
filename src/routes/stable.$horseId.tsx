@@ -51,11 +51,16 @@ function HorseDetail() {
           <CardHeader><CardTitle>Stats</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <HorseStats horse={horse} />
-            <div className="flex gap-2 pt-2">
+            <div className="flex flex-wrap gap-2 pt-2">
               <Badge variant="secondary">Energy ⚡ {horse.energy}/100</Badge>
               <Badge variant={horse.form >= 0 ? "default" : "destructive"}>
                 Form {horse.form > 0 ? "+" : ""}{horse.form}
               </Badge>
+              {isPregnant && (
+                <Badge className="bg-pink-500/15 text-pink-600 border-pink-500/30" variant="outline">
+                  🤰 Pregnant · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
+                </Badge>
+              )}
             </div>
           </CardContent>
         </Card>
