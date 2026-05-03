@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { GameState, Horse, Race } from "./types";
+import type { GameState, Horse, Race, Pregnancy } from "./types";
 import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
 import { GRADED_RACES } from "./gradedRaces";
 
@@ -8,6 +8,8 @@ const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
 const TRAINING_SLOTS_PER_DAY = 2;
 const STARTING_CASH = 5000;
+const BREEDING_FEE = 2000;
+const GESTATION_DAYS = 30;
 
 type Actions = {
   newGame: () => void;
@@ -16,6 +18,7 @@ type Actions = {
   enterRace: (raceId: string, horseId: string) => void;
   withdrawRace: (raceId: string, horseId: string) => void;
   resolveRace: (raceId: string, result: { horseId: string; position: number; time: number }[]) => void;
+  breed: (sireId: string, damId: string) => void;
   advanceDay: () => void;
 };
 
