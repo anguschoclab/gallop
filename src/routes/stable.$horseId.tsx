@@ -23,10 +23,13 @@ function HorseDetail() {
   const trainHorse = useGame((s) => s.trainHorse);
   const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
+  const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
+  const day = useGame((s) => s.day);
 
   if (!horse) throw notFound();
 
   const slotsLeft = 2 - trainingUsed;
+  const isPregnant = !!pregnancy;
 
   return (
     <div className="space-y-6">
@@ -48,11 +51,16 @@ function HorseDetail() {
           <CardHeader><CardTitle>Stats</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <HorseStats horse={horse} />
-            <div className="flex gap-2 pt-2">
+            <div className="flex flex-wrap gap-2 pt-2">
               <Badge variant="secondary">Energy ⚡ {horse.energy}/100</Badge>
               <Badge variant={horse.form >= 0 ? "default" : "destructive"}>
                 Form {horse.form > 0 ? "+" : ""}{horse.form}
               </Badge>
+              {isPregnant && (
+                <Badge className="bg-pink-500/15 text-pink-600 border-pink-500/30" variant="outline">
+                  🤰 Pregnant · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
+                </Badge>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -60,14 +68,18 @@ function HorseDetail() {
         <Card>
           <CardHeader>
             <CardTitle>Training</CardTitle>
-            <p className="text-xs text-muted-foreground">{slotsLeft} slot{slotsLeft !== 1 ? "s" : ""} left today · $75/session</p>
+            <p className="text-xs text-muted-foreground">
+              {isPregnant
+                ? "Resting in the broodmare barn — no training during pregnancy."
+                : `${slotsLeft} slot${slotsLeft !== 1 ? "s" : ""} left today · $75/session`}
+            </p>
           </CardHeader>
           <CardContent className="space-y-2">
             {(["speed", "stamina", "acceleration"] as const).map((k) => (
               <Button
                 key={k}
                 onClick={() => trainHorse(horse.id, k)}
-                disabled={slotsLeft <= 0 || cash < 75 || horse.energy < 15 || horse.stats[k] >= horse.potential}
+                disabled={isPregnant || slotsLeft <= 0 || cash < 75 || horse.energy < 15 || horse.stats[k] >= horse.potential}
                 className="w-full justify-between"
                 variant="outline"
               >
@@ -77,7 +89,7 @@ function HorseDetail() {
             ))}
             <Button
               onClick={() => trainHorse(horse.id, "rest")}
-              disabled={slotsLeft <= 0 || horse.energy >= 100}
+              disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}
               className="w-full"
               variant="secondary"
             >
