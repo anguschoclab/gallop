@@ -159,12 +159,27 @@ function LiveRace() {
     return b.r.position - a.r.position;
   });
 
+  const skyBg = getSkyBackground(race.weather);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-900 to-emerald-950 text-white">
-      <div className="p-4 flex items-center justify-between border-b border-white/10">
+    <div
+      className="min-h-screen text-white"
+      style={{
+        backgroundImage: skyBg ? `${skyBg}, linear-gradient(to bottom, rgb(6 78 59), rgb(6 59 48))` : undefined,
+        backgroundSize: "auto 200px, 100% 100%",
+        backgroundRepeat: "repeat-x, no-repeat",
+        backgroundPosition: "top, top",
+        backgroundColor: "rgb(6 59 48)", // emerald-950 fallback
+      }}
+    >
+      <div className="p-4 flex items-center justify-between border-b border-white/10 bg-black/20">
         <div>
           <h1 className="text-xl font-bold">{race.name}</h1>
-          <p className="text-xs text-white/70">{race.distance}m · {race.raceClass} · Purse ${race.purse.toLocaleString()}</p>
+          <p className="text-xs text-white/70">
+            {race.distance}m · {race.raceClass} · Purse ${race.purse.toLocaleString()}
+            {race.weather && ` · ${race.weather === "sunny" ? "☀️ Sunny" : "🌧️ Rainy"}`}
+            {race.trackCondition && ` · Track: ${race.trackCondition}`}
+          </p>
         </div>
         <div className="flex gap-2">
           {!finished && (
