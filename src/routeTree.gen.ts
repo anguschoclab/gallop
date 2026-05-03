@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StableRouteImport } from './routes/stable'
 import { Route as RacesRouteImport } from './routes/races'
 import { Route as MarketRouteImport } from './routes/market'
-import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
@@ -30,11 +29,6 @@ const RacesRoute = RacesRouteImport.update({
 const MarketRoute = MarketRouteImport.update({
   id: '/market',
   path: '/market',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BreedingRoute = BreedingRouteImport.update({
-  id: '/breeding',
-  path: '/breeding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -55,7 +49,6 @@ const RaceRaceIdRoute = RaceRaceIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/breeding': typeof BreedingRoute
   '/market': typeof MarketRoute
   '/races': typeof RacesRoute
   '/stable': typeof StableRouteWithChildren
@@ -64,7 +57,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/breeding': typeof BreedingRoute
   '/market': typeof MarketRoute
   '/races': typeof RacesRoute
   '/stable': typeof StableRouteWithChildren
@@ -74,7 +66,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/breeding': typeof BreedingRoute
   '/market': typeof MarketRoute
   '/races': typeof RacesRoute
   '/stable': typeof StableRouteWithChildren
@@ -85,7 +76,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/breeding'
     | '/market'
     | '/races'
     | '/stable'
@@ -94,7 +84,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/breeding'
     | '/market'
     | '/races'
     | '/stable'
@@ -103,7 +92,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/breeding'
     | '/market'
     | '/races'
     | '/stable'
@@ -113,7 +101,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  BreedingRoute: typeof BreedingRoute
   MarketRoute: typeof MarketRoute
   RacesRoute: typeof RacesRoute
   StableRoute: typeof StableRouteWithChildren
@@ -141,13 +128,6 @@ declare module '@tanstack/react-router' {
       path: '/market'
       fullPath: '/market'
       preLoaderRoute: typeof MarketRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/breeding': {
-      id: '/breeding'
-      path: '/breeding'
-      fullPath: '/breeding'
-      preLoaderRoute: typeof BreedingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -187,7 +167,6 @@ const StableRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BreedingRoute: BreedingRoute,
   MarketRoute: MarketRoute,
   RacesRoute: RacesRoute,
   StableRoute: StableRouteWithChildren,

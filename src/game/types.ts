@@ -5,40 +5,17 @@ export type HorseStats = {
   consistency: number;
 };
 
-export type Sex = "M" | "F";
-
-export type Lineage = {
-  sireId?: string;
-  sireName?: string;
-  damId?: string;
-  damName?: string;
-};
-
-export type Pregnancy = {
-  sireId: string;
-  sireName: string;
-  dueDay: number;
-  expectedFoalPotential: number;
-};
-
 export type Horse = {
   id: string;
   name: string;
   age: number;
-  sex: Sex;
   silk: string; // hex color
   stats: HorseStats;
   energy: number; // 0-100
   form: number; // -10..+10
   potential: number; // 60-100, soft cap on stat growth
-  raceHistory: { raceId: string; raceName: string; position: number; day: number; beyer?: number; distance?: number }[];
+  raceHistory: { raceId: string; raceName: string; position: number; day: number }[];
   owned: boolean;
-  lineage: Lineage;
-  pregnancy?: Pregnancy;
-  retired?: boolean;
-  // For non-owned public studs available for breeding
-  publicStud?: boolean;
-  studFee?: number;
 };
 
 export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
@@ -46,8 +23,8 @@ export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
 export type Race = {
   id: string;
   name: string;
-  day: number; // scheduled day
-  distance: number; // meters
+  day: number;
+  distance: number;
   raceClass: RaceClass;
   entryFee: number;
   purse: number;
@@ -55,19 +32,14 @@ export type Race = {
   fieldSize: number;
   entries: { horseId: string; owned: boolean }[];
   resolved: boolean;
-  result?: { horseId: string; position: number; time: number; beyer?: number }[];
-  // Graded stakes metadata (real North American races)
+  result?: { horseId: string; position: number; time: number }[];
   graded?: {
     key: string;
     grade: "G1" | "G2" | "G3";
     track: string;
-    surface: "Dirt" | "Turf" | "Synthetic";
+    surface: "Turf" | "Dirt" | "Synthetic";
   };
-  restrictions?: {
-    minAge?: number;
-    maxAge?: number;
-    sex?: Sex;
-  };
+  restrictions?: { minAge?: number; maxAge?: number };
 };
 
 export type GameState = {
@@ -76,7 +48,6 @@ export type GameState = {
   horses: Horse[];
   market: Horse[];
   races: Race[];
-  studs: Horse[]; // public studs available for breeding
   trainingUsed: Record<string, number>; // horseId -> count today
   log: { day: number; text: string }[];
 };

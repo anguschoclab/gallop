@@ -44,9 +44,7 @@ function RacesPage() {
             (!race.minStat || overall(h) >= race.minStat) &&
             !race.entries.some((e) => e.horseId === h.id) &&
             (!r?.minAge || h.age >= r.minAge) &&
-            (!r?.maxAge || h.age <= r.maxAge) &&
-            (!r?.sex || h.sex === r.sex) &&
-            !h.retired && !h.pregnancy
+            (!r?.maxAge || h.age <= r.maxAge)
           );
           const canRun = race.day === day && ownedEntry;
           const gradeColor = race.graded?.grade === "G1"
@@ -77,7 +75,6 @@ function RacesPage() {
                       <span>Entry ${race.entryFee}</span>
                       <span>{race.entries.length}/{race.fieldSize} entered</span>
                       {race.minStat && <span>Min OVR {race.minStat}</span>}
-                      {r?.sex && <span>{r.sex === "F" ? "Fillies/Mares only" : "Colts only"}</span>}
                       {r?.minAge === r?.maxAge && r?.minAge !== undefined && <span>{r.minAge}YO only</span>}
                       {r?.minAge !== undefined && r?.maxAge === undefined && <span>{r.minAge}+ YO</span>}
                     </div>

@@ -20,15 +20,12 @@ function HorseDetail() {
   const { horseId } = Route.useParams();
   const horse = useGame((s) => s.horses.find((h) => h.id === horseId));
   const trainHorse = useGame((s) => s.trainHorse);
-  const retireHorse = useGame((s) => s.retireHorse);
   const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
-  const day = useGame((s) => s.day);
 
   if (!horse) throw notFound();
 
   const slotsLeft = 2 - trainingUsed;
-  const blocked = horse.retired || !!horse.pregnancy;
 
   return (
     <div className="space-y-6">
@@ -38,43 +35,11 @@ function HorseDetail() {
         </Link>
         <div className="flex items-center gap-4">
           <SilkBadge color={horse.silk} />
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight">
-              {horse.name} <span className="text-xl text-muted-foreground font-normal">{horse.sex === "F" ? "♀" : "♂"}</span>
-            </h1>
-            <p className="text-muted-foreground">
-              Age {horse.age} · OVR {overall(horse)} · Potential {horse.potential}
-            </p>
-            {(horse.lineage?.sireName || horse.lineage?.damName) && (
-              <p className="text-xs text-muted-foreground mt-1">
-                by {horse.lineage.sireName ?? "Unknown"} out of {horse.lineage.damName ?? "Unknown"}
-              </p>
-            )}
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{horse.name}</h1>
+            <p className="text-muted-foreground">Age {horse.age} · OVR {overall(horse)} · Potential {horse.potential}</p>
           </div>
-          {!horse.retired && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                if (confirm(`Retire ${horse.name}? Retired horses can't race or train, but mares can still breed.`)) {
-                  retireHorse(horse.id);
-                }
-              }}
-            >
-              Retire
-            </Button>
-          )}
         </div>
-        {horse.pregnancy && (
-          <div className="mt-4 p-3 rounded-lg bg-pink-50 border border-pink-200 text-sm">
-            <span className="font-medium">In foal</span> to {horse.pregnancy.sireName} · due day {horse.pregnancy.dueDay} ({horse.pregnancy.dueDay - day} days left). Cannot train or race.
-          </div>
-        )}
-        {horse.retired && (
-          <div className="mt-4 p-3 rounded-lg bg-muted border text-sm">
-            Retired from racing.
-          </div>
-        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -101,7 +66,7 @@ function HorseDetail() {
               <Button
                 key={k}
                 onClick={() => trainHorse(horse.id, k)}
-                disabled={blocked || slotsLeft <= 0 || cash < 75 || horse.energy < 15 || horse.stats[k] >= horse.potential}
+                disabled={slotsLeft <= 0 || cash < 75 || horse.energy < 15 || horse.stats[k] >= horse.potential}
                 className="w-full justify-between"
                 variant="outline"
               >
@@ -111,7 +76,7 @@ function HorseDetail() {
             ))}
             <Button
               onClick={() => trainHorse(horse.id, "rest")}
-              disabled={blocked || slotsLeft <= 0 || horse.energy >= 100}
+              disabled={slotsLeft <= 0 || horse.energy >= 100}
               className="w-full"
               variant="secondary"
             >
@@ -122,41 +87,21 @@ function HorseDetail() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Race history</CardTitle>
-          {horse.raceHistory.some((r) => r.beyer != null) && (
-            <p className="text-xs text-muted-foreground">
-              Best Beyer: <span className="font-bold text-foreground">
-                {Math.max(...horse.raceHistory.map((r) => r.beyer ?? 0))}
-              </span> · Last 3 avg:{" "}
-              <span className="font-bold text-foreground">
-                {(() => {
-                  const recent = horse.raceHistory.filter((r) => r.beyer != null).slice(0, 3);
-                  if (recent.length === 0) return "—";
-                  return Math.round(recent.reduce((a, b) => a + (b.beyer ?? 0), 0) / recent.length);
-                })()}
-              </span>
-            </p>
-          )}
-        </CardHeader>
+        <CardHeader><CardTitle>Race history</CardTitle></CardHeader>
         <CardContent>
           {horse.raceHistory.length === 0 ? (
             <p className="text-sm text-muted-foreground">No races yet.</p>
           ) : (
             <div className="space-y-1">
               {horse.raceHistory.map((r, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm py-1 border-b last:border-0">
-                  <span className="text-muted-foreground tabular-nums w-8">D{r.day}</span>
-                  <span className="flex-1">{r.raceName}</span>
-                  {r.distance && <span className="text-xs text-muted-foreground tabular-nums">{r.distance}m</span>}
-                  {r.beyer != null && (
-                    <span className="text-xs font-bold tabular-nums px-2 py-0.5 rounded bg-muted">
-                      {r.beyer}
-                    </span>
-                  )}
-                  <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
-                    {r.position}
-                  </Badge>
+                <div key={i} className="flex justify-between text-sm py-1 border-b last:border-0">
+                  <span>{r.raceName}</span>
+                  <span className="flex gap-3">
+                    <span className="text-muted-foreground">D{r.day}</span>
+                    <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
+                      {r.position}
+                    </Badge>
+                  </span>
                 </div>
               ))}
             </div>
