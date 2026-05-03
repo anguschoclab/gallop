@@ -1,11 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { GRADED_RACES, type GradedRace, Grade } from "@/game/gradedRaces";
 import { getRaceCountry } from "@/game/gradedRaces";
 import { getGradeColorClass } from "@/core/race/grading";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 type GradeFilter = "all" | Grade;
 type CountryFilter = "all" | string;
@@ -21,6 +27,10 @@ const DISTANCE_OPTIONS: { value: DistanceFilter; label: string; min?: number; ma
   { value: "stayer", label: "Stayer (> 2400m)", min: 2401 },
 ];
 
+// Extract unique countries and tracks from the data once
+const allCountries = Array.from(new Set(GRADED_RACES.map((r) => getRaceCountry(r)))).sort();
+const allTracks = Array.from(new Set(GRADED_RACES.map((r) => r.track))).sort();
+
 export const Route = createFileRoute("/race-browser")({
   component: RaceBrowser,
 });
@@ -31,32 +41,36 @@ function RaceBrowser() {
   const [trackFilter, setTrackFilter] = useState<TrackFilter>("all");
   const [distanceFilter, setDistanceFilter] = useState<DistanceFilter>("all");
 
-  // Extract unique countries and tracks from the data
-  const allCountries = Array.from(new Set(GRADED_RACES.map(r => getRaceCountry(r)))).sort();
-  const allTracks = Array.from(new Set(GRADED_RACES.map(r => r.track))).sort();
+  const filteredRaces = useMemo(() => {
+    return GRADED_RACES.filter((race) => {
+      // Grade filter
+      if (gradeFilter !== "all" && race.grade !== gradeFilter) return false;
 
-  const filteredRaces = GRADED_RACES.filter((race) => {
-    // Grade filter
-    if (gradeFilter !== "all" && race.grade !== gradeFilter) return false;
+      // Country filter
+      if (countryFilter !== "all" && getRaceCountry(race) !== countryFilter) return false;
 
-    // Country filter
-    if (countryFilter !== "all" && getRaceCountry(race) !== countryFilter) return false;
+      // Track filter
+      if (trackFilter !== "all" && race.track !== trackFilter) return false;
 
-    // Track filter
-    if (trackFilter !== "all" && race.track !== trackFilter) return false;
+      // Distance filter
+      const distanceOption = DISTANCE_OPTIONS.find((opt) => opt.value === distanceFilter);
+      if (distanceOption && distanceFilter !== "all") {
+        if (distanceOption.min !== undefined && race.distance < distanceOption.min) return false;
+        if (distanceOption.max !== undefined && race.distance > distanceOption.max) return false;
+      }
 
-    // Distance filter
-    const distanceOption = DISTANCE_OPTIONS.find(opt => opt.value === distanceFilter);
-    if (distanceOption && distanceFilter !== "all") {
-      if (distanceOption.min !== undefined && race.distance < distanceOption.min) return false;
-      if (distanceOption.max !== undefined && race.distance > distanceOption.max) return false;
-    }
+      return true;
+    });
+  }, [gradeFilter, countryFilter, trackFilter, distanceFilter]);
 
-    return true;
-  });
-
-  const gradeLabel: Record<GradeFilter, string> = { all: "All grades", G1: "G1 only", G2: "G2 only", G3: "G3 only" };
-  const distanceLabel = DISTANCE_OPTIONS.find(opt => opt.value === distanceFilter)?.label || "All distances";
+  const gradeLabel: Record<GradeFilter, string> = {
+    all: "All grades",
+    G1: "G1 only",
+    G2: "G2 only",
+    G3: "G3 only",
+  };
+  const distanceLabel =
+    DISTANCE_OPTIONS.find((opt) => opt.value === distanceFilter)?.label || "All distances";
 
   return (
     <div className="space-y-6">
@@ -77,7 +91,9 @@ function RaceBrowser() {
                 </SelectTrigger>
                 <SelectContent>
                   {GRADE_OPTIONS.map((g) => (
-                    <SelectItem key={g} value={g}>{gradeLabel[g]}</SelectItem>
+                    <SelectItem key={g} value={g}>
+                      {gradeLabel[g]}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -92,7 +108,9 @@ function RaceBrowser() {
                 <SelectContent>
                   <SelectItem value="all">All countries</SelectItem>
                   {allCountries.map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -107,7 +125,9 @@ function RaceBrowser() {
                 <SelectContent>
                   <SelectItem value="all">All tracks</SelectItem>
                   {allTracks.map((t) => (
-                    <SelectItem key={t} value={t}>{t}</SelectItem>
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -115,13 +135,18 @@ function RaceBrowser() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Distance</label>
-              <Select value={distanceFilter} onValueChange={(v) => setDistanceFilter(v as DistanceFilter)}>
+              <Select
+                value={distanceFilter}
+                onValueChange={(v) => setDistanceFilter(v as DistanceFilter)}
+              >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {DISTANCE_OPTIONS.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -163,8 +188,14 @@ function RaceBrowser() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <h3 className="text-lg font-bold">{race.name}</h3>
-                      <Badge variant="outline" className={getGradeColorClass(race.grade)}>{race.grade}</Badge>
-                      {race.note && <Badge variant="secondary" className="text-xs">{race.note}</Badge>}
+                      <Badge variant="outline" className={getGradeColorClass(race.grade)}>
+                        {race.grade}
+                      </Badge>
+                      {race.note && (
+                        <Badge variant="secondary" className="text-xs">
+                          {race.note}
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                       <span className="font-medium text-foreground">{race.track}</span>
@@ -172,20 +203,27 @@ function RaceBrowser() {
                       <span>· {race.distance}m</span>
                       <span>· {race.surface}</span>
                       <span>· Day {race.dayOfYear}</span>
-                      <span>· Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span></span>
+                      <span>
+                        · Purse{" "}
+                        <span className="font-medium text-foreground">
+                          ${race.purse.toLocaleString()}
+                        </span>
+                      </span>
                     </div>
                     {race.restrictions && (
                       <div className="flex flex-wrap gap-1.5 mt-2">
-                        {race.restrictions.minAge !== undefined && race.restrictions.maxAge !== undefined && (
-                          <Badge variant="outline" className="text-xs">
-                            {race.restrictions.minAge}-{race.restrictions.maxAge}YO
-                          </Badge>
-                        )}
-                        {race.restrictions.minAge !== undefined && race.restrictions.maxAge === undefined && (
-                          <Badge variant="outline" className="text-xs">
-                            {race.restrictions.minAge}+ YO
-                          </Badge>
-                        )}
+                        {race.restrictions.minAge !== undefined &&
+                          race.restrictions.maxAge !== undefined && (
+                            <Badge variant="outline" className="text-xs">
+                              {race.restrictions.minAge}-{race.restrictions.maxAge}YO
+                            </Badge>
+                          )}
+                        {race.restrictions.minAge !== undefined &&
+                          race.restrictions.maxAge === undefined && (
+                            <Badge variant="outline" className="text-xs">
+                              {race.restrictions.minAge}+ YO
+                            </Badge>
+                          )}
                         {race.restrictions.gender && (
                           <Badge variant="outline" className="text-xs">
                             {race.restrictions.gender}
