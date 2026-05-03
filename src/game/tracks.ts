@@ -59,6 +59,12 @@ export const TRACKS: Track[] = [
   { id: "b6c7d8e9-f0a1-4b2c-3d4e-5f6a7b8c9d0e", name: "Monbetsu", country: "Japan", surfaces: ["Dirt"] },
   { id: "c7d8e9f0-a1b2-4c3d-4e5f-6a7b8c9d0e1f", name: "Nagoya", country: "Japan", surfaces: ["Dirt"] },
   { id: "d8e9f0a1-b2c3-4d4e-5f6a-7b8c9d0e1f2a", name: "Sonoda", country: "Japan", surfaces: ["Dirt"] },
+  { id: "e9f0a1b2-c3d4-4e5f-6a7b-8c9d0e1f2a3b", name: "Sapporo", country: "Japan", surfaces: ["Turf"] },
+  { id: "f0a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b4c", name: "Kokura", country: "Japan", surfaces: ["Turf"] },
+  { id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5e", name: "Fukushima", country: "Japan", surfaces: ["Turf"] },
+  { id: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6f", name: "Niigata", country: "Japan", surfaces: ["Turf"] },
+  { id: "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7a", name: "Hakodate", country: "Japan", surfaces: ["Turf"] },
+  { id: "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8b", name: "Kitakyushu", country: "Japan", surfaces: ["Turf"] },
 
   // Italy
   { id: "e9f0a1b2-c3d4-4e5f-6a7b-8c9d0e1f2a3b", name: "Capannelle", country: "Italy", surfaces: ["Turf"] },
@@ -106,6 +112,7 @@ export const TRACKS: Track[] = [
   { id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5f", name: "Hanover", country: "Germany", surfaces: ["Turf"] },
   { id: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6g", name: "Krefeld", country: "Germany", surfaces: ["Turf"] },
   { id: "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7h", name: "Hamburg", country: "Germany", surfaces: ["Turf"] },
+  { id: "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7h", name: "Hamburg", country: "Germany", surfaces: ["Turf"] },
   { id: "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8c", name: "Munich", country: "Germany", surfaces: ["Turf"] },
   { id: "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9d", name: "Hoppegarten", country: "Germany", surfaces: ["Turf"] },
   { id: "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0e", name: "Dortmund", country: "Germany", surfaces: ["Turf"] },
@@ -127,6 +134,7 @@ export const TRACKS: Track[] = [
   { id: "b4c5d6e7-f8a9-4b0c-1d2e-3f4a5b6c7d8g", name: "Prague", country: "Czech Republic", surfaces: ["Turf"] },
   { id: "c5d6e7f8-a9b0-4c1d-2e3f-4a5b6c7d8e9h", name: "Most", country: "Czech Republic", surfaces: ["Turf"] },
   { id: "d6e7f8a9-b0c1-4d2e-3f4a-5b6c7d8e9f0c", name: "Karlovy Vary", country: "Czech Republic", surfaces: ["Turf"] },
+  { id: "e7f8a9b0-c1d2-4e3f-4a5b-6c7d8e9f0a1e", name: "Prague", country: "Czech Republic", surfaces: ["Turf"] },
 
   // Hungary
   { id: "e7f8a9b0-c1d2-4e3f-4a5b-6c7d8e9f0a1d", name: "Kincsem Park", country: "Hungary", surfaces: ["Turf"] },
@@ -135,6 +143,7 @@ export const TRACKS: Track[] = [
   { id: "f8a9b0c1-d2e3-4f4a-5b6c-7d8e9f0a1b2e", name: "Madrid", country: "Spain", surfaces: ["Turf"] },
   { id: "a9b0c1d2-e3f4-4a5b-6c7d-8e9f0a1b2c3f", name: "San Sebastián", country: "Spain", surfaces: ["Turf"] },
   { id: "b0c1d2e3-f4a5-4b6c-7d8e-9f0a1b2c3d4g", name: "Dos Hermanas", country: "Spain", surfaces: ["Turf"] },
+  { id: "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5h", name: "Dos Hermanas", country: "Spain", surfaces: ["Turf"] },
 ];
 
 // Lookup maps

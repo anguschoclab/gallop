@@ -2,7 +2,14 @@ import type { Horse, Race, RaceClass, Hemisphere, Conformation, Temperament, Gen
 import { randomHorseName, randomSilk, randomRaceName } from "./names";
 import type { GradedRace } from "./gradedRaces";
 
-const uid = () => Math.random().toString(36).slice(2, 10);
+// Generate proper UUID v4
+const uid = () => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
 
 function rand(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -51,12 +58,17 @@ function generateHealthStatus(): HealthStatus {
 }
 
 function randomCoatColor(): CoatColor {
-  const colors: CoatColor[] = ["bay", "black", "chestnut", "dark-bay", "gray"];
+  const colors: CoatColor[] = ["bay", "black", "chestnut", "dark-bay", "gray", "roan", "palomino", "white"];
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
 function randomWeather(): Weather {
-  return Math.random() < 0.8 ? "sunny" : "rainy";
+  const r = Math.random();
+  if (r < 0.45) return "sunny";
+  if (r < 0.70) return "cloudy";
+  if (r < 0.85) return "rainy";
+  if (r < 0.95) return "sunset";
+  return "night";
 }
 
 function randomTrackCondition(): TrackCondition {
@@ -146,7 +158,7 @@ export function makeGradedRace(g: GradedRace, gameDay: number): Race {
     fieldSize: 12,
     entries: [],
     resolved: false,
-    graded: { key: g.key, grade: g.grade, track: g.track, surface: g.surface },
+    graded: { key: g.key, grade: g.grade, track: g.track, trackId: g.trackId, surface: g.surface },
     restrictions: g.restrictions,
     weather: randomWeather(),
     trackCondition: randomTrackCondition(),

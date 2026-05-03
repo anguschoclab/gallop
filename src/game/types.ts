@@ -41,13 +41,13 @@ export type HorseGender = "colt" | "filly" | "horse" | "mare";
 export type Hemisphere = "Northern" | "Southern";
 
 // Weather conditions for races
-export type Weather = "sunny" | "rainy";
+export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 
 // Track condition affects race performance
 export type TrackCondition = "fast" | "good" | "soft" | "heavy";
 
 // Horse coat colors (for sprite selection)
-export type CoatColor = "bay" | "black" | "chestnut" | "dark-bay" | "gray";
+export type CoatColor = "bay" | "black" | "chestnut" | "dark-bay" | "gray" | "roan" | "palomino" | "white";
 
 export type Horse = {
   id: string;
@@ -92,7 +92,8 @@ export type Race = {
   graded?: {
     key: string;
     grade: "G1" | "G2" | "G3";
-    track: string;
+    track: string; // Track name for display
+    trackId: string; // Track UUID reference
     surface: "Turf" | "Dirt" | "Synthetic";
   };
   restrictions?: { 

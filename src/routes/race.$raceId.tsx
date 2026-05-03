@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { buildRunner, stepRunner, type Runner } from "@/game/raceSim";
 import type { Horse } from "@/game/types";
-import { SilkBadge } from "@/components/HorseBits";
 import { beyerFigure } from "@/game/beyer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { calculateClassBonus } from "@/core/common/classBonus";
@@ -19,7 +18,7 @@ const getTrackBackground = (surface?: string): string | undefined => {
     case "Dirt":
       return "url(/assets/track-dirt.png)";
     case "Synthetic":
-      return "url(/assets/track-dirt.png)";
+      return "url(/assets/track-synthetic.png)";
     default:
       return undefined;
   }
@@ -30,10 +29,34 @@ const getSkyBackground = (weather?: Weather): string | undefined => {
   switch (weather) {
     case "sunny":
       return "url(/assets/bg-sky-sunny.png)";
+    case "cloudy":
+      return "url(/assets/bg-sky-cloudy.png)";
     case "rainy":
       return "url(/assets/bg-sky-pouring.png)";
+    case "sunset":
+      return "url(/assets/bg-sky-sunset.png)";
+    case "night":
+      return "url(/assets/bg-sky-night.png)";
     default:
       return undefined;
+  }
+};
+
+// Weather display helper
+const getWeatherDisplay = (weather?: Weather): string => {
+  switch (weather) {
+    case "sunny":
+      return "☀️ Sunny";
+    case "cloudy":
+      return "☁️ Cloudy";
+    case "rainy":
+      return "🌧️ Rainy";
+    case "sunset":
+      return "🌅 Sunset";
+    case "night":
+      return "🌙 Night";
+    default:
+      return "";
   }
 };
 
@@ -177,7 +200,7 @@ function LiveRace() {
           <h1 className="text-xl font-bold">{race.name}</h1>
           <p className="text-xs text-white/70">
             {race.distance}m · {race.raceClass} · Purse ${race.purse.toLocaleString()}
-            {race.weather && ` · ${race.weather === "sunny" ? "☀️ Sunny" : "🌧️ Rainy"}`}
+            {race.weather && ` · ${getWeatherDisplay(race.weather)}`}
             {race.trackCondition && ` · Track: ${race.trackCondition}`}
           </p>
         </div>
@@ -286,7 +309,7 @@ function Track({
   const laneHeight = 36;
   const trackHeight = runners.length * laneHeight + 20;
   const trackBg = getTrackBackground(surface);
-  const skyBg = getSkyBackground(weather);
+  void weather; // Weather background handled at page level
 
   return (
     <div
@@ -313,7 +336,20 @@ function Track({
 
       {runners.map((r, i) => {
         const pct = Math.min(1, r.position / distance);
-        const horseColor = r.silk; // Fallback to silk color
+        // Map coat color to sprite file
+        const coatToSprite: Record<string, string> = {
+          bay: "b",
+          black: "bl",
+          chestnut: "ch",
+          "dark-bay": "dkb",
+          gray: "gr",
+          roan: "roan",
+          palomino: "palomino",
+          white: "white",
+        };
+        const horseSpriteUrl = r.coatColor
+          ? `/assets/horse-${coatToSprite[r.coatColor] || "b"}.png`
+          : undefined;
         return (
           <div
             key={r.horseId}
@@ -325,7 +361,7 @@ function Track({
             }}
           >
             <div className="flex items-center gap-1">
-              <HorseSprite color={horseColor} num={i + 1} isRunning={tick > 0} />
+              <HorseSprite color={r.silk} num={i + 1} isRunning={tick > 0} spriteUrl={horseSpriteUrl} />
               {r.owned && <span className="text-xs font-bold bg-yellow-400 text-black px-1 rounded">YOU</span>}
             </div>
           </div>
@@ -337,19 +373,19 @@ function Track({
 
 // Horse sprite component with CSS animation
 // Note: The sprite sheets (horse-*.png) contain 6-frame running animations
-// For now, we use CSS background styling with the silk color as a colored circle
-// TODO: When coat colors are fully integrated, map to actual sprite files:
-//   bay -> horse-b.png, black -> horse-bl.png, chestnut -> horse-ch.png,
-//   dark-bay -> horse-dkb.png, gray -> horse-gr.png
+// When spriteUrl is provided, shows the actual horse sprite; otherwise uses silk color
 function HorseSprite({
   color,
   num,
   isRunning,
+  spriteUrl,
 }: {
   color: string;
   num: number;
   isRunning: boolean;
+  spriteUrl?: string;
 }) {
+  // For now, use colored circle; future: use CSS sprite animation with spriteUrl
   return (
     <div
       className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow"

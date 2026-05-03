@@ -303,7 +303,7 @@ export const useGame = create<GameState & Actions>()(
         if (s.cash < totalFee) return;
         const dueDay = s.day + GESTATION_DAYS;
         const preg: Pregnancy = {
-          id: Math.random().toString(36).slice(2, 10),
+          id: crypto.randomUUID(),
           sireId, damId,
           sireName: sire.name, damName: dam.name,
           conceivedDay: s.day,

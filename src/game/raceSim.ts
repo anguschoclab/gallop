@@ -4,6 +4,7 @@ export type Runner = {
   horseId: string;
   name: string;
   silk: string;
+  coatColor?: string; // For race viewer sprite selection
   owned: boolean;
   position: number; // meters traveled
   velocity: number;
@@ -27,6 +28,7 @@ export function buildRunner(h: Horse, owned: boolean): Runner {
     horseId: h.id,
     name: h.name,
     silk: h.silk,
+    coatColor: h.coatColor,
     owned,
     position: 0,
     velocity: 0,
