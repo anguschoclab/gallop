@@ -16,6 +16,8 @@ export type Horse = {
   potential: number; // 60-100, soft cap on stat growth
   raceHistory: { raceId: string; raceName: string; position: number; day: number }[];
   owned: boolean;
+  sireName?: string;
+  damName?: string;
 };
 
 export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
