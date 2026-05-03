@@ -31,7 +31,7 @@ export type Horse = {
   energy: number; // 0-100
   form: number; // -10..+10
   potential: number; // 60-100, soft cap on stat growth
-  raceHistory: { raceId: string; raceName: string; position: number; day: number }[];
+  raceHistory: { raceId: string; raceName: string; position: number; day: number; beyer?: number; distance?: number }[];
   owned: boolean;
   lineage: Lineage;
   pregnancy?: Pregnancy;
@@ -55,7 +55,7 @@ export type Race = {
   fieldSize: number;
   entries: { horseId: string; owned: boolean }[];
   resolved: boolean;
-  result?: { horseId: string; position: number; time: number }[];
+  result?: { horseId: string; position: number; time: number; beyer?: number }[];
 };
 
 export type GameState = {
