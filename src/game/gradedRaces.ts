@@ -803,4 +803,17 @@ export const GRADED_RACES: GradedRace[] = [
   { key: "it-premio-guido-berardelli", name: "Premio Guido Berardelli", track: "Capannelle", grade: "G3", distance: 1800, surface: "Turf", purse: 150000, dayOfYear: 305, restrictions: { minAge: 2, maxAge: 2 }, },
   { key: "it-premio-ribot", name: "Premio Ribot", track: "Capannelle", grade: "G3", distance: 1600, surface: "Turf", purse: 150000, dayOfYear: 319, restrictions: { minAge: 3 }, },
   { key: "it-premio-federico-tesio", name: "Premio Federico Tesio", track: "San Siro", grade: "G3", distance: 2200, surface: "Turf", purse: 150000, dayOfYear: 319, restrictions: { minAge: 3 }, },
+  // Scandinavia — Group 3
+  { key: "scn-stockholms-stora-pris", name: "Stockholms Stora Pris", track: "Bro Park", grade: "G3", distance: 1950, surface: "Turf", purse: 150000, dayOfYear: 166, restrictions: { minAge: 4 }, },
+  { key: "scn-oslo-cup", name: "Oslo Cup", track: "Øvrevoll", grade: "G3", distance: 2400, surface: "Turf", purse: 150000, dayOfYear: 211, restrictions: { minAge: 3 }, },
+  { key: "scn-scandinavian-open-championship", name: "Scandinavian Open Championship", track: "Klampenborg", grade: "G3", distance: 2400, surface: "Turf", purse: 150000, dayOfYear: 227, restrictions: { minAge: 3 }, },
+  { key: "scn-marit-sveaas-minnelop", name: "Marit Sveaas Minneløp", track: "Øvrevoll", grade: "G3", distance: 1800, surface: "Turf", purse: 150000, dayOfYear: 227, restrictions: { minAge: 3 }, },
+  { key: "scn-stockholm-cup-international", name: "Stockholm Cup International", track: "Bro Park", grade: "G3", distance: 2400, surface: "Turf", purse: 150000, dayOfYear: 258, restrictions: { minAge: 3 }, },
+  // Scandinavia — Listed / other notable
+  { key: "scn-pramms-memorial", name: "Pramms Memorial", track: "Jägersro", grade: "G3", distance: 1730, surface: "Turf", purse: 100000, dayOfYear: 135, restrictions: { minAge: 4 }, },
+  { key: "scn-zawawi-cup", name: "Zawawi Cup", track: "Jägersro", grade: "G3", distance: 1200, surface: "Turf", purse: 100000, dayOfYear: 196, restrictions: { minAge: 3 }, },
+  { key: "scn-polar-cup", name: "Polar Cup", track: "Øvrevoll", grade: "G3", distance: 1370, surface: "Turf", purse: 100000, dayOfYear: 211, restrictions: { minAge: 3 }, },
+  { key: "scn-svenskt-derby", name: "Svenskt Derby", track: "Jägersro", grade: "G3", distance: 2400, surface: "Turf", purse: 150000, dayOfYear: 227, restrictions: { minAge: 3, maxAge: 3 }, },
+  { key: "scn-norsk-derby", name: "Norsk Derby", track: "Øvrevoll", grade: "G3", distance: 2400, surface: "Turf", purse: 150000, dayOfYear: 227, restrictions: { minAge: 3, maxAge: 3 }, },
+  { key: "scn-bro-park-sprint-championship", name: "Bro Park Sprint Championship", track: "Bro Park", grade: "G3", distance: 1150, surface: "Turf", purse: 100000, dayOfYear: 258, restrictions: { minAge: 3 }, },
 ];
