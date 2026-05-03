@@ -1,4 +1,5 @@
 import type { Horse, Lineage, Race, RaceClass, Sex } from "./types";
+import { GRADED_RACES, type GradedRace } from "./gradedRaces";
 import { randomHorseName, randomSilk, randomRaceName } from "./names";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -156,7 +157,54 @@ const classConfig: Record<RaceClass, { entry: number; purse: number; minStat?: n
   Allowance: { entry: 300, purse: 6000, minStat: 50, dist: [1200, 1800] },
   Stakes: { entry: 800, purse: 18000, minStat: 65, dist: [1400, 2200] },
   Group: { entry: 2000, purse: 50000, minStat: 78, dist: [1600, 2400] },
+  Graded: { entry: 0, purse: 0, dist: [1200, 2400] }, // overridden by graded race data
 };
+
+/**
+ * Build a real graded stakes race scheduled at gameDay.
+ */
+export function makeGradedRace(g: GradedRace, gameDay: number): Race {
+  // Entry fee scales with grade prestige
+  const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
+  // Min stat threshold by grade
+  const minStat = g.grade === "G1" ? 78 : g.grade === "G2" ? 70 : 62;
+  return {
+    id: uid(),
+    name: g.name,
+    day: gameDay,
+    distance: g.distance,
+    raceClass: "Graded",
+    entryFee,
+    purse: g.purse,
+    minStat,
+    fieldSize: 12,
+    entries: [],
+    resolved: false,
+    graded: {
+      key: g.key,
+      grade: g.grade,
+      track: g.track,
+      surface: g.surface,
+    },
+    restrictions: g.restrictions,
+  };
+}
+
+/**
+ * Return all graded races whose dayOfYear falls between (gameDay, gameDay + lookAhead].
+ * Game year is 365 days; gameDay 1 = Jan 1.
+ */
+export function gradedRacesForWindow(gameDay: number, lookAhead: number): Race[] {
+  const races: Race[] = [];
+  for (let offset = 1; offset <= lookAhead; offset++) {
+    const futureDay = gameDay + offset;
+    const doy = ((futureDay - 1) % 365) + 1;
+    for (const g of GRADED_RACES) {
+      if (g.dayOfYear === doy) races.push(makeGradedRace(g, futureDay));
+    }
+  }
+  return races;
+}
 
 export function generateRace(day: number): Race {
   const r = Math.random();
