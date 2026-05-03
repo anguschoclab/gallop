@@ -20,12 +20,15 @@ function HorseDetail() {
   const { horseId } = Route.useParams();
   const horse = useGame((s) => s.horses.find((h) => h.id === horseId));
   const trainHorse = useGame((s) => s.trainHorse);
+  const retireHorse = useGame((s) => s.retireHorse);
   const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
+  const day = useGame((s) => s.day);
 
   if (!horse) throw notFound();
 
   const slotsLeft = 2 - trainingUsed;
+  const blocked = horse.retired || !!horse.pregnancy;
 
   return (
     <div className="space-y-6">
@@ -35,11 +38,43 @@ function HorseDetail() {
         </Link>
         <div className="flex items-center gap-4">
           <SilkBadge color={horse.silk} />
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{horse.name}</h1>
-            <p className="text-muted-foreground">Age {horse.age} · OVR {overall(horse)} · Potential {horse.potential}</p>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold tracking-tight">
+              {horse.name} <span className="text-xl text-muted-foreground font-normal">{horse.sex === "F" ? "♀" : "♂"}</span>
+            </h1>
+            <p className="text-muted-foreground">
+              Age {horse.age} · OVR {overall(horse)} · Potential {horse.potential}
+            </p>
+            {(horse.lineage?.sireName || horse.lineage?.damName) && (
+              <p className="text-xs text-muted-foreground mt-1">
+                by {horse.lineage.sireName ?? "Unknown"} out of {horse.lineage.damName ?? "Unknown"}
+              </p>
+            )}
           </div>
+          {!horse.retired && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                if (confirm(`Retire ${horse.name}? Retired horses can't race or train, but mares can still breed.`)) {
+                  retireHorse(horse.id);
+                }
+              }}
+            >
+              Retire
+            </Button>
+          )}
         </div>
+        {horse.pregnancy && (
+          <div className="mt-4 p-3 rounded-lg bg-pink-50 border border-pink-200 text-sm">
+            <span className="font-medium">In foal</span> to {horse.pregnancy.sireName} · due day {horse.pregnancy.dueDay} ({horse.pregnancy.dueDay - day} days left). Cannot train or race.
+          </div>
+        )}
+        {horse.retired && (
+          <div className="mt-4 p-3 rounded-lg bg-muted border text-sm">
+            Retired from racing.
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
