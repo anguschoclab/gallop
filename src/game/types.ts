@@ -5,10 +5,27 @@ export type HorseStats = {
   consistency: number;
 };
 
+export type Sex = "M" | "F";
+
+export type Lineage = {
+  sireId?: string;
+  sireName?: string;
+  damId?: string;
+  damName?: string;
+};
+
+export type Pregnancy = {
+  sireId: string;
+  sireName: string;
+  dueDay: number;
+  expectedFoalPotential: number;
+};
+
 export type Horse = {
   id: string;
   name: string;
   age: number;
+  sex: Sex;
   silk: string; // hex color
   stats: HorseStats;
   energy: number; // 0-100
@@ -16,6 +33,12 @@ export type Horse = {
   potential: number; // 60-100, soft cap on stat growth
   raceHistory: { raceId: string; raceName: string; position: number; day: number }[];
   owned: boolean;
+  lineage: Lineage;
+  pregnancy?: Pregnancy;
+  retired?: boolean;
+  // For non-owned public studs available for breeding
+  publicStud?: boolean;
+  studFee?: number;
 };
 
 export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group";
@@ -41,6 +64,7 @@ export type GameState = {
   horses: Horse[];
   market: Horse[];
   races: Race[];
+  studs: Horse[]; // public studs available for breeding
   trainingUsed: Record<string, number>; // horseId -> count today
   log: { day: number; text: string }[];
 };
