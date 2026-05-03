@@ -42,8 +42,7 @@ export function HorseCard({
     if (!horse.healthStatus || horse.healthStatus === "healthy") return null;
     const statusConfig: Record<string, { color: string; label: string }> = {
       covering_sickness: { color: "bg-red-100 text-red-800", label: "Dourine" },
-      minor_ailment: { color: "bg-yellow-100 text-yellow-800", label: "Minor Issue" },
-      lame: { color: "bg-orange-100 text-orange-800", label: "Lame" },
+      other_illness: { color: "bg-yellow-100 text-yellow-800", label: "Ill" },
       recovering: { color: "bg-blue-100 text-blue-800", label: "Recovering" },
     };
     const config = statusConfig[horse.healthStatus] || { color: "bg-gray-100", label: horse.healthStatus };

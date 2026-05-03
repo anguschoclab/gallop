@@ -1,89 +1,19 @@
-import type { Horse, Race, RaceClass, Hemisphere, Conformation, Temperament, GeneticMarkers, HealthStatus, CoatColor, Weather, TrackCondition, RunningStyle } from "./types";
-import { randomHorseName, randomSilk, randomRaceName } from "./names";
+import type { Horse, Race, RaceClass, Hemisphere, HealthStatus } from "./types";
 import type { GradedRace } from "./gradedRaces";
 import { generateUUID } from "./uuid";
-
-function rand(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function randConformation(): Conformation {
-  const r = Math.random();
-  if (r < 0.15) return "excellent";
-  if (r < 0.45) return "good";
-  if (r < 0.75) return "fair";
-  return "poor";
-}
-
-function randTemperament(): Temperament {
-  const r = Math.random();
-  if (r < 0.15) return "excellent";
-  if (r < 0.45) return "good";
-  if (r < 0.75) return "fair";
-  return "poor";
-}
-
-function randGeneticQuality(): "excellent" | "good" | "fair" | "poor" {
-  const r = Math.random();
-  if (r < 0.15) return "excellent";
-  if (r < 0.45) return "good";
-  if (r < 0.75) return "fair";
-  return "poor";
-}
-
-function generateGeneticMarkers(): GeneticMarkers {
-  // Based on horse genome research - genes governing sensory perception, signal transduction, and immunity
-  return {
-    sensoryPerception: randGeneticQuality(),
-    signalTransduction: randGeneticQuality(),
-    immunity: randGeneticQuality(),
-    geneticDiversity: Math.random() * 0.5 + 0.5, // Random diversity score 0.5-1.0
-  };
-}
-
-// Pick a running style biased by the horse's stat profile. Speed/acceleration
-// tilt toward front-runner; stamina tilts toward closer; balanced horses lean
-// stalker. There's still randomness so identical-stat horses can differ.
-function rollRunningStyle(stats: { speed: number; stamina: number; acceleration: number }): RunningStyle {
-  const earlyBias = (stats.speed + stats.acceleration) / 2;
-  const lateBias = stats.stamina;
-  const tilt = earlyBias - lateBias; // ~ -50..+50
-  const r = Math.random() * 100 - tilt; // tilt shifts the distribution
-  if (r < 25) return "front-runner";
-  if (r < 55) return "stalker";
-  if (r < 80) return "mid-pack";
-  return "closer";
-}
-
-function generateHealthStatus(): HealthStatus {
-  // Most horses are healthy, small chance of illness
-  const r = Math.random();
-  if (r < 0.02) return "covering_sickness"; // 2% chance
-  if (r < 0.05) return "other_illness"; // 3% chance
-  return "healthy";
-}
-
-function randomCoatColor(): CoatColor {
-  const colors: CoatColor[] = ["bay", "black", "chestnut", "dark-bay", "gray", "roan", "palomino", "white"];
-  return colors[Math.floor(Math.random() * colors.length)];
-}
-
-function randomWeather(): Weather {
-  const r = Math.random();
-  if (r < 0.45) return "sunny";
-  if (r < 0.70) return "cloudy";
-  if (r < 0.85) return "rainy";
-  if (r < 0.95) return "sunset";
-  return "night";
-}
-
-function randomTrackCondition(): TrackCondition {
-  const r = Math.random();
-  if (r < 0.6) return "fast";
-  if (r < 0.85) return "good";
-  if (r < 0.95) return "soft";
-  return "heavy";
-}
+import {
+  rand,
+  randConformation,
+  randTemperament,
+  generateGeneticMarkers,
+  rollRunningStyle,
+  randomCoatColor,
+  randomWeather,
+  randomTrackCondition,
+  randomHorseName,
+  randomSilk,
+  randomRaceName,
+} from "@/core/common/random";
 
 export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere } = {}): Horse {
   const tier = opts.tier ?? "budget";
