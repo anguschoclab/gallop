@@ -122,21 +122,41 @@ function HorseDetail() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle>Race history</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Race history</CardTitle>
+          {horse.raceHistory.some((r) => r.beyer != null) && (
+            <p className="text-xs text-muted-foreground">
+              Best Beyer: <span className="font-bold text-foreground">
+                {Math.max(...horse.raceHistory.map((r) => r.beyer ?? 0))}
+              </span> · Last 3 avg:{" "}
+              <span className="font-bold text-foreground">
+                {(() => {
+                  const recent = horse.raceHistory.filter((r) => r.beyer != null).slice(0, 3);
+                  if (recent.length === 0) return "—";
+                  return Math.round(recent.reduce((a, b) => a + (b.beyer ?? 0), 0) / recent.length);
+                })()}
+              </span>
+            </p>
+          )}
+        </CardHeader>
         <CardContent>
           {horse.raceHistory.length === 0 ? (
             <p className="text-sm text-muted-foreground">No races yet.</p>
           ) : (
             <div className="space-y-1">
               {horse.raceHistory.map((r, i) => (
-                <div key={i} className="flex justify-between text-sm py-1 border-b last:border-0">
-                  <span>{r.raceName}</span>
-                  <span className="flex gap-3">
-                    <span className="text-muted-foreground">D{r.day}</span>
-                    <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
-                      {r.position}
-                    </Badge>
-                  </span>
+                <div key={i} className="flex items-center gap-3 text-sm py-1 border-b last:border-0">
+                  <span className="text-muted-foreground tabular-nums w-8">D{r.day}</span>
+                  <span className="flex-1">{r.raceName}</span>
+                  {r.distance && <span className="text-xs text-muted-foreground tabular-nums">{r.distance}m</span>}
+                  {r.beyer != null && (
+                    <span className="text-xs font-bold tabular-nums px-2 py-0.5 rounded bg-muted">
+                      {r.beyer}
+                    </span>
+                  )}
+                  <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
+                    {r.position}
+                  </Badge>
                 </div>
               ))}
             </div>
