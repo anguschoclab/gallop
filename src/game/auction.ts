@@ -6,6 +6,17 @@ import { createRng, hashStr } from "./rng";
 import { generateUUID } from "./uuid";
 
 // ---------------------------------------------------------------------------
+// Labels
+// ---------------------------------------------------------------------------
+
+export const KIND_LABELS: Record<AuctionSaleKind, string> = {
+  weanling: "Weanling Sale",
+  yearling: "Yearling Sale",
+  weanling_south: "Southern Weanling Sale",
+  yearling_south: "Southern Yearling Sale",
+};
+
+// ---------------------------------------------------------------------------
 // Lot valuation
 // ---------------------------------------------------------------------------
 

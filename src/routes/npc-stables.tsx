@@ -2,6 +2,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { getMajorStables, getStablesByTier } from "@/game/npcStables";
+import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Users, Building2, TrendingUp } from "lucide-react";
@@ -17,20 +18,6 @@ function NpcStablesPage() {
   const midStables = getStablesByTier(majorStables, "mid");
   const budgetStables = getStablesByTier(majorStables, "budget");
   const fillerCount = npcStables.filter(s => !s.isMajor).length;
-  
-  const getTierColor = (tier: string) => {
-    switch (tier) {
-      case "elite": return "bg-purple-100 text-purple-800 border-purple-300";
-      case "mid": return "bg-blue-100 text-blue-800 border-blue-300";
-      case "budget": return "bg-green-100 text-green-800 border-green-300";
-      default: return "bg-gray-100 text-gray-800 border-gray-300";
-    }
-  };
-  
-  const getReputationStars = (rep: number) => {
-    const stars = Math.floor(rep / 20);
-    return "★".repeat(stars) + "☆".repeat(5 - stars);
-  };
   
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -124,20 +111,6 @@ function NpcStablesPage() {
 }
 
 function StableCard({ stable }: { stable: ReturnType<typeof getMajorStables>[number] }) {
-  const getTierColor = (tier: string) => {
-    switch (tier) {
-      case "elite": return "bg-purple-100 text-purple-800 border-purple-300";
-      case "mid": return "bg-blue-100 text-blue-800 border-blue-300";
-      case "budget": return "bg-green-100 text-green-800 border-green-300";
-      default: return "bg-gray-100 text-gray-800 border-gray-300";
-    }
-  };
-  
-  const getReputationStars = (rep: number) => {
-    const stars = Math.floor(rep / 20);
-    return "★".repeat(stars) + "☆".repeat(5 - stars);
-  };
-  
   return (
     <Link to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">

@@ -18,6 +18,7 @@ import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { runRaceToCompletion } from "./raceSim";
 import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
+import { getOrdinalSuffix } from "@/core/common/ordinal";
 
 export type ActionResult = { ok: true } | { ok: false, reason: string };
 
@@ -348,7 +349,7 @@ export const useGame = create<GameState & Actions>()(
         const summary = ownerResults
           .map((r) => {
             const h = s.horses.find((hh) => hh.id === r.horseId)!;
-            return `${h.name}: ${r.dnf ? "DNF" : `${r.position}${ord(r.position)}`}`;
+            return `${h.name}: ${r.dnf ? "DNF" : `${r.position}${getOrdinalSuffix(r.position)}`}`;
           })
           .join(", ");
         // Record winner finish time into pace samples for this distance bucket.
@@ -795,10 +796,3 @@ export async function rehydrateStore() {
     hydrationComplete = true;
   }
 }
-
-function ord(n: number) {
-  const s = ["th", "st", "nd", "rd"];
-  const v = n % 100;
-  return s[(v - 20) % 10] || s[v] || s[0];
-}
-

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,11 +43,21 @@ function BreedingPage() {
     setSireId(""); setDamId(""); setLiveFoalGuarantee(false);
   };
 
+  const activePregnancies = pregnancies.filter((p) => !p.resolved).length;
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Breeding Shed</h1>
-        <p className="text-muted-foreground">Mate two horses (age 3+). Foals arrive 30 days after conception. Fee $2,000.</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Breeding Shed</h1>
+          <p className="text-muted-foreground">Mate two horses (age 3+). Foals arrive 30 days after conception. Fee $2,000.</p>
+        </div>
+        <Link to="/broodmares">
+          <Button variant="outline" size="sm">
+            <Heart className="h-4 w-4 mr-1" />
+            Broodmares {activePregnancies > 0 && <Badge variant="secondary" className="ml-1">{activePregnancies}</Badge>}
+          </Button>
+        </Link>
       </div>
 
       <Card>

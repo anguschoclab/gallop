@@ -2,61 +2,17 @@
 // Age distribution: 30% 2YO, 40% 3-4YO (prime), 20% 5-6YO, 10% 7YO+ (breeding stock)
 
 import type { Horse, HorseGender, Hemisphere, Stable, StableTier } from "./types";
-import { randomHorseName, randomSilk } from "./names";
 import { generateUUID } from "./uuid";
-
-function rand(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function randConformation(): Horse["conformation"] {
-  const r = Math.random();
-  if (r < 0.15) return "excellent";
-  if (r < 0.45) return "good";
-  if (r < 0.75) return "fair";
-  return "poor";
-}
-
-function randTemperament(): Horse["temperament"] {
-  const r = Math.random();
-  if (r < 0.15) return "excellent";
-  if (r < 0.45) return "good";
-  if (r < 0.75) return "fair";
-  return "poor";
-}
-
-function randGeneticQuality(): "excellent" | "good" | "fair" | "poor" {
-  const r = Math.random();
-  if (r < 0.15) return "excellent";
-  if (r < 0.45) return "good";
-  if (r < 0.75) return "fair";
-  return "poor";
-}
-
-function generateGeneticMarkers() {
-  return {
-    sensoryPerception: randGeneticQuality(),
-    signalTransduction: randGeneticQuality(),
-    immunity: randGeneticQuality(),
-    geneticDiversity: Math.random() * 0.5 + 0.5,
-  };
-}
-
-function randomCoatColor(): Horse["coatColor"] {
-  const colors: Horse["coatColor"][] = ["bay", "black", "chestnut", "dark-bay", "gray", "roan", "palomino", "white"];
-  return colors[Math.floor(Math.random() * colors.length)];
-}
-
-function rollRunningStyle(stats: { speed: number; stamina: number; acceleration: number }): Horse["runningStyle"] {
-  const earlyBias = (stats.speed + stats.acceleration) / 2;
-  const lateBias = stats.stamina;
-  const tilt = earlyBias - lateBias;
-  const r = Math.random() * 100 - tilt;
-  if (r < 25) return "front-runner";
-  if (r < 55) return "stalker";
-  if (r < 80) return "mid-pack";
-  return "closer";
-}
+import {
+  rand,
+  randConformation,
+  randTemperament,
+  generateGeneticMarkers,
+  rollRunningStyle,
+  randomCoatColor,
+  randomHorseName,
+  randomSilk,
+} from "@/core/common/random";
 
 /**
  * Get tier-based stat ranges

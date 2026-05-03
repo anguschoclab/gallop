@@ -4,18 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { KIND_LABELS } from "@/game/auction";
 import { Gavel, Clock, CheckCircle } from "lucide-react";
 
 export const Route = createFileRoute("/auction/")({
   component: AuctionPage,
 });
-
-const KIND_LABELS: Record<string, string> = {
-  weanling: "Weanling Sale",
-  yearling: "Yearling Sale",
-  weanling_south: "Southern Weanling Sale",
-  yearling_south: "Southern Yearling Sale",
-};
 
 function AuctionPage() {
   const auctions = useGame((s) => s.auctions ?? []);

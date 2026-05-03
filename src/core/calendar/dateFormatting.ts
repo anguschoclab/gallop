@@ -6,7 +6,7 @@
 
 const CUMULATIVE_DAYS = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
 
-const MONTH_NAMES_FULL = [
+export const MONTH_NAMES_FULL = [
   "January",
   "February",
   "March",

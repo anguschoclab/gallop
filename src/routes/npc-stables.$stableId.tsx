@@ -1,16 +1,15 @@
 // NPC Stable Detail - View stable info and horses with scouting
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
-import { getStableById } from "@/game/npcStables";
+import { getStableById, PERSONALITY_CONFIG } from "@/game/npcStables";
 import { calculateScoutCost } from "@/game/scouting";
-import type { Stable } from "@/game/types";
+import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
 import { HorseCard } from "@/components/HorseCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Building2, Users, DollarSign, Globe, Trophy, Eye, Brain } from "lucide-react";
 import { toast } from "sonner";
-import { PERSONALITY_CONFIG } from "@/game/npcStables";
 
 export const Route = createFileRoute("/npc-stables/$stableId")({ component: NpcStableDetailPage });
 
@@ -34,20 +33,6 @@ function NpcStableDetailPage() {
   const activeHorses = horses.filter(h => !h.healthStatus || h.healthStatus === "healthy");
   const colts = horses.filter(h => h.gender === "colt" || h.gender === "horse");
   const fillies = horses.filter(h => h.gender === "filly" || h.gender === "mare");
-  
-  const getTierColor = (tier: string) => {
-    switch (tier) {
-      case "elite": return "bg-purple-100 text-purple-800 border-purple-300";
-      case "mid": return "bg-blue-100 text-blue-800 border-blue-300";
-      case "budget": return "bg-green-100 text-green-800 border-green-300";
-      default: return "bg-gray-100 text-gray-800 border-gray-300";
-    }
-  };
-  
-  const getReputationStars = (rep: number) => {
-    const stars = Math.floor(rep / 20);
-    return "★".repeat(stars) + "☆".repeat(5 - stars);
-  };
   
   return (
     <div className="p-6 max-w-6xl mx-auto">

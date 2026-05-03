@@ -7,19 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { getDisplayableStats } from "@/game/scouting";
+import { KIND_LABELS } from "@/game/auction";
 import { Gavel, ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import type { AuctionLot } from "@/game/types";
 
 export const Route = createFileRoute("/auction/$saleId")({
   component: AuctionSalePage,
 });
-
-const KIND_LABELS: Record<string, string> = {
-  weanling: "Weanling Sale",
-  yearling: "Yearling Sale",
-  weanling_south: "Southern Weanling Sale",
-  yearling_south: "Southern Yearling Sale",
-};
 
 function AuctionSalePage() {
   const { saleId } = Route.useParams();
