@@ -109,6 +109,22 @@ function HorseDetail() {
           )}
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Lineage</CardTitle>
+          <p className="text-xs text-muted-foreground">Sire (top) and dam (bottom) for 4 generations</p>
+        </CardHeader>
+        <CardContent className="overflow-x-auto">
+          <Lineage
+            horseId={horse.id}
+            horseName={horse.name}
+            sireName={horse.sireName}
+            damName={horse.damName}
+            generations={4}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }
