@@ -1,5 +1,6 @@
 import type { Horse, Race, RaceClass } from "./types";
 import { randomHorseName, randomSilk, randomRaceName } from "./names";
+import type { GradedRace } from "./gradedRaces";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -55,7 +56,28 @@ const classConfig: Record<RaceClass, { entry: number; purse: number; minStat?: n
   Allowance: { entry: 300, purse: 6000, minStat: 50, dist: [1200, 1800] },
   Stakes: { entry: 800, purse: 18000, minStat: 65, dist: [1400, 2200] },
   Group: { entry: 2000, purse: 50000, minStat: 78, dist: [1600, 2400] },
+  Graded: { entry: 0, purse: 0, dist: [1200, 2400] },
 };
+
+export function makeGradedRace(g: GradedRace, gameDay: number): Race {
+  const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
+  const minStat = g.grade === "G1" ? 78 : g.grade === "G2" ? 70 : 62;
+  return {
+    id: uid(),
+    name: g.name,
+    day: gameDay,
+    distance: g.distance,
+    raceClass: "Graded",
+    entryFee,
+    purse: g.purse,
+    minStat,
+    fieldSize: 12,
+    entries: [],
+    resolved: false,
+    graded: { key: g.key, grade: g.grade, track: g.track, surface: g.surface },
+    restrictions: g.restrictions,
+  };
+}
 
 export function generateRace(day: number): Race {
   const r = Math.random();

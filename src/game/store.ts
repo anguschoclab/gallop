@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { GameState, Horse, Race } from "./types";
-import { generateHorse, generateRace, horsePrice } from "./horseGen";
+import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
+import { GRADED_RACES } from "./gradedRaces";
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
@@ -28,6 +29,10 @@ function initialState(): GameState {
   for (let d = 1; d <= 7; d++) {
     const count = Math.random() < 0.7 ? 2 : 3;
     for (let i = 0; i < count; i++) races.push(generateRace(d));
+  }
+  // Schedule the full first year of real graded stakes
+  for (const g of GRADED_RACES) {
+    races.push(makeGradedRace(g, g.dayOfYear));
   }
   return {
     day: 1,
@@ -100,6 +105,11 @@ export const useGame = create<GameState & Actions>()(
         if (s.cash < race.entryFee) return;
         if (race.entries.some((e) => e.horseId === horseId)) return;
         if (race.entries.length >= race.fieldSize) return;
+        const r = race.restrictions;
+        if (r) {
+          if (r.minAge !== undefined && horse.age < r.minAge) return;
+          if (r.maxAge !== undefined && horse.age > r.maxAge) return;
+        }
         race.entries.push({ horseId, owned: true });
         set({
           races: [...s.races],
@@ -183,6 +193,16 @@ export const useGame = create<GameState & Actions>()(
         const futureDay = newDay + 6;
         const count = Math.random() < 0.7 ? 2 : 3;
         for (let i = 0; i < count; i++) races.push(generateRace(futureDay));
+        // Top up real graded stakes whose dayOfYear falls in the upcoming 7-day window
+        for (let offset = 1; offset <= 7; offset++) {
+          const fday = newDay + offset;
+          const dY = ((fday - 1) % 365) + 1;
+          for (const g of GRADED_RACES) {
+            if (g.dayOfYear !== dY) continue;
+            if (races.some((r) => r.graded?.key === g.key && r.day === fday)) continue;
+            races.push(makeGradedRace(g, fday));
+          }
+        }
         // prune ancient resolved races
         const pruned = races.filter((r) => r.day >= newDay - 3);
 

@@ -39,29 +39,44 @@ function RacesPage() {
       <div className="space-y-3">
         {upcoming.map((race) => {
           const ownedEntry = race.entries.find((e) => e.owned);
+          const r = race.restrictions;
           const eligible = horses.filter((h) =>
             (!race.minStat || overall(h) >= race.minStat) &&
-            !race.entries.some((e) => e.horseId === h.id)
+            !race.entries.some((e) => e.horseId === h.id) &&
+            (!r?.minAge || h.age >= r.minAge) &&
+            (!r?.maxAge || h.age <= r.maxAge)
           );
           const canRun = race.day === day && ownedEntry;
+          const gradeColor = race.graded?.grade === "G1"
+            ? "bg-yellow-500/20 text-yellow-700 border-yellow-500/40"
+            : race.graded?.grade === "G2"
+            ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
+            : "bg-amber-700/20 text-amber-800 border-amber-700/40";
 
           return (
-            <Card key={race.id}>
+            <Card key={race.id} className={race.graded ? "border-l-4 border-l-primary" : undefined}>
               <CardContent className="p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <h3 className="text-lg font-bold">{race.name}</h3>
-                      <Badge variant="outline">{race.raceClass}</Badge>
+                      {race.graded ? (
+                        <Badge variant="outline" className={gradeColor}>{race.graded.grade}</Badge>
+                      ) : (
+                        <Badge variant="outline">{race.raceClass}</Badge>
+                      )}
                       {race.day === day && <Badge variant="default">Today</Badge>}
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                       <span>Day {race.day}</span>
                       <span>{race.distance}m</span>
+                      {race.graded && <span>{race.graded.track} · {race.graded.surface}</span>}
                       <span>Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span></span>
                       <span>Entry ${race.entryFee}</span>
                       <span>{race.entries.length}/{race.fieldSize} entered</span>
                       {race.minStat && <span>Min OVR {race.minStat}</span>}
+                      {r?.minAge === r?.maxAge && r?.minAge !== undefined && <span>{r.minAge}YO only</span>}
+                      {r?.minAge !== undefined && r?.maxAge === undefined && <span>{r.minAge}+ YO</span>}
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 items-end min-w-[200px]">

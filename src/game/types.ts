@@ -18,13 +18,13 @@ export type Horse = {
   owned: boolean;
 };
 
-export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group";
+export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
 
 export type Race = {
   id: string;
   name: string;
-  day: number; // scheduled day
-  distance: number; // meters
+  day: number;
+  distance: number;
   raceClass: RaceClass;
   entryFee: number;
   purse: number;
@@ -33,6 +33,13 @@ export type Race = {
   entries: { horseId: string; owned: boolean }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
+  graded?: {
+    key: string;
+    grade: "G1" | "G2" | "G3";
+    track: string;
+    surface: "Turf" | "Dirt" | "Synthetic";
+  };
+  restrictions?: { minAge?: number; maxAge?: number };
 };
 
 export type GameState = {
