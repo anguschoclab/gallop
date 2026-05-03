@@ -179,10 +179,20 @@ export const useGame = create<GameState & Actions>()(
             return `${h.name}: ${r.position}${ord(r.position)}`;
           })
           .join(", ");
+        // Record winner finish time into pace samples for this distance bucket.
+        const samples: Record<number, number[]> = { ...(s.paceSamples ?? {}) };
+        const winner = result.find((r) => r.position === 1);
+        if (winner && isFinite(winner.time) && winner.time > 0) {
+          const b = distanceBucket(race.distance);
+          const arr = [...(samples[b] ?? []), winner.time];
+          if (arr.length > MAX_SAMPLES_PER_BUCKET) arr.splice(0, arr.length - MAX_SAMPLES_PER_BUCKET);
+          samples[b] = arr;
+        }
         set({
           races: [...s.races],
           horses: [...s.horses],
           cash: s.cash + earned,
+          paceSamples: samples,
           log: [
             { day: s.day, text: `${race.name} — ${summary}${earned ? ` (won $${earned.toLocaleString()})` : ""}` },
             ...s.log,
