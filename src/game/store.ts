@@ -316,9 +316,8 @@ export const useGame = create<GameState & Actions>()(
     }),
     {
       name: "horse-racing-game-v1",
-      version: 2,
-      migrate: (persisted: unknown, _version: number) => {
-        // Backfill new fields on saves from before breeding existed
+      version: 3,
+      migrate: (persisted: unknown, version: number) => {
         const state = persisted as Partial<GameState> & Record<string, unknown>;
         const fix = (h: Horse): Horse => ({
           ...h,
@@ -329,6 +328,21 @@ export const useGame = create<GameState & Actions>()(
         if (Array.isArray(state.market)) state.market = state.market.map(fix);
         if (!Array.isArray(state.studs)) {
           state.studs = Array.from({ length: 4 }, () => generatePublicStud());
+        }
+        // v3: inject the real graded stakes calendar
+        if (version < 3 && Array.isArray(state.races)) {
+          const day = (state.day as number) ?? 1;
+          const existingKeys = new Set(
+            (state.races as Race[]).map((r) => r.graded?.key).filter(Boolean)
+          );
+          for (const g of GRADED_RACES) {
+            if (existingKeys.has(g.key)) continue;
+            // Schedule next occurrence relative to current game day
+            const yearOffset = Math.floor((day - 1) / 365) * 365;
+            let scheduled = yearOffset + g.dayOfYear;
+            if (scheduled < day) scheduled += 365;
+            (state.races as Race[]).push(makeGradedRace(g, scheduled));
+          }
         }
         return state as GameState;
       },
