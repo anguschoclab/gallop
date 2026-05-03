@@ -144,7 +144,7 @@ export const useGame = create<GameState & Actions>()(
           const h = s.horses.find((hh) => hh.id === r.horseId);
           if (!h) continue;
           h.energy = Math.max(0, h.energy - 25);
-          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day }, ...h.raceHistory].slice(0, 20);
+          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer: r.beyer, distance: race.distance }, ...h.raceHistory].slice(0, 20);
           if (r.position === 1) h.form = Math.min(10, h.form + 3);
           else if (r.position <= 3) h.form = Math.min(10, h.form + 1);
           else h.form = Math.max(-10, h.form - 1);
