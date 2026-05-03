@@ -19,9 +19,28 @@ export const Route = createFileRoute("/races")({
   },
 });
 
+const FILTER_KEY = "races.gradeFilter";
+
 function RacesPage() {
   const navigate = useNavigate();
   const { grade } = Route.useSearch();
+
+  // Restore last-used filter when arriving with no explicit search param.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("grade")) {
+      const saved = window.localStorage.getItem(FILTER_KEY) as GradeFilter | null;
+      if (saved && saved !== "all" && GRADE_FILTERS.includes(saved)) {
+        navigate({ to: "/races", search: { grade: saved }, replace: true });
+      }
+    }
+  }, [navigate]);
+
+  // Persist current selection.
+  useEffect(() => {
+    window.localStorage.setItem(FILTER_KEY, grade);
+  }, [grade]);
+
   const races = useGame((s) => s.races);
   const day = useGame((s) => s.day);
   const horses = useGame((s) => s.horses);
