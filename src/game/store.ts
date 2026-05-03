@@ -124,6 +124,13 @@ export const useGame = create<GameState & Actions>()(
         if (s.cash < race.entryFee) return;
         if (race.entries.some((e) => e.horseId === horseId)) return;
         if (race.entries.length >= race.fieldSize) return;
+        // Enforce age/sex restrictions on graded races
+        const r = race.restrictions;
+        if (r) {
+          if (r.minAge !== undefined && horse.age < r.minAge) return;
+          if (r.maxAge !== undefined && horse.age > r.maxAge) return;
+          if (r.sex !== undefined && horse.sex !== r.sex) return;
+        }
         race.entries.push({ horseId, owned: true });
         set({
           races: [...s.races],
@@ -277,6 +284,13 @@ export const useGame = create<GameState & Actions>()(
         const futureDay = newDay + 6;
         const count = Math.random() < 0.7 ? 2 : 3;
         for (let i = 0; i < count; i++) races.push(generateRace(futureDay));
+        // Top up real graded stakes that fall in the upcoming 7-day window
+        const upcomingGraded = gradedRacesForWindow(s.day, 7);
+        for (const gr of upcomingGraded) {
+          if (!races.some((r) => r.graded?.key === gr.graded?.key && r.day === gr.day)) {
+            races.push(gr);
+          }
+        }
         const pruned = races.filter((r) => r.day >= newDay - 3);
 
         const log = [{ day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log];
