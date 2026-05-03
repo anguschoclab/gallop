@@ -101,7 +101,7 @@ function HorseDetail() {
               <Button
                 key={k}
                 onClick={() => trainHorse(horse.id, k)}
-                disabled={slotsLeft <= 0 || cash < 75 || horse.energy < 15 || horse.stats[k] >= horse.potential}
+                disabled={blocked || slotsLeft <= 0 || cash < 75 || horse.energy < 15 || horse.stats[k] >= horse.potential}
                 className="w-full justify-between"
                 variant="outline"
               >
@@ -111,7 +111,7 @@ function HorseDetail() {
             ))}
             <Button
               onClick={() => trainHorse(horse.id, "rest")}
-              disabled={slotsLeft <= 0 || horse.energy >= 100}
+              disabled={blocked || slotsLeft <= 0 || horse.energy >= 100}
               className="w-full"
               variant="secondary"
             >
