@@ -44,6 +44,18 @@ export type Race = {
   restrictions?: { minAge?: number; maxAge?: number };
 };
 
+export type Pregnancy = {
+  id: string;
+  sireId: string;
+  damId: string;
+  sireName: string;
+  damName: string;
+  conceivedDay: number;
+  dueDay: number;
+  resolved: boolean;
+  foalId?: string;
+};
+
 export type GameState = {
   day: number;
   cash: number;
@@ -52,4 +64,5 @@ export type GameState = {
   races: Race[];
   trainingUsed: Record<string, number>; // horseId -> count today
   log: { day: number; text: string }[];
+  pregnancies: Pregnancy[];
 };

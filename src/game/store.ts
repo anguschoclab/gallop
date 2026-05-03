@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { GameState, Horse, Race } from "./types";
+import type { GameState, Horse, Race, Pregnancy } from "./types";
 import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
 import { GRADED_RACES } from "./gradedRaces";
 
@@ -8,6 +8,8 @@ const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
 const TRAINING_SLOTS_PER_DAY = 2;
 const STARTING_CASH = 5000;
+const BREEDING_FEE = 2000;
+const GESTATION_DAYS = 30;
 
 type Actions = {
   newGame: () => void;
@@ -16,6 +18,7 @@ type Actions = {
   enterRace: (raceId: string, horseId: string) => void;
   withdrawRace: (raceId: string, horseId: string) => void;
   resolveRace: (raceId: string, result: { horseId: string; position: number; time: number }[]) => void;
+  breed: (sireId: string, damId: string) => void;
   advanceDay: () => void;
 };
 
@@ -42,6 +45,7 @@ function initialState(): GameState {
     races,
     trainingUsed: {},
     log: [{ day: 1, text: "Welcome to your stable. Train your horses and enter them in races!" }],
+    pregnancies: [],
   };
 }
 
@@ -165,6 +169,32 @@ export const useGame = create<GameState & Actions>()(
         });
       },
 
+      breed: (sireId, damId) => {
+        const s = get();
+        if (sireId === damId) return;
+        const sire = s.horses.find((h) => h.id === sireId);
+        const dam = s.horses.find((h) => h.id === damId);
+        if (!sire || !dam) return;
+        if (s.cash < BREEDING_FEE) return;
+        const dueDay = s.day + GESTATION_DAYS;
+        const preg: Pregnancy = {
+          id: Math.random().toString(36).slice(2, 10),
+          sireId, damId,
+          sireName: sire.name, damName: dam.name,
+          conceivedDay: s.day,
+          dueDay,
+          resolved: false,
+        };
+        set({
+          cash: s.cash - BREEDING_FEE,
+          pregnancies: [preg, ...s.pregnancies],
+          log: [
+            { day: s.day, text: `🐴 Mated ${sire.name} × ${dam.name} (foal due day ${dueDay}). Fee $${BREEDING_FEE.toLocaleString()}.` },
+            ...s.log,
+          ].slice(0, 50),
+        });
+      },
+
       advanceDay: () => {
         const s = get();
         // auto-resolve any unresolved races scheduled for current day with no owned entries
@@ -206,14 +236,43 @@ export const useGame = create<GameState & Actions>()(
         // prune ancient resolved races
         const pruned = races.filter((r) => r.day >= newDay - 3);
 
+        // resolve births
+        const newLogs: { day: number; text: string }[] = [];
+        const pregnancies = s.pregnancies.map((p) => ({ ...p }));
+        let foals: Horse[] = [];
+        for (const p of pregnancies) {
+          if (p.resolved) continue;
+          if (newDay < p.dueDay) continue;
+          const sire = s.horses.find((h) => h.id === p.sireId);
+          const dam = s.horses.find((h) => h.id === p.damId);
+          const foal = generateHorse({ tier: "starter", owned: true });
+          foal.age = 0;
+          foal.sireName = p.sireName;
+          foal.damName = p.damName;
+          if (sire && dam) {
+            foal.stats = {
+              speed: Math.round((sire.stats.speed + dam.stats.speed) / 2 + (Math.random() * 10 - 5)),
+              stamina: Math.round((sire.stats.stamina + dam.stats.stamina) / 2 + (Math.random() * 10 - 5)),
+              acceleration: Math.round((sire.stats.acceleration + dam.stats.acceleration) / 2 + (Math.random() * 10 - 5)),
+              consistency: Math.round((sire.stats.consistency + dam.stats.consistency) / 2 + (Math.random() * 10 - 5)),
+            };
+            foal.potential = Math.min(100, Math.round((sire.potential + dam.potential) / 2 + (Math.random() * 8 - 2)));
+          }
+          p.resolved = true;
+          p.foalId = foal.id;
+          foals.push(foal);
+          newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
+        }
+
         set({
           day: newDay,
           cash: s.cash - upkeep,
-          horses,
+          horses: [...horses, ...foals],
           market,
           races: pruned,
           trainingUsed: {},
-          log: [{ day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
+          pregnancies,
+          log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
         });
       },
     }),
