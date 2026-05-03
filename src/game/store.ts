@@ -295,6 +295,21 @@ export const useGame = create<GameState & Actions>()(
           newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
         }
 
+        // Seasonal Beyer par recalibration from collected pace samples.
+        let calibratedPars = s.calibratedPars;
+        let lastCalibrationDay = s.lastCalibrationDay ?? 0;
+        const seasonLog: { day: number; text: string }[] = [];
+        if (newDay - lastCalibrationDay >= SEASON_DAYS) {
+          const recomputed = recomputePars(s.paceSamples ?? {});
+          if (Object.keys(recomputed).length > 0) {
+            calibratedPars = recomputed;
+            setCalibratedPars(recomputed);
+            lastCalibrationDay = newDay;
+            const buckets = Object.keys(recomputed).length;
+            seasonLog.push({ day: newDay, text: `📊 Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.` });
+          }
+        }
+
         set({
           day: newDay,
           cash: s.cash - upkeep,
@@ -303,11 +318,18 @@ export const useGame = create<GameState & Actions>()(
           races: pruned,
           trainingUsed: {},
           pregnancies,
-          log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
+          calibratedPars,
+          lastCalibrationDay,
+          log: [...seasonLog, ...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
         });
       },
     }),
-    { name: "horse-racing-game-v1" }
+    {
+      name: "horse-racing-game-v1",
+      onRehydrateStorage: () => (state) => {
+        if (state?.calibratedPars) setCalibratedPars(state.calibratedPars);
+      },
+    }
   )
 );
 
