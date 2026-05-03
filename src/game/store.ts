@@ -162,7 +162,7 @@ export const useGame = create<GameState & Actions>()(
           if (!h) continue;
           h.energy = Math.max(0, h.energy - 25);
           const beyer = beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
-          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer }, ...h.raceHistory].slice(0, 20);
+          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: result.length }, ...h.raceHistory].slice(0, 50);
           // form change
           if (r.position === 1) h.form = Math.min(10, h.form + 3);
           else if (r.position <= 3) h.form = Math.min(10, h.form + 1);
