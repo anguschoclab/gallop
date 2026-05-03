@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { HorseStats, overall, SilkBadge } from "@/components/HorseBits";
 import { ArrowLeft } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
+import { BeyerChart } from "@/components/BeyerChart";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
@@ -100,6 +101,16 @@ function HorseDetail() {
       </div>
 
       <Card>
+        <CardHeader>
+          <CardTitle>Beyer Speed Figure trend</CardTitle>
+          <p className="text-xs text-muted-foreground">Last {Math.min(10, horse.raceHistory.length)} races, oldest → newest</p>
+        </CardHeader>
+        <CardContent>
+          <BeyerChart history={horse.raceHistory} />
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardHeader><CardTitle>Race history</CardTitle></CardHeader>
         <CardContent>
           {horse.raceHistory.length === 0 ? (
@@ -109,7 +120,10 @@ function HorseDetail() {
               {horse.raceHistory.map((r, i) => (
                 <div key={i} className="flex justify-between text-sm py-1 border-b last:border-0">
                   <span>{r.raceName}</span>
-                  <span className="flex gap-3">
+                  <span className="flex gap-3 items-center">
+                    {typeof r.beyer === "number" && (
+                      <span className="text-xs text-muted-foreground">Beyer {r.beyer}</span>
+                    )}
                     <span className="text-muted-foreground">D{r.day}</span>
                     <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
                       {r.position}

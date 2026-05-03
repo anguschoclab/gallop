@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import type { GameState, Horse, Race, Pregnancy } from "./types";
 import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
 import { GRADED_RACES } from "./gradedRaces";
+import { beyerFigure } from "./beyer";
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
@@ -139,11 +140,13 @@ export const useGame = create<GameState & Actions>()(
         race.resolved = true;
         race.result = result;
         let earned = 0;
+        const classBonus = race.graded?.grade === "G1" ? 8 : race.graded?.grade === "G2" ? 5 : race.graded?.grade === "G3" ? 3 : race.raceClass === "Group" ? 4 : race.raceClass === "Stakes" ? 2 : 0;
         for (const r of result) {
           const h = s.horses.find((hh) => hh.id === r.horseId);
           if (!h) continue;
           h.energy = Math.max(0, h.energy - 25);
-          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day }, ...h.raceHistory].slice(0, 20);
+          const beyer = beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
+          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer }, ...h.raceHistory].slice(0, 20);
           // form change
           if (r.position === 1) h.form = Math.min(10, h.form + 3);
           else if (r.position <= 3) h.form = Math.min(10, h.form + 1);
