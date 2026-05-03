@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: Home, exact: true },
-  { to: "/stable", label: "Stable", icon: Trophy },
-  { to: "/races", label: "Races", icon: Calendar },
-  { to: "/market", label: "Market", icon: Store },
+  { to: "/stable", label: "Stable", icon: Trophy, exact: false },
+  { to: "/races", label: "Races", icon: Calendar, exact: false },
+  { to: "/market", label: "Market", icon: Store, exact: false },
 ] as const;
 
 export function AppShell() {
