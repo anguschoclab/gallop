@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { buildRunner, stepRunner, type Runner } from "@/game/raceSim";
 import { generateHorse } from "@/game/horseGen";
 import type { Horse } from "@/game/types";
-import { SilkBadge } from "@/components/HorseBits";
+import { SilkBadge, overall } from "@/components/HorseBits";
+import { computeBeyer, beyerBand } from "@/game/beyer";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -57,7 +58,7 @@ function LiveRace() {
   const [speed, setSpeed] = useState(1);
   const [finished, setFinished] = useState(false);
   const startRef = useRef<number | null>(null);
-  const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
+  const finishOrderRef = useRef<{ horseId: string; position: number; time: number; beyer?: number }[]>([]);
   const speedRef = useRef(speed);
   speedRef.current = speed;
 
@@ -91,8 +92,19 @@ function LiveRace() {
         raf = requestAnimationFrame(loop);
       } else {
         setFinished(true);
-        // commit results to store (only owned horses needed for store update,
-        // but include all for completeness)
+        // Compute Beyer figures using field-quality adjustment
+        const fieldAvgOverall =
+          runners.reduce((acc, r) => {
+            const h = horses.find((hh) => hh.id === r.horseId);
+            return acc + (h ? overall(h) : 60);
+          }, 0) / runners.length;
+        for (const fr of finishOrderRef.current) {
+          fr.beyer = computeBeyer({
+            finishTime: fr.time,
+            distance: race.distance,
+            fieldAvgOverall,
+          });
+        }
         const ownedResults = finishOrderRef.current.filter((r) =>
           horses.some((h) => h.id === r.horseId)
         );
