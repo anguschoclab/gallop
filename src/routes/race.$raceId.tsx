@@ -6,6 +6,21 @@ import { buildRunner, stepRunner, type Runner } from "@/game/raceSim";
 import { generateHorse } from "@/game/horseGen";
 import type { Horse } from "@/game/types";
 import { SilkBadge } from "@/components/HorseBits";
+import { beyerFigure } from "@/game/beyer";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+// Project a Beyer figure mid-race from current pace.
+// If finished: use real finish time. Otherwise: extrapolate remaining distance
+// at current velocity (with a small tail-fade penalty if not yet at finish).
+function projectedBeyer(r: Runner, distance: number, simTime: number, classBonus: number): number | null {
+  if (r.finishTime !== null) {
+    return beyerFigure({ distance, finishTime: r.finishTime, classBonus });
+  }
+  if (r.position <= 0 || r.velocity <= 0.5) return null;
+  const remaining = distance - r.position;
+  const projFinish = simTime + remaining / r.velocity;
+  return beyerFigure({ distance, finishTime: projFinish, classBonus });
+}
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
