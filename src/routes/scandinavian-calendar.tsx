@@ -144,7 +144,7 @@ function ScandinavianCalendarPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <h3 className="font-semibold">{race.name}</h3>
-                      <Badge variant="outline" className={gradeColor(race.grade)}>
+                      <Badge variant="outline" className={getGradeColorClass(race.grade)}>
                         {race.grade}
                       </Badge>
                       {race.note && <Badge variant="secondary">{race.note}</Badge>}
@@ -168,7 +168,7 @@ function ScandinavianCalendarPage() {
                     </div>
                   </div>
                   <div className="text-right text-sm">
-                    <div className="font-medium">{formatDate(race.dayOfYear)}</div>
+                    <div className="font-medium">{coreFormatDate(race.dayOfYear)}</div>
                   </div>
                 </div>
               ))}
