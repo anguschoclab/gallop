@@ -138,97 +138,6 @@ function HorseDetail() {
         </CardContent>
       </Card>
 
-      </>
-    );
-  }
-
-  function GradedHistoryPanel({ history }: { history: { raceName: string; position: number; day: number; beyer?: number; grade?: "G1" | "G2" | "G3"; distance?: number; surface?: string; fieldSize?: number }[] }) {
-    const graded = history.filter((r) => r.grade);
-    const byGrade = {
-      G1: graded.filter((r) => r.grade === "G1"),
-      G2: graded.filter((r) => r.grade === "G2"),
-      G3: graded.filter((r) => r.grade === "G3"),
-    };
-    const wins = (rs: typeof graded) => rs.filter((r) => r.position === 1).length;
-    const places = (rs: typeof graded) => rs.filter((r) => r.position <= 3).length;
-    const bestBeyer = (rs: typeof graded) => rs.reduce((m, r) => (typeof r.beyer === "number" && r.beyer > m ? r.beyer : m), 0);
-
-    const gradeColor = (g?: string) =>
-      g === "G1" ? "bg-yellow-500/15 text-yellow-700 border-yellow-500/40 dark:text-yellow-400"
-      : g === "G2" ? "bg-purple-500/15 text-purple-700 border-purple-500/40 dark:text-purple-400"
-      : "bg-blue-500/15 text-blue-700 border-blue-500/40 dark:text-blue-400";
-
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Graded race history</CardTitle>
-          <p className="text-xs text-muted-foreground">G1/G2/G3 finishes with Beyer figures earned</p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-3 gap-2">
-            {(["G1", "G2", "G3"] as const).map((g) => (
-              <div key={g} className="rounded-md border p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <Badge variant="outline" className={gradeColor(g)}>{g}</Badge>
-                  <span className="text-xs text-muted-foreground">{byGrade[g].length} run{byGrade[g].length !== 1 ? "s" : ""}</span>
-                </div>
-                <div className="text-sm">
-                  <span className="font-semibold">{wins(byGrade[g])}</span>
-                  <span className="text-muted-foreground"> wins · </span>
-                  <span className="font-semibold">{places(byGrade[g])}</span>
-                  <span className="text-muted-foreground"> placed</span>
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  Best Beyer: <span className="font-medium text-foreground">{bestBeyer(byGrade[g]) || "—"}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {graded.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No graded stakes appearances yet.</p>
-          ) : (
-            <div className="space-y-1">
-              {graded.map((r, i) => (
-                <div key={i} className="flex items-center justify-between gap-2 text-sm py-2 border-b last:border-0">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <Badge variant="outline" className={gradeColor(r.grade)}>{r.grade}</Badge>
-                    <div className="min-w-0">
-                      <div className="truncate">{r.raceName}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {r.distance ? `${r.distance}m` : ""}{r.surface ? ` · ${r.surface}` : ""}{r.fieldSize ? ` · field of ${r.fieldSize}` : ""} · D{r.day}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    {typeof r.beyer === "number" && (
-                      <span className="text-xs">
-                        <span className="text-muted-foreground">Beyer </span>
-                        <span className="font-semibold">{r.beyer}</span>
-                      </span>
-                    )}
-                    <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
-                      {r.position}{ord(r.position)}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    );
-  }
-
-  function ord(n: number) {
-    const s = ["th", "st", "nd", "rd"];
-    const v = n % 100;
-    return s[(v - 20) % 10] || s[v] || s[0];
-  }
-
-  function _Tail() {
-    return (
-
       <Card>
         <CardHeader>
           <CardTitle>Lineage</CardTitle>
@@ -245,5 +154,90 @@ function HorseDetail() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function ord(n: number) {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return s[(v - 20) % 10] || s[v] || s[0];
+}
+
+function gradeColor(g?: string) {
+  return g === "G1" ? "bg-yellow-500/15 text-yellow-700 border-yellow-500/40 dark:text-yellow-400"
+    : g === "G2" ? "bg-purple-500/15 text-purple-700 border-purple-500/40 dark:text-purple-400"
+    : "bg-blue-500/15 text-blue-700 border-blue-500/40 dark:text-blue-400";
+}
+
+function GradedHistoryPanel({ history }: { history: { raceName: string; position: number; day: number; beyer?: number; grade?: "G1" | "G2" | "G3"; distance?: number; surface?: string; fieldSize?: number }[] }) {
+  const graded = history.filter((r) => r.grade);
+  const byGrade = {
+    G1: graded.filter((r) => r.grade === "G1"),
+    G2: graded.filter((r) => r.grade === "G2"),
+    G3: graded.filter((r) => r.grade === "G3"),
+  };
+  const wins = (rs: typeof graded) => rs.filter((r) => r.position === 1).length;
+  const places = (rs: typeof graded) => rs.filter((r) => r.position <= 3).length;
+  const bestBeyer = (rs: typeof graded) => rs.reduce((m, r) => (typeof r.beyer === "number" && r.beyer > m ? r.beyer : m), 0);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Graded race history</CardTitle>
+        <p className="text-xs text-muted-foreground">G1/G2/G3 finishes with Beyer figures earned</p>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-3 gap-2">
+          {(["G1", "G2", "G3"] as const).map((g) => (
+            <div key={g} className="rounded-md border p-3">
+              <div className="flex items-center justify-between mb-1">
+                <Badge variant="outline" className={gradeColor(g)}>{g}</Badge>
+                <span className="text-xs text-muted-foreground">{byGrade[g].length} run{byGrade[g].length !== 1 ? "s" : ""}</span>
+              </div>
+              <div className="text-sm">
+                <span className="font-semibold">{wins(byGrade[g])}</span>
+                <span className="text-muted-foreground"> wins · </span>
+                <span className="font-semibold">{places(byGrade[g])}</span>
+                <span className="text-muted-foreground"> placed</span>
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Best Beyer: <span className="font-medium text-foreground">{bestBeyer(byGrade[g]) || "—"}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {graded.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No graded stakes appearances yet.</p>
+        ) : (
+          <div className="space-y-1">
+            {graded.map((r, i) => (
+              <div key={i} className="flex items-center justify-between gap-2 text-sm py-2 border-b last:border-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Badge variant="outline" className={gradeColor(r.grade)}>{r.grade}</Badge>
+                  <div className="min-w-0">
+                    <div className="truncate">{r.raceName}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {r.distance ? `${r.distance}m` : ""}{r.surface ? ` · ${r.surface}` : ""}{r.fieldSize ? ` · field of ${r.fieldSize}` : ""} · D{r.day}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  {typeof r.beyer === "number" && (
+                    <span className="text-xs">
+                      <span className="text-muted-foreground">Beyer </span>
+                      <span className="font-semibold">{r.beyer}</span>
+                    </span>
+                  )}
+                  <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
+                    {r.position}{ord(r.position)}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
