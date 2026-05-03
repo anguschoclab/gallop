@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HorseStats, overall, SilkBadge } from "@/components/HorseBits";
 import { ArrowLeft } from "lucide-react";
+import { Lineage } from "@/components/Lineage";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
