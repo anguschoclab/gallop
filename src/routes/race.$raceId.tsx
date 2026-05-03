@@ -115,10 +115,9 @@ function LiveRace() {
         raf = requestAnimationFrame(loop);
       } else {
         setFinished(true);
-        const ownedResults = finishOrderRef.current.filter((r) =>
-          horses.some((h) => h.id === r.horseId)
-        );
-        resolveRace(race.id, ownedResults);
+        // Pass the full field so the store can both pay owners and collect
+        // pace samples for Beyer par calibration.
+        resolveRace(race.id, finishOrderRef.current);
       }
     };
     raf = requestAnimationFrame(loop);
