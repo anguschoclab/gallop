@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildRunner, getConditionsModifier, runRaceToCompletion } from "./raceSim";
+import { buildRunner, getConditionsModifier, runRaceToCompletion, computePaceContext, stepRunner } from "./raceSim";
 import { createRng } from "./rng";
 import type { Horse } from "./types";
 
@@ -88,5 +88,95 @@ describe("raceSim caps", () => {
     expect(r.topSpeed).toBeLessThanOrEqual(22 + 1e-9);
     expect(r.topSpeed).toBeGreaterThan(15);
     expect(Number.isFinite(r.topSpeed)).toBe(true);
+  });
+});
+
+describe("computePaceContext", () => {
+  it("leaderPos is the maximum runner position", () => {
+    const conditions = getConditionsModifier({});
+    const horses = mkField();
+    const runners = horses.map(h => buildRunner(h, true, conditions));
+    runners[0].position = 200;
+    runners[1].position = 150;
+    runners[2].position = 180;
+    runners[3].position = 100;
+    const { leaderPos } = computePaceContext(runners, 1600);
+    expect(leaderPos).toBe(200);
+  });
+
+  it("progress = 1 when all runners have finished", () => {
+    const conditions = getConditionsModifier({});
+    const horses = mkField();
+    const runners = horses.map(h => buildRunner(h, true, conditions));
+    runners.forEach(r => { r.finishTime = 95; r.position = 1600; });
+    const { progress } = computePaceContext(runners, 1600);
+    expect(progress).toBe(1);
+  });
+
+  it("progress in (0, 1) when some runners still running", () => {
+    const conditions = getConditionsModifier({});
+    const horses = mkField();
+    const runners = horses.map(h => buildRunner(h, true, conditions));
+    runners[0].position = 800; // halfway
+    const { progress } = computePaceContext(runners, 1600);
+    expect(progress).toBeGreaterThan(0);
+    expect(progress).toBeLessThanOrEqual(1);
+  });
+
+  it("single unfinished runner sets leaderPos and progress correctly", () => {
+    const conditions = getConditionsModifier({});
+    const runner = buildRunner(mkHorse(), true, conditions);
+    runner.position = 400;
+    const { leaderPos, progress } = computePaceContext([runner], 1600);
+    expect(leaderPos).toBe(400);
+    expect(progress).toBeCloseTo(400 / 1600, 5);
+  });
+});
+
+describe("stepRunner", () => {
+  it("horse at finish line (position >= distance) sets finishTime", () => {
+    const conditions = getConditionsModifier({});
+    const runner = buildRunner(mkHorse(), true, conditions);
+    runner.position = 1595;
+    runner.velocity = 15;
+    const rng = createRng(1);
+    stepRunner(runner, 1, 95, 1600, rng);
+    expect(runner.finishTime).not.toBeNull();
+  });
+
+  it("stationary horse accelerates toward targetSpeed", () => {
+    const conditions = getConditionsModifier({});
+    const runner = buildRunner(mkHorse(), true, conditions);
+    runner.velocity = 0;
+    runner.position = 0;
+    const rng = createRng(5);
+    stepRunner(runner, 0.1, 0, 1600, rng);
+    expect(runner.velocity).toBeGreaterThan(0);
+    expect(runner.position).toBeGreaterThan(0);
+  });
+
+  it("already finished runner is not modified by stepRunner", () => {
+    const conditions = getConditionsModifier({});
+    const runner = buildRunner(mkHorse(), true, conditions);
+    runner.finishTime = 90;
+    runner.position = 1600;
+    runner.velocity = 15;
+    const before = { ...runner };
+    stepRunner(runner, 0.1, 90, 1600, createRng(1));
+    expect(runner.position).toBe(before.position);
+    expect(runner.finishTime).toBe(before.finishTime);
+  });
+
+  it("position increases monotonically across steps", () => {
+    const conditions = getConditionsModifier({});
+    const runner = buildRunner(mkHorse(), true, conditions);
+    runner.velocity = 10;
+    const rng = createRng(2);
+    let last = runner.position;
+    for (let i = 0; i < 10 && runner.finishTime === null; i++) {
+      stepRunner(runner, 0.1, i * 0.1, 1600, rng);
+      expect(runner.position).toBeGreaterThanOrEqual(last);
+      last = runner.position;
+    }
   });
 });

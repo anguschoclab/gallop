@@ -17,14 +17,19 @@ import { Route as ScandinavianCalendarRouteImport } from './routes/scandinavian-
 import { Route as RecapRouteImport } from './routes/recap'
 import { Route as RacesRouteImport } from './routes/races'
 import { Route as RaceBrowserRouteImport } from './routes/race-browser'
+import { Route as NpcStablesRouteImport } from './routes/npc-stables'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as GermanCalendarRouteImport } from './routes/german-calendar'
 import { Route as CanadianCalendarRouteImport } from './routes/canadian-calendar'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
+import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuctionIndexRouteImport } from './routes/auction.index'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
+import { Route as NpcStablesStableIdRouteImport } from './routes/npc-stables.$stableId'
+import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
 
 const UaeCalendarRoute = UaeCalendarRouteImport.update({
   id: '/uae-calendar',
@@ -66,6 +71,11 @@ const RaceBrowserRoute = RaceBrowserRouteImport.update({
   path: '/race-browser',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NpcStablesRoute = NpcStablesRouteImport.update({
+  id: '/npc-stables',
+  path: '/npc-stables',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketRoute = MarketRouteImport.update({
   id: '/market',
   path: '/market',
@@ -91,10 +101,20 @@ const BreedingRoute = BreedingRouteImport.update({
   path: '/breeding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuctionRoute = AuctionRouteImport.update({
+  id: '/auction',
+  path: '/auction',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuctionIndexRoute = AuctionIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuctionRoute,
 } as any)
 const StableHorseIdRoute = StableHorseIdRouteImport.update({
   id: '/$horseId',
@@ -106,14 +126,26 @@ const RaceRaceIdRoute = RaceRaceIdRouteImport.update({
   path: '/race/$raceId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NpcStablesStableIdRoute = NpcStablesStableIdRouteImport.update({
+  id: '/$stableId',
+  path: '/$stableId',
+  getParentRoute: () => NpcStablesRoute,
+} as any)
+const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
+  id: '/$saleId',
+  path: '/$saleId',
+  getParentRoute: () => AuctionRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auction': typeof AuctionRouteWithChildren
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
   '/canadian-calendar': typeof CanadianCalendarRoute
   '/german-calendar': typeof GermanCalendarRoute
   '/market': typeof MarketRoute
+  '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
@@ -122,8 +154,11 @@ export interface FileRoutesByFullPath {
   '/stable': typeof StableRouteWithChildren
   '/track-schedule': typeof TrackScheduleRoute
   '/uae-calendar': typeof UaeCalendarRoute
+  '/auction/$saleId': typeof AuctionSaleIdRoute
+  '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/auction/': typeof AuctionIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -132,6 +167,7 @@ export interface FileRoutesByTo {
   '/canadian-calendar': typeof CanadianCalendarRoute
   '/german-calendar': typeof GermanCalendarRoute
   '/market': typeof MarketRoute
+  '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
@@ -140,17 +176,22 @@ export interface FileRoutesByTo {
   '/stable': typeof StableRouteWithChildren
   '/track-schedule': typeof TrackScheduleRoute
   '/uae-calendar': typeof UaeCalendarRoute
+  '/auction/$saleId': typeof AuctionSaleIdRoute
+  '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/auction': typeof AuctionIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auction': typeof AuctionRouteWithChildren
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
   '/canadian-calendar': typeof CanadianCalendarRoute
   '/german-calendar': typeof GermanCalendarRoute
   '/market': typeof MarketRoute
+  '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
@@ -159,18 +200,23 @@ export interface FileRoutesById {
   '/stable': typeof StableRouteWithChildren
   '/track-schedule': typeof TrackScheduleRoute
   '/uae-calendar': typeof UaeCalendarRoute
+  '/auction/$saleId': typeof AuctionSaleIdRoute
+  '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/auction/': typeof AuctionIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auction'
     | '/breeding'
     | '/broodmares'
     | '/canadian-calendar'
     | '/german-calendar'
     | '/market'
+    | '/npc-stables'
     | '/race-browser'
     | '/races'
     | '/recap'
@@ -179,8 +225,11 @@ export interface FileRouteTypes {
     | '/stable'
     | '/track-schedule'
     | '/uae-calendar'
+    | '/auction/$saleId'
+    | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/stable/$horseId'
+    | '/auction/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -189,6 +238,7 @@ export interface FileRouteTypes {
     | '/canadian-calendar'
     | '/german-calendar'
     | '/market'
+    | '/npc-stables'
     | '/race-browser'
     | '/races'
     | '/recap'
@@ -197,16 +247,21 @@ export interface FileRouteTypes {
     | '/stable'
     | '/track-schedule'
     | '/uae-calendar'
+    | '/auction/$saleId'
+    | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/stable/$horseId'
+    | '/auction'
   id:
     | '__root__'
     | '/'
+    | '/auction'
     | '/breeding'
     | '/broodmares'
     | '/canadian-calendar'
     | '/german-calendar'
     | '/market'
+    | '/npc-stables'
     | '/race-browser'
     | '/races'
     | '/recap'
@@ -215,17 +270,22 @@ export interface FileRouteTypes {
     | '/stable'
     | '/track-schedule'
     | '/uae-calendar'
+    | '/auction/$saleId'
+    | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/stable/$horseId'
+    | '/auction/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuctionRoute: typeof AuctionRouteWithChildren
   BreedingRoute: typeof BreedingRoute
   BroodmaresRoute: typeof BroodmaresRoute
   CanadianCalendarRoute: typeof CanadianCalendarRoute
   GermanCalendarRoute: typeof GermanCalendarRoute
   MarketRoute: typeof MarketRoute
+  NpcStablesRoute: typeof NpcStablesRouteWithChildren
   RaceBrowserRoute: typeof RaceBrowserRoute
   RacesRoute: typeof RacesRoute
   RecapRoute: typeof RecapRoute
@@ -295,6 +355,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RaceBrowserRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/npc-stables': {
+      id: '/npc-stables'
+      path: '/npc-stables'
+      fullPath: '/npc-stables'
+      preLoaderRoute: typeof NpcStablesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/market': {
       id: '/market'
       path: '/market'
@@ -330,12 +397,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BreedingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auction': {
+      id: '/auction'
+      path: '/auction'
+      fullPath: '/auction'
+      preLoaderRoute: typeof AuctionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auction/': {
+      id: '/auction/'
+      path: '/'
+      fullPath: '/auction/'
+      preLoaderRoute: typeof AuctionIndexRouteImport
+      parentRoute: typeof AuctionRoute
     }
     '/stable/$horseId': {
       id: '/stable/$horseId'
@@ -351,8 +432,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RaceRaceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/npc-stables/$stableId': {
+      id: '/npc-stables/$stableId'
+      path: '/$stableId'
+      fullPath: '/npc-stables/$stableId'
+      preLoaderRoute: typeof NpcStablesStableIdRouteImport
+      parentRoute: typeof NpcStablesRoute
+    }
+    '/auction/$saleId': {
+      id: '/auction/$saleId'
+      path: '/$saleId'
+      fullPath: '/auction/$saleId'
+      preLoaderRoute: typeof AuctionSaleIdRouteImport
+      parentRoute: typeof AuctionRoute
+    }
   }
 }
+
+interface AuctionRouteChildren {
+  AuctionSaleIdRoute: typeof AuctionSaleIdRoute
+  AuctionIndexRoute: typeof AuctionIndexRoute
+}
+
+const AuctionRouteChildren: AuctionRouteChildren = {
+  AuctionSaleIdRoute: AuctionSaleIdRoute,
+  AuctionIndexRoute: AuctionIndexRoute,
+}
+
+const AuctionRouteWithChildren =
+  AuctionRoute._addFileChildren(AuctionRouteChildren)
+
+interface NpcStablesRouteChildren {
+  NpcStablesStableIdRoute: typeof NpcStablesStableIdRoute
+}
+
+const NpcStablesRouteChildren: NpcStablesRouteChildren = {
+  NpcStablesStableIdRoute: NpcStablesStableIdRoute,
+}
+
+const NpcStablesRouteWithChildren = NpcStablesRoute._addFileChildren(
+  NpcStablesRouteChildren,
+)
 
 interface StableRouteChildren {
   StableHorseIdRoute: typeof StableHorseIdRoute
@@ -367,11 +487,13 @@ const StableRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuctionRoute: AuctionRouteWithChildren,
   BreedingRoute: BreedingRoute,
   BroodmaresRoute: BroodmaresRoute,
   CanadianCalendarRoute: CanadianCalendarRoute,
   GermanCalendarRoute: GermanCalendarRoute,
   MarketRoute: MarketRoute,
+  NpcStablesRoute: NpcStablesRouteWithChildren,
   RaceBrowserRoute: RaceBrowserRoute,
   RacesRoute: RacesRoute,
   RecapRoute: RecapRoute,

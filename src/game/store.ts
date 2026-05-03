@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 import type { GameState, Horse, Race, Pregnancy, ScoutReport, AuctionSale } from "./types";
 import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
 import { GRADED_RACES } from "./gradedRaces";
@@ -104,28 +104,23 @@ function initialState(): GameState {
 
 // Custom storage adapter for Zustand persist using OPFS
 const opfsStorage = {
-  getItem: async (name: string): Promise<string | null> => {
+  getItem: async (_name: string) => {
     const state = await loadGameState();
-    return state ? JSON.stringify(state) : null;
+    if (!state) return null;
+    return { state, version: 0 };
   },
-  setItem: async (name: string, value: string): Promise<void> => {
-    // Zustand persist passes a JSON string (when using createJSONStorage)
-    // We need to parse it to get the state object, then save it
+  setItem: async (_name: string, value: { state: GameState }) => {
     try {
-      const state = JSON.parse(value) as GameState;
-      await saveGameState(state);
+      await saveGameState(value.state);
     } catch (error) {
-      console.error('Failed to parse state in setItem:', error);
+      console.error('Failed to save game state to OPFS:', error);
     }
   },
-  removeItem: async (name: string): Promise<void> => {
-    // Clear game state - handled by storageAdapter
+  removeItem: async (_name: string): Promise<void> => {
     await (await import('@/services/storageAdapter')).clearGameState();
   },
 };
 
-// Wrap with createJSONStorage for proper serialization
-const jsonStorage = createJSONStorage(() => opfsStorage);
 
 // Flag to track if hydration has completed
 export let hydrationComplete = false;
@@ -775,7 +770,7 @@ export const useGame = create<GameState & Actions>()(
     }),
     {
       name: "horse-racing-game-v1",
-      storage: jsonStorage,
+      storage: opfsStorage,
       skipHydration: true,
       onRehydrateStorage: () => (state) => {
         hydrationComplete = true;

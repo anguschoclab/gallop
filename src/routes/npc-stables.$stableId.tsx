@@ -1,5 +1,5 @@
 // NPC Stable Detail - View stable info and horses with scouting
-import { useParams, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { getStableById } from "@/game/npcStables";
 import { calculateScoutCost } from "@/game/scouting";
@@ -12,8 +12,10 @@ import { ArrowLeft, Building2, Users, DollarSign, Globe, Trophy, Eye, Brain } fr
 import { toast } from "sonner";
 import { PERSONALITY_CONFIG } from "@/game/npcStables";
 
-export default function NpcStableDetailPage() {
-  const { stableId } = useParams({ from: "/npc-stables/$stableId" });
+export const Route = createFileRoute("/npc-stables/$stableId")({ component: NpcStableDetailPage });
+
+function NpcStableDetailPage() {
+  const { stableId } = Route.useParams();
   const game = useGame();
   
   const stable = getStableById(game.npcStables, stableId);

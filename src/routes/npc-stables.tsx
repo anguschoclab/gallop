@@ -1,12 +1,14 @@
 // NPC Stables Directory - Browse rival stables and their horses
-import { Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { getMajorStables, getStablesByTier } from "@/game/npcStables";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Users, Building2, TrendingUp } from "lucide-react";
 
-export default function NpcStablesPage() {
+export const Route = createFileRoute("/npc-stables")({ component: NpcStablesPage });
+
+function NpcStablesPage() {
   const game = useGame();
   const { npcStables } = game;
   

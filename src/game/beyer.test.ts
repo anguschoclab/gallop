@@ -1,5 +1,33 @@
 import { describe, it, expect } from "vitest";
-import { beyerFigure } from "./beyer";
+import {
+  beyerFigure,
+  distanceBucket,
+  setCalibratedPars,
+  getCalibratedPars,
+  parTime,
+  expectedBeyer,
+  calculateBeyerForResult,
+} from "./beyer";
+import type { Horse } from "./types";
+
+function mkHorse(overrides: Partial<Horse> = {}): Horse {
+  return {
+    id: "h1",
+    name: "Test",
+    age: 4,
+    gender: "horse",
+    hemisphere: "Northern",
+    silk: "#aabbcc",
+    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+    energy: 100,
+    form: 0,
+    potential: 80,
+    raceHistory: [],
+    owned: true,
+    fame: 0,
+    ...overrides,
+  };
+}
 
 describe("beyerFigure", () => {
   it("returns 0 for non-finite input rather than NaN", () => {
@@ -19,5 +47,91 @@ describe("beyerFigure", () => {
     const fast = beyerFigure({ distance: 1600, finishTime: 90 });
     const slow = beyerFigure({ distance: 1600, finishTime: 110 });
     expect(fast).toBeGreaterThan(slow);
+  });
+});
+
+describe("distanceBucket", () => {
+  it("1600 → 1600", () => expect(distanceBucket(1600)).toBe(1600));
+  it("1700 → 1800 (rounds to nearest 200)", () => expect(distanceBucket(1700)).toBe(1800));
+  it("1500 → 1600 (rounds half-up to nearest 200)", () => expect(distanceBucket(1500)).toBe(1600));
+  it("1550 → 1600 (rounds to nearest 200)", () => expect(distanceBucket(1550)).toBe(1600));
+  it("100 → 200 (floor at 200)", () => expect(distanceBucket(100)).toBe(200));
+  it("200 → 200", () => expect(distanceBucket(200)).toBe(200));
+  it("result is always a multiple of 200", () => {
+    [800, 1000, 1200, 1400, 1600, 1800, 2000, 2400].forEach(d =>
+      expect(distanceBucket(d) % 200).toBe(0)
+    );
+  });
+});
+
+describe("setCalibratedPars + getCalibratedPars", () => {
+  it("round-trips stored pars", () => {
+    setCalibratedPars({ 1600: 95, 2000: 120 });
+    const pars = getCalibratedPars();
+    expect(pars[1600]).toBe(95);
+    expect(pars[2000]).toBe(120);
+  });
+
+  it("overwriting clears previous values", () => {
+    setCalibratedPars({ 1200: 72 });
+    const pars = getCalibratedPars();
+    expect(pars[1600]).toBeUndefined();
+    expect(pars[1200]).toBe(72);
+    // Reset for other tests
+    setCalibratedPars({});
+  });
+});
+
+describe("parTime", () => {
+  it("no calibration → falls back to distance / 16.7", () => {
+    setCalibratedPars({});
+    expect(parTime(1600)).toBeCloseTo(1600 / 16.7, 1);
+  });
+
+  it("uses calibrated par when available", () => {
+    setCalibratedPars({ 1600: 90 });
+    expect(parTime(1600)).toBeCloseTo(90, 1);
+    setCalibratedPars({});
+  });
+
+  it("blends from neighbor bucket when direct bucket missing", () => {
+    setCalibratedPars({ 1400: 84 }); // neighbor of 1600
+    const t = parTime(1600);
+    expect(t).toBeGreaterThan(0);
+    expect(Number.isFinite(t)).toBe(true);
+    setCalibratedPars({});
+  });
+});
+
+describe("expectedBeyer", () => {
+  it("returns a finite number in [30, 125]", () => {
+    const h = mkHorse();
+    const fig = expectedBeyer(h, 1600, 0);
+    expect(Number.isFinite(fig)).toBe(true);
+    expect(fig).toBeGreaterThanOrEqual(30);
+    expect(fig).toBeLessThanOrEqual(125);
+  });
+
+  it("higher speed → higher expected Beyer (other factors equal)", () => {
+    const fastH = mkHorse({ stats: { speed: 90, stamina: 70, acceleration: 70, consistency: 70 } });
+    const slowH = mkHorse({ stats: { speed: 40, stamina: 70, acceleration: 70, consistency: 70 } });
+    expect(expectedBeyer(fastH, 1600)).toBeGreaterThan(expectedBeyer(slowH, 1600));
+  });
+
+  it("class bonus increases the figure", () => {
+    const h = mkHorse();
+    expect(expectedBeyer(h, 1600, 8)).toBeGreaterThan(expectedBeyer(h, 1600, 0));
+  });
+});
+
+describe("calculateBeyerForResult", () => {
+  it("delegates to beyerFigure — same result for same inputs", () => {
+    expect(calculateBeyerForResult(1600, 95, 0)).toBe(beyerFigure({ distance: 1600, finishTime: 95, classBonus: 0 }));
+    expect(calculateBeyerForResult(2000, 120, 5)).toBe(beyerFigure({ distance: 2000, finishTime: 120, classBonus: 5 }));
+  });
+
+  it("non-finite finishTime → 0", () => {
+    expect(calculateBeyerForResult(1600, Infinity)).toBe(0);
+    expect(calculateBeyerForResult(1600, 0)).toBe(0);
   });
 });
