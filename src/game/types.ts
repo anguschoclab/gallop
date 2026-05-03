@@ -40,6 +40,15 @@ export type HorseGender = "colt" | "filly" | "horse" | "mare";
 
 export type Hemisphere = "Northern" | "Southern";
 
+// Weather conditions for races
+export type Weather = "sunny" | "rainy";
+
+// Track condition affects race performance
+export type TrackCondition = "fast" | "good" | "soft" | "heavy";
+
+// Horse coat colors (for sprite selection)
+export type CoatColor = "bay" | "black" | "chestnut" | "dark-bay" | "gray";
+
 export type Horse = {
   id: string;
   name: string;
@@ -62,6 +71,7 @@ export type Horse = {
   healthStatusDay?: number; // Day when health status was set
   blueHenStatus?: BlueHenStatus; // Blue hen status for exceptional broodmares
   foalsProduced?: string[]; // IDs of foals produced by this mare
+  coatColor?: CoatColor; // Coat color for race viewer sprites
 };
 
 export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
@@ -93,6 +103,8 @@ export type Race = {
     minAgeNorthern?: number;
     minAgeSouthern?: number;
   };
+  weather?: Weather; // Race day weather
+  trackCondition?: TrackCondition; // Track surface condition
 };
 
 export type Pregnancy = {

@@ -1,4 +1,4 @@
-import type { Horse, Race, RaceClass, Hemisphere, Conformation, Temperament, GeneticMarkers, HealthStatus } from "./types";
+import type { Horse, Race, RaceClass, Hemisphere, Conformation, Temperament, GeneticMarkers, HealthStatus, CoatColor, Weather, TrackCondition } from "./types";
 import { randomHorseName, randomSilk, randomRaceName } from "./names";
 import type { GradedRace } from "./gradedRaces";
 
@@ -50,6 +50,23 @@ function generateHealthStatus(): HealthStatus {
   return "healthy";
 }
 
+function randomCoatColor(): CoatColor {
+  const colors: CoatColor[] = ["bay", "black", "chestnut", "dark-bay", "gray"];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function randomWeather(): Weather {
+  return Math.random() < 0.8 ? "sunny" : "rainy";
+}
+
+function randomTrackCondition(): TrackCondition {
+  const r = Math.random();
+  if (r < 0.6) return "fast";
+  if (r < 0.85) return "good";
+  if (r < 0.95) return "soft";
+  return "heavy";
+}
+
 export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere } = {}): Horse {
   const tier = opts.tier ?? "budget";
   const ranges: Record<string, [number, number]> = {
@@ -95,6 +112,7 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     temperament: randTemperament(),
     geneticMarkers: generateGeneticMarkers(),
     healthStatus: "healthy",
+    coatColor: randomCoatColor(),
   };
 }
 
@@ -130,6 +148,8 @@ export function makeGradedRace(g: GradedRace, gameDay: number): Race {
     resolved: false,
     graded: { key: g.key, grade: g.grade, track: g.track, surface: g.surface },
     restrictions: g.restrictions,
+    weather: randomWeather(),
+    trackCondition: randomTrackCondition(),
   };
 }
 
@@ -150,5 +170,7 @@ export function generateRace(day: number): Race {
     fieldSize: rand(6, 8),
     entries: [],
     resolved: false,
+    weather: randomWeather(),
+    trackCondition: randomTrackCondition(),
   };
 }

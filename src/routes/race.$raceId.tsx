@@ -9,6 +9,33 @@ import { beyerFigure } from "@/game/beyer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { buildRaceField, simulateStep, type RaceSimulationDependencies } from "@/services/raceSimulationService";
+import type { Weather } from "@/game/types";
+
+// Track surface background mapping
+const getTrackBackground = (surface?: string): string | undefined => {
+  switch (surface) {
+    case "Turf":
+      return "url(/assets/track-turf.png)";
+    case "Dirt":
+      return "url(/assets/track-dirt.png)";
+    case "Synthetic":
+      return "url(/assets/track-dirt.png)";
+    default:
+      return undefined;
+  }
+};
+
+// Weather sky background mapping
+const getSkyBackground = (weather?: Weather): string | undefined => {
+  switch (weather) {
+    case "sunny":
+      return "url(/assets/bg-sky-sunny.png)";
+    case "rainy":
+      return "url(/assets/bg-sky-pouring.png)";
+    default:
+      return undefined;
+  }
+};
 
 // Project a Beyer figure mid-race from current pace.
 // If finished: use real finish time. Otherwise: extrapolate remaining distance
@@ -155,7 +182,13 @@ function LiveRace() {
 
       <div className="p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
         <div>
-          <Track runners={runners} distance={race.distance} tick={tick} />
+          <Track
+            runners={runners}
+            distance={race.distance}
+            tick={tick}
+            surface={race.graded?.surface}
+            weather={race.weather}
+          />
         </div>
         <div className="bg-black/30 rounded-lg p-3 space-y-3">
           <div>
@@ -221,14 +254,35 @@ function LiveRace() {
   );
 }
 
-function Track({ runners, distance, tick }: { runners: Runner[]; distance: number; tick: number }) {
+function Track({
+  runners,
+  distance,
+  tick,
+  surface,
+  weather,
+}: {
+  runners: Runner[];
+  distance: number;
+  tick: number;
+  surface?: string;
+  weather?: Weather;
+}) {
   void tick;
   const laneHeight = 36;
   const trackHeight = runners.length * laneHeight + 20;
+  const trackBg = getTrackBackground(surface);
+  const skyBg = getSkyBackground(weather);
+
   return (
     <div
-      className="relative bg-emerald-700 rounded-lg overflow-hidden border border-emerald-600 shadow-inner"
-      style={{ height: trackHeight }}
+      className="relative rounded-lg overflow-hidden border border-emerald-600 shadow-inner"
+      style={{
+        height: trackHeight,
+        backgroundImage: trackBg,
+        backgroundSize: "auto 100%",
+        backgroundRepeat: "repeat-x",
+        backgroundColor: trackBg ? undefined : "rgb(4 120 87)", // emerald-700 fallback
+      }}
     >
       {/* lane lines */}
       {runners.map((_, i) => (
@@ -244,6 +298,7 @@ function Track({ runners, distance, tick }: { runners: Runner[]; distance: numbe
 
       {runners.map((r, i) => {
         const pct = Math.min(1, r.position / distance);
+        const horseColor = r.silk; // Fallback to silk color
         return (
           <div
             key={r.horseId}
@@ -255,12 +310,40 @@ function Track({ runners, distance, tick }: { runners: Runner[]; distance: numbe
             }}
           >
             <div className="flex items-center gap-1">
-              <SilkBadge color={r.silk} num={i + 1} />
+              <HorseSprite color={horseColor} num={i + 1} isRunning={tick > 0} />
               {r.owned && <span className="text-xs font-bold bg-yellow-400 text-black px-1 rounded">YOU</span>}
             </div>
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// Horse sprite component with CSS animation
+// Note: The sprite sheets (horse-*.png) contain 6-frame running animations
+// For now, we use CSS background styling with the silk color as a colored circle
+// TODO: When coat colors are fully integrated, map to actual sprite files:
+//   bay -> horse-b.png, black -> horse-bl.png, chestnut -> horse-ch.png,
+//   dark-bay -> horse-dkb.png, gray -> horse-gr.png
+function HorseSprite({
+  color,
+  num,
+  isRunning,
+}: {
+  color: string;
+  num: number;
+  isRunning: boolean;
+}) {
+  return (
+    <div
+      className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow"
+      style={{
+        backgroundColor: color,
+        animation: isRunning ? "pulse 0.5s ease-in-out infinite" : undefined,
+      }}
+    >
+      {num}
     </div>
   );
 }
