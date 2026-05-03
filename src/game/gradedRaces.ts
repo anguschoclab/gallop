@@ -816,4 +816,10 @@ export const GRADED_RACES: GradedRace[] = [
   { key: "scn-svenskt-derby", name: "Svenskt Derby", track: "Jägersro", grade: "G3", distance: 2400, surface: "Turf", purse: 150000, dayOfYear: 227, restrictions: { minAge: 3, maxAge: 3 }, },
   { key: "scn-norsk-derby", name: "Norsk Derby", track: "Øvrevoll", grade: "G3", distance: 2400, surface: "Turf", purse: 150000, dayOfYear: 227, restrictions: { minAge: 3, maxAge: 3 }, },
   { key: "scn-bro-park-sprint-championship", name: "Bro Park Sprint Championship", track: "Bro Park", grade: "G3", distance: 1150, surface: "Turf", purse: 100000, dayOfYear: 258, restrictions: { minAge: 3 }, },
+  // Turkey
+  { key: "tr-international-bosphorus-cup", name: "International Bosphorus Cup", track: "Veliefendi", grade: "G2", distance: 2400, surface: "Turf", purse: 300000, dayOfYear: 258, restrictions: { minAge: 3 }, note: "Colts & Fillies", },
+  { key: "tr-international-topkapi-trophy", name: "International Topkapi Trophy", track: "Veliefendi", grade: "G2", distance: 1600, surface: "Turf", purse: 300000, dayOfYear: 258, restrictions: { minAge: 3 }, note: "Colts & Fillies", },
+  { key: "tr-international-istanbul-trophy", name: "International Istanbul Trophy", track: "Veliefendi", grade: "G3", distance: 1600, surface: "Turf", purse: 150000, dayOfYear: 258, restrictions: { minAge: 3 }, note: "Fillies & Mares", },
+  { key: "tr-international-anatolia-trophy", name: "International Anatolia Trophy", track: "Veliefendi", grade: "G3", distance: 2000, surface: "Synthetic", purse: 150000, dayOfYear: 258, restrictions: { minAge: 3 }, },
+  { key: "tr-international-trakya-trophy", name: "International Trakya Trophy", track: "Veliefendi", grade: "G3", distance: 1200, surface: "Turf", purse: 100000, dayOfYear: 258, restrictions: { minAge: 2, maxAge: 2 }, },
 ];
