@@ -30,7 +30,6 @@ export function beyerFigure({ distance, finishTime, classBonus = 0 }: BeyerInput
 // Estimate a horse's expected Beyer at a given distance based on current
 // stats, form, and energy — mirrors raceSim's buildRunner pace logic so the
 // preview blurb stays consistent with the live simulation.
-import type { Horse } from "./types";
 export function expectedBeyer(h: Horse, distance: number, classBonus = 0): number {
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
