@@ -24,3 +24,20 @@ export function beyerFigure({ distance, finishTime, classBonus = 0 }: BeyerInput
   const fig = 80 + delta * 500 + classBonus;
   return Math.max(30, Math.min(125, Math.round(fig)));
 }
+
+// Estimate a horse's expected Beyer at a given distance based on current
+// stats, form, and energy — mirrors raceSim's buildRunner pace logic so the
+// preview blurb stays consistent with the live simulation.
+import type { Horse } from "./types";
+export function expectedBeyer(h: Horse, distance: number, classBonus = 0): number {
+  const formMod = 1 + h.form / 100;
+  const energyMod = 0.8 + (h.energy / 100) * 0.2;
+  const topSpeed = (12 + (h.stats.speed / 100) * 10) * formMod * energyMod;
+  // Stamina fade across last 40% of race (matches stepRunner curve).
+  const staminaFactor = 0.4 + (h.stats.stamina / 100) * 0.6;
+  // Average pace = 60% at top + 40% scaled by avg fade (1 + staminaFactor)/2.
+  const avgPace = topSpeed * (0.6 + 0.4 * ((1 + staminaFactor) / 2));
+  const finishTime = distance / Math.max(1, avgPace);
+  return beyerFigure({ distance, finishTime, classBonus });
+}
+
