@@ -19,6 +19,8 @@ function RacesPage() {
   const cash = useGame((s) => s.cash);
   const enterRace = useGame((s) => s.enterRace);
   const withdrawRace = useGame((s) => s.withdrawRace);
+  const pregnancies = useGame((s) => s.pregnancies);
+  const pregnantIds = new Set(pregnancies.filter((p) => !p.resolved).map((p) => p.damId));
 
   const upcoming = races
     .filter((r) => !r.resolved && r.day >= day)
