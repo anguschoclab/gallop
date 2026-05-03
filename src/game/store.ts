@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import type { GameState, Horse, Race, Pregnancy } from "./types";
 import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
 import { GRADED_RACES } from "./gradedRaces";
+import { beyerFigure } from "./beyer";
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
