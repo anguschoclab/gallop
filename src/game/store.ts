@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import type { GameState, Horse, Race, Pregnancy } from "./types";
 import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
 import { GRADED_RACES } from "./gradedRaces";
-import { beyerFigure } from "./beyer";
+import { beyerFigure, distanceBucket, setCalibratedPars } from "./beyer";
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
@@ -11,6 +11,22 @@ const TRAINING_SLOTS_PER_DAY = 2;
 const STARTING_CASH = 5000;
 const BREEDING_FEE = 2000;
 const GESTATION_DAYS = 30;
+const SEASON_DAYS = 30;
+const MAX_SAMPLES_PER_BUCKET = 60;
+
+// Recompute par-time per distance bucket from collected winner finish times.
+// Uses a slightly-faster-than-median (40th percentile) to match the
+// "above-average winner" intent of Beyer par.
+function recomputePars(samples: Record<number, number[]>): Record<number, number> {
+  const out: Record<number, number> = {};
+  for (const [k, arr] of Object.entries(samples)) {
+    if (arr.length < 3) continue;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const idx = Math.floor(sorted.length * 0.4);
+    out[Number(k)] = sorted[idx];
+  }
+  return out;
+}
 
 type Actions = {
   newGame: () => void;
