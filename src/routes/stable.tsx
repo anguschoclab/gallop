@@ -26,10 +26,17 @@ function StablePage() {
                 <div className="flex items-center gap-3">
                   <SilkBadge color={h.silk} />
                   <div className="flex-1">
-                    <p className="font-bold">{h.name}</p>
-                    <p className="text-xs text-muted-foreground">Age {h.age} · OVR {overall(h)} · Pot {h.potential}</p>
+                    <p className="font-bold">
+                      {h.name} <span className="text-xs text-muted-foreground font-normal">{h.sex === "F" ? "♀" : "♂"}</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Age {h.age} · OVR {overall(h)} · Pot {h.potential}
+                      {h.lineage?.sireName && <> · by {h.lineage.sireName}</>}
+                    </p>
                   </div>
                   <div className="flex flex-col gap-1 items-end">
+                    {h.pregnancy && <Badge variant="default" className="text-xs">In foal</Badge>}
+                    {h.retired && <Badge variant="outline" className="text-xs">Retired</Badge>}
                     <Badge variant="secondary">⚡ {h.energy}</Badge>
                     {h.form !== 0 && (
                       <Badge variant={h.form > 0 ? "default" : "destructive"} className="text-xs">
