@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { buildRunner, stepRunner, type Runner } from "@/game/raceSim";
 import { generateHorse } from "@/game/horseGen";
 import type { Horse } from "@/game/types";
-import { SilkBadge, overall } from "@/components/HorseBits";
-import { computeBeyer, beyerBand } from "@/game/beyer";
+import { SilkBadge } from "@/components/HorseBits";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -58,7 +57,7 @@ function LiveRace() {
   const [speed, setSpeed] = useState(1);
   const [finished, setFinished] = useState(false);
   const startRef = useRef<number | null>(null);
-  const finishOrderRef = useRef<{ horseId: string; position: number; time: number; beyer?: number }[]>([]);
+  const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
   const speedRef = useRef(speed);
   speedRef.current = speed;
 
@@ -92,19 +91,8 @@ function LiveRace() {
         raf = requestAnimationFrame(loop);
       } else {
         setFinished(true);
-        // Compute Beyer figures using field-quality adjustment
-        const fieldAvgOverall =
-          runners.reduce((acc, r) => {
-            const h = horses.find((hh) => hh.id === r.horseId);
-            return acc + (h ? overall(h) : 60);
-          }, 0) / runners.length;
-        for (const fr of finishOrderRef.current) {
-          fr.beyer = computeBeyer({
-            finishTime: fr.time,
-            distance: race.distance,
-            fieldAvgOverall,
-          });
-        }
+        // commit results to store (only owned horses needed for store update,
+        // but include all for completeness)
         const ownedResults = finishOrderRef.current.filter((r) =>
           horses.some((h) => h.id === r.horseId)
         );
@@ -165,7 +153,7 @@ function LiveRace() {
         </div>
       </div>
 
-      {finished && <ResultOverlay race={race} runners={runners} distance={race.distance} onClose={() => navigate({ to: "/races" })} />}
+      {finished && <ResultOverlay race={race} runners={runners} onClose={() => navigate({ to: "/races" })} />}
     </div>
   );
 }
@@ -217,41 +205,28 @@ function Track({ runners, distance, tick }: { runners: Runner[]; distance: numbe
 function ResultOverlay({
   race,
   runners,
-  distance,
   onClose,
 }: {
   race: { name: string; purse: number };
   runners: Runner[];
-  distance: number;
   onClose: () => void;
 }) {
   const PRIZE = [0.6, 0.25, 0.1, 0.05];
   const ordered = [...runners].sort((a, b) => (a.finishTime ?? 99) - (b.finishTime ?? 99));
-  const fieldAvg = 70; // already baked into stored beyer; recomputed here for any AI-only horses for display
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-      <div className="bg-card text-foreground rounded-lg shadow-xl max-w-lg w-full p-6">
+      <div className="bg-card text-foreground rounded-lg shadow-xl max-w-md w-full p-6">
         <h2 className="text-2xl font-bold mb-1">{race.name}</h2>
-        <p className="text-sm text-muted-foreground mb-4">Final result · {distance}m</p>
+        <p className="text-sm text-muted-foreground mb-4">Final result</p>
         <div className="space-y-2">
           {ordered.map((r, i) => {
             const prize = i < PRIZE.length ? Math.round(race.purse * PRIZE[i]) : 0;
-            const beyer = r.finishTime != null ? computeBeyer({ finishTime: r.finishTime, distance, fieldAvgOverall: fieldAvg }) : undefined;
-            const band = beyer != null ? beyerBand(beyer) : null;
             return (
               <div key={r.horseId} className="flex items-center gap-3 py-1 border-b last:border-0">
                 <span className="w-6 font-bold tabular-nums">{i + 1}</span>
                 <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: r.silk }} />
                 <span className={`flex-1 ${r.owned ? "font-bold" : ""}`}>{r.name}</span>
-                {beyer != null && (
-                  <span
-                    className={`text-xs font-bold tabular-nums px-2 py-0.5 rounded ${beyerToneClass(band!.tone)}`}
-                    title={`Beyer Speed Figure — ${band!.label}`}
-                  >
-                    {beyer}
-                  </span>
-                )}
-                <span className="text-xs text-muted-foreground tabular-nums w-14 text-right">{r.finishTime?.toFixed(2)}s</span>
+                <span className="text-xs text-muted-foreground tabular-nums">{r.finishTime?.toFixed(2)}s</span>
                 {prize > 0 && r.owned && (
                   <span className="text-sm font-medium text-emerald-600 tabular-nums">+${prize.toLocaleString()}</span>
                 )}
@@ -259,21 +234,8 @@ function ResultOverlay({
             );
           })}
         </div>
-        <p className="text-xs text-muted-foreground mt-3">
-          Beyer Speed Figure compares performances across distances. ~80 par · 100+ stakes-class · 110+ champion.
-        </p>
         <Button onClick={onClose} className="w-full mt-5">Continue</Button>
       </div>
     </div>
   );
-}
-
-function beyerToneClass(tone: "low" | "mid" | "high" | "elite" | "legend"): string {
-  switch (tone) {
-    case "legend": return "bg-amber-500 text-amber-950";
-    case "elite": return "bg-emerald-500 text-emerald-950";
-    case "high": return "bg-emerald-200 text-emerald-900";
-    case "mid": return "bg-muted text-foreground";
-    case "low": return "bg-muted text-muted-foreground";
-  }
 }
