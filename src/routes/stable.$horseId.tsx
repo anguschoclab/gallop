@@ -23,10 +23,13 @@ function HorseDetail() {
   const trainHorse = useGame((s) => s.trainHorse);
   const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
+  const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
+  const day = useGame((s) => s.day);
 
   if (!horse) throw notFound();
 
   const slotsLeft = 2 - trainingUsed;
+  const isPregnant = !!pregnancy;
 
   return (
     <div className="space-y-6">
