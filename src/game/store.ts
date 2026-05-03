@@ -169,6 +169,32 @@ export const useGame = create<GameState & Actions>()(
         });
       },
 
+      breed: (sireId, damId) => {
+        const s = get();
+        if (sireId === damId) return;
+        const sire = s.horses.find((h) => h.id === sireId);
+        const dam = s.horses.find((h) => h.id === damId);
+        if (!sire || !dam) return;
+        if (s.cash < BREEDING_FEE) return;
+        const dueDay = s.day + GESTATION_DAYS;
+        const preg: Pregnancy = {
+          id: Math.random().toString(36).slice(2, 10),
+          sireId, damId,
+          sireName: sire.name, damName: dam.name,
+          conceivedDay: s.day,
+          dueDay,
+          resolved: false,
+        };
+        set({
+          cash: s.cash - BREEDING_FEE,
+          pregnancies: [preg, ...s.pregnancies],
+          log: [
+            { day: s.day, text: `🐴 Mated ${sire.name} × ${dam.name} (foal due day ${dueDay}). Fee $${BREEDING_FEE.toLocaleString()}.` },
+            ...s.log,
+          ].slice(0, 50),
+        });
+      },
+
       advanceDay: () => {
         const s = get();
         // auto-resolve any unresolved races scheduled for current day with no owned entries
