@@ -14,7 +14,7 @@ export type Horse = {
   energy: number; // 0-100
   form: number; // -10..+10
   potential: number; // 60-100, soft cap on stat growth
-  raceHistory: { raceId: string; raceName: string; position: number; day: number }[];
+  raceHistory: { raceId: string; raceName: string; position: number; day: number; beyer?: number }[];
   owned: boolean;
   sireName?: string;
   damName?: string;
