@@ -41,6 +41,8 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     potential: rand(pLo, pHi),
     raceHistory: [],
     owned: opts.owned ?? false,
+    sireName: randomHorseName(),
+    damName: randomHorseName(),
   };
 }
 
