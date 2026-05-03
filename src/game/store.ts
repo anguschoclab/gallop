@@ -6,9 +6,12 @@ import {
   generateHorse,
   generatePublicStud,
   generateRace,
+  gradedRacesForWindow,
+  makeGradedRace,
   horsePrice,
   studFee,
 } from "./horseGen";
+import { GRADED_RACES } from "./gradedRaces";
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
@@ -43,6 +46,10 @@ function initialState(): GameState {
   for (let d = 1; d <= 7; d++) {
     const count = Math.random() < 0.7 ? 2 : 3;
     for (let i = 0; i < count; i++) races.push(generateRace(d));
+  }
+  // Schedule the full first year of real graded stakes
+  for (const g of GRADED_RACES) {
+    races.push(makeGradedRace(g, g.dayOfYear));
   }
   return {
     day: 1,
