@@ -1,19 +1,46 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { overall } from "@/components/HorseBits";
 import { expectedBeyer } from "@/game/beyer";
 
+type GradeFilter = "all" | "G1" | "G2" | "G3";
+const GRADE_FILTERS: GradeFilter[] = ["all", "G1", "G2", "G3"];
+
 export const Route = createFileRoute("/races")({
   component: RacesPage,
+  validateSearch: (search: Record<string, unknown>): { grade: GradeFilter } => {
+    const g = search.grade;
+    return { grade: GRADE_FILTERS.includes(g as GradeFilter) ? (g as GradeFilter) : "all" };
+  },
 });
+
+const FILTER_KEY = "races.gradeFilter";
 
 function RacesPage() {
   const navigate = useNavigate();
+  const { grade } = Route.useSearch();
+
+  // Restore last-used filter when arriving with no explicit search param.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("grade")) {
+      const saved = window.localStorage.getItem(FILTER_KEY) as GradeFilter | null;
+      if (saved && saved !== "all" && GRADE_FILTERS.includes(saved)) {
+        navigate({ to: "/races", search: { grade: saved }, replace: true });
+      }
+    }
+  }, [navigate]);
+
+  // Persist current selection.
+  useEffect(() => {
+    window.localStorage.setItem(FILTER_KEY, grade);
+  }, [grade]);
+
   const races = useGame((s) => s.races);
   const day = useGame((s) => s.day);
   const horses = useGame((s) => s.horses);
@@ -23,23 +50,47 @@ function RacesPage() {
   const pregnancies = useGame((s) => s.pregnancies);
   const pregnantIds = new Set(pregnancies.filter((p) => !p.resolved).map((p) => p.damId));
 
+  const matchesFilter = (r: { graded?: { grade: "G1" | "G2" | "G3" } }) =>
+    grade === "all" ? true : r.graded?.grade === grade;
+
   const upcoming = races
-    .filter((r) => !r.resolved && r.day >= day)
+    .filter((r) => !r.resolved && r.day >= day && matchesFilter(r))
     .sort((a, b) => a.day - b.day);
 
   const past = races
-    .filter((r) => r.resolved && r.result && r.result.length > 0)
+    .filter((r) => r.resolved && r.result && r.result.length > 0 && matchesFilter(r))
     .sort((a, b) => b.day - a.day)
     .slice(0, 8);
 
+  const filterLabel: Record<GradeFilter, string> = { all: "All races", G1: "G1 only", G2: "G2 only", G3: "G3 only" };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Race Calendar</h1>
-        <p className="text-muted-foreground">Enter your horses to compete</p>
+      <div className="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Race Calendar</h1>
+          <p className="text-muted-foreground">Enter your horses to compete</p>
+        </div>
+        <div className="inline-flex rounded-md border bg-card p-1">
+          {GRADE_FILTERS.map((g) => (
+            <Link
+              key={g}
+              to="/races"
+              search={{ grade: g }}
+              className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-colors ${
+                grade === g ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {filterLabel[g]}
+            </Link>
+          ))}
+        </div>
       </div>
 
       <div className="space-y-3">
+        {upcoming.length === 0 && (
+          <p className="text-sm text-muted-foreground">No upcoming races match this filter.</p>
+        )}
         {upcoming.map((race) => {
           const ownedEntry = race.entries.find((e) => e.owned);
           const r = race.restrictions;
