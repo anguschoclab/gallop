@@ -45,6 +45,7 @@ function initialState(): GameState {
     races,
     trainingUsed: {},
     log: [{ day: 1, text: "Welcome to your stable. Train your horses and enter them in races!" }],
+    pregnancies: [],
   };
 }
 
