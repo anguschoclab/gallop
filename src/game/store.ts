@@ -106,6 +106,7 @@ export const useGame = create<GameState & Actions>()(
         const race = s.races.find((r) => r.id === raceId);
         const horse = s.horses.find((h) => h.id === horseId);
         if (!race || !horse) return;
+        if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
         if (race.resolved) return;
         if (s.cash < race.entryFee) return;
         if (race.entries.some((e) => e.horseId === horseId)) return;
