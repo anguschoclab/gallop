@@ -12,10 +12,41 @@ export type BeyerInput = {
   classBonus?: number; // 0..10 — grade/stakes uplift
 };
 
-// Par time (s) for an "average" winner at a given distance.
+// Default par time (s) for an "average" winner at a given distance.
 // Calibrated to the runner sim (~16-18 m/s sustained).
-function parTime(distance: number): number {
+function defaultParTime(distance: number): number {
   return distance / 16.7; // ~60s per 1000m
+}
+
+// Calibrated par lookup, populated by the simulator each "season" from
+// observed finish times. Keys are 200m-rounded distance buckets.
+let CALIBRATED_PARS: Record<number, number> = {};
+
+export function distanceBucket(distance: number): number {
+  return Math.max(200, Math.round(distance / 200) * 200);
+}
+
+export function setCalibratedPars(pars: Record<number, number>) {
+  CALIBRATED_PARS = { ...pars };
+}
+
+export function getCalibratedPars(): Record<number, number> {
+  return CALIBRATED_PARS;
+}
+
+export function parTime(distance: number): number {
+  const b = distanceBucket(distance);
+  // Blend: if calibration exists for this bucket, lean on it; otherwise fall
+  // back to the analytical default. Also nudge toward neighboring buckets so
+  // an unsampled distance still benefits from nearby data.
+  const direct = CALIBRATED_PARS[b];
+  if (direct) return direct * (distance / b);
+  const neighbors = [b - 200, b + 200].map((k) => CALIBRATED_PARS[k]).filter(Boolean);
+  if (neighbors.length) {
+    const avg = neighbors.reduce((s, v) => s + v, 0) / neighbors.length;
+    return (avg * (distance / b));
+  }
+  return defaultParTime(distance);
 }
 
 export function beyerFigure({ distance, finishTime, classBonus = 0 }: BeyerInput): number {
