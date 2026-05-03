@@ -1,5 +1,6 @@
 import type { Horse } from "@/game/types";
 import { Progress } from "@/components/ui/progress";
+import { calculateOverallRating } from "@/core/horse/stats";
 
 export function StatBar({ label, value }: { label: string; value: number }) {
   return (
@@ -36,5 +37,5 @@ export function SilkBadge({ color, num }: { color: string; num?: number }) {
 }
 
 export function overall(h: Horse) {
-  return Math.round((h.stats.speed + h.stats.stamina + h.stats.acceleration + h.stats.consistency) / 4);
+  return calculateOverallRating(h);
 }

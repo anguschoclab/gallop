@@ -5,6 +5,37 @@ export type HorseStats = {
   consistency: number;
 };
 
+export type Conformation = "excellent" | "good" | "fair" | "poor";
+export type Temperament = "excellent" | "good" | "fair" | "poor";
+
+// Health status for horses
+export type HealthStatus = "healthy" | "covering_sickness" | "recovering" | "other_illness";
+
+// Blue hen status for exceptional broodmares
+export interface BlueHenStatus {
+  isBlueHen: boolean; // Whether the mare is considered a blue hen
+  stakesWinnersProduced: number; // Number of stakes winners produced
+  group1WinnersProduced: number; // Number of Group 1 winners produced
+  blueHenScore: number; // 0-100 score based on offspring quality
+  foalsProduced?: number; // Total number of foals produced
+}
+
+// Genetic markers based on horse genome research
+export interface GeneticMarkers {
+  // Leopard complex (Lp) - spotting pattern linked to TRPM1
+  leopardComplex?: "dominant" | "recessive" | "heterozygous";
+  // Risk for congenital stationary night blindness (CSNB) - homozygous for Lp
+  csnbRisk?: "high" | "low";
+  // Sensory perception genes (from genome research)
+  sensoryPerception?: "excellent" | "good" | "fair" | "poor";
+  // Signal transduction genes (from genome research)
+  signalTransduction?: "excellent" | "good" | "fair" | "poor";
+  // Immunity genes (from genome research)
+  immunity?: "excellent" | "good" | "fair" | "poor";
+  // Genetic diversity score (based on breed and pedigree)
+  geneticDiversity?: number; // 0-1
+}
+
 export type HorseGender = "colt" | "filly" | "horse" | "mare";
 
 export type Hemisphere = "Northern" | "Southern";
@@ -24,6 +55,13 @@ export type Horse = {
   owned: boolean;
   sireName?: string;
   damName?: string;
+  conformation?: Conformation;
+  temperament?: Temperament;
+  geneticMarkers?: GeneticMarkers;
+  healthStatus?: HealthStatus; // Health status of the horse
+  healthStatusDay?: number; // Day when health status was set
+  blueHenStatus?: BlueHenStatus; // Blue hen status for exceptional broodmares
+  foalsProduced?: string[]; // IDs of foals produced by this mare
 };
 
 export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
@@ -67,6 +105,8 @@ export type Pregnancy = {
   dueDay: number;
   resolved: boolean;
   foalId?: string;
+  liveFoalGuarantee?: boolean; // Whether live foal guarantee was purchased
+  reBreedingAttempts?: number; // Number of re-breeding attempts used
 };
 
 export type GameState = {

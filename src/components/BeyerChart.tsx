@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
+import { getOrdinalSuffix } from "@/core/common/ordinal";
 
 type Entry = { raceName: string; day: number; beyer?: number; position: number };
 
@@ -71,7 +72,7 @@ export function BeyerChart({ history }: { history: Entry[] }) {
               formatter={(v: number) => [v, "Beyer"]}
               labelFormatter={(_, p) => {
                 const d = p?.[0]?.payload as typeof data[0] | undefined;
-                return d ? `${d.raceName} (D${d.day}, ${d.position}${ord(d.position)})` : "";
+                return d ? `${d.raceName} (D${d.day}, ${d.position}${getOrdinalSuffix(d.position)})` : "";
               }}
             />
             <Line
@@ -87,10 +88,4 @@ export function BeyerChart({ history }: { history: Entry[] }) {
       </div>
     </div>
   );
-}
-
-function ord(n: number) {
-  const s = ["th", "st", "nd", "rd"];
-  const v = n % 100;
-  return s[(v - 20) % 10] || s[v] || s[0];
 }

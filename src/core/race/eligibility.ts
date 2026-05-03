@@ -15,8 +15,16 @@ import { calculateOverallRating } from "@/core/horse/stats";
  */
 export function getMinimumAgeForHemisphere(
   horseHemisphere: Hemisphere,
-  restrictions?: { minAge?: number }
+  restrictions?: { minAge?: number; minAgeNorthern?: number; minAgeSouthern?: number }
 ): number {
+  // Use hemisphere-specific age if available
+  if (horseHemisphere === "Northern" && restrictions?.minAgeNorthern !== undefined) {
+    return restrictions.minAgeNorthern;
+  }
+  if (horseHemisphere === "Southern" && restrictions?.minAgeSouthern !== undefined) {
+    return restrictions.minAgeSouthern;
+  }
+  // Fall back to general minAge
   const baseAge = restrictions?.minAge ?? 2;
   return horseHemisphere === "Southern" ? baseAge + 1 : baseAge;
 }

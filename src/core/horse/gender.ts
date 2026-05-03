@@ -6,7 +6,7 @@ import type { Horse } from "@/game/types";
  * Extracted from: races.tsx, RaceDetailPanel.tsx, store.ts
  */
 
-type GenderRestriction = "colt" | "filly" | undefined;
+type GenderRestriction = "colt" | "filly" | "mares" | "fillies-and-mares" | "colts-and-fillies" | "horses" | undefined;
 
 /**
  * Check if a horse's gender matches the race's gender restriction
@@ -16,10 +16,16 @@ export function isGenderEligible(horseGender: Horse["gender"], restriction: Gend
   
   const genderEligibilityMap: Record<string, Horse["gender"][]> = {
     colt: ["colt", "horse"],
+    colts: ["colt", "horse"],
     filly: ["filly", "mare"],
+    fillies: ["filly", "mare"],
+    mares: ["mare"],
+    "fillies-and-mares": ["filly", "mare"],
+    "colts-and-fillies": ["colt", "filly", "horse", "mare"],
+    horses: ["horse", "colt"],
   };
   
-  return genderEligibilityMap[restriction].includes(horseGender);
+  return genderEligibilityMap[restriction]?.includes(horseGender) ?? false;
 }
 
 /**
@@ -27,5 +33,15 @@ export function isGenderEligible(horseGender: Horse["gender"], restriction: Gend
  */
 export function getGenderRestrictionLabel(restriction: GenderRestriction): string {
   if (!restriction) return "Open";
-  return restriction === "colt" ? "Colts" : "Fillies";
+  const labelMap: Record<string, string> = {
+    colt: "Colts",
+    colts: "Colts",
+    filly: "Fillies",
+    fillies: "Fillies",
+    mares: "Mares",
+    "fillies-and-mares": "Fillies & Mares",
+    "colts-and-fillies": "Colts & Fillies",
+    horses: "Horses",
+  };
+  return labelMap[restriction] || restriction;
 }

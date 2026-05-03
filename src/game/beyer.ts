@@ -73,3 +73,8 @@ export function expectedBeyer(h: Horse, distance: number, classBonus = 0): numbe
   return beyerFigure({ distance, finishTime, classBonus });
 }
 
+// Calculate Beyer for a race result
+export function calculateBeyerForResult(distance: number, finishTime: number, classBonus = 0): number {
+  return beyerFigure({ distance, finishTime, classBonus });
+}
+

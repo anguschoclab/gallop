@@ -1,28 +1,23 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type { GameState, Horse, Race, Pregnancy } from "./types";
 import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
 import { GRADED_RACES } from "./gradedRaces";
 import { beyerFigure, distanceBucket, setCalibratedPars } from "./beyer";
+import { loadRaceHistoryLimit } from "@/services/storageAdapter";
+import { calculateBreedingCompatibility } from "./breedingCompatibility";
+import { loadGameState, saveGameState } from "@/services/storageAdapter";
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
+export const TRAINING_COST = 75;
 const TRAINING_SLOTS_PER_DAY = 2;
 const STARTING_CASH = 5000;
 const BREEDING_FEE = 2000;
+const LIVE_FOAL_GUARANTEE_FEE = 1000; // Additional fee for live foal guarantee
 const GESTATION_DAYS = 30;
 const SEASON_DAYS = 30;
 const MAX_SAMPLES_PER_BUCKET = 60;
-
-// Get race history limit from localStorage, default to 50
-function getRaceHistoryLimit(): number {
-  const saved = localStorage.getItem("raceHistoryLimit");
-  if (saved) {
-    const limit = parseInt(saved, 10);
-    if ([10, 20, 50].includes(limit)) return limit;
-  }
-  return 50;
-}
 
 // Recompute par-time per distance bucket from collected winner finish times.
 // Uses a slightly-faster-than-median (40th percentile) to match the
@@ -45,7 +40,7 @@ type Actions = {
   enterRace: (raceId: string, horseId: string) => void;
   withdrawRace: (raceId: string, horseId: string) => void;
   resolveRace: (raceId: string, result: { horseId: string; position: number; time: number }[]) => void;
-  breed: (sireId: string, damId: string) => void;
+  breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => void;
   advanceDay: () => void;
 };
 
@@ -76,20 +71,74 @@ function initialState(): GameState {
   };
 }
 
+// Custom storage adapter for Zustand persist using OPFS
+const opfsStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    const state = await loadGameState();
+    return state ? JSON.stringify(state) : null;
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    // Zustand persist passes a JSON string (when using createJSONStorage)
+    // We need to parse it to get the state object, then save it
+    try {
+      const state = JSON.parse(value) as GameState;
+      await saveGameState(state);
+    } catch (error) {
+      console.error('Failed to parse state in setItem:', error);
+    }
+  },
+  removeItem: async (name: string): Promise<void> => {
+    // Clear game state - handled by storageAdapter
+    await (await import('@/services/storageAdapter')).clearGameState();
+  },
+};
+
+// Wrap with createJSONStorage for proper serialization
+const jsonStorage = createJSONStorage(() => opfsStorage);
+
+// Flag to track if hydration has completed
+export let hydrationComplete = false;
+
 export const useGame = create<GameState & Actions>()(
   persist(
     (set, get) => ({
-      ...initialState(),
+      // Start with empty state, will be hydrated from storage
+      day: 1,
+      cash: STARTING_CASH,
+      horses: [],
+      market: [],
+      races: [],
+      trainingUsed: {},
+      log: [],
+      pregnancies: [],
+      paceSamples: {},
+      calibratedPars: {},
+      lastCalibrationDay: 0,
 
-      newGame: () => set({ ...initialState() }),
+      newGame: async () => {
+        // Clear OPFS storage when starting a new game
+        await (await import('@/services/storageAdapter')).clearGameState();
+        set({ ...initialState() });
+      },
 
       trainHorse: (horseId, kind) => {
         const s = get();
         const horse = s.horses.find((h) => h.id === horseId);
         if (!horse) return;
         if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
-        const used = s.trainingUsed[horseId] ?? 0;
-        if (used >= TRAINING_SLOTS_PER_DAY) return;
+        // Check if horse has covering sickness - prevent training
+        if (horse.healthStatus === "covering_sickness") {
+          set({
+            log: [
+              { day: s.day, text: `❌ Training blocked: ${horse.name} has covering sickness (dourine). Horse cannot be trained while infected.` },
+              ...s.log,
+            ].slice(0, 50),
+          });
+          return;
+        }
+        const usedToday = s.trainingUsed[horseId] || 0;
+        if (usedToday >= TRAINING_SLOTS_PER_DAY) return;
+        if (horse.energy < 10) return;
         if (kind === "rest") {
           horse.energy = Math.min(100, horse.energy + 30);
         } else {
@@ -109,7 +158,7 @@ export const useGame = create<GameState & Actions>()(
         set({
           horses: [...s.horses],
           cash: s.cash,
-          trainingUsed: { ...s.trainingUsed, [horseId]: used + 1 },
+          trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
         });
       },
 
@@ -174,9 +223,9 @@ export const useGame = create<GameState & Actions>()(
         for (const r of result) {
           const h = s.horses.find((hh) => hh.id === r.horseId);
           if (!h) continue;
-          h.energy = Math.max(0, h.energy - 25);
+          h.energy = Math.max(0, h.energy - 25); // Racing costs 25 energy
           const beyer = beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
-          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: result.length }, ...h.raceHistory].slice(0, getRaceHistoryLimit());
+          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: result.length }, ...h.raceHistory].slice(0, loadRaceHistoryLimit());
           // form change
           if (r.position === 1) h.form = Math.min(10, h.form + 3);
           else if (r.position <= 3) h.form = Math.min(10, h.form + 1);
@@ -184,6 +233,24 @@ export const useGame = create<GameState & Actions>()(
           // payout
           if (r.position <= PRIZE_SPLIT.length) {
             earned += Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
+          }
+          // Update dam's blue hen status if horse wins a stakes race
+          if (r.position === 1 && (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")) {
+            const dam = s.horses.find((hh) => hh.name === h.damName);
+            if (dam && dam.blueHenStatus) {
+              dam.blueHenStatus.stakesWinnersProduced += 1;
+              if (race.graded?.grade === "G1") {
+                dam.blueHenStatus.group1WinnersProduced += 1;
+              }
+              // Recalculate blue hen score
+              const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
+              const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
+              dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
+              // Update blue hen status
+              if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
+                dam.blueHenStatus.isBlueHen = true;
+              }
+            }
           }
         }
         const ownerResults = result.filter((r) => s.horses.some((h) => h.id === r.horseId));
@@ -214,13 +281,26 @@ export const useGame = create<GameState & Actions>()(
         });
       },
 
-      breed: (sireId, damId) => {
+      breed: (sireId, damId, liveFoalGuarantee = false) => {
         const s = get();
         if (sireId === damId) return;
         const sire = s.horses.find((h) => h.id === sireId);
         const dam = s.horses.find((h) => h.id === damId);
         if (!sire || !dam) return;
-        if (s.cash < BREEDING_FEE) return;
+        
+        // Check for covering sickness - prevent breeding if either parent has it
+        if (sire.healthStatus === "covering_sickness" || dam.healthStatus === "covering_sickness") {
+          set({
+            log: [
+              { day: s.day, text: `❌ Breeding blocked: Covering sickness (dourine) detected. This sexually transmitted disease cannot be bred.` },
+              ...s.log,
+            ].slice(0, 50),
+          });
+          return;
+        }
+        
+        const totalFee = BREEDING_FEE + (liveFoalGuarantee ? LIVE_FOAL_GUARANTEE_FEE : 0);
+        if (s.cash < totalFee) return;
         const dueDay = s.day + GESTATION_DAYS;
         const preg: Pregnancy = {
           id: Math.random().toString(36).slice(2, 10),
@@ -229,12 +309,14 @@ export const useGame = create<GameState & Actions>()(
           conceivedDay: s.day,
           dueDay,
           resolved: false,
+          liveFoalGuarantee,
+          reBreedingAttempts: 0,
         };
         set({
-          cash: s.cash - BREEDING_FEE,
+          cash: s.cash - totalFee,
           pregnancies: [preg, ...s.pregnancies],
           log: [
-            { day: s.day, text: `🐴 Mated ${sire.name} × ${dam.name} (foal due day ${dueDay}). Fee $${BREEDING_FEE.toLocaleString()}.` },
+            { day: s.day, text: `🐴 Mated ${sire.name} × ${dam.name} (foal due day ${dueDay}). Fee $${totalFee.toLocaleString()}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.` },
             ...s.log,
           ].slice(0, 50),
         });
@@ -285,28 +367,149 @@ export const useGame = create<GameState & Actions>()(
         const newLogs: { day: number; text: string }[] = [];
         const pregnancies = s.pregnancies.map((p) => ({ ...p }));
         let foals: Horse[] = [];
+        let cashAdjustment = 0;
         for (const p of pregnancies) {
           if (p.resolved) continue;
           if (newDay < p.dueDay) continue;
           const sire = s.horses.find((h) => h.id === p.sireId);
           const dam = s.horses.find((h) => h.id === p.damId);
-          const foal = generateHorse({ tier: "starter", owned: true });
-          foal.age = 0;
-          foal.sireName = p.sireName;
-          foal.damName = p.damName;
-          if (sire && dam) {
-            foal.stats = {
-              speed: Math.round((sire.stats.speed + dam.stats.speed) / 2 + (Math.random() * 10 - 5)),
-              stamina: Math.round((sire.stats.stamina + dam.stats.stamina) / 2 + (Math.random() * 10 - 5)),
-              acceleration: Math.round((sire.stats.acceleration + dam.stats.acceleration) / 2 + (Math.random() * 10 - 5)),
-              consistency: Math.round((sire.stats.consistency + dam.stats.consistency) / 2 + (Math.random() * 10 - 5)),
-            };
-            foal.potential = Math.min(100, Math.round((sire.potential + dam.potential) / 2 + (Math.random() * 8 - 2)));
+          
+          // Check for foal complications (based on live foal guarantee concept)
+          const complicationRoll = Math.random();
+          const hasComplication = complicationRoll < 0.05; // 5% chance of complications
+          const complicationType = hasComplication ? (Math.random() < 0.5 ? "stillborn" : "unable to stand") : null;
+          
+          // Check for covering sickness transmission (if parents were infected during pregnancy)
+          // This is a simplified model - in reality, covering sickness is transmitted during breeding
+          const transmissionRoll = Math.random();
+          const hasTransmission = transmissionRoll < 0.01; // 1% chance if parents were healthy
+          
+          const isLiveFoal = !hasComplication;
+          
+          if (isLiveFoal) {
+            const foal = generateHorse({ tier: "starter", owned: true });
+            foal.age = 0;
+            foal.sireName = p.sireName;
+            foal.damName = p.damName;
+            if (sire && dam) {
+              // Calculate breeding compatibility
+              const compatibility = calculateBreedingCompatibility(sire, dam);
+              
+              // Base stats from parents with random variation
+              const baseVariance = 8;
+              const compatibilityBonus = compatibility.overallScore * 5; // Up to +5 from good compatibility
+              
+              foal.stats = {
+                speed: Math.round((sire.stats.speed + dam.stats.speed) / 2 + (Math.random() * baseVariance - baseVariance/2) + compatibilityBonus),
+                stamina: Math.round((sire.stats.stamina + dam.stats.stamina) / 2 + (Math.random() * baseVariance - baseVariance/2) + compatibilityBonus),
+                acceleration: Math.round((sire.stats.acceleration + dam.stats.acceleration) / 2 + (Math.random() * baseVariance - baseVariance/2) + compatibilityBonus),
+                consistency: Math.round((sire.stats.consistency + dam.stats.consistency) / 2 + (Math.random() * baseVariance - baseVariance/2) + compatibilityBonus),
+              };
+              
+              // Potential influenced by compatibility and parent potential
+              foal.potential = Math.min(100, Math.round((sire.potential + dam.potential) / 2 + (Math.random() * 8 - 2) + compatibilityBonus));
+              
+              // Conformation and temperament influenced by parents
+              const confValues: Record<string, number> = { excellent: 4, good: 3, fair: 2, poor: 1 };
+              const tempValues: Record<string, number> = { excellent: 4, good: 3, fair: 2, poor: 1 };
+              
+              const sireConf = sire.conformation || "fair";
+              const damConf = dam.conformation || "fair";
+              const sireTemp = sire.temperament || "fair";
+              const damTemp = dam.temperament || "fair";
+              
+              const avgConf = (confValues[sireConf] + confValues[damConf]) / 2;
+              const avgTemp = (tempValues[sireTemp] + tempValues[damTemp]) / 2;
+              
+              // Inherit conformation with some randomness
+              const confRoll = avgConf + (Math.random() * 2 - 1);
+              if (confRoll >= 3.5) foal.conformation = "excellent";
+              else if (confRoll >= 2.5) foal.conformation = "good";
+              else if (confRoll >= 1.5) foal.conformation = "fair";
+              else foal.conformation = "poor";
+              
+              // Inherit temperament with some randomness
+              const tempRoll = avgTemp + (Math.random() * 2 - 1);
+              if (tempRoll >= 3.5) foal.temperament = "excellent";
+              else if (tempRoll >= 2.5) foal.temperament = "good";
+              else if (tempRoll >= 1.5) foal.temperament = "fair";
+              else foal.temperament = "poor";
+              
+              // Inherit genetic markers from parents
+              const sireGenetics = sire.geneticMarkers;
+              const damGenetics = dam.geneticMarkers;
+              if (sireGenetics && damGenetics) {
+                foal.geneticMarkers = {
+                  sensoryPerception: inheritGeneticTrait(sireGenetics.sensoryPerception, damGenetics.sensoryPerception),
+                  signalTransduction: inheritGeneticTrait(sireGenetics.signalTransduction, damGenetics.signalTransduction),
+                  immunity: inheritGeneticTrait(sireGenetics.immunity, damGenetics.immunity),
+                  geneticDiversity: ((sireGenetics.geneticDiversity || 0.5) + (damGenetics.geneticDiversity || 0.5)) / 2 + (Math.random() * 0.2 - 0.1),
+                };
+              }
+              
+              // Update dam's blue hen status
+              if (dam.blueHenStatus) {
+                dam.blueHenStatus.foalsProduced = (dam.blueHenStatus.foalsProduced || 0) + 1;
+                
+                // Calculate blue hen score based on production
+                const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
+                const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
+                dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
+                
+                // Blue hen status threshold: 2+ stakes winners or 1+ G1 winner
+                if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
+                  dam.blueHenStatus.isBlueHen = true;
+                }
+                
+                // Track foal ID
+                if (!dam.foalsProduced) dam.foalsProduced = [];
+                dam.foalsProduced.push(foal.id);
+              } else {
+                // Initialize blue hen status for first foal
+                dam.blueHenStatus = {
+                  isBlueHen: false,
+                  stakesWinnersProduced: 1,
+                  group1WinnersProduced: 0,
+                  blueHenScore: 15,
+                  foalsProduced: 1,
+                };
+                dam.foalsProduced = [foal.id];
+              }
+            }
+            p.resolved = true;
+            p.foalId = foal.id;
+            foals.push(foal);
+            
+            // Set health status if transmission occurred
+            if (hasTransmission) {
+              foal.healthStatus = "covering_sickness";
+              foal.healthStatusDay = newDay;
+              newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). ⚠️ Covering sickness detected.` });
+            } else {
+              newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
+            }
+          } else {
+            // Foal had complications - check for live foal guarantee
+            if (p.liveFoalGuarantee && (p.reBreedingAttempts || 0) < 3) {
+              // Trigger re-breeding (same breeding season) - refund breeding fee
+              const refundAmount = BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE;
+              cashAdjustment += refundAmount;
+              p.resolved = false;
+              p.dueDay = newDay + GESTATION_DAYS;
+              p.reBreedingAttempts = (p.reBreedingAttempts || 0) + 1;
+              newLogs.push({ 
+                day: newDay, 
+                text: `💔 Foal ${complicationType} - Live Foal Guarantee triggered. Refunded $${refundAmount.toLocaleString()}. Re-breeding ${p.damName} to ${p.sireName}. Attempt ${p.reBreedingAttempts}/3. New due day ${p.dueDay}.` 
+              });
+            } else {
+              // No guarantee or attempts exhausted
+              p.resolved = true;
+              newLogs.push({ 
+                day: newDay, 
+                text: `💔 Foal ${complicationType}${p.liveFoalGuarantee ? ". Live Foal Guarantee attempts exhausted." : "."}` 
+              });
+            }
           }
-          p.resolved = true;
-          p.foalId = foal.id;
-          foals.push(foal);
-          newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
         }
 
         // Seasonal Beyer par recalibration from collected pace samples.
@@ -326,7 +529,7 @@ export const useGame = create<GameState & Actions>()(
 
         set({
           day: newDay,
-          cash: s.cash - upkeep,
+          cash: s.cash - upkeep + cashAdjustment,
           horses: [...horses, ...foals],
           market,
           races: pruned,
@@ -340,15 +543,47 @@ export const useGame = create<GameState & Actions>()(
     }),
     {
       name: "horse-racing-game-v1",
+      storage: jsonStorage,
+      skipHydration: true,
       onRehydrateStorage: () => (state) => {
+        hydrationComplete = true;
         if (state?.calibratedPars) setCalibratedPars(state.calibratedPars);
       },
     }
   )
 );
 
+// Function to manually rehydrate the store (call on client mount)
+export async function rehydrateStore() {
+  const state = await loadGameState();
+  if (state) {
+    // Use the persist middleware's built-in rehydrate
+    // This will call getItem from our custom storage
+    await useGame.persist.rehydrate();
+    hydrationComplete = true;
+    if (state.calibratedPars) setCalibratedPars(state.calibratedPars);
+  } else {
+    // No saved state, initialize with default
+    useGame.setState(initialState());
+    hydrationComplete = true;
+  }
+}
+
 function ord(n: number) {
   const s = ["th", "st", "nd", "rd"];
   const v = n % 100;
   return s[(v - 20) % 10] || s[v] || s[0];
+}
+
+function inheritGeneticTrait(sireTrait: string | undefined, damTrait: string | undefined): "excellent" | "good" | "fair" | "poor" {
+  const traitValues: Record<string, number> = { excellent: 4, good: 3, fair: 2, poor: 1 };
+  const sireValue = traitValues[sireTrait || "fair"] || 2;
+  const damValue = traitValues[damTrait || "fair"] || 2;
+  const avgValue = (sireValue + damValue) / 2;
+  const roll = avgValue + (Math.random() * 2 - 1);
+  
+  if (roll >= 3.5) return "excellent";
+  else if (roll >= 2.5) return "good";
+  else if (roll >= 1.5) return "fair";
+  else return "poor";
 }

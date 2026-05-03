@@ -16,6 +16,7 @@ import { Route as SouthAmericanCalendarRouteImport } from './routes/south-americ
 import { Route as ScandinavianCalendarRouteImport } from './routes/scandinavian-calendar'
 import { Route as RecapRouteImport } from './routes/recap'
 import { Route as RacesRouteImport } from './routes/races'
+import { Route as RaceBrowserRouteImport } from './routes/race-browser'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as GermanCalendarRouteImport } from './routes/german-calendar'
 import { Route as CanadianCalendarRouteImport } from './routes/canadian-calendar'
@@ -58,6 +59,11 @@ const RecapRoute = RecapRouteImport.update({
 const RacesRoute = RacesRouteImport.update({
   id: '/races',
   path: '/races',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RaceBrowserRoute = RaceBrowserRouteImport.update({
+  id: '/race-browser',
+  path: '/race-browser',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketRoute = MarketRouteImport.update({
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/canadian-calendar': typeof CanadianCalendarRoute
   '/german-calendar': typeof GermanCalendarRoute
   '/market': typeof MarketRoute
+  '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/canadian-calendar': typeof CanadianCalendarRoute
   '/german-calendar': typeof GermanCalendarRoute
   '/market': typeof MarketRoute
+  '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/canadian-calendar': typeof CanadianCalendarRoute
   '/german-calendar': typeof GermanCalendarRoute
   '/market': typeof MarketRoute
+  '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/canadian-calendar'
     | '/german-calendar'
     | '/market'
+    | '/race-browser'
     | '/races'
     | '/recap'
     | '/scandinavian-calendar'
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/canadian-calendar'
     | '/german-calendar'
     | '/market'
+    | '/race-browser'
     | '/races'
     | '/recap'
     | '/scandinavian-calendar'
@@ -196,6 +207,7 @@ export interface FileRouteTypes {
     | '/canadian-calendar'
     | '/german-calendar'
     | '/market'
+    | '/race-browser'
     | '/races'
     | '/recap'
     | '/scandinavian-calendar'
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   CanadianCalendarRoute: typeof CanadianCalendarRoute
   GermanCalendarRoute: typeof GermanCalendarRoute
   MarketRoute: typeof MarketRoute
+  RaceBrowserRoute: typeof RaceBrowserRoute
   RacesRoute: typeof RacesRoute
   RecapRoute: typeof RecapRoute
   ScandinavianCalendarRoute: typeof ScandinavianCalendarRoute
@@ -273,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/races'
       fullPath: '/races'
       preLoaderRoute: typeof RacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/race-browser': {
+      id: '/race-browser'
+      path: '/race-browser'
+      fullPath: '/race-browser'
+      preLoaderRoute: typeof RaceBrowserRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/market': {
@@ -352,6 +372,7 @@ const rootRouteChildren: RootRouteChildren = {
   CanadianCalendarRoute: CanadianCalendarRoute,
   GermanCalendarRoute: GermanCalendarRoute,
   MarketRoute: MarketRoute,
+  RaceBrowserRoute: RaceBrowserRoute,
   RacesRoute: RacesRoute,
   RecapRoute: RecapRoute,
   ScandinavianCalendarRoute: ScandinavianCalendarRoute,

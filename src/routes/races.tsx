@@ -13,9 +13,10 @@ import { RaceDetailPanel } from "@/components/RaceDetailPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getGradeColorClass } from "@/core/race/grading";
 import { isGenderEligible } from "@/core/horse/gender";
+import type { Race, Horse } from "@/game/types";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateClassBonus } from "@/core/common/classBonus";
-import { loadRaceFilters, saveRaceFilters } from "@/services/localStorageService";
+import { loadRaceFilters, saveRaceFilters } from "@/services/storageAdapter";
 import { getFilteredRaces, type RaceFilters } from "@/services/raceFilterService";
 
 type GradeFilter = "all" | "G1" | "G2" | "G3";
@@ -48,23 +49,23 @@ export const Route = createFileRoute("/races")({
 
 
 function CalendarView({ upcoming, day, horses, cash, enterRace, withdrawRace, pregnantIds, navigate }: {
-  upcoming: any[];
+  upcoming: Race[];
   day: number;
-  horses: any[];
+  horses: Horse[];
   cash: number;
   enterRace: (raceId: string, horseId: string) => void;
   withdrawRace: (raceId: string, horseId: string) => void;
   pregnantIds: Set<string>;
-  navigate: any;
+  navigate: ReturnType<typeof useNavigate>;
 }) {
   // Group races by day
-  const racesByDay = upcoming.reduce((acc: Record<number, any[]>, race: any) => {
+  const racesByDay = upcoming.reduce((acc: Record<number, Race[]>, race: Race) => {
     if (!acc[race.day]) {
       acc[race.day] = [];
     }
     acc[race.day].push(race);
     return acc;
-  }, {} as Record<number, any[]>);
+  }, {} as Record<number, Race[]>);
 
   const sortedDays = Object.keys(racesByDay).map(Number).sort((a, b) => a - b);
 
@@ -84,9 +85,9 @@ function CalendarView({ upcoming, day, horses, cash, enterRace, withdrawRace, pr
             <div className="flex-1 h-px bg-border" />
           </div>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {racesByDay[raceDay].map((race: any) => {
-              const ownedEntry = race.entries.find((e: any) => e.owned);
-              const eligible = horses.filter((horse: any) =>
+            {racesByDay[raceDay].map((race: Race) => {
+              const ownedEntry = race.entries.find((e: { owned: boolean }) => e.owned);
+              const eligible = horses.filter((horse: Horse) =>
                 isHorseEligibleForRace(horse, race, pregnantIds)
               );
               const canRun = race.day === day && ownedEntry;
@@ -386,6 +387,9 @@ function RacesPage() {
             <Link to="/scandinavian-calendar">
               <Button size="sm" variant="outline">Scandinavian</Button>
             </Link>
+            <Link to="/race-browser">
+              <Button size="sm" variant="default">Race Browser</Button>
+            </Link>
           </div>
         </CardContent>
       </Card>
@@ -398,7 +402,7 @@ function RacesPage() {
           {upcoming.map((race) => {
           const ownedEntry = race.entries.find((e) => e.owned);
           const r = race.restrictions;
-          const eligible = horses.filter((horse: any) =>
+          const eligible = horses.filter((horse: Horse) =>
             isHorseEligibleForRace(horse, race, pregnantIds)
           );
           const canRun = race.day === day && ownedEntry;

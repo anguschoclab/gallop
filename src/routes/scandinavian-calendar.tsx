@@ -41,17 +41,6 @@ function ScandinavianCalendarPage() {
     return acc;
   }, {} as Record<string, typeof filteredRaces>);
 
-  const gradeColor = (grade: Grade) => {
-    switch (grade) {
-      case "G1":
-        return "bg-yellow-500/20 text-yellow-700 border-yellow-500/40";
-      case "G2":
-        return "bg-slate-400/20 text-slate-600 border-slate-400/40";
-      case "G3":
-        return "bg-amber-700/20 text-amber-800 border-amber-700/40";
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div>
@@ -185,53 +174,4 @@ function ScandinavianCalendarPage() {
       )}
     </div>
   );
-}
-
-function getMonthName(dayOfYear: number): string {
-  const cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
-  for (let i = 0; i < cum.length; i++) {
-    if (dayOfYear < cum[i + 1]) {
-      const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-      return months[i];
-    }
-  }
-  return "December";
-}
-
-function formatDate(dayOfYear: number): string {
-  const cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
-  for (let i = 0; i < cum.length; i++) {
-    if (dayOfYear < cum[i + 1]) {
-      const day = dayOfYear - cum[i] + 1;
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      return `${months[i]} ${day}`;
-    }
-  }
-  return "Dec 31";
 }

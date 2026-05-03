@@ -1,5 +1,7 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
+import { useEffect, useState } from "react";
+import { rehydrateStore, hydrationComplete } from "@/game/store";
 
 import appCss from "../styles.css?url";
 
@@ -66,5 +68,26 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    // Rehydrate store on client mount
+    rehydrateStore().then(() => {
+      setIsHydrated(true);
+    });
+  }, []);
+
+  // Show loading state while hydrating
+  if (!isHydrated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return <AppShell />;
 }

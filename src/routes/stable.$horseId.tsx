@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { HorseStats, SilkBadge } from "@/components/HorseBits";
+import { HorseStatsRadar } from "@/components/HorseStatsRadar";
 import { ArrowLeft } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
 import { BeyerChart } from "@/components/BeyerChart";
+import { GradedStatsChart } from "@/components/GradedStatsChart";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getGradeColorClass } from "@/core/race/grading";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/localStorageService";
+import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
+import { TRAINING_COST } from "@/game/store";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
@@ -63,6 +66,7 @@ function HorseDetail() {
         <Card>
           <CardHeader><CardTitle>Stats</CardTitle></CardHeader>
           <CardContent className="space-y-4">
+            <HorseStatsRadar horse={horse} />
             <HorseStats horse={horse} />
             <div className="flex flex-wrap gap-2 pt-2">
               <Badge variant="secondary">Energy ⚡ {horse.energy}/100</Badge>
@@ -84,7 +88,7 @@ function HorseDetail() {
             <p className="text-xs text-muted-foreground">
               {isPregnant
                 ? "Resting in the broodmare barn — no training during pregnancy."
-                : `${slotsLeft} slot${slotsLeft !== 1 ? "s" : ""} left today · $75/session`}
+                : `${slotsLeft} slot${slotsLeft !== 1 ? "s" : ""} left today · $${TRAINING_COST}/session`}
             </p>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -92,7 +96,7 @@ function HorseDetail() {
               <Button
                 key={k}
                 onClick={() => trainHorse(horse.id, k)}
-                disabled={isPregnant || slotsLeft <= 0 || cash < 75 || horse.energy < 15 || horse.stats[k] >= horse.potential}
+                disabled={isPregnant || slotsLeft <= 0 || cash < TRAINING_COST || horse.energy < 15 || horse.stats[k] >= horse.potential}
                 className="w-full justify-between"
                 variant="outline"
               >
@@ -202,6 +206,16 @@ function GradedHistoryPanel({ history }: { history: { raceName: string; position
         <p className="text-xs text-muted-foreground">G1/G2/G3 finishes with Beyer figures earned</p>
       </CardHeader>
       <CardContent className="space-y-4">
+        {graded.length > 0 && (
+          <GradedStatsChart 
+            data={[
+              { grade: "G1", runs: byGrade.G1.length, wins: wins(byGrade.G1), places: places(byGrade.G1) },
+              { grade: "G2", runs: byGrade.G2.length, wins: wins(byGrade.G2), places: places(byGrade.G2) },
+              { grade: "G3", runs: byGrade.G3.length, wins: wins(byGrade.G3), places: places(byGrade.G3) },
+            ]}
+          />
+        )}
+        
         <div className="grid grid-cols-3 gap-2">
           {(["G1", "G2", "G3"] as const).map((g) => (
             <div key={g} className="rounded-md border p-3">

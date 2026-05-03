@@ -1,4 +1,4 @@
-import type { Horse, Race, RaceClass, Hemisphere } from "./types";
+import type { Horse, Race, RaceClass, Hemisphere, Conformation, Temperament, GeneticMarkers, HealthStatus } from "./types";
 import { randomHorseName, randomSilk, randomRaceName } from "./names";
 import type { GradedRace } from "./gradedRaces";
 
@@ -6,6 +6,48 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 
 function rand(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randConformation(): Conformation {
+  const r = Math.random();
+  if (r < 0.15) return "excellent";
+  if (r < 0.45) return "good";
+  if (r < 0.75) return "fair";
+  return "poor";
+}
+
+function randTemperament(): Temperament {
+  const r = Math.random();
+  if (r < 0.15) return "excellent";
+  if (r < 0.45) return "good";
+  if (r < 0.75) return "fair";
+  return "poor";
+}
+
+function randGeneticQuality(): "excellent" | "good" | "fair" | "poor" {
+  const r = Math.random();
+  if (r < 0.15) return "excellent";
+  if (r < 0.45) return "good";
+  if (r < 0.75) return "fair";
+  return "poor";
+}
+
+function generateGeneticMarkers(): GeneticMarkers {
+  // Based on horse genome research - genes governing sensory perception, signal transduction, and immunity
+  return {
+    sensoryPerception: randGeneticQuality(),
+    signalTransduction: randGeneticQuality(),
+    immunity: randGeneticQuality(),
+    geneticDiversity: Math.random() * 0.5 + 0.5, // Random diversity score 0.5-1.0
+  };
+}
+
+function generateHealthStatus(): HealthStatus {
+  // Most horses are healthy, small chance of illness
+  const r = Math.random();
+  if (r < 0.02) return "covering_sickness"; // 2% chance
+  if (r < 0.05) return "other_illness"; // 3% chance
+  return "healthy";
 }
 
 export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere } = {}): Horse {
@@ -49,6 +91,10 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     owned: opts.owned ?? false,
     sireName: randomHorseName(),
     damName: randomHorseName(),
+    conformation: randConformation(),
+    temperament: randTemperament(),
+    geneticMarkers: generateGeneticMarkers(),
+    healthStatus: "healthy",
   };
 }
 

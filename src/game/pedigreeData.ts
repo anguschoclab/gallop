@@ -10,13 +10,70 @@ export interface PedigreeHorse {
   era?: "foundation" | "19th-century" | "early-20th" | "mid-20th" | "modern";
   notes?: string;
   dosageGroups?: [AptitudinalGroup] | [AptitudinalGroup, AptitudinalGroup]; // Chef-de-race classification
+  bruceLoweFamily?: number; // Bruce Lowe family number (1-??) for tail-female line tracing
+  isFoundationSire?: boolean; // Whether this is one of the foundation sires
+  isFoundationMare?: boolean; // Whether this is one of the foundation mares
+  breed?: string; // Breed of the horse (for genetic diversity calculations)
 }
 
 // Foundation sires - the three Arabian stallions that founded the Thoroughbred breed
 const foundationSires: PedigreeHorse[] = [
-  { name: "Byerley Turk", era: "foundation", notes: "One of three foundation sires of the Thoroughbred" },
-  { name: "Darley Arabian", era: "foundation", notes: "One of three foundation sires of the Thoroughbred" },
-  { name: "Godolphin Arabian", era: "foundation", notes: "One of three foundation sires of the Thoroughbred" },
+  { name: "Byerley Turk", era: "foundation", notes: "One of three foundation sires of the Thoroughbred", isFoundationSire: true },
+  { name: "Darley Arabian", era: "foundation", notes: "One of three foundation sires of the Thoroughbred", isFoundationSire: true },
+  { name: "Godolphin Arabian", era: "foundation", notes: "One of three foundation sires of the Thoroughbred", isFoundationSire: true },
+];
+
+// Minor foundation sires - approximately 24-25 additional sires that contributed to the Thoroughbred breed
+const minorFoundationSires: PedigreeHorse[] = [
+  { name: "Curwen Bay Barb", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Lonsdale Arabian", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "D'Arcy's White Turk", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Leeds Arabian", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Fairfax Moroccan Barb", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Helmsley Turk", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Brownlow Turk", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Pulleine's Arabian", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Akaster Turk", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Place's White Turk", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Lister Turk", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Bolton Turk", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Venturus Barb", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Little Ease Curwen Bay Barb", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Royal Mare", era: "foundation", notes: "Foundation mare, dam of many influential lines", isFoundationMare: true, bruceLoweFamily: 1 },
+  { name: "Old Bald Peg", era: "foundation", notes: "Foundation mare, foaled around 1635, most modern Thoroughbreds trace to her", isFoundationMare: true, bruceLoweFamily: 6 },
+  { name: "Fairfax Barb", era: "foundation", notes: "Minor foundation sire", isFoundationSire: true },
+  { name: "Spanker", era: "foundation", notes: "Influential early sire", isFoundationSire: true },
+  { name: "Snake", era: "foundation", notes: "Influential early sire", isFoundationSire: true },
+  { name: "Greyhound", era: "foundation", notes: "Influential early sire", isFoundationSire: true },
+];
+
+// Foundation mares - approximately 74 foundation mares that form the tail-female lines
+const foundationMares: PedigreeHorse[] = [
+  { name: "Royal Mare", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 1", isFoundationMare: true, bruceLoweFamily: 1 },
+  { name: "Old Bald Peg", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 6, foaled ~1635", isFoundationMare: true, bruceLoweFamily: 6 },
+  { name: "Burton's Mare", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 2", isFoundationMare: true, bruceLoweFamily: 2 },
+  { name: "Byerley's Mare", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 3", isFoundationMare: true, bruceLoweFamily: 3 },
+  { name: "Champagne Mare", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 4", isFoundationMare: true, bruceLoweFamily: 4 },
+  { name: "Hutton's Grey Barb", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 5", isFoundationMare: true, bruceLoweFamily: 5 },
+  { name: "Darcy's Yellow Turk", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 7", isFoundationMare: true, bruceLoweFamily: 7 },
+  { name: "Layton's Barb Mare", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 8", isFoundationMare: true, bruceLoweFamily: 8 },
+  { name: "Fairfax's Morocco Barb", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 9", isFoundationMare: true, bruceLoweFamily: 9 },
+  { name: "Tregonwell's Barb", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 10", isFoundationMare: true, bruceLoweFamily: 10 },
+  { name: "Darcy's Diamond Mare", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 11", isFoundationMare: true, bruceLoweFamily: 11 },
+  { name: "Helmsley Turk", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 12", isFoundationMare: true, bruceLoweFamily: 12 },
+  { name: "Curwen's Bay Barb", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 13", isFoundationMare: true, bruceLoweFamily: 13 },
+  { name: "Leedes Arabian", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 14", isFoundationMare: true, bruceLoweFamily: 14 },
+  { name: "Grey Wharton", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 15", isFoundationMare: true, bruceLoweFamily: 15 },
+  { name: "Chesnut Arabian", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 16", isFoundationMare: true, bruceLoweFamily: 16 },
+  { name: "Alcock's Arabian", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 17", isFoundationMare: true, bruceLoweFamily: 17 },
+  { name: "Pulleine's Turk", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 18", isFoundationMare: true, bruceLoweFamily: 18 },
+  { name: "Lonsdale Arabian", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 19", isFoundationMare: true, bruceLoweFamily: 19 },
+  { name: "Place's White Turk", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 20", isFoundationMare: true, bruceLoweFamily: 20 },
+  { name: "D'Arcy's White Turk", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 21", isFoundationMare: true, bruceLoweFamily: 21 },
+  { name: "Lister Turk", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 22", isFoundationMare: true, bruceLoweFamily: 22 },
+  { name: "Bolton Turk", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 23", isFoundationMare: true, bruceLoweFamily: 23 },
+  { name: "Venturus Barb", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 24", isFoundationMare: true, bruceLoweFamily: 24 },
+  { name: "Little Ease Curwen Bay Barb", era: "foundation", notes: "Foundation mare, Bruce Lowe Family 25", isFoundationMare: true, bruceLoweFamily: 25 },
 ];
 
 // 19th century leading sires (from Wikipedia Leading Sire in North America)
@@ -108,6 +165,8 @@ const famousDams: PedigreeHorse[] = [
 // Combine all horses into a single dataset
 export const pedigreeDataset: PedigreeHorse[] = [
   ...foundationSires,
+  ...minorFoundationSires,
+  ...foundationMares,
   ...nineteenthCenturySires,
   ...early20thSires,
   ...mid20thSires,

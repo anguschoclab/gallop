@@ -913,14 +913,6 @@ export const GRADED_RACES: GradedRace[] = [
   { key: "de-herbst-stutenpreis", name: "Herbst Stutenpreis", track: "Hanover", grade: "G3", distance: 2200, surface: "Turf", purse: 150000, dayOfYear: 288, restrictions: {minAge: 3, gender: "fillies-and-mares"}, note: "Fillies & Mares", },
   { key: "de-herzog-von-ratibor-rennen", name: "Herzog von Ratibor-Rennen", track: "Krefeld", grade: "G3", distance: 1700, surface: "Turf", purse: 150000, dayOfYear: 319, restrictions: { minAge: 2, maxAge: 2 }, },
   { key: "de-niederrhein-pokal", name: "Niederrhein-Pokal", track: "Krefeld", grade: "G3", distance: 2000, surface: "Turf", purse: 150000, dayOfYear: 319, restrictions: { minAge: 3 }, },
-  // Italy — Group 2
-  { key: "it-derby-italiano", name: "Derby Italiano", track: "Capannelle", grade: "G2", distance: 2200, surface: "Turf", purse: 300000, dayOfYear: 135, restrictions: {minAge: 3, maxAge: 3, gender: "colts-and-fillies"}, note: "Colts & Fillies", },
-  { key: "it-oaks-ditalia", name: "Oaks d'Italia", track: "San Siro", grade: "G2", distance: 2200, surface: "Turf", purse: 300000, dayOfYear: 150, restrictions: {minAge: 3, maxAge: 3, gender: "fillies"}, note: "Fillies", },
-  { key: "it-premio-vittorio-di-capua", name: "Premio Vittorio di Capua", track: "San Siro", grade: "G2", distance: 1600, surface: "Turf", purse: 300000, dayOfYear: 274, restrictions: { minAge: 3 }, },
-  { key: "it-gran-premio-del-jockey-club", name: "Gran Premio del Jockey Club", track: "San Siro", grade: "G2", distance: 2400, surface: "Turf", purse: 300000, dayOfYear: 288, restrictions: { minAge: 3 }, },
-  { key: "it-premio-dormello", name: "Premio Dormello", track: "San Siro", grade: "G2", distance: 1600, surface: "Turf", purse: 300000, dayOfYear: 288, restrictions: {minAge: 2, maxAge: 2, gender: "fillies"}, note: "Fillies", },
-  { key: "it-premio-lydia-tesio", name: "Premio Lydia Tesio", track: "Capannelle", grade: "G2", distance: 2000, surface: "Turf", purse: 300000, dayOfYear: 305, restrictions: {minAge: 3, gender: "fillies-and-mares"}, note: "Fillies & Mares", },
-  { key: "it-premio-roma", name: "Premio Roma", track: "Capannelle", grade: "G2", distance: 2000, surface: "Turf", purse: 300000, dayOfYear: 319, restrictions: { minAge: 3 }, },
   // Italy — Group 3
   { key: "it-premio-ambrosiano", name: "Premio Ambrosiano", track: "San Siro", grade: "G3", distance: 2000, surface: "Turf", purse: 150000, dayOfYear: 105, restrictions: { minAge: 4 }, },
   { key: "it-premio-parioli", name: "Premio Parioli", track: "Capannelle", grade: "G3", distance: 1600, surface: "Turf", purse: 150000, dayOfYear: 105, restrictions: {minAge: 3, maxAge: 3, gender: "colts"}, note: "Colts", },
@@ -928,7 +920,6 @@ export const GRADED_RACES: GradedRace[] = [
   { key: "it-premio-presidente-della-repubblica", name: "Premio Presidente della Repubblica", track: "Capannelle", grade: "G3", distance: 1800, surface: "Turf", purse: 150000, dayOfYear: 135, restrictions: { minAge: 4 }, },
   { key: "it-premio-carlo-vittadini", name: "Premio Carlo Vittadini", track: "San Siro", grade: "G3", distance: 1600, surface: "Turf", purse: 150000, dayOfYear: 150, restrictions: { minAge: 3 }, },
   { key: "it-premio-del-giubileo", name: "Premio del Giubileo", track: "San Siro", grade: "G3", distance: 2000, surface: "Turf", purse: 150000, dayOfYear: 181, restrictions: {minAge: 4, gender: "fillies-and-mares"}, note: "Fillies & Mares", },
-  { key: "it-gran-premio-di-milano", name: "Gran Premio di Milano", track: "San Siro", grade: "G3", distance: 2000, surface: "Turf", purse: 150000, dayOfYear: 181, restrictions: { minAge: 3 }, },
   { key: "it-premio-verziere", name: "Premio Verziere", track: "San Siro", grade: "G3", distance: 2000, surface: "Turf", purse: 150000, dayOfYear: 288, restrictions: {minAge: 3, gender: "fillies-and-mares"}, note: "Fillies & Mares", },
   { key: "it-gran-criterium", name: "Gran Criterium", track: "San Siro", grade: "G3", distance: 1500, surface: "Turf", purse: 150000, dayOfYear: 288, restrictions: {minAge: 2, maxAge: 2, gender: "colts-and-fillies"}, note: "Colts & Fillies", },
   { key: "it-premio-del-piazzale", name: "Premio del Piazzale", track: "San Siro", grade: "G3", distance: 1600, surface: "Turf", purse: 150000, dayOfYear: 288, restrictions: { minAge: 3 }, },

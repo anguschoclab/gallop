@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { GRADED_RACES, type Grade } from "@/game/gradedRaces";
+import { getGradeColorClass } from "@/core/race/grading";
+import { formatDate as coreFormatDate } from "@/core/calendar/dateFormatting";
 
 const TRIPLE_CROWN_KEYS = new Set([
   "ca-kings-plate",
@@ -45,17 +47,6 @@ function TrackSchedulePage() {
     }
     return acc;
   }, {} as Record<string, typeof filteredRaces>);
-
-  const gradeColor = (grade: Grade) => {
-    switch (grade) {
-      case "G1":
-        return "bg-yellow-500/20 text-yellow-700 border-yellow-500/40";
-      case "G2":
-        return "bg-slate-400/20 text-slate-600 border-slate-400/40";
-      case "G3":
-        return "bg-amber-700/20 text-amber-800 border-amber-700/40";
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -155,7 +146,7 @@ function TrackSchedulePage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <h3 className="font-semibold">{race.name}</h3>
-                      <Badge variant="outline" className={gradeColor(race.grade)}>
+                      <Badge variant="outline" className={getGradeColorClass(race.grade)}>
                         {race.grade}
                       </Badge>
                       {isTripleCrown && (
@@ -180,13 +171,13 @@ function TrackSchedulePage() {
                             : `${race.restrictions.minAge}+ YO`}
                         </span>
                       )}
-                      {race.restrictions?.sex && (
-                        <span>{race.restrictions.sex === "filly" ? "Fillies" : "Colts"} only</span>
+                      {race.restrictions?.gender && (
+                        <span>{race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only</span>
                       )}
                     </div>
                   </div>
                   <div className="text-right text-sm">
-                    <div className="font-medium">{formatDate(race.dayOfYear)}</div>
+                    <div className="font-medium">{coreFormatDate(race.dayOfYear)}</div>
                   </div>
                 </div>
               );
@@ -204,29 +195,4 @@ function TrackSchedulePage() {
       )}
     </div>
   );
-}
-
-function formatDate(dayOfYear: number): string {
-  const cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
-  for (let i = 0; i < cum.length; i++) {
-    if (dayOfYear < cum[i + 1]) {
-      const day = dayOfYear - cum[i] + 1;
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      return `${months[i]} ${day}`;
-    }
-  }
-  return "Dec 31";
 }

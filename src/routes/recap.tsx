@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BeyerBadge } from "@/components/BeyerBadge";
 import { calculateBeyerForResult } from "@/game/beyer";
+import { getGradeColorClass } from "@/core/race/grading";
 import { Trophy, Medal, Award } from "lucide-react";
 
 export const Route = createFileRoute("/recap")({
@@ -44,12 +45,7 @@ function RecapPage() {
       ) : (
         <div className="grid gap-4">
           {recentGradedRaces.map((race) => {
-            const gradeColor =
-              race.graded!.grade === "G1"
-                ? "bg-yellow-500/20 text-yellow-700 border-yellow-500/40"
-                : race.graded!.grade === "G2"
-                ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
-                : "bg-amber-700/20 text-amber-800 border-amber-700/40";
+            const gradeColor = getGradeColorClass(race.graded!.grade);
 
             // Get top 3 finishers with their Beyer figures
             const topFinishers = race.result!
@@ -57,7 +53,8 @@ function RecapPage() {
               .map((result) => {
                 const horse = horses.find((h) => h.id === result.horseId);
                 if (!horse) return null;
-                const beyer = calculateBeyerForResult(horse, race, result);
+                const classBonus = race.graded?.grade ? (race.graded.grade === "G1" ? 8 : race.graded.grade === "G2" ? 5 : 3) : 0;
+                const beyer = calculateBeyerForResult(race.distance, result.time, classBonus);
                 return { horse, result, beyer };
               })
               .filter((f): f is NonNullable<typeof f> => f !== null);
