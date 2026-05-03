@@ -6,6 +6,21 @@ import { buildRunner, stepRunner, type Runner } from "@/game/raceSim";
 import { generateHorse } from "@/game/horseGen";
 import type { Horse } from "@/game/types";
 import { SilkBadge } from "@/components/HorseBits";
+import { beyerFigure } from "@/game/beyer";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+// Project a Beyer figure mid-race from current pace.
+// If finished: use real finish time. Otherwise: extrapolate remaining distance
+// at current velocity (with a small tail-fade penalty if not yet at finish).
+function projectedBeyer(r: Runner, distance: number, simTime: number, classBonus: number): number | null {
+  if (r.finishTime !== null) {
+    return beyerFigure({ distance, finishTime: r.finishTime, classBonus });
+  }
+  if (r.position <= 0 || r.velocity <= 0.5) return null;
+  const remaining = distance - r.position;
+  const projFinish = simTime + remaining / r.velocity;
+  return beyerFigure({ distance, finishTime: projFinish, classBonus });
+}
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -56,25 +71,34 @@ function LiveRace() {
   const [tick, setTick] = useState(0);
   const [speed, setSpeed] = useState(1);
   const [finished, setFinished] = useState(false);
-  const startRef = useRef<number | null>(null);
+  const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
+  const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
+  const [minBeyer, setMinBeyer] = useState(0);
+  const simTimeRef = useRef(0);
   const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
   const speedRef = useRef(speed);
   speedRef.current = speed;
 
+  const classBonus =
+    race.graded?.grade === "G1" ? 8 :
+    race.graded?.grade === "G2" ? 5 :
+    race.graded?.grade === "G3" ? 3 :
+    race.raceClass === "Group" ? 4 :
+    race.raceClass === "Stakes" ? 2 : 0;
+
   useEffect(() => {
     let raf = 0;
     let last = performance.now();
-    let simTime = 0;
 
     const loop = (now: number) => {
       const real = (now - last) / 1000;
       last = now;
       const dt = Math.min(0.1, real * speedRef.current);
-      simTime += dt;
+      simTimeRef.current += dt;
       let stillRunning = false;
       for (const r of runners) {
         if (r.finishTime === null) {
-          stepRunner(r, dt, simTime, race.distance);
+          stepRunner(r, dt, simTimeRef.current, race.distance);
           if (r.finishTime !== null) {
             finishOrderRef.current.push({
               horseId: r.horseId,
@@ -91,8 +115,6 @@ function LiveRace() {
         raf = requestAnimationFrame(loop);
       } else {
         setFinished(true);
-        // commit results to store (only owned horses needed for store update,
-        // but include all for completeness)
         const ownedResults = finishOrderRef.current.filter((r) =>
           horses.some((h) => h.id === r.horseId)
         );
@@ -104,9 +126,29 @@ function LiveRace() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sorted = [...runners]
-    .map((r, i) => ({ r, lane: i }))
-    .sort((a, b) => b.r.position - a.r.position);
+  // Build live rows with projected Beyer, then filter + sort.
+  void tick;
+  const rows = runners.map((r) => ({
+    r,
+    beyer: projectedBeyer(r, race.distance, simTimeRef.current, classBonus),
+  }));
+
+  const positionRank = new Map(
+    [...rows].sort((a, b) => b.r.position - a.r.position).map((row, i) => [row.r.horseId, i + 1])
+  );
+
+  const filtered = rows.filter(({ r, beyer }) => {
+    if (filter === "owned" && !r.owned) return false;
+    if (filter === "top5" && (positionRank.get(r.horseId) ?? 99) > 5) return false;
+    if (minBeyer > 0 && (beyer ?? 0) < minBeyer) return false;
+    return true;
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === "beyer") return (b.beyer ?? -1) - (a.beyer ?? -1);
+    if (sortBy === "velocity") return b.r.velocity - a.r.velocity;
+    return b.r.position - a.r.position;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-900 to-emerald-950 text-white">
@@ -129,26 +171,65 @@ function LiveRace() {
         </div>
       </div>
 
-      <div className="p-4 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4">
+      <div className="p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
         <div>
           <Track runners={runners} distance={race.distance} tick={tick} />
         </div>
-        <div className="bg-black/30 rounded-lg p-3">
-          <p className="text-xs uppercase tracking-wide text-white/60 mb-2">Live order</p>
+        <div className="bg-black/30 rounded-lg p-3 space-y-3">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-white/60 mb-2">Live order</p>
+            <div className="grid grid-cols-2 gap-2">
+              <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                <SelectTrigger className="h-8 text-xs bg-white/10 border-white/20 text-white"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="position">Position</SelectItem>
+                  <SelectItem value="beyer">Proj. Beyer</SelectItem>
+                  <SelectItem value="velocity">Velocity</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
+                <SelectTrigger className="h-8 text-xs bg-white/10 border-white/20 text-white"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All runners</SelectItem>
+                  <SelectItem value="owned">My horses</SelectItem>
+                  <SelectItem value="top5">Top 5</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="mt-2">
+              <label className="text-[10px] uppercase tracking-wide text-white/60 flex justify-between">
+                <span>Min Beyer</span><span className="tabular-nums">{minBeyer}</span>
+              </label>
+              <input
+                type="range" min={0} max={120} step={5}
+                value={minBeyer}
+                onChange={(e) => setMinBeyer(Number(e.target.value))}
+                className="w-full accent-yellow-400"
+              />
+            </div>
+          </div>
           <div className="space-y-1">
-            {sorted.map(({ r }, i) => (
+            {sorted.map(({ r, beyer }) => (
               <div key={r.horseId} className="flex items-center gap-2 text-sm py-1">
-                <span className="w-5 text-white/60 tabular-nums">{i + 1}</span>
+                <span className="w-5 text-white/60 tabular-nums">{positionRank.get(r.horseId)}</span>
                 <div
                   className="h-5 w-5 rounded-full border border-white/40"
                   style={{ backgroundColor: r.silk }}
                 />
-                <span className={r.owned ? "font-bold" : ""}>{r.name}</span>
+                <span className={`flex-1 truncate ${r.owned ? "font-bold" : ""}`}>{r.name}</span>
+                {beyer !== null && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-300 tabular-nums">
+                    {beyer}
+                  </span>
+                )}
                 {r.finishTime !== null && (
-                  <span className="ml-auto text-xs text-white/60 tabular-nums">{r.finishTime.toFixed(1)}s</span>
+                  <span className="text-xs text-white/60 tabular-nums">{r.finishTime.toFixed(1)}s</span>
                 )}
               </div>
             ))}
+            {sorted.length === 0 && (
+              <p className="text-xs text-white/50 italic py-2">No runners match the current filters.</p>
+            )}
           </div>
         </div>
       </div>
