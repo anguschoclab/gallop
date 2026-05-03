@@ -45,6 +45,7 @@ function RacesPage() {
           const eligible = horses.filter((h) =>
             (!race.minStat || overall(h) >= race.minStat) &&
             !race.entries.some((e) => e.horseId === h.id) &&
+            !pregnantIds.has(h.id) &&
             (!r?.minAge || h.age >= r.minAge) &&
             (!r?.maxAge || h.age <= r.maxAge)
           );
