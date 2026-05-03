@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
-import { Home, Trophy, Store, Calendar, Plus } from "lucide-react";
+import { Home, Trophy, Store, Calendar, Plus, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -9,6 +9,7 @@ const navItems = [
   { to: "/stable", label: "Stable", icon: Trophy, exact: false },
   { to: "/races", label: "Races", icon: Calendar, exact: false },
   { to: "/market", label: "Market", icon: Store, exact: false },
+  { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
 ] as const;
 
 export function AppShell() {
