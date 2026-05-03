@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { overall } from "@/components/HorseBits";
+import { expectedBeyer } from "@/game/beyer";
 
 export const Route = createFileRoute("/races")({
   component: RacesPage,
