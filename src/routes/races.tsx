@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { overall } from "@/components/HorseBits";
+import { expectedBeyer } from "@/game/beyer";
 
 export const Route = createFileRoute("/races")({
   component: RacesPage,
@@ -81,6 +82,7 @@ function RacesPage() {
                       {r?.minAge === r?.maxAge && r?.minAge !== undefined && <span>{r.minAge}YO only</span>}
                       {r?.minAge !== undefined && r?.maxAge === undefined && <span>{r.minAge}+ YO</span>}
                     </div>
+                    <BeyerExpectations race={race} horses={horses} />
                   </div>
                   <div className="flex flex-col gap-2 items-end min-w-[200px]">
                     {ownedEntry ? (
@@ -151,6 +153,54 @@ function EntryPicker({ eligible, disabled, onEnter }: { eligible: { id: string; 
       <Button size="sm" disabled={!selected || disabled} onClick={() => selected && onEnter(selected)}>
         Enter
       </Button>
+    </div>
+  );
+}
+
+function BeyerExpectations({ race, horses }: { race: { distance: number; entries: { horseId: string }[]; graded?: { grade: "G1" | "G2" | "G3" }; raceClass: string }; horses: { id: string; name: string; owned: boolean; stats: { speed: number; stamina: number; acceleration: number; consistency: number }; energy: number; form: number; raceHistory: { beyer?: number }[] }[] }) {
+  const entered = race.entries
+    .map((e) => horses.find((h) => h.id === e.horseId))
+    .filter((h): h is NonNullable<typeof h> => !!h);
+  if (entered.length === 0) return null;
+
+  const classBonus =
+    race.graded?.grade === "G1" ? 8 :
+    race.graded?.grade === "G2" ? 5 :
+    race.graded?.grade === "G3" ? 3 :
+    race.raceClass === "Group" ? 4 :
+    race.raceClass === "Stakes" ? 2 : 0;
+
+  const projections = entered.map((h) => {
+    // Blend model expectation with recent Beyer average for stability.
+    const model = expectedBeyer(h as never, race.distance, classBonus);
+    const recent = h.raceHistory.slice(0, 3).map((r) => r.beyer).filter((b): b is number => typeof b === "number");
+    const avgRecent = recent.length ? recent.reduce((s, v) => s + v, 0) / recent.length : null;
+    const proj = avgRecent !== null ? Math.round(model * 0.6 + avgRecent * 0.4) : model;
+    return { h, proj };
+  }).sort((a, b) => b.proj - a.proj);
+
+  const top = projections[0];
+  const owned = projections.find((p) => p.h.owned);
+  const fav = top.h.owned
+    ? `Your ${top.h.name} projects best at ~${top.proj} Beyer.`
+    : owned
+    ? `${top.h.name} is favored (~${top.proj}); your ${owned.h.name} projects ~${owned.proj}.`
+    : `${top.h.name} projects best at ~${top.proj} Beyer.`;
+
+  return (
+    <div className="mt-3 rounded-md border border-yellow-500/30 bg-yellow-500/5 px-3 py-2 text-xs">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="font-semibold text-yellow-700 dark:text-yellow-400">Beyer expectations</span>
+        <span className="text-muted-foreground">{race.distance}m projection</span>
+      </div>
+      <p className="text-foreground/80 mb-1">{fav}</p>
+      <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-muted-foreground">
+        {projections.slice(0, 5).map(({ h, proj }) => (
+          <span key={h.id} className={h.owned ? "font-medium text-foreground" : ""}>
+            {h.name} <span className="tabular-nums">{proj}</span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
