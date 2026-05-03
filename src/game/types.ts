@@ -81,9 +81,76 @@ export type Horse = {
   coatColor?: CoatColor; // Coat color for race viewer sprites
   lastFoaledDay?: number; // Day the mare most recently foaled — gates re-breeding cooldown
   runningStyle?: RunningStyle; // Preferred race tactics — affects pace shape and stamina use
+  // NPC stable system fields
+  stableId?: string; // Reference to NPC stable (null for player horses)
+  fame: number; // 0-100, affects scouting visibility (famous horses are well-known)
+  scoutedStats?: Partial<HorseStats>; // Stats revealed through scouting (fog of war)
+  lastScoutedDay?: number; // Day when last scouted
+  consignedSaleId?: string; // ID of auction sale this horse is consigned to
 };
 
 export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
+
+// NPC Stable tier - determines quality of horses and reputation
+export type StableTier = "elite" | "mid" | "budget";
+
+// NPC Stable personality - affects AI decision-making
+export type StablePersonality = 
+  | "aggressive"      // High risk, enter many races, spend freely
+  | "conservative"    // Low risk, careful entries, save money
+  | "developer"       // Focus on young horses, patient growth
+  | "win-now"         // Focus on proven horses, immediate results
+  | "specialist"      // Focus on specific distances/surfaces
+  | "breeder"         // Focus on breeding, keep mares
+  | "trader"          // Buy/sell frequently, claiming focus
+  | "prestige";       // Target graded stakes, reputation over profit
+
+// Dosage profile for pedigree analysis (aptitudinal points)
+export type DosageProfile = {
+  brilliant: number;
+  intermediate: number;
+  classic: number;
+  solid: number;
+  professional: number;
+};
+
+// Pedigree node for dosage calculation
+export type PedigreeNode = {
+  horseId?: string;
+  name: string;
+  generation: number; // 1=sire, 2=grandsire, etc.
+  aptitudinalGroup?: string;
+};
+
+// NPC Stable - represents an AI-controlled racing operation
+export type Stable = {
+  id: string;
+  name: string;
+  owner: string;
+  tier: StableTier;
+  reputation: number; // 0-100, affects scouting difficulty
+  founded: number; // game day founded
+  cash: number;
+  horses: string[]; // horse IDs belonging to this stable
+  isMajor: boolean; // true for named stables, false for filler
+  colors: { primary: string; secondary: string }; // stable racing colors
+  description?: string; // lore/flavor text for major stables
+  country?: string; // home country
+  personality: StablePersonality; // AI decision-making style
+  // Personality-specific preferences (set during generation)
+  preferredDistance?: number; // For specialists (in meters)
+  preferredSurface?: "Turf" | "Dirt" | "Synthetic"; // For specialists
+};
+
+// Scout report - player's intelligence on an NPC horse
+export type ScoutReport = {
+  horseId: string;
+  stableId: string;
+  day: number;
+  accuracy: number; // 0-1, how accurate the scout was
+  revealedStats: Partial<HorseStats>;
+  notes: string; // flavortext about the horse
+};
 
 export type Race = {
   id: string;
@@ -95,7 +162,7 @@ export type Race = {
   purse: number;
   minStat?: number;
   fieldSize: number;
-  entries: { horseId: string; owned: boolean }[];
+  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
   graded?: {
@@ -132,6 +199,29 @@ export type Pregnancy = {
   refunded?: boolean; // True once Live Foal Guarantee has paid out for this pregnancy — prevents double refunds
 };
 
+export type AuctionLot = {
+  id: string;
+  horseId: string;
+  consignorStableId?: string; // undefined = player-consigned
+  saleId: string;
+  reservePrice: number;
+  hammerPrice?: number;
+  soldToStableId?: string; // undefined = player won
+  passed: boolean;
+  withdrawn: boolean;
+};
+
+export type AuctionSaleKind = "weanling" | "yearling" | "weanling_south" | "yearling_south";
+
+export type AuctionSale = {
+  id: string;
+  name: string;
+  day: number;
+  kind: AuctionSaleKind;
+  lots: AuctionLot[];
+  resolved: boolean;
+};
+
 export type GameState = {
   day: number;
   cash: number;
@@ -146,4 +236,11 @@ export type GameState = {
   // Calibrated par times per bucket, recomputed each season.
   calibratedPars?: Record<number, number>;
   lastCalibrationDay?: number;
+  // NPC stable system
+  npcStables: Stable[];
+  scoutReports: ScoutReport[];
+  // Multi-day advance: set when a player race interrupts auto-advance
+  pendingPlayerRaceId?: string;
+  // Auction system
+  auctions?: AuctionSale[];
 };

@@ -1,15 +1,21 @@
 import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
-import { Home, Trophy, Store, Calendar, Plus, Heart } from "lucide-react";
+import { Home, Trophy, Store, Calendar, Plus, Heart, Building2, Gavel, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { PlayerRacePrompt } from "./PlayerRacePrompt";
+import { AutoSimPanel } from "./AutoSimPanel";
+import { useState } from "react";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: Home, exact: true },
   { to: "/stable", label: "Stable", icon: Trophy, exact: false },
   { to: "/races", label: "Races", icon: Calendar, exact: false },
+  { to: "/npc-stables", label: "Rival Stables", icon: Building2, exact: false },
   { to: "/market", label: "Market", icon: Store, exact: false },
   { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
+  { to: "/auction", label: "Sales", icon: Gavel, exact: false },
 ] as const;
 
 export function AppShell() {
@@ -17,8 +23,10 @@ export function AppShell() {
   const cash = useGame((s) => s.cash);
   const horses = useGame((s) => s.horses);
   const advanceDay = useGame((s) => s.advanceDay);
+  const advanceMultipleDays = useGame((s) => s.advanceMultipleDays);
   const newGame = useGame((s) => s.newGame);
   const location = useLocation();
+  const [autoSimOpen, setAutoSimOpen] = useState(false);
 
   // Hide chrome for live race screen
   const isRace = location.pathname.startsWith("/race/");
@@ -29,7 +37,7 @@ export function AppShell() {
       <aside className="w-60 shrink-0 border-r bg-card flex flex-col">
         <div className="p-5 border-b">
           <h1 className="text-lg font-bold tracking-tight">Stable Manager</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">Day {day}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{gameCalendarDate(day)}</p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {navItems.map((item) => {
@@ -59,9 +67,20 @@ export function AppShell() {
             <p className="text-lg font-bold tabular-nums">${cash.toLocaleString()}</p>
           </div>
           <div className="px-3 py-1 text-xs text-muted-foreground">{horses.length} horses</div>
-          <Button onClick={advanceDay} className="w-full" size="sm">
-            <Plus className="h-4 w-4 mr-1" /> Advance Day
-          </Button>
+          <div className="grid grid-cols-4 gap-1">
+            <Button onClick={advanceDay} className="col-span-1" size="sm" title="Advance 1 day">
+              <Plus className="h-3 w-3" />
+            </Button>
+            <Button onClick={() => advanceMultipleDays(7)} className="col-span-1" size="sm" variant="secondary" title="Advance 1 week">
+              7d
+            </Button>
+            <Button onClick={() => advanceMultipleDays(30)} className="col-span-1" size="sm" variant="secondary" title="Advance 1 month">
+              30d
+            </Button>
+            <Button onClick={() => setAutoSimOpen(true)} className="col-span-1" size="sm" variant="ghost" title="AutoSim settings">
+              <Settings className="h-3 w-3" />
+            </Button>
+          </div>
           <Button
             onClick={() => {
               if (confirm("Start a new game? All progress will be lost.")) newGame();
@@ -79,6 +98,8 @@ export function AppShell() {
           <Outlet />
         </div>
       </main>
+      <PlayerRacePrompt />
+      <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
     </div>
   );
 }

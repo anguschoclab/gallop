@@ -16,6 +16,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     potential: 80,
     raceHistory: [],
     owned: true,
+    fame: 0,
     ...overrides,
   };
 }

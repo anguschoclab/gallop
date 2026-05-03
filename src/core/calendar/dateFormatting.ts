@@ -60,3 +60,26 @@ export function formatDate(dayOfYear: number): string {
   }
   return "Dec 31";
 }
+
+/**
+ * Returns the day of year (1–365) for an absolute game day (1-based, wraps every 365 days)
+ */
+export function dayOfYear(day: number): number {
+  return ((day - 1) % 365) + 1;
+}
+
+/**
+ * Returns the in-game calendar year (starts at 2026 on day 1)
+ */
+export function gameYearNumber(day: number): number {
+  return 2026 + Math.floor((day - 1) / 365);
+}
+
+/**
+ * Returns a human-readable calendar date string (e.g., "Jan 15, 2026") for an absolute game day
+ */
+export function gameCalendarDate(day: number): string {
+  const doy = dayOfYear(day);
+  const year = gameYearNumber(day);
+  return `${formatDate(doy)}, ${year}`;
+}

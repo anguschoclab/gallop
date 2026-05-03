@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
+import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +22,7 @@ function Dashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Day {day} at the stable</p>
+        <p className="text-muted-foreground">{gameCalendarDate(day)}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -1,15 +1,7 @@
 import type { Horse, Race, RaceClass, Hemisphere, Conformation, Temperament, GeneticMarkers, HealthStatus, CoatColor, Weather, TrackCondition, RunningStyle } from "./types";
 import { randomHorseName, randomSilk, randomRaceName } from "./names";
 import type { GradedRace } from "./gradedRaces";
-
-// Generate proper UUID v4
-const uid = () => {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-};
+import { generateUUID } from "./uuid";
 
 function rand(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -121,7 +113,7 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     consistency: rand(lo, hi),
   };
   return {
-    id: uid(),
+    id: generateUUID(),
     name: randomHorseName(),
     age,
     gender,
@@ -141,6 +133,7 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     healthStatus: "healthy",
     coatColor: randomCoatColor(),
     runningStyle: rollRunningStyle(stats),
+    fame: 0, // Player horses start with no fame
   };
 }
 
@@ -163,7 +156,7 @@ export function makeGradedRace(g: GradedRace, gameDay: number): Race {
   const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
   const minStat = g.grade === "G1" ? 78 : g.grade === "G2" ? 70 : 62;
   return {
-    id: uid(),
+    id: generateUUID(),
     name: g.name,
     day: gameDay,
     distance: g.distance,
@@ -187,7 +180,7 @@ export function generateRace(day: number): Race {
   const cfg = classConfig[cls];
   const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100) * 100;
   return {
-    id: uid(),
+    id: generateUUID(),
     name: randomRaceName(),
     day,
     distance,

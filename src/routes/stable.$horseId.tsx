@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { HorseStats, SilkBadge } from "@/components/HorseBits";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Tag } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
 import { BeyerChart } from "@/components/BeyerChart";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
@@ -35,6 +35,9 @@ function HorseDetail() {
   const cash = useGame((s) => s.cash);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const day = useGame((s) => s.day);
+  const auctions = useGame((s) => s.auctions ?? []);
+  const consignHorse = useGame((s) => s.consignHorse);
+  const withdrawConsignment = useGame((s) => s.withdrawConsignment);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
 
   // Persist raceHistoryLimit to localStorage
@@ -46,6 +49,18 @@ function HorseDetail() {
 
   const slotsLeft = 2 - trainingUsed;
   const isPregnant = !!pregnancy;
+  const isConsigned = !!horse.consignedSaleId;
+  const consignedSale = isConsigned ? auctions.find((a) => a.id === horse.consignedSaleId) : undefined;
+  // Find eligible upcoming sales to consign to
+  const eligibleSale = !isConsigned && horse.owned
+    ? auctions.find((a) => {
+        if (a.resolved) return false;
+        const ageMatch =
+          (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
+          ((horse.age === 1 || horse.age === 2) && (a.kind === "yearling" || a.kind === "yearling_south"));
+        return ageMatch;
+      })
+    : undefined;
 
   return (
     <div className="space-y-6">
@@ -99,6 +114,52 @@ function HorseDetail() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Consignment */}
+        {horse.owned && (isConsigned || eligibleSale) && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Tag className="h-4 w-4" /> Auction Consignment
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {isConsigned && consignedSale ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-amber-500">Consigned</Badge>
+                    <span className="text-sm">{consignedSale.name}</span>
+                  </div>
+                  <Link to="/auction/$saleId" params={{ saleId: consignedSale.id }}>
+                    <Button size="sm" variant="outline" className="w-full">View Sale</Button>
+                  </Link>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="w-full text-destructive"
+                    onClick={() => withdrawConsignment(horse.id)}
+                    disabled={consignedSale.day - day < 3}
+                  >
+                    {consignedSale.day - day < 3 ? "Cannot withdraw (< 3 days)" : "Withdraw Consignment"}
+                  </Button>
+                </>
+              ) : eligibleSale ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    {eligibleSale.name} is open for consignments.
+                  </p>
+                  <Button
+                    size="sm"
+                    className="w-full"
+                    onClick={() => consignHorse(horse.id, eligibleSale.id)}
+                  >
+                    <Tag className="h-4 w-4 mr-2" /> Consign to {eligibleSale.name}
+                  </Button>
+                </>
+              ) : null}
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>

@@ -8,7 +8,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useEffect, useState } from "react";
 import { expectedBeyer } from "@/game/beyer";
 import { getCountry } from "@/game/gradedRaces";
-import { Calendar, List } from "lucide-react";
+import { Calendar, List, Users } from "lucide-react";
 import { RaceDetailPanel } from "@/components/RaceDetailPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getGradeColorClass } from "@/core/race/grading";
@@ -17,7 +17,9 @@ import type { Race, Horse } from "@/game/types";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { loadRaceFilters, saveRaceFilters } from "@/services/storageAdapter";
-import { getFilteredRaces, type RaceFilters } from "@/services/raceFilterService";
+import { getFilteredRaces } from "@/services/raceFilterService";
+import type { RaceFilters } from "@/core/race/filtering";
+import { getScoutStatus } from "@/game/scouting";
 
 type GradeFilter = "all" | "G1" | "G2" | "G3";
 const GRADE_FILTERS: GradeFilter[] = ["all", "G1", "G2", "G3"];
@@ -87,6 +89,7 @@ function CalendarView({ upcoming, day, horses, cash, enterRace, withdrawRace, pr
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {racesByDay[raceDay].map((race: Race) => {
               const ownedEntry = race.entries.find((e: { owned: boolean }) => e.owned);
+              const npcEntryCount = race.entries.filter((e: { npc?: boolean }) => e.npc).length;
               const eligible = horses.filter((horse: Horse) =>
                 isHorseEligibleForRace(horse, race, pregnantIds)
               );
@@ -109,10 +112,18 @@ function CalendarView({ upcoming, day, horses, cash, enterRace, withdrawRace, pr
                         <div className="text-sm text-muted-foreground space-y-1">
                           <div>{race.distance}m · {race.graded ? `${race.graded.track} · ${race.graded.surface}` : race.raceClass}</div>
                           <div>Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span> · Entry ${race.entryFee}</div>
-                          <div>{race.entries.length}/{race.fieldSize} entered</div>
+                          <div className="flex items-center gap-2">
+                            <span>{race.entries.length}/{race.fieldSize} entered</span>
+                            {npcEntryCount > 0 && (
+                              <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                                <Users className="w-3 h-3" />
+                                {npcEntryCount} rival{npcEntryCount > 1 ? "s" : ""}
+                              </Badge>
+                            )}
+                          </div>
                           {race.minStat && <div>Min OVR {race.minStat}</div>}
-                          {r?.minAge === r?.maxAge && r?.minAge !== undefined && <div>{r.minAge}YO only</div>}
-                          {r?.minAge !== undefined && r?.maxAge === undefined && <div>{r.minAge}+ YO</div>}
+                          {race.restrictions?.minAge === race.restrictions?.maxAge && race.restrictions?.minAge !== undefined && <div>{race.restrictions.minAge}YO only</div>}
+                          {race.restrictions?.minAge !== undefined && race.restrictions?.maxAge === undefined && <div>{race.restrictions.minAge}+ YO</div>}
                         </div>
                       </div>
                       {race.graded && <RaceDetailPanel race={race} />}
@@ -521,7 +532,7 @@ function EntryPicker({ eligible, disabled, onEnter }: { eligible: { id: string; 
   );
 }
 
-function BeyerExpectations({ race, horses }: { race: { distance: number; entries: { horseId: string }[]; graded?: { grade: "G1" | "G2" | "G3" }; raceClass: string }; horses: { id: string; name: string; owned: boolean; stats: { speed: number; stamina: number; acceleration: number; consistency: number }; energy: number; form: number; raceHistory: { beyer?: number }[] }[] }) {
+function BeyerExpectations({ race, horses }: { race: { distance: number; entries: { horseId: string }[]; graded?: { grade: "G1" | "G2" | "G3" }; raceClass: import("@/game/types").RaceClass }; horses: { id: string; name: string; owned: boolean; stats: { speed: number; stamina: number; acceleration: number; consistency: number }; energy: number; form: number; raceHistory: { beyer?: number }[] }[] }) {
   const entered = race.entries
     .map((e) => horses.find((h) => h.id === e.horseId))
     .filter((h): h is NonNullable<typeof h> => !!h);
