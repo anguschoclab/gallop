@@ -41,7 +41,7 @@ export type Horse = {
   studFee?: number;
 };
 
-export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group";
+export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
 
 export type Race = {
   id: string;
@@ -56,6 +56,18 @@ export type Race = {
   entries: { horseId: string; owned: boolean }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number; beyer?: number }[];
+  // Graded stakes metadata (real North American races)
+  graded?: {
+    key: string;
+    grade: "G1" | "G2" | "G3";
+    track: string;
+    surface: "Dirt" | "Turf" | "Synthetic";
+  };
+  restrictions?: {
+    minAge?: number;
+    maxAge?: number;
+    sex?: Sex;
+  };
 };
 
 export type GameState = {
