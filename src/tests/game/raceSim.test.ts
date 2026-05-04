@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { buildRunner, getConditionsModifier, runRaceToCompletion, computePaceContext, stepRunner } from "./raceSim";
-import { createRng } from "./rng";
-import type { Horse } from "./types";
+import { buildRunner, getConditionsModifier, runRaceToCompletion, computePaceContext, stepRunner } from "../../game/raceSim";
+import { createRng } from "../../game/rng";
+import type { Horse } from "../../game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -18,6 +18,8 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     raceHistory: [],
     owned: true,
     fame: 0,
+    distanceAptitude: 1600,
+    surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
     ...overrides,
   };
 }
@@ -35,8 +37,8 @@ describe("raceSim determinism", () => {
   it("same seed and field produces identical finish order and times", () => {
     const horses = mkField();
     const conditions = getConditionsModifier({});
-    const runA = horses.map((h) => buildRunner(h, true, conditions));
-    const runB = horses.map((h) => buildRunner(h, true, conditions));
+    const runA = horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions));
+    const runB = horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions));
     const a = runRaceToCompletion(runA, 1600, createRng(42));
     const b = runRaceToCompletion(runB, 1600, createRng(42));
     expect(a.map((r) => r.horseId)).toEqual(b.map((r) => r.horseId));
@@ -46,8 +48,8 @@ describe("raceSim determinism", () => {
   it("different seeds produce different (or possibly different) outcomes", () => {
     const horses = mkField();
     const conditions = getConditionsModifier({});
-    const a = runRaceToCompletion(horses.map((h) => buildRunner(h, true, conditions)), 1600, createRng(1));
-    const b = runRaceToCompletion(horses.map((h) => buildRunner(h, true, conditions)), 1600, createRng(99));
+    const a = runRaceToCompletion(horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions)), 1600, createRng(1));
+    const b = runRaceToCompletion(horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions)), 1600, createRng(99));
     // Times will almost certainly differ; if order is the same, that's fine.
     const sameTimes = a.every((r, i) => r.time === b[i].time);
     expect(sameTimes).toBe(false);
@@ -60,12 +62,12 @@ describe("raceSim conditions", () => {
     const fair = getConditionsModifier({ weather: "sunny", trackCondition: "fast" });
     const foul = getConditionsModifier({ weather: "rainy", trackCondition: "heavy" });
     const fairResult = runRaceToCompletion(
-      horses.map((h) => buildRunner(h, true, fair)),
+      horses.map((h) => buildRunner(h, true, 1600, "Turf", fair)),
       1600,
       createRng(42)
     );
     const foulResult = runRaceToCompletion(
-      horses.map((h) => buildRunner(h, true, foul)),
+      horses.map((h) => buildRunner(h, true, 1600, "Turf", foul)),
       1600,
       createRng(42)
     );
@@ -83,7 +85,7 @@ describe("raceSim caps", () => {
       energy: 100,
       potential: 100,
     });
-    const r = buildRunner(max, true, getConditionsModifier({}));
+    const r = buildRunner(max, true, 1600, "Turf", getConditionsModifier({}));
     // ceiling is 22 m/s; allow tiny floating-point slack.
     expect(r.topSpeed).toBeLessThanOrEqual(22 + 1e-9);
     expect(r.topSpeed).toBeGreaterThan(15);
@@ -95,7 +97,7 @@ describe("computePaceContext", () => {
   it("leaderPos is the maximum runner position", () => {
     const conditions = getConditionsModifier({});
     const horses = mkField();
-    const runners = horses.map(h => buildRunner(h, true, conditions));
+    const runners = horses.map(h => buildRunner(h, true, 1600, "Turf", conditions));
     runners[0].position = 200;
     runners[1].position = 150;
     runners[2].position = 180;
@@ -107,7 +109,7 @@ describe("computePaceContext", () => {
   it("progress = 1 when all runners have finished", () => {
     const conditions = getConditionsModifier({});
     const horses = mkField();
-    const runners = horses.map(h => buildRunner(h, true, conditions));
+    const runners = horses.map(h => buildRunner(h, true, 1600, "Turf", conditions));
     runners.forEach(r => { r.finishTime = 95; r.position = 1600; });
     const { progress } = computePaceContext(runners, 1600);
     expect(progress).toBe(1);
@@ -116,7 +118,7 @@ describe("computePaceContext", () => {
   it("progress in (0, 1) when some runners still running", () => {
     const conditions = getConditionsModifier({});
     const horses = mkField();
-    const runners = horses.map(h => buildRunner(h, true, conditions));
+    const runners = horses.map(h => buildRunner(h, true, 1600, "Turf", conditions));
     runners[0].position = 800; // halfway
     const { progress } = computePaceContext(runners, 1600);
     expect(progress).toBeGreaterThan(0);
@@ -125,7 +127,7 @@ describe("computePaceContext", () => {
 
   it("single unfinished runner sets leaderPos and progress correctly", () => {
     const conditions = getConditionsModifier({});
-    const runner = buildRunner(mkHorse(), true, conditions);
+    const runner = buildRunner(mkHorse(), true, 1600, "Turf", conditions);
     runner.position = 400;
     const { leaderPos, progress } = computePaceContext([runner], 1600);
     expect(leaderPos).toBe(400);
@@ -136,7 +138,7 @@ describe("computePaceContext", () => {
 describe("stepRunner", () => {
   it("horse at finish line (position >= distance) sets finishTime", () => {
     const conditions = getConditionsModifier({});
-    const runner = buildRunner(mkHorse(), true, conditions);
+    const runner = buildRunner(mkHorse(), true, 1600, "Turf", conditions);
     runner.position = 1595;
     runner.velocity = 15;
     const rng = createRng(1);
@@ -146,7 +148,7 @@ describe("stepRunner", () => {
 
   it("stationary horse accelerates toward targetSpeed", () => {
     const conditions = getConditionsModifier({});
-    const runner = buildRunner(mkHorse(), true, conditions);
+    const runner = buildRunner(mkHorse(), true, 1600, "Turf", conditions);
     runner.velocity = 0;
     runner.position = 0;
     const rng = createRng(5);

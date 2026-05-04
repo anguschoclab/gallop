@@ -10,6 +10,8 @@ import { useState, useMemo } from "react";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { cn } from "@/lib/utils";
+import { RaceEntry } from "@/components/RaceEntry";
+import { Race } from "@/game/types";
 
 type RaceFilters = {
   grade: string;
@@ -39,6 +41,7 @@ function RacesPage() {
   const horses = useGame((s) => s.horses);
   const day = useGame((s) => s.day);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  const [enteringRace, setEnteringRace] = useState<Race | null>(null);
 
   const filtered = useMemo(() => {
     return races
@@ -254,23 +257,30 @@ function RacesPage() {
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filtered.map((r) => (
-                <RaceCard key={r.id} race={r} />
+                <RaceCard key={r.id} race={r} onEnter={() => setEnteringRace(r as Race)} />
               ))}
             </div>
           ) : (
             <div className="space-y-2">
               {filtered.map((r) => (
-                <RaceRow key={r.id} race={r} />
+                <RaceRow key={r.id} race={r} onEnter={() => setEnteringRace(r as Race)} />
               ))}
             </div>
           )}
         </main>
       </div>
+      {enteringRace && (
+        <RaceEntry 
+          race={enteringRace} 
+          isOpen={!!enteringRace} 
+          onClose={() => setEnteringRace(null)} 
+        />
+      )}
     </div>
   );
 }
 
-function RaceCard({ race }: { race: any }) {
+function RaceCard({ race, onEnter }: { race: any; onEnter?: () => void }) {
   const ownedCount = race.entries.filter((e: any) => e.owned).length;
   const gradeLabel = race.graded?.grade;
   const gradeColor = gradeLabel ? getGradeColor(gradeLabel) : "bg-muted text-muted-foreground";
@@ -294,9 +304,19 @@ function RaceCard({ race }: { race: any }) {
                 <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> {race.country}</span>
               </div>
             </div>
-            <div className="text-right">
+            </div>
+            <div className="text-right flex flex-col items-end">
               <div className="text-sm font-bold tabular-nums">${race.purse.toLocaleString()}</div>
               <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Purse</div>
+              {ownedCount === 0 && (
+                <Button 
+                  size="sm" 
+                  className="mt-2 h-7 text-[10px] uppercase font-black px-3" 
+                  onClick={(e) => { e.preventDefault(); onEnter?.(); }}
+                >
+                  Enter
+                </Button>
+              )}
             </div>
           </div>
 
@@ -321,7 +341,7 @@ function RaceCard({ race }: { race: any }) {
   );
 }
 
-function RaceRow({ race }: { race: any }) {
+function RaceRow({ race, onEnter }: { race: any; onEnter?: () => void }) {
   const ownedCount = race.entries.filter((e: any) => e.owned).length;
   const gradeLabel = race.graded?.grade;
   const gradeColor = gradeLabel ? getGradeColor(gradeLabel) : "";
@@ -358,9 +378,21 @@ function RaceRow({ race }: { race: any }) {
         </div>
       </div>
 
-      <div className="text-right shrink-0">
-        <div className="text-sm font-bold tabular-nums">${race.purse.toLocaleString()}</div>
-        <div className="text-[10px] text-muted-foreground tabular-nums">{race.entries.length}/{race.fieldSize} full</div>
+      <div className="text-right shrink-0 flex items-center gap-4">
+        <div>
+          <div className="text-sm font-bold tabular-nums">${race.purse.toLocaleString()}</div>
+          <div className="text-[10px] text-muted-foreground tabular-nums">{race.entries.length}/{race.fieldSize} full</div>
+        </div>
+        {ownedCount === 0 && (
+          <Button 
+            size="sm" 
+            variant="outline"
+            className="h-8 text-[10px] uppercase font-black px-4 hover:bg-primary hover:text-primary-foreground" 
+            onClick={(e) => { e.preventDefault(); onEnter?.(); }}
+          >
+            Enter
+          </Button>
+        )}
       </div>
     </Link>
   );

@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import type { Horse, Race, Pregnancy, ScoutReport, AuctionSale, GameState } from "./types";
 import { GRADED_RACES } from "./gradedRaces";
 import { generateHorse, horsePrice, generateRace, makeGradedRace, horsePriceWithPedigree } from "./horseGen";
+import { generateInitialJockeys } from "./jockeyGen";
 import { generateAllStables } from "./npcStables";
 import { generateAllNpcHorses } from "./npcHorseGen";
 import { runNpcRaceEntry, runNpcTraining, updateHorseFame } from "./npcRaceEntry";
@@ -10,7 +11,7 @@ import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { createRng, hashStr } from "./rng";
 import { generateUpcomingRaces as generateScheduledRaces } from "./raceSchedule";
-import { TRACK_SCHEDULES } from "./tracks";
+import { TRACKS, TRACK_SCHEDULES, type Track } from "./tracks";
 import { scoutHorse as performScout } from "./scouting";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { loadRaceHistoryLimit } from "@/services/storageAdapter";
@@ -38,6 +39,7 @@ import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
 import { pregnancyPhase } from "@/core/time/phases/pregnancy";
 import { npcCyclePhase } from "@/core/time/phases/npcCycle";
 import { auctionsPhase } from "@/core/time/phases/auctions";
+import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
 import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
 import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
 
@@ -283,9 +285,11 @@ type Actions = {
   buyHorse: (horseId: string) => void;
   enterRace: (raceId: string, horseId: string) => ActionResult;
   withdrawRace: (raceId: string, horseId: string) => void;
-  resolveRace: (raceId: string, result: { horseId: string; position: number; time: number }[]) => void;
+  resolveRace: (raceId: string, result: { horseId: string; position: number; time: number }[], runners?: import("./raceSim").Runner[]) => void;
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
   retireToStud: (horseId: string, fee: number, bookSize: number) => ActionResult;
+  hireJockey: (jockeyId: string) => ActionResult;
+  assignJockey: (raceId: string, horseId: string, jockeyId: string) => ActionResult;
   advanceDay: () => void;
   advanceMultipleDays: (n: number, headless?: boolean) => void;
   advanceWeek: (headless?: boolean) => void;
@@ -348,6 +352,7 @@ function initialState(): GameState {
     npcStables: updatedStables,
     scoutReports: [],
     auctions: [],
+    jockeys: generateInitialJockeys(createRng(hashStr("initial_jockeys")), 25),
   };
 }
 
@@ -503,13 +508,11 @@ export const useGame = create<GameState & Actions>()(
         set({ races: [...s.races], cash: s.cash + Math.floor(race.entryFee / 2) });
       },
 
-      resolveRace: (raceId, result) => {
+      resolveRace: (raceId, result, runners: Runner[] = []) => {
         const s = get();
         const race = s.races.find((r) => r.id === raceId);
         if (!race || race.resolved) return;
-        // Sanitize results: split into finishers vs DNFs (Infinity/NaN/<=0
-        // finish time). DNFs keep their slot at the back of the field but
-        // earn no purse and no Beyer.
+        // Sanitize results: split into finishers vs DNFs
         const tieRng = createRng(hashStr(race.id) ^ 0x7e57);
         const enriched = result.map((r) => ({ ...r, dnf: !Number.isFinite(r.time) || r.time <= 0 }));
         const finishers = enriched.filter((r) => !r.dnf).sort((a, b) => {
@@ -524,7 +527,7 @@ export const useGame = create<GameState & Actions>()(
         race.resolved = true;
         race.result = ranked.map(({ horseId, position, time }) => ({ horseId, position, time }));
 
-        // Detect photo finish (any pair of finishers within 0.05s).
+        // Detect photo finish
         let photoFinish = false;
         for (let i = 1; i < finishers.length; i++) {
           if (Math.abs(finishers[i].time - finishers[i - 1].time) < 0.05) {
@@ -536,29 +539,34 @@ export const useGame = create<GameState & Actions>()(
         let earned = 0;
         const classBonus = getClassBonus(race.graded?.grade, race.raceClass);
         const splits = computePayoutSplits(race.purse, finishers.length);
-        // Track per-stable purse credits so NPC stables actually earn from races
-        // — closes the asymmetric drain where they previously only paid out.
         const stableCredits: Record<string, number> = {};
 
         for (const r of ranked) {
           const h = s.horses.find((hh) => hh.id === r.horseId);
           if (!h) continue;
-          h.energy = Math.max(0, h.energy - 25); // Racing costs 25 energy
+          h.energy = Math.max(0, h.energy - 25); 
           const beyer = r.dnf ? 0 : beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
-          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: ranked.length, raceClass: race.raceClass }, ...h.raceHistory].slice(0, loadRaceHistoryLimit());
-          // form change — Beyer-based performance modeling. A horse that runs
-          // a "big fig" relative to their ability gains form even if they
-          // finished off the board in a deep field.
-          if (r.dnf) {
-            h.form = Math.max(-10, h.form - 2);
-          } else {
-            const expected = expectedBeyer(h, race.distance);
-            const perf = beyer - expected;
-            if (perf > 5) h.form = Math.min(10, h.form + 2);
-            else if (perf > -5) h.form = Math.min(10, h.form + 0.5);
-            else h.form = Math.max(-10, h.form - 2);
-          }
-          // payout — credit player or stable depending on ownership
+          
+          const runner = runners.find(rr => rr.horseId === r.horseId);
+          const barrier = runner?.barrier;
+          const lane = runner?.lane;
+
+          h.raceHistory = [{ 
+            raceId, 
+            raceName: race.name, 
+            position: r.position, 
+            day: s.day, 
+            beyer, 
+            grade: race.graded?.grade, 
+            distance: race.distance, 
+            surface: race.graded?.surface, 
+            purse: race.purse, 
+            fieldSize: ranked.length, 
+            raceClass: race.raceClass,
+            barrier,
+            lane
+          }, ...h.raceHistory].slice(0, loadRaceHistoryLimit());
+          
           h.careerStarts += 1;
           if (r.position === 1) h.careerWins += 1;
 
@@ -571,17 +579,13 @@ export const useGame = create<GameState & Actions>()(
               earned += pay;
             }
           }
-          // Update dam's blue hen status AND sire's stud record if horse wins
-          // a stakes race. Prefer ID-based pedigree links (set on player-bred
-          // and NPC-bred foals via Phase 0); fall back to name match for
-          // legacy/foundation horses that were never bred in-game.
+          // Update dam/sire...
           if (!r.dnf && r.position === 1 && (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")) {
             const damId = h.pedigree?.damId;
             const dam = damId
               ? s.horses.find((hh) => hh.id === damId)
               : s.horses.find((hh) => hh.name === h.damName);
             if (dam) updateBlueHenStatus(dam, race.graded?.grade);
-            // Sire stud-record progression — drives fee climbs over time.
             const sireId = h.pedigree?.sireId;
             if (sireId) {
               const sire = s.horses.find((hh) => hh.id === sireId);
@@ -658,7 +662,52 @@ export const useGame = create<GameState & Actions>()(
             paceSamples: samples,
             log: combinedLogs,
           });
-        });
+
+          // Payout 10% of winnings and riding fee to jockeys
+          const finalJockeys = [...s.jockeys];
+          for (const r of ranked) {
+            if (r.dnf || r.position > splits.length) continue;
+            const raceEntry = race.entries.find(e => e.horseId === r.horseId);
+            if (!raceEntry?.jockeyId) continue;
+            
+            const jIndex = finalJockeys.findIndex(j => j.id === raceEntry.jockeyId);
+            if (jIndex === -1) continue;
+
+            const jockey = { ...finalJockeys[jIndex] };
+            const winAmount = splits[r.position - 1];
+            const jockeyFee = Math.round(winAmount * 0.1);
+            
+            jockey.careerStarts += 1;
+            if (r.position === 1) jockey.careerWins += 1;
+            
+            // Update jockey fame based on result
+            if (r.position === 1) jockey.fame = Math.min(100, jockey.fame + 2);
+            else if (r.position <= 3) jockey.fame = Math.min(100, jockey.fame + 0.5);
+
+            finalJockeys[jIndex] = jockey;
+
+            if (raceEntry.owned) {
+              finalCash -= jockeyFee;
+            } else if (raceEntry.stableId) {
+              const sIndex = finalNpcStables.findIndex(st => st.id === raceEntry.stableId);
+              if (sIndex !== -1) {
+                finalNpcStables[sIndex] = { 
+                  ...finalNpcStables[sIndex], 
+                  cash: finalNpcStables[sIndex].cash - jockeyFee 
+                };
+              }
+            }
+          }
+
+          set({
+            races: [...s.races],
+            horses: finalHorses,
+            cash: finalCash,
+            npcStables: finalNpcStables,
+            jockeys: finalJockeys,
+            paceSamples: samples,
+            log: combinedLogs,
+          });
       },
 
       breed: (sireId, damId, liveFoalGuarantee = false) => {
@@ -775,6 +824,55 @@ export const useGame = create<GameState & Actions>()(
         return { ok: true };
       },
 
+      hireJockey: (jockeyId) => {
+        const s = get();
+        const jockey = s.jockeys.find(j => j.id === jockeyId);
+        if (!jockey) return { ok: false, reason: "Jockey not found." };
+        if (jockey.stableId) return { ok: false, reason: "Jockey is already under contract." };
+        
+        const signOnBonus = jockey.ridingFee * 30; // 30 races worth for player retainer
+        if (s.cash < signOnBonus) return { ok: false, reason: `Insufficient cash. Sign-on bonus is $${signOnBonus.toLocaleString()}.` };
+
+        set({
+          cash: s.cash - signOnBonus,
+          jockeys: s.jockeys.map(j => j.id === jockeyId ? { ...j, contractUntil: s.day + 90 } : j), // stableId undefined means player
+          log: [{ day: s.day, text: `Signed ${jockey.name} to a 90-day retainer for $${signOnBonus.toLocaleString()}.` }, ...s.log].slice(0, 50),
+        });
+        return { ok: true };
+      },
+
+      assignJockey: (raceId, horseId, jockeyId) => {
+        const s = get();
+        const race = s.races.find(r => r.id === raceId);
+        if (!race) return { ok: false, reason: "Race not found." };
+        const entry = race.entries.find(e => e.horseId === horseId);
+        if (!entry) return { ok: false, reason: "Horse not entered in this race." };
+        
+        const jockey = s.jockeys.find(j => j.id === jockeyId);
+        if (!jockey) return { ok: false, reason: "Jockey not found." };
+
+        // Check if jockey already has a mount in this race
+        if (race.entries.some(e => e.jockeyId === jockeyId && e.horseId !== horseId)) {
+          return { ok: false, reason: `${jockey.name} is already riding another horse in this race.` };
+        }
+
+        // Deduct riding fee
+        if (s.cash < jockey.ridingFee) return { ok: false, reason: "Insufficient cash for riding fee." };
+
+        const updatedRaces = s.races.map(r => 
+          r.id === raceId 
+            ? { ...r, entries: r.entries.map(e => e.horseId === horseId ? { ...e, jockeyId } : e) }
+            : r
+        );
+
+        set({
+          races: updatedRaces,
+          cash: s.cash - jockey.ridingFee,
+          log: [{ day: s.day, text: `Assigned ${jockey.name} to horse for $${jockey.ridingFee.toLocaleString()}.` }, ...s.log].slice(0, 50),
+        });
+        return { ok: true };
+      },
+
       scoutHorse: (horseId) => {
         const s = get();
         const horse = s.horses.find(h => h.id === horseId);
@@ -815,7 +913,7 @@ export const useGame = create<GameState & Actions>()(
         // Headless-resolve any unresolved races whose day <= today
         const overdueRaces = s.races.filter((r) => !r.resolved && r.day <= s.day);
         for (const race of overdueRaces) {
-          const { runners, fillerHorses } = buildRaceField({ race, horses: s.horses });
+        const { runners, fillerHorses } = buildRaceField({ race, horses: s.horses, jockeys: s.jockeys });
           // Persist filler horses so resolveRace can find them by ID
           if (fillerHorses.length > 0) {
             for (const fh of fillerHorses) {
@@ -824,8 +922,11 @@ export const useGame = create<GameState & Actions>()(
             }
           }
           const rng = rngForRace(race);
-          const result = runRaceToCompletion(runners, race.distance, rng);
-          get().resolveRace(race.id, result);
+          const track = TRACKS.find(t => t.id === race.graded?.trackId);
+          const trackInfo = track ? { circumference: track.circumference ?? 1600, straightLength: track.straightLength ?? 400 } : undefined;
+          
+          const result = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, trackInfo);
+          get().resolveRace(race.id, result, runners);
         }
         
         const newDay = s.day + 1;
@@ -851,6 +952,7 @@ export const useGame = create<GameState & Actions>()(
           marketPhase,
           racesPhase,
           beyerRecalibrationPhase,
+          jockeyPhase,
           pregnancyPhase,
           npcCyclePhase,
           auctionsPhase,
@@ -910,7 +1012,7 @@ export const useGame = create<GameState & Actions>()(
               (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned)
             );
             if (playerRace) {
-              const { runners, fillerHorses } = buildRaceField({ race: playerRace, horses: currentS.horses });
+              const { runners, fillerHorses } = buildRaceField({ race: playerRace, horses: currentS.horses, jockeys: currentS.jockeys });
               // Persist filler horses so resolveRace can find them by ID
               if (fillerHorses.length > 0) {
                 for (const fh of fillerHorses) {
@@ -918,8 +1020,11 @@ export const useGame = create<GameState & Actions>()(
                   playerRace.entries.push({ horseId: fh.id, owned: false, npc: true });
                 }
               }
-              const result = runRaceToCompletion(runners, playerRace.distance, rngForRace(playerRace));
-              get().resolveRace(playerRace.id, result);
+              const track = TRACKS.find(t => t.id === playerRace.graded?.trackId);
+              const trackInfo = track ? { circumference: track.circumference ?? 1600, straightLength: track.straightLength ?? 400 } : undefined;
+              
+              const result = runRaceToCompletion(runners, playerRace.distance, rngForRace(playerRace), 0.1, 600, trackInfo);
+              get().resolveRace(playerRace.id, result, runners);
             }
           }
           get().advanceDay();

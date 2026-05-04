@@ -130,6 +130,7 @@ function LiveRace() {
   const navigate = useNavigate();
   const race = useGame((s) => s.races.find((r) => r.id === raceId));
   const horses = useGame((s) => s.horses);
+  const jockeys = useGame((s) => s.jockeys);
   const stables = useGame((s) => s.npcStables);
   const resolveRace = useGame((s) => s.resolveRace);
 
@@ -144,7 +145,7 @@ function LiveRace() {
   }
 
   const [runners] = useState<Runner[]>(() => {
-    const deps: RaceSimulationDependencies = { race, horses };
+    const deps: RaceSimulationDependencies = { race, horses, jockeys };
     const { runners: built } = buildRaceField(deps);
     return built;
   });

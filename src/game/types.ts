@@ -16,6 +16,30 @@ export type Temperament = "excellent" | "good" | "fair" | "poor";
 // P (Presser) - Runs in the middle-of-the-pack early. Rarely challenges for lead early.
 // S (Sustain/Closer) - Runs from the rear of the pack, surges late.
 export type RunningStyle = "E" | "EP" | "P" | "S";
+export type JockeyArchetype = "front_runner" | "closer" | "clinical" | "finisher" | "versatile";
+
+export type JockeyStats = {
+  pacing: number;       // Ability to maintain optimal pace / stamina management
+  positioning: number;  // Finding the rail, avoiding traffic
+  vigor: number;        // Final stretch push
+  gateSkill: number;    // Start of the race
+  temperament: number;  // Handling nervous horses
+};
+
+export type Jockey = {
+  id: string;
+  name: string;
+  age: number;
+  archetype: JockeyArchetype;
+  stats: JockeyStats;
+  stableId?: string;      // If retained by a stable
+  contractUntil?: number; // Day the contract ends
+  careerStarts: number;
+  careerWins: number;
+  fame: number;           // 0-100, affects hiring cost
+  ridingFee: number;      // Base fee per race mount
+  lastRaceDay?: number;   // Day of the last race (to prevent double-booking)
+};
 
 // Health status for horses
 export type HealthStatus = "healthy" | "covering_sickness" | "recovering" | "other_illness";
@@ -108,7 +132,7 @@ export type Horse = {
   energy: number; // 0-100
   form: number; // -10..+10
   potential: number; // 60-100, soft cap on stat growth
-  raceHistory: { raceId: string; raceName: string; position: number; day: number; beyer?: number; grade?: "G1" | "G2" | "G3"; distance?: number; surface?: string; purse?: number; fieldSize?: number; raceClass?: RaceClass }[];
+  raceHistory: { raceId: string; raceName: string; position: number; day: number; beyer?: number; grade?: "G1" | "G2" | "G3"; distance?: number; surface?: string; purse?: number; fieldSize?: number; raceClass?: RaceClass; barrier?: number; lane?: number }[];
   owned: boolean;
   sireName?: string;
   damName?: string;
@@ -248,7 +272,7 @@ export type Race = {
   purse: number;
   minStat?: number;
   fieldSize: number;
-  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean }[];
+  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean; barrier?: number; jockeyId?: string }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
   graded?: {
@@ -347,6 +371,7 @@ export type GameState = {
   pendingPlayerRaceId?: string;
   // Auction system
   auctions?: AuctionSale[];
+  jockeys: Jockey[];
   // Industry mean earnings (rolling avg of foal-aged horse career earnings)
   // recomputed once per season. Used for AEI (Average Earnings Index) on the
   // Sire Watch route. 0 until first recompute.

@@ -1,0 +1,93 @@
+import { generateUUID } from "./uuid";
+import type { Rng } from "./rng";
+import type { Jockey, JockeyArchetype, JockeyStats } from "./types";
+import { randomJockeyName } from "./names";
+
+const ARCHETYPES: JockeyArchetype[] = ["front_runner", "closer", "clinical", "finisher", "versatile"];
+
+export type JockeyGenerationOptions = {
+  tier?: "budget" | "mid" | "elite";
+  rng: Rng;
+};
+
+export function generateJockey({ tier = "mid", rng }: JockeyGenerationOptions): Jockey {
+  const archetype = rng.pick(ARCHETYPES);
+  const name = randomJockeyName(rng);
+  
+  const baseMin = tier === "elite" ? 75 : tier === "mid" ? 55 : 35;
+  const baseMax = tier === "elite" ? 98 : tier === "mid" ? 80 : 60;
+  
+  const stats: JockeyStats = {
+    pacing: rng.range(baseMin, baseMax),
+    positioning: rng.range(baseMin, baseMax),
+    vigor: rng.range(baseMin, baseMax),
+    gateSkill: rng.range(baseMin, baseMax),
+    temperament: rng.range(baseMin, baseMax),
+  };
+  
+  // Apply archetype bonuses
+  switch (archetype) {
+    case "front_runner":
+      stats.gateSkill += 15;
+      stats.pacing += 10;
+      stats.vigor -= 10;
+      break;
+    case "closer":
+      stats.vigor += 15;
+      stats.positioning += 10;
+      stats.gateSkill -= 10;
+      break;
+    case "clinical":
+      stats.positioning += 15;
+      stats.pacing += 10;
+      break;
+    case "finisher":
+      stats.vigor += 20;
+      stats.gateSkill += 5;
+      stats.pacing -= 10;
+      break;
+    case "versatile":
+      stats.pacing += 5;
+      stats.positioning += 5;
+      stats.vigor += 5;
+      stats.gateSkill += 5;
+      stats.temperament += 5;
+      break;
+  }
+  
+  // Clamp stats
+  Object.keys(stats).forEach(k => {
+    stats[k as keyof JockeyStats] = Math.min(100, Math.max(10, stats[k as keyof JockeyStats]));
+  });
+  
+  // Career history: older jockeys have more starts
+  const age = 18 + Math.floor(rng.next() * 35);
+  const yearsActive = age - 18;
+  const careerStarts = Math.floor(yearsActive * (50 + rng.next() * 150));
+  const winRate = 0.05 + (stats.vigor + stats.pacing) / 1000 + rng.next() * 0.1;
+  const careerWins = Math.floor(careerStarts * winRate);
+  
+  const totalStats = (stats.pacing + stats.positioning + stats.vigor + stats.gateSkill + stats.temperament) / 5;
+
+  return {
+    id: generateUUID(),
+    name,
+    age,
+    archetype,
+    stats,
+    careerStarts,
+    careerWins,
+    fame: Math.min(100, totalStats + (careerWins / 100)),
+    ridingFee: Math.round(50 + (Math.min(100, totalStats + (careerWins / 100)) * 10)),
+  };
+}
+
+export function generateInitialJockeys(rng: Rng, count: number = 20): Jockey[] {
+  const jockeys: Jockey[] = [];
+  for (let i = 0; i < count; i++) {
+    const r = rng.next();
+    const tier = r < 0.15 ? "elite" : r < 0.6 ? "mid" : "budget";
+    jockeys.push(generateJockey({ tier, rng }));
+  }
+  return jockeys;
+}

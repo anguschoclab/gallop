@@ -1,6 +1,6 @@
-import type { Horse, Race, Stable, Pregnancy } from "@/game/types";
+import type { Horse, Race, Stable, Pregnancy, Jockey } from "@/game/types";
 import { runNpcTraining, runNpcRaceEntry, updateHorseFame } from "@/game/npcRaceEntry";
-import { createRng, hashStr } from "@/game/rng";
+import { createRng, hashStr, type Rng } from "@/game/rng";
 
 /**
  * NPC Cycle Result
@@ -8,6 +8,7 @@ import { createRng, hashStr } from "@/game/rng";
 export interface NpcCycleResult {
   horses: Horse[];
   races: Race[];
+  jockeys: Jockey[];
 }
 
 /**
@@ -27,6 +28,7 @@ export interface NpcCycleResult {
 export function runNpcCycle(
   npcStables: Stable[],
   horses: Horse[],
+  jockeys: Jockey[],
   races: Race[],
   currentDay: number,
   rng: Rng,
@@ -35,7 +37,7 @@ export function runNpcCycle(
 ): NpcCycleResult {
   // Skip if no NPC stables
   if (npcStables.length === 0) {
-    return { horses, races };
+    return { horses, races, jockeys };
   }
 
   // 1. NPC Training
@@ -45,6 +47,7 @@ export function runNpcCycle(
   let racesAfterEntry = runNpcRaceEntry(
     npcStables,
     horsesAfterTraining,
+    jockeys,
     races,
     currentDay,
     rng,
@@ -62,5 +65,6 @@ export function runNpcCycle(
   return {
     horses: horsesAfterFame,
     races: racesAfterEntry,
+    jockeys,
   };
 }

@@ -16,7 +16,8 @@ export type NarrativeEvent =
   | "MILESTONE"
   | "EXPERT_INSIGHT"
   | "GAP_ANNOUNCEMENT"
-  | "ATMOSPHERE";
+  | "ATMOSPHERE"
+  | "LANE_WATCH";
 
 export interface CommentaryLine {
   id: string;
@@ -183,6 +184,12 @@ const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "The anticipation is palpable as they round the turn.",
     "Every jockey is looking for that winning opening.",
   ],
+  LANE_WATCH: [
+    "{horse} is caught wide on the turn, covering a lot of extra ground!",
+    "Looking for the rail, but {horse} is trapped out three-wide.",
+    "A tough trip for {horse}, parked out wide without cover.",
+    "The jockey on {horse} is trying to tuck in, but the rail is packed.",
+  ],
 };
 
 export class NarrativeGenerator {
@@ -329,9 +336,27 @@ export class NarrativeGenerator {
       }
     }
 
+    // 12. Lane Watch (trapped wide on turn)
+    if (this.hasAnnouncedStart && !this.hasAnnouncedFinish) {
+      for (const r of runners) {
+        // If they are in Lane 3+ (3.6m+) and likely in a turn
+        if (r.lane >= 3.6 && this.isInTurn(r.position) && this.canAnnounce("LANE_WATCH", r.horseId, simTime, 45)) {
+          newLines.push(this.createLine("LANE_WATCH", simTime, r));
+          this.setCooldown("LANE_WATCH", r.horseId, simTime, 45);
+        }
+      }
+    }
+
     // Update history
     this.commentary.push(...newLines);
     return newLines;
+  }
+
+  private isInTurn(pos: number): boolean {
+    // Basic oval assumption: 400m home straight, 400m turn, 400m back straight, 400m turn
+    const distFromFinish = this.race.distance - pos;
+    const trackPos = distFromFinish % 1600;
+    return (trackPos > 400 && trackPos <= 800) || (trackPos > 1200);
   }
 
   private checkMilestones(newLines: CommentaryLine[], leaderPos: number, simTime: number) {

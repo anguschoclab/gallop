@@ -1,7 +1,7 @@
 // AI Race Entry System - NPC stables intelligently enter horses in races
 // Evaluates races 1-3 days ahead and enters eligible, competitive horses
 
-import type { Horse, Race, Stable, StableTier } from "./types";
+import type { Horse, Race, Stable, StableTier, Jockey } from "./types";
 import type { Rng } from "./rng";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateOverallRating } from "@/core/horse/stats";
@@ -247,6 +247,7 @@ export function selectHorsesForRaceEntry(
 export function runNpcRaceEntry(
   stables: Stable[],
   horses: Horse[],
+  jockeys: Jockey[],
   races: Race[],
   currentDay: number,
   rng: Rng,
@@ -277,15 +278,41 @@ export function runNpcRaceEntry(
         // Double-check there's still room
         if (race.entries.length >= race.fieldSize) break;
         
+        // Find a jockey for the NPC entry
+        const retainedJockey = jockeys.find(j => j.stableId === stable.id);
+        let jockeyId: string | undefined = retainedJockey?.id;
+        
+        if (!jockeyId) {
+          // Find best available freelance jockey whose archetype matches horse style
+          const freeAgents = jockeys.filter(j => !j.stableId && j.lastRaceDay !== currentDay);
+          if (freeAgents.length > 0) {
+            const matches = freeAgents.filter(j => {
+              if (horse.runningStyle === "E") return j.archetype === "front_runner";
+              if (horse.runningStyle === "S") return j.archetype === "closer";
+              return j.archetype === "versatile" || j.archetype === "clinical";
+            });
+            const pool = matches.length > 0 ? matches : freeAgents;
+            // Pick based on fame/tier
+            pool.sort((a, b) => b.fame - a.fame);
+            const chosen = pool[0];
+            jockeyId = chosen.id;
+            chosen.lastRaceDay = currentDay;
+          }
+        }
+
+        const jockey = jockeys.find(j => j.id === jockeyId);
+        const ridingFee = jockey?.ridingFee ?? 100;
+
         race.entries.push({
           horseId: horse.id,
           owned: false,
           stableId: stable.id,
-          npc: true
+          npc: true,
+          jockeyId
         });
         
-        // Deduct entry fee from stable
-        stable.cash = Math.max(0, stable.cash - race.entryFee);
+        // Deduct entry fee AND riding fee from stable
+        stable.cash = Math.max(0, stable.cash - race.entryFee - ridingFee);
       }
     }
   }

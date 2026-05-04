@@ -1,4 +1,4 @@
-import type { Horse, Race } from "@/game/types";
+import type { Horse, Race, Jockey } from "@/game/types";
 import { buildRunner, stepRunner, getConditionsModifier, computePaceContext, type Runner } from "@/game/raceSim";
 import { generateHorse } from "@/game/horseGen";
 import { calculateClassBonus } from "@/core/common/classBonus";
@@ -12,6 +12,7 @@ import { createRng, hashStr, type Rng } from "@/game/rng";
 export interface RaceSimulationDependencies {
   race: Race;
   horses: Horse[];
+  jockeys: Jockey[];
 }
 
 export interface SimulationResult {
@@ -46,37 +47,55 @@ export function buildRaceField(
 ): RaceFieldResult {
   const { race, horses } = dependencies;
   const conditions = getConditionsModifier(race);
-  const built: Runner[] = [];
   const fillerHorses: Horse[] = [];
   const surface = race.surface || race.graded?.surface;
   const rng = rngForRace(race);
 
-  // Add owner entries
+  // 1. Prepare the full list of entry data
+  const entriesData: { horseId: string; owned: boolean; jockeyId?: string }[] = [];
   for (const entry of race.entries) {
-    const horse = horses.find((h) => h.id === entry.horseId);
-    if (horse) {
-      built.push(buildRunner(horse, entry.owned, race.distance, surface, conditions));
-    }
+    entriesData.push({ horseId: entry.horseId, owned: entry.owned, jockeyId: entry.jockeyId });
   }
 
-  // Fill remaining spots with AI horses. Each filler is also recorded so
-  // the caller can persist them into state and race.entries.
-  while (built.length < race.fieldSize) {
+  // 2. Fill remaining spots with AI horses
+  while (entriesData.length < race.fieldSize) {
     const tier = getTierForRaceClass(race.raceClass);
     const aiHorse = generateHorse(rng, { tier: tier as never });
     fillerHorses.push(aiHorse);
-    built.push(buildRunner(aiHorse, false, race.distance, surface, conditions));
+    // For filler horses, we don't assign a specific jockey here, 
+    // buildRunner will handle it if we pass one, but we might want 
+    // to just leave it undefined for now or pick a random one.
+    entriesData.push({ horseId: aiHorse.id, owned: false });
   }
 
-  // Empty-field guard: a race must always have at least one runner. This
-  // can only happen if fieldSize was somehow set to 0; treat defensively.
-  if (built.length === 0) {
-    const aiHorse = generateHorse(rng, { tier: getTierForRaceClass(race.raceClass) as never });
-    fillerHorses.push(aiHorse);
-    built.push(buildRunner(aiHorse, false, race.distance, surface, conditions));
+  // 3. Shuffle all entries to assign unique barriers (1 to N)
+  // We use the race-seeded RNG for deterministic shuffling.
+  const shuffled = [...entriesData];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(rng.next() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
 
-  return { runners: built, fillerHorses };
+  // 4. Build the final Runner objects with assigned barriers
+  const runners: Runner[] = [];
+  for (let i = 0; i < shuffled.length; i++) {
+    const entryData = shuffled[i];
+    const barrier = i + 1;
+    
+    // Find the horse (either from dependencies.horses or from the new fillerHorses)
+    let horse = horses.find((h) => h.id === entryData.horseId);
+    if (!horse) {
+      horse = fillerHorses.find((h) => h.id === entryData.horseId);
+    }
+    
+    if (horse) {
+      const entry = race.entries.find(e => e.horseId === entryData.horseId);
+      const jockeyObj = entry?.jockeyId ? dependencies.jockeys.find(j => j.id === entry.jockeyId) : undefined;
+      runners.push(buildRunner(horse, entryData.owned, race.distance, surface, conditions, barrier, jockeyObj));
+    }
+  }
+
+  return { runners, fillerHorses };
 }
 
 /**
@@ -87,7 +106,8 @@ export function simulateStep(
   dt: number,
   simTime: number,
   distance: number,
-  rng: Rng
+  rng: Rng,
+  course?: CourseSpecification
 ): { stillRunning: boolean; finishOrder: SimulationResult[] } {
   const finishOrder: SimulationResult[] = [];
   let stillRunning = false;
@@ -98,7 +118,7 @@ export function simulateStep(
 
   for (const runner of runners) {
     if (runner.finishTime === null) {
-      stepRunner(runner, dt, simTime, distance, rng, runners, pace);
+      stepRunner(runner, dt, simTime, distance, rng, runners, pace, course);
       if (runner.finishTime !== null) {
         finishOrder.push({
           horseId: runner.horseId,

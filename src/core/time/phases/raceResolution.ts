@@ -1,6 +1,7 @@
 import type { PipelineContext } from "../pipeline";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { runRaceToCompletion } from "@/game/raceSim";
+import { getCourseForRace } from "@/game/tracks";
 
 /**
  * Phase: Race Resolution
@@ -14,9 +15,10 @@ export const raceResolutionPhase = {
     const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= state.day);
 
     for (const race of overdueRaces) {
-      const { runners } = buildRaceField({ race, horses: state.horses });
+      const { runners } = buildRaceField({ race, horses: state.horses, jockeys: state.jockeys });
       const rng = rngForRace(race);
-      const result = runRaceToCompletion(runners, race.distance, rng);
+      const course = getCourseForRace(race);
+      const result = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course);
       // This will call resolveRace which updates state
       // For now, we'll handle this in the main store
       // This phase is a placeholder for the actual resolution logic

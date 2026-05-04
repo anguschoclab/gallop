@@ -1,10 +1,29 @@
-// Track definitions with UUIDs for all racecourses used in graded stakes
+import type { Race } from "./types";
+
+export type TrackSection = {
+  type: "straight" | "turn";
+  length: number; // meters
+  radius?: number; // meters (for turns)
+  gradient?: number; // % slope (uphill/downhill)
+  banking?: number; // degrees
+};
+
+export type CourseSpecification = {
+  surface: "Turf" | "Dirt" | "Synthetic";
+  name?: string; // e.g. "Main Track", "Inner Turf"
+  circumference: number;
+  straightLength: number; // home straight length
+  width?: number; // meters
+  sections: TrackSection[];
+};
 
 export type Track = {
   id: string;
   name: string;
   country: string;
-  surfaces: ("Turf" | "Dirt" | "Synthetic")[];
+  courses: CourseSpecification[];
+  elevation?: number; // altitude above sea level
+  osmId?: string;
 };
 
 // Track schedule configuration for realistic race day patterns
@@ -22,159 +41,10 @@ const generateUUID = () => {
   return crypto.randomUUID();
 };
 
+import TRACK_DATA from "./data/tracks.json";
+
 // All tracks with their UUIDs
-export const TRACKS: Track[] = [
-  // Canada
-  { id: "a4e790db-a9ad-458d-9191-817b61b9069c", name: "Woodbine", country: "Canada", surfaces: ["Turf", "Synthetic"] },
-  { id: "2ba12f6e-dc0d-47e9-9c95-af87fae00890", name: "Fort Erie", country: "Canada", surfaces: ["Dirt"] },
-  { id: "98c77f6a-f5b7-4791-aac1-afe5e5969aa3", name: "Century Mile", country: "Canada", surfaces: ["Synthetic"] },
-  { id: "c7447323-b2df-46be-9f99-28e56a41e584", name: "Hastings", country: "Canada", surfaces: ["Dirt"] },
-
-  // UAE
-  { id: "85a3d0b8-a4a9-4ff7-bc18-705874d8da31", name: "Meydan", country: "UAE", surfaces: ["Turf", "Dirt"] },
-  { id: "21815495-916b-4f3f-a2d9-51a3f6640152", name: "Abu Dhabi", country: "UAE", surfaces: ["Turf"] },
-  { id: "7e62ba21-8d46-41ee-95ce-3a42b0f13dcc", name: "Jebel Ali", country: "UAE", surfaces: ["Dirt"] },
-
-  // Argentina
-  { id: "271e4541-1500-4872-9340-4ed791fd28b7", name: "Hipódromo de San Isidro", country: "Argentina", surfaces: ["Turf", "Dirt"] },
-  { id: "1e1beb62-f786-44a9-8441-b23aa0db1eec", name: "Hipódromo Argentino de Palermo", country: "Argentina", surfaces: ["Dirt"] },
-  { id: "6546c784-dfb3-4d28-999f-99dc82e90e9a", name: "Hipódromo de La Plata", country: "Argentina", surfaces: ["Dirt"] },
-
-  // Brazil
-  { id: "ce7714db-fa90-4ded-8477-40eec676bb12", name: "Hipódromo da Gávea", country: "Brazil", surfaces: ["Turf"] },
-  { id: "06b1dfcf-f3ae-4db3-ab25-04e29865ff8d", name: "Hipódromo Cidade Jardim", country: "Brazil", surfaces: ["Turf"] },
-
-  // Chile
-  { id: "b7fef5f2-2fe4-4814-a528-fba3d6bbee01", name: "Valparaiso Sporting Club", country: "Chile", surfaces: ["Turf"] },
-  { id: "61a34612-26fc-4336-8c71-c3239098ee26", name: "Club Hípico de Santiago", country: "Chile", surfaces: ["Turf"] },
-  { id: "8cd8068a-d06f-4b40-a8a7-b9d6012afd0f", name: "Hipódromo Chile", country: "Chile", surfaces: ["Dirt"] },
-
-  // Scandinavia
-  { id: "2a3d24c8-10ff-4a5a-836f-cb4ed2d122dc", name: "Bro Park", country: "Sweden", surfaces: ["Turf"] },
-  { id: "60a39c4a-3c65-4ca1-98ba-7bee7a726d43", name: "Øvrevoll", country: "Norway", surfaces: ["Turf"] },
-  { id: "f1bee849-78d8-4b25-9673-50ded746fa6a", name: "Klampenborg", country: "Denmark", surfaces: ["Turf"] },
-  { id: "ff31fa2d-9594-4cfd-bb3f-a4794eb3c435", name: "Jägersro", country: "Sweden", surfaces: ["Turf"] },
-
-  // Japan
-  { id: "09aea125-88e4-4e51-b8d7-0475869c6269", name: "Tokyo", country: "Japan", surfaces: ["Turf", "Dirt"] },
-  { id: "075b214f-ebc8-4d46-9e27-154723cedc2a", name: "Oi", country: "Japan", surfaces: ["Turf"] },
-  { id: "d972ca06-de48-474e-a2cf-84afd2f33863", name: "Kochi", country: "Japan", surfaces: ["Turf"] },
-  { id: "9cf4d0aa-31ff-41e7-a581-54d9408a29e3", name: "Saga", country: "Japan", surfaces: ["Turf"] },
-  { id: "184c95d8-cb34-428c-81f3-adfa7179f035", name: "Chukyo", country: "Japan", surfaces: ["Turf", "Dirt"] },
-  { id: "ddd59f86-d11f-4374-90a6-134a861f16bc", name: "Hanshin", country: "Japan", surfaces: ["Turf", "Dirt"] },
-  { id: "7e899665-ba3d-4fa2-88ba-37d6828ec6a4", name: "Nakayama", country: "Japan", surfaces: ["Turf", "Dirt"] },
-  { id: "92caacd1-e771-49a7-9fe8-0de78b3d22a5", name: "Kyoto", country: "Japan", surfaces: ["Turf", "Dirt"] },
-  { id: "84abb980-cc9b-4a62-b825-7b40e9079e88", name: "Kanazawa", country: "Japan", surfaces: ["Dirt"] },
-  { id: "d11ab0e2-492a-4f90-9cd9-9323fece32f5", name: "Monbetsu", country: "Japan", surfaces: ["Dirt"] },
-  { id: "5d64970b-7d53-4ce7-82eb-565519c87425", name: "Nagoya", country: "Japan", surfaces: ["Dirt"] },
-  { id: "e55abf82-49b9-4c1a-9d79-5387e123045a", name: "Sonoda", country: "Japan", surfaces: ["Dirt"] },
-  { id: "f5704159-e4e5-4966-88b3-ad6338f92a5f", name: "Sapporo", country: "Japan", surfaces: ["Turf"] },
-  { id: "4ebe446a-b55d-43b3-b589-cf710de809a7", name: "Kokura", country: "Japan", surfaces: ["Turf"] },
-  { id: "19c425f0-da5c-49aa-b419-d51050c5984c", name: "Fukushima", country: "Japan", surfaces: ["Turf"] },
-  { id: "5417f98a-9404-41ac-8d94-9af57c227f47", name: "Niigata", country: "Japan", surfaces: ["Turf"] },
-  { id: "e252ed6b-94c0-4d5f-82a2-6325c312331a", name: "Hakodate", country: "Japan", surfaces: ["Turf"] },
-  { id: "349564e3-4eff-425e-8207-21f181ee4fc9", name: "Kitakyushu", country: "Japan", surfaces: ["Turf"] },
-  { id: "e5575f66-1c09-4385-9b1a-83bf2d538d90", name: "Ohi", country: "Japan", surfaces: ["Turf", "Dirt"] },
-  { id: "838abcdc-ff27-44cf-9212-183e2edb66c0", name: "Kawasaki", country: "Japan", surfaces: ["Turf"] },
-  { id: "dc2854c2-b22e-4fde-8052-81b63b0ceb45", name: "Funabashi", country: "Japan", surfaces: ["Turf"] },
-  { id: "8b58953a-b5ad-41ec-a36c-b0feb5625370", name: "Urawa", country: "Japan", surfaces: ["Turf"] },
-  { id: "9c876506-79bd-4450-8321-a1d65a01658e", name: "Morioka", country: "Japan", surfaces: ["Turf"] },
-  { id: "99a1a2ec-3ef9-4f65-9c5f-13650eb71d8b", name: "Various", country: "Japan", surfaces: ["Turf", "Dirt"] },
-
-  // Italy
-  { id: "1c52aaa3-3172-4a8c-8b10-fba1f26591a5", name: "Capannelle", country: "Italy", surfaces: ["Turf"] },
-  { id: "24110cb2-5781-46ad-9117-129ec9c3ed95", name: "San Siro", country: "Italy", surfaces: ["Turf"] },
-
-  // Hong Kong
-  { id: "62a59b6c-0230-4db7-ab2f-fb494d6dd2ec", name: "Sha Tin", country: "Hong Kong", surfaces: ["Turf", "Dirt"] },
-  { id: "352ca343-eb29-4910-bfa4-e78198d0dc8b", name: "Happy Valley", country: "Hong Kong", surfaces: ["Turf"] },
-
-  // Great Britain
-  { id: "e8a9c43d-0aa9-45ba-830d-c3ab0d328cbb", name: "Newmarket", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "30b245c0-68b9-47eb-aef1-03f3c3e4863a", name: "Newmarket (July)", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "643f2051-687d-4112-88f1-cbbe24620cda", name: "Newbury", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "b4f6659e-dcf3-4312-bde1-4052492673aa", name: "Epsom", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "bf517cc6-2210-42ad-a6de-7115abc4ef08", name: "Ascot", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "02e1e70b-eb7c-49fb-98d8-6646ffc39254", name: "Sandown", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "20836f34-3da8-4784-89aa-1a8fc313c86f", name: "York", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "2dab9baa-84dd-437e-ade7-cbd8c320fbd1", name: "Haydock", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "8c165617-0438-496a-9b10-9a941465b298", name: "Chester", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "3e89fd5e-9b6a-49e8-8cfd-81a2641bf583", name: "Doncaster", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "b4480660-0b69-4fd7-9cde-2f15a95c52d7", name: "Goodwood", country: "Great Britain", surfaces: ["Turf"] },
-
-  // France
-  { id: "003f1249-f839-4831-aceb-f46a27d67f36", name: "Saint-Cloud", country: "France", surfaces: ["Turf"] },
-  { id: "38ebbdbd-9247-4085-845f-ad02896c4161", name: "Longchamp", country: "France", surfaces: ["Turf"] },
-  { id: "43e4a14e-8c8c-4b4d-98f7-f9a47a496b5e", name: "Deauville", country: "France", surfaces: ["Turf"] },
-  { id: "3991d574-f943-4a97-b234-1422ac776412", name: "Chantilly", country: "France", surfaces: ["Turf"] },
-  { id: "719cf456-9864-47b7-9c82-506eaeb254a7", name: "Vichy", country: "France", surfaces: ["Turf"] },
-  { id: "f74061a1-adfd-4fb1-aded-843109961953", name: "Toulouse", country: "France", surfaces: ["Turf"] },
-
-  // Ireland
-  { id: "20175183-67a8-4d6b-9c4d-0942856f8860", name: "Curragh", country: "Ireland", surfaces: ["Turf"] },
-  { id: "73892381-380b-4362-bc0e-b499a31efe12", name: "Leopardstown", country: "Ireland", surfaces: ["Turf"] },
-  { id: "fa612877-e790-4f68-bec8-3cade3f1e670", name: "Navan", country: "Ireland", surfaces: ["Turf"] },
-  { id: "a5b184f5-f04b-4ea7-a0a0-497349edb869", name: "Naas", country: "Ireland", surfaces: ["Turf"] },
-  { id: "ec53a32b-9c86-4f8e-8737-28c8b8ddb1d9", name: "Cork", country: "Ireland", surfaces: ["Turf"] },
-  { id: "94c11808-6b19-41fe-bf0b-b2f802d0f5c1", name: "Gowran Park", country: "Ireland", surfaces: ["Turf"] },
-  { id: "1ac5e4ac-7ddf-4b35-a28f-a2bc7a8107fd", name: "Fairyhouse", country: "Ireland", surfaces: ["Turf"] },
-  { id: "bbcc75ec-8d32-466c-9686-1b9deaa116f9", name: "Dundalk", country: "Ireland", surfaces: ["Synthetic"] },
-  { id: "9ed3a611-6bf3-4583-a002-70441a0fc3f4", name: "Longchamp", country: "Ireland", surfaces: ["Turf"] },
-
-  // Germany
-  { id: "f9e9b465-6bf9-4767-a866-588e17ecbdb0", name: "Düsseldorf", country: "Germany", surfaces: ["Turf"] },
-  { id: "5921a518-0a80-4133-a438-86067989b1a5", name: "Cologne", country: "Germany", surfaces: ["Turf"] },
-  { id: "739ee5fa-588c-481c-8e8a-529291ba6644", name: "Baden-Baden", country: "Germany", surfaces: ["Turf"] },
-  { id: "49010038-8c9b-4d39-9b51-69461f034924", name: "Hanover", country: "Germany", surfaces: ["Turf"] },
-  { id: "4b6b97b3-ad2e-4039-8acf-fc10347e3452", name: "Krefeld", country: "Germany", surfaces: ["Turf"] },
-  { id: "31458ac8-25d6-4776-9459-3ef1ce2ce6ae", name: "Hamburg", country: "Germany", surfaces: ["Turf"] },
-  { id: "cf2e39ce-7def-41c7-b187-1ca35fdd66c3", name: "Munich", country: "Germany", surfaces: ["Turf"] },
-  { id: "784442f3-6a95-4629-ab99-3dc564a7b71b", name: "Hoppegarten", country: "Germany", surfaces: ["Turf"] },
-  { id: "d3933648-9640-437a-860b-dfe960d6a0c1", name: "Dortmund", country: "Germany", surfaces: ["Turf"] },
-
-  // Turkey
-  { id: "841f8821-1eb1-4c88-b3f1-a5c4374cbbbc", name: "Veliefendi", country: "Turkey", surfaces: ["Turf", "Synthetic"] },
-
-  // Austria
-  { id: "6b308b0c-6fd9-4416-b06e-7dae37a386ad", name: "Vienna", country: "Austria", surfaces: ["Turf"] },
-  { id: "96921361-a2a0-41db-abc9-3faada7f379c", name: "Klagenfurt", country: "Austria", surfaces: ["Turf"] },
-  { id: "a1a9dede-5d0b-4a84-86c5-0805c4b0b590", name: "Ebreichsdorf", country: "Austria", surfaces: ["Turf"] },
-  { id: "aee7611f-716a-4a79-8142-a3732451b9ed", name: "Freudenau", country: "Austria", surfaces: ["Turf"] },
-
-  // Belgium
-  { id: "9b129f42-f724-43d0-a837-2fb75c32d68c", name: "Ostend", country: "Belgium", surfaces: ["Turf"] },
-  { id: "782f6731-c814-4ba3-b2b3-dac462f2890a", name: "Mons", country: "Belgium", surfaces: ["Synthetic"] },
-
-  // Czech Republic
-  { id: "d2e5c01a-fcd2-4500-9123-bd405ce2aaf0", name: "Prague", country: "Czech Republic", surfaces: ["Turf"] },
-  { id: "6a05c40a-eb0a-471d-9b6c-d090a38b5461", name: "Most", country: "Czech Republic", surfaces: ["Turf"] },
-  { id: "113463f4-3c75-4dfd-9c5b-8f40011dc83b", name: "Karlovy Vary", country: "Czech Republic", surfaces: ["Turf"] },
-  { id: "ae2104a8-5dc8-4609-9ee9-50b0aa4fadd4", name: "Prague", country: "Czech Republic", surfaces: ["Turf"] },
-
-  // Hungary
-  { id: "d0b902b9-a09f-440e-96f7-d3edbd5d7131", name: "Kincsem Park", country: "Hungary", surfaces: ["Turf"] },
-
-  // Spain
-  { id: "23e80c06-3df8-4590-b813-116458225a15", name: "Madrid", country: "Spain", surfaces: ["Turf"] },
-  { id: "37510427-a77d-422f-9113-a8362ae808c4", name: "San Sebastián", country: "Spain", surfaces: ["Turf"] },
-  { id: "8c8eb875-9aa8-4d8b-90ff-066998e57e4f", name: "Dos Hermanas", country: "Spain", surfaces: ["Turf"] },
-
-  // Great Britain - Additional tracks
-  { id: "a38d2b3b-b048-44a6-b344-6506490f7994", name: "Newmarket", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "6aef6140-61e5-4262-806e-9cd9008457ba", name: "York", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "47d7eb08-478c-47ce-bca3-e1ff36affa9d", name: "Newcastle", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "c2dadc93-81e8-4844-8b8c-380dfafb8726", name: "Ayr", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "a5b6c7d8-e9f0-4a1b-2c3d-4e5f6a7b8c9e", name: "Kempton", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "1bf057f7-6597-4f69-b0f4-693a142470f7", name: "Lingfield", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "9d2f4d54-a2a2-4a6d-a442-1dec22bea1c2", name: "Salisbury", country: "Great Britain", surfaces: ["Turf"] },
-  { id: "80f0810c-bcd8-42ee-8411-99b75f53270e", name: "Windsor", country: "Great Britain", surfaces: ["Turf"] },
-
-  // Additional Japan tracks
-  { id: "8b562557-55ca-4d38-b59f-72fe64ef3861", name: "Saga", country: "Japan", surfaces: ["Turf"] },
-
-  // Additional variants (for races that use different track name formats)
-  { id: "4e5db0cb-d4b2-4c6f-b675-903139668491", name: "Urawa Kinen", country: "Japan", surfaces: ["Turf"] },
-];
+export const TRACKS: Track[] = TRACK_DATA as Track[];
 
 // Lookup maps
 export const TRACK_BY_NAME: Record<string, Track> = Object.fromEntries(
@@ -197,6 +67,24 @@ export function getTrackById(id: string): Track | undefined {
 export function getCountryByTrackName(name: string): string {
   const track = getTrackByName(name);
   return track?.country || "Other";
+}
+
+/**
+ * Returns the specific course specification for a track and surface.
+ */
+export function getCourseSpec(trackId: string, surface: "Turf" | "Dirt" | "Synthetic"): CourseSpecification | undefined {
+  const track = getTrackById(trackId);
+  return track?.courses.find(c => c.surface === surface);
+}
+
+/**
+ * Helper to get the correct course specification for a given race.
+ */
+export function getCourseForRace(race: Race): CourseSpecification | undefined {
+  const trackId = race.trackId || race.graded?.trackId;
+  const surface = race.surface || race.graded?.surface;
+  if (!trackId || !surface) return undefined;
+  return getCourseSpec(trackId, surface);
 }
 
 // Track schedules - realistic race day patterns by region

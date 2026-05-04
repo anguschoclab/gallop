@@ -197,3 +197,23 @@ export function randomRaceName(rng: Rng): string {
   const b = rng.pick(RACE_SUFFIXES);
   return `${a} ${b}`;
 }
+
+const JOCKEY_FIRST_NAMES = [
+  "Frankie", "Ryan", "Lester", "Bill", "Mike", "Joel", "Irad", "Jose", "Flavien", "Christophe",
+  "James", "William", "Oisin", "Tom", "Ben", "Kerrin", "Hugh", "Zac", "Joao", "Yutaka",
+  "Mirco", "Lanfranco", "Olivier", "Gerald", "Pat", "Ruby", "Davy", "Paul", "Rachael", "Victor",
+  "John", "Laffit", "Pat", "Gary", "Angel", "Jerry", "Kent", "Corey", "Julien", "Tyler"
+];
+
+const JOCKEY_LAST_NAMES = [
+  "Dettori", "Moore", "Piggott", "Shoemaker", "Smith", "Rosario", "Ortiz", "Prat", "Soumillon", "McDonald",
+  "Marquand", "Doyle", "Murphy", "Curtis", "McEvoy", "Bowman", "Purton", "Moreira", "Take", "Demuro",
+  "Peslier", "Mosse", "Eddery", "Walsh", "Russell", "Townend", "Blackmore", "Stevens", "Velazquez", "Geroux",
+  "Espinoza", "Velazquez", "Day", "Bailey", "Cordero", "Bailey", "Desormeaux", "Nakatani", "Leparoux", "Gaffalione"
+];
+
+export function randomJockeyName(rng: Rng): string {
+  const f = rng.pick(JOCKEY_FIRST_NAMES);
+  const l = rng.pick(JOCKEY_LAST_NAMES);
+  return `${f} ${l}`;
+}

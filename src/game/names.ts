@@ -2,7 +2,8 @@ import { type Rng, nondeterministicRng } from "./rng";
 import { 
   randomHorseName as coreRandomHorseName, 
   randomSilk as coreRandomSilk,
-  randomRaceName as coreRandomRaceName
+  randomRaceName as coreRandomRaceName,
+  randomJockeyName as coreRandomJockeyName
 } from "@/core/common/random";
 
 export function randomHorseName(rng: Rng = nondeterministicRng()) {
@@ -15,6 +16,10 @@ export function randomSilk(rng: Rng = nondeterministicRng()) {
 
 export function randomRaceName(rng: Rng = nondeterministicRng()) {
   return coreRandomRaceName(rng);
+}
+
+export function randomJockeyName(rng: Rng = nondeterministicRng()) {
+  return coreRandomJockeyName(rng);
 }
 
 // Export the new race name generator

@@ -5,11 +5,13 @@ import { useNavigate } from "@tanstack/react-router";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { runRaceToCompletion } from "@/game/raceSim";
+import { getCourseForRace } from "@/game/tracks";
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
   const races = useGame((s) => s.races);
   const horses = useGame((s) => s.horses);
+  const jockeys = useGame((s) => s.jockeys);
   const day = useGame((s) => s.day);
   const resolveRace = useGame((s) => s.resolveRace);
   const set = useGame.setState;
@@ -30,8 +32,9 @@ export function PlayerRacePrompt() {
   }
 
   function autoResolve() {
-    const runners = buildRaceField({ race: race!, horses });
-    const result = runRaceToCompletion(runners, race!.distance, rngForRace(race!));
+    const { runners } = buildRaceField({ race: race!, horses, jockeys });
+    const course = getCourseForRace(race!);
+    const result = runRaceToCompletion(runners, race!.distance, rngForRace(race!), 0.1, 600, course);
     resolveRace(race!.id, result);
     clearPending();
   }

@@ -19,9 +19,10 @@ export const npcCyclePhase = {
     const pregnantIds = new Set(state.pregnancies.filter(p => !p.resolved).map(p => p.damId));
     
     // Run the complete NPC cycle
-    const { horses, races } = runNpcCycle(
+    const { horses, races, jockeys } = runNpcCycle(
       state.npcStables,
       state.horses,
+      state.jockeys,
       state.races,
       newDay,
       context.dailyRng,
@@ -35,6 +36,7 @@ export const npcCyclePhase = {
         ...state,
         horses,
         races,
+        jockeys,
       },
     };
   },
