@@ -130,7 +130,7 @@ export function refreshMarket(currentMarket: Horse[], rng: Rng): Horse[] {
   while (market.length < 5) {
     const r = rng.next();
     const tier = r < 0.5 ? "budget" : r < 0.85 ? "mid" : "elite";
-    market.push(generateHorse({ tier: tier as never, rng }));
+    market.push(generateHorse({ tier: tier as never }, rng));
   }
   return market;
 }
@@ -308,14 +308,14 @@ function initialState(): GameState {
   
   // Generate player horses
   const horses: Horse[] = [
-    { ...generateHorse(setupRng, { tier: "starter", owned: true }) },
-    { ...generateHorse(setupRng, { tier: "starter", owned: true }) },
+    { ...generateHorse({ tier: "starter", owned: true }, setupRng) },
+    { ...generateHorse({ tier: "starter", owned: true }, setupRng) },
   ];
   
   const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
     const tier = r < 0.6 ? "budget" : "mid";
-    return generateHorse(setupRng, { tier: tier as any });
+    return generateHorse({ tier: tier as any }, setupRng);
   });
   
   const races: Race[] = [];
