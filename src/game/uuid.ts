@@ -10,12 +10,18 @@ export function generateUUID(): string {
     return crypto.randomUUID();
   }
   
-  // Fallback to manual UUID v4 generation
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    // Fallback to manual UUID v4 generation using secure random values
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const bytes = new Uint8Array(1);
+      crypto.getRandomValues(bytes);
+      const r = bytes[0] % 16;
+      const v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
+  throw new Error("Secure random number generation is not available.");
 }
 
 /**
@@ -23,7 +29,29 @@ export function generateUUID(): string {
  * 8 character alphanumeric string
  */
 export function generateShortId(): string {
-  return Math.random().toString(36).substring(2, 10);
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let id = "";
+
+    // We want 8 characters
+    while (id.length < 8) {
+      const randomValues = new Uint8Array(8);
+      crypto.getRandomValues(randomValues);
+
+      for (let i = 0; i < 8 && id.length < 8; i++) {
+        // Use rejection sampling to avoid modulo bias.
+        // There are 36 characters. The largest multiple of 36 less than 256 is 252.
+        // So we only use values < 252.
+        if (randomValues[i] < 252) {
+          id += chars[randomValues[i] % 36];
+        }
+      }
+    }
+
+    return id;
+  }
+
+  throw new Error("Secure random number generation is not available.");
 }
 
 /**
