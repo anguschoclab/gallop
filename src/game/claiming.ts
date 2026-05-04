@@ -3,6 +3,7 @@
 
 import type { Race, Horse, ClaimingPrice } from "./types";
 import type { Rng } from "./rng";
+import { calculateOverallRating } from "@/core/horse/stats";
 
 // Horse transfer result from a claiming race
 export type HorseTransfer = {
@@ -98,7 +99,7 @@ export function isHorseEligibleForClaimingPrice(
   allHorses: Horse[]
 ): boolean {
   // Calculate horse's value based on stats and performance
-  const overall = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) / 4;
+  const overall = calculateOverallRating(horse);
   
   // Simple value estimation
   const estimatedValue = overall * 1000;
@@ -125,7 +126,7 @@ export function isHorseEligibleForClaimingPrice(
 
 // Get suggested claiming price range for a horse
 export function getSuggestedClaimingPriceRange(horse: Horse): [ClaimingPrice, ClaimingPrice] {
-  const overall = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) / 4;
+  const overall = calculateOverallRating(horse);
   const estimatedValue = overall * 1000;
   
   const priceTiers: ClaimingPrice[] = [5000, 10000, 12500, 16000, 20000, 25000, 32000, 40000, 50000, 62500, 75000, 100000];

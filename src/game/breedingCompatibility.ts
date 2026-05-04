@@ -1,6 +1,7 @@
 import type { Horse } from "./types";
 import { calculateDosageMetrics, interpretDosageIndex } from "./dosage";
 import { findHorseByName, type PedigreeHorse } from "./pedigreeData";
+import { TRAIT_SCORE } from "./geneticsEngine";
 
 /**
  * Calculate genetic compatibility based on horse genome research
@@ -115,9 +116,8 @@ export function calculateBlueHenContribution(dam: Horse): {
 }
 
 function evaluateGeneticTrait(sireTrait: string | undefined, damTrait: string | undefined): number {
-  const traitValues: Record<string, number> = { excellent: 1.0, good: 0.75, fair: 0.5, poor: 0.25 };
-  const sireValue = traitValues[sireTrait || "fair"] || 0.5;
-  const damValue = traitValues[damTrait || "fair"] || 0.5;
+  const sireValue = TRAIT_SCORE[sireTrait || "fair"] ?? 0.5;
+  const damValue = TRAIT_SCORE[damTrait || "fair"] ?? 0.5;
   return (sireValue + damValue) / 2;
 }
 
@@ -517,15 +517,8 @@ export function calculateConformationCompatibility(
   const sireConf = sire.conformation || "fair";
   const damConf = dam.conformation || "fair";
 
-  const confValues: Record<string, number> = {
-    excellent: 1.0,
-    good: 0.75,
-    fair: 0.5,
-    poor: 0.25,
-  };
-
-  const sireValue = confValues[sireConf];
-  const damValue = confValues[damConf];
+  const sireValue = TRAIT_SCORE[sireConf];
+  const damValue = TRAIT_SCORE[damConf];
 
   // Both parents should have good conformation
   const avgValue = (sireValue + damValue) / 2;
@@ -550,15 +543,8 @@ export function calculateTemperamentCompatibility(
   const sireTemp = sire.temperament || "fair";
   const damTemp = dam.temperament || "fair";
 
-  const tempValues: Record<string, number> = {
-    excellent: 1.0,
-    good: 0.75,
-    fair: 0.5,
-    poor: 0.25,
-  };
-
-  const sireValue = tempValues[sireTemp];
-  const damValue = tempValues[damTemp];
+  const sireValue = TRAIT_SCORE[sireTemp];
+  const damValue = TRAIT_SCORE[damTemp];
 
   const avgValue = (sireValue + damValue) / 2;
 

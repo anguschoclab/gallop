@@ -1,6 +1,8 @@
 // Curated dataset of famous thoroughbred sires and dams
 // Sources: Wikipedia (Leading Sire in North America), TBHeritage.com (Foundation Sires)
 
+import { nondeterministicRng, type Rng } from "./rng";
+
 export type AptitudinalGroup = "Brilliant" | "Intermediate" | "Classic" | "Solid" | "Professional";
 
 export interface PedigreeHorse {
@@ -197,22 +199,22 @@ export function getDamByName(horseName: string): string | undefined {
 }
 
 // Function to get random horse from a specific era
-export function getRandomHorseFromEra(era: PedigreeHorse["era"]): PedigreeHorse | undefined {
+export function getRandomHorseFromEra(era: PedigreeHorse["era"], rng: Rng = nondeterministicRng()): PedigreeHorse | undefined {
   const horses = pedigreeDataset.filter((h) => h.era === era);
   if (horses.length === 0) return undefined;
-  return horses[Math.floor(Math.random() * horses.length)];
+  return horses[Math.floor(rng.next() * horses.length)];
 }
 
 // Function to get random sire from the dataset
-export function getRandomSire(): PedigreeHorse | undefined {
+export function getRandomSire(rng: Rng = nondeterministicRng()): PedigreeHorse | undefined {
   const sires = pedigreeDataset.filter((h) => h.sire !== undefined || h.era === "foundation");
   if (sires.length === 0) return undefined;
-  return sires[Math.floor(Math.random() * sires.length)];
+  return sires[Math.floor(rng.next() * sires.length)];
 }
 
 // Function to get random dam from the dataset
-export function getRandomDam(): PedigreeHorse | undefined {
+export function getRandomDam(rng: Rng = nondeterministicRng()): PedigreeHorse | undefined {
   const dams = pedigreeDataset.filter((h) => h.dam !== undefined);
   if (dams.length === 0) return undefined;
-  return dams[Math.floor(Math.random() * dams.length)];
+  return dams[Math.floor(rng.next() * dams.length)];
 }

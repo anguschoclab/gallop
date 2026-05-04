@@ -4,6 +4,7 @@
 import type { Race } from "./types";
 import type { Track, TrackSchedule } from "./tracks";
 import type { Rng } from "./rng";
+import { createRng, hashStr } from "./rng";
 import { getTrackById } from "./tracks";
 import { generateRace } from "./horseGen";
 import { makeGradedRace } from "./horseGen";
@@ -122,7 +123,6 @@ export function generateUpcomingRaces(
   for (let offset = 1; offset <= 7; offset++) {
     const futureDay = newDay + offset;
     // Derive a unique seed for this specific day
-    const { createRng, hashStr } = require("./rng");
     const dailyRng = createRng(hashStr(`raceGen_${futureDay}`));
     
     const dayRaces = generateTrackSchedule(futureDay, races, schedules, dailyRng);
