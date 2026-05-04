@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { getTrackContinent, getTrackCountry, type Continent } from "@/game/gradedRaces";
+import { groupRacesByDate } from "@/lib/utils";
 
 interface RegionalScheduleProps {
   continent?: Continent;
@@ -16,19 +17,6 @@ function formatDate(day: number): string {
   const dayOfYear = ((day - 1) % 365) + 1;
   const date = new Date(2024, 0, dayOfYear);
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-function groupRacesByDate(races: any[]) {
-  const grouped = new Map<number, any[]>();
-  for (const race of races) {
-    if (!grouped.has(race.day)) {
-      grouped.set(race.day, []);
-    }
-    grouped.get(race.day)!.push(race);
-  }
-  return Array.from(grouped.entries())
-    .sort(([a], [b]) => a - b)
-    .map(([day, races]) => ({ day, races: races.sort((a, b) => a.day - b.day) }));
 }
 
 export function RegionalSchedule({ continent, country, tracks, title }: RegionalScheduleProps) {
