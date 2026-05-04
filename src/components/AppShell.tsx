@@ -39,7 +39,7 @@ export function AppShell() {
           <h1 className="text-lg font-bold tracking-tight">Stable Manager</h1>
           <p className="text-xs text-muted-foreground mt-0.5">{gameCalendarDate(day)}</p>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1" aria-label="Main Navigation">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active =
@@ -48,6 +48,7 @@ export function AppShell() {
               <Link
                 key={item.to}
                 to={item.to}
+                aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                   active
@@ -55,7 +56,7 @@ export function AppShell() {
                     : "text-muted-foreground hover:bg-accent hover:text-foreground"
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4" aria-hidden="true" />
                 {item.label}
               </Link>
             );
@@ -67,18 +68,18 @@ export function AppShell() {
             <p className="text-lg font-bold tabular-nums">${cash.toLocaleString()}</p>
           </div>
           <div className="px-3 py-1 text-xs text-muted-foreground">{horses.length} horses</div>
-          <div className="grid grid-cols-4 gap-1">
-            <Button onClick={advanceDay} className="col-span-1" size="sm" title="Advance 1 day">
-              <Plus className="h-3 w-3" />
+          <div className="grid grid-cols-4 gap-1" role="group" aria-label="Time controls">
+            <Button onClick={advanceDay} className="col-span-1" size="sm" title="Advance 1 day" aria-label="Advance 1 day">
+              <Plus className="h-3 w-3" aria-hidden="true" />
             </Button>
-            <Button onClick={() => advanceMultipleDays(7)} className="col-span-1" size="sm" variant="secondary" title="Advance 1 week">
+            <Button onClick={() => advanceMultipleDays(7)} className="col-span-1" size="sm" variant="secondary" title="Advance 1 week" aria-label="Advance 1 week">
               7d
             </Button>
-            <Button onClick={() => advanceMultipleDays(30)} className="col-span-1" size="sm" variant="secondary" title="Advance 1 month">
+            <Button onClick={() => advanceMultipleDays(30)} className="col-span-1" size="sm" variant="secondary" title="Advance 1 month" aria-label="Advance 1 month">
               30d
             </Button>
-            <Button onClick={() => setAutoSimOpen(true)} className="col-span-1" size="sm" variant="ghost" title="AutoSim settings">
-              <Settings className="h-3 w-3" />
+            <Button onClick={() => setAutoSimOpen(true)} className="col-span-1" size="sm" variant="ghost" title="AutoSim settings" aria-label="AutoSim settings">
+              <Settings className="h-3 w-3" aria-hidden="true" />
             </Button>
           </div>
           <Button
