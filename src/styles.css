@@ -165,12 +165,14 @@
 }
 
 /* Horse sprite base styles */
+/* Sprite sheets are 300x100px (6 frames × 50px width, 100px height per frame) */
 .horse-sprite {
   width: 50px;
   height: 50px;
   background-size: 300px 50px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
+  background-position-y: bottom; /* Show bottom 50px of 100px frame */
 }
 
 .horse-sprite-animated {
