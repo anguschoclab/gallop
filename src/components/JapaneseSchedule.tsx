@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import { groupRacesByDate } from "@/lib/utils";
 
 const JAPANESE_TRACKS = ["Tokyo", "Kyoto", "Nakayama", "Hanshin"] as const;
 
@@ -22,19 +23,6 @@ function getSeasonFromDay(day: number): Season {
   if (dayOfYear >= 91 && dayOfYear <= 180) return "mid";
   if (dayOfYear >= 181 && dayOfYear <= 270) return "late";
   return "early";
-}
-
-function groupRacesByDate(races: any[]) {
-  const grouped = new Map<number, any[]>();
-  for (const race of races) {
-    if (!grouped.has(race.day)) {
-      grouped.set(race.day, []);
-    }
-    grouped.get(race.day)!.push(race);
-  }
-  return Array.from(grouped.entries())
-    .sort(([a], [b]) => a - b)
-    .map(([day, races]) => ({ day, races: races.sort((a, b) => a.day - b.day) }));
 }
 
 export function JapaneseSchedule() {
