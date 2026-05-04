@@ -38,16 +38,18 @@ const TRACK_FILTERS: TrackFilter[] = ["all", "Woodbine", "Fort Erie", "Century M
 
 export const Route = createFileRoute("/races")({
   component: RacesPage,
-  validateSearch: (search: Record<string, unknown>): { grade: GradeFilter; country: CountryFilter; surface: SurfaceFilter; track: TrackFilter } => {
+  validateSearch: (search: Record<string, unknown>): { grade: GradeFilter; country: CountryFilter; surface: SurfaceFilter; track: TrackFilter; owned: OwnedFilter } => {
     const g = search.grade;
     const c = search.country;
     const s = search.surface;
     const t = search.track;
+    const o = search.owned;
     return {
       grade: GRADE_FILTERS.includes(g as GradeFilter) ? (g as GradeFilter) : "all",
       country: COUNTRY_FILTERS.includes(c as CountryFilter) ? (c as CountryFilter) : "all",
       surface: SURFACE_FILTERS.includes(s as SurfaceFilter) ? (s as SurfaceFilter) : "all",
       track: TRACK_FILTERS.includes(t as TrackFilter) ? (t as TrackFilter) : "all",
+      owned: OWNED_FILTERS.includes(o as OwnedFilter) ? (o as OwnedFilter) : "all",
     };
   },
 });
