@@ -391,6 +391,7 @@ function RacesPage() {
                 {o === "all" ? "All entries" : "My entries"}
               </Link>
             ))}
+          </div>
           <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && setViewMode(v as "list" | "calendar")}>
             <ToggleGroupItem value="list" aria-label="List view">
               <List className="h-4 w-4" />
