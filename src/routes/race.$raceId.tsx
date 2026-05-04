@@ -405,7 +405,10 @@ function HorseSprite({
       className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow"
       style={{
         backgroundColor: color,
-        animation: isRunning ? "pulse 0.5s ease-in-out infinite" : undefined,
+        animation:
+          isRunning && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "pulse 0.5s ease-in-out infinite"
+            : undefined,
       }}
     >
       {num}

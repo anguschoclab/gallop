@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Info } from "lucide-react";
+import { toast } from "sonner";
 import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
 import { BreedingRadarChart } from "@/components/BreedingRadarChart";
 
@@ -34,10 +35,7 @@ function BreedingPage() {
     if (!sireId || !damId) return;
     const result = breed(sireId, damId, liveFoalGuarantee);
     if (!result.ok) {
-      // Surface the rejection reason via the existing log feed (the breed
-      // action already pushes an entry); also alert for now to keep parity
-      // with the prior UX. Toast wiring can replace this incrementally.
-      alert(result.reason);
+      toast.error(result.reason);
       return;
     }
     setSireId(""); setDamId(""); setLiveFoalGuarantee(false);

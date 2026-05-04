@@ -1,7 +1,8 @@
 import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
-import { Home, Trophy, Store, Calendar, Plus, Heart, Building2, Gavel, Settings } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Home, Trophy, Store, Calendar, Plus, Heart, Building2, Gavel, Settings, Baby, BarChart2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
@@ -15,7 +16,9 @@ const navItems = [
   { to: "/npc-stables", label: "Rival Stables", icon: Building2, exact: false },
   { to: "/market", label: "Market", icon: Store, exact: false },
   { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
+  { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
   { to: "/auction", label: "Sales", icon: Gavel, exact: false },
+  { to: "/recap", label: "Recap", icon: BarChart2, exact: false },
 ] as const;
 
 export function AppShell() {
@@ -27,6 +30,7 @@ export function AppShell() {
   const newGame = useGame((s) => s.newGame);
   const location = useLocation();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
+  const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
 
   // Hide chrome for live race screen
   const isRace = location.pathname.startsWith("/race/");
@@ -82,15 +86,25 @@ export function AppShell() {
             </Button>
           </div>
           <Button
-            onClick={() => {
-              if (confirm("Start a new game? All progress will be lost.")) newGame();
-            }}
+            onClick={() => setNewGameDialogOpen(true)}
             className="w-full"
             size="sm"
             variant="ghost"
           >
             New Game
           </Button>
+          <Dialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Start a new game?</DialogTitle>
+                <DialogDescription>All current progress will be lost. This cannot be undone.</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="ghost" onClick={() => setNewGameDialogOpen(false)}>Cancel</Button>
+                <Button variant="destructive" onClick={() => { newGame(); setNewGameDialogOpen(false); }}>Start new game</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </aside>
       <main className="flex-1 overflow-auto">

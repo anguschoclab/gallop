@@ -31,7 +31,7 @@ function UAECalendarPage() {
 
   // Group races by month
   const racesByMonth = filteredRaces.reduce((acc, race) => {
-    const monthName = getMonthName(race.dayOfYear);
+    const monthName = coreGetMonthName(race.dayOfYear);
     if (!acc[monthName]) acc[monthName] = [];
     acc[monthName].push(race);
     return acc;
@@ -153,51 +153,3 @@ function UAECalendarPage() {
   );
 }
 
-function getMonthName(dayOfYear: number): string {
-  const cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
-  for (let i = 0; i < cum.length; i++) {
-    if (dayOfYear < cum[i + 1]) {
-      const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-      return months[i];
-    }
-  }
-  return "December";
-}
-
-function formatDate(dayOfYear: number): string {
-  const cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
-  for (let i = 0; i < cum.length; i++) {
-    if (dayOfYear < cum[i + 1]) {
-      const day = dayOfYear - cum[i] + 1;
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      return `${months[i]} ${day}`;
-    }
-  }
-  return "Dec 31";
-}

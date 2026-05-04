@@ -20,9 +20,9 @@ function NpcStableDetailPage() {
   const stable = getStableById(game.npcStables, stableId);
   if (!stable) {
     return (
-      <div className="p-6">
+      <div className="space-y-4">
         <h1 className="text-2xl font-bold">Stable Not Found</h1>
-        <Link to="/npc-stables" className="text-blue-600 hover:underline mt-4 inline-block">
+        <Link to="/npc-stables" className="text-primary hover:underline mt-4 inline-block">
           ← Back to Stables
         </Link>
       </div>
@@ -35,9 +35,9 @@ function NpcStableDetailPage() {
   const fillies = horses.filter(h => h.gender === "filly" || h.gender === "mare");
   
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="space-y-6">
       {/* Back link */}
-      <Link to="/npc-stables" className="text-blue-600 hover:underline mb-4 inline-flex items-center gap-1">
+      <Link to="/npc-stables" className="text-primary hover:underline mb-4 inline-flex items-center gap-1">
         <ArrowLeft className="w-4 h-4" />
         Back to Stables
       </Link>
@@ -59,8 +59,8 @@ function NpcStableDetailPage() {
                 {stable.tier.toUpperCase()}
               </Badge>
             </div>
-            <p className="text-gray-600 mt-1">{stable.owner}</p>
-            <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+            <p className="text-muted-foreground mt-1">{stable.owner}</p>
+            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Globe className="w-4 h-4" />
                 {stable.country}
@@ -81,7 +81,7 @@ function NpcStableDetailPage() {
         </div>
         
         {stable.description && (
-          <p className="text-gray-600 bg-gray-50 p-4 rounded-lg">
+          <p className="text-muted-foreground bg-muted/50 p-4 rounded-lg">
             {stable.description}
           </p>
         )}
@@ -92,7 +92,7 @@ function NpcStableDetailPage() {
             <Brain className="w-3 h-3" />
             <span className="capitalize">{stable.personality.replace("-", " ")}</span>
           </Badge>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted-foreground">
             {PERSONALITY_CONFIG[stable.personality]?.description}
           </span>
           {stable.preferredDistance && (
@@ -108,25 +108,25 @@ function NpcStableDetailPage() {
         <Card>
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">{horses.length}</div>
-            <div className="text-sm text-gray-500">Total Horses</div>
+            <div className="text-sm text-muted-foreground">Total Horses</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">{activeHorses.length}</div>
-            <div className="text-sm text-gray-500">Active Horses</div>
+            <div className="text-sm text-muted-foreground">Active Horses</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">{colts.length}</div>
-            <div className="text-sm text-gray-500">Colts/Horses</div>
+            <div className="text-sm text-muted-foreground">Colts/Horses</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">{fillies.length}</div>
-            <div className="text-sm text-gray-500">Fillies/Mares</div>
+            <div className="text-sm text-muted-foreground">Fillies/Mares</div>
           </CardContent>
         </Card>
       </div>
@@ -175,7 +175,7 @@ function NpcStableDetailPage() {
         </div>
         
         {horses.length === 0 && (
-          <p className="text-gray-500 text-center py-8">
+          <p className="text-muted-foreground text-center py-8">
             No horses currently in this stable.
           </p>
         )}
