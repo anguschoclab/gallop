@@ -7,10 +7,10 @@ describe("Biological Simulation Bridge - Stress Test", () => {
   const rng = createRng(789);
 
   it("should apply size-based weight capacity bonuses", () => {
-    const largeHorse = generateHorse(rng, { tier: "mid" });
+    const largeHorse = generateHorse({ tier: "mid" });
     largeHorse.weight = 600; // Giant
     
-    const smallHorse = generateHorse(rng, { tier: "mid" });
+    const smallHorse = generateHorse({ tier: "mid" });
     smallHorse.weight = 440; // Pony
 
     // Reset stats to identical for fair comparison
@@ -27,10 +27,10 @@ describe("Biological Simulation Bridge - Stress Test", () => {
   });
 
   it("should apply conformation-based stamina efficiency", () => {
-    const goodConf = generateHorse(rng, { tier: "mid" });
+    const goodConf = generateHorse({ tier: "mid" });
     goodConf.conformation = "excellent";
     
-    const poorConf = generateHorse(rng, { tier: "mid" });
+    const poorConf = generateHorse({ tier: "mid" });
     poorConf.conformation = "poor";
 
     goodConf.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80 };
@@ -46,7 +46,7 @@ describe("Biological Simulation Bridge - Stress Test", () => {
   });
 
   it("should verify gelding consistency bonus", () => {
-    const horse = generateHorse(rng, { tier: "mid" });
+    const horse = generateHorse({ tier: "mid" });
     horse.gender = "horse";
     horse.stats.consistency = 80;
     
