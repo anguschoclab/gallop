@@ -90,11 +90,11 @@ function AuctionPage() {
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">Eligible to Consign</h2>
           <div className="grid gap-2">
-            {eligibleToConsign.map((horse) => {
-              const targetSale = upcoming.find((a) =>
-                (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
-                ((horse.age === 1 || horse.age === 2) && (a.kind === "yearling" || a.kind === "yearling_south"))
-              );
+            {(() => {
+              const weanlingSale = upcoming.find((a) => a.kind === "weanling" || a.kind === "weanling_south");
+              const yearlingSale = upcoming.find((a) => a.kind === "yearling" || a.kind === "yearling_south");
+              return eligibleToConsign.map((horse) => {
+                const targetSale = horse.age === 0 ? weanlingSale : yearlingSale;
               return (
                 <Card key={horse.id} className="p-3 flex items-center justify-between gap-4">
                   <div>
@@ -114,7 +114,8 @@ function AuctionPage() {
                   )}
                 </Card>
               );
-            })}
+              });
+            })()}
           </div>
         </section>
       )}
