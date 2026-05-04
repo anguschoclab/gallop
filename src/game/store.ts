@@ -531,7 +531,7 @@ export const useGame = create<GameState & Actions>()(
           if (!h) continue;
           h.energy = Math.max(0, h.energy - 25); // Racing costs 25 energy
           const beyer = r.dnf ? 0 : beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
-          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: ranked.length }, ...h.raceHistory].slice(0, loadRaceHistoryLimit());
+          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: ranked.length, raceClass: race.raceClass }, ...h.raceHistory].slice(0, loadRaceHistoryLimit());
           // form change (DNF treated as "did not finish" → mild form penalty)
           if (r.dnf) h.form = Math.max(-10, h.form - 1);
           else if (r.position === 1) h.form = Math.min(10, h.form + 3);
@@ -588,20 +588,50 @@ export const useGame = create<GameState & Actions>()(
           if (arr.length > MAX_SAMPLES_PER_BUCKET) arr.splice(0, arr.length - MAX_SAMPLES_PER_BUCKET);
           samples[b] = arr;
         }
-        const photoNote = photoFinish ? " Photo finish" : "";
-        const updatedNpcStables = s.npcStables.map((stable) =>
-          stableCredits[stable.id] ? { ...stable, cash: stable.cash + stableCredits[stable.id] } : stable
-        );
-        set({
-          races: [...s.races],
-          horses: [...s.horses],
-          cash: s.cash + earned,
-          npcStables: updatedNpcStables,
-          paceSamples: samples,
-          log: [
+
+        // Process claims (currently empty array until UI/AI claim generation is added)
+        // Dynamically imported to avoid circular dependency issues if any
+        import("@/game/claiming").then(({ processClaims }) => {
+          const { transfers, logs: claimLogs } = processClaims(race, [], s.horses, s.day);
+          
+          let finalCash = s.cash + earned;
+          const finalNpcStables = s.npcStables.map((stable) => {
+            let cash = stableCredits[stable.id] ? stable.cash + stableCredits[stable.id] : stable.cash;
+            // Add cash if sold
+            for (const t of transfers) if (t.fromStableId === stable.id) cash += t.price;
+            // Subtract cash if bought
+            for (const t of transfers) if (t.toStableId === stable.id) cash -= t.price;
+            return { ...stable, cash };
+          });
+
+          for (const t of transfers) {
+            if (!t.fromStableId) finalCash += t.price; // Player sold
+            if (!t.toStableId) finalCash -= t.price; // Player bought
+          }
+
+          const finalHorses = s.horses.map(h => {
+            const t = transfers.find(tr => tr.horseId === h.id);
+            if (t) {
+              return { ...h, stableId: t.toStableId || undefined, owned: !t.toStableId };
+            }
+            return h;
+          });
+
+          const photoNote = photoFinish ? " Photo finish" : "";
+          const combinedLogs = [
             { day: s.day, text: `${race.name} — ${summary}${earned ? ` (won $${earned.toLocaleString()})` : ""}${photoNote}` },
+            ...claimLogs.map(text => ({ day: s.day, text })),
             ...s.log,
-          ].slice(0, 50),
+          ].slice(0, 50);
+
+          set({
+            races: [...s.races],
+            horses: finalHorses,
+            cash: finalCash,
+            npcStables: finalNpcStables,
+            paceSamples: samples,
+            log: combinedLogs,
+          });
         });
       },
 
@@ -759,7 +789,14 @@ export const useGame = create<GameState & Actions>()(
         // Headless-resolve any unresolved races whose day <= today
         const overdueRaces = s.races.filter((r) => !r.resolved && r.day <= s.day);
         for (const race of overdueRaces) {
-          const runners = buildRaceField({ race, horses: s.horses });
+          const { runners, fillerHorses } = buildRaceField({ race, horses: s.horses });
+          // Persist filler horses so resolveRace can find them by ID
+          if (fillerHorses.length > 0) {
+            for (const fh of fillerHorses) {
+              s.horses.push(fh);
+              race.entries.push({ horseId: fh.id, owned: false, npc: true });
+            }
+          }
           const rng = rngForRace(race);
           const result = runRaceToCompletion(runners, race.distance, rng);
           get().resolveRace(race.id, result);
@@ -846,7 +883,14 @@ export const useGame = create<GameState & Actions>()(
               (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned)
             );
             if (playerRace) {
-              const runners = buildRaceField({ race: playerRace, horses: currentS.horses });
+              const { runners, fillerHorses } = buildRaceField({ race: playerRace, horses: currentS.horses });
+              // Persist filler horses so resolveRace can find them by ID
+              if (fillerHorses.length > 0) {
+                for (const fh of fillerHorses) {
+                  currentS.horses.push(fh);
+                  playerRace.entries.push({ horseId: fh.id, owned: false, npc: true });
+                }
+              }
               const result = runRaceToCompletion(runners, playerRace.distance, rngForRace(playerRace));
               get().resolveRace(playerRace.id, result);
             }

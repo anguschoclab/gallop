@@ -145,7 +145,8 @@ function LiveRace() {
 
   const [runners] = useState<Runner[]>(() => {
     const deps: RaceSimulationDependencies = { race, horses };
-    return buildRaceField(deps);
+    const { runners: built } = buildRaceField(deps);
+    return built;
   });
   const rngRef = useRef(rngForRace(race));
 
@@ -163,11 +164,35 @@ function LiveRace() {
   
   const [announcement, setAnnouncement] = useState<string>("");
   const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
+  const [subjectHorseId, setSubjectHorseId] = useState<string | null>(null);
   const narrativeRef = useRef<NarrativeGenerator | null>(null);
+  const messageQueue = useRef<CommentaryLine[]>([]);
+  const lastMessageTime = useRef<number>(0);
   
   if (!narrativeRef.current && race) {
     narrativeRef.current = new NarrativeGenerator(race, horses, stables);
   }
+
+  // Paced message delivery effect
+  useEffect(() => {
+    if (finished) return;
+    const interval = setInterval(() => {
+      const now = Date.now();
+      if (messageQueue.current.length > 0 && now - lastMessageTime.current > 1500) {
+        const next = messageQueue.current.shift()!;
+        setCommentary(prev => [...prev, next].slice(-50));
+        setAnnouncement(next.text);
+        setSubjectHorseId(next.horseId || null);
+        lastMessageTime.current = now;
+        
+        // Clear subject highlight after a few seconds
+        setTimeout(() => {
+          setSubjectHorseId(current => current === next.horseId ? null : current);
+        }, 3000);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [finished]);
 
   const lastAnnouncedPosition = useRef<Map<string, number>>(new Map());
   const lastAnnouncementTime = useRef<number>(0);
@@ -205,9 +230,7 @@ function LiveRace() {
         if (narrativeRef.current) {
           const newCommentary = narrativeRef.current.update(runners, simTimeRef.current, pace.pacePressure);
           if (newCommentary.length > 0) {
-            setCommentary(prev => [...prev, ...newCommentary].slice(-50));
-            // Also update the screen reader announcement
-            setAnnouncement(newCommentary[newCommentary.length - 1].text);
+            messageQueue.current.push(...newCommentary);
           }
         }
         for (const r of runners) {
@@ -358,6 +381,7 @@ function LiveRace() {
             weather={race.weather}
             followTarget={followTarget}
             paused={paused}
+            subjectHorseId={subjectHorseId}
           />
           <BroadcastCommentary commentary={commentary} />
         </div>
@@ -435,6 +459,7 @@ function Track({
   weather,
   followTarget,
   paused,
+  subjectHorseId,
 }: {
   runners: Runner[];
   distance: number;
@@ -443,6 +468,7 @@ function Track({
   weather?: Weather;
   followTarget?: string | null;
   paused?: boolean;
+  subjectHorseId?: string | null;
 }) {
   const laneHeight = 36;
   const trackHeight = runners.length * laneHeight + 20;
@@ -519,27 +545,45 @@ function Track({
         const screenPct = (relativePos / viewportWidth) * 100;
         if (screenPct < -10 || screenPct > 110) return null;
         
-        const spriteUrl = getSpriteUrl(r.coatColor);
-        const isAnimated = isAnimatedSprite(r.coatColor);
         const isRunning = tick > 0 && !paused && r.finishTime === null;
+        const isSubject = r.horseId === subjectHorseId;
         
         return (
           <div
             key={r.horseId}
             className="absolute transition-none"
             style={{
-              top: 10 + i * laneHeight + 4,
               left: `${screenPct}%`,
-              transform: "translateX(-50%)",
+              top: 10 + i * laneHeight,
               zIndex: Math.round(r.position),
             }}
           >
-            <div className="flex items-center gap-2">
-              <div
-                className="h-4 w-4 rounded-full border border-white/60 flex-shrink-0 shadow-sm"
-                style={{ backgroundColor: r.silk }}
-              />
+            <div className="relative">
+              {isSubject && (
+                <div className="absolute inset-0 -m-4 rounded-full bg-broadcast-accent/30 animate-ping pointer-events-none" />
+              )}
+              {isSubject && (
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-broadcast-accent text-black text-[10px] font-black uppercase rounded shadow-lg animate-in zoom-in-50 fade-in duration-300">
+                  Subject
+                </div>
+              )}
               
+              {/* Tactical Indicators */}
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-1 items-center">
+                {r.draftingHorseId && (
+                  <div className="px-1.5 py-0.5 rounded-full bg-blue-500/80 text-[8px] font-bold text-white flex items-center gap-1 animate-pulse">
+                    <span className="h-1 w-1 rounded-full bg-white" />
+                    Drafting
+                  </div>
+                )}
+                {r.velocity > 18 && (
+                  <div className="px-1.5 py-0.5 rounded-full bg-orange-500/80 text-[8px] font-bold text-white flex items-center gap-1 animate-bounce">
+                    <span className="h-1 w-1 rounded-full bg-white" />
+                    Flying
+                  </div>
+                )}
+              </div>
+
               <HorseSprite 
                 runner={r} 
                 isRunning={isRunning} 
@@ -547,15 +591,14 @@ function Track({
                 isAnimated={isAnimated}
               />
               
-              <span className={`text-xs whitespace-nowrap drop-shadow-md tabular-nums ${r.owned ? 'font-bold text-broadcast-accent' : 'text-white'}`}>
-                {r.name}
-              </span>
-              
-              {r.owned && (
-                <Badge className="h-3.5 px-1 text-[8px] font-black bg-broadcast-accent text-black border-none">
-                  YOU
-                </Badge>
-              )}
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                <span className={`text-[10px] whitespace-nowrap drop-shadow-md tabular-nums ${r.owned ? 'font-bold text-broadcast-accent' : 'text-white/80'}`}>
+                  {r.name}
+                </span>
+                {r.owned && (
+                  <div className="text-[8px] font-black text-broadcast-accent uppercase tracking-tighter">Owner</div>
+                )}
+              </div>
             </div>
           </div>
         );
@@ -622,42 +665,54 @@ function BroadcastCommentary({ commentary }: { commentary: CommentaryLine[] }) {
     }
   }, [commentary]);
 
-  // Only show last 3 for high density
-  const visibleLines = commentary.slice(-10);
+  const visibleLines = commentary.slice(-8);
 
   return (
-    <div className="mt-4 bg-broadcast-marquee/60 backdrop-blur-md rounded-lg border border-white/10 overflow-hidden shadow-xl">
-      <div className="px-3 py-2 border-b border-white/10 bg-white/5 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Mic2 className="h-3.5 w-3.5 text-broadcast-accent" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-white/80">Live Commentary</span>
+    <div className="mt-4 bg-broadcast-marquee/80 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden shadow-2xl transition-all duration-500">
+      <div className="px-4 py-2.5 border-b border-white/10 bg-gradient-to-r from-white/10 to-transparent flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-1 rounded bg-broadcast-accent/20">
+            <Mic2 className="h-4 w-4 text-broadcast-accent" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/90 leading-tight">Live Commentary</span>
+            <span className="text-[8px] text-white/40 uppercase tracking-widest font-medium">Race Broadcast Service</span>
+          </div>
         </div>
-        <div className="flex gap-1">
-          <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-          <span className="text-[8px] font-bold text-red-500 uppercase tracking-tight">On Air</span>
+        <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-black/40 border border-white/5">
+          <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_#ef4444]" />
+          <span className="text-[8px] font-bold text-white/90 uppercase tracking-tighter">Live</span>
         </div>
       </div>
       <div 
         ref={scrollRef}
-        className="h-24 overflow-y-auto p-3 space-y-2 scroll-smooth scrollbar-hide"
+        className="h-28 overflow-y-auto p-4 space-y-3 scroll-smooth scrollbar-hide bg-gradient-to-b from-transparent to-black/20"
       >
-        {visibleLines.map((line, i) => (
-          <div 
-            key={line.id} 
-            className={`text-xs transition-all duration-500 animate-in slide-in-from-bottom-2 fade-in ${
-              i === visibleLines.length - 1 ? "text-white font-medium" : "text-white/50"
-            }`}
-          >
-             <span className="text-[10px] tabular-nums mr-2 opacity-30">
-               {line.timestamp.toFixed(1)}s
-             </span>
-             {line.isHighImpact && <span className="mr-1 text-broadcast-accent font-bold">»</span>}
-             {line.text}
-          </div>
-        ))}
+        {visibleLines.map((line, i) => {
+          const isLatest = i === visibleLines.length - 1;
+          return (
+            <div 
+              key={line.id} 
+              className={`text-xs flex gap-3 transition-all duration-700 ${
+                isLatest ? "text-white font-semibold animate-in slide-in-from-right-4 fade-in" : "text-white/40 font-normal"
+              }`}
+            >
+               <span className={`text-[10px] tabular-nums flex-shrink-0 mt-0.5 ${isLatest ? "text-broadcast-accent" : "opacity-30"}`}>
+                 {line.timestamp.toFixed(1)}s
+               </span>
+               <div className="flex-1 leading-relaxed relative">
+                 {line.isHighImpact && isLatest && (
+                   <span className="absolute -left-4 top-0 animate-ping h-2 w-2 rounded-full bg-broadcast-accent opacity-75" />
+                 )}
+                 {line.text}
+               </div>
+            </div>
+          );
+        })}
         {commentary.length === 0 && (
-          <div className="h-full flex items-center justify-center">
-            <p className="text-[10px] text-white/30 italic uppercase tracking-wider">Awaiting start...</p>
+          <div className="h-full flex flex-col items-center justify-center gap-2 opacity-20">
+            <Mic2 className="h-6 w-6" />
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em]">System Initializing</p>
           </div>
         )}
       </div>

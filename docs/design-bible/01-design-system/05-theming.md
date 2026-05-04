@@ -8,7 +8,7 @@ owns: design:design-system
 
 # Theming
 
-Gallop ships two themes today (light + dark), and a third is planned (broadcast). Themes are distinct from tokens: the *tokens* (semantic names) stay constant; the *values* swap.
+Gallop ships three themes today: light (management), dark (management), and broadcast (live race). Themes are distinct from tokens: the *tokens* (semantic names) stay constant; the *values* swap.
 
 ---
 
@@ -48,9 +48,9 @@ Hero values:
 
 ---
 
-## The broadcast theme (planned)
+## The broadcast theme
 
-The live race screen currently hardcodes its palette: `rgb(6 59 48)` (emerald-950) backgrounds, `rgb(4 120 87)` (emerald-700) track, white text, yellow-400 accents. This is **drift** — components hard-code colours instead of consuming tokens.
+The live race screen uses a dedicated `.broadcast` theme applied via a `.broadcast` class on the race-screen wrapper. It prioritises high-contrast readability against dark emerald backgrounds, mimicking a sports television broadcast.
 
 The fix: introduce a third theme variant — `broadcast` — applied via a `.broadcast` class on the race-screen wrapper.
 
@@ -66,13 +66,13 @@ The fix: introduce a third theme variant — `broadcast` — applied via a `.bro
 | `--broadcast-foreground` | All text | `oklch(0.99 0.005 100)` — near-white |
 | `--broadcast-foreground-muted` | Secondary text | `oklch(0.99 0.005 100 / 0.7)` |
 
-When this lands, the race screen becomes:
+The race screen now consumes these tokens exclusively:
 
 ```tsx
 <div className="broadcast min-h-screen bg-broadcast-track text-broadcast-foreground">
 ```
 
-And the [race.$raceId.tsx](../../../src/routes/race.$raceId.tsx) `style={{ backgroundColor: "rgb(6 59 48)" }}` etc. all go away. Inline hex stops appearing in the codebase entirely.
+All inline hex and RGB values have been purged from [race.$raceId.tsx](../../../src/routes/race.$raceId.tsx).
 
 ### When the broadcast theme is loaded
 

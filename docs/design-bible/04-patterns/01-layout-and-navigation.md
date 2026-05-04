@@ -30,7 +30,7 @@ Every Gallop screen lives inside one of three layouts. Pick the right one for th
 - **Main:** centred content column, capped at `max-w-6xl` (~1152px). Padding `p-6`.
 - **Background:** `bg-muted/30` for the page; cards inside use `bg-card`. The slight backdrop tint is what makes cards float.
 
-**The 7 nav items** — Dashboard, Stable, Races, Rival Stables, Market, Breeding, Sales — are deliberate. Adding an 8th needs a vision-level conversation, not just an icon.
+**The 7 nav items** — Dashboard, Stable, Races, Breeding, Auction, Market, Settings — are deliberate. Adding an 8th needs a vision-level conversation, not just an icon. Secondary screens (Recap, Awards, Rivals, Broodmares) have been integrated into these primary pillars.
 
 ---
 
@@ -51,7 +51,7 @@ Why we break the shell: the live race is the **climax**. The sidebar of manageme
 
 **Rules for full-bleed screens:**
 - Must own all of (a) navigation back, (b) primary controls, (c) result handling.
-- Must use the broadcast theme (planned — see [05-theming.md](../01-design-system/05-theming.md)).
+- Must use the broadcast theme (implemented — see [05-theming.md](../01-design-system/05-theming.md)).
 - Must use the same tokens, typography, and silk treatment as the rest of the product.
 
 ---

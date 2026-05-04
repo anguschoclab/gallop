@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { runNpcCycle } from "./npcCycle";
+import { runNpcCycle } from "@/core/npc/npcCycle";
 import type { Horse, Race, Stable } from "@/game/types";
 
 describe("runNpcCycle", () => {

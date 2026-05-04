@@ -52,6 +52,18 @@ All colours use OKLCH (`oklch(L C H)`), not hex or HSL. OKLCH is perceptually un
 | `input` | Form-field borders | pale slate | white at 15% alpha |
 | `ring` | Focus rings | mid slate | mid slate |
 
+### Status tokens
+
+Used for consistent feedback and data visualization across management and broadcast views.
+
+| Token | Role | Colour |
+|---|---|---|
+| `success` | Positive outcomes, profit, owned entries | Emerald / Green |
+| `warning` | Risks, low energy, covering sickness | Amber / Yellow |
+| `destructive` | Errors, negative outcomes, losses | Red |
+| `info` | Grade 3 races, neutral context | Blue / Sky |
+| `fame` | Grade 1 races, horse of the year, awards | Gold / Gold |
+
 ### Chart palette
 
 Five tokens, light/dark flavoured, intended for data viz. Use in this order; if you need a sixth, you're probably making the chart too busy.
@@ -70,11 +82,16 @@ Charts use these via the `<ChartContainer>` wrapper (see [03-components/03-data-
 
 The sidebar (`AppShell`) has its own family so it can carry a slightly different mood from the main content area. Tokens: `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-accent`, `sidebar-border`, `sidebar-ring`. Same naming pattern as the global palette.
 
-### The race-day palette (planned)
+### The broadcast theme
 
-The live race screen currently hardcodes `rgb(6 59 48)` (emerald-950) and a small set of yellow accents. This is **drift** — see the gap analysis in [05-screens/04-race-viewer.md](../05-screens/04-race-viewer.md).
+The live race screen uses a dedicated `.broadcast` theme with emerald backgrounds and high-contrast accessibility tokens. Documented in [05-theming.md](05-theming.md).
 
-The plan is to introduce a third theme variant — `broadcast` — alongside light/dark, with tokens like `broadcast-track`, `broadcast-rail`, `broadcast-silk-bg`, `broadcast-marquee`. Documented in [05-theming.md](05-theming.md).
+| Token | Role | 
+|---|---|
+| `broadcast-track` | Track surface base | 
+| `broadcast-rail` | Lane dividers, finish line | 
+| `broadcast-accent` | Beyer badges, "YOU" chip | 
+| `broadcast-foreground` | All text | 
 
 ---
 

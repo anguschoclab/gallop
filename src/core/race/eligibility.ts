@@ -76,6 +76,36 @@ export function isHorseEligibleForRace(
     return false;
   }
 
+  // Check Maiden races explicitly (must have 0 wins)
+  if (race.raceClass?.toLowerCase().includes("maiden")) {
+    const hasWon = horse.raceHistory.some(r => r.position === 1);
+    if (hasWon) return false;
+  }
+
+  // Check win conditions
+  if (race.winCondition) {
+    const allWins = horse.raceHistory.filter(r => r.position === 1);
+    
+    // N3L: Non-winners of 3 races lifetime
+    if (race.winCondition === "N3L" && allWins.length >= 3) {
+      return false;
+    }
+    
+    // N1X, N2X: Non-winners of 1 or 2 races "other than maiden, claiming, or starter"
+    if (race.winCondition === "N1X" || race.winCondition === "N2X") {
+      const conditionWins = allWins.filter(w => {
+        const rc = w.raceClass?.toLowerCase() || "";
+        if (rc.includes("maiden") || rc.includes("claiming") || rc.includes("starter")) {
+          return false;
+        }
+        return true;
+      });
+      
+      if (race.winCondition === "N1X" && conditionWins.length >= 1) return false;
+      if (race.winCondition === "N2X" && conditionWins.length >= 2) return false;
+    }
+  }
+
   // Check if horse already entered
   if (race.entries.some((entry) => entry.horseId === horse.id)) {
     return false;

@@ -67,7 +67,7 @@ describe("rngForRace", () => {
 describe("buildRaceField", () => {
   it("output length equals race.fieldSize", () => {
     const race = mkRace({ fieldSize: 8, entries: [] });
-    const runners = buildRaceField({ race, horses: [] });
+    const { runners } = buildRaceField({ race, horses: [] });
     expect(runners).toHaveLength(8);
   });
 
@@ -77,7 +77,7 @@ describe("buildRaceField", () => {
       fieldSize: 6,
       entries: [{ horseId: "h1", owned: true }],
     });
-    const runners = buildRaceField({ race, horses: [horse] });
+    const { runners } = buildRaceField({ race, horses: [horse] });
     const ownedRunner = runners.find(r => r.horseId === "h1");
     expect(ownedRunner).toBeDefined();
     expect(ownedRunner!.owned).toBe(true);
@@ -85,14 +85,14 @@ describe("buildRaceField", () => {
 
   it("unfilled slots get owned=false AI runners", () => {
     const race = mkRace({ fieldSize: 4, entries: [] });
-    const runners = buildRaceField({ race, horses: [] });
+    const { runners } = buildRaceField({ race, horses: [] });
     expect(runners.every(r => !r.owned)).toBe(true);
     expect(runners).toHaveLength(4);
   });
 
   it("empty-field guard: always returns at least 1 runner even when fieldSize=0", () => {
     const race = mkRace({ fieldSize: 0, entries: [] });
-    const runners = buildRaceField({ race, horses: [] });
+    const { runners } = buildRaceField({ race, horses: [] });
     expect(runners.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -102,12 +102,19 @@ describe("buildRaceField", () => {
       expect(() => buildRaceField({ race: mkRace({ raceClass, fieldSize: 3 }), horses: [] })).not.toThrow();
     }
   });
+
+  it("returns filler horses for empty fields", () => {
+    const race = mkRace({ fieldSize: 4, entries: [] });
+    const { runners, fillerHorses } = buildRaceField({ race, horses: [] });
+    expect(fillerHorses).toHaveLength(4);
+    expect(runners).toHaveLength(4);
+  });
 });
 
 describe("simulateStep", () => {
   it("runners that finish get finishTime !== null", () => {
     const race = mkRace({ fieldSize: 2, distance: 1600 });
-    const runners = buildRaceField({ race, horses: [] });
+    const { runners } = buildRaceField({ race, horses: [] });
     const rng = rngForRace(race);
     // Push runners just before finish line, with enough velocity to cross in one step
     for (const r of runners) {
@@ -124,7 +131,7 @@ describe("simulateStep", () => {
 
   it("stillRunning=false when all runners have finished", () => {
     const race = mkRace({ fieldSize: 2 });
-    const runners = buildRaceField({ race, horses: [] });
+    const { runners } = buildRaceField({ race, horses: [] });
     const rng = rngForRace(race);
     // Mark all as finished
     for (const r of runners) {
@@ -136,7 +143,7 @@ describe("simulateStep", () => {
 
   it("runners not at finish line remain running", () => {
     const race = mkRace({ fieldSize: 3, distance: 1600 });
-    const runners = buildRaceField({ race, horses: [] });
+    const { runners } = buildRaceField({ race, horses: [] });
     const rng = rngForRace(race);
     // Do a single tiny step from the start
     const { stillRunning } = simulateStep(runners, 0.01, 0, 1600, rng);

@@ -17,29 +17,27 @@ export type Runner = {
   staminaFactor: number;
   noise: number;
   runningStyle: RunningStyle;
+  draftingHorseId: string | null;
 };
 
 // Style-driven pace shape. Each entry returns a multiplier on target speed
 // based on race progress (0 at the gate, 1 at the wire).
-//   front-runner: hot early, fades a touch late (already capped by stamina)
-//   stalker:      slightly conservative early, strong middle and late
-//   mid-pack:     steady throughout
-//   closer:       conservative early, big surge in the final quarter
-// The deltas are small (±~5%) so style influences but doesn't dominate.
+// Maps to standard E, E/P, P, S run styles:
+//   front-runner (E):   Vies for early lead. 1.05 at start, decaying to ~0.98.
+//   stalker (E/P):      Runs 2nd/3rd early. Starts strong (1.01), rates successfully (steady).
+//   mid-pack (P):       Middle of pack early. Mild start (0.98), strong middle (1.02), steady finish.
+//   closer (S):         Back of pack early. Conservative start (0.93), big surge late (1.07).
 function paceShapeMul(style: RunningStyle, progress: number): number {
   switch (style) {
     case "front-runner":
-      // 1.05 at the start, decaying to ~0.98 by the wire.
       return 1.05 - 0.07 * progress;
     case "stalker":
-      // mild dip at the start, peak around 60-80% in.
-      return 0.97 + 0.06 * Math.sin(Math.PI * progress);
+      return 1.01 - 0.02 * progress;
     case "mid-pack":
-      return 1.0;
+      return 0.98 + 0.04 * Math.sin(Math.PI * progress);
     case "closer":
-      // 0.94 early, surge to 1.07 in the last 30%.
-      if (progress < 0.7) return 0.94 + 0.04 * progress;
-      return 0.97 + 0.10 * ((progress - 0.7) / 0.3);
+      if (progress < 0.6) return 0.93 + 0.05 * progress;
+      return 0.96 + 0.11 * ((progress - 0.6) / 0.4);
   }
 }
 
@@ -138,6 +136,7 @@ export function buildRunner(
     staminaFactor,
     noise,
     runningStyle,
+    draftingHorseId: null,
   };
 }
 
@@ -187,13 +186,13 @@ const DRAFT_DISTANCE = 3; // meters
 const DRAFT_SPEED_BONUS = 1.015; // +1.5% speed when drafting
 const DRAFT_STAMINA_PRESERVE = 0.5; // halves the late-race fade penalty
 
-function isDrafting(r: Runner, runners: Runner[]): boolean {
+function getDraftingHorseId(r: Runner, runners: Runner[]): string | null {
   for (const other of runners) {
     if (other.horseId === r.horseId) continue;
     const gap = other.position - r.position;
-    if (gap > 0 && gap <= DRAFT_DISTANCE) return true;
+    if (gap > 0 && gap <= DRAFT_DISTANCE) return other.horseId;
   }
-  return false;
+  return null;
 }
 
 export function stepRunner(
@@ -207,13 +206,16 @@ export function stepRunner(
 ) {
   if (r.finishTime !== null) return;
   const progress = r.position / distance;
+  
+  r.draftingHorseId = field ? getDraftingHorseId(r, field) : null;
+
   // stamina curve: full speed early, fade in last 40% based on stamina
   let staminaMul = 1;
   if (progress > 0.6) {
     const fade = (progress - 0.6) / 0.4; // 0..1
     let effectiveStamina = r.staminaFactor;
     // Drafting preserves stamina in the back/middle of the field.
-    if (field && isDrafting(r, field)) {
+    if (r.draftingHorseId) {
       effectiveStamina = effectiveStamina + (1 - effectiveStamina) * DRAFT_STAMINA_PRESERVE;
     }
     // Pace pressure: front-runners in a hot pace burn out harder.
@@ -223,13 +225,22 @@ export function stepRunner(
     staminaMul = 1 - (1 - effectiveStamina) * fade;
   }
   let styleMul = paceShapeMul(r.runningStyle, progress);
-  // Closers benefit more in a hot-pace race; their late surge is amplified.
+  
+  // E (Early) Front-runners CANNOT rate successfully behind a pace setter.
+  // If they are not in the lead group (more than 3 meters behind the leader),
+  // they lose their rhythm and suffer a rating penalty. E/P Stalkers do not.
+  if (r.runningStyle === "front-runner" && pace && (pace.leaderPos - r.position) > 3) {
+    styleMul *= 0.98; // Rating penalty
+  }
+  
+  // S (Sustain/Closer) benefits more in a hot-pace race; their late surge is amplified.
   if (pace && pace.pacePressure > 0 && r.runningStyle === "closer" && progress > 0.6) {
     styleMul *= 1 + 0.05 * pace.pacePressure;
   }
   // Drafting gives a small target-speed bump on top of the style/stamina mix.
   let draftMul = 1;
-  if (field && progress < 0.95 && isDrafting(r, field)) draftMul = DRAFT_SPEED_BONUS;
+  if (r.draftingHorseId && progress < 0.95) draftMul = DRAFT_SPEED_BONUS;
+  
   const targetSpeed =
     r.topSpeed * staminaMul * styleMul * draftMul * (1 + (rng.next() - 0.5) * 0.08 * r.noise);
   // accelerate toward target

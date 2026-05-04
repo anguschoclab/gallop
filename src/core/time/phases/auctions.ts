@@ -29,7 +29,7 @@ export const auctionsPhase = {
       if (doy === trigger.doy && !auctions.some((a) => !a.resolved && a.kind === trigger.kind)) {
         const newSale = generateAuctionLots(newDay, state.npcStables, horses, trigger.kind, trigger.name);
         auctions.push(newSale);
-        logs.push({ day: newDay, text: `🏷️ ${trigger.name} opens — ${newSale.lots.length} lots.` });
+        logs.push({ day: newDay, text: `${trigger.name} opens — ${newSale.lots.length} lots.` });
       }
     }
 
@@ -46,7 +46,7 @@ export const auctionsPhase = {
             const proceeds = Math.round(lot.hammerPrice * 0.94);
             auctionCashDelta += proceeds;
             horses = horses.filter((h) => h.id !== lot.horseId);
-            logs.push({ day: newDay, text: `🔨 ${sale.name}: your horse sold for $${lot.hammerPrice.toLocaleString()} (net $${proceeds.toLocaleString()}).` });
+            logs.push({ day: newDay, text: `${sale.name}: your horse sold for $${lot.hammerPrice.toLocaleString()} (net $${proceeds.toLocaleString()}).` });
           } else if (!lot.consignorStableId && lot.passed) {
             // Passed — clear consignment
             horses = horses.map((h) =>

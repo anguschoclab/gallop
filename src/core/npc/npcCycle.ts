@@ -28,17 +28,14 @@ export function runNpcCycle(
   horses: Horse[],
   races: Race[],
   currentDay: number,
-  raceEntryDaysAhead: number = 3
+  raceEntryDaysAhead: number = 3,
+  pregnantIds: Set<string> = new Set()
 ): NpcCycleResult {
   // Skip if no NPC stables
   if (npcStables.length === 0) {
     return { horses, races };
   }
 
-  // Get pregnant mare IDs to prevent entry
-  const pregnantIds = new Set<Pregnancy | undefined>();
-  // Note: pregnancies are not passed here, but the phase that calls this should handle it
-  
   // 1. NPC Training
   let horsesAfterTraining = runNpcTraining(npcStables, horses, currentDay);
   
@@ -49,7 +46,7 @@ export function runNpcCycle(
     races,
     currentDay,
     raceEntryDaysAhead,
-    new Set() // Empty set for pregnant IDs - should be passed by caller
+    pregnantIds
   );
   
   // 3. Update fame for horses in yesterday's races
