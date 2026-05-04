@@ -1,13 +1,12 @@
 import type { Horse, HorseStats, Hemisphere, RunningStyle, CoatColor, Genotype, HorseGender } from "./types";
 import type { Rng } from "./rng";
-import { generateGenotype, resolveCoatColor, resolveStats, resolveRunningStyle, resolveDistanceAptitude, resolveSurfaceAptitude, resolveAptitudeMultiplier, resolveTrait, resolveInjuryProneness, resolveSize } from "./geneticsEngine";
+import { generateGenotype, resolveCoatColor, resolveStats, resolveRunningStyle, resolveDistanceAptitude, resolveSurfaceAptitude, resolveAptitudeMultiplier, resolveTrait, resolveInjuryProneness, resolveSize, resolveGeneticMarkers } from "./geneticsEngine";
 import { generateUUID } from "./uuid";
 import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
 import { rollGender, geldHorse } from "@/core/horse/gender";
 import {
   randomHorseName,
   randomSilk,
-  generateGeneticMarkers,
 } from "@/core/common/random";
 // Re-exports for backward compat — callers should migrate to the canonical locations
 export { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
@@ -54,7 +53,7 @@ export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: 
     conformation,
     temperament,
     healthStatus: "healthy",
-    geneticMarkers: generateGeneticMarkers(rng),
+    geneticMarkers: resolveGeneticMarkers(genotype),
     coatColor,
     runningStyle,
     fame: 0,
@@ -133,7 +132,7 @@ export function generateHorse(rng: Rng, opts: { tier?: "starter" | "budget" | "m
     conformation,
     temperament,
     healthStatus: "healthy",
-    geneticMarkers: generateGeneticMarkers(rng),
+    geneticMarkers: resolveGeneticMarkers(genotype),
     coatColor,
     runningStyle,
     fame: 0,
