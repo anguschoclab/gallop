@@ -127,6 +127,7 @@ export function generateHorse(rng: Rng, opts: { tier?: "starter" | "budget" | "m
     conformation,
     temperament,
     healthStatus: "healthy",
+    geneticMarkers: generateGeneticMarkers(rng),
     coatColor,
     runningStyle,
     fame: 0,
