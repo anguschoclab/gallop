@@ -601,3 +601,48 @@ function BeyerExpectations({ race, horses }: { race: { distance: number; entries
     </div>
   );
 }
+
+function RaceSummary({ upcoming, horses }: { upcoming: Race[]; horses: Horse[] }) {
+  const counts = { G1: 0, G2: 0, G3: 0 };
+  const beyersByGrade: Record<"G1" | "G2" | "G3", number[]> = { G1: [], G2: [], G3: [] };
+
+  for (const race of upcoming) {
+    const g = race.graded?.grade;
+    if (!g) continue;
+    counts[g]++;
+    const classBonus = calculateClassBonus(g, race.raceClass);
+    for (const e of race.entries) {
+      const h = horses.find((x) => x.id === e.horseId);
+      if (!h) continue;
+      beyersByGrade[g].push(expectedBeyer(h as never, race.distance, classBonus));
+    }
+  }
+
+  const avg = (arr: number[]) => arr.length ? Math.round(arr.reduce((s, v) => s + v, 0) / arr.length) : null;
+  const grades: Array<"G1" | "G2" | "G3"> = ["G1", "G2", "G3"];
+
+  return (
+    <Card>
+      <CardHeader><CardTitle className="text-base">Filtered summary</CardTitle></CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-3 gap-4">
+          {grades.map((g) => {
+            const a = avg(beyersByGrade[g]);
+            return (
+              <div key={g} className="rounded-md border p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge variant="outline" className={getGradeColorClass(g)}>{g}</Badge>
+                  <span className="text-sm text-muted-foreground">upcoming</span>
+                </div>
+                <div className="text-2xl font-bold tabular-nums">{counts[g]}</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  Avg expected Beyer: <span className="font-medium text-foreground tabular-nums">{a ?? "—"}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
