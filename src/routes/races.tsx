@@ -430,6 +430,8 @@ function RacesPage() {
         </CardContent>
       </Card>
 
+      <RaceSummary upcoming={upcoming} horses={horses} />
+
       {viewMode === "list" ? (
         <div className="space-y-3">
           {upcoming.length === 0 && (
