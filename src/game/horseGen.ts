@@ -2,11 +2,15 @@ import type { Horse, HorseStats, Hemisphere, Rng, RunningStyle, CoatColor, Genot
 import { generateGenotype, resolveCoatColor, resolveStats, resolveRunningStyle, resolveDistanceAptitude, resolveSurfaceAptitude, resolveAptitudeMultiplier, resolveTrait, resolveInjuryProneness, resolveSize } from "./geneticsEngine";
 import { generateUUID } from "./uuid";
 import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
+import { rollGender, geldHorse } from "@/core/horse/gender";
 import {
   randomHorseName,
   randomSilk,
   generateGeneticMarkers,
 } from "@/core/common/random";
+
+// Re-export geldHorse so existing importers from horseGen don't break.
+export { geldHorse };
 
 export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: string; age?: number; gender?: HorseGender; hemisphere?: Hemisphere; owned?: boolean } = {}): Horse {
   const stats = resolveStats(genotype.stats);
@@ -33,7 +37,7 @@ export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: 
     id: generateUUID(rng),
     name: opts.name ?? "Unnamed Foal",
     age: opts.age ?? 0,
-    gender: opts.gender ?? (rng.next() < 0.5 ? (rng.next() < 0.2 ? "gelding" : "colt") : "filly"),
+    gender: opts.gender ?? rollGender(opts.age ?? 0, rng),
     hemisphere: opts.hemisphere ?? "Northern",
     silk: randomSilk(rng),
     stats,
@@ -95,9 +99,7 @@ export function generateHorse(rng: Rng, opts: { tier?: "starter" | "budget" | "m
   let potentialBoost = 0;
   
   const age = opts.age ?? (rng.next() < 0.2 ? rng.range(2, 3) : rng.range(2, 6));
-  const isMale = rng.next() < 0.5;
-  const isGelding = isMale && rng.next() < 0.35; // 35% of males are geldings
-  const gender = opts.gender ?? (age <= 2 ? (isMale ? (isGelding ? "gelding" : "colt") : "filly") : (isMale ? (isGelding ? "gelding" : "horse") : "mare"));
+  const gender = opts.gender ?? rollGender(age, rng);
   const hemisphere: Hemisphere = opts.hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
 
   if (SIRE_FAMILIES.has(bruceLoweFamily) && (gender === "colt" || gender === "horse")) {
@@ -251,18 +253,5 @@ export function generateRace(day: number, rng: Rng): Race {
     resolved: false,
     weather: randomWeather(rng),
     trackCondition: randomTrackCondition(rng),
-  };
-}
-
-/**
- * Transition a male horse (Colt/Horse) to a Gelding.
- * Improves consistency (reduces noise) but removes breeding capability.
- */
-export function geldHorse(h: Horse): Horse {
-  if (h.gender !== "colt" && h.gender !== "horse") return h;
-
-  return {
-    ...h,
-    gender: "gelding",
   };
 }

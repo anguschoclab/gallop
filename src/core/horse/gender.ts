@@ -1,4 +1,5 @@
-import type { Horse } from "@/game/types";
+import type { Horse, HorseGender } from "@/game/types";
+import type { Rng } from "@/game/rng";
 
 /**
  * Pure gender restriction checking
@@ -69,3 +70,38 @@ export function getGenderRestrictionLabel(restriction: GenderRestriction): strin
   };
   return labelMap[restriction] || restriction;
 }
+
+/**
+ * Roll a gender for a newly generated horse. Canonical implementation —
+ * horseGen.ts, npcHorseGen.ts, and createHorseFromDNA all defer here.
+ *
+ * Rules:
+ *  - 55% male, 45% female
+ *  - 35% of males are gelded (for racing consistency)
+ *  - Colts/fillies up to age 4; horse/mare at 5+
+ */
+export function rollGender(age: number, rng: Rng): HorseGender {
+  const isMale = rng.next() < 0.55;
+  const isGelding = isMale && rng.next() < 0.35;
+
+  if (age <= 4) {
+    if (isMale) return isGelding ? "gelding" : "colt";
+    return "filly";
+  }
+  if (isMale) return isGelding ? "gelding" : "horse";
+  return "mare";
+}
+
+/**
+ * Transition a male horse (Colt/Horse) to a Gelding.
+ * Improves consistency (reduces noise) but removes breeding capability.
+ */
+export function geldHorse(h: Horse): Horse {
+  if (h.gender !== "colt" && h.gender !== "horse") return h;
+
+  return {
+    ...h,
+    gender: "gelding",
+  };
+}
+

@@ -1,56 +1,7 @@
 import type { Horse, Pregnancy, RunningStyle, Pedigree, HorseGender } from "./types";
-import { inheritDNA, TRAIT_VALUES } from "./geneticsEngine";
+import { inheritDNA } from "./geneticsEngine";
 import { createHorseFromDNA } from "./horseGen";
 import { createRng, hashStr, type Rng } from "./rng";
-
-// Build a foal's pedigree snapshot from the parents at conception. We carry
-// each parent's recorded pedigree forward, so a foal effectively encodes
-// 3 generations: foal → parents (full Horse refs) → grandparents (Pedigree).
-function buildFoalPedigree(sire: Horse, dam: Horse): Pedigree {
-  return {
-    sireId: sire.id,
-    damId: dam.id,
-    sireName: sire.name,
-    damName: dam.name,
-    sirePedigree: sire.pedigree,
-    damPedigree: dam.pedigree,
-  };
-}
-
-const STYLES: RunningStyle[] = ["E", "EP", "P", "S"];
-
-function inheritRunningStyle(
-  sire: RunningStyle | undefined,
-  dam: RunningStyle | undefined,
-  rng: Rng
-): RunningStyle {
-  // 60% chance to copy a parent (50/50 sire vs dam), 40% chance the foal
-  // mutates one slot toward an adjacent style or picks fresh. This keeps
-  // pedigree influence visible without locking lineages into one tactic.
-  const r = rng.next();
-  if (r < 0.3 && sire) return sire;
-  if (r < 0.6 && dam) return dam;
-  return rng.pick(STYLES);
-}
-
-
-function rollTrait(avg: number, rng: Rng): "excellent" | "good" | "fair" | "poor" {
-  const roll = avg + rng.range(-1, 1);
-  if (roll >= 3.5) return "excellent";
-  if (roll >= 2.5) return "good";
-  if (roll >= 1.5) return "fair";
-  return "poor";
-}
-
-function inheritGeneticTrait(
-  sireTrait: string | undefined,
-  damTrait: string | undefined,
-  rng: Rng
-): "excellent" | "good" | "fair" | "poor" {
-  const s = TRAIT_VALUES[sireTrait || "fair"] || 2;
-  const d = TRAIT_VALUES[damTrait || "fair"] || 2;
-  return rollTrait((s + d) / 2, rng);
-}
 
 export type FoalOutcome =
   | { kind: "live"; foal: Horse; transmission: boolean }

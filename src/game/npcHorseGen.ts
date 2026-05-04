@@ -1,34 +1,26 @@
-// NPC Horse Generation - Tier-based quality with realistic age distribution
+// NPC Horse Generation - DNA-backed with tier-based quality and realistic age distribution
 // Age distribution: 30% 2YO, 40% 3-4YO (prime), 20% 5-6YO, 10% 7YO+ (breeding stock)
 
 import type { Horse, HorseGender, Hemisphere, Stable, StableTier } from "./types";
 import type { Rng } from "./rng";
-import { generateUUID } from "./uuid";
+import { createHorseFromDNA } from "./horseGen";
+import { generateGenotype } from "./geneticsEngine";
 import {
   rand,
-  randConformation,
-  randTemperament,
-  generateGeneticMarkers,
-  rollRunningStyle,
-  randomCoatColor,
   randomHorseName,
   randomSilk,
+  generateGeneticMarkers,
 } from "@/core/common/random";
 import { shouldRetireAtStartup, initialStandingFee, defaultStudParams } from "@/core/breeding/stallions";
-import { rollProceduralFamily, RUNNING_FAMILIES } from "@/core/breeding/bruceLowe";
+import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
+import { rollGender } from "@/core/horse/gender";
 
 /**
- * Get tier-based stat ranges
+ * Map stable tier to DNA generation tier.
+ * Elite stables produce elite-tier DNA; budget stables produce budget-tier.
  */
-function getTierRanges(tier: StableTier): { statRange: [number, number]; potentialRange: [number, number] } {
-  switch (tier) {
-    case "elite":
-      return { statRange: [55, 85], potentialRange: [80, 100] };
-    case "mid":
-      return { statRange: [40, 70], potentialRange: [70, 90] };
-    case "budget":
-      return { statRange: [25, 55], potentialRange: [60, 80] };
-  }
+function dnaGenTier(stableTier: StableTier): "starter" | "budget" | "mid" | "elite" {
+  return stableTier; // 1:1 mapping
 }
 
 /**
@@ -75,25 +67,10 @@ function calculateStartingFame(tier: StableTier, age: number, rng: Rng): number 
 }
 
 /**
- * Generate gender with realistic racing distribution
- * Fillies/mares slightly less common in training stock (breeding considerations)
- */
-function rollGender(age: number, rng: Rng): HorseGender {
-  const r = rng.next();
-  // Slight bias toward males in racing stock
-  const isMale = r < 0.55;
-  const isGelding = isMale && rng.next() < 0.35; // 35% of males are gelded for racing consistency
-  
-  if (age <= 4) { // Colts/Fillies up to age 4 in Gallop
-    if (isMale) return isGelding ? "gelding" : "colt";
-    return "filly";
-  }
-  if (isMale) return isGelding ? "gelding" : "horse";
-  return "mare";
-}
-
-/**
- * Generate a single NPC horse for a stable
+ * Generate a single NPC horse for a stable.
+ * Uses the DNA pipeline (generateGenotype → createHorseFromDNA) so NPC horses
+ * have full DNA, aptitudes, and all required Horse fields — identical in
+ * structure to player/market horses.
  */
 export function generateNpcHorse(
   stableId: string,
@@ -103,59 +80,47 @@ export function generateNpcHorse(
   specificGender?: HorseGender,
   hemisphere?: Hemisphere
 ): Horse {
-  const { statRange, potentialRange } = getTierRanges(tier);
-  const [statMin, statMax] = statRange;
-  const [potMin, potMax] = potentialRange;
-  
   // Determine age
   const ageCategory = specificAge ? null : rollAgeCategory(rng);
   const age = specificAge ?? getAgeFromCategory(ageCategory!, rng);
   
-  // Determine gender
+  // Determine gender via shared canonical function
   const gender = specificGender ?? rollGender(age, rng);
   
-  // Generate stats with slight bias based on tier quality
-  const speed = rand(statMin, statMax, rng);
-  const stamina = rand(statMin, statMax, rng);
-  const acceleration = rand(statMin, statMax, rng);
-  const consistency = rand(statMin, statMax, rng);
+  // Generate full DNA-backed horse
+  const genotype = generateGenotype(rng, dnaGenTier(tier));
+  const resolvedHemisphere: Hemisphere = hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
   
-  const stats = { speed, stamina, acceleration, consistency };
-  const bruceLoweFamily = rollProceduralFamily(rng);
-  if (RUNNING_FAMILIES.has(bruceLoweFamily)) {
-    stats.speed = Math.min(100, stats.speed + 1);
-    stats.acceleration = Math.min(100, stats.acceleration + 1);
-  }
-  const runningStyle = rollRunningStyle(stats, rng);
-  
-  // Use stable colors for silk
-  const silk = randomSilk(rng);
-  
-  return {
-    id: generateUUID(rng),
+  const horse = createHorseFromDNA(genotype, rng, {
     name: randomHorseName(rng),
     age,
     gender,
-    hemisphere: hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern"),
-    silk,
-    stats,
-    energy: 100,
-    form: 0,
-    potential: rand(potMin, potMax, rng),
-    raceHistory: [],
-    owned: false, // NPC horses are never owned by player
+    hemisphere: resolvedHemisphere,
+    owned: false,
+  });
+
+  // Layer NPC-specific metadata on top of DNA-generated base
+  const bruceLoweFamily = rollProceduralFamily(rng);
+
+  // Sire family potential boost for males
+  let potentialBoost = 0;
+  if (SIRE_FAMILIES.has(bruceLoweFamily) && (gender === "colt" || gender === "horse")) {
+    potentialBoost = 2;
+  }
+  if (RUNNING_FAMILIES.has(bruceLoweFamily)) {
+    potentialBoost += 1;
+  }
+
+  return {
+    ...horse,
+    stableId,
     sireName: randomHorseName(rng),
     damName: randomHorseName(rng),
-    conformation: randConformation(rng),
-    temperament: randTemperament(rng),
-    geneticMarkers: generateGeneticMarkers(rng),
-    healthStatus: "healthy",
-    coatColor: randomCoatColor(rng),
-    runningStyle,
-    stableId,
     fame: calculateStartingFame(tier, age, rng),
     bruceLoweFamily,
-    // No scoutedStats initially - fog of war applies
+    potential: Math.min(100, horse.potential + potentialBoost),
+    // NPC horses are never owned by player
+    owned: false,
   };
 }
 
