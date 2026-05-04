@@ -139,7 +139,7 @@ export function generateNorthAmericanRace(
   
   // Build race object
   const race: Race = {
-    id: generateUUID(),
+    id: generateUUID(rng),
     name,
     day,
     distance,

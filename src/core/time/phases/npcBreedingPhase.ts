@@ -14,8 +14,8 @@ export const npcBreedingPhase = {
   name: "npcBreeding",
   order: 38,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
-    const result = runNpcBreeding(state, newDay);
+    const { state, newDay, dailyRng } = context;
+    const result = runNpcBreeding(state, newDay, dailyRng);
     if (result.newPregnancies.length === 0 && result.logs.length === 0) return context;
     return {
       ...context,

@@ -4,6 +4,7 @@ import { canBreed } from "@/core/breeding/eligibility";
 import { isStallionAvailable } from "@/core/breeding/stallions";
 import { isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { calculateBreedingCompatibility } from "./breedingCompatibility";
+import type { Rng } from "./rng";
 
 const BREEDING_FEE = 2000;
 const GESTATION_DAYS = 30;
@@ -23,7 +24,8 @@ const BREEDING_PERSONALITIES: Stable["personality"][] = ["breeder", "developer",
  */
 export function runNpcBreeding(
   state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day">,
-  newDay: number
+  newDay: number,
+  rng: Rng
 ): {
   horses: Horse[];
   npcStables: Stable[];
@@ -108,7 +110,7 @@ export function runNpcBreeding(
       );
 
       const preg: Pregnancy = {
-        id: generateUUID(),
+        id: generateUUID(rng),
         sireId: best.id,
         damId: mare.id,
         sireName: best.name,

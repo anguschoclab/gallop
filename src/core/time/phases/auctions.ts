@@ -28,8 +28,7 @@ export const auctionsPhase = {
     ];
     for (const trigger of SALE_TRIGGERS) {
       if (doy === trigger.doy && !auctions.some((a) => !a.resolved && a.kind === trigger.kind)) {
-        const rng = createRng(hashStr(`auction_${newDay}_${trigger.kind}`));
-        const newSale = generateAuctionLots(newDay, state.npcStables, horses, trigger.kind, trigger.name, rng);
+        const newSale = generateAuctionLots(newDay, state.npcStables, horses, trigger.kind, trigger.name, context.dailyRng);
         auctions.push(newSale);
         logs.push({ day: newDay, text: `${trigger.name} opens — ${newSale.lots.length} lots.` });
       }

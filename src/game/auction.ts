@@ -170,7 +170,7 @@ export function generateAuctionLots(
   name: string,
   rng: Rng
 ): AuctionSale {
-  const saleId = generateUUID();
+  const saleId = generateUUID(rng);
   const eligibleAges = ELIGIBLE_AGES_BY_KIND[kind];
   const hemisphere = HEMISPHERE_BY_KIND[kind];
   const lots: AuctionLot[] = [];
@@ -191,7 +191,7 @@ export function generateAuctionLots(
 
     for (const horse of inventoryLots) {
       lots.push({
-        id: generateUUID(),
+        id: generateUUID(rng),
         horseId: horse.id,
         consignorStableId: stable.id,
         saleId,
@@ -205,7 +205,7 @@ export function generateAuctionLots(
       const freshHorse = generateNpcHorse(stable.id, stable.tier, rng, eligibleAges[0], undefined, hemisphere);
       allHorses.push(freshHorse);
       lots.push({
-        id: generateUUID(),
+        id: generateUUID(rng),
         horseId: freshHorse.id,
         consignorStableId: stable.id,
         saleId,

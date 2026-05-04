@@ -453,7 +453,7 @@ function generateFillerStable(index: number, day: number, rng: Rng): Stable {
   const isSpecialist = personality === "specialist";
   
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     name: `${prefix} ${suffix}`,
     owner: owner,
     tier: "budget",
@@ -523,7 +523,7 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
     const isSpecialist = personality === "specialist";
     stables.push({
       ...template,
-      id: generateUUID(),
+      id: generateUUID(rng),
       tier: "elite",
       reputation: rng.int(minRep, maxRep),
       founded: Math.max(1, day - 365 * 3),
@@ -542,7 +542,7 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
     const isSpecialist = personality === "specialist";
     stables.push({
       ...template,
-      id: generateUUID(),
+      id: generateUUID(rng),
       tier: "mid",
       reputation: rng.int(minRep, maxRep),
       founded: Math.max(1, day - 365 * 2),
@@ -561,7 +561,7 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
     const isSpecialist = personality === "specialist";
     stables.push({
       ...template,
-      id: generateUUID(),
+      id: generateUUID(rng),
       tier: "budget",
       reputation: rng.int(minRep, maxRep),
       founded: Math.max(1, day - 365),

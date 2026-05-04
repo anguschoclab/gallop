@@ -129,7 +129,7 @@ export function generateNpcHorse(
   const silk = randomSilk(rng);
   
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     name: randomHorseName(rng),
     age,
     gender,

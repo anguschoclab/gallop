@@ -10,9 +10,8 @@ export const marketPhase = {
   name: "market",
   order: 50,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
-    const rng = createRng(hashStr(`market_${newDay}`));
-    const market = refreshMarket(state.market, rng);
+    const { state, dailyRng } = context;
+    const market = refreshMarket(state.market, dailyRng);
 
     return {
       ...context,

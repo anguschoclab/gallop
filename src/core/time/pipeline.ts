@@ -1,10 +1,12 @@
 import type { GameState } from "@/game/types";
+import type { Rng } from "@/game/rng";
 
 export interface PipelineContext {
   previousDay: number;
   newDay: number;
   state: GameState;
   logs: { day: number; text: string }[];
+  dailyRng: Rng;
   skipRaceResolution?: boolean;
 }
 

@@ -59,7 +59,7 @@ export function generateHorse(rng: Rng, opts: { tier?: "starter" | "budget" | "m
     potentialBoost = 2;
   }
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     name: randomHorseName(rng),
     age,
     gender,
@@ -133,7 +133,7 @@ export function makeGradedRace(g: GradedRace, gameDay: number, rng: Rng): Race {
   const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
   const minStat = g.grade === "G1" ? 78 : g.grade === "G2" ? 70 : 62;
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     name: g.name,
     day: gameDay,
     distance: g.distance,
@@ -174,7 +174,7 @@ export function generateRace(day: number, rng: Rng): Race {
   const cfg = classConfig[cls];
   const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     name: randomRaceName(rng),
     day,
     distance,

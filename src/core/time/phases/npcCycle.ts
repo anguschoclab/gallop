@@ -24,6 +24,7 @@ export const npcCyclePhase = {
       state.horses,
       state.races,
       newDay,
+      context.dailyRng,
       3,
       pregnantIds
     );

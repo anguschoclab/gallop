@@ -839,6 +839,7 @@ export const useGame = create<GameState & Actions>()(
           newDay,
           state: s,
           logs: [],
+          dailyRng: createRng(hashStr("daily_" + newDay)),
         };
 
         const phases = [

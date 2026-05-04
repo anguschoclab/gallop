@@ -1,10 +1,18 @@
-// Centralized UUID generation for all game entities
+import type { Rng } from "./rng";
 
 /**
  * Generate a proper UUID v4
- * Uses crypto.randomUUID() if available, falls back to manual generation
+ * Uses provided rng if available for determinism, falls back to crypto.randomUUID()
  */
-export function generateUUID(): string {
+export function generateUUID(rng?: Rng): string {
+  if (rng) {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = (rng.next() * 16) | 0;
+      const v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
   // Use native crypto.randomUUID if available (better randomness)
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();

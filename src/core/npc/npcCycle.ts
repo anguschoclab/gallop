@@ -29,6 +29,7 @@ export function runNpcCycle(
   horses: Horse[],
   races: Race[],
   currentDay: number,
+  rng: Rng,
   raceEntryDaysAhead: number = 3,
   pregnantIds: Set<string> = new Set()
 ): NpcCycleResult {
@@ -36,9 +37,6 @@ export function runNpcCycle(
   if (npcStables.length === 0) {
     return { horses, races };
   }
-
-  // Derive a daily seeded RNG for deterministic NPC behavior
-  const rng = createRng(hashStr(`npc_cycle_${currentDay}`));
 
   // 1. NPC Training
   let horsesAfterTraining = runNpcTraining(npcStables, horses, currentDay, rng);

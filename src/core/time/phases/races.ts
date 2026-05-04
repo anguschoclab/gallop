@@ -11,9 +11,8 @@ export const racesPhase = {
   name: "races",
   order: 60,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
-    const rng = createRng(hashStr(`races_${newDay}`));
-    const races = generateUpcomingRaces(state.races, newDay, rng);
+    const { state, newDay, dailyRng } = context;
+    const races = generateUpcomingRaces(state.races, newDay, dailyRng);
     const pruned = pruneOldRaces(races, newDay);
 
     return {
