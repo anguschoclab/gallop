@@ -27,7 +27,6 @@ export async function initOPFS(): Promise<void> {
       // Get OPFS root directory
       opfsRoot = await navigator.storage.getDirectory();
       isOPFSAvailable = true;
-      console.log('OPFS initialized successfully');
     } catch (error) {
       console.error('Failed to initialize OPFS:', error);
       isOPFSAvailable = false;
@@ -151,7 +150,6 @@ export async function clearAll(): Promise<void> {
     for (const name of fileNames) {
       await opfsRoot.removeEntry(name);
     }
-    console.log('OPFS cleared successfully');
   } catch (error) {
     console.error('Failed to clear OPFS:', error);
   }
