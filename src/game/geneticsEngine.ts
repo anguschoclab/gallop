@@ -1,5 +1,6 @@
 import type { 
   Genotype, 
+  MarkerGenotype,
   Locus, 
   Allele, 
   ColorGenotype, 
@@ -7,7 +8,8 @@ import type {
   PreferenceGenotype,
   HorseStats,
   CoatColor,
-  RunningStyle
+  RunningStyle,
+  GeneticMarkers,
 } from "./types";
 import type { Rng } from "./rng";
 
@@ -97,8 +99,42 @@ export function crossover(sireLocus: Locus, damLocus: Locus, rng: Rng, mutationC
   return [a1, a2];
 }
 
+function inheritTrait(
+  a: "excellent" | "good" | "fair" | "poor",
+  b: "excellent" | "good" | "fair" | "poor",
+  rng: Rng
+): "excellent" | "good" | "fair" | "poor" {
+  return rng.next() < 0.5 ? a : b;
+}
+
 export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
   const crossoverLoci = (s: Locus[], d: Locus[]) => s.map((sl, i) => crossover(sl, d[i], rng));
+
+  // Leopard complex: dominant is dominant if either parent carries it
+  const lp = sire.markers.leopardComplex === "dominant" || dam.markers.leopardComplex === "dominant"
+    ? "dominant"
+    : sire.markers.leopardComplex === "heterozygous" || dam.markers.leopardComplex === "heterozygous"
+    ? (rng.next() < 0.5 ? "heterozygous" : "recessive")
+    : "recessive";
+  const csnbRisk: MarkerGenotype["csnbRisk"] = lp === "dominant" ? "high" : "low";
+
+  // Lethal carriers: each gene carrier flag independent Mendelian
+  const inheritCarrier = (a: boolean, b: boolean) =>
+    a && b ? rng.next() < 0.75 : a || b ? rng.next() < 0.5 : false;
+
+  const inheritedMarkers: MarkerGenotype = {
+    leopardComplex: lp,
+    csnbRisk,
+    sensoryPerception: inheritTrait(sire.markers.sensoryPerception, dam.markers.sensoryPerception, rng),
+    signalTransduction: inheritTrait(sire.markers.signalTransduction, dam.markers.signalTransduction, rng),
+    immunity: inheritTrait(sire.markers.immunity, dam.markers.immunity, rng),
+    geneticDiversity: (sire.markers.geneticDiversity + dam.markers.geneticDiversity) / 2,
+    lethalCarriers: {
+      csnb: inheritCarrier(sire.markers.lethalCarriers.csnb, dam.markers.lethalCarriers.csnb),
+      hypp: inheritCarrier(sire.markers.lethalCarriers.hypp, dam.markers.lethalCarriers.hypp),
+      olws: inheritCarrier(sire.markers.lethalCarriers.olws, dam.markers.lethalCarriers.olws),
+    },
+  };
 
   return {
     color: {
@@ -124,6 +160,7 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
     physical: crossover(sire.physical, dam.physical, rng),
     durability: crossover(sire.durability, dam.durability, rng),
     size: crossover(sire.size, dam.size, rng),
+    markers: inheritedMarkers,
   };
 }
 
@@ -135,6 +172,19 @@ export function resolveRunningStyle(styleLocus: Locus): RunningStyle {
   if (avg <= 2.5) return "EP";
   if (avg <= 3.5) return "P";
   return "S";
+}
+
+// --- 5a. Marker Genotype Resolution ---
+export function resolveGeneticMarkers(genotype: Genotype): GeneticMarkers {
+  return {
+    leopardComplex: genotype.markers.leopardComplex,
+    csnbRisk: genotype.markers.csnbRisk,
+    sensoryPerception: genotype.markers.sensoryPerception,
+    signalTransduction: genotype.markers.signalTransduction,
+    immunity: genotype.markers.immunity,
+    geneticDiversity: genotype.markers.geneticDiversity,
+    lethalCarriers: genotype.markers.lethalCarriers,
+  };
 }
 
 // --- 5. DNA Generation (Initial Population) ---
@@ -178,6 +228,32 @@ export function generateGenotype(rng: Rng, tier: "starter" | "budget" | "mid" | 
   else if (rCr < 0.05) cream = [1, 0];        // 3% single dilute (palomino/buckskin)
   else cream = [0, 0];                         // 95% no dilution
 
+  // --- Marker Genotype (health/immune/genetic traits) ---
+  // Leopard complex (Lp): ~5% homozygous dominant, ~25% heterozygous, rest recessive
+  const lpRoll = rng.next();
+  const leopardComplex: MarkerGenotype["leopardComplex"] =
+    lpRoll < 0.05 ? "dominant" : lpRoll < 0.30 ? "heterozygous" : "recessive";
+  const csnbRisk: MarkerGenotype["csnbRisk"] = leopardComplex === "dominant" ? "high" : "low";
+
+  const traitRoll = (): "excellent" | "good" | "fair" | "poor" => {
+    const r = rng.next();
+    return r < 0.15 ? "excellent" : r < 0.55 ? "good" : r < 0.85 ? "fair" : "poor";
+  };
+
+  const markers: MarkerGenotype = {
+    leopardComplex,
+    csnbRisk,
+    sensoryPerception: traitRoll(),
+    signalTransduction: traitRoll(),
+    immunity: traitRoll(),
+    geneticDiversity: 0.5 + rng.next() * 0.5, // 0.5–1.0
+    lethalCarriers: {
+      csnb: rng.next() < 0.05,
+      hypp: rng.next() < 0.03,
+      olws: rng.next() < 0.02,
+    },
+  };
+
   return {
     color: { 
       extension: extension as Locus, 
@@ -202,6 +278,7 @@ export function generateGenotype(rng: Rng, tier: "starter" | "budget" | "mid" | 
     physical: rollLocus(),
     durability: rollLocus(),
     size: rollLocus(),
+    markers,
   };
 }
 
