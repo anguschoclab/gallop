@@ -146,7 +146,19 @@ export function horsePrice(h: Horse): number {
   const overall = (h.stats.speed + h.stats.stamina + h.stats.acceleration + h.stats.consistency) / 4;
   const ageMod = h.age <= 3 ? 1.2 : h.age >= 6 ? 0.7 : 1;
   const potMod = 0.5 + h.potential / 100;
-  return Math.round((overall * 80 * ageMod * potMod) / 50) * 50;
+  
+  // Biological Multipliers
+  let bioMod = 1.0;
+  if (h.conformation === "excellent") bioMod += 0.05;
+  if (h.temperament === "excellent") bioMod += 0.05;
+  if (h.conformation === "poor") bioMod -= 0.1;
+  if (h.temperament === "poor") bioMod -= 0.1;
+
+  // Durability Modifier (Iron Horse vs Fragile)
+  if (h.injuryProneness < 0.04) bioMod += 0.15;
+  if (h.injuryProneness > 0.08) bioMod -= 0.2;
+
+  return Math.round((overall * 80 * ageMod * potMod * bioMod) / 50) * 50;
 }
 
 // Pedigree-aware variant. When a horses[] context is available, applies the
