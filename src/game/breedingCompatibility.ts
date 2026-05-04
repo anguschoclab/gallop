@@ -1,6 +1,6 @@
 import type { Horse } from "./types";
 import { calculateDosageMetrics, interpretDosageIndex } from "./dosage";
-import { findHorseByName } from "./pedigreeData";
+import { findHorseByName, type PedigreeHorse } from "./pedigreeData";
 
 /**
  * Calculate genetic compatibility based on horse genome research
@@ -124,7 +124,11 @@ export function calculateFounderEffect(sireName: string, damName: string): { sco
   const sireAncestors = new Set<string>();
   const damAncestors = new Set<string>();
   
-  function collectAncestors(horse: any, depth: number = 0, ancestors: Set<string>): void {
+  function collectAncestors(
+    horse: PedigreeHorse | undefined,
+    depth: number = 0,
+    ancestors: Set<string>,
+  ): void {
     if (depth > 4 || !horse) return;
     ancestors.add(horse.name);
     
