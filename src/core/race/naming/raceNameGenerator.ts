@@ -4,6 +4,7 @@
 
 import type { RaceClass, ClaimingPrice, WinCondition, RegionalSystem } from "@/game/types";
 import type { Track } from "@/game/tracks";
+import type { Rng } from "@/game/rng";
 import {
   getRandomSponsor,
   getRandomLocation,
@@ -20,7 +21,7 @@ export interface RaceNameParams {
   usedNames?: Set<string>;
   surface?: "Turf" | "Dirt" | "Synthetic";
   distance?: number;
-  rng?: () => number;
+  rng?: Rng;
 }
 
 // Format claiming price for display
@@ -111,11 +112,11 @@ export function getRegionalSystem(track: Track): RegionalSystem {
 function selectNamingPattern(
   raceClass: RaceClass,
   region: RegionalSystem,
-  rng: () => number,
+  rng: Rng | undefined,
   hasWinCondition: boolean,
   hasClaimingPrice: boolean
 ): NamingPattern {
-  const r = rng();
+  const r = rng ? rng.next() : Math.random();
   
   // North America: heavy use of price-based for claiming
   if (region === "north_america") {
@@ -187,7 +188,7 @@ function generateNameByPattern(
   params: RaceNameParams,
   region: RegionalSystem
 ): string {
-  const { track, raceClass, claimingPrice, winCondition, rng = Math.random } = params;
+  const { track, raceClass, claimingPrice, winCondition, rng } = params;
   
   switch (pattern) {
     case "price_based":
@@ -226,7 +227,7 @@ function generateNameByPattern(
       
     case "class_location":
       // For European/Australian class-based naming
-      const classNum = Math.floor(rng() * 6) + 1; // Class 1-6
+      const classNum = Math.floor((rng ? rng.next() : Math.random()) * 6) + 1; // Class 1-6
       const loc = getRandomLocation(region, rng);
       if (raceClass === "Handicap") {
         return `Class ${classNum} ${loc} Handicap`;
@@ -274,7 +275,7 @@ function ensureUnique(name: string, usedNames: Set<string>): string {
 
 // Main race name generator
 export function generateRaceName(params: RaceNameParams): string {
-  const { track, usedNames = new Set<string>(), rng = Math.random } = params;
+  const { track, usedNames = new Set<string>(), rng } = params;
   
   // Determine regional system
   const region = getRegionalSystem(track);

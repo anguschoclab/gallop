@@ -1,5 +1,6 @@
 import type { Horse, Race, Stable, Pregnancy } from "@/game/types";
 import { runNpcTraining, runNpcRaceEntry, updateHorseFame } from "@/game/npcRaceEntry";
+import { createRng, hashStr } from "@/game/rng";
 
 /**
  * NPC Cycle Result
@@ -36,8 +37,11 @@ export function runNpcCycle(
     return { horses, races };
   }
 
+  // Derive a daily seeded RNG for deterministic NPC behavior
+  const rng = createRng(hashStr(`npc_cycle_${currentDay}`));
+
   // 1. NPC Training
-  let horsesAfterTraining = runNpcTraining(npcStables, horses, currentDay);
+  let horsesAfterTraining = runNpcTraining(npcStables, horses, currentDay, rng);
   
   // 2. NPC Race Entry (look ahead)
   let racesAfterEntry = runNpcRaceEntry(
@@ -45,6 +49,7 @@ export function runNpcCycle(
     horsesAfterTraining,
     races,
     currentDay,
+    rng,
     raceEntryDaysAhead,
     pregnantIds
   );

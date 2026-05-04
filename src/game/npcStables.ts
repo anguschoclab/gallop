@@ -2,6 +2,7 @@
 // Pool-based system: Large pools of named stables, config determines how many spawn
 
 import type { Stable, StableTier, StablePersonality } from "./types";
+import type { Rng } from "./rng";
 import { generateUUID } from "./uuid";
 
 // Personality configurations affecting AI behavior
@@ -100,9 +101,9 @@ const PERSONALITY_WEIGHTS: Record<StableTier, Partial<Record<StablePersonality, 
 };
 
 // Random silk color generator (hex)
-const randomSilk = () => {
+const randomSilk = (rng: Rng) => {
   const hues = [0, 30, 60, 120, 180, 240, 270, 300, 330];
-  const hue = hues[Math.floor(Math.random() * hues.length)];
+  const hue = rng.pick(hues);
   return `hsl(${hue}, 70%, 50%)`;
 };
 
@@ -443,12 +444,12 @@ const FILLER_COUNTRIES = [
 /**
  * Generate a single filler stable
  */
-function generateFillerStable(index: number, day: number): Stable {
-  const prefix = FILLER_PREFIXES[Math.floor(Math.random() * FILLER_PREFIXES.length)];
-  const suffix = FILLER_SUFFIXES[Math.floor(Math.random() * FILLER_SUFFIXES.length)];
-  const owner = FILLER_OWNERS[Math.floor(Math.random() * FILLER_OWNERS.length)];
-  const country = FILLER_COUNTRIES[Math.floor(Math.random() * FILLER_COUNTRIES.length)];
-  const personality = selectPersonality("budget");
+function generateFillerStable(index: number, day: number, rng: Rng): Stable {
+  const prefix = rng.pick(FILLER_PREFIXES);
+  const suffix = rng.pick(FILLER_SUFFIXES);
+  const owner = rng.pick(FILLER_OWNERS);
+  const country = rng.pick(FILLER_COUNTRIES);
+  const personality = selectPersonality("budget", rng);
   const isSpecialist = personality === "specialist";
   
   return {
@@ -456,37 +457,37 @@ function generateFillerStable(index: number, day: number): Stable {
     name: `${prefix} ${suffix}`,
     owner: owner,
     tier: "budget",
-    reputation: Math.floor(Math.random() * 25) + 30, // 30-55
-    founded: Math.max(1, day - Math.floor(Math.random() * 365)),
-    cash: Math.floor(Math.random() * 50000) + 10000,
+    reputation: rng.int(30, 55),
+    founded: Math.max(1, day - rng.int(0, 365)),
+    cash: rng.int(10000, 60000),
     horses: [],
     isMajor: false,
-    colors: { primary: randomSilk(), secondary: randomSilk() },
+    colors: { primary: randomSilk(rng), secondary: randomSilk(rng) },
     country,
     personality,
-    ...(isSpecialist ? getSpecialistPreferences() : {}),
+    ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
   };
 }
 
 /**
  * Shuffle array and return a random subset
  */
-function shuffleAndPick<T>(array: T[], count: number): T[] {
-  const shuffled = [...array].sort(() => Math.random() - 0.5);
+function shuffleAndPick<T>(array: T[], count: number, rng: Rng): T[] {
+  const shuffled = [...array].sort(() => rng.next() - 0.5);
   return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 
 /**
  * Select a random personality based on tier weights
  */
-function selectPersonality(tier: StableTier): StablePersonality {
+function selectPersonality(tier: StableTier, rng: Rng): StablePersonality {
   const weights = PERSONALITY_WEIGHTS[tier];
   const totalWeight = Object.values(weights).reduce((sum, w) => sum + (w || 0), 0);
-  let random = Math.random() * totalWeight;
+  let randomVal = rng.next() * totalWeight;
   
   for (const [personality, weight] of Object.entries(weights)) {
-    random -= weight || 0;
-    if (random <= 0) {
+    randomVal -= weight || 0;
+    if (randomVal <= 0) {
       return personality as StablePersonality;
     }
   }
@@ -497,13 +498,13 @@ function selectPersonality(tier: StableTier): StablePersonality {
 /**
  * Get random specialist preferences for specialist personality
  */
-function getSpecialistPreferences() {
+function getSpecialistPreferences(rng: Rng) {
   const distances = [1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
   const surfaces: ("Turf" | "Dirt" | "Synthetic")[] = ["Turf", "Dirt", "Synthetic"];
   
   return {
-    preferredDistance: distances[Math.floor(Math.random() * distances.length)],
-    preferredSurface: surfaces[Math.floor(Math.random() * surfaces.length)],
+    preferredDistance: rng.pick(distances),
+    preferredSurface: rng.pick(surfaces),
   };
 }
 
@@ -511,69 +512,69 @@ function getSpecialistPreferences() {
  * Generate all NPC stables (named + filler)
  * Named stables are randomly selected from pools based on config counts
  */
-export function generateAllStables(day: number, config = STABLE_CONFIG): Stable[] {
+export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG): Stable[] {
   const stables: Stable[] = [];
   
   // Select and create elite stables from pool
-  const selectedElite = shuffleAndPick(ELITE_POOL, config.elite.count);
+  const selectedElite = shuffleAndPick(ELITE_POOL, config.elite.count, rng);
   for (const template of selectedElite) {
     const [minRep, maxRep] = config.elite.reputationRange;
-    const personality = selectPersonality("elite");
+    const personality = selectPersonality("elite", rng);
     const isSpecialist = personality === "specialist";
     stables.push({
       ...template,
       id: generateUUID(),
       tier: "elite",
-      reputation: Math.floor(Math.random() * (maxRep - minRep + 1)) + minRep,
+      reputation: rng.int(minRep, maxRep),
       founded: Math.max(1, day - 365 * 3),
-      cash: Math.floor(Math.random() * 500000) + 500000,
+      cash: rng.int(500000, 1000000),
       horses: [],
       personality,
-      ...(isSpecialist ? getSpecialistPreferences() : {}),
+      ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
     });
   }
   
   // Select and create mid-tier stables from pool
-  const selectedMid = shuffleAndPick(MID_POOL, config.mid.count);
+  const selectedMid = shuffleAndPick(MID_POOL, config.mid.count, rng);
   for (const template of selectedMid) {
     const [minRep, maxRep] = config.mid.reputationRange;
-    const personality = selectPersonality("mid");
+    const personality = selectPersonality("mid", rng);
     const isSpecialist = personality === "specialist";
     stables.push({
       ...template,
       id: generateUUID(),
       tier: "mid",
-      reputation: Math.floor(Math.random() * (maxRep - minRep + 1)) + minRep,
+      reputation: rng.int(minRep, maxRep),
       founded: Math.max(1, day - 365 * 2),
-      cash: Math.floor(Math.random() * 200000) + 150000,
+      cash: rng.int(150000, 350000),
       horses: [],
       personality,
-      ...(isSpecialist ? getSpecialistPreferences() : {}),
+      ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
     });
   }
   
   // Select and create budget stables from pool
-  const selectedBudget = shuffleAndPick(BUDGET_POOL, config.budget.count);
+  const selectedBudget = shuffleAndPick(BUDGET_POOL, config.budget.count, rng);
   for (const template of selectedBudget) {
     const [minRep, maxRep] = config.budget.reputationRange;
-    const personality = selectPersonality("budget");
+    const personality = selectPersonality("budget", rng);
     const isSpecialist = personality === "specialist";
     stables.push({
       ...template,
       id: generateUUID(),
       tier: "budget",
-      reputation: Math.floor(Math.random() * (maxRep - minRep + 1)) + minRep,
+      reputation: rng.int(minRep, maxRep),
       founded: Math.max(1, day - 365),
-      cash: Math.floor(Math.random() * 80000) + 20000,
+      cash: rng.int(20000, 100000),
       horses: [],
       personality,
-      ...(isSpecialist ? getSpecialistPreferences() : {}),
+      ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
     });
   }
   
   // Create filler stables
   for (let i = 0; i < config.filler.count; i++) {
-    stables.push(generateFillerStable(i, day));
+    stables.push(generateFillerStable(i, day, rng));
   }
   
   return stables;
@@ -603,22 +604,22 @@ export function getStablesByTier(stables: Stable[], tier: StableTier): Stable[] 
 /**
  * Calculate starting cash for a stable based on tier
  */
-export function getStartingCashForTier(tier: StableTier): number {
+export function getStartingCashForTier(tier: StableTier, rng: Rng): number {
   switch (tier) {
-    case "elite": return Math.floor(Math.random() * 500000) + 500000;
-    case "mid": return Math.floor(Math.random() * 200000) + 150000;
-    case "budget": return Math.floor(Math.random() * 50000) + 20000;
+    case "elite": return rng.int(500000, 1000000);
+    case "mid": return rng.int(150000, 350000);
+    case "budget": return rng.int(20000, 70000);
   }
 }
 
 /**
  * Calculate target horse count for a stable based on tier
  */
-export function getTargetHorseCountForTier(tier: StableTier, isMajor: boolean): number {
+export function getTargetHorseCountForTier(tier: StableTier, isMajor: boolean, rng: Rng): number {
   if (!isMajor) return 10; // Filler stables always have 10
   switch (tier) {
-    case "elite": return Math.floor(Math.random() * 10) + 30; // 30-40
-    case "mid": return Math.floor(Math.random() * 10) + 20; // 20-30
-    case "budget": return Math.floor(Math.random() * 10) + 15; // 15-25
+    case "elite": return rng.int(30, 40); // 30-40
+    case "mid": return rng.int(20, 30); // 20-30
+    case "budget": return rng.int(15, 25); // 15-25
   }
 }

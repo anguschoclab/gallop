@@ -2,7 +2,7 @@ import type { Horse, Stable, AuctionLot, AuctionSale, AuctionSaleKind } from "./
 import { generateNpcHorse } from "./npcHorseGen";
 import { calculateNpcHorseValue } from "./npcHorseGen";
 import { PERSONALITY_CONFIG } from "./npcStables";
-import { createRng, hashStr } from "./rng";
+import { createRng, hashStr, type Rng } from "./rng";
 import { generateUUID } from "./uuid";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 
@@ -167,7 +167,8 @@ export function generateAuctionLots(
   stables: Stable[],
   allHorses: Horse[],
   kind: AuctionSaleKind,
-  name: string
+  name: string,
+  rng: Rng
 ): AuctionSale {
   const saleId = generateUUID();
   const eligibleAges = ELIGIBLE_AGES_BY_KIND[kind];
@@ -186,7 +187,7 @@ export function generateAuctionLots(
 
     // If inventory is thin, generate fresh NPC lots
     const inventoryLots = stableHorses.slice(0, 4);
-    const freshCount = Math.max(0, Math.floor(Math.random() * 3 + 1) - inventoryLots.length);
+    const freshCount = Math.max(0, rng.int(1, 4) - inventoryLots.length);
 
     for (const horse of inventoryLots) {
       lots.push({
@@ -201,7 +202,7 @@ export function generateAuctionLots(
     }
 
     for (let i = 0; i < freshCount; i++) {
-      const freshHorse = generateNpcHorse(stable.id, stable.tier, eligibleAges[0], undefined, hemisphere);
+      const freshHorse = generateNpcHorse(stable.id, stable.tier, rng, eligibleAges[0], undefined, hemisphere);
       allHorses.push(freshHorse);
       lots.push({
         id: generateUUID(),

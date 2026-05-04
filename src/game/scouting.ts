@@ -118,7 +118,8 @@ export function scoutHorse(
   horse: Horse,
   stable: Stable,
   day: number,
-  playerCash: number
+  playerCash: number,
+  rng: Rng
 ): { success: boolean; report?: ScoutReport; cost: number; message: string } {
   const cost = calculateScoutCost(horse, stable);
   
@@ -141,7 +142,7 @@ export function scoutHorse(
   }
   
   // Calculate accuracy
-  const accuracy = Math.max(0.5, Math.min(0.99, ACCURACY_BASE + (Math.random() - 0.5) * ACCURACY_VARIANCE * 2));
+  const accuracy = Math.max(0.5, Math.min(0.99, ACCURACY_BASE + (rng.next() - 0.5) * ACCURACY_VARIANCE * 2));
   
   // Determine which stats get revealed
   // Higher accuracy = more stats revealed
@@ -223,7 +224,9 @@ export function getDisplayableStats(
       displayStats[stat] = horse.stats[stat];
     } else {
       // Low fame = fuzzy numbers (±3)
-      const fuzz = Math.floor(Math.random() * 7) - 3;
+      // Deterministic fuzz based on horse ID for UI consistency
+      const seed = horse.id.charCodeAt(0) + horse.id.length;
+      const fuzz = (seed % 7) - 3;
       displayStats[stat] = Math.max(1, Math.min(100, horse.stats[stat] + fuzz));
     }
   }

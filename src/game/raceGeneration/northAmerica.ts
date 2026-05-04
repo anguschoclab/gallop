@@ -4,6 +4,7 @@
 
 import type { Race, RaceClass, ClaimingPrice } from "../types";
 import type { Track } from "../tracks";
+import type { Rng } from "../rng";
 import { generateUUID } from "../uuid";
 import { randomWeather, randomTrackCondition, rand } from "@/core/common/random";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
@@ -55,8 +56,8 @@ const NA_CLASS_CONFIG: Record<
 };
 
 // Select a race class based on NA distribution
-function selectNARaceClass(): RaceClass {
-  const r = Math.random();
+function selectNARaceClass(rng: Rng): RaceClass {
+  const r = rng.next();
   let cumulative = 0;
   for (const item of NA_RACE_DISTRIBUTION) {
     cumulative += item.probability;
@@ -68,14 +69,14 @@ function selectNARaceClass(): RaceClass {
 }
 
 // Select a claiming price based on track quality and random variation
-function selectClaimingPrice(trackQuality: "low" | "mid" | "high"): ClaimingPrice {
+function selectClaimingPrice(trackQuality: "low" | "mid" | "high", rng: Rng): ClaimingPrice {
   const priceRanges: Record<typeof trackQuality, ClaimingPrice[]> = {
     low: [5000, 10000, 12500, 16000],
     mid: [10000, 12500, 16000, 20000, 25000, 32000],
     high: [25000, 32000, 40000, 50000, 62500, 75000, 100000],
   };
   const prices = priceRanges[trackQuality];
-  return prices[Math.floor(Math.random() * prices.length)];
+  return rng.pick(prices);
 }
 
 // Determine track quality based on country (simplified for now)
@@ -92,35 +93,36 @@ function getTrackQuality(country: string): "low" | "mid" | "high" {
 export function generateNorthAmericanRace(
   track: Track,
   day: number,
+  rng: Rng,
   surface?: "Turf" | "Dirt" | "Synthetic",
   usedNames?: Set<string>
 ): Race {
-  const raceClass = selectNARaceClass();
+  const raceClass = selectNARaceClass(rng);
   const cfg = NA_CLASS_CONFIG[raceClass];
   const trackQuality = getTrackQuality(track.country);
   
   // Select surface if not specified
-  const selectedSurface = surface || track.surfaces[Math.floor(Math.random() * track.surfaces.length)];
+  const selectedSurface = surface || rng.pick(track.surfaces);
   
   // Calculate distance
-  const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100) * 100;
+  const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
   
   // Determine claiming price for claiming races (needed for naming)
   let claimingPrice: ClaimingPrice | undefined;
   if (raceClass === "Claiming" || raceClass === "MaidenClaiming" || raceClass === "MaidenOptionalClaiming") {
-    claimingPrice = selectClaimingPrice(trackQuality);
+    claimingPrice = selectClaimingPrice(trackQuality, rng);
   }
   
   // Determine claiming price for optional claiming (optional, needed for naming)
   if (raceClass === "OptionalClaiming") {
-    claimingPrice = selectClaimingPrice(trackQuality);
+    claimingPrice = selectClaimingPrice(trackQuality, rng);
   }
   
   // Determine win condition for allowance races (needed for naming)
   let winCondition: "N1X" | "N2X" | "N3L" | "none" | undefined;
   if (raceClass === "Allowance" || raceClass === "StarterAllowance") {
     const winConditions: ("N1X" | "N2X" | "N3L" | "none")[] = ["N1X", "N2X", "N3L", "none"];
-    winCondition = winConditions[Math.floor(Math.random() * winConditions.length)];
+    winCondition = rng.pick(winConditions);
   }
   
   // Generate race name using new generator
@@ -132,6 +134,7 @@ export function generateNorthAmericanRace(
     usedNames,
     surface: selectedSurface,
     distance,
+    rng,
   });
   
   // Build race object
@@ -144,11 +147,11 @@ export function generateNorthAmericanRace(
     entryFee: cfg.entry,
     purse: cfg.purse,
     minStat: cfg.minStat,
-    fieldSize: rand(6, 10),
+    fieldSize: rand(6, 10, rng),
     entries: [],
     resolved: false,
-    weather: randomWeather(),
-    trackCondition: randomTrackCondition(),
+    weather: randomWeather(rng),
+    trackCondition: randomTrackCondition(rng),
     trackId: track.id,
     surface: selectedSurface,
   };
@@ -158,7 +161,7 @@ export function generateNorthAmericanRace(
     race.claimingPrice = claimingPrice;
     // Scale purse based on claiming price
     if (claimingPrice) {
-      race.purse = claimingPrice * 2 + Math.floor(Math.random() * 5000);
+      race.purse = claimingPrice * 2 + rng.int(0, 5000);
     }
   }
   
@@ -166,7 +169,7 @@ export function generateNorthAmericanRace(
   if (raceClass === "OptionalClaiming") {
     race.claimingPrice = claimingPrice;
     if (claimingPrice) {
-      race.purse = claimingPrice * 2.5 + Math.floor(Math.random() * 5000);
+      race.purse = claimingPrice * 2.5 + rng.int(0, 5000);
     }
   }
   
@@ -187,7 +190,8 @@ export function generateNorthAmericanRace(
 export function generateNorthAmericanRaceCard(
   track: Track,
   day: number,
-  numRaces: number
+  numRaces: number,
+  rng: Rng
 ): Race[] {
   const races: Race[] = [];
   const usedNames = new Set<string>();
@@ -197,7 +201,7 @@ export function generateNorthAmericanRaceCard(
     const surfaceIndex = i % track.surfaces.length;
     const surface = track.surfaces[surfaceIndex];
     
-    const race = generateNorthAmericanRace(track, day, surface, usedNames);
+    const race = generateNorthAmericanRace(track, day, rng, surface, usedNames);
     races.push(race);
   }
   

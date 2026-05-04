@@ -2,6 +2,7 @@
 // Provides authentic naming patterns based on real-world racing conventions
 
 import type { RegionalSystem } from "@/game/types";
+import type { Rng } from "@/game/rng";
 
 // Sponsor names for race naming
 export const SPONSORS: Record<RegionalSystem, string[]> = {
@@ -177,26 +178,27 @@ export const ADJECTIVES: Record<RegionalSystem, string[]> = {
 };
 
 // Get a random element from an array
-export function randomFromArray<T>(arr: T[], rng: () => number = Math.random): T {
-  return arr[Math.floor(rng() * arr.length)];
+export function randomFromArray<T>(arr: T[], rng?: Rng): T {
+  const r = rng ? rng.next() : Math.random();
+  return arr[Math.floor(r * arr.length)];
 }
 
 // Get a random sponsor name for a region
-export function getRandomSponsor(region: RegionalSystem, rng: () => number = Math.random): string {
+export function getRandomSponsor(region: RegionalSystem, rng?: Rng): string {
   return randomFromArray(SPONSORS[region] || SPONSORS.north_america, rng);
 }
 
 // Get a random location name for a region
-export function getRandomLocation(region: RegionalSystem, rng: () => number = Math.random): string {
+export function getRandomLocation(region: RegionalSystem, rng?: Rng): string {
   return randomFromArray(LOCATIONS[region] || LOCATIONS.north_america, rng);
 }
 
 // Get a random event name for a region
-export function getRandomEvent(region: RegionalSystem, rng: () => number = Math.random): string {
+export function getRandomEvent(region: RegionalSystem, rng?: Rng): string {
   return randomFromArray(EVENTS[region] || EVENTS.north_america, rng);
 }
 
 // Get a random adjective for a region
-export function getRandomAdjective(region: RegionalSystem, rng: () => number = Math.random): string {
+export function getRandomAdjective(region: RegionalSystem, rng?: Rng): string {
   return randomFromArray(ADJECTIVES[region] || ADJECTIVES.north_america, rng);
 }

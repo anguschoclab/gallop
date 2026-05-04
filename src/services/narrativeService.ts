@@ -191,18 +191,13 @@ export class NarrativeGenerator {
   private cooldowns: Map<string, number> = new Map();
   private commentary: CommentaryLine[] = [];
   private race: Race;
-  private horses: Horse[];
-  private stables: Stable[];
-  private hasAnnouncedStart = false;
-  private hasAnnouncedStretch = false;
-  private hasAnnouncedFinish = false;
-  private hasAnnouncedBio: Set<string> = new Set();
-  private announcedMilestones: Set<number> = new Set();
+  private lineCounter = 0;
 
-  constructor(race: Race, horses: Horse[], stables: Stable[]) {
+  constructor(race: Race, horses: Horse[], stables: Stable[], rng: Rng) {
     this.race = race;
     this.horses = horses;
     this.stables = stables;
+    this.rng = rng;
   }
 
   public update(runners: Runner[], simTime: number, pacePressure: number): CommentaryLine[] {
@@ -215,11 +210,11 @@ export class NarrativeGenerator {
         newLines.push(this.createLine("WEATHER_COMMENT", simTime));
       }
       
-      const spotlightRunner = runners[Math.floor(Math.random() * runners.length)];
+      const spotlightRunner = runners[Math.floor(this.rng.next() * runners.length)];
       const insight = this.generateExpertInsight(spotlightRunner);
       if (insight) {
         newLines.push({
-          id: Math.random().toString(36).substr(2, 9),
+          id: `insight-${this.lineCounter++}`,
           text: insight,
           timestamp: simTime,
           type: "EXPERT_INSIGHT",
@@ -239,7 +234,7 @@ export class NarrativeGenerator {
     this.checkMilestones(newLines, currentLeader.position, simTime);
 
     // 4. Atmosphere
-    if (this.hasAnnouncedStart && !this.hasAnnouncedFinish && Math.random() < 0.005 && this.canAnnounce("ATMOSPHERE", "global", simTime, 45)) {
+    if (this.hasAnnouncedStart && !this.hasAnnouncedFinish && this.rng.next() < 0.005 && this.canAnnounce("ATMOSPHERE", "global", simTime, 45)) {
       newLines.push(this.createLine("ATMOSPHERE", simTime));
       this.setCooldown("ATMOSPHERE", "global", simTime, 45);
     }
@@ -350,7 +345,7 @@ export class NarrativeGenerator {
     for (const m of milestones) {
       if (leaderPos >= m.pos && !this.announcedMilestones.has(m.id)) {
         newLines.push({
-          id: Math.random().toString(36).substr(2, 9),
+          id: `milestone-${m.id}`,
           text: m.text,
           timestamp: simTime,
           type: "MILESTONE"
@@ -380,7 +375,7 @@ export class NarrativeGenerator {
 
     if (insights.length === 0) return null;
 
-    let text = insights[Math.floor(Math.random() * insights.length)];
+    let text = insights[Math.floor(this.rng.next() * insights.length)];
     text = text.replace("{horse}", runner.name);
     text = text.replace("{distance}", this.race.distance.toString());
 
@@ -391,10 +386,10 @@ export class NarrativeGenerator {
     const templates = TEMPLATES[type];
     if (!templates || templates.length === 0) return { id: "", text: "", timestamp: 0, type: "START" };
     
-    let text = templates[Math.floor(Math.random() * templates.length)];
+    let text = templates[Math.floor(this.rng.next() * templates.length)];
 
-    if (Math.random() < 0.2 && (type === "SURGE" || type === "LEAD_CHANGE")) {
-      const prefix = FRAGMENTS.PREFIXES[Math.floor(Math.random() * FRAGMENTS.PREFIXES.length)];
+    if (this.rng.next() < 0.2 && (type === "SURGE" || type === "LEAD_CHANGE")) {
+      const prefix = FRAGMENTS.PREFIXES[Math.floor(this.rng.next() * FRAGMENTS.PREFIXES.length)];
       text = `${prefix} ${text}`;
     }
 
@@ -410,8 +405,8 @@ export class NarrativeGenerator {
       const horse = this.getHorse(runner.horseId);
       const stable = horse?.stableId ? this.getStable(horse.stableId) : null;
       
-      if ((type === "SURGE" || type === "LEAD_CHANGE") && !this.hasAnnouncedBio.has(runner.horseId) && Math.random() < 0.35) {
-        const bio = BIOGRAPHICAL_TEMPLATES[Math.floor(Math.random() * BIOGRAPHICAL_TEMPLATES.length)];
+      if ((type === "SURGE" || type === "LEAD_CHANGE") && !this.hasAnnouncedBio.has(runner.horseId) && this.rng.next() < 0.35) {
+        const bio = BIOGRAPHICAL_TEMPLATES[Math.floor(this.rng.next() * BIOGRAPHICAL_TEMPLATES.length)];
         text = bio + " " + text;
         this.hasAnnouncedBio.add(runner.horseId);
       }
@@ -431,7 +426,7 @@ export class NarrativeGenerator {
     }
 
     return {
-      id: Math.random().toString(36).substr(2, 9),
+      id: `${type}-${this.lineCounter++}`,
       text,
       timestamp,
       type,

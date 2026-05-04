@@ -2,6 +2,7 @@
 // Age distribution: 30% 2YO, 40% 3-4YO (prime), 20% 5-6YO, 10% 7YO+ (breeding stock)
 
 import type { Horse, HorseGender, Hemisphere, Stable, StableTier } from "./types";
+import type { Rng } from "./rng";
 import { generateUUID } from "./uuid";
 import {
   rand,
@@ -34,8 +35,8 @@ function getTierRanges(tier: StableTier): { statRange: [number, number]; potenti
  * Determine age category based on realistic racing distribution
  * Returns: 2YO prospect, 3-4YO prime, 5-6YO veteran, 7YO+ breeding stock
  */
-function rollAgeCategory(): "2yo" | "prime" | "veteran" | "breeding" {
-  const r = Math.random();
+function rollAgeCategory(rng: Rng): "2yo" | "prime" | "veteran" | "breeding" {
+  const r = rng.next();
   if (r < 0.30) return "2yo"; // 30% - young prospects
   if (r < 0.70) return "prime"; // 40% - prime racing age
   if (r < 0.90) return "veteran"; // 20% - veteran campaigners
@@ -45,26 +46,26 @@ function rollAgeCategory(): "2yo" | "prime" | "veteran" | "breeding" {
 /**
  * Get specific age within category
  */
-function getAgeFromCategory(category: "2yo" | "prime" | "veteran" | "breeding"): number {
+function getAgeFromCategory(category: "2yo" | "prime" | "veteran" | "breeding", rng: Rng): number {
   switch (category) {
     case "2yo": return 2;
-    case "prime": return Math.random() < 0.5 ? 3 : 4;
-    case "veteran": return Math.random() < 0.5 ? 5 : 6;
-    case "breeding": return rand(7, 10);
+    case "prime": return rng.next() < 0.5 ? 3 : 4;
+    case "veteran": return rng.next() < 0.5 ? 5 : 6;
+    case "breeding": return rand(7, 10, rng);
   }
 }
 
 /**
  * Calculate starting fame based on tier and age
  */
-function calculateStartingFame(tier: StableTier, age: number): number {
+function calculateStartingFame(tier: StableTier, age: number, rng: Rng): number {
   let baseFame = 0;
   
   // Elite stables start with more famous horses
   switch (tier) {
-    case "elite": baseFame = rand(20, 40); break;
-    case "mid": baseFame = rand(10, 25); break;
-    case "budget": baseFame = rand(0, 15); break;
+    case "elite": baseFame = rand(20, 40, rng); break;
+    case "mid": baseFame = rand(10, 25, rng); break;
+    case "budget": baseFame = rand(0, 15, rng); break;
   }
   
   // Older horses have had more time to become famous
@@ -77,8 +78,8 @@ function calculateStartingFame(tier: StableTier, age: number): number {
  * Generate gender with realistic racing distribution
  * Fillies/mares slightly less common in training stock (breeding considerations)
  */
-function rollGender(age: number): HorseGender {
-  const r = Math.random();
+function rollGender(age: number, rng: Rng): HorseGender {
+  const r = rng.next();
   // Slight bias toward males in racing stock
   const isMale = r < 0.55;
   
@@ -94,6 +95,7 @@ function rollGender(age: number): HorseGender {
 export function generateNpcHorse(
   stableId: string,
   tier: StableTier,
+  rng: Rng,
   specificAge?: number,
   specificGender?: HorseGender,
   hemisphere?: Hemisphere
@@ -103,52 +105,52 @@ export function generateNpcHorse(
   const [potMin, potMax] = potentialRange;
   
   // Determine age
-  const ageCategory = specificAge ? null : rollAgeCategory();
-  const age = specificAge ?? getAgeFromCategory(ageCategory!);
+  const ageCategory = specificAge ? null : rollAgeCategory(rng);
+  const age = specificAge ?? getAgeFromCategory(ageCategory!, rng);
   
   // Determine gender
-  const gender = specificGender ?? rollGender(age);
+  const gender = specificGender ?? rollGender(age, rng);
   
   // Generate stats with slight bias based on tier quality
-  const speed = rand(statMin, statMax);
-  const stamina = rand(statMin, statMax);
-  const acceleration = rand(statMin, statMax);
-  const consistency = rand(statMin, statMax);
+  const speed = rand(statMin, statMax, rng);
+  const stamina = rand(statMin, statMax, rng);
+  const acceleration = rand(statMin, statMax, rng);
+  const consistency = rand(statMin, statMax, rng);
   
   const stats = { speed, stamina, acceleration, consistency };
-  const bruceLoweFamily = rollProceduralFamily();
+  const bruceLoweFamily = rollProceduralFamily(rng);
   if (RUNNING_FAMILIES.has(bruceLoweFamily)) {
     stats.speed = Math.min(100, stats.speed + 1);
     stats.acceleration = Math.min(100, stats.acceleration + 1);
   }
-  const runningStyle = rollRunningStyle(stats);
+  const runningStyle = rollRunningStyle(stats, rng);
   
   // Use stable colors for silk
-  const silk = randomSilk();
+  const silk = randomSilk(rng);
   
   return {
     id: generateUUID(),
-    name: randomHorseName(),
+    name: randomHorseName(rng),
     age,
     gender,
-    hemisphere: hemisphere ?? (Math.random() < 0.5 ? "Northern" : "Southern"),
+    hemisphere: hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern"),
     silk,
     stats,
     energy: 100,
     form: 0,
-    potential: rand(potMin, potMax),
+    potential: rand(potMin, potMax, rng),
     raceHistory: [],
     owned: false, // NPC horses are never owned by player
-    sireName: randomHorseName(),
-    damName: randomHorseName(),
-    conformation: randConformation(),
-    temperament: randTemperament(),
-    geneticMarkers: generateGeneticMarkers(),
+    sireName: randomHorseName(rng),
+    damName: randomHorseName(rng),
+    conformation: randConformation(rng),
+    temperament: randTemperament(rng),
+    geneticMarkers: generateGeneticMarkers(rng),
     healthStatus: "healthy",
-    coatColor: randomCoatColor(),
+    coatColor: randomCoatColor(rng),
     runningStyle,
     stableId,
-    fame: calculateStartingFame(tier, age),
+    fame: calculateStartingFame(tier, age, rng),
     bruceLoweFamily,
     // No scoutedStats initially - fog of war applies
   };
@@ -157,7 +159,7 @@ export function generateNpcHorse(
 /**
  * Generate a full stable of horses
  */
-export function generateStableHorses(stable: Stable): Horse[] {
+export function generateStableHorses(stable: Stable, rng: Rng): Horse[] {
   const horses: Horse[] = [];
   
   // Determine target count based on tier
@@ -166,9 +168,9 @@ export function generateStableHorses(stable: Stable): Horse[] {
     targetCount = 10; // Filler stables
   } else {
     switch (stable.tier) {
-      case "elite": targetCount = rand(30, 40); break;
-      case "mid": targetCount = rand(20, 30); break;
-      case "budget": targetCount = rand(15, 25); break;
+      case "elite": targetCount = rand(30, 40, rng); break;
+      case "mid": targetCount = rand(20, 30, rng); break;
+      case "budget": targetCount = rand(15, 25, rng); break;
     }
   }
   
@@ -187,8 +189,8 @@ export function generateStableHorses(stable: Stable): Horse[] {
   // Generate horses for each category
   for (const [category, count] of Object.entries(ageCategories)) {
     for (let i = 0; i < count; i++) {
-      const age = getAgeFromCategory(category as "2yo" | "prime" | "veteran" | "breeding");
-      horses.push(generateNpcHorse(stable.id, stable.tier, age));
+      const age = getAgeFromCategory(category as "2yo" | "prime" | "veteran" | "breeding", rng);
+      horses.push(generateNpcHorse(stable.id, stable.tier, rng, age));
     }
   }
   
@@ -202,12 +204,12 @@ export function generateStableHorses(stable: Stable): Horse[] {
  * a roster to book against from day 1 (instead of waiting for in-game
  * retirements to seed the stallion market).
  */
-export function generateAllNpcHorses(stables: Stable[]): { stables: Stable[]; horses: Horse[] } {
+export function generateAllNpcHorses(stables: Stable[], rng: Rng): { stables: Stable[]; horses: Horse[] } {
   const updatedStables: Stable[] = [];
   const allHorses: Horse[] = [];
 
   for (const stable of stables) {
-    const horses = generateStableHorses(stable);
+    const horses = generateStableHorses(stable, rng);
     for (const horse of horses) {
       if (shouldRetireAtStartup(horse, stable)) {
         const { bookSize } = defaultStudParams(stable.tier);

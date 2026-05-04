@@ -18,7 +18,7 @@ import { loadGameState, saveGameState } from "@/services/storageAdapter";
 import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
 import { generateUUID } from "./uuid";
 import { resolveFoaling } from "./foalGen";
-import { beyerFigure, distanceBucket, setCalibratedPars } from "./beyer";
+import { beyerFigure, distanceBucket, setCalibratedPars, expectedBeyer } from "./beyer";
 import { runRaceToCompletion } from "./raceSim";
 import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
@@ -122,20 +122,20 @@ function ageHorses(horses: Horse[], newDay: number): Horse[] {
   });
 }
 
-export function refreshMarket(currentMarket: Horse[]): Horse[] {
+export function refreshMarket(currentMarket: Horse[], rng: Rng): Horse[] {
   let market = [...currentMarket];
   if (market.length > 3) market = market.slice(2);
   while (market.length < 5) {
-    const r = Math.random();
+    const r = rng.next();
     const tier = r < 0.5 ? "budget" : r < 0.85 ? "mid" : "elite";
-    market.push(generateHorse({ tier: tier as never }));
+    market.push(generateHorse({ tier: tier as never, rng }));
   }
   return market;
 }
 
-export function generateUpcomingRaces(currentRaces: Race[], newDay: number): Race[] {
+export function generateUpcomingRaces(currentRaces: Race[], newDay: number, rng: Rng): Race[] {
   // Use the new track-based schedule system
-  return generateScheduledRaces(currentRaces, newDay, TRACK_SCHEDULES);
+  return generateScheduledRaces(currentRaces, newDay, TRACK_SCHEDULES, rng);
 }
 
 export function pruneOldRaces(races: Race[], newDay: number): Race[] {
@@ -299,29 +299,42 @@ type Actions = {
 };
 
 function initialState(): GameState {
+  const setupRng = createRng(hashStr("initial_setup"));
+  
   // Generate player horses
   const horses: Horse[] = [
-    { ...generateHorse({ tier: "starter", owned: true }) },
-    { ...generateHorse({ tier: "starter", owned: true }) },
+    { ...generateHorse({ tier: "starter", owned: true, rng: setupRng }) },
+    { ...generateHorse({ tier: "starter", owned: true, rng: setupRng }) },
   ];
-  const market: Horse[] = Array.from({ length: 5 }, () => generateHorse({ tier: Math.random() < 0.6 ? "budget" : "mid" }));
+  
+  const market: Horse[] = Array.from({ length: 5 }, () => {
+    const r = setupRng.next();
+    const tier = r < 0.6 ? "budget" : "mid";
+    return generateHorse({ tier: tier as any, rng: setupRng });
+  });
+  
   const races: Race[] = [];
   for (let d = 1; d <= 7; d++) {
-    const count = Math.random() < 0.7 ? 2 : 3;
-    for (let i = 0; i < count; i++) races.push(generateRace(d));
+    const dayRng = createRng(hashStr(`raceGen_${d}`));
+    const count = dayRng.next() < 0.7 ? 2 : 3;
+    for (let i = 0; i < count; i++) races.push(generateRace(d, dayRng));
   }
   // Schedule the full first year of real graded stakes
   for (const g of GRADED_RACES) {
-    races.push(makeGradedRace(g, g.dayOfYear));
+    const gradedRng = createRng(hashStr(`graded_${g.key}`));
+    races.push(makeGradedRace(g, g.dayOfYear, gradedRng));
   }
   
   // Generate NPC stables and horses
-  const npcStables = generateAllStables(1);
-  const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(npcStables);
+  const stableRng = createRng(hashStr("initial_stables"));
+  const npcStables = generateAllStables(1, stableRng);
+  const npcHorseRng = createRng(hashStr("initial_npc_horses"));
+  const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(npcStables, npcHorseRng);
   
   // Run initial NPC race entry to populate races
   const pregnantIds = new Set<string>();
-  const racesWithEntries = runNpcRaceEntry(updatedStables, npcHorses, races, 1, 7, pregnantIds);
+  const entryRng = createRng(hashStr("initial_entry"));
+  const racesWithEntries = runNpcRaceEntry(updatedStables, npcHorses, races, 1, entryRng, 7, pregnantIds);
   
   return {
     day: 1,
@@ -411,11 +424,12 @@ export const useGame = create<GameState & Actions>()(
           if (s.cash < cost) return;
           if (horse.energy < 15) return;
           horse.energy = Math.max(0, horse.energy - 18);
-          // gain chance
+          // deterministic gain chance for training
+          const trainingRng = createRng(hashStr(`training_${horseId}_${s.day}_${usedToday}`));
           const stat = horse.stats[kind];
           const gap = horse.potential - stat;
-          if (gap > 0 && Math.random() < 0.65) {
-            const gain = Math.min(gap, Math.random() < 0.2 ? 2 : 1);
+          if (gap > 0 && trainingRng.next() < 0.65) {
+            const gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
             horse.stats[kind] = Math.min(horse.potential, stat + gain);
           }
           s.cash -= cost;
@@ -532,14 +546,25 @@ export const useGame = create<GameState & Actions>()(
           h.energy = Math.max(0, h.energy - 25); // Racing costs 25 energy
           const beyer = r.dnf ? 0 : beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
           h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: ranked.length, raceClass: race.raceClass }, ...h.raceHistory].slice(0, loadRaceHistoryLimit());
-          // form change (DNF treated as "did not finish" → mild form penalty)
-          if (r.dnf) h.form = Math.max(-10, h.form - 1);
-          else if (r.position === 1) h.form = Math.min(10, h.form + 3);
-          else if (r.position <= 3) h.form = Math.min(10, h.form + 1);
-          else h.form = Math.max(-10, h.form - 1);
+          // form change — Beyer-based performance modeling. A horse that runs
+          // a "big fig" relative to their ability gains form even if they
+          // finished off the board in a deep field.
+          if (r.dnf) {
+            h.form = Math.max(-10, h.form - 2);
+          } else {
+            const expected = expectedBeyer(h, race.distance);
+            const perf = beyer - expected;
+            if (perf > 5) h.form = Math.min(10, h.form + 2);
+            else if (perf > -5) h.form = Math.min(10, h.form + 0.5);
+            else h.form = Math.max(-10, h.form - 2);
+          }
           // payout — credit player or stable depending on ownership
+          h.careerStarts += 1;
+          if (r.position === 1) h.careerWins += 1;
+
           if (!r.dnf && r.position - 1 < splits.length) {
             const pay = splits[r.position - 1];
+            h.lifetimeEarnings += pay;
             if (h.stableId) {
               stableCredits[h.stableId] = (stableCredits[h.stableId] ?? 0) + pay;
             } else {
@@ -592,7 +617,8 @@ export const useGame = create<GameState & Actions>()(
         // Process claims (currently empty array until UI/AI claim generation is added)
         // Dynamically imported to avoid circular dependency issues if any
         import("@/game/claiming").then(({ processClaims }) => {
-          const { transfers, logs: claimLogs } = processClaims(race, [], s.horses, s.day);
+          const claimRng = createRng(hashStr(`claims_${race.id}`));
+          const { transfers, logs: claimLogs } = processClaims(race, [], s.horses, s.day, claimRng);
           
           let finalCash = s.cash + earned;
           const finalNpcStables = s.npcStables.map((stable) => {

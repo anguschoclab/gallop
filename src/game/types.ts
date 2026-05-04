@@ -11,11 +11,11 @@ export type Conformation = "excellent" | "good" | "fair" | "poor";
 export type Temperament = "excellent" | "good" | "fair" | "poor";
 
 // Running style — preferred position and pace shape during a race.
-// front-runner: pacesetter, controls or sets early pace
-// stalker: sits 1-4 lengths off the leaders, most flexible
-// mid-pack: settles in the middle, can go either way
-// closer: held up at the back, surges late
-export type RunningStyle = "front-runner" | "stalker" | "mid-pack" | "closer";
+// E (Early) - Vies for the early lead. Does not rate well behind a pace setter.
+// EP (Early/Presser) - Runs 2nd or 3rd early. Can successfully rate behind a leader.
+// P (Presser) - Runs in the middle-of-the-pack early. Rarely challenges for lead early.
+// S (Sustain/Closer) - Runs from the rear of the pack, surges late.
+export type RunningStyle = "E" | "EP" | "P" | "S";
 
 // Health status for horses
 export type HealthStatus = "healthy" | "covering_sickness" | "recovering" | "other_illness";
@@ -131,6 +131,11 @@ export type Horse = {
   pedigree?: Pedigree; // Snapshot of this horse's parents at conception/generation
   stud?: StudCareer; // Set when stallion is retired to stud
   bruceLoweFamily?: number; // Tail-female family number, resolved & cached
+  distanceAptitude: number; // Preferred distance in meters (800..3200)
+  surfaceAptitude: Record<"Turf" | "Dirt" | "Synthetic", number>; // 0.8..1.0 multiplier
+  lifetimeEarnings: number;
+  careerStarts: number;
+  careerWins: number;
 };
 
 export type RaceClass =

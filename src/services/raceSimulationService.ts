@@ -48,12 +48,14 @@ export function buildRaceField(
   const conditions = getConditionsModifier(race);
   const built: Runner[] = [];
   const fillerHorses: Horse[] = [];
+  const surface = race.surface || race.graded?.surface;
+  const rng = rngForRace(race);
 
   // Add owner entries
   for (const entry of race.entries) {
     const horse = horses.find((h) => h.id === entry.horseId);
     if (horse) {
-      built.push(buildRunner(horse, entry.owned, conditions));
+      built.push(buildRunner(horse, entry.owned, race.distance, surface, conditions));
     }
   }
 
@@ -61,17 +63,17 @@ export function buildRaceField(
   // the caller can persist them into state and race.entries.
   while (built.length < race.fieldSize) {
     const tier = getTierForRaceClass(race.raceClass);
-    const aiHorse = generateHorse({ tier: tier as never });
+    const aiHorse = generateHorse(rng, { tier: tier as never });
     fillerHorses.push(aiHorse);
-    built.push(buildRunner(aiHorse, false, conditions));
+    built.push(buildRunner(aiHorse, false, race.distance, surface, conditions));
   }
 
   // Empty-field guard: a race must always have at least one runner. This
   // can only happen if fieldSize was somehow set to 0; treat defensively.
   if (built.length === 0) {
-    const aiHorse = generateHorse({ tier: getTierForRaceClass(race.raceClass) as never });
+    const aiHorse = generateHorse(rng, { tier: getTierForRaceClass(race.raceClass) as never });
     fillerHorses.push(aiHorse);
-    built.push(buildRunner(aiHorse, false, conditions));
+    built.push(buildRunner(aiHorse, false, race.distance, surface, conditions));
   }
 
   return { runners: built, fillerHorses };

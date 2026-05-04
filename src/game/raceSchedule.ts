@@ -3,6 +3,7 @@
 
 import type { Race } from "./types";
 import type { Track, TrackSchedule } from "./tracks";
+import type { Rng } from "./rng";
 import { getTrackById } from "./tracks";
 import { generateRace } from "./horseGen";
 import { makeGradedRace } from "./horseGen";
@@ -52,23 +53,22 @@ export function generateTrackRaces(
   track: Track,
   schedule: TrackSchedule,
   gameDay: number,
-  existingRaces: Race[]
+  existingRaces: Race[],
+  rng: Rng
 ): Race[] {
-  const numRaces = Math.floor(
-    Math.random() * (schedule.racesPerDay[1] - schedule.racesPerDay[0] + 1)
-  ) + schedule.racesPerDay[0];
+  const numRaces = rng.int(schedule.racesPerDay[0], schedule.racesPerDay[1]);
 
   // Use regional-specific generator based on track's regional system
   if (schedule.regionalSystem === "north_america") {
-    return generateNorthAmericanRaceCard(track, gameDay, numRaces);
+    return generateNorthAmericanRaceCard(track, gameDay, numRaces, rng);
   }
 
   // Fallback to generic generator for other regions (will be expanded in future sprints)
   const races: Race[] = [];
   for (let i = 0; i < numRaces; i++) {
-    const race = generateRace(gameDay);
+    const race = generateRace(gameDay, rng);
     race.trackId = track.id;
-    race.surface = track.surfaces[Math.floor(Math.random() * track.surfaces.length)];
+    race.surface = rng.pick(track.surfaces);
     races.push(race);
   }
 
@@ -79,7 +79,8 @@ export function generateTrackRaces(
 export function generateTrackSchedule(
   gameDay: number,
   existingRaces: Race[],
-  schedules: TrackSchedule[]
+  schedules: TrackSchedule[],
+  rng: Rng
 ): Race[] {
   const races = [...existingRaces];
   const dayOfYear = getDayOfYear(gameDay);
@@ -88,7 +89,7 @@ export function generateTrackSchedule(
   for (const g of GRADED_RACES) {
     if (g.dayOfYear !== dayOfYear) continue;
     if (races.some((r) => r.graded?.key === g.key && r.day === gameDay)) continue;
-    races.push(makeGradedRace(g, gameDay));
+    races.push(makeGradedRace(g, gameDay, rng));
   }
 
   // Generate track-specific races
@@ -97,7 +98,7 @@ export function generateTrackSchedule(
     if (!track) continue;
 
     if (isTrackRacing(schedule, gameDay)) {
-      const trackRaces = generateTrackRaces(track, schedule, gameDay, races);
+      const trackRaces = generateTrackRaces(track, schedule, gameDay, races, rng);
       races.push(...trackRaces);
     }
   }
@@ -106,17 +107,25 @@ export function generateTrackSchedule(
 }
 
 // Generate upcoming races for the next 7 days
+// Each day uses a derived seed for determinism
 export function generateUpcomingRaces(
   currentRaces: Race[],
   newDay: number,
-  schedules: TrackSchedule[]
+  schedules: TrackSchedule[],
+  baseRng: Rng // Used if we need global randomness, but we prefer daily seeds
 ): Race[] {
   const races = [...currentRaces];
+  // We don't actually need baseRng if we derive daily seeds, 
+  // but we'll keep it for interface consistency if needed.
 
   // Generate races for the next 7 days
   for (let offset = 1; offset <= 7; offset++) {
     const futureDay = newDay + offset;
-    const dayRaces = generateTrackSchedule(futureDay, races, schedules);
+    // Derive a unique seed for this specific day
+    const { createRng, hashStr } = require("./rng");
+    const dailyRng = createRng(hashStr(`raceGen_${futureDay}`));
+    
+    const dayRaces = generateTrackSchedule(futureDay, races, schedules, dailyRng);
     
     // Add only new races (avoid duplicates)
     for (const race of dayRaces) {

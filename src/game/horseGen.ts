@@ -1,5 +1,6 @@
 import type { Horse, Race, RaceClass, Hemisphere, HealthStatus } from "./types";
 import type { GradedRace } from "./gradedRaces";
+import type { Rng } from "./rng";
 import { generateUUID } from "./uuid";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
@@ -17,7 +18,7 @@ import {
   randomRaceName,
 } from "@/core/common/random";
 
-export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere } = {}): Horse {
+export function generateHorse(rng: Rng, opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere } = {}): Horse {
   const tier = opts.tier ?? "budget";
   const ranges: Record<string, [number, number]> = {
     starter: [30, 55],
@@ -33,21 +34,21 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     elite: [85, 100],
   };
   const [pLo, pHi] = potentialRanges[tier];
-  const age = rand(2, 6);
-  const isMale = Math.random() < 0.5;
+  const age = rand(2, 6, rng);
+  const isMale = rng.next() < 0.5;
   const gender = age <= 2 ? (isMale ? "colt" : "filly") : (isMale ? "horse" : "mare");
-  const hemisphere: Hemisphere = opts.hemisphere ?? (Math.random() < 0.5 ? "Northern" : "Southern");
+  const hemisphere: Hemisphere = opts.hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
 
   const stats = {
-    speed: rand(lo, hi),
-    stamina: rand(lo, hi),
-    acceleration: rand(lo, hi),
-    consistency: rand(lo, hi),
+    speed: rand(lo, hi, rng),
+    stamina: rand(lo, hi, rng),
+    acceleration: rand(lo, hi, rng),
+    consistency: rand(lo, hi, rng),
   };
   // Bruce Lowe family — procedurally assigned. Running families (1-5) get a
   // small speed/acceleration nudge; this is mostly cosmetic but makes the
   // family number visible in actual gameplay.
-  const bruceLoweFamily = rollProceduralFamily();
+  const bruceLoweFamily = rollProceduralFamily(rng);
   if (RUNNING_FAMILIES.has(bruceLoweFamily)) {
     stats.speed = Math.min(hi, stats.speed + 1);
     stats.acceleration = Math.min(hi, stats.acceleration + 1);
@@ -59,27 +60,36 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
   }
   return {
     id: generateUUID(),
-    name: randomHorseName(),
+    name: randomHorseName(rng),
     age,
     gender,
     hemisphere,
-    silk: randomSilk(),
+    silk: randomSilk(rng),
     stats,
     energy: 100,
     form: 0,
-    potential: Math.min(100, rand(pLo, pHi) + potentialBoost),
+    potential: Math.min(100, rand(pLo, pHi, rng) + potentialBoost),
     raceHistory: [],
     owned: opts.owned ?? false,
-    sireName: randomHorseName(),
-    damName: randomHorseName(),
-    conformation: randConformation(),
-    temperament: randTemperament(),
-    geneticMarkers: generateGeneticMarkers(),
+    sireName: randomHorseName(rng),
+    damName: randomHorseName(rng),
+    conformation: randConformation(rng),
+    temperament: randTemperament(rng),
+    geneticMarkers: generateGeneticMarkers(rng),
     healthStatus: "healthy",
-    coatColor: randomCoatColor(),
-    runningStyle: rollRunningStyle(stats),
+    coatColor: randomCoatColor(rng),
+    runningStyle: rollRunningStyle(stats, rng),
     fame: 0, // Player horses start with no fame
     bruceLoweFamily,
+    distanceAptitude: rand(10, 24, rng) * 100,
+    surfaceAptitude: {
+      Turf: rng.next() < 0.33 ? 1.0 : rand(85, 95, rng) / 100,
+      Dirt: rng.next() < 0.33 ? 1.0 : rand(85, 95, rng) / 100,
+      Synthetic: rng.next() < 0.33 ? 1.0 : rand(85, 95, rng) / 100,
+    },
+    lifetimeEarnings: 0,
+    careerStarts: 0,
+    careerWins: 0,
   };
 }
 
@@ -119,7 +129,7 @@ const classConfig: Record<RaceClass, { entry: number; purse: number; minStat?: n
   Graded: { entry: 0, purse: 0, dist: [1200, 2400] },
 };
 
-export function makeGradedRace(g: GradedRace, gameDay: number): Race {
+export function makeGradedRace(g: GradedRace, gameDay: number, rng: Rng): Race {
   const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
   const minStat = g.grade === "G1" ? 78 : g.grade === "G2" ? 70 : 62;
   return {
@@ -136,13 +146,13 @@ export function makeGradedRace(g: GradedRace, gameDay: number): Race {
     resolved: false,
     graded: { key: g.key, grade: g.grade, track: g.track, trackId: g.trackId, surface: g.surface },
     restrictions: g.restrictions,
-    weather: randomWeather(),
-    trackCondition: randomTrackCondition(),
+    weather: randomWeather(rng),
+    trackCondition: randomTrackCondition(rng),
   };
 }
 
-export function generateRace(day: number): Race {
-  const r = Math.random();
+export function generateRace(day: number, rng: Rng): Race {
+  const r = rng.next();
   // Expanded distribution for new race classes
   // This is a temporary fallback - regional generators will handle distribution
   let cls: RaceClass;
@@ -162,20 +172,20 @@ export function generateRace(day: number): Race {
   else cls = "Group";
 
   const cfg = classConfig[cls];
-  const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100) * 100;
+  const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
   return {
     id: generateUUID(),
-    name: randomRaceName(),
+    name: randomRaceName(rng),
     day,
     distance,
     raceClass: cls,
     entryFee: cfg.entry,
     purse: cfg.purse,
     minStat: cfg.minStat,
-    fieldSize: rand(6, 8),
+    fieldSize: rand(6, 8, rng),
     entries: [],
     resolved: false,
-    weather: randomWeather(),
-    trackCondition: randomTrackCondition(),
+    weather: randomWeather(rng),
+    trackCondition: randomTrackCondition(rng),
   };
 }

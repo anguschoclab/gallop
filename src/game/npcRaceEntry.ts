@@ -2,6 +2,7 @@
 // Evaluates races 1-3 days ahead and enters eligible, competitive horses
 
 import type { Horse, Race, Stable, StableTier } from "./types";
+import type { Rng } from "./rng";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { PERSONALITY_CONFIG } from "./npcStables";
@@ -51,28 +52,20 @@ function calculateRaceSuitability(horse: Horse, race: Race, stable: Stable): num
     score += 20;
   }
   
-  // Distance fit - specialists get big bonus for preferred distance
-  if (stable.preferredDistance) {
-    const distanceDiff = Math.abs(race.distance - stable.preferredDistance);
-    if (distanceDiff <= 200) {
-      score += 25; // Specialist sweet spot
-    } else if (distanceDiff <= 400) {
-      score += 10;
-    }
-  } else {
-    // General distance fit
-    const preferredMin = 1200;
-    const preferredMax = 2200;
-    if (race.distance >= preferredMin && race.distance <= preferredMax) {
-      score += 15;
-    } else if (race.distance >= preferredMin - 200 && race.distance <= preferredMax + 200) {
-      score += 8;
-    }
-  }
+  // Distance fit - use horse's personal aptitude
+  const distDiff = Math.abs(race.distance - horse.distanceAptitude);
+  if (distDiff <= 100) score += 30;
+  else if (distDiff <= 300) score += 15;
+  else if (distDiff <= 600) score += 5;
+  else score -= 15;
   
-  // Surface preference for specialists
-  if (stable.preferredSurface && race.graded?.surface === stable.preferredSurface) {
-    score += 15;
+  // Surface fit - use horse's personal aptitude
+  const surface = race.surface || race.graded?.surface;
+  if (surface) {
+    const apt = horse.surfaceAptitude[surface] ?? 0.95;
+    if (apt >= 1.0) score += 20;
+    else if (apt >= 0.95) score += 5;
+    else score -= 20;
   }
   
   // Purse appeal - modified by personality
@@ -256,6 +249,7 @@ export function runNpcRaceEntry(
   horses: Horse[],
   races: Race[],
   currentDay: number,
+  rng: Rng,
   daysAhead: number = 3,
   pregnantIds: Set<string> = new Set()
 ): Race[] {
@@ -345,7 +339,8 @@ export function fillRaceWithFillerHorses(
 export function runNpcTraining(
   stables: Stable[],
   horses: Horse[],
-  currentDay: number
+  currentDay: number,
+  rng: Rng
 ): Horse[] {
   const updatedHorses = [...horses];
   
@@ -383,7 +378,7 @@ export function runNpcTraining(
         
         if (toTrain && toTrain[1] > 0) {
           const stat = toTrain[0] as keyof typeof stats;
-          const gain = Math.random() < 0.65 ? 1 : 0;
+          const gain = rng.next() < 0.65 ? 1 : 0;
           if (gain > 0) {
             updatedHorses[horseIndex] = {
               ...horse,
@@ -397,8 +392,8 @@ export function runNpcTraining(
         }
       } else {
         // Lower tiers train more randomly
-        if (Math.random() < 0.4) {
-          const stat = ["speed", "stamina", "acceleration"][Math.floor(Math.random() * 3)] as keyof typeof horse.stats;
+        if (rng.next() < 0.4) {
+          const stat = rng.pick(["speed", "stamina", "acceleration"]) as keyof typeof horse.stats;
           updatedHorses[horseIndex] = {
             ...horse,
             stats: {

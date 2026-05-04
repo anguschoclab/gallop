@@ -1,5 +1,6 @@
 import type { PipelineContext } from "../pipeline";
 import { generateUpcomingRaces, pruneOldRaces } from "@/game/store";
+import { createRng, hashStr } from "@/game/rng";
 
 /**
  * Phase: Race Generation and Pruning
@@ -11,7 +12,8 @@ export const racesPhase = {
   order: 60,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const races = generateUpcomingRaces(state.races, newDay);
+    const rng = createRng(hashStr(`races_${newDay}`));
+    const races = generateUpcomingRaces(state.races, newDay, rng);
     const pruned = pruneOldRaces(races, newDay);
 
     return {

@@ -29,13 +29,13 @@ export type Runner = {
 //   closer (S):         Back of pack early. Conservative start (0.93), big surge late (1.07).
 function paceShapeMul(style: RunningStyle, progress: number): number {
   switch (style) {
-    case "front-runner":
+    case "E":
       return 1.05 - 0.07 * progress;
-    case "stalker":
+    case "EP":
       return 1.01 - 0.02 * progress;
-    case "mid-pack":
+    case "P":
       return 0.98 + 0.04 * Math.sin(Math.PI * progress);
-    case "closer":
+    case "S":
       if (progress < 0.6) return 0.93 + 0.05 * progress;
       return 0.96 + 0.11 * ((progress - 0.6) / 0.4);
   }
@@ -46,13 +46,13 @@ function paceShapeMul(style: RunningStyle, progress: number): number {
 // preserve it for the final surge.
 function styleStaminaFactor(style: RunningStyle, baseStaminaFactor: number): number {
   switch (style) {
-    case "front-runner":
+    case "E":
       return clamp(baseStaminaFactor - 0.05, 0.2, 1);
-    case "stalker":
+    case "EP":
       return baseStaminaFactor;
-    case "mid-pack":
+    case "P":
       return baseStaminaFactor;
-    case "closer":
+    case "S":
       return clamp(baseStaminaFactor + 0.05, 0.2, 1);
   }
 }
@@ -106,20 +106,29 @@ const TOP_SPEED_CEILING = 22;
 export function buildRunner(
   h: Horse,
   owned: boolean,
+  raceDistance: number,
+  surface?: "Turf" | "Dirt" | "Synthetic",
   conditions: ConditionsModifier = { speedMul: 1, staminaDrainMul: 1 }
 ): Runner {
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
   const formEnergy = clamp(formMod * energyMod, 0.5, MAX_FORM_ENERGY_MUL);
+  
+  // Aptitude modifiers
+  const distDiff = Math.abs(h.distanceAptitude - raceDistance);
+  // Penalty starts after 400m deviation, up to 10% penalty at 1200m+ deviation
+  const distanceMod = 1 - Math.min(0.1, Math.max(0, distDiff - 400) / 8000);
+  const surfaceMod = surface ? (h.surfaceAptitude[surface] ?? 0.95) : 1.0;
+
   // base m/s ~ 14-20 for 30..95 speed
-  const rawTopSpeed = (12 + (h.stats.speed / 100) * 10) * formEnergy * conditions.speedMul;
+  const rawTopSpeed = (12 + (h.stats.speed / 100) * 10) * formEnergy * conditions.speedMul * distanceMod * surfaceMod;
   const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
   const accel = 1.5 + (h.stats.acceleration / 100) * 3.5;
   const baseStamina = 0.4 + (h.stats.stamina / 100) * 0.6; // 1 = no fade
   // Worse conditions deepen the fade: drain >1 reduces the staminaFactor
   // toward 0, while drain <=1 leaves it as-is.
   const conditionStamina = clamp(1 - (1 - baseStamina) * conditions.staminaDrainMul, 0.2, 1);
-  const runningStyle: RunningStyle = h.runningStyle ?? "mid-pack";
+  const runningStyle: RunningStyle = h.runningStyle ?? "P";
   const staminaFactor = styleStaminaFactor(runningStyle, conditionStamina);
   const noise = (110 - h.stats.consistency) / 100; // 0.1..1
   return {
@@ -169,7 +178,7 @@ export function computePaceContext(runners: Runner[], distance: number): PaceCon
     if (r.finishTime !== null) continue;
     if (leaderPos - r.position <= 4) {
       leadGroupCount++;
-      if (r.runningStyle === "front-runner") frontRunnersInLeadGroup++;
+      if (r.runningStyle === "E") frontRunnersInLeadGroup++;
     }
   }
   // Hot pace if multiple front-runners contest the lead simultaneously.
@@ -219,7 +228,7 @@ export function stepRunner(
       effectiveStamina = effectiveStamina + (1 - effectiveStamina) * DRAFT_STAMINA_PRESERVE;
     }
     // Pace pressure: front-runners in a hot pace burn out harder.
-    if (pace && pace.pacePressure > 0 && r.runningStyle === "front-runner") {
+    if (pace && pace.pacePressure > 0 && r.runningStyle === "E") {
       effectiveStamina = clamp(effectiveStamina - 0.08 * pace.pacePressure, 0.2, 1);
     }
     staminaMul = 1 - (1 - effectiveStamina) * fade;
@@ -228,13 +237,13 @@ export function stepRunner(
   
   // E (Early) Front-runners CANNOT rate successfully behind a pace setter.
   // If they are not in the lead group (more than 3 meters behind the leader),
-  // they lose their rhythm and suffer a rating penalty. E/P Stalkers do not.
-  if (r.runningStyle === "front-runner" && pace && (pace.leaderPos - r.position) > 3) {
+  // they lose their rhythm and suffer a rating penalty. EP Stalkers do not.
+  if (r.runningStyle === "E" && pace && (pace.leaderPos - r.position) > 3) {
     styleMul *= 0.98; // Rating penalty
   }
   
   // S (Sustain/Closer) benefits more in a hot-pace race; their late surge is amplified.
-  if (pace && pace.pacePressure > 0 && r.runningStyle === "closer" && progress > 0.6) {
+  if (pace && pace.pacePressure > 0 && r.runningStyle === "S" && progress > 0.6) {
     styleMul *= 1 + 0.05 * pace.pacePressure;
   }
   // Drafting gives a small target-speed bump on top of the style/stamina mix.

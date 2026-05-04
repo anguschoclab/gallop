@@ -4,19 +4,20 @@
  */
 
 import type { Conformation, Temperament, GeneticMarkers, RunningStyle, CoatColor, Weather, TrackCondition } from "@/game/types";
+import type { Rng } from "@/game/rng";
 
 /**
  * Generate random integer in range [min, max] (inclusive)
  */
-export function rand(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+export function rand(min: number, max: number, rng: Rng): number {
+  return rng.int(min, max);
 }
 
 /**
  * Generate random conformation quality
  */
-export function randConformation(): Conformation {
-  const r = Math.random();
+export function randConformation(rng: Rng): Conformation {
+  const r = rng.next();
   if (r < 0.15) return "excellent";
   if (r < 0.45) return "good";
   if (r < 0.75) return "fair";
@@ -26,8 +27,8 @@ export function randConformation(): Conformation {
 /**
  * Generate random temperament quality
  */
-export function randTemperament(): Temperament {
-  const r = Math.random();
+export function randTemperament(rng: Rng): Temperament {
+  const r = rng.next();
   if (r < 0.15) return "excellent";
   if (r < 0.45) return "good";
   if (r < 0.75) return "fair";
@@ -37,8 +38,8 @@ export function randTemperament(): Temperament {
 /**
  * Generate random genetic quality rating
  */
-export function randGeneticQuality(): "excellent" | "good" | "fair" | "poor" {
-  const r = Math.random();
+export function randGeneticQuality(rng: Rng): "excellent" | "good" | "fair" | "poor" {
+  const r = rng.next();
   if (r < 0.15) return "excellent";
   if (r < 0.45) return "good";
   if (r < 0.75) return "fair";
@@ -48,10 +49,10 @@ export function randGeneticQuality(): "excellent" | "good" | "fair" | "poor" {
 /**
  * Generate genetic markers for a horse
  */
-export function generateGeneticMarkers(): GeneticMarkers {
+export function generateGeneticMarkers(rng: Rng): GeneticMarkers {
   // Hardy-Weinberg-ish distribution for the leopard-complex spotting allele.
   // ~5% homozygous dominant (high CSNB risk), ~25% heterozygous, rest recessive.
-  const lpRoll = Math.random();
+  const lpRoll = rng.next();
   let leopardComplex: GeneticMarkers["leopardComplex"];
   let csnbRisk: GeneticMarkers["csnbRisk"];
   if (lpRoll < 0.05) {
@@ -69,16 +70,16 @@ export function generateGeneticMarkers(): GeneticMarkers {
   // real-world thoroughbred prevalence reasonably. Both parents carrier on
   // the same condition → 25% homozygous foal (auto-stillborn at day-60).
   const lethalCarriers = {
-    csnb: Math.random() < 0.05,
-    hypp: Math.random() < 0.05,
-    olws: Math.random() < 0.05,
+    csnb: rng.next() < 0.05,
+    hypp: rng.next() < 0.05,
+    olws: rng.next() < 0.05,
   };
 
   return {
-    sensoryPerception: randGeneticQuality(),
-    signalTransduction: randGeneticQuality(),
-    immunity: randGeneticQuality(),
-    geneticDiversity: Math.random() * 0.5 + 0.5, // Random diversity score 0.5-1.0
+    sensoryPerception: randGeneticQuality(rng),
+    signalTransduction: randGeneticQuality(rng),
+    immunity: randGeneticQuality(rng),
+    geneticDiversity: rng.range(0.5, 1.0), // Random diversity score 0.5-1.0
     leopardComplex,
     csnbRisk,
     lethalCarriers,
@@ -90,23 +91,23 @@ export function generateGeneticMarkers(): GeneticMarkers {
  * tilt toward front-runner; stamina tilts toward closer; balanced horses lean
  * stalker. There's still randomness so identical-stat horses can differ.
  */
-export function rollRunningStyle(stats: { speed: number; stamina: number; acceleration: number }): RunningStyle {
+export function rollRunningStyle(stats: { speed: number; stamina: number; acceleration: number }, rng: Rng): RunningStyle {
   const earlyBias = (stats.speed + stats.acceleration) / 2;
   const lateBias = stats.stamina;
   const tilt = earlyBias - lateBias; // ~ -50..+50
-  const r = Math.random() * 100 - tilt; // tilt shifts the distribution
-  if (r < 25) return "front-runner";
-  if (r < 55) return "stalker";
-  if (r < 80) return "mid-pack";
-  return "closer";
+  const r = rng.next() * 100 - tilt; // tilt shifts the distribution
+  if (r < 25) return "E";
+  if (r < 55) return "EP";
+  if (r < 80) return "P";
+  return "S";
 }
 
 /**
  * Generate random coat color with Thoroughbred-appropriate frequencies.
  * Bay and chestnut variants are most common; dilute colors (palomino, buckskin) are rare.
  */
-export function randomCoatColor(): CoatColor {
-  const r = Math.random();
+export function randomCoatColor(rng: Rng): CoatColor {
+  const r = rng.next();
   // Realistic Thoroughbred color distribution
   if (r < 0.30) return "bay";           // ~30% - most common
   if (r < 0.55) return "chestnut";      // ~25% - second most common
@@ -127,8 +128,8 @@ export function randomCoatColor(): CoatColor {
 /**
  * Generate random weather condition
  */
-export function randomWeather(): Weather {
-  const r = Math.random();
+export function randomWeather(rng: Rng): Weather {
+  const r = rng.next();
   if (r < 0.45) return "sunny";
   if (r < 0.70) return "cloudy";
   if (r < 0.85) return "rainy";
@@ -139,8 +140,8 @@ export function randomWeather(): Weather {
 /**
  * Generate random track condition
  */
-export function randomTrackCondition(): TrackCondition {
-  const r = Math.random();
+export function randomTrackCondition(rng: Rng): TrackCondition {
+  const r = rng.next();
   if (r < 0.6) return "fast";
   if (r < 0.85) return "good";
   if (r < 0.95) return "soft";
@@ -162,9 +163,9 @@ const NOUNS = [
   "Saint", "Reverie", "Tempest", "Mirage", "Halo", "Voyager", "Sonnet",
 ];
 
-export function randomHorseName(rng: () => number = Math.random): string {
-  const a = ADJECTIVES[Math.floor(rng() * ADJECTIVES.length)];
-  const n = NOUNS[Math.floor(rng() * NOUNS.length)];
+export function randomHorseName(rng: Rng): string {
+  const a = rng.pick(ADJECTIVES);
+  const n = rng.pick(NOUNS);
   return `${a} ${n}`;
 }
 
@@ -176,8 +177,8 @@ const SILKS = [
   "#0891b2", "#db2777", "#ca8a04", "#475569", "#0d9488",
 ];
 
-export function randomSilk(rng: () => number = Math.random): string {
-  return SILKS[Math.floor(rng() * SILKS.length)];
+export function randomSilk(rng: Rng): string {
+  return rng.pick(SILKS);
 }
 
 /**
@@ -191,8 +192,8 @@ const RACE_PREFIXES = [
 
 const RACE_SUFFIXES = ["Cup", "Stakes", "Trophy", "Classic", "Handicap", "Plate", "Mile", "Sprint"];
 
-export function randomRaceName(rng: () => number = Math.random): string {
-  const a = RACE_PREFIXES[Math.floor(rng() * RACE_PREFIXES.length)];
-  const b = RACE_SUFFIXES[Math.floor(rng() * RACE_SUFFIXES.length)];
+export function randomRaceName(rng: Rng): string {
+  const a = rng.pick(RACE_PREFIXES);
+  const b = rng.pick(RACE_SUFFIXES);
   return `${a} ${b}`;
 }

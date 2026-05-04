@@ -2,6 +2,7 @@
 // Handles claiming transactions, horse transfers, and claiming eligibility
 
 import type { Race, Horse, ClaimingPrice } from "./types";
+import type { Rng } from "./rng";
 
 // Horse transfer result from a claiming race
 export type HorseTransfer = {
@@ -29,7 +30,8 @@ export function processClaims(
   race: Race,
   claims: ClaimAttempt[],
   horses: Horse[],
-  currentDay: number
+  currentDay: number,
+  rng: Rng
 ): { transfers: HorseTransfer[]; logs: string[] } {
   const transfers: HorseTransfer[] = [];
   const logs: string[] = [];
@@ -55,7 +57,7 @@ export function processClaims(
     if (horseClaims.length === 0) continue;
 
     // If multiple claims, randomly select winner
-    const winningClaimIndex = Math.floor(Math.random() * horseClaims.length);
+    const winningClaimIndex = rng.int(0, horseClaims.length - 1);
     const winningClaim = horseClaims[winningClaimIndex];
 
     // Verify claimant has sufficient funds (this is checked elsewhere)

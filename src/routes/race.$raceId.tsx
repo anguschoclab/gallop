@@ -170,7 +170,7 @@ function LiveRace() {
   const lastMessageTime = useRef<number>(0);
   
   if (!narrativeRef.current && race) {
-    narrativeRef.current = new NarrativeGenerator(race, horses, stables);
+    narrativeRef.current = new NarrativeGenerator(race, horses, stables, rngRef.current);
   }
 
   // Paced message delivery effect

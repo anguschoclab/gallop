@@ -18,7 +18,7 @@ function buildFoalPedigree(sire: Horse, dam: Horse): Pedigree {
   };
 }
 
-const STYLES: RunningStyle[] = ["front-runner", "stalker", "mid-pack", "closer"];
+const STYLES: RunningStyle[] = ["E", "EP", "P", "S"];
 
 function inheritRunningStyle(
   sire: RunningStyle | undefined,
@@ -134,7 +134,7 @@ export function resolveFoaling(
   // values when both parents are available. Hemisphere inherits from the dam
   // (the foal is born wherever the mare is) and the pedigree snapshot is
   // attached so future inbreeding/dam-line/sire-line lookups have ID refs.
-  const foal = generateHorse({ tier: "starter", owned: dam?.owned ?? true });
+  const foal = generateHorse({ tier: "starter", owned: dam?.owned ?? true, rng });
   foal.age = 0;
   foal.sireName = pregnancy.sireName;
   foal.damName = pregnancy.damName;
@@ -177,6 +177,20 @@ export function resolveFoaling(
     foal.temperament = rollTrait((TRAIT_VALUES[sireTemp] + TRAIT_VALUES[damTemp]) / 2, rng);
 
     foal.runningStyle = inheritRunningStyle(sire.runningStyle, dam.runningStyle, rng);
+
+    // Inherit aptitudes
+    const inheritAptitude = (sireApt: number, damApt: number): number => {
+      const base = (sireApt + damApt) / 2;
+      const variance = rng.range(-200, 200);
+      return Math.round(base + variance);
+    };
+    foal.distanceAptitude = inheritAptitude(sire.distanceAptitude, dam.distanceAptitude);
+
+    foal.surfaceAptitude = {
+      Turf: clamp((sire.surfaceAptitude.Turf + dam.surfaceAptitude.Turf) / 2 + rng.range(-0.05, 0.05), 0.8, 1.0),
+      Dirt: clamp((sire.surfaceAptitude.Dirt + dam.surfaceAptitude.Dirt) / 2 + rng.range(-0.05, 0.05), 0.8, 1.0),
+      Synthetic: clamp((sire.surfaceAptitude.Synthetic + dam.surfaceAptitude.Synthetic) / 2 + rng.range(-0.05, 0.05), 0.8, 1.0),
+    };
 
     if (sire.geneticMarkers && dam.geneticMarkers) {
       const sg = sire.geneticMarkers;
