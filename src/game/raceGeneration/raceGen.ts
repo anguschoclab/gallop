@@ -1,5 +1,6 @@
 import type { Race, RaceClass } from "../types";
 import type { Rng } from "../rng";
+import { nondeterministicRng } from "../rng";
 import type { GradedRace } from "../gradedRaces";
 import { generateUUID } from "../uuid";
 import { rand, randomWeather, randomTrackCondition } from "@/core/common/random";
@@ -28,7 +29,7 @@ export const CLASS_CONFIG: Record<RaceClass, { entry: number; purse: number; min
   Graded: { entry: 0, purse: 0, dist: [1200, 2400] },
 };
 
-export function makeGradedRace(g: GradedRace, gameDay: number, rng: Rng): Race {
+export function makeGradedRace(g: GradedRace, gameDay: number, rng: Rng = nondeterministicRng()): Race {
   const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
   const minStat = g.grade === "G1" ? 78 : g.grade === "G2" ? 70 : 62;
   return {
@@ -50,7 +51,7 @@ export function makeGradedRace(g: GradedRace, gameDay: number, rng: Rng): Race {
   };
 }
 
-export function generateRace(day: number, rng: Rng): Race {
+export function generateRace(day: number, rng: Rng = nondeterministicRng()): Race {
   const r = rng.next();
   let cls: RaceClass;
   if (r < 0.25) cls = "Maiden";
