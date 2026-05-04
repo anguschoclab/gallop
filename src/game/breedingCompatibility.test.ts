@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   calculateGeneticCompatibility,
   calculateBlueHenContribution,
@@ -13,6 +13,7 @@ import {
   calculateBreedingCompatibility,
 } from "./breedingCompatibility";
 import type { Horse } from "./types";
+import * as dosage from "./dosage";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -248,10 +249,62 @@ describe("checkNickingAffinity", () => {
 });
 
 describe("calculateDosageCompatibility", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("unknown sires → score = 0.5 (insufficient data)", () => {
     const { score, description } = calculateDosageCompatibility("Unknown X", "Unknown Y");
     expect(score).toBe(0.5);
     expect(description).toContain("Insufficient");
+  });
+
+  it("diff < 0.5 returns 0.6 score", () => {
+    vi.spyOn(dosage, "calculateDosageMetrics").mockImplementation((name) => {
+      if (name === "sire") return { dosageIndex: 1.0 };
+      if (name === "dam") return { dosageIndex: 1.4 }; // diff = 0.4
+      return { dosageIndex: Infinity };
+    });
+
+    const result = calculateDosageCompatibility("sire", "dam");
+    expect(result.score).toBe(0.6);
+    expect(result.description).toContain("Similar dosage profiles");
+  });
+
+  it("0.5 <= diff < 1.5 returns 0.8 score", () => {
+    vi.spyOn(dosage, "calculateDosageMetrics").mockImplementation((name) => {
+      if (name === "sire") return { dosageIndex: 1.0 };
+      if (name === "dam") return { dosageIndex: 2.0 }; // diff = 1.0
+      return { dosageIndex: Infinity };
+    });
+
+    const result = calculateDosageCompatibility("sire", "dam");
+    expect(result.score).toBe(0.8);
+    expect(result.description).toContain("Good speed/stamina balance");
+  });
+
+  it("1.5 <= diff < 2.5 returns 0.95 score", () => {
+    vi.spyOn(dosage, "calculateDosageMetrics").mockImplementation((name) => {
+      if (name === "sire") return { dosageIndex: 1.0 };
+      if (name === "dam") return { dosageIndex: 3.0 }; // diff = 2.0
+      return { dosageIndex: Infinity };
+    });
+
+    const result = calculateDosageCompatibility("sire", "dam");
+    expect(result.score).toBe(0.95);
+    expect(result.description).toContain("Excellent complementary dosage");
+  });
+
+  it("diff >= 2.5 returns 0.4 score", () => {
+    vi.spyOn(dosage, "calculateDosageMetrics").mockImplementation((name) => {
+      if (name === "sire") return { dosageIndex: 1.0 };
+      if (name === "dam") return { dosageIndex: 4.0 }; // diff = 3.0
+      return { dosageIndex: Infinity };
+    });
+
+    const result = calculateDosageCompatibility("sire", "dam");
+    expect(result.score).toBe(0.4);
+    expect(result.description).toContain("Very different dosage profiles");
   });
 });
 
