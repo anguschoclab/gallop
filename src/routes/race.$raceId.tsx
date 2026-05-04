@@ -125,7 +125,7 @@ export const Route = createFileRoute("/race/$raceId")({
   notFoundComponent: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Race not found</h1>
-      <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all" }} className="text-primary underline">Back</Link>
+      <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }} className="text-primary underline">Back</Link>
     </div>
   ),
 });
@@ -142,7 +142,7 @@ function LiveRace() {
     return (
       <div className="p-8 text-center">
         <p className="text-muted-foreground">This race has already been run.</p>
-        <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all" }}><Button className="mt-4">Back to races</Button></Link>
+        <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}><Button className="mt-4">Back to races</Button></Link>
       </div>
     );
   }
@@ -376,7 +376,7 @@ function LiveRace() {
           )}
           
           {finished && (
-            <Button size="sm" onClick={() => navigate({ to: "/races", search: { grade: "all", country: "all", surface: "all", track: "all", owned: "all" } })}>Back to races</Button>
+            <Button size="sm" onClick={() => navigate({ to: "/races", search: { grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" } })}>Back to races</Button>
           )}
         </div>
       </div>
@@ -452,7 +452,7 @@ function LiveRace() {
         </div>
       </div>
 
-      {finished && <ResultOverlay race={race} runners={runners} onClose={() => navigate({ to: "/races", search: { grade: "all", country: "all", surface: "all", track: "all", owned: "all" } })} />}
+      {finished && <ResultOverlay race={race} runners={runners} onClose={() => navigate({ to: "/races", search: { grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" } })} />}
     </div>
   );
 }

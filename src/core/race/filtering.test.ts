@@ -70,6 +70,34 @@ describe("filterRacesByCriteria", () => {
     const result = filterRacesByCriteria(races, {}, 1);
     expect(result.length).toBe(races.length);
   });
+
+  it("surface filter: Turf only", () => {
+    const turfRace = mkRace({ id: "turf", graded: { key: "t", grade: "G1", track: "A", trackId: "1", surface: "Turf" } });
+    const dirtRace = mkRace({ id: "dirt", graded: { key: "d", grade: "G1", track: "B", trackId: "2", surface: "Dirt" } });
+    const result = filterRacesByCriteria([turfRace, dirtRace], { surface: "Turf" }, 1);
+    expect(result.map(r => r.id)).toEqual(["turf"]);
+  });
+
+  it("surface filter: Dirt only", () => {
+    const turfRace = mkRace({ id: "turf", graded: { key: "t", grade: "G1", track: "A", trackId: "1", surface: "Turf" } });
+    const dirtRace = mkRace({ id: "dirt", graded: { key: "d", grade: "G1", track: "B", trackId: "2", surface: "Dirt" } });
+    const result = filterRacesByCriteria([turfRace, dirtRace], { surface: "Dirt" }, 1);
+    expect(result.map(r => r.id)).toEqual(["dirt"]);
+  });
+
+  it("surface filter: Synthetic only", () => {
+    const synthRace = mkRace({ id: "synth", graded: { key: "s", grade: "G1", track: "C", trackId: "3", surface: "Synthetic" } });
+    const turfRace = mkRace({ id: "turf", graded: { key: "t", grade: "G1", track: "A", trackId: "1", surface: "Turf" } });
+    const result = filterRacesByCriteria([synthRace, turfRace], { surface: "Synthetic" }, 1);
+    expect(result.map(r => r.id)).toEqual(["synth"]);
+  });
+
+  it("surface filter: non-graded races excluded when surface filter active", () => {
+    const plain = mkRace({ id: "plain", raceClass: "Stakes" });
+    const turfRace = mkRace({ id: "turf", graded: { key: "t", grade: "G1", track: "A", trackId: "1", surface: "Turf" } });
+    const result = filterRacesByCriteria([plain, turfRace], { surface: "Turf" }, 1);
+    expect(result.map(r => r.id)).toEqual(["turf"]);
+  });
 });
 
 describe("separateUpcomingAndPast", () => {

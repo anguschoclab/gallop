@@ -8,7 +8,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useEffect, useState } from "react";
 import { expectedBeyer } from "@/game/beyer";
 import { getCountry } from "@/game/gradedRaces";
-import { Calendar, List, Users } from "lucide-react";
+import { Calendar, List, Search, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { RaceDetailPanel } from "@/components/RaceDetailPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getGradeColorClass } from "@/core/race/grading";
@@ -24,6 +25,9 @@ import { getScoutStatus } from "@/game/scouting";
 type GradeFilter = "all" | "G1" | "G2" | "G3";
 const GRADE_FILTERS: GradeFilter[] = ["all", "G1", "G2", "G3"];
 
+type OwnedFilter = "all" | "mine";
+const OWNED_FILTERS: OwnedFilter[] = ["all", "mine"];
+
 type CountryFilter = "all" | "Canada" | "UAE" | "Argentina" | "Brazil" | "Chile" | "Sweden" | "Norway" | "Denmark" | "Japan" | "Italy" | "Hong Kong" | "Great Britain" | "France" | "Ireland" | "Germany" | "Turkey" | "Austria" | "Belgium" | "Czech Republic" | "Hungary" | "Spain";
 const COUNTRY_FILTERS: CountryFilter[] = ["all", "Canada", "UAE", "Argentina", "Brazil", "Chile", "Sweden", "Norway", "Denmark", "Japan", "Italy", "Hong Kong", "Great Britain", "France", "Ireland", "Germany", "Turkey", "Austria", "Belgium", "Czech Republic", "Hungary", "Spain"];
 
@@ -35,16 +39,19 @@ const TRACK_FILTERS: TrackFilter[] = ["all", "Woodbine", "Fort Erie", "Century M
 
 export const Route = createFileRoute("/races")({
   component: RacesPage,
-  validateSearch: (search: Record<string, unknown>): { grade: GradeFilter; country: CountryFilter; surface: SurfaceFilter; track: TrackFilter } => {
+  validateSearch: (search: Record<string, unknown>): { grade: GradeFilter; country: CountryFilter; surface: SurfaceFilter; track: TrackFilter; owned: OwnedFilter; q: string } => {
     const g = search.grade;
     const c = search.country;
     const s = search.surface;
     const t = search.track;
+    const o = search.owned;
     return {
       grade: GRADE_FILTERS.includes(g as GradeFilter) ? (g as GradeFilter) : "all",
       country: COUNTRY_FILTERS.includes(c as CountryFilter) ? (c as CountryFilter) : "all",
       surface: SURFACE_FILTERS.includes(s as SurfaceFilter) ? (s as SurfaceFilter) : "all",
       track: TRACK_FILTERS.includes(t as TrackFilter) ? (t as TrackFilter) : "all",
+      owned: OWNED_FILTERS.includes(o as OwnedFilter) ? (o as OwnedFilter) : "all",
+      q: typeof search.q === "string" ? search.q : "",
     };
   },
 });
@@ -167,31 +174,49 @@ function CalendarView({ upcoming, day, horses, cash, enterRace, withdrawRace, pr
 
 function RacesPage() {
   const navigate = useNavigate();
-  const { grade, country, surface, track } = Route.useSearch();
+  const { grade, country, surface, track, owned, q } = Route.useSearch();
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [draft, setDraft] = useState(q);
+
+  // Sync draft when URL q changes (e.g. back/forward navigation)
+  useEffect(() => { setDraft(q); }, [q]);
+
+  // Debounce draft → URL (300ms)
+  useEffect(() => {
+    const id = setTimeout(() => {
+      if (draft !== q) {
+        navigate({ to: "/races", search: { grade, country, surface, track, owned, q: draft }, replace: true });
+      }
+    }, 300);
+    return () => clearTimeout(id);
+  }, [draft, grade, country, surface, track, owned, q, navigate]);
 
   // Restore last-used filter when arriving with no explicit search param.
   useEffect(() => {
     const url = new URL(window.location.href);
-    if (!url.searchParams.has("grade") || !url.searchParams.has("country") || !url.searchParams.has("surface") || !url.searchParams.has("track")) {
+    if (!url.searchParams.has("grade") || !url.searchParams.has("country") || !url.searchParams.has("surface") || !url.searchParams.has("track") || !url.searchParams.has("owned")) {
       const savedFilters = loadRaceFilters();
       const savedGrade = savedFilters.grade as GradeFilter | null;
       const savedCountry = savedFilters.country as CountryFilter | null;
       const savedSurface = savedFilters.surface as SurfaceFilter | null;
       const savedTrack = savedFilters.track as TrackFilter | null;
+      const savedOwned = savedFilters.owned as OwnedFilter | null;
+      const savedQ = savedFilters.q || "";
       if ((savedGrade && savedGrade !== "all" && GRADE_FILTERS.includes(savedGrade)) ||
           (savedCountry && savedCountry !== "all" && COUNTRY_FILTERS.includes(savedCountry)) ||
           (savedSurface && savedSurface !== "all" && SURFACE_FILTERS.includes(savedSurface)) ||
-          (savedTrack && savedTrack !== "all" && TRACK_FILTERS.includes(savedTrack))) {
-        navigate({ to: "/races", search: { grade: savedGrade || "all", country: savedCountry || "all", surface: savedSurface || "all", track: savedTrack || "all" }, replace: true });
+          (savedTrack && savedTrack !== "all" && TRACK_FILTERS.includes(savedTrack)) ||
+          (savedOwned && savedOwned !== "all" && OWNED_FILTERS.includes(savedOwned)) ||
+          savedQ) {
+        navigate({ to: "/races", search: { grade: savedGrade || "all", country: savedCountry || "all", surface: savedSurface || "all", track: savedTrack || "all", owned: savedOwned || "all", q: savedQ }, replace: true });
       }
     }
   }, [navigate]);
 
   // Persist current selection.
   useEffect(() => {
-    saveRaceFilters({ grade, country, surface, track });
-  }, [grade, country, surface, track]);
+    saveRaceFilters({ grade, country, surface, track, owned, q });
+  }, [grade, country, surface, track, owned, q]);
 
   const races = useGame((s) => s.races);
   const day = useGame((s) => s.day);
@@ -205,13 +230,26 @@ function RacesPage() {
   const filters: RaceFilters = {
     grade: grade === "all" ? undefined : grade,
     track: track === "all" ? undefined : track,
+    surface: surface === "all" ? undefined : surface,
     tripleCrown: undefined,
     class: undefined,
   };
 
-  const { upcoming, past } = getFilteredRaces({ races, currentDay: day }, filters);
+  const { upcoming: rawUpcoming, past: rawPast } = getFilteredRaces({ races, currentDay: day }, filters);
+
+  const matchesSearch = (race: Race) => {
+    if (!q) return true;
+    const lower = q.toLowerCase();
+    if (race.name.toLowerCase().includes(lower)) return true;
+    if (race.graded?.track.toLowerCase().includes(lower)) return true;
+    if (race.graded && getCountry(race.graded.track).toLowerCase().includes(lower)) return true;
+    return false;
+  };
+  const upcoming = rawUpcoming.filter(matchesSearch);
+  const past = rawPast.filter(matchesSearch);
 
   const filterLabel: Record<GradeFilter, string> = { all: "All races", G1: "G1 only", G2: "G2 only", G3: "G3 only" };
+  const ownedLabel: Record<OwnedFilter, string> = { all: "All races", mine: "My entries" };
   const surfaceLabel: Record<SurfaceFilter, string> = { all: "All surfaces", Turf: "Turf", Dirt: "Dirt", Synthetic: "Synthetic" };
   const countryLabel: Record<CountryFilter, string> = {
     all: "All countries",
@@ -319,7 +357,16 @@ function RacesPage() {
           <p className="text-muted-foreground">Enter your horses to compete</p>
         </div>
         <div className="flex gap-3 items-center">
-          <Select value={country} onValueChange={(c) => navigate({ to: "/races", search: { grade, country: c as CountryFilter, surface, track } })}>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search races\u2026"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              className="w-[200px] pl-8"
+            />
+          </div>
+          <Select value={country} onValueChange={(c) => navigate({ to: "/races", search: { grade, country: c as CountryFilter, surface, track, owned, q } })}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select country" />
             </SelectTrigger>
@@ -329,7 +376,7 @@ function RacesPage() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={track} onValueChange={(t) => navigate({ to: "/races", search: { grade, country, surface, track: t as TrackFilter } })}>
+          <Select value={track} onValueChange={(t) => navigate({ to: "/races", search: { grade, country, surface, track: t as TrackFilter, owned, q } })}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select track" />
             </SelectTrigger>
@@ -344,7 +391,7 @@ function RacesPage() {
               <Link
                 key={g}
                 to="/races"
-                search={{ grade: g, country, surface, track }}
+                search={{ grade: g, country, surface, track, owned, q }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-colors ${
                   grade === g ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
@@ -358,12 +405,26 @@ function RacesPage() {
               <Link
                 key={s}
                 to="/races"
-                search={{ grade, country, surface: s, track }}
+                search={{ grade, country, surface: s, track, owned, q }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-colors ${
                   surface === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {surfaceLabel[s]}
+              </Link>
+            ))}
+          </div>
+          <div className="inline-flex rounded-md border bg-card p-1">
+            {OWNED_FILTERS.map((o) => (
+              <Link
+                key={o}
+                to="/races"
+                search={{ grade, country, surface, track, owned: o, q }}
+                className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-colors ${
+                  owned === o ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {ownedLabel[o]}
               </Link>
             ))}
           </div>
@@ -494,58 +555,167 @@ function RacesPage() {
         />
       )}
 
-      {past.length > 0 && (
-        <Card>
-          <CardHeader><CardTitle>Recent results</CardTitle></CardHeader>
-          <CardContent className="space-y-2">
-            {past.map((r) => (
-              <div key={r.id} className="flex justify-between text-sm py-1 border-b last:border-0">
-                <span><span className="text-muted-foreground">D{r.day}</span> · {r.name}</span>
-                <span className="text-muted-foreground">
-                  Winner: {horses.find((h) => h.id === r.result?.[0]?.horseId)?.name ?? "—"}
-                </span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
+      {/* Filter past races by owned status */}
+      {(() => {
+        const filteredPast = owned === "mine"
+          ? past.filter((r) => r.entries.some((e) => e.owned))
+          : past;
+
+        if (filteredPast.length === 0) return null;
+
+        return (
+          <>
+            <PastGradedSummary past={filteredPast} horses={horses} owned={owned} />
+            <Card>
+              <CardHeader><CardTitle>Recent results</CardTitle></CardHeader>
+              <CardContent className="space-y-2">
+                {filteredPast.map((r) => (
+                  <div key={r.id} className="flex justify-between text-sm py-1 border-b last:border-0">
+                    <span><span className="text-muted-foreground">D{r.day}</span> · {r.name}</span>
+                    <span className="text-muted-foreground">
+                      Winner: {horses.find((h) => h.id === r.result?.[0]?.horseId)?.name ?? "—"}
+                    </span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </>
+        );
+      })()}
     </div>
   );
 }
 
-function RaceSummaryStats({ upcoming, horses }: { upcoming: Race[]; horses: Horse[] }) {
-  // Count G1/G2/G3 races
-  const g1Count = upcoming.filter((r) => r.graded?.grade === "G1").length;
-  const g2Count = upcoming.filter((r) => r.graded?.grade === "G2").length;
-  const g3Count = upcoming.filter((r) => r.graded?.grade === "G3").length;
+function projBeyer(horse: Horse, race: Race): number {
+  const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
+  const model = expectedBeyer(horse, race.distance, classBonus);
+  const recent = horse.raceHistory.slice(0, 3).map((r) => r.beyer).filter((b): b is number => typeof b === "number");
+  const avgRecent = recent.length ? recent.reduce((s, v) => s + v, 0) / recent.length : null;
+  return avgRecent !== null ? Math.round(model * 0.6 + avgRecent * 0.4) : model;
+}
 
-  // Calculate average expected Beyer for all entered horses
-  const enteredHorses = new Map<string, { horse: Horse; race: Race }>();
-  for (const race of upcoming) {
-    for (const entry of race.entries) {
-      const horse = horses.find((h) => h.id === entry.horseId);
-      if (horse && !enteredHorses.has(horse.id)) {
-        enteredHorses.set(horse.id, { horse, race });
+function RaceSummaryStats({ upcoming, horses }: { upcoming: Race[]; horses: Horse[] }) {
+  const grades = ["G1", "G2", "G3"] as const;
+
+  const gradeData = grades.map((grade) => {
+    const races = upcoming.filter((r) => r.graded?.grade === grade);
+    const total = races.length;
+    const ownedCount = races.filter((r) => r.entries.some((e) => e.owned)).length;
+
+    let topOwned: { name: string; proj: number } | null = null;
+    for (const race of races) {
+      for (const entry of race.entries) {
+        if (!entry.owned) continue;
+        const horse = horses.find((h) => h.id === entry.horseId);
+        if (!horse) continue;
+        const proj = projBeyer(horse, race);
+        if (topOwned === null || proj > topOwned.proj) {
+          topOwned = { name: horse.name, proj };
+        }
       }
     }
+
+    return { grade, total, ownedCount, topOwned };
+  });
+
+  // Global avg Beyer across all owned entries (per-grade, no cross-grade dedup)
+  let avgBeyer: number | null = null;
+  const allOwnedProjs: number[] = [];
+  for (const race of upcoming) {
+    for (const entry of race.entries) {
+      if (!entry.owned) continue;
+      const horse = horses.find((h) => h.id === entry.horseId);
+      if (!horse) continue;
+      allOwnedProjs.push(projBeyer(horse, race));
+    }
+  }
+  if (allOwnedProjs.length > 0) {
+    avgBeyer = Math.round(allOwnedProjs.reduce((s, v) => s + v, 0) / allOwnedProjs.length);
   }
 
-  let avgBeyer: number | null = null;
-  if (enteredHorses.size > 0) {
-    let totalBeyer = 0;
-    for (const { horse, race } of enteredHorses.values()) {
-      const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
-      const model = expectedBeyer(horse, race.distance, classBonus);
-      const recent = horse.raceHistory.slice(0, 3).map((r) => r.beyer).filter((b): b is number => typeof b === "number");
-      const avgRecent = recent.length ? recent.reduce((s, v) => s + v, 0) / recent.length : null;
-      const proj = avgRecent !== null ? Math.round(model * 0.6 + avgRecent * 0.4) : model;
-      totalBeyer += proj;
-    }
-    avgBeyer = Math.round(totalBeyer / enteredHorses.size);
-  }
+  const gradeLabelColor: Record<"G1" | "G2" | "G3", string> = {
+    G1: "text-yellow-700 border-yellow-500/40 bg-yellow-500/10",
+    G2: "text-slate-600 border-slate-400/40 bg-slate-400/10",
+    G3: "text-amber-800 border-amber-700/40 bg-amber-700/10",
+  };
 
   return (
     <Card>
+      <CardContent className="p-4 space-y-4">
+        <div className="grid grid-cols-3 gap-4">
+          {gradeData.map(({ grade, total, ownedCount, topOwned }) => (
+            <div key={grade} className="space-y-2">
+              <div className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold ${gradeLabelColor[grade]}`}>
+                {grade}
+              </div>
+              <div>
+                <div className="text-2xl font-bold tabular-nums">{total}</div>
+                <div className="text-xs text-muted-foreground">races upcoming</div>
+              </div>
+              <div>
+                <div className={`text-sm font-semibold tabular-nums ${ownedCount > 0 ? "text-emerald-600" : "text-muted-foreground"}`}>
+                  {ownedCount} entered
+                </div>
+                <div className="text-xs text-muted-foreground">owned entries</div>
+              </div>
+              <div>
+                {topOwned ? (
+                  <>
+                    <div className="text-sm font-semibold truncate">{topOwned.name}</div>
+                    <div className="text-xs text-muted-foreground">top proj. ~{topOwned.proj} Beyer</div>
+                  </>
+                ) : (
+                  <div className="text-sm text-muted-foreground">—</div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="border-t pt-3 flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Avg Beyer (owned entries):</span>
+          <span className="text-sm font-bold tabular-nums">{avgBeyer ?? "—"}</span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function PastGradedSummary({ past, horses, owned }: { past: Race[]; horses: Horse[]; owned: OwnedFilter }) {
+  // Count G1/G2/G3 races
+  const g1Count = past.filter((r) => r.graded?.grade === "G1").length;
+  const g2Count = past.filter((r) => r.graded?.grade === "G2").length;
+  const g3Count = past.filter((r) => r.graded?.grade === "G3").length;
+
+  // Get winner's Beyer from their raceHistory
+  function getWinnerBeyer(race: Race): number | null {
+    if (!race.result?.[0]) return null;
+    const winnerId = race.result[0].horseId;
+    const winner = horses.find((h) => h.id === winnerId);
+    const historyEntry = winner?.raceHistory.find((h) => h.raceId === race.id);
+    return historyEntry?.beyer ?? null;
+  }
+
+  // Calculate average winner Beyer for graded races
+  const gradedPast = past.filter((r) => r.graded?.grade);
+  let avgWinnerBeyer: number | null = null;
+  if (gradedPast.length > 0) {
+    const beyers: number[] = [];
+    for (const race of gradedPast) {
+      const beyer = getWinnerBeyer(race);
+      if (beyer !== null && beyer > 0) {
+        beyers.push(beyer);
+      }
+    }
+    if (beyers.length > 0) {
+      avgWinnerBeyer = Math.round(beyers.reduce((s, v) => s + v, 0) / beyers.length);
+    }
+  }
+
+  const title = owned === "mine" ? "My Past Graded Stakes" : "Past Graded Stakes";
+
+  return (
+    <Card>
+      <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
       <CardContent className="p-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
@@ -561,8 +731,8 @@ function RaceSummaryStats({ upcoming, horses }: { upcoming: Race[]; horses: Hors
             <div className="text-xs text-muted-foreground">G3 Races</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold tabular-nums">{avgBeyer ?? "—"}</div>
-            <div className="text-xs text-muted-foreground">Avg Beyer</div>
+            <div className="text-2xl font-bold tabular-nums">{avgWinnerBeyer ?? "—"}</div>
+            <div className="text-xs text-muted-foreground">Avg Winner Beyer</div>
           </div>
         </div>
       </CardContent>

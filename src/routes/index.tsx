@@ -61,7 +61,7 @@ function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Upcoming races</CardTitle>
-            <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all" }}><Button size="sm" variant="ghost">View all</Button></Link>
+            <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}><Button size="sm" variant="ghost">View all</Button></Link>
           </CardHeader>
           <CardContent className="space-y-2">
             {upcoming.map((r) => (

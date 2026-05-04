@@ -8,6 +8,7 @@ import type { Race } from "@/game/types";
 export interface RaceFilters {
   grade?: "G1" | "G2" | "G3";
   track?: string;
+  surface?: "Turf" | "Dirt" | "Synthetic";
   tripleCrown?: boolean | "all";
   class?: Race["raceClass"];
 }
@@ -28,6 +29,11 @@ export function filterRacesByCriteria(
 
     // Filter by track
     if (filters.track && race.graded?.track !== filters.track) {
+      return false;
+    }
+
+    // Filter by surface
+    if (filters.surface && race.graded?.surface !== filters.surface) {
       return false;
     }
 
