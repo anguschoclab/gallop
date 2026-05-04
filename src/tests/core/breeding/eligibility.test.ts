@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { canBreed, MARE_RECOVERY_DAYS } from "./eligibility";
+import { canBreed, MARE_RECOVERY_DAYS } from "@/core/breeding/eligibility";
 import type { Horse, Pregnancy } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {

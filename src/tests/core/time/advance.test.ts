@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
-import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "./advance";
+import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
 import type { GameState, Race } from "@/game/types";
 
 describe("computePlayerRaceDays", () => {

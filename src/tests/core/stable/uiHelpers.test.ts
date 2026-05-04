@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getTierColor, getReputationStars } from "./uiHelpers";
+import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
 import type { StableTier } from "@/game/types";
 
 describe("getTierColor", () => {

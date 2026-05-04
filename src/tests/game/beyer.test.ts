@@ -7,8 +7,8 @@ import {
   parTime,
   expectedBeyer,
   calculateBeyerForResult,
-} from "./beyer";
-import type { Horse } from "./types";
+} from "@/game/beyer";
+import type { Horse } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {

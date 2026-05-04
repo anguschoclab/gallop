@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateBeyerProjections, formatProjectionMessage } from "./projections";
+import { calculateBeyerProjections, formatProjectionMessage } from "@/core/race/projections";
 import type { Horse, Race } from "@/game/types";
 
 function mkHorse(id: string, speed = 70, stamina = 70, acceleration = 70, consistency = 70): Horse {

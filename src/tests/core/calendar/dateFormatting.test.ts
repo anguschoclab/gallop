@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getMonthName, formatDate, dayOfYear, gameYearNumber, gameCalendarDate } from "./dateFormatting";
+import { getMonthName, formatDate, dayOfYear, gameYearNumber, gameCalendarDate } from "@/core/calendar/dateFormatting";
 
 describe("dayOfYear", () => {
   it("day 1 → 1", () => expect(dayOfYear(1)).toBe(1));

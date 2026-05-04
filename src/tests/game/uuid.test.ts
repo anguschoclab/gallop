@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateUUID, generateShortId, isValidUUID } from "./uuid";
+import { generateUUID, generateShortId, isValidUUID } from "@/game/uuid";
 
 describe("generateUUID", () => {
   it("output passes isValidUUID", () => {

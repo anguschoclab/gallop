@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { agingPhase } from "./aging";
+import { agingPhase } from "@/core/time/phases/aging";
 import type { PipelineContext } from "../pipeline";
 import type { GameState } from "@/game/types";
 

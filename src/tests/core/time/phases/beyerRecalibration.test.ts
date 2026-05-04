@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { beyerRecalibrationPhase } from "./beyerRecalibration";
+import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
 import type { PipelineContext } from "../pipeline";
 import type { GameState } from "@/game/types";
 

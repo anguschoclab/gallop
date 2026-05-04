@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateClassBonus } from "./classBonus";
+import { calculateClassBonus } from "@/core/common/classBonus";
 
 describe("calculateClassBonus", () => {
   it("G1 → 8", () => expect(calculateClassBonus("G1")).toBe(8));

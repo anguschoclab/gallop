@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { pedigreeMultiplier } from "./pedigreePricing";
+import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import type { Horse } from "@/game/types";
 
 function mkHorse(over: Partial<Horse> = {}): Horse {

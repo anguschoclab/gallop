@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { upkeepPhase } from "./upkeep";
+import { upkeepPhase } from "@/core/time/phases/upkeep";
 import type { PipelineContext } from "../pipeline";
 import type { GameState, Stable } from "@/game/types";
 

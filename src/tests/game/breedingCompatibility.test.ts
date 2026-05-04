@@ -11,8 +11,8 @@ import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
   calculateBreedingCompatibility,
-} from "./breedingCompatibility";
-import type { Horse } from "./types";
+} from "@/game/breedingCompatibility";
+import type { Horse } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {

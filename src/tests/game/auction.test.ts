@@ -4,9 +4,9 @@ import {
   calculateNpcBid,
   generateAuctionLots,
   resolveAuctionSale,
-} from "./auction";
-import { createRng } from "./rng";
-import type { Horse, Stable, AuctionSale } from "./types";
+} from "@/game/auction";
+import { createRng } from "@/game/rng";
+import type { Horse, Stable, AuctionSale } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {

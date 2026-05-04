@@ -6,8 +6,8 @@ import {
   calculateNpcHorseValue,
   getStudFee,
   getBroodmareFee,
-} from "./npcHorseGen";
-import type { Stable } from "./types";
+} from "@/game/npcHorseGen";
+import type { Stable } from "@/game/types";
 
 function mkStable(tier: Stable["tier"], isMajor = true, overrides: Partial<Stable> = {}): Stable {
   return {

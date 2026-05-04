@@ -8,7 +8,7 @@ import {
   formatWinCondition,
   getRaceClassAbbreviation,
   getRegionalSystem,
-} from "./raceNameGenerator";
+} from "@/core/race/naming/raceNameGenerator";
 import type { RaceClass, ClaimingPrice, WinCondition, RegionalSystem } from "@/game/types";
 import type { Track } from "@/game/tracks";
 

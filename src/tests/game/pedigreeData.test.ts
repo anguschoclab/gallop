@@ -6,7 +6,7 @@ import {
   getRandomHorseFromEra,
   getRandomSire,
   getRandomDam,
-} from "./pedigreeData";
+} from "@/game/pedigreeData";
 
 describe("pedigreeData utilities", () => {
   describe("findHorseByName", () => {

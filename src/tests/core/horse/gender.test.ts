@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isGenderEligible, getGenderRestrictionLabel } from "./gender";
+import { isGenderEligible, getGenderRestrictionLabel } from "@/core/horse/gender";
 import type { Horse } from "@/game/types";
 
 type Gender = Horse["gender"];

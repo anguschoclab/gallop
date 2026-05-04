@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getMinimumAgeForHemisphere, isHorseEligibleForRace } from "./eligibility";
+import { getMinimumAgeForHemisphere, isHorseEligibleForRace } from "@/core/race/eligibility";
 import type { Horse, Race } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {

@@ -1,5 +1,6 @@
 import type { Horse, HorseStats, Hemisphere, RunningStyle, CoatColor, Genotype, HorseGender } from "./types";
 import type { Rng } from "./rng";
+import { nondeterministicRng } from "./rng";
 import { generateGenotype, resolveCoatColor, resolveStats, resolveRunningStyle, resolveDistanceAptitude, resolveSurfaceAptitude, resolveAptitudeMultiplier, resolveTrait, resolveInjuryProneness, resolveSize, resolveGeneticMarkers } from "./geneticsEngine";
 import { generateUUID } from "./uuid";
 import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
@@ -70,7 +71,7 @@ export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: 
   };
 }
 
-export function generateHorse(rng: Rng, opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere; age?: number; gender?: HorseGender } = {}): Horse {
+export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere; age?: number; gender?: HorseGender } = {}, rng: Rng = nondeterministicRng()): Horse {
   const tier = opts.tier ?? "budget";
   
   // 1. Generate Biological Identity (DNA)

@@ -9,8 +9,8 @@ import {
   getSuggestedClaimingPriceRange,
   validateClaimingRace,
   type ClaimAttempt,
-} from "./claiming";
-import type { Horse, Race } from "./types";
+} from "@/game/claiming";
+import type { Horse, Race } from "@/game/types";
 
 describe("processClaims", () => {
   it("should return empty result when race is not a claiming race", () => {

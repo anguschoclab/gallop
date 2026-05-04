@@ -7,7 +7,7 @@ import {
   getRandomEvent,
   getRandomAdjective,
   randomFromArray,
-} from "./namePools";
+} from "@/core/race/naming/namePools";
 import type { RegionalSystem } from "@/game/types";
 
 describe("randomFromArray", () => {

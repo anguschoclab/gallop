@@ -7,7 +7,7 @@ import {
   randomHorseName,
   randomSilk,
   randomRaceName,
-} from "./random";
+} from "@/core/common/random";
 import { createRng, nondeterministicRng } from "@/game/rng";
 
 describe("rand", () => {

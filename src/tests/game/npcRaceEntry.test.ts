@@ -4,8 +4,8 @@ import {
   runNpcRaceEntry,
   fillRaceWithFillerHorses,
   updateHorseFame,
-} from "./npcRaceEntry";
-import type { Horse, Race, Stable } from "./types";
+} from "@/game/npcRaceEntry";
+import type { Horse, Race, Stable } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {

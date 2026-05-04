@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getGradeColorClass } from "./grading";
+import { getGradeColorClass } from "@/core/race/grading";
 
 describe("getGradeColorClass", () => {
   it("G1 → yellow-based class", () => {

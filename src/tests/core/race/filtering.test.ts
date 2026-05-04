@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { filterRacesByCriteria, separateUpcomingAndPast, sortRacesByDay } from "./filtering";
+import { filterRacesByCriteria, separateUpcomingAndPast, sortRacesByDay } from "@/core/race/filtering";
 import type { Race } from "@/game/types";
 
 function mkRace(overrides: Partial<Race> = {}): Race {

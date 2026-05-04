@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatAgeRestrictions, formatGenderRestriction, formatAllRestrictions } from "./restrictions";
+import { formatAgeRestrictions, formatGenderRestriction, formatAllRestrictions } from "@/core/race/restrictions";
 
 describe("formatAgeRestrictions", () => {
   it("undefined → empty string", () => expect(formatAgeRestrictions(undefined)).toBe(""));

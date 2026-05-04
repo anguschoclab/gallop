@@ -7,9 +7,9 @@ import {
   calculateAwardPoints,
   determineRegionalWinners,
   determineAllRegionalWinners,
-} from "./scoring";
+} from "@/game/awards/scoring";
 import type { Horse, Race } from "../types";
-import type { AwardRegion, RegionalAwardCategory } from "./types";
+import type { AwardRegion, RegionalAwardCategory } from "@/game/awards/types";
 
 describe("calculateAwardPoints", () => {
   it("should return 0 for races outside the award year", () => {

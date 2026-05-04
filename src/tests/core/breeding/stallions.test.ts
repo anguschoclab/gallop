@@ -5,7 +5,7 @@ import {
   recalcStandingFee,
   isStallionAvailable,
   shouldRetireAtStartup,
-} from "./stallions";
+} from "@/core/breeding/stallions";
 import type { Horse, Stable } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {

@@ -11,9 +11,9 @@ import {
   generateTrackRaces,
   generateTrackSchedule,
   generateUpcomingRaces,
-} from "./raceSchedule";
-import type { Race } from "./types";
-import type { Track, TrackSchedule } from "./tracks";
+} from "@/game/raceSchedule";
+import type { Race } from "@/game/types";
+import type { Track, TrackSchedule } from "@/game/tracks";
 
 describe("getCurrentYear", () => {
   it("should return year 1 for days 1-365", () => {

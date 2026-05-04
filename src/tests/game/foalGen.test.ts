@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { resolveFoaling } from "./foalGen";
-import type { Horse, Pregnancy } from "./types";
+import { resolveFoaling } from "@/game/foalGen";
+import type { Horse, Pregnancy } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {

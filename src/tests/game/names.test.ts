@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { randomHorseName, randomSilk, randomRaceName } from "./names";
-import { createRng } from "./rng";
+import { randomHorseName, randomSilk, randomRaceName } from "@/game/names";
+import { createRng } from "@/game/rng";
 
 describe("randomHorseName", () => {
   it("returns a non-empty string", () => {

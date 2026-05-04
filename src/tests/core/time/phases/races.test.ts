@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { racesPhase } from "./races";
+import { racesPhase } from "@/core/time/phases/races";
 import type { PipelineContext } from "../pipeline";
 import type { GameState } from "@/game/types";
 

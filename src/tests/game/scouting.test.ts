@@ -6,8 +6,8 @@ import {
   getDisplayableStats,
   getScoutStatus,
   getIntelSummary,
-} from "./scouting";
-import type { Horse, Stable, ScoutReport } from "./types";
+} from "@/game/scouting";
+import type { Horse, Stable, ScoutReport } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {
