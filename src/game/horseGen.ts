@@ -5,6 +5,7 @@ import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/br
 import {
   randomHorseName,
   randomSilk,
+  generateGeneticMarkers,
 } from "@/core/common/random";
 
 export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: string; age?: number; gender?: HorseGender; hemisphere?: Hemisphere; owned?: boolean } = {}): Horse {
@@ -45,6 +46,7 @@ export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: 
     conformation,
     temperament,
     healthStatus: "healthy",
+    geneticMarkers: generateGeneticMarkers(rng),
     coatColor,
     runningStyle,
     fame: 0,
