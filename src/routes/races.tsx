@@ -172,31 +172,33 @@ function CalendarView({ upcoming, day, horses, cash, enterRace, withdrawRace, pr
 
 function RacesPage() {
   const navigate = useNavigate();
-  const { grade, country, surface, track } = Route.useSearch();
+  const { grade, country, surface, track, owned } = Route.useSearch();
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
 
   // Restore last-used filter when arriving with no explicit search param.
   useEffect(() => {
     const url = new URL(window.location.href);
-    if (!url.searchParams.has("grade") || !url.searchParams.has("country") || !url.searchParams.has("surface") || !url.searchParams.has("track")) {
+    if (!url.searchParams.has("grade") || !url.searchParams.has("country") || !url.searchParams.has("surface") || !url.searchParams.has("track") || !url.searchParams.has("owned")) {
       const savedFilters = loadRaceFilters();
       const savedGrade = savedFilters.grade as GradeFilter | null;
       const savedCountry = savedFilters.country as CountryFilter | null;
       const savedSurface = savedFilters.surface as SurfaceFilter | null;
       const savedTrack = savedFilters.track as TrackFilter | null;
+      const savedOwned = savedFilters.owned as OwnedFilter | null;
       if ((savedGrade && savedGrade !== "all" && GRADE_FILTERS.includes(savedGrade)) ||
           (savedCountry && savedCountry !== "all" && COUNTRY_FILTERS.includes(savedCountry)) ||
           (savedSurface && savedSurface !== "all" && SURFACE_FILTERS.includes(savedSurface)) ||
-          (savedTrack && savedTrack !== "all" && TRACK_FILTERS.includes(savedTrack))) {
-        navigate({ to: "/races", search: { grade: savedGrade || "all", country: savedCountry || "all", surface: savedSurface || "all", track: savedTrack || "all" }, replace: true });
+          (savedTrack && savedTrack !== "all" && TRACK_FILTERS.includes(savedTrack)) ||
+          (savedOwned && savedOwned !== "all" && OWNED_FILTERS.includes(savedOwned))) {
+        navigate({ to: "/races", search: { grade: savedGrade || "all", country: savedCountry || "all", surface: savedSurface || "all", track: savedTrack || "all", owned: savedOwned || "all" }, replace: true });
       }
     }
   }, [navigate]);
 
   // Persist current selection.
   useEffect(() => {
-    saveRaceFilters({ grade, country, surface, track });
-  }, [grade, country, surface, track]);
+    saveRaceFilters({ grade, country, surface, track, owned });
+  }, [grade, country, surface, track, owned]);
 
   const races = useGame((s) => s.races);
   const day = useGame((s) => s.day);
@@ -214,7 +216,11 @@ function RacesPage() {
     class: undefined,
   };
 
-  const { upcoming, past } = getFilteredRaces({ races, currentDay: day }, filters);
+  let { upcoming, past } = getFilteredRaces({ races, currentDay: day }, filters);
+  if (owned === "yes") {
+    upcoming = upcoming.filter((r) => r.entries.some((e) => e.owned));
+    past = past.filter((r) => r.entries.some((e) => e.owned));
+  }
 
   const filterLabel: Record<GradeFilter, string> = { all: "All races", G1: "G1 only", G2: "G2 only", G3: "G3 only" };
   const surfaceLabel: Record<SurfaceFilter, string> = { all: "All surfaces", Turf: "Turf", Dirt: "Dirt", Synthetic: "Synthetic" };
