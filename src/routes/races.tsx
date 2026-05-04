@@ -330,7 +330,7 @@ function RacesPage() {
           <p className="text-muted-foreground">Enter your horses to compete</p>
         </div>
         <div className="flex gap-3 items-center">
-          <Select value={country} onValueChange={(c) => navigate({ to: "/races", search: { grade, country: c as CountryFilter, surface, track } })}>
+          <Select value={country} onValueChange={(c) => navigate({ to: "/races", search: { grade, country: c as CountryFilter, surface, track, owned } })}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select country" />
             </SelectTrigger>
@@ -340,7 +340,7 @@ function RacesPage() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={track} onValueChange={(t) => navigate({ to: "/races", search: { grade, country, surface, track: t as TrackFilter } })}>
+          <Select value={track} onValueChange={(t) => navigate({ to: "/races", search: { grade, country, surface, track: t as TrackFilter, owned } })}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select track" />
             </SelectTrigger>
@@ -355,7 +355,7 @@ function RacesPage() {
               <Link
                 key={g}
                 to="/races"
-                search={{ grade: g, country, surface, track }}
+                search={{ grade: g, country, surface, track, owned }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-colors ${
                   grade === g ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
@@ -369,7 +369,7 @@ function RacesPage() {
               <Link
                 key={s}
                 to="/races"
-                search={{ grade, country, surface: s, track }}
+                search={{ grade, country, surface: s, track, owned }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-colors ${
                   surface === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
