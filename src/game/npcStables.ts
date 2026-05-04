@@ -590,7 +590,7 @@ export function getStableById(stables: Stable[], id: string): Stable | undefined
  * Get all major stables (non-filler)
  */
 export function getMajorStables(stables: Stable[]): Stable[] {
-  return stables.filter(s => s.isMajor);
+  return stables.filter(s => s.tier === 'elite' || s.tier === 'major');
 }
 
 /**
