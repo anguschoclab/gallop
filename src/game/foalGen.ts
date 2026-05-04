@@ -1,8 +1,22 @@
-import type { Horse, Pregnancy, RunningStyle } from "./types";
+import type { Horse, Pregnancy, RunningStyle, Pedigree } from "./types";
 import { calculateBreedingCompatibility } from "./breedingCompatibility";
 import { generateHorse } from "./horseGen";
 import { clamp, clampStat } from "./math";
 import { createRng, hashStr, type Rng } from "./rng";
+
+// Build a foal's pedigree snapshot from the parents at conception. We carry
+// each parent's recorded pedigree forward, so a foal effectively encodes
+// 3 generations: foal → parents (full Horse refs) → grandparents (Pedigree).
+function buildFoalPedigree(sire: Horse, dam: Horse): Pedigree {
+  return {
+    sireId: sire.id,
+    damId: dam.id,
+    sireName: sire.name,
+    damName: dam.name,
+    sirePedigree: sire.pedigree,
+    damPedigree: dam.pedigree,
+  };
+}
 
 const STYLES: RunningStyle[] = ["front-runner", "stalker", "mid-pack", "closer"];
 
@@ -60,11 +74,21 @@ export function resolveFoaling(
   }
 
   // Build foal from a starter template, then overwrite with parent-derived
-  // values when both parents are available.
-  const foal = generateHorse({ tier: "starter", owned: true });
+  // values when both parents are available. Hemisphere inherits from the dam
+  // (the foal is born wherever the mare is) and the pedigree snapshot is
+  // attached so future inbreeding/dam-line/sire-line lookups have ID refs.
+  const foal = generateHorse({ tier: "starter", owned: dam?.owned ?? true });
   foal.age = 0;
   foal.sireName = pregnancy.sireName;
   foal.damName = pregnancy.damName;
+  if (dam) foal.hemisphere = dam.hemisphere;
+  if (sire && dam) {
+    foal.pedigree = buildFoalPedigree(sire, dam);
+    foal.bruceLoweFamily = dam.bruceLoweFamily; // tail-female: foal inherits dam's family directly
+    // Inherit owning stable (NPC breeders need this so their foals show up
+    // under their stable, not as orphans).
+    if (dam.stableId) foal.stableId = dam.stableId;
+  }
 
   if (sire && dam) {
     const compatibility = calculateBreedingCompatibility(sire, dam);

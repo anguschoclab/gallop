@@ -41,7 +41,42 @@ export interface GeneticMarkers {
   immunity?: "excellent" | "good" | "fair" | "poor";
   // Genetic diversity score (based on breed and pedigree)
   geneticDiversity?: number; // 0-1
+  // Lethal recessive carrier flags. Both parents carrier → 25% homozygous foal
+  // (auto-stillborn at the day-60 pregnancy checkpoint).
+  lethalCarriers?: { csnb?: boolean; hypp?: boolean; olws?: boolean };
 }
+
+// Pedigree snapshot recorded on each horse at birth (or at horse generation
+// for procedural horses). Recursive structure: a foal carries its sire's and
+// dam's pedigrees one level deep — that's enough for a 3-generation walk
+// (foal → parent → grandparent → great-grandparent) without recording the
+// entire ancestral tree on every horse.
+export type Pedigree = {
+  sireId?: string;
+  damId?: string;
+  sireName?: string;
+  damName?: string;
+  sirePedigree?: Pedigree;
+  damPedigree?: Pedigree;
+  // True if this slot points to curated foundation stock that lives in
+  // pedigreeData.ts rather than the live horses[] array. Lookup falls back
+  // to findHorseByName for those.
+  sireFromFoundation?: boolean;
+  damFromFoundation?: boolean;
+};
+
+// Stud career state. Set once a stallion is retired to stud; immutable from
+// then on (re-entering racing not supported by design — keeps state simple).
+export type StudCareer = {
+  atStud: boolean;
+  standingFee: number;
+  bookSize: number;             // hard cap on coverings per breeding season
+  seasonBookings: number;       // resets at season start
+  lifetimeFoals: number;
+  lifetimeStakesFoals: number;
+  lifetimeG1Foals: number;
+  retiredOnDay: number;
+};
 
 export type HorseGender = "colt" | "filly" | "horse" | "mare";
 
@@ -54,7 +89,11 @@ export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 export type TrackCondition = "fast" | "good" | "soft" | "heavy";
 
 // Horse coat colors (for sprite selection)
-export type CoatColor = "bay" | "black" | "chestnut" | "dark-bay" | "gray" | "roan" | "palomino" | "white";
+// Common Thoroughbred colors: bay variants, chestnut variants, dilutes, grays
+export type CoatColor =
+  | "bay" | "black" | "chestnut" | "dark-bay" | "gray"
+  | "roan" | "palomino" | "white"
+  | "seal-brown" | "liver-chestnut" | "buckskin" | "dun" | "grulla" | "champagne";
 
 export type Horse = {
   id: string;
@@ -87,6 +126,9 @@ export type Horse = {
   scoutedStats?: Partial<HorseStats>; // Stats revealed through scouting (fog of war)
   lastScoutedDay?: number; // Day when last scouted
   consignedSaleId?: string; // ID of auction sale this horse is consigned to
+  pedigree?: Pedigree; // Snapshot of this horse's parents at conception/generation
+  stud?: StudCareer; // Set when stallion is retired to stud
+  bruceLoweFamily?: number; // Tail-female family number, resolved & cached
 };
 
 export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
@@ -194,6 +236,13 @@ export type Pregnancy = {
   dueDay: number;
   resolved: boolean;
   foalId?: string;
+  // Multi-checkpoint resolution. Stage advances early → mid → late → delivered
+  // as `advanceDay` ticks forward. Each stage has its own loss roll, so a
+  // pregnancy can fail at day 14, day 60, or term.
+  stage?: "early" | "mid" | "late" | "delivered";
+  earlyChecked?: boolean;  // day 14
+  midChecked?: boolean;    // day 60
+  twin?: boolean;          // 5% twin conception, auto-reduced at early stage
   liveFoalGuarantee?: boolean; // Whether live foal guarantee was purchased
   reBreedingAttempts?: number; // Number of re-breeding attempts used
   refunded?: boolean; // True once Live Foal Guarantee has paid out for this pregnancy — prevents double refunds
@@ -243,4 +292,9 @@ export type GameState = {
   pendingPlayerRaceId?: string;
   // Auction system
   auctions?: AuctionSale[];
+  // Industry mean earnings (rolling avg of foal-aged horse career earnings)
+  // recomputed once per season. Used for AEI (Average Earnings Index) on the
+  // Sire Watch route. 0 until first recompute.
+  industryMeanEarnings?: number;
+  industryEarningsUpdatedDay?: number;
 };

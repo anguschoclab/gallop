@@ -19,6 +19,7 @@ import { runRaceToCompletion } from "./raceSim";
 import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
+import { isUniversalBirthday, isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 
 export type ActionResult = { ok: true } | { ok: false, reason: string };
 
@@ -28,6 +29,229 @@ export const TRAINING_COST = 75;
 const TRAINING_SLOTS_PER_DAY = 2;
 const STARTING_CASH = 5000;
 const BREEDING_FEE = 2000;
+
+// =============================================================================
+// Race Resolution Helpers
+// =============================================================================
+
+function computePayoutSplits(purse: number, finisherCount: number): number[] {
+  const splits: number[] = [];
+  let runningPaid = 0;
+  for (let i = 0; i < Math.min(PRIZE_SPLIT.length, finisherCount); i++) {
+    const pay = Math.round(purse * PRIZE_SPLIT[i]);
+    splits.push(pay);
+    runningPaid += pay;
+  }
+  // Route any unpaid remainder to the last paid finisher
+  if (splits.length > 0 && runningPaid < purse && finisherCount >= PRIZE_SPLIT.length) {
+    splits[splits.length - 1] += purse - runningPaid;
+  }
+  return splits;
+}
+
+function getClassBonus(grade: "G1" | "G2" | "G3" | undefined, raceClass: Race["raceClass"]): number {
+  if (grade === "G1") return 8;
+  if (grade === "G2") return 5;
+  if (grade === "G3") return 3;
+  if (raceClass === "Group") return 4;
+  if (raceClass === "Stakes") return 2;
+  return 0;
+}
+
+function updateBlueHenStatus(dam: Horse, raceGrade: "G1" | "G2" | "G3" | undefined): void {
+  if (!dam.blueHenStatus) {
+    dam.blueHenStatus = {
+      isBlueHen: false,
+      stakesWinnersProduced: 0,
+      group1WinnersProduced: 0,
+      blueHenScore: 0,
+      foalsProduced: dam.foalsProduced?.length ?? 0,
+    };
+  }
+  dam.blueHenStatus.stakesWinnersProduced += 1;
+  if (raceGrade === "G1") {
+    dam.blueHenStatus.group1WinnersProduced += 1;
+  }
+  const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
+  const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
+  dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
+  if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
+    dam.blueHenStatus.isBlueHen = true;
+  }
+}
+
+// =============================================================================
+// Day Advancement Helpers
+// =============================================================================
+
+function ageHorses(horses: Horse[], newDay: number): Horse[] {
+  // Per-hemisphere "universal birthday": Northern horses age up on Jan 1 (day-
+  // of-year 1), Southern on Aug 1 (DoY 213). Replaces the prior global tick.
+  const northernTick = isUniversalBirthday(newDay, "Northern");
+  const southernTick = isUniversalBirthday(newDay, "Southern");
+  if (!northernTick && !southernTick) return horses;
+  return horses.map((h) => {
+    const ticks = (h.hemisphere === "Northern" && northernTick) || (h.hemisphere === "Southern" && southernTick);
+    if (!ticks) return h;
+    const newAge = h.age + 1;
+    const newGender =
+      newAge >= 3
+        ? h.gender === "colt" ? "horse" : h.gender === "filly" ? "mare" : h.gender
+        : h.gender;
+    return { ...h, age: newAge, gender: newGender };
+  });
+}
+
+function refreshMarket(currentMarket: Horse[]): Horse[] {
+  let market = [...currentMarket];
+  if (market.length > 3) market = market.slice(2);
+  while (market.length < 5) {
+    const r = Math.random();
+    const tier = r < 0.5 ? "budget" : r < 0.85 ? "mid" : "elite";
+    market.push(generateHorse({ tier: tier as never }));
+  }
+  return market;
+}
+
+function generateUpcomingRaces(currentRaces: Race[], newDay: number): Race[] {
+  const races = [...currentRaces];
+  // Add new races 7 days out
+  const futureDay = newDay + 6;
+  const count = Math.random() < 0.7 ? 2 : 3;
+  for (let i = 0; i < count; i++) races.push(generateRace(futureDay));
+  // Top up real graded stakes whose dayOfYear falls in the upcoming 7-day window
+  for (let offset = 1; offset <= 7; offset++) {
+    const fday = newDay + offset;
+    const dY = ((fday - 1) % 365) + 1;
+    for (const g of GRADED_RACES) {
+      if (g.dayOfYear !== dY) continue;
+      if (races.some((r) => r.graded?.key === g.key && r.day === fday)) continue;
+      races.push(makeGradedRace(g, fday));
+    }
+  }
+  return races;
+}
+
+function pruneOldRaces(races: Race[], newDay: number): Race[] {
+  return races.filter((r) => r.day >= newDay - 3);
+}
+
+type PregnancyResult = {
+  pregnancies: Pregnancy[];
+  foals: Horse[];
+  cashAdjustment: number;
+  logs: { day: number; text: string }[];
+};
+
+function resolvePregnancies(
+  currentPregnancies: Pregnancy[],
+  horses: Horse[],
+  newDay: number
+): PregnancyResult {
+  const newLogs: { day: number; text: string }[] = [];
+  const pregnancies = currentPregnancies.map((p) => ({ ...p }));
+  const damsById = new Map(horses.map((h) => [h.id, h]));
+  const foals: Horse[] = [];
+  let cashAdjustment = 0;
+
+  for (const p of pregnancies) {
+    if (p.resolved) continue;
+    if (newDay < p.dueDay) continue;
+    const sire = damsById.get(p.sireId);
+    const dam = damsById.get(p.damId);
+    const outcome = resolveFoaling(p, sire, dam);
+
+    if (outcome.kind === "live") {
+      const foal = outcome.foal;
+      if (dam) {
+        if (!dam.blueHenStatus) {
+          dam.blueHenStatus = {
+            isBlueHen: false,
+            stakesWinnersProduced: 0,
+            group1WinnersProduced: 0,
+            blueHenScore: 0,
+            foalsProduced: 0,
+          };
+        }
+        dam.blueHenStatus.foalsProduced = (dam.blueHenStatus.foalsProduced || 0) + 1;
+        const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
+        const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
+        dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
+        if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
+          dam.blueHenStatus.isBlueHen = true;
+        }
+        if (!dam.foalsProduced) dam.foalsProduced = [];
+        dam.foalsProduced.push(foal.id);
+        dam.lastFoaledDay = newDay;
+      }
+      p.resolved = true;
+      p.foalId = foal.id;
+      foals.push(foal);
+
+      if (outcome.transmission) {
+        foal.healthStatus = "covering_sickness";
+        foal.healthStatusDay = newDay;
+        newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). ⚠️ Covering sickness detected.` });
+      } else {
+        newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
+      }
+    } else {
+      // Live Foal Guarantee handling
+      const canRefund = p.liveFoalGuarantee && !p.refunded;
+      const canRetry = p.liveFoalGuarantee && (p.reBreedingAttempts || 0) < 3;
+      if (canRetry) {
+        if (canRefund) {
+          cashAdjustment += BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE;
+          p.refunded = true;
+        }
+        p.resolved = false;
+        p.dueDay = newDay + GESTATION_DAYS;
+        p.reBreedingAttempts = (p.reBreedingAttempts || 0) + 1;
+        newLogs.push({
+          day: newDay,
+          text: `💔 Foal ${outcome.type}${canRefund ? ` — Live Foal Guarantee refunded $${(BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE).toLocaleString()}.` : "."} Re-breeding ${p.damName} to ${p.sireName}. Attempt ${p.reBreedingAttempts}/3. New due day ${p.dueDay}.`,
+        });
+      } else {
+        p.resolved = true;
+        newLogs.push({
+          day: newDay,
+          text: `💔 Foal ${outcome.type}${p.liveFoalGuarantee ? ". Live Foal Guarantee attempts exhausted." : "."}`,
+        });
+      }
+    }
+  }
+
+  return { pregnancies, foals, cashAdjustment, logs: newLogs };
+}
+
+type RecalibrationResult = {
+  calibratedPars: Record<number, number> | undefined;
+  lastCalibrationDay: number;
+  log: { day: number; text: string } | null;
+};
+
+function maybeRecalibratePars(
+  currentPars: Record<number, number> | undefined,
+  lastCalibrationDay: number,
+  paceSamples: Record<number, number[]> | undefined,
+  newDay: number
+): RecalibrationResult {
+  if (newDay - lastCalibrationDay < SEASON_DAYS) {
+    return { calibratedPars: currentPars, lastCalibrationDay, log: null };
+  }
+  const recomputed = recomputePars(paceSamples ?? {});
+  if (Object.keys(recomputed).length === 0) {
+    return { calibratedPars: currentPars, lastCalibrationDay, log: null };
+  }
+  setCalibratedPars(recomputed);
+  const buckets = Object.keys(recomputed).length;
+  return {
+    calibratedPars: recomputed,
+    lastCalibrationDay: newDay,
+    log: { day: newDay, text: `📊 Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.` },
+  };
+}
+
 const LIVE_FOAL_GUARANTEE_FEE = 1000; // Additional fee for live foal guarantee
 const GESTATION_DAYS = 30;
 const SEASON_DAYS = 30;
@@ -285,21 +509,8 @@ export const useGame = create<GameState & Actions>()(
         }
 
         let earned = 0;
-        const classBonus = race.graded?.grade === "G1" ? 8 : race.graded?.grade === "G2" ? 5 : race.graded?.grade === "G3" ? 3 : race.raceClass === "Group" ? 4 : race.raceClass === "Stakes" ? 2 : 0;
-        // Compute payouts up front so we can guarantee splits sum to purse.
-        const finisherCount = finishers.length;
-        const splits: number[] = [];
-        let runningPaid = 0;
-        for (let i = 0; i < Math.min(PRIZE_SPLIT.length, finisherCount); i++) {
-          const pay = Math.round(race.purse * PRIZE_SPLIT[i]);
-          splits.push(pay);
-          runningPaid += pay;
-        }
-        // Route any unpaid remainder (rounding or unfilled places) to the
-        // last paid finisher rather than silently dropping it.
-        if (splits.length > 0 && runningPaid < race.purse && finisherCount >= PRIZE_SPLIT.length) {
-          splits[splits.length - 1] += race.purse - runningPaid;
-        }
+        const classBonus = getClassBonus(race.graded?.grade, race.raceClass);
+        const splits = computePayoutSplits(race.purse, finishers.length);
 
         for (const r of ranked) {
           const h = s.horses.find((hh) => hh.id === r.horseId);
@@ -316,33 +527,16 @@ export const useGame = create<GameState & Actions>()(
           if (!r.dnf && r.position - 1 < splits.length) {
             earned += splits[r.position - 1];
           }
-          // Update dam's blue hen status if horse wins a stakes race.
-          // Initialize the dam's record on demand if it didn't exist —
-          // counters start at 0 and increment from this win, fixing the
-          // earlier bug where stakesWinnersProduced was set to 1 at foal birth.
+          // Update dam's blue hen status if horse wins a stakes race. Prefer
+          // the ID-based pedigree link (set on player-bred and NPC-bred foals
+          // via Phase 0); fall back to name match for legacy/foundation horses
+          // that were never bred in-game.
           if (!r.dnf && r.position === 1 && (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")) {
-            const dam = s.horses.find((hh) => hh.name === h.damName);
-            if (dam) {
-              if (!dam.blueHenStatus) {
-                dam.blueHenStatus = {
-                  isBlueHen: false,
-                  stakesWinnersProduced: 0,
-                  group1WinnersProduced: 0,
-                  blueHenScore: 0,
-                  foalsProduced: dam.foalsProduced?.length ?? 0,
-                };
-              }
-              dam.blueHenStatus.stakesWinnersProduced += 1;
-              if (race.graded?.grade === "G1") {
-                dam.blueHenStatus.group1WinnersProduced += 1;
-              }
-              const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
-              const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
-              dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
-              if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
-                dam.blueHenStatus.isBlueHen = true;
-              }
-            }
+            const damId = h.pedigree?.damId;
+            const dam = damId
+              ? s.horses.find((hh) => hh.id === damId)
+              : s.horses.find((hh) => hh.name === h.damName);
+            if (dam) updateBlueHenStatus(dam, race.graded?.grade);
           }
         }
         const ownerResults = ranked.filter((r) => s.horses.some((h) => h.id === r.horseId));
@@ -461,137 +655,19 @@ export const useGame = create<GameState & Actions>()(
         const upkeep = s.horses.length * UPKEEP_PER_HORSE;
         // restore energy
         let horses = get().horses.map((h) => ({ ...h, energy: Math.min(100, h.energy + 35) }));
-        // year-tick: every 365 days age up all horses and promote colts/fillies
         const newDay = s.day + 1;
-        if (newDay % 365 === 0) {
-          horses = horses.map((h) => {
-            const newAge = h.age + 1;
-            const newGender =
-              newAge >= 3
-                ? h.gender === "colt" ? "horse" : h.gender === "filly" ? "mare" : h.gender
-                : h.gender;
-            return { ...h, age: newAge, gender: newGender };
-          });
-        }
-        // refresh market: remove 1-2 oldest, add new
-        let market = [...s.market];
-        if (market.length > 3) market = market.slice(2);
-        while (market.length < 5) {
-          const r = Math.random();
-          const tier = r < 0.5 ? "budget" : r < 0.85 ? "mid" : "elite";
-          market.push(generateHorse({ tier: tier as never }));
-        }
-        // add new races 7 days out
-        const races = [...get().races];
-        const futureDay = newDay + 6;
-        const count = Math.random() < 0.7 ? 2 : 3;
-        for (let i = 0; i < count; i++) races.push(generateRace(futureDay));
-        // Top up real graded stakes whose dayOfYear falls in the upcoming 7-day window
-        for (let offset = 1; offset <= 7; offset++) {
-          const fday = newDay + offset;
-          const dY = ((fday - 1) % 365) + 1;
-          for (const g of GRADED_RACES) {
-            if (g.dayOfYear !== dY) continue;
-            if (races.some((r) => r.graded?.key === g.key && r.day === fday)) continue;
-            races.push(makeGradedRace(g, fday));
-          }
-        }
-        // prune ancient resolved races
-        const pruned = races.filter((r) => r.day >= newDay - 3);
+        horses = ageHorses(horses, newDay);
+        const market = refreshMarket(s.market);
+        const races = generateUpcomingRaces(get().races, newDay);
+        const pruned = pruneOldRaces(races, newDay);
 
-        // resolve births
-        const newLogs: { day: number; text: string }[] = [];
-        const pregnancies = s.pregnancies.map((p) => ({ ...p }));
-        // Track per-dam mutations on a working copy of the existing horses
-        // array (which already had energy restored above) so blue-hen / foal-id
-        // updates land on the persisted set, not on the pre-energy-restore set.
-        const damsById = new Map(horses.map((h) => [h.id, h]));
-        const foals: Horse[] = [];
-        let cashAdjustment = 0;
-        for (const p of pregnancies) {
-          if (p.resolved) continue;
-          if (newDay < p.dueDay) continue;
-          const sire = damsById.get(p.sireId);
-          const dam = damsById.get(p.damId);
+        const pregResult = resolvePregnancies(s.pregnancies, horses, newDay);
+        const { pregnancies, foals, cashAdjustment } = pregResult;
+        let newLogs = [...pregResult.logs];
 
-          const outcome = resolveFoaling(p, sire, dam);
-
-          if (outcome.kind === "live") {
-            const foal = outcome.foal;
-            if (dam) {
-              if (!dam.blueHenStatus) {
-                dam.blueHenStatus = {
-                  isBlueHen: false,
-                  stakesWinnersProduced: 0,
-                  group1WinnersProduced: 0,
-                  blueHenScore: 0,
-                  foalsProduced: 0,
-                };
-              }
-              dam.blueHenStatus.foalsProduced = (dam.blueHenStatus.foalsProduced || 0) + 1;
-              const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
-              const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
-              dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
-              if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
-                dam.blueHenStatus.isBlueHen = true;
-              }
-              if (!dam.foalsProduced) dam.foalsProduced = [];
-              dam.foalsProduced.push(foal.id);
-              dam.lastFoaledDay = newDay;
-            }
-            p.resolved = true;
-            p.foalId = foal.id;
-            foals.push(foal);
-
-            if (outcome.transmission) {
-              foal.healthStatus = "covering_sickness";
-              foal.healthStatusDay = newDay;
-              newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). ⚠️ Covering sickness detected.` });
-            } else {
-              newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
-            }
-          } else {
-            // Live Foal Guarantee: refund exactly once per pregnancy. The
-            // `refunded` flag prevents double-payment if a re-bred attempt
-            // also fails (each attempt is fully covered by the original fee).
-            const canRefund = p.liveFoalGuarantee && !p.refunded;
-            const canRetry = p.liveFoalGuarantee && (p.reBreedingAttempts || 0) < 3;
-            if (canRetry) {
-              if (canRefund) {
-                cashAdjustment += BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE;
-                p.refunded = true;
-              }
-              p.resolved = false;
-              p.dueDay = newDay + GESTATION_DAYS;
-              p.reBreedingAttempts = (p.reBreedingAttempts || 0) + 1;
-              newLogs.push({
-                day: newDay,
-                text: `💔 Foal ${outcome.type}${canRefund ? ` — Live Foal Guarantee refunded $${(BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE).toLocaleString()}.` : "."} Re-breeding ${p.damName} to ${p.sireName}. Attempt ${p.reBreedingAttempts}/3. New due day ${p.dueDay}.`,
-              });
-            } else {
-              p.resolved = true;
-              newLogs.push({
-                day: newDay,
-                text: `💔 Foal ${outcome.type}${p.liveFoalGuarantee ? ". Live Foal Guarantee attempts exhausted." : "."}`,
-              });
-            }
-          }
-        }
-
-        // Seasonal Beyer par recalibration from collected pace samples.
-        let calibratedPars = s.calibratedPars;
-        let lastCalibrationDay = s.lastCalibrationDay ?? 0;
-        const seasonLog: { day: number; text: string }[] = [];
-        if (newDay - lastCalibrationDay >= SEASON_DAYS) {
-          const recomputed = recomputePars(s.paceSamples ?? {});
-          if (Object.keys(recomputed).length > 0) {
-            calibratedPars = recomputed;
-            setCalibratedPars(recomputed);
-            lastCalibrationDay = newDay;
-            const buckets = Object.keys(recomputed).length;
-            seasonLog.push({ day: newDay, text: `📊 Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.` });
-          }
-        }
+        const parResult = maybeRecalibratePars(s.calibratedPars, s.lastCalibrationDay ?? 0, s.paceSamples, newDay);
+        const { calibratedPars, lastCalibrationDay } = parResult;
+        const seasonLog: { day: number; text: string }[] = parResult.log ? [parResult.log] : [];
 
         // NPC Cycle
         const pregnantIds = new Set(s.pregnancies.filter(p => !p.resolved).map(p => p.damId));

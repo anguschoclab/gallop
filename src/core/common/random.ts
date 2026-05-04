@@ -75,11 +75,26 @@ export function rollRunningStyle(stats: { speed: number; stamina: number; accele
 }
 
 /**
- * Generate random coat color
+ * Generate random coat color with Thoroughbred-appropriate frequencies.
+ * Bay and chestnut variants are most common; dilute colors (palomino, buckskin) are rare.
  */
 export function randomCoatColor(): CoatColor {
-  const colors: CoatColor[] = ["bay", "black", "chestnut", "dark-bay", "gray", "roan", "palomino", "white"];
-  return colors[Math.floor(Math.random() * colors.length)];
+  const r = Math.random();
+  // Realistic Thoroughbred color distribution
+  if (r < 0.30) return "bay";           // ~30% - most common
+  if (r < 0.55) return "chestnut";      // ~25% - second most common
+  if (r < 0.70) return "dark-bay";      // ~15% - brown variants
+  if (r < 0.78) return "seal-brown";    // ~8% - registered as brown
+  if (r < 0.85) return "gray";          // ~7% - grays of racing age
+  if (r < 0.90) return "black";         // ~5% - true black
+  if (r < 0.93) return "liver-chestnut"; // ~3% - dark chestnut
+  if (r < 0.95) return "roan";          // ~2% - bay/brown roan
+  if (r < 0.96) return "buckskin";      // ~1% - rare in TBs
+  if (r < 0.97) return "dun";           // ~1% - very rare in TBs
+  if (r < 0.98) return "palomino";      // ~1% - very rare in TBs
+  if (r < 0.99) return "champagne";     // ~1% - rare metallic sheen
+  if (r < 0.995) return "grulla";       // ~0.5% - extremely rare
+  return "white";                       // ~0.5% - maximum white pattern
 }
 
 /**

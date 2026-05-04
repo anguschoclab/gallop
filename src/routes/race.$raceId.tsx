@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { stepRunner, computePaceContext, type Runner } from "@/game/raceSim";
 import { beyerFigure } from "@/game/beyer";
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { buildRaceField, rngForRace, type RaceSimulationDependencies } from "@/services/raceSimulationService";
 import type { Weather } from "@/game/types";
-import { Pause, Play, Camera, Target } from "lucide-react";
+import { Pause, Play, Camera } from "lucide-react";
 
 // Track surface background mapping
 const getTrackBackground = (surface?: string): string | undefined => {
@@ -61,8 +61,13 @@ const getWeatherDisplay = (weather?: Weather): string => {
 };
 
 // Sprite sheet configuration
-const ANIMATED_SPRITES = ["bay", "black", "chestnut", "dark-bay", "gray"];
-const STATIC_SPRITES = ["roan", "palomino", "white"];
+// All sprites have 6-frame animation (300x50px sheets)
+const ANIMATED_SPRITES = [
+  "bay", "black", "chestnut", "dark-bay", "gray",
+  "roan", "palomino", "white",
+  "seal-brown", "liver-chestnut", "buckskin", "dun", "grulla", "champagne"
+];
+const STATIC_SPRITES: string[] = []; // All sprites are animated
 
 const COAT_TO_SPRITE: Record<string, string> = {
   bay: "b",
@@ -73,6 +78,12 @@ const COAT_TO_SPRITE: Record<string, string> = {
   roan: "roan",
   palomino: "palomino",
   white: "white",
+  "seal-brown": "seal",
+  "liver-chestnut": "liver",
+  buckskin: "buck",
+  dun: "dun",
+  grulla: "grulla",
+  champagne: "champagne",
 };
 
 // Get sprite URL for a coat color
@@ -309,6 +320,11 @@ function LiveRace() {
         backgroundColor: "rgb(6 59 48)", // emerald-950 fallback
       }}
     >
+      {/* Accessibility: Live region for screen readers */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {announcement}
+      </div>
+
       <div className="p-4 flex items-center justify-between border-b border-white/10 bg-black/20">
         <div>
           <h1 className="text-xl font-bold">{race.name}</h1>
@@ -318,14 +334,47 @@ function LiveRace() {
             {race.trackCondition && ` · Track: ${race.trackCondition}`}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          {/* Camera follow selector */}
           {!finished && (
+            <Select value={followTarget || "leader"} onValueChange={(v) => setFollowTarget(v === "leader" ? null : v)}>
+              <SelectTrigger className="h-8 w-40 text-xs bg-white/10 border-white/20 text-white">
+                <Camera className="h-3 w-3 mr-1" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="leader">Follow Leader</SelectItem>
+                {runners.map((r, i) => (
+                  <SelectItem key={r.horseId} value={r.horseId}>
+                    {r.owned ? "⭐ " : ""}{i + 1}. {r.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          
+          {/* Pause/Play button */}
+          {!finished && (
+            <Button 
+              size="sm" 
+              variant={paused ? "secondary" : "ghost"}
+              onClick={() => setPaused(!paused)}
+              className="px-2"
+              title="Spacebar to toggle"
+            >
+              {paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+            </Button>
+          )}
+          
+          {/* Speed controls */}
+          {!finished && !paused && (
             <>
               <Button size="sm" variant={speed === 1 ? "secondary" : "ghost"} onClick={() => setSpeed(1)}>1x</Button>
               <Button size="sm" variant={speed === 2 ? "secondary" : "ghost"} onClick={() => setSpeed(2)}>2x</Button>
               <Button size="sm" variant={speed === 4 ? "secondary" : "ghost"} onClick={() => setSpeed(4)}>4x</Button>
             </>
           )}
+          
           {finished && (
             <Button size="sm" onClick={() => navigate({ to: "/races", search: { grade: "all", country: "all", surface: "all", track: "all" } })}>Back to races</Button>
           )}
@@ -340,6 +389,8 @@ function LiveRace() {
             tick={tick}
             surface={race.graded?.surface}
             weather={race.weather}
+            followTarget={followTarget}
+            paused={paused}
           />
         </div>
         <div className="bg-black/30 rounded-lg p-3 space-y-3">
@@ -412,30 +463,66 @@ function Track({
   tick,
   surface,
   weather,
+  followTarget,
+  paused,
 }: {
   runners: Runner[];
   distance: number;
   tick: number;
   surface?: string;
   weather?: Weather;
+  followTarget?: string | null;
+  paused?: boolean;
 }) {
-  void tick;
   const laneHeight = 36;
   const trackHeight = runners.length * laneHeight + 20;
   const trackBg = getTrackBackground(surface);
-  void weather; // Weather background handled at page level
-
+  
+  // Viewport shows 60% of the race distance
+  const viewportWidth = distance * 0.6;
+  
+  // Calculate camera position based on follow target
+  const cameraPos = (() => {
+    if (followTarget) {
+      // Follow specific horse
+      const target = runners.find(r => r.horseId === followTarget);
+      if (target) {
+        // Center the target in viewport
+        return Math.max(0, Math.min(distance - viewportWidth, target.position - viewportWidth / 2));
+      }
+    }
+    // Follow leader
+    const leader = runners.reduce((max, r) => r.position > max.position ? r : max, runners[0]);
+    return Math.max(0, Math.min(distance - viewportWidth, leader.position - viewportWidth / 2));
+  })();
+  
+  // Leader approaching finish (within 100m)
+  const leaderPos = runners.reduce((max, r) => Math.max(max, r.position), 0);
+  const finishActive = leaderPos > distance - 100 && leaderPos < distance;
+  
+  // Parallax track offset
+  const trackOffset = -(cameraPos % 512);
+  
   return (
     <div
       className="relative rounded-lg overflow-hidden border border-emerald-600 shadow-inner"
       style={{
         height: trackHeight,
-        backgroundImage: trackBg,
-        backgroundSize: "auto 100%",
-        backgroundRepeat: "repeat-x",
-        backgroundColor: trackBg ? undefined : "rgb(4 120 87)", // emerald-700 fallback
+        backgroundColor: trackBg ? undefined : "rgb(4 120 87)",
       }}
     >
+      {/* Parallax track background */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: trackBg,
+          backgroundSize: "auto 100%",
+          backgroundRepeat: "repeat-x",
+          backgroundPosition: `${trackOffset}px 0`,
+          willChange: "background-position",
+        }}
+      />
+      
       {/* lane lines */}
       {runners.map((_, i) => (
         <div
@@ -444,39 +531,90 @@ function Track({
           style={{ top: 10 + i * laneHeight + laneHeight }}
         />
       ))}
+      
+      {/* Distance markers every 200m */}
+      {Array.from({ length: Math.ceil(distance / 200) }, (_, i) => {
+        const markerPos = i * 200;
+        const relativePos = markerPos - cameraPos;
+        const screenPct = (relativePos / viewportWidth) * 100;
+        if (screenPct < -10 || screenPct > 110) return null;
+        return (
+          <div
+            key={i}
+            className="absolute top-0 bottom-0 w-px bg-white/20"
+            style={{ left: `${screenPct}%` }}
+          >
+            <span className="absolute -top-4 left-1 text-[10px] text-white/50">{markerPos}m</span>
+          </div>
+        );
+      })}
+      
       {/* finish line */}
-      <div className="absolute top-0 bottom-0 right-2 w-1 bg-white" />
-      <div className="absolute top-0 right-2 -translate-x-full text-xs text-white/70 px-1">FIN</div>
+      <div 
+        className={`absolute top-0 bottom-0 w-1 bg-white ${finishActive ? 'finish-line-active' : ''}`}
+        style={{ 
+          left: `${((distance - cameraPos) / viewportWidth) * 100}%`,
+        }}
+      />
+      <div 
+        className="absolute top-0 text-xs text-white/70 px-1"
+        style={{ 
+          left: `${((distance - cameraPos) / viewportWidth) * 100}%`,
+          transform: 'translateX(-100%)',
+        }}
+      >
+        FIN
+      </div>
 
+      {/* Runners */}
       {runners.map((r, i) => {
-        const pct = Math.min(1, r.position / distance);
-        // Map coat color to sprite file
-        const coatToSprite: Record<string, string> = {
-          bay: "b",
-          black: "bl",
-          chestnut: "ch",
-          "dark-bay": "dkb",
-          gray: "gr",
-          roan: "roan",
-          palomino: "palomino",
-          white: "white",
-        };
-        const horseSpriteUrl = r.coatColor
-          ? `/assets/horse-${coatToSprite[r.coatColor] || "b"}.png`
-          : undefined;
+        const relativePos = r.position - cameraPos;
+        const screenPct = (relativePos / viewportWidth) * 100;
+        const isVisible = screenPct >= -10 && screenPct <= 110;
+        
+        if (!isVisible) return null;
+        
+        const spriteUrl = getSpriteUrl(r.coatColor);
+        const isAnimated = isAnimatedSprite(r.coatColor);
+        const isRunning = tick > 0 && !paused && r.finishTime === null;
+        
         return (
           <div
             key={r.horseId}
             className="absolute transition-none"
             style={{
               top: 10 + i * laneHeight + 4,
-              left: `calc(${pct * 96}% + 4px)`,
+              left: `${screenPct}%`,
               transform: "translateX(-50%)",
+              zIndex: Math.round(r.position),
             }}
           >
-            <div className="flex items-center gap-1">
-              <HorseSprite color={r.silk} num={i + 1} isRunning={tick > 0} spriteUrl={horseSpriteUrl} />
-              {r.owned && <span className="text-xs font-bold bg-yellow-400 text-black px-1 rounded">YOU</span>}
+            <div className="flex items-center gap-2">
+              {/* Silk dot */}
+              <div
+                className="h-4 w-4 rounded-full border border-white/60 flex-shrink-0"
+                style={{ backgroundColor: r.silk }}
+              />
+              
+              {/* Horse sprite */}
+              <HorseSprite 
+                runner={r} 
+                isRunning={isRunning} 
+                spriteUrl={spriteUrl}
+                isAnimated={isAnimated}
+              />
+              
+              {/* Name label */}
+              <span className={`text-xs whitespace-nowrap ${r.owned ? 'font-bold text-yellow-300' : 'text-white/80'}`}>
+                {r.name}
+              </span>
+              
+              {/* YOU badge */}
+              {r.owned && (
+                <span className="text-[10px] font-bold bg-yellow-400 text-black px-1 rounded">
+                  YOU
+                </span>
+              )}
             </div>
           </div>
         );
@@ -486,33 +624,59 @@ function Track({
 }
 
 // Horse sprite component with CSS animation
-// Note: The sprite sheets (horse-*.png) contain 6-frame running animations
-// When spriteUrl is provided, shows the actual horse sprite; otherwise uses silk color
+// Animated sprites use 6-frame sprite sheets with background-position animation
+// Static sprites (roan/palomino/white) use bobbing animation when running
 function HorseSprite({
-  color,
-  num,
+  runner,
   isRunning,
   spriteUrl,
+  isAnimated,
 }: {
-  color: string;
-  num: number;
+  runner: Runner;
   isRunning: boolean;
   spriteUrl?: string;
+  isAnimated: boolean;
 }) {
-  // For now, use colored circle; future: use CSS sprite animation with spriteUrl
+  const prefersReducedMotion = typeof window !== 'undefined' && 
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  
+  // Calculate animation duration based on velocity
+  const animationDuration = getAnimationDuration(runner.velocity);
+  
+  // For animated sprites (6-frame sheets)
+  if (isAnimated && spriteUrl) {
+    return (
+      <div
+        className={`horse-sprite ${isRunning && !prefersReducedMotion ? 'horse-sprite-animated' : ''}`}
+        style={{
+          backgroundImage: `url(${spriteUrl})`,
+          animationDuration: isRunning ? animationDuration : '0.6s',
+        }}
+      />
+    );
+  }
+  
+  // For static sprites (single frame) - use bobbing animation
+  if (spriteUrl) {
+    return (
+      <div
+        className={`horse-sprite horse-sprite-static ${isRunning && !prefersReducedMotion ? 'horse-sprite-bob' : ''}`}
+        style={{
+          backgroundImage: `url(${spriteUrl})`,
+        }}
+      />
+    );
+  }
+  
+  // Fallback to silk circle if no sprite
   return (
     <div
       className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow"
       style={{
-        backgroundColor: color,
-        animation:
-          isRunning && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-            ? "pulse 0.5s ease-in-out infinite"
-            : undefined,
+        backgroundColor: runner.silk,
+        animation: isRunning && !prefersReducedMotion ? "pulse 0.5s ease-in-out infinite" : undefined,
       }}
-    >
-      {num}
-    </div>
+    />
   );
 }
 
