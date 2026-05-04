@@ -1,0 +1,9 @@
+🎯 **What:** The `getMajorStables` function in `src/game/npcStables.ts` was entirely untested. This function is a pure filtering function that retrieves major stables from a provided list.
+
+📊 **Coverage:** A new test file `src/game/npcStables.test.ts` was added to cover:
+- Successful filtering of only major stables (`isMajor === true`).
+- Handling cases where no major stables exist.
+- Handling cases where all stables are major.
+- Handling empty input arrays.
+
+✨ **Result:** Test coverage for `getMajorStables` has increased to 100%, ensuring its behavior is reliable and safe from regression when other logic in the file changes.
