@@ -44,7 +44,7 @@ export function AutoSimPanel({ open, onClose }: Props) {
       if (stoppedRef.current) return;
       if (done >= total) {
         setRunning(false);
-        setLog((l) => [`✅ AutoSim complete — ${total} days simulated.`, ...l]);
+        setLog((l) => [`AutoSim complete — ${total} days simulated.`, ...l]);
         return;
       }
 
@@ -56,7 +56,7 @@ export function AutoSimPanel({ open, onClose }: Props) {
       // If pendingPlayerRaceId was set, we paused — stop autosim
       if (useGame.getState().pendingPlayerRaceId) {
         setRunning(false);
-        setLog((l) => [`⏸ Paused — player race detected on ${gameCalendarDate(afterDay + 1)}.`, ...l]);
+        setLog((l) => [`Paused — player race detected on ${gameCalendarDate(afterDay + 1)}.`, ...l]);
         return;
       }
 
@@ -67,10 +67,9 @@ export function AutoSimPanel({ open, onClose }: Props) {
       const recentLog = useGame.getState().log.slice(0, batchSize * 3);
       const notable = recentLog.filter(
         (e) =>
-          e.text.includes("🍼") ||
-          e.text.includes("🔨") ||
-          e.text.includes("🏷️") ||
-          e.text.includes("📊") ||
+          e.text.includes("Foal born") ||
+          e.text.includes("hammer price") ||
+          e.text.includes("recalibrated") ||
           (e.day >= startDay && e.day <= afterDay)
       );
       if (notable.length > 0) {

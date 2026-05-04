@@ -4,10 +4,13 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Info } from "lucide-react";
+import { Heart, Info, FileText, Baby } from "lucide-react";
 import { toast } from "sonner";
 import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
 import { BreedingRadarChart } from "@/components/BreedingRadarChart";
+import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PregnancyTimeline } from "@/components/PregnancyTimeline";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
@@ -41,224 +44,236 @@ function BreedingPage() {
     setSireId(""); setDamId(""); setLiveFoalGuarantee(false);
   };
 
-  const activePregnancies = pregnancies.filter((p) => !p.resolved).length;
+  const activePregnancies = pregnancies.filter((p) => !p.resolved);
+  const activePregnanciesCount = activePregnancies.length;
 
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Breeding Shed</h1>
-          <p className="text-muted-foreground">Mate two horses (age 3+). Foals arrive 30 days after conception. Fee $2,000.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Breeding & Bloodstock</h1>
+          <p className="text-muted-foreground">Manage your matings and track gestation for the next generation.</p>
         </div>
-        <Link to="/broodmares">
-          <Button variant="outline" size="sm">
-            <Heart className="h-4 w-4 mr-1" />
-            Broodmares {activePregnancies > 0 && <Badge variant="secondary" className="ml-1">{activePregnancies}</Badge>}
-          </Button>
-        </Link>
       </div>
 
-      <Card>
-        <CardHeader><CardTitle>New Mating</CardTitle></CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground">Sire</label>
-              <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={sireId} onChange={(e) => setSireId(e.target.value)}>
-                <option value="">Select sire…</option>
-                {adults.map((h) => <option key={h.id} value={h.id}>{h.name} (age {h.age})</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Dam</label>
-              <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={damId} onChange={(e) => setDamId(e.target.value)}>
-                <option value="">Select dam…</option>
-                {adults.filter((h) => h.id !== sireId).map((h) => <option key={h.id} value={h.id}>{h.name} (age {h.age})</option>)}
-              </select>
-            </div>
-          </div>
-          <Button onClick={onBreed} disabled={!sireId || !damId || sireId === damId || cash < (2000 + (liveFoalGuarantee ? 1000 : 0))}>
-            <Heart className="h-4 w-4 mr-1" /> Breed (${liveFoalGuarantee ? "$3,000" : "$2,000"})
-          </Button>
+      <Tabs defaultValue="shed" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="shed" className="gap-2">
+            <Heart className="h-4 w-4" />
+            Breeding Shed
+          </TabsTrigger>
+          <TabsTrigger value="broodmares" className="gap-2">
+            <Baby className="h-4 w-4" />
+            Broodmares {activePregnanciesCount > 0 && <Badge variant="secondary" className="ml-1 tabular-nums h-4 px-1 text-[10px]">{activePregnanciesCount}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="history" className="gap-2">
+            <FileText className="h-4 w-4" />
+            History
+          </TabsTrigger>
+        </TabsList>
 
-          <div className="flex items-center space-x-2 mt-3">
-            <input 
-              type="checkbox" 
-              id="liveFoalGuarantee" 
-              checked={liveFoalGuarantee}
-              onChange={(e) => setLiveFoalGuarantee(e.target.checked)}
-              className="rounded"
-            />
-            <label htmlFor="liveFoalGuarantee" className="text-sm cursor-pointer">
-              Live Foal Guarantee (+$1,000)
-            </label>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            If foal is stillborn or unable to stand/nurse, you get a free re-breeding (up to 3 attempts).
-          </p>
-
-          {compatibility && (
-            <div className="space-y-4">
-              <BreedingRadarChart factors={compatibility.factors} />
-              <Card className="bg-muted/50">
-                <CardHeader>
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Info className="h-4 w-4" />
-                    Breeding Compatibility Details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Overall Score</span>
-                    <Badge variant={compatibility.overallScore >= 0.65 ? "default" : compatibility.overallScore >= 0.5 ? "secondary" : "destructive"}>
-                      {Math.round(compatibility.overallScore * 100)}%
-                    </Badge>
-                  </div>
-                  <p className="text-muted-foreground">{compatibility.recommendation}</p>
-                  
-                  <div className="space-y-2 pt-2 border-t">
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Nicking</span>
-                      <span className={compatibility.factors.nicking.score > 0 ? "text-green-600" : "text-muted-foreground"}>
-                        {compatibility.factors.nicking.description}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Dosage</span>
-                      <span className={compatibility.factors.dosage.score >= 0.7 ? "text-green-600" : "text-muted-foreground"}>
-                        {compatibility.factors.dosage.description}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Inbreeding</span>
-                      <span className={compatibility.factors.inbreeding.warning ? "text-orange-600" : "text-green-600"}>
-                        {compatibility.factors.inbreeding.description}
-                        {compatibility.factors.inbreeding.warning && ` (${compatibility.factors.inbreeding.warning})`}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Parent Performance</span>
-                      <span className={compatibility.factors.parentPerformance.score >= 0.5 ? "text-green-600" : "text-muted-foreground"}>
-                        {compatibility.factors.parentPerformance.description}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Conformation</span>
-                      <span className={compatibility.factors.conformation.score >= 0.6 ? "text-green-600" : "text-muted-foreground"}>
-                        {compatibility.factors.conformation.description}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Temperament</span>
-                      <span className={compatibility.factors.temperament.score >= 0.6 ? "text-green-600" : "text-muted-foreground"}>
-                        {compatibility.factors.temperament.description}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Foundation Stock</span>
-                      <span className={compatibility.factors.foundationStock.score >= 0.2 ? "text-green-600" : "text-muted-foreground"}>
-                        {compatibility.factors.foundationStock.description}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Founder Effect</span>
-                      <span className={compatibility.factors.founderEffect.warning ? "text-orange-600" : compatibility.factors.founderEffect.score >= 0.7 ? "text-green-600" : "text-muted-foreground"}>
-                        {compatibility.factors.founderEffect.description}
-                        {compatibility.factors.founderEffect.warning && ` (${compatibility.factors.founderEffect.warning})`}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Genetic Markers</span>
-                      <span className={compatibility.factors.genetic.warning ? "text-orange-600" : compatibility.factors.genetic.score >= 0.7 ? "text-green-600" : "text-muted-foreground"}>
-                        {compatibility.factors.genetic.description}
-                        {compatibility.factors.genetic.warning && ` (${compatibility.factors.genetic.warning})`}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span>Blue Hen Status</span>
-                      <span className={compatibility.factors.blueHen.isBlueHen ? "text-blue-600 font-medium" : compatibility.factors.blueHen.score >= 0.5 ? "text-green-600" : "text-muted-foreground"}>
-                        {compatibility.factors.blueHen.description}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><CardTitle>Active Pregnancies</CardTitle></CardHeader>
-        <CardContent>
-          {pregnancies.filter((p) => !p.resolved).length === 0 ? (
-            <p className="text-sm text-muted-foreground">No active pregnancies.</p>
-          ) : (
-            <div className="space-y-2">
-              {pregnancies.filter((p) => !p.resolved).map((p) => {
-                const daysUntilDue = p.dueDay - day;
-                const isReBreeding = (p.reBreedingAttempts || 0) > 0;
-                return (
-                  <div key={p.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border">
-                    <div>
-                      <div className="font-medium">
-                        {p.sireName} × {p.damName}
-                        {isReBreeding && <span className="ml-2 text-xs text-orange-600">(Re-breeding attempt {p.reBreedingAttempts}/3)</span>}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {p.liveFoalGuarantee && <span className="text-green-600">Live Foal Guarantee • </span>}
-                        Due in {daysUntilDue} day{daysUntilDue !== 1 ? "s" : ""} (Day {p.dueDay})
-                      </div>
-                    </div>
-                    <Badge variant={daysUntilDue <= 7 ? "default" : "secondary"}>
-                      {daysUntilDue <= 7 ? "Soon" : `${daysUntilDue}d`}
-                    </Badge>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><CardTitle>Past Foals</CardTitle></CardHeader>
-        <CardContent>
-          {pregnancies.filter((p) => p.resolved).length === 0 ? (
-            <p className="text-sm text-muted-foreground">No foals born yet.</p>
-          ) : (
-            <div className="space-y-2">
-              {pregnancies.filter((p) => p.resolved).map((p) => {
-                const foal = horses.find((h) => h.id === p.foalId);
-                return (
-                  <div key={p.id} className="flex items-center justify-between border rounded-md px-3 py-2 text-sm">
-                    <span>{p.sireName} × {p.damName} → <span className="font-medium">{foal?.name ?? "(sold)"}</span></span>
-                    <span className="text-muted-foreground">Born day {p.dueDay}</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><CardTitle>Breeding Log</CardTitle></CardHeader>
-        <CardContent>
-          {breedLogs.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No breeding events yet.</p>
-          ) : (
-            <div className="space-y-1">
-              {breedLogs.map((l, i) => (
-                <div key={i} className="text-sm py-1 border-b last:border-0 flex gap-3">
-                  <span className="text-muted-foreground tabular-nums shrink-0">D{l.day}</span>
-                  <span>{l.text}</span>
+        <TabsContent value="shed" className="space-y-4">
+          <Card>
+            <CardHeader><CardTitle>New Mating</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-muted-foreground"><JargonTooltip term="Sire">Sire</JargonTooltip></label>
+                  <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={sireId} onChange={(e) => setSireId(e.target.value)}>
+                    <option value="">Select sire…</option>
+                    {adults.map((h) => <option key={h.id} value={h.id}>{h.name} (age {h.age})</option>)}
+                  </select>
                 </div>
-              ))}
+                <div>
+                  <label className="text-xs text-muted-foreground"><JargonTooltip term="Dam">Dam</JargonTooltip></label>
+                  <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={damId} onChange={(e) => setDamId(e.target.value)}>
+                    <option value="">Select dam…</option>
+                    {adults.filter((h) => h.id !== sireId).map((h) => <option key={h.id} value={h.id}>{h.name} (age {h.age})</option>)}
+                  </select>
+                </div>
+              </div>
+              <Button onClick={onBreed} disabled={!sireId || !damId || sireId === damId || cash < (2000 + (liveFoalGuarantee ? 1000 : 0))}>
+                <Heart className="h-4 w-4 mr-1" /> Breed (<span className="tabular-nums">${liveFoalGuarantee ? "3,000" : "2,000"}</span>)
+              </Button>
+
+              <div className="flex items-center space-x-2 mt-3">
+                <input 
+                  type="checkbox" 
+                  id="liveFoalGuarantee" 
+                  checked={liveFoalGuarantee}
+                  onChange={(e) => setLiveFoalGuarantee(e.target.checked)}
+                  className="rounded"
+                />
+                <label htmlFor="liveFoalGuarantee" className="text-sm cursor-pointer">
+                  Live Foal Guarantee (<span className="tabular-nums">+$1,000</span>)
+                </label>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                If <JargonTooltip term="Foal">foal</JargonTooltip> is stillborn or unable to stand/nurse, you get a free re-breeding (up to 3 attempts).
+              </p>
+
+              {compatibility && (
+                <div className="space-y-4">
+                  <BreedingRadarChart factors={compatibility.factors} />
+                  <Card className="bg-muted/50">
+                    <CardHeader>
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <Info className="h-4 w-4" />
+                        Breeding Compatibility Details
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">Overall Score</span>
+                        <Badge variant={compatibility.overallScore >= 0.65 ? "default" : compatibility.overallScore >= 0.5 ? "secondary" : "destructive"} className="tabular-nums">
+                          {Math.round(compatibility.overallScore * 100)}%
+                        </Badge>
+                      </div>
+                      <p className="text-muted-foreground">{compatibility.recommendation}</p>
+                      
+                      <div className="space-y-2 pt-2 border-t">
+                        <div className="flex items-center justify-between text-xs">
+                          <JargonTooltip term="Nicking">Nicking</JargonTooltip>
+                          <span className={compatibility.factors.nicking.score > 0 ? "text-success" : "text-muted-foreground"}>
+                            {compatibility.factors.nicking.description}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <JargonTooltip term="Dosage">Dosage</JargonTooltip>
+                          <span className={compatibility.factors.dosage.score >= 0.7 ? "text-success" : "text-muted-foreground"}>
+                            {compatibility.factors.dosage.description}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <JargonTooltip term="Inbreeding">Inbreeding</JargonTooltip>
+                          <span className={compatibility.factors.inbreeding.warning ? "text-warning" : "text-success"}>
+                            {compatibility.factors.inbreeding.description}
+                            {compatibility.factors.inbreeding.warning && ` (${compatibility.factors.inbreeding.warning})`}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <span>Parent Performance</span>
+                          <span className={compatibility.factors.parentPerformance.score >= 0.5 ? "text-success" : "text-muted-foreground"}>
+                            {compatibility.factors.parentPerformance.description}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs font-medium border-t pt-2 mt-2">
+                          <JargonTooltip term="Blue hen">Blue Hen Status</JargonTooltip>
+                          <span className={compatibility.factors.blueHen.isBlueHen ? "text-info" : compatibility.factors.blueHen.score >= 0.5 ? "text-success" : "text-muted-foreground"}>
+                            {compatibility.factors.blueHen.description}
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="broodmares" className="space-y-4">
+          {activePregnanciesCount === 0 ? (
+            <Card>
+              <CardContent className="p-12 text-center">
+                <Baby className="h-12 w-12 mx-auto text-muted-foreground mb-4 opacity-20" />
+                <h3 className="text-lg font-semibold mb-2">No active pregnancies</h3>
+                <p className="text-sm text-muted-foreground">
+                  Mate your horses in the Breeding Shed to begin bloodstock development.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {activePregnancies.map((p) => {
+                const daysRemaining = p.dueDay - day;
+                const dam = horses.find(h => h.id === p.damId);
+                return (
+                  <Card key={p.id} className="border-l-4 border-l-primary">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <CardTitle className="text-lg">{p.damName} × {p.sireName}</CardTitle>
+                          <p className="text-xs text-muted-foreground mt-1 tabular-nums">
+                            Conceived Day {p.conceivedDay} · Due Day {p.dueDay}
+                          </p>
+                        </div>
+                        <Badge variant={daysRemaining <= 7 ? "default" : "secondary"} className="tabular-nums">
+                          {daysRemaining <= 0 ? "Due Now" : `${daysRemaining} days`}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <PregnancyTimeline
+                        conceivedDay={p.conceivedDay}
+                        dueDay={p.dueDay}
+                        currentDay={day}
+                        sireName={p.sireName}
+                        damName={p.damName}
+                      />
+                      <div className="flex justify-between items-center pt-2 border-t text-xs">
+                        <div className="flex gap-2">
+                          <Link to="/stable/$horseId" params={{ horseId: p.damId }}>
+                            <Button size="sm" variant="outline" className="h-7 text-[10px]">Dam Profile</Button>
+                          </Link>
+                          <Link to="/stable/$horseId" params={{ horseId: p.sireId }}>
+                            <Button size="sm" variant="outline" className="h-7 text-[10px]">Sire Profile</Button>
+                          </Link>
+                        </div>
+                        {p.reBreedingAttempts > 0 && (
+                          <span className="text-warning font-medium tabular-nums">Re-breeding attempt {p.reBreedingAttempts}/3</span>
+                        )}
+                        {p.liveFoalGuarantee && <span className="text-success font-medium">Live Foal Guarantee</span>}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </TabsContent>
+
+        <TabsContent value="history" className="space-y-4">
+          <Card>
+            <CardHeader><CardTitle>Past Foals</CardTitle></CardHeader>
+            <CardContent>
+              {pregnancies.filter((p) => p.resolved).length === 0 ? (
+                <p className="text-sm text-muted-foreground">No foals born yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {pregnancies.filter((p) => p.resolved).map((p) => {
+                    const foal = horses.find((h) => h.id === p.foalId);
+                    return (
+                      <div key={p.id} className="flex items-center justify-between border rounded-md px-3 py-2 text-sm">
+                        <span>{p.sireName} × {p.damName} → <span className="font-medium">{foal?.name ?? "(sold)"}</span></span>
+                        <span className="text-muted-foreground tabular-nums">Born day {p.dueDay}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Breeding Log</CardTitle></CardHeader>
+            <CardContent>
+              {breedLogs.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No breeding events yet.</p>
+              ) : (
+                <div className="space-y-1">
+                  {breedLogs.map((l, i) => (
+                    <div key={i} className="text-sm py-1 border-b last:border-0 flex gap-3">
+                      <span className="text-muted-foreground tabular-nums shrink-0">D{l.day}</span>
+                      <span>{l.text}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

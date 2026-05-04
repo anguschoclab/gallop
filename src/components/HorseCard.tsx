@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
+import { JargonTooltip } from "./ui/JargonTooltip";
 import { useGame } from "@/game/store";
 import { Trophy, Zap, TrendingUp, Activity, Dna, Calendar, User, Building2, Eye } from "lucide-react";
 
@@ -35,15 +36,15 @@ export function HorseCard({
   
   // Gender icon
   const genderIcon = horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀";
-  const genderColor = horse.gender === "colt" || horse.gender === "horse" ? "text-blue-500" : "text-pink-500";
+  const genderColor = horse.gender === "colt" || horse.gender === "horse" ? "text-chart-1" : "text-chart-5";
   
   // Health status indicator
   const getHealthStatus = () => {
     if (!horse.healthStatus || horse.healthStatus === "healthy") return null;
     const statusConfig: Record<string, { color: string; label: string }> = {
-      covering_sickness: { color: "bg-red-100 text-red-800", label: "Dourine" },
-      other_illness: { color: "bg-yellow-100 text-yellow-800", label: "Ill" },
-      recovering: { color: "bg-blue-100 text-blue-800", label: "Recovering" },
+      covering_sickness: { color: "bg-destructive/10 text-destructive", label: "Dourine" },
+      other_illness: { color: "bg-chart-4/10 text-chart-4", label: "Ill" },
+      recovering: { color: "bg-chart-2/10 text-chart-2", label: "Recovering" },
     };
     const config = statusConfig[horse.healthStatus] || { color: "bg-gray-100", label: horse.healthStatus };
     return <Badge className={config.color}>{config.label}</Badge>;
@@ -66,13 +67,13 @@ export function HorseCard({
                 <span className="font-semibold truncate">{horse.name}</span>
               </div>
               <div className="text-xs text-muted-foreground flex items-center gap-2">
-                <span>{horse.age}yo</span>
+                <span className="font-semibold tabular-nums">{horse.age}yo</span>
                 <span>·</span>
-                <span>OVR {ovr}</span>
+                <JargonTooltip term="OVR">OVR {ovr}</JargonTooltip>
                 {horse.stableId && (
                   <>
                     <span>·</span>
-                    <span className="text-yellow-600">★ {horse.fame}</span>
+                    <span className="text-chart-4 tabular-nums">★ {horse.fame}</span>
                   </>
                 )}
               </div>
@@ -116,9 +117,9 @@ export function HorseCard({
                   <span className="font-bold text-lg">{horse.name}</span>
                 </div>
                 <div className="text-sm text-muted-foreground flex items-center gap-2">
-                  <span>{horse.age} years old</span>
+                  <span className="tabular-nums">{horse.age} years old</span>
                   <span>·</span>
-                  <span className="text-yellow-600">Fame: {horse.fame}/100</span>
+                  <span className="text-chart-4 tabular-nums">Fame: {horse.fame}/100</span>
                 </div>
               </div>
             </div>
@@ -161,7 +162,7 @@ export function HorseCard({
             </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Activity className="w-3 h-3" />
-              <span>Form: {horse.form > 0 ? "+" : ""}{horse.form}</span>
+              <span className="tabular-nums">Form: {horse.form > 0 ? "+" : ""}{horse.form}</span>
             </div>
           </div>
         </CardContent>
@@ -191,7 +192,7 @@ export function HorseCard({
               <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
-                  {horse.age} years old
+                  <span className="tabular-nums">{horse.age} years old</span>
                 </span>
                 {horse.hemisphere && (
                   <>
@@ -202,7 +203,7 @@ export function HorseCard({
                 {horse.stableId && (
                   <>
                     <span>·</span>
-                    <span className="text-yellow-600 flex items-center gap-1">
+                    <span className="text-chart-4 flex items-center gap-1 tabular-nums">
                       <Trophy className="w-3 h-3" />
                       {horse.fame} fame
                     </span>
@@ -214,12 +215,12 @@ export function HorseCard({
           <div className="flex flex-col items-end gap-1">
             <Badge variant="secondary" className="flex items-center gap-1">
               <Zap className="w-3 h-3" />
-              {horse.energy} Energy
+              <span className="tabular-nums">{horse.energy} Energy</span>
             </Badge>
             {horse.form !== 0 && (
               <Badge variant={horse.form > 0 ? "default" : "destructive"} className="text-xs flex items-center gap-1">
                 <TrendingUp className="w-3 h-3" />
-                {horse.form > 0 ? "+" : ""}{horse.form} Form
+                <span className="tabular-nums">{horse.form > 0 ? "+" : ""}{horse.form} Form</span>
               </Badge>
             )}
             {scoutStatus && (
@@ -244,13 +245,13 @@ export function HorseCard({
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               <Activity className="w-4 h-4 text-muted-foreground" />
-              <span className="text-muted-foreground">OVR</span>
-              <span className="font-bold text-lg">{ovr}</span>
+              <JargonTooltip term="OVR" className="text-muted-foreground">OVR</JargonTooltip>
+              <span className="font-bold text-lg tabular-nums">{ovr}</span>
             </div>
             <div className="flex items-center gap-1">
               <Dna className="w-4 h-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Pot</span>
-              <span className="font-semibold">{horse.potential}</span>
+              <JargonTooltip term="Pot" className="text-muted-foreground">Pot</JargonTooltip>
+              <span className="font-semibold tabular-nums">{horse.potential}</span>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">

@@ -43,17 +43,17 @@ export function HorseStatsRadar({ horse }: HorseStatsRadarProps) {
           <Radar
             name="Current Stats"
             dataKey="value"
-            stroke="hsl(var(--primary))"
+            stroke="var(--primary)"
             strokeWidth={2}
-            fill="hsl(var(--primary))"
+            fill="var(--primary)"
             fillOpacity={0.3}
           />
           <Radar
             name="Potential"
             dataKey="max"
-            stroke="hsl(var(--secondary))"
+            stroke="var(--secondary)"
             strokeWidth={1}
-            fill="hsl(var(--secondary))"
+            fill="var(--secondary)"
             fillOpacity={0.1}
             strokeDasharray="4 4"
           />

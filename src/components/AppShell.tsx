@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Home, Trophy, Store, Calendar, Plus, Heart, Building2, Gavel, Settings, Baby, BarChart2, Award } from "lucide-react";
+import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
@@ -14,13 +14,10 @@ const navItems = [
   { to: "/", label: "Dashboard", icon: Home, exact: true },
   { to: "/stable", label: "Stable", icon: Trophy, exact: false },
   { to: "/races", label: "Races", icon: Calendar, exact: false },
-  { to: "/npc-stables", label: "Rival Stables", icon: Building2, exact: false },
-  { to: "/market", label: "Market", icon: Store, exact: false },
   { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
-  { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
-  { to: "/auction", label: "Sales", icon: Gavel, exact: false },
-  { to: "/recap", label: "Recap", icon: BarChart2, exact: false },
-  { to: "/awards", label: "Awards", icon: Award, exact: false },
+  { to: "/auction", label: "Auction", icon: Gavel, exact: false },
+  { to: "/market", label: "Market", icon: Store, exact: false },
+  { to: "/settings", label: "Settings", icon: Settings, exact: false },
 ] as const;
 
 export function AppShell() {
@@ -34,28 +31,25 @@ export function AppShell() {
   const [autoSimOpen, setAutoSimOpen] = useState(false);
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
   
-  // Award ceremonies state
   const pendingCeremonies = useGame((s) => s.pendingAwardCeremonies);
   const [showCeremony, setShowCeremony] = useState(false);
   const clearPendingCeremonies = useGame((s) => s.clearPendingCeremonies);
   
-  // Show ceremony when pending ceremonies exist
   useEffect(() => {
     if (pendingCeremonies && pendingCeremonies.length > 0) {
       setShowCeremony(true);
     }
   }, [pendingCeremonies]);
 
-  // Hide chrome for live race screen
   const isRace = location.pathname.startsWith("/race/");
   if (isRace) return <Outlet />;
 
   return (
     <div className="flex min-h-screen bg-muted/30">
-      <aside className="w-60 shrink-0 border-r bg-card flex flex-col">
-        <div className="p-5 border-b">
-          <h1 className="text-lg font-bold tracking-tight">Stable Manager</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">{gameCalendarDate(day)}</p>
+      <aside className="w-60 shrink-0 border-r bg-sidebar flex flex-col">
+        <div className="p-5 border-b border-sidebar-border">
+          <h1 className="text-lg font-bold tracking-tight text-sidebar-foreground">Stable Manager</h1>
+          <p className="text-xs text-sidebar-foreground/60 mt-0.5 tabular-nums">{gameCalendarDate(day)}</p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {navItems.map((item) => {
@@ -69,8 +63,8 @@ export function AppShell() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                   active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -79,20 +73,20 @@ export function AppShell() {
             );
           })}
         </nav>
-        <div className="p-3 border-t space-y-2">
-          <div className="px-3 py-2 rounded-md bg-muted">
-            <p className="text-xs text-muted-foreground">Cash</p>
-            <p className="text-lg font-bold tabular-nums">${cash.toLocaleString()}</p>
+        <div className="p-3 border-t border-sidebar-border space-y-2">
+          <div className="px-3 py-2 rounded-md bg-sidebar-accent/50">
+            <p className="text-xs text-sidebar-foreground/60">Cash</p>
+            <p className="text-lg font-bold tabular-nums text-sidebar-foreground">${cash.toLocaleString()}</p>
           </div>
-          <div className="px-3 py-1 text-xs text-muted-foreground">{horses.length} horses</div>
+          <div className="px-3 py-1 text-xs text-sidebar-foreground/60 tabular-nums">{horses.length} horses</div>
           <div className="grid grid-cols-4 gap-1">
             <Button onClick={advanceDay} className="col-span-1" size="sm" title="Advance 1 day">
               <Plus className="h-3 w-3" />
             </Button>
-            <Button onClick={() => advanceMultipleDays(7)} className="col-span-1" size="sm" variant="secondary" title="Advance 1 week">
+            <Button onClick={() => advanceMultipleDays(7)} className="col-span-1 tabular-nums" size="sm" variant="secondary" title="Advance 1 week">
               7d
             </Button>
-            <Button onClick={() => advanceMultipleDays(30)} className="col-span-1" size="sm" variant="secondary" title="Advance 1 month">
+            <Button onClick={() => advanceMultipleDays(30)} className="col-span-1 tabular-nums" size="sm" variant="secondary" title="Advance 1 month">
               30d
             </Button>
             <Button onClick={() => setAutoSimOpen(true)} className="col-span-1" size="sm" variant="ghost" title="AutoSim settings">
@@ -101,11 +95,11 @@ export function AppShell() {
           </div>
           <Button
             onClick={() => setNewGameDialogOpen(true)}
-            className="w-full"
+            className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
             size="sm"
             variant="ghost"
           >
-            New Game
+            Start new game
           </Button>
           <Dialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
             <DialogContent>

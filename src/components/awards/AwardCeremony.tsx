@@ -62,7 +62,6 @@ export function AwardCeremony({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         className={cn(
-          "max-w-2xl",
           "bg-gradient-to-b from-card to-muted",
           "border-2"
         )}
@@ -104,12 +103,12 @@ export function AwardCeremony({
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Sparkles className="w-5 h-5" style={{ color: colors.accent }} />
                 <span className="font-semibold" style={{ color: colors.accent }}>
-                  Congratulations!
+                  Congratulations
                 </span>
                 <Sparkles className="w-5 h-5" style={{ color: colors.accent }} />
               </div>
               <p className="text-sm text-muted-foreground mb-3">
-                Your stable won {playerAwards.length} award{playerAwards.length > 1 ? "s" : ""}!
+                Your stable won {playerAwards.length} award{playerAwards.length > 1 ? "s" : ""}
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {playerAwards.map((award) => (
@@ -200,7 +199,7 @@ export function AwardCeremony({
             Ceremony {currentIndex + 1} of {ceremonies.length}
           </div>
           <Button onClick={handleNext} className="gap-2">
-            {isLast ? "Close" : "Next Ceremony"}
+            {isLast ? "Close results" : "Next ceremony"}
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
@@ -222,7 +221,7 @@ function Confetti({ active }: { active: boolean }) {
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            backgroundColor: ["#FFD700", "#C0C0C0", "#CD7F32"][Math.floor(Math.random() * 3)],
+            backgroundColor: ["var(--color-chart-3)", "var(--color-chart-4)", "var(--color-chart-1)"][Math.floor(Math.random() * 3)],
             animationDelay: `${Math.random() * 2}s`,
           }}
         />

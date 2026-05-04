@@ -123,7 +123,7 @@ export function runNpcBreeding(
       newPregnancies.push(preg);
       logs.push({
         day: newDay,
-        text: `🐴 ${stable.name}: ${best.name} × ${mare.name} (foal due ${preg.dueDay}).`,
+        text: `${stable.name}: ${best.name} × ${mare.name} (foal due ${preg.dueDay}).`,
       });
     }
   }

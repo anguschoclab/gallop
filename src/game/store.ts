@@ -197,9 +197,9 @@ export function resolvePregnancies(
       if (outcome.transmission) {
         foal.healthStatus = "covering_sickness";
         foal.healthStatusDay = newDay;
-        newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). ⚠️ Covering sickness detected.` });
+        newLogs.push({ day: newDay, text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). Covering sickness detected.` });
       } else {
-        newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
+        newLogs.push({ day: newDay, text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
       }
     } else {
       // Live Foal Guarantee handling
@@ -215,13 +215,13 @@ export function resolvePregnancies(
         p.reBreedingAttempts = (p.reBreedingAttempts || 0) + 1;
         newLogs.push({
           day: newDay,
-          text: `💔 Foal ${outcome.type}${canRefund ? ` — Live Foal Guarantee refunded $${(BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE).toLocaleString()}.` : "."} Re-breeding ${p.damName} to ${p.sireName}. Attempt ${p.reBreedingAttempts}/3. New due day ${p.dueDay}.`,
+          text: `Foal ${outcome.type}${canRefund ? ` — Live Foal Guarantee refunded $${(BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE).toLocaleString()}.` : "."} Re-breeding ${p.damName} to ${p.sireName}. Attempt ${p.reBreedingAttempts}/3. New due day ${p.dueDay}.`,
         });
       } else {
         p.resolved = true;
         newLogs.push({
           day: newDay,
-          text: `💔 Foal ${outcome.type}${p.liveFoalGuarantee ? ". Live Foal Guarantee attempts exhausted." : "."}`,
+          text: `Foal ${outcome.type}${p.liveFoalGuarantee ? ". Live Foal Guarantee attempts exhausted." : "."}`,
         });
       }
     }
@@ -254,7 +254,7 @@ export function maybeRecalibratePars(
   return {
     calibratedPars: recomputed,
     lastCalibrationDay: newDay,
-    log: { day: newDay, text: `📊 Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.` },
+    log: { day: newDay, text: `Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.` },
   };
 }
 
@@ -330,7 +330,7 @@ function initialState(): GameState {
     market,
     races: racesWithEntries,
     trainingUsed: {},
-    log: [{ day: 1, text: "Welcome to your stable. Train your horses and enter them in races!" }],
+    log: [{ day: 1, text: "Welcome to your stable. Train your horses and enter them in races." }],
     pregnancies: [],
     npcStables: updatedStables,
     scoutReports: [],
@@ -395,7 +395,7 @@ export const useGame = create<GameState & Actions>()(
         if (horse.healthStatus === "covering_sickness") {
           set({
             log: [
-              { day: s.day, text: `❌ Training blocked: ${horse.name} has covering sickness (dourine). Horse cannot be trained while infected.` },
+              { day: s.day, text: `Training blocked: ${horse.name} has covering sickness (dourine). Horse cannot be trained while infected.` },
               ...s.log,
             ].slice(0, 50),
           });
@@ -447,7 +447,7 @@ export const useGame = create<GameState & Actions>()(
         const race = s.races.find((r) => r.id === raceId);
         const horse = s.horses.find((h) => h.id === horseId);
         const fail = (reason: string): ActionResult => {
-          set({ log: [{ day: s.day, text: `❌ Race entry: ${reason}` }, ...s.log].slice(0, 50) });
+          set({ log: [{ day: s.day, text: `Race entry: ${reason}` }, ...s.log].slice(0, 50) });
           return { ok: false, reason };
         };
         if (!race) return fail("Race not found.");
@@ -588,7 +588,7 @@ export const useGame = create<GameState & Actions>()(
           if (arr.length > MAX_SAMPLES_PER_BUCKET) arr.splice(0, arr.length - MAX_SAMPLES_PER_BUCKET);
           samples[b] = arr;
         }
-        const photoNote = photoFinish ? " 📸 Photo finish!" : "";
+        const photoNote = photoFinish ? " Photo finish" : "";
         const updatedNpcStables = s.npcStables.map((stable) =>
           stableCredits[stable.id] ? { ...stable, cash: stable.cash + stableCredits[stable.id] } : stable
         );
@@ -610,7 +610,7 @@ export const useGame = create<GameState & Actions>()(
         const sire = s.horses.find((h) => h.id === sireId);
         const dam = s.horses.find((h) => h.id === damId);
         const fail = (reason: string): ActionResult => {
-          set({ log: [{ day: s.day, text: `❌ Breeding: ${reason}` }, ...s.log].slice(0, 50) });
+          set({ log: [{ day: s.day, text: `Breeding: ${reason}` }, ...s.log].slice(0, 50) });
           return { ok: false, reason };
         };
 
@@ -672,7 +672,7 @@ export const useGame = create<GameState & Actions>()(
           npcStables: updatedStables,
           pregnancies: [preg, ...s.pregnancies],
           log: [
-            { day: s.day, text: `🐴 Mated ${sire!.name} × ${dam!.name} (foal due day ${dueDay}). Fee $${totalFee.toLocaleString()}${studFee ? ` (incl. $${studFee.toLocaleString()} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.` },
+            { day: s.day, text: `Mated ${sire!.name} × ${dam!.name} (foal due day ${dueDay}). Fee $${totalFee.toLocaleString()}${studFee ? ` (incl. $${studFee.toLocaleString()} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.` },
             ...s.log,
           ].slice(0, 50),
         });
@@ -683,7 +683,7 @@ export const useGame = create<GameState & Actions>()(
         const s = get();
         const horse = s.horses.find((h) => h.id === horseId);
         const fail = (reason: string): ActionResult => {
-          set({ log: [{ day: s.day, text: `❌ Retire to stud: ${reason}` }, ...s.log].slice(0, 50) });
+          set({ log: [{ day: s.day, text: `Retire to stud: ${reason}` }, ...s.log].slice(0, 50) });
           return { ok: false, reason };
         };
         if (!horse) return fail("Horse not found.");
@@ -714,7 +714,7 @@ export const useGame = create<GameState & Actions>()(
         );
         set({
           horses: updatedHorses,
-          log: [{ day: s.day, text: `🏛️ ${horse.name} retired to stud at $${fee.toLocaleString()} (book ${bookSize}).` }, ...s.log].slice(0, 50),
+          log: [{ day: s.day, text: `${horse.name} retired to stud at $${fee.toLocaleString()} (book ${bookSize}).` }, ...s.log].slice(0, 50),
         });
         return { ok: true };
       },
@@ -897,7 +897,7 @@ export const useGame = create<GameState & Actions>()(
                 }
               : a
           ),
-          log: [{ day: s.day, text: `📋 ${horse.name} consigned to ${sale.name}.` }, ...s.log].slice(0, 50),
+          log: [{ day: s.day, text: `${horse.name} consigned to ${sale.name}.` }, ...s.log].slice(0, 50),
         });
         return { ok: true };
       },

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HorseStats, overall, SilkBadge } from "@/components/HorseBits";
 import { horsePrice } from "@/game/horseGen";
+import { JargonTooltip } from "@/components/ui/JargonTooltip";
 
 export const Route = createFileRoute("/market")({
   component: MarketPage,
@@ -18,8 +19,8 @@ function MarketPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Auction House</h1>
-        <p className="text-muted-foreground">New horses arrive every day</p>
+        <h1 className="text-3xl font-bold tracking-tight">Bloodstock Market</h1>
+        <p className="text-muted-foreground">Private sales available for immediate acquisition. Roster refreshes daily.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -32,18 +33,27 @@ function MarketPage() {
                   <SilkBadge color={h.silk} />
                   <div className="flex-1">
                     <p className="font-bold">{h.name}</p>
-                    <p className="text-xs text-muted-foreground">Age {h.age} · OVR {overall(h)} · Pot {h.potential}</p>
+                    <p className="text-xs text-muted-foreground tabular-nums">
+                      Age {h.age} · <JargonTooltip term="OVR">OVR</JargonTooltip> {overall(h)} · <JargonTooltip term="Potential">Pot</JargonTooltip> {h.potential}
+                    </p>
                   </div>
-                  <Badge variant="outline" className="text-base">${price.toLocaleString()}</Badge>
+                  <Badge variant="outline" className="text-base tabular-nums">${price.toLocaleString()}</Badge>
                 </div>
                 <HorseStats horse={h} />
                 <Button onClick={() => buyHorse(h.id)} disabled={cash < price} className="w-full" size="sm">
-                  {cash < price ? "Not enough cash" : "Buy"}
+                  {cash < price ? "Insufficient funds" : "Acquire Horse"}
                 </Button>
               </CardContent>
             </Card>
           );
         })}
+        {market.length === 0 && (
+          <Card className="col-span-full">
+            <CardContent className="p-12 text-center text-muted-foreground italic">
+              No private offerings available at this time.
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

@@ -61,7 +61,7 @@ export function BeyerChart({ history }: { history: Entry[] }) {
               className="text-muted-foreground"
               width={32}
             />
-            <ReferenceLine y={avg} stroke="hsl(var(--muted-foreground))" strokeDasharray="4 4" />
+            <ReferenceLine y={avg} stroke="var(--muted-foreground)" strokeDasharray="4 4" />
             <Tooltip
               contentStyle={{
                 background: "hsl(var(--popover))",
@@ -78,9 +78,9 @@ export function BeyerChart({ history }: { history: Entry[] }) {
             <Line
               type="monotone"
               dataKey="beyer"
-              stroke="hsl(var(--primary))"
+              stroke="var(--primary)"
               strokeWidth={2}
-              dot={{ r: 3, fill: "hsl(var(--primary))" }}
+              dot={{ r: 3, fill: "var(--primary)" }}
               activeDot={{ r: 5 }}
             />
           </LineChart>

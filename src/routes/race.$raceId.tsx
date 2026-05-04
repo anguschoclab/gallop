@@ -2,13 +2,17 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useGame } from "@/game/store";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
 import { stepRunner, computePaceContext, type Runner } from "@/game/raceSim";
 import { beyerFigure } from "@/game/beyer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { buildRaceField, rngForRace, type RaceSimulationDependencies } from "@/services/raceSimulationService";
 import type { Weather } from "@/game/types";
-import { Pause, Play, Camera } from "lucide-react";
+import { Pause, Play, Camera, Mic2 } from "lucide-react";
+import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import { NarrativeGenerator, type CommentaryLine } from "@/services/narrativeService";
 
 // Track surface background mapping
 const getTrackBackground = (surface?: string): string | undefined => {
@@ -61,13 +65,11 @@ const getWeatherDisplay = (weather?: Weather): string => {
 };
 
 // Sprite sheet configuration
-// All sprites have 6-frame animation (300x50px sheets)
 const ANIMATED_SPRITES = [
   "bay", "black", "chestnut", "dark-bay", "gray",
   "roan", "palomino", "white",
   "seal-brown", "liver-chestnut", "buckskin", "dun", "grulla", "champagne"
 ];
-const STATIC_SPRITES: string[] = []; // All sprites are animated
 
 const COAT_TO_SPRITE: Record<string, string> = {
   bay: "b",
@@ -86,30 +88,23 @@ const COAT_TO_SPRITE: Record<string, string> = {
   champagne: "champagne",
 };
 
-// Get sprite URL for a coat color
 function getSpriteUrl(coatColor?: string): string | undefined {
   if (!coatColor) return undefined;
   const sprite = COAT_TO_SPRITE[coatColor];
   return sprite ? `/assets/horse-${sprite}.png` : undefined;
 }
 
-// Check if sprite is animated (6-frame sheet) or static
 function isAnimatedSprite(coatColor?: string): boolean {
   if (!coatColor) return false;
   return ANIMATED_SPRITES.includes(coatColor);
 }
 
-// Calculate animation duration based on velocity (faster = quicker animation)
 function getAnimationDuration(velocity: number): string {
-  // Base duration 0.6s at ~15 m/s, scales inversely with velocity
   const baseSpeed = 15;
   const duration = Math.max(0.3, Math.min(0.8, 0.6 * (baseSpeed / Math.max(velocity, 5))));
   return `${duration.toFixed(2)}s`;
 }
 
-// Project a Beyer figure mid-race from current pace.
-// If finished: use real finish time. Otherwise: extrapolate remaining distance
-// at current velocity (with a small tail-fade penalty if not yet at finish).
 function projectedBeyer(r: Runner, distance: number, simTime: number, classBonus: number): number | null {
   if (r.finishTime !== null) {
     return beyerFigure({ distance, finishTime: r.finishTime, classBonus });
@@ -135,6 +130,7 @@ function LiveRace() {
   const navigate = useNavigate();
   const race = useGame((s) => s.races.find((r) => r.id === raceId));
   const horses = useGame((s) => s.horses);
+  const stables = useGame((s) => s.npcStables);
   const resolveRace = useGame((s) => s.resolveRace);
 
   if (!race) throw notFound();
@@ -147,8 +143,6 @@ function LiveRace() {
     );
   }
 
-  // Build full field: owner entries + AI fillers. Seeded RNG keyed by race id
-  // means a re-loaded race produces the same finish order and times.
   const [runners] = useState<Runner[]>(() => {
     const deps: RaceSimulationDependencies = { race, horses };
     return buildRaceField(deps);
@@ -163,14 +157,18 @@ function LiveRace() {
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
   const [minBeyer, setMinBeyer] = useState(0);
   
-  // Camera follow: null = auto-follow leader, string = specific horseId
-  // Default to first owned horse, or leader if no owned horses
-  const ownedHorses = runners.filter(r => r.owned);
-  const defaultFollowTarget = ownedHorses.length > 0 ? ownedHorses[0].horseId : null;
+  const ownedRunnersTotal = runners.filter(r => r.owned);
+  const defaultFollowTarget = ownedRunnersTotal.length > 0 ? ownedRunnersTotal[0].horseId : null;
   const [followTarget, setFollowTarget] = useState<string | null>(defaultFollowTarget);
   
-  // Accessibility announcements
   const [announcement, setAnnouncement] = useState<string>("");
+  const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
+  const narrativeRef = useRef<NarrativeGenerator | null>(null);
+  
+  if (!narrativeRef.current && race) {
+    narrativeRef.current = new NarrativeGenerator(race, horses, stables);
+  }
+
   const lastAnnouncedPosition = useRef<Map<string, number>>(new Map());
   const lastAnnouncementTime = useRef<number>(0);
   
@@ -186,9 +184,6 @@ function LiveRace() {
   useEffect(() => {
     let raf = 0;
     let last = performance.now();
-    // Fixed timestep keeps the seeded RNG-driven outcome identical across
-    // reloads regardless of browser frame timing. Variable real-time dt is
-    // accumulated and drained in fixed slices.
     const FIXED_DT = 0.05;
     let accumulator = 0;
     const MAX_STEPS_PER_FRAME = 64;
@@ -196,12 +191,9 @@ function LiveRace() {
     const loop = (now: number) => {
       const real = (now - last) / 1000;
       last = now;
-      
-      // Skip accumulator update when paused
       if (!pausedRef.current) {
         accumulator += real * speedRef.current;
       }
-      
       let stillRunning = runners.some((r) => r.finishTime === null);
       let steps = 0;
       while (accumulator >= FIXED_DT && stillRunning && steps < MAX_STEPS_PER_FRAME) {
@@ -210,6 +202,14 @@ function LiveRace() {
         steps++;
         stillRunning = false;
         const pace = computePaceContext(runners, race.distance);
+        if (narrativeRef.current) {
+          const newCommentary = narrativeRef.current.update(runners, simTimeRef.current, pace.pacePressure);
+          if (newCommentary.length > 0) {
+            setCommentary(prev => [...prev, ...newCommentary].slice(-50));
+            // Also update the screen reader announcement
+            setAnnouncement(newCommentary[newCommentary.length - 1].text);
+          }
+        }
         for (const r of runners) {
           if (r.finishTime === null) {
             stepRunner(r, FIXED_DT, simTimeRef.current, race.distance, rngRef.current, runners, pace);
@@ -230,17 +230,13 @@ function LiveRace() {
         raf = requestAnimationFrame(loop);
       } else {
         setFinished(true);
-        // Pass the full field so the store can both pay owners and collect
-        // pace samples for Beyer par calibration.
         resolveRace(race.id, finishOrderRef.current);
       }
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Keyboard handler: Spacebar toggles pause
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === "Space" && !finished) {
@@ -252,38 +248,11 @@ function LiveRace() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [finished]);
 
-  // Accessibility: Announce position changes for owned horses (throttled)
+  // Legacy simple announcer is now integrated into the NarrativeGenerator
+  // Keeping this effect empty to avoid conflicts but preserving the tick dependency if needed elsewhere
   useEffect(() => {
-    if (finished) return;
-    
-    const now = performance.now();
-    if (now - lastAnnouncementTime.current < 3000) return; // Throttle to 3s
-    
-    const ownedRunners = runners.filter(r => r.owned && r.finishTime === null);
-    if (ownedRunners.length === 0) return;
-    
-    // Calculate positions
-    const sorted = [...runners].sort((a, b) => b.position - a.position);
-    const positions = new Map(sorted.map((r, i) => [r.horseId, i + 1]));
-    
-    // Check for position changes
-    for (const r of ownedRunners) {
-      const currentPos = positions.get(r.horseId) || 0;
-      const lastPos = lastAnnouncedPosition.current.get(r.horseId);
-      
-      if (lastPos !== undefined && currentPos !== lastPos) {
-        const direction = currentPos < lastPos ? "moved up to" : "dropped to";
-        const suffix = currentPos === 1 ? " (leading!)" : "";
-        setAnnouncement(`${r.name} ${direction} ${currentPos}${suffix}`);
-        lastAnnouncementTime.current = now;
-        break; // Only announce one change per tick
-      }
-      
-      lastAnnouncedPosition.current.set(r.horseId, currentPos);
-    }
   }, [tick, runners, finished]);
 
-  // Build live rows with projected Beyer, then filter + sort.
   void tick;
   const rows = runners.map((r) => ({
     r,
@@ -310,32 +279,32 @@ function LiveRace() {
   const skyBg = getSkyBackground(race.weather);
 
   return (
-    <div
-      className="min-h-screen text-white"
-      style={{
-        backgroundImage: skyBg ? `${skyBg}, linear-gradient(to bottom, rgb(6 78 59), rgb(6 59 48))` : undefined,
-        backgroundSize: "auto 200px, 100% 100%",
-        backgroundRepeat: "repeat-x, no-repeat",
-        backgroundPosition: "top, top",
-        backgroundColor: "rgb(6 59 48)", // emerald-950 fallback
-      }}
-    >
-      {/* Accessibility: Live region for screen readers */}
+    <div className="broadcast min-h-screen text-white bg-broadcast-track">
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage: skyBg ? `${skyBg}, linear-gradient(to bottom, var(--broadcast-sky-overlay), transparent)` : undefined,
+          backgroundSize: "auto 200px, 100% 100%",
+          backgroundRepeat: "repeat-x, no-repeat",
+          backgroundPosition: "top, top",
+          zIndex: 0
+        }}
+      />
+
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {announcement}
       </div>
 
-      <div className="p-4 flex items-center justify-between border-b border-white/10 bg-black/20">
+      <div className="relative z-10 p-4 flex items-center justify-between border-b border-white/10 bg-broadcast-marquee backdrop-blur-sm">
         <div>
           <h1 className="text-xl font-bold">{race.name}</h1>
-          <p className="text-xs text-white/70">
+          <p className="text-xs text-white/70 tabular-nums">
             {race.distance}m · {race.raceClass} · Purse ${race.purse.toLocaleString()}
             {race.weather && ` · ${getWeatherDisplay(race.weather)}`}
             {race.trackCondition && ` · Track: ${race.trackCondition}`}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {/* Camera follow selector */}
           {!finished && (
             <Select value={followTarget || "leader"} onValueChange={(v) => setFollowTarget(v === "leader" ? null : v)}>
               <SelectTrigger className="h-8 w-40 text-xs bg-white/10 border-white/20 text-white">
@@ -353,7 +322,6 @@ function LiveRace() {
             </Select>
           )}
           
-          {/* Pause/Play button */}
           {!finished && (
             <Button 
               size="sm" 
@@ -366,7 +334,6 @@ function LiveRace() {
             </Button>
           )}
           
-          {/* Speed controls */}
           {!finished && !paused && (
             <>
               <Button size="sm" variant={speed === 1 ? "secondary" : "ghost"} onClick={() => setSpeed(1)}>1x</Button>
@@ -381,7 +348,7 @@ function LiveRace() {
         </div>
       </div>
 
-      <div className="p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
+      <div className="relative z-10 p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
         <div>
           <Track
             runners={runners}
@@ -392,8 +359,9 @@ function LiveRace() {
             followTarget={followTarget}
             paused={paused}
           />
+          <BroadcastCommentary commentary={commentary} />
         </div>
-        <div className="bg-black/30 rounded-lg p-3 space-y-3">
+        <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
           <div>
             <p className="text-xs uppercase tracking-wide text-white/60 mb-2">Live order</p>
             <div className="grid grid-cols-2 gap-2">
@@ -415,28 +383,30 @@ function LiveRace() {
               </Select>
             </div>
             <div className="mt-2">
-              <label className="text-[10px] uppercase tracking-wide text-white/60 flex justify-between">
-                <span>Min Beyer</span><span className="tabular-nums">{minBeyer}</span>
+              <label className="text-[10px] uppercase tracking-wide text-white/60 flex justify-between items-center mb-1">
+                <span>Min <JargonTooltip term="Beyer">Beyer</JargonTooltip></span><span className="tabular-nums font-bold text-broadcast-accent">{minBeyer}</span>
               </label>
-              <input
-                type="range" min={0} max={120} step={5}
-                value={minBeyer}
-                onChange={(e) => setMinBeyer(Number(e.target.value))}
-                className="w-full accent-yellow-400"
+              <Slider
+                min={0}
+                max={120}
+                step={5}
+                value={[minBeyer]}
+                onValueChange={(vals) => setMinBeyer(vals[0])}
+                className="py-2"
               />
             </div>
           </div>
           <div className="space-y-1">
             {sorted.map(({ r, beyer }) => (
-              <div key={r.horseId} className="flex items-center gap-2 text-sm py-1">
+              <div key={r.horseId} className="flex items-center gap-2 text-sm py-1 border-b border-white/5 last:border-0">
                 <span className="w-5 text-white/60 tabular-nums">{positionRank.get(r.horseId)}</span>
                 <div
-                  className="h-5 w-5 rounded-full border border-white/40"
+                  className="h-4 w-4 rounded-full border border-white/40 shadow-sm"
                   style={{ backgroundColor: r.silk }}
                 />
-                <span className={`flex-1 truncate ${r.owned ? "font-bold" : ""}`}>{r.name}</span>
+                <span className={`flex-1 truncate ${r.owned ? "font-bold text-broadcast-accent" : ""}`}>{r.name}</span>
                 {beyer !== null && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-300 tabular-nums">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-broadcast-accent/20 text-broadcast-accent tabular-nums font-bold">
                     {beyer}
                   </span>
                 )}
@@ -477,41 +447,31 @@ function Track({
   const laneHeight = 36;
   const trackHeight = runners.length * laneHeight + 20;
   const trackBg = getTrackBackground(surface);
-  
-  // Viewport shows 60% of the race distance
   const viewportWidth = distance * 0.6;
   
-  // Calculate camera position based on follow target
   const cameraPos = (() => {
     if (followTarget) {
-      // Follow specific horse
       const target = runners.find(r => r.horseId === followTarget);
       if (target) {
-        // Center the target in viewport
         return Math.max(0, Math.min(distance - viewportWidth, target.position - viewportWidth / 2));
       }
     }
-    // Follow leader
     const leader = runners.reduce((max, r) => r.position > max.position ? r : max, runners[0]);
     return Math.max(0, Math.min(distance - viewportWidth, leader.position - viewportWidth / 2));
   })();
   
-  // Leader approaching finish (within 100m)
   const leaderPos = runners.reduce((max, r) => Math.max(max, r.position), 0);
   const finishActive = leaderPos > distance - 100 && leaderPos < distance;
-  
-  // Parallax track offset
   const trackOffset = -(cameraPos % 512);
   
   return (
     <div
-      className="relative rounded-lg overflow-hidden border border-emerald-600 shadow-inner"
+      className="relative rounded-lg overflow-hidden border border-white/10 shadow-2xl"
       style={{
         height: trackHeight,
-        backgroundColor: trackBg ? undefined : "rgb(4 120 87)",
+        backgroundColor: "var(--broadcast-track)",
       }}
     >
-      {/* Parallax track background */}
       <div
         className="absolute inset-0"
         style={{
@@ -523,16 +483,14 @@ function Track({
         }}
       />
       
-      {/* lane lines */}
       {runners.map((_, i) => (
         <div
           key={i}
-          className="absolute left-0 right-0 border-b border-emerald-800/40"
+          className="absolute left-0 right-0 border-b border-white/5"
           style={{ top: 10 + i * laneHeight + laneHeight }}
         />
       ))}
       
-      {/* Distance markers every 200m */}
       {Array.from({ length: Math.ceil(distance / 200) }, (_, i) => {
         const markerPos = i * 200;
         const relativePos = markerPos - cameraPos;
@@ -541,38 +499,25 @@ function Track({
         return (
           <div
             key={i}
-            className="absolute top-0 bottom-0 w-px bg-white/20"
+            className="absolute top-0 bottom-0 w-px bg-white/10"
             style={{ left: `${screenPct}%` }}
           >
-            <span className="absolute -top-4 left-1 text-[10px] text-white/50">{markerPos}m</span>
+            <span className="absolute -top-4 left-1 text-[10px] text-white/30 tabular-nums">{markerPos}m</span>
           </div>
         );
       })}
       
-      {/* finish line */}
       <div 
-        className={`absolute top-0 bottom-0 w-1 bg-white ${finishActive ? 'finish-line-active' : ''}`}
+        className={`absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_10px_white] ${finishActive ? 'finish-line-active' : ''}`}
         style={{ 
           left: `${((distance - cameraPos) / viewportWidth) * 100}%`,
         }}
       />
-      <div 
-        className="absolute top-0 text-xs text-white/70 px-1"
-        style={{ 
-          left: `${((distance - cameraPos) / viewportWidth) * 100}%`,
-          transform: 'translateX(-100%)',
-        }}
-      >
-        FIN
-      </div>
 
-      {/* Runners */}
       {runners.map((r, i) => {
         const relativePos = r.position - cameraPos;
         const screenPct = (relativePos / viewportWidth) * 100;
-        const isVisible = screenPct >= -10 && screenPct <= 110;
-        
-        if (!isVisible) return null;
+        if (screenPct < -10 || screenPct > 110) return null;
         
         const spriteUrl = getSpriteUrl(r.coatColor);
         const isAnimated = isAnimatedSprite(r.coatColor);
@@ -590,13 +535,11 @@ function Track({
             }}
           >
             <div className="flex items-center gap-2">
-              {/* Silk dot */}
               <div
-                className="h-4 w-4 rounded-full border border-white/60 flex-shrink-0"
+                className="h-4 w-4 rounded-full border border-white/60 flex-shrink-0 shadow-sm"
                 style={{ backgroundColor: r.silk }}
               />
               
-              {/* Horse sprite */}
               <HorseSprite 
                 runner={r} 
                 isRunning={isRunning} 
@@ -604,16 +547,14 @@ function Track({
                 isAnimated={isAnimated}
               />
               
-              {/* Name label */}
-              <span className={`text-xs whitespace-nowrap ${r.owned ? 'font-bold text-yellow-300' : 'text-white/80'}`}>
+              <span className={`text-xs whitespace-nowrap drop-shadow-md tabular-nums ${r.owned ? 'font-bold text-broadcast-accent' : 'text-white'}`}>
                 {r.name}
               </span>
               
-              {/* YOU badge */}
               {r.owned && (
-                <span className="text-[10px] font-bold bg-yellow-400 text-black px-1 rounded">
+                <Badge className="h-3.5 px-1 text-[8px] font-black bg-broadcast-accent text-black border-none">
                   YOU
-                </span>
+                </Badge>
               )}
             </div>
           </div>
@@ -623,9 +564,6 @@ function Track({
   );
 }
 
-// Horse sprite component with CSS animation
-// Animated sprites use 6-frame sprite sheets with background-position animation
-// Static sprites (roan/palomino/white) use bobbing animation when running
 function HorseSprite({
   runner,
   isRunning,
@@ -639,11 +577,8 @@ function HorseSprite({
 }) {
   const prefersReducedMotion = typeof window !== 'undefined' && 
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  
-  // Calculate animation duration based on velocity
   const animationDuration = getAnimationDuration(runner.velocity);
   
-  // For animated sprites (6-frame sheets)
   if (isAnimated && spriteUrl) {
     return (
       <div
@@ -656,7 +591,6 @@ function HorseSprite({
     );
   }
   
-  // For static sprites (single frame) - use bobbing animation
   if (spriteUrl) {
     return (
       <div
@@ -668,7 +602,6 @@ function HorseSprite({
     );
   }
   
-  // Fallback to silk circle if no sprite
   return (
     <div
       className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow"
@@ -677,6 +610,58 @@ function HorseSprite({
         animation: isRunning && !prefersReducedMotion ? "pulse 0.5s ease-in-out infinite" : undefined,
       }}
     />
+  );
+}
+
+function BroadcastCommentary({ commentary }: { commentary: CommentaryLine[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [commentary]);
+
+  // Only show last 3 for high density
+  const visibleLines = commentary.slice(-10);
+
+  return (
+    <div className="mt-4 bg-broadcast-marquee/60 backdrop-blur-md rounded-lg border border-white/10 overflow-hidden shadow-xl">
+      <div className="px-3 py-2 border-b border-white/10 bg-white/5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Mic2 className="h-3.5 w-3.5 text-broadcast-accent" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-white/80">Live Commentary</span>
+        </div>
+        <div className="flex gap-1">
+          <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+          <span className="text-[8px] font-bold text-red-500 uppercase tracking-tight">On Air</span>
+        </div>
+      </div>
+      <div 
+        ref={scrollRef}
+        className="h-24 overflow-y-auto p-3 space-y-2 scroll-smooth scrollbar-hide"
+      >
+        {visibleLines.map((line, i) => (
+          <div 
+            key={line.id} 
+            className={`text-xs transition-all duration-500 animate-in slide-in-from-bottom-2 fade-in ${
+              i === visibleLines.length - 1 ? "text-white font-medium" : "text-white/50"
+            }`}
+          >
+             <span className="text-[10px] tabular-nums mr-2 opacity-30">
+               {line.timestamp.toFixed(1)}s
+             </span>
+             {line.isHighImpact && <span className="mr-1 text-broadcast-accent font-bold">»</span>}
+             {line.text}
+          </div>
+        ))}
+        {commentary.length === 0 && (
+          <div className="h-full flex items-center justify-center">
+            <p className="text-[10px] text-white/30 italic uppercase tracking-wider">Awaiting start...</p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -692,27 +677,27 @@ function ResultOverlay({
   const PRIZE = [0.6, 0.25, 0.1, 0.05];
   const ordered = [...runners].sort((a, b) => (a.finishTime ?? 99) - (b.finishTime ?? 99));
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-      <div className="bg-card text-foreground rounded-lg shadow-xl max-w-md w-full p-6">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+      <div className="bg-card text-card-foreground rounded-xl shadow-2xl max-w-md w-full p-6 border border-white/10">
         <h2 className="text-2xl font-bold mb-1">{race.name}</h2>
         <p className="text-sm text-muted-foreground mb-4">Final result</p>
         <div className="space-y-2">
           {ordered.map((r, i) => {
             const prize = i < PRIZE.length ? Math.round(race.purse * PRIZE[i]) : 0;
             return (
-              <div key={r.horseId} className="flex items-center gap-3 py-1 border-b last:border-0">
-                <span className="w-6 font-bold tabular-nums">{i + 1}</span>
-                <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: r.silk }} />
-                <span className={`flex-1 ${r.owned ? "font-bold" : ""}`}>{r.name}</span>
+              <div key={r.horseId} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
+                <span className="w-6 font-bold tabular-nums text-muted-foreground">{i + 1}</span>
+                <div className="h-5 w-5 rounded-full border border-white/20" style={{ backgroundColor: r.silk }} />
+                <span className={`flex-1 truncate ${r.owned ? "font-bold text-success" : ""}`}>{r.name}</span>
                 <span className="text-xs text-muted-foreground tabular-nums">{r.finishTime?.toFixed(2)}s</span>
                 {prize > 0 && r.owned && (
-                  <span className="text-sm font-medium text-emerald-600 tabular-nums">+${prize.toLocaleString()}</span>
+                  <span className="text-sm font-bold text-success tabular-nums">+${prize.toLocaleString()}</span>
                 )}
               </div>
             );
           })}
         </div>
-        <Button onClick={onClose} className="w-full mt-5">Continue</Button>
+        <Button onClick={onClose} className="w-full mt-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold">Close results</Button>
       </div>
     </div>
   );

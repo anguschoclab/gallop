@@ -10,6 +10,7 @@ import { getDisplayableStats } from "@/game/scouting";
 import { KIND_LABELS } from "@/game/auction";
 import { Gavel, ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import type { AuctionLot } from "@/game/types";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/auction/$saleId")({
   component: AuctionSalePage,
@@ -59,11 +60,11 @@ function AuctionSalePage() {
     if (amount > cash) { setMessage("Insufficient funds."); return; }
     const result = bidInAuction(sale!.id, currentLot.id, amount);
     if (result.ok) {
-      setMessage(`✅ Bid of $${amount.toLocaleString()} placed.`);
+      setMessage(`Bid of $${amount.toLocaleString()} placed.`);
       setBidInput("");
       setMaxBid("");
     } else {
-      setMessage(`❌ ${result.reason}`);
+      setMessage(result.reason);
     }
   }
 
@@ -82,7 +83,7 @@ function AuctionSalePage() {
             ← Sales
           </Button>
           <h1 className="text-2xl font-bold">{sale.name}</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground tabular-nums">
             {gameCalendarDate(sale.day)} · {KIND_LABELS[sale.kind] ?? sale.kind}
             {isResolved && " · Resolved"}
           </p>
@@ -100,7 +101,7 @@ function AuctionSalePage() {
         <>
           {/* Lot navigation */}
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">
+            <span className="text-sm font-medium tabular-nums">
               Lot {lotIndex + 1} of {activeLots.length}
             </span>
             <div className="flex gap-1">
@@ -120,7 +121,7 @@ function AuctionSalePage() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <CardTitle className="text-xl">{horse.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground mt-0.5">
+                    <p className="text-sm text-muted-foreground mt-0.5 tabular-nums">
                       {horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀"}{" "}
                       {horse.gender.charAt(0).toUpperCase() + horse.gender.slice(1)} · Age {horse.age}
                       {horse.hemisphere === "Southern" ? " · Southern" : ""}
@@ -128,7 +129,7 @@ function AuctionSalePage() {
                   </div>
                   {currentLot.passed && <Badge variant="secondary">Passed</Badge>}
                   {!currentLot.passed && !isResolved && isPlayerLeading && (
-                    <Badge className="bg-emerald-600">You're leading</Badge>
+                    <Badge className="bg-success">You're leading</Badge>
                   )}
                   {!currentLot.passed && currentLot.soldToStableId && isResolved && (
                     <Badge variant="outline">
@@ -149,7 +150,7 @@ function AuctionSalePage() {
                 </div>
 
                 {/* Physical */}
-                <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm tabular-nums">
                   {horse.conformation && (
                     <div><span className="text-muted-foreground">Conformation: </span>{horse.conformation}</div>
                   )}
@@ -168,7 +169,7 @@ function AuctionSalePage() {
                 {displayStats && (
                   <div className="space-y-1">
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Stats</p>
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm tabular-nums">
                       {displayStats.speed !== undefined ? (
                         <div><span className="text-muted-foreground">Speed: </span>{displayStats.speed}</div>
                       ) : <div><span className="text-muted-foreground">Speed: </span><span className="italic text-muted-foreground">unknown</span></div>}
@@ -183,7 +184,7 @@ function AuctionSalePage() {
                       ) : <div><span className="text-muted-foreground">Consist.: </span><span className="italic text-muted-foreground">unknown</span></div>}
                     </div>
                     {displayStatsResult?.overallEstimate !== undefined && (
-                      <p className="text-xs text-muted-foreground">OVR ~{displayStatsResult.overallEstimate} (estimated)</p>
+                      <p className="text-xs text-muted-foreground tabular-nums">OVR ~{displayStatsResult.overallEstimate} (estimated)</p>
                     )}
                   </div>
                 )}
@@ -195,7 +196,7 @@ function AuctionSalePage() {
                   </p>
                 )}
                 {!consignor && !currentLot.consignorStableId && (
-                  <p className="text-xs text-emerald-600 font-medium">Your consignment</p>
+                  <p className="text-xs text-success font-medium">Your consignment</p>
                 )}
 
                 {/* Price */}
@@ -220,7 +221,7 @@ function AuctionSalePage() {
                         disabled={cash < nextBid}
                       >
                         <Gavel className="h-4 w-4 mr-2" />
-                        Bid ${nextBid.toLocaleString()}
+                        Bid <span className="tabular-nums">${nextBid.toLocaleString()}</span>
                       </Button>
 
                       {/* Custom bid */}
@@ -230,6 +231,7 @@ function AuctionSalePage() {
                           value={bidInput}
                           onChange={(e) => setBidInput(e.target.value)}
                           onKeyDown={(e) => { if (e.key === "Enter") bid(Number(bidInput.replace(/,/g, ""))); }}
+                          className="tabular-nums"
                         />
                         <Button variant="secondary" onClick={() => bid(Number(bidInput.replace(/,/g, "")))}>
                           Bid
@@ -243,6 +245,7 @@ function AuctionSalePage() {
                           value={maxBid}
                           onChange={(e) => setMaxBid(e.target.value)}
                           onKeyDown={(e) => { if (e.key === "Enter") handleMaxBid(); }}
+                          className="tabular-nums"
                         />
                         <Button variant="outline" onClick={handleMaxBid}>
                           Set Max
@@ -250,7 +253,7 @@ function AuctionSalePage() {
                       </div>
 
                       {message && (
-                        <p className="text-sm text-center" style={{ color: message.startsWith("✅") ? "var(--color-emerald-600)" : "var(--color-destructive)" }}>
+                        <p className={cn("text-sm text-center", message.includes("placed") ? "text-success" : "text-destructive")}>
                           {message}
                         </p>
                       )}
@@ -259,8 +262,8 @@ function AuctionSalePage() {
 
                   {isResolved && currentLot.hammerPrice && !currentLot.passed && (
                     <div className="flex items-center gap-2 text-sm">
-                      <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span>
+                      <Trophy className="h-4 w-4 text-fame" />
+                      <span className="tabular-nums">
                         Sold for <strong>${currentLot.hammerPrice.toLocaleString()}</strong>
                         {currentLot.soldToStableId
                           ? ` to ${stables.find((s) => s.id === currentLot.soldToStableId)?.name ?? "NPC"}`
@@ -285,7 +288,7 @@ function AuctionSalePage() {
               <CardHeader className="pb-2">
                 <CardTitle className="text-base">Sale Summary</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-1 text-sm">
+              <CardContent className="space-y-1 text-sm tabular-nums">
                 <p>Lots offered: <strong>{activeLots.length}</strong></p>
                 <p>Sold: <strong>{activeLots.filter((l) => !l.passed && l.hammerPrice).length}</strong></p>
                 <p>Passed: <strong>{activeLots.filter((l) => l.passed).length}</strong></p>

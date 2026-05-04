@@ -14,15 +14,15 @@ export function GradedStatsChart({ data }: GradedStatsChartProps) {
   const chartConfig = {
     runs: {
       label: "Runs",
-      color: "hsl(var(--muted))",
+      color: "var(--muted)",
     },
     wins: {
       label: "Wins",
-      color: "hsl(var(--primary))",
+      color: "var(--primary)",
     },
     places: {
       label: "Places",
-      color: "hsl(var(--secondary))",
+      color: "var(--secondary)",
     },
   };
 
@@ -34,9 +34,9 @@ export function GradedStatsChart({ data }: GradedStatsChartProps) {
           <YAxis tick={{ fill: "hsl(var(--muted-foreground))" }} />
           <Tooltip content={<ChartTooltipContent />} />
           <Legend />
-          <Bar dataKey="runs" fill="hsl(var(--muted))" name="Runs" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="wins" fill="hsl(var(--primary))" name="Wins" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="places" fill="hsl(var(--secondary))" name="Places" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="runs" fill="var(--muted)" name="Runs" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="wins" fill="var(--primary)" name="Wins" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="places" fill="var(--secondary)" name="Places" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </ChartContainer>

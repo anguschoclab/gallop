@@ -67,16 +67,16 @@ export function getRegionAccent(region: AwardRegion): string {
 
 // All region colors for UI use
 export const REGION_COLORS: Record<AwardRegion, { bg: string; accent: string }> = {
-  north_america: { bg: "#1E3A5F", accent: "#C9A227" },
-  europe: { bg: "#4B0082", accent: "#C0C0C0" },
-  asia_pacific: { bg: "#006400", accent: "#FFD700" },
-  south_america: { bg: "#8B0000", accent: "#FFD700" },
+  north_america: { bg: "var(--color-region-na-bg)", accent: "var(--color-region-na-accent)" },
+  europe: { bg: "var(--color-region-eu-bg)", accent: "var(--color-region-eu-accent)" },
+  asia_pacific: { bg: "var(--color-region-apac-bg)", accent: "var(--color-region-apac-accent)" },
+  south_america: { bg: "var(--color-region-sa-bg)", accent: "var(--color-region-sa-accent)" },
 };
 
 // Tailwind-compatible region color classes
 export const REGION_COLOR_CLASSES: Record<AwardRegion, string> = {
-  north_america: "bg-blue-500/10 border-blue-500/30 text-blue-700",
-  europe: "bg-purple-500/10 border-purple-500/30 text-purple-700",
-  asia_pacific: "bg-emerald-500/10 border-emerald-500/30 text-emerald-700",
-  south_america: "bg-red-500/10 border-red-500/30 text-red-700",
+  north_america: "bg-region-na-bg/10 border-region-na-bg/30 text-region-na-bg",
+  europe: "bg-region-eu-bg/10 border-region-eu-bg/30 text-region-eu-bg",
+  asia_pacific: "bg-region-apac-bg/10 border-region-apac-bg/30 text-region-apac-bg",
+  south_america: "bg-region-sa-bg/10 border-region-sa-bg/30 text-region-sa-bg",
 };
