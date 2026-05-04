@@ -1,29 +1,36 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { GameState, Horse, Race, Pregnancy, ScoutReport, AuctionSale } from "./types";
-import { generateHorse, generateRace, horsePrice, makeGradedRace } from "./horseGen";
+import type { Horse, Race, Pregnancy, ScoutReport, AuctionSale, GameState } from "./types";
 import { GRADED_RACES } from "./gradedRaces";
-import { beyerFigure, distanceBucket, setCalibratedPars } from "./beyer";
-import { loadRaceHistoryLimit } from "@/services/storageAdapter";
-import { loadGameState, saveGameState } from "@/services/storageAdapter";
-import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
-import { createRng, hashStr } from "./rng";
-import { resolveFoaling } from "./foalGen";
-import { generateUUID } from "./uuid";
+import { generateHorse, horsePrice, generateRace, makeGradedRace, horsePriceWithPedigree } from "./horseGen";
 import { generateAllStables } from "./npcStables";
 import { generateAllNpcHorses } from "./npcHorseGen";
 import { runNpcRaceEntry, runNpcTraining, updateHorseFame } from "./npcRaceEntry";
+import { isHorseEligibleForRace } from "@/core/race/eligibility";
+import { calculateOverallRating } from "@/core/horse/stats";
+import { createRng, hashStr } from "./rng";
+import { generateUpcomingRaces as generateScheduledRaces } from "./raceSchedule";
+import { TRACK_SCHEDULES } from "./tracks";
 import { scoutHorse as performScout } from "./scouting";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
+import { loadRaceHistoryLimit } from "@/services/storageAdapter";
+import { loadGameState, saveGameState } from "@/services/storageAdapter";
+import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
+import { generateUUID } from "./uuid";
+import { resolveFoaling } from "./foalGen";
+import { beyerFigure, distanceBucket, setCalibratedPars } from "./beyer";
 import { runRaceToCompletion } from "./raceSim";
 import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { isUniversalBirthday, isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { recalcStandingFee } from "@/core/breeding/stallions";
 import { awardsPhase } from "@/core/time/phases/awards";
 import { executePipeline, createPhase, type PipelineContext } from "@/core/time/pipeline";
 import { upkeepPhase } from "@/core/time/phases/upkeep";
 import { agingPhase } from "@/core/time/phases/aging";
+import { breedingSeasonPhase } from "@/core/time/phases/breedingSeason";
+import { npcBreedingPhase } from "@/core/time/phases/npcBreedingPhase";
 import { energyPhase } from "@/core/time/phases/energy";
 import { marketPhase } from "@/core/time/phases/market";
 import { racesPhase } from "@/core/time/phases/races";
@@ -127,26 +134,12 @@ export function refreshMarket(currentMarket: Horse[]): Horse[] {
 }
 
 export function generateUpcomingRaces(currentRaces: Race[], newDay: number): Race[] {
-  const races = [...currentRaces];
-  // Add new races 7 days out
-  const futureDay = newDay + 6;
-  const count = Math.random() < 0.7 ? 2 : 3;
-  for (let i = 0; i < count; i++) races.push(generateRace(futureDay));
-  // Top up real graded stakes whose dayOfYear falls in the upcoming 7-day window
-  for (let offset = 1; offset <= 7; offset++) {
-    const fday = newDay + offset;
-    const dY = ((fday - 1) % 365) + 1;
-    for (const g of GRADED_RACES) {
-      if (g.dayOfYear !== dY) continue;
-      if (races.some((r) => r.graded?.key === g.key && r.day === fday)) continue;
-      races.push(makeGradedRace(g, fday));
-    }
-  }
-  return races;
+  // Use the new track-based schedule system
+  return generateScheduledRaces(currentRaces, newDay, TRACK_SCHEDULES);
 }
 
 export function pruneOldRaces(races: Race[], newDay: number): Race[] {
-  return races.filter((r) => r.day >= newDay - 3);
+  return races.filter((r) => r.graded || r.day >= newDay - 3);
 }
 
 type PregnancyResult = {
@@ -292,6 +285,7 @@ type Actions = {
   withdrawRace: (raceId: string, horseId: string) => void;
   resolveRace: (raceId: string, result: { horseId: string; position: number; time: number }[]) => void;
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
+  retireToStud: (horseId: string, fee: number, bookSize: number) => ActionResult;
   advanceDay: () => void;
   advanceMultipleDays: (n: number, headless?: boolean) => void;
   advanceWeek: (headless?: boolean) => void;
@@ -552,16 +546,30 @@ export const useGame = create<GameState & Actions>()(
               earned += pay;
             }
           }
-          // Update dam's blue hen status if horse wins a stakes race. Prefer
-          // the ID-based pedigree link (set on player-bred and NPC-bred foals
-          // via Phase 0); fall back to name match for legacy/foundation horses
-          // that were never bred in-game.
+          // Update dam's blue hen status AND sire's stud record if horse wins
+          // a stakes race. Prefer ID-based pedigree links (set on player-bred
+          // and NPC-bred foals via Phase 0); fall back to name match for
+          // legacy/foundation horses that were never bred in-game.
           if (!r.dnf && r.position === 1 && (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")) {
             const damId = h.pedigree?.damId;
             const dam = damId
               ? s.horses.find((hh) => hh.id === damId)
               : s.horses.find((hh) => hh.name === h.damName);
             if (dam) updateBlueHenStatus(dam, race.graded?.grade);
+            // Sire stud-record progression — drives fee climbs over time.
+            const sireId = h.pedigree?.sireId;
+            if (sireId) {
+              const sire = s.horses.find((hh) => hh.id === sireId);
+              if (sire?.stud) {
+                sire.stud.lifetimeStakesFoals += 1;
+                if (race.graded?.grade === "G1") sire.stud.lifetimeG1Foals += 1;
+                sire.stud.standingFee = recalcStandingFee(
+                  sire.stud.standingFee,
+                  sire.stud.lifetimeStakesFoals,
+                  sire.stud.lifetimeG1Foals
+                );
+              }
+            }
           }
         }
         const ownerResults = ranked.filter((r) => s.horses.some((h) => h.id === r.horseId));
@@ -609,7 +617,23 @@ export const useGame = create<GameState & Actions>()(
         const eligibility: BreedResult = canBreed(sire, dam, s.day, s.pregnancies);
         if (!eligibility.ok) return fail(eligibility.reason);
 
-        const totalFee = BREEDING_FEE + (liveFoalGuarantee ? LIVE_FOAL_GUARANTEE_FEE : 0);
+        // External-stallion path: if the sire belongs to an NPC stable, charge
+        // the player the stud fee (in addition to base breeding fee), credit
+        // the stable, and increment the stallion's season-bookings counter.
+        const isExternal = !!sire!.stableId;
+        let studFee = 0;
+        if (isExternal) {
+          if (!sire!.stud?.atStud) return fail(`${sire!.name} is not standing at stud.`);
+          if (sire!.stud.seasonBookings >= sire!.stud.bookSize) {
+            return fail(`${sire!.name}'s book is full this season.`);
+          }
+          if (sire!.hemisphere !== dam!.hemisphere) {
+            return fail("Cross-hemisphere breeding is not supported.");
+          }
+          studFee = sire!.stud.standingFee;
+        }
+
+        const totalFee = BREEDING_FEE + (liveFoalGuarantee ? LIVE_FOAL_GUARANTEE_FEE : 0) + studFee;
         if (s.cash < totalFee) return fail("Insufficient cash for breeding fee.");
 
         const dueDay = s.day + GESTATION_DAYS;
@@ -624,13 +648,73 @@ export const useGame = create<GameState & Actions>()(
           reBreedingAttempts: 0,
           refunded: false,
         };
+
+        // Apply state changes: deduct player cash, credit stable cash if any,
+        // bump stallion's seasonBookings, append pregnancy.
+        const updatedHorses = s.horses.map((h) => {
+          if (isExternal && h.id === sire!.id && h.stud) {
+            return {
+              ...h,
+              stud: { ...h.stud, seasonBookings: h.stud.seasonBookings + 1 },
+            };
+          }
+          return h;
+        });
+        const updatedStables = isExternal
+          ? s.npcStables.map((stable) =>
+              stable.id === sire!.stableId ? { ...stable, cash: stable.cash + studFee } : stable
+            )
+          : s.npcStables;
+
         set({
           cash: s.cash - totalFee,
+          horses: updatedHorses,
+          npcStables: updatedStables,
           pregnancies: [preg, ...s.pregnancies],
           log: [
-            { day: s.day, text: `🐴 Mated ${sire!.name} × ${dam!.name} (foal due day ${dueDay}). Fee $${totalFee.toLocaleString()}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.` },
+            { day: s.day, text: `🐴 Mated ${sire!.name} × ${dam!.name} (foal due day ${dueDay}). Fee $${totalFee.toLocaleString()}${studFee ? ` (incl. $${studFee.toLocaleString()} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.` },
             ...s.log,
           ].slice(0, 50),
+        });
+        return { ok: true };
+      },
+
+      retireToStud: (horseId, fee, bookSize) => {
+        const s = get();
+        const horse = s.horses.find((h) => h.id === horseId);
+        const fail = (reason: string): ActionResult => {
+          set({ log: [{ day: s.day, text: `❌ Retire to stud: ${reason}` }, ...s.log].slice(0, 50) });
+          return { ok: false, reason };
+        };
+        if (!horse) return fail("Horse not found.");
+        if (!horse.owned) return fail("You don't own this horse.");
+        if (horse.gender !== "horse" && horse.gender !== "colt") return fail("Only colts and horses can be retired to stud.");
+        if (horse.age < 4) return fail("Stallions must be age 4+ to retire to stud.");
+        if (horse.stud?.atStud) return fail("Already standing at stud.");
+        // Block retirement if entered in any unresolved race
+        const enteredRaces = s.races.filter((r) => !r.resolved && r.entries.some((e) => e.horseId === horseId));
+        if (enteredRaces.length > 0) return fail("Withdraw from upcoming races before retiring.");
+
+        const updatedHorses = s.horses.map((h) =>
+          h.id === horseId
+            ? {
+                ...h,
+                stud: {
+                  atStud: true,
+                  standingFee: Math.max(500, fee),
+                  bookSize: Math.max(20, Math.min(250, bookSize)),
+                  seasonBookings: 0,
+                  lifetimeFoals: 0,
+                  lifetimeStakesFoals: 0,
+                  lifetimeG1Foals: 0,
+                  retiredOnDay: s.day,
+                },
+              }
+            : h
+        );
+        set({
+          horses: updatedHorses,
+          log: [{ day: s.day, text: `🏛️ ${horse.name} retired to stud at $${fee.toLocaleString()} (book ${bookSize}).` }, ...s.log].slice(0, 50),
         });
         return { ok: true };
       },
@@ -682,18 +766,23 @@ export const useGame = create<GameState & Actions>()(
         }
         
         const newDay = s.day + 1;
-        const upkeep = s.horses.length * UPKEEP_PER_HORSE;
-        
-        // Execute pipeline for all phases
+        const playerHorseCount = s.horses.filter((h) => !h.stableId).length;
+        const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
+
+        // Execute pipeline for all phases. The upkeep phase deducts both
+        // player and NPC-stable cash so the economy is symmetric.
         const pipelineContext: PipelineContext = {
           previousDay: s.day,
           newDay,
-          state: { ...s, cash: s.cash - upkeep },
+          state: s,
           logs: [],
         };
-        
+
         const phases = [
+          upkeepPhase,
           agingPhase,
+          breedingSeasonPhase,
+          npcBreedingPhase,
           energyPhase,
           marketPhase,
           racesPhase,
@@ -704,12 +793,12 @@ export const useGame = create<GameState & Actions>()(
           awardsPhase,
           stateUpdatePhase,
         ];
-        
+
         const updatedContext = executePipeline(phases, pipelineContext);
-        
+
         // Extract final state from pipeline context
         const { state: finalState, logs: newLogs } = updatedContext;
-        
+
         set({
           day: newDay,
           cash: finalState.cash,
@@ -723,7 +812,12 @@ export const useGame = create<GameState & Actions>()(
           npcStables: finalState.npcStables,
           scoutReports: finalState.scoutReports,
           auctions: finalState.auctions,
-          log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
+          awards: finalState.awards,
+          lastAwardYear: finalState.lastAwardYear,
+          pendingAwardCeremonies: finalState.pendingAwardCeremonies,
+          industryMeanEarnings: finalState.industryMeanEarnings,
+          industryEarningsUpdatedDay: finalState.industryEarningsUpdatedDay,
+          log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` }, ...s.log].slice(0, 50),
         });
       },
 
@@ -795,7 +889,7 @@ export const useGame = create<GameState & Actions>()(
                       horseId,
                       consignorStableId: undefined,
                       saleId,
-                      reservePrice: Math.round(horsePrice(horse) * 0.7),
+                      reservePrice: Math.round(horsePriceWithPedigree(horse, s.horses) * 0.7),
                       passed: false,
                       withdrawn: false,
                     },

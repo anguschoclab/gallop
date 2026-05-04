@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { GRADED_RACES, type Grade } from "@/game/gradedRaces";
+import { useGame } from "@/game/store";
+import { type Grade } from "@/game/gradedRaces";
 import { getGradeColorClass } from "@/core/race/grading";
-import { formatDate as coreFormatDate } from "@/core/calendar/dateFormatting";
 
 const TRIPLE_CROWN_KEYS = new Set([
   "ca-kings-plate",
@@ -22,15 +22,16 @@ export const Route = createFileRoute("/track-schedule")({
 function TrackSchedulePage() {
   const [gradeFilter, setGradeFilter] = useState<Grade | "all">("all");
   const [tripleCrownFilter, setTripleCrownFilter] = useState<boolean | "all">("all");
+  const races = useGame((s) => s.races);
 
-  const canadianRaces = GRADED_RACES.filter((race) =>
-    CANADIAN_TRACKS.includes(race.track as any)
+  const canadianRaces = races.filter((race) =>
+    race.graded && CANADIAN_TRACKS.includes(race.graded.track as any)
   );
 
   const filteredRaces = canadianRaces.filter((race) => {
-    if (gradeFilter !== "all" && race.grade !== gradeFilter) return false;
+    if (gradeFilter !== "all" && race.graded?.grade !== gradeFilter) return false;
     if (tripleCrownFilter !== "all") {
-      const isTripleCrown = TRIPLE_CROWN_KEYS.has(race.key);
+      const isTripleCrown = TRIPLE_CROWN_KEYS.has(race.graded?.key ?? "");
       if (tripleCrownFilter && !isTripleCrown) return false;
       if (!tripleCrownFilter && isTripleCrown) return false;
     }
@@ -40,8 +41,8 @@ function TrackSchedulePage() {
   // Group races by track
   const racesByTrack = CANADIAN_TRACKS.reduce((acc, track) => {
     const trackRaces = filteredRaces
-      .filter((race) => race.track === track)
-      .sort((a, b) => a.dayOfYear - b.dayOfYear);
+      .filter((race) => race.graded?.track === track)
+      .sort((a, b) => a.day - b.day);
     if (trackRaces.length > 0) {
       acc[track] = trackRaces;
     }
@@ -135,30 +136,35 @@ function TrackSchedulePage() {
           </CardHeader>
           <CardContent className="space-y-2">
             {races.map((race) => {
-              const isTripleCrown = TRIPLE_CROWN_KEYS.has(race.key);
+              const isTripleCrown = TRIPLE_CROWN_KEYS.has(race.graded?.key ?? "");
+              const hasOwnedEntry = race.entries.some((e) => e.owned);
               return (
                 <div
-                  key={race.key}
+                  key={race.id}
                   className={`flex items-start justify-between gap-4 p-3 rounded-lg border ${
-                    isTripleCrown ? "border-l-4 border-l-purple-500 bg-purple-50/50" : ""
+                    isTripleCrown ? "border-l-4 border-l-purple-500 bg-purple-50/50" : hasOwnedEntry ? "border-l-4 border-l-emerald-500 bg-emerald-50/50" : ""
                   }`}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <h3 className="font-semibold">{race.name}</h3>
-                      <Badge variant="outline" className={getGradeColorClass(race.grade)}>
-                        {race.grade}
-                      </Badge>
+                      {race.graded?.grade && (
+                        <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
+                          {race.graded.grade}
+                        </Badge>
+                      )}
                       {isTripleCrown && (
                         <Badge className="bg-purple-500/20 text-purple-700 border-purple-500/40">
                           Triple Crown
                         </Badge>
                       )}
-                      {race.note && <Badge variant="secondary">{race.note}</Badge>}
+                      {hasOwnedEntry && (
+                        <Badge className="bg-emerald-600 text-white">Entered</Badge>
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                       <span>{race.distance}m</span>
-                      <span>{race.surface}</span>
+                      <span>{race.graded?.surface}</span>
                       <span>
                         Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
                       </span>
@@ -177,7 +183,7 @@ function TrackSchedulePage() {
                     </div>
                   </div>
                   <div className="text-right text-sm">
-                    <div className="font-medium">{coreFormatDate(race.dayOfYear)}</div>
+                    <div className="font-medium">Day {race.day}</div>
                   </div>
                 </div>
               );

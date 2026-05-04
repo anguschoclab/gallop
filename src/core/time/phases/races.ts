@@ -3,7 +3,8 @@ import { generateUpcomingRaces, pruneOldRaces } from "@/game/store";
 
 /**
  * Phase: Race Generation and Pruning
- * Generate upcoming races (7 days ahead) and prune old races (older than 3 days)
+ * Generate upcoming races (7 days ahead) and prune old non-graded races (older than 3 days)
+ * Graded stakes races are preserved indefinitely to support calendar views
  */
 export const racesPhase = {
   name: "races",

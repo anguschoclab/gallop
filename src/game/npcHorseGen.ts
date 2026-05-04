@@ -13,6 +13,8 @@ import {
   randomHorseName,
   randomSilk,
 } from "@/core/common/random";
+import { shouldRetireAtStartup, initialStandingFee, defaultStudParams } from "@/core/breeding/stallions";
+import { rollProceduralFamily, RUNNING_FAMILIES } from "@/core/breeding/bruceLowe";
 
 /**
  * Get tier-based stat ranges
@@ -114,6 +116,11 @@ export function generateNpcHorse(
   const consistency = rand(statMin, statMax);
   
   const stats = { speed, stamina, acceleration, consistency };
+  const bruceLoweFamily = rollProceduralFamily();
+  if (RUNNING_FAMILIES.has(bruceLoweFamily)) {
+    stats.speed = Math.min(100, stats.speed + 1);
+    stats.acceleration = Math.min(100, stats.acceleration + 1);
+  }
   const runningStyle = rollRunningStyle(stats);
   
   // Use stable colors for silk
@@ -142,6 +149,7 @@ export function generateNpcHorse(
     runningStyle,
     stableId,
     fame: calculateStartingFame(tier, age),
+    bruceLoweFamily,
     // No scoutedStats initially - fog of war applies
   };
 }
@@ -189,24 +197,42 @@ export function generateStableHorses(stable: Stable): Horse[] {
 
 /**
  * Generate horses for all stables
- * Returns both the updated stables and all generated horses
+ * Returns both the updated stables and all generated horses.
+ * Retires eligible stallions to stud at world-gen time so the player has
+ * a roster to book against from day 1 (instead of waiting for in-game
+ * retirements to seed the stallion market).
  */
 export function generateAllNpcHorses(stables: Stable[]): { stables: Stable[]; horses: Horse[] } {
   const updatedStables: Stable[] = [];
   const allHorses: Horse[] = [];
-  
+
   for (const stable of stables) {
     const horses = generateStableHorses(stable);
+    for (const horse of horses) {
+      if (shouldRetireAtStartup(horse, stable)) {
+        const { bookSize } = defaultStudParams(stable.tier);
+        horse.stud = {
+          atStud: true,
+          standingFee: initialStandingFee(horse, stable.tier),
+          bookSize,
+          seasonBookings: 0,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 1,
+        };
+      }
+    }
     const horseIds = horses.map(h => h.id);
-    
+
     updatedStables.push({
       ...stable,
       horses: horseIds
     });
-    
+
     allHorses.push(...horses);
   }
-  
+
   return { stables: updatedStables, horses: allHorses };
 }
 

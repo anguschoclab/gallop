@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { overall, SilkBadge } from "@/components/HorseBits";
 import { Trophy } from "lucide-react";
+import { getGradeColorClass } from "@/core/race/grading";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
@@ -20,6 +21,20 @@ function Dashboard() {
   const myRunning = upcoming.filter((r) => r.entries.some((e) => e.owned));
   const playerAwards = awards?.filter((a) => !a.stableId) ?? [];
   const hotyCount = playerAwards.filter((a) => a.category === "horse_of_the_year").length;
+
+  // Calculate grade breakdown for upcoming races
+  const grades = ["G1", "G2", "G3"] as const;
+  const gradeData = grades.map((grade) => {
+    const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
+    const owned = gradeRaces.filter((r) => r.entries.some((e) => e.owned)).length;
+    return { grade, owned };
+  });
+
+  const gradeLabelColor: Record<"G1" | "G2" | "G3", string> = {
+    G1: "text-yellow-700 border-yellow-500/40 bg-yellow-500/10",
+    G2: "text-slate-600 border-slate-400/40 bg-slate-400/10",
+    G3: "text-amber-800 border-amber-700/40 bg-amber-700/10",
+  };
 
   return (
     <div className="space-y-6">
@@ -54,6 +69,23 @@ function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Grade Targets</CardTitle></CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 gap-2">
+            {gradeData.map(({ grade, owned }) => (
+              <div key={grade} className="text-center">
+                <div className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold mb-1 ${gradeLabelColor[grade]}`}>
+                  {grade}
+                </div>
+                <div className="text-lg font-bold tabular-nums">{owned}</div>
+                <div className="text-xs text-muted-foreground">entries</div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>

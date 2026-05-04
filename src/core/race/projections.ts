@@ -1,7 +1,6 @@
 import type { Horse, Race } from "@/game/types";
 import type { Grade } from "@/game/gradedRaces";
-import { calculateClassBonus } from "@/core/common/classBonus";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateProjectedBeyer } from "./beyerProjections";
 
 /**
  * Pure Beyer projection logic
@@ -23,12 +22,10 @@ export function calculateBeyerProjections(
   race: Race,
   ownedHorseIds: Set<string>
 ): BeyerProjection[] {
-  const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
-
   return horses
     .filter((horse) => ownedHorseIds.has(horse.id))
     .map((horse) => {
-      const expectedBeyer = calculateExpectedBeyer(horse, race.distance, classBonus);
+      const expectedBeyer = calculateProjectedBeyer(horse, race);
       return {
         horseId: horse.id,
         horseName: horse.name,
@@ -36,17 +33,6 @@ export function calculateBeyerProjections(
         isOwned: ownedHorseIds.has(horse.id),
       };
     });
-}
-
-/**
- * Calculate expected Beyer for a horse
- * Based on overall rating, class bonus, and distance
- */
-function calculateExpectedBeyer(horse: Horse, distance: number, classBonus: number): number {
-  const overall = calculateOverallRating(horse);
-  const baseBeyer = overall * 1.2;
-  const distanceFactor = distance >= 1600 ? 5 : distance >= 1200 ? 2 : 0;
-  return Math.round(baseBeyer + classBonus + distanceFactor);
 }
 
 /**

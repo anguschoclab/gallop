@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UaeCalendarRouteImport } from './routes/uae-calendar'
 import { Route as TrackScheduleRouteImport } from './routes/track-schedule'
+import { Route as StallionsRouteImport } from './routes/stallions'
 import { Route as StableRouteImport } from './routes/stable'
 import { Route as SouthAmericanCalendarRouteImport } from './routes/south-american-calendar'
 import { Route as ScandinavianCalendarRouteImport } from './routes/scandinavian-calendar'
@@ -40,6 +41,11 @@ const UaeCalendarRoute = UaeCalendarRouteImport.update({
 const TrackScheduleRoute = TrackScheduleRouteImport.update({
   id: '/track-schedule',
   path: '/track-schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StallionsRoute = StallionsRouteImport.update({
+  id: '/stallions',
+  path: '/stallions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StableRoute = StableRouteImport.update({
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
   '/south-american-calendar': typeof SouthAmericanCalendarRoute
   '/stable': typeof StableRouteWithChildren
+  '/stallions': typeof StallionsRoute
   '/track-schedule': typeof TrackScheduleRoute
   '/uae-calendar': typeof UaeCalendarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
   '/south-american-calendar': typeof SouthAmericanCalendarRoute
   '/stable': typeof StableRouteWithChildren
+  '/stallions': typeof StallionsRoute
   '/track-schedule': typeof TrackScheduleRoute
   '/uae-calendar': typeof UaeCalendarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
   '/south-american-calendar': typeof SouthAmericanCalendarRoute
   '/stable': typeof StableRouteWithChildren
+  '/stallions': typeof StallionsRoute
   '/track-schedule': typeof TrackScheduleRoute
   '/uae-calendar': typeof UaeCalendarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/scandinavian-calendar'
     | '/south-american-calendar'
     | '/stable'
+    | '/stallions'
     | '/track-schedule'
     | '/uae-calendar'
     | '/auction/$saleId'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/scandinavian-calendar'
     | '/south-american-calendar'
     | '/stable'
+    | '/stallions'
     | '/track-schedule'
     | '/uae-calendar'
     | '/auction/$saleId'
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '/scandinavian-calendar'
     | '/south-american-calendar'
     | '/stable'
+    | '/stallions'
     | '/track-schedule'
     | '/uae-calendar'
     | '/auction/$saleId'
@@ -305,6 +317,7 @@ export interface RootRouteChildren {
   ScandinavianCalendarRoute: typeof ScandinavianCalendarRoute
   SouthAmericanCalendarRoute: typeof SouthAmericanCalendarRoute
   StableRoute: typeof StableRouteWithChildren
+  StallionsRoute: typeof StallionsRoute
   TrackScheduleRoute: typeof TrackScheduleRoute
   UaeCalendarRoute: typeof UaeCalendarRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/track-schedule'
       fullPath: '/track-schedule'
       preLoaderRoute: typeof TrackScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stallions': {
+      id: '/stallions'
+      path: '/stallions'
+      fullPath: '/stallions'
+      preLoaderRoute: typeof StallionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stable': {
@@ -521,6 +541,7 @@ const rootRouteChildren: RootRouteChildren = {
   ScandinavianCalendarRoute: ScandinavianCalendarRoute,
   SouthAmericanCalendarRoute: SouthAmericanCalendarRoute,
   StableRoute: StableRouteWithChildren,
+  StallionsRoute: StallionsRoute,
   TrackScheduleRoute: TrackScheduleRoute,
   UaeCalendarRoute: UaeCalendarRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,

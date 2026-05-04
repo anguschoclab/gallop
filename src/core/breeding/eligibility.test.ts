@@ -82,6 +82,23 @@ describe("canBreed", () => {
     expect(canBreed(sire, recovered, 50 + MARE_RECOVERY_DAYS, []).ok).toBe(true);
   });
 
+  it("rejects out-of-season breeding (Northern winter)", () => {
+    // Day 1 = DoY 1, Northern season is DoY 36-167. Out of season.
+    const r = canBreed(sire, dam, 1, []);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.reason).toMatch(/season/i);
+  });
+
+  it("Southern hemisphere mare follows Southern season window", () => {
+    const southDam = mkHorse({ id: "sdam", gender: "mare", hemisphere: "Southern" });
+    // Day 100 = Northern season but NOT Southern (Southern: DoY 244-350)
+    const offSeason = canBreed(sire, southDam, 100, []);
+    expect(offSeason.ok).toBe(false);
+    // Day 270 = Southern season
+    const inSeason = canBreed(sire, southDam, 270, []);
+    expect(inSeason.ok).toBe(true);
+  });
+
   it("rejects covering-sickness parent", () => {
     const sick = mkHorse({ id: "sick", gender: "mare", healthStatus: "covering_sickness" });
     const r = canBreed(sire, sick, 100, []);

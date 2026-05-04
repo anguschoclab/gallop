@@ -12,6 +12,7 @@ export const STORAGE_KEYS = {
   GAME_STATE_FALLBACK: "gallop_game_state_fallback",
   RACE_FILTERS: "gallop_race_filters",
   RACE_HISTORY_LIMIT: "gallop_race_history_limit",
+  RACES_DAY_JUMP: "gallop_races_day_jump",
 } as const;
 
 const GAME_STATE_FILENAME = 'gameState.json';
@@ -167,12 +168,39 @@ export function saveRaceHistoryLimit(limit: number): void {
 }
 
 /**
+ * Load day jump value from localStorage (always localStorage)
+ */
+export function loadDayJump(): string | undefined {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.RACES_DAY_JUMP);
+    if (stored) {
+      return stored;
+    }
+  } catch (error) {
+    console.error('Failed to load day jump from localStorage:', error);
+  }
+  return undefined;
+}
+
+/**
+ * Save day jump value to localStorage (always localStorage)
+ */
+export function saveDayJump(value: string): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.RACES_DAY_JUMP, value);
+  } catch (error) {
+    console.error('Failed to save day jump to localStorage:', error);
+  }
+}
+
+/**
  * Clear all settings from localStorage
  */
 export function clearSettings(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.RACE_FILTERS);
     localStorage.removeItem(STORAGE_KEYS.RACE_HISTORY_LIMIT);
+    localStorage.removeItem(STORAGE_KEYS.RACES_DAY_JUMP);
   } catch (error) {
     console.error('Failed to clear settings from localStorage:', error);
   }

@@ -3,9 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { GRADED_RACES, type Grade } from "@/game/gradedRaces";
+import { useGame } from "@/game/store";
+import { type Grade } from "@/game/gradedRaces";
 import { getGradeColorClass } from "@/core/race/grading";
-import { getMonthName as coreGetMonthName, formatDate as coreFormatDate } from "@/core/calendar/dateFormatting";
+import { getMonthName as coreGetMonthName } from "@/core/calendar/dateFormatting";
 
 const SOUTH_AMERICAN_TRACKS = new Set([
   "Hipódromo de San Isidro",
@@ -24,19 +25,21 @@ export const Route = createFileRoute("/south-american-calendar")({
 
 function SouthAmericanCalendarPage() {
   const [gradeFilter, setGradeFilter] = useState<Grade | "all">("all");
+  const races = useGame((s) => s.races);
 
-  const southAmericanRaces = GRADED_RACES.filter((race) =>
-    SOUTH_AMERICAN_TRACKS.has(race.track)
+  const southAmericanRaces = races.filter((race) =>
+    race.graded && SOUTH_AMERICAN_TRACKS.has(race.graded.track)
   );
 
   const filteredRaces = southAmericanRaces.filter((race) => {
-    if (gradeFilter !== "all" && race.grade !== gradeFilter) return false;
+    if (gradeFilter !== "all" && race.graded?.grade !== gradeFilter) return false;
     return true;
   });
 
   // Group races by month
   const racesByMonth = filteredRaces.reduce((acc, race) => {
-    const monthName = coreGetMonthName(race.dayOfYear);
+    const dayOfYear = ((race.day - 1) % 365) + 1;
+    const monthName = coreGetMonthName(dayOfYear);
     if (!acc[monthName]) acc[monthName] = [];
     acc[monthName].push(race);
     return acc;
@@ -102,46 +105,55 @@ function SouthAmericanCalendarPage() {
           </CardHeader>
           <CardContent className="space-y-2">
             {races
-              .sort((a, b) => a.dayOfYear - b.dayOfYear)
-              .map((race) => (
-                <div
-                  key={race.key}
-                  className="flex items-start justify-between gap-4 p-3 rounded-lg border"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <h3 className="font-semibold">{race.name}</h3>
-                      <Badge variant="outline" className={getGradeColorClass(race.grade)}>
-                        {race.grade}
-                      </Badge>
-                      {race.note && <Badge variant="secondary">{race.note}</Badge>}
-                    </div>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                      <span>{race.track}</span>
-                      <span>{race.distance}m</span>
-                      <span>{race.surface}</span>
-                      <span>
-                        Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
-                      </span>
-                      {race.restrictions?.minAge !== undefined && (
+              .sort((a, b) => a.day - b.day)
+              .map((race) => {
+                const hasOwnedEntry = race.entries.some((e) => e.owned);
+                return (
+                  <div
+                    key={race.id}
+                    className={`flex items-start justify-between gap-4 p-3 rounded-lg border ${
+                      hasOwnedEntry ? "border-l-4 border-l-emerald-500 bg-emerald-50/50" : ""
+                    }`}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <h3 className="font-semibold">{race.name}</h3>
+                        {race.graded?.grade && (
+                          <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
+                            {race.graded.grade}
+                          </Badge>
+                        )}
+                        {hasOwnedEntry && (
+                          <Badge className="bg-emerald-600 text-white">Entered</Badge>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                        <span>{race.graded?.track}</span>
+                        <span>{race.distance}m</span>
+                        <span>{race.graded?.surface}</span>
                         <span>
-                          {race.restrictions.minAge === race.restrictions.maxAge
-                            ? `${race.restrictions.minAge}YO only`
-                            : race.restrictions.maxAge
-                            ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
-                            : `${race.restrictions.minAge}+ YO`}
+                          Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
                         </span>
-                      )}
-                      {race.restrictions?.gender && (
-                        <span>{race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only</span>
-                      )}
+                        {race.restrictions?.minAge !== undefined && (
+                          <span>
+                            {race.restrictions.minAge === race.restrictions.maxAge
+                              ? `${race.restrictions.minAge}YO only`
+                              : race.restrictions.maxAge
+                              ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
+                              : `${race.restrictions.minAge}+ YO`}
+                          </span>
+                        )}
+                        {race.restrictions?.gender && (
+                          <span>{race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right text-sm">
+                      <div className="font-medium">Day {race.day}</div>
                     </div>
                   </div>
-                  <div className="text-right text-sm">
-                    <div className="font-medium">{coreFormatDate(race.dayOfYear)}</div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
           </CardContent>
         </Card>
       ))}

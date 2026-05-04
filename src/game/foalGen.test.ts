@@ -68,15 +68,47 @@ describe("resolveFoaling", () => {
   });
 
   it("complication outcomes have a recognized type", () => {
+    const validTypes = [
+      "stillborn",
+      "unable to stand",
+      "early loss",
+      "mid loss",
+      "lethal recessive",
+      "twin reduction (single survivor)",
+    ];
     let saw = false;
     for (let i = 0; i < 500 && !saw; i++) {
       const outcome = resolveFoaling(mkPregnancy(`preg-c-${i}`), sire, dam);
       if (outcome.kind === "complication") {
         saw = true;
-        expect(["stillborn", "unable to stand"]).toContain(outcome.type);
+        expect(validTypes).toContain(outcome.type);
       }
     }
-    // 5% rate over 500 trials → all-or-nothing failure unrealistic; sanity check.
     expect(saw).toBe(true);
+  });
+
+  it("ages mares scale complication risk: 20yo dam fails much more often than 5yo dam", () => {
+    const youngDam = { ...dam, age: 5 };
+    const oldDam = { ...dam, age: 20 };
+    let youngFails = 0, oldFails = 0;
+    for (let i = 0; i < 500; i++) {
+      if (resolveFoaling(mkPregnancy(`y-${i}`), sire, youngDam).kind === "complication") youngFails++;
+      if (resolveFoaling(mkPregnancy(`o-${i}`), sire, oldDam).kind === "complication") oldFails++;
+    }
+    // Loose floor — randomness can swing things, but old should be clearly higher.
+    expect(oldFails).toBeGreaterThan(youngFails);
+  });
+
+  it("lethal recessive: both-carrier pair produces complications at meaningfully higher rate than non-carrier pair", () => {
+    const carrierSire = { ...sire, geneticMarkers: { ...sire.geneticMarkers!, lethalCarriers: { csnb: true, hypp: false, olws: false } } };
+    const carrierDam = { ...dam, geneticMarkers: { ...dam.geneticMarkers!, lethalCarriers: { csnb: true, hypp: false, olws: false } } };
+    const cleanSire = { ...sire, geneticMarkers: { ...sire.geneticMarkers!, lethalCarriers: { csnb: false, hypp: false, olws: false } } };
+    const cleanDam = { ...dam, geneticMarkers: { ...dam.geneticMarkers!, lethalCarriers: { csnb: false, hypp: false, olws: false } } };
+    let bothFails = 0, cleanFails = 0;
+    for (let i = 0; i < 500; i++) {
+      if (resolveFoaling(mkPregnancy(`b-${i}`), carrierSire, carrierDam).kind === "complication") bothFails++;
+      if (resolveFoaling(mkPregnancy(`c-${i}`), cleanSire, cleanDam).kind === "complication") cleanFails++;
+    }
+    expect(bothFails).toBeGreaterThan(cleanFails);
   });
 });

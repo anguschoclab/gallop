@@ -1,4 +1,6 @@
 import type { Horse, Pregnancy } from "@/game/types";
+import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { dayOfYear, formatDate } from "@/core/calendar/dateFormatting";
 
 export type BreedResult = { ok: true } | { ok: false, reason: string };
 
@@ -56,6 +58,15 @@ export function canBreed(
   if (typeof dam.lastFoaledDay === "number" && day - dam.lastFoaledDay < MARE_RECOVERY_DAYS) {
     const remaining = MARE_RECOVERY_DAYS - (day - dam.lastFoaledDay);
     return { ok: false, reason: `${dam.name} is recovering (${remaining} days remaining).` };
+  }
+
+  // Breeding season — gate by the dam's hemisphere. Breeders ship mares to
+  // hemisphere-matched stallions, so the dam's season is the one that
+  // matters. Out-of-season requests are rejected with the next-open date.
+  if (!inBreedingSeason(day, dam.hemisphere)) {
+    const next = nextBreedingSeasonStart(day, dam.hemisphere);
+    const opensOn = formatDate(dayOfYear(next));
+    return { ok: false, reason: `Out of ${dam.hemisphere} breeding season. Opens ${opensOn}.` };
   }
 
   return { ok: true };

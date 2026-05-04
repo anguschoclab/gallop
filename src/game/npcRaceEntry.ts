@@ -5,6 +5,7 @@ import type { Horse, Race, Stable, StableTier } from "./types";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { PERSONALITY_CONFIG } from "./npcStables";
+import { isHorseEligibleForClaimingPrice, getSuggestedClaimingPriceRange } from "./claiming";
 
 // Entry limits per stable per race
 const MAX_HORSES_PER_STABLE_PER_RACE = 2;
@@ -120,7 +121,42 @@ function calculateRaceSuitability(horse: Horse, race: Race, stable: Stable): num
   } else if (race.graded?.grade === "G3") {
     score += 5 + (personality.gradedRaceBonus * 0.2);
   }
-  
+
+  // Claiming race logic - trader personality loves claiming races
+  if (race.claimingPrice) {
+    if (stable.personality === "trader") {
+      score += 20; // Traders actively seek claiming opportunities
+    } else {
+      score -= 5; // Other personalities avoid claiming risk
+    }
+
+    // Check if horse is appropriately priced for claiming level
+    const isEligible = isHorseEligibleForClaimingPrice(horse, race.claimingPrice, []);
+    if (!isEligible) {
+      score -= 30; // Heavy penalty for over-qualified horses
+    } else {
+      // Bonus for well-matched claiming prices
+      const [minPrice, maxPrice] = getSuggestedClaimingPriceRange(horse);
+      if (race.claimingPrice >= minPrice && race.claimingPrice <= maxPrice) {
+        score += 10;
+      }
+    }
+  }
+
+  // Optional claiming - good middle ground
+  if (race.raceClass === "OptionalClaiming") {
+    score += 5; // Slight bonus for flexibility
+  }
+
+  // Starter allowance/starter handicap - good for horses moving up
+  if (race.raceClass === "StarterAllowance" || race.raceClass === "StarterHandicap") {
+    // Check if horse has claiming race history
+    const hasClaimingHistory = horse.raceHistory.some(r => r.purse && r.purse < 10000);
+    if (hasClaimingHistory) {
+      score += 15; // Bonus for horses trying to move up from claiming company
+    }
+  }
+
   return score;
 }
 

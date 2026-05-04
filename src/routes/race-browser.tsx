@@ -8,8 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GRADED_RACES, type GradedRace, Grade } from "@/game/gradedRaces";
-import { getRaceCountry } from "@/game/gradedRaces";
+import { useGame } from "@/game/store";
+import { type Grade } from "@/game/gradedRaces";
+import { getCountry } from "@/game/gradedRaces";
 import { getGradeColorClass } from "@/core/race/grading";
 import { useState, useMemo } from "react";
 
@@ -27,10 +28,6 @@ const DISTANCE_OPTIONS: { value: DistanceFilter; label: string; min?: number; ma
   { value: "stayer", label: "Stayer (> 2400m)", min: 2401 },
 ];
 
-// Extract unique countries and tracks from the data once
-const allCountries = Array.from(new Set(GRADED_RACES.map((r) => getRaceCountry(r)))).sort();
-const allTracks = Array.from(new Set(GRADED_RACES.map((r) => r.track))).sort();
-
 export const Route = createFileRoute("/race-browser")({
   component: RaceBrowser,
 });
@@ -40,17 +37,28 @@ function RaceBrowser() {
   const [countryFilter, setCountryFilter] = useState<CountryFilter>("all");
   const [trackFilter, setTrackFilter] = useState<TrackFilter>("all");
   const [distanceFilter, setDistanceFilter] = useState<DistanceFilter>("all");
+  const races = useGame((s) => s.races);
+
+  // Extract unique countries and tracks from live race data
+  const allCountries = useMemo(() => {
+    return Array.from(new Set(races.filter(r => r.graded).map((r) => getCountry(r.graded!.track)))).sort();
+  }, [races]);
+  const allTracks = useMemo(() => {
+    return Array.from(new Set(races.filter(r => r.graded).map((r) => r.graded?.track))).filter((t): t is string => Boolean(t)).sort();
+  }, [races]);
 
   const filteredRaces = useMemo(() => {
-    return GRADED_RACES.filter((race) => {
+    return races.filter((race) => {
+      if (!race.graded) return false;
+      
       // Grade filter
-      if (gradeFilter !== "all" && race.grade !== gradeFilter) return false;
+      if (gradeFilter !== "all" && race.graded.grade !== gradeFilter) return false;
 
       // Country filter
-      if (countryFilter !== "all" && getRaceCountry(race) !== countryFilter) return false;
+      if (countryFilter !== "all" && getCountry(race.graded.track) !== countryFilter) return false;
 
       // Track filter
-      if (trackFilter !== "all" && race.track !== trackFilter) return false;
+      if (trackFilter !== "all" && race.graded.track !== trackFilter) return false;
 
       // Distance filter
       const distanceOption = DISTANCE_OPTIONS.find((opt) => opt.value === distanceFilter);
@@ -61,7 +69,7 @@ function RaceBrowser() {
 
       return true;
     });
-  }, [gradeFilter, countryFilter, trackFilter, distanceFilter]);
+  }, [gradeFilter, countryFilter, trackFilter, distanceFilter, races]);
 
   const gradeLabel: Record<GradeFilter, string> = {
     all: "All grades",
@@ -169,7 +177,7 @@ function RaceBrowser() {
 
       {/* Results count */}
       <div className="text-sm text-muted-foreground">
-        Showing {filteredRaces.length} of {GRADED_RACES.length} races
+        Showing {filteredRaces.length} of {races.filter(r => r.graded).length} graded stakes races
       </div>
 
       {/* Race list */}
@@ -181,71 +189,74 @@ function RaceBrowser() {
             </CardContent>
           </Card>
         ) : (
-          filteredRaces.map((race) => (
-            <Card key={race.key} className="border-l-4 border-l-primary">
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      <h3 className="text-lg font-bold">{race.name}</h3>
-                      <Badge variant="outline" className={getGradeColorClass(race.grade)}>
-                        {race.grade}
-                      </Badge>
-                      {race.note && (
-                        <Badge variant="secondary" className="text-xs">
-                          {race.note}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                      <span className="font-medium text-foreground">{race.track}</span>
-                      <span>· {getRaceCountry(race)}</span>
-                      <span>· {race.distance}m</span>
-                      <span>· {race.surface}</span>
-                      <span>· Day {race.dayOfYear}</span>
-                      <span>
-                        · Purse{" "}
-                        <span className="font-medium text-foreground">
-                          ${race.purse.toLocaleString()}
-                        </span>
-                      </span>
-                    </div>
-                    {race.restrictions && (
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        {race.restrictions.minAge !== undefined &&
-                          race.restrictions.maxAge !== undefined && (
-                            <Badge variant="outline" className="text-xs">
-                              {race.restrictions.minAge}-{race.restrictions.maxAge}YO
-                            </Badge>
-                          )}
-                        {race.restrictions.minAge !== undefined &&
-                          race.restrictions.maxAge === undefined && (
-                            <Badge variant="outline" className="text-xs">
-                              {race.restrictions.minAge}+ YO
-                            </Badge>
-                          )}
-                        {race.restrictions.gender && (
-                          <Badge variant="outline" className="text-xs">
-                            {race.restrictions.gender}
+          filteredRaces.map((race) => {
+            const hasOwnedEntry = race.entries.some((e) => e.owned);
+            return (
+              <Card key={race.id} className={`border-l-4 ${hasOwnedEntry ? "border-l-emerald-500 bg-emerald-50/50" : "border-l-primary"}`}>
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <h3 className="text-lg font-bold">{race.name}</h3>
+                        {race.graded?.grade && (
+                          <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
+                            {race.graded.grade}
                           </Badge>
                         )}
-                        {race.restrictions.minAgeNorthern !== undefined && (
-                          <Badge variant="outline" className="text-xs">
-                            {race.restrictions.minAgeNorthern}+ YO (Northern)
-                          </Badge>
-                        )}
-                        {race.restrictions.minAgeSouthern !== undefined && (
-                          <Badge variant="outline" className="text-xs">
-                            {race.restrictions.minAgeSouthern}+ YO (Southern)
-                          </Badge>
+                        {hasOwnedEntry && (
+                          <Badge className="bg-emerald-600 text-white">Entered</Badge>
                         )}
                       </div>
-                    )}
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                        <span className="font-medium text-foreground">{race.graded?.track}</span>
+                        <span>· {race.graded && getCountry(race.graded.track)}</span>
+                        <span>· {race.distance}m</span>
+                        <span>· {race.graded?.surface}</span>
+                        <span>· Day {race.day}</span>
+                        <span>
+                          · Purse{" "}
+                          <span className="font-medium text-foreground">
+                            ${race.purse.toLocaleString()}
+                          </span>
+                        </span>
+                      </div>
+                      {race.restrictions && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {race.restrictions.minAge !== undefined &&
+                            race.restrictions.maxAge !== undefined && (
+                              <Badge variant="outline" className="text-xs">
+                                {race.restrictions.minAge}-{race.restrictions.maxAge}YO
+                              </Badge>
+                            )}
+                          {race.restrictions.minAge !== undefined &&
+                            race.restrictions.maxAge === undefined && (
+                              <Badge variant="outline" className="text-xs">
+                                {race.restrictions.minAge}+ YO
+                              </Badge>
+                            )}
+                          {race.restrictions.gender && (
+                            <Badge variant="outline" className="text-xs">
+                              {race.restrictions.gender}
+                            </Badge>
+                          )}
+                          {race.restrictions.minAgeNorthern !== undefined && (
+                            <Badge variant="outline" className="text-xs">
+                              {race.restrictions.minAgeNorthern}+ YO (Northern)
+                            </Badge>
+                          )}
+                          {race.restrictions.minAgeSouthern !== undefined && (
+                            <Badge variant="outline" className="text-xs">
+                              {race.restrictions.minAgeSouthern}+ YO (Southern)
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+                </CardContent>
+              </Card>
+            );
+          })
         )}
       </div>
     </div>

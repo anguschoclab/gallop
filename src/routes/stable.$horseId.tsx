@@ -76,6 +76,12 @@ function HorseDetail() {
             <p className="text-muted-foreground">Age {horse.age} · OVR {calculateOverallRating(horse)} · Potential {horse.potential}</p>
             {(() => {
               const ability = getAbility(horse);
+              const family = horse.bruceLoweFamily;
+              const familyRoleLabel = family === undefined ? null
+                : [1, 2, 4, 5].includes(family) ? "Running"
+                : family === 3 ? "Running/Sire"
+                : [8, 11, 12, 14].includes(family) ? "Sire"
+                : null;
               return (
                 <div className="flex flex-wrap items-center gap-2 mt-1 text-sm">
                   <Badge variant="secondary">
@@ -87,6 +93,11 @@ function HorseDetail() {
                   {horse.runningStyle && (
                     <Badge variant="outline" className="capitalize">
                       Style: {horse.runningStyle.replace("-", " ")}
+                    </Badge>
+                  )}
+                  {family !== undefined && (
+                    <Badge variant="outline" title="Bruce Lowe tail-female family number">
+                      Family {family}{familyRoleLabel ? ` · ${familyRoleLabel}` : ""}
                     </Badge>
                   )}
                 </div>

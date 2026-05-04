@@ -4,6 +4,7 @@ import { calculateNpcHorseValue } from "./npcHorseGen";
 import { PERSONALITY_CONFIG } from "./npcStables";
 import { createRng, hashStr } from "./rng";
 import { generateUUID } from "./uuid";
+import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 
 // ---------------------------------------------------------------------------
 // Labels
@@ -27,9 +28,14 @@ export const KIND_LABELS: Record<AuctionSaleKind, string> = {
 export function calculateLotValuation(
   horse: Horse,
   stable: Stable,
-  saleKind: AuctionSaleKind
+  saleKind: AuctionSaleKind,
+  allHorses?: readonly Horse[]
 ): number {
-  const base = calculateNpcHorseValue(horse, stable.tier);
+  // Pedigree multiplier raises the ceiling for foals by elite stallions out
+  // of blue-hen mares. Falls back to 1× when allHorses isn't passed (older
+  // call sites still work; new sites pass the live horses[] array).
+  const pedigreeMul = allHorses ? pedigreeMultiplier(horse, { horses: [...allHorses] }) : 1;
+  const base = Math.round(calculateNpcHorseValue(horse, stable.tier) * pedigreeMul);
   const p = stable.personality;
   const cfg = PERSONALITY_CONFIG[p];
   const isYearling = saleKind === "yearling" || saleKind === "yearling_south";
@@ -107,9 +113,10 @@ export function calculateNpcBid(
   horse: Horse,
   currentBid: number,
   saleKind: AuctionSaleKind,
-  rng: ReturnType<typeof createRng>
+  rng: ReturnType<typeof createRng>,
+  allHorses?: readonly Horse[]
 ): number | null {
-  const ceiling = calculateLotValuation(horse, stable, saleKind);
+  const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses);
   if (ceiling <= 0) return null;
 
   const budgetCap = stable.cash * BUDGET_CAPS[stable.personality];
@@ -268,7 +275,7 @@ export function resolveAuctionSale(
       for (const stable of eligibleBidders) {
         if (stable.id === currentWinner) continue;
         const rng = createRng(hashStr(lot.id + stable.id + String(currentBid)));
-        const bid = calculateNpcBid(stable, horse, currentBid, sale.kind, rng);
+        const bid = calculateNpcBid(stable, horse, currentBid, sale.kind, rng, allHorses);
         if (bid !== null && bid > currentBid) {
           currentBid = bid;
           currentWinner = stable.id;

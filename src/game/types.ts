@@ -133,7 +133,44 @@ export type Horse = {
   bruceLoweFamily?: number; // Tail-female family number, resolved & cached
 };
 
-export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
+export type RaceClass =
+  // Base classes
+  | "Maiden"
+  | "MaidenSpecialWeight"  // MSW - non-claiming maidens
+  | "MaidenClaiming"       // MCL - maidens eligible to be claimed
+  | "MaidenOptionalClaiming" // MOC - maidens with optional claiming tag
+  | "MaidenStakes"         // MST - stakes race for non-winners
+  | "Allowance"
+  | "OptionalClaiming"     // OCL/OCH - hybrid allowance/claiming
+  | "StarterAllowance"     // STR - for horses from claiming company, not eligible to be claimed
+  | "StarterHandicap"      // SHP - for horses from claiming company with handicap weights
+  | "Stakes"
+  | "Claiming"
+  | "Handicap"
+  | "Listed"               // Below graded/group level
+  | "Group"
+  | "Graded";
+
+// Claiming price tiers (in USD)
+export type ClaimingPrice =
+  | 5000 | 10000 | 12500 | 16000 | 20000 | 25000
+  | 32000 | 40000 | 50000 | 62500 | 75000 | 100000;
+
+// Win condition codes for allowance/condition races
+export type WinCondition =
+  | "none"
+  | "N1X"  // Non-winners of 1 allowance race (other than maiden/claiming)
+  | "N2X"  // Non-winners of 2 allowance races
+  | "N3L"  // Non-winners of 3 races lifetime
+  | "NW1"  // Non-winners of 1 race
+  | "NW2"  // Non-winners of 2 races
+  | "NW3"; // Non-winners of 3 races
+
+// Regional classification system
+export type RegionalSystem = "north_america" | "europe" | "australia" | "asia" | "south_america";
+
+// Grade level for graded/group/listed stakes
+export type GradeLevel = "G1" | "G2" | "G3" | "Listed";
 
 // NPC Stable tier - determines quality of horses and reputation
 export type StableTier = "elite" | "mid" | "budget";
@@ -216,13 +253,24 @@ export type Race = {
     trackId: string; // Track UUID reference
     surface: "Turf" | "Dirt" | "Synthetic";
   };
-  restrictions?: { 
-    minAge?: number; 
-    maxAge?: number; 
+  // New fields for expanded race types
+  claimingPrice?: ClaimingPrice; // For claiming and optional claiming races
+  winCondition?: WinCondition; // For allowance and condition races
+  stateBred?: string; // Country or state code for restricted races (e.g., "CA", "NY", "Canada")
+  handicapWeights?: { horseId: string; weight: number }[]; // Assigned weights for handicap races
+  isHandicap?: boolean; // Flag for handicap races
+  trackId?: string; // Track UUID reference for all races (not just graded)
+  surface?: "Turf" | "Dirt" | "Synthetic"; // Surface for all races
+  restrictions?: {
+    minAge?: number;
+    maxAge?: number;
     gender?: "colt" | "filly" | "horse" | "mare" | "fillies" | "mares" | "colts" | "fillies-and-mares" | "colts-and-fillies";
     // Hemisphere-specific age restrictions (e.g., for Dubai races)
     minAgeNorthern?: number;
     minAgeSouthern?: number;
+    // Win-based conditions for allowance races
+    nonWinnersOf?: number; // Number of races horse must not have won
+    otherThan?: ("maiden" | "claiming" | "restricted")[]; // Types of wins that don't count toward nonWinnersOf
   };
   weather?: Weather; // Race day weather
   trackCondition?: TrackCondition; // Track surface condition
