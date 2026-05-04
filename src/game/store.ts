@@ -709,6 +709,7 @@ export const useGame = create<GameState & Actions>()(
             paceSamples: samples,
             log: combinedLogs,
           });
+        });
       },
 
       breed: (sireId, damId, liveFoalGuarantee = false) => {

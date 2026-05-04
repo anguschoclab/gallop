@@ -1,8 +1,9 @@
 import type { Horse, Race, RunningStyle, TrackCondition, Weather, JockeyStats, JockeyArchetype, Jockey } from "./types";
-import { TRAIT_VALUES } from "./geneticsEngine";
+import { TRAIT_VALUES, fiberDistanceModifier } from "./geneticsEngine";
 import type { CourseSpecification, TrackSection } from "./tracks";
 import type { Rng } from "./rng";
 import { clamp } from "./math";
+import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
 
 export type Runner = {
   horseId: string;
@@ -134,11 +135,37 @@ export function buildRunner(
   const distanceMod = 1 - Math.min(0.1, Math.max(0, distDiff - 400) / 8000);
   const surfaceMod = surface ? (h.surfaceAptitude[surface] ?? 0.95) : 1.0;
 
+  // --- DNA: muscle fiber distance bias ---
+  // Sprinters lose ground in long races; stayers lose ground in short races.
+  // Translates the speed/stamina pair into different effective values per
+  // distance band.
+  const fiberMods = h.fiberBias ? fiberDistanceModifier(h.fiberBias, raceDistance) : { speedMul: 1, staminaMul: 1 };
+
+  // --- DNA: mud aptitude ---
+  // Multiplier on conditions.speedMul when ground is soft/heavy. Mudders gain;
+  // hates-mud horses lose. Identity at fast/good tracks (mudAptitude resolves
+  // around 1.0 anyway, but this protects against extreme rolls amplifying).
+  const conditionsHarsh = conditions.speedMul < 0.97;
+  const mudMod = conditionsHarsh ? (h.mudAptitude ?? 1.0) : 1.0;
+
+  // --- DNA: bloodline regional bonus ---
+  // Heritage line × surface alignment gives a small ability boost.
+  const lineBias = h.bloodline ? REGIONAL_LINE_BIAS[h.bloodline as Bloodline] : undefined;
+  const lineSurfaceMul = lineBias && (!lineBias.surface || lineBias.surface === surface) ? 1 + lineBias.boost : 1;
+
   // base m/s ~ 14-20 for 30..95 speed
-  const rawTopSpeed = (12 + (h.stats.speed / 100) * 10) * formEnergy * conditions.speedMul * distanceMod * surfaceMod;
+  const rawTopSpeed = (12 + (h.stats.speed / 100) * 10)
+    * formEnergy * conditions.speedMul * distanceMod * surfaceMod
+    * fiberMods.speedMul * mudMod * lineSurfaceMul;
   const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
   const accel = 1.5 + (h.stats.acceleration / 100) * 3.5;
-  const baseStamina = 0.4 + (h.stats.stamina / 100) * 0.6; // 1 = no fade
+  // Stride length: long-stride horses gain on straights, lose on turns.
+  // Currently no per-step course context here, so we just apply a flat
+  // distance-based bias (longer races have more straights → long-stride wins).
+  const strideMod = h.strideType === "long" ? (raceDistance >= 1800 ? 1.02 : 0.98)
+                  : h.strideType === "short" ? (raceDistance < 1400 ? 1.02 : 0.99)
+                  : 1;
+  const baseStamina = (0.4 + (h.stats.stamina / 100) * 0.6) * fiberMods.staminaMul; // 1 = no fade
   // Worse conditions deepen the fade: drain >1 reduces the staminaFactor
   // toward 0, while drain <=1 leaves it as-is.
   // --- DNA Trait Modifiers ---
@@ -201,9 +228,12 @@ export function buildRunner(
     targetLane: 0,
     laneVelocity: 0,
     barrier,
-    topSpeed: topSpeed * genderSpeedMul * weightMod,
+    topSpeed: topSpeed * genderSpeedMul * weightMod * strideMod,
     accel: accel * weightMod,
-    staminaFactor,
+    // Heart score boosts late-race stamina retention. We express it on
+    // staminaFactor (closer to 1 = less fade); resolveHeartScore returned
+    // 0.85-1.15 so we lift the floor toward 1 by a fraction of (heart-1).
+    staminaFactor: clamp(staminaFactor + ((h.heartScore ?? 1.0) - 1.0) * 0.5, 0.2, 1),
     noise,
     runningStyle,
     draftingHorseId: null,
