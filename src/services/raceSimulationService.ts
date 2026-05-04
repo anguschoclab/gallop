@@ -3,6 +3,7 @@ import { buildRunner, stepRunner, getConditionsModifier, computePaceContext, typ
 import { generateHorse } from "@/game/horseGen";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { createRng, hashStr, type Rng } from "@/game/rng";
+import { calculateAssignedWeight } from "@/game/npcRaceEntry";
 
 /**
  * Race simulation orchestration with dependency injection
@@ -52,9 +53,14 @@ export function buildRaceField(
   const rng = rngForRace(race);
 
   // 1. Prepare the full list of entry data
-  const entriesData: { horseId: string; owned: boolean; jockeyId?: string }[] = [];
+  const entriesData: { horseId: string; owned: boolean; jockeyId?: string; weight?: number }[] = [];
   for (const entry of race.entries) {
-    entriesData.push({ horseId: entry.horseId, owned: entry.owned, jockeyId: entry.jockeyId });
+    entriesData.push({ 
+      horseId: entry.horseId, 
+      owned: entry.owned, 
+      jockeyId: entry.jockeyId, 
+      weight: entry.weight 
+    });
   }
 
   // 2. Fill remaining spots with AI horses
@@ -62,10 +68,8 @@ export function buildRaceField(
     const tier = getTierForRaceClass(race.raceClass);
     const aiHorse = generateHorse(rng, { tier: tier as never });
     fillerHorses.push(aiHorse);
-    // For filler horses, we don't assign a specific jockey here, 
-    // buildRunner will handle it if we pass one, but we might want 
-    // to just leave it undefined for now or pick a random one.
-    entriesData.push({ horseId: aiHorse.id, owned: false });
+    const weight = calculateAssignedWeight(aiHorse, race);
+    entriesData.push({ horseId: aiHorse.id, owned: false, weight });
   }
 
   // 3. Shuffle all entries to assign unique barriers (1 to N)
@@ -89,9 +93,8 @@ export function buildRaceField(
     }
     
     if (horse) {
-      const entry = race.entries.find(e => e.horseId === entryData.horseId);
-      const jockeyObj = entry?.jockeyId ? dependencies.jockeys.find(j => j.id === entry.jockeyId) : undefined;
-      runners.push(buildRunner(horse, entryData.owned, race.distance, surface, conditions, barrier, jockeyObj));
+      const jockeyObj = entryData.jockeyId ? dependencies.jockeys.find(j => j.id === entryData.jockeyId) : undefined;
+      runners.push(buildRunner(horse, entryData.owned, race.distance, surface, conditions, barrier, jockeyObj, entryData.weight));
     }
   }
 

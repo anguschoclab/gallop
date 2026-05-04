@@ -10,6 +10,42 @@ export type HorseStats = {
 export type Conformation = "excellent" | "good" | "fair" | "poor";
 export type Temperament = "excellent" | "good" | "fair" | "poor";
 
+// DNA System Types
+export type Allele = number; // 1-10 for stats, or encoded for color
+export type Locus = [Allele, Allele];
+
+export type ColorGenotype = {
+  extension: Locus; // E (black) or e (chestnut)
+  agouti: Locus;    // A (bay) or a (black)
+  gray: Locus;      // G (gray) or g (non-gray)
+  cream: Locus;     // Cr (dilute) or n (normal)
+};
+
+export type StatGenotype = {
+  speed: Locus[];       // 10 loci
+  stamina: Locus[];     // 10 loci
+  acceleration: Locus[]; // 10 loci
+  consistency: Locus[];  // 10 loci
+};
+
+export type PreferenceGenotype = {
+  distance: Locus; // Maps to 800-3200m range
+  surface: Locus;  // Maps to Turf/Dirt/Synthetic bias
+  climbing: Locus; // Hill power
+  cornering: Locus; // Turn agility
+};
+
+export type Genotype = {
+  color: ColorGenotype;
+  stats: StatGenotype;
+  preferences: PreferenceGenotype;
+  style: Locus; // Running style bias
+  mental: Locus; // Temperament locus
+  physical: Locus; // Conformation locus
+  durability: Locus; // Injury proneness locus
+  size: Locus; // Height/Mass locus
+};
+
 // Running style — preferred position and pace shape during a race.
 // E (Early) - Vies for the early lead. Does not rate well behind a pace setter.
 // EP (Early/Presser) - Runs 2nd or 3rd early. Can successfully rate behind a leader.
@@ -26,12 +62,19 @@ export type JockeyStats = {
   temperament: number;  // Handling nervous horses
 };
 
+export type JockeyTrait = 
+  | "bullring_expert"   // Mitigates turn speed loss
+  | "hill_specialist"   // Reduces stamina drain on gradients
+  | "long_straight_pro" // Bonus surge on 500m+ straights
+  | "gate_master";      // Higher chance of clean break
+
 export type Jockey = {
   id: string;
   name: string;
   age: number;
   archetype: JockeyArchetype;
   stats: JockeyStats;
+  traits: JockeyTrait[];
   stableId?: string;      // If retained by a stable
   contractUntil?: number; // Day the contract ends
   careerStarts: number;
@@ -104,7 +147,7 @@ export type StudCareer = {
   retiredOnDay: number;
 };
 
-export type HorseGender = "colt" | "filly" | "horse" | "mare";
+export type HorseGender = "colt" | "filly" | "horse" | "mare" | "gelding";
 
 export type Hemisphere = "Northern" | "Southern";
 
@@ -129,6 +172,7 @@ export type Horse = {
   hemisphere: Hemisphere;
   silk: string; // hex color
   stats: HorseStats;
+  genotype: Genotype;
   energy: number; // 0-100
   form: number; // -10..+10
   potential: number; // 60-100, soft cap on stat growth
@@ -157,6 +201,11 @@ export type Horse = {
   bruceLoweFamily?: number; // Tail-female family number, resolved & cached
   distanceAptitude: number; // Preferred distance in meters (800..3200)
   surfaceAptitude: Record<"Turf" | "Dirt" | "Synthetic", number>; // 0.8..1.0 multiplier
+  climbingAptitude: number; // 0.8..1.2 multiplier for uphill stamina drain
+  corneringAptitude: number; // 0.8..1.2 multiplier for turn speed maintenance
+  injuryProneness: number; // 0-1 scale, chance of injury per training/race session
+  height: number; // Hands (14.0 - 18.0)
+  weight: number; // kg (400 - 600)
   lifetimeEarnings: number;
   careerStarts: number;
   careerWins: number;
@@ -260,6 +309,12 @@ export type ScoutReport = {
   accuracy: number; // 0-1, how accurate the scout was
   revealedStats: Partial<HorseStats>;
   notes: string; // flavortext about the horse
+  geneticInsight?: {
+    distanceMarker?: string;
+    surfaceMarker?: string;
+    hiddenColorCarrier?: string;
+    abilityMarkers?: string[];
+  };
 };
 
 export type Race = {
@@ -272,7 +327,7 @@ export type Race = {
   purse: number;
   minStat?: number;
   fieldSize: number;
-  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean; barrier?: number; jockeyId?: string }[];
+  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean; barrier?: number; jockeyId?: string; weight?: number }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
   graded?: {

@@ -1,5 +1,6 @@
 import { expectedBeyer } from "@/game/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
+import { getCourseForRace } from "@/game/tracks";
 import type { Horse, Race } from "@/game/types";
 
 /**
@@ -8,7 +9,8 @@ import type { Horse, Race } from "@/game/types";
  */
 export function calculateProjectedBeyer(horse: Horse, race: Race): number {
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
-  const model = expectedBeyer(horse, race.distance, classBonus);
+  const course = getCourseForRace(race);
+  const model = expectedBeyer(horse, race.distance, classBonus, course);
   // Distance bonus applied AFTER the model so it survives the [30, 125]
   // clamp inside beyerFigure. Longer races deserve bigger Beyer figures
   // even when calibrated pars are empty.

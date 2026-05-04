@@ -1,7 +1,6 @@
-import type { Horse, Pregnancy, RunningStyle, Pedigree } from "./types";
-import { calculateBreedingCompatibility } from "./breedingCompatibility";
-import { generateHorse } from "./horseGen";
-import { clamp, clampStat } from "./math";
+import type { Horse, Pregnancy, RunningStyle, Pedigree, HorseGender } from "./types";
+import { inheritDNA, TRAIT_VALUES } from "./geneticsEngine";
+import { createHorseFromDNA } from "./horseGen";
 import { createRng, hashStr, type Rng } from "./rng";
 
 // Build a foal's pedigree snapshot from the parents at conception. We carry
@@ -34,7 +33,6 @@ function inheritRunningStyle(
   return rng.pick(STYLES);
 }
 
-const TRAIT_VALUES: Record<string, number> = { excellent: 4, good: 3, fair: 2, poor: 1 };
 
 function rollTrait(avg: number, rng: Rng): "excellent" | "good" | "fair" | "poor" {
   const roll = avg + rng.range(-1, 1);
@@ -130,99 +128,29 @@ export function resolveFoaling(
     return { kind: "complication", type: rng.next() < 0.5 ? "stillborn" : "unable to stand" };
   }
 
-  // Build foal from a starter template, then overwrite with parent-derived
-  // values when both parents are available. Hemisphere inherits from the dam
-  // (the foal is born wherever the mare is) and the pedigree snapshot is
-  // attached so future inbreeding/dam-line/sire-line lookups have ID refs.
-  const foal = generateHorse({ tier: "starter", owned: dam?.owned ?? true, rng });
-  foal.age = 0;
-  foal.sireName = pregnancy.sireName;
-  foal.damName = pregnancy.damName;
-  if (dam) foal.hemisphere = dam.hemisphere;
+  // DNA Inheritance
   if (sire && dam) {
+    const inheritedDNA = inheritDNA(sire.genotype, dam.genotype, rng);
+    
+    // Create foal from inherited DNA
+    const foal = createHorseFromDNA(inheritedDNA, rng, {
+      name: "Unnamed Foal",
+      age: 0,
+      hemisphere: dam.hemisphere,
+      owned: dam.owned,
+    });
+
+    foal.sireName = pregnancy.sireName;
+    foal.damName = pregnancy.damName;
     foal.pedigree = buildFoalPedigree(sire, dam);
-    foal.bruceLoweFamily = dam.bruceLoweFamily; // tail-female: foal inherits dam's family directly
-    // Inherit owning stable (NPC breeders need this so their foals show up
-    // under their stable, not as orphans).
+    foal.bruceLoweFamily = dam.bruceLoweFamily;
     if (dam.stableId) foal.stableId = dam.stableId;
+
+    // 1% covering-sickness transmission roll
+    const transmission = rng.next() < 0.01;
+    return { kind: "live", foal, transmission };
   }
 
-  if (sire && dam) {
-    const compatibility = calculateBreedingCompatibility(sire, dam);
-    const baseVariance = 8;
-    const compatibilityBonus = compatibility.overallScore * 5;
-
-    const inheritStat = (sireStat: number, damStat: number): number => {
-      const base = (sireStat + damStat) / 2;
-      const variance = rng.range(-baseVariance / 2, baseVariance / 2);
-      return clampStat(base + variance + compatibilityBonus);
-    };
-
-    foal.stats = {
-      speed: inheritStat(sire.stats.speed, dam.stats.speed),
-      stamina: inheritStat(sire.stats.stamina, dam.stats.stamina),
-      acceleration: inheritStat(sire.stats.acceleration, dam.stats.acceleration),
-      consistency: inheritStat(sire.stats.consistency, dam.stats.consistency),
-    };
-
-    foal.potential = clampStat(
-      (sire.potential + dam.potential) / 2 + rng.range(-2, 6) + compatibilityBonus
-    );
-
-    const sireConf = sire.conformation || "fair";
-    const damConf = dam.conformation || "fair";
-    const sireTemp = sire.temperament || "fair";
-    const damTemp = dam.temperament || "fair";
-    foal.conformation = rollTrait((TRAIT_VALUES[sireConf] + TRAIT_VALUES[damConf]) / 2, rng);
-    foal.temperament = rollTrait((TRAIT_VALUES[sireTemp] + TRAIT_VALUES[damTemp]) / 2, rng);
-
-    foal.runningStyle = inheritRunningStyle(sire.runningStyle, dam.runningStyle, rng);
-
-    // Inherit aptitudes
-    const inheritAptitude = (sireApt: number, damApt: number): number => {
-      const base = (sireApt + damApt) / 2;
-      const variance = rng.range(-200, 200);
-      return Math.round(base + variance);
-    };
-    foal.distanceAptitude = inheritAptitude(sire.distanceAptitude, dam.distanceAptitude);
-
-    foal.surfaceAptitude = {
-      Turf: clamp((sire.surfaceAptitude.Turf + dam.surfaceAptitude.Turf) / 2 + rng.range(-0.05, 0.05), 0.8, 1.0),
-      Dirt: clamp((sire.surfaceAptitude.Dirt + dam.surfaceAptitude.Dirt) / 2 + rng.range(-0.05, 0.05), 0.8, 1.0),
-      Synthetic: clamp((sire.surfaceAptitude.Synthetic + dam.surfaceAptitude.Synthetic) / 2 + rng.range(-0.05, 0.05), 0.8, 1.0),
-    };
-
-    if (sire.geneticMarkers && dam.geneticMarkers) {
-      const sg = sire.geneticMarkers;
-      const dg = dam.geneticMarkers;
-      // Mendelian inheritance for lethal carriers: each parent passes the
-      // allele 50% of the time. A foal who survived the day-60 lethal screen
-      // (homozygous lost) is necessarily either Aa (carrier) or AA (clean).
-      const inheritCarrier = (sireCarrier?: boolean, damCarrier?: boolean): boolean => {
-        const fromSire = sireCarrier && rng.next() < 0.5;
-        const fromDam = damCarrier && rng.next() < 0.5;
-        return !!(fromSire || fromDam);
-      };
-      foal.geneticMarkers = {
-        sensoryPerception: inheritGeneticTrait(sg.sensoryPerception, dg.sensoryPerception, rng),
-        signalTransduction: inheritGeneticTrait(sg.signalTransduction, dg.signalTransduction, rng),
-        immunity: inheritGeneticTrait(sg.immunity, dg.immunity, rng),
-        lethalCarriers: {
-          csnb: inheritCarrier(sg.lethalCarriers?.csnb, dg.lethalCarriers?.csnb),
-          hypp: inheritCarrier(sg.lethalCarriers?.hypp, dg.lethalCarriers?.hypp),
-          olws: inheritCarrier(sg.lethalCarriers?.olws, dg.lethalCarriers?.olws),
-        },
-        geneticDiversity: clamp(
-          ((sg.geneticDiversity || 0.5) + (dg.geneticDiversity || 0.5)) / 2 + rng.range(-0.1, 0.1),
-          0,
-          1
-        ),
-      };
-    }
-  }
-
-  // 1% covering-sickness transmission roll — kept outside the
-  // parent-derived block since it can occur even with no genetic markers.
-  const transmission = rng.next() < 0.01;
-  return { kind: "live", foal, transmission };
+  // Fallback if parents are missing (should not happen in normal play)
+  return { kind: "complication", type: "early loss" };
 }

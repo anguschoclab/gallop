@@ -25,26 +25,32 @@ export function generateJockey({ tier = "mid", rng }: JockeyGenerationOptions): 
     temperament: rng.range(baseMin, baseMax),
   };
   
-  // Apply archetype bonuses
+  const traits: JockeyTrait[] = [];
+  
+  // Apply archetype bonuses and traits
   switch (archetype) {
     case "front_runner":
       stats.gateSkill += 15;
       stats.pacing += 10;
       stats.vigor -= 10;
+      traits.push("gate_master");
       break;
     case "closer":
       stats.vigor += 15;
       stats.positioning += 10;
       stats.gateSkill -= 10;
+      traits.push("hill_specialist");
       break;
     case "clinical":
       stats.positioning += 15;
       stats.pacing += 10;
+      traits.push("bullring_expert");
       break;
     case "finisher":
       stats.vigor += 20;
       stats.gateSkill += 5;
       stats.pacing -= 10;
+      traits.push("long_straight_pro");
       break;
     case "versatile":
       stats.pacing += 5;
@@ -52,6 +58,7 @@ export function generateJockey({ tier = "mid", rng }: JockeyGenerationOptions): 
       stats.vigor += 5;
       stats.gateSkill += 5;
       stats.temperament += 5;
+      if (rng.next() < 0.2) traits.push(rng.pick(["gate_master", "hill_specialist"]));
       break;
   }
   
@@ -75,6 +82,7 @@ export function generateJockey({ tier = "mid", rng }: JockeyGenerationOptions): 
     age,
     archetype,
     stats,
+    traits,
     careerStarts,
     careerWins,
     fame: Math.min(100, totalStats + (careerWins / 100)),

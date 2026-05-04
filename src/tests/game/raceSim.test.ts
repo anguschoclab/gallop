@@ -20,6 +20,11 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     fame: 0,
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
+    climbingAptitude: 1.0,
+    corneringAptitude: 1.0,
+    lifetimeEarnings: 0,
+    careerStarts: 0,
+    careerWins: 0,
     ...overrides,
   };
 }

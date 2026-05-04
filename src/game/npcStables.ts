@@ -14,6 +14,7 @@ export const PERSONALITY_CONFIG: Record<StablePersonality, {
   gradedRaceBonus: number; // Extra appeal for graded races
   riskTolerance: number; // 0-1, affects horse selection
   youthPreference: number; // 0-1, preference for young horses (developer trait)
+  geneticInsightMod: number; // 0-1, how much weight to give to hidden DNA potential
   specialistDistance?: number; // For specialist personality
   specialistSurface?: "Turf" | "Dirt" | "Synthetic";
 }> = {
@@ -25,6 +26,7 @@ export const PERSONALITY_CONFIG: Record<StablePersonality, {
     gradedRaceBonus: 20,
     riskTolerance: 0.8,
     youthPreference: 0.3,
+    geneticInsightMod: 0.4,
   },
   conservative: {
     description: "Careful, methodical approach. Selective entries and cost-conscious.",
@@ -34,6 +36,7 @@ export const PERSONALITY_CONFIG: Record<StablePersonality, {
     gradedRaceBonus: 10,
     riskTolerance: 0.3,
     youthPreference: 0.5,
+    geneticInsightMod: 0.6,
   },
   developer: {
     description: "Focuses on young horses and long-term growth. Patient with 2-3 year olds.",
@@ -43,6 +46,7 @@ export const PERSONALITY_CONFIG: Record<StablePersonality, {
     gradedRaceBonus: 15,
     riskTolerance: 0.5,
     youthPreference: 0.9,
+    geneticInsightMod: 0.95,
   },
   "win-now": {
     description: "Targets immediate results with proven horses. Ages 4-6 preferred.",
@@ -52,6 +56,7 @@ export const PERSONALITY_CONFIG: Record<StablePersonality, {
     gradedRaceBonus: 25,
     riskTolerance: 0.6,
     youthPreference: 0.1,
+    geneticInsightMod: 0.1,
   },
   specialist: {
     description: "Focuses on specific distances or surfaces. Becomes expert in niche.",
@@ -61,6 +66,7 @@ export const PERSONALITY_CONFIG: Record<StablePersonality, {
     gradedRaceBonus: 15,
     riskTolerance: 0.5,
     youthPreference: 0.4,
+    geneticInsightMod: 0.5,
     specialistDistance: 1600, // Default, will be randomized
     specialistSurface: "Turf",
   },
@@ -72,6 +78,7 @@ export const PERSONALITY_CONFIG: Record<StablePersonality, {
     gradedRaceBonus: 12,
     riskTolerance: 0.4,
     youthPreference: 0.5,
+    geneticInsightMod: 0.8,
   },
   trader: {
     description: "Buys and sells frequently. Targets claiming races and bargains.",
@@ -81,6 +88,7 @@ export const PERSONALITY_CONFIG: Record<StablePersonality, {
     gradedRaceBonus: 5,
     riskTolerance: 0.7,
     youthPreference: 0.4,
+    geneticInsightMod: 0.3,
   },
   prestige: {
     description: "Targets graded stakes and prestigious races. Reputation over profit.",
@@ -90,6 +98,7 @@ export const PERSONALITY_CONFIG: Record<StablePersonality, {
     gradedRaceBonus: 35,
     riskTolerance: 0.6,
     youthPreference: 0.3,
+    geneticInsightMod: 0.85,
   },
 };
 

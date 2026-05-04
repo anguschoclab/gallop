@@ -300,6 +300,7 @@ type Actions = {
   withdrawConsignment: (horseId: string) => ActionResult;
   bidInAuction: (saleId: string, lotId: string, amount: number) => ActionResult;
   clearPendingCeremonies: () => void;
+  geldingHorse: (horseId: string) => ActionResult;
 };
 
 function initialState(): GameState {
@@ -307,14 +308,14 @@ function initialState(): GameState {
   
   // Generate player horses
   const horses: Horse[] = [
-    { ...generateHorse({ tier: "starter", owned: true, rng: setupRng }) },
-    { ...generateHorse({ tier: "starter", owned: true, rng: setupRng }) },
+    { ...generateHorse(setupRng, { tier: "starter", owned: true }) },
+    { ...generateHorse(setupRng, { tier: "starter", owned: true }) },
   ];
   
   const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
     const tier = r < 0.6 ? "budget" : "mid";
-    return generateHorse({ tier: tier as any, rng: setupRng });
+    return generateHorse(setupRng, { tier: tier as any });
   });
   
   const races: Race[] = [];
@@ -922,10 +923,11 @@ export const useGame = create<GameState & Actions>()(
             }
           }
           const rng = rngForRace(race);
-          const track = TRACKS.find(t => t.id === race.graded?.trackId);
-          const trackInfo = track ? { circumference: track.circumference ?? 1600, straightLength: track.straightLength ?? 400 } : undefined;
+          const track = TRACKS.find(t => t.id === race.graded?.trackId || t.id === race.trackId);
+          const surface = (race.surface || race.graded?.surface || "Turf") as any;
+          const course = track?.courses.find(c => c.surface === surface);
           
-          const result = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, trackInfo);
+          const result = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course);
           get().resolveRace(race.id, result, runners);
         }
         
@@ -1020,10 +1022,11 @@ export const useGame = create<GameState & Actions>()(
                   playerRace.entries.push({ horseId: fh.id, owned: false, npc: true });
                 }
               }
-              const track = TRACKS.find(t => t.id === playerRace.graded?.trackId);
-              const trackInfo = track ? { circumference: track.circumference ?? 1600, straightLength: track.straightLength ?? 400 } : undefined;
+              const track = TRACKS.find(t => t.id === playerRace.graded?.trackId || t.id === playerRace.trackId);
+              const surface = (playerRace.surface || playerRace.graded?.surface || "Turf") as any;
+              const course = track?.courses.find(c => c.surface === surface);
               
-              const result = runRaceToCompletion(runners, playerRace.distance, rngForRace(playerRace), 0.1, 600, trackInfo);
+              const result = runRaceToCompletion(runners, playerRace.distance, rngForRace(playerRace), 0.1, 600, course);
               get().resolveRace(playerRace.id, result, runners);
             }
           }
@@ -1122,6 +1125,46 @@ export const useGame = create<GameState & Actions>()(
           currentCeremonyIndex: 0,
         });
       },
+      
+      geldingHorse: (horseId: string) => {
+        const s = get();
+        const horse = s.horses.find(h => h.id === horseId);
+        const cost = 500;
+        
+        if (!horse) return { ok: false, reason: "Horse not found." };
+        if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+        if (horse.gender === "gelding" || horse.gender === "filly" || horse.gender === "mare") {
+          return { ok: false, reason: "Only colts and stallions can be gelded." };
+        }
+        if (s.cash < cost) return { ok: false, reason: `Insufficient funds ($${cost} required).` };
+        
+        // Block if entered in a race
+        const isEntered = s.races.some(r => !r.resolved && r.entries.some(e => e.horseId === horseId));
+        if (isEntered) return { ok: false, reason: "Withdraw from races before gelding." };
+
+        const updatedHorses = s.horses.map(h => {
+          if (h.id === horseId) {
+            return {
+              ...h,
+              gender: "gelding" as const,
+              energy: Math.max(0, h.energy - 50), // Significant recovery needed
+              stats: {
+                ...h.stats,
+                consistency: Math.min(100, h.stats.consistency + 5) // Permanent consistency boost
+              }
+            };
+          }
+          return h;
+        });
+
+        set({
+          horses: updatedHorses,
+          cash: s.cash - cost,
+          log: [{ day: s.day, text: `${horse.name} has been gelded. Recovery will take some time, but they should be more consistent now.` }, ...s.log].slice(0, 50)
+        });
+        
+        return { ok: true };
+      }
     }),
     {
       name: "horse-racing-game-v1",

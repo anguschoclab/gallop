@@ -82,11 +82,14 @@ function rollGender(age: number, rng: Rng): HorseGender {
   const r = rng.next();
   // Slight bias toward males in racing stock
   const isMale = r < 0.55;
+  const isGelding = isMale && rng.next() < 0.35; // 35% of males are gelded for racing consistency
   
-  if (age <= 2) {
-    return isMale ? "colt" : "filly";
+  if (age <= 4) { // Colts/Fillies up to age 4 in Gallop
+    if (isMale) return isGelding ? "gelding" : "colt";
+    return "filly";
   }
-  return isMale ? "horse" : "mare";
+  if (isMale) return isGelding ? "gelding" : "horse";
+  return "mare";
 }
 
 /**

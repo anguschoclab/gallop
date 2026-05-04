@@ -67,6 +67,36 @@ function calculateRaceSuitability(horse: Horse, race: Race, stable: Stable): num
     else if (apt >= 0.95) score += 5;
     else score -= 20;
   }
+
+  // --- Track Geometry Match ---
+  // Large tracks (large radii, long straights) vs Tight tracks (small radii, short straights)
+  const trackId = race.graded?.trackId || race.trackId;
+  const course = race.graded ? { 
+    sections: [], 
+    straightLength: race.distance > 2000 ? 500 : 350 // Fallback if no course data
+  } : null; // In real use, we'd look up the track JSON here.
+
+  // For this logic, we'll assume the sim has already resolved the course
+  // If we can't find exact radii, we check the straightLength as a proxy for "Galloping" vs "Tight"
+  const straight = race.graded ? 400 : 350; // Simplified for AI heuristic
+  if (straight > 450) {
+    // Galloping track: favors speed and long-striding horses
+    if (horse.stats.speed > 70) score += 15;
+    if (horse.corneringAptitude < 0.95) score += 10; // "Lumbering" speedsters are OK here
+  } else if (straight < 350) {
+    // Tight "Bullring": favors agility and cornering
+    if (horse.corneringAptitude > 1.05) score += 20;
+    if (horse.stats.acceleration > 70) score += 15;
+    if (horse.corneringAptitude < 0.9) score -= 25; // Don't enter bad cornerers here
+  }
+
+  // --- Gradient Match ---
+  // If the race is at a known hilly track, check climbing aptitude
+  const isHilly = race.graded?.track.toLowerCase().includes("nakayama") || race.graded?.track.toLowerCase().includes("ascot");
+  if (isHilly) {
+    if (horse.climbingAptitude > 1.05) score += 20;
+    if (horse.climbingAptitude < 0.95) score -= 20;
+  }
   
   // Purse appeal - modified by personality
   const baseAppeal = BASE_PURSE_APPEAL[stable.tier] || 10000;
@@ -151,6 +181,38 @@ function calculateRaceSuitability(horse: Horse, race: Race, stable: Stable): num
   }
 
   return score;
+}
+
+/**
+ * Calculate the assigned weight for a horse in a specific race.
+ * Includes Sex Allowance (females carry less) and Weight-for-Age (younger horses carry less).
+ */
+export function calculateAssignedWeight(horse: Horse, race: Race): number {
+  // Base weight for major races is 126 lbs (57kg)
+  let weight = 126;
+
+  // Sex Allowance: Fillies and Mares carry 3-5 lbs less in mixed races
+  const isMixedRace = !race.restrictions?.gender || 
+    (!race.restrictions.gender.toLowerCase().includes("filly") && 
+     !race.restrictions.gender.toLowerCase().includes("mare") &&
+     !race.restrictions.gender.toLowerCase().includes("colt"));
+
+  if (isMixedRace && (horse.gender === "filly" || horse.gender === "mare")) {
+    weight -= 3; // 3 lb sex allowance
+  }
+
+  // Weight-for-Age: 3yos carry less than older horses in open races
+  if (horse.age === 3 && (race.restrictions?.minAge === undefined || race.restrictions.minAge < 3)) {
+    weight -= 2; // 2 lb age allowance
+  }
+
+  // Handicap adjustment (if applicable)
+  if (race.isHandicap && race.handicapWeights) {
+    const hw = race.handicapWeights.find(w => w.horseId === horse.id);
+    if (hw) return hw.weight;
+  }
+
+  return weight;
 }
 
 /**
@@ -303,12 +365,17 @@ export function runNpcRaceEntry(
         const jockey = jockeys.find(j => j.id === jockeyId);
         const ridingFee = jockey?.ridingFee ?? 100;
 
+        const jockey = jockeys.find(j => j.id === jockeyId);
+        const ridingFee = jockey?.ridingFee ?? 100;
+        const assignedWeight = calculateAssignedWeight(horse, race);
+
         race.entries.push({
           horseId: horse.id,
           owned: false,
           stableId: stable.id,
           npc: true,
-          jockeyId
+          jockeyId,
+          weight: assignedWeight
         });
         
         // Deduct entry fee AND riding fee from stable

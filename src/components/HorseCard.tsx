@@ -6,7 +6,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
 import { JargonTooltip } from "./ui/JargonTooltip";
 import { useGame } from "@/game/store";
-import { Trophy, Zap, TrendingUp, Activity, Dna, Calendar, User, Building2, Eye } from "lucide-react";
+import { Trophy, Zap, TrendingUp, Activity, Dna, Calendar, User, Building2, Eye, Ruler, Weight, HeartPulse } from "lucide-react";
 
 interface HorseCardProps {
   horse: Horse;
@@ -35,8 +35,17 @@ export function HorseCard({
     : null;
   
   // Gender icon
-  const genderIcon = horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀";
-  const genderColor = horse.gender === "colt" || horse.gender === "horse" ? "text-chart-1" : "text-chart-5";
+  const getGenderIcon = () => {
+    if (horse.gender === "gelding") return "⚲";
+    return horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀";
+  };
+  const getGenderColor = () => {
+    if (horse.gender === "gelding") return "text-slate-400";
+    return horse.gender === "colt" || horse.gender === "horse" ? "text-chart-1" : "text-chart-5";
+  };
+  
+  const genderIcon = getGenderIcon();
+  const genderColor = getGenderColor();
   
   // Health status indicator
   const getHealthStatus = () => {
@@ -223,12 +232,28 @@ export function HorseCard({
                 <span className="tabular-nums">{horse.form > 0 ? "+" : ""}{horse.form} Form</span>
               </Badge>
             )}
-            {scoutStatus && (
-              <Badge variant="outline" className={`text-xs flex items-center gap-1 ${scoutStatus.color}`}>
-                <Eye className="w-3 h-3" />
-                {scoutStatus.label}
-              </Badge>
-            )}
+          </div>
+        </div>
+
+        {/* Biometrics Strip */}
+        <div className="flex items-center gap-4 mb-4 p-2 bg-muted/30 rounded-lg text-xs">
+          <div className="flex items-center gap-1.5">
+            <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="font-medium">{horse.height?.toFixed(1)} hh</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Weight className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="font-medium">{horse.weight} kg</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full border border-border" style={{ backgroundColor: getCoatHex(horse.coatColor) }} />
+            <span className="capitalize">{horse.coatColor?.replace("-", " ")}</span>
+          </div>
+          <div className="flex items-center gap-1.5 ml-auto">
+            <HeartPulse className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className={getInjuryColor(horse.injuryProneness)}>
+              {getInjuryLabel(horse.injuryProneness)}
+            </span>
           </div>
         </div>
 
@@ -307,6 +332,36 @@ function StatBar({ label, value }: { label: string; value: number }) {
       <Progress value={value} className="h-1.5" />
     </div>
   );
+}
+
+function getCoatHex(color?: string): string {
+  const map: Record<string, string> = {
+    "bay": "#4b2c20",
+    "dark-bay": "#2a1810",
+    "black": "#1a1a1a",
+    "chestnut": "#8b4513",
+    "gray": "#a0a0a0",
+    "palomino": "#daa520",
+    "buckskin": "#c2b280",
+    "roan": "#b08d8d",
+    "white": "#f5f5f5"
+  };
+  return map[color || "bay"] || "#4b2c20";
+}
+
+function getInjuryLabel(proneness?: number): string {
+  if (!proneness) return "Solid";
+  if (proneness < 0.03) return "Iron Horse";
+  if (proneness < 0.06) return "Durable";
+  if (proneness < 0.09) return "Average";
+  return "Fragile";
+}
+
+function getInjuryColor(proneness?: number): string {
+  if (!proneness) return "text-muted-foreground";
+  if (proneness < 0.06) return "text-green-500 font-medium";
+  if (proneness < 0.09) return "text-yellow-500 font-medium";
+  return "text-red-500 font-bold";
 }
 
 export default HorseCard;

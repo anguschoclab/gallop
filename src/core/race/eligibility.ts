@@ -56,12 +56,7 @@ export function isHorseEligibleForRace(
 
   // Check gender restrictions
   if (race.restrictions?.gender) {
-    const restriction = race.restrictions.gender.toLowerCase().includes("colt") 
-      ? "colt" as const
-      : race.restrictions.gender.toLowerCase().includes("filly")
-      ? "filly" as const
-      : undefined;
-    if (restriction && !checkGenderEligibility(horse.gender, restriction)) {
+    if (!checkGenderEligibility(horse.gender, race.restrictions.gender)) {
       return false;
     }
   }

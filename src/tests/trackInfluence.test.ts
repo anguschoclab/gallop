@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { buildRunner, runRaceToCompletion } from "../game/raceSim";
 import type { CourseSpecification } from "../game/tracks";
-import type { Horse, Rng } from "../game/types";
+import type { Horse, Rng, Jockey } from "../game/types";
 
 // Simple deterministic RNG for testing
 const mockRng: Rng = {
@@ -9,27 +9,54 @@ const mockRng: Rng = {
   seed: "test"
 };
 
-const createHorse = (id: string, style: "E" | "S", speed: number = 80, accel: number = 50): Horse => ({
-  id,
-  name: `${style}_Horse_${id}`,
-  age: 3,
-  gender: "colt",
-  hemisphere: "Northern",
-  silk: "#ff0000",
-  stats: { speed, stamina: 80, acceleration: accel, consistency: 100 },
-  energy: 100,
-  form: 0,
-  potential: 100,
-  raceHistory: [],
-  owned: true,
-  runningStyle: style,
-  distanceAptitude: 1600,
-  surfaceAptitude: { Turf: 1, Dirt: 1, Synthetic: 1 },
-  lifetimeEarnings: 0,
-  careerStarts: 0,
-  careerWins: 0,
-  fame: 0
-});
+function createHorse(id: string, style: "E" | "S" | "P", speed: number = 80, accel: number = 50, overrides: Partial<Horse> = {}): Horse {
+  return {
+    id,
+    name: `${style}_Horse_${id}`,
+    age: 3,
+    gender: "colt",
+    hemisphere: "Northern",
+    silk: "#ff0000",
+    stats: { speed, stamina: 80, acceleration: accel, consistency: 100 },
+    energy: 100,
+    form: 0,
+    potential: 100,
+    raceHistory: [],
+    owned: true,
+    runningStyle: style,
+    distanceAptitude: 1600,
+    surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
+    climbingAptitude: 1.0,
+    corneringAptitude: 1.0,
+    lifetimeEarnings: 0,
+    careerStarts: 0,
+    careerWins: 0,
+    fame: 0,
+    ...overrides,
+  };
+}
+
+function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
+  return {
+    id: overrides.id ?? "j1",
+    name: overrides.name ?? "Test J",
+    age: 25,
+    archetype: overrides.archetype ?? "versatile",
+    stats: {
+      pacing: 70,
+      positioning: 70,
+      vigor: 70,
+      gateSkill: 70,
+      temperament: 70,
+    },
+    traits: overrides.traits ?? [],
+    careerStarts: 0,
+    careerWins: 0,
+    fame: 50,
+    ridingFee: 100,
+    ...overrides
+  };
+}
 
 describe("Track Size Influence", () => {
   it("should favor front-runners on tight tracks with short straights", () => {

@@ -1,8 +1,9 @@
 // Scouting System - Fog of war for NPC horse stats
 // Famous horses are well-known; obscure horses require scouting
 
-import type { Horse, HorseStats, ScoutReport, Stable } from "./types";
+import type { Horse, HorseStats, ScoutReport, Stable, Rng } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { resolveCoatColor } from "./geneticsEngine";
 
 // Scouting costs
 const SCOUT_COST_BASE = 500;
@@ -166,13 +167,36 @@ export function scoutHorse(
     revealedStats[stat] = Math.max(1, Math.min(100, trueValue + (error * direction)));
   }
   
+  // Genetic Insight (High-accuracy only)
+  let geneticInsight: ScoutReport["geneticInsight"];
+  if (accuracy > 0.85) {
+    const g = horse.genotype;
+    const abilityMarkers: string[] = [];
+    if (g.preferences.climbing[0] + g.preferences.climbing[1] >= 8) abilityMarkers.push("Strong Climbing Marker");
+    if (g.preferences.cornering[0] + g.preferences.cornering[1] >= 8) abilityMarkers.push("Agile Cornering Marker");
+
+    // Hidden color carrier (e.g. non-gray horse carrying gray allele)
+    let hiddenColorCarrier: string | undefined;
+    if (horse.coatColor !== "gray" && (g.color.gray[0] === 1 || g.color.gray[1] === 1)) {
+      hiddenColorCarrier = "Gray Allele Carrier";
+    }
+
+    geneticInsight = {
+      distanceMarker: `Genetic bias for ${horse.distanceAptitude}m`,
+      surfaceMarker: Object.entries(horse.surfaceAptitude).find(([_, v]) => v === 1.0)?.[0] + " Affinity Marker",
+      hiddenColorCarrier,
+      abilityMarkers
+    };
+  }
+  
   const report: ScoutReport = {
     horseId: horse.id,
     stableId: stable.id,
     day,
     accuracy,
     revealedStats,
-    notes: generateScoutNotes(horse, accuracy)
+    notes: generateScoutNotes(horse, accuracy),
+    geneticInsight
   };
   
   return {

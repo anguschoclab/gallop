@@ -23,7 +23,8 @@ export function canBreed(
   if (sire.id === dam.id) return { ok: false, reason: "A horse cannot breed with itself." };
 
   if (!SIRE_GENDERS.includes(sire.gender)) {
-    return { ok: false, reason: `Sire ${sire.name} is not male.` };
+    const reason = sire.gender === "gelding" ? "has been gelded" : "is not male";
+    return { ok: false, reason: `Sire ${sire.name} ${reason}.` };
   }
   if (!DAM_GENDERS.includes(dam.gender)) {
     return { ok: false, reason: `Dam ${dam.name} is not female.` };

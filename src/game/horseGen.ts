@@ -1,63 +1,111 @@
-import type { Horse, Race, RaceClass, Hemisphere, HealthStatus } from "./types";
-import type { GradedRace } from "./gradedRaces";
-import type { Rng } from "./rng";
+import type { Horse, HorseStats, Hemisphere, Rng, RunningStyle, CoatColor, Genotype, HorseGender } from "./types";
+import { generateGenotype, resolveCoatColor, resolveStats, resolveRunningStyle, resolveDistanceAptitude, resolveSurfaceAptitude, resolveAptitudeMultiplier, resolveTrait, resolveInjuryProneness, resolveSize } from "./geneticsEngine";
 import { generateUUID } from "./uuid";
-import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
 import {
-  rand,
-  randConformation,
-  randTemperament,
-  generateGeneticMarkers,
-  rollRunningStyle,
-  randomCoatColor,
-  randomWeather,
-  randomTrackCondition,
   randomHorseName,
   randomSilk,
-  randomRaceName,
 } from "@/core/common/random";
 
-export function generateHorse(rng: Rng, opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere } = {}): Horse {
+export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: string; age?: number; gender?: HorseGender; hemisphere?: Hemisphere; owned?: boolean } = {}): Horse {
+  const stats = resolveStats(genotype.stats);
+  const coatColor = resolveCoatColor(genotype.color);
+  const runningStyle = resolveRunningStyle(genotype.style);
+  const conformation = resolveTrait(genotype.physical);
+  const temperament = resolveTrait(genotype.mental);
+  
+  const distanceAptitude = resolveDistanceAptitude(genotype.preferences.distance);
+  const surfaceAptitude = resolveSurfaceAptitude(genotype.preferences.surface);
+  const climbingAptitude = resolveAptitudeMultiplier(genotype.preferences.climbing);
+  let corneringAptitude = resolveAptitudeMultiplier(genotype.preferences.cornering);
+  const injuryProneness = resolveInjuryProneness(genotype.durability);
+  const { height, weight } = resolveSize(genotype.size);
+
+  // Size impact on cornering
+  const sizeSum = genotype.size[0] + genotype.size[1];
+  if (sizeSum >= 8) corneringAptitude -= 0.15;
+  if (sizeSum <= 4) corneringAptitude += 0.1;
+
+  const dnaPotential = (stats.speed + stats.stamina + stats.acceleration + stats.consistency) / 4;
+
+  return {
+    id: generateUUID(rng),
+    name: opts.name ?? "Unnamed Foal",
+    age: opts.age ?? 0,
+    gender: opts.gender ?? (rng.next() < 0.5 ? (rng.next() < 0.2 ? "gelding" : "colt") : "filly"),
+    hemisphere: opts.hemisphere ?? "Northern",
+    silk: randomSilk(rng),
+    stats,
+    genotype,
+    energy: 100,
+    form: 0,
+    potential: Math.round(dnaPotential + rng.range(-1, 3)),
+    raceHistory: [],
+    owned: opts.owned ?? false,
+    conformation,
+    temperament,
+    healthStatus: "healthy",
+    coatColor,
+    runningStyle,
+    fame: 0,
+    distanceAptitude,
+    surfaceAptitude,
+    climbingAptitude,
+    corneringAptitude,
+    injuryProneness,
+    height,
+    weight,
+    lifetimeEarnings: 0,
+    careerStarts: 0,
+    careerWins: 0,
+  };
+}
+
+export function generateHorse(rng: Rng, opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere; age?: number; gender?: HorseGender } = {}): Horse {
   const tier = opts.tier ?? "budget";
-  const ranges: Record<string, [number, number]> = {
-    starter: [30, 55],
-    budget: [25, 60],
-    mid: [45, 75],
-    elite: [60, 90],
-  };
-  const [lo, hi] = ranges[tier];
-  const potentialRanges: Record<string, [number, number]> = {
-    starter: [65, 80],
-    budget: [60, 80],
-    mid: [75, 90],
-    elite: [85, 100],
-  };
-  const [pLo, pHi] = potentialRanges[tier];
-  const age = rand(2, 6, rng);
+  
+  // 1. Generate Biological Identity (DNA)
+  const genotype = generateGenotype(rng, tier);
+
+  // 2. Resolve Phenotype (Visible traits)
+  const stats = resolveStats(genotype.stats);
+  const coatColor = resolveCoatColor(genotype.color);
+  const runningStyle = resolveRunningStyle(genotype.style);
+  const conformation = resolveTrait(genotype.physical);
+  const temperament = resolveTrait(genotype.mental);
+  
+  // 3. Resolve Aptitudes from DNA
+  const distanceAptitude = resolveDistanceAptitude(genotype.preferences.distance);
+  const surfaceAptitude = resolveSurfaceAptitude(genotype.preferences.surface);
+  const climbingAptitude = resolveAptitudeMultiplier(genotype.preferences.climbing);
+  let corneringAptitude = resolveAptitudeMultiplier(genotype.preferences.cornering);
+  const injuryProneness = resolveInjuryProneness(genotype.durability);
+  const { height, weight } = resolveSize(genotype.size);
+
+  // Size impact on cornering
+  const sizeSum = genotype.size[0] + genotype.size[1];
+  if (sizeSum >= 8) corneringAptitude -= 0.15;
+  if (sizeSum <= 4) corneringAptitude += 0.1;
+
+  // 4. Procedural Metadata
+  const bruceLoweFamily = rollProceduralFamily(rng);
+  // Sire families (3, 8, 11, 12, 14) lift potential slightly for males.
+  let potentialBoost = 0;
+  
+  const age = opts.age ?? (rng.next() < 0.2 ? rng.range(2, 3) : rng.range(2, 6));
   const isMale = rng.next() < 0.5;
-  const gender = age <= 2 ? (isMale ? "colt" : "filly") : (isMale ? "horse" : "mare");
+  const isGelding = isMale && rng.next() < 0.35; // 35% of males are geldings
+  const gender = opts.gender ?? (age <= 2 ? (isMale ? (isGelding ? "gelding" : "colt") : "filly") : (isMale ? (isGelding ? "gelding" : "horse") : "mare"));
   const hemisphere: Hemisphere = opts.hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
 
-  const stats = {
-    speed: rand(lo, hi, rng),
-    stamina: rand(lo, hi, rng),
-    acceleration: rand(lo, hi, rng),
-    consistency: rand(lo, hi, rng),
-  };
-  // Bruce Lowe family — procedurally assigned. Running families (1-5) get a
-  // small speed/acceleration nudge; this is mostly cosmetic but makes the
-  // family number visible in actual gameplay.
-  const bruceLoweFamily = rollProceduralFamily(rng);
-  if (RUNNING_FAMILIES.has(bruceLoweFamily)) {
-    stats.speed = Math.min(hi, stats.speed + 1);
-    stats.acceleration = Math.min(hi, stats.acceleration + 1);
-  }
-  // Sire families (3, 8, 11, 12, 14) lift potential ceiling for males.
-  let potentialBoost = 0;
   if (SIRE_FAMILIES.has(bruceLoweFamily) && (gender === "colt" || gender === "horse")) {
     potentialBoost = 2;
   }
+
+  // Potential is derived from DNA + small random factor (epigenetics)
+  const dnaPotential = (stats.speed + stats.stamina + stats.acceleration + stats.consistency) / 4;
+  const potential = Math.round(dnaPotential + rng.range(-2, 5) + potentialBoost);
+
   return {
     id: generateUUID(rng),
     name: randomHorseName(rng),
@@ -66,27 +114,28 @@ export function generateHorse(rng: Rng, opts: { tier?: "starter" | "budget" | "m
     hemisphere,
     silk: randomSilk(rng),
     stats,
+    genotype,
     energy: 100,
     form: 0,
-    potential: Math.min(100, rand(pLo, pHi, rng) + potentialBoost),
+    potential: Math.min(100, potential),
     raceHistory: [],
     owned: opts.owned ?? false,
     sireName: randomHorseName(rng),
     damName: randomHorseName(rng),
-    conformation: randConformation(rng),
-    temperament: randTemperament(rng),
-    geneticMarkers: generateGeneticMarkers(rng),
+    conformation,
+    temperament,
     healthStatus: "healthy",
-    coatColor: randomCoatColor(rng),
-    runningStyle: rollRunningStyle(stats, rng),
-    fame: 0, // Player horses start with no fame
+    coatColor,
+    runningStyle,
+    fame: 0,
     bruceLoweFamily,
-    distanceAptitude: rand(10, 24, rng) * 100,
-    surfaceAptitude: {
-      Turf: rng.next() < 0.33 ? 1.0 : rand(85, 95, rng) / 100,
-      Dirt: rng.next() < 0.33 ? 1.0 : rand(85, 95, rng) / 100,
-      Synthetic: rng.next() < 0.33 ? 1.0 : rand(85, 95, rng) / 100,
-    },
+    distanceAptitude,
+    surfaceAptitude,
+    climbingAptitude,
+    corneringAptitude,
+    injuryProneness,
+    height,
+    weight,
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
@@ -187,5 +236,18 @@ export function generateRace(day: number, rng: Rng): Race {
     resolved: false,
     weather: randomWeather(rng),
     trackCondition: randomTrackCondition(rng),
+  };
+}
+
+/**
+ * Transition a male horse (Colt/Horse) to a Gelding.
+ * Improves consistency (reduces noise) but removes breeding capability.
+ */
+export function geldHorse(h: Horse): Horse {
+  if (h.gender !== "colt" && h.gender !== "horse") return h;
+
+  return {
+    ...h,
+    gender: "gelding",
   };
 }
