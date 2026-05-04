@@ -5,7 +5,8 @@
 import type { Race, RaceClass, ClaimingPrice } from "../types";
 import type { Track } from "../tracks";
 import { generateUUID } from "../uuid";
-import { randomRaceName, randomWeather, randomTrackCondition, rand } from "@/core/common/random";
+import { randomWeather, randomTrackCondition, rand } from "@/core/common/random";
+import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 
 // Configuration for North American race distribution
 // 70% claiming races as per real-world statistics
@@ -91,7 +92,8 @@ function getTrackQuality(country: string): "low" | "mid" | "high" {
 export function generateNorthAmericanRace(
   track: Track,
   day: number,
-  surface?: "Turf" | "Dirt" | "Synthetic"
+  surface?: "Turf" | "Dirt" | "Synthetic",
+  usedNames?: Set<string>
 ): Race {
   const raceClass = selectNARaceClass();
   const cfg = NA_CLASS_CONFIG[raceClass];
@@ -103,10 +105,39 @@ export function generateNorthAmericanRace(
   // Calculate distance
   const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100) * 100;
   
+  // Determine claiming price for claiming races (needed for naming)
+  let claimingPrice: ClaimingPrice | undefined;
+  if (raceClass === "Claiming" || raceClass === "MaidenClaiming" || raceClass === "MaidenOptionalClaiming") {
+    claimingPrice = selectClaimingPrice(trackQuality);
+  }
+  
+  // Determine claiming price for optional claiming (optional, needed for naming)
+  if (raceClass === "OptionalClaiming") {
+    claimingPrice = selectClaimingPrice(trackQuality);
+  }
+  
+  // Determine win condition for allowance races (needed for naming)
+  let winCondition: "N1X" | "N2X" | "N3L" | "none" | undefined;
+  if (raceClass === "Allowance" || raceClass === "StarterAllowance") {
+    const winConditions: ("N1X" | "N2X" | "N3L" | "none")[] = ["N1X", "N2X", "N3L", "none"];
+    winCondition = winConditions[Math.floor(Math.random() * winConditions.length)];
+  }
+  
+  // Generate race name using new generator
+  const name = generateRaceName({
+    track,
+    raceClass,
+    claimingPrice,
+    winCondition,
+    usedNames,
+    surface: selectedSurface,
+    distance,
+  });
+  
   // Build race object
   const race: Race = {
     id: generateUUID(),
-    name: randomRaceName(),
+    name,
     day,
     distance,
     raceClass,
@@ -124,15 +155,19 @@ export function generateNorthAmericanRace(
   
   // Add claiming price for claiming races
   if (raceClass === "Claiming" || raceClass === "MaidenClaiming" || raceClass === "MaidenOptionalClaiming") {
-    race.claimingPrice = selectClaimingPrice(trackQuality);
+    race.claimingPrice = claimingPrice;
     // Scale purse based on claiming price
-    race.purse = race.claimingPrice * 2 + Math.floor(Math.random() * 5000);
+    if (claimingPrice) {
+      race.purse = claimingPrice * 2 + Math.floor(Math.random() * 5000);
+    }
   }
   
   // Add claiming price for optional claiming (optional)
   if (raceClass === "OptionalClaiming") {
-    race.claimingPrice = selectClaimingPrice(trackQuality);
-    race.purse = race.claimingPrice * 2.5 + Math.floor(Math.random() * 5000);
+    race.claimingPrice = claimingPrice;
+    if (claimingPrice) {
+      race.purse = claimingPrice * 2.5 + Math.floor(Math.random() * 5000);
+    }
   }
   
   // Add handicap flag
@@ -141,9 +176,8 @@ export function generateNorthAmericanRace(
   }
   
   // Add win condition for allowance races
-  if (raceClass === "Allowance" || raceClass === "StarterAllowance") {
-    const winConditions: ("N1X" | "N2X" | "N3L" | "none")[] = ["N1X", "N2X", "N3L", "none"];
-    race.winCondition = winConditions[Math.floor(Math.random() * winConditions.length)];
+  if (winCondition) {
+    race.winCondition = winCondition;
   }
   
   return race;
@@ -156,13 +190,14 @@ export function generateNorthAmericanRaceCard(
   numRaces: number
 ): Race[] {
   const races: Race[] = [];
+  const usedNames = new Set<string>();
   
   for (let i = 0; i < numRaces; i++) {
     // Alternate surfaces if track has multiple
     const surfaceIndex = i % track.surfaces.length;
     const surface = track.surfaces[surfaceIndex];
     
-    const race = generateNorthAmericanRace(track, day, surface);
+    const race = generateNorthAmericanRace(track, day, surface, usedNames);
     races.push(race);
   }
   

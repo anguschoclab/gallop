@@ -24,6 +24,8 @@ export function randomSilk(rng: () => number = Math.random) {
   return silks[Math.floor(rng() * silks.length)];
 }
 
+// Simple race name generator (legacy, kept for compatibility)
+// Use generateRaceName from @/core/race/naming/raceNameGenerator for realistic names
 const raceNamePrefixes = [
   "Ascot", "Belmont", "Churchill", "Doncaster", "Epsom", "Flemington",
   "Goodwood", "Hialeah", "Irish", "Kentucky", "Longchamp", "Newmarket",
@@ -36,3 +38,6 @@ export function randomRaceName(rng: () => number = Math.random) {
   const b = raceNameSuffixes[Math.floor(rng() * raceNameSuffixes.length)];
   return `${a} ${b}`;
 }
+
+// Export the new race name generator
+export { generateRaceName, generateRaceCardNames } from "@/core/race/naming/raceNameGenerator";

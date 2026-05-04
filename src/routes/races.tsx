@@ -14,7 +14,7 @@ import { RaceDetailPanel } from "@/components/RaceDetailPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getGradeColorClass } from "@/core/race/grading";
 import { isGenderEligible } from "@/core/horse/gender";
-import type { Race, Horse } from "@/game/types";
+import type { Race, Horse, RaceClass } from "@/game/types";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { loadRaceFilters, saveRaceFilters, loadDayJump, saveDayJump } from "@/services/storageAdapter";
@@ -22,6 +22,28 @@ import { getFilteredRaces } from "@/services/raceFilterService";
 import type { RaceFilters } from "@/core/race/filtering";
 import { getScoutStatus } from "@/game/scouting";
 import { parseDayInput, formatDate } from "@/core/calendar/dateFormatting";
+
+// Helper function to format race class names for display
+function formatRaceClass(raceClass: RaceClass): string {
+  const displayNames: Record<RaceClass, string> = {
+    Maiden: "Maiden",
+    MaidenSpecialWeight: "MSW",
+    MaidenClaiming: "MCL",
+    MaidenOptionalClaiming: "MOC",
+    MaidenStakes: "MST",
+    Allowance: "Allowance",
+    OptionalClaiming: "OCL",
+    StarterAllowance: "STR",
+    StarterHandicap: "SHP",
+    Stakes: "Stakes",
+    Claiming: "Claiming",
+    Handicap: "Handicap",
+    Listed: "Listed",
+    Group: "Group",
+    Graded: "Graded",
+  };
+  return displayNames[raceClass] || raceClass;
+}
 
 type GradeFilter = "all" | "G1" | "G2" | "G3";
 const GRADE_FILTERS: GradeFilter[] = ["all", "G1", "G2", "G3"];
@@ -116,12 +138,21 @@ function CalendarView({ upcoming, day, horses, cash, enterRace, withdrawRace, pr
                           {race.graded ? (
                             <Badge variant="outline" className={gradeColor}>{race.graded.grade}</Badge>
                           ) : (
-                            <Badge variant="outline">{race.raceClass}</Badge>
+                            <Badge variant="outline">{formatRaceClass(race.raceClass)}</Badge>
                           )}
                         </div>
                         <div className="text-sm text-muted-foreground space-y-1">
                           <div>{race.distance}m · {race.graded ? `${race.graded.track} · ${race.graded.surface}` : race.raceClass}</div>
                           <div>Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span> · Entry ${race.entryFee}</div>
+                          {race.claimingPrice && (
+                            <div>Claiming Price <span className="font-medium text-foreground">${race.claimingPrice.toLocaleString()}</span></div>
+                          )}
+                          {race.winCondition && race.winCondition !== "none" && (
+                            <div>Condition: <span className="font-medium text-foreground">{race.winCondition}</span></div>
+                          )}
+                          {race.isHandicap && (
+                            <div className="text-amber-600">Handicap Race</div>
+                          )}
                           <div className="flex items-center gap-2">
                             <span>{race.entries.length}/{race.fieldSize} entered</span>
                             {npcEntryCount > 0 && (
@@ -562,7 +593,7 @@ function RacesPage() {
                       {race.graded ? (
                         <Badge variant="outline" className={gradeColor}>{race.graded.grade}</Badge>
                       ) : (
-                        <Badge variant="outline">{race.raceClass}</Badge>
+                        <Badge variant="outline">{formatRaceClass(race.raceClass)}</Badge>
                       )}
                       {race.day === day && <Badge variant="default">Today</Badge>}
                     </div>
@@ -572,6 +603,9 @@ function RacesPage() {
                       {race.graded && <span>{race.graded.track} · {race.graded.surface}</span>}
                       <span>Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span></span>
                       <span>Entry ${race.entryFee}</span>
+                      {race.claimingPrice && <span>Claiming <span className="font-medium text-foreground">${race.claimingPrice.toLocaleString()}</span></span>}
+                      {race.winCondition && race.winCondition !== "none" && <span>Condition: <span className="font-medium text-foreground">{race.winCondition}</span></span>}
+                      {race.isHandicap && <span className="text-amber-600">Handicap</span>}
                       <span>{race.entries.length}/{race.fieldSize} entered</span>
                       {race.minStat && <span>Min OVR {race.minStat}</span>}
                       {r?.minAge === r?.maxAge && r?.minAge !== undefined && <span>{r.minAge}YO only</span>}
