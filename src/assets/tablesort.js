@@ -570,43 +570,37 @@ fdTableSort = {
                 var classToAdd  = "forwardSort";
 
                 if(dataObj.thList.length > 1) {
-                        var js  = "var sortWrapper = function(a,b) {\n";
-                        var l   = dataObj.thList.length;
-                        var cnt = 0;
-                        var e,d,th,p,f;
+                        // 🛡️ Sentinel Security Fix: Replaced eval() based dynamic sorting which was vulnerable
+                        // to XSS (evaluating className strings) with a safe array of sorting rules resolved once.
+                        var sortRules = [];
+                        for(var i = 0; i < dataObj.thList.length; i++) {
+                                var th = dataObj.thList[i];
+                                var p  = th.className.match(/fd-column-([0-9]+)/)[1];
+                                if(dataObj.identical[p]) { continue; }
 
-                        for(var i=0; i < l; i++) {
-                                th = dataObj.thList[i];
-                                p  = th.className.match(/fd-column-([0-9]+)/)[1];
-                                if(dataObj.identical[p]) { continue; };
-                                cnt++;
-
+                                var f;
                                 if(th.className.match(/sortable-(numeric|currency|date|keep)/)) {
-                                        f = "fdTableSort.sortNumeric";
+                                        f = fdTableSort.sortNumeric;
                                 } else if(th.className.match('sortable-text')) {
-                                        f = "fdTableSort.sortText";
+                                        f = fdTableSort.sortText;
                                 } else if(th.className.search(/sortable-([a-zA-Z\_]+)/) != -1 && th.className.match(/sortable-([a-zA-Z\_]+)/)[1] in window) {
-                                        f = "window['" + th.className.match(/sortable-([a-zA-Z\_]+)/)[1] + "']";
-                                } else  f = "fdTableSort.sortText";
+                                        f = window[th.className.match(/sortable-([a-zA-Z\_]+)/)[1]];
+                                } else {
+                                        f = fdTableSort.sortText;
+                                }
+                                var isForward = th.className.search('forwardSort') != -1;
+                                sortRules.push({ p: p, f: f, isForward: isForward });
+                        }
 
-                                e = "e" + i;
-                                d = th.className.search('forwardSort') != -1 ? "a,b" : "b,a";
-                                js += "fdTableSort.pos   = " + p + ";\n";
-                                js += "var " + e + " = "+f+"(" + d +");\n";
-                                js += "if(" + e + ") return " + e + ";\n";
-                                js += "else { \n";
+                        var sortWrapper = function(a, b) {
+                                for(var i = 0; i < sortRules.length; i++) {
+                                        var rule = sortRules[i];
+                                        fdTableSort.pos = rule.p;
+                                        var e = rule.isForward ? rule.f(a, b) : rule.f(b, a);
+                                        if(e) return e;
+                                }
+                                return 0;
                         };
-
-                        js += "return 0;\n";
-
-                        for(var i=0; i < cnt; i++) {
-                                js += "};\n";
-                        };
-
-                        if(cnt) js += "return 0;\n";
-                        js += "};\n";
-
-                        eval(js);
                         dataObj.data.sort(sortWrapper);
                         identical = false;
                 } else if((lastPos == fdTableSort.pos && !identical) || (thNode.className.search(/sortable-keep/) != -1 && lastPos == -1)) {
