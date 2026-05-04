@@ -1,7 +1,16 @@
 import type { Horse, HorseStats, Hemisphere, RunningStyle, CoatColor, Genotype, HorseGender } from "./types";
 import type { Rng } from "./rng";
 import { nondeterministicRng } from "./rng";
-import { generateGenotype, resolveCoatColor, resolveStats, resolveRunningStyle, resolveDistanceAptitude, resolveSurfaceAptitude, resolveAptitudeMultiplier, resolveTrait, resolveInjuryProneness, resolveSize, resolveGeneticMarkers } from "./geneticsEngine";
+import {
+  generateGenotype, resolveCoatColor, resolveStats, resolveRunningStyle,
+  resolveDistanceAptitude, resolveSurfaceAptitude, resolveAptitudeMultiplier,
+  resolveTrait, resolveInjuryProneness, resolveSize, resolveGeneticMarkers,
+  resolveHeartScore, resolveFiberBias, resolveStrideType, resolveTrackPreference,
+  resolveMudAptitude, resolveTrainability, resolvePeakAge, resolveRecoveryRate,
+  resolveFertility, resolveFoalingEase, resolveMarkings,
+  resolveBleederRisk, resolveRoarerRisk, resolveOcdRisk, resolveRacingViable,
+  computeHeterozygosity,
+} from "./geneticsEngine";
 import { generateUUID } from "./uuid";
 import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
 import { rollGender, geldHorse } from "@/core/horse/gender";
@@ -15,6 +24,30 @@ export { generateRace, makeGradedRace } from "./raceGeneration/raceGen";
 
 // Re-export geldHorse so existing importers from horseGen don't break.
 export { geldHorse };
+
+// Resolve all DNA-derived gameplay fields from a Genotype. Centralized here
+// so both `createHorseFromDNA` (foaling) and `generateHorse` (procedural) stay
+// in lockstep — adding a new DNA trait is a one-place edit.
+function resolveDnaTraits(genotype: Genotype) {
+  return {
+    heartScore: resolveHeartScore(genotype.heart),
+    fiberBias: resolveFiberBias(genotype.fiberType),
+    strideType: resolveStrideType(genotype.stride),
+    trackPreference: resolveTrackPreference(genotype.trackBias),
+    mudAptitude: resolveMudAptitude(genotype.mudAptitude),
+    trainability: resolveTrainability(genotype.trainability),
+    peakAge: resolvePeakAge(genotype.peakAge),
+    recoveryRate: resolveRecoveryRate(genotype.recovery),
+    fertility: resolveFertility(genotype.fertility),
+    foalingEase: resolveFoalingEase(genotype.foalingEase),
+    markings: resolveMarkings(genotype.markings),
+    bleederRisk: resolveBleederRisk(genotype.health.bleeder),
+    roarerRisk: resolveRoarerRisk(genotype.health.roarer),
+    ocdRisk: resolveOcdRisk(genotype.health.ocd),
+    racingViable: resolveRacingViable(genotype.health.efna5),
+    heterozygosity: computeHeterozygosity(genotype),
+  };
+}
 
 export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: string; age?: number; gender?: HorseGender; hemisphere?: Hemisphere; owned?: boolean } = {}): Horse {
   const stats = resolveStats(genotype.stats);
@@ -68,6 +101,7 @@ export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: 
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
+    ...resolveDnaTraits(genotype),
   };
 }
 
@@ -148,6 +182,7 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
+    ...resolveDnaTraits(genotype),
   };
 }
 

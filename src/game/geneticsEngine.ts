@@ -1,15 +1,20 @@
-import type { 
-  Genotype, 
+import type {
+  Genotype,
   MarkerGenotype,
-  Locus, 
-  Allele, 
-  ColorGenotype, 
-  StatGenotype, 
+  Locus,
+  Allele,
+  ColorGenotype,
+  StatGenotype,
   PreferenceGenotype,
   HorseStats,
   CoatColor,
   RunningStyle,
   GeneticMarkers,
+  HorseMarkings,
+  MarkingsGenotype,
+  HealthGenotype,
+  SockHeight,
+  FaceWhite,
 } from "./types";
 import type { Rng } from "./rng";
 
@@ -133,6 +138,7 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
       csnb: inheritCarrier(sire.markers.lethalCarriers.csnb, dam.markers.lethalCarriers.csnb),
       hypp: inheritCarrier(sire.markers.lethalCarriers.hypp, dam.markers.lethalCarriers.hypp),
       olws: inheritCarrier(sire.markers.lethalCarriers.olws, dam.markers.lethalCarriers.olws),
+      ffs1: inheritCarrier(sire.markers.lethalCarriers.ffs1, dam.markers.lethalCarriers.ffs1),
     },
   };
 
@@ -161,6 +167,30 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
     durability: crossover(sire.durability, dam.durability, rng),
     size: crossover(sire.size, dam.size, rng),
     markers: inheritedMarkers,
+    // --- New loci, all crossed-over identically. Heart is polygenic (5 loci). ---
+    heart: crossoverLoci(sire.heart, dam.heart),
+    fiberType: crossover(sire.fiberType, dam.fiberType, rng),
+    stride: crossover(sire.stride, dam.stride, rng),
+    trackBias: crossover(sire.trackBias, dam.trackBias, rng),
+    mudAptitude: crossover(sire.mudAptitude, dam.mudAptitude, rng),
+    trainability: crossover(sire.trainability, dam.trainability, rng),
+    peakAge: crossover(sire.peakAge, dam.peakAge, rng),
+    recovery: crossover(sire.recovery, dam.recovery, rng),
+    fertility: crossover(sire.fertility, dam.fertility, rng),
+    foalingEase: crossover(sire.foalingEase, dam.foalingEase, rng),
+    markings: {
+      socks: crossover(sire.markings.socks, dam.markings.socks, rng),
+      face: crossover(sire.markings.face, dam.markings.face, rng),
+      silverDapple: crossover(sire.markings.silverDapple, dam.markings.silverDapple, rng),
+      sabino: crossover(sire.markings.sabino, dam.markings.sabino, rng),
+      splashWhite: crossover(sire.markings.splashWhite, dam.markings.splashWhite, rng),
+    },
+    health: {
+      bleeder: crossover(sire.health.bleeder, dam.health.bleeder, rng),
+      roarer: crossover(sire.health.roarer, dam.health.roarer, rng),
+      ocd: crossover(sire.health.ocd, dam.health.ocd, rng),
+      efna5: crossover(sire.health.efna5, dam.health.efna5, rng),
+    },
   };
 }
 
@@ -251,15 +281,36 @@ export function generateGenotype(rng: Rng, tier: "starter" | "budget" | "mid" | 
       csnb: rng.next() < 0.05,
       hypp: rng.next() < 0.03,
       olws: rng.next() < 0.02,
+      // Fragile Foal Syndrome Type 1 — ~2% real-world TB prevalence
+      ffs1: rng.next() < 0.02,
     },
   };
 
+  // --- Roll the new DNA loci. Tier-aware: elite stables produce horses with
+  //     stronger heart/trainability/recovery; budget stables produce more
+  //     middle-of-the-road values. Cosmetic markings are tier-independent.
+  const rollHealthLocus = (): Locus => {
+    // Health susceptibility — most horses have low risk; rare bad rolls.
+    // Sum 2-3: 70%, sum 4-6: 25%, sum 7-10: 5%.
+    const r = rng.next();
+    if (r < 0.70) return [rng.range(1, 2), rng.range(1, 2)];
+    if (r < 0.95) return [rng.range(2, 3), rng.range(2, 3)];
+    return [rng.range(4, 5), rng.range(4, 5)];
+  };
+
+  const rollMarkingsLocus = (presence: number): Locus => {
+    // For binary cosmetic flags: presence = probability the foal expresses
+    // the modifier (allele sum >= 8). Most horses lack rare patterns.
+    if (rng.next() < presence) return [rng.range(4, 5), rng.range(4, 5)];
+    return [rng.range(1, 3), rng.range(1, 3)];
+  };
+
   return {
-    color: { 
-      extension: extension as Locus, 
-      agouti: agouti as Locus, 
-      gray: gray as Locus, 
-      cream: cream as Locus 
+    color: {
+      extension: extension as Locus,
+      agouti: agouti as Locus,
+      gray: gray as Locus,
+      cream: cream as Locus,
     },
     stats: {
       speed: rollStatDNA(),
@@ -279,6 +330,35 @@ export function generateGenotype(rng: Rng, tier: "starter" | "budget" | "mid" | 
     durability: rollLocus(),
     size: rollLocus(),
     markers,
+    // --- New loci ---
+    heart: Array.from({ length: 5 }, rollLocus),
+    fiberType: rollLocus(),
+    stride: rollLocus(),
+    trackBias: rollLocus(),
+    mudAptitude: rollLocus(),
+    trainability: rollLocus(),
+    peakAge: rollLocus(),
+    recovery: rollLocus(),
+    fertility: rollLocus(),
+    foalingEase: rollLocus(),
+    markings: {
+      // Independent rolls per marking — segregate Mendelian-style.
+      socks: [rng.range(1, 5), rng.range(1, 5)],
+      face: [rng.range(1, 5), rng.range(1, 5)],
+      silverDapple: rollMarkingsLocus(0.05),
+      sabino: rollMarkingsLocus(0.08),
+      splashWhite: rollMarkingsLocus(0.03),
+    },
+    health: {
+      bleeder: rollHealthLocus(),
+      roarer: rollHealthLocus(),
+      ocd: rollHealthLocus(),
+      // EFNA5 haplotype — most horses sound (sum >= 4); ~7% homozygous-negative
+      // (sum <= 3) → never race. Mirrors the 32% reduced racing probability
+      // from the genome study, but expressed as a hard "skeletal viability"
+      // flag rather than a per-event roll.
+      efna5: rng.next() < 0.07 ? [1, 1] : [rng.range(2, 5), rng.range(2, 5)],
+    },
   };
 }
 
@@ -315,6 +395,201 @@ export function resolveInjuryProneness(locus: Locus): number {
   // Higher sum = MORE durable = LOWER proneness
   // 10 -> 0.01 (1%), 2 -> 0.10 (10%) chance per event
   return 0.12 - (sum / 10) * 0.1;
+}
+
+// ============================================================================
+// New DNA traits — Tier 1+2 performance, development, reproduction, cosmetic, health
+// ============================================================================
+
+// --- Tier 1: Heart score (polygenic, 5 loci, hidden) ---
+// Cardiovascular efficiency — multiplier on late-race stamina output.
+// Polygenic (5 loci, allele 1-5 each) so it's hard to predict from a single
+// covering. Range: 0.85x (small heart) → 1.15x (Secretariat-class).
+export function resolveHeartScore(loci: Locus[]): number {
+  const sum = loci.reduce((acc, [a, b]) => acc + a + b, 0); // 10..50
+  // Map [10, 50] → [0.85, 1.15]
+  return 0.85 + ((sum - 10) / 40) * 0.30;
+}
+
+// --- Tier 1: Muscle fiber type (hidden) ---
+// Biases the expression of speed/stamina by race distance.
+// sum 2-4: sprinter (favors speed in <1400m); 5-7: balanced; 8-10: stayer.
+export function resolveFiberBias(locus: Locus): "sprinter" | "balanced" | "stayer" {
+  const sum = locus[0] + locus[1];
+  if (sum <= 4) return "sprinter";
+  if (sum >= 8) return "stayer";
+  return "balanced";
+}
+
+// Returns multipliers applied to topSpeed and staminaFactor at race time.
+// Sprinters lose ground in long races; stayers lose ground in short races.
+// Distance bands: short <1400m, mid 1400-1800m, long >1800m.
+export function fiberDistanceModifier(
+  bias: "sprinter" | "balanced" | "stayer",
+  distance: number
+): { speedMul: number; staminaMul: number } {
+  const isShort = distance < 1400;
+  const isLong = distance > 1800;
+  if (bias === "sprinter") {
+    if (isShort) return { speedMul: 1.04, staminaMul: 1.0 };
+    if (isLong) return { speedMul: 0.96, staminaMul: 0.94 };
+    return { speedMul: 1.0, staminaMul: 0.98 };
+  }
+  if (bias === "stayer") {
+    if (isShort) return { speedMul: 0.96, staminaMul: 1.0 };
+    if (isLong) return { speedMul: 1.0, staminaMul: 1.06 };
+    return { speedMul: 0.99, staminaMul: 1.02 };
+  }
+  return { speedMul: 1.0, staminaMul: 1.0 };
+}
+
+// --- Tier 2: Stride length (hidden) ---
+// Long stride favors big tracks/straights; short stride favors tight turns.
+export function resolveStrideType(locus: Locus): "short" | "balanced" | "long" {
+  const sum = locus[0] + locus[1];
+  if (sum <= 4) return "short";
+  if (sum >= 8) return "long";
+  return "balanced";
+}
+
+// --- Tier 2: Track bias (hidden) ---
+// Left-handed vs right-handed track preference. Most North American tracks
+// run counter-clockwise (left-handed); most European tracks clockwise.
+export function resolveTrackPreference(locus: Locus): "left" | "balanced" | "right" {
+  const sum = locus[0] + locus[1];
+  if (sum <= 4) return "left";
+  if (sum >= 8) return "right";
+  return "balanced";
+}
+
+// --- Tier 2: Mud aptitude (hidden) ---
+// Multiplier on the conditions speed effect when ground is soft/heavy.
+// 0.85 (hates mud) to 1.15 (mudder). At "fast" track, no effect.
+export function resolveMudAptitude(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  return 0.85 + ((sum - 2) / 8) * 0.30;
+}
+
+// --- Tier 1: Trainability (hidden) ---
+// Multiplier on the training-success roll in trainHorse.
+// Range: 0.5 (slow learner) to 1.4 (savant). Most horses cluster near 1.0.
+export function resolveTrainability(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  return 0.5 + ((sum - 2) / 8) * 0.9;
+}
+
+// --- Tier 1: Peak age / development curve (hidden) ---
+// When the horse hits peak ability. 3 = early-developer 2-3yo prodigy;
+// 7 = late bloomer that improves through age 6-7. Stat growth in trainHorse
+// caps at (currentAge / peakAge) × potential, so early-peakers are ready
+// to race at 2 but plateau quickly.
+export function resolvePeakAge(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  if (sum <= 3) return 3;
+  if (sum <= 5) return 4;
+  if (sum <= 7) return 5;
+  if (sum <= 9) return 6;
+  return 7;
+}
+
+// --- Tier 1: Recovery rate (hidden) ---
+// Multiplier on daily energy regen (currently +35/day flat).
+// 0.7 (hard-keeper) to 1.4 (iron horse).
+export function resolveRecoveryRate(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  return 0.7 + ((sum - 2) / 8) * 0.7;
+}
+
+// --- Tier 3: Fertility (hidden) ---
+// For mares: conception probability per cover (0.70-0.99).
+// For stallions: book-completion percentage (% of bookings that go in foal).
+// Both consume the same locus.
+export function resolveFertility(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  return 0.70 + ((sum - 2) / 8) * 0.29;
+}
+
+// --- Tier 3: Foaling ease (hidden, mare-only effect) ---
+// Multiplier on the term-complication rate. Low = easy foaler, fewer
+// stillborns / unable-to-stand outcomes. High = dystocia-prone.
+export function resolveFoalingEase(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  // Higher locus sum = easier foaling = LOWER multiplier on complication rate.
+  // Range: 0.6 (easy) → 1.4 (hard).
+  return 1.4 - ((sum - 2) / 8) * 0.8;
+}
+
+// --- Tier 4: Cosmetic markings (visible, no gameplay effect) ---
+function resolveSocks(locus: Locus): SockHeight {
+  const sum = locus[0] + locus[1];
+  if (sum <= 3) return "none";       // 60%
+  if (sum <= 7) return "sock";       // 35%
+  return "stocking";                 // 5%
+}
+
+function resolveFaceWhite(locus: Locus): FaceWhite {
+  const sum = locus[0] + locus[1];
+  if (sum <= 3) return "none";       // 50%
+  if (sum <= 6) return "star";       // 25%
+  if (sum <= 9) return "blaze";      // 20%
+  return "bald";                     // 5%
+}
+
+export function resolveMarkings(g: MarkingsGenotype): HorseMarkings {
+  return {
+    socks: resolveSocks(g.socks),
+    face: resolveFaceWhite(g.face),
+    silverDapple: g.silverDapple[0] + g.silverDapple[1] >= 8,
+    sabino: g.sabino[0] + g.sabino[1] >= 8,
+    splashWhite: g.splashWhite[0] + g.splashWhite[1] >= 8,
+  };
+}
+
+// --- Tier 6: Health susceptibility (hidden, gameplay effect) ---
+// All map to a 0..1 risk score. Low score = healthy, high = symptomatic.
+function resolveRiskLocus(locus: Locus, maxRisk: number): number {
+  const sum = locus[0] + locus[1];
+  // Inverted: higher allele sum = MORE risk (the locus encodes susceptibility).
+  return ((sum - 2) / 8) * maxRisk;
+}
+
+export function resolveBleederRisk(locus: Locus): number {
+  return resolveRiskLocus(locus, 0.15);
+}
+export function resolveRoarerRisk(locus: Locus): number {
+  return resolveRiskLocus(locus, 0.10);
+}
+export function resolveOcdRisk(locus: Locus): number {
+  return resolveRiskLocus(locus, 0.10);
+}
+
+// EFNA5 chromosome-14 marker. Homozygous recessive (sum <= 3) = skeletal
+// development insufficient for racing. Real-world genome study: 32% lower
+// racing probability for homozygous-negative carriers; we model as a hard
+// gate (the horse never makes it to the track) since a partial dampener
+// would add no gameplay-distinguishable signal.
+export function resolveRacingViable(locus: Locus): boolean {
+  return locus[0] + locus[1] >= 4;
+}
+
+// --- Tier 5: Heterozygosity (population genetics) ---
+// Counts heterozygous loci across the genotype. Foals with high heterozygosity
+// get a small fitness bonus (hybrid vigor); homozygous foals are dampened
+// (inbreeding depression). Returns 0..1.
+export function computeHeterozygosity(g: Genotype): number {
+  const loci: Locus[] = [
+    g.color.extension, g.color.agouti, g.color.gray, g.color.cream,
+    g.preferences.distance, g.preferences.surface, g.preferences.climbing, g.preferences.cornering,
+    g.style, g.mental, g.physical, g.durability, g.size,
+    g.fiberType, g.stride, g.trackBias, g.mudAptitude,
+    g.trainability, g.peakAge, g.recovery,
+    g.fertility, g.foalingEase,
+    g.health.bleeder, g.health.roarer, g.health.ocd, g.health.efna5,
+    ...g.heart,
+    ...g.stats.speed, ...g.stats.stamina, ...g.stats.acceleration, ...g.stats.consistency,
+  ];
+  const heteroCount = loci.filter(([a, b]) => a !== b).length;
+  return heteroCount / loci.length;
 }
 
 export function resolveSize(locus: Locus): { height: number; weight: number } {

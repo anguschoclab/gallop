@@ -42,7 +42,47 @@ export type MarkerGenotype = {
   signalTransduction: "excellent" | "good" | "fair" | "poor";
   immunity: "excellent" | "good" | "fair" | "poor";
   geneticDiversity: number; // 0.5–1.0
-  lethalCarriers: { csnb: boolean; hypp: boolean; olws: boolean };
+  // Lethal recessives. Both parents carrier → 25% homozygous foal lost at the
+  // day-60 (CSNB/HYPP/OLWS) or day-14 (FFS1) checkpoint. FFS1 is real-world
+  // ~2% prevalence in TBs. Listed alongside the others so the existing
+  // both-carrier screen handles them uniformly.
+  lethalCarriers: { csnb: boolean; hypp: boolean; olws: boolean; ffs1: boolean };
+};
+
+// Cosmetic markings — purely visual, no gameplay effect, but breeders care.
+// All resolved from independent loci so they segregate Mendelian-style.
+export type SockHeight = "none" | "sock" | "stocking";
+export type FaceWhite = "none" | "star" | "blaze" | "bald";
+export type CoatModifier = "silver-dapple" | "sabino" | "splash-white" | null;
+
+export type HorseMarkings = {
+  socks: SockHeight;
+  face: FaceWhite;
+  silverDapple: boolean;  // dilute on black-pigmented coats
+  sabino: boolean;        // irregular white spotting
+  splashWhite: boolean;   // ventral white pattern
+};
+
+export type MarkingsGenotype = {
+  socks: Locus;
+  face: Locus;
+  silverDapple: Locus;
+  sabino: Locus;
+  splashWhite: Locus;
+};
+
+// Health-susceptibility loci. Each resolves to a 0–1 risk score consumed by
+// race-sim and lifecycle code. Distinct from `markers` (which are
+// fitness/diversity flags) and from `durability` (general injury proneness).
+export type HealthGenotype = {
+  bleeder: Locus; // EIPH — exercise-induced pulmonary hemorrhage
+  roarer: Locus;  // laryngeal hemiplegia / wind issues
+  ocd: Locus;     // osteochondritis dissecans, esp. in 2yo training
+  // EFNA5 chromosome-14 haplotype: cartilage/skeletal-development gene.
+  // Homozygous-negative carriers have ~32% lower probability of ever racing
+  // (real-world Genomic finding). Modeled as a hidden taint locus that gates
+  // the resolved `racingViable` flag at horse generation.
+  efna5: Locus;
 };
 
 export type Genotype = {
@@ -55,6 +95,23 @@ export type Genotype = {
   durability: Locus; // Injury proneness locus
   size: Locus; // Height/Mass locus
   markers: MarkerGenotype;
+  // --- Performance loci (Tier 1+2) ---
+  heart: Locus[];     // 5 polygenic loci → cardiovascular efficiency multiplier
+  fiberType: Locus;   // muscle fiber bias — sprint vs. stayer
+  stride: Locus;      // long-stride (straights) vs short-stride (turns)
+  trackBias: Locus;   // left-handed vs right-handed track preference
+  mudAptitude: Locus; // performance on soft/heavy going
+  // --- Development & training loci (Tier 1) ---
+  trainability: Locus; // training-gain probability multiplier
+  peakAge: Locus;      // when the horse hits peak (early developer vs. late bloomer)
+  recovery: Locus;     // daily energy regen multiplier
+  // --- Reproduction loci (Tier 3) ---
+  fertility: Locus;    // mare conception % / stallion book-completion %
+  foalingEase: Locus;  // mare-only — bias on term complication rate
+  // --- Cosmetic markings (Tier 4) ---
+  markings: MarkingsGenotype;
+  // --- Health susceptibility (Tier 6) ---
+  health: HealthGenotype;
 };
 
 // Running style — preferred position and pace shape during a race.
@@ -220,6 +277,35 @@ export type Horse = {
   lifetimeEarnings: number;
   careerStarts: number;
   careerWins: number;
+  // --- Resolved DNA traits (Tier 1+2) ---
+  heartScore: number;        // 0.85-1.15 multiplier on late-race stamina
+  fiberBias: "sprinter" | "balanced" | "stayer";
+  strideType: "short" | "balanced" | "long";
+  trackPreference: "left" | "balanced" | "right";
+  mudAptitude: number;       // 0.85-1.15 multiplier on soft/heavy ground
+  // --- Resolved DNA traits (development & training) ---
+  trainability: number;      // 0.5-1.4 multiplier on training-gain probability
+  peakAge: number;           // 3-7 — age at which the horse hits peak ability
+  recoveryRate: number;      // 0.7-1.4 multiplier on daily energy regen
+  // --- Resolved DNA traits (reproduction) ---
+  fertility: number;         // 0.7-0.99 conception probability
+  foalingEase: number;       // 0.7-1.0 multiplier on dam complication risk (lower = easier)
+  // --- Cosmetic markings ---
+  markings: HorseMarkings;
+  // --- Health susceptibility (Tier 6) ---
+  bleederRisk: number;       // 0-0.15 chance of mid-race fade in long races
+  roarerRisk: number;        // 0-0.10 chance of stamina collapse at top speed
+  ocdRisk: number;           // 0-0.10 chance of bone-development injury during 2yo training
+  // --- Population-genetics derived ---
+  bloodline?: string;            // sire-line founder tag (e.g. "Northern Dancer line")
+  heterozygosity?: number;       // computed at birth/generation; 0-1 fitness modifier
+  coefficientOfInbreeding?: number; // Wright's F at conception (0..0.25 typical)
+  ancestralHistoryCoefficient?: number; // AHC — quality of ancestor purging (0..1)
+  inbreedingTier?: "outcross" | "linebreeding" | "close-inbreeding"; // derived from COI
+  prepotency?: number;           // 0..1 — heightened ability to transmit traits (high COI = high prepotency)
+  // Skeletal viability — homozygous-negative for EFNA5 → never races.
+  // When false, the horse is permanently retired before its first race.
+  racingViable: boolean;
 };
 
 export type RaceClass =
