@@ -142,3 +142,60 @@
     color: var(--color-foreground);
   }
 }
+
+/* Race Viewer Sprite Animations */
+@keyframes sprite-run {
+  from { background-position: 0 0; }
+  to { background-position: -300px 0; }
+}
+
+@keyframes sprite-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes finish-flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes track-scroll {
+  from { background-position: 0 0; }
+  to { background-position: -512px 0; }
+}
+
+/* Horse sprite base styles */
+.horse-sprite {
+  width: 50px;
+  height: 50px;
+  background-size: 300px 50px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.horse-sprite-animated {
+  animation: sprite-run 0.5s steps(6) infinite;
+}
+
+.horse-sprite-bob {
+  animation: sprite-bob 0.4s ease-in-out infinite;
+}
+
+/* Static sprite (for roan/palomino/white) */
+.horse-sprite-static {
+  background-size: 50px 50px;
+}
+
+/* Finish line animation */
+.finish-line-active {
+  animation: finish-flash 0.5s ease-in-out infinite;
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .horse-sprite-animated,
+  .horse-sprite-bob,
+  .finish-line-active {
+    animation: none !important;
+  }
+}

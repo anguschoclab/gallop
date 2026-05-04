@@ -405,6 +405,9 @@ function RacesPage() {
         </CardContent>
       </Card>
 
+      {/* Summary Stats */}
+      <RaceSummaryStats upcoming={upcoming} horses={horses} />
+
       {viewMode === "list" ? (
         <div className="space-y-3">
           {upcoming.length === 0 && (
@@ -507,6 +510,63 @@ function RacesPage() {
         </Card>
       )}
     </div>
+  );
+}
+
+function RaceSummaryStats({ upcoming, horses }: { upcoming: Race[]; horses: Horse[] }) {
+  // Count G1/G2/G3 races
+  const g1Count = upcoming.filter((r) => r.graded?.grade === "G1").length;
+  const g2Count = upcoming.filter((r) => r.graded?.grade === "G2").length;
+  const g3Count = upcoming.filter((r) => r.graded?.grade === "G3").length;
+
+  // Calculate average expected Beyer for all entered horses
+  const enteredHorses = new Map<string, { horse: Horse; race: Race }>();
+  for (const race of upcoming) {
+    for (const entry of race.entries) {
+      const horse = horses.find((h) => h.id === entry.horseId);
+      if (horse && !enteredHorses.has(horse.id)) {
+        enteredHorses.set(horse.id, { horse, race });
+      }
+    }
+  }
+
+  let avgBeyer: number | null = null;
+  if (enteredHorses.size > 0) {
+    let totalBeyer = 0;
+    for (const { horse, race } of enteredHorses.values()) {
+      const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
+      const model = expectedBeyer(horse, race.distance, classBonus);
+      const recent = horse.raceHistory.slice(0, 3).map((r) => r.beyer).filter((b): b is number => typeof b === "number");
+      const avgRecent = recent.length ? recent.reduce((s, v) => s + v, 0) / recent.length : null;
+      const proj = avgRecent !== null ? Math.round(model * 0.6 + avgRecent * 0.4) : model;
+      totalBeyer += proj;
+    }
+    avgBeyer = Math.round(totalBeyer / enteredHorses.size);
+  }
+
+  return (
+    <Card>
+      <CardContent className="p-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-yellow-600">{g1Count}</div>
+            <div className="text-xs text-muted-foreground">G1 Races</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-600">{g2Count}</div>
+            <div className="text-xs text-muted-foreground">G2 Races</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-amber-700">{g3Count}</div>
+            <div className="text-xs text-muted-foreground">G3 Races</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold tabular-nums">{avgBeyer ?? "—"}</div>
+            <div className="text-xs text-muted-foreground">Avg Beyer</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

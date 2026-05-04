@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { stepRunner, computePaceContext, type Runner } from "@/game/raceSim";
 import { beyerFigure } from "@/game/beyer";
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { buildRaceField, rngForRace, type RaceSimulationDependencies } from "@/services/raceSimulationService";
 import type { Weather } from "@/game/types";
+import { Pause, Play, Camera, Target } from "lucide-react";
 
 // Track surface background mapping
 const getTrackBackground = (surface?: string): string | undefined => {
@@ -58,6 +59,42 @@ const getWeatherDisplay = (weather?: Weather): string => {
       return "";
   }
 };
+
+// Sprite sheet configuration
+const ANIMATED_SPRITES = ["bay", "black", "chestnut", "dark-bay", "gray"];
+const STATIC_SPRITES = ["roan", "palomino", "white"];
+
+const COAT_TO_SPRITE: Record<string, string> = {
+  bay: "b",
+  black: "bl",
+  chestnut: "ch",
+  "dark-bay": "dkb",
+  gray: "gr",
+  roan: "roan",
+  palomino: "palomino",
+  white: "white",
+};
+
+// Get sprite URL for a coat color
+function getSpriteUrl(coatColor?: string): string | undefined {
+  if (!coatColor) return undefined;
+  const sprite = COAT_TO_SPRITE[coatColor];
+  return sprite ? `/assets/horse-${sprite}.png` : undefined;
+}
+
+// Check if sprite is animated (6-frame sheet) or static
+function isAnimatedSprite(coatColor?: string): boolean {
+  if (!coatColor) return false;
+  return ANIMATED_SPRITES.includes(coatColor);
+}
+
+// Calculate animation duration based on velocity (faster = quicker animation)
+function getAnimationDuration(velocity: number): string {
+  // Base duration 0.6s at ~15 m/s, scales inversely with velocity
+  const baseSpeed = 15;
+  const duration = Math.max(0.3, Math.min(0.8, 0.6 * (baseSpeed / Math.max(velocity, 5))));
+  return `${duration.toFixed(2)}s`;
+}
 
 // Project a Beyer figure mid-race from current pace.
 // If finished: use real finish time. Otherwise: extrapolate remaining distance
@@ -110,13 +147,28 @@ function LiveRace() {
   const [tick, setTick] = useState(0);
   const [speed, setSpeed] = useState(1);
   const [finished, setFinished] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
   const [minBeyer, setMinBeyer] = useState(0);
+  
+  // Camera follow: null = auto-follow leader, string = specific horseId
+  // Default to first owned horse, or leader if no owned horses
+  const ownedHorses = runners.filter(r => r.owned);
+  const defaultFollowTarget = ownedHorses.length > 0 ? ownedHorses[0].horseId : null;
+  const [followTarget, setFollowTarget] = useState<string | null>(defaultFollowTarget);
+  
+  // Accessibility announcements
+  const [announcement, setAnnouncement] = useState<string>("");
+  const lastAnnouncedPosition = useRef<Map<string, number>>(new Map());
+  const lastAnnouncementTime = useRef<number>(0);
+  
   const simTimeRef = useRef(0);
   const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
   const speedRef = useRef(speed);
+  const pausedRef = useRef(paused);
   speedRef.current = speed;
+  pausedRef.current = paused;
 
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
 
@@ -133,7 +185,12 @@ function LiveRace() {
     const loop = (now: number) => {
       const real = (now - last) / 1000;
       last = now;
-      accumulator += real * speedRef.current;
+      
+      // Skip accumulator update when paused
+      if (!pausedRef.current) {
+        accumulator += real * speedRef.current;
+      }
+      
       let stillRunning = runners.some((r) => r.finishTime === null);
       let steps = 0;
       while (accumulator >= FIXED_DT && stillRunning && steps < MAX_STEPS_PER_FRAME) {
@@ -171,6 +228,49 @@ function LiveRace() {
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Keyboard handler: Spacebar toggles pause
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space" && !finished) {
+        e.preventDefault();
+        setPaused((p) => !p);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [finished]);
+
+  // Accessibility: Announce position changes for owned horses (throttled)
+  useEffect(() => {
+    if (finished) return;
+    
+    const now = performance.now();
+    if (now - lastAnnouncementTime.current < 3000) return; // Throttle to 3s
+    
+    const ownedRunners = runners.filter(r => r.owned && r.finishTime === null);
+    if (ownedRunners.length === 0) return;
+    
+    // Calculate positions
+    const sorted = [...runners].sort((a, b) => b.position - a.position);
+    const positions = new Map(sorted.map((r, i) => [r.horseId, i + 1]));
+    
+    // Check for position changes
+    for (const r of ownedRunners) {
+      const currentPos = positions.get(r.horseId) || 0;
+      const lastPos = lastAnnouncedPosition.current.get(r.horseId);
+      
+      if (lastPos !== undefined && currentPos !== lastPos) {
+        const direction = currentPos < lastPos ? "moved up to" : "dropped to";
+        const suffix = currentPos === 1 ? " (leading!)" : "";
+        setAnnouncement(`${r.name} ${direction} ${currentPos}${suffix}`);
+        lastAnnouncementTime.current = now;
+        break; // Only announce one change per tick
+      }
+      
+      lastAnnouncedPosition.current.set(r.horseId, currentPos);
+    }
+  }, [tick, runners, finished]);
 
   // Build live rows with projected Beyer, then filter + sort.
   void tick;
