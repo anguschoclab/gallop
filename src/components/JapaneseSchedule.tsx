@@ -51,14 +51,9 @@ export function JapaneseSchedule() {
       JAPANESE_TRACKS.includes(r.graded.track as JapaneseTrack)
   );
 
-  // Filter by season
+  // Filter by season (inferred from dayOfYear)
   const seasonFilteredRaces = japaneseRaces.filter((race) => {
     if (selectedSeason === "all") return true;
-    const raceSeason = race.restrictions?.season;
-    if (raceSeason) {
-      return raceSeason === selectedSeason;
-    }
-    // If no explicit season restriction, infer from dayOfYear
     const dayOfYear = ((race.day - 1) % 365) + 1;
     const inferredSeason = getSeasonFromDay(dayOfYear);
     return inferredSeason === selectedSeason;

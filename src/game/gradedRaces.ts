@@ -145,6 +145,50 @@ export function getRaceCountry(race: GradedRace): string {
 
 export { getCountry };
 
+// Region/Continent mapping for regional awards
+export type Continent = "north_america" | "europe" | "asia_pacific" | "south_america";
+
+const COUNTRY_TO_CONTINENT: Record<string, Continent> = {
+  // North America
+  "Canada": "north_america",
+  "USA": "north_america",
+  // Europe/Middle East
+  "Great Britain": "europe",
+  "Ireland": "europe",
+  "France": "europe",
+  "Germany": "europe",
+  "Italy": "europe",
+  "Spain": "europe",
+  "UAE": "europe",
+  "Turkey": "europe",
+  "Austria": "europe",
+  "Belgium": "europe",
+  "Czech Republic": "europe",
+  "Hungary": "europe",
+  "Sweden": "europe",
+  "Norway": "europe",
+  "Denmark": "europe",
+  // Asia-Pacific
+  "Japan": "asia_pacific",
+  "Hong Kong": "asia_pacific",
+  "Australia": "asia_pacific",
+  "New Zealand": "asia_pacific",
+  "Singapore": "asia_pacific",
+  // South America
+  "Argentina": "south_america",
+  "Brazil": "south_america",
+  "Chile": "south_america",
+};
+
+export function getTrackCountry(track: string): string {
+  return getCountry(track);
+}
+
+export function getTrackContinent(track: string): Continent {
+  const country = getCountry(track);
+  return COUNTRY_TO_CONTINENT[country] || "europe";
+}
+
 export const GRADED_RACES: GradedRace[] = [
   { uuid: "d5d972e0-b7d3-4a73-987e-7d298c734474", key: "woodbine-mile", name: "Woodbine Mile", track: "Woodbine", trackId: "8b562557-55ca-4d38-b59f-72fe64ef3861", grade: "G1", distance: 1600, surface: "Turf", purse: 1000000, dayOfYear: doy(9, 14), restrictions: { minAge: 3 } },
   { uuid: "c1142636-12c2-412e-9f83-934b614d9e32", key: "ep-taylor", name: "E. P. Taylor Stakes", track: "Woodbine", trackId: "8b562557-55ca-4d38-b59f-72fe64ef3861", grade: "G1", distance: 2000, surface: "Turf", purse: 600000, dayOfYear: doy(10, 12), restrictions: { minAge: 3 } },

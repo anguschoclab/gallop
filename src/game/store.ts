@@ -20,6 +20,19 @@ import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { isUniversalBirthday, isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { awardsPhase } from "@/core/time/phases/awards";
+import { executePipeline, createPhase, type PipelineContext } from "@/core/time/pipeline";
+import { upkeepPhase } from "@/core/time/phases/upkeep";
+import { agingPhase } from "@/core/time/phases/aging";
+import { energyPhase } from "@/core/time/phases/energy";
+import { marketPhase } from "@/core/time/phases/market";
+import { racesPhase } from "@/core/time/phases/races";
+import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
+import { pregnancyPhase } from "@/core/time/phases/pregnancy";
+import { npcCyclePhase } from "@/core/time/phases/npcCycle";
+import { auctionsPhase } from "@/core/time/phases/auctions";
+import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
+import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
 
 export type ActionResult = { ok: true } | { ok: false, reason: string };
 
@@ -102,7 +115,7 @@ function ageHorses(horses: Horse[], newDay: number): Horse[] {
   });
 }
 
-function refreshMarket(currentMarket: Horse[]): Horse[] {
+export function refreshMarket(currentMarket: Horse[]): Horse[] {
   let market = [...currentMarket];
   if (market.length > 3) market = market.slice(2);
   while (market.length < 5) {
@@ -113,7 +126,7 @@ function refreshMarket(currentMarket: Horse[]): Horse[] {
   return market;
 }
 
-function generateUpcomingRaces(currentRaces: Race[], newDay: number): Race[] {
+export function generateUpcomingRaces(currentRaces: Race[], newDay: number): Race[] {
   const races = [...currentRaces];
   // Add new races 7 days out
   const futureDay = newDay + 6;
@@ -132,7 +145,7 @@ function generateUpcomingRaces(currentRaces: Race[], newDay: number): Race[] {
   return races;
 }
 
-function pruneOldRaces(races: Race[], newDay: number): Race[] {
+export function pruneOldRaces(races: Race[], newDay: number): Race[] {
   return races.filter((r) => r.day >= newDay - 3);
 }
 
@@ -143,7 +156,7 @@ type PregnancyResult = {
   logs: { day: number; text: string }[];
 };
 
-function resolvePregnancies(
+export function resolvePregnancies(
   currentPregnancies: Pregnancy[],
   horses: Horse[],
   newDay: number
@@ -230,7 +243,7 @@ type RecalibrationResult = {
   log: { day: number; text: string } | null;
 };
 
-function maybeRecalibratePars(
+export function maybeRecalibratePars(
   currentPars: Record<number, number> | undefined,
   lastCalibrationDay: number,
   paceSamples: Record<number, number[]> | undefined,
@@ -281,10 +294,14 @@ type Actions = {
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
   advanceDay: () => void;
   advanceMultipleDays: (n: number, headless?: boolean) => void;
+  advanceWeek: (headless?: boolean) => void;
+  advanceMonth: (headless?: boolean) => void;
+  advanceYear: (headless?: boolean) => void;
   scoutHorse: (horseId: string) => { success: boolean; report?: ScoutReport; cost: number; message: string };
   consignHorse: (horseId: string, saleId: string) => ActionResult;
   withdrawConsignment: (horseId: string) => ActionResult;
   bidInAuction: (saleId: string, lotId: string, amount: number) => ActionResult;
+  clearPendingCeremonies: () => void;
 };
 
 function initialState(): GameState {
@@ -511,6 +528,9 @@ export const useGame = create<GameState & Actions>()(
         let earned = 0;
         const classBonus = getClassBonus(race.graded?.grade, race.raceClass);
         const splits = computePayoutSplits(race.purse, finishers.length);
+        // Track per-stable purse credits so NPC stables actually earn from races
+        // — closes the asymmetric drain where they previously only paid out.
+        const stableCredits: Record<string, number> = {};
 
         for (const r of ranked) {
           const h = s.horses.find((hh) => hh.id === r.horseId);
@@ -523,9 +543,14 @@ export const useGame = create<GameState & Actions>()(
           else if (r.position === 1) h.form = Math.min(10, h.form + 3);
           else if (r.position <= 3) h.form = Math.min(10, h.form + 1);
           else h.form = Math.max(-10, h.form - 1);
-          // payout
+          // payout — credit player or stable depending on ownership
           if (!r.dnf && r.position - 1 < splits.length) {
-            earned += splits[r.position - 1];
+            const pay = splits[r.position - 1];
+            if (h.stableId) {
+              stableCredits[h.stableId] = (stableCredits[h.stableId] ?? 0) + pay;
+            } else {
+              earned += pay;
+            }
           }
           // Update dam's blue hen status if horse wins a stakes race. Prefer
           // the ID-based pedigree link (set on player-bred and NPC-bred foals
@@ -556,10 +581,14 @@ export const useGame = create<GameState & Actions>()(
           samples[b] = arr;
         }
         const photoNote = photoFinish ? " 📸 Photo finish!" : "";
+        const updatedNpcStables = s.npcStables.map((stable) =>
+          stableCredits[stable.id] ? { ...stable, cash: stable.cash + stableCredits[stable.id] } : stable
+        );
         set({
           races: [...s.races],
           horses: [...s.horses],
           cash: s.cash + earned,
+          npcStables: updatedNpcStables,
           paceSamples: samples,
           log: [
             { day: s.day, text: `${race.name} — ${summary}${earned ? ` (won $${earned.toLocaleString()})` : ""}${photoNote}` },
@@ -651,125 +680,97 @@ export const useGame = create<GameState & Actions>()(
           const result = runRaceToCompletion(runners, race.distance, rng);
           get().resolveRace(race.id, result);
         }
-        // upkeep
-        const upkeep = s.horses.length * UPKEEP_PER_HORSE;
-        // restore energy
-        let horses = get().horses.map((h) => ({ ...h, energy: Math.min(100, h.energy + 35) }));
+        
         const newDay = s.day + 1;
-        horses = ageHorses(horses, newDay);
-        const market = refreshMarket(s.market);
-        const races = generateUpcomingRaces(get().races, newDay);
-        const pruned = pruneOldRaces(races, newDay);
-
-        const pregResult = resolvePregnancies(s.pregnancies, horses, newDay);
-        const { pregnancies, foals, cashAdjustment } = pregResult;
-        let newLogs = [...pregResult.logs];
-
-        const parResult = maybeRecalibratePars(s.calibratedPars, s.lastCalibrationDay ?? 0, s.paceSamples, newDay);
-        const { calibratedPars, lastCalibrationDay } = parResult;
-        const seasonLog: { day: number; text: string }[] = parResult.log ? [parResult.log] : [];
-
-        // NPC Cycle
-        const pregnantIds = new Set(s.pregnancies.filter(p => !p.resolved).map(p => p.damId));
+        const upkeep = s.horses.length * UPKEEP_PER_HORSE;
         
-        // 1. NPC Training
-        let horsesAfterNpcTraining = [...horses, ...foals];
-        if (s.npcStables.length > 0) {
-          horsesAfterNpcTraining = runNpcTraining(s.npcStables, horsesAfterNpcTraining, newDay);
-        }
+        // Execute pipeline for all phases
+        const pipelineContext: PipelineContext = {
+          previousDay: s.day,
+          newDay,
+          state: { ...s, cash: s.cash - upkeep },
+          logs: [],
+        };
         
-        // 2. NPC Race Entry (look 3 days ahead)
-        let racesAfterNpcEntry = pruned;
-        if (s.npcStables.length > 0) {
-          racesAfterNpcEntry = runNpcRaceEntry(s.npcStables, horsesAfterNpcTraining, racesAfterNpcEntry, newDay, 3, pregnantIds);
-        }
-        
-        // 3. Update fame for horses in yesterday's races
-        const yesterdayRaces = s.races.filter(r => r.day === s.day && r.resolved && r.result);
-        for (const race of yesterdayRaces) {
-          horsesAfterNpcTraining = updateHorseFame(horsesAfterNpcTraining, race);
-        }
-
-        // Auction hooks — generate new sales and resolve pending ones
-        const currentState = get();
-        let auctions: AuctionSale[] = [...(currentState.auctions ?? [])];
-        const doy = dayOfYear(newDay);
-        // Generate weanling/yearling sales on schedule
-        const SALE_TRIGGERS: { doy: number; kind: AuctionSale["kind"]; name: string }[] = [
-          { doy: 60, kind: "weanling", name: "Spring Weanling Sale" },
-          { doy: 240, kind: "yearling", name: "Summer Yearling Sale" },
-          { doy: 290, kind: "weanling_south", name: "Southern Weanling Sale" },
-          { doy: 105, kind: "yearling_south", name: "Southern Yearling Sale" },
+        const phases = [
+          agingPhase,
+          energyPhase,
+          marketPhase,
+          racesPhase,
+          beyerRecalibrationPhase,
+          pregnancyPhase,
+          npcCyclePhase,
+          auctionsPhase,
+          awardsPhase,
+          stateUpdatePhase,
         ];
-        for (const trigger of SALE_TRIGGERS) {
-          if (doy === trigger.doy && !auctions.some((a) => !a.resolved && a.kind === trigger.kind)) {
-            const newSale = generateAuctionLots(newDay, currentState.npcStables, horsesAfterNpcTraining, trigger.kind, trigger.name);
-            auctions.push(newSale);
-            newLogs.push({ day: newDay, text: `🏷️ ${trigger.name} opens — ${newSale.lots.length} lots.` });
-          }
-        }
-        // Auto-resolve sales that are 1+ day old and still unresolved (NPC-only resolution)
-        let auctionCashDelta = 0;
-        for (const sale of auctions) {
-          if (!sale.resolved && sale.day < newDay) {
-            const resolved = resolveAuctionSale(sale, currentState.npcStables, horsesAfterNpcTraining);
-            sale.lots = resolved.lots;
-            sale.resolved = true;
-            // Transfer player-consigned horses that sold
-            for (const lot of resolved.lots) {
-              if (!lot.consignorStableId && !lot.passed && !lot.withdrawn && lot.hammerPrice) {
-                // Player-consigned horse sold — remove from horses, credit 94% of hammer
-                const proceeds = Math.round(lot.hammerPrice * 0.94);
-                auctionCashDelta += proceeds;
-                horsesAfterNpcTraining = horsesAfterNpcTraining.filter((h) => h.id !== lot.horseId);
-                newLogs.push({ day: newDay, text: `🔨 ${sale.name}: your horse sold for $${lot.hammerPrice.toLocaleString()} (net $${proceeds.toLocaleString()}).` });
-              } else if (!lot.consignorStableId && lot.passed) {
-                // Passed — clear consignment
-                horsesAfterNpcTraining = horsesAfterNpcTraining.map((h) =>
-                  h.id === lot.horseId ? { ...h, consignedSaleId: undefined } : h
-                );
-              }
-            }
-          }
-        }
-        // Prune auctions older than 30 days
-        auctions = auctions.filter((a) => a.day >= newDay - 30);
-
+        
+        const updatedContext = executePipeline(phases, pipelineContext);
+        
+        // Extract final state from pipeline context
+        const { state: finalState, logs: newLogs } = updatedContext;
+        
         set({
           day: newDay,
-          cash: s.cash - upkeep + cashAdjustment + auctionCashDelta,
-          horses: horsesAfterNpcTraining,
-          market,
-          races: racesAfterNpcEntry,
+          cash: finalState.cash,
+          horses: finalState.horses,
+          market: finalState.market,
+          races: finalState.races,
           trainingUsed: {},
-          pregnancies,
-          calibratedPars,
-          lastCalibrationDay,
-          npcStables: s.npcStables,
-          scoutReports: s.scoutReports,
-          auctions,
-          log: [...seasonLog, ...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
+          pregnancies: finalState.pregnancies,
+          calibratedPars: finalState.calibratedPars,
+          lastCalibrationDay: finalState.lastCalibrationDay,
+          npcStables: finalState.npcStables,
+          scoutReports: finalState.scoutReports,
+          auctions: finalState.auctions,
+          log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
         });
       },
 
       advanceMultipleDays: (n: number, headless = false) => {
+        const s = get();
+        // Pre-compute player race days for O(1) lookup
+        const playerRaceDays = computePlayerRaceDays(s.races, s.day + 1, s.day + n);
+        
         for (let i = 0; i < n; i++) {
-          const s = get();
-          const nextDay = s.day + 1;
-          const playerRace = s.races.find(
-            (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned)
-          );
-          if (playerRace && !headless) {
-            set({ pendingPlayerRaceId: playerRace.id });
-            return;
+          const currentS = get();
+          const nextDay = currentS.day + 1;
+          
+          // O(1) lookup instead of O(n) array.find
+          if (playerRaceDays.has(nextDay) && !headless) {
+            const playerRace = currentS.races.find(
+              (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned)
+            );
+            if (playerRace) {
+              set({ pendingPlayerRaceId: playerRace.id });
+              return;
+            }
           }
-          if (playerRace && headless) {
-            const runners = buildRaceField({ race: playerRace, horses: s.horses });
-            const result = runRaceToCompletion(runners, playerRace.distance, rngForRace(playerRace));
-            get().resolveRace(playerRace.id, result);
+          
+          if (playerRaceDays.has(nextDay) && headless) {
+            const playerRace = currentS.races.find(
+              (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned)
+            );
+            if (playerRace) {
+              const runners = buildRaceField({ race: playerRace, horses: currentS.horses });
+              const result = runRaceToCompletion(runners, playerRace.distance, rngForRace(playerRace));
+              get().resolveRace(playerRace.id, result);
+            }
           }
           get().advanceDay();
         }
+      },
+
+      advanceWeek: (headless = false) => {
+        get().advanceMultipleDays(7, headless);
+      },
+
+      advanceMonth: (headless = false) => {
+        get().advanceMultipleDays(30, headless);
+      },
+
+      advanceYear: (headless = false) => {
+        get().advanceMultipleDays(365, headless);
       },
 
       consignHorse: (horseId: string, saleId: string) => {
@@ -843,6 +844,13 @@ export const useGame = create<GameState & Actions>()(
           ),
         });
         return { ok: true };
+      },
+
+      clearPendingCeremonies: () => {
+        set({
+          pendingAwardCeremonies: [],
+          currentCeremonyIndex: 0,
+        });
       },
     }),
     {

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Building2, Users, DollarSign, Globe, Trophy, Eye, Brain } from "lucide-react";
 import { toast } from "sonner";
+import { TrophyCase } from "@/components/awards";
 
 export const Route = createFileRoute("/npc-stables/$stableId")({ component: NpcStableDetailPage });
 
@@ -103,6 +104,14 @@ function NpcStableDetailPage() {
         </div>
       </div>
       
+      {/* Awards */}
+      <TrophyCase
+        awards={game.awards?.filter((a) => a.stableId === stableId) ?? []}
+        ownerName={stable.name}
+        variant="compact"
+        className="mb-6"
+      />
+
       {/* Stats Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <Card>

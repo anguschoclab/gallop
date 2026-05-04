@@ -1,3 +1,5 @@
+import type { RegionalAward, AwardRegion } from "./awards/types";
+
 export type HorseStats = {
   speed: number;
   stamina: number;
@@ -297,4 +299,13 @@ export type GameState = {
   // Sire Watch route. 0 until first recompute.
   industryMeanEarnings?: number;
   industryEarningsUpdatedDay?: number;
+  // Regional awards system
+  awards?: RegionalAward[];
+  lastAwardYear?: Record<AwardRegion, number>;
+  pendingAwardCeremonies?: {
+    region: AwardRegion;
+    year: number;
+    awards: RegionalAward[];
+  }[];
+  currentCeremonyIndex?: number;
 };

@@ -23,6 +23,7 @@ import { Route as GermanCalendarRouteImport } from './routes/german-calendar'
 import { Route as CanadianCalendarRouteImport } from './routes/canadian-calendar'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
+import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuctionIndexRouteImport } from './routes/auction.index'
@@ -101,6 +102,11 @@ const BreedingRoute = BreedingRouteImport.update({
   path: '/breeding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AwardsRoute = AwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuctionRoute = AuctionRouteImport.update({
   id: '/auction',
   path: '/auction',
@@ -140,6 +146,7 @@ const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auction': typeof AuctionRouteWithChildren
+  '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
   '/canadian-calendar': typeof CanadianCalendarRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
   '/canadian-calendar': typeof CanadianCalendarRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auction': typeof AuctionRouteWithChildren
+  '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
   '/canadian-calendar': typeof CanadianCalendarRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auction'
+    | '/awards'
     | '/breeding'
     | '/broodmares'
     | '/canadian-calendar'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/awards'
     | '/breeding'
     | '/broodmares'
     | '/canadian-calendar'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auction'
+    | '/awards'
     | '/breeding'
     | '/broodmares'
     | '/canadian-calendar'
@@ -280,6 +292,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuctionRoute: typeof AuctionRouteWithChildren
+  AwardsRoute: typeof AwardsRoute
   BreedingRoute: typeof BreedingRoute
   BroodmaresRoute: typeof BroodmaresRoute
   CanadianCalendarRoute: typeof CanadianCalendarRoute
@@ -397,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BreedingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/awards': {
+      id: '/awards'
+      path: '/awards'
+      fullPath: '/awards'
+      preLoaderRoute: typeof AwardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auction': {
       id: '/auction'
       path: '/auction'
@@ -488,6 +508,7 @@ const StableRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuctionRoute: AuctionRouteWithChildren,
+  AwardsRoute: AwardsRoute,
   BreedingRoute: BreedingRoute,
   BroodmaresRoute: BroodmaresRoute,
   CanadianCalendarRoute: CanadianCalendarRoute,

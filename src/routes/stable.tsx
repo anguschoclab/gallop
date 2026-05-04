@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { HorseCard } from "@/components/HorseCard";
 import { HorseCompare } from "@/components/HorseCompare";
+import { TrophyCase } from "@/components/awards";
 
 export const Route = createFileRoute("/stable")({
   component: StablePage,
@@ -9,6 +10,8 @@ export const Route = createFileRoute("/stable")({
 
 function StablePage() {
   const horses = useGame((s) => s.horses.filter(h => h.owned));
+  const awards = useGame((s) => s.awards ?? []);
+  const playerAwards = awards.filter((a) => !a.stableId);
 
   return (
     <div className="space-y-6">
@@ -19,6 +22,13 @@ function StablePage() {
         </div>
         {horses.length >= 2 && <HorseCompare horses={horses} />}
       </div>
+
+      {playerAwards.length > 0 && (
+        <TrophyCase
+          awards={playerAwards}
+          variant="compact"
+        />
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {horses.map((h) => (

@@ -2,12 +2,13 @@ import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Home, Trophy, Store, Calendar, Plus, Heart, Building2, Gavel, Settings, Baby, BarChart2 } from "lucide-react";
+import { Home, Trophy, Store, Calendar, Plus, Heart, Building2, Gavel, Settings, Baby, BarChart2, Award } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
 import { AutoSimPanel } from "./AutoSimPanel";
-import { useState } from "react";
+import { AwardCeremony } from "./awards";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: Home, exact: true },
@@ -19,6 +20,7 @@ const navItems = [
   { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
   { to: "/auction", label: "Sales", icon: Gavel, exact: false },
   { to: "/recap", label: "Recap", icon: BarChart2, exact: false },
+  { to: "/awards", label: "Awards", icon: Award, exact: false },
 ] as const;
 
 export function AppShell() {
@@ -31,6 +33,18 @@ export function AppShell() {
   const location = useLocation();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
+  
+  // Award ceremonies state
+  const pendingCeremonies = useGame((s) => s.pendingAwardCeremonies);
+  const [showCeremony, setShowCeremony] = useState(false);
+  const clearPendingCeremonies = useGame((s) => s.clearPendingCeremonies);
+  
+  // Show ceremony when pending ceremonies exist
+  useEffect(() => {
+    if (pendingCeremonies && pendingCeremonies.length > 0) {
+      setShowCeremony(true);
+    }
+  }, [pendingCeremonies]);
 
   // Hide chrome for live race screen
   const isRace = location.pathname.startsWith("/race/");
@@ -114,6 +128,12 @@ export function AppShell() {
       </main>
       <PlayerRacePrompt />
       <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
+      <AwardCeremony
+        isOpen={showCeremony}
+        onClose={() => setShowCeremony(false)}
+        ceremonies={pendingCeremonies || []}
+        onComplete={() => clearPendingCeremonies?.()}
+      />
     </div>
   );
 }

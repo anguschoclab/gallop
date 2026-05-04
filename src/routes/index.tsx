@@ -5,18 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { overall, SilkBadge } from "@/components/HorseBits";
+import { Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
 function Dashboard() {
-  const { day, cash, horses, races, log } = useGame();
+  const { day, cash, horses, races, log, awards } = useGame();
   const upcoming = races
     .filter((r) => !r.resolved && r.day >= day)
     .sort((a, b) => a.day - b.day)
     .slice(0, 5);
   const myRunning = upcoming.filter((r) => r.entries.some((e) => e.owned));
+  const playerAwards = awards?.filter((a) => !a.stableId) ?? [];
+  const hotyCount = playerAwards.filter((a) => a.category === "horse_of_the_year").length;
 
   return (
     <div className="space-y-6">
@@ -25,7 +28,7 @@ function Dashboard() {
         <p className="text-muted-foreground">{gameCalendarDate(day)}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Cash on hand</CardTitle></CardHeader>
           <CardContent><p className="text-3xl font-bold tabular-nums">${cash.toLocaleString()}</p></CardContent>
@@ -37,6 +40,18 @@ function Dashboard() {
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">My next races</CardTitle></CardHeader>
           <CardContent><p className="text-3xl font-bold">{myRunning.length}</p></CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Awards</CardTitle>
+            <Trophy className="w-4 h-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <Link to="/awards" className="hover:opacity-80 transition-opacity">
+              <p className="text-3xl font-bold">{playerAwards.length}</p>
+              {hotyCount > 0 && <p className="text-xs text-yellow-600 font-medium">{hotyCount} HOTY</p>}
+            </Link>
+          </CardContent>
         </Card>
       </div>
 

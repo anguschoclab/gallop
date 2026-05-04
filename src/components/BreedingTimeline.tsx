@@ -50,7 +50,7 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
       type: "conception",
       day: p.conceivedDay,
       title: isSire ? "Bred as sire" : "Bred as dam",
-      description: `With ${partnerName}${partnerHorse ? ` (${partnerHorse.age}YO ${partnerHorse.sex === "colt" ? "colt" : "filly"})` : ""}`,
+      description: `With ${partnerName}${partnerHorse ? ` (${partnerHorse.age}YO ${partnerHorse.gender === "colt" || partnerHorse.gender === "horse" ? "colt" : "filly"})` : ""}`,
       badgeVariant: "secondary",
     });
 
@@ -62,7 +62,7 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
           type: "foal_birth",
           day: p.dueDay,
           title: "Foal born",
-          description: `${foal.name} (${foal.sex}, ${foal.temperament || "unknown temperament"})${foal.traits ? ` · Traits: ${foal.traits.join(", ")}` : ""}`,
+          description: `${foal.name} (${foal.gender}, ${foal.temperament || "unknown temperament"})`,
           badgeVariant: "outline",
         });
       }

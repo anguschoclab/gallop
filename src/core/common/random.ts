@@ -49,12 +49,39 @@ export function randGeneticQuality(): "excellent" | "good" | "fair" | "poor" {
  * Generate genetic markers for a horse
  */
 export function generateGeneticMarkers(): GeneticMarkers {
-  // Based on horse genome research - genes governing sensory perception, signal transduction, and immunity
+  // Hardy-Weinberg-ish distribution for the leopard-complex spotting allele.
+  // ~5% homozygous dominant (high CSNB risk), ~25% heterozygous, rest recessive.
+  const lpRoll = Math.random();
+  let leopardComplex: GeneticMarkers["leopardComplex"];
+  let csnbRisk: GeneticMarkers["csnbRisk"];
+  if (lpRoll < 0.05) {
+    leopardComplex = "dominant";
+    csnbRisk = "high";
+  } else if (lpRoll < 0.30) {
+    leopardComplex = "heterozygous";
+    csnbRisk = "low";
+  } else {
+    leopardComplex = "recessive";
+    csnbRisk = "low";
+  }
+
+  // Lethal recessive carrier flags. ~5% carrier rate per condition matches
+  // real-world thoroughbred prevalence reasonably. Both parents carrier on
+  // the same condition → 25% homozygous foal (auto-stillborn at day-60).
+  const lethalCarriers = {
+    csnb: Math.random() < 0.05,
+    hypp: Math.random() < 0.05,
+    olws: Math.random() < 0.05,
+  };
+
   return {
     sensoryPerception: randGeneticQuality(),
     signalTransduction: randGeneticQuality(),
     immunity: randGeneticQuality(),
     geneticDiversity: Math.random() * 0.5 + 0.5, // Random diversity score 0.5-1.0
+    leopardComplex,
+    csnbRisk,
+    lethalCarriers,
   };
 }
 

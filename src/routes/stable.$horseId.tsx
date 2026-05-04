@@ -10,6 +10,7 @@ import { HorseStatsRadar } from "@/components/HorseStatsRadar";
 import { ArrowLeft, Tag } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
 import { BeyerChart } from "@/components/BeyerChart";
+import { HorseAwardsPanel } from "@/components/awards";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
 import { getGradeColorClass } from "@/core/race/grading";
@@ -206,6 +207,8 @@ function HorseDetail() {
       </Card>
 
       <GradedHistoryPanel history={horse.raceHistory} />
+
+      <HorseAwardsPanel horse={horse} />
 
       <Card>
         <CardHeader>
