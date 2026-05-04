@@ -378,6 +378,19 @@ function RacesPage() {
               </Link>
             ))}
           </div>
+          <div className="inline-flex rounded-md border bg-card p-1">
+            {OWNED_FILTERS.map((o) => (
+              <Link
+                key={o}
+                to="/races"
+                search={{ grade, country, surface, track, owned: o }}
+                className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-colors ${
+                  owned === o ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {o === "all" ? "All entries" : "My entries"}
+              </Link>
+            ))}
           <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && setViewMode(v as "list" | "calendar")}>
             <ToggleGroupItem value="list" aria-label="List view">
               <List className="h-4 w-4" />
