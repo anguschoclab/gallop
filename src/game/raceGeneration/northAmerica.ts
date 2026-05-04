@@ -8,6 +8,7 @@ import type { Rng } from "../rng";
 import { generateUUID } from "../uuid";
 import { randomWeather, randomTrackCondition, rand } from "@/core/common/random";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
+import { CLASS_CONFIG } from "./raceGen";
 
 // Configuration for North American race distribution
 // 70% claiming races as per real-world statistics
@@ -33,27 +34,6 @@ const NA_CLAIMING_PRICES: ClaimingPrice[] = [
   5000, 10000, 12500, 16000, 20000, 25000, 32000, 40000, 50000, 62500, 75000, 100000,
 ];
 
-// Configuration for each race class
-const NA_CLASS_CONFIG: Record<
-  RaceClass,
-  { entry: number; purse: number; minStat?: number; dist: [number, number] }
-> = {
-  Maiden: { entry: 100, purse: 2000, dist: [1000, 1400] },
-  MaidenSpecialWeight: { entry: 150, purse: 3000, minStat: 40, dist: [1000, 1600] },
-  MaidenClaiming: { entry: 100, purse: 2000, dist: [1000, 1400] },
-  MaidenOptionalClaiming: { entry: 120, purse: 2500, minStat: 35, dist: [1000, 1400] },
-  MaidenStakes: { entry: 500, purse: 10000, minStat: 45, dist: [1200, 1800] },
-  Allowance: { entry: 300, purse: 6000, minStat: 50, dist: [1200, 1800] },
-  OptionalClaiming: { entry: 350, purse: 7000, minStat: 52, dist: [1200, 1800] },
-  StarterAllowance: { entry: 250, purse: 5000, minStat: 48, dist: [1200, 1800] },
-  StarterHandicap: { entry: 200, purse: 4500, minStat: 45, dist: [1200, 2000] },
-  Stakes: { entry: 800, purse: 18000, minStat: 65, dist: [1400, 2200] },
-  Claiming: { entry: 150, purse: 3000, minStat: 40, dist: [1000, 1800] },
-  Handicap: { entry: 400, purse: 8000, minStat: 55, dist: [1200, 2400] },
-  Listed: { entry: 1500, purse: 40000, minStat: 72, dist: [1400, 2400] },
-  Group: { entry: 2000, purse: 50000, minStat: 78, dist: [1600, 2400] },
-  Graded: { entry: 0, purse: 0, dist: [1200, 2400] },
-};
 
 // Select a race class based on NA distribution
 function selectNARaceClass(rng: Rng): RaceClass {
@@ -98,7 +78,7 @@ export function generateNorthAmericanRace(
   usedNames?: Set<string>
 ): Race {
   const raceClass = selectNARaceClass(rng);
-  const cfg = NA_CLASS_CONFIG[raceClass];
+  const cfg = CLASS_CONFIG[raceClass];
   const trackQuality = getTrackQuality(track.country);
   
   // Select surface if not specified

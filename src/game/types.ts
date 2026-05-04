@@ -35,6 +35,16 @@ export type PreferenceGenotype = {
   cornering: Locus; // Turn agility
 };
 
+export type MarkerGenotype = {
+  leopardComplex: "dominant" | "recessive" | "heterozygous";
+  csnbRisk: "high" | "low";
+  sensoryPerception: "excellent" | "good" | "fair" | "poor";
+  signalTransduction: "excellent" | "good" | "fair" | "poor";
+  immunity: "excellent" | "good" | "fair" | "poor";
+  geneticDiversity: number; // 0.5–1.0
+  lethalCarriers: { csnb: boolean; hypp: boolean; olws: boolean };
+};
+
 export type Genotype = {
   color: ColorGenotype;
   stats: StatGenotype;
@@ -44,6 +54,7 @@ export type Genotype = {
   physical: Locus; // Conformation locus
   durability: Locus; // Injury proneness locus
   size: Locus; // Height/Mass locus
+  markers: MarkerGenotype;
 };
 
 // Running style — preferred position and pace shape during a race.

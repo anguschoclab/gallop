@@ -1,17 +1,7 @@
 import type { Horse, Hemisphere, GameState, StableTier } from "@/game/types";
 import type { Stable } from "@/game/types";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
-
-// Local copy of the npc-horse valuation formula. Duplicated rather than
-// imported from npcHorseGen.ts to avoid a circular dependency now that
-// npcHorseGen needs to call into this module at horse-generation time.
-function valueOf(horse: Horse, tier: StableTier): number {
-  const overall = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) / 4;
-  const ageMod = horse.age <= 3 ? 1.3 : horse.age >= 7 ? 0.5 : 0.9;
-  const fameMod = 1 + (horse.fame / 200);
-  const tierMod = tier === "elite" ? 1.5 : tier === "mid" ? 1.2 : 1.0;
-  return Math.round((overall * 100 * ageMod * fameMod * tierMod) / 100) * 100;
-}
+import { calculateBaseHorseValue } from "@/core/horse/pricing";
 
 // Tier-driven defaults for retirement-to-stud parameters. Numbers chosen so
 // that elite stallions are scarce, expensive, and command large books — and
@@ -46,7 +36,7 @@ export function initialStandingFee(horse: Horse, tier: StableTier): number {
   const { fee: tierBase } = STUD_DEFAULTS[tier];
   // Mix tier baseline with stat-based valuation; stat-driven half lets
   // exceptional budget stallions out-earn average mid stallions.
-  const statValue = valueOf(horse, tier);
+  const statValue = calculateBaseHorseValue(horse, tier);
   const blended = (tierBase + statValue * 0.4) / 2;
   return Math.round(blended / 500) * 500;
 }
