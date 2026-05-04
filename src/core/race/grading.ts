@@ -3,8 +3,8 @@ import type { Grade } from "@/game/gradedRaces";
 /**
  * Pure grade color calculation
  * Returns the Tailwind CSS class string for a given grade
- * Extracted from: races.tsx, stable.$horseId.tsx, track-schedule.tsx, canadian-calendar.tsx, 
- *                 uae-calendar.tsx, south-american-calendar.tsx, german-calendar.tsx, 
+ * Extracted from: races.tsx, stable.$horseId.tsx, track-schedule.tsx, canadian-calendar.tsx,
+ *                 uae-calendar.tsx, south-american-calendar.tsx, german-calendar.tsx,
  *                 scandinavian-calendar.tsx, recap.tsx
  */
 export function getGradeColorClass(grade: Grade): string {

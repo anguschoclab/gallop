@@ -54,7 +54,15 @@ export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 export type TrackCondition = "fast" | "good" | "soft" | "heavy";
 
 // Horse coat colors (for sprite selection)
-export type CoatColor = "bay" | "black" | "chestnut" | "dark-bay" | "gray" | "roan" | "palomino" | "white";
+export type CoatColor =
+  | "bay"
+  | "black"
+  | "chestnut"
+  | "dark-bay"
+  | "gray"
+  | "roan"
+  | "palomino"
+  | "white";
 
 export type Horse = {
   id: string;
@@ -67,7 +75,18 @@ export type Horse = {
   energy: number; // 0-100
   form: number; // -10..+10
   potential: number; // 60-100, soft cap on stat growth
-  raceHistory: { raceId: string; raceName: string; position: number; day: number; beyer?: number; grade?: "G1" | "G2" | "G3"; distance?: number; surface?: string; purse?: number; fieldSize?: number }[];
+  raceHistory: {
+    raceId: string;
+    raceName: string;
+    position: number;
+    day: number;
+    beyer?: number;
+    grade?: "G1" | "G2" | "G3";
+    distance?: number;
+    surface?: string;
+    purse?: number;
+    fieldSize?: number;
+  }[];
   owned: boolean;
   sireName?: string;
   damName?: string;
@@ -95,15 +114,15 @@ export type RaceClass = "Maiden" | "Allowance" | "Stakes" | "Group" | "Graded";
 export type StableTier = "elite" | "mid" | "budget";
 
 // NPC Stable personality - affects AI decision-making
-export type StablePersonality = 
-  | "aggressive"      // High risk, enter many races, spend freely
-  | "conservative"    // Low risk, careful entries, save money
-  | "developer"       // Focus on young horses, patient growth
-  | "win-now"         // Focus on proven horses, immediate results
-  | "specialist"      // Focus on specific distances/surfaces
-  | "breeder"         // Focus on breeding, keep mares
-  | "trader"          // Buy/sell frequently, claiming focus
-  | "prestige";       // Target graded stakes, reputation over profit
+export type StablePersonality =
+  | "aggressive" // High risk, enter many races, spend freely
+  | "conservative" // Low risk, careful entries, save money
+  | "developer" // Focus on young horses, patient growth
+  | "win-now" // Focus on proven horses, immediate results
+  | "specialist" // Focus on specific distances/surfaces
+  | "breeder" // Focus on breeding, keep mares
+  | "trader" // Buy/sell frequently, claiming focus
+  | "prestige"; // Target graded stakes, reputation over profit
 
 // Dosage profile for pedigree analysis (aptitudinal points)
 export type DosageProfile = {
@@ -172,10 +191,19 @@ export type Race = {
     trackId: string; // Track UUID reference
     surface: "Turf" | "Dirt" | "Synthetic";
   };
-  restrictions?: { 
-    minAge?: number; 
-    maxAge?: number; 
-    gender?: "colt" | "filly" | "horse" | "mare" | "fillies" | "mares" | "colts" | "fillies-and-mares" | "colts-and-fillies";
+  restrictions?: {
+    minAge?: number;
+    maxAge?: number;
+    gender?:
+      | "colt"
+      | "filly"
+      | "horse"
+      | "mare"
+      | "fillies"
+      | "mares"
+      | "colts"
+      | "fillies-and-mares"
+      | "colts-and-fillies";
     // Hemisphere-specific age restrictions (e.g., for Dubai races)
     minAgeNorthern?: number;
     minAgeSouthern?: number;

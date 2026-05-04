@@ -45,8 +45,8 @@ describe("calculateBeyerProjections", () => {
   it("only returns projections for owned horse IDs", () => {
     const owned = new Set(["h1", "h3"]);
     const result = calculateBeyerProjections(horses, mkRace(), owned);
-    expect(result.map(p => p.horseId)).toEqual(expect.arrayContaining(["h1", "h3"]));
-    expect(result.map(p => p.horseId)).not.toContain("h2");
+    expect(result.map((p) => p.horseId)).toEqual(expect.arrayContaining(["h1", "h3"]));
+    expect(result.map((p) => p.horseId)).not.toContain("h2");
   });
 
   it("returns empty array when no horses are in ownedHorseIds", () => {
@@ -62,7 +62,11 @@ describe("calculateBeyerProjections", () => {
 
   it("distance ≥ 1600 gives higher beyer than distance < 1200 (other factors equal)", () => {
     const [longDist] = calculateBeyerProjections([h1], mkRace({ distance: 1600 }), new Set(["h1"]));
-    const [shortDist] = calculateBeyerProjections([h1], mkRace({ distance: 1000 }), new Set(["h1"]));
+    const [shortDist] = calculateBeyerProjections(
+      [h1],
+      mkRace({ distance: 1000 }),
+      new Set(["h1"]),
+    );
     expect(longDist.expectedBeyer).toBeGreaterThan(shortDist.expectedBeyer);
   });
 
@@ -78,7 +82,7 @@ describe("calculateBeyerProjections", () => {
     const [graded] = calculateBeyerProjections(
       [h1],
       mkRace({ graded: { key: "k", grade: "G1", track: "T", trackId: "t1", surface: "Turf" } }),
-      new Set(["h1"])
+      new Set(["h1"]),
     );
     const [ungraded] = calculateBeyerProjections([h1], mkRace(), new Set(["h1"]));
     expect(graded.expectedBeyer).toBeGreaterThan(ungraded.expectedBeyer);
@@ -96,7 +100,9 @@ describe("formatProjectionMessage", () => {
   });
 
   it("owned projection → includes horse name and beyer figure", () => {
-    const projections = [{ horseId: "h1", horseName: "Thunder Star", expectedBeyer: 85, isOwned: true }];
+    const projections = [
+      { horseId: "h1", horseName: "Thunder Star", expectedBeyer: 85, isOwned: true },
+    ];
     const msg = formatProjectionMessage(projections);
     expect(msg).toContain("Thunder Star");
     expect(msg).toContain("85");

@@ -26,9 +26,9 @@ describe("randomHorseName", () => {
 
   it("produces different names for different rng outputs", () => {
     let val = 0;
-    const rng1 = () => (val += 0.01, val % 1);
+    const rng1 = () => ((val += 0.01), val % 1);
     let val2 = 0.5;
-    const rng2 = () => (val2 += 0.01, val2 % 1);
+    const rng2 = () => ((val2 += 0.01), val2 % 1);
     // Different seed progressions may produce different names
     const names = new Set(Array.from({ length: 10 }, () => randomHorseName()));
     expect(names.size).toBeGreaterThan(1);
@@ -46,7 +46,7 @@ describe("randomSilk", () => {
 
   it("is deterministic with a fixed rng", () => {
     let calls = 0;
-    const rng = () => (calls = (calls + 1) % 10, calls / 10);
+    const rng = () => ((calls = (calls + 1) % 10), calls / 10);
     const a = randomSilk(rng);
     calls = 0;
     const b = randomSilk(rng);

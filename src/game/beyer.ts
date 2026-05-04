@@ -5,7 +5,6 @@
 // Output is clamped 30..125 (Beyer "Big Figs" rarely exceed 120).
 import type { Horse } from "./types";
 
-
 export type BeyerInput = {
   distance: number; // meters
   finishTime: number; // seconds
@@ -44,7 +43,7 @@ export function parTime(distance: number): number {
   const neighbors = [b - 200, b + 200].map((k) => CALIBRATED_PARS[k]).filter(Boolean);
   if (neighbors.length) {
     const avg = neighbors.reduce((s, v) => s + v, 0) / neighbors.length;
-    return (avg * (distance / b));
+    return avg * (distance / b);
   }
   return defaultParTime(distance);
 }
@@ -74,7 +73,10 @@ export function expectedBeyer(h: Horse, distance: number, classBonus = 0): numbe
 }
 
 // Calculate Beyer for a race result
-export function calculateBeyerForResult(distance: number, finishTime: number, classBonus = 0): number {
+export function calculateBeyerForResult(
+  distance: number,
+  finishTime: number,
+  classBonus = 0,
+): number {
   return beyerFigure({ distance, finishTime, classBonus });
 }
-

@@ -20,7 +20,7 @@ import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 
-export type ActionResult = { ok: true } | { ok: false, reason: string };
+export type ActionResult = { ok: true } | { ok: false; reason: string };
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
@@ -53,11 +53,19 @@ type Actions = {
   buyHorse: (horseId: string) => void;
   enterRace: (raceId: string, horseId: string) => ActionResult;
   withdrawRace: (raceId: string, horseId: string) => void;
-  resolveRace: (raceId: string, result: { horseId: string; position: number; time: number }[]) => void;
+  resolveRace: (
+    raceId: string,
+    result: { horseId: string; position: number; time: number }[],
+  ) => void;
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
   advanceDay: () => void;
   advanceMultipleDays: (n: number, headless?: boolean) => void;
-  scoutHorse: (horseId: string) => { success: boolean; report?: ScoutReport; cost: number; message: string };
+  scoutHorse: (horseId: string) => {
+    success: boolean;
+    report?: ScoutReport;
+    cost: number;
+    message: string;
+  };
   consignHorse: (horseId: string, saleId: string) => ActionResult;
   withdrawConsignment: (horseId: string) => ActionResult;
   bidInAuction: (saleId: string, lotId: string, amount: number) => ActionResult;
@@ -69,7 +77,9 @@ function initialState(): GameState {
     { ...generateHorse({ tier: "starter", owned: true }) },
     { ...generateHorse({ tier: "starter", owned: true }) },
   ];
-  const market: Horse[] = Array.from({ length: 5 }, () => generateHorse({ tier: Math.random() < 0.6 ? "budget" : "mid" }));
+  const market: Horse[] = Array.from({ length: 5 }, () =>
+    generateHorse({ tier: Math.random() < 0.6 ? "budget" : "mid" }),
+  );
   const races: Race[] = [];
   for (let d = 1; d <= 7; d++) {
     const count = Math.random() < 0.7 ? 2 : 3;
@@ -79,15 +89,15 @@ function initialState(): GameState {
   for (const g of GRADED_RACES) {
     races.push(makeGradedRace(g, g.dayOfYear));
   }
-  
+
   // Generate NPC stables and horses
   const npcStables = generateAllStables(1);
   const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(npcStables);
-  
+
   // Run initial NPC race entry to populate races
   const pregnantIds = new Set<string>();
   const racesWithEntries = runNpcRaceEntry(updatedStables, npcHorses, races, 1, 7, pregnantIds);
-  
+
   return {
     day: 1,
     cash: STARTING_CASH,
@@ -114,14 +124,13 @@ const opfsStorage = {
     try {
       await saveGameState(value.state);
     } catch (error) {
-      console.error('Failed to save game state to OPFS:', error);
+      console.error("Failed to save game state to OPFS:", error);
     }
   },
   removeItem: async (_name: string): Promise<void> => {
-    await (await import('@/services/storageAdapter')).clearGameState();
+    await (await import("@/services/storageAdapter")).clearGameState();
   },
 };
-
 
 // Flag to track if hydration has completed
 export let hydrationComplete = false;
@@ -147,7 +156,7 @@ export const useGame = create<GameState & Actions>()(
 
       newGame: async () => {
         // Clear OPFS storage when starting a new game
-        await (await import('@/services/storageAdapter')).clearGameState();
+        await (await import("@/services/storageAdapter")).clearGameState();
         set({ ...initialState() });
       },
 
@@ -160,7 +169,10 @@ export const useGame = create<GameState & Actions>()(
         if (horse.healthStatus === "covering_sickness") {
           set({
             log: [
-              { day: s.day, text: `❌ Training blocked: ${horse.name} has covering sickness (dourine). Horse cannot be trained while infected.` },
+              {
+                day: s.day,
+                text: `❌ Training blocked: ${horse.name} has covering sickness (dourine). Horse cannot be trained while infected.`,
+              },
               ...s.log,
             ].slice(0, 50),
           });
@@ -203,7 +215,10 @@ export const useGame = create<GameState & Actions>()(
           cash: s.cash - price,
           horses: [...s.horses, bought],
           market: s.market.filter((m) => m.id !== horseId),
-          log: [{ day: s.day, text: `Bought ${h.name} for $${price.toLocaleString()}.` }, ...s.log].slice(0, 50),
+          log: [
+            { day: s.day, text: `Bought ${h.name} for $${price.toLocaleString()}.` },
+            ...s.log,
+          ].slice(0, 50),
         });
       },
 
@@ -218,8 +233,10 @@ export const useGame = create<GameState & Actions>()(
         if (!race) return fail("Race not found.");
         if (!horse) return fail("Horse not found.");
         if (race.resolved) return fail("Race already resolved.");
-        if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return fail(`${horse.name} is pregnant.`);
-        if (race.entries.some((e) => e.horseId === horseId)) return fail(`${horse.name} is already entered.`);
+        if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId))
+          return fail(`${horse.name} is pregnant.`);
+        if (race.entries.some((e) => e.horseId === horseId))
+          return fail(`${horse.name} is already entered.`);
         if (race.entries.length >= race.fieldSize) return fail("Race field is full.");
         // Economic guard: refuse races whose entry fee exceeds 50% of purse —
         // this catches misconfigured races and protects the player's bankroll.
@@ -227,9 +244,10 @@ export const useGame = create<GameState & Actions>()(
         if (s.cash < race.entryFee) return fail("Insufficient cash for entry fee.");
         const r = race.restrictions;
         if (r) {
-          const minAgeToCheck = horse.hemisphere === "Northern"
-            ? (r.minAgeNorthern ?? r.minAge)
-            : (r.minAgeSouthern ?? r.minAge);
+          const minAgeToCheck =
+            horse.hemisphere === "Northern"
+              ? (r.minAgeNorthern ?? r.minAge)
+              : (r.minAgeSouthern ?? r.minAge);
           if (minAgeToCheck !== undefined && horse.age < minAgeToCheck) {
             return fail(`${horse.name} is below minimum age (${minAgeToCheck}).`);
           }
@@ -241,7 +259,10 @@ export const useGame = create<GameState & Actions>()(
         set({
           races: [...s.races],
           cash: s.cash - race.entryFee,
-          log: [{ day: s.day, text: `Entered ${horse.name} in ${race.name}.` }, ...s.log].slice(0, 50),
+          log: [{ day: s.day, text: `Entered ${horse.name} in ${race.name}.` }, ...s.log].slice(
+            0,
+            50,
+          ),
         });
         return { ok: true };
       },
@@ -262,11 +283,16 @@ export const useGame = create<GameState & Actions>()(
         // finish time). DNFs keep their slot at the back of the field but
         // earn no purse and no Beyer.
         const tieRng = createRng(hashStr(race.id) ^ 0x7e57);
-        const enriched = result.map((r) => ({ ...r, dnf: !Number.isFinite(r.time) || r.time <= 0 }));
-        const finishers = enriched.filter((r) => !r.dnf).sort((a, b) => {
-          if (a.time === b.time) return tieRng.next() - 0.5;
-          return a.time - b.time;
-        });
+        const enriched = result.map((r) => ({
+          ...r,
+          dnf: !Number.isFinite(r.time) || r.time <= 0,
+        }));
+        const finishers = enriched
+          .filter((r) => !r.dnf)
+          .sort((a, b) => {
+            if (a.time === b.time) return tieRng.next() - 0.5;
+            return a.time - b.time;
+          });
         const dnfs = enriched.filter((r) => r.dnf);
         const ranked = [
           ...finishers.map((r, idx) => ({ ...r, position: idx + 1 })),
@@ -285,7 +311,18 @@ export const useGame = create<GameState & Actions>()(
         }
 
         let earned = 0;
-        const classBonus = race.graded?.grade === "G1" ? 8 : race.graded?.grade === "G2" ? 5 : race.graded?.grade === "G3" ? 3 : race.raceClass === "Group" ? 4 : race.raceClass === "Stakes" ? 2 : 0;
+        const classBonus =
+          race.graded?.grade === "G1"
+            ? 8
+            : race.graded?.grade === "G2"
+              ? 5
+              : race.graded?.grade === "G3"
+                ? 3
+                : race.raceClass === "Group"
+                  ? 4
+                  : race.raceClass === "Stakes"
+                    ? 2
+                    : 0;
         // Compute payouts up front so we can guarantee splits sum to purse.
         const finisherCount = finishers.length;
         const splits: number[] = [];
@@ -305,8 +342,24 @@ export const useGame = create<GameState & Actions>()(
           const h = s.horses.find((hh) => hh.id === r.horseId);
           if (!h) continue;
           h.energy = Math.max(0, h.energy - 25); // Racing costs 25 energy
-          const beyer = r.dnf ? 0 : beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
-          h.raceHistory = [{ raceId, raceName: race.name, position: r.position, day: s.day, beyer, grade: race.graded?.grade, distance: race.distance, surface: race.graded?.surface, purse: race.purse, fieldSize: ranked.length }, ...h.raceHistory].slice(0, loadRaceHistoryLimit());
+          const beyer = r.dnf
+            ? 0
+            : beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
+          h.raceHistory = [
+            {
+              raceId,
+              raceName: race.name,
+              position: r.position,
+              day: s.day,
+              beyer,
+              grade: race.graded?.grade,
+              distance: race.distance,
+              surface: race.graded?.surface,
+              purse: race.purse,
+              fieldSize: ranked.length,
+            },
+            ...h.raceHistory,
+          ].slice(0, loadRaceHistoryLimit());
           // form change (DNF treated as "did not finish" → mild form penalty)
           if (r.dnf) h.form = Math.max(-10, h.form - 1);
           else if (r.position === 1) h.form = Math.min(10, h.form + 3);
@@ -320,7 +373,11 @@ export const useGame = create<GameState & Actions>()(
           // Initialize the dam's record on demand if it didn't exist —
           // counters start at 0 and increment from this win, fixing the
           // earlier bug where stakesWinnersProduced was set to 1 at foal birth.
-          if (!r.dnf && r.position === 1 && (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")) {
+          if (
+            !r.dnf &&
+            r.position === 1 &&
+            (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")
+          ) {
             const dam = s.horses.find((hh) => hh.name === h.damName);
             if (dam) {
               if (!dam.blueHenStatus) {
@@ -339,7 +396,10 @@ export const useGame = create<GameState & Actions>()(
               const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
               const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
               dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
-              if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
+              if (
+                dam.blueHenStatus.stakesWinnersProduced >= 2 ||
+                dam.blueHenStatus.group1WinnersProduced >= 1
+              ) {
                 dam.blueHenStatus.isBlueHen = true;
               }
             }
@@ -358,7 +418,8 @@ export const useGame = create<GameState & Actions>()(
         if (winner && isFinite(winner.time) && winner.time > 0) {
           const b = distanceBucket(race.distance);
           const arr = [...(samples[b] ?? []), winner.time];
-          if (arr.length > MAX_SAMPLES_PER_BUCKET) arr.splice(0, arr.length - MAX_SAMPLES_PER_BUCKET);
+          if (arr.length > MAX_SAMPLES_PER_BUCKET)
+            arr.splice(0, arr.length - MAX_SAMPLES_PER_BUCKET);
           samples[b] = arr;
         }
         const photoNote = photoFinish ? " 📸 Photo finish!" : "";
@@ -368,7 +429,10 @@ export const useGame = create<GameState & Actions>()(
           cash: s.cash + earned,
           paceSamples: samples,
           log: [
-            { day: s.day, text: `${race.name} — ${summary}${earned ? ` (won $${earned.toLocaleString()})` : ""}${photoNote}` },
+            {
+              day: s.day,
+              text: `${race.name} — ${summary}${earned ? ` (won $${earned.toLocaleString()})` : ""}${photoNote}`,
+            },
             ...s.log,
           ].slice(0, 50),
         });
@@ -392,8 +456,10 @@ export const useGame = create<GameState & Actions>()(
         const dueDay = s.day + GESTATION_DAYS;
         const preg: Pregnancy = {
           id: generateUUID(),
-          sireId, damId,
-          sireName: sire!.name, damName: dam!.name,
+          sireId,
+          damId,
+          sireName: sire!.name,
+          damName: dam!.name,
           conceivedDay: s.day,
           dueDay,
           resolved: false,
@@ -405,7 +471,10 @@ export const useGame = create<GameState & Actions>()(
           cash: s.cash - totalFee,
           pregnancies: [preg, ...s.pregnancies],
           log: [
-            { day: s.day, text: `🐴 Mated ${sire!.name} × ${dam!.name} (foal due day ${dueDay}). Fee $${totalFee.toLocaleString()}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.` },
+            {
+              day: s.day,
+              text: `🐴 Mated ${sire!.name} × ${dam!.name} (foal due day ${dueDay}). Fee $${totalFee.toLocaleString()}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.`,
+            },
             ...s.log,
           ].slice(0, 50),
         });
@@ -414,27 +483,27 @@ export const useGame = create<GameState & Actions>()(
 
       scoutHorse: (horseId) => {
         const s = get();
-        const horse = s.horses.find(h => h.id === horseId);
+        const horse = s.horses.find((h) => h.id === horseId);
         if (!horse) {
           return { success: false, cost: 0, message: "Horse not found." };
         }
         if (!horse.stableId) {
           return { success: false, cost: 0, message: "Cannot scout your own horses." };
         }
-        const stable = s.npcStables.find(st => st.id === horse.stableId);
+        const stable = s.npcStables.find((st) => st.id === horse.stableId);
         if (!stable) {
           return { success: false, cost: 0, message: "Stable not found." };
         }
-        
+
         const result = performScout(horse, stable, s.day, s.cash);
-        
+
         if (result.success && result.report) {
           const report = result.report;
           // Deduct cost and save report
-          const updatedHorses = s.horses.map(h => 
-            h.id === horseId 
+          const updatedHorses = s.horses.map((h) =>
+            h.id === horseId
               ? { ...h, scoutedStats: report.revealedStats, lastScoutedDay: s.day }
-              : h
+              : h,
           );
           set({
             horses: updatedHorses,
@@ -443,7 +512,7 @@ export const useGame = create<GameState & Actions>()(
             log: [{ day: s.day, text: result.message }, ...s.log].slice(0, 50),
           });
         }
-        
+
         return result;
       },
 
@@ -468,7 +537,11 @@ export const useGame = create<GameState & Actions>()(
             const newAge = h.age + 1;
             const newGender =
               newAge >= 3
-                ? h.gender === "colt" ? "horse" : h.gender === "filly" ? "mare" : h.gender
+                ? h.gender === "colt"
+                  ? "horse"
+                  : h.gender === "filly"
+                    ? "mare"
+                    : h.gender
                 : h.gender;
             return { ...h, age: newAge, gender: newGender };
           });
@@ -532,7 +605,10 @@ export const useGame = create<GameState & Actions>()(
               const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
               const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
               dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
-              if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
+              if (
+                dam.blueHenStatus.stakesWinnersProduced >= 2 ||
+                dam.blueHenStatus.group1WinnersProduced >= 1
+              ) {
                 dam.blueHenStatus.isBlueHen = true;
               }
               if (!dam.foalsProduced) dam.foalsProduced = [];
@@ -546,9 +622,15 @@ export const useGame = create<GameState & Actions>()(
             if (outcome.transmission) {
               foal.healthStatus = "covering_sickness";
               foal.healthStatusDay = newDay;
-              newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). ⚠️ Covering sickness detected.` });
+              newLogs.push({
+                day: newDay,
+                text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). ⚠️ Covering sickness detected.`,
+              });
             } else {
-              newLogs.push({ day: newDay, text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
+              newLogs.push({
+                day: newDay,
+                text: `🍼 Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).`,
+              });
             }
           } else {
             // Live Foal Guarantee: refund exactly once per pregnancy. The
@@ -589,27 +671,37 @@ export const useGame = create<GameState & Actions>()(
             setCalibratedPars(recomputed);
             lastCalibrationDay = newDay;
             const buckets = Object.keys(recomputed).length;
-            seasonLog.push({ day: newDay, text: `📊 Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.` });
+            seasonLog.push({
+              day: newDay,
+              text: `📊 Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.`,
+            });
           }
         }
 
         // NPC Cycle
-        const pregnantIds = new Set(s.pregnancies.filter(p => !p.resolved).map(p => p.damId));
-        
+        const pregnantIds = new Set(s.pregnancies.filter((p) => !p.resolved).map((p) => p.damId));
+
         // 1. NPC Training
         let horsesAfterNpcTraining = [...horses, ...foals];
         if (s.npcStables.length > 0) {
           horsesAfterNpcTraining = runNpcTraining(s.npcStables, horsesAfterNpcTraining, newDay);
         }
-        
+
         // 2. NPC Race Entry (look 3 days ahead)
         let racesAfterNpcEntry = pruned;
         if (s.npcStables.length > 0) {
-          racesAfterNpcEntry = runNpcRaceEntry(s.npcStables, horsesAfterNpcTraining, racesAfterNpcEntry, newDay, 3, pregnantIds);
+          racesAfterNpcEntry = runNpcRaceEntry(
+            s.npcStables,
+            horsesAfterNpcTraining,
+            racesAfterNpcEntry,
+            newDay,
+            3,
+            pregnantIds,
+          );
         }
-        
+
         // 3. Update fame for horses in yesterday's races
-        const yesterdayRaces = s.races.filter(r => r.day === s.day && r.resolved && r.result);
+        const yesterdayRaces = s.races.filter((r) => r.day === s.day && r.resolved && r.result);
         for (const race of yesterdayRaces) {
           horsesAfterNpcTraining = updateHorseFame(horsesAfterNpcTraining, race);
         }
@@ -626,17 +718,33 @@ export const useGame = create<GameState & Actions>()(
           { doy: 105, kind: "yearling_south", name: "Southern Yearling Sale" },
         ];
         for (const trigger of SALE_TRIGGERS) {
-          if (doy === trigger.doy && !auctions.some((a) => !a.resolved && a.kind === trigger.kind)) {
-            const newSale = generateAuctionLots(newDay, currentState.npcStables, horsesAfterNpcTraining, trigger.kind, trigger.name);
+          if (
+            doy === trigger.doy &&
+            !auctions.some((a) => !a.resolved && a.kind === trigger.kind)
+          ) {
+            const newSale = generateAuctionLots(
+              newDay,
+              currentState.npcStables,
+              horsesAfterNpcTraining,
+              trigger.kind,
+              trigger.name,
+            );
             auctions.push(newSale);
-            newLogs.push({ day: newDay, text: `🏷️ ${trigger.name} opens — ${newSale.lots.length} lots.` });
+            newLogs.push({
+              day: newDay,
+              text: `🏷️ ${trigger.name} opens — ${newSale.lots.length} lots.`,
+            });
           }
         }
         // Auto-resolve sales that are 1+ day old and still unresolved (NPC-only resolution)
         let auctionCashDelta = 0;
         for (const sale of auctions) {
           if (!sale.resolved && sale.day < newDay) {
-            const resolved = resolveAuctionSale(sale, currentState.npcStables, horsesAfterNpcTraining);
+            const resolved = resolveAuctionSale(
+              sale,
+              currentState.npcStables,
+              horsesAfterNpcTraining,
+            );
             sale.lots = resolved.lots;
             sale.resolved = true;
             // Transfer player-consigned horses that sold
@@ -646,11 +754,14 @@ export const useGame = create<GameState & Actions>()(
                 const proceeds = Math.round(lot.hammerPrice * 0.94);
                 auctionCashDelta += proceeds;
                 horsesAfterNpcTraining = horsesAfterNpcTraining.filter((h) => h.id !== lot.horseId);
-                newLogs.push({ day: newDay, text: `🔨 ${sale.name}: your horse sold for $${lot.hammerPrice.toLocaleString()} (net $${proceeds.toLocaleString()}).` });
+                newLogs.push({
+                  day: newDay,
+                  text: `🔨 ${sale.name}: your horse sold for $${lot.hammerPrice.toLocaleString()} (net $${proceeds.toLocaleString()}).`,
+                });
               } else if (!lot.consignorStableId && lot.passed) {
                 // Passed — clear consignment
                 horsesAfterNpcTraining = horsesAfterNpcTraining.map((h) =>
-                  h.id === lot.horseId ? { ...h, consignedSaleId: undefined } : h
+                  h.id === lot.horseId ? { ...h, consignedSaleId: undefined } : h,
                 );
               }
             }
@@ -672,7 +783,12 @@ export const useGame = create<GameState & Actions>()(
           npcStables: s.npcStables,
           scoutReports: s.scoutReports,
           auctions,
-          log: [...seasonLog, ...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` }, ...s.log].slice(0, 50),
+          log: [
+            ...seasonLog,
+            ...newLogs,
+            { day: newDay, text: `Day ${newDay} begins. Upkeep: $${upkeep}.` },
+            ...s.log,
+          ].slice(0, 50),
         });
       },
 
@@ -681,7 +797,7 @@ export const useGame = create<GameState & Actions>()(
           const s = get();
           const nextDay = s.day + 1;
           const playerRace = s.races.find(
-            (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned)
+            (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
           );
           if (playerRace && !headless) {
             set({ pendingPlayerRaceId: playerRace.id });
@@ -689,7 +805,11 @@ export const useGame = create<GameState & Actions>()(
           }
           if (playerRace && headless) {
             const runners = buildRaceField({ race: playerRace, horses: s.horses });
-            const result = runRaceToCompletion(runners, playerRace.distance, rngForRace(playerRace));
+            const result = runRaceToCompletion(
+              runners,
+              playerRace.distance,
+              rngForRace(playerRace),
+            );
             get().resolveRace(playerRace.id, result);
           }
           get().advanceDay();
@@ -706,7 +826,7 @@ export const useGame = create<GameState & Actions>()(
         if (!sale) return { ok: false, reason: "Sale not found." };
         if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
         set({
-          horses: s.horses.map((h) => h.id === horseId ? { ...h, consignedSaleId: saleId } : h),
+          horses: s.horses.map((h) => (h.id === horseId ? { ...h, consignedSaleId: saleId } : h)),
           auctions: (s.auctions ?? []).map((a) =>
             a.id === saleId
               ? {
@@ -724,9 +844,12 @@ export const useGame = create<GameState & Actions>()(
                     },
                   ],
                 }
-              : a
+              : a,
           ),
-          log: [{ day: s.day, text: `📋 ${horse.name} consigned to ${sale.name}.` }, ...s.log].slice(0, 50),
+          log: [
+            { day: s.day, text: `📋 ${horse.name} consigned to ${sale.name}.` },
+            ...s.log,
+          ].slice(0, 50),
         });
         return { ok: true };
       },
@@ -737,13 +860,19 @@ export const useGame = create<GameState & Actions>()(
         if (!horse) return { ok: false, reason: "Horse not found." };
         if (!horse.consignedSaleId) return { ok: false, reason: "Horse is not consigned." };
         const sale = (s.auctions ?? []).find((a) => a.id === horse.consignedSaleId);
-        if (sale && sale.day - s.day < 3) return { ok: false, reason: "Cannot withdraw within 3 days of the sale." };
+        if (sale && sale.day - s.day < 3)
+          return { ok: false, reason: "Cannot withdraw within 3 days of the sale." };
         set({
-          horses: s.horses.map((h) => h.id === horseId ? { ...h, consignedSaleId: undefined } : h),
+          horses: s.horses.map((h) =>
+            h.id === horseId ? { ...h, consignedSaleId: undefined } : h,
+          ),
           auctions: (s.auctions ?? []).map((a) =>
             a.id === horse.consignedSaleId
-              ? { ...a, lots: a.lots.map((l) => l.horseId === horseId ? { ...l, withdrawn: true } : l) }
-              : a
+              ? {
+                  ...a,
+                  lots: a.lots.map((l) => (l.horseId === horseId ? { ...l, withdrawn: true } : l)),
+                }
+              : a,
           ),
         });
         return { ok: true };
@@ -756,14 +885,21 @@ export const useGame = create<GameState & Actions>()(
         if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
         const lot = sale.lots.find((l) => l.id === lotId);
         if (!lot) return { ok: false, reason: "Lot not found." };
-        if (lot.passed || lot.withdrawn) return { ok: false, reason: "Lot is no longer available." };
-        if (amount <= (lot.hammerPrice ?? 0)) return { ok: false, reason: "Bid must exceed current price." };
+        if (lot.passed || lot.withdrawn)
+          return { ok: false, reason: "Lot is no longer available." };
+        if (amount <= (lot.hammerPrice ?? 0))
+          return { ok: false, reason: "Bid must exceed current price." };
         if (s.cash < amount) return { ok: false, reason: "Insufficient funds." };
         set({
           auctions: (s.auctions ?? []).map((a) =>
             a.id === saleId
-              ? { ...a, lots: a.lots.map((l) => l.id === lotId ? { ...l, hammerPrice: amount, soldToStableId: undefined } : l) }
-              : a
+              ? {
+                  ...a,
+                  lots: a.lots.map((l) =>
+                    l.id === lotId ? { ...l, hammerPrice: amount, soldToStableId: undefined } : l,
+                  ),
+                }
+              : a,
           ),
         });
         return { ok: true };
@@ -777,8 +913,8 @@ export const useGame = create<GameState & Actions>()(
         hydrationComplete = true;
         if (state?.calibratedPars) setCalibratedPars(state.calibratedPars);
       },
-    }
-  )
+    },
+  ),
 );
 
 // Function to manually rehydrate the store (call on client mount)

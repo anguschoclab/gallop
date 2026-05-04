@@ -219,7 +219,10 @@ describe("generateStableHorses", () => {
 
 describe("generateAllNpcHorses", () => {
   it("updated stables have horses arrays populated", () => {
-    const stables = [mkStable("budget", false, { id: "s1" }), mkStable("budget", false, { id: "s2" })];
+    const stables = [
+      mkStable("budget", false, { id: "s1" }),
+      mkStable("budget", false, { id: "s2" }),
+    ];
     const { stables: updated } = generateAllNpcHorses(stables);
     for (const s of updated) {
       expect(s.horses.length).toBeGreaterThan(0);

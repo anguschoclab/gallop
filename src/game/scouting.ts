@@ -22,13 +22,13 @@ const ACCURACY_VARIANCE = 0.15; // ±15% variance
  */
 export function calculateScoutCost(horse: Horse, stable: Stable): number {
   let cost = SCOUT_COST_BASE;
-  
+
   // More famous horses are cheaper to scout (info already circulates)
   cost += horse.fame * SCOUT_COST_PER_FAME;
-  
+
   // High-reputation stables are harder to get intel on
   cost += stable.reputation * SCOUT_COST_PER_REPUTATION;
-  
+
   // Minimum cost
   return Math.max(100, Math.round(cost));
 }
@@ -40,12 +40,12 @@ export function calculateScoutCost(horse: Horse, stable: Stable): number {
 export function getVisibleStats(horse: Horse): (keyof HorseStats)[] {
   // All horses show overall rating vaguely
   const visible: (keyof HorseStats)[] = [];
-  
+
   if (horse.fame >= FAME_FULL_VISIBILITY) {
     // Famous horses - all stats visible
     return ["speed", "stamina", "acceleration", "consistency"];
   }
-  
+
   if (horse.fame >= FAME_PARTIAL_VISIBILITY) {
     // Somewhat known horses - 2 random stats visible
     const stats: (keyof HorseStats)[] = ["speed", "stamina", "acceleration", "consistency"];
@@ -57,7 +57,7 @@ export function getVisibleStats(horse: Horse): (keyof HorseStats)[] {
     if (idx2 !== idx1) visible.push(stats[idx2]);
     return visible;
   }
-  
+
   // Unknown horses - only one stat hint visible
   const seed = horse.id.charCodeAt(0);
   const stat: (keyof HorseStats)[] = ["speed", "stamina", "acceleration", "consistency"];
@@ -69,7 +69,7 @@ export function getVisibleStats(horse: Horse): (keyof HorseStats)[] {
  */
 function generateScoutNotes(horse: Horse, accuracy: number): string {
   const notes: string[] = [];
-  
+
   // Form assessment
   if (horse.form > 5) {
     notes.push("In excellent form - looks sharp in morning works.");
@@ -78,35 +78,35 @@ function generateScoutNotes(horse: Horse, accuracy: number): string {
   } else if (horse.form < -3) {
     notes.push("Appears to be struggling - may need a confidence boost.");
   }
-  
+
   // Energy level
   if (horse.energy > 80) {
     notes.push("Fresh and well-rested - ready to run a big race.");
   } else if (horse.energy < 50) {
     notes.push("Looks a bit leg-weary - recent racing may have taken its toll.");
   }
-  
+
   // Age assessment
   if (horse.age === 2) {
     notes.push("Young prospect with room to improve.");
   } else if (horse.age >= 7) {
     notes.push("Veteran campaigner with plenty of experience.");
   }
-  
+
   // Fame/reputation notes
   if (horse.fame > 60) {
     notes.push("Well-known runner - scout confirms the reputation.");
   } else if (horse.fame < 20) {
     notes.push("Virtual unknown - could be a surprise packet.");
   }
-  
+
   // Accuracy affects confidence
   if (accuracy > 0.9) {
     notes.push("Scout highly confident in this assessment.");
   } else if (accuracy < 0.7) {
     notes.push("Some uncertainty in this report - limited viewing opportunities.");
   }
-  
+
   return notes.join(" ") || "Basic scout report - limited information available.";
 }
 
@@ -118,67 +118,70 @@ export function scoutHorse(
   horse: Horse,
   stable: Stable,
   day: number,
-  playerCash: number
+  playerCash: number,
 ): { success: boolean; report?: ScoutReport; cost: number; message: string } {
   const cost = calculateScoutCost(horse, stable);
-  
+
   // Check if player can afford
   if (playerCash < cost) {
     return {
       success: false,
       cost: 0,
-      message: `Insufficient funds. Scouting costs $${cost.toLocaleString()}.`
+      message: `Insufficient funds. Scouting costs $${cost.toLocaleString()}.`,
     };
   }
-  
+
   // Already fully scouted this day
   if (horse.lastScoutedDay === day) {
     return {
       success: false,
       cost: 0,
-      message: `${horse.name} was already scouted today.`
+      message: `${horse.name} was already scouted today.`,
     };
   }
-  
+
   // Calculate accuracy
-  const accuracy = Math.max(0.5, Math.min(0.99, ACCURACY_BASE + (Math.random() - 0.5) * ACCURACY_VARIANCE * 2));
-  
+  const accuracy = Math.max(
+    0.5,
+    Math.min(0.99, ACCURACY_BASE + (Math.random() - 0.5) * ACCURACY_VARIANCE * 2),
+  );
+
   // Determine which stats get revealed
   // Higher accuracy = more stats revealed
   const statCount = accuracy > 0.9 ? 4 : accuracy > 0.75 ? 3 : accuracy > 0.6 ? 2 : 1;
   const stats: (keyof HorseStats)[] = ["speed", "stamina", "acceleration", "consistency"];
-  
+
   // Randomly select which stats (deterministic based on horse+day for consistency)
   const seed = horse.id.charCodeAt(0) + day;
   const selectedStats: (keyof HorseStats)[] = [];
   for (let i = 0; i < statCount; i++) {
     selectedStats.push(stats[(seed + i) % 4]);
   }
-  
+
   // Generate revealed stats with some error based on accuracy
   const revealedStats: Partial<HorseStats> = {};
   for (const stat of selectedStats) {
     const trueValue = horse.stats[stat];
     // Add error based on (1 - accuracy)
     const error = Math.round((1 - accuracy) * 10); // Up to ±5 stat points at low accuracy
-    const direction = ((seed + stat.length) % 2 === 0) ? 1 : -1;
-    revealedStats[stat] = Math.max(1, Math.min(100, trueValue + (error * direction)));
+    const direction = (seed + stat.length) % 2 === 0 ? 1 : -1;
+    revealedStats[stat] = Math.max(1, Math.min(100, trueValue + error * direction));
   }
-  
+
   const report: ScoutReport = {
     horseId: horse.id,
     stableId: stable.id,
     day,
     accuracy,
     revealedStats,
-    notes: generateScoutNotes(horse, accuracy)
+    notes: generateScoutNotes(horse, accuracy),
   };
-  
+
   return {
     success: true,
     report,
     cost,
-    message: `Scout report on ${horse.name} completed for $${cost.toLocaleString()}.`
+    message: `Scout report on ${horse.name} completed for $${cost.toLocaleString()}.`,
   };
 }
 
@@ -188,7 +191,7 @@ export function scoutHorse(
 export function getDisplayableStats(
   horse: Horse,
   scoutReports: ScoutReport[],
-  currentDay: number
+  currentDay: number,
 ): {
   stats: Partial<HorseStats>;
   confidence: "full" | "high" | "medium" | "low" | "unknown";
@@ -196,9 +199,9 @@ export function getDisplayableStats(
 } {
   // Check for recent scout report (within last 30 days)
   const recentReport = scoutReports
-    .filter(r => r.horseId === horse.id && currentDay - r.day <= 30)
+    .filter((r) => r.horseId === horse.id && currentDay - r.day <= 30)
     .sort((a, b) => b.day - a.day)[0];
-  
+
   // Determine confidence level
   let confidence: "full" | "high" | "medium" | "low" | "unknown";
   if (horse.fame >= FAME_FULL_VISIBILITY || recentReport?.accuracy > 0.9) {
@@ -210,13 +213,13 @@ export function getDisplayableStats(
   } else {
     confidence = "unknown";
   }
-  
+
   // Get auto-visible stats based on fame
   const autoVisible = getVisibleStats(horse);
-  
+
   // Combine auto-visible with scouted stats
   const displayStats: Partial<HorseStats> = {};
-  
+
   // Add auto-visible stats (may be slightly fuzzy for low fame)
   for (const stat of autoVisible) {
     if (horse.fame >= FAME_FULL_VISIBILITY) {
@@ -227,25 +230,26 @@ export function getDisplayableStats(
       displayStats[stat] = Math.max(1, Math.min(100, horse.stats[stat] + fuzz));
     }
   }
-  
+
   // Override with scout report if available
   if (recentReport) {
     Object.assign(displayStats, recentReport.revealedStats);
   }
-  
+
   // Calculate overall estimate if we don't have all stats
   let overallEstimate: number | undefined;
   const statKeys = Object.keys(displayStats) as (keyof HorseStats)[];
   if (statKeys.length < 4) {
     // Estimate based on fame and what we know
-    const knownAvg = statKeys.length > 0
-      ? statKeys.reduce((sum, k) => sum + (displayStats[k] || 0), 0) / statKeys.length
-      : 50;
+    const knownAvg =
+      statKeys.length > 0
+        ? statKeys.reduce((sum, k) => sum + (displayStats[k] || 0), 0) / statKeys.length
+        : 50;
     // Fame-adjusted estimate
     const fameAdjustment = (horse.fame - 50) / 5; // -10 to +10 based on fame
     overallEstimate = Math.round(knownAvg + fameAdjustment);
   }
-  
+
   return { stats: displayStats, confidence, overallEstimate };
 }
 
@@ -255,7 +259,7 @@ export function getDisplayableStats(
 export function getScoutStatus(
   horse: Horse,
   scoutReports: ScoutReport[],
-  currentDay: number
+  currentDay: number,
 ): {
   icon: string;
   label: string;
@@ -263,7 +267,7 @@ export function getScoutStatus(
   canScout: boolean;
 } {
   const { confidence } = getDisplayableStats(horse, scoutReports, currentDay);
-  
+
   switch (confidence) {
     case "full":
       return { icon: "👁️", label: "Fully Scouted", color: "text-green-500", canScout: false };
@@ -281,24 +285,32 @@ export function getScoutStatus(
 /**
  * Get intel summary string for a horse
  */
-export function getIntelSummary(horse: Horse, scoutReports: ScoutReport[], currentDay: number): string {
-  const { stats, confidence, overallEstimate } = getDisplayableStats(horse, scoutReports, currentDay);
-  
+export function getIntelSummary(
+  horse: Horse,
+  scoutReports: ScoutReport[],
+  currentDay: number,
+): string {
+  const { stats, confidence, overallEstimate } = getDisplayableStats(
+    horse,
+    scoutReports,
+    currentDay,
+  );
+
   const statCount = Object.keys(stats).length;
-  
+
   if (confidence === "full") {
     const ovr = calculateOverallRating(horse);
     return `OVR ${ovr} - All stats known`;
   }
-  
+
   if (statCount > 0) {
     const knownStats = Object.keys(stats).join(", ");
     return `OVR ~${overallEstimate} - ${knownStats} known (${confidence})`;
   }
-  
+
   if (horse.fame > 30) {
     return `Reputation precedes them - needs scouting for details`;
   }
-  
+
   return `Complete unknown - scout recommended`;
 }

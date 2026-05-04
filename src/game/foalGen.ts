@@ -9,7 +9,7 @@ const STYLES: RunningStyle[] = ["front-runner", "stalker", "mid-pack", "closer"]
 function inheritRunningStyle(
   sire: RunningStyle | undefined,
   dam: RunningStyle | undefined,
-  rng: Rng
+  rng: Rng,
 ): RunningStyle {
   // 60% chance to copy a parent (50/50 sire vs dam), 40% chance the foal
   // mutates one slot toward an adjacent style or picks fresh. This keeps
@@ -33,7 +33,7 @@ function rollTrait(avg: number, rng: Rng): "excellent" | "good" | "fair" | "poor
 function inheritGeneticTrait(
   sireTrait: string | undefined,
   damTrait: string | undefined,
-  rng: Rng
+  rng: Rng,
 ): "excellent" | "good" | "fair" | "poor" {
   const s = TRAIT_VALUES[sireTrait || "fair"] || 2;
   const d = TRAIT_VALUES[damTrait || "fair"] || 2;
@@ -50,7 +50,7 @@ export type FoalOutcome =
 export function resolveFoaling(
   pregnancy: Pregnancy,
   sire: Horse | undefined,
-  dam: Horse | undefined
+  dam: Horse | undefined,
 ): FoalOutcome {
   const rng = createRng(hashStr(pregnancy.id) ^ (pregnancy.reBreedingAttempts ?? 0));
 
@@ -85,7 +85,7 @@ export function resolveFoaling(
     };
 
     foal.potential = clampStat(
-      (sire.potential + dam.potential) / 2 + rng.range(-2, 6) + compatibilityBonus
+      (sire.potential + dam.potential) / 2 + rng.range(-2, 6) + compatibilityBonus,
     );
 
     const sireConf = sire.conformation || "fair";
@@ -107,7 +107,7 @@ export function resolveFoaling(
         geneticDiversity: clamp(
           ((sg.geneticDiversity || 0.5) + (dg.geneticDiversity || 0.5)) / 2 + rng.range(-0.1, 0.1),
           0,
-          1
+          1,
         ),
       };
     }

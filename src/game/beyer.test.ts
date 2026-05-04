@@ -58,8 +58,8 @@ describe("distanceBucket", () => {
   it("100 → 200 (floor at 200)", () => expect(distanceBucket(100)).toBe(200));
   it("200 → 200", () => expect(distanceBucket(200)).toBe(200));
   it("result is always a multiple of 200", () => {
-    [800, 1000, 1200, 1400, 1600, 1800, 2000, 2400].forEach(d =>
-      expect(distanceBucket(d) % 200).toBe(0)
+    [800, 1000, 1200, 1400, 1600, 1800, 2000, 2400].forEach((d) =>
+      expect(distanceBucket(d) % 200).toBe(0),
     );
   });
 });
@@ -126,8 +126,12 @@ describe("expectedBeyer", () => {
 
 describe("calculateBeyerForResult", () => {
   it("delegates to beyerFigure — same result for same inputs", () => {
-    expect(calculateBeyerForResult(1600, 95, 0)).toBe(beyerFigure({ distance: 1600, finishTime: 95, classBonus: 0 }));
-    expect(calculateBeyerForResult(2000, 120, 5)).toBe(beyerFigure({ distance: 2000, finishTime: 120, classBonus: 5 }));
+    expect(calculateBeyerForResult(1600, 95, 0)).toBe(
+      beyerFigure({ distance: 1600, finishTime: 95, classBonus: 0 }),
+    );
+    expect(calculateBeyerForResult(2000, 120, 5)).toBe(
+      beyerFigure({ distance: 2000, finishTime: 120, classBonus: 5 }),
+    );
   });
 
   it("non-finite finishTime → 0", () => {
