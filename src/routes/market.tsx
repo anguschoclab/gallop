@@ -32,12 +32,21 @@ function MarketPage() {
                   <SilkBadge color={h.silk} />
                   <div className="flex-1">
                     <p className="font-bold">{h.name}</p>
-                    <p className="text-xs text-muted-foreground">Age {h.age} · OVR {overall(h)} · Pot {h.potential}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Age {h.age} · OVR {overall(h)} · Pot {h.potential}
+                    </p>
                   </div>
-                  <Badge variant="outline" className="text-base">${price.toLocaleString()}</Badge>
+                  <Badge variant="outline" className="text-base">
+                    ${price.toLocaleString()}
+                  </Badge>
                 </div>
                 <HorseStats horse={h} />
-                <Button onClick={() => buyHorse(h.id)} disabled={cash < price} className="w-full" size="sm">
+                <Button
+                  onClick={() => buyHorse(h.id)}
+                  disabled={cash < price}
+                  className="w-full"
+                  size="sm"
+                >
                   {cash < price ? "Not enough cash" : "Buy"}
                 </Button>
               </CardContent>

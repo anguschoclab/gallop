@@ -37,7 +37,9 @@ function AuctionSalePage() {
     return (
       <div className="space-y-4">
         <h1 className="text-2xl font-bold">Sale not found</h1>
-        <Button variant="ghost" onClick={() => navigate({ to: "/auction" })}>← Back to Sales</Button>
+        <Button variant="ghost" onClick={() => navigate({ to: "/auction" })}>
+          ← Back to Sales
+        </Button>
       </div>
     );
   }
@@ -45,18 +47,27 @@ function AuctionSalePage() {
   const activeLots = sale.lots.filter((l) => !l.withdrawn);
   const currentLot: AuctionLot | undefined = activeLots[lotIndex];
   const horse = currentLot ? horses.find((h) => h.id === currentLot.horseId) : undefined;
-  const consignor = currentLot?.consignorStableId ? stables.find((s) => s.id === currentLot.consignorStableId) : undefined;
+  const consignor = currentLot?.consignorStableId
+    ? stables.find((s) => s.id === currentLot.consignorStableId)
+    : undefined;
   const displayStatsResult = horse ? getDisplayableStats(horse, scoutReports, day) : null;
   const displayStats = displayStatsResult?.stats ?? null;
   const currentPrice = currentLot?.hammerPrice ?? 0;
   const nextBid = Math.ceil((currentPrice * 1.05 + 200) / 100) * 100;
-  const isPlayerLeading = currentLot && !currentLot.soldToStableId && currentLot.hammerPrice !== undefined;
+  const isPlayerLeading =
+    currentLot && !currentLot.soldToStableId && currentLot.hammerPrice !== undefined;
   const isResolved = sale.resolved;
 
   function bid(amount: number) {
     if (!currentLot) return;
-    if (amount <= currentPrice) { setMessage("Bid must exceed current price."); return; }
-    if (amount > cash) { setMessage("Insufficient funds."); return; }
+    if (amount <= currentPrice) {
+      setMessage("Bid must exceed current price.");
+      return;
+    }
+    if (amount > cash) {
+      setMessage("Insufficient funds.");
+      return;
+    }
     const result = bidInAuction(sale!.id, currentLot.id, amount);
     if (result.ok) {
       setMessage(`✅ Bid of $${amount.toLocaleString()} placed.`);
@@ -69,7 +80,10 @@ function AuctionSalePage() {
 
   function handleMaxBid() {
     const cap = Number(maxBid.replace(/,/g, ""));
-    if (!cap || cap <= currentPrice) { setMessage("Max bid must exceed current price."); return; }
+    if (!cap || cap <= currentPrice) {
+      setMessage("Max bid must exceed current price.");
+      return;
+    }
     bid(cap);
   }
 
@@ -78,7 +92,12 @@ function AuctionSalePage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/auction" })} className="mb-2 -ml-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate({ to: "/auction" })}
+            className="mb-2 -ml-2"
+          >
             ← Sales
           </Button>
           <h1 className="text-2xl font-bold">{sale.name}</h1>
@@ -94,7 +113,9 @@ function AuctionSalePage() {
 
       {activeLots.length === 0 ? (
         <Card>
-          <CardContent className="p-8 text-center text-muted-foreground">No lots in this sale.</CardContent>
+          <CardContent className="p-8 text-center text-muted-foreground">
+            No lots in this sale.
+          </CardContent>
         </Card>
       ) : (
         <>
@@ -104,10 +125,26 @@ function AuctionSalePage() {
               Lot {lotIndex + 1} of {activeLots.length}
             </span>
             <div className="flex gap-1">
-              <Button size="sm" variant="ghost" onClick={() => { setLotIndex((i) => Math.max(0, i - 1)); setMessage(""); }} disabled={lotIndex === 0}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  setLotIndex((i) => Math.max(0, i - 1));
+                  setMessage("");
+                }}
+                disabled={lotIndex === 0}
+              >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => { setLotIndex((i) => Math.min(activeLots.length - 1, i + 1)); setMessage(""); }} disabled={lotIndex === activeLots.length - 1}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  setLotIndex((i) => Math.min(activeLots.length - 1, i + 1));
+                  setMessage("");
+                }}
+                disabled={lotIndex === activeLots.length - 1}
+              >
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -122,7 +159,8 @@ function AuctionSalePage() {
                     <CardTitle className="text-xl">{horse.name}</CardTitle>
                     <p className="text-sm text-muted-foreground mt-0.5">
                       {horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀"}{" "}
-                      {horse.gender.charAt(0).toUpperCase() + horse.gender.slice(1)} · Age {horse.age}
+                      {horse.gender.charAt(0).toUpperCase() + horse.gender.slice(1)} · Age{" "}
+                      {horse.age}
                       {horse.hemisphere === "Southern" ? " · Southern" : ""}
                     </p>
                   </div>
@@ -132,7 +170,8 @@ function AuctionSalePage() {
                   )}
                   {!currentLot.passed && currentLot.soldToStableId && isResolved && (
                     <Badge variant="outline">
-                      Sold — {stables.find((s) => s.id === currentLot.soldToStableId)?.name ?? "NPC"}
+                      Sold —{" "}
+                      {stables.find((s) => s.id === currentLot.soldToStableId)?.name ?? "NPC"}
                     </Badge>
                   )}
                 </div>
@@ -151,39 +190,87 @@ function AuctionSalePage() {
                 {/* Physical */}
                 <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
                   {horse.conformation && (
-                    <div><span className="text-muted-foreground">Conformation: </span>{horse.conformation}</div>
+                    <div>
+                      <span className="text-muted-foreground">Conformation: </span>
+                      {horse.conformation}
+                    </div>
                   )}
                   {horse.temperament && (
-                    <div><span className="text-muted-foreground">Temperament: </span>{horse.temperament}</div>
+                    <div>
+                      <span className="text-muted-foreground">Temperament: </span>
+                      {horse.temperament}
+                    </div>
                   )}
                   {horse.coatColor && (
-                    <div><span className="text-muted-foreground">Coat: </span>{horse.coatColor}</div>
+                    <div>
+                      <span className="text-muted-foreground">Coat: </span>
+                      {horse.coatColor}
+                    </div>
                   )}
                   {horse.runningStyle && (
-                    <div><span className="text-muted-foreground">Style: </span>{horse.runningStyle}</div>
+                    <div>
+                      <span className="text-muted-foreground">Style: </span>
+                      {horse.runningStyle}
+                    </div>
                   )}
                 </div>
 
                 {/* Stats (fog of war) */}
                 {displayStats && (
                   <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Stats</p>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Stats
+                    </p>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
                       {displayStats.speed !== undefined ? (
-                        <div><span className="text-muted-foreground">Speed: </span>{displayStats.speed}</div>
-                      ) : <div><span className="text-muted-foreground">Speed: </span><span className="italic text-muted-foreground">unknown</span></div>}
+                        <div>
+                          <span className="text-muted-foreground">Speed: </span>
+                          {displayStats.speed}
+                        </div>
+                      ) : (
+                        <div>
+                          <span className="text-muted-foreground">Speed: </span>
+                          <span className="italic text-muted-foreground">unknown</span>
+                        </div>
+                      )}
                       {displayStats.stamina !== undefined ? (
-                        <div><span className="text-muted-foreground">Stamina: </span>{displayStats.stamina}</div>
-                      ) : <div><span className="text-muted-foreground">Stamina: </span><span className="italic text-muted-foreground">unknown</span></div>}
+                        <div>
+                          <span className="text-muted-foreground">Stamina: </span>
+                          {displayStats.stamina}
+                        </div>
+                      ) : (
+                        <div>
+                          <span className="text-muted-foreground">Stamina: </span>
+                          <span className="italic text-muted-foreground">unknown</span>
+                        </div>
+                      )}
                       {displayStats.acceleration !== undefined ? (
-                        <div><span className="text-muted-foreground">Accel.: </span>{displayStats.acceleration}</div>
-                      ) : <div><span className="text-muted-foreground">Accel.: </span><span className="italic text-muted-foreground">unknown</span></div>}
+                        <div>
+                          <span className="text-muted-foreground">Accel.: </span>
+                          {displayStats.acceleration}
+                        </div>
+                      ) : (
+                        <div>
+                          <span className="text-muted-foreground">Accel.: </span>
+                          <span className="italic text-muted-foreground">unknown</span>
+                        </div>
+                      )}
                       {displayStats.consistency !== undefined ? (
-                        <div><span className="text-muted-foreground">Consist.: </span>{displayStats.consistency}</div>
-                      ) : <div><span className="text-muted-foreground">Consist.: </span><span className="italic text-muted-foreground">unknown</span></div>}
+                        <div>
+                          <span className="text-muted-foreground">Consist.: </span>
+                          {displayStats.consistency}
+                        </div>
+                      ) : (
+                        <div>
+                          <span className="text-muted-foreground">Consist.: </span>
+                          <span className="italic text-muted-foreground">unknown</span>
+                        </div>
+                      )}
                     </div>
                     {displayStatsResult?.overallEstimate !== undefined && (
-                      <p className="text-xs text-muted-foreground">OVR ~{displayStatsResult.overallEstimate} (estimated)</p>
+                      <p className="text-xs text-muted-foreground">
+                        OVR ~{displayStatsResult.overallEstimate} (estimated)
+                      </p>
                     )}
                   </div>
                 )}
@@ -229,9 +316,14 @@ function AuctionSalePage() {
                           placeholder="Custom bid amount"
                           value={bidInput}
                           onChange={(e) => setBidInput(e.target.value)}
-                          onKeyDown={(e) => { if (e.key === "Enter") bid(Number(bidInput.replace(/,/g, ""))); }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") bid(Number(bidInput.replace(/,/g, "")));
+                          }}
                         />
-                        <Button variant="secondary" onClick={() => bid(Number(bidInput.replace(/,/g, "")))}>
+                        <Button
+                          variant="secondary"
+                          onClick={() => bid(Number(bidInput.replace(/,/g, "")))}
+                        >
                           Bid
                         </Button>
                       </div>
@@ -242,7 +334,9 @@ function AuctionSalePage() {
                           placeholder="Max bid (auto-bid up to)"
                           value={maxBid}
                           onChange={(e) => setMaxBid(e.target.value)}
-                          onKeyDown={(e) => { if (e.key === "Enter") handleMaxBid(); }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleMaxBid();
+                          }}
                         />
                         <Button variant="outline" onClick={handleMaxBid}>
                           Set Max
@@ -250,7 +344,14 @@ function AuctionSalePage() {
                       </div>
 
                       {message && (
-                        <p className="text-sm text-center" style={{ color: message.startsWith("✅") ? "var(--color-emerald-600)" : "var(--color-destructive)" }}>
+                        <p
+                          className="text-sm text-center"
+                          style={{
+                            color: message.startsWith("✅")
+                              ? "var(--color-emerald-600)"
+                              : "var(--color-destructive)",
+                          }}
+                        >
                           {message}
                         </p>
                       )}
@@ -286,14 +387,28 @@ function AuctionSalePage() {
                 <CardTitle className="text-base">Sale Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-1 text-sm">
-                <p>Lots offered: <strong>{activeLots.length}</strong></p>
-                <p>Sold: <strong>{activeLots.filter((l) => !l.passed && l.hammerPrice).length}</strong></p>
-                <p>Passed: <strong>{activeLots.filter((l) => l.passed).length}</strong></p>
+                <p>
+                  Lots offered: <strong>{activeLots.length}</strong>
+                </p>
+                <p>
+                  Sold:{" "}
+                  <strong>{activeLots.filter((l) => !l.passed && l.hammerPrice).length}</strong>
+                </p>
+                <p>
+                  Passed: <strong>{activeLots.filter((l) => l.passed).length}</strong>
+                </p>
                 {(() => {
-                  const top = activeLots.filter((l) => l.hammerPrice && !l.passed).sort((a, b) => (b.hammerPrice ?? 0) - (a.hammerPrice ?? 0))[0];
+                  const top = activeLots
+                    .filter((l) => l.hammerPrice && !l.passed)
+                    .sort((a, b) => (b.hammerPrice ?? 0) - (a.hammerPrice ?? 0))[0];
                   if (!top) return null;
                   const topHorse = horses.find((h) => h.id === top.horseId);
-                  return <p>Top lot: <strong>{topHorse?.name ?? "Unknown"}</strong> — ${top.hammerPrice!.toLocaleString()}</p>;
+                  return (
+                    <p>
+                      Top lot: <strong>{topHorse?.name ?? "Unknown"}</strong> — $
+                      {top.hammerPrice!.toLocaleString()}
+                    </p>
+                  );
                 })()}
               </CardContent>
             </Card>

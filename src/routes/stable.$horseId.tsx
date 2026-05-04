@@ -4,7 +4,13 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { HorseStats, SilkBadge } from "@/components/HorseBits";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
 import { ArrowLeft, Tag } from "lucide-react";
@@ -22,7 +28,9 @@ export const Route = createFileRoute("/stable/$horseId")({
   notFoundComponent: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Horse not found</h1>
-      <Link to="/stable" className="text-primary underline">Back to stable</Link>
+      <Link to="/stable" className="text-primary underline">
+        Back to stable
+      </Link>
     </div>
   ),
 });
@@ -50,29 +58,38 @@ function HorseDetail() {
   const slotsLeft = 2 - trainingUsed;
   const isPregnant = !!pregnancy;
   const isConsigned = !!horse.consignedSaleId;
-  const consignedSale = isConsigned ? auctions.find((a) => a.id === horse.consignedSaleId) : undefined;
-  // Find eligible upcoming sales to consign to
-  const eligibleSale = !isConsigned && horse.owned
-    ? auctions.find((a) => {
-        if (a.resolved) return false;
-        const ageMatch =
-          (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
-          ((horse.age === 1 || horse.age === 2) && (a.kind === "yearling" || a.kind === "yearling_south"));
-        return ageMatch;
-      })
+  const consignedSale = isConsigned
+    ? auctions.find((a) => a.id === horse.consignedSaleId)
     : undefined;
+  // Find eligible upcoming sales to consign to
+  const eligibleSale =
+    !isConsigned && horse.owned
+      ? auctions.find((a) => {
+          if (a.resolved) return false;
+          const ageMatch =
+            (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
+            ((horse.age === 1 || horse.age === 2) &&
+              (a.kind === "yearling" || a.kind === "yearling_south"));
+          return ageMatch;
+        })
+      : undefined;
 
   return (
     <div className="space-y-6">
       <div>
-        <Link to="/stable" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-3">
+        <Link
+          to="/stable"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-3"
+        >
           <ArrowLeft className="h-4 w-4" /> Back to stable
         </Link>
         <div className="flex items-center gap-4">
           <SilkBadge color={horse.silk} />
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{horse.name}</h1>
-            <p className="text-muted-foreground">Age {horse.age} · OVR {calculateOverallRating(horse)} · Potential {horse.potential}</p>
+            <p className="text-muted-foreground">
+              Age {horse.age} · OVR {calculateOverallRating(horse)} · Potential {horse.potential}
+            </p>
             {(() => {
               const ability = getAbility(horse);
               return (
@@ -97,18 +114,25 @@ function HorseDetail() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader><CardTitle>Stats</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>Stats</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-4">
             <HorseStatsRadar horse={horse} />
             <HorseStats horse={horse} />
             <div className="flex flex-wrap gap-2 pt-2">
               <Badge variant="secondary">Energy ⚡ {horse.energy}/100</Badge>
               <Badge variant={horse.form >= 0 ? "default" : "destructive"}>
-                Form {horse.form > 0 ? "+" : ""}{horse.form}
+                Form {horse.form > 0 ? "+" : ""}
+                {horse.form}
               </Badge>
               {isPregnant && (
-                <Badge className="bg-pink-500/15 text-pink-600 border-pink-500/30" variant="outline">
-                  🤰 Pregnant · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
+                <Badge
+                  className="bg-pink-500/15 text-pink-600 border-pink-500/30"
+                  variant="outline"
+                >
+                  🤰 Pregnant · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}
+                  d)
                 </Badge>
               )}
             </div>
@@ -131,7 +155,9 @@ function HorseDetail() {
                     <span className="text-sm">{consignedSale.name}</span>
                   </div>
                   <Link to="/auction/$saleId" params={{ saleId: consignedSale.id }}>
-                    <Button size="sm" variant="outline" className="w-full">View Sale</Button>
+                    <Button size="sm" variant="outline" className="w-full">
+                      View Sale
+                    </Button>
                   </Link>
                   <Button
                     size="sm"
@@ -140,7 +166,9 @@ function HorseDetail() {
                     onClick={() => withdrawConsignment(horse.id)}
                     disabled={consignedSale.day - day < 3}
                   >
-                    {consignedSale.day - day < 3 ? "Cannot withdraw (< 3 days)" : "Withdraw Consignment"}
+                    {consignedSale.day - day < 3
+                      ? "Cannot withdraw (< 3 days)"
+                      : "Withdraw Consignment"}
                   </Button>
                 </>
               ) : eligibleSale ? (
@@ -175,12 +203,20 @@ function HorseDetail() {
               <Button
                 key={k}
                 onClick={() => trainHorse(horse.id, k)}
-                disabled={isPregnant || slotsLeft <= 0 || cash < TRAINING_COST || horse.energy < 15 || horse.stats[k] >= horse.potential}
+                disabled={
+                  isPregnant ||
+                  slotsLeft <= 0 ||
+                  cash < TRAINING_COST ||
+                  horse.energy < 15 ||
+                  horse.stats[k] >= horse.potential
+                }
                 className="w-full justify-between"
                 variant="outline"
               >
                 <span className="capitalize">{k} work</span>
-                <span className="text-muted-foreground">{horse.stats[k]} → {Math.min(horse.potential, horse.stats[k] + 1)}</span>
+                <span className="text-muted-foreground">
+                  {horse.stats[k]} → {Math.min(horse.potential, horse.stats[k] + 1)}
+                </span>
               </Button>
             ))}
             <Button
@@ -198,7 +234,9 @@ function HorseDetail() {
       <Card>
         <CardHeader>
           <CardTitle>Beyer Speed Figure trend</CardTitle>
-          <p className="text-xs text-muted-foreground">Last {Math.min(10, horse.raceHistory.length)} races, oldest → newest</p>
+          <p className="text-xs text-muted-foreground">
+            Last {Math.min(10, horse.raceHistory.length)} races, oldest → newest
+          </p>
         </CardHeader>
         <CardContent>
           <BeyerChart history={horse.raceHistory} />
@@ -211,7 +249,10 @@ function HorseDetail() {
         <CardHeader>
           <CardTitle>Race history</CardTitle>
           <div className="flex items-center gap-2 mt-2">
-            <Select value={raceHistoryLimit.toString()} onValueChange={(v) => setRaceHistoryLimit(Number(v))}>
+            <Select
+              value={raceHistoryLimit.toString()}
+              onValueChange={(v) => setRaceHistoryLimit(Number(v))}
+            >
               <SelectTrigger className="w-[120px] h-8 text-xs">
                 <SelectValue placeholder="History limit" />
               </SelectTrigger>
@@ -236,7 +277,11 @@ function HorseDetail() {
                       <span className="text-xs text-muted-foreground">Beyer {r.beyer}</span>
                     )}
                     <span className="text-muted-foreground">D{r.day}</span>
-                    <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
+                    <Badge
+                      variant={
+                        r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"
+                      }
+                    >
                       {r.position}
                     </Badge>
                   </span>
@@ -250,7 +295,9 @@ function HorseDetail() {
       <Card>
         <CardHeader>
           <CardTitle>Lineage</CardTitle>
-          <p className="text-xs text-muted-foreground">Sire (top) and dam (bottom) for 4 generations</p>
+          <p className="text-xs text-muted-foreground">
+            Sire (top) and dam (bottom) for 4 generations
+          </p>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <Lineage
@@ -266,8 +313,20 @@ function HorseDetail() {
   );
 }
 
-
-function GradedHistoryPanel({ history }: { history: { raceName: string; position: number; day: number; beyer?: number; grade?: "G1" | "G2" | "G3"; distance?: number; surface?: string; fieldSize?: number }[] }) {
+function GradedHistoryPanel({
+  history,
+}: {
+  history: {
+    raceName: string;
+    position: number;
+    day: number;
+    beyer?: number;
+    grade?: "G1" | "G2" | "G3";
+    distance?: number;
+    surface?: string;
+    fieldSize?: number;
+  }[];
+}) {
   const graded = history.filter((r) => r.grade);
   const byGrade = {
     G1: graded.filter((r) => r.grade === "G1"),
@@ -276,7 +335,8 @@ function GradedHistoryPanel({ history }: { history: { raceName: string; position
   };
   const wins = (rs: typeof graded) => rs.filter((r) => r.position === 1).length;
   const places = (rs: typeof graded) => rs.filter((r) => r.position <= 3).length;
-  const bestBeyer = (rs: typeof graded) => rs.reduce((m, r) => (typeof r.beyer === "number" && r.beyer > m ? r.beyer : m), 0);
+  const bestBeyer = (rs: typeof graded) =>
+    rs.reduce((m, r) => (typeof r.beyer === "number" && r.beyer > m ? r.beyer : m), 0);
 
   return (
     <Card>
@@ -286,21 +346,40 @@ function GradedHistoryPanel({ history }: { history: { raceName: string; position
       </CardHeader>
       <CardContent className="space-y-4">
         {graded.length > 0 && (
-          <GradedStatsChart 
+          <GradedStatsChart
             data={[
-              { grade: "G1", runs: byGrade.G1.length, wins: wins(byGrade.G1), places: places(byGrade.G1) },
-              { grade: "G2", runs: byGrade.G2.length, wins: wins(byGrade.G2), places: places(byGrade.G2) },
-              { grade: "G3", runs: byGrade.G3.length, wins: wins(byGrade.G3), places: places(byGrade.G3) },
+              {
+                grade: "G1",
+                runs: byGrade.G1.length,
+                wins: wins(byGrade.G1),
+                places: places(byGrade.G1),
+              },
+              {
+                grade: "G2",
+                runs: byGrade.G2.length,
+                wins: wins(byGrade.G2),
+                places: places(byGrade.G2),
+              },
+              {
+                grade: "G3",
+                runs: byGrade.G3.length,
+                wins: wins(byGrade.G3),
+                places: places(byGrade.G3),
+              },
             ]}
           />
         )}
-        
+
         <div className="grid grid-cols-3 gap-2">
           {(["G1", "G2", "G3"] as const).map((g) => (
             <div key={g} className="rounded-md border p-3">
               <div className="flex items-center justify-between mb-1">
-                <Badge variant="outline" className={getGradeColorClass(g)}>{g}</Badge>
-                <span className="text-xs text-muted-foreground">{byGrade[g].length} run{byGrade[g].length !== 1 ? "s" : ""}</span>
+                <Badge variant="outline" className={getGradeColorClass(g)}>
+                  {g}
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  {byGrade[g].length} run{byGrade[g].length !== 1 ? "s" : ""}
+                </span>
               </div>
               <div className="text-sm">
                 <span className="font-semibold">{wins(byGrade[g])}</span>
@@ -309,7 +388,8 @@ function GradedHistoryPanel({ history }: { history: { raceName: string; position
                 <span className="text-muted-foreground"> placed</span>
               </div>
               <div className="text-xs text-muted-foreground mt-1">
-                Best Beyer: <span className="font-medium text-foreground">{bestBeyer(byGrade[g]) || "—"}</span>
+                Best Beyer:{" "}
+                <span className="font-medium text-foreground">{bestBeyer(byGrade[g]) || "—"}</span>
               </div>
             </div>
           ))}
@@ -320,13 +400,22 @@ function GradedHistoryPanel({ history }: { history: { raceName: string; position
         ) : (
           <div className="space-y-1">
             {graded.map((r, i) => (
-              <div key={i} className="flex items-center justify-between gap-2 text-sm py-2 border-b last:border-0">
+              <div
+                key={i}
+                className="flex items-center justify-between gap-2 text-sm py-2 border-b last:border-0"
+              >
                 <div className="flex items-center gap-2 min-w-0">
-                  {r.grade && <Badge variant="outline" className={getGradeColorClass(r.grade)}>{r.grade}</Badge>}
+                  {r.grade && (
+                    <Badge variant="outline" className={getGradeColorClass(r.grade)}>
+                      {r.grade}
+                    </Badge>
+                  )}
                   <div className="min-w-0">
                     <div className="truncate">{r.raceName}</div>
                     <div className="text-xs text-muted-foreground">
-                      {r.distance ? `${r.distance}m` : ""}{r.surface ? ` · ${r.surface}` : ""}{r.fieldSize ? ` · field of ${r.fieldSize}` : ""} · D{r.day}
+                      {r.distance ? `${r.distance}m` : ""}
+                      {r.surface ? ` · ${r.surface}` : ""}
+                      {r.fieldSize ? ` · field of ${r.fieldSize}` : ""} · D{r.day}
                     </div>
                   </div>
                 </div>
@@ -337,8 +426,13 @@ function GradedHistoryPanel({ history }: { history: { raceName: string; position
                       <span className="font-semibold">{r.beyer}</span>
                     </span>
                   )}
-                  <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
-                    {r.position}{getOrdinalSuffix(r.position)}
+                  <Badge
+                    variant={
+                      r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"
+                    }
+                  >
+                    {r.position}
+                    {getOrdinalSuffix(r.position)}
                   </Badge>
                 </div>
               </div>

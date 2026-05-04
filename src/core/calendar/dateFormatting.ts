@@ -1,6 +1,6 @@
 /**
  * Pure date formatting functions
- * Extracted from: track-schedule.tsx, canadian-calendar.tsx, uae-calendar.tsx, 
+ * Extracted from: track-schedule.tsx, canadian-calendar.tsx, uae-calendar.tsx,
  *                 south-american-calendar.tsx, german-calendar.tsx, scandinavian-calendar.tsx
  */
 

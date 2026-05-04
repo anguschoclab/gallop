@@ -57,7 +57,8 @@ describe("getGenderRestrictionLabel", () => {
   it("colt → Colts", () => expect(getGenderRestrictionLabel("colt")).toBe("Colts"));
   it("colts → Colts", () => expect(getGenderRestrictionLabel("colts" as never)).toBe("Colts"));
   it("filly → Fillies", () => expect(getGenderRestrictionLabel("filly" as never)).toBe("Fillies"));
-  it("fillies → Fillies", () => expect(getGenderRestrictionLabel("fillies" as never)).toBe("Fillies"));
+  it("fillies → Fillies", () =>
+    expect(getGenderRestrictionLabel("fillies" as never)).toBe("Fillies"));
   it("mares → Mares", () => expect(getGenderRestrictionLabel("mares")).toBe("Mares"));
   it("fillies-and-mares → Fillies & Mares", () =>
     expect(getGenderRestrictionLabel("fillies-and-mares")).toBe("Fillies & Mares"));

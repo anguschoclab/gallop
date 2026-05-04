@@ -3,8 +3,20 @@ import type { Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { HorseStats, StatBar, SilkBadge } from "@/components/HorseBits";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { X, GitCompare } from "lucide-react";
@@ -35,7 +47,7 @@ export function HorseCompare({ horses }: HorseCompareProps) {
         <DialogHeader>
           <DialogTitle>Compare Horses</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           {/* Horse Selection */}
           <div className="grid grid-cols-2 gap-4">
@@ -89,7 +101,8 @@ export function HorseCompare({ horses }: HorseCompareProps) {
                     <Badge variant="secondary">Potential {horse1.potential}</Badge>
                     <Badge variant="secondary">Energy ⚡ {horse1.energy}/100</Badge>
                     <Badge variant={horse1.form >= 0 ? "default" : "destructive"}>
-                      Form {horse1.form > 0 ? "+" : ""}{horse1.form}
+                      Form {horse1.form > 0 ? "+" : ""}
+                      {horse1.form}
                     </Badge>
                   </div>
                   <HorseStats horse={horse1} />
@@ -118,7 +131,8 @@ export function HorseCompare({ horses }: HorseCompareProps) {
                     <Badge variant="secondary">Potential {horse2.potential}</Badge>
                     <Badge variant="secondary">Energy ⚡ {horse2.energy}/100</Badge>
                     <Badge variant={horse2.form >= 0 ? "default" : "destructive"}>
-                      Form {horse2.form > 0 ? "+" : ""}{horse2.form}
+                      Form {horse2.form > 0 ? "+" : ""}
+                      {horse2.form}
                     </Badge>
                   </div>
                   <HorseStats horse={horse2} />
@@ -154,17 +168,22 @@ export function HorseCompare({ horses }: HorseCompareProps) {
                           <span className="text-muted-foreground">
                             {diff !== 0 && (
                               <span className={diff > 0 ? "text-green-600" : "text-red-600"}>
-                                {diff > 0 ? "+" : ""}{diff}
+                                {diff > 0 ? "+" : ""}
+                                {diff}
                               </span>
                             )}
                           </span>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                          <div className={diff > 0 ? "bg-green-50 dark:bg-green-950 rounded p-2" : ""}>
+                          <div
+                            className={diff > 0 ? "bg-green-50 dark:bg-green-950 rounded p-2" : ""}
+                          >
                             <div className="text-xs text-muted-foreground mb-1">{horse1.name}</div>
                             <StatBar label="" value={v1} />
                           </div>
-                          <div className={diff < 0 ? "bg-green-50 dark:bg-green-950 rounded p-2" : ""}>
+                          <div
+                            className={diff < 0 ? "bg-green-50 dark:bg-green-950 rounded p-2" : ""}
+                          >
                             <div className="text-xs text-muted-foreground mb-1">{horse2.name}</div>
                             <StatBar label="" value={v2} />
                           </div>
@@ -194,7 +213,15 @@ export function HorseCompare({ horses }: HorseCompareProps) {
                         {horse1.raceHistory.slice(0, 5).map((r, i) => (
                           <div key={i} className="flex justify-between text-sm py-1 border-b">
                             <span className="truncate">{r.raceName}</span>
-                            <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
+                            <Badge
+                              variant={
+                                r.position === 1
+                                  ? "default"
+                                  : r.position <= 3
+                                    ? "secondary"
+                                    : "outline"
+                              }
+                            >
                               {r.position}
                             </Badge>
                           </div>
@@ -211,7 +238,15 @@ export function HorseCompare({ horses }: HorseCompareProps) {
                         {horse2.raceHistory.slice(0, 5).map((r, i) => (
                           <div key={i} className="flex justify-between text-sm py-1 border-b">
                             <span className="truncate">{r.raceName}</span>
-                            <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
+                            <Badge
+                              variant={
+                                r.position === 1
+                                  ? "default"
+                                  : r.position <= 3
+                                    ? "secondary"
+                                    : "outline"
+                              }
+                            >
                               {r.position}
                             </Badge>
                           </div>

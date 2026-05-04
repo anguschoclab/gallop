@@ -8,7 +8,13 @@ import type { Race } from "@/game/types";
 /**
  * Format age restrictions for display
  */
-export function formatAgeRestrictions(restrictions?: { minAge?: number; maxAge?: number; gender?: string; minAgeNorthern?: number; minAgeSouthern?: number }): string {
+export function formatAgeRestrictions(restrictions?: {
+  minAge?: number;
+  maxAge?: number;
+  gender?: string;
+  minAgeNorthern?: number;
+  minAgeSouthern?: number;
+}): string {
   if (!restrictions || restrictions.minAge === undefined) {
     return "";
   }

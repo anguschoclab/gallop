@@ -1,6 +1,6 @@
 import type { Horse, Pregnancy } from "@/game/types";
 
-export type BreedResult = { ok: true } | { ok: false, reason: string };
+export type BreedResult = { ok: true } | { ok: false; reason: string };
 
 // Mares need rest after foaling — gameplay isn't a real reproductive cycle,
 // but breeding back-to-back every 30 days felt exploitable.
@@ -15,7 +15,7 @@ export function canBreed(
   sire: Horse | undefined,
   dam: Horse | undefined,
   day: number,
-  pregnancies: readonly Pregnancy[]
+  pregnancies: readonly Pregnancy[],
 ): BreedResult {
   if (!sire || !dam) return { ok: false, reason: "Sire or dam not found." };
   if (sire.id === dam.id) return { ok: false, reason: "A horse cannot breed with itself." };

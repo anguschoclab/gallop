@@ -35,8 +35,20 @@ function mkPregnancy(id: string): Pregnancy {
   };
 }
 
-const sire = mkHorse({ id: "sire", name: "Sire", gender: "horse", stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 }, potential: 100 });
-const dam = mkHorse({ id: "dam", name: "Dam", gender: "mare", stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 }, potential: 100 });
+const sire = mkHorse({
+  id: "sire",
+  name: "Sire",
+  gender: "horse",
+  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 },
+  potential: 100,
+});
+const dam = mkHorse({
+  id: "dam",
+  name: "Dam",
+  gender: "mare",
+  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 },
+  potential: 100,
+});
 
 describe("resolveFoaling", () => {
   it("foal stats are integers in [1, 100] even with max parents and big compatibility bonuses", () => {
@@ -45,7 +57,13 @@ describe("resolveFoaling", () => {
       const outcome = resolveFoaling(mkPregnancy(`preg-${i}`), sire, dam);
       if (outcome.kind === "live") {
         const { stats, potential } = outcome.foal;
-        for (const v of [stats.speed, stats.stamina, stats.acceleration, stats.consistency, potential]) {
+        for (const v of [
+          stats.speed,
+          stats.stamina,
+          stats.acceleration,
+          stats.consistency,
+          potential,
+        ]) {
           expect(Number.isInteger(v)).toBe(true);
           expect(v).toBeGreaterThanOrEqual(1);
           expect(v).toBeLessThanOrEqual(100);

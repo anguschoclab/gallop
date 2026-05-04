@@ -7,11 +7,7 @@ import { GRADED_RACES, type Grade } from "@/game/gradedRaces";
 import { getGradeColorClass } from "@/core/race/grading";
 import { formatDate as coreFormatDate } from "@/core/calendar/dateFormatting";
 
-const TRIPLE_CROWN_KEYS = new Set([
-  "ca-kings-plate",
-  "ca-prince-of-wales",
-  "ca-breeders-stakes",
-]);
+const TRIPLE_CROWN_KEYS = new Set(["ca-kings-plate", "ca-prince-of-wales", "ca-breeders-stakes"]);
 
 const CANADIAN_TRACKS = ["Woodbine", "Fort Erie", "Hastings", "Century Mile"] as const;
 
@@ -23,9 +19,7 @@ function TrackSchedulePage() {
   const [gradeFilter, setGradeFilter] = useState<Grade | "all">("all");
   const [tripleCrownFilter, setTripleCrownFilter] = useState<boolean | "all">("all");
 
-  const canadianRaces = GRADED_RACES.filter((race) =>
-    CANADIAN_TRACKS.includes(race.track as any)
-  );
+  const canadianRaces = GRADED_RACES.filter((race) => CANADIAN_TRACKS.includes(race.track as any));
 
   const filteredRaces = canadianRaces.filter((race) => {
     if (gradeFilter !== "all" && race.grade !== gradeFilter) return false;
@@ -38,15 +32,18 @@ function TrackSchedulePage() {
   });
 
   // Group races by track
-  const racesByTrack = CANADIAN_TRACKS.reduce((acc, track) => {
-    const trackRaces = filteredRaces
-      .filter((race) => race.track === track)
-      .sort((a, b) => a.dayOfYear - b.dayOfYear);
-    if (trackRaces.length > 0) {
-      acc[track] = trackRaces;
-    }
-    return acc;
-  }, {} as Record<string, typeof filteredRaces>);
+  const racesByTrack = CANADIAN_TRACKS.reduce(
+    (acc, track) => {
+      const trackRaces = filteredRaces
+        .filter((race) => race.track === track)
+        .sort((a, b) => a.dayOfYear - b.dayOfYear);
+      if (trackRaces.length > 0) {
+        acc[track] = trackRaces;
+      }
+      return acc;
+    },
+    {} as Record<string, typeof filteredRaces>,
+  );
 
   return (
     <div className="space-y-6">
@@ -160,19 +157,24 @@ function TrackSchedulePage() {
                       <span>{race.distance}m</span>
                       <span>{race.surface}</span>
                       <span>
-                        Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
+                        Purse{" "}
+                        <span className="font-medium text-foreground">
+                          ${race.purse.toLocaleString()}
+                        </span>
                       </span>
                       {race.restrictions?.minAge !== undefined && (
                         <span>
                           {race.restrictions.minAge === race.restrictions.maxAge
                             ? `${race.restrictions.minAge}YO only`
                             : race.restrictions.maxAge
-                            ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
-                            : `${race.restrictions.minAge}+ YO`}
+                              ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
+                              : `${race.restrictions.minAge}+ YO`}
                         </span>
                       )}
                       {race.restrictions?.gender && (
-                        <span>{race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only</span>
+                        <span>
+                          {race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only
+                        </span>
                       )}
                     </div>
                   </div>

@@ -43,7 +43,7 @@ export function RegionalSchedule({ continent, country, tracks, title }: Regional
       r.graded &&
       (continent ? getTrackContinent(r.graded.track) === continent : true) &&
       (country ? getTrackCountry(r.graded.track) === country : true) &&
-      (tracks ? tracks.includes(r.graded.track) : true)
+      (tracks ? tracks.includes(r.graded.track) : true),
   );
 
   // Group races by track if specific tracks provided, otherwise by date
@@ -52,7 +52,7 @@ export function RegionalSchedule({ continent, country, tracks, title }: Regional
     for (const track of tracks) {
       racesByTrack.set(
         track,
-        filteredRaces.filter((r) => r.graded?.track === track)
+        filteredRaces.filter((r) => r.graded?.track === track),
       );
     }
 
@@ -96,8 +96,8 @@ export function RegionalSchedule({ continent, country, tracks, title }: Regional
                                 race.graded?.grade === "G1"
                                   ? "bg-yellow-500/20 text-yellow-700 border-yellow-500/40"
                                   : race.graded?.grade === "G2"
-                                  ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
-                                  : "bg-amber-700/20 text-amber-800 border-amber-700/40";
+                                    ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
+                                    : "bg-amber-700/20 text-amber-800 border-amber-700/40";
 
                               return (
                                 <div
@@ -114,17 +114,13 @@ export function RegionalSchedule({ continent, country, tracks, title }: Regional
                                     <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1">
                                       <span>{race.distance}m</span>
                                       <span>{race.graded?.surface}</span>
-                                      <span>
-                                        Purse ${race.purse.toLocaleString()}
-                                      </span>
+                                      <span>Purse ${race.purse.toLocaleString()}</span>
                                       {race.restrictions?.minAge && (
                                         <span>{race.restrictions.minAge}+ YO</span>
                                       )}
                                       {race.restrictions?.sex && (
                                         <span>
-                                          {race.restrictions.sex === "filly"
-                                            ? "Fillies"
-                                            : "Colts"}{" "}
+                                          {race.restrictions.sex === "filly" ? "Fillies" : "Colts"}{" "}
                                           only
                                         </span>
                                       )}
@@ -157,9 +153,7 @@ export function RegionalSchedule({ continent, country, tracks, title }: Regional
       </CardHeader>
       <CardContent>
         {groupedRaces.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4">
-            No upcoming races scheduled
-          </p>
+          <p className="text-sm text-muted-foreground py-4">No upcoming races scheduled</p>
         ) : (
           <div className="space-y-4">
             {groupedRaces.map(({ day, races: dayRaces }) => (
@@ -176,14 +170,11 @@ export function RegionalSchedule({ continent, country, tracks, title }: Regional
                       race.graded?.grade === "G1"
                         ? "bg-yellow-500/20 text-yellow-700 border-yellow-500/40"
                         : race.graded?.grade === "G2"
-                        ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
-                        : "bg-amber-700/20 text-amber-800 border-amber-700/40";
+                          ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
+                          : "bg-amber-700/20 text-amber-800 border-amber-700/40";
 
                     return (
-                      <div
-                        key={race.id}
-                        className="flex items-start justify-between gap-2 py-2"
-                      >
+                      <div key={race.id} className="flex items-start justify-between gap-2 py-2">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-medium text-sm">{race.name}</span>
@@ -197,18 +188,13 @@ export function RegionalSchedule({ continent, country, tracks, title }: Regional
                           <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1">
                             <span>{race.distance}m</span>
                             <span>{race.graded?.surface}</span>
-                            <span>
-                              Purse ${race.purse.toLocaleString()}
-                            </span>
+                            <span>Purse ${race.purse.toLocaleString()}</span>
                             {race.restrictions?.minAge && (
                               <span>{race.restrictions.minAge}+ YO</span>
                             )}
                             {race.restrictions?.sex && (
                               <span>
-                                {race.restrictions.sex === "filly"
-                                  ? "Fillies"
-                                  : "Colts"}{" "}
-                                only
+                                {race.restrictions.sex === "filly" ? "Fillies" : "Colts"} only
                               </span>
                             )}
                           </div>

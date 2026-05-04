@@ -4,9 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { stepRunner, computePaceContext, type Runner } from "@/game/raceSim";
 import { beyerFigure } from "@/game/beyer";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { calculateClassBonus } from "@/core/common/classBonus";
-import { buildRaceField, rngForRace, type RaceSimulationDependencies } from "@/services/raceSimulationService";
+import {
+  buildRaceField,
+  rngForRace,
+  type RaceSimulationDependencies,
+} from "@/services/raceSimulationService";
 import type { Weather } from "@/game/types";
 
 // Track surface background mapping
@@ -62,7 +72,12 @@ const getWeatherDisplay = (weather?: Weather): string => {
 // Project a Beyer figure mid-race from current pace.
 // If finished: use real finish time. Otherwise: extrapolate remaining distance
 // at current velocity (with a small tail-fade penalty if not yet at finish).
-function projectedBeyer(r: Runner, distance: number, simTime: number, classBonus: number): number | null {
+function projectedBeyer(
+  r: Runner,
+  distance: number,
+  simTime: number,
+  classBonus: number,
+): number | null {
   if (r.finishTime !== null) {
     return beyerFigure({ distance, finishTime: r.finishTime, classBonus });
   }
@@ -77,7 +92,13 @@ export const Route = createFileRoute("/race/$raceId")({
   notFoundComponent: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Race not found</h1>
-      <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all" }} className="text-primary underline">Back</Link>
+      <Link
+        to="/races"
+        search={{ grade: "all", country: "all", surface: "all", track: "all" }}
+        className="text-primary underline"
+      >
+        Back
+      </Link>
     </div>
   ),
 });
@@ -94,7 +115,9 @@ function LiveRace() {
     return (
       <div className="p-8 text-center">
         <p className="text-muted-foreground">This race has already been run.</p>
-        <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all" }}><Button className="mt-4">Back to races</Button></Link>
+        <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all" }}>
+          <Button className="mt-4">Back to races</Button>
+        </Link>
       </div>
     );
   }
@@ -144,7 +167,15 @@ function LiveRace() {
         const pace = computePaceContext(runners, race.distance);
         for (const r of runners) {
           if (r.finishTime === null) {
-            stepRunner(r, FIXED_DT, simTimeRef.current, race.distance, rngRef.current, runners, pace);
+            stepRunner(
+              r,
+              FIXED_DT,
+              simTimeRef.current,
+              race.distance,
+              rngRef.current,
+              runners,
+              pace,
+            );
             if (r.finishTime !== null) {
               finishOrderRef.current.push({
                 horseId: r.horseId,
@@ -180,7 +211,7 @@ function LiveRace() {
   }));
 
   const positionRank = new Map(
-    [...rows].sort((a, b) => b.r.position - a.r.position).map((row, i) => [row.r.horseId, i + 1])
+    [...rows].sort((a, b) => b.r.position - a.r.position).map((row, i) => [row.r.horseId, i + 1]),
   );
 
   const filtered = rows.filter(({ r, beyer }) => {
@@ -202,7 +233,9 @@ function LiveRace() {
     <div
       className="min-h-screen text-white"
       style={{
-        backgroundImage: skyBg ? `${skyBg}, linear-gradient(to bottom, rgb(6 78 59), rgb(6 59 48))` : undefined,
+        backgroundImage: skyBg
+          ? `${skyBg}, linear-gradient(to bottom, rgb(6 78 59), rgb(6 59 48))`
+          : undefined,
         backgroundSize: "auto 200px, 100% 100%",
         backgroundRepeat: "repeat-x, no-repeat",
         backgroundPosition: "top, top",
@@ -221,13 +254,41 @@ function LiveRace() {
         <div className="flex gap-2">
           {!finished && (
             <>
-              <Button size="sm" variant={speed === 1 ? "secondary" : "ghost"} onClick={() => setSpeed(1)}>1x</Button>
-              <Button size="sm" variant={speed === 2 ? "secondary" : "ghost"} onClick={() => setSpeed(2)}>2x</Button>
-              <Button size="sm" variant={speed === 4 ? "secondary" : "ghost"} onClick={() => setSpeed(4)}>4x</Button>
+              <Button
+                size="sm"
+                variant={speed === 1 ? "secondary" : "ghost"}
+                onClick={() => setSpeed(1)}
+              >
+                1x
+              </Button>
+              <Button
+                size="sm"
+                variant={speed === 2 ? "secondary" : "ghost"}
+                onClick={() => setSpeed(2)}
+              >
+                2x
+              </Button>
+              <Button
+                size="sm"
+                variant={speed === 4 ? "secondary" : "ghost"}
+                onClick={() => setSpeed(4)}
+              >
+                4x
+              </Button>
             </>
           )}
           {finished && (
-            <Button size="sm" onClick={() => navigate({ to: "/races", search: { grade: "all", country: "all", surface: "all", track: "all" } })}>Back to races</Button>
+            <Button
+              size="sm"
+              onClick={() =>
+                navigate({
+                  to: "/races",
+                  search: { grade: "all", country: "all", surface: "all", track: "all" },
+                })
+              }
+            >
+              Back to races
+            </Button>
           )}
         </div>
       </div>
@@ -247,7 +308,9 @@ function LiveRace() {
             <p className="text-xs uppercase tracking-wide text-white/60 mb-2">Live order</p>
             <div className="grid grid-cols-2 gap-2">
               <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-                <SelectTrigger className="h-8 text-xs bg-white/10 border-white/20 text-white"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-8 text-xs bg-white/10 border-white/20 text-white">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="position">Position</SelectItem>
                   <SelectItem value="beyer">Proj. Beyer</SelectItem>
@@ -255,7 +318,9 @@ function LiveRace() {
                 </SelectContent>
               </Select>
               <Select value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
-                <SelectTrigger className="h-8 text-xs bg-white/10 border-white/20 text-white"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-8 text-xs bg-white/10 border-white/20 text-white">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All runners</SelectItem>
                   <SelectItem value="owned">My horses</SelectItem>
@@ -265,10 +330,14 @@ function LiveRace() {
             </div>
             <div className="mt-2">
               <label className="text-[10px] uppercase tracking-wide text-white/60 flex justify-between">
-                <span>Min Beyer</span><span className="tabular-nums">{minBeyer}</span>
+                <span>Min Beyer</span>
+                <span className="tabular-nums">{minBeyer}</span>
               </label>
               <input
-                type="range" min={0} max={120} step={5}
+                type="range"
+                min={0}
+                max={120}
+                step={5}
                 value={minBeyer}
                 onChange={(e) => setMinBeyer(Number(e.target.value))}
                 className="w-full accent-yellow-400"
@@ -278,7 +347,9 @@ function LiveRace() {
           <div className="space-y-1">
             {sorted.map(({ r, beyer }) => (
               <div key={r.horseId} className="flex items-center gap-2 text-sm py-1">
-                <span className="w-5 text-white/60 tabular-nums">{positionRank.get(r.horseId)}</span>
+                <span className="w-5 text-white/60 tabular-nums">
+                  {positionRank.get(r.horseId)}
+                </span>
                 <div
                   className="h-5 w-5 rounded-full border border-white/40"
                   style={{ backgroundColor: r.silk }}
@@ -290,18 +361,33 @@ function LiveRace() {
                   </span>
                 )}
                 {r.finishTime !== null && (
-                  <span className="text-xs text-white/60 tabular-nums">{r.finishTime.toFixed(1)}s</span>
+                  <span className="text-xs text-white/60 tabular-nums">
+                    {r.finishTime.toFixed(1)}s
+                  </span>
                 )}
               </div>
             ))}
             {sorted.length === 0 && (
-              <p className="text-xs text-white/50 italic py-2">No runners match the current filters.</p>
+              <p className="text-xs text-white/50 italic py-2">
+                No runners match the current filters.
+              </p>
             )}
           </div>
         </div>
       </div>
 
-      {finished && <ResultOverlay race={race} runners={runners} onClose={() => navigate({ to: "/races", search: { grade: "all", country: "all", surface: "all", track: "all" } })} />}
+      {finished && (
+        <ResultOverlay
+          race={race}
+          runners={runners}
+          onClose={() =>
+            navigate({
+              to: "/races",
+              search: { grade: "all", country: "all", surface: "all", track: "all" },
+            })
+          }
+        />
+      )}
     </div>
   );
 }
@@ -375,8 +461,15 @@ function Track({
             }}
           >
             <div className="flex items-center gap-1">
-              <HorseSprite color={r.silk} num={i + 1} isRunning={tick > 0} spriteUrl={horseSpriteUrl} />
-              {r.owned && <span className="text-xs font-bold bg-yellow-400 text-black px-1 rounded">YOU</span>}
+              <HorseSprite
+                color={r.silk}
+                num={i + 1}
+                isRunning={tick > 0}
+                spriteUrl={horseSpriteUrl}
+              />
+              {r.owned && (
+                <span className="text-xs font-bold bg-yellow-400 text-black px-1 rounded">YOU</span>
+              )}
             </div>
           </div>
         );
@@ -440,15 +533,21 @@ function ResultOverlay({
                 <span className="w-6 font-bold tabular-nums">{i + 1}</span>
                 <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: r.silk }} />
                 <span className={`flex-1 ${r.owned ? "font-bold" : ""}`}>{r.name}</span>
-                <span className="text-xs text-muted-foreground tabular-nums">{r.finishTime?.toFixed(2)}s</span>
+                <span className="text-xs text-muted-foreground tabular-nums">
+                  {r.finishTime?.toFixed(2)}s
+                </span>
                 {prize > 0 && r.owned && (
-                  <span className="text-sm font-medium text-emerald-600 tabular-nums">+${prize.toLocaleString()}</span>
+                  <span className="text-sm font-medium text-emerald-600 tabular-nums">
+                    +${prize.toLocaleString()}
+                  </span>
                 )}
               </div>
             );
           })}
         </div>
-        <Button onClick={onClose} className="w-full mt-5">Continue</Button>
+        <Button onClick={onClose} className="w-full mt-5">
+          Continue
+        </Button>
       </div>
     </div>
   );

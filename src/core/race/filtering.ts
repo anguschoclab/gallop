@@ -18,7 +18,7 @@ export interface RaceFilters {
 export function filterRacesByCriteria(
   races: Race[],
   filters: RaceFilters,
-  currentDay: number
+  currentDay: number,
 ): Race[] {
   return races.filter((race) => {
     // Filter by grade
@@ -57,7 +57,7 @@ export function filterRacesByCriteria(
  */
 export function separateUpcomingAndPast(
   races: Race[],
-  currentDay: number
+  currentDay: number,
 ): { upcoming: Race[]; past: Race[] } {
   const upcoming = races.filter((race) => race.day >= currentDay);
   const past = races.filter((race) => race.day < currentDay);

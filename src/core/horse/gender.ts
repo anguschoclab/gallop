@@ -6,14 +6,24 @@ import type { Horse } from "@/game/types";
  * Extracted from: races.tsx, RaceDetailPanel.tsx, store.ts
  */
 
-type GenderRestriction = "colt" | "filly" | "mares" | "fillies-and-mares" | "colts-and-fillies" | "horses" | undefined;
+type GenderRestriction =
+  | "colt"
+  | "filly"
+  | "mares"
+  | "fillies-and-mares"
+  | "colts-and-fillies"
+  | "horses"
+  | undefined;
 
 /**
  * Check if a horse's gender matches the race's gender restriction
  */
-export function isGenderEligible(horseGender: Horse["gender"], restriction: GenderRestriction): boolean {
+export function isGenderEligible(
+  horseGender: Horse["gender"],
+  restriction: GenderRestriction,
+): boolean {
   if (!restriction) return true;
-  
+
   const genderEligibilityMap: Record<string, Horse["gender"][]> = {
     colt: ["colt", "horse"],
     colts: ["colt", "horse"],
@@ -24,7 +34,7 @@ export function isGenderEligible(horseGender: Horse["gender"], restriction: Gend
     "colts-and-fillies": ["colt", "filly", "horse", "mare"],
     horses: ["horse", "colt"],
   };
-  
+
   return genderEligibilityMap[restriction]?.includes(horseGender) ?? false;
 }
 

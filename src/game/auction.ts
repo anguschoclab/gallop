@@ -27,7 +27,7 @@ export const KIND_LABELS: Record<AuctionSaleKind, string> = {
 export function calculateLotValuation(
   horse: Horse,
   stable: Stable,
-  saleKind: AuctionSaleKind
+  saleKind: AuctionSaleKind,
 ): number {
   const base = calculateNpcHorseValue(horse, stable.tier);
   const p = stable.personality;
@@ -67,7 +67,7 @@ export function calculateLotValuation(
       mod = 0.85;
       break;
     case "prestige":
-      mod = 1.2 + (horse.fame / 200);
+      mod = 1.2 + horse.fame / 200;
       if (base < 5000) mod = 0; // skip cheap lots
       break;
   }
@@ -91,12 +91,12 @@ export function calculateLotValuation(
 const BUDGET_CAPS: Record<Stable["personality"], number> = {
   aggressive: 0.35,
   conservative: 0.15,
-  developer: 0.30,
-  "win-now": 0.20,
+  developer: 0.3,
+  "win-now": 0.2,
   specialist: 0.25,
   breeder: 0.35,
-  trader: 0.20,
-  prestige: 0.40,
+  trader: 0.2,
+  prestige: 0.4,
 };
 
 /**
@@ -107,7 +107,7 @@ export function calculateNpcBid(
   horse: Horse,
   currentBid: number,
   saleKind: AuctionSaleKind,
-  rng: ReturnType<typeof createRng>
+  rng: ReturnType<typeof createRng>,
 ): number | null {
   const ceiling = calculateLotValuation(horse, stable, saleKind);
   if (ceiling <= 0) return null;
@@ -160,7 +160,7 @@ export function generateAuctionLots(
   stables: Stable[],
   allHorses: Horse[],
   kind: AuctionSaleKind,
-  name: string
+  name: string,
 ): AuctionSale {
   const saleId = generateUUID();
   const eligibleAges = ELIGIBLE_AGES_BY_KIND[kind];
@@ -169,12 +169,15 @@ export function generateAuctionLots(
 
   // Use NPC major stables that are breeders/developers/traders as primary consignors
   const consignorPersonalities: Stable["personality"][] = ["breeder", "developer", "trader"];
-  const consignors = stables.filter((s) => s.isMajor && consignorPersonalities.includes(s.personality));
+  const consignors = stables.filter(
+    (s) => s.isMajor && consignorPersonalities.includes(s.personality),
+  );
 
   for (const stable of consignors) {
     // Each consignor contributes 1–4 lots from their inventory of eligible-age horses
     const stableHorses = allHorses.filter(
-      (h) => h.stableId === stable.id && eligibleAges.includes(h.age) && h.hemisphere === hemisphere
+      (h) =>
+        h.stableId === stable.id && eligibleAges.includes(h.age) && h.hemisphere === hemisphere,
     );
 
     // If inventory is thin, generate fresh NPC lots
@@ -194,7 +197,13 @@ export function generateAuctionLots(
     }
 
     for (let i = 0; i < freshCount; i++) {
-      const freshHorse = generateNpcHorse(stable.id, stable.tier, eligibleAges[0], undefined, hemisphere);
+      const freshHorse = generateNpcHorse(
+        stable.id,
+        stable.tier,
+        eligibleAges[0],
+        undefined,
+        hemisphere,
+      );
       allHorses.push(freshHorse);
       lots.push({
         id: generateUUID(),
@@ -234,7 +243,7 @@ export type ResolvedSale = {
 export function resolveAuctionSale(
   sale: AuctionSale,
   stables: Stable[],
-  allHorses: Horse[]
+  allHorses: Horse[],
 ): ResolvedSale {
   const log: string[] = [];
   const updatedLots: AuctionLot[] = [];
@@ -282,9 +291,16 @@ export function resolveAuctionSale(
       updatedLots.push({ ...lot, passed: true, hammerPrice: undefined, soldToStableId: undefined });
       log.push(`${horse.name} — passed (reserve not met)`);
     } else {
-      updatedLots.push({ ...lot, hammerPrice: currentBid, soldToStableId: currentWinner, passed: false });
+      updatedLots.push({
+        ...lot,
+        hammerPrice: currentBid,
+        soldToStableId: currentWinner,
+        passed: false,
+      });
       const winner = stables.find((s) => s.id === currentWinner);
-      log.push(`${horse.name} — sold to ${winner?.name ?? "Unknown"} for $${currentBid.toLocaleString()}`);
+      log.push(
+        `${horse.name} — sold to ${winner?.name ?? "Unknown"} for $${currentBid.toLocaleString()}`,
+      );
     }
   }
 

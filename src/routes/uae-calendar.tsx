@@ -5,13 +5,12 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { GRADED_RACES, type Grade } from "@/game/gradedRaces";
 import { getGradeColorClass } from "@/core/race/grading";
-import { getMonthName as coreGetMonthName, formatDate as coreFormatDate } from "@/core/calendar/dateFormatting";
+import {
+  getMonthName as coreGetMonthName,
+  formatDate as coreFormatDate,
+} from "@/core/calendar/dateFormatting";
 
-const UAE_TRACKS = new Set([
-  "Meydan",
-  "Abu Dhabi",
-  "Jebel Ali",
-]);
+const UAE_TRACKS = new Set(["Meydan", "Abu Dhabi", "Jebel Ali"]);
 
 export const Route = createFileRoute("/uae-calendar")({
   component: UAECalendarPage,
@@ -20,9 +19,7 @@ export const Route = createFileRoute("/uae-calendar")({
 function UAECalendarPage() {
   const [gradeFilter, setGradeFilter] = useState<Grade | "all">("all");
 
-  const uaeRaces = GRADED_RACES.filter((race) =>
-    UAE_TRACKS.has(race.track)
-  );
+  const uaeRaces = GRADED_RACES.filter((race) => UAE_TRACKS.has(race.track));
 
   const filteredRaces = uaeRaces.filter((race) => {
     if (gradeFilter !== "all" && race.grade !== gradeFilter) return false;
@@ -30,13 +27,15 @@ function UAECalendarPage() {
   });
 
   // Group races by month
-  const racesByMonth = filteredRaces.reduce((acc, race) => {
-    const monthName = coreGetMonthName(race.dayOfYear);
-    if (!acc[monthName]) acc[monthName] = [];
-    acc[monthName].push(race);
-    return acc;
-  }, {} as Record<string, typeof filteredRaces>);
-
+  const racesByMonth = filteredRaces.reduce(
+    (acc, race) => {
+      const monthName = coreGetMonthName(race.dayOfYear);
+      if (!acc[monthName]) acc[monthName] = [];
+      acc[monthName].push(race);
+      return acc;
+    },
+    {} as Record<string, typeof filteredRaces>,
+  );
 
   return (
     <div className="space-y-6">
@@ -117,19 +116,24 @@ function UAECalendarPage() {
                       <span>{race.distance}m</span>
                       <span>{race.surface}</span>
                       <span>
-                        Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
+                        Purse{" "}
+                        <span className="font-medium text-foreground">
+                          ${race.purse.toLocaleString()}
+                        </span>
                       </span>
                       {race.restrictions?.minAge !== undefined && (
                         <span>
                           {race.restrictions.minAge === race.restrictions.maxAge
                             ? `${race.restrictions.minAge}YO only`
                             : race.restrictions.maxAge
-                            ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
-                            : `${race.restrictions.minAge}+ YO`}
+                              ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
+                              : `${race.restrictions.minAge}+ YO`}
                         </span>
                       )}
                       {race.restrictions?.gender && (
-                        <span>{race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only</span>
+                        <span>
+                          {race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only
+                        </span>
                       )}
                     </div>
                   </div>
@@ -152,4 +156,3 @@ function UAECalendarPage() {
     </div>
   );
 }
-

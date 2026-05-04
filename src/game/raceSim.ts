@@ -39,7 +39,7 @@ function paceShapeMul(style: RunningStyle, progress: number): number {
     case "closer":
       // 0.94 early, surge to 1.07 in the last 30%.
       if (progress < 0.7) return 0.94 + 0.04 * progress;
-      return 0.97 + 0.10 * ((progress - 0.7) / 0.3);
+      return 0.97 + 0.1 * ((progress - 0.7) / 0.3);
   }
 }
 
@@ -87,7 +87,9 @@ const WEATHER_DRAIN_MUL: Record<Weather, number> = {
   rainy: 1.06,
 };
 
-export function getConditionsModifier(race: Pick<Race, "weather" | "trackCondition">): ConditionsModifier {
+export function getConditionsModifier(
+  race: Pick<Race, "weather" | "trackCondition">,
+): ConditionsModifier {
   const trackMul = race.trackCondition ? TRACK_SPEED_MUL[race.trackCondition] : 1;
   const weatherSpeedMul = race.weather ? WEATHER_SPEED_MUL[race.weather] : 1;
   const weatherDrainMul = race.weather ? WEATHER_DRAIN_MUL[race.weather] : 1;
@@ -108,7 +110,7 @@ const TOP_SPEED_CEILING = 22;
 export function buildRunner(
   h: Horse,
   owned: boolean,
-  conditions: ConditionsModifier = { speedMul: 1, staminaDrainMul: 1 }
+  conditions: ConditionsModifier = { speedMul: 1, staminaDrainMul: 1 },
 ): Runner {
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
@@ -203,7 +205,7 @@ export function stepRunner(
   distance: number,
   rng: { next: () => number } | Rng,
   field?: Runner[],
-  pace?: PaceContext
+  pace?: PaceContext,
 ) {
   if (r.finishTime !== null) return;
   const progress = r.position / distance;
@@ -253,7 +255,7 @@ export function runRaceToCompletion(
   distance: number,
   rng: Rng,
   dt: number = 0.1,
-  maxTime: number = 600
+  maxTime: number = 600,
 ): { horseId: string; position: number; time: number }[] {
   let t = 0;
   while (runners.some((r) => r.finishTime === null) && t < maxTime) {

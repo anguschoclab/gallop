@@ -15,7 +15,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
  */
 export function getMinimumAgeForHemisphere(
   horseHemisphere: Hemisphere,
-  restrictions?: { minAge?: number; minAgeNorthern?: number; minAgeSouthern?: number }
+  restrictions?: { minAge?: number; minAgeNorthern?: number; minAgeSouthern?: number },
 ): number {
   // Use hemisphere-specific age if available
   if (horseHemisphere === "Northern" && restrictions?.minAgeNorthern !== undefined) {
@@ -36,7 +36,7 @@ export function getMinimumAgeForHemisphere(
 export function isHorseEligibleForRace(
   horse: Horse,
   race: Race,
-  pregnantHorseIds: Set<string>
+  pregnantHorseIds: Set<string>,
 ): boolean {
   // Check minimum stat requirement
   if (race.minStat && calculateOverallRating(horse) < race.minStat) {
@@ -56,11 +56,11 @@ export function isHorseEligibleForRace(
 
   // Check gender restrictions
   if (race.restrictions?.gender) {
-    const restriction = race.restrictions.gender.toLowerCase().includes("colt") 
-      ? "colt" as const
+    const restriction = race.restrictions.gender.toLowerCase().includes("colt")
+      ? ("colt" as const)
       : race.restrictions.gender.toLowerCase().includes("filly")
-      ? "filly" as const
-      : undefined;
+        ? ("filly" as const)
+        : undefined;
     if (restriction && !checkGenderEligibility(horse.gender, restriction)) {
       return false;
     }

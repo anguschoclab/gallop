@@ -13,9 +13,7 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
   const day = useGame((s) => s.day);
 
   // Find all pregnancies where this horse is either sire or dam
-  const relatedPregnancies = pregnancies.filter(
-    (p) => p.sireId === horseId || p.damId === horseId
-  );
+  const relatedPregnancies = pregnancies.filter((p) => p.sireId === horseId || p.damId === horseId);
 
   // Find the pregnancy that produced this horse (if it was born in-game)
   const birthPregnancy = pregnancies.find((p) => p.foalId === horseId);
@@ -98,18 +96,12 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
               {index !== events.length - 1 && (
                 <div className="absolute left-[11px] top-6 bottom-0 w-0.5 bg-border" />
               )}
-              
+
               {/* Timeline dot */}
               <div className="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-background border-2 border-border flex items-center justify-center">
-                {event.type === "birth" && (
-                  <Baby className="h-3 w-3 text-primary" />
-                )}
-                {event.type === "conception" && (
-                  <Heart className="h-3 w-3 text-pink-500" />
-                )}
-                {event.type === "foal_birth" && (
-                  <Calendar className="h-3 w-3 text-green-500" />
-                )}
+                {event.type === "birth" && <Baby className="h-3 w-3 text-primary" />}
+                {event.type === "conception" && <Heart className="h-3 w-3 text-pink-500" />}
+                {event.type === "foal_birth" && <Calendar className="h-3 w-3 text-green-500" />}
               </div>
 
               {/* Event content */}

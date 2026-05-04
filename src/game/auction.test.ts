@@ -27,7 +27,11 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
   };
 }
 
-function mkStable(personality: Stable["personality"], tier: Stable["tier"] = "mid", overrides: Partial<Stable> = {}): Stable {
+function mkStable(
+  personality: Stable["personality"],
+  tier: Stable["tier"] = "mid",
+  overrides: Partial<Stable> = {},
+): Stable {
   return {
     id: "s1",
     name: "Test Stable",
@@ -85,13 +89,16 @@ describe("calculateLotValuation", () => {
     const colt = mkHorse({ gender: "colt" });
     const breeder = mkStable("breeder");
     expect(calculateLotValuation(filly, breeder, "yearling")).toBeGreaterThan(
-      calculateLotValuation(colt, breeder, "yearling")
+      calculateLotValuation(colt, breeder, "yearling"),
     );
   });
 
   it("prestige + cheap horse (base < 5000) → 0", () => {
     // A horse with very low stats will have a small base value
-    const cheapHorse = mkHorse({ stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1 }, age: 7 });
+    const cheapHorse = mkHorse({
+      stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1 },
+      age: 7,
+    });
     const prestige = mkStable("prestige");
     expect(calculateLotValuation(cheapHorse, prestige, "yearling")).toBe(0);
   });
@@ -101,7 +108,7 @@ describe("calculateLotValuation", () => {
     const excellent = mkHorse({ conformation: "excellent" });
     const stable = mkStable("trader");
     expect(calculateLotValuation(excellent, stable, "yearling")).toBeGreaterThan(
-      calculateLotValuation(plain, stable, "yearling")
+      calculateLotValuation(plain, stable, "yearling"),
     );
   });
 
@@ -110,13 +117,22 @@ describe("calculateLotValuation", () => {
     const excellent = mkHorse({ temperament: "excellent" });
     const stable = mkStable("trader");
     expect(calculateLotValuation(excellent, stable, "yearling")).toBeGreaterThan(
-      calculateLotValuation(plain, stable, "yearling")
+      calculateLotValuation(plain, stable, "yearling"),
     );
   });
 
   it("result is always >= 0", () => {
     const horse = mkHorse();
-    const personalities: Stable["personality"][] = ["aggressive", "conservative", "developer", "win-now", "specialist", "breeder", "trader", "prestige"];
+    const personalities: Stable["personality"][] = [
+      "aggressive",
+      "conservative",
+      "developer",
+      "win-now",
+      "specialist",
+      "breeder",
+      "trader",
+      "prestige",
+    ];
     for (const p of personalities) {
       expect(calculateLotValuation(horse, mkStable(p), "yearling")).toBeGreaterThanOrEqual(0);
     }
@@ -127,7 +143,10 @@ describe("calculateNpcBid", () => {
   const rng = createRng(42);
 
   it("returns null when ceiling is 0 (prestige + cheap horse)", () => {
-    const cheapHorse = mkHorse({ stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1 }, age: 7 });
+    const cheapHorse = mkHorse({
+      stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1 },
+      age: 7,
+    });
     const prestige = mkStable("prestige", "mid", { cash: 1000000 });
     const bid = calculateNpcBid(prestige, cheapHorse, 0, "yearling", rng);
     expect(bid).toBeNull();
@@ -263,7 +282,10 @@ describe("resolveAuctionSale", () => {
   });
 
   it("sold lot has hammerPrice >= reservePrice and soldToStableId set", () => {
-    const horse = mkHorse({ id: "h1", stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 } });
+    const horse = mkHorse({
+      id: "h1",
+      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+    });
     const bidder = mkStable("aggressive", "elite", { id: "bidder", cash: 5000000 });
     const lot = {
       id: "lot1",

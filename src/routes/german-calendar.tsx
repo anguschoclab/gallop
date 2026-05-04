@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { GRADED_RACES, type Grade } from "@/game/gradedRaces";
 import { getGradeColorClass } from "@/core/race/grading";
-import { getMonthName as coreGetMonthName, formatDate as coreFormatDate } from "@/core/calendar/dateFormatting";
+import {
+  getMonthName as coreGetMonthName,
+  formatDate as coreFormatDate,
+} from "@/core/calendar/dateFormatting";
 
 const GERMAN_TRACKS = new Set([
   "Munich",
@@ -27,9 +30,7 @@ function GermanCalendarPage() {
   const [gradeFilter, setGradeFilter] = useState<Grade | "all">("all");
   const [trackFilter, setTrackFilter] = useState<string>("all");
 
-  const germanRaces = GRADED_RACES.filter((race) =>
-    GERMAN_TRACKS.has(race.track)
-  );
+  const germanRaces = GRADED_RACES.filter((race) => GERMAN_TRACKS.has(race.track));
 
   const tracks = Array.from(new Set(germanRaces.map((r) => r.track))).sort();
 
@@ -40,12 +41,15 @@ function GermanCalendarPage() {
   });
 
   // Group races by month
-  const racesByMonth = filteredRaces.reduce((acc, race) => {
-    const monthName = coreGetMonthName(race.dayOfYear);
-    if (!acc[monthName]) acc[monthName] = [];
-    acc[monthName].push(race);
-    return acc;
-  }, {} as Record<string, typeof filteredRaces>);
+  const racesByMonth = filteredRaces.reduce(
+    (acc, race) => {
+      const monthName = coreGetMonthName(race.dayOfYear);
+      if (!acc[monthName]) acc[monthName] = [];
+      acc[monthName].push(race);
+      return acc;
+    },
+    {} as Record<string, typeof filteredRaces>,
+  );
 
   return (
     <div className="space-y-6">
@@ -149,15 +153,18 @@ function GermanCalendarPage() {
                       <span>{race.distance}m</span>
                       <span>{race.surface}</span>
                       <span>
-                        Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
+                        Purse{" "}
+                        <span className="font-medium text-foreground">
+                          ${race.purse.toLocaleString()}
+                        </span>
                       </span>
                       {race.restrictions?.minAge !== undefined && (
                         <span>
                           {race.restrictions.minAge === race.restrictions.maxAge
                             ? `${race.restrictions.minAge}YO only`
                             : race.restrictions.maxAge
-                            ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
-                            : `${race.restrictions.minAge}+ YO`}
+                              ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
+                              : `${race.restrictions.minAge}+ YO`}
                         </span>
                       )}
                     </div>

@@ -15,7 +15,13 @@ import {
   randomRaceName,
 } from "@/core/common/random";
 
-export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere } = {}): Horse {
+export function generateHorse(
+  opts: {
+    tier?: "starter" | "budget" | "mid" | "elite";
+    owned?: boolean;
+    hemisphere?: Hemisphere;
+  } = {},
+): Horse {
   const tier = opts.tier ?? "budget";
   const ranges: Record<string, [number, number]> = {
     starter: [30, 55],
@@ -33,7 +39,7 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
   const [pLo, pHi] = potentialRanges[tier];
   const age = rand(2, 6);
   const isMale = Math.random() < 0.5;
-  const gender = age <= 2 ? (isMale ? "colt" : "filly") : (isMale ? "horse" : "mare");
+  const gender = age <= 2 ? (isMale ? "colt" : "filly") : isMale ? "horse" : "mare";
   const hemisphere: Hemisphere = opts.hemisphere ?? (Math.random() < 0.5 ? "Northern" : "Southern");
 
   const stats = {
@@ -68,13 +74,17 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
 }
 
 export function horsePrice(h: Horse): number {
-  const overall = (h.stats.speed + h.stats.stamina + h.stats.acceleration + h.stats.consistency) / 4;
+  const overall =
+    (h.stats.speed + h.stats.stamina + h.stats.acceleration + h.stats.consistency) / 4;
   const ageMod = h.age <= 3 ? 1.2 : h.age >= 6 ? 0.7 : 1;
   const potMod = 0.5 + h.potential / 100;
   return Math.round((overall * 80 * ageMod * potMod) / 50) * 50;
 }
 
-const classConfig: Record<RaceClass, { entry: number; purse: number; minStat?: number; dist: [number, number] }> = {
+const classConfig: Record<
+  RaceClass,
+  { entry: number; purse: number; minStat?: number; dist: [number, number] }
+> = {
   Maiden: { entry: 100, purse: 2000, dist: [1000, 1400] },
   Allowance: { entry: 300, purse: 6000, minStat: 50, dist: [1200, 1800] },
   Stakes: { entry: 800, purse: 18000, minStat: 65, dist: [1400, 2200] },
@@ -106,7 +116,8 @@ export function makeGradedRace(g: GradedRace, gameDay: number): Race {
 
 export function generateRace(day: number): Race {
   const r = Math.random();
-  const cls: RaceClass = r < 0.45 ? "Maiden" : r < 0.78 ? "Allowance" : r < 0.95 ? "Stakes" : "Group";
+  const cls: RaceClass =
+    r < 0.45 ? "Maiden" : r < 0.78 ? "Allowance" : r < 0.95 ? "Stakes" : "Group";
   const cfg = classConfig[cls];
   const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100) * 100;
   return {

@@ -16,9 +16,7 @@ function AuctionPage() {
   const horses = useGame((s) => s.horses);
   const day = useGame((s) => s.day);
 
-  const upcoming = auctions
-    .filter((a) => !a.resolved)
-    .sort((a, b) => a.day - b.day);
+  const upcoming = auctions.filter((a) => !a.resolved).sort((a, b) => a.day - b.day);
 
   const past = auctions
     .filter((a) => a.resolved)
@@ -26,7 +24,7 @@ function AuctionPage() {
     .slice(0, 10);
 
   const eligibleToConsign = horses.filter(
-    (h) => h.owned && !h.consignedSaleId && (h.age === 0 || h.age === 1 || h.age === 2)
+    (h) => h.owned && !h.consignedSaleId && (h.age === 0 || h.age === 1 || h.age === 2),
   );
 
   return (
@@ -42,7 +40,8 @@ function AuctionPage() {
         {upcoming.length === 0 ? (
           <Card>
             <CardContent className="p-6 text-center text-muted-foreground text-sm">
-              No upcoming sales. The next weanling sale opens around day 60 (Mar 1) and the yearling sale around day 240 (Aug 28).
+              No upcoming sales. The next weanling sale opens around day 60 (Mar 1) and the yearling
+              sale around day 240 (Aug 28).
             </CardContent>
           </Card>
         ) : (
@@ -59,7 +58,8 @@ function AuctionPage() {
                         <Badge variant="outline">{KIND_LABELS[sale.kind] ?? sale.kind}</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {gameCalendarDate(sale.day)} · {sale.lots.filter((l) => !l.withdrawn).length} lots
+                        {gameCalendarDate(sale.day)} ·{" "}
+                        {sale.lots.filter((l) => !l.withdrawn).length} lots
                         {daysAway > 0 && ` · in ${daysAway} day${daysAway === 1 ? "" : "s"}`}
                       </p>
                     </div>
@@ -91,16 +91,19 @@ function AuctionPage() {
           <h2 className="text-lg font-semibold">Eligible to Consign</h2>
           <div className="grid gap-2">
             {eligibleToConsign.map((horse) => {
-              const targetSale = upcoming.find((a) =>
-                (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
-                ((horse.age === 1 || horse.age === 2) && (a.kind === "yearling" || a.kind === "yearling_south"))
+              const targetSale = upcoming.find(
+                (a) =>
+                  (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
+                  ((horse.age === 1 || horse.age === 2) &&
+                    (a.kind === "yearling" || a.kind === "yearling_south")),
               );
               return (
                 <Card key={horse.id} className="p-3 flex items-center justify-between gap-4">
                   <div>
                     <p className="font-medium text-sm">{horse.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {horse.age === 0 ? "Weanling" : horse.age === 1 ? "Yearling" : "2YO"} · {horse.gender}
+                      {horse.age === 0 ? "Weanling" : horse.age === 1 ? "Yearling" : "2YO"} ·{" "}
+                      {horse.gender}
                     </p>
                   </div>
                   {targetSale ? (
@@ -141,7 +144,9 @@ function AuctionPage() {
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">
                         {sold} sold · {passed} passed
-                        {topLot && topHorse && ` · Top lot: ${topHorse.name} $${topLot.hammerPrice!.toLocaleString()}`}
+                        {topLot &&
+                          topHorse &&
+                          ` · Top lot: ${topHorse.name} $${topLot.hammerPrice!.toLocaleString()}`}
                       </p>
                     </div>
                     <CheckCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />

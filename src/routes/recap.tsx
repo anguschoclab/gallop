@@ -19,7 +19,15 @@ function RecapPage() {
   // Get resolved graded races from the past 7 days
   const weekAgo = day - 7;
   const recentGradedRaces = races
-    .filter((r) => r.resolved && r.graded && r.result && r.result.length > 0 && r.day >= weekAgo && r.day <= day)
+    .filter(
+      (r) =>
+        r.resolved &&
+        r.graded &&
+        r.result &&
+        r.result.length > 0 &&
+        r.day >= weekAgo &&
+        r.day <= day,
+    )
     .sort((a, b) => {
       // Sort by grade first (G1 > G2 > G3), then by day (most recent first)
       const gradeOrder = { G1: 3, G2: 2, G3: 1 };
@@ -48,12 +56,18 @@ function RecapPage() {
             const gradeColor = getGradeColorClass(race.graded!.grade);
 
             // Get top 3 finishers with their Beyer figures
-            const topFinishers = race.result!
-              .slice(0, 3)
+            const topFinishers = race
+              .result!.slice(0, 3)
               .map((result) => {
                 const horse = horses.find((h) => h.id === result.horseId);
                 if (!horse) return null;
-                const classBonus = race.graded?.grade ? (race.graded.grade === "G1" ? 8 : race.graded.grade === "G2" ? 5 : 3) : 0;
+                const classBonus = race.graded?.grade
+                  ? race.graded.grade === "G1"
+                    ? 8
+                    : race.graded.grade === "G2"
+                      ? 5
+                      : 3
+                  : 0;
                 const beyer = calculateBeyerForResult(race.distance, result.time, classBonus);
                 return { horse, result, beyer };
               })
@@ -107,7 +121,7 @@ function RecapPage() {
                                   finisher.horse.stats.stamina +
                                   finisher.horse.stats.acceleration +
                                   finisher.horse.stats.consistency) /
-                                  4
+                                  4,
                               )}
                             </div>
                           </div>

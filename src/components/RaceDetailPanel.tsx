@@ -1,7 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { GradedRace } from "@/game/gradedRaces";
-import { formatGenderRestriction, formatAgeRestrictions, formatAllRestrictions } from "@/core/race/restrictions";
+import {
+  formatGenderRestriction,
+  formatAgeRestrictions,
+  formatAllRestrictions,
+} from "@/core/race/restrictions";
 
 interface RaceDetailPanelProps {
   race: {

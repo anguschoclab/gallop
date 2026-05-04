@@ -5,9 +5,9 @@ import { findHorseByName } from "./pedigreeData";
 // Point values per generation for dosage calculation
 const GENERATION_POINTS = {
   1: 16, // sire
-  2: 8,  // grandsire
-  3: 4,  // great-grandsire
-  4: 2,  // great-great-grandsire
+  2: 8, // grandsire
+  3: 4, // great-grandsire
+  4: 2, // great-great-grandsire
 };
 
 /**
@@ -28,12 +28,12 @@ export function calculateDosageProfile(pedigree: PedigreeNode[]): DosageProfile 
     const horse = findHorseByName(node.name);
     if (horse?.dosageGroups) {
       const points = GENERATION_POINTS[node.generation as keyof typeof GENERATION_POINTS] || 0;
-      
+
       // If the horse has one dosage group, assign all points to it
       if (horse.dosageGroups.length === 1) {
         const group = horse.dosageGroups[0];
         profile[group.toLowerCase() as keyof DosageProfile] += points;
-      } 
+      }
       // If the horse has two dosage groups, split points equally
       else if (horse.dosageGroups.length === 2) {
         const halfPoints = points / 2;
@@ -55,11 +55,11 @@ export function calculateDosageProfile(pedigree: PedigreeNode[]): DosageProfile 
 export function calculateDosageIndex(profile: DosageProfile): number {
   const numerator = profile.brilliant + profile.intermediate + 0.5 * profile.classic;
   const denominator = 0.5 * profile.classic + profile.solid + profile.professional;
-  
+
   if (denominator === 0) {
     return Infinity;
   }
-  
+
   return Math.round((numerator / denominator) * 100) / 100;
 }
 
@@ -70,13 +70,19 @@ export function calculateDosageIndex(profile: DosageProfile): number {
  * @returns Center of Distribution (number), or 0 if total points is 0
  */
 export function calculateCenterOfDistribution(profile: DosageProfile): number {
-  const totalPoints = profile.brilliant + profile.intermediate + profile.classic + profile.solid + profile.professional;
-  
+  const totalPoints =
+    profile.brilliant +
+    profile.intermediate +
+    profile.classic +
+    profile.solid +
+    profile.professional;
+
   if (totalPoints === 0) {
     return 0;
   }
-  
-  const numerator = 2 * profile.brilliant + profile.intermediate - profile.solid - 2 * profile.professional;
+
+  const numerator =
+    2 * profile.brilliant + profile.intermediate - profile.solid - 2 * profile.professional;
   return Math.round((numerator / totalPoints) * 100) / 100;
 }
 
@@ -87,28 +93,28 @@ export function calculateCenterOfDistribution(profile: DosageProfile): number {
  */
 export function generatePedigree(sireName?: string): PedigreeNode[] {
   const pedigree: PedigreeNode[] = [];
-  
+
   if (!sireName) {
     return pedigree;
   }
-  
+
   // Generation 1: Sire
   const sire = findHorseByName(sireName);
   if (sire) {
     pedigree.push({ name: sire.name, generation: 1 });
-    
+
     // Generation 2: Grandsire
     if (sire.sire) {
       const grandsire = findHorseByName(sire.sire);
       if (grandsire) {
         pedigree.push({ name: grandsire.name, generation: 2 });
-        
+
         // Generation 3: Great-grandsire
         if (grandsire.sire) {
           const greatGrandsire = findHorseByName(grandsire.sire);
           if (greatGrandsire) {
             pedigree.push({ name: greatGrandsire.name, generation: 3 });
-            
+
             // Generation 4: Great-great-grandsire
             if (greatGrandsire.sire) {
               const greatGreatGrandsire = findHorseByName(greatGrandsire.sire);
@@ -121,7 +127,7 @@ export function generatePedigree(sireName?: string): PedigreeNode[] {
       }
     }
   }
-  
+
   return pedigree;
 }
 
@@ -135,7 +141,7 @@ export function calculateDosageMetrics(sireName?: string) {
   const dosageProfile = calculateDosageProfile(pedigree);
   const dosageIndex = calculateDosageIndex(dosageProfile);
   const centerOfDistribution = calculateCenterOfDistribution(dosageProfile);
-  
+
   return {
     pedigree,
     dosageProfile,
@@ -153,14 +159,14 @@ export function interpretDosageIndex(dosageIndex: number | undefined): string {
   if (dosageIndex === undefined || dosageIndex === Infinity) {
     return "Extreme speed preference (very short distances)";
   }
-  
-  if (dosageIndex >= 4.00) {
+
+  if (dosageIndex >= 4.0) {
     return "High speed preference (short to medium distances)";
-  } else if (dosageIndex >= 3.00) {
+  } else if (dosageIndex >= 3.0) {
     return "Above-average speed preference (short to medium distances)";
-  } else if (dosageIndex >= 2.40) {
+  } else if (dosageIndex >= 2.4) {
     return "Balanced speed and stamina (medium distances)";
-  } else if (dosageIndex >= 1.50) {
+  } else if (dosageIndex >= 1.5) {
     return "Above-average stamina (medium to long distances)";
   } else {
     return "High stamina preference (long distances)";

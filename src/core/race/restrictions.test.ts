@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { formatAgeRestrictions, formatGenderRestriction, formatAllRestrictions } from "./restrictions";
+import {
+  formatAgeRestrictions,
+  formatGenderRestriction,
+  formatAllRestrictions,
+} from "./restrictions";
 
 describe("formatAgeRestrictions", () => {
   it("undefined → empty string", () => expect(formatAgeRestrictions(undefined)).toBe(""));
@@ -41,11 +45,9 @@ describe("formatGenderRestriction", () => {
 });
 
 describe("formatAllRestrictions", () => {
-  it("no restrictions → empty string", () =>
-    expect(formatAllRestrictions(undefined)).toBe(""));
+  it("no restrictions → empty string", () => expect(formatAllRestrictions(undefined)).toBe(""));
 
-  it("empty restrictions object → empty string", () =>
-    expect(formatAllRestrictions({})).toBe(""));
+  it("empty restrictions object → empty string", () => expect(formatAllRestrictions({})).toBe(""));
 
   it("age only", () => {
     const result = formatAllRestrictions({ minAge: 3, maxAge: 3 });

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/npc-stables/$stableId")({ component: NpcS
 function NpcStableDetailPage() {
   const { stableId } = Route.useParams();
   const game = useGame();
-  
+
   const stable = getStableById(game.npcStables, stableId);
   if (!stable) {
     return (
@@ -28,36 +28,37 @@ function NpcStableDetailPage() {
       </div>
     );
   }
-  
-  const horses = game.horses.filter(h => h.stableId === stableId);
-  const activeHorses = horses.filter(h => !h.healthStatus || h.healthStatus === "healthy");
-  const colts = horses.filter(h => h.gender === "colt" || h.gender === "horse");
-  const fillies = horses.filter(h => h.gender === "filly" || h.gender === "mare");
-  
+
+  const horses = game.horses.filter((h) => h.stableId === stableId);
+  const activeHorses = horses.filter((h) => !h.healthStatus || h.healthStatus === "healthy");
+  const colts = horses.filter((h) => h.gender === "colt" || h.gender === "horse");
+  const fillies = horses.filter((h) => h.gender === "filly" || h.gender === "mare");
+
   return (
     <div className="space-y-6">
       {/* Back link */}
-      <Link to="/npc-stables" className="text-primary hover:underline mb-4 inline-flex items-center gap-1">
+      <Link
+        to="/npc-stables"
+        className="text-primary hover:underline mb-4 inline-flex items-center gap-1"
+      >
         <ArrowLeft className="w-4 h-4" />
         Back to Stables
       </Link>
-      
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-start gap-4 mb-4">
-          <div 
+          <div
             className="w-16 h-16 rounded-full border-4 shadow-lg"
-            style={{ 
+            style={{
               backgroundColor: stable.colors.primary,
-              borderColor: stable.colors.secondary 
+              borderColor: stable.colors.secondary,
             }}
           />
           <div className="flex-1">
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-3xl font-bold">{stable.name}</h1>
-              <Badge className={getTierColor(stable.tier)}>
-                {stable.tier.toUpperCase()}
-              </Badge>
+              <Badge className={getTierColor(stable.tier)}>{stable.tier.toUpperCase()}</Badge>
             </div>
             <p className="text-muted-foreground mt-1">{stable.owner}</p>
             <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
@@ -70,22 +71,17 @@ function NpcStableDetailPage() {
                 {horses.length} horses
               </span>
               <span className="flex items-center gap-1">
-                <DollarSign className="w-4 h-4" />
-                ${stable.cash.toLocaleString()}
+                <DollarSign className="w-4 h-4" />${stable.cash.toLocaleString()}
               </span>
-              <span className="text-yellow-600">
-                {getReputationStars(stable.reputation)}
-              </span>
+              <span className="text-yellow-600">{getReputationStars(stable.reputation)}</span>
             </div>
           </div>
         </div>
-        
+
         {stable.description && (
-          <p className="text-muted-foreground bg-muted/50 p-4 rounded-lg">
-            {stable.description}
-          </p>
+          <p className="text-muted-foreground bg-muted/50 p-4 rounded-lg">{stable.description}</p>
         )}
-        
+
         {/* Personality */}
         <div className="mt-4 flex items-center gap-3">
           <Badge variant="outline" className="flex items-center gap-1 px-3 py-1">
@@ -102,7 +98,7 @@ function NpcStableDetailPage() {
           )}
         </div>
       </div>
-      
+
       {/* Stats Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <Card>
@@ -130,19 +126,19 @@ function NpcStableDetailPage() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Horses List */}
       <div>
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <Building2 className="w-5 h-5" />
           Horses
         </h2>
-        
+
         <div className="space-y-3">
-          {horses.map(horse => {
+          {horses.map((horse) => {
             const scoutCost = calculateScoutCost(horse, stable!);
-            const canScout = !horse.lastScoutedDay || (game.day - horse.lastScoutedDay) > 0;
-            
+            const canScout = !horse.lastScoutedDay || game.day - horse.lastScoutedDay > 0;
+
             const handleScout = () => {
               const result = game.scoutHorse(horse.id);
               if (result.success) {
@@ -151,14 +147,14 @@ function NpcStableDetailPage() {
                 toast.error(result.message);
               }
             };
-            
+
             return (
               <div key={horse.id} className="relative">
                 <HorseCard horse={horse} variant="scout" showScoutInfo />
                 {canScout && (
                   <div className="absolute top-4 right-4">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={handleScout}
                       disabled={game.cash < scoutCost}
@@ -173,7 +169,7 @@ function NpcStableDetailPage() {
             );
           })}
         </div>
-        
+
         {horses.length === 0 && (
           <p className="text-muted-foreground text-center py-8">
             No horses currently in this stable.

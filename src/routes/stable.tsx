@@ -8,7 +8,7 @@ export const Route = createFileRoute("/stable")({
 });
 
 function StablePage() {
-  const horses = useGame((s) => s.horses.filter(h => h.owned));
+  const horses = useGame((s) => s.horses.filter((h) => h.owned));
 
   return (
     <div className="space-y-6">

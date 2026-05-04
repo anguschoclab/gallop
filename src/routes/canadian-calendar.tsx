@@ -7,18 +7,9 @@ import { GRADED_RACES, type Grade } from "@/game/gradedRaces";
 import { getGradeColorClass } from "@/core/race/grading";
 import { getMonthName, formatDate } from "@/core/calendar/dateFormatting";
 
-const TRIPLE_CROWN_KEYS = new Set([
-  "ca-kings-plate",
-  "ca-prince-of-wales",
-  "ca-breeders-stakes",
-]);
+const TRIPLE_CROWN_KEYS = new Set(["ca-kings-plate", "ca-prince-of-wales", "ca-breeders-stakes"]);
 
-const CANADIAN_TRACKS = new Set([
-  "Woodbine",
-  "Fort Erie",
-  "Century Mile",
-  "Hastings",
-]);
+const CANADIAN_TRACKS = new Set(["Woodbine", "Fort Erie", "Century Mile", "Hastings"]);
 
 export const Route = createFileRoute("/canadian-calendar")({
   component: CanadianCalendarPage,
@@ -28,9 +19,7 @@ function CanadianCalendarPage() {
   const [gradeFilter, setGradeFilter] = useState<Grade | "all">("all");
   const [tripleCrownFilter, setTripleCrownFilter] = useState<boolean | "all">("all");
 
-  const canadianRaces = GRADED_RACES.filter((race) =>
-    CANADIAN_TRACKS.has(race.track)
-  );
+  const canadianRaces = GRADED_RACES.filter((race) => CANADIAN_TRACKS.has(race.track));
 
   const filteredRaces = canadianRaces.filter((race) => {
     if (gradeFilter !== "all" && race.grade !== gradeFilter) return false;
@@ -43,14 +32,16 @@ function CanadianCalendarPage() {
   });
 
   // Group races by month
-  const racesByMonth = filteredRaces.reduce((acc, race) => {
-    const month = Math.floor(race.dayOfYear / 30) + 1;
-    const monthName = getMonthName(race.dayOfYear);
-    if (!acc[monthName]) acc[monthName] = [];
-    acc[monthName].push(race);
-    return acc;
-  }, {} as Record<string, typeof filteredRaces>);
-
+  const racesByMonth = filteredRaces.reduce(
+    (acc, race) => {
+      const month = Math.floor(race.dayOfYear / 30) + 1;
+      const monthName = getMonthName(race.dayOfYear);
+      if (!acc[monthName]) acc[monthName] = [];
+      acc[monthName].push(race);
+      return acc;
+    },
+    {} as Record<string, typeof filteredRaces>,
+  );
 
   return (
     <div className="space-y-6">
@@ -167,19 +158,24 @@ function CanadianCalendarPage() {
                         <span>{race.distance}m</span>
                         <span>{race.surface}</span>
                         <span>
-                          Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
+                          Purse{" "}
+                          <span className="font-medium text-foreground">
+                            ${race.purse.toLocaleString()}
+                          </span>
                         </span>
                         {race.restrictions?.minAge !== undefined && (
                           <span>
                             {race.restrictions.minAge === race.restrictions.maxAge
                               ? `${race.restrictions.minAge}YO only`
                               : race.restrictions.maxAge
-                              ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
-                              : `${race.restrictions.minAge}+ YO`}
+                                ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
+                                : `${race.restrictions.minAge}+ YO`}
                           </span>
                         )}
                         {race.restrictions?.gender && (
-                          <span>{race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only</span>
+                          <span>
+                            {race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only
+                          </span>
                         )}
                       </div>
                     </div>
@@ -203,4 +199,3 @@ function CanadianCalendarPage() {
     </div>
   );
 }
-

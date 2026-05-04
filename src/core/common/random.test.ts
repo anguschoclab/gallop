@@ -98,7 +98,9 @@ describe("rollRunningStyle", () => {
 describe("randomCoatColor", () => {
   it("returns valid coat color", () => {
     const result = randomCoatColor();
-    expect(["bay", "black", "chestnut", "dark-bay", "gray", "roan", "palomino", "white"]).toContain(result);
+    expect(["bay", "black", "chestnut", "dark-bay", "gray", "roan", "palomino", "white"]).toContain(
+      result,
+    );
   });
 });
 

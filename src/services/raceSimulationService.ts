@@ -31,9 +31,7 @@ export function rngForRace(race: Pick<Race, "id">): Rng {
  * (weather + track surface) bake into runner stats here so the per-step
  * loop doesn't need to know about them.
  */
-export function buildRaceField(
-  dependencies: RaceSimulationDependencies
-): Runner[] {
+export function buildRaceField(dependencies: RaceSimulationDependencies): Runner[] {
   const { race, horses } = dependencies;
   const conditions = getConditionsModifier(race);
   const built: Runner[] = [];
@@ -71,7 +69,7 @@ export function simulateStep(
   dt: number,
   simTime: number,
   distance: number,
-  rng: Rng
+  rng: Rng,
 ): { stillRunning: boolean; finishOrder: SimulationResult[] } {
   const finishOrder: SimulationResult[] = [];
   let stillRunning = false;

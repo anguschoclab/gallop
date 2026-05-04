@@ -52,7 +52,7 @@ export function PregnancyTimeline({
                 className="h-full bg-primary transition-all duration-300 ease-in-out"
                 style={{ width: `${progress}%` }}
               />
-              
+
               {/* Day markers */}
               <div className="absolute inset-0 flex items-center">
                 {dayMarkers.map((dayOffset) => {
@@ -75,12 +75,12 @@ export function PregnancyTimeline({
                           isConceived
                             ? "bg-green-500 ring-2 ring-green-500/50"
                             : isDue
-                            ? "bg-red-500 ring-2 ring-red-500/50"
-                            : isCurrent
-                            ? "bg-white ring-2 ring-white/50"
-                            : isPast
-                            ? "bg-primary/60"
-                            : "bg-muted-foreground/40"
+                              ? "bg-red-500 ring-2 ring-red-500/50"
+                              : isCurrent
+                                ? "bg-white ring-2 ring-white/50"
+                                : isPast
+                                  ? "bg-primary/60"
+                                  : "bg-muted-foreground/40"
                         }`}
                       />
                     </div>
@@ -102,9 +102,7 @@ export function PregnancyTimeline({
             <span className="text-muted-foreground">
               Day {currentDay} of {totalDays} day gestation
             </span>
-            <span className="text-muted-foreground">
-              {daysElapsed} days elapsed
-            </span>
+            <span className="text-muted-foreground">{daysElapsed} days elapsed</span>
           </div>
         </div>
       </CardContent>

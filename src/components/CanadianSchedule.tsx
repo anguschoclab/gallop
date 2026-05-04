@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const CANADIAN_TRACKS = ["Woodbine", "Fort Erie", "Hastings", "Century Mile"] as const;
 
-type CanadianTrack = typeof CANADIAN_TRACKS[number];
+type CanadianTrack = (typeof CANADIAN_TRACKS)[number];
 
 function formatDate(day: number): string {
   const dayOfYear = ((day - 1) % 365) + 1;
@@ -37,7 +37,7 @@ export function CanadianSchedule() {
       !r.resolved &&
       r.day >= day &&
       r.graded &&
-      CANADIAN_TRACKS.includes(r.graded.track as CanadianTrack)
+      CANADIAN_TRACKS.includes(r.graded.track as CanadianTrack),
   );
 
   // Group races by track
@@ -45,7 +45,7 @@ export function CanadianSchedule() {
   for (const track of CANADIAN_TRACKS) {
     racesByTrack.set(
       track,
-      canadianRaces.filter((r) => r.graded?.track === track)
+      canadianRaces.filter((r) => r.graded?.track === track),
     );
   }
 
@@ -89,8 +89,8 @@ export function CanadianSchedule() {
                               race.graded?.grade === "G1"
                                 ? "bg-yellow-500/20 text-yellow-700 border-yellow-500/40"
                                 : race.graded?.grade === "G2"
-                                ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
-                                : "bg-amber-700/20 text-amber-800 border-amber-700/40";
+                                  ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
+                                  : "bg-amber-700/20 text-amber-800 border-amber-700/40";
 
                             return (
                               <div
@@ -107,17 +107,13 @@ export function CanadianSchedule() {
                                   <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1">
                                     <span>{race.distance}m</span>
                                     <span>{race.graded?.surface}</span>
-                                    <span>
-                                      Purse ${race.purse.toLocaleString()}
-                                    </span>
+                                    <span>Purse ${race.purse.toLocaleString()}</span>
                                     {race.restrictions?.minAge && (
                                       <span>{race.restrictions.minAge}+ YO</span>
                                     )}
                                     {race.restrictions?.sex && (
                                       <span>
-                                        {race.restrictions.sex === "filly"
-                                          ? "Fillies"
-                                          : "Colts"}{" "}
+                                        {race.restrictions.sex === "filly" ? "Fillies" : "Colts"}{" "}
                                         only
                                       </span>
                                     )}

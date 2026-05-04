@@ -1,3 +1,10 @@
-## 2024-05-03 - [Optimize RaceBrowser Filtering and Options List Rendering]
-**Learning:** In `src/routes/race-browser.tsx`, generating filter dropdown options (like tracking unique countries and tracks) derived from large static lists (`GRADED_RACES`) directly in the component body caused unnecessary map/Set creation and sorting on every render.
-**Action:** Moving derived static options out of the component body prevents them from being recalculated. Wrapping heavy lists based on dynamic filter state in `useMemo` avoids redundant iteration logic over the 1050+ items.
+## Bolt's Core Principles
+
+* When performing performance optimization tasks (as the 'Bolt' persona), always run linting and tests before creating a PR, add comments explaining optimizations, measure and document the performance impact, do not modify configuration files (like package.json) without instruction, and log only critical, codebase-specific learnings in .jules/bolt.md.
+* The project uses Vitest as its testing framework, with configurations in vitest.config.ts.
+* The project utilizes Bun as the primary package manager and runtime; use `bun` commands for installation and script execution as `npm` and `npx` are prone to failure in this environment.
+* The frontend architecture uses React, TypeScript, TanStack Router for routing, and shadcn/ui components (located in src/components/ui/).
+* The project implements an OPFS (Origin Private File System) abstraction in src/services/opfsService.ts, while src/services/storageAdapter.ts manages a fallback to localStorage if OPFS is unavailable.
+* Use 'bun test' to run the test suite in this repository; 'npm test' and 'npx vitest' may fail due to environment or network restrictions.
+* The pedigreeMap in src/game/pedigreeData.ts stores horse names as lowercased keys, and findHorseByName performs case-insensitive lookups using .toLowerCase().
+* The SidebarProvider in src/components/ui/sidebar.tsx persists the 'sidebar_state' cookie using 'Secure' and 'SameSite=Lax' attributes.

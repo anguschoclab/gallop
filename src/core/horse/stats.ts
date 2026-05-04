@@ -10,7 +10,8 @@ import type { Horse } from "@/game/types";
  */
 export function calculateOverallRating(horse: Horse): number {
   return Math.round(
-    (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) / 4
+    (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) /
+      4,
   );
 }
 

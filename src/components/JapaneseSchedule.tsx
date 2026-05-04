@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const JAPANESE_TRACKS = ["Tokyo", "Kyoto", "Nakayama", "Hanshin"] as const;
 
-type JapaneseTrack = typeof JAPANESE_TRACKS[number];
+type JapaneseTrack = (typeof JAPANESE_TRACKS)[number];
 
 type Season = "all" | "early" | "mid" | "late";
 
@@ -48,7 +48,7 @@ export function JapaneseSchedule() {
       !r.resolved &&
       r.day >= day &&
       r.graded &&
-      JAPANESE_TRACKS.includes(r.graded.track as JapaneseTrack)
+      JAPANESE_TRACKS.includes(r.graded.track as JapaneseTrack),
   );
 
   // Filter by season
@@ -73,12 +73,25 @@ export function JapaneseSchedule() {
         <CardTitle>Japanese Race Schedule</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="all" value={selectedSeason} onValueChange={(v) => setSelectedSeason(v as Season)} className="w-full">
+        <Tabs
+          defaultValue="all"
+          value={selectedSeason}
+          onValueChange={(v) => setSelectedSeason(v as Season)}
+          className="w-full"
+        >
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="all" className="text-sm">All Seasons</TabsTrigger>
-            <TabsTrigger value="early" className="text-sm">Early (Jan-Mar)</TabsTrigger>
-            <TabsTrigger value="mid" className="text-sm">Mid (Apr-Jun)</TabsTrigger>
-            <TabsTrigger value="late" className="text-sm">Late (Jul-Sep)</TabsTrigger>
+            <TabsTrigger value="all" className="text-sm">
+              All Seasons
+            </TabsTrigger>
+            <TabsTrigger value="early" className="text-sm">
+              Early (Jan-Mar)
+            </TabsTrigger>
+            <TabsTrigger value="mid" className="text-sm">
+              Mid (Apr-Jun)
+            </TabsTrigger>
+            <TabsTrigger value="late" className="text-sm">
+              Late (Jul-Sep)
+            </TabsTrigger>
           </TabsList>
           <TabsContent value={selectedSeason} className="mt-4">
             {groupedRaces.length === 0 ? (
@@ -101,8 +114,8 @@ export function JapaneseSchedule() {
                           race.graded?.grade === "G1"
                             ? "bg-yellow-500/20 text-yellow-700 border-yellow-500/40"
                             : race.graded?.grade === "G2"
-                            ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
-                            : "bg-amber-700/20 text-amber-800 border-amber-700/40";
+                              ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
+                              : "bg-amber-700/20 text-amber-800 border-amber-700/40";
 
                         return (
                           <div
@@ -122,18 +135,13 @@ export function JapaneseSchedule() {
                               <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1">
                                 <span>{race.distance}m</span>
                                 <span>{race.graded?.surface}</span>
-                                <span>
-                                  Purse ${race.purse.toLocaleString()}
-                                </span>
+                                <span>Purse ${race.purse.toLocaleString()}</span>
                                 {race.restrictions?.minAge && (
                                   <span>{race.restrictions.minAge}+ YO</span>
                                 )}
                                 {race.restrictions?.sex && (
                                   <span>
-                                    {race.restrictions.sex === "filly"
-                                      ? "Fillies"
-                                      : "Colts"}{" "}
-                                    only
+                                    {race.restrictions.sex === "filly" ? "Fillies" : "Colts"} only
                                   </span>
                                 )}
                               </div>
