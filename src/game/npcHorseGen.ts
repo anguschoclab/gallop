@@ -8,8 +8,6 @@ import { generateGenotype } from "./geneticsEngine";
 import {
   rand,
   randomHorseName,
-  randomSilk,
-  generateGeneticMarkers,
 } from "@/core/common/random";
 import { shouldRetireAtStartup, initialStandingFee, defaultStudParams } from "@/core/breeding/stallions";
 import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
