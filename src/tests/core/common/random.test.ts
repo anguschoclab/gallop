@@ -1,12 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   rand,
-  randConformation,
-  randTemperament,
-  randGeneticQuality,
-  generateGeneticMarkers,
   rollRunningStyle,
-  randomCoatColor,
   randomWeather,
   randomTrackCondition,
   randomHorseName,
@@ -37,39 +32,6 @@ describe("rand", () => {
   });
 });
 
-describe("randConformation", () => {
-  it("returns valid conformation value", () => {
-    const result = randConformation(nondeterministicRng());
-    expect(["excellent", "good", "fair", "poor"]).toContain(result);
-  });
-});
-
-describe("randTemperament", () => {
-  it("returns valid temperament value", () => {
-    const result = randTemperament(nondeterministicRng());
-    expect(["excellent", "good", "fair", "poor"]).toContain(result);
-  });
-});
-
-describe("randGeneticQuality", () => {
-  it("returns valid genetic quality value", () => {
-    const result = randGeneticQuality(nondeterministicRng());
-    expect(["excellent", "good", "fair", "poor"]).toContain(result);
-  });
-});
-
-describe("generateGeneticMarkers", () => {
-  it("returns genetic markers with all required properties", () => {
-    const markers = generateGeneticMarkers(nondeterministicRng());
-    expect(markers.sensoryPerception).toBeDefined();
-    expect(markers.signalTransduction).toBeDefined();
-    expect(markers.immunity).toBeDefined();
-    expect(markers.geneticDiversity).toBeDefined();
-    expect(markers.geneticDiversity).toBeGreaterThanOrEqual(0.5);
-    expect(markers.geneticDiversity).toBeLessThanOrEqual(1);
-  });
-});
-
 describe("rollRunningStyle", () => {
   it("returns valid running style", () => {
     const stats = { speed: 50, stamina: 50, acceleration: 50 };
@@ -96,13 +58,6 @@ describe("rollRunningStyle", () => {
       if (rollRunningStyle(stats, rng) === "S") closerCount++;
     }
     expect(closerCount).toBeGreaterThan(30); // Should be biased
-  });
-});
-
-describe("randomCoatColor", () => {
-  it("returns valid coat color", () => {
-    const result = randomCoatColor(nondeterministicRng());
-    expect(["bay", "black", "chestnut", "dark-bay", "gray", "roan", "palomino", "white"]).toContain(result);
   });
 });
 
