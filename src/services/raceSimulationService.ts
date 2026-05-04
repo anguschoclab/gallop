@@ -66,7 +66,7 @@ export function buildRaceField(
   // 2. Fill remaining spots with AI horses
   while (entriesData.length < race.fieldSize) {
     const tier = getTierForRaceClass(race.raceClass);
-    const aiHorse = generateHorse(rng, { tier: tier as never });
+    const aiHorse = generateHorse({ tier: tier as never }, rng);
     fillerHorses.push(aiHorse);
     const weight = calculateAssignedWeight(aiHorse, race);
     entriesData.push({ horseId: aiHorse.id, owned: false, weight });
