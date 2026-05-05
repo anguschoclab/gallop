@@ -7,6 +7,9 @@ import { calculateBeyerForResult } from "@/game/beyer";
 import { getGradeColorClass } from "@/core/race/grading";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { Trophy, Medal, Award } from "lucide-react";
+import { NumericValue } from "@/components/HorseBits";
+import { SilkDot } from "@/components/SilkDot";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/recap")({
   component: RecapPage,
@@ -33,14 +36,14 @@ function RecapPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Weekly Recap</h1>
-        <p className="text-muted-foreground">Highlights from the past week's graded stakes</p>
+        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Weekly Recap</h1>
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">Highlights from the past week's graded stakes</p>
       </div>
 
       {recentGradedRaces.length === 0 ? (
         <Card>
-          <CardContent className="p-8 text-center text-muted-foreground">
-            No graded races completed in the past 7 days. Check back after some races have been run!
+          <CardContent className="p-8 text-center text-muted-foreground italic font-[family-name:var(--font-body)]">
+            No graded races completed in the past 7 days. Check back after the weekend stakes have been run!
           </CardContent>
         </Card>
       ) : (
@@ -66,17 +69,19 @@ function RecapPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="text-xl font-bold">{race.name}</h3>
-                        <Badge variant="outline" className={gradeColor}>
+                        <h3 className="text-xl font-bold font-[family-name:var(--font-display)]">{race.name}</h3>
+                        <Badge className={cn(gradeColor, "font-[family-name:var(--font-mono)]")}>
                           {race.graded!.grade}
                         </Badge>
-                        <Badge variant="secondary">Day {race.day}</Badge>
+                        <Badge className="bg-secondary text-secondary-foreground font-[family-name:var(--font-mono)] tabular-nums">
+                          Day <NumericValue value={race.day} />
+                        </Badge>
                       </div>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground font-[family-name:var(--font-body)]">
                         <span>{race.graded!.track}</span>
-                        <span>{race.distance}m</span>
+                        <span><NumericValue value={race.distance} suffix="m" /></span>
                         <span>{race.graded!.surface}</span>
-                        <span>Purse ${race.purse.toLocaleString()}</span>
+                        <span className="font-[family-name:var(--font-mono)] tabular-nums">Purse ${race.purse.toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
@@ -99,17 +104,18 @@ function RecapPage() {
                       >
                         <div className="flex items-center gap-3">
                           {positionIcon}
+                          <SilkDot color={finisher.horse.coatColor || "#8B4513"} size="sm" />
                           <div>
-                            <div className="font-medium">{finisher.horse.name}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {finisher.result.time.toFixed(2)}s · {finisher.horse.age}YO · OVR{" "}
-                              {Math.round(
+                            <div className="font-medium font-[family-name:var(--font-display)]">{finisher.horse.name}</div>
+                            <div className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                              <NumericValue value={finisher.result.time} suffix="s" className="font-[family-name:var(--font-mono)] tabular-nums" /> · <NumericValue value={finisher.horse.age} suffix="YO" /> · OVR{" "}
+                              <NumericValue value={Math.round(
                                 (finisher.horse.stats.speed +
                                   finisher.horse.stats.stamina +
                                   finisher.horse.stats.acceleration +
                                   finisher.horse.stats.consistency) /
                                   4
-                              )}
+                              )} />
                             </div>
                           </div>
                         </div>

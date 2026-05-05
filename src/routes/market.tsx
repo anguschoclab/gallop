@@ -3,10 +3,11 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HorseStats, overall } from "@/components/HorseBits";
+import { HorseStats, overall, NumericValue } from "@/components/HorseBits";
 import { horsePrice } from "@/game/horseGen";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { HorsePortrait } from "@/components/HorsePortrait";
+import { SilkDot } from "@/components/SilkDot";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/market")({
   component: MarketPage,
@@ -20,15 +21,15 @@ function MarketPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Bloodstock Market</h1>
-        <p className="text-muted-foreground">Private sales available for immediate acquisition. Roster refreshes daily.</p>
+        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Bloodstock Market</h1>
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">Private sales available for immediate acquisition. Roster refreshes daily.</p>
       </div>
 
       <Link to="/npc-stables">
         <Card className="hover:bg-muted/50 transition-colors">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Scout Rival Stables</CardTitle>
-            <p className="text-xs text-muted-foreground">Browse horses owned by rival stables for potential acquisitions</p>
+            <CardTitle className="text-base font-[family-name:var(--font-display)]">Scout Rival Stables</CardTitle>
+            <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">Browse horses owned by rival stables for potential acquisitions</p>
           </CardHeader>
         </Card>
       </Link>
@@ -40,14 +41,16 @@ function MarketPage() {
             <Card key={h.id}>
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-start gap-3">
-                  <HorsePortrait coatColor={h.coatColor} size="sm" />
+                  <SilkDot color={h.coatColor || "#8B4513"} size="md" />
                   <div className="flex-1">
-                    <p className="font-bold">{h.name}</p>
-                    <p className="text-xs text-muted-foreground tabular-nums">
-                      Age {Math.floor(h.age)} · <JargonTooltip term="OVR">OVR</JargonTooltip> {overall(h)}
+                    <p className="font-bold font-[family-name:var(--font-display)]">{h.name}</p>
+                    <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                      Age <NumericValue value={Math.floor(h.age)} /> · <JargonTooltip term="OVR">OVR</JargonTooltip> <NumericValue value={overall(h)} />
                     </p>
                   </div>
-                  <Badge variant="outline" className="text-base tabular-nums">${price.toLocaleString()}</Badge>
+                  <Badge className={cn("text-base font-[family-name:var(--font-mono)] tabular-nums border bg-transparent")}>
+                    ${price.toLocaleString()}
+                  </Badge>
                 </div>
                 <HorseStats horse={h} />
                 <Button onClick={() => buyHorse(h.id)} disabled={cash < price} className="w-full" size="sm">
@@ -59,8 +62,8 @@ function MarketPage() {
         })}
         {market.length === 0 && (
           <Card className="col-span-full">
-            <CardContent className="p-12 text-center text-muted-foreground italic">
-              No private offerings available at this time.
+            <CardContent className="p-12 text-center text-muted-foreground italic font-[family-name:var(--font-body)]">
+              The market is quiet today. Check back tomorrow for new offerings.
             </CardContent>
           </Card>
         )}

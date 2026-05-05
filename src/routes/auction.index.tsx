@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { KIND_LABELS } from "@/game/auction";
 import { Gavel, Clock, CheckCircle } from "lucide-react";
+import { NumericValue } from "@/components/HorseBits";
+import { SilkDot } from "@/components/SilkDot";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/auction/")({
   component: AuctionPage,
@@ -32,17 +35,17 @@ function AuctionPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Sales</h1>
-        <p className="text-muted-foreground">Weanling &amp; yearling auctions</p>
+        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Sales</h1>
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">Weanling &amp; yearling auctions</p>
       </div>
 
       {/* Upcoming Sales */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Upcoming Sales</h2>
+        <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">Upcoming Sales</h2>
         {upcoming.length === 0 ? (
           <Card>
-            <CardContent className="p-6 text-center text-muted-foreground text-sm">
-              No upcoming sales. The next weanling sale opens around day 60 (Mar 1) and the yearling sale around day 240 (Aug 28).
+            <CardContent className="p-6 text-center text-muted-foreground text-sm font-[family-name:var(--font-body)] italic">
+              No sales on the calendar. The ring will open again soon.
             </CardContent>
           </Card>
         ) : (
@@ -55,12 +58,12 @@ function AuctionPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <CardTitle className="text-lg">{sale.name}</CardTitle>
-                        <Badge variant="outline">{KIND_LABELS[sale.kind] ?? sale.kind}</Badge>
+                        <CardTitle className="text-lg font-[family-name:var(--font-display)]">{sale.name}</CardTitle>
+                        <Badge className="border bg-transparent font-[family-name:var(--font-body)]">{KIND_LABELS[sale.kind] ?? sale.kind}</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {gameCalendarDate(sale.day)} · {sale.lots.filter((l) => !l.withdrawn).length} lots
-                        {daysAway > 0 && ` · in ${daysAway} day${daysAway === 1 ? "" : "s"}`}
+                      <p className="text-sm text-muted-foreground mt-1 font-[family-name:var(--font-body)]">
+                        {gameCalendarDate(sale.day)} · <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots
+                        {daysAway > 0 && <> · in <NumericValue value={daysAway} /> day{daysAway === 1 ? "" : "s"}</>}
                       </p>
                     </div>
                     <Clock className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
@@ -68,8 +71,8 @@ function AuctionPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {playerLots.length > 0 && (
-                    <p className="text-sm text-success font-medium">
-                      {playerLots.length} of your horse{playerLots.length > 1 ? "s" : ""} consigned
+                    <p className="text-sm text-success font-medium font-[family-name:var(--font-body)]">
+                      <NumericValue value={playerLots.length} /> of your horse{playerLots.length > 1 ? "s" : ""} consigned
                     </p>
                   )}
                   <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
@@ -88,7 +91,7 @@ function AuctionPage() {
       {/* Eligible horses to consign */}
       {eligibleToConsign.length > 0 && upcoming.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Eligible to Consign</h2>
+          <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">Eligible to Consign</h2>
           <div className="grid gap-2">
             {(() => {
               const weanlingSale = upcoming.find((a) => a.kind === "weanling" || a.kind === "weanling_south");
@@ -97,11 +100,14 @@ function AuctionPage() {
                 const targetSale = horse.age === 0 ? weanlingSale : yearlingSale;
               return (
                 <Card key={horse.id} className="p-3 flex items-center justify-between gap-4">
-                  <div>
-                    <p className="font-medium text-sm">{horse.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {horse.age === 0 ? "Weanling" : horse.age === 1 ? "Yearling" : "2YO"} · {horse.gender}
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <SilkDot color={horse.coatColor || "#8B4513"} size="sm" />
+                    <div>
+                      <p className="font-medium text-sm font-[family-name:var(--font-display)]">{horse.name}</p>
+                      <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                        {horse.age === 0 ? "Weanling" : horse.age === 1 ? "Yearling" : "2YO"} · {horse.gender}
+                      </p>
+                    </div>
                   </div>
                   {targetSale ? (
                     <Link to="/auction/$saleId" params={{ saleId: targetSale.id }}>
@@ -123,7 +129,7 @@ function AuctionPage() {
       {/* Past Sales */}
       {past.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Past Sales</h2>
+          <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">Past Sales</h2>
           {past.map((sale) => {
             const sold = sale.lots.filter((l) => !l.passed && !l.withdrawn && l.hammerPrice).length;
             const passed = sale.lots.filter((l) => l.passed).length;
@@ -137,12 +143,14 @@ function AuctionPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <CardTitle className="text-base">{sale.name}</CardTitle>
-                        <Badge variant="secondary">{gameCalendarDate(sale.day)}</Badge>
+                        <CardTitle className="text-base font-[family-name:var(--font-display)]">{sale.name}</CardTitle>
+                        <Badge className="bg-secondary text-secondary-foreground font-[family-name:var(--font-mono)] tabular-nums">
+                          {gameCalendarDate(sale.day)}
+                        </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {sold} sold · {passed} passed
-                        {topLot && topHorse && ` · Top lot: ${topHorse.name} $${topLot.hammerPrice!.toLocaleString()}`}
+                      <p className="text-xs text-muted-foreground mt-1 font-[family-name:var(--font-body)]">
+                        <NumericValue value={sold} /> sold · <NumericValue value={passed} /> passed
+                        {topLot && topHorse && <> · Top lot: <span className="font-[family-name:var(--font-display)]">{topHorse.name}</span> ${topLot.hammerPrice!.toLocaleString()}</>}
                       </p>
                     </div>
                     <CheckCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />

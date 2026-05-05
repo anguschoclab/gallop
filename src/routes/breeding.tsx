@@ -13,6 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PregnancyTimeline } from "@/components/PregnancyTimeline";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { getAvailableStallions } from "@/core/breeding/stallions";
+import { NumericValue } from "@/components/HorseBits";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
@@ -64,12 +66,12 @@ function BreedingPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Breeding & Bloodstock</h1>
-          <p className="text-muted-foreground">Manage your matings and track gestation for the next generation.</p>
+          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Breeding & Bloodstock</h1>
+          <p className="text-muted-foreground font-[family-name:var(--font-body)]">Manage your matings and track gestation for the next generation.</p>
         </div>
-        <Badge variant={seasonOpen ? "default" : "secondary"} className={seasonOpen ? "bg-success" : ""}>
+        <Badge className={cn("font-[family-name:var(--font-mono)] tabular-nums", seasonOpen ? "bg-success text-success-foreground" : "bg-secondary text-secondary-foreground")}>
           <Calendar className="h-3 w-3 mr-1" />
-          {seasonOpen ? "Season Open" : `Opens Day ${nextSeasonStart}`}
+          {seasonOpen ? "Season Open" : <>Opens Day <NumericValue value={nextSeasonStart} /></>}
         </Badge>
       </div>
 
@@ -77,24 +79,24 @@ function BreedingPage() {
         <Link to="/stallions">
           <Card className="hover:bg-muted/50 transition-colors">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Stallions at Stud</CardTitle>
-              <p className="text-xs text-muted-foreground">View available stallions for breeding</p>
+              <CardTitle className="text-base font-[family-name:var(--font-display)]">Stallions at Stud</CardTitle>
+              <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">View available stallions for breeding</p>
             </CardHeader>
           </Card>
         </Link>
         <Link to="/sire-watch">
           <Card className="hover:bg-muted/50 transition-colors">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Sire Watch</CardTitle>
-              <p className="text-xs text-muted-foreground">Analytics and performance metrics for stallions</p>
+              <CardTitle className="text-base font-[family-name:var(--font-display)]">Sire Watch</CardTitle>
+              <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">Analytics and performance metrics for stallions</p>
             </CardHeader>
           </Card>
         </Link>
         <Link to="/sire-leaderboards">
           <Card className="hover:bg-muted/50 transition-colors">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Sire Leaderboards</CardTitle>
-              <p className="text-xs text-muted-foreground">Track stallion performance across multiple dimensions</p>
+              <CardTitle className="text-base font-[family-name:var(--font-display)]">Sire Leaderboards</CardTitle>
+              <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">Track stallion performance across multiple dimensions</p>
             </CardHeader>
           </Card>
         </Link>
@@ -108,7 +110,11 @@ function BreedingPage() {
           </TabsTrigger>
           <TabsTrigger value="broodmares" className="gap-2">
             <Baby className="h-4 w-4" />
-            Broodmares {activePregnanciesCount > 0 && <Badge variant="secondary" className="ml-1 tabular-nums h-4 px-1 text-[10px]">{activePregnanciesCount}</Badge>}
+            Broodmares {activePregnanciesCount > 0 && (
+              <Badge className="ml-1 h-4 px-1 text-[10px] font-[family-name:var(--font-mono)] tabular-nums bg-secondary text-secondary-foreground">
+                {activePregnanciesCount}
+              </Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger value="history" className="gap-2">
             <FileText className="h-4 w-4" />
