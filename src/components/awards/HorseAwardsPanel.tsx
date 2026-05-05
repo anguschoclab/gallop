@@ -13,7 +13,7 @@ interface HorseAwardsPanelProps {
 }
 
 export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
-  const awards = useGame((s) => s.awards ?? []);
+  const awards = useGame((s) => s.awards);
 
   // Get awards for this horse
   const horseAwards = awards.filter((a) => a.horseId === horse.id);

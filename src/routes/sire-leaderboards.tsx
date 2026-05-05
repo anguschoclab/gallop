@@ -42,7 +42,7 @@ function SireLeaderboardsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Sire Leaderboards</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Sire Leaderboards</h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">
           Track stallion performance across multiple dimensions. Updated weekly.
         </p>
@@ -82,7 +82,7 @@ function LeaderboardView({ leaderboard }: { leaderboard: any }) {
   return (
     <Card className="border-gold-muted">
       <CardHeader>
-        <CardTitle className="font-[family-name:var(--font-display)]">{leaderboard.title}</CardTitle>
+        <CardTitle className="text-cream font-[family-name:var(--font-display)]">{leaderboard.title}</CardTitle>
         <p className="text-sm text-cream-muted">{leaderboard.description}</p>
       </CardHeader>
       <CardContent>
@@ -90,9 +90,9 @@ function LeaderboardView({ leaderboard }: { leaderboard: any }) {
           {leaderboard.rankings.map((ranking: any) => (
             <div key={ranking.stallionId} className="flex items-center justify-between p-3 bg-t700 rounded-lg">
               <div className="flex items-center gap-4">
-                <span className="text-2xl font-bold w-8">#{ranking.rank}</span>
+                <span className="text-2xl font-bold w-8 text-cream">#{ranking.rank}</span>
                 <div>
-                  <p className="font-semibold">{ranking.stallionName}</p>
+                  <p className="font-semibold text-cream">{ranking.stallionName}</p>
                   <p className="text-sm text-cream-muted">
                     AEI: {ranking.metrics.aei.toFixed(1)} · CI: {ranking.metrics.ci.toFixed(1)} ·
                     {ranking.metrics.lifetimeStakesFoals} Stakes · {ranking.metrics.lifetimeG1Foals} G1
@@ -100,7 +100,7 @@ function LeaderboardView({ leaderboard }: { leaderboard: any }) {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold">{ranking.value.toFixed(1)}</p>
+                <p className="text-2xl font-bold text-cream">{ranking.value.toFixed(1)}</p>
                 <p className="text-xs text-cream-muted">Score</p>
               </div>
             </div>

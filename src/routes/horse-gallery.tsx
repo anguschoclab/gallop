@@ -32,7 +32,8 @@ const COAT_COLORS = [
 ] as const;
 
 function HorseGalleryPage() {
-  const horses = useGame((s) => s.horses.filter((h) => h.owned));
+  const allHorses = useGame((s) => s.horses);
+  const horses = useMemo(() => allHorses.filter((h) => h.owned), [allHorses]);
   const [coatFilter, setCoatFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"ovr" | "age" | "name">("ovr");
 
@@ -119,7 +120,7 @@ function HorseGalleryPage() {
                 <Link to="/market">
                   <Button>Go to Market</Button>
                 </Link>
-                <Link to="/auction">
+                <Link to="/auction/sales">
                   <Button variant="outline">View Auctions</Button>
                 </Link>
               </div>
@@ -147,7 +148,7 @@ function HorseGalleryPage() {
                   </div>
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
-                      <CardTitle className="text-lg truncate font-[family-name:var(--font-display)]">{horse.name}</CardTitle>
+                      <CardTitle className="text-lg truncate text-cream font-[family-name:var(--font-display)]">{horse.name}</CardTitle>
                       <Badge variant="outline" className="text-xs shrink-0 border-gold-muted text-cream">
                         {ovr} OVR
                       </Badge>

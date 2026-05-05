@@ -74,10 +74,10 @@ export function HorseCard({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className={cn(genderColor, "text-sm")}>{genderIcon}</span>
-                <span className="font-semibold font-[family-name:var(--font-display)] truncate">{horse.name}</span>
+                <span className="font-semibold text-cream font-[family-name:var(--font-display)] truncate">{horse.name}</span>
               </div>
               {/* Qualifiers */}
-              <div className="text-xs text-muted-foreground flex items-center gap-2">
+              <div className="text-xs text-cream-muted flex items-center gap-2">
                 <NumericValue value={horse.age} suffix="yo" className="font-semibold" />
                 <span>·</span>
                 <JargonTooltip term="OVR"><span className="font-[family-name:var(--font-body)]">OVR</span> <NumericValue value={ovr} /></JargonTooltip>
@@ -121,9 +121,9 @@ export function HorseCard({
               <div>
                 <div className="flex items-center gap-2">
                   <span className={cn(genderColor, "text-lg")}>{genderIcon}</span>
-                  <span className="font-bold text-lg font-[family-name:var(--font-display)]">{horse.name}</span>
+                  <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)]">{horse.name}</span>
                 </div>
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
+                <div className="text-sm text-cream-muted flex items-center gap-2">
                   <NumericValue value={horse.age} suffix=" years old" />
                   <span>·</span>
                   <span className="text-chart-4">Fame: <NumericValue value={horse.fame} suffix="/100" /></span>
@@ -147,7 +147,7 @@ export function HorseCard({
               return (
                 <div key={stat} className={isUnknown ? "opacity-50" : ""}>
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-muted-foreground capitalize">{stat}</span>
+                    <span className="text-cream-muted capitalize">{stat}</span>
                     <span className="font-medium tabular-nums">
                       {isUnknown ? "???" : value}
                     </span>
@@ -162,12 +162,12 @@ export function HorseCard({
           </div>
           <div className="mt-3 flex items-center justify-between">
             <div className="text-sm">
-              <span className="text-muted-foreground">Overall: </span>
+              <span className="text-cream-muted">Overall: </span>
               <span className="font-bold">
                 {hasAllStats ? ovr : displayStats?.overallEstimate ? `~${displayStats.overallEstimate}` : "???"}
               </span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1 text-xs text-cream-muted">
               <Activity className="w-3 h-3" />
               <span className="tabular-nums">Form: {horse.form > 0 ? "+" : ""}{horse.form}</span>
             </div>
@@ -189,11 +189,11 @@ export function HorseCard({
               {/* Identity */}
               <div className="flex items-center gap-2">
                 <span className={cn(genderColor, "text-lg")}>{genderIcon}</span>
-                <span className="font-bold text-lg font-[family-name:var(--font-display)]">{horse.name}</span>
+                <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)]">{horse.name}</span>
                 {getHealthStatus()}
               </div>
               {/* Qualifiers */}
-              <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap font-[family-name:var(--font-body)]">
+              <div className="text-sm text-cream-muted flex items-center gap-2 flex-wrap font-[family-name:var(--font-body)]">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
                   <NumericValue value={horse.age} suffix=" years old" />
@@ -234,11 +234,11 @@ export function HorseCard({
         {/* Biometrics Strip */}
         <div className="flex items-center gap-4 mb-4 p-2 bg-t700 rounded-lg text-xs">
           <div className="flex items-center gap-1.5">
-            <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
+            <Ruler className="w-3.5 h-3.5 text-cream-muted" />
             <span className="font-medium">{horse.height?.toFixed(1)} hh</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Weight className="w-3.5 h-3.5 text-muted-foreground" />
+            <Weight className="w-3.5 h-3.5 text-cream-muted" />
             <span className="font-medium">{horse.weight} kg</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -246,7 +246,7 @@ export function HorseCard({
             <span className="capitalize">{horse.coatColor?.replace("-", " ")}</span>
           </div>
           <div className="flex items-center gap-1.5 ml-auto">
-            <HeartPulse className="w-3.5 h-3.5 text-muted-foreground" />
+            <HeartPulse className="w-3.5 h-3.5 text-cream-muted" />
             <span className={getInjuryColor(horse.injuryProneness)}>
               {getInjuryLabel(horse.injuryProneness)}
             </span>
@@ -265,17 +265,17 @@ export function HorseCard({
         <div className="flex items-center justify-between pt-3 border-t text-sm">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
-              <Activity className="w-4 h-4 text-muted-foreground" />
-              <JargonTooltip term="OVR" className="text-muted-foreground">OVR</JargonTooltip>
+              <Activity className="w-4 h-4 text-cream-muted" />
+              <JargonTooltip term="OVR" className="text-cream-muted">OVR</JargonTooltip>
               <span className="font-bold text-lg tabular-nums">{ovr}</span>
             </div>
             <div className="flex items-center gap-1">
-              <Dna className="w-4 h-4 text-muted-foreground" />
-              <JargonTooltip term="Pot" className="text-muted-foreground">Pot</JargonTooltip>
+              <Dna className="w-4 h-4 text-cream-muted" />
+              <JargonTooltip term="Pot" className="text-cream-muted">Pot</JargonTooltip>
               <span className="font-semibold tabular-nums">{horse.potential}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 text-xs text-cream-muted">
             {horse.runningStyle && (
               <Badge variant="outline" className="text-xs capitalize">
                 {horse.runningStyle.replace("-", " ")}
@@ -289,7 +289,7 @@ export function HorseCard({
 
         {/* Pedigree (if available) */}
         {(horse.sireName || horse.damName) && (
-          <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
+          <div className="mt-3 pt-3 border-t text-xs text-cream-muted">
             <div className="flex items-center gap-1 mb-1">
               <User className="w-3 h-3" />
               <span>Pedigree:</span>
@@ -304,7 +304,7 @@ export function HorseCard({
         {/* Stable info for NPC horses */}
         {horse.stableId && (
           <div className="mt-3 pt-3 border-t">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs text-cream-muted">
               <Building2 className="w-3 h-3" />
               <span>Belongs to rival stable</span>
               {horse.lastScoutedDay && (
@@ -322,7 +322,7 @@ function StatBar({ label, value }: { label: string; value: number }) {
   return (
     <div>
       <div className="flex justify-between text-xs mb-1">
-        <span className="text-muted-foreground font-[family-name:var(--font-body)]">{label}</span>
+        <span className="text-cream-muted font-[family-name:var(--font-body)]">{label}</span>
         <span className="font-medium font-[family-name:var(--font-mono)] tabular-nums">{value}</span>
       </div>
       <Progress value={value} className="h-1.5" />
@@ -360,7 +360,7 @@ function getInjuryLabel(proneness?: number): string {
 }
 
 function getInjuryColor(proneness?: number): string {
-  if (!proneness) return "text-muted-foreground";
+  if (!proneness) return "text-cream-muted";
   if (proneness < 0.06) return "text-success font-medium";
   if (proneness < 0.09) return "text-warning font-medium";
   return "text-destructive font-bold";

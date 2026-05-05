@@ -85,7 +85,7 @@ function RacesPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Race Calendar</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Race Calendar</h1>
           <p className="text-cream-muted font-[family-name:var(--font-body)]">View and enter upcoming races across all regions.</p>
         </div>
         <div className="flex gap-2">

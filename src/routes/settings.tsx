@@ -43,7 +43,7 @@ function SettingsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 font-[family-name:var(--font-display)]">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
             <Settings className="h-8 w-8" />
             Settings
           </h1>
@@ -61,7 +61,7 @@ function SettingsPage() {
         {/* Display Settings */}
         <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
+            <CardTitle className="text-base flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
               <Monitor className="h-4 w-4" />
               Display
             </CardTitle>
@@ -120,7 +120,7 @@ function SettingsPage() {
         {/* Gameplay Settings */}
         <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
+            <CardTitle className="text-base flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
               <Gamepad2 className="h-4 w-4" />
               Gameplay
             </CardTitle>
@@ -179,7 +179,7 @@ function SettingsPage() {
         {/* Notification Settings */}
         <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
+            <CardTitle className="text-base flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
               <Bell className="h-4 w-4" />
               Notifications
             </CardTitle>
@@ -238,7 +238,7 @@ function SettingsPage() {
         {/* Audio Settings */}
         <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
+            <CardTitle className="text-base flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
               <Volume2 className="h-4 w-4" />
               Audio
             </CardTitle>
@@ -290,7 +290,7 @@ function SettingsPage() {
         {/* Data Management */}
         <Card className="md:col-span-2 border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
+            <CardTitle className="text-base flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
               <Database className="h-4 w-4" />
               Data Management
             </CardTitle>

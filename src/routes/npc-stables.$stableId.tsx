@@ -31,7 +31,7 @@ function NpcStableDetailPage() {
   if (!stable) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Stable Not Found</h1>
+        <h1 className="text-2xl font-bold text-cream">Stable Not Found</h1>
         <Link to="/npc-stables" className="text-gold hover:underline mt-4 inline-block">
           ← Back to Stables
         </Link>
@@ -64,7 +64,7 @@ function NpcStableDetailPage() {
           />
           <div className="flex-1">
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-3xl font-bold font-[family-name:var(--font-display)]">{stable.name}</h1>
+              <h1 className="text-3xl font-bold text-cream font-[family-name:var(--font-display)]">{stable.name}</h1>
               <Badge className={getTierColor(stable.tier)}>
                 {stable.tier.toUpperCase()}
               </Badge>

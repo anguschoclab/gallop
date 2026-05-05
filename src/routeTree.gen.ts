@@ -23,18 +23,19 @@ import { Route as MarketRouteImport } from './routes/market'
 import { Route as JockeysRouteImport } from './routes/jockeys'
 import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
 import { Route as FinancialReportRouteImport } from './routes/financial-report'
+import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
-import { Route as AuctionIndexRouteImport } from './routes/auction.index'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
 import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$stallionId'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
 import { Route as NpcStablesStableIdRouteImport } from './routes/npc-stables.$stableId'
 import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
+import { Route as AuctionSalesRouteImport } from './routes/auction.sales'
 import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
 
 const StallionsRoute = StallionsRouteImport.update({
@@ -107,6 +108,11 @@ const FinancialReportRoute = FinancialReportRouteImport.update({
   path: '/financial-report',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FacilitiesRoute = FacilitiesRouteImport.update({
+  id: '/facilities',
+  path: '/facilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BroodmaresRoute = BroodmaresRouteImport.update({
   id: '/broodmares',
   path: '/broodmares',
@@ -137,11 +143,6 @@ const CalendarIndexRoute = CalendarIndexRouteImport.update({
   path: '/calendar/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuctionIndexRoute = AuctionIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuctionRoute,
-} as any)
 const StableHorseIdRoute = StableHorseIdRouteImport.update({
   id: '/$horseId',
   path: '/$horseId',
@@ -167,6 +168,11 @@ const CalendarRegionIdRoute = CalendarRegionIdRouteImport.update({
   path: '/calendar/$regionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuctionSalesRoute = AuctionSalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
+  getParentRoute: () => AuctionRoute,
+} as any)
 const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
   id: '/$saleId',
   path: '/$saleId',
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
@@ -194,19 +201,21 @@ export interface FileRoutesByFullPath {
   '/stable': typeof StableRouteWithChildren
   '/stallions': typeof StallionsRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
+  '/auction/sales': typeof AuctionSalesRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
-  '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
@@ -222,12 +231,12 @@ export interface FileRoutesByTo {
   '/stable': typeof StableRouteWithChildren
   '/stallions': typeof StallionsRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
+  '/auction/sales': typeof AuctionSalesRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
-  '/auction': typeof AuctionIndexRoute
   '/calendar': typeof CalendarIndexRoute
 }
 export interface FileRoutesById {
@@ -237,6 +246,7 @@ export interface FileRoutesById {
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
@@ -252,12 +262,12 @@ export interface FileRoutesById {
   '/stable': typeof StableRouteWithChildren
   '/stallions': typeof StallionsRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
+  '/auction/sales': typeof AuctionSalesRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
-  '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
 }
 export interface FileRouteTypes {
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/facilities'
     | '/financial-report'
     | '/horse-gallery'
     | '/jockeys'
@@ -283,19 +294,21 @@ export interface FileRouteTypes {
     | '/stable'
     | '/stallions'
     | '/auction/$saleId'
+    | '/auction/sales'
     | '/calendar/$regionId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
-    | '/auction/'
     | '/calendar/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auction'
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/facilities'
     | '/financial-report'
     | '/horse-gallery'
     | '/jockeys'
@@ -311,12 +324,12 @@ export interface FileRouteTypes {
     | '/stable'
     | '/stallions'
     | '/auction/$saleId'
+    | '/auction/sales'
     | '/calendar/$regionId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
-    | '/auction'
     | '/calendar'
   id:
     | '__root__'
@@ -325,6 +338,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/facilities'
     | '/financial-report'
     | '/horse-gallery'
     | '/jockeys'
@@ -340,12 +354,12 @@ export interface FileRouteTypes {
     | '/stable'
     | '/stallions'
     | '/auction/$saleId'
+    | '/auction/sales'
     | '/calendar/$regionId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
-    | '/auction/'
     | '/calendar/'
   fileRoutesById: FileRoutesById
 }
@@ -355,6 +369,7 @@ export interface RootRouteChildren {
   AwardsRoute: typeof AwardsRoute
   BreedingRoute: typeof BreedingRoute
   BroodmaresRoute: typeof BroodmaresRoute
+  FacilitiesRoute: typeof FacilitiesRoute
   FinancialReportRoute: typeof FinancialReportRoute
   HorseGalleryRoute: typeof HorseGalleryRoute
   JockeysRoute: typeof JockeysRoute
@@ -474,6 +489,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FinancialReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/facilities': {
+      id: '/facilities'
+      path: '/facilities'
+      fullPath: '/facilities'
+      preLoaderRoute: typeof FacilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/broodmares': {
       id: '/broodmares'
       path: '/broodmares'
@@ -516,13 +538,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auction/': {
-      id: '/auction/'
-      path: '/'
-      fullPath: '/auction/'
-      preLoaderRoute: typeof AuctionIndexRouteImport
-      parentRoute: typeof AuctionRoute
-    }
     '/stable/$horseId': {
       id: '/stable/$horseId'
       path: '/$horseId'
@@ -558,6 +573,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarRegionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auction/sales': {
+      id: '/auction/sales'
+      path: '/sales'
+      fullPath: '/auction/sales'
+      preLoaderRoute: typeof AuctionSalesRouteImport
+      parentRoute: typeof AuctionRoute
+    }
     '/auction/$saleId': {
       id: '/auction/$saleId'
       path: '/$saleId'
@@ -570,12 +592,12 @@ declare module '@tanstack/react-router' {
 
 interface AuctionRouteChildren {
   AuctionSaleIdRoute: typeof AuctionSaleIdRoute
-  AuctionIndexRoute: typeof AuctionIndexRoute
+  AuctionSalesRoute: typeof AuctionSalesRoute
 }
 
 const AuctionRouteChildren: AuctionRouteChildren = {
   AuctionSaleIdRoute: AuctionSaleIdRoute,
-  AuctionIndexRoute: AuctionIndexRoute,
+  AuctionSalesRoute: AuctionSalesRoute,
 }
 
 const AuctionRouteWithChildren =
@@ -622,6 +644,7 @@ const rootRouteChildren: RootRouteChildren = {
   AwardsRoute: AwardsRoute,
   BreedingRoute: BreedingRoute,
   BroodmaresRoute: BroodmaresRoute,
+  FacilitiesRoute: FacilitiesRoute,
   FinancialReportRoute: FinancialReportRoute,
   HorseGalleryRoute: HorseGalleryRoute,
   JockeysRoute: JockeysRoute,

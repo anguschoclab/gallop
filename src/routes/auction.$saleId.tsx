@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/auction/$saleId")({
 function AuctionSalePage() {
   const { saleId } = Route.useParams();
   const navigate = useNavigate();
-  const auctions = useGame((s) => s.auctions ?? []);
+  const auctions = (useGame as any)((s) => s.auctions ?? [], shallow);
   const horses = useGame((s) => s.horses);
   const cash = useGame((s) => s.cash);
   const stables = useGame((s) => s.npcStables);
@@ -129,8 +130,8 @@ function AuctionSalePage() {
                   <div className="flex items-start gap-3">
                     <HorsePortrait coatColor={horse.coatColor} size="md" />
                     <div>
-                      <CardTitle className="text-xl">{horse.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground mt-0.5 tabular-nums">
+                      <CardTitle className="text-xl text-cream">{horse.name}</CardTitle>
+                      <p className="text-sm text-cream-muted mt-0.5 tabular-nums">
                         {horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀"}{" "}
                         {horse.gender.charAt(0).toUpperCase() + horse.gender.slice(1)} · Age {horse.age}
                         {horse.hemisphere === "Southern" ? " · Southern" : ""}

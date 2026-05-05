@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
+import { useJockeys } from "@/game/hooks/useSystemsState";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -119,7 +120,7 @@ export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
   notFoundComponent: () => (
     <div className="p-6">
-      <h1 className="text-2xl font-bold">Race not found</h1>
+      <h1 className="text-2xl font-bold text-cream">Race not found</h1>
       <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }} className="text-gold underline">Back</Link>
     </div>
   ),
@@ -130,7 +131,7 @@ function LiveRace() {
   const navigate = useNavigate();
   const race = useGame((s) => s.races.find((r) => r.id === raceId));
   const horses = useGame((s) => s.horses);
-  const jockeys = useGame((s) => s.jockeys ?? []);
+  const jockeys = (useGame as any)((s) => s.jockeys ?? [], shallow);
   const stables = useGame((s) => s.npcStables);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
 
@@ -321,7 +322,7 @@ function LiveRace() {
 
       <div className="relative z-10 p-4 flex items-center justify-between border-b border-white/10 bg-broadcast-marquee backdrop-blur-sm">
         <div>
-          <h1 className="text-xl font-bold">{race.name}</h1>
+          <h1 className="text-xl font-bold text-cream">{race.name}</h1>
           <p className="text-xs text-white/70 tabular-nums">
             {race.distance}m · {race.raceClass} · Purse ${race.purse.toLocaleString()}
             {race.weather && ` · ${getWeatherDisplay(race.weather)}`}
@@ -735,7 +736,7 @@ function ResultOverlay({
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
       <div className="bg-card text-card-foreground rounded-xl shadow-2xl max-w-md w-full p-6 border border-white/10">
-        <h2 className="text-2xl font-bold mb-1">{race.name}</h2>
+        <h2 className="text-2xl font-bold mb-1 text-cream">{race.name}</h2>
         <p className="text-sm text-cream-muted mb-4">Final result</p>
         <div className="space-y-2">
           {ordered.map((r, i) => {

@@ -65,6 +65,10 @@ import type { RenameIntent, AnyIntent, TrainingIntent, RaceEntryIntent, Breeding
 import type { UserSettings, DisplaySettings, GameplaySettings, NotificationSettings, AudioSettings } from "@/core/settings/settingsTypes";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import type { RenameImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact } from "@/core/resolver/impacts";
+import type { RegionalAward, AwardRegion } from "@/game/awards/types";
+import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
+import type { Expense } from "@/core/expenses";
+import { upgradeFacility } from "@/core/facilities";
 
 export type ActionResult = { ok: true } | { ok: false, reason: string };
 
@@ -310,7 +314,7 @@ function recomputePars(samples: Record<number, number[]>): Record<number, number
 
 type Actions = {
   newGame: () => void;
-  trainHorse: (horseId: string, kind: "speed" | "stamina" | "acceleration" | "rest") => void;
+  trainHorse: (horseId: string, kind: "speed" | "stamina" | "acceleration" | "rest" | "bullet" | "breeze" | "gate_work" | "swimming" | "gallop") => void;
   buyHorse: (horseId: string) => void;
   enterRace: (raceId: string, horseId: string) => ActionResult;
   withdrawRace: (raceId: string, horseId: string) => void;
@@ -350,6 +354,7 @@ type Actions = {
   updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
   updateAudioSettings: (settings: Partial<AudioSettings>) => void;
   resetSettings: () => void;
+  upgradeFacility: (facilityType: string) => ActionResult;
 };
 
 function initialState(): GameState {
@@ -1667,8 +1672,47 @@ export const useGame = create<GameState & Actions>()(
       },
 
       resetSettings: () => {
+        set({
+          userSettings: createDefaultUserSettings(get().day),
+        });
+      },
+
+      upgradeFacility: (facilityType) => {
         const s = get();
-        set({ userSettings: createDefaultUserSettings(s.day) });
+        const facility = s.facilities?.[facilityType as keyof typeof s.facilities];
+        
+        if (!facility) {
+          return { ok: false, reason: "Facility not found" };
+        }
+
+        const currentDay = s.day;
+        const upgraded = upgradeFacility(facility, currentDay);
+
+        if (!upgraded) {
+          return { ok: false, reason: "Facility already at maximum level" };
+        }
+
+        const cost = facility.upgradeCost;
+        if (s.cash < cost) {
+          return { ok: false, reason: "Insufficient funds" };
+        }
+
+        set({
+          cash: s.cash - cost,
+          facilities: {
+            ...s.facilities,
+            [facilityType]: upgraded,
+          } as typeof s.facilities,
+          log: [
+            ...s.log,
+            {
+              day: currentDay,
+              text: `Upgraded ${facilityType} to ${upgraded.level} level for $${cost.toLocaleString()}`,
+            },
+          ],
+        });
+
+        return { ok: true };
       },
     }),
     {
@@ -1703,6 +1747,11 @@ export const useGame = create<GameState & Actions>()(
         facilities: state.facilities,
         npcFacilities: state.npcFacilities,
         userSettings: state.userSettings,
+        expenses: state.expenses,
+        transactions: state.transactions,
+        replays: state.replays,
+        reputation: state.reputation,
+        transports: state.transports,
       }),
       onRehydrateStorage: () => (state) => {
         hydrationComplete = true;

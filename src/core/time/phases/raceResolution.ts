@@ -10,6 +10,8 @@ import type { Race, Horse } from "@/game/types";
 import { getCurrentYear } from "@/game/raceSchedule";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import { processClaims, type ClaimAttempt } from "@/game/claiming";
+import { createTransaction } from "@/core/transactions";
+import { createReputationEvent, calculateRaceWinReputation, getReputationTier } from "@/core/reputation";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -20,8 +22,11 @@ export const raceResolutionPhase: PipelinePhase = {
   name: "raceResolution",
   order: 70,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
+    const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
+    const newTransactions: typeof state.transactions = [];
+    const updatedRaces: typeof state.races = [...state.races];
+    const newReputationEvents = state.reputation?.events ?? [];
 
     // Find unresolved races that should be resolved today
     const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= newDay);
@@ -32,6 +37,12 @@ export const raceResolutionPhase: PipelinePhase = {
       const rng = rngForRace(race);
       const course = getCourseForRace(race);
       const result = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course);
+
+      // Update race in the updatedRaces array
+      const raceIndex = updatedRaces.findIndex((r) => r.id === race.id);
+      if (raceIndex !== -1) {
+        updatedRaces[raceIndex] = { ...race, resolved: true, result };
+      }
 
       const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
       const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
@@ -170,6 +181,36 @@ export const raceResolutionPhase: PipelinePhase = {
                 amount: prize,
                 reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
               } as CashImpact);
+              
+              // Record transaction for prize money income
+              if (!horse.stableId) {
+                // Player horse - record transaction
+                newTransactions.push(
+                  createTransaction(
+                    "income",
+                    "prize_money",
+                    prize,
+                    `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
+                    newDay,
+                    state.cash + prize,
+                    { horseId: horse.id, raceId: race.id }
+                  )
+                );
+
+                // Track reputation for wins
+                if (r.position === 1) {
+                  const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);
+                  newReputationEvents.push(
+                    createReputationEvent(
+                      "race_win",
+                      repGain,
+                      `Win in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
+                      newDay,
+                      { horseId: horse.id, raceId: race.id }
+                    )
+                  );
+                }
+              }
             }
           }
         }
@@ -206,6 +247,19 @@ export const raceResolutionPhase: PipelinePhase = {
                 amount: -ridingFee,
                 reason: `Jockey fee: ${jockey.name}`,
               } as CashImpact);
+              
+              // Record transaction for jockey fee expense
+              newTransactions.push(
+                createTransaction(
+                  "expense",
+                  "jockey_fee",
+                  -ridingFee,
+                  `Jockey fee: ${jockey.name} for ${horse.name}`,
+                  newDay,
+                  state.cash - ridingFee,
+                  { horseId: horse.id, raceId: race.id }
+                )
+              );
             }
           }
         }
@@ -559,6 +613,20 @@ export const raceResolutionPhase: PipelinePhase = {
 
     return {
       ...context,
+      state: {
+        ...state,
+        races: updatedRaces,
+        transactions: [...(state.transactions ?? []), ...newTransactions],
+        reputation: state.reputation
+          ? {
+              ...state.reputation,
+              events: [...state.reputation.events, ...newReputationEvents],
+              score: state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
+              tier: getReputationTier(state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0)),
+              totalWins: state.reputation.totalWins + newReputationEvents.filter((e) => e.source === "race_win").length,
+            }
+          : state.reputation,
+      },
       impacts: [...context.impacts, ...impacts],
     };
   },

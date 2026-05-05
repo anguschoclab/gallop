@@ -43,7 +43,7 @@ function MarketPage() {
                 <div className="flex items-start gap-3">
                   <SilkDot color={h.silk} size="md" />
                   <div className="flex-1">
-                    <p className="font-bold font-[family-name:var(--font-display)]">{h.name}</p>
+                    <p className="font-bold text-cream font-[family-name:var(--font-display)]">{h.name}</p>
                     <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                       Age <NumericValue value={Math.floor(h.age)} /> · <JargonTooltip term="OVR">OVR</JargonTooltip> <NumericValue value={overall(h)} />
                     </p>

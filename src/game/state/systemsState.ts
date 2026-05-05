@@ -7,8 +7,14 @@ import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardType
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { PlayerFacilities } from "@/core/facilities";
 import type { UserSettings } from "@/core/settings/settingsTypes";
+import type { Expense } from "@/core/expenses";
+import type { Transaction } from "@/core/transactions";
+import type { RaceReplay } from "@/core/replays";
+import type { ManagerReputation } from "@/core/reputation";
+import type { TransportRequest } from "@/core/transportation";
 import { createDefaultPlayerFacilities } from "@/core/facilities";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
+import { getReputationTier } from "@/core/reputation";
 
 /**
  * Systems state for optional subsystems and advanced features.
@@ -67,6 +73,26 @@ export interface SystemsState {
   /** Player preferences and game configuration */
   userSettings?: UserSettings;
 
+  // Expense tracking (optional)
+  /** Historical expense records by category */
+  expenses?: Expense[];
+
+  // Transaction tracking (optional)
+  /** Complete cash flow transaction history */
+  transactions?: Transaction[];
+
+  // Race replay storage (optional)
+  /** Stored race replays for viewing past races */
+  replays?: RaceReplay[];
+
+  // Manager reputation (optional)
+  /** Player's stable prestige and reputation */
+  reputation?: ManagerReputation;
+
+  // Transportation (optional)
+  /** Active transport requests and history */
+  transports?: TransportRequest[];
+
   // Intent/impact resolver system (optional)
   /** Pending intents to be resolved */
   pendingIntents?: AnyIntent[];
@@ -86,5 +112,17 @@ export function createDefaultSystemsState(): SystemsState {
     facilities: createDefaultPlayerFacilities(1),
     npcFacilities: {},
     userSettings: createDefaultUserSettings(1),
+    expenses: [],
+    transactions: [],
+    replays: [],
+    reputation: {
+      score: 0,
+      tier: "unknown",
+      events: [],
+      gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+      totalWins: 0,
+      yearsActive: 0,
+    },
+    transports: [],
   };
 }

@@ -6,7 +6,7 @@ import type { GameState } from "@/game/types";
  * Market state selectors for trading, auctions, and scouting
  */
 export const useMarket = () => useGame((s: GameState) => s.market);
-export const useAuctions = () => useGame((s: GameState) => s.auctions ?? []);
+export const useAuctions = () => (useGame as any)((s: GameState) => s.auctions ?? [], shallow);
 export const useScoutReports = () => useGame((s: GameState) => s.scoutReports);
 
 /**

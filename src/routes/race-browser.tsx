@@ -83,7 +83,7 @@ function RaceBrowser() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Race Browser</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Race Browser</h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">Browse all graded stakes races worldwide</p>
       </div>
 
@@ -92,7 +92,7 @@ function RaceBrowser() {
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-4 items-end">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Grade</label>
+              <label className="text-sm font-medium text-cream">Grade</label>
               <Select value={gradeFilter} onValueChange={(v) => setGradeFilter(v as GradeFilter)}>
                 <SelectTrigger className="w-[150px]">
                   <SelectValue />
@@ -108,7 +108,7 @@ function RaceBrowser() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Country</label>
+              <label className="text-sm font-medium text-cream">Country</label>
               <Select value={countryFilter} onValueChange={setCountryFilter}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="All countries" />
@@ -125,7 +125,7 @@ function RaceBrowser() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Track</label>
+              <label className="text-sm font-medium text-cream">Track</label>
               <Select value={trackFilter} onValueChange={setTrackFilter}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="All tracks" />
@@ -142,7 +142,7 @@ function RaceBrowser() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Distance</label>
+              <label className="text-sm font-medium text-cream">Distance</label>
               <Select
                 value={distanceFilter}
                 onValueChange={(v) => setDistanceFilter(v as DistanceFilter)}
@@ -197,7 +197,7 @@ function RaceBrowser() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="text-lg font-bold font-[family-name:var(--font-display)]">{race.name}</h3>
+                        <h3 className="text-lg font-bold text-cream font-[family-name:var(--font-display)]">{race.name}</h3>
                         {race.graded?.grade && (
                           <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
                             {race.graded.grade}

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
+import { useAuctions } from "@/game/hooks/useMarketState";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,12 +11,12 @@ import { NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/auction/")({
+export const Route = createFileRoute("/auction/sales")({
   component: AuctionPage,
 });
 
 function AuctionPage() {
-  const auctions = useGame((s) => s.auctions ?? []);
+  const auctions = (useGame as any)((s) => s.auctions ?? [], shallow);
   const horses = useGame((s) => s.horses);
   const day = useGame((s) => s.day);
 
@@ -103,7 +104,7 @@ function AuctionPage() {
                   <div className="flex items-center gap-2">
                     <SilkDot color={horse.silk} size="sm" />
                     <div>
-                      <p className="font-medium text-sm font-[family-name:var(--font-display)]">{horse.name}</p>
+                      <p className="font-medium text-sm text-cream font-[family-name:var(--font-display)]">{horse.name}</p>
                       <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                         {horse.age === 0 ? "Weanling" : horse.age === 1 ? "Yearling" : "2YO"} · {horse.gender}
                       </p>
@@ -153,7 +154,7 @@ function AuctionPage() {
                       </div>
                       <p className="text-xs text-cream-muted mt-1 font-[family-name:var(--font-body)]">
                         <NumericValue value={sold} /> sold · <NumericValue value={passed} /> passed
-                        {topLot && topHorse && <> · Top lot: <span className="font-[family-name:var(--font-display)]">{topHorse.name}</span> ${topLot.hammerPrice!.toLocaleString()}</>}
+                        {topLot && topHorse && <> · Top lot: <span className="font-[family-name:var(--font-display)] text-cream">{topHorse.name}</span> ${topLot.hammerPrice!.toLocaleString()}</>}
                       </p>
                     </div>
                     <CheckCircle className="h-5 w-5 text-cream-muted shrink-0 mt-1" />

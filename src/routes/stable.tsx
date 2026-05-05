@@ -27,7 +27,7 @@ function StablePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Stable Management</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Stable Management</h1>
         <p className="text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">
           <NumericValue value={myHorses.length} /> horses in training
         </p>
@@ -37,7 +37,7 @@ function StablePage() {
         <Link to="/stallions">
           <Card className="hover:bg-t700 transition-colors border-gold-muted">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-[family-name:var(--font-display)]">Stallions at Stud</CardTitle>
+              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">Stallions at Stud</CardTitle>
               <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">View available stallions for breeding</p>
             </CardHeader>
           </Card>
@@ -45,7 +45,7 @@ function StablePage() {
         <Link to="/jockeys">
           <Card className="hover:bg-t700 transition-colors border-gold-muted">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-[family-name:var(--font-display)]">Jockeys</CardTitle>
+              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">Jockeys</CardTitle>
               <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Manage your jockey roster</p>
             </CardHeader>
           </Card>
@@ -53,7 +53,7 @@ function StablePage() {
         <Link to="/horse-gallery">
           <Card className="hover:bg-t700 transition-colors border-gold-muted">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-[family-name:var(--font-display)]">Horse Gallery</CardTitle>
+              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">Horse Gallery</CardTitle>
               <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">View your horses in a gallery format</p>
             </CardHeader>
           </Card>
@@ -61,7 +61,7 @@ function StablePage() {
         <Link to="/scheduler">
           <Card className="hover:bg-t700 transition-colors border-gold-muted">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-[family-name:var(--font-display)]">Campaign Scheduler</CardTitle>
+              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">Campaign Scheduler</CardTitle>
               <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Plan race campaigns for your horses</p>
             </CardHeader>
           </Card>

@@ -17,7 +17,7 @@ export interface Intent {
 export interface TrainingIntent extends Intent {
   type: "training";
   horseId: string;
-  trainingType: "speed" | "stamina" | "acceleration" | "rest";
+  trainingType: "speed" | "stamina" | "acceleration" | "rest" | "bullet" | "breeze" | "gate_work" | "swimming" | "gallop";
 }
 
 // Race entry intent

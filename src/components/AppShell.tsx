@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Baby } from "lucide-react";
+import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Baby, DollarSign, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
@@ -37,7 +37,7 @@ const navSections = [
     items: [
       { to: "/races", label: "Races", icon: Calendar, exact: false },
       { to: "/market", label: "Market", icon: Store, exact: false },
-      { to: "/auction", label: "Auction", icon: Gavel, exact: false },
+      { to: "/auction/sales", label: "Auction", icon: Gavel, exact: false },
     ],
   },
 ] as const;
@@ -136,6 +136,18 @@ export function AppShell() {
             >
               <Plus className="h-3 w-3" />
             </Button>
+            <Link to="/financial-report">
+              <Button variant="ghost" className="w-full justify-start">
+                <DollarSign className="h-4 w-4 mr-2" />
+                Financial Report
+              </Button>
+            </Link>
+            <Link to="/facilities">
+              <Button variant="ghost" className="w-full justify-start">
+                <Building2 className="h-4 w-4 mr-2" />
+                Facilities
+              </Button>
+            </Link>
             <Button
               onClick={() => advanceMultipleDays(7)}
               className="col-span-1 tabular-nums"

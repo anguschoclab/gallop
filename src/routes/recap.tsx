@@ -106,7 +106,7 @@ function RecapPage() {
                           {positionIcon}
                           <SilkDot color={finisher.horse.silk} size="sm" />
                           <div>
-                            <div className="font-medium font-[family-name:var(--font-display)]">{finisher.horse.name}</div>
+                            <div className="font-medium font-[family-name:var(--font-display)] text-cream">{finisher.horse.name}</div>
                             <div className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                               <NumericValue value={finisher.result.time} suffix="s" className="font-[family-name:var(--font-mono)] tabular-nums" /> · <NumericValue value={finisher.horse.age} suffix="YO" /> · OVR{" "}
                               <NumericValue value={Math.round(

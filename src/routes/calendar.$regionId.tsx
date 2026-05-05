@@ -81,7 +81,7 @@ function RegionalCalendarPage() {
               Calendars
             </span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">{region.title}</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">{region.title}</h1>
           <p className="text-cream-muted font-[family-name:var(--font-body)]">{region.subtitle}</p>
         </div>
         
@@ -95,7 +95,7 @@ function RegionalCalendarPage() {
           <div className="flex flex-wrap gap-4 items-center">
             {/* Grade Filter */}
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Grade:</span>
+              <span className="text-sm font-medium text-cream">Grade:</span>
               <div className="flex gap-1">
                 {(["all", "G1", "G2", "G3"] as const).map((g) => (
                   <Button

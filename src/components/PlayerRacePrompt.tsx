@@ -1,4 +1,5 @@
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
@@ -11,7 +12,7 @@ export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
   const races = useGame((s) => s.races);
   const horses = useGame((s) => s.horses);
-  const jockeys = useGame((s) => s.jockeys ?? []);
+  const jockeys = (useGame as any)((s) => s.jockeys ?? [], shallow);
   const day = useGame((s) => s.day);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
   const set = useGame.setState;

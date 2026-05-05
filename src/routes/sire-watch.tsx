@@ -36,7 +36,7 @@ function SireWatchPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Sire Watch</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Sire Watch</h1>
           <p className="text-cream-muted font-[family-name:var(--font-body)]">Analytics and performance metrics for active stallions.</p>
         </div>
         <Button variant="outline" size="sm">
@@ -49,7 +49,7 @@ function SireWatchPage() {
         <Card className="border-gold-muted">
           <CardContent className="p-12 text-center">
             <Trophy className="h-12 w-12 mx-auto text-cream-muted mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Stallions at Stud</h3>
+            <h3 className="text-lg font-semibold text-cream mb-2">No Stallions at Stud</h3>
             <p className="text-sm text-cream-muted">
               Retire horses to stud to begin tracking sire analytics.
             </p>
@@ -63,7 +63,7 @@ function SireWatchPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <CardTitle className="text-lg font-[family-name:var(--font-display)]">{analytics.stallionName}</CardTitle>
+                      <CardTitle className="text-lg text-cream font-[family-name:var(--font-display)]">{analytics.stallionName}</CardTitle>
                       <Badge 
                         className={getClassificationColor(analytics.classification)}
                       >
@@ -77,7 +77,7 @@ function SireWatchPage() {
                   <div className="text-right">
                     <div className="flex items-center gap-2 mb-1">
                       <TrendingUp className="h-4 w-4 text-cream-muted" />
-                      <span className="text-2xl font-bold tabular-nums">{analytics.aei.toFixed(1)}</span>
+                      <span className="text-2xl font-bold tabular-nums text-cream">{analytics.aei.toFixed(1)}</span>
                     </div>
                     <p className="text-xs text-cream-muted">AEI</p>
                   </div>
@@ -87,19 +87,19 @@ function SireWatchPage() {
                 <div className="grid grid-cols-4 gap-4 text-sm">
                   <div>
                     <p className="text-cream-muted">CI</p>
-                    <p className="font-semibold">{analytics.ci.toFixed(1)}</p>
+                    <p className="font-semibold text-cream">{analytics.ci.toFixed(1)}</p>
                   </div>
                   <div>
                     <p className="text-cream-muted">Win %</p>
-                    <p className="font-semibold">{analytics.progenyWinPercentage.toFixed(1)}%</p>
+                    <p className="font-semibold text-cream">{analytics.progenyWinPercentage.toFixed(1)}%</p>
                   </div>
                   <div>
                     <p className="text-cream-muted">Stakes Winners</p>
-                    <p className="font-semibold">{analytics.lifetimeStakesFoals}</p>
+                    <p className="font-semibold text-cream">{analytics.lifetimeStakesFoals}</p>
                   </div>
                   <div>
                     <p className="text-cream-muted">G1 Winners</p>
-                    <p className="font-semibold">{analytics.lifetimeG1Foals}</p>
+                    <p className="font-semibold text-cream">{analytics.lifetimeG1Foals}</p>
                   </div>
                 </div>
                 <div className="mt-3 pt-3 border-t border-gold-muted flex justify-between items-center">

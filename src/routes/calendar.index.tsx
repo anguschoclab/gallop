@@ -12,7 +12,7 @@ function CalendarIndex() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Regional Racing Calendars</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Regional Racing Calendars</h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">Browse graded stakes races by region</p>
       </div>
 
@@ -21,7 +21,7 @@ function CalendarIndex() {
           <Link key={region.id} to="/calendar/$regionId" params={{ regionId: region.id }}>
             <Card className="hover:border-gold transition-colors cursor-pointer h-full border-gold-muted">
               <CardHeader>
-                <CardTitle className="flex items-center justify-between font-[family-name:var(--font-display)]">
+                <CardTitle className="flex items-center justify-between text-cream font-[family-name:var(--font-display)]">
                   {region.name}
                   <ChevronRight className="h-5 w-5 text-cream-muted" />
                 </CardTitle>

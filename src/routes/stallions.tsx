@@ -46,14 +46,14 @@ function StallionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Stallion Roster</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Stallion Roster</h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">
           Stallions standing at stud, sorted by fee. Book your mare to a stallion to schedule a foal.
         </p>
       </div>
 
       <Card className="border-gold-muted">
-        <CardHeader><CardTitle className="font-[family-name:var(--font-display)]">Filters</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-cream font-[family-name:var(--font-display)]">Filters</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-cream-muted">Hemisphere</label>
@@ -139,7 +139,7 @@ function StallionCard({
     <Card className="border-gold-muted">
       <CardHeader>
         <div className="flex items-start justify-between">
-          <CardTitle className="text-lg font-[family-name:var(--font-display)]">{stallion.name}</CardTitle>
+          <CardTitle className="text-lg text-cream font-[family-name:var(--font-display)]">{stallion.name}</CardTitle>
           <Badge className="bg-t700 text-cream">{stallion.hemisphere}</Badge>
         </div>
         <p className="text-xs text-cream-muted">{stableName}</p>
@@ -147,23 +147,23 @@ function StallionCard({
       <CardContent className="space-y-2 text-sm">
         <div className="flex justify-between">
           <span className="text-cream-muted">Standing fee</span>
-          <span className="font-mono font-semibold tabular-nums">${stud.standingFee.toLocaleString()}</span>
+          <span className="font-mono font-semibold tabular-nums text-cream">${stud.standingFee.toLocaleString()}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-cream-muted">Book</span>
-          <span>{stud.seasonBookings} / {stud.bookSize}</span>
+          <span className="text-cream">{stud.seasonBookings} / {stud.bookSize}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-cream-muted">Stakes foals</span>
-          <span>{stud.lifetimeStakesFoals}</span>
+          <span className="text-cream">{stud.lifetimeStakesFoals}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-cream-muted">G1 foals</span>
-          <span>{stud.lifetimeG1Foals}</span>
+          <span className="text-cream">{stud.lifetimeG1Foals}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-cream-muted">Age · Fame</span>
-          <span>{stallion.age} · {stallion.fame}</span>
+          <span className="text-cream">{stallion.age} · {stallion.fame}</span>
         </div>
         {!inSeason && (
           <p className="text-xs text-warning">Out of breeding season for {stallion.hemisphere}.</p>

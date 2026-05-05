@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useGame } from "@/game/store";
+import { useJockeys } from "@/game/hooks/useSystemsState";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +26,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const [wantToClaim, setWantToClaim] = useState(false);
   
   const horses = useGame((s) => s.horses.filter(h => h.owned));
-  const jockeys = useGame((s) => s.jockeys ?? []);
+  const jockeys = (useGame as any)((s) => s.jockeys ?? [], shallow);
   const enterRace = useGame((s) => s.enterRace);
   const assignJockey = useGame((s) => s.assignJockey);
   const submitClaim = useGame((s) => s.submitClaim);

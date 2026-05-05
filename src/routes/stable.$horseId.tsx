@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +43,7 @@ function HorseDetail() {
   const cash = useGame((s) => s.cash);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const day = useGame((s) => s.day);
-  const auctions = useGame((s) => s.auctions ?? []);
+  const auctions = (useGame as any)((s) => s.auctions ?? [], shallow);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
 
   // Persist raceHistoryLimit to localStorage
@@ -80,7 +81,7 @@ function HorseDetail() {
           <SilkDot color={horse.silk} size="lg" />
           <div className="flex-1">
             {/* Display font for horse name */}
-            <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">{horse.name}</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">{horse.name}</h1>
             <p className="text-cream-muted font-[family-name:var(--font-body)]">
               Age <NumericValue value={horse.age} /> · OVR <NumericValue value={ovr} /> · Potential <NumericValue value={horse.potential} />
             </p>
@@ -207,6 +208,7 @@ function HorseDetail() {
             </p>
           </CardHeader>
           <CardContent className="space-y-2">
+            {/* Basic training types */}
             {(["speed", "stamina", "acceleration"] as const).map((k) => (
               <Button
                 key={k}
@@ -219,6 +221,59 @@ function HorseDetail() {
                 <span className="text-cream-muted">{horse.stats[k]} → {Math.min(horse.potential, horse.stats[k] + 1)}</span>
               </Button>
             ))}
+            
+            {/* Advanced workout types */}
+            <div className="pt-2 border-t border-gold-muted/30">
+              <p className="text-xs text-cream-muted mb-2">Advanced Workouts</p>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  onClick={() => trainHorse(horse.id, "bullet")}
+                  disabled={isPregnant || slotsLeft <= 0 || cash < 100 || horse.energy < 25 || horse.stats.speed >= horse.potential}
+                  className="w-full justify-between text-xs"
+                  variant="outline"
+                >
+                  <span>Bullet</span>
+                  <span className="text-cream-muted">$100</span>
+                </Button>
+                <Button
+                  onClick={() => trainHorse(horse.id, "breeze")}
+                  disabled={isPregnant || slotsLeft <= 0 || cash < 85 || horse.energy < 20}
+                  className="w-full justify-between text-xs"
+                  variant="outline"
+                >
+                  <span>Breeze</span>
+                  <span className="text-cream-muted">$85</span>
+                </Button>
+                <Button
+                  onClick={() => trainHorse(horse.id, "gate_work")}
+                  disabled={isPregnant || slotsLeft <= 0 || cash < 90 || horse.energy < 22}
+                  className="w-full justify-between text-xs"
+                  variant="outline"
+                >
+                  <span>Gate Work</span>
+                  <span className="text-cream-muted">$90</span>
+                </Button>
+                <Button
+                  onClick={() => trainHorse(horse.id, "swimming")}
+                  disabled={isPregnant || slotsLeft <= 0 || cash < 80 || horse.energy < 15}
+                  className="w-full justify-between text-xs"
+                  variant="outline"
+                >
+                  <span>Swimming</span>
+                  <span className="text-cream-muted">$80</span>
+                </Button>
+                <Button
+                  onClick={() => trainHorse(horse.id, "gallop")}
+                  disabled={isPregnant || slotsLeft <= 0 || cash < 70 || horse.energy < 16}
+                  className="w-full justify-between text-xs"
+                  variant="outline"
+                >
+                  <span>Gallop</span>
+                  <span className="text-cream-muted">$70</span>
+                </Button>
+              </div>
+            </div>
+            
             <Button
               onClick={() => trainHorse(horse.id, "rest")}
               disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}

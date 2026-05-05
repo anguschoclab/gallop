@@ -6,7 +6,7 @@ import type { GameState } from "@/game/types";
  * Breeding state selectors for reproduction tracking and lineage
  */
 export const usePregnancies = () => useGame((s: GameState) => s.pregnancies);
-export const useTripleCrownHistory = () => useGame((s: GameState) => s.triplecrownHistory ?? []);
+export const useTripleCrownHistory = () => (useGame as any)((s: GameState) => s.triplecrownHistory ?? [], shallow);
 
 /**
  * Multiple breeding state values with shallow comparison

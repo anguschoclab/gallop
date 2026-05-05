@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ function SchedulerPage() {
   const day = useGame((s) => s.day);
   const horses = useGame((s) => s.horses);
   const races = useGame((s) => s.races);
-  const campaigns = useGame((s) => s.campaigns ?? []);
+  const campaigns = (useGame as any)((s) => s.campaigns ?? [], shallow);
   const setCampaign = useGame((s) => s.setCampaign);
   const deleteCampaign = useGame((s) => s.deleteCampaign);
   const generateAutoCampaign = useGame((s) => s.generateAutoCampaign);
@@ -182,7 +183,7 @@ function SchedulerPage() {
                 <div className="flex items-center gap-3">
                   <div>
                     <CardTitle className="text-base font-[family-name:var(--font-display)]">
-                      <Link to="/stable/$horseId" params={{ horseId: horse.id }} className="hover:underline">
+                      <Link to="/stable/$horseId" params={{ horseId: horse.id }} className="hover:underline text-cream">
                         {horse.name}
                       </Link>
                     </CardTitle>

@@ -6,9 +6,9 @@ import type { GameState } from "@/game/types";
  * Systems state selectors for optional subsystems and advanced features
  */
 export const useNpcStables = () => useGame((s: GameState) => s.npcStables);
-export const useJockeys = () => useGame((s: GameState) => s.jockeys ?? []);
+export const useJockeys = () => (useGame as any)((s: GameState) => s.jockeys ?? [], shallow);
 export const useAwards = () => useGame((s: GameState) => s.awards);
-export const useCampaigns = () => useGame((s: GameState) => s.campaigns ?? []);
+export const useCampaigns = () => (useGame as any)((s: GameState) => s.campaigns ?? [], shallow);
 export const useUserSettings = () => useGame((s: GameState) => s.userSettings);
 export const useSireLeaderboards = () => useGame((s: GameState) => s.sireLeaderboards);
 export const useIndustryMeanEarnings = () => useGame((s: GameState) => s.industryMeanEarnings ?? 0);

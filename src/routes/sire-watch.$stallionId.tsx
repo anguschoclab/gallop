@@ -27,9 +27,9 @@ function SireProfilePage() {
         </Button>
         <Card>
           <CardContent className="p-12 text-center">
-            <Zap className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Stallion Not Found</h3>
-            <p className="text-sm text-muted-foreground">
+            <Zap className="h-12 w-12 mx-auto text-cream-muted mb-4" />
+            <h3 className="text-lg font-semibold mb-2 text-cream">Stallion Not Found</h3>
+            <p className="text-sm text-cream-muted">
               This stallion is not currently at stud or does not exist.
             </p>
           </CardContent>
@@ -63,7 +63,7 @@ function SireProfilePage() {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <CardTitle className="text-2xl">{stallion.name}</CardTitle>
+                <CardTitle className="text-2xl text-cream">{stallion.name}</CardTitle>
                 <Badge 
                   variant="secondary" 
                   className={getClassificationColor(analytics.classification)}
@@ -71,52 +71,52 @@ function SireProfilePage() {
                   {analytics.classification.charAt(0).toUpperCase() + analytics.classification.slice(1)}
                 </Badge>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-cream-muted">
                 Bloodline: {stallion.bloodline || "Unknown"} · Age {stallion.age}
               </p>
             </div>
             <div className="text-right">
               <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="h-5 w-5 text-muted-foreground" />
-                <span className="text-3xl font-bold">{analytics.aei.toFixed(1)}</span>
+                <TrendingUp className="h-5 w-5 text-cream-muted" />
+                <span className="text-3xl font-bold text-cream">{analytics.aei.toFixed(1)}</span>
               </div>
-              <p className="text-sm text-muted-foreground">AEI</p>
+              <p className="text-sm text-cream-muted">AEI</p>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">CI</p>
-              <p className="text-2xl font-bold">{analytics.ci.toFixed(1)}</p>
+              <p className="text-sm text-cream-muted mb-1">CI</p>
+              <p className="text-2xl font-bold text-cream">{analytics.ci.toFixed(1)}</p>
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Win %</p>
-              <p className="text-2xl font-bold">{analytics.progenyWinPercentage.toFixed(1)}%</p>
+              <p className="text-sm text-cream-muted mb-1">Win %</p>
+              <p className="text-2xl font-bold text-cream">{analytics.progenyWinPercentage.toFixed(1)}%</p>
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Stakes Winners</p>
-              <p className="text-2xl font-bold">{analytics.lifetimeStakesFoals}</p>
+              <p className="text-sm text-cream-muted mb-1">Stakes Winners</p>
+              <p className="text-2xl font-bold text-cream">{analytics.lifetimeStakesFoals}</p>
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">G1 Winners</p>
-              <p className="text-2xl font-bold">{analytics.lifetimeG1Foals}</p>
+              <p className="text-sm text-cream-muted mb-1">G1 Winners</p>
+              <p className="text-2xl font-bold text-cream">{analytics.lifetimeG1Foals}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-2">Standing Fee</p>
-              <p className="text-xl font-bold">${analytics.standingFee.toLocaleString()}</p>
+              <p className="text-sm text-cream-muted mb-2">Standing Fee</p>
+              <p className="text-xl font-bold text-cream">${analytics.standingFee.toLocaleString()}</p>
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-2">Book Size</p>
-              <p className="text-xl font-bold">{stallion.stud.bookSize} mares</p>
+              <p className="text-sm text-cream-muted mb-2">Book Size</p>
+              <p className="text-xl font-bold text-cream">{stallion.stud.bookSize} mares</p>
             </div>
           </div>
 
           <div className="p-4 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground mb-2">Progeny Preferences</p>
+            <p className="text-sm text-cream-muted mb-2">Progeny Preferences</p>
             <div className="flex gap-2">
               <Badge variant="outline" className="text-sm">
                 Surface: {analytics.surfaceBias}
@@ -128,8 +128,8 @@ function SireProfilePage() {
           </div>
 
           <div className="pt-4 border-t">
-            <h3 className="text-lg font-semibold mb-2">Produce Record</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-lg font-semibold mb-2 text-cream">Produce Record</h3>
+            <p className="text-sm text-cream-muted">
               {analytics.lifetimeFoals} total foals · {analytics.lifetimeStakesFoals} stakes winners ({analytics.progenyWinPercentage.toFixed(1)}%) · {analytics.lifetimeG1Foals} Group 1 winners
             </p>
           </div>

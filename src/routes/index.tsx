@@ -43,8 +43,8 @@ function Dashboard() {
       <div className="flex items-end justify-between">
         <div>
           {/* Design Bible: Page titles use Cormorant Garamond display font */}
-          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Dashboard</h1>
-          <p className="text-muted-foreground font-[family-name:var(--font-mono)] tabular-nums">{gameCalendarDate(day)}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Dashboard</h1>
+          <p className="text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">{gameCalendarDate(day)}</p>
         </div>
         <div className="flex gap-2">
           <Link to="/financial-report">
@@ -161,7 +161,7 @@ function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="font-[family-name:var(--font-display)]">Top Stable Stars</CardTitle>
+            <CardTitle className="text-cream font-[family-name:var(--font-display)]">Top Stable Stars</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {horses.slice().sort((a, b) => overall(b) - overall(a)).slice(0, 5).map((h) => (
@@ -169,7 +169,7 @@ function Dashboard() {
                 {/* Design Bible: Silk dot beside every horse name */}
                 <SilkDot color={h.silk} size="md" />
                 <div className="flex-1">
-                  <p className="font-medium text-sm font-[family-name:var(--font-display)]">{h.name}</p>
+                  <p className="font-medium text-sm text-cream font-[family-name:var(--font-display)]">{h.name}</p>
                   <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                     Age <NumericValue value={h.age} /> · OVR <NumericValue value={overall(h)} />
                   </p>
@@ -185,7 +185,7 @@ function Dashboard() {
 
         <Card className="border-gold-muted">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="font-[family-name:var(--font-display)]">Upcoming Entries</CardTitle>
+            <CardTitle className="text-cream font-[family-name:var(--font-display)]">Upcoming Entries</CardTitle>
             <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}>
               <Button className="h-8">View Calendar</Button>
             </Link>
@@ -194,13 +194,13 @@ function Dashboard() {
             {upcoming.map((r) => (
               <div key={r.id} className="flex items-center justify-between p-2 rounded hover:bg-t700">
                 <div>
-                  <p className="font-medium text-sm font-[family-name:var(--font-display)]">{r.name}</p>
+                  <p className="font-medium text-sm text-cream font-[family-name:var(--font-display)]">{r.name}</p>
                   <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                     Day <NumericValue value={r.day} /> · <NumericValue value={r.distance} suffix="m" /> · {r.raceClass}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold font-[family-name:var(--font-mono)] tabular-nums">${r.purse.toLocaleString()}</p>
+                  <p className="text-sm font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">${r.purse.toLocaleString()}</p>
                   {r.entries.some((e) => e.owned) && (
                     <Badge className="text-[9px] bg-success text-t950">Entered</Badge>
                   )}
@@ -214,7 +214,7 @@ function Dashboard() {
 
       <Card className="border-gold-muted">
         <CardHeader>
-          <CardTitle className="font-[family-name:var(--font-display)]">Stable Log</CardTitle>
+          <CardTitle className="text-cream font-[family-name:var(--font-display)]">Stable Log</CardTitle>
         </CardHeader>
         <CardContent className="space-y-1">
           {log.slice(0, 8).map((l, i) => (

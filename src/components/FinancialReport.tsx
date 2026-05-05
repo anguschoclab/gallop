@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, DollarSign, Wallet } from "lucide-react";
-import { useHorses, useRaces, useCash, useDay } from "@/game/hooks/useCoreState";
+import { useHorses, useRaces, useCash, useDay, useExpenses } from "@/game/hooks/useCoreState";
 import { formatCurrency, formatProfitLoss } from "@/core/financial";
 import type { IncomeSummary, ExpenseSummary } from "@/core/financial";
+import { groupExpensesByCategory, CATEGORY_DISPLAY, type ExpenseCategory } from "@/core/expenses";
 
 /**
  * Simple Financial Report Component
@@ -15,6 +16,7 @@ export function FinancialReport() {
   const races = useRaces();
   const cash = useCash();
   const day = useDay();
+  const expenses = useExpenses();
 
   // Calculate income from resolved races
   const playerHorses = horses.filter((h) => h.owned);
@@ -37,25 +39,11 @@ export function FinancialReport() {
     }
   }
 
-  // Calculate expenses (estimated)
-  const daysActive = Math.max(1, day);
-  const upkeepPerHorse = 50;
-  const trainingCost = 75;
-
-  // Estimate training sessions (2 per day per horse, but not all horses train daily)
-  const estimatedTrainingSessions = playerHorses.length * daysActive * 1.5; // ~1.5 sessions per horse per day
-  const estimatedUpkeep = playerHorses.length * upkeepPerHorse * daysActive;
-  const estimatedTraining = estimatedTrainingSessions * trainingCost;
-
-  // Entry fees from races entered
-  let totalEntryFees = 0;
-  for (const race of races) {
-    for (const entry of race.entries) {
-      if (playerHorseIds.has(entry.horseId)) {
-        totalEntryFees += race.entryFee;
-      }
-    }
-  }
+  // Calculate expenses from actual expense records
+  const groupedExpenses = groupExpensesByCategory(expenses);
+  const expenseMap = new Map<ExpenseCategory, number>(
+    groupedExpenses.map((ge) => [ge.category, ge.amount])
+  );
 
   const income: IncomeSummary = {
     prizeMoney: totalPrizeMoney,
@@ -66,22 +54,24 @@ export function FinancialReport() {
     total: totalPrizeMoney,
   };
 
-  const expenses: ExpenseSummary = {
-    upkeep: estimatedUpkeep,
-    training: estimatedTraining,
-    entryFees: totalEntryFees,
-    jockeyFees: 0,    // Would need jockey fee tracking
-    horsePurchases: 0, // Would need purchase history
-    breedingFees: 0,  // Would need breeding tracking
-    transport: 0,     // Not implemented yet
-    veterinary: 0,    // Not implemented yet
-    farrier: 0,       // Not implemented yet
-    insurance: 0,     // Not implemented yet
-    facilityMaintenance: daysActive * 100, // Rough estimate
-    total: estimatedUpkeep + estimatedTraining + totalEntryFees + daysActive * 100,
+  const expensesTotal = groupedExpenses.reduce((sum, ge) => sum + ge.amount, 0);
+
+  const expenseSummary: ExpenseSummary = {
+    upkeep: expenseMap.get("upkeep") ?? 0,
+    training: expenseMap.get("training") ?? 0,
+    entryFees: expenseMap.get("entry_fees") ?? 0,
+    jockeyFees: expenseMap.get("jockey_fees") ?? 0,
+    horsePurchases: expenseMap.get("purchases") ?? 0,
+    breedingFees: expenseMap.get("breeding") ?? 0,
+    transport: expenseMap.get("transport") ?? 0,
+    veterinary: expenseMap.get("veterinary") ?? 0,
+    farrier: expenseMap.get("farrier") ?? 0,
+    insurance: expenseMap.get("insurance") ?? 0,
+    facilityMaintenance: expenseMap.get("facility_maintenance") ?? 0,
+    total: expensesTotal,
   };
 
-  const netProfit = income.total - expenses.total;
+  const netProfit = income.total - expenseSummary.total;
 
   return (
     <div className="space-y-4">
@@ -133,7 +123,7 @@ export function FinancialReport() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-rose-600">
-              {formatCurrency(expenses.total)}
+              {formatCurrency(expenseSummary.total)}
             </div>
             <p className="text-xs text-muted-foreground">
               Upkeep, training, entry fees
@@ -172,24 +162,24 @@ export function FinancialReport() {
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Daily Upkeep</span>
-              <span>{formatCurrency(expenses.upkeep)}</span>
+              <span>{formatCurrency(expenseSummary.upkeep)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Training Costs</span>
-              <span>{formatCurrency(expenses.training)}</span>
+              <span>{formatCurrency(expenseSummary.training)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Race Entry Fees</span>
-              <span>{formatCurrency(expenses.entryFees)}</span>
+              <span>{formatCurrency(expenseSummary.entryFees)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Facility Maintenance</span>
-              <span>{formatCurrency(expenses.facilityMaintenance)}</span>
+              <span>{formatCurrency(expenseSummary.facilityMaintenance)}</span>
             </div>
             <div className="border-t pt-2 mt-2">
               <div className="flex justify-between font-medium">
                 <span>Total Expenses</span>
-                <span>{formatCurrency(expenses.total)}</span>
+                <span>{formatCurrency(expenseSummary.total)}</span>
               </div>
             </div>
           </div>
