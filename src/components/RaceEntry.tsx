@@ -161,8 +161,8 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 <ChevronRight className="text-muted-foreground/30" />
                 
                 <div className="flex flex-col items-center gap-2">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-primary">
-                    <User />
+                  <div className="h-12 w-12 rounded-md bg-white/5 border-2 border-primary/20 flex items-center justify-center overflow-hidden">
+                    <RacingSilks silk={selectedJockey.silk} size={44} />
                   </div>
                   <div className="font-black uppercase tracking-tighter text-center leading-none">
                     {selectedJockey.name}
