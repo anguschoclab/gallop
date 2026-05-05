@@ -1,4 +1,0 @@
-🎯 **What:** Extracted the duplicated `groupRacesByDate` function from `CanadianSchedule.tsx`, `JapaneseSchedule.tsx`, and `RegionalSchedule.tsx` into a shared utility in `src/lib/utils.ts`.
-💡 **Why:** This improves maintainability by removing code duplication and applying a properly typed generic signature (`<T extends { day: number }>`) instead of using `any[]`, which improves safety.
-✅ **Verification:** Verified by typechecking and running the full test suite (`bun test`), ensuring zero regressions.
-✨ **Result:** The codebase is cleaner, DRYer, and more type-safe.
