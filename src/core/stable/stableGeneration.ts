@@ -1,7 +1,7 @@
 import type { Stable, StableTier, StablePersonality } from "@/game/types";
 import type { Rng } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
-import { selectPersonality, getSpecialistPreferences } from "./stableSelection";
+import { selectPersonality, getSpecialistPreferences } from "@/core/stable/stableSelection";
 
 // Random silk color generator (hex)
 export function randomSilk(rng: Rng): string {
