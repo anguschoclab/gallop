@@ -4,6 +4,7 @@ import { Jockey } from "@/game/types";
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { User, Trophy, Calendar, DollarSign, Target } from "lucide-react";
+import { RacingSilks } from "./RacingSilks";
 
 interface JockeyCardProps {
   jockey: Jockey;
@@ -43,8 +44,8 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
       <CardHeader className="p-4 pb-0">
         <div className="flex justify-between items-start">
           <div className="flex gap-3">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-              <User size={20} />
+            <div className="h-12 w-12 rounded-md bg-white/5 flex items-center justify-center border border-white/10 overflow-hidden">
+              <RacingSilks silk={jockey.silk} size={44} />
             </div>
             <div>
               <CardTitle className="text-lg font-bold">{jockey.name}</CardTitle>

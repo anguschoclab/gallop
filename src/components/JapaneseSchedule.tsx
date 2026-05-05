@@ -111,9 +111,9 @@ export function JapaneseSchedule() {
                                 {race.restrictions?.minAge && (
                                   <span>{race.restrictions.minAge}+ YO</span>
                                 )}
-                                {race.restrictions?.sex && (
+                                {race.restrictions?.gender && (
                                   <span>
-                                    {race.restrictions.sex === "filly"
+                                    {race.restrictions.gender.includes("filly") || race.restrictions.gender.includes("mare")
                                       ? "Fillies"
                                       : "Colts"}{" "}
                                     only

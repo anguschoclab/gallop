@@ -8,6 +8,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { Check, ChevronRight, User, Info, AlertTriangle } from "lucide-react";
 import { JockeyCard } from "./JockeyCard";
+import { RacingSilks } from "./RacingSilks";
 
 interface RaceEntryProps {
   race: Race;
@@ -32,7 +33,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const eligibleHorses = useMemo(() => {
     return horses.map(h => ({
       horse: h,
-      eligible: isHorseEligibleForRace(h, race),
+      eligible: isHorseEligibleForRace(h, race, new Set()),
     }));
   }, [horses, race]);
 
@@ -58,15 +59,18 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
     const arch = jockey.archetype;
 
     if (arch === "versatile" || arch === "clinical") return "High";
-    
-    if (style === "E" && arch === "front_runner") return "High";
-    if (style === "C" && arch === "closer") return "High";
-    if (style === "S" && arch === "closer") return "Good";
-    if (style === "P" && arch === "clinical") return "High";
-    
-    if (style === "E" && arch === "closer") return "Poor";
-    if (style === "C" && arch === "front_runner") return "Poor";
-    
+
+    // Front-end speed horses (E/EP) pair with front_runner
+    if ((style === "E" || style === "EP") && arch === "front_runner") return "High";
+    // Closers (S) pair with closer/finisher
+    if (style === "S" && (arch === "closer" || arch === "finisher")) return "High";
+    if (style === "P" && arch === "closer") return "Good";
+    if (style === "P" && arch === "finisher") return "Good";
+
+    // Mismatches
+    if ((style === "E" || style === "EP") && arch === "closer") return "Poor";
+    if (style === "S" && arch === "front_runner") return "Poor";
+
     return "Neutral";
   };
 
@@ -157,8 +161,8 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 <ChevronRight className="text-muted-foreground/30" />
                 
                 <div className="flex flex-col items-center gap-2">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-primary">
-                    <User />
+                  <div className="h-12 w-12 rounded-md bg-white/5 border-2 border-primary/20 flex items-center justify-center overflow-hidden">
+                    <RacingSilks silk={selectedJockey.silk} size={44} />
                   </div>
                   <div className="font-black uppercase tracking-tighter text-center leading-none">
                     {selectedJockey.name}
