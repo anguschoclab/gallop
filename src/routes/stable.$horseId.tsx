@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { HorseStats, SilkBadge } from "@/components/HorseBits";
+import { HorseStats, SilkBadge, NumericValue } from "@/components/HorseBits";
+import { SilkDot } from "@/components/SilkDot";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
 import { ArrowLeft, Tag } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
@@ -19,6 +20,7 @@ import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAd
 import { TRAINING_COST } from "@/game/store";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { getCurrentYear } from "@/game/raceSchedule";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
@@ -65,17 +67,23 @@ function HorseDetail() {
       })
     : undefined;
 
+  const ovr = calculateOverallRating(horse);
+
   return (
     <div className="space-y-6">
       <div>
-        <Link to="/stable" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-3">
+        <Link to="/stable" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-3 font-[family-name:var(--font-body)]">
           <ArrowLeft className="h-4 w-4" /> Back to stable
         </Link>
         <div className="flex items-start gap-6">
-          <HorsePortrait coatColor={horse.coatColor} size="lg" />
+          {/* Design Bible: SilkDot for identity */}
+          <SilkDot color={horse.coatColor || "#8B4513"} size="lg" />
           <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight">{horse.name}</h1>
-            <p className="text-muted-foreground">Age {horse.age} · OVR {calculateOverallRating(horse)} · Potential {horse.potential}</p>
+            {/* Display font for horse name */}
+            <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">{horse.name}</h1>
+            <p className="text-muted-foreground font-[family-name:var(--font-body)]">
+              Age <NumericValue value={horse.age} /> · OVR <NumericValue value={ovr} /> · Potential <NumericValue value={horse.potential} />
+            </p>
             {(() => {
               const ability = getAbility(horse);
               const family = horse.bruceLoweFamily;

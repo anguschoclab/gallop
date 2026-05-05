@@ -4,10 +4,11 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { overall } from "@/components/HorseBits";
+import { overall, NumericValue } from "@/components/HorseBits";
+import { SilkDot } from "@/components/SilkDot";
 import { Trophy, BarChart2, Calendar, TrendingUp } from "lucide-react";
-import { HorsePortrait } from "@/components/HorsePortrait";
 import { getGradeColorClass } from "@/core/race/grading";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
@@ -41,8 +42,9 @@ function Dashboard() {
     <div className="space-y-6">
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground tabular-nums">{gameCalendarDate(day)}</p>
+          {/* Design Bible: Page titles use Cormorant Garamond display font */}
+          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Dashboard</h1>
+          <p className="text-muted-foreground font-[family-name:var(--font-mono)] tabular-nums">{gameCalendarDate(day)}</p>
         </div>
         <div className="flex gap-2">
           <Link to="/recap">
@@ -60,28 +62,41 @@ function Dashboard() {
         </div>
       </div>
 
+      {/* Stat Tiles - Design Bible: Numbers are the protagonist */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Cash on hand</CardTitle></CardHeader>
-          <CardContent><p className="text-3xl font-bold tabular-nums">${cash.toLocaleString()}</p></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">Cash on hand</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold font-[family-name:var(--font-mono)] tabular-nums">${cash.toLocaleString()}</p>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Horses owned</CardTitle></CardHeader>
-          <CardContent><p className="text-3xl font-bold tabular-nums">{horses.length}</p></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">Horses owned</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <NumericValue value={horses.length} className="text-3xl font-bold" />
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">My next races</CardTitle></CardHeader>
-          <CardContent><p className="text-3xl font-bold tabular-nums">{myRunning.length}</p></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">My next races</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <NumericValue value={myRunning.length} className="text-3xl font-bold" />
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Awards</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">Awards</CardTitle>
             <Trophy className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <p className="text-3xl font-bold tabular-nums">{playerAwards.length}</p>
-              {hotyCount > 0 && <span className="text-xs text-fame font-medium tabular-nums">{hotyCount} HOTY</span>}
+              <NumericValue value={playerAwards.length} className="text-3xl font-bold" />
+              {hotyCount > 0 && <span className="text-xs text-fame font-medium font-[family-name:var(--font-mono)] tabular-nums">{hotyCount} HOTY</span>}
             </div>
           </CardContent>
         </Card>
@@ -90,17 +105,17 @@ function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-1">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Grade Targets</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">Grade Targets</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-2">
               {gradeData.map(({ grade, owned }) => (
                 <div key={grade} className="text-center">
-                  <div className={`inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-semibold mb-1 ${getGradeColorClass(grade)}`}>
+                  <div className={cn("inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-semibold mb-1", getGradeColorClass(grade))}>
                     {grade}
                   </div>
-                  <div className="text-lg font-bold tabular-nums">{owned}</div>
+                  <NumericValue value={owned} className="text-lg font-bold" />
                 </div>
               ))}
             </div>
@@ -139,51 +154,66 @@ function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
-          <CardHeader><CardTitle>Top Stable Stars</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="font-[family-name:var(--font-display)]">Top Stable Stars</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-2">
             {horses.slice().sort((a, b) => overall(b) - overall(a)).slice(0, 5).map((h) => (
               <Link key={h.id} to="/stable/$horseId" params={{ horseId: h.id }} className="flex items-center gap-3 p-2 rounded hover:bg-muted transition-colors">
-                <HorsePortrait coatColor={h.coatColor} size="sm" />
+                {/* Design Bible: Silk dot beside every horse name */}
+                <SilkDot color={h.coatColor || "#8B4513"} size="md" />
                 <div className="flex-1">
-                  <p className="font-medium text-sm">{h.name}</p>
-                  <p className="text-xs text-muted-foreground tabular-nums">Age {h.age} · OVR {overall(h)}</p>
+                  <p className="font-medium text-sm font-[family-name:var(--font-display)]">{h.name}</p>
+                  <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                    Age <NumericValue value={h.age} /> · OVR <NumericValue value={overall(h)} />
+                  </p>
                 </div>
-                <Badge variant="secondary" className="tabular-nums text-[10px]">E {h.energy}</Badge>
+                <Badge className="font-[family-name:var(--font-mono)] tabular-nums text-[10px] bg-secondary text-secondary-foreground">
+                  E <NumericValue value={h.energy} />
+                </Badge>
               </Link>
             ))}
-            {horses.length === 0 && <p className="text-sm text-muted-foreground">No horses in training.</p>}
+            {horses.length === 0 && <p className="text-sm text-muted-foreground italic">No horses in training. Visit the auction to acquire stock.</p>}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Upcoming Entries</CardTitle>
-            <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}><Button size="sm" variant="ghost">View Calendar</Button></Link>
+            <CardTitle className="font-[family-name:var(--font-display)]">Upcoming Entries</CardTitle>
+            <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}>
+              <Button className="h-8">View Calendar</Button>
+            </Link>
           </CardHeader>
           <CardContent className="space-y-2">
             {upcoming.map((r) => (
               <div key={r.id} className="flex items-center justify-between p-2 rounded hover:bg-muted">
                 <div>
-                  <p className="font-medium text-sm">{r.name}</p>
-                  <p className="text-xs text-muted-foreground tabular-nums">Day {r.day} · {r.distance}m · {r.raceClass}</p>
+                  <p className="font-medium text-sm font-[family-name:var(--font-display)]">{r.name}</p>
+                  <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                    Day <NumericValue value={r.day} /> · <NumericValue value={r.distance} suffix="m" /> · {r.raceClass}
+                  </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold tabular-nums">${r.purse.toLocaleString()}</p>
-                  {r.entries.some((e) => e.owned) && <Badge variant="default" className="text-[9px] bg-success">Entered</Badge>}
+                  <p className="text-sm font-bold font-[family-name:var(--font-mono)] tabular-nums">${r.purse.toLocaleString()}</p>
+                  {r.entries.some((e) => e.owned) && (
+                    <Badge className="text-[9px] bg-success text-success-foreground">Entered</Badge>
+                  )}
                 </div>
               </div>
             ))}
-            {upcoming.length === 0 && <p className="text-sm text-muted-foreground italic">No upcoming races scheduled.</p>}
+            {upcoming.length === 0 && <p className="text-sm text-muted-foreground italic">No races today.</p>}
           </CardContent>
         </Card>
       </div>
 
       <Card>
-        <CardHeader><CardTitle>Stable Log</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="font-[family-name:var(--font-display)]">Stable Log</CardTitle>
+        </CardHeader>
         <CardContent className="space-y-1">
           {log.slice(0, 8).map((l, i) => (
-            <div key={i} className="text-sm flex gap-3 border-b border-border/30 last:border-0 py-1">
-              <span className="text-muted-foreground tabular-nums w-10 shrink-0">D{l.day}</span>
+            <div key={i} className="text-sm flex gap-3 border-b border-border/30 last:border-0 py-1 font-[family-name:var(--font-body)]">
+              <span className="text-muted-foreground font-[family-name:var(--font-mono)] tabular-nums w-10 shrink-0">D{l.day}</span>
               <span className="text-foreground/80">{l.text}</span>
             </div>
           ))}

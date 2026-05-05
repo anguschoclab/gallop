@@ -62,10 +62,11 @@ export function AppShell() {
       </a>
       <aside className="w-60 shrink-0 border-r bg-sidebar flex flex-col">
         <div className="p-5 border-b border-sidebar-border">
-          <h1 className="text-lg font-bold tracking-tight text-sidebar-foreground">
-            Stable Manager
+          {/* Design Bible: Brand title uses display font */}
+          <h1 className="text-lg font-bold tracking-tight text-sidebar-foreground font-[family-name:var(--font-display)]">
+            Gallop
           </h1>
-          <p className="text-xs text-sidebar-foreground/60 mt-0.5 tabular-nums">
+          <p className="text-xs text-sidebar-foreground/60 mt-0.5 font-[family-name:var(--font-mono)] tabular-nums">
             {gameCalendarDate(day)}
           </p>
         </div>
@@ -94,12 +95,13 @@ export function AppShell() {
         </nav>
         <div className="p-3 border-t border-sidebar-border space-y-2">
           <div className="px-3 py-2 rounded-md bg-sidebar-accent/50">
-            <p className="text-xs text-sidebar-foreground/60">Cash</p>
-            <p className="text-lg font-bold tabular-nums text-sidebar-foreground">
+            <p className="text-xs text-sidebar-foreground/60 font-[family-name:var(--font-body)]">Cash</p>
+            {/* Design Bible: Numbers use IBM Plex Mono with tabular-nums */}
+            <p className="text-lg font-bold font-[family-name:var(--font-mono)] tabular-nums text-sidebar-foreground">
               ${cash.toLocaleString()}
             </p>
           </div>
-          <div className="px-3 py-1 text-xs text-sidebar-foreground/60 tabular-nums">
+          <div className="px-3 py-1 text-xs text-sidebar-foreground/60 font-[family-name:var(--font-mono)] tabular-nums">
             {horses.length} horses
           </div>
           <div className="grid grid-cols-4 gap-1">

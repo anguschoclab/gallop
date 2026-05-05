@@ -7,7 +7,10 @@ import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
 import { JargonTooltip } from "./ui/JargonTooltip";
 import { useGame } from "@/game/store";
 import { HorsePortraitBadge, HorsePortrait } from "./HorsePortrait";
+import { SilkDot } from "./SilkDot";
+import { NumericValue } from "./HorseBits";
 import { Trophy, Zap, TrendingUp, Activity, Dna, Calendar, User, Building2, Eye, Ruler, Weight, HeartPulse } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface HorseCardProps {
   horse: Horse;
@@ -62,34 +65,37 @@ export function HorseCard({
 
   if (variant === "compact") {
     return (
-      <Card className={`hover:shadow-md transition-shadow cursor-pointer ${className}`} onClick={onClick}>
+      <Card className={cn("hover:shadow-md transition-shadow cursor-pointer", className)} onClick={onClick}>
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
-            <HorsePortraitBadge coatColor={horse.coatColor} size="sm" />
+            {/* Identity: SilkDot + Name */}
+            <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className={`${genderColor} text-sm`}>{genderIcon}</span>
-                <span className="font-semibold truncate">{horse.name}</span>
+                <span className={cn(genderColor, "text-sm")}>{genderIcon}</span>
+                <span className="font-semibold font-[family-name:var(--font-display)] truncate">{horse.name}</span>
               </div>
+              {/* Qualifiers */}
               <div className="text-xs text-muted-foreground flex items-center gap-2">
-                <span className="font-semibold tabular-nums">{horse.age}yo</span>
+                <NumericValue value={horse.age} suffix="yo" className="font-semibold" />
                 <span>·</span>
-                <JargonTooltip term="OVR">OVR {ovr}</JargonTooltip>
+                <JargonTooltip term="OVR"><span className="font-[family-name:var(--font-body)]">OVR</span> <NumericValue value={ovr} /></JargonTooltip>
                 {horse.stableId && (
                   <>
                     <span>·</span>
-                    <span className="text-chart-4 tabular-nums">★ {horse.fame}</span>
+                    <span className="text-chart-4"><NumericValue value={horse.fame} prefix="★ " /></span>
                   </>
                 )}
               </div>
             </div>
+            {/* Numbers */}
             <div className="flex flex-col items-end gap-1">
-              <Badge variant="secondary" className="text-xs">
+              <Badge className="text-xs bg-secondary text-secondary-foreground">
                 <Zap className="w-3 h-3 mr-1" />
-                {horse.energy}
+                <NumericValue value={horse.energy} />
               </Badge>
               {scoutStatus && (
-                <Badge variant="outline" className={`text-xs ${scoutStatus.color}`}>
+                <Badge className={cn("text-xs", scoutStatus.color)}>
                   {scoutStatus.icon}
                 </Badge>
               )}
@@ -106,20 +112,20 @@ export function HorseCard({
     const hasAllStats = Object.keys(knownStats).length === 4;
 
     return (
-      <Card className={`${className}`}>
+      <Card className={className}>
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <HorsePortrait coatColor={horse.coatColor} size="md" />
+              <SilkDot color={getCoatColor(horse.coatColor)} size="lg" />
               <div>
                 <div className="flex items-center gap-2">
-                  <span className={`${genderColor} text-lg`}>{genderIcon}</span>
-                  <span className="font-bold text-lg">{horse.name}</span>
+                  <span className={cn(genderColor, "text-lg")}>{genderIcon}</span>
+                  <span className="font-bold text-lg font-[family-name:var(--font-display)]">{horse.name}</span>
                 </div>
                 <div className="text-sm text-muted-foreground flex items-center gap-2">
-                  <span className="tabular-nums">{horse.age} years old</span>
+                  <NumericValue value={horse.age} suffix=" years old" />
                   <span>·</span>
-                  <span className="text-chart-4 tabular-nums">Fame: {horse.fame}/100</span>
+                  <span className="text-chart-4">Fame: <NumericValue value={horse.fame} suffix="/100" /></span>
                 </div>
               </div>
             </div>
@@ -172,22 +178,24 @@ export function HorseCard({
 
   // Full variant
   return (
-    <Card className={`hover:shadow-md transition-shadow ${onClick ? "cursor-pointer" : ""} ${className}`} onClick={onClick}>
+    <Card className={cn("hover:shadow-md transition-shadow", onClick && "cursor-pointer", className)} onClick={onClick}>
       <CardContent className="p-5">
-        {/* Header */}
+        {/* Header - Design Bible: Identity | Qualifiers | Numbers */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <HorsePortrait coatColor={horse.coatColor} size="md" />
+            <SilkDot color={getCoatColor(horse.coatColor)} size="lg" />
             <div>
+              {/* Identity */}
               <div className="flex items-center gap-2">
-                <span className={`${genderColor} text-lg`}>{genderIcon}</span>
-                <span className="font-bold text-lg">{horse.name}</span>
+                <span className={cn(genderColor, "text-lg")}>{genderIcon}</span>
+                <span className="font-bold text-lg font-[family-name:var(--font-display)]">{horse.name}</span>
                 {getHealthStatus()}
               </div>
-              <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
+              {/* Qualifiers */}
+              <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap font-[family-name:var(--font-body)]">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
-                  <span className="tabular-nums">{horse.age} years old</span>
+                  <NumericValue value={horse.age} suffix=" years old" />
                 </span>
                 {horse.hemisphere && (
                   <>
@@ -198,24 +206,25 @@ export function HorseCard({
                 {horse.stableId && (
                   <>
                     <span>·</span>
-                    <span className="text-chart-4 flex items-center gap-1 tabular-nums">
+                    <span className="text-chart-4 flex items-center gap-1">
                       <Trophy className="w-3 h-3" />
-                      {horse.fame} fame
+                      <NumericValue value={horse.fame} suffix=" fame" />
                     </span>
                   </>
                 )}
               </div>
             </div>
           </div>
+          {/* Numbers */}
           <div className="flex flex-col items-end gap-1">
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge className="flex items-center gap-1 bg-secondary text-secondary-foreground">
               <Zap className="w-3 h-3" />
-              <span className="tabular-nums">{horse.energy} Energy</span>
+              <NumericValue value={horse.energy} suffix=" Energy" />
             </Badge>
             {horse.form !== 0 && (
-              <Badge variant={horse.form > 0 ? "default" : "destructive"} className="text-xs flex items-center gap-1">
+              <Badge className={cn("text-xs flex items-center gap-1", horse.form > 0 ? "bg-primary text-primary-foreground" : "bg-destructive text-destructive-foreground")}>
                 <TrendingUp className="w-3 h-3" />
-                <span className="tabular-nums">{horse.form > 0 ? "+" : ""}{horse.form} Form</span>
+                <NumericValue value={horse.form} prefix={horse.form > 0 ? "+" : ""} suffix=" Form" />
               </Badge>
             )}
           </div>
@@ -312,8 +321,8 @@ function StatBar({ label, value }: { label: string; value: number }) {
   return (
     <div>
       <div className="flex justify-between text-xs mb-1">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium tabular-nums">{value}</span>
+        <span className="text-muted-foreground font-[family-name:var(--font-body)]">{label}</span>
+        <span className="font-medium font-[family-name:var(--font-mono)] tabular-nums">{value}</span>
       </div>
       <Progress value={value} className="h-1.5" />
     </div>

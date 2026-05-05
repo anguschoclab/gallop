@@ -19,6 +19,11 @@
  */
 
 @theme inline {
+  /* Font families */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -76,6 +81,16 @@
   --color-warning: var(--warning);
   --color-fame: var(--fame);
   --color-info: var(--info);
+
+  /* Racing palette utilities */
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-muted: var(--gold-muted);
+  --color-gold-subtle: var(--gold-subtle);
+  --color-cream: var(--cream);
+  --color-cream-muted: var(--cream-muted);
+  --color-cream-faint: var(--cream-faint);
+  --color-emerald-accent: var(--emerald-accent);
 }
 
 :root {
@@ -135,6 +150,16 @@
   --warning: oklch(0.769 0.188 70.08);
   --fame: oklch(0.828 0.189 84.429);
   --info: oklch(0.646 0.222 41.116);
+
+  /* Racing Palette (Design Bible) */
+  --gold: #C9A050;
+  --gold-light: #DEB96E;
+  --gold-muted: rgba(201,160,80,0.3);
+  --gold-subtle: rgba(201,160,80,0.08);
+  --cream: #EFE5C5;
+  --cream-muted: #A89872;
+  --cream-faint: rgba(239,229,197,0.06);
+  --emerald-accent: #34D16B;
 }
 
 .dark {
@@ -180,9 +205,14 @@
     border-color: var(--color-border);
   }
 
+  html {
+    font-family: var(--font-body);
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-body);
   }
 }
 
