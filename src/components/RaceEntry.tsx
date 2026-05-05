@@ -9,6 +9,7 @@ import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { Check, ChevronRight, User, Info, AlertTriangle } from "lucide-react";
 import { JockeyCard } from "./JockeyCard";
 import { RacingSilks } from "./RacingSilks";
+import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
 
 interface RaceEntryProps {
   race: Race;
@@ -99,13 +100,13 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                     disabled={!eligible}
                     onClick={() => setSelectedHorseId(horse.id)}
                     className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                      selectedHorseId === horse.id 
-                        ? "border-primary bg-primary/10" 
+                      selectedHorseId === horse.id
+                        ? "border-primary bg-primary/10"
                         : "border-white/5 bg-white/5 hover:bg-white/10"
                     } ${!eligible ? "opacity-50 grayscale cursor-not-allowed" : ""}`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="h-4 w-4 rounded-full border border-white/20" style={{ backgroundColor: horse.silk }} />
+                      <HorsePortraitBadge coatColor={horse.coatColor} size="sm" />
                       <div className="text-left">
                         <div className="font-bold">{horse.name}</div>
                         <div className="text-[10px] uppercase text-muted-foreground">Rating {calculateOverallRating(horse)} · Energy {horse.energy}%</div>
@@ -147,19 +148,19 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
           {step === 3 && selectedHorse && selectedJockey && (
             <div className="space-y-6 animate-in zoom-in-95 duration-300">
               <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground text-center">Final Review</h3>
-              
+
               <div className="flex justify-around items-center gap-4 bg-white/5 p-6 rounded-2xl border border-white/5 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
-                
+
                 <div className="flex flex-col items-center gap-2">
-                  <div className="h-12 w-12 rounded-full border-2 border-white/20" style={{ backgroundColor: selectedHorse.silk }} />
+                  <HorsePortrait coatColor={selectedHorse.coatColor} size="md" />
                   <div className="font-black uppercase tracking-tighter text-center leading-none">
                     {selectedHorse.name}
                   </div>
                 </div>
-                
+
                 <ChevronRight className="text-muted-foreground/30" />
-                
+
                 <div className="flex flex-col items-center gap-2">
                   <div className="h-12 w-12 rounded-md bg-white/5 border-2 border-primary/20 flex items-center justify-center overflow-hidden">
                     <RacingSilks silk={selectedJockey.silk} size={44} />

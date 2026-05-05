@@ -5,7 +5,8 @@
 
 import { describe, it, expect } from "vitest";
 import { runNpcCycle } from "@/core/npc/npcCycle";
-import type { GameState, Horse, Stable, Race } from "@/game/types";
+import { createRng } from "@/game/rng";
+import type { GameState, Horse, Stable, Race, Jockey } from "@/game/types";
 
 describe("NPC Daily Cycle Integration", () => {
   it("should run complete NPC cycle", () => {
@@ -28,7 +29,7 @@ describe("NPC Daily Cycle Integration", () => {
     const horses: Horse[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10);
+    const result = runNpcCycle(npcStables, horses, races, 10, createRng("test"));
     
     // Verify result structure
     expect(result.horses).toBeDefined();
@@ -42,7 +43,7 @@ describe("NPC Daily Cycle Integration", () => {
     const horses: Horse[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10);
+    const result = runNpcCycle(npcStables, horses, races, 10, createRng("test"));
     
     // Should return unchanged
     expect(result.horses).toEqual([]);
@@ -69,7 +70,7 @@ describe("NPC Daily Cycle Integration", () => {
     const horses: Horse[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10);
+    const result = runNpcCycle(npcStables, horses, races, 10, createRng("test"));
     
     // Should not crash with empty horse roster
     expect(result.horses).toBeDefined();
@@ -94,9 +95,10 @@ describe("NPC Daily Cycle Integration", () => {
     ];
 
     const horses: Horse[] = [];
+    const jockeys: Jockey[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10, 5);
+    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, createRng(12345), 5);
     
     // Should not crash with custom raceEntryDaysAhead
     expect(result.horses).toBeDefined();

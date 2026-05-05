@@ -8,6 +8,8 @@ import { executePipeline } from "@/core/time/pipeline";
 import { upkeepPhase } from "@/core/time/phases/upkeep";
 import { agingPhase } from "@/core/time/phases/aging";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
+import { createRng } from "@/game/rng";
+import { createTestHorse } from "@/tests/helpers";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 
@@ -39,6 +41,7 @@ describe("Day Advancement Pipeline Integration", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = executePipeline(phases, context);
@@ -79,6 +82,7 @@ describe("Day Advancement Pipeline Integration", () => {
       newDay: 10,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = executePipeline(phases, context);
@@ -114,6 +118,7 @@ describe("Day Advancement Pipeline Integration", () => {
       newDay: 10,
       state,
       logs: [{ day: 9, text: "Initial log" }],
+      dailyRng: createRng("test"),
     };
 
     const result = executePipeline(phases, context);
@@ -129,7 +134,7 @@ describe("Day Advancement Pipeline Integration", () => {
       day: 10,
       cash: 10000,
       horses: [
-        {
+        createTestHorse({
           id: "horse-1",
           name: "Horse 1",
           age: 3,
@@ -143,7 +148,7 @@ describe("Day Advancement Pipeline Integration", () => {
           owned: true,
           fame: 50,
           raceHistory: [],
-        },
+        }),
       ],
       npcStables: [],
       pregnancies: [],
@@ -165,6 +170,7 @@ describe("Day Advancement Pipeline Integration", () => {
       newDay: 10,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = executePipeline(phases, context);

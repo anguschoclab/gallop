@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { HorseStats, overall, SilkBadge } from "@/components/HorseBits";
 import { horsePrice } from "@/game/horseGen";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import { HorsePortrait } from "@/components/HorsePortrait";
 
 export const Route = createFileRoute("/market")({
   component: MarketPage,
@@ -30,7 +31,7 @@ function MarketPage() {
             <Card key={h.id}>
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-start gap-3">
-                  <SilkBadge color={h.silk} />
+                  <HorsePortrait coatColor={h.coatColor} size="sm" />
                   <div className="flex-1">
                     <p className="font-bold">{h.name}</p>
                     <p className="text-xs text-muted-foreground tabular-nums">

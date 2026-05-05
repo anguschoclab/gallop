@@ -9,6 +9,7 @@ import { HorseStats, SilkBadge } from "@/components/HorseBits";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
 import { ArrowLeft, Tag } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
+import { HorsePortrait } from "@/components/HorsePortrait";
 import { BeyerChart } from "@/components/BeyerChart";
 import { HorseAwardsPanel } from "@/components/awards";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
@@ -69,9 +70,9 @@ function HorseDetail() {
         <Link to="/stable" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-3">
           <ArrowLeft className="h-4 w-4" /> Back to stable
         </Link>
-        <div className="flex items-center gap-4">
-          <SilkBadge color={horse.silk} />
-          <div>
+        <div className="flex items-start gap-6">
+          <HorsePortrait coatColor={horse.coatColor} size="lg" />
+          <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight">{horse.name}</h1>
             <p className="text-muted-foreground">Age {horse.age} · OVR {calculateOverallRating(horse)} · Potential {horse.potential}</p>
             {(() => {

@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Zap, TrendingUp, CalendarClock } from "lucide-react";
+import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Zap, TrendingUp, CalendarClock, Images, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
@@ -13,7 +13,9 @@ import { useState, useEffect } from "react";
 const navItems = [
   { to: "/", label: "Dashboard", icon: Home, exact: true },
   { to: "/stable", label: "Stable", icon: Trophy, exact: false },
+  { to: "/horse-gallery", label: "Gallery", icon: Images, exact: false },
   { to: "/races", label: "Races", icon: Calendar, exact: false },
+  { to: "/calendar", label: "Calendars", icon: Globe, exact: false },
   { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
   { to: "/broodmares", label: "Broodmares", icon: Zap, exact: false },
   { to: "/scheduler", label: "Scheduler", icon: CalendarClock, exact: false },

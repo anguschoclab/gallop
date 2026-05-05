@@ -254,7 +254,7 @@
 .horse-sprite {
   width: 50px;
   height: 50px;
-  background-size: 300px 50px;
+  background-size: 300px 100px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   background-position-y: bottom; /* Show bottom 50px of 100px frame */

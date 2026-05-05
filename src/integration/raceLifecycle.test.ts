@@ -5,6 +5,7 @@
 
 import { describe, it, expect } from "vitest";
 import { generateTrackSchedule } from "@/game/raceSchedule";
+import { createRng } from "@/game/rng";
 import type { GameState, Race, Horse } from "@/game/types";
 
 describe("Race Lifecycle Integration", () => {
@@ -28,7 +29,7 @@ describe("Race Lifecycle Integration", () => {
       scoutReports: [],
     };
 
-    const result = generateTrackSchedule(10, state.races, []);
+    const result = generateTrackSchedule(10, state.races, [], createRng("test"));
     
     // Verify races were generated
     expect(result).toBeDefined();
@@ -69,7 +70,7 @@ describe("Race Lifecycle Integration", () => {
       scoutReports: [],
     };
 
-    const result = generateTrackSchedule(10, state.races, []);
+    const result = generateTrackSchedule(10, state.races, [], createRng("test"));
     
     // Should preserve existing race
     expect(result).toContainEqual(existingRace);
@@ -95,7 +96,7 @@ describe("Race Lifecycle Integration", () => {
       scoutReports: [],
     };
 
-    const result = generateTrackSchedule(10, state.races, []);
+    const result = generateTrackSchedule(10, state.races, [], createRng("test"));
     
     // Should not crash with empty state
     expect(result).toBeDefined();
@@ -121,7 +122,7 @@ describe("Race Lifecycle Integration", () => {
       scoutReports: [],
     };
 
-    const result = generateTrackSchedule(10, state.races, []);
+    const result = generateTrackSchedule(10, state.races, [], createRng("test"));
     
     // Check that generated races have required fields
     for (const race of result) {

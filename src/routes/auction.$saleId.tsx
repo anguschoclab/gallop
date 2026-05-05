@@ -11,6 +11,7 @@ import { KIND_LABELS } from "@/game/auction";
 import { Gavel, ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import type { AuctionLot } from "@/game/types";
 import { cn } from "@/lib/utils";
+import { HorsePortrait } from "@/components/HorsePortrait";
 
 export const Route = createFileRoute("/auction/$saleId")({
   component: AuctionSalePage,
@@ -118,14 +119,17 @@ function AuctionSalePage() {
           {currentLot && horse ? (
             <Card className={currentLot.passed ? "opacity-60" : ""}>
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <CardTitle className="text-xl">{horse.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground mt-0.5 tabular-nums">
-                      {horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀"}{" "}
-                      {horse.gender.charAt(0).toUpperCase() + horse.gender.slice(1)} · Age {horse.age}
-                      {horse.hemisphere === "Southern" ? " · Southern" : ""}
-                    </p>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <HorsePortrait coatColor={horse.coatColor} size="md" />
+                    <div>
+                      <CardTitle className="text-xl">{horse.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground mt-0.5 tabular-nums">
+                        {horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀"}{" "}
+                        {horse.gender.charAt(0).toUpperCase() + horse.gender.slice(1)} · Age {horse.age}
+                        {horse.hemisphere === "Southern" ? " · Southern" : ""}
+                      </p>
+                    </div>
                   </div>
                   {currentLot.passed && <Badge variant="secondary">Passed</Badge>}
                   {!currentLot.passed && !isResolved && isPlayerLeading && (

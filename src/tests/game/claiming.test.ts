@@ -10,6 +10,8 @@ import {
   validateClaimingRace,
   type ClaimAttempt,
 } from "@/game/claiming";
+import { createRng } from "@/game/rng";
+import { createTestHorse } from "@/tests/helpers";
 import type { Horse, Race } from "@/game/types";
 
 describe("processClaims", () => {
@@ -32,7 +34,7 @@ describe("processClaims", () => {
     const horses: Horse[] = [];
     const currentDay = 10;
 
-    const result = processClaims(race, claims, horses, currentDay);
+    const result = processClaims(race, claims, horses, currentDay, createRng("test"));
     expect(result.transfers).toEqual([]);
     expect(result.logs).toEqual([]);
   });
@@ -57,7 +59,7 @@ describe("processClaims", () => {
     const horses: Horse[] = [];
     const currentDay = 10;
 
-    const result = processClaims(race, claims, horses, currentDay);
+    const result = processClaims(race, claims, horses, currentDay, createRng("test"));
     expect(result.transfers).toEqual([]);
     expect(result.logs).toEqual([]);
   });
@@ -78,7 +80,7 @@ describe("processClaims", () => {
       claimingPrice: 10000,
     };
 
-    const horse: Horse = {
+    const horse: Horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
@@ -93,7 +95,7 @@ describe("processClaims", () => {
       fame: 50,
       stableId: "stable-1",
       raceHistory: [],
-    };
+    });
 
     const claims: ClaimAttempt[] = [
       {
@@ -104,7 +106,7 @@ describe("processClaims", () => {
       },
     ];
 
-    const result = processClaims(race, claims, [horse], 10);
+    const result = processClaims(race, claims, [horse], 10, createRng("test"));
     expect(result.transfers.length).toBe(1);
     expect(result.transfers[0].horseId).toBe("horse-1");
     expect(result.transfers[0].fromStableId).toBe("stable-1");
@@ -129,7 +131,7 @@ describe("processClaims", () => {
       claimingPrice: 10000,
     };
 
-    const horse: Horse = {
+    const horse: Horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
@@ -144,7 +146,7 @@ describe("processClaims", () => {
       fame: 50,
       stableId: "stable-1",
       raceHistory: [],
-    };
+    });
 
     const claims: ClaimAttempt[] = [
       {

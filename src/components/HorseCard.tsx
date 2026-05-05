@@ -6,6 +6,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
 import { JargonTooltip } from "./ui/JargonTooltip";
 import { useGame } from "@/game/store";
+import { HorsePortraitBadge, HorsePortrait } from "./HorsePortrait";
 import { Trophy, Zap, TrendingUp, Activity, Dna, Calendar, User, Building2, Eye, Ruler, Weight, HeartPulse } from "lucide-react";
 
 interface HorseCardProps {
@@ -64,12 +65,7 @@ export function HorseCard({
       <Card className={`hover:shadow-md transition-shadow cursor-pointer ${className}`} onClick={onClick}>
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
-            <div 
-              className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow"
-              style={{ backgroundColor: horse.silk }}
-            >
-              {horse.name.charAt(0)}
-            </div>
+            <HorsePortraitBadge coatColor={horse.coatColor} size="sm" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className={`${genderColor} text-sm`}>{genderIcon}</span>
@@ -108,18 +104,13 @@ export function HorseCard({
     // Scouting view - shows fog of war mechanics
     const knownStats = displayStats?.stats || {};
     const hasAllStats = Object.keys(knownStats).length === 4;
-    
+
     return (
       <Card className={`${className}`}>
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div 
-                className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold border-2 border-white shadow"
-                style={{ backgroundColor: horse.silk }}
-              >
-                {horse.name.charAt(0)}
-              </div>
+            <div className="flex items-center gap-3">
+              <HorsePortrait coatColor={horse.coatColor} size="md" />
               <div>
                 <div className="flex items-center gap-2">
                   <span className={`${genderColor} text-lg`}>{genderIcon}</span>
@@ -186,12 +177,7 @@ export function HorseCard({
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div 
-              className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold border-2 border-white shadow"
-              style={{ backgroundColor: horse.silk }}
-            >
-              {horse.name.charAt(0)}
-            </div>
+            <HorsePortrait coatColor={horse.coatColor} size="md" />
             <div>
               <div className="flex items-center gap-2">
                 <span className={`${genderColor} text-lg`}>{genderIcon}</span>

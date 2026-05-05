@@ -4,7 +4,8 @@
 
 import { describe, it, expect } from "vitest";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import type { PipelineContext } from "../pipeline";
+import { createRng } from "@/game/rng";
+import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Race } from "@/game/types";
 
 describe("raceResolutionPhase", () => {
@@ -61,6 +62,7 @@ describe("raceResolutionPhase", () => {
       newDay: 10,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = raceResolutionPhase.execute(context);
@@ -121,6 +123,7 @@ describe("raceResolutionPhase", () => {
       newDay: 10,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = raceResolutionPhase.execute(context);
@@ -166,6 +169,7 @@ describe("raceResolutionPhase", () => {
       newDay: 10,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = raceResolutionPhase.execute(context);
@@ -212,6 +216,7 @@ describe("raceResolutionPhase", () => {
       state,
       logs: [],
       skipRaceResolution: true,
+      dailyRng: createRng(12345),
     };
 
     const shouldSkip = raceResolutionPhase.skipIf?.(context);

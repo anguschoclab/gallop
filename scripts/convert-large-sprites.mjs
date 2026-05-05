@@ -1,8 +1,8 @@
 /**
- * Create 6-frame sprite sheets from single-frame horse sprites.
+ * Convert large single-frame horse sprites to 6-frame animated sprite sheets.
  * 
- * Each sprite sheet: 300x50px (6 frames × 50px width each)
- * Frame sequence: running animation loop
+ * For seal, liver, dun, grulla: 300x100 single-frame → 300x50 animated (6 frames × 50px)
+ * For champagne: 300x50 single-frame → 300x50 animated (6 frames × 50px)
  */
 
 import sharp from 'sharp';
@@ -14,20 +14,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ASSETS_DIR = path.join(__dirname, '..', 'src', 'assets');
 
 // Frame transformations for galloping animation
-// Each frame applies slight offset/transform to simulate motion
 const FRAME_OFFSETS = [
-  { y: 2, rotate: -2 },    // Frame 0: Prep - legs gathering
-  { y: -2, rotate: -1 },   // Frame 1: Push off - rear legs driving
-  { y: -4, rotate: 0 },    // Frame 2: Extension - all legs off ground  
-  { y: -1, rotate: 1 },    // Frame 3: Landing - front legs touch
-  { y: 3, rotate: 2 },     // Frame 4: Compression - weight down
-  { y: 1, rotate: 1 },     // Frame 5: Recovery - preparing next stride
+  { y: 2, rotate: -2 },    // Frame 0: Prep
+  { y: -2, rotate: -1 },   // Frame 1: Push off
+  { y: -4, rotate: 0 },    // Frame 2: Extension
+  { y: -1, rotate: 1 },    // Frame 3: Landing
+  { y: 3, rotate: 2 },     // Frame 4: Compression
+  { y: 1, rotate: 1 },     // Frame 5: Recovery
 ];
 
-async function createSpriteSheet(name) {
+async function createSpriteSheetFromLarge(name, sourceHeight) {
   const inputPath = path.join(ASSETS_DIR, `horse-${name}.png`);
   const outputPath = path.join(ASSETS_DIR, `horse-${name}.png`);
-  const backupPath = path.join(ASSETS_DIR, `horse-${name}-single.png`);
+  const backupPath = path.join(ASSETS_DIR, `horse-${name}-backup.png`);
   
   if (!fs.existsSync(inputPath)) {
     console.log(`⚠️  Input not found: ${inputPath}`);
@@ -35,7 +34,9 @@ async function createSpriteSheet(name) {
   }
   
   // Backup original
-  fs.copyFileSync(inputPath, backupPath);
+  if (!fs.existsSync(backupPath)) {
+    fs.copyFileSync(inputPath, backupPath);
+  }
   
   // Read source image
   const source = sharp(inputPath);
@@ -43,7 +44,20 @@ async function createSpriteSheet(name) {
   
   console.log(`Processing ${name}: ${metadata.width}x${metadata.height}px`);
   
-  // Create 6 variations as buffers
+  // Extract the horse from the center of the 300x100 image
+  // Assuming horse is in the middle, crop to 50x50 region
+  const cropWidth = 50;
+  const cropHeight = 50;
+  const cropLeft = Math.floor((metadata.width - cropWidth) / 2);
+  const cropTop = Math.floor((metadata.height - cropHeight) / 2);
+  
+  // Extract base horse frame
+  const baseHorse = await source
+    .extract({ left: cropLeft, top: cropTop, width: cropWidth, height: cropHeight })
+    .png()
+    .toBuffer();
+  
+  // Create 6 animated frames
   const frames = [];
   for (let i = 0; i < 6; i++) {
     const offset = FRAME_OFFSETS[i];
@@ -58,10 +72,10 @@ async function createSpriteSheet(name) {
       }
     });
     
-    // Resize source and overlay with offset
-    const resized = source.resize(44, 44, { fit: 'inside' });
+    // Resize base horse slightly smaller for animation effect
+    const resized = sharp(baseHorse).resize(44, 44, { fit: 'inside' });
     
-    // Composite the resized image onto the frame with offset
+    // Composite with offset
     const frameBuffer = await sharp({
       create: {
         width: 50,
@@ -104,17 +118,24 @@ async function createSpriteSheet(name) {
     .png()
     .toFile(outputPath);
   
-  console.log(`✓ Created: horse-${name}.png (300x50, 6 frames)`);
+  const stats = fs.statSync(outputPath);
+  console.log(`✓ Created: horse-${name}.png (300x50, 6 frames, ${(stats.size / 1024).toFixed(1)}KB)`);
 }
 
 async function main() {
-  const sprites = ['roan', 'palomino', 'white', 'seal', 'liver', 'dun', 'grulla', 'champagne'];
+  const sprites = [
+    { name: 'seal', height: 100 },
+    { name: 'liver', height: 100 },
+    { name: 'dun', height: 100 },
+    { name: 'grulla', height: 100 },
+    { name: 'champagne', height: 50 },
+  ];
   
-  console.log('Creating 6-frame sprite sheets...\n');
+  console.log('Converting single-frame sprites to animated sprite sheets...\n');
   
-  for (const name of sprites) {
+  for (const { name, height } of sprites) {
     try {
-      await createSpriteSheet(name);
+      await createSpriteSheetFromLarge(name, height);
     } catch (err) {
       console.error(`✗ Failed ${name}:`, err.message);
     }

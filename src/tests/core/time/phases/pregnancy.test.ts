@@ -4,7 +4,8 @@
 
 import { describe, it, expect } from "vitest";
 import { pregnancyPhase } from "@/core/time/phases/pregnancy";
-import type { PipelineContext } from "../pipeline";
+import { createRng } from "@/game/rng";
+import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Pregnancy } from "@/game/types";
 
 describe("pregnancyPhase", () => {
@@ -47,6 +48,7 @@ describe("pregnancyPhase", () => {
       newDay: 31,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = pregnancyPhase.execute(context);
@@ -97,6 +99,7 @@ describe("pregnancyPhase", () => {
       newDay: 31,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = pregnancyPhase.execute(context);
@@ -129,6 +132,7 @@ describe("pregnancyPhase", () => {
       newDay: 31,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = pregnancyPhase.execute(context);
@@ -161,6 +165,7 @@ describe("pregnancyPhase", () => {
       newDay: 31,
       state,
       logs: [{ day: 30, text: "Existing log" }],
+      dailyRng: createRng(12345),
     };
 
     const result = pregnancyPhase.execute(context);

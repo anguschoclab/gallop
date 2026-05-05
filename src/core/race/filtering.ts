@@ -11,6 +11,10 @@ export interface RaceFilters {
   surface?: "Turf" | "Dirt" | "Synthetic";
   tripleCrown?: boolean | "all";
   class?: Race["raceClass"];
+  /** Optional set of special race keys for filtering (e.g., Triple Crown, Classics) */
+  specialRaceKeys?: Set<string>;
+  /** Special filter mode: "all", "only", "exclude" */
+  specialFilterMode?: "all" | "only" | "exclude";
 }
 
 /**
@@ -37,7 +41,7 @@ export function filterRacesByCriteria(
       return false;
     }
 
-    // Filter by triple crown
+    // Filter by triple crown (legacy - backward compatibility)
     if (filters.tripleCrown !== "all" && filters.tripleCrown !== undefined) {
       const tripleCrownKeys = new Set([
         "ca-kings-plate",
@@ -47,6 +51,13 @@ export function filterRacesByCriteria(
       const isTripleCrown = race.graded && tripleCrownKeys.has(race.graded.key);
       if (filters.tripleCrown && !isTripleCrown) return false;
       if (!filters.tripleCrown && isTripleCrown) return false;
+    }
+
+    // Filter by special race keys (generic - for Triple Crown, Classics, etc.)
+    if (filters.specialFilterMode && filters.specialFilterMode !== "all" && filters.specialRaceKeys) {
+      const isSpecial = race.graded && filters.specialRaceKeys.has(race.graded.key);
+      if (filters.specialFilterMode === "only" && !isSpecial) return false;
+      if (filters.specialFilterMode === "exclude" && isSpecial) return false;
     }
 
     // Filter by class

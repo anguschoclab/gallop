@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { overall, SilkBadge } from "@/components/HorseBits";
 import { Trophy, BarChart2, Calendar, TrendingUp } from "lucide-react";
+import { HorsePortrait } from "@/components/HorsePortrait";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
@@ -147,7 +148,7 @@ function Dashboard() {
           <CardContent className="space-y-2">
             {horses.slice().sort((a, b) => overall(b) - overall(a)).slice(0, 5).map((h) => (
               <Link key={h.id} to="/stable/$horseId" params={{ horseId: h.id }} className="flex items-center gap-3 p-2 rounded hover:bg-muted transition-colors">
-                <SilkBadge color={h.silk} />
+                <HorsePortrait coatColor={h.coatColor} size="sm" />
                 <div className="flex-1">
                   <p className="font-medium text-sm">{h.name}</p>
                   <p className="text-xs text-muted-foreground tabular-nums">Age {h.age} · OVR {overall(h)}</p>

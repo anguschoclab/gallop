@@ -7,7 +7,8 @@ import {
   generateNorthAmericanRace,
   generateNorthAmericanRaceCard,
 } from "@/game/raceGeneration/northAmerica";
-import type { Track } from "../tracks";
+import { createRng } from "@/game/rng";
+import type { Track } from "@/game/types";
 
 describe("generateNorthAmericanRace", () => {
   let mockTrack: Track;
@@ -22,7 +23,7 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should generate a race with required properties", () => {
-    const race = generateNorthAmericanRace(mockTrack, 10);
+    const race = generateNorthAmericanRace(mockTrack, 10, createRng("test"));
 
     expect(race).toHaveProperty("id");
     expect(race).toHaveProperty("name");
@@ -41,7 +42,7 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should generate race with valid race class", () => {
-    const race = generateNorthAmericanRace(mockTrack, 10);
+    const race = generateNorthAmericanRace(mockTrack, 10, createRng("test"));
 
     const validClasses = [
       "Maiden",
@@ -66,7 +67,7 @@ describe("generateNorthAmericanRace", () => {
 
   it("should set claiming price for claiming races", () => {
     // Since race class is random, we'll generate multiple races and check that at least one has claiming price
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10));
+    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
     const claimingRaces = races.filter(
       (r) => r.raceClass === "Claiming" || r.raceClass === "MaidenClaiming" || r.raceClass === "MaidenOptionalClaiming"
     );
@@ -78,7 +79,7 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should set claiming price for optional claiming races", () => {
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10));
+    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
     const optionalClaimingRaces = races.filter((r) => r.raceClass === "OptionalClaiming");
 
     if (optionalClaimingRaces.length > 0) {
@@ -88,7 +89,7 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should set handicap flag for handicap races", () => {
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10));
+    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
     const handicapRaces = races.filter((r) => r.raceClass === "Handicap" || r.raceClass === "StarterHandicap");
 
     if (handicapRaces.length > 0) {
@@ -97,7 +98,7 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should set win condition for allowance races", () => {
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10));
+    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
     const allowanceRaces = races.filter((r) => r.raceClass === "Allowance" || r.raceClass === "StarterAllowance");
 
     if (allowanceRaces.length > 0) {
@@ -107,29 +108,29 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should use specified surface when provided", () => {
-    const race = generateNorthAmericanRace(mockTrack, 10, "Dirt");
+    const race = generateNorthAmericanRace(mockTrack, 10, "Dirt", createRng("test"));
     expect(race.surface).toBe("Dirt");
   });
 
   it("should select random surface when not specified", () => {
-    const race = generateNorthAmericanRace(mockTrack, 10);
+    const race = generateNorthAmericanRace(mockTrack, 10, createRng("test"));
     expect(mockTrack.surfaces).toContain(race.surface);
   });
 
   it("should generate distance within class range", () => {
-    const race = generateNorthAmericanRace(mockTrack, 10);
+    const race = generateNorthAmericanRace(mockTrack, 10, createRng("test"));
     expect(race.distance).toBeGreaterThan(0);
     expect(race.distance).toBeLessThanOrEqual(2400);
   });
 
   it("should generate field size between 6 and 10", () => {
-    const race = generateNorthAmericanRace(mockTrack, 10);
+    const race = generateNorthAmericanRace(mockTrack, 10, createRng("test"));
     expect(race.fieldSize).toBeGreaterThanOrEqual(6);
     expect(race.fieldSize).toBeLessThanOrEqual(10);
   });
 
   it("should scale purse for claiming races", () => {
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10));
+    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
     const claimingRaces = races.filter((r) => r.claimingPrice && r.raceClass === "Claiming");
 
     if (claimingRaces.length > 0) {
