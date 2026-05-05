@@ -3,6 +3,7 @@ import type { AuctionSale } from "@/game/types";
 import { generateAuctionLots } from "@/game/auction";
 import { createAuctionRunner } from "@/game/auctionRunner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
+import { generateUUID } from "@/game/uuid";
 
 /**
  * Phase: Auctions (order 90).
@@ -53,7 +54,7 @@ export const auctionsPhase = {
         const freshHorses = horsesForGen.slice(beforeCount);
         for (const horse of freshHorses) {
           impacts.push({
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             intentId: "",
             day: newDay,
             phase: "auctions",

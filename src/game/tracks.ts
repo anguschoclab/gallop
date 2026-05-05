@@ -1,4 +1,5 @@
 import type { Race } from "./types";
+import { generateUUID } from "./uuid";
 
 export type TrackSection = {
   type: "straight" | "turn";
@@ -36,10 +37,6 @@ export type TrackSchedule = {
   regionalSystem: "north_america" | "europe" | "australia" | "asia" | "south_america";
 };
 
-// UUID v4 generator helper
-const generateUUID = () => {
-  return crypto.randomUUID();
-};
 
 import TRACK_DATA from "./data/tracks.json";
 
@@ -492,6 +489,3 @@ export const TRACK_SCHEDULES: TrackSchedule[] = [
     regionalSystem: "asia",
   },
 ];
-
-// Re-export for backward compatibility
-export { generateUUID as generateTrackUUID };

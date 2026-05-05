@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { stepRunner, computePaceContext, type Runner } from "@/game/raceSim";
-import { beyerFigure } from "@/game/beyer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { buildRaceField, rngForRace, type RaceSimulationDependencies } from "@/services/raceSimulationService";
@@ -16,107 +15,7 @@ import { Pause, Play, Camera, Mic2 } from "lucide-react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { NarrativeGenerator, type CommentaryLine } from "@/services/narrativeService";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
-
-// Track surface background mapping
-const getTrackBackground = (surface?: string): string | undefined => {
-  switch (surface) {
-    case "Turf":
-      return "url(/assets/track-turf.png)";
-    case "Dirt":
-      return "url(/assets/track-dirt.png)";
-    case "Synthetic":
-      return "url(/assets/track-synthetic.png)";
-    default:
-      return undefined;
-  }
-};
-
-// Weather sky background mapping
-const getSkyBackground = (weather?: Weather): string | undefined => {
-  switch (weather) {
-    case "sunny":
-      return "url(/assets/bg-sky-sunny.png)";
-    case "cloudy":
-      return "url(/assets/bg-sky-cloudy.png)";
-    case "rainy":
-      return "url(/assets/bg-sky-pouring.png)";
-    case "sunset":
-      return "url(/assets/bg-sky-sunset.png)";
-    case "night":
-      return "url(/assets/bg-sky-night.png)";
-    default:
-      return undefined;
-  }
-};
-
-// Weather display helper
-const getWeatherDisplay = (weather?: Weather): string => {
-  switch (weather) {
-    case "sunny":
-      return "☀️ Sunny";
-    case "cloudy":
-      return "☁️ Cloudy";
-    case "rainy":
-      return "🌧️ Rainy";
-    case "sunset":
-      return "🌅 Sunset";
-    case "night":
-      return "🌙 Night";
-    default:
-      return "";
-  }
-};
-
-// Sprite sheet configuration
-const ANIMATED_SPRITES = [
-  "bay", "black", "chestnut", "dark-bay", "gray",
-  "roan", "palomino", "white",
-  "seal-brown", "liver-chestnut", "buckskin", "dun", "grulla", "champagne"
-];
-
-const COAT_TO_SPRITE: Record<string, string> = {
-  bay: "b",
-  black: "bl",
-  chestnut: "ch",
-  "dark-bay": "dkb",
-  gray: "gr",
-  roan: "roan",
-  palomino: "palomino",
-  white: "white",
-  "seal-brown": "seal",
-  "liver-chestnut": "liver",
-  buckskin: "buck",
-  dun: "dun",
-  grulla: "grulla",
-  champagne: "champagne",
-};
-
-function getSpriteUrl(coatColor?: string): string | undefined {
-  if (!coatColor) return undefined;
-  const sprite = COAT_TO_SPRITE[coatColor];
-  return sprite ? `/assets/horse-${sprite}.png` : undefined;
-}
-
-function isAnimatedSprite(coatColor?: string): boolean {
-  if (!coatColor) return false;
-  return ANIMATED_SPRITES.includes(coatColor);
-}
-
-function getAnimationDuration(velocity: number): string {
-  const baseSpeed = 15;
-  const duration = Math.max(0.3, Math.min(0.8, 0.6 * (baseSpeed / Math.max(velocity, 5))));
-  return `${duration.toFixed(2)}s`;
-}
-
-function projectedBeyer(r: Runner, distance: number, simTime: number, classBonus: number): number | null {
-  if (r.finishTime !== null) {
-    return beyerFigure({ distance, finishTime: r.finishTime, classBonus });
-  }
-  if (r.position <= 0 || r.velocity <= 0.5) return null;
-  const remaining = distance - r.position;
-  const projFinish = simTime + remaining / r.velocity;
-  return beyerFigure({ distance, finishTime: projFinish, classBonus });
-}
+import { getTrackBackground, getSkyBackground, getWeatherDisplay, getSpriteUrl, isAnimatedSprite, getAnimationDuration, projectedBeyer } from "@/components/races/raceVisualHelpers";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,

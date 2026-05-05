@@ -8,6 +8,8 @@
 //
 // Same seeded RNG → same final lots, regardless of which path runs.
 
+import { generateUUID } from "./uuid";
+
 import type { AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord } from "./types";
 import { calculateNpcBid, netProceeds } from "./auction";
 import { createRng, hashStr, type Rng } from "./rng";
@@ -317,7 +319,7 @@ export function createAuctionRunner(
       const isPlayerConsignment = !lot.consignorStableId;
 
       impacts.push({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         intentId: "",
         day,
         phase,
@@ -341,7 +343,7 @@ export function createAuctionRunner(
       // Debit the winner's cash (NPC winner only; player live-bid path debits via store action).
       if (winnerStableId) {
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: "",
           day,
           phase,
@@ -358,7 +360,7 @@ export function createAuctionRunner(
       // mid-sale), so in liveMode we skip emitting this final debit.
       if (!winnerStableId && !liveMode) {
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: "",
           day,
           phase,
@@ -374,7 +376,7 @@ export function createAuctionRunner(
       const proceeds = netProceeds(lot.hammerPrice);
       if (consignorStableId) {
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: "",
           day,
           phase,
@@ -387,7 +389,7 @@ export function createAuctionRunner(
       } else {
         // Player consignor.
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: "",
           day,
           phase,
@@ -401,7 +403,7 @@ export function createAuctionRunner(
 
       // Transfer horse ownership.
       impacts.push({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         intentId: "",
         day,
         phase,

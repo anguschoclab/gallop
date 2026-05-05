@@ -6,6 +6,7 @@ import type { GameState } from "@/game/types";
 import type { AnyIntent } from "./intents";
 import type { AnyImpact } from "./impacts";
 import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
+import { generateUUID } from "@/game/uuid";
 
 // Re-export AnyImpact for use in pipeline
 export type { AnyImpact } from "./impacts";
@@ -219,7 +220,7 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
         const auction = draft.auctions?.find((a) => a.id === saleId);
         if (auction) {
           auction.lots.push({
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             horseId,
             saleId,
             reservePrice,

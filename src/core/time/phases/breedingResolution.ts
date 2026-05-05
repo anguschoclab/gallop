@@ -45,7 +45,7 @@ export const breedingResolutionPhase: PipelinePhase = {
 
         // Transfer stud fee to NPC stable
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: intent.id,
           day: newDay,
           phase: "breedingResolution",
@@ -58,7 +58,7 @@ export const breedingResolutionPhase: PipelinePhase = {
 
         // Update stud career (seasonBookings)
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: intent.id,
           day: newDay,
           phase: "breedingResolution",
@@ -90,7 +90,7 @@ export const breedingResolutionPhase: PipelinePhase = {
       };
 
       impacts.push({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         intentId: intent.id,
         day: newDay,
         phase: "breedingResolution",

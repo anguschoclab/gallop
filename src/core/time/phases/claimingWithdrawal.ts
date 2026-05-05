@@ -4,6 +4,7 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
 import type { AnyImpact, LogImpact } from "@/core/resolver/impacts";
+import { generateUUID } from "@/game/uuid";
 
 /**
  * Claiming Withdrawal Phase (Order 67)
@@ -33,7 +34,7 @@ export const claimingWithdrawalPhase: PipelinePhase = {
       
       // Log the withdrawal (race entry fee is lost as penalty)
       impacts.push({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         intentId: intent.id,
         day: newDay,
         phase: "claimingWithdrawal",

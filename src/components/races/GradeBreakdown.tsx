@@ -1,9 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { getGradeColorClass } from "@/core/race/grading";
+import type { Race, Horse } from "@/game/types";
 
 interface GradeBreakdownProps {
-  races: any[];
-  horses: any[];
+  races: Race[];
+  horses: Horse[];
   day: number;
 }
 

@@ -125,7 +125,7 @@ export function JockeyRoster() {
           <select 
             className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
             value={archetypeFilter}
-            onChange={(e) => setArchetypeFilter(e.target.value as any)}
+            onChange={(e) => setArchetypeFilter(e.target.value as JockeyArchetype | "all")}
           >
             <option value="all">All Styles</option>
             {archetypes.map(a => (
@@ -135,7 +135,7 @@ export function JockeyRoster() {
           <select 
             className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
             value={patternFilter}
-            onChange={(e) => setPatternFilter(e.target.value as any)}
+            onChange={(e) => setPatternFilter(e.target.value as JockeySilkPattern | "all")}
           >
             <option value="all">All Patterns</option>
             {patterns.map(p => (

@@ -6,6 +6,7 @@ import type { AnyIntent, RaceEntryIntent } from "@/core/resolver/intents";
 import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/impacts";
 import { createTransportRequest } from "@/core/transportation";
 import { createTransaction } from "@/core/transactions";
+import { generateUUID } from "@/game/uuid";
 
 /**
  * Race Entry Resolution Phase (Order 15)
@@ -36,7 +37,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
 
       // Generate race entry impact
       impacts.push({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         intentId: intent.id,
         day: newDay,
         phase: "raceEntryResolution",
@@ -57,7 +58,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
 
         // Add transport expense impact
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: intent.id,
           day: newDay,
           phase: "raceEntryResolution",

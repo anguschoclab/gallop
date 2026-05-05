@@ -4,6 +4,7 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, PurchaseIntent } from "@/core/resolver/intents";
 import type { AnyImpact, HorseTransferImpact } from "@/core/resolver/impacts";
+import { generateUUID } from "@/game/uuid";
 
 /**
  * Purchase Resolution Phase (Order 35)
@@ -27,7 +28,7 @@ export const purchaseResolutionPhase: PipelinePhase = {
 
       // Generate horse transfer impact
       impacts.push({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         intentId: intent.id,
         day: newDay,
         phase: "purchaseResolution",

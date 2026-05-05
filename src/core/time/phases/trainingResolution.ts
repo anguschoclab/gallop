@@ -8,6 +8,7 @@ import { createRng, hashStr } from "@/game/rng";
 import type { Horse } from "@/game/types";
 import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";
+import { generateUUID } from "@/game/uuid";
 import { createTransaction } from "@/core/transactions";
 
 /**
@@ -93,7 +94,7 @@ export const trainingResolutionPhase: PipelinePhase = {
         const energyDelta = energyCostMap[intent.trainingType] ?? -18;
         
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: intent.id,
           day: newDay,
           phase: "trainingResolution",
@@ -106,7 +107,7 @@ export const trainingResolutionPhase: PipelinePhase = {
       } else {
         // Rest adds energy
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: intent.id,
           day: newDay,
           phase: "trainingResolution",
@@ -153,7 +154,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           gain = Math.round(gain * (1 + trackBonus) * config.gainBonus);
           
           impacts.push({
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             intentId: intent.id,
             day: newDay,
             phase: "trainingResolution",
@@ -171,7 +172,7 @@ export const trainingResolutionPhase: PipelinePhase = {
             if (secondaryGap > 0) {
               const secondaryGain = Math.min(secondaryGap, 1);
               impacts.push({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 intentId: intent.id,
                 day: newDay,
                 phase: "trainingResolution",
@@ -192,7 +193,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           // OCD injury occurred - emit HealthStatusImpact
           const recoveryDuration = 30 + Math.floor(trainingRng.next() * 30); // 30-60 days
           impacts.push({
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             intentId: intent.id,
             day: newDay,
             phase: "trainingResolution",

@@ -300,7 +300,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
 
         <DialogFooter className="flex justify-between items-center">
           {step > 1 && (
-            <Button variant="ghost" onClick={() => setStep(s => (s - 1) as any)} className="uppercase font-black tracking-widest text-[10px]">
+            <Button variant="ghost" onClick={() => setStep(s => (s - 1) as 1 | 2 | 3 | 4)} className="uppercase font-black tracking-widest text-[10px]">
               Back
             </Button>
           )}

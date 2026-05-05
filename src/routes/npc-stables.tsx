@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNpcStables } from "@/game/hooks/useSystemsState";
 import { getMajorStables, getStablesByTier } from "@/game/npcStables";
+import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
 
 export const Route = createFileRoute("/npc-stables")({ component: NpcStablesPage });
 

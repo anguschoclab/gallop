@@ -1,5 +1,7 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact, RaceResultImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact, ClaimingImpact } from "@/core/resolver/impacts";
+import { getOrdinalSuffix } from "@/core/common/ordinal";
+import { generateUUID } from "@/game/uuid";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
@@ -49,7 +51,7 @@ export const raceResolutionPhase: PipelinePhase = {
 
       // Generate race result impact
       impacts.push({
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         intentId: "",
         day: newDay,
         phase: "raceResolution",
@@ -69,7 +71,7 @@ export const raceResolutionPhase: PipelinePhase = {
 
         // Energy impact (-25)
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -83,7 +85,7 @@ export const raceResolutionPhase: PipelinePhase = {
         // Form impact based on position
         const formDelta = r.position === 1 ? 3 : r.position === 2 ? 2 : r.position === 3 ? 1 : r.position <= 5 ? 0 : -1;
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -98,7 +100,7 @@ export const raceResolutionPhase: PipelinePhase = {
         const fameDelta = r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0;
         if (fameDelta > 0) {
           impacts.push({
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             intentId: "",
             day: newDay,
             phase: "raceResolution",
@@ -125,7 +127,7 @@ export const raceResolutionPhase: PipelinePhase = {
 
         // Race history impact
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -158,7 +160,7 @@ export const raceResolutionPhase: PipelinePhase = {
             if (horse.stableId) {
               // NPC stable gets prize money
               impacts.push({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 intentId: "",
                 day: newDay,
                 phase: "raceResolution",
@@ -171,7 +173,7 @@ export const raceResolutionPhase: PipelinePhase = {
             } else {
               // Player gets prize money
               impacts.push({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 intentId: "",
                 day: newDay,
                 phase: "raceResolution",
@@ -224,7 +226,7 @@ export const raceResolutionPhase: PipelinePhase = {
             if (horse.stableId) {
               // Deduct from NPC stable
               impacts.push({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 intentId: "",
                 day: newDay,
                 phase: "raceResolution",
@@ -237,7 +239,7 @@ export const raceResolutionPhase: PipelinePhase = {
             } else {
               // Deduct from player
               impacts.push({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 intentId: "",
                 day: newDay,
                 phase: "raceResolution",
@@ -269,7 +271,7 @@ export const raceResolutionPhase: PipelinePhase = {
           const dam = state.horses.find((h) => h.id === horse.pedigree?.damId);
           if (dam) {
             impacts.push({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               intentId: "",
               day: newDay,
               phase: "raceResolution",
@@ -291,7 +293,7 @@ export const raceResolutionPhase: PipelinePhase = {
           const sire = state.horses.find((h) => h.id === horse.pedigree?.sireId);
           if (sire && sire.stud?.atStud) {
             impacts.push({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               intentId: "",
               day: newDay,
               phase: "raceResolution",
@@ -321,7 +323,7 @@ export const raceResolutionPhase: PipelinePhase = {
             const jockeyFee = Math.round(winAmount * 0.1);
 
             impacts.push({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               intentId: "",
               day: newDay,
               phase: "raceResolution",
@@ -338,7 +340,7 @@ export const raceResolutionPhase: PipelinePhase = {
             if (jockeyFee > 0) {
               if (raceEntry.owned) {
                 impacts.push({
-                  id: crypto.randomUUID(),
+                  id: generateUUID(),
                   intentId: "",
                   day: newDay,
                   phase: "raceResolution",
@@ -350,7 +352,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 } as CashImpact);
               } else if (raceEntry.stableId) {
                 impacts.push({
-                  id: crypto.randomUUID(),
+                  id: generateUUID(),
                   intentId: "",
                   day: newDay,
                   phase: "raceResolution",
@@ -370,7 +372,7 @@ export const raceResolutionPhase: PipelinePhase = {
       if (result.length > 0) {
         const winner = result[0];
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -399,7 +401,7 @@ export const raceResolutionPhase: PipelinePhase = {
           return sum;
         }, 0);
         impacts.push({
-          id: crypto.randomUUID(),
+          id: generateUUID(),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -433,7 +435,7 @@ export const raceResolutionPhase: PipelinePhase = {
           for (const withdrawnClaim of withdrawnClaims) {
             if (withdrawnClaim.claimantStableId) {
               impacts.push({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 intentId: withdrawnClaim.id,
                 day: newDay,
                 phase: "raceResolution",
@@ -445,7 +447,7 @@ export const raceResolutionPhase: PipelinePhase = {
               } as CashImpact);
             } else {
               impacts.push({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 intentId: withdrawnClaim.id,
                 day: newDay,
                 phase: "raceResolution",
@@ -458,7 +460,7 @@ export const raceResolutionPhase: PipelinePhase = {
             }
             
             impacts.push({
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               intentId: withdrawnClaim.id,
               day: newDay,
               phase: "raceResolution",
@@ -491,7 +493,7 @@ export const raceResolutionPhase: PipelinePhase = {
             for (const transfer of transfers) {
               // ClaimingImpact for horse transfer
               impacts.push({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 intentId: eligibleClaims.find((i) => i.horseId === transfer.horseId)?.id || "",
                 day: newDay,
                 phase: "raceResolution",
@@ -508,7 +510,7 @@ export const raceResolutionPhase: PipelinePhase = {
               // CashImpact for claimant (negative)
               if (transfer.toStableId) {
                 impacts.push({
-                  id: crypto.randomUUID(),
+                  id: generateUUID(),
                   intentId: "",
                   day: newDay,
                   phase: "raceResolution",
@@ -520,7 +522,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 } as CashImpact);
               } else {
                 impacts.push({
-                  id: crypto.randomUUID(),
+                  id: generateUUID(),
                   intentId: "",
                   day: newDay,
                   phase: "raceResolution",
@@ -535,7 +537,7 @@ export const raceResolutionPhase: PipelinePhase = {
               // CashImpact for original owner (positive)
               if (transfer.fromStableId) {
                 impacts.push({
-                  id: crypto.randomUUID(),
+                  id: generateUUID(),
                   intentId: "",
                   day: newDay,
                   phase: "raceResolution",
@@ -547,7 +549,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 } as CashImpact);
               } else {
                 impacts.push({
-                  id: crypto.randomUUID(),
+                  id: generateUUID(),
                   intentId: "",
                   day: newDay,
                   phase: "raceResolution",
@@ -563,7 +565,7 @@ export const raceResolutionPhase: PipelinePhase = {
             // Generate log impacts for claim results
             for (const log of claimLogs) {
               impacts.push({
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 intentId: "",
                 day: newDay,
                 phase: "raceResolution",
@@ -582,7 +584,7 @@ export const raceResolutionPhase: PipelinePhase = {
             for (const losingClaim of losingClaims) {
               if (losingClaim.claimantStableId) {
                 impacts.push({
-                  id: crypto.randomUUID(),
+                  id: generateUUID(),
                   intentId: losingClaim.id,
                   day: newDay,
                   phase: "raceResolution",
@@ -594,7 +596,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 } as CashImpact);
               } else {
                 impacts.push({
-                  id: crypto.randomUUID(),
+                  id: generateUUID(),
                   intentId: losingClaim.id,
                   day: newDay,
                   phase: "raceResolution",
@@ -631,10 +633,3 @@ export const raceResolutionPhase: PipelinePhase = {
     };
   },
 };
-
-function getOrdinalSuffix(n: number): string {
-  if (n === 1) return "st";
-  if (n === 2) return "nd";
-  if (n === 3) return "rd";
-  return "th";
-}
