@@ -23,7 +23,7 @@ function DefaultErrorComponent({ error, reset }: { error: Error; reset: () => vo
             />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Something went wrong</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Something went wrong</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           An unexpected error occurred. Please try again.
         </p>
@@ -38,13 +38,13 @@ function DefaultErrorComponent({ error, reset }: { error: Error; reset: () => vo
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-md bg-t700 px-4 py-2 text-sm font-medium text-cream transition-colors hover:bg-t600"
           >
             Try again
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex items-center justify-center rounded-md border border-gold-muted bg-background px-4 py-2 text-sm font-medium text-cream transition-colors hover:bg-t700"
           >
             Go home
           </a>

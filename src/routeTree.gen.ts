@@ -22,6 +22,7 @@ import { Route as NpcStablesRouteImport } from './routes/npc-stables'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as JockeysRouteImport } from './routes/jockeys'
 import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
+import { Route as FinancialReportRouteImport } from './routes/financial-report'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as AwardsRouteImport } from './routes/awards'
@@ -101,6 +102,11 @@ const HorseGalleryRoute = HorseGalleryRouteImport.update({
   path: '/horse-gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FinancialReportRoute = FinancialReportRouteImport.update({
+  id: '/financial-report',
+  path: '/financial-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BroodmaresRoute = BroodmaresRouteImport.update({
   id: '/broodmares',
   path: '/broodmares',
@@ -173,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/financial-report': typeof FinancialReportRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByTo {
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/financial-report': typeof FinancialReportRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
@@ -229,6 +237,7 @@ export interface FileRoutesById {
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/financial-report': typeof FinancialReportRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
@@ -259,6 +268,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/financial-report'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
@@ -286,6 +296,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/financial-report'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
@@ -314,6 +325,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/financial-report'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
@@ -343,6 +355,7 @@ export interface RootRouteChildren {
   AwardsRoute: typeof AwardsRoute
   BreedingRoute: typeof BreedingRoute
   BroodmaresRoute: typeof BroodmaresRoute
+  FinancialReportRoute: typeof FinancialReportRoute
   HorseGalleryRoute: typeof HorseGalleryRoute
   JockeysRoute: typeof JockeysRoute
   MarketRoute: typeof MarketRoute
@@ -452,6 +465,13 @@ declare module '@tanstack/react-router' {
       path: '/horse-gallery'
       fullPath: '/horse-gallery'
       preLoaderRoute: typeof HorseGalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/financial-report': {
+      id: '/financial-report'
+      path: '/financial-report'
+      fullPath: '/financial-report'
+      preLoaderRoute: typeof FinancialReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/broodmares': {
@@ -602,6 +622,7 @@ const rootRouteChildren: RootRouteChildren = {
   AwardsRoute: AwardsRoute,
   BreedingRoute: BreedingRoute,
   BroodmaresRoute: BroodmaresRoute,
+  FinancialReportRoute: FinancialReportRoute,
   HorseGalleryRoute: HorseGalleryRoute,
   JockeysRoute: JockeysRoute,
   MarketRoute: MarketRoute,

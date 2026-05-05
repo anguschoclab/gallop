@@ -55,32 +55,32 @@ export function RaceDetailPanel({ race }: RaceDetailPanelProps) {
   const restrictionLabels = formatRestrictions();
 
   return (
-    <Card className="bg-muted/50">
+    <Card className="bg-t700 border-gold-muted">
       <CardContent className="p-4 space-y-3">
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
-            <span className="text-muted-foreground">Purse</span>
-            <div className="font-semibold text-foreground">${purse.toLocaleString()}</div>
+            <span className="text-cream-muted">Purse</span>
+            <div className="font-semibold text-cream">${purse.toLocaleString()}</div>
           </div>
           <div>
-            <span className="text-muted-foreground">Distance</span>
-            <div className="font-semibold text-foreground">{distance}m</div>
+            <span className="text-cream-muted">Distance</span>
+            <div className="font-semibold text-cream">{distance}m</div>
           </div>
           {graded && (
             <>
               <div>
-                <span className="text-muted-foreground">Surface</span>
-                <div className="font-semibold text-foreground">{graded.surface}</div>
+                <span className="text-cream-muted">Surface</span>
+                <div className="font-semibold text-cream">{graded.surface}</div>
               </div>
               <div>
-                <span className="text-muted-foreground">Track</span>
-                <div className="font-semibold text-foreground">{graded.track}</div>
+                <span className="text-cream-muted">Track</span>
+                <div className="font-semibold text-cream">{graded.track}</div>
               </div>
             </>
           )}
         </div>
         <div>
-          <span className="text-muted-foreground text-sm">Eligibility</span>
+          <span className="text-cream-muted text-sm">Eligibility</span>
           <div className="flex flex-wrap gap-1.5 mt-1">
             {restrictionLabels.map((label, idx) => (
               <Badge key={idx} variant="secondary" className="text-xs">

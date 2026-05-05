@@ -37,12 +37,12 @@ function RecapPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Weekly Recap</h1>
-        <p className="text-muted-foreground font-[family-name:var(--font-body)]">Highlights from the past week's graded stakes</p>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">Highlights from the past week's graded stakes</p>
       </div>
 
       {recentGradedRaces.length === 0 ? (
-        <Card>
-          <CardContent className="p-8 text-center text-muted-foreground italic font-[family-name:var(--font-body)]">
+        <Card className="border-gold-muted">
+          <CardContent className="p-8 text-center text-cream-muted italic font-[family-name:var(--font-body)]">
             No graded races completed in the past 7 days. Check back after the weekend stakes have been run!
           </CardContent>
         </Card>
@@ -64,7 +64,7 @@ function RecapPage() {
               .filter((f): f is NonNullable<typeof f> => f !== null);
 
             return (
-              <Card key={race.id} className="border-l-4 border-l-primary">
+              <Card key={race.id} className="border-l-4 border-l-gold border-gold-muted">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
@@ -73,11 +73,11 @@ function RecapPage() {
                         <Badge className={cn(gradeColor, "font-[family-name:var(--font-mono)]")}>
                           {race.graded!.grade}
                         </Badge>
-                        <Badge className="bg-secondary text-secondary-foreground font-[family-name:var(--font-mono)] tabular-nums">
+                        <Badge className="bg-t700 text-cream font-[family-name:var(--font-mono)] tabular-nums">
                           Day <NumericValue value={race.day} />
                         </Badge>
                       </div>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground font-[family-name:var(--font-body)]">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted font-[family-name:var(--font-body)]">
                         <span>{race.graded!.track}</span>
                         <span><NumericValue value={race.distance} suffix="m" /></span>
                         <span>{race.graded!.surface}</span>
@@ -92,7 +92,7 @@ function RecapPage() {
                       index === 0 ? (
                         <Trophy className="h-4 w-4 text-fame" />
                       ) : index === 1 ? (
-                        <Medal className="h-4 w-4 text-muted-foreground" />
+                        <Medal className="h-4 w-4 text-cream-muted" />
                       ) : (
                         <Award className="h-4 w-4 text-warning" />
                       );
@@ -100,14 +100,14 @@ function RecapPage() {
                     return (
                       <div
                         key={finisher.horse.id}
-                        className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                        className="flex items-center justify-between p-3 rounded-lg bg-t700"
                       >
                         <div className="flex items-center gap-3">
                           {positionIcon}
                           <SilkDot color={finisher.horse.silk} size="sm" />
                           <div>
                             <div className="font-medium font-[family-name:var(--font-display)]">{finisher.horse.name}</div>
-                            <div className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                            <div className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                               <NumericValue value={finisher.result.time} suffix="s" className="font-[family-name:var(--font-mono)] tabular-nums" /> · <NumericValue value={finisher.horse.age} suffix="YO" /> · OVR{" "}
                               <NumericValue value={Math.round(
                                 (finisher.horse.stats.speed +

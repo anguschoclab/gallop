@@ -43,7 +43,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
   const winRate = jockey.careerStarts > 0 ? (jockey.careerWins / jockey.careerStarts) * 100 : 0;
 
   return (
-    <Card className="overflow-hidden border-white/10 bg-gradient-to-br from-card to-card/50 hover:border-primary/50 transition-all duration-300">
+    <Card className="overflow-hidden border-gold-muted bg-gradient-to-br from-card to-card/50 hover:border-gold transition-all duration-300">
       <CardHeader className="p-4 pb-0">
         <div className="flex justify-between items-start">
           <div className="flex gap-3">
@@ -54,7 +54,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
               {isRetained && (
                 <button
                   onClick={() => rerollJockeySilk(jockey.id)}
-                  className="absolute -top-1 -right-1 bg-primary hover:bg-primary/80 text-primary-foreground rounded-full p-1 shadow-md transition-all"
+                  className="absolute -top-1 -right-1 bg-t700 hover:bg-t600 text-cream rounded-full p-1 shadow-md transition-all"
                   title="Reroll Silks"
                 >
                   <RefreshCw size={12} />
@@ -68,7 +68,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
                   {jockey.archetype.replace("_", " ")}
                 </Badge>
                 {isRetained && (
-                  <Badge className="bg-primary text-primary-foreground text-[10px] font-black uppercase">
+                  <Badge className="bg-t700 text-cream text-[10px] font-black uppercase">
                     Retained
                   </Badge>
                 )}
@@ -76,7 +76,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
             </div>
           </div>
           <div className="text-right">
-            <div className="text-sm font-black text-primary">${jockey.ridingFee.toLocaleString()}</div>
+            <div className="text-sm font-black text-gold">${jockey.ridingFee.toLocaleString()}</div>
             <div className="text-[10px] text-muted-foreground uppercase font-medium">Mount Fee</div>
           </div>
         </div>
@@ -96,7 +96,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
               </div>
               <div className="bg-white/5 rounded-lg p-2 border border-white/5">
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
-                  <Calendar size={12} className="text-primary" />
+                  <Calendar size={12} className="text-gold" />
                   <span className="text-[10px] font-black uppercase tracking-wider">Age</span>
                 </div>
                 <div className="text-sm font-bold tabular-nums">{jockey.age}</div>
@@ -112,7 +112,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-primary" 
+                      className="h-full bg-gold" 
                       style={{ width: `${jockey.fame}%` }}
                     />
                   </div>
@@ -147,7 +147,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
         {onAction && (
           <button
             onClick={() => onAction(jockey)}
-            className="w-full mt-4 py-2 bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-2"
+            className="w-full mt-4 py-2 bg-t700 text-cream text-xs font-black uppercase tracking-widest rounded-lg hover:bg-t600 transition-all flex items-center justify-center gap-2"
           >
             <DollarSign size={14} />
             {actionLabel || "Hire Jockey"}

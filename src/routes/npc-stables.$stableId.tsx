@@ -1,5 +1,8 @@
 // NPC Stable Detail - View stable info and horses with scouting
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowLeft } from "lucide-react";
+import { useHorses, useDay, useCash } from "@/game/hooks/useCoreState";
+import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
 import { useGame } from "@/game/store";
 import { getStableById, PERSONALITY_CONFIG } from "@/game/npcStables";
 import { calculateScoutCost } from "@/game/scouting";
@@ -8,7 +11,7 @@ import { HorseCard } from "@/components/HorseCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Building2, Users, DollarSign, Globe, Trophy, Eye, Brain } from "lucide-react";
+import { Building2, Users, DollarSign, Globe, Trophy, Eye, Brain } from "lucide-react";
 import { toast } from "sonner";
 import { TrophyCase } from "@/components/awards";
 import { NumericValue } from "@/components/HorseBits";
@@ -17,21 +20,26 @@ export const Route = createFileRoute("/npc-stables/$stableId")({ component: NpcS
 
 function NpcStableDetailPage() {
   const { stableId } = Route.useParams();
-  const game = useGame();
+  const npcStables = useNpcStables();
+  const horses = useHorses();
+  const day = useDay();
+  const cash = useCash();
+  const awards = useAwards();
+  const scoutHorse = useGame((s) => s.scoutHorse);
   
-  const stable = getStableById(game.npcStables, stableId);
+  const stable = getStableById(npcStables, stableId);
   if (!stable) {
     return (
       <div className="space-y-4">
         <h1 className="text-2xl font-bold">Stable Not Found</h1>
-        <Link to="/npc-stables" className="text-primary hover:underline mt-4 inline-block">
+        <Link to="/npc-stables" className="text-gold hover:underline mt-4 inline-block">
           ← Back to Stables
         </Link>
       </div>
     );
   }
   
-  const horses = game.horses.filter(h => h.stableId === stableId);
+  const stableHorses = horses.filter(h => h.stableId === stableId);
   const activeHorses = horses.filter(h => !h.healthStatus || h.healthStatus === "healthy");
   const colts = horses.filter(h => h.gender === "colt" || h.gender === "horse");
   const fillies = horses.filter(h => h.gender === "filly" || h.gender === "mare");
@@ -39,7 +47,7 @@ function NpcStableDetailPage() {
   return (
     <div className="space-y-6">
       {/* Back link */}
-      <Link to="/npc-stables" className="text-primary hover:underline mb-4 inline-flex items-center gap-1">
+      <Link to="/npc-stables" className="text-gold hover:underline mb-4 inline-flex items-center gap-1">
         <ArrowLeft className="w-4 h-4" />
         Back to Stables
       </Link>
@@ -56,13 +64,13 @@ function NpcStableDetailPage() {
           />
           <div className="flex-1">
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-3xl font-bold">{stable.name}</h1>
+              <h1 className="text-3xl font-bold font-[family-name:var(--font-display)]">{stable.name}</h1>
               <Badge className={getTierColor(stable.tier)}>
                 {stable.tier.toUpperCase()}
               </Badge>
             </div>
-            <p className="text-muted-foreground mt-1">{stable.owner}</p>
-            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+            <p className="text-cream-muted mt-1">{stable.owner}</p>
+            <div className="flex items-center gap-4 mt-2 text-sm text-cream-muted">
               <span className="flex items-center gap-1">
                 <Globe className="w-4 h-4" />
                 {stable.country}
@@ -83,22 +91,22 @@ function NpcStableDetailPage() {
         </div>
         
         {stable.description && (
-          <p className="text-muted-foreground bg-muted/50 p-4 rounded-lg">
+          <p className="text-cream-muted bg-t700 p-4 rounded-lg">
             {stable.description}
           </p>
         )}
         
         {/* Personality */}
         <div className="mt-4 flex items-center gap-3">
-          <Badge variant="outline" className="flex items-center gap-1 px-3 py-1">
+          <Badge variant="outline" className="flex items-center gap-1 px-3 py-1 border-gold-muted text-cream">
             <Brain className="w-3 h-3" />
             <span className="capitalize">{stable.personality.replace("-", " ")}</span>
           </Badge>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-cream-muted">
             {PERSONALITY_CONFIG[stable.personality]?.description}
           </span>
           {stable.preferredDistance && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge className="text-xs bg-t700 text-cream">
               Specialist: {stable.preferredDistance}m {stable.preferredSurface}
             </Badge>
           )}
@@ -107,7 +115,7 @@ function NpcStableDetailPage() {
       
       {/* Awards */}
       <TrophyCase
-        awards={game.awards?.filter((a) => a.stableId === stableId) ?? []}
+        awards={awards?.filter((a) => a.stableId === stableId) ?? []}
         ownerName={stable.name}
         variant="compact"
         className="mb-6"
@@ -115,35 +123,35 @@ function NpcStableDetailPage() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card>
+        <Card className="border-gold-muted">
           <CardContent className="pt-4">
             <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums"><NumericValue value={horses.length} /></div>
-            <div className="text-sm text-muted-foreground">Total Horses</div>
+            <div className="text-sm text-cream-muted">Total Horses</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-gold-muted">
           <CardContent className="pt-4">
             <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums"><NumericValue value={activeHorses.length} /></div>
-            <div className="text-sm text-muted-foreground">Active Horses</div>
+            <div className="text-sm text-cream-muted">Active Horses</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-gold-muted">
           <CardContent className="pt-4">
             <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums"><NumericValue value={colts.length} /></div>
-            <div className="text-sm text-muted-foreground">Colts/Horses</div>
+            <div className="text-sm text-cream-muted">Colts/Horses</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-gold-muted">
           <CardContent className="pt-4">
             <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums"><NumericValue value={fillies.length} /></div>
-            <div className="text-sm text-muted-foreground">Fillies/Mares</div>
+            <div className="text-sm text-cream-muted">Fillies/Mares</div>
           </CardContent>
         </Card>
       </div>
       
       {/* Horses List */}
       <div>
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-[family-name:var(--font-display)]">
           <Building2 className="w-5 h-5" />
           Horses
         </h2>
@@ -151,10 +159,10 @@ function NpcStableDetailPage() {
         <div className="space-y-3">
           {horses.map(horse => {
             const scoutCost = calculateScoutCost(horse, stable!);
-            const canScout = !horse.lastScoutedDay || (game.day - horse.lastScoutedDay) > 0;
+            const canScout = !horse.lastScoutedDay || (day - horse.lastScoutedDay) > 0;
             
             const handleScout = () => {
-              const result = game.scoutHorse(horse.id);
+              const result = scoutHorse(horse.id);
               if (result.success) {
                 toast.success(result.message);
               } else {
@@ -171,7 +179,7 @@ function NpcStableDetailPage() {
                       size="sm" 
                       variant="outline"
                       onClick={handleScout}
-                      disabled={game.cash < scoutCost}
+                      disabled={cash < scoutCost}
                       className="flex items-center gap-1"
                     >
                       <Eye className="w-4 h-4" />
@@ -185,7 +193,7 @@ function NpcStableDetailPage() {
         </div>
         
         {horses.length === 0 && (
-          <p className="text-muted-foreground text-center py-8">
+          <p className="text-cream-muted text-center py-8">
             No horses currently in this stable.
           </p>
         )}

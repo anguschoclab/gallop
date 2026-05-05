@@ -63,7 +63,7 @@ export function AwardIconWithYear({ year, ...props }: AwardIconWithYearProps) {
   return (
     <div className="relative inline-flex">
       <AwardIcon {...props} />
-      <span className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-[10px] px-1.5 py-0.5 rounded-full font-semibold">
+      <span className="absolute -bottom-1 -right-1 bg-t700 text-cream text-[10px] px-1.5 py-0.5 rounded-full font-semibold">
         {year}
       </span>
     </div>

@@ -108,8 +108,8 @@ export function JockeyRoster() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
         <div>
-          <h2 className="text-3xl font-black tracking-tight uppercase italic text-primary">Jockey Roster</h2>
-          <p className="text-muted-foreground text-sm font-medium">Manage your retained riders and scout the free agent market.</p>
+          <h2 className="text-3xl font-black tracking-tight uppercase italic text-gold font-[family-name:var(--font-display)]">Jockey Roster</h2>
+          <p className="text-cream-muted text-sm font-medium font-[family-name:var(--font-body)]">Manage your retained riders and scout the free agent market.</p>
         </div>
         
         <div className="flex flex-wrap gap-2 w-full md:w-auto">

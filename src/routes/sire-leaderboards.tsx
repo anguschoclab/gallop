@@ -15,9 +15,9 @@ function SireLeaderboardsPage() {
   
   if (!leaderboards) {
     return (
-      <Card>
+      <Card className="border-gold-muted">
         <CardContent className="p-12 text-center">
-          <p className="text-muted-foreground">Leaderboards will be available after the first week of gameplay.</p>
+          <p className="text-cream-muted">Leaderboards will be available after the first week of gameplay.</p>
         </CardContent>
       </Card>
     );
@@ -42,8 +42,8 @@ function SireLeaderboardsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Sire Leaderboards</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Sire Leaderboards</h1>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">
           Track stallion performance across multiple dimensions. Updated weekly.
         </p>
       </div>
@@ -71,29 +71,29 @@ function SireLeaderboardsPage() {
 function LeaderboardView({ leaderboard }: { leaderboard: any }) {
   if (!leaderboard || leaderboard.rankings.length === 0) {
     return (
-      <Card>
+      <Card className="border-gold-muted">
         <CardContent className="p-12 text-center">
-          <p className="text-muted-foreground">No rankings available yet.</p>
+          <p className="text-cream-muted">No rankings available yet.</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card>
+    <Card className="border-gold-muted">
       <CardHeader>
-        <CardTitle>{leaderboard.title}</CardTitle>
-        <p className="text-sm text-muted-foreground">{leaderboard.description}</p>
+        <CardTitle className="font-[family-name:var(--font-display)]">{leaderboard.title}</CardTitle>
+        <p className="text-sm text-cream-muted">{leaderboard.description}</p>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           {leaderboard.rankings.map((ranking: any) => (
-            <div key={ranking.stallionId} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+            <div key={ranking.stallionId} className="flex items-center justify-between p-3 bg-t700 rounded-lg">
               <div className="flex items-center gap-4">
                 <span className="text-2xl font-bold w-8">#{ranking.rank}</span>
                 <div>
                   <p className="font-semibold">{ranking.stallionName}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-cream-muted">
                     AEI: {ranking.metrics.aei.toFixed(1)} · CI: {ranking.metrics.ci.toFixed(1)} ·
                     {ranking.metrics.lifetimeStakesFoals} Stakes · {ranking.metrics.lifetimeG1Foals} G1
                   </p>
@@ -101,7 +101,7 @@ function LeaderboardView({ leaderboard }: { leaderboard: any }) {
               </div>
               <div className="text-right">
                 <p className="text-2xl font-bold">{ranking.value.toFixed(1)}</p>
-                <p className="text-xs text-muted-foreground">Score</p>
+                <p className="text-xs text-cream-muted">Score</p>
               </div>
             </div>
           ))}

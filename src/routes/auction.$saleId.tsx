@@ -87,12 +87,12 @@ function AuctionSalePage() {
             ← Sales
           </Button>
           <h1 className="text-2xl font-bold">{sale.name}</h1>
-          <p className="text-sm text-muted-foreground tabular-nums">
+          <p className="text-sm text-cream-muted tabular-nums">
             {gameCalendarDate(sale.day)} · {KIND_LABELS[sale.kind] ?? sale.kind}
             {isResolved && " · Resolved"}
           </p>
         </div>
-        <Badge variant={isResolved ? "secondary" : "default"} className="mt-1">
+        <Badge className={isResolved ? "bg-t600 text-cream" : "bg-t700 text-cream"}>
           {isResolved ? "Completed" : "Open"}
         </Badge>
       </div>
@@ -102,7 +102,7 @@ function AuctionSalePage() {
         <AuctionTheater saleId={saleId} />
       ) : activeLots.length === 0 ? (
         <Card>
-          <CardContent className="p-8 text-center text-muted-foreground">No lots in this sale.</CardContent>
+          <CardContent className="p-8 text-center text-cream-muted">No lots in this sale.</CardContent>
         </Card>
       ) : (
         <>
@@ -153,8 +153,8 @@ function AuctionSalePage() {
                 <div className="text-sm">
                   {horse.sireName && horse.damName && (
                     <p className="text-muted-foreground">
-                      By <span className="font-medium text-foreground">{horse.sireName}</span> ×{" "}
-                      <span className="font-medium text-foreground">{horse.damName}</span>
+                      By <span className="font-medium text-cream">{horse.sireName}</span> ×{" "}
+                      <span className="font-medium text-cream">{horse.damName}</span>
                     </p>
                   )}
                 </div>
@@ -162,47 +162,49 @@ function AuctionSalePage() {
                 {/* Physical */}
                 <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm tabular-nums">
                   {horse.conformation && (
-                    <div><span className="text-muted-foreground">Conformation: </span>{horse.conformation}</div>
+                    <div><span className="text-cream-muted">Conformation: </span>{horse.conformation}</div>
                   )}
                   {horse.temperament && (
-                    <div><span className="text-muted-foreground">Temperament: </span>{horse.temperament}</div>
+                    <div><span className="text-cream-muted">Temperament: </span>{horse.temperament}</div>
                   )}
                   {horse.coatColor && (
-                    <div><span className="text-muted-foreground">Coat: </span>{horse.coatColor}</div>
+                    <div><span className="text-cream-muted">Coat: </span>{horse.coatColor}</div>
                   )}
                   {horse.runningStyle && (
-                    <div><span className="text-muted-foreground">Style: </span>{horse.runningStyle}</div>
+                    <div><span className="text-cream-muted">Style: </span>{horse.runningStyle}</div>
                   )}
                 </div>
 
                 {/* Stats (fog of war) */}
                 {displayStats && (
                   <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Stats</p>
+                    <p className="text-xs font-medium text-cream-muted uppercase tracking-wide">Stats</p>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm tabular-nums">
                       {displayStats.speed !== undefined ? (
-                        <div><span className="text-muted-foreground">Speed: </span>{displayStats.speed}</div>
-                      ) : <div><span className="text-muted-foreground">Speed: </span><span className="italic text-muted-foreground">unknown</span></div>}
+                        <div><span className="text-cream-muted">Speed: </span>{displayStats.speed}</div>
+                      ) : <div><span className="text-cream-muted">Speed: </span><span className="italic text-cream-muted">unknown</span></div>}
                       {displayStats.stamina !== undefined ? (
-                        <div><span className="text-muted-foreground">Stamina: </span>{displayStats.stamina}</div>
-                      ) : <div><span className="text-muted-foreground">Stamina: </span><span className="italic text-muted-foreground">unknown</span></div>}
+                        <div><span className="text-cream-muted">Stamina: </span>{displayStats.stamina}</div>
+                      ) : <div><span className="text-cream-muted">Stamina: </span><span className="italic text-cream-muted">unknown</span></div>}
                       {displayStats.acceleration !== undefined ? (
-                        <div><span className="text-muted-foreground">Accel.: </span>{displayStats.acceleration}</div>
-                      ) : <div><span className="text-muted-foreground">Accel.: </span><span className="italic text-muted-foreground">unknown</span></div>}
+                        <div><span className="text-cream-muted">Accel.: </span>{displayStats.acceleration}</div>
+                      ) : <div><span className="text-cream-muted">Accel.: </span><span className="italic text-cream-muted">unknown</span></div>}
                       {displayStats.consistency !== undefined ? (
-                        <div><span className="text-muted-foreground">Consist.: </span>{displayStats.consistency}</div>
-                      ) : <div><span className="text-muted-foreground">Consist.: </span><span className="italic text-muted-foreground">unknown</span></div>}
+                        <div><span className="text-cream-muted">Consist.: </span>{displayStats.consistency}</div>
+                      ) : <div><span className="text-cream-muted">Consist.: </span><span className="italic text-cream-muted">unknown</span></div>}
                     </div>
                     {displayStatsResult?.overallEstimate !== undefined && (
-                      <p className="text-xs text-muted-foreground tabular-nums">OVR ~{displayStatsResult.overallEstimate} (estimated)</p>
+                      <p className="text-xs text-cream-muted tabular-nums">OVR ~{displayStatsResult.overallEstimate} (estimated)</p>
                     )}
                   </div>
                 )}
 
                 {/* Consignor */}
                 {consignor && (
-                  <p className="text-xs text-muted-foreground">
-                    Consigned by <span className="font-medium">{consignor.name}</span>
+                  <p className="text-xs text-cream-muted">
+                    {isPlayerConsigned
+                      ? "Your commission will be deducted from proceeds."
+                      : "Bid to acquire this horse for your stable."}
                   </p>
                 )}
                 {!consignor && !currentLot.consignorStableId && (
@@ -210,18 +212,25 @@ function AuctionSalePage() {
                     Your consignment · {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission
                   </p>
                 )}
+                <p className="text-cream-muted">
+                  {isPlayerConsigned
+                    ? "Consigned by you"
+                    : consignor
+                    ? `Consigned by ${consignor.name}`
+                    : "Unknown consignor"}
+                </p>
 
                 {/* Price */}
                 <div className="border-t pt-3 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Current price</span>
-                    <span className="text-lg font-bold tabular-nums">
+                    <span className="text-sm text-cream-muted">Current price</span>
+                    <p className="text-sm text-cream-muted mt-0.5 tabular-nums">
                       {currentPrice > 0 ? `$${currentPrice.toLocaleString()}` : "No bids"}
-                    </span>
+                    </p>
                   </div>
                   {!isResolved && !currentLot.passed && (
                     <>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <div className="flex items-center justify-between text-sm text-cream-muted">
                         <span>Next bid</span>
                         <span className="tabular-nums">${nextBid.toLocaleString()}</span>
                       </div>
@@ -293,7 +302,7 @@ function AuctionSalePage() {
             </Card>
           ) : currentLot && !horse ? (
             <Card>
-              <CardContent className="p-6 text-center text-muted-foreground text-sm">
+              <CardContent className="p-6 text-center text-cream-muted text-sm">
                 Horse data unavailable for this lot.
               </CardContent>
             </Card>

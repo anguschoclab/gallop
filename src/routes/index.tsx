@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { overall, NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
-import { Trophy, BarChart2, Calendar, TrendingUp } from "lucide-react";
+import { Trophy, BarChart2, Calendar, TrendingUp, DollarSign } from "lucide-react";
 import { getGradeColorClass } from "@/core/race/grading";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +47,12 @@ function Dashboard() {
           <p className="text-muted-foreground font-[family-name:var(--font-mono)] tabular-nums">{gameCalendarDate(day)}</p>
         </div>
         <div className="flex gap-2">
+          <Link to="/financial-report">
+            <Button variant="outline" size="sm" className="gap-2">
+              <DollarSign className="h-4 w-4" />
+              Financial Report
+            </Button>
+          </Link>
           <Link to="/recap">
             <Button variant="outline" size="sm" className="gap-2">
               <BarChart2 className="h-4 w-4" />

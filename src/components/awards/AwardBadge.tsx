@@ -69,7 +69,7 @@ export function AwardBadge({
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             {showRegion && <span>{regionName}</span>}
             {showYear && <span>{award.year}</span>}
-            <span className="text-primary font-semibold">{award.points} pts</span>
+            <span className="text-gold font-semibold">{award.points} pts</span>
           </div>
         </div>
       </div>
@@ -95,11 +95,11 @@ export function AwardBadge({
       <p className="text-sm text-muted-foreground">{regionName}</p>
       <div className="flex items-center gap-2 mt-1 text-sm">
         {showYear && (
-          <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+          <span className="bg-t700 text-gold px-2 py-0.5 rounded-full">
             {award.year}
           </span>
         )}
-        <span className="font-semibold text-primary">{award.points} points</span>
+        <span className="font-semibold text-gold">{award.points} points</span>
       </div>
     </div>
   );

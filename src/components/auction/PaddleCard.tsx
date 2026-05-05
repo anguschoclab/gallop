@@ -57,7 +57,7 @@ export function PaddleCard({
       <p
         className={cn(
           "text-xs font-medium mt-1 text-center max-w-[80px] truncate",
-          isPlayer ? "text-emerald-700" : "text-foreground"
+          isPlayer ? "text-emerald-700" : "text-cream"
         )}
       >
         {isPlayer ? "You" : stableName}

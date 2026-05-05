@@ -70,8 +70,8 @@ function HorseGalleryPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Horse Gallery</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Horse Gallery</h1>
+          <p className="text-cream-muted font-[family-name:var(--font-body)]">
             Browse all {horses.length} horses in your stable with coat details.
           </p>
         </div>
@@ -86,7 +86,7 @@ function HorseGalleryPage() {
                 <SelectItem key={coat.value} value={coat.value}>
                   {coat.label}
                   {coat.value !== "all" && coatCounts[coat.value] > 0 && (
-                    <span className="ml-2 text-muted-foreground">({coatCounts[coat.value]})</span>
+                    <span className="ml-2 text-cream-muted">({coatCounts[coat.value]})</span>
                   )}
                 </SelectItem>
               ))}
@@ -107,9 +107,9 @@ function HorseGalleryPage() {
       </div>
 
       {filteredHorses.length === 0 ? (
-        <Card>
+        <Card className="border-gold-muted">
           <CardContent className="p-12 text-center">
-            <p className="text-muted-foreground">
+            <p className="text-cream-muted">
               {horses.length === 0
                 ? "No horses in your stable yet. Visit the market or auction to acquire stock."
                 : "No horses match the selected coat filter."}
@@ -137,8 +137,8 @@ function HorseGalleryPage() {
                 params={{ horseId: horse.id }}
                 className="group"
               >
-                <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full">
-                  <div className="aspect-square bg-muted/50 flex items-center justify-center p-4">
+                <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full border-gold-muted">
+                  <div className="aspect-square bg-t700 flex items-center justify-center p-4">
                     <HorsePortrait
                       coatColor={horse.coatColor}
                       size="xl"
@@ -147,21 +147,21 @@ function HorseGalleryPage() {
                   </div>
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
-                      <CardTitle className="text-lg truncate">{horse.name}</CardTitle>
-                      <Badge variant="outline" className="text-xs shrink-0">
+                      <CardTitle className="text-lg truncate font-[family-name:var(--font-display)]">{horse.name}</CardTitle>
+                      <Badge variant="outline" className="text-xs shrink-0 border-gold-muted text-cream">
                         {ovr} OVR
                       </Badge>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
-                      <Badge variant="secondary" className="capitalize text-xs">
+                      <Badge className="capitalize text-xs bg-t700 text-cream">
                         {horse.coatColor?.replace("-", " ") ?? "Unknown"}
                       </Badge>
-                      <span className="text-muted-foreground">·</span>
-                      <span className="text-muted-foreground">{horse.age} years</span>
+                      <span className="text-cream-muted">·</span>
+                      <span className="text-cream-muted">{horse.age} years</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 text-xs text-cream-muted">
                       <Zap className="w-3 h-3" />
                       <span>Energy {horse.energy}%</span>
                       {horse.form !== 0 && (

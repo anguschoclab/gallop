@@ -67,7 +67,7 @@ export function AppShell() {
   if (isRace) return <Outlet />;
 
   return (
-    <div className="flex min-h-screen bg-t900">
+    <div className="flex min-h-screen bg-t900 animate-fade-in">
       {/* Skip to content link for accessibility */}
       <a
         href="#main-content"

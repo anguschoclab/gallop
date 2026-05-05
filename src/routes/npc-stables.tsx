@@ -1,17 +1,15 @@
 // NPC Stables Directory - Browse rival stables and their horses
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
-import { getMajorStables, getStablesByTier } from "@/game/npcStables";
-import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
-import { Badge } from "@/components/ui/badge";
+import { Trophy, TrendingUp, Users, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Users, Building2, TrendingUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useNpcStables } from "@/game/hooks/useSystemsState";
+import { getMajorStables, getStablesByTier } from "@/game/npcStables";
 
 export const Route = createFileRoute("/npc-stables")({ component: NpcStablesPage });
 
 function NpcStablesPage() {
-  const game = useGame();
-  const { npcStables } = game;
+  const npcStables = useNpcStables();
   
   const majorStables = getMajorStables(npcStables);
   const eliteStables = getStablesByTier(majorStables, "elite");
@@ -22,14 +20,14 @@ function NpcStablesPage() {
   return (
     <div className="space-y-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <Building2 className="w-8 h-8 text-primary" />
+        <h1 className="text-3xl font-bold flex items-center gap-2 font-[family-name:var(--font-display)]">
+          <Building2 className="w-8 h-8 text-gold" />
           Rival Stables
         </h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-cream-muted mt-2 font-[family-name:var(--font-body)]">
           Browse {npcStables.length} NPC stables worldwide — from elite international operations to regional breeders.
         </p>
-        <div className="flex gap-4 mt-3 text-sm text-muted-foreground">
+        <div className="flex gap-4 mt-3 text-sm text-cream-muted">
           <span className="flex items-center gap-1">
             <Trophy className="w-4 h-4" />
             {eliteStables.length} Elite
@@ -52,8 +50,8 @@ function NpcStablesPage() {
       {/* Elite Stables */}
       {eliteStables.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-primary" />
+          <h2 className="text-xl font-semibold mb-3 flex items-center gap-2 font-[family-name:var(--font-display)]">
+            <Trophy className="w-5 h-5 text-gold" />
             Elite Stables
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -67,8 +65,8 @@ function NpcStablesPage() {
       {/* Mid-Tier Stables */}
       {midStables.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-primary" />
+          <h2 className="text-xl font-semibold mb-3 flex items-center gap-2 font-[family-name:var(--font-display)]">
+            <TrendingUp className="w-5 h-5 text-gold" />
             Mid-Tier Stables
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -82,8 +80,8 @@ function NpcStablesPage() {
       {/* Budget Stables */}
       {budgetStables.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
+          <h2 className="text-xl font-semibold mb-3 flex items-center gap-2 font-[family-name:var(--font-display)]">
+            <Users className="w-5 h-5 text-gold" />
             Budget Stables
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -97,11 +95,11 @@ function NpcStablesPage() {
       {/* Regional Operations (Filler) - Collapsible */}
       {fillerCount > 0 && (
         <div className="mt-8 pt-6 border-t">
-          <h2 className="text-lg font-semibold text-muted-foreground flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-cream-muted flex items-center gap-2">
             <Building2 className="w-5 h-5" />
             {fillerCount} Regional Operations
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-cream-muted mt-1">
             Smaller regional stables with limited strings. These operations may not appear in major races but provide depth to the racing ecosystem.
           </p>
         </div>
@@ -113,7 +111,7 @@ function NpcStablesPage() {
 function StableCard({ stable }: { stable: ReturnType<typeof getMajorStables>[number] }) {
   return (
     <Link to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-gold-muted">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
@@ -125,8 +123,8 @@ function StableCard({ stable }: { stable: ReturnType<typeof getMajorStables>[num
                 }}
               />
               <div>
-                <CardTitle className="text-lg">{stable.name}</CardTitle>
-                <p className="text-sm text-muted-foreground">{stable.country}</p>
+                <CardTitle className="text-lg font-[family-name:var(--font-display)]">{stable.name}</CardTitle>
+                <p className="text-sm text-cream-muted">{stable.country}</p>
               </div>
             </div>
             <Badge className={getTierColor(stable.tier)}>
@@ -135,11 +133,11 @@ function StableCard({ stable }: { stable: ReturnType<typeof getMajorStables>[num
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+          <p className="text-sm text-cream-muted mb-3 line-clamp-2">
             {stable.description || `${stable.owner}'s racing operation with ${stable.horses.length} horses.`}
           </p>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
+            <span className="text-cream-muted">
               {stable.horses.length} horses
             </span>
             <span className="text-fame" title={`Reputation: ${stable.reputation}`}>

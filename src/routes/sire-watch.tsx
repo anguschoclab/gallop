@@ -23,12 +23,12 @@ function SireWatchPage() {
 
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {
-      case "elite": return "bg-fame";
-      case "premium": return "bg-info";
-      case "solid": return "bg-success";
-      case "developing": return "bg-warning";
-      case "unproven": return "bg-muted-foreground";
-      default: return "bg-muted-foreground";
+      case "elite": return "bg-fame text-t950";
+      case "premium": return "bg-info text-t950";
+      case "solid": return "bg-success text-t950";
+      case "developing": return "bg-warning text-t950";
+      case "unproven": return "bg-t600 text-cream";
+      default: return "bg-t600 text-cream";
     }
   };
 
@@ -36,8 +36,8 @@ function SireWatchPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Sire Watch</h1>
-          <p className="text-muted-foreground">Analytics and performance metrics for active stallions.</p>
+          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Sire Watch</h1>
+          <p className="text-cream-muted font-[family-name:var(--font-body)]">Analytics and performance metrics for active stallions.</p>
         </div>
         <Button variant="outline" size="sm">
           <Filter className="h-4 w-4 mr-2" />
@@ -46,11 +46,11 @@ function SireWatchPage() {
       </div>
 
       {sortedSires.length === 0 ? (
-        <Card>
+        <Card className="border-gold-muted">
           <CardContent className="p-12 text-center">
-            <Trophy className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <Trophy className="h-12 w-12 mx-auto text-cream-muted mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Stallions at Stud</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-cream-muted">
               Retire horses to stud to begin tracking sire analytics.
             </p>
           </CardContent>
@@ -58,55 +58,54 @@ function SireWatchPage() {
       ) : (
         <div className="grid gap-4">
           {sortedSires.map((analytics) => (
-            <Card key={analytics.stallionId} className="hover:shadow-md transition-shadow">
+            <Card key={analytics.stallionId} className="hover:shadow-md transition-shadow border-gold-muted">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <CardTitle className="text-lg">{analytics.stallionName}</CardTitle>
+                      <CardTitle className="text-lg font-[family-name:var(--font-display)]">{analytics.stallionName}</CardTitle>
                       <Badge 
-                        variant="secondary" 
                         className={getClassificationColor(analytics.classification)}
                       >
                         {analytics.classification.charAt(0).toUpperCase() + analytics.classification.slice(1)}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-cream-muted">
                       Standing Fee: ${analytics.standingFee.toLocaleString()} · {analytics.lifetimeFoals} Foals
                     </p>
                   </div>
                   <div className="text-right">
                     <div className="flex items-center gap-2 mb-1">
-                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                      <TrendingUp className="h-4 w-4 text-cream-muted" />
                       <span className="text-2xl font-bold tabular-nums">{analytics.aei.toFixed(1)}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">AEI</p>
+                    <p className="text-xs text-cream-muted">AEI</p>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-4 gap-4 text-sm">
                   <div>
-                    <p className="text-muted-foreground">CI</p>
+                    <p className="text-cream-muted">CI</p>
                     <p className="font-semibold">{analytics.ci.toFixed(1)}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">Win %</p>
+                    <p className="text-cream-muted">Win %</p>
                     <p className="font-semibold">{analytics.progenyWinPercentage.toFixed(1)}%</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">Stakes Winners</p>
+                    <p className="text-cream-muted">Stakes Winners</p>
                     <p className="font-semibold">{analytics.lifetimeStakesFoals}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">G1 Winners</p>
+                    <p className="text-cream-muted">G1 Winners</p>
                     <p className="font-semibold">{analytics.lifetimeG1Foals}</p>
                   </div>
                 </div>
-                <div className="mt-3 pt-3 border-t flex justify-between items-center">
+                <div className="mt-3 pt-3 border-t border-gold-muted flex justify-between items-center">
                   <div className="flex gap-2">
-                    <Badge variant="outline">{analytics.surfaceBias}</Badge>
-                    <Badge variant="outline">{analytics.distancePreference}</Badge>
+                    <Badge variant="outline" className="border-gold-muted text-cream">{analytics.surfaceBias}</Badge>
+                    <Badge variant="outline" className="border-gold-muted text-cream">{analytics.distancePreference}</Badge>
                   </div>
                   <Button size="sm" variant="ghost" onClick={() => window.location.href = `/sire-watch/${analytics.stallionId}`}>
                     View Profile

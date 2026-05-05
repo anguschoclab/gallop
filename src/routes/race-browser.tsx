@@ -83,12 +83,12 @@ function RaceBrowser() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Race Browser</h1>
-        <p className="text-muted-foreground">Browse all graded stakes races worldwide</p>
+        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Race Browser</h1>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">Browse all graded stakes races worldwide</p>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border-gold-muted">
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-4 items-end">
             <div className="space-y-2">
@@ -167,7 +167,7 @@ function RaceBrowser() {
                 setTrackFilter("all");
                 setDistanceFilter("all");
               }}
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="px-4 py-2 text-sm font-medium text-cream-muted hover:text-cream transition-colors"
             >
               Reset filters
             </button>
@@ -176,15 +176,15 @@ function RaceBrowser() {
       </Card>
 
       {/* Results count */}
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm text-cream-muted">
         Showing {filteredRaces.length} of {races.filter(r => r.graded).length} graded stakes races
       </div>
 
       {/* Race list */}
       <div className="space-y-3">
         {filteredRaces.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center text-muted-foreground">
+          <Card className="border-gold-muted">
+            <CardContent className="p-8 text-center text-cream-muted">
               No races match your filters
             </CardContent>
           </Card>
@@ -192,30 +192,30 @@ function RaceBrowser() {
           filteredRaces.map((race) => {
             const hasOwnedEntry = race.entries.some((e) => e.owned);
             return (
-              <Card key={race.id} className={`border-l-4 ${hasOwnedEntry ? "border-l-success bg-success/10" : "border-l-primary"}`}>
+              <Card key={race.id} className={`border-l-4 border-gold-muted ${hasOwnedEntry ? "border-l-success bg-success/10" : "border-l-gold"}`}>
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="text-lg font-bold">{race.name}</h3>
+                        <h3 className="text-lg font-bold font-[family-name:var(--font-display)]">{race.name}</h3>
                         {race.graded?.grade && (
                           <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
                             {race.graded.grade}
                           </Badge>
                         )}
                         {hasOwnedEntry && (
-                          <Badge className="bg-success text-success-foreground">Entered</Badge>
+                          <Badge className="bg-success text-t950">Entered</Badge>
                         )}
                       </div>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                        <span className="font-medium text-foreground">{race.graded?.track}</span>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted">
+                        <span className="font-medium text-cream">{race.graded?.track}</span>
                         <span>· {race.graded && getCountry(race.graded.track)}</span>
                         <span>· {race.distance}m</span>
                         <span>· {race.graded?.surface}</span>
                         <span>· Day {race.day}</span>
                         <span>
                           · Purse{" "}
-                          <span className="font-medium text-foreground">
+                          <span className="font-medium text-cream">
                             ${race.purse.toLocaleString()}
                           </span>
                         </span>
@@ -224,28 +224,28 @@ function RaceBrowser() {
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {race.restrictions.minAge !== undefined &&
                             race.restrictions.maxAge !== undefined && (
-                              <Badge variant="outline" className="text-xs">
+                              <Badge variant="outline" className="text-xs border-gold-muted text-cream">
                                 {race.restrictions.minAge}-{race.restrictions.maxAge}YO
                               </Badge>
                             )}
                           {race.restrictions.minAge !== undefined &&
                             race.restrictions.maxAge === undefined && (
-                              <Badge variant="outline" className="text-xs">
+                              <Badge variant="outline" className="text-xs border-gold-muted text-cream">
                                 {race.restrictions.minAge}+ YO
                               </Badge>
                             )}
                           {race.restrictions.gender && (
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs border-gold-muted text-cream">
                               {race.restrictions.gender}
                             </Badge>
                           )}
                           {race.restrictions.minAgeNorthern !== undefined && (
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs border-gold-muted text-cream">
                               {race.restrictions.minAgeNorthern}+ YO (Northern)
                             </Badge>
                           )}
                           {race.restrictions.minAgeSouthern !== undefined && (
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs border-gold-muted text-cream">
                               {race.restrictions.minAgeSouthern}+ YO (Southern)
                             </Badge>
                           )}

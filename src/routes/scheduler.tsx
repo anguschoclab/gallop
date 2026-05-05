@@ -30,11 +30,11 @@ const GOAL_LABELS: Record<CampaignGoalType, string> = {
 };
 
 const SLOT_STATUS_COLORS: Record<string, string> = {
-  planned: "bg-blue-100 text-blue-700",
-  entered: "bg-amber-100 text-amber-700",
-  completed: "bg-emerald-100 text-emerald-700",
-  skipped: "bg-gray-100 text-gray-500",
-  cancelled: "bg-red-100 text-red-500",
+  planned: "bg-t700 text-cream",
+  entered: "bg-warning text-t950",
+  completed: "bg-success text-t950",
+  skipped: "bg-t600 text-cream-muted",
+  cancelled: "bg-destructive text-t950",
 };
 
 function SlotStatusBadge({ status }: { status: string }) {
@@ -75,8 +75,8 @@ function SchedulerPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Campaign Scheduler</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-display)]">Campaign Scheduler</h1>
+          <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
             Plan race campaigns for your horses · {gameCalendarDate(day)}
           </p>
         </div>
@@ -90,12 +90,12 @@ function SchedulerPage() {
 
       {/* Add campaign panel */}
       {horsesWithoutCampaign.length > 0 && (
-        <Card className="border-dashed">
+        <Card className="border-dashed border-gold-muted">
           <CardContent className="pt-4">
             {addingHorseId === null ? (
               <Button
                 variant="ghost"
-                className="w-full gap-2 text-muted-foreground"
+                className="w-full gap-2 text-cream-muted"
                 onClick={() => setAddingHorseId(horsesWithoutCampaign[0]?.id ?? "")}
               >
                 <Plus className="h-4 w-4" />
@@ -155,8 +155,8 @@ function SchedulerPage() {
       )}
 
       {campaigns.length === 0 && (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
+        <Card className="border-gold-muted">
+          <CardContent className="py-12 text-center text-cream-muted">
             <CalendarClock className="h-10 w-10 mx-auto mb-3 opacity-30" />
             <p className="font-medium">No campaigns yet</p>
             <p className="text-sm mt-1">Add a campaign above to start planning your horses' race schedules.</p>
@@ -176,22 +176,22 @@ function SchedulerPage() {
           .slice(0, 5);
 
         return (
-          <Card key={campaign.horseId}>
+          <Card key={campaign.horseId} className="border-gold-muted">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div>
-                    <CardTitle className="text-base">
+                    <CardTitle className="text-base font-[family-name:var(--font-display)]">
                       <Link to="/stable/$horseId" params={{ horseId: horse.id }} className="hover:underline">
                         {horse.name}
                       </Link>
                     </CardTitle>
                     <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-gold-muted text-cream">
                         {GOAL_LABELS[campaign.goalType]}
                       </Badge>
                       {campaign.autoManaged && (
-                        <span className="text-xs text-muted-foreground">Auto-managed</span>
+                        <span className="text-xs text-cream-muted">Auto-managed</span>
                       )}
                     </div>
                   </div>
@@ -206,7 +206,7 @@ function SchedulerPage() {
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-7 w-7 text-muted-foreground"
+                    className="h-7 w-7 text-cream-muted"
                     onClick={() => deleteCampaign(campaign.horseId)}
                     title="Delete campaign"
                   >
@@ -223,16 +223,16 @@ function SchedulerPage() {
                   {activeFlags.map((flag, fi) => (
                     <div
                       key={fi}
-                      className="flex items-start justify-between gap-2 p-2 rounded-md bg-amber-50 border border-amber-200"
+                      className="flex items-start justify-between gap-2 p-2 rounded-md bg-warning/20 border border-warning"
                     >
                       <div className="flex items-start gap-2">
-                        <Flag className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
-                        <p className="text-xs text-amber-800">{flag.message}</p>
+                        <Flag className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
+                        <p className="text-xs text-cream">{flag.message}</p>
                       </div>
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-5 w-5 shrink-0 text-amber-600 hover:text-amber-800"
+                        className="h-5 w-5 shrink-0 text-warning hover:text-cream"
                         onClick={() => dismissCampaignFlag(campaign.horseId, fi)}
                       >
                         <X className="h-3 w-3" />
@@ -245,7 +245,7 @@ function SchedulerPage() {
               {/* Upcoming slots */}
               {upcomingSlots.length > 0 ? (
                 <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                  <p className="text-xs font-medium text-cream-muted uppercase tracking-wide mb-2">
                     Upcoming races
                   </p>
                   {upcomingSlots.map((slot, si) => {
@@ -253,16 +253,16 @@ function SchedulerPage() {
                     return (
                       <div
                         key={si}
-                        className="flex items-center justify-between py-1.5 px-3 rounded-md bg-muted/50 text-sm"
+                        className="flex items-center justify-between py-1.5 px-3 rounded-md bg-t700 text-sm"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="text-xs text-muted-foreground tabular-nums w-20">
+                          <span className="text-xs text-cream-muted tabular-nums w-20">
                             {gameCalendarDate(slot.dayTarget)}
                           </span>
                           <span className="font-medium truncate max-w-[180px]">
                             {race?.name ?? slot.raceKey ?? "TBD"}
                           </span>
-                          <Badge variant="outline" className="text-xs capitalize">
+                          <Badge variant="outline" className="text-xs capitalize border-gold-muted text-cream">
                             {slot.role}
                           </Badge>
                         </div>
@@ -272,7 +272,7 @@ function SchedulerPage() {
                             <Link
                               to="/race/$raceId"
                               params={{ raceId: race.id }}
-                              className="text-muted-foreground hover:text-foreground"
+                              className="text-cream-muted hover:text-cream"
                             >
                               <ChevronRight className="h-3.5 w-3.5" />
                             </Link>
@@ -283,22 +283,22 @@ function SchedulerPage() {
                   })}
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground italic">
+                <p className="text-xs text-cream-muted italic">
                   No upcoming slots — slots are refreshed every 7 days automatically.
                 </p>
               )}
 
               {/* Aptitude summary */}
               {(campaign.confirmedAptitudes.surfaceConfirmed || campaign.confirmedAptitudes.distanceBandConfirmed) && (
-                <div className="flex items-center gap-3 pt-1 border-t">
-                  <span className="text-xs text-muted-foreground">Confirmed:</span>
+                <div className="flex items-center gap-3 pt-1 border-t border-gold-muted">
+                  <span className="text-xs text-cream-muted">Confirmed:</span>
                   {campaign.confirmedAptitudes.surfaceConfirmed && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge className="text-xs bg-t700 text-cream">
                       {campaign.confirmedAptitudes.surfaceConfirmed}
                     </Badge>
                   )}
                   {campaign.confirmedAptitudes.distanceBandConfirmed && (
-                    <Badge variant="secondary" className="text-xs capitalize">
+                    <Badge className="text-xs capitalize bg-t700 text-cream">
                       {campaign.confirmedAptitudes.distanceBandConfirmed}
                     </Badge>
                   )}

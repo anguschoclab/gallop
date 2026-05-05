@@ -165,7 +165,7 @@ export function AwardCeremony({
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span className="truncate">{award.horseName}</span>
                       <span>•</span>
-                      <span className="text-primary font-semibold">
+                      <span className="text-gold font-semibold">
                         {award.points} pts
                       </span>
                     </div>

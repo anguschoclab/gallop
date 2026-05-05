@@ -27,7 +27,7 @@ export const Route = createFileRoute("/stable/$horseId")({
   notFoundComponent: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Horse not found</h1>
-      <Link to="/stable" className="text-primary underline">Back to stable</Link>
+      <Link to="/stable" className="text-gold underline">Back to stable</Link>
     </div>
   ),
 });
@@ -35,11 +35,9 @@ export const Route = createFileRoute("/stable/$horseId")({
 function HorseDetail() {
   const { horseId } = Route.useParams();
   const horse = useGame((s) => s.horses.find((h) => h.id === horseId));
-  const { trainHorse, consignHorse, withdrawConsignment } = useGame((s) => ({
-    trainHorse: s.trainHorse,
-    consignHorse: s.consignHorse,
-    withdrawConsignment: s.withdrawConsignment,
-  }));
+  const trainHorse = useGame((s) => s.trainHorse);
+  const consignHorse = useGame((s) => s.consignHorse);
+  const withdrawConsignment = useGame((s) => s.withdrawConsignment);
   const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));

@@ -120,7 +120,7 @@ export const Route = createFileRoute("/race/$raceId")({
   notFoundComponent: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Race not found</h1>
-      <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }} className="text-primary underline">Back</Link>
+      <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }} className="text-gold underline">Back</Link>
     </div>
   ),
 });
@@ -138,7 +138,7 @@ function LiveRace() {
   if (race.resolved) {
     return (
       <div className="p-8 text-center">
-        <p className="text-muted-foreground">This race has already been run.</p>
+        <p className="text-cream-muted">This race has already been run.</p>
         <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}><Button className="mt-4">Back to races</Button></Link>
       </div>
     );
@@ -736,16 +736,16 @@ function ResultOverlay({
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
       <div className="bg-card text-card-foreground rounded-xl shadow-2xl max-w-md w-full p-6 border border-white/10">
         <h2 className="text-2xl font-bold mb-1">{race.name}</h2>
-        <p className="text-sm text-muted-foreground mb-4">Final result</p>
+        <p className="text-sm text-cream-muted mb-4">Final result</p>
         <div className="space-y-2">
           {ordered.map((r, i) => {
             const prize = i < PRIZE.length ? Math.round(race.purse * PRIZE[i]) : 0;
             return (
               <div key={r.horseId} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
-                <span className="w-6 font-bold tabular-nums text-muted-foreground">{i + 1}</span>
+                <span className="w-6 font-bold tabular-nums text-cream-muted">{i + 1}</span>
                 <div className="h-5 w-5 rounded-full border border-white/20" style={{ backgroundColor: r.silk }} />
                 <span className={`flex-1 truncate ${r.owned ? "font-bold text-success" : ""}`}>{r.name}</span>
-                <span className="text-xs text-muted-foreground tabular-nums">{r.finishTime?.toFixed(2)}s</span>
+                <span className="text-xs text-cream-muted tabular-nums">{r.finishTime?.toFixed(2)}s</span>
                 {prize > 0 && r.owned && (
                   <span className="text-sm font-bold text-success tabular-nums">+${prize.toLocaleString()}</span>
                 )}
@@ -753,7 +753,7 @@ function ResultOverlay({
             );
           })}
         </div>
-        <Button onClick={onClose} className="w-full mt-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold">Close results</Button>
+        <Button onClick={onClose} className="w-full mt-6 bg-t700 hover:bg-t600 text-cream font-bold">Close results</Button>
       </div>
     </div>
   );

@@ -70,8 +70,8 @@ function RegionalCalendarPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-            <Link to="/races" className="hover:text-foreground flex items-center gap-1" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}>
+          <div className="flex items-center gap-2 text-cream-muted mb-1">
+            <Link to="/races" className="hover:text-cream flex items-center gap-1" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}>
               <ChevronLeft className="h-4 w-4" />
               All Races
             </Link>
@@ -81,8 +81,8 @@ function RegionalCalendarPage() {
               Calendars
             </span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">{region.title}</h1>
-          <p className="text-muted-foreground">{region.subtitle}</p>
+          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">{region.title}</h1>
+          <p className="text-cream-muted font-[family-name:var(--font-body)]">{region.subtitle}</p>
         </div>
         
         {/* Region Switcher */}
@@ -90,7 +90,7 @@ function RegionalCalendarPage() {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border-gold-muted">
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-4 items-center">
             {/* Grade Filter */}
@@ -151,10 +151,8 @@ function RegionalCalendarPage() {
             </div>
           </div>
           
-          <div className="mt-3 text-sm text-muted-foreground">
-            Showing {filteredRaces.length} race{filteredRaces.length !== 1 ? "s" : ""}
-            {grade !== "all" && ` • Grade ${grade}`}
-            {special !== "all" && region.specialFilterName && ` • ${region.specialFilterName}: ${special}`}
+          <div className="mt-3 text-sm text-cream-muted">
+            Showing {filteredRaces.length} of {regionRaces.length} races
           </div>
         </CardContent>
       </Card>
@@ -167,9 +165,9 @@ function RegionalCalendarPage() {
       )}
 
       {filteredRaces.length === 0 && (
-        <Card>
-          <CardContent className="p-8 text-center text-muted-foreground">
-            No races match the selected filters.
+        <Card className="border-gold-muted">
+          <CardContent className="p-8 text-center text-cream-muted">
+            No races match your filters.
           </CardContent>
         </Card>
       )}
@@ -225,12 +223,12 @@ function MonthView({ races, region, currentDay }: { races: Race[]; region: Regio
                           <Badge className="bg-success text-success-foreground">Entered</Badge>
                         )}
                       </div>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted">
                         <span>{race.graded?.track}</span>
                         <span>{race.distance}m</span>
                         <span>{race.graded?.surface}</span>
                         <span>
-                          Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
+                          Purse <span className="font-medium text-cream">${race.purse.toLocaleString()}</span>
                         </span>
                         {race.restrictions?.minAge !== undefined && (
                           <span>
@@ -309,7 +307,7 @@ function TrackView({ races, region, currentDay }: { races: Race[]; region: Regio
                       <span>{race.distance}m</span>
                       <span>{race.graded?.surface}</span>
                       <span>
-                        Purse <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
+                        Purse <span className="font-medium text-cream">${race.purse.toLocaleString()}</span>
                       </span>
                       {race.restrictions?.minAge !== undefined && (
                         <span>

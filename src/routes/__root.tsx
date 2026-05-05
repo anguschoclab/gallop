@@ -10,15 +10,15 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <h1 className="text-7xl font-bold text-cream font-[family-name:var(--font-display)]">404</h1>
+        <h2 className="mt-4 text-xl font-semibold text-cream font-[family-name:var(--font-display)]">Page not found</h2>
+        <p className="mt-2 text-sm text-cream-muted font-[family-name:var(--font-body)]">
           The page you're looking for doesn't exist or has been moved.
         </p>
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-md bg-t700 px-4 py-2 text-sm font-medium text-cream transition-colors hover:bg-t600"
           >
             Go home
           </Link>
@@ -96,8 +96,8 @@ function RootComponent() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent mx-auto mb-4"></div>
+          <p className="text-cream-muted font-[family-name:var(--font-body)]">Loading...</p>
         </div>
       </div>
     );

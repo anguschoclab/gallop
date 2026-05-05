@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { useGame } from "@/game/store";
+import { useHorses } from "@/game/hooks/useCoreState";
+import { useAwards, useNpcStables } from "@/game/hooks/useSystemsState";
 import { HorseCard } from "@/components/HorseCard";
 import { TrophyCase } from "@/components/awards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,10 +16,9 @@ export const Route = createFileRoute("/stable")({
 });
 
 function StablePage() {
-  const game = useGame();
-  const horses = game.horses;
-  const awards = game.awards;
-  const npcStables = game.npcStables;
+  const horses = useHorses();
+  const awards = useAwards();
+  const npcStables = useNpcStables();
   
   const myHorses = useMemo(() => horses.filter((h) => h.owned), [horses]);
   const playerAwards = useMemo(() => awards.filter((a) => !a.stableId), [awards]);
@@ -109,7 +109,7 @@ function StablePage() {
             {npcStables.map((stable) => {
               const stableHorses = allHorses.filter(h => h.stableId === stable.id);
               return (
-                <Link key={stable.id} to="/npc-stables/$stableId" params={{ stableId: stable.id }}">
+                <Link key={stable.id} to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
                   <Card className="hover:bg-t700 transition-colors border-gold-muted">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base font-[family-name:var(--font-display)]">{stable.name}</CardTitle>

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, DollarSign, Wallet } from "lucide-react";
-import { useGame } from "@/game/store";
+import { useHorses, useRaces, useCash, useDay } from "@/game/hooks/useCoreState";
 import { formatCurrency, formatProfitLoss } from "@/core/financial";
 import type { IncomeSummary, ExpenseSummary } from "@/core/financial";
 
@@ -11,12 +11,10 @@ import type { IncomeSummary, ExpenseSummary } from "@/core/financial";
  * from race history and known expenses.
  */
 export function FinancialReport() {
-  const { horses, races, cash, day } = useGame((state) => ({
-    horses: state.horses,
-    races: state.races,
-    cash: state.cash,
-    day: state.day,
-  }));
+  const horses = useHorses();
+  const races = useRaces();
+  const cash = useCash();
+  const day = useDay();
 
   // Calculate income from resolved races
   const playerHorses = horses.filter((h) => h.owned);

@@ -43,11 +43,11 @@ function SettingsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 font-[family-name:var(--font-display)]">
             <Settings className="h-8 w-8" />
             Settings
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-cream-muted mt-1 font-[family-name:var(--font-body)]">
             Configure your stable manager preferences
           </p>
         </div>
@@ -59,9 +59,9 @@ function SettingsPage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         {/* Display Settings */}
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
               <Monitor className="h-4 w-4" />
               Display
             </CardTitle>
@@ -70,7 +70,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="compact-mode">Compact Mode</Label>
-                <p className="text-xs text-muted-foreground">Smaller cards and tighter spacing</p>
+                <p className="text-xs text-cream-muted">Smaller cards and tighter spacing</p>
               </div>
               <Switch
                 id="compact-mode"
@@ -82,7 +82,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="animations">Animations</Label>
-                <p className="text-xs text-muted-foreground">UI transitions and race viewer effects</p>
+                <p className="text-xs text-cream-muted">UI transitions and race viewer effects</p>
               </div>
               <Switch
                 id="animations"
@@ -94,7 +94,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="detailed-tooltips">Detailed Tooltips</Label>
-                <p className="text-xs text-muted-foreground">Full stat breakdowns on hover</p>
+                <p className="text-xs text-cream-muted">Full stat breakdowns on hover</p>
               </div>
               <Switch
                 id="detailed-tooltips"
@@ -106,7 +106,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="highlight-pending">Highlight Pending Actions</Label>
-                <p className="text-xs text-muted-foreground">Emphasize horses needing attention</p>
+                <p className="text-xs text-cream-muted">Emphasize horses needing attention</p>
               </div>
               <Switch
                 id="highlight-pending"
@@ -118,9 +118,9 @@ function SettingsPage() {
         </Card>
 
         {/* Gameplay Settings */}
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
               <Gamepad2 className="h-4 w-4" />
               Gameplay
             </CardTitle>
@@ -129,7 +129,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="auto-sim">Auto-Simulation</Label>
-                <p className="text-xs text-muted-foreground">Auto-advance when no player races</p>
+                <p className="text-xs text-cream-muted">Auto-advance when no player races</p>
               </div>
               <Switch
                 id="auto-sim"
@@ -141,7 +141,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="suggest-entries">Race Entry Suggestions</Label>
-                <p className="text-xs text-muted-foreground">Auto-suggest eligible horses for races</p>
+                <p className="text-xs text-cream-muted">Auto-suggest eligible horses for races</p>
               </div>
               <Switch
                 id="suggest-entries"
@@ -153,7 +153,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="daily-earnings">Daily Earnings Summary</Label>
-                <p className="text-xs text-muted-foreground">Show summary after each race day</p>
+                <p className="text-xs text-cream-muted">Show summary after each race day</p>
               </div>
               <Switch
                 id="daily-earnings"
@@ -165,7 +165,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="pause-events">Pause on Events</Label>
-                <p className="text-xs text-muted-foreground">Stop for awards and major races</p>
+                <p className="text-xs text-cream-muted">Stop for awards and major races</p>
               </div>
               <Switch
                 id="pause-events"
@@ -177,9 +177,9 @@ function SettingsPage() {
         </Card>
 
         {/* Notification Settings */}
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
               <Bell className="h-4 w-4" />
               Notifications
             </CardTitle>
@@ -188,7 +188,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="race-results">Race Results</Label>
-                <p className="text-xs text-muted-foreground">Toast notifications for race outcomes</p>
+                <p className="text-xs text-cream-muted">Toast notifications for race outcomes</p>
               </div>
               <Switch
                 id="race-results"
@@ -200,7 +200,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="auction-events">Auction Events</Label>
-                <p className="text-xs text-muted-foreground">Bidding and sale notifications</p>
+                <p className="text-xs text-cream-muted">Bidding and sale notifications</p>
               </div>
               <Switch
                 id="auction-events"
@@ -212,7 +212,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="breeding-events">Breeding Events</Label>
-                <p className="text-xs text-muted-foreground">Foaling and pregnancy updates</p>
+                <p className="text-xs text-cream-muted">Foaling and pregnancy updates</p>
               </div>
               <Switch
                 id="breeding-events"
@@ -224,7 +224,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="health-alerts">Health Alerts</Label>
-                <p className="text-xs text-muted-foreground">Injury and recovery notifications</p>
+                <p className="text-xs text-cream-muted">Injury and recovery notifications</p>
               </div>
               <Switch
                 id="health-alerts"
@@ -236,9 +236,9 @@ function SettingsPage() {
         </Card>
 
         {/* Audio Settings */}
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
               <Volume2 className="h-4 w-4" />
               Audio
             </CardTitle>
@@ -247,7 +247,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="sound-effects">Sound Effects</Label>
-                <p className="text-xs text-muted-foreground">UI sounds and game events</p>
+                <p className="text-xs text-cream-muted">UI sounds and game events</p>
               </div>
               <Switch
                 id="sound-effects"
@@ -259,7 +259,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="race-ambience">Race Ambience</Label>
-                <p className="text-xs text-muted-foreground">Crowd and track atmosphere</p>
+                <p className="text-xs text-cream-muted">Crowd and track atmosphere</p>
               </div>
               <Switch
                 id="race-ambience"
@@ -271,7 +271,7 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="ui-sounds">UI Click Sounds</Label>
-                <p className="text-xs text-muted-foreground">Button and interaction sounds</p>
+                <p className="text-xs text-cream-muted">Button and interaction sounds</p>
               </div>
               <Switch
                 id="ui-sounds"
@@ -280,7 +280,7 @@ function SettingsPage() {
               />
             </div>
             <div className="pt-2">
-              <p className="text-xs text-muted-foreground italic">
+              <p className="text-xs text-cream-muted italic">
                 Master volume and audio implementation coming in a future update.
               </p>
             </div>
@@ -288,9 +288,9 @@ function SettingsPage() {
         </Card>
 
         {/* Data Management */}
-        <Card className="md:col-span-2">
+        <Card className="md:col-span-2 border-gold-muted">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 font-[family-name:var(--font-display)]">
               <Database className="h-4 w-4" />
               Data Management
             </CardTitle>
@@ -299,14 +299,14 @@ function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Auto-Save Status</Label>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-cream-muted">
                   Game data is automatically saved to your browser's storage
                 </p>
               </div>
-              <Badge variant="outline" className="text-emerald-600">Auto-save enabled</Badge>
+              <Badge variant="outline" className="text-success border-gold-muted">Auto-save enabled</Badge>
             </div>
             <Separator />
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-cream-muted">
               <p>Settings last modified: Day {userSettings?.lastModified ?? 1}</p>
               <p className="mt-1">Settings version: {userSettings?.version ?? 1}</p>
             </div>
