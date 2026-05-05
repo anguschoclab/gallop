@@ -1,13 +1,14 @@
 import { useState, useMemo } from "react";
 import { useGame } from "@/game/store";
 import { useJockeys } from "@/game/hooks/useSystemsState";
+import { shallow } from "zustand/shallow";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Horse, Race, Jockey } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import { Check, ChevronRight, User, Info, AlertTriangle } from "lucide-react";
+import { Check, ChevronRight, User, Info, AlertTriangle, Truck } from "lucide-react";
 import { JockeyCard } from "./JockeyCard";
 import { RacingSilks } from "./RacingSilks";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
@@ -26,7 +27,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const [wantToClaim, setWantToClaim] = useState(false);
   
   const horses = useGame((s) => s.horses.filter(h => h.owned));
-  const jockeys = (useGame as any)((s) => s.jockeys ?? [], shallow);
+  const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
   const enterRace = useGame((s) => s.enterRace);
   const assignJockey = useGame((s) => s.assignJockey);
   const submitClaim = useGame((s) => s.submitClaim);
@@ -34,8 +35,8 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const cash = useGame((s) => s.cash);
   const day = useGame((s) => s.day);
 
-  const selectedHorse = useMemo(() => horses.find(h => h.id === selectedHorseId), [horses, selectedHorseId]);
-  const selectedJockey = useMemo(() => jockeys.find(j => j.id === selectedJockeyId), [jockeys, selectedJockeyId]);
+  const selectedHorse = useMemo(() => horses.find((h: Horse) => h.id === selectedHorseId), [horses, selectedHorseId]);
+  const selectedJockey = useMemo(() => jockeys.find((j: Jockey) => j.id === selectedJockeyId), [jockeys, selectedJockeyId]);
 
   const isHorseQualifiedForRace = (horse: Horse, race: Race): boolean => {
     if (!race.graded?.key || !horse.winAndYouInQualified) return false;
@@ -52,7 +53,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
 
   const marketJockeys = useMemo(() => {
     // Retained jockeys + freelance pool
-    return jockeys.filter(j => !j.stableId || j.contractUntil); // Simple filter for now
+    return jockeys.filter((j: Jockey) => !j.stableId || j.contractUntil); // Simple filter for now
   }, [jockeys]);
 
   const handleConfirm = () => {
@@ -152,9 +153,9 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
             <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
               <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">Select Jockey</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {marketJockeys.slice(0, 6).map(j => (
-                  <div 
-                    key={j.id} 
+                {marketJockeys.slice(0, 6).map((j: Jockey) => (
+                  <div
+                    key={j.id}
                     onClick={() => setSelectedJockeyId(j.id)}
                     className={`cursor-pointer transition-all ${selectedJockeyId === j.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background rounded-xl" : ""}`}
                   >
@@ -211,14 +212,33 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   <span className="text-muted-foreground">Jockey Riding Fee</span>
                   <span className="font-bold tabular-nums">${selectedJockey.ridingFee.toLocaleString()}</span>
                 </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <Truck size={14} />
+                    Transport Cost
+                  </span>
+                  <span className="font-bold tabular-nums">
+                    ${race.graded ?
+                      (race.graded.grade === "G1" ? 500 : race.graded.grade === "G2" ? 400 : race.graded.grade === "G3" ? 300 : 200) :
+                      150}
+                  </span>
+                </div>
                 <div className="h-px bg-white/10 my-2" />
                 <div className="flex justify-between text-lg font-black uppercase">
                   <span>Total Due</span>
-                  <span className="text-primary tabular-nums">${(isHorseQualifiedForRace(selectedHorse, race) ? 0 : race.entryFee + selectedJockey.ridingFee).toLocaleString()}</span>
+                  <span className="text-primary tabular-nums">
+                    ${(isHorseQualifiedForRace(selectedHorse, race) ? 0 : race.entryFee + selectedJockey.ridingFee + (race.graded ?
+                      (race.graded.grade === "G1" ? 500 : race.graded.grade === "G2" ? 400 : race.graded.grade === "G3" ? 300 : 200) :
+                      150)).toLocaleString()}
+                  </span>
                 </div>
               </div>
 
-              {cash < (isHorseQualifiedForRace(selectedHorse, race) ? selectedJockey.ridingFee : race.entryFee + selectedJockey.ridingFee) && (
+              {cash < (isHorseQualifiedForRace(selectedHorse, race) ? selectedJockey.ridingFee + (race.graded ?
+                      (race.graded.grade === "G1" ? 500 : race.graded.grade === "G2" ? 400 : race.graded.grade === "G3" ? 300 : 200) :
+                      150) : race.entryFee + selectedJockey.ridingFee + (race.graded ?
+                      (race.graded.grade === "G1" ? 500 : race.graded.grade === "G2" ? 400 : race.graded.grade === "G3" ? 300 : 200) :
+                      150)) && (
                 <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex gap-3 text-destructive">
                   <AlertTriangle size={18} className="shrink-0" />
                   <p className="text-xs font-bold">Insufficient cash to cover the total entry cost.</p>
@@ -301,9 +321,15 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               <ChevronRight size={14} className="ml-1" />
             </Button>
           ) : (
-            <Button 
+            <Button
               onClick={handleConfirm}
-              disabled={cash < (selectedHorse && isHorseQualifiedForRace(selectedHorse, race) ? selectedJockey!.ridingFee : race.entryFee + selectedJockey!.ridingFee + (wantToClaim ? race.claimingPrice! : 0))}
+              disabled={cash < (selectedHorse && isHorseQualifiedForRace(selectedHorse, race) ?
+                selectedJockey!.ridingFee + (race.graded ?
+                  (race.graded.grade === "G1" ? 500 : race.graded.grade === "G2" ? 400 : race.graded.grade === "G3" ? 300 : 200) :
+                  150) :
+                race.entryFee + selectedJockey!.ridingFee + (race.graded ?
+                  (race.graded.grade === "G1" ? 500 : race.graded.grade === "G2" ? 400 : race.graded.grade === "G3" ? 300 : 200) :
+                  150) + (wantToClaim ? race.claimingPrice! : 0))}
               className="uppercase font-black tracking-widest text-[10px] bg-primary text-primary-foreground px-8"
             >
               Confirm Entry

@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGame } from "@/game/store";
-import { FACILITY_UPGRADE_COSTS, type FacilityType, type FacilityLevel } from "@/core/facilities";
-import { ArrowUp, Check, X } from "lucide-react";
+import { FACILITY_UPGRADE_COSTS, FACILITY_ENABLED_WORKOUTS, type FacilityType, type FacilityLevel } from "@/core/facilities";
+import { ArrowUp, Check, X, Dumbbell } from "lucide-react";
 
 /**
  * Facilities Panel Component
@@ -108,6 +108,23 @@ export function FacilitiesPanel() {
                     </div>
                   )}
                 </div>
+
+                {/* Display enabled workouts */}
+                {FACILITY_ENABLED_WORKOUTS[type] && FACILITY_ENABLED_WORKOUTS[type].length > 0 && (
+                  <div className="pt-2 border-t">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                      <Dumbbell className="h-3 w-3" />
+                      <span>Enables:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {FACILITY_ENABLED_WORKOUTS[type].map((workout) => (
+                        <Badge key={workout} variant="outline" className="text-[10px] capitalize">
+                          {workout.replace("_", " ")}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {maxLevel ? (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">

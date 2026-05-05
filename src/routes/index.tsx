@@ -9,13 +9,14 @@ import { SilkDot } from "@/components/SilkDot";
 import { Trophy, BarChart2, Calendar, TrendingUp, DollarSign } from "lucide-react";
 import { getGradeColorClass } from "@/core/race/grading";
 import { cn } from "@/lib/utils";
+import { ReputationBadge } from "@/components/ReputationBadge";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
 function Dashboard() {
-  const { day, cash, horses, races, log, awards } = useGame();
+  const { day, cash, horses, races, log, awards, reputation } = useGame();
   const upcoming = races
     .filter((r) => !r.resolved && r.day >= day)
     .sort((a, b) => a.day - b.day)
@@ -30,6 +31,9 @@ function Dashboard() {
     const owned = gradeRaces.filter((r) => r.entries.some((e) => e.owned)).length;
     return { grade, owned };
   });
+
+  // Recent reputation events
+  const recentReputationEvents = reputation?.events?.slice(-5).reverse() ?? [];
 
   // Recent graded winners (from Recap)
   const weekAgo = day - 7;
@@ -46,25 +50,28 @@ function Dashboard() {
           <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Dashboard</h1>
           <p className="text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">{gameCalendarDate(day)}</p>
         </div>
-        <div className="flex gap-2">
-          <Link to="/financial-report">
-            <Button variant="outline" size="sm" className="gap-2">
-              <DollarSign className="h-4 w-4" />
-              Financial Report
-            </Button>
-          </Link>
-          <Link to="/recap">
-            <Button variant="outline" size="sm" className="gap-2">
-              <BarChart2 className="h-4 w-4" />
-              Weekly Recap
-            </Button>
-          </Link>
-          <Link to="/awards">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Trophy className="h-4 w-4" />
-              Trophy Case
-            </Button>
-          </Link>
+        <div className="flex items-center gap-4">
+          <ReputationBadge />
+          <div className="flex gap-2">
+            <Link to="/financial-report">
+              <Button variant="outline" size="sm" className="gap-2">
+                <DollarSign className="h-4 w-4" />
+                Financial Report
+              </Button>
+            </Link>
+            <Link to="/recap">
+              <Button variant="outline" size="sm" className="gap-2">
+                <BarChart2 className="h-4 w-4" />
+                Weekly Recap
+              </Button>
+            </Link>
+            <Link to="/awards">
+              <Button variant="outline" size="sm" className="gap-2">
+                <Trophy className="h-4 w-4" />
+                Trophy Case
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -129,6 +136,61 @@ function Dashboard() {
         </Card>
 
         <Card className="lg:col-span-2 border-gold-muted">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+            <CardTitle className="text-sm font-medium text-cream-muted">Recent Graded Winners</CardTitle>
+            <Calendar className="h-4 w-4 text-cream-muted" />
+          </CardHeader>
+          <CardContent>
+            {recentGradedWinners.length === 0 ? (
+              <p className="text-xs text-cream-muted italic py-2">No graded results this week.</p>
+            ) : (
+              <div className="space-y-2">
+                {recentGradedWinners.map((r) => {
+                  const winnerId = r.result?.[0]?.horseId;
+                  const winner = horses.find(h => h.id === winnerId);
+                  return (
+                    <div key={r.id} className="flex items-center justify-between text-xs border-b border-gold-muted/50 pb-2 last:border-0 last:pb-0">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className={`h-4 px-1 text-[9px] ${getGradeColorClass(r.graded!.grade)}`}>{r.graded!.grade}</Badge>
+                        <span className="font-medium truncate max-w-[120px]">{r.name}</span>
+                      </div>
+                      <span className="text-cream-muted truncate max-w-[100px]">{winner?.name ?? "Unknown"}</span>
+                      <span className="tabular-nums text-cream-muted font-[family-name:var(--font-mono)]">D{r.day}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="border-gold-muted">
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm font-medium text-cream-muted">Reputation History</CardTitle>
+          <Trophy className="h-4 w-4 text-cream-muted" />
+        </CardHeader>
+        <CardContent>
+          {recentReputationEvents.length === 0 ? (
+            <p className="text-xs text-cream-muted italic py-2">No reputation events yet.</p>
+          ) : (
+            <div className="space-y-1">
+              {recentReputationEvents.map((event, i) => (
+                <div key={i} className="text-sm flex gap-3 border-b border-gold-muted/30 last:border-0 py-1 font-[family-name:var(--font-body)]">
+                  <span className="text-cream-muted font-[family-name:var(--font-mono)] tabular-nums w-10 shrink-0">D{event.day}</span>
+                  <span className="text-cream">{event.description}</span>
+                  <span className={cn("text-xs font-medium ml-auto", event.amount > 0 ? "text-emerald-400" : "text-red-400")}>
+                    {event.amount > 0 ? "+" : ""}{event.amount}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="border-gold-muted">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium text-cream-muted">Recent Graded Winners</CardTitle>
             <Calendar className="h-4 w-4 text-cream-muted" />

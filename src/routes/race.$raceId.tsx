@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { useJockeys } from "@/game/hooks/useSystemsState";
-import { useEffect, useRef, useState } from "react";
+import { shallow } from "zustand/shallow";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
@@ -14,6 +15,7 @@ import type { Weather } from "@/game/types";
 import { Pause, Play, Camera, Mic2 } from "lucide-react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { NarrativeGenerator, type CommentaryLine } from "@/services/narrativeService";
+import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
 
 // Track surface background mapping
 const getTrackBackground = (surface?: string): string | undefined => {
@@ -131,7 +133,7 @@ function LiveRace() {
   const navigate = useNavigate();
   const race = useGame((s) => s.races.find((r) => r.id === raceId));
   const horses = useGame((s) => s.horses);
-  const jockeys = (useGame as any)((s) => s.jockeys ?? [], shallow);
+  const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
   const stables = useGame((s) => s.npcStables);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
 
@@ -207,6 +209,26 @@ function LiveRace() {
   pausedRef.current = paused;
 
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
+
+  // Calculate odds for each runner
+  const runnerOdds = useMemo(() => {
+    const oddsMap = new Map<string, string>();
+    for (const runner of runners) {
+      const horse = horses.find(h => h.id === runner.horseId);
+      if (horse) {
+        const probability = calculateWinProbability(
+          horse.stats.speed,
+          horse.stats.stamina,
+          horse.stats.acceleration,
+          horse.form,
+          classBonus
+        );
+        const morningLine = probabilityToMorningLine(probability);
+        oddsMap.set(runner.horseId, formatOdds(morningLine));
+      }
+    }
+    return oddsMap;
+  }, [runners, horses, classBonus]);
 
   useEffect(() => {
     let raf = 0;
@@ -431,6 +453,9 @@ function LiveRace() {
                   style={{ backgroundColor: r.silk }}
                 />
                 <span className={`flex-1 truncate ${r.owned ? "font-bold text-broadcast-accent" : ""}`}>{r.name}</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white/80 tabular-nums font-bold">
+                  {runnerOdds.get(r.horseId) ?? "N/A"}
+                </span>
                 {beyer !== null && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-broadcast-accent/20 text-broadcast-accent tabular-nums font-bold">
                     {beyer}

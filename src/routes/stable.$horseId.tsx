@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { HorseStats, SilkBadge, NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
-import { ArrowLeft, Tag } from "lucide-react";
+import { ArrowLeft, Tag, Lock } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
 import { HorsePortrait } from "@/components/HorsePortrait";
 import { BeyerChart } from "@/components/BeyerChart";
@@ -21,6 +21,7 @@ import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAd
 import { TRAINING_COST } from "@/game/store";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { getCurrentYear } from "@/game/raceSchedule";
+import { isWorkoutEnabled } from "@/core/facilities";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/stable/$horseId")({
@@ -41,6 +42,7 @@ function HorseDetail() {
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
   const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
+  const facilities = useGame((s) => s.facilities);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const day = useGame((s) => s.day);
   const auctions = (useGame as any)((s) => s.auctions ?? [], shallow);
@@ -228,47 +230,98 @@ function HorseDetail() {
               <div className="grid grid-cols-2 gap-2">
                 <Button
                   onClick={() => trainHorse(horse.id, "bullet")}
-                  disabled={isPregnant || slotsLeft <= 0 || cash < 100 || horse.energy < 25 || horse.stats.speed >= horse.potential}
+                  disabled={
+                    isPregnant ||
+                    slotsLeft <= 0 ||
+                    cash < 100 ||
+                    horse.energy < 25 ||
+                    horse.stats.speed >= horse.potential ||
+                    !facilities ||
+                    !isWorkoutEnabled(facilities, "bullet")
+                  }
                   className="w-full justify-between text-xs"
                   variant="outline"
                 >
-                  <span>Bullet</span>
+                  <div className="flex items-center gap-1">
+                    {!facilities || !isWorkoutEnabled(facilities, "bullet") ? <Lock className="h-3 w-3" /> : null}
+                    <span>Bullet</span>
+                  </div>
                   <span className="text-cream-muted">$100</span>
                 </Button>
                 <Button
                   onClick={() => trainHorse(horse.id, "breeze")}
-                  disabled={isPregnant || slotsLeft <= 0 || cash < 85 || horse.energy < 20}
+                  disabled={
+                    isPregnant ||
+                    slotsLeft <= 0 ||
+                    cash < 85 ||
+                    horse.energy < 20 ||
+                    !facilities ||
+                    !isWorkoutEnabled(facilities, "breeze")
+                  }
                   className="w-full justify-between text-xs"
                   variant="outline"
                 >
-                  <span>Breeze</span>
+                  <div className="flex items-center gap-1">
+                    {!facilities || !isWorkoutEnabled(facilities, "breeze") ? <Lock className="h-3 w-3" /> : null}
+                    <span>Breeze</span>
+                  </div>
                   <span className="text-cream-muted">$85</span>
                 </Button>
                 <Button
                   onClick={() => trainHorse(horse.id, "gate_work")}
-                  disabled={isPregnant || slotsLeft <= 0 || cash < 90 || horse.energy < 22}
+                  disabled={
+                    isPregnant ||
+                    slotsLeft <= 0 ||
+                    cash < 90 ||
+                    horse.energy < 22 ||
+                    !facilities ||
+                    !isWorkoutEnabled(facilities, "gate_work")
+                  }
                   className="w-full justify-between text-xs"
                   variant="outline"
                 >
-                  <span>Gate Work</span>
+                  <div className="flex items-center gap-1">
+                    {!facilities || !isWorkoutEnabled(facilities, "gate_work") ? <Lock className="h-3 w-3" /> : null}
+                    <span>Gate Work</span>
+                  </div>
                   <span className="text-cream-muted">$90</span>
                 </Button>
                 <Button
                   onClick={() => trainHorse(horse.id, "swimming")}
-                  disabled={isPregnant || slotsLeft <= 0 || cash < 80 || horse.energy < 15}
+                  disabled={
+                    isPregnant ||
+                    slotsLeft <= 0 ||
+                    cash < 80 ||
+                    horse.energy < 15 ||
+                    !facilities ||
+                    !isWorkoutEnabled(facilities, "swimming")
+                  }
                   className="w-full justify-between text-xs"
                   variant="outline"
                 >
-                  <span>Swimming</span>
+                  <div className="flex items-center gap-1">
+                    {!facilities || !isWorkoutEnabled(facilities, "swimming") ? <Lock className="h-3 w-3" /> : null}
+                    <span>Swimming</span>
+                  </div>
                   <span className="text-cream-muted">$80</span>
                 </Button>
                 <Button
                   onClick={() => trainHorse(horse.id, "gallop")}
-                  disabled={isPregnant || slotsLeft <= 0 || cash < 70 || horse.energy < 16}
+                  disabled={
+                    isPregnant ||
+                    slotsLeft <= 0 ||
+                    cash < 70 ||
+                    horse.energy < 16 ||
+                    !facilities ||
+                    !isWorkoutEnabled(facilities, "gallop")
+                  }
                   className="w-full justify-between text-xs"
                   variant="outline"
                 >
-                  <span>Gallop</span>
+                  <div className="flex items-center gap-1">
+                    {!facilities || !isWorkoutEnabled(facilities, "gallop") ? <Lock className="h-3 w-3" /> : null}
+                    <span>Gallop</span>
+                  </div>
                   <span className="text-cream-muted">$70</span>
                 </Button>
               </div>

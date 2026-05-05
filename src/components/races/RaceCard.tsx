@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
+import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
+import { useGame } from "@/game/store";
 
 interface RaceCardProps {
   race: any;
@@ -15,6 +17,45 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
   const ownedCount = race.entries.filter((e: any) => e.owned).length;
   const gradeLabel = race.graded?.grade;
   const gradeColor = gradeLabel ? getGradeColorClass(gradeLabel) : "bg-muted text-muted-foreground";
+  
+  const horses = useGame((s) => s.horses);
+  const classBonus = useGame((s) => {
+    // Calculate class bonus for odds
+    if (race.graded?.grade) {
+      const grade = race.graded.grade;
+      if (grade === "G1") return 15;
+      if (grade === "G2") return 10;
+      if (grade === "G3") return 5;
+      if (grade === "Listed") return 3;
+    }
+    return 0;
+  });
+
+  // Calculate odds for favorite horse (highest probability)
+  const favoriteOdds = (() => {
+    let bestOdds = "N/A";
+    let bestProbability = 0;
+    
+    for (const entry of race.entries) {
+      const horse = horses.find(h => h.id === entry.horseId);
+      if (horse) {
+        const probability = calculateWinProbability(
+          horse.stats.speed,
+          horse.stats.stamina,
+          horse.stats.acceleration,
+          horse.form,
+          classBonus
+        );
+        if (probability > bestProbability) {
+          bestProbability = probability;
+          const morningLine = probabilityToMorningLine(probability);
+          bestOdds = formatOdds(morningLine);
+        }
+      }
+    }
+    
+    return bestOdds;
+  })();
 
   return (
     <Card className={cn("overflow-hidden hover:bg-t700 transition-colors border-gold-muted", ownedCount > 0 && "border-success/30 bg-success/5")}>
@@ -55,6 +96,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
               <span>{race.distance}m</span>
               <span>{race.surface}</span>
               <span>{race.raceClass}</span>
+              <span className="font-bold text-cream">ML: {favoriteOdds}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground tabular-nums font-[family-name:var(--font-mono)]">Day {race.day}</span>
