@@ -28,6 +28,7 @@ import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { isUniversalBirthday, isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { detectInbreedingPattern, inbreedingPerformanceDampener } from "@/core/breeding/populationGenetics";
 import { recalcStandingFee } from "@/core/breeding/stallions";
+import { isHorseEligibleForClaimingPrice } from "./claiming";
 import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
 import { leaderboardPhase } from "@/core/time/phases/leaderboardPhase";
 import { awardsPhase } from "@/core/time/phases/awards";
@@ -311,6 +312,7 @@ type Actions = {
   enterRace: (raceId: string, horseId: string) => ActionResult;
   withdrawRace: (raceId: string, horseId: string) => void;
   resolveRaceWithImpacts: (raceId: string, result: { horseId: string; position: number; time: number }[], runners?: import("./raceSim").Runner[]) => void;
+  submitClaim: (raceId: string, horseId: string) => ActionResult;
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
   retireToStud: (horseId: string, fee: number, bookSize: number) => ActionResult;
   hireJockey: (jockeyId: string) => ActionResult;
