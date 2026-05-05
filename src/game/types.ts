@@ -1,4 +1,8 @@
 import type { RegionalAward, AwardRegion } from "./awards/types";
+import type { CourseSpecification } from "./tracks";
+import type { Rng } from "./rng";
+
+export type { CourseSpecification, Rng };
 
 export type HorseStats = {
   speed: number;
@@ -535,7 +539,7 @@ export type GameState = {
   pendingPlayerRaceId?: string;
   // Auction system
   auctions?: AuctionSale[];
-  jockeys: Jockey[];
+  jockeys?: Jockey[];
   // Industry mean earnings (rolling avg of foal-aged horse career earnings)
   // recomputed once per season. Used for AEI (Average Earnings Index) on the
   // Sire Watch route. 0 until first recompute.

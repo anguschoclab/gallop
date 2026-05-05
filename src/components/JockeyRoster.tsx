@@ -4,14 +4,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Search, Filter, UserCheck, Users } from "lucide-react";
-import { JockeyArchetype } from "@/game/types";
+import { Search, Filter, UserCheck, Users, Palette } from "lucide-react";
+import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 
 export function JockeyRoster() {
   const jockeys = useGame((s) => s.jockeys);
   const hireJockey = useGame((s) => s.hireJockey);
   const [search, setSearch] = useState("");
   const [archetypeFilter, setArchetypeFilter] = useState<JockeyArchetype | "all">("all");
+  const [patternFilter, setPatternFilter] = useState<JockeySilkPattern | "all">("all");
+  const [colorFilter, setColorFilter] = useState<string>("all");
 
   // Player jockeys: undefined stableId AND have an active contract (player-signed)
   const myJockeys = jockeys.filter(j => !j.stableId && !!j.contractUntil);
@@ -22,11 +24,27 @@ export function JockeyRoster() {
     return list.filter(j => {
       const matchesSearch = j.name.toLowerCase().includes(search.toLowerCase());
       const matchesArchetype = archetypeFilter === "all" || j.archetype === archetypeFilter;
-      return matchesSearch && matchesArchetype;
+      const matchesPattern = patternFilter === "all" || j.silk.pattern === patternFilter;
+      const matchesColor = colorFilter === "all" || j.silk.primary.toLowerCase() === colorFilter.toLowerCase();
+      return matchesSearch && matchesArchetype && matchesPattern && matchesColor;
     });
   };
 
   const archetypes: JockeyArchetype[] = ["front_runner", "closer", "clinical", "finisher", "versatile"];
+  const patterns: JockeySilkPattern[] = ["solid", "stripes", "halves", "quarters", "chevron", "diamond", "star", "sash", "hoops"];
+  const commonColors = [
+    { value: "all", label: "All Colors", hex: "#ffffff" },
+    { value: "#ff0000", label: "Red", hex: "#ff0000" },
+    { value: "#0000ff", label: "Blue", hex: "#0000ff" },
+    { value: "#00ff00", label: "Green", hex: "#00ff00" },
+    { value: "#ffff00", label: "Yellow", hex: "#ffff00" },
+    { value: "#ffffff", label: "White", hex: "#ffffff" },
+    { value: "#000000", label: "Black", hex: "#000000" },
+    { value: "#ff8000", label: "Orange", hex: "#ff8000" },
+    { value: "#800080", label: "Purple", hex: "#800080" },
+    { value: "#ff00ff", label: "Pink", hex: "#ff00ff" },
+    { value: "#00ffff", label: "Cyan", hex: "#00ffff" },
+  ];
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -36,7 +54,7 @@ export function JockeyRoster() {
           <p className="text-muted-foreground text-sm font-medium">Manage your retained riders and scout the free agent market.</p>
         </div>
         
-        <div className="flex gap-2 w-full md:w-auto">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
             <Input 
@@ -54,6 +72,25 @@ export function JockeyRoster() {
             <option value="all">All Styles</option>
             {archetypes.map(a => (
               <option key={a} value={a}>{a.replace("_", " ")}</option>
+            ))}
+          </select>
+          <select 
+            className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
+            value={patternFilter}
+            onChange={(e) => setPatternFilter(e.target.value as any)}
+          >
+            <option value="all">All Patterns</option>
+            {patterns.map(p => (
+              <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
+            ))}
+          </select>
+          <select 
+            className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
+            value={colorFilter}
+            onChange={(e) => setColorFilter(e.target.value)}
+          >
+            {commonColors.map(c => (
+              <option key={c.value} value={c.value}>{c.label}</option>
             ))}
           </select>
         </div>

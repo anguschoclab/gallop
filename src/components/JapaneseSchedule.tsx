@@ -113,7 +113,11 @@ export function JapaneseSchedule() {
                                 )}
                                 {race.restrictions?.gender && (
                                   <span>
+<<<<<<< Updated upstream
                                     {race.restrictions.gender.includes("filly") || race.restrictions.gender.includes("mare")
+=======
+                                    {race.restrictions.gender === "filly" || race.restrictions.gender === "fillies" || race.restrictions.gender === "fillies-and-mares"
+>>>>>>> Stashed changes
                                       ? "Fillies"
                                       : "Colts"}{" "}
                                     only

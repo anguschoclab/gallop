@@ -108,9 +108,9 @@ export function RegionalSchedule({ continent, country, tracks, title }: Regional
                                       {race.restrictions?.minAge && (
                                         <span>{race.restrictions.minAge}+ YO</span>
                                       )}
-                                      {race.restrictions?.sex && (
+                                      {race.restrictions?.gender && (
                                         <span>
-                                          {race.restrictions.sex === "filly"
+                                          {race.restrictions.gender === "filly" || race.restrictions.gender === "fillies" || race.restrictions.gender === "fillies-and-mares"
                                             ? "Fillies"
                                             : "Colts"}{" "}
                                           only
@@ -193,7 +193,11 @@ export function RegionalSchedule({ continent, country, tracks, title }: Regional
                             )}
                             {race.restrictions?.gender && (
                               <span>
+<<<<<<< Updated upstream
                                 {race.restrictions.gender.includes("filly") || race.restrictions.gender.includes("mare")
+=======
+                                {race.restrictions.gender === "filly" || race.restrictions.gender === "fillies" || race.restrictions.gender === "fillies-and-mares"
+>>>>>>> Stashed changes
                                   ? "Fillies"
                                   : "Colts"}{" "}
                                 only

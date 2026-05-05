@@ -142,7 +142,7 @@ function TrackSchedulePage() {
                 <div
                   key={race.id}
                   className={`flex items-start justify-between gap-4 p-3 rounded-lg border ${
-                    isTripleCrown ? "border-l-4 border-l-purple-500 bg-purple-50/50" : hasOwnedEntry ? "border-l-4 border-l-emerald-500 bg-emerald-50/50" : ""
+                    isTripleCrown ? "border-l-4 border-l-fame bg-fame/10" : hasOwnedEntry ? "border-l-4 border-l-success bg-success/10" : ""
                   }`}
                 >
                   <div className="flex-1">
