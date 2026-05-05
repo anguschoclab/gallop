@@ -526,10 +526,10 @@ export function stepRunner(
     }
   } else if (straight > 500) {
     // Long straight: favors closers with sustained stamina.
-    if ((r.runningStyle === "S" || r.runningStyle === "C") && progress > 0.7) {
+    if ((r.runningStyle === "S" || r.runningStyle === "P") && progress > 0.7) {
       const isCloserJockey = r.jockey?.archetype === "closer";
       const isLongStraightPro = r.jockey?.traits.includes("long_straight_pro");
-      const jockeyBonus = (r.jockey?.stats.patience ?? 50) / 1000 + (isCloserJockey ? 0.02 : 0);
+      const jockeyBonus = (r.jockey?.stats.pacing ?? 50) / 1000 + (isCloserJockey ? 0.02 : 0);
       const traitBonus = (progress > 0.85 && isLongStraightPro) ? (r.jockey?.stats.vigor ?? 50) / 400 : 0;
       styleMul *= (1.02 + jockeyBonus + traitBonus);
     }
@@ -568,9 +568,9 @@ export function stepRunner(
   
   // --- 3. Jockey Bonuses ---
   let finalDs = ds;
-  if (r.jockeyStats) {
-    const stats = r.jockeyStats;
-    const arch = r.jockeyArchetype;
+  if (r.jockey) {
+    const stats = r.jockey.stats;
+    const arch = r.jockey.archetype;
     
     // GateSkill: Accelerate faster at the start (first 5% of race)
     if (progress < 0.05) {

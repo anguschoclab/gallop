@@ -180,7 +180,7 @@ export interface GeneticMarkers {
   geneticDiversity?: number; // 0-1
   // Lethal recessive carrier flags. Both parents carrier → 25% homozygous foal
   // (auto-stillborn at the day-60 pregnancy checkpoint).
-  lethalCarriers?: { csnb?: boolean; hypp?: boolean; olws?: boolean };
+  lethalCarriers?: { csnb?: boolean; hypp?: boolean; olws?: boolean; ffs1?: boolean };
 }
 
 // Pedigree snapshot recorded on each horse at birth (or at horse generation

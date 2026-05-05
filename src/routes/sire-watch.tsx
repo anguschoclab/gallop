@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, TrendingUp, Filter } from "lucide-react";
 import { getSireAnalytics, type SireClassification, classifySire } from "@/core/breeding/sireAnalytics";
 
-export const Route = createFileRoute("/sire-watch/")({
+export const Route = createFileRoute("/sire-watch")({
   component: SireWatchPage,
 });
 

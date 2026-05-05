@@ -364,9 +364,6 @@ export function runNpcRaceEntry(
 
         const jockey = jockeys.find(j => j.id === jockeyId);
         const ridingFee = jockey?.ridingFee ?? 100;
-
-        const jockey = jockeys.find(j => j.id === jockeyId);
-        const ridingFee = jockey?.ridingFee ?? 100;
         const assignedWeight = calculateAssignedWeight(horse, race);
 
         race.entries.push({

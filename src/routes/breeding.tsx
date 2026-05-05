@@ -94,7 +94,7 @@ function BreedingPage() {
                   <label className="text-xs text-muted-foreground"><JargonTooltip term="Sire">Sire</JargonTooltip></label>
                   <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={sireId} onChange={(e) => setSireId(e.target.value)}>
                     <option value="">Select sire…</option>
-                    {adults.filter((h) => h.gender === "colt" || h.gender === "stallion").map((h) => (
+                    {adults.filter((h) => h.gender === "colt" || h.gender === "horse").map((h) => (
                       <option key={h.id} value={h.id}>
                         {h.name} (age {h.age}){h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""}
                       </option>
@@ -135,7 +135,18 @@ function BreedingPage() {
 
               {compatibility && (
                 <div className="space-y-4">
-                  <BreedingRadarChart factors={compatibility.factors} />
+                  <BreedingRadarChart data={[
+                    { factor: "Nicking", score: compatibility.factors.nicking.score, fullMark: 100 },
+                    { factor: "Dosage", score: compatibility.factors.dosage.score, fullMark: 100 },
+                    { factor: "Inbreeding", score: compatibility.factors.inbreeding.score, fullMark: 100 },
+                    { factor: "Parent Performance", score: compatibility.factors.parentPerformance.score, fullMark: 100 },
+                    { factor: "Conformation", score: compatibility.factors.conformation.score, fullMark: 100 },
+                    { factor: "Temperament", score: compatibility.factors.temperament.score, fullMark: 100 },
+                    { factor: "Foundation Stock", score: compatibility.factors.foundationStock.score, fullMark: 100 },
+                    { factor: "Founder Effect", score: compatibility.factors.founderEffect.score, fullMark: 100 },
+                    { factor: "Genetic", score: compatibility.factors.genetic.score, fullMark: 100 },
+                    { factor: "Blue Hen", score: compatibility.factors.blueHen.score, fullMark: 100 },
+                  ]} />
                   <Card className="bg-muted/50">
                     <CardHeader>
                       <CardTitle className="text-sm flex items-center gap-2">
@@ -241,7 +252,7 @@ function BreedingPage() {
                             <Button size="sm" variant="outline" className="h-7 text-[10px]">Sire Profile</Button>
                           </Link>
                         </div>
-                        {p.reBreedingAttempts > 0 && (
+                        {p.reBreedingAttempts && p.reBreedingAttempts > 0 && (
                           <span className="text-warning font-medium tabular-nums">Re-breeding attempt {p.reBreedingAttempts}/3</span>
                         )}
                         {p.liveFoalGuarantee && <span className="text-success font-medium">Live Foal Guarantee</span>}

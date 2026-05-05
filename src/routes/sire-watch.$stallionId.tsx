@@ -3,10 +3,10 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Trophy, TrendingUp, Horse as HorseIcon } from "lucide-react";
+import { ArrowLeft, Trophy, TrendingUp, Zap } from "lucide-react";
 import { getSireAnalytics, type SireClassification } from "@/core/breeding/sireAnalytics";
 
-export const Route = createFileRoute("/sire-watch/$stallionId/")({
+export const Route = createFileRoute("/sire-watch/$stallionId")({
   component: SireProfilePage,
 });
 
@@ -26,7 +26,7 @@ function SireProfilePage() {
         </Button>
         <Card>
           <CardContent className="p-12 text-center">
-            <HorseIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <Zap className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">Stallion Not Found</h3>
             <p className="text-sm text-muted-foreground">
               This stallion is not currently at stud or does not exist.

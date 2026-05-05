@@ -318,7 +318,6 @@ function RaceCard({ race, onEnter }: { race: any; onEnter?: () => void }) {
                 </Button>
               )}
             </div>
-          </div>
 
           <div className="flex items-center justify-between pt-2 border-t text-[11px]">
             <div className="flex gap-3 text-muted-foreground tabular-nums">

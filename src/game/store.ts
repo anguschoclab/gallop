@@ -9,7 +9,7 @@ import { generateAllNpcHorses } from "./npcHorseGen";
 import { runNpcRaceEntry, runNpcTraining, updateHorseFame } from "./npcRaceEntry";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { createRng, hashStr } from "./rng";
+import { createRng, hashStr, type Rng } from "./rng";
 import { generateUpcomingRaces as generateScheduledRaces } from "./raceSchedule";
 import { TRACKS, TRACK_SCHEDULES, type Track } from "./tracks";
 import { scoutHorse as performScout } from "./scouting";
@@ -20,7 +20,7 @@ import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
 import { generateUUID } from "./uuid";
 import { resolveFoaling } from "./foalGen";
 import { beyerFigure, distanceBucket, setCalibratedPars, expectedBeyer } from "./beyer";
-import { runRaceToCompletion } from "./raceSim";
+import { runRaceToCompletion, type Runner } from "./raceSim";
 import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
@@ -340,10 +340,14 @@ function initialState(): GameState {
   const npcHorseRng = createRng(hashStr("initial_npc_horses"));
   const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(npcStables, npcHorseRng);
   
+  // Generate initial jockeys
+  const jockeyRng = createRng(hashStr("initial_jockeys"));
+  const jockeys = generateInitialJockeys(jockeyRng);
+  
   // Run initial NPC race entry to populate races
   const pregnantIds = new Set<string>();
   const entryRng = createRng(hashStr("initial_entry"));
-  const racesWithEntries = runNpcRaceEntry(updatedStables, npcHorses, races, 1, entryRng, 7, pregnantIds);
+  const racesWithEntries = runNpcRaceEntry(updatedStables, npcHorses, jockeys, races, 1, entryRng, 7, pregnantIds);
   
   return {
     day: 1,
@@ -402,6 +406,7 @@ export const useGame = create<GameState & Actions>()(
       npcStables: [],
       scoutReports: [],
       auctions: [],
+      jockeys: [],
 
       newGame: async () => {
         // Clear OPFS storage when starting a new game
@@ -904,7 +909,8 @@ export const useGame = create<GameState & Actions>()(
           return { success: false, cost: 0, message: "Stable not found." };
         }
         
-        const result = performScout(horse, stable, s.day, s.cash);
+        const scoutRng = createRng(hashStr(`scout_${horseId}_${s.day}`));
+        const result = performScout(horse, stable, s.day, s.cash, scoutRng);
         
         if (result.success && result.report) {
           const report = result.report;
