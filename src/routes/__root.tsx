@@ -1,4 +1,11 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts, useNavigate } from "@tanstack/react-router";
+import {
+  Outlet,
+  Link,
+  createRootRoute,
+  HeadContent,
+  Scripts,
+  useNavigate,
+} from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
 import { useEffect, useState } from "react";
 import { rehydrateStore, hydrationComplete, useGame } from "@/game/store";
@@ -36,6 +43,12 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
+      // 🛡️ Sentinel Security Fix: Added Content-Security-Policy to enforce defense in depth against XSS and data exfiltration
+      {
+        httpEquiv: "Content-Security-Policy",
+        content:
+          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:;",
+      },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Gallop — Stable Manager" },
       { name: "description", content: "Train horses, enter them in races, build the best stable." },
