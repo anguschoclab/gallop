@@ -58,7 +58,6 @@ import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
 import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
 import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
 import { calculateClassBonus } from "@/core/common/classBonus";
-import { updateBlueHenStatus } from "./helpers/blueHenHelpers";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import { DEFAULT_PLAYER_RESERVE_RATIO } from "./auction";
 import type { RenameIntent, AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, PurchaseIntent } from "@/core/resolver/intents";

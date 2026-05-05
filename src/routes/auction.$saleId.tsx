@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { getDisplayableStats } from "@/game/scouting";
-import { KIND_LABELS } from "@/game/auction";
+import { KIND_LABELS, netProceeds, CONSIGNMENT_COMMISSION } from "@/game/auction";
 import { Gavel, ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import type { AuctionLot } from "@/game/types";
 import { cn } from "@/lib/utils";
 import { HorsePortrait } from "@/components/HorsePortrait";
+import { AuctionTheater } from "@/components/auction/AuctionTheater";
 
 export const Route = createFileRoute("/auction/$saleId")({
   component: AuctionSalePage,
@@ -54,6 +55,8 @@ function AuctionSalePage() {
   const nextBid = Math.ceil((currentPrice * 1.05 + 200) / 100) * 100;
   const isPlayerLeading = currentLot && !currentLot.soldToStableId && currentLot.hammerPrice !== undefined;
   const isResolved = sale.resolved;
+  const isSaleDay = sale.day === day;
+  const isPlayerConsigned = currentLot && !currentLot.consignorStableId;
 
   function bid(amount: number) {
     if (!currentLot) return;
@@ -94,7 +97,10 @@ function AuctionSalePage() {
         </Badge>
       </div>
 
-      {activeLots.length === 0 ? (
+      {/* Three-mode split */}
+      {isSaleDay && !isResolved ? (
+        <AuctionTheater saleId={saleId} />
+      ) : activeLots.length === 0 ? (
         <Card>
           <CardContent className="p-8 text-center text-muted-foreground">No lots in this sale.</CardContent>
         </Card>
@@ -200,7 +206,9 @@ function AuctionSalePage() {
                   </p>
                 )}
                 {!consignor && !currentLot.consignorStableId && (
-                  <p className="text-xs text-success font-medium">Your consignment</p>
+                  <p className="text-xs text-success font-medium">
+                    Your consignment · {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission
+                  </p>
                 )}
 
                 {/* Price */}
@@ -272,6 +280,11 @@ function AuctionSalePage() {
                         {currentLot.soldToStableId
                           ? ` to ${stables.find((s) => s.id === currentLot.soldToStableId)?.name ?? "NPC"}`
                           : " to you"}
+                        {isPlayerConsigned && (
+                          <>
+                            {" "}(gross · net ${netProceeds(currentLot.hammerPrice).toLocaleString()})
+                          </>
+                        )}
                       </span>
                     </div>
                   )}
