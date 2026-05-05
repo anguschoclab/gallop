@@ -442,6 +442,7 @@ export type Race = {
   isHandicap?: boolean; // Flag for handicap races
   trackId?: string; // Track UUID reference for all races (not just graded)
   surface?: "Turf" | "Dirt" | "Synthetic"; // Surface for all races
+  handedness?: "left" | "right" | "balanced"; // Track handedness for genetic trackPreference integration
   restrictions?: {
     minAge?: number;
     maxAge?: number;

@@ -77,10 +77,18 @@ function BroodmaresPage() {
                       {daysRemaining <= 0 && (
                         <Badge variant="default" className="bg-red-500">Due Now</Badge>
                       )}
+                      {dam?.blueHenStatus?.isBlueHen && (
+                        <Badge variant="outline" className="border-blue-500 text-blue-500">Blue Hen</Badge>
+                      )}
                     </div>
                     <p className="text-sm text-muted-foreground">
                       Bred to {pregnancy.sireName} · Conceived Day {pregnancy.conceivedDay}
                     </p>
+                    {dam?.blueHenStatus && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {dam.blueHenStatus.stakesWinnersProduced} stakes winners · {dam.blueHenStatus.group1WinnersProduced} G1 winners · Score: {dam.blueHenStatus.blueHenScore}
+                      </p>
+                    )}
                   </div>
                   <div className="text-right">
                     <Badge 

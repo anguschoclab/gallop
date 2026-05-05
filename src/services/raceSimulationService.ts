@@ -94,7 +94,7 @@ export function buildRaceField(
     
     if (horse) {
       const jockeyObj = entryData.jockeyId ? dependencies.jockeys.find(j => j.id === entryData.jockeyId) : undefined;
-      runners.push(buildRunner(horse, entryData.owned, race.distance, surface, conditions, barrier, jockeyObj, entryData.weight));
+      runners.push(buildRunner(horse, entryData.owned, race.distance, surface, conditions, barrier, jockeyObj, entryData.weight, race.handedness));
     }
   }
 

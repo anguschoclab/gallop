@@ -4,13 +4,14 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Info, FileText, Baby } from "lucide-react";
+import { Heart, Info, FileText, Baby, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
 import { BreedingRadarChart } from "@/components/BreedingRadarChart";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PregnancyTimeline } from "@/components/PregnancyTimeline";
+import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
@@ -36,6 +37,10 @@ function BreedingPage() {
 
   const onBreed = () => {
     if (!sireId || !damId) return;
+    if (!seasonOpen) {
+      toast.error(`Breeding season closed. Reopens day ${nextSeasonStart}.`);
+      return;
+    }
     const result = breed(sireId, damId, liveFoalGuarantee);
     if (!result.ok) {
       toast.error(result.reason);
@@ -47,6 +52,10 @@ function BreedingPage() {
   const activePregnancies = pregnancies.filter((p) => !p.resolved);
   const activePregnanciesCount = activePregnancies.length;
 
+  // Determine breeding season status for Northern hemisphere (default)
+  const seasonOpen = inBreedingSeason(day, "Northern");
+  const nextSeasonStart = nextBreedingSeasonStart(day, "Northern");
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
@@ -54,6 +63,10 @@ function BreedingPage() {
           <h1 className="text-3xl font-bold tracking-tight">Breeding & Bloodstock</h1>
           <p className="text-muted-foreground">Manage your matings and track gestation for the next generation.</p>
         </div>
+        <Badge variant={seasonOpen ? "default" : "secondary"} className={seasonOpen ? "bg-emerald-500" : ""}>
+          <Calendar className="h-3 w-3 mr-1" />
+          {seasonOpen ? "Season Open" : `Opens Day ${nextSeasonStart}`}
+        </Badge>
       </div>
 
       <Tabs defaultValue="shed" className="space-y-4">
@@ -81,14 +94,22 @@ function BreedingPage() {
                   <label className="text-xs text-muted-foreground"><JargonTooltip term="Sire">Sire</JargonTooltip></label>
                   <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={sireId} onChange={(e) => setSireId(e.target.value)}>
                     <option value="">Select sire…</option>
-                    {adults.map((h) => <option key={h.id} value={h.id}>{h.name} (age {h.age})</option>)}
+                    {adults.filter((h) => h.gender === "colt" || h.gender === "stallion").map((h) => (
+                      <option key={h.id} value={h.id}>
+                        {h.name} (age {h.age}){h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground"><JargonTooltip term="Dam">Dam</JargonTooltip></label>
                   <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={damId} onChange={(e) => setDamId(e.target.value)}>
                     <option value="">Select dam…</option>
-                    {adults.filter((h) => h.id !== sireId).map((h) => <option key={h.id} value={h.id}>{h.name} (age {h.age})</option>)}
+                    {adults.filter((h) => (h.gender === "filly" || h.gender === "mare") && h.id !== sireId).map((h) => (
+                      <option key={h.id} value={h.id}>
+                        {h.name} (age {h.age}){h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

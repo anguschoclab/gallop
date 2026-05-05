@@ -25,6 +25,7 @@ import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { isUniversalBirthday, isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { detectInbreedingPattern, inbreedingPerformanceDampener } from "@/core/breeding/populationGenetics";
 import { recalcStandingFee } from "@/core/breeding/stallions";
 import { awardsPhase } from "@/core/time/phases/awards";
 import { executePipeline, createPhase, type PipelineContext } from "@/core/time/pipeline";
@@ -100,6 +101,8 @@ function updateBlueHenStatus(dam: Horse, raceGrade: "G1" | "G2" | "G3" | undefin
   if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
     dam.blueHenStatus.isBlueHen = true;
   }
+  // Sync the count with the array length
+  dam.blueHenStatus.foalsProduced = dam.foalsProduced?.length ?? 0;
 }
 
 // =============================================================================
@@ -178,10 +181,10 @@ export function resolvePregnancies(
             stakesWinnersProduced: 0,
             group1WinnersProduced: 0,
             blueHenScore: 0,
-            foalsProduced: 0,
+            foalsProduced: dam.foalsProduced?.length ?? 0,
           };
         }
-        dam.blueHenStatus.foalsProduced = (dam.blueHenStatus.foalsProduced || 0) + 1;
+        dam.blueHenStatus.foalsProduced = (dam.foalsProduced?.length ?? 0) + 1;
         const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
         const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
         dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
@@ -301,6 +304,7 @@ type Actions = {
   bidInAuction: (saleId: string, lotId: string, amount: number) => ActionResult;
   clearPendingCeremonies: () => void;
   geldingHorse: (horseId: string) => ActionResult;
+  renameHorse: (horseId: string, newName: string) => ActionResult;
 };
 
 function initialState(): GameState {
@@ -410,11 +414,11 @@ export const useGame = create<GameState & Actions>()(
         const horse = s.horses.find((h) => h.id === horseId);
         if (!horse) return;
         if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
-        // Check if horse has covering sickness - prevent training
-        if (horse.healthStatus === "covering_sickness") {
+        // Check if horse has covering sickness or is recovering - prevent training
+        if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering") {
           set({
             log: [
-              { day: s.day, text: `Training blocked: ${horse.name} has covering sickness (dourine). Horse cannot be trained while infected.` },
+              { day: s.day, text: `Training blocked: ${horse.name} is ${horse.healthStatus === "covering_sickness" ? "sick with covering sickness (dourine)" : "recovering from illness"}. Horse cannot be trained while recovering.` },
               ...s.log,
             ].slice(0, 50),
           });
@@ -430,13 +434,18 @@ export const useGame = create<GameState & Actions>()(
           if (s.cash < cost) return;
           if (horse.energy < 15) return;
           horse.energy = Math.max(0, horse.energy - 18);
-          // deterministic gain chance for training
+          // deterministic gain chance for training (modified by trainability locus)
           const trainingRng = createRng(hashStr(`training_${horseId}_${s.day}_${usedToday}`));
           const stat = horse.stats[kind];
-          const gap = horse.potential - stat;
-          if (gap > 0 && trainingRng.next() < 0.65) {
+          // peakAge cap: effective potential is reduced before peak, capped at peak
+          const ageRatio = Math.min(1, horse.age / horse.peakAge);
+          const effectivePotential = horse.potential * ageRatio;
+          const gap = effectivePotential - stat;
+          // trainability multiplier: 0.5-1.4, applied to base 0.65 chance
+          const trainingChance = 0.65 * horse.trainability;
+          if (gap > 0 && trainingRng.next() < trainingChance) {
             const gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
-            horse.stats[kind] = Math.min(horse.potential, stat + gain);
+            horse.stats[kind] = Math.min(effectivePotential, stat + gain);
           }
           s.cash -= cost;
         }
@@ -476,6 +485,7 @@ export const useGame = create<GameState & Actions>()(
         if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return fail(`${horse.name} is pregnant.`);
         if (race.entries.some((e) => e.horseId === horseId)) return fail(`${horse.name} is already entered.`);
         if (race.entries.length >= race.fieldSize) return fail("Race field is full.");
+        if (!horse.racingViable) return fail(`${horse.name} is not racing viable due to genetic condition.`);
         // Economic guard: refuse races whose entry fee exceeds 50% of purse —
         // this catches misconfigured races and protects the player's bankroll.
         if (race.entryFee > race.purse * 0.5) return fail("Entry fee exceeds 50% of purse.");
@@ -545,8 +555,13 @@ export const useGame = create<GameState & Actions>()(
         for (const r of ranked) {
           const h = s.horses.find((hh) => hh.id === r.horseId);
           if (!h) continue;
-          h.energy = Math.max(0, h.energy - 25); 
+          h.energy = Math.max(0, h.energy - 25);
           const beyer = r.dnf ? 0 : beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
+          
+          // Apply inbreeding performance dampener (Beyer penalty for close inbreeding)
+          const inbreedingPattern = detectInbreedingPattern(h.pedigree);
+          const dampener = inbreedingPerformanceDampener(inbreedingPattern);
+          const adjustedBeyer = Math.max(0, beyer - dampener);
           
           const runner = runners.find(rr => rr.horseId === r.horseId);
           const barrier = runner?.barrier;
@@ -557,7 +572,7 @@ export const useGame = create<GameState & Actions>()(
             raceName: race.name, 
             position: r.position, 
             day: s.day, 
-            beyer, 
+            beyer: adjustedBeyer, 
             grade: race.graded?.grade, 
             distance: race.distance, 
             surface: race.graded?.surface, 
@@ -1162,6 +1177,23 @@ export const useGame = create<GameState & Actions>()(
           horses: updatedHorses,
           cash: s.cash - cost,
           log: [{ day: s.day, text: `${horse.name} has been gelded. Recovery will take some time, but they should be more consistent now.` }, ...s.log].slice(0, 50)
+        });
+        
+        return { ok: true };
+      },
+
+      renameHorse: (horseId: string, newName: string) => {
+        const s = get();
+        const horse = s.horses.find(h => h.id === horseId);
+        
+        if (!horse) return { ok: false, reason: "Horse not found." };
+        if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+        if (!newName || newName.trim().length === 0) return { ok: false, reason: "Name cannot be empty." };
+        if (newName.length > 50) return { ok: false, reason: "Name too long (max 50 characters)." };
+        
+        set({
+          horses: s.horses.map(h => (h.id === horseId ? { ...h, name: newName.trim() } : h)),
+          log: [{ day: s.day, text: `${horse.name} has been renamed to ${newName.trim()}.` }, ...s.log].slice(0, 50)
         });
         
         return { ok: true };

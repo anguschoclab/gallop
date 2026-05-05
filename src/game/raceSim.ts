@@ -4,6 +4,7 @@ import type { CourseSpecification, TrackSection } from "./tracks";
 import type { Rng } from "./rng";
 import { clamp } from "./math";
 import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
+import { calculateDosageMetrics, interpretDosageIndex } from "./dosage";
 
 export type Runner = {
   horseId: string;
@@ -123,7 +124,8 @@ export function buildRunner(
   conditions: ConditionsModifier = { speedMul: 1, staminaDrainMul: 1 },
   barrier: number = 1,
   jockey?: Jockey,
-  weight?: number
+  weight?: number,
+  handedness?: "left" | "right" | "balanced"
 ): Runner {
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
@@ -153,10 +155,37 @@ export function buildRunner(
   const lineBias = h.bloodline ? REGIONAL_LINE_BIAS[h.bloodline as Bloodline] : undefined;
   const lineSurfaceMul = lineBias && (!lineBias.surface || lineBias.surface === surface) ? 1 + lineBias.boost : 1;
 
+  // --- DNA: track handedness preference ---
+  // Horses with trackPreference matching the race's handedness get a small boost.
+  // Balanced horses are neutral, left-biased horses gain on left-turn tracks, etc.
+  const handednessMod = handedness && h.trackPreference
+    ? (handedness === "balanced" || h.trackPreference === "balanced" ? 1.0
+       : handedness === h.trackPreference ? 1.02
+       : 0.98)
+    : 1.0;
+
+  // --- DNA: Dosage Index distance preference ---
+  // Pedigree-based distance preference complements genetic distanceAptitude.
+  // High DI = speed preference (short distances), Low DI = stamina preference (long distances)
+  const dosageMetrics = calculateDosageMetrics(h.sireName);
+  const dosageDI = dosageMetrics.dosageIndex;
+  let dosageDistanceMod = 1.0;
+  if (isFinite(dosageDI)) {
+    // Map DI to preferred distance range and calculate modifier
+    const preferredDistance = dosageDI >= 4.00 ? 1200 
+                          : dosageDI >= 3.00 ? 1400
+                          : dosageDI >= 2.40 ? 1600
+                          : dosageDI >= 1.50 ? 2000
+                          : 2400;
+    const dosageDistDiff = Math.abs(raceDistance - preferredDistance);
+    // Small modifier (up to 3%) based on pedigree distance fit
+    dosageDistanceMod = 1 - Math.min(0.03, dosageDistDiff / 10000);
+  }
+
   // base m/s ~ 14-20 for 30..95 speed
   const rawTopSpeed = (12 + (h.stats.speed / 100) * 10)
     * formEnergy * conditions.speedMul * distanceMod * surfaceMod
-    * fiberMods.speedMul * mudMod * lineSurfaceMul;
+    * fiberMods.speedMul * mudMod * lineSurfaceMul * handednessMod * dosageDistanceMod;
   const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
   const accel = 1.5 + (h.stats.acceleration / 100) * 3.5;
   // Stride length: long-stride horses gain on straights, lose on turns.

@@ -304,7 +304,7 @@ export function checkNickingAffinity(
   }
 
   // Check if sire is in our nicking database
-  const sireLine = sire.name;
+  const sireLine = sire.sire || sire.name;
   const damSireLine = dam.sire;
 
   if (!damSireLine) {
