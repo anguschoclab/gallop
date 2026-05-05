@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Horse, Race, Pregnancy, ScoutReport, AuctionSale, GameState } from "./types";
+import type { Horse, Race, Pregnancy, ScoutReport, AuctionSale, GameState, HorseCampaign, CampaignGoalType, ConfirmedAptitudes } from "./types";
 import { GRADED_RACES } from "./gradedRaces";
 import { generateHorse, horsePrice, generateRace, makeGradedRace, horsePriceWithPedigree } from "./horseGen";
-import { generateInitialJockeys } from "./jockeyGen";
+import { generateInitialJockeys, generateSilk } from "./jockeyGen";
 import { generateAllStables } from "./npcStables";
 import { generateAllNpcHorses } from "./npcHorseGen";
 import { runNpcRaceEntry, runNpcTraining, updateHorseFame } from "./npcRaceEntry";
@@ -147,7 +147,11 @@ export function generateUpcomingRaces(currentRaces: Race[], newDay: number, rng:
 }
 
 export function pruneOldRaces(races: Race[], newDay: number): Race[] {
-  return races.filter((r) => r.graded || r.day >= newDay - 3);
+  return races.filter((r) => {
+    if (r.graded) return true;
+    if (!r.resolved) return true;
+    return r.day > newDay - 30;
+  });
 }
 
 type PregnancyResult = {
@@ -301,6 +305,7 @@ type Actions = {
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
   retireToStud: (horseId: string, fee: number, bookSize: number) => ActionResult;
   hireJockey: (jockeyId: string) => ActionResult;
+  rerollJockeySilk: (jockeyId: string) => ActionResult;
   assignJockey: (raceId: string, horseId: string, jockeyId: string) => ActionResult;
   advanceDay: () => void;
   advanceMultipleDays: (n: number, headless?: boolean) => void;
@@ -314,6 +319,11 @@ type Actions = {
   clearPendingCeremonies: () => void;
   geldingHorse: (horseId: string) => ActionResult;
   renameHorse: (horseId: string, newName: string) => ActionResult;
+  setCampaign: (campaign: HorseCampaign) => void;
+  updateCampaignSlot: (horseId: string, slotIndex: number, patch: Partial<HorseCampaign["slots"][number]>) => void;
+  dismissCampaignFlag: (horseId: string, flagIndex: number) => void;
+  deleteCampaign: (horseId: string) => void;
+  generateAutoCampaign: (horseId: string, goalType: CampaignGoalType, targetRaceKey?: string) => void;
 };
 
 function initialState(): GameState {
@@ -710,7 +720,7 @@ export const useGame = create<GameState & Actions>()(
           });
 
           // Payout 10% of winnings and riding fee to jockeys
-          const finalJockeys = [...s.jockeys];
+          const finalJockeys = [...(s.jockeys ?? [])];
           for (const r of ranked) {
             if (r.dnf || r.position > splits.length) continue;
             const raceEntry = race.entries.find(e => e.horseId === r.horseId);
@@ -873,7 +883,7 @@ export const useGame = create<GameState & Actions>()(
 
       hireJockey: (jockeyId) => {
         const s = get();
-        const jockey = s.jockeys.find(j => j.id === jockeyId);
+        const jockey = s.jockeys?.find(j => j.id === jockeyId);
         if (!jockey) return { ok: false, reason: "Jockey not found." };
         if (jockey.stableId) return { ok: false, reason: "Jockey is already under contract." };
         
@@ -882,8 +892,26 @@ export const useGame = create<GameState & Actions>()(
 
         set({
           cash: s.cash - signOnBonus,
-          jockeys: s.jockeys.map(j => j.id === jockeyId ? { ...j, contractUntil: s.day + 90 } : j), // stableId undefined means player
+          jockeys: s.jockeys?.map(j => j.id === jockeyId ? { ...j, contractUntil: s.day + 90 } : j), // stableId undefined means player
           log: [{ day: s.day, text: `Signed ${jockey.name} to a 90-day retainer for $${signOnBonus.toLocaleString()}.` }, ...s.log].slice(0, 50),
+        });
+        return { ok: true };
+      },
+
+      rerollJockeySilk: (jockeyId) => {
+        const s = get();
+        const jockey = s.jockeys?.find(j => j.id === jockeyId);
+        if (!jockey) return { ok: false, reason: "Jockey not found." };
+        
+        // Only allow rerolling retained jockeys (player's jockeys)
+        if (!jockey.contractUntil) return { ok: false, reason: "You can only reroll silks for your retained jockeys." };
+        
+        const rng = createRng(hashStr(`reroll_silk_${jockeyId}_${s.day}`));
+        const newSilk = generateSilk(rng);
+        
+        set({
+          jockeys: s.jockeys?.map(j => j.id === jockeyId ? { ...j, silk: newSilk } : j),
+          log: [{ day: s.day, text: `${jockey.name}'s racing silks have been updated.` }, ...s.log].slice(0, 50),
         });
         return { ok: true };
       },
@@ -895,7 +923,7 @@ export const useGame = create<GameState & Actions>()(
         const entry = race.entries.find(e => e.horseId === horseId);
         if (!entry) return { ok: false, reason: "Horse not entered in this race." };
         
-        const jockey = s.jockeys.find(j => j.id === jockeyId);
+        const jockey = (s.jockeys ?? []).find(j => j.id === jockeyId);
         if (!jockey) return { ok: false, reason: "Jockey not found." };
 
         // Check if jockey already has a mount in this race
@@ -961,7 +989,7 @@ export const useGame = create<GameState & Actions>()(
         // Headless-resolve any unresolved races whose day <= today
         const overdueRaces = s.races.filter((r) => !r.resolved && r.day <= s.day);
         for (const race of overdueRaces) {
-        const { runners, fillerHorses } = buildRaceField({ race, horses: s.horses, jockeys: s.jockeys });
+        const { runners, fillerHorses } = buildRaceField({ race, horses: s.horses, jockeys: s.jockeys ?? [] });
           // Persist filler horses so resolveRace can find them by ID
           if (fillerHorses.length > 0) {
             for (const fh of fillerHorses) {
@@ -1066,7 +1094,7 @@ export const useGame = create<GameState & Actions>()(
               (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned)
             );
             if (playerRace) {
-              const { runners, fillerHorses } = buildRaceField({ race: playerRace, horses: currentS.horses, jockeys: currentS.jockeys });
+              const { runners, fillerHorses } = buildRaceField({ race: playerRace, horses: currentS.horses, jockeys: currentS.jockeys ?? [] });
               // Persist filler horses so resolveRace can find them by ID
               if (fillerHorses.length > 0) {
                 for (const fh of fillerHorses) {
@@ -1233,12 +1261,102 @@ export const useGame = create<GameState & Actions>()(
         });
         
         return { ok: true };
-      }
+      },
+
+      setCampaign: (campaign: HorseCampaign) => {
+        const s = get();
+        const existing = (s.campaigns ?? []).findIndex(c => c.horseId === campaign.horseId);
+        const updated = existing >= 0
+          ? (s.campaigns ?? []).map((c, i) => (i === existing ? campaign : c))
+          : [...(s.campaigns ?? []), campaign];
+        set({ campaigns: updated });
+      },
+
+      updateCampaignSlot: (horseId: string, slotIndex: number, patch: Partial<HorseCampaign["slots"][number]>) => {
+        const s = get();
+        set({
+          campaigns: (s.campaigns ?? []).map(c =>
+            c.horseId !== horseId ? c : {
+              ...c,
+              slots: c.slots.map((sl, i) => (i === slotIndex ? { ...sl, ...patch } : sl)),
+            }
+          ),
+        });
+      },
+
+      dismissCampaignFlag: (horseId: string, flagIndex: number) => {
+        const s = get();
+        set({
+          campaigns: (s.campaigns ?? []).map(c =>
+            c.horseId !== horseId ? c : {
+              ...c,
+              flags: c.flags.map((f, i) => (i === flagIndex ? { ...f, dismissed: true } : f)),
+            }
+          ),
+        });
+      },
+
+      deleteCampaign: (horseId: string) => {
+        const s = get();
+        set({ campaigns: (s.campaigns ?? []).filter(c => c.horseId !== horseId) });
+      },
+
+      generateAutoCampaign: (horseId: string, goalType: CampaignGoalType, targetRaceKey?: string) => {
+        const s = get();
+        const horse = s.horses.find(h => h.id === horseId);
+        if (!horse) return;
+        const emptyAptitudes: ConfirmedAptitudes = {
+          surfaceStarts: { Turf: 0, Dirt: 0, Synthetic: 0 },
+          distanceBandStarts: { sprint: 0, mile: 0, intermediate: 0, staying: 0 },
+        };
+        const campaign: HorseCampaign = {
+          horseId,
+          goalType,
+          targetRaceKey,
+          slots: [],
+          flags: [],
+          autoManaged: true,
+          confirmedAptitudes: emptyAptitudes,
+          createdDay: s.day,
+          lastReviewedDay: s.day,
+        };
+        const existing = (s.campaigns ?? []).findIndex(c => c.horseId === horseId);
+        const updated = existing >= 0
+          ? (s.campaigns ?? []).map((c, i) => (i === existing ? campaign : c))
+          : [...(s.campaigns ?? []), campaign];
+        set({ campaigns: updated });
+      },
     }),
     {
       name: "horse-racing-game-v1",
       storage: opfsStorage,
       skipHydration: true,
+      partialize: (state) => ({
+        day: state.day,
+        cash: state.cash,
+        horses: state.horses,
+        market: state.market,
+        races: state.races,
+        trainingUsed: state.trainingUsed,
+        log: state.log,
+        pregnancies: state.pregnancies,
+        paceSamples: state.paceSamples,
+        calibratedPars: state.calibratedPars,
+        lastCalibrationDay: state.lastCalibrationDay,
+        npcStables: state.npcStables,
+        scoutReports: state.scoutReports,
+        auctions: state.auctions,
+        jockeys: state.jockeys,
+        awards: state.awards,
+        lastAwardYear: state.lastAwardYear,
+        pendingAwardCeremonies: state.pendingAwardCeremonies,
+        currentCeremonyIndex: state.currentCeremonyIndex,
+        sireLeaderboards: state.sireLeaderboards,
+        sireTrendHistory: state.sireTrendHistory,
+        leaderboardsUpdatedDay: state.leaderboardsUpdatedDay,
+        campaigns: state.campaigns,
+        triplecrownHistory: state.triplecrownHistory,
+      }),
       onRehydrateStorage: () => (state) => {
         hydrationComplete = true;
         if (state?.calibratedPars) setCalibratedPars(state.calibratedPars);

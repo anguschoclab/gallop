@@ -154,12 +154,12 @@ function TrackSchedulePage() {
                         </Badge>
                       )}
                       {isTripleCrown && (
-                        <Badge className="bg-purple-500/20 text-purple-700 border-purple-500/40">
+                        <Badge className="bg-fame/20 text-fame border-fame/40">
                           Triple Crown
                         </Badge>
                       )}
                       {hasOwnedEntry && (
-                        <Badge className="bg-emerald-600 text-white">Entered</Badge>
+                        <Badge className="bg-success text-success-foreground">Entered</Badge>
                       )}
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">

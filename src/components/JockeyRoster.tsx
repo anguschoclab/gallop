@@ -3,8 +3,9 @@ import { JockeyCard } from "./JockeyCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from "react";
-import { Search, Filter, UserCheck, Users, Palette } from "lucide-react";
+import { Search, Filter, UserCheck, Users, Palette, Info } from "lucide-react";
 import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 
 export function JockeyRoster() {
@@ -16,11 +17,12 @@ export function JockeyRoster() {
   const [colorFilter, setColorFilter] = useState<string>("all");
 
   // Player jockeys: undefined stableId AND have an active contract (player-signed)
-  const myJockeys = jockeys.filter(j => !j.stableId && !!j.contractUntil);
+  const myJockeys = jockeys?.filter(j => !j.stableId && !!j.contractUntil) ?? [];
   // Free-agent market: not contracted to anyone
-  const market = jockeys.filter(j => !j.stableId && !j.contractUntil);
+  const market = jockeys?.filter(j => !j.stableId && !j.contractUntil) ?? [];
 
   const filterList = (list: typeof jockeys) => {
+    if (!list) return [];
     return list.filter(j => {
       const matchesSearch = j.name.toLowerCase().includes(search.toLowerCase());
       const matchesArchetype = archetypeFilter === "all" || j.archetype === archetypeFilter;
@@ -45,6 +47,62 @@ export function JockeyRoster() {
     { value: "#ff00ff", label: "Pink", hex: "#ff00ff" },
     { value: "#00ffff", label: "Cyan", hex: "#00ffff" },
   ];
+
+  // Visual representation of silk patterns
+  const PatternPreview = ({ pattern, color }: { pattern: JockeySilkPattern; color: string }) => {
+    const baseStyle = { width: 32, height: 32, border: '1px solid #333' };
+    
+    switch (pattern) {
+      case 'solid':
+        return <div style={{ ...baseStyle, backgroundColor: color }} />;
+      case 'stripes':
+        return (
+          <div style={{ ...baseStyle, backgroundColor: color }}>
+            <div style={{ height: '100%', background: 'repeating-linear-gradient(90deg, transparent, transparent 4px, #fff 4px, #fff 8px)' }} />
+          </div>
+        );
+      case 'halves':
+        return (
+          <div style={{ ...baseStyle, background: `linear-gradient(90deg, ${color} 50%, #fff 50%)` }} />
+        );
+      case 'quarters':
+        return (
+          <div style={{ ...baseStyle, background: `linear-gradient(135deg, ${color} 50%, #fff 50%)` }} />
+        );
+      case 'chevron':
+        return (
+          <div style={{ ...baseStyle, backgroundColor: color }}>
+            <div style={{ height: '100%', background: 'linear-gradient(180deg, transparent 40%, #fff 40%, #fff 60%, transparent 60%)' }} />
+          </div>
+        );
+      case 'diamond':
+        return (
+          <div style={{ ...baseStyle, backgroundColor: color }}>
+            <div style={{ height: '100%', backgroundImage: 'radial-gradient(circle, #fff 20%, transparent 20%)', backgroundSize: '16px 16px' }} />
+          </div>
+        );
+      case 'star':
+        return (
+          <div style={{ ...baseStyle, backgroundColor: color }}>
+            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 16 }}>★</div>
+          </div>
+        );
+      case 'sash':
+        return (
+          <div style={{ ...baseStyle, backgroundColor: color }}>
+            <div style={{ height: '100%', background: 'linear-gradient(90deg, transparent 40%, #fff 40%, #fff 60%, transparent 60%)' }} />
+          </div>
+        );
+      case 'hoops':
+        return (
+          <div style={{ ...baseStyle, backgroundColor: color }}>
+            <div style={{ height: '100%', background: 'repeating-linear-gradient(0deg, transparent, transparent 4px, #fff 4px, #fff 8px)' }} />
+          </div>
+        );
+      default:
+        return <div style={{ ...baseStyle, backgroundColor: color }} />;
+    }
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -93,6 +151,28 @@ export function JockeyRoster() {
               <option key={c.value} value={c.value}>{c.label}</option>
             ))}
           </select>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="bg-card border border-white/10 rounded-md px-3 py-2 hover:bg-white/5 transition-colors">
+                  <Info size={16} className="text-muted-foreground" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="p-4 max-w-sm">
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-sm mb-2">Silk Patterns</h4>
+                  <div className="grid grid-cols-3 gap-2">
+                    {patterns.map(pattern => (
+                      <div key={pattern} className="flex flex-col items-center gap-1">
+                        <PatternPreview pattern={pattern} color="#ff0000" />
+                        <span className="text-xs capitalize">{pattern}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 

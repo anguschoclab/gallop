@@ -134,7 +134,7 @@ function ScandinavianCalendarPage() {
                   <div
                     key={race.id}
                     className={`flex items-start justify-between gap-4 p-3 rounded-lg border ${
-                      hasOwnedEntry ? "border-l-4 border-l-emerald-500 bg-emerald-50/50" : ""
+                      hasOwnedEntry ? "border-l-4 border-l-success bg-success/10" : ""
                     }`}
                   >
                     <div className="flex-1">
@@ -146,7 +146,7 @@ function ScandinavianCalendarPage() {
                           </Badge>
                         )}
                         {hasOwnedEntry && (
-                          <Badge className="bg-emerald-600 text-white">Entered</Badge>
+                          <Badge className="bg-success text-success-foreground">Entered</Badge>
                         )}
                       </div>
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">

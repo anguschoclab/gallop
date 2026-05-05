@@ -1461,5 +1461,292 @@
         "sections": []
       }
     ]
+  },
+  {
+    "id": "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+    "name": "Churchill Downs",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 300,
+        "sections": []
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1609,
+        "straightLength": 300,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "c2b3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+    "name": "Pimlico",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 350,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "d3c4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+    "name": "Belmont Park",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 2012,
+        "straightLength": 400,
+        "sections": []
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1609,
+        "straightLength": 350,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "e4d5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "name": "Saratoga",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 300,
+        "sections": []
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1200,
+        "straightLength": 250,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "f5e6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+    "name": "Santa Anita",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 350,
+        "sections": []
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1400,
+        "straightLength": 300,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "a6f7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+    "name": "Keeneland",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 350,
+        "sections": []
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1400,
+        "straightLength": 300,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "b7a8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+    "name": "Del Mar",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 300,
+        "sections": []
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1200,
+        "straightLength": 250,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "c8b9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+    "name": "Aqueduct",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 400,
+        "sections": []
+      },
+      {
+        "surface": "Synthetic",
+        "circumference": 1609,
+        "straightLength": 400,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "d9c0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+    "name": "Oaklawn Park",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 350,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+    "name": "Gulfstream Park",
+    "country": "USA",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1609,
+        "straightLength": 350,
+        "sections": []
+      },
+      {
+        "surface": "Turf",
+        "circumference": 1400,
+        "straightLength": 300,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6d",
+    "name": "Flemington",
+    "country": "Australia",
+    "courses": [
+      {
+        "surface": "Turf",
+        "circumference": 2312,
+        "straightLength": 450,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "b2c3d4e5-f6a7-4b8c-9d0e-2f3a4b5c6d7e",
+    "name": "Randwick",
+    "country": "Australia",
+    "courses": [
+      {
+        "surface": "Turf",
+        "circumference": 2000,
+        "straightLength": 400,
+        "sections": []
+      },
+      {
+        "surface": "Synthetic",
+        "circumference": 2000,
+        "straightLength": 400,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "c3d4e5f6-a7b8-4c9d-0e1f-3a4b5c6d7e8f",
+    "name": "Caulfield",
+    "country": "Australia",
+    "courses": [
+      {
+        "surface": "Turf",
+        "circumference": 2060,
+        "straightLength": 350,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "d4e5f6a7-b8c9-4d0e-1f2a-4b5c6d7e8f9a",
+    "name": "Moonee Valley",
+    "country": "Australia",
+    "courses": [
+      {
+        "surface": "Turf",
+        "circumference": 1800,
+        "straightLength": 170,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "e5f6a7b8-c9d0-4e1f-2a3b-5c6d7e8f9a0b",
+    "name": "Rosehill",
+    "country": "Australia",
+    "courses": [
+      {
+        "surface": "Turf",
+        "circumference": 2000,
+        "straightLength": 380,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "f6a7b8c9-d0e1-4f2a-3b4c-6d7e8f9a0b1c",
+    "name": "King Abdulaziz Racecourse",
+    "country": "Saudi Arabia",
+    "courses": [
+      {
+        "surface": "Dirt",
+        "circumference": 1800,
+        "straightLength": 400,
+        "sections": []
+      },
+      {
+        "surface": "Turf",
+        "circumference": 2000,
+        "straightLength": 400,
+        "sections": []
+      }
+    ]
+  },
+  {
+    "id": "a7b8c9d0-e1f2-4a3b-4c5d-7e8f9a0b1c2d",
+    "name": "Kranji",
+    "country": "Singapore",
+    "courses": [
+      {
+        "surface": "Turf",
+        "circumference": 1900,
+        "straightLength": 380,
+        "sections": []
+      },
+      {
+        "surface": "Synthetic",
+        "circumference": 1900,
+        "straightLength": 380,
+        "sections": []
+      }
+    ]
   }
 ]

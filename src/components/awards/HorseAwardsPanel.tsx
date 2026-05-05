@@ -70,7 +70,7 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
               {hotyAwards.map((award) => (
                 <div
                   key={award.id}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/30"
+                  className="flex items-center gap-2 p-2 rounded-lg bg-fame/10 border border-fame/30"
                 >
                   <AwardIcon
                     region={award.region}

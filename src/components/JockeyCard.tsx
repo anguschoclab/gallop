@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Jockey } from "@/game/types";
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { User, Trophy, Calendar, DollarSign, Target } from "lucide-react";
+import { User, Trophy, Calendar, DollarSign, Target, RefreshCw } from "lucide-react";
 import { RacingSilks } from "./RacingSilks";
+import { useGame } from "@/game/store";
 
 interface JockeyCardProps {
   jockey: Jockey;
@@ -14,6 +15,8 @@ interface JockeyCardProps {
 }
 
 export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: JockeyCardProps) {
+  const rerollJockeySilk = useGame((s) => s.rerollJockeySilk);
+  
   const statsData = [
     { stat: "Pacing", value: jockey.stats.pacing },
     { stat: "Pos", value: jockey.stats.positioning },
@@ -44,8 +47,19 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
       <CardHeader className="p-4 pb-0">
         <div className="flex justify-between items-start">
           <div className="flex gap-3">
-            <div className="h-12 w-12 rounded-md bg-white/5 flex items-center justify-center border border-white/10 overflow-hidden">
-              <RacingSilks silk={jockey.silk} size={44} />
+            <div className="relative">
+              <div className="h-12 w-12 rounded-md bg-white/5 flex items-center justify-center border border-white/10 overflow-hidden">
+                <RacingSilks silk={jockey.silk} size={44} />
+              </div>
+              {isRetained && (
+                <button
+                  onClick={() => rerollJockeySilk(jockey.id)}
+                  className="absolute -top-1 -right-1 bg-primary hover:bg-primary/80 text-primary-foreground rounded-full p-1 shadow-md transition-all"
+                  title="Reroll Silks"
+                >
+                  <RefreshCw size={12} />
+                </button>
+              )}
             </div>
             <div>
               <CardTitle className="text-lg font-bold">{jockey.name}</CardTitle>

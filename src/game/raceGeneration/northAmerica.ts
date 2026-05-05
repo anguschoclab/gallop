@@ -82,7 +82,8 @@ export function generateNorthAmericanRace(
   const trackQuality = getTrackQuality(track.country);
   
   // Select surface if not specified
-  const selectedSurface = surface || rng.pick(track.surfaces);
+  const trackSurfaces = track.courses.map(c => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
+  const selectedSurface = surface || rng.pick(trackSurfaces.length > 0 ? trackSurfaces : ["Dirt"]);
   
   // Calculate distance
   const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
@@ -176,10 +177,12 @@ export function generateNorthAmericanRaceCard(
   const races: Race[] = [];
   const usedNames = new Set<string>();
   
+  const trackSurfaces = track.courses.map(c => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
+  const availableSurfaces = trackSurfaces.length > 0 ? trackSurfaces : ["Dirt" as const];
   for (let i = 0; i < numRaces; i++) {
     // Alternate surfaces if track has multiple
-    const surfaceIndex = i % track.surfaces.length;
-    const surface = track.surfaces[surfaceIndex];
+    const surfaceIndex = i % availableSurfaces.length;
+    const surface = availableSurfaces[surfaceIndex];
     
     const race = generateNorthAmericanRace(track, day, rng, surface, usedNames);
     races.push(race);

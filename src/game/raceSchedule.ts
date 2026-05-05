@@ -38,10 +38,18 @@ export function isTrackRacing(schedule: TrackSchedule, gameDay: number): boolean
   }
 
   // Check if within meet dates
-  if (schedule.meetStart && dayOfYear < schedule.meetStart) {
+  const { meetStart, meetEnd } = schedule;
+  if (meetStart && meetEnd) {
+    if (meetStart <= meetEnd) {
+      // Normal case: meet within same year
+      if (dayOfYear < meetStart || dayOfYear > meetEnd) return false;
+    } else {
+      // Cross-year meet (e.g., meetStart=300, meetEnd=90)
+      if (dayOfYear < meetStart && dayOfYear > meetEnd) return false;
+    }
+  } else if (meetStart && dayOfYear < meetStart) {
     return false;
-  }
-  if (schedule.meetEnd && dayOfYear > schedule.meetEnd) {
+  } else if (meetEnd && dayOfYear > meetEnd) {
     return false;
   }
 
@@ -66,10 +74,12 @@ export function generateTrackRaces(
 
   // Fallback to generic generator for other regions (will be expanded in future sprints)
   const races: Race[] = [];
+  const trackSurfaces = track.courses.map(c => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
+  const availableSurfaces = trackSurfaces.length > 0 ? trackSurfaces : ["Dirt" as const];
   for (let i = 0; i < numRaces; i++) {
     const race = generateRace(gameDay, rng);
     race.trackId = track.id;
-    race.surface = rng.pick(track.surfaces);
+    race.surface = rng.pick(availableSurfaces);
     races.push(race);
   }
 
@@ -102,6 +112,37 @@ export function generateTrackSchedule(
       const trackRaces = generateTrackRaces(track, schedule, gameDay, races, rng);
       races.push(...trackRaces);
     }
+  }
+
+  return races;
+}
+
+// Generate all graded races for a given game year (called on year transition)
+// Uses dayOfYearVariance to apply deterministic jitter to each race's schedule date
+export function generateAnnualCalendar(
+  year: number,
+  existingRaces: Race[]
+): Race[] {
+  const yearRng = createRng(hashStr(`annual_calendar_${year}`));
+  const firstDayOfYear = (year - 1) * 365 + 1;
+  const races = [...existingRaces];
+
+  for (const g of GRADED_RACES) {
+    const variance = g.dayOfYearVariance ?? 3;
+    let jitter = 0;
+    if (variance > 0) {
+      jitter = yearRng.int(-variance, variance);
+    }
+    const rawDoy = g.dayOfYear + jitter;
+    const clampedDoy = Math.max(1, Math.min(365, rawDoy));
+    const gameDay = firstDayOfYear + clampedDoy - 1;
+
+    if (races.some(r => r.graded?.key === g.key && r.day >= firstDayOfYear && r.day < firstDayOfYear + 365)) {
+      continue;
+    }
+
+    const raceRng = createRng(hashStr(`graded_${g.key}_${year}`));
+    races.push(makeGradedRace(g, gameDay, raceRng));
   }
 
   return races;

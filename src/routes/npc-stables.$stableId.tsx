@@ -74,7 +74,7 @@ function NpcStableDetailPage() {
                 <DollarSign className="w-4 h-4" />
                 ${stable.cash.toLocaleString()}
               </span>
-              <span className="text-yellow-600">
+              <span className="text-fame">
                 {getReputationStars(stable.reputation)}
               </span>
             </div>
