@@ -132,7 +132,7 @@ function LiveRace() {
   const horses = useGame((s) => s.horses);
   const jockeys = useGame((s) => s.jockeys ?? []);
   const stables = useGame((s) => s.npcStables);
-  const resolveRace = useGame((s) => s.resolveRace);
+  const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
 
   if (!race) throw notFound();
   if (race.resolved) {
@@ -254,7 +254,7 @@ function LiveRace() {
         raf = requestAnimationFrame(loop);
       } else {
         setFinished(true);
-        resolveRace(race.id, finishOrderRef.current);
+        resolveRaceWithImpacts(race.id, finishOrderRef.current);
       }
     };
     raf = requestAnimationFrame(loop);

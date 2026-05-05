@@ -383,6 +383,25 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
         break;
       }
 
+      case "log": {
+        const { text } = impact;
+        draft.log = [{ day: impact.day, text }, ...draft.log].slice(0, 50);
+        break;
+      }
+
+      case "pace_sample": {
+        const { distance, time } = impact;
+        if (!draft.paceSamples) {
+          draft.paceSamples = {};
+        }
+        const bucket = Math.floor(distance / 100);
+        if (!draft.paceSamples[bucket]) {
+          draft.paceSamples[bucket] = [];
+        }
+        draft.paceSamples[bucket].push(time);
+        break;
+      }
+
       default:
         // Unknown impact type - log warning
         console.warn(`Unknown impact type: ${(impact as any).type}`);

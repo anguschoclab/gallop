@@ -300,6 +300,7 @@ export interface RaceHistoryImpact extends Impact {
     raceClass?: import("@/game/types").RaceClass;
     barrier?: number;
     lane?: number;
+    winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
   };
   reason: string;
 }

@@ -1,16 +1,18 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact, RaceResultImpact } from "@/core/resolver/impacts";
+import type { AnyImpact, RaceResultImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact } from "@/core/resolver/impacts";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
-import type { Race } from "@/game/types";
+import { beyerFigure } from "@/game/beyer";
+import { calculateClassBonus } from "@/core/common/classBonus";
+import { detectInbreedingPattern, inbreedingPerformanceDampener } from "@/core/breeding/populationGenetics";
+import type { Race, Horse } from "@/game/types";
+import { getCurrentYear } from "@/game/raceSchedule";
 
 /**
  * Race Resolution Phase (Order 70)
- * Simulates unresolved races and generates race result impacts.
- * The full race resolution (stat updates, prize money, etc.) is still handled
- * by the existing resolveRace function in store.ts.
- * This phase generates RaceResultImpacts that can be used by the resolver.
+ * Simulates unresolved races and generates all race resolution impacts.
+ * This replaces the old resolveRace function with impact-based resolution.
  */
 export const raceResolutionPhase: PipelinePhase = {
   name: "raceResolution",
@@ -24,15 +26,18 @@ export const raceResolutionPhase: PipelinePhase = {
 
     for (const race of overdueRaces) {
       // Simulate race
-      const { runners } = buildRaceField({ race, horses: state.horses, jockeys: state.jockeys ?? [] });
+      const { runners, fillerHorses } = buildRaceField({ race, horses: state.horses, jockeys: state.jockeys ?? [] });
       const rng = rngForRace(race);
       const course = getCourseForRace(race);
       const result = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course);
 
+      const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
+      const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
+
       // Generate race result impact
       impacts.push({
         id: crypto.randomUUID(),
-        intentId: "", // No intent for system-generated race results
+        intentId: "",
         day: newDay,
         phase: "raceResolution",
         logLevel: "always",
@@ -41,6 +46,277 @@ export const raceResolutionPhase: PipelinePhase = {
         results: result.map(({ horseId, position, time }) => ({ horseId, position, time })),
         reason: "Race resolved",
       } as RaceResultImpact);
+
+      // Generate per-horse impacts
+      for (const r of result) {
+        const horse = state.horses.find((h) => h.id === r.horseId);
+        if (!horse) continue;
+
+        const runner = runners.find((run) => run.horseId === r.horseId);
+
+        // Energy impact (-25)
+        impacts.push({
+          id: crypto.randomUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "conditional",
+          type: "energy_change",
+          horseId: horse.id,
+          delta: -25,
+          reason: "Race energy expenditure",
+        } as EnergyImpact);
+
+        // Form impact based on position
+        const formDelta = r.position === 1 ? 3 : r.position === 2 ? 2 : r.position === 3 ? 1 : r.position <= 5 ? 0 : -1;
+        impacts.push({
+          id: crypto.randomUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "conditional",
+          type: "form_change",
+          horseId: horse.id,
+          delta: formDelta,
+          reason: `Race position: ${r.position}`,
+        } as FormImpact);
+
+        // Fame impact based on position
+        const fameDelta = r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0;
+        if (fameDelta > 0) {
+          impacts.push({
+            id: crypto.randomUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "conditional",
+            type: "fame_change",
+            horseId: horse.id,
+            delta: fameDelta,
+            reason: `Race position: ${r.position}`,
+          } as FameImpact);
+        }
+
+        // Beyer calculation with inbreeding dampener
+        const beyer = beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
+        const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
+        const dampener = inbreedingPerformanceDampener(inbreedingPattern);
+        const adjustedBeyer = Math.max(0, beyer - dampener);
+
+        // Win and You're In qualification
+        let winAndYouInQualified = undefined;
+        if (r.position === 1 && race.graded?.winAndYouInTarget) {
+          const currentYear = getCurrentYear(newDay);
+          winAndYouInQualified = { year: currentYear, raceId: race.id, raceKey: race.graded.winAndYouInTarget };
+        }
+
+        // Race history impact
+        impacts.push({
+          id: crypto.randomUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "always",
+          type: "race_history",
+          horseId: horse.id,
+          raceHistoryEntry: {
+            raceId: race.id,
+            raceName: race.name,
+            position: r.position,
+            day: newDay,
+            beyer: adjustedBeyer,
+            grade: race.graded?.grade,
+            distance: race.distance,
+            surface: race.graded?.surface,
+            purse: race.purse,
+            fieldSize: result.length,
+            raceClass: race.raceClass,
+            barrier: runner?.barrier,
+            lane: runner?.lane,
+            winAndYouInQualified,
+          },
+          reason: "Race completed",
+        } as RaceHistoryImpact);
+
+        // Prize money impact
+        if (r.position - 1 < PRIZE_SPLIT.length) {
+          const prize = Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
+          if (prize > 0) {
+            if (horse.stableId) {
+              // NPC stable gets prize money
+              impacts.push({
+                id: crypto.randomUUID(),
+                intentId: "",
+                day: newDay,
+                phase: "raceResolution",
+                logLevel: "conditional",
+                type: "cash_change",
+                entityId: horse.stableId,
+                amount: prize,
+                reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
+              } as CashImpact);
+            } else {
+              // Player gets prize money
+              impacts.push({
+                id: crypto.randomUUID(),
+                intentId: "",
+                day: newDay,
+                phase: "raceResolution",
+                logLevel: "conditional",
+                type: "cash_change",
+                entityId: "",
+                amount: prize,
+                reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
+              } as CashImpact);
+            }
+          }
+        }
+
+        // Blue hen impact for graded stakes winners
+        if (r.position === 1 && (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")) {
+          const dam = state.horses.find((h) => h.id === horse.pedigree?.damId);
+          if (dam) {
+            impacts.push({
+              id: crypto.randomUUID(),
+              intentId: "",
+              day: newDay,
+              phase: "raceResolution",
+              logLevel: "conditional",
+              type: "blue hen_status",
+              horseId: dam.id,
+              blueHenStatus: {
+                isBlueHen: dam.blueHenStatus?.isBlueHen || false,
+                stakesWinnersProduced: (dam.blueHenStatus?.stakesWinnersProduced ?? 0) + 1,
+                group1WinnersProduced: race.graded?.grade === "G1" ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1 : dam.blueHenStatus?.group1WinnersProduced,
+                blueHenScore: dam.blueHenStatus?.blueHenScore || 0,
+                foalsProduced: dam.blueHenStatus?.foalsProduced || 0,
+              },
+              reason: `Stakes win by ${horse.name}`,
+            } as BlueHenImpact);
+          }
+
+          // Stud career impact for sire
+          const sire = state.horses.find((h) => h.id === horse.pedigree?.sireId);
+          if (sire && sire.stud?.atStud) {
+            impacts.push({
+              id: crypto.randomUUID(),
+              intentId: "",
+              day: newDay,
+              phase: "raceResolution",
+              logLevel: "conditional",
+              type: "stud_career",
+              horseId: sire.id,
+              studCareer: {
+                atStud: sire.stud.atStud,
+                standingFee: sire.stud.standingFee,
+                bookSize: sire.stud.bookSize,
+                seasonBookings: sire.stud.seasonBookings,
+                lifetimeFoals: sire.stud.lifetimeFoals,
+                lifetimeStakesFoals: (sire.stud.lifetimeStakesFoals ?? 0) + 1,
+                lifetimeG1Foals: race.graded?.grade === "G1" ? (sire.stud.lifetimeG1Foals ?? 0) + 1 : sire.stud.lifetimeG1Foals,
+              },
+              reason: `Stakes win by ${horse.name}`,
+            } as StudCareerImpact);
+          }
+        }
+
+        // Jockey stats impact
+        const raceEntry = race.entries.find((e) => e.horseId === horse.id);
+        if (raceEntry?.jockeyId && r.position - 1 < PRIZE_SPLIT.length) {
+          const jockey = state.jockeys?.find((j) => j.id === raceEntry.jockeyId);
+          if (jockey) {
+            const winAmount = PRIZE_SPLIT[r.position - 1] * race.purse;
+            const jockeyFee = Math.round(winAmount * 0.1);
+
+            impacts.push({
+              id: crypto.randomUUID(),
+              intentId: "",
+              day: newDay,
+              phase: "raceResolution",
+              logLevel: "conditional",
+              type: "jockey_stats",
+              jockeyId: jockey.id,
+              careerStarts: jockey.careerStarts + 1,
+              careerWins: jockey.careerWins + (r.position === 1 ? 1 : 0),
+              fame: Math.min(100, jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0)),
+              reason: `Rode ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,
+            } as JockeyStatsImpact);
+
+            // Jockey fee impact
+            if (jockeyFee > 0) {
+              if (raceEntry.owned) {
+                impacts.push({
+                  id: crypto.randomUUID(),
+                  intentId: "",
+                  day: newDay,
+                  phase: "raceResolution",
+                  logLevel: "conditional",
+                  type: "cash_change",
+                  entityId: "",
+                  amount: -jockeyFee,
+                  reason: `Jockey fee for ${jockey.name}`,
+                } as CashImpact);
+              } else if (raceEntry.stableId) {
+                impacts.push({
+                  id: crypto.randomUUID(),
+                  intentId: "",
+                  day: newDay,
+                  phase: "raceResolution",
+                  logLevel: "conditional",
+                  type: "cash_change",
+                  entityId: raceEntry.stableId,
+                  amount: -jockeyFee,
+                  reason: `Jockey fee for ${jockey.name}`,
+                } as CashImpact);
+              }
+            }
+          }
+        }
+      }
+
+      // Pace sample impact for winner
+      if (result.length > 0) {
+        const winner = result[0];
+        impacts.push({
+          id: crypto.randomUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "conditional",
+          type: "pace_sample",
+          distance: race.distance,
+          time: winner.time,
+          reason: `Pace sample from ${race.name}`,
+        } as PaceSampleImpact);
+      }
+
+      // Log impact for race summary
+      const ownedHorses = result.filter((r) => {
+        const horse = state.horses.find((h) => h.id === r.horseId);
+        return horse && !horse.stableId;
+      });
+      if (ownedHorses.length > 0) {
+        const summary = ownedHorses.map((r) => {
+          const horse = state.horses.find((h) => h.id === r.horseId);
+          return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
+        }).join(", ");
+        const prize = ownedHorses.reduce((sum, r) => {
+          if (r.position - 1 < PRIZE_SPLIT.length) {
+            return sum + Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
+          }
+          return sum;
+        }, 0);
+        impacts.push({
+          id: crypto.randomUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "always",
+          type: "log",
+          text: `${race.name} — ${summary}${prize > 0 ? ` (won $${prize.toLocaleString()})` : ""}`,
+          reason: "Race summary",
+        } as LogImpact);
+      }
     }
 
     return {
@@ -49,3 +325,10 @@ export const raceResolutionPhase: PipelinePhase = {
     };
   },
 };
+
+function getOrdinalSuffix(n: number): string {
+  if (n === 1) return "st";
+  if (n === 2) return "nd";
+  if (n === 3) return "rd";
+  return "th";
+}

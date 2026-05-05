@@ -13,7 +13,7 @@ export function PlayerRacePrompt() {
   const horses = useGame((s) => s.horses);
   const jockeys = useGame((s) => s.jockeys ?? []);
   const day = useGame((s) => s.day);
-  const resolveRace = useGame((s) => s.resolveRace);
+  const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
   const set = useGame.setState;
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ export function PlayerRacePrompt() {
     const { runners } = buildRaceField({ race: race!, horses, jockeys });
     const course = getCourseForRace(race!);
     const result = runRaceToCompletion(runners, race!.distance, rngForRace(race!), 0.1, 600, course);
-    resolveRace(race!.id, result);
+    resolveRaceWithImpacts(race!.id, result);
     clearPending();
   }
 
