@@ -897,6 +897,45 @@ export const useGame = create<GameState & Actions>()(
         });
       },
 
+      submitClaim: (raceId, horseId) => {
+        const s = get();
+        const race = s.races.find((r) => r.id === raceId);
+        const horse = s.horses.find((h) => h.id === horseId);
+        
+        if (!race) return { ok: false, reason: "Race not found" };
+        if (!horse) return { ok: false, reason: "Horse not found" };
+        if (!race.claimingPrice) return { ok: false, reason: "Race is not a claiming race" };
+        if (!race.entries.some((e) => e.horseId === horseId)) {
+          return { ok: false, reason: "Horse is not entered in this race" };
+        }
+        if (horse.stableId === undefined) {
+          return { ok: false, reason: "Cannot claim your own horse" };
+        }
+        if (s.cash < race.claimingPrice) {
+          return { ok: false, reason: `Insufficient funds (need $${race.claimingPrice.toLocaleString()})` };
+        }
+        
+        // Check horse eligibility
+        if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, s.horses)) {
+          return { ok: false, reason: "Horse is not eligible for this claiming price" };
+        }
+        
+        // Enqueue ClaimingIntent
+        s.enqueueIntent({
+          id: generateUUID(),
+          entityId: horseId,
+          source: "player",
+          day: s.day,
+          priority: 100, // Player claims have higher priority
+          type: "claiming",
+          raceId,
+          horseId,
+          claimingPrice: race.claimingPrice,
+        });
+        
+        return { ok: true };
+      },
+
       breed: (sireId, damId, liveFoalGuarantee = false) => {
         const s = get();
         const sire = s.horses.find((h) => h.id === sireId);
