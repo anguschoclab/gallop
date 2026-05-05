@@ -4,6 +4,7 @@ import { Jockey } from "@/game/types";
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { User, Trophy, Calendar, DollarSign, Target } from "lucide-react";
+import { RacingSilks } from "./RacingSilks";
 
 interface JockeyCardProps {
   jockey: Jockey;
