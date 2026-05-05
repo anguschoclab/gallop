@@ -12,6 +12,7 @@ import type { Transaction } from "@/core/transactions";
 import type { RaceReplay } from "@/core/replays";
 import type { ManagerReputation } from "@/core/reputation";
 import type { TransportRequest } from "@/core/transportation";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { createDefaultPlayerFacilities } from "@/core/facilities";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -24,6 +25,8 @@ export interface SystemsState {
   // NPC stable system
   /** All NPC-controlled stables */
   npcStables: Stable[];
+  /** NPC AI state manager for learning and personality-driven decisions */
+  npcAIManager?: NpcAIManager;
 
   // Jockey system (optional - may not be initialized yet)
   /** Available and contracted jockeys */
@@ -108,6 +111,10 @@ export interface SystemsState {
 export function createDefaultSystemsState(): SystemsState {
   return {
     npcStables: [],
+    npcAIManager: {
+      stableStates: new Map(),
+      globalDay: 1,
+    },
     awards: [],
     facilities: createDefaultPlayerFacilities(1),
     npcFacilities: {},

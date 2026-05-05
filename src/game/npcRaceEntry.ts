@@ -1,227 +1,18 @@
 // AI Race Entry System - NPC stables intelligently enter horses in races
 // Evaluates races 1-3 days ahead and enters eligible, competitive horses
+// Refactored to use modular scoring, geometry, and AI systems
 
-import type { Horse, Race, Stable, StableTier, Jockey } from "./types";
+import type { Horse, Race, Stable, Jockey } from "./types";
 import type { Rng } from "./rng";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import { calculateOverallRating } from "@/core/horse/stats";
-import { PERSONALITY_CONFIG } from "./npcStables";
-import { isHorseEligibleForClaimingPrice, getSuggestedClaimingPriceRange } from "./claiming";
-
-// Entry limits per stable per race
-const MAX_HORSES_PER_STABLE_PER_RACE = 2;
-
-// Energy threshold for entering races
-const MIN_ENERGY_TO_ENTER = 50;
-
-// Form consideration - prefer positive form
-const MIN_FORM_TO_ENTER = -3;
-
-// Distance preference - horses prefer races within this range of their "best" distance
-const PREFERRED_DISTANCE_RANGE = 300; // ±300m from ideal
-
-// Base purse appeal thresholds by tier (modified by personality)
-const BASE_PURSE_APPEAL: Record<StableTier, number> = {
-  elite: 100000,
-  mid: 25000,
-  budget: 5000,
-};
-
-/**
- * Calculate horse's suitability score for a race
- * Higher score = better match
- * Personality affects scoring significantly
- */
-function calculateRaceSuitability(horse: Horse, race: Race, stable: Stable): number {
-  const personality = PERSONALITY_CONFIG[stable.personality];
-  let score = 0;
-  const overall = calculateOverallRating(horse);
-
-  // Class match - affected by risk tolerance
-  if (race.minStat) {
-    const gap = overall - race.minStat;
-    const riskTolerance = personality.riskTolerance;
-    if (gap >= -5 && gap <= 10) {
-      score += 30;
-    } else if (gap > 10) {
-      score += (20 - gap) * riskTolerance; // Risk-takers still enter overqualified
-    } else {
-      score += gap * riskTolerance; // Risk-takers may enter underqualified
-    }
-  } else {
-    score += 20;
-  }
-
-  // Distance fit - use horse's personal aptitude
-  const distDiff = Math.abs(race.distance - horse.distanceAptitude);
-  if (distDiff <= 100) score += 30;
-  else if (distDiff <= 300) score += 15;
-  else if (distDiff <= 600) score += 5;
-  else score -= 15;
-
-  // Surface fit - use horse's personal aptitude
-  const surface = race.surface || race.graded?.surface;
-  if (surface) {
-    const apt = horse.surfaceAptitude[surface] ?? 0.95;
-    if (apt >= 1.0) score += 20;
-    else if (apt >= 0.95) score += 5;
-    else score -= 20;
-  }
-
-  // --- Track Geometry Match ---
-  // Large tracks (large radii, long straights) vs Tight tracks (small radii, short straights)
-  const trackId = race.graded?.trackId || race.trackId;
-  const course = race.graded
-    ? {
-        sections: [],
-        straightLength: race.distance > 2000 ? 500 : 350, // Fallback if no course data
-      }
-    : null; // In real use, we'd look up the track JSON here.
-
-  // For this logic, we'll assume the sim has already resolved the course
-  // If we can't find exact radii, we check the straightLength as a proxy for "Galloping" vs "Tight"
-  const straight = race.graded ? 400 : 350; // Simplified for AI heuristic
-  if (straight > 450) {
-    // Galloping track: favors speed and long-striding horses
-    if (horse.stats.speed > 70) score += 15;
-    if (horse.corneringAptitude < 0.95) score += 10; // "Lumbering" speedsters are OK here
-  } else if (straight < 350) {
-    // Tight "Bullring": favors agility and cornering
-    if (horse.corneringAptitude > 1.05) score += 20;
-    if (horse.stats.acceleration > 70) score += 15;
-    if (horse.corneringAptitude < 0.9) score -= 25; // Don't enter bad cornerers here
-  }
-
-  // --- Gradient Match ---
-  // If the race is at a known hilly track, check climbing aptitude
-  const isHilly =
-    race.graded?.track.toLowerCase().includes("nakayama") ||
-    race.graded?.track.toLowerCase().includes("ascot");
-  if (isHilly) {
-    if (horse.climbingAptitude > 1.05) score += 20;
-    if (horse.climbingAptitude < 0.95) score -= 20;
-  }
-
-  // Purse appeal - modified by personality
-  const baseAppeal = BASE_PURSE_APPEAL[stable.tier] || 10000;
-  const purseThreshold = baseAppeal * personality.purseThresholdMod;
-  if (race.purse >= purseThreshold * 2) {
-    score += 25 * personality.raceEntryMod;
-  } else if (race.purse >= purseThreshold) {
-    score += 15 * personality.raceEntryMod;
-  } else if (race.purse >= purseThreshold * 0.5) {
-    score += 5 * personality.raceEntryMod;
-  }
-
-  // Youth preference - developers like young horses, win-now likes proven
-  if (horse.age <= 3 && personality.youthPreference > 0.7) {
-    score += 10; // Bonus for young horses with developer personality
-  } else if (horse.age >= 5 && personality.youthPreference < 0.3) {
-    score += 10; // Bonus for proven horses with win-now personality
-  }
-
-  // Form bonus/penalty - aggressive stables ignore form more
-  const formTolerance = personality.riskTolerance;
-  if (horse.form > 3) {
-    score += 10;
-  } else if (horse.form < -3) {
-    score -= 10 * (2 - formTolerance); // Conservative stables penalize bad form more
-  }
-
-  // Energy check
-  if (horse.energy > 80) {
-    score += 5;
-  } else if (horse.energy < MIN_ENERGY_TO_ENTER) {
-    score -= 20;
-  }
-
-  // Fame/recognition - prestige stables love famous horses in big races
-  if (horse.fame > 50 && race.purse > 100000) {
-    score += 10 * (personality.gradedRaceBonus / 20);
-  }
-
-  // Graded race bonus - heavily modified by personality
-  if (race.graded?.grade === "G1") {
-    score += 15 + personality.gradedRaceBonus * 0.5;
-  } else if (race.graded?.grade === "G2") {
-    score += 10 + personality.gradedRaceBonus * 0.3;
-  } else if (race.graded?.grade === "G3") {
-    score += 5 + personality.gradedRaceBonus * 0.2;
-  }
-
-  // Claiming race logic - trader personality loves claiming races
-  if (race.claimingPrice) {
-    if (stable.personality === "trader") {
-      score += 20; // Traders actively seek claiming opportunities
-    } else {
-      score -= 5; // Other personalities avoid claiming risk
-    }
-
-    // Check if horse is appropriately priced for claiming level
-    const isEligible = isHorseEligibleForClaimingPrice(horse, race.claimingPrice, []);
-    if (!isEligible) {
-      score -= 30; // Heavy penalty for over-qualified horses
-    } else {
-      // Bonus for well-matched claiming prices
-      const [minPrice, maxPrice] = getSuggestedClaimingPriceRange(horse);
-      if (race.claimingPrice >= minPrice && race.claimingPrice <= maxPrice) {
-        score += 10;
-      }
-    }
-  }
-
-  // Optional claiming - good middle ground
-  if (race.raceClass === "OptionalClaiming") {
-    score += 5; // Slight bonus for flexibility
-  }
-
-  // Starter allowance/starter handicap - good for horses moving up
-  if (race.raceClass === "StarterAllowance" || race.raceClass === "StarterHandicap") {
-    // Check if horse has claiming race history
-    const hasClaimingHistory = horse.raceHistory.some((r) => r.purse && r.purse < 10000);
-    if (hasClaimingHistory) {
-      score += 15; // Bonus for horses trying to move up from claiming company
-    }
-  }
-
-  return score;
-}
-
-/**
- * Calculate the assigned weight for a horse in a specific race.
- * Includes Sex Allowance (females carry less) and Weight-for-Age (younger horses carry less).
- */
-export function calculateAssignedWeight(horse: Horse, race: Race): number {
-  // Base weight for major races is 126 lbs (57kg)
-  let weight = 126;
-
-  // Sex Allowance: Fillies and Mares carry 3-5 lbs less in mixed races
-  const isMixedRace =
-    !race.restrictions?.gender ||
-    (!race.restrictions.gender.toLowerCase().includes("filly") &&
-      !race.restrictions.gender.toLowerCase().includes("mare") &&
-      !race.restrictions.gender.toLowerCase().includes("colt"));
-
-  if (isMixedRace && (horse.gender === "filly" || horse.gender === "mare")) {
-    weight -= 3; // 3 lb sex allowance
-  }
-
-  // Weight-for-Age: 3yos carry less than older horses in open races
-  if (
-    horse.age === 3 &&
-    (race.restrictions?.minAge === undefined || race.restrictions.minAge < 3)
-  ) {
-    weight -= 2; // 2 lb age allowance
-  }
-
-  // Handicap adjustment (if applicable)
-  if (race.isHandicap && race.handicapWeights) {
-    const hw = race.handicapWeights.find((w) => w.horseId === horse.id);
-    if (hw) return hw.weight;
-  }
-
-  return weight;
-}
+import {
+  calculateRaceSuitability,
+  calculateAssignedWeight,
+  MAX_HORSES_PER_STABLE_PER_RACE,
+  MIN_ENERGY_TO_ENTER,
+} from "@/core/race/entryScoring";
+import { getFormTolerance } from "@/core/stable/personalityModifiers";
+import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 
 /**
  * Check if a horse should enter a race (basic eligibility + suitability)
@@ -244,9 +35,8 @@ function shouldEnterHorse(
   }
 
   // Form check - avoid very cold horses
-  // Note: personality affects this in calculateRaceSuitability
   const personality = PERSONALITY_CONFIG[stable.personality];
-  const minForm = MIN_FORM_TO_ENTER * (2 - personality.riskTolerance);
+  const minForm = getFormTolerance(stable.personality);
   if (horse.form < minForm) {
     return { shouldEnter: false, score: 0 };
   }
@@ -262,11 +52,10 @@ function shouldEnterHorse(
     return { shouldEnter: false, score: 0 };
   }
 
-  // Calculate suitability score with personality
+  // Calculate suitability score with personality (includes geometry and gradient)
   const score = calculateRaceSuitability(horse, race, stable);
 
   // Minimum score threshold to enter - modified by raceEntryMod
-  // Aggressive stables enter with lower scores
   const minScore = 0 * personality.raceEntryMod;
   if (score < minScore) {
     return { shouldEnter: false, score };
@@ -309,6 +98,9 @@ export function selectHorsesForRaceEntry(
 
   return toEnter;
 }
+
+// Re-export for backward compatibility
+export { calculateAssignedWeight };
 
 /**
  * Run race entry for all NPC stables for races in the next N days

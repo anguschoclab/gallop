@@ -9,10 +9,17 @@ import type {
   CampaignRaceSlot,
   CampaignFlag,
   ConfirmedAptitudes,
+  Stable,
 } from "./types";
 import { GRADED_RACES } from "./gradedRaces";
 import type { GradedRace } from "./gradedRaces";
 import { getCurrentYear } from "./raceSchedule";
+import {
+  detectContender,
+  getOptimalMajorRaceTarget,
+  getPrepRaceStrategy,
+} from "@/core/ai/campaignAI";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 // ── Distance band helpers ────────────────────────────────────────────────────
 
@@ -53,6 +60,8 @@ export type PlannerInput = {
   campaign: HorseCampaign;
   races: Race[];
   currentDay: number;
+  stable?: Stable;
+  npcAIManager?: NpcAIManager;
 };
 
 /**
@@ -60,7 +69,7 @@ export type PlannerInput = {
  * Existing "entered" or "completed" slots are preserved.
  */
 export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
-  const { horse, campaign, races, currentDay } = input;
+  const { horse, campaign, races, currentDay, stable, npcAIManager } = input;
   const { goalType, targetRaceKey, confirmedAptitudes } = campaign;
 
   const preserved = campaign.slots.filter(
@@ -75,6 +84,35 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
   });
 
   const year = getCurrentYear(currentDay);
+
+  // AI-driven major race targeting for NPCs
+  if (goalType === "chase_major_race" && stable && npcAIManager) {
+    const aiState = npcAIManager.getStableAIState(stable.id);
+    if (aiState) {
+      // Check if horse is a contender
+      const contenderStatus = detectContender(aiState.campaignAI, horse, currentDay);
+      if (contenderStatus.isContender && !targetRaceKey) {
+        // Auto-assign optimal major race target
+        const optimalTarget = getOptimalMajorRaceTarget(aiState.campaignAI, horse, stable, currentDay);
+        if (optimalTarget) {
+          const targetGraded = GRADED_RACES.find((g) => g.key === optimalTarget);
+          if (targetGraded) {
+            return buildPrepChain(
+              targetGraded,
+              candidateRaces,
+              preserved,
+              confirmedAptitudes,
+              currentDay,
+              year,
+              horse,
+              aiState.campaignAI,
+              stable,
+            );
+          }
+        }
+      }
+    }
+  }
 
   // If targeting a specific graded race key, build a prep chain
   if (targetRaceKey) {

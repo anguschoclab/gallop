@@ -1,9 +1,10 @@
 import type { PipelineContext } from "../pipeline";
 import { runNpcCycle } from "@/core/npc/npcCycle";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**
  * Phase: NPC Cycle
- * Run NPC training, race entry, and fame updates
+ * Run NPC training, race entry, fame updates, and AI state management
  */
 export const npcCyclePhase = {
   name: "npcCycle",
@@ -18,8 +19,14 @@ export const npcCyclePhase = {
 
     const pregnantIds = new Set(state.pregnancies.filter((p) => !p.resolved).map((p) => p.damId));
 
+    // Get existing AI manager or create new one
+    const aiManager: NpcAIManager = (state as any).npcAIManager || {
+      stableStates: new Map(),
+      globalDay: newDay,
+    };
+
     // Run the complete NPC cycle
-    const { horses, races, jockeys } = runNpcCycle(
+    const { horses, races, jockeys, aiManager: updatedAiManager } = runNpcCycle(
       state.npcStables,
       state.horses,
       state.jockeys ?? [],
@@ -28,6 +35,7 @@ export const npcCyclePhase = {
       context.dailyRng,
       3,
       pregnantIds,
+      aiManager,
     );
 
     return {
@@ -37,6 +45,7 @@ export const npcCyclePhase = {
         horses,
         races,
         jockeys,
+        npcAIManager: updatedAiManager,
       },
     };
   },

@@ -1,6 +1,12 @@
 import type { Horse, Race, Stable, Pregnancy, Jockey } from "@/game/types";
 import { runNpcTraining, runNpcRaceEntry, updateHorseFame } from "@/game/npcRaceEntry";
 import { createRng, hashStr, type Rng } from "@/game/rng";
+import {
+  NpcAIManager,
+  getOrCreateStableAIState,
+  updateStableAIState,
+  pruneAllLearningData,
+} from "@/core/ai/npcCycleAI";
 
 /**
  * NPC Cycle Result
@@ -9,6 +15,7 @@ export interface NpcCycleResult {
   horses: Horse[];
   races: Race[];
   jockeys: Jockey[];
+  aiManager: NpcAIManager;
 }
 
 /**
@@ -17,13 +24,15 @@ export interface NpcCycleResult {
  * 1. NPC Training
  * 2. NPC Race Entry (3 days ahead)
  * 3. Horse Fame Updates for yesterday's races
+ * 4. AI state management and pruning
  *
  * @param npcStables - Array of NPC stables
  * @param horses - Current horse roster
  * @param races - Current race schedule
  * @param currentDay - The current game day
  * @param raceEntryDaysAhead - How many days ahead to enter races (default: 3)
- * @returns Updated horses and races
+ * @param aiManager - Existing AI manager (optional, for persistence)
+ * @returns Updated horses, races, and AI manager
  */
 export function runNpcCycle(
   npcStables: Stable[],
@@ -34,10 +43,11 @@ export function runNpcCycle(
   rng: Rng,
   raceEntryDaysAhead: number = 3,
   pregnantIds: Set<string> = new Set(),
+  aiManager: NpcAIManager = { stableStates: new Map(), globalDay: currentDay },
 ): NpcCycleResult {
   // Skip if no NPC stables
   if (npcStables.length === 0) {
-    return { horses, races, jockeys };
+    return { horses, races, jockeys, aiManager };
   }
 
   // 1. NPC Training
@@ -62,9 +72,24 @@ export function runNpcCycle(
     horsesAfterFame = updateHorseFame(horsesAfterFame, race);
   }
 
+  // 4. AI state management
+  let updatedAiManager = aiManager;
+  updatedAiManager.globalDay = currentDay;
+
+  // Create or update AI state for each stable
+  for (const stable of npcStables) {
+    const stableAIState = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
+    updatedAiManager.stableStates.set(stable.id, updateStableAIState(stableAIState, currentDay));
+  }
+
+  // Prune old learning data (90-day memory depth)
+  const cutoffDay = currentDay - 90;
+  updatedAiManager = pruneAllLearningData(updatedAiManager, cutoffDay);
+
   return {
     horses: horsesAfterFame,
     races: racesAfterEntry,
     jockeys,
+    aiManager: updatedAiManager,
   };
 }

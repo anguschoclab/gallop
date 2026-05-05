@@ -4,7 +4,6 @@
 
 import type { Stable, StableTier } from "./types";
 import type { Rng } from "./rng";
-import { generateUUID } from "./uuid";
 import { PERSONALITY_CONFIG, STABLE_CONFIG } from "@/core/stable/stableConfig";
 import {
   shuffleAndPick,
@@ -15,7 +14,6 @@ import {
   generateFillerStable,
   generateStableFromTemplate,
   type StablePoolEntry,
-  randomSilk,
 } from "@/core/stable/stableGeneration";
 
 // Re-export for backward compatibility

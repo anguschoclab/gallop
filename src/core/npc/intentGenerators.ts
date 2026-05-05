@@ -14,6 +14,19 @@ import { generateUUID } from "@/game/uuid";
 import { PERSONALITY_CONFIG } from "@/game/npcStables";
 import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
 import { calculateOverallRating } from "@/core/horse/stats";
+import {
+  createTrainingAIState,
+  selectTrainingType,
+  shouldTrainToday,
+  updateHorseTraining,
+  recordTrainingOutcome,
+} from "@/core/ai/trainingAI";
+import {
+  createClaimingAIState,
+  shouldClaimHorse,
+  recordClaimingDecision,
+} from "@/core/ai/claimingAI";
+import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 
 /**
  * Generate all NPC intents for the day
@@ -46,27 +59,47 @@ function generateNpcTrainingIntents(
   const intents: TrainingIntent[] = [];
   const ownedHorses = state.horses.filter((h) => h.stableId === stable.id);
 
-  for (const horse of ownedHorses) {
-    // Simple logic: train if horse has energy and is not pregnant
-    if (horse.energy >= 15 && !state.pregnancies.some((p) => !p.resolved && p.damId === horse.id)) {
-      // Randomly choose training type based on horse's lowest stat
-      const stats = horse.stats;
-      const lowestStat = Object.entries(stats).reduce((a, b) => (a[1] < b[1] ? a : b))[0] as
-        | "speed"
-        | "stamina"
-        | "acceleration";
+  // Get or create training AI state for this stable
+  const aiManager: NpcAIManager = (state as any).npcAIManager || {
+    stableStates: new Map(),
+    globalDay: day,
+  };
+  let stableAIState = aiManager.stableStates.get(stable.id);
+  if (!stableAIState) {
+    stableAIState = {
+      stableId: stable.id,
+      personalityState: { personality: stable.personality } as any,
+      learningState: { outcomes: [], successRates: new Map(), patterns: new Map(), lastUpdate: 0 },
+      lastUpdateDay: day,
+    };
+  }
 
-      intents.push({
-        id: generateUUID(),
-        entityId: horse.id,
-        source: "npc",
-        sourceId: stable.id,
-        day,
-        priority: 50, // NPC intents have lower priority than player
-        type: "training",
-        horseId: horse.id,
-        trainingType: lowestStat,
-      });
+  // Create training AI state
+  const trainingAI = createTrainingAIState(stable);
+
+  for (const horse of ownedHorses) {
+    // AI-driven training decision
+    if (
+      horse.energy >= 15 &&
+      !state.pregnancies.some((p) => !p.resolved && p.damId === horse.id)
+    ) {
+      // Use AI to determine if horse should train today
+      if (shouldTrainToday(trainingAI, horse, day)) {
+        // Use AI to select training type
+        const trainingType = selectTrainingType(trainingAI, horse, day);
+
+        intents.push({
+          id: generateUUID(),
+          entityId: horse.id,
+          source: "npc",
+          sourceId: stable.id,
+          day,
+          priority: 50, // NPC intents have lower priority than player
+          type: "training",
+          horseId: horse.id,
+          trainingType,
+        });
+      }
     }
   }
 
@@ -166,61 +199,42 @@ function generateNpcClaimingIntents(
   day: number,
 ): ClaimingIntent[] {
   const intents: ClaimingIntent[] = [];
-  const personality = PERSONALITY_CONFIG[stable.personality];
   const upcomingRaces = state.races.filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
+
+  // Create claiming AI state
+  const claimingAI = createClaimingAIState(stable);
 
   for (const race of upcomingRaces) {
     // Skip if not a claiming race
     if (!race.claimingPrice) continue;
-
-    // Personality-based claiming propensity
-    const claimingPropensity =
-      personality.raceEntryMod *
-      (stable.personality === "trader"
-        ? 1.5
-        : stable.personality === "aggressive"
-          ? 1.2
-          : stable.personality === "conservative"
-            ? 0.5
-            : 1.0);
-
-    // Random check based on propensity
-    if (Math.random() > claimingPropensity * 0.3) continue;
 
     for (const entry of race.entries) {
       const horse = state.horses.find((h) => h.id === entry.horseId);
       if (!horse) continue;
       if (horse.stableId === stable.id) continue; // Don't claim own horses
 
-      // Check if stable has sufficient funds
-      if (stable.cash < race.claimingPrice * 1.1) continue;
+      // Use AI to determine if should claim
+      if (shouldClaimHorse(claimingAI, horse, race, stable, day)) {
+        // Check horse eligibility
+        if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) continue;
 
-      // Check horse eligibility
-      if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) continue;
+        // Record claiming decision for learning
+        recordClaimingDecision(claimingAI, horse, race, stable, day);
 
-      // Strategic considerations based on personality
-      if (stable.personality === "developer" && horse.age > 4) continue;
-      if (stable.personality === "win-now" && horse.age < 4) continue;
-      if (stable.personality === "specialist") {
-        if (personality.specialistDistance && race.distance !== personality.specialistDistance)
-          continue;
-        if (personality.specialistSurface && race.surface !== personality.specialistSurface)
-          continue;
+        intents.push({
+          id: generateUUID(),
+          entityId: horse.id,
+          source: "npc",
+          sourceId: stable.id,
+          day,
+          priority: 60,
+          type: "claiming",
+          raceId: race.id,
+          horseId: horse.id,
+          claimantStableId: stable.id,
+          claimingPrice: race.claimingPrice,
+        });
       }
-
-      intents.push({
-        id: generateUUID(),
-        entityId: horse.id,
-        source: "npc",
-        sourceId: stable.id,
-        day,
-        priority: 60,
-        type: "claiming",
-        raceId: race.id,
-        horseId: horse.id,
-        claimantStableId: stable.id,
-        claimingPrice: race.claimingPrice,
-      });
     }
   }
 
