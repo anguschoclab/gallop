@@ -39,6 +39,7 @@ export type GradedRace = {
   note?: string; // e.g. "Fillies & Mares" — display-only
   triplecrownKey?: string; // e.g. "usa-tc", "uk-tc" — groups Triple Crown legs
   bcKey?: string; // e.g. "breeders-cup" — groups BC championship races
+  winAndYouInTarget?: string; // e.g. "bc-classic" - target race for automatic qualification (Win and You're In)
   dayOfYearVariance?: number; // max ±days to shift from base dayOfYear each year (default: 3)
   purseGrowthRate?: number; // annual % purse growth (default: 0.02)
 };
@@ -245,6 +246,7 @@ export const GRADED_RACES: GradedRace[] = [
   // ============= UAE — Group 1 (Meydan, Dubai World Cup Carnival/Night) =============
   { uuid: "0bfe1159-bb65-4869-b852-dde86637705e", key: "jebel-hatta", name: "Jebel Hatta", track: "Meydan", trackId: "85a3d0b8-a4a9-4ff7-bc18-705874d8da31", grade: "G1", distance: 1800, surface: "Turf", purse: 500000, dayOfYear: doy(1, 26), restrictions: { minAge: 4 } },
   { uuid: "ec58258d-3334-4e37-bf30-cb7c763d7ef8", key: "al-maktoum-challenge", name: "Al Maktoum Challenge R3", track: "Meydan", trackId: "85a3d0b8-a4a9-4ff7-bc18-705874d8da31", grade: "G1", distance: 2000, surface: "Dirt", purse: 500000, dayOfYear: doy(1, 26), restrictions: { minAge: 4 } },
+  { uuid: "ff000000-0000-4000-8000-000000000001", key: "al-maktoum-challenge-r1", name: "Al Maktoum Challenge R1", track: "Meydan", trackId: "85a3d0b8-a4a9-4ff7-bc18-705874d8da31", grade: "G1", distance: 1900, surface: "Dirt", purse: 500000, dayOfYear: doy(1, 12), restrictions: { minAge: 4 } },
   { uuid: "02a67f95-7b78-40a4-875f-0ee72bd13ec8", key: "al-quoz-sprint", name: "Al Quoz Sprint", track: "Meydan", trackId: "85a3d0b8-a4a9-4ff7-bc18-705874d8da31", grade: "G1", distance: 1200, surface: "Turf", purse: 1500000, dayOfYear: doy(3, 30), restrictions: { minAge: 3 } },
   { uuid: "4e6ea8d1-2e14-4de0-b91a-ca8fbe504ea1", key: "dubai-golden-shaheen", name: "Dubai Golden Shaheen", track: "Meydan", trackId: "85a3d0b8-a4a9-4ff7-bc18-705874d8da31", grade: "G1", distance: 1200, surface: "Dirt", purse: 1500000, dayOfYear: doy(3, 30), restrictions: { minAge: 3 } },
   { uuid: "7c5f6bd6-44ed-4a8c-aaff-77b1b791c731", key: "dubai-sheema-classic", name: "Dubai Sheema Classic", track: "Meydan", trackId: "85a3d0b8-a4a9-4ff7-bc18-705874d8da31", grade: "G1", distance: 2400, surface: "Turf", purse: 6000000, dayOfYear: doy(3, 30), restrictions: { minAgeNorthern: 4, minAgeSouthern: 3 } },
@@ -1128,6 +1130,9 @@ export const GRADED_RACES: GradedRace[] = [
   { uuid: "aa000020-0000-4000-8000-000000000020", key: "usa-kentucky-oaks", name: "Kentucky Oaks", track: "Churchill Downs", trackId: "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d", grade: "G1", distance: 1800, surface: "Dirt", purse: 1250000, dayOfYear: doy(5, 2), restrictions: { minAge: 3, maxAge: 3, gender: "fillies" }, note: "Fillies" },
   { uuid: "aa000021-0000-4000-8000-000000000021", key: "usa-man-o-war", name: "Man o' War Stakes", track: "Belmont Park", trackId: "d3c4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f", grade: "G1", distance: 1800, surface: "Turf", purse: 750000, dayOfYear: doy(5, 11), restrictions: { minAge: 4 } },
   { uuid: "aa000022-0000-4000-8000-000000000022", key: "usa-metropolitan", name: "Metropolitan Handicap", track: "Belmont Park", trackId: "d3c4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f", grade: "G1", distance: 1600, surface: "Dirt", purse: 750000, dayOfYear: doy(5, 25), restrictions: { minAge: 4 } },
+  { uuid: "aa000024-0000-4000-8000-000000000024", key: "usa-donn-handicap", name: "Donn Handicap", track: "Gulfstream Park", trackId: "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a", grade: "G1", distance: 1800, surface: "Dirt", purse: 500000, dayOfYear: doy(2, 10), restrictions: { minAge: 4 }, dayOfYearVariance: 7 },
+  { uuid: "aa000025-0000-4000-8000-000000000025", key: "usa-gulfstream-park-handicap", name: "Gulfstream Park Handicap", track: "Gulfstream Park", trackId: "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a", grade: "G2", distance: 1700, surface: "Dirt", purse: 300000, dayOfYear: doy(2, 17), restrictions: { minAge: 4 }, dayOfYearVariance: 7 },
+  { uuid: "aa000023-0000-4000-8000-000000000023", key: "usa-pegasus-world-cup", name: "Pegasus World Cup Invitational Stakes", track: "Gulfstream Park", trackId: "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a", grade: "G1", distance: 1811, surface: "Dirt", purse: 3000000, dayOfYear: doy(1, 28), restrictions: { minAge: 4 }, dayOfYearVariance: 7, winAndYouInTarget: "bc-classic" },
 
   // ============= USA — Breeders' Cup (full 14-race card, Keeneland Nov) =============
   { uuid: "bc000001-0000-4000-8000-000000000001", key: "bc-classic", name: "Breeders' Cup Classic", track: "Keeneland", trackId: "a6f7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c", grade: "G1", distance: 2000, surface: "Dirt", purse: 6000000, dayOfYear: doy(11, 1), restrictions: { minAge: 3 }, bcKey: "breeders-cup", dayOfYearVariance: 7 },
@@ -1147,6 +1152,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= Saudi Arabia — Saudi Cup Weekend =============
   { uuid: "sa000001-0000-4000-8000-000000000001", key: "saudi-cup", name: "Saudi Cup", track: "King Abdulaziz Racecourse", trackId: "f6a7b8c9-d0e1-4f2a-3b4c-6d7e8f9a0b1c", grade: "G1", distance: 1800, surface: "Dirt", purse: 20000000, dayOfYear: doy(2, 22), restrictions: { minAge: 4 }, dayOfYearVariance: 7 },
+  { uuid: "sa000005-0000-4000-8000-000000000005", key: "saudi-cup-trial", name: "Saudi Cup Trial", track: "King Abdulaziz Racecourse", trackId: "f6a7b8c9-d0e1-4f2a-3b4c-6d7e8f9a0b1c", grade: "G2", distance: 1800, surface: "Dirt", purse: 500000, dayOfYear: doy(2, 8), restrictions: { minAge: 4 }, dayOfYearVariance: 7 },
   { uuid: "sa000002-0000-4000-8000-000000000002", key: "saudi-1351-cup", name: "1351 Turf Sprint", track: "King Abdulaziz Racecourse", trackId: "f6a7b8c9-d0e1-4f2a-3b4c-6d7e8f9a0b1c", grade: "G1", distance: 1200, surface: "Turf", purse: 2500000, dayOfYear: doy(2, 22), restrictions: { minAge: 3 }, dayOfYearVariance: 7 },
   { uuid: "sa000003-0000-4000-8000-000000000003", key: "saudi-neom-turf-cup", name: "Neom Turf Cup", track: "King Abdulaziz Racecourse", trackId: "f6a7b8c9-d0e1-4f2a-3b4c-6d7e8f9a0b1c", grade: "G2", distance: 2000, surface: "Turf", purse: 1500000, dayOfYear: doy(2, 22), restrictions: { minAge: 4 }, dayOfYearVariance: 7 },
   { uuid: "sa000004-0000-4000-8000-000000000004", key: "saudi-red-sea-turf-h", name: "Red Sea Turf Handicap", track: "King Abdulaziz Racecourse", trackId: "f6a7b8c9-d0e1-4f2a-3b4c-6d7e8f9a0b1c", grade: "G3", distance: 3000, surface: "Turf", purse: 1000000, dayOfYear: doy(2, 22), restrictions: { minAge: 4 }, dayOfYearVariance: 7 },

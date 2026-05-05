@@ -11,12 +11,12 @@ export const COAT_TO_PORTRAIT: Record<CoatColor, string> = {
   palomino: "/assets/portraits/horse-portrait-palomino.png",
   white: "/assets/portraits/horse-portrait-white.png",
   buckskin: "/assets/portraits/horse-portrait-buckskin.png",
-  // Fallback mappings
-  "seal-brown": "/assets/portraits/horse-portrait-bay.png",
-  "liver-chestnut": "/assets/portraits/horse-portrait-chestnut.png",
-  dun: "/assets/portraits/horse-portrait-buckskin.png",
-  grulla: "/assets/portraits/horse-portrait-gray.png",
-  champagne: "/assets/portraits/horse-portrait-palomino.png",
+  // Dedicated mappings (generated variants)
+  "seal-brown": "/assets/portraits/horse-portrait-seal-brown.png",
+  "liver-chestnut": "/assets/portraits/horse-portrait-liver-chestnut.png",
+  dun: "/assets/portraits/horse-portrait-dun.png",
+  grulla: "/assets/portraits/horse-portrait-grulla.png",
+  champagne: "/assets/portraits/horse-portrait-champagne.png",
 };
 
 export function getPortraitUrl(coatColor?: CoatColor): string {

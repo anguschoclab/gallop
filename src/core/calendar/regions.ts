@@ -44,13 +44,13 @@ const USA_TRIPLE_CROWN = new Set([
   "usa-belmont-stakes",
 ]);
 
-// UK Triple Crown races (Guineas, Derby, St Leger)
-const UK_TRIPLE_CROWN = new Set([
-  "uk-2000-guineas",
-  "uk-1000-guineas",
-  "uk-derby",
-  "uk-oaks",
-  "uk-st-leger",
+// UK Classics (Guineas, Derby, Oaks, St Leger) - using gb- prefix from gradedRaces.ts
+const UK_CLASSICS = new Set([
+  "gb-2000-guineas-stakes",
+  "gb-1000-guineas-stakes",
+  "gb-derby-stakes",
+  "gb-oaks-stakes",
+  "gb-st-leger-stakes",
 ]);
 
 export const REGIONS: Record<RegionId, RegionConfig> = {
@@ -108,7 +108,7 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
       "Doncaster",
       "Goodwood",
     ],
-    specialRaceKeys: UK_TRIPLE_CROWN,
+    specialRaceKeys: UK_CLASSICS,
     specialFilterName: "Classics",
     continent: "europe",
   },

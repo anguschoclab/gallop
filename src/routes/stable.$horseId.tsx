@@ -18,6 +18,8 @@ import { getGradeColorClass } from "@/core/race/grading";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
 import { TRAINING_COST } from "@/game/store";
+import { GRADED_RACES } from "@/game/gradedRaces";
+import { getCurrentYear } from "@/game/raceSchedule";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
@@ -123,6 +125,20 @@ function HorseDetail() {
                 <Badge className="bg-fame/15 text-fame border-fame/30" variant="outline">
                   In foal · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
                 </Badge>
+              )}
+              {horse.winAndYouInQualified && horse.winAndYouInQualified.length > 0 && horse.winAndYouInQualified.filter(q => q.year === getCurrentYear(day)).length > 0 && (
+                <>
+                  {horse.winAndYouInQualified
+                    .filter(q => q.year === getCurrentYear(day))
+                    .map(q => {
+                      const gradedRace = GRADED_RACES.find(g => g.key === q.raceKey);
+                      return (
+                        <Badge key={q.raceKey} className="bg-primary text-primary-foreground">
+                          Qualified for {gradedRace?.name || q.raceKey}
+                        </Badge>
+                      );
+                    })}
+                </>
               )}
             </div>
           </CardContent>

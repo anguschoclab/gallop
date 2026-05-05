@@ -292,6 +292,7 @@ export type Horse = {
   lifetimeEarnings: number;
   careerStarts: number;
   careerWins: number;
+  winAndYouInQualified?: { raceKey: string; year: number }[]; // Array of {raceKey, year} for Win and You're In qualifications
   // --- Resolved DNA traits (Tier 1+2) ---
   heartScore: number;        // 0.85-1.15 multiplier on late-race stamina
   fiberBias: "sprinter" | "balanced" | "stayer";
@@ -448,6 +449,7 @@ export type Race = {
     track: string; // Track name for display
     trackId: string; // Track UUID reference
     surface: "Turf" | "Dirt" | "Synthetic";
+    winAndYouInTarget?: string; // Target race for automatic qualification (e.g., "bc-classic")
   };
   // New fields for expanded race types
   claimingPrice?: ClaimingPrice; // For claiming and optional claiming races

@@ -10,7 +10,7 @@ import { runNpcRaceEntry, runNpcTraining, updateHorseFame } from "./npcRaceEntry
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { createRng, hashStr, type Rng } from "./rng";
-import { generateUpcomingRaces as generateScheduledRaces } from "./raceSchedule";
+import { generateUpcomingRaces as generateScheduledRaces, getCurrentYear } from "./raceSchedule";
 import { TRACKS, TRACK_SCHEDULES, type Track } from "./tracks";
 import { scoutHorse as performScout } from "./scouting";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
@@ -529,7 +529,18 @@ export const useGame = create<GameState & Actions>()(
         // Economic guard: refuse races whose entry fee exceeds 50% of purse —
         // this catches misconfigured races and protects the player's bankroll.
         if (race.entryFee > race.purse * 0.5) return fail("Entry fee exceeds 50% of purse.");
-        if (s.cash < race.entryFee) return fail("Insufficient cash for entry fee.");
+        
+        // Check if horse has entry fee waiver for this race
+        let effectiveEntryFee = race.entryFee;
+        if (race.graded?.key && horse.winAndYouInQualified) {
+          const currentYear = getCurrentYear(s.day);
+          const hasWaiver = horse.winAndYouInQualified.some(q => q.raceKey === race.graded!.key && q.year === currentYear);
+          if (hasWaiver) {
+            effectiveEntryFee = 0;
+          }
+        }
+        
+        if (s.cash < effectiveEntryFee) return fail("Insufficient cash for entry fee.");
         const r = race.restrictions;
         if (r) {
           const minAgeToCheck = horse.hemisphere === "Northern"
@@ -545,7 +556,7 @@ export const useGame = create<GameState & Actions>()(
         race.entries.push({ horseId, owned: true });
         set({
           races: [...s.races],
-          cash: s.cash - race.entryFee,
+          cash: s.cash - effectiveEntryFee,
           log: [{ day: s.day, text: `Entered ${horse.name} in ${race.name}.` }, ...s.log].slice(0, 50),
         });
         return { ok: true };
@@ -625,6 +636,15 @@ export const useGame = create<GameState & Actions>()(
           
           h.careerStarts += 1;
           if (r.position === 1) h.careerWins += 1;
+
+          // Win and You're In: if this race has a target and horse won, qualify for target race
+          if (r.position === 1 && race.graded?.winAndYouInTarget) {
+            if (!h.winAndYouInQualified) h.winAndYouInQualified = [];
+            const currentYear = getCurrentYear(s.day);
+            if (!h.winAndYouInQualified.some(q => q.raceKey === race.graded!.winAndYouInTarget && q.year === currentYear)) {
+              h.winAndYouInQualified.push({ raceKey: race.graded!.winAndYouInTarget, year: currentYear });
+            }
+          }
 
           if (!r.dnf && r.position - 1 < splits.length) {
             const pay = splits[r.position - 1];
@@ -1008,6 +1028,18 @@ export const useGame = create<GameState & Actions>()(
         }
         
         const newDay = s.day + 1;
+        const currentYear = getCurrentYear(newDay);
+        const previousYear = getCurrentYear(s.day);
+
+        // Clean up expired Win and You're In qualifications at year boundary
+        if (currentYear > previousYear) {
+          s.horses.forEach(h => {
+            if (h.winAndYouInQualified) {
+              h.winAndYouInQualified = h.winAndYouInQualified.filter(q => q.year >= currentYear);
+            }
+          });
+        }
+
         const playerHorseCount = s.horses.filter((h) => !h.stableId).length;
         const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 

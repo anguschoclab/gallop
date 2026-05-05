@@ -11,6 +11,20 @@ import { makeGradedRace } from "./horseGen";
 import { GRADED_RACES } from "./gradedRaces";
 import { generateNorthAmericanRaceCard } from "./raceGeneration/northAmerica";
 
+// Breeders' Cup rotation pool
+const BREEDERS_CUP_TRACKS = [
+  { trackId: "a6f7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c", name: "Keeneland" },
+  { trackId: "b7a8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d", name: "Del Mar" },
+  { trackId: "f5e6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b", name: "Santa Anita" },
+  { trackId: "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d", name: "Churchill Downs" },
+];
+
+// Helper: Get Breeders' Cup track for a given year
+function getBreedersCupTrack(year: number): { trackId: string; name: string } {
+  const index = (year - 1) % 4;
+  return BREEDERS_CUP_TRACKS[index];
+}
+
 // Helper: Get current year from game day
 export function getCurrentYear(gameDay: number): number {
   // Day 1 = Year 1, Day 366 = Year 2, etc.
@@ -127,6 +141,9 @@ export function generateAnnualCalendar(
   const firstDayOfYear = (year - 1) * 365 + 1;
   const races = [...existingRaces];
 
+  // Get Breeders' Cup track for this year
+  const bcTrack = getBreedersCupTrack(year);
+
   for (const g of GRADED_RACES) {
     const variance = g.dayOfYearVariance ?? 3;
     let jitter = 0;
@@ -142,7 +159,15 @@ export function generateAnnualCalendar(
     }
 
     const raceRng = createRng(hashStr(`graded_${g.key}_${year}`));
-    races.push(makeGradedRace(g, gameDay, raceRng));
+    const race = makeGradedRace(g, gameDay, raceRng);
+
+    // Override Breeders' Cup track with year-appropriate track
+    if (g.bcKey === "breeders-cup" && race.graded) {
+      race.graded.trackId = bcTrack.trackId;
+      race.graded.track = bcTrack.name;
+    }
+
+    races.push(race);
   }
 
   return races;

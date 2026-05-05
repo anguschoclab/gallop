@@ -4,7 +4,7 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { overall, SilkBadge } from "@/components/HorseBits";
+import { overall } from "@/components/HorseBits";
 import { Trophy, BarChart2, Calendar, TrendingUp } from "lucide-react";
 import { HorsePortrait } from "@/components/HorsePortrait";
 

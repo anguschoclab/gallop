@@ -10,6 +10,7 @@ import { Check, ChevronRight, User, Info, AlertTriangle } from "lucide-react";
 import { JockeyCard } from "./JockeyCard";
 import { RacingSilks } from "./RacingSilks";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
+import { getCurrentYear } from "@/game/raceSchedule";
 
 interface RaceEntryProps {
   race: Race;
@@ -27,9 +28,16 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const enterRace = useGame((s) => s.enterRace);
   const assignJockey = useGame((s) => s.assignJockey);
   const cash = useGame((s) => s.cash);
+  const day = useGame((s) => s.day);
 
   const selectedHorse = useMemo(() => horses.find(h => h.id === selectedHorseId), [horses, selectedHorseId]);
   const selectedJockey = useMemo(() => jockeys.find(j => j.id === selectedJockeyId), [jockeys, selectedJockeyId]);
+
+  const isHorseQualifiedForRace = (horse: Horse, race: Race): boolean => {
+    if (!race.graded?.key || !horse.winAndYouInQualified) return false;
+    const currentYear = getCurrentYear(day);
+    return horse.winAndYouInQualified.some(q => q.raceKey === race.graded!.key && q.year === currentYear);
+  };
 
   const eligibleHorses = useMemo(() => {
     return horses.map(h => ({
@@ -108,7 +116,14 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                     <div className="flex items-center gap-3">
                       <HorsePortraitBadge coatColor={horse.coatColor} size="sm" />
                       <div className="text-left">
-                        <div className="font-bold">{horse.name}</div>
+                        <div className="font-bold flex items-center gap-2">
+                          {horse.name}
+                          {isHorseQualifiedForRace(horse, race) && (
+                            <Badge className="bg-primary text-primary-foreground text-[10px]">
+                              Qualified
+                            </Badge>
+                          )}
+                        </div>
                         <div className="text-[10px] uppercase text-muted-foreground">Rating {calculateOverallRating(horse)} · Energy {horse.energy}%</div>
                       </div>
                     </div>
@@ -174,7 +189,9 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               <div className="space-y-2 px-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Entry Fee</span>
-                  <span className="font-bold tabular-nums">${race.entryFee.toLocaleString()}</span>
+                  <span className={`font-bold tabular-nums ${isHorseQualifiedForRace(selectedHorse, race) ? "text-primary" : ""}`}>
+                    {isHorseQualifiedForRace(selectedHorse, race) ? "WAIVED" : `$${race.entryFee.toLocaleString()}`}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Jockey Riding Fee</span>
@@ -183,11 +200,11 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 <div className="h-px bg-white/10 my-2" />
                 <div className="flex justify-between text-lg font-black uppercase">
                   <span>Total Due</span>
-                  <span className="text-primary tabular-nums">${(race.entryFee + selectedJockey.ridingFee).toLocaleString()}</span>
+                  <span className="text-primary tabular-nums">${(isHorseQualifiedForRace(selectedHorse, race) ? 0 : race.entryFee + selectedJockey.ridingFee).toLocaleString()}</span>
                 </div>
               </div>
 
-              {cash < (race.entryFee + selectedJockey.ridingFee) && (
+              {cash < (isHorseQualifiedForRace(selectedHorse, race) ? selectedJockey.ridingFee : race.entryFee + selectedJockey.ridingFee) && (
                 <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex gap-3 text-destructive">
                   <AlertTriangle size={18} className="shrink-0" />
                   <p className="text-xs font-bold">Insufficient cash to cover the total entry cost.</p>
@@ -216,7 +233,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
           ) : (
             <Button 
               onClick={handleConfirm}
-              disabled={cash < (race.entryFee + selectedJockey!.ridingFee)}
+              disabled={cash < (selectedHorse && isHorseQualifiedForRace(selectedHorse, race) ? selectedJockey!.ridingFee : race.entryFee + selectedJockey!.ridingFee)}
               className="uppercase font-black tracking-widest text-[10px] bg-primary text-primary-foreground px-8"
             >
               Confirm Entry

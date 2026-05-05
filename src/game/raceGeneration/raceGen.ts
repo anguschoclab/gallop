@@ -44,7 +44,7 @@ export function makeGradedRace(g: GradedRace, gameDay: number, rng: Rng = nondet
     fieldSize: 12,
     entries: [],
     resolved: false,
-    graded: { key: g.key, grade: g.grade, track: g.track, trackId: g.trackId, surface: g.surface },
+    graded: { key: g.key, grade: g.grade, track: g.track, trackId: g.trackId, surface: g.surface, winAndYouInTarget: g.winAndYouInTarget },
     restrictions: g.restrictions,
     weather: randomWeather(rng),
     trackCondition: randomTrackCondition(rng),

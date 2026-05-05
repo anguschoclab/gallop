@@ -331,7 +331,12 @@ function getCoatColor(color?: string): string {
     "palomino": "var(--coat-palomino)",
     "buckskin": "var(--coat-buckskin)",
     "roan": "var(--coat-roan)",
-    "white": "var(--coat-white)"
+    "white": "var(--coat-white)",
+    "seal-brown": "var(--coat-seal-brown)",
+    "liver-chestnut": "var(--coat-liver-chestnut)",
+    "dun": "var(--coat-dun)",
+    "grulla": "var(--coat-grulla)",
+    "champagne": "var(--coat-champagne)"
   };
   return map[color || "bay"] || "var(--coat-bay)";
 }

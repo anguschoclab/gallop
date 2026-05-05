@@ -3,7 +3,7 @@ import { useGame } from "@/game/store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HorseStats, overall, SilkBadge } from "@/components/HorseBits";
+import { HorseStats, overall } from "@/components/HorseBits";
 import { horsePrice } from "@/game/horseGen";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { HorsePortrait } from "@/components/HorsePortrait";
