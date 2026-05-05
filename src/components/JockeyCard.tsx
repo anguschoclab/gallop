@@ -63,6 +63,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
                   onClick={() => rerollJockeySilk(jockey.id)}
                   className="absolute -top-1 -right-1 bg-t700 hover:bg-t600 text-cream rounded-full p-1 shadow-md transition-all"
                   title="Reroll Silks"
+                  aria-label={`Reroll silks for ${jockey.name}`}
                 >
                   <RefreshCw size={12} />
                 </button>
