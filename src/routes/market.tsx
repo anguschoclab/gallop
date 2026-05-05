@@ -34,7 +34,7 @@ function MarketPage() {
                   <div className="flex-1">
                     <p className="font-bold">{h.name}</p>
                     <p className="text-xs text-muted-foreground tabular-nums">
-                      Age {h.age} · <JargonTooltip term="OVR">OVR</JargonTooltip> {overall(h)} · <JargonTooltip term="Potential">Pot</JargonTooltip> {h.potential}
+                      Age {Math.floor(h.age)} · <JargonTooltip term="OVR">OVR</JargonTooltip> {overall(h)}
                     </p>
                   </div>
                   <Badge variant="outline" className="text-base tabular-nums">${price.toLocaleString()}</Badge>
