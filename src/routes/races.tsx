@@ -13,6 +13,10 @@ import { cn } from "@/lib/utils";
 import { RaceEntry } from "@/components/RaceEntry";
 import { Race } from "@/game/types";
 import { getCountry } from "@/game/gradedRaces";
+import { getGradeColorClass } from "@/core/race/grading";
+import { GradeBreakdown } from "@/components/races/GradeBreakdown";
+import { RaceCard } from "@/components/races/RaceCard";
+import { RaceRow } from "@/components/races/RaceRow";
 
 type RaceFilters = {
   grade: string;
@@ -84,6 +88,12 @@ function RacesPage() {
           <p className="text-muted-foreground">View and enter upcoming races across all regions.</p>
         </div>
         <div className="flex gap-2">
+          <Link to="/race-browser">
+            <Button variant="outline" size="sm" className="gap-2">
+              <Calendar className="h-4 w-4" />
+              Race Browser
+            </Button>
+          </Link>
           <Link to="/recap">
             <Button variant="outline" size="sm" className="gap-2">
               <History className="h-4 w-4" />
@@ -279,221 +289,4 @@ function RacesPage() {
       )}
     </div>
   );
-}
-
-function RaceCard({ race, onEnter }: { race: any; onEnter?: () => void }) {
-  const ownedCount = race.entries.filter((e: any) => e.owned).length;
-  const gradeLabel = race.graded?.grade;
-  const gradeColor = gradeLabel ? getGradeColor(gradeLabel) : "bg-muted text-muted-foreground";
-
-  return (
-    <Card className={cn("overflow-hidden hover:border-primary/50 transition-colors", ownedCount > 0 && "border-success/30 bg-success/5")}>
-      <CardContent className="p-0">
-        <Link to="/race-browser" search={{ raceId: race.id }} className="block p-4 space-y-3">
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                {gradeLabel && (
-                  <Badge variant="outline" className={cn("h-5 px-1 text-[10px] font-bold", gradeColor)}>
-                    {gradeLabel}
-                  </Badge>
-                )}
-                <h3 className="font-bold text-base leading-tight truncate max-w-[180px]">{race.name}</h3>
-              </div>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground tabular-nums">
-                <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {race.graded?.track || "Local Track"}</span>
-                <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> {race.country}</span>
-              </div>
-            </div>
-            </div>
-            <div className="text-right flex flex-col items-end">
-              <div className="text-sm font-bold tabular-nums">${race.purse.toLocaleString()}</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Purse</div>
-              {ownedCount === 0 && (
-                <Button 
-                  size="sm" 
-                  className="mt-2 h-7 text-[10px] uppercase font-black px-3" 
-                  onClick={(e) => { e.preventDefault(); onEnter?.(); }}
-                >
-                  Enter
-                </Button>
-              )}
-            </div>
-
-          <div className="flex items-center justify-between pt-2 border-t text-[11px]">
-            <div className="flex gap-3 text-muted-foreground tabular-nums">
-              <span>{race.distance}m</span>
-              <span>{race.surface}</span>
-              <span>{race.raceClass}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground tabular-nums">Day {race.day}</span>
-              {ownedCount > 0 && (
-                <Badge variant="default" className="h-4 px-1 text-[9px] bg-success">
-                  {ownedCount} Entered
-                </Badge>
-              )}
-            </div>
-          </div>
-        </Link>
-      </CardContent>
-    </Card>
-  );
-}
-
-function RaceRow({ race, onEnter }: { race: any; onEnter?: () => void }) {
-  const ownedCount = race.entries.filter((e: any) => e.owned).length;
-  const gradeLabel = race.graded?.grade;
-  const gradeColor = gradeLabel ? getGradeColor(gradeLabel) : "";
-
-  return (
-    <Link
-      to="/race-browser"
-      search={{ raceId: race.id }}
-      className={cn(
-        "flex items-center gap-4 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors group",
-        ownedCount > 0 && "border-success/30 bg-success/5"
-      )}
-    >
-      <div className="w-12 text-center shrink-0">
-        <div className="text-xs text-muted-foreground uppercase tracking-tighter">Day</div>
-        <div className="text-lg font-bold tabular-nums leading-none">{race.day}</div>
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
-          {gradeLabel && (
-            <Badge variant="outline" className={cn("h-4 px-1 text-[9px] font-bold", gradeColor)}>
-              {gradeLabel}
-            </Badge>
-          )}
-          <h3 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{race.name}</h3>
-          {ownedCount > 0 && <div className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
-        </div>
-        <div className="flex items-center gap-3 text-[11px] text-muted-foreground tabular-nums">
-          <span className="truncate">{race.graded?.track || "Local Track"}</span>
-          <span>{race.distance}m</span>
-          <span>{race.surface}</span>
-          <span>{race.raceClass}</span>
-        </div>
-      </div>
-
-      <div className="text-right shrink-0 flex items-center gap-4">
-        <div>
-          <div className="text-sm font-bold tabular-nums">${race.purse.toLocaleString()}</div>
-          <div className="text-[10px] text-muted-foreground tabular-nums">{race.entries.length}/{race.fieldSize} full</div>
-        </div>
-        {ownedCount === 0 && (
-          <Button 
-            size="sm" 
-            variant="outline"
-            className="h-8 text-[10px] uppercase font-black px-4 hover:bg-primary hover:text-primary-foreground" 
-            onClick={(e) => { e.preventDefault(); onEnter?.(); }}
-          >
-            Enter
-          </Button>
-        )}
-      </div>
-    </Link>
-  );
-}
-
-function GradeBreakdown({ races, horses, day }: { races: any[]; horses: any[]; day: number }) {
-  const upcoming = races.filter((r) => !r.resolved && r.day >= day);
-  const grades = ["G1", "G2", "G3"] as const;
-
-  const gradeData = grades.map((grade) => {
-    const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
-    const ownedEntries = gradeRaces.filter((r) => r.entries.some((e: any) => e.owned));
-    
-    let topProj = null;
-    const allOwnedProjs: number[] = [];
-
-    for (const r of ownedEntries) {
-      const ownedIds = r.entries.filter((e: any) => e.owned).map((e: any) => e.horseId);
-      for (const id of ownedIds) {
-        const horse = horses.find((h) => h.id === id);
-        if (horse) {
-          const proj = horse.stats.speed + horse.stats.acceleration; // Simple proj Beyer
-          allOwnedProjs.push(proj);
-          if (!topProj || proj > topProj.proj) {
-            topProj = { name: horse.name, proj };
-          }
-        }
-      }
-    }
-
-    return {
-      grade,
-      total: gradeRaces.length,
-      ownedCount: ownedEntries.length,
-      topOwned: topProj,
-      allOwnedProjs,
-    };
-  });
-
-  const allOwnedProjs = gradeData.flatMap((d) => d.allOwnedProjs);
-  let avgBeyer = null;
-  if (allOwnedProjs.length > 0) {
-    avgBeyer = Math.round(allOwnedProjs.reduce((s, v) => s + v, 0) / allOwnedProjs.length);
-  }
-
-  const gradeLabelColor: Record<"G1" | "G2" | "G3", string> = {
-    G1: "text-fame border-fame/40 bg-fame/10",
-    G2: "text-muted-foreground border-muted-foreground/40 bg-muted-foreground/10",
-    G3: "text-info border-info/40 bg-info/10",
-  };
-
-  return (
-    <Card>
-      <CardContent className="p-4 space-y-4">
-        <div className="grid grid-cols-3 gap-4">
-          {gradeData.map(({ grade, total, ownedCount, topOwned }) => (
-            <div key={grade} className="space-y-2">
-              <div className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold ${gradeLabelColor[grade]}`}>
-                {grade}
-              </div>
-              <div>
-                <div className="text-2xl font-bold tabular-nums">{total}</div>
-                <div className="text-xs text-muted-foreground">races upcoming</div>
-              </div>
-              <div>
-                <div className={`text-sm font-semibold tabular-nums ${ownedCount > 0 ? "text-success" : "text-muted-foreground"}`}>
-                  {ownedCount} entered
-                </div>
-                <div className="text-xs text-muted-foreground">owned entries</div>
-              </div>
-              <div>
-                {topOwned ? (
-                  <>
-                    <div className="text-sm font-semibold truncate">{topOwned.name}</div>
-                    <div className="text-xs text-muted-foreground">top proj. ~{topOwned.proj} Beyer</div>
-                  </>
-                ) : (
-                  <div className="text-sm text-muted-foreground">—</div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="border-t pt-3 flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">Avg Beyer (owned entries):</span>
-          <span className="text-sm font-bold tabular-nums">{avgBeyer ?? "—"}</span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function getGradeColor(grade: string) {
-  switch (grade) {
-    case "G1":
-      return "text-fame border-fame/40 bg-fame/10";
-    case "G2":
-      return "text-muted-foreground border-muted-foreground/40 bg-muted-foreground/10";
-    case "G3":
-      return "text-info border-info/40 bg-info/10";
-    default:
-      return "";
-  }
 }

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { overall } from "@/components/HorseBits";
 import { Trophy, BarChart2, Calendar, TrendingUp } from "lucide-react";
 import { HorsePortrait } from "@/components/HorsePortrait";
+import { getGradeColorClass } from "@/core/race/grading";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
@@ -28,12 +29,6 @@ function Dashboard() {
     const owned = gradeRaces.filter((r) => r.entries.some((e) => e.owned)).length;
     return { grade, owned };
   });
-
-  const gradeLabelColor: Record<"G1" | "G2" | "G3", string> = {
-    G1: "text-fame border-fame/40 bg-fame/10",
-    G2: "text-muted-foreground border-muted-foreground/40 bg-muted-foreground/10",
-    G3: "text-info border-info/40 bg-info/10",
-  };
 
   // Recent graded winners (from Recap)
   const weekAgo = day - 7;
@@ -102,7 +97,7 @@ function Dashboard() {
             <div className="grid grid-cols-3 gap-2">
               {gradeData.map(({ grade, owned }) => (
                 <div key={grade} className="text-center">
-                  <div className={`inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-semibold mb-1 ${gradeLabelColor[grade]}`}>
+                  <div className={`inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-semibold mb-1 ${getGradeColorClass(grade)}`}>
                     {grade}
                   </div>
                   <div className="text-lg font-bold tabular-nums">{owned}</div>
@@ -128,7 +123,7 @@ function Dashboard() {
                   return (
                     <div key={r.id} className="flex items-center justify-between text-xs border-b border-border/50 pb-2 last:border-0 last:pb-0">
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className={`h-4 px-1 text-[9px] ${gradeLabelColor[r.graded!.grade]}`}>{r.graded!.grade}</Badge>
+                        <Badge variant="outline" className={`h-4 px-1 text-[9px] ${getGradeColorClass(r.graded!.grade)}`}>{r.graded!.grade}</Badge>
                         <span className="font-medium truncate max-w-[120px]">{r.name}</span>
                       </div>
                       <span className="text-muted-foreground truncate max-w-[100px]">{winner?.name ?? "Unknown"}</span>

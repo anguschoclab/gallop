@@ -29,6 +29,25 @@ function StablePage() {
         {myHorses.length >= 2 && <HorseCompare horses={myHorses} />}
       </div>
 
+      <div className="grid grid-cols-2 gap-4">
+        <Link to="/stallions">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Stallions at Stud</CardTitle>
+              <p className="text-xs text-muted-foreground">View available stallions for breeding</p>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link to="/jockeys">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Jockeys</CardTitle>
+              <p className="text-xs text-muted-foreground">Manage your jockey roster</p>
+            </CardHeader>
+          </Card>
+        </Link>
+      </div>
+
       <Tabs defaultValue="roster" className="space-y-4">
         <TabsList>
           <TabsTrigger value="roster" className="gap-2">

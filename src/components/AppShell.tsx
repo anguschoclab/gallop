@@ -13,17 +13,11 @@ import { useState, useEffect } from "react";
 const navItems = [
   { to: "/", label: "Dashboard", icon: Home, exact: true },
   { to: "/stable", label: "Stable", icon: Trophy, exact: false },
-  { to: "/horse-gallery", label: "Gallery", icon: Images, exact: false },
   { to: "/races", label: "Races", icon: Calendar, exact: false },
-  { to: "/calendar", label: "Calendars", icon: Globe, exact: false },
-  { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
-  { to: "/broodmares", label: "Broodmares", icon: Zap, exact: false },
-  { to: "/scheduler", label: "Scheduler", icon: CalendarClock, exact: false },
-  { to: "/sire-leaderboards", label: "Sire Leaderboards", icon: TrendingUp, exact: false },
-  { to: "/auction", label: "Auction", icon: Gavel, exact: false },
+  { to: "/npc-stables", label: "Rival Stables", icon: User, exact: false },
   { to: "/market", label: "Market", icon: Store, exact: false },
-  { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
-  { to: "/settings", label: "Settings", icon: Settings, exact: false },
+  { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
+  { to: "/auction", label: "Sales", icon: Gavel, exact: false },
 ] as const;
 
 export function AppShell() {

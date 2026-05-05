@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HorseStats, overall } from "@/components/HorseBits";
@@ -23,6 +23,15 @@ function MarketPage() {
         <h1 className="text-3xl font-bold tracking-tight">Bloodstock Market</h1>
         <p className="text-muted-foreground">Private sales available for immediate acquisition. Roster refreshes daily.</p>
       </div>
+
+      <Link to="/npc-stables">
+        <Card className="hover:bg-muted/50 transition-colors">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Scout Rival Stables</CardTitle>
+            <p className="text-xs text-muted-foreground">Browse horses owned by rival stables for potential acquisitions</p>
+          </CardHeader>
+        </Card>
+      </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {market.map((h) => {

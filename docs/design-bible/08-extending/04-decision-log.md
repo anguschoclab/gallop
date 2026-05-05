@@ -129,6 +129,22 @@ Newest entries at the **bottom**. Don't edit old entries — supersede them.
 
 ---
 
+## 0008 — Grade colors use app theme tokens (2026-05-06)
+
+**Status.** Active.
+
+**Context.** Graded stakes (G1, G2, G3) need color coding. Options: traditional racing colors (yellow/slate/amber) vs app theme colors (fame/muted-foreground/info). The canonical `getGradeColorClass` in `src/core/race/grading.ts` used traditional colors, but several route files had duplicated implementations using app theme colors.
+
+**Decision.** Use app theme colors (fame/muted-foreground/info) for consistency with the rest of the UI. G1 = fame (gold/celebratory), G2 = muted-foreground (silver/secondary), G3 = info (bronze/tertiary). Consolidate all grade color references to single source of truth in `src/core/race/grading.ts`.
+
+**Consequences.**
+- Visual consistency across all screens using grade badges.
+- Eliminates duplicate grade color logic (DRY violation).
+- Traditional racing enthusiasts may notice the color difference, but the semantic meaning (gold/silver/bronze hierarchy) remains clear.
+- All inline `gradeLabelColor` constants and `getGradeColor` functions deleted from route files.
+
+---
+
 ## How to add a new entry
 
 Append to this file with the next number (`NNNN`). Don't backfill numbers; use the next available.

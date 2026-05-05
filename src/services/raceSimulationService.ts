@@ -73,6 +73,16 @@ export function buildRaceField(
     entriesData.push({ horseId: aiHorse.id, owned: false, weight });
   }
 
+  // Empty-field guard: always return at least 1 runner so downstream
+  // simulation doesn't have to handle a completely empty field.
+  if (entriesData.length === 0) {
+    const tier = getTierForRaceClass(race.raceClass);
+    const aiHorse = generateHorse({ tier: tier as never }, rng);
+    fillerHorses.push(aiHorse);
+    const weight = calculateAssignedWeight(aiHorse, race);
+    entriesData.push({ horseId: aiHorse.id, owned: false, weight });
+  }
+
   // 3. Shuffle all entries to assign unique barriers (1 to N)
   // We use the race-seeded RNG for deterministic shuffling.
   const shuffled = [...entriesData];

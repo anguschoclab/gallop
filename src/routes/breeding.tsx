@@ -73,6 +73,25 @@ function BreedingPage() {
         </Badge>
       </div>
 
+      <div className="grid grid-cols-2 gap-4">
+        <Link to="/stallions">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Stallions at Stud</CardTitle>
+              <p className="text-xs text-muted-foreground">View available stallions for breeding</p>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link to="/sire-watch">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Sire Watch</CardTitle>
+              <p className="text-xs text-muted-foreground">Analytics and performance metrics for stallions</p>
+            </CardHeader>
+          </Card>
+        </Link>
+      </div>
+
       <Tabs defaultValue="shed" className="space-y-4">
         <TabsList>
           <TabsTrigger value="shed" className="gap-2">
