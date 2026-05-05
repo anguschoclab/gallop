@@ -1,7 +1,7 @@
 // Impact type definitions for the impact resolver system
 // Impacts are the actual state changes generated from resolved intents
 
-import type { Horse, Race, Jockey, Pregnancy, AuctionLot, ScoutReport, CampaignFlag, HorseCampaign } from "@/game/types";
+import type { Horse, Race, Jockey, Pregnancy, AuctionLot, ScoutReport, CampaignFlag, HorseCampaign, HealthStatus } from "@/game/types";
 
 // Base impact type
 export interface Impact {
@@ -343,6 +343,16 @@ export interface LogImpact extends Impact {
   reason: string;
 }
 
+// Health status impact - for injuries and health changes
+export interface HealthStatusImpact extends Impact {
+  type: "health_status_change";
+  horseId: string;
+  status: HealthStatus;
+  previousStatus: HealthStatus;
+  recoveryDay?: number; // When horse will return to healthy (for recovering status)
+  reason: string;
+}
+
 // Pace sample impact
 export interface PaceSampleImpact extends Impact {
   type: "pace_sample";
@@ -387,4 +397,5 @@ export type AnyImpact =
   | BlueHenImpact
   | JockeyStatsImpact
   | LogImpact
+  | HealthStatusImpact
   | PaceSampleImpact;

@@ -1,10 +1,12 @@
 // Systems State - Optional subsystems and advanced features
-// Includes NPC stables, jockeys, awards, campaigns, leaderboards, and pending intents
+// Includes NPC stables, jockeys, awards, campaigns, leaderboards, facilities, and pending intents
 
 import type { Stable, ScoutReport, Jockey, HorseCampaign, TripleCrownProgress } from "../types";
 import type { RegionalAward, AwardRegion } from "../awards/types";
 import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { AnyIntent } from "@/core/resolver/intents";
+import type { PlayerFacilities } from "@/core/facilities";
+import { createDefaultPlayerFacilities } from "@/core/facilities";
 
 /**
  * Systems state for optional subsystems and advanced features.
@@ -53,6 +55,12 @@ export interface SystemsState {
   /** Historical Triple Crown attempts */
   triplecrownHistory?: TripleCrownProgress[];
 
+  // Facility/infrastructure system (optional)
+  /** Player's stable facilities - affects training, recovery, and operations */
+  facilities?: PlayerFacilities;
+  /** NPC stable facilities by stable ID */
+  npcFacilities?: Record<string, PlayerFacilities>;
+
   // Intent/impact resolver system (optional)
   /** Pending intents to be resolved */
   pendingIntents?: AnyIntent[];
@@ -68,5 +76,7 @@ export interface SystemsState {
 export function createDefaultSystemsState(): SystemsState {
   return {
     npcStables: [],
+    facilities: createDefaultPlayerFacilities(1),
+    npcFacilities: {},
   };
 }

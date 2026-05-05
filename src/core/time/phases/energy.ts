@@ -1,4 +1,5 @@
 import type { PipelineContext } from "../pipeline";
+import { getFacilityBonus } from "@/core/facilities";
 
 const RECOVERY_DAYS = 30;
 const COVERING_SICKNESS_DURATION = 7;
@@ -28,8 +29,10 @@ export const energyPhase = {
         }
       }
 
-      // Energy restoration (modified by recoveryRate locus)
-      const energyGain = 35 * (h.recoveryRate || 1.0);
+      // Energy restoration (modified by recoveryRate locus and barn facility)
+      const barnBonus = state.facilities ? getFacilityBonus(state.facilities, "barn") : 0;
+      const baseEnergyGain = 35 * (1 + barnBonus);
+      const energyGain = baseEnergyGain * (h.recoveryRate || 1.0);
       const newEnergy = Math.min(100, h.energy + energyGain);
 
       return {

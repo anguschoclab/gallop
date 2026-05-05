@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User } from "lucide-react";
+import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Baby } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
@@ -22,6 +22,7 @@ const navItems = [
   { to: "/stable", label: "Stable", icon: Trophy, exact: false },
   { to: "/races", label: "Races", icon: Calendar, exact: false },
   { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
+  { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
   { to: "/auction", label: "Auction", icon: Gavel, exact: false },
   { to: "/market", label: "Market", icon: Store, exact: false },
   { to: "/settings", label: "Settings", icon: Settings, exact: false },

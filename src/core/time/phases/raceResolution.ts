@@ -174,6 +174,42 @@ export const raceResolutionPhase: PipelinePhase = {
           }
         }
 
+        // Jockey riding fee deduction
+        const entry = race.entries.find((e) => e.horseId === horse.id);
+        if (entry?.jockeyId) {
+          const jockey = state.jockeys?.find((j) => j.id === entry.jockeyId);
+          if (jockey) {
+            const ridingFee = jockey.ridingFee || 100; // Default $100 if not set
+            if (horse.stableId) {
+              // Deduct from NPC stable
+              impacts.push({
+                id: crypto.randomUUID(),
+                intentId: "",
+                day: newDay,
+                phase: "raceResolution",
+                logLevel: "conditional",
+                type: "cash_change",
+                entityId: horse.stableId,
+                amount: -ridingFee,
+                reason: `Jockey fee: ${jockey.name}`,
+              } as CashImpact);
+            } else {
+              // Deduct from player
+              impacts.push({
+                id: crypto.randomUUID(),
+                intentId: "",
+                day: newDay,
+                phase: "raceResolution",
+                logLevel: "conditional",
+                type: "cash_change",
+                entityId: "",
+                amount: -ridingFee,
+                reason: `Jockey fee: ${jockey.name}`,
+              } as CashImpact);
+            }
+          }
+        }
+
         // Blue hen impact for graded stakes winners
         if (r.position === 1 && (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")) {
           const dam = state.horses.find((h) => h.id === horse.pedigree?.damId);

@@ -6,6 +6,7 @@ import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
 import type { AnyImpact, HorseStatImpact, EnergyImpact } from "@/core/resolver/impacts";
 import { createRng, hashStr } from "@/game/rng";
 import type { Horse } from "@/game/types";
+import { getFacilityBonus } from "@/core/facilities";
 
 /**
  * Training Resolution Phase (Order 45)
@@ -70,10 +71,16 @@ export const trainingResolutionPhase: PipelinePhase = {
         const ageRatio = Math.min(1, horse.age / horse.peakAge);
         const effectivePotential = horse.potential * ageRatio;
         const gap = effectivePotential - stat;
-        const trainingChance = 0.65 * horse.trainability;
+
+        // Apply main_track facility bonus to training chance
+        const facilities = state.facilities;
+        const trackBonus = facilities ? getFacilityBonus(facilities, "main_track") : 0;
+        const trainingChance = 0.65 * horse.trainability * (1 + trackBonus);
 
         if (gap > 0 && trainingRng.next() < trainingChance) {
-          const gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
+          // Base gain with facility bonus
+          let gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
+          gain = Math.round(gain * (1 + trackBonus)); // Apply facility bonus to gain amount
           impacts.push({
             id: crypto.randomUUID(),
             intentId: intent.id,
@@ -91,10 +98,21 @@ export const trainingResolutionPhase: PipelinePhase = {
         // Check for OCD injury (2yo only)
         const ocdRisk = horse.ocdRisk ?? 0;
         if (horse.age <= 2 && ocdRisk > 0 && trainingRng.next() < ocdRisk) {
-          // Health status change will be applied by impact
-          // For now, we'll need to handle this in the impact application
-          // This is a limitation of the current impact system - we need to add health status impact type
-          // For now, we'll skip this and handle it in a future update
+          // OCD injury occurred - emit HealthStatusImpact
+          const recoveryDuration = 30 + Math.floor(trainingRng.next() * 30); // 30-60 days
+          impacts.push({
+            id: crypto.randomUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "trainingResolution",
+            logLevel: "always",
+            type: "health_status_change",
+            horseId: horse.id,
+            status: "recovering",
+            previousStatus: horse.healthStatus ?? "healthy",
+            recoveryDay: newDay + recoveryDuration,
+            reason: `OCD injury during training (${intent.trainingType}) - ${recoveryDuration} day recovery`,
+          });
         }
       }
     }

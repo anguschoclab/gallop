@@ -385,6 +385,21 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
         break;
       }
 
+      case "health_status_change": {
+        const { horseId, status, recoveryDay } = impact;
+        const horse = draft.horses.find((h) => h.id === horseId);
+        if (horse) {
+          horse.healthStatus = status;
+          horse.healthStatusDay = impact.day;
+          // If a recovery day is specified, store it (for future auto-recovery logic)
+          if (recoveryDay) {
+            // Store the expected recovery day for reference
+            // The actual recovery logic is handled by the energy phase
+          }
+        }
+        break;
+      }
+
       case "pace_sample": {
         const { distance, time } = impact;
         if (!draft.paceSamples) {
