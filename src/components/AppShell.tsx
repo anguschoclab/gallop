@@ -1,8 +1,15 @@
 import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Zap, TrendingUp, CalendarClock, Images, Globe } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
@@ -30,11 +37,11 @@ export function AppShell() {
   const location = useLocation();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
-  
+
   const pendingCeremonies = useGame((s) => s.pendingAwardCeremonies);
   const [showCeremony, setShowCeremony] = useState(false);
   const clearPendingCeremonies = useGame((s) => s.clearPendingCeremonies);
-  
+
   useEffect(() => {
     if (pendingCeremonies && pendingCeremonies.length > 0) {
       setShowCeremony(true);
@@ -55,14 +62,19 @@ export function AppShell() {
       </a>
       <aside className="w-60 shrink-0 border-r bg-sidebar flex flex-col">
         <div className="p-5 border-b border-sidebar-border">
-          <h1 className="text-lg font-bold tracking-tight text-sidebar-foreground">Stable Manager</h1>
-          <p className="text-xs text-sidebar-foreground/60 mt-0.5 tabular-nums">{gameCalendarDate(day)}</p>
+          <h1 className="text-lg font-bold tracking-tight text-sidebar-foreground">
+            Stable Manager
+          </h1>
+          <p className="text-xs text-sidebar-foreground/60 mt-0.5 tabular-nums">
+            {gameCalendarDate(day)}
+          </p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const active =
-              item.exact ? location.pathname === item.to : location.pathname.startsWith(item.to);
+            const active = item.exact
+              ? location.pathname === item.to
+              : location.pathname.startsWith(item.to);
             return (
               <Link
                 key={item.to}
@@ -71,7 +83,7 @@ export function AppShell() {
                   "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                   active
                     ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -83,20 +95,49 @@ export function AppShell() {
         <div className="p-3 border-t border-sidebar-border space-y-2">
           <div className="px-3 py-2 rounded-md bg-sidebar-accent/50">
             <p className="text-xs text-sidebar-foreground/60">Cash</p>
-            <p className="text-lg font-bold tabular-nums text-sidebar-foreground">${cash.toLocaleString()}</p>
+            <p className="text-lg font-bold tabular-nums text-sidebar-foreground">
+              ${cash.toLocaleString()}
+            </p>
           </div>
-          <div className="px-3 py-1 text-xs text-sidebar-foreground/60 tabular-nums">{horses.length} horses</div>
+          <div className="px-3 py-1 text-xs text-sidebar-foreground/60 tabular-nums">
+            {horses.length} horses
+          </div>
           <div className="grid grid-cols-4 gap-1">
-            <Button onClick={advanceDay} className="col-span-1" size="sm" title="Advance 1 day">
+            <Button
+              onClick={advanceDay}
+              className="col-span-1"
+              size="sm"
+              title="Advance 1 day"
+              aria-label="Advance 1 day"
+            >
               <Plus className="h-3 w-3" />
             </Button>
-            <Button onClick={() => advanceMultipleDays(7)} className="col-span-1 tabular-nums" size="sm" variant="secondary" title="Advance 1 week">
+            <Button
+              onClick={() => advanceMultipleDays(7)}
+              className="col-span-1 tabular-nums"
+              size="sm"
+              variant="secondary"
+              title="Advance 1 week"
+            >
               7d
             </Button>
-            <Button onClick={() => advanceMultipleDays(30)} className="col-span-1 tabular-nums" size="sm" variant="secondary" title="Advance 1 month">
+            <Button
+              onClick={() => advanceMultipleDays(30)}
+              className="col-span-1 tabular-nums"
+              size="sm"
+              variant="secondary"
+              title="Advance 1 month"
+            >
               30d
             </Button>
-            <Button onClick={() => setAutoSimOpen(true)} className="col-span-1" size="sm" variant="ghost" title="AutoSim settings">
+            <Button
+              onClick={() => setAutoSimOpen(true)}
+              className="col-span-1"
+              size="sm"
+              variant="ghost"
+              title="AutoSim settings"
+              aria-label="AutoSim settings"
+            >
               <Settings className="h-3 w-3" />
             </Button>
           </div>
@@ -112,11 +153,23 @@ export function AppShell() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Start a new game?</DialogTitle>
-                <DialogDescription>All current progress will be lost. This cannot be undone.</DialogDescription>
+                <DialogDescription>
+                  All current progress will be lost. This cannot be undone.
+                </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="ghost" onClick={() => setNewGameDialogOpen(false)}>Cancel</Button>
-                <Button variant="destructive" onClick={() => { newGame(); setNewGameDialogOpen(false); }}>Start new game</Button>
+                <Button variant="ghost" onClick={() => setNewGameDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    newGame();
+                    setNewGameDialogOpen(false);
+                  }}
+                >
+                  Start new game
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
