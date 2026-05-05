@@ -1,6 +1,6 @@
 import { generateUUID } from "./uuid";
 import type { Rng } from "./rng";
-import type { Jockey, JockeyArchetype, JockeyStats } from "./types";
+import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "./types";
 import { randomJockeyName } from "./names";
 
 const ARCHETYPES: JockeyArchetype[] = ["front_runner", "closer", "clinical", "finisher", "versatile"];
