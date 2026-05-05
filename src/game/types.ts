@@ -497,6 +497,12 @@ export type Pregnancy = {
   refunded?: boolean; // True once Live Foal Guarantee has paid out for this pregnancy — prevents double refunds
 };
 
+export type AuctionBidRecord = {
+  stableId?: string; // undefined = player
+  amount: number;
+  tick: number; // monotonic per-lot index
+};
+
 export type AuctionLot = {
   id: string;
   horseId: string;
@@ -507,9 +513,19 @@ export type AuctionLot = {
   soldToStableId?: string; // undefined = player won
   passed: boolean;
   withdrawn: boolean;
+  bidHistory?: AuctionBidRecord[];
+  breezeSeconds?: number; // 2YO-in-training breeze time (1/8 mile)
 };
 
-export type AuctionSaleKind = "weanling" | "yearling" | "weanling_south" | "yearling_south";
+export type AuctionSaleKind =
+  | "weanling"
+  | "yearling"
+  | "weanling_south"
+  | "yearling_south"
+  | "mixed"
+  | "broodmare"
+  | "2yo_training"
+  | "racing_age";
 
 export type AuctionSale = {
   id: string;

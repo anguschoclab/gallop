@@ -27,7 +27,7 @@ function AuctionSalePage() {
   const scoutReports = useGame((s) => s.scoutReports);
   const day = useGame((s) => s.day);
   const consignHorse = useGame((s) => s.consignHorse);
-  const bidInAuction = useGame((s) => s.bidInAuction);
+  const placeBookBid = useGame((s) => s.placeBookBid);
 
   const sale = auctions.find((a) => a.id === saleId);
   const [lotIndex, setLotIndex] = useState(0);
@@ -59,7 +59,7 @@ function AuctionSalePage() {
     if (!currentLot) return;
     if (amount <= currentPrice) { setMessage("Bid must exceed current price."); return; }
     if (amount > cash) { setMessage("Insufficient funds."); return; }
-    const result = bidInAuction(sale!.id, currentLot.id, amount);
+    const result = placeBookBid(sale!.id, currentLot.id, amount);
     if (result.ok) {
       setMessage(`Bid of $${amount.toLocaleString()} placed.`);
       setBidInput("");

@@ -187,17 +187,10 @@ export interface ConsignmentWithdrawalImpact extends Impact {
   reason: string;
 }
 
-// Auction bid impact
-export interface AuctionBidImpact extends Impact {
-  type: "auction_bid";
-  saleId: string;
-  lotId: string;
-  amount: number;
-  bidderStableId?: string;
-  reason: string;
-}
-
-// Auction resolution impact
+// Auction resolution impact — emitted per lot when a sale resolves.
+// Updates the lot record (hammerPrice/soldToStableId/passed/bidHistory) and,
+// for player-consigned lots, clears `consignedSaleId` on the horse so the
+// player can re-list next year.
 export interface AuctionResolutionImpact extends Impact {
   type: "auction_resolution";
   saleId: string;
@@ -205,6 +198,9 @@ export interface AuctionResolutionImpact extends Impact {
   hammerPrice?: number;
   soldToStableId?: string;
   passed: boolean;
+  bidHistory?: { stableId?: string; amount: number; tick: number }[];
+  /** True when this lot belonged to the player (no consignorStableId). */
+  wasPlayerConsignment?: boolean;
   reason: string;
 }
 
@@ -377,7 +373,6 @@ export type AnyImpact =
   | ScoutReportImpact
   | ConsignmentImpact
   | ConsignmentWithdrawalImpact
-  | AuctionBidImpact
   | AuctionResolutionImpact
   | GeldingImpact
   | RenameImpact

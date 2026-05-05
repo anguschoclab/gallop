@@ -246,21 +246,8 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
         break;
       }
 
-      case "auction_bid": {
-        const { saleId, lotId, amount, bidderStableId } = impact;
-        const auction = draft.auctions?.find((a) => a.id === saleId);
-        if (auction) {
-          const lot = auction.lots.find((l) => l.id === lotId);
-          if (lot) {
-            lot.hammerPrice = amount;
-            lot.soldToStableId = bidderStableId;
-          }
-        }
-        break;
-      }
-
       case "auction_resolution": {
-        const { saleId, lotId, hammerPrice, soldToStableId, passed } = impact;
+        const { saleId, lotId, hammerPrice, soldToStableId, passed, bidHistory, wasPlayerConsignment } = impact;
         const auction = draft.auctions?.find((a) => a.id === saleId);
         if (auction) {
           const lot = auction.lots.find((l) => l.id === lotId);
@@ -268,6 +255,14 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
             lot.hammerPrice = hammerPrice;
             lot.soldToStableId = soldToStableId;
             lot.passed = passed;
+            if (bidHistory) lot.bidHistory = bidHistory;
+            // Player-consigned lot — clear the horse's consignedSaleId
+            // regardless of sold/passed (sold horse leaves player's hands;
+            // passed horse goes back to the player free to re-list).
+            if (wasPlayerConsignment) {
+              const horse = draft.horses.find((h) => h.id === lot.horseId);
+              if (horse) horse.consignedSaleId = undefined;
+            }
           }
         }
         break;

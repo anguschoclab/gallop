@@ -1,7 +1,7 @@
 // NPC Intent Generators
 // Generates intents for NPC stables during the intent collection phase
 
-import type { AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, AuctionBidIntent, ClaimingIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
+import type { AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, ClaimingIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { generateUUID } from "@/game/uuid";
 import { PERSONALITY_CONFIG } from "@/game/npcStables";
@@ -19,7 +19,8 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
     intents.push(...generateNpcTrainingIntents(state, stable, day));
     intents.push(...generateNpcRaceEntryIntents(state, stable, day));
     intents.push(...generateNpcBreedingIntents(state, stable, day));
-    intents.push(...generateNpcAuctionBidIntents(state, stable, day));
+    // NPC auction bidding lives in auctionRunner / resolveAuctionSale, not the
+    // intent pipeline — auctions are theatrical and resolve in their own pass.
     intents.push(...generateNpcClaimingIntents(state, stable, day));
     intents.push(...generateNpcWithdrawalIntents(state, stable, day));
   }
@@ -121,45 +122,6 @@ function generateNpcBreedingIntents(state: GameState, stable: Stable, day: numbe
           liveFoalGuarantee: false,
         });
         break; // One breeding per mare per day
-      }
-    }
-  }
-
-  return intents;
-}
-
-/**
- * Generate auction bid intents for an NPC stable
- */
-function generateNpcAuctionBidIntents(state: GameState, stable: Stable, day: number): AuctionBidIntent[] {
-  const intents: AuctionBidIntent[] = [];
-
-  if (!state.auctions) return intents;
-
-  for (const auction of state.auctions) {
-    if (auction.resolved) continue;
-
-    for (const lot of auction.lots) {
-      if (lot.passed || lot.withdrawn) continue;
-
-      const horse = state.horses.find((h) => h.id === lot.horseId);
-      if (!horse) continue;
-
-      // Simple logic: bid if horse is affordable and stable has cash
-      const maxBid = Math.min(stable.cash * 0.2, lot.reservePrice * 1.5);
-      if (maxBid > lot.reservePrice && stable.cash >= maxBid) {
-        intents.push({
-          id: generateUUID(),
-          entityId: lot.id,
-          source: "npc",
-          sourceId: stable.id,
-          day,
-          priority: 50,
-          type: "auction_bid",
-          saleId: auction.id,
-          lotId: lot.id,
-          amount: Math.floor(maxBid),
-        });
       }
     }
   }

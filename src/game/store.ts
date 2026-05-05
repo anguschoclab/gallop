@@ -53,7 +53,6 @@ import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution
 import { purchaseResolutionPhase } from "@/core/time/phases/purchaseResolution";
 import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
 import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
-import { auctionResolutionPhase } from "@/core/time/phases/auctionResolution";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
 import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
@@ -61,6 +60,7 @@ import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/c
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { updateBlueHenStatus } from "./helpers/blueHenHelpers";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
+import { DEFAULT_PLAYER_RESERVE_RATIO } from "./auction";
 import type { RenameIntent, AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, PurchaseIntent } from "@/core/resolver/intents";
 import type { RenameImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact } from "@/core/resolver/impacts";
 
@@ -326,9 +326,13 @@ type Actions = {
   advanceMonth: (headless?: boolean) => void;
   advanceYear: (headless?: boolean) => void;
   scoutHorse: (horseId: string) => { success: boolean; report?: ScoutReport; cost: number; message: string };
-  consignHorse: (horseId: string, saleId: string) => ActionResult;
+  consignHorse: (horseId: string, saleId: string, reservePrice?: number) => ActionResult;
   withdrawConsignment: (horseId: string) => ActionResult;
-  bidInAuction: (saleId: string, lotId: string, amount: number) => ActionResult;
+  placeBookBid: (saleId: string, lotId: string, amount: number) => ActionResult;
+  /** Atomic player-cash debit for a live Theater bid. */
+  debitForLiveBid: (amount: number) => ActionResult;
+  /** Commit a live-Theater auction's results. Applies impacts via the resolver. */
+  commitAuctionResult: (saleId: string, finalLots: import("./types").AuctionLot[], impacts: import("@/core/resolver/impacts").AnyImpact[]) => ActionResult;
   clearPendingCeremonies: () => void;
   geldingHorse: (horseId: string) => ActionResult;
   renameHorse: (horseId: string, newName: string) => ActionResult;
@@ -1234,7 +1238,6 @@ export const useGame = create<GameState & Actions>()(
           purchaseResolutionPhase,
           breedingResolutionPhase,
           trainingResolutionPhase,
-          auctionResolutionPhase,
           claimingWithdrawalPhase,
           raceResolutionPhase,
           // Impact application phase (final)
@@ -1308,7 +1311,7 @@ export const useGame = create<GameState & Actions>()(
         get().advanceMultipleDays(365, headless);
       },
 
-      consignHorse: (horseId: string, saleId: string) => {
+      consignHorse: (horseId: string, saleId: string, reservePrice?: number) => {
         const s = get();
         const horse = s.horses.find((h) => h.id === horseId);
         if (!horse) return { ok: false, reason: "Horse not found." };
@@ -1317,6 +1320,8 @@ export const useGame = create<GameState & Actions>()(
         const sale = (s.auctions ?? []).find((a) => a.id === saleId);
         if (!sale) return { ok: false, reason: "Sale not found." };
         if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
+        const baseValue = horsePriceWithPedigree(horse, s.horses);
+        const finalReserve = Math.round(reservePrice ?? baseValue * DEFAULT_PLAYER_RESERVE_RATIO);
         set({
           horses: s.horses.map((h) => h.id === horseId ? { ...h, consignedSaleId: saleId } : h),
           auctions: (s.auctions ?? []).map((a) =>
@@ -1330,7 +1335,7 @@ export const useGame = create<GameState & Actions>()(
                       horseId,
                       consignorStableId: undefined,
                       saleId,
-                      reservePrice: Math.round(horsePriceWithPedigree(horse, s.horses) * 0.7),
+                      reservePrice: finalReserve,
                       passed: false,
                       withdrawn: false,
                     },
@@ -1338,7 +1343,7 @@ export const useGame = create<GameState & Actions>()(
                 }
               : a
           ),
-          log: [{ day: s.day, text: `${horse.name} consigned to ${sale.name}.` }, ...s.log].slice(0, 50),
+          log: [{ day: s.day, text: `${horse.name} consigned to ${sale.name} (reserve $${finalReserve.toLocaleString()}).` }, ...s.log].slice(0, 50),
         });
         return { ok: true };
       },
@@ -1361,7 +1366,7 @@ export const useGame = create<GameState & Actions>()(
         return { ok: true };
       },
 
-      bidInAuction: (saleId: string, lotId: string, amount: number) => {
+      placeBookBid: (saleId: string, lotId: string, amount: number) => {
         const s = get();
         const sale = (s.auctions ?? []).find((a) => a.id === saleId);
         if (!sale) return { ok: false, reason: "Sale not found." };
@@ -1371,12 +1376,49 @@ export const useGame = create<GameState & Actions>()(
         if (lot.passed || lot.withdrawn) return { ok: false, reason: "Lot is no longer available." };
         if (amount <= (lot.hammerPrice ?? 0)) return { ok: false, reason: "Bid must exceed current price." };
         if (s.cash < amount) return { ok: false, reason: "Insufficient funds." };
+        // Book bids are simple: the player becomes current high bidder. NPC
+        // overbids displace them at offline resolution. Cash is debited only
+        // at sale resolution (or refunded if outbid). The runner picks up
+        // hammerPrice as the lot's starting bid.
         set({
           auctions: (s.auctions ?? []).map((a) =>
             a.id === saleId
               ? { ...a, lots: a.lots.map((l) => l.id === lotId ? { ...l, hammerPrice: amount, soldToStableId: undefined } : l) }
               : a
           ),
+        });
+        return { ok: true };
+      },
+
+      debitForLiveBid: (amount: number) => {
+        const s = get();
+        if (amount <= 0) return { ok: false, reason: "Invalid bid amount." };
+        if (s.cash < amount) return { ok: false, reason: "Insufficient funds." };
+        set({ cash: s.cash - amount });
+        return { ok: true };
+      },
+
+      commitAuctionResult: (saleId, finalLots, impacts) => {
+        const s = get();
+        const sale = (s.auctions ?? []).find((a) => a.id === saleId);
+        if (!sale) return { ok: false, reason: "Sale not found." };
+        if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
+        // Apply impacts via the resolver to commit cash transfers, horse
+        // ownership changes, and lot updates atomically.
+        const applied = applyImpacts({
+          state: { ...s, auctions: (s.auctions ?? []).map((a) => a.id === saleId ? { ...a, lots: finalLots, resolved: true } : a) } as GameState,
+          intents: [],
+          impacts,
+          impactLog: [],
+          day: s.day,
+        });
+        // Build a log line summarizing the player's outcomes.
+        const playerWon = finalLots.filter((l) => l.consignorStableId && !l.passed && l.soldToStableId === undefined && l.hammerPrice).length;
+        const playerSold = finalLots.filter((l) => !l.consignorStableId && !l.passed && l.hammerPrice).length;
+        const summary = `${sale.name} concluded — ${playerWon ? `acquired ${playerWon}` : "no acquisitions"}; ${playerSold ? `sold ${playerSold}` : "no consignments sold"}.`;
+        set({
+          ...applied.state,
+          log: [{ day: s.day, text: summary }, ...s.log].slice(0, 50),
         });
         return { ok: true };
       },

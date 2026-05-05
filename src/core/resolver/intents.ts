@@ -96,14 +96,6 @@ export interface ConsignmentWithdrawalIntent extends Intent {
   saleId: string;
 }
 
-// Auction bid intent
-export interface AuctionBidIntent extends Intent {
-  type: "auction_bid";
-  saleId: string;
-  lotId: string;
-  amount: number;
-}
-
 // Gelding intent
 export interface GeldingIntent extends Intent {
   type: "gelding";
@@ -239,7 +231,6 @@ export type AnyIntent =
   | ScoutIntent
   | ConsignmentIntent
   | ConsignmentWithdrawalIntent
-  | AuctionBidIntent
   | GeldingIntent
   | RenameIntent
   | CampaignSlotIntent
