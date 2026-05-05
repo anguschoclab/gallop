@@ -1,7 +1,7 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
 import { useEffect, useState } from "react";
-import { rehydrateStore, hydrationComplete } from "@/game/store";
+import { rehydrateStore, hydrationComplete, useGame } from "@/game/store";
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
@@ -87,6 +87,8 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const [isHydrated, setIsHydrated] = useState(false);
+  const navigate = useNavigate();
+  const playerProfile = useGame((state) => state.playerProfile);
 
   useEffect(() => {
     // Rehydrate store on client mount
@@ -94,6 +96,14 @@ function RootComponent() {
       setIsHydrated(true);
     });
   }, []);
+
+  useEffect(() => {
+    // Redirect to wizard if no player profile exists (fresh install)
+    if (isHydrated && !playerProfile) {
+      // Navigate to wizard - TanStack Router will handle route type after regeneration
+      navigate({ to: "/new-game" as any });
+    }
+  }, [isHydrated, playerProfile, navigate]);
 
   // Show loading state while hydrating
   if (!isHydrated) {
@@ -105,6 +115,11 @@ function RootComponent() {
         </div>
       </div>
     );
+  }
+
+  // Don't render AppShell if redirecting to wizard
+  if (!playerProfile) {
+    return null;
   }
 
   return <AppShell />;

@@ -19,9 +19,11 @@ import { Route as RecapRouteImport } from './routes/recap'
 import { Route as RacesRouteImport } from './routes/races'
 import { Route as RaceBrowserRouteImport } from './routes/race-browser'
 import { Route as NpcStablesRouteImport } from './routes/npc-stables'
+import { Route as NewGameRouteImport } from './routes/new-game'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as JockeysRouteImport } from './routes/jockeys'
 import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
+import { Route as HallOfFameRouteImport } from './routes/hall-of-fame'
 import { Route as FinancialReportRouteImport } from './routes/financial-report'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
@@ -88,6 +90,11 @@ const NpcStablesRoute = NpcStablesRouteImport.update({
   path: '/npc-stables',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewGameRoute = NewGameRouteImport.update({
+  id: '/new-game',
+  path: '/new-game',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketRoute = MarketRouteImport.update({
   id: '/market',
   path: '/market',
@@ -101,6 +108,11 @@ const JockeysRoute = JockeysRouteImport.update({
 const HorseGalleryRoute = HorseGalleryRouteImport.update({
   id: '/horse-gallery',
   path: '/horse-gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HallOfFameRoute = HallOfFameRouteImport.update({
+  id: '/hall-of-fame',
+  path: '/hall-of-fame',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FinancialReportRoute = FinancialReportRouteImport.update({
@@ -187,9 +199,11 @@ export interface FileRoutesByFullPath {
   '/broodmares': typeof BroodmaresRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
+  '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
+  '/new-game': typeof NewGameRoute
   '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
@@ -216,9 +230,11 @@ export interface FileRoutesByTo {
   '/broodmares': typeof BroodmaresRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
+  '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
+  '/new-game': typeof NewGameRoute
   '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
@@ -247,9 +263,11 @@ export interface FileRoutesById {
   '/broodmares': typeof BroodmaresRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
+  '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
+  '/new-game': typeof NewGameRoute
   '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
@@ -279,9 +297,11 @@ export interface FileRouteTypes {
     | '/broodmares'
     | '/facilities'
     | '/financial-report'
+    | '/hall-of-fame'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
+    | '/new-game'
     | '/npc-stables'
     | '/race-browser'
     | '/races'
@@ -308,9 +328,11 @@ export interface FileRouteTypes {
     | '/broodmares'
     | '/facilities'
     | '/financial-report'
+    | '/hall-of-fame'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
+    | '/new-game'
     | '/npc-stables'
     | '/race-browser'
     | '/races'
@@ -338,9 +360,11 @@ export interface FileRouteTypes {
     | '/broodmares'
     | '/facilities'
     | '/financial-report'
+    | '/hall-of-fame'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
+    | '/new-game'
     | '/npc-stables'
     | '/race-browser'
     | '/races'
@@ -369,9 +393,11 @@ export interface RootRouteChildren {
   BroodmaresRoute: typeof BroodmaresRoute
   FacilitiesRoute: typeof FacilitiesRoute
   FinancialReportRoute: typeof FinancialReportRoute
+  HallOfFameRoute: typeof HallOfFameRoute
   HorseGalleryRoute: typeof HorseGalleryRoute
   JockeysRoute: typeof JockeysRoute
   MarketRoute: typeof MarketRoute
+  NewGameRoute: typeof NewGameRoute
   NpcStablesRoute: typeof NpcStablesRouteWithChildren
   RaceBrowserRoute: typeof RaceBrowserRoute
   RacesRoute: typeof RacesRoute
@@ -459,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NpcStablesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/new-game': {
+      id: '/new-game'
+      path: '/new-game'
+      fullPath: '/new-game'
+      preLoaderRoute: typeof NewGameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/market': {
       id: '/market'
       path: '/market'
@@ -478,6 +511,13 @@ declare module '@tanstack/react-router' {
       path: '/horse-gallery'
       fullPath: '/horse-gallery'
       preLoaderRoute: typeof HorseGalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hall-of-fame': {
+      id: '/hall-of-fame'
+      path: '/hall-of-fame'
+      fullPath: '/hall-of-fame'
+      preLoaderRoute: typeof HallOfFameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/financial-report': {
@@ -644,9 +684,11 @@ const rootRouteChildren: RootRouteChildren = {
   BroodmaresRoute: BroodmaresRoute,
   FacilitiesRoute: FacilitiesRoute,
   FinancialReportRoute: FinancialReportRoute,
+  HallOfFameRoute: HallOfFameRoute,
   HorseGalleryRoute: HorseGalleryRoute,
   JockeysRoute: JockeysRoute,
   MarketRoute: MarketRoute,
+  NewGameRoute: NewGameRoute,
   NpcStablesRoute: NpcStablesRouteWithChildren,
   RaceBrowserRoute: RaceBrowserRoute,
   RacesRoute: RacesRoute,

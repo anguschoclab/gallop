@@ -63,6 +63,17 @@ export function HorseCard({
   const genderIcon = getGenderIcon();
   const genderColor = getGenderColor();
 
+  // Lifecycle status indicator (retired/deceased)
+  const getLifecycleStatus = () => {
+    if (horse.lifecycleStatus === "retired") {
+      return <Badge className="bg-gold/20 text-gold border-gold/30">Retired</Badge>;
+    }
+    if (horse.lifecycleStatus === "deceased") {
+      return <Badge className="bg-destructive/20 text-destructive border-destructive/30">Deceased</Badge>;
+    }
+    return null;
+  };
+
   // Health status indicator
   const getHealthStatus = () => {
     if (!horse.healthStatus || horse.healthStatus === "healthy") return null;
@@ -227,6 +238,7 @@ export function HorseCard({
                 <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)]">
                   {horse.name}
                 </span>
+                {getLifecycleStatus()}
                 {getHealthStatus()}
               </div>
               {/* Qualifiers */}

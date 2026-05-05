@@ -18,6 +18,8 @@ export const breedingSeasonPhase = {
 
     const horses = state.horses.map((h) => {
       if (!h.stud?.atStud) return h;
+      // Skip deceased stallions
+      if (h.lifecycleStatus === "deceased") return h;
       const reset =
         (h.hemisphere === "Northern" && northernStart) ||
         (h.hemisphere === "Southern" && southernStart);

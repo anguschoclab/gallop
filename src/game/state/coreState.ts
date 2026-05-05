@@ -1,7 +1,15 @@
 // Core State - Essential game loop properties
 // These fields are always present and the game cannot run without them
 
-import type { Horse, Race } from "../types";
+import type { Horse, Race, PlayerProfile } from "../types";
+import type { Backstory, HorseSpec } from "@/core/newGame/backstories";
+import { generateHorse } from "../horseGen";
+import { createRng, hashStr, type Rng } from "../rng";
+
+export interface NewGameOptions {
+  profile: PlayerProfile;
+  backstory: Backstory;
+}
 
 /**
  * Core game state that is always present and required for the game to function.
@@ -22,8 +30,39 @@ export interface CoreState {
 
 /**
  * Default core state for new games
+ * When options are provided, uses the backstory to customize starting resources
  */
-export function createDefaultCoreState(): CoreState {
+export function createDefaultCoreState(options?: NewGameOptions): CoreState {
+  if (options) {
+    const { profile, backstory } = options;
+    const setupRng = createRng(hashStr(profile.stableName));
+
+    // Generate player horses from backstory spec
+    const playerHorses: Horse[] = [];
+    for (const spec of backstory.horses) {
+      for (let i = 0; i < spec.count; i++) {
+        const horse = generateHorse({ tier: spec.tier, owned: true }, setupRng);
+        // Set horse silk to player's primary color for visual identification
+        horse.silk = profile.silk.primary;
+        playerHorses.push(horse);
+      }
+    }
+
+    return {
+      day: 1,
+      cash: backstory.startingCash,
+      horses: playerHorses,
+      races: [],
+      log: [
+        {
+          day: 1,
+          text: `${profile.stableName} opens its doors. Welcome, ${profile.ownerName}.`,
+        },
+      ],
+    };
+  }
+
+  // Default behavior when no options provided (backward compatibility)
   return {
     day: 1,
     cash: 50000,

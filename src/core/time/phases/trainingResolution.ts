@@ -40,6 +40,9 @@ export const trainingResolutionPhase: PipelinePhase = {
       const horse = state.horses.find((h) => h.id === intent.horseId);
       if (!horse) continue;
 
+      // Skip training for retired or deceased horses
+      if (horse.lifecycleStatus === "retired" || horse.lifecycleStatus === "deceased") continue;
+
       // Check if horse is eligible for training (energy, health)
       if (horse.energy < 15) continue;
       if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering")

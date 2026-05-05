@@ -38,6 +38,8 @@ import { getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "@/core/breeding/line
 import { generateUUID } from "./uuid";
 import { resolveFoaling } from "./foalGen";
 import { beyerFigure, distanceBucket, setCalibratedPars, expectedBeyer } from "./beyer";
+import { createDefaultCoreState, createDefaultMarketState, createDefaultBreedingState, createDefaultRacingState, createDefaultSystemsState } from "./state";
+import type { NewGameOptions } from "./state/coreState";
 import { runRaceToCompletion, type Runner } from "./raceSim";
 import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
@@ -68,6 +70,9 @@ import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
 import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
 import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
 import { stallionRetirementPhase } from "@/core/time/phases/stallionRetirement";
+import { pastureRetirementPhase } from "@/core/time/phases/pastureRetirement";
+import { hallOfFamePhase } from "@/core/time/phases/hallOfFame";
+import { horseDeathPhase } from "@/core/time/phases/horseDeath";
 import { resolveLiveRaceWithImpacts } from "./liveRaceResolution";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
@@ -383,6 +388,7 @@ function recomputePars(samples: Record<number, number[]>): Record<number, number
 
 type Actions = {
   newGame: () => void;
+  startNewGame: (options: import("./state/coreState").NewGameOptions) => Promise<void>;
   trainHorse: (
     horseId: string,
     kind:
@@ -407,7 +413,7 @@ type Actions = {
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
-  retireToStud: (horseId: string, fee: number, bookSize: number) => ActionResult;
+  retireToPasture: (horseId: string) => ActionResult;
   hireJockey: (jockeyId: string) => ActionResult;
   rerollJockeySilk: (jockeyId: string) => ActionResult;
   assignJockey: (raceId: string, horseId: string, jockeyId: string) => ActionResult;
@@ -580,9 +586,21 @@ export const useGame = create<GameState & Actions>()(
       replays: [],
 
       newGame: async () => {
+        // Legacy no-arg action - redirects to wizard
+        // This is kept for backward compatibility but the wizard is the intended path
+        console.warn("newGame() called without options. Use startNewGame(options) instead.");
+      },
+
+      startNewGame: async (options: NewGameOptions) => {
         // Clear OPFS storage when starting a new game
         await (await import("@/services/storageAdapter")).clearGameState();
-        set({ ...initialState() });
+        set({
+          ...createDefaultCoreState(options),
+          ...createDefaultMarketState(),
+          ...createDefaultBreedingState(),
+          ...createDefaultRacingState(),
+          ...createDefaultSystemsState(options),
+        });
       },
 
       trainHorse: (horseId, kind) => {
@@ -693,6 +711,10 @@ export const useGame = create<GameState & Actions>()(
         if (race.entries.length >= race.fieldSize) return fail("Race field is full.");
         if (!horse.racingViable)
           return fail(`${horse.name} is not racing viable due to genetic condition.`);
+        if (horse.lifecycleStatus === "retired")
+          return fail(`${horse.name} is retired and cannot race.`);
+        if (horse.lifecycleStatus === "deceased")
+          return fail(`${horse.name} is deceased and cannot race.`);
         // Economic guard: refuse races whose entry fee exceeds 50% of purse —
         // this catches misconfigured races and protects the player's bankroll.
         if (race.entryFee > race.purse * 0.5) return fail("Entry fee exceeds 50% of purse.");
@@ -921,19 +943,16 @@ export const useGame = create<GameState & Actions>()(
         return { ok: true };
       },
 
-      retireToStud: (horseId, fee, bookSize) => {
+      retireToPasture: (horseId) => {
         const s = get();
         const horse = s.horses.find((h) => h.id === horseId);
         const fail = (reason: string): ActionResult => {
-          set({ log: [{ day: s.day, text: `Retire to stud: ${reason}` }, ...s.log].slice(0, 50) });
+          set({ log: [{ day: s.day, text: `Retire to pasture: ${reason}` }, ...s.log].slice(0, 50) });
           return { ok: false, reason };
         };
         if (!horse) return fail("Horse not found.");
         if (!horse.owned) return fail("You don't own this horse.");
-        if (horse.gender !== "horse" && horse.gender !== "colt")
-          return fail("Only colts and horses can be retired to stud.");
-        if (horse.age < 4) return fail("Stallions must be age 4+ to retire to stud.");
-        if (horse.stud?.atStud) return fail("Already standing at stud.");
+        if (horse.lifecycleStatus !== "active") return fail("Horse is already retired or deceased.");
         // Block retirement if entered in any unresolved race
         const enteredRaces = s.races.filter(
           (r) => !r.resolved && r.entries.some((e) => e.horseId === horseId),
@@ -942,19 +961,7 @@ export const useGame = create<GameState & Actions>()(
 
         const updatedHorses = s.horses.map((h) =>
           h.id === horseId
-            ? {
-                ...h,
-                stud: {
-                  atStud: true,
-                  standingFee: Math.max(500, fee),
-                  bookSize: Math.max(20, Math.min(250, bookSize)),
-                  seasonBookings: 0,
-                  lifetimeFoals: 0,
-                  lifetimeStakesFoals: 0,
-                  lifetimeG1Foals: 0,
-                  retiredOnDay: s.day,
-                },
-              }
+            ? { ...h, lifecycleStatus: "retired" as const, retiredOnDay: s.day }
             : h,
         );
         set({
@@ -962,7 +969,7 @@ export const useGame = create<GameState & Actions>()(
           log: [
             {
               day: s.day,
-              text: `${horse.name} retired to stud at $${fee.toLocaleString()} (book ${bookSize}).`,
+              text: `${horse.name} has been retired to pasture.`,
             },
             ...s.log,
           ].slice(0, 50),
@@ -1152,6 +1159,9 @@ export const useGame = create<GameState & Actions>()(
           pregnancyPhase,
           npcCyclePhase,
           stallionRetirementPhase,
+          pastureRetirementPhase,
+          hallOfFamePhase,
+          horseDeathPhase,
           auctionsPhase,
           leaderboardPhase,
           awardsPhase,
@@ -1713,7 +1723,7 @@ export const useGame = create<GameState & Actions>()(
             h.id === horseId
               ? {
                   ...h,
-                  gender: "stallion",
+                  gender: "horse",
                   stud: {
                     atStud: true,
                     standingFee: initialFee,
@@ -1722,6 +1732,7 @@ export const useGame = create<GameState & Actions>()(
                     lifetimeFoals: 0,
                     lifetimeStakesFoals: 0,
                     lifetimeG1Foals: 0,
+                    retiredOnDay: s.day,
                   },
                 }
               : h,
@@ -1775,6 +1786,7 @@ export const useGame = create<GameState & Actions>()(
         replays: state.replays,
         reputation: state.reputation,
         transports: state.transports,
+        playerProfile: state.playerProfile,
       }),
       onRehydrateStorage: () => (state) => {
         hydrationComplete = true;

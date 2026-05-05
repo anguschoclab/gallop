@@ -356,6 +356,11 @@ export type Horse = {
   // Skeletal viability — homozygous-negative for EFNA5 → never races.
   // When false, the horse is permanently retired before its first race.
   racingViable: boolean;
+  // Lifecycle status — tracks retirement and death
+  lifecycleStatus: "active" | "retired" | "deceased";
+  retiredOnDay?: number; // Day horse was retired to pasture
+  deceasedOnDay?: number; // Day horse died
+  causeOfDeath?: string; // Description of death cause
 };
 
 export type RaceClass =
@@ -457,6 +462,18 @@ export type Stable = {
   preferredDistance?: number; // For specialists (in meters)
   preferredSurface?: "Turf" | "Dirt" | "Synthetic"; // For specialists
 };
+
+// Player Profile - represents the player's stable identity
+export type BackstoryId = "inheritor" | "bloodstock_heir" | "claiming_trainer" | "bootstrapper";
+
+export interface PlayerProfile {
+  stableName: string; // e.g. "Thunder Ridge Stables"
+  ownerName: string; // e.g. "A. Mauricia"
+  silk: JockeySilk; // reuses existing JockeySilk { pattern, primary, secondary, cap }
+  backstoryId: BackstoryId; // the archetype the player picked
+  founded: number; // = day 1 (used for ledger/UI flavor)
+  country?: string; // optional, defaults to "USA"
+}
 
 // Scout report - player's intelligence on an NPC horse
 export type ScoutReport = {

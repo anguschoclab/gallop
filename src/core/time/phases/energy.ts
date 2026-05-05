@@ -15,6 +15,9 @@ export const energyPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const horses = state.horses.map((h) => {
+      // Skip energy restoration for deceased horses
+      if (h.lifecycleStatus === "deceased") return h;
+
       // Health status recovery logic
       let newHealthStatus = h.healthStatus;
       if (h.healthStatus === "covering_sickness" && h.healthStatusDay) {

@@ -22,6 +22,14 @@ export function canBreed(
   if (!sire || !dam) return { ok: false, reason: "Sire or dam not found." };
   if (sire.id === dam.id) return { ok: false, reason: "A horse cannot breed with itself." };
 
+  // Block breeding with deceased horses
+  if (sire.lifecycleStatus === "deceased") {
+    return { ok: false, reason: `Sire ${sire.name} is deceased.` };
+  }
+  if (dam.lifecycleStatus === "deceased") {
+    return { ok: false, reason: `Dam ${dam.name} is deceased.` };
+  }
+
   if (!SIRE_GENDERS.includes(sire.gender)) {
     const reason = sire.gender === "gelding" ? "has been gelded" : "is not male";
     return { ok: false, reason: `Sire ${sire.name} ${reason}.` };

@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "@tanstack/react-router";
+import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +41,7 @@ const navSections = [
       { to: "/stable", label: "Stable", icon: Trophy, exact: false },
       { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
       { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
+      { to: "/hall-of-fame", label: "Hall of Fame", icon: Trophy, exact: false },
     ],
   },
   {
@@ -54,6 +55,7 @@ const navSections = [
 ] as const;
 
 export function AppShell() {
+  const navigate = useNavigate();
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const horses = useGame((s) => s.horses);
@@ -211,8 +213,9 @@ export function AppShell() {
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    newGame();
                     setNewGameDialogOpen(false);
+                    // Navigate to wizard - TanStack Router will handle route type after regeneration
+                    navigate({ to: "/new-game" as any });
                   }}
                 >
                   Start new game
