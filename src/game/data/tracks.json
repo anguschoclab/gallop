@@ -117,9 +117,29 @@
         "surface": "Dirt",
         "circumference": 1600,
         "straightLength": 400,
-        "sections": []
+        "sections": [
+          {
+            "type": "straight",
+            "length": 400
+          },
+          {
+            "type": "turn",
+            "length": 400,
+            "radius": 127
+          },
+          {
+            "type": "straight",
+            "length": 400
+          },
+          {
+            "type": "turn",
+            "length": 400,
+            "radius": 127
+          }
+        ]
       }
-    ]
+    ],
+    "dataSource": "researched"
   },
   {
     "id": "1e1beb62-f786-44a9-8441-b23aa0db1eec",
