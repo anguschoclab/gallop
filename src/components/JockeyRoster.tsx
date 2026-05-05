@@ -13,7 +13,9 @@ export function JockeyRoster() {
   const [search, setSearch] = useState("");
   const [archetypeFilter, setArchetypeFilter] = useState<JockeyArchetype | "all">("all");
 
-  const myJockeys = jockeys.filter(j => j.contractUntil && !j.stableId); // undefined stableId = player
+  // Player jockeys: undefined stableId AND have an active contract (player-signed)
+  const myJockeys = jockeys.filter(j => !j.stableId && !!j.contractUntil);
+  // Free-agent market: not contracted to anyone
   const market = jockeys.filter(j => !j.stableId && !j.contractUntil);
 
   const filterList = (list: typeof jockeys) => {
