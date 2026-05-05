@@ -86,7 +86,7 @@ function RacesPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Race Calendar</h1>
-          <p className="text-muted-foreground font-[family-name:var(--font-body)]">View and enter upcoming races across all regions.</p>
+          <p className="text-cream-muted font-[family-name:var(--font-body)]">View and enter upcoming races across all regions.</p>
         </div>
         <div className="flex gap-2">
           <Link to="/calendar">
@@ -107,7 +107,7 @@ function RacesPage() {
               Past Results
             </Button>
           </Link>
-          <div className="border rounded-md flex p-0.5 bg-muted/50">
+          <div className="border border-gold-muted rounded-md flex p-0.5 bg-t700">
             <Button
               variant={viewMode === "list" ? "secondary" : "ghost"}
               size="sm"
@@ -130,7 +130,7 @@ function RacesPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
         <aside className="space-y-6">
-          <Card>
+          <Card className="border-gold-muted">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 font-[family-name:var(--font-display)]">
                 <Filter className="h-4 w-4" />
@@ -139,9 +139,9 @@ function RacesPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider font-[family-name:var(--font-body)]">Search</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Search</label>
                 <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-cream-muted" />
                   <Input
                     placeholder="Race name..."
                     className="pl-8 h-9 text-sm"
@@ -152,7 +152,7 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider font-[family-name:var(--font-body)]">Grade</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Grade</label>
                 <Select value={grade} onValueChange={(v) => updateFilter("grade", v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="All Grades" />
@@ -169,7 +169,7 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider font-[family-name:var(--font-body)]">Country</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Country</label>
                 <Select value={country} onValueChange={(v) => updateFilter("country", v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="All Countries" />
@@ -186,7 +186,7 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider font-[family-name:var(--font-body)]">Track</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Track</label>
                 <Select value={track} onValueChange={(v) => updateFilter("track", v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="All Tracks" />
@@ -203,7 +203,7 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider font-[family-name:var(--font-body)]">Surface</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Surface</label>
                 <div className="flex flex-wrap gap-2">
                   {["all", "Dirt", "Turf", "Synthetic"].map((s) => (
                     <Button
@@ -220,7 +220,7 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider font-[family-name:var(--font-body)]">Ownership</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Ownership</label>
                 <Select value={owned} onValueChange={(v) => updateFilter("owned", v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="All Races" />
@@ -236,7 +236,7 @@ function RacesPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="w-full h-8 text-xs text-muted-foreground"
+                className="w-full h-8 text-xs text-cream-muted"
                 onClick={() =>
                   navigate({
                     search: {
@@ -260,14 +260,14 @@ function RacesPage() {
 
         <main className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider font-[family-name:var(--font-mono)] tabular-nums">
+            <h2 className="text-sm font-semibold text-cream-muted uppercase tracking-wider font-[family-name:var(--font-mono)] tabular-nums">
               <NumericValue value={filtered.length} /> Races found
             </h2>
           </div>
 
           {filtered.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="p-12 text-center text-muted-foreground font-[family-name:var(--font-body)]">
+            <Card className="border-dashed border-gold-muted">
+              <CardContent className="p-12 text-center text-cream-muted font-[family-name:var(--font-body)]">
                 <Calendar className="h-12 w-12 mx-auto mb-4 opacity-20" />
                 <p>No races match your current filters.</p>
                 <p className="text-sm mt-2 italic">Clear filters to see the full calendar.</p>

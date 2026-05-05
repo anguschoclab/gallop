@@ -22,14 +22,14 @@ function MarketPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Bloodstock Market</h1>
-        <p className="text-muted-foreground font-[family-name:var(--font-body)]">Private sales available for immediate acquisition. Roster refreshes daily.</p>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">Private sales available for immediate acquisition. Roster refreshes daily.</p>
       </div>
 
       <Link to="/npc-stables">
-        <Card className="hover:bg-muted/50 transition-colors">
+        <Card className="hover:bg-t700 transition-colors border-gold-muted">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-[family-name:var(--font-display)]">Scout Rival Stables</CardTitle>
-            <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">Browse horses owned by rival stables for potential acquisitions</p>
+            <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Browse horses owned by rival stables for potential acquisitions</p>
           </CardHeader>
         </Card>
       </Link>
@@ -38,17 +38,17 @@ function MarketPage() {
         {market.map((h) => {
           const price = horsePrice(h);
           return (
-            <Card key={h.id}>
+            <Card key={h.id} className="border-gold-muted">
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-start gap-3">
                   <SilkDot color={h.silk} size="md" />
                   <div className="flex-1">
                     <p className="font-bold font-[family-name:var(--font-display)]">{h.name}</p>
-                    <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                    <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                       Age <NumericValue value={Math.floor(h.age)} /> · <JargonTooltip term="OVR">OVR</JargonTooltip> <NumericValue value={overall(h)} />
                     </p>
                   </div>
-                  <Badge className={cn("text-base font-[family-name:var(--font-mono)] tabular-nums border bg-transparent")}>
+                  <Badge className={cn("text-base font-[family-name:var(--font-mono)] tabular-nums border border-gold-muted bg-t700 text-cream")}>
                     ${price.toLocaleString()}
                   </Badge>
                 </div>
@@ -61,8 +61,8 @@ function MarketPage() {
           );
         })}
         {market.length === 0 && (
-          <Card className="col-span-full">
-            <CardContent className="p-12 text-center text-muted-foreground italic font-[family-name:var(--font-body)]">
+          <Card className="col-span-full border-gold-muted">
+            <CardContent className="p-12 text-center text-cream-muted italic font-[family-name:var(--font-body)]">
               The market is quiet today. Check back tomorrow for new offerings.
             </CardContent>
           </Card>

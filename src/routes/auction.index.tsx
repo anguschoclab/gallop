@@ -36,15 +36,15 @@ function AuctionPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Sales</h1>
-        <p className="text-muted-foreground font-[family-name:var(--font-body)]">Weanling &amp; yearling auctions</p>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">Weanling &amp; yearling auctions</p>
       </div>
 
       {/* Upcoming Sales */}
       <section className="space-y-3">
         <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">Upcoming Sales</h2>
         {upcoming.length === 0 ? (
-          <Card>
-            <CardContent className="p-6 text-center text-muted-foreground text-sm font-[family-name:var(--font-body)] italic">
+          <Card className="border-gold-muted">
+            <CardContent className="p-6 text-center text-cream-muted text-sm font-[family-name:var(--font-body)] italic">
               No sales on the calendar. The ring will open again soon.
             </CardContent>
           </Card>
@@ -53,20 +53,20 @@ function AuctionPage() {
             const daysAway = sale.day - day;
             const playerLots = sale.lots.filter((l) => !l.consignorStableId && !l.withdrawn);
             return (
-              <Card key={sale.id} className="border-l-4 border-l-primary">
+              <Card key={sale.id} className="border-l-4 border-l-gold border-gold-muted">
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <CardTitle className="text-lg font-[family-name:var(--font-display)]">{sale.name}</CardTitle>
-                        <Badge className="border bg-transparent font-[family-name:var(--font-body)]">{KIND_LABELS[sale.kind] ?? sale.kind}</Badge>
+                        <Badge className="border border-gold-muted bg-t700 text-cream font-[family-name:var(--font-body)]">{KIND_LABELS[sale.kind] ?? sale.kind}</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1 font-[family-name:var(--font-body)]">
+                      <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
                         {gameCalendarDate(sale.day)} · <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots
                         {daysAway > 0 && <> · in <NumericValue value={daysAway} /> day{daysAway === 1 ? "" : "s"}</>}
                       </p>
                     </div>
-                    <Clock className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+                    <Clock className="h-5 w-5 text-cream-muted shrink-0 mt-1" />
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -99,12 +99,12 @@ function AuctionPage() {
               return eligibleToConsign.map((horse) => {
                 const targetSale = horse.age === 0 ? weanlingSale : yearlingSale;
               return (
-                <Card key={horse.id} className="p-3 flex items-center justify-between gap-4">
+                <Card key={horse.id} className="p-3 flex items-center justify-between gap-4 border-gold-muted">
                   <div className="flex items-center gap-2">
                     <SilkDot color={horse.silk} size="sm" />
                     <div>
                       <p className="font-medium text-sm font-[family-name:var(--font-display)]">{horse.name}</p>
-                      <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                      <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                         {horse.age === 0 ? "Weanling" : horse.age === 1 ? "Yearling" : "2YO"} · {horse.gender}
                       </p>
                     </div>
@@ -116,9 +116,9 @@ function AuctionPage() {
                       </Button>
                     </Link>
                   ) : (
-                    <span className="text-xs text-muted-foreground">No matching sale open</span>
+                    <span className="text-xs text-cream-muted">No matching sale open</span>
                   )}
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-cream-muted">
                     {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission on sold horses
                   </p>
                 </Card>
@@ -141,22 +141,22 @@ function AuctionPage() {
               .sort((a, b) => (b.hammerPrice ?? 0) - (a.hammerPrice ?? 0))[0];
             const topHorse = topLot ? horses.find((h) => h.id === topLot.horseId) : undefined;
             return (
-              <Card key={sale.id} className="opacity-80">
+              <Card key={sale.id} className="opacity-80 border-gold-muted">
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <CardTitle className="text-base font-[family-name:var(--font-display)]">{sale.name}</CardTitle>
-                        <Badge className="bg-secondary text-secondary-foreground font-[family-name:var(--font-mono)] tabular-nums">
+                        <Badge className="bg-t700 text-cream font-[family-name:var(--font-mono)] tabular-nums">
                           {gameCalendarDate(sale.day)}
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1 font-[family-name:var(--font-body)]">
+                      <p className="text-xs text-cream-muted mt-1 font-[family-name:var(--font-body)]">
                         <NumericValue value={sold} /> sold · <NumericValue value={passed} /> passed
                         {topLot && topHorse && <> · Top lot: <span className="font-[family-name:var(--font-display)]">{topHorse.name}</span> ${topLot.hammerPrice!.toLocaleString()}</>}
                       </p>
                     </div>
-                    <CheckCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+                    <CheckCircle className="h-5 w-5 text-cream-muted shrink-0 mt-1" />
                   </div>
                 </CardHeader>
                 <CardContent>

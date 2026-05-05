@@ -83,6 +83,12 @@
   --color-info: var(--info);
 
   /* Racing palette utilities */
+  --color-t950: var(--t950);
+  --color-t900: var(--t900);
+  --color-t800: var(--t800);
+  --color-t700: var(--t700);
+  --color-t600: var(--t600);
+  --color-t500: var(--t500);
   --color-gold: var(--gold);
   --color-gold-light: var(--gold-light);
   --color-gold-muted: var(--gold-muted);
@@ -95,6 +101,89 @@
 
 :root {
   --radius: 0.625rem;
+
+  /* Broadcast primitives (default values for safety) */
+  --broadcast-track: oklch(0.45 0.12 155);
+  --broadcast-rail: oklch(0.95 0.02 100);
+  --broadcast-sky-overlay: oklch(0.2 0.05 220 / 0.2);
+  --broadcast-marquee: oklch(0.1 0.02 220 / 0.4);
+  --broadcast-accent: oklch(0.85 0.18 95);
+
+  /* Regional Award Tokens */
+  --region-na-bg: oklch(0.3 0.1 245);
+  --region-na-accent: oklch(0.7 0.15 85);
+  --region-eu-bg: oklch(0.3 0.2 290);
+  --region-eu-accent: oklch(0.8 0 0);
+  --region-apac-bg: oklch(0.3 0.15 145);
+  --region-apac-accent: oklch(0.85 0.18 95);
+  --region-sa-bg: oklch(0.3 0.15 25);
+  --region-sa-accent: oklch(0.85 0.18 95);
+
+  /* Status Tokens */
+  --success: oklch(0.627 0.194 149.214);
+  --warning: oklch(0.769 0.188 70.08);
+  --fame: oklch(0.828 0.189 84.429);
+  --info: oklch(0.646 0.222 41.116);
+
+  /* Racing Palette (Design Bible) - OKLCH Format */
+  --t950: oklch(0.06 0.02 150);
+  --t900: oklch(0.09 0.03 150);
+  --t800: oklch(0.12 0.04 150);
+  --t700: oklch(0.15 0.05 150);
+  --t600: oklch(0.18 0.06 150);
+  --t500: oklch(0.22 0.07 150);
+  --gold: oklch(0.65 0.15 85);
+  --gold-light: oklch(0.75 0.12 85);
+  --gold-muted: oklch(0.65 0.15 85 / 0.3);
+  --gold-subtle: oklch(0.65 0.15 85 / 0.08);
+  --cream: oklch(0.92 0.03 85);
+  --cream-muted: oklch(0.70 0.05 85);
+  --cream-faint: oklch(0.92 0.03 85 / 0.06);
+  --emerald-accent: oklch(0.70 0.18 155);
+  --sw: 248px;
+}
+
+.dark {
+  /* Racing Theme as Default */
+  --background: var(--t950);
+  --foreground: var(--cream);
+  --card: var(--t800);
+  --card-foreground: var(--cream);
+  --popover: var(--t800);
+  --popover-foreground: var(--cream);
+  --primary: var(--gold);
+  --primary-foreground: var(--t950);
+  --secondary: var(--t700);
+  --secondary-foreground: var(--cream);
+  --muted: var(--t700);
+  --muted-foreground: var(--cream-muted);
+  --accent: var(--gold-subtle);
+  --accent-foreground: var(--gold);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: var(--gold-muted);
+  --input: var(--gold-subtle);
+  --ring: var(--gold);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: var(--t950);
+  --sidebar-foreground: var(--cream);
+  --sidebar-primary: var(--gold);
+  --sidebar-primary-foreground: var(--t950);
+  --sidebar-accent: var(--gold-subtle);
+  --sidebar-accent-foreground: var(--gold);
+  --sidebar-border: var(--gold-muted);
+  --sidebar-ring: var(--gold);
+
+  /* Broadcast variants for dark theme */
+  --broadcast-track: oklch(0.4 0.1 155);
+}
+
+.light {
+  /* Light theme (optional, moved from :root) */
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -127,77 +216,6 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
-
-  /* Broadcast primitives (default values for safety) */
-  --broadcast-track: oklch(0.45 0.12 155);
-  --broadcast-rail: oklch(0.95 0.02 100);
-  --broadcast-sky-overlay: oklch(0.2 0.05 220 / 0.2);
-  --broadcast-marquee: oklch(0.1 0.02 220 / 0.4);
-  --broadcast-accent: oklch(0.85 0.18 95);
-
-  /* Regional Award Tokens */
-  --region-na-bg: oklch(0.3 0.1 245);
-  --region-na-accent: oklch(0.7 0.15 85);
-  --region-eu-bg: oklch(0.3 0.2 290);
-  --region-eu-accent: oklch(0.8 0 0);
-  --region-apac-bg: oklch(0.3 0.15 145);
-  --region-apac-accent: oklch(0.85 0.18 95);
-  --region-sa-bg: oklch(0.3 0.15 25);
-  --region-sa-accent: oklch(0.85 0.18 95);
-
-  /* Status Tokens */
-  --success: oklch(0.627 0.194 149.214);
-  --warning: oklch(0.769 0.188 70.08);
-  --fame: oklch(0.828 0.189 84.429);
-  --info: oklch(0.646 0.222 41.116);
-
-  /* Racing Palette (Design Bible) */
-  --gold: #C9A050;
-  --gold-light: #DEB96E;
-  --gold-muted: rgba(201,160,80,0.3);
-  --gold-subtle: rgba(201,160,80,0.08);
-  --cream: #EFE5C5;
-  --cream-muted: #A89872;
-  --cream-faint: rgba(239,229,197,0.06);
-  --emerald-accent: #34D16B;
-}
-
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
-
-  /* Broadcast variants for dark theme if needed, though usually fixed */
-  --broadcast-track: oklch(0.4 0.1 155);
 }
 
 @layer base {
@@ -213,6 +231,10 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
   }
 }
 

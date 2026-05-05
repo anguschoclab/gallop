@@ -35,14 +35,16 @@ export const Route = createFileRoute("/stable/$horseId")({
 function HorseDetail() {
   const { horseId } = Route.useParams();
   const horse = useGame((s) => s.horses.find((h) => h.id === horseId));
-  const trainHorse = useGame((s) => s.trainHorse);
+  const { trainHorse, consignHorse, withdrawConsignment } = useGame((s) => ({
+    trainHorse: s.trainHorse,
+    consignHorse: s.consignHorse,
+    withdrawConsignment: s.withdrawConsignment,
+  }));
   const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const day = useGame((s) => s.day);
   const auctions = useGame((s) => s.auctions ?? []);
-  const consignHorse = useGame((s) => s.consignHorse);
-  const withdrawConsignment = useGame((s) => s.withdrawConsignment);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
 
   // Persist raceHistoryLimit to localStorage
@@ -72,7 +74,7 @@ function HorseDetail() {
   return (
     <div className="space-y-6">
       <div>
-        <Link to="/stable" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-3 font-[family-name:var(--font-body)]">
+        <Link to="/stable" className="inline-flex items-center gap-1 text-sm text-cream-muted hover:text-cream mb-3 font-[family-name:var(--font-body)]">
           <ArrowLeft className="h-4 w-4" /> Back to stable
         </Link>
         <div className="flex items-start gap-6">
@@ -81,7 +83,7 @@ function HorseDetail() {
           <div className="flex-1">
             {/* Display font for horse name */}
             <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">{horse.name}</h1>
-            <p className="text-muted-foreground font-[family-name:var(--font-body)]">
+            <p className="text-cream-muted font-[family-name:var(--font-body)]">
               Age <NumericValue value={horse.age} /> · OVR <NumericValue value={ovr} /> · Potential <NumericValue value={horse.potential} />
             </p>
             {(() => {
@@ -94,7 +96,7 @@ function HorseDetail() {
                 : null;
               return (
                 <div className="flex flex-wrap items-center gap-2 mt-1 text-sm">
-                  <Badge variant="secondary">
+                  <Badge className="bg-t700 text-cream">
                     Current ability {ability.current} · grade {abilityGrade(ability.current)}
                   </Badge>
                   <Badge variant="outline">
@@ -118,18 +120,18 @@ function HorseDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader><CardTitle>Stats</CardTitle></CardHeader>
+        <Card className="border-gold-muted">
+          <CardHeader><CardTitle className="font-[family-name:var(--font-display)]">Stats</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <HorseStatsRadar horse={horse} />
             <HorseStats horse={horse} />
             <div className="flex flex-wrap gap-2 pt-2">
-              <Badge variant="secondary">Energy ⚡ {horse.energy}/100</Badge>
-              <Badge variant={horse.form >= 0 ? "default" : "destructive"}>
+              <Badge className="bg-t700 text-cream">Energy ⚡ {horse.energy}/100</Badge>
+              <Badge className={horse.form >= 0 ? "bg-gold text-t950" : "bg-destructive text-destructive-foreground"}>
                 Form {horse.form > 0 ? "+" : ""}{horse.form}
               </Badge>
               {isPregnant && (
-                <Badge className="bg-fame/15 text-fame border-fame/30" variant="outline">
+                <Badge className="bg-fame text-t950 border-fame" variant="outline">
                   In foal · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
                 </Badge>
               )}
@@ -140,7 +142,7 @@ function HorseDetail() {
                     .map(q => {
                       const gradedRace = GRADED_RACES.find(g => g.key === q.raceKey);
                       return (
-                        <Badge key={q.raceKey} className="bg-primary text-primary-foreground">
+                        <Badge key={q.raceKey} className="bg-gold text-t950">
                           Qualified for {gradedRace?.name || q.raceKey}
                         </Badge>
                       );
@@ -153,9 +155,9 @@ function HorseDetail() {
 
         {/* Consignment */}
         {horse.owned && (isConsigned || eligibleSale) && (
-          <Card>
+          <Card className="border-gold-muted">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 font-[family-name:var(--font-display)]">
                 <Tag className="h-4 w-4" /> Auction Consignment
               </CardTitle>
             </CardHeader>
@@ -181,7 +183,7 @@ function HorseDetail() {
                 </>
               ) : eligibleSale ? (
                 <>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-cream-muted">
                     {eligibleSale.name} is open for consignments.
                   </p>
                   <Button
@@ -197,10 +199,10 @@ function HorseDetail() {
           </Card>
         )}
 
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader>
-            <CardTitle>Training</CardTitle>
-            <p className="text-xs text-muted-foreground">
+            <CardTitle className="font-[family-name:var(--font-display)]">Training</CardTitle>
+            <p className="text-xs text-cream-muted">
               {isPregnant
                 ? "Resting in the broodmare barn — no training during pregnancy."
                 : `${slotsLeft} slot${slotsLeft !== 1 ? "s" : ""} left today · $${TRAINING_COST}/session`}
@@ -216,7 +218,7 @@ function HorseDetail() {
                 variant="outline"
               >
                 <span className="capitalize">{k} work</span>
-                <span className="text-muted-foreground">{horse.stats[k]} → {Math.min(horse.potential, horse.stats[k] + 1)}</span>
+                <span className="text-cream-muted">{horse.stats[k]} → {Math.min(horse.potential, horse.stats[k] + 1)}</span>
               </Button>
             ))}
             <Button
@@ -231,10 +233,10 @@ function HorseDetail() {
         </Card>
       </div>
 
-      <Card>
+      <Card className="border-gold-muted">
         <CardHeader>
-          <CardTitle>Beyer Speed Figure trend</CardTitle>
-          <p className="text-xs text-muted-foreground">Last {Math.min(10, horse.raceHistory.length)} races, oldest → newest</p>
+          <CardTitle className="font-[family-name:var(--font-display)]">Beyer Speed Figure trend</CardTitle>
+          <p className="text-xs text-cream-muted">Last {Math.min(10, horse.raceHistory.length)} races, oldest → newest</p>
         </CardHeader>
         <CardContent>
           <BeyerChart history={horse.raceHistory} />
@@ -245,9 +247,9 @@ function HorseDetail() {
 
       <HorseAwardsPanel horse={horse} />
 
-      <Card>
+      <Card className="border-gold-muted">
         <CardHeader>
-          <CardTitle>Race history</CardTitle>
+          <CardTitle className="font-[family-name:var(--font-display)]">Race history</CardTitle>
           <div className="flex items-center gap-2 mt-2">
             <Select value={raceHistoryLimit.toString()} onValueChange={(v) => setRaceHistoryLimit(Number(v))}>
               <SelectTrigger className="w-[120px] h-8 text-xs">
@@ -263,17 +265,17 @@ function HorseDetail() {
         </CardHeader>
         <CardContent>
           {horse.raceHistory.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No races yet.</p>
+            <p className="text-sm text-cream-muted">No races yet.</p>
           ) : (
             <div className="space-y-1">
               {horse.raceHistory.slice(0, raceHistoryLimit).map((r, i) => (
-                <div key={i} className="flex justify-between text-sm py-1 border-b last:border-0">
+                <div key={i} className="flex justify-between text-sm py-1 border-b border-gold-muted last:border-0">
                   <span>{r.raceName}</span>
                   <span className="flex gap-3 items-center">
                     {typeof r.beyer === "number" && (
-                      <span className="text-xs text-muted-foreground">Beyer {r.beyer}</span>
+                      <span className="text-xs text-cream-muted">Beyer {r.beyer}</span>
                     )}
-                    <span className="text-muted-foreground">D{r.day}</span>
+                    <span className="text-cream-muted">D{r.day}</span>
                     <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
                       {r.position}
                     </Badge>
@@ -285,10 +287,10 @@ function HorseDetail() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-gold-muted">
         <CardHeader>
-          <CardTitle>Lineage</CardTitle>
-          <p className="text-xs text-muted-foreground">Sire (top) and dam (bottom) for 4 generations</p>
+          <CardTitle className="font-[family-name:var(--font-display)]">Lineage</CardTitle>
+          <p className="text-xs text-cream-muted">Sire (top) and dam (bottom) for 4 generations</p>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <Lineage

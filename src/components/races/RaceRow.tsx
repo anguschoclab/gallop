@@ -19,13 +19,13 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
       to="/race-browser"
       search={{ raceId: race.id }}
       className={cn(
-        "flex items-center gap-4 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors group",
+        "flex items-center gap-4 p-3 rounded-lg border border-gold-muted bg-t800 hover:bg-t700 transition-colors group",
         ownedCount > 0 && "border-success/30 bg-success/5"
       )}
     >
       <div className="w-12 text-center shrink-0">
-        <div className="text-xs text-muted-foreground uppercase tracking-tighter">Day</div>
-        <div className="text-lg font-bold tabular-nums leading-none">{race.day}</div>
+        <div className="text-xs text-cream-muted uppercase tracking-tighter font-[family-name:var(--font-mono)] tabular-nums">Day</div>
+        <div className="text-lg font-bold tabular-nums leading-none font-[family-name:var(--font-mono)]">{race.day}</div>
       </div>
 
       <div className="flex-1 min-w-0">
@@ -35,10 +35,10 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
               {gradeLabel}
             </Badge>
           )}
-          <h3 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{race.name}</h3>
+          <h3 className="font-bold text-sm truncate group-hover:text-gold transition-colors font-[family-name:var(--font-display)]">{race.name}</h3>
           {ownedCount > 0 && <div className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
         </div>
-        <div className="flex items-center gap-3 text-[11px] text-muted-foreground tabular-nums">
+        <div className="flex items-center gap-3 text-[11px] text-cream-muted tabular-nums">
           <span className="truncate">{race.graded?.track || "Local Track"}</span>
           <span>{race.distance}m</span>
           <span>{race.surface}</span>
@@ -48,14 +48,14 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
 
       <div className="text-right shrink-0 flex items-center gap-4">
         <div>
-          <div className="text-sm font-bold tabular-nums">${race.purse.toLocaleString()}</div>
-          <div className="text-[10px] text-muted-foreground tabular-nums">{race.entries.length}/{race.fieldSize} full</div>
+          <div className="text-sm font-bold tabular-nums font-[family-name:var(--font-mono)]">${race.purse.toLocaleString()}</div>
+          <div className="text-[10px] text-cream-muted tabular-nums font-[family-name:var(--font-mono)]">{race.entries.length}/{race.fieldSize} full</div>
         </div>
         {ownedCount === 0 && (
           <Button 
             size="sm" 
             variant="outline"
-            className="h-8 text-[10px] uppercase font-black px-4 hover:bg-primary hover:text-primary-foreground" 
+            className="h-8 text-[10px] uppercase font-black px-4 hover:bg-gold hover:text-t950" 
             onClick={(e) => { e.preventDefault(); onEnter?.(); }}
           >
             Enter

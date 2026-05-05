@@ -20,22 +20,23 @@ interface HorseCardProps {
   className?: string;
 }
 
-export function HorseCard({ 
-  horse, 
-  variant = "full", 
+export function HorseCard({
+  horse,
+  variant = "full",
   showScoutInfo = false,
   onClick,
   className = ""
 }: HorseCardProps) {
-  const game = useGame();
+  const scoutReports = useGame((s) => s.scoutReports);
+  const day = useGame((s) => s.day);
   const ovr = calculateOverallRating(horse);
-  
+
   // Scout info if applicable
-  const scoutStatus = showScoutInfo && horse.stableId 
-    ? getScoutStatus(horse, game.scoutReports, game.day)
+  const scoutStatus = showScoutInfo && horse.stableId
+    ? getScoutStatus(horse, scoutReports, day)
     : null;
   const displayStats = showScoutInfo && horse.stableId
-    ? getDisplayableStats(horse, game.scoutReports, game.day)
+    ? getDisplayableStats(horse, scoutReports, day)
     : null;
   
   // Gender icon
@@ -65,7 +66,7 @@ export function HorseCard({
 
   if (variant === "compact") {
     return (
-      <Card className={cn("hover:shadow-md transition-shadow cursor-pointer", className)} onClick={onClick}>
+      <Card className={cn("hover:bg-t700 transition-colors cursor-pointer border-gold-muted", className)} onClick={onClick}>
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
             {/* Identity: SilkDot + Name */}
@@ -90,7 +91,7 @@ export function HorseCard({
             </div>
             {/* Numbers */}
             <div className="flex flex-col items-end gap-1">
-              <Badge className="text-xs bg-secondary text-secondary-foreground">
+              <Badge className="text-xs bg-t700 text-cream">
                 <Zap className="w-3 h-3 mr-1" />
                 <NumericValue value={horse.energy} />
               </Badge>
@@ -178,7 +179,7 @@ export function HorseCard({
 
   // Full variant
   return (
-    <Card className={cn("hover:shadow-md transition-shadow", onClick && "cursor-pointer", className)} onClick={onClick}>
+    <Card className={cn("hover:bg-t700 transition-colors border-gold-muted", onClick && "cursor-pointer", className)} onClick={onClick}>
       <CardContent className="p-5">
         {/* Header - Design Bible: Identity | Qualifiers | Numbers */}
         <div className="flex items-start justify-between mb-4">
@@ -217,12 +218,12 @@ export function HorseCard({
           </div>
           {/* Numbers */}
           <div className="flex flex-col items-end gap-1">
-            <Badge className="flex items-center gap-1 bg-secondary text-secondary-foreground">
+            <Badge className="flex items-center gap-1 bg-t700 text-cream">
               <Zap className="w-3 h-3" />
               <NumericValue value={horse.energy} suffix=" Energy" />
             </Badge>
             {horse.form !== 0 && (
-              <Badge className={cn("text-xs flex items-center gap-1", horse.form > 0 ? "bg-primary text-primary-foreground" : "bg-destructive text-destructive-foreground")}>
+              <Badge className={cn("text-xs flex items-center gap-1", horse.form > 0 ? "bg-gold text-t950" : "bg-destructive text-destructive-foreground")}>
                 <TrendingUp className="w-3 h-3" />
                 <NumericValue value={horse.form} prefix={horse.form > 0 ? "+" : ""} suffix=" Form" />
               </Badge>
@@ -231,7 +232,7 @@ export function HorseCard({
         </div>
 
         {/* Biometrics Strip */}
-        <div className="flex items-center gap-4 mb-4 p-2 bg-muted/30 rounded-lg text-xs">
+        <div className="flex items-center gap-4 mb-4 p-2 bg-t700 rounded-lg text-xs">
           <div className="flex items-center gap-1.5">
             <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
             <span className="font-medium">{horse.height?.toFixed(1)} hh</span>
@@ -241,7 +242,7 @@ export function HorseCard({
             <span className="font-medium">{horse.weight} kg</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full border border-border" style={{ backgroundColor: getCoatColor(horse.coatColor) }} />
+            <div className="w-3 h-3 rounded-full border border-gold-muted" style={{ backgroundColor: getCoatColor(horse.coatColor) }} />
             <span className="capitalize">{horse.coatColor?.replace("-", " ")}</span>
           </div>
           <div className="flex items-center gap-1.5 ml-auto">

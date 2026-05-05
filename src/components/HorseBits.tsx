@@ -98,7 +98,7 @@ export function HorseBit({
         {horse.name}
       </span>
       {showStatus && status && (
-        <Badge className="text-[10px] h-4 px-1 bg-secondary text-secondary-foreground font-[family-name:var(--font-mono)] tabular-nums">
+        <Badge className="text-[10px] h-4 px-1 bg-t700 text-cream font-[family-name:var(--font-mono)] tabular-nums">
           {status}
         </Badge>
       )}

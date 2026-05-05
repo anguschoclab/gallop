@@ -6,7 +6,9 @@ import type { RegionalAward, AwardRegion } from "../awards/types";
 import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { PlayerFacilities } from "@/core/facilities";
+import type { UserSettings } from "@/core/settings/settingsTypes";
 import { createDefaultPlayerFacilities } from "@/core/facilities";
+import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 
 /**
  * Systems state for optional subsystems and advanced features.
@@ -23,7 +25,7 @@ export interface SystemsState {
 
   // Regional awards system (optional)
   /** Year-end awards by region */
-  awards?: RegionalAward[];
+  awards: RegionalAward[];
   /** Last year awards were given per region */
   lastAwardYear?: Record<AwardRegion, number>;
   /** Queue of pending award ceremonies */
@@ -61,6 +63,10 @@ export interface SystemsState {
   /** NPC stable facilities by stable ID */
   npcFacilities?: Record<string, PlayerFacilities>;
 
+  // User settings (optional)
+  /** Player preferences and game configuration */
+  userSettings?: UserSettings;
+
   // Intent/impact resolver system (optional)
   /** Pending intents to be resolved */
   pendingIntents?: AnyIntent[];
@@ -76,7 +82,9 @@ export interface SystemsState {
 export function createDefaultSystemsState(): SystemsState {
   return {
     npcStables: [],
+    awards: [],
     facilities: createDefaultPlayerFacilities(1),
     npcFacilities: {},
+    userSettings: createDefaultUserSettings(1),
   };
 }

@@ -17,15 +17,29 @@ import { AutoSimPanel } from "./AutoSimPanel";
 import { AwardCeremony } from "./awards";
 import { useState, useEffect } from "react";
 
-const navItems = [
-  { to: "/", label: "Dashboard", icon: Home, exact: true },
-  { to: "/stable", label: "Stable", icon: Trophy, exact: false },
-  { to: "/races", label: "Races", icon: Calendar, exact: false },
-  { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
-  { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
-  { to: "/auction", label: "Auction", icon: Gavel, exact: false },
-  { to: "/market", label: "Market", icon: Store, exact: false },
-  { to: "/settings", label: "Settings", icon: Settings, exact: false },
+const navSections = [
+  {
+    label: "Foundation",
+    items: [
+      { to: "/", label: "Dashboard", icon: Home, exact: true },
+    ],
+  },
+  {
+    label: "Management",
+    items: [
+      { to: "/stable", label: "Stable", icon: Trophy, exact: false },
+      { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
+      { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
+    ],
+  },
+  {
+    label: "Racing",
+    items: [
+      { to: "/races", label: "Races", icon: Calendar, exact: false },
+      { to: "/market", label: "Market", icon: Store, exact: false },
+      { to: "/auction", label: "Auction", icon: Gavel, exact: false },
+    ],
+  },
 ] as const;
 
 export function AppShell() {
@@ -53,7 +67,7 @@ export function AppShell() {
   if (isRace) return <Outlet />;
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-t900">
       {/* Skip to content link for accessibility */}
       <a
         href="#main-content"
@@ -61,48 +75,55 @@ export function AppShell() {
       >
         Skip to content
       </a>
-      <aside className="w-60 shrink-0 border-r bg-sidebar flex flex-col">
-        <div className="p-5 border-b border-sidebar-border">
+      <aside className="w-[248px] shrink-0 border-r border-gold-muted bg-t950 flex flex-col">
+        <div className="p-5 border-b border-gold-muted">
           {/* Design Bible: Brand title uses display font */}
-          <h1 className="text-lg font-bold tracking-tight text-sidebar-foreground font-[family-name:var(--font-display)]">
+          <h1 className="text-[21px] font-bold text-gold font-[family-name:var(--font-display)] tracking-[0.04em] leading-none">
             Gallop
           </h1>
-          <p className="text-xs text-sidebar-foreground/60 mt-0.5 font-[family-name:var(--font-mono)] tabular-nums">
+          <p className="text-[9px] tracking-[0.14em] uppercase text-cream-muted font-[family-name:var(--font-mono)] tabular-nums mt-1 block">
             {gameCalendarDate(day)}
           </p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = item.exact
-              ? location.pathname === item.to
-              : location.pathname.startsWith(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  active
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
+          {navSections.map((section) => (
+            <div key={section.label}>
+              <span className="text-[9px] tracking-[0.14em] uppercase text-cream-muted px-3 pb-2 block">
+                {section.label}
+              </span>
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const active = item.exact
+                  ? location.pathname === item.to
+                  : location.pathname.startsWith(item.to);
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      active
+                        ? "border-l-2 border-gold text-gold bg-gold-subtle"
+                        : "text-cream-muted/70 hover:bg-gold-subtle hover:text-cream",
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
-        <div className="p-3 border-t border-sidebar-border space-y-2">
-          <div className="px-3 py-2 rounded-md bg-sidebar-accent/50">
-            <p className="text-xs text-sidebar-foreground/60 font-[family-name:var(--font-body)]">Cash</p>
+        <div className="p-3 border-t border-gold-muted space-y-2">
+          <div className="px-3 py-2 rounded-md bg-t800 border border-gold-muted">
+            <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Cash</p>
             {/* Design Bible: Numbers use IBM Plex Mono with tabular-nums */}
-            <p className="text-lg font-bold font-[family-name:var(--font-mono)] tabular-nums text-sidebar-foreground">
+            <p className="text-[22px] font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">
               ${cash.toLocaleString()}
             </p>
           </div>
-          <div className="px-3 py-1 text-xs text-sidebar-foreground/60 font-[family-name:var(--font-mono)] tabular-nums">
+          <div className="px-3 py-1 text-xs text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">
             {horses.length} horses
           </div>
           <div className="grid grid-cols-4 gap-1">

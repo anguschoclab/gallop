@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
 import type { Horse, Race, Pregnancy, ScoutReport, AuctionSale, GameState, HorseCampaign, CampaignGoalType, ConfirmedAptitudes } from "./types";
 import { GRADED_RACES } from "./gradedRaces";
@@ -61,6 +62,8 @@ import { calculateClassBonus } from "@/core/common/classBonus";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import { DEFAULT_PLAYER_RESERVE_RATIO } from "./auction";
 import type { RenameIntent, AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, PurchaseIntent } from "@/core/resolver/intents";
+import type { UserSettings, DisplaySettings, GameplaySettings, NotificationSettings, AudioSettings } from "@/core/settings/settingsTypes";
+import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import type { RenameImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact } from "@/core/resolver/impacts";
 
 export type ActionResult = { ok: true } | { ok: false, reason: string };
@@ -341,6 +344,12 @@ type Actions = {
   dismissCampaignFlag: (horseId: string, flagIndex: number) => void;
   deleteCampaign: (horseId: string) => void;
   generateAutoCampaign: (horseId: string, goalType: CampaignGoalType, targetRaceKey?: string) => void;
+  updateUserSettings: (settings: Partial<UserSettings>) => void;
+  updateDisplaySettings: (settings: Partial<DisplaySettings>) => void;
+  updateGameplaySettings: (settings: Partial<GameplaySettings>) => void;
+  updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
+  updateAudioSettings: (settings: Partial<AudioSettings>) => void;
+  resetSettings: () => void;
 };
 
 function initialState(): GameState {
@@ -398,6 +407,7 @@ function initialState(): GameState {
     scoutReports: [],
     auctions: [],
     jockeys: generateInitialJockeys(createRng(hashStr("initial_jockeys")), 25),
+    awards: [],
   };
 }
 
@@ -443,6 +453,7 @@ export const useGame = create<GameState & Actions>()(
       scoutReports: [],
       auctions: [],
       jockeys: [],
+      awards: [],
 
       newGame: async () => {
         // Clear OPFS storage when starting a new game
@@ -1593,6 +1604,72 @@ export const useGame = create<GameState & Actions>()(
           : [...(s.campaigns ?? []), campaign];
         set({ campaigns: updated });
       },
+
+      // Settings actions
+      updateUserSettings: (settings: Partial<UserSettings>) => {
+        const s = get();
+        const currentSettings = s.userSettings ?? createDefaultUserSettings(s.day);
+        set({
+          userSettings: {
+            ...currentSettings,
+            ...settings,
+            lastModified: s.day,
+          },
+        });
+      },
+
+      updateDisplaySettings: (settings: Partial<DisplaySettings>) => {
+        const s = get();
+        const currentSettings = s.userSettings ?? createDefaultUserSettings(s.day);
+        set({
+          userSettings: {
+            ...currentSettings,
+            display: { ...currentSettings.display, ...settings },
+            lastModified: s.day,
+          },
+        });
+      },
+
+      updateGameplaySettings: (settings: Partial<GameplaySettings>) => {
+        const s = get();
+        const currentSettings = s.userSettings ?? createDefaultUserSettings(s.day);
+        set({
+          userSettings: {
+            ...currentSettings,
+            gameplay: { ...currentSettings.gameplay, ...settings },
+            lastModified: s.day,
+          },
+        });
+      },
+
+      updateNotificationSettings: (settings: Partial<NotificationSettings>) => {
+        const s = get();
+        const currentSettings = s.userSettings ?? createDefaultUserSettings(s.day);
+        set({
+          userSettings: {
+            ...currentSettings,
+            notifications: { ...currentSettings.notifications, ...settings },
+            lastModified: s.day,
+          },
+        });
+      },
+
+      updateAudioSettings: (settings: Partial<AudioSettings>) => {
+        const s = get();
+        const currentSettings = s.userSettings ?? createDefaultUserSettings(s.day);
+        set({
+          userSettings: {
+            ...currentSettings,
+            audio: { ...currentSettings.audio, ...settings },
+            lastModified: s.day,
+          },
+        });
+      },
+
+      resetSettings: () => {
+        const s = get();
+        set({ userSettings: createDefaultUserSettings(s.day) });
+      },
     }),
     {
       name: "horse-racing-game-v1",
@@ -1623,6 +1700,9 @@ export const useGame = create<GameState & Actions>()(
         leaderboardsUpdatedDay: state.leaderboardsUpdatedDay,
         campaigns: state.campaigns,
         triplecrownHistory: state.triplecrownHistory,
+        facilities: state.facilities,
+        npcFacilities: state.npcFacilities,
+        userSettings: state.userSettings,
       }),
       onRehydrateStorage: () => (state) => {
         hydrationComplete = true;
@@ -1647,3 +1727,14 @@ export async function rehydrateStore() {
     hydrationComplete = true;
   }
 }
+
+// Export shallow for use in components that need to compare object/array selectors
+export { shallow };
+
+// Custom hook that supports shallow comparison for object/array selectors
+// Use this when selecting multiple state values to prevent unnecessary re-renders
+// Example: const { horses, awards } = useGameWithShallow((s) => ({ horses: s.horses, awards: s.awards }));
+export const useGameWithShallow = <T>(
+  selector: (state: GameState & Actions) => T
+): T => (useGame as any)(selector, shallow);
+

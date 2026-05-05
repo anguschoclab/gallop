@@ -64,38 +64,38 @@ function Dashboard() {
 
       {/* Stat Tiles - Design Bible: Numbers are the protagonist */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">Cash on hand</CardTitle>
+            <CardTitle className="text-sm font-medium text-cream-muted font-[family-name:var(--font-body)]">Cash on hand</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold font-[family-name:var(--font-mono)] tabular-nums">${cash.toLocaleString()}</p>
+            <p className="text-3xl font-bold font-[family-name:var(--font-mono)] tabular-nums text-cream">${cash.toLocaleString()}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">Horses owned</CardTitle>
+            <CardTitle className="text-sm font-medium text-cream-muted font-[family-name:var(--font-body)]">Horses owned</CardTitle>
           </CardHeader>
           <CardContent>
-            <NumericValue value={horses.length} className="text-3xl font-bold" />
+            <NumericValue value={horses.length} className="text-3xl font-bold text-cream" />
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">My next races</CardTitle>
+            <CardTitle className="text-sm font-medium text-cream-muted font-[family-name:var(--font-body)]">My next races</CardTitle>
           </CardHeader>
           <CardContent>
-            <NumericValue value={myRunning.length} className="text-3xl font-bold" />
+            <NumericValue value={myRunning.length} className="text-3xl font-bold text-cream" />
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">Awards</CardTitle>
-            <Trophy className="w-4 h-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-cream-muted font-[family-name:var(--font-body)]">Awards</CardTitle>
+            <Trophy className="w-4 h-4 text-cream-muted" />
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <NumericValue value={playerAwards.length} className="text-3xl font-bold" />
+              <NumericValue value={playerAwards.length} className="text-3xl font-bold text-cream" />
               {hotyCount > 0 && <span className="text-xs text-fame font-medium font-[family-name:var(--font-mono)] tabular-nums">{hotyCount} HOTY</span>}
             </div>
           </CardContent>
@@ -103,10 +103,10 @@ function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 border-gold-muted">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-medium text-muted-foreground font-[family-name:var(--font-body)]">Grade Targets</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-cream-muted font-[family-name:var(--font-body)]">Grade Targets</CardTitle>
+            <TrendingUp className="h-4 w-4 text-cream-muted" />
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-2">
@@ -115,34 +115,34 @@ function Dashboard() {
                   <div className={cn("inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-semibold mb-1", getGradeColorClass(grade))}>
                     {grade}
                   </div>
-                  <NumericValue value={owned} className="text-lg font-bold" />
+                  <NumericValue value={owned} className="text-lg font-bold text-cream" />
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 border-gold-muted">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Recent Graded Winners</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-cream-muted">Recent Graded Winners</CardTitle>
+            <Calendar className="h-4 w-4 text-cream-muted" />
           </CardHeader>
           <CardContent>
             {recentGradedWinners.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic py-2">No graded results this week.</p>
+              <p className="text-xs text-cream-muted italic py-2">No graded results this week.</p>
             ) : (
               <div className="space-y-2">
                 {recentGradedWinners.map((r) => {
                   const winnerId = r.result?.[0]?.horseId;
                   const winner = horses.find(h => h.id === winnerId);
                   return (
-                    <div key={r.id} className="flex items-center justify-between text-xs border-b border-border/50 pb-2 last:border-0 last:pb-0">
+                    <div key={r.id} className="flex items-center justify-between text-xs border-b border-gold-muted/50 pb-2 last:border-0 last:pb-0">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className={`h-4 px-1 text-[9px] ${getGradeColorClass(r.graded!.grade)}`}>{r.graded!.grade}</Badge>
                         <span className="font-medium truncate max-w-[120px]">{r.name}</span>
                       </div>
-                      <span className="text-muted-foreground truncate max-w-[100px]">{winner?.name ?? "Unknown"}</span>
-                      <span className="tabular-nums text-muted-foreground">D{r.day}</span>
+                      <span className="text-cream-muted truncate max-w-[100px]">{winner?.name ?? "Unknown"}</span>
+                      <span className="tabular-nums text-cream-muted font-[family-name:var(--font-mono)]">D{r.day}</span>
                     </div>
                   );
                 })}
@@ -153,31 +153,31 @@ function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader>
             <CardTitle className="font-[family-name:var(--font-display)]">Top Stable Stars</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {horses.slice().sort((a, b) => overall(b) - overall(a)).slice(0, 5).map((h) => (
-              <Link key={h.id} to="/stable/$horseId" params={{ horseId: h.id }} className="flex items-center gap-3 p-2 rounded hover:bg-muted transition-colors">
+              <Link key={h.id} to="/stable/$horseId" params={{ horseId: h.id }} className="flex items-center gap-3 p-2 rounded hover:bg-t700 transition-colors">
                 {/* Design Bible: Silk dot beside every horse name */}
                 <SilkDot color={h.silk} size="md" />
                 <div className="flex-1">
                   <p className="font-medium text-sm font-[family-name:var(--font-display)]">{h.name}</p>
-                  <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                  <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                     Age <NumericValue value={h.age} /> · OVR <NumericValue value={overall(h)} />
                   </p>
                 </div>
-                <Badge className="font-[family-name:var(--font-mono)] tabular-nums text-[10px] bg-secondary text-secondary-foreground">
+                <Badge className="font-[family-name:var(--font-mono)] tabular-nums text-[10px] bg-t700 text-cream">
                   E <NumericValue value={h.energy} />
                 </Badge>
               </Link>
             ))}
-            {horses.length === 0 && <p className="text-sm text-muted-foreground italic">No horses in training. Visit the auction to acquire stock.</p>}
+            {horses.length === 0 && <p className="text-sm text-cream-muted italic">No horses in training. Visit the auction to acquire stock.</p>}
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-gold-muted">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="font-[family-name:var(--font-display)]">Upcoming Entries</CardTitle>
             <Link to="/races" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}>
@@ -186,38 +186,38 @@ function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-2">
             {upcoming.map((r) => (
-              <div key={r.id} className="flex items-center justify-between p-2 rounded hover:bg-muted">
+              <div key={r.id} className="flex items-center justify-between p-2 rounded hover:bg-t700">
                 <div>
                   <p className="font-medium text-sm font-[family-name:var(--font-display)]">{r.name}</p>
-                  <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
+                  <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                     Day <NumericValue value={r.day} /> · <NumericValue value={r.distance} suffix="m" /> · {r.raceClass}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold font-[family-name:var(--font-mono)] tabular-nums">${r.purse.toLocaleString()}</p>
                   {r.entries.some((e) => e.owned) && (
-                    <Badge className="text-[9px] bg-success text-success-foreground">Entered</Badge>
+                    <Badge className="text-[9px] bg-success text-t950">Entered</Badge>
                   )}
                 </div>
               </div>
             ))}
-            {upcoming.length === 0 && <p className="text-sm text-muted-foreground italic">No races today.</p>}
+            {upcoming.length === 0 && <p className="text-sm text-cream-muted italic">No races today.</p>}
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      <Card className="border-gold-muted">
         <CardHeader>
           <CardTitle className="font-[family-name:var(--font-display)]">Stable Log</CardTitle>
         </CardHeader>
         <CardContent className="space-y-1">
           {log.slice(0, 8).map((l, i) => (
-            <div key={i} className="text-sm flex gap-3 border-b border-border/30 last:border-0 py-1 font-[family-name:var(--font-body)]">
-              <span className="text-muted-foreground font-[family-name:var(--font-mono)] tabular-nums w-10 shrink-0">D{l.day}</span>
-              <span className="text-foreground/80">{l.text}</span>
+            <div key={i} className="text-sm flex gap-3 border-b border-gold-muted/30 last:border-0 py-1 font-[family-name:var(--font-body)]">
+              <span className="text-cream-muted font-[family-name:var(--font-mono)] tabular-nums w-10 shrink-0">D{l.day}</span>
+              <span className="text-cream">{l.text}</span>
             </div>
           ))}
-          {log.length === 0 && <p className="text-sm text-muted-foreground italic">No recent activity.</p>}
+          {log.length === 0 && <p className="text-sm text-cream-muted italic">No recent activity.</p>}
         </CardContent>
       </Card>
     </div>
