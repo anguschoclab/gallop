@@ -71,7 +71,7 @@ describe("randomWeather", () => {
 describe("randomTrackCondition", () => {
   it("returns valid track condition", () => {
     const result = randomTrackCondition(nondeterministicRng());
-    expect(["fast", "good", "soft", "heavy"]).toContain(result);
+    expect(["fast", "good", "soft", "heavy", "yielding"]).toContain(result);
   });
 });
 

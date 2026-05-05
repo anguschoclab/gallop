@@ -246,8 +246,8 @@ export type Hemisphere = "Northern" | "Southern";
 // Weather conditions for races
 export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 
-// Track condition affects race performance
-export type TrackCondition = "fast" | "good" | "soft" | "heavy";
+// Track condition affects race performance (5-tier system)
+export type TrackCondition = "fast" | "good" | "soft" | "heavy" | "yielding";
 
 // Horse coat colors (for sprite selection)
 // Common Thoroughbred colors: bay variants, chestnut variants, dilutes, grays

@@ -96,6 +96,7 @@ const TRACK_SPEED_MUL: Record<TrackCondition, number> = {
   good: 0.985,
   soft: 0.95,
   heavy: 0.93,
+  yielding: 0.9,
 };
 
 const WEATHER_SPEED_MUL: Record<Weather, number> = {

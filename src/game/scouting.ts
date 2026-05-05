@@ -300,15 +300,15 @@ export function getScoutStatus(
 
   switch (confidence) {
     case "full":
-      return { icon: "👁️", label: "Fully Scouted", color: "text-green-500", canScout: false };
+      return { icon: "👁️", label: "Fully Scouted", color: "text-success", canScout: false };
     case "high":
-      return { icon: "🔍", label: "Well Known", color: "text-blue-500", canScout: true };
+      return { icon: "🔍", label: "Well Known", color: "text-info", canScout: true };
     case "medium":
-      return { icon: "🔎", label: "Partially Known", color: "text-yellow-500", canScout: true };
+      return { icon: "🔎", label: "Partially Known", color: "text-warning", canScout: true };
     case "low":
-      return { icon: "❓", label: "Little Known", color: "text-orange-500", canScout: true };
+      return { icon: "❓", label: "Little Known", color: "text-warning", canScout: true };
     case "unknown":
-      return { icon: "❓", label: "Unknown", color: "text-red-500", canScout: true };
+      return { icon: "❓", label: "Unknown", color: "text-destructive", canScout: true };
   }
 }
 
