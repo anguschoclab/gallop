@@ -328,140 +328,193 @@ export const raceResolutionPhase: PipelinePhase = {
         );
         
         if (claimIntents.length > 0) {
-          // Convert ClaimingIntents to ClaimAttempt format for processClaims
-          const claimAttempts: ClaimAttempt[] = claimIntents.map((intent) => ({
-            claimantStableId: intent.claimantStableId || "",
-            horseId: intent.horseId,
-            claimingPrice: intent.claimingPrice,
-            successful: false,
-          }));
-          
-          // Process claims using existing function
-          const { transfers, logs: claimLogs } = processClaims(
-            race,
-            claimAttempts,
-            state.horses,
-            newDay,
-            rng
-          );
-          
-          // Generate impacts for transfers
-          for (const transfer of transfers) {
-            // ClaimingImpact for horse transfer
-            impacts.push({
-              id: crypto.randomUUID(),
-              intentId: claimIntents.find((i) => i.horseId === transfer.horseId)?.id || "",
-              day: newDay,
-              phase: "raceResolution",
-              logLevel: "always",
-              type: "claiming",
-              raceId: race.id,
-              horseId: transfer.horseId,
-              fromStableId: transfer.fromStableId,
-              toStableId: transfer.toStableId,
-              claimingPrice: transfer.price,
-              reason: `Claimed for $${transfer.price.toLocaleString()} after ${race.name}`,
-            } as ClaimingImpact);
-            
-            // CashImpact for claimant (negative)
-            if (transfer.toStableId) {
+          // Filter out horses withdrawn from claiming
+          const eligibleClaims = claimIntents.filter((claim) => {
+            const entry = race.entries.find((e) => e.horseId === claim.horseId);
+            return entry && !entry.withdrawnFromClaiming;
+          });
+
+          // Refund claimants for withdrawn horses
+          const withdrawnClaims = claimIntents.filter((claim) => {
+            const entry = race.entries.find((e) => e.horseId === claim.horseId);
+            return entry && entry.withdrawnFromClaiming;
+          });
+
+          for (const withdrawnClaim of withdrawnClaims) {
+            if (withdrawnClaim.claimantStableId) {
               impacts.push({
                 id: crypto.randomUUID(),
-                intentId: "",
+                intentId: withdrawnClaim.id,
                 day: newDay,
                 phase: "raceResolution",
                 logLevel: "conditional",
                 type: "cash_change",
-                entityId: transfer.toStableId,
-                amount: -transfer.price,
-                reason: `Claiming payment for ${transfer.horseId} in ${race.name}`,
+                entityId: withdrawnClaim.claimantStableId,
+                amount: withdrawnClaim.claimingPrice,
+                reason: `Refund for withdrawn horse ${withdrawnClaim.horseId} in ${race.name}`,
               } as CashImpact);
             } else {
               impacts.push({
                 id: crypto.randomUUID(),
-                intentId: "",
+                intentId: withdrawnClaim.id,
                 day: newDay,
                 phase: "raceResolution",
                 logLevel: "conditional",
                 type: "cash_change",
                 entityId: "",
-                amount: -transfer.price,
-                reason: `Claiming payment for ${transfer.horseId} in ${race.name}`,
+                amount: withdrawnClaim.claimingPrice,
+                reason: `Refund for withdrawn horse ${withdrawnClaim.horseId} in ${race.name}`,
               } as CashImpact);
             }
             
-            // CashImpact for original owner (positive)
-            if (transfer.fromStableId) {
-              impacts.push({
-                id: crypto.randomUUID(),
-                intentId: "",
-                day: newDay,
-                phase: "raceResolution",
-                logLevel: "conditional",
-                type: "cash_change",
-                entityId: transfer.fromStableId,
-                amount: transfer.price,
-                reason: `Claiming proceeds for ${transfer.horseId} in ${race.name}`,
-              } as CashImpact);
-            } else {
-              impacts.push({
-                id: crypto.randomUUID(),
-                intentId: "",
-                day: newDay,
-                phase: "raceResolution",
-                logLevel: "conditional",
-                type: "cash_change",
-                entityId: "",
-                amount: transfer.price,
-                reason: `Claiming proceeds for ${transfer.horseId} in ${race.name}`,
-              } as CashImpact);
-            }
-          }
-          
-          // Generate log impacts for claim results
-          for (const log of claimLogs) {
             impacts.push({
               id: crypto.randomUUID(),
-              intentId: "",
+              intentId: withdrawnClaim.id,
               day: newDay,
               phase: "raceResolution",
               logLevel: "always",
               type: "log",
-              text: log,
-              reason: "Claiming result",
+              text: `Claim on ${withdrawnClaim.horseId} in ${race.name} refunded (horse withdrawn from claiming)`,
+              reason: "Claiming refund",
             } as LogImpact);
           }
           
-          // Refund losing claimants
-          const winningHorseIds = new Set(transfers.map((t) => t.horseId));
-          const losingClaims = claimIntents.filter(
-            (i) => !winningHorseIds.has(i.horseId)
-          );
-          for (const losingClaim of losingClaims) {
-            if (losingClaim.claimantStableId) {
+          if (eligibleClaims.length > 0) {
+            // Convert ClaimingIntents to ClaimAttempt format for processClaims
+            const claimAttempts: ClaimAttempt[] = eligibleClaims.map((intent) => ({
+              claimantStableId: intent.claimantStableId || "",
+              horseId: intent.horseId,
+              claimingPrice: intent.claimingPrice,
+              successful: false,
+            }));
+            
+            // Process claims using existing function
+            const { transfers, logs: claimLogs } = processClaims(
+              race,
+              claimAttempts,
+              state.horses,
+              newDay,
+              rng
+            );
+            
+            // Generate impacts for transfers
+            for (const transfer of transfers) {
+              // ClaimingImpact for horse transfer
               impacts.push({
                 id: crypto.randomUUID(),
-                intentId: losingClaim.id,
+                intentId: eligibleClaims.find((i) => i.horseId === transfer.horseId)?.id || "",
                 day: newDay,
                 phase: "raceResolution",
-                logLevel: "conditional",
-                type: "cash_change",
-                entityId: losingClaim.claimantStableId,
-                amount: losingClaim.claimingPrice,
-                reason: `Refund for failed claim on ${losingClaim.horseId} in ${race.name}`,
-              } as CashImpact);
-            } else {
+                logLevel: "always",
+                type: "claiming",
+                raceId: race.id,
+                horseId: transfer.horseId,
+                fromStableId: transfer.fromStableId,
+                toStableId: transfer.toStableId,
+                claimingPrice: transfer.price,
+                reason: `Claimed for $${transfer.price.toLocaleString()} after ${race.name}`,
+              } as ClaimingImpact);
+              
+              // CashImpact for claimant (negative)
+              if (transfer.toStableId) {
+                impacts.push({
+                  id: crypto.randomUUID(),
+                  intentId: "",
+                  day: newDay,
+                  phase: "raceResolution",
+                  logLevel: "conditional",
+                  type: "cash_change",
+                  entityId: transfer.toStableId,
+                  amount: -transfer.price,
+                  reason: `Claiming payment for ${transfer.horseId} in ${race.name}`,
+                } as CashImpact);
+              } else {
+                impacts.push({
+                  id: crypto.randomUUID(),
+                  intentId: "",
+                  day: newDay,
+                  phase: "raceResolution",
+                  logLevel: "conditional",
+                  type: "cash_change",
+                  entityId: "",
+                  amount: -transfer.price,
+                  reason: `Claiming payment for ${transfer.horseId} in ${race.name}`,
+                } as CashImpact);
+              }
+              
+              // CashImpact for original owner (positive)
+              if (transfer.fromStableId) {
+                impacts.push({
+                  id: crypto.randomUUID(),
+                  intentId: "",
+                  day: newDay,
+                  phase: "raceResolution",
+                  logLevel: "conditional",
+                  type: "cash_change",
+                  entityId: transfer.fromStableId,
+                  amount: transfer.price,
+                  reason: `Claiming proceeds for ${transfer.horseId} in ${race.name}`,
+                } as CashImpact);
+              } else {
+                impacts.push({
+                  id: crypto.randomUUID(),
+                  intentId: "",
+                  day: newDay,
+                  phase: "raceResolution",
+                  logLevel: "conditional",
+                  type: "cash_change",
+                  entityId: "",
+                  amount: transfer.price,
+                  reason: `Claiming proceeds for ${transfer.horseId} in ${race.name}`,
+                } as CashImpact);
+              }
+            }
+            
+            // Generate log impacts for claim results
+            for (const log of claimLogs) {
               impacts.push({
                 id: crypto.randomUUID(),
-                intentId: losingClaim.id,
+                intentId: "",
                 day: newDay,
                 phase: "raceResolution",
-                logLevel: "conditional",
-                type: "cash_change",
-                entityId: "",
-                amount: losingClaim.claimingPrice,
-                reason: `Refund for failed claim on ${losingClaim.horseId} in ${race.name}`,
-              } as CashImpact);
+                logLevel: "always",
+                type: "log",
+                text: log,
+                reason: "Claiming result",
+              } as LogImpact);
+            }
+            
+            // Refund losing claimants
+            const winningHorseIds = new Set(transfers.map((t) => t.horseId));
+            const losingClaims = eligibleClaims.filter(
+              (i) => !winningHorseIds.has(i.horseId)
+            );
+            for (const losingClaim of losingClaims) {
+              if (losingClaim.claimantStableId) {
+                impacts.push({
+                  id: crypto.randomUUID(),
+                  intentId: losingClaim.id,
+                  day: newDay,
+                  phase: "raceResolution",
+                  logLevel: "conditional",
+                  type: "cash_change",
+                  entityId: losingClaim.claimantStableId,
+                  amount: losingClaim.claimingPrice,
+                  reason: `Refund for failed claim on ${losingClaim.horseId} in ${race.name}`,
+                } as CashImpact);
+              } else {
+                impacts.push({
+                  id: crypto.randomUUID(),
+                  intentId: losingClaim.id,
+                  day: newDay,
+                  phase: "raceResolution",
+                  logLevel: "conditional",
+                  type: "cash_change",
+                  entityId: "",
+                  amount: losingClaim.claimingPrice,
+                  reason: `Refund for failed claim on ${losingClaim.horseId} in ${race.name}`,
+                } as CashImpact);
+              }
             }
           }
         }

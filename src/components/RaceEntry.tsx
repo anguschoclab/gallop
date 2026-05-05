@@ -29,6 +29,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const enterRace = useGame((s) => s.enterRace);
   const assignJockey = useGame((s) => s.assignJockey);
   const submitClaim = useGame((s) => s.submitClaim);
+  const withdrawClaim = useGame((s) => s.withdrawClaim);
   const cash = useGame((s) => s.cash);
   const day = useGame((s) => s.day);
 
@@ -255,6 +256,23 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   </div>
                 )}
               </div>
+
+              {(race.raceClass === "OptionalClaiming" || race.raceClass === "MaidenOptionalClaiming") && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const res = withdrawClaim(race.id, selectedHorse.id);
+                    if (res.ok) {
+                      alert("Horse withdrawn from claiming (entry fee forfeited)");
+                    } else {
+                      alert(`Withdrawal failed: ${res.reason}`);
+                    }
+                  }}
+                  className="w-full uppercase font-black tracking-widest text-[10px]"
+                >
+                  Withdraw Horse from Claiming
+                </Button>
+              )}
             </div>
           )}
         </div>

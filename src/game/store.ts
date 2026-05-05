@@ -55,6 +55,7 @@ import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
 import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
 import { auctionResolutionPhase } from "@/core/time/phases/auctionResolution";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
+import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
 import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
 import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
 import { calculateClassBonus } from "@/core/common/classBonus";
@@ -313,6 +314,7 @@ type Actions = {
   withdrawRace: (raceId: string, horseId: string) => void;
   resolveRaceWithImpacts: (raceId: string, result: { horseId: string; position: number; time: number }[], runners?: import("./raceSim").Runner[]) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
+  withdrawClaim: (raceId: string, horseId: string) => ActionResult;
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
   retireToStud: (horseId: string, fee: number, bookSize: number) => ActionResult;
   hireJockey: (jockeyId: string) => ActionResult;
@@ -936,6 +938,43 @@ export const useGame = create<GameState & Actions>()(
         return { ok: true };
       },
 
+      withdrawClaim: (raceId, horseId) => {
+        const s = get();
+        const race = s.races.find((r) => r.id === raceId);
+        const horse = s.horses.find((h) => h.id === horseId);
+        
+        if (!race) return { ok: false, reason: "Race not found" };
+        if (!horse) return { ok: false, reason: "Horse not found" };
+        if (race.resolved) return { ok: false, reason: "Race already resolved" };
+        if (!race.claimingPrice) return { ok: false, reason: "Race is not a claiming race" };
+        if (race.raceClass !== "OptionalClaiming" && race.raceClass !== "MaidenOptionalClaiming") {
+          return { ok: false, reason: "Withdrawal only allowed in optional claiming races" };
+        }
+        if (horse.stableId !== undefined) {
+          return { ok: false, reason: "Cannot withdraw NPC-owned horse" };
+        }
+        
+        const entry = race.entries.find((e) => e.horseId === horseId);
+        if (!entry) return { ok: false, reason: "Horse not entered in this race" };
+        if (entry.withdrawnFromClaiming) {
+          return { ok: false, reason: "Horse already withdrawn from claiming" };
+        }
+        
+        // Enqueue WithdrawFromClaimingIntent
+        s.enqueueIntent({
+          id: generateUUID(),
+          entityId: horseId,
+          source: "player",
+          day: s.day,
+          priority: 100,
+          type: "withdraw_from_claiming",
+          raceId,
+          horseId,
+        });
+        
+        return { ok: true };
+      },
+
       breed: (sireId, damId, liveFoalGuarantee = false) => {
         const s = get();
         const sire = s.horses.find((h) => h.id === sireId);
@@ -1196,6 +1235,7 @@ export const useGame = create<GameState & Actions>()(
           breedingResolutionPhase,
           trainingResolutionPhase,
           auctionResolutionPhase,
+          claimingWithdrawalPhase,
           raceResolutionPhase,
           // Impact application phase (final)
           impactApplicationPhase,

@@ -21,6 +21,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
     intents.push(...generateNpcBreedingIntents(state, stable, day));
     intents.push(...generateNpcAuctionBidIntents(state, stable, day));
     intents.push(...generateNpcClaimingIntents(state, stable, day));
+    intents.push(...generateNpcWithdrawalIntents(state, stable, day));
   }
 
   return intents;
@@ -219,6 +220,57 @@ function generateNpcClaimingIntents(state: GameState, stable: Stable, day: numbe
         claimantStableId: stable.id,
         claimingPrice: race.claimingPrice,
       });
+    }
+  }
+  
+  return intents;
+}
+
+/**
+ * Generate withdrawal intents for an NPC stable
+ */
+function generateNpcWithdrawalIntents(state: GameState, stable: Stable, day: number): WithdrawFromClaimingIntent[] {
+  const intents: WithdrawFromClaimingIntent[] = [];
+  const personality = PERSONALITY_CONFIG[stable.personality];
+  const upcomingRaces = state.races.filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
+  
+  for (const race of upcomingRaces) {
+    // Skip if not an optional claiming race
+    if (race.raceClass !== "OptionalClaiming" && race.raceClass !== "MaidenOptionalClaiming") continue;
+    
+    // Personality-based withdrawal propensity
+    const withdrawalPropensity = 
+      (stable.personality === "conservative" ? 0.7 : 
+       stable.personality === "developer" ? 0.6 : 
+       stable.personality === "breeder" ? 0.5 : 0.2);
+    
+    for (const entry of race.entries) {
+      const horse = state.horses.find((h) => h.id === entry.horseId);
+      if (!horse) continue;
+      if (horse.stableId !== stable.id) continue; // Only own horses
+      if (entry.withdrawnFromClaiming) continue; // Already withdrawn
+      
+      // Random check based on personality
+      if (Math.random() > withdrawalPropensity) continue;
+      
+      // Check horse value vs claiming price
+      const overall = calculateOverallRating(horse);
+      const estimatedValue = overall * 1000;
+      
+      // Withdraw if horse is significantly undervalued
+      if (estimatedValue > race.claimingPrice! * 1.3) {
+        intents.push({
+          id: generateUUID(),
+          entityId: horse.id,
+          source: "npc",
+          sourceId: stable.id,
+          day,
+          priority: 70,
+          type: "withdraw_from_claiming",
+          raceId: race.id,
+          horseId: horse.id,
+        });
+      }
     }
   }
   
