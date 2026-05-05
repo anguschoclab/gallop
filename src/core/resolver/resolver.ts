@@ -5,6 +5,7 @@ import { produce } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyIntent } from "./intents";
 import type { AnyImpact } from "./impacts";
+import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
 
 // Re-export AnyImpact for use in pipeline
 export type { AnyImpact } from "./impacts";
@@ -480,6 +481,39 @@ export function validateIntent(intent: AnyIntent, state: GameState): { valid: bo
       const horse = state.market.find((h) => h.id === intent.horseId);
       if (!horse) return { valid: false, reason: "Horse not in market" };
       if (state.cash < intent.price) return { valid: false, reason: "Insufficient funds" };
+      break;
+    }
+
+    case "claiming": {
+      const race = state.races.find((r) => r.id === intent.raceId);
+      const horse = state.horses.find((h) => h.id === intent.horseId);
+      if (!race) return { valid: false, reason: "Race not found" };
+      if (!horse) return { valid: false, reason: "Horse not found" };
+      if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
+      if (!race.entries.some((e) => e.horseId === intent.horseId)) {
+        return { valid: false, reason: "Horse is not entered in this race" };
+      }
+      if (horse.stableId === intent.claimantStableId) {
+        return { valid: false, reason: "Cannot claim own horse" };
+      }
+      
+      // Check claimant has sufficient funds
+      if (intent.claimantStableId) {
+        const stable = state.npcStables.find((s) => s.id === intent.claimantStableId);
+        if (!stable || stable.cash < race.claimingPrice) {
+          return { valid: false, reason: "Insufficient funds" };
+        }
+      } else {
+        if (state.cash < race.claimingPrice) {
+          return { valid: false, reason: "Insufficient funds" };
+        }
+      }
+      
+      // Check horse eligibility for claiming price
+      if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) {
+        return { valid: false, reason: "Horse is not eligible for this claiming price" };
+      }
+      
       break;
     }
 

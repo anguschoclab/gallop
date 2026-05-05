@@ -1,9 +1,11 @@
 // NPC Intent Generators
 // Generates intents for NPC stables during the intent collection phase
 
-import type { AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, AuctionBidIntent } from "@/core/resolver/intents";
+import type { AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, AuctionBidIntent, ClaimingIntent } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { generateUUID } from "@/game/uuid";
+import { PERSONALITY_CONFIG } from "@/game/npcStables";
+import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
 
 /**
  * Generate all NPC intents for the day
@@ -17,6 +19,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
     intents.push(...generateNpcRaceEntryIntents(state, stable, day));
     intents.push(...generateNpcBreedingIntents(state, stable, day));
     intents.push(...generateNpcAuctionBidIntents(state, stable, day));
+    intents.push(...generateNpcClaimingIntents(state, stable, day));
   }
 
   return intents;
@@ -159,5 +162,64 @@ function generateNpcAuctionBidIntents(state: GameState, stable: Stable, day: num
     }
   }
 
+  return intents;
+}
+
+/**
+ * Generate claiming intents for an NPC stable
+ */
+function generateNpcClaimingIntents(state: GameState, stable: Stable, day: number): ClaimingIntent[] {
+  const intents: ClaimingIntent[] = [];
+  const personality = PERSONALITY_CONFIG[stable.personality];
+  const upcomingRaces = state.races.filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
+  
+  for (const race of upcomingRaces) {
+    // Skip if not a claiming race
+    if (!race.claimingPrice) continue;
+    
+    // Personality-based claiming propensity
+    const claimingPropensity = personality.raceEntryMod * 
+      (stable.personality === "trader" ? 1.5 : 
+       stable.personality === "aggressive" ? 1.2 : 
+       stable.personality === "conservative" ? 0.5 : 1.0);
+    
+    // Random check based on propensity
+    if (Math.random() > claimingPropensity * 0.3) continue;
+    
+    for (const entry of race.entries) {
+      const horse = state.horses.find((h) => h.id === entry.horseId);
+      if (!horse) continue;
+      if (horse.stableId === stable.id) continue; // Don't claim own horses
+      
+      // Check if stable has sufficient funds
+      if (stable.cash < race.claimingPrice * 1.1) continue;
+      
+      // Check horse eligibility
+      if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) continue;
+      
+      // Strategic considerations based on personality
+      if (stable.personality === "developer" && horse.age > 4) continue;
+      if (stable.personality === "win-now" && horse.age < 4) continue;
+      if (stable.personality === "specialist") {
+        if (personality.specialistDistance && race.distance !== personality.specialistDistance) continue;
+        if (personality.specialistSurface && race.surface !== personality.specialistSurface) continue;
+      }
+      
+      intents.push({
+        id: generateUUID(),
+        entityId: horse.id,
+        source: "npc",
+        sourceId: stable.id,
+        day,
+        priority: 60,
+        type: "claiming",
+        raceId: race.id,
+        horseId: horse.id,
+        claimantStableId: stable.id,
+        claimingPrice: race.claimingPrice,
+      });
+    }
+  }
+  
   return intents;
 }
