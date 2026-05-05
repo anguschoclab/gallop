@@ -44,15 +44,15 @@ export function FacilitiesPanel() {
   const getLevelColor = (level: string) => {
     switch (level) {
       case "basic":
-        return "bg-gray-500";
+        return "bg-t600";
       case "standard":
-        return "bg-blue-500";
+        return "bg-info";
       case "premium":
-        return "bg-purple-500";
+        return "bg-chart-4";
       case "elite":
-        return "bg-amber-500";
+        return "bg-gold";
       default:
-        return "bg-gray-500";
+        return "bg-t600";
     }
   };
 
@@ -67,13 +67,13 @@ export function FacilitiesPanel() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Facilities</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-2xl font-bold font-[family-name:var(--font-display)]">Facilities</h2>
+          <p className="text-sm text-cream-muted">
             Upgrade your facilities to improve training and operations
           </p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-muted-foreground">Available Cash</p>
+          <p className="text-sm text-cream-muted">Available Cash</p>
           <p className="text-2xl font-bold">${cash.toLocaleString()}</p>
         </div>
       </div>
@@ -128,8 +128,8 @@ export function FacilitiesPanel() {
                 )}
 
                 {maxLevel ? (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Check className="h-4 w-4 text-emerald-500" />
+                  <div className="flex items-center gap-2 text-sm text-cream-muted">
+                    <Check className="h-4 w-4 text-success" />
                     <span>Maximum level reached</span>
                   </div>
                 ) : (
@@ -145,7 +145,7 @@ export function FacilitiesPanel() {
                 )}
 
                 {!maxLevel && !canAfford && (
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2 text-xs text-cream-muted">
                     <X className="h-3 w-3" />
                     <span>Insufficient funds</span>
                   </div>

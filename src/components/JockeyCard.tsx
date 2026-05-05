@@ -120,7 +120,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
 
             <div className="bg-white/5 rounded-lg p-2 border border-white/5">
               <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
-                <Target size={12} className="text-orange-500" />
+                <Target size={12} className="text-warning" />
                 <span className="text-[10px] font-black uppercase tracking-wider">Fame Index</span>
               </div>
               <div className="flex items-center gap-2">

@@ -91,9 +91,9 @@ export function PregnancyTimeline({
 
             {/* Timeline labels */}
             <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-              <span className="font-medium text-green-600">Conceived</span>
+              <span className="font-medium text-success">Conceived</span>
               <span className="font-medium">Progress: {Math.round(progress)}%</span>
-              <span className="font-medium text-red-600">Due</span>
+              <span className="font-medium text-destructive">Due</span>
             </div>
           </div>
 

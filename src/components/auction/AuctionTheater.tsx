@@ -322,7 +322,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 Auctioneer
-                {isRunning && <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />}
+                {isRunning && <span className="w-2 h-2 bg-success rounded-full animate-pulse" />}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -335,7 +335,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       key={idx}
                       className={cn(
                         "text-sm",
-                        line.isHighImpact ? "font-bold text-emerald-600" : "text-muted-foreground",
+                        line.isHighImpact ? "font-bold text-success" : "text-muted-foreground",
                       )}
                     >
                       {line.text}

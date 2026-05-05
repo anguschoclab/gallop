@@ -15,16 +15,16 @@ export function ReputationBadge() {
   }
 
   const tierColors: Record<string, string> = {
-    unknown: "bg-gray-500",
-    local: "bg-blue-500",
-    regional: "bg-green-500",
-    national: "bg-purple-500",
-    international: "bg-orange-500",
-    world_class: "bg-pink-500",
-    legendary: "bg-amber-500",
+    unknown: "bg-t600",
+    local: "bg-info",
+    regional: "bg-success",
+    national: "bg-chart-4",
+    international: "bg-warning",
+    world_class: "bg-fame",
+    legendary: "bg-gold",
   };
 
-  const tierColor = tierColors[reputation.tier] ?? "bg-gray-500";
+  const tierColor = tierColors[reputation.tier] ?? "bg-t600";
 
   return (
     <div className="flex items-center gap-2">
@@ -32,7 +32,7 @@ export function ReputationBadge() {
         <Trophy className="h-3 w-3 mr-1" />
         {formatReputationTier(reputation.tier)}
       </Badge>
-      <span className="text-sm text-muted-foreground">{reputation.score} pts</span>
+      <span className="text-sm text-cream-muted">{reputation.score} pts</span>
     </div>
   );
 }

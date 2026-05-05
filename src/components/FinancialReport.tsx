@@ -120,7 +120,7 @@ export function FinancialReport() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-rose-600">
+            <div className="text-2xl font-bold text-destructive">
               {formatCurrency(expenseSummary.total)}
             </div>
             <p className="text-xs text-muted-foreground">Upkeep, training, entry fees</p>
@@ -137,7 +137,7 @@ export function FinancialReport() {
           <CardContent>
             <div
               className={`text-2xl font-bold ${
-                netProfit >= 0 ? "text-emerald-600" : "text-rose-600"
+                netProfit >= 0 ? "text-success" : "text-destructive"
               }`}
             >
               {formatProfitLoss(netProfit)}

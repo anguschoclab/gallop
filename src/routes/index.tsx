@@ -226,7 +226,7 @@ function Dashboard() {
                   <span
                     className={cn(
                       "text-xs font-medium ml-auto",
-                      event.amount > 0 ? "text-emerald-400" : "text-red-400",
+                      event.amount > 0 ? "text-success" : "text-destructive"
                     )}
                   >
                     {event.amount > 0 ? "+" : ""}

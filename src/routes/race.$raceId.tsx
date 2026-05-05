@@ -631,13 +631,13 @@ function Track({
               {/* Tactical Indicators */}
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-1 items-center">
                 {r.draftingHorseId && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-blue-500/80 text-[8px] font-bold text-white flex items-center gap-1 animate-pulse">
+                  <div className="px-1.5 py-0.5 rounded-full bg-white/20 text-[8px] font-bold text-white flex items-center gap-1 animate-pulse">
                     <span className="h-1 w-1 rounded-full bg-white" />
                     Drafting
                   </div>
                 )}
                 {r.velocity > 18 && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-orange-500/80 text-[8px] font-bold text-white flex items-center gap-1 animate-bounce">
+                  <div className="px-1.5 py-0.5 rounded-full bg-warning/80 text-[8px] font-bold text-white flex items-center gap-1 animate-bounce">
                     <span className="h-1 w-1 rounded-full bg-white" />
                     Flying
                   </div>
@@ -749,7 +749,7 @@ function BroadcastCommentary({ commentary }: { commentary: CommentaryLine[] }) {
           </div>
         </div>
         <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-black/40 border border-white/5">
-          <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_#ef4444]" />
+          <div className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse shadow-[0_0_8px_var(--destructive)]" />
           <span className="text-[8px] font-bold text-white/90 uppercase tracking-tighter">
             Live
           </span>
