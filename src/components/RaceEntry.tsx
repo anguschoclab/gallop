@@ -19,14 +19,16 @@ interface RaceEntryProps {
 }
 
 export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [selectedHorseId, setSelectedHorseId] = useState<string | null>(null);
   const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
+  const [wantToClaim, setWantToClaim] = useState(false);
   
   const horses = useGame((s) => s.horses.filter(h => h.owned));
   const jockeys = useGame((s) => s.jockeys ?? []);
   const enterRace = useGame((s) => s.enterRace);
   const assignJockey = useGame((s) => s.assignJockey);
+  const submitClaim = useGame((s) => s.submitClaim);
   const cash = useGame((s) => s.cash);
   const day = useGame((s) => s.day);
 
@@ -56,6 +58,16 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
       const res = enterRace(race.id, selectedHorseId);
       if (res.ok) {
         assignJockey(race.id, selectedHorseId, selectedJockeyId);
+        
+        // Submit claim if selected
+        if (wantToClaim && race.claimingPrice) {
+          const claimRes = submitClaim(race.id, selectedHorseId);
+          if (!claimRes.ok) {
+            alert(`Claim failed: ${claimRes.reason}`);
+            return;
+          }
+        }
+        
         onClose();
       } else {
         alert(res.reason);
@@ -91,7 +103,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
             Race Entry: {race.name}
           </DialogTitle>
           <div className="flex gap-1 mt-2">
-            {[1, 2, 3].map(s => (
+            {[1, 2, 3, 4].map(s => (
               <div key={s} className={`h-1 flex-1 rounded-full ${step >= s ? "bg-primary" : "bg-white/10"}`} />
             ))}
           </div>
@@ -212,6 +224,39 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               )}
             </div>
           )}
+
+          {step === 4 && selectedHorse && race.claimingPrice && (
+            <div className="space-y-6 animate-in zoom-in-95 duration-300">
+              <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground text-center">Claiming Option</h3>
+              
+              <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="claim-checkbox"
+                    checked={wantToClaim}
+                    onChange={(e) => setWantToClaim(e.target.checked)}
+                    className="w-5 h-5 rounded border-primary"
+                  />
+                  <label htmlFor="claim-checkbox" className="flex-1">
+                    <div className="font-bold">Claim this horse</div>
+                    <div className="text-sm text-muted-foreground">
+                      If you win the claim, you'll pay ${race.claimingPrice.toLocaleString()} and become the new owner.
+                      If another stable claims it, you'll lose the horse but receive the claiming price.
+                    </div>
+                  </label>
+                </div>
+                
+                {wantToClaim && (
+                  <div className="mt-3 bg-destructive/10 border border-destructive/20 rounded-lg p-3">
+                    <p className="text-xs font-bold text-destructive">
+                      Warning: If another stable claims this horse, it will be transferred to them and you'll receive the claiming price.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <DialogFooter className="flex justify-between items-center">
@@ -221,10 +266,16 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
             </Button>
           )}
           <div className="flex-1" />
-          {step < 3 ? (
+          {step < 4 ? (
             <Button 
               disabled={(step === 1 && !selectedHorseId) || (step === 2 && !selectedJockeyId)}
-              onClick={() => setStep(s => (s + 1) as any)}
+              onClick={() => {
+                if (step === 3 && race.claimingPrice) {
+                  setStep(4);
+                } else {
+                  setStep(s => (s + 1) as any);
+                }
+              }}
               className="uppercase font-black tracking-widest text-[10px]"
             >
               Next Step
@@ -233,7 +284,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
           ) : (
             <Button 
               onClick={handleConfirm}
-              disabled={cash < (selectedHorse && isHorseQualifiedForRace(selectedHorse, race) ? selectedJockey!.ridingFee : race.entryFee + selectedJockey!.ridingFee)}
+              disabled={cash < (selectedHorse && isHorseQualifiedForRace(selectedHorse, race) ? selectedJockey!.ridingFee : race.entryFee + selectedJockey!.ridingFee + (wantToClaim ? race.claimingPrice! : 0))}
               className="uppercase font-black tracking-widest text-[10px] bg-primary text-primary-foreground px-8"
             >
               Confirm Entry
