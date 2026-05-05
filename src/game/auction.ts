@@ -190,12 +190,14 @@ export function generateAuctionLots(
     const freshCount = Math.max(0, rng.int(1, 4) - inventoryLots.length);
 
     for (const horse of inventoryLots) {
+      // Pedigree-aware reserve — elite-sire/blue-hen-dam foals get higher floors.
+      const pedigreeMul = pedigreeMultiplier(horse, { horses: allHorses });
       lots.push({
         id: generateUUID(rng),
         horseId: horse.id,
         consignorStableId: stable.id,
         saleId,
-        reservePrice: Math.round(calculateNpcHorseValue(horse, stable.tier) * 0.5),
+        reservePrice: Math.round(calculateNpcHorseValue(horse, stable.tier) * pedigreeMul * 0.5),
         passed: false,
         withdrawn: false,
       });
@@ -204,12 +206,13 @@ export function generateAuctionLots(
     for (let i = 0; i < freshCount; i++) {
       const freshHorse = generateNpcHorse(stable.id, stable.tier, rng, eligibleAges[0], undefined, hemisphere);
       allHorses.push(freshHorse);
+      const pedigreeMul = pedigreeMultiplier(freshHorse, { horses: allHorses });
       lots.push({
         id: generateUUID(rng),
         horseId: freshHorse.id,
         consignorStableId: stable.id,
         saleId,
-        reservePrice: Math.round(calculateNpcHorseValue(freshHorse, stable.tier) * 0.5),
+        reservePrice: Math.round(calculateNpcHorseValue(freshHorse, stable.tier) * pedigreeMul * 0.5),
         passed: false,
         withdrawn: false,
       });

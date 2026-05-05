@@ -24,7 +24,6 @@ const navItems = [
   { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
   { to: "/auction", label: "Auction", icon: Gavel, exact: false },
   { to: "/market", label: "Market", icon: Store, exact: false },
-  { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
   { to: "/settings", label: "Settings", icon: Settings, exact: false },
 ] as const;
 
@@ -54,6 +53,13 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      {/* Skip to content link for accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md"
+      >
+        Skip to content
+      </a>
       <aside className="w-60 shrink-0 border-r bg-sidebar flex flex-col">
         <div className="p-5 border-b border-sidebar-border">
           <h1 className="text-lg font-bold tracking-tight text-sidebar-foreground">
@@ -169,7 +175,7 @@ export function AppShell() {
           </Dialog>
         </div>
       </aside>
-      <main className="flex-1 overflow-auto">
+      <main id="main-content" className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto p-6">
           <Outlet />
         </div>

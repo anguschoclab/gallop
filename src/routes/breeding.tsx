@@ -4,13 +4,15 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Info, FileText, Baby } from "lucide-react";
+import { Heart, Info, FileText, Baby, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
 import { BreedingRadarChart } from "@/components/BreedingRadarChart";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PregnancyTimeline } from "@/components/PregnancyTimeline";
+import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { getAvailableStallions } from "@/core/breeding/stallions";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
@@ -34,8 +36,15 @@ function BreedingPage() {
   const dam = adults.find((h) => h.id === damId);
   const compatibility = sire && dam ? calculateBreedingCompatibility(sire, dam) : null;
 
+  // Get available stallions for Northern hemisphere (default for player breeding)
+  const availableStallions = getAvailableStallions({ horses, day }, "Northern");
+
   const onBreed = () => {
     if (!sireId || !damId) return;
+    if (!seasonOpen) {
+      toast.error(`Breeding season closed. Reopens day ${nextSeasonStart}.`);
+      return;
+    }
     const result = breed(sireId, damId, liveFoalGuarantee);
     if (!result.ok) {
       toast.error(result.reason);
@@ -47,6 +56,10 @@ function BreedingPage() {
   const activePregnancies = pregnancies.filter((p) => !p.resolved);
   const activePregnanciesCount = activePregnancies.length;
 
+  // Determine breeding season status for Northern hemisphere (default)
+  const seasonOpen = inBreedingSeason(day, "Northern");
+  const nextSeasonStart = nextBreedingSeasonStart(day, "Northern");
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
@@ -54,6 +67,37 @@ function BreedingPage() {
           <h1 className="text-3xl font-bold tracking-tight">Breeding & Bloodstock</h1>
           <p className="text-muted-foreground">Manage your matings and track gestation for the next generation.</p>
         </div>
+        <Badge variant={seasonOpen ? "default" : "secondary"} className={seasonOpen ? "bg-success" : ""}>
+          <Calendar className="h-3 w-3 mr-1" />
+          {seasonOpen ? "Season Open" : `Opens Day ${nextSeasonStart}`}
+        </Badge>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <Link to="/stallions">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Stallions at Stud</CardTitle>
+              <p className="text-xs text-muted-foreground">View available stallions for breeding</p>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link to="/sire-watch">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Sire Watch</CardTitle>
+              <p className="text-xs text-muted-foreground">Analytics and performance metrics for stallions</p>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link to="/sire-leaderboards">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Sire Leaderboards</CardTitle>
+              <p className="text-xs text-muted-foreground">Track stallion performance across multiple dimensions</p>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
 
       <Tabs defaultValue="shed" className="space-y-4">
@@ -81,14 +125,22 @@ function BreedingPage() {
                   <label className="text-xs text-muted-foreground"><JargonTooltip term="Sire">Sire</JargonTooltip></label>
                   <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={sireId} onChange={(e) => setSireId(e.target.value)}>
                     <option value="">Select sire…</option>
-                    {adults.map((h) => <option key={h.id} value={h.id}>{h.name} (age {h.age})</option>)}
+                    {availableStallions.map((h) => (
+                      <option key={h.id} value={h.id}>
+                        {h.name} (age {h.age}){h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""} • ${h.stud?.standingFee.toLocaleString()}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground"><JargonTooltip term="Dam">Dam</JargonTooltip></label>
                   <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={damId} onChange={(e) => setDamId(e.target.value)}>
                     <option value="">Select dam…</option>
-                    {adults.filter((h) => h.id !== sireId).map((h) => <option key={h.id} value={h.id}>{h.name} (age {h.age})</option>)}
+                    {adults.filter((h) => (h.gender === "filly" || h.gender === "mare") && h.id !== sireId).map((h) => (
+                      <option key={h.id} value={h.id}>
+                        {h.name} (age {h.age}){h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -114,7 +166,18 @@ function BreedingPage() {
 
               {compatibility && (
                 <div className="space-y-4">
-                  <BreedingRadarChart factors={compatibility.factors} />
+                  <BreedingRadarChart data={[
+                    { factor: "Nicking", score: compatibility.factors.nicking.score, fullMark: 100 },
+                    { factor: "Dosage", score: compatibility.factors.dosage.score, fullMark: 100 },
+                    { factor: "Inbreeding", score: compatibility.factors.inbreeding.score, fullMark: 100 },
+                    { factor: "Parent Performance", score: compatibility.factors.parentPerformance.score, fullMark: 100 },
+                    { factor: "Conformation", score: compatibility.factors.conformation.score, fullMark: 100 },
+                    { factor: "Temperament", score: compatibility.factors.temperament.score, fullMark: 100 },
+                    { factor: "Foundation Stock", score: compatibility.factors.foundationStock.score, fullMark: 100 },
+                    { factor: "Founder Effect", score: compatibility.factors.founderEffect.score, fullMark: 100 },
+                    { factor: "Genetic", score: compatibility.factors.genetic.score, fullMark: 100 },
+                    { factor: "Blue Hen", score: compatibility.factors.blueHen.score, fullMark: 100 },
+                  ]} />
                   <Card className="bg-muted/50">
                     <CardHeader>
                       <CardTitle className="text-sm flex items-center gap-2">
@@ -220,7 +283,7 @@ function BreedingPage() {
                             <Button size="sm" variant="outline" className="h-7 text-[10px]">Sire Profile</Button>
                           </Link>
                         </div>
-                        {p.reBreedingAttempts > 0 && (
+                        {p.reBreedingAttempts && p.reBreedingAttempts > 0 && (
                           <span className="text-warning font-medium tabular-nums">Re-breeding attempt {p.reBreedingAttempts}/3</span>
                         )}
                         {p.liveFoalGuarantee && <span className="text-success font-medium">Live Foal Guarantee</span>}

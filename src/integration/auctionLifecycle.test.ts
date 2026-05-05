@@ -5,6 +5,7 @@
 
 import { describe, it, expect } from "vitest";
 import { generateAuctionLots, resolveAuctionSale } from "@/game/auction";
+import { createRng } from "@/game/rng";
 import type { GameState, Horse, Stable } from "@/game/types";
 
 describe("Auction Lifecycle Integration", () => {
@@ -42,7 +43,7 @@ describe("Auction Lifecycle Integration", () => {
       },
     ];
 
-    const result = generateAuctionLots(10, npcStables, [horse], "weanling", "Test Sale");
+    const result = generateAuctionLots(10, npcStables, [horse], "weanling", "Test Sale", createRng("test"));
     
     // Verify result structure
     expect(result).toHaveProperty("id");

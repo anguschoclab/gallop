@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Jockey } from "@/game/types";
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { User, Trophy, Calendar, DollarSign, Target } from "lucide-react";
+import { User, Trophy, Calendar, DollarSign, Target, RefreshCw } from "lucide-react";
+import { RacingSilks } from "./RacingSilks";
+import { useGame } from "@/game/store";
 
 interface JockeyCardProps {
   jockey: Jockey;
@@ -13,6 +15,8 @@ interface JockeyCardProps {
 }
 
 export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: JockeyCardProps) {
+  const rerollJockeySilk = useGame((s) => s.rerollJockeySilk);
+  
   const statsData = [
     { stat: "Pacing", value: jockey.stats.pacing },
     { stat: "Pos", value: jockey.stats.positioning },
@@ -29,11 +33,11 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
   };
 
   const archetypeColors: Record<string, string> = {
-    front_runner: "bg-orange-500/20 text-orange-500 border-orange-500/50",
-    closer: "bg-blue-500/20 text-blue-500 border-blue-500/50",
-    clinical: "bg-emerald-500/20 text-emerald-500 border-emerald-500/50",
-    finisher: "bg-red-500/20 text-red-500 border-red-500/50",
-    versatile: "bg-purple-500/20 text-purple-500 border-purple-500/50",
+    front_runner: "bg-chart-1/20 text-chart-1 border-chart-1/50",
+    closer: "bg-chart-3/20 text-chart-3 border-chart-3/50",
+    clinical: "bg-success/20 text-success border-success/50",
+    finisher: "bg-destructive/20 text-destructive border-destructive/50",
+    versatile: "bg-fame/20 text-fame border-fame/50",
   };
 
   const winRate = jockey.careerStarts > 0 ? (jockey.careerWins / jockey.careerStarts) * 100 : 0;
@@ -43,8 +47,19 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
       <CardHeader className="p-4 pb-0">
         <div className="flex justify-between items-start">
           <div className="flex gap-3">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-              <User size={20} />
+            <div className="relative">
+              <div className="h-12 w-12 rounded-md bg-white/5 flex items-center justify-center border border-white/10 overflow-hidden">
+                <RacingSilks silk={jockey.silk} size={44} />
+              </div>
+              {isRetained && (
+                <button
+                  onClick={() => rerollJockeySilk(jockey.id)}
+                  className="absolute -top-1 -right-1 bg-primary hover:bg-primary/80 text-primary-foreground rounded-full p-1 shadow-md transition-all"
+                  title="Reroll Silks"
+                >
+                  <RefreshCw size={12} />
+                </button>
+              )}
             </div>
             <div>
               <CardTitle className="text-lg font-bold">{jockey.name}</CardTitle>
@@ -73,7 +88,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-white/5 rounded-lg p-2 border border-white/5">
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
-                  <Trophy size={12} className="text-yellow-500" />
+                  <Trophy size={12} className="text-fame" />
                   <span className="text-[10px] font-black uppercase tracking-wider">Wins</span>
                 </div>
                 <div className="text-sm font-bold tabular-nums">{jockey.careerWins}</div>

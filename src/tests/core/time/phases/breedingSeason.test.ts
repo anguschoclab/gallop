@@ -4,12 +4,14 @@
 
 import { describe, it, expect } from "vitest";
 import { breedingSeasonPhase } from "@/core/time/phases/breedingSeason";
-import type { PipelineContext } from "../pipeline";
+import { createRng } from "@/game/rng";
+import { createTestHorse } from "@/tests/helpers";
+import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Horse } from "@/game/types";
 
 describe("breedingSeasonPhase", () => {
   it("should not reset bookings when not breeding season start", () => {
-    const stallion: Horse = {
+    const stallion: Horse = createTestHorse({
       id: "stallion-1",
       name: "Test Stallion",
       age: 6,
@@ -34,7 +36,7 @@ describe("breedingSeasonPhase", () => {
         lifetimeG1Foals: 0,
         retiredOnDay: 0,
       },
-    };
+    });
 
     const state: GameState = {
       day: 10,
@@ -145,6 +147,7 @@ describe("breedingSeasonPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = breedingSeasonPhase.execute(context);
@@ -289,6 +292,7 @@ describe("breedingSeasonPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = breedingSeasonPhase.execute(context);

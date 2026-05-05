@@ -1,5 +1,6 @@
 import type { Horse, Race, Jockey } from "@/game/types";
 import { buildRunner, stepRunner, getConditionsModifier, computePaceContext, type Runner } from "@/game/raceSim";
+import type { CourseSpecification } from "@/game/tracks";
 import { generateHorse } from "@/game/horseGen";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { createRng, hashStr, type Rng } from "@/game/rng";
@@ -72,6 +73,16 @@ export function buildRaceField(
     entriesData.push({ horseId: aiHorse.id, owned: false, weight });
   }
 
+  // Empty-field guard: always return at least 1 runner so downstream
+  // simulation doesn't have to handle a completely empty field.
+  if (entriesData.length === 0) {
+    const tier = getTierForRaceClass(race.raceClass);
+    const aiHorse = generateHorse({ tier: tier as never }, rng);
+    fillerHorses.push(aiHorse);
+    const weight = calculateAssignedWeight(aiHorse, race);
+    entriesData.push({ horseId: aiHorse.id, owned: false, weight });
+  }
+
   // 3. Shuffle all entries to assign unique barriers (1 to N)
   // We use the race-seeded RNG for deterministic shuffling.
   const shuffled = [...entriesData];
@@ -94,7 +105,7 @@ export function buildRaceField(
     
     if (horse) {
       const jockeyObj = entryData.jockeyId ? dependencies.jockeys.find(j => j.id === entryData.jockeyId) : undefined;
-      runners.push(buildRunner(horse, entryData.owned, race.distance, surface, conditions, barrier, jockeyObj, entryData.weight));
+      runners.push(buildRunner(horse, entryData.owned, race.distance, surface ?? null, conditions, barrier, jockeyObj, entryData.weight, race.handedness));
     }
   }
 

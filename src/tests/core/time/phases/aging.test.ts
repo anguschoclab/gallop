@@ -4,7 +4,9 @@
 
 import { describe, it, expect } from "vitest";
 import { agingPhase } from "@/core/time/phases/aging";
-import type { PipelineContext } from "../pipeline";
+import { createRng } from "@/game/rng";
+import { createTestHorse } from "@/tests/helpers";
+import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 
 describe("agingPhase", () => {
@@ -13,7 +15,7 @@ describe("agingPhase", () => {
       day: 10,
       cash: 10000,
       horses: [
-        {
+        createTestHorse({
           id: "horse-1",
           name: "Horse 1",
           age: 2,
@@ -27,7 +29,7 @@ describe("agingPhase", () => {
           owned: true,
           fame: 50,
           raceHistory: [],
-        },
+        }),
       ],
       npcStables: [],
       pregnancies: [],
@@ -49,6 +51,7 @@ describe("agingPhase", () => {
       newDay: 10,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = agingPhase.execute(context);
@@ -60,7 +63,7 @@ describe("agingPhase", () => {
       day: 1,
       cash: 10000,
       horses: [
-        {
+        createTestHorse({
           id: "horse-1",
           name: "Horse 1",
           age: 2,
@@ -74,8 +77,8 @@ describe("agingPhase", () => {
           owned: true,
           fame: 50,
           raceHistory: [],
-        },
-        {
+        }),
+        createTestHorse({
           id: "horse-2",
           name: "Horse 2",
           age: 3,
@@ -89,7 +92,7 @@ describe("agingPhase", () => {
           owned: true,
           fame: 60,
           raceHistory: [],
-        },
+        }),
       ],
       npcStables: [],
       pregnancies: [],
@@ -111,6 +114,7 @@ describe("agingPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = agingPhase.execute(context);
@@ -123,7 +127,7 @@ describe("agingPhase", () => {
       day: 213,
       cash: 10000,
       horses: [
-        {
+        createTestHorse({
           id: "horse-1",
           name: "Horse 1",
           age: 2,
@@ -137,8 +141,8 @@ describe("agingPhase", () => {
           owned: true,
           fame: 50,
           raceHistory: [],
-        },
-        {
+        }),
+        createTestHorse({
           id: "horse-2",
           name: "Horse 2",
           age: 3,
@@ -152,7 +156,7 @@ describe("agingPhase", () => {
           owned: true,
           fame: 60,
           raceHistory: [],
-        },
+        }),
       ],
       npcStables: [],
       pregnancies: [],
@@ -186,7 +190,7 @@ describe("agingPhase", () => {
       day: 1,
       cash: 10000,
       horses: [
-        {
+        createTestHorse({
           id: "horse-1",
           name: "Horse 1",
           age: 2,
@@ -200,7 +204,7 @@ describe("agingPhase", () => {
           owned: true,
           fame: 50,
           raceHistory: [],
-        },
+        }),
       ],
       npcStables: [],
       pregnancies: [],
@@ -222,6 +226,7 @@ describe("agingPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = agingPhase.execute(context);
@@ -234,7 +239,7 @@ describe("agingPhase", () => {
       day: 1,
       cash: 10000,
       horses: [
-        {
+        createTestHorse({
           id: "horse-1",
           name: "Horse 1",
           age: 2,
@@ -248,7 +253,7 @@ describe("agingPhase", () => {
           owned: true,
           fame: 50,
           raceHistory: [],
-        },
+        }),
       ],
       npcStables: [],
       pregnancies: [],
@@ -270,6 +275,7 @@ describe("agingPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = agingPhase.execute(context);
@@ -282,7 +288,7 @@ describe("agingPhase", () => {
       day: 1,
       cash: 10000,
       horses: [
-        {
+        createTestHorse({
           id: "horse-1",
           name: "Horse 1",
           age: 4,
@@ -296,7 +302,7 @@ describe("agingPhase", () => {
           owned: true,
           fame: 50,
           raceHistory: [],
-        },
+        }),
       ],
       npcStables: [],
       pregnancies: [],
@@ -318,6 +324,7 @@ describe("agingPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = agingPhase.execute(context);
@@ -350,6 +357,7 @@ describe("agingPhase", () => {
       newDay: 10,
       state,
       logs: [{ day: 9, text: "Existing log" }],
+      dailyRng: createRng("test"),
     };
 
     const result = agingPhase.execute(context);

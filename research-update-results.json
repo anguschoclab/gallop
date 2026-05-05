@@ -1,0 +1,669 @@
+{
+  "updated": [
+    {
+      "id": "2ba12f6e-dc0d-47e9-9c95-af87fae00890",
+      "name": "Fort Erie",
+      "circumference": 1609,
+      "straightLength": 350,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Fort Erie Race Track"
+    },
+    {
+      "id": "98c77f6a-f5b7-4791-aac1-afe5e5969aa3",
+      "name": "Century Mile",
+      "circumference": 1609,
+      "straightLength": 366,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Century Mile Racetrack"
+    },
+    {
+      "id": "c7447323-b2df-46be-9f99-28e56a41e584",
+      "name": "Hastings",
+      "circumference": 1609,
+      "straightLength": 366,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Hastings Racecourse"
+    },
+    {
+      "id": "21815495-916b-4f3f-a2d9-51a3f6640152",
+      "name": "Abu Dhabi",
+      "circumference": 1800,
+      "straightLength": 400,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Abu Dhabi Equestrian Club"
+    },
+    {
+      "id": "7e62ba21-8d46-41ee-95ce-3a42b0f13dcc",
+      "name": "Jebel Ali",
+      "circumference": 1609,
+      "straightLength": 350,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Jebel Ali Racecourse"
+    },
+    {
+      "id": "271e4541-1500-4872-9340-4ed791fd28b7",
+      "name": "Hipódromo de San Isidro",
+      "circumference": 2350,
+      "straightLength": 500,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Hipódromo de San Isidro"
+    },
+    {
+      "id": "1e1beb62-f786-44a9-8441-b23aa0db1eec",
+      "name": "Hipódromo Argentino de Palermo",
+      "circumference": 2000,
+      "straightLength": 450,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Hipódromo Argentino de Palermo"
+    },
+    {
+      "id": "6546c784-dfb3-4d28-999f-99dc82e90e9a",
+      "name": "Hipódromo de La Plata",
+      "circumference": 1850,
+      "straightLength": 400,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Hipódromo de La Plata"
+    },
+    {
+      "id": "ce7714db-fa90-4ded-8477-40eec676bb12",
+      "name": "Hipódromo da Gávea",
+      "circumference": 2000,
+      "straightLength": 400,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Jockey Club Brasileiro"
+    },
+    {
+      "id": "06b1dfcf-f3ae-4db3-ab25-04e29865ff8d",
+      "name": "Hipódromo Cidade Jardim",
+      "circumference": 1900,
+      "straightLength": 380,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Jockey Club de São Paulo"
+    },
+    {
+      "id": "b7fef5f2-2fe4-4814-a528-fba3d6bbee01",
+      "name": "Valparaiso Sporting Club",
+      "circumference": 1850,
+      "straightLength": 350,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Valparaíso Sporting"
+    },
+    {
+      "id": "61a34612-26fc-4336-8c71-c3239098ee26",
+      "name": "Club Hípico de Santiago",
+      "circumference": 2000,
+      "straightLength": 400,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Club Hípico de Santiago"
+    },
+    {
+      "id": "8cd8068a-d06f-4b40-a8a7-b9d6012afd0f",
+      "name": "Hipódromo Chile",
+      "circumference": 1700,
+      "straightLength": 320,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Hipódromo Chile"
+    },
+    {
+      "id": "2a3d24c8-10ff-4a5a-836f-cb4ed2d122dc",
+      "name": "Bro Park",
+      "circumference": 1900,
+      "straightLength": 350,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Bro Park"
+    },
+    {
+      "id": "60a39c4a-3c65-4ca1-98ba-7bee7a726d43",
+      "name": "Øvrevoll",
+      "circumference": 2000,
+      "straightLength": 400,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Øvrevoll Galoppbane"
+    },
+    {
+      "id": "f1bee849-78d8-4b25-9673-50ded746fa6a",
+      "name": "Klampenborg",
+      "circumference": 1800,
+      "straightLength": 350,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Klampenborg Galopbane"
+    },
+    {
+      "id": "ff31fa2d-9594-4cfd-bb3f-a4794eb3c435",
+      "name": "Jägersro",
+      "circumference": 1850,
+      "straightLength": 360,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Jägersro"
+    },
+    {
+      "id": "075b214f-ebc8-4d46-9e27-154723cedc2a",
+      "name": "Oi",
+      "circumference": 1400,
+      "straightLength": 300,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Oi Racecourse"
+    },
+    {
+      "id": "d972ca06-de48-474e-a2cf-84afd2f33863",
+      "name": "Kochi",
+      "circumference": 1200,
+      "straightLength": 250,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Kochi Racecourse"
+    },
+    {
+      "id": "9cf4d0aa-31ff-41e7-a581-54d9408a29e3",
+      "name": "Saga",
+      "circumference": 1300,
+      "straightLength": 260,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Saga Racecourse"
+    },
+    {
+      "id": "84abb980-cc9b-4a62-b825-7b40e9079e88",
+      "name": "Kanazawa",
+      "circumference": 1400,
+      "straightLength": 280,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Kanazawa Racecourse"
+    },
+    {
+      "id": "d11ab0e2-492a-4f90-9cd9-9323fece32f5",
+      "name": "Monbetsu",
+      "circumference": 1500,
+      "straightLength": 300,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Monbetsu Racecourse"
+    },
+    {
+      "id": "5d64970b-7d53-4ce7-82eb-565519c87425",
+      "name": "Nagoya",
+      "circumference": 1250,
+      "straightLength": 240,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Nagoya Racecourse"
+    },
+    {
+      "id": "e55abf82-49b9-4c1a-9d79-5387e123045a",
+      "name": "Sonoda",
+      "circumference": 1350,
+      "straightLength": 260,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Sonoda Racecourse"
+    },
+    {
+      "id": "349564e3-4eff-425e-8207-21f181ee4fc9",
+      "name": "Kitakyushu",
+      "circumference": 1400,
+      "straightLength": 280,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Kitakyushu City Racing"
+    },
+    {
+      "id": "e5575f66-1c09-4385-9b1a-83bf2d538d90",
+      "name": "Ohi",
+      "circumference": 1400,
+      "straightLength": 300,
+      "coursesCount": 2,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Ohi Racecourse"
+    },
+    {
+      "id": "838abcdc-ff27-44cf-9212-183e2edb66c0",
+      "name": "Kawasaki",
+      "circumference": 1300,
+      "straightLength": 260,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Kawasaki Racecourse"
+    },
+    {
+      "id": "dc2854c2-b22e-4fde-8052-81b63b0ceb45",
+      "name": "Funabashi",
+      "circumference": 1450,
+      "straightLength": 290,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Funabashi Racecourse"
+    },
+    {
+      "id": "8b58953a-b5ad-41ec-a36c-b0feb5625370",
+      "name": "Urawa",
+      "circumference": 1350,
+      "straightLength": 270,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Urawa Racecourse"
+    },
+    {
+      "id": "9c876506-79bd-4450-8321-a1d65a01658e",
+      "name": "Morioka",
+      "circumference": 1400,
+      "straightLength": 280,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Morioka Racecourse"
+    },
+    {
+      "id": "1c52aaa3-3172-4a8c-8b10-fba1f26591a5",
+      "name": "Capannelle",
+      "circumference": 2000,
+      "straightLength": 400,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Capannelle Racecourse"
+    },
+    {
+      "id": "24110cb2-5781-46ad-9117-129ec9c3ed95",
+      "name": "San Siro",
+      "circumference": 1800,
+      "straightLength": 350,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Ippodromo di San Siro"
+    },
+    {
+      "id": "643f2051-687d-4112-88f1-cbbe24620cda",
+      "name": "Newbury",
+      "circumference": 1900,
+      "straightLength": 380,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Newbury Racecourse"
+    },
+    {
+      "id": "02e1e70b-eb7c-49fb-98d8-6646ffc39254",
+      "name": "Sandown",
+      "circumference": 1850,
+      "straightLength": 370,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Sandown Park"
+    },
+    {
+      "id": "2dab9baa-84dd-437e-ade7-cbd8c320fbd1",
+      "name": "Haydock",
+      "circumference": 1900,
+      "straightLength": 380,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Haydock Park"
+    },
+    {
+      "id": "719cf456-9864-47b7-9c82-506eaeb254a7",
+      "name": "Vichy",
+      "circumference": 1900,
+      "straightLength": 380,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Hippodrome de Vichy"
+    },
+    {
+      "id": "f74061a1-adfd-4fb1-aded-843109961953",
+      "name": "Toulouse",
+      "circumference": 1850,
+      "straightLength": 370,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Hippodrome de la Cepière"
+    },
+    {
+      "id": "fa612877-e790-4f68-bec8-3cade3f1e670",
+      "name": "Navan",
+      "circumference": 1950,
+      "straightLength": 380,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Navan Racecourse"
+    },
+    {
+      "id": "a5b184f5-f04b-4ea7-a0a0-497349edb869",
+      "name": "Naas",
+      "circumference": 1800,
+      "straightLength": 360,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Naas Racecourse"
+    },
+    {
+      "id": "ec53a32b-9c86-4f8e-8737-28c8b8ddb1d9",
+      "name": "Cork",
+      "circumference": 1750,
+      "straightLength": 340,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Cork Racecourse"
+    },
+    {
+      "id": "94c11808-6b19-41fe-bf0b-b2f802d0f5c1",
+      "name": "Gowran Park",
+      "circumference": 1850,
+      "straightLength": 370,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Gowran Park"
+    },
+    {
+      "id": "1ac5e4ac-7ddf-4b35-a28f-a2bc7a8107fd",
+      "name": "Fairyhouse",
+      "circumference": 2000,
+      "straightLength": 400,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Fairyhouse Racecourse"
+    },
+    {
+      "id": "bbcc75ec-8d32-466c-9686-1b9deaa116f9",
+      "name": "Dundalk",
+      "circumference": 1850,
+      "straightLength": 370,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Dundalk Stadium"
+    },
+    {
+      "id": "f9e9b465-6bf9-4767-a866-588e17ecbdb0",
+      "name": "Düsseldorf",
+      "circumference": 1900,
+      "straightLength": 380,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Düsseldorf-Grafenberg Racecourse"
+    },
+    {
+      "id": "5921a518-0a80-4133-a438-86067989b1a5",
+      "name": "Cologne",
+      "circumference": 2000,
+      "straightLength": 400,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Cologne-Weidenpesch Racecourse"
+    },
+    {
+      "id": "49010038-8c9b-4d39-9b51-69461f034924",
+      "name": "Hanover",
+      "circumference": 1850,
+      "straightLength": 370,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Neue Bult"
+    },
+    {
+      "id": "4b6b97b3-ad2e-4039-8acf-fc10347e3452",
+      "name": "Krefeld",
+      "circumference": 1800,
+      "straightLength": 360,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Krefeld Racecourse"
+    },
+    {
+      "id": "31458ac8-25d6-4776-9459-3ef1ce2ce6ae",
+      "name": "Hamburg",
+      "circumference": 2100,
+      "straightLength": 420,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Horner Rennbahn"
+    },
+    {
+      "id": "cf2e39ce-7def-41c7-b187-1ca35fdd66c3",
+      "name": "Munich",
+      "circumference": 1950,
+      "straightLength": 390,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Galopprennbahn Riem"
+    },
+    {
+      "id": "d3933648-9640-437a-860b-dfe960d6a0c1",
+      "name": "Dortmund",
+      "circumference": 1800,
+      "straightLength": 360,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Dortmund Racecourse"
+    },
+    {
+      "id": "841f8821-1eb1-4c88-b3f1-a5c4374cbbbc",
+      "name": "Veliefendi",
+      "circumference": 1950,
+      "straightLength": 390,
+      "coursesCount": 2,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Veliefendi Racecourse"
+    },
+    {
+      "id": "6b308b0c-6fd9-4416-b06e-7dae37a386ad",
+      "name": "Vienna",
+      "circumference": 1850,
+      "straightLength": 370,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Galopprennbahn Freudenau"
+    },
+    {
+      "id": "96921361-a2a0-41db-abc9-3faada7f379c",
+      "name": "Klagenfurt",
+      "circumference": 1700,
+      "straightLength": 340,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Klagenfurt Racecourse"
+    },
+    {
+      "id": "a1a9dede-5d0b-4a84-86c5-0805c4b0b590",
+      "name": "Ebreichsdorf",
+      "circumference": 1600,
+      "straightLength": 320,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Austrian Racing"
+    },
+    {
+      "id": "aee7611f-716a-4a79-8142-a3732451b9ed",
+      "name": "Freudenau",
+      "circumference": 1850,
+      "straightLength": 370,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Galopprennbahn Freudenau"
+    },
+    {
+      "id": "9b129f42-f724-43d0-a837-2fb75c32d68c",
+      "name": "Ostend",
+      "circumference": 1800,
+      "straightLength": 360,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Hippodrome de Wellington"
+    },
+    {
+      "id": "782f6731-c814-4ba3-b2b3-dac462f2890a",
+      "name": "Mons",
+      "circumference": 1600,
+      "straightLength": 320,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Mons Racecourse"
+    },
+    {
+      "id": "d2e5c01a-fcd2-4500-9123-bd405ce2aaf0",
+      "name": "Prague",
+      "circumference": 1750,
+      "straightLength": 350,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Prague Racecourse"
+    },
+    {
+      "id": "6a05c40a-eb0a-471d-9b6c-d090a38b5461",
+      "name": "Most",
+      "circumference": 1650,
+      "straightLength": 330,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Czech Racing Association"
+    },
+    {
+      "id": "113463f4-3c75-4dfd-9c5b-8f40011dc83b",
+      "name": "Karlovy Vary",
+      "circumference": 1700,
+      "straightLength": 340,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Czech Racing Association"
+    },
+    {
+      "id": "ae2104a8-5dc8-4609-9ee9-50b0aa4fadd4",
+      "name": "Prague",
+      "circumference": 1750,
+      "straightLength": 350,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Prague Racecourse"
+    },
+    {
+      "id": "d0b902b9-a09f-440e-96f7-d3edbd5d7131",
+      "name": "Kincsem Park",
+      "circumference": 1900,
+      "straightLength": 380,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Kincsem Park"
+    },
+    {
+      "id": "23e80c06-3df8-4590-b813-116458225a15",
+      "name": "Madrid",
+      "circumference": 1850,
+      "straightLength": 370,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Hipódromo de la Zarzuela"
+    },
+    {
+      "id": "37510427-a77d-422f-9113-a8362ae808c4",
+      "name": "San Sebastián",
+      "circumference": 1800,
+      "straightLength": 360,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Spanish Racing"
+    },
+    {
+      "id": "8c8eb875-9aa8-4d8b-90ff-066998e57e4f",
+      "name": "Dos Hermanas",
+      "circumference": 1750,
+      "straightLength": 350,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Spanish Racing"
+    },
+    {
+      "id": "47d7eb08-478c-47ce-bca3-e1ff36affa9d",
+      "name": "Newcastle",
+      "circumference": 1750,
+      "straightLength": 340,
+      "coursesCount": 2,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Newcastle Racecourse"
+    },
+    {
+      "id": "c2dadc93-81e8-4844-8b8c-380dfafb8726",
+      "name": "Ayr",
+      "circumference": 1850,
+      "straightLength": 360,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Ayr Racecourse"
+    },
+    {
+      "id": "a5b6c7d8-e9f0-4a1b-2c3d-4e5f6a7b8c9e",
+      "name": "Kempton",
+      "circumference": 2000,
+      "straightLength": 400,
+      "coursesCount": 2,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Kempton Park"
+    },
+    {
+      "id": "1bf057f7-6597-4f69-b0f4-693a142470f7",
+      "name": "Lingfield",
+      "circumference": 1800,
+      "straightLength": 350,
+      "coursesCount": 2,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Lingfield Park"
+    },
+    {
+      "id": "9d2f4d54-a2a2-4a6d-a442-1dec22bea1c2",
+      "name": "Salisbury",
+      "circumference": 1750,
+      "straightLength": 340,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Salisbury Racecourse"
+    },
+    {
+      "id": "80f0810c-bcd8-42ee-8411-99b75f53270e",
+      "name": "Windsor",
+      "circumference": 1950,
+      "straightLength": 390,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "Wikipedia - Windsor Racecourse"
+    },
+    {
+      "id": "8b562557-55ca-4d38-b59f-72fe64ef3861",
+      "name": "Saga",
+      "circumference": 1300,
+      "straightLength": 260,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Saga Racecourse"
+    },
+    {
+      "id": "4e5db0cb-d4b2-4c6f-b675-903139668491",
+      "name": "Urawa Kinen",
+      "circumference": 1350,
+      "straightLength": 270,
+      "coursesCount": 1,
+      "sectionsCount": 4,
+      "source": "NAR - Urawa Racecourse"
+    }
+  ],
+  "notFound": [
+    {
+      "id": "99a1a2ec-3ef9-4f65-9c5f-13650eb71d8b",
+      "name": "Various",
+      "country": "Japan"
+    }
+  ],
+  "skipped": []
+}

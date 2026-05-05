@@ -9,14 +9,16 @@ import { HorseStats, SilkBadge } from "@/components/HorseBits";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
 import { ArrowLeft, Tag } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
+import { HorsePortrait } from "@/components/HorsePortrait";
 import { BeyerChart } from "@/components/BeyerChart";
 import { HorseAwardsPanel } from "@/components/awards";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
+import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
-import { getGradeColorClass } from "@/core/race/grading";
-import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
 import { TRAINING_COST } from "@/game/store";
+import { GRADED_RACES } from "@/game/gradedRaces";
+import { getCurrentYear } from "@/game/raceSchedule";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
@@ -69,9 +71,9 @@ function HorseDetail() {
         <Link to="/stable" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-3">
           <ArrowLeft className="h-4 w-4" /> Back to stable
         </Link>
-        <div className="flex items-center gap-4">
-          <SilkBadge color={horse.silk} />
-          <div>
+        <div className="flex items-start gap-6">
+          <HorsePortrait coatColor={horse.coatColor} size="lg" />
+          <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight">{horse.name}</h1>
             <p className="text-muted-foreground">Age {horse.age} · OVR {calculateOverallRating(horse)} · Potential {horse.potential}</p>
             {(() => {
@@ -119,9 +121,23 @@ function HorseDetail() {
                 Form {horse.form > 0 ? "+" : ""}{horse.form}
               </Badge>
               {isPregnant && (
-                <Badge className="bg-pink-500/15 text-pink-600 border-pink-500/30" variant="outline">
-                  🤰 Pregnant · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
+                <Badge className="bg-fame/15 text-fame border-fame/30" variant="outline">
+                  In foal · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
                 </Badge>
+              )}
+              {horse.winAndYouInQualified && horse.winAndYouInQualified.length > 0 && horse.winAndYouInQualified.filter(q => q.year === getCurrentYear(day)).length > 0 && (
+                <>
+                  {horse.winAndYouInQualified
+                    .filter(q => q.year === getCurrentYear(day))
+                    .map(q => {
+                      const gradedRace = GRADED_RACES.find(g => g.key === q.raceKey);
+                      return (
+                        <Badge key={q.raceKey} className="bg-primary text-primary-foreground">
+                          Qualified for {gradedRace?.name || q.raceKey}
+                        </Badge>
+                      );
+                    })}
+                </>
               )}
             </div>
           </CardContent>
@@ -139,7 +155,7 @@ function HorseDetail() {
               {isConsigned && consignedSale ? (
                 <>
                   <div className="flex items-center gap-2">
-                    <Badge className="bg-amber-500">Consigned</Badge>
+                    <Badge className="bg-warning">Consigned</Badge>
                     <span className="text-sm">{consignedSale.name}</span>
                   </div>
                   <Link to="/auction/$saleId" params={{ saleId: consignedSale.id }}>
@@ -277,89 +293,5 @@ function HorseDetail() {
         </CardContent>
       </Card>
     </div>
-  );
-}
-
-
-function GradedHistoryPanel({ history }: { history: { raceName: string; position: number; day: number; beyer?: number; grade?: "G1" | "G2" | "G3"; distance?: number; surface?: string; fieldSize?: number }[] }) {
-  const graded = history.filter((r) => r.grade);
-  const byGrade = {
-    G1: graded.filter((r) => r.grade === "G1"),
-    G2: graded.filter((r) => r.grade === "G2"),
-    G3: graded.filter((r) => r.grade === "G3"),
-  };
-  const wins = (rs: typeof graded) => rs.filter((r) => r.position === 1).length;
-  const places = (rs: typeof graded) => rs.filter((r) => r.position <= 3).length;
-  const bestBeyer = (rs: typeof graded) => rs.reduce((m, r) => (typeof r.beyer === "number" && r.beyer > m ? r.beyer : m), 0);
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Graded race history</CardTitle>
-        <p className="text-xs text-muted-foreground">G1/G2/G3 finishes with Beyer figures earned</p>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {graded.length > 0 && (
-          <GradedStatsChart 
-            data={[
-              { grade: "G1", runs: byGrade.G1.length, wins: wins(byGrade.G1), places: places(byGrade.G1) },
-              { grade: "G2", runs: byGrade.G2.length, wins: wins(byGrade.G2), places: places(byGrade.G2) },
-              { grade: "G3", runs: byGrade.G3.length, wins: wins(byGrade.G3), places: places(byGrade.G3) },
-            ]}
-          />
-        )}
-        
-        <div className="grid grid-cols-3 gap-2">
-          {(["G1", "G2", "G3"] as const).map((g) => (
-            <div key={g} className="rounded-md border p-3">
-              <div className="flex items-center justify-between mb-1">
-                <Badge variant="outline" className={getGradeColorClass(g)}>{g}</Badge>
-                <span className="text-xs text-muted-foreground">{byGrade[g].length} run{byGrade[g].length !== 1 ? "s" : ""}</span>
-              </div>
-              <div className="text-sm">
-                <span className="font-semibold">{wins(byGrade[g])}</span>
-                <span className="text-muted-foreground"> wins · </span>
-                <span className="font-semibold">{places(byGrade[g])}</span>
-                <span className="text-muted-foreground"> placed</span>
-              </div>
-              <div className="text-xs text-muted-foreground mt-1">
-                Best Beyer: <span className="font-medium text-foreground">{bestBeyer(byGrade[g]) || "—"}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {graded.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No graded stakes appearances yet.</p>
-        ) : (
-          <div className="space-y-1">
-            {graded.map((r, i) => (
-              <div key={i} className="flex items-center justify-between gap-2 text-sm py-2 border-b last:border-0">
-                <div className="flex items-center gap-2 min-w-0">
-                  {r.grade && <Badge variant="outline" className={getGradeColorClass(r.grade)}>{r.grade}</Badge>}
-                  <div className="min-w-0">
-                    <div className="truncate">{r.raceName}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {r.distance ? `${r.distance}m` : ""}{r.surface ? ` · ${r.surface}` : ""}{r.fieldSize ? ` · field of ${r.fieldSize}` : ""} · D{r.day}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  {typeof r.beyer === "number" && (
-                    <span className="text-xs">
-                      <span className="text-muted-foreground">Beyer </span>
-                      <span className="font-semibold">{r.beyer}</span>
-                    </span>
-                  )}
-                  <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
-                    {r.position}{getOrdinalSuffix(r.position)}
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
   );
 }

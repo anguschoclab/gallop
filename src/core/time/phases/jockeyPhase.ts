@@ -11,7 +11,8 @@ export const jockeyPhase = {
   order: 45, // After upkeep, before NPC cycle
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, dailyRng } = context;
-    let { jockeys, npcStables, log } = state;
+    let jockeys = state.jockeys ?? [];
+    let { npcStables, log } = state;
     
     // 1. Handle Contract Expirations
     jockeys = jockeys.map(j => {

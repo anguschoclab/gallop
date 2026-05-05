@@ -4,6 +4,7 @@ import type { CourseSpecification, TrackSection } from "./tracks";
 import type { Rng } from "./rng";
 import { clamp } from "./math";
 import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
+import { calculateDosageMetrics, interpretDosageIndex } from "./dosage";
 
 export type Runner = {
   horseId: string;
@@ -123,7 +124,8 @@ export function buildRunner(
   conditions: ConditionsModifier = { speedMul: 1, staminaDrainMul: 1 },
   barrier: number = 1,
   jockey?: Jockey,
-  weight?: number
+  weight?: number,
+  handedness?: "left" | "right" | "balanced"
 ): Runner {
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
@@ -153,10 +155,37 @@ export function buildRunner(
   const lineBias = h.bloodline ? REGIONAL_LINE_BIAS[h.bloodline as Bloodline] : undefined;
   const lineSurfaceMul = lineBias && (!lineBias.surface || lineBias.surface === surface) ? 1 + lineBias.boost : 1;
 
+  // --- DNA: track handedness preference ---
+  // Horses with trackPreference matching the race's handedness get a small boost.
+  // Balanced horses are neutral, left-biased horses gain on left-turn tracks, etc.
+  const handednessMod = handedness && h.trackPreference
+    ? (handedness === "balanced" || h.trackPreference === "balanced" ? 1.0
+       : handedness === h.trackPreference ? 1.02
+       : 0.98)
+    : 1.0;
+
+  // --- DNA: Dosage Index distance preference ---
+  // Pedigree-based distance preference complements genetic distanceAptitude.
+  // High DI = speed preference (short distances), Low DI = stamina preference (long distances)
+  const dosageMetrics = calculateDosageMetrics(h.sireName);
+  const dosageDI = dosageMetrics.dosageIndex;
+  let dosageDistanceMod = 1.0;
+  if (isFinite(dosageDI)) {
+    // Map DI to preferred distance range and calculate modifier
+    const preferredDistance = dosageDI >= 4.00 ? 1200 
+                          : dosageDI >= 3.00 ? 1400
+                          : dosageDI >= 2.40 ? 1600
+                          : dosageDI >= 1.50 ? 2000
+                          : 2400;
+    const dosageDistDiff = Math.abs(raceDistance - preferredDistance);
+    // Small modifier (up to 3%) based on pedigree distance fit
+    dosageDistanceMod = 1 - Math.min(0.03, dosageDistDiff / 10000);
+  }
+
   // base m/s ~ 14-20 for 30..95 speed
   const rawTopSpeed = (12 + (h.stats.speed / 100) * 10)
     * formEnergy * conditions.speedMul * distanceMod * surfaceMod
-    * fiberMods.speedMul * mudMod * lineSurfaceMul;
+    * fiberMods.speedMul * mudMod * lineSurfaceMul * handednessMod * dosageDistanceMod;
   const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
   const accel = 1.5 + (h.stats.acceleration / 100) * 3.5;
   // Stride length: long-stride horses gain on straights, lose on turns.
@@ -481,6 +510,28 @@ export function stepRunner(
     if (pace && pace.pacePressure > 0 && r.runningStyle === "E") {
       effectiveStamina = clamp(effectiveStamina - 0.08 * pace.pacePressure, 0.2, 1);
     }
+    // EIPH ("bleeder"): chance per race that a high-risk horse hemorrhages
+    // and fades hard in the late stretch. Risk applies once per race (rolled
+    // off horse id × race tick threshold to avoid retriggering every tick).
+    // Long races worsen the effect since the horse runs at top sustained
+    // effort longer.
+    const bleederRisk = r.horse.bleederRisk ?? 0;
+    if (bleederRisk > 0 && distance >= 1600 && progress > 0.7) {
+      // Treat the seeded RNG as an event roll; the runner already has a
+      // deterministic id so use a subtle floor to avoid double-firing.
+      // Cheap heuristic: roll once when progress crosses 0.7.
+      if (rng.next() < bleederRisk * dt * 0.5) {
+        effectiveStamina = clamp(effectiveStamina - 0.20, 0.1, 1);
+      }
+    }
+    // Roarer (laryngeal hemiplegia / wind issue): chance of choke at peak
+    // velocity. Applies whenever the runner is at >95% of their topSpeed.
+    const roarerRisk = r.horse.roarerRisk ?? 0;
+    if (roarerRisk > 0 && r.velocity > r.topSpeed * 0.95) {
+      if (rng.next() < roarerRisk * dt * 0.3) {
+        effectiveStamina = clamp(effectiveStamina - 0.15, 0.1, 1);
+      }
+    }
     staminaMul = 1 - (1 - effectiveStamina) * fade;
   }
   
@@ -497,10 +548,10 @@ export function stepRunner(
     }
   } else if (straight > 500) {
     // Long straight: favors closers with sustained stamina.
-    if ((r.runningStyle === "S" || r.runningStyle === "C") && progress > 0.7) {
+    if ((r.runningStyle === "S" || r.runningStyle === "P") && progress > 0.7) {
       const isCloserJockey = r.jockey?.archetype === "closer";
       const isLongStraightPro = r.jockey?.traits.includes("long_straight_pro");
-      const jockeyBonus = (r.jockey?.stats.patience ?? 50) / 1000 + (isCloserJockey ? 0.02 : 0);
+      const jockeyBonus = (r.jockey?.stats.pacing ?? 50) / 1000 + (isCloserJockey ? 0.02 : 0);
       const traitBonus = (progress > 0.85 && isLongStraightPro) ? (r.jockey?.stats.vigor ?? 50) / 400 : 0;
       styleMul *= (1.02 + jockeyBonus + traitBonus);
     }
@@ -539,9 +590,9 @@ export function stepRunner(
   
   // --- 3. Jockey Bonuses ---
   let finalDs = ds;
-  if (r.jockeyStats) {
-    const stats = r.jockeyStats;
-    const arch = r.jockeyArchetype;
+  if (r.jockey) {
+    const stats = r.jockey.stats;
+    const arch = r.jockey.archetype;
     
     // GateSkill: Accelerate faster at the start (first 5% of race)
     if (progress < 0.05) {

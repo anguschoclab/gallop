@@ -6,6 +6,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
 import { JargonTooltip } from "./ui/JargonTooltip";
 import { useGame } from "@/game/store";
+import { HorsePortraitBadge, HorsePortrait } from "./HorsePortrait";
 import { Trophy, Zap, TrendingUp, Activity, Dna, Calendar, User, Building2, Eye, Ruler, Weight, HeartPulse } from "lucide-react";
 
 interface HorseCardProps {
@@ -64,12 +65,7 @@ export function HorseCard({
       <Card className={`hover:shadow-md transition-shadow cursor-pointer ${className}`} onClick={onClick}>
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
-            <div 
-              className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow"
-              style={{ backgroundColor: horse.silk }}
-            >
-              {horse.name.charAt(0)}
-            </div>
+            <HorsePortraitBadge coatColor={horse.coatColor} size="sm" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className={`${genderColor} text-sm`}>{genderIcon}</span>
@@ -108,18 +104,13 @@ export function HorseCard({
     // Scouting view - shows fog of war mechanics
     const knownStats = displayStats?.stats || {};
     const hasAllStats = Object.keys(knownStats).length === 4;
-    
+
     return (
       <Card className={`${className}`}>
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div 
-                className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold border-2 border-white shadow"
-                style={{ backgroundColor: horse.silk }}
-              >
-                {horse.name.charAt(0)}
-              </div>
+            <div className="flex items-center gap-3">
+              <HorsePortrait coatColor={horse.coatColor} size="md" />
               <div>
                 <div className="flex items-center gap-2">
                   <span className={`${genderColor} text-lg`}>{genderIcon}</span>
@@ -186,12 +177,7 @@ export function HorseCard({
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div 
-              className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold border-2 border-white shadow"
-              style={{ backgroundColor: horse.silk }}
-            >
-              {horse.name.charAt(0)}
-            </div>
+            <HorsePortrait coatColor={horse.coatColor} size="md" />
             <div>
               <div className="flex items-center gap-2">
                 <span className={`${genderColor} text-lg`}>{genderIcon}</span>
@@ -246,7 +232,7 @@ export function HorseCard({
             <span className="font-medium">{horse.weight} kg</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full border border-border" style={{ backgroundColor: getCoatHex(horse.coatColor) }} />
+            <div className="w-3 h-3 rounded-full border border-border" style={{ backgroundColor: getCoatColor(horse.coatColor) }} />
             <span className="capitalize">{horse.coatColor?.replace("-", " ")}</span>
           </div>
           <div className="flex items-center gap-1.5 ml-auto">
@@ -334,19 +320,25 @@ function StatBar({ label, value }: { label: string; value: number }) {
   );
 }
 
-function getCoatHex(color?: string): string {
+function getCoatColor(color?: string): string {
+  // Use CSS custom properties defined in styles.css instead of hardcoded hex codes
   const map: Record<string, string> = {
-    "bay": "#4b2c20",
-    "dark-bay": "#2a1810",
-    "black": "#1a1a1a",
-    "chestnut": "#8b4513",
-    "gray": "#a0a0a0",
-    "palomino": "#daa520",
-    "buckskin": "#c2b280",
-    "roan": "#b08d8d",
-    "white": "#f5f5f5"
+    "bay": "var(--coat-bay)",
+    "dark-bay": "var(--coat-dark-bay)",
+    "black": "var(--coat-black)",
+    "chestnut": "var(--coat-chestnut)",
+    "gray": "var(--coat-gray)",
+    "palomino": "var(--coat-palomino)",
+    "buckskin": "var(--coat-buckskin)",
+    "roan": "var(--coat-roan)",
+    "white": "var(--coat-white)",
+    "seal-brown": "var(--coat-seal-brown)",
+    "liver-chestnut": "var(--coat-liver-chestnut)",
+    "dun": "var(--coat-dun)",
+    "grulla": "var(--coat-grulla)",
+    "champagne": "var(--coat-champagne)"
   };
-  return map[color || "bay"] || "#4b2c20";
+  return map[color || "bay"] || "var(--coat-bay)";
 }
 
 function getInjuryLabel(proneness?: number): string {
@@ -359,9 +351,9 @@ function getInjuryLabel(proneness?: number): string {
 
 function getInjuryColor(proneness?: number): string {
   if (!proneness) return "text-muted-foreground";
-  if (proneness < 0.06) return "text-green-500 font-medium";
-  if (proneness < 0.09) return "text-yellow-500 font-medium";
-  return "text-red-500 font-bold";
+  if (proneness < 0.06) return "text-success font-medium";
+  if (proneness < 0.09) return "text-warning font-medium";
+  return "text-destructive font-bold";
 }
 
 export default HorseCard;

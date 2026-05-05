@@ -73,9 +73,9 @@ export function PregnancyTimeline({
                       <div
                         className={`w-2 h-2 rounded-full ${
                           isConceived
-                            ? "bg-green-500 ring-2 ring-green-500/50"
+                            ? "bg-success ring-2 ring-success/50"
                             : isDue
-                            ? "bg-red-500 ring-2 ring-red-500/50"
+                            ? "bg-destructive ring-2 ring-destructive/50"
                             : isCurrent
                             ? "bg-white ring-2 ring-white/50"
                             : isPast

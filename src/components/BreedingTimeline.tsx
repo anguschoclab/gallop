@@ -105,10 +105,10 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
                   <Baby className="h-3 w-3 text-primary" />
                 )}
                 {event.type === "conception" && (
-                  <Heart className="h-3 w-3 text-pink-500" />
+                  <Heart className="h-3 w-3 text-fame" />
                 )}
                 {event.type === "foal_birth" && (
-                  <Calendar className="h-3 w-3 text-green-500" />
+                  <Calendar className="h-3 w-3 text-success" />
                 )}
               </div>
 

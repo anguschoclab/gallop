@@ -4,7 +4,9 @@
 
 import { describe, it, expect } from "vitest";
 import { upkeepPhase } from "@/core/time/phases/upkeep";
-import type { PipelineContext } from "../pipeline";
+import { createRng } from "@/game/rng";
+import { createTestHorse } from "@/tests/helpers";
+import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Stable } from "@/game/types";
 
 describe("upkeepPhase", () => {
@@ -13,7 +15,7 @@ describe("upkeepPhase", () => {
       day: 1,
       cash: 10000,
       horses: [
-        {
+        createTestHorse({
           id: "horse-1",
           name: "Horse 1",
           age: 3,
@@ -27,8 +29,8 @@ describe("upkeepPhase", () => {
           owned: true,
           fame: 50,
           raceHistory: [],
-        },
-        {
+        }),
+        createTestHorse({
           id: "horse-2",
           name: "Horse 2",
           age: 4,
@@ -42,7 +44,7 @@ describe("upkeepPhase", () => {
           owned: true,
           fame: 60,
           raceHistory: [],
-        },
+        }),
       ],
       npcStables: [],
       pregnancies: [],
@@ -64,6 +66,7 @@ describe("upkeepPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = upkeepPhase.execute(context);
@@ -126,6 +129,7 @@ describe("upkeepPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = upkeepPhase.execute(context);
@@ -217,6 +221,7 @@ describe("upkeepPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = upkeepPhase.execute(context);
@@ -266,6 +271,7 @@ describe("upkeepPhase", () => {
       newDay: 1,
       state,
       logs: [],
+      dailyRng: createRng("test"),
     };
 
     const result = upkeepPhase.execute(context);

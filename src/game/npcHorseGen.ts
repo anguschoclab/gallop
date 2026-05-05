@@ -10,8 +10,9 @@ import {
   randomHorseName,
 } from "@/core/common/random";
 import { shouldRetireAtStartup, initialStandingFee, defaultStudParams } from "@/core/breeding/stallions";
-import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
+import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES, resolveBruceLoweFamily } from "@/core/breeding/bruceLowe";
 import { rollGender } from "@/core/horse/gender";
+import { resolveBloodline } from "@/core/breeding/populationGenetics";
 
 /**
  * Map stable tier to DNA generation tier.
@@ -102,6 +103,14 @@ export function generateNpcHorse(
 
   // Sire family potential boost for males
   let potentialBoost = 0;
+
+  // Resolve bloodline from procedural sire/dam names
+  const proceduralSireName = randomHorseName(rng);
+  const proceduralDamName = randomHorseName(rng);
+  const bloodline = resolveBloodline(
+    { name: proceduralSireName, sireName: proceduralSireName } as Horse,
+    { horses: [] }
+  );
   if (SIRE_FAMILIES.has(bruceLoweFamily) && (gender === "colt" || gender === "horse")) {
     potentialBoost = 2;
   }
@@ -112,10 +121,11 @@ export function generateNpcHorse(
   return {
     ...horse,
     stableId,
-    sireName: randomHorseName(rng),
-    damName: randomHorseName(rng),
+    sireName: proceduralSireName,
+    damName: proceduralDamName,
     fame: calculateStartingFame(tier, age, rng),
     bruceLoweFamily,
+    bloodline,
     potential: Math.min(100, horse.potential + potentialBoost),
     // NPC horses are never owned by player
     owned: false,

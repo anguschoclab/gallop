@@ -14,6 +14,7 @@ import {
 import type { Horse, Race, Pregnancy } from "./types";
 import { generateHorse } from "./horseGen";
 import { generateRace } from "./horseGen";
+import { createRng } from "./rng";
 
 describe("refreshMarket", () => {
   it("should keep market at 5 horses", () => {
@@ -22,7 +23,7 @@ describe("refreshMarket", () => {
       generateHorse({ tier: "budget", owned: false }),
       generateHorse({ tier: "budget", owned: false }),
     ];
-    const refreshed = refreshMarket(market);
+    const refreshed = refreshMarket(market, createRng("test"));
     expect(refreshed.length).toBe(5);
   });
 
@@ -34,7 +35,7 @@ describe("refreshMarket", () => {
       generateHorse({ tier: "budget", owned: false }),
     ];
     const initialIds = market.map((h) => h.id);
-    const refreshed = refreshMarket(market);
+    const refreshed = refreshMarket(market, createRng("test"));
     const refreshedIds = refreshed.map((h) => h.id);
     // Should keep last 2 and add 3 new ones
     expect(refreshedIds).toContain(initialIds[2]);
@@ -47,7 +48,7 @@ describe("refreshMarket", () => {
       generateHorse({ tier: "budget", owned: false }),
       generateHorse({ tier: "budget", owned: false }),
     ];
-    const refreshed = refreshMarket(market);
+    const refreshed = refreshMarket(market, createRng("test"));
     expect(refreshed.length).toBe(5);
   });
 });
@@ -56,7 +57,7 @@ describe("generateUpcomingRaces", () => {
   it("should generate races for upcoming days", () => {
     const currentRaces: Race[] = [];
     const newDay = 1;
-    const races = generateUpcomingRaces(currentRaces, newDay);
+    const races = generateUpcomingRaces(currentRaces, newDay, createRng("test"));
     expect(races.length).toBeGreaterThan(0);
     expect(races.every((r) => r.day >= newDay)).toBe(true);
   });
@@ -65,7 +66,7 @@ describe("generateUpcomingRaces", () => {
     const existingRace = generateRace(1);
     const currentRaces = [existingRace];
     const newDay = 2;
-    const races = generateUpcomingRaces(currentRaces, newDay);
+    const races = generateUpcomingRaces(currentRaces, newDay, createRng("test"));
     expect(races).toContain(existingRace);
   });
 });

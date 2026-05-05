@@ -1,4 +1,7 @@
 import type { PipelineContext } from "../pipeline";
+import type { Horse, Pregnancy } from "@/game/types";
+import { resolveFoaling } from "@/game/foalGen";
+import { getFoalsBy } from "@/core/breeding/lineage";
 import { resolvePregnancies } from "@/game/store";
 
 /**

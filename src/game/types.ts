@@ -1,4 +1,8 @@
 import type { RegionalAward, AwardRegion } from "./awards/types";
+import type { CourseSpecification } from "./tracks";
+import type { Rng } from "./rng";
+
+export type { CourseSpecification, Rng };
 
 export type HorseStats = {
   speed: number;
@@ -136,6 +140,16 @@ export type JockeyTrait =
   | "long_straight_pro" // Bonus surge on 500m+ straights
   | "gate_master";      // Higher chance of clean break
 
+// Racing silk colors and pattern for visual identification
+export type JockeySilkPattern = "solid" | "stripes" | "halves" | "quarters" | "chevron" | "diamond" | "star" | "sash" | "hoops";
+
+export type JockeySilk = {
+  pattern: JockeySilkPattern;
+  primary: string;   // hex color (jacket main)
+  secondary: string; // hex color (pattern accent)
+  cap: string;       // hex color (cap)
+};
+
 export type Jockey = {
   id: string;
   name: string;
@@ -143,6 +157,7 @@ export type Jockey = {
   archetype: JockeyArchetype;
   stats: JockeyStats;
   traits: JockeyTrait[];
+  silk: JockeySilk;       // Racing silks (jacket colors and pattern)
   stableId?: string;      // If retained by a stable
   contractUntil?: number; // Day the contract ends
   careerStarts: number;
@@ -180,7 +195,7 @@ export interface GeneticMarkers {
   geneticDiversity?: number; // 0-1
   // Lethal recessive carrier flags. Both parents carrier → 25% homozygous foal
   // (auto-stillborn at the day-60 pregnancy checkpoint).
-  lethalCarriers?: { csnb?: boolean; hypp?: boolean; olws?: boolean };
+  lethalCarriers?: { csnb?: boolean; hypp?: boolean; olws?: boolean; ffs1?: boolean };
 }
 
 // Pedigree snapshot recorded on each horse at birth (or at horse generation
@@ -277,6 +292,7 @@ export type Horse = {
   lifetimeEarnings: number;
   careerStarts: number;
   careerWins: number;
+  winAndYouInQualified?: { raceKey: string; year: number }[]; // Array of {raceKey, year} for Win and You're In qualifications
   // --- Resolved DNA traits (Tier 1+2) ---
   heartScore: number;        // 0.85-1.15 multiplier on late-race stamina
   fiberBias: "sprinter" | "balanced" | "stayer";
@@ -424,7 +440,7 @@ export type Race = {
   purse: number;
   minStat?: number;
   fieldSize: number;
-  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean; barrier?: number; jockeyId?: string; weight?: number }[];
+  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean; barrier?: number; jockeyId?: string; weight?: number; withdrawnFromClaiming?: boolean }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
   graded?: {
@@ -433,6 +449,7 @@ export type Race = {
     track: string; // Track name for display
     trackId: string; // Track UUID reference
     surface: "Turf" | "Dirt" | "Synthetic";
+    winAndYouInTarget?: string; // Target race for automatic qualification (e.g., "bc-classic")
   };
   // New fields for expanded race types
   claimingPrice?: ClaimingPrice; // For claiming and optional claiming races
@@ -442,6 +459,7 @@ export type Race = {
   isHandicap?: boolean; // Flag for handicap races
   trackId?: string; // Track UUID reference for all races (not just graded)
   surface?: "Turf" | "Dirt" | "Synthetic"; // Surface for all races
+  handedness?: "left" | "right" | "balanced"; // Track handedness for genetic trackPreference integration
   restrictions?: {
     minAge?: number;
     maxAge?: number;
@@ -523,7 +541,7 @@ export type GameState = {
   pendingPlayerRaceId?: string;
   // Auction system
   auctions?: AuctionSale[];
-  jockeys: Jockey[];
+  jockeys?: Jockey[];
   // Industry mean earnings (rolling avg of foal-aged horse career earnings)
   // recomputed once per season. Used for AEI (Average Earnings Index) on the
   // Sire Watch route. 0 until first recompute.
@@ -538,4 +556,69 @@ export type GameState = {
     awards: RegionalAward[];
   }[];
   currentCeremonyIndex?: number;
+  // Sire leaderboards system
+  sireLeaderboards?: Record<string, import("@/core/breeding/leaderboardTypes").Leaderboard>;
+  sireTrendHistory?: import("@/core/breeding/leaderboardTypes").SireTrendData[];
+  leaderboardsUpdatedDay?: number;
+  // Campaign planner system
+  campaigns?: HorseCampaign[];
+  triplecrownHistory?: TripleCrownProgress[];
+  // Intent/impact resolver system
+  pendingIntents?: import("@/core/resolver/intents").AnyIntent[];
+};
+
+// ============= Campaign Planner Types =============
+
+export type CampaignGoalType =
+  | "chase_g1" | "chase_g2" | "chase_g3"
+  | "maximize_earnings" | "develop_maiden" | "free_run";
+
+export type CampaignRaceSlot = {
+  dayTarget: number;
+  dayWindow: number;
+  raceId?: string;
+  raceKey?: string;
+  role: "target" | "prep" | "comeback";
+  constraintDistance?: number;
+  constraintSurface?: "Turf" | "Dirt" | "Synthetic";
+  constraintGradeMin?: "G1" | "G2" | "G3" | "Stakes" | "Allowance";
+  notes?: string;
+  status: "planned" | "entered" | "completed" | "skipped" | "cancelled";
+};
+
+export type CampaignFlag = {
+  day: number;
+  type: "poor_form" | "low_energy" | "health_issue" | "class_mismatch" | "upgrade_available" | "trait_confirmed";
+  message: string;
+  dismissed: boolean;
+  suggestion?: Partial<CampaignRaceSlot>;
+};
+
+export type ConfirmedAptitudes = {
+  surfaceStarts: Record<"Turf" | "Dirt" | "Synthetic", number>;
+  distanceBandStarts: Record<"sprint" | "mile" | "intermediate" | "staying", number>;
+  surfaceConfirmed?: "Turf" | "Dirt" | "Synthetic";
+  distanceBandConfirmed?: "sprint" | "mile" | "intermediate" | "staying";
+};
+
+export type HorseCampaign = {
+  horseId: string;
+  goalType: CampaignGoalType;
+  targetRaceKey?: string;
+  slots: CampaignRaceSlot[];
+  flags: CampaignFlag[];
+  restWindowStart?: number;
+  restWindowEnd?: number;
+  autoManaged: boolean;
+  confirmedAptitudes: ConfirmedAptitudes;
+  createdDay: number;
+  lastReviewedDay: number;
+};
+
+export type TripleCrownProgress = {
+  horseId: string;
+  triplecrownKey: string;
+  year: number;
+  legs: { raceKey: string; position: number; day: number }[];
+  won: boolean;
 };

@@ -12,12 +12,13 @@ import {
   computeHeterozygosity,
 } from "./geneticsEngine";
 import { generateUUID } from "./uuid";
-import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES } from "@/core/breeding/bruceLowe";
+import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES, resolveBruceLoweFamily } from "@/core/breeding/bruceLowe";
 import { rollGender, geldHorse } from "@/core/horse/gender";
 import {
   randomHorseName,
   randomSilk,
 } from "@/core/common/random";
+import { resolveBloodline } from "@/core/breeding/populationGenetics";
 // Re-exports for backward compat — callers should migrate to the canonical locations
 export { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
 export { generateRace, makeGradedRace } from "./raceGeneration/raceGen";
@@ -135,6 +136,12 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
   const bruceLoweFamily = rollProceduralFamily(rng);
   // Sire families (3, 8, 11, 12, 14) lift potential slightly for males.
   let potentialBoost = 0;
+
+  // Resolve bloodline from procedural sire name (for NPC horses)
+  const bloodline = resolveBloodline(
+    { name: randomHorseName(rng), sireName: randomHorseName(rng) } as Horse,
+    { horses: [] }
+  );
   
   const age = opts.age ?? (rng.next() < 0.2 ? rng.range(2, 3) : rng.range(2, 6));
   const gender = opts.gender ?? rollGender(age, rng);
@@ -172,6 +179,7 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     runningStyle,
     fame: 0,
     bruceLoweFamily,
+    bloodline,
     distanceAptitude,
     surfaceAptitude,
     climbingAptitude,

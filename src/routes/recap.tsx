@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { BeyerBadge } from "@/components/BeyerBadge";
 import { calculateBeyerForResult } from "@/game/beyer";
 import { getGradeColorClass } from "@/core/race/grading";
+import { calculateClassBonus } from "@/core/common/classBonus";
 import { Trophy, Medal, Award } from "lucide-react";
 
 export const Route = createFileRoute("/recap")({
@@ -53,7 +54,7 @@ function RecapPage() {
               .map((result) => {
                 const horse = horses.find((h) => h.id === result.horseId);
                 if (!horse) return null;
-                const classBonus = race.graded?.grade ? (race.graded.grade === "G1" ? 8 : race.graded.grade === "G2" ? 5 : 3) : 0;
+                const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
                 const beyer = calculateBeyerForResult(race.distance, result.time, classBonus);
                 return { horse, result, beyer };
               })
@@ -84,11 +85,11 @@ function RecapPage() {
                   {topFinishers.map((finisher, index) => {
                     const positionIcon =
                       index === 0 ? (
-                        <Trophy className="h-4 w-4 text-yellow-500" />
+                        <Trophy className="h-4 w-4 text-fame" />
                       ) : index === 1 ? (
-                        <Medal className="h-4 w-4 text-slate-400" />
+                        <Medal className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <Award className="h-4 w-4 text-amber-600" />
+                        <Award className="h-4 w-4 text-warning" />
                       );
 
                     return (

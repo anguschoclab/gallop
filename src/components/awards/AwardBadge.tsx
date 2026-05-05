@@ -165,7 +165,7 @@ export function AwardListItem({ award, showIcon = true, onClick, className }: Aw
         </div>
       </div>
       {award.isHistoric && (
-        <span className="text-xs bg-yellow-500/20 text-yellow-700 px-1.5 py-0.5 rounded">
+        <span className="text-xs bg-fame/20 text-fame px-1.5 py-0.5 rounded">
           Historic
         </span>
       )}

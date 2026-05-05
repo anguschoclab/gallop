@@ -347,6 +347,150 @@ export const TRACK_SCHEDULES: TrackSchedule[] = [
     meetEnd: 280, // Early October
     regionalSystem: "europe",
   },
+
+  // USA - North American pattern
+  {
+    trackId: "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d", // Churchill Downs
+    raceDays: [4, 5, 6, 0], // Thu, Fri, Sat, Sun
+    racesPerDay: [9, 11],
+    meetStart: 90, // Late March (Spring Meet)
+    meetEnd: 180, // Late June
+    regionalSystem: "north_america",
+  },
+  {
+    trackId: "c2b3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e", // Pimlico
+    raceDays: [4, 5, 6, 0], // Thu-Sun
+    racesPerDay: [8, 10],
+    meetStart: 110, // Mid-April (Preakness meet)
+    meetEnd: 165, // Mid-June
+    regionalSystem: "north_america",
+  },
+  {
+    trackId: "d3c4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f", // Belmont Park
+    raceDays: [4, 5, 6, 0], // Thu-Sun
+    racesPerDay: [9, 11],
+    meetStart: 120, // Late April
+    meetEnd: 210, // Late July
+    regionalSystem: "north_america",
+  },
+  {
+    trackId: "e4d5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a", // Saratoga
+    raceDays: [3, 4, 5, 6, 0], // Wed-Sun
+    racesPerDay: [9, 11],
+    meetStart: 200, // Late July
+    meetEnd: 265, // Late September
+    regionalSystem: "north_america",
+  },
+  {
+    trackId: "f5e6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b", // Santa Anita
+    raceDays: [4, 5, 6, 0], // Thu-Sun
+    racesPerDay: [9, 11],
+    meetStart: 1, // January
+    meetEnd: 130, // Mid-May
+    regionalSystem: "north_america",
+  },
+  {
+    trackId: "a6f7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c", // Keeneland
+    raceDays: [4, 5, 6, 0], // Thu-Sun
+    racesPerDay: [8, 10],
+    meetStart: 95, // First week of April
+    meetEnd: 130, // End of April (Spring meet)
+    regionalSystem: "north_america",
+  },
+  {
+    trackId: "b7a8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d", // Del Mar
+    raceDays: [3, 4, 5, 6], // Wed-Sat
+    racesPerDay: [8, 10],
+    meetStart: 200, // Mid-July
+    meetEnd: 270, // Late September
+    regionalSystem: "north_america",
+  },
+  {
+    trackId: "c8b9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e", // Aqueduct
+    raceDays: [3, 5, 6, 0], // Wed, Fri-Sun
+    racesPerDay: [8, 10],
+    meetStart: 300, // Late October
+    meetEnd: 90, // Late March (crosses year)
+    regionalSystem: "north_america",
+  },
+  {
+    trackId: "d9c0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f", // Oaklawn Park
+    raceDays: [4, 5, 6, 0], // Thu-Sun
+    racesPerDay: [8, 10],
+    meetStart: 15, // January 15
+    meetEnd: 120, // Late April
+    regionalSystem: "north_america",
+  },
+  {
+    trackId: "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a", // Gulfstream Park
+    raceDays: [3, 4, 5, 6, 0], // Wed-Sun
+    racesPerDay: [9, 11],
+    meetStart: 1, // January
+    meetEnd: 130, // Mid-May
+    regionalSystem: "north_america",
+  },
+
+  // Australia - Australia pattern (weekend racing)
+  {
+    trackId: "a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6d", // Flemington
+    raceDays: [5, 6], // Sat, Sun
+    racesPerDay: [8, 10],
+    meetStart: 1, // Year-round
+    meetEnd: 365,
+    regionalSystem: "australia",
+  },
+  {
+    trackId: "b2c3d4e5-f6a7-4b8c-9d0e-2f3a4b5c6d7e", // Randwick
+    raceDays: [5, 6], // Sat, Sun
+    racesPerDay: [8, 10],
+    meetStart: 1, // Year-round
+    meetEnd: 365,
+    regionalSystem: "australia",
+  },
+  {
+    trackId: "c3d4e5f6-a7b8-4c9d-0e1f-3a4b5c6d7e8f", // Caulfield
+    raceDays: [5, 6], // Sat, Sun
+    racesPerDay: [8, 10],
+    meetStart: 1, // Year-round
+    meetEnd: 365,
+    regionalSystem: "australia",
+  },
+  {
+    trackId: "d4e5f6a7-b8c9-4d0e-1f2a-4b5c6d7e8f9a", // Moonee Valley
+    raceDays: [5, 6], // Sat, Sun
+    racesPerDay: [7, 9],
+    meetStart: 1, // Year-round
+    meetEnd: 365,
+    regionalSystem: "australia",
+  },
+  {
+    trackId: "e5f6a7b8-c9d0-4e1f-2a3b-5c6d7e8f9a0b", // Rosehill
+    raceDays: [5, 6], // Sat, Sun
+    racesPerDay: [8, 10],
+    meetStart: 1, // Year-round
+    meetEnd: 365,
+    regionalSystem: "australia",
+  },
+
+  // Saudi Arabia - Asia pattern
+  {
+    trackId: "f6a7b8c9-d0e1-4f2a-3b4c-6d7e8f9a0b1c", // King Abdulaziz Racecourse
+    raceDays: [4, 5], // Thu, Fri
+    racesPerDay: [7, 9],
+    meetStart: 1, // January
+    meetEnd: 90, // Late March
+    regionalSystem: "asia",
+  },
+
+  // Singapore - Asia pattern
+  {
+    trackId: "a7b8c9d0-e1f2-4a3b-4c5d-7e8f9a0b1c2d", // Kranji
+    raceDays: [5, 6], // Fri, Sat
+    racesPerDay: [8, 10],
+    meetStart: 1, // Year-round
+    meetEnd: 365,
+    regionalSystem: "asia",
+  },
 ];
 
 // Re-export for backward compatibility

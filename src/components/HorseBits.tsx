@@ -7,7 +7,7 @@ export function StatBar({ label, value }: { label: string; value: number }) {
     <div>
       <div className="flex justify-between text-xs mb-1">
         <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium tabular-nums">{value}</span>
+        <span className="font-medium tabular-nums">{Math.round(value)}</span>
       </div>
       <Progress value={value} className="h-1.5" />
     </div>

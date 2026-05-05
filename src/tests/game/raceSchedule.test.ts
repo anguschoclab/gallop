@@ -12,6 +12,7 @@ import {
   generateTrackSchedule,
   generateUpcomingRaces,
 } from "@/game/raceSchedule";
+import { createRng } from "@/game/rng";
 import type { Race } from "@/game/types";
 import type { Track, TrackSchedule } from "@/game/tracks";
 
@@ -181,7 +182,7 @@ describe("generateTrackRaces", () => {
 describe("generateTrackSchedule", () => {
   it("should return empty array when no schedules provided", () => {
     const schedules: TrackSchedule[] = [];
-    const races = generateTrackSchedule(10, [], schedules);
+    const races = generateTrackSchedule(10, [], schedules, createRng("test"));
     expect(races).toEqual([]);
   });
 
@@ -201,7 +202,7 @@ describe("generateTrackSchedule", () => {
     };
 
     const schedules: TrackSchedule[] = [];
-    const races = generateTrackSchedule(10, [existingRace], schedules);
+    const races = generateTrackSchedule(10, [existingRace], schedules, createRng("test"));
     expect(races).toContain(existingRace);
   });
 
@@ -213,7 +214,7 @@ describe("generateTrackSchedule", () => {
       regionalSystem: "north_america",
     };
 
-    const races = generateTrackSchedule(1, [], [schedule]);
+    const races = generateTrackSchedule(1, [], [schedule], createRng("test"));
     // Should not crash, just return empty since track doesn't exist
     expect(races).toEqual([]);
   });
@@ -224,7 +225,7 @@ describe("generateUpcomingRaces", () => {
     const currentRaces: Race[] = [];
     const schedules: TrackSchedule[] = [];
 
-    const races = generateUpcomingRaces(currentRaces, 1, schedules);
+    const races = generateUpcomingRaces(currentRaces, 1, schedules, createRng("test"));
     expect(races.length).toBeGreaterThanOrEqual(currentRaces.length);
   });
 
@@ -244,7 +245,7 @@ describe("generateUpcomingRaces", () => {
     };
 
     const schedules: TrackSchedule[] = [];
-    const races = generateUpcomingRaces([existingRace], 1, schedules);
+    const races = generateUpcomingRaces([existingRace], 1, schedules, createRng("test"));
     expect(races).toContain(existingRace);
   });
 
@@ -264,7 +265,7 @@ describe("generateUpcomingRaces", () => {
     };
 
     const schedules: TrackSchedule[] = [];
-    const races = generateUpcomingRaces([existingRace], 1, schedules);
+    const races = generateUpcomingRaces([existingRace], 1, schedules, createRng("test"));
 
     // Count how many times the existing race appears
     const count = races.filter((r) => r.id === existingRace.id).length;

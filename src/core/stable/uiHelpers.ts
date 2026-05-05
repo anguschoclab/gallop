@@ -11,13 +11,13 @@ import type { StableTier } from "@/game/types";
 export function getTierColor(tier: StableTier | string): string {
   switch (tier) {
     case "elite":
-      return "bg-purple-100 text-purple-800 border-purple-300";
+      return "bg-fame/10 text-fame border-fame/30";
     case "mid":
-      return "bg-blue-100 text-blue-800 border-blue-300";
+      return "bg-info/10 text-info border-info/30";
     case "budget":
-      return "bg-green-100 text-green-800 border-green-300";
+      return "bg-success/10 text-success border-success/30";
     default:
-      return "bg-gray-100 text-gray-800 border-gray-300";
+      return "bg-muted text-muted-foreground border-border";
   }
 }
 

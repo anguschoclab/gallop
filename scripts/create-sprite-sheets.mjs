@@ -108,7 +108,7 @@ async function createSpriteSheet(name) {
 }
 
 async function main() {
-  const sprites = ['roan', 'palomino', 'white'];
+  const sprites = ['roan', 'palomino', 'white', 'seal', 'liver', 'dun', 'grulla', 'champagne'];
   
   console.log('Creating 6-frame sprite sheets...\n');
   

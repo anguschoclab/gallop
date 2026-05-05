@@ -4,7 +4,8 @@
 
 import { describe, it, expect } from "vitest";
 import { awardsPhase } from "@/core/time/phases/awards";
-import type { PipelineContext } from "../pipeline";
+import { createRng } from "@/game/rng";
+import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Horse, Race } from "@/game/types";
 
 describe("awardsPhase", () => {
@@ -33,6 +34,7 @@ describe("awardsPhase", () => {
       newDay: 10,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = awardsPhase.execute(context);
@@ -70,6 +72,7 @@ describe("awardsPhase", () => {
       newDay: 365,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = awardsPhase.execute(context);
@@ -125,6 +128,7 @@ describe("awardsPhase", () => {
       newDay: 365,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = awardsPhase.execute(context);
@@ -157,6 +161,7 @@ describe("awardsPhase", () => {
       newDay: 365,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = awardsPhase.execute(context);

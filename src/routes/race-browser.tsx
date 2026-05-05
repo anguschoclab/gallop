@@ -192,7 +192,7 @@ function RaceBrowser() {
           filteredRaces.map((race) => {
             const hasOwnedEntry = race.entries.some((e) => e.owned);
             return (
-              <Card key={race.id} className={`border-l-4 ${hasOwnedEntry ? "border-l-emerald-500 bg-emerald-50/50" : "border-l-primary"}`}>
+              <Card key={race.id} className={`border-l-4 ${hasOwnedEntry ? "border-l-success bg-success/10" : "border-l-primary"}`}>
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
@@ -204,7 +204,7 @@ function RaceBrowser() {
                           </Badge>
                         )}
                         {hasOwnedEntry && (
-                          <Badge className="bg-emerald-600 text-white">Entered</Badge>
+                          <Badge className="bg-success text-success-foreground">Entered</Badge>
                         )}
                       </div>
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">

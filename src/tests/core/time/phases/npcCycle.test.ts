@@ -4,7 +4,8 @@
 
 import { describe, it, expect } from "vitest";
 import { npcCyclePhase } from "@/core/time/phases/npcCycle";
-import type { PipelineContext } from "../pipeline";
+import { createRng } from "@/game/rng";
+import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 
 describe("npcCyclePhase", () => {
@@ -33,6 +34,7 @@ describe("npcCyclePhase", () => {
       newDay: 10,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = npcCyclePhase.execute(context);
@@ -78,6 +80,7 @@ describe("npcCyclePhase", () => {
       newDay: 10,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = npcCyclePhase.execute(context);
@@ -121,6 +124,7 @@ describe("npcCyclePhase", () => {
       newDay: 10,
       state,
       logs: [{ day: 9, text: "Existing log" }],
+      dailyRng: createRng(12345),
     };
 
     const result = npcCyclePhase.execute(context);

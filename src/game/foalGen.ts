@@ -6,6 +6,8 @@ import {
   computeCoiFromSnapshot,
   classifyCoi,
   computeGenomeModifiers,
+  computeAhc,
+  resolveBloodline,
 } from "@/core/breeding/populationGenetics";
 import { clamp } from "./math";
 
@@ -76,7 +78,7 @@ export function resolveFoaling(
   // adjustments. Skipped if the foal pedigree can't be built.
   const foalPedigree: Pedigree | undefined = sire && dam ? buildFoalPedigree(sire, dam) : undefined;
   const coi = foalPedigree ? computeCoiFromSnapshot(foalPedigree) : 0;
-  const ahc = 0; // computed at horse-creation time below — no parent state needed for the LFG path
+  const ahc = (foalPedigree && sire && dam) ? computeAhc(foalPedigree, { horses: [sire, dam] }) : 0;
   const genomeMods = computeGenomeModifiers(coi, ahc);
 
   // 2. Day-14 early loss — 4% baseline, mare-age scaled. Twins double the
@@ -148,6 +150,7 @@ export function resolveFoaling(
     // --- Population-genetics modifiers applied to the foal's resolved fields ---
     foal.coefficientOfInbreeding = coi;
     foal.inbreedingTier = classifyCoi(coi);
+    foal.ancestralHistoryCoefficient = ahc;
     foal.prepotency = genomeMods.prepotency;
     // Inbreeding depression: durability/consistency hit; outcross hybrid vigor
     // bumps recovery and trainability slightly. Never push below floor values.
@@ -161,8 +164,12 @@ export function resolveFoaling(
     }
     foal.peakAge = Math.min(8, foal.peakAge + genomeMods.longevityBonus);
 
-    // Bloodline tag — inherit from sire's bloodline.
-    foal.bloodline = sire.bloodline;
+    // Bloodline tag — resolve from sire's line if not set, otherwise inherit
+    if (!foal.bloodline && sire) {
+      foal.bloodline = resolveBloodline(sire, { horses: [sire, dam] });
+    } else if (sire) {
+      foal.bloodline = sire.bloodline;
+    }
 
     // 1% covering-sickness transmission roll
     const transmission = rng.next() < 0.01;

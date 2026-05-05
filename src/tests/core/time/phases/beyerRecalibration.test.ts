@@ -4,7 +4,8 @@
 
 import { describe, it, expect } from "vitest";
 import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
-import type { PipelineContext } from "../pipeline";
+import { createRng } from "@/game/rng";
+import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 
 describe("beyerRecalibrationPhase", () => {
@@ -33,6 +34,7 @@ describe("beyerRecalibrationPhase", () => {
       newDay: 30,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = beyerRecalibrationPhase.execute(context);
@@ -68,6 +70,7 @@ describe("beyerRecalibrationPhase", () => {
       newDay: 30,
       state,
       logs: [{ day: 29, text: "Existing log" }],
+      dailyRng: createRng(12345),
     };
 
     const result = beyerRecalibrationPhase.execute(context);
@@ -106,6 +109,7 @@ describe("beyerRecalibrationPhase", () => {
       newDay: 30,
       state,
       logs: [],
+      dailyRng: createRng(12345),
     };
 
     const result = beyerRecalibrationPhase.execute(context);
