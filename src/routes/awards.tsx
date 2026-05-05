@@ -41,27 +41,27 @@ function AwardsPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <Trophy className="w-8 h-8 text-primary" />
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 font-[family-name:var(--font-display)]">
+            <Trophy className="w-8 h-8 text-gold" />
             Awards
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-cream-muted mt-1 font-[family-name:var(--font-body)]">
             Regional horse racing awards and championships
           </p>
         </div>
         <div className="flex gap-2">
-          <Badge variant="secondary" className="flex items-center gap-1">
+          <Badge className="bg-t700 text-cream flex items-center gap-1">
             <Trophy className="w-3 h-3" />
             {totalAwards} Total
           </Badge>
           {hotyCount > 0 && (
-            <Badge className="bg-fame/20 text-fame flex items-center gap-1">
+            <Badge className="bg-fame text-t950 border-fame flex items-center gap-1">
               <Star className="w-3 h-3" />
               {hotyCount} HOTY
             </Badge>
           )}
           {currentYearAwards > 0 && (
-            <Badge variant="outline" className="flex items-center gap-1">
+            <Badge variant="outline" className="border-gold-muted text-cream flex items-center gap-1">
               <Calendar className="w-3 h-3" />
               {currentYearAwards} This Year
             </Badge>
@@ -73,37 +73,37 @@ function AwardsPage() {
       <TrophyStats awards={playerAwards} />
 
       {/* Award Schedule Info */}
-      <Card>
+      <Card className="border-gold-muted">
         <CardHeader>
-          <CardTitle className="text-base">Award Ceremony Schedule</CardTitle>
+          <CardTitle className="text-base font-[family-name:var(--font-display)]">Award Ceremony Schedule</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             <div className={REGION_COLOR_CLASSES.north_america}>
               <div className="font-semibold">{REGION_AWARD_NAMES.north_america}</div>
               <div className="text-sm">Dec 31 (Day 365)</div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-cream-muted">
                 {awardsByRegion.north_america.length} awards
               </div>
             </div>
             <div className={REGION_COLOR_CLASSES.europe}>
               <div className="font-semibold">{REGION_AWARD_NAMES.europe}</div>
               <div className="text-sm">Nov 10 (Day 314)</div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-cream-muted">
                 {awardsByRegion.europe.length} awards
               </div>
             </div>
             <div className={REGION_COLOR_CLASSES.asia_pacific}>
               <div className="font-semibold">{REGION_AWARD_NAMES.asia_pacific}</div>
               <div className="text-sm">Jul 31 (Day 212)</div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-cream-muted">
                 {awardsByRegion.asia_pacific.length} awards
               </div>
             </div>
             <div className={REGION_COLOR_CLASSES.south_america}>
               <div className="font-semibold">{REGION_AWARD_NAMES.south_america}</div>
               <div className="text-sm">Apr 30 (Day 120)</div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-cream-muted">
                 {awardsByRegion.south_america.length} awards
               </div>
             </div>
@@ -119,12 +119,12 @@ function AwardsPage() {
       />
 
       {/* Award Categories Info */}
-      <Card>
+      <Card className="border-gold-muted">
         <CardHeader>
-          <CardTitle className="text-base">About Regional Awards</CardTitle>
+          <CardTitle className="text-base font-[family-name:var(--font-display)]">About Regional Awards</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-cream-muted">
             Awards are given annually based on performance in graded stakes races. 
             Each region has its own award ceremony date and categories inspired by 
             real-world horse racing awards.
@@ -132,7 +132,7 @@ function AwardsPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <h4 className="font-semibold text-sm mb-2">North America (Eclipse Awards)</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
+              <ul className="text-sm text-cream-muted space-y-1">
                 <li>• Horse of the Year</li>
                 <li>• Champion 2YO, 3YO (Male/Female)</li>
                 <li>• Champion Older Dirt (Male/Female)</li>
@@ -141,7 +141,7 @@ function AwardsPage() {
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-2">Europe (Cartier Awards)</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
+              <ul className="text-sm text-cream-muted space-y-1">
                 <li>• Horse of the Year</li>
                 <li>• Champion 2YO, 3YO (Colt/Filly)</li>
                 <li>• Champion Older Horse (Combined)</li>
@@ -150,7 +150,7 @@ function AwardsPage() {
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-2">Asia-Pacific (Australian Awards)</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
+              <ul className="text-sm text-cream-muted space-y-1">
                 <li>• Racehorse of the Year</li>
                 <li>• Champion 2YO, 3YO (Combined)</li>
                 <li>• Champion Middle Distance</li>
@@ -159,7 +159,7 @@ function AwardsPage() {
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-2">South America (Gran Premio)</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
+              <ul className="text-sm text-cream-muted space-y-1">
                 <li>• Horse of the Year</li>
                 <li>• Potrillo/Potranca del Año</li>
                 <li>• Campeón 3YO categories</li>
