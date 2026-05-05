@@ -42,12 +42,12 @@ function SireProfilePage() {
 
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {
-      case "elite": return "bg-purple-500";
-      case "premium": return "bg-blue-500";
-      case "solid": return "bg-emerald-500";
-      case "developing": return "bg-amber-500";
-      case "unproven": return "bg-gray-500";
-      default: return "bg-gray-500";
+      case "elite": return "bg-fame";
+      case "premium": return "bg-info";
+      case "solid": return "bg-success";
+      case "developing": return "bg-warning";
+      case "unproven": return "bg-muted-foreground";
+      default: return "bg-muted-foreground";
     }
   };
 
