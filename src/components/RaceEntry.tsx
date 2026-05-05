@@ -8,6 +8,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { Check, ChevronRight, User, Info, AlertTriangle } from "lucide-react";
 import { JockeyCard } from "./JockeyCard";
+import { RacingSilks } from "./RacingSilks";
 
 interface RaceEntryProps {
   race: Race;
