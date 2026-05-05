@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import { KIND_LABELS } from "@/game/auction";
+import { KIND_LABELS, CONSIGNMENT_COMMISSION } from "@/game/auction";
 import { Gavel, Clock, CheckCircle } from "lucide-react";
 import { NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
@@ -78,7 +78,7 @@ function AuctionPage() {
                   <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
                     <Button size="sm" className="w-full">
                       <Gavel className="h-4 w-4 mr-2" />
-                      {daysAway <= 0 ? "Enter Sale" : "Preview Lots"}
+                      {daysAway <= 0 ? "Enter Ring" : "Preview Lots"}
                     </Button>
                   </Link>
                 </CardContent>
@@ -118,6 +118,9 @@ function AuctionPage() {
                   ) : (
                     <span className="text-xs text-muted-foreground">No matching sale open</span>
                   )}
+                  <p className="text-xs text-muted-foreground">
+                    {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission on sold horses
+                  </p>
                 </Card>
               );
               });

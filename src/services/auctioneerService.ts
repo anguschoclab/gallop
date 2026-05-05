@@ -25,6 +25,8 @@ export type AuctioneerContext = {
   /** A 1-based paddle number derived from the bidder stable index, for flavor. */
   paddleNumber?: number;
   saleHype?: number; // 0-1 — how heated the room feels (used to bias prefixes)
+  /** Lot-specific signals available to the auctioneer (breeze times etc.). */
+  breezeSeconds?: number;
 };
 
 export type AuctioneerLine = {
@@ -87,25 +89,21 @@ function breezeBucket(breezeSec?: number): string | null {
   return "workmanlike effort";
 }
 
-function pedigreeFragment(horse?: Horse): string | null {
+function pedigreeFragment(horse: Horse | undefined, rng: Rng): string | null {
   if (!horse) return null;
   const sire = horse.sireName;
   const dam = horse.damName;
   if (sire && dam) {
-    return rngPick([
+    const variants = [
       `by ${sire} out of ${dam}`,
       `out of ${dam}, by ${sire}`,
       `${sire} on top, ${dam} below`,
-    ]);
+    ];
+    return variants[Math.floor(rng.next() * variants.length)];
   }
   if (sire) return `by ${sire}`;
   if (dam) return `out of ${dam}`;
   return null;
-}
-
-// Non-seeded utility — only used inside other rng-seeded calls; kept simple.
-function rngPick<T>(arr: readonly T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 // ---------------------------------------------------------------------------
@@ -117,7 +115,7 @@ type RenderCtx = AuctioneerContext & {
   reserve?: number;
 };
 
-function substitute(template: string, ctx: RenderCtx): string {
+function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
   const horse = ctx.horse;
   const stable = ctx.winner ?? ctx.consignor;
 
@@ -133,7 +131,7 @@ function substitute(template: string, ctx: RenderCtx): string {
     runningStyle: runningStyleLabel(horse?.runningStyle),
     fameBucket: horse ? fameBucket(horse.fame) : undefined,
     potentialBucket: potentialHintFromOverall(ctx.scoutedOverall) ?? undefined,
-    pedigree: pedigreeFragment(horse) ?? undefined,
+    pedigree: pedigreeFragment(horse, rng) ?? undefined,
     blueHen: horse?.blueHenStatus?.isBlueHen ? "blue-hen" : undefined,
     stable: stable?.name,
     consignor: ctx.consignor?.name,
@@ -141,7 +139,7 @@ function substitute(template: string, ctx: RenderCtx): string {
     paddle: ctx.paddleNumber !== undefined ? `paddle ${ctx.paddleNumber}` : undefined,
     amount: ctx.amount !== undefined ? `$${ctx.amount.toLocaleString()}` : undefined,
     reserve: ctx.reserve !== undefined ? `$${ctx.reserve.toLocaleString()}` : undefined,
-    breeze: breezeBucket(horse?.breezeSeconds) ?? undefined,
+    breeze: breezeBucket(ctx.breezeSeconds) ?? undefined,
   };
 
   return template
@@ -163,7 +161,7 @@ function pickLine(
   isHighImpact: boolean
 ): AuctioneerLine {
   const template = templates[Math.floor(rng.next() * templates.length)];
-  let text = substitute(template, ctx);
+  let text = substitute(template, ctx, rng);
   // If we substituted out a fragment (pedigree/breeze) and the sentence has
   // ", , " or trailing punctuation oddities, tidy them up.
   text = text.replace(/,\s*,/g, ",").replace(/\s+\./g, ".").trim();
@@ -172,7 +170,7 @@ function pickLine(
 
 function renderBidLine(amount: number, stableId: string | undefined, ctx: AuctioneerContext, rng: Rng): string {
   const tpls = stableId ? BID_NPC_TEMPLATES : BID_PLAYER_TEMPLATES;
-  return substitute(tpls[Math.floor(rng.next() * tpls.length)], { ...ctx, amount });
+  return substitute(tpls[Math.floor(rng.next() * tpls.length)], { ...ctx, amount }, rng);
 }
 
 // ---------------------------------------------------------------------------
