@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Zap } from "lucide-react";
+import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Zap, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
@@ -16,6 +16,7 @@ const navItems = [
   { to: "/races", label: "Races", icon: Calendar, exact: false },
   { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
   { to: "/broodmares", label: "Broodmares", icon: Zap, exact: false },
+  { to: "/sire-leaderboards", label: "Sire Leaderboards", icon: TrendingUp, exact: false },
   { to: "/auction", label: "Auction", icon: Gavel, exact: false },
   { to: "/market", label: "Market", icon: Store, exact: false },
   { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
@@ -48,6 +49,13 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      {/* Skip to content link for accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md"
+      >
+        Skip to content
+      </a>
       <aside className="w-60 shrink-0 border-r bg-sidebar flex flex-col">
         <div className="p-5 border-b border-sidebar-border">
           <h1 className="text-lg font-bold tracking-tight text-sidebar-foreground">Stable Manager</h1>
@@ -117,7 +125,7 @@ export function AppShell() {
           </Dialog>
         </div>
       </aside>
-      <main className="flex-1 overflow-auto">
+      <main id="main-content" className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto p-6">
           <Outlet />
         </div>

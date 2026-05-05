@@ -127,8 +127,8 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                     <div className="relative">
                       <JockeyCard jockey={j} isRetained={!!j.contractUntil} />
                       <div className={`absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-black uppercase ${
-                        getCompatibility(selectedHorse, j) === "High" ? "bg-emerald-500 text-white" :
-                        getCompatibility(selectedHorse, j) === "Poor" ? "bg-red-500 text-white" :
+                        getCompatibility(selectedHorse, j) === "High" ? "bg-success text-success-foreground" :
+                        getCompatibility(selectedHorse, j) === "Poor" ? "bg-destructive text-destructive-foreground" :
                         "bg-white/20 text-white"
                       }`}>
                         {getCompatibility(selectedHorse, j)} Match
@@ -183,7 +183,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               </div>
 
               {cash < (race.entryFee + selectedJockey.ridingFee) && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 flex gap-3 text-red-500">
+                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex gap-3 text-destructive">
                   <AlertTriangle size={18} className="shrink-0" />
                   <p className="text-xs font-bold">Insufficient cash to cover the total entry cost.</p>
                 </div>

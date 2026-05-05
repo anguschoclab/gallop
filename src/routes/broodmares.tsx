@@ -67,7 +67,7 @@ function BroodmaresPage() {
       ) : (
         <div className="space-y-4">
           {sortedBroodmares.map(({ pregnancy, dam, sire, daysRemaining, maternityLog }) => (
-            <Card key={pregnancy.id} className="border-l-4 border-l-pink-500">
+            <Card key={pregnancy.id} className="border-l-4 border-l-fame">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -75,10 +75,10 @@ function BroodmaresPage() {
                       <CardTitle className="text-lg">{dam?.name}</CardTitle>
                       <Badge variant="secondary">Age {dam?.age}</Badge>
                       {daysRemaining <= 0 && (
-                        <Badge variant="default" className="bg-red-500">Due Now</Badge>
+                        <Badge variant="default" className="bg-destructive">Due Now</Badge>
                       )}
                       {dam?.blueHenStatus?.isBlueHen && (
-                        <Badge variant="outline" className="border-blue-500 text-blue-500">Blue Hen</Badge>
+                        <Badge variant="outline" className="border-info text-info">Blue Hen</Badge>
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground">
@@ -93,7 +93,7 @@ function BroodmaresPage() {
                   <div className="text-right">
                     <Badge 
                       variant={daysRemaining <= 5 ? "default" : daysRemaining <= 15 ? "secondary" : "outline"}
-                      className={daysRemaining <= 5 ? "bg-amber-500" : ""}
+                      className={daysRemaining <= 5 ? "bg-warning" : ""}
                     >
                       {daysRemaining <= 0 ? "Due" : `${daysRemaining} days`}
                     </Badge>

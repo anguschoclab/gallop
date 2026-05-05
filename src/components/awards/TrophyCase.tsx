@@ -137,7 +137,7 @@ export function TrophyCase({
                 </span>
                 <span className="text-[10px] opacity-70">{award.year}</span>
                 {award.isHistoric && (
-                  <Star className="w-3 h-3 text-yellow-500 mt-1" />
+                  <Star className="w-3 h-3 text-fame mt-1" />
                 )}
               </div>
             ))}
@@ -163,7 +163,7 @@ export function TrophyCase({
               {totalAwards}
             </Badge>
             {hotyCount > 0 && (
-              <Badge className="bg-yellow-500/20 text-yellow-700 flex items-center gap-1">
+              <Badge className="bg-fame/20 text-fame flex items-center gap-1">
                 <Star className="w-3 h-3" />
                 {hotyCount} HOTY
               </Badge>
@@ -261,19 +261,19 @@ export function TrophyStats({ awards, className }: TrophyStatsProps) {
 
   return (
     <div className={cn("grid grid-cols-2 sm:grid-cols-4 gap-2", className)}>
-      <div className="bg-blue-500/10 rounded-lg p-3 text-center">
+      <div className="bg-region-na-bg/30 rounded-lg p-3 text-center border border-region-na-accent/20">
         <div className="text-2xl font-bold">{byRegion.north_america.length}</div>
         <div className="text-xs text-muted-foreground">North America</div>
       </div>
-      <div className="bg-purple-500/10 rounded-lg p-3 text-center">
+      <div className="bg-region-eu-bg/30 rounded-lg p-3 text-center border border-region-eu-accent/20">
         <div className="text-2xl font-bold">{byRegion.europe.length}</div>
         <div className="text-xs text-muted-foreground">Europe</div>
       </div>
-      <div className="bg-emerald-500/10 rounded-lg p-3 text-center">
+      <div className="bg-region-apac-bg/30 rounded-lg p-3 text-center border border-region-apac-accent/20">
         <div className="text-2xl font-bold">{byRegion.asia_pacific.length}</div>
         <div className="text-xs text-muted-foreground">Asia-Pacific</div>
       </div>
-      <div className="bg-red-500/10 rounded-lg p-3 text-center">
+      <div className="bg-region-sa-bg/30 rounded-lg p-3 text-center border border-region-sa-accent/20">
         <div className="text-2xl font-bold">{byRegion.south_america.length}</div>
         <div className="text-xs text-muted-foreground">South America</div>
       </div>

@@ -171,7 +171,7 @@ export function AwardCeremony({
                     </div>
                   </div>
                   {award.isHistoric && (
-                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                    <Star className="w-4 h-4 text-fame fill-fame" />
                   )}
                 </div>
               ))}

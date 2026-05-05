@@ -15,6 +15,8 @@ import { Route as StallionsRouteImport } from './routes/stallions'
 import { Route as StableRouteImport } from './routes/stable'
 import { Route as SouthAmericanCalendarRouteImport } from './routes/south-american-calendar'
 import { Route as SireWatchRouteImport } from './routes/sire-watch'
+import { Route as SireLeaderboardsRouteImport } from './routes/sire-leaderboards'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScandinavianCalendarRouteImport } from './routes/scandinavian-calendar'
 import { Route as RecapRouteImport } from './routes/recap'
 import { Route as RacesRouteImport } from './routes/races'
@@ -64,6 +66,16 @@ const SouthAmericanCalendarRoute = SouthAmericanCalendarRouteImport.update({
 const SireWatchRoute = SireWatchRouteImport.update({
   id: '/sire-watch',
   path: '/sire-watch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SireLeaderboardsRoute = SireLeaderboardsRouteImport.update({
+  id: '/sire-leaderboards',
+  path: '/sire-leaderboards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ScandinavianCalendarRoute = ScandinavianCalendarRouteImport.update({
@@ -182,6 +194,8 @@ export interface FileRoutesByFullPath {
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
+  '/settings': typeof SettingsRoute
+  '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
   '/south-american-calendar': typeof SouthAmericanCalendarRoute
   '/stable': typeof StableRouteWithChildren
@@ -209,6 +223,8 @@ export interface FileRoutesByTo {
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
+  '/settings': typeof SettingsRoute
+  '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
   '/south-american-calendar': typeof SouthAmericanCalendarRoute
   '/stable': typeof StableRouteWithChildren
@@ -238,6 +254,8 @@ export interface FileRoutesById {
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
+  '/settings': typeof SettingsRoute
+  '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
   '/south-american-calendar': typeof SouthAmericanCalendarRoute
   '/stable': typeof StableRouteWithChildren
@@ -268,6 +286,8 @@ export interface FileRouteTypes {
     | '/races'
     | '/recap'
     | '/scandinavian-calendar'
+    | '/settings'
+    | '/sire-leaderboards'
     | '/sire-watch'
     | '/south-american-calendar'
     | '/stable'
@@ -295,6 +315,8 @@ export interface FileRouteTypes {
     | '/races'
     | '/recap'
     | '/scandinavian-calendar'
+    | '/settings'
+    | '/sire-leaderboards'
     | '/sire-watch'
     | '/south-american-calendar'
     | '/stable'
@@ -323,6 +345,8 @@ export interface FileRouteTypes {
     | '/races'
     | '/recap'
     | '/scandinavian-calendar'
+    | '/settings'
+    | '/sire-leaderboards'
     | '/sire-watch'
     | '/south-american-calendar'
     | '/stable'
@@ -352,6 +376,8 @@ export interface RootRouteChildren {
   RacesRoute: typeof RacesRoute
   RecapRoute: typeof RecapRoute
   ScandinavianCalendarRoute: typeof ScandinavianCalendarRoute
+  SettingsRoute: typeof SettingsRoute
+  SireLeaderboardsRoute: typeof SireLeaderboardsRoute
   SireWatchRoute: typeof SireWatchRouteWithChildren
   SouthAmericanCalendarRoute: typeof SouthAmericanCalendarRoute
   StableRoute: typeof StableRouteWithChildren
@@ -403,6 +429,20 @@ declare module '@tanstack/react-router' {
       path: '/sire-watch'
       fullPath: '/sire-watch'
       preLoaderRoute: typeof SireWatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sire-leaderboards': {
+      id: '/sire-leaderboards'
+      path: '/sire-leaderboards'
+      fullPath: '/sire-leaderboards'
+      preLoaderRoute: typeof SireLeaderboardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/scandinavian-calendar': {
@@ -611,6 +651,8 @@ const rootRouteChildren: RootRouteChildren = {
   RacesRoute: RacesRoute,
   RecapRoute: RecapRoute,
   ScandinavianCalendarRoute: ScandinavianCalendarRoute,
+  SettingsRoute: SettingsRoute,
+  SireLeaderboardsRoute: SireLeaderboardsRoute,
   SireWatchRoute: SireWatchRouteWithChildren,
   SouthAmericanCalendarRoute: SouthAmericanCalendarRoute,
   StableRoute: StableRouteWithChildren,

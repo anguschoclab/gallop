@@ -29,11 +29,11 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
   };
 
   const archetypeColors: Record<string, string> = {
-    front_runner: "bg-orange-500/20 text-orange-500 border-orange-500/50",
-    closer: "bg-blue-500/20 text-blue-500 border-blue-500/50",
-    clinical: "bg-emerald-500/20 text-emerald-500 border-emerald-500/50",
-    finisher: "bg-red-500/20 text-red-500 border-red-500/50",
-    versatile: "bg-purple-500/20 text-purple-500 border-purple-500/50",
+    front_runner: "bg-chart-1/20 text-chart-1 border-chart-1/50",
+    closer: "bg-chart-3/20 text-chart-3 border-chart-3/50",
+    clinical: "bg-success/20 text-success border-success/50",
+    finisher: "bg-destructive/20 text-destructive border-destructive/50",
+    versatile: "bg-fame/20 text-fame border-fame/50",
   };
 
   const winRate = jockey.careerStarts > 0 ? (jockey.careerWins / jockey.careerStarts) * 100 : 0;
@@ -73,7 +73,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-white/5 rounded-lg p-2 border border-white/5">
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
-                  <Trophy size={12} className="text-yellow-500" />
+                  <Trophy size={12} className="text-fame" />
                   <span className="text-[10px] font-black uppercase tracking-wider">Wins</span>
                 </div>
                 <div className="text-sm font-bold tabular-nums">{jockey.careerWins}</div>

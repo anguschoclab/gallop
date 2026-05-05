@@ -16,6 +16,7 @@ function SireProfilePage() {
   
   const stallion = horses.find((h) => h.id === stallionId);
   const allStallions = horses.filter((h) => h.stud?.atStud);
+  const industryMeanEarnings = useGame((s) => s.industryMeanEarnings ?? 0);
   
   if (!stallion || !stallion.stud?.atStud) {
     return (
@@ -37,7 +38,7 @@ function SireProfilePage() {
     );
   }
   
-  const analytics = getSireAnalytics(stallion, allStallions);
+  const analytics = getSireAnalytics(stallion, horses, industryMeanEarnings);
 
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {

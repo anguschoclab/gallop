@@ -67,7 +67,7 @@ function BreedingPage() {
           <h1 className="text-3xl font-bold tracking-tight">Breeding & Bloodstock</h1>
           <p className="text-muted-foreground">Manage your matings and track gestation for the next generation.</p>
         </div>
-        <Badge variant={seasonOpen ? "default" : "secondary"} className={seasonOpen ? "bg-emerald-500" : ""}>
+        <Badge variant={seasonOpen ? "default" : "secondary"} className={seasonOpen ? "bg-success" : ""}>
           <Calendar className="h-3 w-3 mr-1" />
           {seasonOpen ? "Season Open" : `Opens Day ${nextSeasonStart}`}
         </Badge>

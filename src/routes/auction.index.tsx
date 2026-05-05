@@ -68,7 +68,7 @@ function AuctionPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {playerLots.length > 0 && (
-                    <p className="text-sm text-emerald-600 font-medium">
+                    <p className="text-sm text-success font-medium">
                       {playerLots.length} of your horse{playerLots.length > 1 ? "s" : ""} consigned
                     </p>
                   )}

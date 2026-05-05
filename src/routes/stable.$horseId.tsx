@@ -119,8 +119,8 @@ function HorseDetail() {
                 Form {horse.form > 0 ? "+" : ""}{horse.form}
               </Badge>
               {isPregnant && (
-                <Badge className="bg-pink-500/15 text-pink-600 border-pink-500/30" variant="outline">
-                  🤰 Pregnant · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
+                <Badge className="bg-fame/15 text-fame border-fame/30" variant="outline">
+                  In foal · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
                 </Badge>
               )}
             </div>
@@ -139,7 +139,7 @@ function HorseDetail() {
               {isConsigned && consignedSale ? (
                 <>
                   <div className="flex items-center gap-2">
-                    <Badge className="bg-amber-500">Consigned</Badge>
+                    <Badge className="bg-warning">Consigned</Badge>
                     <span className="text-sm">{consignedSale.name}</span>
                   </div>
                   <Link to="/auction/$saleId" params={{ saleId: consignedSale.id }}>

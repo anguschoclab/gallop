@@ -246,7 +246,7 @@ export function HorseCard({
             <span className="font-medium">{horse.weight} kg</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full border border-border" style={{ backgroundColor: getCoatHex(horse.coatColor) }} />
+            <div className="w-3 h-3 rounded-full border border-border" style={{ backgroundColor: getCoatColor(horse.coatColor) }} />
             <span className="capitalize">{horse.coatColor?.replace("-", " ")}</span>
           </div>
           <div className="flex items-center gap-1.5 ml-auto">
@@ -334,19 +334,20 @@ function StatBar({ label, value }: { label: string; value: number }) {
   );
 }
 
-function getCoatHex(color?: string): string {
+function getCoatColor(color?: string): string {
+  // Use CSS custom properties defined in styles.css instead of hardcoded hex codes
   const map: Record<string, string> = {
-    "bay": "#4b2c20",
-    "dark-bay": "#2a1810",
-    "black": "#1a1a1a",
-    "chestnut": "#8b4513",
-    "gray": "#a0a0a0",
-    "palomino": "#daa520",
-    "buckskin": "#c2b280",
-    "roan": "#b08d8d",
-    "white": "#f5f5f5"
+    "bay": "var(--coat-bay)",
+    "dark-bay": "var(--coat-dark-bay)",
+    "black": "var(--coat-black)",
+    "chestnut": "var(--coat-chestnut)",
+    "gray": "var(--coat-gray)",
+    "palomino": "var(--coat-palomino)",
+    "buckskin": "var(--coat-buckskin)",
+    "roan": "var(--coat-roan)",
+    "white": "var(--coat-white)"
   };
-  return map[color || "bay"] || "#4b2c20";
+  return map[color || "bay"] || "var(--coat-bay)";
 }
 
 function getInjuryLabel(proneness?: number): string {
@@ -359,9 +360,9 @@ function getInjuryLabel(proneness?: number): string {
 
 function getInjuryColor(proneness?: number): string {
   if (!proneness) return "text-muted-foreground";
-  if (proneness < 0.06) return "text-green-500 font-medium";
-  if (proneness < 0.09) return "text-yellow-500 font-medium";
-  return "text-red-500 font-bold";
+  if (proneness < 0.06) return "text-success font-medium";
+  if (proneness < 0.09) return "text-warning font-medium";
+  return "text-destructive font-bold";
 }
 
 export default HorseCard;

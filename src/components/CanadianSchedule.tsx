@@ -75,10 +75,10 @@ export function CanadianSchedule() {
                           {dayRaces.map((race) => {
                             const gradeColor =
                               race.graded?.grade === "G1"
-                                ? "bg-yellow-500/20 text-yellow-700 border-yellow-500/40"
+                                ? "bg-fame/20 text-fame border-fame/40"
                                 : race.graded?.grade === "G2"
-                                ? "bg-slate-400/20 text-slate-600 border-slate-400/40"
-                                : "bg-amber-700/20 text-amber-800 border-amber-700/40";
+                                ? "bg-muted-foreground/20 text-muted-foreground border-muted-foreground/40"
+                                : "bg-warning/20 text-warning border-warning/40";
 
                             return (
                               <div

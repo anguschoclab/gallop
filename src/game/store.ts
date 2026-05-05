@@ -28,6 +28,8 @@ import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { isUniversalBirthday, isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { detectInbreedingPattern, inbreedingPerformanceDampener } from "@/core/breeding/populationGenetics";
 import { recalcStandingFee } from "@/core/breeding/stallions";
+import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
+import { leaderboardPhase } from "@/core/time/phases/leaderboardPhase";
 import { awardsPhase } from "@/core/time/phases/awards";
 import { executePipeline, createPhase, type PipelineContext } from "@/core/time/pipeline";
 import { upkeepPhase } from "@/core/time/phases/upkeep";
@@ -458,6 +460,21 @@ export const useGame = create<GameState & Actions>()(
           if (gap > 0 && trainingRng.next() < trainingChance) {
             const gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
             horse.stats[kind] = Math.min(effectivePotential, stat + gain);
+          }
+          // OCD (osteochondritis dissecans): 2yo training puts developmental
+          // stress on growth plates. Risk applies only at age 2; older horses
+          // have past the susceptible window. Both general injuryProneness
+          // and OCD-specific risk roll independently.
+          const ocdRisk = horse.ocdRisk ?? 0;
+          if (horse.age <= 2 && ocdRisk > 0 && trainingRng.next() < ocdRisk) {
+            horse.healthStatus = "recovering";
+            horse.healthStatusDay = s.day;
+            set({
+              log: [
+                { day: s.day, text: `🩺 ${horse.name} sustained an OCD bone injury during 2yo training. Recovery time required.` },
+                ...s.log,
+              ].slice(0, 50),
+            });
           }
           s.cash -= cost;
         }
@@ -979,6 +996,7 @@ export const useGame = create<GameState & Actions>()(
           upkeepPhase,
           agingPhase,
           breedingSeasonPhase,
+          industryMetricsPhase,
           npcBreedingPhase,
           energyPhase,
           marketPhase,
@@ -988,6 +1006,7 @@ export const useGame = create<GameState & Actions>()(
           pregnancyPhase,
           npcCyclePhase,
           auctionsPhase,
+          leaderboardPhase,
           awardsPhase,
           stateUpdatePhase,
         ];
@@ -1015,6 +1034,9 @@ export const useGame = create<GameState & Actions>()(
           pendingAwardCeremonies: finalState.pendingAwardCeremonies,
           industryMeanEarnings: finalState.industryMeanEarnings,
           industryEarningsUpdatedDay: finalState.industryEarningsUpdatedDay,
+          sireLeaderboards: finalState.sireLeaderboards,
+          sireTrendHistory: finalState.sireTrendHistory,
+          leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
           log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` }, ...s.log].slice(0, 50),
         });
       },

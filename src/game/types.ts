@@ -539,4 +539,8 @@ export type GameState = {
     awards: RegionalAward[];
   }[];
   currentCeremonyIndex?: number;
+  // Sire leaderboards system
+  sireLeaderboards?: Record<string, import("@/core/breeding/leaderboardTypes").Leaderboard>;
+  sireTrendHistory?: import("@/core/breeding/leaderboardTypes").SireTrendData[];
+  leaderboardsUpdatedDay?: number;
 };

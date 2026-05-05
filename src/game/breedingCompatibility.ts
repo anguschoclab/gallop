@@ -574,8 +574,41 @@ export interface BreedingCompatibilityResult {
     founderEffect: { score: number; description: string; warning?: string };
     genetic: { score: number; description: string; warning?: string };
     blueHen: { score: number; description: string; isBlueHen: boolean };
+    crossFamily: { score: number; description: string };
   };
   recommendation: string;
+}
+
+// Cross-family nicking — Bruce Lowe family × sire-line affinities. Specific
+// historical pairings produced exceptional progeny rates. Curated table:
+// keys are sire bloodlines; values are { family: bonus } where bonus is the
+// score boost (0..1) when dam belongs to that Bruce Lowe family.
+const CROSS_FAMILY_AFFINITIES: Record<string, Record<number, number>> = {
+  "Northern Dancer": { 1: 0.8, 5: 0.7, 9: 0.6 },
+  "Mr. Prospector": { 1: 0.75, 4: 0.7, 9: 0.65 },
+  "Sadler's Wells": { 1: 0.85, 14: 0.7 },
+  "Storm Cat": { 4: 0.7, 8: 0.65 },
+  "Sunday Silence": { 1: 0.7, 9: 0.65, 12: 0.6 },
+  "Galileo": { 1: 0.85, 14: 0.75 },
+  "A.P. Indy": { 1: 0.7, 8: 0.65 },
+  "Seattle Slew": { 1: 0.7, 8: 0.6 },
+  "Bold Ruler": { 4: 0.7, 14: 0.65 },
+};
+
+export function calculateCrossFamilyAffinity(sire: Horse, dam: Horse): { score: number; description: string } {
+  const bloodline = sire.bloodline;
+  const family = dam.bruceLoweFamily;
+  if (!bloodline || family === undefined || !CROSS_FAMILY_AFFINITIES[bloodline]) {
+    return { score: 0.4, description: "No documented cross-family affinity" };
+  }
+  const bonus = CROSS_FAMILY_AFFINITIES[bloodline][family] ?? 0.4;
+  if (bonus >= 0.7) {
+    return { score: bonus, description: `Strong cross: ${bloodline} × Family ${family}` };
+  }
+  if (bonus >= 0.55) {
+    return { score: bonus, description: `Notable cross: ${bloodline} × Family ${family}` };
+  }
+  return { score: bonus, description: `Standard cross: ${bloodline} × Family ${family}` };
 }
 
 export function calculateBreedingCompatibility(
@@ -595,22 +628,25 @@ export function calculateBreedingCompatibility(
   const founderEffect = calculateFounderEffect(sire.sireName || "", dam.sireName || "");
   const genetic = calculateGeneticCompatibility(sire, dam);
   const blueHen = calculateBlueHenContribution(dam);
+  const crossFamily = calculateCrossFamilyAffinity(sire, dam);
 
   // Calculate inbreeding score (inverse of coefficient - lower is better)
   const inbreedingScore = Math.max(0, 1 - inbreeding.coefficient * 4); // Penalize high inbreeding
 
-  // Weighted overall score (updated to include blue hen contribution)
+  // Weighted overall score (11 factors, sums to 1.0). Cross-family takes 5%
+  // pulled proportionally from the larger factors.
   const weights = {
-    nicking: 0.08,
-    dosage: 0.08,
+    nicking: 0.07,
+    dosage: 0.07,
     inbreeding: 0.13,
-    parentPerformance: 0.16,
-    conformation: 0.08,
+    parentPerformance: 0.15,
+    conformation: 0.07,
     temperament: 0.05,
-    foundationStock: 0.1,
-    founderEffect: 0.1,
+    foundationStock: 0.09,
+    founderEffect: 0.09,
     genetic: 0.11,
     blueHen: 0.11,
+    crossFamily: 0.06,
   };
 
   const overallScore =
@@ -623,7 +659,8 @@ export function calculateBreedingCompatibility(
     foundationStock.score * weights.foundationStock +
     founderEffect.score * weights.founderEffect +
     genetic.score * weights.genetic +
-    blueHen.score * weights.blueHen;
+    blueHen.score * weights.blueHen +
+    crossFamily.score * weights.crossFamily;
 
   // Generate recommendation
   let recommendation = "";
@@ -666,6 +703,7 @@ export function calculateBreedingCompatibility(
       founderEffect,
       genetic,
       blueHen,
+      crossFamily,
     },
     recommendation,
   };

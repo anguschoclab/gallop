@@ -6,11 +6,11 @@ interface BeyerBadgeProps {
 }
 
 function getBeyerTier(beyer: number): { color: string; label: string } {
-  if (beyer >= 100) return { color: "bg-purple-500/15 text-purple-700 border-purple-500/30", label: "Elite" };
-  if (beyer >= 90) return { color: "bg-blue-500/15 text-blue-700 border-blue-500/30", label: "Excellent" };
-  if (beyer >= 80) return { color: "bg-green-500/15 text-green-700 border-green-500/30", label: "Good" };
-  if (beyer >= 70) return { color: "bg-yellow-500/15 text-yellow-700 border-yellow-500/30", label: "Fair" };
-  return { color: "bg-gray-500/15 text-gray-700 border-gray-500/30", label: "Poor" };
+  if (beyer >= 100) return { color: "bg-fame/15 text-fame border-fame/30", label: "Elite" };
+  if (beyer >= 90) return { color: "bg-info/15 text-info border-info/30", label: "Excellent" };
+  if (beyer >= 80) return { color: "bg-success/15 text-success border-success/30", label: "Good" };
+  if (beyer >= 70) return { color: "bg-warning/15 text-warning border-warning/30", label: "Fair" };
+  return { color: "bg-muted text-muted-foreground border-border", label: "Poor" };
 }
 
 export function BeyerBadge({ beyer, showLabel = true }: BeyerBadgeProps) {

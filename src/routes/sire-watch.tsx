@@ -12,22 +12,23 @@ export const Route = createFileRoute("/sire-watch")({
 
 function SireWatchPage() {
   const horses = useGame((s) => s.horses);
+  const industryMeanEarnings = useGame((s) => s.industryMeanEarnings ?? 0);
   
   // Get all stallions at stud
   const stallions = horses.filter((h) => h.stud?.atStud);
-  const sireAnalytics = stallions.map((s) => getSireAnalytics(s, stallions));
+  const sireAnalytics = stallions.map((s) => getSireAnalytics(s, horses, industryMeanEarnings));
   
   // Sort by AEI (descending)
   const sortedSires = sireAnalytics.sort((a, b) => b.aei - a.aei);
 
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {
-      case "elite": return "bg-purple-500";
-      case "premium": return "bg-blue-500";
-      case "solid": return "bg-emerald-500";
-      case "developing": return "bg-amber-500";
-      case "unproven": return "bg-gray-500";
-      default: return "bg-gray-500";
+      case "elite": return "bg-fame";
+      case "premium": return "bg-info";
+      case "solid": return "bg-success";
+      case "developing": return "bg-warning";
+      case "unproven": return "bg-muted-foreground";
+      default: return "bg-muted-foreground";
     }
   };
 
@@ -77,7 +78,7 @@ function SireWatchPage() {
                   <div className="text-right">
                     <div className="flex items-center gap-2 mb-1">
                       <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-2xl font-bold">{analytics.aei.toFixed(1)}</span>
+                      <span className="text-2xl font-bold tabular-nums">{analytics.aei.toFixed(1)}</span>
                     </div>
                     <p className="text-xs text-muted-foreground">AEI</p>
                   </div>

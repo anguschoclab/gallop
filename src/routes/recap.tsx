@@ -84,11 +84,11 @@ function RecapPage() {
                   {topFinishers.map((finisher, index) => {
                     const positionIcon =
                       index === 0 ? (
-                        <Trophy className="h-4 w-4 text-yellow-500" />
+                        <Trophy className="h-4 w-4 text-fame" />
                       ) : index === 1 ? (
-                        <Medal className="h-4 w-4 text-slate-400" />
+                        <Medal className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <Award className="h-4 w-4 text-amber-600" />
+                        <Award className="h-4 w-4 text-warning" />
                       );
 
                     return (

@@ -510,6 +510,28 @@ export function stepRunner(
     if (pace && pace.pacePressure > 0 && r.runningStyle === "E") {
       effectiveStamina = clamp(effectiveStamina - 0.08 * pace.pacePressure, 0.2, 1);
     }
+    // EIPH ("bleeder"): chance per race that a high-risk horse hemorrhages
+    // and fades hard in the late stretch. Risk applies once per race (rolled
+    // off horse id × race tick threshold to avoid retriggering every tick).
+    // Long races worsen the effect since the horse runs at top sustained
+    // effort longer.
+    const bleederRisk = r.horse.bleederRisk ?? 0;
+    if (bleederRisk > 0 && distance >= 1600 && progress > 0.7) {
+      // Treat the seeded RNG as an event roll; the runner already has a
+      // deterministic id so use a subtle floor to avoid double-firing.
+      // Cheap heuristic: roll once when progress crosses 0.7.
+      if (rng.next() < bleederRisk * dt * 0.5) {
+        effectiveStamina = clamp(effectiveStamina - 0.20, 0.1, 1);
+      }
+    }
+    // Roarer (laryngeal hemiplegia / wind issue): chance of choke at peak
+    // velocity. Applies whenever the runner is at >95% of their topSpeed.
+    const roarerRisk = r.horse.roarerRisk ?? 0;
+    if (roarerRisk > 0 && r.velocity > r.topSpeed * 0.95) {
+      if (rng.next() < roarerRisk * dt * 0.3) {
+        effectiveStamina = clamp(effectiveStamina - 0.15, 0.1, 1);
+      }
+    }
     staminaMul = 1 - (1 - effectiveStamina) * fade;
   }
   

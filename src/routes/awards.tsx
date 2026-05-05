@@ -55,7 +55,7 @@ function AwardsPage() {
             {totalAwards} Total
           </Badge>
           {hotyCount > 0 && (
-            <Badge className="bg-yellow-500/20 text-yellow-700 flex items-center gap-1">
+            <Badge className="bg-fame/20 text-fame flex items-center gap-1">
               <Star className="w-3 h-3" />
               {hotyCount} HOTY
             </Badge>

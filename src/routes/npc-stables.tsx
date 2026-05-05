@@ -142,7 +142,7 @@ function StableCard({ stable }: { stable: ReturnType<typeof getMajorStables>[num
             <span className="text-muted-foreground">
               {stable.horses.length} horses
             </span>
-            <span className="text-yellow-600" title={`Reputation: ${stable.reputation}`}>
+            <span className="text-fame" title={`Reputation: ${stable.reputation}`}>
               {getReputationStars(stable.reputation)}
             </span>
           </div>
