@@ -28,7 +28,6 @@ function AuctionSalePage() {
   const stables = useGame((s) => s.npcStables);
   const scoutReports = useGame((s) => s.scoutReports);
   const day = useGame((s) => s.day);
-  const consignHorse = useGame((s) => s.consignHorse);
   const placeBookBid = useGame((s) => s.placeBookBid);
 
   const sale = auctions.find((a) => a.id === saleId);

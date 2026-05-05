@@ -67,6 +67,7 @@ import { auctionsPhase } from "@/core/time/phases/auctions";
 import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
 import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
 import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
+import { stallionRetirementPhase } from "@/core/time/phases/stallionRetirement";
 import { resolveLiveRaceWithImpacts } from "./liveRaceResolution";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
@@ -456,6 +457,8 @@ type Actions = {
   updateAudioSettings: (settings: Partial<AudioSettings>) => void;
   resetSettings: () => void;
   upgradeFacility: (facilityType: string) => ActionResult;
+  updateStudFee: (horseId: string, newFee: number) => ActionResult;
+  retireToStud: (horseId: string) => ActionResult;
 };
 
 function initialState(): GameState {
@@ -768,6 +771,7 @@ export const useGame = create<GameState & Actions>()(
           runners,
           s.horses,
           s.jockeys ?? [],
+          s.npcStables,
           s.day,
         );
         set({
@@ -883,7 +887,9 @@ export const useGame = create<GameState & Actions>()(
           studFee = sire!.stud.standingFee;
         }
 
-        const totalFee = BREEDING_FEE + (liveFoalGuarantee ? LIVE_FOAL_GUARANTEE_FEE : 0) + studFee;
+        const totalFee = isExternal
+          ? BREEDING_FEE + (liveFoalGuarantee ? (LIVE_FOAL_GUARANTEE_FEE as number) : 0) + studFee
+          : 0;
         if (s.cash < totalFee) return fail("Insufficient cash for breeding fee.");
 
         // Enqueue BreedingIntent for next day advance
@@ -1145,6 +1151,7 @@ export const useGame = create<GameState & Actions>()(
           jockeyPhase,
           pregnancyPhase,
           npcCyclePhase,
+          stallionRetirementPhase,
           auctionsPhase,
           leaderboardPhase,
           awardsPhase,
@@ -1638,39 +1645,94 @@ export const useGame = create<GameState & Actions>()(
         });
       },
 
-      upgradeFacility: (facilityType) => {
+      upgradeFacility: (facilityType: string) => {
         const s = get();
-        const facility = s.facilities?.[facilityType as keyof typeof s.facilities];
+        const result = upgradeFacility(s, facilityType);
+        if (result.ok) set({ ...result.state });
+        return result;
+      },
 
-        if (!facility) {
-          return { ok: false, reason: "Facility not found" };
-        }
+      updateStudFee: (horseId: string, newFee: number) => {
+        const s = get();
+        const horse = s.horses.find((h) => h.id === horseId);
+        if (!horse) return { ok: false, reason: "Horse not found." };
+        if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+        if (!horse.stud?.atStud) return { ok: false, reason: "Horse is not at stud." };
 
-        const currentDay = s.day;
-        const upgraded = upgradeFacility(facility, currentDay);
-
-        if (!upgraded) {
-          return { ok: false, reason: "Facility already at maximum level" };
-        }
-
-        const cost = facility.upgradeCost;
-        if (s.cash < cost) {
-          return { ok: false, reason: "Insufficient funds" };
-        }
+        if (newFee < 500) return { ok: false, reason: "Minimum fee is $500." };
+        if (newFee > 1000000) return { ok: false, reason: "Maximum fee is $1,000,000." };
 
         set({
-          cash: s.cash - cost,
-          facilities: {
-            ...s.facilities,
-            [facilityType]: upgraded,
-          } as typeof s.facilities,
+          horses: s.horses.map((h) =>
+            h.id === horseId
+              ? {
+                  ...h,
+                  stud: {
+                    ...h.stud!,
+                    standingFee: Math.round(newFee / 500) * 500,
+                  },
+                }
+              : h,
+          ),
           log: [
-            ...s.log,
             {
-              day: currentDay,
-              text: `Upgraded ${facilityType} to ${upgraded.level} level for $${cost.toLocaleString()}`,
+              day: s.day,
+              text: `${horse.name}'s standing fee updated to $${newFee.toLocaleString()}.`,
             },
-          ],
+            ...s.log,
+          ].slice(0, 50),
+        });
+
+        return { ok: true };
+      },
+
+      retireToStud: (horseId) => {
+        const s = get();
+        const horse = s.horses.find((h) => h.id === horseId);
+        if (!horse) return { ok: false, reason: "Horse not found." };
+        if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+        if (horse.gender === "mare" || horse.gender === "filly" || horse.gender === "gelding") {
+          return { ok: false, reason: "Only stallions and colts can be retired to stud." };
+        }
+        if (horse.stud?.atStud) return { ok: false, reason: "Horse is already at stud." };
+        if (horse.age < 3) return { ok: false, reason: "Horse must be at least 3 years old." };
+
+        // Check if entered in races
+        const isEntered = s.races.some(
+          (r) => !r.resolved && r.entries.some((e) => e.horseId === horseId),
+        );
+        if (isEntered) return { ok: false, reason: "Withdraw from races before retiring." };
+
+        const initialFee = calculateRecommendedStudFee(horse, {
+          horses: s.horses,
+          npcStables: s.npcStables,
+        });
+
+        set({
+          horses: s.horses.map((h) =>
+            h.id === horseId
+              ? {
+                  ...h,
+                  gender: "stallion",
+                  stud: {
+                    atStud: true,
+                    standingFee: initialFee,
+                    bookSize: 40,
+                    seasonBookings: 0,
+                    lifetimeFoals: 0,
+                    lifetimeStakesFoals: 0,
+                    lifetimeG1Foals: 0,
+                  },
+                }
+              : h,
+          ),
+          log: [
+            {
+              day: s.day,
+              text: `${horse.name} retired to stud with an initial fee of $${initialFee.toLocaleString()}.`,
+            },
+            ...s.log,
+          ].slice(0, 50),
         });
 
         return { ok: true };

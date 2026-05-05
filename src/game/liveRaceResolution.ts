@@ -37,11 +37,12 @@ export function resolveLiveRaceWithImpacts(
   runners: Runner[],
   horses: Horse[],
   jockeys: Jockey[],
+  npcStables: any[],
   day: number,
 ): ResolverContext {
   if (race.resolved) {
     return {
-      state: { horses, jockeys, races: [race] } as any,
+      state: { horses, jockeys, npcStables, races: [race] } as any,
       intents: [],
       impacts: [],
       impactLog: [],
@@ -218,6 +219,27 @@ export function resolveLiveRaceWithImpacts(
       // Stud career impact for sire
       const sire = horses.find((h) => h.id === horse.pedigree?.sireId);
       if (sire && sire.stud?.atStud) {
+        const newStakesFoals = (sire.stud.lifetimeStakesFoals ?? 0) + 1;
+        const newG1Foals =
+          race.graded?.grade === "G1"
+            ? (sire.stud.lifetimeG1Foals ?? 0) + 1
+            : sire.stud.lifetimeG1Foals;
+
+        // Only NPCs auto-adjust fees; players manage their own
+        const newFee = sire.stableId
+          ? recalcStandingFee(
+              {
+                ...sire,
+                stud: {
+                  ...sire.stud,
+                  lifetimeStakesFoals: newStakesFoals,
+                  lifetimeG1Foals: newG1Foals,
+                },
+              },
+              { horses, npcStables } as any,
+            )
+          : sire.stud.standingFee;
+
         impacts.push({
           id: generateUUID(),
           intentId: "",
@@ -227,18 +249,12 @@ export function resolveLiveRaceWithImpacts(
           type: "stud_career",
           horseId: sire.id,
           studCareer: {
-            atStud: sire.stud.atStud,
-            standingFee: sire.stud.standingFee,
-            bookSize: sire.stud.bookSize,
-            seasonBookings: sire.stud.seasonBookings,
-            lifetimeFoals: sire.stud.lifetimeFoals,
-            lifetimeStakesFoals: (sire.stud.lifetimeStakesFoals ?? 0) + 1,
-            lifetimeG1Foals:
-              race.graded?.grade === "G1"
-                ? (sire.stud.lifetimeG1Foals ?? 0) + 1
-                : sire.stud.lifetimeG1Foals,
+            ...sire.stud,
+            standingFee: newFee,
+            lifetimeStakesFoals: newStakesFoals,
+            lifetimeG1Foals: newG1Foals,
           },
-          reason: `Stakes win by ${horse.name}`,
+          reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee adjusted to $${newFee.toLocaleString()}.` : ""}`,
         } as StudCareerImpact);
       }
     }
@@ -345,7 +361,7 @@ export function resolveLiveRaceWithImpacts(
 
   // Apply impacts to state
   const resolverContext: ResolverContext = {
-    state: { horses, jockeys, races: [race] } as any,
+    state: { horses, jockeys, npcStables, races: [race] } as any,
     intents: [],
     impacts,
     impactLog: [],

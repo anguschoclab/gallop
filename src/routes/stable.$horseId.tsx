@@ -50,6 +50,7 @@ function HorseDetail() {
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
   const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
+  const retireToStud = useGame((s) => s.retireToStud);
   const facilities = useGame((s) => s.facilities);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const day = useGame((s) => s.day);
@@ -62,6 +63,13 @@ function HorseDetail() {
   }, [raceHistoryLimit]);
 
   if (!horse) throw notFound();
+
+  const canRetire =
+    horse.owned &&
+    (horse.gender === "colt" || horse.gender === "stallion") &&
+    horse.age >= 3 &&
+    !horse.stud?.atStud &&
+    !isConsigned;
 
   const slotsLeft = 2 - trainingUsed;
   const isPregnant = !!pregnancy;
@@ -190,12 +198,12 @@ function HorseDetail() {
           </CardContent>
         </Card>
 
-        {/* Consignment */}
-        {horse.owned && (isConsigned || eligibleSale) && (
+        {/* Consignment and Retirement */}
+        {horse.owned && (isConsigned || eligibleSale || canRetire) && (
           <Card className="border-gold-muted">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-[family-name:var(--font-display)]">
-                <Tag className="h-4 w-4" /> Auction Consignment
+                <Tag className="h-4 w-4" /> Management
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -236,6 +244,27 @@ function HorseDetail() {
                   </Button>
                 </>
               ) : null}
+
+              {canRetire && (
+                <div className="pt-2 border-t border-gold-muted/30 mt-2">
+                  <p className="text-xs text-cream-muted mb-2">
+                    Retiring to stud will end this horse's racing career.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-gold text-gold hover:bg-gold hover:text-t900"
+                    onClick={() => {
+                      if (confirm(`Retire ${horse.name} to stud? This cannot be undone.`)) {
+                        const result = retireToStud(horse.id);
+                        if (!result.ok) alert(result.reason);
+                      }
+                    }}
+                  >
+                    Retire to Stud
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
