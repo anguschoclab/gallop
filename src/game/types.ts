@@ -608,6 +608,7 @@ export type CampaignGoalType =
   | "chase_g1"
   | "chase_g2"
   | "chase_g3"
+  | "chase_major_race"
   | "maximize_earnings"
   | "develop_maiden"
   | "free_run";
