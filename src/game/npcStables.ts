@@ -1,172 +1,25 @@
 // NPC Stable Definitions - Configurable named stables + filler generation
 // Pool-based system: Large pools of named stables, config determines how many spawn
+// Refactored to use modular configuration and generation systems
 
-import type { Stable, StableTier, StablePersonality } from "./types";
+import type { Stable, StableTier } from "./types";
 import type { Rng } from "./rng";
 import { generateUUID } from "./uuid";
+import { PERSONALITY_CONFIG, STABLE_CONFIG } from "@/core/stable/stableConfig";
+import {
+  shuffleAndPick,
+  selectPersonality,
+  getSpecialistPreferences,
+} from "@/core/stable/stableSelection";
+import {
+  generateFillerStable,
+  generateStableFromTemplate,
+  type StablePoolEntry,
+  randomSilk,
+} from "@/core/stable/stableGeneration";
 
-// Personality configurations affecting AI behavior
-export const PERSONALITY_CONFIG: Record<
-  StablePersonality,
-  {
-    description: string;
-    raceEntryMod: number; // Multiplier for race entry frequency
-    trainingMod: number; // Training slots used
-    purseThresholdMod: number; // Purse attractiveness threshold
-    gradedRaceBonus: number; // Extra appeal for graded races
-    riskTolerance: number; // 0-1, affects horse selection
-    youthPreference: number; // 0-1, preference for young horses (developer trait)
-    geneticInsightMod: number; // 0-1, how much weight to give to hidden DNA potential
-    specialistDistance?: number; // For specialist personality
-    specialistSurface?: "Turf" | "Dirt" | "Synthetic";
-  }
-> = {
-  aggressive: {
-    description: "High-risk, high-reward strategy. Enters many races and spends freely.",
-    raceEntryMod: 1.5,
-    trainingMod: 8,
-    purseThresholdMod: 0.7,
-    gradedRaceBonus: 20,
-    riskTolerance: 0.8,
-    youthPreference: 0.3,
-    geneticInsightMod: 0.4,
-  },
-  conservative: {
-    description: "Careful, methodical approach. Selective entries and cost-conscious.",
-    raceEntryMod: 0.7,
-    trainingMod: 4,
-    purseThresholdMod: 1.3,
-    gradedRaceBonus: 10,
-    riskTolerance: 0.3,
-    youthPreference: 0.5,
-    geneticInsightMod: 0.6,
-  },
-  developer: {
-    description: "Focuses on young horses and long-term growth. Patient with 2-3 year olds.",
-    raceEntryMod: 0.9,
-    trainingMod: 6,
-    purseThresholdMod: 1.0,
-    gradedRaceBonus: 15,
-    riskTolerance: 0.5,
-    youthPreference: 0.9,
-    geneticInsightMod: 0.95,
-  },
-  "win-now": {
-    description: "Targets immediate results with proven horses. Ages 4-6 preferred.",
-    raceEntryMod: 1.3,
-    trainingMod: 7,
-    purseThresholdMod: 0.9,
-    gradedRaceBonus: 25,
-    riskTolerance: 0.6,
-    youthPreference: 0.1,
-    geneticInsightMod: 0.1,
-  },
-  specialist: {
-    description: "Focuses on specific distances or surfaces. Becomes expert in niche.",
-    raceEntryMod: 1.0,
-    trainingMod: 6,
-    purseThresholdMod: 1.1,
-    gradedRaceBonus: 15,
-    riskTolerance: 0.5,
-    youthPreference: 0.4,
-    geneticInsightMod: 0.5,
-    specialistDistance: 1600, // Default, will be randomized
-    specialistSurface: "Turf",
-  },
-  breeder: {
-    description: "Values broodmares and breeding stock. Keeps quality mares.",
-    raceEntryMod: 0.8,
-    trainingMod: 5,
-    purseThresholdMod: 1.2,
-    gradedRaceBonus: 12,
-    riskTolerance: 0.4,
-    youthPreference: 0.5,
-    geneticInsightMod: 0.8,
-  },
-  trader: {
-    description: "Buys and sells frequently. Targets claiming races and bargains.",
-    raceEntryMod: 1.2,
-    trainingMod: 5,
-    purseThresholdMod: 0.8,
-    gradedRaceBonus: 5,
-    riskTolerance: 0.7,
-    youthPreference: 0.4,
-    geneticInsightMod: 0.3,
-  },
-  prestige: {
-    description: "Targets graded stakes and prestigious races. Reputation over profit.",
-    raceEntryMod: 1.1,
-    trainingMod: 7,
-    purseThresholdMod: 0.6,
-    gradedRaceBonus: 35,
-    riskTolerance: 0.6,
-    youthPreference: 0.3,
-    geneticInsightMod: 0.85,
-  },
-};
-
-// Tier-based personality weights (higher = more likely)
-const PERSONALITY_WEIGHTS: Record<StableTier, Partial<Record<StablePersonality, number>>> = {
-  elite: {
-    prestige: 3,
-    aggressive: 2,
-    "win-now": 2,
-    specialist: 1,
-    conservative: 1,
-    developer: 1,
-    breeder: 2,
-    trader: 0.5,
-  },
-  mid: {
-    aggressive: 2,
-    "win-now": 2,
-    specialist: 2,
-    conservative: 2,
-    developer: 1.5,
-    trader: 1.5,
-    prestige: 1,
-    breeder: 1,
-  },
-  budget: {
-    conservative: 3,
-    developer: 2,
-    trader: 2,
-    specialist: 1.5,
-    aggressive: 0.5,
-    prestige: 0.5,
-    "win-now": 1,
-    breeder: 0.5,
-  },
-};
-
-// Random silk color generator (hex)
-const randomSilk = (rng: Rng) => {
-  const hues = [0, 30, 60, 120, 180, 240, 270, 300, 330];
-  const hue = rng.pick(hues);
-  return `hsl(${hue}, 70%, 50%)`;
-};
-
-// Configuration - Adjust these to change how many named stables spawn per tier
-export const STABLE_CONFIG = {
-  elite: { count: 5, reputationRange: [90, 98] as [number, number] },
-  mid: { count: 10, reputationRange: [70, 86] as [number, number] },
-  budget: { count: 5, reputationRange: [50, 65] as [number, number] },
-  filler: { count: 100 },
-};
-
-// Base stable info without generated fields
-type StablePoolEntry = Omit<
-  Stable,
-  | "id"
-  | "founded"
-  | "cash"
-  | "horses"
-  | "tier"
-  | "reputation"
-  | "personality"
-  | "preferredDistance"
-  | "preferredSurface"
->;
+// Re-export for backward compatibility
+export { PERSONALITY_CONFIG, STABLE_CONFIG };
 
 // ELITE STABLE POOL - 10 real-world inspired operations (config picks 5)
 const ELITE_POOL: StablePoolEntry[] = [
@@ -465,189 +318,6 @@ const BUDGET_POOL: StablePoolEntry[] = [
   },
 ];
 
-// Filler stable name components for generation
-const FILLER_PREFIXES = [
-  "Oak",
-  "Pine",
-  "Maple",
-  "Cedar",
-  "Willow",
-  "Birch",
-  "Elm",
-  "Ash",
-  "Spring",
-  "Summer",
-  "Autumn",
-  "Winter",
-  "Morning",
-  "Evening",
-  "Sunset",
-  "Golden",
-  "Silver",
-  "Copper",
-  "Iron",
-  "Diamond",
-  "Ruby",
-  "Emerald",
-  "Royal",
-  "Crown",
-  "Imperial",
-  "Sovereign",
-  "Regal",
-  "Noble",
-  "Running",
-  "Galloping",
-  "Flying",
-  "Racing",
-  "Thunder",
-  "Lightning",
-  "Prairie",
-  "Meadow",
-  "Valley",
-  "Ridge",
-  "Hill",
-  "Brook",
-  "Creek",
-  "Star",
-  "Moon",
-  "Sun",
-  "Sky",
-  "Cloud",
-  "Storm",
-  "Rain",
-  "Victory",
-  "Champion",
-  "Winner",
-  "Triumph",
-  "Glory",
-];
-
-const FILLER_SUFFIXES = [
-  "Racing",
-  "Stables",
-  "Farm",
-  "Stud",
-  "Thoroughbreds",
-  "Bloodstock",
-  "Ranch",
-  "Meadows",
-  "Acres",
-  "Fields",
-  "Estates",
-  "Park",
-  "Lane Stables",
-  "Ridge Farm",
-  "Valley Stud",
-  "Hill Racing",
-  "Downs",
-  "Heights",
-  "Hollow",
-  "Glen",
-  "Crossing",
-  "Point",
-];
-
-const FILLER_OWNERS = [
-  "Racing Partnership",
-  "Thoroughbred LLC",
-  "Bloodstock Group",
-  "Racing Syndicate",
-  "Farm Inc.",
-  "Stables Ltd",
-  "Racing Club",
-  "Partnership Group",
-  "Investment LLC",
-  "Bloodstock Partners",
-  "Racing Ventures",
-  "Farm Group",
-];
-
-const FILLER_COUNTRIES = [
-  "USA",
-  "UK",
-  "Ireland",
-  "France",
-  "Germany",
-  "Italy",
-  "Spain",
-  "Japan",
-  "Australia",
-  "New Zealand",
-  "Hong Kong",
-  "Singapore",
-  "UAE",
-  "South Africa",
-  "Argentina",
-  "Brazil",
-  "Canada",
-];
-
-/**
- * Generate a single filler stable
- */
-function generateFillerStable(index: number, day: number, rng: Rng): Stable {
-  const prefix = rng.pick(FILLER_PREFIXES);
-  const suffix = rng.pick(FILLER_SUFFIXES);
-  const owner = rng.pick(FILLER_OWNERS);
-  const country = rng.pick(FILLER_COUNTRIES);
-  const personality = selectPersonality("budget", rng);
-  const isSpecialist = personality === "specialist";
-
-  return {
-    id: generateUUID(rng),
-    name: `${prefix} ${suffix}`,
-    owner: owner,
-    tier: "budget",
-    reputation: rng.int(30, 55),
-    founded: Math.max(1, day - rng.int(0, 365)),
-    cash: rng.int(10000, 60000),
-    horses: [],
-    isMajor: false,
-    colors: { primary: randomSilk(rng), secondary: randomSilk(rng) },
-    country,
-    personality,
-    ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
-  };
-}
-
-/**
- * Shuffle array and return a random subset
- */
-function shuffleAndPick<T>(array: T[], count: number, rng: Rng): T[] {
-  const shuffled = [...array].sort(() => rng.next() - 0.5);
-  return shuffled.slice(0, Math.min(count, shuffled.length));
-}
-
-/**
- * Select a random personality based on tier weights
- */
-function selectPersonality(tier: StableTier, rng: Rng): StablePersonality {
-  const weights = PERSONALITY_WEIGHTS[tier];
-  const totalWeight = Object.values(weights).reduce((sum, w) => sum + (w || 0), 0);
-  let randomVal = rng.next() * totalWeight;
-
-  for (const [personality, weight] of Object.entries(weights)) {
-    randomVal -= weight || 0;
-    if (randomVal <= 0) {
-      return personality as StablePersonality;
-    }
-  }
-
-  return "conservative"; // Fallback
-}
-
-/**
- * Get random specialist preferences for specialist personality
- */
-function getSpecialistPreferences(rng: Rng) {
-  const distances = [1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
-  const surfaces: ("Turf" | "Dirt" | "Synthetic")[] = ["Turf", "Dirt", "Synthetic"];
-
-  return {
-    preferredDistance: rng.pick(distances),
-    preferredSurface: rng.pick(surfaces),
-  };
-}
 
 /**
  * Generate all NPC stables (named + filler)
@@ -659,58 +329,25 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
   // Select and create elite stables from pool
   const selectedElite = shuffleAndPick(ELITE_POOL, config.elite.count, rng);
   for (const template of selectedElite) {
-    const [minRep, maxRep] = config.elite.reputationRange;
-    const personality = selectPersonality("elite", rng);
-    const isSpecialist = personality === "specialist";
-    stables.push({
-      ...template,
-      id: generateUUID(rng),
-      tier: "elite",
-      reputation: rng.int(minRep, maxRep),
-      founded: Math.max(1, day - 365 * 3),
-      cash: rng.int(500000, 1000000),
-      horses: [],
-      personality,
-      ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
-    });
+    stables.push(
+      generateStableFromTemplate(template, "elite", config.elite.reputationRange, day, rng),
+    );
   }
 
   // Select and create mid-tier stables from pool
   const selectedMid = shuffleAndPick(MID_POOL, config.mid.count, rng);
   for (const template of selectedMid) {
-    const [minRep, maxRep] = config.mid.reputationRange;
-    const personality = selectPersonality("mid", rng);
-    const isSpecialist = personality === "specialist";
-    stables.push({
-      ...template,
-      id: generateUUID(rng),
-      tier: "mid",
-      reputation: rng.int(minRep, maxRep),
-      founded: Math.max(1, day - 365 * 2),
-      cash: rng.int(150000, 350000),
-      horses: [],
-      personality,
-      ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
-    });
+    stables.push(
+      generateStableFromTemplate(template, "mid", config.mid.reputationRange, day, rng),
+    );
   }
 
   // Select and create budget stables from pool
   const selectedBudget = shuffleAndPick(BUDGET_POOL, config.budget.count, rng);
   for (const template of selectedBudget) {
-    const [minRep, maxRep] = config.budget.reputationRange;
-    const personality = selectPersonality("budget", rng);
-    const isSpecialist = personality === "specialist";
-    stables.push({
-      ...template,
-      id: generateUUID(rng),
-      tier: "budget",
-      reputation: rng.int(minRep, maxRep),
-      founded: Math.max(1, day - 365),
-      cash: rng.int(20000, 100000),
-      horses: [],
-      personality,
-      ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
-    });
+    stables.push(
+      generateStableFromTemplate(template, "budget", config.budget.reputationRange, day, rng),
+    );
   }
 
   // Create filler stables
