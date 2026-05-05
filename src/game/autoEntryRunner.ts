@@ -2,7 +2,8 @@
 // For auto-managed campaigns: automatically enters the horse into planned races
 // when within the slot's day window, if eligibility and budget allow.
 
-import type { Horse, Race, HorseCampaign, CampaignRaceSlot, ActionResult } from "./types";
+import type { Horse, Race, HorseCampaign, CampaignRaceSlot } from "./types";
+import type { ActionResult } from "./store";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 
 export type AutoEntryContext = {
@@ -71,9 +72,9 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
       return slot;
     }
 
-    const eligible = isHorseEligibleForRace(horse, race);
-    if (!eligible.eligible) {
-      skipped.push({ slotIndex: idx, reason: eligible.reason ?? "Not eligible" });
+    const eligible = isHorseEligibleForRace(horse, race, new Set());
+    if (!eligible) {
+      skipped.push({ slotIndex: idx, reason: "Not eligible for this race" });
       return slot;
     }
 
@@ -82,7 +83,7 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
       entered.push({ raceId: race.id, raceName: race.name, slotIndex: idx });
       return { ...slot, raceId: race.id, status: "entered" as const };
     } else {
-      skipped.push({ slotIndex: idx, reason: result.reason });
+      skipped.push({ slotIndex: idx, reason: !result.ok ? result.reason : "Unknown error" });
       return slot;
     }
   });

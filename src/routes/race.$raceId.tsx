@@ -130,7 +130,7 @@ function LiveRace() {
   const navigate = useNavigate();
   const race = useGame((s) => s.races.find((r) => r.id === raceId));
   const horses = useGame((s) => s.horses);
-  const jockeys = useGame((s) => s.jockeys);
+  const jockeys = useGame((s) => s.jockeys ?? []);
   const stables = useGame((s) => s.npcStables);
   const resolveRace = useGame((s) => s.resolveRace);
 
@@ -588,8 +588,8 @@ function Track({
               <HorseSprite 
                 runner={r} 
                 isRunning={isRunning} 
-                spriteUrl={spriteUrl}
-                isAnimated={isAnimated}
+                spriteUrl={getSpriteUrl(r.coatColor)}
+                isAnimated={isAnimatedSprite(r.coatColor)}
               />
               
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center">

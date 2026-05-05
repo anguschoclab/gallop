@@ -76,32 +76,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 1609,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 455,
-            "radius": 145
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 455,
-            "radius": 145
-          }
-        ],
-        "width": 20
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "98c77f6a-f5b7-4791-aac1-afe5e5969aa3",
@@ -110,32 +89,11 @@
     "courses": [
       {
         "surface": "Synthetic",
-        "circumference": 1609,
-        "straightLength": 366,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 366
-          },
-          {
-            "type": "turn",
-            "length": 439,
-            "radius": 140
-          },
-          {
-            "type": "straight",
-            "length": 366
-          },
-          {
-            "type": "turn",
-            "length": 439,
-            "radius": 140
-          }
-        ],
-        "width": 22
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "c7447323-b2df-46be-9f99-28e56a41e584",
@@ -144,32 +102,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 1609,
-        "straightLength": 366,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 366
-          },
-          {
-            "type": "turn",
-            "length": 439,
-            "radius": 140
-          },
-          {
-            "type": "straight",
-            "length": 366
-          },
-          {
-            "type": "turn",
-            "length": 439,
-            "radius": 140
-          }
-        ],
-        "width": 22
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "85a3d0b8-a4a9-4ff7-bc18-705874d8da31",
@@ -248,32 +185,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1800,
+        "circumference": 1600,
         "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 500,
-            "radius": 159
-          },
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 500,
-            "radius": 159
-          }
-        ],
-        "width": 24
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "7e62ba21-8d46-41ee-95ce-3a42b0f13dcc",
@@ -282,32 +198,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 1609,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 455,
-            "radius": 145
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 455,
-            "radius": 145
-          }
-        ],
-        "width": 20
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "271e4541-1500-4872-9340-4ed791fd28b7",
@@ -316,57 +211,17 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 2350,
-        "straightLength": 500,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 500
-          },
-          {
-            "type": "turn",
-            "length": 675,
-            "radius": 215
-          },
-          {
-            "type": "straight",
-            "length": 500
-          },
-          {
-            "type": "turn",
-            "length": 675,
-            "radius": 215
-          }
-        ],
-        "width": 26
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       },
       {
         "surface": "Dirt",
         "circumference": 1600,
         "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 400,
-            "radius": 127
-          },
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 400,
-            "radius": 127
-          }
-        ]
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "1e1beb62-f786-44a9-8441-b23aa0db1eec",
@@ -375,32 +230,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 2000,
-        "straightLength": 450,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 450
-          },
-          {
-            "type": "turn",
-            "length": 550,
-            "radius": 175
-          },
-          {
-            "type": "straight",
-            "length": 450
-          },
-          {
-            "type": "turn",
-            "length": 550,
-            "radius": 175
-          }
-        ],
-        "width": 22
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "6546c784-dfb3-4d28-999f-99dc82e90e9a",
@@ -409,32 +243,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 1850,
+        "circumference": 1600,
         "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          },
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          }
-        ],
-        "width": 20
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "ce7714db-fa90-4ded-8477-40eec676bb12",
@@ -443,32 +256,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 2000,
+        "circumference": 1600,
         "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          },
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          }
-        ],
-        "width": 22
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "06b1dfcf-f3ae-4db3-ab25-04e29865ff8d",
@@ -477,32 +269,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1900,
-        "straightLength": 380,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          },
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          }
-        ],
-        "width": 20
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "b7fef5f2-2fe4-4814-a528-fba3d6bbee01",
@@ -511,32 +282,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 575,
-            "radius": 183
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 575,
-            "radius": 183
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "61a34612-26fc-4336-8c71-c3239098ee26",
@@ -545,32 +295,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 2000,
+        "circumference": 1600,
         "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          },
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          }
-        ],
-        "width": 20
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "8cd8068a-d06f-4b40-a8a7-b9d6012afd0f",
@@ -579,32 +308,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 1700,
-        "straightLength": 320,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 320
-          },
-          {
-            "type": "turn",
-            "length": 530,
-            "radius": 169
-          },
-          {
-            "type": "straight",
-            "length": 320
-          },
-          {
-            "type": "turn",
-            "length": 530,
-            "radius": 169
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "2a3d24c8-10ff-4a5a-836f-cb4ed2d122dc",
@@ -613,32 +321,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1900,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "60a39c4a-3c65-4ca1-98ba-7bee7a726d43",
@@ -647,32 +334,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 2000,
+        "circumference": 1600,
         "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          },
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          }
-        ],
-        "width": 20
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "f1bee849-78d8-4b25-9673-50ded746fa6a",
@@ -681,32 +347,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1800,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 550,
-            "radius": 175
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 550,
-            "radius": 175
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "ff31fa2d-9594-4cfd-bb3f-a4794eb3c435",
@@ -715,32 +360,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 360,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 565,
-            "radius": 180
-          },
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 565,
-            "radius": 180
-          }
-        ],
-        "width": 19
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "09aea125-88e4-4e51-b8d7-0475869c6269",
@@ -819,33 +443,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1400,
-        "straightLength": 300,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 300
-          },
-          {
-            "type": "turn",
-            "length": 400,
-            "radius": 127
-          },
-          {
-            "type": "straight",
-            "length": 300
-          },
-          {
-            "type": "turn",
-            "length": 400,
-            "radius": 127
-          }
-        ],
-        "width": 18,
-        "name": "Oi Racecourse"
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "d972ca06-de48-474e-a2cf-84afd2f33863",
@@ -854,32 +456,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1200,
-        "straightLength": 250,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 250
-          },
-          {
-            "type": "turn",
-            "length": 350,
-            "radius": 111
-          },
-          {
-            "type": "straight",
-            "length": 250
-          },
-          {
-            "type": "turn",
-            "length": 350,
-            "radius": 111
-          }
-        ],
-        "width": 16
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "9cf4d0aa-31ff-41e7-a581-54d9408a29e3",
@@ -888,32 +469,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1300,
-        "straightLength": 260,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 390,
-            "radius": 124
-          },
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 390,
-            "radius": 124
-          }
-        ],
-        "width": 16
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "184c95d8-cb34-428c-81f3-adfa7179f035",
@@ -1202,32 +762,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 1400,
-        "straightLength": 280,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 280
-          },
-          {
-            "type": "turn",
-            "length": 420,
-            "radius": 134
-          },
-          {
-            "type": "straight",
-            "length": 280
-          },
-          {
-            "type": "turn",
-            "length": 420,
-            "radius": 134
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "d11ab0e2-492a-4f90-9cd9-9323fece32f5",
@@ -1236,32 +775,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 1500,
-        "straightLength": 300,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 300
-          },
-          {
-            "type": "turn",
-            "length": 450,
-            "radius": 143
-          },
-          {
-            "type": "straight",
-            "length": 300
-          },
-          {
-            "type": "turn",
-            "length": 450,
-            "radius": 143
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "5d64970b-7d53-4ce7-82eb-565519c87425",
@@ -1270,32 +788,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 1250,
-        "straightLength": 240,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 240
-          },
-          {
-            "type": "turn",
-            "length": 385,
-            "radius": 123
-          },
-          {
-            "type": "straight",
-            "length": 240
-          },
-          {
-            "type": "turn",
-            "length": 385,
-            "radius": 123
-          }
-        ],
-        "width": 16
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "e55abf82-49b9-4c1a-9d79-5387e123045a",
@@ -1304,32 +801,11 @@
     "courses": [
       {
         "surface": "Dirt",
-        "circumference": 1350,
-        "straightLength": 260,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 415,
-            "radius": 132
-          },
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 415,
-            "radius": 132
-          }
-        ],
-        "width": 17
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "f5704159-e4e5-4966-88b3-ad6338f92a5f",
@@ -1533,32 +1009,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1400,
-        "straightLength": 280,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 280
-          },
-          {
-            "type": "turn",
-            "length": 420,
-            "radius": 134
-          },
-          {
-            "type": "straight",
-            "length": 280
-          },
-          {
-            "type": "turn",
-            "length": 420,
-            "radius": 134
-          }
-        ],
-        "width": 17
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "e5575f66-1c09-4385-9b1a-83bf2d538d90",
@@ -1567,60 +1022,17 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1400,
-        "straightLength": 300,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 300
-          },
-          {
-            "type": "turn",
-            "length": 400,
-            "radius": 127
-          },
-          {
-            "type": "straight",
-            "length": 300
-          },
-          {
-            "type": "turn",
-            "length": 400,
-            "radius": 127
-          }
-        ],
-        "width": 18,
-        "name": "Ohi Main Course"
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       },
       {
         "surface": "Dirt",
-        "circumference": 1200,
-        "straightLength": 250,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 250
-          },
-          {
-            "type": "turn",
-            "length": 350,
-            "radius": 111
-          },
-          {
-            "type": "straight",
-            "length": 250
-          },
-          {
-            "type": "turn",
-            "length": 350,
-            "radius": 111
-          }
-        ],
-        "width": 16,
-        "name": "Ohi Inner Course"
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "838abcdc-ff27-44cf-9212-183e2edb66c0",
@@ -1629,32 +1041,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1300,
-        "straightLength": 260,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 390,
-            "radius": 124
-          },
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 390,
-            "radius": 124
-          }
-        ],
-        "width": 17
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "dc2854c2-b22e-4fde-8052-81b63b0ceb45",
@@ -1663,32 +1054,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1450,
-        "straightLength": 290,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 290
-          },
-          {
-            "type": "turn",
-            "length": 435,
-            "radius": 138
-          },
-          {
-            "type": "straight",
-            "length": 290
-          },
-          {
-            "type": "turn",
-            "length": 435,
-            "radius": 138
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "8b58953a-b5ad-41ec-a36c-b0feb5625370",
@@ -1697,32 +1067,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1350,
-        "straightLength": 270,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 270
-          },
-          {
-            "type": "turn",
-            "length": 405,
-            "radius": 129
-          },
-          {
-            "type": "straight",
-            "length": 270
-          },
-          {
-            "type": "turn",
-            "length": 405,
-            "radius": 129
-          }
-        ],
-        "width": 17
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "9c876506-79bd-4450-8321-a1d65a01658e",
@@ -1731,32 +1080,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1400,
-        "straightLength": 280,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 280
-          },
-          {
-            "type": "turn",
-            "length": 420,
-            "radius": 134
-          },
-          {
-            "type": "straight",
-            "length": 280
-          },
-          {
-            "type": "turn",
-            "length": 420,
-            "radius": 134
-          }
-        ],
-        "width": 17
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "99a1a2ec-3ef9-4f65-9c5f-13650eb71d8b",
@@ -1784,32 +1112,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 2000,
+        "circumference": 1600,
         "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          },
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          }
-        ],
-        "width": 22
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "24110cb2-5781-46ad-9117-129ec9c3ed95",
@@ -1818,32 +1125,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1800,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 550,
-            "radius": 175
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 550,
-            "radius": 175
-          }
-        ],
-        "width": 20
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "62a59b6c-0230-4db7-ab2f-fb494d6dd2ec",
@@ -2039,32 +1325,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1900,
-        "straightLength": 380,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          },
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          }
-        ],
-        "width": 22
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "b4f6659e-dcf3-4312-bde1-4052492673aa",
@@ -2151,32 +1416,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 370,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          },
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          }
-        ],
-        "width": 21
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "20836f34-3da8-4784-89aa-1a8fc313c86f",
@@ -2224,32 +1468,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1900,
-        "straightLength": 380,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          },
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          }
-        ],
-        "width": 21
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "8c165617-0438-496a-9b10-9a941465b298",
@@ -2531,32 +1754,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1900,
-        "straightLength": 380,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          },
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          }
-        ],
-        "width": 20
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "f74061a1-adfd-4fb1-aded-843109961953",
@@ -2565,32 +1767,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 370,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          },
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          }
-        ],
-        "width": 19
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "20175183-67a8-4d6b-9c4d-0942856f8860",
@@ -2677,32 +1858,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1950,
-        "straightLength": 380,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 595,
-            "radius": 189
-          },
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 595,
-            "radius": 189
-          }
-        ],
-        "width": 21
+        "circumference": 2400,
+        "straightLength": 500,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "a5b184f5-f04b-4ea7-a0a0-497349edb869",
@@ -2711,32 +1871,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1800,
-        "straightLength": 360,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          },
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          }
-        ],
-        "width": 20
+        "circumference": 2400,
+        "straightLength": 500,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "ec53a32b-9c86-4f8e-8737-28c8b8ddb1d9",
@@ -2745,32 +1884,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1750,
-        "straightLength": 340,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 535,
-            "radius": 170
-          },
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 535,
-            "radius": 170
-          }
-        ],
-        "width": 19
+        "circumference": 2000,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "94c11808-6b19-41fe-bf0b-b2f802d0f5c1",
@@ -2779,32 +1897,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 370,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          },
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          }
-        ],
-        "width": 20
+        "circumference": 2400,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "1ac5e4ac-7ddf-4b35-a28f-a2bc7a8107fd",
@@ -2813,32 +1910,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 2000,
-        "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          },
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          }
-        ],
-        "width": 22
+        "circumference": 2800,
+        "straightLength": 500,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "bbcc75ec-8d32-466c-9686-1b9deaa116f9",
@@ -2847,32 +1923,11 @@
     "courses": [
       {
         "surface": "Synthetic",
-        "circumference": 1850,
-        "straightLength": 370,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          },
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          }
-        ],
-        "width": 19
+        "circumference": 2000,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "9ed3a611-6bf3-4583-a002-70441a0fc3f4",
@@ -2920,32 +1975,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1900,
-        "straightLength": 380,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          },
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          }
-        ],
-        "width": 20
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "5921a518-0a80-4133-a438-86067989b1a5",
@@ -2954,32 +1988,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 2000,
+        "circumference": 1600,
         "straightLength": 400,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          },
-          {
-            "type": "straight",
-            "length": 400
-          },
-          {
-            "type": "turn",
-            "length": 600,
-            "radius": 191
-          }
-        ],
-        "width": 21
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "739ee5fa-588c-481c-8e8a-529291ba6644",
@@ -3027,32 +2040,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 370,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          },
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          }
-        ],
-        "width": 19
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "4b6b97b3-ad2e-4039-8acf-fc10347e3452",
@@ -3061,32 +2053,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1800,
-        "straightLength": 360,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          },
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "31458ac8-25d6-4776-9459-3ef1ce2ce6ae",
@@ -3095,32 +2066,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 2100,
-        "straightLength": 420,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 420
-          },
-          {
-            "type": "turn",
-            "length": 630,
-            "radius": 201
-          },
-          {
-            "type": "straight",
-            "length": 420
-          },
-          {
-            "type": "turn",
-            "length": 630,
-            "radius": 201
-          }
-        ],
-        "width": 22
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "cf2e39ce-7def-41c7-b187-1ca35fdd66c3",
@@ -3129,32 +2079,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1950,
-        "straightLength": 390,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 390
-          },
-          {
-            "type": "turn",
-            "length": 585,
-            "radius": 186
-          },
-          {
-            "type": "straight",
-            "length": 390
-          },
-          {
-            "type": "turn",
-            "length": 585,
-            "radius": 186
-          }
-        ],
-        "width": 20
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "784442f3-6a95-4629-ab99-3dc564a7b71b",
@@ -3202,32 +2131,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1800,
-        "straightLength": 360,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          },
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "841f8821-1eb1-4c88-b3f1-a5c4374cbbbc",
@@ -3236,58 +2144,17 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1950,
-        "straightLength": 390,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 390
-          },
-          {
-            "type": "turn",
-            "length": 585,
-            "radius": 186
-          },
-          {
-            "type": "straight",
-            "length": 390
-          },
-          {
-            "type": "turn",
-            "length": 585,
-            "radius": 186
-          }
-        ],
-        "width": 21
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       },
       {
         "surface": "Synthetic",
-        "circumference": 1800,
-        "straightLength": 360,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          },
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          }
-        ],
-        "width": 19
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "6b308b0c-6fd9-4416-b06e-7dae37a386ad",
@@ -3296,32 +2163,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 370,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          },
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          }
-        ],
-        "width": 19
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "96921361-a2a0-41db-abc9-3faada7f379c",
@@ -3330,32 +2176,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1700,
-        "straightLength": 340,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 510,
-            "radius": 162
-          },
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 510,
-            "radius": 162
-          }
-        ],
-        "width": 17
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "a1a9dede-5d0b-4a84-86c5-0805c4b0b590",
@@ -3365,31 +2190,10 @@
       {
         "surface": "Turf",
         "circumference": 1600,
-        "straightLength": 320,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 320
-          },
-          {
-            "type": "turn",
-            "length": 480,
-            "radius": 153
-          },
-          {
-            "type": "straight",
-            "length": 320
-          },
-          {
-            "type": "turn",
-            "length": 480,
-            "radius": 153
-          }
-        ],
-        "width": 16
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "aee7611f-716a-4a79-8142-a3732451b9ed",
@@ -3398,32 +2202,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 370,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          },
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          }
-        ],
-        "width": 19
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "9b129f42-f724-43d0-a837-2fb75c32d68c",
@@ -3432,32 +2215,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1800,
-        "straightLength": 360,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          },
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "782f6731-c814-4ba3-b2b3-dac462f2890a",
@@ -3467,31 +2229,10 @@
       {
         "surface": "Synthetic",
         "circumference": 1600,
-        "straightLength": 320,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 320
-          },
-          {
-            "type": "turn",
-            "length": 480,
-            "radius": 153
-          },
-          {
-            "type": "straight",
-            "length": 320
-          },
-          {
-            "type": "turn",
-            "length": 480,
-            "radius": 153
-          }
-        ],
-        "width": 17
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "d2e5c01a-fcd2-4500-9123-bd405ce2aaf0",
@@ -3500,32 +2241,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1750,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "6a05c40a-eb0a-471d-9b6c-d090a38b5461",
@@ -3534,32 +2254,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1650,
-        "straightLength": 330,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 330
-          },
-          {
-            "type": "turn",
-            "length": 495,
-            "radius": 158
-          },
-          {
-            "type": "straight",
-            "length": 330
-          },
-          {
-            "type": "turn",
-            "length": 495,
-            "radius": 158
-          }
-        ],
-        "width": 17
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "113463f4-3c75-4dfd-9c5b-8f40011dc83b",
@@ -3568,32 +2267,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1700,
-        "straightLength": 340,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 510,
-            "radius": 162
-          },
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 510,
-            "radius": 162
-          }
-        ],
-        "width": 17
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "ae2104a8-5dc8-4609-9ee9-50b0aa4fadd4",
@@ -3602,32 +2280,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1750,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "d0b902b9-a09f-440e-96f7-d3edbd5d7131",
@@ -3636,32 +2293,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1900,
-        "straightLength": 380,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          },
-          {
-            "type": "straight",
-            "length": 380
-          },
-          {
-            "type": "turn",
-            "length": 570,
-            "radius": 181
-          }
-        ],
-        "width": 20
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "23e80c06-3df8-4590-b813-116458225a15",
@@ -3670,32 +2306,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 370,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          },
-          {
-            "type": "straight",
-            "length": 370
-          },
-          {
-            "type": "turn",
-            "length": 555,
-            "radius": 177
-          }
-        ],
-        "width": 19
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "37510427-a77d-422f-9113-a8362ae808c4",
@@ -3704,32 +2319,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1800,
-        "straightLength": 360,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          },
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 540,
-            "radius": 172
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "8c8eb875-9aa8-4d8b-90ff-066998e57e4f",
@@ -3738,32 +2332,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1750,
-        "straightLength": 350,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          },
-          {
-            "type": "straight",
-            "length": 350
-          },
-          {
-            "type": "turn",
-            "length": 525,
-            "radius": 167
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "a38d2b3b-b048-44a6-b344-6506490f7994",
@@ -3850,33 +2423,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1750,
-        "straightLength": 340,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 535,
-            "radius": 170
-          },
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 535,
-            "radius": 170
-          }
-        ],
-        "width": 20,
-        "name": "Tapeta Track"
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "c2dadc93-81e8-4844-8b8c-380dfafb8726",
@@ -3885,32 +2436,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1850,
-        "straightLength": 360,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 565,
-            "radius": 180
-          },
-          {
-            "type": "straight",
-            "length": 360
-          },
-          {
-            "type": "turn",
-            "length": 565,
-            "radius": 180
-          }
-        ],
-        "width": 19
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "a5b6c7d8-e9f0-4a1b-2c3d-4e5f6a7b8c9e",
@@ -3919,33 +2449,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1609,
-        "straightLength": 366,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 366
-          },
-          {
-            "type": "turn",
-            "length": 439,
-            "radius": 140
-          },
-          {
-            "type": "straight",
-            "length": 366
-          },
-          {
-            "type": "turn",
-            "length": 439,
-            "radius": 140
-          }
-        ],
-        "width": 20,
-        "name": "All-Weather Track"
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "1bf057f7-6597-4f69-b0f4-693a142470f7",
@@ -3954,32 +2462,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1609,
-        "straightLength": 366,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 366
-          },
-          {
-            "type": "turn",
-            "length": 439,
-            "radius": 140
-          },
-          {
-            "type": "straight",
-            "length": 366
-          },
-          {
-            "type": "turn",
-            "length": 439,
-            "radius": 140
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "9d2f4d54-a2a2-4a6d-a442-1dec22bea1c2",
@@ -3988,32 +2475,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1750,
-        "straightLength": 340,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 535,
-            "radius": 170
-          },
-          {
-            "type": "straight",
-            "length": 340
-          },
-          {
-            "type": "turn",
-            "length": 535,
-            "radius": 170
-          }
-        ],
-        "width": 18
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "80f0810c-bcd8-42ee-8411-99b75f53270e",
@@ -4022,32 +2488,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1950,
-        "straightLength": 390,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 390
-          },
-          {
-            "type": "turn",
-            "length": 585,
-            "radius": 186
-          },
-          {
-            "type": "straight",
-            "length": 390
-          },
-          {
-            "type": "turn",
-            "length": 585,
-            "radius": 186
-          }
-        ],
-        "width": 20
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "8b562557-55ca-4d38-b59f-72fe64ef3861",
@@ -4056,32 +2501,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1300,
-        "straightLength": 260,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 390,
-            "radius": 124
-          },
-          {
-            "type": "straight",
-            "length": 260
-          },
-          {
-            "type": "turn",
-            "length": 390,
-            "radius": 124
-          }
-        ],
-        "width": 16
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "4e5db0cb-d4b2-4c6f-b675-903139668491",
@@ -4090,32 +2514,11 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 1350,
-        "straightLength": 270,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 270
-          },
-          {
-            "type": "turn",
-            "length": 405,
-            "radius": 129
-          },
-          {
-            "type": "straight",
-            "length": 270
-          },
-          {
-            "type": "turn",
-            "length": 405,
-            "radius": 129
-          }
-        ],
-        "width": 17
+        "circumference": 1600,
+        "straightLength": 400,
+        "sections": []
       }
-    ],
-    "dataSource": "researched"
+    ]
   },
   {
     "id": "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",

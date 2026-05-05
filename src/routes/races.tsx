@@ -12,6 +12,7 @@ import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { cn } from "@/lib/utils";
 import { RaceEntry } from "@/components/RaceEntry";
 import { Race } from "@/game/types";
+import { getCountry } from "@/game/gradedRaces";
 
 type RaceFilters = {
   grade: string;
@@ -54,7 +55,7 @@ function RacesPage() {
         }
         return true;
       })
-      .filter((r) => (country === "all" ? true : r.country === country))
+      .filter((r) => (country === "all" ? true : getCountry(r.graded?.trackId ?? "") === country))
       .filter((r) => (surface === "all" ? true : r.surface === surface))
       .filter((r) => (track === "all" ? true : r.graded?.track === track))
       .filter((r) => {
@@ -72,7 +73,7 @@ function RacesPage() {
     });
   };
 
-  const countries = Array.from(new Set(races.map((r) => r.country))).sort();
+  const countries = Array.from(new Set(races.filter(r => r.graded).map((r) => getCountry(r.graded!.trackId)))).filter(Boolean).sort() as string[];
   const tracks = Array.from(new Set(races.filter((r) => r.graded).map((r) => r.graded!.track))).sort();
 
   return (

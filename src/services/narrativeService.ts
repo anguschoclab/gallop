@@ -1,5 +1,6 @@
 import type { Runner } from "@/game/raceSim";
 import type { Horse, Race, Stable } from "@/game/types";
+import type { Rng } from "@/game/rng";
 
 export type NarrativeEvent =
   | "START"
@@ -199,6 +200,14 @@ export class NarrativeGenerator {
   private commentary: CommentaryLine[] = [];
   private race: Race;
   private lineCounter = 0;
+  private horses: Horse[];
+  private stables: Stable[];
+  private rng: Rng;
+  private hasAnnouncedStart = false;
+  private hasAnnouncedFinish = false;
+  private hasAnnouncedStretch = false;
+  private hasAnnouncedBio: Set<string> = new Set();
+  private announcedMilestones: Set<number> = new Set();
 
   constructor(race: Race, horses: Horse[], stables: Stable[], rng: Rng) {
     this.race = race;
@@ -326,7 +335,7 @@ export class NarrativeGenerator {
     // 11. Drafting
     for (const r of runners) {
       if (r.draftingHorseId && this.canAnnounce("DRAFTING", r.horseId, simTime, 40)) {
-        const other = runners.find(rr => rr.id === r.draftingHorseId);
+        const other = runners.find(rr => rr.horseId === r.draftingHorseId);
         if (other) {
           const line = this.createLine("DRAFTING", simTime, r);
           line.text = line.text.replace("{other}", other.name);

@@ -1,5 +1,6 @@
 import type { Horse, Race, Jockey } from "@/game/types";
 import { buildRunner, stepRunner, getConditionsModifier, computePaceContext, type Runner } from "@/game/raceSim";
+import type { CourseSpecification } from "@/game/tracks";
 import { generateHorse } from "@/game/horseGen";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { createRng, hashStr, type Rng } from "@/game/rng";
@@ -94,7 +95,7 @@ export function buildRaceField(
     
     if (horse) {
       const jockeyObj = entryData.jockeyId ? dependencies.jockeys.find(j => j.id === entryData.jockeyId) : undefined;
-      runners.push(buildRunner(horse, entryData.owned, race.distance, surface, conditions, barrier, jockeyObj, entryData.weight, race.handedness));
+      runners.push(buildRunner(horse, entryData.owned, race.distance, surface ?? null, conditions, barrier, jockeyObj, entryData.weight, race.handedness));
     }
   }
 

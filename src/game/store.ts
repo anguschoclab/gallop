@@ -45,6 +45,7 @@ import { npcCyclePhase } from "@/core/time/phases/npcCycle";
 import { auctionsPhase } from "@/core/time/phases/auctions";
 import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
 import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
+import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
 import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
 
 export type ActionResult = { ok: true } | { ok: false, reason: string };
@@ -1036,6 +1037,7 @@ export const useGame = create<GameState & Actions>()(
           auctionsPhase,
           leaderboardPhase,
           awardsPhase,
+          schedulerPhase,
           stateUpdatePhase,
         ];
 

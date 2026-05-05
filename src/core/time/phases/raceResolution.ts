@@ -15,7 +15,7 @@ export const raceResolutionPhase = {
     const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= state.day);
 
     for (const race of overdueRaces) {
-      const { runners } = buildRaceField({ race, horses: state.horses, jockeys: state.jockeys });
+      const { runners } = buildRaceField({ race, horses: state.horses, jockeys: state.jockeys ?? [] });
       const rng = rngForRace(race);
       const course = getCourseForRace(race);
       const result = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course);

@@ -22,7 +22,7 @@ export const npcCyclePhase = {
     const { horses, races, jockeys } = runNpcCycle(
       state.npcStables,
       state.horses,
-      state.jockeys,
+      state.jockeys ?? [],
       state.races,
       newDay,
       context.dailyRng,

@@ -17,6 +17,7 @@ import { Route as SouthAmericanCalendarRouteImport } from './routes/south-americ
 import { Route as SireWatchRouteImport } from './routes/sire-watch'
 import { Route as SireLeaderboardsRouteImport } from './routes/sire-leaderboards'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SchedulerRouteImport } from './routes/scheduler'
 import { Route as ScandinavianCalendarRouteImport } from './routes/scandinavian-calendar'
 import { Route as RecapRouteImport } from './routes/recap'
 import { Route as RacesRouteImport } from './routes/races'
@@ -76,6 +77,11 @@ const SireLeaderboardsRoute = SireLeaderboardsRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchedulerRoute = SchedulerRouteImport.update({
+  id: '/scheduler',
+  path: '/scheduler',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ScandinavianCalendarRoute = ScandinavianCalendarRouteImport.update({
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
+  '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
@@ -223,6 +230,7 @@ export interface FileRoutesByTo {
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
+  '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
@@ -254,6 +262,7 @@ export interface FileRoutesById {
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
   '/scandinavian-calendar': typeof ScandinavianCalendarRoute
+  '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
@@ -286,6 +295,7 @@ export interface FileRouteTypes {
     | '/races'
     | '/recap'
     | '/scandinavian-calendar'
+    | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
     | '/sire-watch'
@@ -315,6 +325,7 @@ export interface FileRouteTypes {
     | '/races'
     | '/recap'
     | '/scandinavian-calendar'
+    | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
     | '/sire-watch'
@@ -345,6 +356,7 @@ export interface FileRouteTypes {
     | '/races'
     | '/recap'
     | '/scandinavian-calendar'
+    | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
     | '/sire-watch'
@@ -376,6 +388,7 @@ export interface RootRouteChildren {
   RacesRoute: typeof RacesRoute
   RecapRoute: typeof RecapRoute
   ScandinavianCalendarRoute: typeof ScandinavianCalendarRoute
+  SchedulerRoute: typeof SchedulerRoute
   SettingsRoute: typeof SettingsRoute
   SireLeaderboardsRoute: typeof SireLeaderboardsRoute
   SireWatchRoute: typeof SireWatchRouteWithChildren
@@ -443,6 +456,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scheduler': {
+      id: '/scheduler'
+      path: '/scheduler'
+      fullPath: '/scheduler'
+      preLoaderRoute: typeof SchedulerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/scandinavian-calendar': {
@@ -651,6 +671,7 @@ const rootRouteChildren: RootRouteChildren = {
   RacesRoute: RacesRoute,
   RecapRoute: RecapRoute,
   ScandinavianCalendarRoute: ScandinavianCalendarRoute,
+  SchedulerRoute: SchedulerRoute,
   SettingsRoute: SettingsRoute,
   SireLeaderboardsRoute: SireLeaderboardsRoute,
   SireWatchRoute: SireWatchRouteWithChildren,

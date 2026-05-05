@@ -22,7 +22,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
   
   const horses = useGame((s) => s.horses.filter(h => h.owned));
-  const jockeys = useGame((s) => s.jockeys);
+  const jockeys = useGame((s) => s.jockeys ?? []);
   const enterRace = useGame((s) => s.enterRace);
   const assignJockey = useGame((s) => s.assignJockey);
   const cash = useGame((s) => s.cash);
