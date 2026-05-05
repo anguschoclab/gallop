@@ -1,11 +1,12 @@
 // NPC Intent Generators
 // Generates intents for NPC stables during the intent collection phase
 
-import type { AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, AuctionBidIntent, ClaimingIntent } from "@/core/resolver/intents";
+import type { AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, AuctionBidIntent, ClaimingIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { generateUUID } from "@/game/uuid";
 import { PERSONALITY_CONFIG } from "@/game/npcStables";
 import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
+import { calculateOverallRating } from "@/core/horse/stats";
 
 /**
  * Generate all NPC intents for the day

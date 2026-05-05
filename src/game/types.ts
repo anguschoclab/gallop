@@ -440,7 +440,7 @@ export type Race = {
   purse: number;
   minStat?: number;
   fieldSize: number;
-  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean; barrier?: number; jockeyId?: string; weight?: number }[];
+  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean; barrier?: number; jockeyId?: string; weight?: number; withdrawnFromClaiming?: boolean }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
   graded?: {

@@ -219,6 +219,13 @@ export interface ClaimingIntent extends Intent {
   claimingPrice: number;
 }
 
+// Withdraw from claiming intent (for optional claiming races)
+export interface WithdrawFromClaimingIntent extends Intent {
+  type: "withdraw_from_claiming";
+  raceId: string;
+  horseId: string;
+}
+
 // Union type for all intents
 export type AnyIntent =
   | TrainingIntent
@@ -246,4 +253,5 @@ export type AnyIntent =
   | PregnancyCheckIntent
   | PregnancyResolutionIntent
   | RaceResolutionIntent
-  | ClaimingIntent;
+  | ClaimingIntent
+  | WithdrawFromClaimingIntent;

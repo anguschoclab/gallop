@@ -517,6 +517,24 @@ export function validateIntent(intent: AnyIntent, state: GameState): { valid: bo
       break;
     }
 
+    case "withdraw_from_claiming": {
+      const race = state.races.find((r) => r.id === intent.raceId);
+      const horse = state.horses.find((h) => h.id === intent.horseId);
+      if (!race) return { valid: false, reason: "Race not found" };
+      if (!horse) return { valid: false, reason: "Horse not found" };
+      if (race.resolved) return { valid: false, reason: "Race already resolved" };
+      if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
+      if (race.raceClass !== "OptionalClaiming" && race.raceClass !== "MaidenOptionalClaiming") {
+        return { valid: false, reason: "Withdrawal only allowed in optional claiming races" };
+      }
+      const entry = race.entries.find((e) => e.horseId === intent.horseId);
+      if (!entry) return { valid: false, reason: "Horse not entered in this race" };
+      if (entry.withdrawnFromClaiming) {
+        return { valid: false, reason: "Horse already withdrawn from claiming" };
+      }
+      break;
+    }
+
     default:
       // Pass through for other intent types
       break;
