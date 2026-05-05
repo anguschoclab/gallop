@@ -339,6 +339,21 @@ export interface JockeyStatsImpact extends Impact {
   reason: string;
 }
 
+// Log impact
+export interface LogImpact extends Impact {
+  type: "log";
+  text: string;
+  reason: string;
+}
+
+// Pace sample impact
+export interface PaceSampleImpact extends Impact {
+  type: "pace_sample";
+  distance: number;
+  time: number;
+  reason: string;
+}
+
 // Union type for all impacts
 export type AnyImpact =
   | CashImpact
@@ -374,4 +389,6 @@ export type AnyImpact =
   | RaceHistoryImpact
   | ClaimingImpact
   | BlueHenImpact
-  | JockeyStatsImpact;
+  | JockeyStatsImpact
+  | LogImpact
+  | PaceSampleImpact;

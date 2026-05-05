@@ -49,13 +49,17 @@ import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
 import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
 import { intentValidationPhase } from "@/core/time/phases/intentValidation";
 import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
+import { purchaseResolutionPhase } from "@/core/time/phases/purchaseResolution";
+import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
 import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
+import { auctionResolutionPhase } from "@/core/time/phases/auctionResolution";
+import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
 import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { updateBlueHenStatus } from "./helpers/blueHenHelpers";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
-import type { RenameIntent, AnyIntent, TrainingIntent, RaceEntryIntent } from "@/core/resolver/intents";
+import type { RenameIntent, AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, PurchaseIntent } from "@/core/resolver/intents";
 import type { RenameImpact } from "@/core/resolver/impacts";
 
 export type ActionResult = { ok: true } | { ok: false, reason: string };
@@ -609,12 +613,25 @@ export const useGame = create<GameState & Actions>()(
         if (!h) return;
         const price = horsePrice(h);
         if (s.cash < price) return;
-        const bought: Horse = { ...h, owned: true };
+
+        // Enqueue PurchaseIntent for next day advance
+        const intent: PurchaseIntent = {
+          id: generateUUID(),
+          entityId: horseId,
+          source: "player",
+          day: s.day,
+          priority: 100,
+          type: "purchase",
+          horseId,
+          price,
+        };
+
+        get().enqueueIntent(intent);
+
+        // Deduct cash immediately
         set({
           cash: s.cash - price,
-          horses: [...s.horses, bought],
-          market: s.market.filter((m) => m.id !== horseId),
-          log: [{ day: s.day, text: `Bought ${h.name} for $${price.toLocaleString()}.` }, ...s.log].slice(0, 50),
+          log: [{ day: s.day, text: `${h.name} purchase scheduled for $${price.toLocaleString()}.` }, ...s.log].slice(0, 50),
         });
       },
 
@@ -827,43 +844,26 @@ export const useGame = create<GameState & Actions>()(
         const totalFee = BREEDING_FEE + (liveFoalGuarantee ? LIVE_FOAL_GUARANTEE_FEE : 0) + studFee;
         if (s.cash < totalFee) return fail("Insufficient cash for breeding fee.");
 
-        const dueDay = s.day + GESTATION_DAYS;
-        const preg: Pregnancy = {
+        // Enqueue BreedingIntent for next day advance
+        const intent: BreedingIntent = {
           id: generateUUID(),
-          sireId, damId,
-          sireName: sire!.name, damName: dam!.name,
-          conceivedDay: s.day,
-          dueDay,
-          resolved: false,
+          entityId: damId,
+          source: "player",
+          day: s.day,
+          priority: 100,
+          type: "breeding",
+          sireId,
+          damId,
           liveFoalGuarantee,
-          reBreedingAttempts: 0,
-          refunded: false,
         };
 
-        // Apply state changes: deduct player cash, credit stable cash if any,
-        // bump stallion's seasonBookings, append pregnancy.
-        const updatedHorses = s.horses.map((h) => {
-          if (isExternal && h.id === sire!.id && h.stud) {
-            return {
-              ...h,
-              stud: { ...h.stud, seasonBookings: h.stud.seasonBookings + 1 },
-            };
-          }
-          return h;
-        });
-        const updatedStables = isExternal
-          ? s.npcStables.map((stable) =>
-              stable.id === sire!.stableId ? { ...stable, cash: stable.cash + studFee } : stable
-            )
-          : s.npcStables;
+        get().enqueueIntent(intent);
 
+        // Deduct cash immediately
         set({
           cash: s.cash - totalFee,
-          horses: updatedHorses,
-          npcStables: updatedStables,
-          pregnancies: [preg, ...s.pregnancies],
           log: [
-            { day: s.day, text: `Mated ${sire!.name} × ${dam!.name} (foal due day ${dueDay}). Fee $${totalFee.toLocaleString()}${studFee ? ` (incl. $${studFee.toLocaleString()} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.` },
+            { day: s.day, text: `${sire!.name} × ${dam!.name} breeding scheduled. Fee $${totalFee.toLocaleString()}${studFee ? ` (incl. $${studFee.toLocaleString()} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.` },
             ...s.log,
           ].slice(0, 50),
         });
@@ -1089,7 +1089,11 @@ export const useGame = create<GameState & Actions>()(
           stateUpdatePhase,
           // Resolution phases (convert intents to impacts)
           raceEntryResolutionPhase,
+          purchaseResolutionPhase,
+          breedingResolutionPhase,
           trainingResolutionPhase,
+          auctionResolutionPhase,
+          raceResolutionPhase,
           // Impact application phase (final)
           impactApplicationPhase,
         ];
