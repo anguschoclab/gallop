@@ -46,17 +46,17 @@ function StallionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Stallion Roster</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Stallion Roster</h1>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">
           Stallions standing at stud, sorted by fee. Book your mare to a stallion to schedule a foal.
         </p>
       </div>
 
-      <Card>
-        <CardHeader><CardTitle>Filters</CardTitle></CardHeader>
+      <Card className="border-gold-muted">
+        <CardHeader><CardTitle className="font-[family-name:var(--font-display)]">Filters</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-muted-foreground">Hemisphere</label>
+            <label className="text-xs text-cream-muted">Hemisphere</label>
             <Select value={hemisphere} onValueChange={(v) => setHemisphere(v as Hemisphere | "all")}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -67,7 +67,7 @@ function StallionsPage() {
             </Select>
           </div>
           <div>
-            <label className="text-xs text-muted-foreground">Your mare</label>
+            <label className="text-xs text-cream-muted">Your mare</label>
             <Select value={selectedMareId} onValueChange={setSelectedMareId}>
               <SelectTrigger><SelectValue placeholder="Select a mare to book…" /></SelectTrigger>
               <SelectContent>
@@ -99,7 +99,7 @@ function StallionsPage() {
           />
         ))}
         {filtered.length === 0 && (
-          <p className="text-sm text-muted-foreground col-span-full">
+          <p className="text-sm text-cream-muted col-span-full">
             No stallions are currently standing at stud in the selected hemisphere.
           </p>
         )}
@@ -136,40 +136,40 @@ function StallionCard({
     canAfford;
 
   return (
-    <Card>
+    <Card className="border-gold-muted">
       <CardHeader>
         <div className="flex items-start justify-between">
-          <CardTitle className="text-lg">{stallion.name}</CardTitle>
-          <Badge variant="secondary">{stallion.hemisphere}</Badge>
+          <CardTitle className="text-lg font-[family-name:var(--font-display)]">{stallion.name}</CardTitle>
+          <Badge className="bg-t700 text-cream">{stallion.hemisphere}</Badge>
         </div>
-        <p className="text-xs text-muted-foreground">{stableName}</p>
+        <p className="text-xs text-cream-muted">{stableName}</p>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Standing fee</span>
-          <span className="font-mono font-semibold">${stud.standingFee.toLocaleString()}</span>
+          <span className="text-cream-muted">Standing fee</span>
+          <span className="font-mono font-semibold tabular-nums">${stud.standingFee.toLocaleString()}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Book</span>
+          <span className="text-cream-muted">Book</span>
           <span>{stud.seasonBookings} / {stud.bookSize}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Stakes foals</span>
+          <span className="text-cream-muted">Stakes foals</span>
           <span>{stud.lifetimeStakesFoals}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">G1 foals</span>
+          <span className="text-cream-muted">G1 foals</span>
           <span>{stud.lifetimeG1Foals}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Age · Fame</span>
+          <span className="text-cream-muted">Age · Fame</span>
           <span>{stallion.age} · {stallion.fame}</span>
         </div>
         {!inSeason && (
-          <p className="text-xs text-orange-600">Out of breeding season for {stallion.hemisphere}.</p>
+          <p className="text-xs text-warning">Out of breeding season for {stallion.hemisphere}.</p>
         )}
         {stud.seasonBookings >= stud.bookSize && (
-          <p className="text-xs text-orange-600">Book is full this season.</p>
+          <p className="text-xs text-warning">Book is full this season.</p>
         )}
         <Button size="sm" className="w-full mt-2" disabled={!canBook} onClick={onBook}>
           {!mare ? "Select a mare first" :
