@@ -41,7 +41,7 @@ function MarketPage() {
             <Card key={h.id}>
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-start gap-3">
-                  <SilkDot color={h.coatColor || "#8B4513"} size="md" />
+                  <SilkDot color={h.silk} size="md" />
                   <div className="flex-1">
                     <p className="font-bold font-[family-name:var(--font-display)]">{h.name}</p>
                     <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">

@@ -1,7 +1,9 @@
 import type { Horse } from "@/game/types";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { cn } from "@/lib/utils";
+import { SilkDot } from "./SilkDot";
 
 /**
  * StatBar — Displays a stat with label and progress bar.
@@ -66,6 +68,40 @@ export function SilkBadge({ color, num, size = "md", className }: {
       style={{ backgroundColor: color }}
     >
       {num ?? ""}
+    </div>
+  );
+}
+
+/**
+ * HorseBit — Small inline display element (silk + name + status pill).
+ * 
+ * Design Bible:
+ * - Use anywhere a horse is mentioned in flowing copy or compact rows
+ * - Silk dot beside every horse name
+ * - Optional status pill for additional context
+ */
+export function HorseBit({ 
+  horse, 
+  showStatus = false,
+  status,
+  className 
+}: { 
+  horse: Horse; 
+  showStatus?: boolean;
+  status?: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex items-center gap-2", className)}>
+      <SilkDot color={horse.silk} size="sm" />
+      <span className="font-medium font-[family-name:var(--font-display)] text-sm">
+        {horse.name}
+      </span>
+      {showStatus && status && (
+        <Badge className="text-[10px] h-4 px-1 bg-secondary text-secondary-foreground font-[family-name:var(--font-mono)] tabular-nums">
+          {status}
+        </Badge>
+      )}
     </div>
   );
 }

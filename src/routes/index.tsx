@@ -161,7 +161,7 @@ function Dashboard() {
             {horses.slice().sort((a, b) => overall(b) - overall(a)).slice(0, 5).map((h) => (
               <Link key={h.id} to="/stable/$horseId" params={{ horseId: h.id }} className="flex items-center gap-3 p-2 rounded hover:bg-muted transition-colors">
                 {/* Design Bible: Silk dot beside every horse name */}
-                <SilkDot color={h.coatColor || "#8B4513"} size="md" />
+                <SilkDot color={h.silk} size="md" />
                 <div className="flex-1">
                   <p className="font-medium text-sm font-[family-name:var(--font-display)]">{h.name}</p>
                   <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">

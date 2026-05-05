@@ -104,7 +104,7 @@ function RecapPage() {
                       >
                         <div className="flex items-center gap-3">
                           {positionIcon}
-                          <SilkDot color={finisher.horse.coatColor || "#8B4513"} size="sm" />
+                          <SilkDot color={finisher.horse.silk} size="sm" />
                           <div>
                             <div className="font-medium font-[family-name:var(--font-display)]">{finisher.horse.name}</div>
                             <div className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">

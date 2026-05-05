@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Building2, Users, DollarSign, Globe, Trophy, Eye, Brain } from "lucide-react";
 import { toast } from "sonner";
 import { TrophyCase } from "@/components/awards";
+import { NumericValue } from "@/components/HorseBits";
 
 export const Route = createFileRoute("/npc-stables/$stableId")({ component: NpcStableDetailPage });
 
@@ -66,11 +67,11 @@ function NpcStableDetailPage() {
                 <Globe className="w-4 h-4" />
                 {stable.country}
               </span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 font-[family-name:var(--font-mono)] tabular-nums">
                 <Users className="w-4 h-4" />
-                {horses.length} horses
+                <NumericValue value={horses.length} /> horses
               </span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 font-[family-name:var(--font-mono)] tabular-nums">
                 <DollarSign className="w-4 h-4" />
                 ${stable.cash.toLocaleString()}
               </span>
@@ -116,25 +117,25 @@ function NpcStableDetailPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <Card>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">{horses.length}</div>
+            <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums"><NumericValue value={horses.length} /></div>
             <div className="text-sm text-muted-foreground">Total Horses</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">{activeHorses.length}</div>
+            <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums"><NumericValue value={activeHorses.length} /></div>
             <div className="text-sm text-muted-foreground">Active Horses</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">{colts.length}</div>
+            <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums"><NumericValue value={colts.length} /></div>
             <div className="text-sm text-muted-foreground">Colts/Horses</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">{fillies.length}</div>
+            <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums"><NumericValue value={fillies.length} /></div>
             <div className="text-sm text-muted-foreground">Fillies/Mares</div>
           </CardContent>
         </Card>

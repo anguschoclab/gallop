@@ -77,7 +77,7 @@ function HorseDetail() {
         </Link>
         <div className="flex items-start gap-6">
           {/* Design Bible: SilkDot for identity */}
-          <SilkDot color={horse.coatColor || "#8B4513"} size="lg" />
+          <SilkDot color={horse.silk} size="lg" />
           <div className="flex-1">
             {/* Display font for horse name */}
             <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">{horse.name}</h1>

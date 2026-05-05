@@ -101,7 +101,7 @@ function AuctionPage() {
               return (
                 <Card key={horse.id} className="p-3 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
-                    <SilkDot color={horse.coatColor || "#8B4513"} size="sm" />
+                    <SilkDot color={horse.silk} size="sm" />
                     <div>
                       <p className="font-medium text-sm font-[family-name:var(--font-display)]">{horse.name}</p>
                       <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
