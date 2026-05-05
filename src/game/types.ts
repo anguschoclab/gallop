@@ -536,52 +536,9 @@ export type AuctionSale = {
   resolved: boolean;
 };
 
-export type GameState = {
-  day: number;
-  cash: number;
-  horses: Horse[];
-  market: Horse[];
-  races: Race[];
-  trainingUsed: Record<string, number>; // horseId -> count today
-  log: { day: number; text: string }[];
-  pregnancies: Pregnancy[];
-  // Pace samples per 200m distance bucket (winner finish times in seconds).
-  paceSamples?: Record<number, number[]>;
-  // Calibrated par times per bucket, recomputed each season.
-  calibratedPars?: Record<number, number>;
-  lastCalibrationDay?: number;
-  // NPC stable system
-  npcStables: Stable[];
-  scoutReports: ScoutReport[];
-  // Multi-day advance: set when a player race interrupts auto-advance
-  pendingPlayerRaceId?: string;
-  // Auction system
-  auctions?: AuctionSale[];
-  jockeys?: Jockey[];
-  // Industry mean earnings (rolling avg of foal-aged horse career earnings)
-  // recomputed once per season. Used for AEI (Average Earnings Index) on the
-  // Sire Watch route. 0 until first recompute.
-  industryMeanEarnings?: number;
-  industryEarningsUpdatedDay?: number;
-  // Regional awards system
-  awards?: RegionalAward[];
-  lastAwardYear?: Record<AwardRegion, number>;
-  pendingAwardCeremonies?: {
-    region: AwardRegion;
-    year: number;
-    awards: RegionalAward[];
-  }[];
-  currentCeremonyIndex?: number;
-  // Sire leaderboards system
-  sireLeaderboards?: Record<string, import("@/core/breeding/leaderboardTypes").Leaderboard>;
-  sireTrendHistory?: import("@/core/breeding/leaderboardTypes").SireTrendData[];
-  leaderboardsUpdatedDay?: number;
-  // Campaign planner system
-  campaigns?: HorseCampaign[];
-  triplecrownHistory?: TripleCrownProgress[];
-  // Intent/impact resolver system
-  pendingIntents?: import("@/core/resolver/intents").AnyIntent[];
-};
+// GameState type is now defined in ./state/ for better maintainability
+// Re-export from state module for backward compatibility
+export type { GameState } from "./state";
 
 // ============= Campaign Planner Types =============
 
