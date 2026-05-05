@@ -6,6 +6,13 @@
 import type { Stable } from "@/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState } from "./learningModule";
+import type { CampaignAIState } from "./campaignAI";
+import type { TrainingAIState } from "./trainingAI";
+import type { ClaimingAIState } from "./claimingAI";
+import type { AuctionAIState } from "./auctionAI";
+import type { JockeyAIState } from "./jockeyAI";
+import type { FacilityAIState } from "./facilityAI";
+import type { MarketAIState } from "./marketAI";
 
 /**
  * Per-stable AI state that persists across all NPC decision-making
@@ -16,13 +23,13 @@ export interface StableAIState {
   learningState: ReturnType<typeof createLearningState>;
   lastUpdateDay: number;
   // Subsystem-specific AI states (will be populated by respective AI modules)
-  trainingAI?: unknown;
-  claimingAI?: unknown;
-  auctionAI?: unknown;
-  jockeyAI?: unknown;
-  campaignAI?: unknown;
-  facilityAI?: unknown;
-  marketAI?: unknown;
+  trainingAI?: TrainingAIState;
+  claimingAI?: ClaimingAIState;
+  auctionAI?: AuctionAIState;
+  jockeyAI?: JockeyAIState;
+  campaignAI?: CampaignAIState;
+  facilityAI?: FacilityAIState;
+  marketAI?: MarketAIState;
 }
 
 /**

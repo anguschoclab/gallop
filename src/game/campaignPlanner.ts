@@ -18,8 +18,9 @@ import {
   detectContender,
   getOptimalMajorRaceTarget,
   getPrepRaceStrategy,
+  createCampaignAIState,
 } from "@/core/ai/campaignAI";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 
 // ── Distance band helpers ────────────────────────────────────────────────────
 
@@ -87,8 +88,12 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
 
   // AI-driven major race targeting for NPCs
   if (goalType === "chase_major_race" && stable && npcAIManager) {
-    const aiState = npcAIManager.getStableAIState(stable.id);
-    if (aiState) {
+    const aiState = getOrCreateStableAIState(npcAIManager, stable, currentDay);
+    // Initialize campaignAI if not present
+    if (!aiState.campaignAI) {
+      aiState.campaignAI = createCampaignAIState(stable);
+    }
+    if (aiState.campaignAI) {
       // Check if horse is a contender
       const contenderStatus = detectContender(aiState.campaignAI, horse, currentDay);
       if (contenderStatus.isContender && !targetRaceKey) {
@@ -105,8 +110,6 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
               currentDay,
               year,
               horse,
-              aiState.campaignAI,
-              stable,
             );
           }
         }
