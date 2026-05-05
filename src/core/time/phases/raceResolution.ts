@@ -1,5 +1,19 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact, RaceResultImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact, ClaimingImpact } from "@/core/resolver/impacts";
+import type {
+  AnyImpact,
+  RaceResultImpact,
+  EnergyImpact,
+  FormImpact,
+  FameImpact,
+  RaceHistoryImpact,
+  CashImpact,
+  BlueHenImpact,
+  StudCareerImpact,
+  PaceSampleImpact,
+  JockeyStatsImpact,
+  LogImpact,
+  ClaimingImpact,
+} from "@/core/resolver/impacts";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/game/uuid";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
@@ -7,13 +21,20 @@ import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
 import { beyerFigure } from "@/game/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
-import { detectInbreedingPattern, inbreedingPerformanceDampener } from "@/core/breeding/populationGenetics";
+import {
+  detectInbreedingPattern,
+  inbreedingPerformanceDampener,
+} from "@/core/breeding/populationGenetics";
 import type { Race, Horse } from "@/game/types";
 import { getCurrentYear } from "@/game/raceSchedule";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import { processClaims, type ClaimAttempt } from "@/game/claiming";
 import { createTransaction } from "@/core/transactions";
-import { createReputationEvent, calculateRaceWinReputation, getReputationTier } from "@/core/reputation";
+import {
+  createReputationEvent,
+  calculateRaceWinReputation,
+  getReputationTier,
+} from "@/core/reputation";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -35,7 +56,11 @@ export const raceResolutionPhase: PipelinePhase = {
 
     for (const race of overdueRaces) {
       // Simulate race
-      const { runners, fillerHorses } = buildRaceField({ race, horses: state.horses, jockeys: state.jockeys ?? [] });
+      const { runners, fillerHorses } = buildRaceField({
+        race,
+        horses: state.horses,
+        jockeys: state.jockeys ?? [],
+      });
       const rng = rngForRace(race);
       const course = getCourseForRace(race);
       const result = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course);
@@ -83,7 +108,16 @@ export const raceResolutionPhase: PipelinePhase = {
         } as EnergyImpact);
 
         // Form impact based on position
-        const formDelta = r.position === 1 ? 3 : r.position === 2 ? 2 : r.position === 3 ? 1 : r.position <= 5 ? 0 : -1;
+        const formDelta =
+          r.position === 1
+            ? 3
+            : r.position === 2
+              ? 2
+              : r.position === 3
+                ? 1
+                : r.position <= 5
+                  ? 0
+                  : -1;
         impacts.push({
           id: generateUUID(),
           intentId: "",
@@ -122,7 +156,11 @@ export const raceResolutionPhase: PipelinePhase = {
         let winAndYouInQualified = undefined;
         if (r.position === 1 && race.graded?.winAndYouInTarget) {
           const currentYear = getCurrentYear(newDay);
-          winAndYouInQualified = { year: currentYear, raceId: race.id, raceKey: race.graded.winAndYouInTarget };
+          winAndYouInQualified = {
+            year: currentYear,
+            raceId: race.id,
+            raceKey: race.graded.winAndYouInTarget,
+          };
         }
 
         // Race history impact
@@ -183,7 +221,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 amount: prize,
                 reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
               } as CashImpact);
-              
+
               // Record transaction for prize money income
               if (!horse.stableId) {
                 // Player horse - record transaction
@@ -195,8 +233,8 @@ export const raceResolutionPhase: PipelinePhase = {
                     `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
                     newDay,
                     state.cash + prize,
-                    { horseId: horse.id, raceId: race.id }
-                  )
+                    { horseId: horse.id, raceId: race.id },
+                  ),
                 );
 
                 // Track reputation for wins
@@ -208,8 +246,8 @@ export const raceResolutionPhase: PipelinePhase = {
                       repGain,
                       `Win in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
                       newDay,
-                      { horseId: horse.id, raceId: race.id }
-                    )
+                      { horseId: horse.id, raceId: race.id },
+                    ),
                   );
                 }
               }
@@ -249,7 +287,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 amount: -ridingFee,
                 reason: `Jockey fee: ${jockey.name}`,
               } as CashImpact);
-              
+
               // Record transaction for jockey fee expense
               newTransactions.push(
                 createTransaction(
@@ -259,15 +297,18 @@ export const raceResolutionPhase: PipelinePhase = {
                   `Jockey fee: ${jockey.name} for ${horse.name}`,
                   newDay,
                   state.cash - ridingFee,
-                  { horseId: horse.id, raceId: race.id }
-                )
+                  { horseId: horse.id, raceId: race.id },
+                ),
               );
             }
           }
         }
 
         // Blue hen impact for graded stakes winners
-        if (r.position === 1 && (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")) {
+        if (
+          r.position === 1 &&
+          (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")
+        ) {
           const dam = state.horses.find((h) => h.id === horse.pedigree?.damId);
           if (dam) {
             impacts.push({
@@ -281,7 +322,10 @@ export const raceResolutionPhase: PipelinePhase = {
               blueHenStatus: {
                 isBlueHen: dam.blueHenStatus?.isBlueHen || false,
                 stakesWinnersProduced: (dam.blueHenStatus?.stakesWinnersProduced ?? 0) + 1,
-                group1WinnersProduced: race.graded?.grade === "G1" ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1 : dam.blueHenStatus?.group1WinnersProduced,
+                group1WinnersProduced:
+                  race.graded?.grade === "G1"
+                    ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1
+                    : dam.blueHenStatus?.group1WinnersProduced,
                 blueHenScore: dam.blueHenStatus?.blueHenScore || 0,
                 foalsProduced: dam.blueHenStatus?.foalsProduced || 0,
               },
@@ -307,7 +351,10 @@ export const raceResolutionPhase: PipelinePhase = {
                 seasonBookings: sire.stud.seasonBookings,
                 lifetimeFoals: sire.stud.lifetimeFoals,
                 lifetimeStakesFoals: (sire.stud.lifetimeStakesFoals ?? 0) + 1,
-                lifetimeG1Foals: race.graded?.grade === "G1" ? (sire.stud.lifetimeG1Foals ?? 0) + 1 : sire.stud.lifetimeG1Foals,
+                lifetimeG1Foals:
+                  race.graded?.grade === "G1"
+                    ? (sire.stud.lifetimeG1Foals ?? 0) + 1
+                    : sire.stud.lifetimeG1Foals,
               },
               reason: `Stakes win by ${horse.name}`,
             } as StudCareerImpact);
@@ -390,10 +437,12 @@ export const raceResolutionPhase: PipelinePhase = {
         return horse && !horse.stableId;
       });
       if (ownedHorses.length > 0) {
-        const summary = ownedHorses.map((r) => {
-          const horse = state.horses.find((h) => h.id === r.horseId);
-          return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
-        }).join(", ");
+        const summary = ownedHorses
+          .map((r) => {
+            const horse = state.horses.find((h) => h.id === r.horseId);
+            return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
+          })
+          .join(", ");
         const prize = ownedHorses.reduce((sum, r) => {
           if (r.position - 1 < PRIZE_SPLIT.length) {
             return sum + Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
@@ -416,9 +465,9 @@ export const raceResolutionPhase: PipelinePhase = {
       if (race.claimingPrice) {
         // Collect all ClaimingIntents for this race
         const claimIntents = context.intents.filter(
-          (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id
+          (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
         );
-        
+
         if (claimIntents.length > 0) {
           // Filter out horses withdrawn from claiming
           const eligibleClaims = claimIntents.filter((claim) => {
@@ -458,7 +507,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 reason: `Refund for withdrawn horse ${withdrawnClaim.horseId} in ${race.name}`,
               } as CashImpact);
             }
-            
+
             impacts.push({
               id: generateUUID(),
               intentId: withdrawnClaim.id,
@@ -470,7 +519,7 @@ export const raceResolutionPhase: PipelinePhase = {
               reason: "Claiming refund",
             } as LogImpact);
           }
-          
+
           if (eligibleClaims.length > 0) {
             // Convert ClaimingIntents to ClaimAttempt format for processClaims
             const claimAttempts: ClaimAttempt[] = eligibleClaims.map((intent) => ({
@@ -479,16 +528,16 @@ export const raceResolutionPhase: PipelinePhase = {
               claimingPrice: intent.claimingPrice,
               successful: false,
             }));
-            
+
             // Process claims using existing function
             const { transfers, logs: claimLogs } = processClaims(
               race,
               claimAttempts,
               state.horses,
               newDay,
-              rng
+              rng,
             );
-            
+
             // Generate impacts for transfers
             for (const transfer of transfers) {
               // ClaimingImpact for horse transfer
@@ -506,7 +555,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 claimingPrice: transfer.price,
                 reason: `Claimed for $${transfer.price.toLocaleString()} after ${race.name}`,
               } as ClaimingImpact);
-              
+
               // CashImpact for claimant (negative)
               if (transfer.toStableId) {
                 impacts.push({
@@ -533,7 +582,7 @@ export const raceResolutionPhase: PipelinePhase = {
                   reason: `Claiming payment for ${transfer.horseId} in ${race.name}`,
                 } as CashImpact);
               }
-              
+
               // CashImpact for original owner (positive)
               if (transfer.fromStableId) {
                 impacts.push({
@@ -561,7 +610,7 @@ export const raceResolutionPhase: PipelinePhase = {
                 } as CashImpact);
               }
             }
-            
+
             // Generate log impacts for claim results
             for (const log of claimLogs) {
               impacts.push({
@@ -575,12 +624,10 @@ export const raceResolutionPhase: PipelinePhase = {
                 reason: "Claiming result",
               } as LogImpact);
             }
-            
+
             // Refund losing claimants
             const winningHorseIds = new Set(transfers.map((t) => t.horseId));
-            const losingClaims = eligibleClaims.filter(
-              (i) => !winningHorseIds.has(i.horseId)
-            );
+            const losingClaims = eligibleClaims.filter((i) => !winningHorseIds.has(i.horseId));
             for (const losingClaim of losingClaims) {
               if (losingClaim.claimantStableId) {
                 impacts.push({
@@ -623,9 +670,14 @@ export const raceResolutionPhase: PipelinePhase = {
           ? {
               ...state.reputation,
               events: [...state.reputation.events, ...newReputationEvents],
-              score: state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
-              tier: getReputationTier(state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0)),
-              totalWins: state.reputation.totalWins + newReputationEvents.filter((e) => e.source === "race_win").length,
+              score:
+                state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
+              tier: getReputationTier(
+                state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
+              ),
+              totalWins:
+                state.reputation.totalWins +
+                newReputationEvents.filter((e) => e.source === "race_win").length,
             }
           : state.reputation,
       },

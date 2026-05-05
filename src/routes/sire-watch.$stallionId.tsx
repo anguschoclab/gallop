@@ -13,11 +13,11 @@ export const Route = createFileRoute("/sire-watch/$stallionId")({
 function SireProfilePage() {
   const { stallionId } = Route.useParams();
   const horses = useGame((s) => s.horses);
-  
+
   const stallion = horses.find((h) => h.id === stallionId);
   const allStallions = horses.filter((h) => h.stud?.atStud);
   const industryMeanEarnings = useGame((s) => s.industryMeanEarnings ?? 0);
-  
+
   if (!stallion || !stallion.stud?.atStud) {
     return (
       <div className="space-y-6">
@@ -37,17 +37,23 @@ function SireProfilePage() {
       </div>
     );
   }
-  
+
   const analytics = getSireAnalytics(stallion, horses, industryMeanEarnings);
 
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {
-      case "elite": return "bg-fame";
-      case "premium": return "bg-info";
-      case "solid": return "bg-success";
-      case "developing": return "bg-warning";
-      case "unproven": return "bg-muted-foreground";
-      default: return "bg-muted-foreground";
+      case "elite":
+        return "bg-fame";
+      case "premium":
+        return "bg-info";
+      case "solid":
+        return "bg-success";
+      case "developing":
+        return "bg-warning";
+      case "unproven":
+        return "bg-muted-foreground";
+      default:
+        return "bg-muted-foreground";
     }
   };
 
@@ -64,11 +70,12 @@ function SireProfilePage() {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <CardTitle className="text-2xl text-cream">{stallion.name}</CardTitle>
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className={getClassificationColor(analytics.classification)}
                 >
-                  {analytics.classification.charAt(0).toUpperCase() + analytics.classification.slice(1)}
+                  {analytics.classification.charAt(0).toUpperCase() +
+                    analytics.classification.slice(1)}
                 </Badge>
               </div>
               <p className="text-sm text-cream-muted">
@@ -92,7 +99,9 @@ function SireProfilePage() {
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
               <p className="text-sm text-cream-muted mb-1">Win %</p>
-              <p className="text-2xl font-bold text-cream">{analytics.progenyWinPercentage.toFixed(1)}%</p>
+              <p className="text-2xl font-bold text-cream">
+                {analytics.progenyWinPercentage.toFixed(1)}%
+              </p>
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
               <p className="text-sm text-cream-muted mb-1">Stakes Winners</p>
@@ -107,7 +116,9 @@ function SireProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-muted/50 rounded-lg">
               <p className="text-sm text-cream-muted mb-2">Standing Fee</p>
-              <p className="text-xl font-bold text-cream">${analytics.standingFee.toLocaleString()}</p>
+              <p className="text-xl font-bold text-cream">
+                ${analytics.standingFee.toLocaleString()}
+              </p>
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
               <p className="text-sm text-cream-muted mb-2">Book Size</p>
@@ -130,7 +141,9 @@ function SireProfilePage() {
           <div className="pt-4 border-t">
             <h3 className="text-lg font-semibold mb-2 text-cream">Produce Record</h3>
             <p className="text-sm text-cream-muted">
-              {analytics.lifetimeFoals} total foals · {analytics.lifetimeStakesFoals} stakes winners ({analytics.progenyWinPercentage.toFixed(1)}%) · {analytics.lifetimeG1Foals} Group 1 winners
+              {analytics.lifetimeFoals} total foals · {analytics.lifetimeStakesFoals} stakes winners
+              ({analytics.progenyWinPercentage.toFixed(1)}%) · {analytics.lifetimeG1Foals} Group 1
+              winners
             </p>
           </div>
         </CardContent>

@@ -17,7 +17,16 @@ export interface Intent {
 export interface TrainingIntent extends Intent {
   type: "training";
   horseId: string;
-  trainingType: "speed" | "stamina" | "acceleration" | "rest" | "bullet" | "breeze" | "gate_work" | "swimming" | "gallop";
+  trainingType:
+    | "speed"
+    | "stamina"
+    | "acceleration"
+    | "rest"
+    | "bullet"
+    | "breeze"
+    | "gate_work"
+    | "swimming"
+    | "gallop";
 }
 
 // Race entry intent
@@ -139,7 +148,13 @@ export interface CampaignFlagDismissalIntent extends Intent {
 export interface CampaignCreationIntent extends Intent {
   type: "campaign_creation";
   horseId: string;
-  goalType: "chase_g1" | "chase_g2" | "chase_g3" | "maximize_earnings" | "develop_maiden" | "free_run";
+  goalType:
+    | "chase_g1"
+    | "chase_g2"
+    | "chase_g3"
+    | "maximize_earnings"
+    | "develop_maiden"
+    | "free_run";
   targetRaceKey?: string;
 }
 

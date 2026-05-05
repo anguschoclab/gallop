@@ -29,21 +29,21 @@ export function calculateWinProbability(
   stamina: number,
   acceleration: number,
   form: number,
-  classBonus: number = 0
+  classBonus: number = 0,
 ): number {
   // Base probability from stats (normalized 0-1)
   const baseProb = (speed + stamina + acceleration) / 300;
-  
+
   // Form adjustment (form is 0-100)
   const formAdjustment = form / 200;
-  
+
   // Class bonus adjustment
   const classAdjustment = classBonus / 100;
-  
+
   // Combine and normalize
   let probability = baseProb + formAdjustment + classAdjustment;
   probability = Math.max(0.05, Math.min(0.95, probability)); // Clamp between 5% and 95%
-  
+
   return probability;
 }
 
@@ -80,18 +80,18 @@ export function formatOdds(odds: number): string {
  */
 export function createBettingPool(
   raceId: string,
-  horseProbabilities: Record<string, number>
+  horseProbabilities: Record<string, number>,
 ): BettingPool {
   const horseBets: Record<string, number> = {};
   const odds: OddsResult[] = [];
-  
+
   // Simulate initial bets based on probability
   const totalSimulatedPool = 10000; // $10,000 simulated pool
-  
+
   for (const [horseId, probability] of Object.entries(horseProbabilities)) {
     const bet = totalSimulatedPool * probability;
     horseBets[horseId] = bet;
-    
+
     odds.push({
       horseId,
       morningLine: probabilityToMorningLine(probability),
@@ -100,7 +100,7 @@ export function createBettingPool(
       totalPool: bet,
     });
   }
-  
+
   return {
     raceId,
     totalPool: totalSimulatedPool,
@@ -112,28 +112,24 @@ export function createBettingPool(
 /**
  * Update odds based on betting activity (simulate betting flow)
  */
-export function updateOdds(
-  pool: BettingPool,
-  horseId: string,
-  betAmount: number
-): BettingPool {
+export function updateOdds(pool: BettingPool, horseId: string, betAmount: number): BettingPool {
   const newPool = { ...pool };
   newPool.totalPool += betAmount;
   newPool.horseBets = { ...pool.horseBets };
   newPool.horseBets[horseId] = (pool.horseBets[horseId] ?? 0) + betAmount;
-  
+
   // Recalculate current odds based on new pool distribution
   newPool.odds = pool.odds.map((oddsResult) => {
     const horseBet = newPool.horseBets[oddsResult.horseId] ?? 0;
     const share = horseBet / newPool.totalPool;
     const currentOdds = probabilityToMorningLine(share);
-    
+
     return {
       ...oddsResult,
       currentOdds,
       totalPool: horseBet,
     };
   });
-  
+
   return newPool;
 }

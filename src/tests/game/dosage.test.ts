@@ -31,7 +31,13 @@ describe("calculateDosageProfile", () => {
 
 describe("calculateDosageIndex", () => {
   it("denominator = 0 → Infinity", () => {
-    const profile: DosageProfile = { brilliant: 2, intermediate: 2, classic: 0, solid: 0, professional: 0 };
+    const profile: DosageProfile = {
+      brilliant: 2,
+      intermediate: 2,
+      classic: 0,
+      solid: 0,
+      professional: 0,
+    };
     expect(calculateDosageIndex(profile)).toBe(Infinity);
   });
 
@@ -40,18 +46,36 @@ describe("calculateDosageIndex", () => {
   });
 
   it("known formula: {brilliant:0, intermediate:0, classic:2, solid:2, professional:0} → (0+0+1)/(1+2+0) = 0.33", () => {
-    const profile: DosageProfile = { brilliant: 0, intermediate: 0, classic: 2, solid: 2, professional: 0 };
+    const profile: DosageProfile = {
+      brilliant: 0,
+      intermediate: 0,
+      classic: 2,
+      solid: 2,
+      professional: 0,
+    };
     expect(calculateDosageIndex(profile)).toBeCloseTo(0.33, 2);
   });
 
   it("equal brilliant and solid → DI = 1", () => {
-    const profile: DosageProfile = { brilliant: 2, intermediate: 0, classic: 0, solid: 2, professional: 0 };
+    const profile: DosageProfile = {
+      brilliant: 2,
+      intermediate: 0,
+      classic: 0,
+      solid: 2,
+      professional: 0,
+    };
     // numerator = 2, denominator = 2 → 1.0
     expect(calculateDosageIndex(profile)).toBeCloseTo(1.0, 2);
   });
 
   it("returns a number (finite or Infinity), never NaN", () => {
-    const di = calculateDosageIndex({ brilliant: 4, intermediate: 2, classic: 3, solid: 1, professional: 1 });
+    const di = calculateDosageIndex({
+      brilliant: 4,
+      intermediate: 2,
+      classic: 3,
+      solid: 1,
+      professional: 1,
+    });
     expect(Number.isNaN(di)).toBe(false);
   });
 });
@@ -63,24 +87,48 @@ describe("calculateCenterOfDistribution", () => {
 
   it("formula: (2B + I - S - 2P) / total", () => {
     // B=2, I=1, C=0, S=1, P=0 → (4+1-1-0)/(2+1+0+1+0) = 4/4 = 1.0
-    const profile: DosageProfile = { brilliant: 2, intermediate: 1, classic: 0, solid: 1, professional: 0 };
+    const profile: DosageProfile = {
+      brilliant: 2,
+      intermediate: 1,
+      classic: 0,
+      solid: 1,
+      professional: 0,
+    };
     expect(calculateCenterOfDistribution(profile)).toBeCloseTo(1.0, 2);
   });
 
   it("pure professional profile → negative CD", () => {
-    const profile: DosageProfile = { brilliant: 0, intermediate: 0, classic: 0, solid: 0, professional: 4 };
+    const profile: DosageProfile = {
+      brilliant: 0,
+      intermediate: 0,
+      classic: 0,
+      solid: 0,
+      professional: 4,
+    };
     // (0+0-0-8)/4 = -2
     expect(calculateCenterOfDistribution(profile)).toBeCloseTo(-2.0, 2);
   });
 
   it("pure brilliant profile → CD = 2", () => {
-    const profile: DosageProfile = { brilliant: 4, intermediate: 0, classic: 0, solid: 0, professional: 0 };
+    const profile: DosageProfile = {
+      brilliant: 4,
+      intermediate: 0,
+      classic: 0,
+      solid: 0,
+      professional: 0,
+    };
     // (8)/4 = 2.0
     expect(calculateCenterOfDistribution(profile)).toBeCloseTo(2.0, 2);
   });
 
   it("returns number, never NaN", () => {
-    const cd = calculateCenterOfDistribution({ brilliant: 4, intermediate: 2, classic: 3, solid: 1, professional: 1 });
+    const cd = calculateCenterOfDistribution({
+      brilliant: 4,
+      intermediate: 2,
+      classic: 3,
+      solid: 1,
+      professional: 1,
+    });
     expect(Number.isNaN(cd)).toBe(false);
   });
 });

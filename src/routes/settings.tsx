@@ -31,7 +31,7 @@ function SettingsPage() {
       updateAudioSettings: state.updateAudioSettings,
       resetSettings: state.resetSettings,
     }),
-    shallow
+    shallow,
   );
 
   const display = userSettings?.display;
@@ -111,7 +111,9 @@ function SettingsPage() {
               <Switch
                 id="highlight-pending"
                 checked={display?.highlightPendingActions ?? true}
-                onCheckedChange={(checked) => updateDisplaySettings({ highlightPendingActions: checked })}
+                onCheckedChange={(checked) =>
+                  updateDisplaySettings({ highlightPendingActions: checked })
+                }
               />
             </div>
           </CardContent>
@@ -146,7 +148,9 @@ function SettingsPage() {
               <Switch
                 id="suggest-entries"
                 checked={gameplay?.suggestRaceEntries ?? true}
-                onCheckedChange={(checked) => updateGameplaySettings({ suggestRaceEntries: checked })}
+                onCheckedChange={(checked) =>
+                  updateGameplaySettings({ suggestRaceEntries: checked })
+                }
               />
             </div>
             <Separator />
@@ -158,7 +162,9 @@ function SettingsPage() {
               <Switch
                 id="daily-earnings"
                 checked={gameplay?.showDailyEarnings ?? true}
-                onCheckedChange={(checked) => updateGameplaySettings({ showDailyEarnings: checked })}
+                onCheckedChange={(checked) =>
+                  updateGameplaySettings({ showDailyEarnings: checked })
+                }
               />
             </div>
             <Separator />
@@ -205,7 +211,9 @@ function SettingsPage() {
               <Switch
                 id="auction-events"
                 checked={notifications?.auctionEvents ?? true}
-                onCheckedChange={(checked) => updateNotificationSettings({ auctionEvents: checked })}
+                onCheckedChange={(checked) =>
+                  updateNotificationSettings({ auctionEvents: checked })
+                }
               />
             </div>
             <Separator />
@@ -217,7 +225,9 @@ function SettingsPage() {
               <Switch
                 id="breeding-events"
                 checked={notifications?.breedingEvents ?? true}
-                onCheckedChange={(checked) => updateNotificationSettings({ breedingEvents: checked })}
+                onCheckedChange={(checked) =>
+                  updateNotificationSettings({ breedingEvents: checked })
+                }
               />
             </div>
             <Separator />
@@ -303,7 +313,9 @@ function SettingsPage() {
                   Game data is automatically saved to your browser's storage
                 </p>
               </div>
-              <Badge variant="outline" className="text-success border-gold-muted">Auto-save enabled</Badge>
+              <Badge variant="outline" className="text-success border-gold-muted">
+                Auto-save enabled
+              </Badge>
             </div>
             <Separator />
             <div className="text-xs text-cream-muted">

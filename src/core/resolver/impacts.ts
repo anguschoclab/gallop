@@ -1,7 +1,17 @@
 // Impact type definitions for the impact resolver system
 // Impacts are the actual state changes generated from resolved intents
 
-import type { Horse, Race, Jockey, Pregnancy, AuctionLot, ScoutReport, CampaignFlag, HorseCampaign, HealthStatus } from "@/game/types";
+import type {
+  Horse,
+  Race,
+  Jockey,
+  Pregnancy,
+  AuctionLot,
+  ScoutReport,
+  CampaignFlag,
+  HorseCampaign,
+  HealthStatus,
+} from "@/game/types";
 
 // Base impact type
 export interface Impact {

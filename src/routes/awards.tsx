@@ -4,7 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrophyCase, TrophyStats } from "@/components/awards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { REGION_AWARD_NAMES, REGION_DISPLAY_NAMES, CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
+import {
+  REGION_AWARD_NAMES,
+  REGION_DISPLAY_NAMES,
+  CATEGORY_DISPLAY_NAMES,
+} from "@/game/awards/types";
 import { REGION_COLOR_CLASSES } from "@/assets/awards";
 import { Trophy, Calendar, Star } from "lucide-react";
 
@@ -61,7 +65,10 @@ function AwardsPage() {
             </Badge>
           )}
           {currentYearAwards > 0 && (
-            <Badge variant="outline" className="border-gold-muted text-cream flex items-center gap-1">
+            <Badge
+              variant="outline"
+              className="border-gold-muted text-cream flex items-center gap-1"
+            >
               <Calendar className="w-3 h-3" />
               {currentYearAwards} This Year
             </Badge>
@@ -75,7 +82,9 @@ function AwardsPage() {
       {/* Award Schedule Info */}
       <Card className="border-gold-muted">
         <CardHeader>
-          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">Award Ceremony Schedule</CardTitle>
+          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">
+            Award Ceremony Schedule
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -89,9 +98,7 @@ function AwardsPage() {
             <div className={REGION_COLOR_CLASSES.europe}>
               <div className="font-semibold text-cream">{REGION_AWARD_NAMES.europe}</div>
               <div className="text-sm text-cream">Nov 10 (Day 314)</div>
-              <div className="text-sm text-cream-muted">
-                {awardsByRegion.europe.length} awards
-              </div>
+              <div className="text-sm text-cream-muted">{awardsByRegion.europe.length} awards</div>
             </div>
             <div className={REGION_COLOR_CLASSES.asia_pacific}>
               <div className="font-semibold text-cream">{REGION_AWARD_NAMES.asia_pacific}</div>
@@ -112,26 +119,25 @@ function AwardsPage() {
       </Card>
 
       {/* Trophy Case */}
-      <TrophyCase
-        awards={playerAwards}
-        variant="full"
-        sortBy="year"
-      />
+      <TrophyCase awards={playerAwards} variant="full" sortBy="year" />
 
       {/* Award Categories Info */}
       <Card className="border-gold-muted">
         <CardHeader>
-          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">About Regional Awards</CardTitle>
+          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">
+            About Regional Awards
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-cream-muted">
-            Awards are given annually based on performance in graded stakes races. 
-            Each region has its own award ceremony date and categories inspired by 
-            real-world horse racing awards.
+            Awards are given annually based on performance in graded stakes races. Each region has
+            its own award ceremony date and categories inspired by real-world horse racing awards.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <h4 className="font-semibold text-sm mb-2 text-cream">North America (Eclipse Awards)</h4>
+              <h4 className="font-semibold text-sm mb-2 text-cream">
+                North America (Eclipse Awards)
+              </h4>
               <ul className="text-sm text-cream-muted space-y-1">
                 <li>• Horse of the Year</li>
                 <li>• Champion 2YO, 3YO (Male/Female)</li>
@@ -149,7 +155,9 @@ function AwardsPage() {
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-sm mb-2 text-cream">Asia-Pacific (Australian Awards)</h4>
+              <h4 className="font-semibold text-sm mb-2 text-cream">
+                Asia-Pacific (Australian Awards)
+              </h4>
               <ul className="text-sm text-cream-muted space-y-1">
                 <li>• Racehorse of the Year</li>
                 <li>• Champion 2YO, 3YO (Combined)</li>

@@ -40,7 +40,9 @@ const SLOT_STATUS_COLORS: Record<string, string> = {
 
 function SlotStatusBadge({ status }: { status: string }) {
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${SLOT_STATUS_COLORS[status] ?? "bg-gray-100 text-gray-500"}`}>
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${SLOT_STATUS_COLORS[status] ?? "bg-t700 text-cream-muted"}`}
+    >
       {status}
     </span>
   );
@@ -61,7 +63,7 @@ function SchedulerPage() {
 
   const ownedHorses = horses.filter((h) => h.owned);
   const horsesWithoutCampaign = ownedHorses.filter(
-    (h) => !campaigns.some((c) => c.horseId === h.id)
+    (h) => !campaigns.some((c) => c.horseId === h.id),
   );
 
   const getRace = (raceId: string) => races.find((r) => r.id === raceId);
@@ -69,14 +71,16 @@ function SchedulerPage() {
 
   const totalActiveFlags = campaigns.reduce(
     (acc, c) => acc + c.flags.filter((f) => !f.dismissed).length,
-    0
+    0,
   );
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-display)]">Campaign Scheduler</h1>
+          <h1 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-display)]">
+            Campaign Scheduler
+          </h1>
           <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
             Plan race campaigns for your horses · {gameCalendarDate(day)}
           </p>
@@ -142,11 +146,7 @@ function SchedulerPage() {
                 >
                   Create
                 </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setAddingHorseId(null)}
-                >
+                <Button size="sm" variant="ghost" onClick={() => setAddingHorseId(null)}>
                   <X className="h-4 w-4" />
                 </Button>
               </div>
@@ -160,7 +160,9 @@ function SchedulerPage() {
           <CardContent className="py-12 text-center text-cream-muted">
             <CalendarClock className="h-10 w-10 mx-auto mb-3 opacity-30" />
             <p className="font-medium">No campaigns yet</p>
-            <p className="text-sm mt-1">Add a campaign above to start planning your horses' race schedules.</p>
+            <p className="text-sm mt-1">
+              Add a campaign above to start planning your horses' race schedules.
+            </p>
           </CardContent>
         </Card>
       )}
@@ -183,7 +185,11 @@ function SchedulerPage() {
                 <div className="flex items-center gap-3">
                   <div>
                     <CardTitle className="text-base font-[family-name:var(--font-display)]">
-                      <Link to="/stable/$horseId" params={{ horseId: horse.id }} className="hover:underline text-cream">
+                      <Link
+                        to="/stable/$horseId"
+                        params={{ horseId: horse.id }}
+                        className="hover:underline text-cream"
+                      >
                         {horse.name}
                       </Link>
                     </CardTitle>
@@ -263,7 +269,10 @@ function SchedulerPage() {
                           <span className="font-medium truncate max-w-[180px]">
                             {race?.name ?? slot.raceKey ?? "TBD"}
                           </span>
-                          <Badge variant="outline" className="text-xs capitalize border-gold-muted text-cream">
+                          <Badge
+                            variant="outline"
+                            className="text-xs capitalize border-gold-muted text-cream"
+                          >
                             {slot.role}
                           </Badge>
                         </div>
@@ -290,7 +299,8 @@ function SchedulerPage() {
               )}
 
               {/* Aptitude summary */}
-              {(campaign.confirmedAptitudes.surfaceConfirmed || campaign.confirmedAptitudes.distanceBandConfirmed) && (
+              {(campaign.confirmedAptitudes.surfaceConfirmed ||
+                campaign.confirmedAptitudes.distanceBandConfirmed) && (
                 <div className="flex items-center gap-3 pt-1 border-t border-gold-muted">
                   <span className="text-xs text-cream-muted">Confirmed:</span>
                   {campaign.confirmedAptitudes.surfaceConfirmed && (

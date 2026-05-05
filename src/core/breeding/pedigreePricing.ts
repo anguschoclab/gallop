@@ -4,10 +4,7 @@ import type { Horse, GameState } from "@/game/types";
 // pedigree quality. Sire's standing fee and dam's blue-hen score both
 // contribute. Yearlings (age 1) lean harder on pedigree (60/40); older
 // horses lean on stats (30/70). Returns 1 when no pedigree exists.
-export function pedigreeMultiplier(
-  horse: Horse,
-  state: Pick<GameState, "horses">
-): number {
+export function pedigreeMultiplier(horse: Horse, state: Pick<GameState, "horses">): number {
   if (!horse.pedigree) return 1;
 
   const sire = horse.pedigree.sireId
@@ -30,6 +27,10 @@ export function pedigreeMultiplier(
 
 // Helper for callers that want a pre-blended price including base value
 // and pedigree multiplier in a single call.
-export function pedigreeAdjustedPrice(basePrice: number, horse: Horse, state: Pick<GameState, "horses">): number {
-  return Math.round(basePrice * pedigreeMultiplier(horse, state) / 50) * 50;
+export function pedigreeAdjustedPrice(
+  basePrice: number,
+  horse: Horse,
+  state: Pick<GameState, "horses">,
+): number {
+  return Math.round((basePrice * pedigreeMultiplier(horse, state)) / 50) * 50;
 }

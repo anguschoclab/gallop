@@ -3,11 +3,7 @@
 /**
  * Transaction type categories
  */
-export type TransactionType =
-  | "income"
-  | "expense"
-  | "transfer"
-  | "adjustment";
+export type TransactionType = "income" | "expense" | "transfer" | "adjustment";
 
 /**
  * Transaction subcategories for detailed tracking
@@ -72,7 +68,7 @@ export function createTransaction(
     horseId?: string;
     raceId?: string;
     recurring?: boolean;
-  } = {}
+  } = {},
 ): Transaction {
   return {
     id: crypto.randomUUID(),
@@ -93,7 +89,7 @@ export function createTransaction(
  */
 export function filterTransactionsByType(
   transactions: Transaction[],
-  type: TransactionType
+  type: TransactionType,
 ): Transaction[] {
   return transactions.filter((t) => t.type === type);
 }
@@ -103,7 +99,7 @@ export function filterTransactionsByType(
  */
 export function filterTransactionsBySubcategory(
   transactions: Transaction[],
-  subcategory: TransactionSubcategory
+  subcategory: TransactionSubcategory,
 ): Transaction[] {
   return transactions.filter((t) => t.subcategory === subcategory);
 }
@@ -114,7 +110,7 @@ export function filterTransactionsBySubcategory(
 export function filterTransactionsByDayRange(
   transactions: Transaction[],
   startDay: number,
-  endDay: number
+  endDay: number,
 ): Transaction[] {
   return transactions.filter((t) => t.day >= startDay && t.day <= endDay);
 }
@@ -123,18 +119,14 @@ export function filterTransactionsByDayRange(
  * Calculate total income from transactions
  */
 export function calculateTotalIncome(transactions: Transaction[]): number {
-  return transactions
-    .filter((t) => t.type === "income")
-    .reduce((sum, t) => sum + t.amount, 0);
+  return transactions.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
 }
 
 /**
  * Calculate total expenses from transactions
  */
 export function calculateTotalExpenses(transactions: Transaction[]): number {
-  return transactions
-    .filter((t) => t.type === "expense")
-    .reduce((sum, t) => sum + t.amount, 0);
+  return transactions.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
 }
 
 /**
@@ -148,7 +140,7 @@ export function calculateNetCashFlow(transactions: Transaction[]): number {
  * Group transactions by subcategory
  */
 export function groupTransactionsBySubcategory(
-  transactions: Transaction[]
+  transactions: Transaction[],
 ): Map<TransactionSubcategory, { count: number; total: number }> {
   const grouped = new Map<TransactionSubcategory, { count: number; total: number }>();
 
@@ -179,9 +171,7 @@ export function formatTransactionType(type: TransactionType): string {
 /**
  * Format transaction subcategory for display
  */
-export function formatTransactionSubcategory(
-  subcategory: TransactionSubcategory
-): string {
+export function formatTransactionSubcategory(subcategory: TransactionSubcategory): string {
   const labels: Record<TransactionSubcategory, string> = {
     // Income
     prize_money: "Prize Money",

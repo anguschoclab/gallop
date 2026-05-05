@@ -9,7 +9,7 @@ describe("leaderboardService", () => {
 
   beforeEach(() => {
     const rng = createRng(12345);
-    
+
     // Create test horses with various stud careers
     horses = [
       {
@@ -86,7 +86,17 @@ describe("leaderboardService", () => {
       pedigree: { sireId: "sire1", damId: "dam1" },
       sireName: "Elite Sire",
       raceHistory: [
-        { position: 1, beyer: 100, grade: "G1", surface: "Turf", distance: 2000, purse: 500000, day: 100, fieldSize: 12, raceClass: "Group" },
+        {
+          position: 1,
+          beyer: 100,
+          grade: "G1",
+          surface: "Turf",
+          distance: 2000,
+          purse: 500000,
+          day: 100,
+          fieldSize: 12,
+          raceClass: "Group",
+        },
       ],
       careerStarts: 5,
       careerWins: 3,
@@ -106,7 +116,7 @@ describe("leaderboardService", () => {
 
   it("computes overall leaderboard ranked by AEI", () => {
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, 100);
-    
+
     expect(leaderboards.overall).toBeDefined();
     expect(leaderboards.overall.type).toBe("overall");
     expect(leaderboards.overall.title).toBe("Overall Sire Rankings");
@@ -115,7 +125,7 @@ describe("leaderboardService", () => {
 
   it("computes stakes producers leaderboard", () => {
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, 100);
-    
+
     expect(leaderboards.stakes_producers).toBeDefined();
     expect(leaderboards.stakes_producers.type).toBe("stakes_producers");
     expect(leaderboards.stakes_producers.rankings).toHaveLength(2);
@@ -123,21 +133,21 @@ describe("leaderboardService", () => {
 
   it("computes G1 producers leaderboard", () => {
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, 100);
-    
+
     expect(leaderboards.g1_producers).toBeDefined();
     expect(leaderboards.g1_producers.type).toBe("g1_producers");
   });
 
   it("computes value sires leaderboard", () => {
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, 100);
-    
+
     expect(leaderboards.value_sires).toBeDefined();
     expect(leaderboards.value_sires.type).toBe("value_sires");
   });
 
   it("computes regional leaderboards", () => {
     const leaderboards = computeAllLeaderboards(horses, industryMeanEarnings, 100);
-    
+
     expect(leaderboards.regional_north).toBeDefined();
     expect(leaderboards.regional_south).toBeDefined();
   });

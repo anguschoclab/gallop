@@ -146,7 +146,7 @@ describe("resolvePregnancies", () => {
     expect(result.logs.length).toBeGreaterThan(0);
     if (result.pregnancies[0].resolved) {
       // Either a foal was born or a complication occurred
-      expect(result.foals.length + result.logs.filter(l => l.text.includes("💔")).length).toBe(1);
+      expect(result.foals.length + result.logs.filter((l) => l.text.includes("💔")).length).toBe(1);
     } else {
       // Re-scheduled due to live foal guarantee
       expect(result.pregnancies[0].dueDay).toBeGreaterThan(31);

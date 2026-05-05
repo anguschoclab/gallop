@@ -6,9 +6,11 @@ import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
  * Avoids the circular-dep issue that forced a local copy in stallions.ts.
  */
 export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number {
-  const overall = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) / 4;
+  const overall =
+    (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) /
+    4;
   const ageMod = horse.age <= 3 ? 1.3 : horse.age >= 7 ? 0.5 : 0.9;
-  const fameMod = 1 + (horse.fame / 200);
+  const fameMod = 1 + horse.fame / 200;
   const tierMod = tier === "elite" ? 1.5 : tier === "mid" ? 1.2 : 1.0;
   return Math.round((overall * 100 * ageMod * fameMod * tierMod) / 100) * 100;
 }
@@ -18,7 +20,8 @@ export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number 
  * Used in the horse market and consignment reserve pricing.
  */
 export function horsePrice(h: Horse): number {
-  const overall = (h.stats.speed + h.stats.stamina + h.stats.acceleration + h.stats.consistency) / 4;
+  const overall =
+    (h.stats.speed + h.stats.stamina + h.stats.acceleration + h.stats.consistency) / 4;
   const ageMod = h.age <= 3 ? 1.2 : h.age >= 6 ? 0.7 : 1;
   const potMod = 0.5 + h.potential / 100;
 

@@ -42,15 +42,15 @@ export function FinancialReport() {
   // Calculate expenses from actual expense records
   const groupedExpenses = groupExpensesByCategory(expenses);
   const expenseMap = new Map<ExpenseCategory, number>(
-    groupedExpenses.map((ge) => [ge.category, ge.amount])
+    groupedExpenses.map((ge) => [ge.category, ge.amount]),
   );
 
   const income: IncomeSummary = {
     prizeMoney: totalPrizeMoney,
     claimingSales: 0, // Would need claiming history
-    auctionSales: 0,  // Would need auction history
-    privateSales: 0,  // Would need sales tracking
-    studFees: 0,      // Would need stud activity
+    auctionSales: 0, // Would need auction history
+    privateSales: 0, // Would need sales tracking
+    studFees: 0, // Would need stud activity
     total: totalPrizeMoney,
   };
 
@@ -84,12 +84,10 @@ export function FinancialReport() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
-            <Wallet className="h-8 w-8 text-emerald-600" />
+            <Wallet className="h-8 w-8 text-success" />
             <div>
               <div className="text-3xl font-bold">{formatCurrency(cash)}</div>
-              <p className="text-xs text-muted-foreground">
-                Day {day} of operations
-              </p>
+              <p className="text-xs text-muted-foreground">Day {day} of operations</p>
             </div>
           </div>
         </CardContent>
@@ -100,12 +98,12 @@ export function FinancialReport() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-emerald-600" />
+              <TrendingUp className="h-4 w-4 text-success" />
               Total Income
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-600">
+            <div className="text-2xl font-bold text-success">
               {formatCurrency(income.total)}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -117,7 +115,7 @@ export function FinancialReport() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-rose-600" />
+              <TrendingDown className="h-4 w-4 text-destructive" />
               Total Expenses
             </CardTitle>
           </CardHeader>
@@ -125,9 +123,7 @@ export function FinancialReport() {
             <div className="text-2xl font-bold text-rose-600">
               {formatCurrency(expenseSummary.total)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Upkeep, training, entry fees
-            </p>
+            <p className="text-xs text-muted-foreground">Upkeep, training, entry fees</p>
           </CardContent>
         </Card>
 

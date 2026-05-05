@@ -589,13 +589,16 @@ const CROSS_FAMILY_AFFINITIES: Record<string, Record<number, number>> = {
   "Sadler's Wells": { 1: 0.85, 14: 0.7 },
   "Storm Cat": { 4: 0.7, 8: 0.65 },
   "Sunday Silence": { 1: 0.7, 9: 0.65, 12: 0.6 },
-  "Galileo": { 1: 0.85, 14: 0.75 },
+  Galileo: { 1: 0.85, 14: 0.75 },
   "A.P. Indy": { 1: 0.7, 8: 0.65 },
   "Seattle Slew": { 1: 0.7, 8: 0.6 },
   "Bold Ruler": { 4: 0.7, 14: 0.65 },
 };
 
-export function calculateCrossFamilyAffinity(sire: Horse, dam: Horse): { score: number; description: string } {
+export function calculateCrossFamilyAffinity(
+  sire: Horse,
+  dam: Horse,
+): { score: number; description: string } {
   const bloodline = sire.bloodline;
   const family = dam.bruceLoweFamily;
   if (!bloodline || family === undefined || !CROSS_FAMILY_AFFINITIES[bloodline]) {

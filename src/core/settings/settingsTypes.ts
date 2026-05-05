@@ -126,10 +126,7 @@ export function createDefaultUserSettings(currentDay: number = 1): UserSettings 
 /**
  * Validate and migrate settings from older versions
  */
-export function migrateSettings(
-  settings: Partial<UserSettings>,
-  currentDay: number
-): UserSettings {
+export function migrateSettings(settings: Partial<UserSettings>, currentDay: number): UserSettings {
   const defaults = createDefaultUserSettings(currentDay);
 
   return {

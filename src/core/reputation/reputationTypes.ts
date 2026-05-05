@@ -81,7 +81,7 @@ export function createReputationEvent(
   options: {
     horseId?: string;
     raceId?: string;
-  } = {}
+  } = {},
 ): ReputationEvent {
   return {
     id: crypto.randomUUID(),
@@ -97,10 +97,7 @@ export function createReputationEvent(
 /**
  * Calculate reputation gain for a race win
  */
-export function calculateRaceWinReputation(
-  grade: string | undefined,
-  purse: number
-): number {
+export function calculateRaceWinReputation(grade: string | undefined, purse: number): number {
   let base = 10; // Base reputation for any win
 
   // Grade bonuses

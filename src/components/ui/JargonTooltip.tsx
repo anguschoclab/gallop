@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 const JARGON_DEFINITIONS: Record<string, string> = {
@@ -27,8 +22,8 @@ const JARGON_DEFINITIONS: Record<string, string> = {
   OVR: "Overall rating: a weighted average of a horse's primary physical stats.",
   Pot: "Potential: the theoretical maximum stats a horse can reach through training.",
   Nicking: "The specific compatibility score between a sire's and dam's bloodlines.",
-  "Inbreeding": "The measure of shared ancestors in a horse's pedigree.",
-  "Stud": "A retired male horse (stallion) available for breeding.",
+  Inbreeding: "The measure of shared ancestors in a horse's pedigree.",
+  Stud: "A retired male horse (stallion) available for breeding.",
 };
 
 interface JargonTooltipProps {
@@ -51,7 +46,7 @@ export function JargonTooltip({ term, children, className }: JargonTooltipProps)
           <span
             className={cn(
               "underline decoration-dotted decoration-muted-foreground/40 cursor-help",
-              className
+              className,
             )}
           >
             {children || term}

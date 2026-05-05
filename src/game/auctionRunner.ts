@@ -15,13 +15,7 @@ import { calculateNpcBid, netProceeds } from "./auction";
 import { createRng, hashStr, type Rng } from "./rng";
 import type { AnyImpact } from "@/core/resolver/impacts";
 
-export type ChantPhase =
-  | "open"
-  | "bidding"
-  | "going_once"
-  | "going_twice"
-  | "sold"
-  | "passed";
+export type ChantPhase = "open" | "bidding" | "going_once" | "going_twice" | "sold" | "passed";
 
 export type AuctionTickEvent =
   | { type: "LOT_OPEN"; lotId: string }
@@ -56,14 +50,16 @@ export type AuctionRunner = {
   /** Index of the lot currently in the ring. */
   currentLotIndex(): number;
   /** Snapshot of state for the lot in the ring. */
-  currentLot(): {
-    lot: AuctionLot;
-    horse: Horse | undefined;
-    currentBid: number;
-    leadingBidder: string | undefined;
-    chant: ChantPhase;
-    nextBid: number;
-  } | undefined;
+  currentLot():
+    | {
+        lot: AuctionLot;
+        horse: Horse | undefined;
+        currentBid: number;
+        leadingBidder: string | undefined;
+        chant: ChantPhase;
+        nextBid: number;
+      }
+    | undefined;
   /** Advance one tick. If `playerBid` is provided and valid, it's applied first. */
   step(playerBid?: number): StepResult;
   /** Run until done (for the offline/skipped path). */
@@ -111,7 +107,7 @@ export function createAuctionRunner(
   stables: readonly Stable[],
   horses: readonly Horse[],
   baseSeed: number = hashStr(sale.id),
-  options: AuctionRunnerOptions = {}
+  options: AuctionRunnerOptions = {},
 ): AuctionRunner {
   const { liveMode = false } = options;
   const lots: LotState[] = sale.lots
@@ -138,9 +134,7 @@ export function createAuctionRunner(
 
   function findEligibleBidders(state: LotState): readonly Stable[] {
     return bidderStables.filter(
-      (s) =>
-        s.id !== state.lot.consignorStableId &&
-        s.id !== state.leadingBidder
+      (s) => s.id !== state.lot.consignorStableId && s.id !== state.leadingBidder,
     );
   }
 
@@ -180,7 +174,10 @@ export function createAuctionRunner(
     const horse = horses.find((h) => h.id === state.lot.horseId);
     const horseName = horse?.name ?? "Lot";
 
-    if (state.currentBid <= 0 || state.leadingBidder === undefined && state.bidHistory.length === 0) {
+    if (
+      state.currentBid <= 0 ||
+      (state.leadingBidder === undefined && state.bidHistory.length === 0)
+    ) {
       // No bids at all
       state.chant = "passed";
       state.lot.passed = true;
@@ -219,7 +216,7 @@ export function createAuctionRunner(
       toStableId: state.leadingBidder,
     });
     const winner = state.leadingBidder
-      ? stables.find((s) => s.id === state.leadingBidder)?.name ?? "an NPC"
+      ? (stables.find((s) => s.id === state.leadingBidder)?.name ?? "an NPC")
       : "you";
     log.push(`${horseName} — sold to ${winner} for $${state.currentBid.toLocaleString()}`);
     return events;
@@ -237,7 +234,11 @@ export function createAuctionRunner(
       return { events, done: false, currentLotIndex: lotIndex };
     }
 
-    if (state.chant === "bidding" || state.chant === "going_once" || state.chant === "going_twice") {
+    if (
+      state.chant === "bidding" ||
+      state.chant === "going_once" ||
+      state.chant === "going_twice"
+    ) {
       // Player bid first if provided.
       if (playerBid !== undefined) {
         const ev = tryRecordPlayerBid(state, playerBid);
@@ -424,11 +425,12 @@ export function createAuctionRunner(
     currentLot,
     step,
     runToCompletion,
-    finalLots: () => sale.lots.map((orig) => {
-      if (orig.withdrawn) return orig;
-      const state = lots.find((l) => l.lot.id === orig.id);
-      return state ? state.lot : orig;
-    }),
+    finalLots: () =>
+      sale.lots.map((orig) => {
+        if (orig.withdrawn) return orig;
+        const state = lots.find((l) => l.lot.id === orig.id);
+        return state ? state.lot : orig;
+      }),
     log: () => log,
     finalImpacts,
   };

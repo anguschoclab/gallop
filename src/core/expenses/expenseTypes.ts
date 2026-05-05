@@ -177,7 +177,7 @@ export function createExpense(
     horseId?: string;
     raceId?: string;
     recurring?: boolean;
-  } = {}
+  } = {},
 ): Expense {
   return {
     id: crypto.randomUUID(),
@@ -194,9 +194,7 @@ export function createExpense(
 /**
  * Group expenses by category
  */
-export function groupExpensesByCategory(
-  expenses: Expense[]
-): ExpenseByCategory[] {
+export function groupExpensesByCategory(expenses: Expense[]): ExpenseByCategory[] {
   const grouped = new Map<ExpenseCategory, { amount: number; count: number }>();
 
   for (const expense of expenses) {
@@ -220,7 +218,7 @@ export function groupExpensesByCategory(
 export function filterExpensesByDayRange(
   expenses: Expense[],
   startDay: number,
-  endDay: number
+  endDay: number,
 ): Expense[] {
   return expenses.filter((e) => e.day >= startDay && e.day <= endDay);
 }
@@ -228,11 +226,6 @@ export function filterExpensesByDayRange(
 /**
  * Calculate total expenses for a category
  */
-export function calculateCategoryTotal(
-  expenses: Expense[],
-  category: ExpenseCategory
-): number {
-  return expenses
-    .filter((e) => e.category === category)
-    .reduce((sum, e) => sum + e.amount, 0);
+export function calculateCategoryTotal(expenses: Expense[], category: ExpenseCategory): number {
+  return expenses.filter((e) => e.category === category).reduce((sum, e) => sum + e.amount, 0);
 }

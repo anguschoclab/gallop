@@ -12,15 +12,15 @@ export const industryMetricsPhase = {
   order: 45, // After breedingSeason (35), before npcBreeding (38)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    
+
     // Recompute industry mean earnings every season (30 days)
-    const shouldRecompute = !state.industryEarningsUpdatedDay || 
-                           (newDay - state.industryEarningsUpdatedDay) >= 30;
-    
+    const shouldRecompute =
+      !state.industryEarningsUpdatedDay || newDay - state.industryEarningsUpdatedDay >= 30;
+
     if (!shouldRecompute) return context;
-    
+
     const industryMean = computeIndustryMeanEarnings(state.horses);
-    
+
     return {
       ...context,
       state: {
@@ -30,7 +30,7 @@ export const industryMetricsPhase = {
       },
       logs: [
         ...context.logs,
-        { day: newDay, text: `Industry mean earnings updated: $${industryMean.toLocaleString()}` }
+        { day: newDay, text: `Industry mean earnings updated: $${industryMean.toLocaleString()}` },
       ],
     };
   },

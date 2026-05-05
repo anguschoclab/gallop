@@ -57,7 +57,12 @@ describe("getRegionalSystem", () => {
     const uaeTrack: Track = { id: "2", name: "Meydan", country: "UAE", surfaces: ["Dirt"] };
     expect(getRegionalSystem(uaeTrack)).toBe("asia");
 
-    const argentinaTrack: Track = { id: "3", name: "Palermo", country: "Argentina", surfaces: ["Dirt"] };
+    const argentinaTrack: Track = {
+      id: "3",
+      name: "Palermo",
+      country: "Argentina",
+      surfaces: ["Dirt"],
+    };
     expect(getRegionalSystem(argentinaTrack)).toBe("south_america");
 
     const gbTrack: Track = { id: "4", name: "Ascot", country: "Great Britain", surfaces: ["Turf"] };
@@ -68,7 +73,12 @@ describe("getRegionalSystem", () => {
   });
 
   it("defaults to north_america for unknown countries", () => {
-    const unknownTrack: Track = { id: "6", name: "Unknown", country: "Unknown", surfaces: ["Turf"] };
+    const unknownTrack: Track = {
+      id: "6",
+      name: "Unknown",
+      country: "Unknown",
+      surfaces: ["Turf"],
+    };
     expect(getRegionalSystem(unknownTrack)).toBe("north_america");
   });
 });

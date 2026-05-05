@@ -18,7 +18,10 @@ export function rand(min: number, max: number, rng: Rng): number {
  * tilt toward front-runner; stamina tilts toward closer; balanced horses lean
  * stalker. There's still randomness so identical-stat horses can differ.
  */
-export function rollRunningStyle(stats: { speed: number; stamina: number; acceleration: number }, rng: Rng): RunningStyle {
+export function rollRunningStyle(
+  stats: { speed: number; stamina: number; acceleration: number },
+  rng: Rng,
+): RunningStyle {
   const earlyBias = (stats.speed + stats.acceleration) / 2;
   const lateBias = stats.stamina;
   const tilt = earlyBias - lateBias; // ~ -50..+50
@@ -35,7 +38,7 @@ export function rollRunningStyle(stats: { speed: number; stamina: number; accele
 export function randomWeather(rng: Rng): Weather {
   const r = rng.next();
   if (r < 0.45) return "sunny";
-  if (r < 0.70) return "cloudy";
+  if (r < 0.7) return "cloudy";
   if (r < 0.85) return "rainy";
   if (r < 0.95) return "sunset";
   return "night";
@@ -56,15 +59,55 @@ export function randomTrackCondition(rng: Rng): TrackCondition {
  * Generate random horse name
  */
 const ADJECTIVES = [
-  "Thunder", "Silver", "Midnight", "Royal", "Golden", "Wild", "Swift", "Iron",
-  "Crimson", "Shadow", "Lucky", "Northern", "Whispering", "Velvet", "Stormy",
-  "Brave", "Noble", "Mystic", "Blazing", "Quiet", "Diamond", "Emerald", "Roaring",
+  "Thunder",
+  "Silver",
+  "Midnight",
+  "Royal",
+  "Golden",
+  "Wild",
+  "Swift",
+  "Iron",
+  "Crimson",
+  "Shadow",
+  "Lucky",
+  "Northern",
+  "Whispering",
+  "Velvet",
+  "Stormy",
+  "Brave",
+  "Noble",
+  "Mystic",
+  "Blazing",
+  "Quiet",
+  "Diamond",
+  "Emerald",
+  "Roaring",
 ];
 
 const NOUNS = [
-  "Bullet", "Star", "Spirit", "Comet", "Dancer", "Arrow", "Knight", "Whisper",
-  "Flame", "Tide", "Empress", "Legacy", "Dream", "Charger", "Echo", "Bandit",
-  "Saint", "Reverie", "Tempest", "Mirage", "Halo", "Voyager", "Sonnet",
+  "Bullet",
+  "Star",
+  "Spirit",
+  "Comet",
+  "Dancer",
+  "Arrow",
+  "Knight",
+  "Whisper",
+  "Flame",
+  "Tide",
+  "Empress",
+  "Legacy",
+  "Dream",
+  "Charger",
+  "Echo",
+  "Bandit",
+  "Saint",
+  "Reverie",
+  "Tempest",
+  "Mirage",
+  "Halo",
+  "Voyager",
+  "Sonnet",
 ];
 
 export function randomHorseName(rng: Rng): string {
@@ -77,8 +120,16 @@ export function randomHorseName(rng: Rng): string {
  * Generate random silk color
  */
 const SILKS = [
-  "#dc2626", "#2563eb", "#16a34a", "#9333ea", "#ea580c",
-  "#0891b2", "#db2777", "#ca8a04", "#475569", "#0d9488",
+  "#dc2626",
+  "#2563eb",
+  "#16a34a",
+  "#9333ea",
+  "#ea580c",
+  "#0891b2",
+  "#db2777",
+  "#ca8a04",
+  "#475569",
+  "#0d9488",
 ];
 
 export function randomSilk(rng: Rng): string {
@@ -89,9 +140,22 @@ export function randomSilk(rng: Rng): string {
  * Generate random race name
  */
 const RACE_PREFIXES = [
-  "Ascot", "Belmont", "Churchill", "Doncaster", "Epsom", "Flemington",
-  "Goodwood", "Hialeah", "Irish", "Kentucky", "Longchamp", "Newmarket",
-  "Oaklawn", "Pimlico", "Saratoga", "Tokyo",
+  "Ascot",
+  "Belmont",
+  "Churchill",
+  "Doncaster",
+  "Epsom",
+  "Flemington",
+  "Goodwood",
+  "Hialeah",
+  "Irish",
+  "Kentucky",
+  "Longchamp",
+  "Newmarket",
+  "Oaklawn",
+  "Pimlico",
+  "Saratoga",
+  "Tokyo",
 ];
 
 const RACE_SUFFIXES = ["Cup", "Stakes", "Trophy", "Classic", "Handicap", "Plate", "Mile", "Sprint"];
@@ -103,17 +167,89 @@ export function randomRaceName(rng: Rng): string {
 }
 
 const JOCKEY_FIRST_NAMES = [
-  "Frankie", "Ryan", "Lester", "Bill", "Mike", "Joel", "Irad", "Jose", "Flavien", "Christophe",
-  "James", "William", "Oisin", "Tom", "Ben", "Kerrin", "Hugh", "Zac", "Joao", "Yutaka",
-  "Mirco", "Lanfranco", "Olivier", "Gerald", "Pat", "Ruby", "Davy", "Paul", "Rachael", "Victor",
-  "John", "Laffit", "Pat", "Gary", "Angel", "Jerry", "Kent", "Corey", "Julien", "Tyler"
+  "Frankie",
+  "Ryan",
+  "Lester",
+  "Bill",
+  "Mike",
+  "Joel",
+  "Irad",
+  "Jose",
+  "Flavien",
+  "Christophe",
+  "James",
+  "William",
+  "Oisin",
+  "Tom",
+  "Ben",
+  "Kerrin",
+  "Hugh",
+  "Zac",
+  "Joao",
+  "Yutaka",
+  "Mirco",
+  "Lanfranco",
+  "Olivier",
+  "Gerald",
+  "Pat",
+  "Ruby",
+  "Davy",
+  "Paul",
+  "Rachael",
+  "Victor",
+  "John",
+  "Laffit",
+  "Pat",
+  "Gary",
+  "Angel",
+  "Jerry",
+  "Kent",
+  "Corey",
+  "Julien",
+  "Tyler",
 ];
 
 const JOCKEY_LAST_NAMES = [
-  "Dettori", "Moore", "Piggott", "Shoemaker", "Smith", "Rosario", "Ortiz", "Prat", "Soumillon", "McDonald",
-  "Marquand", "Doyle", "Murphy", "Curtis", "McEvoy", "Bowman", "Purton", "Moreira", "Take", "Demuro",
-  "Peslier", "Mosse", "Eddery", "Walsh", "Russell", "Townend", "Blackmore", "Stevens", "Velazquez", "Geroux",
-  "Espinoza", "Velazquez", "Day", "Bailey", "Cordero", "Bailey", "Desormeaux", "Nakatani", "Leparoux", "Gaffalione"
+  "Dettori",
+  "Moore",
+  "Piggott",
+  "Shoemaker",
+  "Smith",
+  "Rosario",
+  "Ortiz",
+  "Prat",
+  "Soumillon",
+  "McDonald",
+  "Marquand",
+  "Doyle",
+  "Murphy",
+  "Curtis",
+  "McEvoy",
+  "Bowman",
+  "Purton",
+  "Moreira",
+  "Take",
+  "Demuro",
+  "Peslier",
+  "Mosse",
+  "Eddery",
+  "Walsh",
+  "Russell",
+  "Townend",
+  "Blackmore",
+  "Stevens",
+  "Velazquez",
+  "Geroux",
+  "Espinoza",
+  "Velazquez",
+  "Day",
+  "Bailey",
+  "Cordero",
+  "Bailey",
+  "Desormeaux",
+  "Nakatani",
+  "Leparoux",
+  "Gaffalione",
 ];
 
 export function randomJockeyName(rng: Rng): string {

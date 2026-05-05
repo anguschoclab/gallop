@@ -18,8 +18,8 @@ export async function initOPFS(): Promise<void> {
   initPromise = (async () => {
     try {
       // Check if OPFS is available
-      if (!('storage' in navigator) || !('getDirectory' in navigator.storage)) {
-        console.warn('OPFS not available in this browser');
+      if (!("storage" in navigator) || !("getDirectory" in navigator.storage)) {
+        console.warn("OPFS not available in this browser");
         isOPFSAvailable = false;
         return;
       }
@@ -28,7 +28,7 @@ export async function initOPFS(): Promise<void> {
       opfsRoot = await navigator.storage.getDirectory();
       isOPFSAvailable = true;
     } catch (error) {
-      console.error('Failed to initialize OPFS:', error);
+      console.error("Failed to initialize OPFS:", error);
       isOPFSAvailable = false;
     }
   })();
@@ -49,7 +49,7 @@ export async function checkOPFSAvailable(): Promise<boolean> {
  */
 export async function writeFile(filename: string, data: unknown): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {
-    throw new Error('OPFS not available');
+    throw new Error("OPFS not available");
   }
 
   try {
@@ -59,8 +59,8 @@ export async function writeFile(filename: string, data: unknown): Promise<void> 
     await writable.write(json);
     await writable.close();
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-      throw new Error('Storage quota exceeded');
+    if (error instanceof DOMException && error.name === "QuotaExceededError") {
+      throw new Error("Storage quota exceeded");
     }
     throw error;
   }
@@ -80,7 +80,7 @@ export async function readFile<T>(filename: string): Promise<T | null> {
     const text = await file.text();
     return JSON.parse(text) as T;
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'NotFoundError') {
+    if (error instanceof DOMException && error.name === "NotFoundError") {
       return null;
     }
     console.error(`Failed to read file ${filename}:`, error);
@@ -99,7 +99,7 @@ export async function deleteFile(filename: string): Promise<void> {
   try {
     await opfsRoot.removeEntry(filename);
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'NotFoundError') {
+    if (error instanceof DOMException && error.name === "NotFoundError") {
       // File doesn't exist, that's fine
       return;
     }
@@ -119,13 +119,13 @@ export async function listFiles(): Promise<string[]> {
     const files: string[] = [];
     // Iterate through directory entries
     for await (const entry of opfsRoot as any) {
-      if (entry.kind === 'file') {
+      if (entry.kind === "file") {
         files.push(entry.name);
       }
     }
     return files;
   } catch (error) {
-    console.error('Failed to list files:', error);
+    console.error("Failed to list files:", error);
     return [];
   }
 }
@@ -142,7 +142,7 @@ export async function clearAll(): Promise<void> {
     // Collect all file names first
     const fileNames: string[] = [];
     for await (const entry of opfsRoot as any) {
-      if (entry.kind === 'file') {
+      if (entry.kind === "file") {
         fileNames.push(entry.name);
       }
     }
@@ -151,6 +151,6 @@ export async function clearAll(): Promise<void> {
       await opfsRoot.removeEntry(name);
     }
   } catch (error) {
-    console.error('Failed to clear OPFS:', error);
+    console.error("Failed to clear OPFS:", error);
   }
 }

@@ -16,7 +16,9 @@ import { findHorseByName } from "@/game/pedigreeData";
 export const RUNNING_FAMILIES = new Set([1, 2, 3, 4, 5]);
 export const SIRE_FAMILIES = new Set([3, 8, 11, 12, 14]);
 
-export function familyRole(family: number | undefined): "Running" | "Sire" | "Both" | "Standard" | "Unknown" {
+export function familyRole(
+  family: number | undefined,
+): "Running" | "Sire" | "Both" | "Standard" | "Unknown" {
   if (family === undefined) return "Unknown";
   const running = RUNNING_FAMILIES.has(family);
   const sire = SIRE_FAMILIES.has(family);
@@ -32,7 +34,7 @@ export function familyRole(family: number | undefined): "Running" | "Sire" | "Bo
 export function resolveBruceLoweFamily(
   horse: Horse,
   state: Pick<GameState, "horses">,
-  depth: number = 0
+  depth: number = 0,
 ): number | undefined {
   if (depth > 6) return undefined;
   if (horse.bruceLoweFamily !== undefined) return horse.bruceLoweFamily;

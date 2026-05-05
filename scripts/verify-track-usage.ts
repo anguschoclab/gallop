@@ -7,30 +7,35 @@ const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
 console.log("=== TRACK DATA USAGE VERIFICATION ===\n");
 
 // 1. Verify all tracks have required fields
-const verification = tracks.reduce((acc: any, t: any) => {
-  const hasCircumference = t.courses.every((c: any) => c.circumference > 0);
-  const hasStraightLength = t.courses.every((c: any) => c.straightLength > 0);
-  const hasSections = t.courses.every((c: any) => c.sections && c.sections.length === 4);
-  const hasRadius = t.courses.every((c: any) => 
-    c.sections && c.sections.every((s: any) => s.type !== "turn" || s.radius > 0)
-  );
-  
-  if (hasCircumference && hasStraightLength && hasSections && hasRadius) {
-    acc.complete++;
-  } else {
-    acc.incomplete.push({
-      name: t.name,
-      hasCircumference,
-      hasStraightLength,
-      hasSections,
-      hasRadius
-    });
-  }
-  return acc;
-}, { complete: 0, incomplete: [] });
+const verification = tracks.reduce(
+  (acc: any, t: any) => {
+    const hasCircumference = t.courses.every((c: any) => c.circumference > 0);
+    const hasStraightLength = t.courses.every((c: any) => c.straightLength > 0);
+    const hasSections = t.courses.every((c: any) => c.sections && c.sections.length === 4);
+    const hasRadius = t.courses.every(
+      (c: any) => c.sections && c.sections.every((s: any) => s.type !== "turn" || s.radius > 0),
+    );
+
+    if (hasCircumference && hasStraightLength && hasSections && hasRadius) {
+      acc.complete++;
+    } else {
+      acc.incomplete.push({
+        name: t.name,
+        hasCircumference,
+        hasStraightLength,
+        hasSections,
+        hasRadius,
+      });
+    }
+    return acc;
+  },
+  { complete: 0, incomplete: [] },
+);
 
 console.log(`✓ Total tracks: ${tracks.length}`);
-console.log(`✓ Tracks with complete data: ${verification.complete}/${tracks.length} (${Math.round(verification.complete/tracks.length*100)}%)`);
+console.log(
+  `✓ Tracks with complete data: ${verification.complete}/${tracks.length} (${Math.round((verification.complete / tracks.length) * 100)}%)`,
+);
 
 if (verification.incomplete.length > 0) {
   console.log(`\n⚠ Tracks missing data: ${verification.incomplete.length}`);
@@ -41,7 +46,7 @@ if (verification.incomplete.length > 0) {
 console.log("\n=== SAMPLE TRACKS (Physics Data) ===\n");
 
 const samples = ["Tokyo", "Ascot", "Longchamp", "Churchill Downs", "Flemington"];
-samples.forEach(name => {
+samples.forEach((name) => {
   const track = tracks.find((t: any) => t.name === name);
   if (track) {
     const c = track.courses[0];
@@ -50,7 +55,9 @@ samples.forEach(name => {
     console.log(`  Straight: ${c.straightLength}m`);
     console.log(`  Turns: ${c.sections.filter((s: any) => s.type === "turn").length}`);
     const turnRadius = c.sections.find((s: any) => s.type === "turn")?.radius;
-    console.log(`  Turn Radius: ${turnRadius}m ${turnRadius < 150 ? "(TIGHT)" : turnRadius > 200 ? "(GALLOPING)" : ""}`);
+    console.log(
+      `  Turn Radius: ${turnRadius}m ${turnRadius < 150 ? "(TIGHT)" : turnRadius > 200 ? "(GALLOPING)" : ""}`,
+    );
     if (c.width) console.log(`  Width: ${c.width}m`);
     console.log("");
   }
@@ -73,7 +80,7 @@ const integrationPoints = [
 ];
 
 console.log("Physics integration points found:");
-integrationPoints.forEach(point => {
+integrationPoints.forEach((point) => {
   const found = point.regex.test(raceSimContent);
   console.log(`  ${found ? "✓" : "✗"} ${point.name}`);
 });
@@ -82,21 +89,24 @@ integrationPoints.forEach(point => {
 console.log("\n=== TRACK INFLUENCE ON RACING ===\n");
 
 // Calculate track characteristics
-const trackTypes = tracks.reduce((acc: any, t: any) => {
-  const c = t.courses[0];
-  if (!c || !c.sections) return acc;
-  
-  const turnRadius = c.sections.find((s: any) => s.type === "turn")?.radius || 200;
-  
-  if (turnRadius < 150) acc.tight++;
-  else if (turnRadius > 200) acc.galloping++;
-  else acc.moderate++;
-  
-  if (c.straightLength < 350) acc.shortStraight++;
-  else if (c.straightLength > 450) acc.longStraight++;
-  
-  return acc;
-}, { tight: 0, moderate: 0, galloping: 0, shortStraight: 0, longStraight: 0 });
+const trackTypes = tracks.reduce(
+  (acc: any, t: any) => {
+    const c = t.courses[0];
+    if (!c || !c.sections) return acc;
+
+    const turnRadius = c.sections.find((s: any) => s.type === "turn")?.radius || 200;
+
+    if (turnRadius < 150) acc.tight++;
+    else if (turnRadius > 200) acc.galloping++;
+    else acc.moderate++;
+
+    if (c.straightLength < 350) acc.shortStraight++;
+    else if (c.straightLength > 450) acc.longStraight++;
+
+    return acc;
+  },
+  { tight: 0, moderate: 0, galloping: 0, shortStraight: 0, longStraight: 0 },
+);
 
 console.log("Track Classification:");
 console.log(`  Tight turns (<150m radius): ${trackTypes.tight} tracks`);

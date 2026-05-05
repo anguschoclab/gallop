@@ -14,7 +14,7 @@ function mockHorse(
   name: string,
   gender: HorseGender,
   stats: { speed: number; stamina: number; acceleration: number; consistency: number },
-  overrides?: Partial<Horse>
+  overrides?: Partial<Horse>,
 ): Horse {
   return {
     id,
@@ -33,7 +33,7 @@ function mockHorse(
     // DNA/genotype fields (minimal defaults)
     genotype: {
       color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
-      stats: { speed: [[1,1]], stamina: [[1,1]], acceleration: [[1,1]], consistency: [[1,1]] },
+      stats: { speed: [[1, 1]], stamina: [[1, 1]], acceleration: [[1, 1]], consistency: [[1, 1]] },
       preferences: { distance: [1, 1], surface: [1, 1], climbing: [1, 1], cornering: [1, 1] },
       style: [1, 1],
       mental: [1, 1],
@@ -59,7 +59,13 @@ function mockHorse(
       recovery: [1, 1],
       fertility: [1, 1],
       foalingEase: [1, 1],
-      markings: { socks: [1, 1], face: [1, 1], silverDapple: [1, 1], sabino: [1, 1], splashWhite: [1, 1] },
+      markings: {
+        socks: [1, 1],
+        face: [1, 1],
+        silverDapple: [1, 1],
+        sabino: [1, 1],
+        splashWhite: [1, 1],
+      },
       health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
     },
     // Aptitude fields
@@ -84,7 +90,13 @@ function mockHorse(
     recoveryRate: 1.0,
     fertility: 0.85,
     foalingEase: 0.85,
-    markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+    markings: {
+      socks: "none",
+      face: "none",
+      silverDapple: false,
+      sabino: false,
+      splashWhite: false,
+    },
     bleederRisk: 0,
     roarerRisk: 0,
     ocdRisk: 0,
@@ -95,28 +107,40 @@ function mockHorse(
 
 describe("Breeding Lifecycle Integration", () => {
   it("should create pregnancies when breeding occurs", () => {
-    const stallion = mockHorse("stallion-1", "Test Stallion", "horse", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 }, {
-      age: 6,
-      stableId: "stable-1",
-      silk: "red",
-      potential: 85,
-      fame: 60,
-      stud: {
-        atStud: true,
-        standingFee: 5000,
-        seasonBookings: 0,
-        bookSize: 50,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
-        retiredOnDay: 0,
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "horse",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      {
+        age: 6,
+        stableId: "stable-1",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
       },
-    });
+    );
 
-    const mare = mockHorse("mare-1", "Test Mare", "mare", { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, {
-      stableId: "stable-1",
-      silk: "blue",
-    });
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      {
+        stableId: "stable-1",
+        silk: "blue",
+      },
+    );
 
     const state: GameState = {
       day: 1,
@@ -152,7 +176,7 @@ describe("Breeding Lifecycle Integration", () => {
     };
 
     const result = runNpcBreeding(state, 1, createRng(1));
-    
+
     // Verify result structure
     expect(result.horses).toBeDefined();
     expect(result.npcStables).toBeDefined();
@@ -161,23 +185,29 @@ describe("Breeding Lifecycle Integration", () => {
   });
 
   it("should update stallion bookings when breeding occurs", () => {
-    const stallion = mockHorse("stallion-1", "Test Stallion", "horse", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 }, {
-      age: 6,
-      stableId: "stable-1",
-      silk: "red",
-      potential: 85,
-      fame: 60,
-      stud: {
-        atStud: true,
-        standingFee: 5000,
-        seasonBookings: 0,
-        bookSize: 50,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
-        retiredOnDay: 0,
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "horse",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      {
+        age: 6,
+        stableId: "stable-1",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
       },
-    });
+    );
 
     const state: GameState = {
       day: 1,
@@ -213,7 +243,7 @@ describe("Breeding Lifecycle Integration", () => {
     };
 
     const result = runNpcBreeding(state, 1, createRng(1));
-    
+
     // Verify horses array is returned
     expect(result.horses).toBeDefined();
     expect(Array.isArray(result.horses)).toBe(true);
@@ -240,7 +270,7 @@ describe("Breeding Lifecycle Integration", () => {
     };
 
     const result = runNpcBreeding(state, 10, createRng(1));
-    
+
     // Should not crash with empty state
     expect(result.horses).toBeDefined();
     expect(result.npcStables).toBeDefined();
@@ -281,7 +311,7 @@ describe("Breeding Lifecycle Integration", () => {
     };
 
     const result = runNpcBreeding(state, 1, createRng(1));
-    
+
     // Verify stable cash is returned (may or may not be deducted depending on breeding)
     expect(result.npcStables).toBeDefined();
   });

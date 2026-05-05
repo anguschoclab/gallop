@@ -1,4 +1,13 @@
-import type { Horse, Race, RunningStyle, TrackCondition, Weather, JockeyStats, JockeyArchetype, Jockey } from "./types";
+import type {
+  Horse,
+  Race,
+  RunningStyle,
+  TrackCondition,
+  Weather,
+  JockeyStats,
+  JockeyArchetype,
+  Jockey,
+} from "./types";
 import { TRAIT_VALUES, fiberDistanceModifier } from "./geneticsEngine";
 import type { CourseSpecification, TrackSection } from "./tracks";
 import type { Rng } from "./rng";
@@ -98,7 +107,9 @@ const WEATHER_DRAIN_MUL: Record<Weather, number> = {
   rainy: 1.06,
 };
 
-export function getConditionsModifier(race: Pick<Race, "weather" | "trackCondition">): ConditionsModifier {
+export function getConditionsModifier(
+  race: Pick<Race, "weather" | "trackCondition">,
+): ConditionsModifier {
   const trackMul = race.trackCondition ? TRACK_SPEED_MUL[race.trackCondition] : 1;
   const weatherSpeedMul = race.weather ? WEATHER_SPEED_MUL[race.weather] : 1;
   const weatherDrainMul = race.weather ? WEATHER_DRAIN_MUL[race.weather] : 1;
@@ -125,12 +136,12 @@ export function buildRunner(
   barrier: number = 1,
   jockey?: Jockey,
   weight?: number,
-  handedness?: "left" | "right" | "balanced"
+  handedness?: "left" | "right" | "balanced",
 ): Runner {
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
   const formEnergy = clamp(formMod * energyMod, 0.5, MAX_FORM_ENERGY_MUL);
-  
+
   // Aptitude modifiers
   const distDiff = Math.abs(h.distanceAptitude - raceDistance);
   // Penalty starts after 400m deviation, up to 10% penalty at 1200m+ deviation
@@ -141,7 +152,9 @@ export function buildRunner(
   // Sprinters lose ground in long races; stayers lose ground in short races.
   // Translates the speed/stamina pair into different effective values per
   // distance band.
-  const fiberMods = h.fiberBias ? fiberDistanceModifier(h.fiberBias, raceDistance) : { speedMul: 1, staminaMul: 1 };
+  const fiberMods = h.fiberBias
+    ? fiberDistanceModifier(h.fiberBias, raceDistance)
+    : { speedMul: 1, staminaMul: 1 };
 
   // --- DNA: mud aptitude ---
   // Multiplier on conditions.speedMul when ground is soft/heavy. Mudders gain;
@@ -153,16 +166,20 @@ export function buildRunner(
   // --- DNA: bloodline regional bonus ---
   // Heritage line × surface alignment gives a small ability boost.
   const lineBias = h.bloodline ? REGIONAL_LINE_BIAS[h.bloodline as Bloodline] : undefined;
-  const lineSurfaceMul = lineBias && (!lineBias.surface || lineBias.surface === surface) ? 1 + lineBias.boost : 1;
+  const lineSurfaceMul =
+    lineBias && (!lineBias.surface || lineBias.surface === surface) ? 1 + lineBias.boost : 1;
 
   // --- DNA: track handedness preference ---
   // Horses with trackPreference matching the race's handedness get a small boost.
   // Balanced horses are neutral, left-biased horses gain on left-turn tracks, etc.
-  const handednessMod = handedness && h.trackPreference
-    ? (handedness === "balanced" || h.trackPreference === "balanced" ? 1.0
-       : handedness === h.trackPreference ? 1.02
-       : 0.98)
-    : 1.0;
+  const handednessMod =
+    handedness && h.trackPreference
+      ? handedness === "balanced" || h.trackPreference === "balanced"
+        ? 1.0
+        : handedness === h.trackPreference
+          ? 1.02
+          : 0.98
+      : 1.0;
 
   // --- DNA: Dosage Index distance preference ---
   // Pedigree-based distance preference complements genetic distanceAptitude.
@@ -172,28 +189,48 @@ export function buildRunner(
   let dosageDistanceMod = 1.0;
   if (isFinite(dosageDI)) {
     // Map DI to preferred distance range and calculate modifier
-    const preferredDistance = dosageDI >= 4.00 ? 1200 
-                          : dosageDI >= 3.00 ? 1400
-                          : dosageDI >= 2.40 ? 1600
-                          : dosageDI >= 1.50 ? 2000
-                          : 2400;
+    const preferredDistance =
+      dosageDI >= 4.0
+        ? 1200
+        : dosageDI >= 3.0
+          ? 1400
+          : dosageDI >= 2.4
+            ? 1600
+            : dosageDI >= 1.5
+              ? 2000
+              : 2400;
     const dosageDistDiff = Math.abs(raceDistance - preferredDistance);
     // Small modifier (up to 3%) based on pedigree distance fit
     dosageDistanceMod = 1 - Math.min(0.03, dosageDistDiff / 10000);
   }
 
   // base m/s ~ 14-20 for 30..95 speed
-  const rawTopSpeed = (12 + (h.stats.speed / 100) * 10)
-    * formEnergy * conditions.speedMul * distanceMod * surfaceMod
-    * fiberMods.speedMul * mudMod * lineSurfaceMul * handednessMod * dosageDistanceMod;
+  const rawTopSpeed =
+    (12 + (h.stats.speed / 100) * 10) *
+    formEnergy *
+    conditions.speedMul *
+    distanceMod *
+    surfaceMod *
+    fiberMods.speedMul *
+    mudMod *
+    lineSurfaceMul *
+    handednessMod *
+    dosageDistanceMod;
   const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
   const accel = 1.5 + (h.stats.acceleration / 100) * 3.5;
   // Stride length: long-stride horses gain on straights, lose on turns.
   // Currently no per-step course context here, so we just apply a flat
   // distance-based bias (longer races have more straights → long-stride wins).
-  const strideMod = h.strideType === "long" ? (raceDistance >= 1800 ? 1.02 : 0.98)
-                  : h.strideType === "short" ? (raceDistance < 1400 ? 1.02 : 0.99)
-                  : 1;
+  const strideMod =
+    h.strideType === "long"
+      ? raceDistance >= 1800
+        ? 1.02
+        : 0.98
+      : h.strideType === "short"
+        ? raceDistance < 1400
+          ? 1.02
+          : 0.99
+        : 1;
   const baseStamina = (0.4 + (h.stats.stamina / 100) * 0.6) * fiberMods.staminaMul; // 1 = no fade
   // Worse conditions deepen the fade: drain >1 reduces the staminaFactor
   // toward 0, while drain <=1 leaves it as-is.
@@ -201,33 +238,37 @@ export function buildRunner(
   // Temperament affects consistency (noise)
   // Excellent (4) -> 0.8x noise, Poor (1) -> 1.1x noise
   const temperamentMod = 1 + (TRAIT_VALUES[h.temperament || "fair"] - 2) * -0.1;
-  
+
   // Conformation affects stamina efficiency
   // Excellent (4) -> 0.94x drain, Poor (1) -> 1.03x drain
   const conformationMod = 1 + (TRAIT_VALUES[h.conformation || "fair"] - 2) * -0.03;
 
-  const conditionStamina = clamp(1 - (1 - baseStamina) * conditions.staminaDrainMul * conformationMod, 0.2, 1);
+  const conditionStamina = clamp(
+    1 - (1 - baseStamina) * conditions.staminaDrainMul * conformationMod,
+    0.2,
+    1,
+  );
   const runningStyle: RunningStyle = h.runningStyle ?? "P";
   const staminaFactor = styleStaminaFactor(runningStyle, conditionStamina);
-  
+
   // --- Gender Modifiers ---
   let genderSpeedMul = 1.0;
   let genderNoiseMul = 1.0;
-  
+
   switch (h.gender) {
     case "colt":
     case "horse":
       genderSpeedMul = 1.015; // +1.5% Peak Power
-      genderNoiseMul = 1.25;  // +25% Volatility
+      genderNoiseMul = 1.25; // +25% Volatility
       break;
     case "gelding":
-      genderSpeedMul = 1.0;    // Standard
-      genderNoiseMul = 0.6;    // -40% Volatility (Highly Consistent)
+      genderSpeedMul = 1.0; // Standard
+      genderNoiseMul = 0.6; // -40% Volatility (Highly Consistent)
       break;
     case "filly":
     case "mare":
-      genderSpeedMul = 0.99;   // -1.0% Base Power
-      genderNoiseMul = 1.0;    // Standard
+      genderSpeedMul = 0.99; // -1.0% Base Power
+      genderNoiseMul = 1.0; // Standard
       break;
   }
 
@@ -237,7 +278,7 @@ export function buildRunner(
   const assignedWeight = weight ?? 126;
   const sizeCapacity = (h.weight - 500) / 10; // +1 lb capacity per 10kg over 500kg
   const standardWeightThreshold = 126 + sizeCapacity;
-  
+
   const weightPenalty = Math.max(0, (assignedWeight - standardWeightThreshold) * 0.0015);
   const weightMod = clamp(1 - weightPenalty, 0.8, 1.05);
 
@@ -288,7 +329,7 @@ export function computePaceContext(runners: Runner[], distance: number): PaceCon
   let totalProgress = 0;
   let alive = 0;
   const laneDensity = new Array(12).fill(0);
-  
+
   for (const r of runners) {
     if (r.position > leaderPos) leaderPos = r.position;
     if (r.finishTime === null) {
@@ -339,7 +380,7 @@ function getDraftingHorseId(r: Runner, runners: Runner[]): string | null {
 function getTrackSection(
   pos: number,
   distance: number,
-  course?: CourseSpecification
+  course?: CourseSpecification,
 ): TrackSection | null {
   if (!course || !course.sections || course.sections.length === 0) return null;
 
@@ -359,20 +400,12 @@ function getTrackSection(
   return course.sections[0];
 }
 
-function getTrackRadius(
-  pos: number,
-  distance: number,
-  course?: CourseSpecification
-): number {
+function getTrackRadius(pos: number, distance: number, course?: CourseSpecification): number {
   const section = getTrackSection(pos, distance, course);
   return section?.type === "turn" ? (section.radius ?? Infinity) : Infinity;
 }
 
-function getTrackGradient(
-  pos: number,
-  distance: number,
-  course?: CourseSpecification
-): number {
+function getTrackGradient(pos: number, distance: number, course?: CourseSpecification): number {
   const section = getTrackSection(pos, distance, course);
   return section?.gradient ?? 0;
 }
@@ -381,19 +414,23 @@ function getTrackGradient(
  * Calculate speed penalty for being in a turn based on tightness (radius).
  * Horses with high acceleration and jockeys with high positioning can mitigate this.
  */
-function getTurnSpeedPenalty(radius: number, accelStat: number, positioningStat: number = 50): number {
+function getTurnSpeedPenalty(
+  radius: number,
+  accelStat: number,
+  positioningStat: number = 50,
+): number {
   if (radius === Infinity) return 0;
-  
-  // Base penalty scales with 1/radius. 
+
+  // Base penalty scales with 1/radius.
   // At R=125m (standard), penalty is ~0.02 (2% speed loss).
   // At R=60m (tight), penalty is ~0.05 (5% speed loss).
   const basePenalty = clamp(2.5 / radius, 0, 0.08);
-  
+
   // Mitigation: up to 50% reduction from horse acceleration (agile horses)
   const accelBonus = (accelStat / 100) * 0.5;
   // Mitigation: up to 20% reduction from jockey positioning skill
   const positioningBonus = (positioningStat / 100) * 0.2;
-  
+
   const totalMitigation = 1 - (accelBonus + positioningBonus);
   return basePenalty * totalMitigation;
 }
@@ -406,23 +443,23 @@ export function stepRunner(
   rng: { next: () => number } | Rng,
   field?: Runner[],
   pace?: PaceContext,
-  course?: CourseSpecification
+  course?: CourseSpecification,
 ) {
   if (r.finishTime !== null) return;
   const progress = r.position / distance;
-  
+
   r.draftingHorseId = field ? getDraftingHorseId(r, field) : null;
 
   // --- 1. Lateral AI & Movement ---
   const LANE_WIDTH = 1.2;
   const MAX_LATERAL_SPEED = 2.0;
-  
+
   // Basic AI: All horses want Lane 0 (the rail).
   // Front-runners (E) prioritize getting to the rail early.
   // Closers (S) might stay wide in the pack to avoid being boxed in.
   let targetLane = 0;
   if (r.runningStyle === "S" && progress < 0.4) targetLane = 1; // Stay slightly wide early
-  
+
   // Traffic Avoidance: If blocked on the rail, move out.
   if (field && pace) {
     const laneIdx = Math.floor(r.lane / LANE_WIDTH);
@@ -431,7 +468,7 @@ export function stepRunner(
       // Rail is crowded, maybe move out if we are not the leader
       if (r.position < pace.leaderPos - 2) targetLane = 1;
     }
-    
+
     // Check for immediate physical blockage (horse right in front)
     for (const other of field) {
       if (other.horseId === r.horseId) continue;
@@ -457,22 +494,22 @@ export function stepRunner(
   // --- 2. Forward Physics & Turn/Elevation Penalties ---
   const radius = getTrackRadius(r.position, distance, course);
   const gradient = getTrackGradient(r.position, distance, course);
-  
+
   // Geometric penalty: distance traveled on the outside is longer.
-  const arcFactor = radius === Infinity ? 1 : (1 + r.lane / radius);
-  
-  // Elevation penalty: uphill (>0) slows down and drains stamina, 
+  const arcFactor = radius === Infinity ? 1 : 1 + r.lane / radius;
+
+  // Elevation penalty: uphill (>0) slows down and drains stamina,
   // downhill (<0) speeds up slightly.
   // 1% gradient = ~1% speed change
   // Jockey Skill: "Hill Specialist" reduces stamina drain on hills
   // Horse Aptitude: "Climbing Aptitude" modulates the penalty
-  const gradientSpeedMul = 1 - (gradient / 100);
+  const gradientSpeedMul = 1 - gradient / 100;
   const isHillSpecialist = r.jockey?.traits.includes("hill_specialist");
   const climbingApt = r.horse?.climbingAptitude ?? 1.0;
-  
-  let gradientStaminaMul = gradient > 0 ? 1 - (gradient / (200 * climbingApt)) : 1;
+
+  let gradientStaminaMul = gradient > 0 ? 1 - gradient / (200 * climbingApt) : 1;
   if (gradient > 0 && isHillSpecialist) {
-    gradientStaminaMul = 1 - (gradient / (400 * climbingApt)); // 50% less stamina drain for specialists
+    gradientStaminaMul = 1 - gradient / (400 * climbingApt); // 50% less stamina drain for specialists
   }
 
   // --- 2.1 Centrifugal Physics (Turn Penalty) ---
@@ -483,20 +520,26 @@ export function stepRunner(
     const centrifugalPressure = (r.velocity * r.velocity) / (radius * 10);
     // Mitigation: High acceleration (agility) helps "hold the rail"
     const agilityMitigation = (r.horse.stats.acceleration / 100) * 0.6;
-    
+
     // Horse Aptitude: Cornering skill (0.8 - 1.2)
     const corneringApt = r.horse?.corneringAptitude ?? 1.0;
-    
+
     // Jockey Traits: "Bullring Specialist"
     const isBullringExpert = r.jockey?.traits.includes("bullring_expert");
     const positioningSkill = (r.jockey?.stats.positioning ?? 50) / 200;
     const traitBonus = isBullringExpert ? 0.2 : 0;
-    
+
     // Safety: Clamp the total penalty to 40% (0.4) so horses don't stall completely on tight turns
-    const totalPenalty = Math.min(0.4, Math.max(0, centrifugalPressure - (agilityMitigation * corneringApt) - positioningSkill - traitBonus));
+    const totalPenalty = Math.min(
+      0.4,
+      Math.max(
+        0,
+        centrifugalPressure - agilityMitigation * corneringApt - positioningSkill - traitBonus,
+      ),
+    );
     turnSpeedMul = 1 - totalPenalty;
   }
-  
+
   // stamina curve: full speed early, fade in last 40% based on stamina
   let staminaMul = 1;
   if (progress > 0.6) {
@@ -521,7 +564,7 @@ export function stepRunner(
       // deterministic id so use a subtle floor to avoid double-firing.
       // Cheap heuristic: roll once when progress crosses 0.7.
       if (rng.next() < bleederRisk * dt * 0.5) {
-        effectiveStamina = clamp(effectiveStamina - 0.20, 0.1, 1);
+        effectiveStamina = clamp(effectiveStamina - 0.2, 0.1, 1);
       }
     }
     // Roarer (laryngeal hemiplegia / wind issue): chance of choke at peak
@@ -534,7 +577,7 @@ export function stepRunner(
     }
     staminaMul = 1 - (1 - effectiveStamina) * fade;
   }
-  
+
   let styleMul = paceShapeMul(r.runningStyle, progress);
 
   // --- 2.2 Straight Length Tactical Bias ---
@@ -543,8 +586,9 @@ export function stepRunner(
     // Short straight: favors front-runners who "kick" early out of the turn.
     if (r.runningStyle === "E" && progress > 0.8) {
       const isFrontRunnerJockey = r.jockey?.archetype === "front_runner";
-      const jockeyBonus = (r.jockey?.stats.positioning ?? 50) / 1000 + (isFrontRunnerJockey ? 0.02 : 0);
-      styleMul *= (1.03 + jockeyBonus);
+      const jockeyBonus =
+        (r.jockey?.stats.positioning ?? 50) / 1000 + (isFrontRunnerJockey ? 0.02 : 0);
+      styleMul *= 1.03 + jockeyBonus;
     }
   } else if (straight > 500) {
     // Long straight: favors closers with sustained stamina.
@@ -552,17 +596,17 @@ export function stepRunner(
       const isCloserJockey = r.jockey?.archetype === "closer";
       const isLongStraightPro = r.jockey?.traits.includes("long_straight_pro");
       const jockeyBonus = (r.jockey?.stats.pacing ?? 50) / 1000 + (isCloserJockey ? 0.02 : 0);
-      const traitBonus = (progress > 0.85 && isLongStraightPro) ? (r.jockey?.stats.vigor ?? 50) / 400 : 0;
-      styleMul *= (1.02 + jockeyBonus + traitBonus);
+      const traitBonus =
+        progress > 0.85 && isLongStraightPro ? (r.jockey?.stats.vigor ?? 50) / 400 : 0;
+      styleMul *= 1.02 + jockeyBonus + traitBonus;
     }
   }
 
-  
   // E (Early) Front-runners CANNOT rate successfully behind a pace setter.
-  if (r.runningStyle === "E" && pace && (pace.leaderPos - r.position) > 3) {
+  if (r.runningStyle === "E" && pace && pace.leaderPos - r.position > 3) {
     styleMul *= 0.98; // Rating penalty
   }
-  
+
   // S (Sustain/Closer) benefits more in a hot-pace race
   if (pace && pace.pacePressure > 0 && r.runningStyle === "S" && progress > 0.6) {
     styleMul *= 1 + 0.05 * pace.pacePressure;
@@ -571,40 +615,46 @@ export function stepRunner(
   // Wide Draw Penalty for Front-runners:
   // If an E horse is forced wide early, they burn extra stamina "pushing" for the lead.
   if (r.runningStyle === "E" && progress < 0.2 && r.lane > 2.4) {
-    staminaMul *= 0.98; 
+    staminaMul *= 0.98;
   }
 
   // Drafting bonus
   let draftMul = 1;
   if (r.draftingHorseId && progress < 0.95) draftMul = DRAFT_SPEED_BONUS;
-  
+
   const targetSpeed =
-    r.topSpeed * staminaMul * styleMul * draftMul * turnSpeedMul * gradientSpeedMul * (1 + (rng.next() - 0.5) * 0.08 * r.noise);
-  
+    r.topSpeed *
+    staminaMul *
+    styleMul *
+    draftMul *
+    turnSpeedMul *
+    gradientSpeedMul *
+    (1 + (rng.next() - 0.5) * 0.08 * r.noise);
+
   // accelerate toward target
   const diff = targetSpeed - r.velocity;
   r.velocity += Math.sign(diff) * Math.min(Math.abs(diff), r.accel * dt);
-  
+
   // Update position with arc-length correction
   const ds = r.velocity * dt;
-  
+
   // --- 3. Jockey Bonuses ---
   let finalDs = ds;
   if (r.jockey) {
     const stats = r.jockey.stats;
     const arch = r.jockey.archetype;
-    
+
     // GateSkill: Accelerate faster at the start (first 5% of race)
     if (progress < 0.05) {
       r.velocity += (stats.gateSkill / 100) * 0.5 * dt;
     }
-    
+
     // Positioning: Better rail seeking and tighter turns
     // Reduces the geometric penalty of being wide
     if (radius !== Infinity) {
       const positioningBonus = (stats.positioning / 100) * 0.4; // up to 40% reduction in wide penalty
       const effectiveLane = Math.max(0, r.lane * (1 - positioningBonus));
-      const adjustedArcFactor = (1 + effectiveLane / radius);
+      const adjustedArcFactor = 1 + effectiveLane / radius;
       finalDs = (r.velocity * dt) / adjustedArcFactor;
     } else {
       finalDs = (r.velocity * dt) / arcFactor;
@@ -612,21 +662,21 @@ export function stepRunner(
 
     // Pacing: Efficiency bonus if archetype matches style
     // Front-runner jockey with E, Closer jockey with S, etc.
-    const isMatched = 
+    const isMatched =
       (arch === "front_runner" && r.runningStyle === "E") ||
       (arch === "closer" && r.runningStyle === "S") ||
       (arch === "clinical" && r.runningStyle === "EP") ||
       (arch === "finisher" && r.runningStyle === "P");
-    
+
     if (isMatched && progress > 0.4) {
       // Small stamina preservation
-      staminaMul *= (1 + (stats.pacing / 100) * 0.02);
+      staminaMul *= 1 + (stats.pacing / 100) * 0.02;
     }
-    
+
     // Style Mismatch Penalty: Front-runner jockey on a Closer horse
     if (arch === "front_runner" && r.runningStyle === "S" && progress < 0.4) {
       // Jockey pushes too hard early
-      r.velocity += 0.2 * dt; 
+      r.velocity += 0.2 * dt;
       staminaMul *= 0.97; // Extra drain
     }
 
@@ -639,9 +689,9 @@ export function stepRunner(
     // Temperament: Buffer consistency noise
     const consistencyBuffer = (stats.temperament / 100) * 0.5;
     const effectiveNoise = r.noise * (1 - consistencyBuffer);
-    // (Wait, noise is already used to calculate targetSpeed above, 
-    // so we should have applied this before velocity calc. 
-    // Let's refine the targetSpeed logic instead if possible, 
+    // (Wait, noise is already used to calculate targetSpeed above,
+    // so we should have applied this before velocity calc.
+    // Let's refine the targetSpeed logic instead if possible,
     // but applying it here as a slight velocity correction is also an option.)
   } else {
     finalDs = ds / arcFactor;
@@ -665,7 +715,7 @@ export function runRaceToCompletion(
   rng: Rng,
   dt: number = 0.1,
   maxTime: number = 600,
-  course?: CourseSpecification
+  course?: CourseSpecification,
 ): { horseId: string; position: number; time: number }[] {
   let t = 0;
   while (runners.some((r) => r.finishTime === null) && t < maxTime) {

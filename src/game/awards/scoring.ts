@@ -2,11 +2,7 @@
 // Calculates award points based on race performance
 
 import type { Horse, Race } from "../types";
-import type {
-  AwardRegion,
-  RegionalAwardCategory,
-  RegionalAward,
-} from "./types";
+import type { AwardRegion, RegionalAwardCategory, RegionalAward } from "./types";
 import {
   REGIONAL_SCORING,
   COUNTRY_TO_REGION,
@@ -19,10 +15,10 @@ import { getTrackContinent, type Continent } from "../gradedRaces";
 
 // Map continent to award region
 const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {
-  "north_america": "north_america",
-  "europe": "europe",
-  "asia_pacific": "asia_pacific",
-  "south_america": "south_america",
+  north_america: "north_america",
+  europe: "europe",
+  asia_pacific: "asia_pacific",
+  south_america: "south_america",
 };
 
 // Get eligible categories for a region
@@ -44,7 +40,7 @@ function getCategoriesForRegion(region: AwardRegion): readonly RegionalAwardCate
 // Calculate points for a single race result
 function calculateRacePoints(
   historyEntry: Horse["raceHistory"][0],
-  weights: typeof REGIONAL_SCORING[AwardRegion]
+  weights: (typeof REGIONAL_SCORING)[AwardRegion],
 ): number {
   let points = 0;
 
@@ -80,7 +76,7 @@ function calculateRacePoints(
 function isEligibleForCategory(
   horse: Horse,
   category: RegionalAwardCategory,
-  historyEntry: Horse["raceHistory"][0]
+  historyEntry: Horse["raceHistory"][0],
 ): boolean {
   const age = horse.age;
   const gender = horse.gender;
@@ -174,7 +170,7 @@ export function calculateAwardPoints(
   races: Race[],
   year: number,
   region: AwardRegion,
-  category: RegionalAwardCategory
+  category: RegionalAwardCategory,
 ): number {
   const weights = REGIONAL_SCORING[region];
   let totalPoints = 0;
@@ -213,14 +209,18 @@ export function determineRegionalWinners(
   horses: Horse[],
   races: Race[],
   year: number,
-  region: AwardRegion
+  region: AwardRegion,
 ): Omit<RegionalAward, "id" | "ceremonyDay">[] {
   const categories = getCategoriesForRegion(region);
   const winners: Omit<RegionalAward, "id" | "ceremonyDay">[] = [];
 
   for (const category of categories) {
     // Skip merit/international categories for now
-    if (category === "award_of_merit" || category === "champion_international" || category === "champion_trainer") {
+    if (
+      category === "award_of_merit" ||
+      category === "champion_international" ||
+      category === "champion_trainer"
+    ) {
       continue;
     }
 
@@ -265,7 +265,7 @@ export function determineRegionalWinners(
 export function determineAllRegionalWinners(
   horses: Horse[],
   races: Race[],
-  year: number
+  year: number,
 ): Omit<RegionalAward, "id" | "ceremonyDay">[] {
   const regions: AwardRegion[] = ["north_america", "europe", "asia_pacific", "south_america"];
   let allWinners: Omit<RegionalAward, "id" | "ceremonyDay">[] = [];

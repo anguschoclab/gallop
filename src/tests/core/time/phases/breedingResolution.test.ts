@@ -30,7 +30,10 @@ describe("breedingResolutionPhase", () => {
     pendingIntents: [],
   });
 
-  const createTestContext = (state: GameState, intents: BreedingIntent[] = []): PipelineContext => ({
+  const createTestContext = (
+    state: GameState,
+    intents: BreedingIntent[] = [],
+  ): PipelineContext => ({
     previousDay: 0,
     newDay: 1,
     state,
@@ -42,7 +45,12 @@ describe("breedingResolutionPhase", () => {
   });
 
   it("should process breeding intent and generate pregnancy creation impact", () => {
-    const sire = createTestHorse({ id: "sire-1", gender: "horse", age: 5, stableId: "npc-stable-1" });
+    const sire = createTestHorse({
+      id: "sire-1",
+      gender: "horse",
+      age: 5,
+      stableId: "npc-stable-1",
+    });
     const dam = createTestHorse({ id: "dam-1", gender: "mare", age: 5 });
     const state: GameState = {
       ...createTestState(),
@@ -86,7 +94,12 @@ describe("breedingResolutionPhase", () => {
   });
 
   it("should generate cash change impact for stud fee", () => {
-    const sire = createTestHorse({ id: "sire-1", gender: "horse", age: 5, stableId: "npc-stable-1" });
+    const sire = createTestHorse({
+      id: "sire-1",
+      gender: "horse",
+      age: 5,
+      stableId: "npc-stable-1",
+    });
     const dam = createTestHorse({ id: "dam-1", gender: "mare", age: 5 });
     const state: GameState = {
       ...createTestState(),

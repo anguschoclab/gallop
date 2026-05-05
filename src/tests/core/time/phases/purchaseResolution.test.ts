@@ -30,7 +30,10 @@ describe("purchaseResolutionPhase", () => {
     pendingIntents: [],
   });
 
-  const createTestContext = (state: GameState, intents: PurchaseIntent[] = []): PipelineContext => ({
+  const createTestContext = (
+    state: GameState,
+    intents: PurchaseIntent[] = [],
+  ): PipelineContext => ({
     previousDay: 0,
     newDay: 1,
     state,

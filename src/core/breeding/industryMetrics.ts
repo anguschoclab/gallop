@@ -8,10 +8,10 @@ import { foalLifetimeEarnings } from "./lineage";
  */
 export function computeIndustryMeanEarnings(allHorses: Horse[]): number {
   // Filter for racing-age horses (2+) that have actually raced
-  const runners = allHorses.filter(h => h.age >= 2 && h.raceHistory.length > 0);
-  
+  const runners = allHorses.filter((h) => h.age >= 2 && h.raceHistory.length > 0);
+
   if (runners.length === 0) return 0;
-  
+
   const totalEarnings = runners.reduce((sum, h) => sum + foalLifetimeEarnings(h), 0);
   return totalEarnings / runners.length;
 }

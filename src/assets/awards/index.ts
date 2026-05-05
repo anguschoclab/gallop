@@ -29,19 +29,35 @@ export interface AwardSvgData {
 const AWARD_SVGS: Record<AwardRegion, { hoty: AwardSvgData; category: AwardSvgData }> = {
   north_america: {
     hoty: { svg: naHoty.hotySvg, color: naHoty.hotyColor, accent: naHoty.hotyAccent },
-    category: { svg: naCategory.categorySvg, color: naCategory.categoryColor, accent: naCategory.categoryAccent },
+    category: {
+      svg: naCategory.categorySvg,
+      color: naCategory.categoryColor,
+      accent: naCategory.categoryAccent,
+    },
   },
   europe: {
     hoty: { svg: euHoty.hotySvg, color: euHoty.hotyColor, accent: euHoty.hotyAccent },
-    category: { svg: euCategory.categorySvg, color: euCategory.categoryColor, accent: euCategory.categoryAccent },
+    category: {
+      svg: euCategory.categorySvg,
+      color: euCategory.categoryColor,
+      accent: euCategory.categoryAccent,
+    },
   },
   asia_pacific: {
     hoty: { svg: apacHoty.hotySvg, color: apacHoty.hotyColor, accent: apacHoty.hotyAccent },
-    category: { svg: apacCategory.categorySvg, color: apacCategory.categoryColor, accent: apacCategory.categoryAccent },
+    category: {
+      svg: apacCategory.categorySvg,
+      color: apacCategory.categoryColor,
+      accent: apacCategory.categoryAccent,
+    },
   },
   south_america: {
     hoty: { svg: saHoty.hotySvg, color: saHoty.hotyColor, accent: saHoty.hotyAccent },
-    category: { svg: saCategory.categorySvg, color: saCategory.categoryColor, accent: saCategory.categoryAccent },
+    category: {
+      svg: saCategory.categorySvg,
+      color: saCategory.categoryColor,
+      accent: saCategory.categoryAccent,
+    },
   },
 };
 

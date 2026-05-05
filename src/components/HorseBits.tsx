@@ -7,17 +7,27 @@ import { SilkDot } from "./SilkDot";
 
 /**
  * StatBar — Displays a stat with label and progress bar.
- * 
+ *
  * Design Bible:
  * - Numbers use IBM Plex Mono with tabular-nums
  * - Clean, scannable layout
  */
-export function StatBar({ label, value, className }: { label: string; value: number; className?: string }) {
+export function StatBar({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: number;
+  className?: string;
+}) {
   return (
     <div className={className}>
       <div className="flex justify-between text-xs mb-1">
         <span className="text-muted-foreground font-[family-name:var(--font-body)]">{label}</span>
-        <span className="font-medium font-[family-name:var(--font-mono)] tabular-nums">{Math.round(value)}</span>
+        <span className="font-medium font-[family-name:var(--font-mono)] tabular-nums">
+          {Math.round(value)}
+        </span>
       </div>
       <Progress value={value} className="h-1.5" />
     </div>
@@ -40,14 +50,19 @@ export function HorseStats({ horse, className }: { horse: Horse; className?: str
 
 /**
  * SilkBadge — A larger silk indicator (legacy, prefer SilkDot for new code).
- * 
+ *
  * Design Bible:
  * - Circular badge with contextual border
  * - White border with shadow for depth
  */
-export function SilkBadge({ color, num, size = "md", className }: { 
-  color: string; 
-  num?: number; 
+export function SilkBadge({
+  color,
+  num,
+  size = "md",
+  className,
+}: {
+  color: string;
+  num?: number;
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
@@ -63,7 +78,7 @@ export function SilkBadge({ color, num, size = "md", className }: {
         "rounded-full flex items-center justify-center text-white font-bold",
         "border-2 border-white/60 dark:border-white/50 shadow-sm",
         sizeClasses[size],
-        className
+        className,
       )}
       style={{ backgroundColor: color }}
     >
@@ -74,19 +89,19 @@ export function SilkBadge({ color, num, size = "md", className }: {
 
 /**
  * HorseBit — Small inline display element (silk + name + status pill).
- * 
+ *
  * Design Bible:
  * - Use anywhere a horse is mentioned in flowing copy or compact rows
  * - Silk dot beside every horse name
  * - Optional status pill for additional context
  */
-export function HorseBit({ 
-  horse, 
+export function HorseBit({
+  horse,
   showStatus = false,
   status,
-  className 
-}: { 
-  horse: Horse; 
+  className,
+}: {
+  horse: Horse;
   showStatus?: boolean;
   status?: string;
   className?: string;
@@ -115,7 +130,7 @@ export function overall(h: Horse) {
 
 /**
  * formatCurrency — Format a number as currency with proper typography.
- * 
+ *
  * Design Bible:
  * - Uses IBM Plex Mono with tabular-nums
  * - Always use toLocaleString() for formatting
@@ -126,7 +141,7 @@ export function formatCurrency(amount: number): string {
 
 /**
  * formatTime — Format race time with proper decimals.
- * 
+ *
  * Design Bible:
  * - Finish time: two decimal places (92.41s)
  * - Split time: one decimal place (23.4s)
@@ -137,23 +152,25 @@ export function formatTime(seconds: number, decimals: 1 | 2 = 2): string {
 
 /**
  * NumericValue — Wrapper for numeric values with proper font.
- * 
+ *
  * Design Bible: Numbers are the protagonist — use monospace tabular-nums
  */
-export function NumericValue({ 
-  value, 
-  prefix = "", 
-  suffix = "", 
-  className 
-}: { 
-  value: number | string; 
-  prefix?: string; 
+export function NumericValue({
+  value,
+  prefix = "",
+  suffix = "",
+  className,
+}: {
+  value: number | string;
+  prefix?: string;
   suffix?: string;
   className?: string;
 }) {
   return (
     <span className={cn("font-[family-name:var(--font-mono)] tabular-nums", className)}>
-      {prefix}{value}{suffix}
+      {prefix}
+      {value}
+      {suffix}
     </span>
   );
 }

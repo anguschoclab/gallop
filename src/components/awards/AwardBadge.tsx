@@ -24,27 +24,19 @@ export function AwardBadge({
 }: AwardBadgeProps) {
   const categoryName = CATEGORY_DISPLAY_NAMES[award.category];
   const regionName = REGION_AWARD_NAMES[award.region];
-  
+
   if (variant === "inline") {
     return (
       <Badge
         className={cn(
           "inline-flex items-center gap-1.5 px-2 py-1",
           REGION_COLOR_CLASSES[award.region],
-          className
+          className,
         )}
       >
-        <AwardIcon
-          region={award.region}
-          category={award.category}
-          size="tiny"
-        />
-        <span className="text-xs font-medium truncate max-w-[120px]">
-          {categoryName}
-        </span>
-        {showYear && (
-          <span className="text-[10px] opacity-70">{award.year}</span>
-        )}
+        <AwardIcon region={award.region} category={award.category} size="tiny" />
+        <span className="text-xs font-medium truncate max-w-[120px]">{categoryName}</span>
+        {showYear && <span className="text-[10px] opacity-70">{award.year}</span>}
       </Badge>
     );
   }
@@ -55,7 +47,7 @@ export function AwardBadge({
         className={cn(
           "flex items-center gap-3 p-3 rounded-lg border",
           "bg-card hover:bg-accent/50 transition-colors",
-          className
+          className,
         )}
       >
         <AwardIcon
@@ -82,22 +74,15 @@ export function AwardBadge({
       className={cn(
         "flex flex-col items-center text-center p-4 rounded-xl border",
         "bg-gradient-to-b from-card to-muted",
-        className
+        className,
       )}
     >
-      <AwardIcon
-        region={award.region}
-        category={award.category}
-        size="large"
-        animated
-      />
+      <AwardIcon region={award.region} category={award.category} size="large" animated />
       <h3 className="font-bold text-lg mt-2">{categoryName}</h3>
       <p className="text-sm text-muted-foreground">{regionName}</p>
       <div className="flex items-center gap-2 mt-1 text-sm">
         {showYear && (
-          <span className="bg-t700 text-gold px-2 py-0.5 rounded-full">
-            {award.year}
-          </span>
+          <span className="bg-t700 text-gold px-2 py-0.5 rounded-full">{award.year}</span>
         )}
         <span className="font-semibold text-gold">{award.points} points</span>
       </div>
@@ -140,7 +125,7 @@ interface AwardListItemProps {
 
 export function AwardListItem({ award, showIcon = true, onClick, className }: AwardListItemProps) {
   const categoryName = CATEGORY_DISPLAY_NAMES[award.category];
-  
+
   return (
     <button
       onClick={onClick}
@@ -148,16 +133,10 @@ export function AwardListItem({ award, showIcon = true, onClick, className }: Aw
         "w-full flex items-center gap-3 p-2 rounded-md text-left",
         "hover:bg-accent transition-colors",
         onClick && "cursor-pointer",
-        className
+        className,
       )}
     >
-      {showIcon && (
-        <AwardIcon
-          region={award.region}
-          category={award.category}
-          size="tiny"
-        />
-      )}
+      {showIcon && <AwardIcon region={award.region} category={award.category} size="tiny" />}
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium truncate">{categoryName}</div>
         <div className="text-xs text-muted-foreground">
@@ -165,9 +144,7 @@ export function AwardListItem({ award, showIcon = true, onClick, className }: Aw
         </div>
       </div>
       {award.isHistoric && (
-        <span className="text-xs bg-fame/20 text-fame px-1.5 py-0.5 rounded">
-          Historic
-        </span>
+        <span className="text-xs bg-fame/20 text-fame px-1.5 py-0.5 rounded">Historic</span>
       )}
     </button>
   );

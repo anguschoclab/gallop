@@ -15,7 +15,10 @@ export function calculateProjectedBeyer(horse: Horse, race: Race): number {
   // clamp inside beyerFigure. Longer races deserve bigger Beyer figures
   // even when calibrated pars are empty.
   const distanceBonus = race.distance >= 1600 ? 5 : race.distance >= 1200 ? 2 : 0;
-  const recent = horse.raceHistory.slice(0, 3).map((r) => r.beyer).filter((b): b is number => typeof b === "number");
+  const recent = horse.raceHistory
+    .slice(0, 3)
+    .map((r) => r.beyer)
+    .filter((b): b is number => typeof b === "number");
   const avgRecent = recent.length ? recent.reduce((s, v) => s + v, 0) / recent.length : null;
   const blended = avgRecent !== null ? model * 0.6 + avgRecent * 0.4 : model;
   return Math.round(blended + distanceBonus);

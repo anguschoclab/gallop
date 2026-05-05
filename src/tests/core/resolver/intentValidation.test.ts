@@ -5,7 +5,13 @@
 import { describe, it, expect } from "vitest";
 import { validateIntent } from "@/core/resolver/resolver";
 import type { GameState, Horse } from "@/game/types";
-import type { AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, PurchaseIntent } from "@/core/resolver/intents";
+import type {
+  AnyIntent,
+  TrainingIntent,
+  RaceEntryIntent,
+  BreedingIntent,
+  PurchaseIntent,
+} from "@/core/resolver/intents";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("validateIntent", () => {

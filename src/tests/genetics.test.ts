@@ -1,6 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { createRng } from "../game/rng";
-import { generateGenotype, inheritDNA, resolveCoatColor, resolveStats, resolveRunningStyle } from "../game/geneticsEngine";
+import {
+  generateGenotype,
+  inheritDNA,
+  resolveCoatColor,
+  resolveStats,
+  resolveRunningStyle,
+} from "../game/geneticsEngine";
 
 describe("Universal DNA System", () => {
   const rng = createRng(123);
@@ -8,7 +14,7 @@ describe("Universal DNA System", () => {
   it("should generate balanced initial genotypes", () => {
     const dna = generateGenotype(rng, "elite");
     const stats = resolveStats(dna.stats);
-    
+
     expect(stats.speed).toBeGreaterThanOrEqual(20);
     expect(stats.speed).toBeLessThanOrEqual(100);
     expect(stats.speed).toBeGreaterThan(60); // Elite should be high
@@ -18,13 +24,13 @@ describe("Universal DNA System", () => {
     // Both parents are heterozygous Gray (Gg)
     const sireDNA = generateGenotype(rng, "mid");
     sireDNA.color.gray = [1, 0];
-    
+
     const damDNA = generateGenotype(rng, "mid");
     damDNA.color.gray = [1, 0];
 
     let foundGray = 0;
     let foundNonGray = 0;
-    
+
     for (let i = 0; i < 100; i++) {
       const foalDNA = inheritDNA(sireDNA, damDNA, createRng(i));
       const color = resolveCoatColor(foalDNA.color);
@@ -44,7 +50,7 @@ describe("Universal DNA System", () => {
     sireDNA.color.agouti = [0, 0];
     sireDNA.color.gray = [0, 0];
     sireDNA.color.cream = [0, 0];
-    
+
     const damDNA = generateGenotype(rng, "mid");
     damDNA.color.extension = [0, 0];
     damDNA.color.agouti = [0, 0];
@@ -63,10 +69,10 @@ describe("Universal DNA System", () => {
   it("should maintain statistical variance in offspring", () => {
     const sireDNA = generateGenotype(rng, "elite");
     const damDNA = generateGenotype(rng, "budget");
-    
+
     const sireSpeed = resolveStats(sireDNA.stats).speed;
     const damSpeed = resolveStats(damDNA.stats).speed;
-    
+
     let totalSpeed = 0;
     const speeds: number[] = [];
 
@@ -80,7 +86,7 @@ describe("Universal DNA System", () => {
     const avgSpeed = totalSpeed / 50;
     expect(avgSpeed).toBeGreaterThan(damSpeed - 5);
     expect(avgSpeed).toBeLessThan(sireSpeed + 5);
-    
+
     // Ensure not every foal is the same
     const uniqueSpeeds = new Set(speeds);
     expect(uniqueSpeeds.size).toBeGreaterThan(5);

@@ -1,15 +1,8 @@
 // Expenses Module - Categorized expense tracking
 
-export type {
-  Expense,
-  ExpenseByCategory,
-  ExpenseConfig,
-  CategoryDisplay,
-} from "./expenseTypes";
+export type { Expense, ExpenseByCategory, ExpenseConfig, CategoryDisplay } from "./expenseTypes";
 
-export type {
-  ExpenseCategory,
-} from "./expenseTypes";
+export type { ExpenseCategory } from "./expenseTypes";
 
 export {
   DEFAULT_EXPENSE_CONFIG,

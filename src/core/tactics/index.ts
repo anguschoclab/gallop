@@ -1,11 +1,6 @@
 // Tactics Module - Race day jockey instructions
 
-export type {
-  RidingStyle,
-  EarlyPosition,
-  MoveTiming,
-  JockeyInstructions,
-} from "./tacticsTypes";
+export type { RidingStyle, EarlyPosition, MoveTiming, JockeyInstructions } from "./tacticsTypes";
 
 export {
   createDefaultInstructions,

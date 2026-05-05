@@ -20,9 +20,7 @@ function AuctionPage() {
   const horses = useGame((s) => s.horses);
   const day = useGame((s) => s.day);
 
-  const upcoming = auctions
-    .filter((a) => !a.resolved)
-    .sort((a, b) => a.day - b.day);
+  const upcoming = auctions.filter((a) => !a.resolved).sort((a, b) => a.day - b.day);
 
   const past = auctions
     .filter((a) => a.resolved)
@@ -30,19 +28,25 @@ function AuctionPage() {
     .slice(0, 10);
 
   const eligibleToConsign = horses.filter(
-    (h) => h.owned && !h.consignedSaleId && (h.age === 0 || h.age === 1 || h.age === 2)
+    (h) => h.owned && !h.consignedSaleId && (h.age === 0 || h.age === 1 || h.age === 2),
   );
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Sales</h1>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">Weanling &amp; yearling auctions</p>
+        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">
+          Sales
+        </h1>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+          Weanling &amp; yearling auctions
+        </p>
       </div>
 
       {/* Upcoming Sales */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">Upcoming Sales</h2>
+        <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">
+          Upcoming Sales
+        </h2>
         {upcoming.length === 0 ? (
           <Card className="border-gold-muted">
             <CardContent className="p-6 text-center text-cream-muted text-sm font-[family-name:var(--font-body)] italic">
@@ -59,12 +63,22 @@ function AuctionPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <CardTitle className="text-lg font-[family-name:var(--font-display)]">{sale.name}</CardTitle>
-                        <Badge className="border border-gold-muted bg-t700 text-cream font-[family-name:var(--font-body)]">{KIND_LABELS[sale.kind] ?? sale.kind}</Badge>
+                        <CardTitle className="text-lg font-[family-name:var(--font-display)]">
+                          {sale.name}
+                        </CardTitle>
+                        <Badge className="border border-gold-muted bg-t700 text-cream font-[family-name:var(--font-body)]">
+                          {KIND_LABELS[sale.kind] ?? sale.kind}
+                        </Badge>
                       </div>
                       <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
-                        {gameCalendarDate(sale.day)} · <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots
-                        {daysAway > 0 && <> · in <NumericValue value={daysAway} /> day{daysAway === 1 ? "" : "s"}</>}
+                        {gameCalendarDate(sale.day)} ·{" "}
+                        <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots
+                        {daysAway > 0 && (
+                          <>
+                            {" "}
+                            · in <NumericValue value={daysAway} /> day{daysAway === 1 ? "" : "s"}
+                          </>
+                        )}
                       </p>
                     </div>
                     <Clock className="h-5 w-5 text-cream-muted shrink-0 mt-1" />
@@ -73,7 +87,8 @@ function AuctionPage() {
                 <CardContent className="space-y-3">
                   {playerLots.length > 0 && (
                     <p className="text-sm text-success font-medium font-[family-name:var(--font-body)]">
-                      <NumericValue value={playerLots.length} /> of your horse{playerLots.length > 1 ? "s" : ""} consigned
+                      <NumericValue value={playerLots.length} /> of your horse
+                      {playerLots.length > 1 ? "s" : ""} consigned
                     </p>
                   )}
                   <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
@@ -92,38 +107,50 @@ function AuctionPage() {
       {/* Eligible horses to consign */}
       {eligibleToConsign.length > 0 && upcoming.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">Eligible to Consign</h2>
+          <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">
+            Eligible to Consign
+          </h2>
           <div className="grid gap-2">
             {(() => {
-              const weanlingSale = upcoming.find((a) => a.kind === "weanling" || a.kind === "weanling_south");
-              const yearlingSale = upcoming.find((a) => a.kind === "yearling" || a.kind === "yearling_south");
+              const weanlingSale = upcoming.find(
+                (a) => a.kind === "weanling" || a.kind === "weanling_south",
+              );
+              const yearlingSale = upcoming.find(
+                (a) => a.kind === "yearling" || a.kind === "yearling_south",
+              );
               return eligibleToConsign.map((horse) => {
                 const targetSale = horse.age === 0 ? weanlingSale : yearlingSale;
-              return (
-                <Card key={horse.id} className="p-3 flex items-center justify-between gap-4 border-gold-muted">
-                  <div className="flex items-center gap-2">
-                    <SilkDot color={horse.silk} size="sm" />
-                    <div>
-                      <p className="font-medium text-sm text-cream font-[family-name:var(--font-display)]">{horse.name}</p>
-                      <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                        {horse.age === 0 ? "Weanling" : horse.age === 1 ? "Yearling" : "2YO"} · {horse.gender}
-                      </p>
+                return (
+                  <Card
+                    key={horse.id}
+                    className="p-3 flex items-center justify-between gap-4 border-gold-muted"
+                  >
+                    <div className="flex items-center gap-2">
+                      <SilkDot color={horse.silk} size="sm" />
+                      <div>
+                        <p className="font-medium text-sm text-cream font-[family-name:var(--font-display)]">
+                          {horse.name}
+                        </p>
+                        <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                          {horse.age === 0 ? "Weanling" : horse.age === 1 ? "Yearling" : "2YO"} ·{" "}
+                          {horse.gender}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  {targetSale ? (
-                    <Link to="/auction/$saleId" params={{ saleId: targetSale.id }}>
-                      <Button size="sm" variant="outline">
-                        Consign to {targetSale.name.split(" ").slice(0, 2).join(" ")}
-                      </Button>
-                    </Link>
-                  ) : (
-                    <span className="text-xs text-cream-muted">No matching sale open</span>
-                  )}
-                  <p className="text-xs text-cream-muted">
-                    {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission on sold horses
-                  </p>
-                </Card>
-              );
+                    {targetSale ? (
+                      <Link to="/auction/$saleId" params={{ saleId: targetSale.id }}>
+                        <Button size="sm" variant="outline">
+                          Consign to {targetSale.name.split(" ").slice(0, 2).join(" ")}
+                        </Button>
+                      </Link>
+                    ) : (
+                      <span className="text-xs text-cream-muted">No matching sale open</span>
+                    )}
+                    <p className="text-xs text-cream-muted">
+                      {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission on sold horses
+                    </p>
+                  </Card>
+                );
               });
             })()}
           </div>
@@ -133,7 +160,9 @@ function AuctionPage() {
       {/* Past Sales */}
       {past.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">Past Sales</h2>
+          <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">
+            Past Sales
+          </h2>
           {past.map((sale) => {
             const sold = sale.lots.filter((l) => !l.passed && !l.withdrawn && l.hammerPrice).length;
             const passed = sale.lots.filter((l) => l.passed).length;
@@ -147,14 +176,25 @@ function AuctionPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <CardTitle className="text-base font-[family-name:var(--font-display)]">{sale.name}</CardTitle>
+                        <CardTitle className="text-base font-[family-name:var(--font-display)]">
+                          {sale.name}
+                        </CardTitle>
                         <Badge className="bg-t700 text-cream font-[family-name:var(--font-mono)] tabular-nums">
                           {gameCalendarDate(sale.day)}
                         </Badge>
                       </div>
                       <p className="text-xs text-cream-muted mt-1 font-[family-name:var(--font-body)]">
                         <NumericValue value={sold} /> sold · <NumericValue value={passed} /> passed
-                        {topLot && topHorse && <> · Top lot: <span className="font-[family-name:var(--font-display)] text-cream">{topHorse.name}</span> ${topLot.hammerPrice!.toLocaleString()}</>}
+                        {topLot && topHorse && (
+                          <>
+                            {" "}
+                            · Top lot:{" "}
+                            <span className="font-[family-name:var(--font-display)] text-cream">
+                              {topHorse.name}
+                            </span>{" "}
+                            ${topLot.hammerPrice!.toLocaleString()}
+                          </>
+                        )}
                       </p>
                     </div>
                     <CheckCircle className="h-5 w-5 text-cream-muted shrink-0 mt-1" />

@@ -37,7 +37,7 @@ export function createRaceReplay(
   winner: string,
   finalPositions: { horseId: string; position: number; time: number }[],
   trackId: string,
-  distance: number
+  distance: number,
 ): RaceReplay {
   return {
     id: crypto.randomUUID(),
@@ -57,7 +57,7 @@ export function createRaceReplay(
 export function getHorsePositionAtTime(
   replay: RaceReplay,
   horseId: string,
-  time: number
+  time: number,
 ): RaceCheckpoint | null {
   const timeIndex = Math.floor(time);
   if (timeIndex >= replay.checkpoints.length) {
@@ -69,10 +69,7 @@ export function getHorsePositionAtTime(
 /**
  * Get all horse positions at a specific time
  */
-export function getAllPositionsAtTime(
-  replay: RaceReplay,
-  time: number
-): RaceCheckpoint[] {
+export function getAllPositionsAtTime(replay: RaceReplay, time: number): RaceCheckpoint[] {
   const timeIndex = Math.floor(time);
   if (timeIndex >= replay.checkpoints.length) {
     return [];

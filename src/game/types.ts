@@ -20,21 +20,21 @@ export type Locus = [Allele, Allele];
 
 export type ColorGenotype = {
   extension: Locus; // E (black) or e (chestnut)
-  agouti: Locus;    // A (bay) or a (black)
-  gray: Locus;      // G (gray) or g (non-gray)
-  cream: Locus;     // Cr (dilute) or n (normal)
+  agouti: Locus; // A (bay) or a (black)
+  gray: Locus; // G (gray) or g (non-gray)
+  cream: Locus; // Cr (dilute) or n (normal)
 };
 
 export type StatGenotype = {
-  speed: Locus[];       // 10 loci
-  stamina: Locus[];     // 10 loci
+  speed: Locus[]; // 10 loci
+  stamina: Locus[]; // 10 loci
   acceleration: Locus[]; // 10 loci
-  consistency: Locus[];  // 10 loci
+  consistency: Locus[]; // 10 loci
 };
 
 export type PreferenceGenotype = {
   distance: Locus; // Maps to 800-3200m range
-  surface: Locus;  // Maps to Turf/Dirt/Synthetic bias
+  surface: Locus; // Maps to Turf/Dirt/Synthetic bias
   climbing: Locus; // Hill power
   cornering: Locus; // Turn agility
 };
@@ -62,9 +62,9 @@ export type CoatModifier = "silver-dapple" | "sabino" | "splash-white" | null;
 export type HorseMarkings = {
   socks: SockHeight;
   face: FaceWhite;
-  silverDapple: boolean;  // dilute on black-pigmented coats
-  sabino: boolean;        // irregular white spotting
-  splashWhite: boolean;   // ventral white pattern
+  silverDapple: boolean; // dilute on black-pigmented coats
+  sabino: boolean; // irregular white spotting
+  splashWhite: boolean; // ventral white pattern
 };
 
 export type MarkingsGenotype = {
@@ -80,8 +80,8 @@ export type MarkingsGenotype = {
 // fitness/diversity flags) and from `durability` (general injury proneness).
 export type HealthGenotype = {
   bleeder: Locus; // EIPH — exercise-induced pulmonary hemorrhage
-  roarer: Locus;  // laryngeal hemiplegia / wind issues
-  ocd: Locus;     // osteochondritis dissecans, esp. in 2yo training
+  roarer: Locus; // laryngeal hemiplegia / wind issues
+  ocd: Locus; // osteochondritis dissecans, esp. in 2yo training
   // EFNA5 chromosome-14 haplotype: cartilage/skeletal-development gene.
   // Homozygous-negative carriers have ~32% lower probability of ever racing
   // (real-world Genomic finding). Modeled as a hidden taint locus that gates
@@ -100,18 +100,18 @@ export type Genotype = {
   size: Locus; // Height/Mass locus
   markers: MarkerGenotype;
   // --- Performance loci (Tier 1+2) ---
-  heart: Locus[];     // 5 polygenic loci → cardiovascular efficiency multiplier
-  fiberType: Locus;   // muscle fiber bias — sprint vs. stayer
-  stride: Locus;      // long-stride (straights) vs short-stride (turns)
-  trackBias: Locus;   // left-handed vs right-handed track preference
+  heart: Locus[]; // 5 polygenic loci → cardiovascular efficiency multiplier
+  fiberType: Locus; // muscle fiber bias — sprint vs. stayer
+  stride: Locus; // long-stride (straights) vs short-stride (turns)
+  trackBias: Locus; // left-handed vs right-handed track preference
   mudAptitude: Locus; // performance on soft/heavy going
   // --- Development & training loci (Tier 1) ---
   trainability: Locus; // training-gain probability multiplier
-  peakAge: Locus;      // when the horse hits peak (early developer vs. late bloomer)
-  recovery: Locus;     // daily energy regen multiplier
+  peakAge: Locus; // when the horse hits peak (early developer vs. late bloomer)
+  recovery: Locus; // daily energy regen multiplier
   // --- Reproduction loci (Tier 3) ---
-  fertility: Locus;    // mare conception % / stallion book-completion %
-  foalingEase: Locus;  // mare-only — bias on term complication rate
+  fertility: Locus; // mare conception % / stallion book-completion %
+  foalingEase: Locus; // mare-only — bias on term complication rate
   // --- Cosmetic markings (Tier 4) ---
   markings: MarkingsGenotype;
   // --- Health susceptibility (Tier 6) ---
@@ -127,27 +127,36 @@ export type RunningStyle = "E" | "EP" | "P" | "S";
 export type JockeyArchetype = "front_runner" | "closer" | "clinical" | "finisher" | "versatile";
 
 export type JockeyStats = {
-  pacing: number;       // Ability to maintain optimal pace / stamina management
-  positioning: number;  // Finding the rail, avoiding traffic
-  vigor: number;        // Final stretch push
-  gateSkill: number;    // Start of the race
-  temperament: number;  // Handling nervous horses
+  pacing: number; // Ability to maintain optimal pace / stamina management
+  positioning: number; // Finding the rail, avoiding traffic
+  vigor: number; // Final stretch push
+  gateSkill: number; // Start of the race
+  temperament: number; // Handling nervous horses
 };
 
-export type JockeyTrait = 
-  | "bullring_expert"   // Mitigates turn speed loss
-  | "hill_specialist"   // Reduces stamina drain on gradients
+export type JockeyTrait =
+  | "bullring_expert" // Mitigates turn speed loss
+  | "hill_specialist" // Reduces stamina drain on gradients
   | "long_straight_pro" // Bonus surge on 500m+ straights
-  | "gate_master";      // Higher chance of clean break
+  | "gate_master"; // Higher chance of clean break
 
 // Racing silk colors and pattern for visual identification
-export type JockeySilkPattern = "solid" | "stripes" | "halves" | "quarters" | "chevron" | "diamond" | "star" | "sash" | "hoops";
+export type JockeySilkPattern =
+  | "solid"
+  | "stripes"
+  | "halves"
+  | "quarters"
+  | "chevron"
+  | "diamond"
+  | "star"
+  | "sash"
+  | "hoops";
 
 export type JockeySilk = {
   pattern: JockeySilkPattern;
-  primary: string;   // hex color (jacket main)
+  primary: string; // hex color (jacket main)
   secondary: string; // hex color (pattern accent)
-  cap: string;       // hex color (cap)
+  cap: string; // hex color (cap)
 };
 
 export type Jockey = {
@@ -157,14 +166,14 @@ export type Jockey = {
   archetype: JockeyArchetype;
   stats: JockeyStats;
   traits: JockeyTrait[];
-  silk: JockeySilk;       // Racing silks (jacket colors and pattern)
-  stableId?: string;      // If retained by a stable
+  silk: JockeySilk; // Racing silks (jacket colors and pattern)
+  stableId?: string; // If retained by a stable
   contractUntil?: number; // Day the contract ends
   careerStarts: number;
   careerWins: number;
-  fame: number;           // 0-100, affects hiring cost
-  ridingFee: number;      // Base fee per race mount
-  lastRaceDay?: number;   // Day of the last race (to prevent double-booking)
+  fame: number; // 0-100, affects hiring cost
+  ridingFee: number; // Base fee per race mount
+  lastRaceDay?: number; // Day of the last race (to prevent double-booking)
 };
 
 // Health status for horses
@@ -222,8 +231,8 @@ export type Pedigree = {
 export type StudCareer = {
   atStud: boolean;
   standingFee: number;
-  bookSize: number;             // hard cap on coverings per breeding season
-  seasonBookings: number;       // resets at season start
+  bookSize: number; // hard cap on coverings per breeding season
+  seasonBookings: number; // resets at season start
   lifetimeFoals: number;
   lifetimeStakesFoals: number;
   lifetimeG1Foals: number;
@@ -243,9 +252,20 @@ export type TrackCondition = "fast" | "good" | "soft" | "heavy";
 // Horse coat colors (for sprite selection)
 // Common Thoroughbred colors: bay variants, chestnut variants, dilutes, grays
 export type CoatColor =
-  | "bay" | "black" | "chestnut" | "dark-bay" | "gray"
-  | "roan" | "palomino" | "white"
-  | "seal-brown" | "liver-chestnut" | "buckskin" | "dun" | "grulla" | "champagne";
+  | "bay"
+  | "black"
+  | "chestnut"
+  | "dark-bay"
+  | "gray"
+  | "roan"
+  | "palomino"
+  | "white"
+  | "seal-brown"
+  | "liver-chestnut"
+  | "buckskin"
+  | "dun"
+  | "grulla"
+  | "champagne";
 
 export type Horse = {
   id: string;
@@ -259,7 +279,21 @@ export type Horse = {
   energy: number; // 0-100
   form: number; // -10..+10
   potential: number; // 60-100, soft cap on stat growth
-  raceHistory: { raceId: string; raceName: string; position: number; day: number; beyer?: number; grade?: "G1" | "G2" | "G3"; distance?: number; surface?: string; purse?: number; fieldSize?: number; raceClass?: RaceClass; barrier?: number; lane?: number }[];
+  raceHistory: {
+    raceId: string;
+    raceName: string;
+    position: number;
+    day: number;
+    beyer?: number;
+    grade?: "G1" | "G2" | "G3";
+    distance?: number;
+    surface?: string;
+    purse?: number;
+    fieldSize?: number;
+    raceClass?: RaceClass;
+    barrier?: number;
+    lane?: number;
+  }[];
   owned: boolean;
   sireName?: string;
   damName?: string;
@@ -294,31 +328,31 @@ export type Horse = {
   careerWins: number;
   winAndYouInQualified?: { raceKey: string; year: number }[]; // Array of {raceKey, year} for Win and You're In qualifications
   // --- Resolved DNA traits (Tier 1+2) ---
-  heartScore: number;        // 0.85-1.15 multiplier on late-race stamina
+  heartScore: number; // 0.85-1.15 multiplier on late-race stamina
   fiberBias: "sprinter" | "balanced" | "stayer";
   strideType: "short" | "balanced" | "long";
   trackPreference: "left" | "balanced" | "right";
-  mudAptitude: number;       // 0.85-1.15 multiplier on soft/heavy ground
+  mudAptitude: number; // 0.85-1.15 multiplier on soft/heavy ground
   // --- Resolved DNA traits (development & training) ---
-  trainability: number;      // 0.5-1.4 multiplier on training-gain probability
-  peakAge: number;           // 3-7 — age at which the horse hits peak ability
-  recoveryRate: number;      // 0.7-1.4 multiplier on daily energy regen
+  trainability: number; // 0.5-1.4 multiplier on training-gain probability
+  peakAge: number; // 3-7 — age at which the horse hits peak ability
+  recoveryRate: number; // 0.7-1.4 multiplier on daily energy regen
   // --- Resolved DNA traits (reproduction) ---
-  fertility: number;         // 0.7-0.99 conception probability
-  foalingEase: number;       // 0.7-1.0 multiplier on dam complication risk (lower = easier)
+  fertility: number; // 0.7-0.99 conception probability
+  foalingEase: number; // 0.7-1.0 multiplier on dam complication risk (lower = easier)
   // --- Cosmetic markings ---
   markings: HorseMarkings;
   // --- Health susceptibility (Tier 6) ---
-  bleederRisk: number;       // 0-0.15 chance of mid-race fade in long races
-  roarerRisk: number;        // 0-0.10 chance of stamina collapse at top speed
-  ocdRisk: number;           // 0-0.10 chance of bone-development injury during 2yo training
+  bleederRisk: number; // 0-0.15 chance of mid-race fade in long races
+  roarerRisk: number; // 0-0.10 chance of stamina collapse at top speed
+  ocdRisk: number; // 0-0.10 chance of bone-development injury during 2yo training
   // --- Population-genetics derived ---
-  bloodline?: string;            // sire-line founder tag (e.g. "Northern Dancer line")
-  heterozygosity?: number;       // computed at birth/generation; 0-1 fitness modifier
+  bloodline?: string; // sire-line founder tag (e.g. "Northern Dancer line")
+  heterozygosity?: number; // computed at birth/generation; 0-1 fitness modifier
   coefficientOfInbreeding?: number; // Wright's F at conception (0..0.25 typical)
   ancestralHistoryCoefficient?: number; // AHC — quality of ancestor purging (0..1)
   inbreedingTier?: "outcross" | "linebreeding" | "close-inbreeding"; // derived from COI
-  prepotency?: number;           // 0..1 — heightened ability to transmit traits (high COI = high prepotency)
+  prepotency?: number; // 0..1 — heightened ability to transmit traits (high COI = high prepotency)
   // Skeletal viability — homozygous-negative for EFNA5 → never races.
   // When false, the horse is permanently retired before its first race.
   racingViable: boolean;
@@ -327,34 +361,44 @@ export type Horse = {
 export type RaceClass =
   // Base classes
   | "Maiden"
-  | "MaidenSpecialWeight"  // MSW - non-claiming maidens
-  | "MaidenClaiming"       // MCL - maidens eligible to be claimed
+  | "MaidenSpecialWeight" // MSW - non-claiming maidens
+  | "MaidenClaiming" // MCL - maidens eligible to be claimed
   | "MaidenOptionalClaiming" // MOC - maidens with optional claiming tag
-  | "MaidenStakes"         // MST - stakes race for non-winners
+  | "MaidenStakes" // MST - stakes race for non-winners
   | "Allowance"
-  | "OptionalClaiming"     // OCL/OCH - hybrid allowance/claiming
-  | "StarterAllowance"     // STR - for horses from claiming company, not eligible to be claimed
-  | "StarterHandicap"      // SHP - for horses from claiming company with handicap weights
+  | "OptionalClaiming" // OCL/OCH - hybrid allowance/claiming
+  | "StarterAllowance" // STR - for horses from claiming company, not eligible to be claimed
+  | "StarterHandicap" // SHP - for horses from claiming company with handicap weights
   | "Stakes"
   | "Claiming"
   | "Handicap"
-  | "Listed"               // Below graded/group level
+  | "Listed" // Below graded/group level
   | "Group"
   | "Graded";
 
 // Claiming price tiers (in USD)
 export type ClaimingPrice =
-  | 5000 | 10000 | 12500 | 16000 | 20000 | 25000
-  | 32000 | 40000 | 50000 | 62500 | 75000 | 100000;
+  | 5000
+  | 10000
+  | 12500
+  | 16000
+  | 20000
+  | 25000
+  | 32000
+  | 40000
+  | 50000
+  | 62500
+  | 75000
+  | 100000;
 
 // Win condition codes for allowance/condition races
 export type WinCondition =
   | "none"
-  | "N1X"  // Non-winners of 1 allowance race (other than maiden/claiming)
-  | "N2X"  // Non-winners of 2 allowance races
-  | "N3L"  // Non-winners of 3 races lifetime
-  | "NW1"  // Non-winners of 1 race
-  | "NW2"  // Non-winners of 2 races
+  | "N1X" // Non-winners of 1 allowance race (other than maiden/claiming)
+  | "N2X" // Non-winners of 2 allowance races
+  | "N3L" // Non-winners of 3 races lifetime
+  | "NW1" // Non-winners of 1 race
+  | "NW2" // Non-winners of 2 races
   | "NW3"; // Non-winners of 3 races
 
 // Regional classification system
@@ -367,15 +411,15 @@ export type GradeLevel = "G1" | "G2" | "G3" | "Listed";
 export type StableTier = "elite" | "mid" | "budget";
 
 // NPC Stable personality - affects AI decision-making
-export type StablePersonality = 
-  | "aggressive"      // High risk, enter many races, spend freely
-  | "conservative"    // Low risk, careful entries, save money
-  | "developer"       // Focus on young horses, patient growth
-  | "win-now"         // Focus on proven horses, immediate results
-  | "specialist"      // Focus on specific distances/surfaces
-  | "breeder"         // Focus on breeding, keep mares
-  | "trader"          // Buy/sell frequently, claiming focus
-  | "prestige";       // Target graded stakes, reputation over profit
+export type StablePersonality =
+  | "aggressive" // High risk, enter many races, spend freely
+  | "conservative" // Low risk, careful entries, save money
+  | "developer" // Focus on young horses, patient growth
+  | "win-now" // Focus on proven horses, immediate results
+  | "specialist" // Focus on specific distances/surfaces
+  | "breeder" // Focus on breeding, keep mares
+  | "trader" // Buy/sell frequently, claiming focus
+  | "prestige"; // Target graded stakes, reputation over profit
 
 // Dosage profile for pedigree analysis (aptitudinal points)
 export type DosageProfile = {
@@ -440,7 +484,16 @@ export type Race = {
   purse: number;
   minStat?: number;
   fieldSize: number;
-  entries: { horseId: string; owned: boolean; stableId?: string; npc?: boolean; barrier?: number; jockeyId?: string; weight?: number; withdrawnFromClaiming?: boolean }[];
+  entries: {
+    horseId: string;
+    owned: boolean;
+    stableId?: string;
+    npc?: boolean;
+    barrier?: number;
+    jockeyId?: string;
+    weight?: number;
+    withdrawnFromClaiming?: boolean;
+  }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
   graded?: {
@@ -463,7 +516,16 @@ export type Race = {
   restrictions?: {
     minAge?: number;
     maxAge?: number;
-    gender?: "colt" | "filly" | "horse" | "mare" | "fillies" | "mares" | "colts" | "fillies-and-mares" | "colts-and-fillies";
+    gender?:
+      | "colt"
+      | "filly"
+      | "horse"
+      | "mare"
+      | "fillies"
+      | "mares"
+      | "colts"
+      | "fillies-and-mares"
+      | "colts-and-fillies";
     // Hemisphere-specific age restrictions (e.g., for Dubai races)
     minAgeNorthern?: number;
     minAgeSouthern?: number;
@@ -489,9 +551,9 @@ export type Pregnancy = {
   // as `advanceDay` ticks forward. Each stage has its own loss roll, so a
   // pregnancy can fail at day 14, day 60, or term.
   stage?: "early" | "mid" | "late" | "delivered";
-  earlyChecked?: boolean;  // day 14
-  midChecked?: boolean;    // day 60
-  twin?: boolean;          // 5% twin conception, auto-reduced at early stage
+  earlyChecked?: boolean; // day 14
+  midChecked?: boolean; // day 60
+  twin?: boolean; // 5% twin conception, auto-reduced at early stage
   liveFoalGuarantee?: boolean; // Whether live foal guarantee was purchased
   reBreedingAttempts?: number; // Number of re-breeding attempts used
   refunded?: boolean; // True once Live Foal Guarantee has paid out for this pregnancy — prevents double refunds
@@ -543,8 +605,12 @@ export type { GameState } from "./state";
 // ============= Campaign Planner Types =============
 
 export type CampaignGoalType =
-  | "chase_g1" | "chase_g2" | "chase_g3"
-  | "maximize_earnings" | "develop_maiden" | "free_run";
+  | "chase_g1"
+  | "chase_g2"
+  | "chase_g3"
+  | "maximize_earnings"
+  | "develop_maiden"
+  | "free_run";
 
 export type CampaignRaceSlot = {
   dayTarget: number;
@@ -561,7 +627,13 @@ export type CampaignRaceSlot = {
 
 export type CampaignFlag = {
   day: number;
-  type: "poor_form" | "low_energy" | "health_issue" | "class_mismatch" | "upgrade_available" | "trait_confirmed";
+  type:
+    | "poor_form"
+    | "low_energy"
+    | "health_issue"
+    | "class_mismatch"
+    | "upgrade_available"
+    | "trait_confirmed";
   message: string;
   dismissed: boolean;
   suggestion?: Partial<CampaignRaceSlot>;

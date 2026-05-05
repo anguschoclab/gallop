@@ -44,17 +44,19 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
 
     // Find the race — prefer matched raceId, fallback to matching by day + constraints
     let race: Race | undefined = slot.raceId
-      ? races.find(r => r.id === slot.raceId && !r.resolved)
+      ? races.find((r) => r.id === slot.raceId && !r.resolved)
       : undefined;
 
     if (!race) {
-      race = races.find(r =>
-        !r.resolved &&
-        r.day >= windowStart &&
-        r.day <= windowEnd &&
-        (!slot.constraintDistance || Math.abs(r.distance - slot.constraintDistance) <= 200) &&
-        (!slot.constraintSurface || (r.graded?.surface ?? r.surface) === slot.constraintSurface) &&
-        !r.entries.some(e => e.horseId === horse.id)
+      race = races.find(
+        (r) =>
+          !r.resolved &&
+          r.day >= windowStart &&
+          r.day <= windowEnd &&
+          (!slot.constraintDistance || Math.abs(r.distance - slot.constraintDistance) <= 200) &&
+          (!slot.constraintSurface ||
+            (r.graded?.surface ?? r.surface) === slot.constraintSurface) &&
+          !r.entries.some((e) => e.horseId === horse.id),
       );
     }
 
@@ -63,7 +65,7 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
       return slot;
     }
 
-    if (race.entries.some(e => e.horseId === horse.id)) {
+    if (race.entries.some((e) => e.horseId === horse.id)) {
       return { ...slot, raceId: race.id, status: "entered" as const };
     }
 
@@ -97,11 +99,11 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
  */
 export function reconcileSlotStatuses(
   campaign: HorseCampaign,
-  races: Race[]
+  races: Race[],
 ): HorseCampaign["slots"] {
-  return campaign.slots.map(slot => {
+  return campaign.slots.map((slot) => {
     if (slot.status !== "entered") return slot;
-    const race = slot.raceId ? races.find(r => r.id === slot.raceId) : undefined;
+    const race = slot.raceId ? races.find((r) => r.id === slot.raceId) : undefined;
     if (race?.resolved) {
       return { ...slot, status: "completed" as const };
     }

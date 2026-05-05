@@ -13,7 +13,7 @@ function mockHorse(
   name: string,
   gender: HorseGender,
   stats: { speed: number; stamina: number; acceleration: number; consistency: number },
-  overrides?: Partial<Horse>
+  overrides?: Partial<Horse>,
 ): Horse {
   return {
     id,
@@ -32,7 +32,7 @@ function mockHorse(
     // DNA/genotype fields (minimal defaults)
     genotype: {
       color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
-      stats: { speed: [[1,1]], stamina: [[1,1]], acceleration: [[1,1]], consistency: [[1,1]] },
+      stats: { speed: [[1, 1]], stamina: [[1, 1]], acceleration: [[1, 1]], consistency: [[1, 1]] },
       preferences: { distance: [1, 1], surface: [1, 1], climbing: [1, 1], cornering: [1, 1] },
       style: [1, 1],
       mental: [1, 1],
@@ -58,7 +58,13 @@ function mockHorse(
       recovery: [1, 1],
       fertility: [1, 1],
       foalingEase: [1, 1],
-      markings: { socks: [1, 1], face: [1, 1], silverDapple: [1, 1], sabino: [1, 1], splashWhite: [1, 1] },
+      markings: {
+        socks: [1, 1],
+        face: [1, 1],
+        silverDapple: [1, 1],
+        sabino: [1, 1],
+        splashWhite: [1, 1],
+      },
       health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
     },
     // Aptitude fields
@@ -83,7 +89,13 @@ function mockHorse(
     recoveryRate: 1.0,
     fertility: 0.85,
     foalingEase: 0.85,
-    markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+    markings: {
+      socks: "none",
+      face: "none",
+      silverDapple: false,
+      sabino: false,
+      splashWhite: false,
+    },
     bleederRisk: 0,
     roarerRisk: 0,
     ocdRisk: 0,
@@ -136,27 +148,39 @@ describe("runNpcBreeding", () => {
   });
 
   it("should breed mares from breeder personality stables", () => {
-    const mare = mockHorse("mare-1", "Test Mare", "mare", { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, {
-      stableId: "stable-1",
-      silk: "blue",
-    });
-
-    const stallion = mockHorse("stallion-1", "Test Stallion", "colt", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 }, {
-      stableId: "stable-2",
-      silk: "red",
-      potential: 85,
-      fame: 60,
-      stud: {
-        atStud: true,
-        standingFee: 5000,
-        seasonBookings: 0,
-        bookSize: 50,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
-        retiredOnDay: 0,
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      {
+        stableId: "stable-1",
+        silk: "blue",
       },
-    });
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
 
     const breederStable: Stable = {
       id: "stable-1",
@@ -203,34 +227,52 @@ describe("runNpcBreeding", () => {
   });
 
   it("should filter mares by age (3-20)", () => {
-    const youngMare = mockHorse("mare-1", "Young Mare", "mare", { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, {
-      age: 2,
-      stableId: "stable-1",
-      silk: "blue",
-    });
-
-    const oldMare = mockHorse("mare-2", "Old Mare", "mare", { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, {
-      age: 21,
-      stableId: "stable-1",
-      silk: "blue",
-    });
-
-    const stallion = mockHorse("stallion-1", "Test Stallion", "colt", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 }, {
-      stableId: "stable-2",
-      silk: "red",
-      potential: 85,
-      fame: 60,
-      stud: {
-        atStud: true,
-        standingFee: 5000,
-        seasonBookings: 0,
-        bookSize: 50,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
-        retiredOnDay: 0,
+    const youngMare = mockHorse(
+      "mare-1",
+      "Young Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      {
+        age: 2,
+        stableId: "stable-1",
+        silk: "blue",
       },
-    });
+    );
+
+    const oldMare = mockHorse(
+      "mare-2",
+      "Old Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      {
+        age: 21,
+        stableId: "stable-1",
+        silk: "blue",
+      },
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
 
     const stable: Stable = {
       id: "stable-1",
@@ -272,10 +314,16 @@ describe("runNpcBreeding", () => {
   });
 
   it("should skip mares already pregnant", () => {
-    const mare = mockHorse("mare-1", "Test Mare", "mare", { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, {
-      stableId: "stable-1",
-      silk: "blue",
-    });
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      {
+        stableId: "stable-1",
+        silk: "blue",
+      },
+    );
 
     const existingPregnancy: Pregnancy = {
       id: "preg-1",
@@ -291,22 +339,28 @@ describe("runNpcBreeding", () => {
       refunded: false,
     };
 
-    const stallion = mockHorse("stallion-1", "Test Stallion", "colt", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 }, {
-      stableId: "stable-2",
-      silk: "red",
-      potential: 85,
-      fame: 60,
-      stud: {
-        atStud: true,
-        standingFee: 5000,
-        seasonBookings: 0,
-        bookSize: 50,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
-        retiredOnDay: 0,
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
       },
-    });
+    );
 
     const stable: Stable = {
       id: "stable-1",
@@ -348,27 +402,39 @@ describe("runNpcBreeding", () => {
   });
 
   it("should deduct cash from breeder stable and credit sire stable when breeding occurs", () => {
-    const mare = mockHorse("mare-1", "Test Mare", "mare", { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, {
-      stableId: "stable-1",
-      silk: "blue",
-    });
-
-    const stallion = mockHorse("stallion-1", "Test Stallion", "colt", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 }, {
-      stableId: "stable-2",
-      silk: "red",
-      potential: 85,
-      fame: 60,
-      stud: {
-        atStud: true,
-        standingFee: 5000,
-        seasonBookings: 0,
-        bookSize: 50,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
-        retiredOnDay: 0,
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      {
+        stableId: "stable-1",
+        silk: "blue",
       },
-    });
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
 
     const breederStable: Stable = {
       id: "stable-1",
@@ -423,27 +489,39 @@ describe("runNpcBreeding", () => {
   });
 
   it("should increment stallion season bookings when breeding occurs", () => {
-    const mare = mockHorse("mare-1", "Test Mare", "mare", { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, {
-      stableId: "stable-1",
-      silk: "blue",
-    });
-
-    const stallion = mockHorse("stallion-1", "Test Stallion", "colt", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 }, {
-      stableId: "stable-2",
-      silk: "red",
-      potential: 85,
-      fame: 60,
-      stud: {
-        atStud: true,
-        standingFee: 5000,
-        seasonBookings: 5,
-        bookSize: 50,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
-        retiredOnDay: 0,
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      {
+        stableId: "stable-1",
+        silk: "blue",
       },
-    });
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 5,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
 
     const stable: Stable = {
       id: "stable-1",
@@ -494,27 +572,39 @@ describe("runNpcBreeding", () => {
   });
 
   it("should create pregnancy with correct due day", () => {
-    const mare = mockHorse("mare-1", "Test Mare", "mare", { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, {
-      stableId: "stable-1",
-      silk: "blue",
-    });
-
-    const stallion = mockHorse("stallion-1", "Test Stallion", "colt", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 }, {
-      stableId: "stable-2",
-      silk: "red",
-      potential: 85,
-      fame: 60,
-      stud: {
-        atStud: true,
-        standingFee: 5000,
-        seasonBookings: 0,
-        bookSize: 50,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
-        retiredOnDay: 0,
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      {
+        stableId: "stable-1",
+        silk: "blue",
       },
-    });
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
 
     const stable: Stable = {
       id: "stable-1",
@@ -559,27 +649,39 @@ describe("runNpcBreeding", () => {
   });
 
   it("should generate log entries for each breeding", () => {
-    const mare = mockHorse("mare-1", "Test Mare", "mare", { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, {
-      stableId: "stable-1",
-      silk: "blue",
-    });
-
-    const stallion = mockHorse("stallion-1", "Test Stallion", "colt", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 }, {
-      stableId: "stable-2",
-      silk: "red",
-      potential: 85,
-      fame: 60,
-      stud: {
-        atStud: true,
-        standingFee: 5000,
-        seasonBookings: 0,
-        bookSize: 50,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
-        retiredOnDay: 0,
+    const mare = mockHorse(
+      "mare-1",
+      "Test Mare",
+      "mare",
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      {
+        stableId: "stable-1",
+        silk: "blue",
       },
-    });
+    );
+
+    const stallion = mockHorse(
+      "stallion-1",
+      "Test Stallion",
+      "colt",
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      {
+        stableId: "stable-2",
+        silk: "red",
+        potential: 85,
+        fame: 60,
+        stud: {
+          atStud: true,
+          standingFee: 5000,
+          seasonBookings: 0,
+          bookSize: 50,
+          lifetimeFoals: 0,
+          lifetimeStakesFoals: 0,
+          lifetimeG1Foals: 0,
+          retiredOnDay: 0,
+        },
+      },
+    );
 
     const stable: Stable = {
       id: "stable-1",

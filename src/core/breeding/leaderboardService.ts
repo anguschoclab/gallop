@@ -10,10 +10,10 @@ export function computeAllLeaderboards(
   horses: Horse[],
   industryMeanEarnings: number,
   currentDay: number,
-  trendHistory?: SireTrendData[]
+  trendHistory?: SireTrendData[],
 ): Record<LeaderboardType, Leaderboard> {
-  const stallions = horses.filter(h => h.stud?.atStud);
-  
+  const stallions = horses.filter((h) => h.stud?.atStud);
+
   return {
     overall: computeOverallLeaderboard(stallions, horses, industryMeanEarnings, currentDay),
     ci: computeCiLeaderboard(stallions, horses, industryMeanEarnings, currentDay),
@@ -38,10 +38,10 @@ function computeOverallLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
   industryMeanEarnings: number,
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const analytics = getSireAnalytics(s, allHorses, industryMeanEarnings);
       return {
         stallionId: s.id,
@@ -50,10 +50,10 @@ function computeOverallLeaderboard(
         metrics: analytics,
       };
     })
-    .filter(s => s.metrics.lifetimeFoals >= 5) // Minimum foals for ranking
+    .filter((s) => s.metrics.lifetimeFoals >= 5) // Minimum foals for ranking
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "overall",
     title: "Overall Sire Rankings",
@@ -70,10 +70,10 @@ function computeCiLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
   industryMeanEarnings: number,
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const analytics = getSireAnalytics(s, allHorses, industryMeanEarnings);
       return {
         stallionId: s.id,
@@ -82,10 +82,10 @@ function computeCiLeaderboard(
         metrics: analytics,
       };
     })
-    .filter(s => s.metrics.lifetimeFoals >= 5)
+    .filter((s) => s.metrics.lifetimeFoals >= 5)
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "ci",
     title: "Comparable Index Rankings",
@@ -101,10 +101,10 @@ function computeCiLeaderboard(
 function computeStakesLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const stakesFoals = getStakesFoalsBy({ horses: allHorses }, s.id);
       const analytics = getSireAnalytics(s, allHorses, 0); // industryMean not needed for this
       return {
@@ -116,7 +116,7 @@ function computeStakesLeaderboard(
     })
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "stakes_producers",
     title: "Stakes Producers",
@@ -132,10 +132,10 @@ function computeStakesLeaderboard(
 function computeG1Leaderboard(
   stallions: Horse[],
   allHorses: Horse[],
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const g1Foals = getG1FoalsBy({ horses: allHorses }, s.id);
       const analytics = getSireAnalytics(s, allHorses, 0);
       return {
@@ -147,7 +147,7 @@ function computeG1Leaderboard(
     })
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "g1_producers",
     title: "Group 1 Producers",
@@ -163,13 +163,14 @@ function computeG1Leaderboard(
 function computeTurfLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let turfWins = 0, turfStarts = 0;
-      
+      let turfWins = 0,
+        turfStarts = 0;
+
       for (const foal of runners) {
         for (const race of foal.raceHistory) {
           if (race.surface === "Turf") {
@@ -178,10 +179,10 @@ function computeTurfLeaderboard(
           }
         }
       }
-      
+
       const turfRate = turfStarts > 0 ? turfWins / turfStarts : 0;
       const analytics = getSireAnalytics(s, allHorses, 0);
-      
+
       return {
         stallionId: s.id,
         stallionName: s.name,
@@ -189,10 +190,10 @@ function computeTurfLeaderboard(
         metrics: analytics,
       };
     })
-    .filter(s => s.metrics.surfaceBias === "turf" && s.value > 0)
+    .filter((s) => s.metrics.surfaceBias === "turf" && s.value > 0)
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "turf_specialists",
     title: "Turf Specialists",
@@ -208,13 +209,14 @@ function computeTurfLeaderboard(
 function computeDirtLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let dirtWins = 0, dirtStarts = 0;
-      
+      let dirtWins = 0,
+        dirtStarts = 0;
+
       for (const foal of runners) {
         for (const race of foal.raceHistory) {
           if (race.surface === "Dirt") {
@@ -223,10 +225,10 @@ function computeDirtLeaderboard(
           }
         }
       }
-      
+
       const dirtRate = dirtStarts > 0 ? dirtWins / dirtStarts : 0;
       const analytics = getSireAnalytics(s, allHorses, 0);
-      
+
       return {
         stallionId: s.id,
         stallionName: s.name,
@@ -234,10 +236,10 @@ function computeDirtLeaderboard(
         metrics: analytics,
       };
     })
-    .filter(s => s.metrics.surfaceBias === "dirt" && s.value > 0)
+    .filter((s) => s.metrics.surfaceBias === "dirt" && s.value > 0)
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "dirt_specialists",
     title: "Dirt Specialists",
@@ -253,13 +255,14 @@ function computeDirtLeaderboard(
 function computeSprintLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let sprintWins = 0, sprintStarts = 0;
-      
+      let sprintWins = 0,
+        sprintStarts = 0;
+
       for (const foal of runners) {
         for (const race of foal.raceHistory) {
           const dist = race.distance || 0;
@@ -269,10 +272,10 @@ function computeSprintLeaderboard(
           }
         }
       }
-      
+
       const sprintRate = sprintStarts > 0 ? sprintWins / sprintStarts : 0;
       const analytics = getSireAnalytics(s, allHorses, 0);
-      
+
       return {
         stallionId: s.id,
         stallionName: s.name,
@@ -280,10 +283,10 @@ function computeSprintLeaderboard(
         metrics: analytics,
       };
     })
-    .filter(s => s.metrics.distancePreference === "sprint" && s.value > 0)
+    .filter((s) => s.metrics.distancePreference === "sprint" && s.value > 0)
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "sprint_sires",
     title: "Sprint Sires",
@@ -299,13 +302,14 @@ function computeSprintLeaderboard(
 function computeStayingLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let stayerWins = 0, stayerStarts = 0;
-      
+      let stayerWins = 0,
+        stayerStarts = 0;
+
       for (const foal of runners) {
         for (const race of foal.raceHistory) {
           const dist = race.distance || 0;
@@ -315,10 +319,10 @@ function computeStayingLeaderboard(
           }
         }
       }
-      
+
       const stayerRate = stayerStarts > 0 ? stayerWins / stayerStarts : 0;
       const analytics = getSireAnalytics(s, allHorses, 0);
-      
+
       return {
         stallionId: s.id,
         stallionName: s.name,
@@ -326,10 +330,10 @@ function computeStayingLeaderboard(
         metrics: analytics,
       };
     })
-    .filter(s => s.metrics.distancePreference === "stayer" && s.value > 0)
+    .filter((s) => s.metrics.distancePreference === "stayer" && s.value > 0)
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "staying_sires",
     title: "Staying Sires",
@@ -346,14 +350,14 @@ function computeValueLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
   industryMeanEarnings: number,
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const analytics = getSireAnalytics(s, allHorses, industryMeanEarnings);
       const fee = analytics.standingFee || 1;
       const valueRatio = analytics.aei / (fee / 1000); // AEI per $1,000
-      
+
       return {
         stallionId: s.id,
         stallionName: s.name,
@@ -361,10 +365,10 @@ function computeValueLeaderboard(
         metrics: analytics,
       };
     })
-    .filter(s => s.metrics.lifetimeFoals >= 5)
+    .filter((s) => s.metrics.lifetimeFoals >= 5)
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "value_sires",
     title: "Value Sires",
@@ -380,17 +384,17 @@ function computeValueLeaderboard(
 function computeFreshmanLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const foals = getFoalsBy({ horses: allHorses }, s.id);
-      const racingAgeFoals = foals.filter(f => f.age >= 2);
-      const oldestFoalAge = foals.length > 0 ? Math.max(...foals.map(f => f.age)) : 0;
-      
+      const racingAgeFoals = foals.filter((f) => f.age >= 2);
+      const oldestFoalAge = foals.length > 0 ? Math.max(...foals.map((f) => f.age)) : 0;
+
       const isFreshman = oldestFoalAge <= 3 && racingAgeFoals.length > 0;
       const analytics = getSireAnalytics(s, allHorses, 0);
-      
+
       return {
         stallionId: s.id,
         stallionName: s.name,
@@ -402,7 +406,7 @@ function computeFreshmanLeaderboard(
     .filter((s): s is typeof s & { isFreshman: true } => s.isFreshman)
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "freshman_watch",
     title: "Freshman Watch",
@@ -419,29 +423,29 @@ function computeRisingStarsLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
   currentDay: number,
-  trendHistory?: SireTrendData[]
+  trendHistory?: SireTrendData[],
 ): Leaderboard {
   if (!trendHistory || trendHistory.length === 0) {
     // Fallback: rank by recent stakes winners
     return computeRecentStakesLeaderboard(stallions, allHorses, currentDay);
   }
-  
+
   const rankings = stallions
-    .map(s => {
-      const history = trendHistory.filter(t => t.stallionId === s.id);
+    .map((s) => {
+      const history = trendHistory.filter((t) => t.stallionId === s.id);
       if (history.length < 2) return null;
-      
+
       const recent = history[history.length - 1];
       const previous = history[history.length - 2];
-      
+
       const aeiChange = recent.aei - previous.aei;
       const stakesGrowth = recent.stakesFoals - previous.stakesFoals;
-      
+
       // Trend score: AEI improvement + recent stakes production
       const trendScore = aeiChange * 10 + stakesGrowth * 5;
-      
+
       const analytics = getSireAnalytics(s, allHorses, 0);
-      
+
       return {
         stallionId: s.id,
         stallionName: s.name,
@@ -452,7 +456,7 @@ function computeRisingStarsLeaderboard(
     .filter((s): s is NonNullable<typeof s> => s !== null && s.value > 0)
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "rising_stars",
     title: "Rising Stars",
@@ -468,10 +472,10 @@ function computeRisingStarsLeaderboard(
 function computeRecentStakesLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .map(s => {
+    .map((s) => {
       const analytics = getSireAnalytics(s, allHorses, 0);
       return {
         stallionId: s.id,
@@ -483,7 +487,7 @@ function computeRecentStakesLeaderboard(
     .sort((a, b) => b.value - a.value)
     .slice(0, 20) // Top 20
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: "rising_stars",
     title: "Rising Stars",
@@ -500,11 +504,11 @@ function computeRegionalLeaderboard(
   stallions: Horse[],
   allHorses: Horse[],
   hemisphere: "Northern" | "Southern",
-  currentDay: number
+  currentDay: number,
 ): Leaderboard {
   const rankings = stallions
-    .filter(s => s.hemisphere === hemisphere)
-    .map(s => {
+    .filter((s) => s.hemisphere === hemisphere)
+    .map((s) => {
       const analytics = getSireAnalytics(s, allHorses, 0);
       return {
         stallionId: s.id,
@@ -513,10 +517,10 @@ function computeRegionalLeaderboard(
         metrics: analytics,
       };
     })
-    .filter(s => s.metrics.lifetimeFoals >= 5)
+    .filter((s) => s.metrics.lifetimeFoals >= 5)
     .sort((a, b) => b.value - a.value)
     .map((s, i) => ({ ...s, rank: i + 1 }));
-  
+
   return {
     type: hemisphere === "Northern" ? "regional_north" : "regional_south",
     title: `${hemisphere} Hemisphere Rankings`,

@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { buildRunner, getConditionsModifier, runRaceToCompletion, computePaceContext, stepRunner } from "../../game/raceSim";
+import {
+  buildRunner,
+  getConditionsModifier,
+  runRaceToCompletion,
+  computePaceContext,
+  stepRunner,
+} from "../../game/raceSim";
 import { createRng } from "../../game/rng";
 import type { Horse } from "../../game/types";
 
@@ -31,10 +37,26 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
 
 function mkField(): Horse[] {
   return [
-    mkHorse({ id: "a", name: "Alpha", stats: { speed: 80, stamina: 70, acceleration: 75, consistency: 70 } }),
-    mkHorse({ id: "b", name: "Bravo", stats: { speed: 65, stamina: 85, acceleration: 60, consistency: 80 } }),
-    mkHorse({ id: "c", name: "Charlie", stats: { speed: 75, stamina: 65, acceleration: 80, consistency: 60 } }),
-    mkHorse({ id: "d", name: "Delta", stats: { speed: 60, stamina: 80, acceleration: 65, consistency: 90 } }),
+    mkHorse({
+      id: "a",
+      name: "Alpha",
+      stats: { speed: 80, stamina: 70, acceleration: 75, consistency: 70 },
+    }),
+    mkHorse({
+      id: "b",
+      name: "Bravo",
+      stats: { speed: 65, stamina: 85, acceleration: 60, consistency: 80 },
+    }),
+    mkHorse({
+      id: "c",
+      name: "Charlie",
+      stats: { speed: 75, stamina: 65, acceleration: 80, consistency: 60 },
+    }),
+    mkHorse({
+      id: "d",
+      name: "Delta",
+      stats: { speed: 60, stamina: 80, acceleration: 65, consistency: 90 },
+    }),
   ];
 }
 
@@ -47,14 +69,24 @@ describe("raceSim determinism", () => {
     const a = runRaceToCompletion(runA, 1600, createRng(42));
     const b = runRaceToCompletion(runB, 1600, createRng(42));
     expect(a.map((r) => r.horseId)).toEqual(b.map((r) => r.horseId));
-    expect(a.map((r) => Math.round(r.time * 1000))).toEqual(b.map((r) => Math.round(r.time * 1000)));
+    expect(a.map((r) => Math.round(r.time * 1000))).toEqual(
+      b.map((r) => Math.round(r.time * 1000)),
+    );
   });
 
   it("different seeds produce different (or possibly different) outcomes", () => {
     const horses = mkField();
     const conditions = getConditionsModifier({});
-    const a = runRaceToCompletion(horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions)), 1600, createRng(1));
-    const b = runRaceToCompletion(horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions)), 1600, createRng(99));
+    const a = runRaceToCompletion(
+      horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions)),
+      1600,
+      createRng(1),
+    );
+    const b = runRaceToCompletion(
+      horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions)),
+      1600,
+      createRng(99),
+    );
     // Times will almost certainly differ; if order is the same, that's fine.
     const sameTimes = a.every((r, i) => r.time === b[i].time);
     expect(sameTimes).toBe(false);
@@ -69,12 +101,12 @@ describe("raceSim conditions", () => {
     const fairResult = runRaceToCompletion(
       horses.map((h) => buildRunner(h, true, 1600, "Turf", fair)),
       1600,
-      createRng(42)
+      createRng(42),
     );
     const foulResult = runRaceToCompletion(
       horses.map((h) => buildRunner(h, true, 1600, "Turf", foul)),
       1600,
-      createRng(42)
+      createRng(42),
     );
     const fairWinner = fairResult[0].time;
     const foulWinner = foulResult[0].time;
@@ -102,7 +134,7 @@ describe("computePaceContext", () => {
   it("leaderPos is the maximum runner position", () => {
     const conditions = getConditionsModifier({});
     const horses = mkField();
-    const runners = horses.map(h => buildRunner(h, true, 1600, "Turf", conditions));
+    const runners = horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions));
     runners[0].position = 200;
     runners[1].position = 150;
     runners[2].position = 180;
@@ -114,8 +146,11 @@ describe("computePaceContext", () => {
   it("progress = 1 when all runners have finished", () => {
     const conditions = getConditionsModifier({});
     const horses = mkField();
-    const runners = horses.map(h => buildRunner(h, true, 1600, "Turf", conditions));
-    runners.forEach(r => { r.finishTime = 95; r.position = 1600; });
+    const runners = horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions));
+    runners.forEach((r) => {
+      r.finishTime = 95;
+      r.position = 1600;
+    });
     const { progress } = computePaceContext(runners, 1600);
     expect(progress).toBe(1);
   });
@@ -123,7 +158,7 @@ describe("computePaceContext", () => {
   it("progress in (0, 1) when some runners still running", () => {
     const conditions = getConditionsModifier({});
     const horses = mkField();
-    const runners = horses.map(h => buildRunner(h, true, 1600, "Turf", conditions));
+    const runners = horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions));
     runners[0].position = 800; // halfway
     const { progress } = computePaceContext(runners, 1600);
     expect(progress).toBeGreaterThan(0);

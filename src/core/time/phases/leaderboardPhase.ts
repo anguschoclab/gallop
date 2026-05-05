@@ -12,18 +12,23 @@ export const leaderboardPhase = {
   order: 70, // After races (60), before awards (80)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    
+
     // Update leaderboards every 7 days (weekly)
-    const shouldUpdate = !state.leaderboardsUpdatedDay || 
-                        (newDay - state.leaderboardsUpdatedDay) >= 7;
-    
+    const shouldUpdate =
+      !state.leaderboardsUpdatedDay || newDay - state.leaderboardsUpdatedDay >= 7;
+
     if (!shouldUpdate) return context;
-    
+
     const industryMean = state.industryMeanEarnings ?? 0;
-    const leaderboards = computeAllLeaderboards(state.horses, industryMean, newDay, state.sireTrendHistory);
-    
+    const leaderboards = computeAllLeaderboards(
+      state.horses,
+      industryMean,
+      newDay,
+      state.sireTrendHistory,
+    );
+
     // Record trend data for all ranked stallions
-    const trendEntry: SireTrendData[] = leaderboards.overall.rankings.map(r => ({
+    const trendEntry: SireTrendData[] = leaderboards.overall.rankings.map((r) => ({
       stallionId: r.stallionId,
       day: newDay,
       aei: r.metrics.aei,
@@ -32,11 +37,12 @@ export const leaderboardPhase = {
       g1Foals: r.metrics.lifetimeG1Foals,
       rank: r.rank,
     }));
-    
+
     // Keep 1 year of trend history
-    const trendHistory = [...(state.sireTrendHistory || []), ...trendEntry]
-      .filter(t => newDay - t.day <= 365);
-    
+    const trendHistory = [...(state.sireTrendHistory || []), ...trendEntry].filter(
+      (t) => newDay - t.day <= 365,
+    );
+
     return {
       ...context,
       state: {
@@ -47,7 +53,10 @@ export const leaderboardPhase = {
       },
       logs: [
         ...context.logs,
-        { day: newDay, text: `Sire leaderboards updated. Top sire: ${leaderboards.overall.rankings[0]?.stallionName}` }
+        {
+          day: newDay,
+          text: `Sire leaderboards updated. Top sire: ${leaderboards.overall.rankings[0]?.stallionName}`,
+        },
       ],
     };
   },

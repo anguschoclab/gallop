@@ -1,6 +1,12 @@
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
@@ -21,7 +27,9 @@ export function PlayerRacePrompt() {
   const race = races.find((r) => r.id === pendingRaceId);
   if (!race) return null;
 
-  const enteredHorse = horses.find((h) => h.owned && race.entries.some((e) => e.horseId === h.id && e.owned));
+  const enteredHorse = horses.find(
+    (h) => h.owned && race.entries.some((e) => e.horseId === h.id && e.owned),
+  );
 
   function clearPending() {
     set({ pendingPlayerRaceId: undefined });
@@ -35,13 +43,25 @@ export function PlayerRacePrompt() {
   function autoResolve() {
     const { runners } = buildRaceField({ race: race!, horses, jockeys });
     const course = getCourseForRace(race!);
-    const result = runRaceToCompletion(runners, race!.distance, rngForRace(race!), 0.1, 600, course);
+    const result = runRaceToCompletion(
+      runners,
+      race!.distance,
+      rngForRace(race!),
+      0.1,
+      600,
+      course,
+    );
     resolveRaceWithImpacts(race!.id, result);
     clearPending();
   }
 
   return (
-    <Dialog open={!!pendingRaceId} onOpenChange={(open) => { if (!open) clearPending(); }}>
+    <Dialog
+      open={!!pendingRaceId}
+      onOpenChange={(open) => {
+        if (!open) clearPending();
+      }}
+    >
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Race Day — {gameCalendarDate(day + 1)}</DialogTitle>

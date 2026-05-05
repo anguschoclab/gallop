@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { getMonthName, formatDate, dayOfYear, gameYearNumber, gameCalendarDate } from "@/core/calendar/dateFormatting";
+import {
+  getMonthName,
+  formatDate,
+  dayOfYear,
+  gameYearNumber,
+  gameCalendarDate,
+} from "@/core/calendar/dateFormatting";
 
 describe("dayOfYear", () => {
   it("day 1 → 1", () => expect(dayOfYear(1)).toBe(1));
@@ -42,5 +48,6 @@ describe("gameCalendarDate", () => {
   it("day 1 → Jan 2, 2026 (formula offset)", () => expect(gameCalendarDate(1)).toBe("Jan 2, 2026"));
   it("day 365 → Dec 31, 2026", () => expect(gameCalendarDate(365)).toBe("Dec 31, 2026"));
   it("day 366 → Jan 2, 2027", () => expect(gameCalendarDate(366)).toBe("Jan 2, 2027"));
-  it("day 396 → Feb 1, 2027 (396=366+30, day-of-year=31)", () => expect(gameCalendarDate(396)).toBe("Feb 1, 2027"));
+  it("day 396 → Feb 1, 2027 (396=366+30, day-of-year=31)", () =>
+    expect(gameCalendarDate(396)).toBe("Feb 1, 2027"));
 });

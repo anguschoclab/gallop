@@ -3,7 +3,13 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { HorsePortrait } from "@/components/HorsePortrait";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { Zap, TrendingUp, Filter } from "lucide-react";
@@ -71,7 +77,9 @@ function HorseGalleryPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Horse Gallery</h1>
+          <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">
+            Horse Gallery
+          </h1>
           <p className="text-cream-muted font-[family-name:var(--font-body)]">
             Browse all {horses.length} horses in your stable with coat details.
           </p>
@@ -148,8 +156,13 @@ function HorseGalleryPage() {
                   </div>
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
-                      <CardTitle className="text-lg truncate text-cream font-[family-name:var(--font-display)]">{horse.name}</CardTitle>
-                      <Badge variant="outline" className="text-xs shrink-0 border-gold-muted text-cream">
+                      <CardTitle className="text-lg truncate text-cream font-[family-name:var(--font-display)]">
+                        {horse.name}
+                      </CardTitle>
+                      <Badge
+                        variant="outline"
+                        className="text-xs shrink-0 border-gold-muted text-cream"
+                      >
                         {ovr} OVR
                       </Badge>
                     </div>
@@ -169,7 +182,10 @@ function HorseGalleryPage() {
                         <>
                           <span>·</span>
                           <TrendingUp className="w-3 h-3" />
-                          <span>Form {horse.form > 0 ? "+" : ""}{horse.form}</span>
+                          <span>
+                            Form {horse.form > 0 ? "+" : ""}
+                            {horse.form}
+                          </span>
                         </>
                       )}
                     </div>

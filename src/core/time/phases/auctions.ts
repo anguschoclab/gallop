@@ -27,21 +27,21 @@ export const auctionsPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     let auctions: AuctionSale[] = [...(state.auctions ?? [])];
-    let logs = [...context.logs];
+    const logs = [...context.logs];
     const impacts = [...context.impacts];
     const doy = dayOfYear(newDay);
 
     // Eight-sale calendar — spaced through the year so the player encounters
     // a fresh sale every couple of months.
     const SALE_TRIGGERS: { doy: number; kind: AuctionSale["kind"]; name: string }[] = [
-      { doy: 75,  kind: "2yo_training",  name: "Spring 2YO Breeze-Up Sale" },
-      { doy: 90,  kind: "weanling",      name: "Spring Weanling Sale" },
+      { doy: 75, kind: "2yo_training", name: "Spring 2YO Breeze-Up Sale" },
+      { doy: 90, kind: "weanling", name: "Spring Weanling Sale" },
       { doy: 105, kind: "yearling_south", name: "Southern Yearling Sale" },
-      { doy: 165, kind: "mixed",         name: "Midsummer Mixed Sale" },
-      { doy: 240, kind: "yearling",      name: "Late Summer Yearling Sale" },
-      { doy: 270, kind: "racing_age",    name: "Autumn Horses-of-Racing-Age Sale" },
+      { doy: 165, kind: "mixed", name: "Midsummer Mixed Sale" },
+      { doy: 240, kind: "yearling", name: "Late Summer Yearling Sale" },
+      { doy: 270, kind: "racing_age", name: "Autumn Horses-of-Racing-Age Sale" },
       { doy: 290, kind: "weanling_south", name: "Southern Weanling Sale" },
-      { doy: 335, kind: "broodmare",     name: "Year-End Broodmare & Breeding Stock Sale" },
+      { doy: 335, kind: "broodmare", name: "Year-End Broodmare & Breeding Stock Sale" },
     ];
     for (const trigger of SALE_TRIGGERS) {
       if (doy === trigger.doy && !auctions.some((a) => !a.resolved && a.kind === trigger.kind)) {
@@ -50,7 +50,14 @@ export const auctionsPhase = {
         // copy and emit horse-creation impacts for any newcomers.
         const horsesForGen = [...state.horses];
         const beforeCount = horsesForGen.length;
-        const newSale = generateAuctionLots(newDay, state.npcStables, horsesForGen, trigger.kind, trigger.name, context.dailyRng);
+        const newSale = generateAuctionLots(
+          newDay,
+          state.npcStables,
+          horsesForGen,
+          trigger.kind,
+          trigger.name,
+          context.dailyRng,
+        );
         const freshHorses = horsesForGen.slice(beforeCount);
         for (const horse of freshHorses) {
           impacts.push({
@@ -78,9 +85,9 @@ export const auctionsPhase = {
       // horses from earlier this turn (so the runner can find them).
       const horsesIncludingFresh = [
         ...state.horses,
-        ...impacts
+        ...(impacts
           .filter((i) => i.type === "horse_creation")
-          .map((i) => (i as { horse: unknown }).horse) as never,
+          .map((i) => (i as { horse: unknown }).horse) as never),
       ];
       const runner = createAuctionRunner(sale, state.npcStables, horsesIncludingFresh);
       runner.runToCompletion();

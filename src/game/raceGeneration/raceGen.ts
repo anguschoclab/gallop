@@ -11,7 +11,10 @@ import { randomRaceName } from "../names";
  * and northAmerica.ts. Replaces the identical classConfig in horseGen.ts and
  * NA_CLASS_CONFIG in northAmerica.ts.
  */
-export const CLASS_CONFIG: Record<RaceClass, { entry: number; purse: number; minStat?: number; dist: [number, number] }> = {
+export const CLASS_CONFIG: Record<
+  RaceClass,
+  { entry: number; purse: number; minStat?: number; dist: [number, number] }
+> = {
   Maiden: { entry: 100, purse: 2000, dist: [1000, 1400] },
   MaidenSpecialWeight: { entry: 150, purse: 3000, minStat: 40, dist: [1000, 1600] },
   MaidenClaiming: { entry: 100, purse: 2000, dist: [1000, 1400] },
@@ -29,7 +32,11 @@ export const CLASS_CONFIG: Record<RaceClass, { entry: number; purse: number; min
   Graded: { entry: 0, purse: 0, dist: [1200, 2400] },
 };
 
-export function makeGradedRace(g: GradedRace, gameDay: number, rng: Rng = nondeterministicRng()): Race {
+export function makeGradedRace(
+  g: GradedRace,
+  gameDay: number,
+  rng: Rng = nondeterministicRng(),
+): Race {
   const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
   const minStat = g.grade === "G1" ? 78 : g.grade === "G2" ? 70 : 62;
   return {
@@ -44,7 +51,14 @@ export function makeGradedRace(g: GradedRace, gameDay: number, rng: Rng = nondet
     fieldSize: 12,
     entries: [],
     resolved: false,
-    graded: { key: g.key, grade: g.grade, track: g.track, trackId: g.trackId, surface: g.surface, winAndYouInTarget: g.winAndYouInTarget },
+    graded: {
+      key: g.key,
+      grade: g.grade,
+      track: g.track,
+      trackId: g.trackId,
+      surface: g.surface,
+      winAndYouInTarget: g.winAndYouInTarget,
+    },
     restrictions: g.restrictions,
     weather: randomWeather(rng),
     trackCondition: randomTrackCondition(rng),
@@ -55,16 +69,16 @@ export function generateRace(day: number, rng: Rng = nondeterministicRng()): Rac
   const r = rng.next();
   let cls: RaceClass;
   if (r < 0.25) cls = "Maiden";
-  else if (r < 0.30) cls = "MaidenClaiming";
+  else if (r < 0.3) cls = "MaidenClaiming";
   else if (r < 0.45) cls = "Allowance";
-  else if (r < 0.50) cls = "Claiming";
-  else if (r < 0.60) cls = "Stakes";
+  else if (r < 0.5) cls = "Claiming";
+  else if (r < 0.6) cls = "Stakes";
   else if (r < 0.65) cls = "Handicap";
-  else if (r < 0.70) cls = "OptionalClaiming";
+  else if (r < 0.7) cls = "OptionalClaiming";
   else if (r < 0.75) cls = "StarterAllowance";
-  else if (r < 0.80) cls = "MaidenSpecialWeight";
+  else if (r < 0.8) cls = "MaidenSpecialWeight";
   else if (r < 0.85) cls = "StarterHandicap";
-  else if (r < 0.90) cls = "MaidenOptionalClaiming";
+  else if (r < 0.9) cls = "MaidenOptionalClaiming";
   else if (r < 0.95) cls = "MaidenStakes";
   else if (r < 0.98) cls = "Listed";
   else cls = "Group";

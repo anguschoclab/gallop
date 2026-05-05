@@ -12,6 +12,5 @@ describe("calculateClassBonus", () => {
   it("neither (Allowance) → 0", () => expect(calculateClassBonus(undefined, "Allowance")).toBe(0));
   it("grade takes priority over class — G1 + Group → 8", () =>
     expect(calculateClassBonus("G1", "Group")).toBe(8));
-  it("G2 + Stakes → 5 (grade wins)", () =>
-    expect(calculateClassBonus("G2", "Stakes")).toBe(5));
+  it("G2 + Stakes → 5 (grade wins)", () => expect(calculateClassBonus("G2", "Stakes")).toBe(5));
 });

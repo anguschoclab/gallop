@@ -6,7 +6,11 @@ import { AwardIcon, AwardIconWithYear } from "./AwardIcon";
 import { AwardBadge, AwardListItem } from "./AwardBadge";
 import { cn } from "@/lib/utils";
 import type { AwardRegion, RegionalAward, RegionalAwardCategory } from "@/game/awards/types";
-import { REGION_DISPLAY_NAMES, REGION_AWARD_NAMES, CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
+import {
+  REGION_DISPLAY_NAMES,
+  REGION_AWARD_NAMES,
+  CATEGORY_DISPLAY_NAMES,
+} from "@/game/awards/types";
 import { REGION_COLOR_CLASSES } from "@/assets/awards";
 import { Trophy, Medal, Star } from "lucide-react";
 
@@ -28,7 +32,7 @@ export function TrophyCase({
   className,
 }: TrophyCaseProps) {
   const [selectedRegion, setSelectedRegion] = useState<AwardRegion | "all">(
-    filterByRegion || "all"
+    filterByRegion || "all",
   );
 
   // Filter and sort awards
@@ -123,7 +127,7 @@ export function TrophyCase({
                   "flex flex-col items-center p-4 rounded-lg border",
                   "bg-card hover:bg-accent/50 transition-all",
                   "hover:scale-105 cursor-pointer",
-                  REGION_COLOR_CLASSES[award.region]
+                  REGION_COLOR_CLASSES[award.region],
                 )}
               >
                 <AwardIcon
@@ -136,9 +140,7 @@ export function TrophyCase({
                   {CATEGORY_DISPLAY_NAMES[award.category]}
                 </span>
                 <span className="text-[10px] opacity-70">{award.year}</span>
-                {award.isHistoric && (
-                  <Star className="w-3 h-3 text-fame mt-1" />
-                )}
+                {award.isHistoric && <Star className="w-3 h-3 text-fame mt-1" />}
               </div>
             ))}
           </div>
@@ -193,13 +195,11 @@ export function TrophyCase({
               <TabsContent key={region} value={region} className="mt-4">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold">{REGION_AWARD_NAMES[region]}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {REGION_DISPLAY_NAMES[region]}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{REGION_DISPLAY_NAMES[region]}</p>
                 </div>
                 <AwardsGrid awards={awardsByRegion[region] || []} />
               </TabsContent>
-            )
+            ),
           )}
         </Tabs>
       </CardContent>
@@ -221,12 +221,7 @@ function AwardsGrid({ awards }: { awards: RegionalAward[] }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {awards.map((award) => (
-        <AwardBadge
-          key={award.id}
-          award={award}
-          variant="card"
-          showRegion
-        />
+        <AwardBadge key={award.id} award={award} variant="card" showRegion />
       ))}
     </div>
   );

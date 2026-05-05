@@ -160,7 +160,23 @@ describe("generateRace", () => {
   });
 
   it("raceClass is one of the valid classes", () => {
-    const validClasses = ["Maiden","MaidenSpecialWeight","MaidenClaiming","MaidenOptionalClaiming","MaidenStakes","Allowance","OptionalClaiming","StarterAllowance","StarterHandicap","Stakes","Claiming","Handicap","Listed","Group","Graded"];
+    const validClasses = [
+      "Maiden",
+      "MaidenSpecialWeight",
+      "MaidenClaiming",
+      "MaidenOptionalClaiming",
+      "MaidenStakes",
+      "Allowance",
+      "OptionalClaiming",
+      "StarterAllowance",
+      "StarterHandicap",
+      "Stakes",
+      "Claiming",
+      "Handicap",
+      "Listed",
+      "Group",
+      "Graded",
+    ];
     for (let i = 0; i < 10; i++) {
       const race = generateRace(1);
       expect(validClasses).toContain(race.raceClass);

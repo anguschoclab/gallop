@@ -14,7 +14,7 @@ export const beyerRecalibrationPhase = {
       state.calibratedPars,
       state.lastCalibrationDay ?? 0,
       state.paceSamples,
-      newDay
+      newDay,
     );
     const { calibratedPars, lastCalibrationDay } = parResult;
     const seasonLog: { day: number; text: string }[] = parResult.log ? [parResult.log] : [];

@@ -13,7 +13,19 @@ import { clamp } from "./math";
 
 export type FoalOutcome =
   | { kind: "live"; foal: Horse; transmission: boolean }
-  | { kind: "complication"; type: "stillborn" | "unable to stand" | "early loss" | "mid loss" | "late loss" | "lethal recessive" | "FFS1 lethal" | "low fertility" | "twin reduction (single survivor)" };
+  | {
+      kind: "complication";
+      type:
+        | "stillborn"
+        | "unable to stand"
+        | "early loss"
+        | "mid loss"
+        | "late loss"
+        | "lethal recessive"
+        | "FFS1 lethal"
+        | "low fertility"
+        | "twin reduction (single survivor)";
+    };
 
 // Mare-age complication scaling: under 14 stays at 3% baseline; older mares
 // climb 1.5pp per year, capped at 25%. Mirrors real-world reproductive
@@ -25,8 +37,14 @@ function complicationRate(damAge: number): number {
 // True if both parents carry a recessive lethal allele on the same gene.
 // Used at the day-60 checkpoint: 25% of the foals from such a pairing are
 // homozygous and don't survive gestation.
-function bothCarry(sire: Horse | undefined, dam: Horse | undefined, gene: "csnb" | "hypp" | "olws" | "ffs1"): boolean {
-  return !!(sire?.geneticMarkers?.lethalCarriers?.[gene] && dam?.geneticMarkers?.lethalCarriers?.[gene]);
+function bothCarry(
+  sire: Horse | undefined,
+  dam: Horse | undefined,
+  gene: "csnb" | "hypp" | "olws" | "ffs1",
+): boolean {
+  return !!(
+    sire?.geneticMarkers?.lethalCarriers?.[gene] && dam?.geneticMarkers?.lethalCarriers?.[gene]
+  );
 }
 
 // Build a foal's pedigree snapshot. Inherits parent pedigrees (depth-1) so
@@ -54,7 +72,7 @@ function buildFoalPedigree(sire: Horse, dam: Horse): Pedigree {
 export function resolveFoaling(
   pregnancy: Pregnancy,
   sire: Horse | undefined,
-  dam: Horse | undefined
+  dam: Horse | undefined,
 ): FoalOutcome {
   const rng = createRng(hashStr(pregnancy.id) ^ (pregnancy.reBreedingAttempts ?? 0));
   const damAge = dam?.age ?? 5;
@@ -78,7 +96,7 @@ export function resolveFoaling(
   // adjustments. Skipped if the foal pedigree can't be built.
   const foalPedigree: Pedigree | undefined = sire && dam ? buildFoalPedigree(sire, dam) : undefined;
   const coi = foalPedigree ? computeCoiFromSnapshot(foalPedigree) : 0;
-  const ahc = (foalPedigree && sire && dam) ? computeAhc(foalPedigree, { horses: [sire, dam] }) : 0;
+  const ahc = foalPedigree && sire && dam ? computeAhc(foalPedigree, { horses: [sire, dam] }) : 0;
   const genomeMods = computeGenomeModifiers(coi, ahc);
 
   // 2. Day-14 early loss — 4% baseline, mare-age scaled. Twins double the
@@ -155,8 +173,16 @@ export function resolveFoaling(
     // Inbreeding depression: durability/consistency hit; outcross hybrid vigor
     // bumps recovery and trainability slightly. Never push below floor values.
     if (genomeMods.depressionPenalty > 0) {
-      foal.injuryProneness = clamp(foal.injuryProneness * (1 + genomeMods.depressionPenalty), 0, 0.5);
-      foal.stats.consistency = clamp(Math.round(foal.stats.consistency * (1 - genomeMods.depressionPenalty * 0.3)), 1, 100);
+      foal.injuryProneness = clamp(
+        foal.injuryProneness * (1 + genomeMods.depressionPenalty),
+        0,
+        0.5,
+      );
+      foal.stats.consistency = clamp(
+        Math.round(foal.stats.consistency * (1 - genomeMods.depressionPenalty * 0.3)),
+        1,
+        100,
+      );
     }
     if (genomeMods.vigorBonus > 0) {
       foal.recoveryRate = clamp(foal.recoveryRate * (1 + genomeMods.vigorBonus), 0.5, 1.5);

@@ -139,9 +139,7 @@ describe("runNpcCycle", () => {
       fieldSize: 8,
       entries: [],
       resolved: true,
-      result: [
-        { horseId: "horse-1", position: 1, time: 120 },
-      ],
+      result: [{ horseId: "horse-1", position: 1, time: 120 }],
     };
 
     const result = runNpcCycle(npcStables, [horse], [race], 10);

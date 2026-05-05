@@ -45,7 +45,11 @@ describe("Intent/Resolution Pipeline Integration", () => {
   });
 
   it("should execute full pipeline with training intent", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 80 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 80,
+    });
     const state: GameState = {
       ...createTestState(),
       horses: [horse],
@@ -72,8 +76,16 @@ describe("Intent/Resolution Pipeline Integration", () => {
   });
 
   it("should handle multiple intents in single day", () => {
-    const horse1 = createTestHorse({ id: "horse-1", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 80 });
-    const horse2 = createTestHorse({ id: "horse-2", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 80 });
+    const horse1 = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 80,
+    });
+    const horse2 = createTestHorse({
+      id: "horse-2",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 80,
+    });
     const state: GameState = {
       ...createTestState(),
       horses: [horse1, horse2],
@@ -110,7 +122,11 @@ describe("Intent/Resolution Pipeline Integration", () => {
   });
 
   it("should produce deterministic results with same RNG seed", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 80 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 80,
+    });
     const state1: GameState = {
       ...createTestState(),
       horses: [horse],
@@ -142,7 +158,11 @@ describe("Intent/Resolution Pipeline Integration", () => {
   });
 
   it("should clear pendingIntents after processing", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 80 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 80,
+    });
     const state: GameState = {
       ...createTestState(),
       horses: [horse],
@@ -168,7 +188,11 @@ describe("Intent/Resolution Pipeline Integration", () => {
   });
 
   it("should preserve immutability of original state", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 80 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 80,
+    });
     const state: GameState = {
       ...createTestState(),
       horses: [horse],

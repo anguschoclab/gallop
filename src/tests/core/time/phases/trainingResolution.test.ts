@@ -31,7 +31,10 @@ describe("trainingResolutionPhase", () => {
     pendingIntents: [],
   });
 
-  const createTestContext = (state: GameState, intents: TrainingIntent[] = []): PipelineContext => ({
+  const createTestContext = (
+    state: GameState,
+    intents: TrainingIntent[] = [],
+  ): PipelineContext => ({
     previousDay: 0,
     newDay: 1,
     state,
@@ -43,7 +46,11 @@ describe("trainingResolutionPhase", () => {
   });
 
   it("should process training intent and generate stat change impact", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 80 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 80,
+    });
     const state: GameState = {
       ...createTestState(),
       horses: [horse],
@@ -69,7 +76,11 @@ describe("trainingResolutionPhase", () => {
   });
 
   it("should generate energy change impact for training", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 80 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 80,
+    });
     const state: GameState = {
       ...createTestState(),
       horses: [horse],
@@ -96,7 +107,11 @@ describe("trainingResolutionPhase", () => {
   });
 
   it("should handle rest training type", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 50 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 50,
+    });
     const state: GameState = {
       ...createTestState(),
       horses: [horse],
@@ -136,7 +151,11 @@ describe("trainingResolutionPhase", () => {
   });
 
   it("should update trainingUsed tracking", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 }, energy: 80 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      energy: 80,
+    });
     const state: GameState = {
       ...createTestState(),
       horses: [horse],

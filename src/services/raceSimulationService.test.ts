@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { rngForRace, buildRaceField, simulateStep, getRaceClassBonus } from "./raceSimulationService";
+import {
+  rngForRace,
+  buildRaceField,
+  simulateStep,
+  getRaceClassBonus,
+} from "./raceSimulationService";
 import type { Horse, Race } from "@/game/types";
 import { createTestHorse, createTestJockeys } from "@/tests/helpers";
 
@@ -64,7 +69,7 @@ describe("buildRaceField", () => {
       entries: [{ horseId: "h1", owned: true }],
     });
     const { runners } = buildRaceField({ race, horses: [horse], jockeys: [] });
-    const ownedRunner = runners.find(r => r.horseId === "h1");
+    const ownedRunner = runners.find((r) => r.horseId === "h1");
     expect(ownedRunner).toBeDefined();
     expect(ownedRunner!.owned).toBe(true);
   });
@@ -72,7 +77,7 @@ describe("buildRaceField", () => {
   it("unfilled slots get owned=false AI runners", () => {
     const race = mkRace({ fieldSize: 4, entries: [] });
     const { runners } = buildRaceField({ race, horses: [], jockeys: [] });
-    expect(runners.every(r => !r.owned)).toBe(true);
+    expect(runners.every((r) => !r.owned)).toBe(true);
     expect(runners).toHaveLength(4);
   });
 
@@ -85,7 +90,9 @@ describe("buildRaceField", () => {
   it("builds runners for all race classes without throwing", () => {
     const classes = ["Maiden", "Allowance", "Stakes", "Group", "Graded"] as const;
     for (const raceClass of classes) {
-      expect(() => buildRaceField({ race: mkRace({ raceClass, fieldSize: 3 }), horses: [], jockeys: [] })).not.toThrow();
+      expect(() =>
+        buildRaceField({ race: mkRace({ raceClass, fieldSize: 3 }), horses: [], jockeys: [] }),
+      ).not.toThrow();
     }
   });
 

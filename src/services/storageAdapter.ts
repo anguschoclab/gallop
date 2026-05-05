@@ -4,8 +4,8 @@
  * Provides fallback to localStorage if OPFS unavailable
  */
 
-import { initOPFS, writeFile, readFile, deleteFile, checkOPFSAvailable } from './opfsService';
-import type { GameState } from '@/game/types';
+import { initOPFS, writeFile, readFile, deleteFile, checkOPFSAvailable } from "./opfsService";
+import type { GameState } from "@/game/types";
 
 export const STORAGE_KEYS = {
   GAME_STATE: "gallop_game_state",
@@ -15,7 +15,7 @@ export const STORAGE_KEYS = {
   RACES_DAY_JUMP: "gallop_races_day_jump",
 } as const;
 
-const GAME_STATE_FILENAME = 'gameState.json';
+const GAME_STATE_FILENAME = "gameState.json";
 
 let opfsInitialized = false;
 let useLocalStorageFallback = false;
@@ -25,14 +25,14 @@ let useLocalStorageFallback = false;
  */
 async function initializeStorage(): Promise<void> {
   if (opfsInitialized) return;
-  
+
   await initOPFS();
   useLocalStorageFallback = !(await checkOPFSAvailable());
-  
+
   if (useLocalStorageFallback) {
-    console.warn('OPFS unavailable, falling back to localStorage for game state');
+    console.warn("OPFS unavailable, falling back to localStorage for game state");
   }
-  
+
   opfsInitialized = true;
 }
 
@@ -41,7 +41,7 @@ async function initializeStorage(): Promise<void> {
  */
 export async function loadGameState(): Promise<GameState | null> {
   await initializeStorage();
-  
+
   if (useLocalStorageFallback) {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
@@ -49,15 +49,15 @@ export async function loadGameState(): Promise<GameState | null> {
         return JSON.parse(stored) as GameState;
       }
     } catch (error) {
-      console.error('Failed to load game state from localStorage fallback:', error);
+      console.error("Failed to load game state from localStorage fallback:", error);
     }
     return null;
   }
-  
+
   try {
     return await readFile<GameState>(GAME_STATE_FILENAME);
   } catch (error) {
-    console.error('Failed to load game state from OPFS:', error);
+    console.error("Failed to load game state from OPFS:", error);
     return null;
   }
 }
@@ -67,26 +67,29 @@ export async function loadGameState(): Promise<GameState | null> {
  */
 export async function saveGameState(state: GameState): Promise<void> {
   await initializeStorage();
-  
+
   if (useLocalStorageFallback) {
     try {
       localStorage.setItem(STORAGE_KEYS.GAME_STATE_FALLBACK, JSON.stringify(state));
     } catch (error) {
-      console.error('Failed to save game state to localStorage fallback:', error);
+      console.error("Failed to save game state to localStorage fallback:", error);
     }
     return;
   }
-  
+
   try {
     await writeFile(GAME_STATE_FILENAME, state);
   } catch (error) {
-    console.error('Failed to save game state to OPFS:', error);
+    console.error("Failed to save game state to OPFS:", error);
     // Fallback to localStorage on write failure
     try {
-      localStorage.setItem(STORAGE_KEYS.RACE_FILTERS.replace('Filters', 'State'), JSON.stringify(state));
-      console.warn('Fell back to localStorage for game state');
+      localStorage.setItem(
+        STORAGE_KEYS.RACE_FILTERS.replace("Filters", "State"),
+        JSON.stringify(state),
+      );
+      console.warn("Fell back to localStorage for game state");
     } catch (fallbackError) {
-      console.error('Fallback to localStorage also failed:', fallbackError);
+      console.error("Fallback to localStorage also failed:", fallbackError);
     }
   }
 }
@@ -96,19 +99,19 @@ export async function saveGameState(state: GameState): Promise<void> {
  */
 export async function clearGameState(): Promise<void> {
   await initializeStorage();
-  
+
   // Clear OPFS
   try {
     await deleteFile(GAME_STATE_FILENAME);
   } catch (error) {
-    console.error('Failed to clear game state from OPFS:', error);
+    console.error("Failed to clear game state from OPFS:", error);
   }
-  
+
   // Clear localStorage fallback
   try {
     localStorage.removeItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
   } catch (error) {
-    console.error('Failed to clear game state from localStorage fallback:', error);
+    console.error("Failed to clear game state from localStorage fallback:", error);
   }
 }
 
@@ -122,7 +125,7 @@ export function loadRaceFilters(): Record<string, string> {
       return JSON.parse(stored);
     }
   } catch (error) {
-    console.error('Failed to load race filters from localStorage:', error);
+    console.error("Failed to load race filters from localStorage:", error);
   }
   return {};
 }
@@ -134,7 +137,7 @@ export function saveRaceFilters(filters: Record<string, string>): void {
   try {
     localStorage.setItem(STORAGE_KEYS.RACE_FILTERS, JSON.stringify(filters));
   } catch (error) {
-    console.error('Failed to save race filters to localStorage:', error);
+    console.error("Failed to save race filters to localStorage:", error);
   }
 }
 
@@ -151,7 +154,7 @@ export function loadRaceHistoryLimit(): number {
       }
     }
   } catch (error) {
-    console.error('Failed to load race history limit from localStorage:', error);
+    console.error("Failed to load race history limit from localStorage:", error);
   }
   return 50;
 }
@@ -163,7 +166,7 @@ export function saveRaceHistoryLimit(limit: number): void {
   try {
     localStorage.setItem(STORAGE_KEYS.RACE_HISTORY_LIMIT, limit.toString());
   } catch (error) {
-    console.error('Failed to save race history limit to localStorage:', error);
+    console.error("Failed to save race history limit to localStorage:", error);
   }
 }
 
@@ -177,7 +180,7 @@ export function loadDayJump(): string | undefined {
       return stored;
     }
   } catch (error) {
-    console.error('Failed to load day jump from localStorage:', error);
+    console.error("Failed to load day jump from localStorage:", error);
   }
   return undefined;
 }
@@ -189,7 +192,7 @@ export function saveDayJump(value: string): void {
   try {
     localStorage.setItem(STORAGE_KEYS.RACES_DAY_JUMP, value);
   } catch (error) {
-    console.error('Failed to save day jump to localStorage:', error);
+    console.error("Failed to save day jump to localStorage:", error);
   }
 }
 
@@ -202,7 +205,7 @@ export function clearSettings(): void {
     localStorage.removeItem(STORAGE_KEYS.RACE_HISTORY_LIMIT);
     localStorage.removeItem(STORAGE_KEYS.RACES_DAY_JUMP);
   } catch (error) {
-    console.error('Failed to clear settings from localStorage:', error);
+    console.error("Failed to clear settings from localStorage:", error);
   }
 }
 

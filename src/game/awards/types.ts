@@ -25,7 +25,7 @@ export type EuropeanCategory =
   | "champion_2yo_filly"
   | "champion_3yo_colt"
   | "champion_3yo_filly"
-  | "champion_older_horse"  // Combined gender - unique to Europe
+  | "champion_older_horse" // Combined gender - unique to Europe
   | "champion_sprinter_eu"
   | "champion_stayer"
   | "award_of_merit";
@@ -36,27 +36,27 @@ export type AsiaPacificCategory =
   | "champion_2yo"
   | "champion_3yo"
   | "champion_sprinter_apac"
-  | "champion_middle_distance"  // 1400-2000m - unique
+  | "champion_middle_distance" // 1400-2000m - unique
   | "champion_stayer"
-  | "champion_filly_or_mare"   // Combined - unique
-  | "champion_international"   // Best performer outside home country
-  | "champion_trainer";        // Human award
+  | "champion_filly_or_mare" // Combined - unique
+  | "champion_international" // Best performer outside home country
+  | "champion_trainer"; // Human award
 
 // South American Categories (Gran Premio style)
 export type SouthAmericanCategory =
   | "horse_of_the_year"
-  | "potrillo_del_ano"      // 2YO colt
-  | "potranca_del_ano"      // 2YO filly
+  | "potrillo_del_ano" // 2YO colt
+  | "potranca_del_ano" // 2YO filly
   | "campeon_3yo_macho"
   | "campeona_3yo_hembras"
   | "campeon_mayor"
-  | "campeon_velocidad"     // Sprint
-  | "campeon_fondo";        // Stayer
+  | "campeon_velocidad" // Sprint
+  | "campeon_fondo"; // Stayer
 
-export type RegionalAwardCategory = 
-  | NorthAmericanCategory 
-  | EuropeanCategory 
-  | AsiaPacificCategory 
+export type RegionalAwardCategory =
+  | NorthAmericanCategory
+  | EuropeanCategory
+  | AsiaPacificCategory
   | SouthAmericanCategory;
 
 export interface RegionalAward {
@@ -66,14 +66,14 @@ export interface RegionalAward {
   category: RegionalAwardCategory;
   horseId: string;
   horseName: string;
-  stableId?: string;      // undefined = player horse
+  stableId?: string; // undefined = player horse
   points: number;
   runnerUpId?: string;
   runnerUpPoints: number;
-  margin: number;         // Points difference
-  qualifyingRaces: string[];  // Race IDs that contributed
-  isHistoric?: boolean;   // Particularly dominant win
-  ceremonyDay: number;    // Day of year when awarded
+  margin: number; // Points difference
+  qualifyingRaces: string[]; // Race IDs that contributed
+  isHistoric?: boolean; // Particularly dominant win
+  ceremonyDay: number; // Day of year when awarded
 }
 
 export interface RegionalAwardsConfig {
@@ -101,37 +101,37 @@ export interface AwardScoringWeights {
 // Country to Region mapping (matches gradedRaces.ts)
 export const COUNTRY_TO_REGION: Record<string, AwardRegion> = {
   // North America
-  "USA": "north_america",
-  "Canada": "north_america",
-  
+  USA: "north_america",
+  Canada: "north_america",
+
   // Europe/Middle East
   "Great Britain": "europe",
-  "Ireland": "europe",
-  "France": "europe",
-  "Germany": "europe",
-  "Italy": "europe",
-  "Spain": "europe",
-  "UAE": "europe",
-  "Turkey": "europe",
-  "Austria": "europe",
-  "Belgium": "europe",
+  Ireland: "europe",
+  France: "europe",
+  Germany: "europe",
+  Italy: "europe",
+  Spain: "europe",
+  UAE: "europe",
+  Turkey: "europe",
+  Austria: "europe",
+  Belgium: "europe",
   "Czech Republic": "europe",
-  "Hungary": "europe",
-  "Sweden": "europe",
-  "Norway": "europe",
-  "Denmark": "europe",
-  
+  Hungary: "europe",
+  Sweden: "europe",
+  Norway: "europe",
+  Denmark: "europe",
+
   // Asia-Pacific
-  "Japan": "asia_pacific",
+  Japan: "asia_pacific",
   "Hong Kong": "asia_pacific",
-  "Australia": "asia_pacific",
+  Australia: "asia_pacific",
   "New Zealand": "asia_pacific",
-  "Singapore": "asia_pacific",
-  
+  Singapore: "asia_pacific",
+
   // South America
-  "Argentina": "south_america",
-  "Brazil": "south_america",
-  "Chile": "south_america",
+  Argentina: "south_america",
+  Brazil: "south_america",
+  Chile: "south_america",
 };
 
 export const REGION_DISPLAY_NAMES: Record<AwardRegion, string> = {
@@ -160,7 +160,7 @@ export const REGIONAL_SCORING: Record<AwardRegion, AwardScoringWeights> = {
     BEYER_110_PLUS: 6,
   },
   europe: {
-    G1_WIN: 12,        // G1s worth more (fewer, higher prestige)
+    G1_WIN: 12, // G1s worth more (fewer, higher prestige)
     G2_WIN: 7,
     G3_WIN: 4,
     GRADED_PLACE: 3,
@@ -169,7 +169,7 @@ export const REGIONAL_SCORING: Record<AwardRegion, AwardScoringWeights> = {
     BEYER_110_PLUS: 4,
   },
   asia_pacific: {
-    G1_WIN: 15,        // Very high G1 weight
+    G1_WIN: 15, // Very high G1 weight
     G2_WIN: 8,
     G3_WIN: 5,
     GRADED_PLACE: 4,
@@ -196,17 +196,17 @@ export const SURFACE_BONUSES: Record<AwardRegion, Record<string, number>> = {
     synthetic: 1.0,
   },
   europe: {
-    turf: 1.2,      // Turf emphasized (+20%)
-    dirt: 0.8,      // Dirt de-emphasized (-20%)
+    turf: 1.2, // Turf emphasized (+20%)
+    dirt: 0.8, // Dirt de-emphasized (-20%)
     synthetic: 1.0,
   },
   asia_pacific: {
-    turf: 1.1,      // Slight turf emphasis
-    dirt: 0.9,      // Slight dirt penalty
+    turf: 1.1, // Slight turf emphasis
+    dirt: 0.9, // Slight dirt penalty
     synthetic: 1.0,
   },
   south_america: {
-    dirt: 1.0,      // Standard (most tracks dirt)
+    dirt: 1.0, // Standard (most tracks dirt)
     turf: 1.0,
     synthetic: 1.0,
   },
@@ -269,7 +269,7 @@ export const REGIONAL_CONFIGS: Record<AwardRegion, RegionalAwardsConfig> = {
     region: "north_america",
     name: "Eclipse Awards",
     displayName: "Eclipse Awards",
-    ceremonyDay: 365,  // December 31
+    ceremonyDay: 365, // December 31
     categories: NORTH_AMERICAN_CATEGORIES,
     countryEligibility: ["USA", "Canada"],
     scoringWeights: REGIONAL_SCORING.north_america,
@@ -280,9 +280,25 @@ export const REGIONAL_CONFIGS: Record<AwardRegion, RegionalAwardsConfig> = {
     region: "europe",
     name: "Cartier Racing Awards",
     displayName: "Cartier Racing Awards",
-    ceremonyDay: 314,  // November 10
+    ceremonyDay: 314, // November 10
     categories: EUROPEAN_CATEGORIES,
-    countryEligibility: ["Great Britain", "Ireland", "France", "Germany", "Italy", "Spain", "UAE", "Turkey", "Austria", "Belgium", "Czech Republic", "Hungary", "Sweden", "Norway", "Denmark"],
+    countryEligibility: [
+      "Great Britain",
+      "Ireland",
+      "France",
+      "Germany",
+      "Italy",
+      "Spain",
+      "UAE",
+      "Turkey",
+      "Austria",
+      "Belgium",
+      "Czech Republic",
+      "Hungary",
+      "Sweden",
+      "Norway",
+      "Denmark",
+    ],
     scoringWeights: REGIONAL_SCORING.europe,
     surfaceBonuses: SURFACE_BONUSES.europe,
     specialRules: ["Stayer: 2400m+", "Older Horse combined gender", "Turf emphasis"],
@@ -291,7 +307,7 @@ export const REGIONAL_CONFIGS: Record<AwardRegion, RegionalAwardsConfig> = {
     region: "asia_pacific",
     name: "Australian Thoroughbred Awards",
     displayName: "Australian Thoroughbred Awards",
-    ceremonyDay: 212,  // July 31
+    ceremonyDay: 212, // July 31
     categories: ASIA_PACIFIC_CATEGORIES,
     countryEligibility: ["Japan", "Hong Kong", "Australia", "New Zealand", "Singapore"],
     scoringWeights: REGIONAL_SCORING.asia_pacific,
@@ -302,7 +318,7 @@ export const REGIONAL_CONFIGS: Record<AwardRegion, RegionalAwardsConfig> = {
     region: "south_america",
     name: "Gran Premio Awards",
     displayName: "Gran Premio Awards",
-    ceremonyDay: 120,  // April 30
+    ceremonyDay: 120, // April 30
     categories: SOUTH_AMERICAN_CATEGORIES,
     countryEligibility: ["Argentina", "Brazil", "Chile"],
     scoringWeights: REGIONAL_SCORING.south_america,

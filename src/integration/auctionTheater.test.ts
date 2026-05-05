@@ -16,10 +16,22 @@ describe("auctionTheater integration", () => {
       genotype: {
         color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
         stats: {
-          speed: [[1, 1], [1, 1]],
-          stamina: [[1, 1], [1, 1]],
-          acceleration: [[1, 1], [1, 1]],
-          consistency: [[1, 1], [1, 1]],
+          speed: [
+            [1, 1],
+            [1, 1],
+          ],
+          stamina: [
+            [1, 1],
+            [1, 1],
+          ],
+          acceleration: [
+            [1, 1],
+            [1, 1],
+          ],
+          consistency: [
+            [1, 1],
+            [1, 1],
+          ],
         },
         preferences: { distance: [1, 1], surface: [1, 1], climbing: [1, 1], cornering: [1, 1] },
         style: [1, 1],
@@ -36,7 +48,10 @@ describe("auctionTheater integration", () => {
           geneticDiversity: 0.8,
           lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
         },
-        heart: [[1, 1], [1, 1]],
+        heart: [
+          [1, 1],
+          [1, 1],
+        ],
         fiberType: [1, 1],
         stride: [1, 1],
         trackBias: [1, 1],
@@ -46,7 +61,13 @@ describe("auctionTheater integration", () => {
         recovery: [1, 1],
         fertility: [1, 1],
         foalingEase: [1, 1],
-        markings: { socks: [1, 1], face: [1, 1], silverDapple: [1, 1], sabino: [1, 1], splashWhite: [1, 1] },
+        markings: {
+          socks: [1, 1],
+          face: [1, 1],
+          silverDapple: [1, 1],
+          sabino: [1, 1],
+          splashWhite: [1, 1],
+        },
         health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
       },
       energy: 100,
@@ -75,7 +96,13 @@ describe("auctionTheater integration", () => {
       recoveryRate: 1.0,
       fertility: 1.0,
       foalingEase: 1.0,
-      markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+      markings: {
+        socks: "none",
+        face: "none",
+        silverDapple: false,
+        sabino: false,
+        splashWhite: false,
+      },
       bleederRisk: 0.05,
       roarerRisk: 0.05,
       ocdRisk: 0.05,
@@ -134,8 +161,12 @@ describe("auctionTheater integration", () => {
     const sale = mkSale([lot]);
 
     const seed = 12345;
-    const runner1 = createAuctionRunner(sale, [bidder, consignor], [horse], seed, { liveMode: true });
-    const runner2 = createAuctionRunner(sale, [bidder, consignor], [horse], seed, { liveMode: true });
+    const runner1 = createAuctionRunner(sale, [bidder, consignor], [horse], seed, {
+      liveMode: true,
+    });
+    const runner2 = createAuctionRunner(sale, [bidder, consignor], [horse], seed, {
+      liveMode: true,
+    });
 
     // Run both to completion
     const events1 = runner1.runToCompletion();
@@ -154,14 +185,18 @@ describe("auctionTheater integration", () => {
     const sale = mkSale([lot]);
 
     const seed = 54321;
-    
+
     // Live mode (attended)
-    const liveRunner = createAuctionRunner(sale, [bidder, consignor], [horse], seed, { liveMode: true });
+    const liveRunner = createAuctionRunner(sale, [bidder, consignor], [horse], seed, {
+      liveMode: true,
+    });
     liveRunner.runToCompletion();
     const liveLots = liveRunner.finalLots();
 
     // Offline mode (unattended)
-    const offlineRunner = createAuctionRunner(sale, [bidder, consignor], [horse], seed, { liveMode: false });
+    const offlineRunner = createAuctionRunner(sale, [bidder, consignor], [horse], seed, {
+      liveMode: false,
+    });
     offlineRunner.runToCompletion();
     const offlineLots = offlineRunner.finalLots();
 
@@ -173,20 +208,25 @@ describe("auctionTheater integration", () => {
   });
 
   it("player bid integration: bid is accepted when valid", () => {
-    const horse = mkHorse({ stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40 }, potential: 50 });
+    const horse = mkHorse({
+      stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40 },
+      potential: 50,
+    });
     const bidder = mkStable({ id: "bidder" });
     const consignor = mkStable({ id: "consignor" });
     const lot = mkLot({ horseId: horse.id, consignorStableId: consignor.id });
     const sale = mkSale([lot]);
 
-    const runner = createAuctionRunner(sale, [bidder, consignor], [horse], Date.now(), { liveMode: true });
-    
+    const runner = createAuctionRunner(sale, [bidder, consignor], [horse], Date.now(), {
+      liveMode: true,
+    });
+
     // Step to open the lot first
     runner.step();
-    
+
     // Place a player bid
     const result = runner.step(5000);
-    
+
     expect(result.done).toBe(false);
     const lotState = runner.currentLot();
     // The bid should be at least the player's bid amount
@@ -208,14 +248,16 @@ describe("auctionTheater integration", () => {
     const lot2 = mkLot({ id: "lot2", horseId: horse2.id, consignorStableId: consignor.id });
     const sale = mkSale([lot1, lot2]);
 
-    const runner = createAuctionRunner(sale, [bidder, consignor], [horse1, horse2], Date.now(), { liveMode: true });
-    
+    const runner = createAuctionRunner(sale, [bidder, consignor], [horse1, horse2], Date.now(), {
+      liveMode: true,
+    });
+
     expect(runner.currentLotIndex()).toBe(0);
-    
+
     // Run first lot to completion (skip by running to completion on first lot context)
     // For simplicity, just verify that the runner can handle multiple lots
     runner.runToCompletion();
-    
+
     expect(runner.currentLotIndex()).toBe(2); // Should be at end
   });
 
@@ -226,11 +268,13 @@ describe("auctionTheater integration", () => {
     const lot = mkLot({ horseId: horse.id, consignorStableId: consignor.id });
     const sale = mkSale([lot]);
 
-    const runner = createAuctionRunner(sale, [bidder, consignor], [horse], Date.now(), { liveMode: true });
+    const runner = createAuctionRunner(sale, [bidder, consignor], [horse], Date.now(), {
+      liveMode: true,
+    });
     runner.runToCompletion();
-    
+
     const impacts = runner.finalImpacts({ day: 10, phase: "test" });
-    
+
     // Should have at least one AuctionResolutionImpact
     const auctionImpacts = impacts.filter((i) => i.type === "auction_resolution");
     expect(auctionImpacts.length).toBeGreaterThan(0);

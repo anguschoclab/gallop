@@ -9,7 +9,7 @@ interface SilkDotProps {
 
 /**
  * Silk Dot — A colored circle representing a horse's racing silks.
- * 
+ *
  * Design Bible Spec:
  * - Circular dot beside every horse name
  * - Border: 2px solid rgba(255,255,255,0.4) on dark backgrounds
@@ -27,9 +27,9 @@ export function SilkDot({ color, size = "md", initials, className }: SilkDotProp
     <div
       className={cn(
         "rounded-full flex items-center justify-center font-bold shrink-0",
-        "border-2 border-white/40 dark:border-white/40 border-slate-400/50",
+        "border-2 border-white/40 dark:border-white/40 border-cream-muted/50",
         sizeClasses[size],
-        className
+        className,
       )}
       style={{ backgroundColor: color }}
     >

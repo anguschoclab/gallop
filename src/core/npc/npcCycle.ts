@@ -17,7 +17,7 @@ export interface NpcCycleResult {
  * 1. NPC Training
  * 2. NPC Race Entry (3 days ahead)
  * 3. Horse Fame Updates for yesterday's races
- * 
+ *
  * @param npcStables - Array of NPC stables
  * @param horses - Current horse roster
  * @param races - Current race schedule
@@ -33,7 +33,7 @@ export function runNpcCycle(
   currentDay: number,
   rng: Rng,
   raceEntryDaysAhead: number = 3,
-  pregnantIds: Set<string> = new Set()
+  pregnantIds: Set<string> = new Set(),
 ): NpcCycleResult {
   // Skip if no NPC stables
   if (npcStables.length === 0) {
@@ -41,10 +41,10 @@ export function runNpcCycle(
   }
 
   // 1. NPC Training
-  let horsesAfterTraining = runNpcTraining(npcStables, horses, currentDay, rng);
-  
+  const horsesAfterTraining = runNpcTraining(npcStables, horses, currentDay, rng);
+
   // 2. NPC Race Entry (look ahead)
-  let racesAfterEntry = runNpcRaceEntry(
+  const racesAfterEntry = runNpcRaceEntry(
     npcStables,
     horsesAfterTraining,
     jockeys,
@@ -52,11 +52,11 @@ export function runNpcCycle(
     currentDay,
     rng,
     raceEntryDaysAhead,
-    pregnantIds
+    pregnantIds,
   );
-  
+
   // 3. Update fame for horses in yesterday's races
-  const yesterdayRaces = races.filter(r => r.day === currentDay && r.resolved && r.result);
+  const yesterdayRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
   let horsesAfterFame = horsesAfterTraining;
   for (const race of yesterdayRaces) {
     horsesAfterFame = updateHorseFame(horsesAfterFame, race);

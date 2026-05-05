@@ -47,7 +47,7 @@ export function initialStandingFee(horse: Horse, tier: StableTier): number {
 export function recalcStandingFee(
   baseFee: number,
   lifetimeStakesFoals: number,
-  lifetimeG1Foals: number
+  lifetimeG1Foals: number,
 ): number {
   const multiplier = 1 + 0.15 * lifetimeStakesFoals + 0.4 * lifetimeG1Foals;
   const capped = Math.min(multiplier, 4);
@@ -68,11 +68,11 @@ export function isStallionAvailable(stallion: Horse, day: number): boolean {
 // hemisphere. Sorted by fee ascending (cheapest first) for browsing.
 export function getAvailableStallions(
   state: Pick<GameState, "horses" | "day">,
-  mareHemisphere: Hemisphere
+  mareHemisphere: Hemisphere,
 ): Horse[] {
   return state.horses
     .filter((h) => h.stud?.atStud)
     .filter((h) => h.hemisphere === mareHemisphere)
     .filter((h) => isStallionAvailable(h, state.day))
-    .sort((a, b) => (a.stud!.standingFee - b.stud!.standingFee));
+    .sort((a, b) => a.stud!.standingFee - b.stud!.standingFee);
 }

@@ -28,9 +28,9 @@ const BREEDING_PERSONALITIES: readonly Stable["personality"][] = [
 // on top stallions; specialists are picky and willing to pay for the right fit.
 const SINGLE_FEE_CAP_FRACTION: Record<Stable["personality"], number> = {
   breeder: 0.35,
-  developer: 0.20,
-  prestige: 0.50,
-  specialist: 0.30,
+  developer: 0.2,
+  prestige: 0.5,
+  specialist: 0.3,
   aggressive: 0,
   conservative: 0,
   "win-now": 0,
@@ -44,7 +44,10 @@ const MIN_MARE_OVERALL: Record<Stable["personality"], number> = {
   developer: 35,
   prestige: 60,
   specialist: 45,
-  aggressive: 0, conservative: 0, "win-now": 0, trader: 0,
+  aggressive: 0,
+  conservative: 0,
+  "win-now": 0,
+  trader: 0,
 };
 
 // Inbreeding tolerance — max COI before the stable refuses the cross. Prestige
@@ -53,9 +56,12 @@ const MIN_MARE_OVERALL: Record<Stable["personality"], number> = {
 const MAX_COI: Record<Stable["personality"], number> = {
   breeder: 0.0625,
   developer: 0.05,
-  prestige: 0.10,
+  prestige: 0.1,
   specialist: 0.0625,
-  aggressive: 1, conservative: 1, "win-now": 1, trader: 1,
+  aggressive: 1,
+  conservative: 1,
+  "win-now": 1,
+  trader: 1,
 };
 
 function overallRating(h: Horse): number {
@@ -69,14 +75,15 @@ function scoreStallion(
   mare: Horse,
   stable: Stable,
   maxFee: number,
-  leaderboards?: Record<string, Leaderboard>
+  leaderboards?: Record<string, Leaderboard>,
 ): number {
   const compat = calculateBreedingCompatibility(stallion, mare).overallScore;
   const stud = stallion.stud!;
   const feeNorm = stud.standingFee / Math.max(1, maxFee);
-  const stakesRate = stud.lifetimeFoals > 0
-    ? (stud.lifetimeStakesFoals + 2 * stud.lifetimeG1Foals) / Math.max(5, stud.lifetimeFoals)
-    : 0;
+  const stakesRate =
+    stud.lifetimeFoals > 0
+      ? (stud.lifetimeStakesFoals + 2 * stud.lifetimeG1Foals) / Math.max(5, stud.lifetimeFoals)
+      : 0;
   // Fertility — high-fertility sires preferred (a wasted cover is a wasted year).
   const fertilityBonus = (stallion.fertility ?? 0.85) - 0.7; // 0..0.29
   const fameBonus = stallion.fame / 200;
@@ -84,29 +91,30 @@ function scoreStallion(
   // Leaderboard bonuses
   let leaderboardBonus = 0;
   if (leaderboards) {
-    const overallRank = leaderboards.overall?.rankings.find(r => r.stallionId === stallion.id);
-    const valueRank = leaderboards.value_sires?.rankings.find(r => r.stallionId === stallion.id);
-    
+    const overallRank = leaderboards.overall?.rankings.find((r) => r.stallionId === stallion.id);
+    const valueRank = leaderboards.value_sires?.rankings.find((r) => r.stallionId === stallion.id);
+
     if (overallRank && overallRank.rank <= 10) {
       leaderboardBonus += (11 - overallRank.rank) * 0.02; // Top 10 bonus
     }
-    
+
     if (valueRank && valueRank.rank <= 5 && stable.personality === "developer") {
       leaderboardBonus += (6 - valueRank.rank) * 0.03; // Value bonus for developers
     }
-    
+
     // Personality-specific leaderboard preferences
     if (stable.personality === "prestige") {
-      const g1Rank = leaderboards.g1_producers?.rankings.find(r => r.stallionId === stallion.id);
+      const g1Rank = leaderboards.g1_producers?.rankings.find((r) => r.stallionId === stallion.id);
       if (g1Rank && g1Rank.rank <= 5) {
         leaderboardBonus += (6 - g1Rank.rank) * 0.04; // G1 bonus for prestige
       }
     }
-    
+
     if (stable.personality === "specialist") {
-      const specialistRank = stable.preferredSurface === "Turf"
-        ? leaderboards.turf_specialists?.rankings.find(r => r.stallionId === stallion.id)
-        : leaderboards.dirt_specialists?.rankings.find(r => r.stallionId === stallion.id);
+      const specialistRank =
+        stable.preferredSurface === "Turf"
+          ? leaderboards.turf_specialists?.rankings.find((r) => r.stallionId === stallion.id)
+          : leaderboards.dirt_specialists?.rankings.find((r) => r.stallionId === stallion.id);
       if (specialistRank && specialistRank.rank <= 5) {
         leaderboardBonus += (6 - specialistRank.rank) * 0.03;
       }
@@ -116,19 +124,45 @@ function scoreStallion(
   switch (stable.personality) {
     case "breeder":
       // Balanced: compatibility, proven record, value, fertility, fame, leaderboard influence.
-      return compat * 0.45 + stakesRate * 0.25 + (1 - feeNorm) * 0.15 + fertilityBonus * 0.05 + fameBonus * 0.05 + leaderboardBonus * 0.05;
+      return (
+        compat * 0.45 +
+        stakesRate * 0.25 +
+        (1 - feeNorm) * 0.15 +
+        fertilityBonus * 0.05 +
+        fameBonus * 0.05 +
+        leaderboardBonus * 0.05
+      );
     case "developer":
       // Value-hunters: heavily weight inverse fee + leaderboard value rankings.
-      return compat * 0.30 + (1 - feeNorm) * 0.35 + stakesRate * 0.15 + fertilityBonus * 0.10 + leaderboardBonus * 0.10;
+      return (
+        compat * 0.3 +
+        (1 - feeNorm) * 0.35 +
+        stakesRate * 0.15 +
+        fertilityBonus * 0.1 +
+        leaderboardBonus * 0.1
+      );
     case "prestige":
       // Brand-chasers: weight fame, classification, high fee, and G1 leaderboards.
-      return compat * 0.25 + stakesRate * 0.25 + fameBonus * 0.20 + feeNorm * 0.10 + fertilityBonus * 0.05 + leaderboardBonus * 0.15;
+      return (
+        compat * 0.25 +
+        stakesRate * 0.25 +
+        fameBonus * 0.2 +
+        feeNorm * 0.1 +
+        fertilityBonus * 0.05 +
+        leaderboardBonus * 0.15
+      );
     case "specialist": {
       // Match stallion's distance aptitude to the stable's preference + specialist leaderboards.
       const stableDist = stable.preferredDistance ?? 1600;
       const stallionDistDiff = Math.abs((stallion.distanceAptitude ?? 1600) - stableDist);
       const distMatch = Math.max(0, 1 - stallionDistDiff / 1000);
-      return compat * 0.35 + distMatch * 0.25 + stakesRate * 0.20 + (1 - feeNorm) * 0.10 + leaderboardBonus * 0.10;
+      return (
+        compat * 0.35 +
+        distMatch * 0.25 +
+        stakesRate * 0.2 +
+        (1 - feeNorm) * 0.1 +
+        leaderboardBonus * 0.1
+      );
     }
     default:
       return compat + leaderboardBonus * 0.1;
@@ -144,7 +178,7 @@ function scoreStallion(
 export function runNpcBreeding(
   state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day" | "sireLeaderboards">,
   newDay: number,
-  rng: Rng
+  rng: Rng,
 ): {
   horses: Horse[];
   npcStables: Stable[];
@@ -172,12 +206,15 @@ export function runNpcBreeding(
     // Mares of breeding age in the hemisphere whose season just opened, above
     // the personality's quality floor.
     const stableHorses = horses.filter((h) => h.stableId === stable.id);
-    const candidateMares = stableHorses.filter((h) =>
-      (h.gender === "mare" || h.gender === "filly") &&
-      h.age >= 3 && h.age <= 20 &&
-      ((h.hemisphere === "Northern" && northernStart) || (h.hemisphere === "Southern" && southernStart)) &&
-      !state.pregnancies.some((p) => !p.resolved && p.damId === h.id) &&
-      overallRating(h) >= minMareQuality
+    const candidateMares = stableHorses.filter(
+      (h) =>
+        (h.gender === "mare" || h.gender === "filly") &&
+        h.age >= 3 &&
+        h.age <= 20 &&
+        ((h.hemisphere === "Northern" && northernStart) ||
+          (h.hemisphere === "Southern" && southernStart)) &&
+        !state.pregnancies.some((p) => !p.resolved && p.damId === h.id) &&
+        overallRating(h) >= minMareQuality,
     );
 
     // Best mares first — the stable's best cash on its best mares.
@@ -239,7 +276,7 @@ export function runNpcBreeding(
       horses = horses.map((h) =>
         h.id === best!.id && h.stud
           ? { ...h, stud: { ...h.stud, seasonBookings: h.stud.seasonBookings + 1 } }
-          : h
+          : h,
       );
 
       const preg: Pregnancy = {

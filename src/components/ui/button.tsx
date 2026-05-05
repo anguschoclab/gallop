@@ -11,8 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-gold text-t950 shadow hover:bg-gold-light",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        outline:
-          "border border-gold-muted text-gold bg-transparent shadow-sm hover:bg-gold-subtle",
+        outline: "border border-gold-muted text-gold bg-transparent shadow-sm hover:bg-gold-subtle",
         secondary: "bg-t700 text-cream shadow-sm hover:bg-t600",
         ghost: "text-cream-muted hover:text-cream hover:bg-gold-subtle",
         link: "text-gold underline-offset-4 hover:underline",

@@ -30,7 +30,7 @@ async function getTrackGeometry(name: string, country: string) {
     >;
     out skel qt;
   `;
-  
+
   try {
     const data = await queryOverpass(query);
     if (!data.elements || data.elements.length === 0) {
@@ -56,14 +56,14 @@ async function getTrackGeometry(name: string, country: string) {
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371e3; // meters
-  const phi1 = lat1 * Math.PI / 180;
-  const phi2 = lat2 * Math.PI / 180;
-  const dPhi = (lat2 - lat1) * Math.PI / 180;
-  const dLambda = (lon2 - lon1) * Math.PI / 180;
+  const phi1 = (lat1 * Math.PI) / 180;
+  const phi2 = (lat2 * Math.PI) / 180;
+  const dPhi = ((lat2 - lat1) * Math.PI) / 180;
+  const dLambda = ((lon2 - lon1) * Math.PI) / 180;
 
-  const a = Math.sin(dPhi / 2) * Math.sin(dPhi / 2) +
-            Math.cos(phi1) * Math.cos(phi2) *
-            Math.sin(dLambda / 2) * Math.sin(dLambda / 2);
+  const a =
+    Math.sin(dPhi / 2) * Math.sin(dPhi / 2) +
+    Math.cos(phi1) * Math.cos(phi2) * Math.sin(dLambda / 2) * Math.sin(dLambda / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return R * c;
@@ -81,7 +81,7 @@ function calculateSections(nodes: any[]) {
     const n3 = nodes[i + 2] || nodes[0];
 
     const dist = calculateDistance(n1.lat, n1.lon, n2.lat, n2.lon);
-    
+
     // Calculate curvature at n2
     // We look at the angle between (n1,n2) and (n2,n3)
     const bearing1 = Math.atan2(n2.lon - n1.lon, n2.lat - n1.lat);
@@ -134,13 +134,14 @@ async function run() {
         c.sections = sections;
         c.circumference = Math.round(sections.reduce((acc, s) => acc + s.length, 0));
         // Find longest straight for home straight
-        const straights = sections.filter(s => s.type === "straight");
-        c.straightLength = straights.length > 0 ? Math.round(Math.max(...straights.map(s => s.length))) : 400;
+        const straights = sections.filter((s) => s.type === "straight");
+        c.straightLength =
+          straights.length > 0 ? Math.round(Math.max(...straights.map((s) => s.length))) : 400;
       });
       console.log(`  Found ${sections.length} sections.`);
     }
     // Rate limiting for Overpass
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
   }
 
   fs.writeFileSync(tracksJsonPath, JSON.stringify(tracks, null, 2));

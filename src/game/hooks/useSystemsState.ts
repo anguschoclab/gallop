@@ -18,7 +18,13 @@ export const useIndustryMeanEarnings = () => useGame((s: GameState) => s.industr
  * Use this when you need multiple systems state values in a single hook call
  * Note: Uses type assertion to work around Zustand typing limitation
  */
-export const useSystemsState = () => (useGame as any)(
-  (s: GameState) => ({ npcStables: s.npcStables, jockeys: s.jockeys ?? [], awards: s.awards, campaigns: s.campaigns ?? [] }),
-  shallow
-);
+export const useSystemsState = () =>
+  (useGame as any)(
+    (s: GameState) => ({
+      npcStables: s.npcStables,
+      jockeys: s.jockeys ?? [],
+      awards: s.awards,
+      campaigns: s.campaigns ?? [],
+    }),
+    shallow,
+  );

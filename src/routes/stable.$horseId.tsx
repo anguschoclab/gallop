@@ -5,7 +5,13 @@ import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { HorseStats, SilkBadge, NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
@@ -29,7 +35,9 @@ export const Route = createFileRoute("/stable/$horseId")({
   notFoundComponent: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Horse not found</h1>
-      <Link to="/stable" className="text-gold underline">Back to stable</Link>
+      <Link to="/stable" className="text-gold underline">
+        Back to stable
+      </Link>
     </div>
   ),
 });
@@ -58,24 +66,31 @@ function HorseDetail() {
   const slotsLeft = 2 - trainingUsed;
   const isPregnant = !!pregnancy;
   const isConsigned = !!horse.consignedSaleId;
-  const consignedSale = isConsigned ? auctions.find((a) => a.id === horse.consignedSaleId) : undefined;
-  // Find eligible upcoming sales to consign to
-  const eligibleSale = !isConsigned && horse.owned
-    ? auctions.find((a) => {
-        if (a.resolved) return false;
-        const ageMatch =
-          (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
-          ((horse.age === 1 || horse.age === 2) && (a.kind === "yearling" || a.kind === "yearling_south"));
-        return ageMatch;
-      })
+  const consignedSale = isConsigned
+    ? auctions.find((a) => a.id === horse.consignedSaleId)
     : undefined;
+  // Find eligible upcoming sales to consign to
+  const eligibleSale =
+    !isConsigned && horse.owned
+      ? auctions.find((a) => {
+          if (a.resolved) return false;
+          const ageMatch =
+            (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
+            ((horse.age === 1 || horse.age === 2) &&
+              (a.kind === "yearling" || a.kind === "yearling_south"));
+          return ageMatch;
+        })
+      : undefined;
 
   const ovr = calculateOverallRating(horse);
 
   return (
     <div className="space-y-6">
       <div>
-        <Link to="/stable" className="inline-flex items-center gap-1 text-sm text-cream-muted hover:text-cream mb-3 font-[family-name:var(--font-body)]">
+        <Link
+          to="/stable"
+          className="inline-flex items-center gap-1 text-sm text-cream-muted hover:text-cream mb-3 font-[family-name:var(--font-body)]"
+        >
           <ArrowLeft className="h-4 w-4" /> Back to stable
         </Link>
         <div className="flex items-start gap-6">
@@ -83,18 +98,26 @@ function HorseDetail() {
           <SilkDot color={horse.silk} size="lg" />
           <div className="flex-1">
             {/* Display font for horse name */}
-            <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">{horse.name}</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+              {horse.name}
+            </h1>
             <p className="text-cream-muted font-[family-name:var(--font-body)]">
-              Age <NumericValue value={horse.age} /> · OVR <NumericValue value={ovr} /> · Potential <NumericValue value={horse.potential} />
+              Age <NumericValue value={horse.age} /> · OVR <NumericValue value={ovr} /> · Potential{" "}
+              <NumericValue value={horse.potential} />
             </p>
             {(() => {
               const ability = getAbility(horse);
               const family = horse.bruceLoweFamily;
-              const familyRoleLabel = family === undefined ? null
-                : [1, 2, 4, 5].includes(family) ? "Running"
-                : family === 3 ? "Running/Sire"
-                : [8, 11, 12, 14].includes(family) ? "Sire"
-                : null;
+              const familyRoleLabel =
+                family === undefined
+                  ? null
+                  : [1, 2, 4, 5].includes(family)
+                    ? "Running"
+                    : family === 3
+                      ? "Running/Sire"
+                      : [8, 11, 12, 14].includes(family)
+                        ? "Sire"
+                        : null;
               return (
                 <div className="flex flex-wrap items-center gap-2 mt-1 text-sm">
                   <Badge className="bg-t700 text-cream">
@@ -110,7 +133,8 @@ function HorseDetail() {
                   )}
                   {family !== undefined && (
                     <Badge variant="outline" title="Bruce Lowe tail-female family number">
-                      Family {family}{familyRoleLabel ? ` · ${familyRoleLabel}` : ""}
+                      Family {family}
+                      {familyRoleLabel ? ` · ${familyRoleLabel}` : ""}
                     </Badge>
                   )}
                 </div>
@@ -122,34 +146,46 @@ function HorseDetail() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="border-gold-muted">
-          <CardHeader><CardTitle className="font-[family-name:var(--font-display)]">Stats</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="font-[family-name:var(--font-display)]">Stats</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-4">
             <HorseStatsRadar horse={horse} />
             <HorseStats horse={horse} />
             <div className="flex flex-wrap gap-2 pt-2">
               <Badge className="bg-t700 text-cream">Energy ⚡ {horse.energy}/100</Badge>
-              <Badge className={horse.form >= 0 ? "bg-gold text-t950" : "bg-destructive text-destructive-foreground"}>
-                Form {horse.form > 0 ? "+" : ""}{horse.form}
+              <Badge
+                className={
+                  horse.form >= 0
+                    ? "bg-gold text-t950"
+                    : "bg-destructive text-destructive-foreground"
+                }
+              >
+                Form {horse.form > 0 ? "+" : ""}
+                {horse.form}
               </Badge>
               {isPregnant && (
                 <Badge className="bg-fame text-t950 border-fame" variant="outline">
                   In foal · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
                 </Badge>
               )}
-              {horse.winAndYouInQualified && horse.winAndYouInQualified.length > 0 && horse.winAndYouInQualified.filter(q => q.year === getCurrentYear(day)).length > 0 && (
-                <>
-                  {horse.winAndYouInQualified
-                    .filter(q => q.year === getCurrentYear(day))
-                    .map(q => {
-                      const gradedRace = GRADED_RACES.find(g => g.key === q.raceKey);
-                      return (
-                        <Badge key={q.raceKey} className="bg-gold text-t950">
-                          Qualified for {gradedRace?.name || q.raceKey}
-                        </Badge>
-                      );
-                    })}
-                </>
-              )}
+              {horse.winAndYouInQualified &&
+                horse.winAndYouInQualified.length > 0 &&
+                horse.winAndYouInQualified.filter((q) => q.year === getCurrentYear(day)).length >
+                  0 && (
+                  <>
+                    {horse.winAndYouInQualified
+                      .filter((q) => q.year === getCurrentYear(day))
+                      .map((q) => {
+                        const gradedRace = GRADED_RACES.find((g) => g.key === q.raceKey);
+                        return (
+                          <Badge key={q.raceKey} className="bg-gold text-t950">
+                            Qualified for {gradedRace?.name || q.raceKey}
+                          </Badge>
+                        );
+                      })}
+                  </>
+                )}
             </div>
           </CardContent>
         </Card>
@@ -170,7 +206,9 @@ function HorseDetail() {
                     <span className="text-sm">{consignedSale.name}</span>
                   </div>
                   <Link to="/auction/$saleId" params={{ saleId: consignedSale.id }}>
-                    <Button size="sm" variant="outline" className="w-full">View Sale</Button>
+                    <Button size="sm" variant="outline" className="w-full">
+                      View Sale
+                    </Button>
                   </Link>
                   <Button
                     size="sm"
@@ -179,7 +217,9 @@ function HorseDetail() {
                     onClick={() => withdrawConsignment(horse.id)}
                     disabled={consignedSale.day - day < 3}
                   >
-                    {consignedSale.day - day < 3 ? "Cannot withdraw (< 3 days)" : "Withdraw Consignment"}
+                    {consignedSale.day - day < 3
+                      ? "Cannot withdraw (< 3 days)"
+                      : "Withdraw Consignment"}
                   </Button>
                 </>
               ) : eligibleSale ? (
@@ -215,15 +255,23 @@ function HorseDetail() {
               <Button
                 key={k}
                 onClick={() => trainHorse(horse.id, k)}
-                disabled={isPregnant || slotsLeft <= 0 || cash < TRAINING_COST || horse.energy < 15 || horse.stats[k] >= horse.potential}
+                disabled={
+                  isPregnant ||
+                  slotsLeft <= 0 ||
+                  cash < TRAINING_COST ||
+                  horse.energy < 15 ||
+                  horse.stats[k] >= horse.potential
+                }
                 className="w-full justify-between"
                 variant="outline"
               >
                 <span className="capitalize">{k} work</span>
-                <span className="text-cream-muted">{horse.stats[k]} → {Math.min(horse.potential, horse.stats[k] + 1)}</span>
+                <span className="text-cream-muted">
+                  {horse.stats[k]} → {Math.min(horse.potential, horse.stats[k] + 1)}
+                </span>
               </Button>
             ))}
-            
+
             {/* Advanced workout types */}
             <div className="pt-2 border-t border-gold-muted/30">
               <p className="text-xs text-cream-muted mb-2">Advanced Workouts</p>
@@ -243,7 +291,9 @@ function HorseDetail() {
                   variant="outline"
                 >
                   <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "bullet") ? <Lock className="h-3 w-3" /> : null}
+                    {!facilities || !isWorkoutEnabled(facilities, "bullet") ? (
+                      <Lock className="h-3 w-3" />
+                    ) : null}
                     <span>Bullet</span>
                   </div>
                   <span className="text-cream-muted">$100</span>
@@ -262,7 +312,9 @@ function HorseDetail() {
                   variant="outline"
                 >
                   <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "breeze") ? <Lock className="h-3 w-3" /> : null}
+                    {!facilities || !isWorkoutEnabled(facilities, "breeze") ? (
+                      <Lock className="h-3 w-3" />
+                    ) : null}
                     <span>Breeze</span>
                   </div>
                   <span className="text-cream-muted">$85</span>
@@ -281,7 +333,9 @@ function HorseDetail() {
                   variant="outline"
                 >
                   <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "gate_work") ? <Lock className="h-3 w-3" /> : null}
+                    {!facilities || !isWorkoutEnabled(facilities, "gate_work") ? (
+                      <Lock className="h-3 w-3" />
+                    ) : null}
                     <span>Gate Work</span>
                   </div>
                   <span className="text-cream-muted">$90</span>
@@ -300,7 +354,9 @@ function HorseDetail() {
                   variant="outline"
                 >
                   <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "swimming") ? <Lock className="h-3 w-3" /> : null}
+                    {!facilities || !isWorkoutEnabled(facilities, "swimming") ? (
+                      <Lock className="h-3 w-3" />
+                    ) : null}
                     <span>Swimming</span>
                   </div>
                   <span className="text-cream-muted">$80</span>
@@ -319,14 +375,16 @@ function HorseDetail() {
                   variant="outline"
                 >
                   <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "gallop") ? <Lock className="h-3 w-3" /> : null}
+                    {!facilities || !isWorkoutEnabled(facilities, "gallop") ? (
+                      <Lock className="h-3 w-3" />
+                    ) : null}
                     <span>Gallop</span>
                   </div>
                   <span className="text-cream-muted">$70</span>
                 </Button>
               </div>
             </div>
-            
+
             <Button
               onClick={() => trainHorse(horse.id, "rest")}
               disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}
@@ -341,8 +399,12 @@ function HorseDetail() {
 
       <Card className="border-gold-muted">
         <CardHeader>
-          <CardTitle className="font-[family-name:var(--font-display)]">Beyer Speed Figure trend</CardTitle>
-          <p className="text-xs text-cream-muted">Last {Math.min(10, horse.raceHistory.length)} races, oldest → newest</p>
+          <CardTitle className="font-[family-name:var(--font-display)]">
+            Beyer Speed Figure trend
+          </CardTitle>
+          <p className="text-xs text-cream-muted">
+            Last {Math.min(10, horse.raceHistory.length)} races, oldest → newest
+          </p>
         </CardHeader>
         <CardContent>
           <BeyerChart history={horse.raceHistory} />
@@ -357,7 +419,10 @@ function HorseDetail() {
         <CardHeader>
           <CardTitle className="font-[family-name:var(--font-display)]">Race history</CardTitle>
           <div className="flex items-center gap-2 mt-2">
-            <Select value={raceHistoryLimit.toString()} onValueChange={(v) => setRaceHistoryLimit(Number(v))}>
+            <Select
+              value={raceHistoryLimit.toString()}
+              onValueChange={(v) => setRaceHistoryLimit(Number(v))}
+            >
               <SelectTrigger className="w-[120px] h-8 text-xs">
                 <SelectValue placeholder="History limit" />
               </SelectTrigger>
@@ -375,14 +440,21 @@ function HorseDetail() {
           ) : (
             <div className="space-y-1">
               {horse.raceHistory.slice(0, raceHistoryLimit).map((r, i) => (
-                <div key={i} className="flex justify-between text-sm py-1 border-b border-gold-muted last:border-0">
+                <div
+                  key={i}
+                  className="flex justify-between text-sm py-1 border-b border-gold-muted last:border-0"
+                >
                   <span>{r.raceName}</span>
                   <span className="flex gap-3 items-center">
                     {typeof r.beyer === "number" && (
                       <span className="text-xs text-cream-muted">Beyer {r.beyer}</span>
                     )}
                     <span className="text-cream-muted">D{r.day}</span>
-                    <Badge variant={r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"}>
+                    <Badge
+                      variant={
+                        r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"
+                      }
+                    >
                       {r.position}
                     </Badge>
                   </span>

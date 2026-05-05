@@ -2,7 +2,13 @@ import { describe, it, expect } from "vitest";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
 import type { Horse } from "@/game/types";
 
-function mkHorse(speed: number, stamina: number, acceleration: number, consistency: number, potential = 80): Horse {
+function mkHorse(
+  speed: number,
+  stamina: number,
+  acceleration: number,
+  consistency: number,
+  potential = 80,
+): Horse {
   return {
     id: "h",
     name: "Test",

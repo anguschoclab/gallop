@@ -37,7 +37,6 @@ export type TrackSchedule = {
   regionalSystem: "north_america" | "europe" | "australia" | "asia" | "south_america";
 };
 
-
 import TRACK_DATA from "./data/tracks.json";
 
 // All tracks with their UUIDs
@@ -45,12 +44,10 @@ export const TRACKS: Track[] = TRACK_DATA as Track[];
 
 // Lookup maps
 export const TRACK_BY_NAME: Record<string, Track> = Object.fromEntries(
-  TRACKS.map((t) => [t.name, t])
+  TRACKS.map((t) => [t.name, t]),
 );
 
-export const TRACK_BY_ID: Record<string, Track> = Object.fromEntries(
-  TRACKS.map((t) => [t.id, t])
-);
+export const TRACK_BY_ID: Record<string, Track> = Object.fromEntries(TRACKS.map((t) => [t.id, t]));
 
 // Helper functions
 export function getTrackByName(name: string): Track | undefined {
@@ -69,9 +66,12 @@ export function getCountryByTrackName(name: string): string {
 /**
  * Returns the specific course specification for a track and surface.
  */
-export function getCourseSpec(trackId: string, surface: "Turf" | "Dirt" | "Synthetic"): CourseSpecification | undefined {
+export function getCourseSpec(
+  trackId: string,
+  surface: "Turf" | "Dirt" | "Synthetic",
+): CourseSpecification | undefined {
   const track = getTrackById(trackId);
-  return track?.courses.find(c => c.surface === surface);
+  return track?.courses.find((c) => c.surface === surface);
 }
 
 /**

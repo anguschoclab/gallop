@@ -23,13 +23,18 @@ let match;
 
 while ((match = objectRegex.exec(tracksRaw)) !== null) {
   const objContent = match[1];
-  
+
   // Extract fields
   const id = objContent.match(/id: "(.*?)"/)?.[1];
   const name = objContent.match(/name: "(.*?)"/)?.[1];
   const country = objContent.match(/country: "(.*?)"/)?.[1];
   const surfacesMatch = objContent.match(/surfaces: \[(.*?)\]/);
-  const surfaces = surfacesMatch ? surfacesMatch[1].replace(/"/g, "").split(",").map(s => s.trim()) : [];
+  const surfaces = surfacesMatch
+    ? surfacesMatch[1]
+        .replace(/"/g, "")
+        .split(",")
+        .map((s) => s.trim())
+    : [];
   const circumference = parseInt(objContent.match(/circumference: (\d+)/)?.[1] || "1600");
   const straightLength = parseInt(objContent.match(/straightLength: (\d+)/)?.[1] || "400");
 
@@ -38,12 +43,12 @@ while ((match = objectRegex.exec(tracksRaw)) !== null) {
       id,
       name,
       country,
-      courses: surfaces.map(s => ({
+      courses: surfaces.map((s) => ({
         surface: s,
         circumference,
         straightLength,
-        sections: [] // To be filled by ingestion
-      }))
+        sections: [], // To be filled by ingestion
+      })),
     });
   }
 }

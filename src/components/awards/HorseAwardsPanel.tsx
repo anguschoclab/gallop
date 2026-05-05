@@ -80,9 +80,7 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
                   />
                   <div className="text-sm">
                     <div className="font-medium">{award.year}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {award.points} points
-                    </div>
+                    <div className="text-xs text-muted-foreground">{award.points} points</div>
                   </div>
                 </div>
               ))}
@@ -99,12 +97,7 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
             </h4>
             <div className="grid gap-2">
               {categoryAwards.slice(0, 6).map((award) => (
-                <AwardBadge
-                  key={award.id}
-                  award={award}
-                  variant="inline"
-                  showYear
-                />
+                <AwardBadge key={award.id} award={award} variant="inline" showYear />
               ))}
               {categoryAwards.length > 6 && (
                 <p className="text-xs text-muted-foreground text-center">
@@ -129,7 +122,8 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
             <div>
               <div className="text-lg font-bold">
                 {Math.max(...sortedAwards.map((a) => a.year)) -
-                  Math.min(...sortedAwards.map((a) => a.year)) + 1}
+                  Math.min(...sortedAwards.map((a) => a.year)) +
+                  1}
               </div>
               <div className="text-xs text-muted-foreground">Years Active</div>
             </div>

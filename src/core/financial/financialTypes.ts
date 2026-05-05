@@ -106,19 +106,12 @@ export interface CashFlowEntry {
 /**
  * Cash flow categories
  */
-export type CashFlowCategory =
-  | "income"
-  | "expense"
-  | "transfer"
-  | "adjustment";
+export type CashFlowCategory = "income" | "expense" | "transfer" | "adjustment";
 
 /**
  * Calculate net profit from income and expenses
  */
-export function calculateNetProfit(
-  income: IncomeSummary,
-  expenses: ExpenseSummary
-): number {
+export function calculateNetProfit(income: IncomeSummary, expenses: ExpenseSummary): number {
   return income.total - expenses.total;
 }
 

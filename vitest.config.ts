@@ -31,7 +31,7 @@ function testSourceRedirectPlugin(): Plugin {
 
       // Build what the path would look like without the "tests/" segment
       const relative = path.relative(testsRoot, importerDir); // e.g. "game" or "core/breeding"
-      const sourceRoot = path.join(srcRoot, relative);        // e.g. src/game or src/core/breeding
+      const sourceRoot = path.join(srcRoot, relative); // e.g. src/game or src/core/breeding
 
       // Resolve the specifier relative to the source root instead
       const resolved = path.resolve(sourceRoot, source);

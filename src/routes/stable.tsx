@@ -19,7 +19,7 @@ function StablePage() {
   const horses = useHorses();
   const awards = useAwards();
   const npcStables = useNpcStables();
-  
+
   const myHorses = useMemo(() => horses.filter((h) => h.owned), [horses]);
   const playerAwards = useMemo(() => awards.filter((a) => !a.stableId), [awards]);
   const allHorses = horses;
@@ -27,7 +27,9 @@ function StablePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Stable Management</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+          Stable Management
+        </h1>
         <p className="text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">
           <NumericValue value={myHorses.length} /> horses in training
         </p>
@@ -37,32 +39,48 @@ function StablePage() {
         <Link to="/stallions">
           <Card className="hover:bg-t700 transition-colors border-gold-muted">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">Stallions at Stud</CardTitle>
-              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">View available stallions for breeding</p>
+              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">
+                Stallions at Stud
+              </CardTitle>
+              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                View available stallions for breeding
+              </p>
             </CardHeader>
           </Card>
         </Link>
         <Link to="/jockeys">
           <Card className="hover:bg-t700 transition-colors border-gold-muted">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">Jockeys</CardTitle>
-              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Manage your jockey roster</p>
+              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">
+                Jockeys
+              </CardTitle>
+              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                Manage your jockey roster
+              </p>
             </CardHeader>
           </Card>
         </Link>
         <Link to="/horse-gallery">
           <Card className="hover:bg-t700 transition-colors border-gold-muted">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">Horse Gallery</CardTitle>
-              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">View your horses in a gallery format</p>
+              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">
+                Horse Gallery
+              </CardTitle>
+              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                View your horses in a gallery format
+              </p>
             </CardHeader>
           </Card>
         </Link>
         <Link to="/scheduler">
           <Card className="hover:bg-t700 transition-colors border-gold-muted">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">Campaign Scheduler</CardTitle>
-              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Plan race campaigns for your horses</p>
+              <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">
+                Campaign Scheduler
+              </CardTitle>
+              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                Plan race campaigns for your horses
+              </p>
             </CardHeader>
           </Card>
         </Link>
@@ -81,12 +99,7 @@ function StablePage() {
         </TabsList>
 
         <TabsContent value="roster" className="space-y-4">
-          {playerAwards.length > 0 && (
-            <TrophyCase
-              awards={playerAwards}
-              variant="compact"
-            />
-          )}
+          {playerAwards.length > 0 && <TrophyCase awards={playerAwards} variant="compact" />}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {myHorses.map((h) => (
@@ -107,20 +120,28 @@ function StablePage() {
         <TabsContent value="rivals" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {npcStables.map((stable) => {
-              const stableHorses = allHorses.filter(h => h.stableId === stable.id);
+              const stableHorses = allHorses.filter((h) => h.stableId === stable.id);
               return (
                 <Link key={stable.id} to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
                   <Card className="hover:bg-t700 transition-colors border-gold-muted">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-base font-[family-name:var(--font-display)]">{stable.name}</CardTitle>
-                      <p className="text-xs text-cream-muted capitalize font-[family-name:var(--font-body)]">{stable.personality} strategy</p>
+                      <CardTitle className="text-base font-[family-name:var(--font-display)]">
+                        {stable.name}
+                      </CardTitle>
+                      <p className="text-xs text-cream-muted capitalize font-[family-name:var(--font-body)]">
+                        {stable.personality} strategy
+                      </p>
                     </CardHeader>
                     <CardContent>
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-cream-muted font-[family-name:var(--font-body)]">
                           <NumericValue value={stableHorses.length} /> horses
                         </span>
-                        <Badge className={cn("font-[family-name:var(--font-mono)] tabular-nums bg-t700 text-cream")}>
+                        <Badge
+                          className={cn(
+                            "font-[family-name:var(--font-mono)] tabular-nums bg-t700 text-cream",
+                          )}
+                        >
                           ${stable.cash.toLocaleString()}
                         </Badge>
                       </div>

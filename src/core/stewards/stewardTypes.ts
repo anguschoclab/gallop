@@ -19,7 +19,13 @@ export type InquiryStatus = "pending" | "reviewing" | "resolved" | "dismissed";
 /**
  * Inquiry outcome
  */
-export type InquiryOutcome = "no_action" | "warning" | "fine" | "suspension" | "disqualification" | "dq_placed_last";
+export type InquiryOutcome =
+  | "no_action"
+  | "warning"
+  | "fine"
+  | "suspension"
+  | "disqualification"
+  | "dq_placed_last";
 
 /**
  * Stewards inquiry
@@ -54,7 +60,7 @@ export function createStewardsInquiry(
     accusedJockeyId?: string;
     reportingHorseId?: string;
     evidence?: string[];
-  } = {}
+  } = {},
 ): StewardsInquiry {
   return {
     id: crypto.randomUUID(),
@@ -76,7 +82,7 @@ export function createStewardsInquiry(
 export function generateRandomInquiry(
   raceId: string,
   day: number,
-  horseIds: string[]
+  horseIds: string[],
 ): StewardsInquiry | null {
   // 5% chance of an inquiry
   if (Math.random() > 0.05) return null;
@@ -84,7 +90,9 @@ export function generateRandomInquiry(
   const types: InquiryType[] = ["interference", "improper_riding", "lane_violation"];
   const type = types[Math.floor(Math.random() * types.length)];
   const accusedHorseId = horseIds[Math.floor(Math.random() * horseIds.length)];
-  const reportingHorseId = horseIds.filter((h) => h !== accusedHorseId)[Math.floor(Math.random() * (horseIds.length - 1))];
+  const reportingHorseId = horseIds.filter((h) => h !== accusedHorseId)[
+    Math.floor(Math.random() * (horseIds.length - 1))
+  ];
 
   const descriptions: Record<InquiryType, string> = {
     interference: "Alleged interference in the stretch",
@@ -95,14 +103,9 @@ export function generateRandomInquiry(
     other: "General conduct review",
   };
 
-  return createStewardsInquiry(
-    raceId,
-    day,
-    type,
-    accusedHorseId,
-    descriptions[type],
-    { reportingHorseId }
-  );
+  return createStewardsInquiry(raceId, day, type, accusedHorseId, descriptions[type], {
+    reportingHorseId,
+  });
 }
 
 /**
@@ -112,7 +115,7 @@ export function resolveInquiry(
   inquiry: StewardsInquiry,
   outcome: InquiryOutcome,
   fineAmount?: number,
-  suspensionDays?: number
+  suspensionDays?: number,
 ): StewardsInquiry {
   return {
     ...inquiry,

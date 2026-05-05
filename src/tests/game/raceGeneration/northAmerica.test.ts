@@ -67,9 +67,14 @@ describe("generateNorthAmericanRace", () => {
 
   it("should set claiming price for claiming races", () => {
     // Since race class is random, we'll generate multiple races and check that at least one has claiming price
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
+    const races = Array.from({ length: 50 }, () =>
+      generateNorthAmericanRace(mockTrack, 10, createRng("test")),
+    );
     const claimingRaces = races.filter(
-      (r) => r.raceClass === "Claiming" || r.raceClass === "MaidenClaiming" || r.raceClass === "MaidenOptionalClaiming"
+      (r) =>
+        r.raceClass === "Claiming" ||
+        r.raceClass === "MaidenClaiming" ||
+        r.raceClass === "MaidenOptionalClaiming",
     );
 
     if (claimingRaces.length > 0) {
@@ -79,7 +84,9 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should set claiming price for optional claiming races", () => {
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
+    const races = Array.from({ length: 50 }, () =>
+      generateNorthAmericanRace(mockTrack, 10, createRng("test")),
+    );
     const optionalClaimingRaces = races.filter((r) => r.raceClass === "OptionalClaiming");
 
     if (optionalClaimingRaces.length > 0) {
@@ -89,8 +96,12 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should set handicap flag for handicap races", () => {
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
-    const handicapRaces = races.filter((r) => r.raceClass === "Handicap" || r.raceClass === "StarterHandicap");
+    const races = Array.from({ length: 50 }, () =>
+      generateNorthAmericanRace(mockTrack, 10, createRng("test")),
+    );
+    const handicapRaces = races.filter(
+      (r) => r.raceClass === "Handicap" || r.raceClass === "StarterHandicap",
+    );
 
     if (handicapRaces.length > 0) {
       expect(handicapRaces[0].isHandicap).toBe(true);
@@ -98,8 +109,12 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should set win condition for allowance races", () => {
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
-    const allowanceRaces = races.filter((r) => r.raceClass === "Allowance" || r.raceClass === "StarterAllowance");
+    const races = Array.from({ length: 50 }, () =>
+      generateNorthAmericanRace(mockTrack, 10, createRng("test")),
+    );
+    const allowanceRaces = races.filter(
+      (r) => r.raceClass === "Allowance" || r.raceClass === "StarterAllowance",
+    );
 
     if (allowanceRaces.length > 0) {
       expect(allowanceRaces[0].winCondition).toBeDefined();
@@ -130,7 +145,9 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should scale purse for claiming races", () => {
-    const races = Array.from({ length: 50 }, () => generateNorthAmericanRace(mockTrack, 10, createRng("test")));
+    const races = Array.from({ length: 50 }, () =>
+      generateNorthAmericanRace(mockTrack, 10, createRng("test")),
+    );
     const claimingRaces = races.filter((r) => r.claimingPrice && r.raceClass === "Claiming");
 
     if (claimingRaces.length > 0) {

@@ -27,13 +27,10 @@ export const upkeepPhase = {
 
     // Record expense entries for each horse
     const newExpenses = playerHorses.map((horse) =>
-      createExpense(
-        "upkeep",
-        UPKEEP_PER_HORSE,
-        `Daily upkeep for ${horse.name}`,
-        newDay,
-        { horseId: horse.id, recurring: true }
-      )
+      createExpense("upkeep", UPKEEP_PER_HORSE, `Daily upkeep for ${horse.name}`, newDay, {
+        horseId: horse.id,
+        recurring: true,
+      }),
     );
 
     // Record facility maintenance expense
@@ -44,8 +41,8 @@ export const upkeepPhase = {
           facilityMaintenance,
           `Daily facility maintenance`,
           newDay,
-          { recurring: true }
-        )
+          { recurring: true },
+        ),
       );
     }
 
@@ -60,8 +57,8 @@ export const upkeepPhase = {
           `Daily upkeep: ${playerHorseCount} horse${playerHorseCount !== 1 ? "s" : ""} + facilities`,
           newDay,
           state.cash - totalDailyCost,
-          { recurring: true }
-        )
+          { recurring: true },
+        ),
       );
     }
 

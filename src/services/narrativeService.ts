@@ -41,8 +41,15 @@ const BIOGRAPHICAL_TEMPLATES = [
 
 const FRAGMENTS = {
   PREFIXES: [
-    "Unbelievable!", "Look at this!", "Incredible action,", "Right now,", "Unfolding before our eyes,",
-    "As expected,", "Surprisingly,", "A dramatic turn,", "Stay focused on the pack,",
+    "Unbelievable!",
+    "Look at this!",
+    "Incredible action,",
+    "Right now,",
+    "Unfolding before our eyes,",
+    "As expected,",
+    "Surprisingly,",
+    "A dramatic turn,",
+    "Stay focused on the pack,",
   ],
 };
 
@@ -172,7 +179,7 @@ const TEMPLATES: Record<NarrativeEvent, string[]> = {
     "Entering the final 400 meters!",
     "They're inside the final 100! Who wants it more?",
   ],
-  EXPERT_INSIGHT: [], 
+  EXPERT_INSIGHT: [],
   GAP_ANNOUNCEMENT: [
     "{horse} is leading by {lengths} lengths!",
     "{horse} has a {lengths} length advantage at the front.",
@@ -225,7 +232,7 @@ export class NarrativeGenerator {
       if (this.race.weather || this.race.trackCondition) {
         newLines.push(this.createLine("WEATHER_COMMENT", simTime));
       }
-      
+
       const spotlightRunner = runners[Math.floor(this.rng.next() * runners.length)];
       const insight = this.generateExpertInsight(spotlightRunner);
       if (insight) {
@@ -234,7 +241,7 @@ export class NarrativeGenerator {
           text: insight,
           timestamp: simTime,
           type: "EXPERT_INSIGHT",
-          horseId: spotlightRunner.horseId
+          horseId: spotlightRunner.horseId,
         });
       }
 
@@ -250,7 +257,12 @@ export class NarrativeGenerator {
     this.checkMilestones(newLines, currentLeader.position, simTime);
 
     // 4. Atmosphere
-    if (this.hasAnnouncedStart && !this.hasAnnouncedFinish && this.rng.next() < 0.005 && this.canAnnounce("ATMOSPHERE", "global", simTime, 45)) {
+    if (
+      this.hasAnnouncedStart &&
+      !this.hasAnnouncedFinish &&
+      this.rng.next() < 0.005 &&
+      this.canAnnounce("ATMOSPHERE", "global", simTime, 45)
+    ) {
       newLines.push(this.createLine("ATMOSPHERE", simTime));
       this.setCooldown("ATMOSPHERE", "global", simTime, 45);
     }
@@ -259,7 +271,10 @@ export class NarrativeGenerator {
     if (this.hasAnnouncedStart && !this.hasAnnouncedFinish && sorted.length > 1) {
       const gapMeters = sorted[0].position - sorted[1].position;
       const lengths = (gapMeters / METERS_PER_LENGTH).toFixed(1);
-      if (parseFloat(lengths) >= 2.0 && this.canAnnounce("GAP_ANNOUNCEMENT", "leader", simTime, 25)) {
+      if (
+        parseFloat(lengths) >= 2.0 &&
+        this.canAnnounce("GAP_ANNOUNCEMENT", "leader", simTime, 25)
+      ) {
         newLines.push(this.createLine("GAP_ANNOUNCEMENT", simTime, sorted[0], lengths));
         this.setCooldown("GAP_ANNOUNCEMENT", "leader", simTime, 25);
       }
@@ -273,7 +288,7 @@ export class NarrativeGenerator {
           if (this.canAnnounce("STABLE_WATCH", r.horseId, simTime, 60)) {
             newLines.push(this.createLine("STABLE_WATCH", simTime, r));
             this.setCooldown("STABLE_WATCH", r.horseId, simTime, 60);
-            break; 
+            break;
           }
         }
       }
@@ -281,7 +296,11 @@ export class NarrativeGenerator {
 
     // 7. Lead Change
     if (this.hasAnnouncedStart && !this.hasAnnouncedFinish) {
-      if (this.lastLeaderId && currentLeader.horseId !== this.lastLeaderId && currentLeader.position > 20) {
+      if (
+        this.lastLeaderId &&
+        currentLeader.horseId !== this.lastLeaderId &&
+        currentLeader.position > 20
+      ) {
         if (this.canAnnounce("LEAD_CHANGE", currentLeader.horseId, simTime)) {
           const line = this.createLine("LEAD_CHANGE", simTime, currentLeader);
           line.isHighImpact = true;
@@ -293,7 +312,11 @@ export class NarrativeGenerator {
     }
 
     // 8. Stretch Run
-    if (currentLeader.position > this.race.distance * 0.85 && !this.hasAnnouncedStretch && !this.hasAnnouncedFinish) {
+    if (
+      currentLeader.position > this.race.distance * 0.85 &&
+      !this.hasAnnouncedStretch &&
+      !this.hasAnnouncedFinish
+    ) {
       const line = this.createLine("STRETCH", simTime);
       line.isHighImpact = true;
       newLines.push(line);
@@ -320,9 +343,8 @@ export class NarrativeGenerator {
               newLines.push(this.createLine("SURGE", simTime, r));
               this.setCooldown("SURGE", r.horseId, simTime, 20);
             }
-          }
-          else if (currentRank - lastRank >= 3) {
-             if (this.canAnnounce("FADE", r.horseId, simTime)) {
+          } else if (currentRank - lastRank >= 3) {
+            if (this.canAnnounce("FADE", r.horseId, simTime)) {
               newLines.push(this.createLine("FADE", simTime, r));
               this.setCooldown("FADE", r.horseId, simTime, 20);
             }
@@ -335,7 +357,7 @@ export class NarrativeGenerator {
     // 11. Drafting
     for (const r of runners) {
       if (r.draftingHorseId && this.canAnnounce("DRAFTING", r.horseId, simTime, 40)) {
-        const other = runners.find(rr => rr.horseId === r.draftingHorseId);
+        const other = runners.find((rr) => rr.horseId === r.draftingHorseId);
         if (other) {
           const line = this.createLine("DRAFTING", simTime, r);
           line.text = line.text.replace("{other}", other.name);
@@ -349,7 +371,11 @@ export class NarrativeGenerator {
     if (this.hasAnnouncedStart && !this.hasAnnouncedFinish) {
       for (const r of runners) {
         // If they are in Lane 3+ (3.6m+) and likely in a turn
-        if (r.lane >= 3.6 && this.isInTurn(r.position) && this.canAnnounce("LANE_WATCH", r.horseId, simTime, 45)) {
+        if (
+          r.lane >= 3.6 &&
+          this.isInTurn(r.position) &&
+          this.canAnnounce("LANE_WATCH", r.horseId, simTime, 45)
+        ) {
           newLines.push(this.createLine("LANE_WATCH", simTime, r));
           this.setCooldown("LANE_WATCH", r.horseId, simTime, 45);
         }
@@ -365,7 +391,7 @@ export class NarrativeGenerator {
     // Basic oval assumption: 400m home straight, 400m turn, 400m back straight, 400m turn
     const distFromFinish = this.race.distance - pos;
     const trackPos = distFromFinish % 1600;
-    return (trackPos > 400 && trackPos <= 800) || (trackPos > 1200);
+    return (trackPos > 400 && trackPos <= 800) || trackPos > 1200;
   }
 
   private checkMilestones(newLines: CommentaryLine[], leaderPos: number, simTime: number) {
@@ -373,7 +399,11 @@ export class NarrativeGenerator {
       { pos: this.race.distance * 0.5, id: 50, text: "Passing the halfway point now." },
       { pos: this.race.distance - 400, id: 400, text: "Entering the final 400 meters!" },
       { pos: this.race.distance - 200, id: 200, text: "Just 200 meters to the wire!" },
-      { pos: this.race.distance - 100, id: 100, text: "They're inside the final 100! Who wants it more?" },
+      {
+        pos: this.race.distance - 100,
+        id: 100,
+        text: "They're inside the final 100! Who wants it more?",
+      },
     ];
 
     for (const m of milestones) {
@@ -382,7 +412,7 @@ export class NarrativeGenerator {
           id: `milestone-${m.id}`,
           text: m.text,
           timestamp: simTime,
-          type: "MILESTONE"
+          type: "MILESTONE",
         });
         this.announcedMilestones.add(m.id);
       }
@@ -404,8 +434,9 @@ export class NarrativeGenerator {
       if (diff <= 200) insights.push(...EXPERT_INSIGHT_TEMPLATES.DISTANCE_FIT);
     }
 
-    const hasRunDistance = horse.raceHistory.some(h => h.distance === this.race.distance);
-    if (!hasRunDistance && this.race.distance >= 1600) insights.push(...EXPERT_INSIGHT_TEMPLATES.NEW_DISTANCE);
+    const hasRunDistance = horse.raceHistory.some((h) => h.distance === this.race.distance);
+    if (!hasRunDistance && this.race.distance >= 1600)
+      insights.push(...EXPERT_INSIGHT_TEMPLATES.NEW_DISTANCE);
 
     if (insights.length === 0) return null;
 
@@ -416,10 +447,16 @@ export class NarrativeGenerator {
     return text;
   }
 
-  private createLine(type: NarrativeEvent, timestamp: number, runner?: Runner, lengths?: string): CommentaryLine {
+  private createLine(
+    type: NarrativeEvent,
+    timestamp: number,
+    runner?: Runner,
+    lengths?: string,
+  ): CommentaryLine {
     const templates = TEMPLATES[type];
-    if (!templates || templates.length === 0) return { id: "", text: "", timestamp: 0, type: "START" };
-    
+    if (!templates || templates.length === 0)
+      return { id: "", text: "", timestamp: 0, type: "START" };
+
     let text = templates[Math.floor(this.rng.next() * templates.length)];
 
     if (this.rng.next() < 0.2 && (type === "SURGE" || type === "LEAD_CHANGE")) {
@@ -438,9 +475,14 @@ export class NarrativeGenerator {
     if (runner) {
       const horse = this.getHorse(runner.horseId);
       const stable = horse?.stableId ? this.getStable(horse.stableId) : null;
-      
-      if ((type === "SURGE" || type === "LEAD_CHANGE") && !this.hasAnnouncedBio.has(runner.horseId) && this.rng.next() < 0.35) {
-        const bio = BIOGRAPHICAL_TEMPLATES[Math.floor(this.rng.next() * BIOGRAPHICAL_TEMPLATES.length)];
+
+      if (
+        (type === "SURGE" || type === "LEAD_CHANGE") &&
+        !this.hasAnnouncedBio.has(runner.horseId) &&
+        this.rng.next() < 0.35
+      ) {
+        const bio =
+          BIOGRAPHICAL_TEMPLATES[Math.floor(this.rng.next() * BIOGRAPHICAL_TEMPLATES.length)];
         text = bio + " " + text;
         this.hasAnnouncedBio.add(runner.horseId);
       }
@@ -452,7 +494,7 @@ export class NarrativeGenerator {
       text = text.replace("{dam}", horse?.damName || "Unknown Dam");
       text = text.replace("{stable}", stable?.name || "Independent");
       text = text.replace("{family}", horse?.bruceLoweFamily?.toString() || "Unknown");
-      
+
       const rank = this.lastRanks.get(runner.horseId);
       if (rank) {
         text = text.replace("{rank}", this.getOrdinal(rank));
@@ -469,18 +511,23 @@ export class NarrativeGenerator {
   }
 
   private getHorse(id: string): Horse | undefined {
-    return this.horses.find(h => h.id === id);
+    return this.horses.find((h) => h.id === id);
   }
 
   private getStable(id: string): Stable | undefined {
-    return this.stables.find(s => s.id === id);
+    return this.stables.find((s) => s.id === id);
   }
 
   private isMajorStable(id: string): boolean {
     return this.getStable(id)?.isMajor || false;
   }
 
-  private canAnnounce(type: NarrativeEvent, key: string, simTime: number, defaultCooldown: number = 10): boolean {
+  private canAnnounce(
+    type: NarrativeEvent,
+    key: string,
+    simTime: number,
+    defaultCooldown: number = 10,
+  ): boolean {
     const cooldownKey = `${type}:${key}`;
     const expiry = this.cooldowns.get(cooldownKey) || 0;
     return simTime >= expiry;

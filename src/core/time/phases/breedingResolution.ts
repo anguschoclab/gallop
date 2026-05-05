@@ -3,7 +3,12 @@
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, BreedingIntent } from "@/core/resolver/intents";
-import type { AnyImpact, PregnancyCreationImpact, CashImpact, StudCareerImpact } from "@/core/resolver/impacts";
+import type {
+  AnyImpact,
+  PregnancyCreationImpact,
+  CashImpact,
+  StudCareerImpact,
+} from "@/core/resolver/impacts";
 import { generateUUID } from "@/game/uuid";
 import type { Pregnancy } from "@/game/types";
 

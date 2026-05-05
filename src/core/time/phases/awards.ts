@@ -19,7 +19,7 @@ export const awardsPhase = {
     const year = Math.floor((newDay - 1) / 365) + 1;
 
     // Check for any ceremony scheduled for today
-    const todayCeremonies = AWARD_CEREMONY_SCHEDULE.filter(c => c.dayOfYear === doy);
+    const todayCeremonies = AWARD_CEREMONY_SCHEDULE.filter((c) => c.dayOfYear === doy);
     if (todayCeremonies.length === 0) {
       return context;
     }
@@ -33,7 +33,7 @@ export const awardsPhase = {
 
     const newCeremonies: { region: AwardRegion; year: number; awards: RegionalAward[] }[] = [];
     let newAwards: RegionalAward[] = [];
-    let updatedHorses = [...state.horses];
+    const updatedHorses = [...state.horses];
     const awardLogs: { day: number; text: string }[] = [];
     const updatedLastAwardYear = { ...lastAwardYear };
 

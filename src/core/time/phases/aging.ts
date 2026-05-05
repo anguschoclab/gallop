@@ -20,12 +20,18 @@ export const agingPhase = {
     }
 
     const horses = state.horses.map((h) => {
-      const ticks = (h.hemisphere === "Northern" && northernTick) || (h.hemisphere === "Southern" && southernTick);
+      const ticks =
+        (h.hemisphere === "Northern" && northernTick) ||
+        (h.hemisphere === "Southern" && southernTick);
       if (!ticks) return h;
       const newAge = h.age + 1;
       const newGender =
         newAge >= 5
-          ? h.gender === "colt" ? "horse" : h.gender === "filly" ? "mare" : h.gender
+          ? h.gender === "colt"
+            ? "horse"
+            : h.gender === "filly"
+              ? "mare"
+              : h.gender
           : h.gender;
       return { ...h, age: newAge, gender: newGender };
     });
@@ -39,4 +45,3 @@ export const agingPhase = {
     };
   },
 };
-

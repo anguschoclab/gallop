@@ -17,7 +17,7 @@ export function generateUUID(rng?: Rng): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  
+
   if (typeof crypto !== "undefined" && crypto.getRandomValues) {
     // Fallback to manual UUID v4 generation using secure random values
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {

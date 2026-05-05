@@ -14,7 +14,12 @@ export const useScoutReports = () => useGame((s: GameState) => s.scoutReports);
  * Use this when you need multiple market state values in a single hook call
  * Note: Uses type assertion to work around Zustand typing limitation
  */
-export const useMarketState = () => (useGame as any)(
-  (s: GameState) => ({ market: s.market, auctions: s.auctions ?? [], scoutReports: s.scoutReports }),
-  shallow
-);
+export const useMarketState = () =>
+  (useGame as any)(
+    (s: GameState) => ({
+      market: s.market,
+      auctions: s.auctions ?? [],
+      scoutReports: s.scoutReports,
+    }),
+    shallow,
+  );

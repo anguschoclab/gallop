@@ -20,14 +20,16 @@ interface TrackStatus {
 
 const analysis: TrackStatus[] = tracks.map((t: any) => {
   const hasSections = t.courses.some((c: any) => c.sections && c.sections.length > 0);
-  const sectionsCount = t.courses.reduce((acc: number, c: any) => 
-    acc + (c.sections?.length || 0), 0);
-  
+  const sectionsCount = t.courses.reduce(
+    (acc: number, c: any) => acc + (c.sections?.length || 0),
+    0,
+  );
+
   // Primary course for reporting
   const primaryCourse = t.courses[0] || {};
-  
+
   const needsUpdate = !hasSections;
-  
+
   return {
     id: t.id,
     name: t.name,
@@ -39,21 +41,23 @@ const analysis: TrackStatus[] = tracks.map((t: any) => {
     circumference: primaryCourse.circumference || 0,
     straightLength: primaryCourse.straightLength || 0,
     needsUpdate,
-    reason: needsUpdate ? "Empty sections" : "Has existing data"
+    reason: needsUpdate ? "Empty sections" : "Has existing data",
   };
 });
 
 // Statistics
 const total = analysis.length;
-const needsUpdate = analysis.filter(t => t.needsUpdate).length;
-const hasData = analysis.filter(t => !t.needsUpdate).length;
-const withOsmId = analysis.filter(t => t.osmId).length;
+const needsUpdate = analysis.filter((t) => t.needsUpdate).length;
+const hasData = analysis.filter((t) => !t.needsUpdate).length;
+const withOsmId = analysis.filter((t) => t.osmId).length;
 
 console.log("=== Track Analysis Report ===\n");
 console.log(`Total tracks: ${total}`);
-console.log(`Needs update (empty sections): ${needsUpdate} (${Math.round(needsUpdate/total*100)}%)`);
-console.log(`Already has data: ${hasData} (${Math.round(hasData/total*100)}%)`);
-console.log(`Has OSM ID: ${withOsmId} (${Math.round(withOsmId/total*100)}%)`);
+console.log(
+  `Needs update (empty sections): ${needsUpdate} (${Math.round((needsUpdate / total) * 100)}%)`,
+);
+console.log(`Already has data: ${hasData} (${Math.round((hasData / total) * 100)}%)`);
+console.log(`Has OSM ID: ${withOsmId} (${Math.round((withOsmId / total) * 100)}%)`);
 
 // Group by country
 const byCountry = analysis.reduce((acc: Record<string, number>, t) => {
@@ -72,38 +76,38 @@ Object.entries(byCountry)
 
 // List tracks already with data
 console.log("\n=== Tracks Already With Section Data (will be skipped) ===");
-analysis.filter(t => !t.needsUpdate).forEach(t => {
-  console.log(`  ✓ ${t.name} (${t.country}) - ${t.sectionsCount} sections`);
-});
+analysis
+  .filter((t) => !t.needsUpdate)
+  .forEach((t) => {
+    console.log(`  ✓ ${t.name} (${t.country}) - ${t.sectionsCount} sections`);
+  });
 
 // Export JSON files
-const tracksNeedingUpdate = analysis.filter(t => t.needsUpdate).map(t => ({
-  id: t.id,
-  name: t.name,
-  country: t.country,
-  osmId: t.osmId,
-  currentCircumference: t.circumference,
-  currentStraightLength: t.straightLength
-}));
+const tracksNeedingUpdate = analysis
+  .filter((t) => t.needsUpdate)
+  .map((t) => ({
+    id: t.id,
+    name: t.name,
+    country: t.country,
+    osmId: t.osmId,
+    currentCircumference: t.circumference,
+    currentStraightLength: t.straightLength,
+  }));
 
-const tracksWithData = analysis.filter(t => !t.needsUpdate).map(t => ({
-  id: t.id,
-  name: t.name,
-  country: t.country,
-  sectionsCount: t.sectionsCount,
-  circumference: t.circumference,
-  straightLength: t.straightLength
-}));
+const tracksWithData = analysis
+  .filter((t) => !t.needsUpdate)
+  .map((t) => ({
+    id: t.id,
+    name: t.name,
+    country: t.country,
+    sectionsCount: t.sectionsCount,
+    circumference: t.circumference,
+    straightLength: t.straightLength,
+  }));
 
-fs.writeFileSync(
-  "tracks-needing-update.json", 
-  JSON.stringify(tracksNeedingUpdate, null, 2)
-);
+fs.writeFileSync("tracks-needing-update.json", JSON.stringify(tracksNeedingUpdate, null, 2));
 
-fs.writeFileSync(
-  "tracks-with-existing-data.json", 
-  JSON.stringify(tracksWithData, null, 2)
-);
+fs.writeFileSync("tracks-with-existing-data.json", JSON.stringify(tracksWithData, null, 2));
 
 console.log("\n=== Files Created ===");
 console.log("  tracks-needing-update.json - Tracks to process via OSM");

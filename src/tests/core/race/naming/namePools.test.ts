@@ -41,7 +41,13 @@ describe("getRandomSponsor", () => {
   });
 
   it("works for all regional systems", () => {
-    const regions: RegionalSystem[] = ["north_america", "europe", "australia", "asia", "south_america"];
+    const regions: RegionalSystem[] = [
+      "north_america",
+      "europe",
+      "australia",
+      "asia",
+      "south_america",
+    ];
     for (const region of regions) {
       const sponsor = getRandomSponsor(region, createRng("test"));
       expect(sponsor).toBeTruthy();
@@ -64,7 +70,13 @@ describe("getRandomLocation", () => {
   });
 
   it("works for all regional systems", () => {
-    const regions: RegionalSystem[] = ["north_america", "europe", "australia", "asia", "south_america"];
+    const regions: RegionalSystem[] = [
+      "north_america",
+      "europe",
+      "australia",
+      "asia",
+      "south_america",
+    ];
     for (const region of regions) {
       const location = getRandomLocation(region, createRng("test"));
       expect(location).toBeTruthy();
@@ -87,7 +99,13 @@ describe("getRandomEvent", () => {
   });
 
   it("works for all regional systems", () => {
-    const regions: RegionalSystem[] = ["north_america", "europe", "australia", "asia", "south_america"];
+    const regions: RegionalSystem[] = [
+      "north_america",
+      "europe",
+      "australia",
+      "asia",
+      "south_america",
+    ];
     for (const region of regions) {
       const event = getRandomEvent(region, createRng("test"));
       expect(event).toBeTruthy();
@@ -110,7 +128,13 @@ describe("getRandomAdjective", () => {
   });
 
   it("works for all regional systems", () => {
-    const regions: RegionalSystem[] = ["north_america", "europe", "australia", "asia", "south_america"];
+    const regions: RegionalSystem[] = [
+      "north_america",
+      "europe",
+      "australia",
+      "asia",
+      "south_america",
+    ];
     for (const region of regions) {
       const adjective = getRandomAdjective(region, createRng("test"));
       expect(adjective).toBeTruthy();

@@ -64,10 +64,10 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
   const { goalType, targetRaceKey, confirmedAptitudes } = campaign;
 
   const preserved = campaign.slots.filter(
-    s => s.status === "entered" || s.status === "completed"
+    (s) => s.status === "entered" || s.status === "completed",
   );
 
-  const candidateRaces = races.filter(r => {
+  const candidateRaces = races.filter((r) => {
     if (r.resolved) return false;
     if (r.day <= currentDay) return false;
     if (r.day > currentDay + 365) return false;
@@ -78,9 +78,17 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
 
   // If targeting a specific graded race key, build a prep chain
   if (targetRaceKey) {
-    const targetGraded = GRADED_RACES.find(g => g.key === targetRaceKey);
+    const targetGraded = GRADED_RACES.find((g) => g.key === targetRaceKey);
     if (targetGraded) {
-      return buildPrepChain(targetGraded, candidateRaces, preserved, confirmedAptitudes, currentDay, year, horse);
+      return buildPrepChain(
+        targetGraded,
+        candidateRaces,
+        preserved,
+        confirmedAptitudes,
+        currentDay,
+        year,
+        horse,
+      );
     }
   }
 
@@ -109,15 +117,15 @@ function buildPrepChain(
   apts: ConfirmedAptitudes,
   currentDay: number,
   year: number,
-  _horse: Horse
+  _horse: Horse,
 ): CampaignRaceSlot[] {
   const firstDayOfYear = (year - 1) * 365 + 1;
   const targetDay = firstDayOfYear + target.dayOfYear - 1;
   const slots: CampaignRaceSlot[] = [...preserved];
 
   // Main target slot
-  const targetRace = candidateRaces.find(r => r.graded?.key === target.key);
-  if (!slots.some(s => s.raceKey === target.key)) {
+  const targetRace = candidateRaces.find((r) => r.graded?.key === target.key);
+  if (!slots.some((s) => s.raceKey === target.key)) {
     slots.push({
       dayTarget: targetDay,
       dayWindow: 7,
@@ -146,10 +154,11 @@ function buildPrepChain(
     };
 
     const prep = candidateRaces
-      .filter(r =>
-        r.day >= prepWindowStart &&
-        r.day <= prepWindowEnd &&
-        !slots.some(s => s.raceId === r.id || s.dayTarget === r.day)
+      .filter(
+        (r) =>
+          r.day >= prepWindowStart &&
+          r.day <= prepWindowEnd &&
+          !slots.some((s) => s.raceId === r.id || s.dayTarget === r.day),
       )
       .sort((a, b) => bandScore(b) - bandScore(a))[0];
 
@@ -161,7 +170,11 @@ function buildPrepChain(
         raceKey: prep.graded?.key,
         role: "prep",
         constraintDistance: prep.distance,
-        constraintSurface: (prep.graded?.surface ?? prep.surface) as "Turf" | "Dirt" | "Synthetic" | undefined,
+        constraintSurface: (prep.graded?.surface ?? prep.surface) as
+          | "Turf"
+          | "Dirt"
+          | "Synthetic"
+          | undefined,
         status: "planned",
       });
     }
@@ -175,16 +188,17 @@ function buildGradeChaseSlots(
   minGrade: "G1" | "G2" | "G3",
   preserved: CampaignRaceSlot[],
   apts: ConfirmedAptitudes,
-  currentDay: number
+  currentDay: number,
 ): CampaignRaceSlot[] {
   const slots: CampaignRaceSlot[] = [...preserved];
 
   const gradedCandidates = candidateRaces
-    .filter(r =>
-      r.graded &&
-      gradeAtLeast(r.graded.grade, minGrade) &&
-      r.day > currentDay + 14 &&
-      !slots.some(s => s.raceId === r.id)
+    .filter(
+      (r) =>
+        r.graded &&
+        gradeAtLeast(r.graded.grade, minGrade) &&
+        r.day > currentDay + 14 &&
+        !slots.some((s) => s.raceId === r.id),
     )
     .sort((a, b) => {
       const aSurf = (a.graded?.surface ?? a.surface) as "Turf" | "Dirt" | "Synthetic" | undefined;
@@ -218,15 +232,13 @@ function buildEarningsSlots(
   candidateRaces: Race[],
   preserved: CampaignRaceSlot[],
   apts: ConfirmedAptitudes,
-  currentDay: number
+  currentDay: number,
 ): CampaignRaceSlot[] {
   const slots: CampaignRaceSlot[] = [...preserved];
 
   const highValue = candidateRaces
-    .filter(r =>
-      r.purse >= 100000 &&
-      r.day > currentDay + 7 &&
-      !slots.some(s => s.raceId === r.id)
+    .filter(
+      (r) => r.purse >= 100000 && r.day > currentDay + 7 && !slots.some((s) => s.raceId === r.id),
     )
     .sort((a, b) => {
       const aSurf = (a.graded?.surface ?? a.surface) as "Turf" | "Dirt" | "Synthetic" | undefined;
@@ -260,15 +272,16 @@ function buildEarningsSlots(
 function buildMaidenSlots(
   candidateRaces: Race[],
   preserved: CampaignRaceSlot[],
-  currentDay: number
+  currentDay: number,
 ): CampaignRaceSlot[] {
   const slots: CampaignRaceSlot[] = [...preserved];
 
   const maidens = candidateRaces
-    .filter(r =>
-      (r.raceClass === "Maiden" || r.raceClass === "MaidenClaiming") &&
-      r.day > currentDay + 7 &&
-      !slots.some(s => s.raceId === r.id)
+    .filter(
+      (r) =>
+        (r.raceClass === "Maiden" || r.raceClass === "MaidenClaiming") &&
+        r.day > currentDay + 7 &&
+        !slots.some((s) => s.raceId === r.id),
     )
     .sort((a, b) => a.day - b.day)
     .slice(0, 4);
@@ -291,12 +304,12 @@ function buildMaidenSlots(
 export function generateCampaignFlags(
   horse: Horse,
   campaign: HorseCampaign,
-  currentDay: number
+  currentDay: number,
 ): CampaignFlag[] {
   const flags: CampaignFlag[] = [...campaign.flags];
 
   // Low energy flag
-  if (horse.energy < 30 && !flags.some(f => !f.dismissed && f.type === "low_energy")) {
+  if (horse.energy < 30 && !flags.some((f) => !f.dismissed && f.type === "low_energy")) {
     flags.push({
       day: currentDay,
       type: "low_energy",
@@ -306,7 +319,10 @@ export function generateCampaignFlags(
   }
 
   // Health flag
-  if (horse.healthStatus !== "healthy" && !flags.some(f => !f.dismissed && f.type === "health_issue")) {
+  if (
+    horse.healthStatus !== "healthy" &&
+    !flags.some((f) => !f.dismissed && f.type === "health_issue")
+  ) {
     flags.push({
       day: currentDay,
       type: "health_issue",
@@ -317,11 +333,11 @@ export function generateCampaignFlags(
 
   // Upgrade available — if horse won last 2 starts in non-graded
   const recentHistory = (horse.raceHistory ?? []).slice(-3);
-  const recentWins = recentHistory.filter(h => h.position === 1);
+  const recentWins = recentHistory.filter((h) => h.position === 1);
   if (
     recentWins.length >= 2 &&
-    !recentHistory.some(h => h.grade) &&
-    !flags.some(f => !f.dismissed && f.type === "upgrade_available")
+    !recentHistory.some((h) => h.grade) &&
+    !flags.some((f) => !f.dismissed && f.type === "upgrade_available")
   ) {
     flags.push({
       day: currentDay,
@@ -339,20 +355,24 @@ export function generateCampaignFlags(
 export function updateCampaignAptitudes(
   apts: ConfirmedAptitudes,
   surface: "Turf" | "Dirt" | "Synthetic",
-  distance: number
+  distance: number,
 ): ConfirmedAptitudes {
   const band = getDistanceBand(distance);
   const updated: ConfirmedAptitudes = {
     ...apts,
     surfaceStarts: { ...apts.surfaceStarts, [surface]: (apts.surfaceStarts[surface] ?? 0) + 1 },
-    distanceBandStarts: { ...apts.distanceBandStarts, [band]: (apts.distanceBandStarts[band] ?? 0) + 1 },
+    distanceBandStarts: {
+      ...apts.distanceBandStarts,
+      [band]: (apts.distanceBandStarts[band] ?? 0) + 1,
+    },
   };
 
   // Confirm surface after 3 starts on it with majority
   const surfTotal = Object.values(updated.surfaceStarts).reduce((a, b) => a + b, 0);
   if (surfTotal >= 3) {
-    const dominant = (Object.entries(updated.surfaceStarts) as [string, number][])
-      .sort((a, b) => b[1] - a[1])[0];
+    const dominant = (Object.entries(updated.surfaceStarts) as [string, number][]).sort(
+      (a, b) => b[1] - a[1],
+    )[0];
     if (dominant[1] >= surfTotal * 0.6) {
       updated.surfaceConfirmed = dominant[0] as "Turf" | "Dirt" | "Synthetic";
     }
@@ -361,8 +381,9 @@ export function updateCampaignAptitudes(
   // Confirm distance band after 3 starts
   const bandTotal = Object.values(updated.distanceBandStarts).reduce((a, b) => a + b, 0);
   if (bandTotal >= 3) {
-    const dominant = (Object.entries(updated.distanceBandStarts) as [string, number][])
-      .sort((a, b) => b[1] - a[1])[0];
+    const dominant = (Object.entries(updated.distanceBandStarts) as [string, number][]).sort(
+      (a, b) => b[1] - a[1],
+    )[0];
     if (dominant[1] >= bandTotal * 0.6) {
       updated.distanceBandConfirmed = dominant[0] as DistanceBand;
     }

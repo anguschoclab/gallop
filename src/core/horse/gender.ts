@@ -7,15 +7,28 @@ import type { Rng } from "@/game/rng";
  * Extracted from: races.tsx, RaceDetailPanel.tsx, store.ts
  */
 
-type GenderRestriction = "colt" | "filly" | "mares" | "fillies-and-mares" | "colts-and-fillies" | "horses" | undefined;
+type GenderRestriction =
+  | "colt"
+  | "filly"
+  | "mares"
+  | "fillies-and-mares"
+  | "colts-and-fillies"
+  | "horses"
+  | undefined;
 
 /**
  * Check if a horse's gender matches the race's gender restriction
  */
-export function isGenderEligible(horseGender: Horse["gender"], restriction: string | undefined): boolean {
+export function isGenderEligible(
+  horseGender: Horse["gender"],
+  restriction: string | undefined,
+): boolean {
   if (!restriction) return true;
-  
-  const normalized = restriction.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-");
+
+  const normalized = restriction
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-");
 
   const genderEligibilityMap: Record<string, Horse["gender"][]> = {
     colt: ["colt", "horse", "gelding"],
@@ -29,23 +42,32 @@ export function isGenderEligible(horseGender: Horse["gender"], restriction: stri
     mare: ["mare"],
     mares: ["mare"],
     "colts-and-fillies": ["colt", "filly", "horse", "mare", "gelding"],
-    "open": ["colt", "filly", "horse", "mare", "gelding"],
+    open: ["colt", "filly", "horse", "mare", "gelding"],
     horses: ["horse", "colt", "gelding"],
     "colts-and-geldings": ["colt", "horse", "gelding"],
   };
-  
+
   // Try direct match or fuzzy match
-  if (genderEligibilityMap[normalized]) return genderEligibilityMap[normalized].includes(horseGender);
-  
+  if (genderEligibilityMap[normalized])
+    return genderEligibilityMap[normalized].includes(horseGender);
+
   // Fallback: search for keywords
   if (normalized.includes("filly") || normalized.includes("mare")) {
-    if (normalized.includes("colt") || normalized.includes("horse") || normalized.includes("gelding")) {
-        return ["colt", "filly", "horse", "mare", "gelding"].includes(horseGender);
+    if (
+      normalized.includes("colt") ||
+      normalized.includes("horse") ||
+      normalized.includes("gelding")
+    ) {
+      return ["colt", "filly", "horse", "mare", "gelding"].includes(horseGender);
     }
     return ["filly", "mare"].includes(horseGender);
   }
-  
-  if (normalized.includes("colt") || normalized.includes("horse") || normalized.includes("gelding")) {
+
+  if (
+    normalized.includes("colt") ||
+    normalized.includes("horse") ||
+    normalized.includes("gelding")
+  ) {
     return ["colt", "horse", "gelding"].includes(horseGender);
   }
 
@@ -104,4 +126,3 @@ export function geldHorse(h: Horse): Horse {
     gender: "gelding",
   };
 }
-

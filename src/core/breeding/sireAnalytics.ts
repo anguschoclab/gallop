@@ -6,18 +6,22 @@ import { getRunnersBy, foalLifetimeEarnings, getFoalsBy } from "./lineage";
  * AEI measures the average earnings of a stallion's progeny relative to the industry mean
  * Formula: (Progeny Average Earnings / Industry Mean Earnings) × 100
  */
-export function calculateAei(stallion: Horse, allHorses: Horse[], industryMeanEarnings: number): number {
+export function calculateAei(
+  stallion: Horse,
+  allHorses: Horse[],
+  industryMeanEarnings: number,
+): number {
   if (!stallion.stud || !stallion.stud.lifetimeFoals) return 0;
-  
+
   const runners = getRunnersBy({ horses: allHorses }, stallion.id);
-  
+
   if (runners.length === 0) return 0;
-  
+
   const totalProgenyEarnings = runners.reduce((sum, f) => sum + foalLifetimeEarnings(f), 0);
   const avgProgenyEarnings = totalProgenyEarnings / runners.length;
-  
+
   if (industryMeanEarnings === 0) return 0;
-  
+
   const aei = (avgProgenyEarnings / industryMeanEarnings) * 100;
   return Math.round(aei * 10) / 10;
 }
@@ -28,13 +32,13 @@ export function calculateAei(stallion: Horse, allHorses: Horse[], industryMeanEa
  */
 export function calculateSimplifiedAei(stallion: Horse, allSires: Horse[]): number {
   if (!stallion.stud || !stallion.stud.lifetimeFoals) return 0;
-  
+
   const progenyCount = stallion.stud.lifetimeFoals;
   if (progenyCount === 0) return 0;
-  
+
   const stakesRatio = (stallion.stud.lifetimeStakesFoals || 0) / progenyCount;
   const baseAei = stakesRatio * 100;
-  
+
   return Math.round(baseAei * 10) / 10;
 }
 
@@ -43,15 +47,21 @@ export function calculateSimplifiedAei(stallion: Horse, allSires: Horse[]): numb
  * CI compares a stallion's progeny performance to other stallions with similar mated mares
  * Formula: (Progeny Average Earnings / Comparable Sires' Progeny Average Earnings) × 100
  */
-export function calculateCi(stallion: Horse, allHorses: Horse[], industryMeanEarnings: number): number {
+export function calculateCi(
+  stallion: Horse,
+  allHorses: Horse[],
+  industryMeanEarnings: number,
+): number {
   if (!stallion.stud || !stallion.stud.lifetimeFoals) return 0;
-  
+
   const aei = calculateAei(stallion, allHorses, industryMeanEarnings);
-  const allSires = allHorses.filter(h => h.stud?.atStud);
-  const averageAei = allSires.reduce((sum, s) => sum + calculateAei(s, allHorses, industryMeanEarnings), 0) / allSires.length;
-  
+  const allSires = allHorses.filter((h) => h.stud?.atStud);
+  const averageAei =
+    allSires.reduce((sum, s) => sum + calculateAei(s, allHorses, industryMeanEarnings), 0) /
+    allSires.length;
+
   if (averageAei === 0) return 0;
-  
+
   const ci = (aei / averageAei) * 100;
   return Math.round(ci * 10) / 10; // Round to 1 decimal
 }
@@ -59,24 +69,28 @@ export function calculateCi(stallion: Horse, allHorses: Horse[], industryMeanEar
 /**
  * Classify a stallion based on their AEI/CI performance
  */
-export type SireClassification = 
-  | "elite"      // AEI > 2.0, CI > 1.0
-  | "premium"    // AEI > 1.5, CI > 0.8
-  | "solid"      // AEI > 1.0, CI > 0.5
+export type SireClassification =
+  | "elite" // AEI > 2.0, CI > 1.0
+  | "premium" // AEI > 1.5, CI > 0.8
+  | "solid" // AEI > 1.0, CI > 0.5
   | "developing" // AEI > 0.5, CI > 0.3
-  | "unproven";  // AEI <= 0.5 or insufficient data
+  | "unproven"; // AEI <= 0.5 or insufficient data
 
-export function classifySire(stallion: Horse, allHorses: Horse[], industryMeanEarnings: number): SireClassification {
+export function classifySire(
+  stallion: Horse,
+  allHorses: Horse[],
+  industryMeanEarnings: number,
+): SireClassification {
   if (!stallion.stud || stallion.stud.lifetimeFoals < 5) return "unproven";
-  
+
   const aei = calculateAei(stallion, allHorses, industryMeanEarnings);
   const ci = calculateCi(stallion, allHorses, industryMeanEarnings);
-  
+
   if (aei > 2.0 && ci > 1.0) return "elite";
   if (aei > 1.5 && ci > 0.8) return "premium";
   if (aei > 1.0 && ci > 0.5) return "solid";
   if (aei > 0.5 && ci > 0.3) return "developing";
-  
+
   return "unproven";
 }
 
@@ -100,10 +114,14 @@ export function getSireSurfaceBias(stallion: Horse, allHorses: Horse[]): Surface
     }
     return "balanced";
   }
-  
-  let turfWins = 0, dirtWins = 0, syntheticWins = 0;
-  let turfStarts = 0, dirtStarts = 0, syntheticStarts = 0;
-  
+
+  let turfWins = 0,
+    dirtWins = 0,
+    syntheticWins = 0;
+  let turfStarts = 0,
+    dirtStarts = 0,
+    syntheticStarts = 0;
+
   for (const foal of runners) {
     for (const race of foal.raceHistory) {
       if (!race.surface) continue;
@@ -119,11 +137,11 @@ export function getSireSurfaceBias(stallion: Horse, allHorses: Horse[]): Surface
       }
     }
   }
-  
+
   const turfRate = turfStarts > 0 ? turfWins / turfStarts : 0;
   const dirtRate = dirtStarts > 0 ? dirtWins / dirtStarts : 0;
   const syntheticRate = syntheticStarts > 0 ? syntheticWins / syntheticStarts : 0;
-  
+
   if (turfRate > 0.25 && turfRate > dirtRate * 1.5) return "turf";
   if (dirtRate > 0.25 && dirtRate > turfRate * 1.5) return "dirt";
   if (syntheticRate > 0.25) return "synthetic";
@@ -138,10 +156,14 @@ export type DistancePreference = "sprint" | "classic" | "stayer" | "versatile";
 export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): DistancePreference {
   const runners = getRunnersBy({ horses: allHorses }, stallion.id);
   if (runners.length < 5) return "versatile";
-  
-  let sprintWins = 0, classicWins = 0, stayerWins = 0;
-  let sprintStarts = 0, classicStarts = 0, stayerStarts = 0;
-  
+
+  let sprintWins = 0,
+    classicWins = 0,
+    stayerWins = 0;
+  let sprintStarts = 0,
+    classicStarts = 0,
+    stayerStarts = 0;
+
   for (const foal of runners) {
     for (const race of foal.raceHistory) {
       const dist = race.distance || 0;
@@ -157,11 +179,11 @@ export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): 
       }
     }
   }
-  
+
   const sprintRate = sprintStarts > 0 ? sprintWins / sprintStarts : 0;
   const classicRate = classicStarts > 0 ? classicWins / classicStarts : 0;
   const stayerRate = stayerStarts > 0 ? stayerWins / stayerStarts : 0;
-  
+
   if (sprintRate > 0.2 && sprintRate > classicRate * 1.3) return "sprint";
   if (stayerRate > 0.2 && stayerRate > classicRate * 1.3) return "stayer";
   if (classicRate > 0.15) return "classic";
@@ -173,11 +195,11 @@ export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): 
  */
 export function calculateProgenyWinPercentage(stallion: Horse): number {
   if (!stallion.stud || !stallion.stud.lifetimeFoals) return 0;
-  
+
   // Simplified calculation using stakes winners as proxy for wins
   const stakesWinners = stallion.stud.lifetimeStakesFoals || 0;
   const totalFoals = stallion.stud.lifetimeFoals;
-  
+
   const winPercentage = (stakesWinners / totalFoals) * 100;
   return Math.round(winPercentage * 10) / 10; // Round to 1 decimal
 }
@@ -200,8 +222,12 @@ export interface SireAnalytics {
   standingFee: number;
 }
 
-export function getSireAnalytics(stallion: Horse, allHorses: Horse[], industryMeanEarnings: number): SireAnalytics {
-  const allSires = allHorses.filter(h => h.stud?.atStud);
+export function getSireAnalytics(
+  stallion: Horse,
+  allHorses: Horse[],
+  industryMeanEarnings: number,
+): SireAnalytics {
+  const allSires = allHorses.filter((h) => h.stud?.atStud);
   return {
     stallionId: stallion.id,
     stallionName: stallion.name,
@@ -223,10 +249,10 @@ export function getSireAnalytics(stallion: Horse, allHorses: Horse[], industryMe
 // ----------------------------------------------------------------------------
 
 export type CropTier =
-  | "freshman"     // first crop are 2-3yo, racing this season
-  | "second-crop"  // oldest crop is 4yo
-  | "established"  // 3+ crops have raced
-  | "unproven";    // no progeny of racing age yet
+  | "freshman" // first crop are 2-3yo, racing this season
+  | "second-crop" // oldest crop is 4yo
+  | "established" // 3+ crops have raced
+  | "unproven"; // no progeny of racing age yet
 
 // Classify a stallion by the maturity of his crops. Looks at the ages of
 // his foals in the live horses array. Freshman = first crop is racing age
@@ -257,7 +283,7 @@ export function classifyStallion(stallion: Horse, allHorses: Horse[]): CropTier 
 export function generateSireNarrative(
   stallion: Horse,
   allHorses: Horse[],
-  industryMeanEarnings: number
+  industryMeanEarnings: number,
 ): string {
   const a = getSireAnalytics(stallion, allHorses, industryMeanEarnings);
   const tier = classifyStallion(stallion, allHorses);

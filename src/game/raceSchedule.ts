@@ -77,7 +77,7 @@ export function generateTrackRaces(
   schedule: TrackSchedule,
   gameDay: number,
   existingRaces: Race[],
-  rng: Rng
+  rng: Rng,
 ): Race[] {
   const numRaces = rng.int(schedule.racesPerDay[0], schedule.racesPerDay[1]);
 
@@ -88,7 +88,7 @@ export function generateTrackRaces(
 
   // Fallback to generic generator for other regions (will be expanded in future sprints)
   const races: Race[] = [];
-  const trackSurfaces = track.courses.map(c => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
+  const trackSurfaces = track.courses.map((c) => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
   const availableSurfaces = trackSurfaces.length > 0 ? trackSurfaces : ["Dirt" as const];
   for (let i = 0; i < numRaces; i++) {
     const race = generateRace(gameDay, rng);
@@ -105,7 +105,7 @@ export function generateTrackSchedule(
   gameDay: number,
   existingRaces: Race[],
   schedules: TrackSchedule[],
-  rng: Rng
+  rng: Rng,
 ): Race[] {
   const races = [...existingRaces];
   const dayOfYear = getDayOfYear(gameDay);
@@ -133,10 +133,7 @@ export function generateTrackSchedule(
 
 // Generate all graded races for a given game year (called on year transition)
 // Uses dayOfYearVariance to apply deterministic jitter to each race's schedule date
-export function generateAnnualCalendar(
-  year: number,
-  existingRaces: Race[]
-): Race[] {
+export function generateAnnualCalendar(year: number, existingRaces: Race[]): Race[] {
   const yearRng = createRng(hashStr(`annual_calendar_${year}`));
   const firstDayOfYear = (year - 1) * 365 + 1;
   const races = [...existingRaces];
@@ -154,7 +151,11 @@ export function generateAnnualCalendar(
     const clampedDoy = Math.max(1, Math.min(365, rawDoy));
     const gameDay = firstDayOfYear + clampedDoy - 1;
 
-    if (races.some(r => r.graded?.key === g.key && r.day >= firstDayOfYear && r.day < firstDayOfYear + 365)) {
+    if (
+      races.some(
+        (r) => r.graded?.key === g.key && r.day >= firstDayOfYear && r.day < firstDayOfYear + 365,
+      )
+    ) {
       continue;
     }
 
@@ -179,10 +180,10 @@ export function generateUpcomingRaces(
   currentRaces: Race[],
   newDay: number,
   schedules: TrackSchedule[],
-  baseRng: Rng // Used if we need global randomness, but we prefer daily seeds
+  baseRng: Rng, // Used if we need global randomness, but we prefer daily seeds
 ): Race[] {
   const races = [...currentRaces];
-  // We don't actually need baseRng if we derive daily seeds, 
+  // We don't actually need baseRng if we derive daily seeds,
   // but we'll keep it for interface consistency if needed.
 
   // Generate races for the next 7 days
@@ -190,9 +191,9 @@ export function generateUpcomingRaces(
     const futureDay = newDay + offset;
     // Derive a unique seed for this specific day
     const dailyRng = createRng(hashStr(`raceGen_${futureDay}`));
-    
+
     const dayRaces = generateTrackSchedule(futureDay, races, schedules, dailyRng);
-    
+
     // Add only new races (avoid duplicates)
     for (const race of dayRaces) {
       if (!races.some((r) => r.id === race.id)) {

@@ -18,10 +18,22 @@ describe("auctioneerService", () => {
     genotype: {
       color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
       stats: {
-        speed: [[1, 1], [1, 1]],
-        stamina: [[1, 1], [1, 1]],
-        acceleration: [[1, 1], [1, 1]],
-        consistency: [[1, 1], [1, 1]],
+        speed: [
+          [1, 1],
+          [1, 1],
+        ],
+        stamina: [
+          [1, 1],
+          [1, 1],
+        ],
+        acceleration: [
+          [1, 1],
+          [1, 1],
+        ],
+        consistency: [
+          [1, 1],
+          [1, 1],
+        ],
       },
       preferences: { distance: [1, 1], surface: [1, 1], climbing: [1, 1], cornering: [1, 1] },
       style: [1, 1],
@@ -38,7 +50,10 @@ describe("auctioneerService", () => {
         geneticDiversity: 0.8,
         lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
       },
-      heart: [[1, 1], [1, 1]],
+      heart: [
+        [1, 1],
+        [1, 1],
+      ],
       fiberType: [1, 1],
       stride: [1, 1],
       trackBias: [1, 1],
@@ -48,7 +63,13 @@ describe("auctioneerService", () => {
       recovery: [1, 1],
       fertility: [1, 1],
       foalingEase: [1, 1],
-      markings: { socks: [1, 1], face: [1, 1], silverDapple: [1, 1], sabino: [1, 1], splashWhite: [1, 1] },
+      markings: {
+        socks: [1, 1],
+        face: [1, 1],
+        silverDapple: [1, 1],
+        sabino: [1, 1],
+        splashWhite: [1, 1],
+      },
       health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
     },
     energy: 100,
@@ -78,7 +99,13 @@ describe("auctioneerService", () => {
     recoveryRate: 1.0,
     fertility: 1.0,
     foalingEase: 1.0,
-    markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+    markings: {
+      socks: "none",
+      face: "none",
+      silverDapple: false,
+      sabino: false,
+      splashWhite: false,
+    },
     bleederRisk: 0.05,
     roarerRisk: 0.05,
     ocdRisk: 0.05,
@@ -119,7 +146,7 @@ describe("auctioneerService", () => {
     const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "lot-1" };
     const ctx = { horse: mockHorse, consignor: mockConsignor };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result).toHaveProperty("text");
     expect(result).toHaveProperty("isHighImpact");
     expect(typeof result.text).toBe("string");
@@ -127,20 +154,29 @@ describe("auctioneerService", () => {
   });
 
   it("generates line for BID_RECEIVED event", () => {
-    const event: AuctionTickEvent = { type: "BID_RECEIVED", lotId: "lot-1", stableId: "stable-2", amount: 5000 };
+    const event: AuctionTickEvent = {
+      type: "BID_RECEIVED",
+      lotId: "lot-1",
+      stableId: "stable-2",
+      amount: 5000,
+    };
     const ctx = { horse: mockHorse, consignor: mockConsignor, paddleNumber: 12 };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result).toHaveProperty("text");
     expect(result.isHighImpact).toBe(false);
     expect(result.text).toContain("$");
   });
 
   it("generates line for BID_WAR event", () => {
-    const event: AuctionTickEvent = { type: "BID_WAR", lotId: "lot-1", stableIds: ["stable-1", "stable-2"] };
+    const event: AuctionTickEvent = {
+      type: "BID_WAR",
+      lotId: "lot-1",
+      stableIds: ["stable-1", "stable-2"],
+    };
     const ctx = { horse: mockHorse };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result).toHaveProperty("text");
     expect(result.isHighImpact).toBe(true);
   });
@@ -149,7 +185,7 @@ describe("auctioneerService", () => {
     const event: AuctionTickEvent = { type: "GOING_ONCE", lotId: "lot-1", amount: 10000 };
     const ctx = { horse: mockHorse };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result).toHaveProperty("text");
     expect(result.text.length).toBeGreaterThan(0);
   });
@@ -158,17 +194,22 @@ describe("auctioneerService", () => {
     const event: AuctionTickEvent = { type: "GOING_TWICE", lotId: "lot-1", amount: 10000 };
     const ctx = { horse: mockHorse };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result).toHaveProperty("text");
     expect(result.text.toLowerCase()).toContain("twice");
     expect(result.isHighImpact).toBe(true);
   });
 
   it("generates line for SOLD event", () => {
-    const event: AuctionTickEvent = { type: "SOLD", lotId: "lot-1", amount: 15000, toStableId: "stable-2" };
+    const event: AuctionTickEvent = {
+      type: "SOLD",
+      lotId: "lot-1",
+      amount: 15000,
+      toStableId: "stable-2",
+    };
     const ctx = { horse: mockHorse, winner: mockWinner };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result).toHaveProperty("text");
     expect(result.text.length).toBeGreaterThan(0);
     expect(result.isHighImpact).toBe(true);
@@ -178,16 +219,21 @@ describe("auctioneerService", () => {
     const event: AuctionTickEvent = { type: "PASSED", lotId: "lot-1", reason: "no_bids" };
     const ctx = { horse: mockHorse };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result).toHaveProperty("text");
     expect(result.text.length).toBeGreaterThan(0);
   });
 
   it("generates line for RESERVE_NOT_MET event", () => {
-    const event: AuctionTickEvent = { type: "RESERVE_NOT_MET", lotId: "lot-1", amount: 8000, reserve: 10000 };
+    const event: AuctionTickEvent = {
+      type: "RESERVE_NOT_MET",
+      lotId: "lot-1",
+      amount: 8000,
+      reserve: 10000,
+    };
     const ctx = { horse: mockHorse };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result).toHaveProperty("text");
     expect(result.text.toLowerCase()).toContain("reserve");
   });
@@ -195,22 +241,27 @@ describe("auctioneerService", () => {
   it("produces variety in generated lines", () => {
     const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "lot-1" };
     const ctx = { horse: mockHorse };
-    
+
     const lines = new Set();
     for (let i = 0; i < 20; i++) {
       const result = generateAuctioneerLine(event, ctx, createRng(i));
       lines.add(result.text);
     }
-    
+
     // Should generate at least some variety
     expect(lines.size).toBeGreaterThan(1);
   });
 
   it("uses paddle number in BID_RECEIVED context", () => {
-    const event: AuctionTickEvent = { type: "BID_RECEIVED", lotId: "lot-1", stableId: "stable-2", amount: 5000 };
+    const event: AuctionTickEvent = {
+      type: "BID_RECEIVED",
+      lotId: "lot-1",
+      stableId: "stable-2",
+      amount: 5000,
+    };
     const ctx = { horse: mockHorse, paddleNumber: 42 };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     // Paddle number may or may not appear in the line depending on template
     // But the context should be accepted without error
     expect(result.text).toBeDefined();
@@ -220,7 +271,7 @@ describe("auctioneerService", () => {
     const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "lot-1" };
     const ctx = { horse: mockHorse, breezeSeconds: 10.5 };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result.text).toBeDefined();
   });
 
@@ -228,7 +279,7 @@ describe("auctioneerService", () => {
     const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "lot-1" };
     const ctx = { horse: mockHorse, scoutedOverall: 80 };
     const result = generateAuctioneerLine(event, ctx, rng);
-    
+
     expect(result.text).toBeDefined();
   });
 });

@@ -38,13 +38,13 @@ function RegionalCalendarPage() {
   const { grade, special, view } = Route.useSearch();
   const navigate = Route.useNavigate();
   const region = getRegion(regionId)!;
-  
+
   const races = useGame((s) => s.races);
   const currentDay = useGame((s) => s.day);
 
   // Filter races by region tracks
   const regionRaces = races.filter(
-    (race) => race.graded && region.tracks.includes(race.graded.track)
+    (race) => race.graded && region.tracks.includes(race.graded.track),
   );
 
   // Apply filters
@@ -71,7 +71,18 @@ function RegionalCalendarPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-cream-muted mb-1">
-            <Link to="/races" className="hover:text-cream flex items-center gap-1" search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}>
+            <Link
+              to="/races"
+              className="hover:text-cream flex items-center gap-1"
+              search={{
+                grade: "all",
+                country: "all",
+                surface: "all",
+                track: "all",
+                owned: "all",
+                q: "",
+              }}
+            >
               <ChevronLeft className="h-4 w-4" />
               All Races
             </Link>
@@ -81,10 +92,12 @@ function RegionalCalendarPage() {
               Calendars
             </span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">{region.title}</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+            {region.title}
+          </h1>
           <p className="text-cream-muted font-[family-name:var(--font-body)]">{region.subtitle}</p>
         </div>
-        
+
         {/* Region Switcher */}
         <RegionSwitcher currentRegion={region} />
       </div>
@@ -150,7 +163,7 @@ function RegionalCalendarPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-3 text-sm text-cream-muted">
             Showing {filteredRaces.length} of {regionRaces.length} races
           </div>
@@ -176,15 +189,26 @@ function RegionalCalendarPage() {
 }
 
 /** Month-based calendar view */
-function MonthView({ races, region, currentDay }: { races: Race[]; region: RegionConfig; currentDay: number }) {
+function MonthView({
+  races,
+  region,
+  currentDay,
+}: {
+  races: Race[];
+  region: RegionConfig;
+  currentDay: number;
+}) {
   // Group races by month
-  const racesByMonth = races.reduce((acc, race) => {
-    const dayOfYear = ((race.day - 1) % 365) + 1;
-    const monthName = getMonthName(dayOfYear);
-    if (!acc[monthName]) acc[monthName] = [];
-    acc[monthName].push(race);
-    return acc;
-  }, {} as Record<string, Race[]>);
+  const racesByMonth = races.reduce(
+    (acc, race) => {
+      const dayOfYear = ((race.day - 1) % 365) + 1;
+      const monthName = getMonthName(dayOfYear);
+      if (!acc[monthName]) acc[monthName] = [];
+      acc[monthName].push(race);
+      return acc;
+    },
+    {} as Record<string, Race[]>,
+  );
 
   return (
     <>
@@ -203,14 +227,21 @@ function MonthView({ races, region, currentDay }: { races: Race[]; region: Regio
                   <div
                     key={race.id}
                     className={`flex items-start justify-between gap-4 p-3 rounded-lg border ${
-                      isSpecial ? "border-l-4 border-l-fame bg-fame/10" : hasOwnedEntry ? "border-l-4 border-l-success bg-success/10" : ""
+                      isSpecial
+                        ? "border-l-4 border-l-fame bg-fame/10"
+                        : hasOwnedEntry
+                          ? "border-l-4 border-l-success bg-success/10"
+                          : ""
                     }`}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h3 className="font-semibold">{race.name}</h3>
                         {race.graded?.grade && (
-                          <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
+                          <Badge
+                            variant="outline"
+                            className={getGradeColorClass(race.graded.grade)}
+                          >
                             {race.graded.grade}
                           </Badge>
                         )}
@@ -228,19 +259,24 @@ function MonthView({ races, region, currentDay }: { races: Race[]; region: Regio
                         <span>{race.distance}m</span>
                         <span>{race.graded?.surface}</span>
                         <span>
-                          Purse <span className="font-medium text-cream">${race.purse.toLocaleString()}</span>
+                          Purse{" "}
+                          <span className="font-medium text-cream">
+                            ${race.purse.toLocaleString()}
+                          </span>
                         </span>
                         {race.restrictions?.minAge !== undefined && (
                           <span>
                             {race.restrictions.minAge === race.restrictions.maxAge
                               ? `${race.restrictions.minAge}YO only`
                               : race.restrictions.maxAge
-                              ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
-                              : `${race.restrictions.minAge}+ YO`}
+                                ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
+                                : `${race.restrictions.minAge}+ YO`}
                           </span>
                         )}
                         {race.restrictions?.gender && (
-                          <span>{race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only</span>
+                          <span>
+                            {race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only
+                          </span>
                         )}
                       </div>
                     </div>
@@ -258,15 +294,26 @@ function MonthView({ races, region, currentDay }: { races: Race[]; region: Regio
 }
 
 /** Track-based calendar view */
-function TrackView({ races, region, currentDay }: { races: Race[]; region: RegionConfig; currentDay: number }) {
+function TrackView({
+  races,
+  region,
+  currentDay,
+}: {
+  races: Race[];
+  region: RegionConfig;
+  currentDay: number;
+}) {
   // Group races by track
-  const racesByTrack = region.tracks.reduce((acc, track) => {
-    const trackRaces = races.filter((r) => r.graded?.track === track);
-    if (trackRaces.length > 0) {
-      acc[track] = trackRaces.sort((a: Race, b: Race) => a.day - b.day);
-    }
-    return acc;
-  }, {} as Record<string, Race[]>);
+  const racesByTrack = region.tracks.reduce(
+    (acc, track) => {
+      const trackRaces = races.filter((r) => r.graded?.track === track);
+      if (trackRaces.length > 0) {
+        acc[track] = trackRaces.sort((a: Race, b: Race) => a.day - b.day);
+      }
+      return acc;
+    },
+    {} as Record<string, Race[]>,
+  );
 
   return (
     <>
@@ -283,7 +330,11 @@ function TrackView({ races, region, currentDay }: { races: Race[]; region: Regio
                 <div
                   key={race.id}
                   className={`flex items-start justify-between gap-4 p-3 rounded-lg border ${
-                    isSpecial ? "border-l-4 border-l-fame bg-fame/10" : hasOwnedEntry ? "border-l-4 border-l-success bg-success/10" : ""
+                    isSpecial
+                      ? "border-l-4 border-l-fame bg-fame/10"
+                      : hasOwnedEntry
+                        ? "border-l-4 border-l-success bg-success/10"
+                        : ""
                   }`}
                 >
                   <div className="flex-1">
@@ -307,19 +358,24 @@ function TrackView({ races, region, currentDay }: { races: Race[]; region: Regio
                       <span>{race.distance}m</span>
                       <span>{race.graded?.surface}</span>
                       <span>
-                        Purse <span className="font-medium text-cream">${race.purse.toLocaleString()}</span>
+                        Purse{" "}
+                        <span className="font-medium text-cream">
+                          ${race.purse.toLocaleString()}
+                        </span>
                       </span>
                       {race.restrictions?.minAge !== undefined && (
                         <span>
                           {race.restrictions.minAge === race.restrictions.maxAge
                             ? `${race.restrictions.minAge}YO only`
                             : race.restrictions.maxAge
-                            ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
-                            : `${race.restrictions.minAge}+ YO`}
+                              ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
+                              : `${race.restrictions.minAge}+ YO`}
                         </span>
                       )}
                       {race.restrictions?.gender && (
-                        <span>{race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only</span>
+                        <span>
+                          {race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only
+                        </span>
                       )}
                     </div>
                   </div>

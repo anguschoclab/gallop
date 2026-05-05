@@ -2,13 +2,13 @@
 export { createTestRng } from "./createTestRng";
 export { createTestGenotype } from "./createTestGenotype";
 export { createTestJockey, createTestJockeys } from "./createTestJockey";
-export { 
-  createTestHorse, 
-  createTestColt, 
-  createTestFilly, 
+export {
+  createTestHorse,
+  createTestColt,
+  createTestFilly,
   createTestAdultHorse,
-  createTestMare, 
-  createTestGelding, 
+  createTestMare,
+  createTestGelding,
   createTestHorses,
-  createTestNpcHorse 
+  createTestNpcHorse,
 } from "./createTestHorse";

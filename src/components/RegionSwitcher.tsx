@@ -12,11 +12,7 @@ export function RegionSwitcher({ currentRegion }: RegionSwitcherProps) {
       <span className="text-sm text-muted-foreground">Region:</span>
       <div className="flex flex-wrap gap-1 max-w-[400px] justify-end">
         {REGION_LIST.map((r) => (
-          <Link
-            key={r.id}
-            to="/calendar/$regionId"
-            params={{ regionId: r.id }}
-          >
+          <Link key={r.id} to="/calendar/$regionId" params={{ regionId: r.id }}>
             <Button
               variant={r.id === currentRegion.id ? "default" : "outline"}
               size="sm"

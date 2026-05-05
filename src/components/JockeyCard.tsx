@@ -1,7 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Jockey } from "@/game/types";
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from "recharts";
+import {
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+} from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { User, Trophy, Calendar, DollarSign, Target, RefreshCw } from "lucide-react";
 import { RacingSilks } from "./RacingSilks";
@@ -16,7 +23,7 @@ interface JockeyCardProps {
 
 export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: JockeyCardProps) {
   const rerollJockeySilk = useGame((s) => s.rerollJockeySilk);
-  
+
   const statsData = [
     { stat: "Pacing", value: jockey.stats.pacing },
     { stat: "Pos", value: jockey.stats.positioning },
@@ -64,7 +71,10 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
             <div>
               <CardTitle className="text-lg font-bold">{jockey.name}</CardTitle>
               <div className="flex items-center gap-2 mt-1">
-                <Badge variant="outline" className={`text-[10px] uppercase font-black ${archetypeColors[jockey.archetype] || ""}`}>
+                <Badge
+                  variant="outline"
+                  className={`text-[10px] uppercase font-black ${archetypeColors[jockey.archetype] || ""}`}
+                >
                   {jockey.archetype.replace("_", " ")}
                 </Badge>
                 {isRetained && (
@@ -81,7 +91,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="p-4 pt-2">
         <div className="grid grid-cols-[1fr_120px] gap-2 items-center">
           <div className="space-y-3">
@@ -92,7 +102,9 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
                   <span className="text-[10px] font-black uppercase tracking-wider">Wins</span>
                 </div>
                 <div className="text-sm font-bold tabular-nums">{jockey.careerWins}</div>
-                <div className="text-[9px] text-muted-foreground tabular-nums">{winRate.toFixed(1)}% Rate</div>
+                <div className="text-[9px] text-muted-foreground tabular-nums">
+                  {winRate.toFixed(1)}% Rate
+                </div>
               </div>
               <div className="bg-white/5 rounded-lg p-2 border border-white/5">
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
@@ -100,24 +112,23 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
                   <span className="text-[10px] font-black uppercase tracking-wider">Age</span>
                 </div>
                 <div className="text-sm font-bold tabular-nums">{jockey.age}</div>
-                <div className="text-[9px] text-muted-foreground uppercase font-medium">Professional</div>
+                <div className="text-[9px] text-muted-foreground uppercase font-medium">
+                  Professional
+                </div>
               </div>
             </div>
-            
+
             <div className="bg-white/5 rounded-lg p-2 border border-white/5">
-               <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
-                  <Target size={12} className="text-orange-500" />
-                  <span className="text-[10px] font-black uppercase tracking-wider">Fame Index</span>
+              <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
+                <Target size={12} className="text-orange-500" />
+                <span className="text-[10px] font-black uppercase tracking-wider">Fame Index</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-gold" style={{ width: `${jockey.fame}%` }} />
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gold" 
-                      style={{ width: `${jockey.fame}%` }}
-                    />
-                  </div>
-                  <span className="text-xs font-bold tabular-nums">{jockey.fame.toFixed(0)}</span>
-                </div>
+                <span className="text-xs font-bold tabular-nums">{jockey.fame.toFixed(0)}</span>
+              </div>
             </div>
           </div>
 

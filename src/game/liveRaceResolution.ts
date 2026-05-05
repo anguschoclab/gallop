@@ -1,9 +1,24 @@
-import type { AnyImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact } from "@/core/resolver/impacts";
+import type {
+  AnyImpact,
+  EnergyImpact,
+  FormImpact,
+  FameImpact,
+  RaceHistoryImpact,
+  CashImpact,
+  BlueHenImpact,
+  StudCareerImpact,
+  PaceSampleImpact,
+  JockeyStatsImpact,
+  LogImpact,
+} from "@/core/resolver/impacts";
 import type { Race, Horse, Jockey } from "./types";
 import type { Runner } from "./raceSim";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { beyerFigure } from "./beyer";
-import { detectInbreedingPattern, inbreedingPerformanceDampener } from "@/core/breeding/populationGenetics";
+import {
+  detectInbreedingPattern,
+  inbreedingPerformanceDampener,
+} from "@/core/breeding/populationGenetics";
 import { getCurrentYear } from "./raceSchedule";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "./uuid";
@@ -22,7 +37,7 @@ export function resolveLiveRaceWithImpacts(
   runners: Runner[],
   horses: Horse[],
   jockeys: Jockey[],
-  day: number
+  day: number,
 ): ResolverContext {
   if (race.resolved) {
     return {
@@ -62,7 +77,8 @@ export function resolveLiveRaceWithImpacts(
     } as EnergyImpact);
 
     // Form impact based on position
-    const formDelta = r.position === 1 ? 3 : r.position === 2 ? 2 : r.position === 3 ? 1 : r.position <= 5 ? 0 : -1;
+    const formDelta =
+      r.position === 1 ? 3 : r.position === 2 ? 2 : r.position === 3 ? 1 : r.position <= 5 ? 0 : -1;
     impacts.push({
       id: generateUUID(),
       intentId: "",
@@ -101,7 +117,11 @@ export function resolveLiveRaceWithImpacts(
     let winAndYouInQualified = undefined;
     if (r.position === 1 && race.graded?.winAndYouInTarget) {
       const currentYear = getCurrentYear(day);
-      winAndYouInQualified = { year: currentYear, raceId: race.id, raceKey: race.graded.winAndYouInTarget };
+      winAndYouInQualified = {
+        year: currentYear,
+        raceId: race.id,
+        raceKey: race.graded.winAndYouInTarget,
+      };
     }
 
     // Race history impact
@@ -167,7 +187,10 @@ export function resolveLiveRaceWithImpacts(
     }
 
     // Blue hen impact for graded stakes winners
-    if (r.position === 1 && (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")) {
+    if (
+      r.position === 1 &&
+      (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")
+    ) {
       const dam = horses.find((h) => h.id === horse.pedigree?.damId);
       if (dam) {
         impacts.push({
@@ -181,7 +204,10 @@ export function resolveLiveRaceWithImpacts(
           blueHenStatus: {
             isBlueHen: dam.blueHenStatus?.isBlueHen || false,
             stakesWinnersProduced: (dam.blueHenStatus?.stakesWinnersProduced ?? 0) + 1,
-            group1WinnersProduced: race.graded?.grade === "G1" ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1 : dam.blueHenStatus?.group1WinnersProduced,
+            group1WinnersProduced:
+              race.graded?.grade === "G1"
+                ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1
+                : dam.blueHenStatus?.group1WinnersProduced,
             blueHenScore: dam.blueHenStatus?.blueHenScore || 0,
             foalsProduced: dam.blueHenStatus?.foalsProduced || 0,
           },
@@ -207,7 +233,10 @@ export function resolveLiveRaceWithImpacts(
             seasonBookings: sire.stud.seasonBookings,
             lifetimeFoals: sire.stud.lifetimeFoals,
             lifetimeStakesFoals: (sire.stud.lifetimeStakesFoals ?? 0) + 1,
-            lifetimeG1Foals: race.graded?.grade === "G1" ? (sire.stud.lifetimeG1Foals ?? 0) + 1 : sire.stud.lifetimeG1Foals,
+            lifetimeG1Foals:
+              race.graded?.grade === "G1"
+                ? (sire.stud.lifetimeG1Foals ?? 0) + 1
+                : sire.stud.lifetimeG1Foals,
           },
           reason: `Stakes win by ${horse.name}`,
         } as StudCareerImpact);
@@ -290,10 +319,12 @@ export function resolveLiveRaceWithImpacts(
     return horse && !horse.stableId;
   });
   if (ownedHorses.length > 0) {
-    const summary = ownedHorses.map((r) => {
-      const horse = horses.find((h) => h.id === r.horseId);
-      return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
-    }).join(", ");
+    const summary = ownedHorses
+      .map((r) => {
+        const horse = horses.find((h) => h.id === r.horseId);
+        return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
+      })
+      .join(", ");
     const prize = ownedHorses.reduce((sum, r) => {
       if (r.position - 1 < PRIZE_SPLIT.length) {
         return sum + Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);

@@ -74,7 +74,7 @@ export const TRANSPORT_CONFIGS: Record<TransportMode, TransportConfig> = {
 export function calculateTransportCost(
   distance: number,
   mode: TransportMode,
-  horseCount: number = 1
+  horseCount: number = 1,
 ): number {
   const config = TRANSPORT_CONFIGS[mode];
   const baseCost = distance * config.baseCostPerMile;
@@ -84,10 +84,7 @@ export function calculateTransportCost(
 /**
  * Calculate transport duration in days
  */
-export function calculateTransportDuration(
-  distance: number,
-  mode: TransportMode
-): number {
+export function calculateTransportDuration(distance: number, mode: TransportMode): number {
   const config = TRANSPORT_CONFIGS[mode];
   return Math.ceil(distance / config.speed);
 }
@@ -110,7 +107,7 @@ export function createTransportRequest(
   toLocation: string,
   distance: number,
   currentDay: number,
-  mode?: TransportMode
+  mode?: TransportMode,
 ): TransportRequest {
   const transportMode = mode ?? getTransportModeForDistance(distance);
   const cost = calculateTransportCost(distance, transportMode);

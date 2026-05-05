@@ -35,8 +35,20 @@ function mkPregnancy(id: string): Pregnancy {
   };
 }
 
-const sire = mkHorse({ id: "sire", name: "Sire", gender: "horse", stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 }, potential: 100 });
-const dam = mkHorse({ id: "dam", name: "Dam", gender: "mare", stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 }, potential: 100 });
+const sire = mkHorse({
+  id: "sire",
+  name: "Sire",
+  gender: "horse",
+  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 },
+  potential: 100,
+});
+const dam = mkHorse({
+  id: "dam",
+  name: "Dam",
+  gender: "mare",
+  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 },
+  potential: 100,
+});
 
 describe("resolveFoaling", () => {
   it("foal stats are integers in [1, 100] even with max parents and big compatibility bonuses", () => {
@@ -45,7 +57,13 @@ describe("resolveFoaling", () => {
       const outcome = resolveFoaling(mkPregnancy(`preg-${i}`), sire, dam);
       if (outcome.kind === "live") {
         const { stats, potential } = outcome.foal;
-        for (const v of [stats.speed, stats.stamina, stats.acceleration, stats.consistency, potential]) {
+        for (const v of [
+          stats.speed,
+          stats.stamina,
+          stats.acceleration,
+          stats.consistency,
+          potential,
+        ]) {
           expect(Number.isInteger(v)).toBe(true);
           expect(v).toBeGreaterThanOrEqual(1);
           expect(v).toBeLessThanOrEqual(100);
@@ -90,9 +108,11 @@ describe("resolveFoaling", () => {
   it("ages mares scale complication risk: 20yo dam fails much more often than 5yo dam", () => {
     const youngDam = { ...dam, age: 5 };
     const oldDam = { ...dam, age: 20 };
-    let youngFails = 0, oldFails = 0;
+    let youngFails = 0,
+      oldFails = 0;
     for (let i = 0; i < 500; i++) {
-      if (resolveFoaling(mkPregnancy(`y-${i}`), sire, youngDam).kind === "complication") youngFails++;
+      if (resolveFoaling(mkPregnancy(`y-${i}`), sire, youngDam).kind === "complication")
+        youngFails++;
       if (resolveFoaling(mkPregnancy(`o-${i}`), sire, oldDam).kind === "complication") oldFails++;
     }
     // Loose floor — randomness can swing things, but old should be clearly higher.
@@ -100,14 +120,41 @@ describe("resolveFoaling", () => {
   });
 
   it("lethal recessive: both-carrier pair produces complications at meaningfully higher rate than non-carrier pair", () => {
-    const carrierSire = { ...sire, geneticMarkers: { ...sire.geneticMarkers!, lethalCarriers: { csnb: true, hypp: false, olws: false } } };
-    const carrierDam = { ...dam, geneticMarkers: { ...dam.geneticMarkers!, lethalCarriers: { csnb: true, hypp: false, olws: false } } };
-    const cleanSire = { ...sire, geneticMarkers: { ...sire.geneticMarkers!, lethalCarriers: { csnb: false, hypp: false, olws: false } } };
-    const cleanDam = { ...dam, geneticMarkers: { ...dam.geneticMarkers!, lethalCarriers: { csnb: false, hypp: false, olws: false } } };
-    let bothFails = 0, cleanFails = 0;
+    const carrierSire = {
+      ...sire,
+      geneticMarkers: {
+        ...sire.geneticMarkers!,
+        lethalCarriers: { csnb: true, hypp: false, olws: false },
+      },
+    };
+    const carrierDam = {
+      ...dam,
+      geneticMarkers: {
+        ...dam.geneticMarkers!,
+        lethalCarriers: { csnb: true, hypp: false, olws: false },
+      },
+    };
+    const cleanSire = {
+      ...sire,
+      geneticMarkers: {
+        ...sire.geneticMarkers!,
+        lethalCarriers: { csnb: false, hypp: false, olws: false },
+      },
+    };
+    const cleanDam = {
+      ...dam,
+      geneticMarkers: {
+        ...dam.geneticMarkers!,
+        lethalCarriers: { csnb: false, hypp: false, olws: false },
+      },
+    };
+    let bothFails = 0,
+      cleanFails = 0;
     for (let i = 0; i < 500; i++) {
-      if (resolveFoaling(mkPregnancy(`b-${i}`), carrierSire, carrierDam).kind === "complication") bothFails++;
-      if (resolveFoaling(mkPregnancy(`c-${i}`), cleanSire, cleanDam).kind === "complication") cleanFails++;
+      if (resolveFoaling(mkPregnancy(`b-${i}`), carrierSire, carrierDam).kind === "complication")
+        bothFails++;
+      if (resolveFoaling(mkPregnancy(`c-${i}`), cleanSire, cleanDam).kind === "complication")
+        cleanFails++;
     }
     expect(bothFails).toBeGreaterThan(cleanFails);
   });

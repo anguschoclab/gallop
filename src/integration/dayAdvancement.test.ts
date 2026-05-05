@@ -16,7 +16,7 @@ import type { GameState } from "@/game/types";
 describe("Day Advancement Pipeline Integration", () => {
   it("should execute phases in correct order", () => {
     const phases = [upkeepPhase, agingPhase, raceResolutionPhase];
-    
+
     const state: GameState = {
       day: 1,
       cash: 10000,
@@ -45,11 +45,11 @@ describe("Day Advancement Pipeline Integration", () => {
     };
 
     const result = executePipeline(phases, context);
-    
+
     // Verify phases executed in order by checking order values
     expect(raceResolutionPhase.order).toBeLessThan(upkeepPhase.order);
     expect(upkeepPhase.order).toBeLessThan(agingPhase.order);
-    
+
     // Verify result structure
     expect(result.state).toBeDefined();
     expect(result.logs).toBeDefined();
@@ -57,7 +57,7 @@ describe("Day Advancement Pipeline Integration", () => {
 
   it("should handle phase skip conditions", () => {
     const phases = [upkeepPhase];
-    
+
     const state: GameState = {
       day: 10,
       cash: 10000,
@@ -86,14 +86,14 @@ describe("Day Advancement Pipeline Integration", () => {
     };
 
     const result = executePipeline(phases, context);
-    
+
     // Verify phase executed
     expect(result.state).toBeDefined();
   });
 
   it("should aggregate logs across phases", () => {
     const phases = [upkeepPhase, agingPhase];
-    
+
     const state: GameState = {
       day: 10,
       cash: 10000,
@@ -122,14 +122,14 @@ describe("Day Advancement Pipeline Integration", () => {
     };
 
     const result = executePipeline(phases, context);
-    
+
     // Logs should be preserved across phases
     expect(result.logs).toContainEqual({ day: 9, text: "Initial log" });
   });
 
   it("should apply state mutations from all phases", () => {
     const phases = [upkeepPhase];
-    
+
     const state: GameState = {
       day: 10,
       cash: 10000,
@@ -174,7 +174,7 @@ describe("Day Advancement Pipeline Integration", () => {
     };
 
     const result = executePipeline(phases, context);
-    
+
     // Upkeep phase should deduct $50 per horse
     expect(result.state.cash).toBe(9950);
   });

@@ -13,7 +13,7 @@ import {
 export function createFacility(
   type: FacilityType,
   level: FacilityLevel,
-  currentDay: number
+  currentDay: number,
 ): Facility {
   return {
     type,
@@ -59,7 +59,7 @@ export function createDefaultPlayerFacilities(currentDay: number = 1): PlayerFac
  */
 export function createNPCFacilities(
   tier: "elite" | "mid" | "budget",
-  currentDay: number
+  currentDay: number,
 ): PlayerFacilities {
   const facilityTypes: FacilityType[] = [
     "main_track",
@@ -115,18 +115,15 @@ export function calculateTotalMaintenance(facilities: PlayerFacilities): number 
  * Get facility bonus multiplier for a given facility type
  * Returns 0 if facility doesn't exist
  */
-export function getFacilityBonus(
-  facilities: PlayerFacilities,
-  type: FacilityType
-): number {
+export function getFacilityBonus(facilities: PlayerFacilities, type: FacilityType): number {
   const facility = facilities[type];
   if (!facility) return 0;
 
   const bonuses: Record<FacilityLevel, number> = {
     basic: 0,
-    standard: 0.10,
+    standard: 0.1,
     premium: 0.25,
-    elite: 0.40,
+    elite: 0.4,
   };
 
   return bonuses[facility.level];
@@ -135,10 +132,7 @@ export function getFacilityBonus(
 /**
  * Check if a facility enables a specific workout type
  */
-export function isWorkoutEnabled(
-  facilities: PlayerFacilities,
-  workoutType: string
-): boolean {
+export function isWorkoutEnabled(facilities: PlayerFacilities, workoutType: string): boolean {
   for (const [facilityType, enabledWorkouts] of Object.entries(FACILITY_ENABLED_WORKOUTS)) {
     const facility = facilities[facilityType as FacilityType];
     if (facility && (enabledWorkouts as string[]).includes(workoutType)) {
@@ -153,10 +147,7 @@ export function isWorkoutEnabled(
  * Upgrade a facility to the next level
  * Returns null if already at max level or upgrade not possible
  */
-export function upgradeFacility(
-  facility: Facility,
-  currentDay: number
-): Facility | null {
+export function upgradeFacility(facility: Facility, currentDay: number): Facility | null {
   const levelOrder: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
   const currentIndex = levelOrder.indexOf(facility.level);
 
@@ -172,10 +163,7 @@ export function upgradeFacility(
  * Downgrade a facility (for emergency cost cutting)
  * Returns null if already at basic level
  */
-export function downgradeFacility(
-  facility: Facility,
-  currentDay: number
-): Facility | null {
+export function downgradeFacility(facility: Facility, currentDay: number): Facility | null {
   const levelOrder: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
   const currentIndex = levelOrder.indexOf(facility.level);
 

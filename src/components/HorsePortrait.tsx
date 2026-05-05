@@ -31,7 +31,9 @@ export function HorsePortrait({
   const sizeCfg = SIZE_MAP[size];
 
   return (
-    <div className={cn("relative overflow-hidden rounded-lg bg-muted/30", sizeCfg.class, className)}>
+    <div
+      className={cn("relative overflow-hidden rounded-lg bg-muted/30", sizeCfg.class, className)}
+    >
       <img
         src={url}
         alt={alt}
@@ -56,16 +58,18 @@ interface HorsePortraitBadgeProps {
   className?: string;
 }
 
-export function HorsePortraitBadge({
-  coatColor,
-  size = "sm",
-  className,
-}: HorsePortraitBadgeProps) {
+export function HorsePortraitBadge({ coatColor, size = "sm", className }: HorsePortraitBadgeProps) {
   const url = getPortraitUrl(coatColor);
   const sizeCfg = SIZE_MAP[size];
 
   return (
-    <div className={cn("rounded-full overflow-hidden border-2 border-white shadow shrink-0", sizeCfg.class, className)}>
+    <div
+      className={cn(
+        "rounded-full overflow-hidden border-2 border-white shadow shrink-0",
+        sizeCfg.class,
+        className,
+      )}
+    >
       <img
         src={url}
         alt=""

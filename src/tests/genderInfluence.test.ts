@@ -4,7 +4,11 @@ import { createRng, hashStr } from "../game/rng";
 import type { Horse, HorseGender } from "../game/types";
 
 // Mock Horse generator
-function mockHorse(id: string, gender: HorseGender, stats: { speed: number; stamina: number; acceleration: number; consistency: number }): Horse {
+function mockHorse(
+  id: string,
+  gender: HorseGender,
+  stats: { speed: number; stamina: number; acceleration: number; consistency: number },
+): Horse {
   return {
     id,
     name: `${gender}_${id}`,
@@ -37,11 +41,34 @@ describe("Gender and Weight Influence", () => {
   const distance = 1600;
 
   it("should penalize speed as weight increases", () => {
-    const horse = mockHorse("h1", "horse", { speed: 80, stamina: 80, acceleration: 80, consistency: 80 });
-    
+    const horse = mockHorse("h1", "horse", {
+      speed: 80,
+      stamina: 80,
+      acceleration: 80,
+      consistency: 80,
+    });
+
     // Light weight vs Heavy weight
-    const runnerLight = buildRunner(horse, true, distance, "Turf", { speedMul: 1, staminaDrainMul: 1 }, 1, undefined, 115);
-    const runnerHeavy = buildRunner(horse, true, distance, "Turf", { speedMul: 1, staminaDrainMul: 1 }, 1, undefined, 130);
+    const runnerLight = buildRunner(
+      horse,
+      true,
+      distance,
+      "Turf",
+      { speedMul: 1, staminaDrainMul: 1 },
+      1,
+      undefined,
+      115,
+    );
+    const runnerHeavy = buildRunner(
+      horse,
+      true,
+      distance,
+      "Turf",
+      { speedMul: 1, staminaDrainMul: 1 },
+      1,
+      undefined,
+      130,
+    );
 
     expect(runnerLight.topSpeed).toBeGreaterThan(runnerHeavy.topSpeed);
     expect(runnerLight.accel).toBeGreaterThan(runnerHeavy.accel);
@@ -52,12 +79,30 @@ describe("Gender and Weight Influence", () => {
     const stallionHorse = mockHorse("stallion", "horse", baseStats);
     const geldingHorse = mockHorse("gelding", "gelding", baseStats);
 
-    const runnerStallion = buildRunner(stallionHorse, true, distance, "Turf", { speedMul: 1, staminaDrainMul: 1 }, 1, undefined, 126);
-    const runnerGelding = buildRunner(geldingHorse, true, distance, "Turf", { speedMul: 1, staminaDrainMul: 1 }, 1, undefined, 126);
+    const runnerStallion = buildRunner(
+      stallionHorse,
+      true,
+      distance,
+      "Turf",
+      { speedMul: 1, staminaDrainMul: 1 },
+      1,
+      undefined,
+      126,
+    );
+    const runnerGelding = buildRunner(
+      geldingHorse,
+      true,
+      distance,
+      "Turf",
+      { speedMul: 1, staminaDrainMul: 1 },
+      1,
+      undefined,
+      126,
+    );
 
     // Stallion should have 1.5% speed boost over Gelding (assuming same weight)
     expect(runnerStallion.topSpeed).toBeGreaterThan(runnerGelding.topSpeed);
-    
+
     // Stallion should have higher noise (consistency penalty)
     // base noise = (110 - 80) / 100 = 0.3
     // stallion noise = 0.3 * 1.25 = 0.375
@@ -71,18 +116,36 @@ describe("Gender and Weight Influence", () => {
     const fillyHorse = mockHorse("filly", "filly", baseStats);
 
     // Stallion at 126lbs vs Filly at 121lbs (5lb allowance)
-    const runnerStallion = buildRunner(stallionHorse, true, distance, "Turf", { speedMul: 1, staminaDrainMul: 1 }, 1, undefined, 126);
-    const runnerFilly = buildRunner(fillyHorse, true, distance, "Turf", { speedMul: 1, staminaDrainMul: 1 }, 1, undefined, 121);
+    const runnerStallion = buildRunner(
+      stallionHorse,
+      true,
+      distance,
+      "Turf",
+      { speedMul: 1, staminaDrainMul: 1 },
+      1,
+      undefined,
+      126,
+    );
+    const runnerFilly = buildRunner(
+      fillyHorse,
+      true,
+      distance,
+      "Turf",
+      { speedMul: 1, staminaDrainMul: 1 },
+      1,
+      undefined,
+      121,
+    );
 
     // Stallion topSpeed: (Base * 1.015 * 1.0)
     // Filly topSpeed: (Base * 0.99 * 1.005) -> 1.005 comes from 126 - 121 = 5lb bonus (5 * 0.001)
-    
+
     // Let's check the math:
     // stallion: 1.015
     // filly: 0.99 * 1.005 = 0.99495
     // Stallion is still slightly faster in top speed, but the gap is closed significantly.
     expect(runnerStallion.topSpeed).toBeGreaterThan(runnerFilly.topSpeed);
-    
+
     // Without allowance, the gap would be 2.5% (1.015 vs 0.99)
     // With allowance, the gap is ~2.0%
   });
@@ -97,12 +160,30 @@ describe("Gender and Weight Influence", () => {
 
     for (let i = 0; i < 20; i++) {
       const raceRng = createRng(hashStr(`race_${i}`));
-      const rS = buildRunner(stallionHorse, true, distance, "Turf", { speedMul: 1, staminaDrainMul: 1 }, 1, undefined, 126);
-      const rG = buildRunner(geldingHorse, true, distance, "Turf", { speedMul: 1, staminaDrainMul: 1 }, 1, undefined, 126);
-      
+      const rS = buildRunner(
+        stallionHorse,
+        true,
+        distance,
+        "Turf",
+        { speedMul: 1, staminaDrainMul: 1 },
+        1,
+        undefined,
+        126,
+      );
+      const rG = buildRunner(
+        geldingHorse,
+        true,
+        distance,
+        "Turf",
+        { speedMul: 1, staminaDrainMul: 1 },
+        1,
+        undefined,
+        126,
+      );
+
       const resS = runRaceToCompletion([rS], distance, raceRng);
       const resG = runRaceToCompletion([rG], distance, raceRng);
-      
+
       stallionTimes.push(resS[0].time);
       geldingTimes.push(resG[0].time);
     }

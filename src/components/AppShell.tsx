@@ -9,7 +9,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Baby, DollarSign, Building2 } from "lucide-react";
+import {
+  Home,
+  Trophy,
+  Store,
+  Calendar,
+  Plus,
+  Heart,
+  Gavel,
+  Settings,
+  User,
+  Baby,
+  DollarSign,
+  Building2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
@@ -20,9 +33,7 @@ import { useState, useEffect } from "react";
 const navSections = [
   {
     label: "Foundation",
-    items: [
-      { to: "/", label: "Dashboard", icon: Home, exact: true },
-    ],
+    items: [{ to: "/", label: "Dashboard", icon: Home, exact: true }],
   },
   {
     label: "Management",

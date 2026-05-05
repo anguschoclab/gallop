@@ -23,7 +23,15 @@ function RecapPage() {
   // Get resolved graded races from the past 7 days
   const weekAgo = day - 7;
   const recentGradedRaces = races
-    .filter((r) => r.resolved && r.graded && r.result && r.result.length > 0 && r.day >= weekAgo && r.day <= day)
+    .filter(
+      (r) =>
+        r.resolved &&
+        r.graded &&
+        r.result &&
+        r.result.length > 0 &&
+        r.day >= weekAgo &&
+        r.day <= day,
+    )
     .sort((a, b) => {
       // Sort by grade first (G1 > G2 > G3), then by day (most recent first)
       const gradeOrder = { G1: 3, G2: 2, G3: 1 };
@@ -36,14 +44,19 @@ function RecapPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Weekly Recap</h1>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">Highlights from the past week's graded stakes</p>
+        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">
+          Weekly Recap
+        </h1>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+          Highlights from the past week's graded stakes
+        </p>
       </div>
 
       {recentGradedRaces.length === 0 ? (
         <Card className="border-gold-muted">
           <CardContent className="p-8 text-center text-cream-muted italic font-[family-name:var(--font-body)]">
-            No graded races completed in the past 7 days. Check back after the weekend stakes have been run!
+            No graded races completed in the past 7 days. Check back after the weekend stakes have
+            been run!
           </CardContent>
         </Card>
       ) : (
@@ -52,8 +65,8 @@ function RecapPage() {
             const gradeColor = getGradeColorClass(race.graded!.grade);
 
             // Get top 3 finishers with their Beyer figures
-            const topFinishers = race.result!
-              .slice(0, 3)
+            const topFinishers = race
+              .result!.slice(0, 3)
               .map((result) => {
                 const horse = horses.find((h) => h.id === result.horseId);
                 if (!horse) return null;
@@ -69,7 +82,9 @@ function RecapPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="text-xl font-bold font-[family-name:var(--font-display)]">{race.name}</h3>
+                        <h3 className="text-xl font-bold font-[family-name:var(--font-display)]">
+                          {race.name}
+                        </h3>
                         <Badge className={cn(gradeColor, "font-[family-name:var(--font-mono)]")}>
                           {race.graded!.grade}
                         </Badge>
@@ -79,9 +94,13 @@ function RecapPage() {
                       </div>
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted font-[family-name:var(--font-body)]">
                         <span>{race.graded!.track}</span>
-                        <span><NumericValue value={race.distance} suffix="m" /></span>
+                        <span>
+                          <NumericValue value={race.distance} suffix="m" />
+                        </span>
                         <span>{race.graded!.surface}</span>
-                        <span className="font-[family-name:var(--font-mono)] tabular-nums">Purse ${race.purse.toLocaleString()}</span>
+                        <span className="font-[family-name:var(--font-mono)] tabular-nums">
+                          Purse ${race.purse.toLocaleString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -106,16 +125,25 @@ function RecapPage() {
                           {positionIcon}
                           <SilkDot color={finisher.horse.silk} size="sm" />
                           <div>
-                            <div className="font-medium font-[family-name:var(--font-display)] text-cream">{finisher.horse.name}</div>
+                            <div className="font-medium font-[family-name:var(--font-display)] text-cream">
+                              {finisher.horse.name}
+                            </div>
                             <div className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                              <NumericValue value={finisher.result.time} suffix="s" className="font-[family-name:var(--font-mono)] tabular-nums" /> · <NumericValue value={finisher.horse.age} suffix="YO" /> · OVR{" "}
-                              <NumericValue value={Math.round(
-                                (finisher.horse.stats.speed +
-                                  finisher.horse.stats.stamina +
-                                  finisher.horse.stats.acceleration +
-                                  finisher.horse.stats.consistency) /
-                                  4
-                              )} />
+                              <NumericValue
+                                value={finisher.result.time}
+                                suffix="s"
+                                className="font-[family-name:var(--font-mono)] tabular-nums"
+                              />{" "}
+                              · <NumericValue value={finisher.horse.age} suffix="YO" /> · OVR{" "}
+                              <NumericValue
+                                value={Math.round(
+                                  (finisher.horse.stats.speed +
+                                    finisher.horse.stats.stamina +
+                                    finisher.horse.stats.acceleration +
+                                    finisher.horse.stats.consistency) /
+                                    4,
+                                )}
+                              />
                             </div>
                           </div>
                         </div>

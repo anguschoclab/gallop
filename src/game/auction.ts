@@ -53,7 +53,7 @@ export function calculateLotValuation(
   horse: Horse,
   stable: Stable,
   saleKind: AuctionSaleKind,
-  allHorses?: readonly Horse[]
+  allHorses?: readonly Horse[],
 ): number {
   // Pedigree multiplier raises the ceiling for foals by elite stallions out
   // of blue-hen mares. Falls back to 1× when allHorses isn't passed (older
@@ -100,7 +100,7 @@ export function calculateLotValuation(
       mod = 0.85;
       break;
     case "prestige":
-      mod = 1.2 + (horse.fame / 200);
+      mod = 1.2 + horse.fame / 200;
       if (base < 5000) mod = 0; // skip cheap lots
       break;
   }
@@ -142,12 +142,12 @@ export function calculateLotValuation(
 const BUDGET_CAPS: Record<Stable["personality"], number> = {
   aggressive: 0.35,
   conservative: 0.15,
-  developer: 0.30,
-  "win-now": 0.20,
+  developer: 0.3,
+  "win-now": 0.2,
   specialist: 0.25,
   breeder: 0.35,
-  trader: 0.20,
-  prestige: 0.40,
+  trader: 0.2,
+  prestige: 0.4,
 };
 
 /**
@@ -159,7 +159,7 @@ export function calculateNpcBid(
   currentBid: number,
   saleKind: AuctionSaleKind,
   rng: ReturnType<typeof createRng>,
-  allHorses?: readonly Horse[]
+  allHorses?: readonly Horse[],
 ): number | null {
   const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses);
   if (ceiling <= 0) return null;
@@ -220,7 +220,7 @@ const HEMISPHERE_BY_KIND: Record<AuctionSaleKind, "Northern" | "Southern" | unde
 export function isLotEligible(
   horse: Horse,
   kind: AuctionSaleKind,
-  pregnancies?: readonly Pregnancy[]
+  pregnancies?: readonly Pregnancy[],
 ): boolean {
   if (!ELIGIBLE_AGES_BY_KIND[kind].includes(horse.age)) return false;
   const hemi = HEMISPHERE_BY_KIND[kind];
@@ -274,7 +274,7 @@ export function personalityConsignmentPolicy(
   stable: Stable,
   kind: AuctionSaleKind,
   allHorses: readonly Horse[],
-  rng: Rng
+  rng: Rng,
 ): { consign: Horse[]; freshCount: number; reserveMultiplier: number } {
   const owned = allHorses.filter((h) => h.stableId === stable.id && isLotEligible(h, kind));
   const p = stable.personality;
@@ -284,7 +284,9 @@ export function personalityConsignmentPolicy(
 
   // Helper picks
   const fillies = owned.filter((h) => h.gender === "filly" || h.gender === "mare");
-  const colts = owned.filter((h) => h.gender === "colt" || h.gender === "horse" || h.gender === "gelding");
+  const colts = owned.filter(
+    (h) => h.gender === "colt" || h.gender === "horse" || h.gender === "gelding",
+  );
   const unraced = owned.filter((h) => h.careerStarts === 0);
   const fading = owned.filter((h) => h.age >= h.peakAge + 2);
   const top = [...owned].sort((a, b) => b.fame + b.potential - (a.fame + a.potential));
@@ -296,7 +298,7 @@ export function personalityConsignmentPolicy(
     case "aggressive":
       // Sells weanlings & off-niche stock to fund yearling + racing buys.
       consign = owned.filter((h) => h.age === 0).slice(0, 3);
-      freshCount = (kind === "weanling" || kind === "weanling_south") ? rng.int(1, 3) : rng.int(0, 2);
+      freshCount = kind === "weanling" || kind === "weanling_south" ? rng.int(1, 3) : rng.int(0, 2);
       break;
     case "conservative":
       // Rare consignor. Only excess lots, with high reserves.
@@ -306,17 +308,19 @@ export function personalityConsignmentPolicy(
       break;
     case "developer":
       // Consigns yearlings they've prepped (existing core behavior).
-      consign = (kind === "yearling" || kind === "yearling_south")
-        ? owned.slice(0, 4)
-        : kind === "weanling" || kind === "weanling_south"
-        ? owned.slice(0, 2)
-        : owned.slice(0, 1);
+      consign =
+        kind === "yearling" || kind === "yearling_south"
+          ? owned.slice(0, 4)
+          : kind === "weanling" || kind === "weanling_south"
+            ? owned.slice(0, 2)
+            : owned.slice(0, 1);
       freshCount = rng.int(1, 3);
       break;
     case "win-now":
       // Dumps unraced 2YOs and fading older horses; doesn't really consign foals.
       if (kind === "broodmare") consign = fading.filter((h) => h.gender === "mare").slice(0, 3);
-      else if (kind === "racing_age") consign = fading.filter((h) => h.gender !== "mare").slice(0, 3);
+      else if (kind === "racing_age")
+        consign = fading.filter((h) => h.gender !== "mare").slice(0, 3);
       else if (kind === "2yo_training") consign = unraced.filter((h) => h.age === 2).slice(0, 3);
       else if (kind === "mixed") consign = fading.slice(0, 2);
       reserveMultiplier = 0.4; // wants to clear
@@ -325,10 +329,16 @@ export function personalityConsignmentPolicy(
     case "specialist": {
       // Consigns horses outside their distance/surface niche.
       const offNiche = owned.filter((h) => {
-        if (stable.preferredDistance && Math.abs(h.distanceAptitude - stable.preferredDistance) > 600) return true;
+        if (
+          stable.preferredDistance &&
+          Math.abs(h.distanceAptitude - stable.preferredDistance) > 600
+        )
+          return true;
         if (stable.preferredSurface) {
           const apts = h.surfaceAptitude;
-          const best = (Object.entries(apts) as [keyof typeof apts, number][]).sort((a, b) => b[1] - a[1])[0];
+          const best = (Object.entries(apts) as [keyof typeof apts, number][]).sort(
+            (a, b) => b[1] - a[1],
+          )[0];
           if (best[0] !== stable.preferredSurface) return true;
         }
         return false;
@@ -373,7 +383,7 @@ export function generateAuctionLots(
   allHorses: Horse[],
   kind: AuctionSaleKind,
   name: string,
-  rng: Rng
+  rng: Rng,
 ): AuctionSale {
   const saleId = generateUUID(rng);
   const hemisphere = HEMISPHERE_BY_KIND[kind];
@@ -406,13 +416,21 @@ export function generateAuctionLots(
     for (let i = 0; i < policy.freshCount; i++) {
       // Fresh NPC horse — pick an age the sale will accept.
       const targetAge = eligibleAges[rng.int(0, eligibleAges.length - 1)];
-      const freshHorse = generateNpcHorse(stable.id, stable.tier, rng, targetAge, undefined, hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern"));
+      const freshHorse = generateNpcHorse(
+        stable.id,
+        stable.tier,
+        rng,
+        targetAge,
+        undefined,
+        hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern"),
+      );
       // Re-check eligibility after generation (e.g. broodmare wants only mares).
       if (!isLotEligible(freshHorse, kind)) continue;
       allHorses.push(freshHorse);
       const pedigreeMul = pedigreeMultiplier(freshHorse, { horses: allHorses });
       const baseValue = calculateNpcHorseValue(freshHorse, stable.tier) * pedigreeMul;
-      const breezeSeconds = kind === "2yo_training" ? generateBreezeSeconds(freshHorse, rng) : undefined;
+      const breezeSeconds =
+        kind === "2yo_training" ? generateBreezeSeconds(freshHorse, rng) : undefined;
       lots.push({
         id: generateUUID(rng),
         horseId: freshHorse.id,
@@ -452,7 +470,7 @@ export type ResolvedSale = {
 export function resolveAuctionSale(
   sale: AuctionSale,
   stables: Stable[],
-  allHorses: Horse[]
+  allHorses: Horse[],
 ): ResolvedSale {
   const log: string[] = [];
   const updatedLots: AuctionLot[] = [];
@@ -500,9 +518,16 @@ export function resolveAuctionSale(
       updatedLots.push({ ...lot, passed: true, hammerPrice: undefined, soldToStableId: undefined });
       log.push(`${horse.name} — passed (reserve not met)`);
     } else {
-      updatedLots.push({ ...lot, hammerPrice: currentBid, soldToStableId: currentWinner, passed: false });
+      updatedLots.push({
+        ...lot,
+        hammerPrice: currentBid,
+        soldToStableId: currentWinner,
+        passed: false,
+      });
       const winner = stables.find((s) => s.id === currentWinner);
-      log.push(`${horse.name} — sold to ${winner?.name ?? "Unknown"} for $${currentBid.toLocaleString()}`);
+      log.push(
+        `${horse.name} — sold to ${winner?.name ?? "Unknown"} for $${currentBid.toLocaleString()}`,
+      );
     }
   }
 

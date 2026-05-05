@@ -29,7 +29,7 @@ export interface PipelinePhase {
  */
 export function executePipeline(
   phases: PipelinePhase[],
-  context: PipelineContext
+  context: PipelineContext,
 ): PipelineContext {
   const sortedPhases = [...phases].sort((a, b) => a.order - b.order);
   let currentContext = context;
@@ -52,7 +52,7 @@ export function createPhase(
   name: string,
   order: number,
   execute: (context: PipelineContext) => PipelineContext,
-  skipIf?: (context: PipelineContext) => boolean
+  skipIf?: (context: PipelineContext) => boolean,
 ): PipelinePhase {
   return { name, order, execute, skipIf };
 }

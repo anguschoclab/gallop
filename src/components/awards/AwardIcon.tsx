@@ -31,7 +31,7 @@ export function AwardIcon({
 }: AwardIconProps) {
   const { svg, color } = getAwardSvg(region, category);
   const config = SIZE_CONFIG[size];
-  
+
   // Replace width/height in SVG string
   const sizedSvg = svg
     .replace(/width="48"/, `width="${config.width}"`)
@@ -45,7 +45,7 @@ export function AwardIcon({
         "award-icon",
         animated && "award-icon-animated",
         config.className,
-        className
+        className,
       )}
       style={{ color }}
       title={showTooltip ? getTooltipText(region, category, year) : undefined}
@@ -78,19 +78,24 @@ interface AwardFallbackProps {
   className?: string;
 }
 
-export function AwardFallback({ region, category, size = "medium", className }: AwardFallbackProps) {
+export function AwardFallback({
+  region,
+  category,
+  size = "medium",
+  className,
+}: AwardFallbackProps) {
   const config = SIZE_CONFIG[size];
   const { color, accent } = getAwardSvg(region, category);
-  
+
   // Get first letters of category for display
   const initials = getCategoryInitials(category);
-  
+
   return (
     <div
       className={cn(
         "inline-flex items-center justify-center rounded-full font-bold",
         config.className,
-        className
+        className,
       )}
       style={{ backgroundColor: color, color: accent }}
     >
@@ -100,7 +105,11 @@ export function AwardFallback({ region, category, size = "medium", className }: 
 }
 
 // Helper functions
-function getTooltipText(region: AwardRegion, category: RegionalAwardCategory, year?: number): string {
+function getTooltipText(
+  region: AwardRegion,
+  category: RegionalAwardCategory,
+  year?: number,
+): string {
   const { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } = require("@/game/awards/types");
   const categoryName = CATEGORY_DISPLAY_NAMES[category] || category;
   const regionName = REGION_AWARD_NAMES[region];
@@ -109,11 +118,11 @@ function getTooltipText(region: AwardRegion, category: RegionalAwardCategory, ye
 
 function getCategoryInitials(category: RegionalAwardCategory): string {
   if (category === "horse_of_the_year") return "HOTY";
-  
+
   // Get first letter of each word
   return category
     .split("_")
-    .map(word => word.charAt(0).toUpperCase())
+    .map((word) => word.charAt(0).toUpperCase())
     .slice(0, 3)
     .join("");
 }

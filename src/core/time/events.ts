@@ -3,7 +3,7 @@ import type { PipelineContext } from "./pipeline";
 
 export interface EventTrigger {
   id: string;
-  type: 'day_of_year' | 'interval' | 'condition';
+  type: "day_of_year" | "interval" | "condition";
   condition: (day: number, state: GameState) => boolean;
   handler: (context: PipelineContext) => void;
   priority: number;
@@ -19,11 +19,11 @@ class EventRegistry {
   }
 
   unregister(id: string): void {
-    this.triggers = this.triggers.filter(t => t.id !== id);
+    this.triggers = this.triggers.filter((t) => t.id !== id);
   }
 
   getTriggers(day: number, state: GameState): EventTrigger[] {
-    return this.triggers.filter(t => t.condition(day, state));
+    return this.triggers.filter((t) => t.condition(day, state));
   }
 
   executeTriggers(context: PipelineContext): void {
@@ -43,11 +43,11 @@ export function createDayOfYearTrigger(
   id: string,
   dayOfYear: number,
   handler: (context: PipelineContext) => void,
-  priority: number = 50
+  priority: number = 50,
 ): EventTrigger {
   return {
     id,
-    type: 'day_of_year',
+    type: "day_of_year",
     condition: (day) => ((day - 1) % 365) + 1 === dayOfYear,
     handler,
     priority,
@@ -62,11 +62,11 @@ export function createIntervalTrigger(
   intervalDays: number,
   startDay: number,
   handler: (context: PipelineContext) => void,
-  priority: number = 50
+  priority: number = 50,
 ): EventTrigger {
   return {
     id,
-    type: 'interval',
+    type: "interval",
     condition: (day) => day >= startDay && (day - startDay) % intervalDays === 0,
     handler,
     priority,
@@ -80,11 +80,11 @@ export function createConditionTrigger(
   id: string,
   condition: (day: number, state: GameState) => boolean,
   handler: (context: PipelineContext) => void,
-  priority: number = 50
+  priority: number = 50,
 ): EventTrigger {
   return {
     id,
-    type: 'condition',
+    type: "condition",
     condition,
     handler,
     priority,

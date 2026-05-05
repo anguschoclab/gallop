@@ -17,21 +17,21 @@ export const claimingWithdrawalPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, intents, newDay } = context;
     const impacts: AnyImpact[] = [];
-    
+
     const withdrawalIntents = intents.filter(
-      (i): i is WithdrawFromClaimingIntent => i.type === "withdraw_from_claiming"
+      (i): i is WithdrawFromClaimingIntent => i.type === "withdraw_from_claiming",
     );
-    
+
     for (const intent of withdrawalIntents) {
       const race = state.races.find((r) => r.id === intent.raceId);
       if (!race) continue;
-      
+
       const entry = race.entries.find((e) => e.horseId === intent.horseId);
       if (!entry) continue;
-      
+
       // Mark entry as withdrawn from claiming
       entry.withdrawnFromClaiming = true;
-      
+
       // Log the withdrawal (race entry fee is lost as penalty)
       impacts.push({
         id: generateUUID(),
@@ -44,7 +44,7 @@ export const claimingWithdrawalPhase: PipelinePhase = {
         reason: "Claiming withdrawal",
       } as LogImpact);
     }
-    
+
     return {
       ...context,
       impacts: [...context.impacts, ...impacts],

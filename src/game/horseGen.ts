@@ -1,23 +1,52 @@
-import type { Horse, HorseStats, Hemisphere, RunningStyle, CoatColor, Genotype, HorseGender } from "./types";
+import type {
+  Horse,
+  HorseStats,
+  Hemisphere,
+  RunningStyle,
+  CoatColor,
+  Genotype,
+  HorseGender,
+} from "./types";
 import type { Rng } from "./rng";
 import { nondeterministicRng } from "./rng";
 import {
-  generateGenotype, resolveCoatColor, resolveStats, resolveRunningStyle,
-  resolveDistanceAptitude, resolveSurfaceAptitude, resolveAptitudeMultiplier,
-  resolveTrait, resolveInjuryProneness, resolveSize, resolveGeneticMarkers,
-  resolveHeartScore, resolveFiberBias, resolveStrideType, resolveTrackPreference,
-  resolveMudAptitude, resolveTrainability, resolvePeakAge, resolveRecoveryRate,
-  resolveFertility, resolveFoalingEase, resolveMarkings,
-  resolveBleederRisk, resolveRoarerRisk, resolveOcdRisk, resolveRacingViable,
+  generateGenotype,
+  resolveCoatColor,
+  resolveStats,
+  resolveRunningStyle,
+  resolveDistanceAptitude,
+  resolveSurfaceAptitude,
+  resolveAptitudeMultiplier,
+  resolveTrait,
+  resolveInjuryProneness,
+  resolveSize,
+  resolveGeneticMarkers,
+  resolveHeartScore,
+  resolveFiberBias,
+  resolveStrideType,
+  resolveTrackPreference,
+  resolveMudAptitude,
+  resolveTrainability,
+  resolvePeakAge,
+  resolveRecoveryRate,
+  resolveFertility,
+  resolveFoalingEase,
+  resolveMarkings,
+  resolveBleederRisk,
+  resolveRoarerRisk,
+  resolveOcdRisk,
+  resolveRacingViable,
   computeHeterozygosity,
 } from "./geneticsEngine";
 import { generateUUID } from "./uuid";
-import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES, resolveBruceLoweFamily } from "@/core/breeding/bruceLowe";
-import { rollGender, geldHorse } from "@/core/horse/gender";
 import {
-  randomHorseName,
-  randomSilk,
-} from "@/core/common/random";
+  rollProceduralFamily,
+  RUNNING_FAMILIES,
+  SIRE_FAMILIES,
+  resolveBruceLoweFamily,
+} from "@/core/breeding/bruceLowe";
+import { rollGender, geldHorse } from "@/core/horse/gender";
+import { randomHorseName, randomSilk } from "@/core/common/random";
 import { resolveBloodline } from "@/core/breeding/populationGenetics";
 // Re-exports for backward compat — callers should migrate to the canonical locations
 export { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
@@ -50,13 +79,23 @@ function resolveDnaTraits(genotype: Genotype) {
   };
 }
 
-export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: string; age?: number; gender?: HorseGender; hemisphere?: Hemisphere; owned?: boolean } = {}): Horse {
+export function createHorseFromDNA(
+  genotype: Genotype,
+  rng: Rng,
+  opts: {
+    name?: string;
+    age?: number;
+    gender?: HorseGender;
+    hemisphere?: Hemisphere;
+    owned?: boolean;
+  } = {},
+): Horse {
   const stats = resolveStats(genotype.stats);
   const coatColor = resolveCoatColor(genotype.color);
   const runningStyle = resolveRunningStyle(genotype.style);
   const conformation = resolveTrait(genotype.physical);
   const temperament = resolveTrait(genotype.mental);
-  
+
   const distanceAptitude = resolveDistanceAptitude(genotype.preferences.distance);
   const surfaceAptitude = resolveSurfaceAptitude(genotype.preferences.surface);
   const climbingAptitude = resolveAptitudeMultiplier(genotype.preferences.climbing);
@@ -106,9 +145,18 @@ export function createHorseFromDNA(genotype: Genotype, rng: Rng, opts: { name?: 
   };
 }
 
-export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "elite"; owned?: boolean; hemisphere?: Hemisphere; age?: number; gender?: HorseGender } = {}, rng: Rng = nondeterministicRng()): Horse {
+export function generateHorse(
+  opts: {
+    tier?: "starter" | "budget" | "mid" | "elite";
+    owned?: boolean;
+    hemisphere?: Hemisphere;
+    age?: number;
+    gender?: HorseGender;
+  } = {},
+  rng: Rng = nondeterministicRng(),
+): Horse {
   const tier = opts.tier ?? "budget";
-  
+
   // 1. Generate Biological Identity (DNA)
   const genotype = generateGenotype(rng, tier);
 
@@ -118,7 +166,7 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
   const runningStyle = resolveRunningStyle(genotype.style);
   const conformation = resolveTrait(genotype.physical);
   const temperament = resolveTrait(genotype.mental);
-  
+
   // 3. Resolve Aptitudes from DNA
   const distanceAptitude = resolveDistanceAptitude(genotype.preferences.distance);
   const surfaceAptitude = resolveSurfaceAptitude(genotype.preferences.surface);
@@ -140,9 +188,9 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
   // Resolve bloodline from procedural sire name (for NPC horses)
   const bloodline = resolveBloodline(
     { name: randomHorseName(rng), sireName: randomHorseName(rng) } as Horse,
-    { horses: [] }
+    { horses: [] },
   );
-  
+
   const age = opts.age ?? (rng.next() < 0.2 ? rng.range(2, 3) : rng.range(2, 6));
   const gender = opts.gender ?? rollGender(age, rng);
   const hemisphere: Hemisphere = opts.hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
@@ -193,4 +241,3 @@ export function generateHorse(opts: { tier?: "starter" | "budget" | "mid" | "eli
     ...resolveDnaTraits(genotype),
   };
 }
-

@@ -1,5 +1,11 @@
 import type { Horse, Race, Jockey } from "@/game/types";
-import { buildRunner, stepRunner, getConditionsModifier, computePaceContext, type Runner } from "@/game/raceSim";
+import {
+  buildRunner,
+  stepRunner,
+  getConditionsModifier,
+  computePaceContext,
+  type Runner,
+} from "@/game/raceSim";
 import type { CourseSpecification } from "@/game/tracks";
 import { generateHorse } from "@/game/horseGen";
 import { calculateClassBonus } from "@/core/common/classBonus";
@@ -44,9 +50,7 @@ export interface RaceFieldResult {
  * Returns both the Runner array and any generated filler Horse objects so
  * callers can persist them into game state (avoids ghost IDs in results).
  */
-export function buildRaceField(
-  dependencies: RaceSimulationDependencies
-): RaceFieldResult {
+export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFieldResult {
   const { race, horses } = dependencies;
   const conditions = getConditionsModifier(race);
   const fillerHorses: Horse[] = [];
@@ -56,11 +60,11 @@ export function buildRaceField(
   // 1. Prepare the full list of entry data
   const entriesData: { horseId: string; owned: boolean; jockeyId?: string; weight?: number }[] = [];
   for (const entry of race.entries) {
-    entriesData.push({ 
-      horseId: entry.horseId, 
-      owned: entry.owned, 
-      jockeyId: entry.jockeyId, 
-      weight: entry.weight 
+    entriesData.push({
+      horseId: entry.horseId,
+      owned: entry.owned,
+      jockeyId: entry.jockeyId,
+      weight: entry.weight,
     });
   }
 
@@ -96,16 +100,30 @@ export function buildRaceField(
   for (let i = 0; i < shuffled.length; i++) {
     const entryData = shuffled[i];
     const barrier = i + 1;
-    
+
     // Find the horse (either from dependencies.horses or from the new fillerHorses)
     let horse = horses.find((h) => h.id === entryData.horseId);
     if (!horse) {
       horse = fillerHorses.find((h) => h.id === entryData.horseId);
     }
-    
+
     if (horse) {
-      const jockeyObj = entryData.jockeyId ? dependencies.jockeys.find(j => j.id === entryData.jockeyId) : undefined;
-      runners.push(buildRunner(horse, entryData.owned, race.distance, surface ?? null, conditions, barrier, jockeyObj, entryData.weight, race.handedness));
+      const jockeyObj = entryData.jockeyId
+        ? dependencies.jockeys.find((j) => j.id === entryData.jockeyId)
+        : undefined;
+      runners.push(
+        buildRunner(
+          horse,
+          entryData.owned,
+          race.distance,
+          surface ?? null,
+          conditions,
+          barrier,
+          jockeyObj,
+          entryData.weight,
+          race.handedness,
+        ),
+      );
     }
   }
 
@@ -121,7 +139,7 @@ export function simulateStep(
   simTime: number,
   distance: number,
   rng: Rng,
-  course?: CourseSpecification
+  course?: CourseSpecification,
 ): { stillRunning: boolean; finishOrder: SimulationResult[] } {
   const finishOrder: SimulationResult[] = [];
   let stillRunning = false;

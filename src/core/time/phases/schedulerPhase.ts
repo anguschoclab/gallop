@@ -4,7 +4,11 @@
 
 import type { PipelineContext } from "../pipeline";
 import type { HorseCampaign } from "@/game/types";
-import { buildCampaignSlots, generateCampaignFlags, updateCampaignAptitudes } from "@/game/campaignPlanner";
+import {
+  buildCampaignSlots,
+  generateCampaignFlags,
+  updateCampaignAptitudes,
+} from "@/game/campaignPlanner";
 import { runAutoEntries, reconcileSlotStatuses } from "@/game/autoEntryRunner";
 
 export const schedulerPhase = {
@@ -17,10 +21,10 @@ export const schedulerPhase = {
       return context;
     }
 
-    const ownedHorseIds = new Set(state.horses.filter(h => h.owned).map(h => h.id));
+    const ownedHorseIds = new Set(state.horses.filter((h) => h.owned).map((h) => h.id));
 
-    let updatedCampaigns: HorseCampaign[] = state.campaigns.map(campaign => {
-      const horse = state.horses.find(h => h.id === campaign.horseId);
+    const updatedCampaigns: HorseCampaign[] = state.campaigns.map((campaign) => {
+      const horse = state.horses.find((h) => h.id === campaign.horseId);
       if (!horse || !ownedHorseIds.has(horse.id)) return campaign;
 
       // Reconcile slot statuses from resolved races
@@ -30,16 +34,25 @@ export const schedulerPhase = {
       // Update aptitudes from newly resolved races (races resolved on this day)
       for (const slot of reconciledSlots) {
         if (slot.status !== "completed" || !slot.raceId) continue;
-        const wasJustCompleted = campaign.slots.find(s => s.raceId === slot.raceId)?.status === "entered";
+        const wasJustCompleted =
+          campaign.slots.find((s) => s.raceId === slot.raceId)?.status === "entered";
         if (!wasJustCompleted) continue;
 
-        const race = state.races.find(r => r.id === slot.raceId);
+        const race = state.races.find((r) => r.id === slot.raceId);
         if (!race) continue;
-        const surf = (race.graded?.surface ?? race.surface) as "Turf" | "Dirt" | "Synthetic" | undefined;
+        const surf = (race.graded?.surface ?? race.surface) as
+          | "Turf"
+          | "Dirt"
+          | "Synthetic"
+          | undefined;
         if (surf) {
           updated = {
             ...updated,
-            confirmedAptitudes: updateCampaignAptitudes(updated.confirmedAptitudes, surf, race.distance),
+            confirmedAptitudes: updateCampaignAptitudes(
+              updated.confirmedAptitudes,
+              surf,
+              race.distance,
+            ),
           };
         }
       }
@@ -72,12 +85,12 @@ export const schedulerPhase = {
     // a lightweight runner that mutates state directly.
     const entryLogs: { day: number; text: string }[] = [];
     let cashDelta = 0;
-    let mutatedRaces = [...state.races];
+    const mutatedRaces = [...state.races];
 
     for (let i = 0; i < updatedCampaigns.length; i++) {
       const campaign = updatedCampaigns[i];
       if (!campaign.autoManaged) continue;
-      const horse = state.horses.find(h => h.id === campaign.horseId);
+      const horse = state.horses.find((h) => h.id === campaign.horseId);
       if (!horse) continue;
 
       const result = runAutoEntries({
@@ -87,9 +100,10 @@ export const schedulerPhase = {
         currentDay: newDay,
         cash: state.cash + cashDelta,
         enterRaceFn: (raceId, horseId) => {
-          const race = mutatedRaces.find(r => r.id === raceId);
+          const race = mutatedRaces.find((r) => r.id === raceId);
           if (!race) return { ok: false, reason: "Race not found" };
-          if (race.entries.some(e => e.horseId === horseId)) return { ok: false, reason: "Already entered" };
+          if (race.entries.some((e) => e.horseId === horseId))
+            return { ok: false, reason: "Already entered" };
           race.entries.push({ horseId, owned: true, npc: false });
           cashDelta -= race.entryFee;
           entryLogs.push({ day: newDay, text: `Auto-entered ${horse.name} in ${race.name}.` });

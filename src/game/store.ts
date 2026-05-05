@@ -1,9 +1,25 @@
 import { create } from "zustand";
 import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
-import type { Horse, Race, Pregnancy, ScoutReport, AuctionSale, GameState, HorseCampaign, CampaignGoalType, ConfirmedAptitudes } from "./types";
+import type {
+  Horse,
+  Race,
+  Pregnancy,
+  ScoutReport,
+  AuctionSale,
+  GameState,
+  HorseCampaign,
+  CampaignGoalType,
+  ConfirmedAptitudes,
+} from "./types";
 import { GRADED_RACES } from "./gradedRaces";
-import { generateHorse, horsePrice, generateRace, makeGradedRace, horsePriceWithPedigree } from "./horseGen";
+import {
+  generateHorse,
+  horsePrice,
+  generateRace,
+  makeGradedRace,
+  horsePriceWithPedigree,
+} from "./horseGen";
 import { generateInitialJockeys, generateSilk } from "./jockeyGen";
 import { generateAllStables } from "./npcStables";
 import { generateAllNpcHorses } from "./npcHorseGen";
@@ -27,7 +43,10 @@ import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { isUniversalBirthday, isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
-import { detectInbreedingPattern, inbreedingPerformanceDampener } from "@/core/breeding/populationGenetics";
+import {
+  detectInbreedingPattern,
+  inbreedingPerformanceDampener,
+} from "@/core/breeding/populationGenetics";
 import { recalcStandingFee } from "@/core/breeding/stallions";
 import { isHorseEligibleForClaimingPrice } from "./claiming";
 import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
@@ -63,16 +82,41 @@ import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/c
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import { DEFAULT_PLAYER_RESERVE_RATIO } from "./auction";
-import type { RenameIntent, AnyIntent, TrainingIntent, RaceEntryIntent, BreedingIntent, PurchaseIntent } from "@/core/resolver/intents";
-import type { UserSettings, DisplaySettings, GameplaySettings, NotificationSettings, AudioSettings } from "@/core/settings/settingsTypes";
+import type {
+  RenameIntent,
+  AnyIntent,
+  TrainingIntent,
+  RaceEntryIntent,
+  BreedingIntent,
+  PurchaseIntent,
+} from "@/core/resolver/intents";
+import type {
+  UserSettings,
+  DisplaySettings,
+  GameplaySettings,
+  NotificationSettings,
+  AudioSettings,
+} from "@/core/settings/settingsTypes";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
-import type { RenameImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact } from "@/core/resolver/impacts";
+import type {
+  RenameImpact,
+  EnergyImpact,
+  FormImpact,
+  FameImpact,
+  RaceHistoryImpact,
+  CashImpact,
+  BlueHenImpact,
+  StudCareerImpact,
+  PaceSampleImpact,
+  JockeyStatsImpact,
+  LogImpact,
+} from "@/core/resolver/impacts";
 import type { RegionalAward, AwardRegion } from "@/game/awards/types";
 import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { Expense } from "@/core/expenses";
 import { upgradeFacility } from "@/core/facilities";
 
-export type ActionResult = { ok: true } | { ok: false, reason: string };
+export type ActionResult = { ok: true } | { ok: false; reason: string };
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 const UPKEEP_PER_HORSE = 50;
@@ -104,16 +148,20 @@ type RankedResult = { horseId: string; position: number; time: number; dnf: bool
 
 function sanitizeAndRankResults(
   rawResult: { horseId: string; time: number }[],
-  raceId: string
+  raceId: string,
 ): { ranked: RankedResult[]; finishers: RankedResult[]; dnfs: RankedResult[] } {
   const tieRng = createRng(hashStr(raceId) ^ 0x7e57);
   const enriched = rawResult.map((r) => ({ ...r, dnf: !Number.isFinite(r.time) || r.time <= 0 }));
-  const finishersRaw = enriched.filter((r) => !r.dnf).sort((a, b) => {
-    if (a.time === b.time) return tieRng.next() - 0.5;
-    return a.time - b.time;
-  });
+  const finishersRaw = enriched
+    .filter((r) => !r.dnf)
+    .sort((a, b) => {
+      if (a.time === b.time) return tieRng.next() - 0.5;
+      return a.time - b.time;
+    });
   const finishers = finishersRaw.map((r, idx) => ({ ...r, position: idx + 1 }));
-  const dnfs = enriched.filter((r) => r.dnf).map((r, idx) => ({ ...r, position: finishersRaw.length + idx + 1 }));
+  const dnfs = enriched
+    .filter((r) => r.dnf)
+    .map((r, idx) => ({ ...r, position: finishersRaw.length + idx + 1 }));
   const ranked = [...finishers, ...dnfs];
   return { ranked, finishers, dnfs };
 }
@@ -138,12 +186,18 @@ function ageHorses(horses: Horse[], newDay: number): Horse[] {
   const southernTick = isUniversalBirthday(newDay, "Southern");
   if (!northernTick && !southernTick) return horses;
   return horses.map((h) => {
-    const ticks = (h.hemisphere === "Northern" && northernTick) || (h.hemisphere === "Southern" && southernTick);
+    const ticks =
+      (h.hemisphere === "Northern" && northernTick) ||
+      (h.hemisphere === "Southern" && southernTick);
     if (!ticks) return h;
     const newAge = h.age + 1;
     const newGender =
       newAge >= 3
-        ? h.gender === "colt" ? "horse" : h.gender === "filly" ? "mare" : h.gender
+        ? h.gender === "colt"
+          ? "horse"
+          : h.gender === "filly"
+            ? "mare"
+            : h.gender
         : h.gender;
     return { ...h, age: newAge, gender: newGender };
   });
@@ -183,7 +237,7 @@ type PregnancyResult = {
 export function resolvePregnancies(
   currentPregnancies: Pregnancy[],
   horses: Horse[],
-  newDay: number
+  newDay: number,
 ): PregnancyResult {
   const newLogs: { day: number; text: string }[] = [];
   const pregnancies = currentPregnancies.map((p) => ({ ...p }));
@@ -214,19 +268,22 @@ export function resolvePregnancies(
         const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
         const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
         dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
-        if (dam.blueHenStatus.stakesWinnersProduced >= 2 || dam.blueHenStatus.group1WinnersProduced >= 1) {
+        if (
+          dam.blueHenStatus.stakesWinnersProduced >= 2 ||
+          dam.blueHenStatus.group1WinnersProduced >= 1
+        ) {
           dam.blueHenStatus.isBlueHen = true;
         }
         if (!dam.foalsProduced) dam.foalsProduced = [];
         dam.foalsProduced.push(foal.id);
         dam.lastFoaledDay = newDay;
       }
-      
+
       // Update sire's lifetime foals count using lineage helper
       if (sire && sire.stud) {
         sire.stud.lifetimeFoals = getFoalsBy({ horses: [...horses, foal] }, sire.id).length;
       }
-      
+
       p.resolved = true;
       p.foalId = foal.id;
       foals.push(foal);
@@ -234,9 +291,15 @@ export function resolvePregnancies(
       if (outcome.transmission) {
         foal.healthStatus = "covering_sickness";
         foal.healthStatusDay = newDay;
-        newLogs.push({ day: newDay, text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). Covering sickness detected.` });
+        newLogs.push({
+          day: newDay,
+          text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). Covering sickness detected.`,
+        });
       } else {
-        newLogs.push({ day: newDay, text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).` });
+        newLogs.push({
+          day: newDay,
+          text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).`,
+        });
       }
     } else {
       // Live Foal Guarantee handling
@@ -277,7 +340,7 @@ export function maybeRecalibratePars(
   currentPars: Record<number, number> | undefined,
   lastCalibrationDay: number,
   paceSamples: Record<number, number[]> | undefined,
-  newDay: number
+  newDay: number,
 ): RecalibrationResult {
   if (newDay - lastCalibrationDay < SEASON_DAYS) {
     return { calibratedPars: currentPars, lastCalibrationDay, log: null };
@@ -291,7 +354,10 @@ export function maybeRecalibratePars(
   return {
     calibratedPars: recomputed,
     lastCalibrationDay: newDay,
-    log: { day: newDay, text: `Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.` },
+    log: {
+      day: newDay,
+      text: `Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.`,
+    },
   };
 }
 
@@ -316,11 +382,27 @@ function recomputePars(samples: Record<number, number[]>): Record<number, number
 
 type Actions = {
   newGame: () => void;
-  trainHorse: (horseId: string, kind: "speed" | "stamina" | "acceleration" | "rest" | "bullet" | "breeze" | "gate_work" | "swimming" | "gallop") => void;
+  trainHorse: (
+    horseId: string,
+    kind:
+      | "speed"
+      | "stamina"
+      | "acceleration"
+      | "rest"
+      | "bullet"
+      | "breeze"
+      | "gate_work"
+      | "swimming"
+      | "gallop",
+  ) => void;
   buyHorse: (horseId: string) => void;
   enterRace: (raceId: string, horseId: string) => ActionResult;
   withdrawRace: (raceId: string, horseId: string) => void;
-  resolveRaceWithImpacts: (raceId: string, result: { horseId: string; position: number; time: number }[], runners?: import("./raceSim").Runner[]) => void;
+  resolveRaceWithImpacts: (
+    raceId: string,
+    result: { horseId: string; position: number; time: number }[],
+    runners?: import("./raceSim").Runner[],
+  ) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
@@ -333,23 +415,40 @@ type Actions = {
   advanceWeek: (headless?: boolean) => void;
   advanceMonth: (headless?: boolean) => void;
   advanceYear: (headless?: boolean) => void;
-  scoutHorse: (horseId: string) => { success: boolean; report?: ScoutReport; cost: number; message: string };
+  scoutHorse: (horseId: string) => {
+    success: boolean;
+    report?: ScoutReport;
+    cost: number;
+    message: string;
+  };
   consignHorse: (horseId: string, saleId: string, reservePrice?: number) => ActionResult;
   withdrawConsignment: (horseId: string) => ActionResult;
   placeBookBid: (saleId: string, lotId: string, amount: number) => ActionResult;
   /** Atomic player-cash debit for a live Theater bid. */
   debitForLiveBid: (amount: number) => ActionResult;
   /** Commit a live-Theater auction's results. Applies impacts via the resolver. */
-  commitAuctionResult: (saleId: string, finalLots: import("./types").AuctionLot[], impacts: import("@/core/resolver/impacts").AnyImpact[]) => ActionResult;
+  commitAuctionResult: (
+    saleId: string,
+    finalLots: import("./types").AuctionLot[],
+    impacts: import("@/core/resolver/impacts").AnyImpact[],
+  ) => ActionResult;
   clearPendingCeremonies: () => void;
   geldingHorse: (horseId: string) => ActionResult;
   renameHorse: (horseId: string, newName: string) => ActionResult;
   enqueueIntent: (intent: AnyIntent) => void;
   setCampaign: (campaign: HorseCampaign) => void;
-  updateCampaignSlot: (horseId: string, slotIndex: number, patch: Partial<HorseCampaign["slots"][number]>) => void;
+  updateCampaignSlot: (
+    horseId: string,
+    slotIndex: number,
+    patch: Partial<HorseCampaign["slots"][number]>,
+  ) => void;
   dismissCampaignFlag: (horseId: string, flagIndex: number) => void;
   deleteCampaign: (horseId: string) => void;
-  generateAutoCampaign: (horseId: string, goalType: CampaignGoalType, targetRaceKey?: string) => void;
+  generateAutoCampaign: (
+    horseId: string,
+    goalType: CampaignGoalType,
+    targetRaceKey?: string,
+  ) => void;
   updateUserSettings: (settings: Partial<UserSettings>) => void;
   updateDisplaySettings: (settings: Partial<DisplaySettings>) => void;
   updateGameplaySettings: (settings: Partial<GameplaySettings>) => void;
@@ -361,19 +460,19 @@ type Actions = {
 
 function initialState(): GameState {
   const setupRng = createRng(hashStr("initial_setup"));
-  
+
   // Generate player horses
   const horses: Horse[] = [
     { ...generateHorse({ tier: "starter", owned: true }, setupRng) },
     { ...generateHorse({ tier: "starter", owned: true }, setupRng) },
   ];
-  
+
   const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
     const tier: "starter" | "budget" | "mid" | "elite" = r < 0.6 ? "budget" : "mid";
     return generateHorse({ tier }, setupRng);
   });
-  
+
   const races: Race[] = [];
   for (let d = 1; d <= 7; d++) {
     const dayRng = createRng(hashStr(`raceGen_${d}`));
@@ -385,22 +484,34 @@ function initialState(): GameState {
     const gradedRng = createRng(hashStr(`graded_${g.key}`));
     races.push(makeGradedRace(g, g.dayOfYear, gradedRng));
   }
-  
+
   // Generate NPC stables and horses
   const stableRng = createRng(hashStr("initial_stables"));
   const npcStables = generateAllStables(1, stableRng);
   const npcHorseRng = createRng(hashStr("initial_npc_horses"));
-  const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(npcStables, npcHorseRng);
-  
+  const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(
+    npcStables,
+    npcHorseRng,
+  );
+
   // Generate initial jockeys
   const jockeyRng = createRng(hashStr("initial_jockeys"));
   const jockeys = generateInitialJockeys(jockeyRng);
-  
+
   // Run initial NPC race entry to populate races
   const pregnantIds = new Set<string>();
   const entryRng = createRng(hashStr("initial_entry"));
-  const racesWithEntries = runNpcRaceEntry(updatedStables, npcHorses, jockeys, races, 1, entryRng, 7, pregnantIds);
-  
+  const racesWithEntries = runNpcRaceEntry(
+    updatedStables,
+    npcHorses,
+    jockeys,
+    races,
+    1,
+    entryRng,
+    7,
+    pregnantIds,
+  );
+
   return {
     day: 1,
     cash: STARTING_CASH,
@@ -429,14 +540,13 @@ const opfsStorage = {
     try {
       await saveGameState(value.state);
     } catch (error) {
-      console.error('Failed to save game state to OPFS:', error);
+      console.error("Failed to save game state to OPFS:", error);
     }
   },
   removeItem: async (_name: string): Promise<void> => {
-    await (await import('@/services/storageAdapter')).clearGameState();
+    await (await import("@/services/storageAdapter")).clearGameState();
   },
 };
-
 
 // Flag to track if hydration has completed
 export let hydrationComplete = false;
@@ -464,7 +574,7 @@ export const useGame = create<GameState & Actions>()(
 
       newGame: async () => {
         // Clear OPFS storage when starting a new game
-        await (await import('@/services/storageAdapter')).clearGameState();
+        await (await import("@/services/storageAdapter")).clearGameState();
         set({ ...initialState() });
       },
 
@@ -478,7 +588,10 @@ export const useGame = create<GameState & Actions>()(
         if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering") {
           set({
             log: [
-              { day: s.day, text: `Training blocked: ${horse.name} is ${horse.healthStatus === "covering_sickness" ? "sick with covering sickness (dourine)" : "recovering from illness"}. Horse cannot be trained while recovering.` },
+              {
+                day: s.day,
+                text: `Training blocked: ${horse.name} is ${horse.healthStatus === "covering_sickness" ? "sick with covering sickness (dourine)" : "recovering from illness"}. Horse cannot be trained while recovering.`,
+              },
               ...s.log,
             ].slice(0, 50),
           });
@@ -516,7 +629,10 @@ export const useGame = create<GameState & Actions>()(
           set({
             cash: s.cash - cost,
             trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
-            log: [{ day: s.day, text: `${horse.name} scheduled for ${kind} training.` }, ...s.log].slice(0, 50),
+            log: [
+              { day: s.day, text: `${horse.name} scheduled for ${kind} training.` },
+              ...s.log,
+            ].slice(0, 50),
           });
         }
       },
@@ -545,7 +661,10 @@ export const useGame = create<GameState & Actions>()(
         // Deduct cash immediately
         set({
           cash: s.cash - price,
-          log: [{ day: s.day, text: `${h.name} purchase scheduled for $${price.toLocaleString()}.` }, ...s.log].slice(0, 50),
+          log: [
+            { day: s.day, text: `${h.name} purchase scheduled for $${price.toLocaleString()}.` },
+            ...s.log,
+          ].slice(0, 50),
         });
       },
 
@@ -560,10 +679,13 @@ export const useGame = create<GameState & Actions>()(
         if (!race) return fail("Race not found.");
         if (!horse) return fail("Horse not found.");
         if (race.resolved) return fail("Race already resolved.");
-        if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return fail(`${horse.name} is pregnant.`);
-        if (race.entries.some((e) => e.horseId === horseId)) return fail(`${horse.name} is already entered.`);
+        if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId))
+          return fail(`${horse.name} is pregnant.`);
+        if (race.entries.some((e) => e.horseId === horseId))
+          return fail(`${horse.name} is already entered.`);
         if (race.entries.length >= race.fieldSize) return fail("Race field is full.");
-        if (!horse.racingViable) return fail(`${horse.name} is not racing viable due to genetic condition.`);
+        if (!horse.racingViable)
+          return fail(`${horse.name} is not racing viable due to genetic condition.`);
         // Economic guard: refuse races whose entry fee exceeds 50% of purse —
         // this catches misconfigured races and protects the player's bankroll.
         if (race.entryFee > race.purse * 0.5) return fail("Entry fee exceeds 50% of purse.");
@@ -572,7 +694,9 @@ export const useGame = create<GameState & Actions>()(
         let effectiveEntryFee = race.entryFee;
         if (race.graded?.key && horse.winAndYouInQualified) {
           const currentYear = getCurrentYear(s.day);
-          const hasWaiver = horse.winAndYouInQualified.some(q => q.raceKey === race.graded!.key && q.year === currentYear);
+          const hasWaiver = horse.winAndYouInQualified.some(
+            (q) => q.raceKey === race.graded!.key && q.year === currentYear,
+          );
           if (hasWaiver) {
             effectiveEntryFee = 0;
           }
@@ -581,9 +705,10 @@ export const useGame = create<GameState & Actions>()(
         if (s.cash < effectiveEntryFee) return fail("Insufficient cash for entry fee.");
         const r = race.restrictions;
         if (r) {
-          const minAgeToCheck = horse.hemisphere === "Northern"
-            ? (r.minAgeNorthern ?? r.minAge)
-            : (r.minAgeSouthern ?? r.minAge);
+          const minAgeToCheck =
+            horse.hemisphere === "Northern"
+              ? (r.minAgeNorthern ?? r.minAge)
+              : (r.minAgeSouthern ?? r.minAge);
           if (minAgeToCheck !== undefined && horse.age < minAgeToCheck) {
             return fail(`${horse.name} is below minimum age (${minAgeToCheck}).`);
           }
@@ -608,7 +733,10 @@ export const useGame = create<GameState & Actions>()(
 
         set({
           cash: s.cash - effectiveEntryFee,
-          log: [{ day: s.day, text: `${horse.name} scheduled to enter ${race.name}.` }, ...s.log].slice(0, 50),
+          log: [
+            { day: s.day, text: `${horse.name} scheduled to enter ${race.name}.` },
+            ...s.log,
+          ].slice(0, 50),
         });
         return { ok: true };
       },
@@ -621,12 +749,23 @@ export const useGame = create<GameState & Actions>()(
         set({ races: [...s.races], cash: s.cash + Math.floor(race.entryFee / 2) });
       },
 
-      resolveRaceWithImpacts: (raceId: string, result: { horseId: string; position: number; time: number }[], runners: Runner[] = []) => {
+      resolveRaceWithImpacts: (
+        raceId: string,
+        result: { horseId: string; position: number; time: number }[],
+        runners: Runner[] = [],
+      ) => {
         const s = get();
         const race = s.races.find((r) => r.id === raceId);
         if (!race || race.resolved) return;
 
-        const newState = resolveLiveRaceWithImpacts(race, result, runners, s.horses, s.jockeys ?? [], s.day);
+        const newState = resolveLiveRaceWithImpacts(
+          race,
+          result,
+          runners,
+          s.horses,
+          s.jockeys ?? [],
+          s.day,
+        );
         set({
           races: [...s.races],
           ...newState,
@@ -637,7 +776,7 @@ export const useGame = create<GameState & Actions>()(
         const s = get();
         const race = s.races.find((r) => r.id === raceId);
         const horse = s.horses.find((h) => h.id === horseId);
-        
+
         if (!race) return { ok: false, reason: "Race not found" };
         if (!horse) return { ok: false, reason: "Horse not found" };
         if (!race.claimingPrice) return { ok: false, reason: "Race is not a claiming race" };
@@ -648,14 +787,17 @@ export const useGame = create<GameState & Actions>()(
           return { ok: false, reason: "Cannot claim your own horse" };
         }
         if (s.cash < race.claimingPrice) {
-          return { ok: false, reason: `Insufficient funds (need $${race.claimingPrice.toLocaleString()})` };
+          return {
+            ok: false,
+            reason: `Insufficient funds (need $${race.claimingPrice.toLocaleString()})`,
+          };
         }
-        
+
         // Check horse eligibility
         if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, s.horses)) {
           return { ok: false, reason: "Horse is not eligible for this claiming price" };
         }
-        
+
         // Enqueue ClaimingIntent
         s.enqueueIntent({
           id: generateUUID(),
@@ -668,7 +810,7 @@ export const useGame = create<GameState & Actions>()(
           horseId,
           claimingPrice: race.claimingPrice,
         });
-        
+
         return { ok: true };
       },
 
@@ -676,7 +818,7 @@ export const useGame = create<GameState & Actions>()(
         const s = get();
         const race = s.races.find((r) => r.id === raceId);
         const horse = s.horses.find((h) => h.id === horseId);
-        
+
         if (!race) return { ok: false, reason: "Race not found" };
         if (!horse) return { ok: false, reason: "Horse not found" };
         if (race.resolved) return { ok: false, reason: "Race already resolved" };
@@ -687,13 +829,13 @@ export const useGame = create<GameState & Actions>()(
         if (horse.stableId !== undefined) {
           return { ok: false, reason: "Cannot withdraw NPC-owned horse" };
         }
-        
+
         const entry = race.entries.find((e) => e.horseId === horseId);
         if (!entry) return { ok: false, reason: "Horse not entered in this race" };
         if (entry.withdrawnFromClaiming) {
           return { ok: false, reason: "Horse already withdrawn from claiming" };
         }
-        
+
         // Enqueue WithdrawFromClaimingIntent
         s.enqueueIntent({
           id: generateUUID(),
@@ -705,7 +847,7 @@ export const useGame = create<GameState & Actions>()(
           raceId,
           horseId,
         });
-        
+
         return { ok: true };
       },
 
@@ -759,7 +901,10 @@ export const useGame = create<GameState & Actions>()(
         set({
           cash: s.cash - totalFee,
           log: [
-            { day: s.day, text: `${sire!.name} × ${dam!.name} breeding scheduled. Fee $${totalFee.toLocaleString()}${studFee ? ` (incl. $${studFee.toLocaleString()} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.` },
+            {
+              day: s.day,
+              text: `${sire!.name} × ${dam!.name} breeding scheduled. Fee $${totalFee.toLocaleString()}${studFee ? ` (incl. $${studFee.toLocaleString()} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.`,
+            },
             ...s.log,
           ].slice(0, 50),
         });
@@ -775,11 +920,14 @@ export const useGame = create<GameState & Actions>()(
         };
         if (!horse) return fail("Horse not found.");
         if (!horse.owned) return fail("You don't own this horse.");
-        if (horse.gender !== "horse" && horse.gender !== "colt") return fail("Only colts and horses can be retired to stud.");
+        if (horse.gender !== "horse" && horse.gender !== "colt")
+          return fail("Only colts and horses can be retired to stud.");
         if (horse.age < 4) return fail("Stallions must be age 4+ to retire to stud.");
         if (horse.stud?.atStud) return fail("Already standing at stud.");
         // Block retirement if entered in any unresolved race
-        const enteredRaces = s.races.filter((r) => !r.resolved && r.entries.some((e) => e.horseId === horseId));
+        const enteredRaces = s.races.filter(
+          (r) => !r.resolved && r.entries.some((e) => e.horseId === horseId),
+        );
         if (enteredRaces.length > 0) return fail("Withdraw from upcoming races before retiring.");
 
         const updatedHorses = s.horses.map((h) =>
@@ -797,106 +945,141 @@ export const useGame = create<GameState & Actions>()(
                   retiredOnDay: s.day,
                 },
               }
-            : h
+            : h,
         );
         set({
           horses: updatedHorses,
-          log: [{ day: s.day, text: `${horse.name} retired to stud at $${fee.toLocaleString()} (book ${bookSize}).` }, ...s.log].slice(0, 50),
+          log: [
+            {
+              day: s.day,
+              text: `${horse.name} retired to stud at $${fee.toLocaleString()} (book ${bookSize}).`,
+            },
+            ...s.log,
+          ].slice(0, 50),
         });
         return { ok: true };
       },
 
       hireJockey: (jockeyId) => {
         const s = get();
-        const jockey = s.jockeys?.find(j => j.id === jockeyId);
+        const jockey = s.jockeys?.find((j) => j.id === jockeyId);
         if (!jockey) return { ok: false, reason: "Jockey not found." };
         if (jockey.stableId) return { ok: false, reason: "Jockey is already under contract." };
-        
+
         const signOnBonus = jockey.ridingFee * 30; // 30 races worth for player retainer
-        if (s.cash < signOnBonus) return { ok: false, reason: `Insufficient cash. Sign-on bonus is $${signOnBonus.toLocaleString()}.` };
+        if (s.cash < signOnBonus)
+          return {
+            ok: false,
+            reason: `Insufficient cash. Sign-on bonus is $${signOnBonus.toLocaleString()}.`,
+          };
 
         set({
           cash: s.cash - signOnBonus,
-          jockeys: s.jockeys?.map(j => j.id === jockeyId ? { ...j, contractUntil: s.day + 90 } : j), // stableId undefined means player
-          log: [{ day: s.day, text: `Signed ${jockey.name} to a 90-day retainer for $${signOnBonus.toLocaleString()}.` }, ...s.log].slice(0, 50),
+          jockeys: s.jockeys?.map((j) =>
+            j.id === jockeyId ? { ...j, contractUntil: s.day + 90 } : j,
+          ), // stableId undefined means player
+          log: [
+            {
+              day: s.day,
+              text: `Signed ${jockey.name} to a 90-day retainer for $${signOnBonus.toLocaleString()}.`,
+            },
+            ...s.log,
+          ].slice(0, 50),
         });
         return { ok: true };
       },
 
       rerollJockeySilk: (jockeyId) => {
         const s = get();
-        const jockey = s.jockeys?.find(j => j.id === jockeyId);
+        const jockey = s.jockeys?.find((j) => j.id === jockeyId);
         if (!jockey) return { ok: false, reason: "Jockey not found." };
-        
+
         // Only allow rerolling retained jockeys (player's jockeys)
-        if (!jockey.contractUntil) return { ok: false, reason: "You can only reroll silks for your retained jockeys." };
-        
+        if (!jockey.contractUntil)
+          return { ok: false, reason: "You can only reroll silks for your retained jockeys." };
+
         const rng = createRng(hashStr(`reroll_silk_${jockeyId}_${s.day}`));
         const newSilk = generateSilk(rng);
-        
+
         set({
-          jockeys: s.jockeys?.map(j => j.id === jockeyId ? { ...j, silk: newSilk } : j),
-          log: [{ day: s.day, text: `${jockey.name}'s racing silks have been updated.` }, ...s.log].slice(0, 50),
+          jockeys: s.jockeys?.map((j) => (j.id === jockeyId ? { ...j, silk: newSilk } : j)),
+          log: [
+            { day: s.day, text: `${jockey.name}'s racing silks have been updated.` },
+            ...s.log,
+          ].slice(0, 50),
         });
         return { ok: true };
       },
 
       assignJockey: (raceId, horseId, jockeyId) => {
         const s = get();
-        const race = s.races.find(r => r.id === raceId);
+        const race = s.races.find((r) => r.id === raceId);
         if (!race) return { ok: false, reason: "Race not found." };
-        const entry = race.entries.find(e => e.horseId === horseId);
+        const entry = race.entries.find((e) => e.horseId === horseId);
         if (!entry) return { ok: false, reason: "Horse not entered in this race." };
-        
-        const jockey = (s.jockeys ?? []).find(j => j.id === jockeyId);
+
+        const jockey = (s.jockeys ?? []).find((j) => j.id === jockeyId);
         if (!jockey) return { ok: false, reason: "Jockey not found." };
 
         // Check if jockey already has a mount in this race
-        if (race.entries.some(e => e.jockeyId === jockeyId && e.horseId !== horseId)) {
-          return { ok: false, reason: `${jockey.name} is already riding another horse in this race.` };
+        if (race.entries.some((e) => e.jockeyId === jockeyId && e.horseId !== horseId)) {
+          return {
+            ok: false,
+            reason: `${jockey.name} is already riding another horse in this race.`,
+          };
         }
 
         // Deduct riding fee
-        if (s.cash < jockey.ridingFee) return { ok: false, reason: "Insufficient cash for riding fee." };
+        if (s.cash < jockey.ridingFee)
+          return { ok: false, reason: "Insufficient cash for riding fee." };
 
-        const updatedRaces = s.races.map(r => 
-          r.id === raceId 
-            ? { ...r, entries: r.entries.map(e => e.horseId === horseId ? { ...e, jockeyId } : e) }
-            : r
+        const updatedRaces = s.races.map((r) =>
+          r.id === raceId
+            ? {
+                ...r,
+                entries: r.entries.map((e) => (e.horseId === horseId ? { ...e, jockeyId } : e)),
+              }
+            : r,
         );
 
         set({
           races: updatedRaces,
           cash: s.cash - jockey.ridingFee,
-          log: [{ day: s.day, text: `Assigned ${jockey.name} to horse for $${jockey.ridingFee.toLocaleString()}.` }, ...s.log].slice(0, 50),
+          log: [
+            {
+              day: s.day,
+              text: `Assigned ${jockey.name} to horse for $${jockey.ridingFee.toLocaleString()}.`,
+            },
+            ...s.log,
+          ].slice(0, 50),
         });
         return { ok: true };
       },
 
       scoutHorse: (horseId) => {
         const s = get();
-        const horse = s.horses.find(h => h.id === horseId);
+        const horse = s.horses.find((h) => h.id === horseId);
         if (!horse) {
           return { success: false, cost: 0, message: "Horse not found." };
         }
         if (!horse.stableId) {
           return { success: false, cost: 0, message: "Cannot scout your own horses." };
         }
-        const stable = s.npcStables.find(st => st.id === horse.stableId);
+        const stable = s.npcStables.find((st) => st.id === horse.stableId);
         if (!stable) {
           return { success: false, cost: 0, message: "Stable not found." };
         }
-        
+
         const scoutRng = createRng(hashStr(`scout_${horseId}_${s.day}`));
         const result = performScout(horse, stable, s.day, s.cash, scoutRng);
-        
+
         if (result.success && result.report) {
           const report = result.report;
           // Deduct cost and save report
-          const updatedHorses = s.horses.map(h => 
-            h.id === horseId 
+          const updatedHorses = s.horses.map((h) =>
+            h.id === horseId
               ? { ...h, scoutedStats: report.revealedStats, lastScoutedDay: s.day }
-              : h
+              : h,
           );
           set({
             horses: updatedHorses,
@@ -905,7 +1088,7 @@ export const useGame = create<GameState & Actions>()(
             log: [{ day: s.day, text: result.message }, ...s.log].slice(0, 50),
           });
         }
-        
+
         return result;
       },
 
@@ -917,9 +1100,9 @@ export const useGame = create<GameState & Actions>()(
 
         // Clean up expired Win and You're In qualifications at year boundary
         if (currentYear > previousYear) {
-          s.horses.forEach(h => {
+          s.horses.forEach((h) => {
             if (h.winAndYouInQualified) {
-              h.winAndYouInQualified = h.winAndYouInQualified.filter(q => q.year >= currentYear);
+              h.winAndYouInQualified = h.winAndYouInQualified.filter((q) => q.year >= currentYear);
             }
           });
         }
@@ -1001,7 +1184,11 @@ export const useGame = create<GameState & Actions>()(
           sireTrendHistory: finalState.sireTrendHistory,
           leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
           pendingIntents: [], // Clear pending intents after processing
-          log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` }, ...s.log].slice(0, 50),
+          log: [
+            ...newLogs,
+            { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` },
+            ...s.log,
+          ].slice(0, 50),
         });
       },
 
@@ -1009,22 +1196,22 @@ export const useGame = create<GameState & Actions>()(
         const s = get();
         // Pre-compute player race days for O(1) lookup
         const playerRaceDays = computePlayerRaceDays(s.races, s.day + 1, s.day + n);
-        
+
         for (let i = 0; i < n; i++) {
           const currentS = get();
           const nextDay = currentS.day + 1;
-          
+
           // O(1) lookup instead of O(n) array.find
           if (playerRaceDays.has(nextDay) && !headless) {
             const playerRace = currentS.races.find(
-              (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned)
+              (r) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
             );
             if (playerRace) {
               set({ pendingPlayerRaceId: playerRace.id });
               return;
             }
           }
-          
+
           get().advanceDay();
         }
       },
@@ -1053,7 +1240,7 @@ export const useGame = create<GameState & Actions>()(
         const baseValue = horsePriceWithPedigree(horse, s.horses);
         const finalReserve = Math.round(reservePrice ?? baseValue * DEFAULT_PLAYER_RESERVE_RATIO);
         set({
-          horses: s.horses.map((h) => h.id === horseId ? { ...h, consignedSaleId: saleId } : h),
+          horses: s.horses.map((h) => (h.id === horseId ? { ...h, consignedSaleId: saleId } : h)),
           auctions: (s.auctions ?? []).map((a) =>
             a.id === saleId
               ? {
@@ -1071,9 +1258,15 @@ export const useGame = create<GameState & Actions>()(
                     },
                   ],
                 }
-              : a
+              : a,
           ),
-          log: [{ day: s.day, text: `${horse.name} consigned to ${sale.name} (reserve $${finalReserve.toLocaleString()}).` }, ...s.log].slice(0, 50),
+          log: [
+            {
+              day: s.day,
+              text: `${horse.name} consigned to ${sale.name} (reserve $${finalReserve.toLocaleString()}).`,
+            },
+            ...s.log,
+          ].slice(0, 50),
         });
         return { ok: true };
       },
@@ -1084,13 +1277,19 @@ export const useGame = create<GameState & Actions>()(
         if (!horse) return { ok: false, reason: "Horse not found." };
         if (!horse.consignedSaleId) return { ok: false, reason: "Horse is not consigned." };
         const sale = (s.auctions ?? []).find((a) => a.id === horse.consignedSaleId);
-        if (sale && sale.day - s.day < 3) return { ok: false, reason: "Cannot withdraw within 3 days of the sale." };
+        if (sale && sale.day - s.day < 3)
+          return { ok: false, reason: "Cannot withdraw within 3 days of the sale." };
         set({
-          horses: s.horses.map((h) => h.id === horseId ? { ...h, consignedSaleId: undefined } : h),
+          horses: s.horses.map((h) =>
+            h.id === horseId ? { ...h, consignedSaleId: undefined } : h,
+          ),
           auctions: (s.auctions ?? []).map((a) =>
             a.id === horse.consignedSaleId
-              ? { ...a, lots: a.lots.map((l) => l.horseId === horseId ? { ...l, withdrawn: true } : l) }
-              : a
+              ? {
+                  ...a,
+                  lots: a.lots.map((l) => (l.horseId === horseId ? { ...l, withdrawn: true } : l)),
+                }
+              : a,
           ),
         });
         return { ok: true };
@@ -1103,8 +1302,10 @@ export const useGame = create<GameState & Actions>()(
         if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
         const lot = sale.lots.find((l) => l.id === lotId);
         if (!lot) return { ok: false, reason: "Lot not found." };
-        if (lot.passed || lot.withdrawn) return { ok: false, reason: "Lot is no longer available." };
-        if (amount <= (lot.hammerPrice ?? 0)) return { ok: false, reason: "Bid must exceed current price." };
+        if (lot.passed || lot.withdrawn)
+          return { ok: false, reason: "Lot is no longer available." };
+        if (amount <= (lot.hammerPrice ?? 0))
+          return { ok: false, reason: "Bid must exceed current price." };
         if (s.cash < amount) return { ok: false, reason: "Insufficient funds." };
         // Book bids are simple: the player becomes current high bidder. NPC
         // overbids displace them at offline resolution. Cash is debited only
@@ -1113,8 +1314,13 @@ export const useGame = create<GameState & Actions>()(
         set({
           auctions: (s.auctions ?? []).map((a) =>
             a.id === saleId
-              ? { ...a, lots: a.lots.map((l) => l.id === lotId ? { ...l, hammerPrice: amount, soldToStableId: undefined } : l) }
-              : a
+              ? {
+                  ...a,
+                  lots: a.lots.map((l) =>
+                    l.id === lotId ? { ...l, hammerPrice: amount, soldToStableId: undefined } : l,
+                  ),
+                }
+              : a,
           ),
         });
         return { ok: true };
@@ -1136,15 +1342,25 @@ export const useGame = create<GameState & Actions>()(
         // Apply impacts via the resolver to commit cash transfers, horse
         // ownership changes, and lot updates atomically.
         const applied = applyImpacts({
-          state: { ...s, auctions: (s.auctions ?? []).map((a) => a.id === saleId ? { ...a, lots: finalLots, resolved: true } : a) } as GameState,
+          state: {
+            ...s,
+            auctions: (s.auctions ?? []).map((a) =>
+              a.id === saleId ? { ...a, lots: finalLots, resolved: true } : a,
+            ),
+          } as GameState,
           intents: [],
           impacts,
           impactLog: [],
           day: s.day,
         });
         // Build a log line summarizing the player's outcomes.
-        const playerWon = finalLots.filter((l) => l.consignorStableId && !l.passed && l.soldToStableId === undefined && l.hammerPrice).length;
-        const playerSold = finalLots.filter((l) => !l.consignorStableId && !l.passed && l.hammerPrice).length;
+        const playerWon = finalLots.filter(
+          (l) =>
+            l.consignorStableId && !l.passed && l.soldToStableId === undefined && l.hammerPrice,
+        ).length;
+        const playerSold = finalLots.filter(
+          (l) => !l.consignorStableId && !l.passed && l.hammerPrice,
+        ).length;
         const summary = `${sale.name} concluded — ${playerWon ? `acquired ${playerWon}` : "no acquisitions"}; ${playerSold ? `sold ${playerSold}` : "no consignments sold"}.`;
         set({
           ...applied.state,
@@ -1159,24 +1375,26 @@ export const useGame = create<GameState & Actions>()(
           currentCeremonyIndex: 0,
         });
       },
-      
+
       geldingHorse: (horseId: string) => {
         const s = get();
-        const horse = s.horses.find(h => h.id === horseId);
+        const horse = s.horses.find((h) => h.id === horseId);
         const cost = 500;
-        
+
         if (!horse) return { ok: false, reason: "Horse not found." };
         if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
         if (horse.gender === "gelding" || horse.gender === "filly" || horse.gender === "mare") {
           return { ok: false, reason: "Only colts and stallions can be gelded." };
         }
         if (s.cash < cost) return { ok: false, reason: `Insufficient funds ($${cost} required).` };
-        
+
         // Block if entered in a race
-        const isEntered = s.races.some(r => !r.resolved && r.entries.some(e => e.horseId === horseId));
+        const isEntered = s.races.some(
+          (r) => !r.resolved && r.entries.some((e) => e.horseId === horseId),
+        );
         if (isEntered) return { ok: false, reason: "Withdraw from races before gelding." };
 
-        const updatedHorses = s.horses.map(h => {
+        const updatedHorses = s.horses.map((h) => {
           if (h.id === horseId) {
             return {
               ...h,
@@ -1184,8 +1402,8 @@ export const useGame = create<GameState & Actions>()(
               energy: Math.max(0, h.energy - 50), // Significant recovery needed
               stats: {
                 ...h.stats,
-                consistency: Math.min(100, h.stats.consistency + 5) // Permanent consistency boost
-              }
+                consistency: Math.min(100, h.stats.consistency + 5), // Permanent consistency boost
+              },
             };
           }
           return h;
@@ -1194,19 +1412,26 @@ export const useGame = create<GameState & Actions>()(
         set({
           horses: updatedHorses,
           cash: s.cash - cost,
-          log: [{ day: s.day, text: `${horse.name} has been gelded. Recovery will take some time, but they should be more consistent now.` }, ...s.log].slice(0, 50)
+          log: [
+            {
+              day: s.day,
+              text: `${horse.name} has been gelded. Recovery will take some time, but they should be more consistent now.`,
+            },
+            ...s.log,
+          ].slice(0, 50),
         });
-        
+
         return { ok: true };
       },
 
       renameHorse: (horseId: string, newName: string) => {
         const s = get();
-        const horse = s.horses.find(h => h.id === horseId);
+        const horse = s.horses.find((h) => h.id === horseId);
 
         if (!horse) return { ok: false, reason: "Horse not found." };
         if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
-        if (!newName || newName.trim().length === 0) return { ok: false, reason: "Name cannot be empty." };
+        if (!newName || newName.trim().length === 0)
+          return { ok: false, reason: "Name cannot be empty." };
         if (newName.length > 50) return { ok: false, reason: "Name too long (max 50 characters)." };
 
         // Generate RenameIntent for immediate resolution
@@ -1247,7 +1472,10 @@ export const useGame = create<GameState & Actions>()(
 
         set({
           horses: updatedContext.state.horses,
-          log: [{ day: s.day, text: `${horse.name} has been renamed to ${newName.trim()}.` }, ...s.log].slice(0, 50),
+          log: [
+            { day: s.day, text: `${horse.name} has been renamed to ${newName.trim()}.` },
+            ...s.log,
+          ].slice(0, 50),
         });
 
         return { ok: true };
@@ -1263,21 +1491,28 @@ export const useGame = create<GameState & Actions>()(
 
       setCampaign: (campaign: HorseCampaign) => {
         const s = get();
-        const existing = (s.campaigns ?? []).findIndex(c => c.horseId === campaign.horseId);
-        const updated = existing >= 0
-          ? (s.campaigns ?? []).map((c, i) => (i === existing ? campaign : c))
-          : [...(s.campaigns ?? []), campaign];
+        const existing = (s.campaigns ?? []).findIndex((c) => c.horseId === campaign.horseId);
+        const updated =
+          existing >= 0
+            ? (s.campaigns ?? []).map((c, i) => (i === existing ? campaign : c))
+            : [...(s.campaigns ?? []), campaign];
         set({ campaigns: updated });
       },
 
-      updateCampaignSlot: (horseId: string, slotIndex: number, patch: Partial<HorseCampaign["slots"][number]>) => {
+      updateCampaignSlot: (
+        horseId: string,
+        slotIndex: number,
+        patch: Partial<HorseCampaign["slots"][number]>,
+      ) => {
         const s = get();
         set({
-          campaigns: (s.campaigns ?? []).map(c =>
-            c.horseId !== horseId ? c : {
-              ...c,
-              slots: c.slots.map((sl, i) => (i === slotIndex ? { ...sl, ...patch } : sl)),
-            }
+          campaigns: (s.campaigns ?? []).map((c) =>
+            c.horseId !== horseId
+              ? c
+              : {
+                  ...c,
+                  slots: c.slots.map((sl, i) => (i === slotIndex ? { ...sl, ...patch } : sl)),
+                },
           ),
         });
       },
@@ -1285,23 +1520,29 @@ export const useGame = create<GameState & Actions>()(
       dismissCampaignFlag: (horseId: string, flagIndex: number) => {
         const s = get();
         set({
-          campaigns: (s.campaigns ?? []).map(c =>
-            c.horseId !== horseId ? c : {
-              ...c,
-              flags: c.flags.map((f, i) => (i === flagIndex ? { ...f, dismissed: true } : f)),
-            }
+          campaigns: (s.campaigns ?? []).map((c) =>
+            c.horseId !== horseId
+              ? c
+              : {
+                  ...c,
+                  flags: c.flags.map((f, i) => (i === flagIndex ? { ...f, dismissed: true } : f)),
+                },
           ),
         });
       },
 
       deleteCampaign: (horseId: string) => {
         const s = get();
-        set({ campaigns: (s.campaigns ?? []).filter(c => c.horseId !== horseId) });
+        set({ campaigns: (s.campaigns ?? []).filter((c) => c.horseId !== horseId) });
       },
 
-      generateAutoCampaign: (horseId: string, goalType: CampaignGoalType, targetRaceKey?: string) => {
+      generateAutoCampaign: (
+        horseId: string,
+        goalType: CampaignGoalType,
+        targetRaceKey?: string,
+      ) => {
         const s = get();
-        const horse = s.horses.find(h => h.id === horseId);
+        const horse = s.horses.find((h) => h.id === horseId);
         if (!horse) return;
         const emptyAptitudes: ConfirmedAptitudes = {
           surfaceStarts: { Turf: 0, Dirt: 0, Synthetic: 0 },
@@ -1318,10 +1559,11 @@ export const useGame = create<GameState & Actions>()(
           createdDay: s.day,
           lastReviewedDay: s.day,
         };
-        const existing = (s.campaigns ?? []).findIndex(c => c.horseId === horseId);
-        const updated = existing >= 0
-          ? (s.campaigns ?? []).map((c, i) => (i === existing ? campaign : c))
-          : [...(s.campaigns ?? []), campaign];
+        const existing = (s.campaigns ?? []).findIndex((c) => c.horseId === horseId);
+        const updated =
+          existing >= 0
+            ? (s.campaigns ?? []).map((c, i) => (i === existing ? campaign : c))
+            : [...(s.campaigns ?? []), campaign];
         set({ campaigns: updated });
       },
 
@@ -1395,7 +1637,7 @@ export const useGame = create<GameState & Actions>()(
       upgradeFacility: (facilityType) => {
         const s = get();
         const facility = s.facilities?.[facilityType as keyof typeof s.facilities];
-        
+
         if (!facility) {
           return { ok: false, reason: "Facility not found" };
         }
@@ -1472,8 +1714,8 @@ export const useGame = create<GameState & Actions>()(
         hydrationComplete = true;
         if (state?.calibratedPars) setCalibratedPars(state.calibratedPars);
       },
-    }
-  )
+    },
+  ),
 );
 
 // Function to manually rehydrate the store (call on client mount)
@@ -1498,7 +1740,5 @@ export { shallow };
 // Custom hook that supports shallow comparison for object/array selectors
 // Use this when selecting multiple state values to prevent unnecessary re-renders
 // Example: const { horses, awards } = useGameWithShallow((s) => ({ horses: s.horses, awards: s.awards }));
-export const useGameWithShallow = <T>(
-  selector: (state: GameState & Actions) => T
-): T => (useGame as any)(selector, shallow);
-
+export const useGameWithShallow = <T>(selector: (state: GameState & Actions) => T): T =>
+  (useGame as any)(selector, shallow);

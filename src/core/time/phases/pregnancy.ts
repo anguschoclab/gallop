@@ -21,9 +21,9 @@ export const pregnancyPhase = {
     const newReputationEvents = state.reputation?.events ?? [];
     for (const foal of foals) {
       // Find the pregnancy that produced this foal
-      const pregnancy = pregnancies.find(p => p.foalId === foal.id);
+      const pregnancy = pregnancies.find((p) => p.foalId === foal.id);
       if (pregnancy) {
-        const dam = state.horses.find(h => h.id === pregnancy.damId);
+        const dam = state.horses.find((h) => h.id === pregnancy.damId);
         // Only add reputation for player-owned dams
         if (dam && !dam.stableId) {
           const foalQuality = foal.potential;
@@ -33,7 +33,7 @@ export const pregnancyPhase = {
             reputationAmount,
             `Foal born: ${foal.name} (potential ${foalQuality})`,
             newDay,
-            { horseId: foal.id }
+            { horseId: foal.id },
           );
           newReputationEvents.push(reputationEvent);
         }
@@ -47,15 +47,21 @@ export const pregnancyPhase = {
         horses: [...state.horses, ...foals],
         pregnancies,
         cash: state.cash + cashAdjustment,
-        reputation: state.reputation ? {
-          ...state.reputation,
-          events: newReputationEvents,
-          score: state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
-          tier: (() => {
-            const { getReputationTier } = require("@/core/reputation");
-            return getReputationTier(state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0));
-          })(),
-        } : state.reputation,
+        reputation: state.reputation
+          ? {
+              ...state.reputation,
+              events: newReputationEvents,
+              score:
+                state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
+              tier: (() => {
+                const { getReputationTier } = require("@/core/reputation");
+                return getReputationTier(
+                  state.reputation.score +
+                    newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
+                );
+              })(),
+            }
+          : state.reputation,
       },
       logs: [...context.logs, ...pregResult.logs],
     };

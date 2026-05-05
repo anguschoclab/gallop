@@ -2,7 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGame } from "@/game/store";
-import { FACILITY_UPGRADE_COSTS, FACILITY_ENABLED_WORKOUTS, type FacilityType, type FacilityLevel } from "@/core/facilities";
+import {
+  FACILITY_UPGRADE_COSTS,
+  FACILITY_ENABLED_WORKOUTS,
+  type FacilityType,
+  type FacilityLevel,
+} from "@/core/facilities";
 import { ArrowUp, Check, X, Dumbbell } from "lucide-react";
 
 /**
@@ -87,12 +92,8 @@ export function FacilitiesPanel() {
             <Card key={type}>
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base capitalize">
-                    {type.replace(/_/g, " ")}
-                  </CardTitle>
-                  <Badge className={getLevelColor(facility.level)}>
-                    {facility.level}
-                  </Badge>
+                  <CardTitle className="text-base capitalize">{type.replace(/_/g, " ")}</CardTitle>
+                  <Badge className={getLevelColor(facility.level)}>{facility.level}</Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">

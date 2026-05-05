@@ -30,7 +30,7 @@ describe("NPC Daily Cycle Integration", () => {
     const races: Race[] = [];
 
     const result = runNpcCycle(npcStables, horses, races, 10, createRng("test"));
-    
+
     // Verify result structure
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();
@@ -44,7 +44,7 @@ describe("NPC Daily Cycle Integration", () => {
     const races: Race[] = [];
 
     const result = runNpcCycle(npcStables, horses, races, 10, createRng("test"));
-    
+
     // Should return unchanged
     expect(result.horses).toEqual([]);
     expect(result.races).toEqual([]);
@@ -71,7 +71,7 @@ describe("NPC Daily Cycle Integration", () => {
     const races: Race[] = [];
 
     const result = runNpcCycle(npcStables, horses, races, 10, createRng("test"));
-    
+
     // Should not crash with empty horse roster
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();
@@ -99,7 +99,7 @@ describe("NPC Daily Cycle Integration", () => {
     const races: Race[] = [];
 
     const result = runNpcCycle(npcStables, horses, jockeys, races, 10, createRng(12345), 5);
-    
+
     // Should not crash with custom raceEntryDaysAhead
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();

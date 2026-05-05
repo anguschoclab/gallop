@@ -184,7 +184,10 @@ describe("calculateTemperamentCompatibility", () => {
 
 describe("calculateParentPerformance", () => {
   it("no race history → score = 0", () => {
-    const { score } = calculateParentPerformance(mkHorse({ raceHistory: [] }), mkMare({ raceHistory: [] }));
+    const { score } = calculateParentPerformance(
+      mkHorse({ raceHistory: [] }),
+      mkMare({ raceHistory: [] }),
+    );
     expect(score).toBe(0);
   });
 
@@ -196,9 +199,7 @@ describe("calculateParentPerformance", () => {
       ],
     });
     const dam = mkMare({
-      raceHistory: [
-        { raceId: "r3", raceName: "Race 3", position: 1, day: 15, grade: "G1" },
-      ],
+      raceHistory: [{ raceId: "r3", raceName: "Race 3", position: 1, day: 15, grade: "G1" }],
     });
     const { score } = calculateParentPerformance(sire, dam);
     expect(score).toBeGreaterThan(0);

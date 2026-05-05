@@ -1,4 +1,16 @@
-import type { Horse, HorseGender, Hemisphere, HorseStats, RunningStyle, HorseMarkings, HealthStatus, BlueHenStatus, CoatColor, Pedigree, StudCareer } from "@/game/types";
+import type {
+  Horse,
+  HorseGender,
+  Hemisphere,
+  HorseStats,
+  RunningStyle,
+  HorseMarkings,
+  HealthStatus,
+  BlueHenStatus,
+  CoatColor,
+  Pedigree,
+  StudCareer,
+} from "@/game/types";
 import { createTestGenotype } from "./createTestGenotype";
 
 /**
@@ -71,44 +83,45 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     bruceLoweFamily: undefined,
 
     // REQUIRED performance properties
-    distanceAptitude: 1600,      // Middle distance preference (800-3200m)
-    surfaceAptitude: {           // Surface preference multipliers
+    distanceAptitude: 1600, // Middle distance preference (800-3200m)
+    surfaceAptitude: {
+      // Surface preference multipliers
       Turf: 1.0,
       Dirt: 1.0,
       Synthetic: 1.0,
     },
-    climbingAptitude: 1.0,      // Uphill stamina multiplier (0.8-1.2)
-    corneringAptitude: 1.0,      // Turn speed multiplier (0.8-1.2)
-    injuryProneness: 0.1,        // Injury chance (0-1)
-    height: 15.2,                // Hands (14.0-18.0)
-    weight: 500,                 // kg (400-600)
+    climbingAptitude: 1.0, // Uphill stamina multiplier (0.8-1.2)
+    corneringAptitude: 1.0, // Turn speed multiplier (0.8-1.2)
+    injuryProneness: 0.1, // Injury chance (0-1)
+    height: 15.2, // Hands (14.0-18.0)
+    weight: 500, // kg (400-600)
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
 
     // REQUIRED DNA traits (Tier 1+2)
-    heartScore: 1.0,             // Late-race stamina multiplier (0.85-1.15)
-    fiberBias: "balanced",       // Sprint vs stayer preference
-    strideType: "balanced",      // Short vs long stride
+    heartScore: 1.0, // Late-race stamina multiplier (0.85-1.15)
+    fiberBias: "balanced", // Sprint vs stayer preference
+    strideType: "balanced", // Short vs long stride
     trackPreference: "balanced", // Track handedness preference
-    mudAptitude: 1.0,            // Soft ground performance (0.85-1.15)
+    mudAptitude: 1.0, // Soft ground performance (0.85-1.15)
 
     // REQUIRED DNA traits (development & training)
-    trainability: 1.0,           // Training gain multiplier (0.5-1.4)
-    peakAge: 4,                  // Peak ability age (3-7)
-    recoveryRate: 1.0,           // Energy regen multiplier (0.7-1.4)
+    trainability: 1.0, // Training gain multiplier (0.5-1.4)
+    peakAge: 4, // Peak ability age (3-7)
+    recoveryRate: 1.0, // Energy regen multiplier (0.7-1.4)
 
     // REQUIRED DNA traits (reproduction)
-    fertility: 0.85,             // Conception probability (0.7-0.99)
-    foalingEase: 0.9,            // Complication risk multiplier (0.7-1.0)
+    fertility: 0.85, // Conception probability (0.7-0.99)
+    foalingEase: 0.9, // Complication risk multiplier (0.7-1.0)
 
     // REQUIRED cosmetic markings
     markings: createTestHorseMarkings(),
 
     // REQUIRED health susceptibility
-    bleederRisk: 0.05,           // Mid-race fade chance (0-0.15)
-    roarerRisk: 0.03,            // Stamina collapse chance (0-0.10)
-    ocdRisk: 0.03,               // Bone injury chance (0-0.10)
+    bleederRisk: 0.05, // Mid-race fade chance (0-0.15)
+    roarerRisk: 0.03, // Stamina collapse chance (0-0.10)
+    ocdRisk: 0.03, // Bone injury chance (0-0.10)
 
     // REQUIRED population genetics
     bloodline: "Test Line",
@@ -158,7 +171,7 @@ export function createTestHorses(count: number, baseOverrides?: Partial<Horse>):
       id: `test-horse-${i + 1}`,
       name: `Test Horse ${i + 1}`,
       ...baseOverrides,
-    })
+    }),
   );
 }
 

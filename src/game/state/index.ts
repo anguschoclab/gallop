@@ -22,11 +22,17 @@ import { createDefaultRacingState } from "./racingState";
 import { createDefaultSystemsState } from "./systemsState";
 
 // Re-export state creators
-export { createDefaultCoreState, createDefaultMarketState, createDefaultBreedingState, createDefaultRacingState, createDefaultSystemsState };
+export {
+  createDefaultCoreState,
+  createDefaultMarketState,
+  createDefaultBreedingState,
+  createDefaultRacingState,
+  createDefaultSystemsState,
+};
 
 /**
  * Complete GameState type - intersection of all domain states
- * 
+ *
  * This type is split into domain-specific slices for better maintainability:
  * - CoreState: Essential game loop (day, cash, horses, races, log)
  * - MarketState: Trading and acquisition (market, auctions, scout reports)

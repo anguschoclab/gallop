@@ -16,7 +16,10 @@ export function getFoalsOf(state: Pick<GameState, "horses">, damId: string): Hor
 // graded badge OR raceClass Stakes/Group at position 1. Mirrors the same
 // predicate used inside resolveRace's blue-hen update path.
 export function isStakesWinner(foal: Horse): boolean {
-  return foal.raceHistory.some((r) => r.position === 1 && (r.grade !== undefined || r.purse !== undefined && r.purse >= 18000));
+  return foal.raceHistory.some(
+    (r) =>
+      r.position === 1 && (r.grade !== undefined || (r.purse !== undefined && r.purse >= 18000)),
+  );
 }
 
 export function isG1Winner(foal: Horse): boolean {

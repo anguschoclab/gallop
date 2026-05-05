@@ -23,7 +23,7 @@ export interface RaceFilters {
 export function filterRacesByCriteria(
   races: Race[],
   filters: RaceFilters,
-  currentDay: number
+  currentDay: number,
 ): Race[] {
   return races.filter((race) => {
     // Filter by grade
@@ -54,7 +54,11 @@ export function filterRacesByCriteria(
     }
 
     // Filter by special race keys (generic - for Triple Crown, Classics, etc.)
-    if (filters.specialFilterMode && filters.specialFilterMode !== "all" && filters.specialRaceKeys) {
+    if (
+      filters.specialFilterMode &&
+      filters.specialFilterMode !== "all" &&
+      filters.specialRaceKeys
+    ) {
       const isSpecial = race.graded && filters.specialRaceKeys.has(race.graded.key);
       if (filters.specialFilterMode === "only" && !isSpecial) return false;
       if (filters.specialFilterMode === "exclude" && isSpecial) return false;
@@ -74,7 +78,7 @@ export function filterRacesByCriteria(
  */
 export function separateUpcomingAndPast(
   races: Race[],
-  currentDay: number
+  currentDay: number,
 ): { upcoming: Race[]; past: Race[] } {
   const upcoming = races.filter((race) => race.day >= currentDay);
   const past = races.filter((race) => race.day < currentDay);

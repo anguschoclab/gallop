@@ -56,7 +56,10 @@ export function AutoSimPanel({ open, onClose }: Props) {
       // If pendingPlayerRaceId was set, we paused — stop autosim
       if (useGame.getState().pendingPlayerRaceId) {
         setRunning(false);
-        setLog((l) => [`Paused — player race detected on ${gameCalendarDate(afterDay + 1)}.`, ...l]);
+        setLog((l) => [
+          `Paused — player race detected on ${gameCalendarDate(afterDay + 1)}.`,
+          ...l,
+        ]);
         return;
       }
 
@@ -70,7 +73,7 @@ export function AutoSimPanel({ open, onClose }: Props) {
           e.text.includes("Foal born") ||
           e.text.includes("hammer price") ||
           e.text.includes("recalibrated") ||
-          (e.day >= startDay && e.day <= afterDay)
+          (e.day >= startDay && e.day <= afterDay),
       );
       if (notable.length > 0) {
         setLog((l) => [...notable.map((e) => `Day ${e.day}: ${e.text}`), ...l].slice(0, 50));
@@ -140,9 +143,14 @@ export function AutoSimPanel({ open, onClose }: Props) {
 
           {log.length > 0 && (
             <div className="space-y-1 max-h-64 overflow-y-auto">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Events</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                Events
+              </p>
               {log.map((entry, i) => (
-                <p key={i} className="text-xs text-muted-foreground leading-relaxed border-b border-border/40 pb-1">
+                <p
+                  key={i}
+                  className="text-xs text-muted-foreground leading-relaxed border-b border-border/40 pb-1"
+                >
                   {entry}
                 </p>
               ))}
@@ -160,7 +168,13 @@ export function AutoSimPanel({ open, onClose }: Props) {
               Run AutoSim
             </Button>
           )}
-          <Button onClick={() => { stop(); onClose(); }} variant="ghost">
+          <Button
+            onClick={() => {
+              stop();
+              onClose();
+            }}
+            variant="ghost"
+          >
             Close
           </Button>
         </div>

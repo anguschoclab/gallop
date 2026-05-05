@@ -11,13 +11,13 @@ export const Route = createFileRoute("/npc-stables")({ component: NpcStablesPage
 
 function NpcStablesPage() {
   const npcStables = useNpcStables();
-  
+
   const majorStables = getMajorStables(npcStables);
   const eliteStables = getStablesByTier(majorStables, "elite");
   const midStables = getStablesByTier(majorStables, "mid");
   const budgetStables = getStablesByTier(majorStables, "budget");
-  const fillerCount = npcStables.filter(s => !s.isMajor).length;
-  
+  const fillerCount = npcStables.filter((s) => !s.isMajor).length;
+
   return (
     <div className="space-y-8">
       <div className="mb-6">
@@ -26,7 +26,8 @@ function NpcStablesPage() {
           Rival Stables
         </h1>
         <p className="text-cream-muted mt-2 font-[family-name:var(--font-body)]">
-          Browse {npcStables.length} NPC stables worldwide — from elite international operations to regional breeders.
+          Browse {npcStables.length} NPC stables worldwide — from elite international operations to
+          regional breeders.
         </p>
         <div className="flex gap-4 mt-3 text-sm text-cream-muted">
           <span className="flex items-center gap-1">
@@ -47,7 +48,7 @@ function NpcStablesPage() {
           </span>
         </div>
       </div>
-      
+
       {/* Elite Stables */}
       {eliteStables.length > 0 && (
         <div className="mb-8">
@@ -56,13 +57,13 @@ function NpcStablesPage() {
             Elite Stables
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {eliteStables.map(stable => (
+            {eliteStables.map((stable) => (
               <StableCard key={stable.id} stable={stable} />
             ))}
           </div>
         </div>
       )}
-      
+
       {/* Mid-Tier Stables */}
       {midStables.length > 0 && (
         <div className="mb-8">
@@ -71,13 +72,13 @@ function NpcStablesPage() {
             Mid-Tier Stables
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {midStables.map(stable => (
+            {midStables.map((stable) => (
               <StableCard key={stable.id} stable={stable} />
             ))}
           </div>
         </div>
       )}
-      
+
       {/* Budget Stables */}
       {budgetStables.length > 0 && (
         <div className="mb-8">
@@ -86,13 +87,13 @@ function NpcStablesPage() {
             Budget Stables
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {budgetStables.map(stable => (
+            {budgetStables.map((stable) => (
               <StableCard key={stable.id} stable={stable} />
             ))}
           </div>
         </div>
       )}
-      
+
       {/* Regional Operations (Filler) - Collapsible */}
       {fillerCount > 0 && (
         <div className="mt-8 pt-6 border-t">
@@ -101,7 +102,8 @@ function NpcStablesPage() {
             {fillerCount} Regional Operations
           </h2>
           <p className="text-sm text-cream-muted mt-1">
-            Smaller regional stables with limited strings. These operations may not appear in major races but provide depth to the racing ecosystem.
+            Smaller regional stables with limited strings. These operations may not appear in major
+            races but provide depth to the racing ecosystem.
           </p>
         </div>
       )}
@@ -116,31 +118,30 @@ function StableCard({ stable }: { stable: ReturnType<typeof getMajorStables>[num
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
-              <div 
+              <div
                 className="w-8 h-8 rounded-full border-2"
-                style={{ 
+                style={{
                   backgroundColor: stable.colors.primary,
-                  borderColor: stable.colors.secondary 
+                  borderColor: stable.colors.secondary,
                 }}
               />
               <div>
-                <CardTitle className="text-lg font-[family-name:var(--font-display)]">{stable.name}</CardTitle>
+                <CardTitle className="text-lg font-[family-name:var(--font-display)]">
+                  {stable.name}
+                </CardTitle>
                 <p className="text-sm text-cream-muted">{stable.country}</p>
               </div>
             </div>
-            <Badge className={getTierColor(stable.tier)}>
-              {stable.tier}
-            </Badge>
+            <Badge className={getTierColor(stable.tier)}>{stable.tier}</Badge>
           </div>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-cream-muted mb-3 line-clamp-2">
-            {stable.description || `${stable.owner}'s racing operation with ${stable.horses.length} horses.`}
+            {stable.description ||
+              `${stable.owner}'s racing operation with ${stable.horses.length} horses.`}
           </p>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-cream-muted">
-              {stable.horses.length} horses
-            </span>
+            <span className="text-cream-muted">{stable.horses.length} horses</span>
             <span className="text-fame" title={`Reputation: ${stable.reputation}`}>
               {getReputationStars(stable.reputation)}
             </span>

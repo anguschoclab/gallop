@@ -20,24 +20,28 @@ function BroodmaresPage() {
   const activePregnancies = pregnancies.filter((p) => !p.resolved);
 
   // Group pregnancies by dam to show each broodmare once
-  const broodmareData = activePregnancies.map((pregnancy) => {
-    const dam = horses.find((h) => h.id === pregnancy.damId);
-    const sire = horses.find((h) => h.id === pregnancy.sireId);
-    const daysRemaining = pregnancy.dueDay - day;
-    
-    // Get maternity log entries for this dam
-    const maternityLog = log.filter((l) => 
-      l.text.includes(pregnancy.damName) && (l.text.includes("Mated") || l.text.includes("Foal"))
-    );
+  const broodmareData = activePregnancies
+    .map((pregnancy) => {
+      const dam = horses.find((h) => h.id === pregnancy.damId);
+      const sire = horses.find((h) => h.id === pregnancy.sireId);
+      const daysRemaining = pregnancy.dueDay - day;
 
-    return {
-      pregnancy,
-      dam,
-      sire,
-      daysRemaining,
-      maternityLog,
-    };
-  }).filter((data) => data.dam); // Only include if dam still exists
+      // Get maternity log entries for this dam
+      const maternityLog = log.filter(
+        (l) =>
+          l.text.includes(pregnancy.damName) &&
+          (l.text.includes("Mated") || l.text.includes("Foal")),
+      );
+
+      return {
+        pregnancy,
+        dam,
+        sire,
+        daysRemaining,
+        maternityLog,
+      };
+    })
+    .filter((data) => data.dam); // Only include if dam still exists
 
   // Sort by days remaining (soonest due first)
   const sortedBroodmares = broodmareData.sort((a, b) => a.daysRemaining - b.daysRemaining);
@@ -45,7 +49,9 @@ function BroodmaresPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">Broodmare Management</h1>
+        <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">
+          Broodmare Management
+        </h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">
           {sortedBroodmares.length} pregnant mare{sortedBroodmares.length !== 1 ? "s" : ""}
         </p>
@@ -72,13 +78,19 @@ function BroodmaresPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <CardTitle className="text-lg font-[family-name:var(--font-display)]">{dam?.name}</CardTitle>
+                      <CardTitle className="text-lg font-[family-name:var(--font-display)]">
+                        {dam?.name}
+                      </CardTitle>
                       <Badge className="bg-t700 text-cream">Age {dam?.age}</Badge>
                       {daysRemaining <= 0 && (
-                        <Badge variant="default" className="bg-destructive">Due Now</Badge>
+                        <Badge variant="default" className="bg-destructive">
+                          Due Now
+                        </Badge>
                       )}
                       {dam?.blueHenStatus?.isBlueHen && (
-                        <Badge variant="outline" className="border-info text-info">Blue Hen</Badge>
+                        <Badge variant="outline" className="border-info text-info">
+                          Blue Hen
+                        </Badge>
                       )}
                     </div>
                     <p className="text-sm text-cream-muted">
@@ -86,13 +98,21 @@ function BroodmaresPage() {
                     </p>
                     {dam?.blueHenStatus && (
                       <p className="text-xs text-cream-muted mt-1">
-                        {dam.blueHenStatus.stakesWinnersProduced} stakes winners · {dam.blueHenStatus.group1WinnersProduced} G1 winners · Score: {dam.blueHenStatus.blueHenScore}
+                        {dam.blueHenStatus.stakesWinnersProduced} stakes winners ·{" "}
+                        {dam.blueHenStatus.group1WinnersProduced} G1 winners · Score:{" "}
+                        {dam.blueHenStatus.blueHenScore}
                       </p>
                     )}
                   </div>
                   <div className="text-right">
-                    <Badge 
-                      variant={daysRemaining <= 5 ? "default" : daysRemaining <= 15 ? "secondary" : "outline"}
+                    <Badge
+                      variant={
+                        daysRemaining <= 5
+                          ? "default"
+                          : daysRemaining <= 15
+                            ? "secondary"
+                            : "outline"
+                      }
                       className={daysRemaining <= 5 ? "bg-warning" : ""}
                     >
                       {daysRemaining <= 0 ? "Due" : `${daysRemaining} days`}
@@ -134,16 +154,25 @@ function BroodmaresPage() {
 
                 {maternityLog.length > 0 && (
                   <div className="mt-3 p-3 bg-t700 rounded-md border border-gold-muted">
-                    <p className="text-xs font-medium text-cream-muted mb-2">Recent maternity activity:</p>
+                    <p className="text-xs font-medium text-cream-muted mb-2">
+                      Recent maternity activity:
+                    </p>
                     <div className="space-y-1">
                       {maternityLog.slice(0, 3).map((entry, idx) => (
-                        <div key={idx} className="text-xs py-1 border-b border-gold-muted last:border-0 flex gap-2">
-                          <span className="text-cream-muted tabular-nums shrink-0">D{entry.day}</span>
+                        <div
+                          key={idx}
+                          className="text-xs py-1 border-b border-gold-muted last:border-0 flex gap-2"
+                        >
+                          <span className="text-cream-muted tabular-nums shrink-0">
+                            D{entry.day}
+                          </span>
                           <span className="text-cream">{entry.text}</span>
                         </div>
                       ))}
                       {maternityLog.length > 3 && (
-                        <p className="text-xs text-cream-muted">+{maternityLog.length - 3} more entries</p>
+                        <p className="text-xs text-cream-muted">
+                          +{maternityLog.length - 3} more entries
+                        </p>
                       )}
                     </div>
                   </div>

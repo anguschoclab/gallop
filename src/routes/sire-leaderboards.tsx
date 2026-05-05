@@ -11,13 +11,15 @@ export const Route = createFileRoute("/sire-leaderboards")({
 });
 
 function SireLeaderboardsPage() {
-  const leaderboards = useGame(s => s.sireLeaderboards);
-  
+  const leaderboards = useGame((s) => s.sireLeaderboards);
+
   if (!leaderboards) {
     return (
       <Card className="border-gold-muted">
         <CardContent className="p-12 text-center">
-          <p className="text-cream-muted">Leaderboards will be available after the first week of gameplay.</p>
+          <p className="text-cream-muted">
+            Leaderboards will be available after the first week of gameplay.
+          </p>
         </CardContent>
       </Card>
     );
@@ -42,7 +44,9 @@ function SireLeaderboardsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Sire Leaderboards</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+          Sire Leaderboards
+        </h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">
           Track stallion performance across multiple dimensions. Updated weekly.
         </p>
@@ -50,7 +54,7 @@ function SireLeaderboardsPage() {
 
       <Tabs defaultValue="overall">
         <TabsList className="grid w-full grid-cols-7">
-          {tabs.map(tab => (
+          {tabs.map((tab) => (
             <TabsTrigger key={tab.key} value={tab.key}>
               <tab.icon className="h-4 w-4 mr-2" />
               {tab.label}
@@ -58,7 +62,7 @@ function SireLeaderboardsPage() {
           ))}
         </TabsList>
 
-        {tabs.map(tab => (
+        {tabs.map((tab) => (
           <TabsContent key={tab.key} value={tab.key}>
             <LeaderboardView leaderboard={leaderboards[tab.key]} />
           </TabsContent>
@@ -82,20 +86,26 @@ function LeaderboardView({ leaderboard }: { leaderboard: any }) {
   return (
     <Card className="border-gold-muted">
       <CardHeader>
-        <CardTitle className="text-cream font-[family-name:var(--font-display)]">{leaderboard.title}</CardTitle>
+        <CardTitle className="text-cream font-[family-name:var(--font-display)]">
+          {leaderboard.title}
+        </CardTitle>
         <p className="text-sm text-cream-muted">{leaderboard.description}</p>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           {leaderboard.rankings.map((ranking: any) => (
-            <div key={ranking.stallionId} className="flex items-center justify-between p-3 bg-t700 rounded-lg">
+            <div
+              key={ranking.stallionId}
+              className="flex items-center justify-between p-3 bg-t700 rounded-lg"
+            >
               <div className="flex items-center gap-4">
                 <span className="text-2xl font-bold w-8 text-cream">#{ranking.rank}</span>
                 <div>
                   <p className="font-semibold text-cream">{ranking.stallionName}</p>
                   <p className="text-sm text-cream-muted">
                     AEI: {ranking.metrics.aei.toFixed(1)} · CI: {ranking.metrics.ci.toFixed(1)} ·
-                    {ranking.metrics.lifetimeStakesFoals} Stakes · {ranking.metrics.lifetimeG1Foals} G1
+                    {ranking.metrics.lifetimeStakesFoals} Stakes · {ranking.metrics.lifetimeG1Foals}{" "}
+                    G1
                   </p>
                 </div>
               </div>

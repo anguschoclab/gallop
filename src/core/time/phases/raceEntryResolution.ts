@@ -29,7 +29,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
     for (const intent of raceEntryIntents) {
       const race = state.races.find((r) => r.id === intent.raceId);
       const horse = state.horses.find((h) => h.id === intent.horseId);
-      
+
       if (!race || !horse) continue;
       if (race.resolved) continue;
       if (race.entries.some((e) => e.horseId === intent.horseId)) continue;
@@ -52,9 +52,15 @@ export const raceEntryResolutionPhase: PipelinePhase = {
       // Add transport cost for player-owned horses (simplified: fixed cost based on race grade)
       if (!horse.stableId) {
         // Simplified transport cost calculation based on race grade
-        const transportCost = race.graded ? 
-          (race.graded.grade === "G1" ? 500 : race.graded.grade === "G2" ? 400 : race.graded.grade === "G3" ? 300 : 200) : 
-          150;
+        const transportCost = race.graded
+          ? race.graded.grade === "G1"
+            ? 500
+            : race.graded.grade === "G2"
+              ? 400
+              : race.graded.grade === "G3"
+                ? 300
+                : 200
+          : 150;
 
         // Add transport expense impact
         impacts.push({
@@ -78,8 +84,8 @@ export const raceEntryResolutionPhase: PipelinePhase = {
             `Transport to ${race.name}`,
             newDay,
             state.cash - transportCost,
-            { horseId: horse.id, raceId: race.id }
-          )
+            { horseId: horse.id, raceId: race.id },
+          ),
         );
 
         // Create transport request
@@ -89,7 +95,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
           race.graded?.track ?? race.name,
           100, // Simplified distance
           newDay,
-          "road"
+          "road",
         );
         newTransports.push(transportRequest);
       }

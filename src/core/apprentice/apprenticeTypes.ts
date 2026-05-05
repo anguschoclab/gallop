@@ -32,10 +32,10 @@ export interface ApprenticeProgression {
  */
 export const CLAIM_ALLOWANCE_TABLE: Record<number, number> = {
   0: 10, // 0 wins: 10 pound allowance
-  1: 7,  // 1 win: 7 pound allowance
-  2: 5,  // 2 wins: 5 pound allowance
-  3: 3,  // 3 wins: 3 pound allowance
-  4: 1,  // 4 wins: 1 pound allowance
+  1: 7, // 1 win: 7 pound allowance
+  2: 5, // 2 wins: 5 pound allowance
+  3: 3, // 3 wins: 3 pound allowance
+  4: 1, // 4 wins: 1 pound allowance
 };
 
 /**
@@ -68,7 +68,7 @@ export function qualifiesForAllowance(wins: number): boolean {
  */
 export function createApprenticeProgression(
   jockeyId: string,
-  startDate: number
+  startDate: number,
 ): ApprenticeProgression {
   return {
     jockeyId,
@@ -84,26 +84,26 @@ export function createApprenticeProgression(
  */
 export function updateApprenticeProgression(
   progression: ApprenticeProgression,
-  isApprenticeRace: boolean
+  isApprenticeRace: boolean,
 ): ApprenticeProgression {
   const newProgression = { ...progression };
   newProgression.careerWins += 1;
-  
+
   if (isApprenticeRace && progression.status === "apprentice") {
     newProgression.apprenticeWins += 1;
   }
-  
+
   // Check for graduation
   if (progression.status === "apprentice" && progression.apprenticeWins >= 5) {
     newProgression.status = "journeyman";
     newProgression.graduationDate = new Date().getTime();
   }
-  
+
   // Check for journeyman to senior
   if (progression.status === "journeyman" && progression.careerWins >= 50) {
     newProgression.status = "senior";
   }
-  
+
   return newProgression;
 }
 

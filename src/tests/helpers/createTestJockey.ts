@@ -1,15 +1,22 @@
-import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk, JockeySilkPattern } from "@/game/types";
+import type {
+  Jockey,
+  JockeyArchetype,
+  JockeyStats,
+  JockeyTrait,
+  JockeySilk,
+  JockeySilkPattern,
+} from "@/game/types";
 
 /**
  * Creates a valid test jockey stats object
  */
 function createTestJockeyStats(overrides?: Partial<JockeyStats>): JockeyStats {
   return {
-    pacing: 75,        // Good stamina management
-    positioning: 70,   // Good race positioning
-    vigor: 80,         // Strong finish
-    gateSkill: 75,     // Good start
-    temperament: 70,   // Good with nervous horses
+    pacing: 75, // Good stamina management
+    positioning: 70, // Good race positioning
+    vigor: 80, // Strong finish
+    gateSkill: 75, // Good start
+    temperament: 70, // Good with nervous horses
     ...overrides,
   };
 }
@@ -51,10 +58,10 @@ export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
  * Creates an array of test jockeys for race simulation
  */
 export function createTestJockeys(count: number = 10): Jockey[] {
-  return Array.from({ length: count }, (_, i) => 
+  return Array.from({ length: count }, (_, i) =>
     createTestJockey({
       id: `test-jockey-${i + 1}`,
       name: `Test Jockey ${i + 1}`,
-    })
+    }),
   );
 }

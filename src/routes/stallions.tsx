@@ -4,7 +4,13 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { isStallionAvailable } from "@/core/breeding/stallions";
 import type { Horse, Hemisphere } from "@/game/types";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
@@ -27,14 +33,15 @@ function StallionsPage() {
   const stallions = horses.filter((h) => h.stud?.atStud);
   const filtered = stallions
     .filter((h) => hemisphere === "all" || h.hemisphere === hemisphere)
-    .sort((a, b) => (a.stud!.standingFee - b.stud!.standingFee));
+    .sort((a, b) => a.stud!.standingFee - b.stud!.standingFee);
 
   // Player mares of breeding age, not currently pregnant
-  const eligibleMares = horses.filter((h) =>
-    h.owned &&
-    (h.gender === "mare" || h.gender === "filly") &&
-    h.age >= 3 &&
-    !pregnancies.some((p) => !p.resolved && p.damId === h.id)
+  const eligibleMares = horses.filter(
+    (h) =>
+      h.owned &&
+      (h.gender === "mare" || h.gender === "filly") &&
+      h.age >= 3 &&
+      !pregnancies.some((p) => !p.resolved && p.damId === h.id),
   );
   const selectedMare = eligibleMares.find((h) => h.id === selectedMareId);
 
@@ -46,19 +53,31 @@ function StallionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Stallion Roster</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+          Stallion Roster
+        </h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">
-          Stallions standing at stud, sorted by fee. Book your mare to a stallion to schedule a foal.
+          Stallions standing at stud, sorted by fee. Book your mare to a stallion to schedule a
+          foal.
         </p>
       </div>
 
       <Card className="border-gold-muted">
-        <CardHeader><CardTitle className="text-cream font-[family-name:var(--font-display)]">Filters</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-cream font-[family-name:var(--font-display)]">
+            Filters
+          </CardTitle>
+        </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-cream-muted">Hemisphere</label>
-            <Select value={hemisphere} onValueChange={(v) => setHemisphere(v as Hemisphere | "all")}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={hemisphere}
+              onValueChange={(v) => setHemisphere(v as Hemisphere | "all")}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All</SelectItem>
                 <SelectItem value="Northern">Northern</SelectItem>
@@ -69,7 +88,9 @@ function StallionsPage() {
           <div>
             <label className="text-xs text-cream-muted">Your mare</label>
             <Select value={selectedMareId} onValueChange={setSelectedMareId}>
-              <SelectTrigger><SelectValue placeholder="Select a mare to book…" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a mare to book…" />
+              </SelectTrigger>
               <SelectContent>
                 {eligibleMares.map((m) => (
                   <SelectItem key={m.id} value={m.id}>
@@ -129,17 +150,15 @@ function StallionCard({
   const baseBookFee = 2000;
   const totalFee = baseBookFee + stud.standingFee;
   const canAfford = cash >= totalFee;
-  const canBook =
-    available &&
-    !!mare &&
-    mare.hemisphere === stallion.hemisphere &&
-    canAfford;
+  const canBook = available && !!mare && mare.hemisphere === stallion.hemisphere && canAfford;
 
   return (
     <Card className="border-gold-muted">
       <CardHeader>
         <div className="flex items-start justify-between">
-          <CardTitle className="text-lg text-cream font-[family-name:var(--font-display)]">{stallion.name}</CardTitle>
+          <CardTitle className="text-lg text-cream font-[family-name:var(--font-display)]">
+            {stallion.name}
+          </CardTitle>
           <Badge className="bg-t700 text-cream">{stallion.hemisphere}</Badge>
         </div>
         <p className="text-xs text-cream-muted">{stableName}</p>
@@ -147,11 +166,15 @@ function StallionCard({
       <CardContent className="space-y-2 text-sm">
         <div className="flex justify-between">
           <span className="text-cream-muted">Standing fee</span>
-          <span className="font-mono font-semibold tabular-nums text-cream">${stud.standingFee.toLocaleString()}</span>
+          <span className="font-mono font-semibold tabular-nums text-cream">
+            ${stud.standingFee.toLocaleString()}
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-cream-muted">Book</span>
-          <span className="text-cream">{stud.seasonBookings} / {stud.bookSize}</span>
+          <span className="text-cream">
+            {stud.seasonBookings} / {stud.bookSize}
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-cream-muted">Stakes foals</span>
@@ -163,7 +186,9 @@ function StallionCard({
         </div>
         <div className="flex justify-between">
           <span className="text-cream-muted">Age · Fame</span>
-          <span className="text-cream">{stallion.age} · {stallion.fame}</span>
+          <span className="text-cream">
+            {stallion.age} · {stallion.fame}
+          </span>
         </div>
         {!inSeason && (
           <p className="text-xs text-warning">Out of breeding season for {stallion.hemisphere}.</p>
@@ -172,11 +197,15 @@ function StallionCard({
           <p className="text-xs text-warning">Book is full this season.</p>
         )}
         <Button size="sm" className="w-full mt-2" disabled={!canBook} onClick={onBook}>
-          {!mare ? "Select a mare first" :
-           mare.hemisphere !== stallion.hemisphere ? "Hemisphere mismatch" :
-           !canAfford ? `Need $${totalFee.toLocaleString()}` :
-           !available ? "Unavailable" :
-           `Book — $${totalFee.toLocaleString()}`}
+          {!mare
+            ? "Select a mare first"
+            : mare.hemisphere !== stallion.hemisphere
+              ? "Hemisphere mismatch"
+              : !canAfford
+                ? `Need $${totalFee.toLocaleString()}`
+                : !available
+                  ? "Unavailable"
+                  : `Book — $${totalFee.toLocaleString()}`}
         </Button>
       </CardContent>
     </Card>

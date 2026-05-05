@@ -19,7 +19,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { CONSIGNMENT_COMMISSION, DEFAULT_PLAYER_RESERVE_RATIO, KIND_LABELS, netProceeds } from "@/game/auction";
+import {
+  CONSIGNMENT_COMMISSION,
+  DEFAULT_PLAYER_RESERVE_RATIO,
+  KIND_LABELS,
+  netProceeds,
+} from "@/game/auction";
 import { horsePriceWithPedigree } from "@/core/horse/pricing";
 import type { Horse, AuctionSale } from "@/game/types";
 
@@ -120,13 +125,13 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
             </div>
           </div>
 
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
           <Button onClick={submit}>Consign to {sale.name.split(" ").slice(0, 2).join(" ")}</Button>
         </DialogFooter>
       </DialogContent>

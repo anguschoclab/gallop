@@ -1,10 +1,6 @@
 // Apprentice Module - Jockey apprentice claim allowances
 
-export type {
-  ApprenticeStatus,
-  ClaimAllowance,
-  ApprenticeProgression,
-} from "./apprenticeTypes";
+export type { ApprenticeStatus, ClaimAllowance, ApprenticeProgression } from "./apprenticeTypes";
 
 export {
   CLAIM_ALLOWANCE_TABLE,

@@ -1,9 +1,9 @@
 import { type Rng, nondeterministicRng } from "./rng";
-import { 
-  randomHorseName as coreRandomHorseName, 
+import {
+  randomHorseName as coreRandomHorseName,
   randomSilk as coreRandomSilk,
   randomRaceName as coreRandomRaceName,
-  randomJockeyName as coreRandomJockeyName
+  randomJockeyName as coreRandomJockeyName,
 } from "@/core/common/random";
 
 export function randomHorseName(rng: Rng = nondeterministicRng()) {

@@ -5,7 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { PaddleCard } from "./PaddleCard";
-import { createAuctionRunner, nextBidAmount, type AuctionTickEvent, type ChantPhase } from "@/game/auctionRunner";
+import {
+  createAuctionRunner,
+  nextBidAmount,
+  type AuctionTickEvent,
+  type ChantPhase,
+} from "@/game/auctionRunner";
 import { generateAuctioneerLine, type AuctioneerLine } from "@/services/auctioneerService";
 import { createRng } from "@/game/rng";
 import { getDisplayableStats } from "@/game/scouting";
@@ -82,10 +87,18 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
     for (const event of events) {
       const lot = sale?.lots.find((l) => l.id === event.lotId);
       const horse = lot ? horses.find((h) => h.id === lot.horseId) : undefined;
-      const consignor = lot?.consignorStableId ? stables.find((s) => s.id === lot.consignorStableId) : undefined;
-      const winner = event.type === "SOLD" && event.toStableId ? stables.find((s) => s.id === event.toStableId) : undefined;
+      const consignor = lot?.consignorStableId
+        ? stables.find((s) => s.id === lot.consignorStableId)
+        : undefined;
+      const winner =
+        event.type === "SOLD" && event.toStableId
+          ? stables.find((s) => s.id === event.toStableId)
+          : undefined;
       const scoutedStats = horse ? getDisplayableStats(horse, game.scoutReports, game.day) : null;
-      const paddleNumber = event.type === "BID_RECEIVED" && event.stableId ? stables.findIndex((s) => s.id === event.stableId) + 1 : undefined;
+      const paddleNumber =
+        event.type === "BID_RECEIVED" && event.stableId
+          ? stables.findIndex((s) => s.id === event.stableId) + 1
+          : undefined;
 
       const ctx = {
         horse,
@@ -231,12 +244,17 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                   </div>
                   {leadingBidder && (
                     <div className="text-sm text-muted-foreground">
-                      Leading: {leadingBidder === undefined ? "You" : stables.find((s) => s.id === leadingBidder)?.name}
+                      Leading:{" "}
+                      {leadingBidder === undefined
+                        ? "You"
+                        : stables.find((s) => s.id === leadingBidder)?.name}
                     </div>
                   )}
                   <div className="flex justify-between items-center text-sm">
                     <span>Next bid:</span>
-                    <span className="font-medium">${nextBidAmount(currentBid).toLocaleString()}</span>
+                    <span className="font-medium">
+                      ${nextBidAmount(currentBid).toLocaleString()}
+                    </span>
                   </div>
                 </div>
 
@@ -253,7 +271,11 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       onChange={(e) => setCustomBid(e.target.value)}
                       className="w-32"
                     />
-                    <Button variant="outline" onClick={handleCustomBid} disabled={done || !customBid}>
+                    <Button
+                      variant="outline"
+                      onClick={handleCustomBid}
+                      disabled={done || !customBid}
+                    >
                       Bid
                     </Button>
                     {!isRunning && (
@@ -313,7 +335,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       key={idx}
                       className={cn(
                         "text-sm",
-                        line.isHighImpact ? "font-bold text-emerald-600" : "text-muted-foreground"
+                        line.isHighImpact ? "font-bold text-emerald-600" : "text-muted-foreground",
                       )}
                     >
                       {line.text}

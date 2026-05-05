@@ -9,7 +9,20 @@ import { useGame } from "@/game/store";
 import { HorsePortraitBadge, HorsePortrait } from "./HorsePortrait";
 import { SilkDot } from "./SilkDot";
 import { NumericValue } from "./HorseBits";
-import { Trophy, Zap, TrendingUp, Activity, Dna, Calendar, User, Building2, Eye, Ruler, Weight, HeartPulse } from "lucide-react";
+import {
+  Trophy,
+  Zap,
+  TrendingUp,
+  Activity,
+  Dna,
+  Calendar,
+  User,
+  Building2,
+  Eye,
+  Ruler,
+  Weight,
+  HeartPulse,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface HorseCardProps {
@@ -25,33 +38,31 @@ export function HorseCard({
   variant = "full",
   showScoutInfo = false,
   onClick,
-  className = ""
+  className = "",
 }: HorseCardProps) {
   const scoutReports = useGame((s) => s.scoutReports);
   const day = useGame((s) => s.day);
   const ovr = calculateOverallRating(horse);
 
   // Scout info if applicable
-  const scoutStatus = showScoutInfo && horse.stableId
-    ? getScoutStatus(horse, scoutReports, day)
-    : null;
-  const displayStats = showScoutInfo && horse.stableId
-    ? getDisplayableStats(horse, scoutReports, day)
-    : null;
-  
+  const scoutStatus =
+    showScoutInfo && horse.stableId ? getScoutStatus(horse, scoutReports, day) : null;
+  const displayStats =
+    showScoutInfo && horse.stableId ? getDisplayableStats(horse, scoutReports, day) : null;
+
   // Gender icon
   const getGenderIcon = () => {
     if (horse.gender === "gelding") return "⚲";
     return horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀";
   };
   const getGenderColor = () => {
-    if (horse.gender === "gelding") return "text-slate-400";
+    if (horse.gender === "gelding") return "text-cream-muted";
     return horse.gender === "colt" || horse.gender === "horse" ? "text-chart-1" : "text-chart-5";
   };
-  
+
   const genderIcon = getGenderIcon();
   const genderColor = getGenderColor();
-  
+
   // Health status indicator
   const getHealthStatus = () => {
     if (!horse.healthStatus || horse.healthStatus === "healthy") return null;
@@ -60,13 +71,19 @@ export function HorseCard({
       other_illness: { color: "bg-chart-4/10 text-chart-4", label: "Ill" },
       recovering: { color: "bg-chart-2/10 text-chart-2", label: "Recovering" },
     };
-    const config = statusConfig[horse.healthStatus] || { color: "bg-gray-100", label: horse.healthStatus };
+    const config = statusConfig[horse.healthStatus] || { color: "bg-t700", label: horse.healthStatus };
     return <Badge className={config.color}>{config.label}</Badge>;
   };
 
   if (variant === "compact") {
     return (
-      <Card className={cn("hover:bg-t700 transition-colors cursor-pointer border-gold-muted", className)} onClick={onClick}>
+      <Card
+        className={cn(
+          "hover:bg-t700 transition-colors cursor-pointer border-gold-muted",
+          className,
+        )}
+        onClick={onClick}
+      >
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
             {/* Identity: SilkDot + Name */}
@@ -74,17 +91,24 @@ export function HorseCard({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className={cn(genderColor, "text-sm")}>{genderIcon}</span>
-                <span className="font-semibold text-cream font-[family-name:var(--font-display)] truncate">{horse.name}</span>
+                <span className="font-semibold text-cream font-[family-name:var(--font-display)] truncate">
+                  {horse.name}
+                </span>
               </div>
               {/* Qualifiers */}
               <div className="text-xs text-cream-muted flex items-center gap-2">
                 <NumericValue value={horse.age} suffix="yo" className="font-semibold" />
                 <span>·</span>
-                <JargonTooltip term="OVR"><span className="font-[family-name:var(--font-body)]">OVR</span> <NumericValue value={ovr} /></JargonTooltip>
+                <JargonTooltip term="OVR">
+                  <span className="font-[family-name:var(--font-body)]">OVR</span>{" "}
+                  <NumericValue value={ovr} />
+                </JargonTooltip>
                 {horse.stableId && (
                   <>
                     <span>·</span>
-                    <span className="text-chart-4"><NumericValue value={horse.fame} prefix="★ " /></span>
+                    <span className="text-chart-4">
+                      <NumericValue value={horse.fame} prefix="★ " />
+                    </span>
                   </>
                 )}
               </div>
@@ -96,9 +120,7 @@ export function HorseCard({
                 <NumericValue value={horse.energy} />
               </Badge>
               {scoutStatus && (
-                <Badge className={cn("text-xs", scoutStatus.color)}>
-                  {scoutStatus.icon}
-                </Badge>
+                <Badge className={cn("text-xs", scoutStatus.color)}>{scoutStatus.icon}</Badge>
               )}
             </div>
           </div>
@@ -121,12 +143,16 @@ export function HorseCard({
               <div>
                 <div className="flex items-center gap-2">
                   <span className={cn(genderColor, "text-lg")}>{genderIcon}</span>
-                  <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)]">{horse.name}</span>
+                  <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)]">
+                    {horse.name}
+                  </span>
                 </div>
                 <div className="text-sm text-cream-muted flex items-center gap-2">
                   <NumericValue value={horse.age} suffix=" years old" />
                   <span>·</span>
-                  <span className="text-chart-4">Fame: <NumericValue value={horse.fame} suffix="/100" /></span>
+                  <span className="text-chart-4">
+                    Fame: <NumericValue value={horse.fame} suffix="/100" />
+                  </span>
                 </div>
               </div>
             </div>
@@ -141,21 +167,16 @@ export function HorseCard({
         </CardHeader>
         <CardContent className="pt-0">
           <div className="grid grid-cols-2 gap-3">
-            {['speed', 'stamina', 'acceleration', 'consistency'].map((stat) => {
+            {["speed", "stamina", "acceleration", "consistency"].map((stat) => {
               const value = knownStats[stat as keyof typeof knownStats];
               const isUnknown = value === undefined;
               return (
                 <div key={stat} className={isUnknown ? "opacity-50" : ""}>
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-cream-muted capitalize">{stat}</span>
-                    <span className="font-medium tabular-nums">
-                      {isUnknown ? "???" : value}
-                    </span>
+                    <span className="font-medium tabular-nums">{isUnknown ? "???" : value}</span>
                   </div>
-                  <Progress 
-                    value={isUnknown ? 0 : value} 
-                    className="h-1.5" 
-                  />
+                  <Progress value={isUnknown ? 0 : value} className="h-1.5" />
                 </div>
               );
             })}
@@ -164,12 +185,19 @@ export function HorseCard({
             <div className="text-sm">
               <span className="text-cream-muted">Overall: </span>
               <span className="font-bold">
-                {hasAllStats ? ovr : displayStats?.overallEstimate ? `~${displayStats.overallEstimate}` : "???"}
+                {hasAllStats
+                  ? ovr
+                  : displayStats?.overallEstimate
+                    ? `~${displayStats.overallEstimate}`
+                    : "???"}
               </span>
             </div>
             <div className="flex items-center gap-1 text-xs text-cream-muted">
               <Activity className="w-3 h-3" />
-              <span className="tabular-nums">Form: {horse.form > 0 ? "+" : ""}{horse.form}</span>
+              <span className="tabular-nums">
+                Form: {horse.form > 0 ? "+" : ""}
+                {horse.form}
+              </span>
             </div>
           </div>
         </CardContent>
@@ -179,7 +207,14 @@ export function HorseCard({
 
   // Full variant
   return (
-    <Card className={cn("hover:bg-t700 transition-colors border-gold-muted", onClick && "cursor-pointer", className)} onClick={onClick}>
+    <Card
+      className={cn(
+        "hover:bg-t700 transition-colors border-gold-muted",
+        onClick && "cursor-pointer",
+        className,
+      )}
+      onClick={onClick}
+    >
       <CardContent className="p-5">
         {/* Header - Design Bible: Identity | Qualifiers | Numbers */}
         <div className="flex items-start justify-between mb-4">
@@ -189,7 +224,9 @@ export function HorseCard({
               {/* Identity */}
               <div className="flex items-center gap-2">
                 <span className={cn(genderColor, "text-lg")}>{genderIcon}</span>
-                <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)]">{horse.name}</span>
+                <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)]">
+                  {horse.name}
+                </span>
                 {getHealthStatus()}
               </div>
               {/* Qualifiers */}
@@ -223,9 +260,20 @@ export function HorseCard({
               <NumericValue value={horse.energy} suffix=" Energy" />
             </Badge>
             {horse.form !== 0 && (
-              <Badge className={cn("text-xs flex items-center gap-1", horse.form > 0 ? "bg-gold text-t950" : "bg-destructive text-destructive-foreground")}>
+              <Badge
+                className={cn(
+                  "text-xs flex items-center gap-1",
+                  horse.form > 0
+                    ? "bg-gold text-t950"
+                    : "bg-destructive text-destructive-foreground",
+                )}
+              >
                 <TrendingUp className="w-3 h-3" />
-                <NumericValue value={horse.form} prefix={horse.form > 0 ? "+" : ""} suffix=" Form" />
+                <NumericValue
+                  value={horse.form}
+                  prefix={horse.form > 0 ? "+" : ""}
+                  suffix=" Form"
+                />
               </Badge>
             )}
           </div>
@@ -242,7 +290,10 @@ export function HorseCard({
             <span className="font-medium">{horse.weight} kg</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full border border-gold-muted" style={{ backgroundColor: getCoatColor(horse.coatColor) }} />
+            <div
+              className="w-3 h-3 rounded-full border border-gold-muted"
+              style={{ backgroundColor: getCoatColor(horse.coatColor) }}
+            />
             <span className="capitalize">{horse.coatColor?.replace("-", " ")}</span>
           </div>
           <div className="flex items-center gap-1.5 ml-auto">
@@ -266,12 +317,16 @@ export function HorseCard({
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               <Activity className="w-4 h-4 text-cream-muted" />
-              <JargonTooltip term="OVR" className="text-cream-muted">OVR</JargonTooltip>
+              <JargonTooltip term="OVR" className="text-cream-muted">
+                OVR
+              </JargonTooltip>
               <span className="font-bold text-lg tabular-nums">{ovr}</span>
             </div>
             <div className="flex items-center gap-1">
               <Dna className="w-4 h-4 text-cream-muted" />
-              <JargonTooltip term="Pot" className="text-cream-muted">Pot</JargonTooltip>
+              <JargonTooltip term="Pot" className="text-cream-muted">
+                Pot
+              </JargonTooltip>
               <span className="font-semibold tabular-nums">{horse.potential}</span>
             </div>
           </div>
@@ -281,9 +336,7 @@ export function HorseCard({
                 {horse.runningStyle.replace("-", " ")}
               </Badge>
             )}
-            {horse.conformation && (
-              <span className="capitalize">{horse.conformation} form</span>
-            )}
+            {horse.conformation && <span className="capitalize">{horse.conformation} form</span>}
           </div>
         </div>
 
@@ -295,8 +348,16 @@ export function HorseCard({
               <span>Pedigree:</span>
             </div>
             <div className="flex gap-4">
-              {horse.sireName && <span>Sire: <span className="font-medium">{horse.sireName}</span></span>}
-              {horse.damName && <span>Dam: <span className="font-medium">{horse.damName}</span></span>}
+              {horse.sireName && (
+                <span>
+                  Sire: <span className="font-medium">{horse.sireName}</span>
+                </span>
+              )}
+              {horse.damName && (
+                <span>
+                  Dam: <span className="font-medium">{horse.damName}</span>
+                </span>
+              )}
             </div>
           </div>
         )}
@@ -307,9 +368,7 @@ export function HorseCard({
             <div className="flex items-center gap-2 text-xs text-cream-muted">
               <Building2 className="w-3 h-3" />
               <span>Belongs to rival stable</span>
-              {horse.lastScoutedDay && (
-                <span>· Last scouted Day {horse.lastScoutedDay}</span>
-              )}
+              {horse.lastScoutedDay && <span>· Last scouted Day {horse.lastScoutedDay}</span>}
             </div>
           </div>
         )}
@@ -323,7 +382,9 @@ function StatBar({ label, value }: { label: string; value: number }) {
     <div>
       <div className="flex justify-between text-xs mb-1">
         <span className="text-cream-muted font-[family-name:var(--font-body)]">{label}</span>
-        <span className="font-medium font-[family-name:var(--font-mono)] tabular-nums">{value}</span>
+        <span className="font-medium font-[family-name:var(--font-mono)] tabular-nums">
+          {value}
+        </span>
       </div>
       <Progress value={value} className="h-1.5" />
     </div>
@@ -333,20 +394,20 @@ function StatBar({ label, value }: { label: string; value: number }) {
 function getCoatColor(color?: string): string {
   // Use CSS custom properties defined in styles.css instead of hardcoded hex codes
   const map: Record<string, string> = {
-    "bay": "var(--coat-bay)",
+    bay: "var(--coat-bay)",
     "dark-bay": "var(--coat-dark-bay)",
-    "black": "var(--coat-black)",
-    "chestnut": "var(--coat-chestnut)",
-    "gray": "var(--coat-gray)",
-    "palomino": "var(--coat-palomino)",
-    "buckskin": "var(--coat-buckskin)",
-    "roan": "var(--coat-roan)",
-    "white": "var(--coat-white)",
+    black: "var(--coat-black)",
+    chestnut: "var(--coat-chestnut)",
+    gray: "var(--coat-gray)",
+    palomino: "var(--coat-palomino)",
+    buckskin: "var(--coat-buckskin)",
+    roan: "var(--coat-roan)",
+    white: "var(--coat-white)",
     "seal-brown": "var(--coat-seal-brown)",
     "liver-chestnut": "var(--coat-liver-chestnut)",
-    "dun": "var(--coat-dun)",
-    "grulla": "var(--coat-grulla)",
-    "champagne": "var(--coat-champagne)"
+    dun: "var(--coat-dun)",
+    grulla: "var(--coat-grulla)",
+    champagne: "var(--coat-champagne)",
   };
   return map[color || "bay"] || "var(--coat-bay)";
 }

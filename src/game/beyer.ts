@@ -5,7 +5,6 @@
 // Output is clamped 30..125 (Beyer "Big Figs" rarely exceed 120).
 import type { Horse, CourseSpecification } from "./types";
 
-
 export type BeyerInput = {
   distance: number; // meters
   finishTime: number; // seconds
@@ -44,7 +43,7 @@ export function parTime(distance: number): number {
   const neighbors = [b - 200, b + 200].map((k) => CALIBRATED_PARS[k]).filter(Boolean);
   if (neighbors.length) {
     const avg = neighbors.reduce((s, v) => s + v, 0) / neighbors.length;
-    return (avg * (distance / b));
+    return avg * (distance / b);
   }
   return defaultParTime(distance);
 }
@@ -60,7 +59,12 @@ export function beyerFigure({ distance, finishTime, classBonus = 0 }: BeyerInput
 
 // Estimate a horse's expected Beyer at a given distance based on current
 // stats, form, energy, and track complexity.
-export function expectedBeyer(h: Horse, distance: number, classBonus = 0, course?: CourseSpecification): number {
+export function expectedBeyer(
+  h: Horse,
+  distance: number,
+  classBonus = 0,
+  course?: CourseSpecification,
+): number {
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
   let topSpeed = (12 + (h.stats.speed / 100) * 10) * formMod * energyMod;
@@ -68,22 +72,24 @@ export function expectedBeyer(h: Horse, distance: number, classBonus = 0, course
   // Track Complexity Factor
   if (course) {
     // Penalize speed based on turn tightess vs cornering aptitude
-    const avgRadius = course.sections
-      .filter(s => s.type === "turn")
-      .reduce((acc, s) => acc + (s.radius || 300), 0) / Math.max(1, course.sections.filter(s => s.type === "turn").length);
-    
+    const avgRadius =
+      course.sections
+        .filter((s) => s.type === "turn")
+        .reduce((acc, s) => acc + (s.radius || 300), 0) /
+      Math.max(1, course.sections.filter((s) => s.type === "turn").length);
+
     if (avgRadius < 200) {
       const penalty = (200 - avgRadius) / 1000;
       const mitigation = (h.corneringAptitude - 1.0) * 0.5;
-      topSpeed *= (1 - Math.max(0, penalty - mitigation));
+      topSpeed *= 1 - Math.max(0, penalty - mitigation);
     }
 
     // Penalize speed based on gradients vs climbing aptitude
-    const maxGradient = Math.max(...course.sections.map(s => s.gradient || 0), 0);
+    const maxGradient = Math.max(...course.sections.map((s) => s.gradient || 0), 0);
     if (maxGradient > 1) {
       const penalty = maxGradient / 100;
       const mitigation = (h.climbingAptitude - 1.0) * 0.5;
-      topSpeed *= (1 - Math.max(0, penalty - mitigation));
+      topSpeed *= 1 - Math.max(0, penalty - mitigation);
     }
   }
 
@@ -96,7 +102,10 @@ export function expectedBeyer(h: Horse, distance: number, classBonus = 0, course
 }
 
 // Calculate Beyer for a race result
-export function calculateBeyerForResult(distance: number, finishTime: number, classBonus = 0): number {
+export function calculateBeyerForResult(
+  distance: number,
+  finishTime: number,
+  classBonus = 0,
+): number {
   return beyerFigure({ distance, finishTime, classBonus });
 }
-

@@ -41,16 +41,20 @@ function RaceBrowser() {
 
   // Extract unique countries and tracks from live race data
   const allCountries = useMemo(() => {
-    return Array.from(new Set(races.filter(r => r.graded).map((r) => getCountry(r.graded!.track)))).sort();
+    return Array.from(
+      new Set(races.filter((r) => r.graded).map((r) => getCountry(r.graded!.track))),
+    ).sort();
   }, [races]);
   const allTracks = useMemo(() => {
-    return Array.from(new Set(races.filter(r => r.graded).map((r) => r.graded?.track))).filter((t): t is string => Boolean(t)).sort();
+    return Array.from(new Set(races.filter((r) => r.graded).map((r) => r.graded?.track)))
+      .filter((t): t is string => Boolean(t))
+      .sort();
   }, [races]);
 
   const filteredRaces = useMemo(() => {
     return races.filter((race) => {
       if (!race.graded) return false;
-      
+
       // Grade filter
       if (gradeFilter !== "all" && race.graded.grade !== gradeFilter) return false;
 
@@ -83,8 +87,12 @@ function RaceBrowser() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Race Browser</h1>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">Browse all graded stakes races worldwide</p>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+          Race Browser
+        </h1>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+          Browse all graded stakes races worldwide
+        </p>
       </div>
 
       {/* Filters */}
@@ -177,7 +185,7 @@ function RaceBrowser() {
 
       {/* Results count */}
       <div className="text-sm text-cream-muted">
-        Showing {filteredRaces.length} of {races.filter(r => r.graded).length} graded stakes races
+        Showing {filteredRaces.length} of {races.filter((r) => r.graded).length} graded stakes races
       </div>
 
       {/* Race list */}
@@ -192,20 +200,26 @@ function RaceBrowser() {
           filteredRaces.map((race) => {
             const hasOwnedEntry = race.entries.some((e) => e.owned);
             return (
-              <Card key={race.id} className={`border-l-4 border-gold-muted ${hasOwnedEntry ? "border-l-success bg-success/10" : "border-l-gold"}`}>
+              <Card
+                key={race.id}
+                className={`border-l-4 border-gold-muted ${hasOwnedEntry ? "border-l-success bg-success/10" : "border-l-gold"}`}
+              >
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="text-lg font-bold text-cream font-[family-name:var(--font-display)]">{race.name}</h3>
+                        <h3 className="text-lg font-bold text-cream font-[family-name:var(--font-display)]">
+                          {race.name}
+                        </h3>
                         {race.graded?.grade && (
-                          <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
+                          <Badge
+                            variant="outline"
+                            className={getGradeColorClass(race.graded.grade)}
+                          >
                             {race.graded.grade}
                           </Badge>
                         )}
-                        {hasOwnedEntry && (
-                          <Badge className="bg-success text-t950">Entered</Badge>
-                        )}
+                        {hasOwnedEntry && <Badge className="bg-success text-t950">Entered</Badge>}
                       </div>
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted">
                         <span className="font-medium text-cream">{race.graded?.track}</span>
@@ -224,28 +238,43 @@ function RaceBrowser() {
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {race.restrictions.minAge !== undefined &&
                             race.restrictions.maxAge !== undefined && (
-                              <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                              <Badge
+                                variant="outline"
+                                className="text-xs border-gold-muted text-cream"
+                              >
                                 {race.restrictions.minAge}-{race.restrictions.maxAge}YO
                               </Badge>
                             )}
                           {race.restrictions.minAge !== undefined &&
                             race.restrictions.maxAge === undefined && (
-                              <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                              <Badge
+                                variant="outline"
+                                className="text-xs border-gold-muted text-cream"
+                              >
                                 {race.restrictions.minAge}+ YO
                               </Badge>
                             )}
                           {race.restrictions.gender && (
-                            <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                            <Badge
+                              variant="outline"
+                              className="text-xs border-gold-muted text-cream"
+                            >
                               {race.restrictions.gender}
                             </Badge>
                           )}
                           {race.restrictions.minAgeNorthern !== undefined && (
-                            <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                            <Badge
+                              variant="outline"
+                              className="text-xs border-gold-muted text-cream"
+                            >
                               {race.restrictions.minAgeNorthern}+ YO (Northern)
                             </Badge>
                           )}
                           {race.restrictions.minAgeSouthern !== undefined && (
-                            <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                            <Badge
+                              variant="outline"
+                              className="text-xs border-gold-muted text-cream"
+                            >
                               {race.restrictions.minAgeSouthern}+ YO (Southern)
                             </Badge>
                           )}

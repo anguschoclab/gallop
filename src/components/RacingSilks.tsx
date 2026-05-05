@@ -42,8 +42,18 @@ export function RacingSilks({ silk, size = 48, showCap = true, className }: Raci
       </defs>
 
       {/* Sleeves (drawn first, behind torso) */}
-      <path d="M8 24 L4 44 L14 46 L18 28 Z" fill={secondary} stroke="rgba(0,0,0,0.25)" strokeWidth="0.6" />
-      <path d="M56 24 L60 44 L50 46 L46 28 Z" fill={secondary} stroke="rgba(0,0,0,0.25)" strokeWidth="0.6" />
+      <path
+        d="M8 24 L4 44 L14 46 L18 28 Z"
+        fill={secondary}
+        stroke="rgba(0,0,0,0.25)"
+        strokeWidth="0.6"
+      />
+      <path
+        d="M56 24 L60 44 L50 46 L46 28 Z"
+        fill={secondary}
+        stroke="rgba(0,0,0,0.25)"
+        strokeWidth="0.6"
+      />
 
       {/* Torso base */}
       <path
@@ -66,12 +76,8 @@ export function RacingSilks({ silk, size = 48, showCap = true, className }: Raci
       {pattern === "chevron" && (
         <path d="M18 28 L32 38 L46 28 L46 36 L32 46 L18 36 Z" fill={secondary} />
       )}
-      {pattern === "sash" && (
-        <path d="M18 22 L46 36 L46 42 L18 28 Z" fill={secondary} />
-      )}
-      {pattern === "diamond" && (
-        <path d="M32 20 L42 33 L32 46 L22 33 Z" fill={secondary} />
-      )}
+      {pattern === "sash" && <path d="M18 22 L46 36 L46 42 L18 28 Z" fill={secondary} />}
+      {pattern === "diamond" && <path d="M32 20 L42 33 L32 46 L22 33 Z" fill={secondary} />}
       {pattern === "star" && (
         <path
           d="M32 20 L34 28 L42 28 L36 33 L38 41 L32 36 L26 41 L28 33 L22 28 L30 28 Z"
@@ -85,7 +91,15 @@ export function RacingSilks({ silk, size = 48, showCap = true, className }: Raci
       {/* Cap */}
       {showCap && (
         <g>
-          <ellipse cx="32" cy="9" rx="9" ry="6" fill={cap} stroke="rgba(0,0,0,0.3)" strokeWidth="0.6" />
+          <ellipse
+            cx="32"
+            cy="9"
+            rx="9"
+            ry="6"
+            fill={cap}
+            stroke="rgba(0,0,0,0.3)"
+            strokeWidth="0.6"
+          />
           <path d="M23 9 Q32 11 41 9 L41 11 Q32 13 23 11 Z" fill="rgba(0,0,0,0.2)" />
         </g>
       )}

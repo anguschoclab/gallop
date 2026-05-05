@@ -17,7 +17,5 @@ export const useExpenses = () => (useGame as any)((s: GameState) => s.expenses ?
  * Use this when you need multiple core state values in a single hook call
  * Note: Uses type assertion to work around Zustand typing limitation
  */
-export const useCoreState = () => (useGame as any)(
-  (s: GameState) => ({ day: s.day, cash: s.cash }),
-  shallow
-);
+export const useCoreState = () =>
+  (useGame as any)((s: GameState) => ({ day: s.day, cash: s.cash }), shallow);

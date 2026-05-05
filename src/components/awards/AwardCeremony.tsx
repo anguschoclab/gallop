@@ -1,17 +1,16 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AwardIcon } from "./AwardIcon";
 import { AwardBadge } from "./AwardBadge";
 import { cn } from "@/lib/utils";
 import type { AwardRegion, RegionalAward } from "@/game/awards/types";
-import { REGION_AWARD_NAMES, REGION_DISPLAY_NAMES, CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
+import {
+  REGION_AWARD_NAMES,
+  REGION_DISPLAY_NAMES,
+  CATEGORY_DISPLAY_NAMES,
+} from "@/game/awards/types";
 import { REGION_COLORS } from "@/assets/awards";
 import { Trophy, ChevronRight, Star, Sparkles } from "lucide-react";
 
@@ -22,12 +21,7 @@ interface AwardCeremonyProps {
   onComplete?: () => void;
 }
 
-export function AwardCeremony({
-  isOpen,
-  onClose,
-  ceremonies,
-  onComplete,
-}: AwardCeremonyProps) {
+export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: AwardCeremonyProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -61,19 +55,13 @@ export function AwardCeremony({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className={cn(
-          "bg-gradient-to-b from-card to-muted",
-          "border-2"
-        )}
+        className={cn("bg-gradient-to-b from-card to-muted", "border-2")}
         style={{ borderColor: colors.accent }}
       >
         <DialogHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Trophy className="w-6 h-6" style={{ color: colors.accent }} />
-            <DialogTitle
-              className="text-2xl font-bold"
-              style={{ color: colors.accent }}
-            >
+            <DialogTitle className="text-2xl font-bold" style={{ color: colors.accent }}>
               {regionName}
             </DialogTitle>
           </div>
@@ -86,7 +74,7 @@ export function AwardCeremony({
                 key={idx}
                 className={cn(
                   "w-2 h-2 rounded-full transition-colors",
-                  idx === currentIndex ? "bg-primary" : "bg-muted-foreground/30"
+                  idx === currentIndex ? "bg-primary" : "bg-muted-foreground/30",
                 )}
               />
             ))}
@@ -117,14 +105,8 @@ export function AwardCeremony({
                     variant="outline"
                     className="flex items-center gap-1 px-2 py-1"
                   >
-                    <AwardIcon
-                      region={award.region}
-                      category={award.category}
-                      size="tiny"
-                    />
-                    <span className="text-xs">
-                      {CATEGORY_DISPLAY_NAMES[award.category]}
-                    </span>
+                    <AwardIcon region={award.region} category={award.category} size="tiny" />
+                    <span className="text-xs">{CATEGORY_DISPLAY_NAMES[award.category]}</span>
                   </Badge>
                 ))}
               </div>
@@ -142,7 +124,7 @@ export function AwardCeremony({
                   key={award.id}
                   className={cn(
                     "flex items-center gap-3 p-3 rounded-lg border",
-                    !award.stableId && "bg-primary/5 border-primary/20"
+                    !award.stableId && "bg-primary/5 border-primary/20",
                   )}
                 >
                   <AwardIcon
@@ -165,14 +147,10 @@ export function AwardCeremony({
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span className="truncate">{award.horseName}</span>
                       <span>•</span>
-                      <span className="text-gold font-semibold">
-                        {award.points} pts
-                      </span>
+                      <span className="text-gold font-semibold">{award.points} pts</span>
                     </div>
                   </div>
-                  {award.isHistoric && (
-                    <Star className="w-4 h-4 text-fame fill-fame" />
-                  )}
+                  {award.isHistoric && <Star className="w-4 h-4 text-fame fill-fame" />}
                 </div>
               ))}
             </div>
@@ -221,7 +199,11 @@ function Confetti({ active }: { active: boolean }) {
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            backgroundColor: ["var(--color-chart-3)", "var(--color-chart-4)", "var(--color-chart-1)"][Math.floor(Math.random() * 3)],
+            backgroundColor: [
+              "var(--color-chart-3)",
+              "var(--color-chart-4)",
+              "var(--color-chart-1)",
+            ][Math.floor(Math.random() * 3)],
             animationDelay: `${Math.random() * 2}s`,
           }}
         />
@@ -238,7 +220,7 @@ export function useAwardCeremony() {
   >([]);
 
   const openCeremony = (
-    newCeremonies: { region: AwardRegion; year: number; awards: RegionalAward[] }[]
+    newCeremonies: { region: AwardRegion; year: number; awards: RegionalAward[] }[],
   ) => {
     setCeremonies(newCeremonies);
     setIsOpen(true);

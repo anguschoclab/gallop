@@ -86,10 +86,10 @@ export function getMoveTimingDescription(timing: MoveTiming): string {
 export function calculateStyleBonus(
   instructions: JockeyInstructions,
   horseSpeed: number,
-  horseStamina: number
+  horseStamina: number,
 ): number {
   let bonus = 0;
-  
+
   switch (instructions.ridingStyle) {
     case "front_runner":
       // Front runners benefit from high speed
@@ -108,7 +108,7 @@ export function calculateStyleBonus(
       bonus = Math.abs(horseSpeed - horseStamina) < 10 ? 2 : 0;
       break;
   }
-  
+
   return Math.max(0, Math.min(5, bonus)); // Clamp between 0 and 5
 }
 

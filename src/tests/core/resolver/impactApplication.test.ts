@@ -5,7 +5,14 @@
 import { describe, it, expect } from "vitest";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import type { GameState, Stable } from "@/game/types";
-import type { AnyImpact, CashImpact, HorseStatImpact, EnergyImpact, HorseCreationImpact, HorseTransferImpact } from "@/core/resolver/impacts";
+import type {
+  AnyImpact,
+  CashImpact,
+  HorseStatImpact,
+  EnergyImpact,
+  HorseCreationImpact,
+  HorseTransferImpact,
+} from "@/core/resolver/impacts";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("applyImpacts", () => {
@@ -127,7 +134,11 @@ describe("applyImpacts", () => {
   });
 
   it("should apply horse stat change impact", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 }, potential: 90 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 },
+      potential: 90,
+    });
 
     const state: GameState = {
       ...createTestState(),
@@ -160,7 +171,11 @@ describe("applyImpacts", () => {
   });
 
   it("should clamp horse stat to potential", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 85, stamina: 75, acceleration: 70, consistency: 65 }, potential: 90 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 85, stamina: 75, acceleration: 70, consistency: 65 },
+      potential: 90,
+    });
 
     const state: GameState = {
       ...createTestState(),
@@ -193,7 +208,12 @@ describe("applyImpacts", () => {
   });
 
   it("should apply energy change impact", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 }, potential: 90, energy: 80 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 },
+      potential: 90,
+      energy: 80,
+    });
 
     const state: GameState = {
       ...createTestState(),
@@ -225,7 +245,12 @@ describe("applyImpacts", () => {
   });
 
   it("should clamp energy between 0 and 100", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 }, potential: 90, energy: 50 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 },
+      potential: 90,
+      energy: 50,
+    });
 
     const state: GameState = {
       ...createTestState(),
@@ -281,7 +306,11 @@ describe("applyImpacts", () => {
 
   it("should apply horse creation impact", () => {
     const state = createTestState();
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 }, potential: 90 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 },
+      potential: 90,
+    });
 
     const impact: HorseCreationImpact = {
       id: "impact-1",
@@ -308,7 +337,12 @@ describe("applyImpacts", () => {
   });
 
   it("should apply horse transfer impact", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 }, potential: 90, stableId: undefined });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 },
+      potential: 90,
+      stableId: undefined,
+    });
 
     const state: GameState = {
       ...createTestState(),
@@ -343,7 +377,11 @@ describe("applyImpacts", () => {
   });
 
   it("should apply multiple impacts in order", () => {
-    const horse = createTestHorse({ id: "horse-1", stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 }, potential: 90 });
+    const horse = createTestHorse({
+      id: "horse-1",
+      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65 },
+      potential: 90,
+    });
 
     const state: GameState = {
       ...createTestState(),

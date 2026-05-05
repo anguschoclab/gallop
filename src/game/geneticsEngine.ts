@@ -19,7 +19,12 @@ import type {
 import type { Rng } from "./rng";
 
 export const TRAIT_VALUES: Record<string, number> = { excellent: 4, good: 3, fair: 2, poor: 1 };
-export const TRAIT_SCORE: Record<string, number> = { excellent: 1.0, good: 0.75, fair: 0.5, poor: 0.25 };
+export const TRAIT_SCORE: Record<string, number> = {
+  excellent: 1.0,
+  good: 0.75,
+  fair: 0.5,
+  poor: 0.25,
+};
 
 /**
  * DNA -> Phenotype Engine
@@ -93,7 +98,12 @@ export function resolveStats(stats: StatGenotype): HorseStats {
 }
 
 // --- 3. Inheritance Engine (The Crossover) ---
-export function crossover(sireLocus: Locus, damLocus: Locus, rng: Rng, mutationChance = 0.005): Locus {
+export function crossover(
+  sireLocus: Locus,
+  damLocus: Locus,
+  rng: Rng,
+  mutationChance = 0.005,
+): Locus {
   let a1 = rng.next() < 0.5 ? sireLocus[0] : sireLocus[1];
   let a2 = rng.next() < 0.5 ? damLocus[0] : damLocus[1];
 
@@ -107,7 +117,7 @@ export function crossover(sireLocus: Locus, damLocus: Locus, rng: Rng, mutationC
 function inheritTrait(
   a: "excellent" | "good" | "fair" | "poor",
   b: "excellent" | "good" | "fair" | "poor",
-  rng: Rng
+  rng: Rng,
 ): "excellent" | "good" | "fair" | "poor" {
   return rng.next() < 0.5 ? a : b;
 }
@@ -116,11 +126,15 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
   const crossoverLoci = (s: Locus[], d: Locus[]) => s.map((sl, i) => crossover(sl, d[i], rng));
 
   // Leopard complex: dominant is dominant if either parent carries it
-  const lp = sire.markers.leopardComplex === "dominant" || dam.markers.leopardComplex === "dominant"
-    ? "dominant"
-    : sire.markers.leopardComplex === "heterozygous" || dam.markers.leopardComplex === "heterozygous"
-    ? (rng.next() < 0.5 ? "heterozygous" : "recessive")
-    : "recessive";
+  const lp =
+    sire.markers.leopardComplex === "dominant" || dam.markers.leopardComplex === "dominant"
+      ? "dominant"
+      : sire.markers.leopardComplex === "heterozygous" ||
+          dam.markers.leopardComplex === "heterozygous"
+        ? rng.next() < 0.5
+          ? "heterozygous"
+          : "recessive"
+        : "recessive";
   const csnbRisk: MarkerGenotype["csnbRisk"] = lp === "dominant" ? "high" : "low";
 
   // Lethal carriers: each gene carrier flag independent Mendelian
@@ -130,8 +144,16 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
   const inheritedMarkers: MarkerGenotype = {
     leopardComplex: lp,
     csnbRisk,
-    sensoryPerception: inheritTrait(sire.markers.sensoryPerception, dam.markers.sensoryPerception, rng),
-    signalTransduction: inheritTrait(sire.markers.signalTransduction, dam.markers.signalTransduction, rng),
+    sensoryPerception: inheritTrait(
+      sire.markers.sensoryPerception,
+      dam.markers.sensoryPerception,
+      rng,
+    ),
+    signalTransduction: inheritTrait(
+      sire.markers.signalTransduction,
+      dam.markers.signalTransduction,
+      rng,
+    ),
     immunity: inheritTrait(sire.markers.immunity, dam.markers.immunity, rng),
     geneticDiversity: (sire.markers.geneticDiversity + dam.markers.geneticDiversity) / 2,
     lethalCarriers: {
@@ -218,11 +240,12 @@ export function resolveGeneticMarkers(genotype: Genotype): GeneticMarkers {
 }
 
 // --- 5. DNA Generation (Initial Population) ---
-export function generateGenotype(rng: Rng, tier: "starter" | "budget" | "mid" | "elite" = "budget"): Genotype {
-  const alleleRange: [number, number] = 
-    tier === "elite" ? [3, 5] : 
-    tier === "mid" ? [2, 4] : 
-    tier === "budget" ? [1, 4] : [1, 3];
+export function generateGenotype(
+  rng: Rng,
+  tier: "starter" | "budget" | "mid" | "elite" = "budget",
+): Genotype {
+  const alleleRange: [number, number] =
+    tier === "elite" ? [3, 5] : tier === "mid" ? [2, 4] : tier === "budget" ? [1, 4] : [1, 3];
 
   const rollAllele = () => rng.range(alleleRange[0], alleleRange[1]);
   const rollLocus = (): Locus => [rollAllele(), rollAllele()];
@@ -238,31 +261,41 @@ export function generateGenotype(rng: Rng, tier: "starter" | "budget" | "mid" | 
 
   const rExt = rng.next();
   let extension: Locus;
-  if (rExt < 0.02) extension = [2, 0];        // 2% roan
-  else if (rExt < 0.03) extension = [3, 0];   // 1% dun
-  else if (rExt < 0.75) extension = [1, 0];   // 72% black pigment
-  else extension = [0, 0];                     // 25% chestnut base
+  if (rExt < 0.02)
+    extension = [2, 0]; // 2% roan
+  else if (rExt < 0.03)
+    extension = [3, 0]; // 1% dun
+  else if (rExt < 0.75)
+    extension = [1, 0]; // 72% black pigment
+  else extension = [0, 0]; // 25% chestnut base
 
   const rAg = rng.next();
   let agouti: Locus;
-  if (rAg < 0.15) agouti = [3, 0];            // 15% dark-bay allele
-  else if (rAg < 0.25) agouti = [2, 0];       // 10% seal-brown allele
-  else if (rAg < 0.85) agouti = [1, 0];       // 60% bay allele
-  else agouti = [0, 0];                        // 15% black (no agouti)
+  if (rAg < 0.15)
+    agouti = [3, 0]; // 15% dark-bay allele
+  else if (rAg < 0.25)
+    agouti = [2, 0]; // 10% seal-brown allele
+  else if (rAg < 0.85)
+    agouti = [1, 0]; // 60% bay allele
+  else agouti = [0, 0]; // 15% black (no agouti)
 
   const rCr = rng.next();
   let cream: Locus;
-  if (rCr < 0.005) cream = [3, 3];            // 0.5% white (double grulla)
-  else if (rCr < 0.01) cream = [3, 0];        // 0.5% grulla
-  else if (rCr < 0.02) cream = [2, 0];        // 1% champagne
-  else if (rCr < 0.05) cream = [1, 0];        // 3% single dilute (palomino/buckskin)
-  else cream = [0, 0];                         // 95% no dilution
+  if (rCr < 0.005)
+    cream = [3, 3]; // 0.5% white (double grulla)
+  else if (rCr < 0.01)
+    cream = [3, 0]; // 0.5% grulla
+  else if (rCr < 0.02)
+    cream = [2, 0]; // 1% champagne
+  else if (rCr < 0.05)
+    cream = [1, 0]; // 3% single dilute (palomino/buckskin)
+  else cream = [0, 0]; // 95% no dilution
 
   // --- Marker Genotype (health/immune/genetic traits) ---
   // Leopard complex (Lp): ~5% homozygous dominant, ~25% heterozygous, rest recessive
   const lpRoll = rng.next();
   const leopardComplex: MarkerGenotype["leopardComplex"] =
-    lpRoll < 0.05 ? "dominant" : lpRoll < 0.30 ? "heterozygous" : "recessive";
+    lpRoll < 0.05 ? "dominant" : lpRoll < 0.3 ? "heterozygous" : "recessive";
   const csnbRisk: MarkerGenotype["csnbRisk"] = leopardComplex === "dominant" ? "high" : "low";
 
   const traitRoll = (): "excellent" | "good" | "fair" | "poor" => {
@@ -293,7 +326,7 @@ export function generateGenotype(rng: Rng, tier: "starter" | "budget" | "mid" | 
     // Health susceptibility — most horses have low risk; rare bad rolls.
     // Sum 2-3: 70%, sum 4-6: 25%, sum 7-10: 5%.
     const r = rng.next();
-    if (r < 0.70) return [rng.range(1, 2), rng.range(1, 2)];
+    if (r < 0.7) return [rng.range(1, 2), rng.range(1, 2)];
     if (r < 0.95) return [rng.range(2, 3), rng.range(2, 3)];
     return [rng.range(4, 5), rng.range(4, 5)];
   };
@@ -366,14 +399,16 @@ export function generateGenotype(rng: Rng, tier: "starter" | "budget" | "mid" | 
 export function resolveDistanceAptitude(locus: Locus): number {
   // sum 2..20. Map to 1000..3000m
   const sum = locus[0] + locus[1];
-  return 800 + (sum * 120); // 1040..3200m
+  return 800 + sum * 120; // 1040..3200m
 }
 
-export function resolveSurfaceAptitude(locus: Locus): Record<"Turf" | "Dirt" | "Synthetic", number> {
+export function resolveSurfaceAptitude(
+  locus: Locus,
+): Record<"Turf" | "Dirt" | "Synthetic", number> {
   const sum = locus[0] + locus[1]; // 2..10
   // Higher sum = Dirt preference, Lower sum = Turf preference
-  if (sum <= 4) return { Turf: 1.0, Dirt: 0.90, Synthetic: 0.95 };
-  if (sum >= 8) return { Turf: 0.90, Dirt: 1.0, Synthetic: 0.95 };
+  if (sum <= 4) return { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 };
+  if (sum >= 8) return { Turf: 0.9, Dirt: 1.0, Synthetic: 0.95 };
   return { Turf: 0.98, Dirt: 0.98, Synthetic: 1.0 };
 }
 
@@ -408,7 +443,7 @@ export function resolveInjuryProneness(locus: Locus): number {
 export function resolveHeartScore(loci: Locus[]): number {
   const sum = loci.reduce((acc, [a, b]) => acc + a + b, 0); // 10..50
   // Map [10, 50] → [0.85, 1.15]
-  return 0.85 + ((sum - 10) / 40) * 0.30;
+  return 0.85 + ((sum - 10) / 40) * 0.3;
 }
 
 // --- Tier 1: Muscle fiber type (hidden) ---
@@ -426,7 +461,7 @@ export function resolveFiberBias(locus: Locus): "sprinter" | "balanced" | "staye
 // Distance bands: short <1400m, mid 1400-1800m, long >1800m.
 export function fiberDistanceModifier(
   bias: "sprinter" | "balanced" | "stayer",
-  distance: number
+  distance: number,
 ): { speedMul: number; staminaMul: number } {
   const isShort = distance < 1400;
   const isLong = distance > 1800;
@@ -467,7 +502,7 @@ export function resolveTrackPreference(locus: Locus): "left" | "balanced" | "rig
 // 0.85 (hates mud) to 1.15 (mudder). At "fast" track, no effect.
 export function resolveMudAptitude(locus: Locus): number {
   const sum = locus[0] + locus[1];
-  return 0.85 + ((sum - 2) / 8) * 0.30;
+  return 0.85 + ((sum - 2) / 8) * 0.3;
 }
 
 // --- Tier 1: Trainability (hidden) ---
@@ -506,7 +541,7 @@ export function resolveRecoveryRate(locus: Locus): number {
 // Both consume the same locus.
 export function resolveFertility(locus: Locus): number {
   const sum = locus[0] + locus[1];
-  return 0.70 + ((sum - 2) / 8) * 0.29;
+  return 0.7 + ((sum - 2) / 8) * 0.29;
 }
 
 // --- Tier 3: Foaling ease (hidden, mare-only effect) ---
@@ -522,17 +557,17 @@ export function resolveFoalingEase(locus: Locus): number {
 // --- Tier 4: Cosmetic markings (visible, no gameplay effect) ---
 function resolveSocks(locus: Locus): SockHeight {
   const sum = locus[0] + locus[1];
-  if (sum <= 3) return "none";       // 60%
-  if (sum <= 7) return "sock";       // 35%
-  return "stocking";                 // 5%
+  if (sum <= 3) return "none"; // 60%
+  if (sum <= 7) return "sock"; // 35%
+  return "stocking"; // 5%
 }
 
 function resolveFaceWhite(locus: Locus): FaceWhite {
   const sum = locus[0] + locus[1];
-  if (sum <= 3) return "none";       // 50%
-  if (sum <= 6) return "star";       // 25%
-  if (sum <= 9) return "blaze";      // 20%
-  return "bald";                     // 5%
+  if (sum <= 3) return "none"; // 50%
+  if (sum <= 6) return "star"; // 25%
+  if (sum <= 9) return "blaze"; // 20%
+  return "bald"; // 5%
 }
 
 export function resolveMarkings(g: MarkingsGenotype): HorseMarkings {
@@ -557,10 +592,10 @@ export function resolveBleederRisk(locus: Locus): number {
   return resolveRiskLocus(locus, 0.15);
 }
 export function resolveRoarerRisk(locus: Locus): number {
-  return resolveRiskLocus(locus, 0.10);
+  return resolveRiskLocus(locus, 0.1);
 }
 export function resolveOcdRisk(locus: Locus): number {
-  return resolveRiskLocus(locus, 0.10);
+  return resolveRiskLocus(locus, 0.1);
 }
 
 // EFNA5 chromosome-14 marker. Homozygous recessive (sum <= 3) = skeletal
@@ -578,15 +613,37 @@ export function resolveRacingViable(locus: Locus): boolean {
 // (inbreeding depression). Returns 0..1.
 export function computeHeterozygosity(g: Genotype): number {
   const loci: Locus[] = [
-    g.color.extension, g.color.agouti, g.color.gray, g.color.cream,
-    g.preferences.distance, g.preferences.surface, g.preferences.climbing, g.preferences.cornering,
-    g.style, g.mental, g.physical, g.durability, g.size,
-    g.fiberType, g.stride, g.trackBias, g.mudAptitude,
-    g.trainability, g.peakAge, g.recovery,
-    g.fertility, g.foalingEase,
-    g.health.bleeder, g.health.roarer, g.health.ocd, g.health.efna5,
+    g.color.extension,
+    g.color.agouti,
+    g.color.gray,
+    g.color.cream,
+    g.preferences.distance,
+    g.preferences.surface,
+    g.preferences.climbing,
+    g.preferences.cornering,
+    g.style,
+    g.mental,
+    g.physical,
+    g.durability,
+    g.size,
+    g.fiberType,
+    g.stride,
+    g.trackBias,
+    g.mudAptitude,
+    g.trainability,
+    g.peakAge,
+    g.recovery,
+    g.fertility,
+    g.foalingEase,
+    g.health.bleeder,
+    g.health.roarer,
+    g.health.ocd,
+    g.health.efna5,
     ...g.heart,
-    ...g.stats.speed, ...g.stats.stamina, ...g.stats.acceleration, ...g.stats.consistency,
+    ...g.stats.speed,
+    ...g.stats.stamina,
+    ...g.stats.acceleration,
+    ...g.stats.consistency,
   ];
   const heteroCount = loci.filter(([a, b]) => a !== b).length;
   return heteroCount / loci.length;
@@ -594,16 +651,16 @@ export function computeHeterozygosity(g: Genotype): number {
 
 export function resolveSize(locus: Locus): { height: number; weight: number } {
   const sum = locus[0] + locus[1]; // 2..10
-  
+
   // Real-world Thoroughbred benchmarks:
   // 15.0-15.2 Hands: Small/Agile (Northern Dancer 15.2h)
   // 16.0-16.2 Hands: Standard/Ideal (Secretariat 16.2h, Man o' War 16.2h)
   // 17.0+ Hands: Giant/Long-strider (Phar Lap 17.1h, Zenyatta 17.2h)
-  
+
   // Height: 15.0 hands base + 0.25h per step above 2. Range: 15.0 to 17.0.
   // We'll add a tiny bit of random variance (±0.1) for biological realism.
   const height = 15.0 + (sum - 2) * 0.25;
-  
+
   // Weight: 400kg base + 20kg per step. Range: 400kg to 560kg.
   const weight = 400 + (sum - 2) * 20;
 

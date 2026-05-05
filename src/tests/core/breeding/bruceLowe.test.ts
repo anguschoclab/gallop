@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { resolveBruceLoweFamily, familyRole, RUNNING_FAMILIES, SIRE_FAMILIES, rollProceduralFamily } from "@/core/breeding/bruceLowe";
+import {
+  resolveBruceLoweFamily,
+  familyRole,
+  RUNNING_FAMILIES,
+  SIRE_FAMILIES,
+  rollProceduralFamily,
+} from "@/core/breeding/bruceLowe";
 import type { Horse } from "@/game/types";
 
 function mkHorse(over: Partial<Horse> = {}): Horse {

@@ -4,8 +4,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Filter, Search, Trophy, MapPin, Globe, History, LayoutGrid, List } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Calendar,
+  Filter,
+  Search,
+  Trophy,
+  MapPin,
+  Globe,
+  History,
+  LayoutGrid,
+  List,
+} from "lucide-react";
 import { useState, useMemo } from "react";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
@@ -78,15 +94,25 @@ function RacesPage() {
     });
   };
 
-  const countries = Array.from(new Set(races.filter(r => r.graded).map((r) => getCountry(r.graded!.trackId)))).filter(Boolean).sort() as string[];
-  const tracks = Array.from(new Set(races.filter((r) => r.graded).map((r) => r.graded!.track))).sort();
+  const countries = Array.from(
+    new Set(races.filter((r) => r.graded).map((r) => getCountry(r.graded!.trackId))),
+  )
+    .filter(Boolean)
+    .sort() as string[];
+  const tracks = Array.from(
+    new Set(races.filter((r) => r.graded).map((r) => r.graded!.track)),
+  ).sort();
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Race Calendar</h1>
-          <p className="text-cream-muted font-[family-name:var(--font-body)]">View and enter upcoming races across all regions.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+            Race Calendar
+          </h1>
+          <p className="text-cream-muted font-[family-name:var(--font-body)]">
+            View and enter upcoming races across all regions.
+          </p>
         </div>
         <div className="flex gap-2">
           <Link to="/calendar">
@@ -139,7 +165,9 @@ function RacesPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Search</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">
+                  Search
+                </label>
                 <div className="relative">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-cream-muted" />
                   <Input
@@ -152,7 +180,9 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Grade</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">
+                  Grade
+                </label>
                 <Select value={grade} onValueChange={(v) => updateFilter("grade", v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="All Grades" />
@@ -169,7 +199,9 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Country</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">
+                  Country
+                </label>
                 <Select value={country} onValueChange={(v) => updateFilter("country", v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="All Countries" />
@@ -186,7 +218,9 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Track</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">
+                  Track
+                </label>
                 <Select value={track} onValueChange={(v) => updateFilter("track", v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="All Tracks" />
@@ -203,7 +237,9 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Surface</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">
+                  Surface
+                </label>
                 <div className="flex flex-wrap gap-2">
                   {["all", "Dirt", "Turf", "Synthetic"].map((s) => (
                     <Button
@@ -220,7 +256,9 @@ function RacesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">Ownership</label>
+                <label className="text-xs font-medium text-cream-muted uppercase tracking-wider font-[family-name:var(--font-body)]">
+                  Ownership
+                </label>
                 <Select value={owned} onValueChange={(v) => updateFilter("owned", v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="All Races" />
@@ -289,10 +327,10 @@ function RacesPage() {
         </main>
       </div>
       {enteringRace && (
-        <RaceEntry 
-          race={enteringRace} 
-          isOpen={!!enteringRace} 
-          onClose={() => setEnteringRace(null)} 
+        <RaceEntry
+          race={enteringRace}
+          isOpen={!!enteringRace}
+          onClose={() => setEnteringRace(null)}
         />
       )}
     </div>

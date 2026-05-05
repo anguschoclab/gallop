@@ -37,7 +37,7 @@ export type AuctioneerLine = {
 export function generateAuctioneerLine(
   event: AuctionTickEvent,
   ctx: AuctioneerContext,
-  rng: Rng
+  rng: Rng,
 ): AuctioneerLine {
   switch (event.type) {
     case "LOT_OPEN":
@@ -57,7 +57,12 @@ export function generateAuctioneerLine(
     case "PASSED":
       return pickLine(PASSED_TEMPLATES, ctx, rng, false);
     case "RESERVE_NOT_MET":
-      return pickLine(RESERVE_NOT_MET_TEMPLATES, { ...ctx, amount: event.amount, reserve: event.reserve }, rng, false);
+      return pickLine(
+        RESERVE_NOT_MET_TEMPLATES,
+        { ...ctx, amount: event.amount, reserve: event.reserve },
+        rng,
+        false,
+      );
   }
 }
 
@@ -124,7 +129,13 @@ function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
     sire: horse?.sireName,
     dam: horse?.damName,
     coat: horse?.coatColor,
-    gender: horse ? (horse.gender === "filly" || horse.gender === "mare" ? "filly" : horse.gender === "colt" || horse.gender === "horse" ? "colt" : horse.gender) : undefined,
+    gender: horse
+      ? horse.gender === "filly" || horse.gender === "mare"
+        ? "filly"
+        : horse.gender === "colt" || horse.gender === "horse"
+          ? "colt"
+          : horse.gender
+      : undefined,
     age: horse ? `${horse.age}YO` : undefined,
     conformation: horse?.conformation,
     temperament: horse?.temperament,
@@ -151,14 +162,16 @@ function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
 
 function runningStyleLabel(s: Horse["runningStyle"] | undefined): string | undefined {
   if (!s) return undefined;
-  return ({ E: "early speed", EP: "press the pace", P: "pace stalker", S: "deep closer" } as const)[s];
+  return ({ E: "early speed", EP: "press the pace", P: "pace stalker", S: "deep closer" } as const)[
+    s
+  ];
 }
 
 function pickLine(
   templates: readonly string[],
   ctx: RenderCtx,
   rng: Rng,
-  isHighImpact: boolean
+  isHighImpact: boolean,
 ): AuctioneerLine {
   const template = templates[Math.floor(rng.next() * templates.length)];
   let text = substitute(template, ctx, rng);
@@ -168,7 +181,12 @@ function pickLine(
   return { text, isHighImpact };
 }
 
-function renderBidLine(amount: number, stableId: string | undefined, ctx: AuctioneerContext, rng: Rng): string {
+function renderBidLine(
+  amount: number,
+  stableId: string | undefined,
+  ctx: AuctioneerContext,
+  rng: Rng,
+): string {
   const tpls = stableId ? BID_NPC_TEMPLATES : BID_PLAYER_TEMPLATES;
   return substitute(tpls[Math.floor(rng.next() * tpls.length)], { ...ctx, amount }, rng);
 }

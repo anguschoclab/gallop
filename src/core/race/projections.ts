@@ -20,7 +20,7 @@ export interface BeyerProjection {
 export function calculateBeyerProjections(
   horses: Horse[],
   race: Race,
-  ownedHorseIds: Set<string>
+  ownedHorseIds: Set<string>,
 ): BeyerProjection[] {
   return horses
     .filter((horse) => ownedHorseIds.has(horse.id))
@@ -48,8 +48,6 @@ export function formatProjectionMessage(projections: BeyerProjection[]): string 
     return "No owned horses entered.";
   }
 
-  const messages = ownedProjections.map(
-    (p) => `${p.horseName}: ${p.expectedBeyer} Beyer`
-  );
+  const messages = ownedProjections.map((p) => `${p.horseName}: ${p.expectedBeyer} Beyer`);
   return `Expected Beyer: ${messages.join(", ")}`;
 }

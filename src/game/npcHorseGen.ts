@@ -5,12 +5,18 @@ import type { Horse, HorseGender, Hemisphere, Stable, StableTier } from "./types
 import type { Rng } from "./rng";
 import { createHorseFromDNA } from "./horseGen";
 import { generateGenotype } from "./geneticsEngine";
+import { rand, randomHorseName } from "@/core/common/random";
 import {
-  rand,
-  randomHorseName,
-} from "@/core/common/random";
-import { shouldRetireAtStartup, initialStandingFee, defaultStudParams } from "@/core/breeding/stallions";
-import { rollProceduralFamily, RUNNING_FAMILIES, SIRE_FAMILIES, resolveBruceLoweFamily } from "@/core/breeding/bruceLowe";
+  shouldRetireAtStartup,
+  initialStandingFee,
+  defaultStudParams,
+} from "@/core/breeding/stallions";
+import {
+  rollProceduralFamily,
+  RUNNING_FAMILIES,
+  SIRE_FAMILIES,
+  resolveBruceLoweFamily,
+} from "@/core/breeding/bruceLowe";
 import { rollGender } from "@/core/horse/gender";
 import { resolveBloodline } from "@/core/breeding/populationGenetics";
 
@@ -28,9 +34,9 @@ function dnaGenTier(stableTier: StableTier): "starter" | "budget" | "mid" | "eli
  */
 function rollAgeCategory(rng: Rng): "2yo" | "prime" | "veteran" | "breeding" {
   const r = rng.next();
-  if (r < 0.30) return "2yo"; // 30% - young prospects
-  if (r < 0.70) return "prime"; // 40% - prime racing age
-  if (r < 0.90) return "veteran"; // 20% - veteran campaigners
+  if (r < 0.3) return "2yo"; // 30% - young prospects
+  if (r < 0.7) return "prime"; // 40% - prime racing age
+  if (r < 0.9) return "veteran"; // 20% - veteran campaigners
   return "breeding"; // 10% - breeding stock
 }
 
@@ -39,10 +45,14 @@ function rollAgeCategory(rng: Rng): "2yo" | "prime" | "veteran" | "breeding" {
  */
 function getAgeFromCategory(category: "2yo" | "prime" | "veteran" | "breeding", rng: Rng): number {
   switch (category) {
-    case "2yo": return 2;
-    case "prime": return rng.next() < 0.5 ? 3 : 4;
-    case "veteran": return rng.next() < 0.5 ? 5 : 6;
-    case "breeding": return rand(7, 10, rng);
+    case "2yo":
+      return 2;
+    case "prime":
+      return rng.next() < 0.5 ? 3 : 4;
+    case "veteran":
+      return rng.next() < 0.5 ? 5 : 6;
+    case "breeding":
+      return rand(7, 10, rng);
   }
 }
 
@@ -51,17 +61,23 @@ function getAgeFromCategory(category: "2yo" | "prime" | "veteran" | "breeding", 
  */
 function calculateStartingFame(tier: StableTier, age: number, rng: Rng): number {
   let baseFame = 0;
-  
+
   // Elite stables start with more famous horses
   switch (tier) {
-    case "elite": baseFame = rand(20, 40, rng); break;
-    case "mid": baseFame = rand(10, 25, rng); break;
-    case "budget": baseFame = rand(0, 15, rng); break;
+    case "elite":
+      baseFame = rand(20, 40, rng);
+      break;
+    case "mid":
+      baseFame = rand(10, 25, rng);
+      break;
+    case "budget":
+      baseFame = rand(0, 15, rng);
+      break;
   }
-  
+
   // Older horses have had more time to become famous
   const ageBonus = (age - 2) * 3;
-  
+
   return Math.min(100, baseFame + ageBonus);
 }
 
@@ -77,19 +93,19 @@ export function generateNpcHorse(
   rng: Rng,
   specificAge?: number,
   specificGender?: HorseGender,
-  hemisphere?: Hemisphere
+  hemisphere?: Hemisphere,
 ): Horse {
   // Determine age
   const ageCategory = specificAge ? null : rollAgeCategory(rng);
   const age = specificAge ?? getAgeFromCategory(ageCategory!, rng);
-  
+
   // Determine gender via shared canonical function
   const gender = specificGender ?? rollGender(age, rng);
-  
+
   // Generate full DNA-backed horse
   const genotype = generateGenotype(rng, dnaGenTier(tier));
   const resolvedHemisphere: Hemisphere = hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
-  
+
   const horse = createHorseFromDNA(genotype, rng, {
     name: randomHorseName(rng),
     age,
@@ -109,7 +125,7 @@ export function generateNpcHorse(
   const proceduralDamName = randomHorseName(rng);
   const bloodline = resolveBloodline(
     { name: proceduralSireName, sireName: proceduralSireName } as Horse,
-    { horses: [] }
+    { horses: [] },
   );
   if (SIRE_FAMILIES.has(bruceLoweFamily) && (gender === "colt" || gender === "horse")) {
     potentialBoost = 2;
@@ -137,31 +153,37 @@ export function generateNpcHorse(
  */
 export function generateStableHorses(stable: Stable, rng: Rng): Horse[] {
   const horses: Horse[] = [];
-  
+
   // Determine target count based on tier
   let targetCount: number;
   if (!stable.isMajor) {
     targetCount = 10; // Filler stables
   } else {
     switch (stable.tier) {
-      case "elite": targetCount = rand(30, 40, rng); break;
-      case "mid": targetCount = rand(20, 30, rng); break;
-      case "budget": targetCount = rand(15, 25, rng); break;
+      case "elite":
+        targetCount = rand(30, 40, rng);
+        break;
+      case "mid":
+        targetCount = rand(20, 30, rng);
+        break;
+      case "budget":
+        targetCount = rand(15, 25, rng);
+        break;
     }
   }
-  
+
   // Generate horses with age distribution
   const ageCategories = {
-    "2yo": Math.floor(targetCount * 0.30),
-    "prime": Math.floor(targetCount * 0.40),
-    "veteran": Math.floor(targetCount * 0.20),
-    "breeding": Math.floor(targetCount * 0.10)
+    "2yo": Math.floor(targetCount * 0.3),
+    prime: Math.floor(targetCount * 0.4),
+    veteran: Math.floor(targetCount * 0.2),
+    breeding: Math.floor(targetCount * 0.1),
   };
-  
+
   // Fill remaining from prime (most common)
   const totalAssigned = Object.values(ageCategories).reduce((a, b) => a + b, 0);
   ageCategories.prime += targetCount - totalAssigned;
-  
+
   // Generate horses for each category
   for (const [category, count] of Object.entries(ageCategories)) {
     for (let i = 0; i < count; i++) {
@@ -169,7 +191,7 @@ export function generateStableHorses(stable: Stable, rng: Rng): Horse[] {
       horses.push(generateNpcHorse(stable.id, stable.tier, rng, age));
     }
   }
-  
+
   return horses;
 }
 
@@ -180,7 +202,10 @@ export function generateStableHorses(stable: Stable, rng: Rng): Horse[] {
  * a roster to book against from day 1 (instead of waiting for in-game
  * retirements to seed the stallion market).
  */
-export function generateAllNpcHorses(stables: Stable[], rng: Rng): { stables: Stable[]; horses: Horse[] } {
+export function generateAllNpcHorses(
+  stables: Stable[],
+  rng: Rng,
+): { stables: Stable[]; horses: Horse[] } {
   const updatedStables: Stable[] = [];
   const allHorses: Horse[] = [];
 
@@ -201,11 +226,11 @@ export function generateAllNpcHorses(stables: Stable[], rng: Rng): { stables: St
         };
       }
     }
-    const horseIds = horses.map(h => h.id);
+    const horseIds = horses.map((h) => h.id);
 
     updatedStables.push({
       ...stable,
-      horses: horseIds
+      horses: horseIds,
     });
 
     allHorses.push(...horses);
@@ -218,11 +243,13 @@ export function generateAllNpcHorses(stables: Stable[], rng: Rng): { stables: St
  * Calculate horse price based on tier and stats (for breeding fees)
  */
 export function calculateNpcHorseValue(horse: Horse, stableTier: StableTier): number {
-  const overall = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) / 4;
+  const overall =
+    (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) /
+    4;
   const ageMod = horse.age <= 3 ? 1.3 : horse.age >= 7 ? 0.5 : 0.9;
-  const fameMod = 1 + (horse.fame / 200); // Up to 50% bonus for fame
+  const fameMod = 1 + horse.fame / 200; // Up to 50% bonus for fame
   const tierMod = stableTier === "elite" ? 1.5 : stableTier === "mid" ? 1.2 : 1.0;
-  
+
   // Stud fee formula (for breeding)
   const baseValue = overall * 100 * ageMod * fameMod * tierMod;
   return Math.round(baseValue / 100) * 100; // Round to nearest 100
@@ -235,12 +262,12 @@ export function getStudFee(horse: Horse, stable: Stable): number {
   if (horse.gender !== "horse" && horse.gender !== "colt") {
     return 0; // Only stallions have stud fees
   }
-  
+
   // Must be 4+ years old to stand at stud
   if (horse.age < 4) {
     return 0;
   }
-  
+
   return calculateNpcHorseValue(horse, stable.tier);
 }
 
@@ -251,11 +278,11 @@ export function getBroodmareFee(horse: Horse, stable: Stable): number {
   if (horse.gender !== "mare" && horse.gender !== "filly") {
     return 0;
   }
-  
+
   // Mares can breed from age 3+
   if (horse.age < 3) {
     return 0;
   }
-  
+
   return Math.round(calculateNpcHorseValue(horse, stable.tier) * 0.3); // Mare fees lower
 }

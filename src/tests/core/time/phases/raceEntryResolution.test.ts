@@ -30,7 +30,10 @@ describe("raceEntryResolutionPhase", () => {
     pendingIntents: [],
   });
 
-  const createTestContext = (state: GameState, intents: RaceEntryIntent[] = []): PipelineContext => ({
+  const createTestContext = (
+    state: GameState,
+    intents: RaceEntryIntent[] = [],
+  ): PipelineContext => ({
     previousDay: 0,
     newDay: 1,
     state,

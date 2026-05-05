@@ -38,11 +38,7 @@ const CANADIAN_TRIPLE_CROWN = new Set([
 ]);
 
 // USA Triple Crown races
-const USA_TRIPLE_CROWN = new Set([
-  "usa-kentucky-derby",
-  "usa-preakness",
-  "usa-belmont-stakes",
-]);
+const USA_TRIPLE_CROWN = new Set(["usa-kentucky-derby", "usa-preakness", "usa-belmont-stakes"]);
 
 // UK Classics (Guineas, Derby, Oaks, St Leger) - using gb- prefix from gradedRaces.ts
 const UK_CLASSICS = new Set([

@@ -12,8 +12,12 @@ function CalendarIndex() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">Regional Racing Calendars</h1>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">Browse graded stakes races by region</p>
+        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+          Regional Racing Calendars
+        </h1>
+        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+          Browse graded stakes races by region
+        </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -29,7 +33,9 @@ function CalendarIndex() {
               <CardContent>
                 <p className="text-sm text-cream-muted mb-3">{region.subtitle}</p>
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="outline" className="border-gold-muted text-cream">{region.tracks.length} tracks</Badge>
+                  <Badge variant="outline" className="border-gold-muted text-cream">
+                    {region.tracks.length} tracks
+                  </Badge>
                   {region.specialFilterName && (
                     <Badge className="bg-t700 text-cream">{region.specialFilterName}</Badge>
                   )}

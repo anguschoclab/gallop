@@ -14,16 +14,16 @@ export type FacilityLevel = "basic" | "standard" | "premium" | "elite";
  * Types of facilities available to stables
  */
 export type FacilityType =
-  | "main_track"       // Training effectiveness for all workouts
-  | "barn"            // Recovery speed (energy regen)
-  | "exercise_pool"   // Enables swimming workouts, reduces injury risk
-  | "treadmill"       // Enables treadmill workouts, controlled conditions
+  | "main_track" // Training effectiveness for all workouts
+  | "barn" // Recovery speed (energy regen)
+  | "exercise_pool" // Enables swimming workouts, reduces injury risk
+  | "treadmill" // Enables treadmill workouts, controlled conditions
   | "veterinary_clinic" // Injury recovery speed, health check quality
-  | "starting_gates"  // Enables gate work training, improves starts
-  | "transport"       // Travel cost reduction, logistics efficiency
-  | "spa"             // Post-race recovery, form regeneration
-  | "nutrition_lab"   // Feed quality, growth optimization
-  | "rehab_center";   // Extended injury recovery options
+  | "starting_gates" // Enables gate work training, improves starts
+  | "transport" // Travel cost reduction, logistics efficiency
+  | "spa" // Post-race recovery, form regeneration
+  | "nutrition_lab" // Feed quality, growth optimization
+  | "rehab_center"; // Extended injury recovery options
 
 /**
  * Individual facility data
@@ -32,8 +32,8 @@ export interface Facility {
   type: FacilityType;
   level: FacilityLevel;
   maintenanceCost: number; // Daily cost to maintain
-  upgradeCost: number;     // One-time cost to upgrade to next level
-  builtDay: number;        // When facility was built/upgraded
+  upgradeCost: number; // One-time cost to upgrade to next level
+  builtDay: number; // When facility was built/upgraded
 }
 
 /**
@@ -47,9 +47,9 @@ export type PlayerFacilities = Record<FacilityType, Facility | undefined>;
  */
 export const FACILITY_BONUSES: Record<FacilityLevel, number> = {
   basic: 0,
-  standard: 0.10,
+  standard: 0.1,
   premium: 0.25,
-  elite: 0.40,
+  elite: 0.4,
 };
 
 /**
@@ -67,10 +67,10 @@ export const FACILITY_MAINTENANCE_COSTS: Record<FacilityLevel, number> = {
  * To upgrade FROM this level to the next
  */
 export const FACILITY_UPGRADE_COSTS: Record<FacilityLevel, number | null> = {
-  basic: 5000,      // Upgrade basic -> standard
-  standard: 15000,  // Upgrade standard -> premium
-  premium: 50000,   // Upgrade premium -> elite
-  elite: null,      // Cannot upgrade from elite
+  basic: 5000, // Upgrade basic -> standard
+  standard: 15000, // Upgrade standard -> premium
+  premium: 50000, // Upgrade premium -> elite
+  elite: null, // Cannot upgrade from elite
 };
 
 /**
@@ -109,7 +109,14 @@ export const FACILITY_DESCRIPTIONS: Record<FacilityType, string> = {
  * Which workout types each facility enables
  */
 export const FACILITY_ENABLED_WORKOUTS: Record<FacilityType, string[]> = {
-  main_track: ["speed_work", "stamina_work", "acceleration_work", "bullet_work", "breeze", "long_gallop"],
+  main_track: [
+    "speed_work",
+    "stamina_work",
+    "acceleration_work",
+    "bullet_work",
+    "breeze",
+    "long_gallop",
+  ],
   barn: [], // Passive effect only
   exercise_pool: ["swimming"],
   treadmill: ["treadmill"],

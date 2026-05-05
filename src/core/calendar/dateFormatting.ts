@@ -1,6 +1,6 @@
 /**
  * Pure date formatting functions
- * Extracted from: track-schedule.tsx, canadian-calendar.tsx, uae-calendar.tsx, 
+ * Extracted from: track-schedule.tsx, canadian-calendar.tsx, uae-calendar.tsx,
  *                 south-american-calendar.tsx, german-calendar.tsx, scandinavian-calendar.tsx
  */
 
@@ -110,8 +110,12 @@ export function parseDayInput(input: string, currentGameDay: number): number | n
 
     if (!isNaN(dayPart) && dayPart > 0 && dayPart <= 31) {
       // Find month index from full or short name
-      const monthIndex = MONTH_NAMES_FULL.findIndex(m => m.toLowerCase() === monthPart.toLowerCase());
-      const shortMonthIndex = MONTH_NAMES_SHORT.findIndex(m => m.toLowerCase() === monthPart.toLowerCase());
+      const monthIndex = MONTH_NAMES_FULL.findIndex(
+        (m) => m.toLowerCase() === monthPart.toLowerCase(),
+      );
+      const shortMonthIndex = MONTH_NAMES_SHORT.findIndex(
+        (m) => m.toLowerCase() === monthPart.toLowerCase(),
+      );
 
       const idx = monthIndex !== -1 ? monthIndex : shortMonthIndex;
       if (idx !== -1) {

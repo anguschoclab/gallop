@@ -4,7 +4,13 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateAuctionLots, resolveAuctionSale, netProceeds, CONSIGNMENT_COMMISSION, personalityConsignmentPolicy } from "@/game/auction";
+import {
+  generateAuctionLots,
+  resolveAuctionSale,
+  netProceeds,
+  CONSIGNMENT_COMMISSION,
+  personalityConsignmentPolicy,
+} from "@/game/auction";
 import { createRng } from "@/game/rng";
 import { createAuctionRunner } from "@/game/auctionRunner";
 import type { GameState, Horse, Stable } from "@/game/types";
@@ -22,10 +28,22 @@ describe("Auction Lifecycle Integration", () => {
       genotype: {
         color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
         stats: {
-          speed: [[1, 1], [1, 1]],
-          stamina: [[1, 1], [1, 1]],
-          acceleration: [[1, 1], [1, 1]],
-          consistency: [[1, 1], [1, 1]],
+          speed: [
+            [1, 1],
+            [1, 1],
+          ],
+          stamina: [
+            [1, 1],
+            [1, 1],
+          ],
+          acceleration: [
+            [1, 1],
+            [1, 1],
+          ],
+          consistency: [
+            [1, 1],
+            [1, 1],
+          ],
         },
         preferences: { distance: [1, 1], surface: [1, 1], climbing: [1, 1], cornering: [1, 1] },
         style: [1, 1],
@@ -42,7 +60,10 @@ describe("Auction Lifecycle Integration", () => {
           geneticDiversity: 0.8,
           lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
         },
-        heart: [[1, 1], [1, 1]],
+        heart: [
+          [1, 1],
+          [1, 1],
+        ],
         fiberType: [1, 1],
         stride: [1, 1],
         trackBias: [1, 1],
@@ -52,7 +73,13 @@ describe("Auction Lifecycle Integration", () => {
         recovery: [1, 1],
         fertility: [1, 1],
         foalingEase: [1, 1],
-        markings: { socks: [1, 1], face: [1, 1], silverDapple: [1, 1], sabino: [1, 1], splashWhite: [1, 1] },
+        markings: {
+          socks: [1, 1],
+          face: [1, 1],
+          silverDapple: [1, 1],
+          sabino: [1, 1],
+          splashWhite: [1, 1],
+        },
         health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
       },
       energy: 100,
@@ -82,7 +109,13 @@ describe("Auction Lifecycle Integration", () => {
       recoveryRate: 1.0,
       fertility: 1.0,
       foalingEase: 1.0,
-      markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+      markings: {
+        socks: "none",
+        face: "none",
+        silverDapple: false,
+        sabino: false,
+        splashWhite: false,
+      },
       bleederRisk: 0.05,
       roarerRisk: 0.05,
       ocdRisk: 0.05,
@@ -105,8 +138,15 @@ describe("Auction Lifecycle Integration", () => {
       },
     ];
 
-    const result = generateAuctionLots(10, npcStables, [horse], "weanling", "Test Sale", createRng(12345));
-    
+    const result = generateAuctionLots(
+      10,
+      npcStables,
+      [horse],
+      "weanling",
+      "Test Sale",
+      createRng(12345),
+    );
+
     // Verify result structure
     expect(result).toHaveProperty("id");
     expect(result).toHaveProperty("name");
@@ -178,10 +218,22 @@ describe("Auction Lifecycle Integration", () => {
       genotype: {
         color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
         stats: {
-          speed: [[1, 1], [1, 1]],
-          stamina: [[1, 1], [1, 1]],
-          acceleration: [[1, 1], [1, 1]],
-          consistency: [[1, 1], [1, 1]],
+          speed: [
+            [1, 1],
+            [1, 1],
+          ],
+          stamina: [
+            [1, 1],
+            [1, 1],
+          ],
+          acceleration: [
+            [1, 1],
+            [1, 1],
+          ],
+          consistency: [
+            [1, 1],
+            [1, 1],
+          ],
         },
         preferences: { distance: [1, 1], surface: [1, 1], climbing: [1, 1], cornering: [1, 1] },
         style: [1, 1],
@@ -198,7 +250,10 @@ describe("Auction Lifecycle Integration", () => {
           geneticDiversity: 0.8,
           lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
         },
-        heart: [[1, 1], [1, 1]],
+        heart: [
+          [1, 1],
+          [1, 1],
+        ],
         fiberType: [1, 1],
         stride: [1, 1],
         trackBias: [1, 1],
@@ -208,7 +263,13 @@ describe("Auction Lifecycle Integration", () => {
         recovery: [1, 1],
         fertility: [1, 1],
         foalingEase: [1, 1],
-        markings: { socks: [1, 1], face: [1, 1], silverDapple: [1, 1], sabino: [1, 1], splashWhite: [1, 1] },
+        markings: {
+          socks: [1, 1],
+          face: [1, 1],
+          silverDapple: [1, 1],
+          sabino: [1, 1],
+          splashWhite: [1, 1],
+        },
         health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
       },
       energy: 100,
@@ -238,7 +299,13 @@ describe("Auction Lifecycle Integration", () => {
       recoveryRate: 1.0,
       fertility: 1.0,
       foalingEase: 1.0,
-      markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+      markings: {
+        socks: "none",
+        face: "none",
+        silverDapple: false,
+        sabino: false,
+        splashWhite: false,
+      },
       bleederRisk: 0.05,
       roarerRisk: 0.05,
       ocdRisk: 0.05,
@@ -246,7 +313,7 @@ describe("Auction Lifecycle Integration", () => {
     };
 
     const result = resolveAuctionSale(sale, npcStables, [horse]);
-    
+
     // Verify result structure
     expect(result.lots).toBeDefined();
     expect(result.lots.length).toBe(1);
@@ -266,7 +333,7 @@ describe("Auction Lifecycle Integration", () => {
     const horses: Horse[] = [];
 
     const result = resolveAuctionSale(sale, npcStables, horses);
-    
+
     // Should not crash with empty lots
     expect(result.lots).toEqual([]);
   });
@@ -275,8 +342,15 @@ describe("Auction Lifecycle Integration", () => {
     const npcStables: Stable[] = [];
     const horses: Horse[] = [];
 
-    const result = generateAuctionLots(10, npcStables, horses, "weanling", "Test Sale", createRng(12345));
-    
+    const result = generateAuctionLots(
+      10,
+      npcStables,
+      horses,
+      "weanling",
+      "Test Sale",
+      createRng(12345),
+    );
+
     // Check that generated sale has required fields
     expect(result).toHaveProperty("id");
     expect(result).toHaveProperty("name");
@@ -302,10 +376,22 @@ describe("Auction Lifecycle Integration", () => {
       genotype: {
         color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
         stats: {
-          speed: [[1, 1], [1, 1]],
-          stamina: [[1, 1], [1, 1]],
-          acceleration: [[1, 1], [1, 1]],
-          consistency: [[1, 1], [1, 1]],
+          speed: [
+            [1, 1],
+            [1, 1],
+          ],
+          stamina: [
+            [1, 1],
+            [1, 1],
+          ],
+          acceleration: [
+            [1, 1],
+            [1, 1],
+          ],
+          consistency: [
+            [1, 1],
+            [1, 1],
+          ],
         },
         preferences: { distance: [1, 1], surface: [1, 1], climbing: [1, 1], cornering: [1, 1] },
         style: [1, 1],
@@ -322,7 +408,10 @@ describe("Auction Lifecycle Integration", () => {
           geneticDiversity: 0.8,
           lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
         },
-        heart: [[1, 1], [1, 1]],
+        heart: [
+          [1, 1],
+          [1, 1],
+        ],
         fiberType: [1, 1],
         stride: [1, 1],
         trackBias: [1, 1],
@@ -332,7 +421,13 @@ describe("Auction Lifecycle Integration", () => {
         recovery: [1, 1],
         fertility: [1, 1],
         foalingEase: [1, 1],
-        markings: { socks: [1, 1], face: [1, 1], silverDapple: [1, 1], sabino: [1, 1], splashWhite: [1, 1] },
+        markings: {
+          socks: [1, 1],
+          face: [1, 1],
+          silverDapple: [1, 1],
+          sabino: [1, 1],
+          splashWhite: [1, 1],
+        },
         health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
       },
       energy: 100,
@@ -362,7 +457,13 @@ describe("Auction Lifecycle Integration", () => {
       recoveryRate: 1.0,
       fertility: 1.0,
       foalingEase: 1.0,
-      markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+      markings: {
+        socks: "none",
+        face: "none",
+        silverDapple: false,
+        sabino: false,
+        splashWhite: false,
+      },
       bleederRisk: 0.05,
       roarerRisk: 0.05,
       ocdRisk: 0.05,
@@ -421,13 +522,15 @@ describe("Auction Lifecycle Integration", () => {
 
     const runner = createAuctionRunner(sale, npcStables, [horse], Date.now(), { liveMode: false });
     runner.runToCompletion();
-    
+
     const impacts = runner.finalImpacts({ day: 10, phase: "test" });
-    
+
     // Should have a CashImpact debiting the buyer stable
     const cashImpacts = impacts.filter((i) => i.type === "cash_change");
-    const buyerDebit = cashImpacts.find((i) => i.type === "cash_change" && i.entityId === "stable-2" && i.amount < 0);
-    
+    const buyerDebit = cashImpacts.find(
+      (i) => i.type === "cash_change" && i.entityId === "stable-2" && i.amount < 0,
+    );
+
     expect(buyerDebit).toBeDefined();
     expect(buyerDebit && buyerDebit.type === "cash_change" ? buyerDebit.amount : 0).toBeLessThan(0);
   });
@@ -436,15 +539,24 @@ describe("Auction Lifecycle Integration", () => {
     const hammerPrice = 10000;
     const expectedCommission = hammerPrice * CONSIGNMENT_COMMISSION;
     const expectedNet = hammerPrice - expectedCommission;
-    
+
     const net = netProceeds(hammerPrice);
-    
+
     expect(net).toBe(Math.round(expectedNet));
     expect(hammerPrice - net).toBe(Math.round(expectedCommission));
   });
 
   it("all 8 sale kinds generate correctly", () => {
-    const saleKinds: Array<"weanling" | "yearling" | "2yo_training" | "mixed" | "racing_age" | "broodmare" | "weanling_south" | "yearling_south"> = [
+    const saleKinds: Array<
+      | "weanling"
+      | "yearling"
+      | "2yo_training"
+      | "mixed"
+      | "racing_age"
+      | "broodmare"
+      | "weanling_south"
+      | "yearling_south"
+    > = [
       "weanling",
       "yearling",
       "2yo_training",
@@ -485,10 +597,22 @@ describe("Auction Lifecycle Integration", () => {
       genotype: {
         color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
         stats: {
-          speed: [[1, 1], [1, 1]],
-          stamina: [[1, 1], [1, 1]],
-          acceleration: [[1, 1], [1, 1]],
-          consistency: [[1, 1], [1, 1]],
+          speed: [
+            [1, 1],
+            [1, 1],
+          ],
+          stamina: [
+            [1, 1],
+            [1, 1],
+          ],
+          acceleration: [
+            [1, 1],
+            [1, 1],
+          ],
+          consistency: [
+            [1, 1],
+            [1, 1],
+          ],
         },
         preferences: { distance: [1, 1], surface: [1, 1], climbing: [1, 1], cornering: [1, 1] },
         style: [1, 1],
@@ -505,7 +629,10 @@ describe("Auction Lifecycle Integration", () => {
           geneticDiversity: 0.8,
           lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
         },
-        heart: [[1, 1], [1, 1]],
+        heart: [
+          [1, 1],
+          [1, 1],
+        ],
         fiberType: [1, 1],
         stride: [1, 1],
         trackBias: [1, 1],
@@ -515,7 +642,13 @@ describe("Auction Lifecycle Integration", () => {
         recovery: [1, 1],
         fertility: [1, 1],
         foalingEase: [1, 1],
-        markings: { socks: [1, 1], face: [1, 1], silverDapple: [1, 1], sabino: [1, 1], splashWhite: [1, 1] },
+        markings: {
+          socks: [1, 1],
+          face: [1, 1],
+          silverDapple: [1, 1],
+          sabino: [1, 1],
+          splashWhite: [1, 1],
+        },
         health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
       },
       energy: 100,
@@ -545,7 +678,13 @@ describe("Auction Lifecycle Integration", () => {
       recoveryRate: 1.0,
       fertility: 1.0,
       foalingEase: 1.0,
-      markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+      markings: {
+        socks: "none",
+        face: "none",
+        silverDapple: false,
+        sabino: false,
+        splashWhite: false,
+      },
       bleederRisk: 0.05,
       roarerRisk: 0.05,
       ocdRisk: 0.05,

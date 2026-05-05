@@ -15,7 +15,13 @@ export const useTrainingUsed = () => useGame((s: GameState) => s.trainingUsed);
  * Use this when you need multiple racing state values in a single hook call
  * Note: Uses type assertion to work around Zustand typing limitation
  */
-export const useRacingState = () => (useGame as any)(
-  (s: GameState) => ({ paceSamples: s.paceSamples, calibratedPars: s.calibratedPars, lastCalibrationDay: s.lastCalibrationDay, trainingUsed: s.trainingUsed }),
-  shallow
-);
+export const useRacingState = () =>
+  (useGame as any)(
+    (s: GameState) => ({
+      paceSamples: s.paceSamples,
+      calibratedPars: s.calibratedPars,
+      lastCalibrationDay: s.lastCalibrationDay,
+      trainingUsed: s.trainingUsed,
+    }),
+    shallow,
+  );

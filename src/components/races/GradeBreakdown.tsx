@@ -15,7 +15,7 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
   const gradeData = grades.map((grade) => {
     const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
     const ownedEntries = gradeRaces.filter((r) => r.entries.some((e: any) => e.owned));
-    
+
     let topProj = null;
     const allOwnedProjs: number[] = [];
 
@@ -54,7 +54,9 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
         <div className="grid grid-cols-3 gap-4">
           {gradeData.map(({ grade, total, ownedCount, topOwned }) => (
             <div key={grade} className="space-y-2">
-              <div className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold ${getGradeColorClass(grade)}`}>
+              <div
+                className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold ${getGradeColorClass(grade)}`}
+              >
                 {grade}
               </div>
               <div>
@@ -62,7 +64,9 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
                 <div className="text-xs text-muted-foreground">races upcoming</div>
               </div>
               <div>
-                <div className={`text-sm font-semibold tabular-nums ${ownedCount > 0 ? "text-success" : "text-muted-foreground"}`}>
+                <div
+                  className={`text-sm font-semibold tabular-nums ${ownedCount > 0 ? "text-success" : "text-muted-foreground"}`}
+                >
                   {ownedCount} entered
                 </div>
                 <div className="text-xs text-muted-foreground">owned entries</div>
@@ -71,7 +75,9 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
                 {topOwned ? (
                   <>
                     <div className="text-sm font-semibold truncate">{topOwned.name}</div>
-                    <div className="text-xs text-muted-foreground">top proj. ~{topOwned.proj} Beyer</div>
+                    <div className="text-xs text-muted-foreground">
+                      top proj. ~{topOwned.proj} Beyer
+                    </div>
                   </>
                 ) : (
                   <div className="text-sm text-muted-foreground">—</div>

@@ -32,9 +32,7 @@ export function ReputationBadge() {
         <Trophy className="h-3 w-3 mr-1" />
         {formatReputationTier(reputation.tier)}
       </Badge>
-      <span className="text-sm text-muted-foreground">
-        {reputation.score} pts
-      </span>
+      <span className="text-sm text-muted-foreground">{reputation.score} pts</span>
     </div>
   );
 }

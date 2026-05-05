@@ -48,7 +48,9 @@ describe("defaultStudParams", () => {
   it("elite > mid > budget for fee and bookSize", () => {
     expect(defaultStudParams("elite").fee).toBeGreaterThan(defaultStudParams("mid").fee);
     expect(defaultStudParams("mid").fee).toBeGreaterThan(defaultStudParams("budget").fee);
-    expect(defaultStudParams("elite").bookSize).toBeGreaterThan(defaultStudParams("budget").bookSize);
+    expect(defaultStudParams("elite").bookSize).toBeGreaterThan(
+      defaultStudParams("budget").bookSize,
+    );
   });
 });
 

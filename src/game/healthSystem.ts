@@ -12,7 +12,11 @@ export interface Injury {
 /**
  * Roll for potential injury during a high-stress event (race or heavy training)
  */
-export function rollForInjury(horse: Horse, eventType: "race" | "training", rng: Rng): Injury | null {
+export function rollForInjury(
+  horse: Horse,
+  eventType: "race" | "training",
+  rng: Rng,
+): Injury | null {
   if (horse.healthStatus !== "healthy") return null;
 
   // Base chance is the horse's genetic proneness

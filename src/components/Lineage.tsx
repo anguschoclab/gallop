@@ -21,7 +21,11 @@ function NodeView({ node, label }: { node: Node; label?: string }) {
   return (
     <div className="flex flex-col gap-1 min-w-0">
       <div className="rounded-md border bg-card px-2 py-1 text-xs">
-        {label && <span className="text-[10px] uppercase tracking-wide text-muted-foreground mr-1">{label}</span>}
+        {label && (
+          <span className="text-[10px] uppercase tracking-wide text-muted-foreground mr-1">
+            {label}
+          </span>
+        )}
         <span className="font-medium truncate">{node.name}</span>
       </div>
       {(node.sire || node.dam) && (

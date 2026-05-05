@@ -66,9 +66,20 @@ export function getWeatherDisplay(weather?: Weather): string {
 
 // Sprite sheet configuration
 const ANIMATED_SPRITES = [
-  "bay", "black", "chestnut", "dark-bay", "gray",
-  "roan", "palomino", "white",
-  "seal-brown", "liver-chestnut", "buckskin", "dun", "grulla", "champagne"
+  "bay",
+  "black",
+  "chestnut",
+  "dark-bay",
+  "gray",
+  "roan",
+  "palomino",
+  "white",
+  "seal-brown",
+  "liver-chestnut",
+  "buckskin",
+  "dun",
+  "grulla",
+  "champagne",
 ];
 
 const COAT_TO_SPRITE: Record<string, string> = {
@@ -129,7 +140,12 @@ export function getAnimationDuration(velocity: number): string {
  * @param classBonus - Class bonus for the race
  * @returns Projected Beyer figure, or null if calculation is not possible
  */
-export function projectedBeyer(r: Runner, distance: number, simTime: number, classBonus: number): number | null {
+export function projectedBeyer(
+  r: Runner,
+  distance: number,
+  simTime: number,
+  classBonus: number,
+): number | null {
   if (r.finishTime !== null) {
     return beyerFigure({ distance, finishTime: r.finishTime, classBonus });
   }

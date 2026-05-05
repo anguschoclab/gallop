@@ -1,5 +1,10 @@
 import type { Race } from "@/game/types";
-import { filterRacesByCriteria, separateUpcomingAndPast, sortRacesByDay, type RaceFilters } from "@/core/race/filtering";
+import {
+  filterRacesByCriteria,
+  separateUpcomingAndPast,
+  sortRacesByDay,
+  type RaceFilters,
+} from "@/core/race/filtering";
 import { MONTH_NAMES_FULL } from "@/core/calendar/dateFormatting";
 
 /**
@@ -17,7 +22,7 @@ export interface RaceFilterServiceDependencies {
  */
 export function getFilteredRaces(
   dependencies: RaceFilterServiceDependencies,
-  filters: RaceFilters
+  filters: RaceFilters,
 ): { upcoming: Race[]; past: Race[] } {
   const { races, currentDay } = dependencies;
 
@@ -35,19 +40,22 @@ export function getFilteredRaces(
  */
 export function getRacesByTrack(
   dependencies: RaceFilterServiceDependencies,
-  filters: RaceFilters
+  filters: RaceFilters,
 ): Record<string, Race[]> {
   const { races, currentDay } = dependencies;
   const filtered = filterRacesByCriteria(races, filters, currentDay);
 
-  const racesByTrack = filtered.reduce((acc, race) => {
-    const track = race.graded?.track || "Other";
-    if (!acc[track]) {
-      acc[track] = [];
-    }
-    acc[track].push(race);
-    return acc;
-  }, {} as Record<string, Race[]>);
+  const racesByTrack = filtered.reduce(
+    (acc, race) => {
+      const track = race.graded?.track || "Other";
+      if (!acc[track]) {
+        acc[track] = [];
+      }
+      acc[track].push(race);
+      return acc;
+    },
+    {} as Record<string, Race[]>,
+  );
 
   // Sort races within each track by day
   for (const track in racesByTrack) {
@@ -62,20 +70,23 @@ export function getRacesByTrack(
  */
 export function getRacesByMonth(
   dependencies: RaceFilterServiceDependencies,
-  filters: RaceFilters
+  filters: RaceFilters,
 ): Record<string, Race[]> {
   const { races, currentDay } = dependencies;
   const filtered = filterRacesByCriteria(races, filters, currentDay);
 
-  const racesByMonth = filtered.reduce((acc, race) => {
-    const month = Math.floor((race.day - 1) / 30) + 1;
-    const monthName = MONTH_NAMES_FULL[month - 1] || "Unknown";
-    if (!acc[monthName]) {
-      acc[monthName] = [];
-    }
-    acc[monthName].push(race);
-    return acc;
-  }, {} as Record<string, Race[]>);
+  const racesByMonth = filtered.reduce(
+    (acc, race) => {
+      const month = Math.floor((race.day - 1) / 30) + 1;
+      const monthName = MONTH_NAMES_FULL[month - 1] || "Unknown";
+      if (!acc[monthName]) {
+        acc[monthName] = [];
+      }
+      acc[monthName].push(race);
+      return acc;
+    },
+    {} as Record<string, Race[]>,
+  );
 
   // Sort races within each month by day
   for (const month in racesByMonth) {
@@ -84,4 +95,3 @@ export function getRacesByMonth(
 
   return racesByMonth;
 }
-

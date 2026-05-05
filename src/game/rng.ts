@@ -14,7 +14,7 @@ export type Rng = {
 };
 
 export function createRng(seed: number): Rng {
-  let state = (seed | 0) || 1;
+  let state = seed | 0 || 1;
   const next = () => {
     state = (state + 0x6d2b79f5) | 0;
     let t = state;

@@ -248,7 +248,15 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
       }
 
       case "auction_resolution": {
-        const { saleId, lotId, hammerPrice, soldToStableId, passed, bidHistory, wasPlayerConsignment } = impact;
+        const {
+          saleId,
+          lotId,
+          hammerPrice,
+          soldToStableId,
+          passed,
+          bidHistory,
+          wasPlayerConsignment,
+        } = impact;
         const auction = draft.auctions?.find((a) => a.id === saleId);
         if (auction) {
           const lot = auction.lots.find((l) => l.id === lotId);
@@ -439,7 +447,11 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
         day: impact.day,
         phase: impact.phase,
         type: impact.type,
-        entityId: (impact as any).entityId || (impact as any).horseId || (impact as any).raceId || "unknown",
+        entityId:
+          (impact as any).entityId ||
+          (impact as any).horseId ||
+          (impact as any).raceId ||
+          "unknown",
         details: (impact as any).reason || impact.type,
         logLevel: impact.logLevel,
       });
@@ -457,7 +469,10 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
  * Validate an intent before resolution
  * Returns { valid: boolean, reason?: string }
  */
-export function validateIntent(intent: AnyIntent, state: GameState): { valid: boolean; reason?: string } {
+export function validateIntent(
+  intent: AnyIntent,
+  state: GameState,
+): { valid: boolean; reason?: string } {
   // Basic validation based on intent type
   switch (intent.type) {
     case "training": {
@@ -482,7 +497,8 @@ export function validateIntent(intent: AnyIntent, state: GameState): { valid: bo
       const dam = state.horses.find((h) => h.id === intent.damId);
       if (!sire) return { valid: false, reason: "Sire not found" };
       if (!dam) return { valid: false, reason: "Dam not found" };
-      if (sire.gender !== "horse" && sire.gender !== "gelding") return { valid: false, reason: "Invalid sire gender" };
+      if (sire.gender !== "horse" && sire.gender !== "gelding")
+        return { valid: false, reason: "Invalid sire gender" };
       if (dam.gender !== "mare") return { valid: false, reason: "Invalid dam gender" };
       if (state.cash < 2000) return { valid: false, reason: "Insufficient funds for breeding" };
       break;
@@ -507,7 +523,7 @@ export function validateIntent(intent: AnyIntent, state: GameState): { valid: bo
       if (horse.stableId === intent.claimantStableId) {
         return { valid: false, reason: "Cannot claim own horse" };
       }
-      
+
       // Check claimant has sufficient funds
       if (intent.claimantStableId) {
         const stable = state.npcStables.find((s) => s.id === intent.claimantStableId);
@@ -519,12 +535,12 @@ export function validateIntent(intent: AnyIntent, state: GameState): { valid: bo
           return { valid: false, reason: "Insufficient funds" };
         }
       }
-      
+
       // Check horse eligibility for claiming price
       if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) {
         return { valid: false, reason: "Horse is not eligible for this claiming price" };
       }
-      
+
       break;
     }
 
@@ -566,7 +582,10 @@ export function sortIntents(intents: AnyIntent[]): AnyIntent[] {
  * Resolve conflicts between intents
  * Currently uses priority-based resolution with logging
  */
-export function resolveIntentConflicts(intents: AnyIntent[], state: GameState): {
+export function resolveIntentConflicts(
+  intents: AnyIntent[],
+  state: GameState,
+): {
   resolved: AnyIntent[];
   conflicts: { intent: AnyIntent; reason: string }[];
 } {
