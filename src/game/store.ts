@@ -1088,6 +1088,7 @@ export const useGame = create<GameState & Actions>()(
           schedulerPhase,
           stateUpdatePhase,
           // Resolution phases (convert intents to impacts)
+          raceEntryResolutionPhase,
           trainingResolutionPhase,
           // Impact application phase (final)
           impactApplicationPhase,
