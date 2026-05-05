@@ -12,6 +12,7 @@ import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PregnancyTimeline } from "@/components/PregnancyTimeline";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { getAvailableStallions } from "@/core/breeding/stallions";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
@@ -34,6 +35,9 @@ function BreedingPage() {
   const sire = adults.find((h) => h.id === sireId);
   const dam = adults.find((h) => h.id === damId);
   const compatibility = sire && dam ? calculateBreedingCompatibility(sire, dam) : null;
+
+  // Get available stallions for Northern hemisphere (default for player breeding)
+  const availableStallions = getAvailableStallions({ horses, day }, "Northern");
 
   const onBreed = () => {
     if (!sireId || !damId) return;
@@ -94,9 +98,9 @@ function BreedingPage() {
                   <label className="text-xs text-muted-foreground"><JargonTooltip term="Sire">Sire</JargonTooltip></label>
                   <select className="w-full border rounded-md px-3 py-2 bg-background text-sm" value={sireId} onChange={(e) => setSireId(e.target.value)}>
                     <option value="">Select sire…</option>
-                    {adults.filter((h) => h.gender === "colt" || h.gender === "horse").map((h) => (
+                    {availableStallions.map((h) => (
                       <option key={h.id} value={h.id}>
-                        {h.name} (age {h.age}){h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""}
+                        {h.name} (age {h.age}){h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""} • ${h.stud?.standingFee.toLocaleString()}
                       </option>
                     ))}
                   </select>

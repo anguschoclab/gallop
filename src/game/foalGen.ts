@@ -7,6 +7,7 @@ import {
   classifyCoi,
   computeGenomeModifiers,
   computeAhc,
+  resolveBloodline,
 } from "@/core/breeding/populationGenetics";
 import { clamp } from "./math";
 
@@ -163,8 +164,12 @@ export function resolveFoaling(
     }
     foal.peakAge = Math.min(8, foal.peakAge + genomeMods.longevityBonus);
 
-    // Bloodline tag — inherit from sire's bloodline.
-    foal.bloodline = sire.bloodline;
+    // Bloodline tag — resolve from sire's line if not set, otherwise inherit
+    if (!foal.bloodline && sire) {
+      foal.bloodline = resolveBloodline(sire, { horses: [sire, dam] });
+    } else if (sire) {
+      foal.bloodline = sire.bloodline;
+    }
 
     // 1% covering-sickness transmission roll
     const transmission = rng.next() < 0.01;

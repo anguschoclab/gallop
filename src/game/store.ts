@@ -17,6 +17,7 @@ import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { loadRaceHistoryLimit } from "@/services/storageAdapter";
 import { loadGameState, saveGameState } from "@/services/storageAdapter";
 import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
+import { getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "@/core/breeding/lineage";
 import { generateUUID } from "./uuid";
 import { resolveFoaling } from "./foalGen";
 import { beyerFigure, distanceBucket, setCalibratedPars, expectedBeyer } from "./beyer";
@@ -195,6 +196,12 @@ export function resolvePregnancies(
         dam.foalsProduced.push(foal.id);
         dam.lastFoaledDay = newDay;
       }
+      
+      // Update sire's lifetime foals count using lineage helper
+      if (sire && sire.stud) {
+        sire.stud.lifetimeFoals = getFoalsBy({ horses: [...horses, foal] }, sire.id).length;
+      }
+      
       p.resolved = true;
       p.foalId = foal.id;
       foals.push(foal);
@@ -611,8 +618,9 @@ export const useGame = create<GameState & Actions>()(
             if (sireId) {
               const sire = s.horses.find((hh) => hh.id === sireId);
               if (sire?.stud) {
-                sire.stud.lifetimeStakesFoals += 1;
-                if (race.graded?.grade === "G1") sire.stud.lifetimeG1Foals += 1;
+                // Use lineage helpers to calculate actual progeny stats
+                sire.stud.lifetimeStakesFoals = getStakesFoalsBy({ horses: s.horses }, sireId);
+                sire.stud.lifetimeG1Foals = getG1FoalsBy({ horses: s.horses }, sireId);
                 sire.stud.standingFee = recalcStandingFee(
                   sire.stud.standingFee,
                   sire.stud.lifetimeStakesFoals,

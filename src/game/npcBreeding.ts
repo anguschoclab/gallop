@@ -1,7 +1,7 @@
 import type { Horse, Pregnancy, Stable, GameState } from "./types";
 import { generateUUID } from "./uuid";
 import { canBreed } from "@/core/breeding/eligibility";
-import { isStallionAvailable } from "@/core/breeding/stallions";
+import { getAvailableStallions } from "@/core/breeding/stallions";
 import { isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { calculateBreedingCompatibility } from "./breedingCompatibility";
 import type { Rng } from "./rng";
@@ -63,11 +63,8 @@ export function runNpcBreeding(
     );
 
     for (const mare of mares) {
-      // Available stallions in mare's hemisphere; sort by compatibility × inverse fee.
-      const stallions = horses
-        .filter((h) => h.stud?.atStud)
-        .filter((h) => h.hemisphere === mare.hemisphere)
-        .filter((h) => isStallionAvailable(h, newDay))
+      // Available stallions in mare's hemisphere; use centralized helper
+      const stallions = getAvailableStallions({ horses, day: newDay }, mare.hemisphere)
         .filter((h) => h.id !== mare.id);
 
       if (stallions.length === 0) continue;
