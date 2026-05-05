@@ -14,10 +14,10 @@ const navItems = [
   { to: "/", label: "Dashboard", icon: Home, exact: true },
   { to: "/stable", label: "Stable", icon: Trophy, exact: false },
   { to: "/races", label: "Races", icon: Calendar, exact: false },
-  { to: "/npc-stables", label: "Rival Stables", icon: User, exact: false },
-  { to: "/market", label: "Market", icon: Store, exact: false },
   { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
-  { to: "/auction", label: "Sales", icon: Gavel, exact: false },
+  { to: "/auction", label: "Auction", icon: Gavel, exact: false },
+  { to: "/market", label: "Market", icon: Store, exact: false },
+  { to: "/settings", label: "Settings", icon: Settings, exact: false },
 ] as const;
 
 export function AppShell() {

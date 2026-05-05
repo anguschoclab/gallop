@@ -46,9 +46,17 @@ import { auctionsPhase } from "@/core/time/phases/auctions";
 import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
 import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
 import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
+import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
+import { intentValidationPhase } from "@/core/time/phases/intentValidation";
+import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
+import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
+import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
 import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { updateBlueHenStatus } from "./helpers/blueHenHelpers";
+import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
+import type { RenameIntent, AnyIntent, TrainingIntent, RaceEntryIntent } from "@/core/resolver/intents";
+import type { RenameImpact } from "@/core/resolver/impacts";
 
 export type ActionResult = { ok: true } | { ok: false, reason: string };
 
@@ -427,6 +435,7 @@ type Actions = {
   clearPendingCeremonies: () => void;
   geldingHorse: (horseId: string) => ActionResult;
   renameHorse: (horseId: string, newName: string) => ActionResult;
+  enqueueIntent: (intent: AnyIntent) => void;
   setCampaign: (campaign: HorseCampaign) => void;
   updateCampaignSlot: (horseId: string, slotIndex: number, patch: Partial<HorseCampaign["slots"][number]>) => void;
   dismissCampaignFlag: (horseId: string, flagIndex: number) => void;
@@ -545,6 +554,7 @@ export const useGame = create<GameState & Actions>()(
         const s = get();
         const horse = s.horses.find((h) => h.id === horseId);
         if (!horse) return;
+        if (!horse.owned) return;
         if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
         // Check if horse has covering sickness or is recovering - prevent training
         if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering") {
@@ -560,47 +570,37 @@ export const useGame = create<GameState & Actions>()(
         if (usedToday >= TRAINING_SLOTS_PER_DAY) return;
         if (horse.energy < 10) return;
         if (kind === "rest") {
+          // Rest is immediate, not queued
           horse.energy = Math.min(100, horse.energy + 30);
+          set({
+            horses: [...s.horses],
+            trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
+          });
         } else {
           const cost = 75;
           if (s.cash < cost) return;
           if (horse.energy < 15) return;
-          horse.energy = Math.max(0, horse.energy - 18);
-          // deterministic gain chance for training (modified by trainability locus)
-          const trainingRng = createRng(hashStr(`training_${horseId}_${s.day}_${usedToday}`));
-          const stat = horse.stats[kind];
-          // peakAge cap: effective potential is reduced before peak, capped at peak
-          const ageRatio = Math.min(1, horse.age / horse.peakAge);
-          const effectivePotential = horse.potential * ageRatio;
-          const gap = effectivePotential - stat;
-          // trainability multiplier: 0.5-1.4, applied to base 0.65 chance
-          const trainingChance = 0.65 * horse.trainability;
-          if (gap > 0 && trainingRng.next() < trainingChance) {
-            const gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
-            horse.stats[kind] = Math.min(effectivePotential, stat + gain);
-          }
-          // OCD (osteochondritis dissecans): 2yo training puts developmental
-          // stress on growth plates. Risk applies only at age 2; older horses
-          // have past the susceptible window. Both general injuryProneness
-          // and OCD-specific risk roll independently.
-          const ocdRisk = horse.ocdRisk ?? 0;
-          if (horse.age <= 2 && ocdRisk > 0 && trainingRng.next() < ocdRisk) {
-            horse.healthStatus = "recovering";
-            horse.healthStatusDay = s.day;
-            set({
-              log: [
-                { day: s.day, text: `🩺 ${horse.name} sustained an OCD bone injury during 2yo training. Recovery time required.` },
-                ...s.log,
-              ].slice(0, 50),
-            });
-          }
-          s.cash -= cost;
+
+          // Enqueue TrainingIntent for next day advance
+          const intent: TrainingIntent = {
+            id: generateUUID(),
+            entityId: horseId,
+            source: "player",
+            day: s.day,
+            priority: 100,
+            type: "training",
+            horseId,
+            trainingType: kind,
+          };
+
+          get().enqueueIntent(intent);
+
+          set({
+            cash: s.cash - cost,
+            trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
+            log: [{ day: s.day, text: `${horse.name} scheduled for ${kind} training.` }, ...s.log].slice(0, 50),
+          });
         }
-        set({
-          horses: [...s.horses],
-          cash: s.cash,
-          trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
-        });
       },
 
       buyHorse: (horseId) => {
@@ -636,7 +636,7 @@ export const useGame = create<GameState & Actions>()(
         // Economic guard: refuse races whose entry fee exceeds 50% of purse —
         // this catches misconfigured races and protects the player's bankroll.
         if (race.entryFee > race.purse * 0.5) return fail("Entry fee exceeds 50% of purse.");
-        
+
         // Check if horse has entry fee waiver for this race
         let effectiveEntryFee = race.entryFee;
         if (race.graded?.key && horse.winAndYouInQualified) {
@@ -646,7 +646,7 @@ export const useGame = create<GameState & Actions>()(
             effectiveEntryFee = 0;
           }
         }
-        
+
         if (s.cash < effectiveEntryFee) return fail("Insufficient cash for entry fee.");
         const r = race.restrictions;
         if (r) {
@@ -660,11 +660,24 @@ export const useGame = create<GameState & Actions>()(
             return fail(`${horse.name} is above maximum age (${r.maxAge}).`);
           }
         }
-        race.entries.push({ horseId, owned: true });
+
+        // Enqueue RaceEntryIntent for next day advance
+        const intent: RaceEntryIntent = {
+          id: generateUUID(),
+          entityId: raceId,
+          source: "player",
+          day: s.day,
+          priority: 100,
+          type: "race_entry",
+          raceId,
+          horseId,
+        };
+
+        get().enqueueIntent(intent);
+
         set({
-          races: [...s.races],
           cash: s.cash - effectiveEntryFee,
-          log: [{ day: s.day, text: `Entered ${horse.name} in ${race.name}.` }, ...s.log].slice(0, 50),
+          log: [{ day: s.day, text: `${horse.name} scheduled to enter ${race.name}.` }, ...s.log].slice(0, 50),
         });
         return { ok: true };
       },
@@ -1046,9 +1059,17 @@ export const useGame = create<GameState & Actions>()(
           state: s,
           logs: [],
           dailyRng: createRng(hashStr("daily_" + newDay)),
+          // Intent/impact resolver fields
+          intents: s.pendingIntents || [],
+          impacts: [],
+          impactLog: [],
         };
 
         const phases = [
+          // Intent/impact resolver phases
+          intentCollectionPhase,
+          intentValidationPhase,
+          // Existing phases
           upkeepPhase,
           agingPhase,
           breedingSeasonPhase,
@@ -1066,6 +1087,10 @@ export const useGame = create<GameState & Actions>()(
           awardsPhase,
           schedulerPhase,
           stateUpdatePhase,
+          // Resolution phases (convert intents to impacts)
+          trainingResolutionPhase,
+          // Impact application phase (final)
+          impactApplicationPhase,
         ];
 
         const updatedContext = executePipeline(phases, pipelineContext);
@@ -1094,6 +1119,7 @@ export const useGame = create<GameState & Actions>()(
           sireLeaderboards: finalState.sireLeaderboards,
           sireTrendHistory: finalState.sireTrendHistory,
           leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
+          pendingIntents: [], // Clear pending intents after processing
           log: [...newLogs, { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` }, ...s.log].slice(0, 50),
         });
       },
@@ -1278,18 +1304,62 @@ export const useGame = create<GameState & Actions>()(
       renameHorse: (horseId: string, newName: string) => {
         const s = get();
         const horse = s.horses.find(h => h.id === horseId);
-        
+
         if (!horse) return { ok: false, reason: "Horse not found." };
         if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
         if (!newName || newName.trim().length === 0) return { ok: false, reason: "Name cannot be empty." };
         if (newName.length > 50) return { ok: false, reason: "Name too long (max 50 characters)." };
-        
+
+        // Generate RenameIntent for immediate resolution
+        const intent: RenameIntent = {
+          id: generateUUID(),
+          entityId: horseId,
+          source: "player",
+          day: s.day,
+          priority: 100,
+          type: "rename",
+          horseId,
+          newName: newName.trim(),
+        };
+
+        // Convert intent to impact
+        const impact: RenameImpact = {
+          id: generateUUID(),
+          intentId: intent.id,
+          day: s.day,
+          phase: "immediate",
+          logLevel: "always",
+          type: "rename",
+          horseId,
+          newName: newName.trim(),
+          reason: "Player renamed horse",
+        };
+
+        // Apply impact immediately using resolver
+        const resolverContext: ResolverContext = {
+          state: s,
+          intents: [intent],
+          impacts: [impact],
+          impactLog: [],
+          day: s.day,
+        };
+
+        const updatedContext = applyImpacts(resolverContext);
+
         set({
-          horses: s.horses.map(h => (h.id === horseId ? { ...h, name: newName.trim() } : h)),
-          log: [{ day: s.day, text: `${horse.name} has been renamed to ${newName.trim()}.` }, ...s.log].slice(0, 50)
+          horses: updatedContext.state.horses,
+          log: [{ day: s.day, text: `${horse.name} has been renamed to ${newName.trim()}.` }, ...s.log].slice(0, 50),
         });
-        
+
         return { ok: true };
+      },
+
+      // Helper function to enqueue intents for next day advance
+      enqueueIntent: (intent: AnyIntent) => {
+        const s = get();
+        set({
+          pendingIntents: [...(s.pendingIntents || []), intent],
+        });
       },
 
       setCampaign: (campaign: HorseCampaign) => {

@@ -563,6 +563,8 @@ export type GameState = {
   // Campaign planner system
   campaigns?: HorseCampaign[];
   triplecrownHistory?: TripleCrownProgress[];
+  // Intent/impact resolver system
+  pendingIntents?: import("@/core/resolver/intents").AnyIntent[];
 };
 
 // ============= Campaign Planner Types =============

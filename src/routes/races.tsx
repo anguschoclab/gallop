@@ -88,9 +88,15 @@ function RacesPage() {
           <p className="text-muted-foreground">View and enter upcoming races across all regions.</p>
         </div>
         <div className="flex gap-2">
-          <Link to="/race-browser">
+          <Link to="/calendar">
             <Button variant="outline" size="sm" className="gap-2">
               <Calendar className="h-4 w-4" />
+              Regional Calendar
+            </Button>
+          </Link>
+          <Link to="/race-browser">
+            <Button variant="outline" size="sm" className="gap-2">
+              <Search className="h-4 w-4" />
               Race Browser
             </Button>
           </Link>

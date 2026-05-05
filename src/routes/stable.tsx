@@ -46,6 +46,22 @@ function StablePage() {
             </CardHeader>
           </Card>
         </Link>
+        <Link to="/horse-gallery">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Horse Gallery</CardTitle>
+              <p className="text-xs text-muted-foreground">View your horses in a gallery format</p>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link to="/scheduler">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Campaign Scheduler</CardTitle>
+              <p className="text-xs text-muted-foreground">Plan race campaigns for your horses</p>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
 
       <Tabs defaultValue="roster" className="space-y-4">

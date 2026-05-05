@@ -1,5 +1,7 @@
 import type { GameState } from "@/game/types";
 import type { Rng } from "@/game/rng";
+import type { AnyIntent } from "@/core/resolver/intents";
+import type { AnyImpact, ImpactLogEntry } from "@/core/resolver/resolver";
 
 export interface PipelineContext {
   previousDay: number;
@@ -8,6 +10,10 @@ export interface PipelineContext {
   logs: { day: number; text: string }[];
   dailyRng: Rng;
   skipRaceResolution?: boolean;
+  // Intent/impact resolver fields
+  intents: AnyIntent[];
+  impacts: AnyImpact[];
+  impactLog: ImpactLogEntry[];
 }
 
 export interface PipelinePhase {

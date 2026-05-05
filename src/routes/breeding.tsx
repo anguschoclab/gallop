@@ -90,6 +90,14 @@ function BreedingPage() {
             </CardHeader>
           </Card>
         </Link>
+        <Link to="/sire-leaderboards">
+          <Card className="hover:bg-muted/50 transition-colors">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Sire Leaderboards</CardTitle>
+              <p className="text-xs text-muted-foreground">Track stallion performance across multiple dimensions</p>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
 
       <Tabs defaultValue="shed" className="space-y-4">
