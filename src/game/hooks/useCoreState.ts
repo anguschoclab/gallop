@@ -10,7 +10,7 @@ export const useCash = () => useGame((s: GameState) => s.cash);
 export const useHorses = () => useGame((s: GameState) => s.horses);
 export const useRaces = () => useGame((s: GameState) => s.races);
 export const useLog = () => useGame((s: GameState) => s.log);
-export const useExpenses = () => (useGame as any)((s: GameState) => s.expenses ?? [], shallow);
+export const useExpenses = () => (useGame as any)((s: GameState) => s.expenses, shallow);
 
 /**
  * Multiple core state values with shallow comparison

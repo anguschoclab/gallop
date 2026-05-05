@@ -14,6 +14,7 @@ import type { AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord } from ".
 import { calculateNpcBid, netProceeds } from "./auction";
 import { createRng, hashStr, type Rng } from "./rng";
 import type { AnyImpact } from "@/core/resolver/impacts";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 export type ChantPhase = "open" | "bidding" | "going_once" | "going_twice" | "sold" | "passed";
 
@@ -100,6 +101,14 @@ export type AuctionRunnerOptions = {
    * Default false (offline path emits the debit).
    */
   liveMode?: boolean;
+  /**
+   * Optional NPC AI manager for AI-driven bidding decisions.
+   */
+  npcAIManager?: NpcAIManager;
+  /**
+   * Current day for AI learning and decision-making.
+   */
+  currentDay?: number;
 };
 
 export function createAuctionRunner(
@@ -109,7 +118,7 @@ export function createAuctionRunner(
   baseSeed: number = hashStr(sale.id),
   options: AuctionRunnerOptions = {},
 ): AuctionRunner {
-  const { liveMode = false } = options;
+  const { liveMode = false, npcAIManager, currentDay } = options;
   const lots: LotState[] = sale.lots
     .filter((l) => !l.withdrawn)
     .map((l) => ({
@@ -156,7 +165,7 @@ export function createAuctionRunner(
     // bidders self-select via valuation/budget gates inside calculateNpcBid.
     for (const stable of eligible) {
       const rng = rngFor(state.lot, tick * 31 + bidderStables.indexOf(stable));
-      const bid = calculateNpcBid(stable, horse, state.currentBid, sale.kind, rng, horses);
+      const bid = calculateNpcBid(stable, horse, state.currentBid, sale.kind, rng, horses, npcAIManager, currentDay);
       if (bid !== null && bid > state.currentBid) {
         state.currentBid = bid;
         state.leadingBidder = stable.id;

@@ -128,7 +128,7 @@ function HorseGalleryPage() {
                 <Link to="/market">
                   <Button>Go to Market</Button>
                 </Link>
-                <Link to="/auction/sales">
+                <Link to="/auction">
                   <Button variant="outline">View Auctions</Button>
                 </Link>
               </div>

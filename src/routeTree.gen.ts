@@ -30,12 +30,12 @@ import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
+import { Route as AuctionIndexRouteImport } from './routes/auction.index'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
 import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$stallionId'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
 import { Route as NpcStablesStableIdRouteImport } from './routes/npc-stables.$stableId'
 import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
-import { Route as AuctionSalesRouteImport } from './routes/auction.sales'
 import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
 
 const StallionsRoute = StallionsRouteImport.update({
@@ -143,6 +143,11 @@ const CalendarIndexRoute = CalendarIndexRouteImport.update({
   path: '/calendar/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuctionIndexRoute = AuctionIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuctionRoute,
+} as any)
 const StableHorseIdRoute = StableHorseIdRouteImport.update({
   id: '/$horseId',
   path: '/$horseId',
@@ -167,11 +172,6 @@ const CalendarRegionIdRoute = CalendarRegionIdRouteImport.update({
   id: '/calendar/$regionId',
   path: '/calendar/$regionId',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuctionSalesRoute = AuctionSalesRouteImport.update({
-  id: '/sales',
-  path: '/sales',
-  getParentRoute: () => AuctionRoute,
 } as any)
 const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
   id: '/$saleId',
@@ -201,17 +201,16 @@ export interface FileRoutesByFullPath {
   '/stable': typeof StableRouteWithChildren
   '/stallions': typeof StallionsRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
-  '/auction/sales': typeof AuctionSalesRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auction': typeof AuctionRouteWithChildren
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
@@ -231,12 +230,12 @@ export interface FileRoutesByTo {
   '/stable': typeof StableRouteWithChildren
   '/stallions': typeof StallionsRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
-  '/auction/sales': typeof AuctionSalesRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/auction': typeof AuctionIndexRoute
   '/calendar': typeof CalendarIndexRoute
 }
 export interface FileRoutesById {
@@ -262,12 +261,12 @@ export interface FileRoutesById {
   '/stable': typeof StableRouteWithChildren
   '/stallions': typeof StallionsRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
-  '/auction/sales': typeof AuctionSalesRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
   '/stable/$horseId': typeof StableHorseIdRoute
+  '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
 }
 export interface FileRouteTypes {
@@ -294,17 +293,16 @@ export interface FileRouteTypes {
     | '/stable'
     | '/stallions'
     | '/auction/$saleId'
-    | '/auction/sales'
     | '/calendar/$regionId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/auction/'
     | '/calendar/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/auction'
     | '/awards'
     | '/breeding'
     | '/broodmares'
@@ -324,12 +322,12 @@ export interface FileRouteTypes {
     | '/stable'
     | '/stallions'
     | '/auction/$saleId'
-    | '/auction/sales'
     | '/calendar/$regionId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/auction'
     | '/calendar'
   id:
     | '__root__'
@@ -354,12 +352,12 @@ export interface FileRouteTypes {
     | '/stable'
     | '/stallions'
     | '/auction/$saleId'
-    | '/auction/sales'
     | '/calendar/$regionId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
     | '/stable/$horseId'
+    | '/auction/'
     | '/calendar/'
   fileRoutesById: FileRoutesById
 }
@@ -538,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auction/': {
+      id: '/auction/'
+      path: '/'
+      fullPath: '/auction/'
+      preLoaderRoute: typeof AuctionIndexRouteImport
+      parentRoute: typeof AuctionRoute
+    }
     '/stable/$horseId': {
       id: '/stable/$horseId'
       path: '/$horseId'
@@ -573,13 +578,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarRegionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auction/sales': {
-      id: '/auction/sales'
-      path: '/sales'
-      fullPath: '/auction/sales'
-      preLoaderRoute: typeof AuctionSalesRouteImport
-      parentRoute: typeof AuctionRoute
-    }
     '/auction/$saleId': {
       id: '/auction/$saleId'
       path: '/$saleId'
@@ -592,12 +590,12 @@ declare module '@tanstack/react-router' {
 
 interface AuctionRouteChildren {
   AuctionSaleIdRoute: typeof AuctionSaleIdRoute
-  AuctionSalesRoute: typeof AuctionSalesRoute
+  AuctionIndexRoute: typeof AuctionIndexRoute
 }
 
 const AuctionRouteChildren: AuctionRouteChildren = {
   AuctionSaleIdRoute: AuctionSaleIdRoute,
-  AuctionSalesRoute: AuctionSalesRoute,
+  AuctionIndexRoute: AuctionIndexRoute,
 }
 
 const AuctionRouteWithChildren =

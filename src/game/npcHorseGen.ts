@@ -19,6 +19,12 @@ import {
 } from "@/core/breeding/bruceLowe";
 import { rollGender } from "@/core/horse/gender";
 import { resolveBloodline } from "@/core/breeding/populationGenetics";
+import {
+  shouldGenerateHorseOfAge,
+  createHorseGenAIState,
+  recordHorseGeneration,
+} from "@/core/ai/horseGenAI";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**
  * Map stable tier to DNA generation tier.
@@ -151,8 +157,22 @@ export function generateNpcHorse(
 /**
  * Generate a full stable of horses
  */
-export function generateStableHorses(stable: Stable, rng: Rng): Horse[] {
+export function generateStableHorses(
+  stable: Stable,
+  rng: Rng,
+  npcAIManager?: NpcAIManager,
+  currentDay?: number,
+): Horse[] {
   const horses: Horse[] = [];
+
+  // Initialize AI state if available
+  let aiState;
+  if (npcAIManager && currentDay !== undefined) {
+    aiState = npcAIManager.stableStates.get(stable.id);
+    if (aiState && !aiState.horseGenAI) {
+      aiState.horseGenAI = createHorseGenAIState(stable);
+    }
+  }
 
   // Determine target count based on tier
   let targetCount: number;
@@ -172,23 +192,59 @@ export function generateStableHorses(stable: Stable, rng: Rng): Horse[] {
     }
   }
 
-  // Generate horses with age distribution
+  // Generate horses with AI-driven age distribution
   const ageCategories = {
-    "2yo": Math.floor(targetCount * 0.3),
-    prime: Math.floor(targetCount * 0.4),
-    veteran: Math.floor(targetCount * 0.2),
-    breeding: Math.floor(targetCount * 0.1),
+    "2yo": 0,
+    prime: 0,
+    veteran: 0,
+    breeding: 0,
   };
 
-  // Fill remaining from prime (most common)
-  const totalAssigned = Object.values(ageCategories).reduce((a, b) => a + b, 0);
-  ageCategories.prime += targetCount - totalAssigned;
+  // Use AI to determine age distribution if available
+  if (aiState?.horseGenAI) {
+    for (let age = 2; age <= 10; age++) {
+      if (shouldGenerateHorseOfAge(aiState.horseGenAI, age, stable)) {
+        if (age === 2) ageCategories["2yo"]++;
+        else if (age <= 4) ageCategories.prime++;
+        else if (age <= 6) ageCategories.veteran++;
+        else ageCategories.breeding++;
+      }
+    }
+
+    // Ensure we have at least some horses
+    const totalAIGenerated = Object.values(ageCategories).reduce((a, b) => a + b, 0);
+    if (totalAIGenerated < targetCount) {
+      // Fill remaining with prime horses
+      ageCategories.prime += targetCount - totalAIGenerated;
+    } else if (totalAIGenerated > targetCount) {
+      // Trim down to target count
+      const excess = totalAIGenerated - targetCount;
+      ageCategories.prime = Math.max(0, ageCategories.prime - excess);
+    }
+  } else {
+    // Fallback to default distribution
+    ageCategories["2yo"] = Math.floor(targetCount * 0.3);
+    ageCategories.prime = Math.floor(targetCount * 0.4);
+    ageCategories.veteran = Math.floor(targetCount * 0.2);
+    ageCategories.breeding = Math.floor(targetCount * 0.1);
+
+    // Fill remaining from prime (most common)
+    const totalAssigned = Object.values(ageCategories).reduce((a, b) => a + b, 0);
+    ageCategories.prime += targetCount - totalAssigned;
+  }
 
   // Generate horses for each category
   for (const [category, count] of Object.entries(ageCategories)) {
     for (let i = 0; i < count; i++) {
       const age = getAgeFromCategory(category as "2yo" | "prime" | "veteran" | "breeding", rng);
-      horses.push(generateNpcHorse(stable.id, stable.tier, rng, age));
+      const horse = generateNpcHorse(stable.id, stable.tier, rng, age);
+
+      // Record generation for AI learning
+      if (aiState?.horseGenAI && currentDay !== undefined) {
+        recordHorseGeneration(aiState.horseGenAI, horse, stable, currentDay);
+      }
+
+      horses.push(horse);
     }
   }
 
@@ -205,12 +261,14 @@ export function generateStableHorses(stable: Stable, rng: Rng): Horse[] {
 export function generateAllNpcHorses(
   stables: Stable[],
   rng: Rng,
+  npcAIManager?: NpcAIManager,
+  currentDay?: number,
 ): { stables: Stable[]; horses: Horse[] } {
   const updatedStables: Stable[] = [];
   const allHorses: Horse[] = [];
 
   for (const stable of stables) {
-    const horses = generateStableHorses(stable, rng);
+    const horses = generateStableHorses(stable, rng, npcAIManager, currentDay);
     for (const horse of horses) {
       if (shouldRetireAtStartup(horse, stable)) {
         const { bookSize } = defaultStudParams(stable.tier);

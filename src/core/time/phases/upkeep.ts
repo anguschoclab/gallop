@@ -2,6 +2,14 @@ import type { PipelineContext } from "../pipeline";
 import { createExpense } from "@/core/expenses";
 import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
+import {
+  calculateMonthlyExpenseBudget,
+  shouldConserveCash,
+  createUpkeepAIState,
+  recordBudgetDecision,
+  updateReserveState,
+} from "@/core/ai/upkeepAI";
+import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 
 const UPKEEP_PER_HORSE = 50;
 
@@ -63,11 +71,51 @@ export const upkeepPhase = {
     }
 
     // Charge each NPC stable for its own horses.
-    const npcStables = state.npcStables.map((stable) => {
-      const owned = state.horses.filter((h) => h.stableId === stable.id);
-      const cost = owned.length * UPKEEP_PER_HORSE;
-      return { ...stable, cash: stable.cash - cost };
-    });
+    let npcStables = state.npcStables;
+    if (state.npcAIManager) {
+      const aiManager = state.npcAIManager; // Capture to satisfy TypeScript
+      npcStables = state.npcStables.map((stable) => {
+        const aiState = getOrCreateStableAIState(aiManager, stable, newDay);
+        if (!aiState.upkeepAI) {
+          aiState.upkeepAI = createUpkeepAIState(stable);
+        }
+
+        const owned = state.horses.filter((h) => h.stableId === stable.id);
+        const cost = owned.length * UPKEEP_PER_HORSE;
+        const monthlyExpenses = cost * 30; // Estimate monthly expenses
+
+        // Update reserve state based on current cash and expenses
+        const updatedAIState = updateReserveState(aiState.upkeepAI, stable, monthlyExpenses, newDay);
+
+        // Check if stable should conserve cash
+        const shouldConserve = shouldConserveCash(updatedAIState, stable, monthlyExpenses);
+
+        // If conserving cash and running low, reduce spending by not charging full upkeep
+        let actualCost = cost;
+        if (shouldConserve && stable.cash < monthlyExpenses * 2) {
+          // Reduce upkeep by 50% when conserving and low on cash
+          actualCost = Math.floor(cost * 0.5);
+        }
+
+        // Record budget decision for AI learning
+        recordBudgetDecision(
+          updatedAIState,
+          monthlyExpenses,
+          actualCost,
+          { upkeep: actualCost },
+          stable,
+          newDay,
+        );
+
+        return { ...stable, cash: stable.cash - actualCost };
+      });
+    } else {
+      npcStables = state.npcStables.map((stable) => {
+        const owned = state.horses.filter((h) => h.stableId === stable.id);
+        const cost = owned.length * UPKEEP_PER_HORSE;
+        return { ...stable, cash: stable.cash - cost };
+      });
+    }
 
     return {
       ...context,

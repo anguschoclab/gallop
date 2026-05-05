@@ -48,7 +48,7 @@ const navSections = [
     items: [
       { to: "/races", label: "Races", icon: Calendar, exact: false },
       { to: "/market", label: "Market", icon: Store, exact: false },
-      { to: "/auction/sales", label: "Auction", icon: Gavel, exact: false },
+      { to: "/auction", label: "Auction", icon: Gavel, exact: false },
     ],
   },
 ] as const;

@@ -7,6 +7,7 @@ import type {
   JockeyStats,
   JockeyArchetype,
   Jockey,
+  Stable,
 } from "./types";
 import { TRAIT_VALUES, fiberDistanceModifier } from "./geneticsEngine";
 import type { CourseSpecification, TrackSection } from "./tracks";
@@ -14,6 +15,12 @@ import type { Rng } from "./rng";
 import { clamp } from "./math";
 import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
 import { calculateDosageMetrics, interpretDosageIndex } from "./dosage";
+import {
+  calculateOptimalRunningStyle,
+  calculateJockeyAggressiveness,
+  createJockeyStrategyAIState,
+} from "@/core/ai/jockeyStrategyAI";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 export type Runner = {
   horseId: string;
@@ -137,6 +144,10 @@ export function buildRunner(
   jockey?: Jockey,
   weight?: number,
   handedness?: "left" | "right" | "balanced",
+  npcAIManager?: NpcAIManager,
+  currentDay?: number,
+  stable?: Stable,
+  race?: Race,
 ): Runner {
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
@@ -248,7 +259,18 @@ export function buildRunner(
     0.2,
     1,
   );
-  const runningStyle: RunningStyle = h.runningStyle ?? "P";
+
+  // Use AI-driven running style if available for NPCs
+  let runningStyle: RunningStyle = h.runningStyle ?? "P";
+  if (npcAIManager && currentDay && stable && jockey && race && !owned) {
+    const aiState = npcAIManager.stableStates.get(stable.id);
+    if (aiState?.jockeyStrategyAI) {
+      const optimalStyle = calculateOptimalRunningStyle(aiState.jockeyStrategyAI, h, race, jockey, stable);
+      if (optimalStyle) {
+        runningStyle = optimalStyle;
+      }
+    }
+  }
   const staminaFactor = styleStaminaFactor(runningStyle, conditionStamina);
 
   // --- Gender Modifiers ---

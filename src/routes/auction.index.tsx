@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import { useAuctions } from "@/game/hooks/useMarketState";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,7 @@ import { NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/auction/sales")({
+export const Route = createFileRoute("/auction/")({
   component: AuctionPage,
 });
 

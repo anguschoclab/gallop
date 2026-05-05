@@ -11,8 +11,12 @@ import type { TrainingAIState } from "./trainingAI";
 import type { ClaimingAIState } from "./claimingAI";
 import type { AuctionAIState } from "./auctionAI";
 import type { JockeyAIState } from "./jockeyAI";
+import type { JockeyStrategyAIState } from "./jockeyStrategyAI";
 import type { FacilityAIState } from "./facilityAI";
 import type { MarketAIState } from "./marketAI";
+import type { UpkeepAIState } from "./upkeepAI";
+import type { WithdrawalAIState } from "./withdrawalAI";
+import type { HorseGenAIState } from "./horseGenAI";
 
 /**
  * Per-stable AI state that persists across all NPC decision-making
@@ -27,9 +31,13 @@ export interface StableAIState {
   claimingAI?: ClaimingAIState;
   auctionAI?: AuctionAIState;
   jockeyAI?: JockeyAIState;
+  jockeyStrategyAI?: JockeyStrategyAIState;
   campaignAI?: CampaignAIState;
   facilityAI?: FacilityAIState;
   marketAI?: MarketAIState;
+  upkeepAI?: UpkeepAIState;
+  withdrawalAI?: WithdrawalAIState;
+  horseGenAI?: HorseGenAIState;
 }
 
 /**

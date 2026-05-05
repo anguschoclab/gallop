@@ -52,7 +52,7 @@ function SchedulerPage() {
   const day = useGame((s) => s.day);
   const horses = useGame((s) => s.horses);
   const races = useGame((s) => s.races);
-  const campaigns = (useGame as any)((s) => s.campaigns ?? [], shallow);
+  const campaigns = (useGame as any)((s) => s.campaigns, shallow);
   const setCampaign = useGame((s) => s.setCampaign);
   const deleteCampaign = useGame((s) => s.deleteCampaign);
   const generateAutoCampaign = useGame((s) => s.generateAutoCampaign);

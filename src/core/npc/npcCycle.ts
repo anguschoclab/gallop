@@ -7,6 +7,19 @@ import {
   updateStableAIState,
   pruneAllLearningData,
 } from "@/core/ai/npcCycleAI";
+import {
+  selectFacilityToUpgrade,
+  calculateFacilityBudget,
+  createFacilityAIState,
+  recordFacilityInvestment,
+} from "@/core/ai/facilityAI";
+import { upgradeFacility } from "@/core/facilities";
+import type { Facility } from "@/core/facilities/facilityTypes";
+import {
+  shouldWithdrawHorse,
+  createWithdrawalAIState,
+  recordWithdrawalDecision,
+} from "@/core/ai/withdrawalAI";
 
 /**
  * NPC Cycle Result
@@ -16,6 +29,7 @@ export interface NpcCycleResult {
   races: Race[];
   jockeys: Jockey[];
   aiManager: NpcAIManager;
+  npcFacilities?: Record<string, Record<string, Facility>>;
 }
 
 /**
@@ -44,6 +58,7 @@ export function runNpcCycle(
   raceEntryDaysAhead: number = 3,
   pregnantIds: Set<string> = new Set(),
   aiManager: NpcAIManager = { stableStates: new Map(), globalDay: currentDay },
+  npcFacilities?: Record<string, Record<string, Facility>>,
 ): NpcCycleResult {
   // Skip if no NPC stables
   if (npcStables.length === 0) {
@@ -80,6 +95,66 @@ export function runNpcCycle(
   for (const stable of npcStables) {
     const stableAIState = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
     updatedAiManager.stableStates.set(stable.id, updateStableAIState(stableAIState, currentDay));
+
+    // Initialize facility AI if not present
+    if (!stableAIState.facilityAI) {
+      stableAIState.facilityAI = createFacilityAIState(stable);
+    }
+
+    // Initialize withdrawal AI if not present
+    if (!stableAIState.withdrawalAI) {
+      stableAIState.withdrawalAI = createWithdrawalAIState(stable);
+    }
+
+    // AI-driven claiming withdrawals
+    // Check horses entered in claiming races and decide whether to withdraw
+    const claimingRaces = races.filter((r) => r.raceClass === "Claiming" && r.day === currentDay + raceEntryDaysAhead);
+    for (const race of claimingRaces) {
+      const entry = race.entries.find((e) => {
+        const horse = horsesAfterTraining.find((h) => h.id === e.horseId);
+        return horse && horse.stableId === stable.id;
+      });
+      if (entry) {
+        const horse = horsesAfterTraining.find((h) => h.id === entry.horseId);
+        if (horse) {
+          const shouldWithdraw = shouldWithdrawHorse(stableAIState.withdrawalAI, horse, race, stable, currentDay);
+          if (shouldWithdraw) {
+            // Mark entry as withdrawn from claiming
+            entry.withdrawnFromClaiming = true;
+            // Record withdrawal decision for AI learning
+            recordWithdrawalDecision(stableAIState.withdrawalAI, horse, race, stable, true, "risk_assessment", currentDay);
+          }
+        }
+      }
+    }
+
+    // AI-driven facility upgrades (if facilities are available)
+    if (npcFacilities && npcFacilities[stable.id]) {
+      const facilities = npcFacilities[stable.id];
+      const facilityBudget = calculateFacilityBudget(stableAIState.facilityAI, stable, currentDay);
+      
+      if (facilityBudget.upgradeBudget > 0 && stable.cash >= facilityBudget.upgradeBudget) {
+        const facilityToUpgrade = selectFacilityToUpgrade(stableAIState.facilityAI, facilities as any, stable, currentDay);
+        if (facilityToUpgrade) {
+          const currentFacility = facilities[facilityToUpgrade];
+          const upgraded = upgradeFacility(currentFacility, currentDay);
+          if (upgraded) {
+            stable.cash -= upgraded.upgradeCost;
+            facilities[facilityToUpgrade] = upgraded;
+            // Record investment for AI learning
+            recordFacilityInvestment(
+              stableAIState.facilityAI,
+              facilityToUpgrade,
+              currentFacility.level,
+              upgraded.level,
+              upgraded.upgradeCost,
+              stable,
+              currentDay,
+            );
+          }
+        }
+      }
+    }
   }
 
   // Prune old learning data (90-day memory depth)
@@ -91,5 +166,6 @@ export function runNpcCycle(
     races: racesAfterEntry,
     jockeys,
     aiManager: updatedAiManager,
+    npcFacilities,
   };
 }

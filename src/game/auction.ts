@@ -5,6 +5,14 @@ import { PERSONALITY_CONFIG } from "./npcStables";
 import { createRng, hashStr, type Rng } from "./rng";
 import { generateUUID } from "./uuid";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
+import {
+  calculateBiddingValue,
+  calculateMaxBid,
+  shouldBidOnHorse,
+  createAuctionAIState,
+  recordBiddingDecision,
+} from "@/core/ai/auctionAI";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -152,6 +160,7 @@ const BUDGET_CAPS: Record<Stable["personality"], number> = {
 
 /**
  * Returns the next NPC bid amount, or null if the stable passes.
+ * AI-driven decisions when npcAIManager is provided.
  */
 export function calculateNpcBid(
   stable: Stable,
@@ -160,7 +169,42 @@ export function calculateNpcBid(
   saleKind: AuctionSaleKind,
   rng: ReturnType<typeof createRng>,
   allHorses?: readonly Horse[],
+  npcAIManager?: NpcAIManager,
+  currentDay?: number,
 ): number | null {
+  // Use AI-driven bidding if AI manager is available
+  if (npcAIManager && currentDay !== undefined) {
+    const aiState = npcAIManager.stableStates.get(stable.id);
+    if (aiState?.auctionAI) {
+      // Create a temporary lot object for AI evaluation
+      const tempLot: AuctionLot = {
+        id: `temp_${horse.id}`,
+        horseId: horse.id,
+        consignorStableId: undefined,
+        saleId: "temp",
+        reservePrice: 0,
+        hammerPrice: currentBid || undefined,
+        soldToStableId: undefined,
+        passed: false,
+        withdrawn: false,
+        bidHistory: [],
+      };
+
+      // Check if stable should bid using AI
+      const shouldBid = shouldBidOnHorse(aiState.auctionAI, horse, tempLot, stable, currentDay);
+      if (!shouldBid) return null;
+
+      // Calculate max bid using AI
+      const maxBid = calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay);
+
+      const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
+      if (nextBid > maxBid) return null;
+
+      return nextBid;
+    }
+  }
+
+  // Fall back to original logic if AI not available
   const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses);
   if (ceiling <= 0) return null;
 

@@ -1,6 +1,13 @@
 import type { PipelineContext } from "../pipeline";
 import { createRng, hashStr } from "@/game/rng";
 import { generateJockey } from "@/game/jockeyGen";
+import {
+  selectBestJockey,
+  shouldRetainJockey,
+  createJockeyAIState,
+  recordJockeyAssignment,
+} from "@/core/ai/jockeyAI";
+import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 
 /**
  * Phase: Jockey Management
@@ -12,7 +19,7 @@ export const jockeyPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, dailyRng } = context;
     let jockeys = state.jockeys ?? [];
-    let { npcStables, log } = state;
+    let { npcStables, log, npcAIManager } = state;
 
     // 1. Handle Contract Expirations
     jockeys = jockeys.map((j) => {
@@ -25,6 +32,21 @@ export const jockeyPhase = {
               day: newDay,
               text: `Jockey contract expired: ${j.name} is now a free agent.`,
             });
+          } else if (npcAIManager) {
+            // NPC jockey contract expired - use AI to decide on retention
+            const aiState = getOrCreateStableAIState(npcAIManager, stable, newDay);
+            if (!aiState.jockeyAI) {
+              aiState.jockeyAI = createJockeyAIState(stable);
+            }
+            const shouldRetain = shouldRetainJockey(aiState.jockeyAI, j, stable, newDay);
+            if (shouldRetain) {
+              // Re-hire the jockey
+              const signOnBonus = j.ridingFee * 20;
+              if (stable.cash >= signOnBonus) {
+                stable.cash -= signOnBonus;
+                return { ...j, stableId: stable.id, contractUntil: newDay + 90 };
+              }
+            }
           }
         }
         return { ...j, stableId: undefined, contractUntil: undefined };
@@ -41,25 +63,67 @@ export const jockeyPhase = {
         // Find best available jockeys
         const freeAgents = jockeys.filter((j) => !j.stableId);
         if (freeAgents.length > 0) {
-          // Elite stables pick high fame, others pick matching their tier
-          let candidates = freeAgents;
-          if (stable.tier === "elite") {
-            candidates = freeAgents.filter((j) => j.fame > 70);
-          } else if (stable.tier === "mid") {
-            candidates = freeAgents.filter((j) => j.fame > 40 && j.fame <= 75);
+          let chosen: typeof freeAgents[0] | null = null;
+
+          // Use AI-driven selection if AI manager is available
+          if (npcAIManager) {
+            const aiState = getOrCreateStableAIState(npcAIManager, stable, newDay);
+            if (!aiState.jockeyAI) {
+              aiState.jockeyAI = createJockeyAIState(stable);
+            }
+            // For AI selection, we need a representative horse from the stable
+            // Use the highest-rated horse as a proxy for the stable's needs
+            const stableHorses = state.horses.filter((h) => h.stableId === stable.id);
+            if (stableHorses.length > 0) {
+              const representativeHorse = stableHorses[0];
+              const bestJockey = selectBestJockey(aiState.jockeyAI, representativeHorse, freeAgents, stable);
+              if (bestJockey) {
+                chosen = bestJockey;
+              }
+            }
           }
 
-          if (candidates.length === 0) candidates = freeAgents; // Fallback
+          // Fall back to original logic if AI not available
+          if (!chosen) {
+            let candidates = freeAgents;
+            if (stable.tier === "elite") {
+              candidates = freeAgents.filter((j) => j.fame > 70);
+            } else if (stable.tier === "mid") {
+              candidates = freeAgents.filter((j) => j.fame > 40 && j.fame <= 75);
+            }
 
-          const chosen = dailyRng.pick(candidates);
-          // Hiring logic: deduct sign-on bonus from stable
-          const signOnBonus = chosen.ridingFee * 20; // 20 races worth of retainer
-          if (stable.cash >= signOnBonus) {
-            stable.cash -= signOnBonus;
-            // Update jockey in our local jockeys array
-            jockeys = jockeys.map((j) =>
-              j.id === chosen.id ? { ...j, stableId: stable.id, contractUntil: newDay + 90 } : j,
-            );
+            if (candidates.length === 0) candidates = freeAgents; // Fallback
+            chosen = dailyRng.pick(candidates);
+          }
+
+          if (chosen) {
+            // Hiring logic: deduct sign-on bonus from stable
+            const signOnBonus = chosen.ridingFee * 20; // 20 races worth of retainer
+            if (stable.cash >= signOnBonus) {
+              stable.cash -= signOnBonus;
+              // Update jockey in our local jockeys array
+              jockeys = jockeys.map((j) =>
+                j.id === chosen.id ? { ...j, stableId: stable.id, contractUntil: newDay + 90 } : j,
+              );
+
+              // Record jockey assignment for AI learning
+              if (npcAIManager) {
+                const aiState = getOrCreateStableAIState(npcAIManager, stable, newDay);
+                if (aiState.jockeyAI) {
+                  const stableHorses = state.horses.filter((h) => h.stableId === stable.id);
+                  const representativeHorse = stableHorses[0];
+                  recordJockeyAssignment(
+                    aiState.jockeyAI,
+                    chosen,
+                    representativeHorse,
+                    "hiring", // Use a placeholder raceId for hiring events
+                    stable,
+                    signOnBonus,
+                    newDay,
+                  );
+                }
+              }
+            }
           }
         }
       }
@@ -85,6 +149,7 @@ export const jockeyPhase = {
         jockeys,
         npcStables,
         log,
+        npcAIManager,
       },
     };
   },

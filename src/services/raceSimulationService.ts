@@ -1,4 +1,5 @@
 import type { Horse, Race, Jockey } from "@/game/types";
+import type { PipelineContext } from "@/core/time/pipeline";
 import {
   buildRunner,
   stepRunner,
@@ -11,6 +12,7 @@ import { generateHorse } from "@/game/horseGen";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import { calculateAssignedWeight } from "@/game/npcRaceEntry";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**
  * Race simulation orchestration with dependency injection
@@ -21,6 +23,9 @@ export interface RaceSimulationDependencies {
   race: Race;
   horses: Horse[];
   jockeys: Jockey[];
+  npcStables?: any[];
+  npcAIManager?: NpcAIManager;
+  currentDay?: number;
 }
 
 export interface SimulationResult {
@@ -51,7 +56,7 @@ export interface RaceFieldResult {
  * callers can persist them into game state (avoids ghost IDs in results).
  */
 export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFieldResult {
-  const { race, horses } = dependencies;
+  const { race, horses, npcStables, npcAIManager, currentDay } = dependencies;
   const conditions = getConditionsModifier(race);
   const fillerHorses: Horse[] = [];
   const surface = race.surface || race.graded?.surface;
@@ -111,6 +116,9 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
       const jockeyObj = entryData.jockeyId
         ? dependencies.jockeys.find((j) => j.id === entryData.jockeyId)
         : undefined;
+      // Get stable for AI-driven decisions
+      const stableObj = horse.stableId && npcStables ? npcStables.find((s) => s.id === horse.stableId) : undefined;
+      
       runners.push(
         buildRunner(
           horse,
@@ -122,6 +130,10 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
           jockeyObj,
           entryData.weight,
           race.handedness,
+          npcAIManager,
+          currentDay,
+          stableObj,
+          race,
         ),
       );
     }

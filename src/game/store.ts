@@ -571,6 +571,10 @@ export const useGame = create<GameState & Actions>()(
       auctions: [],
       jockeys: [],
       awards: [],
+      campaigns: [],
+      expenses: [],
+      transactions: [],
+      replays: [],
 
       newGame: async () => {
         // Clear OPFS storage when starting a new game
