@@ -136,6 +136,16 @@ export type JockeyTrait =
   | "long_straight_pro" // Bonus surge on 500m+ straights
   | "gate_master";      // Higher chance of clean break
 
+// Racing silk colors and pattern for visual identification
+export type JockeySilkPattern = "solid" | "stripes" | "halves" | "quarters" | "chevron" | "diamond" | "star" | "sash" | "hoops";
+
+export type JockeySilk = {
+  pattern: JockeySilkPattern;
+  primary: string;   // hex color (jacket main)
+  secondary: string; // hex color (pattern accent)
+  cap: string;       // hex color (cap)
+};
+
 export type Jockey = {
   id: string;
   name: string;
@@ -143,6 +153,7 @@ export type Jockey = {
   archetype: JockeyArchetype;
   stats: JockeyStats;
   traits: JockeyTrait[];
+  silk: JockeySilk;       // Racing silks (jacket colors and pattern)
   stableId?: string;      // If retained by a stable
   contractUntil?: number; // Day the contract ends
   careerStarts: number;
