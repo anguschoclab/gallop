@@ -23,6 +23,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     raceHistory: [],
     owned: false,
     fame: 0,
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }
@@ -45,6 +46,7 @@ function mkStable(
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality,
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }

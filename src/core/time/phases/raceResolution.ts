@@ -25,6 +25,7 @@ import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
 } from "@/core/breeding/populationGenetics";
+import { recalcStandingFee } from "@/core/breeding/stallions";
 import type { Race, Horse } from "@/game/types";
 import { getCurrentYear } from "@/game/raceSchedule";
 import type { ClaimingIntent } from "@/core/resolver/intents";

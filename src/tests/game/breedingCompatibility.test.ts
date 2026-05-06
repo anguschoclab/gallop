@@ -29,6 +29,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     raceHistory: [],
     owned: false,
     fame: 0,
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }

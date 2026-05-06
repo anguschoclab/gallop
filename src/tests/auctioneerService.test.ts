@@ -110,6 +110,7 @@ describe("auctioneerService", () => {
     roarerRisk: 0.05,
     ocdRisk: 0.05,
     racingViable: true,
+    lifecycleStatus: "active" as const,
   };
 
   const mockConsignor: Stable = {

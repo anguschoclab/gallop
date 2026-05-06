@@ -120,6 +120,7 @@ describe("Auction Lifecycle Integration", () => {
       roarerRisk: 0.05,
       ocdRisk: 0.05,
       racingViable: true,
+    lifecycleStatus: "active" as const,
     };
 
     const npcStables = [
@@ -310,6 +311,7 @@ describe("Auction Lifecycle Integration", () => {
       roarerRisk: 0.05,
       ocdRisk: 0.05,
       racingViable: true,
+    lifecycleStatus: "active" as const,
     };
 
     const result = resolveAuctionSale(sale, npcStables, [horse]);
@@ -468,6 +470,7 @@ describe("Auction Lifecycle Integration", () => {
       roarerRisk: 0.05,
       ocdRisk: 0.05,
       racingViable: true,
+    lifecycleStatus: "active" as const,
     };
 
     const npcStables: Stable[] = [
@@ -689,6 +692,7 @@ describe("Auction Lifecycle Integration", () => {
       roarerRisk: 0.05,
       ocdRisk: 0.05,
       racingViable: true,
+    lifecycleStatus: "active" as const,
     };
 
     const stable: Stable = {
