@@ -62,11 +62,20 @@ export function NewGameWizard() {
   const stableNameValid = stableName.trim().length > 0 && stableName.length <= 40;
   const ownerNameValid = ownerName.trim().length > 0 && ownerName.length <= 40;
 
+  const isHexColor = (v: unknown): v is string =>
+    typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v);
+  const silkValid =
+    !!silk &&
+    isHexColor(silk.primary) &&
+    isHexColor(silk.secondary) &&
+    isHexColor(silk.cap) &&
+    (SILK_PATTERNS as readonly string[]).includes(silk.pattern);
+
   const canProceed =
     (step === 0 && stableNameValid && ownerNameValid) ||
-    (step === 1 && silk) ||
+    (step === 1 && silkValid) ||
     (step === 2 && !!selectedBackstory) ||
-    step === 3;
+    (step === 3 && silkValid && !!selectedBackstory && stableNameValid && ownerNameValid);
 
   const handleStart = async () => {
     if (!selectedBackstory) return;
