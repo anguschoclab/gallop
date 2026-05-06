@@ -226,10 +226,6 @@ function LiveRace() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [finished]);
 
-  // Legacy simple announcer is now integrated into the NarrativeGenerator
-  // Keeping this effect empty to avoid conflicts but preserving the tick dependency if needed elsewhere
-  useEffect(() => {}, [tick, runners, finished]);
-
   // Early return checks after all hooks
   if (!race) throw notFound();
   if (race.resolved) {
