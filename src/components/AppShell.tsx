@@ -163,7 +163,8 @@ export function AppShell() {
             </Link>
             <Button
               onClick={() => {
-                advanceMultipleDays(7);
+                // Use setTimeout to ensure the click completes before starting the async operation
+                setTimeout(() => advanceMultipleDays(7), 0);
               }}
               className="col-span-1 tabular-nums"
               size="sm"
@@ -174,7 +175,8 @@ export function AppShell() {
             </Button>
             <Button
               onClick={() => {
-                advanceMultipleDays(30);
+                // Use setTimeout to ensure the click completes before starting the async operation
+                setTimeout(() => advanceMultipleDays(30), 0);
               }}
               className="col-span-1 tabular-nums"
               size="sm"
@@ -217,7 +219,7 @@ export function AppShell() {
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    startNewGame({});
+                    startNewGame(undefined);
                     setNewGameDialogOpen(false);
                   }}
                 >

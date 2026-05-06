@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,8 +60,8 @@ export const Route = createFileRoute("/races")({
 function RacesPage() {
   const { grade, country, surface, track, owned, q } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const races = useGame((s) => s.races);
-  const horses = useGame((s) => s.horses);
+  const races = (useGame as any)((s: any) => s.races, shallow);
+  const horses = (useGame as any)((s: any) => s.horses, shallow);
   const day = useGame((s) => s.day);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [enteringRace, setEnteringRace] = useState<Race | null>(null);

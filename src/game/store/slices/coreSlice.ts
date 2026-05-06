@@ -383,6 +383,9 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
       // Pre-compute player race days for O(1) lookup
       const playerRaceDays = computePlayerRaceDays(s.races, s.day + 1, s.day + n);
 
+      // Batch size - yield control every 5 days to balance performance and responsiveness
+      const batchSize = 5;
+
       for (let i = 0; i < n; i++) {
         const currentS = get();
         const nextDay = currentS.day + 1;
@@ -399,6 +402,11 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
         }
 
         await get().advanceDay();
+
+        // Yield control to browser every batchSize days to prevent UI freeze
+        if (i % batchSize === 0 && i > 0) {
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        }
       }
     },
 

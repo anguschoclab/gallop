@@ -32,7 +32,8 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
   const [wantToClaim, setWantToClaim] = useState(false);
 
-  const horses = useGame((s) => s.horses.filter((h) => h.owned));
+  const allHorses = (useGame as any)((s: any) => s.horses, shallow);
+  const horses = useMemo(() => allHorses.filter((h: any) => h.owned), [allHorses]);
   const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
   const enterRace = useGame((s) => s.enterRace);
   const assignJockey = useGame((s) => s.assignJockey);

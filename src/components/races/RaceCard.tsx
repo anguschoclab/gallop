@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 
 interface RaceCardProps {
   race: any;
@@ -18,7 +19,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
   const gradeLabel = race.graded?.grade;
   const gradeColor = gradeLabel ? getGradeColorClass(gradeLabel) : "bg-muted text-muted-foreground";
 
-  const horses = useGame((s) => s.horses);
+  const horses = (useGame as any)((s: any) => s.horses, shallow);
   const classBonus = useGame((s) => {
     // Calculate class bonus for odds
     if (race.graded?.grade) {
