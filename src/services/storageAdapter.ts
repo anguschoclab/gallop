@@ -13,6 +13,7 @@ export const STORAGE_KEYS = {
   RACE_FILTERS: "gallop_race_filters",
   RACE_HISTORY_LIMIT: "gallop_race_history_limit",
   RACES_DAY_JUMP: "gallop_races_day_jump",
+  NEW_GAME_WIZARD: "gallop_new_game_wizard",
 } as const;
 
 const GAME_STATE_FILENAME = "gameState.json";
@@ -215,4 +216,55 @@ export function clearSettings(): void {
 export async function clearAllGameData(): Promise<void> {
   await clearGameState();
   clearSettings();
+}
+
+// Wizard state type
+export interface WizardState {
+  step: number;
+  stableName: string;
+  ownerName: string;
+  silk: {
+    pattern: string;
+    primary: string;
+    secondary: string;
+    cap: string;
+  };
+  backstoryId: string;
+}
+
+/**
+ * Load wizard state from localStorage
+ */
+export function loadWizardState(): WizardState | null {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.NEW_GAME_WIZARD);
+    if (stored) {
+      return JSON.parse(stored) as WizardState;
+    }
+  } catch (error) {
+    console.error("Failed to load wizard state from localStorage:", error);
+  }
+  return null;
+}
+
+/**
+ * Save wizard state to localStorage
+ */
+export function saveWizardState(state: WizardState): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.NEW_GAME_WIZARD, JSON.stringify(state));
+  } catch (error) {
+    console.error("Failed to save wizard state to localStorage:", error);
+  }
+}
+
+/**
+ * Clear wizard state from localStorage
+ */
+export function clearWizardState(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEYS.NEW_GAME_WIZARD);
+  } catch (error) {
+    console.error("Failed to clear wizard state from localStorage:", error);
+  }
 }

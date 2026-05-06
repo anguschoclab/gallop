@@ -41,6 +41,7 @@ const navSections = [
       { to: "/stable", label: "Stable", icon: Trophy, exact: false },
       { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
       { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
+      { to: "/hall-of-fame", label: "Hall of Fame", icon: Trophy, exact: false },
     ],
   },
   {
@@ -54,6 +55,7 @@ const navSections = [
 ] as const;
 
 export function AppShell() {
+  const navigate = useNavigate();
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const horses = useGame((s) => s.horses);

@@ -118,7 +118,8 @@ describe("isStallionAvailable", () => {
         lifetimeStakesFoals: 0,
         lifetimeG1Foals: 0,
         retiredOnDay: 1,
-        ...over,
+        lifecycleStatus: "active" as const,
+    ...over,
       },
     });
   }

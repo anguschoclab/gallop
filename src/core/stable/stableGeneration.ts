@@ -25,7 +25,7 @@ export type StablePoolEntry = Omit<
 >;
 
 // Filler stable name components for generation
-const FILLER_PREFIXES = [
+export const FILLER_PREFIXES = [
   "Oak",
   "Pine",
   "Maple",
@@ -81,7 +81,7 @@ const FILLER_PREFIXES = [
   "Glory",
 ];
 
-const FILLER_SUFFIXES = [
+export const FILLER_SUFFIXES = [
   "Racing",
   "Stables",
   "Farm",

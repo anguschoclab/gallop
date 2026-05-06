@@ -22,8 +22,39 @@ export interface CoreState {
 
 /**
  * Default core state for new games
+ * When options are provided, uses the backstory to customize starting resources
  */
-export function createDefaultCoreState(): CoreState {
+export function createDefaultCoreState(options?: NewGameOptions): CoreState {
+  if (options) {
+    const { profile, backstory } = options;
+    const setupRng = createRng(hashStr(profile.stableName));
+
+    // Generate player horses from backstory spec
+    const playerHorses: Horse[] = [];
+    for (const spec of backstory.horses) {
+      for (let i = 0; i < spec.count; i++) {
+        const horse = generateHorse({ tier: spec.tier, owned: true }, setupRng);
+        // Set horse silk to player's primary color for visual identification
+        horse.silk = profile.silk.primary;
+        playerHorses.push(horse);
+      }
+    }
+
+    return {
+      day: 1,
+      cash: backstory.startingCash,
+      horses: playerHorses,
+      races: [],
+      log: [
+        {
+          day: 1,
+          text: `${profile.stableName} opens its doors. Welcome, ${profile.ownerName}.`,
+        },
+      ],
+    };
+  }
+
+  // Default behavior when no options provided (backward compatibility)
   return {
     day: 1,
     cash: 50000,

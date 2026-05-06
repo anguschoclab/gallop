@@ -17,6 +17,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     raceHistory: [],
     owned: true,
     fame: 0,
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }
@@ -33,6 +34,7 @@ function mkRace(overrides: Partial<Race> = {}): Race {
     fieldSize: 8,
     entries: [],
     resolved: false,
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }

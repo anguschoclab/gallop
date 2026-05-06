@@ -11,9 +11,7 @@ import type {
 } from "@/core/resolver/impacts";
 import { generateUUID } from "@/game/uuid";
 import type { Pregnancy } from "@/game/types";
-
-// Gestation period in days
-const GESTATION_DAYS = 30;
+import { GESTATION_DAYS } from "@/game/constants/gameConstants";
 
 /**
  * Breeding Resolution Phase (Order 25)
@@ -38,8 +36,11 @@ export const breedingResolutionPhase: PipelinePhase = {
 
       if (!sire || !dam) continue;
 
-      // Check if sire is external (belongs to NPC stable)
-      const isExternal = !!sire.stableId;
+      // Check if sire is external (belongs to a different stable than the breeder)
+      const isExternal = 
+        intent.source === "player" 
+          ? !!sire.stableId 
+          : sire.stableId !== intent.sourceId;
       let studFee = 0;
 
       if (isExternal && sire.stableId) {

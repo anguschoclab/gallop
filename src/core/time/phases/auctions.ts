@@ -27,8 +27,8 @@ export const auctionsPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     let auctions: AuctionSale[] = [...(state.auctions ?? [])];
-    const logs = [...context.logs];
-    const impacts = [...context.impacts];
+    const logs = [...(context.logs ?? [])];
+    const impacts = [...(context.impacts ?? [])];
     const doy = dayOfYear(newDay);
 
     // Eight-sale calendar — spaced through the year so the player encounters

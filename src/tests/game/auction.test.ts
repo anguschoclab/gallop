@@ -23,6 +23,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     raceHistory: [],
     owned: false,
     fame: 0,
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }
@@ -45,6 +46,7 @@ function mkStable(
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality,
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }
@@ -196,7 +198,7 @@ describe("calculateNpcBid", () => {
 
 describe("generateAuctionLots", () => {
   it("returns AuctionSale with correct kind, day, name and resolved=false", () => {
-    const sale = generateAuctionLots(50, [], [], "yearling", "Test Yearling Sale");
+    const sale = generateAuctionLots(50, [], [], "yearling", "Test Yearling Sale", createRng(1));
     expect(sale.kind).toBe("yearling");
     expect(sale.day).toBe(50);
     expect(sale.name).toBe("Test Yearling Sale");
@@ -206,7 +208,7 @@ describe("generateAuctionLots", () => {
   it("all lots have reservePrice > 0, passed=false, withdrawn=false", () => {
     const stable = mkStable("breeder", "mid");
     const horses: Horse[] = [];
-    const sale = generateAuctionLots(10, [stable], horses, "yearling", "Sale");
+    const sale = generateAuctionLots(10, [stable], horses, "yearling", "Sale", createRng(2));
     for (const lot of sale.lots) {
       expect(lot.reservePrice).toBeGreaterThan(0);
       expect(lot.passed).toBe(false);
@@ -215,7 +217,7 @@ describe("generateAuctionLots", () => {
   });
 
   it("sale has an id", () => {
-    const sale = generateAuctionLots(10, [], [], "weanling", "W Sale");
+    const sale = generateAuctionLots(10, [], [], "weanling", "W Sale", createRng(3));
     expect(typeof sale.id).toBe("string");
     expect(sale.id.length).toBeGreaterThan(0);
   });

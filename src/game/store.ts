@@ -38,6 +38,7 @@ import { getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "@/core/breeding/line
 import { generateUUID } from "./uuid";
 import { resolveFoaling } from "./foalGen";
 import { beyerFigure, distanceBucket, setCalibratedPars, expectedBeyer } from "./beyer";
+import { createDefaultCoreState, createDefaultMarketState, createDefaultBreedingState, createDefaultRacingState, createDefaultSystemsState, type NewGameOptions } from "./state";
 import { runRaceToCompletion, type Runner } from "./raceSim";
 import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
@@ -47,7 +48,7 @@ import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
 } from "@/core/breeding/populationGenetics";
-import { recalcStandingFee } from "@/core/breeding/stallions";
+import { recalcStandingFee, calculateRecommendedStudFee } from "@/core/breeding/stallions";
 import { isHorseEligibleForClaimingPrice } from "./claiming";
 import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
 import { leaderboardPhase } from "@/core/time/phases/leaderboardPhase";
@@ -67,6 +68,10 @@ import { auctionsPhase } from "@/core/time/phases/auctions";
 import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
 import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
 import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
+import { stallionRetirementPhase } from "@/core/time/phases/stallionRetirement";
+import { pastureRetirementPhase } from "@/core/time/phases/pastureRetirement";
+import { hallOfFamePhase } from "@/core/time/phases/hallOfFame";
+import { horseDeathPhase } from "@/core/time/phases/horseDeath";
 import { resolveLiveRaceWithImpacts } from "./liveRaceResolution";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
@@ -118,267 +123,23 @@ import { upgradeFacility } from "@/core/facilities";
 
 export type ActionResult = { ok: true } | { ok: false; reason: string };
 
-const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
-const UPKEEP_PER_HORSE = 50;
-export const TRAINING_COST = 75;
 const TRAINING_SLOTS_PER_DAY = 2;
-const STARTING_CASH = 5000;
-const BREEDING_FEE = 2000;
 
 // =============================================================================
-// Race Resolution Helpers
+// Race Resolution Helpers (now imported from helpers/raceResolution.ts)
 // =============================================================================
 
-function computePayoutSplits(purse: number, finisherCount: number): number[] {
-  const splits: number[] = [];
-  let runningPaid = 0;
-  for (let i = 0; i < Math.min(PRIZE_SPLIT.length, finisherCount); i++) {
-    const pay = Math.round(purse * PRIZE_SPLIT[i]);
-    splits.push(pay);
-    runningPaid += pay;
-  }
-  // Route any unpaid remainder to the last paid finisher
-  if (splits.length > 0 && runningPaid < purse && finisherCount >= PRIZE_SPLIT.length) {
-    splits[splits.length - 1] += purse - runningPaid;
-  }
-  return splits;
-}
-
-type RankedResult = { horseId: string; position: number; time: number; dnf: boolean };
-
-function sanitizeAndRankResults(
-  rawResult: { horseId: string; time: number }[],
-  raceId: string,
-): { ranked: RankedResult[]; finishers: RankedResult[]; dnfs: RankedResult[] } {
-  const tieRng = createRng(hashStr(raceId) ^ 0x7e57);
-  const enriched = rawResult.map((r) => ({ ...r, dnf: !Number.isFinite(r.time) || r.time <= 0 }));
-  const finishersRaw = enriched
-    .filter((r) => !r.dnf)
-    .sort((a, b) => {
-      if (a.time === b.time) return tieRng.next() - 0.5;
-      return a.time - b.time;
-    });
-  const finishers = finishersRaw.map((r, idx) => ({ ...r, position: idx + 1 }));
-  const dnfs = enriched
-    .filter((r) => r.dnf)
-    .map((r, idx) => ({ ...r, position: finishersRaw.length + idx + 1 }));
-  const ranked = [...finishers, ...dnfs];
-  return { ranked, finishers, dnfs };
-}
-
-function detectPhotoFinish(finishers: RankedResult[]): boolean {
-  for (let i = 1; i < finishers.length; i++) {
-    if (Math.abs(finishers[i].time - finishers[i - 1].time) < 0.05) {
-      return true;
-    }
-  }
-  return false;
-}
-
 // =============================================================================
-// Day Advancement Helpers
+// Day Advancement Helpers (now imported from helpers/market.ts)
 // =============================================================================
 
-function ageHorses(horses: Horse[], newDay: number): Horse[] {
-  // Per-hemisphere "universal birthday": Northern horses age up on Jan 1 (day-
-  // of-year 1), Southern on Aug 1 (DoY 213). Replaces the prior global tick.
-  const northernTick = isUniversalBirthday(newDay, "Northern");
-  const southernTick = isUniversalBirthday(newDay, "Southern");
-  if (!northernTick && !southernTick) return horses;
-  return horses.map((h) => {
-    const ticks =
-      (h.hemisphere === "Northern" && northernTick) ||
-      (h.hemisphere === "Southern" && southernTick);
-    if (!ticks) return h;
-    const newAge = h.age + 1;
-    const newGender =
-      newAge >= 3
-        ? h.gender === "colt"
-          ? "horse"
-          : h.gender === "filly"
-            ? "mare"
-            : h.gender
-        : h.gender;
-    return { ...h, age: newAge, gender: newGender };
-  });
-}
+// =============================================================================
+// Pregnancy Resolution Helpers (now imported from helpers/pregnancy.ts)
+// =============================================================================
 
-export function refreshMarket(currentMarket: Horse[], rng: Rng): Horse[] {
-  let market = [...currentMarket];
-  if (market.length > 3) market = market.slice(2);
-  while (market.length < 5) {
-    const r = rng.next();
-    const tier = r < 0.5 ? "budget" : r < 0.85 ? "mid" : "elite";
-    market.push(generateHorse({ tier: tier as never }, rng));
-  }
-  return market;
-}
-
-export function generateUpcomingRaces(currentRaces: Race[], newDay: number, rng: Rng): Race[] {
-  // Use the new track-based schedule system
-  return generateScheduledRaces(currentRaces, newDay, TRACK_SCHEDULES, rng);
-}
-
-export function pruneOldRaces(races: Race[], newDay: number): Race[] {
-  return races.filter((r) => {
-    if (r.graded) return true;
-    if (!r.resolved) return true;
-    return r.day > newDay - 30;
-  });
-}
-
-type PregnancyResult = {
-  pregnancies: Pregnancy[];
-  foals: Horse[];
-  cashAdjustment: number;
-  logs: { day: number; text: string }[];
-};
-
-export function resolvePregnancies(
-  currentPregnancies: Pregnancy[],
-  horses: Horse[],
-  newDay: number,
-): PregnancyResult {
-  const newLogs: { day: number; text: string }[] = [];
-  const pregnancies = currentPregnancies.map((p) => ({ ...p }));
-  const damsById = new Map(horses.map((h) => [h.id, h]));
-  const foals: Horse[] = [];
-  let cashAdjustment = 0;
-
-  for (const p of pregnancies) {
-    if (p.resolved) continue;
-    if (newDay < p.dueDay) continue;
-    const sire = damsById.get(p.sireId);
-    const dam = damsById.get(p.damId);
-    const outcome = resolveFoaling(p, sire, dam);
-
-    if (outcome.kind === "live") {
-      const foal = outcome.foal;
-      if (dam) {
-        if (!dam.blueHenStatus) {
-          dam.blueHenStatus = {
-            isBlueHen: false,
-            stakesWinnersProduced: 0,
-            group1WinnersProduced: 0,
-            blueHenScore: 0,
-            foalsProduced: dam.foalsProduced?.length ?? 0,
-          };
-        }
-        dam.blueHenStatus.foalsProduced = (dam.foalsProduced?.length ?? 0) + 1;
-        const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
-        const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
-        dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
-        if (
-          dam.blueHenStatus.stakesWinnersProduced >= 2 ||
-          dam.blueHenStatus.group1WinnersProduced >= 1
-        ) {
-          dam.blueHenStatus.isBlueHen = true;
-        }
-        if (!dam.foalsProduced) dam.foalsProduced = [];
-        dam.foalsProduced.push(foal.id);
-        dam.lastFoaledDay = newDay;
-      }
-
-      // Update sire's lifetime foals count using lineage helper
-      if (sire && sire.stud) {
-        sire.stud.lifetimeFoals = getFoalsBy({ horses: [...horses, foal] }, sire.id).length;
-      }
-
-      p.resolved = true;
-      p.foalId = foal.id;
-      foals.push(foal);
-
-      if (outcome.transmission) {
-        foal.healthStatus = "covering_sickness";
-        foal.healthStatusDay = newDay;
-        newLogs.push({
-          day: newDay,
-          text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). Covering sickness detected.`,
-        });
-      } else {
-        newLogs.push({
-          day: newDay,
-          text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).`,
-        });
-      }
-    } else {
-      // Live Foal Guarantee handling
-      const canRefund = p.liveFoalGuarantee && !p.refunded;
-      const canRetry = p.liveFoalGuarantee && (p.reBreedingAttempts || 0) < 3;
-      if (canRetry) {
-        if (canRefund) {
-          cashAdjustment += BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE;
-          p.refunded = true;
-        }
-        p.resolved = false;
-        p.dueDay = newDay + GESTATION_DAYS;
-        p.reBreedingAttempts = (p.reBreedingAttempts || 0) + 1;
-        newLogs.push({
-          day: newDay,
-          text: `Foal ${outcome.type}${canRefund ? ` — Live Foal Guarantee refunded $${(BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE).toLocaleString()}.` : "."} Re-breeding ${p.damName} to ${p.sireName}. Attempt ${p.reBreedingAttempts}/3. New due day ${p.dueDay}.`,
-        });
-      } else {
-        p.resolved = true;
-        newLogs.push({
-          day: newDay,
-          text: `Foal ${outcome.type}${p.liveFoalGuarantee ? ". Live Foal Guarantee attempts exhausted." : "."}`,
-        });
-      }
-    }
-  }
-
-  return { pregnancies, foals, cashAdjustment, logs: newLogs };
-}
-
-type RecalibrationResult = {
-  calibratedPars: Record<number, number> | undefined;
-  lastCalibrationDay: number;
-  log: { day: number; text: string } | null;
-};
-
-export function maybeRecalibratePars(
-  currentPars: Record<number, number> | undefined,
-  lastCalibrationDay: number,
-  paceSamples: Record<number, number[]> | undefined,
-  newDay: number,
-): RecalibrationResult {
-  if (newDay - lastCalibrationDay < SEASON_DAYS) {
-    return { calibratedPars: currentPars, lastCalibrationDay, log: null };
-  }
-  const recomputed = recomputePars(paceSamples ?? {});
-  if (Object.keys(recomputed).length === 0) {
-    return { calibratedPars: currentPars, lastCalibrationDay, log: null };
-  }
-  setCalibratedPars(recomputed);
-  const buckets = Object.keys(recomputed).length;
-  return {
-    calibratedPars: recomputed,
-    lastCalibrationDay: newDay,
-    log: {
-      day: newDay,
-      text: `Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.`,
-    },
-  };
-}
-
-const LIVE_FOAL_GUARANTEE_FEE = 1000; // Additional fee for live foal guarantee
-const GESTATION_DAYS = 30;
-const SEASON_DAYS = 30;
-const MAX_SAMPLES_PER_BUCKET = 60;
-
-// Recompute par-time per distance bucket from collected winner finish times.
-// Uses a slightly-faster-than-median (40th percentile) to match the
-// "above-average winner" intent of Beyer par.
-function recomputePars(samples: Record<number, number[]>): Record<number, number> {
-  const out: Record<number, number> = {};
-  for (const [k, arr] of Object.entries(samples)) {
-    if (arr.length < 3) continue;
-    const sorted = [...arr].sort((a, b) => a - b);
-    const idx = Math.floor(sorted.length * 0.4);
-    out[Number(k)] = sorted[idx];
-  }
-  return out;
-}
+// =============================================================================
+// Beyer Recalibration Helpers (now imported from helpers/beyer.ts)
+// =============================================================================
 
 type Actions = {
   newGame: () => void;
@@ -406,7 +167,7 @@ type Actions = {
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
   breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => ActionResult;
-  retireToStud: (horseId: string, fee: number, bookSize: number) => ActionResult;
+  retireToPasture: (horseId: string) => ActionResult;
   hireJockey: (jockeyId: string) => ActionResult;
   rerollJockeySilk: (jockeyId: string) => ActionResult;
   assignJockey: (raceId: string, horseId: string, jockeyId: string) => ActionResult;
@@ -456,6 +217,8 @@ type Actions = {
   updateAudioSettings: (settings: Partial<AudioSettings>) => void;
   resetSettings: () => void;
   upgradeFacility: (facilityType: string) => ActionResult;
+  updateStudFee: (horseId: string, newFee: number) => ActionResult;
+  retireToStud: (horseId: string) => ActionResult;
 };
 
 function initialState(): GameState {
@@ -690,6 +453,10 @@ export const useGame = create<GameState & Actions>()(
         if (race.entries.length >= race.fieldSize) return fail("Race field is full.");
         if (!horse.racingViable)
           return fail(`${horse.name} is not racing viable due to genetic condition.`);
+        if (horse.lifecycleStatus === "retired")
+          return fail(`${horse.name} is retired and cannot race.`);
+        if (horse.lifecycleStatus === "deceased")
+          return fail(`${horse.name} is deceased and cannot race.`);
         // Economic guard: refuse races whose entry fee exceeds 50% of purse —
         // this catches misconfigured races and protects the player's bankroll.
         if (race.entryFee > race.purse * 0.5) return fail("Entry fee exceeds 50% of purse.");
@@ -768,6 +535,7 @@ export const useGame = create<GameState & Actions>()(
           runners,
           s.horses,
           s.jockeys ?? [],
+          s.npcStables,
           s.day,
         );
         set({
@@ -883,7 +651,9 @@ export const useGame = create<GameState & Actions>()(
           studFee = sire!.stud.standingFee;
         }
 
-        const totalFee = BREEDING_FEE + (liveFoalGuarantee ? LIVE_FOAL_GUARANTEE_FEE : 0) + studFee;
+        const totalFee = isExternal
+          ? BREEDING_FEE + (liveFoalGuarantee ? (LIVE_FOAL_GUARANTEE_FEE as number) : 0) + studFee
+          : 0;
         if (s.cash < totalFee) return fail("Insufficient cash for breeding fee.");
 
         // Enqueue BreedingIntent for next day advance
@@ -915,19 +685,16 @@ export const useGame = create<GameState & Actions>()(
         return { ok: true };
       },
 
-      retireToStud: (horseId, fee, bookSize) => {
+      retireToPasture: (horseId) => {
         const s = get();
         const horse = s.horses.find((h) => h.id === horseId);
         const fail = (reason: string): ActionResult => {
-          set({ log: [{ day: s.day, text: `Retire to stud: ${reason}` }, ...s.log].slice(0, 50) });
+          set({ log: [{ day: s.day, text: `Retire to pasture: ${reason}` }, ...s.log].slice(0, 50) });
           return { ok: false, reason };
         };
         if (!horse) return fail("Horse not found.");
         if (!horse.owned) return fail("You don't own this horse.");
-        if (horse.gender !== "horse" && horse.gender !== "colt")
-          return fail("Only colts and horses can be retired to stud.");
-        if (horse.age < 4) return fail("Stallions must be age 4+ to retire to stud.");
-        if (horse.stud?.atStud) return fail("Already standing at stud.");
+        if (horse.lifecycleStatus !== "active") return fail("Horse is already retired or deceased.");
         // Block retirement if entered in any unresolved race
         const enteredRaces = s.races.filter(
           (r) => !r.resolved && r.entries.some((e) => e.horseId === horseId),
@@ -936,19 +703,7 @@ export const useGame = create<GameState & Actions>()(
 
         const updatedHorses = s.horses.map((h) =>
           h.id === horseId
-            ? {
-                ...h,
-                stud: {
-                  atStud: true,
-                  standingFee: Math.max(500, fee),
-                  bookSize: Math.max(20, Math.min(250, bookSize)),
-                  seasonBookings: 0,
-                  lifetimeFoals: 0,
-                  lifetimeStakesFoals: 0,
-                  lifetimeG1Foals: 0,
-                  retiredOnDay: s.day,
-                },
-              }
+            ? { ...h, lifecycleStatus: "retired" as const, retiredOnDay: s.day }
             : h,
         );
         set({
@@ -956,7 +711,7 @@ export const useGame = create<GameState & Actions>()(
           log: [
             {
               day: s.day,
-              text: `${horse.name} retired to stud at $${fee.toLocaleString()} (book ${bookSize}).`,
+              text: `${horse.name} has been retired to pasture.`,
             },
             ...s.log,
           ].slice(0, 50),
@@ -1145,6 +900,10 @@ export const useGame = create<GameState & Actions>()(
           jockeyPhase,
           pregnancyPhase,
           npcCyclePhase,
+          stallionRetirementPhase,
+          pastureRetirementPhase,
+          hallOfFamePhase,
+          horseDeathPhase,
           auctionsPhase,
           leaderboardPhase,
           awardsPhase,
@@ -1638,39 +1397,103 @@ export const useGame = create<GameState & Actions>()(
         });
       },
 
-      upgradeFacility: (facilityType) => {
+      upgradeFacility: (facilityType: string) => {
         const s = get();
         const facility = s.facilities?.[facilityType as keyof typeof s.facilities];
-
-        if (!facility) {
-          return { ok: false, reason: "Facility not found" };
-        }
-
-        const currentDay = s.day;
-        const upgraded = upgradeFacility(facility, currentDay);
-
-        if (!upgraded) {
-          return { ok: false, reason: "Facility already at maximum level" };
-        }
-
-        const cost = facility.upgradeCost;
-        if (s.cash < cost) {
-          return { ok: false, reason: "Insufficient funds" };
-        }
-
+        if (!facility) return { ok: false, reason: "Facility not found" };
+        const result = upgradeFacility(facility, s.day);
+        if (!result) return { ok: false, reason: "Already at max level" };
         set({
-          cash: s.cash - cost,
           facilities: {
             ...s.facilities,
-            [facilityType]: upgraded,
-          } as typeof s.facilities,
+            [facilityType]: result,
+          } as any,
+        });
+        return { ok: true };
+      },
+
+      updateStudFee: (horseId: string, newFee: number) => {
+        const s = get();
+        const horse = s.horses.find((h) => h.id === horseId);
+        if (!horse) return { ok: false, reason: "Horse not found." };
+        if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+        if (!horse.stud?.atStud) return { ok: false, reason: "Horse is not at stud." };
+
+        if (newFee < 500) return { ok: false, reason: "Minimum fee is $500." };
+        if (newFee > 1000000) return { ok: false, reason: "Maximum fee is $1,000,000." };
+
+        set({
+          horses: s.horses.map((h) =>
+            h.id === horseId
+              ? {
+                  ...h,
+                  stud: {
+                    ...h.stud!,
+                    standingFee: Math.round(newFee / 500) * 500,
+                  },
+                }
+              : h,
+          ),
           log: [
-            ...s.log,
             {
-              day: currentDay,
-              text: `Upgraded ${facilityType} to ${upgraded.level} level for $${cost.toLocaleString()}`,
+              day: s.day,
+              text: `${horse.name}'s standing fee updated to $${newFee.toLocaleString()}.`,
             },
-          ],
+            ...s.log,
+          ].slice(0, 50),
+        });
+
+        return { ok: true };
+      },
+
+      retireToStud: (horseId) => {
+        const s = get();
+        const horse = s.horses.find((h) => h.id === horseId);
+        if (!horse) return { ok: false, reason: "Horse not found." };
+        if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+        if (horse.gender === "mare" || horse.gender === "filly" || horse.gender === "gelding") {
+          return { ok: false, reason: "Only stallions and colts can be retired to stud." };
+        }
+        if (horse.stud?.atStud) return { ok: false, reason: "Horse is already at stud." };
+        if (horse.age < 3) return { ok: false, reason: "Horse must be at least 3 years old." };
+
+        // Check if entered in races
+        const isEntered = s.races.some(
+          (r) => !r.resolved && r.entries.some((e) => e.horseId === horseId),
+        );
+        if (isEntered) return { ok: false, reason: "Withdraw from races before retiring." };
+
+        const initialFee = calculateRecommendedStudFee(horse, {
+          horses: s.horses,
+          npcStables: s.npcStables,
+        });
+
+        set({
+          horses: s.horses.map((h) =>
+            h.id === horseId
+              ? {
+                  ...h,
+                  gender: "horse",
+                  stud: {
+                    atStud: true,
+                    standingFee: initialFee,
+                    bookSize: 40,
+                    seasonBookings: 0,
+                    lifetimeFoals: 0,
+                    lifetimeStakesFoals: 0,
+                    lifetimeG1Foals: 0,
+                    retiredOnDay: s.day,
+                  },
+                }
+              : h,
+          ),
+          log: [
+            {
+              day: s.day,
+              text: `${horse.name} retired to stud with an initial fee of $${initialFee.toLocaleString()}.`,
+            },
+            ...s.log,
+          ].slice(0, 50),
         });
 
         return { ok: true };
@@ -1715,7 +1538,7 @@ export const useGame = create<GameState & Actions>()(
         transports: state.transports,
       }),
       onRehydrateStorage: () => (state) => {
-        hydrationComplete = true;
+        hydrationComplete.value = true;
         if (state?.calibratedPars) setCalibratedPars(state.calibratedPars);
       },
     },
@@ -1723,20 +1546,7 @@ export const useGame = create<GameState & Actions>()(
 );
 
 // Function to manually rehydrate the store (call on client mount)
-export async function rehydrateStore() {
-  const state = await loadGameState();
-  if (state) {
-    // Use the persist middleware's built-in rehydrate
-    // This will call getItem from our custom storage
-    await useGame.persist.rehydrate();
-    hydrationComplete = true;
-    if (state.calibratedPars) setCalibratedPars(state.calibratedPars);
-  } else {
-    // No saved state, initialize with default
-    useGame.setState(initialState());
-    hydrationComplete = true;
-  }
-}
+export const rehydrateStore = createRehydrateStore(createInitialState);
 
 // Export shallow for use in components that need to compare object/array selectors
 export { shallow };

@@ -6,6 +6,8 @@ import type { MarketState } from "./marketState";
 import type { BreedingState } from "./breedingState";
 import type { RacingState } from "./racingState";
 import type { SystemsState } from "./systemsState";
+import type { PlayerProfile } from "../types";
+import type { Backstory } from "@/core/newGame/backstories";
 
 // Re-export individual state types and functions
 export type { CoreState } from "./coreState";
@@ -13,6 +15,12 @@ export type { MarketState } from "./marketState";
 export type { BreedingState } from "./breedingState";
 export type { RacingState } from "./racingState";
 export type { SystemsState } from "./systemsState";
+
+// New Game Options - shared between store and state modules
+export interface NewGameOptions {
+  profile: PlayerProfile;
+  backstory: Backstory;
+}
 
 // Import state creators for use in createDefaultGameState
 import { createDefaultCoreState } from "./coreState";

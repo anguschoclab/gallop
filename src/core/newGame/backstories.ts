@@ -16,12 +16,18 @@ export interface Backstory {
   horses: HorseSpec[];
   /** Upgrades over the default all-basic facility set. Types not listed remain "basic". */
   facilityUpgrades: Partial<Record<FacilityType, FacilityLevel>>;
+  /** Alias of facilityUpgrades — kept for UI code that reads `facilities`. */
+  facilities: Partial<Record<FacilityType, FacilityLevel>>;
   /** Starting reputation score on the 0-1000 ManagerReputation scale. */
   reputationScore: number;
+  /** Alias of reputationScore — kept for UI code that reads `reputation`. */
+  reputation: number;
   difficulty: BackstoryDifficulty;
 }
 
-export const BACKSTORIES: Backstory[] = [
+type RawBackstory = Omit<Backstory, "facilities" | "reputation">;
+
+const RAW_BACKSTORIES: RawBackstory[] = [
   {
     id: "inheritor",
     label: "The Inheritor",
@@ -77,8 +83,37 @@ export const BACKSTORIES: Backstory[] = [
   },
 ];
 
+export const BACKSTORIES: Backstory[] = RAW_BACKSTORIES.map((b) => ({
+  ...b,
+  facilities: b.facilityUpgrades,
+  reputation: b.reputationScore,
+}));
+
 export function getBackstory(id: BackstoryId): Backstory {
   const found = BACKSTORIES.find((b) => b.id === id);
   if (!found) throw new Error(`Unknown backstory: ${id}`);
   return found;
 }
+
+/**
+ * Pool of owner names used by the New Game wizard's "random owner" action.
+ * Re-exported here so the wizard doesn't need to know about stableGeneration.
+ */
+export const OWNER_NAMES: readonly string[] = [
+  "A. Mauricia",
+  "Beatrice Calloway",
+  "Charles Whitfield",
+  "Diane Ashworth",
+  "Edward Pemberton",
+  "Felicity Hawthorne",
+  "Gregory Sandeman",
+  "Helena Vargas",
+  "Isaac Cromwell",
+  "Juliette Marchetti",
+  "Katherine Donovan",
+  "Lawrence Fitzgerald",
+  "Margaret O'Sullivan",
+  "Nathaniel Brookhaven",
+  "Olivia Castellano",
+  "Patrick Devereaux",
+];

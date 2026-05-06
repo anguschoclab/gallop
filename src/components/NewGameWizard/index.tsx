@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dice5 } from "lucide-react";
-import { useGame, type NewGameOptions } from "@/game/store";
+import { useGame } from "@/game/store";
+import type { NewGameOptions } from "@/game/state";
 import { createRng, hashStr } from "@/game/rng";
 import {
   generateSilk,
@@ -28,6 +29,7 @@ import { randomStableName, randomOwnerName } from "@/core/stable/stableGeneratio
 import { BACKSTORIES, type Backstory } from "@/core/newGame/backstories";
 import type { JockeySilk, JockeySilkPattern, BackstoryId } from "@/game/types";
 import { SilkPreview } from "./SilkPreview";
+import { loadWizardState, saveWizardState, clearWizardState, type WizardState } from "@/services/storageAdapter";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -54,6 +56,36 @@ export function NewGameWizard() {
   const [backstoryId, setBackstoryId] = useState<BackstoryId | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
 
+  // Load saved wizard state on mount
+  useEffect(() => {
+    const saved = loadWizardState();
+    if (saved) {
+      try {
+        setStep(saved.step as Step);
+        setStableName(saved.stableName);
+        setOwnerName(saved.ownerName);
+        setSilk(saved.silk as JockeySilk);
+        setBackstoryId(saved.backstoryId as BackstoryId);
+      } catch (error) {
+        console.error("Failed to restore wizard state:", error);
+        // Clear corrupted state
+        clearWizardState();
+      }
+    }
+  }, []);
+
+  // Save wizard state on any change
+  useEffect(() => {
+    const state: WizardState = {
+      step,
+      stableName,
+      ownerName,
+      silk,
+      backstoryId: backstoryId || "",
+    };
+    saveWizardState(state);
+  }, [step, stableName, ownerName, silk, backstoryId]);
+
   const selectedBackstory = useMemo(
     () => BACKSTORIES.find((b) => b.id === backstoryId),
     [backstoryId],
@@ -62,14 +94,39 @@ export function NewGameWizard() {
   const stableNameValid = stableName.trim().length > 0 && stableName.length <= 40;
   const ownerNameValid = ownerName.trim().length > 0 && ownerName.length <= 40;
 
+  const isHexColor = (v: unknown): v is string =>
+    typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v);
+  const silkValid =
+    !!silk &&
+    isHexColor(silk.primary) &&
+    isHexColor(silk.secondary) &&
+    isHexColor(silk.cap) &&
+    (SILK_PATTERNS as readonly string[]).includes(silk.pattern);
+
   const canProceed =
     (step === 0 && stableNameValid && ownerNameValid) ||
-    (step === 1 && silk) ||
+    (step === 1 && silkValid) ||
     (step === 2 && !!selectedBackstory) ||
-    step === 3;
+    (step === 3 && silkValid && !!selectedBackstory && stableNameValid && ownerNameValid);
 
   const handleStart = async () => {
     if (!selectedBackstory) return;
+    
+    // Final validation check - prevent game start with invalid silks
+    const isHexColor = (v: unknown): v is string =>
+      typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v);
+    const silkValid =
+      !!silk &&
+      isHexColor(silk.primary) &&
+      isHexColor(silk.secondary) &&
+      isHexColor(silk.cap) &&
+      (SILK_PATTERNS as readonly string[]).includes(silk.pattern);
+    
+    if (!silkValid) {
+      alert("Invalid silks data. Please check your silks configuration before starting.");
+      return;
+    }
+    
     setSubmitting(true);
     const options: NewGameOptions = {
       profile: {
@@ -82,6 +139,7 @@ export function NewGameWizard() {
       backstory: selectedBackstory,
     };
     await startNewGame(options);
+    clearWizardState();
     navigate({ to: "/" });
   };
 
@@ -145,7 +203,7 @@ export function NewGameWizard() {
                 Continue
               </Button>
             ) : (
-              <Button disabled={!selectedBackstory || submitting} onClick={handleStart}>
+              <Button disabled={!selectedBackstory || !silkValid || submitting} onClick={handleStart}>
                 {submitting ? "Starting…" : "Begin"}
               </Button>
             )}
@@ -287,19 +345,39 @@ function StepSilks({ silk, setSilk }: StepSilksProps) {
     <div className="grid gap-6 md:grid-cols-[160px_1fr]">
       <div className="flex flex-col items-center gap-3">
         <SilkPreview silk={silk} size={120} />
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setSilk(generateSilk(makeWizardRng("silk")))}
-            >
-              <Dice5 className="h-4 w-4 mr-1" /> Randomize
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Roll a fresh set of silks</TooltipContent>
-        </Tooltip>
+        <div className="flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setSilk(generateSilk(makeWizardRng("silk")))}
+              >
+                <Dice5 className="h-4 w-4 mr-1" /> Randomize
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Roll a fresh set of silks</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setSilk({
+                  pattern: "solid",
+                  primary: "#FFFFFF",
+                  secondary: "#FFFFFF",
+                  cap: "#FFFFFF",
+                })}
+              >
+                Reset
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Reset to default white silks</TooltipContent>
+          </Tooltip>
+        </div>
       </div>
       <div className="space-y-4">
         <ColorSwatchPicker

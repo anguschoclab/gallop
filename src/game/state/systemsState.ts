@@ -1,7 +1,7 @@
 // Systems State - Optional subsystems and advanced features
 // Includes NPC stables, jockeys, awards, campaigns, leaderboards, facilities, and pending intents
 
-import type { Stable, ScoutReport, Jockey, HorseCampaign, TripleCrownProgress } from "../types";
+import type { Stable, ScoutReport, Jockey, HorseCampaign, TripleCrownProgress, PlayerProfile } from "../types";
 import type { RegionalAward, AwardRegion } from "../awards/types";
 import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { AnyIntent } from "@/core/resolver/intents";
@@ -13,9 +13,10 @@ import type { RaceReplay } from "@/core/replays";
 import type { ManagerReputation } from "@/core/reputation";
 import type { TransportRequest } from "@/core/transportation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { createDefaultPlayerFacilities } from "@/core/facilities";
+import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
+import type { NewGameOptions } from "./index";
 
 /**
  * Systems state for optional subsystems and advanced features.
@@ -103,12 +104,72 @@ export interface SystemsState {
   // Multi-day advance system
   /** Set when a player race interrupts auto-advance */
   pendingPlayerRaceId?: string;
+
+  // Hall of Fame system (optional)
+  /** Legendary horses inducted into Hall of Fame */
+  hallOfFame?: Array<{
+    horseId: string;
+    horseName: string;
+    inductedOnDay: number;
+    careerHighlights: {
+      g1Wins: number;
+      gradedWins: number;
+      lifetimeEarnings: number;
+      horseOfTheYearAwards: number;
+    };
+  }>;
+
+  // Player profile (optional - set after completing new game wizard)
+  /** Player's stable identity from the new game wizard */
+  playerProfile?: PlayerProfile;
 }
 
 /**
  * Default systems state for new games
+ * When options are provided, uses the backstory to customize facilities and reputation
  */
-export function createDefaultSystemsState(): SystemsState {
+export function createDefaultSystemsState(options?: NewGameOptions): SystemsState {
+  if (options) {
+    const { profile, backstory } = options;
+
+    // Build facilities from backstory spec (complete replace, not merge)
+    const facilities: Partial<PlayerFacilities> = {};
+    for (const [type, level] of Object.entries(backstory.facilityUpgrades)) {
+      facilities[type as keyof PlayerFacilities] = createFacility(
+        type as any,
+        level as any,
+        1,
+      );
+    }
+
+    return {
+      npcStables: [],
+      npcAIManager: {
+        stableStates: new Map(),
+        globalDay: 1,
+      },
+      awards: [],
+      facilities: facilities as PlayerFacilities,
+      npcFacilities: {},
+      userSettings: createDefaultUserSettings(1),
+      expenses: [],
+      transactions: [],
+      replays: [],
+      reputation: {
+        score: backstory.reputationScore,
+        tier: getReputationTier(backstory.reputationScore),
+        events: [],
+        gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+        totalWins: 0,
+        yearsActive: 0,
+      },
+      transports: [],
+      playerProfile: profile,
+      hallOfFame: [],
+    };
+  }
+
+  // Default behavior when no options provided (backward compatibility)
   return {
     npcStables: [],
     npcAIManager: {
@@ -131,5 +192,6 @@ export function createDefaultSystemsState(): SystemsState {
       yearsActive: 0,
     },
     transports: [],
+    hallOfFame: [],
   };
 }

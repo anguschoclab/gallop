@@ -94,14 +94,23 @@ function RacesPage() {
     });
   };
 
-  const countries = Array.from(
-    new Set(races.filter((r) => r.graded).map((r) => getCountry(r.graded!.trackId))),
-  )
-    .filter(Boolean)
-    .sort() as string[];
-  const tracks = Array.from(
-    new Set(races.filter((r) => r.graded).map((r) => r.graded!.track)),
-  ).sort();
+  // ⚡ Bolt: Memoize filter options derived from large race lists
+  // Prevents re-iterating over the entire races array on every render
+  // (e.g., when the user types in the search input).
+  const filterOptions = useMemo(() => {
+    const gradedRaces = races.filter((r) => r.graded);
+    const uniqueCountries = Array.from(
+      new Set(gradedRaces.map((r) => getCountry(r.graded!.trackId))),
+    )
+      .filter(Boolean)
+      .sort() as string[];
+
+    const uniqueTracks = Array.from(new Set(gradedRaces.map((r) => r.graded!.track))).sort();
+
+    return { countries: uniqueCountries, tracks: uniqueTracks };
+  }, [races]);
+
+  const { countries, tracks } = filterOptions;
 
   return (
     <div className="space-y-6">

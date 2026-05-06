@@ -99,7 +99,9 @@ function mockHorse(
     bleederRisk: 0,
     roarerRisk: 0,
     ocdRisk: 0,
+    lifecycleStatus: "active",
     racingViable: true,
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }

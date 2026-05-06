@@ -21,6 +21,7 @@ import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
 import { beyerFigure } from "@/game/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
+import { recalcStandingFee } from "@/core/breeding/stallions";
 import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
@@ -35,6 +36,7 @@ import {
   calculateRaceWinReputation,
   getReputationTier,
 } from "@/core/reputation";
+import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -72,7 +74,6 @@ export const raceResolutionPhase: PipelinePhase = {
       }
 
       const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
-      const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 
       // Generate race result impact
       impacts.push({
@@ -336,6 +337,27 @@ export const raceResolutionPhase: PipelinePhase = {
           // Stud career impact for sire
           const sire = state.horses.find((h) => h.id === horse.pedigree?.sireId);
           if (sire && sire.stud?.atStud) {
+            const newStakesFoals = (sire.stud.lifetimeStakesFoals ?? 0) + 1;
+            const newG1Foals =
+              race.graded?.grade === "G1"
+                ? (sire.stud.lifetimeG1Foals ?? 0) + 1
+                : sire.stud.lifetimeG1Foals;
+
+            // Only NPCs auto-adjust fees; players manage their own
+            const newFee = sire.stableId
+              ? recalcStandingFee(
+                  {
+                    ...sire,
+                    stud: {
+                      ...sire.stud,
+                      lifetimeStakesFoals: newStakesFoals,
+                      lifetimeG1Foals: newG1Foals,
+                    },
+                  },
+                  state,
+                )
+              : sire.stud.standingFee;
+
             impacts.push({
               id: generateUUID(),
               intentId: "",
@@ -345,18 +367,12 @@ export const raceResolutionPhase: PipelinePhase = {
               type: "stud_career",
               horseId: sire.id,
               studCareer: {
-                atStud: sire.stud.atStud,
-                standingFee: sire.stud.standingFee,
-                bookSize: sire.stud.bookSize,
-                seasonBookings: sire.stud.seasonBookings,
-                lifetimeFoals: sire.stud.lifetimeFoals,
-                lifetimeStakesFoals: (sire.stud.lifetimeStakesFoals ?? 0) + 1,
-                lifetimeG1Foals:
-                  race.graded?.grade === "G1"
-                    ? (sire.stud.lifetimeG1Foals ?? 0) + 1
-                    : sire.stud.lifetimeG1Foals,
+                ...sire.stud,
+                standingFee: newFee,
+                lifetimeStakesFoals: newStakesFoals,
+                lifetimeG1Foals: newG1Foals,
               },
-              reason: `Stakes win by ${horse.name}`,
+              reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee adjusted to $${newFee.toLocaleString()}.` : ""}`,
             } as StudCareerImpact);
           }
         }

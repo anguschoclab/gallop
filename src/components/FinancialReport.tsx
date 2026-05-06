@@ -5,6 +5,7 @@ import { useHorses, useRaces, useCash, useDay, useExpenses } from "@/game/hooks/
 import { formatCurrency, formatProfitLoss } from "@/core/financial";
 import type { IncomeSummary, ExpenseSummary } from "@/core/financial";
 import { groupExpensesByCategory, CATEGORY_DISPLAY, type ExpenseCategory } from "@/core/expenses";
+import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
 
 /**
  * Simple Financial Report Component
@@ -24,7 +25,6 @@ export function FinancialReport() {
 
   // Calculate prize money from race history
   let totalPrizeMoney = 0;
-  const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 
   for (const race of races) {
     if (!race.resolved || !race.result) continue;

@@ -10,8 +10,7 @@ import {
   updateReserveState,
 } from "@/core/ai/upkeepAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-
-const UPKEEP_PER_HORSE = 50;
+import { UPKEEP_PER_HORSE } from "@/game/constants/gameConstants";
 
 /**
  * Phase: Upkeep
@@ -25,7 +24,7 @@ export const upkeepPhase = {
   order: 20,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const playerHorses = state.horses.filter((h) => !h.stableId);
+    const playerHorses = state.horses.filter((h) => !h.stableId && h.lifecycleStatus === "active");
     const playerHorseCount = playerHorses.length;
     const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 

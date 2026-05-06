@@ -257,6 +257,38 @@ export interface CampaignFlagImpact extends Impact {
   reason: string;
 }
 
+// Pasture retirement impact
+export interface PastureRetirementImpact extends Impact {
+  type: "pasture_retirement";
+  horseId: string;
+  retiredOnDay: number;
+  reason: string;
+}
+
+// Horse death impact
+export interface HorseDeathImpact extends Impact {
+  type: "horse_death";
+  horseId: string;
+  cause: string;
+  deceasedOnDay: number;
+  reason: string;
+}
+
+// Hall of Fame induction impact
+export interface HallOfFameInductionImpact extends Impact {
+  type: "hall_of_fame_induction";
+  horseId: string;
+  horseName: string;
+  inductedOnDay: number;
+  careerHighlights: {
+    g1Wins: number;
+    gradedWins: number;
+    lifetimeEarnings: number;
+    horseOfTheYearAwards: number;
+  };
+  reason: string;
+}
+
 // Campaign creation impact
 export interface CampaignCreationImpact extends Impact {
   type: "campaign_creation";
@@ -408,4 +440,7 @@ export type AnyImpact =
   | JockeyStatsImpact
   | LogImpact
   | HealthStatusImpact
-  | PaceSampleImpact;
+  | PaceSampleImpact
+  | PastureRetirementImpact
+  | HorseDeathImpact
+  | HallOfFameInductionImpact;

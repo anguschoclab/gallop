@@ -30,3 +30,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.claude/worktrees/dreamy-shtern-169f2d/
