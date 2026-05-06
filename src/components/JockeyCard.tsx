@@ -55,7 +55,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
         <div className="flex justify-between items-start">
           <div className="flex gap-3">
             <div className="relative">
-              <div className="h-12 w-12 rounded-md bg-white/5 flex items-center justify-center border border-white/10 overflow-hidden">
+              <div className="h-12 w-12 rounded-md bg-muted flex items-center justify-center border border-border overflow-hidden">
                 <RacingSilks silk={jockey.silk} size={44} />
               </div>
               {isRetained && (
@@ -97,7 +97,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
         <div className="grid grid-cols-[1fr_120px] gap-2 items-center">
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              <div className="bg-white/5 rounded-lg p-2 border border-white/5">
+              <div className="bg-muted rounded-lg p-2 border border-border">
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
                   <Trophy size={12} className="text-fame" />
                   <span className="text-[10px] font-black uppercase tracking-wider">Wins</span>
@@ -107,7 +107,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
                   {winRate.toFixed(1)}% Rate
                 </div>
               </div>
-              <div className="bg-white/5 rounded-lg p-2 border border-white/5">
+              <div className="bg-muted rounded-lg p-2 border border-border">
                 <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
                   <Calendar size={12} className="text-gold" />
                   <span className="text-[10px] font-black uppercase tracking-wider">Age</span>
@@ -119,13 +119,13 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
               </div>
             </div>
 
-            <div className="bg-white/5 rounded-lg p-2 border border-white/5">
+            <div className="bg-muted rounded-lg p-2 border border-border">
               <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
                 <Target size={12} className="text-warning" />
                 <span className="text-[10px] font-black uppercase tracking-wider">Fame Index</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
                   <div className="h-full bg-gold" style={{ width: `${jockey.fame}%` }} />
                 </div>
                 <span className="text-xs font-bold tabular-nums">{jockey.fame.toFixed(0)}</span>

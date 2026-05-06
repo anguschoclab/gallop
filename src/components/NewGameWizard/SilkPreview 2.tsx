@@ -13,7 +13,7 @@ export function SilkPreview({ silk, size = 96, className }: Props) {
       <div
         role="img"
         aria-label="No silks selected"
-        className={`flex flex-col items-center justify-center gap-1 rounded-md border border-dashed border-white/20 bg-white/5 text-cream-muted ${className ?? ""}`}
+        className={`flex flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border bg-muted text-muted-foreground ${className ?? ""}`}
         style={{ width: size, height: size * 1.1 }}
       >
         <Shirt className="opacity-60" style={{ width: size * 0.35, height: size * 0.35 }} />

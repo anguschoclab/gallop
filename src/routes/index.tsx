@@ -357,7 +357,8 @@ function Dashboard() {
                   </p>
                   <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                     Day <NumericValue value={r.day} /> ·{" "}
-                    <NumericValue value={r.distance} suffix="m" /> · {r.raceClass}
+                    <NumericValue value={r.distance} suffix="m" /> ·{" "}
+                    <span className="truncate inline-block max-w-[150px]">{r.raceClass}</span>
                   </p>
                 </div>
                 <div className="text-right">

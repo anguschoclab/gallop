@@ -234,7 +234,7 @@ export function JockeyRoster() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  className="bg-card border border-white/10 rounded-md px-3 py-2 hover:bg-white/5 transition-colors"
+                  className="bg-card border border-border rounded-md px-3 py-2 hover:bg-muted transition-colors"
                   aria-label="View silk patterns information"
                 >
                   <Info size={16} className="text-muted-foreground" />

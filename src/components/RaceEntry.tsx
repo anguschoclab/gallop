@@ -128,7 +128,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
             {[1, 2, 3, 4].map((s) => (
               <div
                 key={s}
-                className={`h-1 flex-1 rounded-full ${step >= s ? "bg-primary" : "bg-white/10"}`}
+                className={`h-1 flex-1 rounded-full ${step >= s ? "bg-primary" : "bg-muted"}`}
               />
             ))}
           </div>
@@ -149,7 +149,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                     className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
                       selectedHorseId === horse.id
                         ? "border-primary bg-primary/10"
-                        : "border-white/5 bg-white/5 hover:bg-white/10"
+                        : "border-border bg-muted hover:bg-muted/80"
                     } ${!eligible ? "opacity-50 grayscale cursor-not-allowed" : ""}`}
                   >
                     <div className="flex items-center gap-3">
@@ -195,7 +195,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                             ? "bg-success text-success-foreground"
                             : getCompatibility(selectedHorse, j) === "Poor"
                               ? "bg-destructive text-destructive-foreground"
-                              : "bg-white/20 text-white"
+                              : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {getCompatibility(selectedHorse, j)} Match
@@ -213,7 +213,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 Final Review
               </h3>
 
-              <div className="flex justify-around items-center gap-4 bg-white/5 p-6 rounded-2xl border border-white/5 relative overflow-hidden">
+              <div className="flex justify-around items-center gap-4 bg-muted p-6 rounded-2xl border border-border relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
 
                 <div className="flex flex-col items-center gap-2">
@@ -226,7 +226,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 <ChevronRight className="text-muted-foreground/30" />
 
                 <div className="flex flex-col items-center gap-2">
-                  <div className="h-12 w-12 rounded-md bg-white/5 border-2 border-primary/20 flex items-center justify-center overflow-hidden">
+                  <div className="h-12 w-12 rounded-md bg-muted border-2 border-primary/20 flex items-center justify-center overflow-hidden">
                     <RacingSilks silk={selectedJockey.silk} size={44} />
                   </div>
                   <div className="font-black uppercase tracking-tighter text-center leading-none">
@@ -270,7 +270,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                       : 150}
                   </span>
                 </div>
-                <div className="h-px bg-white/10 my-2" />
+                <div className="h-px bg-border my-2" />
                 <div className="flex justify-between text-lg font-black uppercase">
                   <span>Total Due</span>
                   <span className="text-primary tabular-nums">

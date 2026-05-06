@@ -44,11 +44,11 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
           </h3>
           {ownedCount > 0 && <div className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
         </div>
-        <div className="flex items-center gap-3 text-[11px] text-cream-muted tabular-nums">
+        <div className="flex items-center gap-3 text-[11px] text-cream-muted tabular-nowrap">
           <span className="truncate">{race.graded?.track || "Local Track"}</span>
           <span>{race.distance}m</span>
           <span>{race.surface}</span>
-          <span>{race.raceClass}</span>
+          <span className="truncate">{race.raceClass}</span>
         </div>
       </div>
 

@@ -296,7 +296,7 @@ function LiveRace() {
       <div className="relative z-10 p-4 flex items-center justify-between border-b border-white/10 bg-broadcast-marquee backdrop-blur-sm">
         <div>
           <h1 className="text-xl font-bold text-cream">{race.name}</h1>
-          <p className="text-xs text-white/70 tabular-nums">
+          <p className="text-xs text-muted-foreground tabular-nums">
             {race.distance}m · {race.raceClass} · Purse ${race.purse.toLocaleString()}
             {race.weather && ` · ${getWeatherDisplay(race.weather)}`}
             {race.trackCondition && ` · Track: ${race.trackCondition}`}
@@ -308,7 +308,7 @@ function LiveRace() {
               value={followTarget || "leader"}
               onValueChange={(v) => setFollowTarget(v === "leader" ? null : v)}
             >
-              <SelectTrigger className="h-8 w-40 text-xs bg-white/10 border-white/20 text-white">
+              <SelectTrigger className="h-8 w-40 text-xs bg-muted border-border text-foreground">
                 <Camera className="h-3 w-3 mr-1" />
                 <SelectValue />
               </SelectTrigger>
@@ -401,10 +401,10 @@ function LiveRace() {
         </div>
         <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
           <div>
-            <p className="text-xs uppercase tracking-wide text-white/60 mb-2">Live order</p>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Live order</p>
             <div className="grid grid-cols-2 gap-2">
               <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-                <SelectTrigger className="h-8 text-xs bg-white/10 border-white/20 text-white">
+                <SelectTrigger className="h-8 text-xs bg-muted border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -414,7 +414,7 @@ function LiveRace() {
                 </SelectContent>
               </Select>
               <Select value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
-                <SelectTrigger className="h-8 text-xs bg-white/10 border-white/20 text-white">
+                <SelectTrigger className="h-8 text-xs bg-muted border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -425,7 +425,7 @@ function LiveRace() {
               </Select>
             </div>
             <div className="mt-2">
-              <label className="text-[10px] uppercase tracking-wide text-white/60 flex justify-between items-center mb-1">
+              <label className="text-[10px] uppercase tracking-wide text-muted-foreground flex justify-between items-center mb-1">
                 <span>
                   Min <JargonTooltip term="Beyer">Beyer</JargonTooltip>
                 </span>
@@ -447,7 +447,7 @@ function LiveRace() {
                 key={r.horseId}
                 className="flex items-center gap-2 text-sm py-1 border-b border-white/5 last:border-0"
               >
-                <span className="w-5 text-white/60 tabular-nums">
+                <span className="w-5 text-muted-foreground tabular-nums">
                   {positionRank.get(r.horseId)}
                 </span>
                 <div
@@ -459,7 +459,7 @@ function LiveRace() {
                 >
                   {r.name}
                 </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white/80 tabular-nums font-bold">
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-foreground tabular-nums font-bold">
                   {runnerOdds.get(r.horseId) ?? "N/A"}
                 </span>
                 {beyer !== null && (
@@ -468,14 +468,14 @@ function LiveRace() {
                   </span>
                 )}
                 {r.finishTime !== null && (
-                  <span className="text-xs text-white/60 tabular-nums">
+                  <span className="text-xs text-muted-foreground tabular-nums">
                     {r.finishTime.toFixed(1)}s
                   </span>
                 )}
               </div>
             ))}
             {sorted.length === 0 && (
-              <p className="text-xs text-white/50 italic py-2">
+              <p className="text-xs text-muted-foreground italic py-2">
                 No runners match the current filters.
               </p>
             )}
@@ -580,10 +580,10 @@ function Track({
         return (
           <div
             key={i}
-            className="absolute top-0 bottom-0 w-px bg-white/10"
+            className="absolute top-0 bottom-0 w-px bg-border"
             style={{ left: `${screenPct}%` }}
           >
-            <span className="absolute -top-4 left-1 text-[10px] text-white/30 tabular-nums">
+            <span className="absolute -top-4 left-1 text-[10px] text-muted-foreground tabular-nums">
               {markerPos}m
             </span>
           </div>
@@ -628,14 +628,14 @@ function Track({
               {/* Tactical Indicators */}
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-1 items-center">
                 {r.draftingHorseId && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-white/20 text-[8px] font-bold text-white flex items-center gap-1 animate-pulse">
-                    <span className="h-1 w-1 rounded-full bg-white" />
+                  <div className="px-1.5 py-0.5 rounded-full bg-muted text-[8px] font-bold text-foreground flex items-center gap-1 animate-pulse">
+                    <span className="h-1 w-1 rounded-full bg-foreground" />
                     Drafting
                   </div>
                 )}
                 {r.velocity > 18 && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-warning/80 text-[8px] font-bold text-white flex items-center gap-1 animate-bounce">
-                    <span className="h-1 w-1 rounded-full bg-white" />
+                  <div className="px-1.5 py-0.5 rounded-full bg-warning/80 text-[8px] font-bold text-warning-foreground flex items-center gap-1 animate-bounce">
+                    <span className="h-1 w-1 rounded-full bg-warning-foreground" />
                     Flying
                   </div>
                 )}
@@ -650,7 +650,7 @@ function Track({
 
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center">
                 <span
-                  className={`text-[10px] whitespace-nowrap drop-shadow-md tabular-nums ${r.owned ? "font-bold text-broadcast-accent" : "text-white/80"}`}
+                  className={`text-[10px] whitespace-nowrap drop-shadow-md tabular-nums ${r.owned ? "font-bold text-broadcast-accent" : "text-foreground"}`}
                 >
                   {r.name}
                 </span>
@@ -737,17 +737,17 @@ function BroadcastCommentary({ commentary }: { commentary: CommentaryLine[] }) {
             <Mic2 className="h-4 w-4 text-broadcast-accent" />
           </div>
           <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/90 leading-tight">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground leading-tight">
               Live Commentary
             </span>
-            <span className="text-[8px] text-white/40 uppercase tracking-widest font-medium">
+            <span className="text-[8px] text-muted-foreground uppercase tracking-widest font-medium">
               Race Broadcast Service
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-black/40 border border-white/5">
           <div className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse shadow-[0_0_8px_var(--destructive)]" />
-          <span className="text-[8px] font-bold text-white/90 uppercase tracking-tighter">
+          <span className="text-[8px] font-bold text-foreground uppercase tracking-tighter">
             Live
           </span>
         </div>
@@ -763,8 +763,8 @@ function BroadcastCommentary({ commentary }: { commentary: CommentaryLine[] }) {
               key={line.id}
               className={`text-xs flex gap-3 transition-all duration-700 ${
                 isLatest
-                  ? "text-white font-semibold animate-in slide-in-from-right-4 fade-in"
-                  : "text-white/40 font-normal"
+                  ? "text-foreground font-semibold animate-in slide-in-from-right-4 fade-in"
+                  : "text-muted-foreground font-normal"
               }`}
             >
               <span
