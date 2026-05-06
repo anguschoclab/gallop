@@ -117,10 +117,3 @@ export const OWNER_NAMES: readonly string[] = [
   "Olivia Castellano",
   "Patrick Devereaux",
 ];
-
-
-export function getBackstory(id: BackstoryId): Backstory {
-  const found = BACKSTORIES.find((b) => b.id === id);
-  if (!found) throw new Error(`Unknown backstory: ${id}`);
-  return found;
-}
