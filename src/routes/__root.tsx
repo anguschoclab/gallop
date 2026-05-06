@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
 import { useEffect, useState } from "react";
-import { rehydrateStore } from "@/game/store";
+import { rehydrateStore, useGame } from "@/game/store";
 import { hydrationComplete } from "@/game/store/storage";
 import { Toaster } from "@/components/ui/sonner";
 
