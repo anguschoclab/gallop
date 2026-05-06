@@ -19,6 +19,7 @@ import { Route as RecapRouteImport } from './routes/recap'
 import { Route as RacesRouteImport } from './routes/races'
 import { Route as RaceBrowserRouteImport } from './routes/race-browser'
 import { Route as NpcStablesRouteImport } from './routes/npc-stables'
+import { Route as NewGameRouteImport } from './routes/new-game'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as JockeysRouteImport } from './routes/jockeys'
 import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
@@ -86,6 +87,11 @@ const RaceBrowserRoute = RaceBrowserRouteImport.update({
 const NpcStablesRoute = NpcStablesRouteImport.update({
   id: '/npc-stables',
   path: '/npc-stables',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewGameRoute = NewGameRouteImport.update({
+  id: '/new-game',
+  path: '/new-game',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketRoute = MarketRouteImport.update({
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
+  '/new-game': typeof NewGameRoute
   '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
+  '/new-game': typeof NewGameRoute
   '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
+  '/new-game': typeof NewGameRoute
   '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
+    | '/new-game'
     | '/npc-stables'
     | '/race-browser'
     | '/races'
@@ -311,6 +321,7 @@ export interface FileRouteTypes {
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
+    | '/new-game'
     | '/npc-stables'
     | '/race-browser'
     | '/races'
@@ -341,6 +352,7 @@ export interface FileRouteTypes {
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
+    | '/new-game'
     | '/npc-stables'
     | '/race-browser'
     | '/races'
@@ -372,6 +384,7 @@ export interface RootRouteChildren {
   HorseGalleryRoute: typeof HorseGalleryRoute
   JockeysRoute: typeof JockeysRoute
   MarketRoute: typeof MarketRoute
+  NewGameRoute: typeof NewGameRoute
   NpcStablesRoute: typeof NpcStablesRouteWithChildren
   RaceBrowserRoute: typeof RaceBrowserRoute
   RacesRoute: typeof RacesRoute
@@ -457,6 +470,13 @@ declare module '@tanstack/react-router' {
       path: '/npc-stables'
       fullPath: '/npc-stables'
       preLoaderRoute: typeof NpcStablesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-game': {
+      id: '/new-game'
+      path: '/new-game'
+      fullPath: '/new-game'
+      preLoaderRoute: typeof NewGameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/market': {
@@ -647,6 +667,7 @@ const rootRouteChildren: RootRouteChildren = {
   HorseGalleryRoute: HorseGalleryRoute,
   JockeysRoute: JockeysRoute,
   MarketRoute: MarketRoute,
+  NewGameRoute: NewGameRoute,
   NpcStablesRoute: NpcStablesRouteWithChildren,
   RaceBrowserRoute: RaceBrowserRoute,
   RacesRoute: RacesRoute,

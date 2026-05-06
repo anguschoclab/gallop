@@ -142,6 +142,67 @@ const FILLER_COUNTRIES = [
 ];
 
 /**
+ * Generate a random stable name like "Thunder Ridge Stables"
+ */
+export function randomStableName(rng: Rng): string {
+  const prefix = rng.pick(FILLER_PREFIXES);
+  const suffix = rng.pick(FILLER_SUFFIXES);
+  return `${prefix} ${suffix}`;
+}
+
+/**
+ * Generate a random owner name. Uses a personal-name pool when available, else
+ * falls back to the corporate-style FILLER_OWNERS for partnership flavor.
+ */
+const PERSONAL_FIRST_NAMES = [
+  "Alex",
+  "Morgan",
+  "Riley",
+  "Jordan",
+  "Casey",
+  "Taylor",
+  "Sam",
+  "Jamie",
+  "Drew",
+  "Avery",
+  "Blake",
+  "Cameron",
+  "Devon",
+  "Emerson",
+  "Hayden",
+  "Quinn",
+  "Reese",
+  "Rowan",
+  "Sloane",
+  "Phoenix",
+];
+const PERSONAL_LAST_NAMES = [
+  "Whitfield",
+  "Carrington",
+  "Holloway",
+  "Ashbury",
+  "Pemberton",
+  "Sinclair",
+  "Lockhart",
+  "Fairchild",
+  "Hargrove",
+  "Kingsley",
+  "Marlowe",
+  "Thornton",
+  "Vance",
+  "Worthington",
+  "Caldwell",
+  "Driscoll",
+  "Everhart",
+  "Galloway",
+  "Halloran",
+  "Quartermaine",
+];
+export function randomOwnerName(rng: Rng): string {
+  return `${rng.pick(PERSONAL_FIRST_NAMES)} ${rng.pick(PERSONAL_LAST_NAMES)}`;
+}
+
+/**
  * Generate a single filler stable
  */
 export function generateFillerStable(index: number, day: number, rng: Rng): Stable {
