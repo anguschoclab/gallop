@@ -107,6 +107,7 @@ describe("auctionTheater integration", () => {
       roarerRisk: 0.05,
       ocdRisk: 0.05,
       racingViable: true,
+      lifecycleStatus: "active",
       ...overrides,
     };
   }

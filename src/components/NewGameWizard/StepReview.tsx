@@ -127,7 +127,7 @@ export function StepReview({ profile, backstoryId, onBegin, onBack }: StepReview
                   <div className="flex justify-between items-center">
                     <span className="text-cream-muted">Facilities</span>
                     <span className="text-cream font-medium">
-                      {Object.keys(backstory.facilities).length || "None"}
+                      {Object.keys(backstory.facilityUpgrades).length || "None"}
                     </span>
                   </div>
                 </TooltipTrigger>
@@ -141,7 +141,7 @@ export function StepReview({ profile, backstoryId, onBegin, onBack }: StepReview
                 <TooltipTrigger asChild>
                   <div className="flex justify-between items-center">
                     <span className="text-cream-muted">Reputation</span>
-                    <span className="text-cream font-medium">{backstory.reputation}</span>
+                    <span className="text-cream font-medium">{backstory.reputationScore}</span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>

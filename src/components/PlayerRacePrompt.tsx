@@ -18,7 +18,7 @@ export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
   const races = useGame((s) => s.races);
   const horses = useGame((s) => s.horses);
-  const jockeys = (useGame as any)((s) => s.jockeys ?? [], shallow);
+  const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
   const day = useGame((s) => s.day);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
   const set = useGame.setState;

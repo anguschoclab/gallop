@@ -16,7 +16,7 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
-import type { NewGameOptions } from "./coreState";
+import type { NewGameOptions } from "./index";
 
 /**
  * Systems state for optional subsystems and advanced features.
@@ -134,7 +134,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
 
     // Build facilities from backstory spec (complete replace, not merge)
     const facilities: Partial<PlayerFacilities> = {};
-    for (const [type, level] of Object.entries(backstory.facilities)) {
+    for (const [type, level] of Object.entries(backstory.facilityUpgrades)) {
       facilities[type as keyof PlayerFacilities] = createFacility(
         type as any,
         level as any,
@@ -156,8 +156,8 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       transactions: [],
       replays: [],
       reputation: {
-        score: backstory.reputation,
-        tier: getReputationTier(backstory.reputation),
+        score: backstory.reputationScore,
+        tier: getReputationTier(backstory.reputationScore),
         events: [],
         gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
         totalWins: 0,

@@ -475,8 +475,6 @@ export type Stable = {
 };
 
 // Player Profile - represents the player's stable identity
-export type BackstoryId = "inheritor" | "bloodstock_heir" | "claiming_trainer" | "bootstrapper";
-
 export interface PlayerProfile {
   stableName: string; // e.g. "Thunder Ridge Stables"
   ownerName: string; // e.g. "A. Mauricia"

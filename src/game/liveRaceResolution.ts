@@ -23,6 +23,7 @@ import { getCurrentYear } from "./raceSchedule";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "./uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
+import { recalcStandingFee } from "@/core/breeding/stallions";
 
 const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 

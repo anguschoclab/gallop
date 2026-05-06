@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ import { randomStableName, randomOwnerName } from "@/core/stable/stableGeneratio
 import { BACKSTORIES, type Backstory } from "@/core/newGame/backstories";
 import type { JockeySilk, JockeySilkPattern, BackstoryId } from "@/game/types";
 import { SilkPreview } from "./SilkPreview";
+import { loadWizardState, saveWizardState, clearWizardState, type WizardState } from "@/services/storageAdapter";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -53,6 +54,36 @@ export function NewGameWizard() {
   const [silk, setSilk] = useState<JockeySilk>(() => generateSilk(makeWizardRng("silk")));
   const [backstoryId, setBackstoryId] = useState<BackstoryId | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
+
+  // Load saved wizard state on mount
+  useEffect(() => {
+    const saved = loadWizardState();
+    if (saved) {
+      try {
+        setStep(saved.step as Step);
+        setStableName(saved.stableName);
+        setOwnerName(saved.ownerName);
+        setSilk(saved.silk as JockeySilk);
+        setBackstoryId(saved.backstoryId as BackstoryId);
+      } catch (error) {
+        console.error("Failed to restore wizard state:", error);
+        // Clear corrupted state
+        clearWizardState();
+      }
+    }
+  }, []);
+
+  // Save wizard state on any change
+  useEffect(() => {
+    const state: WizardState = {
+      step,
+      stableName,
+      ownerName,
+      silk,
+      backstoryId: backstoryId || "",
+    };
+    saveWizardState(state);
+  }, [step, stableName, ownerName, silk, backstoryId]);
 
   const selectedBackstory = useMemo(
     () => BACKSTORIES.find((b) => b.id === backstoryId),
@@ -91,6 +122,7 @@ export function NewGameWizard() {
       backstory: selectedBackstory,
     };
     await startNewGame(options);
+    clearWizardState();
     navigate({ to: "/" });
   };
 

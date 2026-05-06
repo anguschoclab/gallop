@@ -38,8 +38,7 @@ import { getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "@/core/breeding/line
 import { generateUUID } from "./uuid";
 import { resolveFoaling } from "./foalGen";
 import { beyerFigure, distanceBucket, setCalibratedPars, expectedBeyer } from "./beyer";
-import { createDefaultCoreState, createDefaultMarketState, createDefaultBreedingState, createDefaultRacingState, createDefaultSystemsState } from "./state";
-import type { NewGameOptions } from "./state/coreState";
+import { createDefaultCoreState, createDefaultMarketState, createDefaultBreedingState, createDefaultRacingState, createDefaultSystemsState, type NewGameOptions } from "./state";
 import { runRaceToCompletion, type Runner } from "./raceSim";
 import { generateAuctionLots, resolveAuctionSale } from "./auction";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
@@ -49,7 +48,7 @@ import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
 } from "@/core/breeding/populationGenetics";
-import { recalcStandingFee } from "@/core/breeding/stallions";
+import { recalcStandingFee, calculateRecommendedStudFee } from "@/core/breeding/stallions";
 import { isHorseEligibleForClaimingPrice } from "./claiming";
 import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
 import { leaderboardPhase } from "@/core/time/phases/leaderboardPhase";
@@ -473,11 +472,6 @@ type Actions = {
   retireToStud: (horseId: string) => ActionResult;
 };
 
-export interface NewGameOptions {
-  profile: PlayerProfile;
-  backstory: Backstory;
-}
-
 function initialState(options?: NewGameOptions): GameState {
   const profileSeed = options?.profile.stableName ?? "initial_setup";
   const setupRng = createRng(hashStr(profileSeed));
@@ -548,7 +542,7 @@ function initialState(options?: NewGameOptions): GameState {
       if (level) {
         facilities[type as keyof typeof facilities] = createFacility(
           type as Parameters<typeof createFacility>[0],
-          level,
+          level as any,
           1,
         );
       }
@@ -1696,9 +1690,17 @@ export const useGame = create<GameState & Actions>()(
 
       upgradeFacility: (facilityType: string) => {
         const s = get();
-        const result = upgradeFacility(s, facilityType);
-        if (result.ok) set({ ...result.state });
-        return result;
+        const facility = s.facilities?.[facilityType as keyof typeof s.facilities];
+        if (!facility) return { ok: false, reason: "Facility not found" };
+        const result = upgradeFacility(facility, s.day);
+        if (!result) return { ok: false, reason: "Already at max level" };
+        set({
+          facilities: {
+            ...s.facilities,
+            [facilityType]: result,
+          } as any,
+        });
+        return { ok: true };
       },
 
       updateStudFee: (horseId: string, newFee: number) => {
@@ -1826,7 +1828,6 @@ export const useGame = create<GameState & Actions>()(
         replays: state.replays,
         reputation: state.reputation,
         transports: state.transports,
-        playerProfile: state.playerProfile,
       }),
       onRehydrateStorage: () => (state) => {
         hydrationComplete = true;

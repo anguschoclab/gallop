@@ -2,6 +2,9 @@
 // These fields are always present and the game cannot run without them
 
 import type { Horse, Race, PlayerProfile } from "../types";
+import { createRng, hashStr } from "../rng";
+import { generateHorse } from "../horseGen";
+import type { NewGameOptions } from "./index";
 
 /**
  * Core game state that is always present and required for the game to function.

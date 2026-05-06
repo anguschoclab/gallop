@@ -21,6 +21,7 @@ import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
 import { beyerFigure } from "@/game/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
+import { recalcStandingFee } from "@/core/breeding/stallions";
 import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
