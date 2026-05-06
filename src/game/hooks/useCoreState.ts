@@ -1,5 +1,5 @@
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store/index";
+import { useGame } from "@/game/store";
 import type { GameState } from "@/game/types";
 
 /**
