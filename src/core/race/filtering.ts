@@ -41,7 +41,7 @@ export function filterRacesByCriteria(
       return false;
     }
 
-    // Filter by triple crown (legacy - backward compatibility)
+    // Filter by triple crown
     if (filters.tripleCrown !== "all" && filters.tripleCrown !== undefined) {
       const tripleCrownKeys = new Set([
         "ca-kings-plate",

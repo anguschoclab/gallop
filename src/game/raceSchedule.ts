@@ -6,8 +6,7 @@ import type { Track, TrackSchedule } from "./tracks";
 import type { Rng } from "./rng";
 import { createRng, hashStr } from "./rng";
 import { getTrackById } from "./tracks";
-import { generateRace } from "./horseGen";
-import { makeGradedRace } from "./horseGen";
+import { generateRace, makeGradedRace } from "./raceGeneration/raceGen";
 import { GRADED_RACES } from "./gradedRaces";
 import { generateNorthAmericanRaceCard } from "./raceGeneration/northAmerica";
 
