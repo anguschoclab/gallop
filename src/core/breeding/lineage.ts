@@ -1,4 +1,5 @@
 import type { Horse, GameState } from "@/game/types";
+import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
 
 // Reverse-lookup helpers: given a sire/dam ID, find that horse's foals in the
 // live horses[] array. Linear scans for now — fine at the scale of a single
@@ -38,7 +39,6 @@ export function getG1FoalsBy(state: Pick<GameState, "horses">, stallionId: strin
 // taking the prize-split share for the recorded position. Approximate: we
 // reconstruct earnings from purse × split rather than persisting per-race
 // payouts. Good enough for AEI computation.
-const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 export function foalLifetimeEarnings(foal: Horse): number {
   let total = 0;
   for (const r of foal.raceHistory) {

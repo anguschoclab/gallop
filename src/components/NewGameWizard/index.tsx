@@ -111,6 +111,22 @@ export function NewGameWizard() {
 
   const handleStart = async () => {
     if (!selectedBackstory) return;
+    
+    // Final validation check - prevent game start with invalid silks
+    const isHexColor = (v: unknown): v is string =>
+      typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v);
+    const silkValid =
+      !!silk &&
+      isHexColor(silk.primary) &&
+      isHexColor(silk.secondary) &&
+      isHexColor(silk.cap) &&
+      (SILK_PATTERNS as readonly string[]).includes(silk.pattern);
+    
+    if (!silkValid) {
+      alert("Invalid silks data. Please check your silks configuration before starting.");
+      return;
+    }
+    
     setSubmitting(true);
     const options: NewGameOptions = {
       profile: {
@@ -187,7 +203,7 @@ export function NewGameWizard() {
                 Continue
               </Button>
             ) : (
-              <Button disabled={!selectedBackstory || submitting} onClick={handleStart}>
+              <Button disabled={!selectedBackstory || !silkValid || submitting} onClick={handleStart}>
                 {submitting ? "Starting…" : "Begin"}
               </Button>
             )}

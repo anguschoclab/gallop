@@ -15,9 +15,7 @@ import {
   scoreStallion,
 } from "@/core/breeding/strategy";
 import { calculateAIStallionScore, createBreedingAIState, recordBreedingDecision } from "@/core/ai/breedingAI";
-
-const BREEDING_FEE = 2000;
-const GESTATION_DAYS = 30;
+import { BREEDING_FEE, GESTATION_DAYS } from "./constants/gameConstants";
 
 /**
  * Run autonomous NPC breeding for the current day. Personality-aware:

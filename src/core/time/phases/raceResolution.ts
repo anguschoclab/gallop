@@ -26,7 +26,6 @@ import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
 } from "@/core/breeding/populationGenetics";
-import { recalcStandingFee } from "@/core/breeding/stallions";
 import type { Race, Horse } from "@/game/types";
 import { getCurrentYear } from "@/game/raceSchedule";
 import type { ClaimingIntent } from "@/core/resolver/intents";
@@ -37,6 +36,7 @@ import {
   calculateRaceWinReputation,
   getReputationTier,
 } from "@/core/reputation";
+import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -74,7 +74,6 @@ export const raceResolutionPhase: PipelinePhase = {
       }
 
       const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
-      const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 
       // Generate race result impact
       impacts.push({

@@ -127,270 +127,59 @@ import {
 import type { PlayerProfile } from "./types";
 import type { Backstory } from "@/core/newGame/backstories";
 import { getReputationTier } from "@/core/reputation";
+import {
+  PRIZE_SPLIT,
+  UPKEEP_PER_HORSE,
+  TRAINING_COST,
+  STARTING_CASH,
+  BREEDING_FEE,
+  LIVE_FOAL_GUARANTEE_FEE,
+  GESTATION_DAYS,
+  SEASON_DAYS,
+  MAX_SAMPLES_PER_BUCKET,
+} from "./constants/gameConstants";
+import {
+  computePayoutSplits,
+  sanitizeAndRankResults,
+  detectPhotoFinish,
+} from "./store/helpers/raceResolution";
+import {
+  ageHorses,
+  refreshMarket,
+  generateUpcomingRaces,
+  pruneOldRaces,
+} from "./store/helpers/market";
+import { resolvePregnancies } from "./store/helpers/pregnancy";
+import { maybeRecalibratePars, recomputePars, type RecalibrationResult } from "./store/helpers/beyer";
+import { createOpfsStorage, createRehydrateStore, hydrationComplete } from "./store/storage";
+import { createInitialState } from "./store/initialization";
+
+// Re-export helper functions for external consumers
+export { maybeRecalibratePars, recomputePars, type RecalibrationResult } from "./store/helpers/beyer";
+export { computePayoutSplits, sanitizeAndRankResults, detectPhotoFinish } from "./store/helpers/raceResolution";
+export { ageHorses, refreshMarket, generateUpcomingRaces, pruneOldRaces } from "./store/helpers/market";
+export { resolvePregnancies, type PregnancyResult } from "./store/helpers/pregnancy";
+export { hydrationComplete } from "./store/storage";
 
 export type ActionResult = { ok: true } | { ok: false; reason: string };
 
-const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
-const UPKEEP_PER_HORSE = 50;
-export const TRAINING_COST = 75;
 const TRAINING_SLOTS_PER_DAY = 2;
-const STARTING_CASH = 5000;
-const BREEDING_FEE = 2000;
 
 // =============================================================================
-// Race Resolution Helpers
+// Race Resolution Helpers (now imported from helpers/raceResolution.ts)
 // =============================================================================
 
-function computePayoutSplits(purse: number, finisherCount: number): number[] {
-  const splits: number[] = [];
-  let runningPaid = 0;
-  for (let i = 0; i < Math.min(PRIZE_SPLIT.length, finisherCount); i++) {
-    const pay = Math.round(purse * PRIZE_SPLIT[i]);
-    splits.push(pay);
-    runningPaid += pay;
-  }
-  // Route any unpaid remainder to the last paid finisher
-  if (splits.length > 0 && runningPaid < purse && finisherCount >= PRIZE_SPLIT.length) {
-    splits[splits.length - 1] += purse - runningPaid;
-  }
-  return splits;
-}
-
-type RankedResult = { horseId: string; position: number; time: number; dnf: boolean };
-
-function sanitizeAndRankResults(
-  rawResult: { horseId: string; time: number }[],
-  raceId: string,
-): { ranked: RankedResult[]; finishers: RankedResult[]; dnfs: RankedResult[] } {
-  const tieRng = createRng(hashStr(raceId) ^ 0x7e57);
-  const enriched = rawResult.map((r) => ({ ...r, dnf: !Number.isFinite(r.time) || r.time <= 0 }));
-  const finishersRaw = enriched
-    .filter((r) => !r.dnf)
-    .sort((a, b) => {
-      if (a.time === b.time) return tieRng.next() - 0.5;
-      return a.time - b.time;
-    });
-  const finishers = finishersRaw.map((r, idx) => ({ ...r, position: idx + 1 }));
-  const dnfs = enriched
-    .filter((r) => r.dnf)
-    .map((r, idx) => ({ ...r, position: finishersRaw.length + idx + 1 }));
-  const ranked = [...finishers, ...dnfs];
-  return { ranked, finishers, dnfs };
-}
-
-function detectPhotoFinish(finishers: RankedResult[]): boolean {
-  for (let i = 1; i < finishers.length; i++) {
-    if (Math.abs(finishers[i].time - finishers[i - 1].time) < 0.05) {
-      return true;
-    }
-  }
-  return false;
-}
-
 // =============================================================================
-// Day Advancement Helpers
+// Day Advancement Helpers (now imported from helpers/market.ts)
 // =============================================================================
 
-function ageHorses(horses: Horse[], newDay: number): Horse[] {
-  // Per-hemisphere "universal birthday": Northern horses age up on Jan 1 (day-
-  // of-year 1), Southern on Aug 1 (DoY 213). Replaces the prior global tick.
-  const northernTick = isUniversalBirthday(newDay, "Northern");
-  const southernTick = isUniversalBirthday(newDay, "Southern");
-  if (!northernTick && !southernTick) return horses;
-  return horses.map((h) => {
-    const ticks =
-      (h.hemisphere === "Northern" && northernTick) ||
-      (h.hemisphere === "Southern" && southernTick);
-    if (!ticks) return h;
-    const newAge = h.age + 1;
-    const newGender =
-      newAge >= 3
-        ? h.gender === "colt"
-          ? "horse"
-          : h.gender === "filly"
-            ? "mare"
-            : h.gender
-        : h.gender;
-    return { ...h, age: newAge, gender: newGender };
-  });
-}
+// =============================================================================
+// Pregnancy Resolution Helpers (now imported from helpers/pregnancy.ts)
+// =============================================================================
 
-export function refreshMarket(currentMarket: Horse[], rng: Rng): Horse[] {
-  let market = [...currentMarket];
-  if (market.length > 3) market = market.slice(2);
-  while (market.length < 5) {
-    const r = rng.next();
-    const tier = r < 0.5 ? "budget" : r < 0.85 ? "mid" : "elite";
-    market.push(generateHorse({ tier: tier as never }, rng));
-  }
-  return market;
-}
-
-export function generateUpcomingRaces(currentRaces: Race[], newDay: number, rng: Rng): Race[] {
-  // Use the new track-based schedule system
-  return generateScheduledRaces(currentRaces, newDay, TRACK_SCHEDULES, rng);
-}
-
-export function pruneOldRaces(races: Race[], newDay: number): Race[] {
-  return races.filter((r) => {
-    if (r.graded) return true;
-    if (!r.resolved) return true;
-    return r.day > newDay - 30;
-  });
-}
-
-type PregnancyResult = {
-  pregnancies: Pregnancy[];
-  foals: Horse[];
-  cashAdjustment: number;
-  logs: { day: number; text: string }[];
-};
-
-export function resolvePregnancies(
-  currentPregnancies: Pregnancy[],
-  horses: Horse[],
-  newDay: number,
-): PregnancyResult {
-  const newLogs: { day: number; text: string }[] = [];
-  const pregnancies = currentPregnancies.map((p) => ({ ...p }));
-  const damsById = new Map(horses.map((h) => [h.id, h]));
-  const foals: Horse[] = [];
-  let cashAdjustment = 0;
-
-  for (const p of pregnancies) {
-    if (p.resolved) continue;
-    if (newDay < p.dueDay) continue;
-    const sire = damsById.get(p.sireId);
-    const dam = damsById.get(p.damId);
-    const outcome = resolveFoaling(p, sire, dam);
-
-    if (outcome.kind === "live") {
-      const foal = outcome.foal;
-      if (dam) {
-        if (!dam.blueHenStatus) {
-          dam.blueHenStatus = {
-            isBlueHen: false,
-            stakesWinnersProduced: 0,
-            group1WinnersProduced: 0,
-            blueHenScore: 0,
-            foalsProduced: dam.foalsProduced?.length ?? 0,
-          };
-        }
-        dam.blueHenStatus.foalsProduced = (dam.foalsProduced?.length ?? 0) + 1;
-        const baseScore = Math.min(dam.blueHenStatus.stakesWinnersProduced * 15, 60);
-        const g1Bonus = dam.blueHenStatus.group1WinnersProduced * 20;
-        dam.blueHenStatus.blueHenScore = Math.min(baseScore + g1Bonus, 100);
-        if (
-          dam.blueHenStatus.stakesWinnersProduced >= 2 ||
-          dam.blueHenStatus.group1WinnersProduced >= 1
-        ) {
-          dam.blueHenStatus.isBlueHen = true;
-        }
-        if (!dam.foalsProduced) dam.foalsProduced = [];
-        dam.foalsProduced.push(foal.id);
-        dam.lastFoaledDay = newDay;
-      }
-
-      // Update sire's lifetime foals count using lineage helper
-      if (sire && sire.stud) {
-        sire.stud.lifetimeFoals = getFoalsBy({ horses: [...horses, foal] }, sire.id).length;
-      }
-
-      p.resolved = true;
-      p.foalId = foal.id;
-      foals.push(foal);
-
-      if (outcome.transmission) {
-        foal.healthStatus = "covering_sickness";
-        foal.healthStatusDay = newDay;
-        newLogs.push({
-          day: newDay,
-          text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}). Covering sickness detected.`,
-        });
-      } else {
-        newLogs.push({
-          day: newDay,
-          text: `Foal born: ${foal.name} (by ${p.sireName} out of ${p.damName}).`,
-        });
-      }
-    } else {
-      // Live Foal Guarantee handling
-      const canRefund = p.liveFoalGuarantee && !p.refunded;
-      const canRetry = p.liveFoalGuarantee && (p.reBreedingAttempts || 0) < 3;
-      if (canRetry) {
-        if (canRefund) {
-          cashAdjustment += BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE;
-          p.refunded = true;
-        }
-        p.resolved = false;
-        p.dueDay = newDay + GESTATION_DAYS;
-        p.reBreedingAttempts = (p.reBreedingAttempts || 0) + 1;
-        newLogs.push({
-          day: newDay,
-          text: `Foal ${outcome.type}${canRefund ? ` — Live Foal Guarantee refunded $${(BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE).toLocaleString()}.` : "."} Re-breeding ${p.damName} to ${p.sireName}. Attempt ${p.reBreedingAttempts}/3. New due day ${p.dueDay}.`,
-        });
-      } else {
-        p.resolved = true;
-        newLogs.push({
-          day: newDay,
-          text: `Foal ${outcome.type}${p.liveFoalGuarantee ? ". Live Foal Guarantee attempts exhausted." : "."}`,
-        });
-      }
-    }
-  }
-
-  return { pregnancies, foals, cashAdjustment, logs: newLogs };
-}
-
-type RecalibrationResult = {
-  calibratedPars: Record<number, number> | undefined;
-  lastCalibrationDay: number;
-  log: { day: number; text: string } | null;
-};
-
-export function maybeRecalibratePars(
-  currentPars: Record<number, number> | undefined,
-  lastCalibrationDay: number,
-  paceSamples: Record<number, number[]> | undefined,
-  newDay: number,
-): RecalibrationResult {
-  if (newDay - lastCalibrationDay < SEASON_DAYS) {
-    return { calibratedPars: currentPars, lastCalibrationDay, log: null };
-  }
-  const recomputed = recomputePars(paceSamples ?? {});
-  if (Object.keys(recomputed).length === 0) {
-    return { calibratedPars: currentPars, lastCalibrationDay, log: null };
-  }
-  setCalibratedPars(recomputed);
-  const buckets = Object.keys(recomputed).length;
-  return {
-    calibratedPars: recomputed,
-    lastCalibrationDay: newDay,
-    log: {
-      day: newDay,
-      text: `Beyer par recalibrated from ${buckets} distance bucket${buckets === 1 ? "" : "s"}.`,
-    },
-  };
-}
-
-const LIVE_FOAL_GUARANTEE_FEE = 1000; // Additional fee for live foal guarantee
-const GESTATION_DAYS = 30;
-const SEASON_DAYS = 30;
-const MAX_SAMPLES_PER_BUCKET = 60;
-
-// Recompute par-time per distance bucket from collected winner finish times.
-// Uses a slightly-faster-than-median (40th percentile) to match the
-// "above-average winner" intent of Beyer par.
-function recomputePars(samples: Record<number, number[]>): Record<number, number> {
-  const out: Record<number, number> = {};
-  for (const [k, arr] of Object.entries(samples)) {
-    if (arr.length < 3) continue;
-    const sorted = [...arr].sort((a, b) => a - b);
-    const idx = Math.floor(sorted.length * 0.4);
-    out[Number(k)] = sorted[idx];
-  }
-  return out;
-}
+// =============================================================================
+// Beyer Recalibration Helpers (now imported from helpers/beyer.ts)
+// =============================================================================
 
 type Actions = {
   startNewGame: (options: NewGameOptions) => Promise<void>;
@@ -472,138 +261,8 @@ type Actions = {
   retireToStud: (horseId: string) => ActionResult;
 };
 
-function initialState(options?: NewGameOptions): GameState {
-  const profileSeed = options?.profile.stableName ?? "initial_setup";
-  const setupRng = createRng(hashStr(profileSeed));
-
-  // Generate player horses — backstory-driven if options provided, else default 2 starters
-  const playerHorseSpecs = options?.backstory.horses ?? [
-    { tier: "starter" as const, count: 2 },
-  ];
-  const playerSilkColor = options?.profile.silk.primary;
-  const horses: Horse[] = [];
-  for (const spec of playerHorseSpecs) {
-    for (let i = 0; i < spec.count; i++) {
-      const h = generateHorse({ tier: spec.tier, owned: true }, setupRng);
-      if (playerSilkColor) h.silk = playerSilkColor;
-      horses.push(h);
-    }
-  }
-
-  const market: Horse[] = Array.from({ length: 5 }, () => {
-    const r = setupRng.next();
-    const tier: "starter" | "budget" | "mid" | "elite" = r < 0.6 ? "budget" : "mid";
-    return generateHorse({ tier }, setupRng);
-  });
-
-  const races: Race[] = [];
-  for (let d = 1; d <= 7; d++) {
-    const dayRng = createRng(hashStr(`raceGen_${d}`));
-    const count = dayRng.next() < 0.7 ? 2 : 3;
-    for (let i = 0; i < count; i++) races.push(generateRace(d, dayRng));
-  }
-  // Schedule the full first year of real graded stakes
-  for (const g of GRADED_RACES) {
-    const gradedRng = createRng(hashStr(`graded_${g.key}`));
-    races.push(makeGradedRace(g, g.dayOfYear, gradedRng));
-  }
-
-  // Generate NPC stables and horses
-  const stableRng = createRng(hashStr("initial_stables"));
-  const npcStables = generateAllStables(1, stableRng);
-  const npcHorseRng = createRng(hashStr("initial_npc_horses"));
-  const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(
-    npcStables,
-    npcHorseRng,
-  );
-
-  // Generate initial jockeys
-  const jockeyRng = createRng(hashStr("initial_jockeys"));
-  const jockeys = generateInitialJockeys(jockeyRng);
-
-  // Run initial NPC race entry to populate races
-  const pregnantIds = new Set<string>();
-  const entryRng = createRng(hashStr("initial_entry"));
-  const racesWithEntries = runNpcRaceEntry(
-    updatedStables,
-    npcHorses,
-    jockeys,
-    races,
-    1,
-    entryRng,
-    7,
-    pregnantIds,
-  );
-
-  // Facilities — start with all-basic default, then apply backstory upgrades
-  const facilities = createDefaultPlayerFacilities(1);
-  if (options) {
-    for (const [type, level] of Object.entries(options.backstory.facilityUpgrades)) {
-      if (level) {
-        facilities[type as keyof typeof facilities] = createFacility(
-          type as Parameters<typeof createFacility>[0],
-          level as any,
-          1,
-        );
-      }
-    }
-  }
-
-  const reputationScore = options?.backstory.reputationScore ?? 0;
-
-  const startingCash = options?.backstory.startingCash ?? STARTING_CASH;
-  const welcomeText = options
-    ? `${options.profile.stableName} opens its doors. Welcome, ${options.profile.ownerName}.`
-    : "Welcome to your stable. Train your horses and enter them in races.";
-
-  return {
-    day: 1,
-    cash: startingCash,
-    horses: [...horses, ...npcHorses],
-    market,
-    races: racesWithEntries,
-    trainingUsed: {},
-    log: [{ day: 1, text: welcomeText }],
-    pregnancies: [],
-    npcStables: updatedStables,
-    scoutReports: [],
-    auctions: [],
-    jockeys: generateInitialJockeys(createRng(hashStr("initial_jockeys")), 25),
-    awards: [],
-    facilities,
-    reputation: {
-      score: reputationScore,
-      tier: getReputationTier(reputationScore),
-      events: [],
-      gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
-      totalWins: 0,
-      yearsActive: 0,
-    },
-    playerProfile: options?.profile,
-  };
-}
-
-// Custom storage adapter for Zustand persist using OPFS
-const opfsStorage = {
-  getItem: async (_name: string) => {
-    const state = await loadGameState();
-    if (!state) return null;
-    return { state, version: 0 };
-  },
-  setItem: async (_name: string, value: { state: GameState }) => {
-    try {
-      await saveGameState(value.state);
-    } catch (error) {
-      console.error("Failed to save game state to OPFS:", error);
-    }
-  },
-  removeItem: async (_name: string): Promise<void> => {
-    await (await import("@/services/storageAdapter")).clearGameState();
-  },
-};
-
-// Flag to track if hydration has completed
-export let hydrationComplete = false;
+// Create storage adapter using factory function
+const opfsStorage = createOpfsStorage();
 
 export const useGame = create<GameState & Actions>()(
   persist(
@@ -633,7 +292,7 @@ export const useGame = create<GameState & Actions>()(
       startNewGame: async (options: NewGameOptions) => {
         // Clear OPFS storage when starting a new game
         await (await import("@/services/storageAdapter")).clearGameState();
-        set({ ...initialState(options) });
+        set({ ...createInitialState(options) });
       },
 
       trainHorse: (horseId, kind) => {
@@ -1830,7 +1489,7 @@ export const useGame = create<GameState & Actions>()(
         transports: state.transports,
       }),
       onRehydrateStorage: () => (state) => {
-        hydrationComplete = true;
+        hydrationComplete.value = true;
         if (state?.calibratedPars) setCalibratedPars(state.calibratedPars);
       },
     },
@@ -1838,20 +1497,7 @@ export const useGame = create<GameState & Actions>()(
 );
 
 // Function to manually rehydrate the store (call on client mount)
-export async function rehydrateStore() {
-  const state = await loadGameState();
-  if (state) {
-    // Use the persist middleware's built-in rehydrate
-    // This will call getItem from our custom storage
-    await useGame.persist.rehydrate();
-    hydrationComplete = true;
-    if (state.calibratedPars) setCalibratedPars(state.calibratedPars);
-  } else {
-    // No saved state, initialize with default
-    useGame.setState(initialState());
-    hydrationComplete = true;
-  }
-}
+export const rehydrateStore = createRehydrateStore(createInitialState);
 
 // Export shallow for use in components that need to compare object/array selectors
 export { shallow };

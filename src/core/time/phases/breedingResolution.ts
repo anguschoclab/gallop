@@ -11,9 +11,7 @@ import type {
 } from "@/core/resolver/impacts";
 import { generateUUID } from "@/game/uuid";
 import type { Pregnancy } from "@/game/types";
-
-// Gestation period in days
-const GESTATION_DAYS = 30;
+import { GESTATION_DAYS } from "@/game/constants/gameConstants";
 
 /**
  * Breeding Resolution Phase (Order 25)
