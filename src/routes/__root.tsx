@@ -1,8 +1,7 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
-import { NewGameWizard } from "@/components/NewGameWizard";
 import { useEffect, useState } from "react";
-import { rehydrateStore, useGame } from "@/game/store";
+import { rehydrateStore, hydrationComplete } from "@/game/store";
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
@@ -88,7 +87,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const [isHydrated, setIsHydrated] = useState(false);
-  const playerProfile = useGame((s) => s.playerProfile);
 
   useEffect(() => {
     // Rehydrate store on client mount
@@ -107,13 +105,6 @@ function RootComponent() {
         </div>
       </div>
     );
-  }
-
-  // First-time load: no stable yet → run the worldgen wizard full-screen,
-  // bypassing the AppShell sidebar so the player can't escape into a
-  // half-initialized game.
-  if (!playerProfile) {
-    return <NewGameWizard />;
   }
 
   return <AppShell />;

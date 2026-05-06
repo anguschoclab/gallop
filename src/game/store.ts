@@ -114,14 +114,7 @@ import type {
 import type { RegionalAward, AwardRegion } from "@/game/awards/types";
 import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { Expense } from "@/core/expenses";
-import {
-  upgradeFacility,
-  createDefaultPlayerFacilities,
-  createFacility,
-} from "@/core/facilities";
-import type { PlayerProfile } from "./types";
-import type { Backstory } from "@/core/newGame/backstories";
-import { getReputationTier } from "@/core/reputation";
+import { upgradeFacility } from "@/core/facilities";
 
 export type ActionResult = { ok: true } | { ok: false; reason: string };
 
@@ -388,7 +381,7 @@ function recomputePars(samples: Record<number, number[]>): Record<number, number
 }
 
 type Actions = {
-  startNewGame: (options: NewGameOptions) => Promise<void>;
+  newGame: () => void;
   trainHorse: (
     horseId: string,
     kind:
@@ -465,28 +458,14 @@ type Actions = {
   upgradeFacility: (facilityType: string) => ActionResult;
 };
 
-export interface NewGameOptions {
-  profile: PlayerProfile;
-  backstory: Backstory;
-}
+function initialState(): GameState {
+  const setupRng = createRng(hashStr("initial_setup"));
 
-function initialState(options?: NewGameOptions): GameState {
-  const profileSeed = options?.profile.stableName ?? "initial_setup";
-  const setupRng = createRng(hashStr(profileSeed));
-
-  // Generate player horses — backstory-driven if options provided, else default 2 starters
-  const playerHorseSpecs = options?.backstory.horses ?? [
-    { tier: "starter" as const, count: 2 },
+  // Generate player horses
+  const horses: Horse[] = [
+    { ...generateHorse({ tier: "starter", owned: true }, setupRng) },
+    { ...generateHorse({ tier: "starter", owned: true }, setupRng) },
   ];
-  const playerSilkColor = options?.profile.silk.primary;
-  const horses: Horse[] = [];
-  for (const spec of playerHorseSpecs) {
-    for (let i = 0; i < spec.count; i++) {
-      const h = generateHorse({ tier: spec.tier, owned: true }, setupRng);
-      if (playerSilkColor) h.silk = playerSilkColor;
-      horses.push(h);
-    }
-  }
 
   const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
@@ -533,51 +512,20 @@ function initialState(options?: NewGameOptions): GameState {
     pregnantIds,
   );
 
-  // Facilities — start with all-basic default, then apply backstory upgrades
-  const facilities = createDefaultPlayerFacilities(1);
-  if (options) {
-    for (const [type, level] of Object.entries(options.backstory.facilityUpgrades)) {
-      if (level) {
-        facilities[type as keyof typeof facilities] = createFacility(
-          type as Parameters<typeof createFacility>[0],
-          level,
-          1,
-        );
-      }
-    }
-  }
-
-  const reputationScore = options?.backstory.reputationScore ?? 0;
-
-  const startingCash = options?.backstory.startingCash ?? STARTING_CASH;
-  const welcomeText = options
-    ? `${options.profile.stableName} opens its doors. Welcome, ${options.profile.ownerName}.`
-    : "Welcome to your stable. Train your horses and enter them in races.";
-
   return {
     day: 1,
-    cash: startingCash,
+    cash: STARTING_CASH,
     horses: [...horses, ...npcHorses],
     market,
     races: racesWithEntries,
     trainingUsed: {},
-    log: [{ day: 1, text: welcomeText }],
+    log: [{ day: 1, text: "Welcome to your stable. Train your horses and enter them in races." }],
     pregnancies: [],
     npcStables: updatedStables,
     scoutReports: [],
     auctions: [],
     jockeys: generateInitialJockeys(createRng(hashStr("initial_jockeys")), 25),
     awards: [],
-    facilities,
-    reputation: {
-      score: reputationScore,
-      tier: getReputationTier(reputationScore),
-      events: [],
-      gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
-      totalWins: 0,
-      yearsActive: 0,
-    },
-    playerProfile: options?.profile,
   };
 }
 
@@ -628,10 +576,10 @@ export const useGame = create<GameState & Actions>()(
       transactions: [],
       replays: [],
 
-      startNewGame: async (options: NewGameOptions) => {
+      newGame: async () => {
         // Clear OPFS storage when starting a new game
         await (await import("@/services/storageAdapter")).clearGameState();
-        set({ ...initialState(options) });
+        set({ ...initialState() });
       },
 
       trainHorse: (horseId, kind) => {
@@ -1736,7 +1684,6 @@ export const useGame = create<GameState & Actions>()(
         day: state.day,
         cash: state.cash,
         horses: state.horses,
-        playerProfile: state.playerProfile,
         market: state.market,
         races: state.races,
         trainingUsed: state.trainingUsed,

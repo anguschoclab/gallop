@@ -1,7 +1,7 @@
 // Core State - Essential game loop properties
 // These fields are always present and the game cannot run without them
 
-import type { Horse, Race, PlayerProfile } from "../types";
+import type { Horse, Race } from "../types";
 
 /**
  * Core game state that is always present and required for the game to function.
@@ -18,8 +18,6 @@ export interface CoreState {
   races: Race[];
   /** Game log for significant events */
   log: { day: number; text: string }[];
-  /** Player identity — set when the new-game wizard completes. Undefined means the wizard has not yet run. */
-  playerProfile?: PlayerProfile;
 }
 
 /**
