@@ -39,23 +39,11 @@ describe("utils", () => {
 
       const result = groupRacesByDate(races);
 
-      expect(result).toHaveLength(3);
-
-      // Sorted by day
-      expect(result[0].day).toBe(1);
-      expect(result[1].day).toBe(2);
-      expect(result[2].day).toBe(5);
-
-      // Check grouped content
-      expect(result[0].races).toHaveLength(1);
-      expect(result[0].races[0].id).toBe(4);
-
-      expect(result[1].races).toHaveLength(1);
-      expect(result[1].races[0].id).toBe(2);
-
-      expect(result[2].races).toHaveLength(2);
-      // Sort within group
-      expect(result[2].races.map(r => r.id)).toEqual([1, 3]);
+      expect(result).toEqual([
+        { day: 1, races: [{ id: 4, day: 1 }] },
+        { day: 2, races: [{ id: 2, day: 2 }] },
+        { day: 5, races: [{ id: 1, day: 5 }, { id: 3, day: 5 }] },
+      ]);
     });
 
     it("handles empty arrays", () => {
