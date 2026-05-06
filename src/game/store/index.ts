@@ -18,6 +18,11 @@ import type { CoreState } from "@/game/state/coreState";
 import { shallow } from "zustand/shallow";
 
 /**
+ * Standard action result type for store actions
+ */
+export type ActionResult = { ok: true } | { ok: false; reason: string };
+
+/**
  * Composed store type combining all slices
  */
 export type StoreType = CoreState &
@@ -105,6 +110,9 @@ export const useGame = create<StoreType>()(
 
 // Export rehydrate function
 export const rehydrateStoreMain = createRehydrateStore(createInitialState);
+
+// Export as rehydrateStore for backwards compatibility
+export { rehydrateStoreMain as rehydrateStore };
 
 // Export hydrationComplete for external consumers
 export { hydrationComplete };

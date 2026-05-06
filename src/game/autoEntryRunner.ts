@@ -3,7 +3,7 @@
 // when within the slot's day window, if eligibility and budget allow.
 
 import type { Horse, Race, HorseCampaign, CampaignRaceSlot } from "./types";
-import type { ActionResult } from "./store";
+import type { ActionResult } from "@/game/store";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 
 export type AutoEntryContext = {
