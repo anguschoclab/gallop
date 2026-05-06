@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { HorseStats, SilkBadge, NumericValue } from "@/components/HorseBits";
+import { HorseStats, NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
 import { ArrowLeft, Tag, Lock } from "lucide-react";
