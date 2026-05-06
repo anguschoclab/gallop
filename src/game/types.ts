@@ -159,17 +159,6 @@ export type JockeySilk = {
   cap: string; // hex color (cap)
 };
 
-export type BackstoryId = "inheritor" | "bloodstock_heir" | "claiming_trainer" | "bootstrapper";
-
-export interface PlayerProfile {
-  stableName: string;
-  ownerName: string;
-  silk: JockeySilk;
-  backstoryId: BackstoryId;
-  founded: number;
-  country?: string;
-}
-
 export type Jockey = {
   id: string;
   name: string;

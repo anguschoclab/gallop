@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Button } from "@/components/ui/button";
 import {
@@ -61,6 +61,7 @@ export function AppShell() {
   const horses = useGame((s) => s.horses);
   const advanceDay = useGame((s) => s.advanceDay);
   const advanceMultipleDays = useGame((s) => s.advanceMultipleDays);
+  const newGame = useGame((s) => s.newGame);
   const location = useLocation();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
@@ -202,7 +203,7 @@ export function AppShell() {
               <DialogHeader>
                 <DialogTitle>Start a new game?</DialogTitle>
                 <DialogDescription>
-                  You'll set up a new stable from scratch. Your current progress will be wiped only after you finish the new-game setup.
+                  All current progress will be lost. This cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -212,11 +213,11 @@ export function AppShell() {
                 <Button
                   variant="destructive"
                   onClick={() => {
+                    newGame();
                     setNewGameDialogOpen(false);
-                    navigate({ to: "/new-game" });
                   }}
                 >
-                  Continue
+                  Start new game
                 </Button>
               </DialogFooter>
             </DialogContent>
