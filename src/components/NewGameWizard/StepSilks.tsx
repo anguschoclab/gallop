@@ -181,7 +181,7 @@ export function StepSilks({ silk, onChange, onNext, onBack }: StepSilksProps) {
 
         <div className="flex flex-col items-center justify-center p-6 bg-t800 rounded-xl border border-gold-muted">
           <label className="text-sm font-medium text-cream mb-4">Preview</label>
-          <SilkPreview silk={localSilk} size="lg" />
+          <SilkPreview silk={localSilk} size={160} />
         </div>
       </div>
 
