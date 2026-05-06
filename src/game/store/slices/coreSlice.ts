@@ -7,6 +7,41 @@ import type { CoreState } from "@/game/state/coreState";
 import { createDefaultCoreState } from "@/game/state/coreState";
 import type { Horse, Race, PlayerProfile } from "@/game/types";
 import type { ActionResult } from "@/game/store";
+import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
+import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
+import { intentValidationPhase } from "@/core/time/phases/intentValidation";
+import { upkeepPhase } from "@/core/time/phases/upkeep";
+import { agingPhase } from "@/core/time/phases/aging";
+import { breedingSeasonPhase } from "@/core/time/phases/breedingSeason";
+import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
+import { npcBreedingPhase } from "@/core/time/phases/npcBreedingPhase";
+import { energyPhase } from "@/core/time/phases/energy";
+import { marketPhase } from "@/core/time/phases/market";
+import { racesPhase } from "@/core/time/phases/races";
+import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
+import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
+import { pregnancyPhase } from "@/core/time/phases/pregnancy";
+import { npcCyclePhase } from "@/core/time/phases/npcCycle";
+import { stallionRetirementPhase } from "@/core/time/phases/stallionRetirement";
+import { pastureRetirementPhase } from "@/core/time/phases/pastureRetirement";
+import { hallOfFamePhase } from "@/core/time/phases/hallOfFame";
+import { horseDeathPhase } from "@/core/time/phases/horseDeath";
+import { auctionsPhase } from "@/core/time/phases/auctions";
+import { leaderboardPhase } from "@/core/time/phases/leaderboardPhase";
+import { awardsPhase } from "@/core/time/phases/awards";
+import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
+import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
+import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
+import { purchaseResolutionPhase } from "@/core/time/phases/purchaseResolution";
+import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
+import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
+import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
+import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
+import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
+import { createRng, hashStr } from "@/game/rng";
+import { getCurrentYear } from "@/game/raceSchedule";
+import { computePlayerRaceDays } from "@/core/time/advance";
+import { UPKEEP_PER_HORSE } from "@/game/constants/gameConstants";
 
 export type CoreSlice = CoreState & {
   enterRace: (raceId: string, horseId: string) => ActionResult;
@@ -176,35 +211,151 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
     },
 
     advanceDay: () => {
-      // Full implementation would call the day advancement pipeline
-      set((state: any) => ({
-        day: state.day + 1,
-      }));
+      const s = get();
+      const newDay = s.day + 1;
+      const currentYear = getCurrentYear(newDay);
+      const previousYear = getCurrentYear(s.day);
+
+      // Clean up expired Win and You're In qualifications at year boundary
+      if (currentYear > previousYear) {
+        s.horses.forEach((h: Horse) => {
+          if (h.winAndYouInQualified) {
+            h.winAndYouInQualified = h.winAndYouInQualified.filter((q) => q.year >= currentYear);
+          }
+        });
+      }
+
+      const playerHorseCount = s.horses.filter((h: Horse) => !h.stableId).length;
+      const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
+
+      // Execute pipeline for all phases
+      const pipelineContext: PipelineContext = {
+        previousDay: s.day,
+        newDay,
+        state: s,
+        logs: [],
+        dailyRng: createRng(hashStr("daily_" + newDay)),
+        // Intent/impact resolver fields
+        intents: s.pendingIntents || [],
+        impacts: [],
+        impactLog: [],
+      };
+
+      const phases = [
+        // Intent/impact resolver phases
+        intentCollectionPhase,
+        intentValidationPhase,
+        // Existing phases
+        upkeepPhase,
+        agingPhase,
+        breedingSeasonPhase,
+        industryMetricsPhase,
+        npcBreedingPhase,
+        energyPhase,
+        marketPhase,
+        racesPhase,
+        beyerRecalibrationPhase,
+        jockeyPhase,
+        pregnancyPhase,
+        npcCyclePhase,
+        stallionRetirementPhase,
+        pastureRetirementPhase,
+        hallOfFamePhase,
+        horseDeathPhase,
+        auctionsPhase,
+        leaderboardPhase,
+        awardsPhase,
+        schedulerPhase,
+        stateUpdatePhase,
+        // Resolution phases (convert intents to impacts)
+        raceEntryResolutionPhase,
+        purchaseResolutionPhase,
+        breedingResolutionPhase,
+        trainingResolutionPhase,
+        claimingWithdrawalPhase,
+        raceResolutionPhase,
+        // Impact application phase (final)
+        impactApplicationPhase,
+      ];
+
+      const updatedContext = executePipeline(phases, pipelineContext);
+
+      // Extract final state from pipeline context
+      const { state: finalState, logs: newLogs } = updatedContext;
+
+      set({
+        day: newDay,
+        cash: finalState.cash,
+        horses: finalState.horses,
+        market: finalState.market,
+        races: finalState.races,
+        trainingUsed: {},
+        pregnancies: finalState.pregnancies,
+        calibratedPars: finalState.calibratedPars,
+        lastCalibrationDay: finalState.lastCalibrationDay,
+        npcStables: finalState.npcStables,
+        scoutReports: finalState.scoutReports,
+        auctions: finalState.auctions,
+        awards: finalState.awards,
+        lastAwardYear: finalState.lastAwardYear,
+        pendingAwardCeremonies: finalState.pendingAwardCeremonies,
+        currentCeremonyIndex: finalState.currentCeremonyIndex,
+        industryMeanEarnings: finalState.industryMeanEarnings,
+        industryEarningsUpdatedDay: finalState.industryEarningsUpdatedDay,
+        sireLeaderboards: finalState.sireLeaderboards,
+        sireTrendHistory: finalState.sireTrendHistory,
+        leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
+        jockeys: finalState.jockeys,
+        campaigns: finalState.campaigns,
+        expenses: finalState.expenses,
+        transactions: finalState.transactions,
+        reputation: finalState.reputation,
+        transports: finalState.transports,
+        hallOfFame: finalState.hallOfFame,
+        npcAIManager: finalState.npcAIManager,
+        pendingIntents: [], // Clear pending intents after processing
+        log: [
+          ...newLogs,
+          { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` },
+          ...s.log,
+        ].slice(0, 50),
+      });
     },
 
     advanceMultipleDays: (n: number, headless?: boolean) => {
-      // Full implementation would call day advancement n times
-      set((state: any) => ({
-        day: state.day + n,
-      }));
+      const s = get();
+      // Pre-compute player race days for O(1) lookup
+      const playerRaceDays = computePlayerRaceDays(s.races, s.day + 1, s.day + n);
+
+      for (let i = 0; i < n; i++) {
+        const currentS = get();
+        const nextDay = currentS.day + 1;
+
+        // O(1) lookup instead of O(n) array.find
+        if (playerRaceDays.has(nextDay) && !headless) {
+          const playerRace = currentS.races.find(
+            (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e: any) => e.owned),
+          );
+          if (playerRace) {
+            set({ pendingPlayerRaceId: playerRace.id });
+            return;
+          }
+        }
+
+        get().advanceDay();
+      }
     },
 
     advanceWeek: (headless?: boolean) => {
-      set((state: any) => ({
-        day: state.day + 7,
-      }));
+      get().advanceMultipleDays(7, headless);
     },
 
     advanceMonth: (headless?: boolean) => {
-      set((state: any) => ({
-        day: state.day + 30,
-      }));
+      get().advanceMultipleDays(30, headless);
     },
 
     advanceYear: (headless?: boolean) => {
-      set((state: any) => ({
-        day: state.day + 365,
-      }));
+      get().advanceMultipleDays(365, headless);
     },
 
     setDay: (day) => {

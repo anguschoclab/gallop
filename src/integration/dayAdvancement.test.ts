@@ -41,14 +41,17 @@ describe("Day Advancement Pipeline Integration", () => {
       newDay: 1,
       state,
       logs: [],
-      dailyRng: createRng("test"),
+      dailyRng: createRng(12345),
+      intents: [],
+      impacts: [],
+      impactLog: [],
     };
 
     const result = executePipeline(phases, context);
 
     // Verify phases executed in order by checking order values
-    expect(raceResolutionPhase.order).toBeLessThan(upkeepPhase.order);
     expect(upkeepPhase.order).toBeLessThan(agingPhase.order);
+    expect(agingPhase.order).toBeLessThan(raceResolutionPhase.order);
 
     // Verify result structure
     expect(result.state).toBeDefined();
@@ -82,7 +85,10 @@ describe("Day Advancement Pipeline Integration", () => {
       newDay: 10,
       state,
       logs: [],
-      dailyRng: createRng("test"),
+      dailyRng: createRng(12345),
+      intents: [],
+      impacts: [],
+      impactLog: [],
     };
 
     const result = executePipeline(phases, context);
@@ -118,7 +124,10 @@ describe("Day Advancement Pipeline Integration", () => {
       newDay: 10,
       state,
       logs: [{ day: 9, text: "Initial log" }],
-      dailyRng: createRng("test"),
+      dailyRng: createRng(12345),
+      intents: [],
+      impacts: [],
+      impactLog: [],
     };
 
     const result = executePipeline(phases, context);
@@ -170,7 +179,10 @@ describe("Day Advancement Pipeline Integration", () => {
       newDay: 10,
       state,
       logs: [],
-      dailyRng: createRng("test"),
+      dailyRng: createRng(12345),
+      intents: [],
+      impacts: [],
+      impactLog: [],
     };
 
     const result = executePipeline(phases, context);

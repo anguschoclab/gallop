@@ -34,6 +34,10 @@ export const intentCollectionPhase: PipelinePhase = {
     return {
       ...context,
       intents,
+      state: {
+        ...state,
+        pendingIntents: [], // Clear pending intents after collection
+      },
     };
   },
 };

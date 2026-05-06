@@ -82,6 +82,7 @@ export const useGame = create<StoreType>()(
         calibratedPars: state.calibratedPars,
         lastCalibrationDay: state.lastCalibrationDay,
         npcStables: state.npcStables,
+        npcAIManager: state.npcAIManager,
         scoutReports: state.scoutReports,
         auctions: state.auctions,
         jockeys: state.jockeys,
