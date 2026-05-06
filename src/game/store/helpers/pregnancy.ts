@@ -69,8 +69,18 @@ export function resolvePregnancies(
       }
 
       // Update sire's lifetime foals count using lineage helper
+      // Clone sire to avoid mutating frozen/read-only objects
       if (sire && sire.stud) {
-        sire.stud.lifetimeFoals = getFoalsBy({ horses: [...horses, foal] }, sire.id).length;
+        const sireIndex = horses.findIndex((h) => h.id === sire.id);
+        if (sireIndex !== -1) {
+          horses[sireIndex] = {
+            ...sire,
+            stud: {
+              ...sire.stud,
+              lifetimeFoals: getFoalsBy({ horses: [...horses, foal] }, sire.id).length,
+            },
+          };
+        }
       }
 
       p.resolved = true;
