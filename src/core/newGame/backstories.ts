@@ -16,8 +16,12 @@ export interface Backstory {
   horses: HorseSpec[];
   /** Upgrades over the default all-basic facility set. Types not listed remain "basic". */
   facilityUpgrades: Partial<Record<FacilityType, FacilityLevel>>;
+  /** Alias of facilityUpgrades — kept for UI code that reads `facilities`. */
+  facilities: Partial<Record<FacilityType, FacilityLevel>>;
   /** Starting reputation score on the 0-1000 ManagerReputation scale. */
   reputationScore: number;
+  /** Alias of reputationScore — kept for UI code that reads `reputation`. */
+  reputation: number;
   difficulty: BackstoryDifficulty;
 }
 
