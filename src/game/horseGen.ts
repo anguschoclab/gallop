@@ -239,6 +239,7 @@ export function generateHorse(
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
+    lifecycleStatus: "active",
     ...resolveDnaTraits(genotype),
   };
 }
