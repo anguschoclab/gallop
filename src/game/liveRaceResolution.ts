@@ -19,6 +19,7 @@ import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
 } from "@/core/breeding/populationGenetics";
+import { recalcStandingFee } from "@/core/breeding/stallions";
 import { getCurrentYear } from "./raceSchedule";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "./uuid";

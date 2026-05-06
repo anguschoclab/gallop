@@ -101,6 +101,7 @@ function mockHorse(
     ocdRisk: 0,
     lifecycleStatus: "active",
     racingViable: true,
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }
