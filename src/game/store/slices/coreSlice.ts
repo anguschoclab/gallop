@@ -280,7 +280,7 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
       });
     },
 
-    advanceMultipleDays: (n: number, headless?: boolean) => {
+    advanceMultipleDays: async (n: number, headless?: boolean) => {
       const s = get();
       // Pre-compute player race days for O(1) lookup
       const playerRaceDays = computePlayerRaceDays(s.races, s.day + 1, s.day + n);
@@ -300,20 +300,20 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
           }
         }
 
-        get().advanceDay();
+        await get().advanceDay();
       }
     },
 
-    advanceWeek: (headless?: boolean) => {
-      get().advanceMultipleDays(7, headless);
+    advanceWeek: async (headless?: boolean) => {
+      await get().advanceMultipleDays(7, headless);
     },
 
-    advanceMonth: (headless?: boolean) => {
-      get().advanceMultipleDays(30, headless);
+    advanceMonth: async (headless?: boolean) => {
+      await get().advanceMultipleDays(30, headless);
     },
 
-    advanceYear: (headless?: boolean) => {
-      get().advanceMultipleDays(365, headless);
+    advanceYear: async (headless?: boolean) => {
+      await get().advanceMultipleDays(365, headless);
     },
 
     setDay: (day) => {

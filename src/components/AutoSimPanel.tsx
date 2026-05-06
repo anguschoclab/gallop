@@ -15,6 +15,7 @@ interface Props {
 export function AutoSimPanel({ open, onClose }: Props) {
   const [days, setDays] = useState(30);
   const [headless, setHeadless] = useState(false);
+  const [useWorker, setUseWorker] = useState(true);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(0);
   const [log, setLog] = useState<string[]>([]);
@@ -29,7 +30,7 @@ export function AutoSimPanel({ open, onClose }: Props) {
     setRunning(false);
   }
 
-  function run() {
+  async function run() {
     if (days <= 0) return;
     stoppedRef.current = false;
     setRunning(true);
@@ -40,7 +41,7 @@ export function AutoSimPanel({ open, onClose }: Props) {
     const total = days;
     const startDay = day;
 
-    function tick() {
+    async function tick() {
       if (stoppedRef.current) return;
       if (done >= total) {
         setRunning(false);
@@ -50,7 +51,7 @@ export function AutoSimPanel({ open, onClose }: Props) {
 
       const batchSize = Math.min(5, total - done);
       const beforeDay = useGame.getState().day;
-      advanceMultipleDays(batchSize, headless);
+      await advanceMultipleDays(batchSize, headless);
       const afterDay = useGame.getState().day;
 
       // If pendingPlayerRaceId was set, we paused — stop autosim
@@ -122,6 +123,18 @@ export function AutoSimPanel({ open, onClose }: Props) {
             />
             <Label htmlFor="headless" className="cursor-pointer">
               Auto-resolve player races (headless)
+            </Label>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="use-worker"
+              checked={useWorker}
+              onCheckedChange={(v) => setUseWorker(!!v)}
+              disabled={running}
+            />
+            <Label htmlFor="use-worker" className="cursor-pointer">
+              Use Web Worker for pipeline execution
             </Label>
           </div>
 

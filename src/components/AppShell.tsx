@@ -162,7 +162,9 @@ export function AppShell() {
               </Button>
             </Link>
             <Button
-              onClick={() => advanceMultipleDays(7)}
+              onClick={() => {
+                advanceMultipleDays(7);
+              }}
               className="col-span-1 tabular-nums"
               size="sm"
               variant="secondary"
@@ -171,7 +173,9 @@ export function AppShell() {
               7d
             </Button>
             <Button
-              onClick={() => advanceMultipleDays(30)}
+              onClick={() => {
+                advanceMultipleDays(30);
+              }}
               className="col-span-1 tabular-nums"
               size="sm"
               variant="secondary"
