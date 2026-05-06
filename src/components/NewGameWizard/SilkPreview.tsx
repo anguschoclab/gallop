@@ -1,12 +1,26 @@
 import type { JockeySilk } from "@/game/types";
+import { Shirt } from "lucide-react";
 
 interface Props {
-  silk: JockeySilk;
+  silk?: JockeySilk | null;
   size?: number;
   className?: string;
 }
 
 export function SilkPreview({ silk, size = 96, className }: Props) {
+  if (!silk || !silk.primary || !silk.secondary || !silk.cap || !silk.pattern) {
+    return (
+      <div
+        role="img"
+        aria-label="No silks selected"
+        className={`flex flex-col items-center justify-center gap-1 rounded-md border border-dashed border-white/20 bg-white/5 text-cream-muted ${className ?? ""}`}
+        style={{ width: size, height: size * 1.1 }}
+      >
+        <Shirt className="opacity-60" style={{ width: size * 0.35, height: size * 0.35 }} />
+        <span className="text-[10px] uppercase tracking-wide">No silks</span>
+      </div>
+    );
+  }
   const { primary, secondary, cap, pattern } = silk;
   const stroke = "rgba(0,0,0,0.35)";
 

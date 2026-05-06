@@ -61,7 +61,7 @@ export function StepReview({ profile, backstoryId, onBegin, onBack }: StepReview
                 <TooltipTrigger asChild>
                   <div className="flex justify-between items-center">
                     <span className="text-cream-muted">Racing Silks</span>
-                    <SilkPreview silk={profile.silk} size="sm" />
+                    <SilkPreview silk={profile.silk} size={48} />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -69,6 +69,9 @@ export function StepReview({ profile, backstoryId, onBegin, onBack }: StepReview
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            <div className="flex justify-center pt-2">
+              <SilkPreview silk={profile.silk} size={120} />
+            </div>
           </CardContent>
         </Card>
 
