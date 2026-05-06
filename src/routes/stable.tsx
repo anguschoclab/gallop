@@ -24,6 +24,17 @@ function StablePage() {
   const playerAwards = useMemo(() => awards.filter((a) => !a.stableId), [awards]);
   const allHorses = horses;
 
+  // Pre-calculate horse counts by stable to replace an O(n^2) nested loop with O(n) map lookup
+  const horseCountsByStable = useMemo(() => {
+    const counts = new Map<string, number>();
+    allHorses.forEach((h) => {
+      if (h.stableId) {
+        counts.set(h.stableId, (counts.get(h.stableId) || 0) + 1);
+      }
+    });
+    return counts;
+  }, [allHorses]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -120,7 +131,7 @@ function StablePage() {
         <TabsContent value="rivals" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {npcStables.map((stable) => {
-              const stableHorses = allHorses.filter((h) => h.stableId === stable.id);
+              const stableHorseCount = horseCountsByStable.get(stable.id) || 0;
               return (
                 <Link key={stable.id} to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
                   <Card className="hover:bg-t700 transition-colors border-gold-muted">
@@ -135,7 +146,7 @@ function StablePage() {
                     <CardContent>
                       <div className="flex justify-between items-center text-sm">
                         <span className="text-cream-muted font-[family-name:var(--font-body)]">
-                          <NumericValue value={stableHorses.length} /> horses
+                          <NumericValue value={stableHorseCount} /> horses
                         </span>
                         <Badge
                           className={cn(
