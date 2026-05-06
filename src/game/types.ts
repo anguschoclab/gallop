@@ -475,16 +475,7 @@ export type Stable = {
 };
 
 // Player Profile - represents the player's stable identity
-export type BackstoryId = "inheritor" | "bloodstock_heir" | "claiming_trainer" | "bootstrapper";
-
-export interface PlayerProfile {
-  stableName: string; // e.g. "Thunder Ridge Stables"
-  ownerName: string; // e.g. "A. Mauricia"
-  silk: JockeySilk; // reuses existing JockeySilk { pattern, primary, secondary, cap }
-  backstoryId: BackstoryId; // the archetype the player picked
-  founded: number; // = day 1 (used for ledger/UI flavor)
-  country?: string; // optional, defaults to "USA"
-}
+// (BackstoryId and PlayerProfile are declared earlier in this file.)
 
 // Scout report - player's intelligence on an NPC horse
 export type ScoutReport = {
