@@ -141,6 +141,8 @@ export function createHorseFromDNA(
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
+    racingViable: true,
+    lifecycleStatus: "active",
     ...resolveDnaTraits(genotype),
   };
 }
