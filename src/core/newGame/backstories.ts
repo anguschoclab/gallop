@@ -42,6 +42,8 @@ export const BACKSTORIES: Backstory[] = [
       veterinary_clinic: "standard",
     },
     reputationScore: 200,
+    reputation: 200,
+    facilities: {},
     difficulty: "easy",
   },
   {
@@ -57,6 +59,8 @@ export const BACKSTORIES: Backstory[] = [
       main_track: "standard",
     },
     reputationScore: 150,
+    reputation: 150,
+    facilities: {},
     difficulty: "standard",
   },
   {
@@ -67,6 +71,8 @@ export const BACKSTORIES: Backstory[] = [
     horses: [{ tier: "budget", count: 3 }],
     facilityUpgrades: {},
     reputationScore: 75,
+    reputation: 75,
+    facilities: {},
     difficulty: "standard",
   },
   {
@@ -77,6 +83,8 @@ export const BACKSTORIES: Backstory[] = [
     horses: [{ tier: "starter", count: 1 }],
     facilityUpgrades: {},
     reputationScore: 0,
+    reputation: 0,
+    facilities: {},
     difficulty: "very_hard",
   },
 ];
