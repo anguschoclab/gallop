@@ -77,8 +77,6 @@ export interface UserSettings {
   gameplay: GameplaySettings;
   notifications: NotificationSettings;
   audio: AudioSettings;
-  /** Version for migration handling */
-  version: number;
   /** Day settings were last modified */
   lastModified: number;
 }
@@ -118,25 +116,6 @@ export function createDefaultUserSettings(currentDay: number = 1): UserSettings 
       raceAmbience: false,
       uiSounds: false,
     },
-    version: 1,
-    lastModified: currentDay,
-  };
-}
-
-/**
- * Validate and migrate settings from older versions
- */
-export function migrateSettings(settings: Partial<UserSettings>, currentDay: number): UserSettings {
-  const defaults = createDefaultUserSettings(currentDay);
-
-  return {
-    ...defaults,
-    ...settings,
-    display: { ...defaults.display, ...settings.display },
-    gameplay: { ...defaults.gameplay, ...settings.gameplay },
-    notifications: { ...defaults.notifications, ...settings.notifications },
-    audio: { ...defaults.audio, ...settings.audio },
-    version: 1,
     lastModified: currentDay,
   };
 }

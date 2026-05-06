@@ -115,9 +115,3 @@ export { shallow };
 // Custom hook that supports shallow comparison for object/array selectors
 export const useGameWithShallow = <T>(selector: (state: StoreType) => T): T =>
   (useGame as any)(selector, shallow);
-
-// Re-export helper functions for external consumers
-export { computePayoutSplits, sanitizeAndRankResults, detectPhotoFinish } from "./helpers/raceResolution";
-export { ageHorses, refreshMarket, generateUpcomingRaces, pruneOldRaces } from "./helpers/market";
-export { resolvePregnancies, type PregnancyResult } from "./helpers/pregnancy";
-export { maybeRecalibratePars, recomputePars, type RecalibrationResult } from "./helpers/beyer";

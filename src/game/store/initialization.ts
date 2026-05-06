@@ -5,7 +5,8 @@
 
 import type { GameState, Horse, Race } from "@/game/types";
 import type { NewGameOptions } from "@/game/state";
-import { generateHorse, generateRace, makeGradedRace } from "@/game/horseGen";
+import { generateHorse } from "@/game/horseGen";
+import { generateRace, makeGradedRace } from "@/game/raceGeneration/raceGen";
 import { generateInitialJockeys } from "@/game/jockeyGen";
 import { generateAllStables } from "@/game/npcStables";
 import { generateAllNpcHorses } from "@/game/npcHorseGen";

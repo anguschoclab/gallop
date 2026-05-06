@@ -22,9 +22,6 @@ import {
   detectAtmosphere,
 } from "./narrative/eventDetector";
 
-// Re-export types for backward compatibility
-export type { NarrativeEvent, CommentaryLine };
-
 const METERS_PER_LENGTH = 2.4;
 
 export class NarrativeGenerator {

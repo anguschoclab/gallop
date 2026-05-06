@@ -1,4 +1,4 @@
-import type { NarrativeEvent } from "@/services/narrativeService";
+import type { NarrativeEvent } from "@/services/narrative/commentaryGenerator";
 
 /**
  * Narrative commentary templates

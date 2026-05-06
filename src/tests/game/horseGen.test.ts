@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { generateHorse, horsePrice, makeGradedRace, generateRace } from "@/game/horseGen";
+import { generateHorse } from "@/game/horseGen";
+import { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
+import { makeGradedRace, generateRace } from "@/game/raceGeneration/raceGen";
 import type { GradedRace } from "@/game/gradedRaces";
 
 const STAT_RANGES: Record<string, [number, number]> = {

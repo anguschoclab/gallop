@@ -44,16 +44,6 @@ export function randomWeather(rng: Rng): Weather {
   return "night";
 }
 
-/**
- * Generate random track condition
- */
-export function randomTrackCondition(rng: Rng): TrackCondition {
-  const r = rng.next();
-  if (r < 0.6) return "fast";
-  if (r < 0.85) return "good";
-  if (r < 0.95) return "soft";
-  return "heavy";
-}
 
 /**
  * Generate random horse name

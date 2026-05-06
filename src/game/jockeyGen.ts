@@ -98,7 +98,7 @@ export function generateJockey({ tier = "mid", rng }: JockeyGenerationOptions): 
   };
 }
 
-const SILK_PALETTE: string[] = [
+export const SILK_PALETTE: string[] = [
   "#dc2626",
   "#ea580c",
   "#f59e0b",
@@ -120,7 +120,7 @@ const SILK_PALETTE: string[] = [
   "#78716c",
   "#57534e",
 ];
-const SILK_PATTERNS: JockeySilk["pattern"][] = [
+export const SILK_PATTERNS: JockeySilk["pattern"][] = [
   "solid",
   "stripes",
   "halves",

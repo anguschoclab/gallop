@@ -27,22 +27,6 @@ export function calculateAei(
 }
 
 /**
- * Legacy simplified AEI calculation (kept for backwards compatibility in UI)
- * @deprecated Use calculateAei with industryMeanEarnings instead
- */
-export function calculateSimplifiedAei(stallion: Horse, allSires: Horse[]): number {
-  if (!stallion.stud || !stallion.stud.lifetimeFoals) return 0;
-
-  const progenyCount = stallion.stud.lifetimeFoals;
-  if (progenyCount === 0) return 0;
-
-  const stakesRatio = (stallion.stud.lifetimeStakesFoals || 0) / progenyCount;
-  const baseAei = stakesRatio * 100;
-
-  return Math.round(baseAei * 10) / 10;
-}
-
-/**
  * Calculate Comparable Index (CI) for a stallion
  * CI compares a stallion's progeny performance to other stallions with similar mated mares
  * Formula: (Progeny Average Earnings / Comparable Sires' Progeny Average Earnings) × 100

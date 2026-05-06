@@ -1,5 +1,5 @@
 import type { PipelineContext } from "../pipeline";
-import { maybeRecalibratePars } from "@/game/store";
+import { maybeRecalibratePars } from "@/game/store/helpers/beyer";
 import { SEASON_DAYS } from "@/game/constants/gameConstants";
 
 /**

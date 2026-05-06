@@ -8,9 +8,6 @@ import type { AnyImpact } from "./impacts";
 import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
 import { generateUUID } from "@/game/uuid";
 
-// Re-export AnyImpact for use in pipeline
-export type { AnyImpact } from "./impacts";
-
 // Impact log entry for debugging and audit trail
 export interface ImpactLogEntry {
   impactId: string;

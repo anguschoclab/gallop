@@ -3,7 +3,8 @@ import type { Rng } from "../rng";
 import { nondeterministicRng } from "../rng";
 import type { GradedRace } from "../gradedRaces";
 import { generateUUID } from "../uuid";
-import { rand, randomWeather, randomTrackCondition } from "@/core/common/random";
+import { rand, randomWeather } from "@/core/common/random";
+import { randomTrackConditionWithClimateBias } from "@/core/trackConditions";
 import { randomRaceName } from "../names";
 
 /**
@@ -61,7 +62,7 @@ export function makeGradedRace(
     },
     restrictions: g.restrictions,
     weather: randomWeather(rng),
-    trackCondition: randomTrackCondition(rng),
+    trackCondition: randomTrackConditionWithClimateBias(rng, "temperate", "turf"),
   };
 }
 
@@ -98,6 +99,6 @@ export function generateRace(day: number, rng: Rng = nondeterministicRng()): Rac
     entries: [],
     resolved: false,
     weather: randomWeather(rng),
-    trackCondition: randomTrackCondition(rng),
+    trackCondition: randomTrackConditionWithClimateBias(rng, "temperate", "turf"),
   };
 }

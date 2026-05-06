@@ -11,7 +11,7 @@ import type {
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { generateUUID } from "@/game/uuid";
-import { PERSONALITY_CONFIG } from "@/game/npcStables";
+import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
 import { calculateOverallRating } from "@/core/horse/stats";
 import {

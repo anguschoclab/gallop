@@ -13,13 +13,9 @@ import type {
   ConfirmedAptitudes,
 } from "./types";
 import { GRADED_RACES } from "./gradedRaces";
-import {
-  generateHorse,
-  horsePrice,
-  generateRace,
-  makeGradedRace,
-  horsePriceWithPedigree,
-} from "./horseGen";
+import { generateHorse } from "./horseGen";
+import { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
+import { generateRace, makeGradedRace } from "./raceGeneration/raceGen";
 import { generateInitialJockeys, generateSilk } from "./jockeyGen";
 import { generateAllStables } from "./npcStables";
 import { generateAllNpcHorses } from "./npcHorseGen";
@@ -1489,13 +1485,6 @@ export const rehydrateStore = createRehydrateStore(createInitialState);
 
 // Export shallow for use in components that need to compare object/array selectors
 export { shallow };
-
-// Re-export helper functions for external consumers
-export { computePayoutSplits, sanitizeAndRankResults, detectPhotoFinish } from "./store/helpers/raceResolution";
-export { ageHorses, refreshMarket, generateUpcomingRaces, pruneOldRaces } from "./store/helpers/market";
-export { resolvePregnancies, type PregnancyResult } from "./store/helpers/pregnancy";
-export { maybeRecalibratePars, recomputePars, type RecalibrationResult } from "./store/helpers/beyer";
-export { hydrationComplete } from "./store/storage";
 
 // Custom hook that supports shallow comparison for object/array selectors
 // Use this when selecting multiple state values to prevent unnecessary re-renders

@@ -10,4 +10,4 @@ export type {
 } from "./settingsTypes";
 
 // Function exports
-export { createDefaultUserSettings, migrateSettings } from "./settingsTypes";
+export { createDefaultUserSettings } from "./settingsTypes";

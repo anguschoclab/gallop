@@ -507,31 +507,5 @@ export function isMaintenanceApplicable(
 }
 
 // =============================================================================
-// 9. BACKWARD COMPATIBILITY
-// =============================================================================
-
-/**
- * Legacy random track condition generator (backward compatible)
- * Uses temperate climate bias as default
- * @param rng - Random number generator
- * @returns Random track condition
- * @deprecated Use randomTrackConditionWithClimateBias for climate-aware generation
- */
-export function randomTrackCondition(rng: Rng): TrackCondition {
-  return randomTrackConditionWithClimateBias(rng, "temperate", "turf");
-}
-
-/**
- * Convert old 4-tier condition to new 5-tier system
- * @param oldCondition - Legacy condition ("fast" | "good" | "soft" | "heavy")
- * @returns New 5-tier condition
- */
-export function convertToFiveTier(
-  oldCondition: "fast" | "good" | "soft" | "heavy",
-): TrackCondition {
-  // "yielding" is new - old conditions map directly
-  return oldCondition;
-}
-
 // Re-export TrackCondition for convenience
 export type { TrackCondition };

@@ -6,7 +6,7 @@
 import type { Horse, AuctionSale, ScoutReport } from "@/game/types";
 import type { MarketState } from "@/game/state/marketState";
 import { createDefaultMarketState } from "@/game/state/marketState";
-import { horsePrice, horsePriceWithPedigree } from "@/game/horseGen";
+import { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
 import { scoutHorse } from "@/game/scouting";
 import { createRng, hashStr } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";

@@ -11,7 +11,7 @@ import type { CourseSpecification } from "@/game/tracks";
 import { generateHorse } from "@/game/horseGen";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { createRng, hashStr, type Rng } from "@/game/rng";
-import { calculateAssignedWeight } from "@/game/npcRaceEntry";
+import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**

@@ -16,9 +16,6 @@ import {
   type StablePoolEntry,
 } from "@/core/stable/stableGeneration";
 
-// Re-export for backward compatibility
-export { PERSONALITY_CONFIG, STABLE_CONFIG };
-
 // ELITE STABLE POOL - 10 real-world inspired operations (config picks 5)
 const ELITE_POOL: StablePoolEntry[] = [
   {

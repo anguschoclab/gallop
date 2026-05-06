@@ -1,5 +1,5 @@
 import type { PipelineContext } from "../pipeline";
-import { generateUpcomingRaces, pruneOldRaces } from "@/game/store";
+import { generateUpcomingRaces, pruneOldRaces } from "@/game/store/helpers/market";
 import { generateAnnualCalendar, getCurrentYear } from "@/game/raceSchedule";
 
 /**

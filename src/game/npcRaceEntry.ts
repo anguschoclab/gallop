@@ -99,9 +99,6 @@ export function selectHorsesForRaceEntry(
   return toEnter;
 }
 
-// Re-export for backward compatibility
-export { calculateAssignedWeight };
-
 /**
  * Run race entry for all NPC stables for races in the next N days
  * This is called during advanceDay()

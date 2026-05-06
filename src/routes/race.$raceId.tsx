@@ -23,7 +23,8 @@ import {
 import type { Weather } from "@/game/types";
 import { Pause, Play, Camera, Mic2 } from "lucide-react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { NarrativeGenerator, type CommentaryLine } from "@/services/narrativeService";
+import { NarrativeGenerator } from "@/services/narrativeService";
+import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
 import {
   getTrackBackground,

@@ -48,12 +48,6 @@ import {
 import { rollGender, geldHorse } from "@/core/horse/gender";
 import { randomHorseName, randomSilk } from "@/core/common/random";
 import { resolveBloodline } from "@/core/breeding/populationGenetics";
-// Re-exports for backward compat — callers should migrate to the canonical locations
-export { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
-export { generateRace, makeGradedRace } from "./raceGeneration/raceGen";
-
-// Re-export geldHorse so existing importers from horseGen don't break.
-export { geldHorse };
 
 // Resolve all DNA-derived gameplay fields from a Genotype. Centralized here
 // so both `createHorseFromDNA` (foaling) and `generateHorse` (procedural) stay

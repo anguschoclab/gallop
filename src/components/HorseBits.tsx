@@ -49,45 +49,6 @@ export function HorseStats({ horse, className }: { horse: Horse; className?: str
 }
 
 /**
- * SilkBadge — A larger silk indicator (legacy, prefer SilkDot for new code).
- *
- * Design Bible:
- * - Circular badge with contextual border
- * - White border with shadow for depth
- */
-export function SilkBadge({
-  color,
-  num,
-  size = "md",
-  className,
-}: {
-  color: string;
-  num?: number;
-  size?: "sm" | "md" | "lg";
-  className?: string;
-}) {
-  const sizeClasses = {
-    sm: "h-6 w-6 text-[10px]",
-    md: "h-8 w-8 text-xs",
-    lg: "h-10 w-10 text-sm",
-  };
-
-  return (
-    <div
-      className={cn(
-        "rounded-full flex items-center justify-center text-white font-bold",
-        "border-2 border-white/60 dark:border-white/50 shadow-sm",
-        sizeClasses[size],
-        className,
-      )}
-      style={{ backgroundColor: color }}
-    >
-      {num ?? ""}
-    </div>
-  );
-}
-
-/**
  * HorseBit — Small inline display element (silk + name + status pill).
  *
  * Design Bible:

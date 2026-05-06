@@ -1,5 +1,5 @@
 import type { PipelineContext } from "../pipeline";
-import { refreshMarket } from "@/game/store";
+import { refreshMarket } from "@/game/store/helpers/market";
 import { createRng, hashStr } from "@/game/rng";
 import {
   shouldPurchaseHorse,

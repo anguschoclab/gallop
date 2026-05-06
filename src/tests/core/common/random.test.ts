@@ -3,7 +3,6 @@ import {
   rand,
   rollRunningStyle,
   randomWeather,
-  randomTrackCondition,
   randomHorseName,
   randomSilk,
   randomRaceName,
@@ -65,13 +64,6 @@ describe("randomWeather", () => {
   it("returns valid weather condition", () => {
     const result = randomWeather(nondeterministicRng());
     expect(["sunny", "cloudy", "rainy", "sunset", "night"]).toContain(result);
-  });
-});
-
-describe("randomTrackCondition", () => {
-  it("returns valid track condition", () => {
-    const result = randomTrackCondition(nondeterministicRng());
-    expect(["fast", "good", "soft", "heavy", "yielding"]).toContain(result);
   });
 });
 
