@@ -130,10 +130,10 @@ function RootComponent() {
     );
   }
 
-  // Don't render AppShell if redirecting to wizard
-  if (!playerProfile) {
-    return null;
+  // Render AppShell if playerProfile exists, otherwise render Outlet for wizard
+  if (playerProfile) {
+    return <AppShell />;
   }
 
-  return <AppShell />;
+  return <Outlet />;
 }
