@@ -16,6 +16,86 @@ import { createOpfsStorage, hydrationComplete, createRehydrateStore } from "./st
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/state/coreState";
 import { shallow } from "zustand/shallow";
+import { wrap, expose, type Remote } from "comlink";
+import type { EngineWorkerApi } from "@/workers/engine.worker";
+import type { StorageWorkerApi } from "@/workers/storage.worker";
+import type { InitializationWorkerApi } from "@/workers/initialization.worker";
+
+/**
+ * Worker instances
+ */
+let engineWorker: Remote<EngineWorkerApi> | null = null;
+let storageWorker: Remote<StorageWorkerApi> | null = null;
+let initializationWorker: Remote<InitializationWorkerApi> | null = null;
+
+/**
+ * Initialize engine worker
+ */
+export async function initEngineWorker(): Promise<void> {
+  if (engineWorker) return;
+
+  const worker = new Worker(new URL("@/workers/engine.worker", import.meta.url), {
+    type: "module",
+  });
+  engineWorker = wrap<EngineWorkerApi>(worker);
+}
+
+/**
+ * Initialize storage worker
+ */
+export async function initStorageWorker(): Promise<void> {
+  if (storageWorker) return;
+
+  const worker = new Worker(new URL("@/workers/storage.worker", import.meta.url), {
+    type: "module",
+  });
+  storageWorker = wrap<StorageWorkerApi>(worker);
+}
+
+/**
+ * Initialize initialization worker
+ */
+export async function initInitializationWorker(): Promise<void> {
+  if (initializationWorker) return;
+
+  const worker = new Worker(
+    new URL("@/workers/initialization.worker", import.meta.url),
+    { type: "module" },
+  );
+  initializationWorker = wrap<InitializationWorkerApi>(worker);
+}
+
+/**
+ * Get engine worker instance
+ */
+export function getEngineWorker(): Remote<EngineWorkerApi> {
+  if (!engineWorker) {
+    throw new Error("Engine worker not initialized. Call initEngineWorker() first.");
+  }
+  return engineWorker;
+}
+
+/**
+ * Get storage worker instance
+ */
+export function getStorageWorker(): Remote<StorageWorkerApi> {
+  if (!storageWorker) {
+    throw new Error("Storage worker not initialized. Call initStorageWorker() first.");
+  }
+  return storageWorker;
+}
+
+/**
+ * Get initialization worker instance
+ */
+export function getInitializationWorker(): Remote<InitializationWorkerApi> {
+  if (!initializationWorker) {
+    throw new Error(
+      "Initialization worker not initialized. Call initInitializationWorker() first.",
+    );
+  }
+  return initializationWorker;
+}
 
 /**
  * Standard action result type for store actions
