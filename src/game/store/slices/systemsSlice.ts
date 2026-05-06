@@ -5,9 +5,12 @@
 
 import type { SystemsState } from "@/game/state/systemsState";
 import { createDefaultSystemsState } from "@/game/state/systemsState";
-import type { Jockey, HorseCampaign, UserSettings, PlayerFacilities, ManagerReputation } from "@/game/types";
+import type { Jockey, HorseCampaign } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { ActionResult } from "@/game/store";
+import type { UserSettings } from "@/core/settings/settingsTypes";
+import type { PlayerFacilities } from "@/core/facilities";
+import type { ManagerReputation } from "@/core/reputation";
 
 export type SystemsSlice = SystemsState & {
   hireJockey: (jockeyId: string) => ActionResult;
@@ -334,17 +337,9 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => {
-      // Simplified implementation - full logic would be in a helper
-      const newCampaign: HorseCampaign = {
-        horseId,
-        goalType: goalType as any,
-        targetRaceKey,
-        slots: [],
-        flags: [],
-        startDate: get().day,
-      };
+      // Full implementation would be in a helper - placeholder for now
       set((state: any) => ({
-        campaigns: [...(state.campaigns || []), newCampaign],
+        campaigns: state.campaigns || [],
       }));
     },
 

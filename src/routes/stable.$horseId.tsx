@@ -24,7 +24,7 @@ import { GradedStatsChart } from "@/components/GradedStatsChart";
 import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
-import { TRAINING_COST } from "@/game/store";
+import { TRAINING_COST } from "@/game/constants/gameConstants";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { isWorkoutEnabled } from "@/core/facilities";
