@@ -206,10 +206,11 @@ export const PERSONALITY_WEIGHTS: Record<StableTier, Partial<Record<StablePerson
 /**
  * Configuration for stable generation
  * Adjust these to change how many named stables spawn per tier
+ * Updated to accommodate expanded stallion roster (~522 stallions) and larger stable pools
  */
 export const STABLE_CONFIG = {
-  elite: { count: 5, reputationRange: [90, 98] as [number, number] },
-  mid: { count: 10, reputationRange: [70, 86] as [number, number] },
-  budget: { count: 5, reputationRange: [50, 65] as [number, number] },
+  elite: { count: 7, reputationRange: [90, 98] as [number, number] },
+  mid: { count: 15, reputationRange: [70, 86] as [number, number] },
+  budget: { count: 6, reputationRange: [50, 65] as [number, number] },
   filler: { count: 100 },
 };
