@@ -3,6 +3,7 @@
 // Refactored to use modular configuration and generation systems
 
 import type { Stable, StableTier } from "./types";
+import type { PedigreeHorse } from "./pedigreeData";
 import type { Rng } from "./rng";
 import { PERSONALITY_CONFIG, STABLE_CONFIG } from "@/core/stable/stableConfig";
 import {
@@ -100,6 +101,14 @@ const ELITE_POOL: StablePoolEntry[] = [
     colors: { primary: "#ff0000", secondary: "#ffd700" },
     description: "Asian powerhouse with global reach, breeding and racing worldwide.",
     country: "China/International",
+  },
+  {
+    name: "Shadai Stallion Station",
+    owner: "Yoshida Family",
+    isMajor: true,
+    colors: { primary: "#000080", secondary: "#ffffff" },
+    description: "Japanese breeding powerhouse home of Deep Impact, Sunday Silence, and Japanese Triple Crown winners.",
+    country: "Japan",
   },
 ];
 
@@ -401,4 +410,64 @@ export function getTargetHorseCountForTier(tier: StableTier, isMajor: boolean, r
     case "budget":
       return rng.int(15, 25); // 15-25
   }
+}
+
+/**
+ * Map a famous stallion to an appropriate game stable
+ * Uses real-world stud farm name to match with game stables, with tier-based fallback
+ */
+export function mapStallionToStable(stallion: PedigreeHorse, stables: Stable[]): Stable {
+  // Try exact match first
+  const exactMatch = stables.find((s) => s.name === stallion.studFarm);
+  if (exactMatch) return exactMatch;
+
+  // Map by stud farm name to game stable
+  const farmMapping: Record<string, string> = {
+    Coolmore: "Coolmore Stud",
+    Godolphin: "Godolphin",
+    Juddmonte: "Juddmonte Farms",
+    Spendthrift: "WinStar Farm",
+    Darley: "Godolphin",
+    "Darley Jonabell Farm": "Godolphin",
+    "Coolmore Ashford": "Coolmore Stud",
+    "Coolmore Ireland": "Coolmore Stud",
+    Arrowfield: "Arrowfield Stud",
+    "Arrowfield Stud": "Arrowfield Stud",
+    Shadai: "Shadai Stallion Station",
+    "Shadai Stallion Station": "Shadai Stallion Station",
+    "Yulong Investments": "Yulong Investments",
+    "Newgate Farm": "Newgate Farm",
+    "Gainesway Farm": "WinStar Farm",
+    "Three Chimneys Farm": "WinStar Farm",
+    "Hill 'n' Dale Farms": "WinStar Farm",
+    "Lane's End": "WinStar Farm",
+    "Northern Farm": "Shadai Stallion Station",
+    "Banstead Manor Stud": "Coolmore Stud",
+    "Newsells Park Stud": "Coolmore Stud",
+    "Aga Khan Studs": "Coolmore Stud",
+    "Widden Stud": "Arrowfield Stud",
+    "Darley Australia": "Godolphin",
+  };
+
+  const mappedName = farmMapping[stallion.studFarm || ""];
+  if (mappedName) {
+    const mapped = stables.find((s) => s.name === mappedName);
+    if (mapped) return mapped;
+  }
+
+  // Fallback: assign by tier based on stud fee
+  const tier =
+    stallion.studFee && stallion.studFee >= 100000
+      ? "elite"
+      : stallion.studFee && stallion.studFee >= 25000
+      ? "mid"
+      : "budget";
+
+  const tierStables = stables.filter((s) => s.tier === tier);
+  if (tierStables.length === 0) {
+    // If no stables of appropriate tier, return any stable
+    return stables[Math.floor(Math.random() * stables.length)];
+  }
+
+  return tierStables[Math.floor(Math.random() * tierStables.length)];
 }

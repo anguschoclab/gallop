@@ -9,6 +9,16 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Horse, Race, Jockey } from "@/game/types";
@@ -19,6 +29,10 @@ import { JockeyCard } from "./JockeyCard";
 import { RacingSilks } from "./RacingSilks";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
 import { getCurrentYear } from "@/game/raceSchedule";
+import { toast } from "sonner";
+
+const fmtCurrency = (n: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 
 interface RaceEntryProps {
   race: Race;
@@ -36,12 +50,17 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const horses = useMemo(() => allHorses.filter((h: any) => h.owned), [allHorses]);
   const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
   const enterRace = useGame((s) => s.enterRace);
+  const enterClaimingRace = useGame((s) => s.enterClaimingRace);
+  const withdrawFromClaimingRace = useGame((s) => s.withdrawFromClaimingRace);
   const assignJockey = useGame((s) => s.assignJockey);
   const submitClaim = useGame((s) => s.submitClaim);
   const withdrawClaim = useGame((s) => s.withdrawClaim);
   const withdrawRace = useGame((s) => s.withdrawRace);
   const cash = useGame((s) => s.cash);
   const day = useGame((s) => s.day);
+  // D3: determine if this is a new-spec claiming race
+  const isNewClaimingRace = !!race.claiming;
+  const claimingPrice = race.claiming?.price ?? race.claimingPrice;
 
   const selectedHorse = useMemo(
     () => horses.find((h: Horse) => h.id === selectedHorseId),
@@ -74,17 +93,25 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
 
   const handleConfirm = () => {
     if (selectedHorseId && selectedJockeyId) {
-      const res = enterRace(race.id, selectedHorseId);
+      // D3: use enterClaimingRace for new claiming races
+      const res = isNewClaimingRace
+        ? enterClaimingRace(race.id, selectedHorseId)
+        : enterRace(race.id, selectedHorseId);
       if (res.ok) {
         assignJockey(race.id, selectedHorseId, selectedJockeyId);
 
-        // Submit claim if selected
-        if (wantToClaim && race.claimingPrice) {
+        // Submit claim if selected (old-style claimingPrice)
+        if (wantToClaim && race.claimingPrice && !isNewClaimingRace) {
           const claimRes = submitClaim(race.id, selectedHorseId);
           if (!claimRes.ok) {
             alert(`Claim failed: ${claimRes.reason}`);
             return;
           }
+        }
+
+        if (isNewClaimingRace) {
+          const horse = horses.find((h: Horse) => h.id === selectedHorseId);
+          toast.info(`${horse?.name ?? "Horse"} entered in claiming race at ${fmtCurrency(claimingPrice!)}.`);
         }
 
         onClose();
@@ -180,7 +207,29 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                         </div>
                       </button>
                       <div className="flex items-center gap-2">
-                        {isEntered && (
+                        {isEntered && isNewClaimingRace && (() => {
+                          const canWithdraw = day < race.day - 1;
+                          return (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-[10px] uppercase font-black tracking-wider"
+                              disabled={!canWithdraw}
+                              title={canWithdraw ? undefined : "Withdrawal closed"}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (canWithdraw) {
+                                  withdrawFromClaimingRace(race.id, horse.id);
+                                  toast.success(`${horse.name} withdrawn from ${race.name}.`);
+                                  onClose();
+                                }
+                              }}
+                            >
+                              {canWithdraw ? "Withdraw" : "Withdrawal closed"}
+                            </Button>
+                          );
+                        })()}
+                        {isEntered && !isNewClaimingRace && (
                           <Button
                             variant="destructive"
                             size="sm"
@@ -245,6 +294,16 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground text-center">
                 Final Review
               </h3>
+              {/* D3 — Claiming race risk warning */}
+              {isNewClaimingRace && claimingPrice && (
+                <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 flex gap-3 text-warning">
+                  <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+                  <p className="text-xs font-bold">
+                    Claiming Race: Any stable may purchase {selectedHorse.name} for{" "}
+                    {fmtCurrency(claimingPrice)} after the race. The transfer is automatic. You may withdraw up to 1 day before the race.
+                  </p>
+                </div>
+              )}
 
               <div className="flex justify-around items-center gap-4 bg-muted p-6 rounded-2xl border border-border relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />

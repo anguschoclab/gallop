@@ -38,6 +38,9 @@ import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
 import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
+import { privateSaleExpiryPhase } from "@/core/time/phases/privateSaleExpiry";
+import { npcClaimingPhase } from "@/core/time/phases/npcClaiming";
+import { claimResolutionPhase } from "@/core/time/phases/claimResolution";
 import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
@@ -272,6 +275,8 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
           transports: finalState.transports,
           hallOfFame: finalState.hallOfFame,
           npcAIManager: finalState.npcAIManager,
+          privateSaleOffers: finalState.privateSaleOffers,
+          claims: finalState.claims,
           pendingIntents: [], // Clear pending intents after processing
           log: [
             ...newLogs,
@@ -300,6 +305,8 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
           // Intent/impact resolver phases
           intentCollectionPhase,
           intentValidationPhase,
+          // D2 — Private sale offer expiry (very early)
+          privateSaleExpiryPhase,
           // Existing phases
           upkeepPhase,
           agingPhase,
@@ -328,7 +335,11 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
           breedingResolutionPhase,
           trainingResolutionPhase,
           claimingWithdrawalPhase,
+          // D3 — NPC claim filing (before race resolution)
+          npcClaimingPhase,
           raceResolutionPhase,
+          // D3 — Claim resolution (after race resolution)
+          claimResolutionPhase,
           // Impact application phase (final)
           impactApplicationPhase,
         ];
@@ -368,6 +379,8 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
           transports: finalState.transports,
           hallOfFame: finalState.hallOfFame,
           npcAIManager: finalState.npcAIManager,
+          privateSaleOffers: finalState.privateSaleOffers,
+          claims: finalState.claims,
           pendingIntents: [], // Clear pending intents after processing
           log: [
             ...newLogs,

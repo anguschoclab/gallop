@@ -25,6 +25,8 @@ import {
   recordHorseGeneration,
 } from "@/core/ai/horseGenAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { activeStallions2020s, type PedigreeHorse } from "./pedigreeData";
+import { mapStallionToStable } from "./npcStables";
 
 /**
  * Map stable tier to DNA generation tier.
@@ -257,19 +259,50 @@ export function generateStableHorses(
  * Retires eligible stallions to stud at world-gen time so the player has
  * a roster to book against from day 1 (instead of waiting for in-game
  * retirements to seed the stallion market).
+ *
+ * If famousStallions is provided, they are integrated into the stables and
+ * procedural stallion generation is skipped for those stables.
  */
 export function generateAllNpcHorses(
   stables: Stable[],
   rng: Rng,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
+  famousStallions?: Horse[],
 ): { stables: Stable[]; horses: Horse[] } {
   const updatedStables: Stable[] = [];
   const allHorses: Horse[] = [];
 
+  // Group famous stallions by stable
+  const stallionsByStable = new Map<string, Horse[]>();
+  if (famousStallions) {
+    for (const stallion of famousStallions) {
+      if (stallion.stableId) {
+        if (!stallionsByStable.has(stallion.stableId)) {
+          stallionsByStable.set(stallion.stableId, []);
+        }
+        stallionsByStable.get(stallion.stableId)!.push(stallion);
+      }
+      allHorses.push(stallion);
+    }
+  }
+
   for (const stable of stables) {
+    const stableFamousStallions = stallionsByStable.get(stable.id) || [];
+
+    // Generate procedural horses
     const horses = generateStableHorses(stable, rng, npcAIManager, currentDay);
+
+    // Add famous stallions to this stable's horses
+    horses.push(...stableFamousStallions);
+
+    // Retire eligible procedural horses to stud (famous stallions already have stud careers)
     for (const horse of horses) {
+      // Skip famous stallions - they already have stud careers
+      if (famousStallions && famousStallions.some((fs) => fs.id === horse.id)) {
+        continue;
+      }
+
       if (shouldRetireAtStartup(horse, stable)) {
         const { bookSize } = defaultStudParams(stable.tier);
         horse.stud = {
@@ -284,6 +317,7 @@ export function generateAllNpcHorses(
         };
       }
     }
+
     const horseIds = horses.map((h) => h.id);
 
     updatedStables.push({
@@ -343,4 +377,83 @@ export function getBroodmareFee(horse: Horse, stable: Stable): number {
   }
 
   return Math.round(calculateNpcHorseValue(horse, stable.tier) * 0.3); // Mare fees lower
+}
+
+/**
+ * Generate famous stallions from the activeStallions2020s dataset
+ * These replace procedural stallion generation with real-world sires
+ */
+export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
+  const famousStallions: Horse[] = [];
+
+  // Filter for active stallions
+  const activeStallions = activeStallions2020s.filter((s) => s.currentStatus === "active");
+
+  for (const stallionData of activeStallions) {
+    // Map to appropriate stable
+    const stable = mapStallionToStable(stallionData, stables);
+
+    // Calculate age from birth year (game starts in 2026)
+    const age = 2026 - (stallionData.birthYear || 2020);
+
+    // Determine DNA tier based on stud fee
+    const tier =
+      stallionData.studFee && stallionData.studFee >= 100000
+        ? "elite"
+        : stallionData.studFee && stallionData.studFee >= 25000
+        ? "mid"
+        : "budget";
+
+    // Generate DNA
+    const genotype = generateGenotype(rng, tier);
+
+    // Create horse from DNA
+    const horse = createHorseFromDNA(genotype, rng, {
+      name: stallionData.name,
+      age,
+      gender: "horse",
+      hemisphere: stallionData.hemisphere || "Northern",
+      owned: false,
+    });
+
+    // Set pedigree
+    horse.sireName = stallionData.sire;
+    horse.damName = stallionData.dam;
+
+    // Set stud career with real-world fee
+    horse.stud = {
+      atStud: true,
+      standingFee: stallionData.studFee || 50000,
+      bookSize: stallionData.bookSize || 150,
+      seasonBookings: 0,
+      lifetimeFoals: 0,
+      lifetimeStakesFoals: 0,
+      lifetimeG1Foals: 0,
+      retiredOnDay: 1,
+    };
+
+    // Assign to stable
+    horse.stableId = stable.id;
+
+    // Set bloodline from pedigreeData
+    horse.bloodline = resolveBloodline(horse, { horses: [] });
+
+    // Set Bruce Lowe family if available
+    if (stallionData.bruceLoweFamily) {
+      horse.bruceLoweFamily = stallionData.bruceLoweFamily;
+    } else {
+      // Fallback to procedural family
+      horse.bruceLoweFamily = rollProceduralFamily(rng);
+    }
+
+    // Set fame based on achievements and stud fee
+    let baseFame = 30;
+    if (stallionData.studFee && stallionData.studFee >= 200000) baseFame = 70;
+    else if (stallionData.studFee && stallionData.studFee >= 100000) baseFame = 50;
+    horse.fame = Math.min(100, baseFame + (age - 4) * 2);
+
+    famousStallions.push(horse);
+  }
+
+  return famousStallions;
 }

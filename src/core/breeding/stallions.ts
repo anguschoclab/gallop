@@ -87,7 +87,15 @@ export function calculateRecommendedStudFee(
 // Compute the standing-fee for a stallion based on stable tier and the
 // horse's stat profile. Uses the existing calculateNpcHorseValue infra
 // scaled down so a brand-new stallion isn't priced like a proven sire.
-export function initialStandingFee(horse: Horse, tier: StableTier): number {
+// If realWorldFee is provided, use it directly (for famous stallions).
+export function initialStandingFee(
+  horse: Horse,
+  tier: StableTier,
+  realWorldFee?: number,
+): number {
+  // If real-world fee is provided, use it directly
+  if (realWorldFee) return realWorldFee;
+
   const { fee: tierBase } = STUD_DEFAULTS[tier];
   // Mix tier baseline with stat-based valuation; stat-driven half lets
   // exceptional budget stallions out-earn average mid stallions.

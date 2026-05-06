@@ -550,6 +550,8 @@ export type Race = {
   };
   weather?: Weather; // Race day weather
   trackCondition?: TrackCondition; // Track surface condition
+  /** Claiming race price — when set, any stable may claim any entered horse */
+  claiming?: { price: number };
 };
 
 export type Pregnancy = {
@@ -592,6 +594,7 @@ export type AuctionLot = {
   withdrawn: boolean;
   bidHistory?: AuctionBidRecord[];
   breezeSeconds?: number; // 2YO-in-training breeze time (1/8 mile)
+  buyNowPrice?: number; // set by auctioneer at generation; undefined once threshold crossed
 };
 
 export type AuctionSaleKind =
@@ -611,6 +614,37 @@ export type AuctionSale = {
   kind: AuctionSaleKind;
   lots: AuctionLot[];
   resolved: boolean;
+};
+
+// ---------------------------------------------------------------------------
+// D2 — Private Sales
+// ---------------------------------------------------------------------------
+
+export type PrivateSaleStatus = 'pending' | 'accepted' | 'countered' | 'declined' | 'expired';
+
+export type PrivateSaleOffer = {
+  id: string;
+  horseId: string;
+  fromStableId?: string;  // undefined = offer originates from player
+  toStableId?: string;    // undefined = player is the recipient
+  amount: number;
+  counterAmount?: number; // populated only when status === 'countered'
+  status: PrivateSaleStatus;
+  createdDay: number;
+  expiresDay: number;     // always createdDay + 3
+};
+
+// ---------------------------------------------------------------------------
+// D3 — Claiming Races
+// ---------------------------------------------------------------------------
+
+export type Claim = {
+  id: string;
+  raceId: string;
+  horseId: string;
+  claimantStableId?: string; // undefined = player is the claimant
+  price: number;
+  day: number;
 };
 
 // GameState type is now defined in ./state/ for better maintainability

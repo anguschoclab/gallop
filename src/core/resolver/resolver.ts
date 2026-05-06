@@ -457,6 +457,14 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
         break;
       }
 
+      case "claimResolution": {
+        // The actual horse/cash transfers are emitted as separate CashImpact /
+        // HorseTransferImpact impacts by the claiming resolution logic.
+        // This impact is a marker for the post-race recap UI — no additional
+        // state mutation needed here beyond what those impacts already apply.
+        break;
+      }
+
       default:
         // Unknown impact type - log warning
         console.warn(`Unknown impact type: ${(impact as any).type}`);

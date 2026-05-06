@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Calendar,
   Filter,
   Search,
@@ -22,19 +32,21 @@ import {
   History,
   LayoutGrid,
   List,
+  AlertTriangle,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { cn } from "@/lib/utils";
 import { RaceEntry } from "@/components/RaceEntry";
-import { Race } from "@/game/types";
+import { Race, Claim } from "@/game/types";
 import { getCountry } from "@/game/gradedRaces";
 import { getGradeColorClass } from "@/core/race/grading";
 import { GradeBreakdown } from "@/components/races/GradeBreakdown";
 import { RaceCard } from "@/components/races/RaceCard";
 import { RaceRow } from "@/components/races/RaceRow";
 import { NumericValue } from "@/components/HorseBits";
+import { toast } from "sonner";
 
 type RaceFilters = {
   grade: string;
@@ -57,14 +69,22 @@ export const Route = createFileRoute("/races")({
   component: RacesPage,
 });
 
+const fmtCurrency = (n: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+
 function RacesPage() {
   const { grade, country, surface, track, owned, q } = Route.useSearch();
   const navigate = Route.useNavigate();
   const races = (useGame as any)((s: any) => s.races, shallow);
   const horses = (useGame as any)((s: any) => s.horses, shallow);
+  const claims: Claim[] = (useGame as any)((s: any) => s.claims ?? [], shallow);
   const day = useGame((s) => s.day);
+  const cash = useGame((s) => s.cash);
+  const fileClaim = useGame((s) => s.fileClaim);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [enteringRace, setEnteringRace] = useState<Race | null>(null);
+  const [claimingRace, setClaimingRace] = useState<Race | null>(null);
+  const [pendingClaimHorseId, setPendingClaimHorseId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     return races
@@ -329,9 +349,64 @@ function RacesPage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {filtered.map((r) => (
-                <RaceRow key={r.id} race={r} onEnter={() => setEnteringRace(r as Race)} />
-              ))}
+              {filtered.map((r) => {
+                const isClaiming = !!r.claiming;
+                return (
+                  <div key={r.id}>
+                    <RaceRow race={r} onEnter={() => setEnteringRace(r as Race)} />
+                    {/* D3 — Claiming race entries panel */}
+                    {isClaiming && r.entries.length > 0 && (
+                      <div className="ml-4 mt-1 mb-1 p-3 rounded-b-lg border border-t-0 border-gold-muted/50 bg-t900 space-y-2">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-warning flex items-center gap-1">
+                          <AlertTriangle className="h-3 w-3" />
+                          Claiming Race Entries — {fmtCurrency(r.claiming!.price)}
+                        </p>
+                        <div className="space-y-1">
+                          {r.entries.map((entry: any) => {
+                            const entryHorse = horses.find((h: any) => h.id === entry.horseId);
+                            const isOwned = !!entry.owned;
+                            const playerClaimFiled = claims.some(
+                              (c: Claim) => c.raceId === r.id && c.horseId === entry.horseId && c.claimantStableId === undefined,
+                            );
+                            const canAfford = cash >= r.claiming!.price;
+                            return (
+                              <div key={entry.horseId} className="flex items-center justify-between py-1 border-b border-gold-muted/20 last:border-0">
+                                <span className="text-sm text-cream font-medium">
+                                  {entryHorse?.name ?? entry.horseId}
+                                  {isOwned && <span className="ml-2 text-xs text-success">(your horse)</span>}
+                                </span>
+                                <div>
+                                  {!isOwned && (
+                                    playerClaimFiled ? (
+                                      <Button size="sm" variant="ghost" disabled className="text-xs">
+                                        Claim filed
+                                      </Button>
+                                    ) : (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        disabled={!canAfford}
+                                        title={canAfford ? undefined : `You need ${fmtCurrency(r.claiming!.price - cash)} to file this claim.`}
+                                        className="text-xs"
+                                        onClick={() => {
+                                          setClaimingRace(r as Race);
+                                          setPendingClaimHorseId(entry.horseId);
+                                        }}
+                                      >
+                                        Claim {fmtCurrency(r.claiming!.price)}
+                                      </Button>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </main>
@@ -343,6 +418,45 @@ function RacesPage() {
           onClose={() => setEnteringRace(null)}
         />
       )}
+
+      {/* D3 — Claim filing dialog */}
+      {claimingRace && pendingClaimHorseId && (() => {
+        const horse = horses.find((h: any) => h.id === pendingClaimHorseId);
+        const cp = claimingRace.claiming!.price;
+        return (
+          <AlertDialog open onOpenChange={(open) => { if (!open) { setClaimingRace(null); setPendingClaimHorseId(null); } }}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Claim {horse?.name} for {fmtCurrency(cp)}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  If your claim is drawn, {fmtCurrency(cp)} will be deducted from your account and{" "}
+                  {horse?.name ?? "the horse"} will transfer to your stable after the race completes.
+                  Multiple claims on the same horse are resolved randomly.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => { setClaimingRace(null); setPendingClaimHorseId(null); }}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    const result = fileClaim(claimingRace.id, pendingClaimHorseId);
+                    setClaimingRace(null);
+                    setPendingClaimHorseId(null);
+                    if (result.ok) {
+                      toast.success(`Claim filed on ${horse?.name} for ${fmtCurrency(cp)}.`);
+                    } else {
+                      toast.error(`Claim failed: ${result.reason}`);
+                    }
+                  }}
+                >
+                  File Claim
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        );
+      })()}
     </div>
   );
 }

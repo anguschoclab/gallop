@@ -59,6 +59,7 @@ export type AuctionRunner = {
         leadingBidder: string | undefined;
         chant: ChantPhase;
         nextBid: number;
+        bidHistory: AuctionBidRecord[];
       }
     | undefined;
   /** Advance one tick. If `playerBid` is provided and valid, it's applied first. */
@@ -77,6 +78,8 @@ export type AuctionRunner = {
    * Caller passes the day + phase tag for impact metadata.
    */
   finalImpacts(args: { day: number; phase: string }): AnyImpact[];
+  /** Set or clear the player's proxy max bid cap for automatic re-raises. */
+  setPlayerMaxBid(cap: number | undefined): void;
 };
 
 /**
@@ -109,6 +112,11 @@ export type AuctionRunnerOptions = {
    * Current day for AI learning and decision-making.
    */
   currentDay?: number;
+  /**
+   * Called before each auto-raise to debit cash. Return false to abort the
+   * auto-raise and cancel the proxy bid.
+   */
+  onAutoRaise?: (amount: number) => boolean;
 };
 
 export function createAuctionRunner(
@@ -118,7 +126,10 @@ export function createAuctionRunner(
   baseSeed: number = hashStr(sale.id),
   options: AuctionRunnerOptions = {},
 ): AuctionRunner {
-  const { liveMode = false, npcAIManager, currentDay } = options;
+  const { liveMode = false, npcAIManager, currentDay, onAutoRaise } = options;
+
+  // Proxy bid cap — cleared per lot and on cancel.
+  let playerMaxBid: number | undefined = undefined;
   const lots: LotState[] = sale.lots
     .filter((l) => !l.withdrawn)
     .map((l) => ({
@@ -259,6 +270,32 @@ export function createAuctionRunner(
       // Then NPC scan.
       const npcEv = tryNpcRaise(state);
       if (npcEv) {
+        // Auto-raise: if player has a proxy cap and NPC just outbid them,
+        // attempt to re-raise on the player's behalf before advancing the chant.
+        // tryNpcRaise always returns a BID_RECEIVED event which has `amount`.
+        const npcAmount = "amount" in npcEv ? npcEv.amount : 0;
+        const nextForPlayer = nextBidAmount(npcAmount);
+        if (
+          playerMaxBid !== undefined &&
+          nextForPlayer <= playerMaxBid &&
+          state.leadingBidder !== undefined // NPC is now leading
+        ) {
+          // Debit cash via injected callback; cancel proxy if cash is insufficient.
+          const canRaise = onAutoRaise ? onAutoRaise(nextForPlayer) : true;
+          if (canRaise) {
+            const autoEv = tryRecordPlayerBid(state, nextForPlayer);
+            if (autoEv) {
+              events.push(npcEv); // NPC raise first
+              events.push(autoEv); // player re-raise immediately after
+              state.chant = "bidding";
+              return { events, done, currentLotIndex: lotIndex };
+            }
+          } else {
+            // onAutoRaise returned false — proxy cancelled.
+            playerMaxBid = undefined;
+          }
+        }
+
         events.push(npcEv);
         state.chant = "bidding";
         // Detect a bid-war: 4+ consecutive raises on this lot
@@ -318,6 +355,7 @@ export function createAuctionRunner(
       leadingBidder: state.leadingBidder,
       chant: state.chant,
       nextBid: nextBidAmount(state.currentBid),
+      bidHistory: state.bidHistory,
     };
   }
 
@@ -442,5 +480,8 @@ export function createAuctionRunner(
       }),
     log: () => log,
     finalImpacts,
+    setPlayerMaxBid: (cap: number | undefined) => {
+      playerMaxBid = cap;
+    },
   };
 }

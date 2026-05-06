@@ -10,7 +10,9 @@
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__click",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script",
       "Bash(Get-ChildItem *)",
-      "Bash(Select-Object FullName)"
+      "Bash(Select-Object FullName)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

@@ -1,7 +1,7 @@
 // Market State - Trading and acquisition systems
 // Includes market horses, auctions, and scouting reports
 
-import type { Horse, AuctionSale, ScoutReport } from "../types";
+import type { Horse, AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "../types";
 
 /**
  * Market-related state for trading, auctions, and scouting.
@@ -14,6 +14,10 @@ export interface MarketState {
   auctions?: AuctionSale[];
   /** Scouting reports on NPC stables */
   scoutReports: ScoutReport[];
+  /** Private sale offers between player and NPC stables */
+  privateSaleOffers: PrivateSaleOffer[];
+  /** Claims filed against horses in claiming races */
+  claims: Claim[];
 }
 
 /**
@@ -23,5 +27,7 @@ export function createDefaultMarketState(): MarketState {
   return {
     market: [],
     scoutReports: [],
+    privateSaleOffers: [],
+    claims: [],
   };
 }

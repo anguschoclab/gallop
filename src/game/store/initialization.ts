@@ -9,7 +9,7 @@ import { generateHorse } from "@/game/horseGen";
 import { generateRace, makeGradedRace } from "@/game/raceGeneration/raceGen";
 import { generateInitialJockeys } from "@/game/jockeyGen";
 import { generateAllStables } from "@/game/npcStables";
-import { generateAllNpcHorses } from "@/game/npcHorseGen";
+import { generateAllNpcHorses, generateFamousStallions } from "@/game/npcHorseGen";
 import { runNpcRaceEntry } from "@/game/npcRaceEntry";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import { GRADED_RACES } from "@/game/gradedRaces";
@@ -61,9 +61,17 @@ export function createInitialState(options?: NewGameOptions): GameState {
   const stableRng = createRng(hashStr("initial_stables"));
   const npcStables = generateAllStables(1, stableRng);
   const npcHorseRng = createRng(hashStr("initial_npc_horses"));
+
+  // Generate famous stallions first
+  const famousStallions = generateFamousStallions(npcStables, npcHorseRng);
+
+  // Generate remaining NPC horses (non-stallions) and integrate famous stallions
   const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(
     npcStables,
     npcHorseRng,
+    undefined,
+    1,
+    famousStallions,
   );
 
   // Generate initial jockeys

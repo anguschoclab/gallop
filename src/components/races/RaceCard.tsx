@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe } from "lucide-react";
+import { MapPin, Globe, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
@@ -18,6 +18,8 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
   const ownedCount = race.entries.filter((e: any) => e.owned).length;
   const gradeLabel = race.graded?.grade;
   const gradeColor = gradeLabel ? getGradeColorClass(gradeLabel) : "bg-muted text-muted-foreground";
+  const isClaiming = !!race.claiming;
+  const claimingPrice: number | undefined = race.claiming?.price;
 
   const horses = (useGame as any)((s: any) => s.horses, shallow);
   const classBonus = useGame((s) => {
@@ -69,7 +71,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
         <Link to="/race-browser" search={{ raceId: race.id }} className="block p-4 space-y-3">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 {gradeLabel && (
                   <Badge
                     variant="outline"
@@ -81,6 +83,13 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
                 <h3 className="font-bold text-base leading-tight truncate max-w-[180px] font-[family-name:var(--font-display)]">
                   {race.name}
                 </h3>
+                {/* D3 — Claiming badge */}
+                {isClaiming && claimingPrice !== undefined && (
+                  <Badge className="h-4 px-1.5 text-[9px] font-bold bg-warning/20 text-warning border border-warning/40 flex items-center gap-0.5">
+                    <AlertTriangle className="h-2.5 w-2.5" />
+                    Claiming ${claimingPrice.toLocaleString()}
+                  </Badge>
+                )}
               </div>
               <div className="flex items-center gap-3 text-xs text-muted-foreground tabular-nums">
                 <span className="flex items-center gap-1">

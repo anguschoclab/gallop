@@ -403,6 +403,15 @@ export interface PaceSampleImpact extends Impact {
   reason: string;
 }
 
+// Claim resolution impact — emitted after race resolution when claims are settled.
+export interface ClaimResolutionImpact extends Impact {
+  type: "claimResolution";
+  raceId: string;
+  horseId: string;
+  winningClaimId: string;
+  losingClaimIds: string[];
+}
+
 // Union type for all impacts
 export type AnyImpact =
   | CashImpact
@@ -443,4 +452,5 @@ export type AnyImpact =
   | PaceSampleImpact
   | PastureRetirementImpact
   | HorseDeathImpact
-  | HallOfFameInductionImpact;
+  | HallOfFameInductionImpact
+  | ClaimResolutionImpact;

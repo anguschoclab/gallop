@@ -37,6 +37,9 @@ import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
 import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
+import { privateSaleExpiryPhase } from "@/core/time/phases/privateSaleExpiry";
+import { npcClaimingPhase } from "@/core/time/phases/npcClaiming";
+import { claimResolutionPhase } from "@/core/time/phases/claimResolution";
 import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
 
@@ -89,6 +92,8 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     // Intent/impact resolver phases
     intentCollectionPhase,
     intentValidationPhase,
+    // D2 — Private sale offer expiry (very early, order 3)
+    privateSaleExpiryPhase,
     // Existing phases
     upkeepPhase,
     agingPhase,
@@ -117,7 +122,11 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     breedingResolutionPhase,
     trainingResolutionPhase,
     claimingWithdrawalPhase,
+    // D3 — NPC claim filing (order 62, before raceResolution)
+    npcClaimingPhase,
     raceResolutionPhase,
+    // D3 — Claim resolution (order 75, after raceResolution)
+    claimResolutionPhase,
     // Impact application phase (final)
     impactApplicationPhase,
   ];
@@ -126,12 +135,12 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
   let currentContext = pipelineContext;
   const totalStages = 5;
 
-  // Stage 1: Intent processing (phases 5-10)
+  // Stage 1: Intent processing + early expiry (phases 1-10)
   if (progressCallback) {
     progressCallback(1, totalStages, "Intent processing");
   }
   currentContext = executePipeline(
-    phases.filter((p) => p.order >= 5 && p.order <= 10),
+    phases.filter((p) => p.order >= 1 && p.order <= 10),
     currentContext,
   );
 

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
+import { AlertTriangle } from "lucide-react";
 
 interface RaceRowProps {
   race: any;
@@ -13,6 +14,8 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
   const ownedCount = race.entries.filter((e: any) => e.owned).length;
   const gradeLabel = race.graded?.grade;
   const gradeColor = gradeLabel ? getGradeColorClass(gradeLabel) : "";
+  const isClaiming = !!race.claiming;
+  const claimingPrice: number | undefined = race.claiming?.price;
 
   return (
     <Link
@@ -33,7 +36,7 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
+        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           {gradeLabel && (
             <Badge variant="outline" className={cn("h-4 px-1 text-[9px] font-bold", gradeColor)}>
               {gradeLabel}
@@ -43,6 +46,19 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
             {race.name}
           </h3>
           {ownedCount > 0 && <div className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
+          {/* D3 — Claiming badge */}
+          {isClaiming && claimingPrice !== undefined && (
+            <Badge className="h-4 px-1.5 text-[9px] font-bold bg-warning/20 text-warning border border-warning/40 flex items-center gap-0.5">
+              <AlertTriangle className="h-2.5 w-2.5" />
+              Claiming ${claimingPrice.toLocaleString()}
+            </Badge>
+          )}
+          {/* D3 — "Entered — at risk" badge when player has entered a claiming race */}
+          {isClaiming && ownedCount > 0 && (
+            <Badge className="h-4 px-1.5 text-[9px] font-bold bg-warning/20 text-warning border border-warning/40">
+              Entered — at risk
+            </Badge>
+          )}
         </div>
         <div className="flex items-center gap-3 text-[11px] text-cream-muted tabular-nowrap">
           <span className="truncate">{race.graded?.track || "Local Track"}</span>
