@@ -211,78 +211,35 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
       return { ok: true };
     },
 
-    advanceDay: () => {
+    advanceDay: async (progressCallback?: (stage: number, total: number, name: string) => void) => {
       const s = get();
       const newDay = s.day + 1;
       const currentYear = getCurrentYear(newDay);
       const previousYear = getCurrentYear(s.day);
 
       // Clean up expired Win and You're In qualifications at year boundary
+      let horses = s.horses;
       if (currentYear > previousYear) {
-        s.horses.forEach((h: Horse) => {
+        horses = horses.map((h: Horse) => {
           if (h.winAndYouInQualified) {
             h.winAndYouInQualified = h.winAndYouInQualified.filter((q) => q.year >= currentYear);
           }
+          return h;
         });
       }
 
-      const playerHorseCount = s.horses.filter((h: Horse) => !h.stableId).length;
+      const playerHorseCount = horses.filter((h: Horse) => !h.stableId).length;
       const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 
-      // Execute pipeline for all phases
-      const pipelineContext: PipelineContext = {
-        previousDay: s.day,
+      // Call engine worker to execute pipeline
+      const engineWorker = getEngineWorker();
+      const result = await engineWorker.advanceDay({
+        state: { ...s, horses },
         newDay,
-        state: s,
-        logs: [],
-        dailyRng: createRng(hashStr("daily_" + newDay)),
-        // Intent/impact resolver fields
-        intents: s.pendingIntents || [],
-        impacts: [],
-        impactLog: [],
-      };
+        progressCallback,
+      });
 
-      const phases = [
-        // Intent/impact resolver phases
-        intentCollectionPhase,
-        intentValidationPhase,
-        // Existing phases
-        upkeepPhase,
-        agingPhase,
-        breedingSeasonPhase,
-        industryMetricsPhase,
-        npcBreedingPhase,
-        energyPhase,
-        marketPhase,
-        racesPhase,
-        beyerRecalibrationPhase,
-        jockeyPhase,
-        pregnancyPhase,
-        npcCyclePhase,
-        stallionRetirementPhase,
-        pastureRetirementPhase,
-        hallOfFamePhase,
-        horseDeathPhase,
-        auctionsPhase,
-        leaderboardPhase,
-        awardsPhase,
-        schedulerPhase,
-        stateUpdatePhase,
-        // Resolution phases (convert intents to impacts)
-        raceEntryResolutionPhase,
-        purchaseResolutionPhase,
-        breedingResolutionPhase,
-        trainingResolutionPhase,
-        claimingWithdrawalPhase,
-        raceResolutionPhase,
-        // Impact application phase (final)
-        impactApplicationPhase,
-      ];
-
-      const updatedContext = executePipeline(phases, pipelineContext);
-
-      // Extract final state from pipeline context
-      const { state: finalState, logs: newLogs } = updatedContext;
+      const { state: finalState, logs: newLogs } = result;
 
       set({
         day: newDay,
