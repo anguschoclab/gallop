@@ -28,7 +28,7 @@ export function ReputationBadge() {
 
   return (
     <div className="flex items-center gap-2">
-      <Badge className={tierColor}>
+      <Badge className={`${tierColor} text-white`}>
         <Trophy className="h-3 w-3 mr-1" />
         {formatReputationTier(reputation.tier)}
       </Badge>

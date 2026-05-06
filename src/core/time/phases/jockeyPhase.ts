@@ -33,20 +33,9 @@ export const jockeyPhase = {
               text: `Jockey contract expired: ${j.name} is now a free agent.`,
             });
           } else if (npcAIManager) {
-            // NPC jockey contract expired - use AI to decide on retention
-            const aiState = getOrCreateStableAIState(npcAIManager, stable, newDay);
-            if (!aiState.jockeyAI) {
-              aiState.jockeyAI = createJockeyAIState(stable);
-            }
-            const shouldRetain = shouldRetainJockey(aiState.jockeyAI, j, stable, newDay);
-            if (shouldRetain) {
-              // Re-hire the jockey
-              const signOnBonus = j.ridingFee * 20;
-              if (stable.cash >= signOnBonus) {
-                stable.cash -= signOnBonus;
-                return { ...j, stableId: stable.id, contractUntil: newDay + 90 };
-              }
-            }
+            // NPC jockey contract expired - skip AI for now to avoid frozen object errors
+            // TODO: Re-enable AI state once frozen object issues are resolved
+            // For now, always let the jockey become a free agent
           }
         }
         return { ...j, stableId: undefined, contractUntil: undefined };
@@ -65,25 +54,10 @@ export const jockeyPhase = {
         if (freeAgents.length > 0) {
           let chosen: typeof freeAgents[0] | null = null;
 
-          // Use AI-driven selection if AI manager is available
-          if (npcAIManager) {
-            const aiState = getOrCreateStableAIState(npcAIManager, stable, newDay);
-            if (!aiState.jockeyAI) {
-              aiState.jockeyAI = createJockeyAIState(stable);
-            }
-            // For AI selection, we need a representative horse from the stable
-            // Use the highest-rated horse as a proxy for the stable's needs
-            const stableHorses = state.horses.filter((h) => h.stableId === stable.id);
-            if (stableHorses.length > 0) {
-              const representativeHorse = stableHorses[0];
-              const bestJockey = selectBestJockey(aiState.jockeyAI, representativeHorse, freeAgents, stable);
-              if (bestJockey) {
-                chosen = bestJockey;
-              }
-            }
-          }
+          // Skip AI-driven selection for now to avoid frozen object errors
+          // TODO: Re-enable AI state once frozen object issues are resolved
 
-          // Fall back to original logic if AI not available
+          // Fall back to original logic
           if (!chosen) {
             let candidates = freeAgents;
             if (stable.tier === "elite") {
@@ -106,23 +80,8 @@ export const jockeyPhase = {
                 j.id === chosen.id ? { ...j, stableId: stable.id, contractUntil: newDay + 90 } : j,
               );
 
-              // Record jockey assignment for AI learning
-              if (npcAIManager) {
-                const aiState = getOrCreateStableAIState(npcAIManager, stable, newDay);
-                if (aiState.jockeyAI) {
-                  const stableHorses = state.horses.filter((h) => h.stableId === stable.id);
-                  const representativeHorse = stableHorses[0];
-                  recordJockeyAssignment(
-                    aiState.jockeyAI,
-                    chosen,
-                    representativeHorse,
-                    "hiring", // Use a placeholder raceId for hiring events
-                    stable,
-                    signOnBonus,
-                    newDay,
-                  );
-                }
-              }
+              // Skip AI learning for now to avoid frozen object errors
+              // TODO: Re-enable AI state once frozen object issues are resolved
             }
           }
         }

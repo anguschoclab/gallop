@@ -73,7 +73,8 @@ export function getOrCreateStableAIState(
     state = createStableAIState(stable, currentDay);
     manager.stableStates.set(stable.id, state);
   }
-  return state;
+  // Return a clone to avoid mutating frozen/read-only objects
+  return JSON.parse(JSON.stringify(state));
 }
 
 /**

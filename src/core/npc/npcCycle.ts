@@ -88,8 +88,12 @@ export function runNpcCycle(
   }
 
   // 4. AI state management
-  let updatedAiManager = aiManager;
-  updatedAiManager.globalDay = currentDay;
+  // Clone AI manager to avoid mutating frozen/read-only objects
+  let updatedAiManager = {
+    ...aiManager,
+    globalDay: currentDay,
+    stableStates: new Map(aiManager.stableStates),
+  };
 
   // Create or update AI state for each stable
   for (const stable of npcStables) {

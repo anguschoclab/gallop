@@ -1,22 +1,36 @@
 import type { CoatColor } from "@/game/types";
+import bayPortrait from "@/assets/portraits/horse-portrait-bay.png";
+import blackPortrait from "@/assets/portraits/horse-portrait-black.png";
+import chestnutPortrait from "@/assets/portraits/horse-portrait-chestnut.png";
+import darkBayPortrait from "@/assets/portraits/horse-portrait-dark-bay.png";
+import grayPortrait from "@/assets/portraits/horse-portrait-gray.png";
+import roanPortrait from "@/assets/portraits/horse-portrait-roan.png";
+import palominoPortrait from "@/assets/portraits/horse-portrait-palomino.png";
+import whitePortrait from "@/assets/portraits/horse-portrait-white.png";
+import buckskinPortrait from "@/assets/portraits/horse-portrait-buckskin.png";
+import sealBrownPortrait from "@/assets/portraits/horse-portrait-seal-brown.png";
+import liverChestnutPortrait from "@/assets/portraits/horse-portrait-liver-chestnut.png";
+import dunPortrait from "@/assets/portraits/horse-portrait-dun.png";
+import grullaPortrait from "@/assets/portraits/horse-portrait-grulla.png";
+import champagnePortrait from "@/assets/portraits/horse-portrait-champagne.png";
 
 export const COAT_TO_PORTRAIT: Record<CoatColor, string> = {
   // Direct mappings
-  bay: "/assets/portraits/horse-portrait-bay.png",
-  black: "/assets/portraits/horse-portrait-black.png",
-  chestnut: "/assets/portraits/horse-portrait-chestnut.png",
-  "dark-bay": "/assets/portraits/horse-portrait-dark-bay.png",
-  gray: "/assets/portraits/horse-portrait-gray.png",
-  roan: "/assets/portraits/horse-portrait-roan.png",
-  palomino: "/assets/portraits/horse-portrait-palomino.png",
-  white: "/assets/portraits/horse-portrait-white.png",
-  buckskin: "/assets/portraits/horse-portrait-buckskin.png",
+  bay: bayPortrait,
+  black: blackPortrait,
+  chestnut: chestnutPortrait,
+  "dark-bay": darkBayPortrait,
+  gray: grayPortrait,
+  roan: roanPortrait,
+  palomino: palominoPortrait,
+  white: whitePortrait,
+  buckskin: buckskinPortrait,
   // Dedicated mappings (generated variants)
-  "seal-brown": "/assets/portraits/horse-portrait-seal-brown.png",
-  "liver-chestnut": "/assets/portraits/horse-portrait-liver-chestnut.png",
-  dun: "/assets/portraits/horse-portrait-dun.png",
-  grulla: "/assets/portraits/horse-portrait-grulla.png",
-  champagne: "/assets/portraits/horse-portrait-champagne.png",
+  "seal-brown": sealBrownPortrait,
+  "liver-chestnut": liverChestnutPortrait,
+  dun: dunPortrait,
+  grulla: grullaPortrait,
+  champagne: champagnePortrait,
 };
 
 export function getPortraitUrl(coatColor?: CoatColor): string {

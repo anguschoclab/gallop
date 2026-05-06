@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import {
   FACILITY_UPGRADE_COSTS,
   FACILITY_ENABLED_WORKOUTS,
@@ -15,12 +16,10 @@ import { ArrowUp, Check, X, Dumbbell } from "lucide-react";
  * Displays player's facilities and allows upgrading them
  */
 export function FacilitiesPanel() {
-  const { facilities, cash, upgradeFacility, day } = useGame((s) => ({
-    facilities: s.facilities,
-    cash: s.cash,
-    upgradeFacility: s.upgradeFacility,
-    day: s.day,
-  }));
+  const facilities = (useGame as any)((s: any) => s.facilities, shallow);
+  const cash = useGame((s) => s.cash);
+  const upgradeFacility = useGame((s) => s.upgradeFacility);
+  const day = useGame((s) => s.day);
 
   if (!facilities) {
     return null;

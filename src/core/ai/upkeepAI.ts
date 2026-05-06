@@ -192,11 +192,16 @@ export function updateReserveState(
   const currentReserve = stable.cash;
   const currentReserveRatio = currentReserve / monthlyExpenses;
 
-  aiState.reserves.targetReserveRatio = targetReserveRatio;
-  aiState.reserves.currentReserveRatio = currentReserveRatio;
-  aiState.reserves.lastAdjustmentDay = currentDay;
-
-  return aiState;
+  // Create new objects to avoid mutating frozen/read-only objects
+  return {
+    ...aiState,
+    reserves: {
+      ...aiState.reserves,
+      targetReserveRatio,
+      currentReserveRatio,
+      lastAdjustmentDay: currentDay,
+    },
+  };
 }
 
 /**
@@ -244,18 +249,17 @@ export function recordBudgetDecision(
     personality: stable.personality,
   };
 
-  aiState.budgetHistory.push(decision);
+  // Clone array to avoid mutating frozen/read-only objects
+  const newBudgetHistory = [...aiState.budgetHistory, decision];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.budgetHistory.length > maxHistory) {
-    aiState.budgetHistory = aiState.budgetHistory.slice(-maxHistory);
-  }
+  const trimmedHistory = newBudgetHistory.length > maxHistory ? newBudgetHistory.slice(-maxHistory) : newBudgetHistory;
 
   // Update learning state
   const success = spent <= totalBudget * 1.1; // Within 10% of budget is success
   const value = totalBudget - spent; // Savings
-  aiState.learningState = recordOutcome(
+  const updatedLearningState = recordOutcome(
     aiState.learningState,
     "upkeep_spending",
     "budget",
@@ -266,7 +270,12 @@ export function recordBudgetDecision(
     aiState.personalityState.memoryDepth,
   );
 
-  return aiState;
+  // Return new state to avoid mutating frozen/read-only objects
+  return {
+    ...aiState,
+    budgetHistory: trimmedHistory,
+    learningState: updatedLearningState,
+  };
 }
 
 /**

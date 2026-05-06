@@ -59,20 +59,8 @@ function generateNpcTrainingIntents(
   const intents: TrainingIntent[] = [];
   const ownedHorses = state.horses.filter((h) => h.stableId === stable.id);
 
-  // Get or create training AI state for this stable
-  const aiManager: NpcAIManager = (state as any).npcAIManager || {
-    stableStates: new Map(),
-    globalDay: day,
-  };
-  let stableAIState = aiManager.stableStates.get(stable.id);
-  if (!stableAIState) {
-    stableAIState = {
-      stableId: stable.id,
-      personalityState: { personality: stable.personality } as any,
-      learningState: { outcomes: [], successRates: new Map(), patterns: new Map(), lastUpdate: 0 },
-      lastUpdateDay: day,
-    };
-  }
+  // Skip AI state management for now to avoid stack overflow
+  // TODO: Re-enable AI state once serialization issues are resolved
 
   // Create training AI state
   const trainingAI = createTrainingAIState(stable);

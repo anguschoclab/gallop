@@ -113,7 +113,11 @@ export function runNpcRaceEntry(
   daysAhead: number = 3,
   pregnantIds: Set<string> = new Set(),
 ): Race[] {
-  const updatedRaces = [...races];
+  // Deep clone races to avoid mutating frozen/read-only objects during multi-day advancement
+  const updatedRaces = races.map((race) => ({
+    ...race,
+    entries: [...race.entries],
+  }));
 
   // Look at races in the next daysAhead days
   const upcomingRaces = updatedRaces.filter(
@@ -155,7 +159,11 @@ export function runNpcRaceEntry(
             pool.sort((a, b) => b.fame - a.fame);
             const chosen = pool[0];
             jockeyId = chosen.id;
-            chosen.lastRaceDay = currentDay;
+            // Clone jockey to avoid mutating frozen/read-only objects
+            const jockeyIndex = jockeys.findIndex((j) => j.id === chosen.id);
+            if (jockeyIndex !== -1) {
+              jockeys[jockeyIndex] = { ...chosen, lastRaceDay: currentDay };
+            }
           }
         }
 

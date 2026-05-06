@@ -53,15 +53,13 @@ export function recordOutcome(
     day,
   };
 
-  // Add to memory
-  state.outcomes.push(outcome);
+  // Clone array to avoid mutating frozen/read-only objects
+  const newOutcomes = [...state.outcomes, outcome];
 
   // Trim to memory depth
-  if (state.outcomes.length > memoryDepth) {
-    state.outcomes = state.outcomes.slice(-memoryDepth);
-  }
+  const trimmedOutcomes = newOutcomes.length > memoryDepth ? newOutcomes.slice(-memoryDepth) : newOutcomes;
 
-  // Update success rates
+  // Update success rates - clone Map to avoid mutating
   const key = `${decisionType}:${contextKey}`;
   const existing = state.successRates.get(key) || { successes: 0, total: 0, rate: 0 };
   const updated = {
@@ -69,29 +67,36 @@ export function recordOutcome(
     total: existing.total + 1,
     rate: (existing.successes + (success ? 1 : 0)) / (existing.total + 1),
   };
-  state.successRates.set(key, updated);
+  const newSuccessRates = new Map(state.successRates);
+  newSuccessRates.set(key, updated);
 
-  // Update patterns
-  updatePatterns(state, decisionType, contextKey, success);
+  // Update patterns - clone Map to avoid mutating
+  const newPatterns = updatePatterns(state.patterns, decisionType, contextKey, success);
 
-  state.lastUpdate = timestamp;
-
-  return state;
+  // Return new state to avoid mutating frozen/read-only objects
+  return {
+    outcomes: trimmedOutcomes,
+    successRates: newSuccessRates,
+    patterns: newPatterns,
+    lastUpdate: timestamp,
+  };
 }
 
 /**
  * Update pattern recognition
  */
 function updatePatterns(
-  state: LearningState,
+  patterns: Map<string, number>,
   decisionType: string,
   contextKey: string,
   success: boolean,
-): void {
+): Map<string, number> {
   const patternKey = `${decisionType}:${contextKey.split(":")[0]}`; // Use first context dimension
-  const existing = state.patterns.get(patternKey) || 0.5;
+  const existing = patterns.get(patternKey) || 0.5;
   const weight = success ? 0.1 : -0.05;
-  state.patterns.set(patternKey, Math.max(0, Math.min(1, existing + weight)));
+  const newPatterns = new Map(patterns);
+  newPatterns.set(patternKey, Math.max(0, Math.min(1, existing + weight)));
+  return newPatterns;
 }
 
 /**
