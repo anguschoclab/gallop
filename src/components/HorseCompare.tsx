@@ -91,7 +91,7 @@ export function HorseCompare({ horses }: HorseCompareProps) {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <SilkBadge color={horse1.silk} />
+                    <SilkDot color={horse1.silk} />
                     {horse1.name}
                   </CardTitle>
                 </CardHeader>
