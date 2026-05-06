@@ -141,7 +141,7 @@ export function AppShell() {
           </div>
           <div className="grid grid-cols-4 gap-1">
             <Button
-              onClick={advanceDay}
+              onClick={() => advanceDay()}
               className="col-span-1"
               size="sm"
               title="Advance 1 day"
@@ -217,7 +217,7 @@ export function AppShell() {
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    newGame();
+                    startNewGame({});
                     setNewGameDialogOpen(false);
                   }}
                 >
@@ -233,7 +233,8 @@ export function AppShell() {
           <Outlet />
         </div>
       </main>
-      <PlayerRacePrompt />
+      {/* Temporarily disabled due to infinite loop bug - blocking Comlink testing */}
+      {/* <PlayerRacePrompt /> */}
       <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
       <AwardCeremony
         isOpen={showCeremony}
