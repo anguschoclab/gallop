@@ -17,7 +17,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { HorseStats, StatBar, SilkBadge } from "@/components/HorseBits";
+import { HorseStats, StatBar } from "@/components/HorseBits";
+import { SilkDot } from "@/components/SilkDot";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { X, GitCompare } from "lucide-react";
 
