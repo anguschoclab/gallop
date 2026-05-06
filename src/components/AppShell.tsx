@@ -61,8 +61,8 @@ export function AppShell() {
   const horses = useGame((s) => s.horses);
   const advanceDay = useGame((s) => s.advanceDay);
   const advanceMultipleDays = useGame((s) => s.advanceMultipleDays);
-  const newGame = useGame((s) => s.newGame);
   const location = useLocation();
+  const navigate = useNavigate();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
 
@@ -203,7 +203,7 @@ export function AppShell() {
               <DialogHeader>
                 <DialogTitle>Start a new game?</DialogTitle>
                 <DialogDescription>
-                  All current progress will be lost. This cannot be undone.
+                  You'll set up a new stable from scratch. Your current progress will be wiped only after you finish the new-game setup.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -214,11 +214,10 @@ export function AppShell() {
                   variant="destructive"
                   onClick={() => {
                     setNewGameDialogOpen(false);
-                    // Navigate to wizard - TanStack Router will handle route type after regeneration
-                    navigate({ to: "/new-game" as any });
+                    navigate({ to: "/new-game" });
                   }}
                 >
-                  Start new game
+                  Continue
                 </Button>
               </DialogFooter>
             </DialogContent>

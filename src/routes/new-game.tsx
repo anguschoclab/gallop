@@ -1,16 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { NewGameWizard } from "@/components/NewGameWizard";
 
 export const Route = createFileRoute("/new-game")({
-  component: NewGameRoute,
+  component: NewGameWizard,
 });
-
-function NewGameRoute() {
-  const navigate = useNavigate();
-
-  const handleComplete = () => {
-    navigate({ to: "/" });
-  };
-
-  return <NewGameWizard onComplete={handleComplete} />;
-}
