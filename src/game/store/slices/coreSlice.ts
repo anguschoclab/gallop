@@ -42,6 +42,7 @@ import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
 import { UPKEEP_PER_HORSE } from "@/game/constants/gameConstants";
+import { getEngineWorker } from "@/game/store";
 
 export type CoreSlice = CoreState & {
   enterRace: (raceId: string, horseId: string) => ActionResult;
@@ -53,11 +54,11 @@ export type CoreSlice = CoreState & {
   ) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
-  advanceDay: () => void;
-  advanceMultipleDays: (n: number, headless?: boolean) => void;
-  advanceWeek: (headless?: boolean) => void;
-  advanceMonth: (headless?: boolean) => void;
-  advanceYear: (headless?: boolean) => void;
+  advanceDay: (progressCallback?: (stage: number, total: number, name: string) => void) => Promise<void>;
+  advanceMultipleDays: (n: number, headless?: boolean) => Promise<void>;
+  advanceWeek: (headless?: boolean) => Promise<void>;
+  advanceMonth: (headless?: boolean) => Promise<void>;
+  advanceYear: (headless?: boolean) => Promise<void>;
   setDay: (day: number) => void;
   setCash: (cash: number) => void;
   setHorses: (horses: Horse[]) => void;
