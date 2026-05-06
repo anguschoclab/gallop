@@ -1,4 +1,11 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  Outlet,
+  Link,
+  createRootRoute,
+  HeadContent,
+  Scripts,
+  useNavigate,
+} from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
 import { NewGameWizard } from "@/components/NewGameWizard";
 import { useEffect, useState } from "react";
@@ -37,6 +44,12 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
+      // 🛡️ Sentinel Security Fix: Added Content-Security-Policy to enforce defense in depth against XSS and data exfiltration
+      {
+        httpEquiv: "Content-Security-Policy",
+        content:
+          "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; object-src 'none';",
+      },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Gallop — Stable Manager" },
       { name: "description", content: "Train horses, enter them in races, build the best stable." },
@@ -96,6 +109,14 @@ function RootComponent() {
       setIsHydrated(true);
     });
   }, []);
+
+  useEffect(() => {
+    // Redirect to wizard if no player profile exists (fresh install)
+    if (isHydrated && !playerProfile) {
+      // Navigate to wizard - TanStack Router will handle route type after regeneration
+      navigate({ to: "/new-game" as any });
+    }
+  }, [isHydrated, playerProfile, navigate]);
 
   // Show loading state while hydrating
   if (!isHydrated) {

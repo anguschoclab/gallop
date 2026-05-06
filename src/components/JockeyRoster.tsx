@@ -186,6 +186,7 @@ export function JockeyRoster() {
             />
             <Input
               placeholder="Search jockeys..."
+              aria-label="Search jockeys"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 bg-card border-white/10"
@@ -193,6 +194,7 @@ export function JockeyRoster() {
           </div>
           <select
             className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
+            aria-label="Filter by riding style"
             value={archetypeFilter}
             onChange={(e) => setArchetypeFilter(e.target.value as JockeyArchetype | "all")}
           >
@@ -205,6 +207,7 @@ export function JockeyRoster() {
           </select>
           <select
             className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
+            aria-label="Filter by silk pattern"
             value={patternFilter}
             onChange={(e) => setPatternFilter(e.target.value as JockeySilkPattern | "all")}
           >
@@ -217,6 +220,7 @@ export function JockeyRoster() {
           </select>
           <select
             className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
+            aria-label="Filter by silk color"
             value={colorFilter}
             onChange={(e) => setColorFilter(e.target.value)}
           >
@@ -229,7 +233,10 @@ export function JockeyRoster() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="bg-card border border-white/10 rounded-md px-3 py-2 hover:bg-white/5 transition-colors">
+                <button
+                  className="bg-card border border-white/10 rounded-md px-3 py-2 hover:bg-white/5 transition-colors"
+                  aria-label="View silk patterns information"
+                >
                   <Info size={16} className="text-muted-foreground" />
                 </button>
               </TooltipTrigger>

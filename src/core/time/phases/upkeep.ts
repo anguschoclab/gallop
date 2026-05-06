@@ -25,7 +25,7 @@ export const upkeepPhase = {
   order: 20,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const playerHorses = state.horses.filter((h) => !h.stableId);
+    const playerHorses = state.horses.filter((h) => !h.stableId && h.lifecycleStatus === "active");
     const playerHorseCount = playerHorses.length;
     const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 

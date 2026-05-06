@@ -112,7 +112,7 @@ export function runNpcBreeding(
       let best: Horse | undefined;
       let bestScore = -Infinity;
       for (const stallion of candidates) {
-        const score = calculateAIStallionScore(
+        let score = calculateAIStallionScore(
           aiState,
           stallion,
           mare,
@@ -120,6 +120,12 @@ export function runNpcBreeding(
           maxFee,
           state.sireLeaderboards,
         );
+
+        // Ownership Bonus: encourage NPCs to use their own stallions if competitive
+        if (stallion.stableId === stable.id) {
+          score += 20;
+        }
+
         if (score > bestScore) {
           bestScore = score;
           best = stallion;
@@ -130,13 +136,17 @@ export function runNpcBreeding(
       const elig = canBreed(best, mare, newDay, [...state.pregnancies, ...newPregnancies]);
       if (!elig.ok) continue;
 
-      const studFee = best.stud!.standingFee;
+      // Ownership Discount: don't pay stud fees to self
+      const studFee = best.stableId === stable.id ? 0 : best.stud!.standingFee;
       const totalCost = BREEDING_FEE + studFee;
       stableCash -= totalCost;
 
       stables = stables.map((st) => {
         if (st.id === stable.id) return { ...st, cash: st.cash - totalCost };
-        if (best!.stableId && st.id === best!.stableId) return { ...st, cash: st.cash + studFee };
+        // Only credit revenue if it's an external stable
+        if (best!.stableId && best!.stableId !== stable.id && st.id === best!.stableId) {
+          return { ...st, cash: st.cash + studFee };
+        }
         return st;
       });
       horses = horses.map((h) =>

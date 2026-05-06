@@ -422,6 +422,44 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
         break;
       }
 
+      case "pasture_retirement": {
+        const { horseId, retiredOnDay } = impact;
+        const horse = draft.horses.find((h) => h.id === horseId);
+        if (horse) {
+          horse.lifecycleStatus = "retired";
+          horse.retiredOnDay = retiredOnDay;
+        }
+        break;
+      }
+
+      case "horse_death": {
+        const { horseId, cause, deceasedOnDay } = impact;
+        const horse = draft.horses.find((h) => h.id === horseId);
+        if (horse) {
+          horse.lifecycleStatus = "deceased";
+          horse.deceasedOnDay = deceasedOnDay;
+          horse.causeOfDeath = cause;
+        }
+        break;
+      }
+
+      case "hall_of_fame_induction": {
+        const { horseId, horseName, inductedOnDay, careerHighlights } = impact;
+        if (!draft.hallOfFame) {
+          draft.hallOfFame = [];
+        }
+        // Check if already inducted
+        if (!draft.hallOfFame.some((h) => h.horseId === horseId)) {
+          draft.hallOfFame.push({
+            horseId,
+            horseName,
+            inductedOnDay,
+            careerHighlights,
+          });
+        }
+        break;
+      }
+
       default:
         // Unknown impact type - log warning
         console.warn(`Unknown impact type: ${(impact as any).type}`);

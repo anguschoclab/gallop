@@ -1,36 +1,59 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
+import { useState } from "react";
 import { useGame } from "@/game/store";
-import { useAuctions } from "@/game/hooks/useMarketState";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import { KIND_LABELS, CONSIGNMENT_COMMISSION } from "@/game/auction";
-import { Gavel, Clock, CheckCircle } from "lucide-react";
+import { KIND_LABELS, CONSIGNMENT_COMMISSION, isLotEligible } from "@/game/auction";
+import { Gavel, Clock, CheckCircle, Sparkles } from "lucide-react";
 import { NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/utils";
+import { ConsignDialog } from "@/components/auction/ConsignDialog";
+import type { AuctionSale, Horse } from "@/game/types";
 
 export const Route = createFileRoute("/auction/")({
   component: AuctionPage,
 });
 
 function AuctionPage() {
-  const auctions = (useGame as any)((s) => s.auctions ?? [], shallow);
+  const auctions = (useGame as any)((s: any) => s.auctions ?? [], shallow) as AuctionSale[];
   const horses = useGame((s) => s.horses);
   const day = useGame((s) => s.day);
 
+  const [consignOpen, setConsignOpen] = useState(false);
+  const [consignTarget, setConsignTarget] = useState<{ horse: Horse; sale: AuctionSale } | null>(null);
+
   const upcoming = auctions.filter((a) => !a.resolved).sort((a, b) => a.day - b.day);
+  const todaysSales = upcoming.filter((s) => s.day === day);
 
   const past = auctions
     .filter((a) => a.resolved)
     .sort((a, b) => b.day - a.day)
     .slice(0, 10);
 
-  const eligibleToConsign = horses.filter(
-    (h) => h.owned && !h.consignedSaleId && (h.age === 0 || h.age === 1 || h.age === 2),
-  );
+  // Player horses available to consign — anything not currently consigned.
+  const playerHorses = horses.filter((h) => h.owned && !h.consignedSaleId);
+
+  /**
+   * For each player horse, find the next upcoming sale where it's eligible.
+   * Uses the same eligibility logic as the runner so the player sees only
+   * sales that will actually accept the horse.
+   */
+  function findEligibleSale(horse: Horse): AuctionSale | undefined {
+    return upcoming.find((sale) => isLotEligible(horse, sale.kind));
+  }
+
+  const consignablePairs = playerHorses
+    .map((h) => ({ horse: h, sale: findEligibleSale(h) }))
+    .filter((p): p is { horse: Horse; sale: AuctionSale } => p.sale !== undefined);
+
+  function openConsign(horse: Horse, sale: AuctionSale) {
+    setConsignTarget({ horse, sale });
+    setConsignOpen(true);
+  }
 
   return (
     <div className="space-y-6">
@@ -39,9 +62,43 @@ function AuctionPage() {
           Sales
         </h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">
-          Weanling &amp; yearling auctions
+          Eight sales a year — weanlings, yearlings, 2YOs in training, mixed, racing-age, and broodmare dispersals.
         </p>
       </div>
+
+      {/* "Sale today" hero — only when applicable */}
+      {todaysSales.length > 0 && (
+        <section className="space-y-3">
+          {todaysSales.map((sale) => (
+            <Card
+              key={sale.id}
+              className="border-2 border-warning bg-warning/5 ring-1 ring-warning/30"
+            >
+              <CardContent className="p-4 flex items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Sparkles className="h-4 w-4 text-warning" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-warning">
+                      Sale today
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold">{sale.name}</h3>
+                  <p className="text-sm text-cream-muted">
+                    {KIND_LABELS[sale.kind] ?? sale.kind} ·{" "}
+                    <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots in the ring
+                  </p>
+                </div>
+                <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
+                  <Button size="lg" className="shadow-md">
+                    <Gavel className="h-4 w-4 mr-2" />
+                    Enter the Ring
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+      )}
 
       {/* Upcoming Sales */}
       <section className="space-y-3">
@@ -58,8 +115,15 @@ function AuctionPage() {
           upcoming.map((sale) => {
             const daysAway = sale.day - day;
             const playerLots = sale.lots.filter((l) => !l.consignorStableId && !l.withdrawn);
+            const isToday = daysAway === 0;
             return (
-              <Card key={sale.id} className="border-l-4 border-l-gold border-gold-muted">
+              <Card
+                key={sale.id}
+                className={cn(
+                  "border-l-4 border-gold-muted",
+                  isToday ? "border-l-warning" : "border-l-gold"
+                )}
+              >
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -93,9 +157,9 @@ function AuctionPage() {
                     </p>
                   )}
                   <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
-                    <Button size="sm" className="w-full">
+                    <Button size="sm" className="w-full" variant={isToday ? "default" : "secondary"}>
                       <Gavel className="h-4 w-4 mr-2" />
-                      {daysAway <= 0 ? "Enter Ring" : "Preview Lots"}
+                      {isToday ? "Enter Ring" : "Preview Lots"}
                     </Button>
                   </Link>
                 </CardContent>
@@ -105,55 +169,39 @@ function AuctionPage() {
         )}
       </section>
 
-      {/* Eligible horses to consign */}
-      {eligibleToConsign.length > 0 && upcoming.length > 0 && (
+      {/* Eligible to Consign — opens ConsignDialog */}
+      {consignablePairs.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">
-            Eligible to Consign
-          </h2>
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">
+              Eligible to Consign
+            </h2>
+            <span className="text-xs text-cream-muted">
+              {Math.round(CONSIGNMENT_COMMISSION * 100)}% sale-house commission applies
+            </span>
+          </div>
           <div className="grid gap-2">
-            {(() => {
-              const weanlingSale = upcoming.find(
-                (a) => a.kind === "weanling" || a.kind === "weanling_south",
-              );
-              const yearlingSale = upcoming.find(
-                (a) => a.kind === "yearling" || a.kind === "yearling_south",
-              );
-              return eligibleToConsign.map((horse) => {
-                const targetSale = horse.age === 0 ? weanlingSale : yearlingSale;
-                return (
-                  <Card
-                    key={horse.id}
-                    className="p-3 flex items-center justify-between gap-4 border-gold-muted"
-                  >
-                    <div className="flex items-center gap-2">
-                      <SilkDot color={horse.silk} size="sm" />
-                      <div>
-                        <p className="font-medium text-sm text-cream font-[family-name:var(--font-display)]">
-                          {horse.name}
-                        </p>
-                        <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                          {horse.age === 0 ? "Weanling" : horse.age === 1 ? "Yearling" : "2YO"} ·{" "}
-                          {horse.gender}
-                        </p>
-                      </div>
-                    </div>
-                    {targetSale ? (
-                      <Link to="/auction/$saleId" params={{ saleId: targetSale.id }}>
-                        <Button size="sm" variant="outline">
-                          Consign to {targetSale.name.split(" ").slice(0, 2).join(" ")}
-                        </Button>
-                      </Link>
-                    ) : (
-                      <span className="text-xs text-cream-muted">No matching sale open</span>
-                    )}
-                    <p className="text-xs text-cream-muted">
-                      {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission on sold horses
+            {consignablePairs.map(({ horse, sale }) => (
+              <Card
+                key={horse.id}
+                className="p-3 flex items-center justify-between gap-4 border-gold-muted"
+              >
+                <div className="flex items-center gap-2">
+                  <SilkDot color={horse.silk} size="sm" />
+                  <div>
+                    <p className="font-medium text-sm text-cream font-[family-name:var(--font-display)]">
+                      {horse.name}
                     </p>
-                  </Card>
-                );
-              });
-            })()}
+                    <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                      {ageLabel(horse)} · {horse.gender} · → {sale.name.split(" ").slice(0, 3).join(" ")}
+                    </p>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => openConsign(horse, sale)}>
+                  Consign…
+                </Button>
+              </Card>
+            ))}
           </div>
         </section>
       )}
@@ -213,6 +261,27 @@ function AuctionPage() {
           })}
         </section>
       )}
+
+      {/* Consign dialog */}
+      {consignTarget && (
+        <ConsignDialog
+          horse={consignTarget.horse}
+          sale={consignTarget.sale}
+          open={consignOpen}
+          onOpenChange={(open) => {
+            setConsignOpen(open);
+            if (!open) setConsignTarget(null);
+          }}
+        />
+      )}
     </div>
   );
+}
+
+function ageLabel(horse: Horse): string {
+  if (horse.age === 0) return "Weanling";
+  if (horse.age === 1) return "Yearling";
+  if (horse.age === 2) return "2YO";
+  if (horse.gender === "mare") return `Broodmare (${horse.age})`;
+  return `${horse.age}YO`;
 }

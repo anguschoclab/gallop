@@ -23,6 +23,7 @@ import { Route as NewGameRouteImport } from './routes/new-game'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as JockeysRouteImport } from './routes/jockeys'
 import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
+import { Route as HallOfFameRouteImport } from './routes/hall-of-fame'
 import { Route as FinancialReportRouteImport } from './routes/financial-report'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
@@ -109,6 +110,11 @@ const HorseGalleryRoute = HorseGalleryRouteImport.update({
   path: '/horse-gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HallOfFameRoute = HallOfFameRouteImport.update({
+  id: '/hall-of-fame',
+  path: '/hall-of-fame',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FinancialReportRoute = FinancialReportRouteImport.update({
   id: '/financial-report',
   path: '/financial-report',
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/broodmares': typeof BroodmaresRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
+  '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
@@ -223,6 +230,7 @@ export interface FileRoutesByTo {
   '/broodmares': typeof BroodmaresRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
+  '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   '/broodmares': typeof BroodmaresRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
+  '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
@@ -288,6 +297,7 @@ export interface FileRouteTypes {
     | '/broodmares'
     | '/facilities'
     | '/financial-report'
+    | '/hall-of-fame'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/broodmares'
     | '/facilities'
     | '/financial-report'
+    | '/hall-of-fame'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/broodmares'
     | '/facilities'
     | '/financial-report'
+    | '/hall-of-fame'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
@@ -381,6 +393,7 @@ export interface RootRouteChildren {
   BroodmaresRoute: typeof BroodmaresRoute
   FacilitiesRoute: typeof FacilitiesRoute
   FinancialReportRoute: typeof FinancialReportRoute
+  HallOfFameRoute: typeof HallOfFameRoute
   HorseGalleryRoute: typeof HorseGalleryRoute
   JockeysRoute: typeof JockeysRoute
   MarketRoute: typeof MarketRoute
@@ -498,6 +511,13 @@ declare module '@tanstack/react-router' {
       path: '/horse-gallery'
       fullPath: '/horse-gallery'
       preLoaderRoute: typeof HorseGalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hall-of-fame': {
+      id: '/hall-of-fame'
+      path: '/hall-of-fame'
+      fullPath: '/hall-of-fame'
+      preLoaderRoute: typeof HallOfFameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/financial-report': {
@@ -664,6 +684,7 @@ const rootRouteChildren: RootRouteChildren = {
   BroodmaresRoute: BroodmaresRoute,
   FacilitiesRoute: FacilitiesRoute,
   FinancialReportRoute: FinancialReportRoute,
+  HallOfFameRoute: HallOfFameRoute,
   HorseGalleryRoute: HorseGalleryRoute,
   JockeysRoute: JockeysRoute,
   MarketRoute: MarketRoute,

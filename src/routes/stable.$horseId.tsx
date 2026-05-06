@@ -50,10 +50,12 @@ function HorseDetail() {
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
   const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
   const cash = useGame((s) => s.cash);
+  const retireToStud = useGame((s) => s.retireToStud);
+  const retireToPasture = useGame((s) => s.retireToPasture);
   const facilities = useGame((s) => s.facilities);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const day = useGame((s) => s.day);
-  const auctions = (useGame as any)((s) => s.auctions ?? [], shallow);
+  const auctions = (useGame as any)((s: any) => s.auctions ?? [], shallow);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
 
   // Persist raceHistoryLimit to localStorage
@@ -63,16 +65,29 @@ function HorseDetail() {
 
   if (!horse) throw notFound();
 
-  const slotsLeft = 2 - trainingUsed;
   const isPregnant = !!pregnancy;
   const isConsigned = !!horse.consignedSaleId;
+
+  const canRetireToStud =
+    horse.owned &&
+    (horse.gender === "colt" || horse.gender === "horse") &&
+    horse.age >= 3 &&
+    !horse.stud?.atStud &&
+    !isConsigned;
+
+  const canRetireToPasture =
+    horse.owned &&
+    horse.lifecycleStatus === "active" &&
+    !isConsigned;
+
+  const slotsLeft = 2 - trainingUsed;
   const consignedSale = isConsigned
-    ? auctions.find((a) => a.id === horse.consignedSaleId)
+    ? auctions.find((a: any) => a.id === horse.consignedSaleId)
     : undefined;
   // Find eligible upcoming sales to consign to
   const eligibleSale =
     !isConsigned && horse.owned
-      ? auctions.find((a) => {
+      ? auctions.find((a: any) => {
           if (a.resolved) return false;
           const ageMatch =
             (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
@@ -190,12 +205,12 @@ function HorseDetail() {
           </CardContent>
         </Card>
 
-        {/* Consignment */}
-        {horse.owned && (isConsigned || eligibleSale) && (
+        {/* Consignment and Retirement */}
+        {horse.owned && (isConsigned || eligibleSale || canRetireToStud) && (
           <Card className="border-gold-muted">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-[family-name:var(--font-display)]">
-                <Tag className="h-4 w-4" /> Auction Consignment
+                <Tag className="h-4 w-4" /> Management
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -236,6 +251,48 @@ function HorseDetail() {
                   </Button>
                 </>
               ) : null}
+
+              {canRetireToStud && (
+                <div className="pt-2 border-t border-gold-muted/30 mt-2">
+                  <p className="text-xs text-cream-muted mb-2">
+                    Retiring to stud will end this horse's racing career.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-gold text-gold hover:bg-gold hover:text-t900"
+                    onClick={() => {
+                      if (confirm(`Retire ${horse.name} to stud? This cannot be undone.`)) {
+                        const result = retireToStud(horse.id);
+                        if (!result.ok) alert(result.reason);
+                      }
+                    }}
+                  >
+                    Retire to Stud
+                  </Button>
+                </div>
+              )}
+
+              {canRetireToPasture && (
+                <div className="pt-2 border-t border-gold-muted/30 mt-2">
+                  <p className="text-xs text-cream-muted mb-2">
+                    Retiring to pasture will end this horse's racing career.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-gold-muted text-cream-muted hover:bg-t700"
+                    onClick={() => {
+                      if (confirm(`Retire ${horse.name} to pasture? This cannot be undone.`)) {
+                        const result = retireToPasture(horse.id);
+                        if (!result.ok) alert(result.reason);
+                      }
+                    }}
+                  >
+                    Retire to Pasture
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
