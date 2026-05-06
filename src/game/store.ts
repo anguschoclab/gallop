@@ -119,47 +119,7 @@ import type {
 import type { RegionalAward, AwardRegion } from "@/game/awards/types";
 import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { Expense } from "@/core/expenses";
-import {
-  upgradeFacility,
-  createDefaultPlayerFacilities,
-  createFacility,
-} from "@/core/facilities";
-import type { PlayerProfile } from "./types";
-import type { Backstory } from "@/core/newGame/backstories";
-import { getReputationTier } from "@/core/reputation";
-import {
-  PRIZE_SPLIT,
-  UPKEEP_PER_HORSE,
-  TRAINING_COST,
-  STARTING_CASH,
-  BREEDING_FEE,
-  LIVE_FOAL_GUARANTEE_FEE,
-  GESTATION_DAYS,
-  SEASON_DAYS,
-  MAX_SAMPLES_PER_BUCKET,
-} from "./constants/gameConstants";
-import {
-  computePayoutSplits,
-  sanitizeAndRankResults,
-  detectPhotoFinish,
-} from "./store/helpers/raceResolution";
-import {
-  ageHorses,
-  refreshMarket,
-  generateUpcomingRaces,
-  pruneOldRaces,
-} from "./store/helpers/market";
-import { resolvePregnancies } from "./store/helpers/pregnancy";
-import { maybeRecalibratePars, recomputePars, type RecalibrationResult } from "./store/helpers/beyer";
-import { createOpfsStorage, createRehydrateStore, hydrationComplete } from "./store/storage";
-import { createInitialState } from "./store/initialization";
-
-// Re-export helper functions for external consumers
-export { maybeRecalibratePars, recomputePars, type RecalibrationResult } from "./store/helpers/beyer";
-export { computePayoutSplits, sanitizeAndRankResults, detectPhotoFinish } from "./store/helpers/raceResolution";
-export { ageHorses, refreshMarket, generateUpcomingRaces, pruneOldRaces } from "./store/helpers/market";
-export { resolvePregnancies, type PregnancyResult } from "./store/helpers/pregnancy";
-export { hydrationComplete } from "./store/storage";
+import { upgradeFacility } from "@/core/facilities";
 
 export type ActionResult = { ok: true } | { ok: false; reason: string };
 
@@ -182,7 +142,7 @@ const TRAINING_SLOTS_PER_DAY = 2;
 // =============================================================================
 
 type Actions = {
-  startNewGame: (options: NewGameOptions) => Promise<void>;
+  newGame: () => void;
   trainHorse: (
     horseId: string,
     kind:
@@ -261,8 +221,98 @@ type Actions = {
   retireToStud: (horseId: string) => ActionResult;
 };
 
-// Create storage adapter using factory function
-const opfsStorage = createOpfsStorage();
+function initialState(): GameState {
+  const setupRng = createRng(hashStr("initial_setup"));
+
+  // Generate player horses
+  const horses: Horse[] = [
+    { ...generateHorse({ tier: "starter", owned: true }, setupRng) },
+    { ...generateHorse({ tier: "starter", owned: true }, setupRng) },
+  ];
+
+  const market: Horse[] = Array.from({ length: 5 }, () => {
+    const r = setupRng.next();
+    const tier: "starter" | "budget" | "mid" | "elite" = r < 0.6 ? "budget" : "mid";
+    return generateHorse({ tier }, setupRng);
+  });
+
+  const races: Race[] = [];
+  for (let d = 1; d <= 7; d++) {
+    const dayRng = createRng(hashStr(`raceGen_${d}`));
+    const count = dayRng.next() < 0.7 ? 2 : 3;
+    for (let i = 0; i < count; i++) races.push(generateRace(d, dayRng));
+  }
+  // Schedule the full first year of real graded stakes
+  for (const g of GRADED_RACES) {
+    const gradedRng = createRng(hashStr(`graded_${g.key}`));
+    races.push(makeGradedRace(g, g.dayOfYear, gradedRng));
+  }
+
+  // Generate NPC stables and horses
+  const stableRng = createRng(hashStr("initial_stables"));
+  const npcStables = generateAllStables(1, stableRng);
+  const npcHorseRng = createRng(hashStr("initial_npc_horses"));
+  const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(
+    npcStables,
+    npcHorseRng,
+  );
+
+  // Generate initial jockeys
+  const jockeyRng = createRng(hashStr("initial_jockeys"));
+  const jockeys = generateInitialJockeys(jockeyRng);
+
+  // Run initial NPC race entry to populate races
+  const pregnantIds = new Set<string>();
+  const entryRng = createRng(hashStr("initial_entry"));
+  const racesWithEntries = runNpcRaceEntry(
+    updatedStables,
+    npcHorses,
+    jockeys,
+    races,
+    1,
+    entryRng,
+    7,
+    pregnantIds,
+  );
+
+  return {
+    day: 1,
+    cash: STARTING_CASH,
+    horses: [...horses, ...npcHorses],
+    market,
+    races: racesWithEntries,
+    trainingUsed: {},
+    log: [{ day: 1, text: "Welcome to your stable. Train your horses and enter them in races." }],
+    pregnancies: [],
+    npcStables: updatedStables,
+    scoutReports: [],
+    auctions: [],
+    jockeys: generateInitialJockeys(createRng(hashStr("initial_jockeys")), 25),
+    awards: [],
+  };
+}
+
+// Custom storage adapter for Zustand persist using OPFS
+const opfsStorage = {
+  getItem: async (_name: string) => {
+    const state = await loadGameState();
+    if (!state) return null;
+    return { state, version: 0 };
+  },
+  setItem: async (_name: string, value: { state: GameState }) => {
+    try {
+      await saveGameState(value.state);
+    } catch (error) {
+      console.error("Failed to save game state to OPFS:", error);
+    }
+  },
+  removeItem: async (_name: string): Promise<void> => {
+    await (await import("@/services/storageAdapter")).clearGameState();
+  },
+};
+
+// Flag to track if hydration has completed
+export let hydrationComplete = false;
 
 export const useGame = create<GameState & Actions>()(
   persist(
@@ -289,10 +339,10 @@ export const useGame = create<GameState & Actions>()(
       transactions: [],
       replays: [],
 
-      startNewGame: async (options: NewGameOptions) => {
+      newGame: async () => {
         // Clear OPFS storage when starting a new game
         await (await import("@/services/storageAdapter")).clearGameState();
-        set({ ...createInitialState(options) });
+        set({ ...initialState() });
       },
 
       trainHorse: (horseId, kind) => {
@@ -1457,7 +1507,6 @@ export const useGame = create<GameState & Actions>()(
         day: state.day,
         cash: state.cash,
         horses: state.horses,
-        playerProfile: state.playerProfile,
         market: state.market,
         races: state.races,
         trainingUsed: state.trainingUsed,
