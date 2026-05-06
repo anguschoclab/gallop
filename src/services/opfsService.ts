@@ -91,19 +91,18 @@ export async function readFile<T>(filename: string): Promise<T | null> {
 /**
  * Delete file from OPFS
  */
-export async function deleteFile(filename: string): Promise<void> {
+export async function deleteFile(filename: string): Promise<boolean> {
   if (!isOPFSAvailable || !opfsRoot) {
-    return;
+    return false;
   }
 
   try {
     await opfsRoot.removeEntry(filename);
+    console.log(`Deleted ${filename} from OPFS`);
+    return true;
   } catch (error) {
-    if (error instanceof DOMException && error.name === "NotFoundError") {
-      // File doesn't exist, that's fine
-      return;
-    }
-    console.error(`Failed to delete file ${filename}:`, error);
+    console.warn(`Could not delete ${filename} from OPFS:`, error);
+    return false;
   }
 }
 
