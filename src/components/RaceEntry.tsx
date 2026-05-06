@@ -39,7 +39,6 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const assignJockey = useGame((s) => s.assignJockey);
   const submitClaim = useGame((s) => s.submitClaim);
   const withdrawClaim = useGame((s) => s.withdrawClaim);
-  const withdrawRace = useGame((s) => s.withdrawRace);
   const cash = useGame((s) => s.cash);
   const day = useGame((s) => s.day);
 
@@ -143,67 +142,36 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 Select Horse
               </h3>
               <div className="grid grid-cols-1 gap-2">
-                {eligibleHorses.map(({ horse, eligible }) => {
-                  const isEntered = race.entries.some((e: any) => e.horseId === horse.id);
-                  return (
-                    <div
-                      key={horse.id}
-                      className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                        selectedHorseId === horse.id
-                          ? "border-primary bg-primary/10"
-                          : "border-border bg-muted hover:bg-muted/80"
-                      } ${!eligible && !isEntered ? "opacity-50 grayscale cursor-not-allowed" : ""}`}
-                    >
-                      <button
-                        disabled={!eligible && !isEntered}
-                        onClick={() => setSelectedHorseId(horse.id)}
-                        className="flex items-center gap-3 flex-1 text-left"
-                      >
-                        <HorsePortraitBadge coatColor={horse.coatColor} size="sm" />
-                        <div>
-                          <div className="font-bold flex items-center gap-2">
-                            {horse.name}
-                            {isEntered && (
-                              <Badge className="bg-yellow-500 text-yellow-950 text-[10px]">
-                                Entered
-                              </Badge>
-                            )}
-                            {isHorseQualifiedForRace(horse, race) && (
-                              <Badge className="bg-primary text-primary-foreground text-[10px]">
-                                Qualified
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="text-[10px] uppercase text-muted-foreground">
-                            Rating {calculateOverallRating(horse)} · Energy {horse.energy}%
-                          </div>
+                {eligibleHorses.map(({ horse, eligible }) => (
+                  <button
+                    key={horse.id}
+                    disabled={!eligible}
+                    onClick={() => setSelectedHorseId(horse.id)}
+                    className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                      selectedHorseId === horse.id
+                        ? "border-primary bg-primary/10"
+                        : "border-border bg-muted hover:bg-muted/80"
+                    } ${!eligible ? "opacity-50 grayscale cursor-not-allowed" : ""}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <HorsePortraitBadge coatColor={horse.coatColor} size="sm" />
+                      <div className="text-left">
+                        <div className="font-bold flex items-center gap-2">
+                          {horse.name}
+                          {isHorseQualifiedForRace(horse, race) && (
+                            <Badge className="bg-primary text-primary-foreground text-[10px]">
+                              Qualified
+                            </Badge>
+                          )}
                         </div>
-                      </button>
-                      <div className="flex items-center gap-2">
-                        {isEntered && (
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            className="text-[10px] uppercase font-black tracking-wider"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const res = withdrawRace(race.id, horse.id);
-                              if (res.ok) {
-                                alert(`${horse.name} withdrawn from ${race.name}`);
-                                onClose();
-                              } else {
-                                alert(`Withdrawal failed: ${res.reason}`);
-                              }
-                            }}
-                          >
-                            Withdraw
-                          </Button>
-                        )}
-                        {selectedHorseId === horse.id && !isEntered && <Check className="text-primary" size={20} />}
+                        <div className="text-[10px] uppercase text-muted-foreground">
+                          Rating {calculateOverallRating(horse)} · Energy {horse.energy}%
+                        </div>
                       </div>
                     </div>
-                  );
-                })}
+                    {selectedHorseId === horse.id && <Check className="text-primary" size={20} />}
+                  </button>
+                ))}
               </div>
             </div>
           )}
