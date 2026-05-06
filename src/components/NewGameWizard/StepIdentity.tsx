@@ -28,7 +28,7 @@ export function StepIdentity({ stableName, ownerName, onChange, onNext }: StepId
 
   const handleRandomOwnerName = () => {
     const rng = createRng(hashStr(Date.now().toString()));
-    const newName = rng.pick(OWNER_NAMES);
+    const newName = rng.pick<string>(OWNER_NAMES);
     setLocalOwnerName(newName);
     onChange(localStableName, newName);
   };
