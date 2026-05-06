@@ -101,10 +101,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const [isHydrated, setIsHydrated] = useState(false);
+  const playerProfile = useGame((s) => s.playerProfile);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Rehydrate store on client mount
-    rehydrateStore().then(() => {
+    rehydrateStore(useGame).then(() => {
       setIsHydrated(true);
     });
   }, []);

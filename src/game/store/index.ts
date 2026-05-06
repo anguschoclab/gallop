@@ -20,6 +20,7 @@ import { wrap, expose, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
+import { setCalibratedPars } from "@/game/beyer";
 
 /**
  * Worker instances
@@ -209,7 +210,6 @@ export const useGame = create<StoreType>()(
 
         hydrationComplete.value = true;
         if (state?.calibratedPars) {
-          const { setCalibratedPars } = require("@/game/beyer");
           setCalibratedPars(state.calibratedPars);
         }
       },
