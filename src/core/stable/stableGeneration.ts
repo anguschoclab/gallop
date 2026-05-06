@@ -121,6 +121,22 @@ const FILLER_OWNERS = [
   "Farm Group",
 ];
 
+/**
+ * Generate a random stable name using filler prefixes and suffixes
+ */
+export function randomStableName(rng: Rng): string {
+  const prefix = rng.pick(FILLER_PREFIXES);
+  const suffix = rng.pick(FILLER_SUFFIXES);
+  return `${prefix} ${suffix}`;
+}
+
+/**
+ * Generate a random owner name using filler owners
+ */
+export function randomOwnerName(rng: Rng): string {
+  return rng.pick(FILLER_OWNERS);
+}
+
 const FILLER_COUNTRIES = [
   "USA",
   "UK",
