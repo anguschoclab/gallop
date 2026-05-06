@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Medal, DollarSign, Calendar } from "lucide-react";
 import { NumericValue } from "@/components/HorseBits";
 
-export const Route = createFileRoute("/hall-of-fame")({
+export const Route = createFileRoute("/hall-of-fame 2")({
   component: HallOfFame,
 });
 

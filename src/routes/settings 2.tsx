@@ -9,7 +9,7 @@ import { Settings, Volume2, Monitor, Database, Bell, Gamepad2, RotateCcw } from 
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/settings 2")({
   component: SettingsPage,
 });
 

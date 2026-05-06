@@ -17,7 +17,7 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import type { CampaignGoalType } from "@/game/types";
 import { useState } from "react";
 
-export const Route = createFileRoute("/scheduler")({
+export const Route = createFileRoute("/scheduler 2")({
   component: SchedulerPage,
 });
 

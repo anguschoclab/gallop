@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
 import { REGION_LIST } from "@/core/calendar/regions";
 
-export const Route = createFileRoute("/calendar/")({
+export const Route = createFileRoute("/calendar/index 2")({
   component: CalendarIndex,
 });
 

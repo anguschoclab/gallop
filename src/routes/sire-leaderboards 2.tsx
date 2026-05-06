@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Target, Award, DollarSign, TrendingUp, Globe } from "lucide-react";
 import type { LeaderboardType } from "@/core/breeding/leaderboardTypes";
 
-export const Route = createFileRoute("/sire-leaderboards")({
+export const Route = createFileRoute("/sire-leaderboards 2")({
   component: SireLeaderboardsPage,
 });
 

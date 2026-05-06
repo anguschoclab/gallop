@@ -19,7 +19,7 @@ interface CalendarSearch {
   view?: "month" | "track";
 }
 
-export const Route = createFileRoute("/calendar/$regionId")({
+export const Route = createFileRoute("/calendar/$regionId 2")({
   component: RegionalCalendarPage,
   validateSearch: (search: Record<string, unknown>): CalendarSearch => ({
     grade: (search.grade as Grade | "all") || "all",

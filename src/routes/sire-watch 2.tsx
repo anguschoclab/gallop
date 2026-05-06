@@ -10,7 +10,7 @@ import {
   classifySire,
 } from "@/core/breeding/sireAnalytics";
 
-export const Route = createFileRoute("/sire-watch")({
+export const Route = createFileRoute("/sire-watch 2")({
   component: SireWatchPage,
 });
 

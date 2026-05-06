@@ -34,6 +34,12 @@ let initializationWorker: Remote<InitializationWorkerApi> | null = null;
 export async function initEngineWorker(): Promise<void> {
   if (engineWorker) return;
 
+  // Only initialize workers in browser context where Worker API is available
+  if (typeof Worker === "undefined") {
+    console.warn("Worker API not available, skipping engine worker initialization");
+    return;
+  }
+
   const worker = new Worker(new URL("@/workers/engine.worker", import.meta.url), {
     type: "module",
   });
@@ -46,6 +52,12 @@ export async function initEngineWorker(): Promise<void> {
 export async function initStorageWorker(): Promise<void> {
   if (storageWorker) return;
 
+  // Only initialize workers in browser context where Worker API is available
+  if (typeof Worker === "undefined") {
+    console.warn("Worker API not available, skipping storage worker initialization");
+    return;
+  }
+
   const worker = new Worker(new URL("@/workers/storage.worker", import.meta.url), {
     type: "module",
   });
@@ -57,6 +69,12 @@ export async function initStorageWorker(): Promise<void> {
  */
 export async function initInitializationWorker(): Promise<void> {
   if (initializationWorker) return;
+
+  // Only initialize workers in browser context where Worker API is available
+  if (typeof Worker === "undefined") {
+    console.warn("Worker API not available, skipping initialization worker initialization");
+    return;
+  }
 
   const worker = new Worker(
     new URL("@/workers/initialization.worker", import.meta.url),
@@ -183,7 +201,12 @@ export const useGame = create<StoreType>()(
         npcFacilities: state.npcFacilities,
         playerProfile: state.playerProfile,
       }),
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => async (state) => {
+        // Initialize workers on rehydration (app load or existing save load)
+        await initEngineWorker();
+        await initStorageWorker();
+        await initInitializationWorker();
+
         hydrationComplete.value = true;
         if (state?.calibratedPars) {
           const { setCalibratedPars } = require("@/game/beyer");

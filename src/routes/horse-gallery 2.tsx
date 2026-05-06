@@ -15,7 +15,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
 import { Zap, TrendingUp, Filter } from "lucide-react";
 import { useState, useMemo } from "react";
 
-export const Route = createFileRoute("/horse-gallery")({
+export const Route = createFileRoute("/horse-gallery 2")({
   component: HorseGalleryPage,
 });
 

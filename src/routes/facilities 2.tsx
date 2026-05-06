@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { FacilitiesPanel } from "@/components/FacilitiesPanel";
 
-export const Route = createFileRoute("/facilities")({
+export const Route = createFileRoute("/facilities 2")({
   component: FacilitiesPage,
 });
 

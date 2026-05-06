@@ -231,53 +231,151 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
       const playerHorseCount = horses.filter((h: Horse) => !h.stableId).length;
       const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 
-      // Call engine worker to execute pipeline
-      const engineWorker = getEngineWorker();
-      const result = await engineWorker.advanceDay({
-        state: { ...s, horses },
-        newDay,
-        progressCallback,
-      });
+      // Try to use engine worker if available (browser context)
+      try {
+        const engineWorker = getEngineWorker();
+        const result = await engineWorker.advanceDay({
+          state: { ...s, horses },
+          newDay,
+          progressCallback,
+        });
 
-      const { state: finalState, logs: newLogs } = result;
+        const { state: finalState, logs: newLogs } = result;
 
-      set({
-        day: newDay,
-        cash: finalState.cash,
-        horses: finalState.horses,
-        market: finalState.market,
-        races: finalState.races,
-        trainingUsed: {},
-        pregnancies: finalState.pregnancies,
-        calibratedPars: finalState.calibratedPars,
-        lastCalibrationDay: finalState.lastCalibrationDay,
-        npcStables: finalState.npcStables,
-        scoutReports: finalState.scoutReports,
-        auctions: finalState.auctions,
-        awards: finalState.awards,
-        lastAwardYear: finalState.lastAwardYear,
-        pendingAwardCeremonies: finalState.pendingAwardCeremonies,
-        currentCeremonyIndex: finalState.currentCeremonyIndex,
-        industryMeanEarnings: finalState.industryMeanEarnings,
-        industryEarningsUpdatedDay: finalState.industryEarningsUpdatedDay,
-        sireLeaderboards: finalState.sireLeaderboards,
-        sireTrendHistory: finalState.sireTrendHistory,
-        leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
-        jockeys: finalState.jockeys,
-        campaigns: finalState.campaigns,
-        expenses: finalState.expenses,
-        transactions: finalState.transactions,
-        reputation: finalState.reputation,
-        transports: finalState.transports,
-        hallOfFame: finalState.hallOfFame,
-        npcAIManager: finalState.npcAIManager,
-        pendingIntents: [], // Clear pending intents after processing
-        log: [
-          ...newLogs,
-          { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` },
-          ...s.log,
-        ].slice(0, 50),
-      });
+        set({
+          day: newDay,
+          cash: finalState.cash,
+          horses: finalState.horses,
+          market: finalState.market,
+          races: finalState.races,
+          trainingUsed: {},
+          pregnancies: finalState.pregnancies,
+          calibratedPars: finalState.calibratedPars,
+          lastCalibrationDay: finalState.lastCalibrationDay,
+          npcStables: finalState.npcStables,
+          scoutReports: finalState.scoutReports,
+          auctions: finalState.auctions,
+          awards: finalState.awards,
+          lastAwardYear: finalState.lastAwardYear,
+          pendingAwardCeremonies: finalState.pendingAwardCeremonies,
+          currentCeremonyIndex: finalState.currentCeremonyIndex,
+          industryMeanEarnings: finalState.industryMeanEarnings,
+          industryEarningsUpdatedDay: finalState.industryEarningsUpdatedDay,
+          sireLeaderboards: finalState.sireLeaderboards,
+          sireTrendHistory: finalState.sireTrendHistory,
+          leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
+          jockeys: finalState.jockeys,
+          campaigns: finalState.campaigns,
+          expenses: finalState.expenses,
+          transactions: finalState.transactions,
+          reputation: finalState.reputation,
+          transports: finalState.transports,
+          hallOfFame: finalState.hallOfFame,
+          npcAIManager: finalState.npcAIManager,
+          pendingIntents: [], // Clear pending intents after processing
+          log: [
+            ...newLogs,
+            { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` },
+            ...s.log,
+          ].slice(0, 50),
+        });
+      } catch (error) {
+        // Fallback: Worker not available (SSR context), use synchronous pipeline
+        console.warn("Worker not available, using synchronous pipeline execution", error);
+
+        // Execute pipeline for all phases
+        const pipelineContext: PipelineContext = {
+          previousDay: s.day,
+          newDay,
+          state: { ...s, horses },
+          logs: [],
+          dailyRng: createRng(hashStr("daily_" + newDay)),
+          // Intent/impact resolver fields
+          intents: s.pendingIntents || [],
+          impacts: [],
+          impactLog: [],
+        };
+
+        const phases = [
+          // Intent/impact resolver phases
+          intentCollectionPhase,
+          intentValidationPhase,
+          // Existing phases
+          upkeepPhase,
+          agingPhase,
+          breedingSeasonPhase,
+          industryMetricsPhase,
+          npcBreedingPhase,
+          energyPhase,
+          marketPhase,
+          racesPhase,
+          beyerRecalibrationPhase,
+          jockeyPhase,
+          pregnancyPhase,
+          npcCyclePhase,
+          stallionRetirementPhase,
+          pastureRetirementPhase,
+          hallOfFamePhase,
+          horseDeathPhase,
+          auctionsPhase,
+          leaderboardPhase,
+          awardsPhase,
+          schedulerPhase,
+          stateUpdatePhase,
+          // Resolution phases (convert intents to impacts)
+          raceEntryResolutionPhase,
+          purchaseResolutionPhase,
+          breedingResolutionPhase,
+          trainingResolutionPhase,
+          claimingWithdrawalPhase,
+          raceResolutionPhase,
+          // Impact application phase (final)
+          impactApplicationPhase,
+        ];
+
+        const updatedContext = executePipeline(phases, pipelineContext);
+
+        // Extract final state from pipeline context
+        const { state: finalState, logs: newLogs } = updatedContext;
+
+        set({
+          day: newDay,
+          cash: finalState.cash,
+          horses: finalState.horses,
+          market: finalState.market,
+          races: finalState.races,
+          trainingUsed: {},
+          pregnancies: finalState.pregnancies,
+          calibratedPars: finalState.calibratedPars,
+          lastCalibrationDay: finalState.lastCalibrationDay,
+          npcStables: finalState.npcStables,
+          scoutReports: finalState.scoutReports,
+          auctions: finalState.auctions,
+          awards: finalState.awards,
+          lastAwardYear: finalState.lastAwardYear,
+          pendingAwardCeremonies: finalState.pendingAwardCeremonies,
+          currentCeremonyIndex: finalState.currentCeremonyIndex,
+          industryMeanEarnings: finalState.industryMeanEarnings,
+          industryEarningsUpdatedDay: finalState.industryEarningsUpdatedDay,
+          sireLeaderboards: finalState.sireLeaderboards,
+          sireTrendHistory: finalState.sireTrendHistory,
+          leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
+          jockeys: finalState.jockeys,
+          campaigns: finalState.campaigns,
+          expenses: finalState.expenses,
+          transactions: finalState.transactions,
+          reputation: finalState.reputation,
+          transports: finalState.transports,
+          hallOfFame: finalState.hallOfFame,
+          npcAIManager: finalState.npcAIManager,
+          pendingIntents: [], // Clear pending intents after processing
+          log: [
+            ...newLogs,
+            { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` },
+            ...s.log,
+          ].slice(0, 50),
+        });
+      }
     },
 
     advanceMultipleDays: async (n: number, headless?: boolean) => {
