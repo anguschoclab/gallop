@@ -17,7 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dice5 } from "lucide-react";
-import { useGame, type NewGameOptions } from "@/game/store";
+import { useGame } from "@/game/store";
+import type { NewGameOptions } from "@/game/state";
 import { createRng, hashStr } from "@/game/rng";
 import {
   generateSilk,
@@ -328,19 +329,39 @@ function StepSilks({ silk, setSilk }: StepSilksProps) {
     <div className="grid gap-6 md:grid-cols-[160px_1fr]">
       <div className="flex flex-col items-center gap-3">
         <SilkPreview silk={silk} size={120} />
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setSilk(generateSilk(makeWizardRng("silk")))}
-            >
-              <Dice5 className="h-4 w-4 mr-1" /> Randomize
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Roll a fresh set of silks</TooltipContent>
-        </Tooltip>
+        <div className="flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setSilk(generateSilk(makeWizardRng("silk")))}
+              >
+                <Dice5 className="h-4 w-4 mr-1" /> Randomize
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Roll a fresh set of silks</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setSilk({
+                  pattern: "solid",
+                  primary: "#FFFFFF",
+                  secondary: "#FFFFFF",
+                  cap: "#FFFFFF",
+                })}
+              >
+                Reset
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Reset to default white silks</TooltipContent>
+          </Tooltip>
+        </div>
       </div>
       <div className="space-y-4">
         <ColorSwatchPicker
