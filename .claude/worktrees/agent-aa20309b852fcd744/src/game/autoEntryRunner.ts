@@ -1,0 +1,112 @@
+// Auto Entry Runner
+// For auto-managed campaigns: automatically enters the horse into planned races
+// when within the slot's day window, if eligibility and budget allow.
+
+import type { Horse, Race, HorseCampaign, CampaignRaceSlot } from "./types";
+import type { ActionResult } from "@/game/store";
+import { isHorseEligibleForRace } from "@/core/race/eligibility";
+
+export type AutoEntryContext = {
+  horse: Horse;
+  campaign: HorseCampaign;
+  races: Race[];
+  currentDay: number;
+  cash: number;
+  enterRaceFn: (raceId: string, horseId: string) => ActionResult;
+};
+
+export type AutoEntryResult = {
+  entered: { raceId: string; raceName: string; slotIndex: number }[];
+  skipped: { slotIndex: number; reason: string }[];
+  updatedSlots: HorseCampaign["slots"];
+};
+
+/**
+ * Scans campaign slots and auto-enters eligible planned races within the day window.
+ * Only runs for auto-managed campaigns.
+ */
+export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
+  const { horse, campaign, races, currentDay, cash, enterRaceFn } = ctx;
+
+  if (!campaign.autoManaged) {
+    return { entered: [], skipped: [], updatedSlots: campaign.slots };
+  }
+
+  const entered: AutoEntryResult["entered"] = [];
+  const skipped: AutoEntryResult["skipped"] = [];
+  const updatedSlots = campaign.slots.map((slot, idx) => {
+    if (slot.status !== "planned") return slot;
+
+    const windowStart = slot.dayTarget - slot.dayWindow;
+    const windowEnd = slot.dayTarget;
+
+    if (currentDay < windowStart || currentDay > windowEnd) return slot;
+
+    // Find the race — prefer matched raceId, fallback to matching by day + constraints
+    let race: Race | undefined = slot.raceId
+      ? races.find((r) => r.id === slot.raceId && !r.resolved)
+      : undefined;
+
+    if (!race) {
+      race = races.find(
+        (r) =>
+          !r.resolved &&
+          r.day >= windowStart &&
+          r.day <= windowEnd &&
+          (!slot.constraintDistance || Math.abs(r.distance - slot.constraintDistance) <= 200) &&
+          (!slot.constraintSurface ||
+            (r.graded?.surface ?? r.surface) === slot.constraintSurface) &&
+          !r.entries.some((e) => e.horseId === horse.id),
+      );
+    }
+
+    if (!race) {
+      skipped.push({ slotIndex: idx, reason: "No matching race found in window" });
+      return slot;
+    }
+
+    if (race.entries.some((e) => e.horseId === horse.id)) {
+      return { ...slot, raceId: race.id, status: "entered" as const };
+    }
+
+    if (cash < race.entryFee) {
+      skipped.push({ slotIndex: idx, reason: `Insufficient cash (need $${race.entryFee})` });
+      return slot;
+    }
+
+    const eligible = isHorseEligibleForRace(horse, race, new Set());
+    if (!eligible) {
+      skipped.push({ slotIndex: idx, reason: "Not eligible for this race" });
+      return slot;
+    }
+
+    const result = enterRaceFn(race.id, horse.id);
+    if (result.ok) {
+      entered.push({ raceId: race.id, raceName: race.name, slotIndex: idx });
+      return { ...slot, raceId: race.id, status: "entered" as const };
+    } else {
+      skipped.push({ slotIndex: idx, reason: !result.ok ? result.reason : "Unknown error" });
+      return slot;
+    }
+  });
+
+  return { entered, skipped, updatedSlots };
+}
+
+/**
+ * Mark completed slots based on resolved races in the horse's race history.
+ * Also updates aptitude counts in ConfirmedAptitudes.
+ */
+export function reconcileSlotStatuses(
+  campaign: HorseCampaign,
+  races: Race[],
+): HorseCampaign["slots"] {
+  return campaign.slots.map((slot) => {
+    if (slot.status !== "entered") return slot;
+    const race = slot.raceId ? races.find((r) => r.id === slot.raceId) : undefined;
+    if (race?.resolved) {
+      return { ...slot, status: "completed" as const };
+    }
+    return slot;
+  });
+}

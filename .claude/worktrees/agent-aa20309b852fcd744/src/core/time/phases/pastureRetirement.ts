@@ -1,0 +1,84 @@
+// Pasture Retirement Phase
+// Automatically retires NPC horses to pasture based on age and inactivity
+
+import type { PipelineContext, PipelinePhase } from "../pipeline";
+import type { AnyImpact, PastureRetirementImpact, LogImpact } from "@/core/resolver/impacts";
+import { generateUUID } from "@/game/uuid";
+
+/**
+ * Phase: Pasture Retirement
+ * Automatically retires NPC horses to pasture when they meet criteria:
+ * - Age ≥ 8 (past typical racing age)
+ * - OR (age ≥ 6 AND inactive for 90+ days AND not at stud)
+ * - OR (age ≥ 5 AND low fame < 20 AND no graded wins)
+ */
+export const pastureRetirementPhase: PipelinePhase = {
+  name: "pastureRetirement",
+  order: 150, // After stallion retirement (145)
+  execute: (context: PipelineContext): PipelineContext => {
+    const { state, newDay } = context;
+    const impacts: AnyImpact[] = [];
+
+    // Only run for NPC horses
+    const npcHorses = state.horses.filter((h) => h.stableId && h.lifecycleStatus === "active");
+
+    for (const horse of npcHorses) {
+      // Skip if already at stud (stud retirement handles that)
+      if (horse.stud?.atStud) continue;
+
+      // Calculate last race day
+      const lastRaceDay =
+        horse.raceHistory.length > 0
+          ? Math.max(...horse.raceHistory.map((r) => r.day))
+          : 0;
+      const inactiveDays = lastRaceDay > 0 ? newDay - lastRaceDay : newDay;
+
+      // Count graded wins
+      const gradedWins = horse.raceHistory.filter(
+        (r) => r.position === 1 && r.grade && ["G1", "G2", "G3"].includes(r.grade),
+      ).length;
+
+      // Determine retirement eligibility
+      const isOld = horse.age >= 8;
+      const isOldAndInactive = horse.age >= 6 && inactiveDays > 90;
+      const isLowAchiever = horse.age >= 5 && horse.fame < 20 && gradedWins === 0;
+
+      if (isOld || isOldAndInactive || isLowAchiever) {
+        let reason = "";
+        if (isOld) reason = "old age";
+        else if (isOldAndInactive) reason = "age and inactivity";
+        else reason = "limited career success";
+
+        // Emit pasture retirement impact
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "pastureRetirement",
+          logLevel: "conditional",
+          type: "pasture_retirement",
+          horseId: horse.id,
+          retiredOnDay: newDay,
+          reason: `Retired to pasture due to ${reason}`,
+        } as PastureRetirementImpact);
+
+        // Emit log impact
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "pastureRetirement",
+          logLevel: "conditional",
+          type: "log",
+          text: `${horse.name} has been retired to pasture (${reason}).`,
+          reason: "NPC pasture retirement",
+        } as LogImpact);
+      }
+    }
+
+    return {
+      ...context,
+      impacts: [...context.impacts, ...impacts],
+    };
+  },
+};

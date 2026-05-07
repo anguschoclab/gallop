@@ -1,0 +1,100 @@
+// Hall of Fame Phase
+// Inducts legendary horses into the Hall of Fame based on career achievements
+
+import type { PipelineContext, PipelinePhase } from "../pipeline";
+import type { AnyImpact, HallOfFameInductionImpact, LogImpact } from "@/core/resolver/impacts";
+import { generateUUID } from "@/game/uuid";
+
+/**
+ * Phase: Hall of Fame Induction
+ * Checks retired/deceased horses for Hall of Fame eligibility:
+ * - lifecycleStatus: "retired" or "deceased"
+ * - fame ≥ 85
+ * - AND (3+ G1 wins OR 5+ graded wins OR Horse of the Year award)
+ * - AND lifetimeEarnings ≥ $500,000
+ */
+export const hallOfFamePhase: PipelinePhase = {
+  name: "hallOfFame",
+  order: 155, // After pasture retirement (150), before horse death (160)
+  execute: (context: PipelineContext): PipelineContext => {
+    const { state, newDay } = context;
+    const impacts: AnyImpact[] = [];
+
+    // Check if Hall of Fame exists in state
+    const existingHallOfFame = state.hallOfFame || [];
+
+    for (const horse of state.horses) {
+      // Skip if already inducted
+      if (existingHallOfFame.some((h) => h.horseId === horse.id)) continue;
+
+      // Skip if not retired or deceased
+      if (horse.lifecycleStatus !== "retired" && horse.lifecycleStatus !== "deceased") continue;
+
+      // Check fame threshold
+      if (horse.fame < 85) continue;
+
+      // Count G1 wins
+      const g1Wins = horse.raceHistory.filter(
+        (r) => r.position === 1 && r.grade === "G1",
+      ).length;
+
+      // Count total graded wins
+      const gradedWins = horse.raceHistory.filter(
+        (r) => r.position === 1 && r.grade && ["G1", "G2", "G3"].includes(r.grade),
+      ).length;
+
+      // Check for Horse of the Year awards
+      const horseOfTheYearAwards = (state.awards || []).filter(
+        (a) => a.horseId === horse.id && a.category === "horse_of_the_year",
+      ).length;
+
+      // Check earnings threshold
+      if (horse.lifetimeEarnings < 500000) continue;
+
+      // Check achievement criteria
+      const hasAchievement =
+        g1Wins >= 3 || gradedWins >= 5 || horseOfTheYearAwards >= 1;
+
+      if (!hasAchievement) continue;
+
+      // Eligible for Hall of Fame - emit induction impact
+      const careerHighlights = {
+        g1Wins,
+        gradedWins,
+        lifetimeEarnings: horse.lifetimeEarnings,
+        horseOfTheYearAwards,
+      };
+
+      impacts.push({
+        id: generateUUID(),
+        intentId: "",
+        day: newDay,
+        phase: "hallOfFame",
+        logLevel: "always",
+        type: "hall_of_fame_induction",
+        horseId: horse.id,
+        horseName: horse.name,
+        inductedOnDay: newDay,
+        careerHighlights,
+        reason: `${horse.name} inducted into Hall of Fame`,
+      } as HallOfFameInductionImpact);
+
+      // Emit log impact
+      impacts.push({
+        id: generateUUID(),
+        intentId: "",
+        day: newDay,
+        phase: "hallOfFame",
+        logLevel: "always",
+        type: "log",
+        text: `🏆 ${horse.name} has been inducted into the Hall of Fame!`,
+        reason: "Hall of Fame induction",
+      } as LogImpact);
+    }
+
+    return {
+      ...context,
+      impacts: [...context.impacts, ...impacts],
+    };
+  },
+};
