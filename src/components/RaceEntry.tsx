@@ -186,7 +186,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                         onClick={() => setSelectedHorseId(horse.id)}
                         className="flex items-center gap-3 flex-1 text-left"
                       >
-                        <HorsePortraitBadge id={horse.id} coatColor={horse.coatColor} markings={horse.markings} gender={horse.gender} size="sm" />
+                        <HorsePortraitBadge id={horse.id} coatColor={horse.coatColor} markings={horse.markings} gender={horse.gender} appearance={horse.appearance} size="sm" />
                         <div>
                           <div className="font-bold flex items-center gap-2">
                             {horse.name}
@@ -309,7 +309,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
 
                 <div className="flex flex-col items-center gap-2">
-                  <HorsePortrait id={selectedHorse.id} coatColor={selectedHorse.coatColor} markings={selectedHorse.markings} gender={selectedHorse.gender} size="md" />
+                  <HorsePortrait id={selectedHorse.id} coatColor={selectedHorse.coatColor} markings={selectedHorse.markings} gender={selectedHorse.gender} appearance={selectedHorse.appearance} size="md" />
                   <div className="font-black uppercase tracking-tighter text-center leading-none">
                     {selectedHorse.name}
                   </div>

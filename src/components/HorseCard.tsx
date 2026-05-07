@@ -6,7 +6,6 @@ import { calculateOverallRating } from "@/core/horse/stats";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
 import { JargonTooltip } from "./ui/JargonTooltip";
 import { useGame } from "@/game/store";
-import { HorsePortraitBadge, HorsePortrait } from "./HorsePortrait";
 import { SilkDot } from "./SilkDot";
 import { NumericValue } from "./HorseBits";
 import {

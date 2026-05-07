@@ -502,7 +502,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
             {currentLot && currentHorse ? (
               <>
                 <div className="flex items-start gap-3">
-                  <HorsePortrait id={currentHorse.id} coatColor={currentHorse.coatColor} markings={currentHorse.markings} gender={currentHorse.gender} size="md" />
+                  <HorsePortrait id={currentHorse.id} coatColor={currentHorse.coatColor} markings={currentHorse.markings} gender={currentHorse.gender} appearance={currentHorse.appearance} view="full" size="md" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h2 className="text-xl font-bold">{currentHorse.name}</h2>

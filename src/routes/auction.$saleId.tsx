@@ -279,7 +279,7 @@ function AuctionSalePage() {
                   <Card key={lot.id}>
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
-                        <HorsePortrait id={lotHorse?.id} coatColor={lotHorse?.coatColor} markings={lotHorse?.markings} gender={lotHorse?.gender} size="sm" />
+                        <HorsePortrait id={lotHorse?.id} coatColor={lotHorse?.coatColor} markings={lotHorse?.markings} gender={lotHorse?.gender} appearance={lotHorse?.appearance} size="sm" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2">
                             <div>
@@ -540,7 +540,7 @@ function AuctionSalePage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
-                    <HorsePortrait id={horse.id} coatColor={horse.coatColor} markings={horse.markings} gender={horse.gender} size="md" />
+                    <HorsePortrait id={horse.id} coatColor={horse.coatColor} markings={horse.markings} gender={horse.gender} appearance={horse.appearance} size="md" />
                     <div>
                       <CardTitle className="text-xl text-cream">{horse.name}</CardTitle>
                       <p className="text-sm text-cream-muted mt-0.5 tabular-nums">

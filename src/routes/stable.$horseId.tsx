@@ -17,7 +17,6 @@ import { SilkDot } from "@/components/SilkDot";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
 import { ArrowLeft, Tag, Lock } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
-import { HorsePortrait } from "@/components/HorsePortrait";
 import { BeyerChart } from "@/components/BeyerChart";
 import { HorseAwardsPanel } from "@/components/awards";
 import { GradedStatsChart } from "@/components/GradedStatsChart";

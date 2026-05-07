@@ -153,6 +153,7 @@ function HorseGalleryPage() {
                       coatColor={horse.coatColor}
                       markings={horse.markings}
                       gender={horse.gender}
+                      appearance={horse.appearance}
                       size="xl"
                       className="group-hover:scale-105 transition-transform duration-300"
                     />

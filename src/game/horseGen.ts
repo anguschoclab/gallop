@@ -245,6 +245,16 @@ export function generateHorse(
     careerStarts: 0,
     careerWins: 0,
     lifecycleStatus: "active",
-    ...resolveDnaTraits(genotype),
+    ...(() => {
+      const traits = resolveDnaTraits(genotype);
+      return {
+        ...traits,
+        appearance: generateAppearanceDNA(
+          Math.floor(rng.next() * 0xffffffff),
+          traits.markings,
+          getPalette(coatColor),
+        ),
+      };
+    })(),
   };
 }
