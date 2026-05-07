@@ -27,9 +27,10 @@ describe("NPC Daily Cycle Integration", () => {
     ];
 
     const horses: Horse[] = [];
+    const jockeys: Jockey[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10, createRng("test"));
+    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, createRng("test"));
 
     // Verify result structure
     expect(result.horses).toBeDefined();
@@ -41,9 +42,10 @@ describe("NPC Daily Cycle Integration", () => {
   it("should skip when no NPC stables", () => {
     const npcStables: Stable[] = [];
     const horses: Horse[] = [];
+    const jockeys: Jockey[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10, createRng("test"));
+    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, createRng("test"));
 
     // Should return unchanged
     expect(result.horses).toEqual([]);
@@ -68,9 +70,10 @@ describe("NPC Daily Cycle Integration", () => {
     ];
 
     const horses: Horse[] = [];
+    const jockeys: Jockey[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10, createRng("test"));
+    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, createRng("test"));
 
     // Should not crash with empty horse roster
     expect(result.horses).toBeDefined();

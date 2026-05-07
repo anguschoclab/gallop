@@ -126,6 +126,9 @@ describe("generateTrackRaces", () => {
       name: "Test Track",
       country: "USA",
       surfaces: ["Dirt"],
+      courses: [{ surface: "Dirt", distance: 2000, condition: "Fast" }],
+      condition: "Fast",
+      weather: "Sunny",
     };
 
     const schedule: TrackSchedule = {
@@ -135,7 +138,7 @@ describe("generateTrackRaces", () => {
       regionalSystem: "north_america",
     };
 
-    const races = generateTrackRaces(track, schedule, 10, []);
+    const races = generateTrackRaces(track, schedule, 10, [], createRng("test"));
     expect(races.length).toBeGreaterThan(0);
     expect(races.length).toBeLessThanOrEqual(10);
   });
@@ -146,6 +149,9 @@ describe("generateTrackRaces", () => {
       name: "Test Track",
       country: "USA",
       surfaces: ["Dirt"],
+      courses: [{ surface: "Dirt", distance: 2000, condition: "Fast" }],
+      condition: "Fast",
+      weather: "Sunny",
     };
 
     const schedule: TrackSchedule = {
@@ -155,7 +161,7 @@ describe("generateTrackRaces", () => {
       regionalSystem: "north_america",
     };
 
-    const races = generateTrackRaces(track, schedule, 10, []);
+    const races = generateTrackRaces(track, schedule, 10, [], createRng("test"));
     expect(races.every((r) => r.trackId === "track-1")).toBe(true);
   });
 
@@ -165,6 +171,9 @@ describe("generateTrackRaces", () => {
       name: "Test Track",
       country: "USA",
       surfaces: ["Dirt"],
+      courses: [{ surface: "Dirt", distance: 2000, condition: "Fast" }],
+      condition: "Fast",
+      weather: "Sunny",
     };
 
     const schedule: TrackSchedule = {
@@ -174,7 +183,7 @@ describe("generateTrackRaces", () => {
       regionalSystem: "north_america",
     };
 
-    const races = generateTrackRaces(track, schedule, 10, []);
+    const races = generateTrackRaces(track, schedule, 10, [], createRng("test"));
     expect(races.every((r) => r.day === 10)).toBe(true);
   });
 });

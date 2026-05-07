@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { createRng } from "@/game/rng";
 import {
   calculateScoutCost,
   getVisibleStats,
@@ -105,7 +106,7 @@ describe("scoutHorse", () => {
   it("returns success=false, cost=0 when playerCash < cost", () => {
     const horse = mkHorse();
     const stable = mkStable(90); // high reputation → expensive
-    const result = scoutHorse(horse, stable, 10, 0);
+    const result = scoutHorse(horse, stable, 10, 0, createRng("test"));
     expect(result.success).toBe(false);
     expect(result.cost).toBe(0);
     expect(result.message).toContain("Insufficient");
@@ -115,7 +116,7 @@ describe("scoutHorse", () => {
     const horse = mkHorse({ lastScoutedDay: 10 });
     const stable = mkStable(50);
     const cost = calculateScoutCost(horse, stable);
-    const result = scoutHorse(horse, stable, 10, cost * 10);
+    const result = scoutHorse(horse, stable, 10, cost * 10, createRng("test"));
     expect(result.success).toBe(false);
     expect(result.cost).toBe(0);
     expect(result.message).toContain("already scouted");
@@ -125,7 +126,7 @@ describe("scoutHorse", () => {
     const horse = mkHorse({ fame: 0 });
     const stable = mkStable(50);
     const cost = calculateScoutCost(horse, stable);
-    const result = scoutHorse(horse, stable, 10, cost * 10);
+    const result = scoutHorse(horse, stable, 10, cost * 10, createRng("test"));
     expect(result.success).toBe(true);
     expect(result.report).toBeDefined();
     expect(Object.keys(result.report!.revealedStats).length).toBeGreaterThanOrEqual(1);
@@ -135,7 +136,7 @@ describe("scoutHorse", () => {
     const horse = mkHorse({ fame: 10 });
     const stable = mkStable(50);
     const cost = calculateScoutCost(horse, stable);
-    const result = scoutHorse(horse, stable, 10, cost * 10);
+    const result = scoutHorse(horse, stable, 10, cost * 10, createRng("test"));
     if (result.success) {
       expect(result.cost).toBeGreaterThan(0);
     }
@@ -145,7 +146,7 @@ describe("scoutHorse", () => {
     const horse = mkHorse({ id: "horse-123", fame: 10 });
     const stable = mkStable(50);
     const cost = calculateScoutCost(horse, stable);
-    const result = scoutHorse(horse, stable, 5, cost * 10);
+    const result = scoutHorse(horse, stable, 5, cost * 10, createRng("test"));
     if (result.success && result.report) {
       expect(result.report.horseId).toBe("horse-123");
       expect(result.report.stableId).toBe("s1");

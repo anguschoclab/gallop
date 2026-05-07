@@ -9,10 +9,11 @@ import type { Horse, Race, Stable } from "@/game/types";
 describe("runNpcCycle", () => {
   it("should return unchanged horses and races when no NPC stables", () => {
     const horses: Horse[] = [];
+    const jockeys: any[] = [];
     const races: Race[] = [];
     const npcStables: Stable[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10);
+    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any);
     expect(result.horses).toEqual([]);
     expect(result.races).toEqual([]);
   });
@@ -35,9 +36,10 @@ describe("runNpcCycle", () => {
     ];
 
     const horses: Horse[] = [];
+    const jockeys: any[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10);
+    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any);
     // Just verify it doesn't crash and returns expected structure
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();
@@ -61,9 +63,10 @@ describe("runNpcCycle", () => {
     ];
 
     const horses: Horse[] = [];
+    const jockeys: any[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10, 5);
+    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any, 5);
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();
   });
@@ -86,9 +89,10 @@ describe("runNpcCycle", () => {
     ];
 
     const horses: Horse[] = [];
+    const jockeys: any[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10);
+    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any);
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();
   });
@@ -142,7 +146,7 @@ describe("runNpcCycle", () => {
       result: [{ horseId: "horse-1", position: 1, time: 120 }],
     };
 
-    const result = runNpcCycle(npcStables, [horse], [race], 10);
+    const result = runNpcCycle(npcStables, [horse], [], [race], 10, { next: () => 0.5 } as any);
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();
   });
@@ -150,9 +154,10 @@ describe("runNpcCycle", () => {
   it("should return NpcCycleResult with correct structure", () => {
     const npcStables: Stable[] = [];
     const horses: Horse[] = [];
+    const jockeys: any[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, races, 10);
+    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any);
     expect(result).toHaveProperty("horses");
     expect(result).toHaveProperty("races");
     expect(Array.isArray(result.horses)).toBe(true);
