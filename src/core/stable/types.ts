@@ -1,0 +1,42 @@
+import type { JockeySilk } from "@/core/jockey/types";
+
+export type StableTier = "elite" | "mid" | "budget";
+
+export type StablePersonality =
+  | "aggressive"
+  | "conservative"
+  | "developer"
+  | "win-now"
+  | "specialist"
+  | "breeder"
+  | "trader"
+  | "prestige";
+
+export type Stable = {
+  id: string;
+  name: string;
+  owner: string;
+  tier: StableTier;
+  reputation: number;
+  founded: number;
+  cash: number;
+  horses: string[];
+  isMajor: boolean;
+  colors: { primary: string; secondary: string };
+  description?: string;
+  country?: string;
+  personality: StablePersonality;
+  preferredDistance?: number;
+  preferredSurface?: "Turf" | "Dirt" | "Synthetic";
+};
+
+export type BackstoryId = "heir" | "trainer" | "investor" | "owner";
+
+export interface PlayerProfile {
+  stableName: string;
+  ownerName: string;
+  silk: JockeySilk;
+  backstoryId: BackstoryId;
+  founded: number;
+  country?: string;
+}

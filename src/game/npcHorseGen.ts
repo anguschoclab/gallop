@@ -5,7 +5,7 @@ import type { Horse, HorseGender, Hemisphere, Stable, StableTier, StablePersonal
 import type { Rng } from "./rng";
 import { createHorseFromDNA } from "./horseGen";
 import { generateGenotype, generateDeterministicGenotype, generateResearchBasedGenotype } from "./geneticsEngine";
-import { rand, randomHorseName } from "@/core/common/random";
+import { rand } from "@/core/common/random";
 import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
