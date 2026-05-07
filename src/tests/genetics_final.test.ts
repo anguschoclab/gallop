@@ -1,13 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { createRng } from "../game/rng";
+import { createRng } from "@/game/rng";
 import {
   generateGenotype,
+  generateDeterministicGenotype,
   inheritDNA,
   resolveCoatColor,
   resolveStats,
   resolveSize,
   resolveInjuryProneness,
-} from "../game/geneticsEngine";
+} from "@/game/geneticsEngine";
 
 describe("Universal DNA System - Final Validation", () => {
   const rng = createRng(123);
@@ -50,5 +51,84 @@ describe("Universal DNA System - Final Validation", () => {
     // Foal should be between parents
     expect(foalH).toBeGreaterThan(damH - 0.1);
     expect(foalH).toBeLessThan(sireH + 0.1);
+  });
+});
+
+describe("Deterministic DNA Bias Validation", () => {
+  it("should validate Brilliant dosage bias toward speed", () => {
+    const brilliantDNA = generateDeterministicGenotype("BrilliantTest", "elite", ["Brilliant"]);
+    const classicDNA = generateDeterministicGenotype("ClassicTest", "elite", ["Classic"]);
+    
+    const brilliantStats = resolveStats(brilliantDNA.stats);
+    const classicStats = resolveStats(classicDNA.stats);
+    
+    // Brilliant should have higher speed than Classic
+    expect(brilliantStats.speed).toBeGreaterThan(classicStats.speed);
+  });
+
+  it("should validate Solid dosage bias toward stamina and durability", () => {
+    const solidDNA = generateDeterministicGenotype("SolidTest", "elite", ["Solid"]);
+    const classicDNA = generateDeterministicGenotype("ClassicTest", "elite", ["Classic"]);
+    
+    const solidStats = resolveStats(solidDNA.stats);
+    const classicStats = resolveStats(classicDNA.stats);
+    
+    // Solid should have higher stamina than Classic
+    expect(solidStats.stamina).toBeGreaterThan(classicStats.stamina);
+    
+    // Solid should have higher durability
+    expect(solidDNA.durability[0] + solidDNA.durability[1])
+      .toBeGreaterThan(classicDNA.durability[0] + classicDNA.durability[1]);
+  });
+
+  it("should validate Triple Crown achievement bonuses", () => {
+    const tripleCrownDNA = generateDeterministicGenotype("TripleCrownTest", "elite", ["Classic"], ["Triple Crown winner"]);
+    const noAchievementDNA = generateDeterministicGenotype("NoAchievementTest", "elite", ["Classic"], []);
+    
+    // Triple Crown winner should have boosted heart
+    const tripleCrownHeartSum = tripleCrownDNA.heart.reduce((sum, l) => sum + l[0] + l[1], 0);
+    const noAchievementHeartSum = noAchievementDNA.heart.reduce((sum, l) => sum + l[0] + l[1], 0);
+    expect(tripleCrownHeartSum).toBeGreaterThan(noAchievementHeartSum);
+    
+    // Triple Crown winner should have boosted trainability
+    expect(tripleCrownDNA.trainability[0] + tripleCrownDNA.trainability[1])
+      .toBeGreaterThan(noAchievementDNA.trainability[0] + noAchievementDNA.trainability[1]);
+  });
+
+  it("should validate Champion sire achievement bonuses", () => {
+    const championSireDNA = generateDeterministicGenotype("ChampionSireTest", "elite", ["Classic"], ["Champion sire"]);
+    const noAchievementDNA = generateDeterministicGenotype("NoAchievementTest", "elite", ["Classic"], []);
+    
+    // Champion sire should have boosted fertility
+    expect(championSireDNA.fertility[0] + championSireDNA.fertility[1])
+      .toBeGreaterThan(noAchievementDNA.fertility[0] + noAchievementDNA.fertility[1]);
+  });
+
+  it("should validate sprinter achievement bonuses", () => {
+    const sprinterDNA = generateDeterministicGenotype("SprinterTest", "elite", ["Brilliant"], ["sprint"]);
+    const noAchievementDNA = generateDeterministicGenotype("NoAchievementTest", "elite", ["Brilliant"], []);
+    
+    const sprinterStats = resolveStats(sprinterDNA.stats);
+    const noAchievementStats = resolveStats(noAchievementDNA.stats);
+    
+    // Sprinter should have higher speed
+    expect(sprinterStats.speed).toBeGreaterThan(noAchievementStats.speed);
+    
+    // Sprinter should have lower stamina
+    expect(sprinterStats.stamina).toBeLessThan(noAchievementStats.stamina);
+  });
+
+  it("should validate stayer achievement bonuses", () => {
+    const stayerDNA = generateDeterministicGenotype("StayerTest", "elite", ["Solid"], ["stayer"]);
+    const noAchievementDNA = generateDeterministicGenotype("NoAchievementTest", "elite", ["Solid"], []);
+    
+    const stayerStats = resolveStats(stayerDNA.stats);
+    const noAchievementStats = resolveStats(noAchievementDNA.stats);
+    
+    // Stayer should have higher stamina
+    expect(stayerStats.stamina).toBeGreaterThan(noAchievementStats.stamina);
+    
+    // Stayer should have lower speed
+    expect(stayerStats.speed).toBeLessThan(noAchievementStats.speed);
   });
 });

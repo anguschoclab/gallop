@@ -4,7 +4,7 @@
 import type { Horse, HorseGender, Hemisphere, Stable, StableTier } from "./types";
 import type { Rng } from "./rng";
 import { createHorseFromDNA } from "./horseGen";
-import { generateGenotype } from "./geneticsEngine";
+import { generateGenotype, generateDeterministicGenotype, generateResearchBasedGenotype } from "./geneticsEngine";
 import { rand, randomHorseName } from "@/core/common/random";
 import {
   shouldRetireAtStartup,
@@ -404,8 +404,15 @@ export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
         ? "mid"
         : "budget";
 
-    // Generate DNA
-    const genotype = generateGenotype(rng, tier);
+    // Generate research-based DNA with deterministic fallback
+    // Uses manually researched data if available, otherwise deterministic generation
+    // Applies dosage-based biases and achievement-based bonuses
+    const genotype = generateResearchBasedGenotype(
+      stallionData.name,
+      tier,
+      stallionData.dosageGroups,
+      stallionData.achievements,
+    );
 
     // Create horse from DNA
     const horse = createHorseFromDNA(genotype, rng, {

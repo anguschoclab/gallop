@@ -17,6 +17,10 @@ import type {
   FaceWhite,
 } from "./types";
 import type { Rng } from "./rng";
+import { createRng, hashStr } from "./rng";
+import type { AptitudinalGroup } from "./pedigreeData";
+import { getStallionResearchData, hasCompleteData, type StallionResearchData } from "./stallionDNAData";
+import { mapResearchDataToGenotype } from "./stallionDNAMapper";
 
 export const TRAIT_VALUES: Record<string, number> = { excellent: 4, good: 3, fair: 2, poor: 1 };
 export const TRAIT_SCORE: Record<string, number> = {
@@ -25,6 +29,233 @@ export const TRAIT_SCORE: Record<string, number> = {
   fair: 0.5,
   poor: 0.25,
 };
+
+/**
+ * Dosage-to-DNA bias mapping
+ * Used for deterministic stallion DNA generation based on Chef-de-race classification
+ */
+const DOSAGE_BIASES: Record<AptitudinalGroup, {
+  speedBias: number;
+  staminaBias: number;
+  styleBias: number;
+  fiberBias: number;
+  durabilityBias: number;
+}> = {
+  Brilliant: { speedBias: +0.3, staminaBias: -0.2, styleBias: 1.5, fiberBias: -0.5, durabilityBias: 0 },
+  Classic: { speedBias: 0, staminaBias: 0, styleBias: 2.5, fiberBias: 0, durabilityBias: 0 },
+  Intermediate: { speedBias: +0.1, staminaBias: +0.1, styleBias: 2.0, fiberBias: 0, durabilityBias: 0 },
+  Solid: { speedBias: -0.2, staminaBias: +0.3, styleBias: 3.5, fiberBias: +0.5, durabilityBias: +0.2 },
+  Professional: { speedBias: 0, staminaBias: 0, styleBias: 2.5, fiberBias: 0, durabilityBias: 0 },
+};
+
+/**
+ * Apply achievement-based bonuses to genotype
+ * Uses keyword matching on achievement strings to apply DNA bonuses
+ */
+function applyAchievementBonuses(
+  genotype: Genotype,
+  achievements?: string[],
+): Genotype {
+  if (!achievements || achievements.length === 0) return genotype;
+
+  const achievementsStr = achievements.join(" ").toLowerCase();
+
+  // Triple Crown / Horse of the Year: boost heart, trainability, peakAge
+  if (achievementsStr.includes("triple crown") || achievementsStr.includes("horse of the year")) {
+    genotype.heart = genotype.heart.map(l => [
+      Math.min(5, l[0] + 1),
+      Math.min(5, l[1] + 1),
+    ]) as Locus[];
+    genotype.trainability = [
+      Math.min(5, genotype.trainability[0] + 1),
+      Math.min(5, genotype.trainability[1] + 1),
+    ];
+    genotype.peakAge = [
+      Math.min(5, genotype.peakAge[0] + 1),
+      Math.min(5, genotype.peakAge[1] + 1),
+    ];
+  }
+
+  // Sprinter / speed achievements: boost speed, reduce stamina
+  if (achievementsStr.includes("sprint") || achievementsStr.includes("speed")) {
+    genotype.stats.speed = genotype.stats.speed.map(l => [
+      Math.min(5, l[0] + 1),
+      Math.min(5, l[1] + 1),
+    ]) as Locus[];
+    genotype.stats.stamina = genotype.stats.stamina.map(l => [
+      Math.max(1, l[0] - 1),
+      Math.max(1, l[1] - 1),
+    ]) as Locus[];
+    genotype.fiberType = [
+      Math.max(1, genotype.fiberType[0] - 1),
+      Math.max(1, genotype.fiberType[1] - 1),
+    ];
+  }
+
+  // Stayer / classic / distance achievements: boost stamina, reduce speed
+  if (achievementsStr.includes("stayer") || achievementsStr.includes("classic") || 
+      achievementsStr.includes("distance") || achievementsStr.includes("cup")) {
+    genotype.stats.stamina = genotype.stats.stamina.map(l => [
+      Math.min(5, l[0] + 1),
+      Math.min(5, l[1] + 1),
+    ]) as Locus[];
+    genotype.stats.speed = genotype.stats.speed.map(l => [
+      Math.max(1, l[0] - 1),
+      Math.max(1, l[1] - 1),
+    ]) as Locus[];
+    genotype.fiberType = [
+      Math.min(5, genotype.fiberType[0] + 1),
+      Math.min(5, genotype.fiberType[1] + 1),
+    ];
+  }
+
+  // Champion sire: boost fertility, trainability
+  if (achievementsStr.includes("champion sire") || achievementsStr.includes("leading sire")) {
+    genotype.fertility = [
+      Math.min(5, genotype.fertility[0] + 1),
+      Math.min(5, genotype.fertility[1] + 1),
+    ];
+    genotype.trainability = [
+      Math.min(5, genotype.trainability[0] + 1),
+      Math.min(5, genotype.trainability[1] + 1),
+    ];
+  }
+
+  return genotype;
+}
+
+/**
+ * Apply dosage-based biases to genotype
+ * Uses Chef-de-race classification to bias DNA traits
+ */
+function applyDosageBiases(
+  genotype: Genotype,
+  dosageGroups?: AptitudinalGroup[],
+  tier: "starter" | "budget" | "mid" | "elite" = "budget",
+): Genotype {
+  if (!dosageGroups || dosageGroups.length === 0) return genotype;
+
+  // Get tier-based allele range for clamping
+  const alleleMin = tier === "elite" ? 3 : tier === "mid" ? 2 : tier === "budget" ? 1 : 1;
+  const alleleMax = 5;
+
+  // Combine biases from all dosage groups
+  let totalSpeedBias = 0;
+  let totalStaminaBias = 0;
+  let totalStyleBias = 0;
+  let totalFiberBias = 0;
+  let totalDurabilityBias = 0;
+
+  for (const group of dosageGroups) {
+    const bias = DOSAGE_BIASES[group];
+    if (bias) {
+      totalSpeedBias += bias.speedBias;
+      totalStaminaBias += bias.staminaBias;
+      totalStyleBias += bias.styleBias;
+      totalFiberBias += bias.fiberBias;
+      totalDurabilityBias += bias.durabilityBias;
+    }
+  }
+
+  // Average biases if multiple groups
+  const count = dosageGroups.length;
+  totalSpeedBias /= count;
+  totalStaminaBias /= count;
+  totalStyleBias /= count;
+  totalFiberBias /= count;
+  totalDurabilityBias /= count;
+
+  // Apply speed bias to speed loci
+  if (totalSpeedBias !== 0) {
+    genotype.stats.speed = genotype.stats.speed.map(l => [
+      Math.max(alleleMin, Math.min(alleleMax, l[0] + totalSpeedBias)),
+      Math.max(alleleMin, Math.min(alleleMax, l[1] + totalSpeedBias)),
+    ]) as Locus[];
+  }
+
+  // Apply stamina bias to stamina loci
+  if (totalStaminaBias !== 0) {
+    genotype.stats.stamina = genotype.stats.stamina.map(l => [
+      Math.max(alleleMin, Math.min(alleleMax, l[0] + totalStaminaBias)),
+      Math.max(alleleMin, Math.min(alleleMax, l[1] + totalStaminaBias)),
+    ]) as Locus[];
+  }
+
+  // Apply style bias (convert to locus value: 1=E, 2=EP, 3=P, 4=S)
+  if (totalStyleBias !== 0) {
+    const baseStyle = (genotype.style[0] + genotype.style[1]) / 2;
+    const biasedStyle = Math.max(1, Math.min(4, baseStyle + totalStyleBias));
+    genotype.style = [biasedStyle, biasedStyle];
+  }
+
+  // Apply fiber bias
+  if (totalFiberBias !== 0) {
+    genotype.fiberType = [
+      Math.max(alleleMin, Math.min(alleleMax, genotype.fiberType[0] + totalFiberBias)),
+      Math.max(alleleMin, Math.min(alleleMax, genotype.fiberType[1] + totalFiberBias)),
+    ];
+  }
+
+  // Apply durability bias
+  if (totalDurabilityBias !== 0) {
+    genotype.durability = [
+      Math.max(alleleMin, Math.min(alleleMax, genotype.durability[0] + totalDurabilityBias)),
+      Math.max(alleleMin, Math.min(alleleMax, genotype.durability[1] + totalDurabilityBias)),
+    ];
+  }
+
+  return genotype;
+}
+
+/**
+ * Generate deterministic DNA for a stallion based on its name and characteristics
+ * Uses stallion name as RNG seed for reproducibility
+ * Applies dosage-based biases and achievement-based bonuses
+ * Maintains tier-based quality floor
+ */
+export function generateDeterministicGenotype(
+  stallionName: string,
+  tier: "starter" | "budget" | "mid" | "elite" = "budget",
+  dosageGroups?: AptitudinalGroup[],
+  achievements?: string[],
+): Genotype {
+  // Use stallion name as seed for determinism
+  const rng = createRng(hashStr(stallionName));
+
+  // Generate base genotype using existing function
+  const baseGenotype = generateGenotype(rng, tier);
+
+  // Apply dosage-based biases
+  const biasedGenotype = applyDosageBiases(baseGenotype, dosageGroups, tier);
+
+  // Apply achievement-based bonuses
+  const finalGenotype = applyAchievementBonuses(biasedGenotype, achievements);
+
+  return finalGenotype;
+}
+
+/**
+ * Generate research-based DNA for a stallion
+ * Checks for manually researched data first, falls back to deterministic generation
+ * Provides historical accuracy for key stallions while ensuring all stallions have DNA
+ */
+export function generateResearchBasedGenotype(
+  stallionName: string,
+  tier: "starter" | "budget" | "mid" | "elite" = "budget",
+  dosageGroups?: AptitudinalGroup[],
+  achievements?: string[],
+): Genotype {
+  // Check if research data exists for this stallion
+  const researchData = getStallionResearchData(stallionName);
+
+  // If research data exists and is complete, use it
+  if (researchData && hasCompleteData(researchData)) {
+    return mapResearchDataToGenotype(researchData, tier);
+  }
+
+  // Otherwise, fall back to deterministic generation
+  return generateDeterministicGenotype(stallionName, tier, dosageGroups, achievements);
+}
 
 /**
  * DNA -> Phenotype Engine
