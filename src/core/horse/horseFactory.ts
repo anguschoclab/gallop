@@ -45,6 +45,7 @@ import {
   resolveBleederRisk,
   resolveRoarerRisk,
   resolveRacingViable,
+  resolveHealthStatus,
   computeHeterozygosity,
 } from "@/core/genetics/phenotype";
 import {
@@ -161,10 +162,14 @@ export function createHorseFromDNA(
     fame: 0,
     energy: 100,
     form: 50,
-    healthStatus: "healthy",
+    healthStatus: resolveHealthStatus(genotype.health),
     lifecycleStatus: "active",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     racingViable: resolveRacingViable(genotype.health.racingViable),
+=======
+    racingViable: true,
+>>>>>>> Stashed changes
     ...dnaTraits,
     appearance: generateAppearanceDNA(seed, markings, palette),
 =======
@@ -221,7 +226,7 @@ export function generateNpcHorse(
   rng: Rng,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
-  opts: { tier?: StableTier; forcedAge?: number } = {},
+  opts: { tier?: StableTier; forcedAge?: number; hemisphere?: Hemisphere } = {},
 ): Horse {
   const tier = opts.tier ?? stable.tier;
   const genTier = tier === "elite" ? "elite" : tier === "mid" ? "mid" : "budget";
@@ -239,7 +244,7 @@ export function generateNpcHorse(
     age,
     gender,
     stableId: stable.id,
-    hemisphere: "Northern", // Default
+    hemisphere: opts.hemisphere ?? "Northern",
   });
 
   horse.name = generateProceduralHorseName(

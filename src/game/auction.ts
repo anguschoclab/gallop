@@ -461,12 +461,14 @@ export function generateAuctionLots(
       // Fresh NPC horse — pick an age the sale will accept.
       const targetAge = eligibleAges[rng.int(0, eligibleAges.length - 1)];
       const freshHorse = generateNpcHorse(
-        stable.id,
-        stable.tier,
+        stable,
         rng,
-        targetAge,
         undefined,
-        hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern"),
+        1,
+        {
+          forcedAge: targetAge,
+          hemisphere: hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern")
+        }
       );
       // Re-check eligibility after generation (e.g. broodmare wants only mares).
       if (!isLotEligible(freshHorse, kind)) continue;
