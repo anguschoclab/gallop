@@ -51,6 +51,7 @@ export function resolveLiveRaceWithImpacts(
       impactLog: [],
       day,
     };
+  }
 
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
   const impacts: AnyImpact[] = [];

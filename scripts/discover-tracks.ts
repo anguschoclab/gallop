@@ -4,7 +4,24 @@ import crypto from "crypto";
 
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 const existingTracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
-const existingNames = new Set(existingTracks.map((t: any) => t.name.toLowerCase()));
+
+interface Track {
+  name: string;
+}
+
+const existingNames = new Set((existingTracks as Track[]).map((t) => t.name.toLowerCase()));
+
+interface GeometryNode {
+  lat: number;
+  lon: number;
+}
+
+interface Section {
+  type: "turn" | "straight";
+  length: number;
+  totalAngle?: number;
+  radius?: number;
+}
 
 const headers = {
   "User-Agent": "GallopTrackExpertDiscoverer/1.0 (https://github.com/anguschoclab/gallop)",
@@ -34,7 +51,8 @@ async function queryOverpass(query: string) {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
     } catch (e) {
-      console.warn(`Server ${servers[currentServerIndex]} error: ${e.message}. Rotating...`);
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      console.warn(`Server ${servers[currentServerIndex]} error: ${errorMessage}. Rotating...`);
       currentServerIndex = (currentServerIndex + 1) % servers.length;
       attempts++;
     }
@@ -54,10 +72,10 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-function calculateSections(geom: any[]) {
+function calculateSections(geom: GeometryNode[]): Section[] {
   if (geom.length < 3) return [];
-  const sections: any[] = [];
-  let current: any = null;
+  const sections: Section[] = [];
+  let current: Section | null = null;
 
   for (let i = 0; i < geom.length - 1; i++) {
     const n1 = geom[i],
@@ -77,7 +95,7 @@ function calculateSections(geom: any[]) {
       current = { type, length: 0, totalAngle: 0 };
     }
     current.length += dist;
-    if (isTurn) current.totalAngle += diff;
+    if (isTurn) current.totalAngle = (current.totalAngle || 0) + diff;
   }
   if (current) sections.push(current);
 
@@ -102,6 +120,7 @@ async function discoverCountry(countryName: string) {
 
   try {
     const data = await queryOverpass(query);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ways = data.elements.filter((e: any) => e.type === "way" && e.geometry);
     let added = 0;
     for (const way of ways) {
@@ -109,9 +128,9 @@ async function discoverCountry(countryName: string) {
       if (existingNames.has(name.toLowerCase())) continue;
 
       const sections = calculateSections(way.geometry);
-      const circumference = Math.round(sections.reduce((acc, s) => acc + s.length, 0));
+      const circumference = Math.round(sections.reduce((acc: number, s: Section) => acc + s.length, 0));
       const straightLength = Math.round(
-        Math.max(...sections.filter((s) => s.type === "straight").map((s) => s.length), 300),
+        Math.max(...sections.filter((s: Section) => s.type === "straight").map((s: Section) => s.length), 300),
       );
 
       existingTracks.push({
@@ -133,7 +152,7 @@ async function discoverCountry(countryName: string) {
     }
     console.log(`  Added ${added} tracks from ${countryName}.`);
   } catch (err) {
-    console.error(`  Failed ${countryName}: ${err.message}`);
+    console.error(`  Failed ${countryName}: ${(err as Error).message}`);
   }
 }
 

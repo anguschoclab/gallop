@@ -4,6 +4,46 @@ import path from "path";
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
 
+interface GeometryNode {
+  id: number;
+  lat: number;
+  lon: number;
+}
+
+interface Section {
+  type: "turn" | "straight";
+  length: number;
+  totalAngle?: number;
+  radius?: number;
+}
+
+interface Course {
+  sections?: Section[];
+  circumference?: number;
+  straightLength?: number;
+}
+
+interface Track {
+  id: string;
+  name: string;
+  country: string;
+  courses: Course[];
+  osmId?: string;
+  dataSource?: string;
+}
+
+interface IngestionResult {
+  id: string;
+  name: string;
+  sectionsCount?: number;
+  circumference?: number;
+  osmId?: string;
+  matchedName?: string;
+  country?: string;
+  reason?: string;
+  error?: string;
+}
+
 const headers = {
   "User-Agent": "GallopTrackIngestor/1.0 (https://github.com/anguschoclab/gallop)",
 };
@@ -44,18 +84,21 @@ async function getTrackGeometry(name: string, country: string) {
     try {
       const data = await queryOverpass(query);
       if (data.elements && data.elements.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const way = data.elements.find((e: any) => e.type === "way");
         if (way) {
-          const nodeMap = new Map();
+          const nodeMap = new Map<number, GeometryNode>();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           data.elements
             .filter((e: any) => e.type === "node")
             .forEach((n: any) => nodeMap.set(n.id, n));
-          const nodes = way.nodes.map((id: number) => nodeMap.get(id)).filter(Boolean);
+          const nodes = way.nodes.map((id: number) => nodeMap.get(id)).filter(Boolean) as GeometryNode[];
           return { nodes, osmId: way.id.toString(), matchedName: tryName };
         }
       }
-    } catch (err: any) {
-      console.error(`  Error querying "${tryName}":`, err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error(`  Error querying "${tryName}":`, errorMessage);
     }
   }
 
@@ -74,11 +117,11 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-function calculateSections(nodes: any[]) {
+function calculateSections(nodes: GeometryNode[]): Section[] {
   if (nodes.length < 3) return [];
 
-  const sections: any[] = [];
-  let currentSection: any = null;
+  const sections: Section[] = [];
+  let currentSection: Section | null = null;
 
   for (let i = 0; i < nodes.length - 1; i++) {
     const n1 = nodes[i];
@@ -100,7 +143,7 @@ function calculateSections(nodes: any[]) {
     }
 
     currentSection.length += dist;
-    if (isTurn) currentSection.totalAngle += angleDiff;
+    if (isTurn) currentSection.totalAngle = (currentSection.totalAngle || 0) + angleDiff;
   }
   if (currentSection) sections.push(currentSection);
 
@@ -122,21 +165,21 @@ async function run() {
   console.log(`Backup created: ${backupPath}\n`);
 
   const results = {
-    updated: [] as any[],
-    notFound: [] as any[],
-    skipped: [] as any[],
-    errors: [] as any[],
+    updated: [] as IngestionResult[],
+    notFound: [] as IngestionResult[],
+    skipped: [] as IngestionResult[],
+    errors: [] as IngestionResult[],
   };
 
   let processed = 0;
-  const total = tracks.length;
+  const total = (tracks as Track[]).length;
 
-  for (const track of tracks) {
+  for (const track of tracks as Track[]) {
     processed++;
     console.log(`[${processed}/${total}] ${track.name} (${track.country})`);
 
     // Check if already has sections
-    const hasExistingData = track.courses.some((c: any) => c.sections && c.sections.length > 0);
+    const hasExistingData = track.courses.some((c) => c.sections && c.sections.length > 0);
     if (hasExistingData) {
       console.log(`  ⏭️  Skipped - already has section data`);
       results.skipped.push({ id: track.id, name: track.name, reason: "Has existing sections" });
@@ -149,14 +192,14 @@ async function run() {
       if (geometry) {
         const sections = calculateSections(geometry.nodes);
 
-        track.courses.forEach((c: any) => {
+        track.courses.forEach((c) => {
           c.sections = sections;
-          c.circumference = Math.round(sections.reduce((acc, s) => acc + s.length, 0));
-          const straights = sections.filter((s: any) => s.type === "straight");
+          c.circumference = Math.round(sections.reduce((acc: number, s: Section) => acc + s.length, 0));
+          const straights = sections.filter((s) => s.type === "straight");
           c.straightLength =
             straights.length > 0
-              ? Math.round(Math.max(...straights.map((s: any) => s.length)))
-              : Math.round(c.circumference * 0.25);
+              ? Math.round(Math.max(...straights.map((s) => s.length)))
+              : Math.round((c.circumference || 0) * 0.25);
         });
 
         track.osmId = geometry.osmId;
@@ -177,9 +220,10 @@ async function run() {
         console.log(`  ❌ Not found in OSM`);
         results.notFound.push({ id: track.id, name: track.name, country: track.country });
       }
-    } catch (err: any) {
-      console.error(`  💥 Error: ${err.message}`);
-      results.errors.push({ id: track.id, name: track.name, error: err.message });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error(`  💥 Error: ${errorMessage}`);
+      results.errors.push({ id: track.id, name: track.name, error: errorMessage });
     }
 
     // Rate limiting

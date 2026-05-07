@@ -18,10 +18,24 @@ interface TrackStatus {
   reason: string;
 }
 
-const analysis: TrackStatus[] = tracks.map((t: any) => {
-  const hasSections = t.courses.some((c: any) => c.sections && c.sections.length > 0);
+interface Course {
+  sections?: unknown[];
+  circumference?: number;
+  straightLength?: number;
+}
+
+interface Track {
+  id: string;
+  name: string;
+  country: string;
+  osmId?: string;
+  courses: Course[];
+}
+
+const analysis: TrackStatus[] = (tracks as Track[]).map((t) => {
+  const hasSections = t.courses.some((c) => c.sections && c.sections.length > 0);
   const sectionsCount = t.courses.reduce(
-    (acc: number, c: any) => acc + (c.sections?.length || 0),
+    (acc: number, c) => acc + (c.sections?.length || 0),
     0,
   );
 

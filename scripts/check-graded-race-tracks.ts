@@ -7,16 +7,26 @@ const gradedRacesPath = path.resolve(process.cwd(), "src/game/gradedRaces.ts");
 const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
 const gradedRacesContent = fs.readFileSync(gradedRacesPath, "utf-8");
 
+interface Course {
+  sections?: unknown[];
+}
+
+interface Track {
+  name: string;
+  country: string;
+  courses: Course[];
+}
+
 // Extract all track names from graded races
 const trackMatches = gradedRacesContent.match(/track: "([^"]+)"/g) || [];
 const gradedTrackNames = [...new Set(trackMatches.map((m) => m.replace(/track: "(.+)"/, "$1")))];
 
 // Get track names from database
-const dbTrackNames = tracks.map((t: any) => t.name);
+const dbTrackNames = (tracks as Track[]).map((t) => t.name);
 
 // Find missing tracks
 const missingFromDb = gradedTrackNames.filter((name) => !dbTrackNames.includes(name));
-const missingFromGraded = dbTrackNames.filter((name: string) => !gradedTrackNames.includes(name));
+const missingFromGraded = dbTrackNames.filter((name) => !gradedTrackNames.includes(name));
 
 console.log("=== GRADED RACE TRACKS VERIFICATION ===\n");
 console.log(`Tracks hosting graded races: ${gradedTrackNames.length}`);
@@ -33,12 +43,12 @@ if (missingFromDb.length === 0) {
 console.log();
 
 // Check data completeness for graded race tracks
-const gradedTracksInDb = tracks.filter((t: any) => gradedTrackNames.includes(t.name));
-const completeData = gradedTracksInDb.filter((t: any) =>
-  t.courses.every((c: any) => c.sections && c.sections.length > 0),
+const gradedTracksInDb = (tracks as Track[]).filter((t) => gradedTrackNames.includes(t.name));
+const completeData = gradedTracksInDb.filter((t) =>
+  t.courses.every((c) => c.sections && c.sections.length > 0),
 );
 const incompleteData = gradedTracksInDb.filter(
-  (t: any) => !t.courses.every((c: any) => c.sections && c.sections.length > 0),
+  (t) => !t.courses.every((c) => c.sections && c.sections.length > 0),
 );
 
 console.log(
@@ -47,10 +57,10 @@ console.log(
 
 if (incompleteData.length > 0) {
   console.log(`\n⚠️  Graded race tracks MISSING geometry data (${incompleteData.length}):`);
-  incompleteData.forEach((t: any) => {
+  incompleteData.forEach((t) => {
     const missingCourses = t.courses
-      .map((c: any, i: number) => (!c.sections || c.sections.length === 0 ? i + 1 : null))
-      .filter((x: any) => x !== null);
+      .map((c, i: number) => (!c.sections || c.sections.length === 0 ? i + 1 : null))
+      .filter((x) => x !== null);
     console.log(`  - ${t.name} (${t.country}) - course(s): ${missingCourses.join(", ")}`);
   });
 }

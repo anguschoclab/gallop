@@ -6,6 +6,20 @@ const outputJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 
 const content = fs.readFileSync(tracksFilePath, "utf-8");
 
+interface Course {
+  surface: string;
+  circumference: number;
+  straightLength: number;
+  sections: unknown[];
+}
+
+interface MigratedTrack {
+  id: string;
+  name: string;
+  country: string;
+  courses: Course[];
+}
+
 // Extract the TRACKS array content
 const tracksMatch = content.match(/export const TRACKS: Track\[] = \[([\s\S]*?)\];/);
 if (!tracksMatch) {
@@ -17,7 +31,7 @@ const tracksRaw = tracksMatch[1];
 
 // A very hacky parser for the current TRACKS array
 // We look for objects: { id: "...", name: "...", ... }
-const trackObjects: any[] = [];
+const trackObjects: MigratedTrack[] = [];
 const objectRegex = /\{([\s\S]*?)\}/g;
 let match;
 

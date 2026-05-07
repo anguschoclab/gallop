@@ -4,6 +4,31 @@ import path from "path";
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
 
+interface GeometryNode {
+  id: number;
+  lat: number;
+  lon: number;
+}
+
+interface Section {
+  type: "turn" | "straight";
+  length: number;
+  totalAngle?: number;
+  radius?: number;
+}
+
+interface Course {
+  sections?: Section[];
+  circumference?: number;
+  straightLength?: number;
+}
+
+interface Track {
+  name: string;
+  country: string;
+  courses: Course[];
+}
+
 const headers = {
   "User-Agent": "GallopTrackIngestor/1.0 (https://github.com/anguschoclab/gallop)",
 };
@@ -39,17 +64,20 @@ async function getTrackGeometry(name: string, country: string) {
     }
 
     // Find the way element
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const way = data.elements.find((e: any) => e.type === "way");
     if (!way) return null;
 
     // Get nodes for the way
-    const nodeMap = new Map();
+    const nodeMap = new Map<number, GeometryNode>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data.elements.filter((e: any) => e.type === "node").forEach((n: any) => nodeMap.set(n.id, n));
 
-    const nodes = way.nodes.map((id: number) => nodeMap.get(id)).filter(Boolean);
+    const nodes = way.nodes.map((id: number) => nodeMap.get(id)).filter(Boolean) as GeometryNode[];
     return nodes;
   } catch (err) {
-    console.error(`Error fetching ${name}:`, err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error(`Error fetching ${name}:`, errorMessage);
     return null;
   }
 }
@@ -69,11 +97,11 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 }
 
-function calculateSections(nodes: any[]) {
+function calculateSections(nodes: GeometryNode[]): Section[] {
   if (nodes.length < 3) return [];
 
-  const sections: any[] = [];
-  let currentSection: any = null;
+  const sections: Section[] = [];
+  let currentSection: Section | null = null;
 
   for (let i = 0; i < nodes.length - 1; i++) {
     const n1 = nodes[i];
@@ -104,16 +132,16 @@ function calculateSections(nodes: any[]) {
 
     currentSection.length += dist;
     if (isTurn) {
-      currentSection.totalAngle += angleDiff;
+      currentSection.totalAngle = (currentSection.totalAngle || 0) + angleDiff;
     }
   }
   if (currentSection) sections.push(currentSection);
 
   // Post-process sections: combine adjacent same-types, calculate radii
-  const processed: any[] = [];
+  const processed: Section[] = [];
   for (const s of sections) {
     if (s.type === "turn") {
-      s.radius = s.length / s.totalAngle;
+      s.radius = s.length / (s.totalAngle || 0.1);
       delete s.totalAngle;
     }
     processed.push(s);
@@ -123,16 +151,16 @@ function calculateSections(nodes: any[]) {
 }
 
 async function run() {
-  for (const track of tracks) {
+  for (const track of tracks as Track[]) {
     console.log(`Processing ${track.name}...`);
     const nodes = await getTrackGeometry(track.name, track.country);
     if (nodes) {
       const sections = calculateSections(nodes);
       // For simplicity, we apply these sections to all courses at the venue
       // In a real scenario, we'd distinguish between multiple ways on OSM
-      track.courses.forEach((c: any) => {
+      track.courses.forEach((c) => {
         c.sections = sections;
-        c.circumference = Math.round(sections.reduce((acc, s) => acc + s.length, 0));
+        c.circumference = Math.round(sections.reduce((acc: number, s: Section) => acc + s.length, 0));
         // Find longest straight for home straight
         const straights = sections.filter((s) => s.type === "straight");
         c.straightLength =
