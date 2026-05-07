@@ -67,6 +67,31 @@ export type HorseMarkings = {
   splashWhite: boolean; // ventral white pattern
 };
 
+// Procedural-portrait DNA — one-time random parameters seeded at horse
+// generation, persisted on the horse so its rendered look is stable across
+// sessions and regenerations of the variation function. The compositor
+// (see core/horse/proceduralPortrait.ts) reads these to produce a unique
+// SVG without ever needing the horse's id.
+export type AppearanceDNA = {
+  seed: number; // master seed for any extra deterministic detail
+  headTilt: number; // -5..5 deg
+  headLength: number; // 0.96..1.06
+  earSpread: number; // 0.9..1.12
+  eyeY: number; // small vertical offset
+  forelockSweep: number; // -7..7
+  maneWaves: number[]; // 4 jitter values for mane edge
+  bodyLength: number; // 0.95..1.08 — full-body width scalar
+  bodyDepth: number; // 0.95..1.08 — barrel depth scalar
+  legLength: number; // 0.95..1.08
+  tailSweep: number; // -8..8 deg
+  tailFullness: number; // 0.85..1.15
+  // Per-leg sock heights — left to vary independently around the markings DNA.
+  // Order: front-left, front-right, hind-left, hind-right.
+  socks: [SockHeight, SockHeight, SockHeight, SockHeight];
+  dapples: { x: number; y: number; r: number }[];
+  flecks: { x: number; y: number; r: number }[];
+};
+
 export type MarkingsGenotype = {
   socks: Locus;
   face: Locus;
@@ -361,6 +386,11 @@ export type Horse = {
   retiredOnDay?: number; // Day horse was retired to pasture
   deceasedOnDay?: number; // Day horse died
   causeOfDeath?: string; // Description of death cause
+  // --- Appearance DNA ---
+  // One-time procedural-portrait parameters generated alongside the rest of
+  // the genome. Optional so legacy saves still load — the renderer falls
+  // back to deriving values from `id` when this is missing.
+  appearance?: AppearanceDNA;
 };
 
 export type RaceClass =

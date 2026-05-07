@@ -1,17 +1,20 @@
-import type { CoatColor, HorseMarkings, HorseGender } from "@/game/types";
+import type { CoatColor, HorseMarkings, HorseGender, AppearanceDNA } from "@/game/types";
 import { ProceduralHorsePortrait } from "@/components/ProceduralHorsePortrait";
 import { cn } from "@/lib/utils";
 
 interface HorsePortraitProps {
-  /** Horse id — drives deterministic procedural variation. */
+  /** Horse id — drives deterministic procedural variation when no DNA given. */
   id?: string;
   coatColor?: CoatColor;
   markings?: HorseMarkings;
   gender?: HorseGender;
+  appearance?: AppearanceDNA;
+  /** "head" (default) or "full"-body view. */
+  view?: "head" | "full";
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
   className?: string;
   alt?: string;
-  /** Legacy / no-op props kept for back-compat with existing call sites. */
+  /** Legacy / no-op props kept for back-compat. */
   fallbackToSilk?: boolean;
   silkColor?: string;
 }
@@ -29,15 +32,19 @@ export function HorsePortrait({
   coatColor,
   markings,
   gender,
+  appearance,
+  view = "head",
   size = "md",
   className,
   alt = "Horse portrait",
 }: HorsePortraitProps) {
+  // Full-body view is naturally wider — let it stretch by allowing aspect-auto
+  // when called with a wider container.
   return (
     <div
       className={cn(
         "relative overflow-hidden rounded-lg bg-muted/30",
-        SIZE_MAP[size],
+        view === "head" ? SIZE_MAP[size] : "w-full",
         className,
       )}
     >
@@ -46,6 +53,8 @@ export function HorsePortrait({
         coatColor={coatColor}
         markings={markings}
         gender={gender}
+        appearance={appearance}
+        view={view}
         alt={alt}
       />
     </div>
@@ -57,6 +66,7 @@ interface HorsePortraitBadgeProps {
   coatColor?: CoatColor;
   markings?: HorseMarkings;
   gender?: HorseGender;
+  appearance?: AppearanceDNA;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
@@ -68,6 +78,7 @@ export function HorsePortraitBadge({
   coatColor,
   markings,
   gender,
+  appearance,
   size = "sm",
   className,
 }: HorsePortraitBadgeProps) {
@@ -84,6 +95,7 @@ export function HorsePortraitBadge({
         coatColor={coatColor}
         markings={markings}
         gender={gender}
+        appearance={appearance}
       />
     </div>
   );

@@ -9,6 +9,7 @@ import type {
 } from "./types";
 import type { Rng } from "./rng";
 import { nondeterministicRng } from "./rng";
+import { generateAppearanceDNA, getPalette } from "@/core/horse/proceduralPortrait";
 import {
   generateGenotype,
   resolveCoatColor,
@@ -136,7 +137,17 @@ export function createHorseFromDNA(
     careerStarts: 0,
     careerWins: 0,
     lifecycleStatus: "active",
-    ...resolveDnaTraits(genotype),
+    ...(() => {
+      const traits = resolveDnaTraits(genotype);
+      return {
+        ...traits,
+        appearance: generateAppearanceDNA(
+          Math.floor(rng.next() * 0xffffffff),
+          traits.markings,
+          getPalette(coatColor),
+        ),
+      };
+    })(),
   };
 }
 
