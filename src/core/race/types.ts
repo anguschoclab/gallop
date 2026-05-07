@@ -93,3 +93,6 @@ export type Race = {
   trackCondition?: TrackCondition;
   claiming?: { price: number };
 };
+
+export type RegionalSystem = "north_america" | "europe" | "australia" | "asia" | "south_america";
+export type GradeLevel = "G1" | "G2" | "G3" | "Listed";
