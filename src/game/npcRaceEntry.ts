@@ -3,7 +3,7 @@
 // Refactored to use modular scoring, geometry, and AI systems
 
 import type { Horse, Race, Stable, Jockey } from "./types";
-import type { Rng } from "./rng";
+import type { Rng } from "@/game/rng";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import {
   calculateRaceSuitability,
