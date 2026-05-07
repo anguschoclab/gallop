@@ -18,7 +18,10 @@ describe("generateNorthAmericanRace", () => {
       id: "track-1",
       name: "Test Track",
       country: "USA",
-      surfaces: ["Dirt", "Turf"],
+      courses: [
+        { surface: "Dirt", circumference: 1600, straightLength: 400, sections: [] },
+        { surface: "Turf", circumference: 1800, straightLength: 500, sections: [] },
+      ],
     };
   });
 
