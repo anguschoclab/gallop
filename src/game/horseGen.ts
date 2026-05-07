@@ -9,6 +9,7 @@ import type {
 } from "./types";
 import type { Rng } from "./rng";
 import { nondeterministicRng } from "./rng";
+import { generateAppearanceDNA, getPalette } from "@/core/horse/proceduralPortrait";
 import {
   generateGenotype,
   resolveCoatColor,
