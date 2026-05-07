@@ -137,12 +137,17 @@ export function createHorseFromDNA(
     careerStarts: 0,
     careerWins: 0,
     lifecycleStatus: "active",
-    ...resolveDnaTraits(genotype),
-    appearance: generateAppearanceDNA(
-      Math.floor(rng.next() * 0xffffffff),
-      genotype.markings ? undefined : undefined, // resolved markings come from resolveDnaTraits
-      getPalette(coatColor),
-    ),
+    ...(() => {
+      const traits = resolveDnaTraits(genotype);
+      return {
+        ...traits,
+        appearance: generateAppearanceDNA(
+          Math.floor(rng.next() * 0xffffffff),
+          traits.markings,
+          getPalette(coatColor),
+        ),
+      };
+    })(),
   };
 }
 
