@@ -12,7 +12,7 @@ import type {
   LogImpact,
 } from "@/core/resolver/impacts";
 import type { Race, Horse, Jockey } from "./types";
-import type { Runner } from "./raceSim";
+import type { Runner } from "@/core/race/raceSim";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { beyerFigure } from "./beyer";
 import {
@@ -22,7 +22,7 @@ import {
 import { recalcStandingFee } from "@/core/breeding/stallions";
 import { getCurrentYear } from "./raceSchedule";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { generateUUID } from "./uuid";
+import { generateUUID } from "@/game/uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import { PRIZE_SPLIT } from "./constants/gameConstants";
 

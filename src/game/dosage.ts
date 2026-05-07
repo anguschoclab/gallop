@@ -1,6 +1,6 @@
 import type { DosageProfile, PedigreeNode } from "./types";
-import type { AptitudinalGroup, PedigreeHorse } from "./pedigreeData";
-import { findHorseByName } from "./pedigreeData";
+import type { AptitudinalGroup, PedigreeHorse } from "@/core/data/pedigreeData";
+import { findHorseByName } from "@/core/data/pedigreeData";
 
 // Point values per generation for dosage calculation
 const GENERATION_POINTS = {
