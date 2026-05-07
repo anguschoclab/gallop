@@ -52,6 +52,8 @@ export type SystemsSlice = SystemsState & {
   setReplays: (replays: SystemsState["replays"]) => void;
   setReputation: (reputation: ManagerReputation) => void;
   setPlayerProfile: (profile: SystemsState["playerProfile"]) => void;
+  registerHorseName: (name: string) => void;
+  unregisterHorseName: (name: string) => void;
 };
 
 export function createSystemsSlice(set: any, get: any): SystemsSlice {
@@ -269,10 +271,19 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
 
+      const lowerNewName = newName.toLowerCase();
+      if (s.usedHorseNames.includes(lowerNewName) && lowerNewName !== horse.name.toLowerCase()) {
+        return { ok: false, reason: "Name is already in use." };
+      }
+
       set({
         horses: s.horses.map((h: any) =>
           h.id === horseId ? { ...h, name: newName } : h,
         ),
+        usedHorseNames: [
+          ...s.usedHorseNames.filter((n: string) => n !== horse.name.toLowerCase()),
+          lowerNewName,
+        ],
         log: [
           {
             day: s.day,
@@ -437,6 +448,20 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
     setPlayerProfile: (profile) => {
       set({ playerProfile: profile });
+    },
+
+    registerHorseName: (name: string) => {
+      const lower = name.toLowerCase();
+      set((s: any) => ({
+        usedHorseNames: s.usedHorseNames.includes(lower) ? s.usedHorseNames : [...s.usedHorseNames, lower]
+      }));
+    },
+
+    unregisterHorseName: (name: string) => {
+      const lower = name.toLowerCase();
+      set((s: any) => ({
+        usedHorseNames: s.usedHorseNames.filter((n: string) => n !== lower)
+      }));
     },
   };
 }

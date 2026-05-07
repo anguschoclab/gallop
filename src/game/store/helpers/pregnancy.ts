@@ -3,8 +3,10 @@
  * Pure business logic for resolving pregnancies and foaling
  */
 
-import type { Horse, Pregnancy } from "@/game/types";
+import type { Horse, Pregnancy, Stable } from "@/game/types";
 import { resolveFoaling } from "@/game/foalGen";
+import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
+import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getFoalsBy } from "@/core/breeding/lineage";
 import { BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants/gameConstants";
 
@@ -26,6 +28,8 @@ export type PregnancyResult = {
 export function resolvePregnancies(
   currentPregnancies: Pregnancy[],
   horses: Horse[],
+  stables: Stable[],
+  usedNames: Set<string>,
   newDay: number,
 ): PregnancyResult {
   const newLogs: { day: number; text: string }[] = [];
@@ -39,7 +43,21 @@ export function resolvePregnancies(
     if (newDay < p.dueDay) continue;
     const sire = damsById.get(p.sireId);
     const dam = damsById.get(p.damId);
-    const outcome = resolveFoaling(p, sire, dam);
+
+    // Prepare naming context for NPC foals
+    let namingContext = undefined;
+    if (dam?.stableId) {
+      const stable = stables.find(s => s.id === dam.stableId);
+      if (stable) {
+        namingContext = {
+          region: getRegionalSystem(stable.country || "USA"),
+          namingTheme: (PERSONALITY_CONFIG as any)[stable.personality]?.namingTheme,
+          existingNames: usedNames
+        };
+      }
+    }
+
+    const outcome = resolveFoaling(p, sire, dam, namingContext);
 
     if (outcome.kind === "live") {
       const foal = outcome.foal;

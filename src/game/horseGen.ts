@@ -48,6 +48,7 @@ import {
 } from "@/core/breeding/bruceLowe";
 import { rollGender, geldHorse } from "@/core/horse/gender";
 import { randomHorseName, randomSilk } from "@/core/common/random";
+import { generateProceduralHorseName, type NamingContext } from "@/core/horse/naming/nameGenerator";
 import { resolveBloodline } from "@/core/breeding/populationGenetics";
 
 // Resolve all DNA-derived gameplay fields from a Genotype. Centralized here
@@ -160,6 +161,7 @@ export function generateHorse(
     gender?: HorseGender;
   } = {},
   rng: Rng = nondeterministicRng(),
+  namingContext?: Partial<NamingContext>,
 ): Horse {
   const tier = opts.tier ?? "budget";
 
@@ -201,6 +203,37 @@ export function generateHorse(
   const gender = opts.gender ?? rollGender(age, rng);
   const hemisphere: Hemisphere = opts.hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
 
+  const existingNames = namingContext?.existingNames ?? new Set<string>();
+  const deceasedNames = namingContext?.deceasedNames;
+
+  const sireName = generateProceduralHorseName(
+    { region: namingContext?.region, namingTheme: namingContext?.namingTheme, existingNames },
+    rng,
+    { strategy: "regional" }
+  );
+  existingNames.add(sireName.toLowerCase());
+
+  const damName = generateProceduralHorseName(
+    { region: namingContext?.region, namingTheme: namingContext?.namingTheme, existingNames },
+    rng,
+    { strategy: "regional" }
+  );
+  existingNames.add(damName.toLowerCase());
+
+  const horseName = generateProceduralHorseName(
+    { 
+      region: namingContext?.region, 
+      namingTheme: namingContext?.namingTheme, 
+      sireName, 
+      damName, 
+      existingNames,
+      deceasedNames
+    },
+    rng,
+    { strategy: "hybrid" }
+  );
+  existingNames.add(horseName.toLowerCase());
+
   if (SIRE_FAMILIES.has(bruceLoweFamily) && (gender === "colt" || gender === "horse")) {
     potentialBoost = 2;
   }
@@ -211,7 +244,7 @@ export function generateHorse(
 
   return {
     id: generateUUID(rng),
-    name: randomHorseName(rng),
+    name: horseName,
     age,
     gender,
     hemisphere,
@@ -223,8 +256,8 @@ export function generateHorse(
     potential: Math.min(100, potential),
     raceHistory: [],
     owned: opts.owned ?? false,
-    sireName: randomHorseName(rng),
-    damName: randomHorseName(rng),
+    sireName,
+    damName,
     conformation,
     temperament,
     healthStatus: "healthy",

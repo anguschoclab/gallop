@@ -14,7 +14,14 @@ export const pregnancyPhase = {
   order: 70,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const pregResult = resolvePregnancies(state.pregnancies, state.horses, newDay);
+    const usedNamesSet = new Set(state.usedHorseNames);
+    const pregResult = resolvePregnancies(
+      state.pregnancies,
+      state.horses,
+      state.npcStables,
+      usedNamesSet,
+      newDay
+    );
     const { pregnancies, foals, cashAdjustment } = pregResult;
 
     // Add reputation events for player-owned foals born
@@ -47,6 +54,7 @@ export const pregnancyPhase = {
         horses: [...state.horses, ...foals],
         pregnancies,
         cash: state.cash + cashAdjustment,
+        usedHorseNames: Array.from(usedNamesSet),
         reputation: state.reputation
           ? {
               ...state.reputation,

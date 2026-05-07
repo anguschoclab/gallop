@@ -6,6 +6,9 @@ import type { Rng } from "./rng";
 import { createHorseFromDNA } from "./horseGen";
 import { generateGenotype, generateDeterministicGenotype, generateResearchBasedGenotype } from "./geneticsEngine";
 import { rand, randomHorseName } from "@/core/common/random";
+import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
+import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import {
   shouldRetireAtStartup,
   initialStandingFee,
@@ -99,6 +102,9 @@ export function generateNpcHorse(
   stableId: string,
   tier: StableTier,
   rng: Rng,
+  usedNames: Set<string>,
+  stablePersonality: string,
+  country: string,
   specificAge?: number,
   specificGender?: HorseGender,
   hemisphere?: Hemisphere,
@@ -114,8 +120,39 @@ export function generateNpcHorse(
   const genotype = generateGenotype(rng, dnaGenTier(tier));
   const resolvedHemisphere: Hemisphere = hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
 
+  // Resolve bloodline from procedural sire/dam names
+  const region = getRegionalSystem(country);
+  const namingTheme = (PERSONALITY_CONFIG as any)[stablePersonality]?.namingTheme;
+
+  const proceduralSireName = generateProceduralHorseName(
+    { region, namingTheme, existingNames: usedNames },
+    rng,
+    { strategy: "regional" }
+  );
+  usedNames.add(proceduralSireName.toLowerCase());
+
+  const proceduralDamName = generateProceduralHorseName(
+    { region, namingTheme, existingNames: usedNames },
+    rng,
+    { strategy: "regional" }
+  );
+  usedNames.add(proceduralDamName.toLowerCase());
+
+  const horseName = generateProceduralHorseName(
+    { 
+      region, 
+      namingTheme, 
+      sireName: proceduralSireName, 
+      damName: proceduralDamName, 
+      existingNames: usedNames 
+    },
+    rng,
+    { strategy: "hybrid" }
+  );
+  usedNames.add(horseName.toLowerCase());
+
   const horse = createHorseFromDNA(genotype, rng, {
-    name: randomHorseName(rng),
+    name: horseName,
     age,
     gender,
     hemisphere: resolvedHemisphere,
@@ -129,8 +166,6 @@ export function generateNpcHorse(
   let potentialBoost = 0;
 
   // Resolve bloodline from procedural sire/dam names
-  const proceduralSireName = randomHorseName(rng);
-  const proceduralDamName = randomHorseName(rng);
   const bloodline = resolveBloodline(
     { name: proceduralSireName, sireName: proceduralSireName } as Horse,
     { horses: [] },
@@ -162,6 +197,7 @@ export function generateNpcHorse(
 export function generateStableHorses(
   stable: Stable,
   rng: Rng,
+  usedNames: Set<string>,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
 ): Horse[] {
@@ -239,7 +275,15 @@ export function generateStableHorses(
   for (const [category, count] of Object.entries(ageCategories)) {
     for (let i = 0; i < count; i++) {
       const age = getAgeFromCategory(category as "2yo" | "prime" | "veteran" | "breeding", rng);
-      const horse = generateNpcHorse(stable.id, stable.tier, rng, age);
+      const horse = generateNpcHorse(
+        stable.id,
+        stable.tier,
+        rng,
+        usedNames,
+        stable.personality,
+        stable.country || "USA",
+        age
+      );
 
       // Record generation for AI learning
       if (aiState?.horseGenAI && currentDay !== undefined) {
@@ -269,14 +313,16 @@ export function generateAllNpcHorses(
   npcAIManager?: NpcAIManager,
   currentDay?: number,
   famousStallions?: Horse[],
-): { stables: Stable[]; horses: Horse[] } {
+): { stables: Stable[]; horses: Horse[]; usedNames: Set<string> } {
   const updatedStables: Stable[] = [];
   const allHorses: Horse[] = [];
+  const usedNames = new Set<string>();
 
   // Group famous stallions by stable
   const stallionsByStable = new Map<string, Horse[]>();
   if (famousStallions) {
     for (const stallion of famousStallions) {
+      usedNames.add(stallion.name.toLowerCase());
       if (stallion.stableId) {
         if (!stallionsByStable.has(stallion.stableId)) {
           stallionsByStable.set(stallion.stableId, []);
@@ -291,7 +337,7 @@ export function generateAllNpcHorses(
     const stableFamousStallions = stallionsByStable.get(stable.id) || [];
 
     // Generate procedural horses
-    const horses = generateStableHorses(stable, rng, npcAIManager, currentDay);
+    const horses = generateStableHorses(stable, rng, usedNames, npcAIManager, currentDay);
 
     // Add famous stallions to this stable's horses
     horses.push(...stableFamousStallions);
@@ -328,7 +374,7 @@ export function generateAllNpcHorses(
     allHorses.push(...horses);
   }
 
-  return { stables: updatedStables, horses: allHorses };
+  return { stables: updatedStables, horses: allHorses, usedNames };
 }
 
 /**

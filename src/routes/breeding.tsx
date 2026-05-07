@@ -15,6 +15,7 @@ import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breed
 import { getAvailableStallions } from "@/core/breeding/stallions";
 import { NumericValue } from "@/components/HorseBits";
 import { cn } from "@/lib/utils";
+import { FoalNamingDialog } from "@/components/FoalNamingDialog";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
@@ -30,6 +31,7 @@ function BreedingPage() {
   const [sireId, setSireId] = useState<string>("");
   const [damId, setDamId] = useState<string>("");
   const [liveFoalGuarantee, setLiveFoalGuarantee] = useState(false);
+  const [namingFoalId, setNamingFoalId] = useState<string | null>(null);
 
   const adults = horses.filter((h) => h.age >= 3);
   const breedLogs = log.filter((l) => /Mated|Foal/.test(l.text));
@@ -481,6 +483,16 @@ function BreedingPage() {
                           <span>
                             {p.sireName} × {p.damName} →{" "}
                             <span className="font-medium">{foal?.name ?? "(sold)"}</span>
+                            {foal?.name === "Unnamed Foal" && foal.owned && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-6 ml-2 text-info hover:text-white"
+                                onClick={() => setNamingFoalId(foal.id)}
+                              >
+                                Name Foal
+                              </Button>
+                            )}
                           </span>
                           <span className="text-cream-muted tabular-nums">Born day {p.dueDay}</span>
                         </div>
@@ -490,6 +502,12 @@ function BreedingPage() {
               )}
             </CardContent>
           </Card>
+
+          <FoalNamingDialog
+            foalId={namingFoalId || ""}
+            isOpen={!!namingFoalId}
+            onClose={() => setNamingFoalId(null)}
+          />
 
           <Card className="border-gold-muted">
             <CardHeader>

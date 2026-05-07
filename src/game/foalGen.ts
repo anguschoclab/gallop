@@ -10,6 +10,9 @@ import {
   resolveBloodline,
 } from "@/core/breeding/populationGenetics";
 import { clamp } from "./math";
+import { generateProceduralHorseName, type NamingContext } from "@/core/horse/naming/nameGenerator";
+import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 
 export type FoalOutcome =
   | { kind: "live"; foal: Horse; transmission: boolean }
@@ -73,6 +76,7 @@ export function resolveFoaling(
   pregnancy: Pregnancy,
   sire: Horse | undefined,
   dam: Horse | undefined,
+  namingContext?: Partial<NamingContext>,
 ): FoalOutcome {
   const rng = createRng(hashStr(pregnancy.id) ^ (pregnancy.reBreedingAttempts ?? 0));
   const damAge = dam?.age ?? 5;
@@ -151,9 +155,27 @@ export function resolveFoaling(
   if (sire && dam) {
     const inheritedDNA = inheritDNA(sire.genotype, dam.genotype, rng);
 
+    // Determine name for NPC foals
+    let foalName = "Unnamed Foal";
+    if (dam.stableId && namingContext?.existingNames) {
+      // Find stable to get personality/country
+      // For now we'll assume we can pass theme/region in namingContext
+      foalName = generateProceduralHorseName(
+        {
+          ...namingContext,
+          sireName: pregnancy.sireName,
+          damName: pregnancy.damName,
+          existingNames: namingContext.existingNames,
+        },
+        rng,
+        { strategy: "hybrid" }
+      );
+      namingContext.existingNames.add(foalName.toLowerCase());
+    }
+
     // Create foal from inherited DNA
     const foal = createHorseFromDNA(inheritedDNA, rng, {
-      name: "Unnamed Foal",
+      name: foalName,
       age: 0,
       hemisphere: dam.hemisphere,
       owned: dam.owned,

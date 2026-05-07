@@ -31,18 +31,22 @@ export function createInitialState(options?: NewGameOptions): GameState {
   ];
   const playerSilkColor = options?.profile.silk.primary;
   const horses: Horse[] = [];
+  const usedNames = new Set<string>();
   for (const spec of playerHorseSpecs) {
     for (let i = 0; i < spec.count; i++) {
-      const h = generateHorse({ tier: spec.tier, owned: true }, setupRng);
+      const h = generateHorse({ tier: spec.tier, owned: true }, setupRng, { existingNames: usedNames });
       if (playerSilkColor) h.silk = playerSilkColor;
       horses.push(h);
+      usedNames.add(h.name.toLowerCase());
     }
   }
 
   const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
     const tier: "starter" | "budget" | "mid" | "elite" = r < 0.6 ? "budget" : "mid";
-    return generateHorse({ tier }, setupRng);
+    const h = generateHorse({ tier }, setupRng, { existingNames: usedNames });
+    usedNames.add(h.name.toLowerCase());
+    return h;
   });
 
   const races: Race[] = [];
@@ -66,13 +70,16 @@ export function createInitialState(options?: NewGameOptions): GameState {
   const famousStallions = generateFamousStallions(npcStables, npcHorseRng);
 
   // Generate remaining NPC horses (non-stallions) and integrate famous stallions
-  const { stables: updatedStables, horses: npcHorses } = generateAllNpcHorses(
+  const { stables: updatedStables, horses: npcHorses, usedNames: npcUsedNames } = generateAllNpcHorses(
     npcStables,
     npcHorseRng,
     undefined,
     1,
     famousStallions,
   );
+
+  // Merge used names
+  for (const name of npcUsedNames) usedNames.add(name);
 
   // Generate initial jockeys
   const jockeyRng = createRng(hashStr("initial_jockeys"));
@@ -137,5 +144,6 @@ export function createInitialState(options?: NewGameOptions): GameState {
       tier: "unknown",
     },
     playerProfile: options?.profile,
+    usedHorseNames: Array.from(usedNames),
   };
 }
