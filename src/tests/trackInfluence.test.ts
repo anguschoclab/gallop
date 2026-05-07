@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { buildRunner, runRaceToCompletion } from "../game/raceSim";
-import type { CourseSpecification } from "../game/tracks";
-import type { Horse, Rng, Jockey } from "../game/types";
+import { buildRunner, runRaceToCompletion } from "@/game/raceSim";
+import type { CourseSpecification } from "@/game/tracks";
+import type { Horse, Rng, Jockey } from "@/game/types";
 
 // Simple deterministic RNG for testing
 const mockRng: Rng = {

@@ -12,9 +12,9 @@ import {
 import { resolvePregnancies } from "./store/helpers/pregnancy";
 import { maybeRecalibratePars } from "./store/helpers/beyer";
 import type { Horse, Race, Pregnancy } from "./types";
-import { generateHorse } from "./horseGen";
-import { generateRace } from "./horseGen";
-import { createRng, hashStr } from "./rng";
+import { generateHorse } from "@/game/horseGen";
+import { generateRace } from "@/game/raceGeneration/raceGen";
+import { createRng, hashStr } from "@/game/rng";
 
 describe("refreshMarket", () => {
   it("should keep market at 5 horses", () => {
@@ -97,14 +97,14 @@ describe("pruneOldRaces", () => {
   });
 
   it("should remove races older than 3 days if not graded", () => {
-    const oldRace: Race = { ...generateRace(1), day: 1 };
+    const oldRace: Race = { ...generateRace(1), day: 1, resolved: true };
     const currentDay = 10;
     const pruned = pruneOldRaces([oldRace], currentDay);
     expect(pruned).not.toContain(oldRace);
   });
 
   it("should remove races exactly 4 days old if not graded", () => {
-    const oldRace: Race = { ...generateRace(6), day: 6 };
+    const oldRace: Race = { ...generateRace(6), day: 6, resolved: true };
     const currentDay = 10;
     const pruned = pruneOldRaces([oldRace], currentDay);
     expect(pruned).not.toContain(oldRace);
@@ -139,7 +139,7 @@ describe("resolvePregnancies", () => {
     };
 
     const horses = [sire, dam];
-    const result = resolvePregnancies([pregnancy], horses, 31);
+    const result = resolvePregnancies([pregnancy], horses, [], new Set(), 31);
 
     // Pregnancy should be either resolved (live foal or complication)
     // or re-scheduled if live foal guarantee triggered
@@ -179,7 +179,7 @@ describe("resolvePregnancies", () => {
     };
 
     const horses = [sire, dam];
-    const result = resolvePregnancies([pregnancy], horses, 30);
+    const result = resolvePregnancies([pregnancy], horses, [], new Set(), 30);
 
     expect(result.pregnancies[0].resolved).toBe(false);
     expect(result.foals.length).toBe(0);
@@ -211,7 +211,7 @@ describe("resolvePregnancies", () => {
     };
 
     const horses = [sire, dam];
-    const result = resolvePregnancies([pregnancy], horses, 31);
+    const result = resolvePregnancies([pregnancy], horses, [], new Set(), 31);
 
     expect(result.foals.length).toBe(0);
   });
@@ -242,7 +242,7 @@ describe("resolvePregnancies", () => {
     };
 
     const horses = [sire, dam];
-    const result = resolvePregnancies([pregnancy], horses, 31);
+    const result = resolvePregnancies([pregnancy], horses, [], new Set(), 31);
 
     // If complication occurred, should re-breed
     // If live foal, should resolve normally

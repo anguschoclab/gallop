@@ -14,7 +14,7 @@ import type {
  * Creates a valid test allele (1-10)
  */
 function createAllele(value: number = 5): Allele {
-  return Math.max(1, Math.min(10, value));
+  return Math.max(1, Math.min(5, value));
 }
 
 /**

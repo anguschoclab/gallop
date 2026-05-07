@@ -5,9 +5,9 @@ import {
   runRaceToCompletion,
   computePaceContext,
   stepRunner,
-} from "../../game/raceSim";
-import { createRng } from "../../game/rng";
-import type { Horse } from "../../game/types";
+} from "@/game/raceSim";
+import { createRng } from "@/game/rng";
+import type { Horse } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {

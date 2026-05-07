@@ -79,6 +79,6 @@ export function pruneOldRaces(races: Race[], newDay: number): Race[] {
   return races.filter((r) => {
     if (r.graded) return true;
     if (!r.resolved) return true;
-    return r.day > newDay - 30;
+    return r.day > newDay - 3;
   });
 }

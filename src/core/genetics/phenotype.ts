@@ -62,7 +62,8 @@ export function resolveCoatColor(color: ColorGenotype): CoatColor {
 
 // --- Stat Resolution ---
 function sumLoci(loci: Locus[]): number {
-  return loci.reduce((acc, [a1, a2]) => acc + a1 + a2, 0);
+  const sum = loci.reduce((acc, [a1, a2]) => acc + a1 + a2, 0);
+  return Math.min(100, Math.max(1, sum));
 }
 
 export function resolveStats(stats: StatGenotype): HorseStats {

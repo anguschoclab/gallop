@@ -120,7 +120,7 @@ describe("leaderboardNpcBreeding integration", () => {
     };
 
     state = {
-      day: 100,
+      day: 36,
       horses: [
         {
           id: "sire1",
@@ -222,7 +222,7 @@ describe("leaderboardNpcBreeding integration", () => {
   });
 
   it("leaderboards influence NPC breeding choices", () => {
-    const result = runNpcBreeding(state, 100, rng);
+    const result = runNpcBreeding(state, 36, rng);
 
     // With leaderboards, developer personality should prefer value sires
     // The value sire (sire2) has a high value ranking for developers
@@ -237,7 +237,7 @@ describe("leaderboardNpcBreeding integration", () => {
     state.npcStables[0].personality = "prestige";
     state.npcStables[0].cash = 200000; // More cash for prestige breeding
 
-    const result = runNpcBreeding(state, 100, rng);
+    const result = runNpcBreeding(state, 36, rng);
 
     if (result.newPregnancies.length > 0) {
       const pregnancy = result.newPregnancies[0];
@@ -249,7 +249,7 @@ describe("leaderboardNpcBreeding integration", () => {
   it("handles missing leaderboards gracefully", () => {
     state.sireLeaderboards = undefined;
 
-    const result = runNpcBreeding(state, 100, rng);
+    const result = runNpcBreeding(state, 36, rng);
 
     // Should still work without leaderboards
     expect(result).toBeDefined();

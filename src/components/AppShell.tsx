@@ -149,18 +149,6 @@ export function AppShell() {
             >
               <Plus className="h-3 w-3" />
             </Button>
-            <Link to="/financial-report">
-              <Button variant="ghost" className="w-full justify-start">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Financial Report
-              </Button>
-            </Link>
-            <Link to="/facilities">
-              <Button variant="ghost" className="w-full justify-start">
-                <Building2 className="h-4 w-4 mr-2" />
-                Facilities
-              </Button>
-            </Link>
             <Button
               onClick={() => {
                 // Use setTimeout to ensure the click completes before starting the async operation
@@ -195,6 +183,20 @@ export function AppShell() {
             >
               <Settings className="h-3 w-3" />
             </Button>
+          </div>
+          <div className="space-y-1">
+            <Link to="/financial-report">
+              <Button variant="ghost" className="w-full justify-start text-xs" size="sm">
+                <DollarSign className="h-3.5 w-3.5 mr-2" />
+                Financial Report
+              </Button>
+            </Link>
+            <Link to="/facilities">
+              <Button variant="ghost" className="w-full justify-start text-xs" size="sm">
+                <Building2 className="h-3.5 w-3.5 mr-2" />
+                Facilities
+              </Button>
+            </Link>
           </div>
           <Button
             onClick={() => setNewGameDialogOpen(true)}

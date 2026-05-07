@@ -263,13 +263,40 @@ export function resolveFoaling(
   sire: Horse,
   dam: Horse,
   namingContext?: Partial<NamingContext>,
-): any {
+): { kind: "live"; foal: Horse; transmission?: boolean } | { kind: "complication"; type: string } {
   const rng = createRng(hashStr(pregnancy.id));
 
   // Genetic crossover
   if (!sire.genotype || !dam.genotype) {
     throw new Error(`Cannot resolve foaling: missing genotype for ${!sire.genotype ? 'sire' : 'dam'}`);
   }
+
+  // --- Complication Checks ---
+  
+  // 1. Age-based risk
+  const ageRisk = Math.max(0, (dam.age - 10) * 0.02); // 2% per year over 10
+  const baseRoll = rng.next();
+  if (baseRoll < 0.01 + ageRisk) {
+    const types = ["stillborn", "unable to stand", "early loss", "mid loss"];
+    return { kind: "complication", type: types[Math.floor(rng.next() * types.length)] };
+  }
+
+  // 2. Lethal recessive check
+  const sMarkers = sire.geneticMarkers?.lethalCarriers;
+  const dMarkers = dam.geneticMarkers?.lethalCarriers;
+  if (sMarkers && dMarkers) {
+    if ((sMarkers.csnb && dMarkers.csnb) || (sMarkers.hypp && dMarkers.hypp) || (sMarkers.olws && dMarkers.olws)) {
+      if (rng.next() < 0.25) { // 25% chance for homozygous lethal
+        return { kind: "complication", type: "lethal recessive" };
+      }
+    }
+  }
+
+  // 3. Rare random complication
+  if (rng.next() < 0.005) {
+    return { kind: "complication", type: "twin reduction (single survivor)" };
+  }
+
   const genotype = inheritDNA(sire.genotype, dam.genotype, rng);
 
   const foal = createHorseFromDNA(genotype, rng, {

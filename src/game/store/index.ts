@@ -237,3 +237,6 @@ export { shallow };
 // Custom hook that supports shallow comparison for object/array selectors
 export const useGameWithShallow = <T>(selector: (state: StoreType) => T): T =>
   (useGame as any)(selector, shallow);
+
+// Alias for backwards compatibility
+export { useGame as useGallopStore };

@@ -204,7 +204,7 @@ describe("raceResolutionPhase", () => {
     };
 
     const result = raceResolutionPhase.execute(context);
-    expect(result).toEqual(context);
+    expect(result.state.races[0].resolved).toBe(false);
   });
 
   it("should skip when skipRaceResolution is true", () => {

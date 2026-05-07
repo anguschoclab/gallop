@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { resolveFoaling } from "@/game/foalGen";
+import { createTestGenotype } from "@/tests/helpers/createTestGenotype";
+import { resolveGeneticMarkers } from "@/core/genetics/phenotype";
 import type { Horse, Pregnancy } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
@@ -14,6 +16,8 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     energy: 100,
     form: 0,
     potential: 90,
+    genotype: overrides.genotype ?? createTestGenotype(),
+    geneticMarkers: resolveGeneticMarkers(overrides.genotype ?? createTestGenotype()),
     raceHistory: [],
     owned: true,
     fame: 0,

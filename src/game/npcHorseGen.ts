@@ -39,7 +39,7 @@ function calculateStartingFame(tier: StableTier, age: number, rng: Rng): number 
 
 // ─── Stable horse generation ──────────────────────────────────────────────────
 
-function generateStableHorses(
+export function generateStableHorses(
   stable: Stable,
   rng: Rng,
   usedNames: Set<string>,

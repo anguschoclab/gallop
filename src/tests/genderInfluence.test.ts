@@ -1,7 +1,7 @@
-import { describe, it, expect } from "bun:test";
-import { buildRunner, runRaceToCompletion } from "../game/raceSim";
-import { createRng, hashStr } from "../game/rng";
-import type { Horse, HorseGender } from "../game/types";
+import { describe, it, expect } from "vitest";
+import { buildRunner, runRaceToCompletion } from "@/game/raceSim";
+import { createRng, hashStr } from "@/game/rng";
+import type { Horse, HorseGender } from "@/game/types";
 
 // Mock Horse generator
 function mockHorse(
