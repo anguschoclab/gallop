@@ -45,7 +45,7 @@ import { getGradeColorClass } from "@/core/race/grading";
 import { GradeBreakdown } from "@/components/races/GradeBreakdown";
 import { RaceCard } from "@/components/races/RaceCard";
 import { RaceRow } from "@/components/races/RaceRow";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue, formatCurrency } from "@/components/HorseBits";
 import { toast } from "sonner";
 
 type RaceFilters = {
@@ -68,13 +68,6 @@ export const Route = createFileRoute("/races")({
   }),
   component: RacesPage,
 });
-
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(n);
 
 function RacesPage() {
   const { grade, country, surface, track, owned, q } = Route.useSearch();
@@ -363,7 +356,7 @@ function RacesPage() {
                       <div className="ml-4 mt-1 mb-1 p-3 rounded-b-lg border border-t-0 border-gold-muted/50 bg-t900 space-y-2">
                         <p className="text-xs font-semibold uppercase tracking-wide text-warning flex items-center gap-1">
                           <AlertTriangle className="h-3 w-3" />
-                          Claiming Race Entries — {fmtCurrency(r.claiming!.price)}
+                          Claiming Race Entries — {formatCurrency(r.claiming!.price)}
                         </p>
                         <div className="space-y-1">
                           {r.entries.map((entry: any) => {
@@ -410,7 +403,7 @@ function RacesPage() {
                                         title={
                                           canAfford
                                             ? undefined
-                                            : `You need ${fmtCurrency(r.claiming!.price - cash)} to file this claim.`
+                                            : `You need ${formatCurrency(r.claiming!.price - cash)} to file this claim.`
                                         }
                                         className="text-xs"
                                         onClick={() => {
@@ -418,7 +411,7 @@ function RacesPage() {
                                           setPendingClaimHorseId(entry.horseId);
                                         }}
                                       >
-                                        Claim {fmtCurrency(r.claiming!.price)}
+                                        Claim {formatCurrency(r.claiming!.price)}
                                       </Button>
                                     ))}
                                 </div>
@@ -462,10 +455,10 @@ function RacesPage() {
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
-                    Claim {horse?.name} for {fmtCurrency(cp)}?
+                    Claim {horse?.name} for {formatCurrency(cp)}?
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    If your claim is drawn, {fmtCurrency(cp)} will be deducted from your account and{" "}
+                    If your claim is drawn, {formatCurrency(cp)} will be deducted from your account and{" "}
                     {horse?.name ?? "the horse"} will transfer to your stable after the race
                     completes. Multiple claims on the same horse are resolved randomly.
                   </AlertDialogDescription>
@@ -485,7 +478,7 @@ function RacesPage() {
                       setClaimingRace(null);
                       setPendingClaimHorseId(null);
                       if (result.ok) {
-                        toast.success(`Claim filed on ${horse?.name} for ${fmtCurrency(cp)}.`);
+                        toast.success(`Claim filed on ${horse?.name} for ${formatCurrency(cp)}.`);
                       } else {
                         toast.error(`Claim failed: ${result.reason}`);
                       }

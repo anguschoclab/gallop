@@ -94,10 +94,14 @@ export function overall(h: Horse) {
  *
  * Design Bible:
  * - Uses IBM Plex Mono with tabular-nums
- * - Always use toLocaleString() for formatting
+ * - Uses Intl.NumberFormat for consistent formatting
  */
 export function formatCurrency(amount: number): string {
-  return `$${amount.toLocaleString()}`;
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(amount);
 }
 
 /**

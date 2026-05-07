@@ -43,18 +43,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { TrophyCase } from "@/components/awards";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue, formatCurrency } from "@/components/HorseBits";
 import { useState } from "react";
 import type { Horse, PrivateSaleOffer } from "@/game/types";
 
 export const Route = createFileRoute("/npc-stables/$stableId")({ component: NpcStableDetailPage });
-
-const fmt = (n: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(n);
 
 function getDeclineFlavour(personality: string, stableName: string): string {
   switch (personality) {
@@ -117,7 +110,7 @@ function NpcStableDetailPage() {
       return;
     }
     if (cash < amount) {
-      setOfferError(`Insufficient funds. You need ${fmt(amount - cash)} more.`);
+      setOfferError(`Insufficient funds. You need ${formatCurrency(amount - cash)} more.`);
       return;
     }
     const result = proposePrivateSale(offerHorse.id, stableId, amount);
@@ -137,7 +130,7 @@ function NpcStableDetailPage() {
     const status = result.reason; // proposePrivateSale returns the offer status as reason on ok
     if (status === "accepted") {
       toast.success(
-        `${stable.name} accepted your offer of ${fmt(amount)} for ${offerHorse.name}. They join your stable.`,
+        `${stable.name} accepted your offer of ${formatCurrency(amount)} for ${offerHorse.name}. They join your stable.`,
       );
     } else if (status === "countered") {
       // Read the fresh store state synchronously to get counter amount
@@ -146,7 +139,7 @@ function NpcStableDetailPage() {
         (o: any) => o.horseId === offerHorse.id && o.status === "countered",
       );
       const counterAmt = counterOffer?.counterAmount ?? 0;
-      toast.info(`${stable.name} countered at ${fmt(counterAmt)}. Go to Rival Stables to respond.`);
+      toast.info(`${stable.name} countered at ${formatCurrency(counterAmt)}. Go to Rival Stables to respond.`);
     } else {
       toast.error(getDeclineFlavour(stable.personality, stable.name));
     }
@@ -351,7 +344,7 @@ function NpcStableDetailPage() {
                             <div>
                               <p className="font-medium text-sm">
                                 Counter offer from {stable.name}:{" "}
-                                <span className="tabular-nums font-bold">{fmt(counterAmt)}</span>
+                                <span className="tabular-nums font-bold">{formatCurrency(counterAmt)}</span>
                               </p>
                               <p className="text-xs text-cream-muted">
                                 Expires day {activeOffer.expiresDay}
@@ -373,14 +366,14 @@ function NpcStableDetailPage() {
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                   <Button size="sm" variant="outline">
-                                    Accept {fmt(counterAmt)}
+                                    Accept {formatCurrency(counterAmt)}
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>Accept counter offer?</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      You will pay {fmt(counterAmt)} for {horse.name}. This cannot
+                                      You will pay {formatCurrency(counterAmt)} for {horse.name}. This cannot
                                       be undone.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
@@ -391,7 +384,7 @@ function NpcStableDetailPage() {
                                         const r = respondToPrivateSale(activeOffer.id, true);
                                         if (r.ok) {
                                           toast.success(
-                                            `${horse.name} joins your stable for ${fmt(counterAmt)}.`,
+                                            `${horse.name} joins your stable for ${formatCurrency(counterAmt)}.`,
                                           );
                                         } else {
                                           toast.error(r.reason ?? "Could not accept.");
@@ -410,7 +403,7 @@ function NpcStableDetailPage() {
                                 disabled
                                 title="Insufficient funds"
                               >
-                                Accept {fmt(counterAmt)}
+                                Accept {formatCurrency(counterAmt)}
                               </Button>
                             )}
                           </div>
@@ -452,7 +445,7 @@ function NpcStableDetailPage() {
                   <p className="text-sm text-cream-muted">
                     Estimated market value:{" "}
                     <span className="tabular-nums font-medium text-cream">
-                      ~{fmt(fogLow)} – {fmt(fogHigh)}
+                      ~{formatCurrency(fogLow)} – {formatCurrency(fogHigh)}
                     </span>
                   </p>
                   <div className="space-y-1">

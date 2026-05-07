@@ -29,6 +29,7 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { getDisplayableStats } from "@/game/scouting";
 import { KIND_LABELS, netProceeds, commissionAmount, CONSIGNMENT_COMMISSION } from "@/game/auction";
 import { Gavel, ChevronLeft, ChevronRight, Trophy, Trash2, Search, Zap } from "lucide-react";
+import { formatCurrency } from "@/components/HorseBits";
 import { toast } from "sonner";
 import type { AuctionLot } from "@/game/types";
 import { cn } from "@/lib/utils";
@@ -765,11 +766,7 @@ function AuctionSalePage() {
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-cream-muted">Buy now:</span>
                           <span className="tabular-nums text-cream-muted font-medium">
-                            {new Intl.NumberFormat("en-US", {
-                              style: "currency",
-                              currency: "USD",
-                              maximumFractionDigits: 0,
-                            }).format(currentLot.buyNowPrice)}
+                            {formatCurrency(currentLot.buyNowPrice)}
                           </span>
                         </div>
                       )}
@@ -779,11 +776,7 @@ function AuctionSalePage() {
                         !isPlayerConsigned &&
                         (() => {
                           const bnp = currentLot.buyNowPrice!;
-                          const formatted = new Intl.NumberFormat("en-US", {
-                            style: "currency",
-                            currency: "USD",
-                            maximumFractionDigits: 0,
-                          }).format(bnp);
+                          const formatted = formatCurrency(bnp);
                           const canAfford = cash >= bnp;
                           return (
                             <div className="space-y-1">
@@ -836,11 +829,7 @@ function AuctionSalePage() {
                                   </Button>
                                   <p className="text-xs text-destructive tabular-nums text-center">
                                     Insufficient funds. You need{" "}
-                                    {new Intl.NumberFormat("en-US", {
-                                      style: "currency",
-                                      currency: "USD",
-                                      maximumFractionDigits: 0,
-                                    }).format(bnp - cash)}{" "}
+                                    {formatCurrency(bnp - cash)}{" "}
                                     more.
                                   </p>
                                 </div>

@@ -30,14 +30,8 @@ import { JockeyCard } from "./JockeyCard";
 import { RacingSilks } from "./RacingSilks";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
 import { getCurrentYear } from "@/game/raceSchedule";
+import { formatCurrency } from "./HorseBits";
 import { toast } from "sonner";
-
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(n);
 
 interface RaceEntryProps {
   race: Race;
@@ -117,7 +111,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
         if (isNewClaimingRace) {
           const horse = horses.find((h: Horse) => h.id === selectedHorseId);
           toast.info(
-            `${horse?.name ?? "Horse"} entered in claiming race at ${fmtCurrency(claimingPrice!)}.`,
+            `${horse?.name ?? "Horse"} entered in claiming race at ${formatCurrency(claimingPrice!)}.`,
           );
         }
 
@@ -318,7 +312,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   <AlertTriangle size={18} className="shrink-0 mt-0.5" />
                   <p className="text-xs font-bold">
                     Claiming Race: Any stable may purchase {selectedHorse.name} for{" "}
-                    {fmtCurrency(claimingPrice)} after the race. The transfer is automatic. You may
+                    {formatCurrency(claimingPrice)} after the race. The transfer is automatic. You may
                     withdraw up to 1 day before the race.
                   </p>
                 </div>

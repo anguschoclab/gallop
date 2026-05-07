@@ -44,7 +44,16 @@ const navSections = [
     label: "My Stable",
     items: [
       { to: "/stable", label: "Roster", icon: Trophy, exact: false },
-      { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
+      {
+        to: "/breeding",
+        label: "Breeding",
+        icon: Heart,
+        exact: false,
+        subItems: [
+          { to: "/breeding", label: "Mating", icon: Heart, exact: true },
+          { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
+        ],
+      },
       { to: "/hall-of-fame", label: "Hall of Fame", icon: Award, exact: false },
     ],
   },
@@ -114,19 +123,45 @@ export function AppShell() {
                   ? location.pathname === item.to
                   : location.pathname.startsWith(item.to);
                 return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className={cn(
-                      "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                      active
-                        ? "border-l-2 border-gold text-gold bg-gold-subtle"
-                        : "text-cream-muted/70 hover:bg-gold-subtle hover:text-cream",
+                  <div key={item.to}>
+                    <Link
+                      to={item.to}
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                        active
+                          ? "border-l-2 border-gold text-gold bg-gold-subtle"
+                          : "text-cream-muted/70 hover:bg-gold-subtle hover:text-cream",
+                      )}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {item.label}
+                    </Link>
+                    {"subItems" in item && item.subItems && (
+                      <div className="ml-6 mt-1 space-y-1">
+                        {item.subItems.map((subItem) => {
+                          const SubIcon = subItem.icon;
+                          const subActive = subItem.exact
+                            ? location.pathname === subItem.to
+                            : location.pathname.startsWith(subItem.to);
+                          return (
+                            <Link
+                              key={subItem.to}
+                              to={subItem.to}
+                              className={cn(
+                                "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors",
+                                subActive
+                                  ? "border-l-2 border-gold text-gold bg-gold-subtle"
+                                  : "text-cream-muted/60 hover:bg-gold-subtle hover:text-cream",
+                              )}
+                            >
+                              <SubIcon className="h-3 w-3" />
+                              {subItem.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
                     )}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
+                  </div>
                 );
               })}
             </div>

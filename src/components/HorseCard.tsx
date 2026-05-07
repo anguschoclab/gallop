@@ -7,7 +7,7 @@ import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
 import { JargonTooltip } from "./ui/JargonTooltip";
 import { useGame } from "@/game/store";
 import { SilkDot } from "./SilkDot";
-import { NumericValue } from "./HorseBits";
+import { NumericValue, StatBar } from "./HorseBits";
 import {
   Trophy,
   Zap,
@@ -392,20 +392,6 @@ export function HorseCard({
         )}
       </CardContent>
     </Card>
-  );
-}
-
-function StatBar({ label, value }: { label: string; value: number }) {
-  return (
-    <div>
-      <div className="flex justify-between text-xs mb-1">
-        <span className="text-cream-muted font-[family-name:var(--font-body)]">{label}</span>
-        <span className="font-medium font-[family-name:var(--font-mono)] tabular-nums">
-          {Math.round(value)}
-        </span>
-      </div>
-      <Progress value={value} className="h-1.5" />
-    </div>
   );
 }
 
