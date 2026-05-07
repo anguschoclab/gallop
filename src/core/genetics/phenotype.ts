@@ -3,6 +3,7 @@ import type {
   ColorGenotype,
   StatGenotype,
   MarkerGenotype,
+  HealthGenotype,
 } from "./types";
 import type { Locus } from "@/core/common/types";
 import type {
@@ -12,6 +13,7 @@ import type {
   GeneticMarkers,
   SockHeight,
   FaceWhite,
+  HealthStatus,
 } from "@/core/horse/types";
 
 export const TRAIT_VALUES: Record<string, number> = { excellent: 4, good: 3, fair: 2, poor: 1 };
@@ -227,6 +229,12 @@ function resolveFaceWhite(locus: Locus): FaceWhite {
 
 export function resolveRacingViable(locus: Locus): boolean {
   return (locus[0] + locus[1]) >= 4;
+}
+
+export function resolveHealthStatus(health: HealthGenotype): HealthStatus {
+  // Logic could be expanded to check for immediate health issues from genetics,
+  // but for now, we initialize all horses as "healthy".
+  return "healthy";
 }
 
 export function resolveBleederRisk(locus: Locus): number {

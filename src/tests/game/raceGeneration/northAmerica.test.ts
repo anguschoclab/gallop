@@ -126,7 +126,7 @@ describe("generateNorthAmericanRace", () => {
   });
 
   it("should use specified surface when provided", () => {
-    const race = generateNorthAmericanRace(mockTrack, 10, "Dirt", createRng("test"));
+    const race = generateNorthAmericanRace(mockTrack, 10, createRng("test"), "Dirt");
     expect(race.surface).toBe("Dirt");
   });
 
@@ -176,12 +176,12 @@ describe("generateNorthAmericanRaceCard", () => {
   });
 
   it("should generate specified number of races", () => {
-    const races = generateNorthAmericanRaceCard(mockTrack, 10, 5);
+    const races = generateNorthAmericanRaceCard(mockTrack, 10, 5, createRng("test"));
     expect(races.length).toBe(5);
   });
 
   it("should alternate surfaces for multi-surface tracks", () => {
-    const races = generateNorthAmericanRaceCard(mockTrack, 10, 4);
+    const races = generateNorthAmericanRaceCard(mockTrack, 10, 4, createRng("test"));
     // With 2 surfaces and 4 races, we should get 2 of each
     const dirtRaces = races.filter((r) => r.surface === "Dirt");
     const turfRaces = races.filter((r) => r.surface === "Turf");
@@ -196,12 +196,12 @@ describe("generateNorthAmericanRaceCard", () => {
       courses: [{ surface: "Dirt", circumference: 1600, straightLength: 400, sections: [] }],
     };
 
-    const races = generateNorthAmericanRaceCard(singleSurfaceTrack, 10, 3);
+    const races = generateNorthAmericanRaceCard(singleSurfaceTrack, 10, 3, createRng("test"));
     expect(races.every((r) => r.surface === "Dirt")).toBe(true);
   });
 
   it("should generate unique race names", () => {
-    const races = generateNorthAmericanRaceCard(mockTrack, 10, 5);
+    const races = generateNorthAmericanRaceCard(mockTrack, 10, 5, createRng("test"));
     const names = races.map((r) => r.name);
     const uniqueNames = new Set(names);
 
@@ -209,12 +209,12 @@ describe("generateNorthAmericanRaceCard", () => {
   });
 
   it("should set day for all races", () => {
-    const races = generateNorthAmericanRaceCard(mockTrack, 10, 3);
+    const races = generateNorthAmericanRaceCard(mockTrack, 10, 3, createRng("test"));
     expect(races.every((r) => r.day === 10)).toBe(true);
   });
 
   it("should set trackId for all races", () => {
-    const races = generateNorthAmericanRaceCard(mockTrack, 10, 3);
+    const races = generateNorthAmericanRaceCard(mockTrack, 10, 3, createRng("test"));
     expect(races.every((r) => r.trackId === "track-1")).toBe(true);
   });
 });

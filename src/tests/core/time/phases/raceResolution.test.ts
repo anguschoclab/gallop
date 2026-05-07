@@ -55,6 +55,13 @@ describe("raceResolutionPhase", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      transactions: [],
+      reputation: {
+        score: 50,
+        tier: "Local",
+        events: [],
+        totalWins: 0,
+      },
     };
 
     const context: PipelineContext = {
@@ -63,11 +70,14 @@ describe("raceResolutionPhase", () => {
       state,
       logs: [],
       dailyRng: createRng(12345),
+      intents: [],
+      impacts: [],
+      impactLog: [],
     };
 
     const result = raceResolutionPhase.execute(context);
-    // Phase is currently a placeholder, should return context unchanged
-    expect(result).toEqual(context);
+    expect(result.state.races[0].resolved).toBe(true);
+    expect(result.state.races[1].resolved).toBe(true);
   });
 
   it("should skip already resolved races", () => {
@@ -116,6 +126,13 @@ describe("raceResolutionPhase", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      transactions: [],
+      reputation: {
+        score: 50,
+        tier: "Local",
+        events: [],
+        totalWins: 0,
+      },
     };
 
     const context: PipelineContext = {
@@ -124,10 +141,14 @@ describe("raceResolutionPhase", () => {
       state,
       logs: [],
       dailyRng: createRng(12345),
+      intents: [],
+      impacts: [],
+      impactLog: [],
     };
 
     const result = raceResolutionPhase.execute(context);
-    expect(result).toEqual(context);
+    expect(result.state.races[1].resolved).toBe(true);
+    expect(result.state.races[0].resolved).toBe(true);
   });
 
   it("should skip races in the future", () => {
@@ -162,6 +183,13 @@ describe("raceResolutionPhase", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      transactions: [],
+      reputation: {
+        score: 50,
+        tier: "Local",
+        events: [],
+        totalWins: 0,
+      },
     };
 
     const context: PipelineContext = {
@@ -170,6 +198,9 @@ describe("raceResolutionPhase", () => {
       state,
       logs: [],
       dailyRng: createRng(12345),
+      intents: [],
+      impacts: [],
+      impactLog: [],
     };
 
     const result = raceResolutionPhase.execute(context);
@@ -208,6 +239,13 @@ describe("raceResolutionPhase", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      transactions: [],
+      reputation: {
+        score: 50,
+        tier: "Local",
+        events: [],
+        totalWins: 0,
+      },
     };
 
     const context: PipelineContext = {
@@ -217,6 +255,9 @@ describe("raceResolutionPhase", () => {
       logs: [],
       skipRaceResolution: true,
       dailyRng: createRng(12345),
+      intents: [],
+      impacts: [],
+      impactLog: [],
     };
 
     const shouldSkip = raceResolutionPhase.skipIf?.(context);
@@ -241,6 +282,13 @@ describe("raceResolutionPhase", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      transactions: [],
+      reputation: {
+        score: 50,
+        tier: "Local",
+        events: [],
+        totalWins: 0,
+      },
     };
 
     const context: PipelineContext = {
@@ -249,6 +297,10 @@ describe("raceResolutionPhase", () => {
       state,
       logs: [],
       skipRaceResolution: false,
+      dailyRng: createRng(12345),
+      intents: [],
+      impacts: [],
+      impactLog: [],
     };
 
     const shouldSkip = raceResolutionPhase.skipIf?.(context);
@@ -256,7 +308,7 @@ describe("raceResolutionPhase", () => {
   });
 
   it("should have correct order", () => {
-    expect(raceResolutionPhase.order).toBe(10);
+    expect(raceResolutionPhase.order).toBe(70);
   });
 
   it("should have correct name", () => {

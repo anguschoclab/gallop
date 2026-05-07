@@ -213,17 +213,27 @@ export function generateNpcHorse(
   rng: Rng,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
-  opts: { tier?: StableTier; forcedAge?: number; hemisphere?: Hemisphere } = {},
+  opts: {
+    tier?: StableTier;
+    forcedAge?: number;
+    forcedGender?: Horse["gender"];
+    forcedName?: string;
+    hemisphere?: Hemisphere;
+  } = {},
 ): Horse {
   const tier = opts.tier ?? stable.tier;
   const genTier = tier === "elite" ? "elite" : tier === "mid" ? "mid" : "budget";
 
   // Personality config
-  const config = (stable.personality && (PERSONALITY_CONFIG as any)[stable.personality]) || PERSONALITY_CONFIG.conservative;
-  const region = stable.country ? getRegionalSystem((stable.country ?? 'Belmont') as any) : "north_america";
+  const config =
+    (stable.personality && (PERSONALITY_CONFIG as any)[stable.personality]) ||
+    PERSONALITY_CONFIG.conservative;
+  const region = stable.country
+    ? getRegionalSystem((stable.country ?? "Belmont") as any)
+    : "north_america";
 
   const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : rng.range(3, 6));
-  const gender = rollGender(age, rng);
+  const gender = opts.forcedGender ?? rollGender(age, rng);
 
   const genotype = generateGenotype(rng, genTier);
 
@@ -234,11 +244,13 @@ export function generateNpcHorse(
     hemisphere: opts.hemisphere ?? "Northern",
   });
 
-  horse.name = generateProceduralHorseName(
-    { region, namingTheme: config.namingTheme, existingNames: new Set() },
-    rng,
-    { strategy: "regional" }
-  );
+  horse.name =
+    opts.forcedName ??
+    generateProceduralHorseName(
+      { region, namingTheme: config.namingTheme, existingNames: new Set() },
+      rng,
+      { strategy: "regional" }
+    );
 
   return horse;
 }

@@ -5,10 +5,10 @@ import { makeGradedRace, generateRace } from "@/game/raceGeneration/raceGen";
 import type { GradedRace } from "@/game/gradedRaces";
 
 const STAT_RANGES: Record<string, [number, number]> = {
-  starter: [30, 55],
-  budget: [25, 60],
-  mid: [45, 75],
-  elite: [60, 90],
+  starter: [20, 60],
+  budget: [20, 80],
+  mid: [40, 80],
+  elite: [60, 100],
 };
 
 describe("generateHorse", () => {
@@ -53,7 +53,7 @@ describe("generateHorse", () => {
     expect(h.silk).toBeTruthy();
     expect(h.raceHistory).toEqual([]);
     expect(h.energy).toBe(100);
-    expect(h.form).toBe(0);
+    expect(h.form).toBe(50);
     expect(h.fame).toBe(0);
   });
 

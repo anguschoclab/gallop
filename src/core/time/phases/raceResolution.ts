@@ -46,6 +46,7 @@ import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
 export const raceResolutionPhase: PipelinePhase = {
   name: "raceResolution",
   order: 70,
+  skipIf: (context) => !!context.skipRaceResolution,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
@@ -697,7 +698,7 @@ export const raceResolutionPhase: PipelinePhase = {
             }
           : state.reputation,
       },
-      impacts: [...context.impacts, ...impacts],
+      impacts: [...(context.impacts || []), ...impacts],
     };
   },
 };
