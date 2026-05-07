@@ -45,7 +45,7 @@ export const trainingResolutionPhase: PipelinePhase = {
 
       // Check if horse is eligible for training (energy, health)
       if (horse.energy < 15) continue;
-      if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering")
+      if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering" || horse.healthStatus === "other_illness")
         continue;
 
       // Record training expense (only for actual training, not rest)

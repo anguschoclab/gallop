@@ -1,8 +1,11 @@
 import type { PipelineContext } from "../pipeline";
 import { getFacilityBonus } from "@/core/facilities";
+import { resolveEpmRisk } from "@/core/genetics/phenotype";
 
 const RECOVERY_DAYS = 30;
 const COVERING_SICKNESS_DURATION = 7;
+const ILLNESS_DURATION_MIN = 14;
+const ILLNESS_DURATION_MAX = 30;
 
 /**
  * Phase: Energy Restoration
@@ -30,6 +33,45 @@ export const energyPhase = {
         if (daysSinceOnset >= COVERING_SICKNESS_DURATION + RECOVERY_DAYS) {
           newHealthStatus = "healthy";
         }
+      } else if (h.healthStatus === "other_illness" && h.healthStatusDay) {
+        // Illness recovery: 14-30 days before transitioning to recovering
+        const daysSinceOnset = newDay - h.healthStatusDay;
+        if (daysSinceOnset >= ILLNESS_DURATION_MIN && daysSinceOnset <= ILLNESS_DURATION_MAX) {
+          // Random chance to recover each day after minimum duration
+          if (Math.random() < 0.3) {
+            newHealthStatus = "recovering";
+          }
+        } else if (daysSinceOnset > ILLNESS_DURATION_MAX) {
+          // Force recovery after max duration
+          newHealthStatus = "recovering";
+        }
+      }
+
+      // Illness check system (only for healthy horses)
+      if (newHealthStatus === "healthy" && h.genotype && h.genotype.health) {
+        const immunityTier = h.genotype.markers.immunity;
+        const epmRisk = resolveEpmRisk(h.genotype.health.epm);
+        
+        // EPM susceptibility: treat immunity as one tier lower for illness check
+        let effectiveImmunityTier = immunityTier;
+        if (epmRisk > 0) {
+          if (immunityTier === "excellent") effectiveImmunityTier = "good";
+          else if (immunityTier === "good") effectiveImmunityTier = "fair";
+          else if (immunityTier === "fair") effectiveImmunityTier = "poor";
+        }
+
+        // Daily illness chance based on immunity tier
+        const illnessChance: Record<"excellent" | "good" | "fair" | "poor", number> = {
+          excellent: 0.001, // 0.1%
+          good: 0.003, // 0.3%
+          fair: 0.006, // 0.6%
+          poor: 0.010, // 1.0%
+        };
+
+        if (Math.random() < illnessChance[effectiveImmunityTier]) {
+          newHealthStatus = "other_illness";
+          // healthStatusDay will be set below
+        }
       }
 
       // Energy restoration (modified by recoveryRate locus and barn facility)
@@ -42,6 +84,7 @@ export const energyPhase = {
         ...h,
         energy: newEnergy,
         healthStatus: newHealthStatus,
+        healthStatusDay: (newHealthStatus !== h.healthStatus && newHealthStatus !== "healthy") ? newDay : h.healthStatusDay,
       };
     });
 

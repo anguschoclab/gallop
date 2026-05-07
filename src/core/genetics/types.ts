@@ -44,6 +44,9 @@ export type HealthGenotype = {
   roarer: Locus;
   ocd: Locus;
   efna5: Locus;
+  pssm: Locus; // Polysaccharide Storage Myopathy
+  rer: Locus; // Recurrent Exertional Rhabdomyolysis
+  epm: Locus; // EPM immune susceptibility
 };
 
 export type Genotype = {

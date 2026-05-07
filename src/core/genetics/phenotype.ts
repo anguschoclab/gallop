@@ -3,8 +3,8 @@ import type {
   ColorGenotype,
   StatGenotype,
   MarkerGenotype,
-  Locus,
 } from "./types";
+import type { Locus } from "@/core/common/types";
 import type {
   HorseStats,
   CoatColor,
@@ -240,6 +240,28 @@ export function resolveRoarerRisk(locus: Locus): number {
   const sum = locus[0] + locus[1];
   if (sum <= 3) return 0.1;
   if (sum <= 6) return 0.03;
+  return 0;
+}
+
+// New health condition risk resolution functions
+export function resolvePssmRisk(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  if (sum <= 3) return 0.15;
+  if (sum <= 6) return 0.05;
+  return 0;
+}
+
+export function resolveRerRisk(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  if (sum <= 3) return 0.12;
+  if (sum <= 6) return 0.05;
+  return 0;
+}
+
+export function resolveEpmRisk(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  if (sum <= 3) return 0.10;
+  if (sum <= 6) return 0.04;
   return 0;
 }
 

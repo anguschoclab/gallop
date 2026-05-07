@@ -1,8 +1,8 @@
 import type {
   Genotype,
-  Locus,
   MarkerGenotype,
 } from "./types";
+import type { Locus } from "@/core/common/types";
 import type { Rng } from "@/core/common/types";
 import { createRng, hashStr } from "@/game/rng";
 import type { AptitudinalGroup } from "@/core/data/pedigreeData";
@@ -91,6 +91,26 @@ export function generateGenotype(
     return [rng.range(4, 5), rng.range(4, 5)];
   };
 
+  // Roll new health loci with tier-specific affected rates
+  // Convention: low allele sum (≤3) = susceptible, (4-6) = carrier, (≥7) = healthy
+  const rollTieredHealthLocus = (affectedRate: number): Locus => {
+    if (rng.next() < affectedRate) {
+      // Affected: low allele sum (≤3)
+      return [rng.range(1, 2), rng.range(1, 2)];
+    } else if (rng.next() < 0.5) {
+      // Carrier: medium allele sum (4-6)
+      return [rng.range(2, 3), rng.range(2, 4)];
+    } else {
+      // Healthy: high allele sum (≥7)
+      return [rng.range(3, 5), rng.range(4, 5)];
+    }
+  };
+
+  // Tier-specific affected rates
+  const pssmRate = tier === "starter" || tier === "budget" ? 0.08 : tier === "mid" ? 0.05 : 0.02;
+  const rerRate = tier === "starter" || tier === "budget" ? 0.06 : tier === "mid" ? 0.04 : 0.02;
+  const epmRate = tier === "starter" || tier === "budget" ? 0.07 : tier === "mid" ? 0.05 : 0.03;
+
   const rollMarkingsLocus = (presence: number): Locus => {
     if (rng.next() < presence) return [rng.range(4, 5), rng.range(4, 5)];
     return [rng.range(1, 3), rng.range(1, 3)];
@@ -143,6 +163,9 @@ export function generateGenotype(
       roarer: rollHealthLocus(),
       ocd: rollHealthLocus(),
       efna5: rng.next() < 0.07 ? [1, 1] : [rng.range(2, 5), rng.range(2, 5)],
+      pssm: rollTieredHealthLocus(pssmRate),
+      rer: rollTieredHealthLocus(rerRate),
+      epm: rollTieredHealthLocus(epmRate),
     },
   };
 }
