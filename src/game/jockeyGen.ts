@@ -1,5 +1,5 @@
-import { generateUUID } from "./uuid";
-import type { Rng } from "./rng";
+import { generateUUID } from "@/game/uuid";
+import type { Rng } from "@/game/rng";
 import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "./types";
 import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
 import type { RegionalSystem } from "./types";

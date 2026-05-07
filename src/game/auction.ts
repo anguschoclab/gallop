@@ -1,6 +1,6 @@
 import type { Horse, Pregnancy, Stable, AuctionLot, AuctionSale, AuctionSaleKind } from "./types";
 import { generateNpcHorse } from "@/core/horse/horseFactory";
-import { calculateNpcHorseValue } from "@/core/horse/valuation";
+import { calculateNpcHorseValue } from "@/core/horse/pricing";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";

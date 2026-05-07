@@ -12,7 +12,8 @@
       "Bash(Get-ChildItem *)",
       "Bash(Select-Object FullName)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git worktree *)"
     ]
   }
 }

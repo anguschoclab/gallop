@@ -16,6 +16,13 @@ export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number 
 }
 
 /**
+ * NPC Stable valuation alias.
+ */
+export function calculateNpcHorseValue(horse: Horse, tier: StableTier): number {
+  return calculateBaseHorseValue(horse, tier);
+}
+
+/**
  * Market price for a player-owned horse (no tier context needed).
  * Used in the horse market and consignment reserve pricing.
  */

@@ -1,4 +1,4 @@
-import type { Rng } from "./rng";
+import type { Rng } from "@/game/rng";
 
 /**
  * Generate a proper UUID v4

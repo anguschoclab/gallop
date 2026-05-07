@@ -51,6 +51,8 @@ const THEMES: Record<NamingTheme, ThemeDefinition> = {
     wordPools: [ABSTRACT_TERMS, RACING_TERMS],
     patterns: ["{W1} Deal", "Value {W1}", "Bargain {W1}", "Market {W1}"],
   },
+  elite: {
+    wordPools: [ABSTRACT_TERMS],
     patterns: ["{W1} Elite", "Royal {W1}", "Grand {W1}", "{W1} Excellence"],
   },
   generic: {

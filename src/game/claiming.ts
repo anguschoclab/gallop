@@ -2,7 +2,7 @@
 // Handles claiming transactions, horse transfers, and claiming eligibility
 
 import type { Race, Horse, ClaimingPrice } from "./types";
-import type { Rng } from "./rng";
+import type { Rng } from "@/game/rng";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 // Horse transfer result from a claiming race
