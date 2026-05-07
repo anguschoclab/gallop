@@ -11,10 +11,7 @@ export function rand(min: number, max: number, rng: Rng): number {
   return rng.int(min, max);
 }
 
-// Domain-specific re-exports for backward compatibility
-export { randomHorseName } from "../horse/naming/legacyFallback";
+// Domain-specific re-exports
 export { randomSilk } from "../horse/visuals";
 export { randomWeather } from "../race/environment";
-export { randomRaceName } from "../race/naming/legacyFallback";
-export { randomJockeyName } from "../jockey/naming";
 export { rollRunningStyle } from "../horse/stats";
