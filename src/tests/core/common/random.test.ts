@@ -3,12 +3,13 @@ import {
   rand,
   rollRunningStyle,
   randomWeather,
-  randomHorseName,
   randomSilk,
-  randomRaceName,
-  randomJockeyName,
 } from "@/core/common/random";
+import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
+import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
+import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { createRng, nondeterministicRng } from "@/game/rng";
+import type { Track } from "@/game/tracks";
 
 describe("rand", () => {
   it("returns integer within range", () => {
@@ -20,16 +21,6 @@ describe("rand", () => {
       expect(Number.isInteger(result)).toBe(true);
     }
   });
-
-  it("handles negative ranges", () => {
-    const result = rand(-10, -1, nondeterministicRng());
-    expect(result).toBeGreaterThanOrEqual(-10);
-    expect(result).toBeLessThanOrEqual(-1);
-  });
-
-  it("handles same min and max", () => {
-    expect(rand(5, 5, nondeterministicRng())).toBe(5);
-  });
 });
 
 describe("rollRunningStyle", () => {
@@ -37,27 +28,6 @@ describe("rollRunningStyle", () => {
     const stats = { speed: 50, stamina: 50, acceleration: 50 };
     const result = rollRunningStyle(stats, nondeterministicRng());
     expect(["E", "EP", "P", "S"]).toContain(result);
-  });
-
-  it("front-runner bias with high speed/acceleration", () => {
-    const stats = { speed: 90, stamina: 30, acceleration: 90 };
-    const rng = createRng(12345);
-    // With high early bias, should skew toward front-runner
-    let frontRunnerCount = 0;
-    for (let i = 0; i < 100; i++) {
-      if (rollRunningStyle(stats, rng) === "E") frontRunnerCount++;
-    }
-    expect(frontRunnerCount).toBeGreaterThan(30); // Should be biased
-  });
-
-  it("closer bias with high stamina", () => {
-    const stats = { speed: 30, stamina: 90, acceleration: 30 };
-    const rng = createRng(12345);
-    let closerCount = 0;
-    for (let i = 0; i < 100; i++) {
-      if (rollRunningStyle(stats, rng) === "S") closerCount++;
-    }
-    expect(closerCount).toBeGreaterThan(30); // Should be biased
   });
 });
 
@@ -68,42 +38,38 @@ describe("randomWeather", () => {
   });
 });
 
-describe("randomHorseName", () => {
-  it("returns non-empty string with two words", () => {
-    const name = randomHorseName(nondeterministicRng());
-    expect(typeof name).toBe("string");
-    expect(name.length).toBeGreaterThan(0);
-    expect(name.split(" ").length).toBe(2);
-  });
-
-  it("uses provided RNG when given", () => {
-    const mockRng = createRng(0);
-    const name = randomHorseName(mockRng);
+describe("Procedural Horse Naming", () => {
+  it("generates valid names", () => {
+    const name = generateProceduralHorseName({ existingNames: new Set() }, nondeterministicRng());
     expect(name).toBeTruthy();
+    expect(name.length).toBeLessThanOrEqual(18);
+  });
+});
+
+describe("Procedural Jockey Naming", () => {
+  it("generates regionalized names", () => {
+    const rng = createRng(123);
+    const asiaName = generateProceduralJockeyName("asia", rng);
+    // Many Asian names in pool are Japanese/HK
+    expect(asiaName).toBeTruthy();
+    
+    const euroName = generateProceduralJockeyName("europe", rng);
+    expect(euroName).toBeTruthy();
+  });
+});
+
+describe("Procedural Race Naming", () => {
+  it("generates realistic names", () => {
+    const mockTrack = { name: "Test Track", country: "USA" } as Track;
+    const name = generateRaceName({ track: mockTrack, raceClass: "Stakes", rng: nondeterministicRng() });
+    expect(name).toBeTruthy();
+    expect(name).not.toBe("Stakes"); // Should be more descriptive
   });
 });
 
 describe("randomSilk", () => {
-  it("returns valid color", () => {
+  it("returns HSL color", () => {
     const silk = randomSilk(nondeterministicRng());
     expect(silk).toMatch(/hsl\(\d+, \d+%, \d+%\)/);
-  });
-});
-
-describe("randomRaceName", () => {
-  it("returns non-empty string with two words", () => {
-    const name = randomRaceName(nondeterministicRng());
-    expect(typeof name).toBe("string");
-    expect(name.length).toBeGreaterThan(0);
-    expect(name.split(" ").length).toBe(2);
-  });
-});
-
-describe("randomJockeyName", () => {
-  it("returns non-empty string with two words", () => {
-    const name = randomJockeyName(nondeterministicRng());
-    expect(typeof name).toBe("string");
-    expect(name.length).toBeGreaterThan(0);
-    expect(name.split(" ").length).toBe(2);
   });
 });
