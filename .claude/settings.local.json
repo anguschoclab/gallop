@@ -13,7 +13,25 @@
       "Bash(Select-Object FullName)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git worktree *)"
+      "Bash(git worktree *)",
+      "Bash(npx vitest *)",
+      "Bash(npm install *)",
+      "Bash(npm list *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "Bash(curl -s http://localhost:5173/breeding)",
+      "Bash(curl -s http://localhost:5173/)",
+      "Bash(jobs -l)",
+      "Bash(curl -s \"http://localhost:5173/src/main.tsx\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts',{}\\), indent=2\\)\\)\")",
+      "Bash(npx vite *)",
+      "Bash(curl -sv http://localhost:5173/)",
+      "Bash(curl -sv http://localhost:8083/)",
+      "Bash(node -e ' *)",
+      "Bash(git stash *)"
     ]
   }
 }
