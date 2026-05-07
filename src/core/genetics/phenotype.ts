@@ -202,6 +202,7 @@ export function resolveFoalingEase(locus: Locus): number {
   return 1.4 - ((sum - 2) / 8) * 0.8;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function resolveMarkings(locus: any) {
   // Shared logic for resolving cosmetic flags
   return {

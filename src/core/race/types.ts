@@ -77,6 +77,7 @@ export type Race = {
   restrictions?: {
     minAge?: number;
     maxAge?: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     gender?: any; // Avoiding deep nest for now
     minAgeNorthern?: number;
     minAgeSouthern?: number;

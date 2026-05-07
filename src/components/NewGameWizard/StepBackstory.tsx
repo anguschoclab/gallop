@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { BACKSTORIES } from "@/core/newGame/backstories";
 import type { BackstoryId } from "@/game/types";
+import { formatCurrency } from "@/components/HorseBits";
 
 interface StepBackstoryProps {
   backstoryId: BackstoryId;
@@ -79,9 +80,7 @@ export function StepBackstory({ backstoryId, onChange, onNext, onBack }: StepBac
                     <div className="space-y-2 text-xs text-cream-muted">
                       <div className="flex justify-between">
                         <span>Starting Cash:</span>
-                        <span className="text-cream">
-                          ${backstory.startingCash.toLocaleString()}
-                        </span>
+                        <span className="text-cream">{formatCurrency(backstory.startingCash)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Horses:</span>

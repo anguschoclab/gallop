@@ -54,6 +54,7 @@ function HorseDetail() {
   const facilities = useGame((s) => s.facilities);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const day = useGame((s) => s.day);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const auctions = (useGame as any)((s: any) => s.auctions ?? [], shallow);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
 
@@ -78,11 +79,13 @@ function HorseDetail() {
 
   const slotsLeft = 2 - trainingUsed;
   const consignedSale = isConsigned
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ? auctions.find((a: any) => a.id === horse.consignedSaleId)
     : undefined;
   // Find eligible upcoming sales to consign to
   const eligibleSale =
     !isConsigned && horse.owned
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ? auctions.find((a: any) => {
           if (a.resolved) return false;
           const ageMatch =

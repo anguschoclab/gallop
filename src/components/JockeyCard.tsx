@@ -13,6 +13,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { User, Trophy, Calendar, DollarSign, Target, RefreshCw } from "lucide-react";
 import { RacingSilks } from "./RacingSilks";
 import { useGame } from "@/game/store";
+import { formatCurrency } from "@/components/HorseBits";
 
 interface JockeyCardProps {
   jockey: Jockey;
@@ -87,7 +88,7 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
             </div>
           </div>
           <div className="text-right">
-            <div className="text-sm font-black text-gold">${jockey.ridingFee.toLocaleString()}</div>
+            <div className="text-sm font-black text-gold">{formatCurrency(jockey.ridingFee)}</div>
             <div className="text-[10px] text-muted-foreground uppercase font-medium">Mount Fee</div>
           </div>
         </div>

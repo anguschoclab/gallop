@@ -8,6 +8,7 @@ import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getFoalsBy } from "@/core/breeding/lineage";
+import { formatCurrency } from "@/components/HorseBits";
 import {
   BREEDING_FEE,
   GESTATION_DAYS,
@@ -63,6 +64,7 @@ export function resolvePregnancies(
       if (stable) {
         namingContext = {
           region: getRegionalSystem(stable.country || "USA"),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           namingTheme: (PERSONALITY_CONFIG as any)[stable.personality]?.namingTheme,
           existingNames: usedNames,
         };
@@ -144,7 +146,7 @@ export function resolvePregnancies(
         p.reBreedingAttempts = (p.reBreedingAttempts || 0) + 1;
         newLogs.push({
           day: newDay,
-          text: `Foal ${outcome.type}${canRefund ? ` — Live Foal Guarantee refunded $${(BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE).toLocaleString()}.` : "."} Re-breeding ${p.damName} to ${p.sireName}. Attempt ${p.reBreedingAttempts}/3. New due day ${p.dueDay}.`,
+          text: `Foal ${outcome.type}${canRefund ? ` — Live Foal Guarantee refunded ${formatCurrency(BREEDING_FEE + LIVE_FOAL_GUARANTEE_FEE)}.` : "."} Re-breeding ${p.damName} to ${p.sireName}. Attempt ${p.reBreedingAttempts}/3. New due day ${p.dueDay}.`,
         });
       } else {
         p.resolved = true;

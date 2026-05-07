@@ -1,5 +1,6 @@
 import { getAwardSvg, type AwardSvgData } from "@/assets/awards";
 import type { AwardRegion, RegionalAwardCategory } from "@/game/awards/types";
+import { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } from "@/game/awards/types";
 import { cn } from "@/lib/utils";
 
 interface AwardIconProps {
@@ -110,7 +111,6 @@ function getTooltipText(
   category: RegionalAwardCategory,
   year?: number,
 ): string {
-  const { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } = require("@/game/awards/types");
   const categoryName = CATEGORY_DISPLAY_NAMES[category] || category;
   const regionName = REGION_AWARD_NAMES[region];
   return year ? `${categoryName} (${year}) - ${regionName}` : `${categoryName} - ${regionName}`;

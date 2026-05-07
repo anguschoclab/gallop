@@ -9,9 +9,11 @@ import type { Jockey, HorseCampaign } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { ActionResult } from "@/game/store";
 import type { UserSettings } from "@/core/settings/settingsTypes";
+import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import type { PlayerFacilities } from "@/core/facilities";
 import type { ManagerReputation } from "@/core/reputation";
 import type { BreedingProgram } from "@/core/breeding/programs";
+import { formatCurrency } from "@/components/HorseBits";
 
 export type SystemsSlice = SystemsState & {
   hireJockey: (jockeyId: string) => ActionResult;
@@ -71,7 +73,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       if (s.cash < signOnBonus)
         return {
           ok: false,
-          reason: `Insufficient cash. Sign-on bonus is $${signOnBonus.toLocaleString()}.`,
+          reason: `Insufficient cash. Sign-on bonus is ${formatCurrency(signOnBonus)}.`,
         };
 
       set({
@@ -82,7 +84,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
         log: [
           {
             day: s.day,
-            text: `Hired jockey ${jockey.name} for $${signOnBonus.toLocaleString()} sign-on bonus.`,
+            text: `Hired jockey ${jockey.name} for ${formatCurrency(signOnBonus)} sign-on bonus.`,
           },
           ...s.log,
         ].slice(0, 50),
@@ -101,7 +103,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       if (s.cash < rerollCost)
         return {
           ok: false,
-          reason: `Insufficient cash. Silk reroll costs $${rerollCost.toLocaleString()}.`,
+          reason: `Insufficient cash. Silk reroll costs ${formatCurrency(rerollCost)}.`,
         };
 
       set({
@@ -119,7 +121,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
         log: [
           {
             day: s.day,
-            text: `Rerolled silk for ${jockey.name} for $${rerollCost.toLocaleString()}.`,
+            text: `Rerolled silk for ${jockey.name} for ${formatCurrency(rerollCost)}.`,
           },
           ...s.log,
         ].slice(0, 50),
@@ -169,7 +171,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       if (s.cash < cost)
         return {
           ok: false,
-          reason: `Insufficient cash. Upgrade costs $${cost.toLocaleString()}.`,
+          reason: `Insufficient cash. Upgrade costs ${formatCurrency(cost)}.`,
         };
 
       set({
@@ -181,7 +183,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
         log: [
           {
             day: s.day,
-            text: `Upgraded ${facilityType} to level ${nextLevel} for $${cost.toLocaleString()}.`,
+            text: `Upgraded ${facilityType} to level ${nextLevel} for ${formatCurrency(cost)}.`,
           },
           ...s.log,
         ].slice(0, 50),
@@ -203,7 +205,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
         log: [
           {
             day: s.day,
-            text: `Updated ${horse.name}'s stud fee to $${newFee.toLocaleString()}.`,
+            text: `Updated ${horse.name}'s stud fee to ${formatCurrency(newFee)}.`,
           },
           ...s.log,
         ].slice(0, 50),
@@ -396,7 +398,6 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     resetSettings: () => {
-      const { createDefaultUserSettings } = require("@/core/settings/settingsTypes");
       set((state: any) => ({
         userSettings: createDefaultUserSettings(state.day),
       }));

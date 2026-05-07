@@ -10,6 +10,7 @@ export const useCash = () => useGame((s: GameState) => s.cash);
 export const useHorses = () => useGame((s: GameState) => s.horses);
 export const useRaces = () => useGame((s: GameState) => s.races);
 export const useLog = () => useGame((s: GameState) => s.log);
+
 export const useExpenses = () => (useGame as any)((s: GameState) => s.expenses, shallow);
 
 /**
@@ -17,5 +18,7 @@ export const useExpenses = () => (useGame as any)((s: GameState) => s.expenses, 
  * Use this when you need multiple core state values in a single hook call
  * Note: Uses type assertion to work around Zustand typing limitation
  */
+
 export const useCoreState = () =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (useGame as any)((s: GameState) => ({ day: s.day, cash: s.cash }), shallow);

@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { getBackstory } from "@/core/newGame/backstories";
 import { SilkPreview } from "./SilkPreview";
 import type { PlayerProfile, BackstoryId } from "@/game/types";
+import { formatCurrency } from "@/components/HorseBits";
 
 interface StepReviewProps {
   profile: PlayerProfile;
@@ -99,7 +100,7 @@ export function StepReview({ profile, backstoryId, onBegin, onBack }: StepReview
                   <div className="flex justify-between items-center">
                     <span className="text-cream-muted">Starting Cash</span>
                     <span className="text-cream font-medium">
-                      ${backstory.startingCash.toLocaleString()}
+                      {formatCurrency(backstory.startingCash)}
                     </span>
                   </div>
                 </TooltipTrigger>

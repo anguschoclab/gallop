@@ -7,7 +7,7 @@ import { TrophyCase } from "@/components/awards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue, formatCurrency } from "@/components/HorseBits";
 import { Building2, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -153,7 +153,7 @@ function StablePage() {
                             "font-[family-name:var(--font-mono)] tabular-nums bg-t700 text-cream",
                           )}
                         >
-                          ${stable.cash.toLocaleString()}
+                          ${formatCurrency(stable.cash)}
                         </Badge>
                       </div>
                     </CardContent>

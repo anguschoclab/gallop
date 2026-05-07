@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PregnancyTimeline } from "@/components/PregnancyTimeline";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { getAvailableStallions } from "@/core/breeding/stallions";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue, formatCurrency } from "@/components/HorseBits";
 import { cn } from "@/lib/utils";
 import { FoalNamingDialog } from "@/components/FoalNamingDialog";
 import { BreedingProgramPanel } from "@/components/BreedingProgramPanel";
@@ -180,7 +180,7 @@ function BreedingPage() {
                       <option key={h.id} value={h.id}>
                         {h.name} (age {Math.floor(h.age)})
                         {h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""} • $
-                        {h.stud?.standingFee.toLocaleString()}
+                        {formatCurrency(h.stud?.standingFee || 0)}
                       </option>
                     ))}
                   </select>

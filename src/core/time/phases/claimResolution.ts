@@ -3,6 +3,7 @@ import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { netProceeds } from "@/game/auction";
 import { hashStr } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
+import { formatCurrency } from "@/components/HorseBits";
 
 /**
  * Phase: Claim Resolution
@@ -94,7 +95,7 @@ export const claimResolutionPhase = {
         playerCash += proceeds;
         newLogs.push({
           day: newDay,
-          text: `${horse.name} was claimed by ${winnerClaim.claimantStableId ? (npcStables.find((s) => s.id === winnerClaim.claimantStableId)?.name ?? "an NPC") : "your stable"} for $${price.toLocaleString()} after ${race.name}. Net proceeds: $${proceeds.toLocaleString()}.`,
+          text: `${horse.name} was claimed by ${winnerClaim.claimantStableId ? (npcStables.find((s) => s.id === winnerClaim.claimantStableId)?.name ?? "an NPC") : "your stable"} for ${formatCurrency(price)} after ${race.name}. Net proceeds: ${formatCurrency(proceeds)}.`,
         });
       } else {
         // Credit NPC consignor
@@ -107,7 +108,7 @@ export const claimResolutionPhase = {
       if (!winnerClaim.claimantStableId) {
         newLogs.push({
           day: newDay,
-          text: `Your claim on ${horse.name} was successful. They join your stable for $${price.toLocaleString()}.`,
+          text: `Your claim on ${horse.name} was successful. They join your stable for ${formatCurrency(price)}.`,
         });
       }
 

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Dice5 } from "lucide-react";
 import { useGame } from "@/game/store";
+import { formatCurrency } from "@/components/HorseBits";
 import type { NewGameOptions } from "@/game/state";
 import { createRng, hashStr } from "@/game/rng";
 import { generateSilk, SILK_PALETTE, SILK_PATTERNS } from "@/game/jockeyGen";
@@ -495,7 +496,7 @@ function StepBackstory({ backstoryId, setBackstoryId }: StepBackstoryProps) {
                 <p className="mt-2 text-sm text-cream-muted">{b.blurb}</p>
                 <dl className="mt-3 grid grid-cols-2 gap-1 text-xs text-cream tabular-nums">
                   <dt className="text-cream-muted">Cash</dt>
-                  <dd>${b.startingCash.toLocaleString()}</dd>
+                  <dd>{formatCurrency(b.startingCash)}</dd>
                   <dt className="text-cream-muted">Horses</dt>
                   <dd>{TOTAL_HORSES(b)}</dd>
                   <dt className="text-cream-muted">Upgraded facilities</dt>
@@ -549,7 +550,7 @@ function StepReview({ stableName, ownerName, silk, backstory }: StepReviewProps)
               Operating capital. You'll spend this on training, entries, and horses.
             </TooltipContent>
           </Tooltip>
-          <dd className="text-cream">${backstory.startingCash.toLocaleString()}</dd>
+          <dd className="text-cream">{formatCurrency(backstory.startingCash)}</dd>
 
           <Tooltip>
             <TooltipTrigger asChild>

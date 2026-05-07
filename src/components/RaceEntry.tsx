@@ -30,7 +30,7 @@ import { JockeyCard } from "./JockeyCard";
 import { RacingSilks } from "./RacingSilks";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
 import { getCurrentYear } from "@/game/raceSchedule";
-import { formatCurrency } from "./HorseBits";
+import { formatCurrency } from "@/components/HorseBits";
 import { toast } from "sonner";
 
 interface RaceEntryProps {
@@ -45,8 +45,10 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
   const [wantToClaim, setWantToClaim] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const allHorses = (useGame as any)((s: any) => s.horses, shallow);
-  const horses = useMemo(() => allHorses.filter((h: any) => h.owned), [allHorses]);
+  const horses = useMemo(() => allHorses.filter((h: Horse) => h.owned), [allHorses]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
   const enterRace = useGame((s) => s.enterRace);
   const enterClaimingRace = useGame((s) => s.enterClaimingRace);
@@ -79,7 +81,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   };
 
   const eligibleHorses = useMemo(() => {
-    return horses.map((h) => ({
+    return horses.map((h: Horse) => ({
       horse: h,
       eligible: isHorseEligibleForRace(h, race, new Set()),
     }));
@@ -312,8 +314,8 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   <AlertTriangle size={18} className="shrink-0 mt-0.5" />
                   <p className="text-xs font-bold">
                     Claiming Race: Any stable may purchase {selectedHorse.name} for{" "}
-                    {formatCurrency(claimingPrice)} after the race. The transfer is automatic. You may
-                    withdraw up to 1 day before the race.
+                    {formatCurrency(claimingPrice)} after the race. The transfer is automatic. You
+                    may withdraw up to 1 day before the race.
                   </p>
                 </div>
               )}
@@ -365,13 +367,13 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   >
                     {isHorseQualifiedForRace(selectedHorse, race)
                       ? "WAIVED"
-                      : `$${race.entryFee.toLocaleString()}`}
+                      : formatCurrency(race.entryFee)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Jockey Riding Fee</span>
                   <span className="font-bold tabular-nums">
-                    ${selectedJockey.ridingFee.toLocaleString()}
+                    {formatCurrency(selectedJockey.ridingFee)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -397,20 +399,31 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   <span>Total Due</span>
                   <span className="text-primary tabular-nums">
                     $
-                    {(isHorseQualifiedForRace(selectedHorse, race)
-                      ? 0
-                      : race.entryFee +
-                        selectedJockey.ridingFee +
-                        (race.graded
-                          ? race.graded.grade === "G1"
-                            ? 500
-                            : race.graded.grade === "G2"
-                              ? 400
-                              : race.graded.grade === "G3"
-                                ? 300
-                                : 200
-                          : 150)
-                    ).toLocaleString()}
+                    {formatCurrency(
+                      isHorseQualifiedForRace(selectedHorse, race)
+                        ? selectedJockey.ridingFee +
+                            (race.graded
+                              ? race.graded.grade === "G1"
+                                ? 500
+                                : race.graded.grade === "G2"
+                                  ? 400
+                                  : race.graded.grade === "G3"
+                                    ? 300
+                                    : 200
+                              : 150)
+                        : race.entryFee +
+                            selectedJockey.ridingFee +
+                            (race.graded
+                              ? race.graded.grade === "G1"
+                                ? 500
+                                : race.graded.grade === "G2"
+                                  ? 400
+                                  : race.graded.grade === "G3"
+                                    ? 300
+                                    : 200
+                              : 150) +
+                            (wantToClaim ? race.claimingPrice! : 0),
+                    )}
                   </span>
                 </div>
               </div>
@@ -466,7 +479,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   <label htmlFor="claim-checkbox" className="flex-1">
                     <div className="font-bold">Claim this horse</div>
                     <div className="text-sm text-muted-foreground">
-                      If you win the claim, you'll pay ${race.claimingPrice.toLocaleString()} and
+                      If you win the claim, you'll pay {formatCurrency(race.claimingPrice)} and
                       become the new owner. If another stable claims it, you'll lose the horse but
                       receive the claiming price.
                     </div>
@@ -522,7 +535,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 if (step === 3 && race.claimingPrice) {
                   setStep(4);
                 } else {
-                  setStep((s) => (s + 1) as any);
+                  setStep((s) => Math.min(s + 1, 4) as 1 | 2 | 3 | 4);
                 }
               }}
               className="uppercase font-black tracking-widest text-[10px]"

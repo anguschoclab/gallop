@@ -105,6 +105,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
       if (level) {
         facilities[type as keyof typeof facilities] = createFacility(
           type as Parameters<typeof createFacility>[0],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           level as any,
           1,
         );

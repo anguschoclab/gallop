@@ -14,7 +14,9 @@ export const consignmentResolutionPhase: PipelinePhase = {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
 
-    const consignmentIntents = intents.filter((i): i is ConsignmentIntent => i.type === "consignment");
+    const consignmentIntents = intents.filter(
+      (i): i is ConsignmentIntent => i.type === "consignment",
+    );
 
     for (const intent of consignmentIntents) {
       const horse = state.horses.find((h) => h.id === intent.horseId);

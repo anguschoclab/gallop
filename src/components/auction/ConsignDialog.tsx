@@ -25,6 +25,7 @@ import {
   KIND_LABELS,
   netProceeds,
 } from "@/game/auction";
+import { formatCurrency } from "@/components/HorseBits";
 import { horsePriceWithPedigree } from "@/core/horse/pricing";
 import type { Horse, AuctionSale } from "@/game/types";
 
@@ -74,7 +75,7 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
           <div className="rounded-lg border bg-muted/40 p-3 space-y-1">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Estimated value</span>
-              <span className="font-medium tabular-nums">${baseValue.toLocaleString()}</span>
+              <span className="font-medium tabular-nums">{formatCurrency(baseValue)}</span>
             </div>
             <p className="text-xs text-muted-foreground">
               Based on stats, age, and pedigree. The market may pay above or below.
@@ -86,7 +87,7 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">Reserve price</label>
               <span className="text-sm tabular-nums font-semibold">
-                ${reservePrice.toLocaleString()}{" "}
+                {formatCurrency(reservePrice)}{" "}
                 <span className="text-muted-foreground font-normal">({reservePct}%)</span>
               </span>
             </div>
@@ -111,16 +112,16 @@ export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
             </div>
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>Commission at reserve</span>
-              <span className="tabular-nums">${commissionAtReserve.toLocaleString()}</span>
+              <span className="tabular-nums">{formatCurrency(commissionAtReserve)}</span>
             </div>
             <div className="border-t pt-1.5 mt-1.5 space-y-0.5">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Net if sold at reserve</span>
-                <span className="font-semibold tabular-nums">${netAtReserve.toLocaleString()}</span>
+                <span className="font-semibold tabular-nums">{formatCurrency(netAtReserve)}</span>
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>Net at strong outcome (reserve × 1.5)</span>
-                <span className="tabular-nums">${netAtUpside.toLocaleString()}</span>
+                <span className="tabular-nums">{formatCurrency(netAtUpside)}</span>
               </div>
             </div>
           </div>

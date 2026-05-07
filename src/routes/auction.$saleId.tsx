@@ -28,14 +28,16 @@ import {
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { getDisplayableStats } from "@/game/scouting";
 import { KIND_LABELS, netProceeds, commissionAmount, CONSIGNMENT_COMMISSION } from "@/game/auction";
-import { Gavel, ChevronLeft, ChevronRight, Trophy, Trash2, Search, Zap } from "lucide-react";
+import { Gavel, ChevronLeft, ChevronRight, Trophy, Trash2, Search } from "lucide-react";
 import { formatCurrency } from "@/components/HorseBits";
 import { toast } from "sonner";
 import type { AuctionLot } from "@/game/types";
 import { cn } from "@/lib/utils";
 import { HorsePortrait } from "@/components/HorsePortrait";
 import { AuctionTheater } from "@/components/auction/AuctionTheater";
+import { BuyNowDialog } from "@/components/auction/BuyNowDialog";
 import { z } from "zod";
+import { filterAndSortLots } from "@/services/auctionLotFilter";
 
 const auctionBrowseSearchSchema = z.object({
   sex: z.enum(["colt", "filly", "gelding", "mare"]).optional(),
@@ -98,62 +100,17 @@ function AuctionSalePage() {
   );
 
   // C1/C2/C3 — Derive filtered + sorted lot list
-  const filteredLots = useMemo(() => {
-    let result: AuctionLot[] = activeLots;
-
-    // Sex filter
-    if (sex) {
-      result = result.filter((l) => {
-        const h = horses.find((h) => h.id === l.horseId);
-        return h?.gender === sex;
-      });
-    }
-
-    // Age band filter
-    if (ageBand) {
-      result = result.filter((l) => {
-        const h = horses.find((h) => h.id === l.horseId);
-        if (!h) return false;
-        if (ageBand === "weanling") return h.age === 0;
-        if (ageBand === "yearling") return h.age === 1;
-        if (ageBand === "2yo") return h.age === 2;
-        if (ageBand === "3yo+") return h.age >= 3;
-        return true;
-      });
-    }
-
-    // Reserve band filter
-    if (reserveBand) {
-      result = result.filter((l) => {
-        if (reserveBand === "under10k") return l.reservePrice < 10_000;
-        if (reserveBand === "10k-50k") return l.reservePrice >= 10_000 && l.reservePrice <= 50_000;
-        if (reserveBand === "over50k") return l.reservePrice > 50_000;
-        return true;
-      });
-    }
-
-    // Search filter — case-insensitive substring on name and sire
-    if (q && q.trim().length > 0) {
-      const needle = q.trim().toLowerCase();
-      result = result.filter((l) => {
-        const h = horses.find((h) => h.id === l.horseId);
-        if (!h) return false;
-        return (
-          h.name.toLowerCase().includes(needle) || (h.sireName ?? "").toLowerCase().includes(needle)
-        );
-      });
-    }
-
-    // Sort
-    if (sort === "reserve-asc") {
-      result = [...result].sort((a, b) => a.reservePrice - b.reservePrice);
-    } else if (sort === "reserve-desc") {
-      result = [...result].sort((a, b) => b.reservePrice - a.reservePrice);
-    }
-    // sort === "lot" (or undefined) preserves original lot-number order
-
-    return result;
-  }, [activeLots, horses, sex, ageBand, reserveBand, sort, q]);
+  const filteredLots = useMemo(
+    () =>
+      filterAndSortLots(activeLots, horses, {
+        sex,
+        ageBand,
+        reserveBand,
+        sort,
+        q,
+      }),
+    [activeLots, horses, sex, ageBand, reserveBand, sort, q],
+  );
 
   // C5 — Reset lot index to 0 when filters/sort change
   const filterKey = `${sex ?? ""}|${ageBand ?? ""}|${reserveBand ?? ""}|${sort ?? ""}|${q ?? ""}`;
@@ -161,7 +118,7 @@ function AuctionSalePage() {
   useEffect(() => {
     setLotIndex(0);
     setMessage("");
-  }, [filterKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filterKey]);
 
   const hasActiveFilters =
     sex !== undefined || ageBand !== undefined || reserveBand !== undefined || q !== undefined;
@@ -210,7 +167,7 @@ function AuctionSalePage() {
     }
     const result = placeBookBid(sale!.id, currentLot.id, amount);
     if (result.ok) {
-      setMessage(`Bid of $${amount.toLocaleString()} placed.`);
+      setMessage(`Bid of ${formatCurrency(amount)} placed.`);
       setBidInput("");
       setMaxBid("");
     } else {
@@ -312,7 +269,7 @@ function AuctionSalePage() {
                                 <div className="flex items-center justify-between">
                                   <span className="text-cream-muted">Hammer price</span>
                                   <span className="tabular-nums font-medium">
-                                    ${lot.hammerPrice.toLocaleString()}
+                                    ${formatCurrency(lot.hammerPrice)}
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between">
@@ -320,13 +277,13 @@ function AuctionSalePage() {
                                     Commission ({Math.round(CONSIGNMENT_COMMISSION * 100)}%)
                                   </span>
                                   <span className="tabular-nums text-destructive">
-                                    −${commissionAmount(lot.hammerPrice).toLocaleString()}
+                                    −${formatCurrency(commissionAmount(lot.hammerPrice))}
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between font-semibold">
                                   <span className="text-cream-muted">Net proceeds</span>
                                   <span className="tabular-nums text-success">
-                                    ${netProceeds(lot.hammerPrice).toLocaleString()}
+                                    ${formatCurrency(netProceeds(lot.hammerPrice))}
                                   </span>
                                 </div>
                               </>
@@ -357,7 +314,7 @@ function AuctionSalePage() {
                   <p className="text-sm text-cream-muted tabular-nums">
                     <strong className="text-cream">{soldLots.length}</strong>{" "}
                     {soldLots.length === 1 ? "horse" : "horses"} sold · Total net proceeds:{" "}
-                    <strong className="text-cream">${totalNet.toLocaleString()}</strong> (after{" "}
+                    <strong className="text-cream">${formatCurrency(totalNet)}</strong> (after{" "}
                     {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission)
                   </p>
                 );
@@ -751,14 +708,14 @@ function AuctionSalePage() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-cream-muted">Current price</span>
                     <p className="text-sm text-cream-muted mt-0.5 tabular-nums">
-                      {currentPrice > 0 ? `$${currentPrice.toLocaleString()}` : "No bids"}
+                      {currentPrice > 0 ? formatCurrency(currentPrice) : "No bids"}
                     </p>
                   </div>
                   {!isResolved && !currentLot.passed && (
                     <>
                       <div className="flex items-center justify-between text-sm text-cream-muted">
                         <span>Next bid</span>
-                        <span className="tabular-nums">${nextBid.toLocaleString()}</span>
+                        <span className="tabular-nums">{formatCurrency(nextBid)}</span>
                       </div>
 
                       {/* Buy-now label on lot card (secondary, muted) */}
@@ -772,71 +729,15 @@ function AuctionSalePage() {
                       )}
 
                       {/* D1 — Buy Now button + AlertDialog */}
-                      {currentLot.buyNowPrice !== undefined &&
-                        !isPlayerConsigned &&
-                        (() => {
-                          const bnp = currentLot.buyNowPrice!;
-                          const formatted = formatCurrency(bnp);
-                          const canAfford = cash >= bnp;
-                          return (
-                            <div className="space-y-1">
-                              {canAfford ? (
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button variant="outline" className="w-full gap-2">
-                                      <Zap className="h-4 w-4" />
-                                      Buy Now {formatted}
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>
-                                        Buy {horse?.name} now for {formatted}?
-                                      </AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        This immediately ends the lot. Your account will be debited{" "}
-                                        {formatted} and {horse?.name} will transfer to your stable.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() => {
-                                          const result = buyNow(sale!.id, currentLot.id);
-                                          if (result.ok) {
-                                            toast.success(
-                                              `${horse?.name ?? "Horse"} joins your stable.`,
-                                            );
-                                          } else {
-                                            if (result.reason === "buy_now_unavailable") {
-                                              toast.info("Buy-now removed — bidding is active.");
-                                            } else {
-                                              toast.error(`Buy Now failed: ${result.reason}`);
-                                            }
-                                          }
-                                        }}
-                                      >
-                                        Buy Now
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              ) : (
-                                <div className="space-y-1">
-                                  <Button variant="outline" className="w-full gap-2" disabled>
-                                    <Zap className="h-4 w-4" />
-                                    Buy Now {formatted}
-                                  </Button>
-                                  <p className="text-xs text-destructive tabular-nums text-center">
-                                    Insufficient funds. You need{" "}
-                                    {formatCurrency(bnp - cash)}{" "}
-                                    more.
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })()}
+                      {currentLot.buyNowPrice !== undefined && !isPlayerConsigned && (
+                        <BuyNowDialog
+                          horseName={horse?.name ?? "Horse"}
+                          buyNowPrice={currentLot.buyNowPrice}
+                          cash={cash}
+                          onBuyNow={() => buyNow(sale!.id, currentLot.id)}
+                          disabled={cash < currentLot.buyNowPrice}
+                        />
+                      )}
 
                       {/* Quick bid */}
                       <Button
@@ -845,7 +746,7 @@ function AuctionSalePage() {
                         disabled={cash < nextBid}
                       >
                         <Gavel className="h-4 w-4 mr-2" />
-                        Bid <span className="tabular-nums">${nextBid.toLocaleString()}</span>
+                        Bid <span className="tabular-nums">{formatCurrency(nextBid)}</span>
                       </Button>
 
                       {/* Custom bid */}
@@ -900,15 +801,12 @@ function AuctionSalePage() {
                     <div className="flex items-center gap-2 text-sm">
                       <Trophy className="h-4 w-4 text-fame" />
                       <span className="tabular-nums">
-                        Sold for <strong>${currentLot.hammerPrice.toLocaleString()}</strong>
+                        Sold for <strong>{formatCurrency(currentLot.hammerPrice)}</strong>
                         {currentLot.soldToStableId
                           ? ` to ${stables.find((s) => s.id === currentLot.soldToStableId)?.name ?? "NPC"}`
                           : " to you"}
                         {isPlayerConsigned && (
-                          <>
-                            {" "}
-                            (gross · net ${netProceeds(currentLot.hammerPrice).toLocaleString()})
-                          </>
+                          <> (gross · net {formatCurrency(netProceeds(currentLot.hammerPrice))})</>
                         )}
                       </span>
                     </div>
@@ -950,7 +848,7 @@ function AuctionSalePage() {
                   return (
                     <p>
                       Top lot: <strong>{topHorse?.name ?? "Unknown"}</strong> — $
-                      {top.hammerPrice!.toLocaleString()}
+                      {formatCurrency(top.hammerPrice!)}
                     </p>
                   );
                 })()}

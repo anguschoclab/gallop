@@ -15,6 +15,7 @@ import type { Race, Horse, Jockey } from "./types";
 import type { Runner } from "@/core/race/raceSim";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { beyerFigure } from "./beyer";
+import { formatCurrency } from "@/components/HorseBits";
 import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
@@ -37,10 +38,12 @@ export function resolveLiveRaceWithImpacts(
   runners: Runner[],
   horses: Horse[],
   jockeys: Jockey[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   npcStables: any[],
   day: number,
 ): ResolverContext {
   if (race.resolved) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return {
       state: { horses, jockeys, npcStables, races: [race] } as any,
       intents: [],
@@ -48,7 +51,6 @@ export function resolveLiveRaceWithImpacts(
       impactLog: [],
       day,
     };
-  }
 
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
   const impacts: AnyImpact[] = [];
@@ -236,6 +238,7 @@ export function resolveLiveRaceWithImpacts(
                   lifetimeG1Foals: newG1Foals,
                 },
               },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               { horses, npcStables } as any,
             )
           : sire.stud.standingFee;
@@ -254,7 +257,7 @@ export function resolveLiveRaceWithImpacts(
             lifetimeStakesFoals: newStakesFoals,
             lifetimeG1Foals: newG1Foals,
           },
-          reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee adjusted to $${newFee.toLocaleString()}.` : ""}`,
+          reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee adjusted to ${formatCurrency(newFee)}.` : ""}`,
         } as StudCareerImpact);
       }
     }
@@ -354,12 +357,13 @@ export function resolveLiveRaceWithImpacts(
       phase: "raceResolution",
       logLevel: "always",
       type: "log",
-      text: `${race.name} — ${summary}${prize > 0 ? ` (won $${prize.toLocaleString()})` : ""}`,
+      text: `${race.name} — ${summary}${prize > 0 ? ` (won ${formatCurrency(prize)})` : ""}`,
       reason: "Race summary",
     } as LogImpact);
   }
 
   // Apply impacts to state
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const resolverContext: ResolverContext = {
     state: { horses, jockeys, npcStables, races: [race] } as any,
     intents: [],

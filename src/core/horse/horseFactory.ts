@@ -240,11 +240,13 @@ export function generateNpcHorse(
   const genTier = tier === "elite" ? "elite" : tier === "mid" ? "mid" : "budget";
 
   // Personality config
-  const config =
-    (stable.personality && (PERSONALITY_CONFIG as any)[stable.personality]) ||
-    PERSONALITY_CONFIG.conservative;
+  const config = stable.personality
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((PERSONALITY_CONFIG as any)[stable.personality] || PERSONALITY_CONFIG.conservative)
+    : PERSONALITY_CONFIG.conservative;
   const region = stable.country
-    ? getRegionalSystem((stable.country ?? "Belmont") as any)
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getRegionalSystem((stable.country ?? "Belmont") as any)
     : "north_america";
 
   const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : rng.range(3, 6));

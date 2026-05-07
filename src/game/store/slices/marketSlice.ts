@@ -20,6 +20,7 @@ import { createRng, hashStr } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
 import type { PurchaseIntent } from "@/core/resolver/intents";
 import { DEFAULT_PLAYER_RESERVE_RATIO, calculateLotValuation } from "@/game/auction";
+import { formatCurrency } from "@/components/HorseBits";
 
 export type MarketSlice = MarketState & {
   buyHorse: (horseId: string) => void;
@@ -102,7 +103,7 @@ export function createMarketSlice(
       set({
         cash: s.cash - price,
         log: [
-          { day: s.day, text: `${h.name} purchase scheduled for $${price.toLocaleString()}.` },
+          { day: s.day, text: `${h.name} purchase scheduled for ${formatCurrency(price)}.` },
           ...s.log,
         ].slice(0, 50),
       });
@@ -180,7 +181,7 @@ export function createMarketSlice(
         log: [
           {
             day: s.day,
-            text: `${horse.name} consigned to ${sale.name} (reserve $${finalReserve.toLocaleString()}).`,
+            text: `${horse.name} consigned to ${sale.name} (reserve ${formatCurrency(finalReserve)}).`,
           },
           ...s.log,
         ].slice(0, 50),
@@ -252,7 +253,7 @@ export function createMarketSlice(
         log: [
           {
             day: s.day,
-            text: `Book bid of $${amount.toLocaleString()} placed on lot ${lotId} in ${sale.name}.`,
+            text: `Book bid of ${formatCurrency(amount)} placed on lot ${lotId} in ${sale.name}.`,
           },
           ...s.log,
         ].slice(0, 50),
@@ -348,7 +349,7 @@ export function createMarketSlice(
         log: [
           {
             day: s.day,
-            text: `${horse.name} purchased via Buy Now for $${buyNowPrice.toLocaleString()}.`,
+            text: `${horse.name} purchased via Buy Now for ${formatCurrency(buyNowPrice)}.`,
           },
           ...s.log,
         ].slice(0, 50),
@@ -435,7 +436,7 @@ export function createMarketSlice(
           log: [
             {
               day: s.day,
-              text: `${horse.name} acquired from ${stable.name} for $${amount.toLocaleString()}.`,
+              text: `${horse.name} acquired from ${stable.name} for ${formatCurrency(amount)}.`,
             },
             ...s.log,
           ].slice(0, 50),
@@ -446,7 +447,7 @@ export function createMarketSlice(
           log: [
             {
               day: s.day,
-              text: `Private sale offer of $${amount.toLocaleString()} for ${horse.name} submitted to ${stable.name}.`,
+              text: `Private sale offer of ${formatCurrency(amount)} for ${horse.name} submitted to ${stable.name}.`,
             },
             ...s.log,
           ].slice(0, 50),
@@ -496,7 +497,7 @@ export function createMarketSlice(
           log: [
             {
               day: s.day,
-              text: `Counter offer accepted. ${horse?.name ?? "Horse"} joins your stable for $${finalAmount.toLocaleString()}.`,
+              text: `Counter offer accepted. ${horse?.name ?? "Horse"} joins your stable for ${formatCurrency(finalAmount)}.`,
             },
             ...s.log,
           ].slice(0, 50),
@@ -540,7 +541,7 @@ export function createMarketSlice(
         log: [
           {
             day: s.day,
-            text: `${horse.name} entered in ${race.name} (claiming $${race.claiming!.price.toLocaleString()}).`,
+            text: `${horse.name} entered in ${race.name} (claiming ${formatCurrency(race.claiming!.price)}).`,
           },
           ...s.log,
         ].slice(0, 50),
@@ -604,7 +605,7 @@ export function createMarketSlice(
         log: [
           {
             day: s.day,
-            text: `Claim filed on ${horse.name} in ${race.name} for $${race.claiming.price.toLocaleString()}.`,
+            text: `Claim filed on ${horse.name} in ${race.name} for ${formatCurrency(race.claiming.price)}.`,
           },
           ...s.log,
         ].slice(0, 50),

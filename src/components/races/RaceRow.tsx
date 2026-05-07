@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
 import { AlertTriangle } from "lucide-react";
+import { formatCurrency } from "@/components/HorseBits";
+import type { Race } from "@/game/types";
 
 interface RaceRowProps {
-  race: any;
+  race: Race;
   onEnter?: () => void;
 }
 
 export function RaceRow({ race, onEnter }: RaceRowProps) {
-  const ownedCount = race.entries.filter((e: any) => e.owned).length;
+  const ownedCount = race.entries.filter((e) => e.owned).length;
   const gradeLabel = race.graded?.grade;
   const gradeColor = gradeLabel ? getGradeColorClass(gradeLabel) : "";
   const isClaiming = !!race.claiming;
@@ -50,7 +52,7 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
           {isClaiming && claimingPrice !== undefined && (
             <Badge className="h-4 px-1.5 text-[9px] font-bold bg-warning/20 text-warning border border-warning/40 flex items-center gap-0.5">
               <AlertTriangle className="h-2.5 w-2.5" />
-              Claiming ${claimingPrice.toLocaleString()}
+              Claiming {formatCurrency(claimingPrice)}
             </Badge>
           )}
           {/* D3 — "Entered — at risk" badge when player has entered a claiming race */}
@@ -71,7 +73,7 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
       <div className="text-right shrink-0 flex items-center gap-4">
         <div>
           <div className="text-sm font-bold tabular-nums font-[family-name:var(--font-mono)]">
-            ${race.purse.toLocaleString()}
+            {formatCurrency(race.purse)}
           </div>
           <div className="text-[10px] text-cream-muted tabular-nums font-[family-name:var(--font-mono)]">
             {race.entries.length}/{race.fieldSize} full

@@ -1,9 +1,10 @@
 // Claiming Race Mechanics
 // Handles claiming transactions, horse transfers, and claiming eligibility
 
-import type { Race, Horse, ClaimingPrice } from "./types";
-import type { Rng } from "@/game/rng";
+import type { Horse, Race, Claim, ClaimingPrice, ClaimingRaceEntry } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { createRng, hashStr } from "./rng";
+import { formatCurrency } from "@/components/HorseBits";
 
 // Horse transfer result from a claiming race
 export type HorseTransfer = {
@@ -85,7 +86,7 @@ export function processClaims(
 
     transfers.push(transfer);
     logs.push(
-      `${horse.name} claimed for $${race.claimingPrice.toLocaleString()} by stable ${winningClaim.claimantStableId} after ${race.name}.`,
+      `${horse.name} claimed for ${formatCurrency(race.claimingPrice)} by stable ${winningClaim.claimantStableId} after ${race.name}.`,
     );
 
     // Log other unsuccessful claimants

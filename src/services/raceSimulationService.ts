@@ -1,4 +1,4 @@
-import type { Horse, Race, Jockey } from "@/game/types";
+import type { Horse, Race, Jockey, Stable } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import {
   buildRunner,
@@ -23,6 +23,7 @@ export interface RaceSimulationDependencies {
   race: Race;
   horses: Horse[];
   jockeys: Jockey[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   npcStables?: any[];
   npcAIManager?: NpcAIManager;
   currentDay?: number;

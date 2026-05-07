@@ -4,7 +4,7 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { overall, NumericValue } from "@/components/HorseBits";
+import { overall, NumericValue, formatCurrency } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { Trophy, BarChart2, Calendar, TrendingUp, DollarSign } from "lucide-react";
 import { getGradeColorClass } from "@/core/race/grading";
@@ -89,7 +89,7 @@ function Dashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold font-[family-name:var(--font-mono)] tabular-nums text-cream">
-              ${cash.toLocaleString()}
+              ${formatCurrency(cash)}
             </p>
           </CardContent>
         </Card>
@@ -364,7 +364,7 @@ function Dashboard() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">
-                    ${r.purse.toLocaleString()}
+                    ${formatCurrency(r.purse)}
                   </p>
                   {r.entries.some((e) => e.owned) && (
                     <Badge className="text-[9px] bg-success text-t950">Entered</Badge>

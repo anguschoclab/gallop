@@ -14,13 +14,13 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
 
   const gradeData = grades.map((grade) => {
     const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
-    const ownedEntries = gradeRaces.filter((r) => r.entries.some((e: any) => e.owned));
+    const ownedEntries = gradeRaces.filter((r) => r.entries.some((e) => e.owned));
 
     let topProj = null;
     const allOwnedProjs: number[] = [];
 
     for (const r of ownedEntries) {
-      const ownedIds = r.entries.filter((e: any) => e.owned).map((e: any) => e.horseId);
+      const ownedIds = r.entries.filter((e) => e.owned).map((e) => e.horseId);
       for (const id of ownedIds) {
         const horse = horses.find((h) => h.id === id);
         if (horse) {

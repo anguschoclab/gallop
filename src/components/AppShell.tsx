@@ -23,7 +23,13 @@ import {
   DollarSign,
   Building2,
   Award,
+  Users,
+  Map,
+  Clock,
+  LayoutGrid,
+  Star,
 } from "lucide-react";
+import { formatCurrency } from "@/components/HorseBits";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
@@ -38,12 +44,16 @@ const navSections = [
       { to: "/", label: "Dashboard", icon: Home, exact: true },
       { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
+      { to: "/settings", label: "Settings", icon: Settings, exact: false },
     ],
   },
   {
     label: "My Stable",
     items: [
       { to: "/stable", label: "Roster", icon: Trophy, exact: false },
+      { to: "/horse-gallery", label: "Horse Gallery", icon: LayoutGrid, exact: false },
+      { to: "/jockeys", label: "Jockeys", icon: Users, exact: false },
+      { to: "/scheduler", label: "Scheduler", icon: Clock, exact: false },
       {
         to: "/breeding",
         label: "Breeding",
@@ -60,9 +70,19 @@ const navSections = [
   {
     label: "The World",
     items: [
-      { to: "/races", label: "Racing Calendar", icon: Calendar, exact: false },
+      {
+        to: "/races",
+        label: "Racing Calendar",
+        icon: Calendar,
+        exact: false,
+        subItems: [{ to: "/calendar", label: "Calendar", icon: Calendar, exact: false }],
+      },
       { to: "/market", label: "Horse Market", icon: Store, exact: false },
       { to: "/auction", label: "Auctions", icon: Gavel, exact: false },
+      { to: "/npc-stables", label: "NPC Stables", icon: Map, exact: false },
+      { to: "/stallions", label: "Stallions", icon: Star, exact: false },
+      { to: "/sire-watch", label: "Sire Watch", icon: Star, exact: false },
+      { to: "/sire-leaderboards", label: "Sire Leaderboards", icon: Trophy, exact: false },
     ],
   },
 ] as const;
@@ -172,7 +192,7 @@ export function AppShell() {
             <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Cash</p>
             {/* Design Bible: Numbers use IBM Plex Mono with tabular-nums */}
             <p className="text-[22px] font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">
-              ${cash.toLocaleString()}
+              {formatCurrency(cash)}
             </p>
           </div>
           <div className="px-3 py-1 text-xs text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">

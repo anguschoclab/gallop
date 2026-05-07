@@ -469,6 +469,7 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
 
       default:
         // Unknown impact type - log warning
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         console.warn(`Unknown impact type: ${(impact as any).type}`);
     }
   });
@@ -493,11 +494,18 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
         phase: impact.phase,
         type: impact.type,
         entityId:
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (impact as any).entityId ||
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (impact as any).horseId ||
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (impact as any).raceId ||
           "unknown",
-        details: (impact as any).reason || impact.type,
+        details:
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (impact as any).reason ||
+          impact.type,
+
         logLevel: impact.logLevel,
       });
     }
@@ -523,7 +531,8 @@ export function validateIntent(
     case "training": {
       const horse = state.horses.find((h) => h.id === intent.horseId);
       if (!horse) return { valid: false, reason: "Horse not found" };
-      if (horse.consignedSaleId) return { valid: false, reason: "Horse is consigned to an auction" };
+      if (horse.consignedSaleId)
+        return { valid: false, reason: "Horse is consigned to an auction" };
       if (horse.energy < 20) return { valid: false, reason: "Insufficient energy" };
       break;
     }
@@ -532,7 +541,8 @@ export function validateIntent(
       const horse = state.horses.find((h) => h.id === intent.horseId);
       const race = state.races.find((r) => r.id === intent.raceId);
       if (!horse) return { valid: false, reason: "Horse not found" };
-      if (horse.consignedSaleId) return { valid: false, reason: "Horse is consigned to an auction" };
+      if (horse.consignedSaleId)
+        return { valid: false, reason: "Horse is consigned to an auction" };
       if (!race) return { valid: false, reason: "Race not found" };
       if (race.resolved) return { valid: false, reason: "Race already resolved" };
       if (horse.energy < 40) return { valid: false, reason: "Insufficient energy" };
@@ -563,7 +573,8 @@ export function validateIntent(
       const horse = state.horses.find((h) => h.id === intent.horseId);
       if (!race) return { valid: false, reason: "Race not found" };
       if (!horse) return { valid: false, reason: "Horse not found" };
-      if (horse.consignedSaleId) return { valid: false, reason: "Horse is consigned to an auction" };
+      if (horse.consignedSaleId)
+        return { valid: false, reason: "Horse is consigned to an auction" };
       if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
       if (!race.entries.some((e) => e.horseId === intent.horseId)) {
         return { valid: false, reason: "Horse is not entered in this race" };

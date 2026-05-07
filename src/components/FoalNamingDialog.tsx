@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -32,11 +32,11 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
 
   const existingNamesSet = useMemo(() => new Set(usedHorseNames), [usedHorseNames]);
   const deceasedNamesSet = useMemo(
-    () => new Set(hallOfFame.map((h) => h.name.toLowerCase())),
+    () => new Set((hallOfFame || []).map((h) => h.horseName.toLowerCase())),
     [hallOfFame],
   );
 
-  const generateSuggestions = () => {
+  const generateSuggestions = useCallback(() => {
     if (!foal) return;
     const rng = createRng(Date.now());
     const newSuggestions: string[] = [];
@@ -56,7 +56,7 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
       newSuggestions.push(suggestion);
     }
     setSuggestions(newSuggestions);
-  };
+  }, [foal, existingNamesSet, deceasedNamesSet]);
 
   useEffect(() => {
     if (isOpen && foal) {
@@ -64,7 +64,7 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
       setName("");
       setError(null);
     }
-  }, [isOpen, foalId]);
+  }, [isOpen, foal, generateSuggestions, foalId]);
 
   useEffect(() => {
     if (name) {

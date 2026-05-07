@@ -117,6 +117,7 @@ export async function listFiles(): Promise<string[]> {
   try {
     const files: string[] = [];
     // Iterate through directory entries
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     for await (const entry of opfsRoot as any) {
       if (entry.kind === "file") {
         files.push(entry.name);
@@ -140,6 +141,7 @@ export async function clearAll(): Promise<void> {
   try {
     // Collect all file names first
     const fileNames: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     for await (const entry of opfsRoot as any) {
       if (entry.kind === "file") {
         fileNames.push(entry.name);

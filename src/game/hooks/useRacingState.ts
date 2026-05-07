@@ -13,9 +13,11 @@ export const useTrainingUsed = () => useGame((s: GameState) => s.trainingUsed);
 /**
  * Multiple racing state values with shallow comparison
  * Use this when you need multiple racing state values in a single hook call
- * Note: Uses type assertion to work around Zustand typing limitation
+ * Note: Uses type assertion to work around Zustand typing limitation with shallow comparison
  */
+
 export const useRacingState = () =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (useGame as any)(
     (s: GameState) => ({
       paceSamples: s.paceSamples,

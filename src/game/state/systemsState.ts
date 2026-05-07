@@ -153,6 +153,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     // Build facilities from backstory spec (complete replace, not merge)
     const facilities: Partial<PlayerFacilities> = {};
     for (const [type, level] of Object.entries(backstory.facilityUpgrades)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       facilities[type as keyof PlayerFacilities] = createFacility(type as any, level as any, 1);
     }
 

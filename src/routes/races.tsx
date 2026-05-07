@@ -458,8 +458,8 @@ function RacesPage() {
                     Claim {horse?.name} for {formatCurrency(cp)}?
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    If your claim is drawn, {formatCurrency(cp)} will be deducted from your account and{" "}
-                    {horse?.name ?? "the horse"} will transfer to your stable after the race
+                    If your claim is drawn, {formatCurrency(cp)} will be deducted from your account
+                    and {horse?.name ?? "the horse"} will transfer to your stable after the race
                     completes. Multiple claims on the same horse are resolved randomly.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

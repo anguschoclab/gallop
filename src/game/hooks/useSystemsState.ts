@@ -6,9 +6,13 @@ import type { GameState } from "@/game/types";
  * Systems state selectors for optional subsystems and advanced features
  */
 export const useNpcStables = () => useGame((s: GameState) => s.npcStables);
-export const useJockeys = () => (useGame as any)((s: GameState) => s.jockeys ?? [], shallow);
+export const useJockeys = () =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (useGame as any)((s: any) => s.jockeys ?? [], shallow);
 export const useAwards = () => useGame((s: GameState) => s.awards);
-export const useCampaigns = () => (useGame as any)((s: GameState) => s.campaigns ?? [], shallow);
+export const useCampaigns = () =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (useGame as any)((s: any) => s.campaigns ?? [], shallow);
 export const useUserSettings = () => useGame((s: GameState) => s.userSettings);
 export const useSireLeaderboards = () => useGame((s: GameState) => s.sireLeaderboards);
 export const useIndustryMeanEarnings = () => useGame((s: GameState) => s.industryMeanEarnings ?? 0);
@@ -16,8 +20,9 @@ export const useIndustryMeanEarnings = () => useGame((s: GameState) => s.industr
 /**
  * Multiple systems state values with shallow comparison
  * Use this when you need multiple systems state values in a single hook call
- * Note: Uses type assertion to work around Zustand typing limitation
+ * Note: Uses type assertion to work around Zustand typing limitation with shallow comparison
  */
+
 export const useSystemsState = () =>
   (useGame as any)(
     (s: GameState) => ({

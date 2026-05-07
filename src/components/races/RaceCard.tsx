@@ -8,19 +8,22 @@ import { getGradeColorClass } from "@/core/race/grading";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
+import { formatCurrency } from "@/components/HorseBits";
+import type { Race } from "@/game/types";
 
 interface RaceCardProps {
-  race: any;
+  race: Race;
   onEnter?: () => void;
 }
 
 export function RaceCard({ race, onEnter }: RaceCardProps) {
-  const ownedCount = race.entries.filter((e: any) => e.owned).length;
+  const ownedCount = race.entries.filter((e) => e.owned).length;
   const gradeLabel = race.graded?.grade;
   const gradeColor = gradeLabel ? getGradeColorClass(gradeLabel) : "bg-muted text-muted-foreground";
   const isClaiming = !!race.claiming;
   const claimingPrice: number | undefined = race.claiming?.price;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const horses = (useGame as any)((s: any) => s.horses, shallow);
   const classBonus = useGame((s) => {
     // Calculate class bonus for odds
@@ -87,7 +90,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
                 {isClaiming && claimingPrice !== undefined && (
                   <Badge className="h-4 px-1.5 text-[9px] font-bold bg-warning/20 text-warning border border-warning/40 flex items-center gap-0.5">
                     <AlertTriangle className="h-2.5 w-2.5" />
-                    Claiming ${claimingPrice.toLocaleString()}
+                    Claiming {formatCurrency(claimingPrice)}
                   </Badge>
                 )}
               </div>
@@ -95,15 +98,12 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3 w-3" /> {race.graded?.track || "Local Track"}
                 </span>
-                <span className="flex items-center gap-1">
-                  <Globe className="h-3 w-3" /> {race.country}
-                </span>
               </div>
             </div>
           </div>
           <div className="text-right flex flex-col items-end">
             <div className="text-sm font-bold tabular-nums font-[family-name:var(--font-mono)]">
-              ${race.purse.toLocaleString()}
+              {formatCurrency(race.purse)}
             </div>
             <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Purse</div>
             {ownedCount === 0 && (

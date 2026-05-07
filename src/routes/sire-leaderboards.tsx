@@ -25,7 +25,7 @@ function SireLeaderboardsPage() {
     );
   }
 
-  const tabs: { key: LeaderboardType; label: string; icon: any }[] = [
+  const tabs: { key: LeaderboardType; label: string; icon: React.ComponentType<any> }[] = [
     { key: "overall", label: "Overall", icon: Trophy },
     { key: "ci", label: "Comparable Index", icon: Target },
     { key: "stakes_producers", label: "Stakes Producers", icon: Award },
@@ -72,6 +72,7 @@ function SireLeaderboardsPage() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function LeaderboardView({ leaderboard }: { leaderboard: any }) {
   if (!leaderboard || leaderboard.rankings.length === 0) {
     return (

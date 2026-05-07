@@ -13,6 +13,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { PaddleCard } from "./PaddleCard";
+import { formatCurrency } from "@/components/HorseBits";
+import { PHASES, chantToPhaseIndex } from "./auctionPhaseStrip";
+import { useScoreboard } from "./useScoreboard";
+import { BidHistoryPanel } from "./BidHistoryPanel";
+import { WinOverlay } from "./WinOverlay";
 import {
   createAuctionRunner,
   nextBidAmount,
@@ -31,78 +36,8 @@ import type { AuctionBidRecord } from "@/game/types";
 
 const TICK_MS = 1500;
 
-// ---------------------------------------------------------------------------
-// Phase strip data + helper (Ac-1)
-// ---------------------------------------------------------------------------
-
-const PHASES: { key: ChantPhase | "sold_passed"; label: string }[] = [
-  { key: "open", label: "Open" },
-  { key: "bidding", label: "Bidding" },
-  { key: "going_once", label: "Going Once" },
-  { key: "going_twice", label: "Going Twice" },
-  { key: "sold_passed", label: "Sold / Passed" },
-];
-
-function chantToPhaseIndex(chant: ChantPhase | undefined): number {
-  switch (chant) {
-    case "open":
-      return 0;
-    case "bidding":
-      return 1;
-    case "going_once":
-      return 2;
-    case "going_twice":
-      return 3;
-    case "sold":
-    case "passed":
-      return 4;
-    default:
-      return 0;
-  }
-}
-
 interface AuctionTheaterProps {
   saleId: string;
-}
-
-/**
- * Pure-derived scoreboard — what the player has done so far in this sale.
- */
-function useScoreboard(saleId: string) {
-  const auctions = useGame((s) => s.auctions);
-  const horses = useGame((s) => s.horses);
-  return useMemo(() => {
-    const sale = auctions?.find((a) => a.id === saleId);
-    if (!sale) return null;
-    let won = 0;
-    let sold = 0;
-    let spent = 0;
-    let netReceived = 0;
-    let topAcquisition: { name: string; price: number } | null = null;
-    let topSale: { name: string; price: number } | null = null;
-    for (const lot of sale.lots) {
-      if (lot.passed || lot.withdrawn) continue;
-      if (!lot.hammerPrice) continue;
-      const horse = horses.find((h) => h.id === lot.horseId);
-      const isPlayerWin = lot.consignorStableId !== undefined && lot.soldToStableId === undefined;
-      const isPlayerSale = lot.consignorStableId === undefined;
-      if (isPlayerWin) {
-        won++;
-        spent += lot.hammerPrice;
-        if (!topAcquisition || lot.hammerPrice > topAcquisition.price) {
-          topAcquisition = { name: horse?.name ?? "Lot", price: lot.hammerPrice };
-        }
-      }
-      if (isPlayerSale) {
-        sold++;
-        netReceived += netProceeds(lot.hammerPrice);
-        if (!topSale || lot.hammerPrice > topSale.price) {
-          topSale = { name: horse?.name ?? "Lot", price: lot.hammerPrice };
-        }
-      }
-    }
-    return { won, sold, spent, netReceived, topAcquisition, topSale };
-  }, [auctions, saleId, horses]);
 }
 
 export function AuctionTheater({ saleId }: AuctionTheaterProps) {
@@ -350,7 +285,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
   };
 
   const onMaxBidSubmit = () => {
-    const cap = Number(maxBid.replace(/[\$,]/g, ""));
+    const cap = Number(maxBid.replace(/[$,]/g, ""));
     if (!cap || isNaN(cap) || cap <= currentBid) {
       setBidError("Max bid must exceed current price.");
       return;
@@ -566,47 +501,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                 </div>
 
                 {/* Ab — Bid history panel */}
-                {historyOpen && (
-                  <div
-                    id="bid-history-panel"
-                    className="rounded-md border bg-muted/30 p-2 space-y-0.5 max-h-40 overflow-y-auto"
-                  >
-                    {bidHistory.length === 0 ? (
-                      <p className="text-xs text-muted-foreground italic text-center py-2">
-                        No bids yet
-                      </p>
-                    ) : (
-                      [...bidHistory].reverse().map((record, idx) => {
-                        const label =
-                          record.stableId === undefined
-                            ? "YOU"
-                            : (stables.find((s) => s.id === record.stableId)?.name ??
-                              record.stableId);
-                        return (
-                          <div
-                            key={idx}
-                            className="flex items-baseline justify-between text-xs gap-3"
-                          >
-                            <span
-                              className={cn(
-                                "font-medium truncate",
-                                record.stableId === undefined && "text-primary",
-                              )}
-                            >
-                              {label}
-                            </span>
-                            <span className="tabular-nums text-right shrink-0">
-                              ${record.amount.toLocaleString()}
-                            </span>
-                            <span className="tabular-nums text-muted-foreground shrink-0 text-[10px]">
-                              t{record.tick}
-                            </span>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                )}
+                {historyOpen && <BidHistoryPanel bidHistory={bidHistory} stables={stables} />}
 
                 {/* YOUR CONSIGNMENT badge — shown while lot is live */}
                 {isPlayerConsignment && !done && (
@@ -640,7 +535,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       <div className="flex items-baseline justify-between">
                         <span className="text-sm text-muted-foreground">Current bid</span>
                         <span className="text-3xl font-bold tabular-nums">
-                          {currentBid > 0 ? `$${currentBid.toLocaleString()}` : "—"}
+                          {currentBid > 0 ? formatCurrency(currentBid) : "—"}
                         </span>
                       </div>
                       {currentBid > 0 && (
@@ -675,7 +570,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                             playerIsLeading && "text-success",
                           )}
                         >
-                          {currentBid > 0 ? `$${currentBid.toLocaleString()}` : "—"}
+                          {currentBid > 0 ? formatCurrency(currentBid) : "—"}
                         </span>
                       </div>
                       {/* Ac-2 — Leading banner */}
@@ -699,7 +594,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span>Next required bid</span>
                         <span className="tabular-nums">
-                          ${nextBidAmount(currentBid).toLocaleString()}
+                          {formatCurrency(nextBidAmount(currentBid))}
                         </span>
                       </div>
 
@@ -712,7 +607,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                           title="Hotkey: Space"
                         >
                           <Gavel className="h-4 w-4 mr-1.5" />
-                          Bid ${nextBidAmount(currentBid).toLocaleString()}
+                          Bid {formatCurrency(nextBidAmount(currentBid))}
                         </Button>
                         <Button variant="ghost" size="sm" onClick={onPass} disabled={done}>
                           <X className="h-4 w-4 mr-1" /> Pass
@@ -765,7 +660,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       {playerMaxBidState !== undefined && (
                         <div className="flex items-center gap-2 rounded-md bg-primary/10 border border-primary/30 px-3 py-1.5 text-sm">
                           <span className="flex-1">
-                            Auto-bidding · cap ${playerMaxBidState.toLocaleString()}
+                            Auto-bidding · cap {formatCurrency(playerMaxBidState)}
                           </span>
                           <button
                             onClick={onCancelMaxBid}
@@ -800,22 +695,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
 
           {/* Ac-3 — Win overlay */}
           {winOverlay && (
-            <div
-              className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-lg bg-background/90 backdrop-blur-sm animate-in fade-in duration-300"
-              role="status"
-              aria-live="polite"
-            >
-              <p className="text-5xl font-black tracking-tight text-emerald-400 uppercase">
-                Acquired
-              </p>
-              <p className="mt-2 text-xl font-semibold">{winOverlay.horseName}</p>
-              <p className="mt-1 text-2xl font-bold tabular-nums">
-                ${winOverlay.hammerPrice.toLocaleString()}
-              </p>
-              <p className="mt-4 text-xs text-muted-foreground">
-                Press any key or wait to continue…
-              </p>
-            </div>
+            <WinOverlay horseName={winOverlay.horseName} hammerPrice={winOverlay.hammerPrice} />
           )}
         </Card>
 
@@ -905,15 +785,15 @@ function ScoreboardStrip({
     <div
       className={`grid gap-2 text-sm ${showProceeds ? "grid-cols-2 sm:grid-cols-5" : "grid-cols-2 sm:grid-cols-4"}`}
     >
-      <ScoreCell label="Cash" value={`$${cash.toLocaleString()}`} />
+      <ScoreCell label="Cash" value={formatCurrency(cash)} />
       <ScoreCell label="Lots remaining" value={String(lotsRemaining)} />
       <ScoreCell
         label="Acquired"
-        value={scoreboard ? `${scoreboard.won} · $${scoreboard.spent.toLocaleString()}` : "—"}
+        value={scoreboard ? `${scoreboard.won} · ${formatCurrency(scoreboard.spent)}` : "—"}
       />
       <ScoreCell label="Sold" value={scoreboard ? String(scoreboard.sold) : "—"} />
       {showProceeds && (
-        <ScoreCell label="Proceeds" value={`$${scoreboard.netReceived.toLocaleString()}`} />
+        <ScoreCell label="Proceeds" value={formatCurrency(scoreboard.netReceived)} />
       )}
     </div>
   );
@@ -949,11 +829,11 @@ function PostSaleSummary({
           <>
             <div className="grid grid-cols-2 gap-3">
               <SummaryStat label="Lots acquired" value={String(sb.won)} />
-              <SummaryStat label="Total spent" value={`$${sb.spent.toLocaleString()}`} />
+              <SummaryStat label="Total spent" value={formatCurrency(sb.spent)} />
               <SummaryStat label="Lots sold" value={String(sb.sold)} />
               <SummaryStat
                 label="Net received"
-                value={`$${sb.netReceived.toLocaleString()}`}
+                value={formatCurrency(sb.netReceived)}
                 hint={
                   sb.sold > 0
                     ? `after ${Math.round((commissionAmount(sb.netReceived / 0.94) / (sb.netReceived / 0.94)) * 100)}% commission`
@@ -967,14 +847,14 @@ function PostSaleSummary({
                   Top acquisition
                 </p>
                 <p className="font-semibold">{sb.topAcquisition.name}</p>
-                <p className="text-sm tabular-nums">${sb.topAcquisition.price.toLocaleString()}</p>
+                <p className="text-sm tabular-nums">{formatCurrency(sb.topAcquisition.price)}</p>
               </div>
             )}
             {sb.topSale && (
               <div className="rounded-lg border-l-4 border-l-warning bg-warning/5 p-3">
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">Best sale</p>
                 <p className="font-semibold">{sb.topSale.name}</p>
-                <p className="text-sm tabular-nums">${sb.topSale.price.toLocaleString()}</p>
+                <p className="text-sm tabular-nums">{formatCurrency(sb.topSale.price)}</p>
               </div>
             )}
           </>

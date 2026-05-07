@@ -6,6 +6,7 @@ import {
   formatAgeRestrictions,
   formatAllRestrictions,
 } from "@/core/race/restrictions";
+import { formatCurrency } from "@/components/HorseBits";
 
 interface RaceDetailPanelProps {
   race: {
@@ -64,7 +65,7 @@ export function RaceDetailPanel({ race }: RaceDetailPanelProps) {
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
             <span className="text-cream-muted">Purse</span>
-            <div className="font-semibold text-cream">${purse.toLocaleString()}</div>
+            <div className="font-semibold text-cream">{formatCurrency(purse)}</div>
           </div>
           <div>
             <span className="text-cream-muted">Distance</span>

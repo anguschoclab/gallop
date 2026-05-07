@@ -2,6 +2,7 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { generateUUID } from "@/game/uuid";
 import type { StudCareerImpact, LogImpact } from "@/core/resolver/impacts";
 import { calculateRecommendedStudFee } from "@/core/breeding/stallions";
+import { formatCurrency } from "@/components/HorseBits";
 
 /**
  * Phase: Stallion Retirement (Order 145)
@@ -66,7 +67,7 @@ export const stallionRetirementPhase: PipelinePhase = {
           phase: "stallionRetirement",
           logLevel: "always",
           type: "log",
-          text: `${horse.name} has been retired to stud with a standing fee of $${fee.toLocaleString()}.`,
+          text: `${horse.name} has been retired to stud with a standing fee of ${formatCurrency(fee)}.`,
           reason: "NPC Retirement log",
         } as LogImpact);
       }

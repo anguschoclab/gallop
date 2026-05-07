@@ -19,7 +19,8 @@ export const marketPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, dailyRng, newDay } = context;
     let market = refreshMarket(state.market, dailyRng);
-    let { npcStables, npcAIManager } = state;
+    const npcStables = state.npcStables;
+    const npcAIManager = state.npcAIManager;
 
     // NPC AI-driven market purchases
     if (npcAIManager && npcStables.length > 0) {

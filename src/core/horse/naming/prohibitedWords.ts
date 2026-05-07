@@ -35,5 +35,5 @@ export const RESERVED_NAMES = ["Unnamed", "Anonymous", "System", "Admin", "N/A",
 
 export const PROHIBITED_PATTERNS = [
   /\b\d+\b/, // No standalone numbers
-  /[!@#$%^&*()_=+\[\]{};:"\\|,.<>\/?]/, // Removed ' and - is already allowed by exclusion
+  /[!@#$%^&*()_=+[\]{};:"\\|,.<>/?]/, // Removed ' and - is already allowed by exclusion
 ];

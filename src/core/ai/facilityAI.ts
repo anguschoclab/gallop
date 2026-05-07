@@ -384,6 +384,7 @@ export function getFacilityInsights(
   const avgROI =
     totalInvestedAmount > 0 ? (totalBenefit - totalInvestedAmount) / totalInvestedAmount : 0;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const facilityLevels: Record<FacilityType, FacilityLevel> = {} as any;
   for (const investment of stableInvestments) {
     facilityLevels[investment.facilityType] = investment.toLevel;

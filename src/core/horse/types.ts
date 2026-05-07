@@ -125,6 +125,7 @@ export type Horse = {
     surface?: string;
     purse?: number;
     fieldSize?: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     raceClass?: any; // Avoiding circular dep for now
     barrier?: number;
     lane?: number;

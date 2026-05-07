@@ -19,7 +19,9 @@ export const jockeyPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, dailyRng } = context;
     let jockeys = state.jockeys ?? [];
-    let { npcStables, log, npcAIManager } = state;
+    let npcStables = state.npcStables;
+    const log = state.log;
+    const npcAIManager = state.npcAIManager;
 
     // 1. Handle Contract Expirations
     jockeys = jockeys.map((j) => {

@@ -122,6 +122,7 @@ export function runBreedingSimulation(
     const simulationRng = createRng(iterationSeed);
 
     // Inherit DNA
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const offspringGenotype = inheritDNA(sire.genotype, dam.genotype, simulationRng as any);
 
     // Resolve to phenotype
@@ -248,6 +249,7 @@ export function runBreedingSimulation(
         P: runningStyleValues.filter((v) => v === "P").length / SIMULATION_ITERATIONS,
         S: runningStyleValues.filter((v) => v === "S").length / SIMULATION_ITERATIONS,
       } as any,
+
       trainability: {
         mean: mean(trainabilityValues),
         tier: {
@@ -293,12 +295,14 @@ export function runBreedingSimulation(
       },
       {} as Record<CoatColor, number>,
     ),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     coiEstimate: computeCoiFromSnapshot({
       sireId: sire.id,
       damId: dam.id,
       sirePedigree: sire.pedigree,
       damPedigree: dam.pedigree,
     } as any),
+
     compatScore: calculateGeneticCompatibility(sire, dam).score,
   };
 

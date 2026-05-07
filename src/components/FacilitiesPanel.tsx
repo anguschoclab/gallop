@@ -10,12 +10,14 @@ import {
   type FacilityLevel,
 } from "@/core/facilities";
 import { ArrowUp, Check, X, Dumbbell } from "lucide-react";
+import { formatCurrency } from "@/components/HorseBits";
 
 /**
  * Facilities Panel Component
  * Displays player's facilities and allows upgrading them
  */
 export function FacilitiesPanel() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const facilities = (useGame as any)((s: any) => s.facilities, shallow);
   const cash = useGame((s) => s.cash);
   const upgradeFacility = useGame((s) => s.upgradeFacility);
@@ -73,7 +75,7 @@ export function FacilitiesPanel() {
         </div>
         <div className="text-right">
           <p className="text-sm text-cream-muted">Available Cash</p>
-          <p className="text-2xl font-bold">${cash.toLocaleString()}</p>
+          <p className="text-2xl font-bold">{formatCurrency(cash)}</p>
         </div>
       </div>
 
@@ -99,12 +101,12 @@ export function FacilitiesPanel() {
                 <div className="text-sm space-y-1">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Maintenance Cost</span>
-                    <span>${facility.maintenanceCost.toLocaleString()}/day</span>
+                    <span>{formatCurrency(facility.maintenanceCost)}/day</span>
                   </div>
                   {!maxLevel && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Upgrade Cost</span>
-                      <span className="font-semibold">${upgradeCost.toLocaleString()}</span>
+                      <span className="font-semibold">{formatCurrency(upgradeCost)}</span>
                     </div>
                   )}
                 </div>

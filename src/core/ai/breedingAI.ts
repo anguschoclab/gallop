@@ -324,15 +324,17 @@ export function selectSireForDam(
       const simulation = cachedSimulation(sire.id, dam.id, () =>
         runBreedingSimulation(sire, dam, gameState, rng),
       );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       // Build a synthetic horse from the simulation median stats to measure distance
-      const syntheticFoal = {
+      const syntheticFoal: any = {
         stats: {
           speed: simulation.stats.speed.p75,
           stamina: simulation.stats.stamina.p75,
           acceleration: simulation.stats.acceleration.p75,
           consistency: simulation.stats.consistency.p75,
         },
-      } as any;
+      }; // Synthetic object for distance calculation, not a real horse
+
       const distance = calculateGeneticDistance(syntheticFoal, archetype);
       if (distance < bestDistance) {
         bestDistance = distance;

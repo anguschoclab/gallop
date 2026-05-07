@@ -154,29 +154,28 @@ export function runNpcCycle(
       const facilityBudget = calculateFacilityBudget(stableAIState.facilityAI, stable, currentDay);
 
       if (facilityBudget.upgradeBudget > 0 && stable.cash >= facilityBudget.upgradeBudget) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const facilityToUpgrade = selectFacilityToUpgrade(
           stableAIState.facilityAI,
           facilities as any,
           stable,
           currentDay,
         );
-        if (facilityToUpgrade) {
-          const currentFacility = facilities[facilityToUpgrade];
-          const upgraded = upgradeFacility(currentFacility, currentDay);
-          if (upgraded) {
-            stable.cash -= upgraded.upgradeCost;
-            facilities[facilityToUpgrade] = upgraded;
-            // Record investment for AI learning
-            recordFacilityInvestment(
-              stableAIState.facilityAI,
-              facilityToUpgrade,
-              currentFacility.level,
-              upgraded.level,
-              upgraded.upgradeCost,
-              stable,
-              currentDay,
-            );
-          }
+        const currentFacility = facilities[facilityToUpgrade];
+        const upgraded = upgradeFacility(currentFacility, currentDay);
+        if (upgraded) {
+          stable.cash -= upgraded.upgradeCost;
+          facilities[facilityToUpgrade] = upgraded;
+          // Record investment for AI learning
+          recordFacilityInvestment(
+            stableAIState.facilityAI,
+            facilityToUpgrade,
+            currentFacility.level,
+            upgraded.level,
+            upgraded.upgradeCost,
+            stable,
+            currentDay,
+          );
         }
       }
     }

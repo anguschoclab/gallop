@@ -62,13 +62,16 @@ export const auctionsPhase = {
             reason: "auction_consignment_generation",
           });
         }
-        
+
         // Take the generated lots and strip them from the sale, because we will emit consignment
         // impacts to add them back in the impact resolution phase (which also locks the horses).
         const generatedLots = newSale.lots;
         newSale.lots = [];
         auctions.push(newSale);
-        logs.push({ day: newDay, text: `Catalog opens for ${trigger.name} — sale on Day ${saleDay}.` });
+        logs.push({
+          day: newDay,
+          text: `Catalog opens for ${trigger.name} — sale on Day ${saleDay}.`,
+        });
 
         // Emit consignment impacts for each NPC lot
         for (const lot of generatedLots) {

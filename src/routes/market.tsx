@@ -3,7 +3,7 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HorseStats, overall, NumericValue } from "@/components/HorseBits";
+import { HorseStats, overall, NumericValue, formatCurrency } from "@/components/HorseBits";
 import { horsePrice } from "@/core/horse/pricing";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { SilkDot } from "@/components/SilkDot";
@@ -65,7 +65,7 @@ function MarketPage() {
                       "text-base font-[family-name:var(--font-mono)] tabular-nums border border-gold-muted bg-t700 text-cream",
                     )}
                   >
-                    ${price.toLocaleString()}
+                    ${formatCurrency(price)}
                   </Badge>
                 </div>
                 <HorseStats horse={h} />

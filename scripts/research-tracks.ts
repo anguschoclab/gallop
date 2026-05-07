@@ -65,7 +65,7 @@ function extractSpecsFromHTML(html: string, trackName: string) {
     },
     {
       field: "circumference",
-      regex: /(?:circumference|track length|course length)[^\d]*(\d{1,2}\,\d{3})\s*m/i,
+      regex: /(?:circumference|track length|course length)[^\d]*(\d{1,2},\d{3})\s*m/i,
     },
     {
       field: "straightLength",

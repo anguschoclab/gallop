@@ -139,7 +139,9 @@ function NpcStableDetailPage() {
         (o: any) => o.horseId === offerHorse.id && o.status === "countered",
       );
       const counterAmt = counterOffer?.counterAmount ?? 0;
-      toast.info(`${stable.name} countered at ${formatCurrency(counterAmt)}. Go to Rival Stables to respond.`);
+      toast.info(
+        `${stable.name} countered at ${formatCurrency(counterAmt)}. Go to Rival Stables to respond.`,
+      );
     } else {
       toast.error(getDeclineFlavour(stable.personality, stable.name));
     }
@@ -184,7 +186,7 @@ function NpcStableDetailPage() {
                 <NumericValue value={horses.length} /> horses
               </span>
               <span className="flex items-center gap-1 font-[family-name:var(--font-mono)] tabular-nums">
-                <DollarSign className="w-4 h-4" />${stable.cash.toLocaleString()}
+                <DollarSign className="w-4 h-4" />${formatCurrency(stable.cash)}
               </span>
               <span className="text-fame">{getReputationStars(stable.reputation)}</span>
             </div>
@@ -344,7 +346,9 @@ function NpcStableDetailPage() {
                             <div>
                               <p className="font-medium text-sm">
                                 Counter offer from {stable.name}:{" "}
-                                <span className="tabular-nums font-bold">{formatCurrency(counterAmt)}</span>
+                                <span className="tabular-nums font-bold">
+                                  {formatCurrency(counterAmt)}
+                                </span>
                               </p>
                               <p className="text-xs text-cream-muted">
                                 Expires day {activeOffer.expiresDay}
@@ -373,8 +377,8 @@ function NpcStableDetailPage() {
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>Accept counter offer?</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      You will pay {formatCurrency(counterAmt)} for {horse.name}. This cannot
-                                      be undone.
+                                      You will pay {formatCurrency(counterAmt)} for {horse.name}.
+                                      This cannot be undone.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
@@ -461,7 +465,7 @@ function NpcStableDetailPage() {
                       className="tabular-nums"
                       onBlur={() => {
                         const n = Number(offerAmount.replace(/,/g, "").replace(/\$/g, ""));
-                        if (n > 0) setOfferAmount(n.toLocaleString());
+                        if (n > 0) setOfferAmount(formatCurrency(n));
                       }}
                     />
                     {offerError && <p className="text-xs text-destructive">{offerError}</p>}

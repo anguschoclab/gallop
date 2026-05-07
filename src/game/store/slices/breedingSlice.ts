@@ -13,6 +13,7 @@ import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
 import { generateUUID } from "@/game/uuid";
 import type { BreedingIntent } from "@/core/resolver/intents";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants/gameConstants";
+import { formatCurrency } from "@/components/HorseBits";
 
 export type BreedingSlice = BreedingState & {
   breed: (
@@ -92,7 +93,7 @@ export function createBreedingSlice(
         log: [
           {
             day: s.day,
-            text: `${sire!.name} × ${dam!.name} breeding scheduled. Fee $${totalFee.toLocaleString()}${studFee ? ` (incl. $${studFee.toLocaleString()} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.`,
+            text: `${sire!.name} × ${dam!.name} breeding scheduled. Fee ${formatCurrency(totalFee)}${studFee ? ` (incl. ${formatCurrency(studFee)} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.`,
           },
           ...s.log,
         ].slice(0, 50),

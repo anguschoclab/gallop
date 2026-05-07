@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { gameCalendarDate, dayOfYear } from "@/core/calendar/dateFormatting";
 import { KIND_LABELS, CONSIGNMENT_COMMISSION, isLotEligible, SALE_TRIGGERS } from "@/game/auction";
 import { Gavel, Clock, CheckCircle, Sparkles, Calendar as CalendarIcon } from "lucide-react";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue, formatCurrency } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/utils";
 import { ConsignDialog } from "@/components/auction/ConsignDialog";
@@ -290,7 +290,7 @@ function AuctionPage() {
                             <span className="font-[family-name:var(--font-display)] text-cream">
                               {topHorse.name}
                             </span>{" "}
-                            ${topLot.hammerPrice!.toLocaleString()}
+                            ${formatCurrency(topLot.hammerPrice!)}
                           </>
                         )}
                       </p>

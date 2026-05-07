@@ -20,6 +20,7 @@ export const npcCyclePhase = {
     const pregnantIds = new Set(state.pregnancies.filter((p) => !p.resolved).map((p) => p.damId));
 
     // Get existing AI manager or create new one
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const aiManager: NpcAIManager = (state as any).npcAIManager || {
       stableStates: new Map(),
       globalDay: newDay,

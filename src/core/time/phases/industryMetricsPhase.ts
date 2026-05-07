@@ -1,6 +1,7 @@
 import type { PipelineContext } from "../pipeline";
 import { computeIndustryMeanEarnings } from "@/core/breeding/industryMetrics";
 import type { Horse } from "@/game/types";
+import { formatCurrency } from "@/components/HorseBits";
 
 /**
  * Phase: Industry Metrics
@@ -30,7 +31,7 @@ export const industryMetricsPhase = {
       },
       logs: [
         ...context.logs,
-        { day: newDay, text: `Industry mean earnings updated: $${industryMean.toLocaleString()}` },
+        { day: newDay, text: `Industry mean earnings updated: ${formatCurrency(industryMean)}` },
       ],
     };
   },

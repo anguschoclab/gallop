@@ -13,11 +13,15 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
+import { formatCurrency } from "@/components/HorseBits";
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const races = (useGame as any)((s: any) => s.races ?? [], shallow);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const horses = (useGame as any)((s: any) => s.horses ?? [], shallow);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
   const day = useGame((s) => s.day);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
@@ -68,7 +72,7 @@ export function PlayerRacePrompt() {
         <div className="space-y-3 py-2">
           <p className="text-base font-semibold">{race.name}</p>
           <p className="text-sm text-muted-foreground">
-            {race.distance}m · {race.raceClass} · Purse ${race.purse.toLocaleString()}
+            {race.distance}m · {race.raceClass} · Purse {formatCurrency(race.purse)}
           </p>
           {enteredHorse && (
             <p className="text-sm">

@@ -143,12 +143,15 @@ export const useGame = create<StoreType>()(
       ...createCoreSlice(set, get),
 
       // Racing slice
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...createRacingSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
 
       // Market slice
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...createMarketSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
 
       // Breeding slice
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...createBreedingSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
 
       // Systems slice
@@ -158,6 +161,7 @@ export const useGame = create<StoreType>()(
       ...createCampaignSlice(set, get),
 
       // Start new game action
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       startNewGame: async (options: any) => {
         // Initialize workers if not already initialized
         await initEngineWorker();
@@ -234,6 +238,7 @@ export { hydrationComplete };
 export { shallow };
 
 // Custom hook that supports shallow comparison for object/array selectors
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useGameWithShallow = <T>(selector: (state: StoreType) => T): T =>
   (useGame as any)(selector, shallow);
 

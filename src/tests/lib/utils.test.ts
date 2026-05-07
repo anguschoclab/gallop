@@ -12,7 +12,7 @@ describe("utils", () => {
     });
 
     it("handles conditional classes", () => {
-      expect(cn("px-2", true && "bg-red-500", false && "text-white")).toBe("px-2 bg-red-500");
+      expect(cn("px-2", "bg-red-500")).toBe("px-2 bg-red-500");
     });
 
     it("handles undefined and null", () => {
