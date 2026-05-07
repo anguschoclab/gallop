@@ -1,82 +1,89 @@
-import type { CoatColor } from "@/game/types";
-import { getPortraitUrl } from "@/core/horse/portrait";
+import type { CoatColor, HorseMarkings, HorseGender } from "@/game/types";
+import { ProceduralHorsePortrait } from "@/components/ProceduralHorsePortrait";
 import { cn } from "@/lib/utils";
 
 interface HorsePortraitProps {
+  /** Horse id — drives deterministic procedural variation. */
+  id?: string;
   coatColor?: CoatColor;
+  markings?: HorseMarkings;
+  gender?: HorseGender;
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
   className?: string;
   alt?: string;
+  /** Legacy / no-op props kept for back-compat with existing call sites. */
   fallbackToSilk?: boolean;
   silkColor?: string;
 }
 
 const SIZE_MAP = {
-  sm: { width: 48, height: 48, class: "w-12 h-12" },
-  md: { width: 80, height: 80, class: "w-20 h-20" },
-  lg: { width: 160, height: 160, class: "w-40 h-40" },
-  xl: { width: 240, height: 240, class: "w-60 h-60" },
-  "2xl": { width: 320, height: 320, class: "w-80 h-80" },
+  sm: "w-12 h-12",
+  md: "w-20 h-20",
+  lg: "w-40 h-40",
+  xl: "w-60 h-60",
+  "2xl": "w-80 h-80",
 };
 
 export function HorsePortrait({
+  id,
   coatColor,
+  markings,
+  gender,
   size = "md",
   className,
   alt = "Horse portrait",
-  fallbackToSilk = false,
-  silkColor,
 }: HorsePortraitProps) {
-  const url = getPortraitUrl(coatColor);
-  const sizeCfg = SIZE_MAP[size];
-
   return (
     <div
-      className={cn("relative overflow-hidden rounded-lg bg-muted/30", sizeCfg.class, className)}
+      className={cn(
+        "relative overflow-hidden rounded-lg bg-muted/30",
+        SIZE_MAP[size],
+        className,
+      )}
     >
-      <img
-        src={url}
+      <ProceduralHorsePortrait
+        id={id}
+        coatColor={coatColor}
+        markings={markings}
+        gender={gender}
         alt={alt}
-        width={sizeCfg.width}
-        height={sizeCfg.height}
-        className="object-contain w-full h-full"
-        loading="lazy"
-        onError={(e) => {
-          if (fallbackToSilk && silkColor) {
-            e.currentTarget.style.display = "none";
-            e.currentTarget.parentElement!.style.backgroundColor = silkColor;
-          }
-        }}
       />
     </div>
   );
 }
 
 interface HorsePortraitBadgeProps {
+  id?: string;
   coatColor?: CoatColor;
+  markings?: HorseMarkings;
+  gender?: HorseGender;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
 
-export function HorsePortraitBadge({ coatColor, size = "sm", className }: HorsePortraitBadgeProps) {
-  const url = getPortraitUrl(coatColor);
-  const sizeCfg = SIZE_MAP[size];
+const BADGE_SIZE = { sm: "w-12 h-12", md: "w-20 h-20", lg: "w-40 h-40" };
 
+export function HorsePortraitBadge({
+  id,
+  coatColor,
+  markings,
+  gender,
+  size = "sm",
+  className,
+}: HorsePortraitBadgeProps) {
   return (
     <div
       className={cn(
         "rounded-full overflow-hidden border-2 border-white shadow shrink-0",
-        sizeCfg.class,
+        BADGE_SIZE[size],
         className,
       )}
     >
-      <img
-        src={url}
-        alt=""
-        width={sizeCfg.width}
-        height={sizeCfg.height}
-        className="object-cover w-full h-full"
-        loading="lazy"
+      <ProceduralHorsePortrait
+        id={id}
+        coatColor={coatColor}
+        markings={markings}
+        gender={gender}
       />
     </div>
   );
