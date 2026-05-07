@@ -83,7 +83,8 @@ export function createInitialState(options?: NewGameOptions): GameState {
 
   // Generate initial jockeys
   const jockeyRng = createRng(hashStr("initial_jockeys"));
-  const jockeys = generateInitialJockeys(jockeyRng);
+  const usedJockeyNames = new Set<string>();
+  const jockeys = generateInitialJockeys(jockeyRng, 25, usedJockeyNames);
 
   // Run initial NPC race entry to populate races
   const pregnantIds = new Set<string>();
@@ -132,7 +133,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     npcStables: updatedStables,
     scoutReports: [],
     auctions: [],
-    jockeys: generateInitialJockeys(createRng(hashStr("initial_jockeys")), 25),
+    jockeys,
     awards: [],
     facilities,
     reputation: {
@@ -145,5 +146,6 @@ export function createInitialState(options?: NewGameOptions): GameState {
     },
     playerProfile: options?.profile,
     usedHorseNames: Array.from(usedNames),
+    usedJockeyNames: Array.from(usedJockeyNames),
   };
 }

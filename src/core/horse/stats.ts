@@ -1,4 +1,5 @@
-import type { Horse } from "@/game/types";
+import type { Horse, RunningStyle } from "@/game/types";
+import type { Rng } from "@/game/rng";
 
 /**
  * Pure functions for horse stat calculations
@@ -41,4 +42,23 @@ export function abilityGrade(score: number): string {
   if (score >= 60) return "C";
   if (score >= 50) return "D";
   return "F";
+}
+
+/**
+ * Pick a running style biased by the horse's stat profile. Speed/acceleration
+ * tilt toward front-runner; stamina tilts toward closer; balanced horses lean
+ * stalker. There's still randomness so identical-stat horses can differ.
+ */
+export function rollRunningStyle(
+  stats: { speed: number; stamina: number; acceleration: number },
+  rng: Rng,
+): RunningStyle {
+  const earlyBias = (stats.speed + stats.acceleration) / 2;
+  const lateBias = stats.stamina;
+  const tilt = earlyBias - lateBias; // ~ -50..+50
+  const r = rng.next() * 100 - tilt; // tilt shifts the distribution
+  if (r < 25) return "E";
+  if (r < 55) return "EP";
+  if (r < 80) return "P";
+  return "S";
 }

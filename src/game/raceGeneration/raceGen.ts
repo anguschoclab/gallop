@@ -5,7 +5,7 @@ import type { GradedRace } from "../gradedRaces";
 import { generateUUID } from "../uuid";
 import { rand, randomWeather } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/trackConditions";
-import { randomRaceName } from "../names";
+import { randomRaceName } from "@/core/race/naming/legacyFallback";
 
 /**
  * Single authoritative class config shared by the generic fallback generator

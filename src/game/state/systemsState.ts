@@ -126,6 +126,8 @@ export interface SystemsState {
   // Name tracking system
   /** Set of all horse names currently in use to ensure uniqueness */
   usedHorseNames: string[];
+  /** Set of all jockey names currently in use to ensure uniqueness */
+  usedJockeyNames: string[];
 }
 
 
@@ -172,6 +174,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       playerProfile: profile,
       hallOfFame: [],
       usedHorseNames: [],
+      usedJockeyNames: [],
     };
   }
 
@@ -200,5 +203,6 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     transports: [],
     hallOfFame: [],
     usedHorseNames: [],
+    usedJockeyNames: [],
   };
 }

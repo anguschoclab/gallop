@@ -1,7 +1,8 @@
 import { generateUUID } from "./uuid";
 import type { Rng } from "./rng";
 import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "./types";
-import { randomJockeyName } from "./names";
+import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
+import type { RegionalSystem } from "./types";
 
 const ARCHETYPES: JockeyArchetype[] = [
   "front_runner",
@@ -14,11 +15,14 @@ const ARCHETYPES: JockeyArchetype[] = [
 export type JockeyGenerationOptions = {
   tier?: "budget" | "mid" | "elite";
   rng: Rng;
+  region?: RegionalSystem;
+  usedNames?: Set<string>;
 };
 
-export function generateJockey({ tier = "mid", rng }: JockeyGenerationOptions): Jockey {
+export function generateJockey({ tier = "mid", rng, region = "north_america", usedNames }: JockeyGenerationOptions): Jockey {
   const archetype = rng.pick(ARCHETYPES);
-  const name = randomJockeyName(rng);
+  const name = generateProceduralJockeyName(region, rng, usedNames);
+  if (usedNames) usedNames.add(name.toLowerCase());
 
   const baseMin = tier === "elite" ? 75 : tier === "mid" ? 55 : 35;
   const baseMax = tier === "elite" ? 98 : tier === "mid" ? 80 : 60;
@@ -143,12 +147,15 @@ export function generateSilk(rng: Rng): JockeySilk {
   return { pattern, primary, secondary, cap };
 }
 
-export function generateInitialJockeys(rng: Rng, count: number = 20): Jockey[] {
+export function generateInitialJockeys(rng: Rng, count: number = 20, usedNames?: Set<string>): Jockey[] {
   const jockeys: Jockey[] = [];
+  const regions: RegionalSystem[] = ["north_america", "europe", "australia", "asia", "south_america"];
+  
   for (let i = 0; i < count; i++) {
     const r = rng.next();
     const tier = r < 0.15 ? "elite" : r < 0.6 ? "mid" : "budget";
-    jockeys.push(generateJockey({ tier, rng }));
+    const region = regions[i % regions.length];
+    jockeys.push(generateJockey({ tier, rng, region, usedNames }));
   }
   return jockeys;
 }

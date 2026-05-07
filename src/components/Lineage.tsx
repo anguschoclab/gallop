@@ -1,9 +1,13 @@
-import { randomHorseName } from "@/core/common/random";
+import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
 import { createRng, hashStr } from "@/game/rng";
 
 function nameFromSeed(seed: string): string {
   const rng = createRng(hashStr(seed));
-  return randomHorseName(rng);
+  return generateProceduralHorseName(
+    { existingNames: new Set() },
+    rng,
+    { strategy: "regional" }
+  );
 }
 
 type Node = { name: string; sire?: Node; dam?: Node };

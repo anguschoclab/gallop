@@ -2,13 +2,7 @@ import type { Stable, StableTier, StablePersonality } from "@/game/types";
 import type { Rng } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
 import { selectPersonality, getSpecialistPreferences } from "@/core/stable/stableSelection";
-
-// Random silk color generator (hex)
-export function randomSilk(rng: Rng): string {
-  const hues = [0, 30, 60, 120, 180, 240, 270, 300, 330];
-  const hue = rng.pick(hues);
-  return `hsl(${hue}, 70%, 50%)`;
-}
+import { randomSilk } from "@/core/horse/visuals";
 
 // Base stable info without generated fields
 export type StablePoolEntry = Omit<

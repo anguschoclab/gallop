@@ -6,6 +6,7 @@ import {
   randomHorseName,
   randomSilk,
   randomRaceName,
+  randomJockeyName,
 } from "@/core/common/random";
 import { createRng, nondeterministicRng } from "@/game/rng";
 
@@ -85,13 +86,22 @@ describe("randomHorseName", () => {
 describe("randomSilk", () => {
   it("returns valid color", () => {
     const silk = randomSilk(nondeterministicRng());
-    expect(silk).toBeTruthy();
+    expect(silk).toMatch(/hsl\(\d+, \d+%, \d+%\)/);
   });
 });
 
 describe("randomRaceName", () => {
   it("returns non-empty string with two words", () => {
     const name = randomRaceName(nondeterministicRng());
+    expect(typeof name).toBe("string");
+    expect(name.length).toBeGreaterThan(0);
+    expect(name.split(" ").length).toBe(2);
+  });
+});
+
+describe("randomJockeyName", () => {
+  it("returns non-empty string with two words", () => {
+    const name = randomJockeyName(nondeterministicRng());
     expect(typeof name).toBe("string");
     expect(name.length).toBeGreaterThan(0);
     expect(name.split(" ").length).toBe(2);

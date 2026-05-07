@@ -1,7 +1,7 @@
 // NPC Horse Generation - DNA-backed with tier-based quality and realistic age distribution
 // Age distribution: 30% 2YO, 40% 3-4YO (prime), 20% 5-6YO, 10% 7YO+ (breeding stock)
 
-import type { Horse, HorseGender, Hemisphere, Stable, StableTier } from "./types";
+import type { Horse, HorseGender, Hemisphere, Stable, StableTier, StablePersonality } from "./types";
 import type { Rng } from "./rng";
 import { createHorseFromDNA } from "./horseGen";
 import { generateGenotype, generateDeterministicGenotype, generateResearchBasedGenotype } from "./geneticsEngine";
@@ -103,7 +103,7 @@ export function generateNpcHorse(
   tier: StableTier,
   rng: Rng,
   usedNames: Set<string>,
-  stablePersonality: string,
+  stablePersonality: StablePersonality,
   country: string,
   specificAge?: number,
   specificGender?: HorseGender,
@@ -122,7 +122,7 @@ export function generateNpcHorse(
 
   // Resolve bloodline from procedural sire/dam names
   const region = getRegionalSystem(country);
-  const namingTheme = (PERSONALITY_CONFIG as any)[stablePersonality]?.namingTheme;
+  const namingTheme = PERSONALITY_CONFIG[stablePersonality]?.namingTheme;
 
   const proceduralSireName = generateProceduralHorseName(
     { region, namingTheme, existingNames: usedNames },

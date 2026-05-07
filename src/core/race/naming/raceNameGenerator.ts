@@ -75,7 +75,8 @@ type NamingPattern =
   | "traditional" // Gran Premio [Name]
   | "adjective_type" // Golden Stakes
   | "track_type" // Woodbine Maiden Claiming
-  | "simple_type"; // Maiden Claiming
+  | "simple_type" // Maiden Claiming
+  | "legacy"; // Churchill Cup
 
 // Determine regional system from track
 export function getRegionalSystem(track: Track): RegionalSystem {
@@ -183,8 +184,17 @@ function selectNamingPattern(
   }
 
   // Default
+  if (r < 0.2) return "legacy";
   return "sponsor_type";
 }
+
+const RACE_PREFIXES = [
+  "Ascot", "Belmont", "Churchill", "Doncaster", "Epsom", "Flemington", "Goodwood", "Hialeah",
+  "Irish", "Kentucky", "Longchamp", "Newmarket", "Oaklawn", "Pimlico", "Saratoga", "Tokyo",
+  "Aintree", "Chepstow", "Haydock", "Kempton", "Ludlow", "Sandown", "Wincanton", "York"
+];
+
+const RACE_SUFFIXES = ["Cup", "Stakes", "Trophy", "Classic", "Handicap", "Plate", "Mile", "Sprint", "Championship", "Memorial", "Invitational"];
 
 // Generate name based on pattern
 function generateNameByPattern(
@@ -257,6 +267,11 @@ function generateNameByPattern(
 
     case "simple_type":
       return raceClass;
+
+    case "legacy":
+      const a = rng ? rng.pick(RACE_PREFIXES) : RACE_PREFIXES[0];
+      const b = rng ? rng.pick(RACE_SUFFIXES) : RACE_SUFFIXES[0];
+      return `${a} ${b}`;
 
     default:
       return `${getRandomSponsor(region, rng)} Stakes`;

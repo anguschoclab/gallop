@@ -40,3 +40,15 @@ export const ABSTRACT_TERMS = [
   "Grace", "Elegance", "Style", "Charm", "Beauty", "Power", "Strength", "Might", "Force", "Energy",
   "Silence", "Whisper", "Echo", "Sound", "Noise", "Music", "Song", "Rhythm", "Beat", "Flow",
 ];
+
+export const RACING_SPIRIT_ADJECTIVES = [
+  "Thunder", "Silver", "Midnight", "Royal", "Golden", "Wild", "Swift", "Iron", "Crimson", "Shadow",
+  "Lucky", "Northern", "Whispering", "Velvet", "Stormy", "Brave", "Noble", "Mystic", "Blazing", "Quiet",
+  "Rapid", "Mighty", "Bold", "Gallant", "Steady", "Constant", "Relentless", "Valiant", "Heroic", "Epic",
+];
+
+export const RACING_SPIRIT_NOUNS = [
+  "Bullet", "Star", "Spirit", "Comet", "Dancer", "Arrow", "Knight", "Whisper", "Flame", "Tide",
+  "Empress", "Legacy", "Dream", "Charger", "Echo", "Bandit", "Saint", "Reverie", "Tempest", "Mirage",
+  "Warrior", "Champion", "Hero", "Legend", "Myth", "Saga", "Epic", "Tale", "Fable", "Crown",
+];
