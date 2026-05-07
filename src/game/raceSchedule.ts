@@ -3,11 +3,10 @@
 
 import type { Race } from "./types";
 import type { Track, TrackSchedule } from "./tracks";
-import type { Rng } from "./rng";
-import { createRng, hashStr } from "./rng";
+import { createRng, hashStr } from "@/game/rng";
 import { getTrackById } from "./tracks";
 import { generateRace, makeGradedRace } from "./raceGeneration/raceGen";
-import { GRADED_RACES } from "./gradedRaces";
+import { GRADED_RACES } from "@/core/data/gradedRaces";
 import { generateNorthAmericanRaceCard } from "./raceGeneration/northAmerica";
 
 // Breeders' Cup rotation pool
