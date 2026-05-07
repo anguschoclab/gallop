@@ -169,14 +169,18 @@ describe("getBroodmareFee", () => {
   });
 
   it("returns > 0 for eligible mare", () => {
-    const h = generateNpcHorse("s1", "mid", 5, "mare", createRng("test"));
-    expect(getBroodmareFee(h, stable)).toBeGreaterThan(0);
+    const s = { id: "s1", tier: "mid" } as any;
+    const h = generateNpcHorse(s, createRng("test"), undefined, 1, { forcedAge: 5 });
+    h.gender = "mare"; // Ensure it's a mare for the test
+    expect(getBroodmareFee(h, s)).toBeGreaterThan(0);
   });
 
   it("broodmare fee is approximately 30% of calculateNpcHorseValue", () => {
-    const h = generateNpcHorse("s1", "mid", 5, "mare", createRng("test"));
+    const s = { id: "s1", tier: "mid" } as any;
+    const h = generateNpcHorse(s, createRng("test"), undefined, 1, { forcedAge: 5 });
+    h.gender = "mare";
     const val = calculateNpcHorseValue(h, "mid");
-    const fee = getBroodmareFee(h, stable);
+    const fee = getBroodmareFee(h, s);
     const expected = Math.round(val * 0.3);
     expect(fee).toBe(expected);
   });

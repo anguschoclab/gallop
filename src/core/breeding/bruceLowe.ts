@@ -1,6 +1,6 @@
 import type { Horse, GameState } from "@/game/types";
 import type { Rng } from "@/game/rng";
-import { findHorseByName } from "@/game/pedigreeData";
+import { findHorseByName } from "@/core/data/pedigreeData";
 
 // Bruce Lowe's "Figure System": every thoroughbred traces tail-female to one
 // of ~43 root mares, each numbered by historical wins in the English Classics.
@@ -73,9 +73,10 @@ const PROCEDURAL_FAMILIES = [
   ...[16, 17, 18, 19, 20, 21, 22, 23, 24, 25].map((f) => [f, 2] as const),
 ];
 
-export function rollProceduralFamily(rng: Rng): number {
+export function rollProceduralFamily(rng?: Rng): number {
+  const _rng = rng || { next: () => Math.random() } as any;
   const total = PROCEDURAL_FAMILIES.reduce((s, [, w]) => s + w, 0);
-  let pick = rng.next() * total;
+  let pick = _rng.next() * total;
   for (const [family, weight] of PROCEDURAL_FAMILIES) {
     pick -= weight;
     if (pick <= 0) return family;

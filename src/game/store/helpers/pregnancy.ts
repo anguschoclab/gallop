@@ -44,6 +44,11 @@ export function resolvePregnancies(
     const sire = damsById.get(p.sireId);
     const dam = damsById.get(p.damId);
 
+    if (!sire || !dam) {
+      newLogs.push({ day: newDay, text: `Warning: Could not find sire or dam for pregnancy ${p.id}. Skipping.` });
+      continue;
+    }
+
     // Prepare naming context for NPC foals
     let namingContext = undefined;
     if (dam?.stableId) {

@@ -65,7 +65,7 @@ import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { shouldRetireAtStartup, initialStandingFee, defaultStudParams } from "@/core/breeding/stallions";
 import { shouldGenerateHorseOfAge, createHorseGenAIState, recordHorseGeneration } from "@/core/ai/horseGenAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { activeStallions2020s, type PedigreeHorse } from "@/game/pedigreeData";
+import { activeStallions2020s, type PedigreeHorse } from "@/core/data/pedigreeData";
 import { clamp } from "@/game/math";
 
 // --- Internal Helpers ---
@@ -157,12 +157,18 @@ export function createHorseFromDNA(
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
-    ...dnaTraits,
+    potential: 50 + Math.floor(rng.next() * 40), // 50-90 base
+    fame: 0,
+    energy: 100,
+    form: 50,
+    healthStatus: "healthy",
     lifecycleStatus: "active",
-    appearance: generateAppearanceDNA(rng),
+    racingViable: resolveRacingViable(genotype.health.racingViable),
+    ...dnaTraits,
+    appearance: generateAppearanceDNA(seed, markings, palette),
   };
 
-  return horse;
+  return horse as Horse;
 }
 
 /**
@@ -216,7 +222,7 @@ export function generateNpcHorse(
   const genTier = tier === "elite" ? "elite" : tier === "mid" ? "mid" : "budget";
   
   // Personality config
-  const config = PERSONALITY_CONFIG[stable.personality] || PERSONALITY_CONFIG.balanced;
+  const config = (stable.personality && (PERSONALITY_CONFIG as any)[stable.personality]) || PERSONALITY_CONFIG.conservative;
   const region = stable.country ? getRegionalSystem(stable.country) : "north_america";
   
   const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : rng.range(3, 6));
@@ -252,6 +258,9 @@ export function resolveFoaling(
   const rng = createRng(hashStr(pregnancy.id));
   
   // Genetic crossover
+  if (!sire.genotype || !dam.genotype) {
+    throw new Error(`Cannot resolve foaling: missing genotype for ${!sire.genotype ? 'sire' : 'dam'}`);
+  }
   const genotype = inheritDNA(sire.genotype, dam.genotype, rng);
   
   const foal = createHorseFromDNA(genotype, rng, {

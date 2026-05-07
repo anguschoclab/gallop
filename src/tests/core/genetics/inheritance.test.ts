@@ -77,8 +77,8 @@ describe("breedingSimulator — RNG diversity", () => {
     dam.stats.speed = Array.from({ length: 10 }, () => [1, 1] as [number, number]);
 
     // Force contrasting fiber types so both values appear in offspring
-    sire.fiberType = [5, 5]; // stayer
-    dam.fiberType = [1, 1];  // sprinter
+    sire.fiberType = [5, 1]; // heterozygous
+    dam.fiberType = [5, 1];  // heterozygous
 
     const sireHorse = { id: "s1", genotype: sire, pedigree: undefined } as any;
     const damHorse = { id: "d1", genotype: dam, pedigree: undefined } as any;

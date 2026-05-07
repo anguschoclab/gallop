@@ -17,10 +17,9 @@ export const TRADE_NAMES = [
 
 export const RESERVED_NAMES = [
   "Unnamed", "Anonymous", "System", "Admin", "N/A", "TBD",
-  "Secretariat", "Man o' War", "Citation", "Seattle Slew", "Affirmed", // Hall of Fame icons
 ];
 
 export const PROHIBITED_PATTERNS = [
   /\b\d+\b/, // No standalone numbers
-  /[!@#$%^&*()_=+\[\]{};':"\\|,.<>\/?]/, // No special characters except hyphens and apostrophes
+  /[!@#$%^&*()_=+\[\]{};:"\\|,.<>\/?]/, // Removed ' and - is already allowed by exclusion
 ];

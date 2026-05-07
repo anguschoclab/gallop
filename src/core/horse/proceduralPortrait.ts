@@ -132,8 +132,16 @@ const PALETTES: Record<CoatColor, PortraitPalette> = {
 };
 
 export function getPalette(coat?: CoatColor): PortraitPalette {
-  if (!coat) return PALETTES.bay;
-  return PALETTES[coat] ?? PALETTES.bay;
+  const defaultPalette = PALETTES?.bay || {
+    body: "#7a3f1a", bodyShade: "#4a2410", bodyHighlight: "#9a5a2a",
+    points: "#1a0e08", mane: "#140a06", maneShade: "#080403",
+    muzzle: "#2a160a", eye: "#1a0a04", skin: "#3a1c10", hoof: "#1a1410",
+    bg1: "#3a2418", bg2: "#1a100a",
+    hasDapples: false, hasRoanFleck: false, hasDorsalStripe: false, blueEye: false,
+  };
+  
+  if (!coat || !PALETTES) return defaultPalette;
+  return PALETTES[coat] ?? defaultPalette;
 }
 
 // ---------------------------------------------------------------------------
@@ -178,22 +186,23 @@ function sockNeighbor(base: SockHeight, r: () => number): SockHeight {
 export function generateAppearanceDNA(
   seed: number,
   markings: HorseMarkings | undefined,
-  palette: PortraitPalette,
+  palette?: PortraitPalette,
 ): AppearanceDNA {
+  const _palette = palette || getPalette();
   const rng = mulberry32(seed);
   const r = () => rng();
   const between = (a: number, b: number) => a + r() * (b - a);
 
   const baseSocks: SockHeight = markings?.socks ?? "none";
   const dapples: { x: number; y: number; r: number }[] = [];
-  if (palette.hasDapples) {
+  if (_palette.hasDapples) {
     const count = 8 + Math.floor(r() * 8);
     for (let i = 0; i < count; i++) {
       dapples.push({ x: between(60, 175), y: between(70, 175), r: between(3, 7) });
     }
   }
   const flecks: { x: number; y: number; r: number }[] = [];
-  if (palette.hasRoanFleck) {
+  if (_palette.hasRoanFleck) {
     const count = 40 + Math.floor(r() * 30);
     for (let i = 0; i < count; i++) {
       flecks.push({ x: between(40, 185), y: between(60, 195), r: between(0.6, 1.6) });
@@ -273,5 +282,5 @@ export function buildVariation(
   palette?: PortraitPalette,
 ): AppearanceDNA {
   const seed = hashSeed(id ?? "anon");
-  return generateAppearanceDNA(seed, markings, palette ?? PALETTES.bay);
+  return generateAppearanceDNA(seed, markings, palette ?? getPalette());
 }

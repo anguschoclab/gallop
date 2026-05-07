@@ -3,7 +3,7 @@
  */
 
 import type { Rng } from "@/game/rng";
-import { findHorseByName } from "@/game/pedigreeData";
+import { findHorseByName } from "@/core/data/pedigreeData";
 
 /**
  * Generate a name based on a notable ancestor.
