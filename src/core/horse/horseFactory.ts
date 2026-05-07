@@ -1,8 +1,8 @@
-import type { 
-  Horse, 
-  Genotype, 
-  HorseGender, 
-  Hemisphere, 
+import type {
+  Horse,
+  Genotype,
+  HorseGender,
+  Hemisphere,
   Pregnancy,
   Pedigree,
   HorseStats,
@@ -138,8 +138,9 @@ export function createHorseFromDNA(
     stats,
     genotype,
     energy: 100,
-    form: 0,
-    potential: 80, // Default potential
+    form: 50,
+    potential: 50 + Math.floor(rng.next() * 40), // 50-90 base
+    fame: 0,
     raceHistory: [],
     owned: opts.owned ?? false,
     stableId: opts.stableId,
@@ -158,24 +159,10 @@ export function createHorseFromDNA(
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
-    potential: 50 + Math.floor(rng.next() * 40), // 50-90 base
-    fame: 0,
-    energy: 100,
-    form: 50,
     healthStatus: resolveHealthStatus(genotype.health),
     lifecycleStatus: "active",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    racingViable: resolveRacingViable(genotype.health.racingViable),
-=======
-    racingViable: true,
->>>>>>> Stashed changes
     ...dnaTraits,
-    appearance: generateAppearanceDNA(seed, markings, palette),
-=======
-    fame: 0,
     appearance: generateAppearanceDNA(Math.floor(rng.next() * 2147483647), undefined, getPalette(coatColor)),
->>>>>>> Stashed changes
   };
 
   return horse as Horse;
@@ -230,16 +217,16 @@ export function generateNpcHorse(
 ): Horse {
   const tier = opts.tier ?? stable.tier;
   const genTier = tier === "elite" ? "elite" : tier === "mid" ? "mid" : "budget";
-  
+
   // Personality config
   const config = (stable.personality && (PERSONALITY_CONFIG as any)[stable.personality]) || PERSONALITY_CONFIG.conservative;
   const region = stable.country ? getRegionalSystem((stable.country ?? 'Belmont') as any) : "north_america";
-  
+
   const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : rng.range(3, 6));
   const gender = rollGender(age, rng);
-  
+
   const genotype = generateGenotype(rng, genTier);
-  
+
   const horse = createHorseFromDNA(genotype, rng, {
     age,
     gender,
@@ -266,13 +253,13 @@ export function resolveFoaling(
   namingContext?: Partial<NamingContext>,
 ): any {
   const rng = createRng(hashStr(pregnancy.id));
-  
+
   // Genetic crossover
   if (!sire.genotype || !dam.genotype) {
     throw new Error(`Cannot resolve foaling: missing genotype for ${!sire.genotype ? 'sire' : 'dam'}`);
   }
   const genotype = inheritDNA(sire.genotype, dam.genotype, rng);
-  
+
   const foal = createHorseFromDNA(genotype, rng, {
     age: 0,
     gender: rng.next() < 0.5 ? "colt" : "filly",
@@ -281,12 +268,12 @@ export function resolveFoaling(
   });
 
   foal.name = generateProceduralHorseName(
-    { 
-      sireName: sire.name, 
-      damName: dam.name, 
-      region: namingContext?.region, 
-      namingTheme: namingContext?.namingTheme, 
-      existingNames: namingContext?.existingNames ?? new Set() 
+    {
+      sireName: sire.name,
+      damName: dam.name,
+      region: namingContext?.region,
+      namingTheme: namingContext?.namingTheme,
+      existingNames: namingContext?.existingNames ?? new Set()
     },
     rng,
     { strategy: "hybrid" }
