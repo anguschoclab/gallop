@@ -107,7 +107,7 @@ export function HorseCard({
               </div>
               {/* Qualifiers */}
               <div className="text-xs text-cream-muted flex items-center gap-2">
-                <NumericValue value={horse.age} suffix="yo" className="font-semibold" />
+                <NumericValue value={Math.floor(horse.age)} suffix="yo" className="font-semibold" />
                 <span>·</span>
                 <JargonTooltip term="OVR">
                   <span className="font-[family-name:var(--font-body)]">OVR</span>{" "}
@@ -158,7 +158,7 @@ export function HorseCard({
                   </span>
                 </div>
                 <div className="text-sm text-cream-muted flex items-center gap-2">
-                  <NumericValue value={horse.age} suffix=" years old" />
+                  <NumericValue value={Math.floor(horse.age)} suffix=" years old" />
                   <span>·</span>
                   <span className="text-chart-4">
                     Fame: <NumericValue value={horse.fame} suffix="/100" />
@@ -184,7 +184,7 @@ export function HorseCard({
                 <div key={stat} className={isUnknown ? "opacity-50" : ""}>
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-cream-muted capitalize">{stat}</span>
-                    <span className="font-medium tabular-nums">{isUnknown ? "???" : value}</span>
+                    <span className="font-medium tabular-nums">{isUnknown ? "???" : Math.round(value)}</span>
                   </div>
                   <Progress value={isUnknown ? 0 : value} className="h-1.5" />
                 </div>
@@ -244,7 +244,7 @@ export function HorseCard({
               <div className="text-sm text-cream-muted flex items-center gap-2 flex-wrap font-[family-name:var(--font-body)]">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
-                  <NumericValue value={horse.age} suffix=" years old" />
+                  <NumericValue value={Math.floor(horse.age)} suffix=" years old" />
                 </span>
                 {horse.hemisphere && (
                   <>
@@ -298,7 +298,7 @@ export function HorseCard({
           </div>
           <div className="flex items-center gap-1.5">
             <Weight className="w-3.5 h-3.5 text-cream-muted" />
-            <span className="font-medium">{horse.weight} kg</span>
+            <span className="font-medium">{Math.round(horse.weight)} kg</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div
@@ -394,7 +394,7 @@ function StatBar({ label, value }: { label: string; value: number }) {
       <div className="flex justify-between text-xs mb-1">
         <span className="text-cream-muted font-[family-name:var(--font-body)]">{label}</span>
         <span className="font-medium font-[family-name:var(--font-mono)] tabular-nums">
-          {value}
+          {Math.round(value)}
         </span>
       </div>
       <Progress value={value} className="h-1.5" />
