@@ -163,9 +163,14 @@ export function createHorseFromDNA(
     form: 50,
     healthStatus: "healthy",
     lifecycleStatus: "active",
+<<<<<<< Updated upstream
     racingViable: resolveRacingViable(genotype.health.racingViable),
     ...dnaTraits,
     appearance: generateAppearanceDNA(seed, markings, palette),
+=======
+    fame: 0,
+    appearance: generateAppearanceDNA(Math.floor(rng.next() * 2147483647), undefined, getPalette(coatColor)),
+>>>>>>> Stashed changes
   };
 
   return horse as Horse;

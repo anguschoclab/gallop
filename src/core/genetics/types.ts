@@ -1,4 +1,5 @@
 import type { Locus } from "@/core/common/types";
+export type { Locus };
 
 export type ColorGenotype = {
   extension: Locus; // E (black) or e (chestnut)

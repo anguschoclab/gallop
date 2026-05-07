@@ -6,7 +6,7 @@ import type {
   Weather,
   Jockey,
   Stable,
-} from "@/core/common/types"; // This might need a custom import set or just re-export
+} from "@/game/types";
 import { 
   TRAIT_VALUES, 
   fiberDistanceModifier 

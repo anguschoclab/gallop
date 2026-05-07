@@ -31,7 +31,10 @@
       "Bash(curl -sv http://localhost:5173/)",
       "Bash(curl -sv http://localhost:8083/)",
       "Bash(node -e ' *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(xargs grep -l \"^export\")",
+      "Bash(sed -i 's|import { findHorseByName } from \"@/game/pedigreeData\";|import { findHorseByName } from \"@/core/data/pedigreeData\";|g' src/core/breeding/bruceLowe.ts src/core/horse/naming/ancestorHomage.ts)",
+      "Bash(sed -i 's|from \"@/game/pedigreeData\"|from \"@/core/data/pedigreeData\"|g' src/core/horse/horseFactory.ts)"
     ]
   }
 }
