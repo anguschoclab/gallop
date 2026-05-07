@@ -16,3 +16,18 @@ export type Pregnancy = {
   reBreedingAttempts?: number;
   refunded?: boolean;
 };
+
+export type DosageProfile = {
+  brilliant: number;
+  intermediate: number;
+  classic: number;
+  solid: number;
+  professional: number;
+};
+
+export type PedigreeNode = {
+  horseId?: string;
+  name: string;
+  generation: number;
+  aptitudinalGroup?: string;
+};
