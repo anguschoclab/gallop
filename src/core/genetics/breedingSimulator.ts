@@ -6,6 +6,7 @@
 import type { Horse } from "@/game/types";
 import type { GameState } from "@/game/types";
 import type { Rng } from "@/core/common/types";
+import { createRng } from "@/game/rng";
 import { inheritDNA } from "./inheritance";
 import { resolveStats, resolveFiberBias, resolveStrideType, resolveRunningStyle, resolveTrainability, resolvePeakAge, resolveRecoveryRate, resolveBleederRisk, resolveRoarerRisk, resolvePssmRisk, resolveRerRisk, resolveEpmRisk, resolveCoatColor } from "./phenotype";
 import type { RunningStyle, CoatColor } from "@/core/horse/types";
@@ -102,20 +103,9 @@ export function runBreedingSimulation(
 
   // Run 250 simulations
   for (let i = 0; i < SIMULATION_ITERATIONS; i++) {
-    // Generate unique seed for this simulation
-    const simulationSeed = rng.next() * 10000;
-    const simulationRng = {
-      next: () => {
-        const x = Math.sin(simulationSeed + i * 0.1) * 10000;
-        return x - Math.floor(x);
-      },
-      range: (min: number, max: number) => {
-        const x = Math.sin(simulationSeed + i * 0.1 + 0.5) * 10000;
-        const normalized = x - Math.floor(x);
-        return min + normalized * (max - min);
-      },
-      pick: <T>(arr: T[]): T => arr[Math.floor((Math.sin(simulationSeed + i * 0.1 + 0.25) * 10000 - Math.floor(Math.sin(simulationSeed + i * 0.1 + 0.25) * 10000)) * arr.length)],
-    };
+    // Each iteration gets a fresh deterministic RNG seeded from the outer rng
+    const iterationSeed = Math.floor(rng.next() * 2 ** 31);
+    const simulationRng = createRng(iterationSeed);
 
     // Inherit DNA
     const offspringGenotype = inheritDNA(sire.genotype, dam.genotype, simulationRng as any);
@@ -278,7 +268,12 @@ export function runBreedingSimulation(
       acc[color] = (acc[color] || 0) + 1 / SIMULATION_ITERATIONS;
       return acc;
     }, {} as Record<CoatColor, number>),
-    coiEstimate: computeCoiFromSnapshot(sire.pedigree),
+    coiEstimate: computeCoiFromSnapshot({
+      sireId: sire.id,
+      damId: dam.id,
+      sirePedigree: sire.pedigree,
+      damPedigree: dam.pedigree,
+    } as any),
     compatScore: calculateGeneticCompatibility(sire, dam).score,
   };
 

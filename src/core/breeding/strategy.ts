@@ -2,6 +2,14 @@ import type { Horse, Stable } from "@/game/types";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
 
+// How much program archetype fit contributes to stallion score per personality.
+const PROGRAM_WEIGHT: Partial<Record<Stable["personality"], number>> = {
+  breeder: 0.20,
+  developer: 0.10,
+  prestige: 0.30,
+  specialist: 0.40,
+};
+
 /**
  * Breeding Strategy Configuration
  * Personality-driven breeding parameters and scoring logic
@@ -72,6 +80,7 @@ export function scoreStallion(
   stable: Stable,
   maxFee: number,
   leaderboards?: Record<string, Leaderboard>,
+  archetypeFitDelta: number = 0,
 ): number {
   const compat = calculateBreedingCompatibility(stallion, mare).overallScore;
   const stud = stallion.stud!;
@@ -117,38 +126,40 @@ export function scoreStallion(
     }
   }
 
+  const programWeight = PROGRAM_WEIGHT[stable.personality] ?? 0;
+  const programTerm = archetypeFitDelta * programWeight;
+
   switch (stable.personality) {
     case "breeder":
-      // Balanced: compatibility, proven record, value, fertility, fame, leaderboard influence.
       return (
         compat * 0.45 +
         stakesRate * 0.25 +
         (1 - feeNorm) * 0.15 +
         fertilityBonus * 0.05 +
         fameBonus * 0.05 +
-        leaderboardBonus * 0.05
+        leaderboardBonus * 0.05 +
+        programTerm
       );
     case "developer":
-      // Value-hunters: heavily weight inverse fee + leaderboard value rankings.
       return (
         compat * 0.3 +
         (1 - feeNorm) * 0.35 +
         stakesRate * 0.15 +
         fertilityBonus * 0.1 +
-        leaderboardBonus * 0.1
+        leaderboardBonus * 0.1 +
+        programTerm
       );
     case "prestige":
-      // Brand-chasers: weight fame, classification, high fee, and G1 leaderboards.
       return (
         compat * 0.25 +
         stakesRate * 0.25 +
         fameBonus * 0.2 +
         feeNorm * 0.1 +
         fertilityBonus * 0.05 +
-        leaderboardBonus * 0.15
+        leaderboardBonus * 0.15 +
+        programTerm
       );
     case "specialist": {
-      // Match stallion's distance aptitude to the stable's preference + specialist leaderboards.
       const stableDist = stable.preferredDistance ?? 1600;
       const stallionDistDiff = Math.abs((stallion.distanceAptitude ?? 1600) - stableDist);
       const distMatch = Math.max(0, 1 - stallionDistDiff / 1000);
@@ -157,7 +168,8 @@ export function scoreStallion(
         distMatch * 0.25 +
         stakesRate * 0.2 +
         (1 - feeNorm) * 0.1 +
-        leaderboardBonus * 0.1
+        leaderboardBonus * 0.1 +
+        programTerm
       );
     }
     default:

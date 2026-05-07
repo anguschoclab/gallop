@@ -58,7 +58,9 @@ function inheritTrait(
     "poor-poor": [{ result: "poor", probability: 1.0 }],
   };
 
-  const key = `${a}-${b}`;
+  const order = ["excellent", "good", "fair", "poor"];
+  const [stronger, weaker] = order.indexOf(a) <= order.indexOf(b) ? [a, b] : [b, a];
+  const key = `${stronger}-${weaker}`;
   const options = combinations[key] || [{ result: "fair", probability: 1.0 }];
   const roll = rng.next();
   let cumulative = 0;
@@ -107,6 +109,7 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
         allele = genotype.heart[idx];
       } else if (key === "fiberType") allele = genotype.fiberType;
       else if (key === "stride") allele = genotype.stride;
+      else if (key === "style") allele = genotype.style;
       else if (key === "distance") allele = genotype.preferences.distance;
       else if (key === "mudAptitude") allele = genotype.mudAptitude;
       else if (key === "mental") allele = genotype.mental;
@@ -373,13 +376,15 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
     },
   };
 
-  // Build offspring genotype using chromosome-aware results
+  // Build offspring genotype using chromosome-aware results.
+  // Color and markings use independent allele crossover (Mendelian 50/50 within pair)
+  // since whole-locus inheritance breaks dominant/recessive ratios for discrete traits.
   return {
     color: {
-      extension: getOffspringLocus("extension", "COLOR"),
-      agouti: getOffspringLocus("agouti", "COLOR"),
-      gray: getOffspringLocus("gray", "COLOR"),
-      cream: getOffspringLocus("cream", "COLOR"),
+      extension: crossover(sire.color.extension, dam.color.extension, rng),
+      agouti: crossover(sire.color.agouti, dam.color.agouti, rng),
+      gray: crossover(sire.color.gray, dam.color.gray, rng),
+      cream: crossover(sire.color.cream, dam.color.cream, rng),
     },
     stats: {
       speed: reconstructLoci("ATHLETIC", getLociByChromosome("ATHLETIC").filter(k => k.startsWith("speed."))),
@@ -393,7 +398,7 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
       climbing: getOffspringLocus("climbing", "TRACK"),
       cornering: getOffspringLocus("cornering", "TRACK"),
     },
-    style: crossover(sire.style, dam.style, rng), // Independent (not in linkage map yet)
+    style: getOffspringLocus("style", "PERFORMANCE"),
     mental: getOffspringLocus("mental", "BEHAVIORAL"),
     physical: getOffspringLocus("physical", "CONFORMATION"),
     durability: getOffspringLocus("durability", "CONFORMATION"),
@@ -410,11 +415,11 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
     fertility: crossover(sire.fertility, dam.fertility, rng), // Independent (not in linkage map yet)
     foalingEase: getOffspringLocus("foalingEase", "CONFORMATION"),
     markings: {
-      socks: getOffspringLocus("socks", "MARKINGS"),
-      face: getOffspringLocus("face", "MARKINGS"),
-      silverDapple: getOffspringLocus("silverDapple", "MARKINGS"),
-      sabino: getOffspringLocus("sabino", "MARKINGS"),
-      splashWhite: getOffspringLocus("splashWhite", "MARKINGS"),
+      socks: crossover(sire.markings.socks, dam.markings.socks, rng),
+      face: crossover(sire.markings.face, dam.markings.face, rng),
+      silverDapple: crossover(sire.markings.silverDapple, dam.markings.silverDapple, rng),
+      sabino: crossover(sire.markings.sabino, dam.markings.sabino, rng),
+      splashWhite: crossover(sire.markings.splashWhite, dam.markings.splashWhite, rng),
     },
     health: {
       bleeder: getOffspringLocus("bleeder", "HEALTH"),

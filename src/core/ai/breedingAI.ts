@@ -11,6 +11,8 @@ import { scoreStallion, overallRating } from "@/core/breeding/strategy";
 import { runBreedingSimulation } from "@/core/genetics/breedingSimulator";
 import { cachedSimulation } from "@/core/genetics/genotypeCache";
 import { getArchetypeById } from "@/core/breeding/archetypes";
+import { calculateGeneticDistance } from "@/core/breeding/programs";
+import type { BreedingProgram } from "@/core/breeding/programs";
 import type { Rng } from "@/game/rng";
 
 /**
@@ -22,6 +24,9 @@ export interface BreedingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;
   breedingHistory: BreedingDecision[];
+  activeProgram: BreedingProgram | null;
+  programDistanceHistory: { season: number; distance: number }[];
+  programSwitchCooldown: number;
 }
 
 export interface BreedingDecision {
@@ -49,6 +54,9 @@ export function createBreedingAIState(stable: Stable): BreedingAIState {
     personalityState: getPersonalityAIState(stable.personality),
     learningState: createLearningState(),
     breedingHistory: [],
+    activeProgram: null,
+    programDistanceHistory: [],
+    programSwitchCooldown: 0,
   };
 }
 
@@ -304,26 +312,33 @@ export function selectSireForDam(
       return selectSireByTraditionalScoring(dam, candidateSires, stable, gameState);
     }
 
-    // Evaluate each candidate sire using breeding simulator (cached)
     let bestSire: Horse | null = null;
     let bestDistance = 1.0;
 
     for (const sire of candidateSires) {
+      // Run a quick sim to get a representative foal, then measure archetype distance
       const simulation = cachedSimulation(
         sire.id,
         dam.id,
         () => runBreedingSimulation(sire, dam, gameState, rng),
       );
-
-      const distance = simulation.coiEstimate; // Use COI as proxy for genetic distance
+      // Build a synthetic horse from the simulation median stats to measure distance
+      const syntheticFoal = {
+        stats: {
+          speed: simulation.stats.speed.p75,
+          stamina: simulation.stats.stamina.p75,
+          acceleration: simulation.stats.acceleration.p75,
+          consistency: simulation.stats.consistency.p75,
+        },
+      } as any;
+      const distance = calculateGeneticDistance(syntheticFoal, archetype);
       if (distance < bestDistance) {
         bestDistance = distance;
         bestSire = sire;
       }
     }
 
-    // If best match is good (distance < 0.3), use it
-    if (bestSire && bestDistance < 0.3) {
+    if (bestSire && bestDistance < 0.5) {
       return bestSire;
     }
   }

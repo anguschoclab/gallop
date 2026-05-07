@@ -1,5 +1,6 @@
 import type { Horse, GameState, Pedigree } from "@/game/types";
-import { findHorseByName } from "@/game/pedigreeData";
+import { findHorseByName } from "@/core/data/pedigreeData";
+import { cachedCoi, cachedBloodline } from "@/core/genetics/genotypeCache";
 
 // ============================================================================
 // Bloodline tagging — sire-line founder identification
@@ -50,6 +51,9 @@ export function resolveBloodline(
   state: Pick<GameState, "horses">,
   depth: number = 0,
 ): Bloodline {
+  if (depth === 0) {
+    return cachedBloodline(horse.id, () => resolveBloodline(horse, state, 1));
+  }
   if (depth > 8) return "Unaffiliated";
   if (horse.bloodline) return horse.bloodline as Bloodline;
 
@@ -92,6 +96,18 @@ export function computeCoiFromSnapshot(
   maxDepth: number = 5,
 ): number {
   if (!pedigree) return 0;
+  if (pedigree.sireId && pedigree.damId) {
+    return cachedCoi(pedigree.sireId, pedigree.damId, () =>
+      _computeCoiFromSnapshot(pedigree, maxDepth),
+    );
+  }
+  return _computeCoiFromSnapshot(pedigree, maxDepth);
+}
+
+function _computeCoiFromSnapshot(
+  pedigree: Pedigree,
+  maxDepth: number = 5,
+): number {
   const sireDepths = new Map<string, number>();
   const damDepths = new Map<string, number>();
   walkPedigree(pedigree.sirePedigree, 1, maxDepth, sireDepths);

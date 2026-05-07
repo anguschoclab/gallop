@@ -6,6 +6,9 @@
 import type { Pregnancy, TripleCrownProgress } from "@/game/types";
 import type { BreedingState } from "@/game/state/breedingState";
 import { createDefaultBreedingState } from "@/game/state/breedingState";
+import { createBreedingProgram, updateProgramProgress } from "@/core/breeding/programs";
+import { getArchetypeById } from "@/core/breeding/archetypes";
+import type { BreedingProgram } from "@/core/breeding/programs";
 import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
 import { generateUUID } from "@/game/uuid";
 import type { BreedingIntent } from "@/core/resolver/intents";
@@ -16,6 +19,11 @@ export type BreedingSlice = BreedingState & {
   retireToPasture: (horseId: string) => { ok: true } | { ok: false; reason: string };
   setPregnancies: (pregnancies: Pregnancy[]) => void;
   setTriplecrownHistory: (history: TripleCrownProgress[]) => void;
+  startBreedingProgram: (archetypeId: string) => { ok: true } | { ok: false; reason: string };
+  cancelBreedingProgram: () => void;
+  enrollDamInProgram: (damId: string) => { ok: true } | { ok: false; reason: string };
+  unenrollDamFromProgram: (damId: string) => void;
+  recordProgramFoal: (horseId: string) => void;
 };
 
 export function createBreedingSlice(
@@ -116,6 +124,59 @@ export function createBreedingSlice(
 
     setTriplecrownHistory: (history) => {
       set({ triplecrownHistory: history });
+    },
+
+    startBreedingProgram: (archetypeId) => {
+      const archetype = getArchetypeById(archetypeId);
+      if (!archetype) return { ok: false, reason: "Unknown archetype." };
+      const s = get();
+      const program = createBreedingProgram("player", archetypeId, s.day);
+      set({ activeBreedingProgram: program });
+      return { ok: true };
+    },
+
+    cancelBreedingProgram: () => {
+      set({ activeBreedingProgram: null });
+    },
+
+    enrollDamInProgram: (damId) => {
+      const s = get();
+      if (!s.activeBreedingProgram) return { ok: false, reason: "No active program." };
+      const dam = s.horses.find((h: any) => h.id === damId);
+      if (!dam) return { ok: false, reason: "Horse not found." };
+      if (dam.gender !== "mare" && dam.gender !== "filly")
+        return { ok: false, reason: "Only mares can be enrolled." };
+      if (s.activeBreedingProgram.enrolledDamIds.includes(damId))
+        return { ok: false, reason: "Already enrolled." };
+      set({
+        activeBreedingProgram: {
+          ...s.activeBreedingProgram,
+          enrolledDamIds: [...s.activeBreedingProgram.enrolledDamIds, damId],
+        },
+      });
+      return { ok: true };
+    },
+
+    unenrollDamFromProgram: (damId) => {
+      const s = get();
+      if (!s.activeBreedingProgram) return;
+      set({
+        activeBreedingProgram: {
+          ...s.activeBreedingProgram,
+          enrolledDamIds: s.activeBreedingProgram.enrolledDamIds.filter((id: string) => id !== damId),
+        },
+      });
+    },
+
+    recordProgramFoal: (horseId) => {
+      const s = get();
+      if (!s.activeBreedingProgram) return;
+      const horse = s.horses.find((h: any) => h.id === horseId);
+      if (!horse) return;
+      const archetype = getArchetypeById(s.activeBreedingProgram.archetypeId);
+      if (!archetype) return;
+      const updated = updateProgramProgress(s.activeBreedingProgram, horse, archetype, s.day);
+      set({ activeBreedingProgram: updated });
     },
   };
 }

@@ -24,11 +24,7 @@ export type BreedingProgram = {
   geneticDistance: number;
   milestones: ProgramMilestone[];
   enrolledDamIds: string[];
-  history: {
-    day: number;
-    event: string;
-    details?: string;
-  }[];
+  history: { day: number; distance: number; horseId: string }[];
 };
 
 /**
@@ -86,9 +82,9 @@ export function updateProgramProgress(
     let achieved = false;
     if (milestone.triggerCondition === "first_generation" && program.generationCount === 1) {
       achieved = true;
-    } else if (milestone.triggerCondition === "distance_below_0.5" && newDistance < 0.5) {
+    } else if (milestone.triggerCondition === "distance_below_0.6" && newDistance < 0.6) {
       achieved = true;
-    } else if (milestone.triggerCondition === "distance_below_0.3" && newDistance < 0.3) {
+    } else if (milestone.triggerCondition === "distance_below_0.4" && newDistance < 0.4) {
       achieved = true;
     } else if (milestone.triggerCondition === "distance_below_0.2" && newDistance < 0.2) {
       achieved = true;
@@ -104,12 +100,7 @@ export function updateProgramProgress(
     return milestone;
   });
 
-  // Add history entry
-  const historyEntry = {
-    day,
-    event: isBest ? "new_best_horse" : "foal_born",
-    details: `Horse ${horse.name} born with distance ${newDistance.toFixed(3)}`,
-  };
+  const historyEntry = { day, distance: newDistance, horseId: horse.id };
 
   return {
     ...program,
@@ -137,15 +128,15 @@ export function createBreedingProgram(
       achieved: false,
     },
     {
-      id: `${stableId}_dist_0.5`,
-      description: "Achieve genetic distance below 0.5",
-      triggerCondition: "distance_below_0.5",
+      id: `${stableId}_dist_0.6`,
+      description: "Genetic foundation established",
+      triggerCondition: "distance_below_0.6",
       achieved: false,
     },
     {
-      id: `${stableId}_dist_0.3`,
-      description: "Achieve genetic distance below 0.3",
-      triggerCondition: "distance_below_0.3",
+      id: `${stableId}_dist_0.4`,
+      description: "Program taking shape",
+      triggerCondition: "distance_below_0.4",
       achieved: false,
     },
     {
@@ -166,12 +157,6 @@ export function createBreedingProgram(
     geneticDistance: 1.0,
     milestones,
     enrolledDamIds: [],
-    history: [
-      {
-        day,
-        event: "program_created",
-        details: `Breeding program created with archetype ${archetypeId}`,
-      },
-    ],
+    history: [],
   };
 }

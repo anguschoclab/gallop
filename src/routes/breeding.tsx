@@ -4,7 +4,7 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Info, FileText, Baby, Calendar } from "lucide-react";
+import { Heart, Info, FileText, Baby, Calendar, Target } from "lucide-react";
 import { toast } from "sonner";
 import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
 import { BreedingRadarChart } from "@/components/BreedingRadarChart";
@@ -16,6 +16,7 @@ import { getAvailableStallions } from "@/core/breeding/stallions";
 import { NumericValue } from "@/components/HorseBits";
 import { cn } from "@/lib/utils";
 import { FoalNamingDialog } from "@/components/FoalNamingDialog";
+import { BreedingProgramPanel } from "@/components/BreedingProgramPanel";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
@@ -151,6 +152,10 @@ function BreedingPage() {
           <TabsTrigger value="history" className="gap-2">
             <FileText className="h-4 w-4" />
             History
+          </TabsTrigger>
+          <TabsTrigger value="programs" className="gap-2">
+            <Target className="h-4 w-4" />
+            Programs
           </TabsTrigger>
         </TabsList>
 
@@ -531,6 +536,10 @@ function BreedingPage() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="programs" className="space-y-4">
+          <BreedingProgramPanel />
         </TabsContent>
       </Tabs>
     </div>

@@ -2,6 +2,7 @@
 // Includes pregnancies, stud careers, and breeding history
 
 import type { Pregnancy, TripleCrownProgress } from "../types";
+import type { BreedingProgram } from "@/core/breeding/programs";
 
 /**
  * Breeding-related state for reproduction tracking and lineage.
@@ -11,6 +12,8 @@ export interface BreedingState {
   pregnancies: Pregnancy[];
   /** Historical record of Triple Crown attempts */
   triplecrownHistory?: TripleCrownProgress[];
+  /** Player's active multi-generation breeding program (one at a time) */
+  activeBreedingProgram: BreedingProgram | null;
 }
 
 /**
@@ -19,5 +22,6 @@ export interface BreedingState {
 export function createDefaultBreedingState(): BreedingState {
   return {
     pregnancies: [],
+    activeBreedingProgram: null,
   };
 }
