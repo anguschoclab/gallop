@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
-  <!-- Roan horse placeholder - mix of white and dark hairs -->
-  <circle cx="25" cy="25" r="20" fill="#A0A0A0"/>
-  <circle cx="18" cy="20" r="3" fill="#D0D0D0" opacity="0.7"/>
-  <circle cx="32" cy="22" r="2.5" fill="#E0E0E0" opacity="0.6"/>
-  <circle cx="25" cy="30" r="2" fill="#C0C0C0" opacity="0.8"/>
-  <text x="25" y="28" text-anchor="middle" fill="white" font-size="10" font-weight="bold">R</text>
-</svg>
