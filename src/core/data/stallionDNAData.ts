@@ -1,4 +1,4 @@
-import type { Genotype, Locus, MarkerGenotype } from "./types";
+import type { Genotype, Locus, MarkerGenotype } from "@/core/genetics/types";
 
 /**
  * Research data for stallions gathered from real-world sources

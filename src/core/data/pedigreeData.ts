@@ -1,7 +1,7 @@
 // Curated dataset of famous thoroughbred sires and dams
 // Sources: Wikipedia (Leading Sire in North America), TBHeritage.com (Foundation Sires)
 
-import { nondeterministicRng, type Rng } from "./rng";
+import { nondeterministicRng, type Rng } from "@/game/rng";
 
 export type AptitudinalGroup = "Brilliant" | "Intermediate" | "Classic" | "Solid" | "Professional";
 
