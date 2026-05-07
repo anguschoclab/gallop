@@ -233,7 +233,7 @@ export function generateNpcHorse(
   
   // Personality config
   const config = (stable.personality && (PERSONALITY_CONFIG as any)[stable.personality]) || PERSONALITY_CONFIG.conservative;
-  const region = stable.country ? getRegionalSystem(stable.country) : "north_america";
+  const region = stable.country ? getRegionalSystem((stable.country ?? 'Belmont') as any) : "north_america";
   
   const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : rng.range(3, 6));
   const gender = rollGender(age, rng);

@@ -34,7 +34,9 @@
       "Bash(git stash *)",
       "Bash(xargs grep -l \"^export\")",
       "Bash(sed -i 's|import { findHorseByName } from \"@/game/pedigreeData\";|import { findHorseByName } from \"@/core/data/pedigreeData\";|g' src/core/breeding/bruceLowe.ts src/core/horse/naming/ancestorHomage.ts)",
-      "Bash(sed -i 's|from \"@/game/pedigreeData\"|from \"@/core/data/pedigreeData\"|g' src/core/horse/horseFactory.ts)"
+      "Bash(sed -i 's|from \"@/game/pedigreeData\"|from \"@/core/data/pedigreeData\"|g' src/core/horse/horseFactory.ts)",
+      "Bash(sed -i \"s/|| PERSONALITY_CONFIG.balanced/|| PERSONALITY_CONFIG.developer/\" src/core/horse/horseFactory.ts)",
+      "Bash(sed -i \"s/getRegionalSystem\\(stable.country\\)/getRegionalSystem\\(\\(stable.country ?? 'Belmont'\\) as any\\)/\" src/core/horse/horseFactory.ts)"
     ]
   }
 }
