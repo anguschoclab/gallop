@@ -12,10 +12,19 @@ import {
   NATURE_TERMS,
   ABSTRACT_TERMS,
   RACING_SPIRIT_ADJECTIVES,
-  RACING_SPIRIT_NOUNS
+  RACING_SPIRIT_NOUNS,
 } from "./nameDatabase";
 
-export type NamingTheme = "aggressive" | "conservative" | "developer" | "win-now" | "specialist" | "breeder" | "trader" | "prestige" | "generic";
+export type NamingTheme =
+  | "aggressive"
+  | "conservative"
+  | "developer"
+  | "win-now"
+  | "specialist"
+  | "breeder"
+  | "trader"
+  | "prestige"
+  | "generic";
 
 interface ThemeDefinition {
   wordPools: string[][];

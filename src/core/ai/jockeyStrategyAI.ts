@@ -117,7 +117,13 @@ function calculateStyleScore(
     style_score: score,
     horse_energy: horse.energy,
     horse_form: horse.form,
-    jockey_skill: (jockey.stats.pacing + jockey.stats.vigor + jockey.stats.positioning + jockey.stats.gateSkill + jockey.stats.temperament) / 5,
+    jockey_skill:
+      (jockey.stats.pacing +
+        jockey.stats.vigor +
+        jockey.stats.positioning +
+        jockey.stats.gateSkill +
+        jockey.stats.temperament) /
+      5,
   };
 
   score = calculateUtilityScore(aiState.personalityState, "jockey_strategy", factors);
@@ -300,9 +306,7 @@ export function getStrategyInsights(
   const stableHistory = aiState.strategyHistory.filter((s) => s.stableId === stableId);
   const totalRaces = stableHistory.length;
   const avgPosition =
-    totalRaces > 0
-      ? stableHistory.reduce((sum, s) => sum + s.position, 0) / totalRaces
-      : 5;
+    totalRaces > 0 ? stableHistory.reduce((sum, s) => sum + s.position, 0) / totalRaces : 5;
 
   const styleUsage: Record<RunningStyle, number> = {
     E: 0,
@@ -316,9 +320,7 @@ export function getStrategyInsights(
   }
 
   const avgAggressiveness =
-    totalRaces > 0
-      ? stableHistory.reduce((sum, s) => sum + s.aggressiveness, 0) / totalRaces
-      : 0.5;
+    totalRaces > 0 ? stableHistory.reduce((sum, s) => sum + s.aggressiveness, 0) / totalRaces : 0.5;
 
   return {
     totalRaces,

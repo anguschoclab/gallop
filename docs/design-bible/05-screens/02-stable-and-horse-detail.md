@@ -12,12 +12,12 @@ Two screens, one spec: they share data, components, and a coherent flow.
 
 ## At a glance
 
-| | Stable list | Horse detail |
-|---|---|---|
-| **Route** | `/stable` ([stable.tsx](../../../src/routes/stable.tsx)) | `/stable/$horseId` ([stable.$horseId.tsx](../../../src/routes/stable.$horseId.tsx)) |
-| **Persona** | Maya, Tomás | All three |
-| **Primary verb** | Browse / Compare | Train, Inspect |
-| **Layout** | AppShell | AppShell |
+|                  | Stable list                                              | Horse detail                                                                        |
+| ---------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **Route**        | `/stable` ([stable.tsx](../../../src/routes/stable.tsx)) | `/stable/$horseId` ([stable.$horseId.tsx](../../../src/routes/stable.$horseId.tsx)) |
+| **Persona**      | Maya, Tomás                                              | All three                                                                           |
+| **Primary verb** | Browse / Compare                                         | Train, Inspect                                                                      |
+| **Layout**       | AppShell                                                 | AppShell                                                                            |
 
 ## Purpose
 
@@ -89,17 +89,17 @@ Two screens, one spec: they share data, components, and a coherent flow.
 
 ## Copy
 
-- Stable title: *"My stable"* + *"n horses"* subtitle.
+- Stable title: _"My stable"_ + _"n horses"_ subtitle.
 - Horse detail title: horse name (title case, given by player or generated).
-- Primary CTA on horse detail: *"Train"* if eligible today, otherwise *"Enter race"* if races available.
-- Tab labels: *"Overview"*, *"Pedigree"*, *"Record"*, *"Training"*.
-- Empty state for "Record": *"No races run yet."*
+- Primary CTA on horse detail: _"Train"_ if eligible today, otherwise _"Enter race"_ if races available.
+- Tab labels: _"Overview"_, _"Pedigree"_, _"Record"_, _"Training"_.
+- Empty state for "Record": _"No races run yet."_
 
 ## States
 
 - Stable empty — see [Dashboard](01-dashboard.md) empty pattern.
-- Filtered to empty — *"No horses match your filters."* + reset.
-- Horse detail not found / sold — *"This horse is no longer in your stable."* + back link.
+- Filtered to empty — _"No horses match your filters."_ + reset.
+- Horse detail not found / sold — _"This horse is no longer in your stable."_ + back link.
 - Horse retired — overview shows retirement banner; train/enter buttons disabled.
 - Horse in foal (mare) — `PregnancyTimeline` becomes the lead element.
 
@@ -112,4 +112,4 @@ Two screens, one spec: they share data, components, and a coherent flow.
 ## Open questions
 
 - Compact list view (table) vs. card grid: should it be a toggle or a breakpoint behaviour?
-- Where does *jockey assignment* live — on the horse detail or on the race entry flow?
+- Where does _jockey assignment_ live — on the horse detail or on the race entry flow?

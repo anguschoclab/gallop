@@ -87,7 +87,7 @@ export function calculateUtilityScore(
 
     // Graded race bonus affects stakes factors
     if (factor.includes("graded") || factor.includes("stakes")) {
-      weight *= (config.gradedRaceBonus / 10);
+      weight *= config.gradedRaceBonus / 10;
     }
 
     score += value * weight;
@@ -100,7 +100,7 @@ export function calculateUtilityScore(
 
   // Apply innovation modifier (boosts score for novel approaches)
   if (decisionType === "novel") {
-    score *= (1 + config.innovation * 0.5);
+    score *= 1 + config.innovation * 0.5;
   }
 
   return Math.max(0, Math.min(1, score));
@@ -172,7 +172,7 @@ function shouldAdaptStrategy(
   if (history.length < 5) return false;
 
   // Conservative personalities adapt slower
-  const threshold = 0.5 - (aiState.conservatism * 0.2);
+  const threshold = 0.5 - aiState.conservatism * 0.2;
   return successRate < threshold;
 }
 
@@ -263,12 +263,12 @@ export function getCompetitiveModifier(
     // If competitors are succeeding, conservative personalities may avoid
     // Innovative personalities may try to compete
     if (competitorSuccessRate > 0.7) {
-      modifier *= (1 - config.conservatism * 0.3) + config.innovation * 0.2;
+      modifier *= 1 - config.conservatism * 0.3 + config.innovation * 0.2;
     }
 
     // If competitors are failing, may be opportunity
     if (competitorSuccessRate < 0.3) {
-      modifier *= (1 + config.innovation * 0.2);
+      modifier *= 1 + config.innovation * 0.2;
     }
   }
 

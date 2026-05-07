@@ -1,14 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { createRng } from "@/game/rng";
+import { generateGenotype, generateDeterministicGenotype } from "@/core/genetics/generation";
 import {
-  generateGenotype,
-  generateDeterministicGenotype,
-} from "@/core/genetics/generation";
-import { 
-  resolveStats, 
-  resolveCoatColor, 
-  resolveSize, 
-  resolveInjuryProneness 
+  resolveStats,
+  resolveCoatColor,
+  resolveSize,
+  resolveInjuryProneness,
 } from "@/core/genetics/phenotype";
 import { inheritDNA } from "@/core/genetics/inheritance";
 
@@ -60,10 +57,10 @@ describe("Deterministic DNA Bias Validation", () => {
   it("should validate Brilliant dosage bias toward speed", () => {
     const brilliantDNA = generateDeterministicGenotype("BrilliantTest", "elite", ["Brilliant"]);
     const classicDNA = generateDeterministicGenotype("ClassicTest", "elite", ["Classic"]);
-    
+
     const brilliantStats = resolveStats(brilliantDNA.stats);
     const classicStats = resolveStats(classicDNA.stats);
-    
+
     // Brilliant should have higher speed than Classic
     expect(brilliantStats.speed).toBeGreaterThan(classicStats.speed);
   });
@@ -71,15 +68,16 @@ describe("Deterministic DNA Bias Validation", () => {
   it("should validate Solid dosage bias toward stamina and durability", () => {
     const solidDNA = generateDeterministicGenotype("SolidTest", "elite", ["Solid"]);
     const classicDNA = generateDeterministicGenotype("ClassicTest", "elite", ["Classic"]);
-    
+
     const solidStats = resolveStats(solidDNA.stats);
     const classicStats = resolveStats(classicDNA.stats);
-    
+
     // Solid should have higher stamina than Classic
     expect(solidStats.stamina).toBeGreaterThan(classicStats.stamina);
-    
+
     // Solid should have higher durability
-    expect(solidDNA.durability[0] + solidDNA.durability[1])
-      .toBeGreaterThan(classicDNA.durability[0] + classicDNA.durability[1]);
+    expect(solidDNA.durability[0] + solidDNA.durability[1]).toBeGreaterThan(
+      classicDNA.durability[0] + classicDNA.durability[1],
+    );
   });
 });

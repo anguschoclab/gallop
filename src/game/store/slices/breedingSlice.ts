@@ -15,7 +15,11 @@ import type { BreedingIntent } from "@/core/resolver/intents";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants/gameConstants";
 
 export type BreedingSlice = BreedingState & {
-  breed: (sireId: string, damId: string, liveFoalGuarantee?: boolean) => { ok: true } | { ok: false; reason: string };
+  breed: (
+    sireId: string,
+    damId: string,
+    liveFoalGuarantee?: boolean,
+  ) => { ok: true } | { ok: false; reason: string };
   retireToPasture: (horseId: string) => { ok: true } | { ok: false; reason: string };
   setPregnancies: (pregnancies: Pregnancy[]) => void;
   setTriplecrownHistory: (history: TripleCrownProgress[]) => void;
@@ -101,8 +105,9 @@ export function createBreedingSlice(
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
-      if (horse.age < 3) return { ok: false, reason: "Horse must be at least 3 years old to retire." };
-      
+      if (horse.age < 3)
+        return { ok: false, reason: "Horse must be at least 3 years old to retire." };
+
       set({
         horses: s.horses.map((h: any) =>
           h.id === horseId ? { ...h, retired: true, retiredDay: s.day } : h,
@@ -163,7 +168,9 @@ export function createBreedingSlice(
       set({
         activeBreedingProgram: {
           ...s.activeBreedingProgram,
-          enrolledDamIds: s.activeBreedingProgram.enrolledDamIds.filter((id: string) => id !== damId),
+          enrolledDamIds: s.activeBreedingProgram.enrolledDamIds.filter(
+            (id: string) => id !== damId,
+          ),
         },
       });
     },

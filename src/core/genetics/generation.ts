@@ -1,7 +1,4 @@
-import type {
-  Genotype,
-  MarkerGenotype,
-} from "./types";
+import type { Genotype, MarkerGenotype } from "./types";
 import type { Locus } from "@/core/common/types";
 import type { Rng } from "@/core/common/types";
 import { createRng, hashStr } from "@/game/rng";
@@ -9,17 +6,38 @@ import type { AptitudinalGroup } from "@/core/data/pedigreeData";
 import { getStallionResearchData, hasCompleteData } from "@/core/data/stallionDNAData";
 import { mapResearchDataToGenotype } from "./mapper";
 
-const DOSAGE_BIASES: Record<AptitudinalGroup, {
-  speedBias: number;
-  staminaBias: number;
-  styleBias: number;
-  fiberBias: number;
-  durabilityBias: number;
-}> = {
-  Brilliant: { speedBias: +0.3, staminaBias: -0.2, styleBias: 1.5, fiberBias: -0.5, durabilityBias: 0 },
+const DOSAGE_BIASES: Record<
+  AptitudinalGroup,
+  {
+    speedBias: number;
+    staminaBias: number;
+    styleBias: number;
+    fiberBias: number;
+    durabilityBias: number;
+  }
+> = {
+  Brilliant: {
+    speedBias: +0.3,
+    staminaBias: -0.2,
+    styleBias: 1.5,
+    fiberBias: -0.5,
+    durabilityBias: 0,
+  },
   Classic: { speedBias: 0, staminaBias: 0, styleBias: 2.5, fiberBias: 0, durabilityBias: 0 },
-  Intermediate: { speedBias: +0.1, staminaBias: +0.1, styleBias: 2.0, fiberBias: 0, durabilityBias: 0 },
-  Solid: { speedBias: -0.2, staminaBias: +0.3, styleBias: 3.5, fiberBias: +0.5, durabilityBias: +0.2 },
+  Intermediate: {
+    speedBias: +0.1,
+    staminaBias: +0.1,
+    styleBias: 2.0,
+    fiberBias: 0,
+    durabilityBias: 0,
+  },
+  Solid: {
+    speedBias: -0.2,
+    staminaBias: +0.3,
+    styleBias: 3.5,
+    fiberBias: +0.5,
+    durabilityBias: +0.2,
+  },
   Professional: { speedBias: 0, staminaBias: 0, styleBias: 2.5, fiberBias: 0, durabilityBias: 0 },
 };
 
@@ -205,14 +223,14 @@ export function applyDosageBiases(
   totalDurabilityBias /= count;
 
   if (totalSpeedBias !== 0) {
-    genotype.stats.speed = genotype.stats.speed.map(l => [
+    genotype.stats.speed = genotype.stats.speed.map((l) => [
       Math.max(alleleMin, Math.min(alleleMax, l[0] + totalSpeedBias)),
       Math.max(alleleMin, Math.min(alleleMax, l[1] + totalSpeedBias)),
     ]) as Locus[];
   }
 
   if (totalStaminaBias !== 0) {
-    genotype.stats.stamina = genotype.stats.stamina.map(l => [
+    genotype.stats.stamina = genotype.stats.stamina.map((l) => [
       Math.max(alleleMin, Math.min(alleleMax, l[0] + totalStaminaBias)),
       Math.max(alleleMin, Math.min(alleleMax, l[1] + totalStaminaBias)),
     ]) as Locus[];

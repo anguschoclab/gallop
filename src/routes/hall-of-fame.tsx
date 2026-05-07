@@ -65,19 +65,26 @@ function HallOfFame() {
                       <div className="flex items-center gap-2">
                         <Medal className="h-4 w-4 text-chart-4" />
                         <span className="text-cream-muted">Graded Wins:</span>
-                        <span className="font-semibold">{inductee.careerHighlights.gradedWins}</span>
+                        <span className="font-semibold">
+                          {inductee.careerHighlights.gradedWins}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-chart-2" />
                         <span className="text-cream-muted">Earnings:</span>
                         <span className="font-semibold">
-                          <NumericValue value={inductee.careerHighlights.lifetimeEarnings} prefix="$" />
+                          <NumericValue
+                            value={inductee.careerHighlights.lifetimeEarnings}
+                            prefix="$"
+                          />
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Trophy className="h-4 w-4 text-chart-1" />
                         <span className="text-cream-muted">HOTY:</span>
-                        <span className="font-semibold">{inductee.careerHighlights.horseOfTheYearAwards}</span>
+                        <span className="font-semibold">
+                          {inductee.careerHighlights.horseOfTheYearAwards}
+                        </span>
                       </div>
                     </div>
                     {horse && (

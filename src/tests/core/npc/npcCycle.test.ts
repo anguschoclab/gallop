@@ -66,7 +66,15 @@ describe("runNpcCycle", () => {
     const jockeys: any[] = [];
     const races: Race[] = [];
 
-    const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any, 5);
+    const result = runNpcCycle(
+      npcStables,
+      horses,
+      jockeys,
+      races,
+      10,
+      { next: () => 0.5 } as any,
+      5,
+    );
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();
   });

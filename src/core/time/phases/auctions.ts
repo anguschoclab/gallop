@@ -1,6 +1,6 @@
 import type { PipelineContext } from "../pipeline";
 import type { AuctionSale } from "@/game/types";
-import { generateAuctionLots } from "@/game/auction";
+import { generateAuctionLots, SALE_TRIGGERS } from "@/game/auction";
 import { createAuctionRunner } from "@/game/auctionRunner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/game/uuid";
@@ -31,27 +31,18 @@ export const auctionsPhase = {
     const impacts = [...(context.impacts ?? [])];
     const doy = dayOfYear(newDay);
 
-    // Eight-sale calendar — spaced through the year so the player encounters
-    // a fresh sale every couple of months.
-    const SALE_TRIGGERS: { doy: number; kind: AuctionSale["kind"]; name: string }[] = [
-      { doy: 75, kind: "2yo_training", name: "Spring 2YO Breeze-Up Sale" },
-      { doy: 90, kind: "weanling", name: "Spring Weanling Sale" },
-      { doy: 105, kind: "yearling_south", name: "Southern Yearling Sale" },
-      { doy: 165, kind: "mixed", name: "Midsummer Mixed Sale" },
-      { doy: 240, kind: "yearling", name: "Late Summer Yearling Sale" },
-      { doy: 270, kind: "racing_age", name: "Autumn Horses-of-Racing-Age Sale" },
-      { doy: 290, kind: "weanling_south", name: "Southern Weanling Sale" },
-      { doy: 335, kind: "broodmare", name: "Year-End Broodmare & Breeding Stock Sale" },
-    ];
     for (const trigger of SALE_TRIGGERS) {
-      if (doy === trigger.doy && !auctions.some((a) => !a.resolved && a.kind === trigger.kind)) {
+      const targetDoy = trigger.doy - 14 <= 0 ? trigger.doy - 14 + 365 : trigger.doy - 14;
+
+      if (doy === targetDoy && !auctions.some((a) => !a.resolved && a.kind === trigger.kind)) {
+        const saleDay = newDay + 14;
         // generateAuctionLots may push fresh NPC horses into the working
         // horses array (for thin-inventory consignors). We pass a working
         // copy and emit horse-creation impacts for any newcomers.
         const horsesForGen = [...state.horses];
         const beforeCount = horsesForGen.length;
         const newSale = generateAuctionLots(
-          newDay,
+          saleDay,
           state.npcStables,
           horsesForGen,
           trigger.kind,
@@ -71,8 +62,31 @@ export const auctionsPhase = {
             reason: "auction_consignment_generation",
           });
         }
+        
+        // Take the generated lots and strip them from the sale, because we will emit consignment
+        // impacts to add them back in the impact resolution phase (which also locks the horses).
+        const generatedLots = newSale.lots;
+        newSale.lots = [];
         auctions.push(newSale);
-        logs.push({ day: newDay, text: `${trigger.name} opens — ${newSale.lots.length} lots.` });
+        logs.push({ day: newDay, text: `Catalog opens for ${trigger.name} — sale on Day ${saleDay}.` });
+
+        // Emit consignment impacts for each NPC lot
+        for (const lot of generatedLots) {
+          impacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "auctions",
+            logLevel: "conditional",
+            type: "consignment",
+            horseId: lot.horseId,
+            saleId: newSale.id,
+            consignorStableId: lot.consignorStableId,
+            reservePrice: lot.reservePrice,
+            breezeSeconds: lot.breezeSeconds,
+            reason: "npc_consignment",
+          });
+        }
       }
     }
 

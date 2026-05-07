@@ -22,26 +22,25 @@ interface FoalNamingDialogProps {
   onClose: () => void;
 }
 
-export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
-  foalId,
-  isOpen,
-  onClose,
-}) => {
+export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOpen, onClose }) => {
   const { horses, usedHorseNames, hallOfFame, renameHorse } = useGallopStore();
   const foal = horses.find((h) => h.id === foalId);
-  
+
   const [name, setName] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const existingNamesSet = useMemo(() => new Set(usedHorseNames), [usedHorseNames]);
-  const deceasedNamesSet = useMemo(() => new Set(hallOfFame.map(h => h.name.toLowerCase())), [hallOfFame]);
+  const deceasedNamesSet = useMemo(
+    () => new Set(hallOfFame.map((h) => h.name.toLowerCase())),
+    [hallOfFame],
+  );
 
   const generateSuggestions = () => {
     if (!foal) return;
     const rng = createRng(Date.now());
     const newSuggestions: string[] = [];
-    
+
     // Generate 3 suggestions
     for (let i = 0; i < 3; i++) {
       const suggestion = generateProceduralHorseName(
@@ -52,7 +51,7 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
           deceasedNames: deceasedNamesSet,
         },
         rng,
-        { strategy: "hybrid" }
+        { strategy: "hybrid" },
       );
       newSuggestions.push(suggestion);
     }
@@ -106,14 +105,16 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
 
         <div className="grid gap-6 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="name" className="text-slate-300">Horse Name</Label>
+            <Label htmlFor="name" className="text-slate-300">
+              Horse Name
+            </Label>
             <div className="relative">
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter a unique name..."
-                className={`bg-slate-950 border-slate-800 text-white pr-10 ${error ? 'border-red-500 focus-visible:ring-red-500' : 'focus-visible:ring-emerald-500'}`}
+                className={`bg-slate-950 border-slate-800 text-white pr-10 ${error ? "border-red-500 focus-visible:ring-red-500" : "focus-visible:ring-emerald-500"}`}
                 maxLength={18}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -131,9 +132,9 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
           <div className="grid gap-3">
             <div className="flex items-center justify-between">
               <Label className="text-slate-300">Suggested Names</Label>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={generateSuggestions}
                 className="h-6 px-2 text-slate-400 hover:text-white hover:bg-slate-800"
               >
@@ -156,15 +157,15 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
         </div>
 
         <DialogFooter>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onClose}
             className="border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white"
           >
             Skip for Now
           </Button>
-          <Button 
-            onClick={handleSave} 
+          <Button
+            onClick={handleSave}
             disabled={!!error || !name}
             className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
           >

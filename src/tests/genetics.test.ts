@@ -83,20 +83,40 @@ describe("Universal DNA System", () => {
 
 describe("Deterministic DNA Generation", () => {
   it("should generate identical DNA for same stallion name (determinism)", () => {
-    const dna1 = generateDeterministicGenotype("Secretariat", "elite", ["Brilliant", "Classic"], ["Triple Crown winner"]);
-    const dna2 = generateDeterministicGenotype("Secretariat", "elite", ["Brilliant", "Classic"], ["Triple Crown winner"]);
-    
+    const dna1 = generateDeterministicGenotype(
+      "Secretariat",
+      "elite",
+      ["Brilliant", "Classic"],
+      ["Triple Crown winner"],
+    );
+    const dna2 = generateDeterministicGenotype(
+      "Secretariat",
+      "elite",
+      ["Brilliant", "Classic"],
+      ["Triple Crown winner"],
+    );
+
     // Compare all DNA fields
     expect(JSON.stringify(dna1)).toBe(JSON.stringify(dna2));
   });
 
   it("should generate different DNA for different stallion names (variety)", () => {
-    const dna1 = generateDeterministicGenotype("Secretariat", "elite", ["Brilliant", "Classic"], ["Triple Crown winner"]);
-    const dna2 = generateDeterministicGenotype("Northern Dancer", "elite", ["Brilliant", "Classic"], ["Champion sire"]);
-    
+    const dna1 = generateDeterministicGenotype(
+      "Secretariat",
+      "elite",
+      ["Brilliant", "Classic"],
+      ["Triple Crown winner"],
+    );
+    const dna2 = generateDeterministicGenotype(
+      "Northern Dancer",
+      "elite",
+      ["Brilliant", "Classic"],
+      ["Champion sire"],
+    );
+
     // Should have different DNA
     expect(JSON.stringify(dna1)).not.toBe(JSON.stringify(dna2));
-    
+
     // Specifically check stats are different
     const stats1 = resolveStats(dna1.stats);
     const stats2 = resolveStats(dna2.stats);
@@ -106,10 +126,10 @@ describe("Deterministic DNA Generation", () => {
   it("should apply dosage bias correctly (Brilliant = higher speed)", () => {
     const brilliantDNA = generateDeterministicGenotype("TestStallion", "elite", ["Brilliant"]);
     const solidDNA = generateDeterministicGenotype("TestStallion2", "elite", ["Solid"]);
-    
+
     const brilliantStats = resolveStats(brilliantDNA.stats);
     const solidStats = resolveStats(solidDNA.stats);
-    
+
     // Brilliant should have higher speed bias than Solid
     expect(brilliantStats.speed).toBeGreaterThan(solidStats.speed);
     expect(solidStats.stamina).toBeGreaterThan(brilliantStats.stamina);
@@ -126,7 +146,7 @@ describe("Research-Based DNA Generation", () => {
   it("should apply research data traits correctly", () => {
     const secretariatDNA = generateResearchBasedGenotype("Secretariat", "elite");
     const physicalSum = secretariatDNA.physical[0] + secretariatDNA.physical[1];
-    expect(physicalSum).toBeGreaterThan(15); 
+    expect(physicalSum).toBeGreaterThan(15);
     const mentalSum = secretariatDNA.mental[0] + secretariatDNA.mental[1];
     expect(mentalSum).toBeGreaterThan(15);
   });

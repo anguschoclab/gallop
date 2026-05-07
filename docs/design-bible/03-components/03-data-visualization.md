@@ -8,7 +8,7 @@ owns: design:design-system
 
 # Data visualization
 
-Charts in Gallop serve Maya's archetype most directly: the player who wants to *see* a distribution, a trend, or a comparison at a glance. They follow strict rules so that across screens they read like one chart family.
+Charts in Gallop serve Maya's archetype most directly: the player who wants to _see_ a distribution, a trend, or a comparison at a glance. They follow strict rules so that across screens they read like one chart family.
 
 **Library:** Recharts, wrapped via `<ChartContainer>` ([src/components/ui/chart.tsx](../../../src/components/ui/chart.tsx)).
 
@@ -16,15 +16,15 @@ Charts in Gallop serve Maya's archetype most directly: the player who wants to *
 
 ## When to use which chart
 
-| Question | Chart |
-|---|---|
-| *How does this horse compare across attributes?* | Radar (`HorseStatsRadar`) |
-| *How has this horse's Beyer trended?* | Line (`BeyerChart`) |
-| *How does this horse's wins distribute by class?* | Bar (`GradedStatsChart`) |
-| *How does sire compatibility vary by attribute?* | Radar (`BreedingRadarChart`) |
-| *Where does this horse fall in a population?* | Histogram (future) |
-| *How did the field's pace look in this race?* | Line w/ multiple series (future) |
-| *What's the share of X across categories?* | **Don't pie.** Use a bar. |
+| Question                                          | Chart                            |
+| ------------------------------------------------- | -------------------------------- |
+| _How does this horse compare across attributes?_  | Radar (`HorseStatsRadar`)        |
+| _How has this horse's Beyer trended?_             | Line (`BeyerChart`)              |
+| _How does this horse's wins distribute by class?_ | Bar (`GradedStatsChart`)         |
+| _How does sire compatibility vary by attribute?_  | Radar (`BreedingRadarChart`)     |
+| _Where does this horse fall in a population?_     | Histogram (future)               |
+| _How did the field's pace look in this race?_     | Line w/ multiple series (future) |
+| _What's the share of X across categories?_        | **Don't pie.** Use a bar.        |
 
 We **never** use pie charts. The eye can't compare angles well; bar charts always win on accuracy.
 
@@ -36,7 +36,7 @@ Charts pull colours from `--chart-1` through `--chart-5` ([01-tokens.md](../01-d
 
 ```tsx
 const config = {
-  speed:   { label: "Speed",   color: "var(--chart-1)" },
+  speed: { label: "Speed", color: "var(--chart-1)" },
   stamina: { label: "Stamina", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 ```
@@ -52,7 +52,7 @@ const config = {
 ## Axes
 
 - Always label both axes when their meaning isn't self-evident.
-- Always show units on the axis label (e.g. *"Beyer"*, *"Distance (m)"*, *"Wins"*).
+- Always show units on the axis label (e.g. _"Beyer"_, _"Distance (m)"_, _"Wins"_).
 - **Never truncate the y-axis without saying so.** A Beyer chart from 90 to 110 is misleading without a "y-axis: 90–110" caption.
 - **Tabular numerics on tick labels** — Recharts respects `font-variant-numeric: tabular-nums` if you set it on the parent.
 
@@ -84,7 +84,7 @@ What we don't do: speech-bubble callouts, watermarks, decorative gridlines.
 
 - A chart with **0 data points**: show the empty-state pattern (see [04-patterns/03-empty-loading-error.md](../04-patterns/03-empty-loading-error.md)) instead of an empty axis.
 - A chart with **1 data point**: render it as a single dot with a label, not a line. ("First race — Beyer 87.")
-- A chart with **2 data points**: render the line, but with a caveat label *"Two races so far"*.
+- A chart with **2 data points**: render the line, but with a caveat label _"Two races so far"_.
 
 ---
 

@@ -104,10 +104,7 @@ export function computeCoiFromSnapshot(
   return _computeCoiFromSnapshot(pedigree, maxDepth);
 }
 
-function _computeCoiFromSnapshot(
-  pedigree: Pedigree,
-  maxDepth: number = 5,
-): number {
+function _computeCoiFromSnapshot(pedigree: Pedigree, maxDepth: number = 5): number {
   const sireDepths = new Map<string, number>();
   const damDepths = new Map<string, number>();
   walkPedigree(pedigree.sirePedigree, 1, maxDepth, sireDepths);

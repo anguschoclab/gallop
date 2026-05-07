@@ -1,6 +1,15 @@
 // NPC Stable Detail - View stable info and horses with scouting
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Eye, Brain, Building2, Globe, Users, DollarSign, HandCoins } from "lucide-react";
+import {
+  ArrowLeft,
+  Eye,
+  Brain,
+  Building2,
+  Globe,
+  Users,
+  DollarSign,
+  HandCoins,
+} from "lucide-react";
 import { useHorses, useDay, useCash } from "@/game/hooks/useCoreState";
 import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
 import { useGame } from "@/game/store";
@@ -41,15 +50,24 @@ import type { Horse, PrivateSaleOffer } from "@/game/types";
 export const Route = createFileRoute("/npc-stables/$stableId")({ component: NpcStableDetailPage });
 
 const fmt = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(n);
 
 function getDeclineFlavour(personality: string, stableName: string): string {
   switch (personality) {
-    case "aggressive": return "Not for sale at that price. Try harder.";
-    case "prestige": return "This horse is not for sale to just anyone.";
-    case "conservative": return "We don't sell below market.";
-    case "breeder": return "We intend to breed from this horse.";
-    default: return `${stableName} declined your offer.`;
+    case "aggressive":
+      return "Not for sale at that price. Try harder.";
+    case "prestige":
+      return "This horse is not for sale to just anyone.";
+    case "conservative":
+      return "We don't sell below market.";
+    case "breeder":
+      return "We intend to breed from this horse.";
+    default:
+      return `${stableName} declined your offer.`;
   }
 }
 
@@ -63,7 +81,9 @@ function NpcStableDetailPage() {
   const scoutHorse = useGame((s) => s.scoutHorse);
   const proposePrivateSale = useGame((s) => s.proposePrivateSale);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
-  const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)((s: any) => s.privateSaleOffers ?? []);
+  const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)(
+    (s: any) => s.privateSaleOffers ?? [],
+  );
 
   // Offer dialog state
   const [offerHorse, setOfferHorse] = useState<Horse | null>(null);
@@ -83,7 +103,9 @@ function NpcStableDetailPage() {
   }
 
   const stableHorses = horses.filter((h: Horse) => h.stableId === stableId);
-  const activeHorses = stableHorses.filter((h: Horse) => !h.healthStatus || h.healthStatus === "healthy");
+  const activeHorses = stableHorses.filter(
+    (h: Horse) => !h.healthStatus || h.healthStatus === "healthy",
+  );
   const colts = stableHorses.filter((h: Horse) => h.gender === "colt" || h.gender === "horse");
   const fillies = stableHorses.filter((h: Horse) => h.gender === "filly" || h.gender === "mare");
 
@@ -114,11 +136,15 @@ function NpcStableDetailPage() {
     // Show outcome toast — read fresh store state after the action
     const status = result.reason; // proposePrivateSale returns the offer status as reason on ok
     if (status === "accepted") {
-      toast.success(`${stable.name} accepted your offer of ${fmt(amount)} for ${offerHorse.name}. They join your stable.`);
+      toast.success(
+        `${stable.name} accepted your offer of ${fmt(amount)} for ${offerHorse.name}. They join your stable.`,
+      );
     } else if (status === "countered") {
       // Read the fresh store state synchronously to get counter amount
       const freshOffers = (useGame.getState() as any).privateSaleOffers ?? [];
-      const counterOffer = freshOffers.find((o: any) => o.horseId === offerHorse.id && o.status === "countered");
+      const counterOffer = freshOffers.find(
+        (o: any) => o.horseId === offerHorse.id && o.status === "countered",
+      );
       const counterAmt = counterOffer?.counterAmount ?? 0;
       toast.info(`${stable.name} countered at ${fmt(counterAmt)}. Go to Rival Stables to respond.`);
     } else {
@@ -289,8 +315,8 @@ function NpcStableDetailPage() {
                         activeOffer
                           ? "Offer pending"
                           : hasInAuction
-                          ? "This horse is currently in a sale."
-                          : undefined
+                            ? "This horse is currently in a sale."
+                            : undefined
                       }
                       className="flex items-center gap-1"
                     >
@@ -313,80 +339,85 @@ function NpcStableDetailPage() {
                 </div>
 
                 {/* D2 — Counter offer card */}
-                {activeOffer?.status === "countered" && activeOffer.counterAmount !== undefined && (() => {
-                  const counterAmt = activeOffer.counterAmount!;
-                  const canAffordCounter = cash >= counterAmt;
-                  return (
-                    <Card className="border-warning/40 bg-warning/5">
-                      <CardContent className="p-4 space-y-2">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="font-medium text-sm">
-                              Counter offer from {stable.name}:{" "}
-                              <span className="tabular-nums font-bold">{fmt(counterAmt)}</span>
-                            </p>
-                            <p className="text-xs text-cream-muted">
-                              Expires day {activeOffer.expiresDay}
-                            </p>
+                {activeOffer?.status === "countered" &&
+                  activeOffer.counterAmount !== undefined &&
+                  (() => {
+                    const counterAmt = activeOffer.counterAmount!;
+                    const canAffordCounter = cash >= counterAmt;
+                    return (
+                      <Card className="border-warning/40 bg-warning/5">
+                        <CardContent className="p-4 space-y-2">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <p className="font-medium text-sm">
+                                Counter offer from {stable.name}:{" "}
+                                <span className="tabular-nums font-bold">{fmt(counterAmt)}</span>
+                              </p>
+                              <p className="text-xs text-cream-muted">
+                                Expires day {activeOffer.expiresDay}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => {
-                              respondToPrivateSale(activeOffer.id, false);
-                              toast.info("Counter declined.");
-                            }}
-                          >
-                            Decline
-                          </Button>
-                          {canAffordCounter ? (
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button size="sm" variant="outline">
-                                  Accept {fmt(counterAmt)}
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Accept counter offer?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    You will pay {fmt(counterAmt)} for {horse.name}. This cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => {
-                                      const r = respondToPrivateSale(activeOffer.id, true);
-                                      if (r.ok) {
-                                        toast.success(`${horse.name} joins your stable for ${fmt(counterAmt)}.`);
-                                      } else {
-                                        toast.error(r.reason ?? "Could not accept.");
-                                      }
-                                    }}
-                                  >
-                                    Accept
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          ) : (
+                          <div className="flex gap-2">
                             <Button
                               size="sm"
-                              variant="outline"
-                              disabled
-                              title="Insufficient funds"
+                              variant="ghost"
+                              onClick={() => {
+                                respondToPrivateSale(activeOffer.id, false);
+                                toast.info("Counter declined.");
+                              }}
                             >
-                              Accept {fmt(counterAmt)}
+                              Decline
                             </Button>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })()}
+                            {canAffordCounter ? (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button size="sm" variant="outline">
+                                    Accept {fmt(counterAmt)}
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Accept counter offer?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      You will pay {fmt(counterAmt)} for {horse.name}. This cannot
+                                      be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => {
+                                        const r = respondToPrivateSale(activeOffer.id, true);
+                                        if (r.ok) {
+                                          toast.success(
+                                            `${horse.name} joins your stable for ${fmt(counterAmt)}.`,
+                                          );
+                                        } else {
+                                          toast.error(r.reason ?? "Could not accept.");
+                                        }
+                                      }}
+                                    >
+                                      Accept
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled
+                                title="Insufficient funds"
+                              >
+                                Accept {fmt(counterAmt)}
+                              </Button>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })()}
               </div>
             );
           })}
@@ -398,48 +429,61 @@ function NpcStableDetailPage() {
       </div>
 
       {/* D2 — Make an Offer dialog */}
-      <Dialog open={!!offerHorse} onOpenChange={(open) => { if (!open) { setOfferHorse(null); setOfferError(""); } }}>
+      <Dialog
+        open={!!offerHorse}
+        onOpenChange={(open) => {
+          if (!open) {
+            setOfferHorse(null);
+            setOfferError("");
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Make an offer for {offerHorse?.name}</DialogTitle>
           </DialogHeader>
-          {offerHorse && (() => {
-            const valuation = calculateLotValuation(offerHorse, stable, "racing_age", horses);
-            const fogLow = Math.round(valuation * 0.80);
-            const fogHigh = Math.round(valuation * 1.20);
-            return (
-              <div className="space-y-4 pt-2">
-                <p className="text-sm text-cream-muted">
-                  Estimated market value:{" "}
-                  <span className="tabular-nums font-medium text-cream">
-                    ~{fmt(fogLow)} – {fmt(fogHigh)}
-                  </span>
-                </p>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">Your offer amount</label>
-                  <Input
-                    inputMode="numeric"
-                    placeholder="e.g. 25000"
-                    value={offerAmount}
-                    onChange={(e) => {
-                      setOfferAmount(e.target.value);
-                      setOfferError("");
-                    }}
-                    className="tabular-nums"
-                    onBlur={() => {
-                      const n = Number(offerAmount.replace(/,/g, "").replace(/\$/g, ""));
-                      if (n > 0) setOfferAmount(n.toLocaleString());
-                    }}
-                  />
-                  {offerError && (
-                    <p className="text-xs text-destructive">{offerError}</p>
-                  )}
+          {offerHorse &&
+            (() => {
+              const valuation = calculateLotValuation(offerHorse, stable, "racing_age", horses);
+              const fogLow = Math.round(valuation * 0.8);
+              const fogHigh = Math.round(valuation * 1.2);
+              return (
+                <div className="space-y-4 pt-2">
+                  <p className="text-sm text-cream-muted">
+                    Estimated market value:{" "}
+                    <span className="tabular-nums font-medium text-cream">
+                      ~{fmt(fogLow)} – {fmt(fogHigh)}
+                    </span>
+                  </p>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">Your offer amount</label>
+                    <Input
+                      inputMode="numeric"
+                      placeholder="e.g. 25000"
+                      value={offerAmount}
+                      onChange={(e) => {
+                        setOfferAmount(e.target.value);
+                        setOfferError("");
+                      }}
+                      className="tabular-nums"
+                      onBlur={() => {
+                        const n = Number(offerAmount.replace(/,/g, "").replace(/\$/g, ""));
+                        if (n > 0) setOfferAmount(n.toLocaleString());
+                      }}
+                    />
+                    {offerError && <p className="text-xs text-destructive">{offerError}</p>}
+                  </div>
                 </div>
-              </div>
-            );
-          })()}
+              );
+            })()}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => { setOfferHorse(null); setOfferError(""); }}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setOfferHorse(null);
+                setOfferError("");
+              }}
+            >
               Cancel
             </Button>
             <Button onClick={handleSubmitOffer}>Submit Offer</Button>

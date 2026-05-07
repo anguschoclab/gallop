@@ -21,15 +21,9 @@ export function PaddleCard({
     <div
       className={cn(
         "relative flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all duration-300",
-        isPlayer
-          ? "bg-success/20 border-success"
-          : colors
-          ? "bg-muted"
-          : "bg-muted",
+        isPlayer ? "bg-success/20 border-success" : colors ? "bg-muted" : "bg-muted",
         isActive &&
-          (isPlayer
-            ? "ring-2 ring-success ring-offset-2"
-            : "ring-2 ring-primary ring-offset-2"),
+          (isPlayer ? "ring-2 ring-success ring-offset-2" : "ring-2 ring-primary ring-offset-2"),
         isLeading && "scale-110 shadow-lg",
       )}
       style={

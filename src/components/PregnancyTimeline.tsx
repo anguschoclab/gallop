@@ -28,21 +28,6 @@ export function PregnancyTimeline({
     <Card>
       <CardContent className="p-4">
         <div className="space-y-4">
-          {/* Header with parent names and countdown */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold text-sm">
-                {sireName} × {damName}
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                Conceived Day {conceivedDay} → Due Day {dueDay}
-              </p>
-            </div>
-            <Badge variant={daysRemaining <= 0 ? "default" : "secondary"}>
-              {daysRemaining <= 0 ? "Due" : `${daysRemaining} days remaining`}
-            </Badge>
-          </div>
-
           {/* Visual timeline */}
           <div className="relative">
             {/* Timeline bar */}

@@ -35,8 +35,19 @@ export function commissionAmount(hammerPrice: number): number {
 }
 
 // ---------------------------------------------------------------------------
-// Labels
+// Labels & Schedule
 // ---------------------------------------------------------------------------
+
+export const SALE_TRIGGERS: { doy: number; kind: AuctionSaleKind; name: string }[] = [
+  { doy: 75, kind: "2yo_training", name: "Spring 2YO Breeze-Up Sale" },
+  { doy: 90, kind: "weanling", name: "Spring Weanling Sale" },
+  { doy: 105, kind: "yearling_south", name: "Southern Yearling Sale" },
+  { doy: 165, kind: "mixed", name: "Midsummer Mixed Sale" },
+  { doy: 240, kind: "yearling", name: "Late Summer Yearling Sale" },
+  { doy: 270, kind: "racing_age", name: "Autumn Horses-of-Racing-Age Sale" },
+  { doy: 290, kind: "weanling_south", name: "Southern Weanling Sale" },
+  { doy: 335, kind: "broodmare", name: "Year-End Broodmare & Breeding Stock Sale" },
+];
 
 export const KIND_LABELS: Record<AuctionSaleKind, string> = {
   weanling: "Weanling Sale",
@@ -460,16 +471,10 @@ export function generateAuctionLots(
     for (let i = 0; i < policy.freshCount; i++) {
       // Fresh NPC horse — pick an age the sale will accept.
       const targetAge = eligibleAges[rng.int(0, eligibleAges.length - 1)];
-      const freshHorse = generateNpcHorse(
-        stable,
-        rng,
-        undefined,
-        1,
-        {
-          forcedAge: targetAge,
-          hemisphere: hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern")
-        }
-      );
+      const freshHorse = generateNpcHorse(stable, rng, undefined, 1, {
+        forcedAge: targetAge,
+        hemisphere: hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern"),
+      });
       // Re-check eligibility after generation (e.g. broodmare wants only mares).
       if (!isLotEligible(freshHorse, kind)) continue;
       allHorses.push(freshHorse);
@@ -533,6 +538,12 @@ export function resolveAuctionSale(
     const horse = allHorses.find((h) => h.id === lot.horseId);
     if (!horse) {
       updatedLots.push({ ...lot, passed: true });
+      continue;
+    }
+
+    if (horse.lifecycleStatus === "deceased") {
+      updatedLots.push({ ...lot, withdrawn: true });
+      log.push(`${horse.name} — withdrawn (deceased)`);
       continue;
     }
 

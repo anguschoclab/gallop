@@ -57,7 +57,8 @@ export function recordOutcome(
   const newOutcomes = [...state.outcomes, outcome];
 
   // Trim to memory depth
-  const trimmedOutcomes = newOutcomes.length > memoryDepth ? newOutcomes.slice(-memoryDepth) : newOutcomes;
+  const trimmedOutcomes =
+    newOutcomes.length > memoryDepth ? newOutcomes.slice(-memoryDepth) : newOutcomes;
 
   // Update success rates - clone Map to avoid mutating
   const key = `${decisionType}:${contextKey}`;
@@ -115,7 +116,11 @@ export function getSuccessRate(
 /**
  * Get pattern score for a decision type
  */
-export function getPatternScore(state: LearningState, decisionType: string, context: string): number {
+export function getPatternScore(
+  state: LearningState,
+  decisionType: string,
+  context: string,
+): number {
   const patternKey = `${decisionType}:${context.split(":")[0]}`;
   return state.patterns.get(patternKey) ?? 0.5;
 }
@@ -141,11 +146,11 @@ export function getAdaptiveThreshold(
  */
 export function pruneOldOutcomes(state: LearningState, cutoffDay: number): LearningState {
   state.outcomes = state.outcomes.filter((o) => o.day >= cutoffDay);
-  
+
   // Recalculate success rates after pruning
   const newSuccessRates = new Map();
   const grouped = new Map<string, { successes: number; total: number }>();
-  
+
   for (const outcome of state.outcomes) {
     const key = `${outcome.decisionType}:${outcome.contextKey}`;
     const existing = grouped.get(key) || { successes: 0, total: 0 };
@@ -154,7 +159,7 @@ export function pruneOldOutcomes(state: LearningState, cutoffDay: number): Learn
       total: existing.total + 1,
     });
   }
-  
+
   for (const [key, data] of grouped.entries()) {
     newSuccessRates.set(key, {
       successes: data.successes,
@@ -162,9 +167,9 @@ export function pruneOldOutcomes(state: LearningState, cutoffDay: number): Learn
       rate: data.successes / data.total,
     });
   }
-  
+
   state.successRates = newSuccessRates;
-  
+
   return state;
 }
 
@@ -185,9 +190,7 @@ export function getLearningInsights(
   const successes = relevantOutcomes.filter((o) => o.success).length;
   const successRate = totalDecisions > 0 ? successes / totalDecisions : 0.5;
   const avgValue =
-    totalDecisions > 0
-      ? relevantOutcomes.reduce((sum, o) => sum + o.value, 0) / totalDecisions
-      : 0;
+    totalDecisions > 0 ? relevantOutcomes.reduce((sum, o) => sum + o.value, 0) / totalDecisions : 0;
 
   const patterns: Array<{ key: string; score: number }> = [];
   for (const [key, score] of state.patterns.entries()) {

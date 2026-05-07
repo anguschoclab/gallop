@@ -19,9 +19,10 @@ owns: engineering:documentation
 
 The recap is the **moment of memory**. After a day (or week, or season), what happened? Who won? What changed?
 
-This is the *Football Manager inbox* analogue — except instead of a list of bullet points, it's a curated story.
+This is the _Football Manager inbox_ analogue — except instead of a list of bullet points, it's a curated story.
 
 It serves all three personas because each finds something different here:
+
 - **Maya** — the numbers: Beyer per race, training gains, stat shifts.
 - **Tomás** — the legacy: foals born, sires confirmed, lines extended.
 - **Alex** — the highlights: replays of the best race, vibes.
@@ -76,15 +77,15 @@ The hero card uses a **partial broadcast theme treatment** — the same emerald 
 ## Copy
 
 - Title: in-game date.
-- Section labels: *"Highlights"*, *"All races today"*, *"Stable changes"*, *"Foals born"*.
-- Hero card title pattern: *"[Race name] — [horse name] takes [class]"*.
-- Replay CTA: *"Watch replay"*.
-- Empty period: *"Quiet day — no races run."*
+- Section labels: _"Highlights"_, _"All races today"_, _"Stable changes"_, _"Foals born"_.
+- Hero card title pattern: _"[Race name] — [horse name] takes [class]"_.
+- Replay CTA: _"Watch replay"_.
+- Empty period: _"Quiet day — no races run."_
 
 ## States
 
 - **Standard day** — full content.
-- **Quiet day** — minimal content, *"Quiet day"* line.
+- **Quiet day** — minimal content, _"Quiet day"_ line.
 - **Big day** (multiple owned wins) — recap takes you to a celebration variant with multiple hero cards.
 - **Loss day** — same structure, no special treatment. Honesty principle.
 

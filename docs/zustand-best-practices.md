@@ -7,6 +7,7 @@ This document provides guidelines for using the Zustand store in the Gallop appl
 ### Object Selectors (CAUSES INFINITE LOOPS)
 
 ❌ **DON'T DO THIS:**
+
 ```typescript
 const { horses, awards } = useGame((s) => ({ horses: s.horses, awards: s.awards }));
 ```
@@ -16,6 +17,7 @@ This creates a new object on every render, defeating shallow comparison and caus
 ### No Selector (PERFORMANCE ISSUE)
 
 ❌ **DON'T DO THIS:**
+
 ```typescript
 const game = useGame();
 const horses = game.horses;
@@ -28,6 +30,7 @@ This subscribes to the entire state, causing re-renders on any state change, eve
 ### Single Selectors
 
 ✅ **DO THIS:**
+
 ```typescript
 const horses = useGame((s) => s.horses);
 const awards = useGame((s) => s.awards);
@@ -38,6 +41,7 @@ Each selector subscribes only to the specific state slice it needs. This is the 
 ### Domain Hooks
 
 ✅ **DO THIS:**
+
 ```typescript
 import { useHorses, useAwards } from "@/game/hooks/useCoreState";
 import { useNpcStables } from "@/game/hooks/useSystemsState";
@@ -52,11 +56,9 @@ Domain hooks provide type-safe, memoized access to state slices. They are the re
 ### Shallow with Multiple Values
 
 ✅ **DO THIS:**
+
 ```typescript
-const { day, cash } = useGame(
-  (s) => ({ day: s.day, cash: s.cash }),
-  shallow
-);
+const { day, cash } = useGame((s) => ({ day: s.day, cash: s.cash }), shallow);
 ```
 
 Only use shallow with domain hooks (e.g., `useCoreState()`), not inline object selectors. The domain hooks are already configured with shallow comparison.
@@ -64,6 +66,7 @@ Only use shallow with domain hooks (e.g., `useCoreState()`), not inline object s
 ### Action Selectors
 
 ✅ **DO THIS:**
+
 ```typescript
 const trainHorse = useGame((s) => s.trainHorse);
 const breed = useGame((s) => s.breed);
@@ -74,6 +77,7 @@ Actions are stable references, so they can be selected individually without caus
 ## Available Domain Hooks
 
 ### Core State (`@/game/hooks/useCoreState`)
+
 - `useDay()` - Current simulation day
 - `useCash()` - Player's cash balance
 - `useHorses()` - All horses in the game
@@ -82,17 +86,20 @@ Actions are stable references, so they can be selected individually without caus
 - `useCoreState()` - Multiple core values with shallow comparison
 
 ### Market State (`@/game/hooks/useMarketState`)
+
 - `useMarket()` - Horses available for purchase
 - `useAuctions()` - Active auction sales
 - `useScoutReports()` - Scouting reports on NPC stables
 - `useMarketState()` - Multiple market values with shallow comparison
 
 ### Breeding State (`@/game/hooks/useBreedingState`)
+
 - `usePregnancies()` - Active pregnancies
 - `useTripleCrownHistory()` - Historical Triple Crown attempts
 - `useBreedingState()` - Multiple breeding values with shallow comparison
 
 ### Racing State (`@/game/hooks/useRacingState`)
+
 - `usePaceSamples()` - Pace sample data
 - `useCalibratedPars()` - Calibrated par times
 - `useLastCalibrationDay()` - Last calibration day
@@ -100,6 +107,7 @@ Actions are stable references, so they can be selected individually without caus
 - `useRacingState()` - Multiple racing values with shallow comparison
 
 ### Systems State (`@/game/hooks/useSystemsState`)
+
 - `useNpcStables()` - NPC stable data
 - `useJockeys()` - Available jockeys
 - `useAwards()` - Awards data
@@ -114,6 +122,7 @@ Actions are stable references, so they can be selected individually without caus
 ### Converting Object Selectors
 
 **Before:**
+
 ```typescript
 const { horses, races, cash, day } = useGame((state) => ({
   horses: state.horses,
@@ -124,6 +133,7 @@ const { horses, races, cash, day } = useGame((state) => ({
 ```
 
 **After:**
+
 ```typescript
 import { useHorses, useRaces, useCash, useDay } from "@/game/hooks/useCoreState";
 
@@ -136,6 +146,7 @@ const day = useDay();
 ### Converting No-Selector Usage
 
 **Before:**
+
 ```typescript
 const game = useGame();
 const horses = game.horses;
@@ -143,6 +154,7 @@ const awards = game.awards;
 ```
 
 **After:**
+
 ```typescript
 import { useHorses } from "@/game/hooks/useCoreState";
 import { useAwards } from "@/game/hooks/useSystemsState";
@@ -161,6 +173,7 @@ const awards = useAwards();
 ## Performance Benefits
 
 Using domain hooks and single selectors provides:
+
 - **Reduced re-renders**: Components only re-render when their specific state changes
 - **Type safety**: TypeScript types are inferred correctly
 - **Predictable behavior**: No unexpected re-renders from unrelated state changes

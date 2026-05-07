@@ -98,7 +98,12 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
       const contenderStatus = detectContender(aiState.campaignAI, horse, currentDay);
       if (contenderStatus.isContender && !targetRaceKey) {
         // Auto-assign optimal major race target
-        const optimalTarget = getOptimalMajorRaceTarget(aiState.campaignAI, horse, stable, currentDay);
+        const optimalTarget = getOptimalMajorRaceTarget(
+          aiState.campaignAI,
+          horse,
+          stable,
+          currentDay,
+        );
         if (optimalTarget) {
           const targetGraded = GRADED_RACES.find((g) => g.key === optimalTarget);
           if (targetGraded) {

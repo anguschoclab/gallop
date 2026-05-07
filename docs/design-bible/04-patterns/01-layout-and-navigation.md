@@ -50,6 +50,7 @@ Every Gallop screen lives inside one of three layouts. Pick the right one for th
 Why we break the shell: the live race is the **climax**. The sidebar of management chrome would visually flatten the moment.
 
 **Rules for full-bleed screens:**
+
 - Must own all of (a) navigation back, (b) primary controls, (c) result handling.
 - Must use the broadcast theme (implemented — see [05-theming.md](../01-design-system/05-theming.md)).
 - Must use the same tokens, typography, and silk treatment as the rest of the product.
@@ -60,12 +61,12 @@ Why we break the shell: the live race is the **climax**. The sidebar of manageme
 
 Some interactions belong on top of the current screen, not as a new route:
 
-| Pattern | Component | When |
-|---|---|---|
-| Modal | `Dialog` | Pause-the-world decisions (PlayerRacePrompt, retire-to-stud). |
-| Sheet | `Sheet` | Inspect detail without losing list context (e.g. tap a horse → side panel). |
-| Popover | `Popover` | Show detail attached to an element (e.g. info icon). |
-| Toast | `Sonner` | Transient feedback. |
+| Pattern | Component | When                                                                        |
+| ------- | --------- | --------------------------------------------------------------------------- |
+| Modal   | `Dialog`  | Pause-the-world decisions (PlayerRacePrompt, retire-to-stud).               |
+| Sheet   | `Sheet`   | Inspect detail without losing list context (e.g. tap a horse → side panel). |
+| Popover | `Popover` | Show detail attached to an element (e.g. info icon).                        |
+| Toast   | `Sonner`  | Transient feedback.                                                         |
 
 **Don't** use a modal where a route would do (and vice versa). A modal interrupts; a route is a destination.
 
@@ -83,7 +84,7 @@ Active nav item: `bg-primary text-primary-foreground`. Inactive: `text-muted-for
 
 ### 3. Back-out is the player's job
 
-Routes don't auto-redirect. If a player ends up at `/stable/$horseId` for a horse they sold, the screen shows an empty state with *"This horse is no longer in your stable"* and a link back. We don't kick them out.
+Routes don't auto-redirect. If a player ends up at `/stable/$horseId` for a horse they sold, the screen shows an empty state with _"This horse is no longer in your stable"_ and a link back. We don't kick them out.
 
 ### 4. URL is the source of truth
 
@@ -99,11 +100,11 @@ Filters, sorts, and selections that survive a refresh live in the URL (search pa
 
 Gallop targets desktop (≥1024px) as its primary canvas, but every screen must work down to 768px (tablet portrait) without breaking.
 
-| Breakpoint | What changes |
-|---|---|
-| ≥ 1024px (`lg`) | Default. Sidebar visible, multi-column grids, race-screen sidebar visible. |
+| Breakpoint        | What changes                                                                                       |
+| ----------------- | -------------------------------------------------------------------------------------------------- |
+| ≥ 1024px (`lg`)   | Default. Sidebar visible, multi-column grids, race-screen sidebar visible.                         |
 | 768–1023px (`md`) | Sidebar visible (still 240px), grids collapse to 1 col, race-screen sidebar moves under the track. |
-| < 768px | Out of scope for v1. We don't break — but we don't optimise. Future work. |
+| < 768px           | Out of scope for v1. We don't break — but we don't optimise. Future work.                          |
 
 The race screen explicitly uses `grid-cols-1 lg:grid-cols-[1fr_280px]` ([race.$raceId.tsx:235](../../../src/routes/race.$raceId.tsx)).
 

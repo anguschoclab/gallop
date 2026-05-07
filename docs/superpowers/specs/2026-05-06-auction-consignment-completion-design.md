@@ -9,9 +9,9 @@ status: Approved
 
 ## Overview
 
-The consignment dialog (`ConsignDialog.tsx`) is complete: the player can select a sale, set a reserve, see the commission disclosure, and confirm. What is missing is everything that happens *after* the player clicks Confirm — specifically:
+The consignment dialog (`ConsignDialog.tsx`) is complete: the player can select a sale, set a reserve, see the commission disclosure, and confirm. What is missing is everything that happens _after_ the player clicks Confirm — specifically:
 
-- **B1** — Seeing their horse go through the ring in `AuctionTheater.tsx` as a *consignor* rather than a bidder, with live proceeds tracking.
+- **B1** — Seeing their horse go through the ring in `AuctionTheater.tsx` as a _consignor_ rather than a bidder, with live proceeds tracking.
 - **B2** — Reviewing itemised consignment results on the resolved sale page (`auction.$saleId.tsx`).
 - **B3** — Withdrawing a consignment before sale day from the lot detail panel.
 
@@ -21,13 +21,13 @@ All three features rely on the existing convention that `AuctionLot.consignorSta
 
 ## Affected Files
 
-| File | Change type |
-|---|---|
-| `src/components/auction/AuctionTheater.tsx` | Modify — B1 banner, scoreboard row, bid-control guard |
-| `src/routes/auction.$saleId.tsx` | Modify — B2 consignment results section, B3 withdraw button |
-| `src/game/store/slices/marketSlice.ts` | Modify — new `withdrawConsignment(saleId, lotId)` action replacing the old horse-keyed variant |
+| File                                        | Change type                                                                                    |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `src/components/auction/AuctionTheater.tsx` | Modify — B1 banner, scoreboard row, bid-control guard                                          |
+| `src/routes/auction.$saleId.tsx`            | Modify — B2 consignment results section, B3 withdraw button                                    |
+| `src/game/store/slices/marketSlice.ts`      | Modify — new `withdrawConsignment(saleId, lotId)` action replacing the old horse-keyed variant |
 
-The existing `withdrawConsignment(horseId)` on `MarketSlice` already does the right thing internally (marks lot `withdrawn: true`, clears `horse.consignedSaleId`). B3 only needs a new *call site* and a guard on sale day; no new store action is required unless the product wants lot-keyed addressing (see B3 detail).
+The existing `withdrawConsignment(horseId)` on `MarketSlice` already does the right thing internally (marks lot `withdrawn: true`, clears `horse.consignedSaleId`). B3 only needs a new _call site_ and a guard on sale day; no new store action is required unless the product wants lot-keyed addressing (see B3 detail).
 
 ---
 
@@ -58,8 +58,8 @@ Condition: `isPlayerConsignment && !done` (hide once the hammer has fallen for t
 
 The existing `ScoreboardStrip` merges sold count and net proceeds into a single "Sold" cell. Split these or add a fifth cell:
 
-| Label | Value |
-|---|---|
+| Label    | Value                            |
+| -------- | -------------------------------- |
 | Proceeds | `$netReceived` accumulating live |
 
 The `netReceived` figure in `useScoreboard` is already computed correctly via `netProceeds(lot.hammerPrice)` — only the display needs updating. The cell should only appear when `scoreboard.sold > 0`; hide it (or show `—`) otherwise to avoid visual noise on sales where the player has no consignments.
@@ -91,7 +91,7 @@ The resolved-sale view shows per-lot cards in the navigator and a compact `Sale 
 
 ### Design
 
-Add a **"Your Consignments"** section that renders *before* the lot navigator when `isResolved` is true and there is at least one player-consigned lot in the sale.
+Add a **"Your Consignments"** section that renders _before_ the lot navigator when `isResolved` is true and there is at least one player-consigned lot in the sale.
 
 **Section header:** `<h2>Your Consignments</h2>` with appropriate sizing and a separator below.
 
@@ -132,7 +132,7 @@ Where X = sold lots count, Y = sum of `netProceeds(lot.hammerPrice)` across sold
 **Data derivation:**
 
 ```ts
-const playerConsignedLots = activeLots.filter(l => !l.consignorStableId);
+const playerConsignedLots = activeLots.filter((l) => !l.consignorStableId);
 // Only shown when isResolved && playerConsignedLots.length > 0
 ```
 
@@ -149,6 +149,7 @@ No new store selectors required — all data (`horses`, `stables`, `activeLots`)
 ### Existing store action
 
 `marketSlice.ts` already exports `withdrawConsignment(horseId: string)` which:
+
 1. Finds the horse by ID.
 2. Clears `horse.consignedSaleId`.
 3. Marks the matching lot `withdrawn: true` (sets `lot.withdrawn = true` via `lots.map`).
@@ -159,6 +160,7 @@ The signature `withdrawConsignment(horseId)` is sufficient — no new action is 
 ### UI changes in `auction.$saleId.tsx`
 
 **Eligibility guard — show the withdraw button only when:**
+
 - `isPlayerConsigned` (`!currentLot.consignorStableId`) is true.
 - `!isResolved` — sale has not already run.
 - `sale.day > day` — it is not yet sale day. (Equivalent to `!isSaleDay`, but checking `sale.day > day` is more explicit and safe against the equal case.)
@@ -176,7 +178,7 @@ The signature `withdrawConsignment(horseId)` is sufficient — no new action is 
 **On confirm:**
 
 ```ts
-const withdrawConsignment = useGame(s => s.withdrawConsignment);
+const withdrawConsignment = useGame((s) => s.withdrawConsignment);
 // ...
 withdrawConsignment(currentLot.horseId);
 // navigate back to lot 0 or show a toast; the lot disappears from activeLots
@@ -214,7 +216,7 @@ If all lots in the sale are player consignments, `scoreboard.won === 0` and `sco
 
 **Player also bid on other lots in the same sale (B2)**
 
-The "Your Consignments" section only filters `!lot.consignorStableId`. Lots the player won as a *buyer* (`lot.soldToStableId === undefined && lot.consignorStableId !== undefined`) appear only in the general lot navigator below, not in this section. The two roles are mutually exclusive per lot.
+The "Your Consignments" section only filters `!lot.consignorStableId`. Lots the player won as a _buyer_ (`lot.soldToStableId === undefined && lot.consignorStableId !== undefined`) appear only in the general lot navigator below, not in this section. The two roles are mutually exclusive per lot.
 
 **Withdrawing the only lot in a sale (B3)**
 

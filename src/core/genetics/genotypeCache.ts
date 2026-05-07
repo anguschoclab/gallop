@@ -39,11 +39,7 @@ export function cachedSimulation(
 /**
  * Get or compute COI
  */
-export function cachedCoi(
-  sireId: string,
-  damId: string,
-  computeFn: () => number,
-): number {
+export function cachedCoi(sireId: string, damId: string, computeFn: () => number): number {
   const key = `coi:${sireId}:${damId}`;
   if (coiCache.has(key)) {
     return coiCache.get(key)!;
@@ -56,10 +52,7 @@ export function cachedCoi(
 /**
  * Get or compute bloodline
  */
-export function cachedBloodline(
-  horseId: string,
-  computeFn: () => Bloodline,
-): Bloodline {
+export function cachedBloodline(horseId: string, computeFn: () => Bloodline): Bloodline {
   const key = `bloodline:${horseId}`;
   if (bloodlineCache.has(key)) {
     return bloodlineCache.get(key)!;

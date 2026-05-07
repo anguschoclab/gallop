@@ -97,11 +97,7 @@ function assessHorseForm(horse: Horse): number {
 /**
  * Calculate risk score for claiming a horse
  */
-export function calculateClaimingRisk(
-  aiState: ClaimingAIState,
-  horse: Horse,
-  race: Race,
-): number {
+export function calculateClaimingRisk(aiState: ClaimingAIState, horse: Horse, race: Race): number {
   let risk = 0;
 
   // Age risk - older horses have higher risk
@@ -156,7 +152,7 @@ export function shouldClaimHorse(
   const riskTolerance = aiState.personalityState.conservatism < 0.5 ? 0.7 : 0.5;
 
   // Decision: claim if value exceeds threshold and risk is acceptable
-  const adjustedValue = valueScore - (riskScore * (1 - riskTolerance));
+  const adjustedValue = valueScore - riskScore * (1 - riskTolerance);
 
   return adjustedValue > adaptiveThreshold;
 }
@@ -248,9 +244,7 @@ export function getClaimingInsights(
   const successes = stableHistory.filter((d) => d.success).length;
   const successRate = totalClaims > 0 ? successes / totalClaims : 0.5;
   const avgValue =
-    totalClaims > 0
-      ? stableHistory.reduce((sum, d) => sum + (d.value || 0), 0) / totalClaims
-      : 0;
+    totalClaims > 0 ? stableHistory.reduce((sum, d) => sum + (d.value || 0), 0) / totalClaims : 0;
 
   // Calculate average risk (simplified)
   const avgRisk = successRate < 0.5 ? 60 : 40;

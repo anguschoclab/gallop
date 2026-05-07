@@ -8,7 +8,21 @@ import type { GameState } from "@/game/types";
 import type { Rng } from "@/core/common/types";
 import { createRng } from "@/game/rng";
 import { inheritDNA } from "./inheritance";
-import { resolveStats, resolveFiberBias, resolveStrideType, resolveRunningStyle, resolveTrainability, resolvePeakAge, resolveRecoveryRate, resolveBleederRisk, resolveRoarerRisk, resolvePssmRisk, resolveRerRisk, resolveEpmRisk, resolveCoatColor } from "./phenotype";
+import {
+  resolveStats,
+  resolveFiberBias,
+  resolveStrideType,
+  resolveRunningStyle,
+  resolveTrainability,
+  resolvePeakAge,
+  resolveRecoveryRate,
+  resolveBleederRisk,
+  resolveRoarerRisk,
+  resolvePssmRisk,
+  resolveRerRisk,
+  resolveEpmRisk,
+  resolveCoatColor,
+} from "./phenotype";
 import type { RunningStyle, CoatColor } from "@/core/horse/types";
 import { computeCoiFromSnapshot } from "@/core/breeding/populationGenetics";
 import { calculateGeneticCompatibility } from "@/game/breedingCompatibility";
@@ -67,7 +81,7 @@ function range(arr: number[]): [number, number] {
 
 /**
  * Run breeding simulation
- * 
+ *
  * @param sire - Sire horse
  * @param dam - Dam horse
  * @param state - Game state (for COI calculation)
@@ -84,21 +98,21 @@ export function runBreedingSimulation(
   const staminaValues: number[] = [];
   const accelerationValues: number[] = [];
   const consistencyValues: number[] = [];
-  
+
   const fiberBiasValues: ("sprinter" | "balanced" | "stayer")[] = [];
   const strideTypeValues: ("short" | "balanced" | "long")[] = [];
   const runningStyleValues: RunningStyle[] = [];
   const trainabilityValues: number[] = [];
   const distanceAptitudeValues: number[] = [];
   const surfaceAptitudeValues: { Turf: number; Dirt: number; Synthetic: number }[] = [];
-  
+
   const bleederRiskValues: number[] = [];
   const roarerRiskValues: number[] = [];
   const pssmRiskValues: number[] = [];
   const rerRiskValues: number[] = [];
   const epmRiskValues: number[] = [];
   const lethalCarrierValues: { csnb: boolean; hypp: boolean; olws: boolean; ffs1: boolean }[] = [];
-  
+
   const coatColorValues: CoatColor[] = [];
 
   // Run 250 simulations
@@ -119,23 +133,25 @@ export function runBreedingSimulation(
 
     const fiberBias = resolveFiberBias(offspringGenotype.fiberType);
     fiberBiasValues.push(fiberBias);
-    
+
     const strideType = resolveStrideType(offspringGenotype.stride);
     strideTypeValues.push(strideType);
-    
+
     const runningStyle = resolveRunningStyle(offspringGenotype.style);
     runningStyleValues.push(runningStyle);
-    
+
     const trainability = resolveTrainability(offspringGenotype.trainability);
     trainabilityValues.push(trainability);
-    
+
     // Distance aptitude (from preferences.distance)
-    const distanceSum = offspringGenotype.preferences.distance[0] + offspringGenotype.preferences.distance[1];
+    const distanceSum =
+      offspringGenotype.preferences.distance[0] + offspringGenotype.preferences.distance[1];
     const distanceAptitude = 800 + distanceSum * 120;
     distanceAptitudeValues.push(distanceAptitude);
-    
+
     // Surface aptitude
-    const surfaceSum = offspringGenotype.preferences.surface[0] + offspringGenotype.preferences.surface[1];
+    const surfaceSum =
+      offspringGenotype.preferences.surface[0] + offspringGenotype.preferences.surface[1];
     let surfaceAptitude: { Turf: number; Dirt: number; Synthetic: number };
     if (surfaceSum <= 4) {
       surfaceAptitude = { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 };
@@ -149,19 +165,19 @@ export function runBreedingSimulation(
     // Health risks
     const bleederRisk = resolveBleederRisk(offspringGenotype.health.bleeder);
     bleederRiskValues.push(bleederRisk);
-    
+
     const roarerRisk = resolveRoarerRisk(offspringGenotype.health.roarer);
     roarerRiskValues.push(roarerRisk);
-    
+
     const pssmRisk = resolvePssmRisk(offspringGenotype.health.pssm);
     pssmRiskValues.push(pssmRisk);
-    
+
     const rerRisk = resolveRerRisk(offspringGenotype.health.rer);
     rerRiskValues.push(rerRisk);
-    
+
     const epmRisk = resolveEpmRisk(offspringGenotype.health.epm);
     epmRiskValues.push(epmRisk);
-    
+
     lethalCarrierValues.push({
       csnb: offspringGenotype.markers.lethalCarriers.csnb,
       hypp: offspringGenotype.markers.lethalCarriers.hypp,
@@ -217,28 +233,30 @@ export function runBreedingSimulation(
     },
     traits: {
       fiberBias: {
-        sprinter: fiberBiasValues.filter(v => v === "sprinter").length / SIMULATION_ITERATIONS,
-        balanced: fiberBiasValues.filter(v => v === "balanced").length / SIMULATION_ITERATIONS,
-        stayer: fiberBiasValues.filter(v => v === "stayer").length / SIMULATION_ITERATIONS,
+        sprinter: fiberBiasValues.filter((v) => v === "sprinter").length / SIMULATION_ITERATIONS,
+        balanced: fiberBiasValues.filter((v) => v === "balanced").length / SIMULATION_ITERATIONS,
+        stayer: fiberBiasValues.filter((v) => v === "stayer").length / SIMULATION_ITERATIONS,
       },
       strideType: {
-        short: strideTypeValues.filter(v => v === "short").length / SIMULATION_ITERATIONS,
-        balanced: strideTypeValues.filter(v => v === "balanced").length / SIMULATION_ITERATIONS,
-        long: strideTypeValues.filter(v => v === "long").length / SIMULATION_ITERATIONS,
+        short: strideTypeValues.filter((v) => v === "short").length / SIMULATION_ITERATIONS,
+        balanced: strideTypeValues.filter((v) => v === "balanced").length / SIMULATION_ITERATIONS,
+        long: strideTypeValues.filter((v) => v === "long").length / SIMULATION_ITERATIONS,
       },
       runningStyle: {
-        E: runningStyleValues.filter(v => v === "E").length / SIMULATION_ITERATIONS,
-        EP: runningStyleValues.filter(v => v === "EP").length / SIMULATION_ITERATIONS,
-        P: runningStyleValues.filter(v => v === "P").length / SIMULATION_ITERATIONS,
-        S: runningStyleValues.filter(v => v === "S").length / SIMULATION_ITERATIONS,
+        E: runningStyleValues.filter((v) => v === "E").length / SIMULATION_ITERATIONS,
+        EP: runningStyleValues.filter((v) => v === "EP").length / SIMULATION_ITERATIONS,
+        P: runningStyleValues.filter((v) => v === "P").length / SIMULATION_ITERATIONS,
+        S: runningStyleValues.filter((v) => v === "S").length / SIMULATION_ITERATIONS,
       } as any,
       trainability: {
         mean: mean(trainabilityValues),
         tier: {
-          excellent: trainabilityValues.filter(v => v >= 0.85).length / SIMULATION_ITERATIONS,
-          good: trainabilityValues.filter(v => v >= 0.65 && v < 0.85).length / SIMULATION_ITERATIONS,
-          fair: trainabilityValues.filter(v => v >= 0.45 && v < 0.65).length / SIMULATION_ITERATIONS,
-          poor: trainabilityValues.filter(v => v < 0.45).length / SIMULATION_ITERATIONS,
+          excellent: trainabilityValues.filter((v) => v >= 0.85).length / SIMULATION_ITERATIONS,
+          good:
+            trainabilityValues.filter((v) => v >= 0.65 && v < 0.85).length / SIMULATION_ITERATIONS,
+          fair:
+            trainabilityValues.filter((v) => v >= 0.45 && v < 0.65).length / SIMULATION_ITERATIONS,
+          poor: trainabilityValues.filter((v) => v < 0.45).length / SIMULATION_ITERATIONS,
         },
       },
       distanceAptitude: {
@@ -246,9 +264,13 @@ export function runBreedingSimulation(
         range: range(distanceAptitudeValues),
       },
       surfaceAptitude: {
-        likelyTurf: surfaceAptitudeValues.filter(v => v.Turf > 0.95).length / SIMULATION_ITERATIONS,
-        likelyDirt: surfaceAptitudeValues.filter(v => v.Dirt > 0.95).length / SIMULATION_ITERATIONS,
-        versatile: surfaceAptitudeValues.filter(v => Math.abs(v.Turf - v.Dirt) < 0.05).length / SIMULATION_ITERATIONS,
+        likelyTurf:
+          surfaceAptitudeValues.filter((v) => v.Turf > 0.95).length / SIMULATION_ITERATIONS,
+        likelyDirt:
+          surfaceAptitudeValues.filter((v) => v.Dirt > 0.95).length / SIMULATION_ITERATIONS,
+        versatile:
+          surfaceAptitudeValues.filter((v) => Math.abs(v.Turf - v.Dirt) < 0.05).length /
+          SIMULATION_ITERATIONS,
       },
     },
     health: {
@@ -258,16 +280,19 @@ export function runBreedingSimulation(
       rerRisk: mean(rerRiskValues),
       epmRisk: mean(epmRiskValues),
       lethalRisk: {
-        csnb: lethalCarrierValues.filter(v => v.csnb).length / SIMULATION_ITERATIONS,
-        hypp: lethalCarrierValues.filter(v => v.hypp).length / SIMULATION_ITERATIONS,
-        olws: lethalCarrierValues.filter(v => v.olws).length / SIMULATION_ITERATIONS,
-        ffs1: lethalCarrierValues.filter(v => v.ffs1).length / SIMULATION_ITERATIONS,
+        csnb: lethalCarrierValues.filter((v) => v.csnb).length / SIMULATION_ITERATIONS,
+        hypp: lethalCarrierValues.filter((v) => v.hypp).length / SIMULATION_ITERATIONS,
+        olws: lethalCarrierValues.filter((v) => v.olws).length / SIMULATION_ITERATIONS,
+        ffs1: lethalCarrierValues.filter((v) => v.ffs1).length / SIMULATION_ITERATIONS,
       },
     },
-    coatColors: coatColorValues.reduce((acc, color) => {
-      acc[color] = (acc[color] || 0) + 1 / SIMULATION_ITERATIONS;
-      return acc;
-    }, {} as Record<CoatColor, number>),
+    coatColors: coatColorValues.reduce(
+      (acc, color) => {
+        acc[color] = (acc[color] || 0) + 1 / SIMULATION_ITERATIONS;
+        return acc;
+      },
+      {} as Record<CoatColor, number>,
+    ),
     coiEstimate: computeCoiFromSnapshot({
       sireId: sire.id,
       damId: dam.id,

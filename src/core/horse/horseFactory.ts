@@ -48,9 +48,7 @@ import {
   resolveHealthStatus,
   computeHeterozygosity,
 } from "@/core/genetics/phenotype";
-import {
-  inheritDNA,
-} from "@/core/genetics/inheritance";
+import { inheritDNA } from "@/core/genetics/inheritance";
 import {
   rollProceduralFamily,
   RUNNING_FAMILIES,
@@ -60,11 +58,24 @@ import {
 import { rollGender, geldHorse } from "@/core/horse/gender";
 import { randomSilk, rand } from "@/core/common/random";
 import { generateProceduralHorseName, type NamingContext } from "@/core/horse/naming/nameGenerator";
-import { resolveBloodline, computeCoiFromSnapshot, computeAhc, computeGenomeModifiers } from "@/core/breeding/populationGenetics";
+import {
+  resolveBloodline,
+  computeCoiFromSnapshot,
+  computeAhc,
+  computeGenomeModifiers,
+} from "@/core/breeding/populationGenetics";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
-import { shouldRetireAtStartup, initialStandingFee, defaultStudParams } from "@/core/breeding/stallions";
-import { shouldGenerateHorseOfAge, createHorseGenAIState, recordHorseGeneration } from "@/core/ai/horseGenAI";
+import {
+  shouldRetireAtStartup,
+  initialStandingFee,
+  defaultStudParams,
+} from "@/core/breeding/stallions";
+import {
+  shouldGenerateHorseOfAge,
+  createHorseGenAIState,
+  recordHorseGeneration,
+} from "@/core/ai/horseGenAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { activeStallions2020s, type PedigreeHorse } from "@/core/data/pedigreeData";
 import { clamp } from "@/game/math";
@@ -162,7 +173,11 @@ export function createHorseFromDNA(
     healthStatus: resolveHealthStatus(genotype.health),
     lifecycleStatus: "active",
     ...dnaTraits,
-    appearance: generateAppearanceDNA(Math.floor(rng.next() * 2147483647), undefined, getPalette(coatColor)),
+    appearance: generateAppearanceDNA(
+      Math.floor(rng.next() * 2147483647),
+      undefined,
+      getPalette(coatColor),
+    ),
   };
 
   return horse as Horse;
@@ -193,7 +208,7 @@ export function generateHorse(
   const horseName = generateProceduralHorseName(
     { region: namingContext?.region, namingTheme: namingContext?.namingTheme, existingNames },
     rng,
-    { strategy: "regional" }
+    { strategy: "regional" },
   );
 
   return createHorseFromDNA(genotype, rng, {
@@ -249,7 +264,7 @@ export function generateNpcHorse(
     generateProceduralHorseName(
       { region, namingTheme: config.namingTheme, existingNames: new Set() },
       rng,
-      { strategy: "regional" }
+      { strategy: "regional" },
     );
 
   return horse;
@@ -268,11 +283,13 @@ export function resolveFoaling(
 
   // Genetic crossover
   if (!sire.genotype || !dam.genotype) {
-    throw new Error(`Cannot resolve foaling: missing genotype for ${!sire.genotype ? 'sire' : 'dam'}`);
+    throw new Error(
+      `Cannot resolve foaling: missing genotype for ${!sire.genotype ? "sire" : "dam"}`,
+    );
   }
 
   // --- Complication Checks ---
-  
+
   // 1. Age-based risk
   const ageRisk = Math.max(0, (dam.age - 10) * 0.02); // 2% per year over 10
   const baseRoll = rng.next();
@@ -285,8 +302,13 @@ export function resolveFoaling(
   const sMarkers = sire.geneticMarkers?.lethalCarriers;
   const dMarkers = dam.geneticMarkers?.lethalCarriers;
   if (sMarkers && dMarkers) {
-    if ((sMarkers.csnb && dMarkers.csnb) || (sMarkers.hypp && dMarkers.hypp) || (sMarkers.olws && dMarkers.olws)) {
-      if (rng.next() < 0.25) { // 25% chance for homozygous lethal
+    if (
+      (sMarkers.csnb && dMarkers.csnb) ||
+      (sMarkers.hypp && dMarkers.hypp) ||
+      (sMarkers.olws && dMarkers.olws)
+    ) {
+      if (rng.next() < 0.25) {
+        // 25% chance for homozygous lethal
         return { kind: "complication", type: "lethal recessive" };
       }
     }
@@ -312,10 +334,10 @@ export function resolveFoaling(
       damName: dam.name,
       region: namingContext?.region,
       namingTheme: namingContext?.namingTheme,
-      existingNames: namingContext?.existingNames ?? new Set()
+      existingNames: namingContext?.existingNames ?? new Set(),
     },
     rng,
-    { strategy: "hybrid" }
+    { strategy: "hybrid" },
   );
 
   return { kind: "live", foal };

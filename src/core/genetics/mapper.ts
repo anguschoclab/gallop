@@ -52,9 +52,11 @@ function mapStyleToLocus(style: "E" | "EP" | "P" | "S"): Locus {
 /**
  * Map physical traits to DNA
  */
-function mapPhysicalTraitsToDNA(
-  traits: StallionResearchData["physicalTraits"],
-): { size: Locus; physical: Locus; mental: Locus } {
+function mapPhysicalTraitsToDNA(traits: StallionResearchData["physicalTraits"]): {
+  size: Locus;
+  physical: Locus;
+  mental: Locus;
+} {
   const size: Locus = traits?.height ? mapHeightToSize(traits.height) : [5, 5];
   const physical: Locus = traits?.conformation ? mapTraitToLocus(traits.conformation) : [5, 5];
   const mental: Locus = traits?.temperament ? mapTraitToLocus(traits.temperament) : [5, 5];
@@ -87,17 +89,29 @@ function mapRacingPerformanceToDNA(
 
     if (distSum <= 4) {
       // Sprinter: higher speed, lower stamina
-      speed = speed.map(l => [Math.min(alleleMax, l[0] + 1), Math.min(alleleMax, l[1] + 1)] as Locus);
-      stamina = stamina.map(l => [Math.max(alleleMin, l[0] - 1), Math.max(alleleMin, l[1] - 1)] as Locus);
+      speed = speed.map(
+        (l) => [Math.min(alleleMax, l[0] + 1), Math.min(alleleMax, l[1] + 1)] as Locus,
+      );
+      stamina = stamina.map(
+        (l) => [Math.max(alleleMin, l[0] - 1), Math.max(alleleMin, l[1] - 1)] as Locus,
+      );
     } else if (distSum >= 8) {
       // Stayer: higher stamina, lower speed
-      stamina = stamina.map(l => [Math.min(alleleMax, l[0] + 1), Math.min(alleleMax, l[1] + 1)] as Locus);
-      speed = speed.map(l => [Math.max(alleleMin, l[0] - 1), Math.max(alleleMin, l[1] - 1)] as Locus);
+      stamina = stamina.map(
+        (l) => [Math.min(alleleMax, l[0] + 1), Math.min(alleleMax, l[1] + 1)] as Locus,
+      );
+      speed = speed.map(
+        (l) => [Math.max(alleleMin, l[0] - 1), Math.max(alleleMin, l[1] - 1)] as Locus,
+      );
     }
   }
 
-  const distance: Locus = perf?.distancePreference ? mapDistanceToPreference(perf.distancePreference) : [5, 5];
-  const surface: Locus = perf?.surfacePreference ? mapSurfaceToPreference(perf.surfacePreference) : [5, 5];
+  const distance: Locus = perf?.distancePreference
+    ? mapDistanceToPreference(perf.distancePreference)
+    : [5, 5];
+  const surface: Locus = perf?.surfacePreference
+    ? mapSurfaceToPreference(perf.surfacePreference)
+    : [5, 5];
   const style: Locus = perf?.runningStyle ? mapStyleToLocus(perf.runningStyle) : [2, 2];
 
   return { stats: { speed, stamina }, preferences: { distance, surface }, style };
@@ -106,9 +120,7 @@ function mapRacingPerformanceToDNA(
 /**
  * Map genetic markers directly
  */
-function mapGeneticMarkers(
-  markers: StallionResearchData["geneticMarkers"],
-): MarkerGenotype {
+function mapGeneticMarkers(markers: StallionResearchData["geneticMarkers"]): MarkerGenotype {
   return {
     leopardComplex: markers?.leopardComplex || "recessive",
     csnbRisk: markers?.lethalCarriers?.csnb ? "high" : "low",
@@ -132,12 +144,7 @@ export function mapResearchDataToGenotype(
   researchData: StallionResearchData,
   tier: "starter" | "budget" | "mid" | "elite",
 ): Genotype {
-  const baseGenotype = generateDeterministicGenotype(
-    researchData.name,
-    tier,
-    undefined,
-    undefined,
-  );
+  const baseGenotype = generateDeterministicGenotype(researchData.name, tier, undefined, undefined);
 
   if (researchData.physicalTraits) {
     const physical = mapPhysicalTraitsToDNA(researchData.physicalTraits);

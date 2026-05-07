@@ -20,11 +20,11 @@ describe("utils", () => {
     });
 
     it("handles arrays", () => {
-        expect(cn(["px-2", "py-1"], "bg-red-500")).toBe("px-2 py-1 bg-red-500");
+      expect(cn(["px-2", "py-1"], "bg-red-500")).toBe("px-2 py-1 bg-red-500");
     });
 
     it("handles objects", () => {
-        expect(cn({ "px-2": true, "py-1": false }, "bg-red-500")).toBe("px-2 bg-red-500");
+      expect(cn({ "px-2": true, "py-1": false }, "bg-red-500")).toBe("px-2 bg-red-500");
     });
   });
 
@@ -42,12 +42,18 @@ describe("utils", () => {
       expect(result).toEqual([
         { day: 1, races: [{ id: 4, day: 1 }] },
         { day: 2, races: [{ id: 2, day: 2 }] },
-        { day: 5, races: [{ id: 1, day: 5 }, { id: 3, day: 5 }] },
+        {
+          day: 5,
+          races: [
+            { id: 1, day: 5 },
+            { id: 3, day: 5 },
+          ],
+        },
       ]);
     });
 
     it("handles empty arrays", () => {
-        expect(groupRacesByDate([])).toEqual([]);
+      expect(groupRacesByDate([])).toEqual([]);
     });
   });
 });

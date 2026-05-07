@@ -84,7 +84,7 @@ describe("trainingResolutionPhase", () => {
 
     // There should be at least two impacts: one for energy, one for stat change.
     expect(result.impacts.length).toBeGreaterThanOrEqual(2);
-    const statChangeImpact = result.impacts.find(i => i.type === "horse_stat_change");
+    const statChangeImpact = result.impacts.find((i) => i.type === "horse_stat_change");
     expect(statChangeImpact).toBeDefined();
   });
 

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,7 +70,11 @@ export const Route = createFileRoute("/races")({
 });
 
 const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(n);
 
 function RacesPage() {
   const { grade, country, surface, track, owned, q } = Route.useSearch();
@@ -366,19 +370,36 @@ function RacesPage() {
                             const entryHorse = horses.find((h: any) => h.id === entry.horseId);
                             const isOwned = !!entry.owned;
                             const playerClaimFiled = claims.some(
-                              (c: Claim) => c.raceId === r.id && c.horseId === entry.horseId && c.claimantStableId === undefined,
+                              (c: Claim) =>
+                                c.raceId === r.id &&
+                                c.horseId === entry.horseId &&
+                                c.claimantStableId === undefined,
                             );
                             const canAfford = cash >= r.claiming!.price;
                             return (
-                              <div key={entry.horseId} className="flex items-center justify-between py-1 border-b border-gold-muted/20 last:border-0">
-                                <span className="text-sm text-cream font-medium">
+                              <div
+                                key={entry.horseId}
+                                className="flex items-center justify-between py-1 border-b border-gold-muted/20 last:border-0"
+                              >
+                                <Link
+                                  to="/stable/$horseId"
+                                  params={{ horseId: entry.horseId }}
+                                  className="text-sm text-cream font-medium hover:underline hover:text-gold"
+                                >
                                   {entryHorse?.name ?? entry.horseId}
-                                  {isOwned && <span className="ml-2 text-xs text-success">(your horse)</span>}
-                                </span>
+                                  {isOwned && (
+                                    <span className="ml-2 text-xs text-success">(your horse)</span>
+                                  )}
+                                </Link>
                                 <div>
-                                  {!isOwned && (
-                                    playerClaimFiled ? (
-                                      <Button size="sm" variant="ghost" disabled className="text-xs">
+                                  {!isOwned &&
+                                    (playerClaimFiled ? (
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        disabled
+                                        className="text-xs"
+                                      >
                                         Claim filed
                                       </Button>
                                     ) : (
@@ -386,7 +407,11 @@ function RacesPage() {
                                         size="sm"
                                         variant="outline"
                                         disabled={!canAfford}
-                                        title={canAfford ? undefined : `You need ${fmtCurrency(r.claiming!.price - cash)} to file this claim.`}
+                                        title={
+                                          canAfford
+                                            ? undefined
+                                            : `You need ${fmtCurrency(r.claiming!.price - cash)} to file this claim.`
+                                        }
                                         className="text-xs"
                                         onClick={() => {
                                           setClaimingRace(r as Race);
@@ -395,8 +420,7 @@ function RacesPage() {
                                       >
                                         Claim {fmtCurrency(r.claiming!.price)}
                                       </Button>
-                                    )
-                                  )}
+                                    ))}
                                 </div>
                               </div>
                             );
@@ -420,43 +444,60 @@ function RacesPage() {
       )}
 
       {/* D3 — Claim filing dialog */}
-      {claimingRace && pendingClaimHorseId && (() => {
-        const horse = horses.find((h: any) => h.id === pendingClaimHorseId);
-        const cp = claimingRace.claiming!.price;
-        return (
-          <AlertDialog open onOpenChange={(open) => { if (!open) { setClaimingRace(null); setPendingClaimHorseId(null); } }}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Claim {horse?.name} for {fmtCurrency(cp)}?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  If your claim is drawn, {fmtCurrency(cp)} will be deducted from your account and{" "}
-                  {horse?.name ?? "the horse"} will transfer to your stable after the race completes.
-                  Multiple claims on the same horse are resolved randomly.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel onClick={() => { setClaimingRace(null); setPendingClaimHorseId(null); }}>
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => {
-                    const result = fileClaim(claimingRace.id, pendingClaimHorseId);
-                    setClaimingRace(null);
-                    setPendingClaimHorseId(null);
-                    if (result.ok) {
-                      toast.success(`Claim filed on ${horse?.name} for ${fmtCurrency(cp)}.`);
-                    } else {
-                      toast.error(`Claim failed: ${result.reason}`);
-                    }
-                  }}
-                >
-                  File Claim
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        );
-      })()}
+      {claimingRace &&
+        pendingClaimHorseId &&
+        (() => {
+          const horse = horses.find((h: any) => h.id === pendingClaimHorseId);
+          const cp = claimingRace.claiming!.price;
+          return (
+            <AlertDialog
+              open
+              onOpenChange={(open) => {
+                if (!open) {
+                  setClaimingRace(null);
+                  setPendingClaimHorseId(null);
+                }
+              }}
+            >
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Claim {horse?.name} for {fmtCurrency(cp)}?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    If your claim is drawn, {fmtCurrency(cp)} will be deducted from your account and{" "}
+                    {horse?.name ?? "the horse"} will transfer to your stable after the race
+                    completes. Multiple claims on the same horse are resolved randomly.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel
+                    onClick={() => {
+                      setClaimingRace(null);
+                      setPendingClaimHorseId(null);
+                    }}
+                  >
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      const result = fileClaim(claimingRace.id, pendingClaimHorseId);
+                      setClaimingRace(null);
+                      setPendingClaimHorseId(null);
+                      if (result.ok) {
+                        toast.success(`Claim filed on ${horse?.name} for ${fmtCurrency(cp)}.`);
+                      } else {
+                        toast.error(`Claim failed: ${result.reason}`);
+                      }
+                    }}
+                  >
+                    File Claim
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          );
+        })()}
     </div>
   );
 }

@@ -65,10 +65,10 @@ ASCII or description of the major regions. Reference the layout pattern from [04
 
 ## Copy
 
-- Page title: *"..."*
-- Subtitle (if any): *"..."*
-- Primary CTA: *"..."*
-- Empty state: *"..."* + button label.
+- Page title: _"..."_
+- Subtitle (if any): _"..."_
+- Primary CTA: _"..."_
+- Empty state: _"..."_ + button label.
 - Tooltips on jargon: list any term that gets a tooltip on this screen.
 
 ## States

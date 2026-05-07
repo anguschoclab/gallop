@@ -74,7 +74,7 @@ const PROCEDURAL_FAMILIES = [
 ];
 
 export function rollProceduralFamily(rng?: Rng): number {
-  const _rng = rng || { next: () => Math.random() } as any;
+  const _rng = rng || ({ next: () => Math.random() } as any);
   const total = PROCEDURAL_FAMILIES.reduce((s, [, w]) => s + w, 0);
   let pick = _rng.next() * total;
   for (const [family, weight] of PROCEDURAL_FAMILIES) {

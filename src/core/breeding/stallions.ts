@@ -46,16 +46,15 @@ export function calculateRecommendedStudFee(
   const baseValue = calculateBaseHorseValue(stallion, tier);
 
   // 2. Career Performance Bonus (30%)
-  const grade1Wins = stallion.raceHistory.filter((r) => r.position === 1 && r.grade === "G1").length;
+  const grade1Wins = stallion.raceHistory.filter(
+    (r) => r.position === 1 && r.grade === "G1",
+  ).length;
   const stakesWins = stallion.raceHistory.filter(
     (r) => r.position === 1 && (r.grade === "G2" || r.grade === "G3" || r.raceClass === "Stakes"),
   ).length;
 
   const careerMultiplier =
-    1 +
-    grade1Wins * 0.5 +
-    stakesWins * 0.15 +
-    (stallion.lifetimeEarnings ?? 0) / 1000000;
+    1 + grade1Wins * 0.5 + stakesWins * 0.15 + (stallion.lifetimeEarnings ?? 0) / 1000000;
 
   // 3. Progeny Performance (30%)
   const progenyMultiplier = stallion.stud
@@ -88,11 +87,7 @@ export function calculateRecommendedStudFee(
 // horse's stat profile. Uses the existing calculateNpcHorseValue infra
 // scaled down so a brand-new stallion isn't priced like a proven sire.
 // If realWorldFee is provided, use it directly (for famous stallions).
-export function initialStandingFee(
-  horse: Horse,
-  tier: StableTier,
-  realWorldFee?: number,
-): number {
+export function initialStandingFee(horse: Horse, tier: StableTier, realWorldFee?: number): number {
   // If real-world fee is provided, use it directly
   if (realWorldFee) return realWorldFee;
 

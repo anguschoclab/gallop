@@ -21,7 +21,12 @@ export async function exportHorsePortraitPng(
   const { createElement } = await import("react");
 
   // Ensure DNA is resolved so the same look is exported.
-  const appearance = getOrDeriveAppearance(horse.id, horse.coatColor, horse.markings, horse.appearance);
+  const appearance = getOrDeriveAppearance(
+    horse.id,
+    horse.coatColor,
+    horse.markings,
+    horse.appearance,
+  );
 
   const svgMarkup = renderToStaticMarkup(
     createElement(ProceduralHorsePortrait, {

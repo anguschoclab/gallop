@@ -94,7 +94,8 @@ export function generateCommentaryLine(
       !context.hasAnnouncedBio.has(context.runner.horseId) &&
       context.rng.next() < 0.35
     ) {
-      const bio = BIOGRAPHICAL_TEMPLATES[Math.floor(context.rng.next() * BIOGRAPHICAL_TEMPLATES.length)];
+      const bio =
+        BIOGRAPHICAL_TEMPLATES[Math.floor(context.rng.next() * BIOGRAPHICAL_TEMPLATES.length)];
       text = bio + " " + text;
       context.hasAnnouncedBio.add(context.runner.horseId);
     }

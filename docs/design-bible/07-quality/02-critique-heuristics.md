@@ -10,7 +10,7 @@ owns: design:design-critique
 
 A short, opinionated checklist for reviewing a screen — your own or a teammate's. Walk it top-to-bottom; the first principle that surfaces a problem is usually the right one to fix.
 
-This is the practical cousin of [00-foundations/02-design-principles.md](../00-foundations/02-design-principles.md) — the principles are *what we believe*; this file is *how to check*.
+This is the practical cousin of [00-foundations/02-design-principles.md](../00-foundations/02-design-principles.md) — the principles are _what we believe_; this file is _how to check_.
 
 ---
 
@@ -29,7 +29,7 @@ If any of these read soft, fix the screen before continuing.
 ### 2. One verb (30 seconds)
 
 - What is the **primary verb** of this screen?
-- Is the primary CTA the *only* default-variant button visible without scroll?
+- Is the primary CTA the _only_ default-variant button visible without scroll?
 - Are the secondary actions appropriately demoted (`ghost`, `outline`, `secondary`)?
 
 If you can't name the verb, you don't have a screen — you have a list of functions.
@@ -55,6 +55,7 @@ Density without breath is claustrophobia. Breath without density is condescensio
 ### 5. Tokens, not hex (30 seconds)
 
 Search the diff for:
+
 - `#` (hex codes) — outside the race screen, **none allowed**.
 - `rgb(` / `oklch(` — same rule.
 - Inline `style={{ backgroundColor: ... }}` — only acceptable for silks (which are user-data colours).
@@ -85,15 +86,15 @@ Read every word on the screen out loud.
 
 These are the failure modes that creep back in after every refactor:
 
-| Symptom | Underlying cause | Fix |
-|---|---|---|
-| Numbers don't align in a column | `tabular-nums` missing | Add it on the parent. |
-| Inline hex code | Convenience colour for "this one case" | Convert to a token, or define a new one. |
-| Tooltipless jargon | Designer assumed glossary covered it | Add `<Tooltip>` on first appearance per screen. |
-| Two equally-prominent CTAs | "We didn't know which was primary" | Pick one. Demote the other. |
-| Modal-on-modal | Trying to fit a follow-up into the current modal | Convert to a sub-route or sheet. |
-| Silent state | Loading spinner missing, or empty state not specified | Add the explicit state. |
-| Race screen colour out of sync | Used inline `rgb(...)` | Pull from broadcast tokens (post-G1 — see [05-screens/04-race-viewer.md](../05-screens/04-race-viewer.md)). |
+| Symptom                         | Underlying cause                                      | Fix                                                                                                         |
+| ------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Numbers don't align in a column | `tabular-nums` missing                                | Add it on the parent.                                                                                       |
+| Inline hex code                 | Convenience colour for "this one case"                | Convert to a token, or define a new one.                                                                    |
+| Tooltipless jargon              | Designer assumed glossary covered it                  | Add `<Tooltip>` on first appearance per screen.                                                             |
+| Two equally-prominent CTAs      | "We didn't know which was primary"                    | Pick one. Demote the other.                                                                                 |
+| Modal-on-modal                  | Trying to fit a follow-up into the current modal      | Convert to a sub-route or sheet.                                                                            |
+| Silent state                    | Loading spinner missing, or empty state not specified | Add the explicit state.                                                                                     |
+| Race screen colour out of sync  | Used inline `rgb(...)`                                | Pull from broadcast tokens (post-G1 — see [05-screens/04-race-viewer.md](../05-screens/04-race-viewer.md)). |
 
 ---
 
@@ -101,9 +102,9 @@ These are the failure modes that creep back in after every refactor:
 
 When giving feedback to a teammate:
 
-- **Lead with the principle**, not the line. *"This violates principle 1 — numbers aren't the protagonist here"* lands better than *"reduce the icon size"*.
+- **Lead with the principle**, not the line. _"This violates principle 1 — numbers aren't the protagonist here"_ lands better than _"reduce the icon size"_.
 - **Be concrete.** Point to the file:line of the offending element.
-- **Distinguish must / should / could.** *"Must: tabular-nums on the Beyer column. Should: tooltip on 'Maiden'. Could: consider a sticky header."*
+- **Distinguish must / should / could.** _"Must: tabular-nums on the Beyer column. Should: tooltip on 'Maiden'. Could: consider a sticky header."_
 - **One sweep, not three.** Run the full pass once, then summarise. Don't drip critique.
 
 ---
@@ -121,4 +122,4 @@ If you've been on a screen for >2 hours, you've stopped seeing it. Routes for a 
 ## Open questions
 
 - Do we want to formalise this as a **PR template checklist** so design-system regressions get caught at code review? Probably yes.
-- Should we maintain a *gallery of fixed regressions* (before/after) as a teaching tool? Reserve the idea.
+- Should we maintain a _gallery of fixed regressions_ (before/after) as a teaching tool? Reserve the idea.

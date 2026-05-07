@@ -52,7 +52,9 @@ export function StepBackstory({ backstoryId, onChange, onNext, onBack }: StepBac
         <h2 className="text-2xl font-bold text-gold font-[family-name:var(--font-display)] mb-2">
           Choose Your Backstory
         </h2>
-        <p className="text-cream-muted">Your starting resources and difficulty depend on your background.</p>
+        <p className="text-cream-muted">
+          Your starting resources and difficulty depend on your background.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,7 +79,9 @@ export function StepBackstory({ backstoryId, onChange, onNext, onBack }: StepBac
                     <div className="space-y-2 text-xs text-cream-muted">
                       <div className="flex justify-between">
                         <span>Starting Cash:</span>
-                        <span className="text-cream">${backstory.startingCash.toLocaleString()}</span>
+                        <span className="text-cream">
+                          ${backstory.startingCash.toLocaleString()}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Horses:</span>
@@ -111,9 +115,7 @@ export function StepBackstory({ backstoryId, onChange, onNext, onBack }: StepBac
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button onClick={handleNext}>
-          Next
-        </Button>
+        <Button onClick={handleNext}>Next</Button>
       </div>
     </div>
   );

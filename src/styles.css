@@ -20,9 +20,9 @@
 
 @theme inline {
   /* Font families */
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -137,9 +137,9 @@
   --gold-muted: oklch(0.65 0.15 85 / 0.3);
   --gold-subtle: oklch(0.65 0.15 85 / 0.08);
   --cream: oklch(0.92 0.03 85);
-  --cream-muted: oklch(0.70 0.05 85);
+  --cream-muted: oklch(0.7 0.05 85);
   --cream-faint: oklch(0.92 0.03 85 / 0.06);
-  --emerald-accent: oklch(0.70 0.18 155);
+  --emerald-accent: oklch(0.7 0.18 155);
   --sw: 248px;
 }
 
@@ -233,7 +233,12 @@
     font-family: var(--font-body);
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
   }
 }
@@ -282,23 +287,41 @@
 
 /* Race Viewer Sprite Animations */
 @keyframes sprite-run {
-  from { background-position: 0 0; }
-  to { background-position: -300px 0; }
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -300px 0;
+  }
 }
 
 @keyframes sprite-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 @keyframes finish-flash {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes track-scroll {
-  from { background-position: 0 0; }
-  to { background-position: -512px 0; }
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -512px 0;
+  }
 }
 
 /* Horse sprite base styles */
@@ -346,7 +369,8 @@
 
 /* Subtle scale animation for cards */
 @keyframes card-hover {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -366,7 +390,8 @@
 
 /* Pulse animation for badges */
 @keyframes badge-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -385,7 +410,9 @@
 
 /* Card hover polish */
 .card-hover-polish {
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  transition:
+    transform 0.2s ease-out,
+    box-shadow 0.2s ease-out;
 }
 
 .card-hover-polish:hover {
@@ -414,12 +441,16 @@
 
 /* Subtle border glow for gold borders */
 .gold-border-glow {
-  box-shadow: 0 0 0 1px var(--gold-muted), 0 0 0 2px var(--gold-subtle);
+  box-shadow:
+    0 0 0 1px var(--gold-muted),
+    0 0 0 2px var(--gold-subtle);
   transition: box-shadow 0.2s ease-out;
 }
 
 .gold-border-glow:hover {
-  box-shadow: 0 0 0 1px var(--gold-muted), 0 0 8px 2px var(--gold-subtle);
+  box-shadow:
+    0 0 0 1px var(--gold-muted),
+    0 0 8px 2px var(--gold-subtle);
 }
 
 /* Reduced motion preferences */

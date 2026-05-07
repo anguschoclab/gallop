@@ -4,7 +4,12 @@
 
 import type { Rng } from "@/game/rng";
 import type { RegionalSystem } from "@/game/types";
-import { generatePortmanteau, extractAndCombine, generateSoundAlike, generateReverseHomage } from "./pedigreePatterns";
+import {
+  generatePortmanteau,
+  extractAndCombine,
+  generateSoundAlike,
+  generateReverseHomage,
+} from "./pedigreePatterns";
 import { generateAncestorHomage } from "./ancestorHomage";
 import { generateThematicName, type NamingTheme } from "./thematicNaming";
 import { generateRegionalName } from "./regionalConventions";
@@ -30,7 +35,7 @@ export interface NamingOptions {
 export function generateProceduralHorseName(
   context: NamingContext,
   rng: Rng,
-  options: NamingOptions = {}
+  options: NamingOptions = {},
 ): string {
   const { strategy = "hybrid", maxAttempts = 20 } = options;
   const { existingNames, deceasedNames } = context;
@@ -43,9 +48,10 @@ export function generateProceduralHorseName(
     switch (currentStrategy) {
       case "pedigree":
         if (context.sireName && context.damName) {
-          candidate = rng.next() < 0.5 
-            ? generatePortmanteau(context.sireName, context.damName, rng)
-            : extractAndCombine(context.sireName, context.damName, rng);
+          candidate =
+            rng.next() < 0.5
+              ? generatePortmanteau(context.sireName, context.damName, rng)
+              : extractAndCombine(context.sireName, context.damName, rng);
         } else if (context.sireName || context.damName) {
           candidate = generateSoundAlike(context.sireName || context.damName!, rng);
         }

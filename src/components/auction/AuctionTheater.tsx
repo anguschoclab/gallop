@@ -36,22 +36,28 @@ const TICK_MS = 1500;
 // ---------------------------------------------------------------------------
 
 const PHASES: { key: ChantPhase | "sold_passed"; label: string }[] = [
-  { key: "open",        label: "Open" },
-  { key: "bidding",     label: "Bidding" },
-  { key: "going_once",  label: "Going Once" },
+  { key: "open", label: "Open" },
+  { key: "bidding", label: "Bidding" },
+  { key: "going_once", label: "Going Once" },
   { key: "going_twice", label: "Going Twice" },
   { key: "sold_passed", label: "Sold / Passed" },
 ];
 
 function chantToPhaseIndex(chant: ChantPhase | undefined): number {
   switch (chant) {
-    case "open":         return 0;
-    case "bidding":      return 1;
-    case "going_once":   return 2;
-    case "going_twice":  return 3;
+    case "open":
+      return 0;
+    case "bidding":
+      return 1;
+    case "going_once":
+      return 2;
+    case "going_twice":
+      return 3;
     case "sold":
-    case "passed":       return 4;
-    default:             return 0;
+    case "passed":
+      return 4;
+    default:
+      return 0;
   }
 }
 
@@ -150,24 +156,18 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
   // Initialize runner once per sale.
   useEffect(() => {
     if (!sale) return;
-    runnerRef.current = createAuctionRunner(
-      sale,
-      stables,
-      horses,
-      hashStr(sale.id),
-      {
-        liveMode: true,
-        onAutoRaise: (amount) => {
-          const result = debitForLiveBid(amount);
-          if (!result.ok) {
-            setPlayerMaxBidState(undefined);
-            setBidError(`Auto-bid cancelled: ${result.reason}`);
-            return false;
-          }
-          return true;
-        },
-      }
-    );
+    runnerRef.current = createAuctionRunner(sale, stables, horses, hashStr(sale.id), {
+      liveMode: true,
+      onAutoRaise: (amount) => {
+        const result = debitForLiveBid(amount);
+        if (!result.ok) {
+          setPlayerMaxBidState(undefined);
+          setBidError(`Auto-bid cancelled: ${result.reason}`);
+          return false;
+        }
+        return true;
+      },
+    });
     setChantLines([]);
     setDone(false);
     setCommitted(false);
@@ -191,7 +191,8 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
   const leadingBidder = lotState?.leadingBidder; // undefined = player, when chant not "open"
   const totalLots = sale?.lots.filter((l) => !l.withdrawn).length ?? 0;
   const lotIndex = runnerRef.current?.currentLotIndex() ?? 0;
-  const playerIsLeading = !done && currentBid > 0 && leadingBidder === undefined && (lotState?.chant !== "open");
+  const playerIsLeading =
+    !done && currentBid > 0 && leadingBidder === undefined && lotState?.chant !== "open";
   const bidHistory: AuctionBidRecord[] = lotState?.bidHistory ?? [];
   // Declared here (before the keyboard useEffect) to avoid use-before-declare.
   // The full `isPlayerConsignment` (which depends on the consignor lookup) is
@@ -202,92 +203,99 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
   // Step machinery
   // ---------------------------------------------------------------------------
 
-  const stepAndRender = useCallback((playerBid?: number) => {
-    const runner = runnerRef.current;
-    if (!runner || done) return;
+  const stepAndRender = useCallback(
+    (playerBid?: number) => {
+      const runner = runnerRef.current;
+      if (!runner || done) return;
 
-    const result = runner.step(playerBid);
+      const result = runner.step(playerBid);
 
-    // Lot transition detection — reset per-lot state (Aa, Ab, Ac).
-    if (result.currentLotIndex !== prevLotIndexRef.current) {
-      setPlayerMaxBidState(undefined);
-      runner.setPlayerMaxBid(undefined);
-      setHistoryOpen(false);
-      setWinOverlay(null);
-      prevLotIndexRef.current = result.currentLotIndex;
-    }
-
-    // Generate chant lines from events.
-    const newLines: AuctioneerLine[] = [];
-    let flashStable: string | null = null;
-    let sawHammer = false;
-    for (const event of result.events) {
-      const lot = sale?.lots.find((l) => l.id === event.lotId);
-      const horse = lot ? horses.find((h) => h.id === lot.horseId) : undefined;
-      const consignor = lot?.consignorStableId
-        ? stables.find((s) => s.id === lot.consignorStableId)
-        : undefined;
-      const winner =
-        event.type === "SOLD" && event.toStableId
-          ? stables.find((s) => s.id === event.toStableId)
-          : undefined;
-      const scouted = horse ? getDisplayableStats(horse, scoutReports, day) : null;
-      const paddleNumber =
-        (event.type === "BID_RECEIVED" && event.stableId)
-          ? Math.max(1, stables.findIndex((s) => s.id === event.stableId) + 1)
-          : undefined;
-
-      const line = generateAuctioneerLine(event, {
-        horse,
-        consignor,
-        winner,
-        scoutedOverall: scouted?.overallEstimate,
-        paddleNumber,
-        breezeSeconds: lot?.breezeSeconds,
-      }, rngRef.current);
-      newLines.push(line);
-
-      if (event.type === "BID_RECEIVED" && event.stableId) flashStable = event.stableId;
-      if (event.type === "SOLD" || event.type === "PASSED") sawHammer = true;
-
-      // Ac-3 — win overlay trigger
-      if (event.type === "SOLD" && event.toStableId === undefined) {
-        const winHorse = horses.find((h) => h.id === lot?.horseId);
-        setWinOverlay({
-          horseName: winHorse?.name ?? "Horse",
-          hammerPrice: event.amount,
-        });
-        setTimeout(() => setWinOverlay(null), 2500);
+      // Lot transition detection — reset per-lot state (Aa, Ab, Ac).
+      if (result.currentLotIndex !== prevLotIndexRef.current) {
+        setPlayerMaxBidState(undefined);
+        runner.setPlayerMaxBid(undefined);
+        setHistoryOpen(false);
+        setWinOverlay(null);
+        prevLotIndexRef.current = result.currentLotIndex;
       }
-    }
 
-    if (newLines.length > 0) {
-      setChantLines((prev) => [...prev, ...newLines].slice(-30));
-    }
-    if (flashStable) {
-      setActivePaddle(flashStable);
-    }
-    if (sawHammer) {
-      setHammerFlash(true);
-      setTimeout(() => setHammerFlash(false), 600);
-    }
-    setBidError(null);
-    setDone(result.done);
+      // Generate chant lines from events.
+      const newLines: AuctioneerLine[] = [];
+      let flashStable: string | null = null;
+      let sawHammer = false;
+      for (const event of result.events) {
+        const lot = sale?.lots.find((l) => l.id === event.lotId);
+        const horse = lot ? horses.find((h) => h.id === lot.horseId) : undefined;
+        const consignor = lot?.consignorStableId
+          ? stables.find((s) => s.id === lot.consignorStableId)
+          : undefined;
+        const winner =
+          event.type === "SOLD" && event.toStableId
+            ? stables.find((s) => s.id === event.toStableId)
+            : undefined;
+        const scouted = horse ? getDisplayableStats(horse, scoutReports, day) : null;
+        const paddleNumber =
+          event.type === "BID_RECEIVED" && event.stableId
+            ? Math.max(1, stables.findIndex((s) => s.id === event.stableId) + 1)
+            : undefined;
 
-    // Ac-2 — detect leading state change and flash banner.
-    forceTick();
-    const updatedLotState = runner.currentLot();
-    const newLeading =
-      !result.done &&
-      (updatedLotState?.currentBid ?? 0) > 0 &&
-      updatedLotState?.leadingBidder === undefined &&
-      updatedLotState?.chant !== "open";
-    if (prevLeadingRef.current !== undefined && prevLeadingRef.current !== newLeading) {
-      setBannerFlash(true);
-      setTimeout(() => setBannerFlash(false), 150);
-    }
-    prevLeadingRef.current = newLeading;
-  }, [sale, horses, stables, scoutReports, day, done]);
+        const line = generateAuctioneerLine(
+          event,
+          {
+            horse,
+            consignor,
+            winner,
+            scoutedOverall: scouted?.overallEstimate,
+            paddleNumber,
+            breezeSeconds: lot?.breezeSeconds,
+          },
+          rngRef.current,
+        );
+        newLines.push(line);
+
+        if (event.type === "BID_RECEIVED" && event.stableId) flashStable = event.stableId;
+        if (event.type === "SOLD" || event.type === "PASSED") sawHammer = true;
+
+        // Ac-3 — win overlay trigger
+        if (event.type === "SOLD" && event.toStableId === undefined) {
+          const winHorse = horses.find((h) => h.id === lot?.horseId);
+          setWinOverlay({
+            horseName: winHorse?.name ?? "Horse",
+            hammerPrice: event.amount,
+          });
+          setTimeout(() => setWinOverlay(null), 2500);
+        }
+      }
+
+      if (newLines.length > 0) {
+        setChantLines((prev) => [...prev, ...newLines].slice(-30));
+      }
+      if (flashStable) {
+        setActivePaddle(flashStable);
+      }
+      if (sawHammer) {
+        setHammerFlash(true);
+        setTimeout(() => setHammerFlash(false), 600);
+      }
+      setBidError(null);
+      setDone(result.done);
+
+      // Ac-2 — detect leading state change and flash banner.
+      forceTick();
+      const updatedLotState = runner.currentLot();
+      const newLeading =
+        !result.done &&
+        (updatedLotState?.currentBid ?? 0) > 0 &&
+        updatedLotState?.leadingBidder === undefined &&
+        updatedLotState?.chant !== "open";
+      if (prevLeadingRef.current !== undefined && prevLeadingRef.current !== newLeading) {
+        setBannerFlash(true);
+        setTimeout(() => setBannerFlash(false), 150);
+      }
+      prevLeadingRef.current = newLeading;
+    },
+    [sale, horses, stables, scoutReports, day, done],
+  );
 
   // Auto-watch tick loop.
   useEffect(() => {
@@ -311,21 +319,24 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
   // Player actions
   // ---------------------------------------------------------------------------
 
-  const placeBid = useCallback((amount: number) => {
-    if (!runnerRef.current || done) return;
-    if (amount <= currentBid) {
-      setBidError("Bid must exceed current price.");
-      return;
-    }
-    const debit = debitForLiveBid(amount);
-    if (!debit.ok) {
-      setBidError(debit.reason);
-      return;
-    }
-    setCustomBid("");
-    setMaxBid("");
-    stepAndRender(amount);
-  }, [done, currentBid, debitForLiveBid, stepAndRender]);
+  const placeBid = useCallback(
+    (amount: number) => {
+      if (!runnerRef.current || done) return;
+      if (amount <= currentBid) {
+        setBidError("Bid must exceed current price.");
+        return;
+      }
+      const debit = debitForLiveBid(amount);
+      if (!debit.ok) {
+        setBidError(debit.reason);
+        return;
+      }
+      setCustomBid("");
+      setMaxBid("");
+      stepAndRender(amount);
+    },
+    [done, currentBid, debitForLiveBid, stepAndRender],
+  );
 
   const onQuickBid = useCallback(() => placeBid(nextBidAmount(currentBid)), [placeBid, currentBid]);
 
@@ -400,9 +411,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
   const scoreboard = useScoreboard(saleId);
 
   if (!sale) {
-    return (
-      <div className="p-8 text-center text-muted-foreground">Sale not found.</div>
-    );
+    return <div className="p-8 text-center text-muted-foreground">Sale not found.</div>;
   }
 
   const bidderStables = stables.filter((s) => s.isMajor);
@@ -466,30 +475,31 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
       </div>
 
       {/* Scoreboard */}
-      <ScoreboardStrip
-        cash={cash}
-        lotsRemaining={totalLots - lotIndex}
-        scoreboard={scoreboard}
-      />
+      <ScoreboardStrip cash={cash} lotsRemaining={totalLots - lotIndex} scoreboard={scoreboard} />
 
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Lot card */}
-        <Card className={cn("lg:col-span-2 transition-all relative", hammerFlash && "ring-2 ring-warning")}>
+        <Card
+          className={cn(
+            "lg:col-span-2 transition-all relative",
+            hammerFlash && "ring-2 ring-warning",
+          )}
+        >
           {/* Ac-1 — Phase strip */}
           <div className="flex rounded-t-lg overflow-hidden" aria-label="Auction phase">
             {PHASES.map((phase, idx) => {
               const activeIdx = chantToPhaseIndex(lotState?.chant);
-              const isActive  = idx === activeIdx;
-              const isDone    = idx < activeIdx;
+              const isActive = idx === activeIdx;
+              const isDone = idx < activeIdx;
               return (
                 <div
                   key={phase.key}
                   className={cn(
                     "flex-1 py-1 text-center text-[10px] font-medium uppercase tracking-wide transition-colors duration-300",
                     isActive && "bg-warning text-warning-foreground",
-                    isDone   && "bg-warning/25 text-warning-foreground/60",
-                    !isActive && !isDone && "bg-muted text-muted-foreground"
+                    isDone && "bg-warning/25 text-warning-foreground/60",
+                    !isActive && !isDone && "bg-muted text-muted-foreground",
                   )}
                 >
                   {phase.label}
@@ -502,7 +512,15 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
             {currentLot && currentHorse ? (
               <>
                 <div className="flex items-start gap-3">
-                  <HorsePortrait id={currentHorse.id} coatColor={currentHorse.coatColor} markings={currentHorse.markings} gender={currentHorse.gender} appearance={currentHorse.appearance} view="full" size="md" />
+                  <HorsePortrait
+                    id={currentHorse.id}
+                    coatColor={currentHorse.coatColor}
+                    markings={currentHorse.markings}
+                    gender={currentHorse.gender}
+                    appearance={currentHorse.appearance}
+                    view="full"
+                    size="md"
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h2 className="text-xl font-bold">{currentHorse.name}</h2>
@@ -512,7 +530,9 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                         </Badge>
                       )}
                       {currentHorse.blueHenStatus?.isBlueHen && (
-                        <Badge variant="outline" className="border-warning text-warning">Blue-Hen</Badge>
+                        <Badge variant="outline" className="border-warning text-warning">
+                          Blue-Hen
+                        </Badge>
                       )}
                       {/* Ab — History toggle */}
                       <button
@@ -525,7 +545,9 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       </button>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {currentHorse.gender === "filly" || currentHorse.gender === "mare" ? "♀" : "♂"}{" "}
+                      {currentHorse.gender === "filly" || currentHorse.gender === "mare"
+                        ? "♀"
+                        : "♂"}{" "}
                       {currentHorse.gender.charAt(0).toUpperCase() + currentHorse.gender.slice(1)} ·
                       Age {currentHorse.age} · {currentHorse.hemisphere}
                     </p>
@@ -550,18 +572,27 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                     className="rounded-md border bg-muted/30 p-2 space-y-0.5 max-h-40 overflow-y-auto"
                   >
                     {bidHistory.length === 0 ? (
-                      <p className="text-xs text-muted-foreground italic text-center py-2">No bids yet</p>
+                      <p className="text-xs text-muted-foreground italic text-center py-2">
+                        No bids yet
+                      </p>
                     ) : (
                       [...bidHistory].reverse().map((record, idx) => {
-                        const label = record.stableId === undefined
-                          ? "YOU"
-                          : stables.find((s) => s.id === record.stableId)?.name ?? record.stableId;
+                        const label =
+                          record.stableId === undefined
+                            ? "YOU"
+                            : (stables.find((s) => s.id === record.stableId)?.name ??
+                              record.stableId);
                         return (
-                          <div key={idx} className="flex items-baseline justify-between text-xs gap-3">
-                            <span className={cn(
-                              "font-medium truncate",
-                              record.stableId === undefined && "text-primary"
-                            )}>
+                          <div
+                            key={idx}
+                            className="flex items-baseline justify-between text-xs gap-3"
+                          >
+                            <span
+                              className={cn(
+                                "font-medium truncate",
+                                record.stableId === undefined && "text-primary",
+                              )}
+                            >
                               {label}
                             </span>
                             <span className="tabular-nums text-right shrink-0">
@@ -579,7 +610,10 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
 
                 {/* YOUR CONSIGNMENT badge — shown while lot is live */}
                 {isPlayerConsignment && !done && (
-                  <Badge variant="outline" className="border-amber-500 text-amber-600 dark:text-amber-400 self-start mt-1">
+                  <Badge
+                    variant="outline"
+                    className="border-amber-500 text-amber-600 dark:text-amber-400 self-start mt-1"
+                  >
                     YOUR CONSIGNMENT
                   </Badge>
                 )}
@@ -614,7 +648,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                           <span>Leader</span>
                           <span className="font-medium">
                             {leadingBidder
-                              ? stables.find((s) => s.id === leadingBidder)?.name ?? "—"
+                              ? (stables.find((s) => s.id === leadingBidder)?.name ?? "—")
                               : "—"}
                           </span>
                         </div>
@@ -623,11 +657,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                         This horse is your consignment. Bidders are competing for it now.
                       </p>
                       <div className="flex flex-wrap gap-2 pt-1">
-                        <Button
-                          disabled
-                          variant="secondary"
-                          className="flex-1 min-w-[140px]"
-                        >
+                        <Button disabled variant="secondary" className="flex-1 min-w-[140px]">
                           You consigned this lot
                         </Button>
                         <Button variant="ghost" size="sm" onClick={onPass} disabled={done}>
@@ -642,7 +672,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                         <span
                           className={cn(
                             "text-3xl font-bold tabular-nums transition-colors",
-                            playerIsLeading && "text-success"
+                            playerIsLeading && "text-success",
                           )}
                         >
                           {currentBid > 0 ? `$${currentBid.toLocaleString()}` : "—"}
@@ -656,19 +686,21 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                             playerIsLeading
                               ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
                               : "bg-amber-500/20 text-amber-400 border border-amber-500/40",
-                            bannerFlash && "opacity-0"
+                            bannerFlash && "opacity-0",
                           )}
                         >
-                          {playerIsLeading ? "You're Leading" : (
-                            leadingBidder
+                          {playerIsLeading
+                            ? "You're Leading"
+                            : leadingBidder
                               ? `Outbid by ${stables.find((s) => s.id === leadingBidder)?.name ?? "NPC"}`
-                              : "—"
-                          )}
+                              : "—"}
                         </div>
                       )}
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span>Next required bid</span>
-                        <span className="tabular-nums">${nextBidAmount(currentBid).toLocaleString()}</span>
+                        <span className="tabular-nums">
+                          ${nextBidAmount(currentBid).toLocaleString()}
+                        </span>
                       </div>
 
                       {/* Action bar */}
@@ -694,10 +726,17 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                             placeholder="Custom bid"
                             value={customBid}
                             onChange={(e) => setCustomBid(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === "Enter") onCustomBidSubmit(); }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") onCustomBidSubmit();
+                            }}
                             className="tabular-nums text-sm h-9"
                           />
-                          <Button variant="secondary" size="sm" onClick={onCustomBidSubmit} disabled={done || !customBid}>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={onCustomBidSubmit}
+                            disabled={done || !customBid}
+                          >
                             Bid
                           </Button>
                         </div>
@@ -706,10 +745,17 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                             placeholder="Max bid"
                             value={maxBid}
                             onChange={(e) => setMaxBid(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === "Enter") onMaxBidSubmit(); }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") onMaxBidSubmit();
+                            }}
                             className="tabular-nums text-sm h-9"
                           />
-                          <Button variant="outline" size="sm" onClick={onMaxBidSubmit} disabled={done || !maxBid}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={onMaxBidSubmit}
+                            disabled={done || !maxBid}
+                          >
                             Set
                           </Button>
                         </div>
@@ -718,7 +764,9 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       {/* Aa — Auto-bid chip */}
                       {playerMaxBidState !== undefined && (
                         <div className="flex items-center gap-2 rounded-md bg-primary/10 border border-primary/30 px-3 py-1.5 text-sm">
-                          <span className="flex-1">Auto-bidding · cap ${playerMaxBidState.toLocaleString()}</span>
+                          <span className="flex-1">
+                            Auto-bidding · cap ${playerMaxBidState.toLocaleString()}
+                          </span>
                           <button
                             onClick={onCancelMaxBid}
                             className="text-muted-foreground hover:text-destructive transition-colors"
@@ -729,12 +777,11 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                         </div>
                       )}
 
-                      {bidError && (
-                        <p className="text-xs text-destructive">{bidError}</p>
-                      )}
+                      {bidError && <p className="text-xs text-destructive">{bidError}</p>}
 
                       <p className="text-[10px] text-muted-foreground text-center pt-1">
-                        Press <kbd className="px-1 rounded bg-muted text-foreground">Space</kbd> to bid the next increment ·{" "}
+                        Press <kbd className="px-1 rounded bg-muted text-foreground">Space</kbd> to
+                        bid the next increment ·{" "}
                         <kbd className="px-1 rounded bg-muted text-foreground">P</kbd> to pause
                       </p>
                     </>
@@ -817,8 +864,9 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       key={idx}
                       className={cn(
                         "text-xs leading-snug",
-                        idx === chantLines.length - 1 && "animate-in fade-in slide-in-from-right-2 duration-200",
-                        line.isHighImpact ? "font-bold text-foreground" : "text-muted-foreground"
+                        idx === chantLines.length - 1 &&
+                          "animate-in fade-in slide-in-from-right-2 duration-200",
+                        line.isHighImpact ? "font-bold text-foreground" : "text-muted-foreground",
                       )}
                     >
                       {line.text}
@@ -854,22 +902,18 @@ function ScoreboardStrip({
 }) {
   const showProceeds = scoreboard && scoreboard.sold > 0;
   return (
-    <div className={`grid gap-2 text-sm ${showProceeds ? "grid-cols-2 sm:grid-cols-5" : "grid-cols-2 sm:grid-cols-4"}`}>
+    <div
+      className={`grid gap-2 text-sm ${showProceeds ? "grid-cols-2 sm:grid-cols-5" : "grid-cols-2 sm:grid-cols-4"}`}
+    >
       <ScoreCell label="Cash" value={`$${cash.toLocaleString()}`} />
       <ScoreCell label="Lots remaining" value={String(lotsRemaining)} />
       <ScoreCell
         label="Acquired"
         value={scoreboard ? `${scoreboard.won} · $${scoreboard.spent.toLocaleString()}` : "—"}
       />
-      <ScoreCell
-        label="Sold"
-        value={scoreboard ? String(scoreboard.sold) : "—"}
-      />
+      <ScoreCell label="Sold" value={scoreboard ? String(scoreboard.sold) : "—"} />
       {showProceeds && (
-        <ScoreCell
-          label="Proceeds"
-          value={`$${scoreboard.netReceived.toLocaleString()}`}
-        />
+        <ScoreCell label="Proceeds" value={`$${scoreboard.netReceived.toLocaleString()}`} />
       )}
     </div>
   );
@@ -910,12 +954,18 @@ function PostSaleSummary({
               <SummaryStat
                 label="Net received"
                 value={`$${sb.netReceived.toLocaleString()}`}
-                hint={sb.sold > 0 ? `after ${Math.round((commissionAmount(sb.netReceived / 0.94) / (sb.netReceived / 0.94)) * 100)}% commission` : undefined}
+                hint={
+                  sb.sold > 0
+                    ? `after ${Math.round((commissionAmount(sb.netReceived / 0.94) / (sb.netReceived / 0.94)) * 100)}% commission`
+                    : undefined
+                }
               />
             </div>
             {sb.topAcquisition && (
               <div className="rounded-lg border-l-4 border-l-success bg-success/5 p-3">
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">Top acquisition</p>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                  Top acquisition
+                </p>
                 <p className="font-semibold">{sb.topAcquisition.name}</p>
                 <p className="text-sm tabular-nums">${sb.topAcquisition.price.toLocaleString()}</p>
               </div>

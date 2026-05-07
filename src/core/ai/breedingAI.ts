@@ -104,19 +104,19 @@ function calculateStrategicBreedingBonus(
     (d) => d.sireId === stallion.id && d.stableId === stable.id && d.outcome,
   );
   if (sireHistory.length > 0) {
-    const avgSuccess = sireHistory.reduce((sum, d) => sum + (d.outcome?.success ? 1 : 0), 0) / sireHistory.length;
+    const avgSuccess =
+      sireHistory.reduce((sum, d) => sum + (d.outcome?.success ? 1 : 0), 0) / sireHistory.length;
     bonus += (avgSuccess - 0.5) * 10; // Bonus for proven sires
   }
 
   // Check if similar crosses have been successful
   const similarCrosses = aiState.breedingHistory.filter(
-    (d) =>
-      d.sireId === stallion.id &&
-      d.personality === stable.personality &&
-      d.outcome,
+    (d) => d.sireId === stallion.id && d.personality === stable.personality && d.outcome,
   );
   if (similarCrosses.length > 0) {
-    const avgRating = similarCrosses.reduce((sum, d) => sum + (d.outcome?.foalRating || 0), 0) / similarCrosses.length;
+    const avgRating =
+      similarCrosses.reduce((sum, d) => sum + (d.outcome?.foalRating || 0), 0) /
+      similarCrosses.length;
     if (avgRating > 60) {
       bonus += 5; // Bonus for historically successful crosses
     }
@@ -237,7 +237,11 @@ export function getBreedingInsights(
   // Group by sire
   const sireMap = new Map<string, { count: number; successes: number; name: string }>();
   for (const decision of stableHistory) {
-    const existing = sireMap.get(decision.sireId) || { count: 0, successes: 0, name: decision.sireName };
+    const existing = sireMap.get(decision.sireId) || {
+      count: 0,
+      successes: 0,
+      name: decision.sireName,
+    };
     sireMap.set(decision.sireId, {
       count: existing.count + 1,
       successes: existing.successes + (decision.outcome?.success ? 1 : 0),
@@ -317,10 +321,8 @@ export function selectSireForDam(
 
     for (const sire of candidateSires) {
       // Run a quick sim to get a representative foal, then measure archetype distance
-      const simulation = cachedSimulation(
-        sire.id,
-        dam.id,
-        () => runBreedingSimulation(sire, dam, gameState, rng),
+      const simulation = cachedSimulation(sire.id, dam.id, () =>
+        runBreedingSimulation(sire, dam, gameState, rng),
       );
       // Build a synthetic horse from the simulation median stats to measure distance
       const syntheticFoal = {

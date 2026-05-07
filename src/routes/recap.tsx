@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -125,9 +125,13 @@ function RecapPage() {
                           {positionIcon}
                           <SilkDot color={finisher.horse.silk} size="sm" />
                           <div>
-                            <div className="font-medium font-[family-name:var(--font-display)] text-cream">
+                            <Link
+                              to="/stable/$horseId"
+                              params={{ horseId: finisher.horse.id }}
+                              className="font-medium font-[family-name:var(--font-display)] text-cream hover:underline hover:text-gold"
+                            >
                               {finisher.horse.name}
-                            </div>
+                            </Link>
                             <div className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
                               <NumericValue
                                 value={finisher.result.time}

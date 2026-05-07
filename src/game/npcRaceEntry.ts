@@ -34,6 +34,11 @@ function shouldEnterHorse(
     return { shouldEnter: false, score: 0 };
   }
 
+  // Consignment check - cannot race if consigned to an auction
+  if (horse.consignedSaleId) {
+    return { shouldEnter: false, score: 0 };
+  }
+
   // Form check - avoid very cold horses
   const personality = PERSONALITY_CONFIG[stable.personality];
   const minForm = getFormTolerance(stable.personality);

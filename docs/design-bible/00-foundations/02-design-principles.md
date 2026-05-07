@@ -20,7 +20,7 @@ Stats, times, prize money, and Beyer figures get the strongest visual treatment 
 
 **Don't** — Burst the numbers in glow effects, drop shadows, or tilted angles. Don't pair numbers with emoji that compete with the digits.
 
-> Why: this game *is* the numbers. If a player can't scan a row of horses and tell you who's fastest, the screen has failed.
+> Why: this game _is_ the numbers. If a player can't scan a row of horses and tell you who's fastest, the screen has failed.
 
 ---
 
@@ -28,11 +28,11 @@ Stats, times, prize money, and Beyer figures get the strongest visual treatment 
 
 Use the real word. Then make sure no one is left behind.
 
-**Do** — Write *"G1 Stakes"*, *"Beyer 102"*, *"3yo Maiden"*, *"covered by"*, *"in foal to"*. Wrap any racing-jargon term in a `<Tooltip>` the first time it appears on a screen.
+**Do** — Write _"G1 Stakes"_, _"Beyer 102"_, _"3yo Maiden"_, _"covered by"_, _"in foal to"_. Wrap any racing-jargon term in a `<Tooltip>` the first time it appears on a screen.
 
 **Don't** — Translate to "Tier-1 Big Race" or "Speed Score 102" or "horse is pregnant". That patronises veterans and teaches newcomers nothing.
 
-> Why: the player who learns *Beyer* on day one knows *Beyer* forever, in the game and outside it. That's a gift.
+> Why: the player who learns _Beyer_ on day one knows _Beyer_ forever, in the game and outside it. That's a gift.
 
 ---
 

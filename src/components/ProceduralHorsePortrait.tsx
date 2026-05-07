@@ -1,5 +1,10 @@
 import type { CoatColor, HorseMarkings, HorseGender, AppearanceDNA } from "@/game/types";
-import { getPalette, getOrDeriveAppearance, isFeminine, hashSeed } from "@/core/horse/proceduralPortrait";
+import {
+  getPalette,
+  getOrDeriveAppearance,
+  isFeminine,
+  hashSeed,
+} from "@/core/horse/proceduralPortrait";
 import { cn } from "@/lib/utils";
 import { useMemo, forwardRef } from "react";
 
@@ -24,49 +29,57 @@ interface Props {
  * Inspired by Football Manager's "newgen" facegen — a parametric compositor
  * that yields a unique image per individual without shipping bespoke art.
  */
-export const ProceduralHorsePortrait = forwardRef<SVGSVGElement, Props>(function ProceduralHorsePortrait(
-  { id, coatColor, markings, gender, appearance, view = "head", className, alt = "Horse portrait" },
-  ref,
-) {
-  const palette = useMemo(() => getPalette(coatColor), [coatColor]);
-  const dna = useMemo(
-    () => getOrDeriveAppearance(id, coatColor, markings, appearance),
-    [id, coatColor, markings, appearance],
-  );
+export const ProceduralHorsePortrait = forwardRef<SVGSVGElement, Props>(
+  function ProceduralHorsePortrait(
+    {
+      id,
+      coatColor,
+      markings,
+      gender,
+      appearance,
+      view = "head",
+      className,
+      alt = "Horse portrait",
+    },
+    ref,
+  ) {
+    const palette = useMemo(() => getPalette(coatColor), [coatColor]);
+    const dna = useMemo(
+      () => getOrDeriveAppearance(id, coatColor, markings, appearance),
+      [id, coatColor, markings, appearance],
+    );
 
-  // Stable per-svg gradient id namespace.
-  const uid = useMemo(
-    () => `pp-${hashSeed(id ?? `${dna.seed}`).toString(36)}`,
-    [id, dna.seed],
-  );
+    // Stable per-svg gradient id namespace.
+    const uid = useMemo(() => `pp-${hashSeed(id ?? `${dna.seed}`).toString(36)}`, [id, dna.seed]);
 
-  const feminine = isFeminine(gender);
-  const face = markings?.face ?? "none";
+    const feminine = isFeminine(gender);
+    const face = markings?.face ?? "none";
 
-  return view === "full" ? (
-    <FullBodySvg
-      ref={ref}
-      uid={uid}
-      palette={palette}
-      dna={dna}
-      feminine={feminine}
-      face={face}
-      alt={alt}
-      className={className}
-    />
-  ) : (
-    <HeadSvg
-      ref={ref}
-      uid={uid}
-      palette={palette}
-      dna={dna}
-      feminine={feminine}
-      face={face}
-      alt={alt}
-      className={className}
-    />
-  );
-});
+    return view === "full" ? (
+      <FullBodySvg
+        ref={ref}
+        uid={uid}
+        palette={palette}
+        dna={dna}
+        feminine={feminine}
+        face={face}
+        alt={alt}
+        className={className}
+      />
+    ) : (
+      <HeadSvg
+        ref={ref}
+        uid={uid}
+        palette={palette}
+        dna={dna}
+        feminine={feminine}
+        face={face}
+        alt={alt}
+        className={className}
+      />
+    );
+  },
+);
 
 // ---------------------------------------------------------------------------
 // HEAD VIEW
@@ -120,8 +133,20 @@ const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
         <clipPath id={`${uid}-clip`}>
           <g transform={`rotate(${dna.headTilt} 110 110)`}>
             <path d="M 30 220 L 30 145 Q 50 100 95 95 L 150 95 L 175 220 Z" />
-            <ellipse cx="135" cy={108 + dna.eyeY} rx={48 * headLen} ry={32} transform="rotate(-18 135 108)" />
-            <ellipse cx={172 * headLen} cy={140 + dna.eyeY} rx={20 * muzzleScale} ry={16 * muzzleScale} transform="rotate(-18 172 140)" />
+            <ellipse
+              cx="135"
+              cy={108 + dna.eyeY}
+              rx={48 * headLen}
+              ry={32}
+              transform="rotate(-18 135 108)"
+            />
+            <ellipse
+              cx={172 * headLen}
+              cy={140 + dna.eyeY}
+              rx={20 * muzzleScale}
+              ry={16 * muzzleScale}
+              transform="rotate(-18 172 140)"
+            />
           </g>
         </clipPath>
       </defs>
@@ -141,40 +166,94 @@ const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
           fill={`url(#${uid}-mane)`}
         />
         {/* NECK */}
-        <path d="M 60 220 Q 70 160 95 130 Q 110 110 138 102 L 168 220 Z" fill={`url(#${uid}-body)`} />
+        <path
+          d="M 60 220 Q 70 160 95 130 Q 110 110 138 102 L 168 220 Z"
+          fill={`url(#${uid}-body)`}
+        />
         {/* HEAD */}
         <g transform="rotate(-18 135 108)">
-          <ellipse cx="135" cy={108 + dna.eyeY} rx={48 * headLen} ry={32} fill={`url(#${uid}-body)`} />
-          <ellipse cx={172 * headLen} cy={140 + dna.eyeY} rx={20 * muzzleScale} ry={16 * muzzleScale} fill={`url(#${uid}-body)`} />
-          <ellipse cx={178 * headLen} cy={144 + dna.eyeY} rx={12 * muzzleScale} ry={9 * muzzleScale} fill={palette.muzzle} opacity="0.85" />
+          <ellipse
+            cx="135"
+            cy={108 + dna.eyeY}
+            rx={48 * headLen}
+            ry={32}
+            fill={`url(#${uid}-body)`}
+          />
+          <ellipse
+            cx={172 * headLen}
+            cy={140 + dna.eyeY}
+            rx={20 * muzzleScale}
+            ry={16 * muzzleScale}
+            fill={`url(#${uid}-body)`}
+          />
+          <ellipse
+            cx={178 * headLen}
+            cy={144 + dna.eyeY}
+            rx={12 * muzzleScale}
+            ry={9 * muzzleScale}
+            fill={palette.muzzle}
+            opacity="0.85"
+          />
         </g>
 
         <g clipPath={`url(#${uid}-clip)`}>
           {palette.hasDorsalStripe && (
-            <path d="M 70 220 Q 85 160 110 120 L 118 124 Q 96 165 82 220 Z" fill={palette.points} opacity="0.55" />
+            <path
+              d="M 70 220 Q 85 160 110 120 L 118 124 Q 96 165 82 220 Z"
+              fill={palette.points}
+              opacity="0.55"
+            />
           )}
           {dna.flecks.map((f, i) => (
             <circle key={`f${i}`} cx={f.x} cy={f.y} r={f.r} fill="#f4f0ea" opacity="0.55" />
           ))}
           {dna.dapples.map((d, i) => (
-            <circle key={`d${i}`} cx={d.x} cy={d.y} r={d.r} fill={palette.bodyHighlight} opacity="0.35" />
+            <circle
+              key={`d${i}`}
+              cx={d.x}
+              cy={d.y}
+              r={d.r}
+              fill={palette.bodyHighlight}
+              opacity="0.35"
+            />
           ))}
           {face === "bald" && (
-            <path d="M 130 88 Q 152 90 168 100 Q 185 120 188 145 Q 175 158 158 152 Q 142 130 130 110 Z" fill="#f6f1e7" opacity="0.95" />
+            <path
+              d="M 130 88 Q 152 90 168 100 Q 185 120 188 145 Q 175 158 158 152 Q 142 130 130 110 Z"
+              fill="#f6f1e7"
+              opacity="0.95"
+            />
           )}
           {face === "blaze" && (
-            <path d="M 138 92 Q 150 100 162 118 Q 172 138 178 152 Q 168 156 158 152 Q 150 130 138 108 Z" fill="#f6f1e7" opacity="0.95" />
+            <path
+              d="M 138 92 Q 150 100 162 118 Q 172 138 178 152 Q 168 156 158 152 Q 150 130 138 108 Z"
+              fill="#f6f1e7"
+              opacity="0.95"
+            />
           )}
           {face === "star" && (
             <ellipse cx="148" cy="106" rx="7" ry="9" fill="#f6f1e7" opacity="0.95" />
           )}
-          <ellipse cx="128" cy="118" rx="22" ry="14" fill={`url(#${uid}-cheek)`} transform="rotate(-15 128 118)" />
+          <ellipse
+            cx="128"
+            cy="118"
+            rx="22"
+            ry="14"
+            fill={`url(#${uid}-cheek)`}
+            transform="rotate(-15 128 118)"
+          />
         </g>
 
         {/* EARS */}
         <g transform="rotate(-18 135 108)">
-          <path d={`M ${110 - 6 * dna.earSpread} 78 L ${118 - 2 * dna.earSpread} 56 L ${126 + 2 * dna.earSpread} 80 Z`} fill={palette.bodyShade} />
-          <path d={`M ${130 + 4 * dna.earSpread} 76 L ${140 + 8 * dna.earSpread} 54 L ${148 + 12 * dna.earSpread} 78 Z`} fill={palette.body} />
+          <path
+            d={`M ${110 - 6 * dna.earSpread} 78 L ${118 - 2 * dna.earSpread} 56 L ${126 + 2 * dna.earSpread} 80 Z`}
+            fill={palette.bodyShade}
+          />
+          <path
+            d={`M ${130 + 4 * dna.earSpread} 76 L ${140 + 8 * dna.earSpread} 54 L ${148 + 12 * dna.earSpread} 78 Z`}
+            fill={palette.body}
+          />
         </g>
 
         {/* FORELOCK */}
@@ -192,14 +271,32 @@ const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
 
         {/* NOSTRIL */}
         <g transform="rotate(-18 135 108)">
-          <ellipse cx={180 * headLen} cy={142 + dna.eyeY} rx="2.6" ry="3.6" fill={palette.eye} opacity="0.85" />
+          <ellipse
+            cx={180 * headLen}
+            cy={142 + dna.eyeY}
+            rx="2.6"
+            ry="3.6"
+            fill={palette.eye}
+            opacity="0.85"
+          />
         </g>
 
         {/* JAW SHADOW */}
-        <path d="M 96 138 Q 118 160 150 158 Q 130 170 100 162 Z" fill={palette.bodyShade} opacity="0.35" />
+        <path
+          d="M 96 138 Q 118 160 150 158 Q 130 170 100 162 Z"
+          fill={palette.bodyShade}
+          opacity="0.35"
+        />
       </g>
 
-      <rect width="220" height="220" fill="none" stroke="black" strokeOpacity="0.25" strokeWidth="2" />
+      <rect
+        width="220"
+        height="220"
+        fill="none"
+        stroke="black"
+        strokeOpacity="0.25"
+        strokeWidth="2"
+      />
     </svg>
   );
 });
@@ -269,7 +366,9 @@ const FullBodySvg = forwardRef<SVGSVGElement, SvgProps>(function FullBodySvg(
       <ellipse cx={bodyCX} cy={groundY + 6} rx={bodyW * 0.55} ry="6" fill="black" opacity="0.32" />
 
       {/* TAIL */}
-      <g transform={`translate(${bodyCX + bodyW * 0.5}, ${bodyCY - bodyH * 0.1}) rotate(${dna.tailSweep})`}>
+      <g
+        transform={`translate(${bodyCX + bodyW * 0.5}, ${bodyCY - bodyH * 0.1}) rotate(${dna.tailSweep})`}
+      >
         <path
           d={`M 0 0 Q ${15 * dna.tailFullness} 30 ${10 * dna.tailFullness} ${70 * dna.tailFullness}
               Q ${-5 * dna.tailFullness} ${85 * dna.tailFullness} ${-12 * dna.tailFullness} ${75 * dna.tailFullness}
@@ -285,12 +384,26 @@ const FullBodySvg = forwardRef<SVGSVGElement, SvgProps>(function FullBodySvg(
         const sockH = SOCK_HEIGHT_PX[sock];
         return (
           <g key={`bl${i}`}>
-            <rect x={x - 6} y={legTop} width="12" height={legL - 12} fill={`url(#${uid}-body)`} rx="3" />
+            <rect
+              x={x - 6}
+              y={legTop}
+              width="12"
+              height={legL - 12}
+              fill={`url(#${uid}-body)`}
+              rx="3"
+            />
             {/* Hock bulge */}
             <ellipse cx={x} cy={legTop + 10} rx="8" ry="6" fill={palette.body} />
             {/* Sock */}
             {sockH > 0 && (
-              <rect x={x - 6.5} y={groundY - sockH - 8} width="13" height={sockH} fill="#f6f1e7" rx="2" />
+              <rect
+                x={x - 6.5}
+                y={groundY - sockH - 8}
+                width="13"
+                height={sockH}
+                fill="#f6f1e7"
+                rx="2"
+              />
             )}
             {/* Hoof */}
             <rect x={x - 7} y={groundY - 8} width="14" height="9" fill={palette.hoof} rx="2" />
@@ -299,12 +412,25 @@ const FullBodySvg = forwardRef<SVGSVGElement, SvgProps>(function FullBodySvg(
       })}
 
       {/* BODY (barrel) */}
-      <ellipse cx={bodyCX} cy={bodyCY} rx={bodyW * 0.5} ry={bodyH * 0.55} fill={`url(#${uid}-body)`} />
+      <ellipse
+        cx={bodyCX}
+        cy={bodyCY}
+        rx={bodyW * 0.5}
+        ry={bodyH * 0.55}
+        fill={`url(#${uid}-body)`}
+      />
 
       {/* Body details: dapples, flecks, dorsal stripe */}
       <g clipPath={`url(#${uid}-bclip)`}>
         {palette.hasDorsalStripe && (
-          <rect x={bodyCX - bodyW * 0.5} y={bodyCY - bodyH * 0.5} width={bodyW} height="4" fill={palette.points} opacity="0.55" />
+          <rect
+            x={bodyCX - bodyW * 0.5}
+            y={bodyCY - bodyH * 0.5}
+            width={bodyW}
+            height="4"
+            fill={palette.points}
+            opacity="0.55"
+          />
         )}
         {dna.dapples.map((d, i) => (
           <circle
@@ -329,10 +455,23 @@ const FullBodySvg = forwardRef<SVGSVGElement, SvgProps>(function FullBodySvg(
       </g>
 
       {/* Belly shadow */}
-      <ellipse cx={bodyCX} cy={bodyCY + bodyH * 0.3} rx={bodyW * 0.45} ry={bodyH * 0.18} fill={palette.bodyShade} opacity="0.35" />
+      <ellipse
+        cx={bodyCX}
+        cy={bodyCY + bodyH * 0.3}
+        rx={bodyW * 0.45}
+        ry={bodyH * 0.18}
+        fill={palette.bodyShade}
+        opacity="0.35"
+      />
 
       {/* CHEST */}
-      <ellipse cx={bodyCX - bodyW * 0.45} cy={bodyCY + 5} rx="18" ry="22" fill={`url(#${uid}-body)`} />
+      <ellipse
+        cx={bodyCX - bodyW * 0.45}
+        cy={bodyCY + 5}
+        rx="18"
+        ry="22"
+        fill={`url(#${uid}-body)`}
+      />
 
       {/* NECK */}
       <path
@@ -356,24 +495,57 @@ const FullBodySvg = forwardRef<SVGSVGElement, SvgProps>(function FullBodySvg(
       />
 
       {/* HEAD */}
-      <g transform={`translate(${bodyCX - bodyW * 0.7}, ${bodyCY - 60}) rotate(${dna.headTilt - 8})`}>
+      <g
+        transform={`translate(${bodyCX - bodyW * 0.7}, ${bodyCY - 60}) rotate(${dna.headTilt - 8})`}
+      >
         <ellipse cx="0" cy="0" rx={28 * dna.headLength} ry={16} fill={`url(#${uid}-body)`} />
-        <ellipse cx={-22 * dna.headLength} cy={8} rx={12 * muzzleScale} ry={9 * muzzleScale} fill={`url(#${uid}-body)`} />
-        <ellipse cx={-26 * dna.headLength} cy={10} rx={7 * muzzleScale} ry={5 * muzzleScale} fill={palette.muzzle} opacity="0.85" />
+        <ellipse
+          cx={-22 * dna.headLength}
+          cy={8}
+          rx={12 * muzzleScale}
+          ry={9 * muzzleScale}
+          fill={`url(#${uid}-body)`}
+        />
+        <ellipse
+          cx={-26 * dna.headLength}
+          cy={10}
+          rx={7 * muzzleScale}
+          ry={5 * muzzleScale}
+          fill={palette.muzzle}
+          opacity="0.85"
+        />
         {/* Face white */}
         {face === "bald" && (
-          <path d={`M 0 -10 Q -10 -6 -22 4 Q -26 12 -22 16 Q -10 14 -2 6 Z`} fill="#f6f1e7" opacity="0.95" />
+          <path
+            d={`M 0 -10 Q -10 -6 -22 4 Q -26 12 -22 16 Q -10 14 -2 6 Z`}
+            fill="#f6f1e7"
+            opacity="0.95"
+          />
         )}
         {face === "blaze" && (
-          <path d={`M -4 -8 Q -10 0 -20 8 Q -22 12 -18 14 Q -10 8 -4 0 Z`} fill="#f6f1e7" opacity="0.95" />
+          <path
+            d={`M -4 -8 Q -10 0 -20 8 Q -22 12 -18 14 Q -10 8 -4 0 Z`}
+            fill="#f6f1e7"
+            opacity="0.95"
+          />
         )}
         {face === "star" && <ellipse cx="-6" cy="-2" rx="4" ry="5" fill="#f6f1e7" opacity="0.95" />}
         {/* Ear */}
-        <path d={`M ${10 - 4 * dna.earSpread} -10 L ${4} ${-22 - 2 * dna.earSpread} L ${16 + 2 * dna.earSpread} -8 Z`} fill={palette.bodyShade} />
+        <path
+          d={`M ${10 - 4 * dna.earSpread} -10 L ${4} ${-22 - 2 * dna.earSpread} L ${16 + 2 * dna.earSpread} -8 Z`}
+          fill={palette.bodyShade}
+        />
         {/* Eye */}
         <ellipse cx="-6" cy="-2" rx="2.4" ry="1.8" fill={palette.eye} />
         {/* Nostril */}
-        <ellipse cx={-26 * dna.headLength} cy="9" rx="1.6" ry="2.2" fill={palette.eye} opacity="0.85" />
+        <ellipse
+          cx={-26 * dna.headLength}
+          cy="9"
+          rx="1.6"
+          ry="2.2"
+          fill={palette.eye}
+          opacity="0.85"
+        />
       </g>
 
       {/* FRONT LEGS */}
@@ -383,10 +555,24 @@ const FullBodySvg = forwardRef<SVGSVGElement, SvgProps>(function FullBodySvg(
         const sockH = SOCK_HEIGHT_PX[sock];
         return (
           <g key={`fl${i}`}>
-            <rect x={x - 6} y={legTop} width="12" height={legL - 12} fill={`url(#${uid}-body)`} rx="3" />
+            <rect
+              x={x - 6}
+              y={legTop}
+              width="12"
+              height={legL - 12}
+              fill={`url(#${uid}-body)`}
+              rx="3"
+            />
             <ellipse cx={x} cy={legTop + 8} rx="7" ry="5" fill={palette.body} />
             {sockH > 0 && (
-              <rect x={x - 6.5} y={groundY - sockH - 8} width="13" height={sockH} fill="#f6f1e7" rx="2" />
+              <rect
+                x={x - 6.5}
+                y={groundY - sockH - 8}
+                width="13"
+                height={sockH}
+                fill="#f6f1e7"
+                rx="2"
+              />
             )}
             <rect x={x - 7} y={groundY - 8} width="14" height="9" fill={palette.hoof} rx="2" />
           </g>
@@ -394,7 +580,14 @@ const FullBodySvg = forwardRef<SVGSVGElement, SvgProps>(function FullBodySvg(
       })}
 
       {/* Frame */}
-      <rect width="360" height="280" fill="none" stroke="black" strokeOpacity="0.25" strokeWidth="2" />
+      <rect
+        width="360"
+        height="280"
+        fill="none"
+        stroke="black"
+        strokeOpacity="0.25"
+        strokeWidth="2"
+      />
     </svg>
   );
 });

@@ -33,7 +33,10 @@ function inheritTrait(
   b: "excellent" | "good" | "fair" | "poor",
   rng: Rng,
 ): "excellent" | "good" | "fair" | "poor" {
-  const combinations: Record<string, { result: "excellent" | "good" | "fair" | "poor"; probability: number }[]> = {
+  const combinations: Record<
+    string,
+    { result: "excellent" | "good" | "fair" | "poor"; probability: number }[]
+  > = {
     "excellent-excellent": [{ result: "excellent", probability: 1.0 }],
     "excellent-good": [
       { result: "excellent", probability: 0.7 },
@@ -80,7 +83,10 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
   // Gather loci by chromosome and perform single crossover per chromosome
 
   // Helper to get loci array from sire/dam for a given chromosome
-  const getChromosomeLoci = (chromosomeId: string, genotype: Genotype): { alleles: Locus[]; positions: number[] } => {
+  const getChromosomeLoci = (
+    chromosomeId: string,
+    genotype: Genotype,
+  ): { alleles: Locus[]; positions: number[] } => {
     const alleles: Locus[] = [];
     const positions: number[] = [];
 
@@ -156,7 +162,17 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
     { parent1Alleles: Locus[]; parent2Alleles: Locus[]; positions: number[] }
   >();
 
-  const chromosomes: string[] = ["ATHLETIC", "ENDURANCE", "PERFORMANCE", "BEHAVIORAL", "CONFORMATION", "TRACK", "HEALTH", "COLOR", "MARKINGS"];
+  const chromosomes: string[] = [
+    "ATHLETIC",
+    "ENDURANCE",
+    "PERFORMANCE",
+    "BEHAVIORAL",
+    "CONFORMATION",
+    "TRACK",
+    "HEALTH",
+    "COLOR",
+    "MARKINGS",
+  ];
 
   for (const chromosomeId of chromosomes) {
     const sireData = getChromosomeLoci(chromosomeId, sire);
@@ -387,10 +403,22 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
       cream: crossover(sire.color.cream, dam.color.cream, rng),
     },
     stats: {
-      speed: reconstructLoci("ATHLETIC", getLociByChromosome("ATHLETIC").filter(k => k.startsWith("speed."))),
-      stamina: reconstructLoci("ENDURANCE", getLociByChromosome("ENDURANCE").filter(k => k.startsWith("stamina."))),
-      acceleration: reconstructLoci("PERFORMANCE", getLociByChromosome("PERFORMANCE").filter(k => k.startsWith("acceleration."))),
-      consistency: reconstructLoci("BEHAVIORAL", getLociByChromosome("BEHAVIORAL").filter(k => k.startsWith("consistency."))),
+      speed: reconstructLoci(
+        "ATHLETIC",
+        getLociByChromosome("ATHLETIC").filter((k) => k.startsWith("speed.")),
+      ),
+      stamina: reconstructLoci(
+        "ENDURANCE",
+        getLociByChromosome("ENDURANCE").filter((k) => k.startsWith("stamina.")),
+      ),
+      acceleration: reconstructLoci(
+        "PERFORMANCE",
+        getLociByChromosome("PERFORMANCE").filter((k) => k.startsWith("acceleration.")),
+      ),
+      consistency: reconstructLoci(
+        "BEHAVIORAL",
+        getLociByChromosome("BEHAVIORAL").filter((k) => k.startsWith("consistency.")),
+      ),
     },
     preferences: {
       distance: getOffspringLocus("distance", "ENDURANCE"),
@@ -404,7 +432,10 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
     durability: getOffspringLocus("durability", "CONFORMATION"),
     size: getOffspringLocus("size", "CONFORMATION"),
     markers: inheritedMarkers,
-    heart: reconstructLoci("PERFORMANCE", getLociByChromosome("PERFORMANCE").filter(k => k.startsWith("heart."))),
+    heart: reconstructLoci(
+      "PERFORMANCE",
+      getLociByChromosome("PERFORMANCE").filter((k) => k.startsWith("heart.")),
+    ),
     fiberType: getOffspringLocus("fiberType", "ATHLETIC"),
     stride: getOffspringLocus("stride", "ATHLETIC"),
     trackBias: getOffspringLocus("trackBias", "TRACK"),

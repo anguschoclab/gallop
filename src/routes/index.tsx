@@ -226,7 +226,7 @@ function Dashboard() {
                   <span
                     className={cn(
                       "text-xs font-medium ml-auto",
-                      event.amount > 0 ? "text-success" : "text-destructive"
+                      event.amount > 0 ? "text-success" : "text-destructive",
                     )}
                   >
                     {event.amount > 0 ? "+" : ""}
@@ -310,7 +310,8 @@ function Dashboard() {
                       {h.name}
                     </p>
                     <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                      Age <NumericValue value={h.age} /> · OVR <NumericValue value={overall(h)} />
+                      Age <NumericValue value={Math.floor(h.age)} /> · OVR{" "}
+                      <NumericValue value={overall(h)} />
                     </p>
                   </div>
                   <Badge className="font-[family-name:var(--font-mono)] tabular-nums text-[10px] bg-t700 text-cream">

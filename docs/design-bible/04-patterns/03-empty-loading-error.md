@@ -8,7 +8,7 @@ owns: design:design-system
 
 # Empty, loading, error
 
-Most UIs ship the happy path well. The state of a sim like Gallop is most-of-the-time *not* on the happy path — a brand-new save is empty, a refreshed view is loading, a network blip means the auction failed. These three states are first-class.
+Most UIs ship the happy path well. The state of a sim like Gallop is most-of-the-time _not_ on the happy path — a brand-new save is empty, a refreshed view is loading, a network blip means the auction failed. These three states are first-class.
 
 ---
 
@@ -20,7 +20,7 @@ See [02-voice/02-ux-copy-patterns.md](../02-voice/02-ux-copy-patterns.md) for th
 - **Optional icon:** Lucide, `h-10 w-10`, `text-muted-foreground/40`. Use sparingly — most empty states don't need an icon.
 - **Heading:** `text-base font-medium`.
 - **Subtitle:** `text-sm text-muted-foreground`.
-- **CTA:** `Button` (default variant) — *one* primary action only.
+- **CTA:** `Button` (default variant) — _one_ primary action only.
 
 **Examples:**
 
@@ -29,9 +29,7 @@ See [02-voice/02-ux-copy-patterns.md](../02-voice/02-ux-copy-patterns.md) for th
 <div className="text-center py-12">
   <Trophy className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
   <p className="text-base font-medium">No horses yet</p>
-  <p className="text-sm text-muted-foreground mt-1">
-    Visit the auction or breed your first foal.
-  </p>
+  <p className="text-sm text-muted-foreground mt-1">Visit the auction or breed your first foal.</p>
   <Button className="mt-4" asChild>
     <Link to="/auction">Browse auction</Link>
   </Button>
@@ -48,7 +46,7 @@ See [02-voice/02-ux-copy-patterns.md](../02-voice/02-ux-copy-patterns.md) for th
 </div>
 ```
 
-**Don't** show empty states with confessional language ("Sorry!", "Whoops!"). Don't show empty states without next steps unless the empty *is* the truth (e.g. "No races today" is fine if there are genuinely none).
+**Don't** show empty states with confessional language ("Sorry!", "Whoops!"). Don't show empty states without next steps unless the empty _is_ the truth (e.g. "No races today" is fine if there are genuinely none).
 
 ---
 
@@ -62,8 +60,8 @@ Use `<Skeleton />` ([src/components/ui/skeleton.tsx](../../../src/components/ui/
 
 ```tsx
 <div className="space-y-3">
-  <Skeleton className="h-6 w-1/3" />          {/* title */}
-  <Skeleton className="h-4 w-1/2" />          {/* subtitle */}
+  <Skeleton className="h-6 w-1/3" /> {/* title */}
+  <Skeleton className="h-4 w-1/2" /> {/* subtitle */}
   <Skeleton className="h-32 w-full rounded-lg" /> {/* card */}
 </div>
 ```
@@ -73,7 +71,7 @@ Use `<Skeleton />` ([src/components/ui/skeleton.tsx](../../../src/components/ui/
 ### When skeletons aren't right
 
 - **< 100ms loads** — show nothing. The skeleton flash is more disorienting than the brief blank.
-- **Mid-action, button-bound loads** — the button itself shows the progressive verb (*"Saving…"*) and disables. No skeleton needed.
+- **Mid-action, button-bound loads** — the button itself shows the progressive verb (_"Saving…"_) and disables. No skeleton needed.
 - **Charts that need data to compute** — show the skeleton sized to the chart's eventual area, not a generic spinner.
 
 ### Spinners
@@ -112,12 +110,14 @@ Centred card. Explain plainly, offer recovery.
 ```tsx
 <div className="text-center py-16">
   <p className="text-base font-medium">Couldn't load this race</p>
-  <p className="text-sm text-muted-foreground mt-1">
-    The race may have been resolved or removed.
-  </p>
+  <p className="text-sm text-muted-foreground mt-1">The race may have been resolved or removed.</p>
   <div className="flex gap-2 justify-center mt-4">
-    <Button variant="ghost" onClick={retry}>Retry</Button>
-    <Button asChild><Link to="/races">Back to races</Link></Button>
+    <Button variant="ghost" onClick={retry}>
+      Retry
+    </Button>
+    <Button asChild>
+      <Link to="/races">Back to races</Link>
+    </Button>
   </div>
 </div>
 ```
@@ -135,8 +135,8 @@ Centred card. Explain plainly, offer recovery.
 The race screen has unique not-found, in-progress, and resolved states:
 
 - **Not found** ([race.$raceId.tsx:77–83](../../../src/routes/race.$raceId.tsx)) — page-level error pattern, centred card, link back.
-- **Already resolved** — *"This race has already been run."* + *"Back to races"* button. (Already implemented.)
-- **In progress** — the live track *is* the loading state. No skeleton needed.
+- **Already resolved** — _"This race has already been run."_ + _"Back to races"_ button. (Already implemented.)
+- **In progress** — the live track _is_ the loading state. No skeleton needed.
 
 ---
 

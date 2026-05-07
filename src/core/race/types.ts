@@ -29,14 +29,7 @@ export type ClaimingPrice =
   | 75000
   | 100000;
 
-export type WinCondition =
-  | "none"
-  | "N1X"
-  | "N2X"
-  | "N3L"
-  | "NW1"
-  | "NW2"
-  | "NW3";
+export type WinCondition = "none" | "N1X" | "N2X" | "N3L" | "NW1" | "NW2" | "NW3";
 
 export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 

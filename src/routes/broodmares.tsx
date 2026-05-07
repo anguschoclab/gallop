@@ -146,9 +146,19 @@ function BroodmaresPage() {
                       </Link>
                     )}
                   </div>
-                  <Button size="sm" variant="ghost" className="text-cream-muted">
-                    <FileText className="h-4 w-4 mr-1" />
-                    Maternity Log ({maternityLog.length})
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs border-gold-muted/50 hover:bg-t700 text-cream-muted hover:text-cream transition-colors"
+                  >
+                    <FileText className="h-3.5 w-3.5 mr-1.5" />
+                    <span>Maternity Log</span>
+                    <Badge
+                      variant="secondary"
+                      className="ml-2 h-4 px-1 text-[10px] bg-t800 text-gold-muted border-gold-muted/30"
+                    >
+                      {maternityLog.length}
+                    </Badge>
                   </Button>
                 </div>
 

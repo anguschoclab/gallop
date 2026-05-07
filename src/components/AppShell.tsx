@@ -22,6 +22,7 @@ import {
   Baby,
   DollarSign,
   Building2,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
@@ -32,24 +33,27 @@ import { useState, useEffect } from "react";
 
 const navSections = [
   {
-    label: "Foundation",
-    items: [{ to: "/", label: "Dashboard", icon: Home, exact: true }],
-  },
-  {
-    label: "Management",
+    label: "Headquarters",
     items: [
-      { to: "/stable", label: "Stable", icon: Trophy, exact: false },
-      { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
-      { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
-      { to: "/hall-of-fame", label: "Hall of Fame", icon: Trophy, exact: false },
+      { to: "/", label: "Dashboard", icon: Home, exact: true },
+      { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
+      { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
     ],
   },
   {
-    label: "Racing",
+    label: "My Stable",
     items: [
-      { to: "/races", label: "Races", icon: Calendar, exact: false },
-      { to: "/market", label: "Market", icon: Store, exact: false },
-      { to: "/auction", label: "Auction", icon: Gavel, exact: false },
+      { to: "/stable", label: "Roster", icon: Trophy, exact: false },
+      { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
+      { to: "/hall-of-fame", label: "Hall of Fame", icon: Award, exact: false },
+    ],
+  },
+  {
+    label: "The World",
+    items: [
+      { to: "/races", label: "Racing Calendar", icon: Calendar, exact: false },
+      { to: "/market", label: "Horse Market", icon: Store, exact: false },
+      { to: "/auction", label: "Auctions", icon: Gavel, exact: false },
     ],
   },
 ] as const;
@@ -184,20 +188,7 @@ export function AppShell() {
               <Settings className="h-3 w-3" />
             </Button>
           </div>
-          <div className="space-y-1">
-            <Link to="/financial-report">
-              <Button variant="ghost" className="w-full justify-start text-xs" size="sm">
-                <DollarSign className="h-3.5 w-3.5 mr-2" />
-                Financial Report
-              </Button>
-            </Link>
-            <Link to="/facilities">
-              <Button variant="ghost" className="w-full justify-start text-xs" size="sm">
-                <Building2 className="h-3.5 w-3.5 mr-2" />
-                Facilities
-              </Button>
-            </Link>
-          </div>
+
           <Button
             onClick={() => setNewGameDialogOpen(true)}
             className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground"

@@ -95,7 +95,7 @@ function BreedingPage() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link to="/stallions">
           <Card className="hover:bg-t700 transition-colors border-gold-muted">
             <CardHeader className="pb-2">
@@ -178,8 +178,9 @@ function BreedingPage() {
                     <option value="">Select sire…</option>
                     {availableStallions.map((h) => (
                       <option key={h.id} value={h.id}>
-                        {h.name} (age {Math.floor(h.age)}){h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""}{" "}
-                        • ${h.stud?.standingFee.toLocaleString()}
+                        {h.name} (age {Math.floor(h.age)})
+                        {h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""} • $
+                        {h.stud?.standingFee.toLocaleString()}
                       </option>
                     ))}
                   </select>
@@ -449,14 +450,33 @@ function BreedingPage() {
                             </Button>
                           </Link>
                         </div>
-                        {p.reBreedingAttempts && p.reBreedingAttempts > 0 && (
-                          <span className="text-warning font-medium tabular-nums">
-                            Re-breeding attempt {p.reBreedingAttempts}/3
-                          </span>
-                        )}
-                        {p.liveFoalGuarantee && (
-                          <span className="text-success font-medium">Live Foal Guarantee</span>
-                        )}
+                        <div className="flex items-center gap-3">
+                          {(p.reBreedingAttempts ?? 0) > 0 && (
+                            <span className="text-warning font-medium tabular-nums">
+                              Re-breeding attempt {p.reBreedingAttempts}/3
+                            </span>
+                          )}
+                          {p.liveFoalGuarantee && (
+                            <span className="text-success font-medium">Live Foal Guarantee</span>
+                          )}
+                          {(() => {
+                            const maternityLog = log.filter(
+                              (l) =>
+                                l.text.includes(p.damName) &&
+                                (l.text.includes("Mated") || l.text.includes("Foal")),
+                            );
+                            return (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 text-[10px] text-cream-muted hover:text-cream"
+                              >
+                                <FileText className="h-3 w-3 mr-1" />
+                                Log ({maternityLog.length})
+                              </Button>
+                            );
+                          })()}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

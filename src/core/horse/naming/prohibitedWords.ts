@@ -10,14 +10,28 @@ export const OFFENSIVE_WORDS = [
 ];
 
 export const TRADE_NAMES = [
-  "Nike", "Adidas", "Coca-Cola", "Pepsi", "Google", "Apple", "Microsoft",
-  "Amazon", "Facebook", "Twitter", "Instagram", "TikTok", "Netflix",
-  "Toyota", "Ford", "Ferrari", "Mercedes", "BMW", "Rolex",
+  "Nike",
+  "Adidas",
+  "Coca-Cola",
+  "Pepsi",
+  "Google",
+  "Apple",
+  "Microsoft",
+  "Amazon",
+  "Facebook",
+  "Twitter",
+  "Instagram",
+  "TikTok",
+  "Netflix",
+  "Toyota",
+  "Ford",
+  "Ferrari",
+  "Mercedes",
+  "BMW",
+  "Rolex",
 ];
 
-export const RESERVED_NAMES = [
-  "Unnamed", "Anonymous", "System", "Admin", "N/A", "TBD",
-];
+export const RESERVED_NAMES = ["Unnamed", "Anonymous", "System", "Admin", "N/A", "TBD"];
 
 export const PROHIBITED_PATTERNS = [
   /\b\d+\b/, // No standalone numbers

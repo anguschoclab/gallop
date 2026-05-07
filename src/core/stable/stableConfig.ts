@@ -25,7 +25,15 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: number; // 0-1, how much NPC tracks player/other NPC actions
     conservatism: number; // 0-1, tendency to stick with proven strategies
     innovation: number; // 0-1, willingness to try new approaches
-    namingTheme: "aggressive" | "conservative" | "developer" | "win-now" | "specialist" | "breeder" | "trader" | "prestige";
+    namingTheme:
+      | "aggressive"
+      | "conservative"
+      | "developer"
+      | "win-now"
+      | "specialist"
+      | "breeder"
+      | "trader"
+      | "prestige";
   }
 > = {
   aggressive: {
@@ -174,7 +182,6 @@ export const PERSONALITY_CONFIG: Record<
     innovation: 0.5,
     namingTheme: "prestige",
   },
-
 };
 
 /**

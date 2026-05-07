@@ -4,7 +4,11 @@
  */
 
 import type { Horse, Stable, AuctionLot } from "@/game/types";
-import { getPersonalityAIState, calculateUtilityScore, calculateStrategicScore } from "./personalitySystem";
+import {
+  getPersonalityAIState,
+  calculateUtilityScore,
+  calculateStrategicScore,
+} from "./personalitySystem";
 import {
   createLearningState,
   recordOutcome,
@@ -240,7 +244,10 @@ export function shouldConsignHorse(
   horse: Horse,
   stable: Stable,
   currentDay: number,
-): { shouldConsign: boolean; reason?: "underperformer" | "surplus" | "rebalancing" | "retirement" } {
+): {
+  shouldConsign: boolean;
+  reason?: "underperformer" | "surplus" | "rebalancing" | "retirement";
+} {
   // Don't consign young horses
   if (horse.age < 3) return { shouldConsign: false };
 
@@ -306,7 +313,7 @@ export function recordBiddingDecision(
 
   // Update learning state (use horse age as context key)
   const contextKey = `${horse.age}`;
-  const value = won ? decision.horseRating - (finalBid / 1000) : -finalBid / 1000;
+  const value = won ? decision.horseRating - finalBid / 1000 : -finalBid / 1000;
   aiState.learningState = recordOutcome(
     aiState.learningState,
     "bidding",
@@ -389,7 +396,9 @@ export function getAuctionInsights(
       ? stableBiddingHistory.reduce((sum, d) => sum + (d.value || 0), 0) / totalBids
       : 0;
 
-  const stableConsignmentHistory = aiState.consignmentHistory.filter((d) => d.stableId === stableId);
+  const stableConsignmentHistory = aiState.consignmentHistory.filter(
+    (d) => d.stableId === stableId,
+  );
   const totalConsignments = stableConsignmentHistory.length;
   const sold = stableConsignmentHistory.filter((d) => d.sold).length;
   const sellRate = totalConsignments > 0 ? sold / totalConsignments : 0.5;

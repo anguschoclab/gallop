@@ -34,9 +34,7 @@ export const hallOfFamePhase: PipelinePhase = {
       if (horse.fame < 85) continue;
 
       // Count G1 wins
-      const g1Wins = horse.raceHistory.filter(
-        (r) => r.position === 1 && r.grade === "G1",
-      ).length;
+      const g1Wins = horse.raceHistory.filter((r) => r.position === 1 && r.grade === "G1").length;
 
       // Count total graded wins
       const gradedWins = horse.raceHistory.filter(
@@ -52,8 +50,7 @@ export const hallOfFamePhase: PipelinePhase = {
       if (horse.lifetimeEarnings < 500000) continue;
 
       // Check achievement criteria
-      const hasAchievement =
-        g1Wins >= 3 || gradedWins >= 5 || horseOfTheYearAwards >= 1;
+      const hasAchievement = g1Wins >= 3 || gradedWins >= 5 || horseOfTheYearAwards >= 1;
 
       if (!hasAchievement) continue;
 

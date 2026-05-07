@@ -17,10 +17,10 @@ The change is additive: the three-mode split (`AuctionTheater` on sale day, lot 
 
 ## Affected files
 
-| File | Change |
-|---|---|
+| File                             | Change                                                                                                                                 |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/routes/auction.$saleId.tsx` | Primary implementation. Add `validateSearch`, derive filtered/sorted lot list, render filter bar and result count above the navigator. |
-| `src/game/types.ts` | No change needed — `AuctionLot`, `Horse`, `AuctionSale` are sufficient as-is. |
+| `src/game/types.ts`              | No change needed — `AuctionLot`, `Horse`, `AuctionSale` are sufficient as-is.                                                          |
 
 No new route files are required. All new UI is inline in the existing route component. If the filter bar grows beyond ~60 lines it should be extracted to `src/components/auction/AuctionBrowseFilters.tsx`, but the initial pass may stay inline.
 
@@ -68,12 +68,12 @@ Write a filter value by calling `navigate({ search: (prev) => ({ ...prev, sex: "
 
 Age bands map to `horse.age` (integer years):
 
-| Band key | `horse.age` values |
-|---|---|
-| `weanling` | 0 |
-| `yearling` | 1 |
-| `2yo` | 2 |
-| `3yo+` | 3 or greater |
+| Band key   | `horse.age` values |
+| ---------- | ------------------ |
+| `weanling` | 0                  |
+| `yearling` | 1                  |
+| `2yo`      | 2                  |
+| `3yo+`     | 3 or greater       |
 
 ---
 
@@ -81,11 +81,11 @@ Age bands map to `horse.age` (integer years):
 
 Reserve bands map to `lot.reservePrice`:
 
-| Band key | Predicate |
-|---|---|
-| `under10k` | `reservePrice < 10_000` |
-| `10k-50k` | `reservePrice >= 10_000 && reservePrice <= 50_000` |
-| `over50k` | `reservePrice > 50_000` |
+| Band key   | Predicate                                          |
+| ---------- | -------------------------------------------------- |
+| `under10k` | `reservePrice < 10_000`                            |
+| `10k-50k`  | `reservePrice >= 10_000 && reservePrice <= 50_000` |
+| `over50k`  | `reservePrice > 50_000`                            |
 
 ---
 
@@ -135,8 +135,7 @@ const filteredLots = useMemo(() => {
       const h = horses.find((h) => h.id === l.horseId);
       if (!h) return false;
       return (
-        h.name.toLowerCase().includes(needle) ||
-        (h.sireName ?? "").toLowerCase().includes(needle)
+        h.name.toLowerCase().includes(needle) || (h.sireName ?? "").toLowerCase().includes(needle)
       );
     });
   }
@@ -180,9 +179,7 @@ The search input (C2) sits above the filter bar.
 <ToggleGroup
   type="single"
   value={sex ?? ""}
-  onValueChange={(v) =>
-    navigate({ search: (prev) => ({ ...prev, sex: v || undefined }) })
-  }
+  onValueChange={(v) => navigate({ search: (prev) => ({ ...prev, sex: v || undefined }) })}
 >
   <ToggleGroupItem value="">All</ToggleGroupItem>
   <ToggleGroupItem value="colt">Colt</ToggleGroupItem>
@@ -205,19 +202,21 @@ Same pattern, values `""` / `"under10k"` / `"10k-50k"` / `"over50k"`. Display la
 **Reset button:**
 
 ```tsx
-{hasActiveFilters && (
-  <Button
-    variant="ghost"
-    size="sm"
-    onClick={() =>
-      navigate({
-        search: () => ({}),
-      })
-    }
-  >
-    Reset
-  </Button>
-)}
+{
+  hasActiveFilters && (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() =>
+        navigate({
+          search: () => ({}),
+        })
+      }
+    >
+      Reset
+    </Button>
+  );
+}
 ```
 
 `hasActiveFilters` is `true` when any of `sex`, `ageBand`, `reserveBand`, or `q` is defined (non-undefined). The `sort` param is not considered a filter for this purpose — the reset button does not clear the sort selection.
@@ -231,7 +230,10 @@ Right-aligned in the filter bar, using the `Select` primitive:
   value={sort ?? "lot"}
   onValueChange={(v) =>
     navigate({
-      search: (prev) => ({ ...prev, sort: v === "lot" ? undefined : (v as AuctionBrowseSearch["sort"]) }),
+      search: (prev) => ({
+        ...prev,
+        sort: v === "lot" ? undefined : (v as AuctionBrowseSearch["sort"]),
+      }),
     })
   }
 >
@@ -294,11 +296,13 @@ The `Search` icon is from `lucide-react` (already imported in the route file). T
 Render between the filter bar and the lot navigator, visible only when `filteredLots.length < activeLots.length`:
 
 ```tsx
-{filteredLots.length < activeLots.length && (
-  <p className="text-sm text-cream-muted tabular-nums">
-    Showing {filteredLots.length} of {activeLots.length} lots
-  </p>
-)}
+{
+  filteredLots.length < activeLots.length && (
+    <p className="text-sm text-cream-muted tabular-nums">
+      Showing {filteredLots.length} of {activeLots.length} lots
+    </p>
+  );
+}
 ```
 
 When no filter is active the line is hidden entirely — it does not show "Showing 12 of 12 lots".
@@ -359,20 +363,18 @@ The next/prev click handlers clamp correctly once `filteredLots.length` is used 
 When `filteredLots.length === 0`, the lot card area is replaced by:
 
 ```tsx
-{filteredLots.length === 0 && (
-  <Card>
-    <CardContent className="p-8 text-center space-y-3">
-      <p className="text-cream-muted">No lots match your filters.</p>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => navigate({ search: () => ({}) })}
-      >
-        Reset filters
-      </Button>
-    </CardContent>
-  </Card>
-)}
+{
+  filteredLots.length === 0 && (
+    <Card>
+      <CardContent className="p-8 text-center space-y-3">
+        <p className="text-cream-muted">No lots match your filters.</p>
+        <Button variant="ghost" size="sm" onClick={() => navigate({ search: () => ({}) })}>
+          Reset filters
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
 ```
 
 The lot navigator (prev/next row) is also hidden when `filteredLots.length === 0`. The result-count line (`filteredLots.length < activeLots.length`) is still shown.

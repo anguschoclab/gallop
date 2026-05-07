@@ -4,11 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  refreshMarket,
-  generateUpcomingRaces,
-  pruneOldRaces,
-} from "./store/helpers/market";
+import { refreshMarket, generateUpcomingRaces, pruneOldRaces } from "./store/helpers/market";
 import { resolvePregnancies } from "./store/helpers/pregnancy";
 import { maybeRecalibratePars } from "./store/helpers/beyer";
 import type { Horse, Race, Pregnancy } from "./types";

@@ -207,9 +207,9 @@ export function resolveMarkings(locus: any) {
   return {
     socks: resolveSocks(locus.socks),
     face: resolveFaceWhite(locus.face),
-    silverDapple: (locus.silverDapple[0] + locus.silverDapple[1]) >= 8,
-    sabino: (locus.sabino[0] + locus.sabino[1]) >= 8,
-    splashWhite: (locus.splashWhite[0] + locus.splashWhite[1]) >= 8,
+    silverDapple: locus.silverDapple[0] + locus.silverDapple[1] >= 8,
+    sabino: locus.sabino[0] + locus.sabino[1] >= 8,
+    splashWhite: locus.splashWhite[0] + locus.splashWhite[1] >= 8,
   };
 }
 
@@ -229,7 +229,7 @@ function resolveFaceWhite(locus: Locus): FaceWhite {
 }
 
 export function resolveRacingViable(locus: Locus): boolean {
-  return (locus[0] + locus[1]) >= 4;
+  return locus[0] + locus[1] >= 4;
 }
 
 export function resolveHealthStatus(health: HealthGenotype): HealthStatus {
@@ -269,7 +269,7 @@ export function resolveRerRisk(locus: Locus): number {
 
 export function resolveEpmRisk(locus: Locus): number {
   const sum = locus[0] + locus[1];
-  if (sum <= 3) return 0.10;
+  if (sum <= 3) return 0.1;
   if (sum <= 6) return 0.04;
   return 0;
 }
@@ -305,6 +305,6 @@ export function computeHeterozygosity(genotype: Genotype): number {
   checkLocus(genotype.color.cream);
   checkLocus(genotype.preferences.distance);
   checkLocus(genotype.preferences.surface);
-  
+
   return heteroLoci / totalLoci;
 }

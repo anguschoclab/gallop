@@ -1,12 +1,23 @@
 import type { Horse, Stable, StableTier } from "./types";
 import type { Rng } from "./rng";
-import { createHorseFromDNA, generateNpcHorse as _generateNpcHorse } from "@/core/horse/horseFactory";
+import {
+  createHorseFromDNA,
+  generateNpcHorse as _generateNpcHorse,
+} from "@/core/horse/horseFactory";
 import { generateResearchBasedGenotype } from "@/core/genetics/generation";
 import { rand } from "@/core/common/random";
-import { shouldRetireAtStartup, initialStandingFee, defaultStudParams } from "@/core/breeding/stallions";
+import {
+  shouldRetireAtStartup,
+  initialStandingFee,
+  defaultStudParams,
+} from "@/core/breeding/stallions";
 import { rollProceduralFamily } from "@/core/breeding/bruceLowe";
 import { resolveBloodline } from "@/core/breeding/populationGenetics";
-import { shouldGenerateHorseOfAge, createHorseGenAIState, recordHorseGeneration } from "@/core/ai/horseGenAI";
+import {
+  shouldGenerateHorseOfAge,
+  createHorseGenAIState,
+  recordHorseGeneration,
+} from "@/core/ai/horseGenAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { activeStallions2020s } from "@/core/data/pedigreeData";
 import { mapStallionToStable } from "./npcStables";
@@ -25,15 +36,20 @@ function rollAgeCategory(rng: Rng): AgeCategory {
 
 function getAgeFromCategory(cat: AgeCategory, rng: Rng): number {
   switch (cat) {
-    case "2yo": return 2;
-    case "prime": return rng.next() < 0.5 ? 3 : 4;
-    case "veteran": return rng.next() < 0.5 ? 5 : 6;
-    case "breeding": return rand(7, 10, rng);
+    case "2yo":
+      return 2;
+    case "prime":
+      return rng.next() < 0.5 ? 3 : 4;
+    case "veteran":
+      return rng.next() < 0.5 ? 5 : 6;
+    case "breeding":
+      return rand(7, 10, rng);
   }
 }
 
 function calculateStartingFame(tier: StableTier, age: number, rng: Rng): number {
-  const base = tier === "elite" ? rand(20, 40, rng) : tier === "mid" ? rand(10, 25, rng) : rand(0, 15, rng);
+  const base =
+    tier === "elite" ? rand(20, 40, rng) : tier === "mid" ? rand(10, 25, rng) : rand(0, 15, rng);
   return Math.min(100, base + (age - 2) * 3);
 }
 
@@ -58,9 +74,15 @@ export function generateStableHorses(
     targetCount = 10;
   } else {
     switch (stable.tier) {
-      case "elite": targetCount = rand(30, 40, rng); break;
-      case "mid":   targetCount = rand(20, 30, rng); break;
-      default:      targetCount = rand(15, 25, rng); break;
+      case "elite":
+        targetCount = rand(30, 40, rng);
+        break;
+      case "mid":
+        targetCount = rand(20, 30, rng);
+        break;
+      default:
+        targetCount = rand(15, 25, rng);
+        break;
     }
   }
 
@@ -69,7 +91,8 @@ export function generateStableHorses(
   if (aiState?.horseGenAI) {
     for (let age = 2; age <= 10; age++) {
       if (shouldGenerateHorseOfAge(aiState.horseGenAI, age, stable)) {
-        const key: AgeCategory = age === 2 ? "2yo" : age <= 4 ? "prime" : age <= 6 ? "veteran" : "breeding";
+        const key: AgeCategory =
+          age === 2 ? "2yo" : age <= 4 ? "prime" : age <= 6 ? "veteran" : "breeding";
         cats[key]++;
       }
     }
@@ -77,10 +100,10 @@ export function generateStableHorses(
     if (total < targetCount) cats.prime += targetCount - total;
     else if (total > targetCount) cats.prime = Math.max(0, cats.prime - (total - targetCount));
   } else {
-    cats["2yo"]    = Math.floor(targetCount * 0.3);
-    cats.prime     = Math.floor(targetCount * 0.4);
-    cats.veteran   = Math.floor(targetCount * 0.2);
-    cats.breeding  = Math.floor(targetCount * 0.1);
+    cats["2yo"] = Math.floor(targetCount * 0.3);
+    cats.prime = Math.floor(targetCount * 0.4);
+    cats.veteran = Math.floor(targetCount * 0.2);
+    cats.breeding = Math.floor(targetCount * 0.1);
     const total = Object.values(cats).reduce((a, b) => a + b, 0);
     cats.prime += targetCount - total;
   }
@@ -165,7 +188,12 @@ export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
     const tier: StableTier =
       (data.studFee ?? 0) >= 100000 ? "elite" : (data.studFee ?? 0) >= 25000 ? "mid" : "budget";
 
-    const genotype = generateResearchBasedGenotype(data.name, tier, data.dosageGroups, data.achievements);
+    const genotype = generateResearchBasedGenotype(
+      data.name,
+      tier,
+      data.dosageGroups,
+      data.achievements,
+    );
     const horse = createHorseFromDNA(genotype, rng, {
       name: data.name,
       age,
@@ -181,7 +209,8 @@ export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
     horse.bruceLoweFamily = data.bruceLoweFamily ?? rollProceduralFamily(rng);
     horse.fame = Math.min(
       100,
-      ((data.studFee ?? 0) >= 200000 ? 70 : (data.studFee ?? 0) >= 100000 ? 50 : 30) + (age - 4) * 2,
+      ((data.studFee ?? 0) >= 200000 ? 70 : (data.studFee ?? 0) >= 100000 ? 50 : 30) +
+        (age - 4) * 2,
     );
     horse.stud = {
       atStud: true,
@@ -201,7 +230,9 @@ export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
 }
 
 export function calculateNpcHorseValue(horse: Horse, stableTier: StableTier): number {
-  const overall = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) / 4;
+  const overall =
+    (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) /
+    4;
   const ageMod = horse.age <= 3 ? 1.3 : horse.age >= 7 ? 0.5 : 0.9;
   const fameMod = 1 + horse.fame / 200;
   const tierMod = stableTier === "elite" ? 1.5 : stableTier === "mid" ? 1.2 : 1.0;

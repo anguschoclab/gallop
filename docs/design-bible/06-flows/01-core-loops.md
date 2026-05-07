@@ -29,8 +29,9 @@ Dashboard ──► (decision: train? race? rest?)
 **Cadence.** Multiple times per session. The day-advance click is the dominant action.
 
 **Design implications.**
+
 - Dashboard must orient in <10 seconds.
-- *"Advance day"* button must always be accessible (always in sidebar; mirrored on dashboard).
+- _"Advance day"_ button must always be accessible (always in sidebar; mirrored on dashboard).
 - Recap appears only when there's something to recap — quiet days don't interrupt.
 
 ---
@@ -55,6 +56,7 @@ PlayerRacePrompt (modal, mid-day-advance)
 **Cadence.** Several times per in-game week. Every one matters emotionally.
 
 **Design implications.**
+
 - The transition into `/race/$raceId` must feel ceremonial — the broadcast theme is a discrete switch, not a gradient.
 - The result overlay is the most-read piece of copy in the product. It must read like a result, not a debug screen.
 - Returning from `/race/...` should land on Recap if the race was significant, otherwise on `/races` — the player should never be lost.
@@ -93,6 +95,7 @@ Foal trains, races, breeds ──► Lineage extends
 **Cadence.** Initiated once per mare per season. The follow-up touchpoints stretch across in-game years.
 
 **Design implications.**
+
 - Pregnancy state must be visible everywhere the mare is mentioned (principle 6).
 - Foal birth is a recap-level event, not a toast.
 - The lineage page must remain stable across years — links from old foals should never break.
@@ -119,6 +122,7 @@ Stable (new horse arrives)          back to Auction list
 **Cadence.** Daily, optional. The player might skip several days between auction visits.
 
 **Design implications.**
+
 - Auction empty state isn't an error — it's expected if the player visits late in the day after lots are sold.
 - Won-lot toast is celebratory but brief — the player isn't on the dashboard yet.
 - Outbid is informational, not punitive.
@@ -129,12 +133,12 @@ Stable (new horse arrives)          back to Auction list
 
 Loops aren't watertight. The transitions between them are the high-value design moments:
 
-| From | To | Pattern |
-|---|---|---|
-| Day loop → Race day loop | `PlayerRacePrompt` modal interrupts day-advance. |
-| Race day loop → Recap | After result overlay, *"Continue"* lands on Recap when the race was significant. |
-| Auction loop → Day loop | Won lot returns the player to the auction list, not the new horse. They drill into the new horse on their own timing. |
-| Breeding loop → Day loop | Confirmed cover returns to Broodmares, not Stable. The mare is the unit, not the just-conceived foal. |
+| From                     | To                                                                                                                    | Pattern |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------- |
+| Day loop → Race day loop | `PlayerRacePrompt` modal interrupts day-advance.                                                                      |
+| Race day loop → Recap    | After result overlay, _"Continue"_ lands on Recap when the race was significant.                                      |
+| Auction loop → Day loop  | Won lot returns the player to the auction list, not the new horse. They drill into the new horse on their own timing. |
+| Breeding loop → Day loop | Confirmed cover returns to Broodmares, not Stable. The mare is the unit, not the just-conceived foal.                 |
 
 ---
 
@@ -148,12 +152,12 @@ Loops aren't watertight. The transitions between them are the high-value design 
 
 ## Future loops (reserved)
 
-| Loop | Status |
-|---|---|
-| **Sales consigning** — selling a horse to other stables | In-design. |
-| **Jockey contracting** — picking and retaining riders | Reserved. |
-| **Career retirement** — long-arc end-of-life narrative for stallions/broodmares | Reserved. |
-| **Multiplayer (head-to-head)** | Out of scope — see [00-foundations/01-product-vision.md](../00-foundations/01-product-vision.md). |
+| Loop                                                                            | Status                                                                                            |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Sales consigning** — selling a horse to other stables                         | In-design.                                                                                        |
+| **Jockey contracting** — picking and retaining riders                           | Reserved.                                                                                         |
+| **Career retirement** — long-arc end-of-life narrative for stallions/broodmares | Reserved.                                                                                         |
+| **Multiplayer (head-to-head)**                                                  | Out of scope — see [00-foundations/01-product-vision.md](../00-foundations/01-product-vision.md). |
 
 ---
 

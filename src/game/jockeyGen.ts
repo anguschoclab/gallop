@@ -19,7 +19,12 @@ export type JockeyGenerationOptions = {
   usedNames?: Set<string>;
 };
 
-export function generateJockey({ tier = "mid", rng, region = "north_america", usedNames }: JockeyGenerationOptions): Jockey {
+export function generateJockey({
+  tier = "mid",
+  rng,
+  region = "north_america",
+  usedNames,
+}: JockeyGenerationOptions): Jockey {
   const archetype = rng.pick(ARCHETYPES);
   const name = generateProceduralJockeyName(region, rng, usedNames);
   if (usedNames) usedNames.add(name.toLowerCase());
@@ -147,10 +152,20 @@ export function generateSilk(rng: Rng): JockeySilk {
   return { pattern, primary, secondary, cap };
 }
 
-export function generateInitialJockeys(rng: Rng, count: number = 20, usedNames?: Set<string>): Jockey[] {
+export function generateInitialJockeys(
+  rng: Rng,
+  count: number = 20,
+  usedNames?: Set<string>,
+): Jockey[] {
   const jockeys: Jockey[] = [];
-  const regions: RegionalSystem[] = ["north_america", "europe", "australia", "asia", "south_america"];
-  
+  const regions: RegionalSystem[] = [
+    "north_america",
+    "europe",
+    "australia",
+    "asia",
+    "south_america",
+  ];
+
   for (let i = 0; i < count; i++) {
     const r = rng.next();
     const tier = r < 0.15 ? "elite" : r < 0.6 ? "mid" : "budget";

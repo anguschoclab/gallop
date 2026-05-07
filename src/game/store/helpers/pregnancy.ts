@@ -8,7 +8,11 @@ import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getFoalsBy } from "@/core/breeding/lineage";
-import { BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants/gameConstants";
+import {
+  BREEDING_FEE,
+  GESTATION_DAYS,
+  LIVE_FOAL_GUARANTEE_FEE,
+} from "@/game/constants/gameConstants";
 
 export type PregnancyResult = {
   pregnancies: Pregnancy[];
@@ -45,19 +49,22 @@ export function resolvePregnancies(
     const dam = damsById.get(p.damId);
 
     if (!sire || !dam) {
-      newLogs.push({ day: newDay, text: `Warning: Could not find sire or dam for pregnancy ${p.id}. Skipping.` });
+      newLogs.push({
+        day: newDay,
+        text: `Warning: Could not find sire or dam for pregnancy ${p.id}. Skipping.`,
+      });
       continue;
     }
 
     // Prepare naming context for NPC foals
     let namingContext = undefined;
     if (dam?.stableId) {
-      const stable = stables.find(s => s.id === dam.stableId);
+      const stable = stables.find((s) => s.id === dam.stableId);
       if (stable) {
         namingContext = {
           region: getRegionalSystem(stable.country || "USA"),
           namingTheme: (PERSONALITY_CONFIG as any)[stable.personality]?.namingTheme,
-          existingNames: usedNames
+          existingNames: usedNames,
         };
       }
     }

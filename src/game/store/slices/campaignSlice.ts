@@ -16,11 +16,7 @@ export type CampaignSlice = {
   ) => void;
   dismissCampaignFlag: (horseId: string, flagIndex: number) => void;
   deleteCampaign: (horseId: string) => void;
-  generateAutoCampaign: (
-    horseId: string,
-    goalType: string,
-    targetRaceKey?: string,
-  ) => void;
+  generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => void;
   setCampaigns: (campaigns: HorseCampaign[]) => void;
   setTriplecrownHistory: (history: TripleCrownProgress[]) => void;
 };
@@ -48,9 +44,7 @@ export function createCampaignSlice(set: any, get: any): CampaignSlice {
           c.horseId === horseId
             ? {
                 ...c,
-                slots: c.slots.map((s, i) =>
-                  i === slotIndex ? { ...s, ...patch } : s,
-                ),
+                slots: c.slots.map((s, i) => (i === slotIndex ? { ...s, ...patch } : s)),
               }
             : c,
         ),

@@ -33,11 +33,11 @@ export interface StallionResearchData {
 /**
  * Map of stallion names to their research data
  * Populated with real-world research data
- * 
+ *
  * Note: Due to the massive scope (500+ stallions), this system uses a hybrid approach:
  * - Manually researched data for the most famous stallions (below)
  * - Deterministic generation (using dosageGroups, achievements, studFee) for all other stallions
- * 
+ *
  * This provides historical accuracy for key stallions while ensuring all 500+ stallions
  * have consistent, data-driven DNA without requiring external research for every horse.
  */

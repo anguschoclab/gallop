@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  rand,
-  rollRunningStyle,
-  randomWeather,
-  randomSilk,
-} from "@/core/common/random";
+import { rand, rollRunningStyle, randomWeather, randomSilk } from "@/core/common/random";
 import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
 import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
@@ -52,7 +47,7 @@ describe("Procedural Jockey Naming", () => {
     const asiaName = generateProceduralJockeyName("asia", rng);
     // Many Asian names in pool are Japanese/HK
     expect(asiaName).toBeTruthy();
-    
+
     const euroName = generateProceduralJockeyName("europe", rng);
     expect(euroName).toBeTruthy();
   });
@@ -61,7 +56,11 @@ describe("Procedural Jockey Naming", () => {
 describe("Procedural Race Naming", () => {
   it("generates realistic names", () => {
     const mockTrack = { name: "Test Track", country: "USA" } as Track;
-    const name = generateRaceName({ track: mockTrack, raceClass: "Stakes", rng: nondeterministicRng() });
+    const name = generateRaceName({
+      track: mockTrack,
+      raceClass: "Stakes",
+      rng: nondeterministicRng(),
+    });
     expect(name).toBeTruthy();
     expect(name).not.toBe("Stakes"); // Should be more descriptive
   });

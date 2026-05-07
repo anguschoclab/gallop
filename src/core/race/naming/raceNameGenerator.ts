@@ -189,12 +189,45 @@ function selectNamingPattern(
 }
 
 const RACE_PREFIXES = [
-  "Ascot", "Belmont", "Churchill", "Doncaster", "Epsom", "Flemington", "Goodwood", "Hialeah",
-  "Irish", "Kentucky", "Longchamp", "Newmarket", "Oaklawn", "Pimlico", "Saratoga", "Tokyo",
-  "Aintree", "Chepstow", "Haydock", "Kempton", "Ludlow", "Sandown", "Wincanton", "York"
+  "Ascot",
+  "Belmont",
+  "Churchill",
+  "Doncaster",
+  "Epsom",
+  "Flemington",
+  "Goodwood",
+  "Hialeah",
+  "Irish",
+  "Kentucky",
+  "Longchamp",
+  "Newmarket",
+  "Oaklawn",
+  "Pimlico",
+  "Saratoga",
+  "Tokyo",
+  "Aintree",
+  "Chepstow",
+  "Haydock",
+  "Kempton",
+  "Ludlow",
+  "Sandown",
+  "Wincanton",
+  "York",
 ];
 
-const RACE_SUFFIXES = ["Cup", "Stakes", "Trophy", "Classic", "Handicap", "Plate", "Mile", "Sprint", "Championship", "Memorial", "Invitational"];
+const RACE_SUFFIXES = [
+  "Cup",
+  "Stakes",
+  "Trophy",
+  "Classic",
+  "Handicap",
+  "Plate",
+  "Mile",
+  "Sprint",
+  "Championship",
+  "Memorial",
+  "Invitational",
+];
 
 // Generate name based on pattern
 function generateNameByPattern(

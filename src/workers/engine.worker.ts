@@ -31,6 +31,7 @@ import { awardsPhase } from "@/core/time/phases/awards";
 import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
 import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
 import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
+import { consignmentResolutionPhase } from "@/core/time/phases/consignmentResolution";
 import { purchaseResolutionPhase } from "@/core/time/phases/purchaseResolution";
 import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
 import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
@@ -118,6 +119,7 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     stateUpdatePhase,
     // Resolution phases (convert intents to impacts)
     raceEntryResolutionPhase,
+    consignmentResolutionPhase,
     purchaseResolutionPhase,
     breedingResolutionPhase,
     trainingResolutionPhase,

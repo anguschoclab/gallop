@@ -186,6 +186,8 @@ export interface ConsignmentImpact extends Impact {
   horseId: string;
   saleId: string;
   reservePrice: number;
+  consignorStableId?: string;
+  breezeSeconds?: number;
   reason: string;
 }
 

@@ -51,7 +51,7 @@ export const energyPhase = {
       if (newHealthStatus === "healthy" && h.genotype && h.genotype.health) {
         const immunityTier = h.genotype.markers.immunity;
         const epmRisk = resolveEpmRisk(h.genotype.health.epm);
-        
+
         // EPM susceptibility: treat immunity as one tier lower for illness check
         let effectiveImmunityTier = immunityTier;
         if (epmRisk > 0) {
@@ -65,7 +65,7 @@ export const energyPhase = {
           excellent: 0.001, // 0.1%
           good: 0.003, // 0.3%
           fair: 0.006, // 0.6%
-          poor: 0.010, // 1.0%
+          poor: 0.01, // 1.0%
         };
 
         if (Math.random() < illnessChance[effectiveImmunityTier]) {
@@ -84,7 +84,10 @@ export const energyPhase = {
         ...h,
         energy: newEnergy,
         healthStatus: newHealthStatus,
-        healthStatusDay: (newHealthStatus !== h.healthStatus && newHealthStatus !== "healthy") ? newDay : h.healthStatusDay,
+        healthStatusDay:
+          newHealthStatus !== h.healthStatus && newHealthStatus !== "healthy"
+            ? newDay
+            : h.healthStatusDay,
       };
     });
 

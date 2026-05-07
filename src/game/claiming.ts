@@ -43,7 +43,8 @@ export function processClaims(
     int: (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min,
     range: (min: number, max: number) => min + Math.random() * (max - min),
     pick: <T>(arr: readonly T[]) => arr[Math.floor(Math.random() * arr.length)],
-    gauss: (mean = 0, sd = 1) => mean + sd * (Math.random() + Math.random() + Math.random() + Math.random() - 2), // Rough approximation
+    gauss: (mean = 0, sd = 1) =>
+      mean + sd * (Math.random() + Math.random() + Math.random() + Math.random() - 2), // Rough approximation
   };
 
   if (!race.claimingPrice || race.resolved === false) {

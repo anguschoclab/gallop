@@ -65,24 +65,24 @@ Three-column stat grid uses `grid grid-cols-1 md:grid-cols-3 gap-4`.
 
 ## Copy
 
-- Title: *"Welcome back."* (after first session) or *"Welcome to your stable."* (first session).
+- Title: _"Welcome back."_ (after first session) or _"Welcome to your stable."_ (first session).
 - Sub-title: in-game date via `gameCalendarDate(day)`.
-- Primary CTA: *"Advance day"* (already in sidebar; dashboard mirrors).
-- Stat tile labels: *"Cash"*, *"Horses"*, *"This week"* (number of races scheduled).
-- Empty state for "Today's races": *"No races today."* (no CTA — calendar shift is automatic).
-- Empty state for "My horses": *"No horses yet."* + *"Browse auction"* CTA.
+- Primary CTA: _"Advance day"_ (already in sidebar; dashboard mirrors).
+- Stat tile labels: _"Cash"_, _"Horses"_, _"This week"_ (number of races scheduled).
+- Empty state for "Today's races": _"No races today."_ (no CTA — calendar shift is automatic).
+- Empty state for "My horses": _"No horses yet."_ + _"Browse auction"_ CTA.
 
 ## States
 
 - **First-session** — no horses, no races. Empty states for both sections; the auction CTA is more prominent.
 - **Active day** — full content.
-- **Race day with player entry** — top race highlighted with a *"Watch live"* CTA leading to `/race/$id`.
-- **End of season** — banner: *"End of season — review your record."* linking to recap.
+- **Race day with player entry** — top race highlighted with a _"Watch live"_ CTA leading to `/race/$id`.
+- **End of season** — banner: _"End of season — review your record."_ linking to recap.
 
 ## Accessibility
 
 - Focus order: header → advance-day button → stat tiles → races → horses.
-- Live region: when a day advances, announce *"Now Year 3, Apr 14. Three horses trained."*
+- Live region: when a day advances, announce _"Now Year 3, Apr 14. Three horses trained."_
 
 ## Telemetry
 

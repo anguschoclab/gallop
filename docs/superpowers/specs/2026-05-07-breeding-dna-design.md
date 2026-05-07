@@ -15,30 +15,30 @@ The existing `Locus`-based data shape is unchanged — this is an internal engin
 
 ### New files
 
-| File | Purpose |
-|---|---|
-| `src/core/genetics/chromosomes.ts` | Chromosome model + crossover engine |
-| `src/core/genetics/linkageMap.ts` | Declares which locus lives on which chromosome + position |
+| File                                     | Purpose                                                              |
+| ---------------------------------------- | -------------------------------------------------------------------- |
+| `src/core/genetics/chromosomes.ts`       | Chromosome model + crossover engine                                  |
+| `src/core/genetics/linkageMap.ts`        | Declares which locus lives on which chromosome + position            |
 | `src/core/genetics/breedingSimulator.ts` | Runs 250 inheritance simulations, aggregates phenotype distributions |
-| `src/core/breeding/programs.ts` | `BreedingProgram` type, distance metrics, progress tracking |
-| `src/core/breeding/archetypes.ts` | Library of 8 target archetypes with weighted phenotype targets |
-| `src/core/genetics/genotypeCache.ts` | Memoization for COI, bloodline resolution, compatibility scoring |
+| `src/core/breeding/programs.ts`          | `BreedingProgram` type, distance metrics, progress tracking          |
+| `src/core/breeding/archetypes.ts`        | Library of 8 target archetypes with weighted phenotype targets       |
+| `src/core/genetics/genotypeCache.ts`     | Memoization for COI, bloodline resolution, compatibility scoring     |
 
 ### Modified files
 
-| File | Change |
-|---|---|
-| `src/core/genetics/inheritance.ts` | Replace `crossoverLoci` with chromosome-aware engine; fix `inheritTrait` |
-| `src/core/genetics/types.ts` | Add `pssm`, `rer`, `epm` to `HealthGenotype` |
-| `src/core/genetics/generation.ts` | Initialize new health loci with tier-scaled probabilities |
-| `src/core/genetics/phenotype.ts` | Add `resolvePssmRisk`, `resolveRerRisk`, `resolveEpmRisk` |
-| `src/core/breeding/populationGenetics.ts` | Wrap COI + bloodline with cache |
-| `src/game/breedingCompatibility.ts` | Wrap compatibility scoring with cache |
-| `src/core/breeding/strategy.ts` | Add `archetypeFitDelta` term to `scoreStallion` per personality |
-| `src/core/ai/breedingAI.ts` | Add `activeProgram`, `programDistanceHistory`, `programSwitchCooldown` to `BreedingAIState` |
-| `src/game/npcBreeding.ts` | Wire program archetype fit delta into NPC stallion evaluation |
-| `src/game/store/slices/` | New `breedingProgramsSlice` |
-| `src/game/state/` | Add `breedingPrograms` to game state |
+| File                                      | Change                                                                                      |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `src/core/genetics/inheritance.ts`        | Replace `crossoverLoci` with chromosome-aware engine; fix `inheritTrait`                    |
+| `src/core/genetics/types.ts`              | Add `pssm`, `rer`, `epm` to `HealthGenotype`                                                |
+| `src/core/genetics/generation.ts`         | Initialize new health loci with tier-scaled probabilities                                   |
+| `src/core/genetics/phenotype.ts`          | Add `resolvePssmRisk`, `resolveRerRisk`, `resolveEpmRisk`                                   |
+| `src/core/breeding/populationGenetics.ts` | Wrap COI + bloodline with cache                                                             |
+| `src/game/breedingCompatibility.ts`       | Wrap compatibility scoring with cache                                                       |
+| `src/core/breeding/strategy.ts`           | Add `archetypeFitDelta` term to `scoreStallion` per personality                             |
+| `src/core/ai/breedingAI.ts`               | Add `activeProgram`, `programDistanceHistory`, `programSwitchCooldown` to `BreedingAIState` |
+| `src/game/npcBreeding.ts`                 | Wire program archetype fit delta into NPC stallion evaluation                               |
+| `src/game/store/slices/`                  | New `breedingProgramsSlice`                                                                 |
+| `src/game/state/`                         | Add `breedingPrograms` to game state                                                        |
 
 ### No-change boundary
 
@@ -81,17 +81,17 @@ The existing `crossover(sireLocus, damLocus, rng)` signature is kept as a conven
 
 ### Linkage groups
 
-| Chromosome | Loci | Gameplay effect |
-|---|---|---|
-| `CHR_ATHLETIC` | speed×10 (pos 0.05–0.55), fiberType (0.70), stride (0.85) | Sprint package travels together — hard to get elite speed without fiber/stride bias |
-| `CHR_ENDURANCE` | stamina×10 (0.05–0.55), distance (0.70), mudAptitude (0.85) | Stayer traits bundle — mud aptitude drifts with stamina |
-| `CHR_PERFORMANCE` | acceleration×10 (0.05–0.55), heart×5 (0.62–0.78), style (0.90) | Explosive racers inherit bravery and early-foot together |
-| `CHR_BEHAVIORAL` | consistency×10 (0.05–0.55), mental (0.65), trainability (0.75), recovery (0.88) | Mentally tough horses tend to be trainable and recover faster |
-| `CHR_CONFORMATION` | physical (0.15), size (0.35), durability (0.55), peakAge (0.72), foalingEase (0.88) | Frame, soundness, and career arc come as a package |
-| `CHR_TRACK` | surface (0.20), climbing (0.45), cornering (0.65), trackBias (0.85) | Course-specific aptitudes co-inherit |
-| `CHR_HEALTH` | bleeder (0.10), roarer (0.25), ocd (0.40), efna5 (0.55), pssm (0.65), rer (0.75), epm (0.88) | Health conditions cluster — prone to one → likelier to carry others |
-| `CHR_COLOR` | extension (0.20), agouti (0.45), gray (0.65), cream (0.85) | Coat genetics — independent from performance chromosomes |
-| `CHR_MARKINGS` | socks (0.15), face (0.35), silverDapple (0.55), sabino (0.72), splashWhite (0.88) | Independent cosmetics |
+| Chromosome         | Loci                                                                                         | Gameplay effect                                                                     |
+| ------------------ | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `CHR_ATHLETIC`     | speed×10 (pos 0.05–0.55), fiberType (0.70), stride (0.85)                                    | Sprint package travels together — hard to get elite speed without fiber/stride bias |
+| `CHR_ENDURANCE`    | stamina×10 (0.05–0.55), distance (0.70), mudAptitude (0.85)                                  | Stayer traits bundle — mud aptitude drifts with stamina                             |
+| `CHR_PERFORMANCE`  | acceleration×10 (0.05–0.55), heart×5 (0.62–0.78), style (0.90)                               | Explosive racers inherit bravery and early-foot together                            |
+| `CHR_BEHAVIORAL`   | consistency×10 (0.05–0.55), mental (0.65), trainability (0.75), recovery (0.88)              | Mentally tough horses tend to be trainable and recover faster                       |
+| `CHR_CONFORMATION` | physical (0.15), size (0.35), durability (0.55), peakAge (0.72), foalingEase (0.88)          | Frame, soundness, and career arc come as a package                                  |
+| `CHR_TRACK`        | surface (0.20), climbing (0.45), cornering (0.65), trackBias (0.85)                          | Course-specific aptitudes co-inherit                                                |
+| `CHR_HEALTH`       | bleeder (0.10), roarer (0.25), ocd (0.40), efna5 (0.55), pssm (0.65), rer (0.75), epm (0.88) | Health conditions cluster — prone to one → likelier to carry others                 |
+| `CHR_COLOR`        | extension (0.20), agouti (0.45), gray (0.65), cream (0.85)                                   | Coat genetics — independent from performance chromosomes                            |
+| `CHR_MARKINGS`     | socks (0.15), face (0.35), silverDapple (0.55), sabino (0.72), splashWhite (0.88)            | Independent cosmetics                                                               |
 
 Markers (`leopardComplex`, `lethalCarriers`, `sensoryPerception`, `signalTransduction`, `immunity`, `geneticDiversity`) remain independently assorting — they represent diverse genomic origins and are handled by the existing `crossover()` wrapper.
 
@@ -105,18 +105,18 @@ Markers (`leopardComplex`, `lethalCarriers`, `sensoryPerception`, `signalTransdu
 
 ### Replacement table
 
-| Sire × Dam | Foal distribution |
-|---|---|
-| excellent × excellent | 100% excellent |
-| excellent × good | 70% excellent, 30% good |
-| excellent × fair | 100% good *(regression to mean)* |
-| excellent × poor | 50% good, 50% fair |
-| good × good | 100% good |
-| good × fair | 70% good, 30% fair |
-| good × poor | 100% fair *(regression to mean)* |
-| fair × fair | 100% fair |
-| fair × poor | 70% fair, 30% poor |
-| poor × poor | 100% poor |
+| Sire × Dam            | Foal distribution                |
+| --------------------- | -------------------------------- |
+| excellent × excellent | 100% excellent                   |
+| excellent × good      | 70% excellent, 30% good          |
+| excellent × fair      | 100% good _(regression to mean)_ |
+| excellent × poor      | 50% good, 50% fair               |
+| good × good           | 100% good                        |
+| good × fair           | 70% good, 30% fair               |
+| good × poor           | 100% fair _(regression to mean)_ |
+| fair × fair           | 100% fair                        |
+| fair × poor           | 70% fair, 30% poor               |
+| poor × poor           | 100% poor                        |
 
 The `excellent × fair → good` and `good × poor → fair` cases model incomplete dominance — offspring land between parents. The extreme cross `excellent × poor` produces variance (good or fair) rather than always inheriting the stronger value, so fixing a trait in a line requires multiple generations of deliberate selection.
 
@@ -144,19 +144,19 @@ Convention: **low allele sum = susceptible**, high = healthy (consistent with ex
 
 ### Phenotype effects
 
-| Condition | Sum ≤ 3 (affected) | Sum ≤ 6 (carrier) | Sum ≥ 7 (healthy) |
-|---|---|---|---|
-| **PSSM** | trainability −20%, caps at "fair" under hard workouts | trainability −8% | no effect |
-| **RER** | injury risk +0.05 during intense training; recovery rate −15% | injury risk +0.02 | no effect |
-| **EPM susceptibility** | immunity treated as one tier lower for illness checks | susceptibility flag | no effect |
+| Condition              | Sum ≤ 3 (affected)                                            | Sum ≤ 6 (carrier)   | Sum ≥ 7 (healthy) |
+| ---------------------- | ------------------------------------------------------------- | ------------------- | ----------------- |
+| **PSSM**               | trainability −20%, caps at "fair" under hard workouts         | trainability −8%    | no effect         |
+| **RER**                | injury risk +0.05 during intense training; recovery rate −15% | injury risk +0.02   | no effect         |
+| **EPM susceptibility** | immunity treated as one tier lower for illness checks         | susceptibility flag | no effect         |
 
 ### Generation probabilities (new horses in `generation.ts`)
 
-| Tier | PSSM affected | RER affected | EPM susceptible |
-|---|---|---|---|
-| starter / budget | 8% | 6% | 7% |
-| mid | 5% | 4% | 5% |
-| elite | 2% | 2% | 3% |
+| Tier             | PSSM affected | RER affected | EPM susceptible |
+| ---------------- | ------------- | ------------ | --------------- |
+| starter / budget | 8%            | 6%           | 7%              |
+| mid              | 5%            | 4%           | 5%              |
+| elite            | 2%            | 2%           | 3%              |
 
 ### Gameplay surface
 
@@ -178,28 +178,28 @@ A pure function in `breedingSimulator.ts` that runs `inheritDNA` 250 times with 
 ```ts
 type SimulationResult = {
   stats: {
-    speed:        { p10: number; p25: number; p75: number; p90: number };
-    stamina:      { p10: number; p25: number; p75: number; p90: number };
+    speed: { p10: number; p25: number; p75: number; p90: number };
+    stamina: { p10: number; p25: number; p75: number; p90: number };
     acceleration: { p10: number; p25: number; p75: number; p90: number };
-    consistency:  { p10: number; p25: number; p75: number; p90: number };
+    consistency: { p10: number; p25: number; p75: number; p90: number };
   };
   traits: {
-    fiberBias:        Record<"sprinter" | "balanced" | "stayer", number>;
-    strideType:       Record<"short" | "balanced" | "long", number>;
-    runningStyle:     Record<RunningStyle, number>;
-    trainability:     { mean: number; tier: Record<"excellent" | "good" | "fair" | "poor", number> };
+    fiberBias: Record<"sprinter" | "balanced" | "stayer", number>;
+    strideType: Record<"short" | "balanced" | "long", number>;
+    runningStyle: Record<RunningStyle, number>;
+    trainability: { mean: number; tier: Record<"excellent" | "good" | "fair" | "poor", number> };
     distanceAptitude: { mean: number; range: [number, number] };
-    surfaceAptitude:  { likelyTurf: number; likelyDirt: number; versatile: number };
+    surfaceAptitude: { likelyTurf: number; likelyDirt: number; versatile: number };
   };
   health: {
     bleederRisk: number;
-    roarerRisk:  number;
-    pssmRisk:    number;
-    rerRisk:     number;
-    epmRisk:     number;
-    lethalRisk:  { csnb: number; hypp: number; olws: number; ffs1: number };
+    roarerRisk: number;
+    pssmRisk: number;
+    rerRisk: number;
+    epmRisk: number;
+    lethalRisk: { csnb: number; hypp: number; olws: number; ffs1: number };
   };
-  coatColors:  Record<CoatColor, number>;
+  coatColors: Record<CoatColor, number>;
   coiEstimate: number;
   compatScore: number;
 };
@@ -234,20 +234,20 @@ Simulator results are memoized per `(sireId, damId)` for the session. Cache inva
 
 ### Core concept
 
-A stable-level commitment to an archetype target. Progress is measured as *genetic distance* — a weighted Euclidean distance (normalised 0–1) between the stable's best current horse and the archetype's target phenotype profile. Distance ideally decreases each generation.
+A stable-level commitment to an archetype target. Progress is measured as _genetic distance_ — a weighted Euclidean distance (normalised 0–1) between the stable's best current horse and the archetype's target phenotype profile. Distance ideally decreases each generation.
 
 ### Archetype library (`archetypes.ts`)
 
-| ID | Name | Key targets |
-|---|---|---|
-| `elite-turf-stayer` | Classic Turf Stayer | High stamina, distance 2400m+, surface Turf, style S/P |
-| `dirt-sprinter` | Dirt Sprinter | High speed, fiber sprinter, distance ≤1200m, surface Dirt |
-| `classic-miler` | Classic Miler | Balanced speed/stamina, distance 1600m, versatile surface |
-| `turf-specialist` | Turf Specialist | High acceleration, cornering, climbing, surface Turf |
-| `iron-horse` | Iron Horse | High durability, recovery, consistency, low health risk |
-| `early-developer` | Precocious 2YO | Low peakAge, high acceleration, sprinter/miler |
-| `late-bloomer` | Stayer's Stayer | High peakAge, stamina dominant, trainability |
-| `all-weather` | All-Surface Ace | Versatile surface, balanced stats, high mental |
+| ID                  | Name                | Key targets                                               |
+| ------------------- | ------------------- | --------------------------------------------------------- |
+| `elite-turf-stayer` | Classic Turf Stayer | High stamina, distance 2400m+, surface Turf, style S/P    |
+| `dirt-sprinter`     | Dirt Sprinter       | High speed, fiber sprinter, distance ≤1200m, surface Dirt |
+| `classic-miler`     | Classic Miler       | Balanced speed/stamina, distance 1600m, versatile surface |
+| `turf-specialist`   | Turf Specialist     | High acceleration, cornering, climbing, surface Turf      |
+| `iron-horse`        | Iron Horse          | High durability, recovery, consistency, low health risk   |
+| `early-developer`   | Precocious 2YO      | Low peakAge, high acceleration, sprinter/miler            |
+| `late-bloomer`      | Stayer's Stayer     | High peakAge, stamina dominant, trainability              |
+| `all-weather`       | All-Surface Ace     | Versatile surface, balanced stats, high mental            |
 
 ### `BreedingProgram` type (`programs.ts`)
 
@@ -259,7 +259,7 @@ type BreedingProgram = {
   createdDay: number;
   generationCount: number;
   bestHorseId: string | null;
-  geneticDistance: number;           // 0–1, lower is better
+  geneticDistance: number; // 0–1, lower is better
   milestones: ProgramMilestone[];
   enrolledDamIds: string[];
   history: { day: number; distance: number; horseId: string }[];
@@ -279,14 +279,15 @@ type BreedingProgram = {
 
 **Program assignment at stable creation:**
 
-| Personality | Default archetype | Archetype weight in `scoreStallion` | Commitment |
-|---|---|---|---|
-| `breeder` | `classic-miler` | 20% | Medium — tiebreaker between equal-scored stallions |
-| `developer` | `early-developer` or `all-weather` | 10% | Low — subordinate to value; pivots if market shifts |
-| `prestige` | `elite-turf-stayer` or `turf-specialist` | 30% | Very high — program is stable identity |
-| `specialist` | Derived from `preferredDistance` + `preferredSurface` | 40% | Absolute — never switches |
+| Personality  | Default archetype                                     | Archetype weight in `scoreStallion` | Commitment                                          |
+| ------------ | ----------------------------------------------------- | ----------------------------------- | --------------------------------------------------- |
+| `breeder`    | `classic-miler`                                       | 20%                                 | Medium — tiebreaker between equal-scored stallions  |
+| `developer`  | `early-developer` or `all-weather`                    | 10%                                 | Low — subordinate to value; pivots if market shifts |
+| `prestige`   | `elite-turf-stayer` or `turf-specialist`              | 30%                                 | Very high — program is stable identity              |
+| `specialist` | Derived from `preferredDistance` + `preferredSurface` | 40%                                 | Absolute — never switches                           |
 
 `specialist` archetype derivation from `preferredDistance` + `preferredSurface`:
+
 - long (≥2000m) + Turf → `elite-turf-stayer`
 - long (≥2000m) + Dirt → `late-bloomer`
 - short (≤1400m) + Dirt → `dirt-sprinter`
@@ -310,8 +311,14 @@ type BreedingProgram = {
 ```ts
 // archetypeFitDelta: positive = reduces genetic distance to program target
 const PROGRAM_WEIGHT: Record<Stable["personality"], number> = {
-  breeder: 0.20, developer: 0.10, prestige: 0.30, specialist: 0.40,
-  aggressive: 0, conservative: 0, "win-now": 0, trader: 0,
+  breeder: 0.2,
+  developer: 0.1,
+  prestige: 0.3,
+  specialist: 0.4,
+  aggressive: 0,
+  conservative: 0,
+  "win-now": 0,
+  trader: 0,
 };
 const programTerm = archetypeFitDelta * PROGRAM_WEIGHT[stable.personality];
 // Added to existing score sum
@@ -321,8 +328,12 @@ const programTerm = archetypeFitDelta * PROGRAM_WEIGHT[stable.personality];
 
 ```ts
 activeProgram: BreedingProgram | null;
-programDistanceHistory: { season: number; distance: number }[];
-programSwitchCooldown: number;  // days until switch allowed
+programDistanceHistory: {
+  season: number;
+  distance: number;
+}
+[];
+programSwitchCooldown: number; // days until switch allowed
 ```
 
 Learning integration: when `recordBreedingOutcome` fires, if foal's genetic distance to program is lower than the dam's → success signal for that stallion × program combination. If higher (regression) → failure signal. `strategyConfidence` builds as distance trends downward; when it falls below 0.4 the NPC diversifies — enrolls 1–2 mares outside the program per season to hedge.
@@ -353,17 +364,17 @@ function cachedBloodline(horse: Horse, state): Bloodline;
 // Compatibility: invalidated when either horse gains a race result
 const compatCache = new Map<string, CompatibilityResult>();
 function cachedCompat(sire: Horse, dam: Horse): CompatibilityResult;
-function invalidateCompatFor(horseId: string): void;  // called after race results applied
+function invalidateCompatFor(horseId: string): void; // called after race results applied
 ```
 
 ### Invalidation rules
 
-| Cache | Invalidation trigger |
-|---|---|
-| COI | Never — pedigree is immutable |
-| Bloodline | Never — sire line doesn't change |
+| Cache         | Invalidation trigger                                                       |
+| ------------- | -------------------------------------------------------------------------- |
+| COI           | Never — pedigree is immutable                                              |
+| Bloodline     | Never — sire line doesn't change                                           |
 | Compatibility | When `careerWins`, `earnings`, or `blueHenStatus` changes for either horse |
-| Simulator | When genetic testing reveals new alleles for either horse |
+| Simulator     | When genetic testing reveals new alleles for either horse                  |
 
 ### Expected impact
 

@@ -112,7 +112,9 @@ export function runNpcCycle(
 
     // AI-driven claiming withdrawals
     // Check horses entered in claiming races and decide whether to withdraw
-    const claimingRaces = races.filter((r) => r.raceClass === "Claiming" && r.day === currentDay + raceEntryDaysAhead);
+    const claimingRaces = races.filter(
+      (r) => r.raceClass === "Claiming" && r.day === currentDay + raceEntryDaysAhead,
+    );
     for (const race of claimingRaces) {
       const entry = race.entries.find((e) => {
         const horse = horsesAfterTraining.find((h) => h.id === e.horseId);
@@ -121,12 +123,26 @@ export function runNpcCycle(
       if (entry) {
         const horse = horsesAfterTraining.find((h) => h.id === entry.horseId);
         if (horse) {
-          const shouldWithdraw = shouldWithdrawHorse(stableAIState.withdrawalAI, horse, race, stable, currentDay);
+          const shouldWithdraw = shouldWithdrawHorse(
+            stableAIState.withdrawalAI,
+            horse,
+            race,
+            stable,
+            currentDay,
+          );
           if (shouldWithdraw) {
             // Mark entry as withdrawn from claiming
             entry.withdrawnFromClaiming = true;
             // Record withdrawal decision for AI learning
-            recordWithdrawalDecision(stableAIState.withdrawalAI, horse, race, stable, true, "risk_assessment", currentDay);
+            recordWithdrawalDecision(
+              stableAIState.withdrawalAI,
+              horse,
+              race,
+              stable,
+              true,
+              "risk_assessment",
+              currentDay,
+            );
           }
         }
       }
@@ -136,9 +152,14 @@ export function runNpcCycle(
     if (npcFacilities && npcFacilities[stable.id]) {
       const facilities = npcFacilities[stable.id];
       const facilityBudget = calculateFacilityBudget(stableAIState.facilityAI, stable, currentDay);
-      
+
       if (facilityBudget.upgradeBudget > 0 && stable.cash >= facilityBudget.upgradeBudget) {
-        const facilityToUpgrade = selectFacilityToUpgrade(stableAIState.facilityAI, facilities as any, stable, currentDay);
+        const facilityToUpgrade = selectFacilityToUpgrade(
+          stableAIState.facilityAI,
+          facilities as any,
+          stable,
+          currentDay,
+        );
         if (facilityToUpgrade) {
           const currentFacility = facilities[facilityToUpgrade];
           const upgraded = upgradeFacility(currentFacility, currentDay);

@@ -33,7 +33,8 @@ export const ORIGINAL_ARCHETYPES: Archetype[] = [
   {
     id: "elite-turf-stayer",
     name: "Elite Turf Stayer",
-    description: "High stamina for long turf races, balanced speed/stamina, surface Turf, style S/P",
+    description:
+      "High stamina for long turf races, balanced speed/stamina, surface Turf, style S/P",
     targetPhenotype: {
       speed: 0.7,
       stamina: 0.9,
@@ -175,7 +176,8 @@ export const TRIPLE_CROWN_ARCHETYPES: Archetype[] = [
   {
     id: "triple-crown-usa",
     name: "USA Triple Crown Specialist",
-    description: "Focus on US Triple Crown. High stamina for 1.5 mile Belmont, balanced speed/stamina for Derby/Preakness, high durability for 3-race series in 5 weeks, surface Dirt, style P/S, peakAge 3",
+    description:
+      "Focus on US Triple Crown. High stamina for 1.5 mile Belmont, balanced speed/stamina for Derby/Preakness, high durability for 3-race series in 5 weeks, surface Dirt, style P/S, peakAge 3",
     targetPhenotype: {
       speed: 0.8,
       stamina: 0.85,
@@ -192,7 +194,8 @@ export const TRIPLE_CROWN_ARCHETYPES: Archetype[] = [
   {
     id: "triple-crown-canada",
     name: "Canadian Triple Crown Specialist",
-    description: "Focus on Canadian Triple Crown. Similar to USA but with Canadian race conditions (Woodbine track). High stamina for longest leg, balanced speed/stamina for shorter legs, high durability for series, surface Dirt or Synthetic, style P/S, peakAge 3",
+    description:
+      "Focus on Canadian Triple Crown. Similar to USA but with Canadian race conditions (Woodbine track). High stamina for longest leg, balanced speed/stamina for shorter legs, high durability for series, surface Dirt or Synthetic, style P/S, peakAge 3",
     targetPhenotype: {
       speed: 0.75,
       stamina: 0.85,
@@ -209,7 +212,8 @@ export const TRIPLE_CROWN_ARCHETYPES: Archetype[] = [
   {
     id: "triple-crown-uk-classics",
     name: "UK Classics Specialist",
-    description: "Focus on UK Classics. Turf surface, varying distances (1 mile to 1.75 mile), longer series duration (May-September), high stamina for St Leger, balanced speed/stamina for Guineas and Derby, surface Turf, style P/S, peakAge 3",
+    description:
+      "Focus on UK Classics. Turf surface, varying distances (1 mile to 1.75 mile), longer series duration (May-September), high stamina for St Leger, balanced speed/stamina for Guineas and Derby, surface Turf, style P/S, peakAge 3",
     targetPhenotype: {
       speed: 0.75,
       stamina: 0.9,
@@ -226,7 +230,8 @@ export const TRIPLE_CROWN_ARCHETYPES: Archetype[] = [
   {
     id: "triple-crown-specialist",
     name: "Triple Crown Specialist",
-    description: "Aggressive focus on Triple Crown achievement regardless of region. Very high stamina (for longest leg), high speed (for shortest leg), elite durability and recovery, zero health risks, peakAge exactly 3, mental excellent, trainability excellent, surface versatile",
+    description:
+      "Aggressive focus on Triple Crown achievement regardless of region. Very high stamina (for longest leg), high speed (for shortest leg), elite durability and recovery, zero health risks, peakAge exactly 3, mental excellent, trainability excellent, surface versatile",
     targetPhenotype: {
       speed: 0.85,
       stamina: 0.9,
@@ -245,10 +250,7 @@ export const TRIPLE_CROWN_ARCHETYPES: Archetype[] = [
 /**
  * All archetypes combined
  */
-export const ALL_ARCHETYPES: Archetype[] = [
-  ...ORIGINAL_ARCHETYPES,
-  ...TRIPLE_CROWN_ARCHETYPES,
-];
+export const ALL_ARCHETYPES: Archetype[] = [...ORIGINAL_ARCHETYPES, ...TRIPLE_CROWN_ARCHETYPES];
 
 /**
  * Get archetype by ID
@@ -260,6 +262,8 @@ export function getArchetypeById(id: string): Archetype | undefined {
 /**
  * Get archetypes by surface preference
  */
-export function getArchetypesBySurface(surface: "Turf" | "Dirt" | "Synthetic" | "Versatile"): Archetype[] {
+export function getArchetypesBySurface(
+  surface: "Turf" | "Dirt" | "Synthetic" | "Versatile",
+): Archetype[] {
   return ALL_ARCHETYPES.filter((a) => a.targetPhenotype.surface === surface);
 }

@@ -86,11 +86,11 @@ The most important density pattern in Gallop. A horse, a race, or an entry shown
 
 ### Filter copy
 
-| Use | Example |
-|---|---|
-| Default option | *"All surfaces"* (not *"Any"*, not *"None"*) |
-| Empty filter result | *"No horses match your filters."* + reset button |
-| Plural counts | *"Showing 12 of 47 horses"* |
+| Use                 | Example                                          |
+| ------------------- | ------------------------------------------------ |
+| Default option      | _"All surfaces"_ (not _"Any"_, not _"None"_)     |
+| Empty filter result | _"No horses match your filters."_ + reset button |
+| Plural counts       | _"Showing 12 of 47 horses"_                      |
 
 ### URL state
 
@@ -111,6 +111,7 @@ Rule of thumb: **left = identity, right = numbers, middle = qualifiers.**
 ```
 
 The eye should be able to:
+
 - Identify the row in 0.3s (silk + name).
 - Categorise it in 0.6s (qualifiers).
 - Compare it to the next row in 1.2s (numbers).

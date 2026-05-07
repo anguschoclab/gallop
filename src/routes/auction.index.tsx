@@ -5,9 +5,9 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import { KIND_LABELS, CONSIGNMENT_COMMISSION, isLotEligible } from "@/game/auction";
-import { Gavel, Clock, CheckCircle, Sparkles } from "lucide-react";
+import { gameCalendarDate, dayOfYear } from "@/core/calendar/dateFormatting";
+import { KIND_LABELS, CONSIGNMENT_COMMISSION, isLotEligible, SALE_TRIGGERS } from "@/game/auction";
+import { Gavel, Clock, CheckCircle, Sparkles, Calendar as CalendarIcon } from "lucide-react";
 import { NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/utils";
@@ -24,10 +24,32 @@ function AuctionPage() {
   const day = useGame((s) => s.day);
 
   const [consignOpen, setConsignOpen] = useState(false);
-  const [consignTarget, setConsignTarget] = useState<{ horse: Horse; sale: AuctionSale } | null>(null);
+  const [consignTarget, setConsignTarget] = useState<{ horse: Horse; sale: AuctionSale } | null>(
+    null,
+  );
 
-  const upcoming = auctions.filter((a) => !a.resolved).sort((a, b) => a.day - b.day);
-  const todaysSales = upcoming.filter((s) => s.day === day);
+  const activeUpcoming = auctions.filter((a) => !a.resolved).sort((a, b) => a.day - b.day);
+  const todaysSales = activeUpcoming.filter((s) => s.day === day);
+
+  // Mix active upcoming with scheduled upcoming (from SALE_TRIGGERS)
+  const allUpcoming = SALE_TRIGGERS.map((t) => {
+    const actual = activeUpcoming.find((a) => a.kind === t.kind);
+    if (actual) return actual;
+
+    const currentDoy = dayOfYear(day);
+    const daysAway = t.doy >= currentDoy ? t.doy - currentDoy : 365 - currentDoy + t.doy;
+    const futureDay = day + daysAway;
+
+    return {
+      id: `scheduled-${t.kind}`,
+      name: t.name,
+      kind: t.kind,
+      day: futureDay,
+      lots: [],
+      resolved: false,
+      isScheduled: true, // Custom flag to mark it as not fully generated
+    };
+  }).sort((a, b) => a.day - b.day);
 
   const past = auctions
     .filter((a) => a.resolved)
@@ -38,12 +60,11 @@ function AuctionPage() {
   const playerHorses = horses.filter((h) => h.owned && !h.consignedSaleId);
 
   /**
-   * For each player horse, find the next upcoming sale where it's eligible.
-   * Uses the same eligibility logic as the runner so the player sees only
-   * sales that will actually accept the horse.
+   * For each player horse, find the next active upcoming sale where it's eligible.
+   * We only allow consigning to fully generated active sales.
    */
   function findEligibleSale(horse: Horse): AuctionSale | undefined {
-    return upcoming.find((sale) => isLotEligible(horse, sale.kind));
+    return activeUpcoming.find((sale) => isLotEligible(horse, sale.kind));
   }
 
   const consignablePairs = playerHorses
@@ -62,7 +83,8 @@ function AuctionPage() {
           Sales
         </h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">
-          Eight sales a year — weanlings, yearlings, 2YOs in training, mixed, racing-age, and broodmare dispersals.
+          Eight sales a year — weanlings, yearlings, 2YOs in training, mixed, racing-age, and
+          broodmare dispersals.
         </p>
       </div>
 
@@ -85,7 +107,8 @@ function AuctionPage() {
                   <h3 className="text-xl font-bold">{sale.name}</h3>
                   <p className="text-sm text-cream-muted">
                     {KIND_LABELS[sale.kind] ?? sale.kind} ·{" "}
-                    <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots in the ring
+                    <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots in
+                    the ring
                   </p>
                 </div>
                 <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
@@ -105,23 +128,28 @@ function AuctionPage() {
         <h2 className="text-lg font-semibold font-[family-name:var(--font-display)]">
           Upcoming Sales
         </h2>
-        {upcoming.length === 0 ? (
+        {allUpcoming.length === 0 ? (
           <Card className="border-gold-muted">
             <CardContent className="p-6 text-center text-cream-muted text-sm font-[family-name:var(--font-body)] italic">
               No sales on the calendar. The ring will open again soon.
             </CardContent>
           </Card>
         ) : (
-          upcoming.map((sale) => {
+          allUpcoming.map((sale: any) => {
             const daysAway = sale.day - day;
-            const playerLots = sale.lots.filter((l) => !l.consignorStableId && !l.withdrawn);
+            const playerLots = sale.lots
+              ? sale.lots.filter((l: any) => !l.consignorStableId && !l.withdrawn)
+              : [];
             const isToday = daysAway === 0;
+            const isScheduled = sale.isScheduled;
+
             return (
               <Card
                 key={sale.id}
                 className={cn(
                   "border-l-4 border-gold-muted",
-                  isToday ? "border-l-warning" : "border-l-gold"
+                  isToday ? "border-l-warning" : "border-l-gold",
+                  isScheduled && "opacity-80 border-dashed",
                 )}
               >
                 <CardHeader className="pb-2">
@@ -136,8 +164,17 @@ function AuctionPage() {
                         </Badge>
                       </div>
                       <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
-                        {gameCalendarDate(sale.day)} ·{" "}
-                        <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots
+                        {gameCalendarDate(sale.day)}
+                        {!isScheduled && (
+                          <>
+                            {" "}
+                            ·{" "}
+                            <NumericValue
+                              value={sale.lots.filter((l: any) => !l.withdrawn).length}
+                            />{" "}
+                            lots
+                          </>
+                        )}
                         {daysAway > 0 && (
                           <>
                             {" "}
@@ -156,12 +193,23 @@ function AuctionPage() {
                       {playerLots.length > 1 ? "s" : ""} consigned
                     </p>
                   )}
-                  <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
-                    <Button size="sm" className="w-full" variant={isToday ? "default" : "secondary"}>
-                      <Gavel className="h-4 w-4 mr-2" />
-                      {isToday ? "Enter Ring" : "Preview Lots"}
+                  {isScheduled ? (
+                    <Button size="sm" className="w-full" variant="secondary" disabled>
+                      <CalendarIcon className="h-4 w-4 mr-2 opacity-50" />
+                      Catalog opens {gameCalendarDate(sale.day)}
                     </Button>
-                  </Link>
+                  ) : (
+                    <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        variant={isToday ? "default" : "secondary"}
+                      >
+                        <Gavel className="h-4 w-4 mr-2" />
+                        {isToday ? "Enter Ring" : "Preview Lots"}
+                      </Button>
+                    </Link>
+                  )}
                 </CardContent>
               </Card>
             );
@@ -193,7 +241,8 @@ function AuctionPage() {
                       {horse.name}
                     </p>
                     <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                      {ageLabel(horse)} · {horse.gender} · → {sale.name.split(" ").slice(0, 3).join(" ")}
+                      {ageLabel(horse)} · {horse.gender} · →{" "}
+                      {sale.name.split(" ").slice(0, 3).join(" ")}
                     </p>
                   </div>
                 </div>

@@ -13,10 +13,16 @@ describe("inheritTrait — order independence", () => {
 
     const base = generateGenotype(rng, "mid");
 
-    const sireExcellent = { ...base, markers: { ...base.markers, sensoryPerception: "excellent" as const } };
+    const sireExcellent = {
+      ...base,
+      markers: { ...base.markers, sensoryPerception: "excellent" as const },
+    };
     const damGood = { ...base, markers: { ...base.markers, sensoryPerception: "good" as const } };
     const sireGood = { ...base, markers: { ...base.markers, sensoryPerception: "good" as const } };
-    const damExcellent = { ...base, markers: { ...base.markers, sensoryPerception: "excellent" as const } };
+    const damExcellent = {
+      ...base,
+      markers: { ...base.markers, sensoryPerception: "excellent" as const },
+    };
 
     let excellentFromSireFirst = 0;
     let excellentFromDamFirst = 0;
@@ -78,7 +84,7 @@ describe("breedingSimulator — RNG diversity", () => {
 
     // Force contrasting fiber types so both values appear in offspring
     sire.fiberType = [5, 1]; // heterozygous
-    dam.fiberType = [5, 1];  // heterozygous
+    dam.fiberType = [5, 1]; // heterozygous
 
     const sireHorse = { id: "s1", genotype: sire, pedigree: undefined } as any;
     const damHorse = { id: "d1", genotype: dam, pedigree: undefined } as any;
@@ -103,7 +109,10 @@ describe("inheritDNA — style locus chromosome linkage", () => {
     const base = generateGenotype(rng, "mid");
 
     // Both parents: high acceleration loci, early-foot style (low style value = E/EP)
-    const highAccel: typeof base.stats.acceleration = Array.from({ length: 10 }, () => [5, 5] as [number, number]);
+    const highAccel: typeof base.stats.acceleration = Array.from(
+      { length: 10 },
+      () => [5, 5] as [number, number],
+    );
     const earlyStyle: [number, number] = [1, 1]; // resolves to "E"
 
     const sire = { ...base, stats: { ...base.stats, acceleration: highAccel }, style: earlyStyle };

@@ -12,12 +12,12 @@ Two related screens. Tomás's home turf.
 
 ## At a glance
 
-| | Breeding | Broodmares |
-|---|---|---|
-| **Route** | `/breeding` ([breeding.tsx](../../../src/routes/breeding.tsx)) | `/broodmares` ([broodmares.tsx](../../../src/routes/broodmares.tsx)) |
-| **Persona** | Tomás (deeply), Maya (statistically) | Tomás |
-| **Primary verb** | Match (cover a mare with a sire) | Manage (track pregnancies, foaling) |
-| **Layout** | AppShell | AppShell |
+|                  | Breeding                                                       | Broodmares                                                           |
+| ---------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Route**        | `/breeding` ([breeding.tsx](../../../src/routes/breeding.tsx)) | `/broodmares` ([broodmares.tsx](../../../src/routes/broodmares.tsx)) |
+| **Persona**      | Tomás (deeply), Maya (statistically)                           | Tomás                                                                |
+| **Primary verb** | Match (cover a mare with a sire)                               | Manage (track pregnancies, foaling)                                  |
+| **Layout**       | AppShell                                                       | AppShell                                                             |
 
 ## Purpose
 
@@ -29,7 +29,7 @@ Two related screens. Tomás's home turf.
 
 ### Breeding
 
-1. Player wants to breed *Athena* (a mare).
+1. Player wants to breed _Athena_ (a mare).
 2. Goes to `/breeding`.
 3. Picks Athena from the mare selector.
 4. Browses sire options — owned stallions, or external (paid) covers.
@@ -88,18 +88,18 @@ Two related screens. Tomás's home turf.
 
 ## Copy
 
-- Cover CTA: *"Confirm cover — $40,000"*.
-- Mare status badges: *"Open"*, *"In foal"*, *"Nursing"*, *"Retired"*.
-- Confirm modal: *"Cover Athena with Galileo II?"* / *"Stud fee: $40,000. Foal expected Year 4, Mar 22."* / `[Cancel]` `[Confirm cover]`.
-- Empty mares: *"No mares yet."* / *"Buy a mare at the auction or retire one of your fillies."*
+- Cover CTA: _"Confirm cover — $40,000"_.
+- Mare status badges: _"Open"_, _"In foal"_, _"Nursing"_, _"Retired"_.
+- Confirm modal: _"Cover Athena with Galileo II?"_ / _"Stud fee: $40,000. Foal expected Year 4, Mar 22."_ / `[Cancel]` `[Confirm cover]`.
+- Empty mares: _"No mares yet."_ / _"Buy a mare at the auction or retire one of your fillies."_
 
 ## States
 
 - Default — mare/sire pickers, compatibility view.
-- Mare not selected — empty right pane: *"Select a mare to begin."*
-- Sire not selected — empty radar: *"Pick a sire to see compatibility."*
+- Mare not selected — empty right pane: _"Select a mare to begin."_
+- Sire not selected — empty radar: _"Pick a sire to see compatibility."_
 - Cover confirmed — mare moves to in-foal, success toast, screen returns to mare picker.
-- Mare ineligible — disabled card with reason (*"Already in foal"*).
+- Mare ineligible — disabled card with reason (_"Already in foal"_).
 
 ## Accessibility
 
@@ -108,5 +108,5 @@ Two related screens. Tomás's home turf.
 
 ## Open questions
 
-- Should we surface "famous crosses" (e.g. *Northern Dancer × Ribot*) as a discoverability layer for Tomás? Future.
-- Where does *embryo transfer* fit, if introduced? Probably as a checkbox option at cover time.
+- Should we surface "famous crosses" (e.g. _Northern Dancer × Ribot_) as a discoverability layer for Tomás? Future.
+- Where does _embryo transfer_ fit, if introduced? Probably as a checkbox option at cover time.

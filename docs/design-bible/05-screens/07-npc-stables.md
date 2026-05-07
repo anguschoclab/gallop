@@ -56,7 +56,7 @@ This screen is the **meta layer** — what's happening in the wider sport. Maya 
 └────────────────────────────────────────────────┘
 ```
 
-**Fog-of-war**: rival horses show stats in ranges (*"Speed 70–85"*) rather than exact values, mirroring FM's scout system. The longer the player races against them, the tighter the range.
+**Fog-of-war**: rival horses show stats in ranges (_"Speed 70–85"_) rather than exact values, mirroring FM's scout system. The longer the player races against them, the tighter the range.
 
 ## Components used
 
@@ -65,22 +65,22 @@ This screen is the **meta layer** — what's happening in the wider sport. Maya 
 
 ## Copy
 
-- Title: *"Rival stables"*.
-- Style badge values: *"Aggressive"*, *"Conservative"*, *"Breeder"*, *"Prestige"*, *"Volume"* (one chip per stable).
-- Stat range copy: *"Speed 70–85"* (don't show *"Speed: ?"*).
-- Empty: *"No data yet — race against them to learn more."*
+- Title: _"Rival stables"_.
+- Style badge values: _"Aggressive"_, _"Conservative"_, _"Breeder"_, _"Prestige"_, _"Volume"_ (one chip per stable).
+- Stat range copy: _"Speed 70–85"_ (don't show _"Speed: ?"_).
+- Empty: _"No data yet — race against them to learn more."_
 
 ## States
 
 - Default list.
-- New stable (no race history yet) — copy *"Newly entered. No record yet."*
+- New stable (no race history yet) — copy _"Newly entered. No record yet."_
 - Drilled detail with tabs.
 
 ## Accessibility
 
-- Range values must include `aria-label` (*"Speed estimate, between 70 and 85"*) for screen readers.
+- Range values must include `aria-label` (_"Speed estimate, between 70 and 85"_) for screen readers.
 
 ## Open questions
 
-- Should we show the rival's *best result against the player* as a stat (head-to-head record)? Tracked.
+- Should we show the rival's _best result against the player_ as a stat (head-to-head record)? Tracked.
 - Do rivals have voiced personality copy? Probably not — too costly to maintain at scale.

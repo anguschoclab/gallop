@@ -209,7 +209,7 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
       }
 
       case "consignment": {
-        const { horseId, saleId, reservePrice } = impact;
+        const { horseId, saleId, reservePrice, consignorStableId, breezeSeconds } = impact;
         const horse = draft.horses.find((h) => h.id === horseId);
         if (horse) {
           horse.consignedSaleId = saleId;
@@ -220,9 +220,11 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
             id: generateUUID(),
             horseId,
             saleId,
+            consignorStableId,
             reservePrice,
             passed: false,
             withdrawn: false,
+            breezeSeconds,
           });
         }
         break;
@@ -521,6 +523,7 @@ export function validateIntent(
     case "training": {
       const horse = state.horses.find((h) => h.id === intent.horseId);
       if (!horse) return { valid: false, reason: "Horse not found" };
+      if (horse.consignedSaleId) return { valid: false, reason: "Horse is consigned to an auction" };
       if (horse.energy < 20) return { valid: false, reason: "Insufficient energy" };
       break;
     }
@@ -529,6 +532,7 @@ export function validateIntent(
       const horse = state.horses.find((h) => h.id === intent.horseId);
       const race = state.races.find((r) => r.id === intent.raceId);
       if (!horse) return { valid: false, reason: "Horse not found" };
+      if (horse.consignedSaleId) return { valid: false, reason: "Horse is consigned to an auction" };
       if (!race) return { valid: false, reason: "Race not found" };
       if (race.resolved) return { valid: false, reason: "Race already resolved" };
       if (horse.energy < 40) return { valid: false, reason: "Insufficient energy" };
@@ -559,6 +563,7 @@ export function validateIntent(
       const horse = state.horses.find((h) => h.id === intent.horseId);
       if (!race) return { valid: false, reason: "Race not found" };
       if (!horse) return { valid: false, reason: "Horse not found" };
+      if (horse.consignedSaleId) return { valid: false, reason: "Horse is consigned to an auction" };
       if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
       if (!race.entries.some((e) => e.horseId === intent.horseId)) {
         return { valid: false, reason: "Horse is not entered in this race" };

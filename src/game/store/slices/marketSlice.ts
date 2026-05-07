@@ -3,7 +3,15 @@
  * Market-related state and actions for trading, auctions, and scouting
  */
 
-import type { Horse, AuctionSale, ScoutReport, PrivateSaleOffer, Claim, Stable, Race } from "@/game/types";
+import type {
+  Horse,
+  AuctionSale,
+  ScoutReport,
+  PrivateSaleOffer,
+  Claim,
+  Stable,
+  Race,
+} from "@/game/types";
 import type { MarketState } from "@/game/state/marketState";
 import { createDefaultMarketState } from "@/game/state/marketState";
 import { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
@@ -21,9 +29,17 @@ export type MarketSlice = MarketState & {
     cost: number;
     message: string;
   };
-  consignHorse: (horseId: string, saleId: string, reservePrice?: number) => { ok: true } | { ok: false; reason: string };
+  consignHorse: (
+    horseId: string,
+    saleId: string,
+    reservePrice?: number,
+  ) => { ok: true } | { ok: false; reason: string };
   withdrawConsignment: (horseId: string) => { ok: true } | { ok: false; reason: string };
-  placeBookBid: (saleId: string, lotId: string, amount: number) => { ok: true } | { ok: false; reason: string };
+  placeBookBid: (
+    saleId: string,
+    lotId: string,
+    amount: number,
+  ) => { ok: true } | { ok: false; reason: string };
   debitForLiveBid: (amount: number) => { ok: true } | { ok: false; reason: string };
   commitAuctionResult: (
     saleId: string,
@@ -33,7 +49,11 @@ export type MarketSlice = MarketState & {
   /** D1 — Buy-now: immediately resolve a lot at its buyNowPrice */
   buyNow: (saleId: string, lotId: string) => { ok: boolean; reason?: string };
   /** D2 — Propose a private sale offer to an NPC stable */
-  proposePrivateSale: (horseId: string, stableId: string, amount: number) => { ok: boolean; reason?: string };
+  proposePrivateSale: (
+    horseId: string,
+    stableId: string,
+    amount: number,
+  ) => { ok: boolean; reason?: string };
   /** D2 — Respond to a counter-offer (accept or decline) */
   respondToPrivateSale: (offerId: string, accept: boolean) => { ok: boolean; reason?: string };
   /** D3 — Enter a horse in a claiming race */
@@ -135,7 +155,9 @@ export function createMarketSlice(
       const baseValue = horsePriceWithPedigree(horse, s.horses);
       const finalReserve = Math.round(reservePrice ?? baseValue * DEFAULT_PLAYER_RESERVE_RATIO);
       set({
-        horses: s.horses.map((h: Horse) => (h.id === horseId ? { ...h, consignedSaleId: saleId } : h)),
+        horses: s.horses.map((h: Horse) =>
+          h.id === horseId ? { ...h, consignedSaleId: saleId } : h,
+        ),
         auctions: (s.auctions ?? []).map((a: AuctionSale) =>
           a.id === saleId
             ? {
@@ -174,9 +196,11 @@ export function createMarketSlice(
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === horse.consignedSaleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
       if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
-      
+
       set({
-        horses: s.horses.map((h: Horse) => (h.id === horseId ? { ...h, consignedSaleId: undefined } : h)),
+        horses: s.horses.map((h: Horse) =>
+          h.id === horseId ? { ...h, consignedSaleId: undefined } : h,
+        ),
         auctions: (s.auctions ?? []).map((a: AuctionSale) =>
           a.id === sale.id
             ? {
@@ -207,7 +231,7 @@ export function createMarketSlice(
       if (!lot) return { ok: false, reason: "Lot not found." };
       if (lot.withdrawn || lot.passed) return { ok: false, reason: "Lot not available." };
       if (s.cash < amount) return { ok: false, reason: "Insufficient funds." };
-      
+
       set({
         cash: s.cash - amount,
         auctions: (s.auctions ?? []).map((a: AuctionSale) =>
@@ -247,7 +271,7 @@ export function createMarketSlice(
       const s = get();
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
-      
+
       // Apply impacts via resolver (this would be handled by the main store's applyImpacts)
       // For now, just update the auction state
       set({
@@ -278,19 +302,20 @@ export function createMarketSlice(
     buyNow: (saleId: string, lotId: string) => {
       const s = get();
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
-      if (!sale) return { ok: false, reason: 'sale_not_found' };
-      if (sale.resolved) return { ok: false, reason: 'sale_resolved' };
+      if (!sale) return { ok: false, reason: "sale_not_found" };
+      if (sale.resolved) return { ok: false, reason: "sale_resolved" };
       // Broodmare sales never have buy-now; guard for degenerate state.
-      if (sale.kind === 'broodmare') return { ok: false, reason: 'buy_now_unavailable' };
+      if (sale.kind === "broodmare") return { ok: false, reason: "buy_now_unavailable" };
       const lot = sale.lots.find((l: any) => l.id === lotId);
-      if (!lot) return { ok: false, reason: 'lot_not_found' };
-      if (lot.buyNowPrice === undefined) return { ok: false, reason: 'buy_now_unavailable' };
+      if (!lot) return { ok: false, reason: "lot_not_found" };
+      if (lot.buyNowPrice === undefined) return { ok: false, reason: "buy_now_unavailable" };
       const buyNowPrice: number = lot.buyNowPrice;
-      if (s.cash < buyNowPrice) return { ok: false, reason: 'insufficient_funds' };
-      if (lot.withdrawn || lot.passed || lot.hammerPrice !== undefined) return { ok: false, reason: 'lot_not_available' };
+      if (s.cash < buyNowPrice) return { ok: false, reason: "insufficient_funds" };
+      if (lot.withdrawn || lot.passed || lot.hammerPrice !== undefined)
+        return { ok: false, reason: "lot_not_available" };
       const horse = s.horses.find((h: Horse) => h.id === lot.horseId);
-      if (!horse) return { ok: false, reason: 'horse_not_found' };
-      if (horse.owned) return { ok: false, reason: 'already_owned' };
+      if (!horse) return { ok: false, reason: "horse_not_found" };
+      if (horse.owned) return { ok: false, reason: "already_owned" };
 
       // Apply: debit cash, transfer horse, mark lot sold
       const updatedHorses = s.horses.map((h: Horse) =>
@@ -338,39 +363,39 @@ export function createMarketSlice(
     proposePrivateSale: (horseId: string, stableId: string, amount: number) => {
       const s = get();
       const horse = s.horses.find((h: Horse) => h.id === horseId);
-      if (!horse) return { ok: false, reason: 'horse_not_found' };
-      if (horse.stableId !== stableId) return { ok: false, reason: 'horse_not_in_stable' };
-      if (s.cash < amount) return { ok: false, reason: 'insufficient_funds' };
+      if (!horse) return { ok: false, reason: "horse_not_found" };
+      if (horse.stableId !== stableId) return { ok: false, reason: "horse_not_in_stable" };
+      if (s.cash < amount) return { ok: false, reason: "insufficient_funds" };
 
       // Duplicate offer guard
       const existingOffer = (s.privateSaleOffers ?? []).find(
         (o: PrivateSaleOffer) =>
           o.horseId === horseId &&
           o.fromStableId === undefined &&
-          (o.status === 'pending' || o.status === 'countered'),
+          (o.status === "pending" || o.status === "countered"),
       );
-      if (existingOffer) return { ok: false, reason: 'duplicate_offer' };
+      if (existingOffer) return { ok: false, reason: "duplicate_offer" };
 
       // Horse in auction guard
-      if (horse.consignedSaleId) return { ok: false, reason: 'horse_in_auction' };
+      if (horse.consignedSaleId) return { ok: false, reason: "horse_in_auction" };
 
       const stable: Stable | undefined = s.npcStables.find((st: Stable) => st.id === stableId);
-      if (!stable) return { ok: false, reason: 'stable_not_found' };
+      if (!stable) return { ok: false, reason: "stable_not_found" };
 
-      const valuation = calculateLotValuation(horse, stable, 'racing_age', s.horses);
+      const valuation = calculateLotValuation(horse, stable, "racing_age", s.horses);
       const offerId = generateUUID();
       const expiresDay = s.day + 3;
 
-      let status: PrivateSaleOffer['status'];
+      let status: PrivateSaleOffer["status"];
       let counterAmount: number | undefined;
 
-      if (amount >= valuation * 0.90) {
-        status = 'accepted';
-      } else if (amount >= valuation * 0.60) {
-        status = 'countered';
+      if (amount >= valuation * 0.9) {
+        status = "accepted";
+      } else if (amount >= valuation * 0.6) {
+        status = "countered";
         counterAmount = Math.round(valuation * 0.95);
       } else {
-        status = 'declined';
+        status = "declined";
       }
 
       const offer: PrivateSaleOffer = {
@@ -387,14 +412,20 @@ export function createMarketSlice(
 
       const newOffers = [...(s.privateSaleOffers ?? []), offer];
 
-      if (status === 'accepted') {
+      if (status === "accepted") {
         // Immediately transfer
         const updatedHorses = s.horses.map((h: Horse) =>
           h.id === horseId ? { ...h, owned: true, stableId: undefined } : h,
         );
         // Credit NPC stable
         const updatedStables = s.npcStables.map((st: Stable) =>
-          st.id === stableId ? { ...st, cash: st.cash + amount, horses: st.horses.filter((id: string) => id !== horseId) } : st,
+          st.id === stableId
+            ? {
+                ...st,
+                cash: st.cash + amount,
+                horses: st.horses.filter((id: string) => id !== horseId),
+              }
+            : st,
         );
         set({
           cash: s.cash - amount,
@@ -402,7 +433,10 @@ export function createMarketSlice(
           npcStables: updatedStables,
           privateSaleOffers: newOffers,
           log: [
-            { day: s.day, text: `${horse.name} acquired from ${stable.name} for $${amount.toLocaleString()}.` },
+            {
+              day: s.day,
+              text: `${horse.name} acquired from ${stable.name} for $${amount.toLocaleString()}.`,
+            },
             ...s.log,
           ].slice(0, 50),
         });
@@ -410,7 +444,10 @@ export function createMarketSlice(
         set({
           privateSaleOffers: newOffers,
           log: [
-            { day: s.day, text: `Private sale offer of $${amount.toLocaleString()} for ${horse.name} submitted to ${stable.name}.` },
+            {
+              day: s.day,
+              text: `Private sale offer of $${amount.toLocaleString()} for ${horse.name} submitted to ${stable.name}.`,
+            },
             ...s.log,
           ].slice(0, 50),
         });
@@ -424,26 +461,32 @@ export function createMarketSlice(
       const offer: PrivateSaleOffer | undefined = (s.privateSaleOffers ?? []).find(
         (o: PrivateSaleOffer) => o.id === offerId,
       );
-      if (!offer) return { ok: false, reason: 'offer_not_found' };
-      if (offer.status !== 'countered') return { ok: false, reason: 'offer_not_actionable' };
+      if (!offer) return { ok: false, reason: "offer_not_found" };
+      if (offer.status !== "countered") return { ok: false, reason: "offer_not_actionable" };
 
       if (accept) {
         const finalAmount = offer.counterAmount ?? offer.amount;
-        if (s.cash < finalAmount) return { ok: false, reason: 'insufficient_funds' };
+        if (s.cash < finalAmount) return { ok: false, reason: "insufficient_funds" };
         const horse = s.horses.find((h: Horse) => h.id === offer.horseId);
-        if (!horse) return { ok: false, reason: 'horse_not_found' };
-        const stable: Stable | undefined = s.npcStables.find((st: Stable) => st.id === offer.toStableId);
+        if (!horse) return { ok: false, reason: "horse_not_found" };
+        const stable: Stable | undefined = s.npcStables.find(
+          (st: Stable) => st.id === offer.toStableId,
+        );
 
         const updatedHorses = s.horses.map((h: Horse) =>
           h.id === offer.horseId ? { ...h, owned: true, stableId: undefined } : h,
         );
         const updatedStables = s.npcStables.map((st: Stable) =>
           st.id === offer.toStableId
-            ? { ...st, cash: st.cash + finalAmount, horses: st.horses.filter((id: string) => id !== offer.horseId) }
+            ? {
+                ...st,
+                cash: st.cash + finalAmount,
+                horses: st.horses.filter((id: string) => id !== offer.horseId),
+              }
             : st,
         );
         const updatedOffers = (s.privateSaleOffers ?? []).map((o: PrivateSaleOffer) =>
-          o.id === offerId ? { ...o, status: 'accepted' as const } : o,
+          o.id === offerId ? { ...o, status: "accepted" as const } : o,
         );
         set({
           cash: s.cash - finalAmount,
@@ -451,13 +494,16 @@ export function createMarketSlice(
           npcStables: updatedStables,
           privateSaleOffers: updatedOffers,
           log: [
-            { day: s.day, text: `Counter offer accepted. ${horse?.name ?? 'Horse'} joins your stable for $${finalAmount.toLocaleString()}.` },
+            {
+              day: s.day,
+              text: `Counter offer accepted. ${horse?.name ?? "Horse"} joins your stable for $${finalAmount.toLocaleString()}.`,
+            },
             ...s.log,
           ].slice(0, 50),
         });
       } else {
         const updatedOffers = (s.privateSaleOffers ?? []).map((o: PrivateSaleOffer) =>
-          o.id === offerId ? { ...o, status: 'declined' as const } : o,
+          o.id === offerId ? { ...o, status: "declined" as const } : o,
         );
         set({ privateSaleOffers: updatedOffers });
       }
@@ -472,29 +518,30 @@ export function createMarketSlice(
     enterClaimingRace: (raceId: string, horseId: string) => {
       const s = get();
       const race: Race | undefined = s.races.find((r: Race) => r.id === raceId);
-      if (!race) return { ok: false, reason: 'race_not_found' };
-      if (!race.claiming) return { ok: false, reason: 'not_claiming_race' };
+      if (!race) return { ok: false, reason: "race_not_found" };
+      if (!race.claiming) return { ok: false, reason: "not_claiming_race" };
       const horse = s.horses.find((h: Horse) => h.id === horseId);
-      if (!horse) return { ok: false, reason: 'horse_not_found' };
-      if (!horse.owned) return { ok: false, reason: 'not_owned' };
-      if (s.day >= race.day) return { ok: false, reason: 'entries_closed' };
-      if (race.entries.some((e: any) => e.horseId === horseId)) return { ok: false, reason: 'already_entered' };
+      if (!horse) return { ok: false, reason: "horse_not_found" };
+      if (!horse.owned) return { ok: false, reason: "not_owned" };
+      if (s.day >= race.day) return { ok: false, reason: "entries_closed" };
+      if (race.entries.some((e: any) => e.horseId === horseId))
+        return { ok: false, reason: "already_entered" };
 
       const updatedRaces = s.races.map((r: Race) =>
         r.id === raceId
           ? {
               ...r,
-              entries: [
-                ...r.entries,
-                { horseId, owned: true },
-              ],
+              entries: [...r.entries, { horseId, owned: true }],
             }
           : r,
       );
       set({
         races: updatedRaces,
         log: [
-          { day: s.day, text: `${horse.name} entered in ${race.name} (claiming $${race.claiming!.price.toLocaleString()}).` },
+          {
+            day: s.day,
+            text: `${horse.name} entered in ${race.name} (claiming $${race.claiming!.price.toLocaleString()}).`,
+          },
           ...s.log,
         ].slice(0, 50),
       });
@@ -519,7 +566,7 @@ export function createMarketSlice(
       set({
         races: updatedRaces,
         log: [
-          { day: s.day, text: `${horse?.name ?? 'Horse'} withdrawn from ${race.name}.` },
+          { day: s.day, text: `${horse?.name ?? "Horse"} withdrawn from ${race.name}.` },
           ...s.log,
         ].slice(0, 50),
       });
@@ -528,20 +575,21 @@ export function createMarketSlice(
     fileClaim: (raceId: string, horseId: string) => {
       const s = get();
       const race: Race | undefined = s.races.find((r: Race) => r.id === raceId);
-      if (!race) return { ok: false, reason: 'race_not_found' };
-      if (!race.claiming) return { ok: false, reason: 'not_claiming_race' };
+      if (!race) return { ok: false, reason: "race_not_found" };
+      if (!race.claiming) return { ok: false, reason: "not_claiming_race" };
       const horse = s.horses.find((h: Horse) => h.id === horseId);
-      if (!horse) return { ok: false, reason: 'horse_not_found' };
+      if (!horse) return { ok: false, reason: "horse_not_found" };
       // Self-claim prohibited
-      if (horse.owned) return { ok: false, reason: 'self_claim_prohibited' };
-      if (s.cash < race.claiming.price) return { ok: false, reason: 'insufficient_funds' };
-      if (s.day >= race.day) return { ok: false, reason: 'post_time_passed' };
+      if (horse.owned) return { ok: false, reason: "self_claim_prohibited" };
+      if (s.cash < race.claiming.price) return { ok: false, reason: "insufficient_funds" };
+      if (s.day >= race.day) return { ok: false, reason: "post_time_passed" };
 
       // Duplicate guard
       const duplicate = (s.claims ?? []).find(
-        (c: Claim) => c.raceId === raceId && c.horseId === horseId && c.claimantStableId === undefined,
+        (c: Claim) =>
+          c.raceId === raceId && c.horseId === horseId && c.claimantStableId === undefined,
       );
-      if (duplicate) return { ok: false, reason: 'duplicate_claim' };
+      if (duplicate) return { ok: false, reason: "duplicate_claim" };
 
       const claim: Claim = {
         id: generateUUID(),
@@ -554,7 +602,10 @@ export function createMarketSlice(
       set({
         claims: [...(s.claims ?? []), claim],
         log: [
-          { day: s.day, text: `Claim filed on ${horse.name} in ${race.name} for $${race.claiming.price.toLocaleString()}.` },
+          {
+            day: s.day,
+            text: `Claim filed on ${horse.name} in ${race.name} for $${race.claiming.price.toLocaleString()}.`,
+          },
           ...s.log,
         ].slice(0, 50),
       });

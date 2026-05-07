@@ -11,7 +11,7 @@ import { findHorseByName } from "@/core/data/pedigreeData";
 export function generateAncestorHomage(
   sireName: string | undefined,
   damName: string | undefined,
-  rng: Rng
+  rng: Rng,
 ): string | undefined {
   const ancestors: string[] = [];
 

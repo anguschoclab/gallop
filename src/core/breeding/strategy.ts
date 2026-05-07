@@ -4,10 +4,10 @@ import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
 
 // How much program archetype fit contributes to stallion score per personality.
 const PROGRAM_WEIGHT: Partial<Record<Stable["personality"], number>> = {
-  breeder: 0.20,
-  developer: 0.10,
-  prestige: 0.30,
-  specialist: 0.40,
+  breeder: 0.2,
+  developer: 0.1,
+  prestige: 0.3,
+  specialist: 0.4,
 };
 
 /**

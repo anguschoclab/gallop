@@ -82,9 +82,7 @@ export const claimResolutionPhase = {
       if (winnerClaim.claimantStableId) {
         // NPC wins the claim — debit NPC cash
         npcStables = npcStables.map((s: Stable) =>
-          s.id === winnerClaim.claimantStableId
-            ? { ...s, cash: Math.max(0, s.cash - price) }
-            : s,
+          s.id === winnerClaim.claimantStableId ? { ...s, cash: Math.max(0, s.cash - price) } : s,
         );
       } else {
         // Player wins the claim — debit player cash

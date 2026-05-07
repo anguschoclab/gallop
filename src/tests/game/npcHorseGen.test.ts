@@ -65,20 +65,26 @@ describe("generateNpcHorse", () => {
 
   it("specificAge is honored", () => {
     for (let i = 0; i < 10; i++) {
-      const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 5 });
+      const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+        forcedAge: 5,
+      });
       expect(h.age).toBe(5);
     }
   });
 
   it("specificGender is honored", () => {
     for (let i = 0; i < 10; i++) {
-      const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedGender: "mare" });
+      const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+        forcedGender: "mare",
+      });
       expect(h.gender).toBe("mare");
     }
   });
 
   it("hemisphere is honored when provided", () => {
-    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { hemisphere: "Southern" });
+    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      hemisphere: "Southern",
+    });
     expect(h.hemisphere).toBe("Southern");
   });
 
@@ -96,13 +102,17 @@ describe("generateNpcHorse", () => {
 
 describe("calculateNpcHorseValue", () => {
   it("result is rounded to nearest 100", () => {
-    const horse = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 4 });
+    const horse = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 4,
+    });
     const val = calculateNpcHorseValue(horse, "mid");
     expect(val % 100).toBe(0);
   });
 
   it("elite tier > mid tier > budget tier for same horse", () => {
-    const horse = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 4 });
+    const horse = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 4,
+    });
     const elite = calculateNpcHorseValue(horse, "elite");
     const mid = calculateNpcHorseValue(horse, "mid");
     const budget = calculateNpcHorseValue(horse, "budget");
@@ -111,8 +121,12 @@ describe("calculateNpcHorseValue", () => {
   });
 
   it("young horse (age 2) has higher value than old horse (age 8) for same stats", () => {
-    const young = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 2 });
-    const old = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 8 });
+    const young = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 2,
+    });
+    const old = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 8,
+    });
     // Use same stats for fair comparison — override manually
     const base = { speed: 60, stamina: 60, acceleration: 60, consistency: 60 };
     const youngVal = calculateNpcHorseValue({ ...young, stats: base, fame: 0 }, "mid");
@@ -125,27 +139,42 @@ describe("getStudFee", () => {
   const stable = mkStable("mid");
 
   it("returns 0 for mare", () => {
-    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 5, forcedGender: "mare" });
+    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 5,
+      forcedGender: "mare",
+    });
     expect(getStudFee(h, stable)).toBe(0);
   });
 
   it("returns 0 for filly", () => {
-    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 2, forcedGender: "filly" });
+    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 2,
+      forcedGender: "filly",
+    });
     expect(getStudFee(h, stable)).toBe(0);
   });
 
   it("returns 0 for horse younger than 4", () => {
-    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 3, forcedGender: "horse" });
+    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 3,
+      forcedGender: "horse",
+    });
     expect(getStudFee(h, stable)).toBe(0);
   });
 
   it("returns > 0 for horse age >= 4", () => {
-    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 5, forcedGender: "horse" });
+    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 5,
+      forcedGender: "horse",
+    });
     expect(getStudFee(h, stable)).toBeGreaterThan(0);
   });
 
   it("returns 0 for colt younger than 4", () => {
-    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 2, forcedGender: "colt" });
+    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 2,
+      forcedGender: "colt",
+    });
     expect(getStudFee(h, stable)).toBe(0);
   });
 });
@@ -154,17 +183,26 @@ describe("getBroodmareFee", () => {
   const stable = mkStable("mid");
 
   it("returns 0 for horse (male)", () => {
-    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 5, forcedGender: "horse" });
+    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 5,
+      forcedGender: "horse",
+    });
     expect(getBroodmareFee(h, stable)).toBe(0);
   });
 
   it("returns 0 for colt", () => {
-    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 2, forcedGender: "colt" });
+    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 2,
+      forcedGender: "colt",
+    });
     expect(getBroodmareFee(h, stable)).toBe(0);
   });
 
   it("returns 0 for filly age < 3", () => {
-    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, { forcedAge: 2, forcedGender: "filly" });
+    const h = generateNpcHorse(mkStable("mid"), createRng("test"), undefined, 1, {
+      forcedAge: 2,
+      forcedGender: "filly",
+    });
     expect(getBroodmareFee(h, stable)).toBe(0);
   });
 

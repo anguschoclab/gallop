@@ -40,6 +40,7 @@ The act of writing the spec surfaces 80% of the open questions. Don't skip this 
 ## Step 2 — Review the spec
 
 Bring the draft to:
+
 - A designer (mantra alignment, persona check).
 - An engineer (component / token / data feasibility).
 - Optionally product (verb / loop fit).
@@ -106,6 +107,7 @@ Run [07-quality/02-critique-heuristics.md](../07-quality/02-critique-heuristics.
 - Note any open questions the spec didn't resolve (these become engineering follow-ups).
 
 The PR template should ask:
+
 - [ ] Screen file in `docs/design-bible/05-screens/` exists.
 - [ ] Components used are documented (or a doc PR is open).
 - [ ] No inline hex / rgb / oklch values.
@@ -127,14 +129,15 @@ The PR template should ask:
 
 To prove the system holds, here's a thought experiment.
 
-**Step 0** — Persona: Maya (form study), Tomás (jockey-stallion connections). Verb: *Browse*. Loop: day loop.
+**Step 0** — Persona: Maya (form study), Tomás (jockey-stallion connections). Verb: _Browse_. Loop: day loop.
 
 **Step 1** — Spec:
+
 - Route: `/jockeys` (top-level — needs nav entry).
 - Layout: AppShell.
 - Components: `Card`, `Table`, new `JockeyCard` (domain component).
 - New tokens: none — uses existing palette.
-- New copy: title *"Jockeys"*, empty state *"No jockeys signed yet."*, filter labels.
+- New copy: title _"Jockeys"_, empty state _"No jockeys signed yet."_, filter labels.
 - States: default, filtered empty, no jockeys (first session).
 
 **Step 2** — Review surfaces: do we want jockeys at top-level nav, or under a `/staff` umbrella? (Open question logged on the spec.)
@@ -143,7 +146,7 @@ To prove the system holds, here's a thought experiment.
 
 **Step 4-7** — As above.
 
-**Verdict.** The system is sufficient. Tokens cover it; components compose; states have patterns; copy has a voice. The only open question (top-level vs. `/staff` umbrella) is a *product* question, not a *design* question.
+**Verdict.** The system is sufficient. Tokens cover it; components compose; states have patterns; copy has a voice. The only open question (top-level vs. `/staff` umbrella) is a _product_ question, not a _design_ question.
 
 This is what extensibility looks like.
 

@@ -10,12 +10,12 @@ owns: engineering:documentation
 
 ## At a glance
 
-| | Auction | Auction detail | Market |
-|---|---|---|---|
-| **Route** | `/auction` ([auction.tsx](../../../src/routes/auction.tsx)) | `/auction/$saleId` ([auction.$saleId.tsx](../../../src/routes/auction.$saleId.tsx)) | `/market` ([market.tsx](../../../src/routes/market.tsx)) |
-| **Persona** | All three | Maya, Tomás | Maya |
-| **Primary verb** | Browse / Bid | Bid / Inspect | Trade / Upgrade |
-| **Layout** | AppShell | AppShell | AppShell |
+|                  | Auction                                                     | Auction detail                                                                      | Market                                                   |
+| ---------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| **Route**        | `/auction` ([auction.tsx](../../../src/routes/auction.tsx)) | `/auction/$saleId` ([auction.$saleId.tsx](../../../src/routes/auction.$saleId.tsx)) | `/market` ([market.tsx](../../../src/routes/market.tsx)) |
+| **Persona**      | All three                                                   | Maya, Tomás                                                                         | Maya                                                     |
+| **Primary verb** | Browse / Bid                                                | Bid / Inspect                                                                       | Trade / Upgrade                                          |
+| **Layout**       | AppShell                                                    | AppShell                                                                            | AppShell                                                 |
 
 ## Purpose
 
@@ -89,12 +89,12 @@ owns: engineering:documentation
 
 ## Copy
 
-- Title: *"Sales"* (auction). *"Market"* (market).
-- Bid CTA: *"Bid $X"* (the number is the proposed bid).
-- Bid confirm: *"Place bid of $4,500 on Lot 12?"* / `[Cancel]` `[Place bid]`.
-- Won lot: toast *"Lot 12 won. Stardust joins your stable."*.
-- Outbid: toast *"Outbid on Lot 12. Current bid $4,750."*.
-- Empty: *"Sale complete. Next refresh tomorrow."*
+- Title: _"Sales"_ (auction). _"Market"_ (market).
+- Bid CTA: _"Bid $X"_ (the number is the proposed bid).
+- Bid confirm: _"Place bid of $4,500 on Lot 12?"_ / `[Cancel]` `[Place bid]`.
+- Won lot: toast _"Lot 12 won. Stardust joins your stable."_.
+- Outbid: toast _"Outbid on Lot 12. Current bid $4,750."_.
+- Empty: _"Sale complete. Next refresh tomorrow."_
 
 ## States
 
@@ -107,9 +107,9 @@ owns: engineering:documentation
 ## Accessibility
 
 - Bid amounts: numeric input with `inputMode="numeric"`, formatting on blur.
-- Live region announces outbid events (*"You've been outbid on Lot 12"*).
+- Live region announces outbid events (_"You've been outbid on Lot 12"_).
 
 ## Open questions
 
 - Buy-now vs. timed auction — both are useful. Currently the model is unclear; revisit when bidding system is finalised.
-- Is *market* the right home for jockey contracts? Or a separate `/staff` screen?
+- Is _market_ the right home for jockey contracts? Or a separate `/staff` screen?

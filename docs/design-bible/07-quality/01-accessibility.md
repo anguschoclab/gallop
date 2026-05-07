@@ -24,17 +24,18 @@ All text must meet:
 
 **Verified-OK pairings.**
 
-| Foreground / background | Theme | Notes |
-|---|---|---|
-| `text-foreground` on `bg-background` | Light | Built into the OKLCH design. |
-| `text-foreground` on `bg-card` | Light | Card surface inherits backdrop. |
-| `text-muted-foreground` on `bg-background` | Light | Verified ≥4.5:1. |
-| `text-muted-foreground` on `bg-muted` | Light | Borderline — verify before relying on it for body copy. **Don't put long copy on `bg-muted` in light theme.** |
-| `text-primary-foreground` on `bg-primary` | Both | Token pair guarantees inversion contrast. |
-| White on emerald-950 (race screen) | Broadcast (current) | Verified ~10:1. |
-| White-at-70% on emerald-950 | Broadcast (current) | ~7:1 — OK for secondary text. |
+| Foreground / background                    | Theme               | Notes                                                                                                         |
+| ------------------------------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `text-foreground` on `bg-background`       | Light               | Built into the OKLCH design.                                                                                  |
+| `text-foreground` on `bg-card`             | Light               | Card surface inherits backdrop.                                                                               |
+| `text-muted-foreground` on `bg-background` | Light               | Verified ≥4.5:1.                                                                                              |
+| `text-muted-foreground` on `bg-muted`      | Light               | Borderline — verify before relying on it for body copy. **Don't put long copy on `bg-muted` in light theme.** |
+| `text-primary-foreground` on `bg-primary`  | Both                | Token pair guarantees inversion contrast.                                                                     |
+| White on emerald-950 (race screen)         | Broadcast (current) | Verified ~10:1.                                                                                               |
+| White-at-70% on emerald-950                | Broadcast (current) | ~7:1 — OK for secondary text.                                                                                 |
 
 **Things to watch.**
+
 - **Yellow-400 Beyer badges** on emerald-950: contrast ~6:1 — OK at the badge's tiny size, but don't push to long copy.
 - **Silk colours** on the race screen: silks are user-facing identifiers, not text — the white border around the silk dot is what carries the accessibility role. Never put text directly on a silk colour.
 - **`text-muted-foreground` on `bg-muted/30`**: the dashboard's subtle backdrop. Verified at edge of allowed; don't reduce it further.
@@ -46,6 +47,7 @@ All text must meet:
 Focus must be visible at all times. Radix primitives ship with `focus-visible:ring-ring` rings — keep them, don't override.
 
 **Rules.**
+
 - **Default ring** is `ring-2 ring-ring ring-offset-2` for solid surfaces, `ring-2 ring-ring` (no offset) on transparent surfaces.
 - **Focus order** follows DOM order. If you need a different order, fix the DOM, don't use `tabindex` other than `0` or `-1`.
 - **Skip-to-content** link present on every screen — currently TBD; treat as open work.
@@ -60,16 +62,16 @@ Focus must be visible at all times. Radix primitives ship with `focus-visible:ri
 
 Every interaction must be possible without a mouse.
 
-| Pattern | Keys |
-|---|---|
-| Activate button | `Enter` or `Space` |
-| Open dropdown | `Enter` / `Space` |
-| Navigate dropdown | Arrow keys |
-| Close dropdown / dialog | `Esc` |
-| Move between tabs | Arrow keys (Radix Tabs default) |
-| Sort table column | `Enter` on the header button |
-| Race speed | `1`, `2`, `4` (race screen only — see [04-patterns/04-interaction-patterns.md](../04-patterns/04-interaction-patterns.md)) |
-| Pause / resume race | `Space` (when implemented) |
+| Pattern                 | Keys                                                                                                                       |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Activate button         | `Enter` or `Space`                                                                                                         |
+| Open dropdown           | `Enter` / `Space`                                                                                                          |
+| Navigate dropdown       | Arrow keys                                                                                                                 |
+| Close dropdown / dialog | `Esc`                                                                                                                      |
+| Move between tabs       | Arrow keys (Radix Tabs default)                                                                                            |
+| Sort table column       | `Enter` on the header button                                                                                               |
+| Race speed              | `1`, `2`, `4` (race screen only — see [04-patterns/04-interaction-patterns.md](../04-patterns/04-interaction-patterns.md)) |
+| Pause / resume race     | `Space` (when implemented)                                                                                                 |
 
 **Test rule.** A reviewer must be able to play through a complete day without touching the mouse.
 
@@ -85,19 +87,19 @@ Every interaction must be possible without a mouse.
 
 ### Live regions
 
-| Surface | Region | Politeness |
-|---|---|---|
-| Toasts (`Sonner`) | Built-in | polite |
-| Day-advance announcement | Dashboard | polite |
-| Race-screen race calls | `/race/$raceId` | polite |
-| Race-screen finish | `/race/$raceId` | assertive (single announcement only) |
-| Outbid notification | Auction | polite |
+| Surface                  | Region          | Politeness                           |
+| ------------------------ | --------------- | ------------------------------------ |
+| Toasts (`Sonner`)        | Built-in        | polite                               |
+| Day-advance announcement | Dashboard       | polite                               |
+| Race-screen race calls   | `/race/$raceId` | polite                               |
+| Race-screen finish       | `/race/$raceId` | assertive (single announcement only) |
+| Outbid notification      | Auction         | polite                               |
 
 **Race screen live calls** are throttled to one announcement per 3 seconds. Phrasing examples:
 
-- *"Stardust now leading by half a length."*
-- *"Stardust drops to 2nd at the turn."*
-- *"Stardust finishes 1st in 92.4 seconds."*
+- _"Stardust now leading by half a length."_
+- _"Stardust drops to 2nd at the turn."_
+- _"Stardust finishes 1st in 92.4 seconds."_
 
 The throttle is essential. Without it, the screen-reader user is drowned in updates and gets less, not more.
 
@@ -114,6 +116,7 @@ The throttle is essential. Without it, the screen-reader user is drowned in upda
 Honour `prefers-reduced-motion: reduce` everywhere. See [01-design-system/04-motion.md](../01-design-system/04-motion.md) for the global contract.
 
 **Race screen specifics.**
+
 - No pulse on horses (silk dot stays static).
 - No sprite animation (sprite shows frame-1 only).
 - Position updates remain — they carry information.
@@ -125,12 +128,12 @@ Honour `prefers-reduced-motion: reduce` everywhere. See [01-design-system/04-mot
 
 Anything that uses colour to mean something must also have a non-colour signal:
 
-| Colour signal | Required pair |
-|---|---|
-| Red error border | Error message text |
-| Green "eligible" pill | The word *"Eligible"* |
-| Yellow Beyer-high badge | The figure itself, plus tooltip |
-| Silk dot identity | Always paired with the horse's name |
+| Colour signal           | Required pair                       |
+| ----------------------- | ----------------------------------- |
+| Red error border        | Error message text                  |
+| Green "eligible" pill   | The word _"Eligible"_               |
+| Yellow Beyer-high badge | The figure itself, plus tooltip     |
+| Silk dot identity       | Always paired with the horse's name |
 
 ---
 
@@ -166,4 +169,4 @@ Run before any release:
 ## Open questions
 
 - Does any of our chart imagery need a textual table alternative as a sibling, or is the tooltip sufficient? Probably need the table for screen readers.
-- Is the in-game date format (*"Year 3, Apr 14"*) accessible to all locales? Yes for screen readers; verify for cognitive accessibility.
+- Is the in-game date format (_"Year 3, Apr 14"_) accessible to all locales? Yes for screen readers; verify for cognitive accessibility.

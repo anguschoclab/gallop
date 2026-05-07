@@ -11,11 +11,11 @@ status: Approved
 
 Three targeted improvements to the live auction theater UI and runner. Each section is independently shippable; they share no runtime coupling.
 
-| ID | Name | Surface |
-|----|------|---------|
-| Aa | Max bid re-raise (proxy) | `auctionRunner.ts` + `AuctionTheater.tsx` |
-| Ab | Bid history panel | `AuctionTheater.tsx` |
-| Ac | Visual feedback (phase strip, leading banner, win overlay) | `AuctionTheater.tsx` |
+| ID  | Name                                                       | Surface                                   |
+| --- | ---------------------------------------------------------- | ----------------------------------------- |
+| Aa  | Max bid re-raise (proxy)                                   | `auctionRunner.ts` + `AuctionTheater.tsx` |
+| Ab  | Bid history panel                                          | `AuctionTheater.tsx`                      |
+| Ac  | Visual feedback (phase strip, leading banner, win overlay) | `AuctionTheater.tsx`                      |
 
 ---
 
@@ -183,18 +183,20 @@ const onCancelMaxBid = () => {
 Render inside the bidding panel, below the action bar, when `playerMaxBidState` is set:
 
 ```tsx
-{playerMaxBidState !== undefined && (
-  <div className="flex items-center gap-2 rounded-md bg-primary/10 border border-primary/30 px-3 py-1.5 text-sm">
-    <span className="flex-1">Auto-bidding · cap ${playerMaxBidState.toLocaleString()}</span>
-    <button
-      onClick={onCancelMaxBid}
-      className="text-muted-foreground hover:text-destructive transition-colors"
-      aria-label="Cancel auto-bid"
-    >
-      <X className="h-3.5 w-3.5" />
-    </button>
-  </div>
-)}
+{
+  playerMaxBidState !== undefined && (
+    <div className="flex items-center gap-2 rounded-md bg-primary/10 border border-primary/30 px-3 py-1.5 text-sm">
+      <span className="flex-1">Auto-bidding · cap ${playerMaxBidState.toLocaleString()}</span>
+      <button
+        onClick={onCancelMaxBid}
+        className="text-muted-foreground hover:text-destructive transition-colors"
+        aria-label="Cancel auto-bid"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
 ```
 
 #### Lot Transition
@@ -216,15 +218,15 @@ Use a `prevLotIndexRef` ref initialized to `0`.
 
 ### Edge Cases — Aa
 
-| Scenario | Behavior |
-|---|---|
-| Player sets cap below `nextBidAmount(currentBid)` | Reject with `"Max bid must exceed current price."` |
-| NPC raises to exactly `playerMaxBid` | `nextBidAmount(playerMaxBid) > playerMaxBid` so no auto-raise fires; proxy stays armed at cap (player leading, so no NPC re-raise triggers it) |
-| NPC raises above `playerMaxBid` | `nextForPlayer > playerMaxBid` → no auto-raise; proxy cancelled silently (cap exhausted) |
-| Cash insufficient for auto-raise | `onAutoRaise` returns `false`; proxy cancelled; bidError shown |
-| Player already leading when proxy is set | Chip shown; auto-raise only fires on next NPC outbid |
-| Lot sold before proxy triggers | Proxy is irrelevant; cleared on lot transition |
-| `onSkipToResults` called while proxy is set | `runToCompletion` does not call `onAutoRaise`; proxy has no effect on offline path |
+| Scenario                                          | Behavior                                                                                                                                       |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Player sets cap below `nextBidAmount(currentBid)` | Reject with `"Max bid must exceed current price."`                                                                                             |
+| NPC raises to exactly `playerMaxBid`              | `nextBidAmount(playerMaxBid) > playerMaxBid` so no auto-raise fires; proxy stays armed at cap (player leading, so no NPC re-raise triggers it) |
+| NPC raises above `playerMaxBid`                   | `nextForPlayer > playerMaxBid` → no auto-raise; proxy cancelled silently (cap exhausted)                                                       |
+| Cash insufficient for auto-raise                  | `onAutoRaise` returns `false`; proxy cancelled; bidError shown                                                                                 |
+| Player already leading when proxy is set          | Chip shown; auto-raise only fires on next NPC outbid                                                                                           |
+| Lot sold before proxy triggers                    | Proxy is irrelevant; cleared on lot transition                                                                                                 |
+| `onSkipToResults` called while proxy is set       | `runToCompletion` does not call `onAutoRaise`; proxy has no effect on offline path                                                             |
 
 ---
 
@@ -255,7 +257,7 @@ return {
   leadingBidder: state.leadingBidder,
   chant: state.chant,
   nextBid: nextBidAmount(state.currentBid),
-  bidHistory: state.bidHistory,   // ADD
+  bidHistory: state.bidHistory, // ADD
 };
 ```
 
@@ -281,38 +283,43 @@ Inside the lot `CardContent`, in the lot header row (where horse name and badges
 Render immediately below the horse header block, before the stats grid, when `historyOpen`:
 
 ```tsx
-{historyOpen && (
-  <div
-    id="bid-history-panel"
-    className="rounded-md border bg-muted/30 p-2 space-y-0.5 max-h-40 overflow-y-auto"
-  >
-    {bidHistory.length === 0 ? (
-      <p className="text-xs text-muted-foreground italic text-center py-2">No bids yet</p>
-    ) : (
-      [...bidHistory].reverse().map((record, idx) => {
-        const label = record.stableId === undefined
-          ? "YOU"
-          : stables.find((s) => s.id === record.stableId)?.name ?? record.stableId;
-        return (
-          <div key={idx} className="flex items-baseline justify-between text-xs gap-3">
-            <span className={cn(
-              "font-medium truncate",
-              record.stableId === undefined && "text-primary"
-            )}>
-              {label}
-            </span>
-            <span className="tabular-nums text-right shrink-0">
-              ${record.amount.toLocaleString()}
-            </span>
-            <span className="tabular-nums text-muted-foreground shrink-0 text-[10px]">
-              t{record.tick}
-            </span>
-          </div>
-        );
-      })
-    )}
-  </div>
-)}
+{
+  historyOpen && (
+    <div
+      id="bid-history-panel"
+      className="rounded-md border bg-muted/30 p-2 space-y-0.5 max-h-40 overflow-y-auto"
+    >
+      {bidHistory.length === 0 ? (
+        <p className="text-xs text-muted-foreground italic text-center py-2">No bids yet</p>
+      ) : (
+        [...bidHistory].reverse().map((record, idx) => {
+          const label =
+            record.stableId === undefined
+              ? "YOU"
+              : (stables.find((s) => s.id === record.stableId)?.name ?? record.stableId);
+          return (
+            <div key={idx} className="flex items-baseline justify-between text-xs gap-3">
+              <span
+                className={cn(
+                  "font-medium truncate",
+                  record.stableId === undefined && "text-primary",
+                )}
+              >
+                {label}
+              </span>
+              <span className="tabular-nums text-right shrink-0">
+                ${record.amount.toLocaleString()}
+              </span>
+              <span className="tabular-nums text-muted-foreground shrink-0 text-[10px]">
+                t{record.tick}
+              </span>
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+}
 ```
 
 `bidHistory` is read from `lotState?.bidHistory ?? []`. Because `forceTick()` is called after every `step`, the panel re-renders each tick automatically.
@@ -321,12 +328,12 @@ Render immediately below the horse header block, before the stats grid, when `hi
 
 ### Edge Cases — Ab
 
-| Scenario | Behavior |
-|---|---|
-| Lot transitions while panel is open | `historyOpen` resets to `false`; new lot opens with panel closed |
-| NPC stable not found in `stables` | Fall back to raw `stableId` string |
+| Scenario                            | Behavior                                                                                                                                                           |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Lot transitions while panel is open | `historyOpen` resets to `false`; new lot opens with panel closed                                                                                                   |
+| NPC stable not found in `stables`   | Fall back to raw `stableId` string                                                                                                                                 |
 | Panel open during `onSkipToResults` | Runner advances to done; `forceTick` not called; panel shows stale history. Acceptable — panel is hidden once `done && committed` transitions to `PostSaleSummary` |
-| Zero bids on a passed lot | "No bids yet" empty state |
+| Zero bids on a passed lot           | "No bids yet" empty state                                                                                                                                          |
 
 ---
 
@@ -344,11 +351,11 @@ A horizontal progress strip rendered above the lot card showing the five auction
 
 ```ts
 const PHASES: { key: ChantPhase | "sold_passed"; label: string }[] = [
-  { key: "open",         label: "Open" },
-  { key: "bidding",      label: "Bidding" },
-  { key: "going_once",   label: "Going Once" },
-  { key: "going_twice",  label: "Going Twice" },
-  { key: "sold_passed",  label: "Sold / Passed" },
+  { key: "open", label: "Open" },
+  { key: "bidding", label: "Bidding" },
+  { key: "going_once", label: "Going Once" },
+  { key: "going_twice", label: "Going Twice" },
+  { key: "sold_passed", label: "Sold / Passed" },
 ];
 ```
 
@@ -362,16 +369,16 @@ Place the strip as the first child of the lot `Card`, before `CardContent`, span
 <div className="flex rounded-t-lg overflow-hidden" aria-label="Auction phase">
   {PHASES.map((phase, idx) => {
     const activeIdx = chantToPhaseIndex(lotState?.chant);
-    const isActive  = idx === activeIdx;
-    const isDone    = idx < activeIdx;
+    const isActive = idx === activeIdx;
+    const isDone = idx < activeIdx;
     return (
       <div
         key={phase.key}
         className={cn(
           "flex-1 py-1 text-center text-[10px] font-medium uppercase tracking-wide transition-colors duration-300",
           isActive && "bg-warning text-warning-foreground",
-          isDone   && "bg-warning/25 text-warning-foreground/60",
-          !isActive && !isDone && "bg-muted text-muted-foreground"
+          isDone && "bg-warning/25 text-warning-foreground/60",
+          !isActive && !isDone && "bg-muted text-muted-foreground",
         )}
       >
         {phase.label}
@@ -388,13 +395,19 @@ The left-fill animation is achieved via `transition-colors duration-300` on each
 ```ts
 function chantToPhaseIndex(chant: ChantPhase | undefined): number {
   switch (chant) {
-    case "open":         return 0;
-    case "bidding":      return 1;
-    case "going_once":   return 2;
-    case "going_twice":  return 3;
+    case "open":
+      return 0;
+    case "bidding":
+      return 1;
+    case "going_once":
+      return 2;
+    case "going_twice":
+      return 3;
     case "sold":
-    case "passed":       return 4;
-    default:             return 0;
+    case "passed":
+      return 4;
+    default:
+      return 0;
   }
 }
 ```
@@ -430,23 +443,25 @@ prevLeadingRef.current = newLeading;
 Remove the existing leader label row. Insert the banner directly below the current bid amount display, inside the bidding panel:
 
 ```tsx
-{currentBid > 0 && (
-  <div
-    className={cn(
-      "rounded px-3 py-1.5 text-center text-sm font-bold uppercase tracking-wider transition-colors",
-      playerIsLeading
-        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
-        : "bg-amber-500/20 text-amber-400 border border-amber-500/40",
-      bannerFlash && "opacity-0"
-    )}
-  >
-    {playerIsLeading ? "You're Leading" : (
-      leadingBidder
-        ? `Outbid by ${stables.find((s) => s.id === leadingBidder)?.name ?? "NPC"}`
-        : "—"
-    )}
-  </div>
-)}
+{
+  currentBid > 0 && (
+    <div
+      className={cn(
+        "rounded px-3 py-1.5 text-center text-sm font-bold uppercase tracking-wider transition-colors",
+        playerIsLeading
+          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+          : "bg-amber-500/20 text-amber-400 border border-amber-500/40",
+        bannerFlash && "opacity-0",
+      )}
+    >
+      {playerIsLeading
+        ? "You're Leading"
+        : leadingBidder
+          ? `Outbid by ${stables.find((s) => s.id === leadingBidder)?.name ?? "NPC"}`
+          : "—"}
+    </div>
+  );
+}
 ```
 
 The flash is a 150ms `opacity-0` → `opacity-100` toggle. Because Tailwind transitions apply on class removal, the banner briefly disappears then snaps back. No animation library required. Add `transition-opacity duration-150` to the className.
@@ -504,24 +519,22 @@ if (winOverlay) {
 Overlay the lot card using absolute positioning inside the `Card` wrapper. The `Card` must have `relative` in its className:
 
 ```tsx
-{winOverlay && (
-  <div
-    className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-lg bg-background/90 backdrop-blur-sm animate-in fade-in duration-300"
-    role="status"
-    aria-live="polite"
-  >
-    <p className="text-5xl font-black tracking-tight text-emerald-400 uppercase">
-      Acquired
-    </p>
-    <p className="mt-2 text-xl font-semibold">{winOverlay.horseName}</p>
-    <p className="mt-1 text-2xl font-bold tabular-nums">
-      ${winOverlay.hammerPrice.toLocaleString()}
-    </p>
-    <p className="mt-4 text-xs text-muted-foreground">
-      Press any key or wait to continue…
-    </p>
-  </div>
-)}
+{
+  winOverlay && (
+    <div
+      className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-lg bg-background/90 backdrop-blur-sm animate-in fade-in duration-300"
+      role="status"
+      aria-live="polite"
+    >
+      <p className="text-5xl font-black tracking-tight text-emerald-400 uppercase">Acquired</p>
+      <p className="mt-2 text-xl font-semibold">{winOverlay.horseName}</p>
+      <p className="mt-1 text-2xl font-bold tabular-nums">
+        ${winOverlay.hammerPrice.toLocaleString()}
+      </p>
+      <p className="mt-4 text-xs text-muted-foreground">Press any key or wait to continue…</p>
+    </div>
+  );
+}
 ```
 
 #### Clearing on Lot Transition
@@ -539,14 +552,14 @@ if (result.currentLotIndex !== prevLotIndexRef.current) {
 
 ### Edge Cases — Ac
 
-| Scenario | Behavior |
-|---|---|
-| Player wins a consignment lot (no real win) | `event.toStableId === undefined` only on non-consignment lots where `soldToStableId` is undefined — consignments set `consignorStableId = undefined` on the lot, not `soldToStableId`. The SOLD event's `toStableId` correctly reflects the buyer, not the consignor. Overlay fires only when `toStableId === undefined`. |
-| `onSkipToResults` — player won a lot offline | `runToCompletion` is synchronous; events are not dispatched through `stepAndRender`; win overlay does not fire. Correct — the offline path shows the post-sale summary directly. |
-| Banner when chant is "open" (no bids) | Hidden (`currentBid === 0` guard). |
-| Phase strip when `done` is true but `PostSaleSummary` has not rendered yet | `lotState` is `undefined` after the final lot advances. `chantToPhaseIndex(undefined)` returns `0`. Strip shows "Open" highlighted, which is moot — the sale-concluded placeholder renders instead. |
-| Win overlay keypress conflicts with Space bid | The keyboard handler returns early when `winOverlay` is set (see Ac-3 trigger section), preventing a double bid. |
-| Multiple SOLD events in one step (shouldn't happen) | `stepAndRender` iterates events sequentially; `setWinOverlay` is called for the last matching event. In practice the runner emits at most one SOLD per step. |
+| Scenario                                                                   | Behavior                                                                                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Player wins a consignment lot (no real win)                                | `event.toStableId === undefined` only on non-consignment lots where `soldToStableId` is undefined — consignments set `consignorStableId = undefined` on the lot, not `soldToStableId`. The SOLD event's `toStableId` correctly reflects the buyer, not the consignor. Overlay fires only when `toStableId === undefined`. |
+| `onSkipToResults` — player won a lot offline                               | `runToCompletion` is synchronous; events are not dispatched through `stepAndRender`; win overlay does not fire. Correct — the offline path shows the post-sale summary directly.                                                                                                                                          |
+| Banner when chant is "open" (no bids)                                      | Hidden (`currentBid === 0` guard).                                                                                                                                                                                                                                                                                        |
+| Phase strip when `done` is true but `PostSaleSummary` has not rendered yet | `lotState` is `undefined` after the final lot advances. `chantToPhaseIndex(undefined)` returns `0`. Strip shows "Open" highlighted, which is moot — the sale-concluded placeholder renders instead.                                                                                                                       |
+| Win overlay keypress conflicts with Space bid                              | The keyboard handler returns early when `winOverlay` is set (see Ac-3 trigger section), preventing a double bid.                                                                                                                                                                                                          |
+| Multiple SOLD events in one step (shouldn't happen)                        | `stepAndRender` iterates events sequentially; `setWinOverlay` is called for the last matching event. In practice the runner emits at most one SOLD per step.                                                                                                                                                              |
 
 ---
 

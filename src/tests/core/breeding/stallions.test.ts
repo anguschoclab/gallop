@@ -146,7 +146,7 @@ describe("isStallionAvailable", () => {
         lifetimeG1Foals: 0,
         retiredOnDay: 1,
         lifecycleStatus: "active" as const,
-    ...over,
+        ...over,
       },
     });
   }

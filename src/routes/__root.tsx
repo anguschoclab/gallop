@@ -106,9 +106,13 @@ function RootComponent() {
 
   useEffect(() => {
     // Rehydrate store on client mount
-    rehydrateStore(useGame).then(() => {
-      setIsHydrated(true);
-    });
+    rehydrateStore(useGame)
+      .catch((error) => {
+        console.error("Failed to rehydrate store:", error);
+      })
+      .finally(() => {
+        setIsHydrated(true);
+      });
   }, []);
 
   useEffect(() => {

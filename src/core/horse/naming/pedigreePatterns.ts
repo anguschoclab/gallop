@@ -25,8 +25,8 @@ export function generatePortmanteau(sire: string, dam: string, rng: Rng): string
  * Extract words from sire/dam names and combine them.
  */
 export function extractAndCombine(sire: string, dam: string, rng: Rng): string {
-  const sireWords = sire.split(" ").filter(w => w.length > 3);
-  const damWords = dam.split(" ").filter(w => w.length > 3);
+  const sireWords = sire.split(" ").filter((w) => w.length > 3);
+  const damWords = dam.split(" ").filter((w) => w.length > 3);
 
   if (sireWords.length === 0 || damWords.length === 0) {
     return `${sire} ${dam}`.slice(0, 18);

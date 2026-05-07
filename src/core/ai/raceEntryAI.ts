@@ -1,6 +1,10 @@
 import type { Horse, Race, Stable } from "@/game/types";
 import type { Rng } from "@/game/rng";
-import { getPersonalityAIState, calculateUtilityScore, calculateStrategicScore } from "./personalitySystem";
+import {
+  getPersonalityAIState,
+  calculateUtilityScore,
+  calculateStrategicScore,
+} from "./personalitySystem";
 import {
   createLearningState,
   recordOutcome,
@@ -79,7 +83,7 @@ export function calculateStrategicEntryScore(
   score = applyPersonalityModifiers(score, horse, race, stable);
 
   // Learning-based adjustment
-  const contextKey = `${race.distance}:${race.surface || 'unknown'}:${race.graded?.grade || 'open'}`;
+  const contextKey = `${race.distance}:${race.surface || "unknown"}:${race.graded?.grade || "open"}`;
   const successRate = getSuccessRate(aiState.learningState, "race_entry", contextKey);
   const adaptiveBonus = (successRate - 0.5) * 20; // -10 to +10 based on learning
   score += adaptiveBonus;
@@ -120,10 +124,11 @@ function evaluateStrategicValue(
 
   // Competitive positioning - avoid races with too many top competitors
   if (race.entries.length > 0) {
-    const competitorQuality = race.entries.reduce((sum, e) => {
-      // In real implementation, would look up horse stats
-      return sum + 50; // Placeholder
-    }, 0) / race.entries.length;
+    const competitorQuality =
+      race.entries.reduce((sum, e) => {
+        // In real implementation, would look up horse stats
+        return sum + 50; // Placeholder
+      }, 0) / race.entries.length;
 
     if (competitorQuality > 80) {
       strategicValue -= 10; // Penalty for very competitive fields
@@ -154,7 +159,7 @@ export function updateHorseDevelopment(
     targetGrade: race.graded?.grade || "open",
     currentProgress: 0,
     recentRaces: [],
-    projectedPeak: horse.age < 4 ? (horse.age * 365) + 365 : horse.age * 365,
+    projectedPeak: horse.age < 4 ? horse.age * 365 + 365 : horse.age * 365,
   };
 
   // Add race result
@@ -196,7 +201,7 @@ export function recordRaceEntryOutcome(
   success: boolean,
   position?: number,
 ): RaceEntryAIState {
-  const contextKey = `${race.distance}:${race.surface || 'unknown'}:${race.graded?.grade || 'open'}`;
+  const contextKey = `${race.distance}:${race.surface || "unknown"}:${race.graded?.grade || "open"}`;
   const value = success && position ? (10 - position) * 10 : 0;
 
   aiState.learningState = recordOutcome(
@@ -269,10 +274,7 @@ export function generateMultiRaceStrategy(
 /**
  * Adapt strategy based on learning outcomes
  */
-export function adaptStrategy(
-  aiState: RaceEntryAIState,
-  currentDay: number,
-): RaceEntryAIState {
+export function adaptStrategy(aiState: RaceEntryAIState, currentDay: number): RaceEntryAIState {
   // Prune old learning data
   const cutoffDay = currentDay - aiState.personalityState.memoryDepth;
   // Note: learningModule.pruneOldOutcomes would be called here

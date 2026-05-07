@@ -32,6 +32,7 @@ import { awardsPhase } from "@/core/time/phases/awards";
 import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
 import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
 import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
+import { consignmentResolutionPhase } from "@/core/time/phases/consignmentResolution";
 import { purchaseResolutionPhase } from "@/core/time/phases/purchaseResolution";
 import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
 import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
@@ -57,7 +58,9 @@ export type CoreSlice = CoreState & {
   ) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
-  advanceDay: (progressCallback?: (stage: number, total: number, name: string) => void) => Promise<void>;
+  advanceDay: (
+    progressCallback?: (stage: number, total: number, name: string) => void,
+  ) => Promise<void>;
   advanceMultipleDays: (n: number, headless?: boolean) => Promise<void>;
   advanceWeek: (headless?: boolean) => Promise<void>;
   advanceMonth: (headless?: boolean) => Promise<void>;
@@ -331,6 +334,7 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
           stateUpdatePhase,
           // Resolution phases (convert intents to impacts)
           raceEntryResolutionPhase,
+          consignmentResolutionPhase,
           purchaseResolutionPhase,
           breedingResolutionPhase,
           trainingResolutionPhase,

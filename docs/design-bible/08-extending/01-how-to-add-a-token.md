@@ -16,7 +16,7 @@ Tokens are the system's smallest unit. Adding one is the lightest extension you 
 
 1. **Does an existing token already cover this?** Re-check [01-design-system/01-tokens.md](../01-design-system/01-tokens.md). 90% of "I need a new colour" turns into "I should use `accent` here".
 2. **Is this a primitive or a semantic?** Primitives are raw values; semantics are roles. We add semantics; primitives are values inside them.
-3. **Does it belong to a theme?** A token used only on the race screen probably belongs to the *broadcast* theme, not the global palette.
+3. **Does it belong to a theme?** A token used only on the race screen probably belongs to the _broadcast_ theme, not the global palette.
 
 If the new token still seems necessary, follow the steps below.
 
@@ -107,15 +107,16 @@ If you need one:
 
 ## Naming conventions
 
-| Pattern | Example |
-|---|---|
-| Role only | `--primary`, `--muted`, `--destructive` |
-| Role + variant | `--primary-foreground`, `--muted-foreground` |
-| Family + role | `--sidebar-primary`, `--sidebar-accent` |
-| Theme + role | `--broadcast-track`, `--broadcast-rail` |
+| Pattern           | Example                                      |
+| ----------------- | -------------------------------------------- |
+| Role only         | `--primary`, `--muted`, `--destructive`      |
+| Role + variant    | `--primary-foreground`, `--muted-foreground` |
+| Family + role     | `--sidebar-primary`, `--sidebar-accent`      |
+| Theme + role      | `--broadcast-track`, `--broadcast-rail`      |
 | Domain + property | `--race-lane-height`, `--race-sidebar-width` |
 
 Avoid:
+
 - Numeric scales (`--blue-100` … `--blue-900`).
 - Vague semantics (`--colour1`, `--bg2`).
 - Mixed languages (`--couleur-fond`).
@@ -125,4 +126,4 @@ Avoid:
 ## Open questions
 
 - Should we adopt a tokens.json source-of-truth (Figma → CSS) when we have a Figma file? Track in decision log.
-- Do we want a *brand* family of tokens (`--brand-pop`, `--brand-quiet`) for the rare moments we want a clearly Gallop-specific colour, distinct from generic *primary*?
+- Do we want a _brand_ family of tokens (`--brand-pop`, `--brand-quiet`) for the rare moments we want a clearly Gallop-specific colour, distinct from generic _primary_?

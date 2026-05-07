@@ -25,19 +25,19 @@ export const stallionRetirementPhase: PipelinePhase = {
 
       // 2. Retirement Criteria
       // NPCs retire if they are legends (high fame/G1 wins) or reached "old age" (6+)
-      const isLegend = horse.fame > 70 || horse.raceHistory.some((r) => r.position === 1 && r.grade === "G1");
+      const isLegend =
+        horse.fame > 70 || horse.raceHistory.some((r) => r.position === 1 && r.grade === "G1");
       const isOld = horse.age >= 6;
-      
-      // Additional check: are they still competitive? 
+
+      // Additional check: are they still competitive?
       // If they haven't raced in 30 days and have 0 energy, they are essentially retired from racing
-      const lastRaceDay = horse.raceHistory.length > 0 
-        ? Math.max(...horse.raceHistory.map(r => r.day)) 
-        : 0;
-      const inactive = (newDay - lastRaceDay) > 60;
+      const lastRaceDay =
+        horse.raceHistory.length > 0 ? Math.max(...horse.raceHistory.map((r) => r.day)) : 0;
+      const inactive = newDay - lastRaceDay > 60;
 
       if ((isLegend && inactive) || isOld) {
         const fee = calculateRecommendedStudFee(horse, state);
-        
+
         impacts.push({
           id: generateUUID(),
           intentId: "",

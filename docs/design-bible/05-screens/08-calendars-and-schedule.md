@@ -32,13 +32,14 @@ Each region has its own calendar with its own race traditions, naming convention
 1. Player has a turf horse, wants to find a stakes campaign.
 2. Goes to a regional calendar (or unified track schedule).
 3. Browses upcoming weeks, identifying stakes races by class, surface, distance.
-4. Builds a mental campaign — *"He runs at Saratoga, then Belmont, then ships to Dubai."*
+4. Builds a mental campaign — _"He runs at Saratoga, then Belmont, then ships to Dubai."_
 
 ## Layout
 
 ### Regional calendar
 
 Vertical scrolling list of weeks. Each week shows:
+
 - Date range (top).
 - Races in that week, grouped by track.
 - Within a track, races sorted by class then time.
@@ -76,7 +77,7 @@ Royal A.│     │     │  G1 │  6  │
 
 ## Copy
 
-- Region selector copy: *"Canadian calendar"*, *"German calendar"*, *"South American calendar"*, etc.
+- Region selector copy: _"Canadian calendar"_, _"German calendar"_, _"South American calendar"_, etc.
 - Stakes badge: G1 / G2 / G3 / Listed (uppercase, badge style).
 - Track name: title case, full.
 - Distance: integer + `m`.
@@ -91,7 +92,7 @@ Royal A.│     │     │  G1 │  6  │
 ## Accessibility
 
 - Calendar grid must have row/column headers properly marked (`<th scope="row">` / `scope="col"`).
-- Week cells in the unified view are buttons with descriptive `aria-label` (*"Week 16, Belmont, 4 races including Belmont Stakes G1"*).
+- Week cells in the unified view are buttons with descriptive `aria-label` (_"Week 16, Belmont, 4 races including Belmont Stakes G1"_).
 
 ## Open questions
 

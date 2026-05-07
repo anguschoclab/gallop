@@ -31,30 +31,30 @@ If any of the six is missing, the handoff is not ready.
 
 Per visible region of the screen:
 
-| Region | Token / utility | Notes |
-|---|---|---|
-| Page background | `bg-muted/30` | (AppShell layouts) |
-| Card surface | `bg-card` | |
-| Card border | `border` | |
-| Card padding | `p-5` (default) or `p-3` (compact) | |
-| Headings | `text-3xl font-bold tracking-tight` (h1), `text-lg font-semibold` (card) | |
-| Body | `text-sm` | |
-| Muted text | `text-muted-foreground` | |
-| Numeric | `tabular-nums` | mandatory in numeric columns |
-| Buttons | variant + size | e.g. `variant="default" size="sm"` |
-| Silk dot | inline `style={{ backgroundColor: silk }}` + `border-white/40` | data colour, exception |
-| Spacing | `gap-3` / `gap-4` / `gap-6` | per scale |
+| Region          | Token / utility                                                          | Notes                              |
+| --------------- | ------------------------------------------------------------------------ | ---------------------------------- |
+| Page background | `bg-muted/30`                                                            | (AppShell layouts)                 |
+| Card surface    | `bg-card`                                                                |                                    |
+| Card border     | `border`                                                                 |                                    |
+| Card padding    | `p-5` (default) or `p-3` (compact)                                       |                                    |
+| Headings        | `text-3xl font-bold tracking-tight` (h1), `text-lg font-semibold` (card) |                                    |
+| Body            | `text-sm`                                                                |                                    |
+| Muted text      | `text-muted-foreground`                                                  |                                    |
+| Numeric         | `tabular-nums`                                                           | mandatory in numeric columns       |
+| Buttons         | variant + size                                                           | e.g. `variant="default" size="sm"` |
+| Silk dot        | inline `style={{ backgroundColor: silk }}` + `border-white/40`           | data colour, exception             |
+| Spacing         | `gap-3` / `gap-4` / `gap-6`                                              | per scale                          |
 
 ---
 
 ## Component map
 
-| Component | File | Why this one |
-|---|---|---|
-| `Button` | `src/components/ui/button.tsx` | Primary CTA |
-| `Card` | `src/components/ui/card.tsx` | Container |
+| Component   | File                           | Why this one   |
+| ----------- | ------------------------------ | -------------- |
+| `Button`    | `src/components/ui/button.tsx` | Primary CTA    |
+| `Card`      | `src/components/ui/card.tsx`   | Container      |
 | `HorseCard` | `src/components/HorseCard.tsx` | Each horse row |
-| ... | | |
+| ...         |                                |                |
 
 If a new component is introduced, link to its [03-components/](../03-components/) entry (or, if not yet documented, a stub). New components don't ship without a doc.
 
@@ -64,16 +64,16 @@ If a new component is introduced, link to its [03-components/](../03-components/
 
 For every string on the screen:
 
-| Location | Copy | Persona / tone |
-|---|---|---|
-| Page title | *"My stable"* | Composed, factual |
-| Subtitle | *"8 horses · 3 in training"* | Composed |
-| Primary CTA | *"Browse auction"* | Verb + object |
-| Empty state heading | *"No horses yet."* | Factual |
-| Empty state body | *"Visit the auction or breed your first foal."* | Inviting |
-| Empty state CTA | *"Browse auction"* | Verb + object |
-| Filter reset | *"Reset filters"* | Verb + object |
-| Tooltip (Beyer) | *"A speed figure (0–~120) standardised across distances and tracks."* | Encyclopedia-tight |
+| Location            | Copy                                                                  | Persona / tone     |
+| ------------------- | --------------------------------------------------------------------- | ------------------ |
+| Page title          | _"My stable"_                                                         | Composed, factual  |
+| Subtitle            | _"8 horses · 3 in training"_                                          | Composed           |
+| Primary CTA         | _"Browse auction"_                                                    | Verb + object      |
+| Empty state heading | _"No horses yet."_                                                    | Factual            |
+| Empty state body    | _"Visit the auction or breed your first foal."_                       | Inviting           |
+| Empty state CTA     | _"Browse auction"_                                                    | Verb + object      |
+| Filter reset        | _"Reset filters"_                                                     | Verb + object      |
+| Tooltip (Beyer)     | _"A speed figure (0–~120) standardised across distances and tracks."_ | Encyclopedia-tight |
 
 ---
 
@@ -81,21 +81,21 @@ For every string on the screen:
 
 For each interaction:
 
-| Trigger | Outcome |
-|---|---|
-| Click row | Drill into `/stable/$horseId` |
-| Click header column | Sort by that column; toggle direction |
-| Cmd+click row | Enter multi-select mode; show bottom action bar |
+| Trigger                         | Outcome                                                                                                                            |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Click row                       | Drill into `/stable/$horseId`                                                                                                      |
+| Click header column             | Sort by that column; toggle direction                                                                                              |
+| Cmd+click row                   | Enter multi-select mode; show bottom action bar                                                                                    |
 | Click "Compare" (in action bar) | Navigate to compare view (route or sheet, see [04-patterns/04-interaction-patterns.md](../04-patterns/04-interaction-patterns.md)) |
-| Empty state CTA | Navigate to `/auction` |
+| Empty state CTA                 | Navigate to `/auction`                                                                                                             |
 
 For each animation:
 
-| Element | Motion | Duration | Easing |
-|---|---|---|---|
-| Row hover | colour-only | 75ms | `ease-out` |
-| Sheet slide-in | `translate-x` | 250ms | `ease-out` |
-| Skeleton → content | fade in | 150ms | `ease-out` |
+| Element            | Motion        | Duration | Easing     |
+| ------------------ | ------------- | -------- | ---------- |
+| Row hover          | colour-only   | 75ms     | `ease-out` |
+| Sheet slide-in     | `translate-x` | 250ms    | `ease-out` |
+| Skeleton → content | fade in       | 150ms    | `ease-out` |
 
 ---
 
@@ -108,7 +108,7 @@ When marking up a design (in Figma or otherwise):
 - **Yellow callout** = behaviour note.
 - **Green callout** = copy with persona/tone tag.
 
-Don't redline what the system already specifies (e.g. don't redline the height of a `Button size="sm"` — it's fixed). Redline only what the screen *uniquely decides*.
+Don't redline what the system already specifies (e.g. don't redline the height of a `Button size="sm"` — it's fixed). Redline only what the screen _uniquely decides_.
 
 ---
 
@@ -116,29 +116,29 @@ Don't redline what the system already specifies (e.g. don't redline the height o
 
 If the engineer has to ask any of these, the handoff is incomplete:
 
-- *"What colour is this?"* — token map covers it.
-- *"What's this button label?"* — copy table covers it.
-- *"What does it do when there's no data?"* — empty state in the screen file covers it.
-- *"What happens after I click?"* — behaviour notes cover it.
-- *"Can I just use a `<div>` here?"* — component map answers (no — use the documented primitive or domain component).
+- _"What colour is this?"_ — token map covers it.
+- _"What's this button label?"_ — copy table covers it.
+- _"What does it do when there's no data?"_ — empty state in the screen file covers it.
+- _"What happens after I click?"_ — behaviour notes cover it.
+- _"Can I just use a `<div>` here?"_ — component map answers (no — use the documented primitive or domain component).
 
 ---
 
 ## Tailwind cheat-sheet (the most-used utilities)
 
-| Use | Class |
-|---|---|
-| Card with default padding | `bg-card border rounded-lg p-5` |
-| Page H1 | `text-3xl font-bold tracking-tight` |
-| Section header row | `flex items-end justify-between mb-4` |
-| Muted small text | `text-xs text-muted-foreground` |
-| Numeric column | `text-right tabular-nums` |
-| Tiny uppercase label | `text-[10px] uppercase tracking-wide text-muted-foreground` |
-| Active nav item | `bg-primary text-primary-foreground` |
-| Hover row | `hover:bg-muted/50 transition-colors` |
-| Standard grid | `grid grid-cols-1 lg:grid-cols-2 gap-4` |
-| Stat tile grid | `grid grid-cols-1 md:grid-cols-3 gap-4` |
-| Race-screen sidebar | (post-G2) `w-[var(--race-sidebar-width)]` |
+| Use                       | Class                                                       |
+| ------------------------- | ----------------------------------------------------------- |
+| Card with default padding | `bg-card border rounded-lg p-5`                             |
+| Page H1                   | `text-3xl font-bold tracking-tight`                         |
+| Section header row        | `flex items-end justify-between mb-4`                       |
+| Muted small text          | `text-xs text-muted-foreground`                             |
+| Numeric column            | `text-right tabular-nums`                                   |
+| Tiny uppercase label      | `text-[10px] uppercase tracking-wide text-muted-foreground` |
+| Active nav item           | `bg-primary text-primary-foreground`                        |
+| Hover row                 | `hover:bg-muted/50 transition-colors`                       |
+| Standard grid             | `grid grid-cols-1 lg:grid-cols-2 gap-4`                     |
+| Stat tile grid            | `grid grid-cols-1 md:grid-cols-3 gap-4`                     |
+| Race-screen sidebar       | (post-G2) `w-[var(--race-sidebar-width)]`                   |
 
 ---
 

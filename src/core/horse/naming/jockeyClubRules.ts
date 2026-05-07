@@ -2,7 +2,12 @@
  * Jockey Club-style naming validation rules.
  */
 
-import { OFFENSIVE_WORDS, TRADE_NAMES, RESERVED_NAMES, PROHIBITED_PATTERNS } from "./prohibitedWords";
+import {
+  OFFENSIVE_WORDS,
+  TRADE_NAMES,
+  RESERVED_NAMES,
+  PROHIBITED_PATTERNS,
+} from "./prohibitedWords";
 
 export interface NameValidation {
   isValid: boolean;
@@ -18,7 +23,7 @@ export interface NameValidation {
 export function validateHorseName(
   name: string,
   existingNames: Set<string>,
-  deceasedNames?: Set<string>
+  deceasedNames?: Set<string>,
 ): NameValidation {
   const trimmed = name.trim();
 
@@ -36,28 +41,31 @@ export function validateHorseName(
   }
 
   // 3. Offensive words
-  if (OFFENSIVE_WORDS.some(w => lowerName.includes(w.toLowerCase()))) {
+  if (OFFENSIVE_WORDS.some((w) => lowerName.includes(w.toLowerCase()))) {
     return { isValid: false, reason: "Name contains offensive language." };
   }
 
   // 4. Trade names
-  if (TRADE_NAMES.some(w => lowerName.includes(w.toLowerCase()))) {
+  if (TRADE_NAMES.some((w) => lowerName.includes(w.toLowerCase()))) {
     return { isValid: false, reason: "Name cannot contain commercial trade names." };
   }
 
   // 5. Reserved names
-  if (RESERVED_NAMES.some(w => lowerName === w.toLowerCase())) {
+  if (RESERVED_NAMES.some((w) => lowerName === w.toLowerCase())) {
     return { isValid: false, reason: "Name is reserved and cannot be used." };
   }
 
   // 6. Prohibited patterns (numbers, special characters)
-  if (PROHIBITED_PATTERNS.some(p => p.test(trimmed))) {
+  if (PROHIBITED_PATTERNS.some((p) => p.test(trimmed))) {
     return { isValid: false, reason: "Name contains prohibited characters or numbers." };
   }
 
   // 7. Standard character check (allow only letters, spaces, hyphens, and apostrophes)
   if (!/^[a-zA-Z\s\-\']+$/.test(trimmed)) {
-    return { isValid: false, reason: "Name can only contain letters, spaces, hyphens, and apostrophes." };
+    return {
+      isValid: false,
+      reason: "Name can only contain letters, spaces, hyphens, and apostrophes.",
+    };
   }
 
   return { isValid: true };

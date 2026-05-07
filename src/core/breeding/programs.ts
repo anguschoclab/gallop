@@ -50,8 +50,10 @@ export function calculateGeneticDistance(horse: Horse, archetype: Archetype): nu
   // Calculate squared differences weighted by archetype weights
   const speedDiff = Math.pow(normalizedSpeed - target.speed, 2) * weights.speed;
   const staminaDiff = Math.pow(normalizedStamina - target.stamina, 2) * weights.stamina;
-  const accelerationDiff = Math.pow(normalizedAcceleration - target.acceleration, 2) * weights.acceleration;
-  const consistencyDiff = Math.pow(normalizedConsistency - target.consistency, 2) * weights.consistency;
+  const accelerationDiff =
+    Math.pow(normalizedAcceleration - target.acceleration, 2) * weights.acceleration;
+  const consistencyDiff =
+    Math.pow(normalizedConsistency - target.consistency, 2) * weights.consistency;
 
   // Sum weighted differences
   const totalWeightedDiff = speedDiff + staminaDiff + accelerationDiff + consistencyDiff;

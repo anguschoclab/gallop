@@ -454,11 +454,13 @@ function LiveRace() {
                   className="h-4 w-4 rounded-full border border-white/40 shadow-sm"
                   style={{ backgroundColor: r.silk }}
                 />
-                <span
-                  className={`flex-1 truncate ${r.owned ? "font-bold text-broadcast-accent" : ""}`}
+                <Link
+                  to="/stable/$horseId"
+                  params={{ horseId: r.horseId }}
+                  className={`flex-1 truncate hover:underline ${r.owned ? "font-bold text-broadcast-accent" : ""}`}
                 >
                   {r.name}
-                </span>
+                </Link>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-foreground tabular-nums font-bold">
                   {runnerOdds.get(r.horseId) ?? "N/A"}
                 </span>
@@ -821,9 +823,13 @@ function ResultOverlay({
                   className="h-5 w-5 rounded-full border border-white/20"
                   style={{ backgroundColor: r.silk }}
                 />
-                <span className={`flex-1 truncate ${r.owned ? "font-bold text-success" : ""}`}>
+                <Link
+                  to="/stable/$horseId"
+                  params={{ horseId: r.horseId }}
+                  className={`flex-1 truncate hover:underline ${r.owned ? "font-bold text-success" : ""}`}
+                >
                   {r.name}
-                </span>
+                </Link>
                 <span className="text-xs text-cream-muted tabular-nums">
                   {r.finishTime?.toFixed(2)}s
                 </span>

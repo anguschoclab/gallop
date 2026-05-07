@@ -29,7 +29,11 @@ export const REGIONAL_TERMINOLOGY: Record<
     good: { label: "Good", abbreviation: "GD", description: "Slightly loosened, still quick." },
     soft: { label: "Muddy", abbreviation: "MY", description: "Wet but firming. Challenging." },
     heavy: { label: "Sloppy", abbreviation: "SL", description: "Waterlogged, very testing." },
-    yielding: { label: "Sealed", abbreviation: "SX", description: "Packed wet surface for stability." },
+    yielding: {
+      label: "Sealed",
+      abbreviation: "SX",
+      description: "Packed wet surface for stability.",
+    },
   },
   europe: {
     fast: { label: "Firm", abbreviation: "FM", description: "Hard turf. Fast times expected." },
@@ -422,7 +426,9 @@ export function randomTrackConditionWithClimateBias(
   ) as [TrackCondition, number][];
 
   const totalWeight = validEntries.reduce((sum, [, weight]) => sum + weight, 0);
-  const normalized = validEntries.map(([condition, weight]) => [condition, weight / totalWeight] as const);
+  const normalized = validEntries.map(
+    ([condition, weight]) => [condition, weight / totalWeight] as const,
+  );
 
   // Weighted random selection
   const roll = rng.next();

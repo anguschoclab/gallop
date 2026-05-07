@@ -77,10 +77,9 @@ export async function initInitializationWorker(): Promise<void> {
     return;
   }
 
-  const worker = new Worker(
-    new URL("@/workers/initialization.worker", import.meta.url),
-    { type: "module" },
-  );
+  const worker = new Worker(new URL("@/workers/initialization.worker", import.meta.url), {
+    type: "module",
+  });
   initializationWorker = wrap<InitializationWorkerApi>(worker);
 }
 

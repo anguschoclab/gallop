@@ -11,11 +11,11 @@ status: Approved
 
 Three complementary mechanics extend the horse acquisition and trading surface:
 
-| Mechanic | Where | Player action | NPC participation |
-|---|---|---|---|
-| **D1 — Buy-Now Pricing** | Auction lot detail | Skip the bidding war at a fixed price | Auctioneer sets price at sale generation |
-| **D2 — Private Sales** | NPC stable detail | Make a direct offer for a specific horse | NPC accepts, counters, or declines |
-| **D3 — Claiming Races** | Race browser + race detail | Enter a horse at risk; claim rivals' horses | All NPC stables may file claims |
+| Mechanic                 | Where                      | Player action                               | NPC participation                        |
+| ------------------------ | -------------------------- | ------------------------------------------- | ---------------------------------------- |
+| **D1 — Buy-Now Pricing** | Auction lot detail         | Skip the bidding war at a fixed price       | Auctioneer sets price at sale generation |
+| **D2 — Private Sales**   | NPC stable detail          | Make a direct offer for a specific horse    | NPC accepts, counters, or declines       |
+| **D3 — Claiming Races**  | Race browser + race detail | Enter a horse at risk; claim rivals' horses | All NPC stables may file claims          |
 
 All three mechanics share the same foundational constraints:
 
@@ -68,13 +68,13 @@ On success: apply `CashImpact` (deduct `buyNowPrice`, no commission) + `HorseTra
 
 ### Affected files
 
-| File | Change |
-|---|---|
-| `src/game/types.ts` | Add `buyNowPrice?: number` to `AuctionLot` |
-| `src/game/store.ts` | Add `buyNow` action |
-| `src/game/auctionSaleGenerator.ts` (or equivalent) | Set `buyNowPrice` at generation |
-| `src/routes/auction.$saleId.tsx` | Buy-now button + AlertDialog |
-| `src/components/AuctionTheater.tsx` | Buy-now button in live bidding view |
+| File                                               | Change                                     |
+| -------------------------------------------------- | ------------------------------------------ |
+| `src/game/types.ts`                                | Add `buyNowPrice?: number` to `AuctionLot` |
+| `src/game/store.ts`                                | Add `buyNow` action                        |
+| `src/game/auctionSaleGenerator.ts` (or equivalent) | Set `buyNowPrice` at generation            |
+| `src/routes/auction.$saleId.tsx`                   | Buy-now button + AlertDialog               |
+| `src/components/AuctionTheater.tsx`                | Buy-now button in live bidding view        |
 
 ### UI components
 
@@ -102,18 +102,18 @@ On success: apply `CashImpact` (deduct `buyNowPrice`, no commission) + `HorseTra
 Add to `src/game/types.ts`:
 
 ```ts
-type PrivateSaleStatus = 'pending' | 'accepted' | 'countered' | 'declined' | 'expired';
+type PrivateSaleStatus = "pending" | "accepted" | "countered" | "declined" | "expired";
 
 type PrivateSaleOffer = {
   id: string;
   horseId: string;
-  fromStableId?: string;  // undefined = offer originates from player
-  toStableId?: string;    // undefined = player is the recipient
+  fromStableId?: string; // undefined = offer originates from player
+  toStableId?: string; // undefined = player is the recipient
   amount: number;
   counterAmount?: number; // populated only when status === 'countered'
   status: PrivateSaleStatus;
   createdDay: number;
-  expiresDay: number;     // always createdDay + 3
+  expiresDay: number; // always createdDay + 3
 };
 ```
 
@@ -142,6 +142,7 @@ if offer.amount <  valuation * 0.60  → status = 'declined'
 **Expiry**: if the offer status is still `'pending'` or `'countered'` on day `expiresDay`, the store's day-advance logic transitions it to `'expired'`. Expiry is processed before any other day-advance effects.
 
 **Resolution on acceptance**: immediately apply:
+
 1. `CashImpact` — deduct the final agreed amount from the player; credit the NPC stable (NPC cash is tracked for simulation fidelity but not player-visible).
 2. `HorseTransferImpact` — transfer horse from NPC stable to player stable.
 
@@ -169,14 +170,14 @@ respondToPrivateSale(offerId: string, accept: boolean): { ok: boolean; reason?: 
 
 ### Affected files
 
-| File | Change |
-|---|---|
-| `src/game/types.ts` | Add `PrivateSaleStatus`, `PrivateSaleOffer`; extend `GameState` |
-| `src/game/store.ts` | Add `proposePrivateSale`, `respondToPrivateSale`; add expiry logic to day-advance |
-| `src/game/impacts.ts` (or equivalent) | Handle private sale `CashImpact` + `HorseTransferImpact` |
-| `src/routes/npc-stables.$stableId.tsx` | "Make an Offer" button + offer dialog |
-| `src/components/Sidebar.tsx` (or nav component) | Pending-offer badge on NPC Stables nav item |
-| `src/hooks/useDayAdvance.ts` (or equivalent) | Expiry processing + offer-response toasts |
+| File                                            | Change                                                                            |
+| ----------------------------------------------- | --------------------------------------------------------------------------------- |
+| `src/game/types.ts`                             | Add `PrivateSaleStatus`, `PrivateSaleOffer`; extend `GameState`                   |
+| `src/game/store.ts`                             | Add `proposePrivateSale`, `respondToPrivateSale`; add expiry logic to day-advance |
+| `src/game/impacts.ts` (or equivalent)           | Handle private sale `CashImpact` + `HorseTransferImpact`                          |
+| `src/routes/npc-stables.$stableId.tsx`          | "Make an Offer" button + offer dialog                                             |
+| `src/components/Sidebar.tsx` (or nav component) | Pending-offer badge on NPC Stables nav item                                       |
+| `src/hooks/useDayAdvance.ts` (or equivalent)    | Expiry processing + offer-response toasts                                         |
 
 ### UI components
 
@@ -198,13 +199,14 @@ Triggered by "Make an Offer". Use `Dialog` (not `AlertDialog` — it is not irre
 
 Outcomes are shown as Sonner toasts on the same tick (instant NPC evaluation):
 
-| Status | Toast |
-|---|---|
-| `accepted` | `"[Stable] accepted your offer of $X for [Horse]. They join your stable."` |
-| `countered` | `"[Stable] countered at $X,XXX. Go to Rival Stables to respond."` |
-| `declined` | `"[Stable] declined your offer. [Flavour line based on stable personality]."` |
+| Status      | Toast                                                                         |
+| ----------- | ----------------------------------------------------------------------------- |
+| `accepted`  | `"[Stable] accepted your offer of $X for [Horse]. They join your stable."`    |
+| `countered` | `"[Stable] countered at $X,XXX. Go to Rival Stables to respond."`             |
+| `declined`  | `"[Stable] declined your offer. [Flavour line based on stable personality]."` |
 
 Flavour copy for declines (keyed to `Stable.personality`):
+
 - `"aggressive"`: `"Not for sale at that price. Try harder."`
 - `"prestige"`: `"This horse is not for sale to just anyone."`
 - `"conservative"`: `"We don't sell below market."`
@@ -224,6 +226,7 @@ When a counter is active, show an inline card under the horse:
 ```
 
 "Accept $X,XXX" opens an `AlertDialog`:
+
 - Title: `"Accept counter offer?"`
 - Body: `"You will pay $X,XXX for [Horse Name]. This cannot be undone."`
 - Actions: `[Cancel]` / `[Accept]`
@@ -264,7 +267,7 @@ Add `ClaimResolutionImpact` to the `AnyImpact` union:
 
 ```ts
 type ClaimResolutionImpact = {
-  kind: 'claimResolution';
+  kind: "claimResolution";
   raceId: string;
   horseId: string;
   winningClaimId: string;
@@ -334,14 +337,14 @@ fileClaim(raceId: string, horseId: string): { ok: boolean; reason?: string }
 
 ### Affected files
 
-| File | Change |
-|---|---|
-| `src/game/types.ts` | Extend `Race` with `claiming`; add `Claim`, `ClaimResolutionImpact`; extend `GameState` |
-| `src/game/store.ts` | Add `enterClaimingRace`, `withdrawFromClaimingRace`, `fileClaim` |
-| `src/game/raceResolver.ts` (or equivalent) | Multi-claim resolution logic in post-race pass |
-| `src/game/impacts.ts` | Handle `ClaimResolutionImpact` |
-| `src/routes/races.tsx` | Claiming badge on race list rows |
-| `src/routes/race.$raceId.tsx` | Entry button variant, withdraw button, claim button, post-race recap |
+| File                                       | Change                                                                                  |
+| ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `src/game/types.ts`                        | Extend `Race` with `claiming`; add `Claim`, `ClaimResolutionImpact`; extend `GameState` |
+| `src/game/store.ts`                        | Add `enterClaimingRace`, `withdrawFromClaimingRace`, `fileClaim`                        |
+| `src/game/raceResolver.ts` (or equivalent) | Multi-claim resolution logic in post-race pass                                          |
+| `src/game/impacts.ts`                      | Handle `ClaimResolutionImpact`                                                          |
+| `src/routes/races.tsx`                     | Claiming badge on race list rows                                                        |
+| `src/routes/race.$raceId.tsx`              | Entry button variant, withdraw button, claim button, post-race recap                    |
 
 ### UI components
 
@@ -411,11 +414,13 @@ Copper King — no claim filed
 ```
 
 Lines are colour-coded:
+
 - `"your horse was claimed"` — `destructive` text token.
 - `"claim successful"` — `success` text token.
 - `"no claim filed"` — `text-muted-foreground`.
 
 Toasts are also shown for each player-affecting outcome on day advance:
+
 - `"[Horse] was claimed by [Stable] for $X,XXX after [Race Name]."`
 - `"Your claim on [Horse] was successful. They join your stable for $X,XXX."`
 - `"Your claim on [Horse] was not drawn. No charge."`
@@ -451,11 +456,13 @@ Once the player has entered a horse in a claiming race, the race row in `races.t
 ### D2 — Private sale resolution sequence
 
 **Accepted on first offer**:
+
 1. `proposePrivateSale` evaluates → `status: 'accepted'`.
 2. Apply `CashImpact` + `HorseTransferImpact` immediately.
 3. Toast confirms acquisition.
 
 **Counter-round**:
+
 1. `proposePrivateSale` evaluates → `status: 'countered'`, `counterAmount` set.
 2. Toast: `"[Stable] countered at $X,XXX."`.
 3. Player navigates to NPC stable detail, sees inline counter card.
@@ -464,10 +471,12 @@ Once the player has entered a horse in a claiming race, the race row in `races.t
 6. If `accept: false`: set `status: 'declined'`, toast `"Counter declined."`.
 
 **Declined on first offer**:
+
 1. `proposePrivateSale` evaluates → `status: 'declined'`.
 2. Toast with flavour copy. Offer record retained for UI but no further actions available.
 
 **Expiry**:
+
 1. Day-advance loop checks all offers where `status === 'pending' | 'countered'` and `currentDay >= expiresDay`.
 2. Transition to `status: 'expired'`.
 3. Toast: `"Your offer on [Horse] expired."`.

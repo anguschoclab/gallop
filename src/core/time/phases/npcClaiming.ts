@@ -36,7 +36,10 @@ export const npcClaimingPhase = {
           if (horse.stableId === stable.id) continue;
           // Don't duplicate claims
           const alreadyClaimed = newClaims.some(
-            (c: Claim) => c.raceId === race.id && c.horseId === entry.horseId && c.claimantStableId === stable.id,
+            (c: Claim) =>
+              c.raceId === race.id &&
+              c.horseId === entry.horseId &&
+              c.claimantStableId === stable.id,
           );
           if (alreadyClaimed) continue;
 

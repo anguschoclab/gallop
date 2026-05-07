@@ -10654,7 +10654,7 @@ export const activeStallions2020s: PedigreeHorse[] = [
   },
   // Modern European Sires
   {
-    name: "Kingman", 
+    name: "Kingman",
     sire: "Cape Cross",
     dam: "Urban Sea",
     birthYear: 2006,

@@ -132,7 +132,7 @@ describe("generateNorthAmericanRace", () => {
 
   it("should select random surface when not specified", () => {
     const race = generateNorthAmericanRace(mockTrack, 10, createRng("test"));
-    expect(mockTrack.courses.map(c => c.surface)).toContain(race.surface);
+    expect(mockTrack.courses.map((c) => c.surface)).toContain(race.surface);
   });
 
   it("should generate distance within class range", () => {

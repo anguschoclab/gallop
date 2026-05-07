@@ -26,7 +26,12 @@ export const npcCyclePhase = {
     };
 
     // Run the complete NPC cycle
-    const { horses, races, jockeys, aiManager: updatedAiManager } = runNpcCycle(
+    const {
+      horses,
+      races,
+      jockeys,
+      aiManager: updatedAiManager,
+    } = runNpcCycle(
       state.npcStables,
       state.horses,
       state.jockeys ?? [],

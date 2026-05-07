@@ -7,27 +7,22 @@ import type {
   Jockey,
   Stable,
 } from "@/game/types";
-import { 
-  TRAIT_VALUES, 
-  fiberDistanceModifier 
-} from "@/core/genetics/phenotype";
+import { TRAIT_VALUES, fiberDistanceModifier } from "@/core/genetics/phenotype";
 import type { CourseSpecification, TrackSection } from "@/game/tracks";
 import type { Rng } from "@/core/common/types";
 import { clamp } from "@/game/math";
 import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
 import { calculateDosageMetrics } from "@/game/dosage";
-import {
-  calculateOptimalRunningStyle,
-} from "@/core/ai/jockeyStrategyAI";
+import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 // Standardizing imports for relocated file
-import type { 
-  Horse as HorseT, 
-  Race as RaceT, 
-  Stable as StableT, 
+import type {
+  Horse as HorseT,
+  Race as RaceT,
+  Stable as StableT,
   Jockey as JockeyT,
-  RunningStyle as RunningStyleT
+  RunningStyle as RunningStyleT,
 } from "@/game/types";
 
 export type Runner = {
@@ -210,7 +205,7 @@ export function buildRunner(
           ? 1.02
           : 0.99
         : 1;
-  const baseStamina = (0.4 + (h.stats.stamina / 100) * 0.6) * fiberMods.staminaMul; 
+  const baseStamina = (0.4 + (h.stats.stamina / 100) * 0.6) * fiberMods.staminaMul;
   const temperamentMod = 1 + (TRAIT_VALUES[h.temperament || "fair"] - 2) * -0.1;
   const conformationMod = 1 + (TRAIT_VALUES[h.conformation || "fair"] - 2) * -0.03;
 
@@ -224,7 +219,13 @@ export function buildRunner(
   if (npcAIManager && currentDay && stable && jockey && race && !owned) {
     const aiState = npcAIManager.stableStates.get(stable.id);
     if (aiState?.jockeyStrategyAI) {
-      const optimalStyle = calculateOptimalRunningStyle(aiState.jockeyStrategyAI, h, race, jockey, stable);
+      const optimalStyle = calculateOptimalRunningStyle(
+        aiState.jockeyStrategyAI,
+        h,
+        race,
+        jockey,
+        stable,
+      );
       if (optimalStyle) {
         runningStyle = optimalStyle;
       }
@@ -326,7 +327,7 @@ export function computePaceContext(runners: Runner[], distance: number): PaceCon
   return { leaderPos, leadGroupCount, pacePressure, progress, laneDensity };
 }
 
-const DRAFT_DISTANCE = 3; 
+const DRAFT_DISTANCE = 3;
 const DRAFT_SPEED_BONUS = 1.015;
 const DRAFT_STAMINA_PRESERVE = 0.5;
 
@@ -390,7 +391,7 @@ export function stepRunner(
   const MAX_LATERAL_SPEED = 2.0;
 
   let targetLane = 0;
-  if (r.runningStyle === "S" && progress < 0.4) targetLane = 1; 
+  if (r.runningStyle === "S" && progress < 0.4) targetLane = 1;
 
   if (field && pace) {
     const laneIdx = Math.floor(r.lane / LANE_WIDTH);

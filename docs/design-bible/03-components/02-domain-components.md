@@ -72,7 +72,7 @@ Multi-mare overview — who is in foal, who is open, due dates.
 
 Single-mare progression: covered → confirmed → trimester markers → foaling.
 
-**Pattern:** every breeding screen renders state visibly (principle 6). A mare in foal *shows* the timeline, never just a date.
+**Pattern:** every breeding screen renders state visibly (principle 6). A mare in foal _shows_ the timeline, never just a date.
 
 ---
 
@@ -124,13 +124,13 @@ Settings for auto-simulating periods (skip ahead through time). Gear-icon trigge
 
 These don't exist yet but are likely future additions. Their place in the system is reserved here.
 
-| Future component | Where it goes | Notes |
-|---|---|---|
-| `RaceCommentary` | `src/components/race/` | Live race text feed. Drives Tourist's experience. |
-| `OddsBoard` | `src/components/race/` | Pre-race / live odds. Optional based on game-mode. |
-| `JockeyCard` | `src/components/` | Jockey display analogous to `HorseCard`. |
-| `ScoutReport` | `src/components/` | Fog-of-war info on rival horses. |
-| `RaceReplay` | `src/components/race/` | Playback control HUD wrapper. |
+| Future component | Where it goes          | Notes                                              |
+| ---------------- | ---------------------- | -------------------------------------------------- |
+| `RaceCommentary` | `src/components/race/` | Live race text feed. Drives Tourist's experience.  |
+| `OddsBoard`      | `src/components/race/` | Pre-race / live odds. Optional based on game-mode. |
+| `JockeyCard`     | `src/components/`      | Jockey display analogous to `HorseCard`.           |
+| `ScoutReport`    | `src/components/`      | Fog-of-war info on rival horses.                   |
+| `RaceReplay`     | `src/components/race/` | Playback control HUD wrapper.                      |
 
 When introducing one, write a short spec in [08-extending/02-how-to-add-a-component.md](../08-extending/02-how-to-add-a-component.md).
 
@@ -147,4 +147,4 @@ When introducing one, write a short spec in [08-extending/02-how-to-add-a-compon
 ## Open questions
 
 - Should `HorseCard` have explicit size variants (`compact`, `default`, `hero`)? Right now sizing is implicit per usage; this could become an issue as more screens use it.
-- Where do *jockey* and *trainer* avatars live, when we eventually add them? Reserve `JockeyCard` / `TrainerCard` and leave the question open.
+- Where do _jockey_ and _trainer_ avatars live, when we eventually add them? Reserve `JockeyCard` / `TrainerCard` and leave the question open.

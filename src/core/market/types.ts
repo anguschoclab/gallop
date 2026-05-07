@@ -55,7 +55,7 @@ export type AuctionSale = {
   resolved: boolean;
 };
 
-export type PrivateSaleStatus = 'pending' | 'accepted' | 'countered' | 'declined' | 'expired';
+export type PrivateSaleStatus = "pending" | "accepted" | "countered" | "declined" | "expired";
 
 export type PrivateSaleOffer = {
   id: string;

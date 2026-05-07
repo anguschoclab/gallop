@@ -3,11 +3,7 @@ import { createRng, hashStr } from "@/game/rng";
 
 function nameFromSeed(seed: string): string {
   const rng = createRng(hashStr(seed));
-  return generateProceduralHorseName(
-    { existingNames: new Set() },
-    rng,
-    { strategy: "regional" }
-  );
+  return generateProceduralHorseName({ existingNames: new Set() }, rng, { strategy: "regional" });
 }
 
 type Node = { name: string; sire?: Node; dam?: Node };

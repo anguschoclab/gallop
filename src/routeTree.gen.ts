@@ -37,6 +37,7 @@ import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
 import { Route as SireWatchStallionIdRouteImport } from './routes/sire-watch.$stallionId'
 import { Route as RaceRaceIdRouteImport } from './routes/race.$raceId'
 import { Route as NpcStablesStableIdRouteImport } from './routes/npc-stables.$stableId'
+import { Route as JockeyJockeyIdRouteImport } from './routes/jockey.$jockeyId'
 import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
 import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
 
@@ -180,6 +181,11 @@ const NpcStablesStableIdRoute = NpcStablesStableIdRouteImport.update({
   path: '/$stableId',
   getParentRoute: () => NpcStablesRoute,
 } as any)
+const JockeyJockeyIdRoute = JockeyJockeyIdRouteImport.update({
+  id: '/jockey/$jockeyId',
+  path: '/jockey/$jockeyId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CalendarRegionIdRoute = CalendarRegionIdRouteImport.update({
   id: '/calendar/$regionId',
   path: '/calendar/$regionId',
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/stallions': typeof StallionsRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
+  '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/stallions': typeof StallionsRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
+  '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/stallions': typeof StallionsRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
+  '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
   '/npc-stables/$stableId': typeof NpcStablesStableIdRoute
   '/race/$raceId': typeof RaceRaceIdRoute
   '/sire-watch/$stallionId': typeof SireWatchStallionIdRoute
@@ -314,6 +323,7 @@ export interface FileRouteTypes {
     | '/stallions'
     | '/auction/$saleId'
     | '/calendar/$regionId'
+    | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
@@ -345,6 +355,7 @@ export interface FileRouteTypes {
     | '/stallions'
     | '/auction/$saleId'
     | '/calendar/$regionId'
+    | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
@@ -377,6 +388,7 @@ export interface FileRouteTypes {
     | '/stallions'
     | '/auction/$saleId'
     | '/calendar/$regionId'
+    | '/jockey/$jockeyId'
     | '/npc-stables/$stableId'
     | '/race/$raceId'
     | '/sire-watch/$stallionId'
@@ -409,6 +421,7 @@ export interface RootRouteChildren {
   StableRoute: typeof StableRouteWithChildren
   StallionsRoute: typeof StallionsRoute
   CalendarRegionIdRoute: typeof CalendarRegionIdRoute
+  JockeyJockeyIdRoute: typeof JockeyJockeyIdRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
   CalendarIndexRoute: typeof CalendarIndexRoute
 }
@@ -611,6 +624,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NpcStablesStableIdRouteImport
       parentRoute: typeof NpcStablesRoute
     }
+    '/jockey/$jockeyId': {
+      id: '/jockey/$jockeyId'
+      path: '/jockey/$jockeyId'
+      fullPath: '/jockey/$jockeyId'
+      preLoaderRoute: typeof JockeyJockeyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/calendar/$regionId': {
       id: '/calendar/$regionId'
       path: '/calendar/$regionId'
@@ -700,6 +720,7 @@ const rootRouteChildren: RootRouteChildren = {
   StableRoute: StableRouteWithChildren,
   StallionsRoute: StallionsRoute,
   CalendarRegionIdRoute: CalendarRegionIdRoute,
+  JockeyJockeyIdRoute: JockeyJockeyIdRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,
   CalendarIndexRoute: CalendarIndexRoute,
 }

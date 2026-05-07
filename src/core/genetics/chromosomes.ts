@@ -41,7 +41,7 @@ export type CrossoverEvent = {
 
 /**
  * Perform chromosome-aware crossover for a single chromosome
- * 
+ *
  * @param parent1Alleles - First parent's alleles for loci on this chromosome
  * @param parent2Alleles - Second parent's alleles for loci on this chromosome
  * @param positions - Position of each locus on chromosome (0-1)
@@ -54,7 +54,10 @@ export function crossoverChromosome(
   positions: number[],
   rng: Rng,
 ): Locus[] {
-  if (parent1Alleles.length !== parent2Alleles.length || parent1Alleles.length !== positions.length) {
+  if (
+    parent1Alleles.length !== parent2Alleles.length ||
+    parent1Alleles.length !== positions.length
+  ) {
     throw new Error("Allele and position arrays must have same length");
   }
 
@@ -86,7 +89,7 @@ export function crossoverChromosome(
 /**
  * Perform crossover for multiple chromosomes independently
  * Each chromosome segregates independently with its own crossover point
- * 
+ *
  * @param chromosomeData - Map of chromosome ID to parent alleles and positions
  * @param rng - Random number generator
  * @returns Map of chromosome ID to offspring alleles

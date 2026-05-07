@@ -13,7 +13,10 @@ describe("Horse Naming System", () => {
     });
 
     it("should reject names longer than 18 characters", () => {
-      expect(validateHorseName("This name is definitely way too long for the jockey club", existing).isValid).toBe(false);
+      expect(
+        validateHorseName("This name is definitely way too long for the jockey club", existing)
+          .isValid,
+      ).toBe(false);
     });
 
     it("should reject active duplicate names", () => {

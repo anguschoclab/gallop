@@ -28,9 +28,7 @@ export const pastureRetirementPhase: PipelinePhase = {
 
       // Calculate last race day
       const lastRaceDay =
-        horse.raceHistory.length > 0
-          ? Math.max(...horse.raceHistory.map((r) => r.day))
-          : 0;
+        horse.raceHistory.length > 0 ? Math.max(...horse.raceHistory.map((r) => r.day)) : 0;
       const inactiveDays = lastRaceDay > 0 ? newDay - lastRaceDay : newDay;
 
       // Count graded wins

@@ -12,7 +12,7 @@ owns: design:design-system
 
 A **single-player horse racing stable management sim**. The player owns a stable, trains and breeds horses, enters races, and grows their operation across seasons. Outcomes are simulated horse-by-horse with real physics (pace, stamina, energy, surface, weather) and real metrics (Beyer figures, dosage profiles, graded stakes ladder).
 
-Think *Football Manager* married to *Photo Finish: Horse Racing* — the depth of a numerical sim with the visceral payoff of a live, animated race.
+Think _Football Manager_ married to _Photo Finish: Horse Racing_ — the depth of a numerical sim with the visceral payoff of a live, animated race.
 
 ## What Gallop is not
 

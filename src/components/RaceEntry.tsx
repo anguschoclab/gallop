@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { useJockeys } from "@/game/hooks/useSystemsState";
 import { shallow } from "zustand/shallow";
@@ -32,7 +33,11 @@ import { getCurrentYear } from "@/game/raceSchedule";
 import { toast } from "sonner";
 
 const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(n);
 
 interface RaceEntryProps {
   race: Race;
@@ -111,7 +116,9 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
 
         if (isNewClaimingRace) {
           const horse = horses.find((h: Horse) => h.id === selectedHorseId);
-          toast.info(`${horse?.name ?? "Horse"} entered in claiming race at ${fmtCurrency(claimingPrice!)}.`);
+          toast.info(
+            `${horse?.name ?? "Horse"} entered in claiming race at ${fmtCurrency(claimingPrice!)}.`,
+          );
         }
 
         onClose();
@@ -186,7 +193,14 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                         onClick={() => setSelectedHorseId(horse.id)}
                         className="flex items-center gap-3 flex-1 text-left"
                       >
-                        <HorsePortraitBadge id={horse.id} coatColor={horse.coatColor} markings={horse.markings} gender={horse.gender} appearance={horse.appearance} size="sm" />
+                        <HorsePortraitBadge
+                          id={horse.id}
+                          coatColor={horse.coatColor}
+                          markings={horse.markings}
+                          gender={horse.gender}
+                          appearance={horse.appearance}
+                          size="sm"
+                        />
                         <div>
                           <div className="font-bold flex items-center gap-2">
                             {horse.name}
@@ -207,28 +221,30 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                         </div>
                       </button>
                       <div className="flex items-center gap-2">
-                        {isEntered && isNewClaimingRace && (() => {
-                          const canWithdraw = day < race.day - 1;
-                          return (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-[10px] uppercase font-black tracking-wider"
-                              disabled={!canWithdraw}
-                              title={canWithdraw ? undefined : "Withdrawal closed"}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (canWithdraw) {
-                                  withdrawFromClaimingRace(race.id, horse.id);
-                                  toast.success(`${horse.name} withdrawn from ${race.name}.`);
-                                  onClose();
-                                }
-                              }}
-                            >
-                              {canWithdraw ? "Withdraw" : "Withdrawal closed"}
-                            </Button>
-                          );
-                        })()}
+                        {isEntered &&
+                          isNewClaimingRace &&
+                          (() => {
+                            const canWithdraw = day < race.day - 1;
+                            return (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-[10px] uppercase font-black tracking-wider"
+                                disabled={!canWithdraw}
+                                title={canWithdraw ? undefined : "Withdrawal closed"}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (canWithdraw) {
+                                    withdrawFromClaimingRace(race.id, horse.id);
+                                    toast.success(`${horse.name} withdrawn from ${race.name}.`);
+                                    onClose();
+                                  }
+                                }}
+                              >
+                                {canWithdraw ? "Withdraw" : "Withdrawal closed"}
+                              </Button>
+                            );
+                          })()}
                         {isEntered && !isNewClaimingRace && (
                           <Button
                             variant="destructive"
@@ -248,7 +264,9 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                             Withdraw
                           </Button>
                         )}
-                        {selectedHorseId === horse.id && !isEntered && <Check className="text-primary" size={20} />}
+                        {selectedHorseId === horse.id && !isEntered && (
+                          <Check className="text-primary" size={20} />
+                        )}
                       </div>
                     </div>
                   );
@@ -300,7 +318,8 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   <AlertTriangle size={18} className="shrink-0 mt-0.5" />
                   <p className="text-xs font-bold">
                     Claiming Race: Any stable may purchase {selectedHorse.name} for{" "}
-                    {fmtCurrency(claimingPrice)} after the race. The transfer is automatic. You may withdraw up to 1 day before the race.
+                    {fmtCurrency(claimingPrice)} after the race. The transfer is automatic. You may
+                    withdraw up to 1 day before the race.
                   </p>
                 </div>
               )}
@@ -309,10 +328,22 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
 
                 <div className="flex flex-col items-center gap-2">
-                  <HorsePortrait id={selectedHorse.id} coatColor={selectedHorse.coatColor} markings={selectedHorse.markings} gender={selectedHorse.gender} appearance={selectedHorse.appearance} size="md" />
-                  <div className="font-black uppercase tracking-tighter text-center leading-none">
+                  <HorsePortrait
+                    id={selectedHorse.id}
+                    coatColor={selectedHorse.coatColor}
+                    markings={selectedHorse.markings}
+                    gender={selectedHorse.gender}
+                    appearance={selectedHorse.appearance}
+                    size="md"
+                  />
+                  <Link
+                    to="/stable/$horseId"
+                    params={{ horseId: selectedHorse.id }}
+                    target="_blank"
+                    className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-gold"
+                  >
                     {selectedHorse.name}
-                  </div>
+                  </Link>
                 </div>
 
                 <ChevronRight className="text-muted-foreground/30" />
@@ -321,9 +352,14 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   <div className="h-12 w-12 rounded-md bg-muted border-2 border-primary/20 flex items-center justify-center overflow-hidden">
                     <RacingSilks silk={selectedJockey.silk} size={44} />
                   </div>
-                  <div className="font-black uppercase tracking-tighter text-center leading-none">
+                  <Link
+                    to="/jockey/$jockeyId"
+                    params={{ jockeyId: selectedJockey.id }}
+                    target="_blank"
+                    className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-gold"
+                  >
                     {selectedJockey.name}
-                  </div>
+                  </Link>
                 </div>
               </div>
 

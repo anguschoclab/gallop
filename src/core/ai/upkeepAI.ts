@@ -254,7 +254,8 @@ export function recordBudgetDecision(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newBudgetHistory.length > maxHistory ? newBudgetHistory.slice(-maxHistory) : newBudgetHistory;
+  const trimmedHistory =
+    newBudgetHistory.length > maxHistory ? newBudgetHistory.slice(-maxHistory) : newBudgetHistory;
 
   // Update learning state
   const success = spent <= totalBudget * 1.1; // Within 10% of budget is success
@@ -294,9 +295,7 @@ export function getBudgetInsights(
   const stableHistory = aiState.budgetHistory.filter((b) => b.stableId === stableId);
   const totalBudgets = stableHistory.length;
   const avgSpending =
-    totalBudgets > 0
-      ? stableHistory.reduce((sum, b) => sum + b.spent, 0) / totalBudgets
-      : 0;
+    totalBudgets > 0 ? stableHistory.reduce((sum, b) => sum + b.spent, 0) / totalBudgets : 0;
 
   const successfulBudgets = stableHistory.filter((b) => b.success).length;
   const budgetAdherence = totalBudgets > 0 ? successfulBudgets / totalBudgets : 1;

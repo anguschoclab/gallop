@@ -24,19 +24,19 @@ Gallop uses a small, deliberate set of visual assets. The rule: every image earn
 
 **Current navigation icons** ([AppShell.tsx:4](../../../src/components/AppShell.tsx)):
 
-| Icon | Used for |
-|---|---|
-| `Home` | Dashboard |
-| `Trophy` | Stable |
-| `Calendar` | Races |
-| `Building2` | Rival Stables |
-| `Store` | Market |
-| `Heart` | Breeding |
-| `Gavel` | Sales / Auctions |
-| `Plus` | Advance day |
-| `Settings` | AutoSim panel |
+| Icon        | Used for         |
+| ----------- | ---------------- |
+| `Home`      | Dashboard        |
+| `Trophy`    | Stable           |
+| `Calendar`  | Races            |
+| `Building2` | Rival Stables    |
+| `Store`     | Market           |
+| `Heart`     | Breeding         |
+| `Gavel`     | Sales / Auctions |
+| `Plus`      | Advance day      |
+| `Settings`  | AutoSim panel    |
 
-**Don't** mix icon libraries. Don't ship raster icons. Don't use emoji *as* icons in management UI (the race screen weather emoji is a controlled exception — see [02-voice/02-ux-copy-patterns.md](../02-voice/02-ux-copy-patterns.md)).
+**Don't** mix icon libraries. Don't ship raster icons. Don't use emoji _as_ icons in management UI (the race screen weather emoji is a controlled exception — see [02-voice/02-ux-copy-patterns.md](../02-voice/02-ux-copy-patterns.md)).
 
 ---
 
@@ -44,16 +44,16 @@ Gallop uses a small, deliberate set of visual assets. The rule: every image earn
 
 Located in [src/assets/](../../../src/assets/) and served from `/assets/horse-*.png`. These are 6-frame running sprite sheets, indexed by coat colour:
 
-| Coat | File |
-|---|---|
-| bay | `horse-b.png` |
-| black | `horse-bl.png` |
-| chestnut | `horse-ch.png` |
-| dark-bay | `horse-dkb.png` |
-| gray | `horse-gr.png` |
-| roan | `horse-roan.png` (also `.svg`) |
+| Coat     | File                               |
+| -------- | ---------------------------------- |
+| bay      | `horse-b.png`                      |
+| black    | `horse-bl.png`                     |
+| chestnut | `horse-ch.png`                     |
+| dark-bay | `horse-dkb.png`                    |
+| gray     | `horse-gr.png`                     |
+| roan     | `horse-roan.png` (also `.svg`)     |
 | palomino | `horse-palomino.png` (also `.svg`) |
-| white | `horse-white.png` (also `.svg`) |
+| white    | `horse-white.png` (also `.svg`)    |
 
 **Status (2026-05):** these assets are referenced by the race viewer but **not yet rendered** — `HorseSprite` falls back to a coloured silk circle. See gap analysis in [05-screens/04-race-viewer.md](../05-screens/04-race-viewer.md).
 
@@ -63,10 +63,10 @@ Located in [src/assets/](../../../src/assets/) and served from `/assets/horse-*.
 
 ## Track surface textures
 
-| Surface | File |
-|---|---|
-| Turf | `track-turf.png` |
-| Dirt | `track-dirt.png` |
+| Surface   | File                                |
+| --------- | ----------------------------------- |
+| Turf      | `track-turf.png`                    |
+| Dirt      | `track-dirt.png`                    |
 | Synthetic | `track-synthetic.png` (also `.svg`) |
 
 Used in [race.$raceId.tsx:13–24](../../../src/routes/race.$raceId.tsx). Repeated horizontally as the live track background.
@@ -79,13 +79,13 @@ Used in [race.$raceId.tsx:13–24](../../../src/routes/race.$raceId.tsx). Repeat
 
 Available weather variants, each with a paired sky image:
 
-| Weather | File(s) |
-|---|---|
-| Sunny | `bg-sky-sunny.png` |
-| Cloudy | `bg-sky-cloudy.png` (`.svg`) |
-| Rainy | `bg-sky-pouring.png` |
-| Sunset | `bg-sky-sunset.png` (`.svg`) |
-| Night | `bg-sky-night.png` (`.svg`) |
+| Weather | File(s)                      |
+| ------- | ---------------------------- |
+| Sunny   | `bg-sky-sunny.png`           |
+| Cloudy  | `bg-sky-cloudy.png` (`.svg`) |
+| Rainy   | `bg-sky-pouring.png`         |
+| Sunset  | `bg-sky-sunset.png` (`.svg`) |
+| Night   | `bg-sky-night.png` (`.svg`)  |
 
 Used as a 200px-tall repeating-x band atop the emerald track gradient on the live race screen.
 
@@ -100,15 +100,12 @@ Silks are how the player and rivals are visually identified. Each horse has a si
 **Pattern:**
 
 ```tsx
-<div
-  className="h-5 w-5 rounded-full border border-white/40"
-  style={{ backgroundColor: r.silk }}
-/>
+<div className="h-5 w-5 rounded-full border border-white/40" style={{ backgroundColor: r.silk }} />
 ```
 
 (`border-white/40` on dark backgrounds; `border` on light. Always border — the silk dot needs a stroke to read on either surface.)
 
-**Source:** silks are stored on `Runner.silk` (per the type in [src/game/raceSim.ts](../../../src/game/raceSim.ts)) and assigned at horse creation. They are *never* derived per-screen — this guarantees consistency principle 7 ("the race screen is the constitution").
+**Source:** silks are stored on `Runner.silk` (per the type in [src/game/raceSim.ts](../../../src/game/raceSim.ts)) and assigned at horse creation. They are _never_ derived per-screen — this guarantees consistency principle 7 ("the race screen is the constitution").
 
 **The "YOU" badge:** when `r.owned`, render a small `bg-yellow-400 text-black` chip beside the silk. Reserved for the player.
 
@@ -116,13 +113,14 @@ Silks are how the player and rivals are visually identified. Each horse has a si
 
 ## Decorative imagery (and what we don't ship)
 
-| Asset | Status |
-|---|---|
+| Asset                  | Status                                            |
+| ---------------------- | ------------------------------------------------- |
 | `background-fence.png` | Decorative — race screen background fence detail. |
-| `markers-steeple.png` | Decorative — for steeplechase variants (future). |
-| `fast.png` | Legacy — likely old loading/UI element. Audit. |
+| `markers-steeple.png`  | Decorative — for steeplechase variants (future).  |
+| `fast.png`             | Legacy — likely old loading/UI element. Audit.    |
 
 **We do not ship:**
+
 - Photographic horse imagery.
 - Stock-photo backgrounds.
 - Illustrations of jockeys, trainers, or owners as faces.
@@ -134,5 +132,5 @@ The sprite-and-silk model is the entire visual vocabulary for representing horse
 
 ## Open questions
 
-- Should we add silk *patterns* (stripes, halves, stars) like real racing colours, or stay with solid colours? The `HorseSprite.silk` field today is a single colour string.
+- Should we add silk _patterns_ (stripes, halves, stars) like real racing colours, or stay with solid colours? The `HorseSprite.silk` field today is a single colour string.
 - Should the surface texture become a tokenised gradient rather than a PNG, so the race screen can tint it for night races?

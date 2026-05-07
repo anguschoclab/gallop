@@ -108,7 +108,8 @@ const ELITE_POOL: StablePoolEntry[] = [
     owner: "Yoshida Family",
     isMajor: true,
     colors: { primary: "#000080", secondary: "#ffffff" },
-    description: "Japanese breeding powerhouse home of Deep Impact, Sunday Silence, and Japanese Triple Crown winners.",
+    description:
+      "Japanese breeding powerhouse home of Deep Impact, Sunday Silence, and Japanese Triple Crown winners.",
     country: "Japan",
   },
   {
@@ -116,7 +117,8 @@ const ELITE_POOL: StablePoolEntry[] = [
     owner: "B. Wayne Hughes",
     isMajor: true,
     colors: { primary: "#000000", secondary: "#ffd700" },
-    description: "Kentucky stud farm home of Into Mischief, Omaha Beach, and other champion stallions.",
+    description:
+      "Kentucky stud farm home of Into Mischief, Omaha Beach, and other champion stallions.",
     country: "USA",
   },
   {
@@ -124,7 +126,8 @@ const ELITE_POOL: StablePoolEntry[] = [
     owner: "Coolmore",
     isMajor: true,
     colors: { primary: "#1a472a", secondary: "#ffffff" },
-    description: "Coolmore's Kentucky operation standing Justify, Uncle Mo, and other elite stallions.",
+    description:
+      "Coolmore's Kentucky operation standing Justify, Uncle Mo, and other elite stallions.",
     country: "USA",
   },
   {
@@ -531,7 +534,6 @@ const BUDGET_POOL: StablePoolEntry[] = [
   },
 ];
 
-
 /**
  * Generate all NPC stables (named + filler)
  * Named stables are randomly selected from pools based on config counts
@@ -550,9 +552,7 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
   // Select and create mid-tier stables from pool
   const selectedMid = shuffleAndPick(MID_POOL, config.mid.count, rng);
   for (const template of selectedMid) {
-    stables.push(
-      generateStableFromTemplate(template, "mid", config.mid.reputationRange, day, rng),
-    );
+    stables.push(generateStableFromTemplate(template, "mid", config.mid.reputationRange, day, rng));
   }
 
   // Select and create budget stables from pool
@@ -573,15 +573,19 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
     if (stable.tier === "elite" && stable.isMajor) {
       // Elite tier prestige: regional Triple Crown archetype (random for elite stables)
       if (stable.personality === "prestige") {
-        const tripleCrownArchetypes = TRIPLE_CROWN_ARCHETYPES.filter(a => a.id === "triple-crown-specialist");
-        stable.breedingArchetype = tripleCrownArchetypes.length > 0 ? rng.pick(tripleCrownArchetypes).id : undefined;
+        const tripleCrownArchetypes = TRIPLE_CROWN_ARCHETYPES.filter(
+          (a) => a.id === "triple-crown-specialist",
+        );
+        stable.breedingArchetype =
+          tripleCrownArchetypes.length > 0 ? rng.pick(tripleCrownArchetypes).id : undefined;
       }
       // Elite tier specialist: random specialist archetype
       else if (stable.personality === "specialist") {
-        const specialistArchetypes = ORIGINAL_ARCHETYPES.filter(a => 
-          a.id === "dirt-sprinter" || a.id === "turf-specialist" || a.id === "iron-horse"
+        const specialistArchetypes = ORIGINAL_ARCHETYPES.filter(
+          (a) => a.id === "dirt-sprinter" || a.id === "turf-specialist" || a.id === "iron-horse",
         );
-        stable.breedingArchetype = specialistArchetypes.length > 0 ? rng.pick(specialistArchetypes).id : undefined;
+        stable.breedingArchetype =
+          specialistArchetypes.length > 0 ? rng.pick(specialistArchetypes).id : undefined;
       }
     } else if (stable.tier === "mid" && stable.isMajor) {
       // Mid tier: random original archetype
@@ -717,8 +721,8 @@ export function mapStallionToStable(stallion: PedigreeHorse, stables: Stable[]):
     stallion.studFee && stallion.studFee >= 100000
       ? "elite"
       : stallion.studFee && stallion.studFee >= 25000
-      ? "mid"
-      : "budget";
+        ? "mid"
+        : "budget";
 
   const tierStables = stables.filter((s) => s.tier === tier);
   if (tierStables.length === 0) {

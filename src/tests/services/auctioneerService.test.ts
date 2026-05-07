@@ -49,7 +49,11 @@ function mkStable(name: string): Stable {
 describe("auctioneerService", () => {
   it("substitutes horse name and pedigree in LOT_OPEN lines", () => {
     const rng = createRng(1);
-    const horse = mkHorse({ name: "Sea Hero", sireName: "Polish Navy", damName: "Glowing Tribute" });
+    const horse = mkHorse({
+      name: "Sea Hero",
+      sireName: "Polish Navy",
+      damName: "Glowing Tribute",
+    });
     const event: AuctionTickEvent = { type: "LOT_OPEN", lotId: "l1" };
 
     // Try several seeds and expect at least one to mention the horse name and
@@ -104,7 +108,7 @@ describe("auctioneerService", () => {
         const line = generateAuctioneerLine(
           event,
           { horse, winner: stable, consignor: stable, paddleNumber: 3 },
-          createRng(seed)
+          createRng(seed),
         );
         expect(line.text).not.toMatch(/\{[a-zA-Z]+\}/);
         expect(line.text).not.toMatch(/\[\w+\?\]/); // unfilled fallback marker
