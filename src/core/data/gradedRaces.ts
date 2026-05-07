@@ -1723,6 +1723,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 1000000,
     dayOfYear: doy(8, 17),
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "canada-tc",
   },
   {
     uuid: "492aae8c-9ba8-4bce-b7c2-1f5c9404c703",
@@ -1736,6 +1737,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 400000,
     dayOfYear: doy(9, 9),
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "canada-tc",
   },
   {
     uuid: "71c573ae-c6c8-4ed9-a9a3-c4b3fac18d30",
@@ -1749,6 +1751,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 500000,
     dayOfYear: doy(10, 5),
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "canada-tc",
   },
 
   // ============= Canada — Grade 2 (Woodbine) =============
@@ -5189,6 +5192,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "uk-classics",
   },
   {
     uuid: "70d96855-b65c-456e-81fa-63f82dd6c84d",
@@ -5203,6 +5207,7 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "uk-classics",
   },
   {
     uuid: "983dfd97-f9a8-4144-a853-90149cc5f3e4",
@@ -5230,6 +5235,7 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 166,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "uk-classics",
   },
   {
     uuid: "83c486e6-9561-47f3-8604-b81424890603",
@@ -5256,6 +5262,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 166,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "uk-classics",
   },
   {
     uuid: "a1f3f85c-ba94-4f43-b30e-682122e522a1",

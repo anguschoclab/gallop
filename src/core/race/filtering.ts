@@ -44,11 +44,11 @@ export function filterRacesByCriteria(
     // Filter by triple crown
     if (filters.tripleCrown !== "all" && filters.tripleCrown !== undefined) {
       const tripleCrownKeys = new Set([
-        "ca-kings-plate",
-        "ca-prince-of-wales",
-        "ca-breeders-stakes",
+        "usa-tc",
+        "canada-tc",
+        "uk-classics",
       ]);
-      const isTripleCrown = race.graded && tripleCrownKeys.has(race.graded.key);
+      const isTripleCrown = race.graded && tripleCrownKeys.has(race.graded.triplecrownKey || "");
       if (filters.tripleCrown && !isTripleCrown) return false;
       if (!filters.tripleCrown && isTripleCrown) return false;
     }

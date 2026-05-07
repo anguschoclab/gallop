@@ -71,6 +71,7 @@ export type Race = {
     trackId: string;
     surface: "Turf" | "Dirt" | "Synthetic";
     winAndYouInTarget?: string;
+    triplecrownKey?: string; // e.g. "usa-tc", "canada-tc", "uk-classics" — groups Triple Crown legs
   };
   claimingPrice?: ClaimingPrice;
   winCondition?: WinCondition;

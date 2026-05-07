@@ -1,4 +1,4 @@
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable, GameState } from "@/game/types";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
 import {
@@ -8,6 +8,10 @@ import {
   type LearningState,
 } from "./learningModule";
 import { scoreStallion, overallRating } from "@/core/breeding/strategy";
+import { runBreedingSimulation } from "@/core/genetics/breedingSimulator";
+import { cachedSimulation } from "@/core/genetics/genotypeCache";
+import { getArchetypeById } from "@/core/breeding/archetypes";
+import type { Rng } from "@/game/rng";
 
 /**
  * Breeding AI System
@@ -279,4 +283,72 @@ export function adaptBreedingStrategy(
   }
 
   return aiState;
+}
+
+/**
+ * Select sire for dam using breeding simulator if stable has breeding program
+ * Falls back to traditional scoring if no breeding program or simulation shows poor match
+ */
+export function selectSireForDam(
+  dam: Horse,
+  candidateSires: Horse[],
+  stable: Stable,
+  gameState: GameState,
+  rng: Rng,
+): Horse | null {
+  // If stable has a breeding program, use breeding simulator
+  if (stable.breedingArchetype) {
+    const archetype = getArchetypeById(stable.breedingArchetype);
+    if (!archetype) {
+      // Fall back to traditional scoring if archetype not found
+      return selectSireByTraditionalScoring(dam, candidateSires, stable, gameState);
+    }
+
+    // Evaluate each candidate sire using breeding simulator (cached)
+    let bestSire: Horse | null = null;
+    let bestDistance = 1.0;
+
+    for (const sire of candidateSires) {
+      const simulation = cachedSimulation(
+        sire.id,
+        dam.id,
+        () => runBreedingSimulation(sire, dam, gameState, rng),
+      );
+
+      const distance = simulation.coiEstimate; // Use COI as proxy for genetic distance
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestSire = sire;
+      }
+    }
+
+    // If best match is good (distance < 0.3), use it
+    if (bestSire && bestDistance < 0.3) {
+      return bestSire;
+    }
+  }
+
+  // Fall back to traditional scoring
+  return selectSireByTraditionalScoring(dam, candidateSires, stable, gameState);
+}
+
+/**
+ * Select sire using traditional scoring (fallback when breeding program not applicable)
+ */
+function selectSireByTraditionalScoring(
+  dam: Horse,
+  candidateSires: Horse[],
+  stable: Stable,
+  gameState: GameState,
+): Horse | null {
+  if (candidateSires.length === 0) return null;
+
+  // Simple scoring based on overall rating
+  const scored = candidateSires.map((sire) => ({
+    sire,
+    score: overallRating(sire),
+  }));
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored[0].sire;
 }

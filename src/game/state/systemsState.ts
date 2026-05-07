@@ -2,6 +2,7 @@
 // Includes NPC stables, jockeys, awards, campaigns, leaderboards, facilities, and pending intents
 
 import type { Stable, ScoutReport, Jockey, HorseCampaign, TripleCrownProgress, PlayerProfile } from "../types";
+import type { BreedingProgram } from "@/core/breeding/programs";
 import type { RegionalAward, AwardRegion } from "../awards/types";
 import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { AnyIntent } from "@/core/resolver/intents";
@@ -28,6 +29,10 @@ export interface SystemsState {
   npcStables: Stable[];
   /** NPC AI state manager for learning and personality-driven decisions */
   npcAIManager?: NpcAIManager;
+
+  // Breeding programs system
+  /** Breeding programs for stables targeting specific archetypes */
+  breedingPrograms: BreedingProgram[];
 
   // Jockey system (optional - may not be initialized yet)
   /** Available and contracted jockeys */
@@ -155,6 +160,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
         stableStates: new Map(),
         globalDay: 1,
       },
+      breedingPrograms: [],
       awards: [],
       facilities: facilities as PlayerFacilities,
       npcFacilities: {},
@@ -185,6 +191,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       stableStates: new Map(),
       globalDay: 1,
     },
+    breedingPrograms: [],
     awards: [],
     facilities: createDefaultPlayerFacilities(1),
     npcFacilities: {},

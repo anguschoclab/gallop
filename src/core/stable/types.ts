@@ -1,4 +1,5 @@
 import type { JockeySilk } from "@/core/jockey/types";
+import type { Archetype } from "@/core/breeding/archetypes";
 
 export type StableTier = "elite" | "mid" | "budget";
 
@@ -28,6 +29,7 @@ export type Stable = {
   personality: StablePersonality;
   preferredDistance?: number;
   preferredSurface?: "Turf" | "Dirt" | "Synthetic";
+  breedingArchetype?: Archetype["id"];
 };
 
 export type BackstoryId = "heir" | "trainer" | "investor" | "owner";

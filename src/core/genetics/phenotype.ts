@@ -13,6 +13,7 @@ import type {
   SockHeight,
   FaceWhite,
 } from "@/core/horse/types";
+import { cachedSimulation, cachedCompat } from "./genotypeCache";
 
 export const TRAIT_VALUES: Record<string, number> = { excellent: 4, good: 3, fair: 2, poor: 1 };
 export const TRAIT_SCORE: Record<string, number> = {

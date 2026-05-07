@@ -16,6 +16,7 @@ import {
   generateStableFromTemplate,
   type StablePoolEntry,
 } from "@/core/stable/stableGeneration";
+import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/core/breeding/archetypes";
 
 // ELITE STABLE POOL - 10 real-world inspired operations (config picks 5)
 const ELITE_POOL: StablePoolEntry[] = [
@@ -565,6 +566,28 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
   // Create filler stables
   for (let i = 0; i < config.filler.count; i++) {
     stables.push(generateFillerStable(i, day, rng));
+  }
+
+  // Assign breeding archetypes based on tier/personality
+  for (const stable of stables) {
+    if (stable.tier === "elite" && stable.isMajor) {
+      // Elite tier prestige: regional Triple Crown archetype (random for elite stables)
+      if (stable.personality === "prestige") {
+        const tripleCrownArchetypes = TRIPLE_CROWN_ARCHETYPES.filter(a => a.id === "triple-crown-specialist");
+        stable.breedingArchetype = tripleCrownArchetypes.length > 0 ? rng.pick(tripleCrownArchetypes).id : undefined;
+      }
+      // Elite tier specialist: random specialist archetype
+      else if (stable.personality === "specialist") {
+        const specialistArchetypes = ORIGINAL_ARCHETYPES.filter(a => 
+          a.id === "dirt-sprinter" || a.id === "turf-specialist" || a.id === "iron-horse"
+        );
+        stable.breedingArchetype = specialistArchetypes.length > 0 ? rng.pick(specialistArchetypes).id : undefined;
+      }
+    } else if (stable.tier === "mid" && stable.isMajor) {
+      // Mid tier: random original archetype
+      stable.breedingArchetype = rng.pick(ORIGINAL_ARCHETYPES).id;
+    }
+    // Budget/starter tier: no archetype (undefined)
   }
 
   return stables;

@@ -1,7 +1,7 @@
 import type { Horse } from "./types";
 import { calculateDosageMetrics, interpretDosageIndex } from "./dosage";
-import { findHorseByName, type PedigreeHorse } from "./pedigreeData";
-import { TRAIT_SCORE } from "./geneticsEngine";
+import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeData";
+import { TRAIT_SCORE } from "@/core/genetics/phenotype";
 
 /**
  * Calculate genetic compatibility based on horse genome research

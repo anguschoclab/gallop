@@ -11,6 +11,7 @@ import type { ActionResult } from "@/game/store";
 import type { UserSettings } from "@/core/settings/settingsTypes";
 import type { PlayerFacilities } from "@/core/facilities";
 import type { ManagerReputation } from "@/core/reputation";
+import type { BreedingProgram } from "@/core/breeding/programs";
 
 export type SystemsSlice = SystemsState & {
   hireJockey: (jockeyId: string) => ActionResult;
@@ -54,6 +55,10 @@ export type SystemsSlice = SystemsState & {
   setPlayerProfile: (profile: SystemsState["playerProfile"]) => void;
   registerHorseName: (name: string) => void;
   unregisterHorseName: (name: string) => void;
+  createBreedingProgram: (program: BreedingProgram) => void;
+  updateBreedingProgram: (program: BreedingProgram) => void;
+  deleteBreedingProgram: (programId: string) => void;
+  enrollDamInProgram: (programId: string, damId: string) => void;
 };
 
 export function createSystemsSlice(set: any, get: any): SystemsSlice {
@@ -461,6 +466,41 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       const lower = name.toLowerCase();
       set((s: any) => ({
         usedHorseNames: s.usedHorseNames.filter((n: string) => n !== lower)
+      }));
+    },
+
+    createBreedingProgram: (program: BreedingProgram) => {
+      set((s: any) => ({
+        breedingPrograms: [...s.breedingPrograms, program],
+      }));
+    },
+
+    updateBreedingProgram: (program: BreedingProgram) => {
+      set((s: any) => ({
+        breedingPrograms: s.breedingPrograms.map((p: BreedingProgram) =>
+          p.id === program.id ? program : p,
+        ),
+      }));
+    },
+
+    deleteBreedingProgram: (programId: string) => {
+      set((s: any) => ({
+        breedingPrograms: s.breedingPrograms.filter((p: BreedingProgram) => p.id !== programId),
+      }));
+    },
+
+    enrollDamInProgram: (programId: string, damId: string) => {
+      set((s: any) => ({
+        breedingPrograms: s.breedingPrograms.map((p: BreedingProgram) =>
+          p.id === programId
+            ? {
+                ...p,
+                enrolledDamIds: p.enrolledDamIds.includes(damId)
+                  ? p.enrolledDamIds
+                  : [...p.enrolledDamIds, damId],
+              }
+            : p,
+        ),
       }));
     },
   };

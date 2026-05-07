@@ -203,6 +203,9 @@ export const useGame = create<StoreType>()(
         playerProfile: state.playerProfile,
         privateSaleOffers: state.privateSaleOffers,
         claims: state.claims,
+        breedingPrograms: state.breedingPrograms,
+        usedHorseNames: state.usedHorseNames,
+        usedJockeyNames: state.usedJockeyNames,
       }),
       onRehydrateStorage: () => async (state) => {
         // Initialize workers on rehydration (app load or existing save load)
