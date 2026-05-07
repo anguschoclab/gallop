@@ -82,6 +82,7 @@ export function StepIdentity({ stableName, ownerName, onChange, onNext }: StepId
                     variant="outline"
                     size="icon"
                     onClick={handleRandomStableName}
+                    aria-label="Roll a random stable name"
                   >
                     🎲
                   </Button>
@@ -124,6 +125,7 @@ export function StepIdentity({ stableName, ownerName, onChange, onNext }: StepId
                     variant="outline"
                     size="icon"
                     onClick={handleRandomOwnerName}
+                    aria-label="Roll a random owner name"
                   >
                     🎲
                   </Button>
