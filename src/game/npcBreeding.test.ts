@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from "vitest";
 import { runNpcBreeding } from "./npcBreeding";
-import { createRng } from "./rng";
+import { createRng } from "@/game/rng";
 import type { Horse, Stable, GameState, Pregnancy, HorseGender } from "./types";
 
 // Helper to create minimal valid Horse objects for testing
