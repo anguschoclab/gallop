@@ -9,7 +9,6 @@ import { generateAncestorHomage } from "./ancestorHomage";
 import { generateThematicName, type NamingTheme } from "./thematicNaming";
 import { generateRegionalName } from "./regionalConventions";
 import { validateHorseName } from "./jockeyClubRules";
-import { randomHorseName as fallbackRandomHorseName } from "@/core/common/random";
 
 export interface NamingContext {
   sireName?: string;
@@ -71,7 +70,7 @@ export function generateProceduralHorseName(
 
     // Fallback if strategy failed to produce a name
     if (!candidate) {
-      candidate = fallbackRandomHorseName(rng);
+      candidate = generateThematicName("generic", rng);
     }
 
     // Validate name
@@ -82,7 +81,7 @@ export function generateProceduralHorseName(
   }
 
   // Final fallback: append a number if all else fails (rare)
-  const finalFallback = fallbackRandomHorseName(rng);
+  const finalFallback = generateThematicName("generic", rng);
   return `${finalFallback.slice(0, 14)} ${rng.int(10, 99)}`;
 }
 
