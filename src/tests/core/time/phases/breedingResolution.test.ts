@@ -50,6 +50,13 @@ describe("breedingResolutionPhase", () => {
       gender: "horse",
       age: 5,
       stableId: "npc-stable-1",
+      stud: {
+        atStud: true,
+        standingFee: 1000,
+        seasonBookings: 0,
+        bookSize: 40,
+        retired: false,
+      },
     });
     const dam = createTestHorse({ id: "dam-1", gender: "mare", age: 5 });
     const state: GameState = {
@@ -88,7 +95,7 @@ describe("breedingResolutionPhase", () => {
     const context = createTestContext(state, [intent]);
     const result = breedingResolutionPhase.execute(context);
 
-    expect(result.impacts).toHaveLength(2);
+    expect(result.impacts).toHaveLength(3);
     const pregnancyImpact = result.impacts.find((i) => i.type === "pregnancy_creation");
     expect(pregnancyImpact).toBeDefined();
   });
@@ -99,6 +106,13 @@ describe("breedingResolutionPhase", () => {
       gender: "horse",
       age: 5,
       stableId: "npc-stable-1",
+      stud: {
+        atStud: true,
+        standingFee: 1000,
+        seasonBookings: 0,
+        bookSize: 40,
+        retired: false,
+      },
     });
     const dam = createTestHorse({ id: "dam-1", gender: "mare", age: 5 });
     const state: GameState = {

@@ -37,14 +37,14 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
     switch (impact.type) {
       case "cash_change": {
         const { entityId, amount, reason } = impact;
-        if (entityId) {
+        if (entityId && entityId !== "player") {
           // NPC stable cash change
           const stable = draft.npcStables.find((s) => s.id === entityId);
           if (stable) {
             stable.cash = Math.max(0, stable.cash + amount);
           }
         } else {
-          // Player cash change
+          // Player cash change (entityId is falsy or "player")
           draft.cash = Math.max(0, draft.cash + amount);
         }
         break;

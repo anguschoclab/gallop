@@ -174,25 +174,29 @@ export function scoutHorse(
   let geneticInsight: ScoutReport["geneticInsight"];
   if (accuracy > 0.85) {
     const g = horse.genotype;
-    const abilityMarkers: string[] = [];
-    if (g.preferences.climbing[0] + g.preferences.climbing[1] >= 8)
-      abilityMarkers.push("Strong Climbing Marker");
-    if (g.preferences.cornering[0] + g.preferences.cornering[1] >= 8)
-      abilityMarkers.push("Agile Cornering Marker");
+    if (g) {
+      const abilityMarkers: string[] = [];
+      if (g.preferences) {
+        if (g.preferences.climbing[0] + g.preferences.climbing[1] >= 8)
+          abilityMarkers.push("Strong Climbing Marker");
+        if (g.preferences.cornering[0] + g.preferences.cornering[1] >= 8)
+          abilityMarkers.push("Agile Cornering Marker");
+      }
 
-    // Hidden color carrier (e.g. non-gray horse carrying gray allele)
-    let hiddenColorCarrier: string | undefined;
-    if (horse.coatColor !== "gray" && (g.color.gray[0] === 1 || g.color.gray[1] === 1)) {
-      hiddenColorCarrier = "Gray Allele Carrier";
+      // Hidden color carrier (e.g. non-gray horse carrying gray allele)
+      let hiddenColorCarrier: string | undefined;
+      if (horse.coatColor !== "gray" && (g.color.gray[0] === 1 || g.color.gray[1] === 1)) {
+        hiddenColorCarrier = "Gray Allele Carrier";
+      }
+
+      geneticInsight = {
+        distanceMarker: `Genetic bias for ${horse.distanceAptitude}m`,
+        surfaceMarker:
+          Object.entries(horse.surfaceAptitude).find(([_, v]) => v === 1.0)?.[0] + " Affinity Marker",
+        hiddenColorCarrier,
+        abilityMarkers,
+      };
     }
-
-    geneticInsight = {
-      distanceMarker: `Genetic bias for ${horse.distanceAptitude}m`,
-      surfaceMarker:
-        Object.entries(horse.surfaceAptitude).find(([_, v]) => v === 1.0)?.[0] + " Affinity Marker",
-      hiddenColorCarrier,
-      abilityMarkers,
-    };
   }
 
   const report: ScoutReport = {

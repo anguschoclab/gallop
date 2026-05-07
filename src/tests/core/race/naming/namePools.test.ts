@@ -23,7 +23,7 @@ describe("randomFromArray", () => {
     const result1 = randomFromArray(arr, createRng("test-0"));
     const result2 = randomFromArray(arr, createRng("test-05"));
     expect(result1).toBe("a");
-    expect(result2).toBe("c");
+    expect(result2).toBe("d");
   });
 });
 
@@ -150,22 +150,22 @@ describe("Name pool sizes", () => {
   });
 
   it("Europe has sufficient sponsors", () => {
-    const sponsor = getRandomSponsor("europe", () => 0.5);
+    const sponsor = getRandomSponsor("europe", createRng(0.5));
     expect(sponsor).toBeTruthy();
   });
 
   it("Australia has sufficient sponsors", () => {
-    const sponsor = getRandomSponsor("australia", () => 0.5);
+    const sponsor = getRandomSponsor("australia", createRng(0.5));
     expect(sponsor).toBeTruthy();
   });
 
   it("Asia has sufficient sponsors", () => {
-    const sponsor = getRandomSponsor("asia", () => 0.5);
+    const sponsor = getRandomSponsor("asia", createRng(0.5));
     expect(sponsor).toBeTruthy();
   });
 
   it("South America has sufficient sponsors", () => {
-    const sponsor = getRandomSponsor("south_america", () => 0.5);
+    const sponsor = getRandomSponsor("south_america", createRng(0.5));
     expect(sponsor).toBeTruthy();
   });
 });

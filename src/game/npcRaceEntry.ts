@@ -113,6 +113,10 @@ export function runNpcRaceEntry(
   daysAhead: number = 3,
   pregnantIds: Set<string> = new Set(),
 ): Race[] {
+  if (!Array.isArray(races)) {
+    console.error("runNpcRaceEntry called with non-array races:", races);
+    return [];
+  }
   // Deep clone races to avoid mutating frozen/read-only objects during multi-day advancement
   const updatedRaces = races.map((race) => ({
     ...race,

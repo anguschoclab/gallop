@@ -58,17 +58,26 @@ export function crossoverChromosome(
     throw new Error("Allele and position arrays must have same length");
   }
 
-  // Draw single crossover point from uniform(0,1)
-  const crossoverPoint = rng.next();
+  // Draw crossover points for each parent independently
+  // Each parent has two homologous chromosomes (represented by Locus[0] and Locus[1])
+  const cp1 = rng.next();
+  const cp2 = rng.next();
 
-  // Loci below crossover inherit from parent A, above from parent B
+  // Pick which strand each parent starts with (0 or 1)
+  const startStrand1 = rng.next() < 0.5 ? 0 : 1;
+  const startStrand2 = rng.next() < 0.5 ? 0 : 1;
+
   const offspringAlleles: Locus[] = [];
   for (let i = 0; i < parent1Alleles.length; i++) {
-    if (positions[i] < crossoverPoint) {
-      offspringAlleles.push(parent1Alleles[i]);
-    } else {
-      offspringAlleles.push(parent2Alleles[i]);
-    }
+    // Parent 1 allele: swap strand if past crossover point
+    const strand1 = positions[i] < cp1 ? startStrand1 : 1 - startStrand1;
+    const a1 = parent1Alleles[i][strand1];
+
+    // Parent 2 allele: swap strand if past crossover point
+    const strand2 = positions[i] < cp2 ? startStrand2 : 1 - startStrand2;
+    const a2 = parent2Alleles[i][strand2];
+
+    offspringAlleles.push([a1, a2]);
   }
 
   return offspringAlleles;

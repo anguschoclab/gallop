@@ -5,6 +5,7 @@ import {
   fillRaceWithFillerHorses,
   updateHorseFame,
 } from "@/game/npcRaceEntry";
+import { createRng } from "@/game/rng";
 import type { Horse, Race, Stable } from "@/game/types";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
@@ -107,7 +108,7 @@ describe("runNpcRaceEntry", () => {
     const farRace = mkRace({ id: "far", day: 100 });
     const stables = [mkStable()];
     const horses = [mkHorse({ id: "h1", stableId: "s1", energy: 80 })];
-    const result = runNpcRaceEntry(stables, horses, [farRace], 1, 3);
+    const result = runNpcRaceEntry(stables, horses, [], [farRace], 1, createRng("test"), 3);
     expect(result.find((r) => r.id === "far")!.entries).toHaveLength(0);
   });
 
@@ -120,7 +121,7 @@ describe("runNpcRaceEntry", () => {
     });
     const stables = [mkStable()];
     const horses = [mkHorse({ id: "h1", stableId: "s1", energy: 80 })];
-    const result = runNpcRaceEntry(stables, horses, [fullRace], 1, 3);
+    const result = runNpcRaceEntry(stables, horses, [], [fullRace], 1, createRng("test"), 3);
     expect(result.find((r) => r.id === "full")!.entries).toHaveLength(1); // unchanged
   });
 
@@ -128,13 +129,13 @@ describe("runNpcRaceEntry", () => {
     const resolved = mkRace({ id: "res", day: 3, resolved: true });
     const stables = [mkStable()];
     const horses = [mkHorse({ id: "h1", stableId: "s1" })];
-    const result = runNpcRaceEntry(stables, horses, [resolved], 1, 3);
+    const result = runNpcRaceEntry(stables, horses, [], [resolved], 1, createRng("test"), 3);
     expect(result.find((r) => r.id === "res")!.entries).toHaveLength(0);
   });
 
   it("returns same number of races as input", () => {
     const races = [mkRace({ id: "r1", day: 2 }), mkRace({ id: "r2", day: 4 })];
-    const result = runNpcRaceEntry([], [], races, 1, 3);
+    const result = runNpcRaceEntry([], [], [], races, 1, createRng("test"), 3);
     expect(result).toHaveLength(races.length);
   });
 });

@@ -26,7 +26,7 @@ export const agingPhase = {
       if (!ticks) return h;
       const newAge = h.age + 1;
       const newGender =
-        newAge >= 5
+        newAge >= 3
           ? h.gender === "colt"
             ? "horse"
             : h.gender === "filly"

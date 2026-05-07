@@ -11,7 +11,7 @@ import {
   ASIA_PACIFIC_CATEGORIES,
   SOUTH_AMERICAN_CATEGORIES,
 } from "./types";
-import { getTrackContinent, type Continent } from "../gradedRaces";
+import { getTrackContinent, type Continent } from "@/core/data/gradedRaces";
 
 // Map continent to award region
 const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {

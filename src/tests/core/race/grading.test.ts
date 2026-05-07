@@ -4,17 +4,17 @@ import { getGradeColorClass } from "@/core/race/grading";
 describe("getGradeColorClass", () => {
   it("G1 → yellow-based class", () => {
     const cls = getGradeColorClass("G1");
-    expect(cls).toContain("yellow");
+    expect(cls).toContain("fame");
   });
 
   it("G2 → slate-based class", () => {
     const cls = getGradeColorClass("G2");
-    expect(cls).toContain("slate");
+    expect(cls).toContain("muted-foreground");
   });
 
   it("G3 → amber-based class", () => {
     const cls = getGradeColorClass("G3");
-    expect(cls).toContain("amber");
+    expect(cls).toContain("info");
   });
 
   it("all grades return non-empty strings", () => {

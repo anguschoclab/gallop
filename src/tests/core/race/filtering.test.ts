@@ -38,7 +38,14 @@ const g3Race = mkRace({
 const plainRace = mkRace({ id: "plain", raceClass: "Stakes" });
 const tcRace = mkRace({
   id: "tc",
-  graded: { key: "ca-kings-plate", grade: "G1", track: "Woodbine", trackId: "t4", surface: "Turf" },
+  graded: {
+    key: "ca-kings-plate",
+    grade: "G1",
+    track: "Woodbine",
+    trackId: "t4",
+    surface: "Turf",
+    triplecrownKey: "canada-tc",
+  },
 });
 
 describe("filterRacesByCriteria", () => {

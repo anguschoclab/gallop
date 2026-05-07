@@ -42,9 +42,17 @@ export const purchaseResolutionPhase: PipelinePhase = {
       });
     }
 
+    // Remove purchased horses from market
+    const purchasedHorseIds = new Set(purchaseIntents.map((i) => i.horseId));
+    const newMarket = state.market.filter((h) => !purchasedHorseIds.has(h.id));
+
     return {
       ...context,
       impacts: [...context.impacts, ...impacts],
+      state: {
+        ...state,
+        market: newMarket,
+      },
     };
   },
 };

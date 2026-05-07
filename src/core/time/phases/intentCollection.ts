@@ -15,7 +15,6 @@ import { generateNpcIntents } from "@/core/npc/intentGenerators";
 export const intentCollectionPhase: PipelinePhase = {
   name: "intentCollection",
   order: 5,
-  skipIf: () => true, // Temporarily skip to fix stack overflow
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const intents: AnyIntent[] = [];

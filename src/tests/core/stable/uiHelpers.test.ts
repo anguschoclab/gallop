@@ -4,19 +4,19 @@ import type { StableTier } from "@/game/types";
 
 describe("getTierColor", () => {
   it("returns correct color for elite tier", () => {
-    expect(getTierColor("elite")).toContain("purple");
+    expect(getTierColor("elite")).toContain("fame");
   });
 
   it("returns correct color for mid tier", () => {
-    expect(getTierColor("mid")).toContain("blue");
+    expect(getTierColor("mid")).toContain("info");
   });
 
   it("returns correct color for budget tier", () => {
-    expect(getTierColor("budget")).toContain("green");
+    expect(getTierColor("budget")).toContain("success");
   });
 
   it("returns default color for unknown tier", () => {
-    expect(getTierColor("unknown" as StableTier)).toContain("gray");
+    expect(getTierColor("unknown" as StableTier)).toContain("muted");
   });
 });
 

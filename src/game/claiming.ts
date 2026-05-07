@@ -32,10 +32,19 @@ export function processClaims(
   claims: ClaimAttempt[],
   horses: Horse[],
   currentDay: number,
-  rng: Rng,
+  rng?: Rng,
 ): { transfers: HorseTransfer[]; logs: string[] } {
   const transfers: HorseTransfer[] = [];
   const logs: string[] = [];
+
+  // Fallback to nondeterministic RNG if none provided
+  const _rng = rng || {
+    next: () => Math.random(),
+    int: (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min,
+    range: (min: number, max: number) => min + Math.random() * (max - min),
+    pick: <T>(arr: readonly T[]) => arr[Math.floor(Math.random() * arr.length)],
+    gauss: (mean = 0, sd = 1) => mean + sd * (Math.random() + Math.random() + Math.random() + Math.random() - 2), // Rough approximation
+  };
 
   if (!race.claimingPrice || race.resolved === false) {
     return { transfers, logs };
@@ -58,7 +67,7 @@ export function processClaims(
     if (horseClaims.length === 0) continue;
 
     // If multiple claims, randomly select winner
-    const winningClaimIndex = rng.int(0, horseClaims.length - 1);
+    const winningClaimIndex = _rng.int(0, horseClaims.length - 1);
     const winningClaim = horseClaims[winningClaimIndex];
 
     // Verify claimant has sufficient funds (this is checked elsewhere)

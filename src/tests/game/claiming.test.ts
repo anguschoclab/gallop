@@ -163,7 +163,7 @@ describe("processClaims", () => {
       },
     ];
 
-    const result = processClaims(race, claims, [horse], 10);
+    const result = processClaims(race, claims, [horse], 10, createRng("test"));
     expect(result.transfers.length).toBe(1);
     expect(result.logs.length).toBe(2); // One winner, one loser
   });
@@ -193,7 +193,7 @@ describe("processClaims", () => {
       },
     ];
 
-    const result = processClaims(race, claims, [], 10);
+    const result = processClaims(race, claims, [], 10, createRng("test"));
     expect(result.transfers).toEqual([]);
     expect(result.logs).toEqual([]);
   });

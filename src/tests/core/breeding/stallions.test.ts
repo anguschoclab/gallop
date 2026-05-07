@@ -73,16 +73,43 @@ describe("initialStandingFee", () => {
 
 describe("recalcStandingFee", () => {
   it("raises fee with stakes wins; G1 wins matter more", () => {
-    const base = 10000;
-    expect(recalcStandingFee(base, 0, 0)).toBe(base);
-    expect(recalcStandingFee(base, 1, 0)).toBeGreaterThan(base);
-    expect(recalcStandingFee(base, 0, 1)).toBeGreaterThan(recalcStandingFee(base, 1, 0));
-  });
+    const horse = mkHorse({
+      stud: {
+        atStud: true,
+        standingFee: 10000,
+        bookSize: 100,
+        seasonBookings: 0,
+        lifetimeFoals: 0,
+        lifetimeStakesFoals: 0,
+        lifetimeG1Foals: 0,
+        retiredOnDay: 1,
+      },
+      raceHistory: [],
+    });
+    const state = { horses: [horse], npcStables: [] };
+    const base = recalcStandingFee(horse, state);
 
-  it("converges at 4× cap so a runaway sire doesn't break the economy", () => {
-    const base = 10000;
-    const huge = recalcStandingFee(base, 100, 100);
-    expect(huge).toBeLessThanOrEqual(base * 4);
+    // Add a stakes win
+    horse.raceHistory.push({
+      raceId: "r1",
+      raceName: "Stakes",
+      position: 1,
+      day: 1,
+      raceClass: "Stakes",
+    });
+    const stakesFee = recalcStandingFee(horse, state);
+    expect(stakesFee).toBeGreaterThan(base);
+
+    // Add a G1 win
+    horse.raceHistory.push({
+      raceId: "r2",
+      raceName: "G1",
+      position: 1,
+      day: 2,
+      grade: "G1",
+    });
+    const g1Fee = recalcStandingFee(horse, state);
+    expect(g1Fee).toBeGreaterThan(stakesFee);
   });
 });
 

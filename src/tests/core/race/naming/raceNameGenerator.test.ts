@@ -9,6 +9,7 @@ import {
   getRaceClassAbbreviation,
   getRegionalSystem,
 } from "@/core/race/naming/raceNameGenerator";
+import { createRng } from "@/game/rng";
 import type { RaceClass, ClaimingPrice, WinCondition, RegionalSystem } from "@/game/types";
 import type { Track } from "@/game/tracks";
 
@@ -164,7 +165,7 @@ describe("generateRaceName", () => {
       track: mockTrack,
       raceClass: "Stakes",
       usedNames,
-      rng: () => 0, // Force deterministic behavior
+      rng: createRng(0), // Force deterministic behavior
     });
     // If the generator produces "Test Stakes", it should add a suffix
     // This is hard to test deterministically without mocking the entire generator

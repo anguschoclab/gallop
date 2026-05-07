@@ -80,8 +80,9 @@ describe("raceEntryResolutionPhase", () => {
     const context = createTestContext(state, [intent]);
     const result = raceEntryResolutionPhase.execute(context);
 
-    expect(result.impacts).toHaveLength(1);
+    expect(result.impacts).toHaveLength(2);
     expect(result.impacts[0].type).toBe("race_entry");
+    expect(result.impacts[1].type).toBe("cash_change");
   });
 
   it("should skip non-race entry intents", () => {
