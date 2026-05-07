@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
-  <!-- Palomino horse placeholder - golden coat with white mane/tail -->
-  <circle cx="25" cy="25" r="20" fill="#E6B84D"/>
-  <circle cx="25" cy="15" r="6" fill="#F5F5DC"/>
-  <text x="25" y="28" text-anchor="middle" fill="#8B4513" font-size="10" font-weight="bold">P</text>
-</svg>

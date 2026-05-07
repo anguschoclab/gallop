@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
-  <!-- White horse placeholder -->
-  <circle cx="25" cy="25" r="20" fill="#F8F8FF"/>
-  <circle cx="25" cy="25" r="18" fill="#FFFFFF" opacity="0.9"/>
-  <text x="25" y="28" text-anchor="middle" fill="#CCC" font-size="10" font-weight="bold">W</text>
-</svg>
