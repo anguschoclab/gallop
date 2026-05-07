@@ -1,10 +1,10 @@
 import type { Horse, Pregnancy, Stable, GameState } from "./types";
-import { generateUUID } from "./uuid";
+import { generateUUID } from "@/game/uuid";
 import { canBreed } from "@/core/breeding/eligibility";
 import { getAvailableStallions } from "@/core/breeding/stallions";
 import { isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { computeCoiFromSnapshot } from "@/core/breeding/populationGenetics";
-import type { Rng } from "./rng";
+import type { Rng } from "@/game/rng";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import {
   BREEDING_PERSONALITIES,
@@ -15,7 +15,7 @@ import {
   scoreStallion,
 } from "@/core/breeding/strategy";
 import { calculateAIStallionScore, createBreedingAIState, recordBreedingDecision } from "@/core/ai/breedingAI";
-import { BREEDING_FEE, GESTATION_DAYS } from "./constants/gameConstants";
+import { BREEDING_FEE, GESTATION_DAYS } from "@/game/constants/gameConstants";
 
 /**
  * Run autonomous NPC breeding for the current day. Personality-aware:
