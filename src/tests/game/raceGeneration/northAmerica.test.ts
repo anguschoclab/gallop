@@ -193,7 +193,7 @@ describe("generateNorthAmericanRaceCard", () => {
   it("should use single surface for single-surface tracks", () => {
     const singleSurfaceTrack: Track = {
       ...mockTrack,
-      surfaces: ["Dirt"],
+      courses: [{ surface: "Dirt", circumference: 1600, straightLength: 400, sections: [] }],
     };
 
     const races = generateNorthAmericanRaceCard(singleSurfaceTrack, 10, 3);
