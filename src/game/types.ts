@@ -386,6 +386,11 @@ export type Horse = {
   retiredOnDay?: number; // Day horse was retired to pasture
   deceasedOnDay?: number; // Day horse died
   causeOfDeath?: string; // Description of death cause
+  // --- Appearance DNA ---
+  // One-time procedural-portrait parameters generated alongside the rest of
+  // the genome. Optional so legacy saves still load — the renderer falls
+  // back to deriving values from `id` when this is missing.
+  appearance?: AppearanceDNA;
 };
 
 export type RaceClass =
