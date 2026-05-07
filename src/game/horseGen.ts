@@ -47,7 +47,7 @@ import {
   resolveBruceLoweFamily,
 } from "@/core/breeding/bruceLowe";
 import { rollGender, geldHorse } from "@/core/horse/gender";
-import { randomHorseName, randomSilk } from "@/core/common/random";
+import { randomSilk } from "@/core/common/random";
 import { generateProceduralHorseName, type NamingContext } from "@/core/horse/naming/nameGenerator";
 import { resolveBloodline } from "@/core/breeding/populationGenetics";
 
@@ -195,7 +195,10 @@ export function generateHorse(
 
   // Resolve bloodline from procedural sire name (for NPC horses)
   const bloodline = resolveBloodline(
-    { name: randomHorseName(rng), sireName: randomHorseName(rng) } as Horse,
+    { 
+      name: generateProceduralHorseName({ existingNames: new Set() }, rng, { strategy: "regional" }), 
+      sireName: generateProceduralHorseName({ existingNames: new Set() }, rng, { strategy: "regional" }) 
+    } as Horse,
     { horses: [] },
   );
 
