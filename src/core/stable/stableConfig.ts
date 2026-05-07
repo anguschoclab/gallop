@@ -25,6 +25,7 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: number; // 0-1, how much NPC tracks player/other NPC actions
     conservatism: number; // 0-1, tendency to stick with proven strategies
     innovation: number; // 0-1, willingness to try new approaches
+    namingTheme: "aggressive" | "conservative" | "developer" | "win-now" | "specialist" | "breeder" | "trader" | "prestige";
   }
 > = {
   aggressive: {
@@ -43,6 +44,7 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: 0.6,
     conservatism: 0.3,
     innovation: 0.7,
+    namingTheme: "aggressive",
   },
   conservative: {
     description: "Careful, methodical approach. Selective entries and cost-conscious.",
@@ -60,6 +62,7 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: 0.8,
     conservatism: 0.9,
     innovation: 0.2,
+    namingTheme: "conservative",
   },
   developer: {
     description: "Focuses on young horses and long-term growth. Patient with 2-3 year olds.",
@@ -77,6 +80,7 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: 0.5,
     conservatism: 0.6,
     innovation: 0.5,
+    namingTheme: "developer",
   },
   "win-now": {
     description: "Targets immediate results with proven horses. Ages 4-6 preferred.",
@@ -94,6 +98,7 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: 0.7,
     conservatism: 0.4,
     innovation: 0.4,
+    namingTheme: "win-now",
   },
   specialist: {
     description: "Focuses on specific distances or surfaces. Becomes expert in niche.",
@@ -113,6 +118,7 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: 0.5,
     conservatism: 0.7,
     innovation: 0.3,
+    namingTheme: "specialist",
   },
   breeder: {
     description: "Values broodmares and breeding stock. Keeps quality mares.",
@@ -130,6 +136,7 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: 0.6,
     conservatism: 0.8,
     innovation: 0.4,
+    namingTheme: "breeder",
   },
   trader: {
     description: "Buys and sells frequently. Targets claiming races and bargains.",
@@ -147,6 +154,7 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: 0.9,
     conservatism: 0.2,
     innovation: 0.8,
+    namingTheme: "trader",
   },
   prestige: {
     description: "Targets graded stakes and prestigious races. Reputation over profit.",
@@ -164,7 +172,9 @@ export const PERSONALITY_CONFIG: Record<
     competitiveAwareness: 0.8,
     conservatism: 0.7,
     innovation: 0.5,
+    namingTheme: "prestige",
   },
+
 };
 
 /**

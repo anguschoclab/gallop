@@ -1,0 +1,42 @@
+/**
+ * Expanded word pools for horse naming.
+ * Inspired by real-world thoroughbred naming conventions.
+ */
+
+export const CLASSICAL_NAMES = [
+  "Apollo", "Artemis", "Athena", "Ares", "Aphrodite", "Hermes", "Dionysus", "Zeus", "Hera", "Poseidon",
+  "Demeter", "Hephaestus", "Hestia", "Persephone", "Hades", "Chronos", "Atlas", "Prometheus", "Hercules", "Achilles",
+  "Hector", "Paris", "Helen", "Odysseus", "Aeneas", "Dido", "Caesar", "Augustus", "Nero", "Tiberius",
+  "Odin", "Thor", "Loki", "Freya", "Frigg", "Balder", "Tyr", "Heimdall", "Valkyrie", "Ragnarok",
+];
+
+export const CELESTIAL_TERMS = [
+  "Starlight", "Moonbeam", "Sunburst", "Galaxy", "Nebula", "Comet", "Asteroid", "Meteor", "Cosmos", "Zenith",
+  "Nadír", "Eclipse", "Solstice", "Equinox", "Nova", "Supernova", "Quasar", "Pulsar", "Andromeda", "Orion",
+  "Pegasus", "Cassiopeia", "Lyra", "Cygnus", "Aquila", "Draco", "Polaris", "Sirius", "Vega", "Altair",
+];
+
+export const ARISTOCRATIC_TITLES = [
+  "Duke", "Duchess", "Earl", "Countess", "Baron", "Baroness", "Marquess", "Marchioness", "Viscount", "Viscountess",
+  "Prince", "Princess", "King", "Queen", "Emperor", "Empress", "Lord", "Lady", "Sir", "Dame",
+  "Regent", "Viceroy", "Sovereign", "Monarch", "Majesty", "Royal", "Imperial", "Noble", "Grand", "Highness",
+];
+
+export const RACING_TERMS = [
+  "Sprint", "Dash", "Gallop", "Stride", "Pace", "Speed", "Velocity", "Fast", "Quick", "Swift",
+  "Winner", "Champion", "Legend", "Legacy", "Hero", "Victory", "Triumph", "Glory", "Honor", "Prestige",
+  "Finish", "Final", "Last", "End", "Goal", "Target", "Aim", "Drive", "Push", "Surge",
+  "Classic", "Stakes", "Cup", "Trophy", "Plate", "Derby", "Oaks", "Classic", "Handicap", "Plate",
+];
+
+export const NATURE_TERMS = [
+  "River", "Mountain", "Valley", "Forest", "Ocean", "Sea", "Lake", "Stream", "Brook", "Creek",
+  "Storm", "Thunder", "Lightning", "Rain", "Snow", "Wind", "Breeze", "Gale", "Mist", "Fog",
+  "Willow", "Oak", "Maple", "Pine", "Cedar", "Rose", "Lily", "Daisy", "Flora", "Fauna",
+];
+
+export const ABSTRACT_TERMS = [
+  "Dream", "Spirit", "Soul", "Heart", "Mind", "Thought", "Idea", "Memory", "Hope", "Faith",
+  "Grace", "Elegance", "Style", "Charm", "Beauty", "Power", "Strength", "Might", "Force", "Energy",
+  "Silence", "Whisper", "Echo", "Sound", "Noise", "Music", "Song", "Rhythm", "Beat", "Flow",
+];

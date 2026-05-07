@@ -122,7 +122,12 @@ export interface SystemsState {
   // Player profile (optional - set after completing new game wizard)
   /** Player's stable identity from the new game wizard */
   playerProfile?: PlayerProfile;
+
+  // Name tracking system
+  /** Set of all horse names currently in use to ensure uniqueness */
+  usedHorseNames: string[];
 }
+
 
 /**
  * Default systems state for new games
@@ -166,6 +171,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       transports: [],
       playerProfile: profile,
       hallOfFame: [],
+      usedHorseNames: [],
     };
   }
 
@@ -193,5 +199,6 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     },
     transports: [],
     hallOfFame: [],
+    usedHorseNames: [],
   };
 }
