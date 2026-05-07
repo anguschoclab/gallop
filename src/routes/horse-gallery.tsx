@@ -149,7 +149,10 @@ function HorseGalleryPage() {
                 <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full border-gold-muted">
                   <div className="aspect-square bg-t700 flex items-center justify-center p-4">
                     <HorsePortrait
+                      id={horse.id}
                       coatColor={horse.coatColor}
+                      markings={horse.markings}
+                      gender={horse.gender}
                       size="xl"
                       className="group-hover:scale-105 transition-transform duration-300"
                     />
