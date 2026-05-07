@@ -1,7 +1,6 @@
-import type { Genotype, Locus, MarkerGenotype } from "./types";
-import type { StallionResearchData } from "./stallionDNAData";
-import { generateGenotype, generateDeterministicGenotype } from "./geneticsEngine";
-import type { AptitudinalGroup } from "./pedigreeData";
+import type { Genotype, Locus, MarkerGenotype } from "@/core/genetics/types";
+import type { StallionResearchData } from "@/core/data/stallionDNAData";
+import { generateDeterministicGenotype } from "@/core/genetics/generation";
 
 /**
  * Mapping functions to convert real-world research data to game DNA loci
@@ -128,22 +127,18 @@ function mapGeneticMarkers(
 
 /**
  * Map research data to genotype
- * This is the main orchestrator that converts all research data into a complete genotype
  */
 export function mapResearchDataToGenotype(
   researchData: StallionResearchData,
   tier: "starter" | "budget" | "mid" | "elite",
 ): Genotype {
-  // Start with a base genotype from deterministic generation
-  // This ensures all loci are filled with reasonable defaults
   const baseGenotype = generateDeterministicGenotype(
     researchData.name,
     tier,
-    undefined, // Don't apply dosage bias yet, we'll override with research data
+    undefined,
     undefined,
   );
 
-  // Override with research data where available
   if (researchData.physicalTraits) {
     const physical = mapPhysicalTraitsToDNA(researchData.physicalTraits);
     baseGenotype.size = physical.size;

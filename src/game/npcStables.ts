@@ -3,8 +3,8 @@
 // Refactored to use modular configuration and generation systems
 
 import type { Stable, StableTier } from "./types";
-import type { PedigreeHorse } from "./pedigreeData";
-import type { Rng } from "./rng";
+import type { PedigreeHorse } from "@/core/data/pedigreeData";
+import type { Rng } from "@/game/rng";
 import { PERSONALITY_CONFIG, STABLE_CONFIG } from "@/core/stable/stableConfig";
 import {
   shuffleAndPick,

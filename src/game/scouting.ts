@@ -3,7 +3,7 @@
 
 import type { Horse, HorseStats, ScoutReport, Stable, Rng } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { resolveCoatColor } from "./geneticsEngine";
+import { resolveCoatColor } from "@/core/genetics/phenotype";
 
 // Scouting costs
 const SCOUT_COST_BASE = 500;

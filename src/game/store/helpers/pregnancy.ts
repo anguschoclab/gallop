@@ -4,7 +4,7 @@
  */
 
 import type { Horse, Pregnancy, Stable } from "@/game/types";
-import { resolveFoaling } from "@/game/foalGen";
+import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getFoalsBy } from "@/core/breeding/lineage";

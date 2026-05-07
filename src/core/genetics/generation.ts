@@ -7,7 +7,7 @@ import type { Rng } from "@/core/common/types";
 import { createRng, hashStr } from "@/game/rng";
 import type { AptitudinalGroup } from "@/core/data/pedigreeData";
 import { getStallionResearchData, hasCompleteData } from "@/core/data/stallionDNAData";
-import { mapResearchDataToGenotype } from "@/game/stallionDNAMapper";
+import { mapResearchDataToGenotype } from "./mapper";
 
 const DOSAGE_BIASES: Record<AptitudinalGroup, {
   speedBias: number;

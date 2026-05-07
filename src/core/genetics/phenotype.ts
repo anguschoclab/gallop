@@ -129,6 +129,21 @@ export function resolveHeartScore(loci: Locus[]): number {
   return 0.85 + ((sum - 10) / 40) * 0.3;
 }
 
+export function fiberDistanceModifier(
+  fiberBias: "sprinter" | "balanced" | "stayer",
+  distance: number,
+): { speedMul: number; staminaMul: number } {
+  if (fiberBias === "sprinter") {
+    if (distance <= 1200) return { speedMul: 1.05, staminaMul: 0.95 };
+    if (distance >= 2000) return { speedMul: 0.95, staminaMul: 0.9 };
+  }
+  if (fiberBias === "stayer") {
+    if (distance <= 1200) return { speedMul: 0.9, staminaMul: 1.05 };
+    if (distance >= 2000) return { speedMul: 0.98, staminaMul: 1.1 };
+  }
+  return { speedMul: 1, staminaMul: 1 };
+}
+
 export function resolveFiberBias(locus: Locus): "sprinter" | "balanced" | "stayer" {
   const sum = locus[0] + locus[1];
   if (sum <= 4) return "sprinter";
@@ -212,6 +227,27 @@ function resolveFaceWhite(locus: Locus): FaceWhite {
 
 export function resolveRacingViable(locus: Locus): boolean {
   return (locus[0] + locus[1]) >= 4;
+}
+
+export function resolveBleederRisk(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  if (sum <= 3) return 0.15;
+  if (sum <= 5) return 0.05;
+  return 0.01;
+}
+
+export function resolveRoarerRisk(locus: Locus): number {
+  const sum = locus[0] + locus[1];
+  if (sum <= 3) return 0.1;
+  if (sum <= 6) return 0.03;
+  return 0;
+}
+
+export function resolveSize(locus: Locus): { height: number; weight: number } {
+  const sum = locus[0] + locus[1];
+  const height = 14.2 + (sum / 10) * 2.8; // 14.2 to 17.0 hands
+  const weight = 400 + (sum / 10) * 250; // 400kg to 650kg
+  return { height, weight };
 }
 
 export function computeHeterozygosity(genotype: Genotype): number {
