@@ -256,10 +256,18 @@ export const trainingResolutionPhase: PipelinePhase = {
       }
     }
 
+    const newTrainingUsed = { ...state.trainingUsed };
+    for (const intent of trainingIntents) {
+      if (intent.trainingType !== "rest") {
+        newTrainingUsed[intent.horseId] = (newTrainingUsed[intent.horseId] || 0) + 1;
+      }
+    }
+
     return {
       ...context,
       state: {
         ...state,
+        trainingUsed: newTrainingUsed,
         expenses: [...(state.expenses ?? []), ...newExpenses],
         transactions: [...(state.transactions ?? []), ...newTransactions],
       },
