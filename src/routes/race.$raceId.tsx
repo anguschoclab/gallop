@@ -36,6 +36,7 @@ import {
   projectedBeyer,
 } from "@/components/races/raceVisualHelpers";
 import { BroadcastCommentary } from "@/components/races/BroadcastCommentary";
+import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -228,26 +229,9 @@ function LiveRace() {
 
   // Early return checks after all hooks
   if (!race) throw notFound();
-  if (race.resolved) {
-    return (
-      <div className="p-8 text-center">
-        <p className="text-cream-muted">This race has already been run.</p>
-        <Link
-          to="/races"
-          search={{
-            grade: "all",
-            country: "all",
-            surface: "all",
-            track: "all",
-            owned: "all",
-            q: "",
-          }}
-        >
-          <Button className="mt-4">Back to races</Button>
-        </Link>
-      </div>
-    );
-  }
+
+  // If the race is resolved and has snapshots, we can show the replay
+  const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
 
   void tick;
   const rows = runners.map((r) => ({
@@ -387,16 +371,30 @@ function LiveRace() {
 
       <div className="relative z-10 p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
         <div>
-          <Track
-            runners={runners}
-            distance={race.distance}
-            tick={tick}
-            surface={race.graded?.surface}
-            weather={race.weather}
-            followTarget={followTarget}
-            paused={paused}
-            subjectHorseId={subjectHorseId}
-          />
+          {hasReplay ? (
+            <RaceVisualizer
+              snapshots={race.snapshots!}
+              distance={race.distance}
+              runners={runners.map(r => ({
+                horseId: r.horseId,
+                name: r.name,
+                silk: r.silk,
+                owned: r.owned
+              }))}
+              trackType={race.surface}
+            />
+          ) : (
+            <Track
+              runners={runners}
+              distance={race.distance}
+              tick={tick}
+              surface={race.graded?.surface}
+              weather={race.weather}
+              followTarget={followTarget}
+              paused={paused}
+              subjectHorseId={subjectHorseId}
+            />
+          )}
           <BroadcastCommentary commentary={commentary} />
         </div>
         <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
