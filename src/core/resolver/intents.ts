@@ -73,6 +73,7 @@ export interface JockeyContractIntent extends Intent {
   jockeyId: string;
   stableId?: string;
   contractUntil?: number;
+  bonus?: number;
 }
 
 // Jockey assignment intent
@@ -233,6 +234,46 @@ export interface WithdrawFromClaimingIntent extends Intent {
   horseId: string;
 }
 
+// Tactics intent
+export interface TacticsIntent extends Intent {
+  type: "tactics";
+  raceId: string;
+  horseId: string;
+  tactics: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+}
+
+// Staff intent
+export interface StaffIntent extends Intent {
+  type: "staff";
+  action: "hire" | "fire";
+  staffType: "trainer" | "vet" | "farrier" | "groom";
+  staffId?: string;
+  salary: number;
+  specialty?: string;
+  skill: number;
+}
+
+// Facility upgrade intent
+export interface FacilityUpgradeIntent extends Intent {
+  type: "facility_upgrade";
+  facilityId: string;
+  nextLevel: number;
+  cost: number;
+}
+
+// Pasture retirement intent
+export interface PastureRetirementIntent extends Intent {
+  type: "pasture_retirement";
+  horseId: string;
+}
+
+// Update stud fee intent
+export interface UpdateStudFeeIntent extends Intent {
+  type: "update_stud_fee";
+  horseId: string;
+  newFee: number;
+}
+
 // Union type for all intents
 export type AnyIntent =
   | TrainingIntent
@@ -260,4 +301,9 @@ export type AnyIntent =
   | PregnancyResolutionIntent
   | RaceResolutionIntent
   | ClaimingIntent
-  | WithdrawFromClaimingIntent;
+  | WithdrawFromClaimingIntent
+  | TacticsIntent
+  | StaffIntent
+  | FacilityUpgradeIntent
+  | PastureRetirementIntent
+  | UpdateStudFeeIntent;

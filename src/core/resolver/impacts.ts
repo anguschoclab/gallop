@@ -427,6 +427,35 @@ export interface TripleCrownProgressImpact extends Impact {
   reason: string;
 }
 
+// Tactics impact
+export interface TacticsImpact extends Impact {
+  type: "tactics";
+  raceId: string;
+  horseId: string;
+  tactics: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+  reason: string;
+}
+
+// Staff impact
+export interface StaffImpact extends Impact {
+  type: "staff";
+  action: "hire" | "fire";
+  staffType: "trainer" | "vet" | "farrier" | "groom";
+  staffId: string;
+  salary: number;
+  specialty?: string;
+  skill: number;
+  reason: string;
+}
+
+// Facility upgrade impact
+export interface FacilityUpgradeImpact extends Impact {
+  type: "facility_upgrade";
+  facilityId: string;
+  nextLevel: number;
+  reason: string;
+}
+
 // Union type for all impacts
 export type AnyImpact =
   | CashImpact
@@ -469,4 +498,7 @@ export type AnyImpact =
   | HorseDeathImpact
   | HallOfFameInductionImpact
   | ClaimResolutionImpact
-  | TripleCrownProgressImpact;
+  | TripleCrownProgressImpact
+  | TacticsImpact
+  | StaffImpact
+  | FacilityUpgradeImpact;

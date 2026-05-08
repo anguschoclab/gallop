@@ -141,7 +141,7 @@ export const useGame = create<StoreType>()(
   persist(
     (set, get) => ({
       // Core slice
-      ...createCoreSlice(set, get),
+      ...createCoreSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
 
       // Racing slice
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

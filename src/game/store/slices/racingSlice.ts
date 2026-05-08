@@ -57,38 +57,27 @@ export function createRacingSlice(
       if (usedToday >= TRAINING_SLOTS_PER_DAY) return;
       if (horse.energy < 10) return;
 
-      if (kind === "rest") {
-        // Rest is immediate, not queued
-        const updatedHorses = s.horses.map((h: Horse) =>
-          h.id === horseId ? { ...h, energy: Math.min(100, h.energy + 30) } : h,
-        );
-        set({
-          horses: updatedHorses,
-          trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
-        });
-      } else {
-        if (s.cash < TRAINING_COST) return;
-        if (horse.energy < 15) return;
+      const isRest = kind === "rest";
+      if (!isRest && s.cash < TRAINING_COST) return;
+      if (!isRest && horse.energy < 15) return;
 
-        // Enqueue TrainingIntent for next day advance
-        const intent: TrainingIntent = {
-          id: generateUUID(),
-          entityId: horseId,
-          source: "player",
-          day: s.day,
-          priority: 100,
-          type: "training",
-          horseId,
-          trainingType: kind,
-        };
+      // Enqueue TrainingIntent for next day advance
+      const intent: TrainingIntent = {
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "training",
+        horseId,
+        trainingType: kind,
+      };
 
-        enqueueIntent(intent);
+      enqueueIntent(intent);
 
-        set({
-          cash: s.cash - TRAINING_COST,
-          trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
-        });
-      }
+      set({
+        trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
+      });
     },
 
     setTrainingUsed: (horseId, count) => {

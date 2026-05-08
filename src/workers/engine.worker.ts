@@ -41,6 +41,7 @@ import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
 import { privateSaleExpiryPhase } from "@/core/time/phases/privateSaleExpiry";
 import { npcClaimingPhase } from "@/core/time/phases/npcClaiming";
 import { claimResolutionPhase } from "@/core/time/phases/claimResolution";
+import { managementResolutionPhase } from "@/core/time/phases/managementResolution";
 import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
 
@@ -124,6 +125,7 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     breedingResolutionPhase,
     trainingResolutionPhase,
     claimingWithdrawalPhase,
+    managementResolutionPhase,
     // D3 — NPC claim filing (order 62, before raceResolution)
     npcClaimingPhase,
     raceResolutionPhase,

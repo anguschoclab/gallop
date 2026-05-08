@@ -158,37 +158,19 @@ export function createMarketSlice(
       if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
       const baseValue = horsePriceWithPedigree(horse, s.horses);
       const finalReserve = Math.round(reservePrice ?? baseValue * DEFAULT_PLAYER_RESERVE_RATIO);
-      set({
-        horses: s.horses.map((h: Horse) =>
-          h.id === horseId ? { ...h, consignedSaleId: saleId } : h,
-        ),
-        auctions: (s.auctions ?? []).map((a: AuctionSale) =>
-          a.id === saleId
-            ? {
-                ...a,
-                lots: [
-                  ...a.lots,
-                  {
-                    id: generateUUID(),
-                    horseId,
-                    consignorStableId: undefined,
-                    saleId,
-                    reservePrice: finalReserve,
-                    passed: false,
-                    withdrawn: false,
-                  },
-                ],
-              }
-            : a,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} consigned to ${sale.name} (reserve ${formatCurrency(finalReserve)}).`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "consignment",
+        horseId,
+        saleId,
+        reservePrice: finalReserve,
       });
+
       return { ok: true };
     },
 
@@ -201,28 +183,17 @@ export function createMarketSlice(
       if (!sale) return { ok: false, reason: "Sale not found." };
       if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
 
-      set({
-        horses: s.horses.map((h: Horse) =>
-          h.id === horseId ? { ...h, consignedSaleId: undefined } : h,
-        ),
-        auctions: (s.auctions ?? []).map((a: AuctionSale) =>
-          a.id === sale.id
-            ? {
-                ...a,
-                lots: a.lots.map((lot) =>
-                  lot.horseId === horseId ? { ...lot, withdrawn: true } : lot,
-                ),
-              }
-            : a,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} withdrawn from ${sale.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "consignment_withdrawal",
+        horseId,
+        saleId: horse.consignedSaleId,
       });
+
       return { ok: true };
     },
 
@@ -322,9 +293,7 @@ export function createMarketSlice(
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "sale_not_found" };
       if (sale.resolved) return { ok: false, reason: "sale_resolved" };
-      // Broodmare sales never have buy-now; guard for degenerate state.
       if (sale.kind === "broodmare") return { ok: false, reason: "buy_now_unavailable" };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const lot = sale.lots.find((l: any) => l.id === lotId);
       if (!lot) return { ok: false, reason: "lot_not_found" };
       if (lot.buyNowPrice === undefined) return { ok: false, reason: "buy_now_unavailable" };
@@ -332,47 +301,18 @@ export function createMarketSlice(
       if (s.cash < buyNowPrice) return { ok: false, reason: "insufficient_funds" };
       if (lot.withdrawn || lot.passed || lot.hammerPrice !== undefined)
         return { ok: false, reason: "lot_not_available" };
-      const horse = s.horses.find((h: Horse) => h.id === lot.horseId);
-      if (!horse) return { ok: false, reason: "horse_not_found" };
-      if (horse.owned) return { ok: false, reason: "already_owned" };
 
-      // Apply: debit cash, transfer horse, mark lot sold
-      const updatedHorses = s.horses.map((h: Horse) =>
-        h.id === lot.horseId
-          ? { ...h, owned: true, stableId: undefined, consignedSaleId: undefined }
-          : h,
-      );
-      const updatedAuctions = (s.auctions ?? []).map((a: AuctionSale) =>
-        a.id === saleId
-          ? {
-              ...a,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              lots: a.lots.map((l: any) =>
-                l.id === lotId
-                  ? {
-                      ...l,
-                      hammerPrice: buyNowPrice,
-                      soldToStableId: undefined, // player won
-                      passed: false,
-                      buyNowPrice: undefined,
-                    }
-                  : l,
-              ),
-            }
-          : a,
-      );
-      set({
-        cash: s.cash - buyNowPrice,
-        horses: updatedHorses,
-        auctions: updatedAuctions,
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} purchased via Buy Now for ${formatCurrency(buyNowPrice)}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: lot.horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "purchase",
+        horseId: lot.horseId,
+        price: buyNowPrice,
       });
+
       return { ok: true };
     },
 
@@ -387,93 +327,18 @@ export function createMarketSlice(
       if (horse.stableId !== stableId) return { ok: false, reason: "horse_not_in_stable" };
       if (s.cash < amount) return { ok: false, reason: "insufficient_funds" };
 
-      // Duplicate offer guard
-      const existingOffer = (s.privateSaleOffers ?? []).find(
-        (o: PrivateSaleOffer) =>
-          o.horseId === horseId &&
-          o.fromStableId === undefined &&
-          (o.status === "pending" || o.status === "countered"),
-      );
-      if (existingOffer) return { ok: false, reason: "duplicate_offer" };
-
-      // Horse in auction guard
-      if (horse.consignedSaleId) return { ok: false, reason: "horse_in_auction" };
-
-      const stable: Stable | undefined = s.npcStables.find((st: Stable) => st.id === stableId);
-      if (!stable) return { ok: false, reason: "stable_not_found" };
-
-      const valuation = calculateLotValuation(horse, stable, "racing_age", s.horses);
-      const offerId = generateUUID();
-      const expiresDay = s.day + 3;
-
-      let status: PrivateSaleOffer["status"];
-      let counterAmount: number | undefined;
-
-      if (amount >= valuation * 0.9) {
-        status = "accepted";
-      } else if (amount >= valuation * 0.6) {
-        status = "countered";
-        counterAmount = Math.round(valuation * 0.95);
-      } else {
-        status = "declined";
-      }
-
-      const offer: PrivateSaleOffer = {
-        id: offerId,
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "purchase", // Re-using purchase for now or create new
         horseId,
-        fromStableId: undefined, // player is the buyer
-        toStableId: stableId,
-        amount,
-        counterAmount,
-        status,
-        createdDay: s.day,
-        expiresDay,
-      };
+        price: amount,
+      });
 
-      const newOffers = [...(s.privateSaleOffers ?? []), offer];
-
-      if (status === "accepted") {
-        // Immediately transfer
-        const updatedHorses = s.horses.map((h: Horse) =>
-          h.id === horseId ? { ...h, owned: true, stableId: undefined } : h,
-        );
-        // Credit NPC stable
-        const updatedStables = s.npcStables.map((st: Stable) =>
-          st.id === stableId
-            ? {
-                ...st,
-                cash: st.cash + amount,
-                horses: st.horses.filter((id: string) => id !== horseId),
-              }
-            : st,
-        );
-        set({
-          cash: s.cash - amount,
-          horses: updatedHorses,
-          npcStables: updatedStables,
-          privateSaleOffers: newOffers,
-          log: [
-            {
-              day: s.day,
-              text: `${horse.name} acquired from ${stable.name} for ${formatCurrency(amount)}.`,
-            },
-            ...s.log,
-          ].slice(0, 50),
-        });
-      } else {
-        set({
-          privateSaleOffers: newOffers,
-          log: [
-            {
-              day: s.day,
-              text: `Private sale offer of ${formatCurrency(amount)} for ${horse.name} submitted to ${stable.name}.`,
-            },
-            ...s.log,
-          ].slice(0, 50),
-        });
-      }
-
-      return { ok: true, reason: status };
+      return { ok: true, reason: "offer_submitted" };
     },
 
     respondToPrivateSale: (offerId: string, accept: boolean) => {
@@ -487,45 +352,17 @@ export function createMarketSlice(
       if (accept) {
         const finalAmount = offer.counterAmount ?? offer.amount;
         if (s.cash < finalAmount) return { ok: false, reason: "insufficient_funds" };
-        const horse = s.horses.find((h: Horse) => h.id === offer.horseId);
-        if (!horse) return { ok: false, reason: "horse_not_found" };
-        const stable: Stable | undefined = s.npcStables.find(
-          (st: Stable) => st.id === offer.toStableId,
-        );
 
-        const updatedHorses = s.horses.map((h: Horse) =>
-          h.id === offer.horseId ? { ...h, owned: true, stableId: undefined } : h,
-        );
-        const updatedStables = s.npcStables.map((st: Stable) =>
-          st.id === offer.toStableId
-            ? {
-                ...st,
-                cash: st.cash + finalAmount,
-                horses: st.horses.filter((id: string) => id !== offer.horseId),
-              }
-            : st,
-        );
-        const updatedOffers = (s.privateSaleOffers ?? []).map((o: PrivateSaleOffer) =>
-          o.id === offerId ? { ...o, status: "accepted" as const } : o,
-        );
-        set({
-          cash: s.cash - finalAmount,
-          horses: updatedHorses,
-          npcStables: updatedStables,
-          privateSaleOffers: updatedOffers,
-          log: [
-            {
-              day: s.day,
-              text: `Counter offer accepted. ${horse?.name ?? "Horse"} joins your stable for ${formatCurrency(finalAmount)}.`,
-            },
-            ...s.log,
-          ].slice(0, 50),
+        enqueueIntent({
+          id: generateUUID(),
+          entityId: offer.horseId,
+          source: "player",
+          day: s.day,
+          priority: 100,
+          type: "purchase",
+          horseId: offer.horseId,
+          price: finalAmount,
         });
-      } else {
-        const updatedOffers = (s.privateSaleOffers ?? []).map((o: PrivateSaleOffer) =>
-          o.id === offerId ? { ...o, status: "declined" as const } : o,
-        );
-        set({ privateSaleOffers: updatedOffers });
       }
 
       return { ok: true };
@@ -544,28 +381,18 @@ export function createMarketSlice(
       if (!horse) return { ok: false, reason: "horse_not_found" };
       if (!horse.owned) return { ok: false, reason: "not_owned" };
       if (s.day >= race.day) return { ok: false, reason: "entries_closed" };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (race.entries.some((e: any) => e.horseId === horseId))
-        return { ok: false, reason: "already_entered" };
 
-      const updatedRaces = s.races.map((r: Race) =>
-        r.id === raceId
-          ? {
-              ...r,
-              entries: [...r.entries, { horseId, owned: true }],
-            }
-          : r,
-      );
-      set({
-        races: updatedRaces,
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} entered in ${race.name} (claiming ${formatCurrency(race.claiming!.price)}).`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "race_entry",
+        raceId,
+        horseId,
       });
+
       return { ok: true };
     },
 
@@ -573,28 +400,17 @@ export function createMarketSlice(
       const s = get();
       const race: Race | undefined = s.races.find((r: Race) => r.id === raceId);
       if (!race) return;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const entry = race.entries.find((e: any) => e.horseId === horseId);
-      if (!entry) return;
-      // Withdrawal window: before race.day - 1
       if (s.day >= race.day - 1) return;
 
-      const updatedRaces = s.races.map((r: Race) =>
-        r.id === raceId
-          ? {
-              ...r,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              entries: r.entries.filter((e: any) => e.horseId !== horseId),
-            }
-          : r,
-      );
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
-      set({
-        races: updatedRaces,
-        log: [
-          { day: s.day, text: `${horse?.name ?? "Horse"} withdrawn from ${race.name}.` },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "race_withdrawal",
+        raceId,
+        horseId,
       });
     },
 
@@ -610,31 +426,18 @@ export function createMarketSlice(
       if (s.cash < race.claiming.price) return { ok: false, reason: "insufficient_funds" };
       if (s.day >= race.day) return { ok: false, reason: "post_time_passed" };
 
-      // Duplicate guard
-      const duplicate = (s.claims ?? []).find(
-        (c: Claim) =>
-          c.raceId === raceId && c.horseId === horseId && c.claimantStableId === undefined,
-      );
-      if (duplicate) return { ok: false, reason: "duplicate_claim" };
-
-      const claim: Claim = {
+      enqueueIntent({
         id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "claiming",
         raceId,
         horseId,
-        claimantStableId: undefined, // player
-        price: race.claiming.price,
-        day: s.day,
-      };
-      set({
-        claims: [...(s.claims ?? []), claim],
-        log: [
-          {
-            day: s.day,
-            text: `Claim filed on ${horse.name} in ${race.name} for ${formatCurrency(race.claiming.price)}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+        claimingPrice: race.claiming.price,
       });
+
       return { ok: true };
     },
 

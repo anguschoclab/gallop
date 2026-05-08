@@ -16,10 +16,40 @@ export const pastureRetirementPhase: PipelinePhase = {
   name: "pastureRetirement",
   order: 150, // After stallion retirement (145)
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
+    const { state, newDay, intents } = context;
     const impacts: AnyImpact[] = [];
 
-    // Only run for NPC horses
+    // 1. Process player intents
+    const retirementIntents = intents.filter((i) => i.type === "pasture_retirement");
+    for (const intent of retirementIntents) {
+      const horse = state.horses.find((h) => h.id === (intent as any).horseId);
+      if (horse && horse.lifecycleStatus === "active") {
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "pastureRetirement",
+          logLevel: "always",
+          type: "pasture_retirement",
+          horseId: horse.id,
+          retiredOnDay: newDay,
+          reason: "Voluntary retirement to pasture",
+        } as PastureRetirementImpact);
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "pastureRetirement",
+          logLevel: "always",
+          type: "log",
+          text: `${horse.name} has been retired to pasture.`,
+          reason: "Player pasture retirement",
+        } as LogImpact);
+      }
+    }
+
+    // 2. Automatic NPC retirement
     const npcHorses = state.horses.filter((h) => h.stableId && h.lifecycleStatus === "active");
 
     for (const horse of npcHorses) {

@@ -54,6 +54,7 @@ export type Race = {
     jockeyId?: string;
     weight?: number;
     withdrawnFromClaiming?: boolean;
+    tactics?: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
   }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];

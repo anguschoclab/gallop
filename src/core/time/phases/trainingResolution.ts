@@ -89,6 +89,19 @@ export const trainingResolutionPhase: PipelinePhase = {
             { horseId: horse.id },
           ),
         );
+
+        // Add cash change impact
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: "player",
+          amount: -cost,
+          reason: `${intent.trainingType} training cost`,
+        } as any);
       }
 
       // Deduct energy (only for actual training, not rest)

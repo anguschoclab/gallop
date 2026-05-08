@@ -107,26 +107,22 @@ export function createBreedingSlice(
 
     retireToPasture: (horseId: string) => {
       const s = get();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
       if (horse.age < 3)
         return { ok: false, reason: "Horse must be at least 3 years old to retire." };
 
-      set({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        horses: s.horses.map((h: any) =>
-          h.id === horseId ? { ...h, retired: true, retiredDay: s.day } : h,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} retired to pasture.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "pasture_retirement",
+        horseId,
       });
+
       return { ok: true };
     },
 

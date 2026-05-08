@@ -74,26 +74,26 @@ export function createSystemsSlice(
       if (!jockey) return { ok: false, reason: "Jockey not found." };
       if (jockey.stableId) return { ok: false, reason: "Jockey is already under contract." };
 
-      const signOnBonus = jockey.ridingFee * 30;
-      if (s.cash < signOnBonus)
+      const bonus = jockey.ridingFee * 30;
+      if (s.cash < bonus)
         return {
           ok: false,
-          reason: `Insufficient cash. Sign-on bonus is ${formatCurrency(signOnBonus)}.`,
+          reason: `Insufficient cash. Sign-on bonus is ${formatCurrency(bonus)}.`,
         };
 
-      set({
-        cash: s.cash - signOnBonus,
-        jockeys: s.jockeys?.map((j: Jockey) =>
-          j.id === jockeyId ? { ...j, contractUntil: s.day + 90 } : j,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Hired jockey ${jockey.name} for ${formatCurrency(signOnBonus)} sign-on bonus.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      get().enqueueIntent({
+        id: generateUUID(),
+        entityId: jockeyId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "jockey_contract",
+        jockeyId,
+        stableId: "player",
+        contractUntil: s.day + 90,
+        bonus,
       });
+
       return { ok: true };
     },
 
@@ -111,6 +111,7 @@ export function createSystemsSlice(
           reason: `Insufficient cash. Silk reroll costs ${formatCurrency(rerollCost)}.`,
         };
 
+      // Cosmetic/Immediate
       set({
         cash: s.cash - rerollCost,
         jockeys: s.jockeys?.map((j: Jockey) =>
@@ -136,37 +137,26 @@ export function createSystemsSlice(
 
     assignJockey: (raceId: string, horseId: string, jockeyId: string) => {
       const s = get();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const race = s.races.find((r: any) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
       const jockey = s.jockeys?.find((j: Jockey) => j.id === jockeyId);
       if (!jockey) return { ok: false, reason: "Jockey not found." };
 
-      set({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        races: s.races.map((r: any) =>
-          r.id === raceId
-            ? {
-                ...r,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                entries: r.entries.map((e: any) =>
-                  e.horseId === horseId ? { ...e, jockeyId } : e,
-                ),
-              }
-            : r,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Assigned ${jockey.name} to ${horse.name} for ${race.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      get().enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "jockey_assignment",
+        raceId,
+        horseId,
+        jockeyId,
       });
+
       return { ok: true };
     },
 
@@ -183,50 +173,44 @@ export function createSystemsSlice(
           reason: `Insufficient cash. Upgrade costs ${formatCurrency(cost)}.`,
         };
 
-      set({
-        cash: s.cash - cost,
-        facilities: {
-          ...s.facilities,
-          [facilityType]: { ...facility, level: nextLevel },
-        },
-        log: [
-          {
-            day: s.day,
-            text: `Upgraded ${facilityType} to level ${nextLevel} for ${formatCurrency(cost)}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      get().enqueueIntent({
+        id: generateUUID(),
+        entityId: facilityType,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "facility_upgrade",
+        facilityId: facilityType,
+        nextLevel,
+        cost,
       });
+
       return { ok: true };
     },
 
     updateStudFee: (horseId: string, newFee: number) => {
       const s = get();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
       if (!horse.stud) return { ok: false, reason: "Horse is not standing at stud." };
 
-      set({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        horses: s.horses.map((h: any) =>
-          h.id === horseId ? { ...h, stud: { ...h.stud, standingFee: newFee } } : h,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Updated ${horse.name}'s stud fee to ${formatCurrency(newFee)}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      get().enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "update_stud_fee",
+        horseId,
+        newFee,
       });
+
       return { ok: true };
     },
 
     retireToStud: (horseId: string) => {
       const s = get();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
@@ -235,59 +219,44 @@ export function createSystemsSlice(
       if (horse.age < 4)
         return { ok: false, reason: "Horse must be at least 4 years old to stand at stud." };
 
-      set({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        horses: s.horses.map((h: any) =>
-          h.id === horseId
-            ? {
-                ...h,
-                stud: {
-                  atStud: true,
-                  standingFee: 500,
-                  bookSize: 20,
-                  seasonBookings: 0,
-                  lifetimeFoals: 0,
-                },
-              }
-            : h,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} retired to stud.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      get().enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "stud_retirement",
+        horseId,
+        standingFee: 500,
+        bookSize: 20,
       });
+
       return { ok: true };
     },
 
     geldingHorse: (horseId: string) => {
       const s = get();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
       if (horse.gender === "horse" || horse.gender === "gelding")
         return { ok: false, reason: "Horse is already male." };
 
-      set({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        horses: s.horses.map((h: any) => (h.id === horseId ? { ...h, gender: "gelding" } : h)),
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} gelded.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      get().enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "gelding",
+        horseId,
       });
+
       return { ok: true };
     },
 
     renameHorse: (horseId: string, newName: string) => {
       const s = get();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
@@ -297,21 +266,17 @@ export function createSystemsSlice(
         return { ok: false, reason: "Name is already in use." };
       }
 
-      set({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        horses: s.horses.map((h: any) => (h.id === horseId ? { ...h, name: newName } : h)),
-        usedHorseNames: [
-          ...s.usedHorseNames.filter((n: string) => n !== horse.name.toLowerCase()),
-          lowerNewName,
-        ],
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} renamed to ${newName}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      get().enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "rename",
+        horseId,
+        newName,
       });
+
       return { ok: true };
     },
 

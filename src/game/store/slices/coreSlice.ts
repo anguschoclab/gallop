@@ -42,6 +42,7 @@ import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
 import { privateSaleExpiryPhase } from "@/core/time/phases/privateSaleExpiry";
 import { npcClaimingPhase } from "@/core/time/phases/npcClaiming";
 import { claimResolutionPhase } from "@/core/time/phases/claimResolution";
+import { managementResolutionPhase } from "@/core/time/phases/managementResolution";
 import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
@@ -80,6 +81,7 @@ export function createCoreSlice(
   set: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: any,
+  enqueueIntent: (intent: any) => void,
 ): CoreSlice {
   return {
     ...createDefaultCoreState(),
@@ -92,34 +94,16 @@ export function createCoreSlice(
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
       if (horse.energy < 50) return { ok: false, reason: "Horse lacks sufficient energy." };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (race.entries.some((e: any) => e.horseId === horseId))
         return { ok: false, reason: "Horse already entered." };
 
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId
-            ? {
-                ...r,
-                entries: [
-                  ...r.entries,
-                  {
-                    horseId,
-                    jockeyId: undefined,
-                    scratched: false,
-                  },
-                ],
-              }
-            : r,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} entered in ${race.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        type: "race_entry",
+        raceId,
+        horseId,
+        day: s.day,
       });
+
       return { ok: true };
     },
 
@@ -127,46 +111,29 @@ export function createCoreSlice(
       const s = get();
       const race = s.races.find((r: Race) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const entry = race.entries.find((e: any) => e.horseId === horseId);
       if (!entry) return { ok: false, reason: "Horse not entered in this race." };
 
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId
-            ? {
-                ...r,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                entries: r.entries.filter((e: any) => e.horseId !== horseId),
-              }
-            : r,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Horse withdrawn from ${race.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        type: "race_withdrawal",
+        raceId,
+        horseId,
+        day: s.day,
       });
+
       return { ok: true };
     },
 
     resolveRaceWithImpacts: (
       raceId: string,
       result: { horseId: string; position: number; time: number }[],
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      runners?: any[],
     ) => {
       const s = get();
-      const race = s.races.find((r: Race) => r.id === raceId);
-      if (!race) return;
-
-      // Update race with results
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId ? { ...r, resolved: true, results: result } : r,
-        ),
+      enqueueIntent({
+        type: "race_resolution",
+        raceId,
+        results: result,
+        day: s.day,
       });
     },
 
@@ -178,26 +145,13 @@ export function createCoreSlice(
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (horse.owned) return { ok: false, reason: "Cannot claim your own horse." };
 
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId
-            ? {
-                ...r,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                entries: r.entries.map((e: any) =>
-                  e.horseId === horseId ? { ...e, claimed: true } : e,
-                ),
-              }
-            : r,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Claim submitted for ${horse.name} in ${race.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        type: "claiming",
+        raceId,
+        horseId,
+        day: s.day,
       });
+
       return { ok: true };
     },
 
@@ -206,26 +160,13 @@ export function createCoreSlice(
       const race = s.races.find((r: Race) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
 
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId
-            ? {
-                ...r,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                entries: r.entries.map((e: any) =>
-                  e.horseId === horseId ? { ...e, claimed: false } : e,
-                ),
-              }
-            : r,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Claim withdrawn for horse in ${race.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        type: "withdraw_from_claiming",
+        raceId,
+        horseId,
+        day: s.day,
       });
+
       return { ok: true };
     },
 
@@ -351,6 +292,7 @@ export function createCoreSlice(
           breedingResolutionPhase,
           trainingResolutionPhase,
           claimingWithdrawalPhase,
+          managementResolutionPhase,
           // D3 — NPC claim filing (before race resolution)
           npcClaimingPhase,
           raceResolutionPhase,

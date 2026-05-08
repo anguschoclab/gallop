@@ -216,7 +216,19 @@ export function buildRunner(
   );
 
   let runningStyle: RunningStyleT = h.runningStyle ?? "P";
-  if (npcAIManager && currentDay && stable && jockey && race && !owned) {
+  
+  // Use tactics from race entry if available (for both player and NPC)
+  const entry = race?.entries.find(e => e.horseId === h.id);
+  if (entry?.tactics && entry.tactics !== "default") {
+    const tacticsMap: Record<string, RunningStyleT> = {
+      "lead": "E",
+      "rail": "EP",
+      "outside": "P",
+      "save": "P",
+      "late_kick": "S"
+    };
+    runningStyle = tacticsMap[entry.tactics] || runningStyle;
+  } else if (npcAIManager && currentDay && stable && jockey && race && !owned) {
     const aiState = npcAIManager.stableStates.get(stable.id);
     if (aiState?.jockeyStrategyAI) {
       const optimalStyle = calculateOptimalRunningStyle(

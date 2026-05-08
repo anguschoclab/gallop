@@ -40,6 +40,19 @@ export const purchaseResolutionPhase: PipelinePhase = {
         price: intent.price,
         reason: "Purchase from market",
       });
+
+      // Add cash change impact
+      impacts.push({
+        id: generateUUID(),
+        intentId: intent.id,
+        day: newDay,
+        phase: "purchaseResolution",
+        logLevel: "always",
+        type: "cash_change",
+        entityId: "player",
+        amount: -intent.price,
+        reason: "Market purchase",
+      } as any);
     }
 
     // Remove purchased horses from market
