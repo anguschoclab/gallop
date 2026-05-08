@@ -7,7 +7,7 @@
  * Run with: bun run scripts/runHeadlessTripleCrownSim.ts
  */
 
-import { createDefaultGameState } from "../src/game/state";
+import { createInitialState } from "../src/game/store/initialization";
 import { useGame } from "../src/game/store";
 import type { Horse } from "../src/core/horse/types";
 
@@ -18,9 +18,10 @@ console.warn = () => {};
 async function runSimulation() {
   console.log("=== Starting Headless Triple Crown Simulation ===\n");
 
-  // Initialize game state
-  const initialState = createDefaultGameState();
+  // Initialize game state with NPCs and horses
+  const initialState = createInitialState();
   useGame.setState(initialState);
+
 
   let yearsTaken = 0;
   let winningHorse: Horse | null = null;
