@@ -346,15 +346,16 @@ export function recordCampaignDecision(
     day: currentDay,
   };
 
-  aiState.campaignHistory.push(decision);
+  const newHistory = [...aiState.campaignHistory, decision];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.campaignHistory.length > maxHistory) {
-    aiState.campaignHistory = aiState.campaignHistory.slice(-maxHistory);
-  }
+  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
-  return aiState;
+  return {
+    ...aiState,
+    campaignHistory: trimmedHistory,
+  };
 }
 
 /**

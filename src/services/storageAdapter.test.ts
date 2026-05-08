@@ -8,6 +8,7 @@ vi.mock("./opfsService", () => ({
   deleteFile: vi.fn(),
 }));
 
+import * as opfsService from "./opfsService";
 import * as storageAdapter from "./storageAdapter";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/state";
@@ -17,16 +18,15 @@ let mockOPFSData: Map<string, any> = new Map();
 
 function resetOPFSMocks() {
   mockOPFSData = new Map();
-  
-  const opfsService = require("./opfsService");
-  opfsService.initOPFS.mockResolvedValue(undefined);
-  opfsService.readFile.mockImplementation(async (filename: string) => {
+
+  vi.mocked(opfsService.initOPFS).mockResolvedValue(undefined);
+  vi.mocked(opfsService.readFile).mockImplementation(async (filename: string) => {
     return mockOPFSData.get(filename) ?? null;
   });
-  opfsService.writeFile.mockImplementation(async (filename: string, data: any) => {
+  vi.mocked(opfsService.writeFile).mockImplementation(async (filename: string, data: any) => {
     mockOPFSData.set(filename, data);
   });
-  opfsService.deleteFile.mockImplementation(async (filename: string) => {
+  vi.mocked(opfsService.deleteFile).mockImplementation(async (filename: string) => {
     mockOPFSData.delete(filename);
   });
 }

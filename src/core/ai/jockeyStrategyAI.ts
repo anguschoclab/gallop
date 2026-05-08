@@ -265,19 +265,17 @@ export function recordRaceStrategy(
     position,
   };
 
-  aiState.strategyHistory.push(strategy);
+  const newHistory = [...aiState.strategyHistory, strategy];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.strategyHistory.length > maxHistory) {
-    aiState.strategyHistory = aiState.strategyHistory.slice(-maxHistory);
-  }
+  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update learning state
   const success = position <= 3; // Top 3 is success
   const contextKey = `${horse.age}:${race.distance}:${runningStyle}`;
   const value = 10 - position; // Higher value for better positions
-  aiState.learningState = recordOutcome(
+  const newLearningState = recordOutcome(
     aiState.learningState,
     "jockey_strategy",
     contextKey,
@@ -288,7 +286,11 @@ export function recordRaceStrategy(
     aiState.personalityState.memoryDepth,
   );
 
-  return aiState;
+  return {
+    ...aiState,
+    strategyHistory: trimmedHistory,
+    learningState: newLearningState,
+  };
 }
 
 /**

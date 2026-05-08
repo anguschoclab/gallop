@@ -439,7 +439,7 @@ describe("Year Advance Integration", () => {
         {
           id: "race-1",
           name: "Test Race",
-          day: 400, // In year 2
+          day: 365, // In year 2, within advance range
           distance: 2000,
           raceClass: "Maiden",
           entryFee: 500,
@@ -470,13 +470,15 @@ describe("Year Advance Integration", () => {
       usedJockeyNames: [],
     };
 
-    const advanceDayFn = vi.fn();
+    const advanceDayFn = vi.fn(() => {
+      state.day++;
+    });
     const result = advanceMultipleDaysWithRaceDetection(state, 10, advanceDayFn, false);
 
     // Should stop at the player race
     expect(result.daysAdvanced).toBeLessThan(10);
     expect(result.encounteredPlayerRace).toBe(true);
-    expect(result.playerRaceDay).toBe(400);
+    expect(result.playerRaceDay).toBe(365);
   });
 
   it("should skip player races across year boundary in headless mode", () => {

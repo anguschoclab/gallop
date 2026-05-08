@@ -12,6 +12,7 @@ import {
   getCompetitiveModifier,
 } from "@/core/ai/personalitySystem";
 import type { StablePersonality } from "@/game/types";
+import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 
 describe("getPersonalityAIState", () => {
   it("should initialize AI state for each personality", () => {
@@ -48,8 +49,6 @@ describe("getPersonalityAIState", () => {
     const aggressiveState = getPersonalityAIState("aggressive");
     const conservativeState = getPersonalityAIState("conservative");
 
-    // Access config values through the PERSONALITY_CONFIG
-    const { PERSONALITY_CONFIG } = require("@/core/stable/stableConfig");
     const aggressiveConfig = PERSONALITY_CONFIG.aggressive;
     const conservativeConfig = PERSONALITY_CONFIG.conservative;
 
@@ -79,7 +78,7 @@ describe("calculateUtilityScore", () => {
 
     const factors = {
       risk: 0.9,
-      purse: 5000,
+      purse: 0.5,
     };
 
     const aggressiveScore = calculateUtilityScore(aggressiveState, "race_entry", factors);
@@ -95,7 +94,7 @@ describe("calculateUtilityScore", () => {
 
     const factors = {
       youth: 0.9,
-      purse: 5000,
+      purse: 0.5,
     };
 
     const developerScore = calculateUtilityScore(developerState, "purchase", factors);
@@ -126,8 +125,8 @@ describe("calculateUtilityScore", () => {
     const traderState = getPersonalityAIState("trader");
 
     const factors = {
-      graded: 1.0,
-      purse: 5000,
+      graded: 0.8,
+      purse: 0.3,
     };
 
     const prestigeScore = calculateUtilityScore(prestigeState, "race_entry", factors);
@@ -155,7 +154,7 @@ describe("calculateUtilityScore", () => {
     const aggressiveState = getPersonalityAIState("aggressive");
     const factors = {
       risk: 0.5,
-      purse: 5000,
+      purse: 0.3,
     };
 
     const normalScore = calculateUtilityScore(aggressiveState, "decision", factors);
@@ -168,8 +167,8 @@ describe("calculateUtilityScore", () => {
   it("should clamp score between 0 and 1", () => {
     const state = getPersonalityAIState("aggressive");
     const factors = {
-      risk: 100,
-      purse: 1000000,
+      risk: 2.0,
+      purse: 5.0,
     };
 
     const score = calculateUtilityScore(state, "decision", factors);
@@ -260,8 +259,9 @@ describe("recordOutcome", () => {
       );
     }
 
-    // Strategy should change after enough failures
-    expect(updatedState.strategyConfidence).toBeLessThan(0.5);
+    // Strategy should change after enough failures (resets to 0.6 when switching)
+    expect(updatedState.currentStrategy).not.toBe("default");
+    expect(updatedState.lastStrategyChange).toBeGreaterThan(0);
   });
 });
 

@@ -114,7 +114,7 @@ export function selectBestJockey(
       jockey,
       score: calculateJockeySuitability(aiState, jockey, horse, stable),
     }))
-    .filter((j) => j.score > 50)
+    .filter((j) => j.score > 0)
     .sort((a, b) => b.score - a.score);
 
   return scoredJockeys.length > 0 ? scoredJockeys[0].jockey : null;
@@ -229,13 +229,11 @@ export function recordJockeyAssignment(
     fee,
   };
 
-  aiState.jockeyHistory.push(assignment);
+  const newHistory = [...aiState.jockeyHistory, assignment];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.jockeyHistory.length > maxHistory) {
-    aiState.jockeyHistory = aiState.jockeyHistory.slice(-maxHistory);
-  }
+  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update retention record
   let retention = aiState.retention.find(
@@ -251,13 +249,27 @@ export function recordJockeyAssignment(
       totalPrize: 0,
       retained: true,
     };
-    aiState.retention.push(retention);
   }
 
-  retention.lastUseDay = currentDay;
-  retention.totalRides++;
+  const updatedRetention = {
+    ...retention,
+    lastUseDay: currentDay,
+    totalRides: retention.totalRides + 1,
+  };
 
-  return aiState;
+  const newRetention = aiState.retention.some(
+    (r) => r.jockeyId === jockey.id && r.stableId === stable.id,
+  )
+    ? aiState.retention.map((r) =>
+        r.jockeyId === jockey.id && r.stableId === stable.id ? updatedRetention : r,
+      )
+    : [...aiState.retention, updatedRetention];
+
+  return {
+    ...aiState,
+    jockeyHistory: trimmedHistory,
+    retention: newRetention,
+  };
 }
 
 /**

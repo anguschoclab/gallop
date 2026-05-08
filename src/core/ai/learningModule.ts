@@ -92,7 +92,7 @@ function updatePatterns(
   contextKey: string,
   success: boolean,
 ): Map<string, number> {
-  const patternKey = `${decisionType}:${contextKey.split(":")[0]}`; // Use first context dimension
+  const patternKey = `${decisionType}:${contextKey}`; // Use full context key
   const existing = patterns.get(patternKey) || 0.5;
   const weight = success ? 0.1 : -0.05;
   const newPatterns = new Map(patterns);
@@ -121,7 +121,7 @@ export function getPatternScore(
   decisionType: string,
   context: string,
 ): number {
-  const patternKey = `${decisionType}:${context.split(":")[0]}`;
+  const patternKey = `${decisionType}:${context}`;
   return state.patterns.get(patternKey) ?? 0.5;
 }
 
