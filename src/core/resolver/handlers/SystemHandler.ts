@@ -2,6 +2,8 @@ import type { WritableDraft } from "immer/dist/internal";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
+import { getReputationTier, createReputationEvent } from "@/core/reputation";
+import { createTransaction } from "@/core/transactions";
 
 export class SystemHandler implements ImpactHandler {
   canHandle(type: string): boolean {
@@ -16,7 +18,9 @@ export class SystemHandler implements ImpactHandler {
       "campaign_creation",
       "campaign_deletion",
       "auto_manage_toggle",
-      "claimResolution"
+      "claimResolution",
+      "reputation_change",
+      "transaction"
     ].includes(type);
   }
 
@@ -110,6 +114,37 @@ export class SystemHandler implements ImpactHandler {
         if (campaign) {
           campaign.autoManaged = autoManaged;
         }
+        break;
+      }
+
+      case "reputation_change": {
+        const { delta, reason, source, metadata } = impact;
+        if (draft.reputation) {
+          const newEvent = createReputationEvent(source as any, delta, reason, impact.day, metadata);
+          draft.reputation.events.push(newEvent);
+          draft.reputation.score += delta;
+          draft.reputation.tier = getReputationTier(draft.reputation.score);
+          if (source === "race_win") {
+            draft.reputation.totalWins += 1;
+          }
+        }
+        break;
+      }
+
+      case "transaction": {
+        const { amount, category, description, metadata } = impact;
+        if (!draft.transactions) draft.transactions = [];
+        const type = amount >= 0 ? "income" : "expense";
+        const newTransaction = createTransaction(
+          type,
+          category as any,
+          amount,
+          description,
+          impact.day,
+          draft.cash + amount,
+          metadata,
+        );
+        draft.transactions.push(newTransaction);
         break;
       }
     }

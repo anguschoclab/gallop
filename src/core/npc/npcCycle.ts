@@ -78,6 +78,7 @@ export function runNpcCycle(
     rng,
     raceEntryDaysAhead,
     pregnantIds,
+    aiManager,
   );
 
   // 3. Update fame for horses in yesterday's races

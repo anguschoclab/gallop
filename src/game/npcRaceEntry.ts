@@ -5,14 +5,11 @@
 import type { Horse, Race, Stable, Jockey } from "./types";
 import type { Rng } from "@/game/rng";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import {
-  calculateRaceSuitability,
-  calculateAssignedWeight,
-  MAX_HORSES_PER_STABLE_PER_RACE,
-  MIN_ENERGY_TO_ENTER,
-} from "@/core/race/entryScoring";
+import { calculateAssignedWeight, MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/core/race/entryScoring";
 import { getFormTolerance } from "@/core/stable/personalityModifiers";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import { calculateOptimalTactics } from "@/core/ai/jockeyStrategyAI";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**
  * Check if a horse should enter a race (basic eligibility + suitability)
@@ -117,6 +114,7 @@ export function runNpcRaceEntry(
   rng: Rng,
   daysAhead: number = 3,
   pregnantIds: Set<string> = new Set(),
+  aiManager?: NpcAIManager,
 ): Race[] {
   if (!Array.isArray(races)) {
     console.error("runNpcRaceEntry called with non-array races:", races);
@@ -180,6 +178,21 @@ export function runNpcRaceEntry(
         const ridingFee = jockey?.ridingFee ?? 100;
         const assignedWeight = calculateAssignedWeight(horse, race);
 
+        // Calculate tactics for NPC entry
+        let tactics = "default";
+        if (aiManager && jockey) {
+          const stableState = aiManager.stableStates.get(stable.id);
+          if (stableState?.jockeyStrategyAI) {
+            tactics = calculateOptimalTactics(
+              stableState.jockeyStrategyAI,
+              horse,
+              race,
+              jockey,
+              stable,
+            );
+          }
+        }
+
         race.entries.push({
           horseId: horse.id,
           owned: false,
@@ -187,6 +200,7 @@ export function runNpcRaceEntry(
           npc: true,
           jockeyId,
           weight: assignedWeight,
+          tactics,
         });
 
         // Deduct entry fee AND riding fee from stable

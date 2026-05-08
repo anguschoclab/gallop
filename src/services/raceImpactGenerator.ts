@@ -12,6 +12,8 @@ import type {
   JockeyStatsImpact,
   LogImpact,
   TripleCrownProgressImpact,
+  ReputationImpact,
+  TransactionImpact,
 } from "@/core/resolver/impacts";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/game/uuid";
@@ -52,14 +54,8 @@ export function generateRaceImpacts({
   newDay,
   stateCash,
   stateReputation,
-}: GenerateRaceImpactsProps): {
-  impacts: AnyImpact[];
-  transactions: Transaction[];
-  reputationEvents: ReturnType<typeof createReputationEvent>[];
-} {
+}: GenerateRaceImpactsProps): AnyImpact[] {
   const impacts: AnyImpact[] = [];
-  const newTransactions: Transaction[] = [];
-  const newReputationEvents = stateReputation?.events ?? [];
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
 
   // Generate race result impact
@@ -253,30 +249,34 @@ export function generateRaceImpacts({
           } as CashImpact);
 
           // Record transaction for prize money income
-          newTransactions.push(
-            createTransaction(
-              "income",
-              "prize_money",
-              prize,
-              `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
-              newDay,
-              stateCash + prize,
-              { horseId: horse.id, raceId: race.id },
-            ),
-          );
+          impacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "conditional",
+            type: "transaction",
+            amount: prize,
+            category: "prize_money",
+            description: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
+            metadata: { horseId: horse.id, raceId: race.id },
+          } as TransactionImpact);
 
           // Track reputation for wins
           if (r.position === 1) {
             const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);
-            newReputationEvents.push(
-              createReputationEvent(
-                "race_win",
-                repGain,
-                `Win in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
-                newDay,
-                { horseId: horse.id, raceId: race.id },
-              ),
-            );
+            impacts.push({
+              id: generateUUID(),
+              intentId: "",
+              day: newDay,
+              phase: "raceResolution",
+              logLevel: "always",
+              type: "reputation_change",
+              delta: repGain,
+              source: "race_win",
+              reason: `Win in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
+              metadata: { horseId: horse.id, raceId: race.id },
+            } as ReputationImpact);
           }
         }
       }
@@ -313,17 +313,18 @@ export function generateRaceImpacts({
             reason: `Jockey fee: ${jockey.name}`,
           } as CashImpact);
 
-          newTransactions.push(
-            createTransaction(
-              "expense",
-              "jockey_fee",
-              -ridingFee,
-              `Jockey fee: ${jockey.name} for ${horse.name}`,
-              newDay,
-              stateCash - ridingFee,
-              { horseId: horse.id, raceId: race.id },
-            ),
-          );
+          impacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "conditional",
+            type: "transaction",
+            amount: -ridingFee,
+            category: "jockey_fee",
+            description: `Jockey fee: ${jockey.name} for ${horse.name}`,
+            metadata: { horseId: horse.id, raceId: race.id },
+          } as TransactionImpact);
         }
       }
     }
@@ -500,5 +501,5 @@ export function generateRaceImpacts({
     } as LogImpact);
   }
 
-  return { impacts, transactions: newTransactions, reputationEvents: newReputationEvents };
+  return impacts;
 }

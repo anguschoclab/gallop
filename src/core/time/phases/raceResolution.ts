@@ -39,7 +39,7 @@ export const raceResolutionPhase: PipelinePhase = {
       }
 
       // Generate race impacts using service
-      const { impacts: raceImpacts, transactions: raceTransactions, reputationEvents: raceReputationEvents } = generateRaceImpacts({
+      const raceImpacts = generateRaceImpacts({
         race,
         result,
         runners,
@@ -51,8 +51,6 @@ export const raceResolutionPhase: PipelinePhase = {
       });
 
       impacts.push(...raceImpacts);
-      newTransactions.push(...raceTransactions);
-      newReputationEvents.push(...raceReputationEvents);
 
       // Claiming resolution (if race is claiming race)
       if (race.claimingPrice) {
@@ -78,21 +76,6 @@ export const raceResolutionPhase: PipelinePhase = {
       state: {
         ...state,
         races: updatedRaces,
-        transactions: [...(state.transactions ?? []), ...newTransactions],
-        reputation: state.reputation
-          ? {
-              ...state.reputation,
-              events: [...state.reputation.events, ...newReputationEvents],
-              score:
-                state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
-              tier: getReputationTier(
-                state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
-              ),
-              totalWins:
-                state.reputation.totalWins +
-                newReputationEvents.filter((e) => e.source === "race_win").length,
-            }
-          : state.reputation,
       },
       impacts: [...(context.impacts || []), ...impacts],
     };

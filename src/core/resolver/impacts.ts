@@ -12,6 +12,8 @@ import type {
   HorseCampaign,
   HealthStatus,
   TripleCrownProgress,
+  ReputationEvent,
+  Transaction,
 } from "@/game/types";
 
 // Base impact type
@@ -472,6 +474,24 @@ export interface FacilityUpgradeImpact extends Impact {
   reason: string;
 }
 
+// Reputation impact
+export interface ReputationImpact extends Impact {
+  type: "reputation_change";
+  delta: number;
+  reason: string;
+  source: string; // e.g. "race_win", "graded_win"
+  metadata?: Record<string, any>;
+}
+
+// Transaction impact
+export interface TransactionImpact extends Impact {
+  type: "transaction";
+  amount: number;
+  category: string;
+  description: string;
+  metadata?: Record<string, any>;
+}
+
 // Union type for all impacts
 export type AnyImpact =
   | CashImpact
@@ -519,4 +539,6 @@ export type AnyImpact =
   | TripleCrownProgressImpact
   | TacticsImpact
   | StaffImpact
-  | FacilityUpgradeImpact;
+  | FacilityUpgradeImpact
+  | ReputationImpact
+  | TransactionImpact;

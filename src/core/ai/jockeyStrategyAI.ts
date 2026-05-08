@@ -41,6 +41,51 @@ export function createJockeyStrategyAIState(stable: Stable): JockeyStrategyAISta
 }
 
 /**
+ * Calculate optimal tactics for a horse in a race
+ */
+export function calculateOptimalTactics(
+  aiState: JockeyStrategyAIState,
+  horse: Horse,
+  race: Race,
+  jockey: Jockey,
+  stable: Stable,
+): string {
+  const personality = aiState.personalityState.personality;
+  const runningStyle = calculateOptimalRunningStyle(aiState, horse, race, jockey, stable);
+
+  // Aggressive stables favor leading or the rail
+  if (personality === "aggressive" || personality === "win-now") {
+    if (runningStyle === "E") return "lead";
+    if (runningStyle === "EP") return "rail";
+  }
+
+  // Conservative stables favor saving energy
+  if (personality === "conservative") {
+    if (runningStyle === "S") return "late_kick";
+    return "save";
+  }
+
+  // Distance considerations
+  if (race.distance >= 2400 && runningStyle === "S") {
+    return "late_kick";
+  }
+
+  if (race.distance <= 1200 && runningStyle === "E") {
+    return "lead";
+  }
+
+  // Default behavior based on running style
+  const defaultTactics: Record<string, string> = {
+    E: "lead",
+    EP: "rail",
+    P: "default",
+    S: "save",
+  };
+
+  return defaultTactics[runningStyle] || "default";
+}
+
+/**
  * Calculate optimal running style for a horse in a race
  */
 export function calculateOptimalRunningStyle(

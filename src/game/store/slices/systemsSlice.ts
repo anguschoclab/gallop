@@ -111,27 +111,17 @@ export function createSystemsSlice(
           reason: `Insufficient cash. Silk reroll costs ${formatCurrency(rerollCost)}.`,
         };
 
-      // Cosmetic/Immediate
-      set({
-        cash: s.cash - rerollCost,
-        jockeys: s.jockeys?.map((j: Jockey) =>
-          j.id === jockeyId
-            ? {
-                ...j,
-                silk: `#${Math.floor(Math.random() * 16777215)
-                  .toString(16)
-                  .padStart(6, "0")}`,
-              }
-            : j,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Rerolled silk for ${jockey.name} for ${formatCurrency(rerollCost)}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      get().enqueueIntent({
+        id: generateUUID(),
+        entityId: jockeyId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "reroll_silk",
+        jockeyId,
+        cost: rerollCost,
       });
+
       return { ok: true };
     },
 

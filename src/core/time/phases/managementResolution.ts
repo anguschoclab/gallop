@@ -173,8 +173,17 @@ export const managementResolutionPhase: PipelinePhase = {
             reason: "Silk reroll cost",
           } as any);
 
-          // Need a way to update the jockey silk. I'll use a custom impact for now or check if there's one.
-          // I'll check impacts.ts again.
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "jockey_silk",
+            jockeyId: typedIntent.jockeyId,
+            silk: newSilk,
+            reason: "Silk rerolled",
+          } as any);
           break;
         }
 

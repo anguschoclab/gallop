@@ -11,6 +11,7 @@ export class RacingHandler implements ImpactHandler {
       "race_result",
       "jockey_contract",
       "jockey_assignment",
+      "jockey_silk",
       "jockey_stats",
       "race_history",
       "claiming",
@@ -75,6 +76,15 @@ export class RacingHandler implements ImpactHandler {
           if (entry) {
             entry.jockeyId = jockeyId;
           }
+        }
+        break;
+      }
+
+      case "jockey_silk": {
+        const { jockeyId, silk } = impact;
+        const jockey = draft.jockeys?.find((j) => j.id === jockeyId);
+        if (jockey) {
+          jockey.silk = silk;
         }
         break;
       }

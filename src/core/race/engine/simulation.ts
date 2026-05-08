@@ -47,6 +47,7 @@ export type Runner = {
   horse: HorseT;
   jockey?: JockeyT;
   weight: number;
+  tactics: string;
 };
 
 function paceShapeMul(style: RunningStyleT, progress: number): number {
@@ -297,6 +298,7 @@ export function buildRunner(
     horse: h,
     jockey,
     weight: assignedWeight,
+    tactics: entry?.tactics || "default",
   };
 }
 
@@ -405,6 +407,11 @@ export function stepRunner(
   let targetLane = 0;
   if (r.runningStyle === "S" && progress < 0.4) targetLane = 1;
 
+  // Tactics-based lane bias
+  if (r.tactics === "rail") targetLane = 0;
+  if (r.tactics === "outside" && progress < 0.8) targetLane = 2;
+  if (r.tactics === "lead" && progress < 0.2) targetLane = 0;
+
   if (field && pace) {
     const laneIdx = Math.floor(r.lane / LANE_WIDTH);
     if (laneIdx === 0 && pace.laneDensity[0] > 4 && progress < 0.7) {
@@ -484,6 +491,12 @@ export function stepRunner(
         effectiveStamina = clamp(effectiveStamina - 0.15, 0.1, 1);
       }
     }
+
+    // "Save" tactics preservation
+    if (r.tactics === "save" && progress < 0.7) {
+      effectiveStamina = clamp(effectiveStamina + 0.1, 0, 1.1);
+    }
+
     staminaMul = 1 - (1 - effectiveStamina) * fade;
   }
 
@@ -508,6 +521,11 @@ export function stepRunner(
     }
   }
 
+  // "Late Kick" velocity boost
+  if (r.tactics === "late_kick" && progress > 0.85) {
+    styleMul *= 1.08 + (r.jockey?.stats.vigor ?? 50) / 1000;
+  }
+
   if (r.runningStyle === "E" && pace && pace.leaderPos - r.position > 3) {
     styleMul *= 0.98;
   }
@@ -521,7 +539,11 @@ export function stepRunner(
   }
 
   let draftMul = 1;
-  if (r.draftingHorseId && progress < 0.95) draftMul = DRAFT_SPEED_BONUS;
+  if (r.draftingHorseId && progress < 0.95) {
+    draftMul = DRAFT_SPEED_BONUS;
+    // "Rail" tactics bonus for drafting
+    if (r.tactics === "rail") draftMul *= 1.005;
+  }
 
   const targetSpeed =
     r.topSpeed *
