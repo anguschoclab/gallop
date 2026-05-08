@@ -22,7 +22,9 @@ export class SystemHandler implements ImpactHandler {
       "reputation_change",
       "transaction",
       "staff",
-      "news_item"
+      "news_item",
+      "hall_of_fame_induction",
+      "season_history_record"
     ].includes(type);
   }
 
@@ -188,6 +190,23 @@ export class SystemHandler implements ImpactHandler {
         const { newsItem } = impact;
         if (!draft.news) draft.news = [];
         draft.news = [newsItem, ...draft.news].slice(0, 100);
+        break;
+      }
+      
+      case "hall_of_fame_induction": {
+        const { entry } = impact;
+        if (!draft.hallOfFame) draft.hallOfFame = [];
+        // Prevent duplicates
+        if (!draft.hallOfFame.find(e => e.horseId === entry.horseId)) {
+          draft.hallOfFame.push(entry);
+        }
+        break;
+      }
+
+      case "season_history_record": {
+        const { record } = impact;
+        if (!draft.seasonRecords) draft.seasonRecords = [];
+        draft.seasonRecords.push(record);
         break;
       }
     }

@@ -65,7 +65,7 @@ const navSections = [
           { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
         ],
       },
-      { to: "/hall-of-fame", label: "Hall of Fame", icon: Award, exact: false },
+      { to: "/records", label: "Hall of Records", icon: Award, exact: false },
     ],
   },
   {

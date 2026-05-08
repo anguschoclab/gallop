@@ -8,7 +8,16 @@ import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 export interface RaceSimulationResult {
   raceId: string;
   result: Array<{ horseId: string; position: number; time: number }>;
-  runners: Array<{ horseId: string; name: string; silk: string; owned: boolean; barrier?: number; lane?: number }>;
+  runners: Array<{ 
+    horseId: string; 
+    name: string; 
+    silk: string; 
+    owned: boolean; 
+    jockeyId: string; 
+    jockeyName: string; 
+    barrier?: number; 
+    lane?: number 
+  }>;
   snapshots: RaceSnapshot[];
 }
 
@@ -43,11 +52,13 @@ export function simulateRace(
   return {
     raceId: race.id,
     result,
-    runners: runners.map(({ horseId, name, silk, owned, barrier, lane }) => ({ 
+    runners: runners.map(({ horseId, name, silk, owned, jockey, barrier, lane }) => ({ 
       horseId, 
       name, 
       silk, 
       owned, 
+      jockeyId: jockey.id,
+      jockeyName: jockey.name,
       barrier, 
       lane 
     })),

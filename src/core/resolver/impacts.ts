@@ -13,6 +13,7 @@ import type {
   TripleCrownProgress,
 } from "@/game/types";
 import type { NewsItem } from "../narrative/newsTypes";
+import type { SeasonRecord, HallOfFameEntry } from "../history/historyTypes";
 
 // Base impact type
 export interface Impact {
@@ -297,16 +298,14 @@ export interface HorseDeathImpact extends Impact {
 // Hall of Fame induction impact
 export interface HallOfFameInductionImpact extends Impact {
   type: "hall_of_fame_induction";
-  horseId: string;
-  horseName: string;
-  inductedOnDay: number;
-  careerHighlights: {
-    g1Wins: number;
-    gradedWins: number;
-    lifetimeEarnings: number;
-    horseOfTheYearAwards: number;
-  };
+  entry: HallOfFameEntry;
   reason: string;
+}
+
+// Season history record impact
+export interface SeasonHistoryImpact extends Impact {
+  type: "season_history_record";
+  record: SeasonRecord;
 }
 
 // Campaign creation impact

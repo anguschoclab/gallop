@@ -12,6 +12,7 @@ import type { CourseSpecification, TrackSection } from "@/game/tracks";
 import type { Rng } from "@/core/common/types";
 import { clamp } from "@/game/math";
 import type { RaceSnapshot, HorseSnapshot } from "./raceSnapshotTypes";
+import { calculateTacticalAdjustment } from "./tacticalAI";
 
 export type RunnerBonuses = {
   farrier?: number;
@@ -317,20 +318,26 @@ export function buildRunner(
 
 export type PaceContext = {
   leaderPos: number;
+  leaderVelocity: number;
   leadGroupCount: number;
   pacePressure: number;
   progress: number;
   laneDensity: number[];
+  paceRating: number; // 0.8 = crawl, 1.0 = normal, 1.2 = blistering
 };
 
 export function computePaceContext(runners: Runner[], distance: number): PaceContext {
   let leaderPos = 0;
+  let leaderVelocity = 0;
   let totalProgress = 0;
   let alive = 0;
   const laneDensity = new Array(12).fill(0);
 
   for (const r of runners) {
-    if (r.position > leaderPos) leaderPos = r.position;
+    if (r.position > leaderPos) {
+      leaderPos = r.position;
+      leaderVelocity = r.velocity;
+    }
     if (r.finishTime === null) {
       totalProgress += r.position / distance;
       alive++;
@@ -340,6 +347,12 @@ export function computePaceContext(runners: Runner[], distance: number): PaceCon
       totalProgress += 1;
     }
   }
+
+  // Calculate Pace Rating
+  // Expected velocity for a top-tier horse at this distance
+  const expectedVel = 18.5 - (distance / 3000) * 2.5; 
+  const paceRating = leaderVelocity / expectedVel;
+
   let leadGroupCount = 0;
   let frontRunnersInLeadGroup = 0;
   for (const r of runners) {
@@ -351,7 +364,15 @@ export function computePaceContext(runners: Runner[], distance: number): PaceCon
   }
   const pacePressure = clamp((frontRunnersInLeadGroup - 1) / 2, 0, 1);
   const progress = alive > 0 ? totalProgress / runners.length : 1;
-  return { leaderPos, leadGroupCount, pacePressure, progress, laneDensity };
+  return {
+    leaderPos,
+    leaderVelocity,
+    leadGroupCount,
+    pacePressure,
+    progress,
+    laneDensity,
+    paceRating,
+  };
 }
 
 const DRAFT_DISTANCE = 3;
@@ -606,11 +627,32 @@ export function stepRunner(
     }
 
     if (progress > 0.8) {
-      const vigorBoost = (stats.vigor / 100) * 0.03;
+      let vigorBoost = (stats.vigor / 100) * 0.03;
+      // "Late Kick" tactic bonus
+      if (r.tactics === "late_kick" && progress > 0.92) {
+        vigorBoost *= 1.5;
+      }
       r.velocity += vigorBoost * dt;
     }
   } else {
     finalDs = ds / arcFactor;
+  }
+
+  // --- Tactical AI Integration ---
+  const tactical = calculateTacticalAdjustment(r, pace, runners);
+  r.velocity *= (1 + (tactical.velocityMod - 1) * dt);
+  r.lane += (tactical.targetLane - r.lane) * 0.1 * dt;
+
+  // --- Traffic & Blocking Penalty ---
+  const blockingHorse = runners.find(other => 
+    other.horseId !== r.horseId &&
+    other.finishTime === null &&
+    other.position > r.position &&
+    other.position - r.position < 1.5 &&
+    Math.abs(other.lane - r.lane) < 0.4
+  );
+  if (blockingHorse) {
+    r.velocity = Math.min(r.velocity, blockingHorse.velocity * 0.98);
   }
 
   r.position += finalDs;

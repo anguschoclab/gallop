@@ -3,6 +3,7 @@
 
 import type { Horse, Race } from "../types";
 import type { NewsItem } from "@/core/narrative/newsTypes";
+import type { HallOfFameEntry, SeasonRecord } from "@/core/history/historyTypes";
 import { generateUUID } from "@/game/uuid";
 
 /**
@@ -22,6 +23,10 @@ export interface CoreState {
   log: { day: number; text: string }[];
   /** Structured news items for the Gallop Gazette */
   news: NewsItem[];
+  /** Historical records of major race winners */
+  seasonRecords: SeasonRecord[];
+  /** Legendary horses preserved for history */
+  hallOfFame: HallOfFameEntry[];
 }
 
 /**
@@ -65,6 +70,8 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
           body: `The local racing community is abuzz as ${profile.ownerName} officially registers ${profile.stableName}. "We're here to make history," the new owner stated at the morning trials.`,
         },
       ],
+      seasonRecords: [],
+      hallOfFame: [],
     };
   }
 
@@ -85,5 +92,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
         body: "Your stable is now open for business. Good luck on the road to the Triple Crown!",
       },
     ],
+    seasonRecords: [],
+    hallOfFame: [],
   };
 }

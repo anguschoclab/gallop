@@ -7,6 +7,8 @@ import { getReputationTier } from "@/core/reputation";
 import { simulateRace } from "@/services/raceSimulationExecutor";
 import { generateRaceImpacts } from "@/services/raceImpactGenerator";
 import { processClaimingResolution } from "@/services/claimingResolutionService";
+import { recordRaceHistory, checkHallOfFameInduction } from "@/services/historyService";
+import { generateUUID } from "@/game/uuid";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -25,7 +27,7 @@ export const raceResolutionPhase: PipelinePhase = {
 
     for (const race of overdueRaces) {
       // Simulate race using service
-      const { result, runners } = simulateRace(
+      const { result, runners, snapshots } = simulateRace(
         race,
         state.horses,
         state.jockeys ?? [],
@@ -55,6 +57,53 @@ export const raceResolutionPhase: PipelinePhase = {
       });
 
       impacts.push(...raceImpacts);
+
+      // --- Historical Records & Hall of Fame ---
+      if (race.graded?.grade === "G1") {
+        const historyRecord = recordRaceHistory(race, result, runners, state.horses, newDay);
+        if (historyRecord) {
+          impacts.push({
+            id: generateUUID(),
+            intentId: race.id,
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "never",
+            type: "season_history_record",
+            record: historyRecord
+          } as any);
+        }
+
+        // Check winner for Hall of Fame induction
+        const winnerId = result.find(r => r.position === 1)?.horseId;
+        const winner = state.horses.find(h => h.id === winnerId);
+        if (winner) {
+          // Calculate temporary stats to see if they cross the threshold
+          const prizeMoney = race.purse * 0.6; // Winner gets 60%
+          const tempHorse = {
+            ...winner,
+            lifetimeEarnings: winner.lifetimeEarnings + prizeMoney,
+            careerWins: winner.careerWins + 1,
+            raceHistory: [
+              ...winner.raceHistory,
+              { grade: "G1", position: 1, day: newDay } as any
+            ]
+          };
+
+          const hofEntry = checkHallOfFameInduction(tempHorse, newDay);
+          if (hofEntry && !state.hallOfFame.find(e => e.horseId === winner.id)) {
+            impacts.push({
+              id: generateUUID(),
+              intentId: race.id,
+              day: newDay,
+              phase: "raceResolution",
+              logLevel: "always",
+              type: "hall_of_fame_induction",
+              entry: hofEntry,
+              reason: `${winner.name} reaches legendary status after winning ${race.name}!`
+            } as any);
+          }
+        }
+      }
 
       // Claiming resolution (if race is claiming race)
       if (race.claimingPrice) {
