@@ -11,6 +11,7 @@ import { TRAIT_VALUES, fiberDistanceModifier } from "@/core/genetics/phenotype";
 import type { CourseSpecification, TrackSection } from "@/game/tracks";
 import type { Rng } from "@/core/common/types";
 import { clamp } from "@/game/math";
+import type { RaceSnapshot, HorseSnapshot } from "./raceSnapshotTypes";
 
 export type RunnerBonuses = {
   farrier?: number;
@@ -629,15 +630,42 @@ export function runRaceToCompletion(
   dt: number = 0.1,
   maxTime: number = 600,
   course?: CourseSpecification,
-): { horseId: string; position: number; time: number }[] {
+  recordSnapshots: boolean = false,
+): {
+  result: { horseId: string; position: number; time: number }[];
+  snapshots: RaceSnapshot[];
+} {
   let t = 0;
+  const snapshots: RaceSnapshot[] = [];
+
   while (runners.some((r) => r.finishTime === null) && t < maxTime) {
     const pace = computePaceContext(runners, distance);
     for (const r of runners) stepRunner(r, dt, t, distance, rng, runners, pace, course);
+
+    if (recordSnapshots) {
+      snapshots.push({
+        t,
+        horses: runners.map((r) => ({
+          horseId: r.horseId,
+          position: r.position,
+          lane: r.lane,
+          velocity: r.velocity,
+        })),
+      });
+    }
+
     t += dt;
   }
+
   const ranked = [...runners]
     .map((r) => ({ horseId: r.horseId, time: r.finishTime ?? Infinity }))
     .sort((a, b) => a.time - b.time);
-  return ranked.map((r, idx) => ({ horseId: r.horseId, position: idx + 1, time: r.time }));
+
+  const result = ranked.map((r, idx) => ({
+    horseId: r.horseId,
+    position: idx + 1,
+    time: r.time,
+  }));
+
+  return { result, snapshots };
 }

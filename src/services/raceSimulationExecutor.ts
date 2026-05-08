@@ -3,11 +3,13 @@ import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
 import type { Race, Horse, Jockey, Stable } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
+import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 
 export interface RaceSimulationResult {
   raceId: string;
   result: Array<{ horseId: string; position: number; time: number }>;
   runners: Array<{ horseId: string; barrier?: number; lane?: number }>;
+  snapshots: RaceSnapshot[];
 }
 
 /**
@@ -33,11 +35,15 @@ export function simulateRace(
   });
   const rng = rngForRace(race);
   const course = getCourseForRace(race);
-  const result = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course);
+  
+  // For now, record snapshots for all races. We might want to filter this later
+  // to only record for player-involved races if state size becomes an issue.
+  const { result, snapshots } = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course, true);
 
   return {
     raceId: race.id,
-    result: result.map(({ horseId, position, time }) => ({ horseId, position, time })),
+    result,
     runners: runners.map(({ horseId, barrier, lane }) => ({ horseId, barrier, lane })),
+    snapshots,
   };
 }

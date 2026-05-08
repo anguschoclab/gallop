@@ -37,7 +37,7 @@ export const raceResolutionPhase: PipelinePhase = {
       // Update race in the updatedRaces array
       const raceIndex = updatedRaces.findIndex((r) => r.id === race.id);
       if (raceIndex !== -1) {
-        updatedRaces[raceIndex] = { ...race, resolved: true, result };
+        updatedRaces[raceIndex] = { ...race, resolved: true, result, snapshots };
       }
 
       // Generate race impacts using service

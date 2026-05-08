@@ -35,6 +35,8 @@ export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 
 export type TrackCondition = "fast" | "good" | "soft" | "heavy" | "yielding";
 
+import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
+
 export type Race = {
   id: string;
   name: string;
@@ -58,6 +60,7 @@ export type Race = {
   }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
+  snapshots?: RaceSnapshot[];
   graded?: {
     key: string;
     grade: "G1" | "G2" | "G3";
