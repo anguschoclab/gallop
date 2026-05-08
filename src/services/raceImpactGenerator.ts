@@ -14,7 +14,13 @@ import type {
   TripleCrownProgressImpact,
   ReputationImpact,
   TransactionImpact,
+  InjuryImpact,
+  NewsImpact,
 } from "@/core/resolver/impacts";
+import { generateRaceNews } from "@/services/newsGenerator";
+import { rollForInjury } from "@/core/health/healthSystem";
+import type { StaffMember } from "@/core/staff/staffTypes";
+import type { Rng } from "@/game/rng";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/game/uuid";
 import { formatCurrency } from "@/components/HorseBits";
@@ -43,6 +49,8 @@ export interface GenerateRaceImpactsProps {
   newDay: number;
   stateCash: number;
   stateReputation?: ManagerReputation;
+  hiredStaff?: StaffMember[];
+  rng?: Rng;
 }
 
 export function generateRaceImpacts({
@@ -54,6 +62,8 @@ export function generateRaceImpacts({
   newDay,
   stateCash,
   stateReputation,
+  hiredStaff = [],
+  rng,
 }: GenerateRaceImpactsProps): AnyImpact[] {
   const impacts: AnyImpact[] = [];
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
@@ -91,9 +101,20 @@ export function generateRaceImpacts({
       reason: "Race energy expenditure",
     } as EnergyImpact);
 
+    // Roll for injury
+    if (rng) {
+      const injury = rollForInjury(rng, horse, newDay, hiredStaff);
+      if (injury) {
+        impacts.push(injury);
+      }
+    }
+
     // Form impact based on position
-    const formDelta =
+    const groom = hiredStaff.find(s => s.role === 'groom' && s.stableId === (horse.stableId || ""));
+    const baseFormDelta =
       r.position === 1 ? 3 : r.position === 2 ? 2 : r.position === 3 ? 1 : r.position <= 5 ? 0 : -1;
+    const formDelta = baseFormDelta < 0 && groom ? 0 : baseFormDelta;
+
     impacts.push({
       id: generateUUID(),
       intentId: "",
@@ -499,6 +520,20 @@ export function generateRaceImpacts({
       text: `${race.name} — ${summary}${prize > 0 ? ` (won ${formatCurrency(prize)})` : ""}`,
       reason: "Race summary",
     } as LogImpact);
+  }
+
+  // Generate News Impact
+  const newsItem = generateRaceNews(race, result, horses, newDay);
+  if (newsItem) {
+    impacts.push({
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "news_item",
+      newsItem,
+    } as NewsImpact);
   }
 
   return impacts;

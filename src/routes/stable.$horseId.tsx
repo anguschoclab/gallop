@@ -208,6 +208,19 @@ function HorseDetail() {
             <CardTitle className="font-[family-name:var(--font-display)]">Health & Welfare</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {horse.activeInjury && (
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md mb-4">
+                <div className="flex items-center gap-2 text-destructive font-bold text-sm">
+                  <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+                  ACTIVE INJURY
+                </div>
+                <p className="text-cream font-medium text-xs mt-1">{horse.activeInjury.type}</p>
+                <div className="flex justify-between items-end mt-2">
+                  <Badge variant="destructive" className="text-[9px] h-4 px-1">{horse.activeInjury.severity.toUpperCase()}</Badge>
+                  <span className="text-[10px] text-cream-muted font-[family-name:var(--font-mono)]">Est. {horse.activeInjury.recoveryDays} days remaining</span>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <p className="text-xs text-cream-muted uppercase tracking-wider font-bold">Recovery Rate</p>
@@ -246,6 +259,42 @@ function HorseDetail() {
               <p className="text-[10px] text-cream-muted mt-2 italic">
                 *Risks are estimated based on veterinary evaluation and bloodline history.
               </p>
+            </div>
+
+            <div className="pt-4 border-t border-gold-muted/30">
+              <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">Staff Support</p>
+              <div className="space-y-1">
+                {(() => {
+                  const hiredStaff = useGame((s) => s.hiredStaff);
+                  const stableId = horse.stableId ?? "";
+                  const staffForStable = hiredStaff?.filter(s => s.stableId === stableId) ?? [];
+                  
+                  const nutritionist = staffForStable.find(s => s.role === 'nutritionist');
+                  const vet = staffForStable.find(s => s.role === 'veterinarian');
+                  const trainer = staffForStable.find(s => s.role === 'trainer');
+                  const farrier = staffForStable.find(s => s.role === 'farrier');
+                  const groom = staffForStable.find(s => s.role === 'groom');
+
+                  const bonuses = [
+                    nutritionist && { label: "Nutritionist", value: `+${Math.round(nutritionist.bonusValue * 100)}% Energy` },
+                    vet && { label: "Veterinarian", value: `+${Math.round(vet.bonusValue * 100)}% Recovery` },
+                    trainer && { label: "Trainer", value: `+${Math.round(trainer.bonusValue * 100)}% Efficiency` },
+                    farrier && { label: "Farrier", value: `+${Math.round(farrier.bonusValue * 100)}% Aptitude` },
+                    groom && { label: "Groom", value: `+${Math.round(groom.bonusValue * 100)}% Form` },
+                  ].filter(Boolean);
+
+                  if (bonuses.length === 0) {
+                    return <p className="text-[10px] text-cream-muted italic">No specialized staff support active.</p>;
+                  }
+
+                  return bonuses.map((b: any) => (
+                    <div key={b.label} className="flex justify-between text-[10px]">
+                      <span className="text-cream-muted">{b.label}</span>
+                      <span className="text-success font-medium">{b.value}</span>
+                    </div>
+                  ));
+                })()}
+              </div>
             </div>
           </CardContent>
         </Card>

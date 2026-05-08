@@ -21,6 +21,11 @@ export const STAFF_CONFIG = {
     mid: { salary: 300, bonus: 0.3 },
     elite: { salary: 800, bonus: 0.6 },
   },
+  trainer: {
+    budget: { salary: 300, bonus: 0.1 },
+    mid: { salary: 900, bonus: 0.25 },
+    elite: { salary: 2500, bonus: 0.45 },
+  },
 };
 
 export const STAFF_ROLE_LABELS: Record<StaffRole, string> = {
@@ -28,6 +33,7 @@ export const STAFF_ROLE_LABELS: Record<StaffRole, string> = {
   farrier: "Farrier",
   nutritionist: "Nutritionist",
   groom: "Groom",
+  trainer: "Trainer",
 };
 
 export const STAFF_TIER_LABELS: Record<StaffTier, string> = {

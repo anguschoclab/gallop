@@ -3,7 +3,7 @@
 /**
  * Staff roles within a stable
  */
-export type StaffRole = 'veterinarian' | 'farrier' | 'nutritionist' | 'groom';
+export type StaffRole = 'veterinarian' | 'farrier' | 'nutritionist' | 'groom' | 'trainer';
 
 /**
  * Staff experience and quality tiers

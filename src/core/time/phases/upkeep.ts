@@ -2,6 +2,9 @@ import type { PipelineContext } from "../pipeline";
 import { createExpense } from "@/core/expenses";
 import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
+import { generateFlavorNews } from "@/services/newsGenerator";
+import { generateUUID } from "@/game/uuid";
+import type { AnyImpact } from "@/core/resolver/impacts";
 import {
   calculateMonthlyExpenseBudget,
   shouldConserveCash,
@@ -28,9 +31,12 @@ export const upkeepPhase = {
     const playerHorseCount = playerHorses.length;
     const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 
-    // Calculate facility maintenance costs
-    const facilityMaintenance = state.facilities ? calculateTotalMaintenance(state.facilities) : 0;
-    const totalDailyCost = playerUpkeep + facilityMaintenance;
+    // Calculate staff salaries for player
+    const hiredStaff = state.hiredStaff ?? [];
+    const playerStaff = hiredStaff.filter(s => s.stableId === "");
+    const playerStaffSalaries = playerStaff.reduce((sum, s) => sum + s.salary, 0);
+
+    const totalDailyCost = playerUpkeep + facilityMaintenance + playerStaffSalaries;
 
     // Record expense entries for each horse
     const newExpenses = playerHorses.map((horse) =>
@@ -41,6 +47,7 @@ export const upkeepPhase = {
     );
 
     // Record facility maintenance expense
+    const facilityMaintenance = state.facilities ? calculateTotalMaintenance(state.facilities) : 0;
     if (facilityMaintenance > 0) {
       newExpenses.push(
         createExpense(
@@ -53,6 +60,19 @@ export const upkeepPhase = {
       );
     }
 
+    // Record staff salary expenses
+    playerStaff.forEach(staff => {
+      newExpenses.push(
+        createExpense(
+          "staff_salary",
+          staff.salary,
+          `${staff.role} salary for ${staff.name}`,
+          newDay,
+          { recurring: true }
+        )
+      );
+    });
+
     // Record transaction entries for total upkeep (single transaction for the day)
     const newTransactions: typeof state.transactions = [];
     if (totalDailyCost > 0) {
@@ -61,7 +81,7 @@ export const upkeepPhase = {
           "expense",
           "upkeep",
           -totalDailyCost,
-          `Daily upkeep: ${playerHorseCount} horse${playerHorseCount !== 1 ? "s" : ""} + facilities`,
+          `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
           newDay,
           state.cash - totalDailyCost,
           { recurring: true },
@@ -84,7 +104,12 @@ export const upkeepPhase = {
         }
 
         const owned = state.horses.filter((h) => h.stableId === stable.id);
-        const cost = owned.length * UPKEEP_PER_HORSE;
+        const horseCost = owned.length * UPKEEP_PER_HORSE;
+        
+        const stableStaff = hiredStaff.filter(s => s.stableId === stable.id);
+        const staffSalaries = stableStaff.reduce((sum, s) => sum + s.salary, 0);
+        
+        const cost = horseCost + staffSalaries;
         const monthlyExpenses = cost * 30; // Estimate monthly expenses
 
         // Update reserve state based on current cash and expenses
@@ -134,6 +159,18 @@ export const upkeepPhase = {
         expenses: [...(state.expenses ?? []), ...newExpenses],
         transactions: [...(state.transactions ?? []), ...newTransactions],
       },
+      impacts: [
+        ...(context.impacts || []),
+        ...((Math.random() < 0.1) ? [{
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "upkeep",
+          logLevel: "always",
+          type: "news_item",
+          newsItem: generateFlavorNews(newDay),
+        } as AnyImpact] : [])
+      ],
       logs: [...context.logs],
     };
   },

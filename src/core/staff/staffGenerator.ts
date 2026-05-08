@@ -14,14 +14,15 @@ const SPECIALIZED_TRAITS: Record<StaffRole, string[]> = {
   veterinarian: ["colic_expert", "bone_specialist", "fertility_boost", "calm_demeanor"],
   farrier: ["mud_expert", "turf_specialist", "synthetic_pro", "durability_focus"],
   nutritionist: ["stamina_optimizer", "weight_manager", "recovery_plus", "growth_agent"],
-  groom: ["show_prep", "temperament_calm", "shine_specialist", "vibe_check"]
+  groom: ["show_prep", "temperament_calm", "shine_specialist", "vibe_check"],
+  trainer: ["speed_coach", "distance_guru", "gate_expert", "discipline_master"]
 };
 
 /**
  * Generate a random staff member
  */
 export function generateStaffMember(rng: Rng, role?: StaffRole, tier?: StaffTier): StaffMember {
-  const chosenRole = role || rng.pick(['veterinarian', 'farrier', 'nutritionist', 'groom']) as StaffRole;
+  const chosenRole = role || rng.pick(['veterinarian', 'farrier', 'nutritionist', 'groom', 'trainer']) as StaffRole;
   
   // Weights for tiers: 60% budget, 30% mid, 10% elite
   const tierRoll = rng.next();

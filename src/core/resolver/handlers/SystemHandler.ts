@@ -20,7 +20,9 @@ export class SystemHandler implements ImpactHandler {
       "auto_manage_toggle",
       "claimResolution",
       "reputation_change",
-      "transaction"
+      "transaction",
+      "staff",
+      "news_item"
     ].includes(type);
   }
 
@@ -145,6 +147,47 @@ export class SystemHandler implements ImpactHandler {
           metadata,
         );
         draft.transactions.push(newTransaction);
+        break;
+      }
+
+      case "staff": {
+        const { action, stableId, staffId, role } = impact;
+        
+        if (action === "hire") {
+          const staffIndex = draft.staffPool.findIndex(s => s.id === staffId);
+          if (staffIndex !== -1) {
+            const staff = draft.staffPool[staffIndex];
+            staff.stableId = stableId;
+            draft.hiredStaff.push(staff);
+            draft.staffPool.splice(staffIndex, 1);
+            
+            if (stableId !== "") {
+              const stable = draft.npcStables.find(s => s.id === stableId);
+              if (stable) {
+                stable.staff[role] = staffId;
+              }
+            }
+          }
+        } else if (action === "fire") {
+          const staffIndex = draft.hiredStaff.findIndex(s => s.id === staffId);
+          if (staffIndex !== -1) {
+            draft.hiredStaff.splice(staffIndex, 1);
+            
+            if (stableId !== "") {
+              const stable = draft.npcStables.find(s => s.id === stableId);
+              if (stable) {
+                stable.staff[role] = null;
+              }
+            }
+          }
+        }
+        break;
+      }
+
+      case "news_item": {
+        const { newsItem } = impact;
+        if (!draft.news) draft.news = [];
+        draft.news = [newsItem, ...draft.news].slice(0, 100);
         break;
       }
     }

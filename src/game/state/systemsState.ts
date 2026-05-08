@@ -22,6 +22,7 @@ import type { RaceReplay } from "@/core/replays";
 import type { ManagerReputation } from "@/core/reputation";
 import type { TransportRequest } from "@/core/transportation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { StaffMember } from "@/core/staff/staffTypes";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -141,6 +142,12 @@ export interface SystemsState {
   usedHorseNames: string[];
   /** Set of all jockey names currently in use to ensure uniqueness */
   usedJockeyNames: string[];
+  
+  // Staff system
+  /** Pool of staff available for hire */
+  staffPool: StaffMember[];
+  /** All staff currently hired by any stable (player or NPC) */
+  hiredStaff: StaffMember[];
 }
 
 /**
@@ -186,6 +193,8 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       hallOfFame: [],
       usedHorseNames: [],
       usedJockeyNames: [],
+      staffPool: [],
+      hiredStaff: [],
     };
   }
 
@@ -216,5 +225,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     hallOfFame: [],
     usedHorseNames: [],
     usedJockeyNames: [],
+    staffPool: [],
+    hiredStaff: [],
   };
 }

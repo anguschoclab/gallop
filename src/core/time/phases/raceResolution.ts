@@ -25,7 +25,13 @@ export const raceResolutionPhase: PipelinePhase = {
 
     for (const race of overdueRaces) {
       // Simulate race using service
-      const { result, runners } = simulateRace(race, state.horses, state.jockeys ?? []);
+      const { result, runners } = simulateRace(
+        race,
+        state.horses,
+        state.jockeys ?? [],
+        state.hiredStaff,
+        state.npcStables,
+      );
       const rng = rngForRace(race);
 
       // Update race in the updatedRaces array
@@ -44,6 +50,8 @@ export const raceResolutionPhase: PipelinePhase = {
         newDay,
         stateCash: state.cash,
         stateReputation: state.reputation,
+        hiredStaff: state.hiredStaff ?? [],
+        rng,
       });
 
       impacts.push(...raceImpacts);

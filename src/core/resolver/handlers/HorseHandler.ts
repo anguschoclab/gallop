@@ -15,7 +15,8 @@ export class HorseHandler implements ImpactHandler {
       "aging",
       "health_status_change",
       "pasture_retirement",
-      "horse_death"
+      "horse_death",
+      "injury"
     ].includes(type);
   }
 
@@ -111,6 +112,22 @@ export class HorseHandler implements ImpactHandler {
           horse.lifecycleStatus = "deceased";
           horse.deceasedOnDay = deceasedOnDay;
           horse.causeOfDeath = cause;
+        }
+        break;
+      }
+
+      case "injury": {
+        const { horseId, severity, injuryType, recoveryDays } = impact;
+        const horse = draft.horses.find((h) => h.id === horseId);
+        if (horse) {
+          horse.healthStatus = severity === "career-ending" ? "other_illness" : "recovering";
+          horse.healthStatusDay = impact.day;
+          horse.activeInjury = {
+            type: injuryType,
+            severity,
+            recoveryDays,
+            onsetDay: impact.day,
+          };
         }
         break;
       }

@@ -52,7 +52,8 @@ const navSections = [
     items: [
       { to: "/stable", label: "Roster", icon: Trophy, exact: false },
       { to: "/horse-gallery", label: "Horse Gallery", icon: LayoutGrid, exact: false },
-      { to: "/jockeys", label: "Jockeys", icon: Users, exact: false },
+      { to: "/staff", label: "Staff", icon: Users, exact: false },
+      { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
       { to: "/scheduler", label: "Scheduler", icon: Clock, exact: false },
       {
         to: "/breeding",

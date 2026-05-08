@@ -10,11 +10,10 @@ import type {
   ScoutReport,
   CampaignFlag,
   HorseCampaign,
-  HealthStatus,
-  TripleCrownProgress,
-  ReputationEvent,
   Transaction,
+  TripleCrownProgress,
 } from "@/game/types";
+import type { NewsItem } from "../narrative/newsTypes";
 
 // Base impact type
 export interface Impact {
@@ -458,11 +457,21 @@ export interface TacticsImpact extends Impact {
 export interface StaffImpact extends Impact {
   type: "staff";
   action: "hire" | "fire";
-  staffType: "trainer" | "vet" | "farrier" | "groom";
+  stableId: string; // stableId of the stable hiring/firing
   staffId: string;
+  role: import("@/core/staff/staffTypes").StaffRole;
+  tier: import("@/core/staff/staffTypes").StaffTier;
   salary: number;
-  specialty?: string;
-  skill: number;
+  reason: string;
+}
+
+// Injury impact
+export interface InjuryImpact extends Impact {
+  type: "injury";
+  horseId: string;
+  severity: "minor" | "moderate" | "major" | "career-ending";
+  injuryType: string;
+  recoveryDays: number;
   reason: string;
 }
 
@@ -490,6 +499,12 @@ export interface TransactionImpact extends Impact {
   category: string;
   description: string;
   metadata?: Record<string, any>;
+}
+
+// News impact
+export interface NewsImpact extends Impact {
+  type: "news_item";
+  newsItem: NewsItem;
 }
 
 // Union type for all impacts
@@ -539,6 +554,8 @@ export type AnyImpact =
   | TripleCrownProgressImpact
   | TacticsImpact
   | StaffImpact
+  | InjuryImpact
   | FacilityUpgradeImpact
   | ReputationImpact
-  | TransactionImpact;
+  | TransactionImpact
+  | NewsImpact;

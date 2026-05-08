@@ -51,6 +51,17 @@ export const trainingResolutionPhase: PipelinePhase = {
         horse.healthStatus === "other_illness"
       )
         continue;
+      
+      // Get staff bonuses for this stable
+      const stableId = horse.stableId ?? "";
+      const hiredStaff = state.hiredStaff ?? [];
+      const staffForStable = hiredStaff.filter(s => s.stableId === stableId);
+      
+      const trainer = staffForStable.find(s => s.role === "trainer");
+      const trainerBonus = trainer ? trainer.bonusValue : 0;
+      
+      const nutritionist = staffForStable.find(s => s.role === "nutritionist");
+      const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
 
       // Record training expense (only for actual training, not rest)
       if (intent.trainingType !== "rest") {
@@ -117,7 +128,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           swimming: -15, // Low impact
           gallop: -16, // Standard work
         };
-        const energyDelta = energyCostMap[intent.trainingType] ?? -18;
+        const energyDelta = (energyCostMap[intent.trainingType] ?? -18) * (1 - nutritionistBonus);
 
         impacts.push({
           id: generateUUID(),
@@ -207,10 +218,10 @@ export const trainingResolutionPhase: PipelinePhase = {
         const effectivePotential = horse.potential * ageRatio;
         const gap = effectivePotential - primaryStat;
 
-        // Apply main_track facility bonus to training chance
+        // Apply main_track facility bonus and trainer bonus to training chance
         const facilities = state.facilities;
         const trackBonus = facilities ? getFacilityBonus(facilities, "main_track") : 0;
-        const trainingChance = 0.65 * horse.trainability * (1 + trackBonus);
+        const trainingChance = 0.65 * horse.trainability * (1 + trackBonus + trainerBonus);
 
         if (gap > 0 && trainingRng.next() < trainingChance) {
           // Base gain with facility and workout bonuses
