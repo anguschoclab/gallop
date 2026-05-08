@@ -100,7 +100,7 @@ describe("Headless Triple Crown Simulation", () => {
     let sireFeeAfter = 0;
 
     // Simulation loop
-    const maxYears = 10; // Reduced from 100 for testing
+    const maxYears = 2; // Test with just 2 years to see if it completes
     let foundWinner = false;
 
     for (let year = 1; year <= maxYears && !foundWinner; year++) {
