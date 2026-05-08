@@ -3,19 +3,16 @@ import { calculateDosageMetrics, interpretDosageIndex } from "./dosage";
 import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeData";
 import { TRAIT_SCORE } from "@/core/genetics/phenotype";
 import { calculateGeneticCompatibility } from "@/services/genotypeMatching";
-import {
-  calculateFounderEffect,
-  calculateInbreedingCoefficient,
-} from "@/services/inbreedingCalculator";
+import { calculateFounderEffect } from "@/services/inbreedingCalculator";
 import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
 } from "@/services/traitCompatibility";
+import { computeCoiFromSnapshot } from "@/core/breeding/populationGenetics";
 
 export {
   calculateGeneticCompatibility,
   calculateFounderEffect,
-  calculateInbreedingCoefficient,
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
 };
@@ -357,7 +354,8 @@ export function calculateBreedingCompatibility(
 ): BreedingCompatibilityResult {
   const nicking = checkNickingAffinity(sire.sireName || "", dam.sireName || "");
   const dosage = calculateDosageCompatibility(sire.sireName || "", dam.sireName || "");
-  const inbreeding = calculateInbreedingCoefficient(sire.sireName || "", dam.sireName || "");
+  const coi = computeCoiFromSnapshot(sire.pedigree, 8);
+  const inbreeding = { coefficient: coi, warning: coi > 0.125 ? "High inbreeding - may reduce vigor" : coi > 0.0625 ? "Moderate inbreeding - monitor closely" : "" };
   const parentPerformance = calculateParentPerformance(sire, dam);
   const conformation = calculateConformationCompatibility(sire, dam);
   const temperament = calculateTemperamentCompatibility(sire, dam);

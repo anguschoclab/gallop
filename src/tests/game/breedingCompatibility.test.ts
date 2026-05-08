@@ -5,7 +5,6 @@ import {
   calculateFounderEffect,
   calculateFoundationStockProximity,
   checkNickingAffinity,
-  calculateInbreedingCoefficient,
   calculateDosageCompatibility,
   calculateParentPerformance,
   calculateConformationCompatibility,
@@ -13,6 +12,7 @@ import {
   calculateBreedingCompatibility,
 } from "@/game/breedingCompatibility";
 import type { Horse } from "@/game/types";
+import { generateDeterministicGenotype } from "@/core/genetics/generation";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -30,6 +30,47 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     owned: false,
     fame: 0,
     lifecycleStatus: "active" as const,
+    genotype: generateDeterministicGenotype("Test", "budget"),
+    distanceAptitude: 1200,
+    surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
+    climbingAptitude: 1.0,
+    corneringAptitude: 1.0,
+    injuryProneness: 0.1,
+    height: 15.2,
+    weight: 500,
+    lifetimeEarnings: 0,
+    careerStarts: 0,
+    careerWins: 0,
+    conformation: "good",
+    temperament: "good",
+    coatColor: "bay",
+    runningStyle: "E",
+    geneticMarkers: {
+      leopardComplex: "recessive",
+      csnbRisk: "low",
+      sensoryPerception: "good",
+      signalTransduction: "good",
+      immunity: "good",
+      geneticDiversity: 0.5,
+      lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
+    },
+    heartScore: 1.0,
+    fiberBias: "balanced",
+    strideType: "balanced",
+    trackPreference: "balanced",
+    mudAptitude: 1.0,
+    trainability: 0.7,
+    peakAge: 5,
+    recoveryRate: 0.8,
+    fertility: 0.8,
+    foalingEase: 1.2,
+    markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+    bleederRisk: 0.05,
+    roarerRisk: 0.03,
+    ocdRisk: 0,
+    racingViable: true,
+    heterozygosity: 0.5,
+    healthStatus: "healthy",
     ...overrides,
   };
 }
@@ -220,19 +261,6 @@ describe("calculateParentPerformance", () => {
     const { score } = calculateParentPerformance(sire, dam);
     expect(score).toBeLessThanOrEqual(1.0);
     expect(score).toBeGreaterThanOrEqual(0);
-  });
-});
-
-describe("calculateInbreedingCoefficient", () => {
-  it("both unknown names → { coefficient: 0, warning: '' }", () => {
-    const result = calculateInbreedingCoefficient("Unknown XYZ", "Unknown ABC");
-    expect(result.coefficient).toBe(0);
-    expect(result.warning).toBe("");
-  });
-
-  it("coefficient is always >= 0", () => {
-    const { coefficient } = calculateInbreedingCoefficient("", "");
-    expect(coefficient).toBeGreaterThanOrEqual(0);
   });
 });
 

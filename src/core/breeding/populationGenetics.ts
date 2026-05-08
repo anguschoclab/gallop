@@ -54,7 +54,7 @@ export function resolveBloodline(
   if (depth === 0) {
     return cachedBloodline(horse.id, () => resolveBloodline(horse, state, 1));
   }
-  if (depth > 8) return "Unaffiliated";
+  if (depth > 6) return "Unaffiliated";
   if (horse.bloodline) return horse.bloodline as Bloodline;
 
   // Foundation match by name on the horse itself
@@ -72,7 +72,7 @@ export function resolveBloodline(
   // Fall back through curated pedigree data via name chain
   let sireName: string | undefined = horse.pedigree?.sireName ?? horse.sireName;
   let safety = 0;
-  while (sireName && safety++ < 8) {
+  while (sireName && safety++ < 6) {
     if ((KNOWN_BLOODLINES as readonly string[]).includes(sireName)) return sireName as Bloodline;
     const found = findHorseByName(sireName);
     if (!found?.sire) break;
@@ -87,13 +87,14 @@ export function resolveBloodline(
 // ============================================================================
 
 // Compute Wright's F using the recorded pedigree IDs. Walks both sire and dam
-// pedigrees to depth 5, intersects the ancestor sets, and sums (1/2)^(d_s+d_d+1)
+// pedigrees to depth 8 with weighted generation contribution (near gens weighted
+// more heavily), intersects the ancestor sets, and sums weight*(1/2)^(d_s+d_d+1)
 // for each common ancestor. Distinct from the curated-pedigreeData version in
 // breedingCompatibility — this one operates on the foal's snapshot, so it
 // works for player-bred and NPC-bred lineages too.
 export function computeCoiFromSnapshot(
   pedigree: Pedigree | undefined,
-  maxDepth: number = 5,
+  maxDepth: number = 8,
 ): number {
   if (!pedigree) return 0;
   if (pedigree.sireId && pedigree.damId) {
@@ -104,7 +105,7 @@ export function computeCoiFromSnapshot(
   return _computeCoiFromSnapshot(pedigree, maxDepth);
 }
 
-function _computeCoiFromSnapshot(pedigree: Pedigree, maxDepth: number = 5): number {
+function _computeCoiFromSnapshot(pedigree: Pedigree, maxDepth: number = 8): number {
   const sireDepths = new Map<string, number>();
   const damDepths = new Map<string, number>();
   walkPedigree(pedigree.sirePedigree, 1, maxDepth, sireDepths);
@@ -118,7 +119,13 @@ function _computeCoiFromSnapshot(pedigree: Pedigree, maxDepth: number = 5): numb
   for (const [id, ds] of sireDepths) {
     const dd = damDepths.get(id);
     if (dd === undefined) continue;
-    coi += Math.pow(0.5, ds + dd + 1);
+    // Weighted contribution: near generations have stronger impact
+    const totalDepth = ds + dd;
+    let weight = 1.0;
+    if (totalDepth >= 7) weight = 0.25; // Distant generations (7-8)
+    else if (totalDepth >= 4) weight = 0.5; // Middle generations (4-6)
+    // Near generations (1-3) keep full weight (1.0)
+    coi += weight * Math.pow(0.5, ds + dd + 1);
   }
   return coi;
 }
@@ -148,15 +155,15 @@ export function classifyCoi(coi: number): "outcross" | "linebreeding" | "close-i
 
 // Detect the canonical "X by Y" inbreeding pattern (e.g. 2x3, 3x3) — the
 // generations at which a common ancestor appears in both sire and dam lines.
-// Returns the closest pair found, or undefined if no duplication within 5 gens.
+// Returns the closest pair found, or undefined if no duplication within 8 gens.
 export function detectInbreedingPattern(
   pedigree: Pedigree | undefined,
 ): { ancestorId: string; sireGen: number; damGen: number } | undefined {
   if (!pedigree) return undefined;
   const sireDepths = new Map<string, number>();
   const damDepths = new Map<string, number>();
-  walkPedigree(pedigree.sirePedigree, 1, 5, sireDepths);
-  walkPedigree(pedigree.damPedigree, 1, 5, damDepths);
+  walkPedigree(pedigree.sirePedigree, 1, 8, sireDepths);
+  walkPedigree(pedigree.damPedigree, 1, 8, damDepths);
   if (pedigree.sireId) sireDepths.set(pedigree.sireId, 0);
   if (pedigree.damId) damDepths.set(pedigree.damId, 0);
 
