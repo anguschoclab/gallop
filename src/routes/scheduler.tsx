@@ -146,7 +146,7 @@ function SchedulerPage() {
                 >
                   Create
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setAddingHorseId(null)}>
+                <Button size="sm" variant="ghost" onClick={() => setAddingHorseId(null)} aria-label="Cancel adding campaign">
                   <X className="h-4 w-4" />
                 </Button>
               </div>
@@ -216,6 +216,7 @@ function SchedulerPage() {
                     className="h-7 w-7 text-cream-muted"
                     onClick={() => deleteCampaign(campaign.horseId)}
                     title="Delete campaign"
+                    aria-label="Delete campaign"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
@@ -241,6 +242,7 @@ function SchedulerPage() {
                         variant="ghost"
                         className="h-5 w-5 shrink-0 text-warning hover:text-cream"
                         onClick={() => dismissCampaignFlag(campaign.horseId, fi)}
+                        aria-label="Dismiss flag"
                       >
                         <X className="h-3 w-3" />
                       </Button>
