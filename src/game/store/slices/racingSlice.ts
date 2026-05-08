@@ -22,7 +22,9 @@ export type RacingSlice = RacingState & {
 };
 
 export function createRacingSlice(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   set: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: any,
   enqueueIntent: (intent: TrainingIntent) => void,
 ): RacingSlice {
@@ -34,6 +36,7 @@ export function createRacingSlice(
       const horse = s.horses.find((h: Horse) => h.id === horseId);
       if (!horse) return;
       if (!horse.owned) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (s.pregnancies.some((p: any) => !p.resolved && p.damId === horseId)) return;
 
       // Check if horse has covering sickness or is recovering - prevent training
@@ -89,6 +92,7 @@ export function createRacingSlice(
     },
 
     setTrainingUsed: (horseId, count) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         trainingUsed: { ...state.trainingUsed, [horseId]: count },
       }));

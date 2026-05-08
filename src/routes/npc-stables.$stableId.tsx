@@ -74,7 +74,9 @@ function NpcStableDetailPage() {
   const scoutHorse = useGame((s) => s.scoutHorse);
   const proposePrivateSale = useGame((s) => s.proposePrivateSale);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (s: any) => s.privateSaleOffers ?? [],
   );
 
@@ -130,20 +132,22 @@ function NpcStableDetailPage() {
     const status = result.reason; // proposePrivateSale returns the offer status as reason on ok
     if (status === "accepted") {
       toast.success(
-        `${stable.name} accepted your offer of ${formatCurrency(amount)} for ${offerHorse.name}. They join your stable.`,
+        `${stable?.name || "the stable"} accepted your offer of ${formatCurrency(amount)} for ${offerHorse.name}. They join your stable.`,
       );
     } else if (status === "countered") {
       // Read the fresh store state synchronously to get counter amount
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const freshOffers = (useGame.getState() as any).privateSaleOffers ?? [];
       const counterOffer = freshOffers.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (o: any) => o.horseId === offerHorse.id && o.status === "countered",
       );
       const counterAmt = counterOffer?.counterAmount ?? 0;
       toast.info(
-        `${stable.name} countered at ${formatCurrency(counterAmt)}. Go to Rival Stables to respond.`,
+        `${stable?.name || "the stable"} countered at ${formatCurrency(counterAmt)}. Go to Rival Stables to respond.`,
       );
     } else {
-      toast.error(getDeclineFlavour(stable.personality, stable.name));
+      toast.error(stable ? getDeclineFlavour(stable.personality, stable.name) : "Offer declined");
     }
   }
 

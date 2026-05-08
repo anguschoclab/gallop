@@ -1,14 +1,12 @@
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
 /**
  * Market state selectors for trading, auctions, and scouting
  */
 export const useMarket = () => useGame((s: GameState) => s.market);
-export const useAuctions = () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (useGame as any)((s: GameState) => s.auctions ?? [], shallow);
+export const useAuctions = () => useGameWithShallow((s: GameState) => s.auctions ?? []);
 export const useScoutReports = () => useGame((s: GameState) => s.scoutReports);
 
 /**
@@ -18,12 +16,8 @@ export const useScoutReports = () => useGame((s: GameState) => s.scoutReports);
  */
 
 export const useMarketState = () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (useGame as any)(
-    (s: GameState) => ({
-      market: s.market,
-      auctions: s.auctions ?? [],
-      scoutReports: s.scoutReports,
-    }),
-    shallow,
-  );
+  useGameWithShallow((s: GameState) => ({
+    market: s.market,
+    auctions: s.auctions ?? [],
+    scoutReports: s.scoutReports,
+  }));

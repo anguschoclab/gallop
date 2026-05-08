@@ -26,6 +26,7 @@ import type { Race, Horse, Jockey } from "@/game/types";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
 import { createReputationEvent, calculateRaceWinReputation } from "@/core/reputation";
+import type { ManagerReputation } from "@/core/reputation";
 import { createTransaction } from "@/core/transactions";
 import type { Transaction } from "@/core/transactions";
 
@@ -37,8 +38,7 @@ export interface GenerateRaceImpactsProps {
   jockeys: Jockey[];
   newDay: number;
   stateCash: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stateReputation?: any;
+  stateReputation?: ManagerReputation;
 }
 
 export function generateRaceImpacts({
@@ -53,8 +53,7 @@ export function generateRaceImpacts({
 }: GenerateRaceImpactsProps): {
   impacts: AnyImpact[];
   transactions: Transaction[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  reputationEvents: any[];
+  reputationEvents: ReturnType<typeof createReputationEvent>[];
 } {
   const impacts: AnyImpact[] = [];
   const newTransactions: Transaction[] = [];

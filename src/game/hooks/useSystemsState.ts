@@ -1,18 +1,14 @@
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
 /**
  * Systems state selectors for optional subsystems and advanced features
  */
 export const useNpcStables = () => useGame((s: GameState) => s.npcStables);
-export const useJockeys = () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (useGame as any)((s: any) => s.jockeys ?? [], shallow);
+export const useJockeys = () => useGameWithShallow((s: GameState) => s.jockeys ?? []);
 export const useAwards = () => useGame((s: GameState) => s.awards);
-export const useCampaigns = () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (useGame as any)((s: any) => s.campaigns ?? [], shallow);
+export const useCampaigns = () => useGameWithShallow((s: GameState) => s.campaigns ?? []);
 export const useUserSettings = () => useGame((s: GameState) => s.userSettings);
 export const useSireLeaderboards = () => useGame((s: GameState) => s.sireLeaderboards);
 export const useIndustryMeanEarnings = () => useGame((s: GameState) => s.industryMeanEarnings ?? 0);
@@ -24,12 +20,9 @@ export const useIndustryMeanEarnings = () => useGame((s: GameState) => s.industr
  */
 
 export const useSystemsState = () =>
-  (useGame as any)(
-    (s: GameState) => ({
-      npcStables: s.npcStables,
-      jockeys: s.jockeys ?? [],
-      awards: s.awards,
-      campaigns: s.campaigns ?? [],
-    }),
-    shallow,
-  );
+  useGameWithShallow((s: GameState) => ({
+    npcStables: s.npcStables,
+    jockeys: s.jockeys ?? [],
+    awards: s.awards,
+    campaigns: s.campaigns ?? [],
+  }));

@@ -14,6 +14,7 @@ import { runNpcRaceEntry } from "@/game/npcRaceEntry";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
+import type { FacilityLevel } from "@/core/facilities";
 import { STARTING_CASH } from "@/game/constants/gameConstants";
 
 /**
@@ -103,10 +104,11 @@ export function createInitialState(options?: NewGameOptions): GameState {
   if (options) {
     for (const [type, level] of Object.entries(options.backstory.facilityUpgrades)) {
       if (level) {
+        const facilityType = type as Parameters<typeof createFacility>[0];
+        const facilityLevel = level as FacilityLevel;
         facilities[type as keyof typeof facilities] = createFacility(
-          type as Parameters<typeof createFacility>[0],
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          level as any,
+          facilityType,
+          facilityLevel,
           1,
         );
       }

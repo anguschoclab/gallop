@@ -72,8 +72,11 @@ export const Route = createFileRoute("/races")({
 function RacesPage() {
   const { grade, country, surface, track, owned, q } = Route.useSearch();
   const navigate = Route.useNavigate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const races = (useGame as any)((s: any) => s.races, shallow);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const horses = (useGame as any)((s: any) => s.horses, shallow);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const claims: Claim[] = (useGame as any)((s: any) => s.claims ?? [], shallow);
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
@@ -85,8 +88,8 @@ function RacesPage() {
 
   const filtered = useMemo(() => {
     return races
-      .filter((r) => !r.resolved && r.day >= day)
-      .filter((r) => {
+      .filter((r: Race) => !r.resolved && r.day >= day)
+      .filter((r: Race) => {
         if (grade !== "all") {
           if (grade === "Graded") return !!r.graded;
           if (grade === "Ungraded") return !r.graded;
@@ -94,16 +97,16 @@ function RacesPage() {
         }
         return true;
       })
-      .filter((r) => (country === "all" ? true : getCountry(r.graded?.trackId ?? "") === country))
-      .filter((r) => (surface === "all" ? true : r.surface === surface))
-      .filter((r) => (track === "all" ? true : r.graded?.track === track))
-      .filter((r) => {
+      .filter((r: Race) => (country === "all" ? true : getCountry(r.graded?.trackId ?? "") === country))
+      .filter((r: Race) => (surface === "all" ? true : r.surface === surface))
+      .filter((r: Race) => (track === "all" ? true : r.graded?.track === track))
+      .filter((r: Race) => {
         if (owned === "all") return true;
         const hasOwned = r.entries.some((e) => e.owned);
         return owned === "owned" ? hasOwned : !hasOwned;
       })
-      .filter((r) => (q ? r.name.toLowerCase().includes(q.toLowerCase()) : true))
-      .sort((a, b) => a.day - b.day);
+      .filter((r: Race) => (q ? r.name.toLowerCase().includes(q.toLowerCase()) : true))
+      .sort((a: Race, b: Race) => a.day - b.day);
   }, [races, day, grade, country, surface, track, owned, q]);
 
   const updateFilter = (key: keyof RaceFilters, value: string) => {
@@ -116,14 +119,14 @@ function RacesPage() {
   // Prevents re-iterating over the entire races array on every render
   // (e.g., when the user types in the search input).
   const filterOptions = useMemo(() => {
-    const gradedRaces = races.filter((r) => r.graded);
+    const gradedRaces = races.filter((r: Race) => r.graded);
     const uniqueCountries = Array.from(
-      new Set(gradedRaces.map((r) => getCountry(r.graded!.trackId))),
+      new Set(gradedRaces.map((r: Race) => getCountry(r.graded!.trackId))),
     )
       .filter(Boolean)
       .sort() as string[];
 
-    const uniqueTracks = Array.from(new Set(gradedRaces.map((r) => r.graded!.track))).sort();
+    const uniqueTracks = Array.from(new Set(gradedRaces.map((r: Race) => r.graded!.track))).sort();
 
     return { countries: uniqueCountries, tracks: uniqueTracks };
   }, [races]);
@@ -254,7 +257,7 @@ function RacesPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Tracks</SelectItem>
-                    {tracks.map((t) => (
+                    {(tracks as string[]).map((t) => (
                       <SelectItem key={t} value={t}>
                         {t}
                       </SelectItem>
@@ -340,13 +343,13 @@ function RacesPage() {
             </Card>
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filtered.map((r) => (
+              {filtered.map((r: Race) => (
                 <RaceCard key={r.id} race={r} onEnter={() => setEnteringRace(r as Race)} />
               ))}
             </div>
           ) : (
             <div className="space-y-2">
-              {filtered.map((r) => {
+              {filtered.map((r: Race) => {
                 const isClaiming = !!r.claiming;
                 return (
                   <div key={r.id}>
@@ -359,7 +362,9 @@ function RacesPage() {
                           Claiming Race Entries — {formatCurrency(r.claiming!.price)}
                         </p>
                         <div className="space-y-1">
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                           {r.entries.map((entry: any) => {
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             const entryHorse = horses.find((h: any) => h.id === entry.horseId);
                             const isOwned = !!entry.owned;
                             const playerClaimFiled = claims.some(
@@ -440,6 +445,7 @@ function RacesPage() {
       {claimingRace &&
         pendingClaimHorseId &&
         (() => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const horse = horses.find((h: any) => h.id === pendingClaimHorseId);
           const cp = claimingRace.claiming!.price;
           return (

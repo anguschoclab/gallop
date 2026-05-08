@@ -116,6 +116,7 @@ describe("trainingResolutionPhase", () => {
 
     const energyImpact = result.impacts.find((i) => i.type === "energy_change");
     expect(energyImpact).toBeDefined();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((energyImpact as any).delta).toBeLessThan(0);
   });
 
@@ -147,6 +148,7 @@ describe("trainingResolutionPhase", () => {
 
     const energyImpact = result.impacts.find((i) => i.type === "energy_change");
     expect(energyImpact).toBeDefined();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((energyImpact as any).delta).toBeGreaterThan(0);
   });
 
@@ -157,6 +159,7 @@ describe("trainingResolutionPhase", () => {
       horses: [horse],
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const context = createTestContext(state, [] as any);
     const result = trainingResolutionPhase.execute(context);
 

@@ -248,6 +248,7 @@ export function runBreedingSimulation(
         EP: runningStyleValues.filter((v) => v === "EP").length / SIMULATION_ITERATIONS,
         P: runningStyleValues.filter((v) => v === "P").length / SIMULATION_ITERATIONS,
         S: runningStyleValues.filter((v) => v === "S").length / SIMULATION_ITERATIONS,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any,
 
       trainability: {
@@ -295,12 +296,12 @@ export function runBreedingSimulation(
       },
       {} as Record<CoatColor, number>,
     ),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     coiEstimate: computeCoiFromSnapshot({
       sireId: sire.id,
       damId: dam.id,
       sirePedigree: sire.pedigree,
       damPedigree: dam.pedigree,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any),
 
     compatScore: calculateGeneticCompatibility(sire, dam).score,

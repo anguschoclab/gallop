@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import {
   FACILITY_UPGRADE_COSTS,
@@ -17,8 +17,7 @@ import { formatCurrency } from "@/components/HorseBits";
  * Displays player's facilities and allows upgrading them
  */
 export function FacilitiesPanel() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const facilities = (useGame as any)((s: any) => s.facilities, shallow);
+  const facilities = useGameWithShallow((s) => s.facilities);
   const cash = useGame((s) => s.cash);
   const upgradeFacility = useGame((s) => s.upgradeFacility);
   const day = useGame((s) => s.day);

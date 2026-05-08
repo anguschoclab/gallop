@@ -130,6 +130,7 @@ export type StoreType = CoreState &
   SystemsSlice &
   CampaignSlice &
   CoreSlice & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     startNewGame: (options: any) => Promise<void>;
   };
 
@@ -238,8 +239,8 @@ export { hydrationComplete };
 export { shallow };
 
 // Custom hook that supports shallow comparison for object/array selectors
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useGameWithShallow = <T>(selector: (state: StoreType) => T): T =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (useGame as any)(selector, shallow);
 
 // Alias for backwards compatibility

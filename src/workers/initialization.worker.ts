@@ -44,6 +44,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
 
   const playerHorseSpecs = options?.backstory.horses ?? [{ tier: "starter" as const, count: 2 }];
   const playerSilkColor = options?.profile.silk.primary;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const horses: any[] = [];
   for (const spec of playerHorseSpecs) {
     for (let i = 0; i < spec.count; i++) {
@@ -58,6 +59,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     progressCallback(2, totalStages, "Generating market horses");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const market: any[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
     const tier: "starter" | "budget" | "mid" | "elite" = r < 0.6 ? "budget" : "mid";
@@ -69,6 +71,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     progressCallback(3, totalStages, "Generating races");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const races: any[] = [];
   for (let d = 1; d <= 7; d++) {
     const dayRng = createRng(hashStr(`raceGen_${d}`));
@@ -130,6 +133,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
       if (level) {
         facilities[type as keyof typeof facilities] = createFacility(
           type as Parameters<typeof createFacility>[0],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           level as any,
           1,
         );

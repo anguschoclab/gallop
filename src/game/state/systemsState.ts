@@ -13,6 +13,7 @@ import type { BreedingProgram } from "@/core/breeding/programs";
 import type { RegionalAward, AwardRegion } from "../awards/types";
 import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { AnyIntent } from "@/core/resolver/intents";
+import type { FacilityType, FacilityLevel } from "@/core/facilities";
 import type { PlayerFacilities } from "@/core/facilities";
 import type { UserSettings } from "@/core/settings/settingsTypes";
 import type { Expense } from "@/core/expenses";
@@ -153,8 +154,9 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     // Build facilities from backstory spec (complete replace, not merge)
     const facilities: Partial<PlayerFacilities> = {};
     for (const [type, level] of Object.entries(backstory.facilityUpgrades)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      facilities[type as keyof PlayerFacilities] = createFacility(type as any, level as any, 1);
+      const facilityType = type as FacilityType;
+      const facilityLevel = level as FacilityLevel;
+      facilities[facilityType] = createFacility(facilityType, facilityLevel, 1);
     }
 
     return {

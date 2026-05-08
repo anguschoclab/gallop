@@ -154,9 +154,9 @@ export function runNpcCycle(
       const facilityBudget = calculateFacilityBudget(stableAIState.facilityAI, stable, currentDay);
 
       if (facilityBudget.upgradeBudget > 0 && stable.cash >= facilityBudget.upgradeBudget) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const facilityToUpgrade = selectFacilityToUpgrade(
           stableAIState.facilityAI,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           facilities as any,
           stable,
           currentDay,

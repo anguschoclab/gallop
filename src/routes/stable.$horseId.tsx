@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,8 +54,7 @@ function HorseDetail() {
   const facilities = useGame((s) => s.facilities);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const day = useGame((s) => s.day);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const auctions = (useGame as any)((s: any) => s.auctions ?? [], shallow);
+  const auctions = useGameWithShallow((s) => s.auctions ?? []);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
 
   // Persist raceHistoryLimit to localStorage

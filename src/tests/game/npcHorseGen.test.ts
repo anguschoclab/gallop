@@ -207,6 +207,7 @@ describe("getBroodmareFee", () => {
   });
 
   it("returns > 0 for eligible mare", () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const s = { id: "s1", tier: "mid" } as any;
     const h = generateNpcHorse(s, createRng("test"), undefined, 1, { forcedAge: 5 });
     h.gender = "mare"; // Ensure it's a mare for the test
@@ -214,6 +215,7 @@ describe("getBroodmareFee", () => {
   });
 
   it("broodmare fee is approximately 30% of calculateNpcHorseValue", () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const s = { id: "s1", tier: "mid" } as any;
     const h = generateNpcHorse(s, createRng("test"), undefined, 1, { forcedAge: 5 });
     h.gender = "mare";

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { useJockeys } from "@/game/hooks/useSystemsState";
 import { shallow } from "zustand/shallow";
 import { useEffect, useRef, useState, useMemo } from "react";
@@ -58,8 +58,7 @@ function LiveRace() {
   const navigate = useNavigate();
   const race = useGame((s) => s.races.find((r) => r.id === raceId));
   const horses = useGame((s) => s.horses);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
+  const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
   const stables = useGame((s) => s.npcStables);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
 

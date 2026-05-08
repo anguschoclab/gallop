@@ -241,8 +241,7 @@ export function generateNpcHorse(
 
   // Personality config
   const config = stable.personality
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ((PERSONALITY_CONFIG as any)[stable.personality] || PERSONALITY_CONFIG.conservative)
+    ? PERSONALITY_CONFIG[stable.personality] || PERSONALITY_CONFIG.conservative
     : PERSONALITY_CONFIG.conservative;
   const region = stable.country
     ? // eslint-disable-next-line @typescript-eslint/no-explicit-any

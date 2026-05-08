@@ -4,9 +4,50 @@ import path from "path";
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
 
+interface Section {
+  type: string;
+  length: number;
+  radius?: number;
+}
+
+interface Course {
+  sections?: Section[];
+  circumference?: number;
+  straightLength?: number;
+  width?: number;
+}
+
+interface Track {
+  id: string;
+  name: string;
+  country: string;
+  courses: Course[];
+  dataSource?: string;
+}
+
+interface Specs {
+  circumference?: number;
+  straightLength?: number;
+  width?: number;
+  surface?: string;
+  source?: string;
+  [key: string]: unknown;
+}
+
+interface ResearchResult {
+  id: string;
+  name: string;
+  circumference?: number;
+  straightLength?: number;
+  sectionsCount?: number;
+  source?: string;
+  country?: string;
+  error?: string;
+}
+
 // Load tracks that weren't found in OSM, or process all empty ones
-const tracksToResearch = tracks.filter((t: any) => {
-  const hasEmptySections = t.courses.some((c: any) => !c.sections || c.sections.length === 0);
+const tracksToResearch = (tracks as Track[]).filter((t) => {
+  const hasEmptySections = t.courses.some((c) => !c.sections || c.sections.length === 0);
   return hasEmptySections;
 });
 
@@ -46,16 +87,17 @@ async function searchWikipedia(trackName: string, country: string) {
           return { ...specs, source: `Wikipedia: ${title}` };
         }
       }
-    } catch (err: any) {
-      console.error(`  Wikipedia error: ${err.message}`);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error(`  Wikipedia error: ${errorMessage}`);
     }
   }
 
   return null;
 }
 
-function extractSpecsFromHTML(html: string, trackName: string) {
-  const specs: any = {};
+function extractSpecsFromHTML(html: string, trackName: string): Specs {
+  const specs: Specs = {};
 
   // Common patterns for track specifications in Wikipedia
   const patterns = [
@@ -106,9 +148,9 @@ function generateOvalSections(circumference: number, straightLength: number) {
 
 async function run() {
   const results = {
-    updated: [] as any[],
-    notFound: [] as any[],
-    errors: [] as any[],
+    updated: [] as ResearchResult[],
+    notFound: [] as ResearchResult[],
+    errors: [] as ResearchResult[],
   };
 
   // Process in batches to avoid rate limiting
@@ -132,18 +174,18 @@ async function run() {
 
         if (specs && specs.circumference) {
           // Apply to all courses at this track
-          track.courses.forEach((c: any) => {
+          track.courses.forEach((c) => {
             c.circumference = specs.circumference;
             if (specs.straightLength) {
               c.straightLength = specs.straightLength;
             } else {
               // Estimate if not found
-              c.straightLength = Math.round(specs.circumference * 0.25);
+              c.straightLength = Math.round((specs.circumference || 0) * 0.25);
             }
             c.width = specs.width || c.width;
 
             // Generate sections
-            c.sections = generateOvalSections(c.circumference, c.straightLength);
+            c.sections = generateOvalSections(c.circumference || 0, c.straightLength || 0);
           });
 
           track.dataSource = "wikipedia";
@@ -165,9 +207,10 @@ async function run() {
           console.log(`  ❌ No data found`);
           results.notFound.push({ id: track.id, name: track.name, country: track.country });
         }
-      } catch (err: any) {
-        console.error(`  💥 Error: ${err.message}`);
-        results.errors.push({ id: track.id, name: track.name, error: err.message });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        console.error(`  💥 Error: ${errorMessage}`);
+        results.errors.push({ id: track.id, name: track.name, error: errorMessage });
       }
 
       // Small delay between tracks in batch
@@ -197,7 +240,7 @@ async function run() {
 
   if (results.notFound.length > 0) {
     console.log("\n=== Still Missing (Manual Research Needed) ===");
-    results.notFound.forEach((t: any) => {
+    results.notFound.forEach((t) => {
       console.log(`  - ${t.name} (${t.country})`);
     });
   }

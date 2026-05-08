@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import { useState } from "react";
-import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,8 @@ export const Route = createFileRoute("/auction/")({
 });
 
 function AuctionPage() {
-  const auctions = (useGame as any)((s: any) => s.auctions ?? [], shallow) as AuctionSale[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const auctions = useGameWithShallow((s: any) => s.auctions ?? []) as AuctionSale[];
   const horses = useGame((s) => s.horses);
   const day = useGame((s) => s.day);
 
@@ -135,9 +136,11 @@ function AuctionPage() {
             </CardContent>
           </Card>
         ) : (
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           allUpcoming.map((sale: any) => {
             const daysAway = sale.day - day;
             const playerLots = sale.lots
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               ? sale.lots.filter((l: any) => !l.consignorStableId && !l.withdrawn)
               : [];
             const isToday = daysAway === 0;
@@ -160,7 +163,8 @@ function AuctionPage() {
                           {sale.name}
                         </CardTitle>
                         <Badge className="border border-gold-muted bg-t700 text-cream font-[family-name:var(--font-body)]">
-                          {KIND_LABELS[sale.kind] ?? sale.kind}
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                          {(KIND_LABELS as any)[sale.kind] ?? sale.kind}
                         </Badge>
                       </div>
                       <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
@@ -170,6 +174,7 @@ function AuctionPage() {
                             {" "}
                             ·{" "}
                             <NumericValue
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               value={sale.lots.filter((l: any) => !l.withdrawn).length}
                             />{" "}
                             lots

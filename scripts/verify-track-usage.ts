@@ -4,16 +4,53 @@ import path from "path";
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
 
+interface Section {
+  type: string;
+  radius?: number;
+}
+
+interface Course {
+  circumference?: number;
+  straightLength?: number;
+  width?: number;
+  sections?: Section[];
+}
+
+interface Track {
+  name: string;
+  country: string;
+  courses: Course[];
+}
+
+interface VerificationResult {
+  complete: number;
+  incomplete: Array<{
+    name: string;
+    hasCircumference: boolean;
+    hasStraightLength: boolean;
+    hasSections: boolean;
+    hasRadius: boolean;
+  }>;
+}
+
+interface TrackTypes {
+  tight: number;
+  moderate: number;
+  galloping: number;
+  shortStraight: number;
+  longStraight: number;
+}
+
 console.log("=== TRACK DATA USAGE VERIFICATION ===\n");
 
 // 1. Verify all tracks have required fields
-const verification = tracks.reduce(
-  (acc: any, t: any) => {
-    const hasCircumference = t.courses.every((c: any) => c.circumference > 0);
-    const hasStraightLength = t.courses.every((c: any) => c.straightLength > 0);
-    const hasSections = t.courses.every((c: any) => c.sections && c.sections.length === 4);
+const verification = (tracks as Track[]).reduce(
+  (acc: VerificationResult, t: Track) => {
+    const hasCircumference = t.courses.every((c) => c.circumference && c.circumference > 0);
+    const hasStraightLength = t.courses.every((c) => c.straightLength && c.straightLength > 0);
+    const hasSections = t.courses.every((c) => c.sections && c.sections.length === 4);
     const hasRadius = t.courses.every(
-      (c: any) => c.sections && c.sections.every((s: any) => s.type !== "turn" || s.radius > 0),
+      (c) => c.sections && c.sections.every((s) => s.type !== "turn" || (s.radius && s.radius > 0)),
     );
 
     if (hasCircumference && hasStraightLength && hasSections && hasRadius) {
@@ -39,7 +76,7 @@ console.log(
 
 if (verification.incomplete.length > 0) {
   console.log(`\n⚠ Tracks missing data: ${verification.incomplete.length}`);
-  verification.incomplete.forEach((t: any) => console.log(`  - ${t.name}`));
+  verification.incomplete.forEach((t) => console.log(`  - ${t.name}`));
 }
 
 // 2. Show sample tracks with their physics-relevant data
@@ -47,16 +84,16 @@ console.log("\n=== SAMPLE TRACKS (Physics Data) ===\n");
 
 const samples = ["Tokyo", "Ascot", "Longchamp", "Churchill Downs", "Flemington"];
 samples.forEach((name) => {
-  const track = tracks.find((t: any) => t.name === name);
+  const track = (tracks as Track[]).find((t) => t.name === name);
   if (track) {
     const c = track.courses[0];
     console.log(`${name} (${track.country}):`);
     console.log(`  Circumference: ${c.circumference}m`);
     console.log(`  Straight: ${c.straightLength}m`);
-    console.log(`  Turns: ${c.sections.filter((s: any) => s.type === "turn").length}`);
-    const turnRadius = c.sections.find((s: any) => s.type === "turn")?.radius;
+    console.log(`  Turns: ${c.sections?.filter((s) => s.type === "turn").length}`);
+    const turnRadius = c.sections?.find((s) => s.type === "turn")?.radius;
     console.log(
-      `  Turn Radius: ${turnRadius}m ${turnRadius < 150 ? "(TIGHT)" : turnRadius > 200 ? "(GALLOPING)" : ""}`,
+      `  Turn Radius: ${turnRadius}m ${turnRadius && turnRadius < 150 ? "(TIGHT)" : turnRadius && turnRadius > 200 ? "(GALLOPING)" : ""}`,
     );
     if (c.width) console.log(`  Width: ${c.width}m`);
     console.log("");
@@ -89,19 +126,19 @@ integrationPoints.forEach((point) => {
 console.log("\n=== TRACK INFLUENCE ON RACING ===\n");
 
 // Calculate track characteristics
-const trackTypes = tracks.reduce(
-  (acc: any, t: any) => {
+const trackTypes = (tracks as Track[]).reduce(
+  (acc: TrackTypes, t: Track) => {
     const c = t.courses[0];
     if (!c || !c.sections) return acc;
 
-    const turnRadius = c.sections.find((s: any) => s.type === "turn")?.radius || 200;
+    const turnRadius = c.sections.find((s) => s.type === "turn")?.radius || 200;
 
     if (turnRadius < 150) acc.tight++;
     else if (turnRadius > 200) acc.galloping++;
     else acc.moderate++;
 
-    if (c.straightLength < 350) acc.shortStraight++;
-    else if (c.straightLength > 450) acc.longStraight++;
+    if (c.straightLength && c.straightLength < 350) acc.shortStraight++;
+    else if (c.straightLength && c.straightLength > 450) acc.longStraight++;
 
     return acc;
   },

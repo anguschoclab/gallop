@@ -23,8 +23,7 @@ export interface RaceSimulationDependencies {
   race: Race;
   horses: Horse[];
   jockeys: Jockey[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  npcStables?: any[];
+  npcStables?: Stable[];
   npcAIManager?: NpcAIManager;
   currentDay?: number;
 }

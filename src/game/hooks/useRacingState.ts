@@ -1,5 +1,5 @@
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
 /**
@@ -17,13 +17,9 @@ export const useTrainingUsed = () => useGame((s: GameState) => s.trainingUsed);
  */
 
 export const useRacingState = () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (useGame as any)(
-    (s: GameState) => ({
-      paceSamples: s.paceSamples,
-      calibratedPars: s.calibratedPars,
-      lastCalibrationDay: s.lastCalibrationDay,
-      trainingUsed: s.trainingUsed,
-    }),
-    shallow,
-  );
+  useGameWithShallow((s: GameState) => ({
+    paceSamples: s.paceSamples,
+    calibratedPars: s.calibratedPars,
+    lastCalibrationDay: s.lastCalibrationDay,
+    trainingUsed: s.trainingUsed,
+  }));

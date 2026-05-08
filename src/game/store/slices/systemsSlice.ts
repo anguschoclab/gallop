@@ -59,7 +59,12 @@ export type SystemsSlice = SystemsState & {
   enrollDamInProgram: (programId: string, damId: string) => void;
 };
 
-export function createSystemsSlice(set: any, get: any): SystemsSlice {
+export function createSystemsSlice(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  set: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get: any,
+): SystemsSlice {
   return {
     ...createDefaultSystemsState(),
 
@@ -131,8 +136,10 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
     assignJockey: (raceId: string, horseId: string, jockeyId: string) => {
       const s = get();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const race = s.races.find((r: any) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
@@ -140,10 +147,12 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       if (!jockey) return { ok: false, reason: "Jockey not found." };
 
       set({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         races: s.races.map((r: any) =>
           r.id === raceId
             ? {
                 ...r,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 entries: r.entries.map((e: any) =>
                   e.horseId === horseId ? { ...e, jockeyId } : e,
                 ),
@@ -193,12 +202,14 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
     updateStudFee: (horseId: string, newFee: number) => {
       const s = get();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
       if (!horse.stud) return { ok: false, reason: "Horse is not standing at stud." };
 
       set({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         horses: s.horses.map((h: any) =>
           h.id === horseId ? { ...h, stud: { ...h.stud, standingFee: newFee } } : h,
         ),
@@ -215,6 +226,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
     retireToStud: (horseId: string) => {
       const s = get();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
@@ -224,6 +236,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
         return { ok: false, reason: "Horse must be at least 4 years old to stand at stud." };
 
       set({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         horses: s.horses.map((h: any) =>
           h.id === horseId
             ? {
@@ -251,6 +264,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
     geldingHorse: (horseId: string) => {
       const s = get();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
@@ -258,6 +272,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
         return { ok: false, reason: "Horse is already male." };
 
       set({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         horses: s.horses.map((h: any) => (h.id === horseId ? { ...h, gender: "gelding" } : h)),
         log: [
           {
@@ -272,6 +287,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
     renameHorse: (horseId: string, newName: string) => {
       const s = get();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const horse = s.horses.find((h: any) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
@@ -282,6 +298,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       }
 
       set({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         horses: s.horses.map((h: any) => (h.id === horseId ? { ...h, name: newName } : h)),
         usedHorseNames: [
           ...s.usedHorseNames.filter((n: string) => n !== horse.name.toLowerCase()),
@@ -299,12 +316,14 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     enqueueIntent: (intent: AnyIntent) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         pendingIntents: [...(state.pendingIntents || []), intent],
       }));
     },
 
     setCampaign: (campaign: HorseCampaign) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns?.map((c: HorseCampaign) =>
           c.horseId === campaign.horseId ? campaign : c,
@@ -317,6 +336,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       slotIndex: number,
       patch: Partial<HorseCampaign["slots"][number]>,
     ) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns?.map((c: HorseCampaign) =>
           c.horseId === horseId
@@ -330,6 +350,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     dismissCampaignFlag: (horseId: string, flagIndex: number) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns?.map((c: HorseCampaign) =>
           c.horseId === horseId
@@ -343,6 +364,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     deleteCampaign: (horseId: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns?.filter((c: HorseCampaign) => c.horseId !== horseId),
       }));
@@ -350,18 +372,21 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
     generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => {
       // Full implementation would be in a helper - placeholder for now
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns || [],
       }));
     },
 
     updateUserSettings: (settings: Partial<UserSettings>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         userSettings: { ...state.userSettings, ...settings },
       }));
     },
 
     updateDisplaySettings: (settings: Partial<UserSettings["display"]>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         userSettings: {
           ...state.userSettings,
@@ -371,6 +396,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     updateGameplaySettings: (settings: Partial<UserSettings["gameplay"]>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         userSettings: {
           ...state.userSettings,
@@ -380,6 +406,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     updateNotificationSettings: (settings: Partial<UserSettings["notifications"]>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         userSettings: {
           ...state.userSettings,
@@ -389,6 +416,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     updateAudioSettings: (settings: Partial<UserSettings["audio"]>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         userSettings: {
           ...state.userSettings,
@@ -398,6 +426,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     resetSettings: () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         userSettings: createDefaultUserSettings(state.day),
       }));
@@ -452,6 +481,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
     registerHorseName: (name: string) => {
       const lower = name.toLowerCase();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((s: any) => ({
         usedHorseNames: s.usedHorseNames.includes(lower)
           ? s.usedHorseNames
@@ -461,18 +491,21 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
     unregisterHorseName: (name: string) => {
       const lower = name.toLowerCase();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((s: any) => ({
         usedHorseNames: s.usedHorseNames.filter((n: string) => n !== lower),
       }));
     },
 
     createBreedingProgram: (program: BreedingProgram) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((s: any) => ({
         breedingPrograms: [...s.breedingPrograms, program],
       }));
     },
 
     updateBreedingProgram: (program: BreedingProgram) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((s: any) => ({
         breedingPrograms: s.breedingPrograms.map((p: BreedingProgram) =>
           p.id === program.id ? program : p,
@@ -481,12 +514,14 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
     },
 
     deleteBreedingProgram: (programId: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((s: any) => ({
         breedingPrograms: s.breedingPrograms.filter((p: BreedingProgram) => p.id !== programId),
       }));
     },
 
     enrollDamInProgram: (programId: string, damId: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((s: any) => ({
         breedingPrograms: s.breedingPrograms.map((p: BreedingProgram) =>
           p.id === programId

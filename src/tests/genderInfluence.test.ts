@@ -32,6 +32,7 @@ function mockHorse(
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     genotype: {} as any,
   };
 }

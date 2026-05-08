@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { useJockeys } from "@/game/hooks/useSystemsState";
 import { shallow } from "zustand/shallow";
 import {
@@ -45,11 +45,9 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
   const [wantToClaim, setWantToClaim] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const allHorses = (useGame as any)((s: any) => s.horses, shallow);
+  const allHorses = useGameWithShallow((s) => s.horses);
   const horses = useMemo(() => allHorses.filter((h: Horse) => h.owned), [allHorses]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
+  const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
   const enterRace = useGame((s) => s.enterRace);
   const enterClaimingRace = useGame((s) => s.enterClaimingRace);
   const withdrawFromClaimingRace = useGame((s) => s.withdrawFromClaimingRace);
@@ -174,6 +172,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               </h3>
               <div className="grid grid-cols-1 gap-2">
                 {eligibleHorses.map(({ horse, eligible }) => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   const isEntered = race.entries.some((e: any) => e.horseId === horse.id);
                   return (
                     <div

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,18 +36,8 @@ import { cn } from "@/lib/utils";
 import { HorsePortrait } from "@/components/HorsePortrait";
 import { AuctionTheater } from "@/components/auction/AuctionTheater";
 import { BuyNowDialog } from "@/components/auction/BuyNowDialog";
-import { z } from "zod";
+import { auctionBrowseSearchSchema, type AuctionBrowseSearch } from "@/lib/auctionSearchSchema";
 import { filterAndSortLots } from "@/services/auctionLotFilter";
-
-const auctionBrowseSearchSchema = z.object({
-  sex: z.enum(["colt", "filly", "gelding", "mare"]).optional(),
-  ageBand: z.enum(["weanling", "yearling", "2yo", "3yo+"]).optional(),
-  reserveBand: z.enum(["under10k", "10k-50k", "over50k"]).optional(),
-  sort: z.enum(["lot", "reserve-asc", "reserve-desc"]).optional(),
-  q: z.string().optional(),
-});
-
-export type AuctionBrowseSearch = z.infer<typeof auctionBrowseSearchSchema>;
 
 export const Route = createFileRoute("/auction/$saleId")({
   validateSearch: auctionBrowseSearchSchema,
@@ -58,7 +48,7 @@ function AuctionSalePage() {
   const { saleId } = Route.useParams();
   const navigate = Route.useNavigate();
   const { sex, ageBand, reserveBand, sort, q } = Route.useSearch();
-  const auctions = (useGame as any)((s) => s.auctions ?? [], shallow);
+  const auctions = useGameWithShallow((s) => s.auctions ?? []);
   const horses = useGame((s) => s.horses);
   const cash = useGame((s) => s.cash);
   const stables = useGame((s) => s.npcStables);

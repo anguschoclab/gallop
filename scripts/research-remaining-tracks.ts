@@ -4,6 +4,43 @@ import path from "path";
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
 
+interface Section {
+  type?: string;
+  length?: number;
+}
+
+interface Course {
+  sections?: Section[];
+  circumference?: number;
+  straightLength?: number;
+  width?: number;
+  name?: string;
+}
+
+interface Track {
+  id: string;
+  name: string;
+  country: string;
+  courses: Course[];
+  dataSource?: string;
+}
+
+interface ResearchResult {
+  id: string;
+  name: string;
+  circumference?: number;
+  straightLength?: number;
+  coursesCount?: number;
+  sectionsCount?: number;
+  source?: string;
+  country?: string;
+}
+
+interface FinalStats {
+  complete: number;
+  missing: number;
+}
+
 // Hardcoded research data for tracks not found in official database
 // Sources: Wikipedia, track official websites, racing databases
 const RESEARCHED_TRACK_DATA: Record<
@@ -417,8 +454,11 @@ function run() {
   console.log(`Backup created: ${backupPath}\n`);
 
   const results = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updated: [] as any[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     notFound: [] as any[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     skipped: [] as any[],
   };
 
@@ -427,6 +467,7 @@ function run() {
 
     if (researchData) {
       // Check if already has sections
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const hasExistingData = track.courses.some((c: any) => c.sections && c.sections.length > 0);
       if (hasExistingData) {
         console.log(`⏭️  ${track.name} - skipped (already has data)`);
@@ -467,7 +508,9 @@ function run() {
       });
     } else {
       // Check if already has data from previous run
-      const hasExistingData = track.courses.some((c: any) => c.sections && c.sections.length > 0);
+      const hasExistingData = track.courses.some(
+        (c: Course) => c.sections && c.sections.length > 0,
+      );
       if (!hasExistingData) {
         results.notFound.push({ id: track.id, name: track.name, country: track.country });
       }
@@ -490,15 +533,15 @@ function run() {
 
   if (results.notFound.length > 0) {
     console.log("\n=== Tracks Still Missing Data ===");
-    results.notFound.forEach((t: any) => {
+    results.notFound.forEach((t) => {
       console.log(`  - ${t.name} (${t.country})`);
     });
   }
 
   // Final stats
-  const finalStats = tracks.reduce(
-    (acc: any, t: any) => {
-      const hasData = t.courses.some((c: any) => c.sections && c.sections.length > 0);
+  const finalStats = (tracks as Track[]).reduce(
+    (acc: FinalStats, t: Track) => {
+      const hasData = t.courses.some((c) => c.sections && c.sections.length > 0);
       if (hasData) acc.complete++;
       else acc.missing++;
       return acc;

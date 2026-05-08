@@ -63,9 +63,9 @@ export function resolvePregnancies(
       const stable = stables.find((s) => s.id === dam.stableId);
       if (stable) {
         namingContext = {
-          region: getRegionalSystem(stable.country || "USA"),
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          namingTheme: (PERSONALITY_CONFIG as any)[stable.personality]?.namingTheme,
+          region: getRegionalSystem((stable.country || "USA") as any),
+          namingTheme: PERSONALITY_CONFIG[stable.personality]?.namingTheme,
           existingNames: usedNames,
         };
       }

@@ -222,7 +222,7 @@ function MonthView({
               .sort((a: Race, b: Race) => a.day - b.day)
               .map((race: Race) => {
                 const isSpecial = region.specialRaceKeys?.has(race.graded?.key ?? "");
-                const hasOwnedEntry = race.entries.some((e: any) => e.owned);
+                const hasOwnedEntry = race.entries.some((e) => e.owned);
                 return (
                   <div
                     key={race.id}
@@ -325,7 +325,7 @@ function TrackView({
           <CardContent className="space-y-2">
             {trackRaces.map((race: Race) => {
               const isSpecial = region.specialRaceKeys?.has(race.graded?.key ?? "");
-              const hasOwnedEntry = race.entries.some((e: any) => e.owned);
+              const hasOwnedEntry = race.entries.some((e) => e.owned);
               return (
                 <div
                   key={race.id}

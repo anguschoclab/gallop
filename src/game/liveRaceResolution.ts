@@ -43,8 +43,8 @@ export function resolveLiveRaceWithImpacts(
   day: number,
 ): ResolverContext {
   if (race.resolved) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       state: { horses, jockeys, npcStables, races: [race] } as any,
       intents: [],
       impacts: [],
@@ -364,8 +364,8 @@ export function resolveLiveRaceWithImpacts(
   }
 
   // Apply impacts to state
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const resolverContext: ResolverContext = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     state: { horses, jockeys, npcStables, races: [race] } as any,
     intents: [],
     impacts,

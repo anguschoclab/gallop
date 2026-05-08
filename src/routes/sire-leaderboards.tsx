@@ -25,6 +25,7 @@ function SireLeaderboardsPage() {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tabs: { key: LeaderboardType; label: string; icon: React.ComponentType<any> }[] = [
     { key: "overall", label: "Overall", icon: Trophy },
     { key: "ci", label: "Comparable Index", icon: Target },
@@ -94,6 +95,7 @@ function LeaderboardView({ leaderboard }: { leaderboard: any }) {
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {leaderboard.rankings.map((ranking: any) => (
             <div
               key={ranking.stallionId}

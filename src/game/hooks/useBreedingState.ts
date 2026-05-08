@@ -1,5 +1,5 @@
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
 /**
@@ -7,9 +7,7 @@ import type { GameState } from "@/game/types";
  */
 export const usePregnancies = () => useGame((s: GameState) => s.pregnancies);
 
-export const useTripleCrownHistory = () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (useGame as any)((s: any) => s.triplecrownHistory ?? [], shallow);
+export const useTripleCrownHistory = () => useGameWithShallow((s) => s.triplecrownHistory ?? []);
 
 /**
  * Multiple breeding state values with shallow comparison
@@ -18,10 +16,7 @@ export const useTripleCrownHistory = () =>
  */
 
 export const useBreedingState = () =>
-  (useGame as any)(
-    (s: GameState) => ({
-      pregnancies: s.pregnancies,
-      triplecrownHistory: s.triplecrownHistory ?? [],
-    }),
-    shallow,
-  );
+  useGameWithShallow((s: GameState) => ({
+    pregnancies: s.pregnancies,
+    triplecrownHistory: s.triplecrownHistory ?? [],
+  }));

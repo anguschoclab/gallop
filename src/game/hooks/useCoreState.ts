@@ -1,5 +1,5 @@
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
 /**
@@ -11,7 +11,7 @@ export const useHorses = () => useGame((s: GameState) => s.horses);
 export const useRaces = () => useGame((s: GameState) => s.races);
 export const useLog = () => useGame((s: GameState) => s.log);
 
-export const useExpenses = () => (useGame as any)((s: GameState) => s.expenses, shallow);
+export const useExpenses = () => useGameWithShallow((s: GameState) => s.expenses);
 
 /**
  * Multiple core state values with shallow comparison
@@ -20,5 +20,4 @@ export const useExpenses = () => (useGame as any)((s: GameState) => s.expenses, 
  */
 
 export const useCoreState = () =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (useGame as any)((s: GameState) => ({ day: s.day, cash: s.cash }), shallow);
+  useGameWithShallow((s: GameState) => ({ day: s.day, cash: s.cash }));

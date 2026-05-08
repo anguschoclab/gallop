@@ -1,4 +1,4 @@
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import {
   Dialog,
@@ -17,12 +17,9 @@ import { formatCurrency } from "@/components/HorseBits";
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const races = (useGame as any)((s: any) => s.races ?? [], shallow);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const horses = (useGame as any)((s: any) => s.horses ?? [], shallow);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
+  const races = useGameWithShallow((s) => s.races ?? []);
+  const horses = useGameWithShallow((s) => s.horses ?? []);
+  const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
   const day = useGame((s) => s.day);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
   const navigate = useNavigate();

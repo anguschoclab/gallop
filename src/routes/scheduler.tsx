@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -52,8 +52,7 @@ function SchedulerPage() {
   const day = useGame((s) => s.day);
   const horses = useGame((s) => s.horses);
   const races = useGame((s) => s.races);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const campaigns = (useGame as any)((s: any) => s.campaigns, shallow);
+  const campaigns = useGameWithShallow((s) => s.campaigns ?? []);
   const setCampaign = useGame((s) => s.setCampaign);
   const deleteCampaign = useGame((s) => s.deleteCampaign);
   const generateAutoCampaign = useGame((s) => s.generateAutoCampaign);

@@ -21,12 +21,18 @@ export type CampaignSlice = {
   setTriplecrownHistory: (history: TripleCrownProgress[]) => void;
 };
 
-export function createCampaignSlice(set: any, get: any): CampaignSlice {
+export function createCampaignSlice(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  set: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get: any,
+): CampaignSlice {
   return {
     campaigns: [],
     triplecrownHistory: [],
 
     setCampaign: (campaign: HorseCampaign) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns?.map((c: HorseCampaign) =>
           c.horseId === campaign.horseId ? campaign : c,
@@ -39,6 +45,7 @@ export function createCampaignSlice(set: any, get: any): CampaignSlice {
       slotIndex: number,
       patch: Partial<HorseCampaign["slots"][number]>,
     ) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns?.map((c: HorseCampaign) =>
           c.horseId === horseId
@@ -52,6 +59,7 @@ export function createCampaignSlice(set: any, get: any): CampaignSlice {
     },
 
     dismissCampaignFlag: (horseId: string, flagIndex: number) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns?.map((c: HorseCampaign) =>
           c.horseId === horseId
@@ -65,6 +73,7 @@ export function createCampaignSlice(set: any, get: any): CampaignSlice {
     },
 
     deleteCampaign: (horseId: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns?.filter((c: HorseCampaign) => c.horseId !== horseId),
       }));
@@ -72,6 +81,7 @@ export function createCampaignSlice(set: any, get: any): CampaignSlice {
 
     generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => {
       // Full implementation would be in a helper
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
         campaigns: state.campaigns || [],
       }));

@@ -71,7 +71,9 @@ export type MarketSlice = MarketState & {
 };
 
 export function createMarketSlice(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   set: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: any,
   enqueueIntent: (intent: PurchaseIntent) => void,
 ): MarketSlice {
@@ -118,6 +120,7 @@ export function createMarketSlice(
       if (!horse.stableId) {
         return { success: false, cost: 0, message: "Cannot scout your own horses." };
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const stable = s.npcStables.find((st: any) => st.id === horse.stableId);
       if (!stable) {
         return { success: false, cost: 0, message: "Stable not found." };
@@ -228,6 +231,7 @@ export function createMarketSlice(
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
       if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const lot = sale.lots.find((l: any) => l.id === lotId);
       if (!lot) return { ok: false, reason: "Lot not found." };
       if (lot.withdrawn || lot.passed) return { ok: false, reason: "Lot not available." };
@@ -239,6 +243,7 @@ export function createMarketSlice(
           a.id === saleId
             ? {
                 ...a,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 lots: a.lots.map((l: any) =>
                   l.id === lotId
                     ? {
@@ -268,7 +273,13 @@ export function createMarketSlice(
       return { ok: true };
     },
 
-    commitAuctionResult: (saleId: string, finalLots: any[], impacts: any[]) => {
+    commitAuctionResult: (
+      saleId: string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      finalLots: any[],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      impacts: any[],
+    ) => {
       const s = get();
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
@@ -281,7 +292,13 @@ export function createMarketSlice(
             ? {
                 ...a,
                 resolved: true,
-                lots: finalLots,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                lots: a.lots.map((l: any) => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const finalLot = finalLots.find((fl: any) => fl.id === l.id);
+                  if (!finalLot) return l;
+                  return { ...l, ...finalLot };
+                }),
               }
             : a,
         ),
@@ -307,6 +324,7 @@ export function createMarketSlice(
       if (sale.resolved) return { ok: false, reason: "sale_resolved" };
       // Broodmare sales never have buy-now; guard for degenerate state.
       if (sale.kind === "broodmare") return { ok: false, reason: "buy_now_unavailable" };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const lot = sale.lots.find((l: any) => l.id === lotId);
       if (!lot) return { ok: false, reason: "lot_not_found" };
       if (lot.buyNowPrice === undefined) return { ok: false, reason: "buy_now_unavailable" };
@@ -328,6 +346,7 @@ export function createMarketSlice(
         a.id === saleId
           ? {
               ...a,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               lots: a.lots.map((l: any) =>
                 l.id === lotId
                   ? {
@@ -525,6 +544,7 @@ export function createMarketSlice(
       if (!horse) return { ok: false, reason: "horse_not_found" };
       if (!horse.owned) return { ok: false, reason: "not_owned" };
       if (s.day >= race.day) return { ok: false, reason: "entries_closed" };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (race.entries.some((e: any) => e.horseId === horseId))
         return { ok: false, reason: "already_entered" };
 
@@ -553,6 +573,7 @@ export function createMarketSlice(
       const s = get();
       const race: Race | undefined = s.races.find((r: Race) => r.id === raceId);
       if (!race) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const entry = race.entries.find((e: any) => e.horseId === horseId);
       if (!entry) return;
       // Withdrawal window: before race.day - 1
@@ -560,7 +581,11 @@ export function createMarketSlice(
 
       const updatedRaces = s.races.map((r: Race) =>
         r.id === raceId
-          ? { ...r, entries: r.entries.filter((e: any) => e.horseId !== horseId) }
+          ? {
+              ...r,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              entries: r.entries.filter((e: any) => e.horseId !== horseId),
+            }
           : r,
       );
       const horse = s.horses.find((h: Horse) => h.id === horseId);

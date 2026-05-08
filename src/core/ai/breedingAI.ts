@@ -324,8 +324,8 @@ export function selectSireForDam(
       const simulation = cachedSimulation(sire.id, dam.id, () =>
         runBreedingSimulation(sire, dam, gameState, rng),
       );
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       // Build a synthetic horse from the simulation median stats to measure distance
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const syntheticFoal: any = {
         stats: {
           speed: simulation.stats.speed.p75,

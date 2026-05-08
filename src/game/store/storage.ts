@@ -48,7 +48,11 @@ export const hydrationComplete = {
  * Creates a rehydrate function that can be called with the store instance
  * @param initialState - Function to create initial state if no save exists
  */
-export function createRehydrateStore(initialState: () => GameState & any) {
+export function createRehydrateStore(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialState: () => GameState & any,
+) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return async function rehydrateStore(useGame: any): Promise<void> {
     const state = await loadGameState();
     if (state) {

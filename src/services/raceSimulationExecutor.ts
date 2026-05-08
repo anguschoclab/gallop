@@ -16,8 +16,7 @@ export interface RaceSimulationResult {
  * @param jockeys - All jockeys in the game state
  * @returns Race simulation result
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function simulateRace(race: Race, horses: Horse[], jockeys: any[]): RaceSimulationResult {
+export function simulateRace(race: Race, horses: Horse[], jockeys: Jockey[]): RaceSimulationResult {
   const { runners, fillerHorses } = buildRaceField({
     race,
     horses,
