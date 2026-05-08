@@ -10,7 +10,6 @@ import type {
   ScoutReport,
   CampaignFlag,
   HorseCampaign,
-  Transaction,
   TripleCrownProgress,
 } from "@/game/types";
 import type { NewsItem } from "../narrative/newsTypes";

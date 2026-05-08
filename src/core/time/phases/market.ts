@@ -8,6 +8,7 @@ import {
   recordMarketPurchase,
 } from "@/core/ai/marketAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { generateStaffPool } from "@/core/staff/staffGenerator";
 
 /**
  * Phase: Market Refresh
@@ -70,7 +71,6 @@ export const marketPhase = {
     // Staff pool replenishment
     let staffPool = state.staffPool ?? [];
     if (staffPool.length < 4) {
-      const { generateStaffPool } = await import("@/core/staff/staffGenerator");
       const newStaff = generateStaffPool(dailyRng, 6 - staffPool.length);
       staffPool = [...staffPool, ...newStaff];
     }

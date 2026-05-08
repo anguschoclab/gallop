@@ -11,6 +11,13 @@ import { TRAIT_VALUES, fiberDistanceModifier } from "@/core/genetics/phenotype";
 import type { CourseSpecification, TrackSection } from "@/game/tracks";
 import type { Rng } from "@/core/common/types";
 import { clamp } from "@/game/math";
+
+export type RunnerBonuses = {
+  farrier?: number;
+  groom?: number;
+  trainer?: number;
+  veterinarian?: number;
+};
 import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
 import { calculateDosageMetrics } from "@/game/dosage";
 import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStrategyAI";

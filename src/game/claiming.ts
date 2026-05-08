@@ -1,7 +1,7 @@
 // Claiming Race Mechanics
 // Handles claiming transactions, horse transfers, and claiming eligibility
 
-import type { Horse, Race, Claim, ClaimingPrice, ClaimingRaceEntry } from "./types";
+import type { Horse, Race, Claim, ClaimingPrice } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { createRng, hashStr } from "./rng";
 import { formatCurrency } from "@/components/HorseBits";

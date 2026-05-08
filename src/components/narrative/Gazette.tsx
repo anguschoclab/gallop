@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGameStore } from '@/game/store';
+import { useGame as useGameStore } from '@/game/store';
 import type { NewsItem, EntityLink } from '@/core/narrative/newsTypes';
 import './Gazette.css';
 

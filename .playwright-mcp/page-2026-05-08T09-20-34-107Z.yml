@@ -1,0 +1,291 @@
+- generic [ref=e1]:
+  - generic [ref=e6]:
+    - link "Skip to content" [ref=e7] [cursor=pointer]:
+      - /url: "#main-content"
+    - complementary [ref=e8]:
+      - generic [ref=e9]:
+        - heading "Gallop" [level=1] [ref=e10]
+        - paragraph [ref=e11]: Jan 2, 2026
+      - navigation [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]: Headquarters
+          - link "Dashboard" [ref=e16] [cursor=pointer]:
+            - /url: /
+            - img [ref=e17]
+            - text: Dashboard
+          - link "Finances" [ref=e21] [cursor=pointer]:
+            - /url: /financial-report
+            - img [ref=e22]
+            - text: Finances
+          - link "Facilities" [ref=e25] [cursor=pointer]:
+            - /url: /facilities
+            - img [ref=e26]
+            - text: Facilities
+          - link "Settings" [ref=e31] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e32]
+            - text: Settings
+        - generic [ref=e35]:
+          - generic [ref=e36]: My Stable
+          - link "Roster" [ref=e38] [cursor=pointer]:
+            - /url: /stable
+            - img [ref=e39]
+            - text: Roster
+          - link "Horse Gallery" [ref=e46] [cursor=pointer]:
+            - /url: /horse-gallery
+            - img [ref=e47]
+            - text: Horse Gallery
+          - link "Staff" [ref=e53] [cursor=pointer]:
+            - /url: /staff
+            - img [ref=e54]
+            - text: Staff
+          - link "Jockeys" [ref=e60] [cursor=pointer]:
+            - /url: /jockeys
+            - img [ref=e61]
+            - text: Jockeys
+          - link "Scheduler" [ref=e65] [cursor=pointer]:
+            - /url: /scheduler
+            - img [ref=e66]
+            - text: Scheduler
+          - generic [ref=e69]:
+            - link "Breeding" [ref=e70] [cursor=pointer]:
+              - /url: /breeding
+              - img [ref=e71]
+              - text: Breeding
+            - generic [ref=e73]:
+              - link "Mating" [ref=e74] [cursor=pointer]:
+                - /url: /breeding
+                - img [ref=e75]
+                - text: Mating
+              - link "Broodmares" [ref=e77] [cursor=pointer]:
+                - /url: /broodmares
+                - img [ref=e78]
+                - text: Broodmares
+          - link "Hall of Fame" [ref=e82] [cursor=pointer]:
+            - /url: /hall-of-fame
+            - img [ref=e83]
+            - text: Hall of Fame
+        - generic [ref=e86]:
+          - generic [ref=e87]: The World
+          - generic [ref=e88]:
+            - link "Racing Calendar" [ref=e89] [cursor=pointer]:
+              - /url: /races
+              - img [ref=e90]
+              - text: Racing Calendar
+            - link "Calendar" [ref=e93] [cursor=pointer]:
+              - /url: /calendar
+              - img [ref=e94]
+              - text: Calendar
+          - link "Horse Market" [ref=e97] [cursor=pointer]:
+            - /url: /market
+            - img [ref=e98]
+            - text: Horse Market
+          - link "Auctions" [ref=e103] [cursor=pointer]:
+            - /url: /auction
+            - img [ref=e104]
+            - text: Auctions
+          - link "NPC Stables" [ref=e111] [cursor=pointer]:
+            - /url: /npc-stables
+            - img [ref=e112]
+            - text: NPC Stables
+          - link "Stallions" [ref=e115] [cursor=pointer]:
+            - /url: /stallions
+            - img [ref=e116]
+            - text: Stallions
+          - link "Sire Watch" [ref=e119] [cursor=pointer]:
+            - /url: /sire-watch
+            - img [ref=e120]
+            - text: Sire Watch
+          - link "Sire Leaderboards" [ref=e123] [cursor=pointer]:
+            - /url: /sire-leaderboards
+            - img [ref=e124]
+            - text: Sire Leaderboards
+      - generic [ref=e130]:
+        - generic [ref=e131]:
+          - paragraph [ref=e132]: Cash
+          - paragraph [ref=e133]: $250,000
+        - generic [ref=e134]: 2758 horses
+        - generic [ref=e135]:
+          - button "Advance 1 day" [ref=e136]:
+            - img
+          - button "7d" [ref=e137]
+          - button "30d" [ref=e138]
+          - button "AutoSim settings" [ref=e139]:
+            - img
+        - button "Start new game" [ref=e140]
+    - main [ref=e141]:
+      - generic [ref=e143]:
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - heading "Breeding & Bloodstock" [level=1] [ref=e146]
+            - paragraph [ref=e147]: Manage your matings and track gestation for the next generation.
+          - generic [ref=e148]:
+            - img [ref=e149]
+            - text: Opens Day
+            - generic [ref=e151]: "36"
+        - generic [ref=e152]:
+          - link "Stallions at Stud View available stallions for breeding" [ref=e153] [cursor=pointer]:
+            - /url: /stallions
+            - generic [ref=e155]:
+              - generic [ref=e156]: Stallions at Stud
+              - paragraph [ref=e157]: View available stallions for breeding
+          - link "Sire Watch Analytics and performance metrics for stallions" [ref=e158] [cursor=pointer]:
+            - /url: /sire-watch
+            - generic [ref=e160]:
+              - generic [ref=e161]: Sire Watch
+              - paragraph [ref=e162]: Analytics and performance metrics for stallions
+          - link "Sire Leaderboards Track stallion performance across multiple dimensions" [ref=e163] [cursor=pointer]:
+            - /url: /sire-leaderboards
+            - generic [ref=e165]:
+              - generic [ref=e166]: Sire Leaderboards
+              - paragraph [ref=e167]: Track stallion performance across multiple dimensions
+        - generic [ref=e168]:
+          - tablist [ref=e169]:
+            - tab "Breeding Shed" [ref=e170]:
+              - img [ref=e171]
+              - text: Breeding Shed
+            - tab "Broodmares" [ref=e173]:
+              - img [ref=e174]
+              - text: Broodmares
+            - tab "History" [ref=e177]:
+              - img [ref=e178]
+              - text: History
+            - tab "Programs" [active] [selected] [ref=e181]:
+              - img [ref=e182]
+              - text: Programs
+          - tabpanel "Programs" [ref=e202]:
+            - generic [ref=e204]:
+              - generic [ref=e205]:
+                - generic [ref=e206]:
+                  - img [ref=e207]
+                  - text: Choose an Archetype
+                - paragraph [ref=e211]: A breeding program gives you a generational target. The simulator will highlight stallions that move your line closer to the archetype.
+              - generic [ref=e212]:
+                - generic [ref=e213]:
+                  - button "All" [ref=e214]
+                  - button "Classic" [ref=e215]
+                  - button "Turf" [ref=e216]
+                  - button "Dirt" [ref=e217]
+                  - button "Triple Crown" [ref=e218]
+                - generic [ref=e219]:
+                  - button "🌿 Elite Turf Stayer High stamina for long turf races, balanced speed/stamina, surface Turf, style S/P Turf 2400m" [ref=e220]:
+                    - generic [ref=e221]:
+                      - generic [ref=e222]: 🌿
+                      - generic [ref=e223]:
+                        - paragraph [ref=e224]: Elite Turf Stayer
+                        - paragraph [ref=e225]: High stamina for long turf races, balanced speed/stamina, surface Turf, style S/P
+                        - generic [ref=e226]:
+                          - generic [ref=e227]: Turf
+                          - generic [ref=e228]: 2400m
+                      - img [ref=e229]
+                  - button "⚡ Dirt Sprinter High speed, fiber sprinter, distance ≤1200m, surface Dirt Dirt 1000m" [ref=e231]:
+                    - generic [ref=e232]:
+                      - generic [ref=e233]: ⚡
+                      - generic [ref=e234]:
+                        - paragraph [ref=e235]: Dirt Sprinter
+                        - paragraph [ref=e236]: High speed, fiber sprinter, distance ≤1200m, surface Dirt
+                        - generic [ref=e237]:
+                          - generic [ref=e238]: Dirt
+                          - generic [ref=e239]: 1000m
+                      - img [ref=e240]
+                  - button "⚖️ Classic Miler Balanced speed/stamina, distance 1600m, versatile surface Versatile 1600m" [ref=e242]:
+                    - generic [ref=e243]:
+                      - generic [ref=e244]: ⚖️
+                      - generic [ref=e245]:
+                        - paragraph [ref=e246]: Classic Miler
+                        - paragraph [ref=e247]: Balanced speed/stamina, distance 1600m, versatile surface
+                        - generic [ref=e248]:
+                          - generic [ref=e249]: Versatile
+                          - generic [ref=e250]: 1600m
+                      - img [ref=e251]
+                  - button "🍃 Turf Specialist High acceleration, cornering, climbing, surface Turf Turf 1800m" [ref=e253]:
+                    - generic [ref=e254]:
+                      - generic [ref=e255]: 🍃
+                      - generic [ref=e256]:
+                        - paragraph [ref=e257]: Turf Specialist
+                        - paragraph [ref=e258]: High acceleration, cornering, climbing, surface Turf
+                        - generic [ref=e259]:
+                          - generic [ref=e260]: Turf
+                          - generic [ref=e261]: 1800m
+                      - img [ref=e262]
+                  - button "🛡️ Iron Horse High durability, recovery, consistency, low health risk Versatile 2000m" [ref=e264]:
+                    - generic [ref=e265]:
+                      - generic [ref=e266]: 🛡️
+                      - generic [ref=e267]:
+                        - paragraph [ref=e268]: Iron Horse
+                        - paragraph [ref=e269]: High durability, recovery, consistency, low health risk
+                        - generic [ref=e270]:
+                          - generic [ref=e271]: Versatile
+                          - generic [ref=e272]: 2000m
+                      - img [ref=e273]
+                  - button "🌟 Early Developer Low peakAge, high acceleration, sprinter/miler Versatile 1200m" [ref=e275]:
+                    - generic [ref=e276]:
+                      - generic [ref=e277]: 🌟
+                      - generic [ref=e278]:
+                        - paragraph [ref=e279]: Early Developer
+                        - paragraph [ref=e280]: Low peakAge, high acceleration, sprinter/miler
+                        - generic [ref=e281]:
+                          - generic [ref=e282]: Versatile
+                          - generic [ref=e283]: 1200m
+                      - img [ref=e284]
+                  - button "🌸 Late Bloomer High peakAge, stamina dominant, trainability Versatile 2400m" [ref=e286]:
+                    - generic [ref=e287]:
+                      - generic [ref=e288]: 🌸
+                      - generic [ref=e289]:
+                        - paragraph [ref=e290]: Late Bloomer
+                        - paragraph [ref=e291]: High peakAge, stamina dominant, trainability
+                        - generic [ref=e292]:
+                          - generic [ref=e293]: Versatile
+                          - generic [ref=e294]: 2400m
+                      - img [ref=e295]
+                  - button "🌐 All-Weather Versatile surface, balanced stats, high mental Synthetic 1600m" [ref=e297]:
+                    - generic [ref=e298]:
+                      - generic [ref=e299]: 🌐
+                      - generic [ref=e300]:
+                        - paragraph [ref=e301]: All-Weather
+                        - paragraph [ref=e302]: Versatile surface, balanced stats, high mental
+                        - generic [ref=e303]:
+                          - generic [ref=e304]: Synthetic
+                          - generic [ref=e305]: 1600m
+                      - img [ref=e306]
+                  - button "🏆 USA Triple Crown Specialist Focus on US Triple Crown. High stamina for 1.5 mile Belmont, balanced speed/stamina for Derby/Preakness, high durability for 3-race series in 5 weeks, surface Dirt, style P/S, peakAge 3 Dirt 2000m" [ref=e308]:
+                    - generic [ref=e309]:
+                      - generic [ref=e310]: 🏆
+                      - generic [ref=e311]:
+                        - paragraph [ref=e312]: USA Triple Crown Specialist
+                        - paragraph [ref=e313]: Focus on US Triple Crown. High stamina for 1.5 mile Belmont, balanced speed/stamina for Derby/Preakness, high durability for 3-race series in 5 weeks, surface Dirt, style P/S, peakAge 3
+                        - generic [ref=e314]:
+                          - generic [ref=e315]: Dirt
+                          - generic [ref=e316]: 2000m
+                      - img [ref=e317]
+                  - button "🍁 Canadian Triple Crown Specialist Focus on Canadian Triple Crown. Similar to USA but with Canadian race conditions (Woodbine track). High stamina for longest leg, balanced speed/stamina for shorter legs, high durability for series, surface Dirt or Synthetic, style P/S, peakAge 3 Versatile 2000m" [ref=e319]:
+                    - generic [ref=e320]:
+                      - generic [ref=e321]: 🍁
+                      - generic [ref=e322]:
+                        - paragraph [ref=e323]: Canadian Triple Crown Specialist
+                        - paragraph [ref=e324]: Focus on Canadian Triple Crown. Similar to USA but with Canadian race conditions (Woodbine track). High stamina for longest leg, balanced speed/stamina for shorter legs, high durability for series, surface Dirt or Synthetic, style P/S, peakAge 3
+                        - generic [ref=e325]:
+                          - generic [ref=e326]: Versatile
+                          - generic [ref=e327]: 2000m
+                      - img [ref=e328]
+                  - button "👑 UK Classics Specialist Focus on UK Classics. Turf surface, varying distances (1 mile to 1.75 mile), longer series duration (May-September), high stamina for St Leger, balanced speed/stamina for Guineas and Derby, surface Turf, style P/S, peakAge 3 Turf 2400m" [ref=e330]:
+                    - generic [ref=e331]:
+                      - generic [ref=e332]: 👑
+                      - generic [ref=e333]:
+                        - paragraph [ref=e334]: UK Classics Specialist
+                        - paragraph [ref=e335]: Focus on UK Classics. Turf surface, varying distances (1 mile to 1.75 mile), longer series duration (May-September), high stamina for St Leger, balanced speed/stamina for Guineas and Derby, surface Turf, style P/S, peakAge 3
+                        - generic [ref=e336]:
+                          - generic [ref=e337]: Turf
+                          - generic [ref=e338]: 2400m
+                      - img [ref=e339]
+                  - button "🥇 Triple Crown Specialist Aggressive focus on Triple Crown achievement regardless of region. Very high stamina (for longest leg), high speed (for shortest leg), elite durability and recovery, zero health risks, peakAge exactly 3, mental excellent, trainability excellent, surface versatile Versatile 2000m" [ref=e341]:
+                    - generic [ref=e342]:
+                      - generic [ref=e343]: 🥇
+                      - generic [ref=e344]:
+                        - paragraph [ref=e345]: Triple Crown Specialist
+                        - paragraph [ref=e346]: Aggressive focus on Triple Crown achievement regardless of region. Very high stamina (for longest leg), high speed (for shortest leg), elite durability and recovery, zero health risks, peakAge exactly 3, mental excellent, trainability excellent, surface versatile
+                        - generic [ref=e347]:
+                          - generic [ref=e348]: Versatile
+                          - generic [ref=e349]: 2000m
+                      - img [ref=e350]
+  - region "Notifications alt+T"

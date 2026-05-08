@@ -45,7 +45,10 @@
       "mcp__plugin_playwright_playwright__browser_wait_for",
       "mcp__plugin_playwright_playwright__browser_click",
       "mcp__plugin_playwright_playwright__browser_snapshot",
-      "mcp__plugin_playwright_playwright__browser_evaluate"
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4444/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5555/)",
+      "mcp__plugin_playwright_playwright__browser_resize"
     ]
   }
 }
