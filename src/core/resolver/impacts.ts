@@ -12,9 +12,10 @@ import type {
   HorseCampaign,
   TripleCrownProgress,
 } from "@/game/types";
-import type { RaceSnapshot } from "@/core/race/types";
+import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { NewsItem } from "../narrative/newsTypes";
 import type { SeasonRecord, HallOfFameEntry } from "../history/historyTypes";
+import type { HealthStatus } from "@/core/horse/types";
 
 // Base impact type
 export interface Impact {
@@ -541,6 +542,7 @@ export type AnyImpact =
   | AutoManageToggleImpact
   | AgingImpact
   | RaceHistoryImpact
+  | SeasonHistoryImpact
   | ClaimingImpact
   | BlueHenImpact
   | JockeyStatsImpact

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/components/HorseBits";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
-import { Users, Briefcase, Zap, HeartPulse, UserPlus, X } from "lucide-react";
+import { Users, Briefcase, Zap, HeartPulse, UserPlus, X, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/staff")({

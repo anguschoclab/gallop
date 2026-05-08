@@ -75,7 +75,7 @@ function AuctionSalePage() {
       });
     }, 200);
     return () => clearTimeout(id);
-  }, [searchDraft]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchDraft, navigate]);
 
   // Keep draft in sync if URL param changes externally (e.g. back/forward)
   useEffect(() => {

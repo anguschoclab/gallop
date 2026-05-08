@@ -21,7 +21,6 @@ export class SystemHandler implements ImpactHandler {
       "claimResolution",
       "reputation_change",
       "transaction",
-      "staff",
       "news_item",
       "hall_of_fame_induction",
       "season_history_record"
@@ -102,7 +101,7 @@ export class SystemHandler implements ImpactHandler {
           lookupMaps?.campaignMap.get(horseId) || draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.flags = campaign.flags.filter(
-            (f) =>
+            (f: any) =>
               f.type !== flag.type || f.day !== flag.day || f.description !== flag.description,
           );
         }

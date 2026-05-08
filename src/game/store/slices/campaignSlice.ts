@@ -7,6 +7,8 @@ import type { HorseCampaign, TripleCrownProgress } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/game/uuid";
 
+import type { StoreSet, StoreGet } from "../types";
+
 export type CampaignSlice = {
   campaigns?: HorseCampaign[];
   triplecrownHistory?: TripleCrownProgress[];
@@ -21,10 +23,8 @@ export type CampaignSlice = {
   generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => void;
   setCampaigns: (campaigns: HorseCampaign[]) => void;
   setTriplecrownHistory: (history: TripleCrownProgress[]) => void;
-import type { StoreSet, StoreGet } from "../types";
+};
 
-export type CampaignSlice = {
-...
 export function createCampaignSlice(
   set: StoreSet,
   get: StoreGet,
@@ -44,7 +44,9 @@ export function createCampaignSlice(
         day: s.day,
         priority: 100,
         type: "campaign_creation",
-        campaign,
+        horseId: campaign.horseId,
+        goalType: campaign.goalType as "chase_g1" | "chase_g2" | "chase_g3" | "maximize_earnings" | "develop_maiden" | "free_run",
+        targetRaceKey: campaign.targetRaceKey,
       });
     },
 
@@ -71,7 +73,6 @@ export function createCampaignSlice(
       const s = get();
       const campaign = s.campaigns?.find((c: HorseCampaign) => c.horseId === horseId);
       if (!campaign) return;
-      const flag = campaign.flags[flagIndex];
 
       enqueueIntent({
         id: generateUUID(),
@@ -81,7 +82,7 @@ export function createCampaignSlice(
         priority: 100,
         type: "campaign_flag_dismissal",
         horseId,
-        flag,
+        flagIndex,
       });
     },
 
@@ -107,16 +108,9 @@ export function createCampaignSlice(
         day: s.day,
         priority: 100,
         type: "campaign_creation",
-        // Helper would be needed here for full auto-gen, for now just enqueuing
-        campaign: {
-          horseId,
-          goalType,
-          targetRaceKey,
-          slots: [],
-          flags: [],
-          autoManaged: true,
-          lastUpdated: s.day,
-        },
+        horseId,
+        goalType: goalType as "chase_g1" | "chase_g2" | "chase_g3" | "maximize_earnings" | "develop_maiden" | "free_run",
+        targetRaceKey,
       });
     },
 

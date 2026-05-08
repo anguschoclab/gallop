@@ -44,7 +44,7 @@ export interface StableAIState {
  * Global NPC AI state manager
  */
 export interface NpcAIManager {
-  stableStates: Map<string, StableAIState>;
+  stableStates: Record<string, StableAIState>;
   globalDay: number;
 }
 
@@ -68,10 +68,10 @@ export function getOrCreateStableAIState(
   stable: Stable,
   currentDay: number,
 ): StableAIState {
-  let state = manager.stableStates.get(stable.id);
+  let state = manager.stableStates[stable.id];
   if (!state) {
     state = createStableAIState(stable, currentDay);
-    manager.stableStates.set(stable.id, state);
+    manager.stableStates[stable.id] = state;
   }
   // Return a shallow clone; deep cloning via JSON is too slow for 500+ NPC stables
   return { ...state };
@@ -91,10 +91,11 @@ export function updateStableAIState(state: StableAIState, currentDay: number): S
  * Prune old learning data for all stables
  */
 export function pruneAllLearningData(manager: NpcAIManager, cutoffDay: number): NpcAIManager {
-  for (const [id, state] of manager.stableStates.entries()) {
+  for (const id in manager.stableStates) {
+    const state = manager.stableStates[id];
     const prunedLearning = pruneOldOutcomes(state.learningState, cutoffDay);
     if (prunedLearning !== state.learningState) {
-      manager.stableStates.set(id, { ...state, learningState: prunedLearning });
+      manager.stableStates[id] = { ...state, learningState: prunedLearning };
     }
   }
   return manager;
@@ -112,7 +113,7 @@ export function getStrategicInsights(
   strategyConfidence: number;
   lastUpdate: number;
 } | null {
-  const state = manager.stableStates.get(stableId);
+  const state = manager.stableStates[stableId];
   if (!state) return null;
 
   const totalDecisions = state.learningState.outcomes.length;
