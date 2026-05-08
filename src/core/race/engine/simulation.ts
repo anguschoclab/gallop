@@ -639,12 +639,12 @@ export function stepRunner(
   }
 
   // --- Tactical AI Integration ---
-  const tactical = calculateTacticalAdjustment(r, pace, runners);
+  const tactical = calculateTacticalAdjustment(r, pace, field || []);
   r.velocity *= (1 + (tactical.velocityMod - 1) * dt);
   r.lane += (tactical.targetLane - r.lane) * 0.1 * dt;
 
   // --- Traffic & Blocking Penalty ---
-  const blockingHorse = runners.find(other => 
+  const blockingHorse = (field || []).find(other => 
     other.horseId !== r.horseId &&
     other.finishTime === null &&
     other.position > r.position &&
@@ -654,6 +654,7 @@ export function stepRunner(
   if (blockingHorse) {
     r.velocity = Math.min(r.velocity, blockingHorse.velocity * 0.98);
   }
+
 
   r.position += finalDs;
 

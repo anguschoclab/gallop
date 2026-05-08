@@ -57,11 +57,12 @@ export function simulateRace(
       name, 
       silk, 
       owned, 
-      jockeyId: jockey.id,
-      jockeyName: jockey.name,
+      jockeyId: jockey?.id || "ai",
+      jockeyName: jockey?.name || "AI Jockey",
       barrier, 
       lane 
     })),
+
     snapshots,
   };
 }

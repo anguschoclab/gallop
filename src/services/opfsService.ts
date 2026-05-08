@@ -17,6 +17,12 @@ export async function initOPFS(): Promise<void> {
 
   initPromise = (async () => {
     try {
+      // Check if we are in a browser environment
+      if (typeof navigator === "undefined") {
+        isOPFSAvailable = false;
+        return;
+      }
+
       // Check if OPFS is available
       if (!("storage" in navigator) || !("getDirectory" in navigator.storage)) {
         console.warn("OPFS not available in this browser");
@@ -49,8 +55,10 @@ export async function checkOPFSAvailable(): Promise<boolean> {
  */
 export async function writeFile(filename: string, data: unknown): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {
-    throw new Error("OPFS not available");
+    // Silent no-op in headless/SSR environments
+    return;
   }
+
 
   try {
     const fileHandle = await opfsRoot.getFileHandle(filename, { create: true });

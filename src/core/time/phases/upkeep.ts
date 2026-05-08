@@ -36,6 +36,7 @@ export const upkeepPhase = {
     const playerStaff = hiredStaff.filter(s => s.stableId === "");
     const playerStaffSalaries = playerStaff.reduce((sum, s) => sum + s.salary, 0);
 
+    const facilityMaintenance = state.facilities ? calculateTotalMaintenance(state.facilities) : 0;
     const totalDailyCost = playerUpkeep + facilityMaintenance + playerStaffSalaries;
 
     // Record expense entries for each horse
@@ -46,8 +47,6 @@ export const upkeepPhase = {
       }),
     );
 
-    // Record facility maintenance expense
-    const facilityMaintenance = state.facilities ? calculateTotalMaintenance(state.facilities) : 0;
     if (facilityMaintenance > 0) {
       newExpenses.push(
         createExpense(
