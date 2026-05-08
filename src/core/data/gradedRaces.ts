@@ -51,6 +51,7 @@ export type GradedRace = {
   winAndYouInTarget?: string; // e.g. "bc-classic" - target race for automatic qualification (Win and You're In)
   dayOfYearVariance?: number; // max ±days to shift from base dayOfYear each year (default: 3)
   purseGrowthRate?: number; // annual % purse growth (default: 0.02)
+  fieldSize?: number; // Real-life field size for this race (defaults to 12 if not specified)
 };
 
 function doy(month: number, day: number): number {
@@ -243,7 +244,58 @@ export function getTrackContinent(track: string): Continent {
   return COUNTRY_TO_CONTINENT[country] || "europe";
 }
 
-export const GRADED_RACES: GradedRace[] = [
+// Field size assignment helpers based on real-life research
+function getDefaultFieldSize(grade: Grade, country: string): number {
+  // Region mapping for field size heuristics
+  const region = getCountryRegion(country);
+
+  // Heuristic matrix based on research of real-life field sizes
+  const fieldSizeMatrix: Record<string, Record<Grade, number>> = {
+    north_america: { G1: 13, G2: 10, G3: 8 },
+    europe: { G1: 15, G2: 11, G3: 9 },
+    asia_pacific: { G1: 15, G2: 11, G3: 9 },
+    japan: { G1: 17, G2: 13, G3: 11 },
+    hong_kong: { G1: 13, G2: 11, G3: 9 },
+    uae: { G1: 11, G2: 9, G3: 7 },
+    south_america: { G1: 13, G2: 9, G3: 7 },
+  };
+
+  return fieldSizeMatrix[region]?.[grade] ?? 12;
+}
+
+function getCountryRegion(country: string): string {
+  const regionMap: Record<string, string> = {
+    USA: "north_america",
+    Canada: "north_america",
+    "Great Britain": "europe",
+    Ireland: "europe",
+    France: "europe",
+    Germany: "europe",
+    Italy: "europe",
+    Spain: "europe",
+    Austria: "europe",
+    Belgium: "europe",
+    "Czech Republic": "europe",
+    Hungary: "europe",
+    Sweden: "europe",
+    Norway: "europe",
+    Denmark: "europe",
+    Turkey: "europe",
+    UAE: "uae",
+    Australia: "asia_pacific",
+    "New Zealand": "asia_pacific",
+    Singapore: "asia_pacific",
+    "Saudi Arabia": "asia_pacific",
+    Japan: "japan",
+    "Hong Kong": "hong_kong",
+    Argentina: "south_america",
+    Brazil: "south_america",
+    Chile: "south_america",
+  };
+  return regionMap[country] ?? "europe"; // Default to Europe
+}
+
+const GRADED_RACES_BASE: GradedRace[] = [
   {
     uuid: "d5d972e0-b7d3-4a73-987e-7d298c734474",
     key: "woodbine-mile",
@@ -440,6 +492,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 12000000,
     dayOfYear: doy(3, 30),
     restrictions: { minAgeNorthern: 4, minAgeSouthern: 3 },
+    fieldSize: 11,
   },
 
   // ============= UAE — Group 2 =============
@@ -2600,6 +2653,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 319,
     restrictions: { minAge: 3 },
+    fieldSize: 18,
   },
   {
     uuid: "449a86d9-23a0-48ab-8b45-556a8ac3afc8",
@@ -7566,6 +7620,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 288,
     restrictions: { minAge: 3 },
+    fieldSize: 24,
   },
   {
     uuid: "a2e6d57a-ac19-48f3-a488-410bd9c6caeb",
@@ -11482,6 +11537,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
     triplecrownKey: "usa-tc",
     dayOfYearVariance: 0,
+    fieldSize: 20,
   },
   {
     uuid: "aa000002-0000-4000-8000-000000000002",
@@ -11497,6 +11553,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
     triplecrownKey: "usa-tc",
     dayOfYearVariance: 0,
+    fieldSize: 12,
   },
   {
     uuid: "aa000003-0000-4000-8000-000000000003",
@@ -11512,6 +11569,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
     triplecrownKey: "usa-tc",
     dayOfYearVariance: 0,
+    fieldSize: 12,
   },
 
   // ============= USA — Major G1s (prep chain to Triple Crown) =============
@@ -11744,6 +11802,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000002-0000-4000-8000-000000000002",
@@ -11759,6 +11818,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000003-0000-4000-8000-000000000003",
@@ -12031,6 +12091,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 8000000,
     dayOfYear: doy(11, 5),
     restrictions: { minAge: 3 },
+    fieldSize: 24,
     dayOfYearVariance: 0,
   },
   {
@@ -12235,6 +12296,14 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
 ];
+
+// Apply fieldSize heuristics to races without explicit fieldSize
+const GRADED_RACES_WITH_FIELD_SIZES: GradedRace[] = GRADED_RACES_BASE.map((race) => ({
+  ...race,
+  fieldSize: race.fieldSize ?? getDefaultFieldSize(race.grade, race.country || "USA"),
+}));
+
+export const GRADED_RACES = GRADED_RACES_WITH_FIELD_SIZES;
 
 // Duplicate detection check to ensure no race keys are duplicated across sources
 function validateNoDuplicateRaces() {

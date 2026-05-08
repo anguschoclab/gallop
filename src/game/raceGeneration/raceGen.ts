@@ -49,7 +49,7 @@ export function makeGradedRace(
     entryFee,
     purse: g.purse,
     minStat,
-    fieldSize: 12,
+    fieldSize: g.fieldSize ?? 12,
     entries: [],
     resolved: false,
     graded: {

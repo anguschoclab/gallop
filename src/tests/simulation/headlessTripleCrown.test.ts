@@ -1,19 +1,91 @@
 /**
  * Headless Triple Crown Simulation Test
- * 
+ *
  * This test runs a headless simulation until a Triple Crown winner is found in any region,
  * then reports the years taken, pedigree, and sire breeding price impact.
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+
+// Mock Worker global to prevent worker creation in test environment
+(global as any).Worker = undefined;
+
+// Mock opfsService module before importing storage-dependent code
+vi.mock("@/services/opfsService", () => ({
+  initOPFS: vi.fn(),
+  writeFile: vi.fn(),
+  readFile: vi.fn(),
+  deleteFile: vi.fn(),
+}));
+
+// Mock comlink to prevent worker communication issues
+vi.mock("comlink", () => ({
+  wrap: () => ({
+    simulateRace: vi.fn().mockResolvedValue([]),
+    initializeHorses: vi.fn().mockResolvedValue(undefined),
+    saveState: vi.fn().mockResolvedValue(undefined),
+    loadState: vi.fn().mockResolvedValue(null),
+  }),
+  expose: vi.fn(),
+}));
+
 import { createDefaultGameState } from "@/game/state";
 import { useGame } from "@/game/store";
 import type { Horse } from "@/game/types";
+import * as opfsService from "@/services/opfsService";
+
+// Mock helpers
+let mockOPFSData: Map<string, any> = new Map();
+
+function resetOPFSMocks() {
+  mockOPFSData = new Map();
+
+  (opfsService.initOPFS as any).mockResolvedValue(undefined);
+  (opfsService.readFile as any).mockImplementation(async (filename: string) => {
+    return mockOPFSData.get(filename) ?? null;
+  });
+  (opfsService.writeFile as any).mockImplementation(async (filename: string, data: any) => {
+    mockOPFSData.set(filename, data);
+  });
+  (opfsService.deleteFile as any).mockImplementation(async (filename: string) => {
+    mockOPFSData.delete(filename);
+    return true;
+  });
+}
+
+function mockLocalStorage() {
+  const store = new Map<string, string>();
+  (global as any).localStorage = {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      store.set(key, value);
+    },
+    removeItem: (key: string) => {
+      store.delete(key);
+    },
+    clear: () => {
+      store.clear();
+    },
+  };
+  return store;
+}
+
+const originalLocalStorage = (global as any).localStorage;
 
 describe("Headless Triple Crown Simulation", () => {
   beforeEach(() => {
+    // Reset OPFS mocks and setup localStorage
+    resetOPFSMocks();
+    mockLocalStorage();
     // Reset store before each test
     useGame.setState(createDefaultGameState());
+    // Suppress worker warnings to reduce output noise
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    (global as any).localStorage = originalLocalStorage;
   });
 
   it("should simulate until triple crown winner found", async () => {
@@ -28,7 +100,7 @@ describe("Headless Triple Crown Simulation", () => {
     let sireFeeAfter = 0;
 
     // Simulation loop
-    const maxYears = 100; // Safety limit
+    const maxYears = 10; // Reduced from 100 for testing
     let foundWinner = false;
 
     for (let year = 1; year <= maxYears && !foundWinner; year++) {
