@@ -381,4 +381,4 @@ async function runHighPerfAnalysis(years: number = 30) {
   console.log(`\nFull results saved to simulation-results-${Date.now()}.json`);
 }
 
-runHighPerfAnalysis(30).catch(console.error);
+runHighPerfAnalysis(0.5).catch(console.error);
