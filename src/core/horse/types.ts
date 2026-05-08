@@ -14,6 +14,13 @@ export type RunningStyle = "E" | "EP" | "P" | "S";
 
 export type HealthStatus = "healthy" | "covering_sickness" | "recovering" | "other_illness";
 
+export interface ActiveInjury {
+  type: string;
+  severity: "minor" | "moderate" | "major" | "career-ending";
+  recoveryDays: number;
+  onsetDay: number;
+}
+
 export interface BlueHenStatus {
   isBlueHen: boolean;
   stakesWinnersProduced: number;
@@ -189,4 +196,5 @@ export type Horse = {
   deceasedOnDay?: number;
   causeOfDeath?: string;
   appearance?: AppearanceDNA;
+  activeInjury?: ActiveInjury;
 };

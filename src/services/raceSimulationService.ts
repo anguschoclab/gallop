@@ -13,6 +13,8 @@ import { calculateClassBonus } from "@/core/common/classBonus";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { StaffMember } from "@/core/staff/staffTypes";
+import type { RunnerBonuses } from "@/core/race/engine/simulation";
 
 /**
  * Race simulation orchestration with dependency injection
@@ -26,6 +28,7 @@ export interface RaceSimulationDependencies {
   npcStables?: Stable[];
   npcAIManager?: NpcAIManager;
   currentDay?: number;
+  hiredStaff?: StaffMember[];
 }
 
 export interface SimulationResult {
@@ -56,7 +59,7 @@ export interface RaceFieldResult {
  * callers can persist them into game state (avoids ghost IDs in results).
  */
 export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFieldResult {
-  const { race, horses, npcStables, npcAIManager, currentDay } = dependencies;
+  const { race, horses, npcStables, npcAIManager, currentDay, hiredStaff = [] } = dependencies;
   const conditions = getConditionsModifier(race);
   const fillerHorses: Horse[] = [];
   const surface = race.surface || race.graded?.surface;
@@ -119,6 +122,18 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
       // Get stable for AI-driven decisions
       const stableObj =
         horse.stableId && npcStables ? npcStables.find((s) => s.id === horse.stableId) : undefined;
+        
+      // Get staff for this stable
+      const stableId = horse.stableId ?? "";
+      const staffForStable = hiredStaff.filter(s => s.stableId === stableId);
+      
+      const farrier = staffForStable.find(s => s.role === "farrier");
+      const groom = staffForStable.find(s => s.role === "groom");
+      
+      const runnerBonuses: RunnerBonuses = {
+        farrier: farrier?.bonusValue,
+        groom: groom?.bonusValue,
+      };
 
       runners.push(
         buildRunner(
@@ -135,6 +150,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
           currentDay,
           stableObj,
           race,
+          runnerBonuses,
         ),
       );
     }

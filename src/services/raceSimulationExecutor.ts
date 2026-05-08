@@ -1,7 +1,8 @@
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
-import type { Race, Horse, Jockey } from "@/game/types";
+import type { Race, Horse, Jockey, Stable } from "@/game/types";
+import type { StaffMember } from "@/core/staff/staffTypes";
 
 export interface RaceSimulationResult {
   raceId: string;
@@ -16,11 +17,19 @@ export interface RaceSimulationResult {
  * @param jockeys - All jockeys in the game state
  * @returns Race simulation result
  */
-export function simulateRace(race: Race, horses: Horse[], jockeys: Jockey[]): RaceSimulationResult {
+export function simulateRace(
+  race: Race, 
+  horses: Horse[], 
+  jockeys: Jockey[],
+  hiredStaff?: StaffMember[],
+  npcStables?: Stable[]
+): RaceSimulationResult {
   const { runners, fillerHorses } = buildRaceField({
     race,
     horses,
     jockeys,
+    hiredStaff,
+    npcStables,
   });
   const rng = rngForRace(race);
   const course = getCourseForRace(race);

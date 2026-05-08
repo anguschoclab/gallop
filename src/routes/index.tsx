@@ -10,13 +10,14 @@ import { Trophy, BarChart2, Calendar, TrendingUp, DollarSign } from "lucide-reac
 import { getGradeColorClass } from "@/core/race/grading";
 import { cn } from "@/lib/utils";
 import { ReputationBadge } from "@/components/ReputationBadge";
+import { Newspaper } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
 function Dashboard() {
-  const { day, cash, horses, races, log, awards, reputation } = useGame();
+  const { day, cash, horses, races, log, awards, reputation, news } = useGame();
   const upcoming = races
     .filter((r) => !r.resolved && r.day >= day)
     .sort((a, b) => a.day - b.day)
@@ -132,6 +133,48 @@ function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Top Headlines - The Gallop Gazette Mini-Widget */}
+      <Card className="border-gold bg-[#f4f1ea] text-[#2c2c2c] overflow-hidden">
+        <CardHeader className="pb-2 border-b-2 border-double border-[#2c2c2c] flex flex-row items-center justify-between">
+          <CardTitle className="text-xl font-black uppercase tracking-tighter font-[family-name:var(--font-display)]">
+            The Gallop Gazette
+          </CardTitle>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase">
+            <span>Day {day} Edition</span>
+            <Newspaper className="h-4 w-4" />
+          </div>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {news && news.length > 0 ? (
+              news.slice(0, 2).map((item, i) => (
+                <div key={item.id} className={cn("space-y-1", i === 0 && news.length > 1 && "md:border-r md:border-[#d3d3d3] md:pr-6")}>
+                  <Badge variant="outline" className="text-[9px] uppercase bg-[#2c2c2c] text-white border-none rounded-none h-4 px-1">
+                    {item.category}
+                  </Badge>
+                  <h3 className={cn(
+                    "font-extrabold leading-tight tracking-tighter",
+                    item.importance === 'high' ? "text-xl" : "text-lg"
+                  )}>
+                    {item.headline}
+                  </h3>
+                  <p className="text-sm line-clamp-2 leading-snug opacity-80 font-serif">
+                    {item.body}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm italic opacity-60">No headlines today.</p>
+            )}
+          </div>
+          <div className="mt-4 pt-2 border-t border-[#d3d3d3] flex justify-end">
+            <Link to="/gazette" className="text-xs font-bold uppercase hover:underline flex items-center gap-1">
+              Read Full Gazette →
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-1 border-gold-muted">

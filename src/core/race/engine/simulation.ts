@@ -136,21 +136,25 @@ export function buildRunner(
   currentDay?: number,
   stable?: StableT,
   race?: RaceT,
+  bonuses?: RunnerBonuses,
 ): Runner {
+  const farrierBonus = bonuses?.farrier ?? 0;
+  const groomBonus = bonuses?.groom ?? 0;
+
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
   const formEnergy = clamp(formMod * energyMod, 0.5, MAX_FORM_ENERGY_MUL);
 
   const distDiff = Math.abs(h.distanceAptitude - raceDistance);
   const distanceMod = 1 - Math.min(0.1, Math.max(0, distDiff - 400) / 8000);
-  const surfaceMod = surface ? (h.surfaceAptitude[surface] ?? 0.95) : 1.0;
+  const surfaceMod = surface ? (h.surfaceAptitude[surface] ?? 0.95) * (1 + farrierBonus) : 1.0;
 
   const fiberMods = h.fiberBias
     ? fiberDistanceModifier(h.fiberBias, raceDistance)
     : { speedMul: 1, staminaMul: 1 };
 
   const conditionsHarsh = conditions.speedMul < 0.97;
-  const mudMod = conditionsHarsh ? (h.mudAptitude ?? 1.0) : 1.0;
+  const mudMod = conditionsHarsh ? (h.mudAptitude ?? 1.0) * (1 + farrierBonus) : 1.0;
 
   const lineBias = h.bloodline ? REGIONAL_LINE_BIAS[h.bloodline as Bloodline] : undefined;
   const lineSurfaceMul =
@@ -207,7 +211,8 @@ export function buildRunner(
           : 0.99
         : 1;
   const baseStamina = (0.4 + (h.stats.stamina / 100) * 0.6) * fiberMods.staminaMul;
-  const temperamentMod = 1 + (TRAIT_VALUES[h.temperament || "fair"] - 2) * -0.1;
+  const rawTemperamentMod = 1 + (TRAIT_VALUES[h.temperament || "fair"] - 2) * -0.1;
+  const temperamentMod = Math.max(1.0, rawTemperamentMod + groomBonus);
   const conformationMod = 1 + (TRAIT_VALUES[h.conformation || "fair"] - 2) * -0.03;
 
   const conditionStamina = clamp(

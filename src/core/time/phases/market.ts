@@ -67,6 +67,14 @@ export const marketPhase = {
       }
     }
 
+    // Staff pool replenishment
+    let staffPool = state.staffPool ?? [];
+    if (staffPool.length < 4) {
+      const { generateStaffPool } = await import("@/core/staff/staffGenerator");
+      const newStaff = generateStaffPool(dailyRng, 6 - staffPool.length);
+      staffPool = [...staffPool, ...newStaff];
+    }
+
     return {
       ...context,
       state: {
@@ -74,6 +82,7 @@ export const marketPhase = {
         market,
         npcStables,
         npcAIManager,
+        staffPool,
       },
     };
   },

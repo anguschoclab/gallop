@@ -2,6 +2,8 @@
 // These fields are always present and the game cannot run without them
 
 import type { Horse, Race } from "../types";
+import type { NewsItem } from "@/core/narrative/newsTypes";
+import { generateUUID } from "@/game/uuid";
 
 /**
  * Core game state that is always present and required for the game to function.
@@ -18,6 +20,8 @@ export interface CoreState {
   races: Race[];
   /** Game log for significant events */
   log: { day: number; text: string }[];
+  /** Structured news items for the Gallop Gazette */
+  news: NewsItem[];
 }
 
 /**
@@ -51,6 +55,16 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
           text: `${profile.stableName} opens its doors. Welcome, ${profile.ownerName}.`,
         },
       ],
+      news: [
+        {
+          id: generateUUID(),
+          day: 1,
+          category: "milestone",
+          importance: "high",
+          headline: `${profile.stableName} Opens for Business!`,
+          body: `The local racing community is abuzz as ${profile.ownerName} officially registers ${profile.stableName}. "We're here to make history," the new owner stated at the morning trials.`,
+        },
+      ],
     };
   }
 
@@ -61,5 +75,15 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
     horses: [],
     races: [],
     log: [{ day: 1, text: "Welcome to Gallop! Your stable is now open for business." }],
+    news: [
+      {
+        id: generateUUID(),
+        day: 1,
+        category: "milestone",
+        importance: "high",
+        headline: "Welcome to Gallop!",
+        body: "Your stable is now open for business. Good luck on the road to the Triple Crown!",
+      },
+    ],
   };
 }
