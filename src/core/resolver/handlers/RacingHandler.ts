@@ -14,7 +14,8 @@ export class RacingHandler implements ImpactHandler {
       "jockey_stats",
       "race_history",
       "claiming",
-      "triple_crown_progress"
+      "triple_crown_progress",
+      "tactics"
     ].includes(type);
   }
 
@@ -119,6 +120,18 @@ export class RacingHandler implements ImpactHandler {
           existing.won = won;
         } else {
           draft.triplecrownHistory.push({ horseId, triplecrownKey, year, legs, won });
+        }
+        break;
+      }
+
+      case "tactics": {
+        const { raceId, horseId, tactics } = impact;
+        const race = draft.races.find((r) => r.id === raceId);
+        if (race) {
+          const entry = race.entries.find((e) => e.horseId === horseId);
+          if (entry) {
+            entry.tactics = tactics;
+          }
         }
         break;
       }

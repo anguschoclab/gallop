@@ -89,18 +89,9 @@ export function createBreedingSlice(
         liveFoalGuarantee,
       };
 
-      enqueueIntent(intent);
-
-      // Deduct cash immediately
-      set({
-        cash: s.cash - totalFee,
-        log: [
-          {
-            day: s.day,
-            text: `${sire!.name} × ${dam!.name} breeding scheduled. Fee ${formatCurrency(totalFee)}${studFee ? ` (incl. ${formatCurrency(studFee)} stud fee)` : ""}${liveFoalGuarantee ? " (Live Foal Guarantee)" : ""}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        ...intent,
+        fee: totalFee,
       });
       return { ok: true };
     },

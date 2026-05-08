@@ -175,6 +175,14 @@ export interface JockeyAssignmentImpact extends Impact {
   reason: string;
 }
 
+// Jockey silk impact
+export interface JockeySilkImpact extends Impact {
+  type: "jockey_silk";
+  jockeyId: string;
+  silk: string;
+  reason: string;
+}
+
 // Scout report impact
 export interface ScoutReportImpact extends Impact {
   type: "scout_report";
@@ -256,6 +264,14 @@ export interface CampaignSlotImpact extends Impact {
 // Campaign flag impact
 export interface CampaignFlagImpact extends Impact {
   type: "campaign_flag";
+  horseId: string;
+  flag: CampaignFlag;
+  reason: string;
+}
+
+// Campaign flag dismissal impact
+export interface CampaignFlagDismissalImpact extends Impact {
+  type: "campaign_flag_dismissal";
   horseId: string;
   flag: CampaignFlag;
   reason: string;
@@ -475,6 +491,7 @@ export type AnyImpact =
   | StudCareerImpact
   | JockeyContractImpact
   | JockeyAssignmentImpact
+  | JockeySilkImpact
   | ScoutReportImpact
   | ConsignmentImpact
   | ConsignmentWithdrawalImpact
@@ -483,6 +500,7 @@ export type AnyImpact =
   | RenameImpact
   | CampaignSlotImpact
   | CampaignFlagImpact
+  | CampaignFlagDismissalImpact
   | CampaignCreationImpact
   | CampaignDeletionImpact
   | AutoManageToggleImpact

@@ -52,6 +52,11 @@ import { getEngineWorker } from "@/game/store";
 export type CoreSlice = CoreState & {
   enterRace: (raceId: string, horseId: string) => ActionResult;
   withdrawRace: (raceId: string, horseId: string) => ActionResult;
+  setRaceTactics: (
+    raceId: string,
+    horseId: string,
+    tactics: import("@/core/resolver/intents").TacticsIntent["tactics"],
+  ) => void;
   resolveRaceWithImpacts: (
     raceId: string,
     result: { horseId: string; position: number; time: number }[],
@@ -105,6 +110,21 @@ export function createCoreSlice(
       });
 
       return { ok: true };
+    },
+
+    setRaceTactics: (raceId: string, horseId: string, tactics: any) => {
+      const s = get();
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "tactics",
+        raceId,
+        horseId,
+        tactics,
+      });
     },
 
     withdrawRace: (raceId: string, horseId: string) => {

@@ -15,7 +15,7 @@ import type {
 import type { MarketState } from "@/game/state/marketState";
 import { createDefaultMarketState } from "@/game/state/marketState";
 import { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
-import { scoutHorse } from "@/game/scouting";
+import { scoutHorse, calculateScoutCost } from "@/game/scouting";
 import { createRng, hashStr } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
 import type { PurchaseIntent } from "@/core/resolver/intents";
@@ -75,7 +75,7 @@ export function createMarketSlice(
   set: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: any,
-  enqueueIntent: (intent: PurchaseIntent) => void,
+  enqueueIntent: (intent: PurchaseIntent | ScoutIntent) => void,
 ): MarketSlice {
   return {
     ...createDefaultMarketState(),
@@ -87,8 +87,7 @@ export function createMarketSlice(
       const price = horsePrice(h);
       if (s.cash < price) return;
 
-      // Enqueue PurchaseIntent for next day advance
-      const intent: PurchaseIntent = {
+      enqueueIntent({
         id: generateUUID(),
         entityId: horseId,
         source: "player",
@@ -97,17 +96,6 @@ export function createMarketSlice(
         type: "purchase",
         horseId,
         price,
-      };
-
-      enqueueIntent(intent);
-
-      // Deduct cash immediately
-      set({
-        cash: s.cash - price,
-        log: [
-          { day: s.day, text: `${h.name} purchase scheduled for ${formatCurrency(price)}.` },
-          ...s.log,
-        ].slice(0, 50),
       });
     },
 
@@ -126,25 +114,31 @@ export function createMarketSlice(
         return { success: false, cost: 0, message: "Stable not found." };
       }
 
-      const scoutRng = createRng(hashStr(`scout_${horseId}_${s.day}`));
-      const result = scoutHorse(horse, stable, s.day, s.cash, scoutRng);
-
-      if (result.success && result.report) {
-        const report = result.report;
-        // Deduct cost and save report
-        const updatedHorses = s.horses.map((h: Horse) =>
-          h.id === horseId
-            ? { ...h, scoutedStats: report.revealedStats, lastScoutedDay: s.day }
-            : h,
-        );
-        set({
-          horses: updatedHorses,
-          cash: s.cash - result.cost,
-          scoutReports: [report, ...s.scoutReports],
-          log: [{ day: s.day, text: result.message }, ...s.log].slice(0, 50),
-        });
+      const cost = calculateScoutCost(horse, stable);
+      if (s.cash < cost) {
+        return {
+          success: false,
+          cost: 0,
+          message: `Insufficient funds. Scouting costs ${formatCurrency(cost)}.`,
+        };
       }
-      return result;
+
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "scout",
+        horseId,
+        stableId: horse.stableId,
+      });
+
+      return {
+        success: true,
+        cost,
+        message: `Scout dispatched to examine ${horse.name}. Report ready tomorrow.`,
+      };
     },
 
     consignHorse: (horseId: string, saleId: string, reservePrice?: number) => {

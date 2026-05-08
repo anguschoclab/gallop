@@ -156,10 +156,12 @@ export const useGame = create<StoreType>()(
       ...createBreedingSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
 
       // Systems slice
-      ...createSystemsSlice(set, get),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...createSystemsSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
 
       // Campaign slice
-      ...createCampaignSlice(set, get),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...createCampaignSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
 
       // Start new game action
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

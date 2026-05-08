@@ -4,6 +4,8 @@
  */
 
 import type { HorseCampaign, TripleCrownProgress } from "@/game/types";
+import type { AnyIntent } from "@/core/resolver/intents";
+import { generateUUID } from "@/game/uuid";
 
 export type CampaignSlice = {
   campaigns?: HorseCampaign[];
@@ -26,18 +28,23 @@ export function createCampaignSlice(
   set: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: any,
+  enqueueIntent: (intent: AnyIntent) => void,
 ): CampaignSlice {
   return {
     campaigns: [],
     triplecrownHistory: [],
 
     setCampaign: (campaign: HorseCampaign) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
-        campaigns: state.campaigns?.map((c: HorseCampaign) =>
-          c.horseId === campaign.horseId ? campaign : c,
-        ) || [campaign],
-      }));
+      const s = get();
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: campaign.horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "campaign_creation",
+        campaign,
+      });
     },
 
     updateCampaignSlot: (
@@ -45,46 +52,71 @@ export function createCampaignSlice(
       slotIndex: number,
       patch: Partial<HorseCampaign["slots"][number]>,
     ) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
-        campaigns: state.campaigns?.map((c: HorseCampaign) =>
-          c.horseId === horseId
-            ? {
-                ...c,
-                slots: c.slots.map((s, i) => (i === slotIndex ? { ...s, ...patch } : s)),
-              }
-            : c,
-        ),
-      }));
+      const s = get();
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "campaign_slot",
+        horseId,
+        slotIndex,
+        slot: patch,
+      });
     },
 
     dismissCampaignFlag: (horseId: string, flagIndex: number) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
-        campaigns: state.campaigns?.map((c: HorseCampaign) =>
-          c.horseId === horseId
-            ? {
-                ...c,
-                flags: c.flags.filter((_, i) => i !== flagIndex),
-              }
-            : c,
-        ),
-      }));
+      const s = get();
+      const campaign = s.campaigns?.find((c: HorseCampaign) => c.horseId === horseId);
+      if (!campaign) return;
+      const flag = campaign.flags[flagIndex];
+
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "campaign_flag_dismissal",
+        horseId,
+        flag,
+      });
     },
 
     deleteCampaign: (horseId: string) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
-        campaigns: state.campaigns?.filter((c: HorseCampaign) => c.horseId !== horseId),
-      }));
+      const s = get();
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "campaign_deletion",
+        horseId,
+      });
     },
 
-    generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => {
-      // Full implementation would be in a helper
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
-        campaigns: state.campaigns || [],
-      }));
+    generateAutoCampaign: (horseId: string, goalType: any, targetRaceKey?: string) => {
+      const s = get();
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "campaign_creation",
+        // Helper would be needed here for full auto-gen, for now just enqueuing
+        campaign: {
+          horseId,
+          goalType,
+          targetRaceKey,
+          slots: [],
+          flags: [],
+          autoManaged: true,
+          lastUpdated: s.day,
+        },
+      });
     },
 
     setCampaigns: (campaigns) => {

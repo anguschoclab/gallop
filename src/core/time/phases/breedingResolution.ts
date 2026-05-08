@@ -103,6 +103,21 @@ export const breedingResolutionPhase: PipelinePhase = {
         pregnancy,
         reason: "Breeding",
       });
+
+      // Deduct fee from breeder (player)
+      if (intent.source === "player" && intent.fee && intent.fee > 0) {
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "breedingResolution",
+          logLevel: "always",
+          type: "cash_change",
+          entityId: "player",
+          amount: -intent.fee,
+          reason: "Breeding fee",
+        });
+      }
     }
 
     return {

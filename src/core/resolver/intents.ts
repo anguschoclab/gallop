@@ -50,6 +50,7 @@ export interface BreedingIntent extends Intent {
   sireId: string;
   damId: string;
   liveFoalGuarantee: boolean;
+  fee?: number;
 }
 
 // Stud retirement intent
@@ -110,6 +111,12 @@ export interface ConsignmentWithdrawalIntent extends Intent {
 export interface GeldingIntent extends Intent {
   type: "gelding";
   horseId: string;
+}
+
+export interface RerollSilkIntent extends Intent {
+  type: "reroll_silk";
+  jockeyId: string;
+  cost: number;
 }
 
 // Rename intent
@@ -288,6 +295,7 @@ export type AnyIntent =
   | ConsignmentIntent
   | ConsignmentWithdrawalIntent
   | GeldingIntent
+  | RerollSilkIntent
   | RenameIntent
   | CampaignSlotIntent
   | CampaignFlagDismissalIntent

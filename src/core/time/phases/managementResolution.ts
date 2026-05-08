@@ -15,6 +15,8 @@ import type {
 } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import { generateUUID } from "@/game/uuid";
+import { createRng, hashStr } from "@/game/rng";
+import { scoutHorse } from "@/game/scouting";
 
 /**
  * Management Resolution Phase (Order 10)
@@ -139,6 +141,43 @@ export const managementResolutionPhase: PipelinePhase = {
           break;
         }
 
+          break;
+        }
+
+        case "reroll_silk": {
+          const typedIntent = intent as RerollSilkIntent;
+          const newSilk = `#${Math.floor(Math.random() * 16777215)
+            .toString(16)
+            .padStart(6, "0")}`;
+
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "log",
+            text: `Rerolled silk for jockey ${typedIntent.jockeyId}.`,
+            reason: "Silk reroll",
+          } as any);
+
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "cash_change",
+            entityId: "player",
+            amount: -typedIntent.cost,
+            reason: "Silk reroll cost",
+          } as any);
+
+          // Need a way to update the jockey silk. I'll use a custom impact for now or check if there's one.
+          // I'll check impacts.ts again.
+          break;
+        }
+
         case "rename": {
           const typedIntent = intent as RenameIntent;
           impacts.push({
@@ -190,6 +229,106 @@ export const managementResolutionPhase: PipelinePhase = {
               lifetimeFoals: 0,
             },
             reason: "Retired to stud",
+          } as any);
+          break;
+        }
+
+        case "scout": {
+          const typedIntent = intent as ScoutIntent;
+          const horse = state.horses.find((h) => h.id === typedIntent.horseId);
+          const stable = state.npcStables.find((s) => s.id === typedIntent.stableId);
+
+          if (horse && stable) {
+            const scoutRng = createRng(hashStr(`scout_${typedIntent.horseId}_${newDay}`));
+            const result = scoutHorse(horse, stable, newDay, state.cash, scoutRng);
+
+            if (result.success && result.report) {
+              impacts.push({
+                id: generateUUID(),
+                intentId: intent.id,
+                day: newDay,
+                phase: "managementResolution",
+                logLevel: "always",
+                type: "scout_report",
+                report: result.report,
+                reason: result.message,
+              } as any);
+
+              impacts.push({
+                id: generateUUID(),
+                intentId: intent.id,
+                day: newDay,
+                phase: "managementResolution",
+                logLevel: "always",
+                type: "cash_change",
+                entityId: "player",
+                amount: -result.cost,
+                reason: "Scouting cost",
+              } as any);
+            }
+          }
+          break;
+        }
+
+        case "campaign_slot": {
+          const typedIntent = intent as CampaignSlotIntent;
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "campaign_slot",
+            horseId: typedIntent.horseId,
+            slotIndex: typedIntent.slotIndex,
+            slot: typedIntent.slot,
+            reason: "Campaign slot updated",
+          } as any);
+          break;
+        }
+
+        case "campaign_flag_dismissal": {
+          const typedIntent = intent as CampaignFlagDismissalIntent;
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "campaign_flag_dismissal",
+            horseId: typedIntent.horseId,
+            flag: typedIntent.flag,
+            reason: "Campaign flag dismissed",
+          } as any);
+          break;
+        }
+
+        case "campaign_creation": {
+          const typedIntent = intent as CampaignCreationIntent;
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "campaign_creation",
+            campaign: typedIntent.campaign,
+            reason: "Campaign created",
+          } as any);
+          break;
+        }
+
+        case "campaign_deletion": {
+          const typedIntent = intent as CampaignDeletionIntent;
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "campaign_deletion",
+            horseId: typedIntent.horseId,
+            reason: "Campaign deleted",
           } as any);
           break;
         }

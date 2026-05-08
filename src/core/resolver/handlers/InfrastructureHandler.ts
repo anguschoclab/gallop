@@ -5,7 +5,7 @@ import type { ImpactHandler } from "./types";
 
 export class InfrastructureHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return ["facility_upgrade", "tactics", "staff"].includes(type);
+    return ["facility_upgrade", "staff"].includes(type);
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact): void {
@@ -15,20 +15,6 @@ export class InfrastructureHandler implements ImpactHandler {
         const facility = draft.facilities.find((f) => f.id === facilityId);
         if (facility) {
           facility.level = nextLevel;
-        }
-        break;
-      }
-
-      case "tactics": {
-        const { raceId, horseId, tactics } = impact;
-        const race = draft.races.find((r) => r.id === raceId);
-        if (race) {
-          const entry = race.entries.find((e) => e.horseId === horseId);
-          if (entry) {
-            // Add tactics to entry if not already there (extending the type)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (entry as any).tactics = tactics;
-          }
         }
         break;
       }

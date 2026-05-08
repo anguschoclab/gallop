@@ -12,6 +12,7 @@ export class SystemHandler implements ImpactHandler {
       "pace_sample",
       "campaign_slot",
       "campaign_flag",
+      "campaign_flag_dismissal",
       "campaign_creation",
       "campaign_deletion",
       "auto_manage_toggle",
@@ -69,6 +70,18 @@ export class SystemHandler implements ImpactHandler {
         const campaign = draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.flags.push(flag);
+        }
+        break;
+      }
+
+      case "campaign_flag_dismissal": {
+        const { horseId, flag } = impact;
+        const campaign = draft.campaigns?.find((c) => c.horseId === horseId);
+        if (campaign) {
+          campaign.flags = campaign.flags.filter(
+            (f) =>
+              f.type !== flag.type || f.day !== flag.day || f.description !== flag.description,
+          );
         }
         break;
       }
