@@ -466,6 +466,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 6000000,
     dayOfYear: doy(3, 30),
     restrictions: { minAgeNorthern: 4, minAgeSouthern: 3 },
+    fieldSize: 14,
   },
   {
     uuid: "d6be4762-25a0-42bb-816b-8460384753e5",
@@ -479,6 +480,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 5000000,
     dayOfYear: doy(3, 30),
     restrictions: { minAgeNorthern: 4, minAgeSouthern: 3 },
+    fieldSize: 14,
   },
   {
     uuid: "05edc9f6-f773-46f0-a9e3-15b2ae8de753",
@@ -11835,6 +11837,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     note: "Fillies & Mares",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000004-0000-4000-8000-000000000004",
@@ -11850,6 +11853,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000005-0000-4000-8000-000000000005",
@@ -11865,6 +11869,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000006-0000-4000-8000-000000000006",
@@ -11881,6 +11886,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     note: "Fillies & Mares",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000007-0000-4000-8000-000000000007",
@@ -11896,6 +11902,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000008-0000-4000-8000-000000000008",
@@ -11912,6 +11919,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     note: "Fillies",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000009-0000-4000-8000-000000000009",
@@ -11927,6 +11935,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 12,
   },
   {
     uuid: "bc000010-0000-4000-8000-000000000010",
@@ -11942,6 +11951,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 12,
   },
   {
     uuid: "bc000011-0000-4000-8000-000000000011",
@@ -11958,6 +11968,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     note: "Fillies & Mares",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000012-0000-4000-8000-000000000012",
@@ -11973,6 +11984,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000013-0000-4000-8000-000000000013",
@@ -11989,6 +12001,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     note: "Fillies",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "bc000014-0000-4000-8000-000000000014",
@@ -12004,6 +12017,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     restrictions: { minAge: 4 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
 
   // ============= Saudi Arabia — Saudi Cup Weekend =============
@@ -12020,6 +12034,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: doy(2, 22),
     restrictions: { minAge: 4 },
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "sa000005-0000-4000-8000-000000000005",
@@ -12107,6 +12122,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: doy(10, 26),
     restrictions: { minAge: 3 },
     dayOfYearVariance: 0,
+    fieldSize: 14,
   },
   {
     uuid: "au000003-0000-4000-8000-000000000003",
@@ -12121,6 +12137,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: doy(10, 19),
     restrictions: { minAge: 3 },
     dayOfYearVariance: 0,
+    fieldSize: 18,
   },
   {
     uuid: "au000004-0000-4000-8000-000000000004",
@@ -12135,6 +12152,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: doy(10, 19),
     restrictions: { minAge: 3 },
     dayOfYearVariance: 0,
+    fieldSize: 12,
   },
   {
     uuid: "au000005-0000-4000-8000-000000000005",
@@ -12227,6 +12245,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 5000000,
     dayOfYear: doy(11, 9),
     restrictions: { minAge: 3 },
+    fieldSize: 14,
   },
   {
     uuid: "au000012-0000-4000-8000-000000000012",
