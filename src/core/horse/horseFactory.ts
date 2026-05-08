@@ -337,7 +337,9 @@ export function resolveFoaling(
     gender: rng.next() < 0.5 ? "colt" : "filly",
     owned: dam.owned,
     stableId: dam.stableId,
+    createdAtDay: newDay,
   });
+
 
   foal.name = generateProceduralHorseName(
     {

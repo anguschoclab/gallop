@@ -71,7 +71,8 @@ export function resolvePregnancies(
       }
     }
 
-    const outcome = resolveFoaling(p, sire, dam, namingContext);
+    const outcome = resolveFoaling(p, sire, dam, namingContext, newDay);
+
 
     if (outcome.kind === "live") {
       const foal = outcome.foal;
