@@ -57,7 +57,9 @@ export const raceResolutionPhase: PipelinePhase = {
         snapshots,
       });
 
-      impacts.push(...raceImpacts);
+      for (const impact of raceImpacts) {
+        impacts.push(impact);
+      }
 
       // --- Historical Records & Hall of Fame ---
       if (race.graded?.grade === "G1") {
@@ -120,7 +122,9 @@ export const raceResolutionPhase: PipelinePhase = {
             newDay,
             rng,
           });
-          impacts.push(...claimingImpacts);
+          for (const impact of claimingImpacts) {
+            impacts.push(impact);
+          }
         }
       }
     }

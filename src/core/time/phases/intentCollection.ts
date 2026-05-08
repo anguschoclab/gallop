@@ -21,12 +21,17 @@ export const intentCollectionPhase: PipelinePhase = {
 
     // Collect player intents from pendingIntents queue
     if (state.pendingIntents && state.pendingIntents.length > 0) {
-      intents.push(...state.pendingIntents);
+      for (const intent of state.pendingIntents) {
+        intents.push(intent);
+      }
     }
 
     // Collect NPC intents from NPC intent generators
     const npcIntents = generateNpcIntents(state, newDay);
-    intents.push(...npcIntents);
+    for (const intent of npcIntents) {
+      intents.push(intent);
+    }
+
 
     // Collect system intents (placeholder)
     // TODO: Generate system intents (e.g., auto race entries from campaign planner)

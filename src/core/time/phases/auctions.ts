@@ -110,7 +110,9 @@ export const auctionsPhase = {
       runner.runToCompletion();
       const finalLots = runner.finalLots();
       const lotImpacts = runner.finalImpacts({ day: newDay, phase: "auctions" });
-      impacts.push(...lotImpacts);
+      for (const impact of lotImpacts) {
+        impacts.push(impact);
+      }
       for (const line of runner.log()) {
         logs.push({ day: newDay, text: `${sale.name}: ${line}` });
       }
