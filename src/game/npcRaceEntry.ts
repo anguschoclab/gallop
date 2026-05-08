@@ -72,7 +72,7 @@ function shouldEnterHorse(
  */
 export function selectHorsesForRaceEntry(
   stable: Stable,
-  horses: Horse[],
+  horseMap: Map<string, Horse>,
   race: Race,
   pregnantIds: Set<string>,
 ): Horse[] {
@@ -80,7 +80,7 @@ export function selectHorsesForRaceEntry(
 
   // Find all eligible horses
   for (const horseId of stable.horses) {
-    const horse = horses.find((h) => h.id === horseId);
+    const horse = horseMap.get(horseId);
     if (!horse) continue;
 
     const { shouldEnter, score } = shouldEnterHorse(horse, race, race.entries, pregnantIds, stable);
@@ -126,6 +126,9 @@ export function runNpcRaceEntry(
     entries: [...race.entries],
   }));
 
+  // Index horses for fast lookup
+  const horseMap = new Map(horses.map(h => [h.id, h]));
+
   // Look at races in the next daysAhead days
   const upcomingRaces = updatedRaces.filter(
     (r) => r.day > currentDay && r.day <= currentDay + daysAhead && !r.resolved,
@@ -141,7 +144,7 @@ export function runNpcRaceEntry(
       if (stable.horses.length === 0) continue;
 
       // Select horses to enter
-      const horsesToEnter = selectHorsesForRaceEntry(stable, horses, race, pregnantIds);
+      const horsesToEnter = selectHorsesForRaceEntry(stable, horseMap, race, pregnantIds);
 
       // Add entries
       for (const horse of horsesToEnter) {
@@ -259,6 +262,7 @@ export function runNpcTraining(
   rng: Rng,
 ): Horse[] {
   const updatedHorses = [...horses];
+  const horseToIndex = new Map(updatedHorses.map((h, i) => [h.id, i]));
 
   for (const stable of stables) {
     // Training budget and slots vary by tier
@@ -268,8 +272,8 @@ export function runNpcTraining(
     for (const horseId of stable.horses) {
       if (slotsUsed >= trainingSlots) break;
 
-      const horseIndex = updatedHorses.findIndex((h) => h.id === horseId);
-      if (horseIndex === -1) continue;
+      const horseIndex = horseToIndex.get(horseId);
+      if (horseIndex === undefined) continue;
 
       const horse = updatedHorses[horseIndex];
 
@@ -333,12 +337,13 @@ export function runNpcTraining(
  */
 export function updateHorseFame(horses: Horse[], race: Race): Horse[] {
   const updatedHorses = [...horses];
-
   if (!race.result) return updatedHorses;
 
+  const horseToIndex = new Map(updatedHorses.map((h, i) => [h.id, i]));
+
   for (const result of race.result) {
-    const horseIndex = updatedHorses.findIndex((h) => h.id === result.horseId);
-    if (horseIndex === -1) continue;
+    const horseIndex = horseToIndex.get(result.horseId);
+    if (horseIndex === undefined) continue;
 
     const horse = updatedHorses[horseIndex];
     let fameGain = 0;
@@ -381,3 +386,4 @@ export function updateHorseFame(horses: Horse[], race: Race): Horse[] {
 
   return updatedHorses;
 }
+

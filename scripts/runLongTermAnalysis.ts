@@ -1,11 +1,82 @@
 
 import { createInitialState } from "../src/game/store/initialization";
-import { useGame } from "../src/game/store";
+import { executePipeline, type PipelineContext } from "../src/core/time/pipeline";
+import { intentCollectionPhase } from "../src/core/time/phases/intentCollection";
+import { intentValidationPhase } from "../src/core/time/phases/intentValidation";
+import { upkeepPhase } from "../src/core/time/phases/upkeep";
+import { agingPhase } from "../src/core/time/phases/aging";
+import { breedingSeasonPhase } from "../src/core/time/phases/breedingSeason";
+import { industryMetricsPhase } from "../src/core/time/phases/industryMetricsPhase";
+import { npcBreedingPhase } from "../src/core/time/phases/npcBreedingPhase";
+import { energyPhase } from "../src/core/time/phases/energy";
+import { marketPhase } from "../src/core/time/phases/market";
+import { racesPhase } from "../src/core/time/phases/races";
+import { beyerRecalibrationPhase } from "../src/core/time/phases/beyerRecalibration";
+import { jockeyPhase } from "../src/core/time/phases/jockeyPhase";
+import { pregnancyPhase } from "../src/core/time/phases/pregnancy";
+import { npcCyclePhase } from "../src/core/time/phases/npcCycle";
+import { stallionRetirementPhase } from "../src/core/time/phases/stallionRetirement";
+import { pastureRetirementPhase } from "../src/core/time/phases/pastureRetirement";
+import { hallOfFamePhase } from "../src/core/time/phases/hallOfFame";
+import { horseDeathPhase } from "../src/core/time/phases/horseDeath";
+import { auctionsPhase } from "../src/core/time/phases/auctions";
+import { leaderboardPhase } from "../src/core/time/phases/leaderboardPhase";
+import { awardsPhase } from "../src/core/time/phases/awards";
+import { schedulerPhase } from "../src/core/time/phases/schedulerPhase";
+import { stateUpdatePhase } from "../src/core/time/phases/stateUpdate";
+import { raceEntryResolutionPhase } from "../src/core/time/phases/raceEntryResolution";
+import { consignmentResolutionPhase } from "../src/core/time/phases/consignmentResolution";
+import { purchaseResolutionPhase } from "../src/core/time/phases/purchaseResolution";
+import { breedingResolutionPhase } from "../src/core/time/phases/breedingResolution";
+import { trainingResolutionPhase } from "../src/core/time/phases/trainingResolution";
+import { claimingWithdrawalPhase } from "../src/core/time/phases/claimingWithdrawal";
+import { raceResolutionPhase } from "../src/core/time/phases/raceResolution";
+import { impactApplicationPhase } from "../src/core/time/phases/impactApplication";
+import { privateSaleExpiryPhase } from "../src/core/time/phases/privateSaleExpiry";
+import { npcClaimingPhase } from "../src/core/time/phases/npcClaiming";
+import { claimResolutionPhase } from "../src/core/time/phases/claimResolution";
+import { managementResolutionPhase } from "../src/core/time/phases/managementResolution";
+import { createRng, hashStr } from "../src/game/rng";
 import type { GameState } from "../src/game/types";
 
-// Suppress worker warnings
-const originalWarn = console.warn;
-console.warn = () => {};
+// Pipeline phases in order
+const PHASES = [
+  intentCollectionPhase,
+  intentValidationPhase,
+  privateSaleExpiryPhase,
+  upkeepPhase,
+  agingPhase,
+  breedingSeasonPhase,
+  industryMetricsPhase,
+  npcBreedingPhase,
+  energyPhase,
+  marketPhase,
+  racesPhase,
+  beyerRecalibrationPhase,
+  jockeyPhase,
+  pregnancyPhase,
+  npcCyclePhase,
+  stallionRetirementPhase,
+  pastureRetirementPhase,
+  hallOfFamePhase,
+  horseDeathPhase,
+  auctionsPhase,
+  leaderboardPhase,
+  awardsPhase,
+  schedulerPhase,
+  stateUpdatePhase,
+  raceEntryResolutionPhase,
+  consignmentResolutionPhase,
+  purchaseResolutionPhase,
+  breedingResolutionPhase,
+  trainingResolutionPhase,
+  claimingWithdrawalPhase,
+  managementResolutionPhase,
+  npcClaimingPhase,
+  raceResolutionPhase,
+  claimResolutionPhase,
+  impactApplicationPhase,
+];
 
 interface YearMetrics {
   year: number;
@@ -22,50 +93,59 @@ interface YearMetrics {
   avgAuctionPrice: number;
 }
 
-async function runLongTermAnalysis(totalYears: number = 10) {
-  console.log(`=== Starting Long-Term Analysis (${totalYears} years) ===\n`);
+async function runHighPerfAnalysis(totalYears: number = 10) {
+  console.log(`=== Starting High-Performance Long-Term Analysis (${totalYears} years) ===\n`);
 
-  const initialState = createInitialState();
-  useGame.setState(initialState);
-
+  let state: GameState = createInitialState();
   const history: YearMetrics[] = [];
-  
-  let auctionSalesThisYear = 0;
-  let auctionLotsThisYear = 0;
-  let auctionRevenueThisYear = 0;
-  let foalsThisYear = 0;
-  let deathsThisYear = 0;
 
   for (let year = 1; year <= totalYears; year++) {
-    const yearStartDay = useGame.getState().day;
-    foalsThisYear = 0;
-    deathsThisYear = 0;
-    auctionLotsThisYear = 0;
-    auctionRevenueThisYear = 0;
+    let foalsThisYear = 0;
+    let deathsThisYear = 0;
+    let auctionLotsThisYear = 0;
+    let auctionRevenueThisYear = 0;
 
-    console.log(`\n--- Year ${year} (Day ${yearStartDay}) ---`);
+    console.log(`\n--- Year ${year} (Day ${state.day}) ---`);
+    const startOfyearHorseCount = state.horses.length;
 
     for (let day = 1; day <= 365; day++) {
-      const stateBefore = useGame.getState();
-      const horseCountBefore = stateBefore.horses.length;
+      const previousDay = state.day;
+      const newDay = previousDay + 1;
       
-      // Advance one day
-      await useGame.getState().advanceMultipleDays(1, true);
-      
-      const stateAfter = useGame.getState();
-      const currentDay = stateAfter.day;
-      
-      // Track foals (new horses with age 0)
-      const newHorses = stateAfter.horses.filter(h => h.age === 0 && !stateBefore.horses.find(bh => bh.id === h.id));
-      foalsThisYear += newHorses.length;
-      
+      const horseIdsBefore = new Set(state.horses.map(h => h.id));
+      const horseStatusBefore = new Map(state.horses.map(h => [h.id, h.lifecycleStatus]));
+
+      const context: PipelineContext = {
+        previousDay,
+        newDay,
+        state,
+        logs: [],
+        dailyRng: createRng(hashStr("daily_" + newDay)),
+        intents: (state as any).pendingIntents || [],
+        impacts: [],
+        impactLog: [],
+      };
+
+      const resultContext = executePipeline(PHASES, context);
+      state = resultContext.state;
+
+      // Track foals (new horses)
+      for (const horse of state.horses) {
+        if (!horseIdsBefore.has(horse.id) && horse.age === 0) {
+          foalsThisYear++;
+        }
+      }
+
+
       // Track deaths
-      const deadHorses = stateAfter.horses.filter(h => h.lifecycleStatus === "deceased" && stateBefore.horses.find(bh => bh.id === h.id && bh.lifecycleStatus !== "deceased"));
-      deathsThisYear += deadHorses.length;
+      for (const horse of state.horses) {
+        if (horse.lifecycleStatus === "deceased" && horseStatusBefore.get(horse.id) !== "deceased") {
+          deathsThisYear++;
+        }
+      }
 
       // Track auctions
-      // Resolved auctions in state.auctions for the last 30 days
-      const resolvedToday = stateAfter.auctions.filter(a => a.resolved && a.day === currentDay);
+      const resolvedToday = state.auctions.filter(a => a.resolved && a.day === newDay);
       for (const sale of resolvedToday) {
         for (const lot of sale.lots) {
           if (lot.soldPrice && lot.soldPrice > 0) {
@@ -80,24 +160,21 @@ async function runLongTermAnalysis(totalYears: number = 10) {
       }
     }
 
-    // Collect year-end metrics
-    const state = useGame.getState();
-    const horses = state.horses.filter(h => h.lifecycleStatus === "active");
+    // Year-end metrics
+    const activeHorses = state.horses.filter(h => h.lifecycleStatus === "active");
     const npcs = state.npcStables;
-    
-    const potSum = horses.reduce((sum, h) => sum + h.potential, 0);
-    const elite = horses.filter(h => h.potential >= 90).length;
-    const maxPot = Math.max(...horses.map(h => h.potential), 0);
-    
+    const potSum = activeHorses.reduce((sum, h) => sum + h.potential, 0);
+    const elite = activeHorses.filter(h => h.potential >= 90).length;
+    const maxPot = Math.max(...activeHorses.map(h => h.potential), 0);
     const npcCash = npcs.map(n => n.cash);
     const avgCash = npcCash.reduce((sum, c) => sum + c, 0) / (npcs.length || 1);
-    
+
     const metrics: YearMetrics = {
       year,
-      horseCount: horses.length,
+      horseCount: activeHorses.length,
       foalsBorn: foalsThisYear,
       deaths: deathsThisYear,
-      avgPotential: potSum / (horses.length || 1),
+      avgPotential: potSum / (activeHorses.length || 1),
       maxPotential: maxPot,
       eliteCount: elite,
       avgNpcCash: avgCash,
@@ -119,4 +196,4 @@ async function runLongTermAnalysis(totalYears: number = 10) {
   console.table(history);
 }
 
-runLongTermAnalysis(10).catch(console.error);
+runHighPerfAnalysis(10).catch(console.error);

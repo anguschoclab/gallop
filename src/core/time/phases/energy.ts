@@ -17,20 +17,33 @@ export const energyPhase = {
   order: 40,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
+    
+    // Index staff by stableId for fast lookup
+    const staffByStable = new Map<string, any[]>();
+    if (state.hiredStaff) {
+      for (const staff of state.hiredStaff) {
+        const stableId = staff.stableId ?? "";
+        if (!staffByStable.has(stableId)) {
+          staffByStable.set(stableId, []);
+        }
+        staffByStable.get(stableId)!.push(staff);
+      }
+    }
+
     const horses = state.horses.map((h) => {
       // Skip energy restoration for deceased horses
       if (h.lifecycleStatus === "deceased") return h;
 
       // Get staff bonuses for this stable
       const stableId = h.stableId ?? "";
-      const hiredStaff = state.hiredStaff ?? [];
-      const staffForStable = hiredStaff.filter(s => s.stableId === (stableId === "" ? "" : stableId));
+      const staffForStable = staffByStable.get(stableId) ?? [];
       
       const nutritionist = staffForStable.find(s => s.role === "nutritionist");
       const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
       
       const vet = staffForStable.find(s => s.role === "veterinarian");
       const vetBonus = vet ? vet.bonusValue : 0;
+
 
       // Health status recovery logic
       let newHealthStatus = h.healthStatus;

@@ -194,7 +194,9 @@ export type Horse = {
   lifecycleStatus: "active" | "retired" | "deceased";
   retiredOnDay?: number;
   deceasedOnDay?: number;
+  createdAtDay?: number;
   causeOfDeath?: string;
+
   appearance?: AppearanceDNA;
   activeInjury?: ActiveInjury;
 };

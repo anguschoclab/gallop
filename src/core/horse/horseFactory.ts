@@ -122,7 +122,9 @@ export function createHorseFromDNA(
     hemisphere?: Hemisphere;
     owned?: boolean;
     stableId?: string;
+    createdAtDay?: number;
   } = {},
+
 ): Horse {
   const stats = resolveStats(genotype.stats);
   const coatColor = resolveCoatColor(genotype.color);
@@ -177,7 +179,9 @@ export function createHorseFromDNA(
     healthStatus: resolveHealthStatus(genotype.health),
     lifecycleStatus: "active",
     ...dnaTraits,
+    createdAtDay: opts.createdAtDay,
     appearance: generateAppearanceDNA(
+
       Math.floor(rng.next() * 2147483647),
       undefined,
       getPalette(coatColor),
@@ -283,7 +287,9 @@ export function resolveFoaling(
   sire: Horse,
   dam: Horse,
   namingContext?: Partial<NamingContext>,
+  newDay?: number,
 ): { kind: "live"; foal: Horse; transmission?: boolean } | { kind: "complication"; type: string } {
+
   const rng = createRng(hashStr(pregnancy.id));
 
   // Genetic crossover

@@ -90,6 +90,24 @@ export const upkeepPhase = {
 
     // Charge each NPC stable for its own horses.
     let npcStables = state.npcStables;
+
+    // Pre-calculate counts and staff
+    const horseCountsByStable = new Map<string, number>();
+    for (const h of state.horses) {
+      if (h.stableId && h.lifecycleStatus === "active") {
+        horseCountsByStable.set(h.stableId, (horseCountsByStable.get(h.stableId) ?? 0) + 1);
+      }
+    }
+
+    const staffByStable = new Map<string, any[]>();
+    if (state.hiredStaff) {
+      for (const staff of state.hiredStaff) {
+        const sid = staff.stableId ?? "";
+        if (!staffByStable.has(sid)) staffByStable.set(sid, []);
+        staffByStable.get(sid)!.push(staff);
+      }
+    }
+
     if (state.npcAIManager) {
       const aiManager = state.npcAIManager; // Capture to satisfy TypeScript
       // Ensure stableStates is a Map (it may have been serialized to an object)
@@ -102,10 +120,10 @@ export const upkeepPhase = {
           aiState.upkeepAI = createUpkeepAIState(stable);
         }
 
-        const owned = state.horses.filter((h) => h.stableId === stable.id);
-        const horseCost = owned.length * UPKEEP_PER_HORSE;
+        const ownedCount = horseCountsByStable.get(stable.id) ?? 0;
+        const horseCost = ownedCount * UPKEEP_PER_HORSE;
         
-        const stableStaff = hiredStaff.filter(s => s.stableId === stable.id);
+        const stableStaff = staffByStable.get(stable.id) ?? [];
         const staffSalaries = stableStaff.reduce((sum, s) => sum + s.salary, 0);
         
         const cost = horseCost + staffSalaries;
@@ -143,11 +161,12 @@ export const upkeepPhase = {
       });
     } else {
       npcStables = state.npcStables.map((stable) => {
-        const owned = state.horses.filter((h) => h.stableId === stable.id);
-        const cost = owned.length * UPKEEP_PER_HORSE;
+        const ownedCount = horseCountsByStable.get(stable.id) ?? 0;
+        const cost = ownedCount * UPKEEP_PER_HORSE;
         return { ...stable, cash: stable.cash - cost };
       });
     }
+
 
     return {
       ...context,

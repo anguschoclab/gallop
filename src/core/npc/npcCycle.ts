@@ -96,6 +96,14 @@ export function runNpcCycle(
     stableStates: new Map(aiManager.stableStates),
   };
 
+  // Check horses entered in claiming races and decide whether to withdraw
+  const claimingRaces = races.filter(
+    (r) => r.raceClass === "Claiming" && r.day === currentDay + raceEntryDaysAhead,
+  );
+
+  // Index horses for fast lookup
+  const horseMap = new Map(horsesAfterTraining.map(h => [h.id, h]));
+
   // Create or update AI state for each stable
   for (const stable of npcStables) {
     const stableAIState = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
@@ -112,17 +120,13 @@ export function runNpcCycle(
     }
 
     // AI-driven claiming withdrawals
-    // Check horses entered in claiming races and decide whether to withdraw
-    const claimingRaces = races.filter(
-      (r) => r.raceClass === "Claiming" && r.day === currentDay + raceEntryDaysAhead,
-    );
     for (const race of claimingRaces) {
       const entry = race.entries.find((e) => {
-        const horse = horsesAfterTraining.find((h) => h.id === e.horseId);
+        const horse = horseMap.get(e.horseId);
         return horse && horse.stableId === stable.id;
       });
       if (entry) {
-        const horse = horsesAfterTraining.find((h) => h.id === entry.horseId);
+        const horse = horseMap.get(entry.horseId);
         if (horse) {
           const shouldWithdraw = shouldWithdrawHorse(
             stableAIState.withdrawalAI,
@@ -148,6 +152,7 @@ export function runNpcCycle(
         }
       }
     }
+
 
     // AI-driven facility upgrades (if facilities are available)
     if (npcFacilities && npcFacilities[stable.id]) {

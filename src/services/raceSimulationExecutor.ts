@@ -26,6 +26,7 @@ export interface RaceSimulationResult {
  * @param race - The race to simulate
  * @param horses - All horses in the game state
  * @param jockeys - All jockeys in the game state
+ * @param recordSnapshots - Whether to record detailed race snapshots (default: only if player horse involved)
  * @returns Race simulation result
  */
 export function simulateRace(
@@ -33,7 +34,8 @@ export function simulateRace(
   horses: Horse[], 
   jockeys: Jockey[],
   hiredStaff?: StaffMember[],
-  npcStables?: Stable[]
+  npcStables?: Stable[],
+  recordSnapshots?: boolean
 ): RaceSimulationResult {
   const { runners, fillerHorses } = buildRaceField({
     race,
@@ -45,9 +47,10 @@ export function simulateRace(
   const rng = rngForRace(race);
   const course = getCourseForRace(race);
   
-  // For now, record snapshots for all races. We might want to filter this later
-  // to only record for player-involved races if state size becomes an issue.
-  const { result, snapshots } = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course, true);
+  // Default to recording snapshots only if a player-owned horse is in the field
+  const shouldRecord = recordSnapshots ?? runners.some(r => r.owned);
+  
+  const { result, snapshots } = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course, shouldRecord);
 
   return {
     raceId: race.id,
@@ -66,3 +69,4 @@ export function simulateRace(
     snapshots,
   };
 }
+
