@@ -1,6 +1,5 @@
-
 import { createInitialState } from "../src/game/store/initialization";
-import { executePipeline, type PipelineContext } from "../src/core/time/pipeline";
+import { executePipeline } from "../src/core/time/pipeline";
 import { intentCollectionPhase } from "../src/core/time/phases/intentCollection";
 import { intentValidationPhase } from "../src/core/time/phases/intentValidation";
 import { upkeepPhase } from "../src/core/time/phases/upkeep";
@@ -78,122 +77,105 @@ const PHASES = [
   impactApplicationPhase,
 ];
 
-interface YearMetrics {
-  year: number;
-  horseCount: number;
-  foalsBorn: number;
-  deaths: number;
-  avgPotential: number;
-  maxPotential: number;
-  eliteCount: number;
-  avgNpcCash: number;
-  minNpcCash: number;
-  maxNpcCash: number;
-  totalAuctionLots: number;
-  avgAuctionPrice: number;
-}
+/**
+ * High-Performance Analysis Entry Point
+ */
+async function runHighPerfAnalysis(years: number = 10) {
+  console.log(`=== Starting High-Performance Long-Term Analysis (${years} years) ===`);
 
-async function runHighPerfAnalysis(totalYears: number = 10) {
-  console.log(`=== Starting High-Performance Long-Term Analysis (${totalYears} years) ===\n`);
+  let state = createInitialState();
+  const days = years * 365;
 
-  let state: GameState = createInitialState();
-  const history: YearMetrics[] = [];
+  // Trackers
+  const populationHistory: number[] = [];
+  const economicHistory: number[] = [];
+  const g1Winners: Set<string> = new Set();
+  const startDay = state.day;
 
-  for (let year = 1; year <= totalYears; year++) {
-    let foalsThisYear = 0;
-    let deathsThisYear = 0;
-    let auctionLotsThisYear = 0;
-    let auctionRevenueThisYear = 0;
+  for (let day = startDay; day < startDay + days; day++) {
+    const year = Math.floor((day - 1) / 365) + 1;
+    console.log(`Day ${day} starting (Year ${year})...`);
+    const dayStart = Date.now();
 
-    console.log(`\n--- Year ${year} (Day ${state.day}) ---`);
-    const startOfyearHorseCount = state.horses.length;
+    // Prune historical collections periodically to avoid memory growth and spread-copy overhead
+    if (day % 30 === 0) {
+      if (state.transactions && state.transactions.length > 1000) {
+        state.transactions = state.transactions.slice(-1000);
+      }
+      if (state.news && state.news.length > 1000) {
+        state.news = state.news.slice(-1000);
+      }
+      if (state.log && state.log.length > 1000) {
+        state.log = state.log.slice(-1000);
+      }
+      if ((state as any).replays && (state as any).replays.length > 1000) {
+        (state as any).replays = (state as any).replays.slice(-1000);
+      }
+      if ((state as any).expenses && (state as any).expenses.length > 1000) {
+        (state as any).expenses = (state as any).expenses.slice(-1000);
+      }
+      // Prune resolved races older than 30 days
+      if (state.races && state.races.length > 500) {
+        state.races = state.races.filter(r => !r.resolved || r.day > day - 30);
+      }
+    }
 
-    for (let day = 1; day <= 365; day++) {
-      const previousDay = state.day;
-      const newDay = previousDay + 1;
-      
-      const horseIdsBefore = new Set(state.horses.map(h => h.id));
-      const horseStatusBefore = new Map(state.horses.map(h => [h.id, h.lifecycleStatus]));
 
-      const context: PipelineContext = {
-        previousDay,
-        newDay,
-        state,
-        logs: [],
-        dailyRng: createRng(hashStr("daily_" + newDay)),
-        intents: (state as any).pendingIntents || [],
-        impacts: [],
-        impactLog: [],
-      };
+    const context = {
+      state,
+      newDay: day,
+      intents: [],
+      impacts: [],
+      logs: [],
+      impactLog: [],
+      dailyRng: createRng(hashStr(`day_${day}`)),
+      previousDay: day - 1,
+    };
 
+    try {
       const resultContext = executePipeline(PHASES, context);
       state = resultContext.state;
-
-      // Track foals (new horses)
-      for (const horse of state.horses) {
-        if (!horseIdsBefore.has(horse.id) && horse.age === 0) {
-          foalsThisYear++;
-        }
-      }
-
-
-      // Track deaths
-      for (const horse of state.horses) {
-        if (horse.lifecycleStatus === "deceased" && horseStatusBefore.get(horse.id) !== "deceased") {
-          deathsThisYear++;
-        }
-      }
-
-      // Track auctions
-      const resolvedToday = state.auctions.filter(a => a.resolved && a.day === newDay);
-      for (const sale of resolvedToday) {
-        for (const lot of sale.lots) {
-          if (lot.soldPrice && lot.soldPrice > 0) {
-            auctionLotsThisYear++;
-            auctionRevenueThisYear += lot.soldPrice;
-          }
+      
+      // Track population
+      populationHistory.push(state.horses.filter(h => h.lifecycleStatus !== 'deceased').length);
+      economicHistory.push(state.cash);
+      
+      // Track G1 winners from recently resolved races
+      for (const race of state.races) {
+        if (race.day === day && race.resolved && race.graded?.grade === 'G1' && race.result) {
+          const winnerId = race.result.find(r => r.position === 1)?.horseId;
+          if (winnerId) g1Winners.add(winnerId);
         }
       }
 
       if (day % 30 === 0) {
         process.stdout.write(".");
       }
+      console.log(`Day ${day} finished in ${Date.now() - dayStart}ms`);
+    } catch (e) {
+
+      console.error(`\nFAILED on Day ${day}:`, e);
+      break;
     }
-
-    // Year-end metrics
-    const activeHorses = state.horses.filter(h => h.lifecycleStatus === "active");
-    const npcs = state.npcStables;
-    const potSum = activeHorses.reduce((sum, h) => sum + h.potential, 0);
-    const elite = activeHorses.filter(h => h.potential >= 90).length;
-    const maxPot = Math.max(...activeHorses.map(h => h.potential), 0);
-    const npcCash = npcs.map(n => n.cash);
-    const avgCash = npcCash.reduce((sum, c) => sum + c, 0) / (npcs.length || 1);
-
-    const metrics: YearMetrics = {
-      year,
-      horseCount: activeHorses.length,
-      foalsBorn: foalsThisYear,
-      deaths: deathsThisYear,
-      avgPotential: potSum / (activeHorses.length || 1),
-      maxPotential: maxPot,
-      eliteCount: elite,
-      avgNpcCash: avgCash,
-      minNpcCash: Math.min(...npcCash, 0),
-      maxNpcCash: Math.max(...npcCash, 0),
-      totalAuctionLots: auctionLotsThisYear,
-      avgAuctionPrice: auctionLotsThisYear > 0 ? auctionRevenueThisYear / auctionLotsThisYear : 0,
-    };
-
-    history.push(metrics);
-    console.log(`\nYear ${year} Summary:`);
-    console.log(`  Population: ${metrics.horseCount} active, ${metrics.foalsBorn} foals, ${metrics.deaths} deaths`);
-    console.log(`  Breeding: Avg Pot ${metrics.avgPotential.toFixed(1)}, Max Pot ${metrics.maxPotential.toFixed(1)}, Elites ${metrics.eliteCount}`);
-    console.log(`  Economy: Avg NPC Cash $${Math.floor(metrics.avgNpcCash)}, Min $${Math.floor(metrics.minNpcCash)}`);
-    console.log(`  Auctions: Sold ${metrics.totalAuctionLots} lots, Avg Price $${Math.floor(metrics.avgAuctionPrice)}`);
   }
 
-  console.log("\n=== Final Long-Term Analysis Report ===\n");
-  console.table(history);
+  console.log("\n\n=== Analysis Complete ===");
+  console.log(`Final Year: ${Math.floor((state.day - 1) / 365) + 1}`);
+  console.log(`Total Population: ${state.horses.filter(h => h.lifecycleStatus !== 'deceased').length}`);
+  console.log(`Unique G1 Winners Produced: ${g1Winners.size}`);
+  console.log(`Total NPC Cash in System: ${Math.round(state.cash)}`);
+  
+  // Export summary
+  const summary = {
+    finalDay: state.day,
+    finalPopulation: state.horses.filter(h => h.lifecycleStatus !== 'deceased').length,
+    g1WinnersCount: g1Winners.size,
+    economicTrend: economicHistory.filter((_, i) => i % 30 === 0),
+    populationTrend: populationHistory.filter((_, i) => i % 30 === 0),
+  };
+  
+  console.log("\nPopulation Trend (Monthly):", summary.populationTrend.join(", "));
+  console.log("Economic Trend (Monthly):", summary.economicTrend.map(c => Math.round(c / 1000) + "k").join(", "));
 }
 
 runHighPerfAnalysis(10).catch(console.error);

@@ -50,7 +50,11 @@ export function simulateRace(
   // Default to recording snapshots only if a player-owned horse is in the field
   const shouldRecord = recordSnapshots ?? runners.some(r => r.owned);
   
-  const { result, snapshots } = runRaceToCompletion(runners, race.distance, rng, 0.1, 600, course, shouldRecord);
+  // Use a larger time step for background simulations to increase performance
+  const dt = shouldRecord ? 0.1 : 0.4;
+  
+  const { result, snapshots } = runRaceToCompletion(runners, race.distance, rng, dt, 600, course, shouldRecord);
+
 
   return {
     raceId: race.id,

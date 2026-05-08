@@ -21,24 +21,25 @@ export const schedulerPhase = {
       return context;
     }
 
-    const ownedHorseIds = new Set(state.horses.filter((h) => h.owned).map((h) => h.id));
+    const horseMap = new Map(state.horses.map(h => [h.id, h]));
+    const raceMap = new Map(state.races.map(r => [r.id, r]));
 
     const updatedCampaigns: HorseCampaign[] = state.campaigns.map((campaign) => {
-      const horse = state.horses.find((h) => h.id === campaign.horseId);
-      if (!horse || !ownedHorseIds.has(horse.id)) return campaign;
+      const horse = horseMap.get(campaign.horseId);
+      if (!horse || !horse.owned) return campaign;
 
       // Reconcile slot statuses from resolved races
       const reconciledSlots = reconcileSlotStatuses(campaign, state.races);
       let updated: HorseCampaign = { ...campaign, slots: reconciledSlots };
 
-      // Update aptitudes from newly resolved races (races resolved on this day)
+      // Update aptitudes from newly resolved races
       for (const slot of reconciledSlots) {
         if (slot.status !== "completed" || !slot.raceId) continue;
         const wasJustCompleted =
           campaign.slots.find((s) => s.raceId === slot.raceId)?.status === "entered";
         if (!wasJustCompleted) continue;
 
-        const race = state.races.find((r) => r.id === slot.raceId);
+        const race = raceMap.get(slot.raceId);
         if (!race) continue;
         const surf = (race.graded?.surface ?? race.surface) as
           | "Turf"
@@ -77,12 +78,6 @@ export const schedulerPhase = {
       return updated;
     });
 
-    // Auto-entry: process each campaign, collecting cash deltas
-    // We simulate entry cost changes by tracking what enterRace would deduct.
-    // The actual enterRace action in store.ts handles cash deduction when called
-    // interactively; here we just record the intent and let the store action handle it
-    // on the next user interaction cycle. For truly headless auto-entry, we build
-    // a lightweight runner that mutates state directly.
     const entryLogs: { day: number; text: string }[] = [];
     let cashDelta = 0;
     const mutatedRaces = [...state.races];
@@ -90,7 +85,7 @@ export const schedulerPhase = {
     for (let i = 0; i < updatedCampaigns.length; i++) {
       const campaign = updatedCampaigns[i];
       if (!campaign.autoManaged) continue;
-      const horse = state.horses.find((h) => h.id === campaign.horseId);
+      const horse = horseMap.get(campaign.horseId);
       if (!horse) continue;
 
       const result = runAutoEntries({
@@ -113,6 +108,7 @@ export const schedulerPhase = {
 
       updatedCampaigns[i] = { ...campaign, slots: result.updatedSlots };
     }
+
 
     const updatedLogs = [...entryLogs, ...context.logs];
 

@@ -17,6 +17,7 @@ export interface PipelineContext {
   impactLog: ImpactLogEntry[];
 }
 
+
 export interface PipelinePhase {
   name: string;
   order: number;
@@ -40,7 +41,22 @@ export function executePipeline(
       continue;
     }
 
+    const start = Date.now();
     currentContext = phase.execute(currentContext);
+    const duration = Date.now() - start;
+    if (duration >= 0) {
+      console.log(`  [PERF] Phase ${phase.name} took ${duration}ms`);
+    }
+
+
+
+
+
+
+
+
+
+
   }
 
   return currentContext;

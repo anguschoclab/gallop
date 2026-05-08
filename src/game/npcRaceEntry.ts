@@ -120,19 +120,34 @@ export function runNpcRaceEntry(
     console.error("runNpcRaceEntry called with non-array races:", races);
     return [];
   }
-  // Deep clone races to avoid mutating frozen/read-only objects during multi-day advancement
-  const updatedRaces = races.map((race) => ({
-    ...race,
-    entries: [...race.entries],
-  }));
+  // Index horses and jockeys for fast lookup
 
-  // Index horses for fast lookup
   const horseMap = new Map(horses.map(h => [h.id, h]));
+  const jockeyMap = new Map(jockeys.map(j => [j.id, j]));
+  const stableJockeyMap = new Map(jockeys.filter(j => j.stableId).map(j => [j.stableId!, j]));
 
   // Look at races in the next daysAhead days
-  const upcomingRaces = updatedRaces.filter(
+  const upcomingRaces = races.filter(
     (r) => r.day > currentDay && r.day <= currentDay + daysAhead && !r.resolved,
   );
+  
+  if (upcomingRaces.length === 0) return races;
+
+  // We only need to clone the races we might modify
+  const upcomingRaceIds = new Set(upcomingRaces.map(r => r.id));
+  const updatedRaces = races.map(r => {
+    if (upcomingRaceIds.has(r.id)) {
+      return { ...r, entries: [...r.entries] };
+    }
+    return r;
+  });
+
+  // Re-fetch upcoming from the cloned array
+  const workingUpcoming = updatedRaces.filter(r => upcomingRaceIds.has(r.id));
+  
+  // Cache free agents
+  let freeAgents = jockeys.filter((j) => !j.stableId && j.lastRaceDay !== currentDay);
+  freeAgents.sort((a, b) => b.fame - a.fame);
 
   for (const race of upcomingRaces) {
     // Skip if race is full
@@ -152,12 +167,11 @@ export function runNpcRaceEntry(
         if (race.entries.length >= race.fieldSize) break;
 
         // Find a jockey for the NPC entry
-        const retainedJockey = jockeys.find((j) => j.stableId === stable.id);
-        let jockeyId: string | undefined = retainedJockey?.id;
+        const retainedJockey = stableJockeyMap.get(stable.id);
+        let chosenJockey = retainedJockey;
 
-        if (!jockeyId) {
+        if (!chosenJockey) {
           // Find best available freelance jockey whose archetype matches horse style
-          const freeAgents = jockeys.filter((j) => !j.stableId && j.lastRaceDay !== currentDay);
           if (freeAgents.length > 0) {
             const matches = freeAgents.filter((j) => {
               if (horse.runningStyle === "E") return j.archetype === "front_runner";
@@ -165,19 +179,20 @@ export function runNpcRaceEntry(
               return j.archetype === "versatile" || j.archetype === "clinical";
             });
             const pool = matches.length > 0 ? matches : freeAgents;
-            // Pick based on fame/tier
-            pool.sort((a, b) => b.fame - a.fame);
-            const chosen = pool[0];
-            jockeyId = chosen.id;
-            // Clone jockey to avoid mutating frozen/read-only objects
-            const jockeyIndex = jockeys.findIndex((j) => j.id === chosen.id);
+            chosenJockey = pool[0];
+            
+            // Mark as used today
+            freeAgents = freeAgents.filter(j => j.id !== chosenJockey!.id);
+            const jockeyIndex = jockeys.findIndex((j) => j.id === chosenJockey!.id);
             if (jockeyIndex !== -1) {
-              jockeys[jockeyIndex] = { ...chosen, lastRaceDay: currentDay };
+              jockeys[jockeyIndex] = { ...chosenJockey!, lastRaceDay: currentDay };
+              jockeyMap.set(chosenJockey!.id, jockeys[jockeyIndex]);
             }
           }
         }
 
-        const jockey = jockeys.find((j) => j.id === jockeyId);
+        const jockeyId = chosenJockey?.id;
+        const jockey = chosenJockey;
         const ridingFee = jockey?.ridingFee ?? 100;
         const assignedWeight = calculateAssignedWeight(horse, race);
 
@@ -335,11 +350,16 @@ export function runNpcTraining(
 /**
  * Update horse fame after race results
  */
-export function updateHorseFame(horses: Horse[], race: Race): Horse[] {
+export function updateHorseFame(
+  horses: Horse[],
+  race: Race,
+  horseMap?: Map<string, number>,
+): Horse[] {
   const updatedHorses = [...horses];
   if (!race.result) return updatedHorses;
 
-  const horseToIndex = new Map(updatedHorses.map((h, i) => [h.id, i]));
+  const horseToIndex = horseMap || new Map(updatedHorses.map((h, i) => [h.id, i]));
+
 
   for (const result of race.result) {
     const horseIndex = horseToIndex.get(result.horseId);

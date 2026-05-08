@@ -26,14 +26,18 @@ export const raceEntryResolutionPhase: PipelinePhase = {
     // Filter for race entry intents
     const raceEntryIntents = intents.filter((i): i is RaceEntryIntent => i.type === "race_entry");
 
+    const horseMap = new Map(state.horses.map(h => [h.id, h]));
+    const raceMap = new Map(state.races.map(r => [r.id, r]));
+
     for (const intent of raceEntryIntents) {
-      const race = state.races.find((r) => r.id === intent.raceId);
-      const horse = state.horses.find((h) => h.id === intent.horseId);
+      const race = raceMap.get(intent.raceId);
+      const horse = horseMap.get(intent.horseId);
 
       if (!race || !horse) continue;
       if (race.resolved) continue;
       if (race.entries.some((e) => e.horseId === intent.horseId)) continue;
       if (race.entries.length >= race.fieldSize) continue;
+
 
       // Generate race entry impact
       impacts.push({

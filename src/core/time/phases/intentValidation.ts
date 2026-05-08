@@ -16,15 +16,17 @@ export const intentValidationPhase: PipelinePhase = {
   order: 10,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state } = context;
+    const horseMap = new Map(state.horses.map(h => [h.id, h]));
+    const raceMap = new Map(state.races.map(r => [r.id, r]));
+    const stableMap = new Map(state.npcStables.map(s => [s.id, s]));
+
     const validIntents: typeof intents = [];
 
     for (const intent of intents) {
-      const validation = validateIntent(intent, state);
+      const validation = validateIntent(intent, state, { horseMap, raceMap, stableMap });
       if (validation.valid) {
         validIntents.push(intent);
       }
-      // Invalid intents are silently rejected for now
-      // Could log rejection reasons in impactLog in the future
     }
 
     return {

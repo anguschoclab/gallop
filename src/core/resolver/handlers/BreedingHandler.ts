@@ -15,24 +15,34 @@ export class BreedingHandler implements ImpactHandler {
     ].includes(type);
   }
 
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact): void {
+  handle(
+    draft: WritableDraft<GameState>,
+    impact: AnyImpact,
+    lookupMaps?: {
+      horseMap: Map<string, WritableDraft<any>>;
+      stableMap: Map<string, WritableDraft<any>>;
+      campaignMap: Map<string, WritableDraft<any>>;
+    },
+  ): void {
+    const impactAny = impact as any;
+
     switch (impact.type) {
       case "update_stud_fee": {
-        const { horseId, newFee } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { horseId, newFee } = impactAny;
+        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (horse && horse.stud) {
           horse.stud.standingFee = newFee;
         }
         break;
       }
       case "pregnancy_creation": {
-        const { pregnancy } = impact;
+        const { pregnancy } = impactAny;
         draft.pregnancies.push(pregnancy);
         break;
       }
 
       case "pregnancy_update": {
-        const { pregnancyId, updates } = impact;
+        const { pregnancyId, updates } = impactAny;
         const index = draft.pregnancies.findIndex((p) => p.id === pregnancyId);
         if (index !== -1) {
           Object.assign(draft.pregnancies[index], updates);
@@ -41,7 +51,7 @@ export class BreedingHandler implements ImpactHandler {
       }
 
       case "pregnancy_deletion": {
-        const { pregnancyId } = impact;
+        const { pregnancyId } = impactAny;
         const index = draft.pregnancies.findIndex((p) => p.id === pregnancyId);
         if (index !== -1) {
           draft.pregnancies.splice(index, 1);
@@ -50,8 +60,8 @@ export class BreedingHandler implements ImpactHandler {
       }
 
       case "stud_career": {
-        const { horseId, studCareer } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { horseId, studCareer } = impactAny;
+        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (horse) {
           horse.stud = studCareer;
         }
@@ -59,8 +69,8 @@ export class BreedingHandler implements ImpactHandler {
       }
 
       case "blue hen_status": {
-        const { horseId, blueHenStatus } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { horseId, blueHenStatus } = impactAny;
+        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (horse) {
           horse.blueHenStatus = blueHenStatus;
         }
@@ -68,4 +78,5 @@ export class BreedingHandler implements ImpactHandler {
       }
     }
   }
+
 }

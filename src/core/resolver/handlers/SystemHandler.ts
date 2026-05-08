@@ -28,31 +28,43 @@ export class SystemHandler implements ImpactHandler {
     ].includes(type);
   }
 
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact): void {
+  handle(
+    draft: WritableDraft<GameState>,
+    impact: AnyImpact,
+    lookupMaps?: {
+      horseMap: Map<string, WritableDraft<any>>;
+      stableMap: Map<string, WritableDraft<any>>;
+      campaignMap: Map<string, WritableDraft<any>>;
+    },
+  ): void {
+    const impactAny = impact as any;
+
     switch (impact.type) {
       case "horse_creation": {
-        const { horse } = impact;
+        const { horse } = impactAny;
         draft.horses.push(horse);
+        if (lookupMaps) lookupMaps.horseMap.set(horse.id, horse);
         break;
       }
 
       case "horse_deletion": {
-        const { horseId } = impact;
+        const { horseId } = impactAny;
         const index = draft.horses.findIndex((h) => h.id === horseId);
         if (index !== -1) {
           draft.horses.splice(index, 1);
+          if (lookupMaps) lookupMaps.horseMap.delete(horseId);
         }
         break;
       }
 
       case "log": {
-        const { text } = impact;
+        const { text } = impactAny;
         draft.log = [{ day: impact.day, text }, ...draft.log].slice(0, 50);
         break;
       }
 
       case "pace_sample": {
-        const { distance, time } = impact;
+        const { distance, time } = impactAny;
         if (!draft.paceSamples) {
           draft.paceSamples = {};
         }
@@ -65,8 +77,9 @@ export class SystemHandler implements ImpactHandler {
       }
 
       case "campaign_slot": {
-        const { horseId, slotIndex, slot } = impact;
-        const campaign = draft.campaigns?.find((c) => c.horseId === horseId);
+        const { horseId, slotIndex, slot } = impactAny;
+        const campaign =
+          lookupMaps?.campaignMap.get(horseId) || draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.slots[slotIndex] = { ...campaign.slots[slotIndex], ...slot };
         }
@@ -74,8 +87,9 @@ export class SystemHandler implements ImpactHandler {
       }
 
       case "campaign_flag": {
-        const { horseId, flag } = impact;
-        const campaign = draft.campaigns?.find((c) => c.horseId === horseId);
+        const { horseId, flag } = impactAny;
+        const campaign =
+          lookupMaps?.campaignMap.get(horseId) || draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.flags.push(flag);
         }
@@ -83,8 +97,9 @@ export class SystemHandler implements ImpactHandler {
       }
 
       case "campaign_flag_dismissal": {
-        const { horseId, flag } = impact;
-        const campaign = draft.campaigns?.find((c) => c.horseId === horseId);
+        const { horseId, flag } = impactAny;
+        const campaign =
+          lookupMaps?.campaignMap.get(horseId) || draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.flags = campaign.flags.filter(
             (f) =>
@@ -95,26 +110,29 @@ export class SystemHandler implements ImpactHandler {
       }
 
       case "campaign_creation": {
-        const { campaign } = impact;
+        const { campaign } = impactAny;
         if (!draft.campaigns) draft.campaigns = [];
         draft.campaigns.push(campaign);
+        if (lookupMaps) lookupMaps.campaignMap.set(campaign.horseId, campaign);
         break;
       }
 
       case "campaign_deletion": {
-        const { horseId } = impact;
+        const { horseId } = impactAny;
         if (draft.campaigns) {
           const index = draft.campaigns.findIndex((c) => c.horseId === horseId);
           if (index !== -1) {
             draft.campaigns.splice(index, 1);
+            if (lookupMaps) lookupMaps.campaignMap.delete(horseId);
           }
         }
         break;
       }
 
       case "auto_manage_toggle": {
-        const { horseId, autoManaged } = impact;
-        const campaign = draft.campaigns?.find((c) => c.horseId === horseId);
+        const { horseId, autoManaged } = impactAny;
+        const campaign =
+          lookupMaps?.campaignMap.get(horseId) || draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.autoManaged = autoManaged;
         }
@@ -122,7 +140,7 @@ export class SystemHandler implements ImpactHandler {
       }
 
       case "reputation_change": {
-        const { delta, reason, source, metadata } = impact;
+        const { delta, reason, source, metadata } = impactAny;
         if (draft.reputation) {
           const newEvent = createReputationEvent(source as any, delta, reason, impact.day, metadata);
           draft.reputation.events.push(newEvent);
@@ -136,7 +154,7 @@ export class SystemHandler implements ImpactHandler {
       }
 
       case "transaction": {
-        const { amount, category, description, metadata } = impact;
+        const { amount, category, description, metadata } = impactAny;
         if (!draft.transactions) draft.transactions = [];
         const type = amount >= 0 ? "income" : "expense";
         const newTransaction = createTransaction(
@@ -153,7 +171,7 @@ export class SystemHandler implements ImpactHandler {
       }
 
       case "staff": {
-        const { action, stableId, staffId, role } = impact;
+        const { action, stableId, staffId, role } = impactAny;
         
         if (action === "hire") {
           const staffIndex = draft.staffPool.findIndex(s => s.id === staffId);
@@ -164,7 +182,7 @@ export class SystemHandler implements ImpactHandler {
             draft.staffPool.splice(staffIndex, 1);
             
             if (stableId !== "") {
-              const stable = draft.npcStables.find(s => s.id === stableId);
+              const stable = lookupMaps?.stableMap.get(stableId) || draft.npcStables.find(s => s.id === stableId);
               if (stable) {
                 stable.staff[role] = staffId;
               }
@@ -176,7 +194,7 @@ export class SystemHandler implements ImpactHandler {
             draft.hiredStaff.splice(staffIndex, 1);
             
             if (stableId !== "") {
-              const stable = draft.npcStables.find(s => s.id === stableId);
+              const stable = lookupMaps?.stableMap.get(stableId) || draft.npcStables.find(s => s.id === stableId);
               if (stable) {
                 stable.staff[role] = null;
               }
@@ -187,14 +205,14 @@ export class SystemHandler implements ImpactHandler {
       }
 
       case "news_item": {
-        const { newsItem } = impact;
+        const { newsItem } = impactAny;
         if (!draft.news) draft.news = [];
         draft.news = [newsItem, ...draft.news].slice(0, 100);
         break;
       }
       
       case "hall_of_fame_induction": {
-        const { entry } = impact;
+        const { entry } = impactAny;
         if (!draft.hallOfFame) draft.hallOfFame = [];
         // Prevent duplicates
         if (!draft.hallOfFame.find(e => e.horseId === entry.horseId)) {
@@ -204,11 +222,12 @@ export class SystemHandler implements ImpactHandler {
       }
 
       case "season_history_record": {
-        const { record } = impact;
+        const { record } = impactAny;
         if (!draft.seasonRecords) draft.seasonRecords = [];
         draft.seasonRecords.push(record);
         break;
       }
     }
   }
+
 }

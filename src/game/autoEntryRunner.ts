@@ -32,6 +32,8 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
     return { entered: [], skipped: [], updatedSlots: campaign.slots };
   }
 
+  const raceMap = new Map(races.map(r => [r.id, r]));
+
   const entered: AutoEntryResult["entered"] = [];
   const skipped: AutoEntryResult["skipped"] = [];
   const updatedSlots = campaign.slots.map((slot, idx) => {
@@ -44,8 +46,10 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
 
     // Find the race — prefer matched raceId, fallback to matching by day + constraints
     let race: Race | undefined = slot.raceId
-      ? races.find((r) => r.id === slot.raceId && !r.resolved)
+      ? raceMap.get(slot.raceId)
       : undefined;
+    
+    if (race && race.resolved) race = undefined;
 
     if (!race) {
       race = races.find(
@@ -101,9 +105,10 @@ export function reconcileSlotStatuses(
   campaign: HorseCampaign,
   races: Race[],
 ): HorseCampaign["slots"] {
+  const raceMap = new Map(races.map(r => [r.id, r]));
   return campaign.slots.map((slot) => {
     if (slot.status !== "entered") return slot;
-    const race = slot.raceId ? races.find((r) => r.id === slot.raceId) : undefined;
+    const race = slot.raceId ? raceMap.get(slot.raceId) : undefined;
     if (race?.resolved) {
       return { ...slot, status: "completed" as const };
     }

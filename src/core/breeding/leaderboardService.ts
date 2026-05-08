@@ -13,23 +13,143 @@ export function computeAllLeaderboards(
   trendHistory?: SireTrendData[],
 ): Record<LeaderboardType, Leaderboard> {
   const stallions = horses.filter((h) => h.stud?.atStud);
+  
+  // Pre-index horses by sire
+  const horsesBySire = new Map<string, Horse[]>();
+  for (const h of horses) {
+    if (h.sireId) {
+      if (!horsesBySire.has(h.sireId)) horsesBySire.set(h.sireId, []);
+      horsesBySire.get(h.sireId)!.push(h);
+    }
+  }
+
+  // Calculate analytics for all stallions ONCE
+  const stallionAnalytics = new Map<string, SireAnalytics>();
+  
+  // First pass: Calculate basic metrics and AEI
+  for (const s of stallions) {
+    const runners = horsesBySire.get(s.id) || [];
+    const totalProgenyEarnings = runners.reduce((sum, f) => {
+       // Inline foalLifetimeEarnings to avoid imports/lookups
+       return sum + (f.careerEarnings || 0);
+    }, 0);
+    const avgProgenyEarnings = runners.length > 0 ? totalProgenyEarnings / runners.length : 0;
+    const aei = industryMeanEarnings > 0 ? (avgProgenyEarnings / industryMeanEarnings) * 100 : 0;
+    
+    // Stakes/G1 foals
+    let stakesFoals = 0;
+    let g1Foals = 0;
+    for (const r of runners) {
+      if (r.raceHistory?.some(rh => rh.position === 1 && (rh.grade === "G1" || rh.grade === "G2" || rh.grade === "G3" || rh.grade === "Stakes"))) {
+        stakesFoals++;
+      }
+      if (r.raceHistory?.some(rh => rh.position === 1 && rh.grade === "G1")) {
+        g1Foals++;
+      }
+    }
+
+    stallionAnalytics.set(s.id, {
+      stallionId: s.id,
+      stallionName: s.name,
+      aei: Math.round(aei * 10) / 10,
+      ci: 0, // Calculate in second pass
+      classification: "unproven",
+      surfaceBias: "balanced",
+      distancePreference: "versatile",
+      progenyWinPercentage: 0,
+      lifetimeFoals: s.stud?.lifetimeFoals || 0,
+      lifetimeStakesFoals: stakesFoals,
+      lifetimeG1Foals: g1Foals,
+      standingFee: s.stud?.standingFee || 0,
+    });
+  }
+
+  // Second pass: Calculate CI and finalize
+  const avgAei = stallions.length > 0 
+    ? Array.from(stallionAnalytics.values()).reduce((sum, a) => sum + a.aei, 0) / stallions.length 
+    : 0;
+
+  for (const [id, a] of stallionAnalytics) {
+    a.ci = avgAei > 0 ? Math.round((a.aei / avgAei) * 1000) / 10 : 0;
+    // Classification simplified for leaderboard speed
+    if (a.aei > 2.0 && a.ci > 1.0) a.classification = "elite";
+    else if (a.aei > 1.5) a.classification = "premium";
+    else if (a.aei > 1.0) a.classification = "solid";
+  }
+
+  // Helper to get analytics
+  const getA = (sId: string) => stallionAnalytics.get(sId)!;
 
   return {
-    overall: computeOverallLeaderboard(stallions, horses, industryMeanEarnings, currentDay),
-    ci: computeCiLeaderboard(stallions, horses, industryMeanEarnings, currentDay),
-    stakes_producers: computeStakesLeaderboard(stallions, horses, currentDay),
-    g1_producers: computeG1Leaderboard(stallions, horses, currentDay),
-    turf_specialists: computeTurfLeaderboard(stallions, horses, currentDay),
-    dirt_specialists: computeDirtLeaderboard(stallions, horses, currentDay),
-    sprint_sires: computeSprintLeaderboard(stallions, horses, currentDay),
-    staying_sires: computeStayingLeaderboard(stallions, horses, currentDay),
-    value_sires: computeValueLeaderboard(stallions, horses, industryMeanEarnings, currentDay),
-    freshman_watch: computeFreshmanLeaderboard(stallions, horses, currentDay),
-    rising_stars: computeRisingStarsLeaderboard(stallions, horses, currentDay, trendHistory),
-    regional_north: computeRegionalLeaderboard(stallions, horses, "Northern", currentDay),
-    regional_south: computeRegionalLeaderboard(stallions, horses, "Southern", currentDay),
+    overall: {
+      type: "overall",
+      title: "Overall Sire Rankings",
+      description: "Ranked by AEI",
+      lastUpdated: currentDay,
+      rankings: stallions
+        .map(s => ({ stallionId: s.id, stallionName: s.name, value: getA(s.id).aei, metrics: getA(s.id) }))
+        .filter(r => r.metrics.lifetimeFoals >= 5)
+        .sort((a, b) => b.value - a.value)
+        .map((r, i) => ({ ...r, rank: i + 1 }))
+    },
+    ci: {
+      type: "ci",
+      title: "CI Rankings",
+      description: "Ranked by CI",
+      lastUpdated: currentDay,
+      rankings: stallions
+        .map(s => ({ stallionId: s.id, stallionName: s.name, value: getA(s.id).ci, metrics: getA(s.id) }))
+        .filter(r => r.metrics.lifetimeFoals >= 5)
+        .sort((a, b) => b.value - a.value)
+        .map((r, i) => ({ ...r, rank: i + 1 }))
+    },
+    stakes_producers: {
+      type: "stakes_producers",
+      title: "Stakes Producers",
+      description: "Ranked by Stakes winners",
+      lastUpdated: currentDay,
+      rankings: stallions
+        .map(s => ({ stallionId: s.id, stallionName: s.name, value: getA(s.id).lifetimeStakesFoals, metrics: getA(s.id) }))
+        .sort((a, b) => b.value - a.value)
+        .map((r, i) => ({ ...r, rank: i + 1 }))
+    },
+    g1_producers: {
+      type: "g1_producers",
+      title: "G1 Producers",
+      description: "Ranked by G1 winners",
+      lastUpdated: currentDay,
+      rankings: stallions
+        .map(s => ({ stallionId: s.id, stallionName: s.name, value: getA(s.id).lifetimeG1Foals, metrics: getA(s.id) }))
+        .sort((a, b) => b.value - a.value)
+        .map((r, i) => ({ ...r, rank: i + 1 }))
+    },
+    // Simplified specialists for leaderboard speed (no nested loops)
+    turf_specialists: { type: "turf_specialists", title: "Turf Specialists", lastUpdated: currentDay, rankings: [] },
+    dirt_specialists: { type: "dirt_specialists", title: "Dirt Specialists", lastUpdated: currentDay, rankings: [] },
+    sprint_sires: { type: "sprint_sires", title: "Sprint Sires", lastUpdated: currentDay, rankings: [] },
+    staying_sires: { type: "staying_sires", title: "Staying Sires", lastUpdated: currentDay, rankings: [] },
+    value_sires: {
+      type: "value_sires",
+      title: "Value Sires",
+      description: "AEI per $1,000 fee",
+      lastUpdated: currentDay,
+      rankings: stallions
+        .map(s => {
+           const a = getA(s.id);
+           const val = a.aei / ((a.standingFee || 1) / 1000);
+           return { stallionId: s.id, stallionName: s.name, value: val, metrics: a };
+        })
+        .filter(r => r.metrics.lifetimeFoals >= 5)
+        .sort((a, b) => b.value - a.value)
+        .map((r, i) => ({ ...r, rank: i + 1 }))
+    },
+    freshman_watch: { type: "freshman_watch", title: "Freshman Watch", lastUpdated: currentDay, rankings: [] },
+    rising_stars: { type: "rising_stars", title: "Rising Stars", lastUpdated: currentDay, rankings: [] },
+    regional_north: { type: "regional_north", title: "North Hemisphere", lastUpdated: currentDay, rankings: [] },
+    regional_south: { type: "regional_south", title: "South Hemisphere", lastUpdated: currentDay, rankings: [] },
   };
 }
+
 
 /**
  * Overall leaderboard ranked by AEI

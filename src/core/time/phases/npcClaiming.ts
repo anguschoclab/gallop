@@ -23,12 +23,13 @@ export const npcClaimingPhase = {
     const newClaims: Claim[] = [...(state.claims ?? [])];
     const npcStables: Stable[] = state.npcStables;
     const allHorses: Horse[] = state.horses;
+    const horseMap = new Map(allHorses.map((h) => [h.id, h]));
 
     for (const race of claimingRaces) {
       const price = race.claiming!.price;
       for (const entry of race.entries) {
         // Only file claims on horses the NPC doesn't already own
-        const horse = allHorses.find((h: Horse) => h.id === entry.horseId);
+        const horse = horseMap.get(entry.horseId);
         if (!horse) continue;
 
         for (const stable of npcStables) {
@@ -43,8 +44,9 @@ export const npcClaimingPhase = {
           );
           if (alreadyClaimed) continue;
 
-          const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses);
+          const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses, horseMap);
           if (price <= valuation * 0.85 && stable.cash >= price) {
+
             newClaims.push({
               id: generateUUID(),
               raceId: race.id,

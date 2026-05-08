@@ -65,28 +65,19 @@ export function runNpcCycle(
     return { horses, races, jockeys, aiManager };
   }
 
-  // 1. NPC Training
-  const horsesAfterTraining = runNpcTraining(npcStables, horses, currentDay, rng);
-
-  // 2. NPC Race Entry (look ahead)
-  const racesAfterEntry = runNpcRaceEntry(
-    npcStables,
-    horsesAfterTraining,
-    jockeys,
-    races,
-    currentDay,
-    rng,
-    raceEntryDaysAhead,
-    pregnantIds,
-    aiManager,
-  );
+  // 1. NPC Training and 2. NPC Race Entry are now handled via the Intent/Impact pipeline
+  // to avoid duplication and ensure consistent resolution.
+  const horsesAfterTraining = horses;
+  const racesAfterEntry = races;
 
   // 3. Update fame for horses in yesterday's races
   const yesterdayRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
   let horsesAfterFame = horsesAfterTraining;
+  const horseToIndex = new Map(horsesAfterFame.map((h, i) => [h.id, i]));
   for (const race of yesterdayRaces) {
-    horsesAfterFame = updateHorseFame(horsesAfterFame, race);
+    horsesAfterFame = updateHorseFame(horsesAfterFame, race, horseToIndex);
   }
+
 
   // 4. AI state management
   // Clone AI manager to avoid mutating frozen/read-only objects

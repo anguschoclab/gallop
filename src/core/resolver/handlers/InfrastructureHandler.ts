@@ -8,11 +8,26 @@ export class InfrastructureHandler implements ImpactHandler {
     return ["facility_upgrade", "staff"].includes(type);
   }
 
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact): void {
+  handle(
+    draft: WritableDraft<GameState>,
+    impact: AnyImpact,
+    lookupMaps?: {
+      horseMap: Map<string, WritableDraft<any>>;
+      stableMap: Map<string, WritableDraft<any>>;
+      campaignMap: Map<string, WritableDraft<any>>;
+      raceMap: Map<string, WritableDraft<any>>;
+      jockeyMap: Map<string, WritableDraft<any>>;
+      auctionMap: Map<string, WritableDraft<any>>;
+      facilityMap: Map<string, WritableDraft<any>>;
+      staffMap: Map<string, WritableDraft<any>>;
+    },
+  ): void {
+    const impactAny = impact as any;
+
     switch (impact.type) {
       case "facility_upgrade": {
-        const { facilityId, nextLevel } = impact;
-        const facility = draft.facilities.find((f) => f.id === facilityId);
+        const { facilityId, nextLevel } = impactAny;
+        const facility = lookupMaps?.facilityMap.get(facilityId) || draft.facilities.find((f) => f.id === facilityId);
         if (facility) {
           facility.level = nextLevel;
         }
@@ -20,26 +35,35 @@ export class InfrastructureHandler implements ImpactHandler {
       }
 
       case "staff": {
-        const { action, staffType, staffId, salary, specialty, skill } = impact;
-        if (!draft.staff) draft.staff = [];
+        const { action, staffType, staffId, salary, specialty, skill, name, tier, bonusValue, traits, fame } = impactAny;
+        if (!draft.hiredStaff) draft.hiredStaff = [];
         
         if (action === "hire") {
-          draft.staff.push({
+          const newStaff = {
             id: staffId,
-            type: staffType,
+            name: name || "New Staff",
+            role: staffType,
+            tier: tier || "standard",
             salary,
-            specialty,
-            skill,
-            hiredDay: impact.day
-          });
+            bonusValue: bonusValue || 0,
+            traits: traits || [],
+            fame: fame || 0,
+            stableId: impactAny.stableId,
+            contractUntil: impactAny.contractUntil
+          };
+          draft.hiredStaff.push(newStaff);
+          if (lookupMaps) lookupMaps.staffMap.set(staffId, newStaff);
         } else if (action === "fire") {
-          const index = draft.staff.findIndex(s => s.id === staffId);
+          const index = draft.hiredStaff.findIndex(s => s.id === staffId);
           if (index !== -1) {
-            draft.staff.splice(index, 1);
+            draft.hiredStaff.splice(index, 1);
+            if (lookupMaps) lookupMaps.staffMap.delete(staffId);
           }
         }
         break;
       }
+
     }
   }
+
 }

@@ -104,24 +104,23 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   }
 
   // 4. Build the final Runner objects with assigned barriers
+  const horseMap = new Map(horses.map(h => [h.id, h]));
+  const jockeyMap = new Map(dependencies.jockeys.map(j => [j.id, j]));
+  const stableMap = npcStables ? new Map(npcStables.map(s => [s.id, s])) : new Map();
+  const fillerMap = new Map(fillerHorses.map(h => [h.id, h]));
+  
   const runners: Runner[] = [];
   for (let i = 0; i < shuffled.length; i++) {
     const entryData = shuffled[i];
     const barrier = i + 1;
 
-    // Find the horse (either from dependencies.horses or from the new fillerHorses)
-    let horse = horses.find((h) => h.id === entryData.horseId);
-    if (!horse) {
-      horse = fillerHorses.find((h) => h.id === entryData.horseId);
-    }
+    // Find the horse
+    let horse = horseMap.get(entryData.horseId) || fillerMap.get(entryData.horseId);
 
     if (horse) {
-      const jockeyObj = entryData.jockeyId
-        ? dependencies.jockeys.find((j) => j.id === entryData.jockeyId)
-        : undefined;
+      const jockeyObj = entryData.jockeyId ? jockeyMap.get(entryData.jockeyId) : undefined;
       // Get stable for AI-driven decisions
-      const stableObj =
-        horse.stableId && npcStables ? npcStables.find((s) => s.id === horse.stableId) : undefined;
+      const stableObj = horse.stableId ? stableMap.get(horse.stableId) : undefined;
         
       // Get staff for this stable
       const stableId = horse.stableId ?? "";
@@ -129,6 +128,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
       
       const farrier = staffForStable.find(s => s.role === "farrier");
       const groom = staffForStable.find(s => s.role === "groom");
+
       
       const runnerBonuses: RunnerBonuses = {
         farrier: farrier?.bonusValue,

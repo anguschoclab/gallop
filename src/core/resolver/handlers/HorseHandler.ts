@@ -16,15 +16,36 @@ export class HorseHandler implements ImpactHandler {
       "health_status_change",
       "pasture_retirement",
       "horse_death",
-      "injury"
+      "injury",
+      "horse_creation"
     ].includes(type);
   }
 
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact): void {
+  handle(
+    draft: WritableDraft<GameState>,
+    impact: AnyImpact,
+    lookupMaps?: {
+      horseMap: Map<string, WritableDraft<any>>;
+      stableMap: Map<string, WritableDraft<any>>;
+      campaignMap: Map<string, WritableDraft<any>>;
+    },
+  ): void {
+    const impactAny = impact as any;
+    const horseId = impactAny.horseId || impactAny.entityId;
+    const horse =
+      lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+
     switch (impact.type) {
+      case "horse_creation": {
+        const { horse } = impactAny;
+        if (horse) {
+          draft.horses.push(horse);
+          if (lookupMaps) lookupMaps.horseMap.set(horse.id, horse);
+        }
+        break;
+      }
       case "horse_stat_change": {
-        const { horseId, stat, delta } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { stat, delta } = impactAny;
         if (horse) {
           horse.stats[stat] = Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta));
         }
@@ -32,8 +53,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "energy_change": {
-        const { horseId, delta } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { delta } = impactAny;
         if (horse) {
           horse.energy = Math.min(100, Math.max(0, horse.energy + delta));
         }
@@ -41,8 +61,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "form_change": {
-        const { horseId, delta } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { delta } = impactAny;
         if (horse) {
           horse.form = Math.min(10, Math.max(-10, horse.form + delta));
         }
@@ -50,8 +69,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "fame_change": {
-        const { horseId, delta } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { delta } = impactAny;
         if (horse) {
           horse.fame = Math.min(100, Math.max(0, horse.fame + delta));
         }
@@ -59,8 +77,6 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "gelding": {
-        const { horseId } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
         if (horse && (horse.gender === "colt" || horse.gender === "horse")) {
           horse.gender = "gelding";
         }
@@ -68,8 +84,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "rename": {
-        const { horseId, newName } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { newName } = impactAny;
         if (horse) {
           horse.name = newName;
         }
@@ -77,8 +92,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "aging": {
-        const { horseId, newAge } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { newAge } = impactAny;
         if (horse) {
           horse.age = newAge;
         }
@@ -86,8 +100,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "health_status_change": {
-        const { horseId, status } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { status } = impactAny;
         if (horse) {
           horse.healthStatus = status;
           horse.healthStatusDay = impact.day;
@@ -96,8 +109,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "pasture_retirement": {
-        const { horseId, retiredOnDay } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { retiredOnDay } = impactAny;
         if (horse) {
           horse.lifecycleStatus = "retired";
           horse.retiredOnDay = retiredOnDay;
@@ -106,8 +118,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "horse_death": {
-        const { horseId, cause, deceasedOnDay } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { cause, deceasedOnDay } = impactAny;
         if (horse) {
           horse.lifecycleStatus = "deceased";
           horse.deceasedOnDay = deceasedOnDay;
@@ -117,8 +128,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "injury": {
-        const { horseId, severity, injuryType, recoveryDays } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
+        const { severity, injuryType, recoveryDays } = impactAny;
         if (horse) {
           horse.healthStatus = severity === "career-ending" ? "other_illness" : "recovering";
           horse.healthStatusDay = impact.day;
@@ -133,4 +143,5 @@ export class HorseHandler implements ImpactHandler {
       }
     }
   }
+
 }

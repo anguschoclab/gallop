@@ -56,44 +56,112 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
  * Apply all impacts to the state in order
  */
 export function applyImpacts(context: ResolverContext): ResolverContext {
-  let state = context.state;
   const impactLog: ImpactLogEntry[] = [];
-
-  for (const impact of context.impacts) {
-    state = applyImpact(state, impact);
-
-    // Log impact based on logLevel
-    if (impact.logLevel !== "never") {
-      impactLog.push({
-        impactId: impact.id,
-        intentId: impact.intentId,
-        day: impact.day,
-        phase: impact.phase,
-        type: impact.type,
-        entityId:
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (impact as any).entityId ||
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (impact as any).horseId ||
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (impact as any).raceId ||
-          "unknown",
-        details:
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (impact as any).reason ||
-          impact.type,
-
-        logLevel: impact.logLevel,
-      });
+  
+  const newState = produce(context.state, (draft) => {
+    // PRE-INDEX: Create maps for O(1) lookups during impact resolution
+    // Note: We use the DRAFT as source, but once a horse is modified, 
+    // the proxy stays the same in the map, so it's safe.
+    const horseMap = new Map<string, WritableDraft<Horse>>();
+    for (const h of draft.horses) {
+      horseMap.set(h.id, h);
     }
-  }
+    
+    const stableMap = new Map<string, WritableDraft<Stable>>();
+    for (const s of draft.npcStables) {
+      stableMap.set(s.id, s);
+    }
+
+    const campaignMap = new Map<string, WritableDraft<any>>();
+    if (draft.campaigns) {
+      for (const c of draft.campaigns) {
+        campaignMap.set(c.horseId, c);
+      }
+    }
+
+    const raceMap = new Map<string, WritableDraft<any>>();
+    for (const r of draft.races) {
+      raceMap.set(r.id, r);
+    }
+
+    const jockeyMap = new Map<string, WritableDraft<any>>();
+    if (draft.jockeys) {
+      for (const j of draft.jockeys) {
+        jockeyMap.set(j.id, j);
+      }
+    }
+
+    const auctionMap = new Map<string, WritableDraft<any>>();
+    if (draft.auctions) {
+      for (const a of draft.auctions) {
+        auctionMap.set(a.id, a);
+      }
+    }
+
+    const facilityMap = new Map<string, WritableDraft<any>>();
+    if (draft.facilities) {
+      for (const f of Object.values(draft.facilities)) {
+        if (f) facilityMap.set(f.type, f);
+      }
+    }
+
+    const staffMap = new Map<string, WritableDraft<any>>();
+    if (draft.hiredStaff) {
+      for (const s of draft.hiredStaff) {
+        staffMap.set(s.id, s);
+      }
+    }
+
+    for (const impact of context.impacts) {
+      let handled = false;
+      
+      for (const handler of ALL_HANDLERS) {
+        if (handler.canHandle(impact.type)) {
+          handler.handle(draft, impact, { horseMap, stableMap, campaignMap, raceMap, jockeyMap, auctionMap, facilityMap, staffMap });
+          handled = true;
+          break;
+        }
+      }
+
+
+
+
+
+
+
+      if (!handled) {
+        console.warn(`Unknown impact type: ${(impact as any).type}`);
+      }
+
+      // Log impact based on logLevel
+      if (impact.logLevel !== "never") {
+        impactLog.push({
+          impactId: impact.id,
+          intentId: impact.intentId,
+          day: impact.day,
+          phase: impact.phase,
+          type: impact.type,
+          entityId:
+            (impact as any).entityId ||
+            (impact as any).horseId ||
+            (impact as any).raceId ||
+            "unknown",
+          details:
+            (impact as any).reason ||
+            impact.type,
+          logLevel: impact.logLevel,
+        });
+      }
+    }
+  });
 
   return {
     ...context,
-    state,
+    state: newState as GameState,
     impactLog: [...context.impactLog, ...impactLog],
   };
 }
+
 
 /**
  * Validate an intent before resolution
@@ -102,11 +170,16 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
 export function validateIntent(
   intent: AnyIntent,
   state: GameState,
+  cache?: {
+    horseMap?: Map<string, Horse>;
+    raceMap?: Map<string, Race>;
+    stableMap?: Map<string, Stable>;
+  },
 ): { valid: boolean; reason?: string } {
   // Basic validation based on intent type
   switch (intent.type) {
     case "training": {
-      const horse = state.horses.find((h) => h.id === intent.horseId);
+      const horse = cache?.horseMap?.get(intent.horseId) || state.horses.find((h) => h.id === intent.horseId);
       if (!horse) return { valid: false, reason: "Horse not found" };
       if (horse.consignedSaleId)
         return { valid: false, reason: "Horse is consigned to an auction" };
@@ -115,8 +188,8 @@ export function validateIntent(
     }
 
     case "race_entry": {
-      const horse = state.horses.find((h) => h.id === intent.horseId);
-      const race = state.races.find((r) => r.id === intent.raceId);
+      const horse = cache?.horseMap?.get(intent.horseId) || state.horses.find((h) => h.id === intent.horseId);
+      const race = cache?.raceMap?.get(intent.raceId) || state.races.find((r) => r.id === intent.raceId);
       if (!horse) return { valid: false, reason: "Horse not found" };
       if (horse.consignedSaleId)
         return { valid: false, reason: "Horse is consigned to an auction" };
@@ -127,8 +200,8 @@ export function validateIntent(
     }
 
     case "breeding": {
-      const sire = state.horses.find((h) => h.id === intent.sireId);
-      const dam = state.horses.find((h) => h.id === intent.damId);
+      const sire = cache?.horseMap?.get(intent.sireId) || state.horses.find((h) => h.id === intent.sireId);
+      const dam = cache?.horseMap?.get(intent.damId) || state.horses.find((h) => h.id === intent.damId);
       if (!sire) return { valid: false, reason: "Sire not found" };
       if (!dam) return { valid: false, reason: "Dam not found" };
       if (sire.gender !== "horse" && sire.gender !== "gelding")
@@ -146,8 +219,8 @@ export function validateIntent(
     }
 
     case "claiming": {
-      const race = state.races.find((r) => r.id === intent.raceId);
-      const horse = state.horses.find((h) => h.id === intent.horseId);
+      const race = cache?.raceMap?.get(intent.raceId) || state.races.find((r) => r.id === intent.raceId);
+      const horse = cache?.horseMap?.get(intent.horseId) || state.horses.find((h) => h.id === intent.horseId);
       if (!race) return { valid: false, reason: "Race not found" };
       if (!horse) return { valid: false, reason: "Horse not found" };
       if (horse.consignedSaleId)
@@ -162,7 +235,7 @@ export function validateIntent(
 
       // Check claimant has sufficient funds
       if (intent.claimantStableId) {
-        const stable = state.npcStables.find((s) => s.id === intent.claimantStableId);
+        const stable = cache?.stableMap?.get(intent.claimantStableId) || state.npcStables.find((s) => s.id === intent.claimantStableId);
         if (!stable || stable.cash < race.claimingPrice) {
           return { valid: false, reason: "Insufficient funds" };
         }
@@ -181,8 +254,8 @@ export function validateIntent(
     }
 
     case "withdraw_from_claiming": {
-      const race = state.races.find((r) => r.id === intent.raceId);
-      const horse = state.horses.find((h) => h.id === intent.horseId);
+      const race = cache?.raceMap?.get(intent.raceId) || state.races.find((r) => r.id === intent.raceId);
+      const horse = cache?.horseMap?.get(intent.horseId) || state.horses.find((h) => h.id === intent.horseId);
       if (!race) return { valid: false, reason: "Race not found" };
       if (!horse) return { valid: false, reason: "Horse not found" };
       if (race.resolved) return { valid: false, reason: "Race already resolved" };
@@ -197,6 +270,7 @@ export function validateIntent(
       }
       break;
     }
+
 
     default:
       // Pass through for other intent types

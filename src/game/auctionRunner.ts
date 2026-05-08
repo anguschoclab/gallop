@@ -128,6 +128,8 @@ export function createAuctionRunner(
 ): AuctionRunner {
   const { liveMode = false, npcAIManager, currentDay, onAutoRaise } = options;
 
+  const horseMap = new Map(horses.map((h) => [h.id, h]));
+
   // Proxy bid cap — cleared per lot and on cancel.
   let playerMaxBid: number | undefined = undefined;
   const lots: LotState[] = sale.lots
@@ -141,6 +143,7 @@ export function createAuctionRunner(
       silentSteps: 0,
       consecutiveBidders: [],
     }));
+
 
   const bidderStables = stables.filter((s) => s.isMajor);
   const log: string[] = [];
@@ -169,7 +172,7 @@ export function createAuctionRunner(
   }
 
   function tryNpcRaise(state: LotState): AuctionTickEvent | null {
-    const horse = horses.find((h) => h.id === state.lot.horseId);
+    const horse = horseMap.get(state.lot.horseId);
     if (!horse) return null;
     const eligible = findEligibleBidders(state);
     // First-eligible-wins keeps it deterministic; specifically interesting
@@ -183,6 +186,7 @@ export function createAuctionRunner(
         sale.kind,
         rng,
         horses,
+        horseMap,
         npcAIManager,
         currentDay,
       );
@@ -200,7 +204,7 @@ export function createAuctionRunner(
 
   function finalizeCurrent(state: LotState): AuctionTickEvent[] {
     const events: AuctionTickEvent[] = [];
-    const horse = horses.find((h) => h.id === state.lot.horseId);
+    const horse = horseMap.get(state.lot.horseId);
     const horseName = horse?.name ?? "Lot";
 
     if (
@@ -356,7 +360,7 @@ export function createAuctionRunner(
   function currentLot() {
     if (done || lotIndex >= lots.length) return undefined;
     const state = lots[lotIndex];
-    const horse = horses.find((h) => h.id === state.lot.horseId);
+    const horse = horseMap.get(state.lot.horseId);
     return {
       lot: state.lot,
       horse,

@@ -17,7 +17,9 @@ export const jockeyPhase = {
   name: "jockey",
   order: 45, // After upkeep, before NPC cycle
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay, dailyRng } = context;
+    const { state, newDay } = context;
+    const dailyRng = (context as any).dailyRng || createRng(hashStr(`jockey_phase_${newDay}`));
+
     let jockeys = state.jockeys ?? [];
     let npcStables = state.npcStables;
     const log = state.log;

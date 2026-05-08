@@ -4,15 +4,28 @@ import type { Horse, GameState } from "@/game/types";
 // pedigree quality. Sire's standing fee and dam's blue-hen score both
 // contribute. Yearlings (age 1) lean harder on pedigree (60/40); older
 // horses lean on stats (30/70). Returns 1 when no pedigree exists.
-export function pedigreeMultiplier(horse: Horse, state: Pick<GameState, "horses">): number {
+export function pedigreeMultiplier(
+  horse: Horse,
+  state: Pick<GameState, "horses">,
+  horseMap?: Map<string, Horse>,
+): number {
   if (!horse.pedigree) return 1;
 
-  const sire = horse.pedigree.sireId
-    ? state.horses.find((h) => h.id === horse.pedigree!.sireId)
-    : undefined;
-  const dam = horse.pedigree.damId
-    ? state.horses.find((h) => h.id === horse.pedigree!.damId)
-    : undefined;
+  let sire: Horse | undefined;
+  let dam: Horse | undefined;
+
+  if (horseMap) {
+    sire = horse.pedigree.sireId ? horseMap.get(horse.pedigree.sireId) : undefined;
+    dam = horse.pedigree.damId ? horseMap.get(horse.pedigree.damId) : undefined;
+  } else {
+    sire = horse.pedigree.sireId
+      ? state.horses.find((h) => h.id === horse.pedigree!.sireId)
+      : undefined;
+    dam = horse.pedigree.damId
+      ? state.horses.find((h) => h.id === horse.pedigree!.damId)
+      : undefined;
+  }
+
 
   // Normalize sire fee against the upper end of the elite range ($250k).
   const sireFeeNorm = Math.min(1, (sire?.stud?.standingFee ?? 0) / 250000);

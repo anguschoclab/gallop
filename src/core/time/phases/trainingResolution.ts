@@ -36,8 +36,17 @@ export const trainingResolutionPhase: PipelinePhase = {
     // Filter for training intents
     const trainingIntents = intents.filter((i): i is TrainingIntent => i.type === "training");
 
+    const horseMap = new Map(state.horses.map(h => [h.id, h]));
+    const hiredStaffByStable = new Map<string, typeof state.hiredStaff>();
+    if (state.hiredStaff) {
+      for (const staff of state.hiredStaff) {
+        if (!hiredStaffByStable.has(staff.stableId)) hiredStaffByStable.set(staff.stableId, []);
+        hiredStaffByStable.get(staff.stableId)!.push(staff);
+      }
+    }
+
     for (const intent of trainingIntents) {
-      const horse = state.horses.find((h) => h.id === intent.horseId);
+      const horse = horseMap.get(intent.horseId);
       if (!horse) continue;
 
       // Skip training for retired or deceased horses
@@ -54,8 +63,8 @@ export const trainingResolutionPhase: PipelinePhase = {
       
       // Get staff bonuses for this stable
       const stableId = horse.stableId ?? "";
-      const hiredStaff = state.hiredStaff ?? [];
-      const staffForStable = hiredStaff.filter(s => s.stableId === stableId);
+      const staffForStable = hiredStaffByStable.get(stableId) || [];
+
       
       const trainer = staffForStable.find(s => s.role === "trainer");
       const trainerBonus = trainer ? trainer.bonusValue : 0;

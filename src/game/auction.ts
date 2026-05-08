@@ -73,12 +73,14 @@ export function calculateLotValuation(
   stable: Stable,
   saleKind: AuctionSaleKind,
   allHorses?: readonly Horse[],
+  horseMap?: Map<string, Horse>,
 ): number {
   // Pedigree multiplier raises the ceiling for foals by elite stallions out
   // of blue-hen mares. Falls back to 1× when allHorses isn't passed (older
   // call sites still work; new sites pass the live horses[] array).
-  const pedigreeMul = allHorses ? pedigreeMultiplier(horse, { horses: [...allHorses] }) : 1;
+  const pedigreeMul = allHorses ? pedigreeMultiplier(horse, { horses: allHorses }, horseMap) : 1;
   const base = Math.round(calculateNpcHorseValue(horse, stable.tier) * pedigreeMul);
+
   const p = stable.personality;
   const cfg = PERSONALITY_CONFIG[p];
   const isYearling = saleKind === "yearling" || saleKind === "yearling_south";
@@ -180,9 +182,11 @@ export function calculateNpcBid(
   saleKind: AuctionSaleKind,
   rng: ReturnType<typeof createRng>,
   allHorses?: readonly Horse[],
+  horseMap?: Map<string, Horse>,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
 ): number | null {
+
   // Use AI-driven bidding if AI manager is available
   if (npcAIManager && currentDay !== undefined) {
     const aiState = npcAIManager.stableStates.get(stable.id);
@@ -216,7 +220,8 @@ export function calculateNpcBid(
   }
 
   // Fall back to original logic if AI not available
-  const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses);
+  const ceiling = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap);
+
   if (ceiling <= 0) return null;
 
   const budgetCap = stable.cash * BUDGET_CAPS[stable.personality];
@@ -528,6 +533,7 @@ export function resolveAuctionSale(
 
   // Bidders: all major stables (not the consignor for their own lot)
   const bidderStables = stables.filter((s) => s.isMajor);
+  const horseMap = new Map(allHorses.map((h) => [h.id, h]));
 
   for (const lot of sale.lots) {
     if (lot.withdrawn) {
@@ -535,11 +541,12 @@ export function resolveAuctionSale(
       continue;
     }
 
-    const horse = allHorses.find((h) => h.id === lot.horseId);
+    const horse = horseMap.get(lot.horseId);
     if (!horse) {
       updatedLots.push({ ...lot, passed: true });
       continue;
     }
+
 
     if (horse.lifecycleStatus === "deceased") {
       updatedLots.push({ ...lot, withdrawn: true });
@@ -561,7 +568,8 @@ export function resolveAuctionSale(
       for (const stable of eligibleBidders) {
         if (stable.id === currentWinner) continue;
         const rng = createRng(hashStr(lot.id + stable.id + String(currentBid)));
-        const bid = calculateNpcBid(stable, horse, currentBid, sale.kind, rng, allHorses);
+        const bid = calculateNpcBid(stable, horse, currentBid, sale.kind, rng, allHorses, horseMap);
+
         if (bid !== null && bid > currentBid) {
           currentBid = bid;
           currentWinner = stable.id;
