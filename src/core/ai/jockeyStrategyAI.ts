@@ -51,38 +51,41 @@ export function calculateOptimalTactics(
   stable: Stable,
 ): string {
   const personality = aiState.personalityState.personality;
-  const runningStyle = calculateOptimalRunningStyle(aiState, horse, race, jockey, stable);
-
-  // Aggressive stables favor leading or the rail
-  if (personality === "aggressive" || personality === "win-now") {
-    if (runningStyle === "E") return "lead";
-    if (runningStyle === "EP") return "rail";
+  
+  // Jockey competency check - more skilled jockeys are better at riding to strength
+  const isSkilled = (jockey.stats.positioning + jockey.stats.pacing) / 2 > 70;
+  
+  // Strategy: Try to race to strength
+  if (horse.runningStyle === "E") {
+    // Front runners want to lead or be on the rail
+    if (personality === "aggressive" || (isSkilled && horse.energy > 80)) return "lead";
+    return "rail";
   }
 
-  // Conservative stables favor saving energy
-  if (personality === "conservative") {
-    if (runningStyle === "S") return "late_kick";
+  if (horse.runningStyle === "S") {
+    // Closers want to save ground or have a late kick
+    if (race.distance >= 2000 || isSkilled) return "late_kick";
     return "save";
   }
 
-  // Distance considerations
-  if (race.distance >= 2400 && runningStyle === "S") {
-    return "late_kick";
+  if (horse.runningStyle === "EP") {
+    // Early pressers want the rail to stay close to the lead efficiently
+    if (personality === "conservative") return "save";
+    return "rail";
   }
 
-  if (race.distance <= 1200 && runningStyle === "E") {
-    return "lead";
+  if (horse.runningStyle === "P") {
+    // Pressers are versatile; outside often helps avoid traffic if skilled
+    if (isSkilled && personality !== "conservative") return "outside";
+    if (personality === "conservative") return "save";
+    return "default";
   }
 
-  // Default behavior based on running style
-  const defaultTactics: Record<string, string> = {
-    E: "lead",
-    EP: "rail",
-    P: "default",
-    S: "save",
-  };
+  // Fallback to personality-driven logic if style is unclear
+  if (personality === "aggressive") return "lead";
+  if (personality === "conservative") return "save";
 
-  return defaultTactics[runningStyle] || "default";
+  return "default";
 }
 
 /**

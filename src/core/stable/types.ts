@@ -30,6 +30,7 @@ export type Stable = {
   preferredDistance?: number;
   preferredSurface?: "Turf" | "Dirt" | "Synthetic";
   breedingArchetype?: Archetype["id"];
+  staff: Record<import("@/core/staff/staffTypes").StaffRole, string | null>;
 };
 
 export type BackstoryId = "heir" | "trainer" | "investor" | "owner";

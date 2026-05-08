@@ -241,51 +241,6 @@ function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="border-gold-muted">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-medium text-cream-muted">
-              Recent Graded Winners
-            </CardTitle>
-            <Calendar className="h-4 w-4 text-cream-muted" />
-          </CardHeader>
-          <CardContent>
-            {recentGradedWinners.length === 0 ? (
-              <p className="text-xs text-cream-muted italic py-2">No graded results this week.</p>
-            ) : (
-              <div className="space-y-2">
-                {recentGradedWinners.map((r) => {
-                  const winnerId = r.result?.[0]?.horseId;
-                  const winner = horses.find((h) => h.id === winnerId);
-                  return (
-                    <div
-                      key={r.id}
-                      className="flex items-center justify-between text-xs border-b border-gold-muted/50 pb-2 last:border-0 last:pb-0"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant="outline"
-                          className={`h-4 px-1 text-[9px] ${getGradeColorClass(r.graded!.grade)}`}
-                        >
-                          {r.graded!.grade}
-                        </Badge>
-                        <span className="font-medium truncate max-w-[120px]">{r.name}</span>
-                      </div>
-                      <span className="text-cream-muted truncate max-w-[100px]">
-                        {winner?.name ?? "Unknown"}
-                      </span>
-                      <span className="tabular-nums text-cream-muted font-[family-name:var(--font-mono)]">
-                        D{r.day}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="border-gold-muted">
           <CardHeader>
             <CardTitle className="text-cream font-[family-name:var(--font-display)]">
               Top Stable Stars

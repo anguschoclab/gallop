@@ -203,6 +203,53 @@ function HorseDetail() {
           </CardContent>
         </Card>
 
+        <Card className="border-gold-muted">
+          <CardHeader>
+            <CardTitle className="font-[family-name:var(--font-display)]">Health & Welfare</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <p className="text-xs text-cream-muted uppercase tracking-wider font-bold">Recovery Rate</p>
+                <NumericValue value={horse.recoveryRate} />
+                <p className="text-[10px] text-cream-muted italic">Speed of energy return</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-cream-muted uppercase tracking-wider font-bold">Trainability</p>
+                <NumericValue value={horse.trainability} />
+                <p className="text-[10px] text-cream-muted italic">Likelihood of stat gains</p>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gold-muted/30">
+              <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">Hidden Risk Profile</p>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-cream-muted">Bleeder Risk</span>
+                  <Badge variant={horse.bleederRisk > 70 ? "destructive" : horse.bleederRisk > 30 ? "secondary" : "outline"}>
+                    {horse.bleederRisk > 70 ? "High" : horse.bleederRisk > 30 ? "Moderate" : "Low"}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-cream-muted">Roarer Risk</span>
+                  <Badge variant={horse.roarerRisk > 70 ? "destructive" : horse.roarerRisk > 30 ? "secondary" : "outline"}>
+                    {horse.roarerRisk > 70 ? "High" : horse.roarerRisk > 30 ? "Moderate" : "Low"}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-cream-muted">OCD Risk</span>
+                  <Badge variant={horse.ocdRisk > 70 ? "destructive" : horse.ocdRisk > 30 ? "secondary" : "outline"}>
+                    {horse.ocdRisk > 70 ? "High" : horse.ocdRisk > 30 ? "Moderate" : "Low"}
+                  </Badge>
+                </div>
+              </div>
+              <p className="text-[10px] text-cream-muted mt-2 italic">
+                *Risks are estimated based on veterinary evaluation and bloodline history.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Consignment and Retirement */}
         {horse.owned && (isConsigned || eligibleSale || canRetireToStud) && (
           <Card className="border-gold-muted">

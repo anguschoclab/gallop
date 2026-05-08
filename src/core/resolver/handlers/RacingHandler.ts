@@ -25,10 +25,11 @@ export class RacingHandler implements ImpactHandler {
       case "race_entry": {
         const { raceId, horseId, jockeyId, weight } = impact;
         const race = draft.races.find((r) => r.id === raceId);
-        if (race) {
+        const horse = draft.horses.find((h) => h.id === horseId);
+        if (race && horse) {
           race.entries.push({
             horseId,
-            owned: false,
+            owned: !horse.stableId,
             jockeyId,
             weight,
           });

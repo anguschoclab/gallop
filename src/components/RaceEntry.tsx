@@ -43,6 +43,9 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [selectedHorseId, setSelectedHorseId] = useState<string | null>(null);
   const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
+  const [selectedTactics, setSelectedTactics] = useState<
+    "lead" | "rail" | "outside" | "save" | "late_kick" | "default"
+  >("default");
   const [wantToClaim, setWantToClaim] = useState(false);
 
   const allHorses = useGameWithShallow((s) => s.horses);
@@ -52,6 +55,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const enterClaimingRace = useGame((s) => s.enterClaimingRace);
   const withdrawFromClaimingRace = useGame((s) => s.withdrawFromClaimingRace);
   const assignJockey = useGame((s) => s.assignJockey);
+  const setRaceTactics = useGame((s) => s.setRaceTactics);
   const submitClaim = useGame((s) => s.submitClaim);
   const withdrawClaim = useGame((s) => s.withdrawClaim);
   const withdrawRace = useGame((s) => s.withdrawRace);
@@ -98,6 +102,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
         : enterRace(race.id, selectedHorseId);
       if (res.ok) {
         assignJockey(race.id, selectedHorseId, selectedJockeyId);
+        setRaceTactics(race.id, selectedHorseId, selectedTactics);
 
         // Submit claim if selected (old-style claimingPrice)
         if (wantToClaim && race.claimingPrice && !isNewClaimingRace) {
@@ -142,6 +147,35 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
     return "Neutral";
   };
 
+  const TACTIC_OPTIONS = [
+    {
+      id: "default",
+      name: "Default",
+      desc: "Jockey will use their best judgment based on horse style.",
+    },
+    {
+      id: "lead",
+      name: "Lead at all costs",
+      desc: "Aggressive push for the front. High speed boost but drains stamina fast.",
+    },
+    {
+      id: "rail",
+      name: "Hug the Rail",
+      desc: "Stay in lane 0. Saves distance but risks getting boxed in.",
+    },
+    {
+      id: "outside",
+      name: "Stay Outside",
+      desc: "Avoid traffic by staying wide. No boxing risk but covers more ground.",
+    },
+    { id: "save", name: "Save Ground", desc: "Prioritize drafting behind other horses." },
+    {
+      id: "late_kick",
+      name: "Late Kick",
+      desc: "Sit back and conserve energy for a massive boost in the final 20%.",
+    },
+  ] as const;
+
   return (
     <Dialog
       open={isOpen}
@@ -155,7 +189,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
             Race Entry: {race.name}
           </DialogTitle>
           <div className="flex gap-1 mt-2">
-            {[1, 2, 3, 4].map((s) => (
+            {[1, 2, 3, 4, 5].map((s) => (
               <div
                 key={s}
                 className={`h-1 flex-1 rounded-full ${step >= s ? "bg-primary" : "bg-muted"}`}
@@ -302,7 +336,34 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
             </div>
           )}
 
-          {step === 3 && selectedHorse && selectedJockey && (
+          {step === 3 && selectedHorse && (
+            <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
+              <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">
+                Tactical Instructions
+              </h3>
+              <div className="grid grid-cols-1 gap-2">
+                {TACTIC_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.id}
+                    onClick={() => setSelectedTactics(opt.id as any)}
+                    className={`flex flex-col p-3 rounded-lg border text-left transition-all ${
+                      selectedTactics === opt.id
+                        ? "border-primary bg-primary/10"
+                        : "border-border bg-muted hover:bg-muted/80"
+                    }`}
+                  >
+                    <div className="flex justify-between items-center w-full">
+                      <span className="font-bold">{opt.name}</span>
+                      {selectedTactics === opt.id && <Check className="text-primary" size={16} />}
+                    </div>
+                    <span className="text-xs text-muted-foreground mt-1">{opt.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 4 && selectedHorse && selectedJockey && (
             <div className="space-y-6 animate-in zoom-in-95 duration-300">
               <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground text-center">
                 Final Review
@@ -360,6 +421,12 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
 
               <div className="space-y-2 px-4">
                 <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Tactics</span>
+                  <span className="font-bold uppercase text-primary">
+                    {TACTIC_OPTIONS.find((t) => t.id === selectedTactics)?.name}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Entry Fee</span>
                   <span
                     className={`font-bold tabular-nums ${isHorseQualifiedForRace(selectedHorse, race) ? "text-primary" : ""}`}
@@ -409,7 +476,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                                   : race.graded.grade === "G3"
                                     ? 300
                                     : 200
-                              : 150)
+                                : 150)
                         : race.entryFee +
                             selectedJockey.ridingFee +
                             (race.graded
@@ -420,7 +487,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                                   : race.graded.grade === "G3"
                                     ? 300
                                     : 200
-                              : 150) +
+                                : 150) +
                             (wantToClaim ? race.claimingPrice! : 0),
                     )}
                   </span>
@@ -460,7 +527,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
             </div>
           )}
 
-          {step === 4 && selectedHorse && race.claimingPrice && (
+          {step === 5 && selectedHorse && race.claimingPrice && (
             <div className="space-y-6 animate-in zoom-in-95 duration-300">
               <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground text-center">
                 Claiming Option
@@ -520,26 +587,28 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
           {step > 1 && (
             <Button
               variant="ghost"
-              onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3 | 4)}
+              onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3 | 4 | 5)}
               className="uppercase font-black tracking-widest text-[10px]"
             >
               Back
             </Button>
           )}
           <div className="flex-1" />
-          {step < 4 ? (
+          {step < 5 ? (
             <Button
               disabled={(step === 1 && !selectedHorseId) || (step === 2 && !selectedJockeyId)}
               onClick={() => {
-                if (step === 3 && race.claimingPrice) {
-                  setStep(4);
+                if (step === 4 && race.claimingPrice) {
+                  setStep(5);
+                } else if (step === 4 && !race.claimingPrice) {
+                  handleConfirm();
                 } else {
-                  setStep((s) => Math.min(s + 1, 4) as 1 | 2 | 3 | 4);
+                  setStep((s) => Math.min(s + 1, 5) as 1 | 2 | 3 | 4 | 5);
                 }
               }}
               className="uppercase font-black tracking-widest text-[10px]"
             >
-              Next Step
+              {step === 4 && !race.claimingPrice ? "Confirm Entry" : "Next Step"}
               <ChevronRight size={14} className="ml-1" />
             </Button>
           ) : (
