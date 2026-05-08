@@ -523,7 +523,7 @@ function HorseDetail() {
       <Card className="border-gold-muted">
         <CardHeader>
           <CardTitle className="font-[family-name:var(--font-display)]">Lineage</CardTitle>
-          <p className="text-xs text-cream-muted">Sire (top) and dam (bottom) for 4 generations</p>
+          <p className="text-xs text-cream-muted">Sire (top) and dam (bottom) for 4 generations (COI calculated to 8)</p>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <Lineage

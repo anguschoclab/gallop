@@ -22,7 +22,8 @@ const JARGON_DEFINITIONS: Record<string, string> = {
   OVR: "Overall rating: a weighted average of a horse's primary physical stats.",
   Pot: "Potential: the theoretical maximum stats a horse can reach through training.",
   Nicking: "The specific compatibility score between a sire's and dam's bloodlines.",
-  Inbreeding: "The measure of shared ancestors in a horse's pedigree.",
+  Bloodline: "The sire-line pedigree traced to 6 generations to identify founder ancestors (e.g., Northern Dancer, Mr. Prospector).",
+  Inbreeding: "The measure of shared ancestors in a horse's pedigree, calculated to 8 generations with weighted contribution (near generations have stronger impact).",
   Stud: "A retired male horse (stallion) available for breeding.",
 };
 

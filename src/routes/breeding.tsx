@@ -358,6 +358,10 @@ function BreedingPage() {
                               ` (${compatibility.factors.inbreeding.warning})`}
                           </span>
                         </div>
+                        <div className="flex items-center justify-between text-xs text-cream-muted">
+                          <span>COI Depth</span>
+                          <span>8 generations (weighted)</span>
+                        </div>
                         <div className="flex items-center justify-between text-xs">
                           <span>Parent Performance</span>
                           <span
