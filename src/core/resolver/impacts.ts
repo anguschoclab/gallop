@@ -12,6 +12,7 @@ import type {
   HorseCampaign,
   TripleCrownProgress,
 } from "@/game/types";
+import type { RaceSnapshot } from "@/core/race/types";
 import type { NewsItem } from "../narrative/newsTypes";
 import type { SeasonRecord, HallOfFameEntry } from "../history/historyTypes";
 
@@ -115,6 +116,7 @@ export interface RaceResultImpact extends Impact {
   type: "race_result";
   raceId: string;
   results: { horseId: string; position: number; time: number }[];
+  snapshots?: RaceSnapshot[];
   reason: string;
 }
 

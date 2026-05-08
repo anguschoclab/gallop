@@ -54,6 +54,7 @@ export const raceResolutionPhase: PipelinePhase = {
         stateReputation: state.reputation,
         hiredStaff: state.hiredStaff ?? [],
         rng,
+        snapshots,
       });
 
       impacts.push(...raceImpacts);

@@ -50,11 +50,12 @@ export class RacingHandler implements ImpactHandler {
       }
 
       case "race_result": {
-        const { raceId, results } = impact;
+        const { raceId, results, snapshots } = impact;
         const race = draft.races.find((r) => r.id === raceId);
         if (race) {
           race.result = results;
           race.resolved = true;
+          race.snapshots = snapshots;
         }
         break;
       }

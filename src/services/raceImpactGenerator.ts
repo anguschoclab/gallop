@@ -1,3 +1,4 @@
+import type { RaceSnapshot } from "@/core/race/types";
 import type {
   AnyImpact,
   RaceResultImpact,
@@ -51,6 +52,7 @@ export interface GenerateRaceImpactsProps {
   stateReputation?: ManagerReputation;
   hiredStaff?: StaffMember[];
   rng?: Rng;
+  snapshots?: RaceSnapshot[];
 }
 
 export function generateRaceImpacts({
@@ -64,6 +66,7 @@ export function generateRaceImpacts({
   stateReputation,
   hiredStaff = [],
   rng,
+  snapshots = [],
 }: GenerateRaceImpactsProps): AnyImpact[] {
   const impacts: AnyImpact[] = [];
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
@@ -78,6 +81,7 @@ export function generateRaceImpacts({
     type: "race_result",
     raceId: race.id,
     results: result.map(({ horseId, position, time }) => ({ horseId, position, time })),
+    snapshots,
     reason: "Race resolved",
   } as RaceResultImpact);
 
