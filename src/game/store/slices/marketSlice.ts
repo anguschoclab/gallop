@@ -18,9 +18,10 @@ import { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
 import { scoutHorse, calculateScoutCost } from "@/game/scouting";
 import { createRng, hashStr } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
-import type { PurchaseIntent } from "@/core/resolver/intents";
+import type { PurchaseIntent, ScoutIntent } from "@/core/resolver/intents";
 import { DEFAULT_PLAYER_RESERVE_RATIO, calculateLotValuation } from "@/game/auction";
 import { formatCurrency } from "@/components/HorseBits";
+import type { StoreSet, StoreGet } from "../types";
 
 export type MarketSlice = MarketState & {
   buyHorse: (horseId: string) => void;
@@ -71,11 +72,9 @@ export type MarketSlice = MarketState & {
 };
 
 export function createMarketSlice(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  set: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get: any,
-  enqueueIntent: (intent: PurchaseIntent | ScoutIntent) => void,
+  set: StoreSet,
+  get: StoreGet,
+  enqueueIntent: (intent: any) => void,
 ): MarketSlice {
   return {
     ...createDefaultMarketState(),
@@ -108,8 +107,7 @@ export function createMarketSlice(
       if (!horse.stableId) {
         return { success: false, cost: 0, message: "Cannot scout your own horses." };
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const stable = s.npcStables.find((st: any) => st.id === horse.stableId);
+      const stable = s.npcStables.find((st: Stable) => st.id === horse.stableId);
       if (!stable) {
         return { success: false, cost: 0, message: "Stable not found." };
       }
@@ -196,8 +194,7 @@ export function createMarketSlice(
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
       if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const lot = sale.lots.find((l: any) => l.id === lotId);
+      const lot = sale.lots.find((l: AuctionLot) => l.id === lotId);
       if (!lot) return { ok: false, reason: "Lot not found." };
       if (lot.withdrawn || lot.passed) return { ok: false, reason: "Lot not available." };
       if (s.cash < amount) return { ok: false, reason: "Insufficient funds." };
@@ -208,8 +205,7 @@ export function createMarketSlice(
           a.id === saleId
             ? {
                 ...a,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                lots: a.lots.map((l: any) =>
+                lots: a.lots.map((l: AuctionLot) =>
                   l.id === lotId
                     ? {
                         ...l,

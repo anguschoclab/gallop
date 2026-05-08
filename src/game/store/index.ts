@@ -21,6 +21,8 @@ import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
 import { setCalibratedPars } from "@/game/beyer";
+import type { StoreType, NewGameOptions } from "./types";
+import type { AnyIntent } from "@/core/resolver/intents";
 
 /**
  * Worker instances
@@ -116,56 +118,31 @@ export function getInitializationWorker(): Remote<InitializationWorkerApi> {
 }
 
 /**
- * Standard action result type for store actions
- */
-export type ActionResult = { ok: true } | { ok: false; reason: string };
-
-/**
- * Composed store type combining all slices
- */
-export type StoreType = CoreState &
-  RacingSlice &
-  MarketSlice &
-  BreedingSlice &
-  SystemsSlice &
-  CampaignSlice &
-  CoreSlice & {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    startNewGame: (options: any) => Promise<void>;
-  };
-
-/**
  * Main Zustand store composed from all slices
  */
 export const useGame = create<StoreType>()(
   persist(
     (set, get) => ({
       // Core slice
-      ...createCoreSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
+      ...createCoreSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Racing slice
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...createRacingSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
+      ...createRacingSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Market slice
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...createMarketSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
+      ...createMarketSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Breeding slice
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...createBreedingSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
+      ...createBreedingSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Systems slice
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...createSystemsSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
+      ...createSystemsSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Campaign slice
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...createCampaignSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
+      ...createCampaignSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Start new game action
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      startNewGame: async (options: any) => {
+      startNewGame: async (options: NewGameOptions) => {
         // Initialize workers if not already initialized
         await initEngineWorker();
         await initStorageWorker();

@@ -9,6 +9,8 @@ import { createDefaultRacingState } from "@/game/state/racingState";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/game/uuid";
 import { TRAINING_COST } from "@/game/constants/gameConstants";
+import type { StoreSet, StoreGet } from "../types";
+import type { AnyIntent } from "@/core/resolver/intents";
 
 const TRAINING_SLOTS_PER_DAY = 2;
 
@@ -22,10 +24,8 @@ export type RacingSlice = RacingState & {
 };
 
 export function createRacingSlice(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  set: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get: any,
+  set: StoreSet,
+  get: StoreGet,
   enqueueIntent: (intent: TrainingIntent) => void,
 ): RacingSlice {
   return {
@@ -36,8 +36,7 @@ export function createRacingSlice(
       const horse = s.horses.find((h: Horse) => h.id === horseId);
       if (!horse) return;
       if (!horse.owned) return;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (s.pregnancies.some((p: any) => !p.resolved && p.damId === horseId)) return;
+      if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
 
       // Check if horse has covering sickness or is recovering - prevent training
       if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering") {
@@ -81,8 +80,7 @@ export function createRacingSlice(
     },
 
     setTrainingUsed: (horseId, count) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         trainingUsed: { ...state.trainingUsed, [horseId]: count },
       }));
     },

@@ -1,7 +1,7 @@
 import type { Genotype, MarkerGenotype } from "./types";
 import type { Locus } from "@/core/common/types";
 import type { Rng } from "@/core/common/types";
-import { crossoverAllChromosomes } from "./chromosomes";
+import { crossoverAllChromosomes, type ChromosomeId } from "./chromosomes";
 import { LINKAGE_MAP, getLociByChromosome, INDEPENDENTLY_ASSORTING_LOCI } from "./linkageMap";
 
 /**
@@ -84,14 +84,13 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
 
   // Helper to get loci array from sire/dam for a given chromosome
   const getChromosomeLoci = (
-    chromosomeId: string,
+    chromosomeId: ChromosomeId,
     genotype: Genotype,
   ): { alleles: Locus[]; positions: number[] } => {
     const alleles: Locus[] = [];
     const positions: number[] = [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const locusKeys = getLociByChromosome(chromosomeId as any);
+    const locusKeys = getLociByChromosome(chromosomeId);
 
     for (const key of locusKeys) {
       const coord = LINKAGE_MAP[key];
@@ -189,13 +188,11 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
   }
 
   // Perform chromosome-aware crossover
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const offspringMap = crossoverAllChromosomes(chromosomeData as any, rng);
+  const offspringMap = crossoverAllChromosomes(chromosomeData, rng);
 
   // Helper to reconstruct loci arrays from offspring map
-  const reconstructLoci = (chromosomeId: string, locusKeys: string[]): Locus[] => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const offspringAlleles = offspringMap.get(chromosomeId as any);
+  const reconstructLoci = (chromosomeId: ChromosomeId, locusKeys: string[]): Locus[] => {
+    const offspringAlleles = offspringMap.get(chromosomeId);
     if (!offspringAlleles) {
       // Fallback to independent crossover if chromosome not in map
       return locusKeys.map((key) => {
@@ -235,11 +232,9 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
   };
 
   // Extract individual loci from offspring map
-  const getOffspringLocus = (key: string, chromosomeId: string): Locus => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const offspringAlleles = offspringMap.get(chromosomeId as any);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const locusKeys = getLociByChromosome(chromosomeId as any);
+  const getOffspringLocus = (key: string, chromosomeId: ChromosomeId): Locus => {
+    const offspringAlleles = offspringMap.get(chromosomeId);
+    const locusKeys = getLociByChromosome(chromosomeId);
     const idx = locusKeys.indexOf(key);
 
     if (offspringAlleles && idx >= 0 && idx < offspringAlleles.length) {

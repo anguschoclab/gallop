@@ -3,7 +3,7 @@
  * Breeding-related state and actions for reproduction and lineage tracking
  */
 
-import type { Pregnancy, TripleCrownProgress } from "@/game/types";
+import type { Pregnancy, TripleCrownProgress, Horse } from "@/game/types";
 import type { BreedingState } from "@/game/state/breedingState";
 import { createDefaultBreedingState } from "@/game/state/breedingState";
 import { createBreedingProgram, updateProgramProgress } from "@/core/breeding/programs";
@@ -14,6 +14,7 @@ import { generateUUID } from "@/game/uuid";
 import type { BreedingIntent } from "@/core/resolver/intents";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants/gameConstants";
 import { formatCurrency } from "@/components/HorseBits";
+import type { StoreSet, StoreGet } from "../types";
 
 export type BreedingSlice = BreedingState & {
   breed: (
@@ -32,10 +33,8 @@ export type BreedingSlice = BreedingState & {
 };
 
 export function createBreedingSlice(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  set: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get: any,
+  set: StoreSet,
+  get: StoreGet,
   enqueueIntent: (intent: BreedingIntent) => void,
 ): BreedingSlice {
   return {
@@ -43,10 +42,8 @@ export function createBreedingSlice(
 
     breed: (sireId, damId, liveFoalGuarantee = false) => {
       const s = get();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sire = s.horses.find((h: any) => h.id === sireId);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const dam = s.horses.find((h: any) => h.id === damId);
+      const sire = s.horses.find((h: Horse) => h.id === sireId);
+      const dam = s.horses.find((h: Horse) => h.id === damId);
       const fail = (reason: string): { ok: false; reason: string } => {
         set({ log: [{ day: s.day, text: `Breeding: ${reason}` }, ...s.log].slice(0, 50) });
         return { ok: false, reason };
@@ -98,7 +95,7 @@ export function createBreedingSlice(
 
     retireToPasture: (horseId: string) => {
       const s = get();
-      const horse = s.horses.find((h: any) => h.id === horseId);
+      const horse = s.horses.find((h: Horse) => h.id === horseId);
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
       if (horse.age < 3)
@@ -141,8 +138,7 @@ export function createBreedingSlice(
     enrollDamInProgram: (damId) => {
       const s = get();
       if (!s.activeBreedingProgram) return { ok: false, reason: "No active program." };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const dam = s.horses.find((h: any) => h.id === damId);
+      const dam = s.horses.find((h: Horse) => h.id === damId);
       if (!dam) return { ok: false, reason: "Horse not found." };
       if (dam.gender !== "mare" && dam.gender !== "filly")
         return { ok: false, reason: "Only mares can be enrolled." };
@@ -173,8 +169,7 @@ export function createBreedingSlice(
     recordProgramFoal: (horseId) => {
       const s = get();
       if (!s.activeBreedingProgram) return;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const horse = s.horses.find((h: any) => h.id === horseId);
+      const horse = s.horses.find((h: Horse) => h.id === horseId);
       if (!horse) return;
       const archetype = getArchetypeById(s.activeBreedingProgram.archetypeId);
       if (!archetype) return;

@@ -21,16 +21,17 @@ export type CampaignSlice = {
   generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => void;
   setCampaigns: (campaigns: HorseCampaign[]) => void;
   setTriplecrownHistory: (history: TripleCrownProgress[]) => void;
-};
+import type { StoreSet, StoreGet } from "../types";
 
+export type CampaignSlice = {
+...
 export function createCampaignSlice(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  set: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get: any,
+  set: StoreSet,
+  get: StoreGet,
   enqueueIntent: (intent: AnyIntent) => void,
 ): CampaignSlice {
   return {
+
     campaigns: [],
     triplecrownHistory: [],
 

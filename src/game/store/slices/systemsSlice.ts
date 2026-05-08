@@ -14,6 +14,7 @@ import type { PlayerFacilities } from "@/core/facilities";
 import type { ManagerReputation } from "@/core/reputation";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import { formatCurrency } from "@/components/HorseBits";
+import type { GameStateCreator } from "../types";
 
 export type SystemsSlice = SystemsState & {
   hireJockey: (jockeyId: string) => ActionResult;
@@ -59,12 +60,7 @@ export type SystemsSlice = SystemsState & {
   enrollDamInProgram: (programId: string, damId: string) => void;
 };
 
-export function createSystemsSlice(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  set: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get: any,
-): SystemsSlice {
+export const createSystemsSlice: GameStateCreator<SystemsSlice> = (set, get) => {
   return {
     ...createDefaultSystemsState(),
 
@@ -271,15 +267,13 @@ export function createSystemsSlice(
     },
 
     enqueueIntent: (intent: AnyIntent) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         pendingIntents: [...(state.pendingIntents || []), intent],
       }));
     },
 
     setCampaign: (campaign: HorseCampaign) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         campaigns: state.campaigns?.map((c: HorseCampaign) =>
           c.horseId === campaign.horseId ? campaign : c,
         ) || [campaign],
@@ -291,8 +285,7 @@ export function createSystemsSlice(
       slotIndex: number,
       patch: Partial<HorseCampaign["slots"][number]>,
     ) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         campaigns: state.campaigns?.map((c: HorseCampaign) =>
           c.horseId === horseId
             ? {
@@ -305,8 +298,7 @@ export function createSystemsSlice(
     },
 
     dismissCampaignFlag: (horseId: string, flagIndex: number) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         campaigns: state.campaigns?.map((c: HorseCampaign) =>
           c.horseId === horseId
             ? {
@@ -319,30 +311,26 @@ export function createSystemsSlice(
     },
 
     deleteCampaign: (horseId: string) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         campaigns: state.campaigns?.filter((c: HorseCampaign) => c.horseId !== horseId),
       }));
     },
 
     generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => {
       // Full implementation would be in a helper - placeholder for now
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         campaigns: state.campaigns || [],
       }));
     },
 
     updateUserSettings: (settings: Partial<UserSettings>) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         userSettings: { ...state.userSettings, ...settings },
       }));
     },
 
     updateDisplaySettings: (settings: Partial<UserSettings["display"]>) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         userSettings: {
           ...state.userSettings,
           display: { ...state.userSettings?.display, ...settings },
@@ -351,8 +339,7 @@ export function createSystemsSlice(
     },
 
     updateGameplaySettings: (settings: Partial<UserSettings["gameplay"]>) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         userSettings: {
           ...state.userSettings,
           gameplay: { ...state.userSettings?.gameplay, ...settings },
@@ -361,8 +348,7 @@ export function createSystemsSlice(
     },
 
     updateNotificationSettings: (settings: Partial<UserSettings["notifications"]>) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         userSettings: {
           ...state.userSettings,
           notifications: { ...state.userSettings?.notifications, ...settings },
@@ -371,8 +357,7 @@ export function createSystemsSlice(
     },
 
     updateAudioSettings: (settings: Partial<UserSettings["audio"]>) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         userSettings: {
           ...state.userSettings,
           audio: { ...state.userSettings?.audio, ...settings },
@@ -381,8 +366,7 @@ export function createSystemsSlice(
     },
 
     resetSettings: () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         userSettings: createDefaultUserSettings(state.day),
       }));
     },
