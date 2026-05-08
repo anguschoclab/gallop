@@ -5,7 +5,7 @@
 import type { Horse, Race, Stable, Jockey } from "./types";
 import type { Rng } from "@/game/rng";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import { calculateAssignedWeight, MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/core/race/entryScoring";
+import { calculateAssignedWeight, calculateRaceSuitability, MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/core/race/entryScoring";
 import { getFormTolerance } from "@/core/stable/personalityModifiers";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { calculateOptimalTactics } from "@/core/ai/jockeyStrategyAI";
