@@ -145,13 +145,14 @@ export function getAdaptiveThreshold(
  * Prune old outcomes outside time window
  */
 export function pruneOldOutcomes(state: LearningState, cutoffDay: number): LearningState {
-  state.outcomes = state.outcomes.filter((o) => o.day >= cutoffDay);
+  const outcomes = state.outcomes.filter((o) => o.day >= cutoffDay);
+  if (outcomes.length === state.outcomes.length) return state;
 
   // Recalculate success rates after pruning
   const newSuccessRates = new Map();
   const grouped = new Map<string, { successes: number; total: number }>();
 
-  for (const outcome of state.outcomes) {
+  for (const outcome of outcomes) {
     const key = `${outcome.decisionType}:${outcome.contextKey}`;
     const existing = grouped.get(key) || { successes: 0, total: 0 };
     grouped.set(key, {
@@ -168,9 +169,11 @@ export function pruneOldOutcomes(state: LearningState, cutoffDay: number): Learn
     });
   }
 
-  state.successRates = newSuccessRates;
-
-  return state;
+  return {
+    ...state,
+    outcomes,
+    successRates: newSuccessRates,
+  };
 }
 
 /**

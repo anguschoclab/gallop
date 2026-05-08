@@ -9,7 +9,8 @@ import type { SireTrendData } from "@/core/breeding/leaderboardTypes";
  */
 export const leaderboardPhase = {
   name: "leaderboardUpdate",
-  order: 70, // After races (60), before awards (80)
+  order: 72, // After races (60) and raceResolution (70), before awards (80)
+
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 

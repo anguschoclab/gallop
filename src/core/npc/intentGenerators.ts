@@ -52,9 +52,22 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
     }
   }
 
-  // Cache upcoming races
+  // Cache upcoming races and index them by region
   const upcomingRaces = state.races.filter(r => !r.resolved && r.day >= day && r.day <= day + 7);
   
+  const racesByRegion = new Map<string, Race[]>();
+  const globalGradedRaces: Race[] = [];
+  
+  for (const race of upcomingRaces) {
+    const region = race.graded ? (race.graded.country || 'Other') : 'Other';
+    if (!racesByRegion.has(region)) racesByRegion.set(region, []);
+    racesByRegion.get(region)!.push(race);
+    
+    if (race.graded) {
+      globalGradedRaces.push(race);
+    }
+  }
+
   // Pre-index entries for faster lookup in loops
   const raceEntrySets = new Map<string, Set<string>>();
   for (const race of upcomingRaces) {
@@ -64,11 +77,19 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
   // Generate intents for each NPC stable
   for (const stable of state.npcStables) {
     const ownedHorses = horsesByStable.get(stable.id) || [];
+    
+    // Only check races in the stable's country, plus any Graded races (which are "global")
+    const stableRegion = stable.country || 'Other';
+    const relevantRaces = [
+      ...(racesByRegion.get(stableRegion) || []),
+      ...globalGradedRaces.filter(r => r.graded?.country !== stableRegion)
+    ];
+
     intents.push(...generateNpcTrainingIntents(state, stable, day, ownedHorses, activePregnanciesByDam));
-    intents.push(...generateNpcRaceEntryIntents(state, stable, day, ownedHorses, upcomingRaces, raceEntrySets));
+    intents.push(...generateNpcRaceEntryIntents(state, stable, day, ownedHorses, relevantRaces, raceEntrySets));
     intents.push(...generateNpcBreedingIntents(state, stable, day, ownedHorses, activePregnanciesByDam));
-    intents.push(...generateNpcClaimingIntents(state, stable, day, upcomingRaces, horseMap));
-    intents.push(...generateNpcWithdrawalIntents(state, stable, day, ownedHorses, upcomingRaces, horseMap));
+    intents.push(...generateNpcClaimingIntents(state, stable, day, relevantRaces, horseMap));
+    intents.push(...generateNpcWithdrawalIntents(state, stable, day, ownedHorses, relevantRaces, horseMap));
   }
 
   return intents;

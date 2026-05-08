@@ -24,8 +24,17 @@ export const raceResolutionPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
     const updatedRaces: typeof state.races = [...state.races];
     const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= newDay);
+    if (overdueRaces.length > 0) {
+      console.log(`      - Resolving ${overdueRaces.length} races...`);
+    }
 
+    let resolvedCount = 0;
     for (const race of overdueRaces) {
+      resolvedCount++;
+      if (resolvedCount % 10 === 0) {
+        console.log(`        ... resolved ${resolvedCount}/${overdueRaces.length} races`);
+      }
+      const raceStart = Date.now();
       // Simulate race using service
       const { result, runners, snapshots } = simulateRace(
         race,
@@ -33,7 +42,14 @@ export const raceResolutionPhase: PipelinePhase = {
         state.jockeys ?? [],
         state.hiredStaff,
         state.npcStables,
+        state.npcAIManager,
+        newDay
       );
+      const raceDuration = Date.now() - raceStart;
+      if (raceDuration > 100) {
+        console.log(`        [SLOW RACE] ${race.name} (id: ${race.id}) took ${raceDuration}ms`);
+      }
+
       const rng = rngForRace(race);
 
       // Update race in the updatedRaces array
@@ -79,7 +95,7 @@ export const raceResolutionPhase: PipelinePhase = {
         // Check winner for Hall of Fame induction
         const winnerId = result.find(r => r.position === 1)?.horseId;
         const winner = state.horses.find(h => h.id === winnerId);
-        if (winner) {
+        if (winner && winner.id) {
           // Calculate temporary stats to see if they cross the threshold
           const prizeMoney = race.purse * 0.6; // Winner gets 60%
           const tempHorse = {
@@ -100,9 +116,20 @@ export const raceResolutionPhase: PipelinePhase = {
               day: newDay,
               phase: "raceResolution",
               logLevel: "always",
-              type: "hall_of_fame_induction",
+              type: "hall_of_fame",
               entry: hofEntry,
-              reason: `${winner.name} reaches legendary status after winning ${race.name}!`
+              reason: "G1 winner reached HoF criteria",
+            } as any);
+
+            impacts.push({
+              id: generateUUID(),
+              intentId: race.id,
+              day: newDay,
+              phase: "raceResolution",
+              logLevel: "always",
+              type: "log",
+              text: `Hall of Fame induction: ${winner.name} after G1 victory in ${race.name}`,
+              reason: "HoF induction",
             } as any);
           }
         }

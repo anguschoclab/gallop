@@ -638,10 +638,12 @@ export function stepRunner(
     finalDs = ds / arcFactor;
   }
 
-  // --- Tactical AI Integration ---
-  const tactical = calculateTacticalAdjustment(r, pace, field || []);
-  r.velocity *= (1 + (tactical.velocityMod - 1) * dt);
-  r.lane += (tactical.targetLane - r.lane) * 0.1 * dt;
+  // --- Tactical AI Integration (Throttle to ~1Hz) ---
+  if (Math.floor(t / 1.0) !== Math.floor((t - dt) / 1.0)) {
+    const tactical = calculateTacticalAdjustment(r, pace, field || []);
+    r.velocity *= (1 + (tactical.velocityMod - 1) * dt);
+    r.lane += (tactical.targetLane - r.lane) * 0.1 * dt;
+  }
 
   // --- Traffic & Blocking Penalty ---
   const blockingHorse = (field || []).find(other => 
@@ -698,7 +700,12 @@ export function runRaceToCompletion(
     }
 
     t += dt;
+    // if (Math.floor(t / dt) % 100 === 0) {
+    //   console.log(`      [SIM] t=${t.toFixed(1)}s`);
+    // }
   }
+
+
 
   const ranked = [...runners]
     .map((r) => ({ horseId: r.horseId, time: r.finishTime ?? Infinity }))

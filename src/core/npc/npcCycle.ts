@@ -72,11 +72,35 @@ export function runNpcCycle(
 
   // 3. Update fame for horses in yesterday's races
   const yesterdayRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
-  let horsesAfterFame = horsesAfterTraining;
+  let horsesAfterFame = [...horsesAfterTraining];
   const horseToIndex = new Map(horsesAfterFame.map((h, i) => [h.id, i]));
+  
+  // Use a mutable pattern inside this phase to avoid O(R*H) array copies
   for (const race of yesterdayRaces) {
-    horsesAfterFame = updateHorseFame(horsesAfterFame, race, horseToIndex);
+    if (!race.result) continue;
+    for (const result of race.result) {
+      const idx = horseToIndex.get(result.horseId);
+      if (idx !== undefined) {
+        const horse = horsesAfterFame[idx];
+        let fameGain = 0;
+        if (result.position === 1) {
+          fameGain = race.graded?.grade === "G1" ? 20 : race.graded?.grade === "G2" ? 15 : race.graded?.grade === "G3" ? 10 : 5;
+        } else if (result.position <= 3) {
+          fameGain = race.graded?.grade === "G1" ? 10 : race.graded?.grade === "G2" ? 8 : race.graded?.grade === "G3" ? 5 : 2;
+        } else if (result.position <= 5) {
+          fameGain = 1;
+        }
+        if (race.purse > 500000) fameGain += 3;
+        else if (race.purse > 100000) fameGain += 1;
+        
+        horsesAfterFame[idx] = {
+          ...horse,
+          fame: Math.min(100, horse.fame + fameGain)
+        };
+      }
+    }
   }
+
 
 
   // 4. AI state management

@@ -70,6 +70,10 @@ export function generateRaceImpacts({
 }: GenerateRaceImpactsProps): AnyImpact[] {
   const impacts: AnyImpact[] = [];
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
+  const horseMap = new Map(horses.map(h => [h.id, h]));
+  const jockeyMap = new Map(jockeys.map(j => [j.id, j]));
+  const runnersMap = new Map(runners.map(run => [run.horseId, run]));
+  const entriesMap = new Map(race.entries.map(e => [e.horseId, e]));
 
   // Generate race result impact
   impacts.push({
@@ -87,10 +91,10 @@ export function generateRaceImpacts({
 
   // Generate per-horse impacts
   for (const r of result) {
-    const horse = horses.find((h) => h.id === r.horseId);
+    const horse = horseMap.get(r.horseId);
     if (!horse) continue;
 
-    const runner = runners.find((run) => run.horseId === r.horseId);
+    const runner = runnersMap.get(r.horseId);
 
     // Energy impact (-25)
     impacts.push({
@@ -114,7 +118,9 @@ export function generateRaceImpacts({
     }
 
     // Form impact based on position
-    const groom = hiredStaff.find(s => s.role === 'groom' && s.stableId === (horse.stableId || ""));
+    const stableId = horse.stableId || "";
+    const groom = hiredStaff.find(s => s.role === 'groom' && s.stableId === stableId);
+
     const baseFormDelta =
       r.position === 1 ? 3 : r.position === 2 ? 2 : r.position === 3 ? 1 : r.position <= 5 ? 0 : -1;
     const formDelta = baseFormDelta < 0 && groom ? 0 : baseFormDelta;
@@ -308,9 +314,10 @@ export function generateRaceImpacts({
     }
 
     // Jockey riding fee deduction
-    const entry = race.entries.find((e) => e.horseId === horse.id);
+    const entry = entriesMap.get(horse.id);
     if (entry?.jockeyId) {
-      const jockey = jockeys?.find((j) => j.id === entry.jockeyId);
+      const jockey = jockeyMap.get(entry.jockeyId);
+
       if (jockey) {
         const ridingFee = jockey.ridingFee || 100;
         if (horse.stableId) {
@@ -359,7 +366,8 @@ export function generateRaceImpacts({
       r.position === 1 &&
       (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")
     ) {
-      const dam = horses.find((h) => h.id === horse.pedigree?.damId);
+      const dam = horse.pedigree?.damId ? horseMap.get(horse.pedigree.damId) : undefined;
+
       if (dam) {
         impacts.push({
           id: generateUUID(),
@@ -384,7 +392,8 @@ export function generateRaceImpacts({
       }
 
       // Stud career impact for sire
-      const sire = horses.find((h) => h.id === horse.pedigree?.sireId);
+      const sire = horse.pedigree?.sireId ? horseMap.get(horse.pedigree.sireId) : undefined;
+
       if (sire && sire.stud?.atStud) {
         const newStakesFoals = (sire.stud.lifetimeStakesFoals ?? 0) + 1;
         const newG1Foals =
@@ -428,9 +437,10 @@ export function generateRaceImpacts({
     }
 
     // Jockey stats impact
-    const raceEntry = race.entries.find((e) => e.horseId === horse.id);
+    const raceEntry = entriesMap.get(horse.id);
     if (raceEntry?.jockeyId && r.position - 1 < PRIZE_SPLIT.length) {
-      const jockey = jockeys?.find((j) => j.id === raceEntry.jockeyId);
+      const jockey = jockeyMap.get(raceEntry.jockeyId);
+
       if (jockey) {
         const winAmount = PRIZE_SPLIT[r.position - 1] * race.purse;
         const jockeyFee = Math.round(winAmount * 0.1);
@@ -498,16 +508,17 @@ export function generateRaceImpacts({
 
   // Log impact for race summary
   const ownedHorses = result.filter((r) => {
-    const horse = horses.find((h) => h.id === r.horseId);
+    const horse = horseMap.get(r.horseId);
     return horse && !horse.stableId;
   });
   if (ownedHorses.length > 0) {
     const summary = ownedHorses
       .map((r) => {
-        const horse = horses.find((h) => h.id === r.horseId);
+        const horse = horseMap.get(r.horseId);
         return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
       })
       .join(", ");
+
     const prize = ownedHorses.reduce((sum, r) => {
       if (r.position - 1 < PRIZE_SPLIT.length) {
         return sum + Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);

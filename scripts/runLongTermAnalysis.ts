@@ -37,6 +37,7 @@ import { claimResolutionPhase } from "../src/core/time/phases/claimResolution";
 import { managementResolutionPhase } from "../src/core/time/phases/managementResolution";
 import { createRng, hashStr } from "../src/game/rng";
 import type { GameState } from "../src/game/types";
+import { produce } from "immer";
 
 // Pipeline phases in order
 const PHASES = [
@@ -151,9 +152,22 @@ async function runHighPerfAnalysis(years: number = 10) {
       if (day % 30 === 0) {
         process.stdout.write(".");
       }
-      console.log(`Day ${day} finished in ${Date.now() - dayStart}ms`);
-    } catch (e) {
+      const dayDuration = Date.now() - dayStart;
+      console.log(`Day ${day} finished in ${dayDuration}ms (Horses: ${state.horses.length}, Races: ${state.races.length})`);
 
+      // Cleanup state to prevent memory bloat during 10-year run
+      state = produce(state, draft => {
+        // Prune resolved races older than 7 days
+        draft.races = draft.races.filter(r => r.day >= day - 7 || !r.resolved);
+        
+        // Remove old logs
+        draft.log = draft.log.slice(-100);
+        
+        // Trim Hall of Fame to most recent 100 entries to save space
+        draft.hallOfFame = draft.hallOfFame.slice(-100);
+      });
+
+    } catch (e) {
       console.error(`\nFAILED on Day ${day}:`, e);
       break;
     }

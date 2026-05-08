@@ -5,7 +5,7 @@
 
 import type { Stable } from "@/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
-import { createLearningState } from "./learningModule";
+import { createLearningState, pruneOldOutcomes } from "./learningModule";
 import type { CampaignAIState } from "./campaignAI";
 import type { TrainingAIState } from "./trainingAI";
 import type { ClaimingAIState } from "./claimingAI";
@@ -73,9 +73,10 @@ export function getOrCreateStableAIState(
     state = createStableAIState(stable, currentDay);
     manager.stableStates.set(stable.id, state);
   }
-  // Return a clone to avoid mutating frozen/read-only objects
-  return JSON.parse(JSON.stringify(state));
+  // Return a shallow clone; deep cloning via JSON is too slow for 500+ NPC stables
+  return { ...state };
 }
+
 
 /**
  * Update stable AI state after daily cycle
@@ -85,13 +86,16 @@ export function updateStableAIState(state: StableAIState, currentDay: number): S
   return state;
 }
 
+
 /**
  * Prune old learning data for all stables
  */
 export function pruneAllLearningData(manager: NpcAIManager, cutoffDay: number): NpcAIManager {
-  for (const state of manager.stableStates.values()) {
-    // Prune learning state outcomes older than cutoff
-    state.learningState.outcomes = state.learningState.outcomes.filter((o) => o.day >= cutoffDay);
+  for (const [id, state] of manager.stableStates.entries()) {
+    const prunedLearning = pruneOldOutcomes(state.learningState, cutoffDay);
+    if (prunedLearning !== state.learningState) {
+      manager.stableStates.set(id, { ...state, learningState: prunedLearning });
+    }
   }
   return manager;
 }

@@ -35,15 +35,21 @@ export function simulateRace(
   jockeys: Jockey[],
   hiredStaff?: StaffMember[],
   npcStables?: Stable[],
+  npcAIManager?: NpcAIManager,
+  currentDay?: number,
   recordSnapshots?: boolean
 ): RaceSimulationResult {
+  console.log(`          [DEBUG] Simulating race ${race.id} (${race.name})`);
   const { runners, fillerHorses } = buildRaceField({
     race,
     horses,
     jockeys,
     hiredStaff,
     npcStables,
+    npcAIManager,
+    currentDay,
   });
+
   const rng = rngForRace(race);
   const course = getCourseForRace(race);
   
