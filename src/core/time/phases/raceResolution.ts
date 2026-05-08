@@ -156,11 +156,14 @@ export const raceResolutionPhase: PipelinePhase = {
       }
     }
 
+    // Cleanup: Remove resolved races older than 30 days to prevent array accumulation
+    const prunedRaces = updatedRaces.filter((r) => !r.resolved || r.day >= newDay - 30);
+
     return {
       ...context,
       state: {
         ...state,
-        races: updatedRaces,
+        races: prunedRaces,
       },
       impacts: [...(context.impacts || []), ...impacts],
     };

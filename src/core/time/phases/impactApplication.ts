@@ -25,9 +25,32 @@ export const impactApplicationPhase: PipelinePhase = {
 
     const updatedContext = applyImpacts(resolverContext);
 
+    // Cleanup: Cap other arrays to prevent memory bloat
+    const cleanedState = { ...updatedContext.state };
+    if (cleanedState.seasonRecords && cleanedState.seasonRecords.length > 500) {
+      cleanedState.seasonRecords = cleanedState.seasonRecords.slice(-500);
+    }
+    if (cleanedState.scoutReports && cleanedState.scoutReports.length > 100) {
+      cleanedState.scoutReports = cleanedState.scoutReports.slice(-100);
+    }
+    if (cleanedState.triplecrownHistory && cleanedState.triplecrownHistory.length > 100) {
+      cleanedState.triplecrownHistory = cleanedState.triplecrownHistory.slice(-100);
+    }
+    if (cleanedState.paceSamples) {
+      // Pace samples is an object with arrays, clean each bucket
+      for (const key in cleanedState.paceSamples) {
+        if (cleanedState.paceSamples[key].length > 100) {
+          cleanedState.paceSamples[key] = cleanedState.paceSamples[key].slice(-100);
+        }
+      }
+    }
+    if (cleanedState.hallOfFame && cleanedState.hallOfFame.length > 200) {
+      cleanedState.hallOfFame = cleanedState.hallOfFame.slice(-200) as any;
+    }
+
     return {
       ...context,
-      state: updatedContext.state,
+      state: cleanedState,
       impactLog: updatedContext.impactLog,
     };
   },

@@ -63,7 +63,7 @@ export const upkeepPhase = {
     playerStaff.forEach(staff => {
       newExpenses.push(
         createExpense(
-          "staff_salary",
+          "upkeep",
           staff.salary,
           `${staff.role} salary for ${staff.name}`,
           newDay,
@@ -167,6 +167,29 @@ export const upkeepPhase = {
       });
     }
 
+    // Bankruptcy protection: Inject cash to NPCs that have gone bankrupt
+    const BANKRUPTCY_THRESHOLD = -10000; // Allow some debt before intervention
+    const BANKRUPTCY_INJECTION = 50000; // Cash injection amount
+    const BANKRUPTCY_COOLDOWN_DAYS = 365; // One year between injections per stable
+
+    npcStables = npcStables.map((stable) => {
+      if (stable.cash < BANKRUPTCY_THRESHOLD) {
+        // Check if this stable recently received an injection
+        const lastInjectionDay = (stable as any).lastBankruptcyInjectionDay || 0;
+        const daysSinceInjection = newDay - lastInjectionDay;
+
+        if (daysSinceInjection >= BANKRUPTCY_COOLDOWN_DAYS) {
+          console.log(`[BANKRUPTCY PROTECTION] Injecting $${BANKRUPTCY_INJECTION} into stable ${stable.name} (cash: $${stable.cash})`);
+          return {
+            ...stable,
+            cash: stable.cash + BANKRUPTCY_INJECTION,
+            lastBankruptcyInjectionDay: newDay,
+          };
+        }
+      }
+      return stable;
+    });
+
 
     return {
       ...context,
@@ -174,8 +197,8 @@ export const upkeepPhase = {
         ...state,
         cash: state.cash - totalDailyCost,
         npcStables,
-        expenses: [...(state.expenses ?? []), ...newExpenses],
-        transactions: [...(state.transactions ?? []), ...newTransactions],
+        expenses: [...(state.expenses ?? []), ...newExpenses].slice(-1000), // Cap at 1000 entries
+        transactions: [...(state.transactions ?? []), ...newTransactions].slice(-1000), // Cap at 1000 entries
       },
       impacts: [
         ...(context.impacts || []),
