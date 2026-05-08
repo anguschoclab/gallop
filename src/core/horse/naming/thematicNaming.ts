@@ -9,7 +9,6 @@ import {
   ARISTOCRATIC_TITLES,
   RACING_TERMS,
   NATURE_TERMS,
-  NATURE_TERMS,
   ABSTRACT_TERMS,
   RACING_SPIRIT_ADJECTIVES,
   RACING_SPIRIT_NOUNS,
@@ -60,7 +59,7 @@ const THEMES: Record<NamingTheme, ThemeDefinition> = {
     wordPools: [ABSTRACT_TERMS, RACING_TERMS],
     patterns: ["{W1} Deal", "Value {W1}", "Bargain {W1}", "Market {W1}"],
   },
-  elite: {
+  prestige: {
     wordPools: [ABSTRACT_TERMS],
     patterns: ["{W1} Elite", "Royal {W1}", "Grand {W1}", "{W1} Excellence"],
   },

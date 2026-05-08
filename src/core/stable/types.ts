@@ -33,7 +33,7 @@ export type Stable = {
   staff: Record<import("@/core/staff/staffTypes").StaffRole, string | null>;
 };
 
-export type BackstoryId = "heir" | "trainer" | "investor" | "owner";
+export type BackstoryId = "inheritor" | "bloodstock_heir" | "claiming_trainer" | "bootstrapper";
 
 export interface PlayerProfile {
   stableName: string;

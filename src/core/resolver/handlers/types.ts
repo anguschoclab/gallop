@@ -1,6 +1,6 @@
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import type { WritableDraft } from "immer/dist/internal";
+import type { WritableDraft } from "immer";
 
 /**
  * Base interface for impact handlers

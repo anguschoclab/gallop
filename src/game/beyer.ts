@@ -3,7 +3,8 @@
 // We approximate: figure scales linearly with how far finish time beats a
 // par time for the distance, with grade/race-class adding a small uplift.
 // Output is clamped 30..125 (Beyer "Big Figs" rarely exceed 120).
-import type { Horse, CourseSpecification } from "./types";
+import type { Horse } from "./types";
+import type { CourseSpecification } from "./tracks";
 
 export type BeyerInput = {
   distance: number; // meters

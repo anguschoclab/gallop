@@ -1,4 +1,4 @@
-import type { BackstoryId } from "@/game/types";
+import type { BackstoryId } from "@/core/stable/types";
 import type { FacilityType, FacilityLevel } from "@/core/facilities";
 
 export type BackstoryDifficulty = "easy" | "standard" | "hard" | "very_hard";

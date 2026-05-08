@@ -1,4 +1,4 @@
-import type { WritableDraft } from "immer/dist/internal";
+import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";

@@ -141,8 +141,6 @@ export const managementResolutionPhase: PipelinePhase = {
           break;
         }
 
-          break;
-        }
 
         case "reroll_silk": {
           const typedIntent = intent as RerollSilkIntent;
