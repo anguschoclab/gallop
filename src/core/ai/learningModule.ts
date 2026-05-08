@@ -14,8 +14,8 @@ export interface LearningOutcome {
 
 export interface LearningState {
   outcomes: LearningOutcome[];
-  successRates: Map<string, { successes: number; total: number; rate: number }>;
-  patterns: Map<string, number>; // Pattern recognition scores
+  successRates: Record<string, { successes: number; total: number; rate: number }>;
+  patterns: Record<string, number>; // Pattern recognition scores
   lastUpdate: number;
 }
 
@@ -25,8 +25,8 @@ export interface LearningState {
 export function createLearningState(): LearningState {
   return {
     outcomes: [],
-    successRates: new Map(),
-    patterns: new Map(),
+    successRates: {},
+    patterns: {},
     lastUpdate: 0,
   };
 }
@@ -60,18 +60,17 @@ export function recordOutcome(
   const trimmedOutcomes =
     newOutcomes.length > memoryDepth ? newOutcomes.slice(-memoryDepth) : newOutcomes;
 
-  // Update success rates - clone Map to avoid mutating
+  // Update success rates
   const key = `${decisionType}:${contextKey}`;
-  const existing = state.successRates.get(key) || { successes: 0, total: 0, rate: 0 };
+  const existing = state.successRates[key] || { successes: 0, total: 0, rate: 0 };
   const updated = {
     successes: existing.successes + (success ? 1 : 0),
     total: existing.total + 1,
     rate: (existing.successes + (success ? 1 : 0)) / (existing.total + 1),
   };
-  const newSuccessRates = new Map(state.successRates);
-  newSuccessRates.set(key, updated);
+  const newSuccessRates = { ...state.successRates, [key]: updated };
 
-  // Update patterns - clone Map to avoid mutating
+  // Update patterns
   const newPatterns = updatePatterns(state.patterns, decisionType, contextKey, success);
 
   // Return new state to avoid mutating frozen/read-only objects
@@ -87,17 +86,18 @@ export function recordOutcome(
  * Update pattern recognition
  */
 function updatePatterns(
-  patterns: Map<string, number>,
+  patterns: Record<string, number>,
   decisionType: string,
   contextKey: string,
   success: boolean,
-): Map<string, number> {
+): Record<string, number> {
   const patternKey = `${decisionType}:${contextKey}`; // Use full context key
-  const existing = patterns.get(patternKey) || 0.5;
+  const existing = patterns[patternKey] ?? 0.5;
   const weight = success ? 0.1 : -0.05;
-  const newPatterns = new Map(patterns);
-  newPatterns.set(patternKey, Math.max(0, Math.min(1, existing + weight)));
-  return newPatterns;
+  return {
+    ...patterns,
+    [patternKey]: Math.max(0, Math.min(1, existing + weight)),
+  };
 }
 
 /**
@@ -109,7 +109,7 @@ export function getSuccessRate(
   contextKey: string,
 ): number {
   const key = `${decisionType}:${contextKey}`;
-  const data = state.successRates.get(key);
+  const data = state.successRates[key];
   return data?.rate ?? 0.5; // Default to 50% if no data
 }
 
@@ -122,7 +122,7 @@ export function getPatternScore(
   context: string,
 ): number {
   const patternKey = `${decisionType}:${context}`;
-  return state.patterns.get(patternKey) ?? 0.5;
+  return state.patterns[patternKey] ?? 0.5;
 }
 
 /**
@@ -149,24 +149,25 @@ export function pruneOldOutcomes(state: LearningState, cutoffDay: number): Learn
   if (outcomes.length === state.outcomes.length) return state;
 
   // Recalculate success rates after pruning
-  const newSuccessRates = new Map();
-  const grouped = new Map<string, { successes: number; total: number }>();
+  const newSuccessRates: Record<string, { successes: number; total: number; rate: number }> = {};
+  const grouped: Record<string, { successes: number; total: number }> = {};
 
   for (const outcome of outcomes) {
     const key = `${outcome.decisionType}:${outcome.contextKey}`;
-    const existing = grouped.get(key) || { successes: 0, total: 0 };
-    grouped.set(key, {
+    const existing = grouped[key] || { successes: 0, total: 0 };
+    grouped[key] = {
       successes: existing.successes + (outcome.success ? 1 : 0),
       total: existing.total + 1,
-    });
+    };
   }
 
-  for (const [key, data] of grouped.entries()) {
-    newSuccessRates.set(key, {
+  for (const key in grouped) {
+    const data = grouped[key];
+    newSuccessRates[key] = {
       successes: data.successes,
       total: data.total,
       rate: data.successes / data.total,
-    });
+    };
   }
 
   return {
@@ -196,9 +197,9 @@ export function getLearningInsights(
     totalDecisions > 0 ? relevantOutcomes.reduce((sum, o) => sum + o.value, 0) / totalDecisions : 0;
 
   const patterns: Array<{ key: string; score: number }> = [];
-  for (const [key, score] of state.patterns.entries()) {
+  for (const key in state.patterns) {
     if (key.startsWith(decisionType)) {
-      patterns.push({ key: key.split(":")[1], score });
+      patterns.push({ key: key.split(":")[1], score: state.patterns[key] });
     }
   }
 

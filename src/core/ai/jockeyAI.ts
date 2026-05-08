@@ -9,7 +9,6 @@ import {
   createLearningState,
   recordOutcome,
   getSuccessRate,
-  getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
 
@@ -285,26 +284,32 @@ export function recordJockeyOutcome(
   currentDay: number,
 ): JockeyAIState {
   // Find the assignment
-  const assignment = aiState.jockeyHistory.find(
+  const assignmentIndex = aiState.jockeyHistory.findIndex(
     (a) => a.jockeyId === jockeyId && a.horseId === horseId && a.raceId === raceId && !a.result,
   );
 
-  if (assignment) {
-    assignment.result = { position, prize };
+  if (assignmentIndex !== -1) {
+    const assignment = { ...aiState.jockeyHistory[assignmentIndex], result: { position, prize } };
+    const newHistory = [...aiState.jockeyHistory];
+    newHistory[assignmentIndex] = assignment;
 
     // Update retention record
-    const retention = aiState.retention.find(
+    const retentionIndex = aiState.retention.findIndex(
       (r) => r.jockeyId === jockeyId && r.stableId === assignment.stableId,
     );
-    if (retention) {
+    let newRetention = aiState.retention;
+    if (retentionIndex !== -1) {
+      const retention = { ...aiState.retention[retentionIndex] };
       retention.totalPrize += prize;
+      newRetention = [...aiState.retention];
+      newRetention[retentionIndex] = retention;
     }
 
     // Update learning state
     const contextKey = `${jockeyId}`;
     const success = position <= 3; // Top 3 is success
     const value = prize - assignment.fee; // Net value
-    aiState.learningState = recordOutcome(
+    const newLearningState = recordOutcome(
       aiState.learningState,
       "jockey_selection",
       contextKey,
@@ -314,6 +319,13 @@ export function recordJockeyOutcome(
       currentDay,
       aiState.personalityState.memoryDepth,
     );
+    
+    return {
+      ...aiState,
+      jockeyHistory: newHistory,
+      retention: newRetention,
+      learningState: newLearningState,
+    };
   }
 
   return aiState;

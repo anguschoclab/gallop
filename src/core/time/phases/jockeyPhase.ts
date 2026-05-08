@@ -37,9 +37,20 @@ export const jockeyPhase = {
               text: `Jockey contract expired: ${j.name} is now a free agent.`,
             });
           } else if (npcAIManager) {
-            // NPC jockey contract expired - skip AI for now to avoid frozen object errors
-            // TODO: Re-enable AI state once frozen object issues are resolved
-            // For now, always let the jockey become a free agent
+            // NPC jockey contract expired - use AI to determine if should retain
+            const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
+            const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
+
+            if (!shouldRetainJockey(jockeyAI, j, stable, newDay)) {
+              log.push({
+                day: newDay,
+                text: `${stable.name} declined to renew contract for ${j.name}.`,
+              });
+              return { ...j, stableId: undefined, contractUntil: undefined };
+            } else {
+              // Renew contract
+              return { ...j, contractUntil: newDay + 90 };
+            }
           }
         }
         return { ...j, stableId: undefined, contractUntil: undefined };
@@ -58,8 +69,12 @@ export const jockeyPhase = {
         if (freeAgents.length > 0) {
           let chosen: (typeof freeAgents)[0] | null = null;
 
-          // Skip AI-driven selection for now to avoid frozen object errors
-          // TODO: Re-enable AI state once frozen object issues are resolved
+          // AI-driven selection
+          if (npcAIManager) {
+            const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
+            const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
+            chosen = selectBestJockey(jockeyAI, {} as any, freeAgents, stable); // Passing empty horse as proxy for general selection
+          }
 
           // Fall back to original logic
           if (!chosen) {
@@ -84,8 +99,20 @@ export const jockeyPhase = {
                 j.id === chosen.id ? { ...j, stableId: stable.id, contractUntil: newDay + 90 } : j,
               );
 
-              // Skip AI learning for now to avoid frozen object errors
-              // TODO: Re-enable AI state once frozen object issues are resolved
+              // AI learning
+              if (npcAIManager) {
+                const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
+                const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
+                stableAI.jockeyAI = recordJockeyAssignment(
+                  jockeyAI,
+                  chosen,
+                  {} as any,
+                  "retained_contract",
+                  stable,
+                  signOnBonus,
+                  newDay,
+                );
+              }
             }
           }
         }

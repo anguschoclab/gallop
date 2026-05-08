@@ -1,15 +1,9 @@
 /**
  * Facility AI System
- * Learning from facility ROI, strategic investment decisions, budget management
+ * Multi-factor facility upgrade prioritization and maintenance
  */
 
-import type { Stable, Horse } from "@/game/types";
-import type {
-  Facility,
-  FacilityType,
-  FacilityLevel,
-  PlayerFacilities,
-} from "@/core/facilities/facilityTypes";
+import type { Stable } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
@@ -18,38 +12,31 @@ import {
   getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
-import {
-  FACILITY_BONUSES,
-  FACILITY_MAINTENANCE_COSTS,
-  FACILITY_UPGRADE_COSTS,
-  FACILITY_NAMES,
-} from "@/core/facilities/facilityTypes";
+import type { FacilityType, FacilityLevel, PlayerFacilities } from "@/core/facilities";
+import { FACILITY_CONFIGS } from "@/core/facilities/facilityConfigs";
 
 export interface FacilityAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;
-  investmentHistory: FacilityInvestment[];
-  roiTracking: Map<string, FacilityROI>;
+  upgradeHistory: FacilityUpgradeDecision[];
+  roiTracking: Record<string, FacilityROI>;
 }
 
-export interface FacilityInvestment {
+export interface FacilityUpgradeDecision {
   facilityType: FacilityType;
-  fromLevel: FacilityLevel;
-  toLevel: FacilityLevel;
+  level: FacilityLevel;
   cost: number;
   stableId: string;
-  personality: Stable["personality"];
   day: number;
-  roi?: number;
+  success?: boolean; // True if ROI targets met after 90 days
+  impact?: number; // Measured performance boost
 }
 
 export interface FacilityROI {
   facilityType: FacilityType;
-  level: FacilityLevel;
-  totalInvestment: number;
-  totalBenefit: number;
-  daysOwned: number;
-  lastUpdateDay: number;
+  cumulativeCost: number;
+  measuredBenefit: number;
+  lastAssessmentDay: number;
 }
 
 /**
@@ -59,108 +46,64 @@ export function createFacilityAIState(stable: Stable): FacilityAIState {
   return {
     personalityState: getPersonalityAIState(stable.personality),
     learningState: createLearningState(),
-    investmentHistory: [],
-    roiTracking: new Map(),
+    upgradeHistory: [],
+    roiTracking: {},
   };
 }
 
 /**
- * Calculate investment priority score for a facility upgrade
+ * Calculate facility upgrade priority score
  */
-export function calculateFacilityUpgradePriority(
+export function calculateUpgradePriority(
   aiState: FacilityAIState,
   facilityType: FacilityType,
-  currentLevel: FacilityLevel,
+  currentFacilities: PlayerFacilities,
   stable: Stable,
-  currentDay: number,
 ): number {
+  const config = FACILITY_CONFIGS[facilityType];
+  const currentLevel = currentFacilities[facilityType]?.level || 0;
+  
+  // Can't upgrade beyond max level
+  if (currentLevel >= 5) return 0;
+  
+  const nextLevel = (currentLevel + 1) as FacilityLevel;
+  const upgradeCost = config.levels[nextLevel].cost;
+  
+  // Check budget constraint (max 30% of cash for upgrades)
+  if (stable.cash < upgradeCost || upgradeCost > stable.cash * 0.3) return 0;
+
   let score = 0;
 
-  // Can't upgrade from elite
-  if (currentLevel === "elite") return 0;
+  // Base priority from personality
+  const personality = aiState.personalityState.personality;
+  if (personality === "aggressive" && (facilityType === "training_track" || facilityType === "vets_office")) score += 30;
+  if (personality === "conservative" && (facilityType === "pastures" || facilityType === "fencing")) score += 30;
+  if (personality === "win-now" && facilityType === "training_track") score += 40;
 
-  const upgradeCost = FACILITY_UPGRADE_COSTS[currentLevel] || 0;
-  if (upgradeCost === null || upgradeCost === 0) return 0;
-
-  // Base priority from facility importance
-  const facilityPriority = getFacilityPriority(facilityType, aiState.personalityState.personality);
-  score += facilityPriority;
-
-  // Current level penalty (lower levels have higher priority)
-  const levelBonus = { basic: 30, standard: 20, premium: 10 }[currentLevel] || 0;
-  score += levelBonus;
-
-  // Budget consideration
-  const budgetRatio = stable.cash / upgradeCost;
-  if (budgetRatio < 2) score -= 20; // Too expensive
-  if (budgetRatio > 5) score += 10; // Affordable
-
-  // ROI learning
-  const roiKey = `${facilityType}:${currentLevel}`;
-  const roi = aiState.roiTracking.get(roiKey);
-  if (roi && roi.daysOwned > 30) {
-    const dailyROI = roi.totalBenefit / roi.daysOwned;
-    if (dailyROI > 50) score += 20; // Good ROI
-    if (dailyROI < 10) score -= 15; // Poor ROI
-  }
-
-  // Personality modifiers
+  // Utility factor modifiers
   const factors: Record<string, number> = {
-    facility_priority: facilityPriority,
-    current_level_bonus: levelBonus,
-    budget_ratio: budgetRatio,
     upgrade_cost: upgradeCost,
+    current_level: currentLevel,
+    stable_cash: stable.cash,
+    stable_tier: stable.tier === "elite" ? 1 : stable.tier === "mid" ? 0.6 : 0.3,
   };
 
   score = calculateUtilityScore(aiState.personalityState, "facility_upgrade", factors);
 
+  // ROI-based adjustment
+  const roi = aiState.roiTracking[facilityType];
+  if (roi) {
+    const roiRatio = roi.measuredBenefit / (roi.cumulativeCost || 1);
+    score += (roiRatio - 1) * 20;
+  }
+
   // Learning-based adjustment
-  const contextKey = `${stable.personality}:${facilityType}`;
+  const contextKey = `${facilityType}:${nextLevel}`;
   const successRate = getSuccessRate(aiState.learningState, "facility_upgrade", contextKey);
-  const adaptiveBonus = (successRate - 0.5) * 10;
+  const adaptiveBonus = (successRate - 0.5) * 25;
   score += adaptiveBonus;
 
   return Math.max(0, score);
-}
-
-/**
- * Get base priority for a facility type based on personality
- */
-function getFacilityPriority(
-  facilityType: FacilityType,
-  personality: Stable["personality"],
-): number {
-  const basePriorities: Record<FacilityType, number> = {
-    main_track: 50, // Essential for training
-    barn: 40, // Recovery is important
-    veterinary_clinic: 35, // Health management
-    exercise_pool: 25, // Injury prevention
-    treadmill: 20, // Training variety
-    starting_gates: 25, // Start improvement
-    spa: 20, // Recovery
-    nutrition_lab: 15, // Growth optimization
-    rehab_center: 15, // Injury recovery
-    transport: 10, // Logistics
-  };
-
-  let priority = basePriorities[facilityType] || 20;
-
-  // Personality adjustments
-  if (personality === "developer") {
-    if (facilityType === "nutrition_lab") priority += 15;
-    if (facilityType === "barn") priority += 10;
-  } else if (personality === "prestige") {
-    if (facilityType === "main_track") priority += 10;
-    if (facilityType === "spa") priority += 15;
-  } else if (personality === "conservative") {
-    if (facilityType === "veterinary_clinic") priority += 15;
-    if (facilityType === "transport") priority += 10;
-  } else if (personality === "win-now") {
-    if (facilityType === "main_track") priority += 15;
-    if (facilityType === "starting_gates") priority += 10;
-  }
-
-  return priority;
 }
 
 /**
@@ -168,232 +111,63 @@ function getFacilityPriority(
  */
 export function shouldUpgradeFacility(
   aiState: FacilityAIState,
-  facilityType: FacilityType,
-  currentLevel: FacilityLevel,
-  stable: Stable,
-  currentDay: number,
-): boolean {
-  const priorityScore = calculateFacilityUpgradePriority(
-    aiState,
-    facilityType,
-    currentLevel,
-    stable,
-    currentDay,
-  );
-
-  // Get adaptive threshold
-  const contextKey = `${stable.personality}:${facilityType}`;
-  const baseThreshold = 50;
-  const adaptiveThreshold = getAdaptiveThreshold(
-    aiState.learningState,
-    "facility_upgrade",
-    contextKey,
-    baseThreshold,
-    aiState.personalityState.adaptationSpeed,
-  );
-
-  // Personality-based threshold adjustment
-  const config = aiState.personalityState;
-  let threshold = adaptiveThreshold;
-
-  if (config.personality === "aggressive") threshold -= 10;
-  if (config.personality === "conservative") threshold += 10;
-  if (config.personality === "developer") threshold -= 5; // Developers invest more
-
-  return priorityScore > threshold;
-}
-
-/**
- * Calculate facility budget allocation
- */
-export function calculateFacilityBudget(
-  aiState: FacilityAIState,
-  stable: Stable,
-  currentDay: number,
-): {
-  totalBudget: number;
-  upgradeBudget: number;
-  maintenanceBudget: number;
-} {
-  // Base budget is percentage of cash
-  const totalBudget = stable.cash * 0.15; // 15% of cash for facilities
-
-  // Personality-based allocation
-  const config = aiState.personalityState;
-  let upgradeRatio = 0.6; // Default 60% for upgrades, 40% for maintenance
-
-  if (config.personality === "conservative") {
-    upgradeRatio = 0.4; // More for maintenance
-  } else if (config.personality === "aggressive") {
-    upgradeRatio = 0.8; // More for upgrades
-  } else if (config.personality === "developer") {
-    upgradeRatio = 0.7; // Invest in growth
-  }
-
-  const upgradeBudget = totalBudget * upgradeRatio;
-  const maintenanceBudget = totalBudget * (1 - upgradeRatio);
-
-  return {
-    totalBudget,
-    upgradeBudget,
-    maintenanceBudget,
-  };
-}
-
-/**
- * Select best facility to upgrade
- */
-export function selectFacilityToUpgrade(
-  aiState: FacilityAIState,
-  facilities: PlayerFacilities,
+  currentFacilities: PlayerFacilities,
   stable: Stable,
   currentDay: number,
 ): FacilityType | null {
-  const budget = calculateFacilityBudget(aiState, stable, currentDay).upgradeBudget;
+  const facilityTypes: FacilityType[] = ["training_track", "vets_office", "pastures", "fencing", "stable_block", "lab"];
+  
+  const scoredTypes = facilityTypes
+    .map((type) => ({
+      type,
+      score: calculateUpgradePriority(aiState, type, currentFacilities, stable),
+    }))
+    .filter((f) => f.score > 60) // High threshold for facility investment
+    .sort((a, b) => b.score - a.score);
 
-  let bestFacility: FacilityType | null = null;
-  let bestScore = 0;
-
-  for (const [facilityType, facility] of Object.entries(facilities)) {
-    const currentLevel = facility?.level || "basic";
-    const upgradeCost = FACILITY_UPGRADE_COSTS[currentLevel];
-
-    if (!upgradeCost || upgradeCost > budget) continue;
-
-    const score = calculateFacilityUpgradePriority(
-      aiState,
-      facilityType as FacilityType,
-      currentLevel,
-      stable,
-      currentDay,
-    );
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestFacility = facilityType as FacilityType;
-    }
-  }
-
-  return bestFacility;
+  return scoredTypes.length > 0 ? scoredTypes[0].type : null;
 }
 
 /**
- * Record facility investment for learning
+ * Record facility upgrade for learning
  */
-export function recordFacilityInvestment(
+export function recordUpgradeDecision(
   aiState: FacilityAIState,
   facilityType: FacilityType,
-  fromLevel: FacilityLevel,
-  toLevel: FacilityLevel,
+  level: FacilityLevel,
   cost: number,
   stable: Stable,
   currentDay: number,
 ): FacilityAIState {
-  const investment: FacilityInvestment = {
+  const decision: FacilityUpgradeDecision = {
     facilityType,
-    fromLevel,
-    toLevel,
+    level,
     cost,
     stableId: stable.id,
-    personality: stable.personality,
     day: currentDay,
   };
 
-  aiState.investmentHistory.push(investment);
-
-  // Trim history to memory depth
-  const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.investmentHistory.length > maxHistory) {
-    aiState.investmentHistory = aiState.investmentHistory.slice(-maxHistory);
-  }
-
-  // Initialize ROI tracking
-  const roiKey = `${facilityType}:${toLevel}`;
-  let roi = aiState.roiTracking.get(roiKey);
-  if (!roi) {
-    roi = {
-      facilityType,
-      level: toLevel,
-      totalInvestment: 0,
-      totalBenefit: 0,
-      daysOwned: 0,
-      lastUpdateDay: currentDay,
-    };
-    aiState.roiTracking.set(roiKey, roi);
-  }
-
-  roi.totalInvestment += cost;
-
-  return aiState;
-}
-
-/**
- * Update facility ROI tracking
- */
-export function updateFacilityROI(
-  aiState: FacilityAIState,
-  facilityType: FacilityType,
-  level: FacilityLevel,
-  benefit: number,
-  currentDay: number,
-): FacilityAIState {
-  const roiKey = `${facilityType}:${level}`;
-  const roi = aiState.roiTracking.get(roiKey);
-
-  if (roi) {
-    roi.totalBenefit += benefit;
-    roi.daysOwned += currentDay - roi.lastUpdateDay;
-    roi.lastUpdateDay = currentDay;
-
-    // Update learning state
-    const contextKey = facilityType;
-    const success = benefit > 50; // Benefit threshold
-    aiState.learningState = recordOutcome(
-      aiState.learningState,
-      "facility_upgrade",
-      contextKey,
-      success,
-      benefit,
-      Date.now(),
-      currentDay,
-      aiState.personalityState.memoryDepth,
-    );
-  }
-
-  return aiState;
-}
-
-/**
- * Get facility insights for a stable
- */
-export function getFacilityInsights(
-  aiState: FacilityAIState,
-  stableId: string,
-): {
-  totalInvestments: number;
-  avgROI: number;
-  totalFacilities: number;
-  facilityLevels: Record<FacilityType, FacilityLevel>;
-} {
-  const stableInvestments = aiState.investmentHistory.filter((i) => i.stableId === stableId);
-  const totalInvestments = stableInvestments.length;
-  const totalInvestedAmount = stableInvestments.reduce((sum, i) => sum + i.cost, 0);
-
-  const rois = Array.from(aiState.roiTracking.values());
-  const totalBenefit = rois.reduce((sum, r) => sum + r.totalBenefit, 0);
-  const avgROI =
-    totalInvestedAmount > 0 ? (totalBenefit - totalInvestedAmount) / totalInvestedAmount : 0;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const facilityLevels: Record<FacilityType, FacilityLevel> = {} as any;
-  for (const investment of stableInvestments) {
-    facilityLevels[investment.facilityType] = investment.toLevel;
-  }
+  const newHistory = [...aiState.upgradeHistory, decision];
+  
+  // Update ROI tracking
+  const roi = aiState.roiTracking[facilityType] || {
+    facilityType,
+    cumulativeCost: 0,
+    measuredBenefit: 0,
+    lastAssessmentDay: currentDay,
+  };
+  
+  const updatedRoi = {
+    ...roi,
+    cumulativeCost: roi.cumulativeCost + cost,
+  };
 
   return {
-    totalInvestments,
-    avgROI,
-    totalFacilities: Object.keys(facilityLevels).length,
-    facilityLevels,
+    ...aiState,
+    upgradeHistory: newHistory,
+    roiTracking: {
+      ...aiState.roiTracking,
+      [facilityType]: updatedRoi,
+    },
   };
 }

@@ -20,7 +20,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
 export interface CampaignAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;
-  contenderTracking: Map<string, ContenderStatus>;
+  contenderTracking: Record<string, ContenderStatus>;
   campaignHistory: CampaignDecision[];
 }
 
@@ -51,7 +51,7 @@ export function createCampaignAIState(stable: Stable): CampaignAIState {
   return {
     personalityState: getPersonalityAIState(stable.personality),
     learningState: createLearningState(),
-    contenderTracking: new Map(),
+    contenderTracking: {},
     campaignHistory: [],
   };
 }
@@ -150,7 +150,7 @@ export function detectContender(
     lastAssessmentDay: currentDay,
   };
 
-  aiState.contenderTracking.set(horse.id, status);
+  aiState.contenderTracking[horse.id] = status;
   return status;
 }
 
@@ -163,7 +163,7 @@ export function getOptimalMajorRaceTarget(
   stable: Stable,
   currentDay: number,
 ): string | null {
-  const contenderStatus = aiState.contenderTracking.get(horse.id);
+  const contenderStatus = aiState.contenderTracking[horse.id];
   if (!contenderStatus || !contenderStatus.isContender) return null;
 
   let bestRaceKey: string | null = null;
@@ -350,7 +350,7 @@ export function recordCampaignDecision(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-memoryDepth) : newHistory;
 
   return {
     ...aiState,
@@ -414,7 +414,7 @@ export function getCampaignInsights(
   );
   const totalCampaigns = stableHistory.length;
   const successes = stableHistory.filter((d) => d.success).length;
-  const successRate = totalCampaigns > 0 ? successes / totalCampaigns : 0.5;
+  const successRate = totalClaims > 0 ? successes / totalDecisions : 0.5;
   const avgPosition =
     totalCampaigns > 0
       ? stableHistory.reduce((sum, d) => sum + (d.position || 5), 0) / totalCampaigns
@@ -422,7 +422,7 @@ export function getCampaignInsights(
   const totalPrize =
     totalCampaigns > 0 ? stableHistory.reduce((sum, d) => sum + (d.prize || 0), 0) : 0;
 
-  const contenderCount = Array.from(aiState.contenderTracking.values()).filter(
+  const contenderCount = Object.values(aiState.contenderTracking).filter(
     (c) => c.isContender && c.lastAssessmentDay > 0,
   ).length;
 

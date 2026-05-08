@@ -174,21 +174,26 @@ export function recordBreedingOutcome(
   currentDay: number,
 ): BreedingAIState {
   // Find the decision
-  const decision = aiState.breedingHistory.find(
+  const decisionIndex = aiState.breedingHistory.findIndex(
     (d) => d.sireId === sireId && d.damId === damId && !d.outcome,
   );
 
-  if (decision) {
-    decision.outcome = {
-      foalId,
-      foalRating,
-      success,
-      value: foalRating,
+  if (decisionIndex !== -1) {
+    const decision = {
+      ...aiState.breedingHistory[decisionIndex],
+      outcome: {
+        foalId,
+        foalRating,
+        success,
+        value: foalRating,
+      },
     };
+    const newBreedingHistory = [...aiState.breedingHistory];
+    newBreedingHistory[decisionIndex] = decision;
 
     // Update learning state
     const contextKey = `${sireId}:${decision.personality}`;
-    aiState.learningState = recordLearningOutcome(
+    const newLearningState = recordLearningOutcome(
       aiState.learningState,
       "breeding",
       contextKey,
@@ -200,7 +205,7 @@ export function recordBreedingOutcome(
     );
 
     // Update personality state
-    aiState.personalityState = recordOutcome(
+    const newPersonalityState = recordOutcome(
       aiState.personalityState,
       "breeding",
       { sireId, personality: decision.personality },
@@ -208,6 +213,13 @@ export function recordBreedingOutcome(
       foalRating,
       Date.now(),
     );
+
+    return {
+      ...aiState,
+      breedingHistory: newBreedingHistory,
+      learningState: newLearningState,
+      personalityState: newPersonalityState,
+    };
   }
 
   return aiState;
@@ -235,21 +247,21 @@ export function getBreedingInsights(
       : 0;
 
   // Group by sire
-  const sireMap = new Map<string, { count: number; successes: number; name: string }>();
+  const sireMap: Record<string, { count: number; successes: number; name: string }> = {};
   for (const decision of stableHistory) {
-    const existing = sireMap.get(decision.sireId) || {
+    const existing = sireMap[decision.sireId] || {
       count: 0,
       successes: 0,
       name: decision.sireName,
     };
-    sireMap.set(decision.sireId, {
+    sireMap[decision.sireId] = {
       count: existing.count + 1,
       successes: existing.successes + (decision.outcome?.success ? 1 : 0),
       name: decision.sireName,
-    });
+    };
   }
 
-  const topSires = Array.from(sireMap.entries())
+  const topSires = Object.entries(sireMap)
     .map(([sireId, data]) => ({
       sireId,
       sireName: data.name,
@@ -274,10 +286,6 @@ export function adaptBreedingStrategy(
   aiState: BreedingAIState,
   currentDay: number,
 ): BreedingAIState {
-  // Prune old learning data
-  const cutoffDay = currentDay - aiState.personalityState.memoryDepth;
-  // Note: learningModule.pruneOldOutcomes would be called here
-
   // Adjust strategy confidence based on success
   const insights = getBreedingInsights(aiState, aiState.breedingHistory[0]?.stableId || "");
   if (insights.totalDecisions > 10) {

@@ -15,7 +15,7 @@ import {
 export interface TrainingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;
-  horseDevelopment: Map<string, HorseTrainingTrack>;
+  horseDevelopment: Record<string, HorseTrainingTrack>;
 }
 
 export interface HorseTrainingTrack {
@@ -23,7 +23,7 @@ export interface HorseTrainingTrack {
   targetStats: Array<"speed" | "stamina" | "acceleration">;
   currentFocus: "speed" | "stamina" | "acceleration" | "balanced";
   trainingHistory: TrainingSession[];
-  statGains: Map<string, number>;
+  statGains: Record<string, number>;
   lastTrainingDay: number;
 }
 
@@ -41,7 +41,7 @@ export function createTrainingAIState(stable: Stable): TrainingAIState {
   return {
     personalityState: getPersonalityAIState(stable.personality),
     learningState: createLearningState(),
-    horseDevelopment: new Map(),
+    horseDevelopment: {},
   };
 }
 
@@ -80,7 +80,7 @@ export function calculateTrainingPriority(
   score += adaptiveBonus;
 
   // Strategic considerations
-  const devTrack = aiState.horseDevelopment.get(horse.id);
+  const devTrack = aiState.horseDevelopment[horse.id];
   if (devTrack) {
     // Bonus for training focused stat
     if (devTrack.currentFocus === stat) {
@@ -126,12 +126,12 @@ export function updateHorseTraining(
   energyBefore: number,
   currentDay: number,
 ): TrainingAIState {
-  const devTrack: HorseTrainingTrack = aiState.horseDevelopment.get(horse.id) || {
+  const devTrack: HorseTrainingTrack = aiState.horseDevelopment[horse.id] || {
     horseId: horse.id,
     targetStats: [],
     currentFocus: "balanced",
     trainingHistory: [] as TrainingSession[],
-    statGains: new Map(),
+    statGains: {},
     lastTrainingDay: 0,
   };
 
@@ -164,9 +164,14 @@ export function updateHorseTraining(
   }
 
   devTrack.lastTrainingDay = currentDay;
-  aiState.horseDevelopment.set(horse.id, devTrack);
-
-  return aiState;
+  
+  return {
+    ...aiState,
+    horseDevelopment: {
+      ...aiState.horseDevelopment,
+      [horse.id]: devTrack,
+    },
+  };
 }
 
 /**
@@ -181,7 +186,7 @@ export function recordTrainingOutcome(
   currentDay: number,
 ): TrainingAIState {
   const contextKey = `${horse.age}:${trainingType}`;
-  aiState.learningState = recordOutcome(
+  const newLearningState = recordOutcome(
     aiState.learningState,
     "training",
     contextKey,
@@ -193,14 +198,30 @@ export function recordTrainingOutcome(
   );
 
   // Update stat gains in development track
-  const devTrack = aiState.horseDevelopment.get(horse.id);
+  const devTrack = aiState.horseDevelopment[horse.id];
   if (devTrack) {
-    const currentGain = devTrack.statGains.get(trainingType) || 0;
-    devTrack.statGains.set(trainingType, currentGain + statGain);
-    aiState.horseDevelopment.set(horse.id, devTrack);
+    const currentGain = devTrack.statGains[trainingType] || 0;
+    const updatedDevTrack = {
+      ...devTrack,
+      statGains: {
+        ...devTrack.statGains,
+        [trainingType]: currentGain + statGain,
+      },
+    };
+    return {
+      ...aiState,
+      learningState: newLearningState,
+      horseDevelopment: {
+        ...aiState.horseDevelopment,
+        [horse.id]: updatedDevTrack,
+      },
+    };
   }
 
-  return aiState;
+  return {
+    ...aiState,
+    learningState: newLearningState,
+  };
 }
 
 /**
@@ -215,7 +236,7 @@ export function shouldTrainToday(
   if (horse.energy < 15) return false;
 
   // Check training frequency (personality-driven)
-  const devTrack = aiState.horseDevelopment.get(horse.id);
+  const devTrack = aiState.horseDevelopment[horse.id];
   if (devTrack) {
     const daysSinceTraining = currentDay - devTrack.lastTrainingDay;
     const config = aiState.personalityState;
