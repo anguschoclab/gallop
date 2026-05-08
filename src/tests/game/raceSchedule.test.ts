@@ -11,6 +11,7 @@ import {
   generateTrackRaces,
   generateTrackSchedule,
   generateUpcomingRaces,
+  generateAnnualCalendar,
 } from "@/game/raceSchedule";
 import { createRng } from "@/game/rng";
 import type { Race } from "@/game/types";
@@ -125,10 +126,17 @@ describe("generateTrackRaces", () => {
       id: "track-1",
       name: "Test Track",
       country: "USA",
-      surfaces: ["Dirt"],
-      courses: [{ surface: "Dirt", distance: 2000, condition: "Fast" }],
-      condition: "Fast",
-      weather: "Sunny",
+      courses: [{
+        surface: "Dirt",
+        circumference: 2000,
+        straightLength: 400,
+        sections: [
+          { type: "straight", length: 400 },
+          { type: "turn", length: 600, radius: 191 },
+          { type: "straight", length: 400 },
+          { type: "turn", length: 600, radius: 191 },
+        ],
+      }],
     };
 
     const schedule: TrackSchedule = {
@@ -148,10 +156,17 @@ describe("generateTrackRaces", () => {
       id: "track-1",
       name: "Test Track",
       country: "USA",
-      surfaces: ["Dirt"],
-      courses: [{ surface: "Dirt", distance: 2000, condition: "Fast" }],
-      condition: "Fast",
-      weather: "Sunny",
+      courses: [{
+        surface: "Dirt",
+        circumference: 2000,
+        straightLength: 400,
+        sections: [
+          { type: "straight", length: 400 },
+          { type: "turn", length: 600, radius: 191 },
+          { type: "straight", length: 400 },
+          { type: "turn", length: 600, radius: 191 },
+        ],
+      }],
     };
 
     const schedule: TrackSchedule = {
@@ -170,10 +185,17 @@ describe("generateTrackRaces", () => {
       id: "track-1",
       name: "Test Track",
       country: "USA",
-      surfaces: ["Dirt"],
-      courses: [{ surface: "Dirt", distance: 2000, condition: "Fast" }],
-      condition: "Fast",
-      weather: "Sunny",
+      courses: [{
+        surface: "Dirt",
+        circumference: 2000,
+        straightLength: 400,
+        sections: [
+          { type: "straight", length: 400 },
+          { type: "turn", length: 600, radius: 191 },
+          { type: "straight", length: 400 },
+          { type: "turn", length: 600, radius: 191 },
+        ],
+      }],
     };
 
     const schedule: TrackSchedule = {
@@ -279,5 +301,72 @@ describe("generateUpcomingRaces", () => {
     // Count how many times the existing race appears
     const count = races.filter((r) => r.id === existingRace.id).length;
     expect(count).toBe(1);
+  });
+});
+
+describe("generateAnnualCalendar", () => {
+  it("should generate graded races for a year", () => {
+    const year = 1;
+    const existingRaces: Race[] = [];
+
+    const races = generateAnnualCalendar(year, existingRaces);
+    expect(races.length).toBeGreaterThan(0);
+  });
+
+  it("should preserve existing races", () => {
+    const year = 1;
+    const existingRace: Race = {
+      id: "existing-1",
+      name: "Existing Race",
+      day: 10,
+      distance: 2000,
+      raceClass: "Maiden",
+      entryFee: 500,
+      purse: 10000,
+      minStat: 70,
+      fieldSize: 8,
+      entries: [],
+      resolved: false,
+    };
+
+    const races = generateAnnualCalendar(year, [existingRace]);
+    expect(races).toContain(existingRace);
+  });
+
+  it("should not duplicate races for the same year", () => {
+    const year = 1;
+    const races1 = generateAnnualCalendar(year, []);
+    const races2 = generateAnnualCalendar(year, races1);
+
+    // Should not add duplicate races
+    expect(races2.length).toBe(races1.length);
+  });
+
+  it("should generate races with correct day range for year", () => {
+    const year = 1;
+    const races = generateAnnualCalendar(year, []);
+
+    const yearRaces = races.filter((r) => r.day >= 1 && r.day <= 365);
+    expect(yearRaces.length).toBe(races.length);
+  });
+
+  it("should generate races for year 2 with correct day range", () => {
+    const year = 2;
+    const races = generateAnnualCalendar(year, []);
+
+    const yearRaces = races.filter((r) => r.day >= 366 && r.day <= 730);
+    expect(yearRaces.length).toBe(races.length);
+  });
+
+  it("should apply day of year variance", () => {
+    const year = 1;
+    const races = generateAnnualCalendar(year, []);
+
+    // All races should have valid day of year (1-365)
+    races.forEach((race) => {
+      const doy = getDayOfYear(race.day);
+      expect(doy).toBeGreaterThanOrEqual(1);
+      expect(doy).toBeLessThanOrEqual(365);
+    });
   });
 });
