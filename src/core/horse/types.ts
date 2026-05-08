@@ -46,6 +46,7 @@ export type Pedigree = {
 export type StudCareer = {
   atStud: boolean;
   standingFee: number;
+  previousStandingFee?: number;
   bookSize: number;
   seasonBookings: number;
   lifetimeFoals: number;

@@ -10,6 +10,7 @@ import type {
   PaceSampleImpact,
   JockeyStatsImpact,
   LogImpact,
+  TripleCrownProgressImpact,
 } from "@/core/resolver/impacts";
 import type { Race, Horse, Jockey } from "./types";
 import type { Runner } from "@/core/race/raceSim";
@@ -22,6 +23,7 @@ import {
 } from "@/core/breeding/populationGenetics";
 import { recalcStandingFee } from "@/core/breeding/stallions";
 import { getCurrentYear } from "./raceSchedule";
+import { GRADED_RACES } from "@/core/data/gradedRaces";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/game/uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
@@ -156,6 +158,56 @@ export function resolveLiveRaceWithImpacts(
       reason: "Race completed",
     } as RaceHistoryImpact);
 
+    // Triple Crown progress tracking
+    if (r.position === 1 && race.graded?.triplecrownKey) {
+      const currentYear = getCurrentYear(day);
+      const triplecrownKey = race.graded.triplecrownKey;
+
+      // Get all races for this triple crown series
+      const tcRaces = GRADED_RACES.filter((g) => g.triplecrownKey === triplecrownKey);
+
+      // Check horse's race history for all legs
+      const legs = tcRaces.map((tcRace) => {
+        // If this is the current race being resolved, use the current result
+        if (tcRace.key === race.graded?.key) {
+          return {
+            raceKey: tcRace.key,
+            position: r.position,
+            day,
+          };
+        }
+        // Otherwise check race history
+        const historyEntry = horse.raceHistory.find(
+          (rh) => rh.raceId === tcRace.key || rh.raceName === tcRace.name,
+        );
+        return {
+          raceKey: tcRace.key,
+          position: historyEntry?.position ?? 999,
+          day: historyEntry?.day ?? 0,
+        };
+      });
+
+      // Check if won all legs (all positions === 1)
+      const won = legs.every((leg) => leg.position === 1);
+
+      impacts.push({
+        id: generateUUID(),
+        intentId: "",
+        day,
+        phase: "raceResolution",
+        logLevel: "always",
+        type: "triple_crown_progress",
+        horseId: horse.id,
+        triplecrownKey,
+        year: currentYear,
+        legs,
+        won,
+        reason: won
+          ? `Triple Crown winner! ${horse.name} won ${triplecrownKey}`
+          : `Triple Crown progress updated for ${horse.name}`,
+      } as TripleCrownProgressImpact);
+    }
+
     // Prize money impact
     if (r.position - 1 < PRIZE_SPLIT.length) {
       const prize = Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
@@ -229,6 +281,7 @@ export function resolveLiveRaceWithImpacts(
             : sire.stud.lifetimeG1Foals;
 
         // Only NPCs auto-adjust fees; players manage their own
+        const previousFee = sire.stud.standingFee;
         const newFee = sire.stableId
           ? recalcStandingFee(
               {
@@ -255,10 +308,11 @@ export function resolveLiveRaceWithImpacts(
           studCareer: {
             ...sire.stud,
             standingFee: newFee,
+            previousStandingFee: previousFee,
             lifetimeStakesFoals: newStakesFoals,
             lifetimeG1Foals: newG1Foals,
           },
-          reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee adjusted to ${formatCurrency(newFee)}.` : ""}`,
+          reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee: $${formatCurrency(previousFee)} → $${formatCurrency(newFee)}.` : ""}`,
         } as StudCareerImpact);
       }
     }

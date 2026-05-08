@@ -467,6 +467,22 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
         break;
       }
 
+      case "triple_crown_progress": {
+        const { horseId, triplecrownKey, year, legs, won } = impact;
+        // Update triplecrownHistory in state
+        if (!draft.triplecrownHistory) draft.triplecrownHistory = [];
+        const existing = draft.triplecrownHistory.find(
+          (t) => t.horseId === horseId && t.triplecrownKey === triplecrownKey && t.year === year
+        );
+        if (existing) {
+          existing.legs = legs;
+          existing.won = won;
+        } else {
+          draft.triplecrownHistory.push({ horseId, triplecrownKey, year, legs, won });
+        }
+        break;
+      }
+
       default:
         // Unknown impact type - log warning
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

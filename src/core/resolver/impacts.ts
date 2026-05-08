@@ -11,6 +11,7 @@ import type {
   CampaignFlag,
   HorseCampaign,
   HealthStatus,
+  TripleCrownProgress,
 } from "@/game/types";
 
 // Base impact type
@@ -145,6 +146,7 @@ export interface StudCareerImpact extends Impact {
   studCareer: {
     atStud: boolean;
     standingFee: number;
+    previousStandingFee?: number;
     bookSize: number;
     seasonBookings: number;
     lifetimeFoals: number;
@@ -414,6 +416,17 @@ export interface ClaimResolutionImpact extends Impact {
   losingClaimIds: string[];
 }
 
+// Triple Crown progress impact — tracks a horse's progress through a Triple Crown series
+export interface TripleCrownProgressImpact extends Impact {
+  type: "triple_crown_progress";
+  horseId: string;
+  triplecrownKey: string;
+  year: number;
+  legs: { raceKey: string; position: number; day: number }[];
+  won: boolean;
+  reason: string;
+}
+
 // Union type for all impacts
 export type AnyImpact =
   | CashImpact
@@ -455,4 +468,5 @@ export type AnyImpact =
   | PastureRetirementImpact
   | HorseDeathImpact
   | HallOfFameInductionImpact
-  | ClaimResolutionImpact;
+  | ClaimResolutionImpact
+  | TripleCrownProgressImpact;

@@ -22,7 +22,7 @@ export const raceResolutionPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
     const newTransactions: typeof state.transactions = [];
     const updatedRaces: typeof state.races = [...state.races];
-    const newReputationEvents = state.reputation?.events ?? [];
+    const newReputationEvents = [...(state.reputation?.events ?? [])];
 
     // Find unresolved races that should be resolved today
     const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= newDay);
