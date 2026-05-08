@@ -142,35 +142,37 @@ async function runHighPerfAnalysis(years: number = 30) {
 
     // Prune historical collections periodically to avoid memory growth and spread-copy overhead
     if (day % 30 === 0) {
-      if (state.transactions && state.transactions.length > 1000) {
-        state.transactions = state.transactions.slice(-1000);
-      }
-      if (state.news && state.news.length > 1000) {
-        state.news = state.news.slice(-1000);
-      }
-      if (state.log && state.log.length > 1000) {
-        state.log = state.log.slice(-1000);
-      }
-      if ((state as any).replays && (state as any).replays.length > 1000) {
-        (state as any).replays = (state as any).replays.slice(-1000);
-      }
-      if ((state as any).expenses && (state as any).expenses.length > 1000) {
-        (state as any).expenses = (state as any).expenses.slice(-1000);
-      }
-      // Prune resolved races older than 30 days
-      if (state.races && state.races.length > 500) {
-        state.races = state.races.filter((r: any) => !r.resolved || r.day > day - 30);
-      }
-      // Prune dead/retired horses with no wins to reduce array accumulation
-      if (state.horses.length > 5000) {
-        const horsesToPrune = state.horses.filter((h: any) =>
-          (h.lifecycleStatus === 'deceased' || h.lifecycleStatus === 'retired') &&
-          h.careerWins === 0
-        );
-        if (horsesToPrune.length > 0) {
-          state.horses = state.horses.filter((h: any) => !horsesToPrune.some((p: any) => p.id === h.id));
+      state = produce(state, (draft: any) => {
+        if (draft.transactions && draft.transactions.length > 1000) {
+          draft.transactions = draft.transactions.slice(-1000);
         }
-      }
+        if (draft.news && draft.news.length > 1000) {
+          draft.news = draft.news.slice(-1000);
+        }
+        if (draft.log && draft.log.length > 1000) {
+          draft.log = draft.log.slice(-1000);
+        }
+        if (draft.replays && draft.replays.length > 1000) {
+          draft.replays = draft.replays.slice(-1000);
+        }
+        if (draft.expenses && draft.expenses.length > 1000) {
+          draft.expenses = draft.expenses.slice(-1000);
+        }
+        // Prune resolved races older than 30 days
+        if (draft.races && draft.races.length > 500) {
+          draft.races = draft.races.filter((r: any) => !r.resolved || r.day > day - 30);
+        }
+        // Prune dead/retired horses with no wins to reduce array accumulation
+        if (draft.horses.length > 5000) {
+          const horsesToPrune = draft.horses.filter((h: any) =>
+            (h.lifecycleStatus === 'deceased' || h.lifecycleStatus === 'retired') &&
+            h.careerWins === 0
+          );
+          if (horsesToPrune.length > 0) {
+            draft.horses = draft.horses.filter((h: any) => !horsesToPrune.some((p: any) => p.id === h.id));
+          }
+        }
+      });
     }
 
     const context = {
@@ -190,7 +192,9 @@ async function runHighPerfAnalysis(years: number = 30) {
       
       // Track population
       populationHistory.push(state.horses.filter((h: any) => h.lifecycleStatus !== 'deceased').length);
-      economicHistory.push(state.cash);
+      // Track player cash (not state.cash which is total system cash)
+      const playerStable = state.npcStables?.find((s: any) => s.isPlayer);
+      economicHistory.push(playerStable?.cash ?? 0);
 
       // Track NPC cash distribution and bankruptcy
       const npcCashValues = state.npcStables.map((s: any) => s.cash);
@@ -381,4 +385,4 @@ async function runHighPerfAnalysis(years: number = 30) {
   console.log(`\nFull results saved to simulation-results-${Date.now()}.json`);
 }
 
-runHighPerfAnalysis(0.5).catch(console.error);
+runHighPerfAnalysis(1).catch(console.error);

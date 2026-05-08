@@ -59,7 +59,7 @@ export class SystemHandler implements ImpactHandler {
 
       case "log": {
         const { text } = impactAny;
-        draft.log = [{ day: impact.day, text }, ...draft.log].slice(0, 50);
+        draft.log = [{ day: impact.day, text }, ...draft.log].slice(0, 500);
         break;
       }
 
@@ -207,7 +207,7 @@ export class SystemHandler implements ImpactHandler {
       case "news_item": {
         const { newsItem } = impactAny;
         if (!draft.news) draft.news = [];
-        draft.news = [newsItem, ...draft.news].slice(0, 100);
+        draft.news = [newsItem, ...draft.news].slice(0, 500);
         break;
       }
       

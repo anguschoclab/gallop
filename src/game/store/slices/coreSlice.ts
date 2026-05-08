@@ -446,7 +446,7 @@ export function createCoreSlice(
     addLogEntry: (entry) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set((state: any) => ({
-        log: [entry, ...state.log].slice(0, 50),
+        log: [entry, ...state.log].slice(0, 500),
       }));
     },
   };

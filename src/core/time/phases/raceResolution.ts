@@ -116,7 +116,7 @@ export const raceResolutionPhase: PipelinePhase = {
               day: newDay,
               phase: "raceResolution",
               logLevel: "always",
-              type: "hall_of_fame",
+              type: "hall_of_fame_induction",
               entry: hofEntry,
               reason: "G1 winner reached HoF criteria",
             } as any);

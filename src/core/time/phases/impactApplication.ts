@@ -38,11 +38,13 @@ export const impactApplicationPhase: PipelinePhase = {
     }
     if (cleanedState.paceSamples) {
       // Pace samples is an object with arrays, clean each bucket
+      const newPaceSamples: any = {};
       for (const key in cleanedState.paceSamples) {
-        if (cleanedState.paceSamples[key].length > 100) {
-          cleanedState.paceSamples[key] = cleanedState.paceSamples[key].slice(-100);
-        }
+        newPaceSamples[key] = cleanedState.paceSamples[key].length > 100
+          ? cleanedState.paceSamples[key].slice(-100)
+          : cleanedState.paceSamples[key];
       }
+      cleanedState.paceSamples = newPaceSamples;
     }
     if (cleanedState.hallOfFame && cleanedState.hallOfFame.length > 200) {
       cleanedState.hallOfFame = cleanedState.hallOfFame.slice(-200) as any;

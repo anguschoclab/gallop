@@ -2,7 +2,7 @@ import type { Horse, Pregnancy, Stable, GameState } from "./types";
 import { generateUUID } from "@/game/uuid";
 import { canBreed } from "@/core/breeding/eligibility";
 import { getAvailableStallions } from "@/core/breeding/stallions";
-import { isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { computeCoiFromSnapshot } from "@/core/breeding/populationGenetics";
 import type { Rng } from "@/game/rng";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
@@ -37,9 +37,10 @@ export function runNpcBreeding(
   newPregnancies: Pregnancy[];
   logs: { day: number; text: string }[];
 } {
-  const northernStart = isBreedingSeasonStart(newDay, "Northern");
-  const southernStart = isBreedingSeasonStart(newDay, "Southern");
-  if (!northernStart && !southernStart) {
+  // Allow breeding throughout the season, not just on the first day
+  const northernSeason = inBreedingSeason(newDay, "Northern");
+  const southernSeason = inBreedingSeason(newDay, "Southern");
+  if (!northernSeason && !southernSeason) {
     return { horses: state.horses, npcStables: state.npcStables, newPregnancies: [], logs: [] };
   }
 
@@ -64,7 +65,7 @@ export function runNpcBreeding(
     const maxCoi = MAX_COI[stable.personality];
     const feeCapFraction = SINGLE_FEE_CAP_FRACTION[stable.personality];
 
-    // Mares of breeding age in the hemisphere whose season just opened, above
+    // Mares of breeding age in the hemisphere whose season is open, above
     // the personality's quality floor.
     const stableHorses = horses.filter((h) => h.stableId === stable.id);
     const candidateMares = stableHorses.filter(
@@ -72,8 +73,8 @@ export function runNpcBreeding(
         (h.gender === "mare" || h.gender === "filly") &&
         h.age >= 3 &&
         h.age <= 20 &&
-        ((h.hemisphere === "Northern" && northernStart) ||
-          (h.hemisphere === "Southern" && southernStart)) &&
+        ((h.hemisphere === "Northern" && northernSeason) ||
+          (h.hemisphere === "Southern" && southernSeason)) &&
         !state.pregnancies.some((p) => !p.resolved && p.damId === h.id) &&
         overallRating(h) >= minMareQuality,
     );

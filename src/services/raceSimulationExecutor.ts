@@ -4,6 +4,7 @@ import { getCourseForRace } from "@/game/tracks";
 import type { Race, Horse, Jockey, Stable } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 export interface RaceSimulationResult {
   raceId: string;
@@ -39,7 +40,8 @@ export function simulateRace(
   currentDay?: number,
   recordSnapshots?: boolean
 ): RaceSimulationResult {
-  console.log(`          [DEBUG] Simulating race ${race.id} (${race.name})`);
+  // Skip debug logging for performance in long-term simulations
+  // console.log(`          [DEBUG] Simulating race ${race.id} (${race.name})`);
   const { runners, fillerHorses } = buildRaceField({
     race,
     horses,
@@ -57,9 +59,9 @@ export function simulateRace(
   const shouldRecord = recordSnapshots ?? runners.some(r => r.owned);
   
   // Use a larger time step for background simulations to increase performance
-  const dt = shouldRecord ? 0.1 : 0.4;
+  const dt = shouldRecord ? 0.1 : 5.0;
   
-  const { result, snapshots } = runRaceToCompletion(runners, race.distance, rng, dt, 600, course, shouldRecord);
+  const { result, snapshots } = runRaceToCompletion(runners, race.distance, rng, dt, 30, course, shouldRecord);
 
 
   return {
