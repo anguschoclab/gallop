@@ -1,3 +1,13 @@
+/**
+ * hooks/useBreedingState.ts - Breeding state selectors
+ *
+ * This file provides Zustand hooks for breeding state including pregnancies and
+ * Triple Crown history with shallow comparison for performance.
+ *
+ * Dependencies: zustand/shallow (shallow), @/game/store (useGame, useGameWithShallow), @/game/types (GameState)
+ * Related files: store.ts (state management), breeding.ts (uses breeding state)
+ */
+
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";

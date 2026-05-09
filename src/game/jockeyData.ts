@@ -1,3 +1,13 @@
+/**
+ * jockeyData.ts - Jockey data constants
+ *
+ * This file provides jockey archetypes, silk color palettes, and silk patterns
+ * for jockey generation.
+ *
+ * Dependencies: ./types (JockeyArchetype, JockeySilk)
+ * Related files: jockeyGen.ts (uses these constants for generation)
+ */
+
 import type { JockeyArchetype, JockeySilk } from "./types";
 
 export const ARCHETYPES: JockeyArchetype[] = [

@@ -1,3 +1,13 @@
+/**
+ * trackSchedulesData.ts - Track schedule configuration
+ *
+ * This file provides track schedule data with realistic race day patterns by region,
+ * including race days, races per day, meet start/end dates, and regional system.
+ *
+ * Dependencies: ./tracks (TrackSchedule)
+ * Related files: tracks.ts (uses track schedules), raceSchedule.ts (uses schedule data)
+ */
+
 import type { TrackSchedule } from "./tracks";
 
 // Track schedules - realistic race day patterns by region

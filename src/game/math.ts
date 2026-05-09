@@ -1,3 +1,13 @@
+/**
+ * math.ts - Math utility functions
+ *
+ * This file provides math utility functions including clamp, clampStat, and
+ * clampPotential for numeric value normalization.
+ *
+ * Dependencies: None (self-contained functions)
+ * Related files: Used throughout the codebase for stat normalization
+ */
+
 export function clamp(n: number, min: number, max: number): number {
   if (!Number.isFinite(n)) return min;
   if (n < min) return min;

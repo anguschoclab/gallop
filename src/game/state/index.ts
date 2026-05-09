@@ -1,3 +1,14 @@
+/**
+ * state/index.ts - State module exports
+ *
+ * This file exports all state types and creators from the state module, providing
+ * the complete GameState type as an intersection of all domain states, and the
+ * NewGameOptions interface for game initialization.
+ *
+ * Dependencies: ./coreState (CoreState, createDefaultCoreState), ./marketState (MarketState, createDefaultMarketState), ./breedingState (BreedingState, createDefaultBreedingState), ./racingState (RacingState, createDefaultRacingState), ./systemsState (SystemsState, createDefaultSystemsState), ../types (PlayerProfile), @/core/newGame/backstories (Backstory)
+ * Related files: store.ts (uses GameState), index.ts (exports NewGameOptions)
+ */
+
 // Game State - Combined type exports
 // This module provides the complete GameState type and default state creation
 

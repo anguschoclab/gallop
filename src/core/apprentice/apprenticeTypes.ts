@@ -1,3 +1,14 @@
+/**
+ * apprenticeTypes.ts - Jockey apprentice claim allowances system
+ *
+ * This file provides type definitions and functions for jockey apprentice claim allowances,
+ * including status levels, claim allowance configurations, progression tracking, and
+ * weight allowance calculations based on win count.
+ *
+ * Dependencies: None (self-contained types and functions)
+ * Related files: index.ts (re-exports types and functions)
+ */
+
 // Apprentice Types - Jockey apprentice claim allowances system
 
 /**

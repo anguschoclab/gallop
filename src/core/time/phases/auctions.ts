@@ -11,7 +11,8 @@
 
 import type { PipelineContext } from "../pipeline";
 import type { AuctionSale } from "@/game/types";
-import { generateAuctionLots, SALE_TRIGGERS } from "@/game/auction";
+import { generateAuctionLots } from "@/game/auction";
+import { SALE_TRIGGERS } from "@/game/auctionData";
 import { createAuctionRunner } from "@/game/auctionRunner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/game/uuid";

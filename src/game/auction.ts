@@ -1,3 +1,13 @@
+/**
+ * auction.ts - Auction lot valuation and bidding logic
+ *
+ * This file provides functions for calculating lot valuations, bidding values,
+ * commission amounts, and net proceeds for auction sales.
+ *
+ * Dependencies: @/core/horse/gender (isMaleHorse, isFemaleHorse), ./types (Horse, Pregnancy, Stable, AuctionLot, AuctionSale, AuctionSaleKind), @/core/horse/horseFactory (generateNpcHorse), @/core/horse/pricing (calculateNpcHorseValue), @/core/stable/stableConfig (PERSONALITY_CONFIG), ./rng (createRng, hashStr, Rng), ./uuid (generateUUID), @/core/breeding/pedigreePricing (pedigreeMultiplier), @/core/ai/auctionAI (calculateBiddingValue, calculateMaxBid, shouldBidOnHorse, createAuctionAIState, recordBiddingDecision), @/core/ai/npcCycleAI (NpcAIManager), ./auctionData (SALE_TRIGGERS, KIND_LABELS)
+ * Related files: auctionRunner.ts (uses valuation logic), auctionData.ts (sale triggers and labels)
+ */
+
 import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import type { Horse, Pregnancy, Stable, AuctionLot, AuctionSale, AuctionSaleKind } from "./types";
 import { generateNpcHorse } from "@/core/horse/horseFactory";

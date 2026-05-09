@@ -1,3 +1,14 @@
+/**
+ * breedingCompatibility.ts - Breeding compatibility calculation
+ *
+ * This file provides comprehensive breeding compatibility scoring including genetic
+ * compatibility, founder effect, conformation/temperament compatibility, COI,
+ * nicking affinities, and blue hen contribution.
+ *
+ * Dependencies: ./types (Horse), ./dosage (calculateDosageMetrics, interpretDosageIndex), @/core/data/pedigreeData (findHorseByName, PedigreeHorse), @/core/genetics/phenotype (TRAIT_SCORE), @/services/genotypeMatching (calculateGeneticCompatibility), @/services/inbreedingCalculator (calculateFounderEffect), @/services/traitCompatibility (calculateConformationCompatibility, calculateTemperamentCompatibility), @/core/breeding/populationGenetics (computeCoiFromSnapshot), @/core/breeding/breedingAffinityData (NICKING_AFFINITIES, CROSS_FAMILY_AFFINITIES)
+ * Related files: Used throughout breeding systems for compatibility evaluation
+ */
+
 import type { Horse } from "./types";
 import { calculateDosageMetrics, interpretDosageIndex } from "./dosage";
 import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeData";

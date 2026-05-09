@@ -31,7 +31,8 @@ import { getDisplayableStats } from "@/game/scouting";
 import { HorsePortrait } from "@/components/HorsePortrait";
 import { Pause, Play, FastForward, Gavel, Trophy, X, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { commissionAmount, KIND_LABELS, netProceeds } from "@/game/auction";
+import { commissionAmount, netProceeds } from "@/game/auction";
+import { KIND_LABELS } from "@/game/auctionData";
 import { useNavigate } from "@tanstack/react-router";
 import type { AuctionBidRecord } from "@/game/types";
 

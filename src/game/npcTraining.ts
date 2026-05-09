@@ -1,3 +1,13 @@
+/**
+ * npcTraining.ts - AI training for NPC stables
+ *
+ * This file provides AI training for NPC stables, with tier-based training slots and
+ * intelligent stat training for elite stables focusing on stats below potential.
+ *
+ * Dependencies: ./types (Horse, Stable), ./rng (Rng)
+ * Related files: npcStables.ts (uses training), npcRaceEntry.ts (training affects race eligibility)
+ */
+
 import type { Horse, Stable } from "./types";
 import type { Rng } from "@/game/rng";
 

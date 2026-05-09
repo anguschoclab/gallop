@@ -1,3 +1,13 @@
+/**
+ * beyer.ts - Beyer-style speed figure calculation
+ *
+ * This file provides lightweight Beyer-style speed figure calculation based on
+ * finish time vs par time, with optional calibrated pars and class bonuses.
+ *
+ * Dependencies: ./types (Horse), ./tracks (CourseSpecification)
+ * Related files: raceSim.ts (uses Beyer figures for race results), projections.ts (uses for race analysis)
+ */
+
 // Lightweight Beyer-style speed figure.
 // Real Beyer figures use track-specific daily variants from par times.
 // We approximate: figure scales linearly with how far finish time beats a

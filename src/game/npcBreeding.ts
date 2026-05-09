@@ -1,3 +1,15 @@
+/**
+ * npcBreeding.ts - Autonomous NPC breeding
+ *
+ * This file runs autonomous NPC breeding for the current day with personality-aware
+ * decisions: aggressive stables breed more often, conservative stables wait for
+ * higher-quality pairings, budget stables look for value sires, and trader stables
+ * breed for marketability.
+ *
+ * Dependencies: ./types (Horse, Pregnancy, Stable, GameState), ./uuid (generateUUID), @/core/breeding/eligibility (canBreed), @/core/breeding/stallions (getAvailableStallions), @/core/calendar/breedingCalendar (inBreedingSeason), @/core/breeding/populationGenetics (computeProspectiveCoi), ./rng (Rng), @/core/breeding/leaderboardTypes (Leaderboard), @/core/breeding/strategy (BREEDING_PERSONALITIES, SINGLE_FEE_CAP_FRACTION, MIN_MARE_OVERALL, MAX_COI, scoreStallion), @/core/horse/stats (calculateOverallRating), @/core/ai/breedingAI (calculateAIStallionScore, createBreedingAIState, recordBreedingDecision), ./constants/gameConstants (BREEDING_FEE, GESTATION_DAYS)
+ * Related files: npcStables.ts (uses breeding logic), breedingAI.ts (provides AI decisions)
+ */
+
 import type { Horse, Pregnancy, Stable, GameState } from "./types";
 import { generateUUID } from "@/game/uuid";
 import { canBreed } from "@/core/breeding/eligibility";

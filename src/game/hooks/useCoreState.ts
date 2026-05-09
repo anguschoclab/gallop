@@ -1,3 +1,13 @@
+/**
+ * hooks/useCoreState.ts - Core state selectors
+ *
+ * This file provides Zustand hooks for core game state including day, cash, horses,
+ * races, log, and expenses with shallow comparison for performance.
+ *
+ * Dependencies: zustand/shallow (shallow), @/game/store (useGame, useGameWithShallow), @/game/types (GameState)
+ * Related files: store.ts (state management), used throughout components
+ */
+
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";

@@ -1,3 +1,13 @@
+/**
+ * auctionData.ts - Auction sale triggers and labels
+ *
+ * This file provides auction sale schedule triggers and kind labels for
+ * different types of horse sales (weanling, yearling, mixed, broodmare, etc.).
+ *
+ * Dependencies: ./types (AuctionSaleKind)
+ * Related files: auction.ts (uses sale triggers), auctionRunner.ts (uses sale data)
+ */
+
 import type { AuctionSaleKind } from "./types";
 
 export const SALE_TRIGGERS: { doy: number; kind: AuctionSaleKind; name: string }[] = [

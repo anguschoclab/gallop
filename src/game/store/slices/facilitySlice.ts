@@ -1,3 +1,13 @@
+/**
+ * store/slices/facilitySlice.ts - Facility management slice
+ *
+ * This file provides facility-related state and actions for upgrading and managing
+ * player facilities.
+ *
+ * Dependencies: @/core/facilities (PlayerFacilities), @/lib/formatting (formatCurrency), @/game/uuid (generateUUID), ../types (ActionResult, GameStateCreator)
+ * Related files: store/index.ts (uses this slice), @/core/facilities/facilityDefaults.ts (facility defaults)
+ */
+
 import type { PlayerFacilities } from "@/core/facilities";
 import { formatCurrency } from "@/lib/formatting";
 import { generateUUID } from "@/game/uuid";

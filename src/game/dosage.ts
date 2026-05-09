@@ -1,3 +1,13 @@
+/**
+ * dosage.ts - Dosage profile calculation
+ *
+ * This file provides dosage profile calculation based on pedigree, including
+ * chef-de-race classifications and dosage index interpretation.
+ *
+ * Dependencies: ./types (DosageProfile, PedigreeNode), @/core/data/pedigreeData (AptitudinalGroup, PedigreeHorse, findHorseByName)
+ * Related files: breedingCompatibility.ts (uses dosage metrics), pedigreeData.ts (provides chef-de-race data)
+ */
+
 import type { DosageProfile, PedigreeNode } from "./types";
 import type { AptitudinalGroup, PedigreeHorse } from "@/core/data/pedigreeData";
 import { findHorseByName } from "@/core/data/pedigreeData";

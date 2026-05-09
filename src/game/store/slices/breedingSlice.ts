@@ -1,4 +1,15 @@
 /**
+ * store/slices/breedingSlice.ts - Breeding state slice
+ *
+ * This file provides breeding-related state and actions for reproduction and lineage
+ * tracking, including breeding, retirement, pregnancy management, and breeding
+ * program management.
+ *
+ * Dependencies: @/game/types (Pregnancy, TripleCrownProgress, Horse), @/game/state/breedingState (BreedingState, createDefaultBreedingState), @/core/breeding/programs (createBreedingProgram, updateProgramProgress, BreedingProgram), @/core/breeding/archetypes (getArchetypeById), @/core/breeding/eligibility (canBreed, BreedResult), @/game/uuid (generateUUID), @/core/resolver/intents (BreedingIntent), @/game/constants/gameConstants (BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE), @/lib/formatting (formatCurrency), ../guards (requireOwned, requireHorse), ../types (StoreSet, StoreGet)
+ * Related files: store/index.ts (uses this slice), @/core/breeding/programs.ts (breeding programs)
+ */
+
+/**
  * Breeding Slice
  * Breeding-related state and actions for reproduction and lineage tracking
  */

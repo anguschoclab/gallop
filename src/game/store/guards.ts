@@ -1,3 +1,13 @@
+/**
+ * store/guards.ts - Store action validation guards
+ *
+ * This file provides guard functions for validating store actions, including
+ * horse lookup and ownership verification.
+ *
+ * Dependencies: @/game/types (Horse)
+ * Related files: Used throughout store slices for validation
+ */
+
 import type { Horse } from "@/game/types";
 
 /**

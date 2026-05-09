@@ -1,3 +1,14 @@
+/**
+ * hooks/useSystemsState.ts - Systems state selectors
+ *
+ * This file provides Zustand hooks for systems state including NPC stables, jockeys,
+ * awards, campaigns, user settings, sire leaderboards, and industry earnings with
+ * shallow comparison.
+ *
+ * Dependencies: zustand/shallow (shallow), @/game/store (useGame, useGameWithShallow), @/game/types (GameState)
+ * Related files: store.ts (state management), used throughout subsystems
+ */
+
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";

@@ -1,3 +1,13 @@
+/**
+ * campaignPlanner.ts - Campaign planning and slot generation
+ *
+ * This file generates and updates campaign race slots by scanning upcoming races
+ * and matching them to the horse's goal and aptitudes.
+ *
+ * Dependencies: ./types (Horse, Race, HorseCampaign, CampaignRaceSlot, CampaignFlag, ConfirmedAptitudes, Stable), ./gradedRaces (GRADED_RACES, GradedRace), ./raceSchedule (getCurrentYear), @/core/ai/campaignAI (detectContender, getOptimalMajorRaceTarget, getPrepRaceStrategy, createCampaignAIState), @/core/ai/npcCycleAI (getOrCreateStableAIState, NpcAIManager)
+ * Related files: autoEntryRunner.ts (uses campaign slots for auto-entry), scheduler.ts (uses for campaign management)
+ */
+
 // Campaign Planner
 // Generates and updates CampaignRaceSlot[] for a HorseCampaign by scanning
 // upcoming races and matching them to the horse's goal and aptitudes.

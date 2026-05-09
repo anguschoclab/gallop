@@ -1,3 +1,13 @@
+/**
+ * npcRaceEntryHelpers.ts - NPC race entry helper functions
+ *
+ * This file provides helper functions for NPC race entry including eligibility checks,
+ * energy checks, form checks, and suitability scoring with personality modifiers.
+ *
+ * Dependencies: ./types (Horse, Race, Stable), @/core/race/eligibility (isHorseEligibleForRace), @/core/race/entryScoring (calculateRaceSuitability, MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER), @/core/stable/personalityModifiers (getFormTolerance), @/core/stable/stableConfig (PERSONALITY_CONFIG)
+ * Related files: npcRaceEntry.ts (uses these helpers)
+ */
+
 import type { Horse, Race, Stable } from "./types";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateRaceSuitability, MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/core/race/entryScoring";

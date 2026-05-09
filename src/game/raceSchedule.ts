@@ -1,3 +1,13 @@
+/**
+ * raceSchedule.ts - Race schedule generator
+ *
+ * This file generates realistic race cards based on track schedules using regional-
+ * specific generators for authentic race patterns, including Breeders' Cup rotation.
+ *
+ * Dependencies: ./types (Race), ./tracks (Track, TrackSchedule), ./rng (createRng, hashStr), ./tracks (getTrackById), ./raceGeneration/raceGen (generateRace, makeGradedRace), @/core/data/gradedRaces (GRADED_RACES), ./raceGeneration/northAmerica (generateNorthAmericanRaceCard), ./constants/gameConstants (DAYS_PER_YEAR), @/core/calendar/dateFormatting (dayOfYear)
+ * Related files: raceGeneration/northAmerica.ts (NA-specific generator), raceGeneration/raceGen.ts (base generator)
+ */
+
 // Race Schedule Generator - Generates realistic race cards based on track schedules
 // This uses regional-specific generators for authentic race patterns
 

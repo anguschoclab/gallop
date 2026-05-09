@@ -1,3 +1,14 @@
+/**
+ * liveRaceResolution.ts - Live race resolution with impacts
+ *
+ * This file resolves races and applies impacts for live race simulation, used when
+ * the player watches a race live as opposed to the pipeline-based resolution during
+ * day-rollover.
+ *
+ * Dependencies: @/core/resolver/impacts/index (AnyImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact, TripleCrownProgressImpact), ./types (Race, Horse, Jockey), @/core/race/raceSim (Runner), @/core/common/classBonus (calculateClassBonus), ./beyer (beyerFigure), @/lib/formatting (formatCurrency), @/core/breeding/populationGenetics (detectInbreedingPattern, inbreedingPerformanceDampener), @/core/breeding/stallions (recalcStandingFee), ./raceSchedule (getCurrentYear), @/core/data/gradedRaces (GRADED_RACES), @/core/common/ordinal (getOrdinalSuffix), ./uuid (generateUUID), @/core/resolver/resolver (applyImpacts, ResolverContext), ./constants/gameConstants (PRIZE_SPLIT)
+ * Related files: raceSim.ts (provides race results), resolver.ts (applies impacts)
+ */
+
 import type {
   AnyImpact,
   EnergyImpact,

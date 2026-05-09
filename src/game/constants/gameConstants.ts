@@ -1,4 +1,14 @@
 /**
+ * gameConstants.ts - Centralized game constants
+ *
+ * This file provides a single source of truth for all game balance constants
+ * including prize splits, upkeep costs, training costs, starting cash, and calendar constants.
+ *
+ * Dependencies: None (self-contained constants)
+ * Related files: Used throughout the game for balance calculations
+ */
+
+/**
  * Centralized game constants
  * Single source of truth for all game balance constants
  */

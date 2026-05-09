@@ -1,4 +1,14 @@
 /**
+ * store/helpers/market.ts - Market and day advancement helpers
+ *
+ * This file provides pure business logic for market refresh, horse aging based on
+ * hemisphere-specific universal birthdays, and race scheduling.
+ *
+ * Dependencies: @/game/types (Horse, Race), @/game/horseGen (generateHorse), @/game/raceSchedule (generateUpcomingRaces), @/game/tracks (TRACK_SCHEDULES), @/core/calendar/breedingCalendar (isUniversalBirthday), @/game/rng (Rng)
+ * Related files: store/slices/coreSlice.ts (uses market helpers), store/slices/racingSlice.ts (uses race scheduling)
+ */
+
+/**
  * Market and Day Advancement Helper Functions
  * Pure business logic for market refresh and race scheduling
  */

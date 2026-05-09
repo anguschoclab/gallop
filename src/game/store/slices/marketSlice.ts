@@ -1,4 +1,15 @@
 /**
+ * store/slices/marketSlice.ts - Market state slice
+ *
+ * This file provides market-related state and actions for trading, auctions, and
+ * scouting, including horse purchasing, scouting, consignment, bidding, and auction
+ * result processing.
+ *
+ * Dependencies: @/game/types (Horse, AuctionSale, ScoutReport, PrivateSaleOffer, Claim, Stable, Race), @/game/state/marketState (MarketState, createDefaultMarketState), @/core/horse/pricing (horsePrice, horsePriceWithPedigree), @/game/scouting (scoutHorse, calculateScoutCost), @/game/rng (createRng, hashStr), @/game/uuid (generateUUID), @/core/resolver/intents (PurchaseIntent, ScoutIntent), @/game/auction (DEFAULT_PLAYER_RESERVE_RATIO, calculateLotValuation), @/lib/formatting (formatCurrency), ../types (StoreSet, StoreGet)
+ * Related files: store/index.ts (uses this slice), @/game/auction.ts (auction logic), @/game/scouting.ts (scouting logic)
+ */
+
+/**
  * Market Slice
  * Market-related state and actions for trading, auctions, and scouting
  */

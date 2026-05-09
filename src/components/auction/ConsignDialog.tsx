@@ -22,9 +22,9 @@ import { Badge } from "@/components/ui/badge";
 import {
   CONSIGNMENT_COMMISSION,
   DEFAULT_PLAYER_RESERVE_RATIO,
-  KIND_LABELS,
   netProceeds,
 } from "@/game/auction";
+import { KIND_LABELS } from "@/game/auctionData";
 import { formatCurrency } from "@/lib/formatting";
 import { horsePriceWithPedigree } from "@/core/horse/pricing";
 import type { Horse, AuctionSale } from "@/game/types";

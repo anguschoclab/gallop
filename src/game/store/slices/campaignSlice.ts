@@ -1,4 +1,15 @@
 /**
+ * store/slices/campaignSlice.ts - Campaign state slice
+ *
+ * This file provides campaign planning and management state, including campaign
+ * creation, slot management, flag dismissal, campaign deletion, auto-campaign
+ * generation, and Triple Crown history tracking.
+ *
+ * Dependencies: @/game/types (HorseCampaign, TripleCrownProgress), @/core/resolver/intents (AnyIntent), @/game/uuid (generateUUID), ../types (StoreSet, StoreGet)
+ * Related files: store/index.ts (uses this slice), @/game/campaignPlanner.ts (campaign planning logic)
+ */
+
+/**
  * Campaign Slice
  * Campaign planning and management state
  */

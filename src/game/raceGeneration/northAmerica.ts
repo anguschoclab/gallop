@@ -1,3 +1,13 @@
+/**
+ * raceGeneration/northAmerica.ts - North American race generator
+ *
+ * This file generates races with NA-specific patterns: 70% claiming races, optional
+ * claiming, starter races, with graded races able to be handicaps in NA.
+ *
+ * Dependencies: ../types (Race, RaceClass, ClaimingPrice), ../tracks (Track), ../rng (Rng), ../uuid (generateUUID), @/core/common/random (randomWeather, rand), @/core/trackConditions (randomTrackConditionWithClimateBias), @/core/race/naming/raceNameGenerator (generateRaceName), ./raceGen (CLASS_CONFIG)
+ * Related files: raceGen.ts (base race generation), raceSchedule.ts (uses generated races)
+ */
+
 // North American Race Generator
 // Generates races with NA-specific patterns: 70% claiming races, optional claiming, starter races
 // Graded races can be handicaps in NA

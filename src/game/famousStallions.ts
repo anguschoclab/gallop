@@ -1,3 +1,13 @@
+/**
+ * famousStallions.ts - Famous stallion generation
+ *
+ * This file generates famous active stallions from real-world pedigree data,
+ * mapping them to stables and assigning stud fees based on their achievements.
+ *
+ * Dependencies: ./types (Horse, Stable, StableTier), ./rng (Rng), @/core/horse/horseFactory (createHorseFromDNA), @/core/genetics/generation (generateResearchBasedGenotype), @/core/breeding/bruceLowe (rollProceduralFamily), @/core/breeding/populationGenetics (resolveBloodline), @/core/data/pedigreeData (activeStallions2020s), @/core/stable/stableQueries (mapStallionToStable)
+ * Related files: npcStables.ts (uses famous stallions), breeding.ts (uses for breeding)
+ */
+
 import type { Horse, Stable, StableTier } from "./types";
 import type { Rng } from "./rng";
 import { createHorseFromDNA } from "@/core/horse/horseFactory";

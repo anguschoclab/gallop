@@ -15,6 +15,8 @@ import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { calculateBaseHorseValue } from "@/core/horse/pricing";
 import { isMaleHorse } from "@/core/horse/gender";
 
+const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
+
 // Tier-driven defaults for retirement-to-stud parameters. Numbers chosen so
 // that elite stallions are scarce, expensive, and command large books — and
 // budget stallions remain available cheap for low-tier players.
@@ -107,15 +109,17 @@ export function isStallionMaterial(horse: Horse): boolean {
  * market value, weighted heavily by G1 wins and graded stakes performance.
  *
  * @param horse - The horse to calculate the fee for
- * @param stable - Optional stable for tier context
+ * @param stableOrTier - Optional stable for tier context, or tier directly
  * @returns Recommended stud fee in dollars
  *
  * @example
  * const fee = calculateRecommendedStudFee(horse, stable);
+ * const fee2 = calculateRecommendedStudFee(horse, "elite");
  */
-export function calculateRecommendedStudFee(horse: Horse, stable?: Stable): number {
-  const baseValue = calculateBaseHorseValue(horse, stable?.tier || "mid");
-  
+export function calculateRecommendedStudFee(horse: Horse, stableOrTier?: Stable | StableTier): number {
+  const tier = typeof stableOrTier === "string" ? stableOrTier : stableOrTier?.tier || "mid";
+  const baseValue = calculateBaseHorseValue(horse, tier);
+
   // Calculate win frequency and quality
   const g1Wins = horse.raceHistory.filter(r => r.position === 1 && r.grade === "G1").length;
   const gradedWins = horse.raceHistory.filter(r => r.position === 1 && r.grade).length;
@@ -127,7 +131,7 @@ export function calculateRecommendedStudFee(horse: Horse, stable?: Stable): numb
   if (g1Wins > 0) {
     fee += g1Wins * 10000;
   }
-  
+
   if (gradedWins > 0) {
     fee += (gradedWins - g1Wins) * 3500;
   }
@@ -140,6 +144,11 @@ export function calculateRecommendedStudFee(horse: Horse, stable?: Stable): numb
   // Round to nearest $500
   return Math.round(fee / 500) * 500;
 }
+
+/**
+ * Alias for calculateRecommendedStudFee for backward compatibility.
+ */
+export const initialStandingFee = calculateRecommendedStudFee;
 
 /**
  * Recalculate standing fee after new progeny results or major wins.
@@ -201,4 +210,74 @@ export function valueOf(horse: Horse, stable: Stable): number {
   const annualStudRevenue = horse.stud.standingFee * horse.stud.bookSize * 0.7; // 70% fill rate
   
   return baseValue + annualStudRevenue * 2; // Valued at base + 2 years of stud income
+}
+
+/**
+ * Get available stallions for breeding with a specific mare.
+ *
+ * Filters all horses to find stallions that are available for breeding with the given mare.
+ * Considers gender, stud status, and basic eligibility criteria.
+ *
+ * @param horses - All horses in the game state
+ * @param mare - The mare to breed with
+ * @returns Array of available stallions
+ *
+ * @example
+ * const stallions = getAvailableStallions(state.horses, mare);
+ */
+export function getAvailableStallions(horses: Horse[], mare: Horse): Horse[] {
+  return horses.filter((horse) => {
+    // Must be a male horse
+    if (!SIRE_GENDERS.includes(horse.gender)) return false;
+
+    // Must be at stud
+    if (!horse.stud || !horse.stud.atStud) return false;
+
+    // Must be alive
+    if (horse.lifecycleStatus === "deceased") return false;
+
+    // Must be of breeding age
+    if (horse.age < 3) return false;
+
+    // Cannot breed with itself
+    if (horse.id === mare.id) return false;
+
+    // Basic health check
+    if (horse.healthStatus === "covering_sickness") return false;
+
+    return true;
+  });
+}
+
+/**
+ * Check if a stallion is available for breeding on a given day.
+ *
+ * Considers stud status, breeding season, and booking availability.
+ *
+ * @param stallion - The stallion horse
+ * @param day - Current game day
+ * @returns True if the stallion is available for breeding
+ *
+ * @example
+ * if (isStallionAvailable(stallion, currentDay)) {
+ *   bookBreeding(stallion);
+ * }
+ */
+export function isStallionAvailable(stallion: Horse, day: number): boolean {
+  // Must be at stud
+  if (!stallion.stud || !stallion.stud.atStud) return false;
+
+  // Must be alive
+  if (stallion.lifecycleStatus === "deceased") return false;
+
+  // Must be in breeding season
+  if (!inBreedingSeason(day, stallion.hemisphere)) return false;
+
+  // Must have available booking slots
+  if (stallion.stud.seasonBookings >= stallion.stud.bookSize) return false;
+
+  // Basic health check
+  if (stallion.healthStatus === "covering_sickness") return false;
+
+  return true;
 }

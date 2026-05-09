@@ -1,4 +1,14 @@
 /**
+ * store/storage.ts - Zustand persist storage adapter
+ *
+ * This file provides a custom OPFS-based storage adapter for Zustand persist
+ * middleware, including hydration tracking and rehydration functions.
+ *
+ * Dependencies: @/game/types (GameState), @/services/storageAdapter (loadGameState, saveGameState, clearGameState)
+ * Related files: store/index.ts (uses storage adapter), storageAdapter.ts (storage service)
+ */
+
+/**
  * Storage Adapter for Zustand Persist
  * Custom OPFS-based storage for game state persistence
  */

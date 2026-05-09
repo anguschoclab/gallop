@@ -1,4 +1,14 @@
 /**
+ * store/helpers/pregnancy.ts - Pregnancy resolution helpers
+ *
+ * This file provides pure business logic for resolving pregnancies and foaling,
+ * including live foals, stillbirths, live foal guarantee retries, and cash adjustments.
+ *
+ * Dependencies: @/game/types (Horse, Pregnancy, Stable), @/core/horse/horseFactory (resolveFoaling), @/core/race/naming/raceNameGenerator (getRegionalSystem), @/core/stable/stableConfig (PERSONALITY_CONFIG), @/core/breeding/lineage (getFoalsBy), @/lib/formatting (formatCurrency), @/game/constants/gameConstants (BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE)
+ * Related files: store/slices/breedingSlice.ts (uses pregnancy helpers)
+ */
+
+/**
  * Pregnancy Resolution Helper Functions
  * Pure business logic for resolving pregnancies and foaling
  */

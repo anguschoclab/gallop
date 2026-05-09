@@ -1,3 +1,14 @@
+/**
+ * stallionDNAData.ts - Stallion research data for DNA generation
+ *
+ * This file provides research data for stallions gathered from real-world sources,
+ * used to generate historically accurate DNA instead of procedural generation.
+ * Includes physical traits, racing performance, progeny performance, and genetic markers.
+ *
+ * Dependencies: @/core/genetics/types (Genotype, Locus, MarkerGenotype)
+ * Related files: genetics/mapper.ts (uses research data for genotype mapping), genetics/generation.ts (uses for deterministic generation)
+ */
+
 import type { Genotype, Locus, MarkerGenotype } from "@/core/genetics/types";
 
 /**

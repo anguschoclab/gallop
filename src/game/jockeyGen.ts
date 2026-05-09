@@ -1,3 +1,13 @@
+/**
+ * jockeyGen.ts - Jockey generation
+ *
+ * This file provides jockey generation with archetypes, stats, traits, and silk
+ * customization based on tier and region.
+ *
+ * Dependencies: @/game/uuid (generateUUID), @/game/rng (Rng), ./types (Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk, RegionalSystem), @/core/jockey/proceduralNaming (generateProceduralJockeyName), ./jockeyData (ARCHETYPES, SILK_PALETTE, SILK_PATTERNS)
+ * Related files: jockeyData.ts (provides constants), npcStables.ts (uses jockey generation)
+ */
+
 import { generateUUID } from "@/game/uuid";
 import type { Rng } from "@/game/rng";
 import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "./types";

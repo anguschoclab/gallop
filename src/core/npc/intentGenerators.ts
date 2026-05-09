@@ -39,8 +39,8 @@ import {
 } from "@/core/ai/claimingAI";
 import {
   createRaceEntryAIState,
-  calculateRaceSuitability,
 } from "@/core/ai/raceEntryAI";
+import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import {
   getOrCreateStableAIState,
   updateStableAIState,

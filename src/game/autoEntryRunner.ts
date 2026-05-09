@@ -1,3 +1,14 @@
+/**
+ * autoEntryRunner.ts - Auto-managed campaign race entry
+ *
+ * This file provides functionality for automatically entering horses into planned
+ * races for auto-managed campaigns when within the slot's day window, if eligibility
+ * and budget allow.
+ *
+ * Dependencies: ./types (Horse, Race, HorseCampaign, CampaignRaceSlot), ./store (ActionResult), @/core/race/eligibility (isHorseEligibleForRace)
+ * Related files: campaignPlanner.ts (uses for campaign management), scheduler.ts (uses for auto-entry)
+ */
+
 // Auto Entry Runner
 // For auto-managed campaigns: automatically enters the horse into planned races
 // when within the slot's day window, if eligibility and budget allow.

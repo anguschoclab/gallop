@@ -1,3 +1,13 @@
+/**
+ * store/slices/jockeySlice.ts - Jockey management slice
+ *
+ * This file provides jockey-related state and actions for hiring, silk rerolling,
+ * and jockey assignment to races.
+ *
+ * Dependencies: @/game/types (Jockey), @/lib/formatting (formatCurrency), @/game/uuid (generateUUID), ../types (ActionResult, GameStateCreator)
+ * Related files: store/index.ts (uses this slice), @/game/jockeyGen.ts (jockey generation)
+ */
+
 import type { Jockey } from "@/game/types";
 import { formatCurrency } from "@/lib/formatting";
 import { generateUUID } from "@/game/uuid";

@@ -1,3 +1,14 @@
+/**
+ * rng.ts - Seeded RNG for reproducible gameplay
+ *
+ * This file provides seeded RNG used by race simulation, foal generation, and any
+ * other gameplay code that needs to be reproducible from a deterministic input.
+ * Uses the mulberry32 algorithm for small, well-distributed game RNG.
+ *
+ * Dependencies: None (self-contained functions)
+ * Related files: Used throughout the codebase for deterministic random generation
+ */
+
 // Seeded RNG used by race simulation, foal generation, and any other gameplay
 // code that needs to be reproducible from a deterministic input. Replays of
 // the same race or pregnancy must produce identical outcomes.

@@ -1,3 +1,13 @@
+/**
+ * claiming.ts - Claiming race mechanics
+ *
+ * This file handles claiming transactions, horse transfers, and claiming eligibility
+ * for claiming races.
+ *
+ * Dependencies: ./types (Horse, Race, Claim, ClaimingPrice), @/core/horse/stats (calculateOverallRating), ./rng (createRng, hashStr), @/lib/formatting (formatCurrency)
+ * Related files: raceSim.ts (uses claiming mechanics), resolver.ts (handles claiming transactions)
+ */
+
 // Claiming Race Mechanics
 // Handles claiming transactions, horse transfers, and claiming eligibility
 

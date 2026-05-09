@@ -16,11 +16,11 @@ import {
   extractAndCombine,
   generateSoundAlike,
   generateReverseHomage,
-} from "./pedigreePatterns";
-import { generateAncestorHomage } from "./ancestorHomage";
-import { generateThematicName, type NamingTheme } from "./thematicNaming";
-import { generateRegionalName } from "./regionalConventions";
-import { validateHorseName } from "./jockeyClubRules";
+} from "./pedigreePatterns.ts";
+import { generateAncestorHomage } from "./ancestorHomage.ts";
+import { generateThematicName, type NamingTheme } from "./thematicNaming.ts";
+import { generateRegionalName } from "./regionalConventions.ts";
+import { validateHorseName } from "./jockeyClubRules.ts";
 
 /**
  * Context for name generation, providing pedigree and naming preferences.

@@ -1,3 +1,14 @@
+/**
+ * tracks.ts - Track data and schedule management
+ *
+ * This file provides track data including track specifications (sections, surfaces,
+ * dimensions), track schedule configuration for realistic race day patterns, and
+ * lookup utilities for track data.
+ *
+ * Dependencies: ./types (Race), ./uuid (generateUUID), ./trackSchedulesData (TRACK_SCHEDULES), ./data/tracks.json (TRACK_DATA)
+ * Related files: raceSchedule.ts (uses track schedules), raceGeneration/raceGen.ts (uses track data)
+ */
+
 import type { Race } from "./types";
 import { generateUUID } from "./uuid";
 import { TRACK_SCHEDULES } from "./trackSchedulesData";

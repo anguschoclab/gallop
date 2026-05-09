@@ -1,3 +1,14 @@
+/**
+ * raceGeneration/raceGen.ts - Base race generation
+ *
+ * This file provides the single authoritative class config shared by the generic
+ * fallback generator and northAmerica.ts, with functions for creating graded races
+ * and generating races.
+ *
+ * Dependencies: ../types (Race, RaceClass), ../rng (Rng, nondeterministicRng), @/core/data/gradedRaces (GradedRace), ../uuid (generateUUID), @/core/common/random (rand, randomWeather), @/core/trackConditions (randomTrackConditionWithClimateBias), @/core/race/naming/legacyFallback (randomRaceName)
+ * Related files: northAmerica.ts (uses class config), raceSchedule.ts (uses race generation)
+ */
+
 import type { Race, RaceClass } from "../types";
 import type { Rng } from "@/game/rng";
 import { nondeterministicRng } from "@/game/rng";

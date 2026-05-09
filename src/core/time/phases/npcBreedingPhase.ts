@@ -9,7 +9,7 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import { runNpcBreeding } from "@/game/npcBreeding";
+import { runAutonomousBreeding } from "@/game/npcBreeding";
 
 /**
  * Phase: NPC Autonomous Breeding
@@ -24,18 +24,11 @@ export const npcBreedingPhase = {
   name: "npcBreeding",
   order: 38,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay, dailyRng } = context;
-    const result = runNpcBreeding(state, newDay, dailyRng);
-    if (result.newPregnancies.length === 0 && result.logs.length === 0) return context;
+    const { state, dailyRng } = context;
+    const updatedState = runAutonomousBreeding(state, state.npcStables, dailyRng);
     return {
       ...context,
-      state: {
-        ...state,
-        horses: result.horses,
-        npcStables: result.npcStables,
-        pregnancies: [...result.newPregnancies, ...state.pregnancies],
-      },
-      logs: [...context.logs, ...result.logs],
+      state: updatedState,
     };
   },
 };

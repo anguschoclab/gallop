@@ -1,3 +1,13 @@
+/**
+ * hooks/useRacingState.ts - Racing state selectors
+ *
+ * This file provides Zustand hooks for racing state including pace samples,
+ * calibrated pars, calibration day, and training usage with shallow comparison.
+ *
+ * Dependencies: zustand/shallow (shallow), @/game/store (useGame, useGameWithShallow), @/game/types (GameState)
+ * Related files: store.ts (state management), raceSim.ts (uses racing state)
+ */
+
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";

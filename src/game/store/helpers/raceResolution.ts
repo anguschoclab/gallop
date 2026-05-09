@@ -1,4 +1,14 @@
 /**
+ * store/helpers/raceResolution.ts - Race resolution helpers
+ *
+ * This file provides pure business logic for race result processing, including
+ * prize money payout splits, result sanitization, and ranking with tie-breaking.
+ *
+ * Dependencies: @/game/rng (createRng, hashStr, Rng), @/game/constants/gameConstants (PRIZE_SPLIT)
+ * Related files: store/slices/coreSlice.ts (uses race resolution helpers), @/game/raceSim.ts (race simulation)
+ */
+
+/**
  * Race Resolution Helper Functions
  * Pure business logic for race result processing
  */

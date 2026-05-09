@@ -1,3 +1,13 @@
+/**
+ * npcPostRace.ts - NPC post-race fame updates
+ *
+ * This file updates horse fame after race results based on finishing position,
+ * race grade, and purse size.
+ *
+ * Dependencies: ./types (Horse, Race)
+ * Related files: raceSim.ts (uses for fame updates), npcRaceEntry.ts (uses for post-race processing)
+ */
+
 import type { Horse, Race } from "./types";
 
 /**

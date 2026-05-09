@@ -1,3 +1,13 @@
+/**
+ * store/slices/utilitySlice.ts - Utility state slice
+ *
+ * This file provides utility state management functions for intent queuing, NPC stables,
+ * user settings, expenses, transactions, replays, reputation, and player profile.
+ *
+ * Dependencies: @/core/resolver/intents (AnyIntent), @/game/types (Stable, PlayerProfile), @/core/reputation (ManagerReputation), @/game/state/systemsState (SystemsState), @/core/settings/settingsTypes (UserSettings), ../types (GameStateCreator)
+ * Related files: store/index.ts (uses this slice)
+ */
+
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { Stable, PlayerProfile } from "@/game/types";
 import type { ManagerReputation } from "@/core/reputation";

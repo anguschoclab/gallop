@@ -1,4 +1,15 @@
 /**
+ * store/slices/racingSlice.ts - Racing state slice
+ *
+ * This file provides racing-related state and actions for training and performance
+ * analytics, including horse training, pace samples, calibrated pars, and training
+ * usage tracking.
+ *
+ * Dependencies: @/game/types (Horse), @/game/state/racingState (RacingState, createDefaultRacingState), @/core/resolver/intents (TrainingIntent, AnyIntent), @/game/uuid (generateUUID), @/game/constants/gameConstants (TRAINING_COST), ../types (StoreSet, StoreGet)
+ * Related files: store/index.ts (uses this slice), @/game/beyer.ts (Beyer calculation)
+ */
+
+/**
  * Racing Slice
  * Racing-related state and actions for training and performance analytics
  */

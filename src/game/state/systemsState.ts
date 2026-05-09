@@ -1,3 +1,15 @@
+/**
+ * state/systemsState.ts - Systems state management
+ *
+ * This file provides systems state for optional subsystems and advanced features,
+ * including NPC stables, breeding programs, jockeys, awards, campaigns, leaderboards,
+ * facilities, user settings, expenses, transactions, replays, reputation, transportation,
+ * staff, and pending intents.
+ *
+ * Dependencies: ../types (Stable, ScoutReport, Jockey, HorseCampaign, TripleCrownProgress, PlayerProfile), @/core/breeding/programs (BreedingProgram), ../awards/types (RegionalAward, AwardRegion), @/core/breeding/leaderboardTypes (Leaderboard, SireTrendData), @/core/resolver/intents (AnyIntent), @/core/facilities (FacilityType, FacilityLevel, PlayerFacilities), @/core/settings/settingsTypes (UserSettings), @/core/expenses (Expense), @/core/transactions (Transaction), @/core/replays (RaceReplay), @/core/reputation (ManagerReputation), @/core/transportation (TransportRequest), @/core/ai/npcCycleAI (NpcAIManager), @/core/staff/staffTypes (StaffMember), @/core/facilities/facilityDefaults (createFacility, createDefaultPlayerFacilities), @/core/settings/settingsTypes (createDefaultUserSettings), @/core/reputation (getReputationTier), ./index (NewGameOptions)
+ * Related files: store.ts (uses systems state), npcStables.ts (NPC stable logic)
+ */
+
 // Systems State - Optional subsystems and advanced features
 // Includes NPC stables, jockeys, awards, campaigns, leaderboards, facilities, and pending intents
 

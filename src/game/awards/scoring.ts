@@ -1,3 +1,13 @@
+/**
+ * awards/scoring.ts - Regional awards scoring engine
+ *
+ * This file calculates award points based on race performance for regional
+ * awards (North America, Europe, Asia-Pacific, South America).
+ *
+ * Dependencies: ../types (Horse, Race), ./types (AwardRegion, RegionalAwardCategory, RegionalAward, REGIONAL_SCORING, COUNTRY_TO_REGION, NORTH_AMERICAN_CATEGORIES, EUROPEAN_CATEGORIES, ASIA_PACIFIC_CATEGORIES, SOUTH_AMERICAN_CATEGORIES), @/core/data/gradedRaces (getTrackContinent, Continent)
+ * Related files: types.ts (award type definitions), index.ts (re-exports)
+ */
+
 // Regional Awards Scoring Engine
 // Calculates award points based on race performance
 

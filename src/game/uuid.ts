@@ -1,3 +1,13 @@
+/**
+ * uuid.ts - UUID generation utilities
+ *
+ * This file provides UUID and short ID generation functions, with support for
+ * deterministic generation using seeded RNG for reproducible gameplay.
+ *
+ * Dependencies: ./rng (Rng)
+ * Related files: Used throughout the codebase for entity ID generation
+ */
+
 import type { Rng } from "@/game/rng";
 
 /**

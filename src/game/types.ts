@@ -1,3 +1,13 @@
+/**
+ * types.ts - Central type exports
+ *
+ * This file re-exports all type definitions from core modules and provides a unified
+ * type interface for the game module.
+ *
+ * Dependencies: @/core/common/types, @/core/genetics/types, @/core/horse/types, @/core/jockey/types, @/core/race/types, @/core/stable/types, @/core/market/types, @/core/breeding/types, @/core/campaign/types, ./state (GameState), ./awards/types (RegionalAward, AwardRegion)
+ * Related files: All game files use these types
+ */
+
 export * from "@/core/common/types";
 export * from "@/core/genetics/types";
 export * from "@/core/horse/types";

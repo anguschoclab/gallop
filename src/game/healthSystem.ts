@@ -1,3 +1,13 @@
+/**
+ * healthSystem.ts - Injury and health mechanics
+ *
+ * This file provides injury rolling, recovery tracking, and health status management
+ * for horses during races and training.
+ *
+ * Dependencies: ./types (Horse, Rng)
+ * Related files: raceSim.ts (uses injury rolling), training.ts (uses injury mechanics)
+ */
+
 import type { Horse, Rng } from "./types";
 
 export type InjurySeverity = "minor" | "moderate" | "major" | "career-ending";

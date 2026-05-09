@@ -1,3 +1,13 @@
+/**
+ * scouting.ts - Scouting system for fog of war
+ *
+ * This file provides fog of war for NPC horse stats, where famous horses are well-known
+ * and obscure horses require scouting with cost calculation and accuracy variance.
+ *
+ * Dependencies: ./types (Horse, HorseStats, ScoutReport, Stable, Rng), @/core/horse/stats (calculateOverallRating), @/core/genetics/phenotype (resolveCoatColor)
+ * Related files: store.ts (uses scouting reports), market.ts (scouting affects market visibility)
+ */
+
 // Scouting System - Fog of war for NPC horse stats
 // Famous horses are well-known; obscure horses require scouting
 

@@ -1,3 +1,14 @@
+/**
+ * auctionRunner.ts - Deterministic auction simulation runner
+ *
+ * This file provides a deterministic, lot-by-lot auction simulation that powers
+ * both the live AuctionTheater UI and the day-rollover phase, producing the same
+ * final outcomes regardless of which path runs.
+ *
+ * Dependencies: ./uuid (generateUUID), ./types (AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord), ./auction (calculateNpcBid, netProceeds), ./rng (createRng, hashStr, Rng), @/core/resolver/impacts/index (AnyImpact), @/core/ai/npcCycleAI (NpcAIManager)
+ * Related files: auction.ts (valuation logic), auctionData.ts (sale configuration)
+ */
+
 // Deterministic, lot-by-lot auction simulation.
 //
 // Powers two paths from a single source of truth:

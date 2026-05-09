@@ -8,7 +8,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dice5 } from "lucide-react";
-import { generateSilk, SILK_PALETTE, SILK_PATTERNS } from "@/game/jockeyGen";
+import { generateSilk } from "@/game/jockeyGen";
+import { SILK_PALETTE, SILK_PATTERNS } from "@/game/jockeyData";
 import type { JockeySilk, JockeySilkPattern } from "@/game/types";
 import { SilkPreview } from "../SilkPreview";
 import { makeWizardRng } from "./helpers";

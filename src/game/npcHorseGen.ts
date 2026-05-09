@@ -1,3 +1,13 @@
+/**
+ * npcHorseGen.ts - NPC stable horse generation
+ *
+ * This file generates horses for NPC stables based on tier, age categories, and
+ * AI state, including initial fame calculation and stud fee determination.
+ *
+ * Dependencies: ./types (Horse, Stable, StableTier), ./rng (Rng), @/core/horse/horseFactory (generateNpcHorse), @/core/common/random (rand), @/core/breeding/stallions (shouldRetireAtStartup, initialStandingFee, defaultStudParams), @/core/ai/horseGenAI (shouldGenerateHorseOfAge, createHorseGenAIState, recordHorseGeneration), @/core/ai/npcCycleAI (NpcAIManager), ./npcHorseGenHelpers (AgeCategory, getAgeFromCategory, calculateStartingFame)
+ * Related files: npcStables.ts (uses horse generation), npcHorseGenHelpers.ts (helper functions)
+ */
+
 import type { Horse, Stable, StableTier } from "./types";
 import type { Rng } from "./rng";
 import {

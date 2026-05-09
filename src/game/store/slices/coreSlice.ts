@@ -1,4 +1,15 @@
 /**
+ * store/slices/coreSlice.ts - Core game state slice
+ *
+ * This file provides the core game loop properties and essential state management,
+ * including race entry/withdrawal, race tactics, race resolution, claiming,
+ * and day advancement functions.
+ *
+ * Dependencies: immer (applyPatches), @/game/state/coreState (CoreState, createDefaultCoreState), @/game/types (Horse, Race, PlayerProfile), @/game/store (ActionResult), @/core/time/pipeline (executePipeline, PipelineContext), @/core/time/phases (GAME_PIPELINE_PHASES), @/game/rng (createRng, hashStr), @/game/raceSchedule (getCurrentYear), @/core/time/advance (computePlayerRaceDays), @/game/constants/gameConstants (UPKEEP_PER_HORSE, DAYS_PER_YEAR, DAYS_PER_MONTH, DAYS_PER_WEEK), ../guards (requireOwned, requireHorse), ../types (StoreSet, StoreGet)
+ * Related files: store/index.ts (uses this slice), @/core/time/pipeline.ts (day advancement logic)
+ */
+
+/**
  * Core Slice
  * Core game loop properties and essential state management
  */

@@ -1,3 +1,13 @@
+/**
+ * npcRaceEntry.ts - AI race entry system for NPC stables
+ *
+ * This file provides AI race entry for NPC stables, evaluating races 1-3 days ahead
+ * and entering eligible, competitive horses using modular scoring, geometry, and AI systems.
+ *
+ * Dependencies: ./types (Horse, Race, Stable, Jockey), ./rng (Rng), @/core/race/entryScoring (calculateAssignedWeight, MAX_HORSES_PER_STABLE_PER_RACE), @/core/ai/jockeyStrategyAI (calculateOptimalTactics), @/core/ai/npcCycleAI (NpcAIManager), ./npcRaceEntryHelpers (shouldEnterHorse)
+ * Related files: npcRaceEntryHelpers.ts (provides entry logic), npcStables.ts (uses race entry)
+ */
+
 // AI Race Entry System - NPC stables intelligently enter horses in races
 // Evaluates races 1-3 days ahead and enters eligible, competitive horses
 // Refactored to use modular scoring, geometry, and AI systems

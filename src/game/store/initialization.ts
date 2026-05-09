@@ -1,4 +1,14 @@
 /**
+ * store/initialization.ts - Game state initialization
+ *
+ * This file provides game state initialization logic for creating the initial
+ * game state for new games, including horses, races, jockeys, stables, and facilities.
+ *
+ * Dependencies: @/game/types (GameState, Horse, Race), @/game/state (NewGameOptions), @/game/horseGen (generateHorse), @/game/raceGeneration/raceGen (generateRace, makeGradedRace), @/game/jockeyGen (generateInitialJockeys), @/game/npcStables (generateAllStables), @/game/npcHorseGen (generateAllNpcHorses), @/game/famousStallions (generateFamousStallions), @/game/npcRaceEntry (runNpcRaceEntry), @/game/rng (createRng, hashStr, Rng), @/game/gradedRaces (GRADED_RACES), @/core/facilities (createDefaultPlayerFacilities, createFacility, FacilityLevel), @/game/constants/gameConstants (STARTING_CASH)
+ * Related files: store/index.ts (uses initialization), types.ts (state types)
+ */
+
+/**
  * Game Initialization Logic
  * Creates the initial game state for new games
  */

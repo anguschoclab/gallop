@@ -1,3 +1,13 @@
+/**
+ * raceFieldManager.ts - Race field management
+ *
+ * This file fills remaining race spots with filler horses when pre-entries don't fill
+ * the race, using non-major stables and eligible filler horses.
+ *
+ * Dependencies: ./types (Race, Stable, Horse)
+ * Related files: raceSchedule.ts (uses field management), npcRaceEntry.ts (provides entries)
+ */
+
 import type { Race, Stable, Horse } from "./types";
 
 /**

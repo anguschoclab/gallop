@@ -1,3 +1,13 @@
+/**
+ * state/breedingState.ts - Breeding state management
+ *
+ * This file provides breeding-related state for reproduction tracking and lineage,
+ * including pregnancies, Triple Crown history, and active breeding programs.
+ *
+ * Dependencies: ../types (Pregnancy, TripleCrownProgress), @/core/breeding/programs (BreedingProgram)
+ * Related files: store.ts (uses breeding state), breeding.ts (breeding logic)
+ */
+
 // Breeding State - Reproduction and lineage tracking
 // Includes pregnancies, stud careers, and breeding history
 

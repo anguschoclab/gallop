@@ -1,3 +1,13 @@
+/**
+ * hooks/useMarketState.ts - Market state selectors
+ *
+ * This file provides Zustand hooks for market state including market data, auctions,
+ * and scout reports with shallow comparison for performance.
+ *
+ * Dependencies: zustand/shallow (shallow), @/game/store (useGame, useGameWithShallow), @/game/types (GameState)
+ * Related files: store.ts (state management), auction.ts (uses market state)
+ */
+
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";

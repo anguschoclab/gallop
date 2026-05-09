@@ -1,3 +1,13 @@
+/**
+ * store/slices/horseAdminSlice.ts - Horse administration slice
+ *
+ * This file provides horse administration actions for stud fee updates, retirement to
+ * stud, gelding, renaming, and horse name registration.
+ *
+ * Dependencies: @/game/uuid (generateUUID), ../guards (requireOwned, requireHorse), ../types (ActionResult, GameStateCreator)
+ * Related files: store/index.ts (uses this slice), ../guards.ts (validation guards)
+ */
+
 import { generateUUID } from "@/game/uuid";
 import { requireOwned, requireHorse } from "../guards";
 import type { ActionResult } from "../types";

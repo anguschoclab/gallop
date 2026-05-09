@@ -1,3 +1,13 @@
+/**
+ * npcHorseGenHelpers.ts - NPC horse generation helper functions
+ *
+ * This file provides helper functions for NPC horse generation including age category
+ * rolling, age from category mapping, and starting fame calculation.
+ *
+ * Dependencies: ./types (StableTier), ./rng (Rng), @/core/common/random (rand)
+ * Related files: npcHorseGen.ts (uses these helpers)
+ */
+
 import type { StableTier } from "./types";
 import type { Rng } from "./rng";
 import { rand } from "@/core/common/random";

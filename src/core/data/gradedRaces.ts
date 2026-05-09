@@ -1,3 +1,13 @@
+/**
+ * gradedRaces.ts - Graded stakes race data
+ *
+ * This file provides a comprehensive dataset of graded stakes races worldwide,
+ * including race definitions, schedules, restrictions, and Triple Crown groupings.
+ *
+ * Dependencies: @/game/tracks (TRACK_BY_NAME)
+ * Related files: Used throughout race scheduling and calendar systems
+ */
+
 // Canadian Grade 1 stakes races (run at Woodbine).
 // Source: Wikipedia – Category:Grade 1 stakes races in Canada.
 // Distances normalized to meters. dayOfYear schedules each race on the

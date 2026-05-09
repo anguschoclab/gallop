@@ -1,3 +1,13 @@
+/**
+ * store/slices/breedingProgramSlice.ts - Breeding program management slice
+ *
+ * This file provides breeding program management for creating, updating, deleting,
+ * and enrolling dams in breeding programs.
+ *
+ * Dependencies: @/core/breeding/programs (BreedingProgram), ../types (GameStateCreator)
+ * Related files: store/index.ts (uses this slice), @/core/breeding/programs.ts (breeding program logic)
+ */
+
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { GameStateCreator } from "../types";
 

@@ -1,4 +1,14 @@
 /**
+ * npcBreeding.test.ts - NPC breeding logic tests
+ *
+ * This file contains tests for NPC breeding logic including autonomous breeding,
+ * personality-based decisions, and COI calculations.
+ *
+ * Dependencies: vitest (describe, it, expect), ./npcBreeding (runNpcBreeding), ./rng (createRng), ./types (Horse, Stable, GameState, Pregnancy, HorseGender)
+ * Related files: npcBreeding.ts (implementation being tested)
+ */
+
+/**
  * Tests for NPC breeding logic
  */
 

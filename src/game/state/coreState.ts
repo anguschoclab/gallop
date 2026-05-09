@@ -1,3 +1,14 @@
+/**
+ * state/coreState.ts - Core state management
+ *
+ * This file provides core game state that is always present and required for the game
+ * to function, including day, cash, horses, races, log, news, season records, hall of
+ * fame, and archive for historical data.
+ *
+ * Dependencies: ../types (Horse, Race), @/core/narrative/newsTypes (NewsItem), @/core/history/historyTypes (HallOfFameEntry, SeasonRecord), ../uuid (generateUUID), ../rng (createRng, hashStr)
+ * Related files: store.ts (uses core state), types.ts (core types)
+ */
+
 // Core State - Essential game loop properties
 // These fields are always present and the game cannot run without them
 

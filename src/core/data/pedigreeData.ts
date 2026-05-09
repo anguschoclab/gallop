@@ -1,3 +1,14 @@
+/**
+ * pedigreeData.ts - Famous thoroughbred pedigree data
+ *
+ * This file provides a curated dataset of famous thoroughbred sires and dams,
+ * including foundation sires, dosage classifications, Bruce Lowe families,
+ * and lookup functions for pedigree resolution.
+ *
+ * Dependencies: @/game/rng (nondeterministicRng, Rng)
+ * Related files: Used throughout breeding, genetics, and horse generation systems
+ */
+
 // Curated dataset of famous thoroughbred sires and dams
 // Sources: Wikipedia (Leading Sire in North America), TBHeritage.com (Foundation Sires)
 

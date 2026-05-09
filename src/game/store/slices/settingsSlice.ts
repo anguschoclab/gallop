@@ -1,3 +1,13 @@
+/**
+ * store/slices/settingsSlice.ts - User settings slice
+ *
+ * This file provides user settings management for display, gameplay, notifications,
+ * and audio preferences.
+ *
+ * Dependencies: @/core/settings/settingsTypes (UserSettings, createDefaultUserSettings), ../types (GameStateCreator)
+ * Related files: store/index.ts (uses this slice), @/core/settings/settingsTypes.ts (settings types)
+ */
+
 import type { UserSettings } from "@/core/settings/settingsTypes";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import type { GameStateCreator } from "../types";

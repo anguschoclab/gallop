@@ -1,3 +1,14 @@
+/**
+ * npcStables.ts - NPC stable definitions and generation
+ *
+ * This file provides NPC stable generation using a pool-based system with configurable
+ * named stables and filler generation, refactored to use modular configuration and
+ * generation systems.
+ *
+ * Dependencies: ./types (Stable), ./rng (Rng), @/core/stable/stableConfig (STABLE_CONFIG), @/core/stable/stableSelection (shuffleAndPick), @/core/stable/stableGeneration (generateFillerStable, generateStableFromTemplate), @/core/breeding/archetypes (ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES), @/core/stable/stablePoolData (ELITE_POOL, MID_POOL, BUDGET_POOL)
+ * Related files: npcHorseGen.ts (uses stables for horse generation), npcBreeding.ts (uses stables for breeding)
+ */
+
 // NPC Stable Definitions - Configurable named stables + filler generation
 // Pool-based system: Large pools of named stables, config determines how many spawn
 // Refactored to use modular configuration and generation systems

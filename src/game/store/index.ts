@@ -1,4 +1,16 @@
 /**
+ * store/index.ts - Main Zustand store composition
+ *
+ * This file composes all state slices into the unified Zustand store, including
+ * racing, market, breeding, campaign, core, jockey, facility, settings, breeding
+ * program, horse admin, award, and utility slices. It also manages worker initialization
+ * and storage operations.
+ *
+ * Dependencies: zustand (create, persist, shallow), ./types (StoreType, NewGameOptions), ./slices/* (all slice creators), ./storage (createOpfsStorage, hydrationComplete, createRehydrateStore), ./initialization (createInitialState), comlink (wrap, expose), @/workers/engine.worker (EngineWorkerApi), @/workers/storage.worker (StorageWorkerApi), @/workers/initialization.worker (InitializationWorkerApi), @/core/resolver/intents (AnyIntent)
+ * Related files: All slice files in store/slices/, storage.ts (storage operations)
+ */
+
+/**
  * Main Store Index
  * Composes all slices into the unified Zustand store
  */

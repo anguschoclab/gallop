@@ -71,7 +71,7 @@ import {
 } from "@/core/breeding/bruceLowe";
 import { rollGender, geldHorse } from "@/core/horse/gender";
 import { randomSilk, rand } from "@/core/common/random";
-import { generateProceduralHorseName, type NamingContext } from "@/core/horse/naming/nameGenerator";
+import { generateProceduralHorseName, type NamingContext } from "@/core/horse/naming/nameGenerator.ts";
 import {
   resolveBloodline,
   computeCoiFromSnapshot,

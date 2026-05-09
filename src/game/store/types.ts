@@ -1,3 +1,13 @@
+/**
+ * store/types.ts - Store type definitions
+ *
+ * This file provides type definitions for the Zustand store, including the
+ * composed StoreType, ActionResult, and NewGameOptions interfaces.
+ *
+ * Dependencies: zustand (StateCreator), @/game/state/coreState (CoreState), ./slices/* (all slice types)
+ * Related files: store/index.ts (uses these types), all slice files (implement slice types)
+ */
+
 import type { StateCreator } from "zustand";
 import type { CoreState } from "@/game/state/coreState";
 import type { RacingSlice } from "./slices/racingSlice";

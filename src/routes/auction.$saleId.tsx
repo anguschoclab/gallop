@@ -27,7 +27,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { getDisplayableStats } from "@/game/scouting";
-import { KIND_LABELS, netProceeds, commissionAmount, CONSIGNMENT_COMMISSION } from "@/game/auction";
+import { KIND_LABELS } from "@/game/auctionData";
+import { netProceeds, commissionAmount, CONSIGNMENT_COMMISSION } from "@/game/auction";
 import { Gavel, ChevronLeft, ChevronRight, Trophy, Trash2, Search } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
