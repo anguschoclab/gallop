@@ -13,3 +13,8 @@ When injecting dynamic styles in React, using `dangerouslySetInnerHTML` to rende
 **Vulnerability:** Found `target="_blank"` links in `src/components/RaceEntry.tsx` without `rel="noopener noreferrer"`.
 **Learning:** External or new-tab links opening via `target="_blank"` are vulnerable to reverse tabnabbing. The newly opened tab can manipulate the original page using `window.opener`, potentially redirecting the user to a malicious site.
 **Prevention:** Always append `rel="noopener noreferrer"` to any anchor tag or `<Link>` component that opens in a new tab to break the `window.opener` reference.
+
+## 2025-02-09 - [Prevent reverse tabnabbing vulnerability]
+**Vulnerability:** Found `<Link>` components in `src/components/RaceEntry.tsx` using `target="_blank"` with only `rel="noopener"`.
+**Learning:** While `rel="noopener"` prevents the new tab from accessing `window.opener` on modern browsers, adding `noreferrer` is a best practice defense-in-depth approach to ensure no referrer information is leaked and provides broader legacy browser protection against reverse tabnabbing.
+**Prevention:** Always use `rel="noopener noreferrer"` when using `target="_blank"` on links opening user-generated or potentially external content.

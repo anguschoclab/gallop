@@ -395,7 +395,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                     to="/stable/$horseId"
                     params={{ horseId: selectedHorse.id }}
                     target="_blank"
-                    rel="noopener"
+                    rel="noopener noreferrer"
                     className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-gold"
                   >
                     {selectedHorse.name}
@@ -405,12 +405,16 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 <ChevronRight className="text-muted-foreground/30" />
 
                 <div className="flex flex-col items-center gap-2">
-                  <JockeyAvatar jockey={selectedJockey} size="md" className="border-2 border-primary/20" />
+                  <JockeyAvatar
+                    jockey={selectedJockey}
+                    size="md"
+                    className="border-2 border-primary/20"
+                  />
                   <Link
                     to="/jockey/$jockeyId"
                     params={{ jockeyId: selectedJockey.id }}
                     target="_blank"
-                    rel="noopener"
+                    rel="noopener noreferrer"
                     className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-gold"
                   >
                     {selectedJockey.name}
@@ -475,7 +479,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                                   : race.graded.grade === "G3"
                                     ? 300
                                     : 200
-                                : 150)
+                              : 150)
                         : race.entryFee +
                             selectedJockey.ridingFee +
                             (race.graded
@@ -486,7 +490,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                                   : race.graded.grade === "G3"
                                     ? 300
                                     : 200
-                                : 150) +
+                              : 150) +
                             (wantToClaim ? race.claimingPrice! : 0),
                     )}
                   </span>
