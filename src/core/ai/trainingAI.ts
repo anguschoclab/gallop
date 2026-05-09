@@ -1,4 +1,14 @@
 /**
+ * trainingAI.ts - Training AI system
+ *
+ * This file provides personality-driven training priorities with learning
+ * from effectiveness for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Stable), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions)
+ * Related files: npcCycleAI.ts (uses training AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Training AI System
  * Personality-driven training priorities with learning from effectiveness
  */

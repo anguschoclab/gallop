@@ -1,3 +1,13 @@
+/**
+ * validators/BreedingValidator.ts - Breeding intent validator
+ *
+ * This file validates breeding intents to ensure sire and dam exist,
+ * have valid genders, and sufficient funds are available.
+ *
+ * Dependencies: @/game/types (GameState), ../intents (AnyIntent, BreedingIntent), ./types (IntentValidator, ValidationCache)
+ * Related files: ../resolver.ts (uses validator), ./index.ts (exports validators)
+ */
+
 import type { GameState } from "@/game/types";
 import type { AnyIntent, BreedingIntent } from "../intents";
 import type { IntentValidator, ValidationCache } from "./types";

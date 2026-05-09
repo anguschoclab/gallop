@@ -1,3 +1,13 @@
+/**
+ * stablePoolData.ts - Stable pool data
+ *
+ * This file provides stable pool entries for elite, mid, and budget tiers,
+ * including real-world inspired operations with colors, descriptions, and countries.
+ *
+ * Dependencies: @/game/types (Stable)
+ * Related files: stableGeneration.ts (uses pool data), stableSelection.ts (uses pool data)
+ */
+
 import type { Stable } from "@/game/types";
 
 // Base stable info without generated fields

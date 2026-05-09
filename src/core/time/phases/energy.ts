@@ -1,3 +1,13 @@
+/**
+ * phases/energy.ts - Energy restoration phase
+ *
+ * This file provides the energy restoration phase that restores energy for all horses
+ * and handles health status recovery (covering_sickness -> recovering -> healthy).
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/facilities (getFacilityBonus), @/core/genetics/phenotype (resolveEpmRisk)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { getFacilityBonus } from "@/core/facilities";
 import { resolveEpmRisk } from "@/core/genetics/phenotype";

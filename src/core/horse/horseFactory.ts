@@ -72,7 +72,6 @@ import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import {
   shouldRetireAtStartup,
-  initialStandingFee,
   defaultStudParams,
 } from "@/core/breeding/stallions";
 import {
@@ -111,6 +110,25 @@ function resolveDnaTraits(genotype: Genotype) {
 
 /**
  * Low-level builder: DNA -> Fully hydrated Horse object
+ *
+ * This function takes a genotype and resolves all phenotype traits (stats, coat color,
+ * running style, aptitudes, health risks, etc.) to create a complete Horse object.
+ * It's the core horse creation primitive used by all other generation functions.
+ *
+ * @param genotype - The genetic blueprint containing all DNA information
+ * @param rng - Random number generator for deterministic variation
+ * @param opts.name - Optional horse name (defaults to "Unnamed")
+ * @param opts.age - Optional horse age in years (defaults to 2)
+ * @param opts.gender - Optional horse gender (defaults to "colt")
+ * @param opts.hemisphere - Optional racing hemisphere (defaults to "Northern")
+ * @param opts.owned - Optional ownership flag (defaults to false)
+ * @param opts.stableId - Optional stable ID assignment
+ * @param opts.createdAtDay - Optional game day when horse was created
+ * @returns Fully hydrated Horse object with all phenotype traits resolved
+ *
+ * @example
+ * const genotype = generateGenotype(rng, "elite");
+ * const horse = createHorseFromDNA(genotype, rng, { name: "Thunder", age: 3 });
  */
 export function createHorseFromDNA(
   genotype: Genotype,
@@ -193,6 +211,23 @@ export function createHorseFromDNA(
 
 /**
  * Procedural generation for market/starter horses
+ *
+ * Generates a complete horse with genotype, phenotype, and name. This is the primary
+ * function for creating horses for the market, starter stables, or other procedural
+ * generation needs. It uses tier-based generation to control quality distribution.
+ *
+ * @param opts.tier - Quality tier affecting stat ranges (defaults to "budget")
+ * @param opts.owned - Whether the horse is player-owned (defaults to false)
+ * @param opts.hemisphere - Racing hemisphere (defaults to random)
+ * @param opts.age - Horse age in years (defaults to 2-5 random)
+ * @param opts.gender - Horse gender (defaults to age-appropriate random)
+ * @param rng - Random number generator (defaults to nondeterministic)
+ * @param namingContext - Context for name generation (region, theme, existing names)
+ * @returns Fully generated Horse object with name, stats, and appearance
+ *
+ * @example
+ * const horse = generateHorse({ tier: "elite", owned: true });
+ * const budgetHorse = generateHorse({ tier: "budget" });
  */
 export function generateHorse(
   opts: {
@@ -208,7 +243,7 @@ export function generateHorse(
   const tier = opts.tier ?? "budget";
   const genotype = generateGenotype(rng, tier);
   const age = opts.age ?? (rng.next() < 0.2 ? rng.range(2, 3) : rng.range(2, 6));
-  const gender = opts.gender ?? rollGender(age, rng);
+  const gender = opts.gender ?? rollGender(rng);
   const hemisphere: Hemisphere = opts.hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
 
   // Naming logic...
@@ -230,6 +265,24 @@ export function generateHorse(
 
 /**
  * Personality-driven generation for NPC stables
+ *
+ * Generates a horse tailored to an NPC stable's personality and tier. The stable's
+ * personality influences naming themes and quality preferences. This function is used
+ * during world generation and daily NPC horse production.
+ *
+ * @param stable - The NPC stable generating the horse (provides tier, personality, country)
+ * @param rng - Random number generator for deterministic variation
+ * @param npcAIManager - Optional AI manager for advanced decision-making
+ * @param currentDay - Optional current game day for age calculations
+ * @param opts.tier - Override stable tier for generation (defaults to stable.tier)
+ * @param opts.forcedAge - Force specific age instead of random
+ * @param opts.forcedGender - Force specific gender instead of random
+ * @param opts.forcedName - Force specific name instead of procedural generation
+ * @param opts.hemisphere - Override hemisphere (defaults to "Northern")
+ * @returns Generated Horse object assigned to the stable
+ *
+ * @example
+ * const horse = generateNpcHorse(stable, rng, aiManager, currentDay, { forcedAge: 3 });
  */
 export function generateNpcHorse(
   stable: Stable,
@@ -257,7 +310,7 @@ export function generateNpcHorse(
     : "north_america";
 
   const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : rng.range(3, 6));
-  const gender = opts.forcedGender ?? rollGender(age, rng);
+  const gender = opts.forcedGender ?? rollGender(rng);
 
   const genotype = generateGenotype(rng, genTier);
 
@@ -281,6 +334,27 @@ export function generateNpcHorse(
 
 /**
  * Breeding resolution: resolves pregnancy into foal or complication
+ *
+ * This function handles the foaling process, including genetic inheritance from
+ * sire and dam, complication checks (age-based risks, lethal recessives, rare events),
+ * and foal creation. It uses a deterministic RNG seeded by the pregnancy ID for
+ * consistent results.
+ *
+ * @param pregnancy - The pregnancy record to resolve
+ * @param sire - The sire horse (must have genotype)
+ * @param dam - The dam horse (must have genotype)
+ * @param namingContext - Optional context for name generation (region, theme, existing names)
+ * @param newDay - Optional game day when foaling occurs
+ * @returns Either a live foal with Horse object, or a complication with type description
+ * @throws {Error} If sire or dam is missing genotype
+ *
+ * @example
+ * const result = resolveFoaling(pregnancy, sire, dam, namingContext, currentDay);
+ * if (result.kind === "live") {
+ *   console.log("Foal born:", result.foal.name);
+ * } else {
+ *   console.log("Complication:", result.type);
+ * }
  */
 export function resolveFoaling(
   pregnancy: Pregnancy,

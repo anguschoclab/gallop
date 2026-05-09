@@ -1,3 +1,13 @@
+/**
+ * phases/schedulerPhase.ts - Scheduler phase
+ *
+ * This file provides the scheduler phase that runs campaign planner and
+ * auto-entry runner for all auto-managed campaigns.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (HorseCampaign), @/game/campaignPlanner (buildCampaignSlots, generateCampaignFlags, updateCampaignAptitudes), @/game/autoEntryRunner (runAutoEntries, reconcileSlotStatuses)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Scheduler Phase
 // Runs campaign planner and auto-entry runner for all auto-managed campaigns.
 // Order 85 — after races are generated (60) but before state serialization (100).

@@ -1,3 +1,14 @@
+/**
+ * populationGenetics.ts - Bloodline tracking, COI calculation, and genome modifiers
+ *
+ * This file provides population genetics calculations including bloodline resolution,
+ * coefficient of inbreeding (COI), ancestral history coefficient (AHC), and genome
+ * modifiers that affect foal generation based on inbreeding patterns.
+ *
+ * Dependencies: @/game/types (Horse, GameState, Pedigree), @/core/data/pedigreeData (findHorseByName), @/core/genetics/genotypeCache (cachedCoi, cachedBloodline)
+ * Related files: horseFactory.ts (uses genome modifiers for foal generation), breedingCompatibility.ts (uses COI for compatibility)
+ */
+
 import type { Horse, GameState, Pedigree } from "@/game/types";
 import { findHorseByName } from "@/core/data/pedigreeData";
 import { cachedCoi, cachedBloodline } from "@/core/genetics/genotypeCache";
@@ -44,8 +55,20 @@ export const REGIONAL_LINE_BIAS: Record<
   Unaffiliated: { boost: 0 },
 };
 
-// Walk a horse's sire-line pedigree to find which bloodline it belongs to.
-// Stops at the first ancestor whose name matches a known founder.
+/**
+ * Walk a horse's sire-line pedigree to find which bloodline it belongs to.
+ *
+ * Stops at the first ancestor whose name matches a known founder. Checks both
+ * in-game horses via ID and curated foundation data via name chain.
+ *
+ * @param horse - The horse to resolve the bloodline for
+ * @param state - Game state containing the horses array
+ * @param depth - Current recursion depth (for internal use)
+ * @returns Bloodline name, or "Unaffiliated" if not found
+ *
+ * @example
+ * const bloodline = resolveBloodline(horse, gameState);
+ */
 export function resolveBloodline(
   horse: Horse,
   state: Pick<GameState, "horses">,
@@ -92,6 +115,20 @@ export function resolveBloodline(
 // for each common ancestor. Distinct from the curated-pedigreeData version in
 // breedingCompatibility — this one operates on the foal's snapshot, so it
 // works for player-bred and NPC-bred lineages too.
+/**
+ * Compute COI from a pedigree snapshot.
+ *
+ * Uses Wright's coefficient of inbreeding formula to calculate the probability
+ * that two alleles at a locus are identical by descent. Walks both sire and dam
+ * pedigrees to depth 8 with weighted generation contribution.
+ *
+ * @param pedigree - The pedigree structure to analyze
+ * @param maxDepth - Maximum pedigree depth to analyze (defaults to 8)
+ * @returns COI value between 0 and 1
+ *
+ * @example
+ * const coi = computeCoiFromSnapshot(horse.pedigree);
+ */
 export function computeCoiFromSnapshot(
   pedigree: Pedigree | undefined,
   maxDepth: number = 8,
@@ -107,6 +144,17 @@ export function computeCoiFromSnapshot(
 
 /**
  * Compute COI for a prospective mating between two horses.
+ *
+ * Creates a prospective pedigree structure and calculates the expected COI
+ * for a foal from the proposed mating. Used for breeding compatibility checks.
+ *
+ * @param sire - The sire horse
+ * @param dam - The dam horse
+ * @param maxDepth - Maximum pedigree depth to analyze (defaults to 8)
+ * @returns Expected COI value for the prospective foal
+ *
+ * @example
+ * const coi = computeProspectiveCoi(sire, dam);
  */
 export function computeProspectiveCoi(sire: Horse, dam: Horse, maxDepth: number = 8): number {
   const prospectivePedigree: any = {
@@ -159,7 +207,22 @@ function walkPedigree(
 // Classify a COI into the three breeder-recognized tiers.
 // <2% → outcross (genetic diversity, hybrid vigor)
 // 2-5% → linebreeding (mild duplication, balanced)
-// >5% → close inbreeding (high prepotency, depression risk)
+// >5% → close-inbreeding (high prepotency, depression risk)
+/**
+ * Classify a COI value into a breeder-recognized tier.
+ *
+ * Returns the inbreeding classification based on COI thresholds:
+ * - <2%: outcross (genetic diversity, hybrid vigor)
+ * - 2-5%: linebreeding (mild duplication, balanced)
+ * - >5%: close-inbreeding (high prepotency, depression risk)
+ *
+ * @param coi - The COI value to classify
+ * @returns Classification: "outcross", "linebreeding", or "close-inbreeding"
+ *
+ * @example
+ * const tier = classifyCoi(0.03);
+ * // Returns "linebreeding"
+ */
 export function classifyCoi(coi: number): "outcross" | "linebreeding" | "close-inbreeding" {
   if (coi < 0.02) return "outcross";
   if (coi < 0.05) return "linebreeding";
@@ -169,6 +232,20 @@ export function classifyCoi(coi: number): "outcross" | "linebreeding" | "close-i
 // Detect the canonical "X by Y" inbreeding pattern (e.g. 2x3, 3x3) — the
 // generations at which a common ancestor appears in both sire and dam lines.
 // Returns the closest pair found, or undefined if no duplication within 8 gens.
+/**
+ * Detect the canonical "X by Y" inbreeding pattern.
+ *
+ * Finds the closest common ancestor and returns the generation numbers at which
+ * it appears in both sire and dam lines (e.g., 2x3 means ancestor appears at
+ * generation 2 in sire line and generation 3 in dam line).
+ *
+ * @param pedigree - The pedigree structure to analyze
+ * @returns Pattern with ancestorId, sireGen, and damGen, or undefined if no duplication
+ *
+ * @example
+ * const pattern = detectInbreedingPattern(horse.pedigree);
+ * // Returns { ancestorId: "...", sireGen: 2, damGen: 3 } for a 2x3 inbreeding
+ */
 export function detectInbreedingPattern(
   pedigree: Pedigree | undefined,
 ): { ancestorId: string; sireGen: number; damGen: number } | undefined {
@@ -205,6 +282,20 @@ export function detectInbreedingPattern(
 // Real research uses Monte-Carlo gene-dropping; we approximate cheaply by
 // looking at parents' AHC and bumping it up when inbreeding survived without
 // producing complications.
+/**
+ * Compute Ancestral History Coefficient (AHC).
+ *
+ * Measures the quality of inbreeding by evaluating whether duplicated ancestors
+ * were themselves products of successful inbreeding (lineages "purged" of
+ * deleterious recessives). Approximated using parents' AHC and racing success.
+ *
+ * @param pedigree - The pedigree structure to analyze
+ * @param state - Game state containing the horses array
+ * @returns AHC value between 0 and 1
+ *
+ * @example
+ * const ahc = computeAhc(horse.pedigree, gameState);
+ */
 export function computeAhc(
   pedigree: Pedigree | undefined,
   state: Pick<GameState, "horses">,
@@ -244,6 +335,23 @@ export type FoalGenomeModifiers = {
   ffs1RiskMultiplier: number; // 1..2 — bumps if both parents carry FFS1 (handled at foaling separately)
 };
 
+/**
+ * Compute genome modifiers based on COI and AHC.
+ *
+ * Returns modifiers applied to foal stats based on inbreeding level and
+ * ancestral history. Implements the "calculated risk" tradeoff:
+ * - Close inbreeding: high prepotency but depression penalty
+ * - Linebreeding: moderate prepotency with small bonuses
+ * - Outcross: low prepotency with vigor and longevity bonuses
+ * - High AHC: reduces inbreeding penalties (lineage is "proven")
+ *
+ * @param coi - Coefficient of inbreeding
+ * @param ahc - Ancestral history coefficient
+ * @returns FoalGenomeModifiers with prepotency, penalties, and bonuses
+ *
+ * @example
+ * const modifiers = computeGenomeModifiers(0.03, 0.5);
+ */
 export function computeGenomeModifiers(coi: number, ahc: number): FoalGenomeModifiers {
   const tier = classifyCoi(coi);
   // AHC reduces depression penalty by up to 50%
@@ -280,6 +388,20 @@ export function computeGenomeModifiers(coi: number, ahc: number): FoalGenomeModi
 // Generation-pattern-aware Beyer dampener for race performance. 2x3 → ~5
 // Beyer points off; 3x3 → ~2 off. Mirrors the empirical RPR study cited in
 // the breeding research. Returns 0 for outcrosses.
+/**
+ * Calculate inbreeding performance dampener based on pattern.
+ *
+ * Returns Beyer point penalty based on inbreeding pattern closeness.
+ * Mirrors empirical research showing that closer inbreeding patterns
+ * (2x3, 3x3) correlate with reduced performance.
+ *
+ * @param pattern - Inbreeding pattern with sireGen and damGen
+ * @returns Beyer point penalty (0 for outcrosses)
+ *
+ * @example
+ * const penalty = inbreedingPerformanceDampener({ sireGen: 2, damGen: 3 });
+ * // Returns 5 (2x3 pattern)
+ */
 export function inbreedingPerformanceDampener(
   pattern: { sireGen: number; damGen: number } | undefined,
 ): number {

@@ -1,3 +1,14 @@
+/**
+ * types.ts - Race type definitions
+ *
+ * This file provides type definitions for race-related concepts including
+ * race classes, claiming prices, win conditions, weather, track conditions,
+ * and the main Race type.
+ *
+ * Dependencies: ./engine/raceSnapshotTypes (RaceSnapshot)
+ * Related files: Used throughout the race module and game state
+ */
+
 export type RaceClass =
   | "Maiden"
   | "MaidenSpecialWeight"
@@ -37,6 +48,12 @@ export type TrackCondition = "fast" | "good" | "soft" | "heavy" | "yielding";
 
 import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
 
+/**
+ * Main Race type definition.
+ *
+ * Represents a complete race with entries, conditions, results, and
+ * optional graded race information.
+ */
 export type Race = {
   id: string;
   name: string;

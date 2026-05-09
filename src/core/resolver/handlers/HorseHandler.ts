@@ -1,3 +1,14 @@
+/**
+ * handlers/HorseHandler.ts - Horse impact handler
+ *
+ * This file handles horse-related impacts including stat changes, energy changes,
+ * form changes, fame changes, gelding, renaming, aging, health status changes,
+ * pasture retirement, horse death, injury, and horse creation.
+ *
+ * Dependencies: immer (WritableDraft), @/game/types (GameState), ../impacts (AnyImpact), @/core/horse/gender (isMaleHorse), ./types (ImpactHandler)
+ * Related files: ../resolver.ts (uses handler), ../impacts/horseImpacts.ts (provides impact types)
+ */
+
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";

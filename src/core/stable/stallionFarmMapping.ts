@@ -1,4 +1,14 @@
 /**
+ * stallionFarmMapping.ts - Stallion farm mapping
+ *
+ * This file maps real-world stud farm names to in-game NPC stables,
+ * ensuring famous stallions are associated with the correct operation.
+ *
+ * Dependencies: None
+ * Related files: stablePoolData.ts (must be kept in sync with ELITE_POOL and MID_POOL), stableQueries.ts (uses mapping)
+ */
+
+/**
  * Stallion Farm Mapping
  * 
  * Maps real-world stud farm names (found in pedigree data) to in-game NPC stables.

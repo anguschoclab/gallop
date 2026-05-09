@@ -17,6 +17,17 @@ import type {
 // math when the same portrait is mounted on many pages.
 // ---------------------------------------------------------------------------
 
+/**
+ * proceduralPortrait.ts - Procedural horse portrait generation
+ *
+ * This file provides "facegen" functionality for horses, generating unique
+ * visual appearances based on coat color and random variation. It maintains
+ * a cache to avoid recomputing the same horse's appearance.
+ *
+ * Dependencies: @/game/types (CoatColor, HorseMarkings, HorseGender, AppearanceDNA, SockHeight)
+ * Related files: portrait.ts (static portraits), exportPortrait.ts (PNG export)
+ */
+
 export interface PortraitPalette {
   body: string;
   bodyShade: string;
@@ -291,6 +302,20 @@ const PALETTES: Record<CoatColor, PortraitPalette> = {
   },
 };
 
+/**
+ * Get the color palette for a given coat color.
+ *
+ * Returns a PortraitPalette containing all color tokens needed for rendering
+ * a horse of the specified coat color. Falls back to bay if the coat color
+ * is not mapped or undefined.
+ *
+ * @param coat - The coat color to get the palette for
+ * @returns PortraitPalette with body, mane, eye, and other color tokens
+ *
+ * @example
+ * const palette = getPalette("chestnut");
+ * console.log(palette.body); // "#9c4520"
+ */
 export function getPalette(coat?: CoatColor): PortraitPalette {
   const defaultPalette = PALETTES?.bay || {
     body: "#7a3f1a",
@@ -319,6 +344,19 @@ export function getPalette(coat?: CoatColor): PortraitPalette {
 // Seeded RNG — mulberry32. Same seed → same shape.
 // ---------------------------------------------------------------------------
 
+/**
+ * Hash a string to a numeric seed for deterministic RNG.
+ *
+ * Uses the FNV-1a hash algorithm to convert a string (typically a horse ID)
+ * into a numeric seed. Same string always produces the same seed.
+ *
+ * @param str - The string to hash (typically a horse ID)
+ * @returns Numeric seed value (0 to 2^32-1)
+ *
+ * @example
+ * const seed = hashSeed("horse-123");
+ * // Always returns the same number for "horse-123"
+ */
 export function hashSeed(str: string): number {
   let h = 2166136261 >>> 0;
   for (let i = 0; i < str.length; i++) {
@@ -354,6 +392,22 @@ function sockNeighbor(base: SockHeight, r: () => number): SockHeight {
   return SOCK_LEVELS[next];
 }
 
+/**
+ * Generate appearance DNA from a seed.
+ *
+ * Creates deterministic visual variation parameters (head shape, leg length,
+ * mane waves, sock heights, dapple positions, etc.) from a numeric seed.
+ * Same seed always produces the same appearance. Call once at horse generation
+ * and persist the result on the horse.
+ *
+ * @param seed - Numeric seed for deterministic generation
+ * @param markings - Optional horse markings to base sock heights on
+ * @param palette - Optional color palette (defaults to bay if not provided)
+ * @returns AppearanceDNA with all visual variation parameters
+ *
+ * @example
+ * const dna = generateAppearanceDNA(12345, { socks: "stocking" }, getPalette("bay"));
+ */
 export function generateAppearanceDNA(
   seed: number,
   markings: HorseMarkings | undefined,
@@ -413,6 +467,22 @@ export function generateAppearanceDNA(
 const APPEARANCE_CACHE = new Map<string, AppearanceDNA>();
 const MAX_CACHE = 2000;
 
+/**
+ * Get or derive appearance DNA for a horse.
+ *
+ * Returns persisted appearance DNA if available, otherwise derives it from the
+ * horse's ID hash. Uses a module-level cache to avoid recomputing the same
+ * horse's appearance multiple times.
+ *
+ * @param id - Horse ID (used for caching and derivation)
+ * @param coatColor - Coat color for palette selection
+ * @param markings - Horse markings for sock height reference
+ * @param persisted - Optional persisted appearance DNA from save data
+ * @returns AppearanceDNA for the horse
+ *
+ * @example
+ * const dna = getOrDeriveAppearance(horse.id, horse.coatColor, horse.markings, horse.appearance);
+ */
 export function getOrDeriveAppearance(
   id: string | undefined,
   coatColor: CoatColor | undefined,
@@ -440,12 +510,39 @@ export function getOrDeriveAppearance(
   return dna;
 }
 
+/**
+ * Check if a horse gender is feminine (filly or mare).
+ *
+ * Used for portrait rendering adjustments that differ between male and female horses.
+ *
+ * @param gender - Horse gender to check
+ * @returns True if gender is filly or mare, false otherwise
+ *
+ * @example
+ * if (isFeminine(horse.gender)) {
+ *   renderFeminineFeatures();
+ * }
+ */
 export function isFeminine(gender?: HorseGender): boolean {
   return gender === "filly" || gender === "mare";
 }
 
 // Legacy named export — kept so older code paths keep working.
 export type PortraitVariation = AppearanceDNA;
+
+/**
+ * Legacy function: build variation from ID.
+ *
+ * Kept for backward compatibility with older code paths.
+ * New code should use generateAppearanceDNA or getOrDeriveAppearance.
+ *
+ * @param id - Horse ID for seed generation
+ * @param markings - Optional horse markings
+ * @param _gender - Unused (kept for signature compatibility)
+ * @param palette - Optional color palette
+ * @returns AppearanceDNA for the horse
+ * @deprecated Use generateAppearanceDNA or getOrDeriveAppearance instead
+ */
 export function buildVariation(
   id: string | undefined,
   markings?: HorseMarkings,

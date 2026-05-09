@@ -1,3 +1,13 @@
+/**
+ * phases/raceEntryResolution.ts - Race entry resolution phase
+ *
+ * This file provides the race entry resolution phase that converts RaceEntryIntents
+ * into impacts (race entry, cash changes).
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, RaceEntryIntent), @/core/resolver/impacts/index (AnyImpact, RaceEntryImpact, CashImpact), @/core/transportation (createTransportRequest), @/core/transactions (createTransaction), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Race Entry Resolution Phase
 // Converts RaceEntryIntents into impacts (race entry, cash changes)
 

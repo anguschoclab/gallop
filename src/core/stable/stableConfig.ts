@@ -1,3 +1,13 @@
+/**
+ * stableConfig.ts - Stable personality configuration
+ *
+ * This file provides personality configurations affecting AI behavior,
+ * enhanced with AI traits for learning, adaptation, and strategic planning.
+ *
+ * Dependencies: @/game/types (StablePersonality, StableTier)
+ * Related files: personalityModifiers.ts (uses config), ../ai/personalitySystem.ts (uses config)
+ */
+
 import type { StablePersonality, StableTier } from "@/game/types";
 
 /**

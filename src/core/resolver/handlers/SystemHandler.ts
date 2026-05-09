@@ -1,3 +1,14 @@
+/**
+ * handlers/SystemHandler.ts - System impact handler
+ *
+ * This file handles system-related impacts including horse creation/deletion, logging,
+ * pace sampling, campaign slots/flags, auto-manage toggle, claim resolution,
+ * reputation changes, transactions, news items, hall of fame induction, and season history.
+ *
+ * Dependencies: immer (WritableDraft), @/game/types (GameState), ../impacts (AnyImpact), ./types (ImpactHandler), @/core/reputation (getReputationTier, createReputationEvent), @/core/transactions (createTransaction)
+ * Related files: ../resolver.ts (uses handler), ../impacts/miscImpacts.ts (provides impact types)
+ */
+
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";

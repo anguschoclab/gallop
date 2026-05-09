@@ -1,8 +1,28 @@
+/**
+ * trackGeometry.ts - Track geometry and gradient scoring
+ *
+ * This file provides scoring functions for evaluating how well a horse's
+ * attributes match a track's geometry (galloping vs tight tracks) and gradient
+ * (hilly tracks).
+ *
+ * Dependencies: @/game/types (Horse, Race)
+ * Related files: entryScoring.ts (uses geometry scores for race entry evaluation)
+ */
+
 import type { Horse, Race } from "@/game/types";
 
 /**
- * Calculate track geometry score for a horse at a race
- * Large tracks (large radii, long straights) vs Tight tracks (small radii, short straights)
+ * Calculate track geometry score for a horse at a race.
+ *
+ * Large tracks (large radii, long straights) favor speed and long-striding horses.
+ * Tight tracks (small radii, short straights) favor agility and cornering.
+ *
+ * @param horse - The horse to evaluate
+ * @param race - The race with track information
+ * @returns Geometry score (higher is better)
+ *
+ * @example
+ * const score = calculateTrackGeometryScore(horse, race);
  */
 export function calculateTrackGeometryScore(horse: Horse, race: Race): number {
   let score = 0;
@@ -34,8 +54,17 @@ export function calculateTrackGeometryScore(horse: Horse, race: Race): number {
 }
 
 /**
- * Calculate gradient score for a horse at a race
- * If the race is at a known hilly track, check climbing aptitude
+ * Calculate gradient score for a horse at a race.
+ *
+ * If the race is at a known hilly track (e.g., Nakayama, Ascot), checks
+ * the horse's climbing aptitude and applies bonuses/penalties.
+ *
+ * @param horse - The horse to evaluate
+ * @param race - The race with track information
+ * @returns Gradient score (positive for good climbers, negative for poor)
+ *
+ * @example
+ * const score = calculateGradientScore(horse, race);
  */
 export function calculateGradientScore(horse: Horse, race: Race): number {
   let score = 0;

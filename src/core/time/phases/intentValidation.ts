@@ -1,3 +1,13 @@
+/**
+ * phases/intentValidation.ts - Intent validation phase
+ *
+ * This file provides the intent validation phase that validates all intents
+ * and rejects invalid ones.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/resolver (validateIntent)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Intent Validation Phase
 // Validates all intents and rejects invalid ones
 

@@ -1,3 +1,15 @@
+/**
+ * bruceLowe.ts - Bruce Lowe Figure System for pedigree families
+ *
+ * This file implements Bruce Lowe's historical Figure System, which categorizes
+ * thoroughbreds by tail-female lineage into ~43 numbered families based on
+ * historical wins in the English Classics. While scientifically discredited,
+ * it remains culturally embedded and expected by players.
+ *
+ * Dependencies: @/game/types (Horse, GameState), @/game/rng (Rng), @/core/data/pedigreeData (findHorseByName)
+ * Related files: horseFactory.ts (uses resolveBruceLoweFamily for horse generation), populationGenetics.ts (uses family data)
+ */
+
 import type { Horse, GameState } from "@/game/types";
 import type { Rng } from "@/game/rng";
 import { findHorseByName } from "@/core/data/pedigreeData";
@@ -16,6 +28,19 @@ import { findHorseByName } from "@/core/data/pedigreeData";
 export const RUNNING_FAMILIES = new Set([1, 2, 3, 4, 5]);
 export const SIRE_FAMILIES = new Set([3, 8, 11, 12, 14]);
 
+/**
+ * Determine the role of a Bruce Lowe family.
+ *
+ * Returns whether a family is known for producing race winners, influential
+ * stallions, both, or is a standard family.
+ *
+ * @param family - The Bruce Lowe family number
+ * @returns Family role classification
+ *
+ * @example
+ * const role = familyRole(3);
+ * // Returns "Both" (Family 3 is both running and sire family)
+ */
 export function familyRole(
   family: number | undefined,
 ): "Running" | "Sire" | "Both" | "Standard" | "Unknown" {
@@ -31,6 +56,20 @@ export function familyRole(
 // Walk a horse's recorded pedigree (via Pedigree.damId chain in state.horses,
 // and falling back to the curated pedigreeData findHorseByName for foundation
 // stock) until we hit a mare with a known bruceLoweFamily number.
+/**
+ * Resolve the Bruce Lowe family number for a horse.
+ *
+ * Walks the horse's tail-female pedigree through both live horses and curated
+ * foundation data until finding a mare with a known Bruce Lowe family number.
+ *
+ * @param horse - The horse to resolve the family for
+ * @param state - Game state containing the horses array
+ * @param depth - Current recursion depth (for internal use)
+ * @returns Bruce Lowe family number, or undefined if not found
+ *
+ * @example
+ * const family = resolveBruceLoweFamily(horse, gameState);
+ */
 export function resolveBruceLoweFamily(
   horse: Horse,
   state: Pick<GameState, "horses">,
@@ -73,6 +112,19 @@ const PROCEDURAL_FAMILIES = [
   ...[16, 17, 18, 19, 20, 21, 22, 23, 24, 25].map((f) => [f, 2] as const),
 ];
 
+/**
+ * Roll a procedural Bruce Lowe family number.
+ *
+ * Samples from a weighted distribution that mirrors real-world stud book
+ * frequencies (families 1-5 are most common). Used for NPC and market horses
+ * that don't have full pedigrees.
+ *
+ * @param rng - Random number generator (optional, defaults to Math.random)
+ * @returns Bruce Lowe family number
+ *
+ * @example
+ * const family = rollProceduralFamily(rng);
+ */
 export function rollProceduralFamily(rng?: Rng): number {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const _rng = rng || ({ next: () => Math.random() } as any);

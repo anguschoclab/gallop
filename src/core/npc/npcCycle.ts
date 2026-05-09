@@ -1,3 +1,13 @@
+/**
+ * npc/npcCycle.ts - NPC cycle orchestration
+ *
+ * This file provides the main NPC cycle orchestration that coordinates
+ * NPC training, race entry, horse fame updates, and AI state management.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable, Jockey), @/game/rng (Rng, createRng, hashStr), @/core/ai/npcCycleAI (NpcAIManager functions), @/core/ai/facilityAI (facility AI functions), @/core/facilities (upgradeFacility), @/core/ai/withdrawalAI (withdrawal AI functions)
+ * Related files: intentGenerators.ts (provides intent generation)
+ */
+
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import {

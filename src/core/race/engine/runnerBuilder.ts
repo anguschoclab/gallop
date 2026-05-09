@@ -1,3 +1,14 @@
+/**
+ * runnerBuilder.ts - Race runner construction
+ *
+ * This file provides functions for building race runner objects from horse data,
+ * applying modifiers for form, energy, distance, surface, weather, track conditions,
+ * bloodline, dosage, gender, weight, and running style.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable, Jockey, RunningStyle), @/core/genetics/phenotype (TRAIT_VALUES, fiberDistanceModifier), @/game/math (clamp), @/core/breeding/populationGenetics (REGIONAL_LINE_BIAS, Bloodline), @/game/dosage (calculateDosageMetrics), @/core/ai/jockeyStrategyAI (calculateOptimalRunningStyle), @/core/ai/npcCycleAI (NpcAIManager)
+ * Related files: simulation.ts (uses runners for race simulation), tacticalAI.ts (uses runner data for tactical decisions)
+ */
+
 import type {
   Horse as HorseT,
   Race as RaceT,
@@ -83,6 +94,19 @@ const WEATHER_DRAIN_MUL: Record<string, number> = {
   rainy: 1.06,
 };
 
+/**
+ * Calculate pace shape multiplier based on running style and race progress.
+ *
+ * Returns a velocity modifier that varies through the race based on the
+ * horse's running style (E, EP, P, S).
+ *
+ * @param style - The horse's running style
+ * @param progress - Race progress (0-1)
+ * @returns Velocity multiplier
+ *
+ * @example
+ * const mul = paceShapeMul("E", 0.5);
+ */
 export function paceShapeMul(style: RunningStyleT, progress: number): number {
   switch (style) {
     case "E":
@@ -97,6 +121,19 @@ export function paceShapeMul(style: RunningStyleT, progress: number): number {
   }
 }
 
+/**
+ * Calculate stamina factor based on running style.
+ *
+ * Adjusts base stamina factor based on running style: early runners (E) have
+ * reduced stamina, stalkers (EP/P) have standard, and closers (S) have increased.
+ *
+ * @param style - The horse's running style
+ * @param baseStaminaFactor - Base stamina factor
+ * @returns Adjusted stamina factor
+ *
+ * @example
+ * const stamina = styleStaminaFactor("E", 0.8);
+ */
 export function styleStaminaFactor(style: RunningStyleT, baseStaminaFactor: number): number {
   switch (style) {
     case "E":
@@ -110,6 +147,18 @@ export function styleStaminaFactor(style: RunningStyleT, baseStaminaFactor: numb
   }
 }
 
+/**
+ * Get conditions modifier based on weather and track condition.
+ *
+ * Returns speed and stamina drain multipliers based on current weather
+ * and track conditions.
+ *
+ * @param race - Race with weather and track condition
+ * @returns Conditions modifier object
+ *
+ * @example
+ * const modifier = getConditionsModifier({ weather: "rainy", trackCondition: "heavy" });
+ */
 export function getConditionsModifier(
   race: Pick<RaceT, "weather" | "trackCondition">,
 ): ConditionsModifier {
@@ -126,6 +175,32 @@ export function getConditionsModifier(
 const MAX_FORM_ENERGY_MUL = 1.25;
 const TOP_SPEED_CEILING = 22;
 
+/**
+ * Build a race runner from horse data.
+ *
+ * Creates a complete Runner object with all modifiers applied for form, energy,
+ * distance, surface, weather, track conditions, bloodline, dosage, gender, weight,
+ * running style, and stable bonuses.
+ *
+ * @param h - The horse to build a runner for
+ * @param owned - Whether the horse is owned by the player
+ * @param raceDistance - The race distance in meters
+ * @param surface - The race surface
+ * @param conditions - Conditions modifier for weather/track
+ * @param barrier - The horse's barrier position
+ * @param jockey - Optional jockey
+ * @param weight - Optional assigned weight
+ * @param handedness - Track handedness
+ * @param npcAIManager - Optional NPC AI manager
+ * @param currentDay - Current game day
+ * @param stable - The horse's stable
+ * @param race - The race
+ * @param bonuses - Optional runner bonuses
+ * @returns Complete Runner object
+ *
+ * @example
+ * const runner = buildRunner(horse, true, 1600, "Turf", conditions, 1, jockey, 126, "left");
+ */
 export function buildRunner(
   h: HorseT,
   owned: boolean,

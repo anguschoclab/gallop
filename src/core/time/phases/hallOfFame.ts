@@ -1,3 +1,13 @@
+/**
+ * phases/hallOfFame.ts - Hall of Fame induction phase
+ *
+ * This file provides the Hall of Fame induction phase that inducts legendary
+ * horses into the Hall of Fame based on career achievements.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/impacts/index (AnyImpact, HallOfFameInductionImpact, LogImpact), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Hall of Fame Phase
 // Inducts legendary horses into the Hall of Fame based on career achievements
 

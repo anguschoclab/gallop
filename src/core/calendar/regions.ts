@@ -1,3 +1,14 @@
+/**
+ * regions.ts - Regional calendar configuration
+ *
+ * This file provides region configurations for racing calendars worldwide, including
+ * region IDs, names, tracks, special race keys (Triple Crown, Classics), and continent
+ * classifications.
+ *
+ * Dependencies: @/game/gradedRaces (Grade)
+ * Related files: None
+ */
+
 import type { Grade } from "@/game/gradedRaces";
 
 export type RegionId =
@@ -16,6 +27,9 @@ export type RegionId =
   | "italy"
   | "spain";
 
+/**
+ * Region configuration interface.
+ */
 export interface RegionConfig {
   id: RegionId;
   name: string;
@@ -235,12 +249,28 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
 
 export const REGION_LIST = Object.values(REGIONS);
 
-/** Get region by ID, returns undefined if not found */
+/**
+ * Get region by ID.
+ *
+ * @param id - Region ID
+ * @returns Region config or undefined if not found
+ *
+ * @example
+ * const region = getRegion("usa");
+ */
 export function getRegion(id: string): RegionConfig | undefined {
   return REGIONS[id as RegionId];
 }
 
-/** Check if a region ID is valid */
+/**
+ * Check if a region ID is valid.
+ *
+ * @param id - Region ID to check
+ * @returns True if valid region ID
+ *
+ * @example
+ * const valid = isValidRegion("usa"); // true
+ */
 export function isValidRegion(id: string): id is RegionId {
   return id in REGIONS;
 }

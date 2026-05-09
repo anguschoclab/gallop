@@ -1,3 +1,13 @@
+/**
+ * phases/intentCollection.ts - Intent collection phase
+ *
+ * This file provides the intent collection phase that collects all intents
+ * for the current day from player, NPCs, and system.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent), @/core/npc/intentGenerators (generateNpcIntents), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Intent Collection Phase
 // Collects all intents for the current day from player, NPCs, and system
 

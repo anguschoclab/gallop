@@ -1,3 +1,13 @@
+/**
+ * phases/horseDeath.ts - Horse death phase
+ *
+ * This file provides the horse death phase that handles death from old age,
+ * catastrophic injury, and illness complications.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/impacts/index (AnyImpact, HorseDeathImpact, LogImpact), @/game/rng (createRng, hashStr), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Horse Death Phase
 // Handles death from old age, catastrophic injury, and illness complications
 

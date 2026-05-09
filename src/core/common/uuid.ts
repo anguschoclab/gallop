@@ -1,8 +1,25 @@
+/**
+ * uuid.ts - UUID generation
+ *
+ * This file provides UUID v4 generation with support for deterministic RNG.
+ *
+ * Dependencies: ./types (Rng)
+ * Related files: None
+ */
+
 import type { Rng } from "./types";
 
 /**
- * Generate a random UUID v4 using the provided RNG for determinism.
- * Falls back to crypto.randomUUID if no RNG provided.
+ * Generate a random UUID v4.
+ *
+ * Uses the provided RNG for determinism if available, otherwise falls back
+ * to crypto.randomUUID for non-deterministic generation.
+ *
+ * @param rng - Optional random number generator for determinism
+ * @returns UUID v4 string
+ *
+ * @example
+ * const id = generateUUID(rng);
  */
 export function generateUUID(rng?: Rng): string {
   if (!rng) return crypto.randomUUID();

@@ -1,3 +1,12 @@
+/**
+ * handlers/FinanceHandler.ts - Finance impact handler
+ *
+ * This file handles finance-related impacts including cash changes and horse transfers.
+ *
+ * Dependencies: immer (WritableDraft), @/game/types (GameState), ../impacts (AnyImpact), ./types (ImpactHandler)
+ * Related files: ../resolver.ts (uses handler), ../impacts/financialImpacts.ts (provides impact types)
+ */
+
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";

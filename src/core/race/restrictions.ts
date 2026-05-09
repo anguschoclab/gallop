@@ -1,3 +1,13 @@
+/**
+ * restrictions.ts - Race restriction formatting logic
+ *
+ * This file provides pure functions for formatting race restrictions for display,
+ * including age restrictions, gender restrictions, and combined restriction strings.
+ *
+ * Dependencies: @/game/types (Race)
+ * Related files: Used throughout UI components for displaying race eligibility requirements
+ */
+
 import type { Race } from "@/game/types";
 
 /**
@@ -6,7 +16,16 @@ import type { Race } from "@/game/types";
  */
 
 /**
- * Format age restrictions for display
+ * Format age restrictions for display.
+ *
+ * Returns a human-readable string for age restrictions like "2+ YO", "2-3YO", or "3YO only".
+ *
+ * @param restrictions - Race restrictions object
+ * @returns Formatted age restriction string
+ *
+ * @example
+ * const ageStr = formatAgeRestrictions({ minAge: 2, maxAge: 3 });
+ * // Returns "2-3YO"
  */
 export function formatAgeRestrictions(restrictions?: {
   minAge?: number;
@@ -31,7 +50,16 @@ export function formatAgeRestrictions(restrictions?: {
 }
 
 /**
- * Format gender restriction for display
+ * Format gender restriction for display.
+ *
+ * Returns a human-readable string for gender restrictions like "Colts only", "Fillies only", etc.
+ *
+ * @param gender - The gender restriction string
+ * @returns Formatted gender restriction string
+ *
+ * @example
+ * const genderStr = formatGenderRestriction("colt");
+ * // Returns "Colts only"
  */
 export function formatGenderRestriction(gender?: string): string {
   if (!gender) {
@@ -56,7 +84,17 @@ export function formatGenderRestriction(gender?: string): string {
 }
 
 /**
- * Format all restrictions for display
+ * Format all restrictions for display.
+ *
+ * Combines age and gender restrictions into a single formatted string,
+ * separated by " · ".
+ *
+ * @param restrictions - Race restrictions object
+ * @returns Combined formatted restriction string
+ *
+ * @example
+ * const allStr = formatAllRestrictions({ minAge: 2, gender: "colt" });
+ * // Returns "2+ YO · Colts only"
  */
 export function formatAllRestrictions(restrictions?: Race["restrictions"]): string {
   const parts: string[] = [];

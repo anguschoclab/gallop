@@ -1,3 +1,14 @@
+/**
+ * impacts/raceImpacts.ts - Race impact types
+ *
+ * This file provides race-related impact types including race entry, race withdrawal,
+ * race results, race history, jockey contracts, jockey assignments, jockey silks,
+ * jockey stats, claiming, triple crown progress, and tactics.
+ *
+ * Dependencies: ./base (Impact), @/core/race/engine/raceSnapshotTypes (RaceSnapshot), @/game/types (RaceClass)
+ * Related files: ../handlers/RacingHandler.ts (handles impacts), ./index.ts (exports types)
+ */
+
 import type { Impact } from "./base";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { RaceClass } from "@/game/types";

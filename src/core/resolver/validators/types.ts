@@ -1,3 +1,12 @@
+/**
+ * validators/types.ts - Validator types
+ *
+ * This file provides base interface for intent validators and validation cache.
+ *
+ * Dependencies: @/game/types (GameState, Horse, Race, Stable), ../intents (AnyIntent)
+ * Related files: ../resolver.ts (uses validators), ./index.ts (exports validators)
+ */
+
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import type { AnyIntent } from "../intents";
 

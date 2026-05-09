@@ -1,10 +1,11 @@
 /**
- * Unified Track Conditions System
+ * trackConditions.ts - Unified track conditions system
  *
- * Consolidated module providing surface-specific terminology, speed modifiers,
- * turf rail positions, maintenance actions, and climate-aware condition progression.
- * 
- * Static data has been extracted to @/core/track/trackConditionData.
+ * This file provides surface-specific terminology, speed modifiers, turf rail positions,
+ * maintenance actions, and climate-aware condition progression.
+ *
+ * Dependencies: @/game/types (TrackCondition), @/game/rng (Rng), ./track/trackConditionData (constants and types)
+ * Related files: track/trackConditionData.ts (provides static data)
  */
 
 import type { TrackCondition } from "@/game/types";
@@ -61,7 +62,18 @@ export {
   CLIMATE_DRYING_RATES,
 };
 
-/** Running style bias from rail position (positive = inside advantage) */
+/**
+ * Get running style bias from rail position.
+ *
+ * Positive values indicate inside advantage (saves ground),
+ * negative values indicate outside disadvantage (more ground to cover).
+ *
+ * @param railPosition - Turf rail position
+ * @returns Bias modifier (positive = inside advantage)
+ *
+ * @example
+ * const bias = getRailBias("true"); // 0.05
+ */
 export function getRailBias(railPosition: TurfRailPosition): number {
   switch (railPosition) {
     case "true":
@@ -76,12 +88,19 @@ export function getRailBias(railPosition: TurfRailPosition): number {
 }
 
 /**
- * Calculate condition change after a race day
+ * Calculate track condition change after a race day.
+ *
+ * Factors in base deterioration rate, weather impact, number of races,
+ * and maintenance quality to determine the new track condition.
+ *
  * @param current - Current track condition
  * @param weather - Weather pattern during racing
  * @param racesRun - Number of races completed
- * @param maintenanceLevel - 0-1 scale of track preparation quality
+ * @param maintenanceLevel - 0-1 scale of track preparation quality (default 0.5)
  * @returns New track condition
+ *
+ * @example
+ * const newCondition = calculateConditionChange("good", "rain", 8, 0.8);
  */
 export function calculateConditionChange(
   current: TrackCondition,
@@ -104,11 +123,17 @@ export function calculateConditionChange(
 }
 
 /**
- * Simulate track recovery between race days
+ * Simulate track recovery between race days.
+ *
+ * Calculates how much the track recovers based on days rested and climate zone.
+ *
  * @param current - Current condition
  * @param daysRested - Days since last racing
- * @param climate - Climate zone affecting drying
+ * @param climate - Climate zone affecting drying (default "temperate")
  * @returns Recovered track condition
+ *
+ * @example
+ * const recovered = calculateConditionRecovery("yielding", 3, "tropical");
  */
 export function calculateConditionRecovery(
   current: TrackCondition,
@@ -127,11 +152,18 @@ export function calculateConditionRecovery(
 }
 
 /**
- * Generate a random track condition biased by climate zone
+ * Generate a random track condition biased by climate zone.
+ *
+ * Uses climate-specific weights to generate a condition that's appropriate
+ * for the given climate and surface type.
+ *
  * @param rng - Random number generator
- * @param climate - Climate zone for bias
- * @param surface - Surface type for compatibility filtering
+ * @param climate - Climate zone for bias (default "temperate")
+ * @param surface - Surface type for compatibility filtering (default "turf")
  * @returns Track condition appropriate for the climate and surface
+ *
+ * @example
+ * const condition = randomTrackConditionWithClimateBias(rng, "tropical", "dirt");
  */
 export function randomTrackConditionWithClimateBias(
   rng: Rng,
@@ -167,10 +199,17 @@ export function randomTrackConditionWithClimateBias(
 }
 
 /**
- * Get regional display terminology for a track condition
+ * Get regional display terminology for a track condition.
+ *
+ * Returns the region-specific label, abbreviation, and description
+ * for a given track condition.
+ *
  * @param condition - Standard track condition
  * @param region - Region code for terminology
- * @returns Regional display information
+ * @returns Regional display information with label, abbreviation, description
+ *
+ * @example
+ * const info = getRegionalTerminology("good", "uk");
  */
 export function getRegionalTerminology(
   condition: TrackCondition,
@@ -180,10 +219,17 @@ export function getRegionalTerminology(
 }
 
 /**
- * Calculate speed modifier for a given track condition
+ * Calculate speed modifier for a given track condition.
+ *
+ * Returns the speed multiplier for the condition, optionally adjusted
+ * by the horse's mud aptitude for harsh conditions.
+ *
  * @param condition - Track condition
- * @param mudAptitude - Horse's mud aptitude (0.85-1.15)
+ * @param mudAptitude - Horse's mud aptitude (0.85-1.15, default 1.0)
  * @returns Final speed multiplier
+ *
+ * @example
+ * const modifier = getSpeedModifier("soft", 1.1); // 1.1 * base
  */
 export function getSpeedModifier(condition: TrackCondition, mudAptitude: number = 1.0): number {
   const baseModifier = TRACK_SPEED_MODIFIERS[condition];
@@ -198,19 +244,32 @@ export function getSpeedModifier(condition: TrackCondition, mudAptitude: number 
 }
 
 /**
- * Calculate stamina drain for a given track condition
+ * Calculate stamina drain for a given track condition.
+ *
+ * Returns the stamina drain multiplier for the condition.
+ *
  * @param condition - Track condition
  * @returns Stamina drain multiplier
+ *
+ * @example
+ * const drain = getStaminaDrainModifier("heavy"); // Higher than good
  */
 export function getStaminaDrainModifier(condition: TrackCondition): number {
   return STAMINA_DRAIN_MODIFIERS[condition];
 }
 
 /**
- * Get turf rail position for a track condition
+ * Get turf rail position for a track condition.
+ *
+ * Returns the default turf rail position for the condition,
+ * or uses the override if provided.
+ *
  * @param condition - Track condition
  * @param override - Optional override position
  * @returns Turf rail position
+ *
+ * @example
+ * const position = getTurfRailPosition("good"); // "true"
  */
 export function getTurfRailPosition(
   condition: TrackCondition,
@@ -220,10 +279,16 @@ export function getTurfRailPosition(
 }
 
 /**
- * Determine if a maintenance action is applicable for a surface
+ * Determine if a maintenance action is applicable for a surface.
+ *
+ * Checks if a given maintenance action can be performed on a specific surface type.
+ *
  * @param action - Maintenance action type
- * @param surface - Track surface type
+ * @param surface - Track surface type (dirt, turf, synthetic)
  * @returns Whether the action can be performed
+ *
+ * @example
+ * const canHarrow = isMaintenanceApplicable("harrow", "dirt"); // true
  */
 export function isMaintenanceApplicable(
   action: MaintenanceAction,

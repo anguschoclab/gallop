@@ -1,3 +1,13 @@
+/**
+ * handlers/BreedingHandler.ts - Breeding impact handler
+ *
+ * This file handles breeding-related impacts including pregnancy creation/update/deletion,
+ * stud career updates, blue hen status, and stud fee updates.
+ *
+ * Dependencies: immer (WritableDraft), @/game/types (GameState), ../impacts (AnyImpact), ./types (ImpactHandler)
+ * Related files: ../resolver.ts (uses handler), ../impacts/breedingImpacts.ts (provides impact types)
+ */
+
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";

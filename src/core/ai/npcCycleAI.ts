@@ -1,4 +1,15 @@
 /**
+ * npcCycleAI.ts - NPC cycle AI orchestration
+ *
+ * This file manages AI state persistence and strategic coordination across
+ * all NPC subsystems including training, claiming, auction, jockey, campaign,
+ * facility, market, upkeep, withdrawal, horse generation, race entry, and breeding AI.
+ *
+ * Dependencies: @/game/types (Stable), ./personalitySystem (getPersonalityAIState), ./learningModule (createLearningState, pruneOldOutcomes), ./campaignAI, ./trainingAI, ./claimingAI, ./auctionAI, ./jockeyAI, ./jockeyStrategyAI, ./facilityAI, ./marketAI, ./upkeepAI, ./withdrawalAI, ./horseGenAI, ./raceEntryAI, ./breedingAI
+ * Related files: ../npc/npcCycle.ts (uses this orchestration)
+ */
+
+/**
  * NPC Cycle AI Orchestration
  * Manages AI state persistence and strategic coordination across all NPC subsystems
  */

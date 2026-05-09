@@ -1,7 +1,21 @@
+/**
+ * eligibility.ts - Breeding eligibility validation
+ *
+ * This file provides validation logic for horse breeding, checking age, gender,
+ * health status, recovery periods, breeding seasons, and inbreeding restrictions.
+ * It enforces realistic breeding constraints to prevent exploitative gameplay.
+ *
+ * Dependencies: @/game/types (Horse, Pregnancy), @/core/calendar/breedingCalendar (inBreedingSeason, nextBreedingSeasonStart), @/core/calendar/dateFormatting (dayOfYear, formatDate)
+ * Related files: horseFactory.ts (uses canBreed for foaling), breedingCalendar.ts (season logic)
+ */
+
 import type { Horse, Pregnancy } from "@/game/types";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { dayOfYear, formatDate } from "@/core/calendar/dateFormatting";
 
+/**
+ * Result of breeding eligibility check with optional reason for failure.
+ */
 export type BreedResult = { ok: true } | { ok: false; reason: string };
 
 // Mares need rest after foaling — gameplay isn't a real reproductive cycle,
@@ -13,6 +27,26 @@ export const MAX_DAM_AGE = 20;
 const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
 const DAM_GENDERS: Horse["gender"][] = ["filly", "mare"];
 
+/**
+ * Check if a sire and dam can breed.
+ *
+ * Performs comprehensive validation including age, gender, health status,
+ * pregnancy status, recovery period, breeding season, and inbreeding restrictions.
+ *
+ * @param sire - The sire horse
+ * @param dam - The dam horse
+ * @param day - Current game day
+ * @param pregnancies - List of all pregnancies to check for existing pregnancy
+ * @returns BreedResult with ok flag and optional reason for failure
+ *
+ * @example
+ * const result = canBreed(sire, dam, currentDay, pregnancies);
+ * if (result.ok) {
+ *   breedHorses(sire, dam);
+ * } else {
+ *   showMessage(result.reason);
+ * }
+ */
 export function canBreed(
   sire: Horse | undefined,
   dam: Horse | undefined,

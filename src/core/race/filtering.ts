@@ -1,3 +1,13 @@
+/**
+ * filtering.ts - Race filtering and sorting logic
+ *
+ * This file provides pure functions for filtering races by criteria,
+ * separating upcoming from past races, and sorting by day.
+ *
+ * Dependencies: @/game/types (Race)
+ * Related files: Used throughout UI components for race list filtering
+ */
+
 import type { Race } from "@/game/types";
 
 /**
@@ -18,7 +28,18 @@ export interface RaceFilters {
 }
 
 /**
- * Filter races by multiple criteria
+ * Filter races by multiple criteria.
+ *
+ * Filters a list of races by grade, track, surface, Triple Crown status,
+ * special race keys, and class.
+ *
+ * @param races - The races to filter
+ * @param filters - Filter criteria
+ * @param currentDay - Current game day
+ * @returns Filtered race list
+ *
+ * @example
+ * const filtered = filterRacesByCriteria(races, { grade: "G1" }, currentDay);
  */
 export function filterRacesByCriteria(
   races: Race[],
@@ -70,7 +91,16 @@ export function filterRacesByCriteria(
 }
 
 /**
- * Separate races into upcoming and past
+ * Separate races into upcoming and past.
+ *
+ * Splits a race list into two arrays based on the current day.
+ *
+ * @param races - The races to separate
+ * @param currentDay - Current game day
+ * @returns Object with upcoming and past race arrays
+ *
+ * @example
+ * const { upcoming, past } = separateUpcomingAndPast(races, currentDay);
  */
 export function separateUpcomingAndPast(
   races: Race[],
@@ -82,7 +112,16 @@ export function separateUpcomingAndPast(
 }
 
 /**
- * Sort races by day
+ * Sort races by day.
+ *
+ * Returns a new array sorted by race day in ascending or descending order.
+ *
+ * @param races - The races to sort
+ * @param ascending - Sort direction (true = ascending, false = descending)
+ * @returns Sorted race array
+ *
+ * @example
+ * const sorted = sortRacesByDay(races, true);
  */
 export function sortRacesByDay(races: Race[], ascending: boolean = true): Race[] {
   return [...races].sort((a, b) => (ascending ? a.day - b.day : b.day - a.day));

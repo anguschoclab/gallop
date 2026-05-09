@@ -1,3 +1,13 @@
+/**
+ * phases/leaderboardPhase.ts - Leaderboard update phase
+ *
+ * This file provides the leaderboard update phase that updates sire leaderboards
+ * every 7 days (weekly) and records trend data for rising star detection.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/breeding/leaderboardService (computeAllLeaderboards), @/core/breeding/leaderboardTypes (SireTrendData)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { computeAllLeaderboards } from "@/core/breeding/leaderboardService";
 import type { SireTrendData } from "@/core/breeding/leaderboardTypes";

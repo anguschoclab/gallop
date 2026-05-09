@@ -1,3 +1,13 @@
+/**
+ * phases/archivingPhase.ts - Archiving phase
+ *
+ * This file provides the archiving phase that moves deceased horses and old resolved
+ * records out of the active state to keep the simulation performant.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/game/types (Horse, Race, Pregnancy)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { Horse, Race, Pregnancy } from "@/game/types";
 

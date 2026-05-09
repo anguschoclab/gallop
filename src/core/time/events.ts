@@ -1,3 +1,13 @@
+/**
+ * events.ts - Event registry and triggers
+ *
+ * This file provides an event registry for day-of-year, interval, and conditional triggers
+ * that execute handlers during day advancement.
+ *
+ * Dependencies: @/game/types (GameState), ./pipeline (PipelineContext)
+ * Related files: pipeline.ts (uses event registry), phases/ (phases register events)
+ */
+
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "./pipeline";
 

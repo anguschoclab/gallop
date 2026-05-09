@@ -1,3 +1,13 @@
+/**
+ * inheritance.ts - Genetic inheritance logic
+ *
+ * This file provides functions for genetic inheritance including chromosome-aware
+ * crossover, independent assortment, and trait inheritance with regression to mean.
+ *
+ * Dependencies: ./types (Genotype, MarkerGenotype), @/core/common/types (Locus, Rng), ./chromosomes (crossoverAllChromosomes, ChromosomeId), ./linkageMap (LINKAGE_MAP, getLociByChromosome, INDEPENDENTLY_ASSORTING_LOCI)
+ * Related files: phenotype.ts (resolves genotypes to phenotypes), chromosomes.ts (provides chromosome crossover logic)
+ */
+
 import type { Genotype, MarkerGenotype } from "./types";
 import type { Locus } from "@/core/common/types";
 import type { Rng } from "@/core/common/types";
@@ -5,8 +15,19 @@ import { crossoverAllChromosomes, type ChromosomeId } from "./chromosomes";
 import { LINKAGE_MAP, getLociByChromosome, INDEPENDENTLY_ASSORTING_LOCI } from "./linkageMap";
 
 /**
- * Independent crossover for loci that assort independently
- * Used for markers and color/markings that are not chromosome-linked
+ * Independent crossover for loci that assort independently.
+ *
+ * Used for markers and color/markings that are not chromosome-linked.
+ * Performs Mendelian 50/50 crossover with optional mutation.
+ *
+ * @param sireLocus - Sire locus
+ * @param damLocus - Dam locus
+ * @param rng - Random number generator
+ * @param mutationChance - Mutation probability (default 0.005)
+ * @returns Offspring locus
+ *
+ * @example
+ * const locus = crossover(sireLocus, damLocus, rng);
  */
 export function crossover(
   sireLocus: Locus,
@@ -78,6 +99,20 @@ function inheritTrait(
   return options[0].result;
 }
 
+/**
+ * Inherit DNA from sire and dam genotypes.
+ *
+ * Performs chromosome-aware crossover for linked loci and independent assortment
+ * for unlinked loci. Returns complete offspring genotype.
+ *
+ * @param sire - Sire genotype
+ * @param dam - Dam genotype
+ * @param rng - Random number generator
+ * @returns Offspring genotype
+ *
+ * @example
+ * const offspring = inheritDNA(sireGenotype, damGenotype, rng);
+ */
 export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
   // Chromosome-aware crossover for linked loci
   // Gather loci by chromosome and perform single crossover per chromosome
@@ -158,11 +193,11 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
 
   // Build chromosome data map
   const chromosomeData = new Map<
-    string,
+    ChromosomeId,
     { parent1Alleles: Locus[]; parent2Alleles: Locus[]; positions: number[] }
   >();
 
-  const chromosomes: string[] = [
+  const chromosomes: ChromosomeId[] = [
     "ATHLETIC",
     "ENDURANCE",
     "PERFORMANCE",

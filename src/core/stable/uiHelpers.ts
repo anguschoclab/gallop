@@ -1,4 +1,14 @@
 /**
+ * uiHelpers.ts - Stable UI helper functions
+ *
+ * This file provides pure UI helper functions for NPC stable components,
+ * including tier color classes and reputation star representations.
+ *
+ * Dependencies: @/game/types (StableTier)
+ * Related files: npc-stables.tsx (uses helpers), npc-stables.$stableId.tsx (uses helpers)
+ */
+
+/**
  * Pure UI helper functions for NPC stable components
  * Extracted from: npc-stables.tsx, npc-stables.$stableId.tsx
  */

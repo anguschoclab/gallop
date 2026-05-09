@@ -1,3 +1,13 @@
+/**
+ * phases/npcBreedingPhase.ts - NPC autonomous breeding phase
+ *
+ * This file provides the NPC autonomous breeding phase that runs at the start of
+ * each hemisphere's breeding season for breeder/developer/prestige stables.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/npcBreeding (runNpcBreeding)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { runNpcBreeding } from "@/game/npcBreeding";
 

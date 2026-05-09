@@ -1,3 +1,12 @@
+/**
+ * expenses/index.ts - Expenses module
+ *
+ * This module provides categorized expense tracking and reporting.
+ *
+ * Dependencies: ./expenseTypes (types and functions)
+ * Related files: expenseTypes.ts (provides types and functions)
+ */
+
 // Expenses Module - Categorized expense tracking
 
 export type { Expense, ExpenseByCategory, ExpenseConfig, CategoryDisplay } from "./expenseTypes";

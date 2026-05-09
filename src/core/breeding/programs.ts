@@ -1,4 +1,15 @@
 /**
+ * programs.ts - Breeding program management
+ *
+ * This file provides stable-level breeding programs with archetype targets.
+ * Programs track genetic distance progress, milestones, and generation count
+ * as breeders work toward specific phenotype goals.
+ *
+ * Dependencies: @/game/types (Horse), ./archetypes (Archetype)
+ * Related files: archetypes.ts (target definitions), strategy.ts (uses archetype fit for scoring)
+ */
+
+/**
  * Breeding Programs
  * Stable-level breeding programs with archetype targets
  */
@@ -28,8 +39,17 @@ export type BreedingProgram = {
 };
 
 /**
- * Calculate genetic distance from horse to archetype target
- * Weighted Euclidean distance (0-1, where 0 = perfect match, 1 = worst possible)
+ * Calculate genetic distance from horse to archetype target.
+ *
+ * Weighted Euclidean distance (0-1, where 0 = perfect match, 1 = worst possible).
+ * Uses archetype weights to prioritize certain stats in the distance calculation.
+ *
+ * @param horse - The horse to measure
+ * @param archetype - The target archetype
+ * @returns Genetic distance value between 0 and 1
+ *
+ * @example
+ * const distance = calculateGeneticDistance(horse, archetype);
  */
 export function calculateGeneticDistance(horse: Horse, archetype: Archetype): number {
   const target = archetype.targetPhenotype;
@@ -66,7 +86,19 @@ export function calculateGeneticDistance(horse: Horse, archetype: Archetype): nu
 }
 
 /**
- * Update breeding program progress after a new foal is born
+ * Update breeding program progress after a new foal is born.
+ *
+ * Recalculates genetic distance, updates best horse tracking, checks milestones,
+ * and records history entry for the new foal.
+ *
+ * @param program - The breeding program to update
+ * @param horse - The newly born foal
+ * @param archetype - The target archetype
+ * @param day - Current game day
+ * @returns Updated breeding program
+ *
+ * @example
+ * const updated = updateProgramProgress(program, foal, archetype, currentDay);
  */
 export function updateProgramProgress(
   program: BreedingProgram,
@@ -115,7 +147,18 @@ export function updateProgramProgress(
 }
 
 /**
- * Create initial breeding program
+ * Create initial breeding program.
+ *
+ * Creates a new breeding program with default milestones for tracking
+ * genetic distance progress toward an archetype target.
+ *
+ * @param stableId - The stable ID creating the program
+ * @param archetypeId - The target archetype ID
+ * @param day - Current game day
+ * @returns New breeding program with initial state
+ *
+ * @example
+ * const program = createBreedingProgram(stableId, "elite-turf-stayer", currentDay);
  */
 export function createBreedingProgram(
   stableId: string,

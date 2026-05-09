@@ -1,3 +1,14 @@
+/**
+ * phases/pastureRetirement.ts - Pasture retirement phase
+ *
+ * This file provides the pasture retirement phase that automatically retires
+ * NPC horses to pasture based on age and inactivity, and deletes dead/retired
+ * horses with no wins to prevent array accumulation.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/impacts/index (AnyImpact, PastureRetirementImpact, LogImpact, HorseDeletionImpact), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Pasture Retirement Phase
 // Automatically retires NPC horses to pasture based on age and inactivity
 // Also deletes dead/retired horses with no wins to prevent array accumulation

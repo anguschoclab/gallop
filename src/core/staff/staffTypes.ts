@@ -1,3 +1,13 @@
+/**
+ * staff/staffTypes.ts - Stable staff types
+ *
+ * This file provides types for stable staff members including roles, tiers,
+ * staff details, and action results.
+ *
+ * Dependencies: None
+ * Related files: staffConfig.ts, staffGenerator.ts
+ */
+
 // Stable Staff Types - Management and bonus definitions
 
 /**

@@ -1,3 +1,14 @@
+/**
+ * strategy.ts - Personality-driven breeding strategy configuration
+ *
+ * This file provides breeding strategy parameters and scoring logic tied to stable
+ * personalities. Each personality has different preferences for stud fees, mare quality,
+ * inbreeding tolerance, and stallion scoring weights.
+ *
+ * Dependencies: @/game/types (Horse, Stable), @/core/breeding/leaderboardTypes (Leaderboard), @/game/breedingCompatibility (calculateBreedingCompatibility)
+ * Related files: archetypes.ts (program archetype matching), npcDailyCycle.ts (uses strategy for NPC breeding decisions)
+ */
+
 import type { Horse, Stable } from "@/game/types";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
@@ -64,8 +75,22 @@ export const MAX_COI: Record<Stable["personality"], number> = {
 };
 
 /**
- * Personality-specific stallion scoring. Compatibility, fee, stakes record,
- * fertility, fame, and leaderboard rankings all weight differently per personality.
+ * Personality-specific stallion scoring.
+ *
+ * Compatibility, fee, stakes record, fertility, fame, and leaderboard rankings
+ * all weight differently per personality. Returns a score used for stallion
+ * selection during NPC breeding.
+ *
+ * @param stallion - The stallion horse being evaluated
+ * @param mare - The mare being bred
+ * @param stable - The stable making the breeding decision
+ * @param maxFee - Maximum stud fee the stable is willing to pay
+ * @param leaderboards - Optional leaderboard data for ranking bonuses
+ * @param archetypeFitDelta - Optional archetype fit bonus
+ * @returns Stallion score (higher is better)
+ *
+ * @example
+ * const score = scoreStallion(stallion, mare, stable, maxFee, leaderboards, 0.1);
  */
 export function scoreStallion(
   stallion: Horse,

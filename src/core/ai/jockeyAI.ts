@@ -1,4 +1,14 @@
 /**
+ * jockeyAI.ts - Jockey AI system
+ *
+ * This file provides personality-driven jockey selection, retention,
+ * and contract negotiation for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Jockey, Stable), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), @/core/horse/stats (calculateRaceRating), ./learningModule (learning functions)
+ * Related files: npcCycleAI.ts (uses jockey AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Jockey AI System
  * Personality-driven jockey selection, retention, and contract negotiation
  */

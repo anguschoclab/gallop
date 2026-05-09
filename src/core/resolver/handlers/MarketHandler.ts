@@ -1,3 +1,13 @@
+/**
+ * handlers/MarketHandler.ts - Market impact handler
+ *
+ * This file handles market-related impacts including scout reports, consignments,
+ * consignment withdrawals, and auction resolutions.
+ *
+ * Dependencies: immer (WritableDraft), @/game/types (GameState), ../impacts (AnyImpact), ./types (ImpactHandler), @/game/uuid (generateUUID)
+ * Related files: ../resolver.ts (uses handler), ../impacts/miscImpacts.ts (provides impact types)
+ */
+
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";

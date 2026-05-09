@@ -1,3 +1,13 @@
+/**
+ * stableQueries.ts - Stable query functions
+ *
+ * This file provides query functions for stables including get by ID,
+ * get major stables, get by tier, calculate starting cash, and target horse count.
+ *
+ * Dependencies: @/game/types (Stable, StableTier), @/core/data/pedigreeData (PedigreeHorse), @/game/rng (Rng), ./stallionFarmMapping (STALLION_FARM_MAPPING)
+ * Related files: stableGeneration.ts (uses queries), stallionFarmMapping.ts (provides mapping)
+ */
+
 import type { Stable, StableTier } from "@/game/types";
 import type { PedigreeHorse } from "@/core/data/pedigreeData";
 import type { Rng } from "@/game/rng";

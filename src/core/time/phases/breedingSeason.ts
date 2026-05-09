@@ -1,3 +1,13 @@
+/**
+ * phases/breedingSeason.ts - Breeding season reset phase
+ *
+ * This file provides the breeding season reset phase that zeros out stud.seasonBookings
+ * for stallions on the first day of each hemisphere's breeding season.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/calendar/breedingCalendar (isBreedingSeasonStart)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 

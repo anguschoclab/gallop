@@ -1,3 +1,13 @@
+/**
+ * campaign/types.ts - Campaign types
+ *
+ * This file provides types for horse campaign management, including campaign goals,
+ * race slots, flags, aptitude tracking, and Triple Crown progress.
+ *
+ * Dependencies: None
+ * Related files: None
+ */
+
 export type CampaignGoalType =
   | "chase_g1"
   | "chase_g2"

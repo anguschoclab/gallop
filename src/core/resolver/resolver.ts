@@ -1,3 +1,13 @@
+/**
+ * resolver.ts - Core resolver logic
+ *
+ * This file provides core resolver logic for the impact resolver system,
+ * handling intent collection, validation, and impact application using Immer.
+ *
+ * Dependencies: immer (produce), @/game/types (GameState), ./intents (AnyIntent), ./impacts (AnyImpact), ./handlers (ALL_HANDLERS), ./validators (ALL_VALIDATORS, ValidationCache)
+ * Related files: intents.ts (provides intent types), handlers/ (handle intents), validators/ (validate intents)
+ */
+
 // Core resolver logic for the impact resolver system
 // Handles intent collection, validation, and impact application using Immer
 

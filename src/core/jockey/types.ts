@@ -1,3 +1,13 @@
+/**
+ * jockey/types.ts - Jockey types
+ *
+ * This file provides types for jockeys including archetypes, stats, traits,
+ * silk patterns, and jockey details.
+ *
+ * Dependencies: None
+ * Related files: proceduralNaming.ts (provides name generation)
+ */
+
 export type JockeyArchetype = "front_runner" | "closer" | "clinical" | "finisher" | "versatile";
 
 export type JockeyStats = {

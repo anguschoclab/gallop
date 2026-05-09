@@ -1,14 +1,28 @@
+/**
+ * mapper.ts - Research data to genotype mapping
+ *
+ * This file provides functions for converting real-world stallion research data
+ * to game DNA loci, including physical traits, racing performance, and genetic markers.
+ *
+ * Dependencies: @/core/genetics/types (Genotype, Locus, MarkerGenotype), @/core/data/stallionDNAData (StallionResearchData), ./generation (generateDeterministicGenotype)
+ * Related files: generation.ts (provides fallback genotype generation), @/core/data/stallionDNAData (provides research data)
+ */
+
 import type { Genotype, Locus, MarkerGenotype } from "@/core/genetics/types";
 import type { StallionResearchData } from "@/core/data/stallionDNAData";
 import { generateDeterministicGenotype } from "@/core/genetics/generation";
 
 /**
- * Mapping functions to convert real-world research data to game DNA loci
+ * Mapping functions to convert real-world research data to game DNA loci.
  */
 
 /**
- * Map height (in hands) to size locus
- * 14.0h = locus 1, 18.0h = locus 10 (linear interpolation)
+ * Map height (in hands) to size locus.
+ *
+ * 14.0h = locus 1, 18.0h = locus 10 (linear interpolation).
+ *
+ * @param height - Height in hands
+ * @returns Size locus
  */
 function mapHeightToSize(height: number): Locus {
   const normalized = (height - 14.0) / 4.0; // 0.0 to 1.0
@@ -138,7 +152,18 @@ function mapGeneticMarkers(markers: StallionResearchData["geneticMarkers"]): Mar
 }
 
 /**
- * Map research data to genotype
+ * Map research data to genotype.
+ *
+ * Converts stallion research data to a genotype by mapping physical traits,
+ * racing performance, and genetic markers, with fallback to deterministic generation
+ * for unmapped fields.
+ *
+ * @param researchData - Stallion research data
+ * @param tier - Quality tier
+ * @returns Generated genotype
+ *
+ * @example
+ * const genotype = mapResearchDataToGenotype(stallionData, "elite");
  */
 export function mapResearchDataToGenotype(
   researchData: StallionResearchData,

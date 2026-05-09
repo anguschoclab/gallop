@@ -1,3 +1,13 @@
+/**
+ * advance.ts - Day advance functions
+ *
+ * This file provides functions for advancing multiple days with player race detection
+ * and computing player race days for O(1) lookup.
+ *
+ * Dependencies: @/game/types (GameState, Race)
+ * Related files: pipeline.ts (uses advance functions), phases/ (phases use advance)
+ */
+
 import type { GameState, Race } from "@/game/types";
 
 /**

@@ -1,3 +1,13 @@
+/**
+ * breedingAI.ts - Breeding AI system
+ *
+ * This file provides long-term breeding strategy, learning from outcomes,
+ * and adaptive decision-making for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Stable, GameState), @/core/breeding/leaderboardTypes (Leaderboard), ./personalitySystem (getPersonalityAIState, recordOutcome), ./learningModule (getSuccessRate), @/core/breeding/strategy (scoreStallion, overallRating), @/core/genetics/breedingSimulator (runBreedingSimulation), @/core/genetics/genotypeCache (cachedSimulation), @/core/breeding/archetypes (getArchetypeById), @/core/breeding/programs (calculateGeneticDistance, BreedingProgram), @/game/rng (Rng)
+ * Related files: npcCycleAI.ts (uses breeding AI), personalitySystem.ts (provides personality state)
+ */
+
 import type { Horse, Stable, GameState } from "@/game/types";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";

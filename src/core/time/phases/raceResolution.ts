@@ -1,3 +1,13 @@
+/**
+ * phases/raceResolution.ts - Race resolution phase
+ *
+ * This file provides the race resolution phase that simulates unresolved races
+ * and generates all race resolution impacts.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/impacts/index (AnyImpact), @/services/raceSimulationService (rngForRace), @/game/types (Race), @/core/resolver/intents (ClaimingIntent), @/services/raceSimulationExecutor (simulateRace), @/services/raceImpactGenerator (generateRaceImpacts), @/services/claimingResolutionService (processClaimingResolution), @/services/historyService (recordRaceHistory, checkHallOfFameInduction), @/game/uuid (generateUUID), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/raceEntryAI (recordRaceEntryOutcome), @/core/ai/jockeyAI (recordJockeyOutcome), @/core/ai/campaignAI (recordCampaignOutcome)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/raceSimulationService";

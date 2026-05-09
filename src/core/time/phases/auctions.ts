@@ -1,3 +1,14 @@
+/**
+ * phases/auctions.ts - Auctions phase
+ *
+ * This file provides the auctions phase that owns the auction lifecycle:
+ * spawns new sales on calendar triggers, resolves sales the player didn't attend,
+ * marks sales resolved, and prunes stale sales after 30 days.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (AuctionSale), @/game/auction (generateAuctionLots, SALE_TRIGGERS), @/game/auctionRunner (createAuctionRunner), @/core/calendar/dateFormatting (dayOfYear), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import type { AuctionSale } from "@/game/types";
 import { generateAuctionLots, SALE_TRIGGERS } from "@/game/auction";

@@ -1,5 +1,11 @@
 /**
- * Types for long-term historical tracking and records
+ * historyTypes.ts - Historical tracking types
+ *
+ * This file provides types for long-term historical tracking and records,
+ * including season records and Hall of Fame entries.
+ *
+ * Dependencies: None
+ * Related files: None
  */
 
 export interface SeasonRecord {

@@ -1,3 +1,13 @@
+/**
+ * validators/RacingValidator.ts - Racing intent validator
+ *
+ * This file validates race entry, race withdrawal, and claiming withdrawal intents
+ * to ensure horses exist, have sufficient energy, races are valid, and horses are not consigned.
+ *
+ * Dependencies: @/game/types (GameState), ../intents (AnyIntent, RaceEntryIntent, WithdrawFromClaimingIntent), ./types (IntentValidator, ValidationCache)
+ * Related files: ../resolver.ts (uses validator), ./index.ts (exports validators)
+ */
+
 import type { GameState } from "@/game/types";
 import type { AnyIntent, RaceEntryIntent, WithdrawFromClaimingIntent } from "../intents";
 import type { IntentValidator, ValidationCache } from "./types";

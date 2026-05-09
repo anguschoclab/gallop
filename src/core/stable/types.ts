@@ -1,3 +1,13 @@
+/**
+ * types.ts - Stable types
+ *
+ * This file provides stable-related types including StableTier, StablePersonality,
+ * Stable, BackstoryId, and PlayerProfile.
+ *
+ * Dependencies: @/core/jockey/types (JockeySilk), @/core/breeding/archetypes (Archetype)
+ * Related files: stableConfig.ts (uses types), personalityModifiers.ts (uses types)
+ */
+
 import type { JockeySilk } from "@/core/jockey/types";
 import type { Archetype } from "@/core/breeding/archetypes";
 

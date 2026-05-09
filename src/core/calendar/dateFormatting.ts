@@ -1,5 +1,15 @@
 /**
- * Pure date formatting functions
+ * dateFormatting.ts - Date formatting utilities
+ *
+ * This file provides pure date formatting functions for converting absolute game days
+ * to human-readable calendar dates, month names, and parsing day inputs.
+ *
+ * Dependencies: None
+ * Related files: breedingCalendar.ts (uses dayOfYear for breeding season calculations)
+ */
+
+/**
+ * Pure date formatting functions.
  * Extracted from: track-schedule.tsx, canadian-calendar.tsx, uae-calendar.tsx,
  *                 south-american-calendar.tsx, german-calendar.tsx, scandinavian-calendar.tsx
  */
@@ -37,7 +47,13 @@ const MONTH_NAMES_SHORT = [
 ];
 
 /**
- * Returns the full month name for a given day of year (1-365)
+ * Returns the full month name for a given day of year (1-365).
+ *
+ * @param dayOfYear - Day of year (1-365)
+ * @returns Full month name
+ *
+ * @example
+ * const month = getMonthName(15); // "January"
  */
 export function getMonthName(dayOfYear: number): string {
   for (let i = 0; i < CUMULATIVE_DAYS.length; i++) {
@@ -49,7 +65,13 @@ export function getMonthName(dayOfYear: number): string {
 }
 
 /**
- * Returns the formatted date string for a given day of year (e.g., "Jan 15")
+ * Returns the formatted date string for a given day of year (e.g., "Jan 15").
+ *
+ * @param dayOfYear - Day of year (1-365)
+ * @returns Formatted date string
+ *
+ * @example
+ * const date = formatDate(15); // "Jan 15"
  */
 export function formatDate(dayOfYear: number): string {
   for (let i = 0; i < CUMULATIVE_DAYS.length; i++) {
@@ -62,21 +84,39 @@ export function formatDate(dayOfYear: number): string {
 }
 
 /**
- * Returns the day of year (1–365) for an absolute game day (1-based, wraps every 365 days)
+ * Returns the day of year (1–365) for an absolute game day (1-based, wraps every 365 days).
+ *
+ * @param day - Absolute game day
+ * @returns Day of year (1-365)
+ *
+ * @example
+ * const doy = dayOfYear(450); // 85
  */
 export function dayOfYear(day: number): number {
   return ((day - 1) % 365) + 1;
 }
 
 /**
- * Returns the in-game calendar year (starts at 2026 on day 1)
+ * Returns the in-game calendar year (starts at 2026 on day 1).
+ *
+ * @param day - Absolute game day
+ * @returns Calendar year
+ *
+ * @example
+ * const year = gameYearNumber(1); // 2026
  */
 export function gameYearNumber(day: number): number {
-  return 2026 + Math.floor((day - 1) / DAYS_PER_YEAR);
+  return 2026 + Math.floor((day - 1) / 365);
 }
 
 /**
- * Returns a human-readable calendar date string (e.g., "Jan 15, 2026") for an absolute game day
+ * Returns a human-readable calendar date string (e.g., "Jan 15, 2026") for an absolute game day.
+ *
+ * @param day - Absolute game day
+ * @returns Formatted calendar date string
+ *
+ * @example
+ * const date = gameCalendarDate(15); // "Jan 15, 2026"
  */
 export function gameCalendarDate(day: number): string {
   const doy = dayOfYear(day);
@@ -86,11 +126,18 @@ export function gameCalendarDate(day: number): string {
 
 /**
  * Parses a day input string and returns the absolute game day.
+ *
  * Supports formats:
  * - Absolute day number (e.g., "450")
  * - Day-of-year number (e.g., "15") - converts to current year's absolute day
  * - Month day format (e.g., "Jan 15") - converts to current year's absolute day
- * Returns null if input is invalid.
+ *
+ * @param input - Day input string
+ * @param currentGameDay - Current absolute game day for context
+ * @returns Absolute game day or null if invalid
+ *
+ * @example
+ * const day = parseDayInput("Jan 15", 450); // 415 (Jan 15 of current year)
  */
 export function parseDayInput(input: string, currentGameDay: number): number | null {
   const trimmed = input.trim();
@@ -143,7 +190,13 @@ export function parseDayInput(input: string, currentGameDay: number): number | n
 }
 
 /**
- * Validates if a day-of-year is valid (1-365)
+ * Validates if a day-of-year is valid (1-365).
+ *
+ * @param day - Day of year to validate
+ * @returns True if valid, false otherwise
+ *
+ * @example
+ * const valid = isValidDayOfYear(15); // true
  */
 export function isValidDayOfYear(day: number): boolean {
   return day >= 1 && day <= 365;

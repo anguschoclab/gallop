@@ -1,3 +1,14 @@
+/**
+ * entryScoring.ts - Race entry suitability scoring
+ *
+ * This file provides scoring functions for evaluating how well a horse matches
+ * a race based on class, distance, surface, track geometry, purse, and stable personality.
+ * Used for NPC race entry decisions and race recommendation systems.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable, StableTier), @/core/horse/stats (calculateOverallRating), @/core/horse/gender (isFemaleHorse), @/core/stable/stableConfig (PERSONALITY_CONFIG), @/game/claiming (isHorseEligibleForClaimingPrice, getSuggestedClaimingPriceRange), ./trackGeometry (calculateTrackGeometryScore, calculateGradientScore)
+ * Related files: npcDailyCycle.ts (uses for NPC race entry), store.ts (uses for race recommendations)
+ */
+
 import type { Horse, Race, Stable, StableTier } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { isFemaleHorse } from "@/core/horse/gender";
@@ -25,9 +36,19 @@ export const BASE_PURSE_APPEAL: Record<StableTier, number> = {
 };
 
 /**
- * Calculate horse's suitability score for a race
- * Higher score = better match
- * Personality affects scoring significantly
+ * Calculate horse's suitability score for a race.
+ *
+ * Higher score = better match. Personality affects scoring significantly.
+ * Evaluates class match, distance fit, surface fit, track geometry, gradient,
+ * purse appeal, form, energy, fame, graded race bonuses, and claiming race logic.
+ *
+ * @param horse - The horse to evaluate
+ * @param race - The race to evaluate
+ * @param stable - The stable making the decision
+ * @returns Suitability score (higher is better)
+ *
+ * @example
+ * const score = calculateRaceSuitability(horse, race, stable);
  */
 export function calculateRaceSuitability(horse: Horse, race: Race, stable: Stable): number {
   const personality = PERSONALITY_CONFIG[stable.personality];
@@ -158,7 +179,16 @@ export function calculateRaceSuitability(horse: Horse, race: Race, stable: Stabl
 
 /**
  * Calculate the assigned weight for a horse in a specific race.
- * Includes Sex Allowance (females carry less) and Weight-for-Age (younger horses carry less).
+ *
+ * Includes Sex Allowance (females carry less) and Weight-for-Age
+ * (younger horses carry less). Base weight for major races is 126 lbs (57kg).
+ *
+ * @param horse - The horse to calculate weight for
+ * @param race - The race with weight conditions
+ * @returns Assigned weight in pounds
+ *
+ * @example
+ * const weight = calculateAssignedWeight(horse, race);
  */
 export function calculateAssignedWeight(horse: Horse, race: Race): number {
   // Base weight for major races is 126 lbs (57kg)

@@ -1,3 +1,13 @@
+/**
+ * phases/managementResolution.ts - Management resolution phase
+ *
+ * This file provides the management resolution phase that processes player intents
+ * for infrastructure, jockeys, and horse management.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, JockeyContractIntent, JockeyAssignmentIntent, FacilityUpgradeIntent, UpdateStudFeeIntent, GeldingIntent, RenameIntent, TacticsIntent, StudRetirementIntent), @/core/resolver/impacts/index (AnyImpact), @/game/uuid (generateUUID), @/game/rng (createRng, hashStr), @/game/scouting (scoutHorse)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Management Resolution Phase
 // Processes player intents for infrastructure, jockeys, and horse management
 

@@ -1,3 +1,13 @@
+/**
+ * raceEntryAI.ts - Race entry AI system
+ *
+ * This file provides strategic race entry system with long-term race schedule
+ * planning, horse development tracking, and multi-race strategy optimization.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable), ./personalitySystem (getPersonalityAIState), ./learningModule (learning functions), @/core/race/entryScoring (calculateRaceSuitability), @/core/race/trackGeometry (calculateTrackGeometryScore, calculateGradientScore), @/core/stable/personalityModifiers (applyPersonalityModifiers)
+ * Related files: npcCycleAI.ts (uses race entry AI), personalitySystem.ts (provides personality state)
+ */
+
 import type { Horse, Race, Stable } from "@/game/types";
 import {
   getPersonalityAIState,

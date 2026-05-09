@@ -1,3 +1,13 @@
+/**
+ * phases/trainingResolution.ts - Training resolution phase
+ *
+ * This file provides the training resolution phase that converts TrainingIntents
+ * into impacts (stat changes, energy changes, cash changes).
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, TrainingIntent), @/core/resolver/impacts/index (AnyImpact), @/game/rng (createRng, hashStr), @/core/facilities (getFacilityBonus), @/core/expenses (createExpense), @/game/uuid (generateUUID), @/core/transactions (createTransaction), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/trainingAI (recordTrainingOutcome)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Training Resolution Phase
 // Converts TrainingIntents into impacts (stat changes, energy changes, cash changes)
 

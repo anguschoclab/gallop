@@ -1,3 +1,14 @@
+/**
+ * healthSystem.ts - Health and injury system
+ *
+ * This file provides functions for rolling for injuries during races, calculating
+ * injury severity, and determining recovery times based on horse genetics,
+ * energy levels, and staff bonuses.
+ *
+ * Dependencies: @/game/types (Horse), @/game/rng (Rng), @/game/uuid (generateUUID), @/core/resolver/impacts/index (InjuryImpact), @/core/staff/staffTypes (StaffMember)
+ * Related files: resolver/impacts/index.ts (provides InjuryImpact type)
+ */
+
 import type { Horse } from "@/game/types";
 import type { Rng } from "@/game/rng";
 import type { InjuryImpact } from "@/core/resolver/impacts/index";
@@ -5,13 +16,24 @@ import { generateUUID } from "@/game/uuid";
 import type { StaffMember } from "@/core/staff/staffTypes";
 
 /**
- * Injury severity levels
+ * Injury severity levels.
  */
 export type InjurySeverity = "minor" | "moderate" | "major" | "career-ending";
 
 /**
- * Roll for potential injury during a race
+ * Roll for potential injury during a race.
+ *
  * Factors in horse genetics, current energy, surface, and staff bonuses
+ * to determine if an injury occurs and its severity.
+ *
+ * @param rng - Random number generator
+ * @param horse - The horse to check for injury
+ * @param day - Current game day
+ * @param hiredStaff - Optional list of hired staff for bonuses
+ * @returns Injury impact if injury occurred, null otherwise
+ *
+ * @example
+ * const injury = rollForInjury(rng, horse, currentDay, staff);
  */
 export function rollForInjury(
   rng: Rng,

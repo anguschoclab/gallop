@@ -1,3 +1,13 @@
+/**
+ * phases/jockeyPhase.ts - Jockey management phase
+ *
+ * This file provides the jockey management phase that handles contract expirations,
+ * NPC hiring, and pool refreshment.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/rng (createRng, hashStr), @/game/jockeyGen (generateJockey), @/core/ai/jockeyAI (selectBestJockey, shouldRetainJockey, createJockeyAIState, recordJockeyAssignment), @/core/ai/npcCycleAI (getOrCreateStableAIState)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { createRng, hashStr } from "@/game/rng";
 import { generateJockey } from "@/game/jockeyGen";

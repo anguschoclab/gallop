@@ -1,4 +1,14 @@
 /**
+ * horseGenAI.ts - Horse generation AI system
+ *
+ * This file provides personality-driven stock generation, roster composition,
+ * and learning from outcomes for NPC stables.
+ *
+ * Dependencies: @/game/types (Stable, Horse), ./personalitySystem (getPersonalityAIState), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating)
+ * Related files: npcCycleAI.ts (uses horse generation AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Horse Generation AI System
  * Personality-driven stock generation, roster composition, learning from outcomes
  */

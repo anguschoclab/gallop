@@ -1,4 +1,14 @@
 /**
+ * phases/awards.ts - Awards ceremony phase
+ *
+ * This file provides the awards ceremony phase that calculates and presents
+ * regional awards at year end.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/awards/scoring (determineAllRegionalWinners, determineRegionalWinners), @/core/calendar/dateFormatting (dayOfYear), @/game/uuid (generateUUID), @/game/awards/types (AwardRegion, RegionalAward, AWARD_CEREMONY_SCHEDULE)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
+/**
  * Phase: Awards Ceremony
  * Calculate and present regional awards at year end
  */

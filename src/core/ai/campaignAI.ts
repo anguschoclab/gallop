@@ -1,4 +1,15 @@
 /**
+ * campaignAI.ts - Campaign AI system
+ *
+ * This file provides major race targeting for Triple Crown, Breeders Cup,
+ * Dubai World Cup with contender detection, personality-driven targeting,
+ * and learning integration for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable), @/game/gradedRaces (GradedRace, GRADED_RACES), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating, calculateRaceRating)
+ * Related files: npcCycleAI.ts (uses campaign AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Campaign AI System
  * Major race targeting for Triple Crown, Breeders Cup, Dubai World Cup
  * Contender detection, personality-driven targeting, learning integration

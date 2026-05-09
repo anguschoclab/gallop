@@ -1,3 +1,13 @@
+/**
+ * phases/aging.ts - Aging phase
+ *
+ * This file provides the aging phase that ages horses on hemisphere-specific
+ * universal birthdays (Northern: Jan 1, Southern: Aug 1).
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (Horse), @/core/calendar/breedingCalendar (isUniversalBirthday)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import type { Horse } from "@/game/types";
 import { isUniversalBirthday } from "@/core/calendar/breedingCalendar";

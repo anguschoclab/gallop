@@ -1,3 +1,13 @@
+/**
+ * phases/pregnancy.ts - Pregnancy resolution phase
+ *
+ * This file provides the pregnancy resolution phase that resolves pregnancies
+ * and handles foaling events, including AI outcome recording for NPCs.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (Horse, Pregnancy), @/core/breeding/lineage (getFoalsBy), @/game/store/helpers/pregnancy (resolvePregnancies), @/core/reputation (createReputationEvent, calculateBreedingReputation, getReputationTier), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/breedingAI (recordBreedingOutcome), @/core/horse/stats (calculateOverallRating)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import type { Horse, Pregnancy } from "@/game/types";
 import { getFoalsBy } from "@/core/breeding/lineage";

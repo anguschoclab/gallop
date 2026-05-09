@@ -1,3 +1,13 @@
+/**
+ * phases/impactApplication.ts - Impact application phase
+ *
+ * This file provides the impact application phase that applies all impacts to the
+ * state using the resolver with Immer for immutable state updates.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/resolver (applyImpacts, ResolverContext)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Impact Application Phase
 // Applies all impacts to the state using the resolver
 

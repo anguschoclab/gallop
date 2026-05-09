@@ -1,3 +1,13 @@
+/**
+ * personalitySystem.ts - AI personality system
+ *
+ * This file provides a hybrid AI personality system combining utility AI scoring,
+ * behavior trees, learning system, and strategic planning for NPC decision-making.
+ *
+ * Dependencies: @/game/types (StablePersonality), @/core/stable/stableConfig (PERSONALITY_CONFIG), ./learningModule (learning functions)
+ * Related files: npcCycleAI.ts (uses personality state), learningModule.ts (provides learning infrastructure)
+ */
+
 import type { StablePersonality } from "@/game/types";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import {

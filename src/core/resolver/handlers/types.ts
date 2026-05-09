@@ -1,3 +1,12 @@
+/**
+ * handlers/types.ts - Handler types
+ *
+ * This file provides base interface for impact handlers.
+ *
+ * Dependencies: @/game/types (GameState), ../impacts (AnyImpact), immer (WritableDraft)
+ * Related files: ../resolver.ts (uses handlers), ./index.ts (exports handlers)
+ */
+
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { WritableDraft } from "immer";

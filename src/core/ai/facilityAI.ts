@@ -1,4 +1,14 @@
 /**
+ * facilityAI.ts - Facility AI system
+ *
+ * This file provides learning from facility ROI, strategic investment decisions,
+ * and budget management for NPC stables.
+ *
+ * Dependencies: @/game/types (Stable), @/core/facilities/facilityTypes (FacilityType, FacilityLevel, PlayerFacilities, FACILITY_UPGRADE_COSTS), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions)
+ * Related files: npcCycleAI.ts (uses facility AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Facility AI System
  * Learning from facility ROI, strategic investment decisions, budget management
  */

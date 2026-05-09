@@ -1,3 +1,13 @@
+/**
+ * validators/MarketValidator.ts - Market intent validator
+ *
+ * This file validates purchase and claiming intents to ensure horses exist,
+ * are eligible for claiming, and sufficient funds are available.
+ *
+ * Dependencies: @/game/types (GameState), ../intents (AnyIntent, PurchaseIntent, ClaimingIntent), ./types (IntentValidator, ValidationCache), @/game/claiming (isHorseEligibleForClaimingPrice)
+ * Related files: ../resolver.ts (uses validator), ./index.ts (exports validators)
+ */
+
 import type { GameState } from "@/game/types";
 import type { AnyIntent, PurchaseIntent, ClaimingIntent } from "../intents";
 import type { IntentValidator, ValidationCache } from "./types";

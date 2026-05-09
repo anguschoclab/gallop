@@ -1,3 +1,14 @@
+/**
+ * npc/intentGenerators.ts - NPC intent generators
+ *
+ * This file provides intent generation for NPC stables during the intent
+ * collection phase, including training, race entry, breeding, claiming,
+ * and withdrawal intents.
+ *
+ * Dependencies: @/core/resolver/intents (intent types), @/game/types (GameState, Horse, Race, Stable), @/game/uuid (generateUUID), @/core/stable/stableConfig (PERSONALITY_CONFIG), @/game/claiming (isHorseEligibleForClaimingPrice), @/core/horse/stats (calculateOverallRating), @/core/ai/trainingAI (training AI functions), @/core/ai/claimingAI (claiming AI functions), @/core/ai/raceEntryAI (race entry AI functions), @/core/ai/npcCycleAI (NpcAIManager functions)
+ * Related files: npcCycle.ts (uses intents)
+ */
+
 // NPC Intent Generators
 // Generates intents for NPC stables during the intent collection phase
 

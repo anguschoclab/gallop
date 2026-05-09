@@ -1,3 +1,14 @@
+/**
+ * track/trackConditionData.ts - Track condition data
+ *
+ * This file provides static data for track conditions including regional
+ * terminology mappings, speed modifiers, stamina drain modifiers, turf rail
+ * positions, maintenance actions, and climate bias configurations.
+ *
+ * Dependencies: @/game/types (TrackCondition)
+ * Related files: ../trackConditions.ts (uses this data)
+ */
+
 import type { TrackCondition } from "@/game/types";
 
 // =============================================================================

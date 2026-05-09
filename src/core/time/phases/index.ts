@@ -1,3 +1,14 @@
+/**
+ * phases/index.ts - Pipeline phases
+ *
+ * This file exports all game pipeline phases in their correct order.
+ * Consolidating this here ensures synchronization between the Web Worker
+ * and the main thread fallback.
+ *
+ * Dependencies: ./intentCollection, ./intentValidation, ./privateSaleExpiry, ./upkeep, ./aging, ./breedingSeason, ./industryMetricsPhase, ./npcBreedingPhase, ./energy, ./market, ./races, ./beyerRecalibration, ./jockeyPhase, ./pregnancy, ./npcCycle, ./stallionRetirement, ./pastureRetirement, ./hallOfFame, ./horseDeath, ./auctions, ./leaderboardPhase, ./awards, ./schedulerPhase, ./stateUpdate, ./raceEntryResolution, ./consignmentResolution, ./purchaseResolution, ./breedingResolution, ./trainingResolution, ./claimingWithdrawal, ./managementResolution, ./npcClaiming, ./raceResolution, ./claimResolution, ./archivingPhase, ./impactApplication
+ * Related files: ../pipeline.ts (uses phases), ../advance.ts (uses phases)
+ */
+
 import { intentCollectionPhase } from "./intentCollection";
 import { intentValidationPhase } from "./intentValidation";
 import { privateSaleExpiryPhase } from "./privateSaleExpiry";

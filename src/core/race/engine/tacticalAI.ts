@@ -1,8 +1,29 @@
 import { clamp } from "@/game/math";
-import type { Runner, PaceContext } from "./simulation";
+import type { Runner, PaceContext } from "./runnerBuilder";
 
 /**
- * NPC Jockey tactical adjustments during a race.
+ * tacticalAI.ts - NPC Jockey tactical adjustments
+ *
+ * This file provides tactical AI for NPC jockeys during races, including
+ * pace sensing, lane management, traffic avoidance, and tactic-specific behavior.
+ *
+ * Dependencies: @/game/math (clamp), ./runnerBuilder (Runner, PaceContext)
+ * Related files: simulation.ts (uses tactical adjustments during race steps)
+ */
+
+/**
+ * Calculate tactical adjustment for a runner.
+ *
+ * NPC jockeys adjust velocity and target lane based on pace, traffic, and
+ * assigned tactics. Higher-skilled jockeys make better tactical decisions.
+ *
+ * @param runner - The runner to calculate adjustments for
+ * @param pace - Current pace context
+ * @param runners - All runners in the race
+ * @returns Velocity modifier and target lane adjustment
+ *
+ * @example
+ * const tactical = calculateTacticalAdjustment(runner, pace, runners);
  */
 export function calculateTacticalAdjustment(
   runner: Runner,

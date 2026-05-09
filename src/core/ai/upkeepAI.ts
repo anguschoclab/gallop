@@ -1,4 +1,14 @@
 /**
+ * upkeepAI.ts - Upkeep budgeting AI system
+ *
+ * This file provides strategic cost management, cash reserves, and learning
+ * from budgeting decisions for NPC stables.
+ *
+ * Dependencies: @/game/types (Stable, Horse), ./personalitySystem (getPersonalityAIState), ./learningModule (learning functions)
+ * Related files: npcCycleAI.ts (uses upkeep AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Upkeep Budgeting AI System
  * Strategic cost management, cash reserves, learning from budgeting decisions
  */

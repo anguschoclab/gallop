@@ -1,3 +1,13 @@
+/**
+ * phases/stateUpdate.ts - State update phase
+ *
+ * This file provides the state update phase that commits all state changes
+ * and updates logs as the final phase in the pipeline.
+ *
+ * Dependencies: ../pipeline (PipelineContext)
+ * Related files: ../pipeline.ts (uses phase), ../advance.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 
 /**

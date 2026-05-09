@@ -1,3 +1,13 @@
+/**
+ * phases/beyerRecalibration.ts - Beyer par recalibration phase
+ *
+ * This file provides the Beyer par recalibration phase that recalibrates
+ * Beyer speed figure pars every 30 days (SEASON_DAYS).
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/store/helpers/beyer (maybeRecalibratePars), @/game/constants/gameConstants (SEASON_DAYS)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { maybeRecalibratePars } from "@/game/store/helpers/beyer";
 import { SEASON_DAYS } from "@/game/constants/gameConstants";

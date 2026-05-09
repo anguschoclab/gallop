@@ -1,3 +1,13 @@
+/**
+ * personalityModifiers.ts - Personality-based modifiers
+ *
+ * This file provides personality-based modifiers for race entry decisions,
+ * adjusting base suitability scores based on personality traits.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable, StablePersonality), ./stableConfig (PERSONALITY_CONFIG)
+ * Related files: ../ai/raceEntryAI.ts (uses modifiers), stableConfig.ts (provides config)
+ */
+
 import type { Horse, Race, Stable, StablePersonality } from "@/game/types";
 import { PERSONALITY_CONFIG } from "./stableConfig";
 

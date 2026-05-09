@@ -1,3 +1,13 @@
+/**
+ * phases/consignmentResolution.ts - Consignment resolution phase
+ *
+ * This file provides the consignment resolution phase that converts player
+ * ConsignmentIntents into impacts.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/impacts/index (AnyImpact), @/game/uuid (generateUUID), @/core/resolver/intents (ConsignmentIntent, ConsignmentWithdrawalIntent)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";

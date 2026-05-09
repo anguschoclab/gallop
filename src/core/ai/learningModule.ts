@@ -1,4 +1,14 @@
 /**
+ * learningModule.ts - Shared learning infrastructure
+ *
+ * This file provides shared learning infrastructure that tracks outcomes,
+ * patterns, and success rates for AI decision-making across all AI subsystems.
+ *
+ * Dependencies: None
+ * Related files: personalitySystem.ts (uses learning state), npcCycleAI.ts (uses learning functions)
+ */
+
+/**
  * Shared Learning Infrastructure
  * Tracks outcomes, patterns, and success rates for AI decision-making
  */

@@ -1,3 +1,13 @@
+/**
+ * phases/npcCycle.ts - NPC cycle phase
+ *
+ * This file provides the NPC cycle phase that runs NPC training, race entry,
+ * fame updates, and AI state management.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/npc/npcCycle (runNpcCycle), @/core/ai/npcCycleAI (NpcAIManager)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { runNpcCycle } from "@/core/npc/npcCycle";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";

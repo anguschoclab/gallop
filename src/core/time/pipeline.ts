@@ -1,3 +1,13 @@
+/**
+ * pipeline.ts - Pipeline execution framework
+ *
+ * This file provides the pipeline execution framework for day advancement,
+ * including PipelineContext, PipelinePhase, and executePipeline function.
+ *
+ * Dependencies: @/game/types (GameState), @/game/rng (Rng), @/core/resolver/intents (AnyIntent), @/core/resolver/impacts/index (AnyImpact), @/core/resolver/resolver (ImpactLogEntry)
+ * Related files: advance.ts (uses pipeline), phases/index.ts (provides phases)
+ */
+
 import type { GameState } from "@/game/types";
 import type { Rng } from "@/game/rng";
 import type { AnyIntent } from "@/core/resolver/intents";

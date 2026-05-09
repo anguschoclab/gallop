@@ -1,3 +1,13 @@
+/**
+ * impacts/campaignImpacts.ts - Campaign impact types
+ *
+ * This file provides campaign-related impact types including campaign slots,
+ * campaign flags, campaign flag dismissals, campaign creation, and campaign deletion.
+ *
+ * Dependencies: ./base (Impact), @/game/types (HorseCampaign, CampaignFlag)
+ * Related files: ../handlers/SystemHandler.ts (handles impacts), ./index.ts (exports types)
+ */
+
 import type { Impact } from "./base";
 import type { HorseCampaign, CampaignFlag } from "@/game/types";
 

@@ -1,3 +1,14 @@
+/**
+ * simulation.ts - Race simulation engine
+ *
+ * This file provides the core race simulation engine, including pace context calculation,
+ * runner stepping logic, drafting, track geometry effects, stamina fade, and tactical AI
+ * integration. Generates race results and optional replay snapshots.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable, Jockey), @/game/tracks (CourseSpecification, TrackSection), @/core/common/types (Rng), @/game/math (clamp), ./raceSnapshotTypes (RaceSnapshot), ./tacticalAI (calculateTacticalAdjustment), ./runnerBuilder (Runner, PaceContext, paceShapeMul)
+ * Related files: runnerBuilder.ts (provides runner objects), tacticalAI.ts (provides tactical adjustments)
+ */
+
 import type {
   Horse,
   Race,
@@ -20,6 +31,19 @@ import type {
   Race as RaceT,
 } from "@/game/types";
 
+/**
+ * Compute pace context from current runner positions.
+ *
+ * Calculates leader position, velocity, lead group count, pace pressure,
+ * race progress, lane density, and pace rating for tactical decisions.
+ *
+ * @param runners - All runners in the race
+ * @param distance - Race distance in meters
+ * @returns Pace context object
+ *
+ * @example
+ * const pace = computePaceContext(runners, 1600);
+ */
 export function computePaceContext(runners: Runner[], distance: number): PaceContext {
   let leaderPos = 0;
   let leaderVelocity = 0;
@@ -114,6 +138,24 @@ function getTrackGradient(pos: number, distance: number, course?: CourseSpecific
   return section?.gradient ?? 0;
 }
 
+/**
+ * Step a single runner forward in time.
+ *
+ * Updates runner position, velocity, and lane based on physics, drafting,
+ * track geometry, stamina fade, jockey skills, and tactical adjustments.
+ *
+ * @param r - The runner to step
+ * @param dt - Time delta in seconds
+ * @param t - Current simulation time
+ * @param distance - Race distance in meters
+ * @param rng - Random number generator
+ * @param field - All runners in the race
+ * @param pace - Current pace context
+ * @param course - Optional track course specification
+ *
+ * @example
+ * stepRunner(runner, 0.1, 5.0, 1600, rng, runners, pace, course);
+ */
 export function stepRunner(
   r: Runner,
   dt: number,
@@ -333,7 +375,7 @@ export function stepRunner(
   }
 
   // --- Tactical AI Integration (Throttle to ~1Hz) ---
-  if (Math.floor(t / 1.0) !== Math.floor((t - dt) / 1.0)) {
+  if (Math.floor(t / 1.0) !== Math.floor((t - dt) / 1.0) && pace) {
     const tactical = calculateTacticalAdjustment(r, pace, field || []);
     r.velocity *= (1 + (tactical.velocityMod - 1) * dt);
     r.lane += (tactical.targetLane - r.lane) * 0.1 * dt;
@@ -362,6 +404,25 @@ export function stepRunner(
   }
 }
 
+/**
+ * Run race to completion.
+ *
+ * Simulates a full race from start to finish, stepping all runners forward
+ * until all finish or max time is reached. Returns final results and optional
+ * replay snapshots.
+ *
+ * @param runners - All runners in the race
+ * @param distance - Race distance in meters
+ * @param rng - Random number generator
+ * @param dt - Time delta per step in seconds
+ * @param maxTime - Maximum simulation time in seconds
+ * @param course - Optional track course specification
+ * @param recordSnapshots - Whether to record replay snapshots
+ * @returns Race result and optional snapshots
+ *
+ * @example
+ * const { result, snapshots } = runRaceToCompletion(runners, 1600, rng, 0.1, 600, course, true);
+ */
 export function runRaceToCompletion(
   runners: Runner[],
   distance: number,

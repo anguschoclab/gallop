@@ -1,4 +1,14 @@
 /**
+ * claimingAI.ts - Claiming AI system
+ *
+ * This file provides learning from claiming outcomes, strategic value assessment,
+ * and risk evaluation for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating)
+ * Related files: npcCycleAI.ts (uses claiming AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Claiming AI System
  * Learning from claiming outcomes, strategic value assessment, risk evaluation
  */

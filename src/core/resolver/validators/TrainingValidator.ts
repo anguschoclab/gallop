@@ -1,3 +1,13 @@
+/**
+ * validators/TrainingValidator.ts - Training intent validator
+ *
+ * This file validates training intents to ensure horses exist, have sufficient energy,
+ * and are not consigned to an auction.
+ *
+ * Dependencies: @/game/types (GameState), ../intents (AnyIntent, TrainingIntent), ./types (IntentValidator, ValidationCache)
+ * Related files: ../resolver.ts (uses validator), ./index.ts (exports validators)
+ */
+
 import type { GameState } from "@/game/types";
 import type { AnyIntent, TrainingIntent } from "../intents";
 import type { IntentValidator, ValidationCache } from "./types";

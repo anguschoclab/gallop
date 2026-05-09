@@ -1,4 +1,14 @@
 /**
+ * jockeyStrategyAI.ts - Jockey strategy AI system
+ *
+ * This file provides NPC jockey instructions for race simulation based on
+ * personality and learning for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Jockey, Stable, Race, RunningStyle), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), @/core/horse/stats (calculateRaceRating), ./learningModule (learning functions)
+ * Related files: npcCycleAI.ts (uses jockey strategy AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Jockey Strategy AI System
  * NPC jockey instructions for race simulation based on personality and learning
  */

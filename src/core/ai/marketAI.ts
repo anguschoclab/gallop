@@ -1,4 +1,14 @@
 /**
+ * marketAI.ts - Market AI system
+ *
+ * This file provides learning from market purchases, strategic purchase decisions,
+ * and portfolio buying for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Stable), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating)
+ * Related files: npcCycleAI.ts (uses market AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Market AI System
  * Learning from market purchases, strategic purchase decisions, portfolio buying
  */

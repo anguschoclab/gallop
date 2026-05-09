@@ -1,4 +1,15 @@
 /**
+ * archetypes.ts - Breeding Archetypes
+ *
+ * This file provides predefined breeding program targets with genetic specifications.
+ * Archetypes define target phenotypes (speed, stamina, acceleration, etc.) and stat
+ * weights for different types of horses (sprinters, stayers, milers, etc.).
+ *
+ * Dependencies: None (self-contained type definitions and data)
+ * Related files: strategy.ts (uses archetypes for scoring), programs.ts (breeding program management)
+ */
+
+/**
  * Breeding Archetypes
  * Predefined breeding program targets with genetic specifications
  */
@@ -253,14 +264,26 @@ export const TRIPLE_CROWN_ARCHETYPES: Archetype[] = [
 export const ALL_ARCHETYPES: Archetype[] = [...ORIGINAL_ARCHETYPES, ...TRIPLE_CROWN_ARCHETYPES];
 
 /**
- * Get archetype by ID
+ * Get archetype by ID.
+ *
+ * @param id - The archetype ID to search for
+ * @returns The archetype with matching ID, or undefined
+ *
+ * @example
+ * const archetype = getArchetypeById("elite-turf-stayer");
  */
 export function getArchetypeById(id: string): Archetype | undefined {
   return ALL_ARCHETYPES.find((a) => a.id === id);
 }
 
 /**
- * Get archetypes by surface preference
+ * Get archetypes by surface preference.
+ *
+ * @param surface - The surface type to filter by
+ * @returns Array of archetypes that prefer the given surface
+ *
+ * @example
+ * const turfArchetypes = getArchetypesBySurface("Turf");
  */
 export function getArchetypesBySurface(
   surface: "Turf" | "Dirt" | "Synthetic" | "Versatile",

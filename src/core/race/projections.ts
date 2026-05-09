@@ -1,3 +1,13 @@
+/**
+ * projections.ts - Beyer projection calculations
+ *
+ * This file provides functions for calculating expected Beyer figures
+ * for horses in a race, used for race analysis and predictions.
+ *
+ * Dependencies: @/game/types (Horse, Race), @/game/gradedRaces (Grade), ./beyerProjections (calculateProjectedBeyer)
+ * Related files: races.tsx (uses for race display), store.ts (uses for race recommendations)
+ */
+
 import type { Horse, Race } from "@/game/types";
 import type { Grade } from "@/game/gradedRaces";
 import { calculateProjectedBeyer } from "./beyerProjections";
@@ -15,7 +25,19 @@ export interface BeyerProjection {
 }
 
 /**
- * Calculate Beyer projections for horses in a race
+ * Calculate Beyer projections for horses in a race.
+ *
+ * Returns a list of Beyer projections for owned horses in a race,
+ * blending model expectations with recent performance.
+ *
+ * @param horses - All horses in the race
+ * @param race - The race to project for
+ * @param ownedHorseIds - Set of owned horse IDs
+ * @param calibratedPars - Optional calibrated PAR values
+ * @returns Array of Beyer projections
+ *
+ * @example
+ * const projections = calculateBeyerProjections(horses, race, ownedIds);
  */
 export function calculateBeyerProjections(
   horses: Horse[],
@@ -37,7 +59,17 @@ export function calculateBeyerProjections(
 }
 
 /**
- * Format projection message for display
+ * Format projection message for display.
+ *
+ * Returns a human-readable string showing expected Beyer figures
+ * for owned horses in a race.
+ *
+ * @param projections - Array of Beyer projections
+ * @returns Formatted message string
+ *
+ * @example
+ * const message = formatProjectionMessage(projections);
+ * // Returns "Expected Beyer: Horse A: 95 Beyer, Horse B: 88 Beyer"
  */
 export function formatProjectionMessage(projections: BeyerProjection[]): string {
   if (projections.length === 0) {

@@ -1,3 +1,13 @@
+/**
+ * phases/purchaseResolution.ts - Purchase resolution phase
+ *
+ * This file provides the purchase resolution phase that converts PurchaseIntents
+ * into impacts (horse transfer from market to player).
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, PurchaseIntent), @/core/resolver/impacts/index (AnyImpact, HorseTransferImpact), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Purchase Resolution Phase
 // Converts PurchaseIntents into impacts (horse transfer from market to player)
 

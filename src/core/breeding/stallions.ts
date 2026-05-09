@@ -1,3 +1,14 @@
+/**
+ * stallions.ts - Stallion management and stud fee calculation
+ *
+ * This file provides functions for determining stallion eligibility, calculating
+ * stud fees, and managing stallion retirement decisions. It handles both player
+ * and NPC stallions with tier-based defaults.
+ *
+ * Dependencies: @/game/types (Horse, Hemisphere, GameState, StableTier, Stable), @/core/calendar/breedingCalendar (inBreedingSeason), @/core/horse/pricing (calculateBaseHorseValue), @/core/horse/gender (isMaleHorse)
+ * Related files: horseFactory.ts (uses shouldRetireAtStartup), pricing.ts (base value calculation)
+ */
+
 import type { Horse, Hemisphere, GameState, StableTier } from "@/game/types";
 import type { Stable } from "@/game/types";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
@@ -13,14 +24,39 @@ const STUD_DEFAULTS: Record<StableTier, { fee: number; bookSize: number }> = {
   budget: { fee: 2500, bookSize: 80 },
 };
 
+/**
+ * Get default stud parameters for a stable tier.
+ *
+ * Returns the default standing fee and book size for a given stable tier.
+ * Used for NPC stallions and as a baseline for player stallions.
+ *
+ * @param tier - The stable tier (defaults to "budget" if undefined)
+ * @returns Object with fee and bookSize
+ *
+ * @example
+ * const params = defaultStudParams("elite");
+ * // Returns { fee: 75000, bookSize: 180 }
+ */
 export function defaultStudParams(tier: StableTier | undefined): { fee: number; bookSize: number } {
   return STUD_DEFAULTS[tier ?? "budget"];
 }
 
-// Decide which NPC stallions stand at stud at world generation. Tier-driven
-// proportions: elite stables retire all male 5+ horses to stud, mid retire
-// most, budget retire some. Player horses never start at stud — that's the
-// player's call via the retireToStud action.
+/**
+ * Determine if an NPC horse should retire to stud at world generation.
+ *
+ * Tier-driven proportions: elite stables retire all male 5+ horses to stud,
+ * mid retire most, budget retire some. Player horses never start at stud —
+ * that's the player's call via the retireToStud action.
+ *
+ * @param horse - The horse to evaluate
+ * @param stable - The stable the horse belongs to
+ * @returns True if the horse should retire to stud at startup
+ *
+ * @example
+ * if (shouldRetireAtStartup(horse, stable)) {
+ *   horse.stud = { atStud: true, standingFee: ..., maxBookSize: ... };
+ * }
+ */
 export function shouldRetireAtStartup(horse: Horse, stable: Stable | undefined): boolean {
   if (!stable) return false;
   if (!isMaleHorse(horse.gender)) return false;
@@ -31,8 +67,19 @@ export function shouldRetireAtStartup(horse: Horse, stable: Stable | undefined):
 }
 
 /**
- * NPC stallions are retired based on performance and fame.
- * G1 winners are highly likely to stand at stud.
+ * Determine if a horse is suitable for standing at stud.
+ *
+ * NPC stallions are retired based on performance and fame. G1 winners are
+ * highly likely to stand at stud. This function evaluates whether a horse
+ * meets the criteria for stallion material based on race performance and fame.
+ *
+ * @param horse - The horse to evaluate
+ * @returns True if the horse is suitable for standing at stud
+ *
+ * @example
+ * if (isStallionMaterial(horse)) {
+ *   considerForStud(horse);
+ * }
  */
 export function isStallionMaterial(horse: Horse): boolean {
   if (!isMaleHorse(horse.gender)) return false;
@@ -55,7 +102,16 @@ export function isStallionMaterial(horse: Horse): boolean {
 
 /**
  * Recommended initial stud fee for a horse based on performance and value.
- * Used for both player and NPC retirement.
+ *
+ * Used for both player and NPC retirement. Calculates a fee based on the horse's
+ * market value, weighted heavily by G1 wins and graded stakes performance.
+ *
+ * @param horse - The horse to calculate the fee for
+ * @param stable - Optional stable for tier context
+ * @returns Recommended stud fee in dollars
+ *
+ * @example
+ * const fee = calculateRecommendedStudFee(horse, stable);
  */
 export function calculateRecommendedStudFee(horse: Horse, stable?: Stable): number {
   const baseValue = calculateBaseHorseValue(horse, stable?.tier || "mid");
@@ -87,6 +143,16 @@ export function calculateRecommendedStudFee(horse: Horse, stable?: Stable): numb
 
 /**
  * Recalculate standing fee after new progeny results or major wins.
+ *
+ * Adjusts the stallion's fee based on progeny performance stakes rate and G1 winners.
+ * Fees increase with successful progeny and decrease with age.
+ *
+ * @param horse - The stallion horse
+ * @param currentDay - Current game day
+ * @returns Recalculated standing fee in dollars
+ *
+ * @example
+ * const newFee = recalcStandingFee(stallion, currentDay);
  */
 export function recalcStandingFee(horse: Horse, currentDay: number): number {
   if (!horse.stud || !horse.stud.atStud) return 0;
@@ -115,7 +181,16 @@ export function recalcStandingFee(horse: Horse, currentDay: number): number {
 
 /**
  * valueOf — current financial value of the stallion to the stable.
- * Used for taxes, accounting, and AI buy/sell decisions.
+ *
+ * Used for taxes, accounting, and AI buy/sell decisions. Calculates the stallion's
+ * total value as base horse value plus stud income potential (valued at 2 years of stud revenue).
+ *
+ * @param horse - The stallion horse
+ * @param stable - The stable owning the horse
+ * @returns Total financial value in dollars
+ *
+ * @example
+ * const value = valueOf(stallion, stable);
  */
 export function valueOf(horse: Horse, stable: Stable): number {
   const baseValue = calculateBaseHorseValue(horse, stable.tier);
@@ -123,7 +198,7 @@ export function valueOf(horse: Horse, stable: Stable): number {
   if (!horse.stud || !horse.stud.atStud) return baseValue;
 
   // Stud value is heavily influenced by their book size and fee
-  const annualStudRevenue = horse.stud.standingFee * horse.stud.maxBookSize * 0.7; // 70% fill rate
+  const annualStudRevenue = horse.stud.standingFee * horse.stud.bookSize * 0.7; // 70% fill rate
   
   return baseValue + annualStudRevenue * 2; // Valued at base + 2 years of stud income
 }

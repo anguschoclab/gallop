@@ -1,3 +1,13 @@
+/**
+ * phases/npcClaiming.ts - NPC claiming phase
+ *
+ * This file provides the NPC claiming phase where NPC stables evaluate whether
+ * to file claims on horses entered in claiming races running today.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (Race, Claim, Horse, Stable), @/game/auction (calculateLotValuation), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { calculateLotValuation } from "@/game/auction";

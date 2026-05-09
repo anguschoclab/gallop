@@ -1,3 +1,13 @@
+/**
+ * raceNameGenerator.ts - Race name generation
+ *
+ * This file generates realistic, unique race names for non-graded races
+ * across all regions, inspired by real-world naming conventions.
+ *
+ * Dependencies: @/game/types (RaceClass, ClaimingPrice, WinCondition, RegionalSystem), @/game/tracks (Track), @/game/rng (Rng), ./namePools (getRandomSponsor, getRandomLocation, getRandomEvent, getRandomAdjective)
+ * Related files: Used throughout race generation systems
+ */
+
 // Race Name Generator
 // Generates realistic, unique race names for non-graded races across all regions
 // Inspired by real-world naming conventions
@@ -24,12 +34,30 @@ export interface RaceNameParams {
   rng?: Rng;
 }
 
-// Format claiming price for display
+/**
+ * Format claiming price for display.
+ *
+ * @param price - The claiming price
+ * @returns Formatted price string
+ *
+ * @example
+ * const formatted = formatClaimingPrice(10000);
+ * // Returns "$10,000"
+ */
 export function formatClaimingPrice(price: ClaimingPrice): string {
   return `$${price.toLocaleString()}`;
 }
 
-// Format win condition for display
+/**
+ * Format win condition for display.
+ *
+ * @param condition - The win condition
+ * @returns Formatted condition string
+ *
+ * @example
+ * const formatted = formatWinCondition("N1X");
+ * // Returns "N1X"
+ */
 export function formatWinCondition(condition: WinCondition): string {
   const conditionMap: Record<WinCondition, string> = {
     none: "",
@@ -43,7 +71,18 @@ export function formatWinCondition(condition: WinCondition): string {
   return conditionMap[condition] || "";
 }
 
-// Generate race class abbreviation
+/**
+ * Generate race class abbreviation.
+ *
+ * Returns a shortened form of the race class for display purposes.
+ *
+ * @param raceClass - The race class
+ * @returns Abbreviated class string
+ *
+ * @example
+ * const abbr = getRaceClassAbbreviation("Maiden");
+ * // Returns "Mdn"
+ */
 export function getRaceClassAbbreviation(raceClass: RaceClass): string {
   const abbreviations: Record<RaceClass, string> = {
     Maiden: "Mdn",
@@ -78,7 +117,18 @@ type NamingPattern =
   | "simple_type" // Maiden Claiming
   | "legacy"; // Churchill Cup
 
-// Determine regional system from track
+/**
+ * Determine regional system from track.
+ *
+ * Maps a track's country to its regional naming system (north_america, europe,
+ * asia, south_america, australia).
+ *
+ * @param track - The track to map
+ * @returns Regional system identifier
+ *
+ * @example
+ * const region = getRegionalSystem(track);
+ */
 export function getRegionalSystem(track: Track): RegionalSystem {
   // Map country to regional system
   const countryToRegion: Record<string, RegionalSystem> = {
@@ -333,7 +383,19 @@ function ensureUnique(name: string, usedNames: Set<string>): string {
   return `${name} ${counter}`;
 }
 
-// Main race name generator
+/**
+ * Main race name generator.
+ *
+ * Generates a unique, realistic race name based on track, race class,
+ * regional naming conventions, and optional parameters like claiming price
+ * and win conditions.
+ *
+ * @param params - Race name generation parameters
+ * @returns Generated race name
+ *
+ * @example
+ * const name = generateRaceName({ track, raceClass: "Allowance", rng });
+ */
 export function generateRaceName(params: RaceNameParams): string {
   const { track, usedNames = new Set<string>(), rng } = params;
 
@@ -367,7 +429,20 @@ export function generateRaceName(params: RaceNameParams): string {
   return name;
 }
 
-// Generate multiple unique race names for a race card
+/**
+ * Generate multiple unique race names for a race card.
+ *
+ * Generates unique race names for a list of race classes, ensuring no
+ * duplicates within the same race card.
+ *
+ * @param track - The track hosting the races
+ * @param raceClasses - List of race classes to generate names for
+ * @param additionalParams - Additional generation parameters
+ * @returns Array of unique race names
+ *
+ * @example
+ * const names = generateRaceCardNames(track, ["Maiden", "Allowance", "Stakes"]);
+ */
 export function generateRaceCardNames(
   track: Track,
   raceClasses: RaceClass[],

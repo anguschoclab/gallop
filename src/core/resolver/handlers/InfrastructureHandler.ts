@@ -1,3 +1,12 @@
+/**
+ * handlers/InfrastructureHandler.ts - Infrastructure impact handler
+ *
+ * This file handles infrastructure-related impacts including facility upgrades and staff.
+ *
+ * Dependencies: immer (WritableDraft), @/game/types (GameState), ../impacts (AnyImpact), ./types (ImpactHandler)
+ * Related files: ../resolver.ts (uses handler), ../impacts/miscImpacts.ts (provides impact types)
+ */
+
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";

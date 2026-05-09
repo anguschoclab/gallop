@@ -1,3 +1,13 @@
+/**
+ * validators/index.ts - Intent validators
+ *
+ * This file exports all intent validators for the resolver system.
+ * Validators check if intents are valid before processing.
+ *
+ * Dependencies: ./TrainingValidator, ./RacingValidator, ./BreedingValidator, ./MarketValidator, ./types (IntentValidator)
+ * Related files: ../resolver.ts (uses ALL_VALIDATORS), ../intents.ts (provides intent types)
+ */
+
 import { TrainingValidator } from "./TrainingValidator";
 import { RacingValidator } from "./RacingValidator";
 import { BreedingValidator } from "./BreedingValidator";

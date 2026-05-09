@@ -1,4 +1,14 @@
 /**
+ * auctionAI.ts - Auction AI system
+ *
+ * This file provides learning from auction outcomes, strategic bidding,
+ * and portfolio management for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Stable, AuctionLot), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating)
+ * Related files: npcCycleAI.ts (uses auction AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Auction AI System
  * Learning from auction outcomes, strategic bidding, portfolio management
  */

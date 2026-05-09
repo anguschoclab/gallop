@@ -1,3 +1,14 @@
+/**
+ * impacts/horseImpacts.ts - Horse impact types
+ *
+ * This file provides horse-related impact types including stat changes, energy changes,
+ * form changes, fame changes, horse creation, horse transfer, gelding, renaming,
+ * aging, health status changes, pasture retirement, horse death, injury, and season history.
+ *
+ * Dependencies: ./base (Impact), @/game/types (Horse, HealthStatus), ../../history/historyTypes (SeasonRecord, HallOfFameEntry)
+ * Related files: ../handlers/HorseHandler.ts (handles impacts), ./index.ts (exports types)
+ */
+
 import type { Impact } from "./base";
 import type { Horse, HealthStatus } from "@/game/types";
 import type { SeasonRecord, HallOfFameEntry } from "../../history/historyTypes";

@@ -1,3 +1,13 @@
+/**
+ * intents.ts - Intent type definitions
+ *
+ * This file provides intent type definitions for the impact resolver system.
+ * All player and NPC actions generate intents instead of mutating state directly.
+ *
+ * Dependencies: @/game/types (Horse, Race, Jockey)
+ * Related files: resolver.ts (uses intents), handlers/ (handle intents), validators/ (validate intents)
+ */
+
 // Intent type definitions for the impact resolver system
 // All player and NPC actions generate intents instead of mutating state directly
 

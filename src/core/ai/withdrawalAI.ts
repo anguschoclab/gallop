@@ -1,4 +1,14 @@
 /**
+ * withdrawalAI.ts - Withdrawal AI system
+ *
+ * This file provides risk assessment and strategic management of race
+ * withdrawals for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable), ./personalitySystem (getPersonalityAIState), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating)
+ * Related files: npcCycleAI.ts (uses withdrawal AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Withdrawal AI System
  * Risk assessment, strategic management of race withdrawals
  */

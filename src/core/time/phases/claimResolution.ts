@@ -1,3 +1,13 @@
+/**
+ * phases/claimResolution.ts - Claim resolution phase
+ *
+ * This file provides the claim resolution phase that settles all claims after
+ * races have been resolved, including cash transfers and horse ownership transfers.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (Race, Claim, Horse, Stable), @/game/auction (netProceeds), @/game/rng (hashStr), @/game/uuid (generateUUID), @/lib/formatting (formatCurrency)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { netProceeds } from "@/game/auction";

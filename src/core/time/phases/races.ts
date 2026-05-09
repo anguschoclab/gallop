@@ -1,3 +1,13 @@
+/**
+ * phases/races.ts - Race generation and pruning phase
+ *
+ * This file provides the race generation and pruning phase that pre-populates
+ * graded stakes on year transition and generates upcoming track races daily.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/store/helpers/market (generateUpcomingRaces, pruneOldRaces), @/game/raceSchedule (generateAnnualCalendar, getCurrentYear)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { generateUpcomingRaces, pruneOldRaces } from "@/game/store/helpers/market";
 import { generateAnnualCalendar, getCurrentYear } from "@/game/raceSchedule";

@@ -1,3 +1,13 @@
+/**
+ * stableGeneration.ts - Stable generation
+ *
+ * This file provides functions for generating random stable names, owner names,
+ * and filler stables with procedurally generated properties.
+ *
+ * Dependencies: @/game/types (Stable, StableTier, StablePersonality), @/game/rng (Rng), @/game/uuid (generateUUID), ./stableSelection (selectPersonality, getSpecialistPreferences), @/core/horse/visuals (randomSilk), ./stablePoolData (FILLER_PREFIXES, FILLER_SUFFIXES, FILLER_OWNERS, FILLER_COUNTRIES, StablePoolEntry)
+ * Related files: stablePoolData.ts (provides pool data), stableSelection.ts (provides selection logic)
+ */
+
 import type { Stable, StableTier, StablePersonality } from "@/game/types";
 import type { Rng } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";

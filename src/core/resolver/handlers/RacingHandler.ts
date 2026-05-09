@@ -1,3 +1,14 @@
+/**
+ * handlers/RacingHandler.ts - Racing impact handler
+ *
+ * This file handles racing-related impacts including race entry, race withdrawal,
+ * race results, jockey contracts, jockey assignments, jockey silks, jockey stats,
+ * race history, claiming, triple crown progress, and tactics.
+ *
+ * Dependencies: immer (WritableDraft), @/game/types (GameState), ../impacts (AnyImpact), ./types (ImpactHandler)
+ * Related files: ../resolver.ts (uses handler), ../impacts/raceImpacts.ts (provides impact types)
+ */
+
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
