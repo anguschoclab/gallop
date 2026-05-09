@@ -18,6 +18,7 @@ export const Route = createFileRoute("/recap")({
 function RecapPage() {
   const races = useGame((s) => s.races);
   const horses = useGame((s) => s.horses);
+  const calibratedPars = useGame((s) => s.calibratedPars);
   const day = useGame((s) => s.day);
 
   // Get resolved graded races from the past 7 days
@@ -71,7 +72,12 @@ function RecapPage() {
                 const horse = horses.find((h) => h.id === result.horseId);
                 if (!horse) return null;
                 const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
-                const beyer = calculateBeyerForResult(race.distance, result.time, classBonus);
+                const beyer = calculateBeyerForResult(
+                  race.distance,
+                  result.time,
+                  classBonus,
+                  calibratedPars,
+                );
                 return { horse, result, beyer };
               })
               .filter((f): f is NonNullable<typeof f> => f !== null);

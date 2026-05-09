@@ -20,7 +20,6 @@ import { wrap, expose, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
-import { setCalibratedPars } from "@/game/beyer";
 import type { StoreType, NewGameOptions } from "./types";
 import type { AnyIntent } from "@/core/resolver/intents";
 
@@ -199,9 +198,6 @@ export const useGame = create<StoreType>()(
         await initInitializationWorker();
 
         hydrationComplete.value = true;
-        if (state?.calibratedPars) {
-          setCalibratedPars(state.calibratedPars);
-        }
       },
     },
   ),

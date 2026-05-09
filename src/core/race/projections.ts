@@ -21,11 +21,12 @@ export function calculateBeyerProjections(
   horses: Horse[],
   race: Race,
   ownedHorseIds: Set<string>,
+  calibratedPars: Record<number, number> = {},
 ): BeyerProjection[] {
   return horses
     .filter((horse) => ownedHorseIds.has(horse.id))
     .map((horse) => {
-      const expectedBeyer = calculateProjectedBeyer(horse, race);
+      const expectedBeyer = calculateProjectedBeyer(horse, race, calibratedPars);
       return {
         horseId: horse.id,
         horseName: horse.name,

@@ -123,6 +123,7 @@ export const raceResolutionPhase: PipelinePhase = {
         hiredStaff: state.hiredStaff ?? [],
         rng,
         snapshots,
+        calibratedPars: state.calibratedPars || {},
       });
 
       for (const impact of raceImpacts) {

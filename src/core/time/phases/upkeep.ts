@@ -110,10 +110,6 @@ export const upkeepPhase = {
 
     if (state.npcAIManager) {
       const aiManager = state.npcAIManager; // Capture to satisfy TypeScript
-      // Ensure stableStates is a Map (it may have been serialized to an object)
-      if (!(aiManager.stableStates instanceof Map)) {
-        aiManager.stableStates = new Map(Object.entries(aiManager.stableStates || {}));
-      }
       npcStables = state.npcStables.map((stable) => {
         const aiState = getOrCreateStableAIState(aiManager, stable, newDay);
         if (!aiState.upkeepAI) {

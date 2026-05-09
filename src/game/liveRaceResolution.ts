@@ -43,6 +43,7 @@ export function resolveLiveRaceWithImpacts(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   npcStables: any[],
   day: number,
+  calibratedPars: Record<number, number> = {},
 ): ResolverContext {
   if (race.resolved) {
     return {
@@ -114,7 +115,12 @@ export function resolveLiveRaceWithImpacts(
     }
 
     // Beyer calculation with inbreeding dampener
-    const beyer = beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
+    const beyer = beyerFigure({
+      distance: race.distance,
+      finishTime: r.time,
+      classBonus,
+      calibratedPars,
+    });
     const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
     const dampener = inbreedingPerformanceDampener(inbreedingPattern);
     const adjustedBeyer = Math.max(0, beyer - dampener);

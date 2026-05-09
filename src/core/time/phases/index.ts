@@ -32,6 +32,7 @@ import { managementResolutionPhase } from "./managementResolution";
 import { npcClaimingPhase } from "./npcClaiming";
 import { raceResolutionPhase } from "./raceResolution";
 import { claimResolutionPhase } from "./claimResolution";
+import { archivingPhase } from "./archivingPhase";
 import { impactApplicationPhase } from "./impactApplication";
 
 /**
@@ -80,6 +81,8 @@ export const GAME_PIPELINE_PHASES = [
   raceResolutionPhase,
   // Claim resolution (after raceResolution)
   claimResolutionPhase,
+  // Archiving phase (before impact application)
+  archivingPhase,
   // Impact application phase (final)
   impactApplicationPhase,
 ];

@@ -5,11 +5,14 @@
  */
 
 import { expose, proxy } from "comlink";
+import { produceWithPatches, enablePatches, type Patch } from "immer";
 import type { GameState } from "@/game/types";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
+
+enablePatches();
 
 export type AdvanceDayInput = {
   state: GameState;
@@ -18,7 +21,7 @@ export type AdvanceDayInput = {
 };
 
 export type AdvanceDayOutput = {
-  state: GameState;
+  patches: Patch[];
   logs: { day: number; text: string }[];
 };
 
@@ -43,73 +46,84 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     });
   }
 
-  // Setup pipeline context
-  const pipelineContext: PipelineContext = {
-    previousDay,
-    newDay,
-    state: { ...state, horses },
-    logs: [],
-    dailyRng: createRng(hashStr("daily_" + newDay)),
-    intents: state.pendingIntents || [],
-    impacts: [],
-    impactLog: [],
-  };
+  // Setup initial state for produceWithPatches
+  const initialState = { ...state, horses };
 
-  // Execute pipeline with progress callbacks
-  let currentContext = pipelineContext;
-  const totalStages = 5;
+  const [_, patches] = produceWithPatches(initialState, (draft) => {
+    // Setup pipeline context using the draft state
+    const pipelineContext: PipelineContext = {
+      previousDay,
+      newDay,
+      state: draft as GameState,
+      logs: [],
+      dailyRng: createRng(hashStr("daily_" + newDay)),
+      intents: draft.pendingIntents || [],
+      impacts: [],
+      impactLog: [],
+    };
 
-  // Stage 1: Intent processing + early expiry (phases 1-10)
-  if (progressCallback) {
-    progressCallback(1, totalStages, "Intent processing");
-  }
-  currentContext = executePipeline(
-    GAME_PIPELINE_PHASES.filter((p) => p.order >= 1 && p.order <= 10),
-    currentContext,
-  );
+    // Execute pipeline with progress callbacks
+    let currentContext = pipelineContext;
+    const totalStages = 5;
 
-  // Stage 2: Resolution intents (phases 15-45)
-  if (progressCallback) {
-    progressCallback(2, totalStages, "Resolution intents");
-  }
-  currentContext = executePipeline(
-    GAME_PIPELINE_PHASES.filter((p) => p.order >= 15 && p.order <= 45),
-    currentContext,
-  );
+    // Stage 1: Intent processing + early expiry (phases 1-10)
+    if (progressCallback) {
+      progressCallback(1, totalStages, "Intent processing");
+    }
+    currentContext = executePipeline(
+      GAME_PIPELINE_PHASES.filter((p) => p.order >= 1 && p.order <= 10),
+      currentContext,
+    );
 
-  // Stage 3: Core simulation (phases 50-95)
-  if (progressCallback) {
-    progressCallback(3, totalStages, "Core simulation");
-  }
-  currentContext = executePipeline(
-    GAME_PIPELINE_PHASES.filter((p) => p.order >= 50 && p.order <= 95),
-    currentContext,
-  );
+    // Stage 2: Resolution intents (phases 15-45)
+    if (progressCallback) {
+      progressCallback(2, totalStages, "Resolution intents");
+    }
+    currentContext = executePipeline(
+      GAME_PIPELINE_PHASES.filter((p) => p.order >= 15 && p.order <= 45),
+      currentContext,
+    );
 
-  // Stage 4: Lifecycle (phases 100-160)
-  if (progressCallback) {
-    progressCallback(4, totalStages, "Lifecycle");
-  }
-  currentContext = executePipeline(
-    GAME_PIPELINE_PHASES.filter((p) => p.order >= 100 && p.order <= 160),
-    currentContext,
-  );
+    // Stage 3: Core simulation (phases 50-95)
+    if (progressCallback) {
+      progressCallback(3, totalStages, "Core simulation");
+    }
+    currentContext = executePipeline(
+      GAME_PIPELINE_PHASES.filter((p) => p.order >= 50 && p.order <= 95),
+      currentContext,
+    );
 
-  // Stage 5: Final resolution (phases 67-200)
-  if (progressCallback) {
-    progressCallback(5, totalStages, "Final resolution");
-  }
-  currentContext = executePipeline(
-    GAME_PIPELINE_PHASES.filter((p) => p.order >= 67 && p.order <= 200),
-    currentContext,
-  );
+    // Stage 4: Lifecycle (phases 100-160)
+    if (progressCallback) {
+      progressCallback(4, totalStages, "Lifecycle");
+    }
+    currentContext = executePipeline(
+      GAME_PIPELINE_PHASES.filter((p) => p.order >= 100 && p.order <= 160),
+      currentContext,
+    );
 
-  // Extract final state from pipeline context
-  const { state: finalState, logs: newLogs } = currentContext;
+    // Stage 5: Final resolution (phases 67-200)
+    if (progressCallback) {
+      progressCallback(5, totalStages, "Final resolution");
+    }
+    currentContext = executePipeline(
+      GAME_PIPELINE_PHASES.filter((p) => p.order >= 67 && p.order <= 200),
+      currentContext,
+    );
+
+    // Sync the draft state with the final pipeline state
+    Object.assign(draft, currentContext.state);
+
+    // Return the logs through a side channel since patches don't include them
+    return currentContext.logs as any;
+  });
+
+  // Extract logs from the produceWithPatches result (immer returns what the producer returns)
+  const logs = _ as any as { day: number; text: string }[];
 
   return {
-    state: finalState,
-    logs: newLogs,
+    patches,
+    logs,
   };
 }
 

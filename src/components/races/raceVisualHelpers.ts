@@ -145,12 +145,13 @@ export function projectedBeyer(
   distance: number,
   simTime: number,
   classBonus: number,
+  calibratedPars: Record<number, number> = {},
 ): number | null {
   if (r.finishTime !== null) {
-    return beyerFigure({ distance, finishTime: r.finishTime, classBonus });
+    return beyerFigure({ distance, finishTime: r.finishTime, classBonus, calibratedPars });
   }
   if (r.position <= 0 || r.velocity <= 0.5) return null;
   const remaining = distance - r.position;
   const projFinish = simTime + remaining / r.velocity;
-  return beyerFigure({ distance, finishTime: projFinish, classBonus });
+  return beyerFigure({ distance, finishTime: projFinish, classBonus, calibratedPars });
 }

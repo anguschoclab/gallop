@@ -199,7 +199,7 @@ export function runNpcRaceEntry(
         // Calculate tactics for NPC entry
         let tactics = "default";
         if (aiManager && jockey) {
-          const stableState = aiManager.stableStates.get(stable.id);
+          const stableState = aiManager.stableStates[stable.id];
           if (stableState?.jockeyStrategyAI) {
             tactics = calculateOptimalTactics(
               stableState.jockeyStrategyAI,

@@ -2,8 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   beyerFigure,
   distanceBucket,
-  setCalibratedPars,
-  getCalibratedPars,
   parTime,
   expectedBeyer,
   calculateBeyerForResult,
@@ -65,42 +63,21 @@ describe("distanceBucket", () => {
   });
 });
 
-describe("setCalibratedPars + getCalibratedPars", () => {
-  it("round-trips stored pars", () => {
-    setCalibratedPars({ 1600: 95, 2000: 120 });
-    const pars = getCalibratedPars();
-    expect(pars[1600]).toBe(95);
-    expect(pars[2000]).toBe(120);
-  });
-
-  it("overwriting clears previous values", () => {
-    setCalibratedPars({ 1200: 72 });
-    const pars = getCalibratedPars();
-    expect(pars[1600]).toBeUndefined();
-    expect(pars[1200]).toBe(72);
-    // Reset for other tests
-    setCalibratedPars({});
-  });
-});
-
 describe("parTime", () => {
   it("no calibration → falls back to distance / 16.7", () => {
-    setCalibratedPars({});
-    expect(parTime(1600)).toBeCloseTo(1600 / 16.7, 1);
+    expect(parTime(1600, {})).toBeCloseTo(1600 / 16.7, 1);
   });
 
   it("uses calibrated par when available", () => {
-    setCalibratedPars({ 1600: 90 });
-    expect(parTime(1600)).toBeCloseTo(90, 1);
-    setCalibratedPars({});
+    const pars = { 1600: 90 };
+    expect(parTime(1600, pars)).toBeCloseTo(90, 1);
   });
 
   it("blends from neighbor bucket when direct bucket missing", () => {
-    setCalibratedPars({ 1400: 84 }); // neighbor of 1600
-    const t = parTime(1600);
+    const pars = { 1400: 84 }; // neighbor of 1600
+    const t = parTime(1600, pars);
     expect(t).toBeGreaterThan(0);
     expect(Number.isFinite(t)).toBe(true);
-    setCalibratedPars({});
   });
 });
 

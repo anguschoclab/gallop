@@ -27,6 +27,13 @@ export interface CoreState {
   seasonRecords: SeasonRecord[];
   /** Legendary horses preserved for history */
   hallOfFame: HallOfFameEntry[];
+  /** Historical data moved out of active state for performance */
+  archive: {
+    horses: Horse[];
+    races: Race[];
+    pregnancies: any[];
+    news: NewsItem[];
+  };
 }
 
 /**
@@ -72,6 +79,12 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
       ],
       seasonRecords: [],
       hallOfFame: [],
+      archive: {
+        horses: [],
+        races: [],
+        pregnancies: [],
+        news: [],
+      },
     };
   }
 
@@ -94,5 +107,11 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
     ],
     seasonRecords: [],
     hallOfFame: [],
+    archive: {
+      horses: [],
+      races: [],
+      pregnancies: [],
+      news: [],
+    },
   };
 }
