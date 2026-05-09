@@ -7,41 +7,7 @@
 import { expose, proxy } from "comlink";
 import type { GameState } from "@/game/types";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
-import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
-import { intentValidationPhase } from "@/core/time/phases/intentValidation";
-import { upkeepPhase } from "@/core/time/phases/upkeep";
-import { agingPhase } from "@/core/time/phases/aging";
-import { breedingSeasonPhase } from "@/core/time/phases/breedingSeason";
-import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
-import { npcBreedingPhase } from "@/core/time/phases/npcBreedingPhase";
-import { energyPhase } from "@/core/time/phases/energy";
-import { marketPhase } from "@/core/time/phases/market";
-import { racesPhase } from "@/core/time/phases/races";
-import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
-import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
-import { pregnancyPhase } from "@/core/time/phases/pregnancy";
-import { npcCyclePhase } from "@/core/time/phases/npcCycle";
-import { stallionRetirementPhase } from "@/core/time/phases/stallionRetirement";
-import { pastureRetirementPhase } from "@/core/time/phases/pastureRetirement";
-import { hallOfFamePhase } from "@/core/time/phases/hallOfFame";
-import { horseDeathPhase } from "@/core/time/phases/horseDeath";
-import { auctionsPhase } from "@/core/time/phases/auctions";
-import { leaderboardPhase } from "@/core/time/phases/leaderboardPhase";
-import { awardsPhase } from "@/core/time/phases/awards";
-import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
-import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
-import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
-import { consignmentResolutionPhase } from "@/core/time/phases/consignmentResolution";
-import { purchaseResolutionPhase } from "@/core/time/phases/purchaseResolution";
-import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
-import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
-import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
-import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
-import { privateSaleExpiryPhase } from "@/core/time/phases/privateSaleExpiry";
-import { npcClaimingPhase } from "@/core/time/phases/npcClaiming";
-import { claimResolutionPhase } from "@/core/time/phases/claimResolution";
-import { managementResolutionPhase } from "@/core/time/phases/managementResolution";
+import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
 
@@ -89,52 +55,6 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     impactLog: [],
   };
 
-  // Define phases array with all game phases
-  const phases = [
-    // Intent/impact resolver phases
-    intentCollectionPhase,
-    intentValidationPhase,
-    // D2 — Private sale offer expiry (very early, order 3)
-    privateSaleExpiryPhase,
-    // Existing phases
-    upkeepPhase,
-    agingPhase,
-    breedingSeasonPhase,
-    industryMetricsPhase,
-    npcBreedingPhase,
-    energyPhase,
-    marketPhase,
-    racesPhase,
-    beyerRecalibrationPhase,
-    jockeyPhase,
-    pregnancyPhase,
-    npcCyclePhase,
-    stallionRetirementPhase,
-    pastureRetirementPhase,
-    hallOfFamePhase,
-    horseDeathPhase,
-    auctionsPhase,
-    leaderboardPhase,
-    awardsPhase,
-    schedulerPhase,
-    stateUpdatePhase,
-    // Resolution phases (convert intents to impacts)
-    raceEntryResolutionPhase,
-    consignmentResolutionPhase,
-    purchaseResolutionPhase,
-    breedingResolutionPhase,
-    trainingResolutionPhase,
-    claimingWithdrawalPhase,
-    managementResolutionPhase,
-    // D3 — NPC claim filing (order 62, before raceResolution)
-    npcClaimingPhase,
-    raceResolutionPhase,
-    // D3 — Claim resolution (order 75, after raceResolution)
-    claimResolutionPhase,
-    // Impact application phase (final)
-    impactApplicationPhase,
-  ];
-
   // Execute pipeline with progress callbacks
   let currentContext = pipelineContext;
   const totalStages = 5;
@@ -144,7 +64,7 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     progressCallback(1, totalStages, "Intent processing");
   }
   currentContext = executePipeline(
-    phases.filter((p) => p.order >= 1 && p.order <= 10),
+    GAME_PIPELINE_PHASES.filter((p) => p.order >= 1 && p.order <= 10),
     currentContext,
   );
 
@@ -153,7 +73,7 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     progressCallback(2, totalStages, "Resolution intents");
   }
   currentContext = executePipeline(
-    phases.filter((p) => p.order >= 15 && p.order <= 45),
+    GAME_PIPELINE_PHASES.filter((p) => p.order >= 15 && p.order <= 45),
     currentContext,
   );
 
@@ -162,7 +82,7 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     progressCallback(3, totalStages, "Core simulation");
   }
   currentContext = executePipeline(
-    phases.filter((p) => p.order >= 50 && p.order <= 95),
+    GAME_PIPELINE_PHASES.filter((p) => p.order >= 50 && p.order <= 95),
     currentContext,
   );
 
@@ -171,7 +91,7 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     progressCallback(4, totalStages, "Lifecycle");
   }
   currentContext = executePipeline(
-    phases.filter((p) => p.order >= 100 && p.order <= 160),
+    GAME_PIPELINE_PHASES.filter((p) => p.order >= 100 && p.order <= 160),
     currentContext,
   );
 
@@ -180,7 +100,7 @@ async function advanceDay(input: AdvanceDayInput): Promise<AdvanceDayOutput> {
     progressCallback(5, totalStages, "Final resolution");
   }
   currentContext = executePipeline(
-    phases.filter((p) => p.order >= 67 && p.order <= 200),
+    GAME_PIPELINE_PHASES.filter((p) => p.order >= 67 && p.order <= 200),
     currentContext,
   );
 
