@@ -13,8 +13,15 @@ import { getOrDeriveAppearance } from "@/core/horse/proceduralPortrait";
 
 /**
  * Render a procedural horse portrait to a PNG and trigger a download.
+ *
  * Works fully client-side: serializes the rendered SVG, draws it onto a
  * canvas at the requested resolution, and saves via an anchor click.
+ *
+ * @param horse - Horse object with id, name, coatColor, markings, gender, and appearance
+ * @param options.view - View type: "head" or "full" (defaults to "full")
+ * @param options.size - Image size in pixels (defaults to 1024)
+ * @param options.filename - Optional custom filename (defaults to "{name}_{view}.png")
+ * @returns Promise that resolves when the download is triggered
  */
 export async function exportHorsePortraitPng(
   horse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance">,

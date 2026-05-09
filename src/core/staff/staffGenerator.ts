@@ -19,7 +19,15 @@ const SPECIALIZED_TRAITS: Record<StaffRole, string[]> = {
 };
 
 /**
- * Generate a random staff member
+ * Generate a random staff member.
+ *
+ * Creates a staff member with role, tier, name, salary, bonus value, traits, and fame.
+ * If role or tier are not provided, they are randomly selected based on weighted distributions.
+ *
+ * @param rng - Random number generator
+ * @param role - Optional staff role (veterinarian, farrier, nutritionist, groom, trainer)
+ * @param tier - Optional staff tier (budget, mid, elite)
+ * @returns Generated staff member
  */
 export function generateStaffMember(rng: Rng, role?: StaffRole, tier?: StaffTier): StaffMember {
   const chosenRole = role || rng.pick(['veterinarian', 'farrier', 'nutritionist', 'groom', 'trainer']) as StaffRole;
@@ -54,7 +62,13 @@ export function generateStaffMember(rng: Rng, role?: StaffRole, tier?: StaffTier
 }
 
 /**
- * Generate a pool of staff available for hire
+ * Generate a pool of staff available for hire.
+ *
+ * Creates a collection of staff members that can be hired by stables.
+ *
+ * @param rng - Random number generator
+ * @param count - Number of staff members to generate (defaults to 8)
+ * @returns Array of staff members available for hire
  */
 export function generateStaffPool(rng: Rng, count: number = 8): StaffMember[] {
   const pool: StaffMember[] = [];

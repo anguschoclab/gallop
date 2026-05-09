@@ -1,0 +1,137 @@
+import { useState, useEffect, useRef } from "react";
+import { computePaceContext, stepRunner, type Runner } from "@/game/raceSim";
+import type { NarrativeGenerator } from "@/services/narrativeService";
+import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
+
+/**
+ * Hook to manage the complex race simulation loop using requestAnimationFrame.
+ * 
+ * @param race The race being simulated.
+ * @param runners The field of runners in the race.
+ * @param resolveRaceWithImpacts Callback to finalize race results in the store.
+ * @param narrativeRef Reference to the narrative generator service.
+ * @param messageQueue Reference to the commentary message queue.
+ * @param rngRef Reference to the random number generator for the race.
+ * @returns An object containing simulation state (tick, finished, paused, speed) and controls.
+ */
+export function useLiveRaceSimulation({
+  race,
+  runners,
+  resolveRaceWithImpacts,
+  narrativeRef,
+  messageQueue,
+  rngRef,
+}: {
+  race: any;
+  runners: Runner[];
+  resolveRaceWithImpacts: (raceId: string, finishOrder: any[]) => void;
+  narrativeRef: React.MutableRefObject<NarrativeGenerator | null>;
+  messageQueue: React.MutableRefObject<CommentaryLine[]>;
+  rngRef: React.MutableRefObject<any>;
+}) {
+  const [tick, setTick] = useState(0);
+  const [speed, setSpeed] = useState(1);
+  const [finished, setFinished] = useState(false);
+  const [paused, setPaused] = useState(false);
+
+  const simTimeRef = useRef(0);
+  const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
+  const speedRef = useRef(speed);
+  const pausedRef = useRef(paused);
+
+  // Sync refs with state
+  useEffect(() => {
+    speedRef.current = speed;
+  }, [speed]);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
+
+  useEffect(() => {
+    if (!race || race.resolved) return;
+    
+    let raf = 0;
+    let last = performance.now();
+    const FIXED_DT = 0.05;
+    let accumulator = 0;
+    const MAX_STEPS_PER_FRAME = 64;
+
+    const loop = (now: number) => {
+      const real = (now - last) / 1000;
+      last = now;
+      
+      if (!pausedRef.current) {
+        accumulator += real * speedRef.current;
+      }
+      
+      let stillRunning = runners.some((r) => r.finishTime === null);
+      let steps = 0;
+      
+      while (accumulator >= FIXED_DT && stillRunning && steps < MAX_STEPS_PER_FRAME) {
+        accumulator -= FIXED_DT;
+        simTimeRef.current += FIXED_DT;
+        steps++;
+        stillRunning = false;
+        
+        const pace = computePaceContext(runners, race.distance);
+        
+        if (narrativeRef.current) {
+          const newCommentary = narrativeRef.current.update(
+            runners,
+            simTimeRef.current,
+            pace.pacePressure,
+          );
+          if (newCommentary.length > 0) {
+            messageQueue.current.push(...newCommentary);
+          }
+        }
+        
+        for (const r of runners) {
+          if (r.finishTime === null) {
+            stepRunner(
+              r,
+              FIXED_DT,
+              simTimeRef.current,
+              race.distance,
+              rngRef.current!,
+              runners,
+              pace,
+            );
+            if (r.finishTime !== null) {
+              finishOrderRef.current.push({
+                horseId: r.horseId,
+                position: finishOrderRef.current.length + 1,
+                time: r.finishTime,
+              });
+            } else {
+              stillRunning = true;
+            }
+          }
+        }
+      }
+      
+      setTick((t) => t + 1);
+      
+      if (stillRunning) {
+        raf = requestAnimationFrame(loop);
+      } else {
+        setFinished(true);
+        resolveRaceWithImpacts(race.id, finishOrderRef.current);
+      }
+    };
+    
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [race, runners, resolveRaceWithImpacts, narrativeRef, messageQueue, rngRef]);
+
+  return {
+    tick,
+    speed,
+    setSpeed,
+    finished,
+    paused,
+    setPaused,
+    simTime: simTimeRef.current,
+  };
+}

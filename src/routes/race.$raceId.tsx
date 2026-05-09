@@ -20,7 +20,6 @@ import {
   rngForRace,
   type RaceSimulationDependencies,
 } from "@/services/raceSimulationService";
-import type { Weather } from "@/game/types";
 import { Pause, Play, Camera } from "lucide-react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { NarrativeGenerator } from "@/services/narrativeService";
@@ -37,6 +36,10 @@ import {
 } from "@/components/races/raceVisualHelpers";
 import { BroadcastCommentary } from "@/components/races/BroadcastCommentary";
 import { RaceVisualizer } from "@/components/race/RaceVisualizer";
+import { useLiveRaceSimulation } from "@/hooks/useLiveRaceSimulation";
+import { ResultOverlay } from "@/components/race/ResultOverlay";
+import { SilkDot } from "@/components/SilkDot";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -71,10 +74,23 @@ function LiveRace() {
   });
   const rngRef = useRef(race ? rngForRace(race) : null);
 
-  const [tick, setTick] = useState(0);
-  const [speed, setSpeed] = useState(1);
-  const [finished, setFinished] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const narrativeRef = useRef<NarrativeGenerator | null>(null);
+  const messageQueue = useRef<CommentaryLine[]>([]);
+  const lastMessageTime = useRef<number>(0);
+
+  if (!narrativeRef.current && race) {
+    narrativeRef.current = new NarrativeGenerator(race, horses, stables, rngRef.current!);
+  }
+
+  const { tick, speed, setSpeed, finished, paused, setPaused, simTime } = useLiveRaceSimulation({
+    race,
+    runners,
+    resolveRaceWithImpacts,
+    narrativeRef,
+    messageQueue,
+    rngRef,
+  });
+
   const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
   const [minBeyer, setMinBeyer] = useState(0);
@@ -86,13 +102,6 @@ function LiveRace() {
   const [announcement, setAnnouncement] = useState<string>("");
   const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
   const [subjectHorseId, setSubjectHorseId] = useState<string | null>(null);
-  const narrativeRef = useRef<NarrativeGenerator | null>(null);
-  const messageQueue = useRef<CommentaryLine[]>([]);
-  const lastMessageTime = useRef<number>(0);
-
-  if (!narrativeRef.current && race) {
-    narrativeRef.current = new NarrativeGenerator(race, horses, stables, rngRef.current!);
-  }
 
   // Paced message delivery effect
   useEffect(() => {
@@ -118,13 +127,6 @@ function LiveRace() {
   const lastAnnouncedPosition = useRef<Map<string, number>>(new Map());
   const lastAnnouncementTime = useRef<number>(0);
 
-  const simTimeRef = useRef(0);
-  const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
-  const speedRef = useRef(speed);
-  const pausedRef = useRef(paused);
-  speedRef.current = speed;
-  pausedRef.current = paused;
-
   const classBonus = race ? calculateClassBonus(race.graded?.grade, race.raceClass) : 0;
 
   // Calculate odds for each runner
@@ -147,74 +149,6 @@ function LiveRace() {
     return oddsMap;
   }, [runners, horses, classBonus]);
 
-  // Race simulation loop effect
-  useEffect(() => {
-    if (!race || race.resolved) return;
-    let raf = 0;
-    let last = performance.now();
-    const FIXED_DT = 0.05;
-    let accumulator = 0;
-    const MAX_STEPS_PER_FRAME = 64;
-
-    const loop = (now: number) => {
-      const real = (now - last) / 1000;
-      last = now;
-      if (!pausedRef.current) {
-        accumulator += real * speedRef.current;
-      }
-      let stillRunning = runners.some((r) => r.finishTime === null);
-      let steps = 0;
-      while (accumulator >= FIXED_DT && stillRunning && steps < MAX_STEPS_PER_FRAME) {
-        accumulator -= FIXED_DT;
-        simTimeRef.current += FIXED_DT;
-        steps++;
-        stillRunning = false;
-        const pace = computePaceContext(runners, race.distance);
-        if (narrativeRef.current) {
-          const newCommentary = narrativeRef.current.update(
-            runners,
-            simTimeRef.current,
-            pace.pacePressure,
-          );
-          if (newCommentary.length > 0) {
-            messageQueue.current.push(...newCommentary);
-          }
-        }
-        for (const r of runners) {
-          if (r.finishTime === null) {
-            stepRunner(
-              r,
-              FIXED_DT,
-              simTimeRef.current,
-              race.distance,
-              rngRef.current!,
-              runners,
-              pace,
-            );
-            if (r.finishTime !== null) {
-              finishOrderRef.current.push({
-                horseId: r.horseId,
-                position: finishOrderRef.current.length + 1,
-                time: r.finishTime,
-              });
-            } else {
-              stillRunning = true;
-            }
-          }
-        }
-      }
-      setTick((t) => t + 1);
-      if (stillRunning) {
-        raf = requestAnimationFrame(loop);
-      } else {
-        setFinished(true);
-        resolveRaceWithImpacts(race!.id, finishOrderRef.current);
-      }
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [race, race?.resolved, runners, resolveRaceWithImpacts]);
-
   // Keyboard controls effect
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -225,7 +159,7 @@ function LiveRace() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [finished]);
+  }, [finished, setPaused]);
 
   // Early return checks after all hooks
   if (!race) throw notFound();
@@ -235,10 +169,9 @@ function LiveRace() {
 
   const calibratedPars = useGame((s) => s.calibratedPars);
 
-  void tick;
   const rows = runners.map((r) => ({
     r,
-    beyer: projectedBeyer(r, race.distance, simTimeRef.current, classBonus, calibratedPars),
+    beyer: projectedBeyer(r, race.distance, simTime, classBonus, calibratedPars),
   }));
 
   const positionRank = new Map(
@@ -745,61 +678,4 @@ function HorseSprite({
   );
 }
 
-function ResultOverlay({
-  race,
-  runners,
-  onClose,
-}: {
-  race: { name: string; purse: number };
-  runners: Runner[];
-  onClose: () => void;
-}) {
-  const PRIZE = [0.6, 0.25, 0.1, 0.05];
-  const ordered = [...runners].sort((a, b) => (a.finishTime ?? 99) - (b.finishTime ?? 99));
-  return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-      <div className="bg-card text-card-foreground rounded-xl shadow-2xl max-w-md w-full p-6 border border-white/10">
-        <h2 className="text-2xl font-bold mb-1 text-cream">{race.name}</h2>
-        <p className="text-sm text-cream-muted mb-4">Final result</p>
-        <div className="space-y-2">
-          {ordered.map((r, i) => {
-            const prize = i < PRIZE.length ? Math.round(race.purse * PRIZE[i]) : 0;
-            return (
-              <div
-                key={r.horseId}
-                className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0"
-              >
-                <span className="w-6 font-bold tabular-nums text-cream-muted">{i + 1}</span>
-                <div
-                  className="h-5 w-5 rounded-full border border-white/20"
-                  style={{ backgroundColor: r.silk }}
-                />
-                <Link
-                  to="/stable/$horseId"
-                  params={{ horseId: r.horseId }}
-                  className={`flex-1 truncate hover:underline ${r.owned ? "font-bold text-success" : ""}`}
-                >
-                  {r.name}
-                </Link>
-                <span className="text-xs text-cream-muted tabular-nums">
-                  {r.finishTime?.toFixed(2)}s
-                </span>
-                {prize > 0 && r.owned && (
-                  <span className="text-sm font-bold text-success tabular-nums">
-                    +${prize.toLocaleString()}
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <Button
-          onClick={onClose}
-          className="w-full mt-6 bg-t700 hover:bg-t600 text-cream font-bold"
-        >
-          Close results
-        </Button>
-      </div>
-    </div>
-  );
-}
+

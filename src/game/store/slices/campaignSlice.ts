@@ -36,6 +36,18 @@ export type CampaignSlice = {
   setTriplecrownHistory: (history: TripleCrownProgress[]) => void;
 };
 
+/**
+ * Create the campaign state slice with campaign planning and management actions.
+ *
+ * Provides campaign creation, slot management, flag dismissal, campaign deletion,
+ * auto-campaign generation, and Triple Crown history tracking. Uses intent-based
+ * state updates for campaign actions.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Campaign slice with state and actions
+ */
 export function createCampaignSlice(
   set: any,
   get: StoreGet,

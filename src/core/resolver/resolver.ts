@@ -62,7 +62,13 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
 }
 
 /**
- * Apply all impacts to the state in order
+ * Apply all impacts to the state in order.
+ *
+ * Processes all impacts in the context, applying them to the game state using Immer
+ * for immutability. Creates pre-indexed maps for O(1) lookups during impact resolution.
+ *
+ * @param context - Resolver context containing state, intents, impacts, and impact log
+ * @returns Updated resolver context with new state and impact log
  */
 export function applyImpacts(context: ResolverContext): ResolverContext {
   const impactLog: ImpactLogEntry[] = [];
@@ -173,8 +179,16 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
 
 
 /**
- * Validate an intent before resolution
- * Returns { valid: boolean, reason?: string }
+ * Validate an intent before resolution.
+ *
+ * Finds and runs the appropriate validator for the intent type. Returns validation
+ * result with validity flag and optional reason if invalid. Defaults to valid if no
+ * specific validator found.
+ *
+ * @param intent - Intent to validate
+ * @param state - Current game state
+ * @param cache - Optional validation cache for performance
+ * @returns Validation result with valid flag and optional reason
  */
 export function validateIntent(
   intent: AnyIntent,
@@ -193,16 +207,27 @@ export function validateIntent(
 }
 
 /**
- * Sort intents by priority (higher priority first)
- * Player intents have priority 100, NPC intents have priority 50, System intents have priority 10
+ * Sort intents by priority (higher priority first).
+ *
+ * Sorts intents by their priority field. Player intents have priority 100, NPC intents
+ * have priority 50, System intents have priority 10.
+ *
+ * @param intents - Intents to sort
+ * @returns Sorted intents array with highest priority first
  */
 export function sortIntents(intents: AnyIntent[]): AnyIntent[] {
   return [...intents].sort((a, b) => b.priority - a.priority);
 }
 
 /**
- * Resolve conflicts between intents
- * Currently uses priority-based resolution with logging
+ * Resolve conflicts between intents.
+ *
+ * Groups intents by entity and type, keeping only the highest-priority intent for each.
+ * Lower-priority intents are logged as conflicts. Uses priority-based resolution.
+ *
+ * @param intents - Intents to resolve conflicts for
+ * @param state - Current game state
+ * @returns Resolved intents array and conflicts log
  */
 export function resolveIntentConflicts(
   intents: AnyIntent[],

@@ -28,6 +28,17 @@ export type ScoutingSlice = {
   setScoutReports: (reports: ScoutReport[]) => void;
 };
 
+/**
+ * Create the scouting state slice with horse evaluation actions.
+ *
+ * Provides scouting actions for evaluating horses in NPC stables and scout report management.
+ * Uses intent-based state updates for scouting actions.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Scouting slice with actions
+ */
 export function createScoutingSlice(
   set: any,
   get: StoreGet,

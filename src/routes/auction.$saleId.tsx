@@ -1,19 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { shallow } from "zustand/shallow";
 import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,11 +19,10 @@ import {
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { getDisplayableStats } from "@/game/scouting";
 import { KIND_LABELS } from "@/game/auctionData";
-import { netProceeds, commissionAmount, CONSIGNMENT_COMMISSION } from "@/game/auction";
+import { netProceeds } from "@/game/auction";
 import { Gavel, ChevronLeft, ChevronRight, Trophy, Trash2, Search } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
-import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
-import { toast } from "sonner";
+import { genderSymbol } from "@/core/horse/gender";
 import type { AuctionLot } from "@/game/types";
 import { cn } from "@/lib/utils";
 import { HorsePortrait } from "@/components/HorsePortrait";
@@ -40,6 +30,8 @@ import { AuctionTheater } from "@/components/auction/AuctionTheater";
 import { BuyNowDialog } from "@/components/auction/BuyNowDialog";
 import { auctionBrowseSearchSchema, type AuctionBrowseSearch } from "@/lib/auctionSearchSchema";
 import { filterAndSortLots } from "@/services/auctionLotFilter";
+import { PlayerConsignmentsPanel } from "@/components/auction/PlayerConsignmentsPanel";
+import { AuctionFilterBar } from "@/components/auction/AuctionFilterBar";
 
 export const Route = createFileRoute("/auction/$saleId")({
   validateSearch: auctionBrowseSearchSchema,
@@ -49,7 +41,8 @@ export const Route = createFileRoute("/auction/$saleId")({
 function AuctionSalePage() {
   const { saleId } = Route.useParams();
   const navigate = Route.useNavigate();
-  const { sex, ageBand, reserveBand, sort, q } = Route.useSearch();
+  const filters = Route.useSearch();
+  const { sex, ageBand, reserveBand, sort, q } = filters;
   const auctions = useGameWithShallow((s) => s.auctions ?? []);
   const horses = useGame((s) => s.horses);
   const cash = useGame((s) => s.cash);
@@ -114,6 +107,18 @@ function AuctionSalePage() {
 
   const hasActiveFilters =
     sex !== undefined || ageBand !== undefined || reserveBand !== undefined || q !== undefined;
+
+  const onUpdateFilter = (
+    update:
+      | Partial<AuctionBrowseSearch>
+      | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
+  ) => {
+    navigate({
+      search: (prev) => (typeof update === "function" ? update(prev) : { ...prev, ...update }),
+    });
+  };
+
+  const onResetFilters = () => navigate({ search: () => ({}) });
 
   // Early return after all hooks
   if (!sale) {
@@ -212,106 +217,12 @@ function AuctionSalePage() {
       ) : (
         <>
           {/* B2 — Your Consignments (resolved sales only) */}
-          {isResolved && playerConsignedLots.length > 0 && (
-            <div className="space-y-3">
-              <div>
-                <h2 className="text-lg font-semibold">Your Consignments</h2>
-                <div className="border-b mt-1" />
-              </div>
-              {playerConsignedLots.map((lot) => {
-                const lotHorse = horses.find((h) => h.id === lot.horseId);
-                const buyer = lot.soldToStableId
-                  ? stables.find((s) => s.id === lot.soldToStableId)
-                  : undefined;
-                return (
-                  <Card key={lot.id}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        <HorsePortrait
-                          id={lotHorse?.id}
-                          coatColor={lotHorse?.coatColor}
-                          markings={lotHorse?.markings}
-                          gender={lotHorse?.gender}
-                          appearance={lotHorse?.appearance}
-                          size="sm"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <div>
-                              <p className="font-semibold text-cream">
-                                {lotHorse?.name ?? "Unknown"}
-                              </p>
-                              <p className="text-xs text-cream-muted">
-                                {lotHorse
-                                  ? `${lotHorse.gender.charAt(0).toUpperCase() + lotHorse.gender.slice(1)} · Age ${lotHorse.age}${lotHorse.hemisphere === "Southern" ? " · Southern" : ""}`
-                                  : ""}
-                              </p>
-                            </div>
-                            {lot.passed ? (
-                              <Badge variant="secondary">Passed</Badge>
-                            ) : (
-                              <Badge className="bg-success text-white">Sold</Badge>
-                            )}
-                          </div>
-                          <div className="border-t mt-2 pt-2 space-y-1 text-sm">
-                            {lot.passed || !lot.hammerPrice ? (
-                              <p className="text-cream-muted italic">Reserve not met</p>
-                            ) : (
-                              <>
-                                <div className="flex items-center justify-between">
-                                  <span className="text-cream-muted">Hammer price</span>
-                                  <span className="tabular-nums font-medium">
-                                    ${formatCurrency(lot.hammerPrice)}
-                                  </span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                  <span className="text-cream-muted">
-                                    Commission ({Math.round(CONSIGNMENT_COMMISSION * 100)}%)
-                                  </span>
-                                  <span className="tabular-nums text-destructive">
-                                    −${formatCurrency(commissionAmount(lot.hammerPrice))}
-                                  </span>
-                                </div>
-                                <div className="flex items-center justify-between font-semibold">
-                                  <span className="text-cream-muted">Net proceeds</span>
-                                  <span className="tabular-nums text-success">
-                                    ${formatCurrency(netProceeds(lot.hammerPrice))}
-                                  </span>
-                                </div>
-                              </>
-                            )}
-                            <div className="flex items-center justify-between text-xs pt-0.5">
-                              <span className="text-cream-muted">Sold to</span>
-                              <span className="font-medium">
-                                {lot.passed
-                                  ? "Passed — reserve not met"
-                                  : buyer
-                                    ? buyer.name
-                                    : "Unknown"}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-              {/* Aggregate footer */}
-              {(() => {
-                const soldLots = playerConsignedLots.filter((l) => !l.passed && l.hammerPrice);
-                if (soldLots.length === 0) return null;
-                const totalNet = soldLots.reduce((sum, l) => sum + netProceeds(l.hammerPrice!), 0);
-                return (
-                  <p className="text-sm text-cream-muted tabular-nums">
-                    <strong className="text-cream">{soldLots.length}</strong>{" "}
-                    {soldLots.length === 1 ? "horse" : "horses"} sold · Total net proceeds:{" "}
-                    <strong className="text-cream">${formatCurrency(totalNet)}</strong> (after{" "}
-                    {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission)
-                  </p>
-                );
-              })()}
-            </div>
+          {isResolved && (
+            <PlayerConsignmentsPanel
+              playerConsignedLots={playerConsignedLots}
+              horses={horses}
+              stables={stables}
+            />
           )}
 
           {/* C2 — Search input (pre-sale only) */}
@@ -329,113 +240,12 @@ function AuctionSalePage() {
 
           {/* C1 — Filter bar + C3 — Sort (pre-sale only) */}
           {!isResolved && (
-            <div className="space-y-2">
-              {/* Row 1: sex + age band */}
-              <div className="flex flex-wrap gap-3 items-start">
-                <div className="space-y-1">
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">Sex</p>
-                  <ToggleGroup
-                    type="single"
-                    variant="outline"
-                    value={sex ?? ""}
-                    onValueChange={(v) =>
-                      navigate({
-                        search: (prev) => ({
-                          ...prev,
-                          sex: v ? (v as AuctionBrowseSearch["sex"]) : undefined,
-                        }),
-                      })
-                    }
-                  >
-                    <ToggleGroupItem value="">All</ToggleGroupItem>
-                    <ToggleGroupItem value="colt">Colt</ToggleGroupItem>
-                    <ToggleGroupItem value="filly">Filly</ToggleGroupItem>
-                    <ToggleGroupItem value="gelding">Gelding</ToggleGroupItem>
-                    <ToggleGroupItem value="mare">Mare</ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">Age</p>
-                  <ToggleGroup
-                    type="single"
-                    variant="outline"
-                    value={ageBand ?? ""}
-                    onValueChange={(v) =>
-                      navigate({
-                        search: (prev) => ({
-                          ...prev,
-                          ageBand: v ? (v as AuctionBrowseSearch["ageBand"]) : undefined,
-                        }),
-                      })
-                    }
-                  >
-                    <ToggleGroupItem value="">All</ToggleGroupItem>
-                    <ToggleGroupItem value="weanling">Weanling</ToggleGroupItem>
-                    <ToggleGroupItem value="yearling">Yearling</ToggleGroupItem>
-                    <ToggleGroupItem value="2yo">2yo</ToggleGroupItem>
-                    <ToggleGroupItem value="3yo+">3yo+</ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-              </div>
-
-              {/* Row 2: reserve band + reset + sort */}
-              <div className="flex flex-wrap gap-3 items-end justify-between">
-                <div className="space-y-1">
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">Reserve</p>
-                  <ToggleGroup
-                    type="single"
-                    variant="outline"
-                    value={reserveBand ?? ""}
-                    onValueChange={(v) =>
-                      navigate({
-                        search: (prev) => ({
-                          ...prev,
-                          reserveBand: v ? (v as AuctionBrowseSearch["reserveBand"]) : undefined,
-                        }),
-                      })
-                    }
-                  >
-                    <ToggleGroupItem value="">All</ToggleGroupItem>
-                    <ToggleGroupItem value="under10k">Under $10k</ToggleGroupItem>
-                    <ToggleGroupItem value="10k-50k">$10k–$50k</ToggleGroupItem>
-                    <ToggleGroupItem value="over50k">Over $50k</ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {hasActiveFilters && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => navigate({ search: () => ({}) })}
-                    >
-                      Reset
-                    </Button>
-                  )}
-                  <Select
-                    value={sort ?? "lot"}
-                    onValueChange={(v) =>
-                      navigate({
-                        search: (prev) => ({
-                          ...prev,
-                          sort: v === "lot" ? undefined : (v as AuctionBrowseSearch["sort"]),
-                        }),
-                      })
-                    }
-                  >
-                    <SelectTrigger className="w-[200px]">
-                      <SelectValue placeholder="Sort: Lot order" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="lot">Lot order</SelectItem>
-                      <SelectItem value="reserve-asc">Lowest reserve first</SelectItem>
-                      <SelectItem value="reserve-desc">Highest reserve first</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
+            <AuctionFilterBar
+              search={filters}
+              hasActiveFilters={hasActiveFilters}
+              onUpdateFilter={onUpdateFilter}
+              onReset={onResetFilters}
+            />
           )}
 
           {/* C4 — Result count (pre-sale only, hidden when unfiltered) */}

@@ -33,6 +33,17 @@ export type PrivateSaleSlice = {
   setClaims: (claims: Claim[]) => void;
 };
 
+/**
+ * Create the private sales and claiming state slice.
+ *
+ * Provides private sale offers, counter-offers, claiming race entry and withdrawal,
+ * and claim filing actions. Uses intent-based state updates.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Private sale slice with actions
+ */
 export function createPrivateSaleSlice(
   set: any,
   get: StoreGet,

@@ -34,6 +34,17 @@ export type RacingSlice = RacingState & {
   setLastCalibrationDay: (day: number) => void;
 };
 
+/**
+ * Create the racing state slice with training and performance analytics actions.
+ *
+ * Provides horse training, pace samples, calibrated pars, and training usage tracking.
+ * Uses intent-based state updates for training actions.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Racing slice with state and actions
+ */
 export function createRacingSlice(
   set: any,
   get: StoreGet,

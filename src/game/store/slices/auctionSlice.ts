@@ -45,6 +45,18 @@ export type AuctionSlice = {
   setAuctions: (auctions: AuctionSale[]) => void;
 };
 
+/**
+ * Create the auction state slice with consignment, bidding, and result processing actions.
+ *
+ * Provides horse consignment to sales, consignment withdrawal, book bidding, live bid
+ * debiting, auction result commitment, and buy-now functionality. Uses intent-based
+ * state updates for auction actions.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Auction slice with actions
+ */
 export function createAuctionSlice(
   set: any,
   get: StoreGet,

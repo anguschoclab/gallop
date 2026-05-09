@@ -13,50 +13,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Calendar,
   Filter,
   Search,
-  Trophy,
-  MapPin,
-  Globe,
   History,
   LayoutGrid,
   List,
-  AlertTriangle,
 } from "lucide-react";
-import { useState, useMemo } from "react";
-import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { useState } from "react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { cn } from "@/lib/utils";
 import { RaceEntry } from "@/components/RaceEntry";
 import { Race, Claim } from "@/game/types";
-import { getCountry } from "@/game/gradedRaces";
-import { getGradeColorClass } from "@/core/race/grading";
 import { GradeBreakdown } from "@/components/races/GradeBreakdown";
 import { RaceCard } from "@/components/races/RaceCard";
 import { RaceRow } from "@/components/races/RaceRow";
 import { NumericValue } from "@/components/HorseBits";
-import { formatCurrency } from "@/lib/formatting";
-import { toast } from "sonner";
-
-type RaceFilters = {
-  grade: string;
-  country: string;
-  surface: string;
-  track: string;
-  owned: string;
-  q: string;
-};
+import { useRaceFilters, type RaceFilters } from "@/hooks/useRaceFilters";
+import { ClaimingRacePanel } from "@/components/races/ClaimingRacePanel";
 
 export const Route = createFileRoute("/races")({
   validateSearch: (search: Record<string, unknown>): RaceFilters => ({
@@ -71,7 +44,8 @@ export const Route = createFileRoute("/races")({
 });
 
 function RacesPage() {
-  const { grade, country, surface, track, owned, q } = Route.useSearch();
+  const filters = Route.useSearch();
+  const { grade, country, surface, track, owned, q } = filters;
   const navigate = Route.useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const races = (useGame as any)((s: any) => s.races, shallow);
@@ -84,55 +58,14 @@ function RacesPage() {
   const fileClaim = useGame((s) => s.fileClaim);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [enteringRace, setEnteringRace] = useState<Race | null>(null);
-  const [claimingRace, setClaimingRace] = useState<Race | null>(null);
-  const [pendingClaimHorseId, setPendingClaimHorseId] = useState<string | null>(null);
 
-  const filtered = useMemo(() => {
-    return races
-      .filter((r: Race) => !r.resolved && r.day >= day)
-      .filter((r: Race) => {
-        if (grade !== "all") {
-          if (grade === "Graded") return !!r.graded;
-          if (grade === "Ungraded") return !r.graded;
-          return r.graded?.grade === grade;
-        }
-        return true;
-      })
-      .filter((r: Race) => (country === "all" ? true : getCountry(r.graded?.trackId ?? "") === country))
-      .filter((r: Race) => (surface === "all" ? true : r.surface === surface))
-      .filter((r: Race) => (track === "all" ? true : r.graded?.track === track))
-      .filter((r: Race) => {
-        if (owned === "all") return true;
-        const hasOwned = r.entries.some((e) => e.owned);
-        return owned === "owned" ? hasOwned : !hasOwned;
-      })
-      .filter((r: Race) => (q ? r.name.toLowerCase().includes(q.toLowerCase()) : true))
-      .sort((a: Race, b: Race) => a.day - b.day);
-  }, [races, day, grade, country, surface, track, owned, q]);
+  const { filteredRaces, countries, tracks } = useRaceFilters(races, day, filters);
 
   const updateFilter = (key: keyof RaceFilters, value: string) => {
     navigate({
       search: (prev) => ({ ...prev, [key]: value }),
     });
   };
-
-  // ⚡ Bolt: Memoize filter options derived from large race lists
-  // Prevents re-iterating over the entire races array on every render
-  // (e.g., when the user types in the search input).
-  const filterOptions = useMemo(() => {
-    const gradedRaces = races.filter((r: Race) => r.graded);
-    const uniqueCountries = Array.from(
-      new Set(gradedRaces.map((r: Race) => getCountry(r.graded!.trackId))),
-    )
-      .filter(Boolean)
-      .sort() as string[];
-
-    const uniqueTracks = Array.from(new Set(gradedRaces.map((r: Race) => r.graded!.track))).sort();
-
-    return { countries: uniqueCountries, tracks: uniqueTracks };
-  }, [races]);
-
-  const { countries, tracks } = filterOptions;
 
   return (
     <div className="space-y-6">
@@ -330,11 +263,11 @@ function RacesPage() {
         <main className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-cream-muted uppercase tracking-wider font-[family-name:var(--font-mono)] tabular-nums">
-              <NumericValue value={filtered.length} /> Races found
+              <NumericValue value={filteredRaces.length} /> Races found
             </h2>
           </div>
 
-          {filtered.length === 0 ? (
+          {filteredRaces.length === 0 ? (
             <Card className="border-dashed border-gold-muted">
               <CardContent className="p-12 text-center text-cream-muted font-[family-name:var(--font-body)]">
                 <Calendar className="h-12 w-12 mx-auto mb-4 opacity-20" />
@@ -344,88 +277,25 @@ function RacesPage() {
             </Card>
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filtered.map((r: Race) => (
+              {filteredRaces.map((r: Race) => (
                 <RaceCard key={r.id} race={r} onEnter={() => setEnteringRace(r as Race)} />
               ))}
             </div>
           ) : (
             <div className="space-y-2">
-              {filtered.map((r: Race) => {
+              {filteredRaces.map((r: Race) => {
                 const isClaiming = !!r.claiming;
                 return (
                   <div key={r.id}>
                     <RaceRow race={r} onEnter={() => setEnteringRace(r as Race)} />
-                    {/* D3 — Claiming race entries panel */}
                     {isClaiming && r.entries.length > 0 && (
-                      <div className="ml-4 mt-1 mb-1 p-3 rounded-b-lg border border-t-0 border-gold-muted/50 bg-t900 space-y-2">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-warning flex items-center gap-1">
-                          <AlertTriangle className="h-3 w-3" />
-                          Claiming Race Entries — {formatCurrency(r.claiming!.price)}
-                        </p>
-                        <div className="space-y-1">
-                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                          {r.entries.map((entry: any) => {
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const entryHorse = horses.find((h: any) => h.id === entry.horseId);
-                            const isOwned = !!entry.owned;
-                            const playerClaimFiled = claims.some(
-                              (c: Claim) =>
-                                c.raceId === r.id &&
-                                c.horseId === entry.horseId &&
-                                c.claimantStableId === undefined,
-                            );
-                            const canAfford = cash >= r.claiming!.price;
-                            return (
-                              <div
-                                key={entry.horseId}
-                                className="flex items-center justify-between py-1 border-b border-gold-muted/20 last:border-0"
-                              >
-                                <Link
-                                  to="/stable/$horseId"
-                                  params={{ horseId: entry.horseId }}
-                                  className="text-sm text-cream font-medium hover:underline hover:text-gold"
-                                >
-                                  {entryHorse?.name ?? entry.horseId}
-                                  {isOwned && (
-                                    <span className="ml-2 text-xs text-success">(your horse)</span>
-                                  )}
-                                </Link>
-                                <div>
-                                  {!isOwned &&
-                                    (playerClaimFiled ? (
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        disabled
-                                        className="text-xs"
-                                      >
-                                        Claim filed
-                                      </Button>
-                                    ) : (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        disabled={!canAfford}
-                                        title={
-                                          canAfford
-                                            ? undefined
-                                            : `You need ${formatCurrency(r.claiming!.price - cash)} to file this claim.`
-                                        }
-                                        className="text-xs"
-                                        onClick={() => {
-                                          setClaimingRace(r as Race);
-                                          setPendingClaimHorseId(entry.horseId);
-                                        }}
-                                      >
-                                        Claim {formatCurrency(r.claiming!.price)}
-                                      </Button>
-                                    ))}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
+                      <ClaimingRacePanel
+                        race={r as Race}
+                        horses={horses}
+                        claims={claims}
+                        cash={cash}
+                        fileClaim={fileClaim}
+                      />
                     )}
                   </div>
                 );
@@ -441,63 +311,6 @@ function RacesPage() {
           onClose={() => setEnteringRace(null)}
         />
       )}
-
-      {/* D3 — Claim filing dialog */}
-      {claimingRace &&
-        pendingClaimHorseId &&
-        (() => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const horse = horses.find((h: any) => h.id === pendingClaimHorseId);
-          const cp = claimingRace.claiming!.price;
-          return (
-            <AlertDialog
-              open
-              onOpenChange={(open) => {
-                if (!open) {
-                  setClaimingRace(null);
-                  setPendingClaimHorseId(null);
-                }
-              }}
-            >
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Claim {horse?.name} for {formatCurrency(cp)}?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    If your claim is drawn, {formatCurrency(cp)} will be deducted from your account
-                    and {horse?.name ?? "the horse"} will transfer to your stable after the race
-                    completes. Multiple claims on the same horse are resolved randomly.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel
-                    onClick={() => {
-                      setClaimingRace(null);
-                      setPendingClaimHorseId(null);
-                    }}
-                  >
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => {
-                      const result = fileClaim(claimingRace.id, pendingClaimHorseId);
-                      setClaimingRace(null);
-                      setPendingClaimHorseId(null);
-                      if (result.ok) {
-                        toast.success(`Claim filed on ${horse?.name} for ${formatCurrency(cp)}.`);
-                      } else {
-                        toast.error(`Claim failed: ${result.reason}`);
-                      }
-                    }}
-                  >
-                    File Claim
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          );
-        })()}
     </div>
   );
 }

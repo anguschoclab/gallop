@@ -68,6 +68,17 @@ export type CoreSlice = CoreState & {
   addLogEntry: (entry: { day: number; text: string }) => void;
 };
 
+/**
+ * Create the core game state slice with all game loop actions.
+ *
+ * Provides race entry/withdrawal, race tactics, race resolution, claiming,
+ * day advancement, and state setters. Uses intent-based state updates.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Core slice with state and actions
+ */
 export function createCoreSlice(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   set: any,

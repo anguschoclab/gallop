@@ -239,38 +239,7 @@ function HorseDetail() {
 
             <div className="pt-4 border-t border-gold-muted/30">
               <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">Staff Support</p>
-              <div className="space-y-1">
-                {(() => {
-                  const hiredStaff = useGame((s) => s.hiredStaff);
-                  const stableId = horse.stableId ?? "";
-                  const staffForStable = hiredStaff?.filter(s => s.stableId === stableId) ?? [];
-                  
-                  const nutritionist = staffForStable.find(s => s.role === 'nutritionist');
-                  const vet = staffForStable.find(s => s.role === 'veterinarian');
-                  const trainer = staffForStable.find(s => s.role === 'trainer');
-                  const farrier = staffForStable.find(s => s.role === 'farrier');
-                  const groom = staffForStable.find(s => s.role === 'groom');
-
-                  const bonuses = [
-                    nutritionist && { label: "Nutritionist", value: `+${Math.round(nutritionist.bonusValue * 100)}% Energy` },
-                    vet && { label: "Veterinarian", value: `+${Math.round(vet.bonusValue * 100)}% Recovery` },
-                    trainer && { label: "Trainer", value: `+${Math.round(trainer.bonusValue * 100)}% Efficiency` },
-                    farrier && { label: "Farrier", value: `+${Math.round(farrier.bonusValue * 100)}% Aptitude` },
-                    groom && { label: "Groom", value: `+${Math.round(groom.bonusValue * 100)}% Form` },
-                  ].filter(Boolean);
-
-                  if (bonuses.length === 0) {
-                    return <p className="text-[10px] text-cream-muted italic">No specialized staff support active.</p>;
-                  }
-
-                  return bonuses.map((b: any) => (
-                    <div key={b.label} className="flex justify-between text-[10px]">
-                      <span className="text-cream-muted">{b.label}</span>
-                      <span className="text-success font-medium">{b.value}</span>
-                    </div>
-                  ));
-                })()}
-              </div>
+              <StaffSupportPanel stableId={horse.stableId ?? ""} />
             </div>
           </CardContent>
         </Card>
@@ -373,153 +342,18 @@ function HorseDetail() {
             <p className="text-xs text-cream-muted">
               {isPregnant
                 ? "Resting in the broodmare barn — no training during pregnancy."
-                : `${slotsLeft} slot${slotsLeft !== 1 ? "s" : ""} left today · $${TRAINING_COST}/session`}
+                : `${slotsLeft} slot${slotsLeft !== 1 ? "s" : ""} left today · $100/session`}
             </p>
           </CardHeader>
           <CardContent className="space-y-2">
-            {/* Basic training types */}
-            {(["speed", "stamina", "acceleration"] as const).map((k) => (
-              <Button
-                key={k}
-                onClick={() => trainHorse(horse.id, k)}
-                disabled={
-                  isPregnant ||
-                  slotsLeft <= 0 ||
-                  cash < TRAINING_COST ||
-                  horse.energy < 15 ||
-                  horse.stats[k] >= horse.potential
-                }
-                className="w-full justify-between"
-                variant="outline"
-              >
-                <span className="capitalize">{k} work</span>
-                <span className="text-cream-muted">
-                  {horse.stats[k]} → {Math.min(horse.potential, horse.stats[k] + 1)}
-                </span>
-              </Button>
-            ))}
-
-            {/* Advanced workout types */}
-            <div className="pt-2 border-t border-gold-muted/30">
-              <p className="text-xs text-cream-muted mb-2">Advanced Workouts</p>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  onClick={() => trainHorse(horse.id, "bullet")}
-                  disabled={
-                    isPregnant ||
-                    slotsLeft <= 0 ||
-                    cash < 100 ||
-                    horse.energy < 25 ||
-                    horse.stats.speed >= horse.potential ||
-                    !facilities ||
-                    !isWorkoutEnabled(facilities, "bullet")
-                  }
-                  className="w-full justify-between text-xs"
-                  variant="outline"
-                >
-                  <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "bullet") ? (
-                      <Lock className="h-3 w-3" />
-                    ) : null}
-                    <span>Bullet</span>
-                  </div>
-                  <span className="text-cream-muted">$100</span>
-                </Button>
-                <Button
-                  onClick={() => trainHorse(horse.id, "breeze")}
-                  disabled={
-                    isPregnant ||
-                    slotsLeft <= 0 ||
-                    cash < 85 ||
-                    horse.energy < 20 ||
-                    !facilities ||
-                    !isWorkoutEnabled(facilities, "breeze")
-                  }
-                  className="w-full justify-between text-xs"
-                  variant="outline"
-                >
-                  <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "breeze") ? (
-                      <Lock className="h-3 w-3" />
-                    ) : null}
-                    <span>Breeze</span>
-                  </div>
-                  <span className="text-cream-muted">$85</span>
-                </Button>
-                <Button
-                  onClick={() => trainHorse(horse.id, "gate_work")}
-                  disabled={
-                    isPregnant ||
-                    slotsLeft <= 0 ||
-                    cash < 90 ||
-                    horse.energy < 22 ||
-                    !facilities ||
-                    !isWorkoutEnabled(facilities, "gate_work")
-                  }
-                  className="w-full justify-between text-xs"
-                  variant="outline"
-                >
-                  <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "gate_work") ? (
-                      <Lock className="h-3 w-3" />
-                    ) : null}
-                    <span>Gate Work</span>
-                  </div>
-                  <span className="text-cream-muted">$90</span>
-                </Button>
-                <Button
-                  onClick={() => trainHorse(horse.id, "swimming")}
-                  disabled={
-                    isPregnant ||
-                    slotsLeft <= 0 ||
-                    cash < 80 ||
-                    horse.energy < 15 ||
-                    !facilities ||
-                    !isWorkoutEnabled(facilities, "swimming")
-                  }
-                  className="w-full justify-between text-xs"
-                  variant="outline"
-                >
-                  <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "swimming") ? (
-                      <Lock className="h-3 w-3" />
-                    ) : null}
-                    <span>Swimming</span>
-                  </div>
-                  <span className="text-cream-muted">$80</span>
-                </Button>
-                <Button
-                  onClick={() => trainHorse(horse.id, "gallop")}
-                  disabled={
-                    isPregnant ||
-                    slotsLeft <= 0 ||
-                    cash < 70 ||
-                    horse.energy < 16 ||
-                    !facilities ||
-                    !isWorkoutEnabled(facilities, "gallop")
-                  }
-                  className="w-full justify-between text-xs"
-                  variant="outline"
-                >
-                  <div className="flex items-center gap-1">
-                    {!facilities || !isWorkoutEnabled(facilities, "gallop") ? (
-                      <Lock className="h-3 w-3" />
-                    ) : null}
-                    <span>Gallop</span>
-                  </div>
-                  <span className="text-cream-muted">$70</span>
-                </Button>
-              </div>
-            </div>
-
-            <Button
-              onClick={() => trainHorse(horse.id, "rest")}
-              disabled={isPregnant || slotsLeft <= 0 || horse.energy >= 100}
-              className="w-full"
-              variant="secondary"
-            >
-              Rest (+30 energy)
-            </Button>
+            <TrainingPanel
+              horse={horse}
+              isPregnant={isPregnant}
+              slotsLeft={slotsLeft}
+              cash={cash}
+              facilities={facilities}
+              onTrain={trainHorse}
+            />
           </CardContent>
         </Card>
       </div>

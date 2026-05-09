@@ -39,6 +39,17 @@ export type BreedingSlice = BreedingState & {
   setTriplecrownHistory: (history: TripleCrownProgress[]) => void;
 };
 
+/**
+ * Create the breeding state slice with breeding and retirement actions.
+ *
+ * Provides breeding, retirement to pasture, pregnancy management, and Triple Crown
+ * history tracking. Uses intent-based state updates for breeding actions.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Breeding slice with state and actions
+ */
 export function createBreedingSlice(
   set: any,
   get: StoreGet,

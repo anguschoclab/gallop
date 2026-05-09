@@ -25,6 +25,17 @@ export type MarketSlice = MarketState & {
   setMarket: (market: Horse[]) => void;
 };
 
+/**
+ * Create the market state slice with horse purchasing actions.
+ *
+ * Provides direct horse purchasing from the open market and market state management.
+ * Uses intent-based state updates for purchases.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Market slice with state and actions
+ */
 export function createMarketSlice(
   set: any,
   get: StoreGet,
