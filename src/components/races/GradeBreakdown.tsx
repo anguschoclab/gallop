@@ -20,7 +20,7 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
       const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
       const ownedEntries = gradeRaces.filter((r) => r.entries.some((e) => e.owned));
 
-      let topProj = null;
+      let topProj: { name: string; proj: number } | null = null;
       const allOwnedProjs: number[] = [];
 
       for (const r of ownedEntries) {
