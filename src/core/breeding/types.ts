@@ -41,3 +41,24 @@ export type PedigreeNode = {
   generation: number;
   aptitudinalGroup?: string;
 };
+
+export interface ShareTransaction {
+  id: string;
+  syndicateId: string;
+  stableId: string;
+  shares: number;
+  pricePerShare: number;
+  day: number;
+}
+
+export interface Syndicate {
+  id: string;
+  stallionId: string;
+  stallionName: string;
+  totalShares: number; // usually 40 in real life
+  shareHolders: Record<string, number>; // stableId -> share count
+  sharePrice: number;
+  studFee: number;
+  isPublic: boolean;
+  lifetimeEarnings: number; // accumulated stud fees
+}

@@ -34,7 +34,8 @@ export class SystemHandler implements ImpactHandler {
       "transaction",
       "news_item",
       "hall_of_fame_induction",
-      "season_history_record"
+      "season_history_record",
+      "track_record"
     ].includes(type);
   }
 
@@ -235,6 +236,14 @@ export class SystemHandler implements ImpactHandler {
         const { record } = impactAny;
         if (!draft.seasonRecords) draft.seasonRecords = [];
         draft.seasonRecords.push(record);
+        break;
+      }
+
+      case "track_record": {
+        const { record } = impactAny;
+        if (!draft.trackRecords) draft.trackRecords = {};
+        const key = `${record.trackId}_${record.surface}_${record.distance}`;
+        draft.trackRecords[key] = record;
         break;
       }
     }

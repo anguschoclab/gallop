@@ -12,11 +12,19 @@
 import type { Impact } from "./base";
 import type { ScoutReport } from "@/game/types";
 import type { NewsItem } from "../../narrative/newsTypes";
+import type { TrackRecord } from "../../history/historyTypes";
 
 // News impact
 export interface NewsImpact extends Impact {
   type: "news_item";
   newsItem: NewsItem;
+}
+
+// Track record impact
+export interface TrackRecordImpact extends Impact {
+  type: "track_record";
+  record: TrackRecord;
+  reason: string;
 }
 
 // Log impact
@@ -96,6 +104,7 @@ export interface AuctionResolutionImpact extends Impact {
 
 export type MiscImpact =
   | NewsImpact
+  | TrackRecordImpact
   | LogImpact
   | ReputationImpact
   | StaffImpact

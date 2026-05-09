@@ -5,13 +5,13 @@
  * form changes, fame changes, horse creation, horse transfer, gelding, renaming,
  * aging, health status changes, pasture retirement, horse death, injury, and season history.
  *
- * Dependencies: ./base (Impact), @/game/types (Horse, HealthStatus), ../../history/historyTypes (SeasonRecord, HallOfFameEntry)
- * Related files: ../handlers/HorseHandler.ts (handles impacts), ./index.ts (exports types)
+ * Dependencies: ./base (Impact), @/game/types (Horse, HealthStatus), ../../history/historyTypes (SeasonRecord, HallOfFameEntry, TrackRecord)
+ * Related files: ../handlers/HorseHandler.ts (handles impacts), ../handlers/SystemHandler.ts (handles impacts), ./index.ts (exports types)
  */
 
 import type { Impact } from "./base";
 import type { Horse, HealthStatus } from "@/game/types";
-import type { SeasonRecord, HallOfFameEntry } from "../../history/historyTypes";
+import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "../../history/historyTypes";
 
 // Horse stat impact
 export interface HorseStatImpact extends Impact {
@@ -158,6 +158,13 @@ export interface BlueHenImpact extends Impact {
   reason: string;
 }
 
+// Track record impact
+export interface TrackRecordImpact extends Impact {
+  type: "track_record";
+  record: TrackRecord;
+  reason: string;
+}
+
 export type HorseImpact =
   | HorseStatImpact
   | EnergyImpact
@@ -175,4 +182,5 @@ export type HorseImpact =
   | HorseDeathImpact
   | HallOfFameInductionImpact
   | SeasonHistoryImpact
-  | BlueHenImpact;
+  | BlueHenImpact
+  | TrackRecordImpact;

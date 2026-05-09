@@ -41,3 +41,27 @@ export interface HallOfFameEntry {
     damName?: string;
   };
 }
+
+export interface TrackRecord {
+  trackId: string;
+  trackName: string;
+  surface: "Turf" | "Dirt" | "Synthetic";
+  distance: number;
+  time: number;
+  horseId: string;
+  horseName: string;
+  day: number;
+  year: number;
+}
+
+export interface FounderRecord {
+  horseId: string;
+  name: string;
+  influenceScore: number; // Sum of descendants' achievements
+  totalEarnings: number; // Descendants' total earnings
+  stakesWinners: number; // Count of stakes winning descendants
+  g1Winners: number; // Count of G1 winning descendants
+  generationDepth: number; // Max generation depth reached
+  descendantCount: number;
+  lastUpdated: number;
+}

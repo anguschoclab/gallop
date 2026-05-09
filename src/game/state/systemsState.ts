@@ -23,7 +23,13 @@ import type {
 } from "../types";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { RegionalAward, AwardRegion } from "../awards/types";
-import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
+import type { 
+  Leaderboard, 
+  SireTrendData,
+  ProgenyLeaderboard,
+  ProgenyLeaderboardType,
+} from "@/core/breeding/leaderboardTypes";
+import type { Syndicate } from "@/core/breeding/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { FacilityType, FacilityLevel } from "@/core/facilities";
 import type { PlayerFacilities } from "@/core/facilities";
@@ -35,7 +41,7 @@ import type { ManagerReputation } from "@/core/reputation";
 import type { TransportRequest } from "@/core/transportation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
-import type { HallOfFameEntry } from "@/core/history/historyTypes";
+import type { HallOfFameEntry, TrackRecord, FounderRecord } from "@/core/history/historyTypes";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -136,6 +142,18 @@ export interface SystemsState {
   /** Legendary horses inducted into Hall of Fame */
   hallOfFame?: HallOfFameEntry[];
 
+  // Global historical records (optional)
+  /** Lifetime track records keyed by trackId_surface_distance */
+  trackRecords?: Record<string, TrackRecord>;
+  /** Cached progeny/horse leaderboards (Beyer, Earnings, etc.) */
+  horseLeaderboards?: Record<string, ProgenyLeaderboard>;
+  /** Multi-generational influence records */
+  founders?: Record<string, FounderRecord>;
+  /** Day of last founder analysis update */
+  lastFounderUpdateDay?: number;
+  /** Stallion syndicates keyed by stallionId */
+  syndicates?: Record<string, Syndicate>;
+
   // Player profile (optional - set after completing new game wizard)
   /** Player's stable identity from the new game wizard */
   playerProfile?: PlayerProfile;
@@ -199,6 +217,10 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       transports: [],
       playerProfile: profile,
       hallOfFame: [],
+      trackRecords: {},
+      horseLeaderboards: {},
+      founders: {},
+      syndicates: {},
       usedHorseNames: [],
       usedJockeyNames: [],
       staffPool: [],
@@ -231,8 +253,12 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     },
     transports: [],
     hallOfFame: [],
+    trackRecords: {},
+    horseLeaderboards: {},
+    founders: {},
     usedHorseNames: [],
     usedJockeyNames: [],
+
     staffPool: [],
     hiredStaff: [],
   };

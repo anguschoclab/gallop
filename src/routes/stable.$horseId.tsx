@@ -22,6 +22,7 @@ import { GradedStatsChart } from "@/components/GradedStatsChart";
 import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
 import { TrainingPanel } from "@/components/horse/TrainingPanel";
 import { StaffSupportPanel } from "@/components/horse/StaffSupportPanel";
+import { FounderLegacy } from "@/components/horse/FounderLegacy";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
 import { GRADED_RACES } from "@/game/gradedRaces";
@@ -358,6 +359,8 @@ function HorseDetail() {
           </CardContent>
         </Card>
       </div>
+
+      <FounderLegacy horseId={horse.id} />
 
       <Card className="border-gold-muted">
         <CardHeader>

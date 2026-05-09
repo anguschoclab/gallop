@@ -1,6 +1,7 @@
 import type { Race, Horse } from "@/game/types";
-import type { SeasonRecord, HallOfFameEntry } from "@/core/history/historyTypes";
+import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/core/history/historyTypes";
 import { generateUUID } from "@/game/uuid";
+import { getCareerStats } from "@/core/horse/stats";
 
 export function recordRaceHistory(
   race: Race,
@@ -59,6 +60,40 @@ export function checkHallOfFameInduction(
       lifetimeEarnings: stats.earnings,
       lifetimeStarts: stats.starts,
       lifetimeWins: stats.wins,
+    };
+  }
+
+  return null;
+}
+
+export function checkTrackRecord(
+  race: Race,
+  winnerId: string,
+  winnerName: string,
+  time: number,
+  day: number,
+  existingRecords: Record<string, TrackRecord> = {}
+): TrackRecord | null {
+  const trackId = race.trackId || race.graded?.trackId;
+  const surface = race.surface || race.graded?.surface;
+  const distance = race.distance;
+
+  if (!trackId || !surface) return null;
+
+  const key = `${trackId}_${surface}_${distance}`;
+  const existing = existingRecords[key];
+
+  if (!existing || time < existing.time) {
+    return {
+      trackId,
+      trackName: race.trackName || race.graded?.trackName || "Unknown Track",
+      surface,
+      distance,
+      time,
+      horseId: winnerId,
+      horseName: winnerName,
+      day,
+      year: Math.floor((day - 1) / 365) + 1,
     };
   }
 

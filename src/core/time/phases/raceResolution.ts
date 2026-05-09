@@ -16,7 +16,11 @@ import type { ClaimingIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/raceSimulationExecutor";
 import { generateRaceImpacts } from "@/services/raceImpactGenerator";
 import { processClaimingResolution } from "@/services/claimingResolutionService";
-import { recordRaceHistory, checkHallOfFameInduction } from "@/services/historyService";
+import { 
+  recordRaceHistory, 
+  checkHallOfFameInduction,
+  checkTrackRecord 
+} from "@/services/historyService";
 import { generateUUID } from "@/game/uuid";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAI";
@@ -141,6 +145,33 @@ export const raceResolutionPhase: PipelinePhase = {
       }
 
       // --- Historical Records & Hall of Fame ---
+      const winnerResult = result.find(r => r.position === 1);
+      const winnerHorse = winnerResult ? state.horses.find(h => h.id === winnerResult.horseId) : null;
+
+      if (winnerResult && winnerHorse) {
+        const trackRecord = checkTrackRecord(
+          race,
+          winnerResult.horseId,
+          winnerHorse.name,
+          winnerResult.time,
+          newDay,
+          state.trackRecords || {}
+        );
+
+        if (trackRecord) {
+          impacts.push({
+            id: generateUUID(),
+            intentId: race.id,
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "always",
+            type: "track_record",
+            record: trackRecord,
+            reason: "New track record set!"
+          } as any);
+        }
+      }
+
       if (race.graded?.grade === "G1") {
         const historyRecord = recordRaceHistory(race, result, runners, state.horses, newDay);
         if (historyRecord) {
