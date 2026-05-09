@@ -34,6 +34,7 @@ export interface BreedingState {
 export function createDefaultBreedingState(): BreedingState {
   return {
     pregnancies: [],
+    triplecrownHistory: [],
     activeBreedingProgram: null,
   };
 }

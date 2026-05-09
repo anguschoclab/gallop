@@ -346,6 +346,6 @@ function ageLabel(horse: Horse): string {
   if (horse.age === 0) return "Weanling";
   if (horse.age === 1) return "Yearling";
   if (horse.age === 2) return "2YO";
-  if (horse.gender === "mare") return `Broodmare (${horse.age})`;
-  return `${horse.age}YO`;
+  if (horse.gender === "mare") return `Broodmare (${Math.floor(horse.age)})`;
+  return `${Math.floor(horse.age)}YO`;
 }

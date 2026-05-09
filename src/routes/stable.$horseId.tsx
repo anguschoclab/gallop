@@ -101,7 +101,7 @@ function HorseDetail() {
               {horse.name}
             </h1>
             <p className="text-cream-muted font-[family-name:var(--font-body)]">
-              Age <NumericValue value={horse.age} /> · OVR <NumericValue value={ovr} /> · Potential{" "}
+              Age <NumericValue value={Math.floor(horse.age)} /> · OVR <NumericValue value={ovr} /> · Potential{" "}
               <NumericValue value={horse.potential} />
             </p>
             {(() => {

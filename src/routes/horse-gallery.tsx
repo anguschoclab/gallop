@@ -177,7 +177,7 @@ function HorseGalleryPage() {
                         {horse.coatColor?.replace("-", " ") ?? "Unknown"}
                       </Badge>
                       <span className="text-cream-muted">·</span>
-                      <span className="text-cream-muted">{horse.age} years</span>
+                      <span className="text-cream-muted">{Math.floor(horse.age)} years</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-cream-muted">
                       <Zap className="w-3 h-3" />

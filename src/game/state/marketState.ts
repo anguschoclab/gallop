@@ -39,6 +39,7 @@ export interface MarketState {
 export function createDefaultMarketState(): MarketState {
   return {
     market: [],
+    auctions: [],
     scoutReports: [],
     privateSaleOffers: [],
     claims: [],

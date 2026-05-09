@@ -144,7 +144,7 @@ function RecapPage() {
                                 suffix="s"
                                 className="font-[family-name:var(--font-mono)] tabular-nums"
                               />{" "}
-                              · <NumericValue value={finisher.horse.age} suffix="YO" /> · OVR{" "}
+                              · <NumericValue value={Math.floor(finisher.horse.age)} suffix="YO" /> · OVR{" "}
                               <NumericValue
                                 value={Math.round(
                                   (finisher.horse.stats.speed +

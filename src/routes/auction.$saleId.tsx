@@ -319,7 +319,7 @@ function AuctionSalePage() {
                       <p className="text-sm text-cream-muted mt-0.5 tabular-nums">
                         {genderSymbol(horse.gender)}{" "}
                         {horse.gender.charAt(0).toUpperCase() + horse.gender.slice(1)} · Age{" "}
-                        {horse.age}
+                        {Math.floor(horse.age)}
                         {horse.hemisphere === "Southern" ? " · Southern" : ""}
                       </p>
                     </div>
