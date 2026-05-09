@@ -46,7 +46,7 @@ export type MarketSlice = MarketState & {
   commitAuctionResult: (
     saleId: string,
     finalLots: import("@/game/types").AuctionLot[],
-    impacts: import("@/core/resolver/impacts").AnyImpact[],
+    impacts: import("@/core/resolver/impacts/index").AnyImpact[],
   ) => { ok: true } | { ok: false; reason: string };
   /** D1 — Buy-now: immediately resolve a lot at its buyNowPrice */
   buyNow: (saleId: string, lotId: string) => { ok: boolean; reason?: string };

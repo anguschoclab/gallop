@@ -9,9 +9,15 @@ import type { GameState } from "@/game/types";
 import { createRacingSlice, type RacingSlice } from "./slices/racingSlice";
 import { createMarketSlice, type MarketSlice } from "./slices/marketSlice";
 import { createBreedingSlice, type BreedingSlice } from "./slices/breedingSlice";
-import { createSystemsSlice, type SystemsSlice } from "./slices/systemsSlice";
 import { createCampaignSlice, type CampaignSlice } from "./slices/campaignSlice";
 import { createCoreSlice, type CoreSlice } from "./slices/coreSlice";
+import { createJockeySlice } from "./slices/jockeySlice";
+import { createFacilitySlice } from "./slices/facilitySlice";
+import { createSettingsSlice } from "./slices/settingsSlice";
+import { createBreedingProgramSlice } from "./slices/breedingProgramSlice";
+import { createHorseAdminSlice } from "./slices/horseAdminSlice";
+import { createAwardSlice } from "./slices/awardSlice";
+import { createUtilitySlice } from "./slices/utilitySlice";
 import { createOpfsStorage, hydrationComplete, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/state/coreState";
@@ -134,11 +140,29 @@ export const useGame = create<StoreType>()(
       // Breeding slice
       ...createBreedingSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-      // Systems slice
-      ...createSystemsSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
       // Campaign slice
       ...createCampaignSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Jockey slice
+      ...createJockeySlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Facility slice
+      ...createFacilitySlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Settings slice
+      ...createSettingsSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Breeding program slice
+      ...createBreedingProgramSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Horse admin slice
+      ...createHorseAdminSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Award slice
+      ...createAwardSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Utility slice
+      ...createUtilitySlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Start new game action
       startNewGame: async (options: NewGameOptions) => {

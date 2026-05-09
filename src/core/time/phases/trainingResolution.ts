@@ -5,7 +5,7 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
 import type {
   AnyImpact,
-} from "@/core/resolver/impacts";
+} from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";
 import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";

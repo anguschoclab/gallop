@@ -1,5 +1,5 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact } from "@/core/resolver/impacts";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 import type { ConsignmentIntent, ConsignmentWithdrawalIntent } from "@/core/resolver/intents";
 

@@ -12,7 +12,7 @@ import type {
   EnergyImpact,
   HorseCreationImpact,
   HorseTransferImpact,
-} from "@/core/resolver/impacts";
+} from "@/core/resolver/impacts/index";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("applyImpacts", () => {

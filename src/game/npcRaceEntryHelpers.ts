@@ -1,0 +1,60 @@
+import type { Horse, Race, Stable } from "./types";
+import { isHorseEligibleForRace } from "@/core/race/eligibility";
+import { calculateRaceSuitability, MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/core/race/entryScoring";
+import { getFormTolerance } from "@/core/stable/personalityModifiers";
+import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+
+/**
+ * Check if a horse should enter a race (basic eligibility + suitability)
+ */
+export function shouldEnterHorse(
+  horse: Horse,
+  race: Race,
+  currentEntries: Race["entries"],
+  pregnantIds: Set<string>,
+  stable: Stable,
+): { shouldEnter: boolean; score: number } {
+  // Basic eligibility check
+  if (!isHorseEligibleForRace(horse, race, pregnantIds)) {
+    return { shouldEnter: false, score: 0 };
+  }
+
+  // Energy check
+  if (horse.energy < MIN_ENERGY_TO_ENTER) {
+    return { shouldEnter: false, score: 0 };
+  }
+
+  // Consignment check - cannot race if consigned to an auction
+  if (horse.consignedSaleId) {
+    return { shouldEnter: false, score: 0 };
+  }
+
+  // Form check - avoid very cold horses
+  const personality = PERSONALITY_CONFIG[stable.personality];
+  const minForm = getFormTolerance(stable.personality);
+  if (horse.form < minForm) {
+    return { shouldEnter: false, score: 0 };
+  }
+
+  // Check stable hasn't maxed out entries in this race
+  const stableEntries = currentEntries.filter((e) => e.stableId === horse.stableId).length;
+  if (stableEntries >= MAX_HORSES_PER_STABLE_PER_RACE) {
+    return { shouldEnter: false, score: 0 };
+  }
+
+  // Check horse not already entered
+  if (currentEntries.some((e) => e.horseId === horse.id)) {
+    return { shouldEnter: false, score: 0 };
+  }
+
+  // Calculate suitability score with personality (includes geometry and gradient)
+  const score = calculateRaceSuitability(horse, race, stable);
+
+  // Minimum score threshold to enter - modified by raceEntryMod
+  const minScore = 0 * personality.raceEntryMod;
+  if (score < minScore) {
+    return { shouldEnter: false, score };
+  }
+
+  return { shouldEnter: true, score };
+}

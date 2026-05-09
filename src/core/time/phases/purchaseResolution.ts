@@ -3,7 +3,7 @@
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, PurchaseIntent } from "@/core/resolver/intents";
-import type { AnyImpact, HorseTransferImpact } from "@/core/resolver/impacts";
+import type { AnyImpact, HorseTransferImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 
 /**

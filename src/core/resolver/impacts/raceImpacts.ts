@@ -1,0 +1,103 @@
+import type { Impact } from "./base";
+import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { RaceClass } from "@/game/types";
+
+// Race entry impact
+export interface RaceEntryImpact extends Impact {
+  type: "race_entry";
+  raceId: string;
+  horseId: string;
+  jockeyId?: string;
+  weight?: number;
+  entryFee: number;
+  ridingFee?: number;
+  reason: string;
+}
+
+// Race withdrawal impact
+export interface RaceWithdrawalImpact extends Impact {
+  type: "race_withdrawal";
+  raceId: string;
+  horseId: string;
+  refundAmount: number;
+  reason: string;
+}
+
+// Race result impact
+export interface RaceResultImpact extends Impact {
+  type: "race_result";
+  raceId: string;
+  results: { horseId: string; position: number; time: number }[];
+  snapshots?: RaceSnapshot[];
+  reason: string;
+}
+
+// Race history impact
+export interface RaceHistoryImpact extends Impact {
+  type: "race_history";
+  horseId: string;
+  raceHistoryEntry: {
+    raceId: string;
+    raceName: string;
+    position: number;
+    day: number;
+    beyer?: number;
+    grade?: "G1" | "G2" | "G3";
+    distance?: number;
+    surface?: string;
+    purse?: number;
+    fieldSize?: number;
+    raceClass?: RaceClass;
+    barrier?: number;
+    lane?: number;
+    winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
+  };
+  reason: string;
+}
+
+// Claiming impact
+export interface ClaimingImpact extends Impact {
+  type: "claiming";
+  raceId: string;
+  horseId: string;
+  fromStableId?: string;
+  toStableId?: string;
+  claimingPrice: number;
+  reason: string;
+}
+
+// Claim resolution impact
+export interface ClaimResolutionImpact extends Impact {
+  type: "claimResolution";
+  raceId: string;
+  horseId: string;
+  winningClaimId: string;
+  losingClaimIds: string[];
+}
+
+// Tactics impact
+export interface TacticsImpact extends Impact {
+  type: "tactics";
+  raceId: string;
+  horseId: string;
+  tactics: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+  reason: string;
+}
+
+// Pace sample impact
+export interface PaceSampleImpact extends Impact {
+  type: "pace_sample";
+  distance: number;
+  time: number;
+  reason: string;
+}
+
+export type RaceImpact =
+  | RaceEntryImpact
+  | RaceWithdrawalImpact
+  | RaceResultImpact
+  | RaceHistoryImpact
+  | ClaimingImpact
+  | ClaimResolutionImpact
+  | TacticsImpact
+  | PaceSampleImpact;

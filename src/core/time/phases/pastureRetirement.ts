@@ -3,7 +3,7 @@
 // Also deletes dead/retired horses with no wins to prevent array accumulation
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact, PastureRetirementImpact, LogImpact, HorseDeletionImpact } from "@/core/resolver/impacts";
+import type { AnyImpact, PastureRetirementImpact, LogImpact, HorseDeletionImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 
 /**

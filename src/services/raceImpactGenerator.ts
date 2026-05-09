@@ -17,7 +17,7 @@ import type {
   TransactionImpact,
   InjuryImpact,
   NewsImpact,
-} from "@/core/resolver/impacts";
+} from "@/core/resolver/impacts/index";
 import { generateRaceNews } from "@/services/newsGenerator";
 import { rollForInjury } from "@/core/health/healthSystem";
 import type { StaffMember } from "@/core/staff/staffTypes";

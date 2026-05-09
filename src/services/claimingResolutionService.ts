@@ -1,4 +1,4 @@
-import type { AnyImpact, CashImpact, ClaimingImpact, LogImpact } from "@/core/resolver/impacts";
+import type { AnyImpact, CashImpact, ClaimingImpact, LogImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 import { formatCurrency } from "@/lib/formatting";
 import type { ClaimingIntent } from "@/core/resolver/intents";

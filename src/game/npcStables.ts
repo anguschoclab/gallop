@@ -2,22 +2,18 @@
 // Pool-based system: Large pools of named stables, config determines how many spawn
 // Refactored to use modular configuration and generation systems
 
-import type { Stable, StableTier } from "./types";
-import type { PedigreeHorse } from "@/core/data/pedigreeData";
+import type { Stable } from "./types";
 import type { Rng } from "@/game/rng";
-import { PERSONALITY_CONFIG, STABLE_CONFIG } from "@/core/stable/stableConfig";
+import { STABLE_CONFIG } from "@/core/stable/stableConfig";
 import {
   shuffleAndPick,
-  selectPersonality,
-  getSpecialistPreferences,
 } from "@/core/stable/stableSelection";
 import {
   generateFillerStable,
   generateStableFromTemplate,
 } from "@/core/stable/stableGeneration";
 import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/core/breeding/archetypes";
-import { ELITE_POOL, MID_POOL, BUDGET_POOL, type StablePoolEntry } from "@/core/stable/stablePoolData";
-import { STALLION_FARM_MAPPING } from "@/core/stable/stallionFarmMapping";
+import { ELITE_POOL, MID_POOL, BUDGET_POOL } from "@/core/stable/stablePoolData";
 
 /**
  * Generate all NPC stables (named + filler)
@@ -80,87 +76,4 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
   }
 
   return stables;
-}
-
-/**
- * Get stable by ID
- */
-export function getStableById(stables: Stable[], id: string): Stable | undefined {
-  return stables.find((s) => s.id === id);
-}
-
-/**
- * Get all major stables (non-filler)
- */
-export function getMajorStables(stables: Stable[]): Stable[] {
-  return stables.filter((s) => s.isMajor);
-}
-
-/**
- * Get stables by tier
- */
-export function getStablesByTier(stables: Stable[], tier: StableTier): Stable[] {
-  return stables.filter((s) => s.tier === tier);
-}
-
-/**
- * Calculate starting cash for a stable based on tier
- */
-export function getStartingCashForTier(tier: StableTier, rng: Rng): number {
-  switch (tier) {
-    case "elite":
-      return rng.int(500000, 1000000);
-    case "mid":
-      return rng.int(150000, 350000);
-    case "budget":
-      return rng.int(20000, 70000);
-  }
-}
-
-/**
- * Calculate target horse count for a stable based on tier
- */
-export function getTargetHorseCountForTier(tier: StableTier, isMajor: boolean, rng: Rng): number {
-  if (!isMajor) return 10; // Filler stables always have 10
-  switch (tier) {
-    case "elite":
-      return rng.int(30, 40); // 30-40
-    case "mid":
-      return rng.int(20, 30); // 20-30
-    case "budget":
-      return rng.int(15, 25); // 15-25
-  }
-}
-
-/**
- * Map a famous stallion to an appropriate game stable
- * Uses real-world stud farm name to match with game stables, with tier-based fallback
- */
-export function mapStallionToStable(stallion: PedigreeHorse, stables: Stable[]): Stable {
-  // Try exact match first
-  const exactMatch = stables.find((s) => s.name === stallion.studFarm);
-  if (exactMatch) return exactMatch;
-
-  // Map by stud farm name to game stable
-  const mappedName = STALLION_FARM_MAPPING[stallion.studFarm || ""];
-  if (mappedName) {
-    const mapped = stables.find((s) => s.name === mappedName);
-    if (mapped) return mapped;
-  }
-
-  // Fallback: assign by tier based on stud fee
-  const tier =
-    stallion.studFee && stallion.studFee >= 100000
-      ? "elite"
-      : stallion.studFee && stallion.studFee >= 25000
-        ? "mid"
-        : "budget";
-
-  const tierStables = stables.filter((s) => s.tier === tier);
-  if (tierStables.length === 0) {
-    // If no stables of appropriate tier, return any stable
-    return stables[Math.floor(Math.random() * stables.length)];
-  }
-
-  return tierStables[Math.floor(Math.random() * tierStables.length)];
 }

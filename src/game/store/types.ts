@@ -3,9 +3,15 @@ import type { CoreState } from "@/game/state/coreState";
 import type { RacingSlice } from "./slices/racingSlice";
 import type { MarketSlice } from "./slices/marketSlice";
 import type { BreedingSlice } from "./slices/breedingSlice";
-import type { SystemsSlice } from "./slices/systemsSlice";
 import type { CampaignSlice } from "./slices/campaignSlice";
 import type { CoreSlice } from "./slices/coreSlice";
+import type { JockeySlice } from "./slices/jockeySlice";
+import type { FacilitySlice } from "./slices/facilitySlice";
+import type { SettingsSlice } from "./slices/settingsSlice";
+import type { BreedingProgramSlice } from "./slices/breedingProgramSlice";
+import type { HorseAdminSlice } from "./slices/horseAdminSlice";
+import type { AwardSlice } from "./slices/awardSlice";
+import type { UtilitySlice } from "./slices/utilitySlice";
 
 /**
  * Standard action result type for store actions
@@ -16,9 +22,14 @@ export type ActionResult = { ok: true } | { ok: false; reason: string };
  * Options for starting a new game
  */
 export interface NewGameOptions {
-  region: string;
-  stableName: string;
-  initialCash?: number;
+  profile: {
+    stableName: string;
+    ownerName: string;
+    silk: any;
+    backstoryId: string;
+    founded: number;
+  };
+  backstory: any;
 }
 
 /**
@@ -28,9 +39,15 @@ export type StoreType = CoreState &
   RacingSlice &
   MarketSlice &
   BreedingSlice &
-  SystemsSlice &
   CampaignSlice &
-  CoreSlice & {
+  CoreSlice &
+  JockeySlice &
+  FacilitySlice &
+  SettingsSlice &
+  BreedingProgramSlice &
+  HorseAdminSlice &
+  AwardSlice &
+  UtilitySlice & {
     startNewGame: (options: NewGameOptions) => Promise<void>;
   };
 

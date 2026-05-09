@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import {
   selectHorsesForRaceEntry,
   runNpcRaceEntry,
-  fillRaceWithFillerHorses,
-  updateHorseFame,
 } from "@/game/npcRaceEntry";
+import { fillRaceWithFillerHorses } from "@/game/raceFieldManager";
+import { updateHorseFame } from "@/game/npcPostRace";
 import { createRng } from "@/game/rng";
 import type { Horse, Race, Stable } from "@/game/types";
 

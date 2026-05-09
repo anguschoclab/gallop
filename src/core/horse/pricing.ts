@@ -1,4 +1,4 @@
-import type { Horse, StableTier, GameState } from "@/game/types";
+import type { Horse, StableTier, GameState, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 
@@ -19,6 +19,24 @@ export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number 
  */
 export function calculateNpcHorseValue(horse: Horse, tier: StableTier): number {
   return calculateBaseHorseValue(horse, tier);
+}
+
+/**
+ * Get stud fee for a horse based on its value
+ */
+export function getStudFee(horse: Horse, stable: Pick<Stable, "tier">): number {
+  if (horse.gender !== "horse" && horse.gender !== "colt") return 0;
+  if (horse.age < 4) return 0;
+  return calculateNpcHorseValue(horse, stable.tier);
+}
+
+/**
+ * Get broodmare fee for a horse based on its value
+ */
+export function getBroodmareFee(horse: Horse, stable: Pick<Stable, "tier">): number {
+  if (horse.gender !== "mare" && horse.gender !== "filly") return 0;
+  if (horse.age < 3) return 0;
+  return Math.round(calculateNpcHorseValue(horse, stable.tier) * 0.3);
 }
 
 /**

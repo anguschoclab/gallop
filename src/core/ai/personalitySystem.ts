@@ -1,5 +1,11 @@
 import type { StablePersonality } from "@/game/types";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import {
+  createLearningState,
+  recordOutcome as recordLearningOutcome,
+  getSuccessRate,
+  type LearningState,
+} from "./learningModule";
 
 /**
  * Hybrid AI Personality System
@@ -16,20 +22,11 @@ export interface PersonalityAIState {
   conservatism: number;
   innovation: number;
   // Learning memory
-  outcomes: DecisionOutcome[];
-  successRates: Record<string, number>;
+  learningState: LearningState;
   // Strategic state
   currentStrategy: string;
   strategyConfidence: number;
   lastStrategyChange: number;
-}
-
-export interface DecisionOutcome {
-  decisionType: string;
-  context: Record<string, unknown>;
-  success: boolean;
-  value: number;
-  timestamp: number;
 }
 
 /**
@@ -46,8 +43,7 @@ export function getPersonalityAIState(personality: StablePersonality): Personali
     competitiveAwareness: config.competitiveAwareness,
     conservatism: config.conservatism,
     innovation: config.innovation,
-    outcomes: [],
-    successRates: {},
+    learningState: createLearningState(),
     currentStrategy: "default",
     strategyConfidence: 0.5,
     lastStrategyChange: 0,
@@ -116,44 +112,32 @@ export function recordOutcome(
   success: boolean,
   value: number,
   timestamp: number,
+  day: number,
 ): PersonalityAIState {
-  const outcome: DecisionOutcome = {
+  const contextKey = getOutcomeKey(decisionType, context);
+
+  // Delegate to learningModule
+  const newLearningState = recordLearningOutcome(
+    aiState.learningState,
     decisionType,
-    context,
+    contextKey,
     success,
     value,
     timestamp,
-  };
+    day,
+    aiState.memoryDepth,
+  );
 
-  // Add to memory
-  const newOutcomes = [...aiState.outcomes, outcome];
-
-  // Trim to memory depth
-  const trimmedOutcomes =
-    newOutcomes.length > aiState.memoryDepth
-      ? newOutcomes.slice(-aiState.memoryDepth)
-      : newOutcomes;
-
-  // Update success rates
-  const key = getOutcomeKey(decisionType, context);
-  const history = trimmedOutcomes.filter((o) => getOutcomeKey(o.decisionType, o.context) === key);
-  const successCount = history.filter((o) => o.success).length;
-  const successRate = history.length > 0 ? successCount / history.length : 0;
-  
-  const newSuccessRates = {
-    ...aiState.successRates,
-    [key]: successRate,
-  };
+  const successRate = getSuccessRate(newLearningState, decisionType, contextKey);
 
   let newState = {
     ...aiState,
-    outcomes: trimmedOutcomes,
-    successRates: newSuccessRates,
+    learningState: newLearningState,
   };
 
   // Adapt strategy if needed
-  if (shouldAdaptStrategy(newState, key, successRate)) {
-    newState = adaptStrategy(newState, key, successRate, timestamp);
+  if (shouldAdaptStrategy(newState, decisionType, contextKey, successRate)) {
+    newState = adaptStrategy(newState, decisionType, contextKey, successRate, timestamp);
   }
 
   return newState;
@@ -176,12 +160,13 @@ function getOutcomeKey(decisionType: string, context: Record<string, unknown>): 
  */
 function shouldAdaptStrategy(
   aiState: PersonalityAIState,
-  key: string,
+  decisionType: string,
+  contextKey: string,
   successRate: number,
 ): boolean {
   // Adapt if success rate is low and enough data collected
-  const history = aiState.outcomes.filter((o) => getOutcomeKey(o.decisionType, o.context) === key);
-  if (history.length < 5) return false;
+  const data = aiState.learningState.successRates[`${decisionType}:${contextKey}`];
+  if (!data || data.total < 5) return false;
 
   // Conservative personalities adapt slower
   const threshold = 0.5 - aiState.conservatism * 0.2;
@@ -193,7 +178,8 @@ function shouldAdaptStrategy(
  */
 function adaptStrategy(
   aiState: PersonalityAIState,
-  key: string,
+  _decisionType: string,
+  _contextKey: string,
   successRate: number,
   timestamp: number,
 ): PersonalityAIState {
@@ -201,7 +187,7 @@ function adaptStrategy(
   const confidenceChange = (1 - successRate) * config.adaptationSpeed;
 
   const newConfidence = Math.max(0.1, aiState.strategyConfidence - confidenceChange);
-  
+
   let currentStrategy = aiState.currentStrategy;
   let finalConfidence = newConfidence;
 

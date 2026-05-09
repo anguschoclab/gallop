@@ -1,5 +1,5 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact } from "@/core/resolver/impacts";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/raceSimulationService";
 import type { Race } from "@/game/types";
 import type { ClaimingIntent } from "@/core/resolver/intents";

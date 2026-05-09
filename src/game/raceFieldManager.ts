@@ -1,0 +1,38 @@
+import type { Race, Stable, Horse } from "./types";
+
+/**
+ * Fill remaining race spots with filler horses
+ * Called when building race field if pre-entries don't fill the race
+ */
+export function fillRaceWithFillerHorses(
+  race: Race,
+  stables: Stable[],
+  horses: Horse[],
+  needed: number,
+): { updatedRace: Race; newHorses: Horse[] } {
+  const updatedRace = { ...race };
+  const newHorses: Horse[] = [];
+
+  // Get filler stables (non-major)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const fillerStables = stables.filter((s) => !s.isMajor);
+
+  // Find eligible filler horses already in the system
+  const eligibleFillerHorses = horses.filter(
+    (h) => h.stableId && !h.owned && !race.entries.some((e) => e.horseId === h.id) && h.energy > 40,
+  );
+
+  // Use existing horses first
+  for (const horse of eligibleFillerHorses.slice(0, needed)) {
+    if (updatedRace.entries.length >= updatedRace.fieldSize) break;
+
+    updatedRace.entries.push({
+      horseId: horse.id,
+      owned: false,
+      stableId: horse.stableId,
+      npc: true,
+    });
+  }
+
+  return { updatedRace, newHorses };
+}

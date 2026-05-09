@@ -13,7 +13,7 @@ import type {
   TacticsIntent,
   StudRetirementIntent
 } from "@/core/resolver/intents";
-import type { AnyImpact } from "@/core/resolver/impacts";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 import { createRng, hashStr } from "@/game/rng";
 import { scoutHorse } from "@/game/scouting";

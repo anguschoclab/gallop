@@ -13,7 +13,7 @@ import { generateUUID } from "./uuid";
 import type { AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord } from "./types";
 import { calculateNpcBid, netProceeds } from "./auction";
 import { createRng, hashStr, type Rng } from "./rng";
-import type { AnyImpact } from "@/core/resolver/impacts";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 export type ChantPhase = "open" | "bidding" | "going_once" | "going_twice" | "sold" | "passed";

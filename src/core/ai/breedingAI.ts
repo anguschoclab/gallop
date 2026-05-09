@@ -1,12 +1,7 @@
 import type { Horse, Stable, GameState } from "@/game/types";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome as recordLearningOutcome,
-  getSuccessRate,
-  type LearningState,
-} from "./learningModule";
+import { getSuccessRate } from "./learningModule";
 import { scoreStallion, overallRating } from "@/core/breeding/strategy";
 import { runBreedingSimulation } from "@/core/genetics/breedingSimulator";
 import { cachedSimulation } from "@/core/genetics/genotypeCache";
@@ -22,7 +17,6 @@ import type { Rng } from "@/game/rng";
 
 export interface BreedingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
-  learningState: LearningState;
   breedingHistory: BreedingDecision[];
   activeProgram: BreedingProgram | null;
   programDistanceHistory: { season: number; distance: number }[];
@@ -52,7 +46,6 @@ export interface BreedingDecision {
 export function createBreedingAIState(stable: Stable): BreedingAIState {
   return {
     personalityState: getPersonalityAIState(stable.personality),
-    learningState: createLearningState(),
     breedingHistory: [],
     activeProgram: null,
     programDistanceHistory: [],
@@ -77,7 +70,7 @@ export function calculateAIStallionScore(
 
   // Learning-based adjustment
   const contextKey = `${stallion.id}:${stable.personality}`;
-  const successRate = getSuccessRate(aiState.learningState, "breeding", contextKey);
+  const successRate = getSuccessRate(aiState.personalityState.learningState, "breeding", contextKey);
   const adaptiveBonus = (successRate - 0.5) * 20; // -10 to +10 based on learning
   score += adaptiveBonus;
 
@@ -192,20 +185,7 @@ export function recordBreedingOutcome(
     const newBreedingHistory = [...aiState.breedingHistory];
     newBreedingHistory[decisionIndex] = decision;
 
-    // Update learning state
-    const contextKey = `${sireId}:${decision.personality}`;
-    const newLearningState = recordLearningOutcome(
-      aiState.learningState,
-      "breeding",
-      contextKey,
-      success,
-      foalRating,
-      Date.now(),
-      currentDay,
-      aiState.personalityState.memoryDepth,
-    );
-
-    // Update personality state
+    // Update personality state (now handles learning internally)
     const newPersonalityState = recordOutcome(
       aiState.personalityState,
       "breeding",
@@ -213,12 +193,12 @@ export function recordBreedingOutcome(
       success,
       foalRating,
       Date.now(),
+      currentDay,
     );
 
     return {
       ...aiState,
       breedingHistory: newBreedingHistory,
-      learningState: newLearningState,
       personalityState: newPersonalityState,
     };
   }

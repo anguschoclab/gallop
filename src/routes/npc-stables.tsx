@@ -4,7 +4,7 @@ import { Trophy, TrendingUp, Users, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNpcStables } from "@/game/hooks/useSystemsState";
-import { getMajorStables, getStablesByTier } from "@/game/npcStables";
+import { getMajorStables, getStablesByTier } from "@/core/stable/stableQueries";
 import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
 
 export const Route = createFileRoute("/npc-stables")({ component: NpcStablesPage });

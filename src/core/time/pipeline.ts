@@ -1,7 +1,7 @@
 import type { GameState } from "@/game/types";
 import type { Rng } from "@/game/rng";
 import type { AnyIntent } from "@/core/resolver/intents";
-import type { AnyImpact } from "@/core/resolver/impacts";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { ImpactLogEntry } from "@/core/resolver/resolver";
 
 export interface PipelineContext {

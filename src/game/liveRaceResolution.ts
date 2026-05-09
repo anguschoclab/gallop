@@ -11,7 +11,7 @@ import type {
   JockeyStatsImpact,
   LogImpact,
   TripleCrownProgressImpact,
-} from "@/core/resolver/impacts";
+} from "@/core/resolver/impacts/index";
 import type { Race, Horse, Jockey } from "./types";
 import type { Runner } from "@/core/race/raceSim";
 import { calculateClassBonus } from "@/core/common/classBonus";

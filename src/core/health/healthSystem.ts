@@ -1,6 +1,6 @@
 import type { Horse } from "@/game/types";
 import type { Rng } from "@/game/rng";
-import type { InjuryImpact } from "@/core/resolver/impacts";
+import type { InjuryImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 import type { StaffMember } from "@/core/staff/staffTypes";
 

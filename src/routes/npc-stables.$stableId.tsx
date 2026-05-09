@@ -13,7 +13,7 @@ import {
 import { useHorses, useDay, useCash } from "@/game/hooks/useCoreState";
 import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
 import { useGame } from "@/game/store";
-import { getStableById } from "@/game/npcStables";
+import { getStableById } from "@/core/stable/stableQueries";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { calculateScoutCost } from "@/game/scouting";
 import { calculateLotValuation } from "@/game/auction";

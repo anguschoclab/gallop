@@ -8,7 +8,7 @@ import type {
   PregnancyCreationImpact,
   CashImpact,
   StudCareerImpact,
-} from "@/core/resolver/impacts";
+} from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 import type { Pregnancy } from "@/game/types";
 import { GESTATION_DAYS } from "@/game/constants/gameConstants";
