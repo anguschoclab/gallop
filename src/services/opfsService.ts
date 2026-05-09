@@ -52,13 +52,14 @@ export async function checkOPFSAvailable(): Promise<boolean> {
 
 /**
  * Write JSON data to OPFS file
+ * @param filename
+ * @param data
  */
 export async function writeFile(filename: string, data: unknown): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {
     // Silent no-op in headless/SSR environments
     return;
   }
-
 
   try {
     const fileHandle = await opfsRoot.getFileHandle(filename, { create: true });
@@ -76,6 +77,7 @@ export async function writeFile(filename: string, data: unknown): Promise<void> 
 
 /**
  * Read JSON data from OPFS file
+ * @param filename
  */
 export async function readFile<T>(filename: string): Promise<T | null> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -98,6 +100,7 @@ export async function readFile<T>(filename: string): Promise<T | null> {
 
 /**
  * Delete file from OPFS
+ * @param filename
  */
 export async function deleteFile(filename: string): Promise<boolean> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -125,8 +128,7 @@ export async function listFiles(): Promise<string[]> {
   try {
     const files: string[] = [];
     // Iterate through directory entries
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    for await (const entry of opfsRoot as any) {
+    for await (const entry of opfsRoot) {
       if (entry.kind === "file") {
         files.push(entry.name);
       }
@@ -149,8 +151,7 @@ export async function clearAll(): Promise<void> {
   try {
     // Collect all file names first
     const fileNames: string[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    for await (const entry of opfsRoot as any) {
+    for await (const entry of opfsRoot) {
       if (entry.kind === "file") {
         fileNames.push(entry.name);
       }

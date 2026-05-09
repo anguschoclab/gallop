@@ -23,8 +23,8 @@ import type {
   LogImpact,
   TripleCrownProgressImpact,
 } from "@/core/resolver/impacts/index";
-import type { Race, Horse, Jockey } from "./types";
-import type { Runner } from "@/core/race/raceSim";
+import type { Race, Horse, Jockey, Stable, GameState } from "./types";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { beyerFigure } from "./beyer";
 import { formatCurrency } from "@/lib/formatting";
@@ -63,15 +63,13 @@ export function resolveLiveRaceWithImpacts(
   runners: Runner[],
   horses: Horse[],
   jockeys: Jockey[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  npcStables: any[],
+  npcStables: Stable[],
   day: number,
   calibratedPars: Record<number, number> = {},
 ): ResolverContext {
   if (race.resolved) {
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      state: { horses, jockeys, npcStables, races: [race] } as any,
+      state: { horses, jockeys, npcStables, races: [race] } as GameState,
       intents: [],
       impacts: [],
       impactLog: [],
@@ -321,8 +319,7 @@ export function resolveLiveRaceWithImpacts(
                   lifetimeG1Foals: newG1Foals,
                 },
               },
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              { horses, npcStables } as any,
+              day,
             )
           : sire.stud.standingFee;
 
@@ -448,8 +445,7 @@ export function resolveLiveRaceWithImpacts(
 
   // Apply impacts to state
   const resolverContext: ResolverContext = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    state: { horses, jockeys, npcStables, races: [race] } as any,
+    state: { horses, jockeys, npcStables, races: [race] } as GameState,
     intents: [],
     impacts,
     impactLog: [],

@@ -82,8 +82,7 @@ export type Race = {
   restrictions?: {
     minAge?: number;
     maxAge?: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    gender?: any; // Gender restrictions have complex union types - avoiding deep nesting
+    gender?: "colt" | "filly" | "gelding" | "mare" | "stallion";
     minAgeNorthern?: number;
     minAgeSouthern?: number;
     nonWinnersOf?: number;

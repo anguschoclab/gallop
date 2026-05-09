@@ -15,4 +15,9 @@ export interface Impact {
   phase: string;
   type: string;
   logLevel: "always" | "conditional" | "never";
+  // Optional common properties for impact logging
+  entityId?: string;
+  horseId?: string;
+  raceId?: string;
+  reason?: string;
 }

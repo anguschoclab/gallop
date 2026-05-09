@@ -128,7 +128,6 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
   if (options) {
     for (const [type, level] of Object.entries(options.backstory.facilityUpgrades)) {
       if (level) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         facilities[type as keyof typeof facilities] = createFacility(
           type as Parameters<typeof createFacility>[0],
           level as unknown as number, // Object.entries returns string, convert to number

@@ -435,18 +435,26 @@ export function resolveFoalingEase(locus: Locus): number {
 }
 
 /**
- * Resolve markings from markings genotype.
+ * Resolve markings from marker genotype.
  *
- * Returns cosmetic marking flags including socks, face white, and special patterns.
+ * Returns the horse's markings (socks, face white, silver dapple, sabino, splash white)
+ * based on the marker genotype.
  *
- * @param locus - Markings genotype
+ * @param locus - Marker genotype locus with dynamic structure
  * @returns Markings object
  *
  * @example
  * const markings = resolveMarkings(genotype.markings);
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function resolveMarkings(locus: any) { // Locus has dynamic structure based on genotype
+type MarkingsLocus = {
+  socks: Locus;
+  face: Locus;
+  silverDapple: [number, number];
+  sabino: [number, number];
+  splashWhite: [number, number];
+};
+
+export function resolveMarkings(locus: MarkingsLocus) {
   // Shared logic for resolving cosmetic flags
   return {
     socks: resolveSocks(locus.socks),

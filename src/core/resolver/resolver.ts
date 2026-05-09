@@ -11,8 +11,8 @@
 // Core resolver logic for the impact resolver system
 // Handles intent collection, validation, and impact application using Immer
 
-import { produce } from "immer";
-import type { GameState } from "@/game/types";
+import { produce, type WritableDraft } from "immer";
+import type { GameState, Horse, Stable } from "@/game/types";
 import type { AnyIntent } from "./intents";
 import type { AnyImpact } from "./impacts";
 import { ALL_HANDLERS } from "./handlers";
@@ -41,6 +41,8 @@ export interface ResolverContext {
 
 /**
  * Apply a single impact to the state using Immer for immutability
+ * @param state
+ * @param impact
  */
 function applyImpact(state: GameState, impact: AnyImpact): GameState {
   return produce(state, (draft) => {
@@ -71,16 +73,16 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
  */
 export function applyImpacts(context: ResolverContext): ResolverContext {
   const impactLog: ImpactLogEntry[] = [];
-  
+
   const newState = produce(context.state, (draft) => {
     // PRE-INDEX: Create maps for O(1) lookups during impact resolution
-    // Note: We use the DRAFT as source, but once a horse is modified, 
+    // Note: We use the DRAFT as source, but once a horse is modified,
     // the proxy stays the same in the map, so it's safe.
     const horseMap = new Map<string, WritableDraft<Horse>>();
     for (const h of draft.horses) {
       horseMap.set(h.id, h);
     }
-    
+
     const stableMap = new Map<string, WritableDraft<Stable>>();
     for (const s of draft.npcStables) {
       stableMap.set(s.id, s);
@@ -128,20 +130,23 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
 
     for (const impact of context.impacts) {
       let handled = false;
-      
+
       for (const handler of ALL_HANDLERS) {
         if (handler.canHandle(impact.type)) {
-          handler.handle(draft, impact, { horseMap, stableMap, campaignMap, raceMap, jockeyMap, auctionMap, facilityMap, staffMap });
+          handler.handle(draft, impact, {
+            horseMap,
+            stableMap,
+            campaignMap,
+            raceMap,
+            jockeyMap,
+            auctionMap,
+            facilityMap,
+            staffMap,
+          });
           handled = true;
           break;
         }
       }
-
-
-
-
-
-
 
       if (!handled) {
         console.warn(`Unknown impact type: ${impact.type}`);
@@ -155,14 +160,8 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
           day: impact.day,
           phase: impact.phase,
           type: impact.type,
-          entityId:
-            (impact as any).entityId ||
-            (impact as any).horseId ||
-            (impact as any).raceId ||
-            "unknown",
-          details:
-            (impact as any).reason ||
-            impact.type,
+          entityId: impact.entityId || impact.horseId || impact.raceId || "unknown",
+          details: impact.reason || impact.type,
           logLevel: impact.logLevel,
         });
       }
@@ -175,7 +174,6 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
     impactLog: [...context.impactLog, ...impactLog],
   };
 }
-
 
 /**
  * Validate an intent before resolution.

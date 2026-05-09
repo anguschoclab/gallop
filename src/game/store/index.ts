@@ -204,7 +204,9 @@ export const useGame = create<StoreType>()(
       ...createAuctionSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Private sale slice
-      ...createPrivateSaleSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createPrivateSaleSlice(set as any, get, (intent: AnyIntent) =>
+        get().enqueueIntent(intent),
+      ),
 
       // Breeding slice
       ...createBreedingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
@@ -222,7 +224,9 @@ export const useGame = create<StoreType>()(
       ...createSettingsSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Breeding program slice
-      ...createBreedingProgramSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createBreedingProgramSlice(set as any, get, (intent: AnyIntent) =>
+        get().enqueueIntent(intent),
+      ),
 
       // Horse admin slice
       ...createHorseAdminSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
@@ -321,8 +325,12 @@ export { shallow };
 
 // Custom hook that supports shallow comparison for object/array selectors
 export const useGameWithShallow = <T>(selector: (state: StoreType) => T): T =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (useGame as any)(selector, shallow);
+  (
+    useGame as unknown as (
+      selector: (state: StoreType) => T,
+      equalityFn: (a: T, b: T) => boolean,
+    ) => T
+  )(selector, shallow);
 
 // Alias for backwards compatibility
 export { useGame as useGallopStore };

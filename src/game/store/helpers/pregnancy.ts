@@ -13,7 +13,8 @@
  * Pure business logic for resolving pregnancies and foaling
  */
 
-import type { Horse, Pregnancy, Stable } from "@/game/types";
+import type { Horse, Pregnancy, Stable, RegionalSystem } from "@/game/types";
+import type { Track } from "@/game/tracks";
 import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
@@ -24,6 +25,17 @@ import {
   GESTATION_DAYS,
   LIVE_FOAL_GUARANTEE_FEE,
 } from "@/game/constants/gameConstants";
+
+/**
+ * Helper function to get regional system from country string
+ * Maps country to regional system without requiring a full Track object
+ * @param country
+ */
+function getRegionalSystemFromCountry(country: string): RegionalSystem {
+  // Create a minimal Track-like object for getRegionalSystem
+  const trackLike = { id: "temp", name: "temp", country, surfaces: ["Dirt"], courses: [] } as const;
+  return getRegionalSystem(trackLike as unknown as Track);
+}
 
 export type PregnancyResult = {
   pregnancies: Pregnancy[];
@@ -37,6 +49,8 @@ export type PregnancyResult = {
  * Handles live foals, stillbirths, and live foal guarantee retries
  * @param currentPregnancies - Current pregnancy records
  * @param horses - All horses in the game (for sire/dam lookup)
+ * @param stables
+ * @param usedNames
  * @param newDay - Current simulation day
  * @returns Result object with updated pregnancies, new foals, cash adjustments, and logs
  */
@@ -72,10 +86,7 @@ export function resolvePregnancies(
     if (dam?.stableId) {
       const stable = stables.find((s) => s.id === dam.stableId);
       if (stable) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const regionalSystem = getRegionalSystem(
-          (stable.country || "USA") as any, // getRegionalSystem expects Track type, country is string
-        );
+        const regionalSystem = getRegionalSystemFromCountry(stable.country || "USA");
         namingContext = {
           region: regionalSystem,
           namingTheme: PERSONALITY_CONFIG[stable.personality]?.namingTheme,
@@ -85,7 +96,6 @@ export function resolvePregnancies(
     }
 
     const outcome = resolveFoaling(p, sire, dam, namingContext, newDay);
-
 
     if (outcome.kind === "live") {
       const foal = outcome.foal;

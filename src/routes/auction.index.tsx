@@ -17,6 +17,19 @@ import { cn } from "@/lib/utils";
 import { ConsignDialog } from "@/components/auction/ConsignDialog";
 import type { AuctionSale, Horse } from "@/game/types";
 
+// Type for mixed AuctionSale and scheduled sale objects
+type SaleDisplay =
+  | AuctionSale
+  | {
+      id: string;
+      name: string;
+      kind: string;
+      day: number;
+      lots: Array<{ consignorStableId?: string; withdrawn?: boolean }>;
+      resolved: false;
+      isScheduled: true;
+    };
+
 export const Route = createFileRoute("/auction/")({
   component: AuctionPage,
 });
@@ -35,7 +48,7 @@ function AuctionPage() {
   const todaysSales = activeUpcoming.filter((s) => s.day === day);
 
   // Mix active upcoming with scheduled upcoming (from SALE_TRIGGERS)
-  const allUpcoming = SALE_TRIGGERS.map((t) => {
+  const allUpcoming: SaleDisplay[] = SALE_TRIGGERS.map((t) => {
     const actual = activeUpcoming.find((a) => a.kind === t.kind);
     if (actual) return actual;
 
@@ -138,15 +151,13 @@ function AuctionPage() {
             </CardContent>
           </Card>
         ) : (
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          allUpcoming.map((sale: any) => { // Mix of AuctionSale and scheduled sale objects
+          allUpcoming.map((sale) => {
             const daysAway = sale.day - day;
             const playerLots = sale.lots
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              ? sale.lots.filter((l: any) => !l.consignorStableId && !l.withdrawn)
+              ? sale.lots.filter((l) => !l.consignorStableId && !l.withdrawn)
               : [];
             const isToday = daysAway === 0;
-            const isScheduled = sale.isScheduled;
+            const isScheduled = "isScheduled" in sale && sale.isScheduled;
 
             return (
               <Card
@@ -165,8 +176,7 @@ function AuctionPage() {
                           {sale.name}
                         </CardTitle>
                         <Badge className="border border-gold-muted bg-t700 text-cream font-[family-name:var(--font-body)]">
-                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                          {(KIND_LABELS as any)[sale.kind] ?? sale.kind} // KIND_LABELS has complex key types
+                          {KIND_LABELS[sale.kind as keyof typeof KIND_LABELS] ?? sale.kind}
                         </Badge>
                       </div>
                       <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
@@ -174,10 +184,8 @@ function AuctionPage() {
                         {!isScheduled && (
                           <>
                             {" "}
-                            ·{" "}
-                            <NumericValue
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              value={sale.lots.filter((l: any) => !l.withdrawn).length} // Lot type complex due to mixed objects
+                            · <NumericValue
+                              value={sale.lots.filter((l) => !l.withdrawn).length}
                             />{" "}
                             lots
                           </>

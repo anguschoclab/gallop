@@ -33,6 +33,7 @@ import {
 } from "@/game/constants/gameConstants";
 import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";
+import { generateUUID } from "@/game/uuid";
 import type { StoreSet, StoreGet } from "../types";
 
 export type CoreSlice = CoreState & {
@@ -47,8 +48,7 @@ export type CoreSlice = CoreState & {
   resolveRaceWithImpacts: (
     raceId: string,
     result: { horseId: string; position: number; time: number }[],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    runners?: any[],
+    runners?: Array<{ horseId: string; owned?: boolean }>,
   ) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
@@ -80,11 +80,9 @@ export type CoreSlice = CoreState & {
  * @returns Core slice with state and actions
  */
 export function createCoreSlice(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  set: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get: any,
-  enqueueIntent: (intent: any) => void,
+  set: StoreSet,
+  get: StoreGet,
+  enqueueIntent: (intent: AnyIntent) => void,
 ): CoreSlice {
   /**
    * Helper to apply day advancement results to the store state.
@@ -162,16 +160,20 @@ export function createCoreSlice(
       const horse = requireHorse(s.horses, horseId);
       const ownershipGuard = requireOwned(horse);
       if (ownershipGuard) return ownershipGuard;
-      
+
       if (horse!.energy < 50) return { ok: false, reason: "Horse lacks sufficient energy." };
-      if (race.entries.some((e: any) => e.horseId === horseId))
+      if (race.entries.some((e) => e.horseId === horseId))
         return { ok: false, reason: "Horse already entered." };
 
       enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
         type: "race_entry",
         raceId,
         horseId,
-        day: s.day,
       });
 
       return { ok: true };
@@ -196,14 +198,18 @@ export function createCoreSlice(
       const s = get();
       const race = s.races.find((r: Race) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
-      const entry = race.entries.find((e: any) => e.horseId === horseId);
+      const entry = race.entries.find((e) => e.horseId === horseId);
       if (!entry) return { ok: false, reason: "Horse not entered in this race." };
 
       enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
         type: "race_withdrawal",
         raceId,
         horseId,
-        day: s.day,
       });
 
       return { ok: true };
@@ -215,10 +221,14 @@ export function createCoreSlice(
     ) => {
       const s = get();
       enqueueIntent({
+        id: generateUUID(),
+        entityId: raceId,
+        source: "system",
+        day: s.day,
+        priority: 10,
         type: "race_resolution",
         raceId,
         results: result,
-        day: s.day,
       });
     },
 
@@ -231,10 +241,15 @@ export function createCoreSlice(
       if (horse.owned) return { ok: false, reason: "Cannot claim your own horse." };
 
       enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
         type: "claiming",
         raceId,
         horseId,
-        day: s.day,
+        claimingPrice: race.claimingPrice || 0,
       });
 
       return { ok: true };
@@ -246,10 +261,14 @@ export function createCoreSlice(
       if (!race) return { ok: false, reason: "Race not found." };
 
       enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
         type: "withdraw_from_claiming",
         raceId,
         horseId,
-        day: s.day,
       });
 
       return { ok: true };
@@ -331,13 +350,7 @@ export function createCoreSlice(
         // O(1) lookup instead of O(n) array.find
         if (playerRaceDays.has(nextDay) && !headless) {
           const playerRace = currentS.races.find(
-            (r: Race) =>
-              !r.resolved &&
-              r.day === nextDay &&
-              r.entries.some(
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (e: any) => e.owned,
-              ),
+            (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
           );
           if (playerRace) {
             set({ pendingPlayerRaceId: playerRace.id });
@@ -391,8 +404,7 @@ export function createCoreSlice(
     },
 
     addLogEntry: (entry) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      set((state: any) => ({
+      set((state) => ({
         log: [entry, ...state.log].slice(0, 500),
       }));
     },

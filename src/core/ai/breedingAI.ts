@@ -99,7 +99,11 @@ export function calculateAIStallionScore(
 
   // Learning-based adjustment
   const contextKey = `${stallion.id}:${stable.personality}`;
-  const successRate = getSuccessRate(aiState.personalityState.learningState, "breeding", contextKey);
+  const successRate = getSuccessRate(
+    aiState.personalityState.learningState,
+    "breeding",
+    contextKey,
+  );
   const adaptiveBonus = (successRate - 0.5) * 20; // -10 to +10 based on learning
   score += adaptiveBonus;
 
@@ -211,7 +215,8 @@ export function recordBreedingDecision(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   return {
     ...aiState,
@@ -465,15 +470,14 @@ export function selectSireForDam(
         runBreedingSimulation(sire, dam, gameState, rng),
       );
       // Build a synthetic horse from the simulation median stats to measure distance
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const syntheticFoal: any = {
+      const syntheticFoal = {
         stats: {
           speed: simulation.stats.speed.p75,
           stamina: simulation.stats.stamina.p75,
           acceleration: simulation.stats.acceleration.p75,
           consistency: simulation.stats.consistency.p75,
         },
-      }; // Synthetic partial object for distance calculation - only stats needed
+      } as unknown as Horse; // Synthetic partial object for distance calculation - only stats needed
 
       const distance = calculateGeneticDistance(syntheticFoal, archetype);
       if (distance < bestDistance) {
