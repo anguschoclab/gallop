@@ -12,6 +12,7 @@ import {
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { User, Trophy, Calendar, DollarSign, Target, RefreshCw } from "lucide-react";
 import { RacingSilks } from "./RacingSilks";
+import { JockeyPortrait } from "./JockeyPortrait";
 import { useGame } from "@/game/store";
 import { formatCurrency } from "@/lib/formatting";
 
