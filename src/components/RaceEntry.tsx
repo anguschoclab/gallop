@@ -28,6 +28,7 @@ import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { Check, ChevronRight, User, Info, AlertTriangle, Truck } from "lucide-react";
 import { JockeyCard } from "./JockeyCard";
 import { RacingSilks } from "./RacingSilks";
+import { JockeyAvatar } from "./JockeyAvatar";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { formatCurrency } from "@/lib/formatting";
