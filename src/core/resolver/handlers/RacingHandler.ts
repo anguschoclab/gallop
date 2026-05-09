@@ -53,6 +53,8 @@ export class RacingHandler implements ImpactHandler {
           race.entries.push({
             horseId,
             owned: !horse.stableId,
+            stableId: horse.stableId,
+            npc: !!horse.stableId,
             jockeyId,
             weight,
           });
