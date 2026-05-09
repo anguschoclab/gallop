@@ -1,8 +1,0 @@
-🎯 **What:**
-Resolved an XSS vulnerability in `src/components/ui/chart.tsx` where dynamically constructed CSS rules were being injected into a `<style>` block using `dangerouslySetInnerHTML`.
-
-⚠️ **Risk:**
-If any interpolated variables (like `id`) contained user-controlled or malicious content (e.g., `</style><script>alert('XSS')</script>`), it would have allowed arbitrary script execution within the application.
-
-🛡️ **Solution:**
-Removed `dangerouslySetInnerHTML` and replaced it with direct React children formatting (`<style>{dynamicString}</style>`). React natively escapes HTML entities injected via children inside `<style>` nodes. This elegantly avoids the vulnerability without relying on heavy external sanitizers like DOMPurify or breaking valid CSS styles. Verified fixes with tests and no visual regressions observed.
