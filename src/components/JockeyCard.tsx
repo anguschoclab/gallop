@@ -57,7 +57,6 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
           <div className="flex gap-3">
             <div className="relative">
               <JockeyAvatar jockey={jockey} size="md" />
-              </div>
               {isRetained && (
                 <button
                   onClick={() => rerollJockeySilk(jockey.id)}
