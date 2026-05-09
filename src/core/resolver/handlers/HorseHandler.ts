@@ -29,7 +29,9 @@ export class HorseHandler implements ImpactHandler {
       "pasture_retirement",
       "horse_death",
       "injury",
-      "horse_creation"
+      "horse_creation",
+      "recovery_change",
+      "beyer_update"
     ].includes(type);
   }
 
@@ -153,7 +155,23 @@ export class HorseHandler implements ImpactHandler {
         }
         break;
       }
+
+      case "recovery_change": {
+        const { delta } = impactAny;
+        if (horse) {
+          horse.recoveryPoints = Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta));
+        }
+        break;
+      }
+
+      case "beyer_update": {
+        const { beyer, raceDay } = impactAny;
+        if (horse) {
+          horse.lastBeyer = beyer;
+          horse.lastRaceDay = raceDay;
+        }
+        break;
+      }
     }
   }
-
 }

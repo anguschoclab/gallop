@@ -2,29 +2,13 @@
  * types.ts - Race type definitions
  *
  * This file provides type definitions for race-related concepts including
- * race classes, claiming prices, win conditions, weather, track conditions,
- * and the main Race type.
+ * claiming prices, win conditions, weather, track conditions, and the main Race type.
  *
- * Dependencies: ./engine/raceSnapshotTypes (RaceSnapshot)
+ * Dependencies: ./engine/raceSnapshotTypes (RaceSnapshot), ./sharedTypes (RaceClass)
  * Related files: Used throughout the race module and game state
  */
 
-export type RaceClass =
-  | "Maiden"
-  | "MaidenSpecialWeight"
-  | "MaidenClaiming"
-  | "MaidenOptionalClaiming"
-  | "MaidenStakes"
-  | "Allowance"
-  | "OptionalClaiming"
-  | "StarterAllowance"
-  | "StarterHandicap"
-  | "Stakes"
-  | "Claiming"
-  | "Handicap"
-  | "Listed"
-  | "Group"
-  | "Graded";
+import { RaceClass } from "./sharedTypes";
 
 export type ClaimingPrice =
   | 5000
@@ -99,7 +83,7 @@ export type Race = {
     minAge?: number;
     maxAge?: number;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    gender?: any; // Avoiding deep nest for now
+    gender?: any; // Gender restrictions have complex union types - avoiding deep nesting
     minAgeNorthern?: number;
     minAgeSouthern?: number;
     nonWinnersOf?: number;

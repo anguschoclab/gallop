@@ -45,6 +45,7 @@ export interface RaceEntryIntent extends Intent {
   raceId: string;
   horseId: string;
   jockeyId?: string;
+  tactics?: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
 }
 
 // Race withdrawal intent
@@ -291,6 +292,41 @@ export interface UpdateStudFeeIntent extends Intent {
   newFee: number;
 }
 
+// Syndicate creation intent
+export interface SyndicateCreationIntent extends Intent {
+  type: "syndicate_creation";
+  stallionId: string;
+  totalShares: number;
+  sharePrice: number;
+  initialShareholders: Record<string, number>; // stableId -> share count
+}
+
+// Share purchase intent
+export interface SharePurchaseIntent extends Intent {
+  type: "share_purchase";
+  syndicateId: string;
+  buyerStableId?: string; // undefined for player
+  shares: number;
+  pricePerShare: number;
+}
+
+// Share sale intent
+export interface ShareSaleIntent extends Intent {
+  type: "share_sale";
+  syndicateId: string;
+  sellerStableId?: string; // undefined for player
+  shares: number;
+  pricePerShare: number;
+}
+
+// Syndicate fee distribution intent
+export interface SyndicateFeeDistributionIntent extends Intent {
+  type: "syndicate_fee_distribution";
+  syndicateId: string;
+  totalFee: number;
+  breedingDay: number;
+}
+
 // Union type for all intents
 export type AnyIntent =
   | TrainingIntent
@@ -324,4 +360,8 @@ export type AnyIntent =
   | StaffIntent
   | FacilityUpgradeIntent
   | PastureRetirementIntent
-  | UpdateStudFeeIntent;
+  | UpdateStudFeeIntent
+  | SyndicateCreationIntent
+  | SharePurchaseIntent
+  | ShareSaleIntent
+  | SyndicateFeeDistributionIntent;

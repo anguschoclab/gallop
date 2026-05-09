@@ -115,9 +115,16 @@ export const energyPhase = {
       const energyGain = baseEnergyGain * (h.recoveryRate || 1.0);
       const newEnergy = Math.min(100, h.energy + energyGain);
 
+      // Dynamic Form: Recovery points regeneration (small daily recovery)
+      const currentRecoveryPoints = h.recoveryPoints ?? 100;
+      const baseRecoveryGain = 10 * (1 + barnBonus + nutritionistBonus);
+      const recoveryGain = baseRecoveryGain * (h.recoveryRate || 1.0);
+      const newRecoveryPoints = Math.min(100, currentRecoveryPoints + recoveryGain);
+
       return {
         ...h,
         energy: newEnergy,
+        recoveryPoints: newRecoveryPoints,
         healthStatus: newHealthStatus,
         healthStatusDay:
           newHealthStatus !== h.healthStatus && newHealthStatus !== "healthy"

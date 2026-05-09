@@ -32,7 +32,7 @@ export const npcCyclePhase = {
     // Get existing AI manager or create new one
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const aiManager: NpcAIManager = (state as any).npcAIManager || {
-      stableStates: new Map(),
+      stableStates: {},
       globalDay: newDay,
     };
 

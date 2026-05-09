@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Target, Award, DollarSign, TrendingUp, Globe } from "lucide-react";
-import type { LeaderboardType } from "@/core/breeding/leaderboardTypes";
+import type { LeaderboardType, Leaderboard, SireRanking } from "@/core/breeding/leaderboardTypes";
 
 export const Route = createFileRoute("/sire-leaderboards")({
   component: SireLeaderboardsPage,
@@ -25,8 +25,7 @@ function SireLeaderboardsPage() {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tabs: { key: LeaderboardType; label: string; icon: React.ComponentType<any> }[] = [
+  const tabs: { key: LeaderboardType; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { key: "overall", label: "Overall", icon: Trophy },
     { key: "ci", label: "Comparable Index", icon: Target },
     { key: "stakes_producers", label: "Stakes Producers", icon: Award },
@@ -73,8 +72,7 @@ function SireLeaderboardsPage() {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function LeaderboardView({ leaderboard }: { leaderboard: any }) {
+function LeaderboardView({ leaderboard }: { leaderboard: Leaderboard }) {
   if (!leaderboard || leaderboard.rankings.length === 0) {
     return (
       <Card className="border-gold-muted">
@@ -95,8 +93,7 @@ function LeaderboardView({ leaderboard }: { leaderboard: any }) {
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {leaderboard.rankings.map((ranking: any) => (
+          {leaderboard.rankings.map((ranking: SireRanking) => (
             <div
               key={ranking.stallionId}
               className="flex items-center justify-between p-3 bg-t700 rounded-lg"

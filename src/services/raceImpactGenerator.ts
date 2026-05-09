@@ -17,6 +17,8 @@ import type {
   TransactionImpact,
   InjuryImpact,
   NewsImpact,
+  RecoveryImpact,
+  BeyerImpact,
 } from "@/core/resolver/impacts/index";
 import { generateRaceNews } from "@/services/newsGenerator";
 import { rollForInjury } from "@/core/health/healthSystem";
@@ -165,6 +167,34 @@ export function generateRaceImpacts({
     const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
     const dampener = inbreedingPerformanceDampener(inbreedingPattern);
     const adjustedBeyer = Math.max(0, beyer - dampener);
+
+    // Dynamic Form: Recovery points draining based on distance and Beyer
+    const recoveryDrain = Math.min(30, Math.floor(race.distance / 100) + Math.floor(adjustedBeyer / 20));
+    impacts.push({
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "recovery_change",
+      horseId: horse.id,
+      delta: -recoveryDrain,
+      reason: "Race fatigue",
+    } as RecoveryImpact);
+
+    // Dynamic Form: Update lastBeyer and lastRaceDay
+    impacts.push({
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "beyer_update",
+      horseId: horse.id,
+      beyer: adjustedBeyer,
+      raceDay: newDay,
+      reason: "Race performance",
+    } as BeyerImpact);
 
     // Win and You're In qualification
     let winAndYouInQualified = undefined;

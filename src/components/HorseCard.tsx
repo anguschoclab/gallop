@@ -88,6 +88,49 @@ export function HorseCard({
     return <Badge className={config.color}>{config.label}</Badge>;
   };
 
+  // Dynamic Form: Condition status indicator based on recoveryPoints
+  const getConditionStatus = () => {
+    const recoveryPoints = horse.recoveryPoints ?? 100;
+    let label: string;
+    let color: string;
+
+    if (recoveryPoints > 80) {
+      label = "Peaking";
+      color = "bg-chart-1/10 text-chart-1";
+    } else if (recoveryPoints >= 50) {
+      label = "Fresh";
+      color = "bg-chart-2/10 text-chart-2";
+    } else if (recoveryPoints >= 30) {
+      label = "Fatigued";
+      color = "bg-chart-3/10 text-chart-3";
+    } else {
+      label = "Exhausted";
+      color = "bg-destructive/10 text-destructive";
+    }
+
+    return <Badge className={color}>{label}</Badge>;
+  };
+
+  // Dynamic Form: Bounce risk indicator
+  const getBounceRiskIndicator = () => {
+    if (!horse.lastBeyer || !horse.lastRaceDay || !day) return null;
+    
+    const daysSinceLastRace = day - horse.lastRaceDay;
+    const beyerHistory = horse.raceHistory
+      .filter((r) => r.beyer !== undefined)
+      .map((r) => r.beyer!);
+    const avgBeyer = beyerHistory.length > 0
+      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+      : 80;
+    
+    // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days
+    if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
+      return <Badge className="bg-gold/10 text-gold border-gold/30">Bounce Risk</Badge>;
+    }
+    
+    return null;
+  };
+
   if (variant === "compact") {
     return (
       <Card
@@ -244,6 +287,8 @@ export function HorseCard({
                 </span>
                 {getLifecycleStatus()}
                 {getHealthStatus()}
+                {getConditionStatus()}
+                {getBounceRiskIndicator()}
               </div>
               {/* Qualifiers */}
               <div className="text-sm text-cream-muted flex items-center gap-2 flex-wrap font-[family-name:var(--font-body)]">

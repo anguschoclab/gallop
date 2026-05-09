@@ -46,7 +46,7 @@ export class RacingHandler implements ImpactHandler {
 
     switch (impact.type) {
       case "race_entry": {
-        const { raceId, horseId, jockeyId, weight } = impactAny;
+        const { raceId, horseId, jockeyId, weight, tactics } = impactAny;
         const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
         const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (race && horse) {
@@ -57,6 +57,7 @@ export class RacingHandler implements ImpactHandler {
             npc: !!horse.stableId,
             jockeyId,
             weight,
+            tactics,
           });
         }
         break;

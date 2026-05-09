@@ -145,8 +145,7 @@ export function runBreedingSimulation(
     const simulationRng = createRng(iterationSeed);
 
     // Inherit DNA
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const offspringGenotype = inheritDNA(sire.genotype, dam.genotype, simulationRng as any);
+    const offspringGenotype = inheritDNA(sire.genotype, dam.genotype, simulationRng);
 
     // Resolve to phenotype
     const stats = resolveStats(offspringGenotype.stats);
@@ -271,8 +270,7 @@ export function runBreedingSimulation(
         EP: runningStyleValues.filter((v) => v === "EP").length / SIMULATION_ITERATIONS,
         P: runningStyleValues.filter((v) => v === "P").length / SIMULATION_ITERATIONS,
         S: runningStyleValues.filter((v) => v === "S").length / SIMULATION_ITERATIONS,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any,
+      },
 
       trainability: {
         mean: mean(trainabilityValues),

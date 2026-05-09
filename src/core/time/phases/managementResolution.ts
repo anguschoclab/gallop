@@ -21,12 +21,16 @@ import type {
   GeldingIntent,
   RenameIntent,
   TacticsIntent,
-  StudRetirementIntent
+  StudRetirementIntent,
+  SyndicateCreationIntent,
+  SharePurchaseIntent,
+  ShareSaleIntent
 } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 import { createRng, hashStr } from "@/game/rng";
 import { scoutHorse } from "@/game/scouting";
+import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 
 /**
  * Management Resolution Phase (Order 10)
@@ -347,6 +351,14 @@ export const managementResolutionPhase: PipelinePhase = {
             horseId: typedIntent.horseId,
             reason: "Campaign deleted",
           } as any);
+          break;
+        }
+
+        case "syndicate_creation":
+        case "share_purchase":
+        case "share_sale": {
+          const syndicateImpacts = resolveSyndicationIntent(intent, state, newDay);
+          impacts.push(...syndicateImpacts);
           break;
         }
       }

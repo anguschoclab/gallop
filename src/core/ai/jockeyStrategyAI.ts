@@ -82,6 +82,37 @@ export function calculateOptimalTactics(
   // Jockey competency check - more skilled jockeys are better at riding to strength
   const isSkilled = (jockey.stats.positioning + jockey.stats.pacing) / 2 > 70;
   
+  // Dynamic Form: Check recoveryPoints - adjust tactics for fatigued horses
+  const recoveryPoints = horse.recoveryPoints ?? 100;
+  if (recoveryPoints < 50) {
+    // Horse is fatigued - use conservative tactics to preserve energy
+    return "save";
+  }
+
+  // Dynamic Form: Assess bounce risk and adjust tactics
+  let bounceRisk = false;
+  if (horse.lastBeyer && horse.lastRaceDay && race.day) {
+    const daysSinceLastRace = race.day - horse.lastRaceDay;
+    const beyerHistory = horse.raceHistory
+      .filter((r) => r.beyer !== undefined)
+      .map((r) => r.beyer!);
+    const avgBeyer = beyerHistory.length > 0
+      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+      : 80;
+    
+    // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days
+    if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
+      bounceRisk = true;
+    }
+  }
+
+  // If bounce risk is detected, use more conservative tactics
+  if (bounceRisk) {
+    if (horse.runningStyle === "E") return "rail"; // Still try to lead but more conservatively
+    if (horse.runningStyle === "S") return "save"; // Save more for late kick
+    return "save"; // Default to save for bounce risk
+  }
+  
   // Strategy: Try to race to strength
   if (horse.runningStyle === "E") {
     // Front runners want to lead or be on the rail
@@ -162,6 +193,38 @@ function calculateStyleScore(
   style: RunningStyle,
 ): number {
   let score = 0;
+
+  // Dynamic Form: Adjust style score based on recoveryPoints
+  const recoveryPoints = horse.recoveryPoints ?? 100;
+  if (recoveryPoints < 50) {
+    // Fatigued horses benefit from conservative styles (S, P)
+    if (style === "S") score += 20;
+    if (style === "P") score += 10;
+    if (style === "E") score -= 15; // Penalize front-running when fatigued
+  }
+
+  // Dynamic Form: Assess bounce risk
+  let bounceRisk = false;
+  if (horse.lastBeyer && horse.lastRaceDay && race.day) {
+    const daysSinceLastRace = race.day - horse.lastRaceDay;
+    const beyerHistory = horse.raceHistory
+      .filter((r) => r.beyer !== undefined)
+      .map((r) => r.beyer!);
+    const avgBeyer = beyerHistory.length > 0
+      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+      : 80;
+    
+    if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
+      bounceRisk = true;
+    }
+  }
+
+  // If bounce risk, favor conservative styles
+  if (bounceRisk) {
+    if (style === "S") score += 15;
+    if (style === "P") score += 10;
+    if (style === "E") score -= 10;
+  }
 
   // Horse distance aptitude match
   const distDiff = Math.abs(horse.distanceAptitude - race.distance);

@@ -43,11 +43,7 @@ function NpcStableDetailPage() {
   const awards = useAwards();
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (s: any) => s.privateSaleOffers ?? [],
-  );
+  const privateSaleOffers: PrivateSaleOffer[] = useGame((s) => s.privateSaleOffers ?? []);
 
   // Offer dialog state
   const [offerHorse, setOfferHorse] = useState<Horse | null>(null);

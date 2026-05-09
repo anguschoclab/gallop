@@ -34,7 +34,7 @@ export function computeAllLeaderboards(
   trendHistory?: SireTrendData[],
 ): Record<LeaderboardType, Leaderboard> {
   const stallions = horses.filter((h) => h.stud?.atStud);
-  
+
   // Pre-index horses by sire
   const horsesBySire = new Map<string, Horse[]>();
   for (const h of horses) {
@@ -46,13 +46,13 @@ export function computeAllLeaderboards(
 
   // Calculate analytics for all stallions ONCE
   const stallionAnalytics = new Map<string, SireAnalytics>();
-  
+
   // First pass: Calculate basic metrics and AEI
   for (const s of stallions) {
     const runners = horsesBySire.get(s.id) || [];
     const totalProgenyEarnings = runners.reduce((sum, f) => {
        // Inline foalLifetimeEarnings to avoid imports/lookups
-       return sum + (f.careerEarnings || 0);
+       return sum + (f.lifetimeEarnings || 0);
     }, 0);
     const avgProgenyEarnings = runners.length > 0 ? totalProgenyEarnings / runners.length : 0;
     const aei = industryMeanEarnings > 0 ? (avgProgenyEarnings / industryMeanEarnings) * 100 : 0;

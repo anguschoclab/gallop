@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
+import { useRaces, useHorses } from "@/game/hooks/useCoreState";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,12 +48,9 @@ function RacesPage() {
   const filters = Route.useSearch();
   const { grade, country, surface, track, owned, q } = filters;
   const navigate = Route.useNavigate();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const races = (useGame as any)((s: any) => s.races, shallow);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const horses = (useGame as any)((s: any) => s.horses, shallow);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const claims: Claim[] = (useGame as any)((s: any) => s.claims ?? [], shallow);
+  const races = useRaces();
+  const horses = useHorses();
+  const claims: Claim[] = useGame((s) => s.claims ?? []);
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const fileClaim = useGame((s) => s.fileClaim);

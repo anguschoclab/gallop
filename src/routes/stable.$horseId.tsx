@@ -23,6 +23,7 @@ import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
 import { TrainingPanel } from "@/components/horse/TrainingPanel";
 import { StaffSupportPanel } from "@/components/horse/StaffSupportPanel";
 import { FounderLegacy } from "@/components/horse/FounderLegacy";
+import { SyndicateDialog } from "@/components/SyndicateDialog";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
 import { GRADED_RACES } from "@/game/gradedRaces";
@@ -63,6 +64,8 @@ function HorseDetail() {
   const facilities = useGame((s) => s.facilities);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
+  const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
+  const syndicates = useGame((s) => s.syndicates || {});
 
   // Persist raceHistoryLimit to localStorage
   useEffect(() => {
@@ -74,6 +77,11 @@ function HorseDetail() {
   const isPregnant = !!pregnancy;
   const slotsLeft = 2 - trainingUsed;
   const ovr = calculateOverallRating(horse);
+  
+  // Check if horse is a G1 winner (eligible for syndication)
+  const g1Wins = horse.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+  const isG1Winner = g1Wins > 0;
+  const isSyndicated = !!syndicates[horseId];
 
   return (
     <div className="space-y-6">
@@ -154,6 +162,20 @@ function HorseDetail() {
               >
                 Form {horse.form > 0 ? "+" : ""}
                 {horse.form}
+              </Badge>
+              {/* Dynamic Form: Recovery Points */}
+              <Badge
+                className={
+                  (horse.recoveryPoints ?? 100) > 80
+                    ? "bg-chart-1/20 text-chart-1"
+                    : (horse.recoveryPoints ?? 100) >= 50
+                      ? "bg-chart-2/20 text-chart-2"
+                      : (horse.recoveryPoints ?? 100) >= 30
+                        ? "bg-chart-3/20 text-chart-3"
+                        : "bg-destructive/20 text-destructive"
+                }
+              >
+                Recovery {(horse.recoveryPoints ?? 100)}/100
               </Badge>
               {isPregnant && (
                 <Badge className="bg-fame text-t950 border-fame" variant="outline">
@@ -314,6 +336,30 @@ function HorseDetail() {
                 </div>
               )}
 
+              {isG1Winner && horse.stud?.atStud && !isSyndicated && (
+                <div className="pt-2 border-t border-gold-muted/30 mt-2">
+                  <p className="text-xs text-cream-muted mb-2">
+                    Syndicate this G1-winning stallion to share stud fee income.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                    onClick={() => setSyndicateDialogOpen(true)}
+                  >
+                    Syndicate Stallion
+                  </Button>
+                </div>
+              )}
+
+              {isSyndicated && (
+                <div className="pt-2 border-t border-gold-muted/30 mt-2">
+                  <Badge variant="outline" className="w-full justify-center">
+                    Syndicated
+                  </Badge>
+                </div>
+              )}
+
               {canRetireToPasture && (
                 <div className="pt-2 border-t border-gold-muted/30 mt-2">
                   <p className="text-xs text-cream-muted mb-2">
@@ -445,6 +491,13 @@ function HorseDetail() {
           />
         </CardContent>
       </Card>
+      
+      <SyndicateDialog
+        isOpen={syndicateDialogOpen}
+        onClose={() => setSyndicateDialogOpen(false)}
+        stallionId={horse.id}
+        stallionName={horse.name}
+      />
     </div>
   );
 }

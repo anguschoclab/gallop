@@ -206,8 +206,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               </h3>
               <div className="grid grid-cols-1 gap-2">
                 {eligibleHorses.map(({ horse, eligible }) => {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  const isEntered = race.entries.some((e: any) => e.horseId === horse.id);
+                  const isEntered = race.entries.some((e) => e.horseId === horse.id);
                   return (
                     <div
                       key={horse.id}

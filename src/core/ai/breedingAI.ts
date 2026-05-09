@@ -473,7 +473,7 @@ export function selectSireForDam(
           acceleration: simulation.stats.acceleration.p75,
           consistency: simulation.stats.consistency.p75,
         },
-      }; // Synthetic object for distance calculation, not a real horse
+      }; // Synthetic partial object for distance calculation - only stats needed
 
       const distance = calculateGeneticDistance(syntheticFoal, archetype);
       if (distance < bestDistance) {

@@ -207,6 +207,7 @@ export function createHorseFromDNA(
     healthStatus: resolveHealthStatus(genotype.health),
     lifecycleStatus: "active",
     ...dnaTraits,
+    recoveryPoints: 100, // Dynamic Form: Initialize at full recovery
     createdAtDay: opts.createdAtDay,
     appearance: generateAppearanceDNA(
 
@@ -314,9 +315,11 @@ export function generateNpcHorse(
   const config = stable.personality
     ? PERSONALITY_CONFIG[stable.personality] || PERSONALITY_CONFIG.conservative
     : PERSONALITY_CONFIG.conservative;
+  const regionalSystem = getRegionalSystem(
+    (stable.country ?? "Belmont") as any, // getRegionalSystem expects Track type, country is string
+  );
   const region = stable.country
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      getRegionalSystem((stable.country ?? "Belmont") as any)
+    ? regionalSystem
     : "north_america";
 
   const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : rng.range(3, 6));

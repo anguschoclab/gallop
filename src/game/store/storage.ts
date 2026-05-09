@@ -68,11 +68,10 @@ export const hydrationComplete = {
  * @returns Async rehydrate function that takes the store instance
  */
 export function createRehydrateStore(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialState: () => GameState & any,
+  initialState: any,
+  useGame: any,
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return async function rehydrateStore(useGame: any): Promise<void> {
+  return async function rehydrateStore(): Promise<void> {
     const state = await loadGameState();
     if (state) {
       // Use the persist middleware's built-in rehydrate

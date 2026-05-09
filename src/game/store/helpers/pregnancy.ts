@@ -72,9 +72,12 @@ export function resolvePregnancies(
     if (dam?.stableId) {
       const stable = stables.find((s) => s.id === dam.stableId);
       if (stable) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const regionalSystem = getRegionalSystem(
+          (stable.country || "USA") as any, // getRegionalSystem expects Track type, country is string
+        );
         namingContext = {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          region: getRegionalSystem((stable.country || "USA") as any),
+          region: regionalSystem,
           namingTheme: PERSONALITY_CONFIG[stable.personality]?.namingTheme,
           existingNames: usedNames,
         };

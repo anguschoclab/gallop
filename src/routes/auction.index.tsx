@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useGame, useGameWithShallow } from "@/game/store";
+import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
+import { useAuctions } from "@/game/hooks/useMarketState";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,8 +22,7 @@ export const Route = createFileRoute("/auction/")({
 });
 
 function AuctionPage() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const auctions = useGameWithShallow((s: any) => s.auctions ?? []) as AuctionSale[];
+  const auctions = useAuctions() as AuctionSale[];
   const horses = useGame((s) => s.horses);
   const day = useGame((s) => s.day);
 
@@ -139,7 +139,7 @@ function AuctionPage() {
           </Card>
         ) : (
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          allUpcoming.map((sale: any) => {
+          allUpcoming.map((sale: any) => { // Mix of AuctionSale and scheduled sale objects
             const daysAway = sale.day - day;
             const playerLots = sale.lots
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -166,7 +166,7 @@ function AuctionPage() {
                         </CardTitle>
                         <Badge className="border border-gold-muted bg-t700 text-cream font-[family-name:var(--font-body)]">
                           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                          {(KIND_LABELS as any)[sale.kind] ?? sale.kind}
+                          {(KIND_LABELS as any)[sale.kind] ?? sale.kind} // KIND_LABELS has complex key types
                         </Badge>
                       </div>
                       <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
@@ -177,7 +177,7 @@ function AuctionPage() {
                             ·{" "}
                             <NumericValue
                               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              value={sale.lots.filter((l: any) => !l.withdrawn).length}
+                              value={sale.lots.filter((l: any) => !l.withdrawn).length} // Lot type complex due to mixed objects
                             />{" "}
                             lots
                           </>

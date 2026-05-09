@@ -8,12 +8,29 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useNavigate } from "@tanstack/react-router";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
 import { formatCurrency } from "@/lib/formatting";
+import { useState } from "react";
+
+const TACTIC_OPTIONS = [
+  { id: "default", name: "Default", desc: "Jockey's best judgment" },
+  { id: "lead", name: "Lead", desc: "Aggressive front-running" },
+  { id: "rail", name: "Rail", desc: "Hug the inside" },
+  { id: "outside", name: "Outside", desc: "Stay wide to avoid traffic" },
+  { id: "save", name: "Save", desc: "Draft behind others" },
+  { id: "late_kick", name: "Late Kick", desc: "Conserve for final stretch" },
+] as const;
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
@@ -22,7 +39,9 @@ export function PlayerRacePrompt() {
   const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
   const day = useGame((s) => s.day);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
+  const setRaceTactics = useGame((s) => s.setRaceTactics);
   const navigate = useNavigate();
+  const [selectedTactics, setSelectedTactics] = useState<"default" | "lead" | "rail" | "outside" | "save" | "late_kick">("default");
 
   const race = races.find((r) => r.id === pendingRaceId);
   if (!race) return null;
@@ -41,6 +60,11 @@ export function PlayerRacePrompt() {
   }
 
   function autoResolve() {
+    // Set tactics before resolving
+    if (enteredHorse) {
+      setRaceTactics(race!.id, enteredHorse.id, selectedTactics);
+    }
+    
     const { runners } = buildRaceField({ race: race!, horses, jockeys });
     const course = getCourseForRace(race!);
     const result = runRaceToCompletion(
@@ -75,6 +99,23 @@ export function PlayerRacePrompt() {
             <p className="text-sm">
               <span className="font-medium">{enteredHorse.name}</span> is entered in this race.
             </p>
+          )}
+          {enteredHorse && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Tactics</label>
+              <Select value={selectedTactics} onValueChange={(v: any) => setSelectedTactics(v)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TACTIC_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.id} value={opt.id}>
+                      {opt.name} - {opt.desc}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           )}
         </div>
         <DialogFooter className="flex flex-col sm:flex-row gap-2">

@@ -291,6 +291,7 @@ export const useGame = create<StoreType>()(
         horseLeaderboards: state.horseLeaderboards,
         founders: state.founders,
         lastFounderUpdateDay: state.lastFounderUpdateDay,
+        syndicates: state.syndicates,
         staffPool: state.staffPool,
         hiredStaff: state.hiredStaff,
       }),

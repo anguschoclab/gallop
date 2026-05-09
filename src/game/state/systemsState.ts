@@ -153,6 +153,8 @@ export interface SystemsState {
   lastFounderUpdateDay?: number;
   /** Stallion syndicates keyed by stallionId */
   syndicates?: Record<string, Syndicate>;
+  /** Share transaction history for syndicates */
+  shareTransactions?: any[];
 
   // Player profile (optional - set after completing new game wizard)
   /** Player's stable identity from the new game wizard */
@@ -256,6 +258,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     trackRecords: {},
     horseLeaderboards: {},
     founders: {},
+    syndicates: {},
     usedHorseNames: [],
     usedJockeyNames: [],
 

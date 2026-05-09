@@ -119,8 +119,9 @@ function RootComponent() {
     // Redirect to wizard if no player profile exists (fresh install)
     if (isHydrated && !playerProfile) {
       // Navigate to wizard - TanStack Router will handle route type after regeneration
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      navigate({ to: "/new-game" as any });
+      navigate({ to: "/new-game" }).catch((error) => {
+        console.error("Navigation error:", error);
+      });
     }
   }, [isHydrated, playerProfile, navigate]);
 

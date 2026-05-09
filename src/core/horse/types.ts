@@ -5,11 +5,12 @@
  * conformation, temperament, running style, health status, injuries, blue hen status,
  * genetic markers, and pedigree.
  *
- * Dependencies: @/core/genetics/types (Genotype)
+ * Dependencies: @/core/genetics/types (Genotype), @/core/race/sharedTypes (RaceClass)
  * Related files: Used throughout the horse module and game state
  */
 
 import type { Genotype } from "@/core/genetics/types";
+import type { RaceClass } from "@/core/race/sharedTypes";
 
 export type HorseStats = {
   speed: number;
@@ -133,6 +134,9 @@ export type Horse = {
   energy: number;
   form: number;
   potential: number;
+  recoveryPoints: number; // Dynamic form: 0-100, represents horse's physical condition
+  lastBeyer?: number; // Track last race performance for bounce calculation
+  lastRaceDay?: number; // Track when horse last raced for recovery calculation
   raceHistory: {
     raceId: string;
     raceName: string;
@@ -144,8 +148,7 @@ export type Horse = {
     surface?: string;
     purse?: number;
     fieldSize?: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    raceClass?: any; // Avoiding circular dep for now
+    raceClass?: RaceClass;
     barrier?: number;
     lane?: number;
   }[];

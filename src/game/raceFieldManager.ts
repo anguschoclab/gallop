@@ -31,10 +31,6 @@ export function fillRaceWithFillerHorses(
   const updatedRace = { ...race };
   const newHorses: Horse[] = [];
 
-  // Get filler stables (non-major)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const fillerStables = stables.filter((s) => !s.isMajor);
-
   // Find eligible filler horses already in the system
   const eligibleFillerHorses = horses.filter(
     (h) => h.stableId && !h.owned && !race.entries.some((e) => e.horseId === h.id) && h.energy > 40,

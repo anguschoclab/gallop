@@ -446,7 +446,7 @@ export function resolveFoalingEase(locus: Locus): number {
  * const markings = resolveMarkings(genotype.markings);
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function resolveMarkings(locus: any) {
+export function resolveMarkings(locus: any) { // Locus has dynamic structure based on genotype
   // Shared logic for resolving cosmetic flags
   return {
     socks: resolveSocks(locus.socks),

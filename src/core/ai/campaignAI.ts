@@ -372,6 +372,40 @@ export function shouldTargetMajorRace(
   // Check if race is in target races
   if (!contenderStatus.targetRaces.includes(race.key)) return false;
 
+  // Dynamic Form: Check recoveryPoints - avoid racing horses with low recovery
+  const recoveryPoints = horse.recoveryPoints ?? 100;
+  if (recoveryPoints < 40) {
+    // Too fatigued to race effectively
+    return false;
+  } else if (recoveryPoints < 60) {
+    // Moderately fatigued - only target if aggressive personality or very high stakes
+    if (stable.personality !== "aggressive" && stable.personality !== "win-now") {
+      return false;
+    }
+  }
+
+  // Dynamic Form: Assess bounce risk
+  let bounceRisk = false;
+  if (horse.lastBeyer && horse.lastRaceDay && currentDay) {
+    const daysSinceLastRace = currentDay - horse.lastRaceDay;
+    const beyerHistory = horse.raceHistory
+      .filter((r) => r.beyer !== undefined)
+      .map((r) => r.beyer!);
+    const avgBeyer = beyerHistory.length > 0
+      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+      : 80;
+    
+    // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days
+    if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
+      bounceRisk = true;
+    }
+  }
+
+  // If bounce risk is high, only aggressive personalities might still enter
+  if (bounceRisk && stable.personality !== "aggressive" && stable.personality !== "win-now") {
+    return false;
+  }
+
   // Calculate target score
   const score = calculateRaceTargetScore(aiState, horse, race, stable, currentDay);
 
@@ -395,6 +429,10 @@ export function shouldTargetMajorRace(
   if (config.personality === "prestige" && (race.triplecrownKey || race.bcKey === "breeders-cup")) {
     threshold -= 15;
   }
+
+  // Additional penalty for low recoveryPoints or bounce risk
+  if (recoveryPoints < 60) threshold += 10;
+  if (bounceRisk) threshold += 15;
 
   return score > threshold;
 }

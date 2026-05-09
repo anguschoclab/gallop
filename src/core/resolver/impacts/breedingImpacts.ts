@@ -51,8 +51,42 @@ export interface StudCareerImpact extends Impact {
   reason: string;
 }
 
+// Syndicate creation impact
+export interface SyndicateCreationImpact extends Impact {
+  type: "syndicate_creation";
+  syndicateId: string;
+  stallionId: string;
+  stallionName: string;
+  totalShares: number;
+  sharePrice: number;
+  initialShareholders: Record<string, number>;
+  reason: string;
+}
+
+// Share transaction impact
+export interface ShareTransactionImpact extends Impact {
+  type: "share_transaction";
+  syndicateId: string;
+  stableId: string;
+  shares: number;
+  pricePerShare: number;
+  reason: string;
+}
+
+// Syndicate fee distribution impact
+export interface SyndicateFeeDistributionImpact extends Impact {
+  type: "syndicate_fee_distribution";
+  syndicateId: string;
+  totalFee: number;
+  breedingDay: number;
+  reason: string;
+}
+
 export type BreedingImpact =
   | PregnancyCreationImpact
   | PregnancyUpdateImpact
   | PregnancyDeletionImpact
-  | StudCareerImpact;
+  | StudCareerImpact
+  | SyndicateCreationImpact
+  | ShareTransactionImpact
+  | SyndicateFeeDistributionImpact;

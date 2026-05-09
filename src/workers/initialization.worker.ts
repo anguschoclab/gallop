@@ -5,7 +5,7 @@
  */
 
 import { expose } from "comlink";
-import type { GameState } from "@/game/types";
+import type { GameState, Horse, Race } from "@/game/types";
 import type { NewGameOptions } from "@/game/state";
 import { generateHorse } from "@/game/horseGen";
 import { generateRace, makeGradedRace } from "@/game/raceGeneration/raceGen";
@@ -44,8 +44,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
 
   const playerHorseSpecs = options?.backstory.horses ?? [{ tier: "starter" as const, count: 2 }];
   const playerSilkColor = options?.profile.silk.primary;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const horses: any[] = [];
+  const horses: Horse[] = [];
   for (const spec of playerHorseSpecs) {
     for (let i = 0; i < spec.count; i++) {
       const h = generateHorse({ tier: spec.tier, owned: true }, setupRng);
@@ -59,8 +58,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     progressCallback(2, totalStages, "Generating market horses");
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const market: any[] = Array.from({ length: 5 }, () => {
+  const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
     const tier: "starter" | "budget" | "mid" | "elite" = r < 0.6 ? "budget" : "mid";
     return generateHorse({ tier }, setupRng);
@@ -71,8 +69,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     progressCallback(3, totalStages, "Generating races");
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const races: any[] = [];
+  const races: Race[] = [];
   for (let d = 1; d <= 7; d++) {
     const dayRng = createRng(hashStr(`raceGen_${d}`));
     const count = dayRng.next() < 0.7 ? 2 : 3;
@@ -131,10 +128,10 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
   if (options) {
     for (const [type, level] of Object.entries(options.backstory.facilityUpgrades)) {
       if (level) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         facilities[type as keyof typeof facilities] = createFacility(
           type as Parameters<typeof createFacility>[0],
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          level as any,
+          level as unknown as number, // Object.entries returns string, convert to number
           1,
         );
       }

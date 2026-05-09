@@ -20,7 +20,7 @@ import type {
   ClaimingIntent,
   WithdrawFromClaimingIntent,
 } from "@/core/resolver/intents";
-import type { GameState, Horse, Race, Stable } from "@/game/types";
+import type { GameState, Horse, Race, Stable, Jockey } from "@/game/types";
 import { generateUUID } from "@/game/uuid";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
@@ -32,11 +32,6 @@ import {
   updateHorseTraining,
   recordTrainingOutcome,
 } from "@/core/ai/trainingAI";
-import {
-  createClaimingAIState,
-  shouldClaimHorse,
-  recordClaimingDecision,
-} from "@/core/ai/claimingAI";
 import {
   createRaceEntryAIState,
 } from "@/core/ai/raceEntryAI";
@@ -52,6 +47,7 @@ import {
   type NpcAIManager,
   type StableAIState,
 } from "@/core/ai/npcCycleAI";
+import { calculateOptimalTactics, createJockeyStrategyAIState } from "@/core/ai/jockeyStrategyAI";
 
 /**
  * Generate all NPC intents for the day.
@@ -242,6 +238,13 @@ function generateNpcRaceEntryIntents(
       ? (stableAI.raceEntryAI = createRaceEntryAIState(stable))
       : createRaceEntryAIState(stable));
 
+  // Initialize jockey strategy AI if not present
+  const jockeyStrategyAI = stableAI?.jockeyStrategyAI || 
+    (stableAI ? (stableAI.jockeyStrategyAI = createJockeyStrategyAIState(stable)) : createJockeyStrategyAIState(stable));
+
+  // Create a jockey map for tactics calculation (use first available jockey for now)
+  const jockeyMap = new Map((state.jockeys || []).map(j => [j.id, j]));
+
   for (const race of upcomingRaces) {
     const entrySet = raceEntrySets.get(race.id);
     for (const horse of ownedHorses) {
@@ -253,6 +256,11 @@ function generateNpcRaceEntryIntents(
 
       if (suitability > 60) {
         if (race.entries.length < race.fieldSize) {
+          // Calculate optimal tactics for this horse in this race
+          const jockey = (state.jockeys || [])[0]; // Use first jockey for tactics calculation
+          if (!jockey) continue;
+          const tactics = calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable) as "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+          
           intents.push({
             id: generateUUID(),
             entityId: race.id,
@@ -263,6 +271,7 @@ function generateNpcRaceEntryIntents(
             type: "race_entry",
             raceId: race.id,
             horseId: horse.id,
+            tactics,
           });
         }
       }

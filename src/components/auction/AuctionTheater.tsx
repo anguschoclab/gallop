@@ -114,7 +114,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
     prevLotIndexRef.current = 0;
     prevLeadingRef.current = undefined;
     forceTick();
-  }, [sale?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sale?.id]); // eslint-disable-line react-hooks/exhaustive-deps -- sale?.id is the only stable dependency needed
 
   // Sync playerMaxBidState changes to runner.
   useEffect(() => {

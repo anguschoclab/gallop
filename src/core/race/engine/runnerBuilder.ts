@@ -266,6 +266,32 @@ export function buildRunner(
     dosageDistanceMod = 1 - Math.min(0.03, dosageDistDiff / 10000);
   }
 
+  // Dynamic Form: Calculate fatigue modifier based on recoveryPoints
+  let fatigueMod = 1.0;
+  const recoveryPoints = h.recoveryPoints ?? 100;
+  if (recoveryPoints < 50) {
+    // Fatigue reduces performance when recoveryPoints are low
+    fatigueMod = 0.7 + (recoveryPoints / 50) * 0.3; // 0.7 to 1.0
+  }
+
+  // Dynamic Form: Calculate bounce penalty
+  let bouncePenalty = 1.0;
+  if (h.lastBeyer && h.lastRaceDay && currentDay) {
+    const daysSinceLastRace = currentDay - h.lastRaceDay;
+    // Calculate average Beyer from race history
+    const beyerHistory = h.raceHistory
+      .filter((r) => r.beyer !== undefined)
+      .map((r) => r.beyer!);
+    const avgBeyer = beyerHistory.length > 0
+      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+      : 80;
+    
+    // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days
+    if (h.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
+      bouncePenalty = 0.9; // 10% reduction
+    }
+  }
+
   const rawTopSpeed =
     (12 + (h.stats.speed / 100) * 10) *
     formEnergy *
@@ -276,7 +302,9 @@ export function buildRunner(
     mudMod *
     lineSurfaceMul *
     handednessMod *
-    dosageDistanceMod;
+    dosageDistanceMod *
+    fatigueMod *
+    bouncePenalty;
   const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
   const accel = 1.5 + (h.stats.acceleration / 100) * 3.5;
   const strideMod =

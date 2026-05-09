@@ -12,7 +12,7 @@
 // Converts BreedingIntents into impacts (pregnancy creation, stud fee transfers)
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyIntent, BreedingIntent } from "@/core/resolver/intents";
+import type { AnyIntent, BreedingIntent, SyndicateFeeDistributionIntent } from "@/core/resolver/intents";
 import type {
   AnyImpact,
   PregnancyCreationImpact,
@@ -22,6 +22,7 @@ import type {
 import { generateUUID } from "@/game/uuid";
 import type { Pregnancy } from "@/game/types";
 import { GESTATION_DAYS } from "@/game/constants/gameConstants";
+import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 
 /**
  * Breeding Resolution Phase (Order 25)
@@ -57,18 +58,37 @@ export const breedingResolutionPhase: PipelinePhase = {
         if (sire.hemisphere !== dam.hemisphere) continue;
         studFee = sire.stud.standingFee;
 
-        // Transfer stud fee to NPC stable
-        impacts.push({
-          id: generateUUID(),
-          intentId: intent.id,
-          day: newDay,
-          phase: "breedingResolution",
-          logLevel: "conditional",
-          type: "cash_change",
-          entityId: sire.stableId,
-          amount: studFee,
-          reason: "Stud fee",
-        });
+        // Check if stallion is syndicated and handle fee distribution
+        const syndicate = state.syndicates?.[sire.id];
+        if (syndicate && syndicate.totalShares > 0) {
+          // Generate syndicate fee distribution intent
+          const feeDistIntent: SyndicateFeeDistributionIntent = {
+            id: generateUUID(),
+            entityId: sire.id,
+            source: "system",
+            day: newDay,
+            priority: 50,
+            type: "syndicate_fee_distribution",
+            syndicateId: syndicate.id,
+            totalFee: studFee,
+            breedingDay: newDay,
+          };
+          const feeDistImpacts = resolveSyndicationIntent(feeDistIntent, state, newDay);
+          impacts.push(...feeDistImpacts);
+        } else {
+          // Transfer stud fee to NPC stable (non-syndicated)
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "breedingResolution",
+            logLevel: "conditional",
+            type: "cash_change",
+            entityId: sire.stableId,
+            amount: studFee,
+            reason: "Stud fee",
+          });
+        }
 
         // Update stud career (seasonBookings)
         impacts.push({

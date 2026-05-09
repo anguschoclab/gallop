@@ -1,10 +1,9 @@
 /**
- * handlers/index.ts - Impact handlers
+ * handlers/index.ts - Handler registry
  *
- * This file exports all impact handlers for the resolver system.
- * Handlers apply impacts to the game state using Immer.
+ * This file registers all impact handlers for the resolver system.
  *
- * Dependencies: ./HorseHandler, ./FinanceHandler, ./RacingHandler, ./BreedingHandler, ./MarketHandler, ./SystemHandler, ./InfrastructureHandler, ./types (ImpactHandler)
+ * Dependencies: ./HorseHandler, ./FinanceHandler, ./RacingHandler, ./BreedingHandler, ./MarketHandler, ./SystemHandler, ./InfrastructureHandler, ./SyndicationHandler, ./types (ImpactHandler)
  * Related files: ../resolver.ts (uses ALL_HANDLERS), ../impacts/ (provides impact types)
  */
 
@@ -15,6 +14,7 @@ import { BreedingHandler } from "./BreedingHandler";
 import { MarketHandler } from "./MarketHandler";
 import { SystemHandler } from "./SystemHandler";
 import { InfrastructureHandler } from "./InfrastructureHandler";
+import { SyndicationHandler } from "./SyndicationHandler";
 import type { ImpactHandler } from "./types";
 
 export const ALL_HANDLERS: ImpactHandler[] = [
@@ -25,6 +25,7 @@ export const ALL_HANDLERS: ImpactHandler[] = [
   new MarketHandler(),
   new SystemHandler(),
   new InfrastructureHandler(),
+  new SyndicationHandler(),
 ];
 
 export * from "./types";

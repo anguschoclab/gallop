@@ -124,6 +124,8 @@ export function createCoreSlice(
       sireLeaderboards: finalState.sireLeaderboards,
       sireTrendHistory: finalState.sireTrendHistory,
       leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
+      trackRecords: finalState.trackRecords,
+      horseLeaderboards: finalState.horseLeaderboards,
       jockeys: finalState.jockeys,
       campaigns: finalState.campaigns,
       expenses: finalState.expenses,

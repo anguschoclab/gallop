@@ -11,7 +11,7 @@
 
 import type { Impact } from "./base";
 import type { Horse, HealthStatus } from "@/game/types";
-import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "../../history/historyTypes";
+import type { SeasonRecord, HallOfFameEntry } from "../../history/historyTypes";
 
 // Horse stat impact
 export interface HorseStatImpact extends Impact {
@@ -158,10 +158,20 @@ export interface BlueHenImpact extends Impact {
   reason: string;
 }
 
-// Track record impact
-export interface TrackRecordImpact extends Impact {
-  type: "track_record";
-  record: TrackRecord;
+// Recovery impact - for dynamic form mechanic
+export interface RecoveryImpact extends Impact {
+  type: "recovery_change";
+  horseId: string;
+  delta: number;
+  reason: string;
+}
+
+// Beyer impact - for tracking last race performance
+export interface BeyerImpact extends Impact {
+  type: "beyer_update";
+  horseId: string;
+  beyer: number;
+  raceDay: number;
   reason: string;
 }
 
@@ -183,4 +193,5 @@ export type HorseImpact =
   | HallOfFameInductionImpact
   | SeasonHistoryImpact
   | BlueHenImpact
-  | TrackRecordImpact;
+  | RecoveryImpact
+  | BeyerImpact;

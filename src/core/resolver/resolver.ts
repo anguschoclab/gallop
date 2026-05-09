@@ -55,8 +55,7 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
 
     if (!handled) {
       // Unknown impact type - log warning
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console.warn(`Unknown impact type: ${(impact as any).type}`);
+      console.warn(`Unknown impact type: ${impact.type}`);
     }
   });
 }
@@ -145,7 +144,7 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
 
 
       if (!handled) {
-        console.warn(`Unknown impact type: ${(impact as any).type}`);
+        console.warn(`Unknown impact type: ${impact.type}`);
       }
 
       // Log impact based on logLevel

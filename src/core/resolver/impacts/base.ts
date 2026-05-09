@@ -13,5 +13,6 @@ export interface Impact {
   intentId: string;
   day: number;
   phase: string;
+  type: string;
   logLevel: "always" | "conditional" | "never";
 }
