@@ -64,7 +64,7 @@ export function generateStableHorses(
 ): Horse[] {
   const horses: Horse[] = [];
 
-  const aiState = npcAIManager?.stableStates.get(stable.id);
+  const aiState = npcAIManager?.stableStates[stable.id];
   if (aiState && !aiState.horseGenAI) {
     aiState.horseGenAI = createHorseGenAIState(stable);
   }

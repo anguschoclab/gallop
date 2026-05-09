@@ -4,7 +4,6 @@
  */
 
 import { SEASON_DAYS } from "@/game/constants/gameConstants";
-import { setCalibratedPars } from "@/game/beyer";
 
 export type RecalibrationResult = {
   calibratedPars: Record<number, number> | undefined;
@@ -34,7 +33,6 @@ export function maybeRecalibratePars(
   if (Object.keys(recomputed).length === 0) {
     return { calibratedPars: currentPars, lastCalibrationDay, log: null };
   }
-  setCalibratedPars(recomputed);
   const buckets = Object.keys(recomputed).length;
   return {
     calibratedPars: recomputed,

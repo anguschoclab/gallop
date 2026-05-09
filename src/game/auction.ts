@@ -189,7 +189,7 @@ export function calculateNpcBid(
 
   // Use AI-driven bidding if AI manager is available
   if (npcAIManager && currentDay !== undefined) {
-    const aiState = npcAIManager.stableStates.get(stable.id);
+    const aiState = npcAIManager.stableStates[stable.id];
     if (aiState?.auctionAI) {
       // Create a temporary lot object for AI evaluation
       const tempLot: AuctionLot = {

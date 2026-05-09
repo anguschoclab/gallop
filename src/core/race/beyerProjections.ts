@@ -7,10 +7,14 @@ import type { Horse, Race } from "@/game/types";
  * Calculate projected Beyer for a horse in a race
  * Blends model expectation with recent Beyer average for stability
  */
-export function calculateProjectedBeyer(horse: Horse, race: Race): number {
+export function calculateProjectedBeyer(
+  horse: Horse,
+  race: Race,
+  calibratedPars: Record<number, number> = {},
+): number {
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
   const course = getCourseForRace(race);
-  const model = expectedBeyer(horse, race.distance, classBonus, course);
+  const model = expectedBeyer(horse, race.distance, classBonus, course, calibratedPars);
   // Distance bonus applied AFTER the model so it survives the [30, 125]
   // clamp inside beyerFigure. Longer races deserve bigger Beyer figures
   // even when calibrated pars are empty.

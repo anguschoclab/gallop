@@ -5,7 +5,6 @@
 
 import type { GameState } from "@/game/types";
 import { loadGameState, saveGameState } from "@/services/storageAdapter";
-import { setCalibratedPars } from "@/game/beyer";
 
 /**
  * Creates the OPFS storage adapter for Zustand persist
@@ -60,7 +59,6 @@ export function createRehydrateStore(
       // This will call getItem from our custom storage
       await useGame.persist.rehydrate();
       hydrationComplete.value = true;
-      if (state.calibratedPars) setCalibratedPars(state.calibratedPars);
     } else {
       // No saved state, initialize with default
       useGame.setState(initialState());

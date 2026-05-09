@@ -233,10 +233,12 @@ function LiveRace() {
   // If the race is resolved and has snapshots, we can show the replay
   const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
 
+  const calibratedPars = useGame((s) => s.calibratedPars);
+
   void tick;
   const rows = runners.map((r) => ({
     r,
-    beyer: projectedBeyer(r, race.distance, simTimeRef.current, classBonus),
+    beyer: projectedBeyer(r, race.distance, simTimeRef.current, classBonus, calibratedPars),
   }));
 
   const positionRank = new Map(

@@ -244,7 +244,7 @@ export function buildRunner(
     };
     runningStyle = tacticsMap[entry.tactics] || runningStyle;
   } else if (npcAIManager && currentDay && stable && jockey && race && !owned) {
-    const aiState = npcAIManager.stableStates.get(stable.id);
+    const aiState = npcAIManager.stableStates[stable.id];
     if (aiState?.jockeyStrategyAI) {
       const optimalStyle = calculateOptimalRunningStyle(
         aiState.jockeyStrategyAI,

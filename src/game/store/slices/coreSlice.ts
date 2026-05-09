@@ -3,46 +3,13 @@
  * Core game loop properties and essential state management
  */
 
+import { applyPatches } from "immer";
 import type { CoreState } from "@/game/state/coreState";
 import { createDefaultCoreState } from "@/game/state/coreState";
 import type { Horse, Race, PlayerProfile } from "@/game/types";
 import type { ActionResult } from "@/game/store";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
-import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
-import { intentValidationPhase } from "@/core/time/phases/intentValidation";
-import { upkeepPhase } from "@/core/time/phases/upkeep";
-import { agingPhase } from "@/core/time/phases/aging";
-import { breedingSeasonPhase } from "@/core/time/phases/breedingSeason";
-import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
-import { npcBreedingPhase } from "@/core/time/phases/npcBreedingPhase";
-import { energyPhase } from "@/core/time/phases/energy";
-import { marketPhase } from "@/core/time/phases/market";
-import { racesPhase } from "@/core/time/phases/races";
-import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
-import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
-import { pregnancyPhase } from "@/core/time/phases/pregnancy";
-import { npcCyclePhase } from "@/core/time/phases/npcCycle";
-import { stallionRetirementPhase } from "@/core/time/phases/stallionRetirement";
-import { pastureRetirementPhase } from "@/core/time/phases/pastureRetirement";
-import { hallOfFamePhase } from "@/core/time/phases/hallOfFame";
-import { horseDeathPhase } from "@/core/time/phases/horseDeath";
-import { auctionsPhase } from "@/core/time/phases/auctions";
-import { leaderboardPhase } from "@/core/time/phases/leaderboardPhase";
-import { awardsPhase } from "@/core/time/phases/awards";
-import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
-import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
-import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
-import { consignmentResolutionPhase } from "@/core/time/phases/consignmentResolution";
-import { purchaseResolutionPhase } from "@/core/time/phases/purchaseResolution";
-import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
-import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
-import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
-import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
-import { privateSaleExpiryPhase } from "@/core/time/phases/privateSaleExpiry";
-import { npcClaimingPhase } from "@/core/time/phases/npcClaiming";
-import { claimResolutionPhase } from "@/core/time/phases/claimResolution";
-import { managementResolutionPhase } from "@/core/time/phases/managementResolution";
+import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
@@ -219,7 +186,10 @@ export function createCoreSlice(
           progressCallback,
         });
 
-        const { state: finalState, logs: newLogs } = result;
+        const { patches, logs: newLogs } = result;
+
+        // Apply patches to get the final state
+        const finalState = applyPatches(s, patches);
 
         set({
           day: newDay,
@@ -253,6 +223,7 @@ export function createCoreSlice(
           npcAIManager: finalState.npcAIManager,
           privateSaleOffers: finalState.privateSaleOffers,
           claims: finalState.claims,
+          archive: finalState.archive,
           pendingIntents: [], // Clear pending intents after processing
           log: [
             ...newLogs,
@@ -277,52 +248,7 @@ export function createCoreSlice(
           impactLog: [],
         };
 
-        const phases = [
-          // Intent/impact resolver phases
-          intentCollectionPhase,
-          intentValidationPhase,
-          // D2 — Private sale offer expiry (very early)
-          privateSaleExpiryPhase,
-          // Existing phases
-          upkeepPhase,
-          agingPhase,
-          breedingSeasonPhase,
-          industryMetricsPhase,
-          npcBreedingPhase,
-          energyPhase,
-          marketPhase,
-          racesPhase,
-          beyerRecalibrationPhase,
-          jockeyPhase,
-          pregnancyPhase,
-          npcCyclePhase,
-          stallionRetirementPhase,
-          pastureRetirementPhase,
-          hallOfFamePhase,
-          horseDeathPhase,
-          auctionsPhase,
-          leaderboardPhase,
-          awardsPhase,
-          schedulerPhase,
-          stateUpdatePhase,
-          // Resolution phases (convert intents to impacts)
-          raceEntryResolutionPhase,
-          consignmentResolutionPhase,
-          purchaseResolutionPhase,
-          breedingResolutionPhase,
-          trainingResolutionPhase,
-          claimingWithdrawalPhase,
-          managementResolutionPhase,
-          // D3 — NPC claim filing (before race resolution)
-          npcClaimingPhase,
-          raceResolutionPhase,
-          // D3 — Claim resolution (after race resolution)
-          claimResolutionPhase,
-          // Impact application phase (final)
-          impactApplicationPhase,
-        ];
-
-        const updatedContext = executePipeline(phases, pipelineContext);
+        const updatedContext = executePipeline(GAME_PIPELINE_PHASES, pipelineContext);
 
         // Extract final state from pipeline context
         const { state: finalState, logs: newLogs } = updatedContext;
@@ -359,6 +285,7 @@ export function createCoreSlice(
           npcAIManager: finalState.npcAIManager,
           privateSaleOffers: finalState.privateSaleOffers,
           claims: finalState.claims,
+          archive: finalState.archive,
           pendingIntents: [], // Clear pending intents after processing
           log: [
             ...newLogs,

@@ -53,6 +53,7 @@ export interface GenerateRaceImpactsProps {
   hiredStaff?: StaffMember[];
   rng?: Rng;
   snapshots?: RaceSnapshot[];
+  calibratedPars: Record<number, number>;
 }
 
 export function generateRaceImpacts({
@@ -67,6 +68,7 @@ export function generateRaceImpacts({
   hiredStaff = [],
   rng,
   snapshots = [],
+  calibratedPars,
 }: GenerateRaceImpactsProps): AnyImpact[] {
   const impacts: AnyImpact[] = [];
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
@@ -154,7 +156,12 @@ export function generateRaceImpacts({
     }
 
     // Beyer calculation with inbreeding dampener
-    const beyer = beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
+    const beyer = beyerFigure({
+      distance: race.distance,
+      finishTime: r.time,
+      classBonus,
+      calibratedPars,
+    });
     const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
     const dampener = inbreedingPerformanceDampener(inbreedingPattern);
     const adjustedBeyer = Math.max(0, beyer - dampener);

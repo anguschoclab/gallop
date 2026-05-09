@@ -5,9 +5,8 @@ import { produce } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyIntent } from "./intents";
 import type { AnyImpact } from "./impacts";
-import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
-import { generateUUID } from "@/game/uuid";
 import { ALL_HANDLERS } from "./handlers";
+import { ALL_VALIDATORS, type ValidationCache } from "./validators";
 
 // Impact log entry for debugging and audit trail
 export interface ImpactLogEntry {
@@ -170,113 +169,16 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
 export function validateIntent(
   intent: AnyIntent,
   state: GameState,
-  cache?: {
-    horseMap?: Map<string, Horse>;
-    raceMap?: Map<string, Race>;
-    stableMap?: Map<string, Stable>;
-  },
+  cache?: ValidationCache,
 ): { valid: boolean; reason?: string } {
-  // Basic validation based on intent type
-  switch (intent.type) {
-    case "training": {
-      const horse = cache?.horseMap?.get(intent.horseId) || state.horses.find((h) => h.id === intent.horseId);
-      if (!horse) return { valid: false, reason: "Horse not found" };
-      if (horse.consignedSaleId)
-        return { valid: false, reason: "Horse is consigned to an auction" };
-      if (horse.energy < 20) return { valid: false, reason: "Insufficient energy" };
-      break;
+  // Find appropriate validator from registry
+  for (const validator of ALL_VALIDATORS) {
+    if (validator.canValidate(intent.type)) {
+      return validator.validate(intent, state, cache);
     }
-
-    case "race_entry": {
-      const horse = cache?.horseMap?.get(intent.horseId) || state.horses.find((h) => h.id === intent.horseId);
-      const race = cache?.raceMap?.get(intent.raceId) || state.races.find((r) => r.id === intent.raceId);
-      if (!horse) return { valid: false, reason: "Horse not found" };
-      if (horse.consignedSaleId)
-        return { valid: false, reason: "Horse is consigned to an auction" };
-      if (!race) return { valid: false, reason: "Race not found" };
-      if (race.resolved) return { valid: false, reason: "Race already resolved" };
-      if (horse.energy < 40) return { valid: false, reason: "Insufficient energy" };
-      break;
-    }
-
-    case "breeding": {
-      const sire = cache?.horseMap?.get(intent.sireId) || state.horses.find((h) => h.id === intent.sireId);
-      const dam = cache?.horseMap?.get(intent.damId) || state.horses.find((h) => h.id === intent.damId);
-      if (!sire) return { valid: false, reason: "Sire not found" };
-      if (!dam) return { valid: false, reason: "Dam not found" };
-      if (sire.gender !== "horse" && sire.gender !== "gelding")
-        return { valid: false, reason: "Invalid sire gender" };
-      if (dam.gender !== "mare") return { valid: false, reason: "Invalid dam gender" };
-      if (state.cash < 2000) return { valid: false, reason: "Insufficient funds for breeding" };
-      break;
-    }
-
-    case "purchase": {
-      const horse = state.market.find((h) => h.id === intent.horseId);
-      if (!horse) return { valid: false, reason: "Horse not in market" };
-      if (state.cash < intent.price) return { valid: false, reason: "Insufficient funds" };
-      break;
-    }
-
-    case "claiming": {
-      const race = cache?.raceMap?.get(intent.raceId) || state.races.find((r) => r.id === intent.raceId);
-      const horse = cache?.horseMap?.get(intent.horseId) || state.horses.find((h) => h.id === intent.horseId);
-      if (!race) return { valid: false, reason: "Race not found" };
-      if (!horse) return { valid: false, reason: "Horse not found" };
-      if (horse.consignedSaleId)
-        return { valid: false, reason: "Horse is consigned to an auction" };
-      if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
-      if (!race.entries.some((e) => e.horseId === intent.horseId)) {
-        return { valid: false, reason: "Horse is not entered in this race" };
-      }
-      if (horse.stableId === intent.claimantStableId) {
-        return { valid: false, reason: "Cannot claim own horse" };
-      }
-
-      // Check claimant has sufficient funds
-      if (intent.claimantStableId) {
-        const stable = cache?.stableMap?.get(intent.claimantStableId) || state.npcStables.find((s) => s.id === intent.claimantStableId);
-        if (!stable || stable.cash < race.claimingPrice) {
-          return { valid: false, reason: "Insufficient funds" };
-        }
-      } else {
-        if (state.cash < race.claimingPrice) {
-          return { valid: false, reason: "Insufficient funds" };
-        }
-      }
-
-      // Check horse eligibility for claiming price
-      if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) {
-        return { valid: false, reason: "Horse is not eligible for this claiming price" };
-      }
-
-      break;
-    }
-
-    case "withdraw_from_claiming": {
-      const race = cache?.raceMap?.get(intent.raceId) || state.races.find((r) => r.id === intent.raceId);
-      const horse = cache?.horseMap?.get(intent.horseId) || state.horses.find((h) => h.id === intent.horseId);
-      if (!race) return { valid: false, reason: "Race not found" };
-      if (!horse) return { valid: false, reason: "Horse not found" };
-      if (race.resolved) return { valid: false, reason: "Race already resolved" };
-      if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
-      if (race.raceClass !== "OptionalClaiming" && race.raceClass !== "MaidenOptionalClaiming") {
-        return { valid: false, reason: "Withdrawal only allowed in optional claiming races" };
-      }
-      const entry = race.entries.find((e) => e.horseId === intent.horseId);
-      if (!entry) return { valid: false, reason: "Horse not entered in this race" };
-      if (entry.withdrawnFromClaiming) {
-        return { valid: false, reason: "Horse already withdrawn from claiming" };
-      }
-      break;
-    }
-
-
-    default:
-      // Pass through for other intent types
-      break;
   }
 
+  // Default to valid if no specific validator found
   return { valid: true };
 }
 
