@@ -1,3 +1,13 @@
+/**
+ * facilityTypes.ts - Facility type definitions and constants
+ *
+ * This file provides type definitions for facilities, facility levels, and constant data
+ * for bonuses, maintenance costs, upgrade costs, and enabled workouts.
+ *
+ * Dependencies: None (self-contained types and constants)
+ * Related files: facilityDefaults.ts (uses types and constants), index.ts (re-exports types)
+ */
+
 // Facility Types - Infrastructure system for racing stables
 // Facilities affect training effectiveness, recovery, injury healing, and racing operations
 

@@ -1,3 +1,13 @@
+/**
+ * gender.ts - Gender eligibility checking
+ *
+ * This file provides pure functions for checking gender eligibility for races
+ * and determining horse gender characteristics.
+ *
+ * Dependencies: @/game/types (Horse, HorseGender), @/game/rng (Rng)
+ * Related files: race/eligibility.ts (uses gender checks), races.tsx (uses for race display)
+ */
+
 import type { Horse, HorseGender } from "@/game/types";
 import type { Rng } from "@/game/rng";
 

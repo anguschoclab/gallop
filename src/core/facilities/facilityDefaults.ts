@@ -1,3 +1,13 @@
+/**
+ * facilityDefaults.ts - Facility creation and helper functions
+ *
+ * This file provides functions for creating default facilities, calculating maintenance costs,
+ * and managing facility upgrades for stable infrastructure.
+ *
+ * Dependencies: ./facilityTypes (Facility, FacilityType, FacilityLevel, PlayerFacilities, FACILITY_MAINTENANCE_COSTS, FACILITY_UPGRADE_COSTS, FACILITY_ENABLED_WORKOUTS)
+ * Related files: facilityTypes.ts (type definitions), index.ts (re-exports functions)
+ */
+
 // Facility Defaults - Default facility creation and helper functions
 
 import type { Facility, FacilityType, FacilityLevel, PlayerFacilities } from "./facilityTypes";

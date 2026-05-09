@@ -1,3 +1,13 @@
+/**
+ * industryMetrics.ts - Industry mean earnings calculation
+ *
+ * This file provides the computation of industry mean earnings for all racing-age horses,
+ * which is the baseline used for AEI (Average Earnings Index) calculation.
+ *
+ * Dependencies: @/game/types (Horse), ./lineage (foalLifetimeEarnings)
+ * Related files: sireAnalytics.ts (uses industry mean for AEI calculation), leaderboardService.ts (uses for rankings)
+ */
+
 import type { Horse } from "@/game/types";
 import { foalLifetimeEarnings } from "./lineage";
 

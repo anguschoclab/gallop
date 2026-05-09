@@ -1,3 +1,14 @@
+/**
+ * types.ts - Horse type definitions
+ *
+ * This file provides type definitions for horse-related concepts including stats,
+ * conformation, temperament, running style, health status, injuries, blue hen status,
+ * genetic markers, and pedigree.
+ *
+ * Dependencies: @/core/genetics/types (Genotype)
+ * Related files: Used throughout the horse module and game state
+ */
+
 import type { Genotype } from "@/core/genetics/types";
 
 export type HorseStats = {

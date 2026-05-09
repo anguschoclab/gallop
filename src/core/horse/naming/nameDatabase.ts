@@ -1,4 +1,15 @@
 /**
+ * nameDatabase.ts - Word pools for horse naming
+ *
+ * This file provides expanded word pools for horse naming, including classical names,
+ * celestial terms, and other thematic categories inspired by real-world thoroughbred
+ * naming conventions.
+ *
+ * Dependencies: None (self-contained data)
+ * Related files: nameGenerator.ts (uses these word pools), ancestorHomage.ts (uses word pools for homage naming)
+ */
+
+/**
  * Expanded word pools for horse naming.
  * Inspired by real-world thoroughbred naming conventions.
  */

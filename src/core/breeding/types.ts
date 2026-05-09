@@ -1,3 +1,13 @@
+/**
+ * types.ts - Breeding type definitions
+ *
+ * This file provides type definitions for breeding-related concepts including
+ * pregnancy, dosage profiles, and pedigree nodes.
+ *
+ * Dependencies: None (self-contained type definitions)
+ * Related files: Used throughout the breeding module and game state
+ */
+
 export type Pregnancy = {
   id: string;
   sireId: string;

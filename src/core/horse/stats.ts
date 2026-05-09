@@ -1,3 +1,13 @@
+/**
+ * stats.ts - Horse stat calculations
+ *
+ * This file provides pure functions for calculating overall ratings, race ratings,
+ * and career statistics from race history.
+ *
+ * Dependencies: @/game/types (Horse, RunningStyle), @/game/rng (Rng)
+ * Related files: horseFactory.ts (uses for stat resolution), stable.$horseId.tsx (uses for display)
+ */
+
 import type { Horse, RunningStyle } from "@/game/types";
 import type { Rng } from "@/game/rng";
 

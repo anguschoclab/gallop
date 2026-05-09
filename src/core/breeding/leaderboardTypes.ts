@@ -1,3 +1,12 @@
+/**
+ * leaderboardTypes.ts - Sire leaderboard type definitions
+ *
+ * This file provides type definitions for sire leaderboards, rankings, and trend data.
+ *
+ * Dependencies: ./sireAnalytics (SurfaceBias, DistancePreference, SireClassification, SireAnalytics)
+ * Related files: leaderboardService.ts (uses these types), leaderboardPhase.ts (uses for trend tracking)
+ */
+
 import type {
   SurfaceBias,
   DistancePreference,

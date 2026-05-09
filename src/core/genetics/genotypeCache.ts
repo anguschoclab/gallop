@@ -1,4 +1,14 @@
 /**
+ * genotypeCache.ts - In-memory caching for expensive genetic calculations
+ *
+ * This file provides caching for simulator results, COI calculations, bloodline
+ * resolution, and breeding compatibility to avoid redundant computations.
+ *
+ * Dependencies: ./breedingSimulator (SimulationResult), ../breeding/populationGenetics (Bloodline), @/game/breedingCompatibility (BreedingCompatibilityResult)
+ * Related files: breedingSimulator.ts (uses simulator cache), populationGenetics.ts (uses COI cache)
+ */
+
+/**
  * Genotype Cache
  * In-memory caching for expensive genetic calculations
  */

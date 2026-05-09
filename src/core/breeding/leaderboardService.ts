@@ -1,3 +1,13 @@
+/**
+ * leaderboardService.ts - Sire leaderboard computation
+ *
+ * This file provides functions for computing all sire leaderboards including AEI, CI,
+ * stakes producers, G1 producers, and various specialty rankings.
+ *
+ * Dependencies: @/game/types (Horse), ./sireAnalytics (getSireAnalytics, getSireSurfaceBias, getSireDistancePreference), ./lineage (getRunnersBy, getStakesFoalsBy, getG1FoalsBy, getFoalsBy), ./leaderboardTypes (Leaderboard, LeaderboardType, SireRanking, SireTrendData)
+ * Related files: leaderboardPhase.ts (uses this service), leaderboardTypes.ts (type definitions)
+ */
+
 import type { Horse } from "@/game/types";
 import { getSireAnalytics, getSireSurfaceBias, getSireDistancePreference } from "./sireAnalytics";
 import { getRunnersBy, getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "./lineage";

@@ -1,3 +1,13 @@
+/**
+ * progenyLeaderboards.ts - Progeny leaderboard computation
+ *
+ * This file provides functions for computing progeny leaderboards tracking top
+ * performers by Beyer figures, earnings, and stakes wins.
+ *
+ * Dependencies: @/core/horse/stats (getCareerStats), @/game/types (Horse), ./lineage (foalLifetimeEarnings), ./leaderboardTypes (ProgenyLeaderboard, ProgenyLeaderboardType, ProgenyRanking)
+ * Related files: leaderboardPhase.ts (uses for progeny rankings), leaderboardTypes.ts (type definitions)
+ */
+
 import { getCareerStats } from "@/core/horse/stats";
 import type { Horse } from "@/game/types";
 import { foalLifetimeEarnings } from "./lineage";

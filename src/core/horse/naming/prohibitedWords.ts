@@ -1,4 +1,14 @@
 /**
+ * prohibitedWords.ts - Prohibited word lists for naming validation
+ *
+ * This file provides lists of offensive words, trade names, reserved names, and
+ * prohibited patterns for horse naming validation based on Jockey Club guidelines.
+ *
+ * Dependencies: None (self-contained data)
+ * Related files: jockeyClubRules.ts (uses these lists for validation)
+ */
+
+/**
  * Prohibited and offensive word lists for horse naming validation.
  * Based on Jockey Club guidelines and general offensive word filters.
  */

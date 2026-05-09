@@ -1,3 +1,13 @@
+/**
+ * pricing.ts - Horse valuation and pricing
+ *
+ * This file provides functions for calculating horse values, stud fees, and broodmare
+ * fees based on stats, age, fame, and tier.
+ *
+ * Dependencies: @/game/types (Horse, StableTier, GameState, Stable), ./stats (calculateOverallRating), ../breeding/pedigreePricing (pedigreeMultiplier)
+ * Related files: stallions.ts (uses for stud fee calculation), market.ts (uses for horse pricing)
+ */
+
 import type { Horse, StableTier, GameState, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";

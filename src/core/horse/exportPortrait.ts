@@ -1,3 +1,13 @@
+/**
+ * exportPortrait.ts - Horse portrait export functionality
+ *
+ * This file provides client-side horse portrait export to PNG, rendering procedural
+ * SVG portraits to canvas and triggering downloads.
+ *
+ * Dependencies: @/game/types (Horse), ./proceduralPortrait (getOrDeriveAppearance)
+ * Related files: proceduralPortrait.ts (procedural generation), portrait.ts (static assets)
+ */
+
 import type { Horse } from "@/game/types";
 import { getOrDeriveAppearance } from "@/core/horse/proceduralPortrait";
 

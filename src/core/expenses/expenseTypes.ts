@@ -1,3 +1,14 @@
+/**
+ * expenseTypes.ts - Expense type definitions and functions
+ *
+ * This file provides type definitions for expense categories, expense records,
+ * expense summaries, and configuration. It also includes helper functions for
+ * creating, grouping, and filtering expenses.
+ *
+ * Dependencies: None (self-contained types and functions)
+ * Related files: index.ts (re-exports types and functions)
+ */
+
 // Expense Types - Categorized expense tracking for stable operations
 
 /**
