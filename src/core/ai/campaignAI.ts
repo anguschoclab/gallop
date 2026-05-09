@@ -17,6 +17,7 @@
 
 import type { Horse, Race, Stable } from "@/game/types";
 import type { GradedRace } from "@/game/gradedRaces";
+import type { TripleCrownProgress } from "@/core/campaign/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
@@ -243,6 +244,7 @@ export function detectContender(
  * @param horse - The horse to evaluate
  * @param stable - The stable making the decision
  * @param currentDay - Current game day
+ * @param triplecrownHistory - Optional historical Triple Crown progress
  * @returns Optimal target race key or null if not a contender
  */
 export function getOptimalMajorRaceTarget(
@@ -250,6 +252,7 @@ export function getOptimalMajorRaceTarget(
   horse: Horse,
   stable: Stable,
   currentDay: number,
+  triplecrownHistory: TripleCrownProgress[] = [],
 ): string | null {
   const contenderStatus = aiState.contenderTracking[horse.id];
   if (!contenderStatus || !contenderStatus.isContender) return null;
@@ -261,7 +264,7 @@ export function getOptimalMajorRaceTarget(
     const race = GRADED_RACES.find((r) => r.key === raceKey);
     if (!race) continue;
 
-    const score = calculateRaceTargetScore(aiState, horse, race, stable, currentDay);
+    const score = calculateRaceTargetScore(aiState, horse, race, stable, currentDay, triplecrownHistory);
     if (score > bestScore) {
       bestScore = score;
       bestRaceKey = raceKey;
@@ -291,6 +294,7 @@ function calculateRaceTargetScore(
   race: GradedRace,
   stable: Stable,
   currentDay: number,
+  triplecrownHistory: TripleCrownProgress[] = [],
 ): number {
   let score = 0;
 
@@ -317,8 +321,19 @@ function calculateRaceTargetScore(
       }
     }
 
-    // TODO: Add bonus for series progress (requires access to triplecrownHistory from game state)
-    // This is a "Should Have" feature from the plan, deferred for now
+    // Bonus for series progress
+    const progress = triplecrownHistory.find(
+      (p) => p.horseId === horse.id && p.triplecrownKey === race.triplecrownKey,
+    );
+    if (progress && progress.legs.length > 0) {
+      // If won previous legs, high bonus to keep chasing
+      const wins = progress.legs.filter((l) => l.position === 1).length;
+      if (wins > 0) {
+        score += wins * 30; // Strong bonus to complete the sweep
+      } else {
+        score += 10; // Still chasing
+      }
+    }
   }
 
   if (race.bcKey === "breeders-cup") score += 35;
@@ -365,6 +380,7 @@ export function shouldTargetMajorRace(
   race: GradedRace,
   stable: Stable,
   currentDay: number,
+  triplecrownHistory: TripleCrownProgress[] = [],
 ): boolean {
   const contenderStatus = aiState.contenderTracking[horse.id];
   if (!contenderStatus || !contenderStatus.isContender) return false;
@@ -407,7 +423,7 @@ export function shouldTargetMajorRace(
   }
 
   // Calculate target score
-  const score = calculateRaceTargetScore(aiState, horse, race, stable, currentDay);
+  const score = calculateRaceTargetScore(aiState, horse, race, stable, currentDay, triplecrownHistory);
 
   // Get adaptive threshold
   const contextKey = `${stable.personality}:${race.key}`;

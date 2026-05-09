@@ -271,10 +271,11 @@ export function getLearningInsights(
   const avgValue =
     totalDecisions > 0 ? relevantOutcomes.reduce((sum, o) => sum + o.value, 0) / totalDecisions : 0;
 
-  const patterns: Array<{ key: string; score: number }> = [];
+  const patterns: Array<{ key: string; score: number }>;
+  patterns = [];
   for (const key in state.patterns) {
-    if (key.startsWith(decisionType)) {
-      patterns.push({ key: key.split(":")[1], score: state.patterns[key] });
+    if (key.startsWith(decisionType + ":")) {
+      patterns.push({ key: key.substring(decisionType.length + 1), score: state.patterns[key] });
     }
   }
 

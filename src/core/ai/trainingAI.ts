@@ -305,7 +305,7 @@ export function shouldTrainToday(
   // Check training frequency (personality-driven)
   const devTrack = aiState.horseDevelopment[horse.id];
   if (devTrack) {
-    const daysSinceTraining = currentDay - devTrack.lastUpdateDay;
+    const daysSinceTraining = currentDay - devTrack.lastTrainingDay;
     const config = aiState.personalityState;
 
     // Aggressive personalities train more frequently

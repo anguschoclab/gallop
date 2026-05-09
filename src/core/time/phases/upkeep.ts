@@ -181,7 +181,7 @@ export const upkeepPhase = {
     npcStables = npcStables.map((stable) => {
       if (stable.cash < BANKRUPTCY_THRESHOLD) {
         // Check if this stable recently received an injection
-        const lastInjectionDay = (stable as any).lastBankruptcyInjectionDay || 0;
+        const lastInjectionDay = stable.lastBankruptcyInjectionDay || 0;
         const daysSinceInjection = newDay - lastInjectionDay;
 
         if (daysSinceInjection >= BANKRUPTCY_COOLDOWN_DAYS) {

@@ -19,7 +19,7 @@ import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
 } from "@/services/traitCompatibility";
-import { computeCoiFromSnapshot } from "@/core/breeding/populationGenetics";
+import { computeCoiFromSnapshot, computeProspectiveCoi } from "@/core/breeding/populationGenetics";
 import { NICKING_AFFINITIES, CROSS_FAMILY_AFFINITIES } from "@/core/breeding/breedingAffinityData";
 import { getCareerStats } from "@/core/horse/stats";
 
@@ -28,6 +28,7 @@ export {
   calculateFounderEffect,
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
+  computeProspectiveCoi,
 };
 
 /**
@@ -144,14 +145,14 @@ export function calculateFoundationStockProximity(
     }
   }
 
-  // Cap the score at 0.5 (50% bonus maximum from foundation stock)
-  score = Math.min(score, 0.5);
+  // Cap the score at 1.0 (normalized for weighting)
+  score = Math.min(score * 2, 1.0);
 
   let description = "Limited foundation stock proximity";
-  if (score >= 0.4) description = "Excellent foundation stock proximity";
-  else if (score >= 0.25) description = "Strong foundation stock proximity";
-  else if (score >= 0.15) description = "Moderate foundation stock proximity";
-  else if (score >= 0.05) description = "Some foundation stock influence";
+  if (score >= 0.8) description = "Excellent foundation stock proximity";
+  else if (score >= 0.5) description = "Strong foundation stock proximity";
+  else if (score >= 0.3) description = "Moderate foundation stock proximity";
+  else if (score >= 0.1) description = "Some foundation stock influence";
 
   if (reasons.length > 0) {
     description += ` (${reasons.slice(0, 2).join(", ")})`;
@@ -194,7 +195,7 @@ export function checkNickingAffinity(
   if (affinities.includes(damSireLine)) {
     return {
       hasAffinity: true,
-      affinity: 0.3, // 30% bonus for known nicking
+      affinity: 1.0, // Strong nicking
       description: `Strong nicking: ${sireLine} × ${damSireLine}`,
     };
   }
@@ -206,7 +207,7 @@ export function checkNickingAffinity(
     if (affinities.includes(grandSire)) {
       return {
         hasAffinity: true,
-        affinity: 0.15, // 15% bonus for indirect nicking
+        affinity: 0.5, // Moderate nicking
         description: `Moderate nicking: ${sireLine} × ${damSireLine} (via ${grandSire})`,
       };
     }
@@ -386,7 +387,7 @@ export function calculateBreedingCompatibility(
 ): BreedingCompatibilityResult {
   const nicking = checkNickingAffinity(sire.sireName || "", dam.sireName || "");
   const dosage = calculateDosageCompatibility(sire.sireName || "", dam.sireName || "");
-  const coi = computeCoiFromSnapshot(sire.pedigree, 8);
+  const coi = computeProspectiveCoi(sire, dam, 8);
   const inbreeding = { coefficient: coi, warning: coi > 0.125 ? "High inbreeding - may reduce vigor" : coi > 0.0625 ? "Moderate inbreeding - monitor closely" : "" };
   const parentPerformance = calculateParentPerformance(sire, dam);
   const conformation = calculateConformationCompatibility(sire, dam);

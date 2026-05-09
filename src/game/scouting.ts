@@ -224,11 +224,13 @@ export function scoutHorse(
         hiddenColorCarrier = "Gray Allele Carrier";
       }
 
+      const surfaceAffinity = Object.entries(horse.surfaceAptitude).find(([_, v]) => v >= 0.8);
+      
       geneticInsight = {
         distanceMarker: `Genetic bias for ${horse.distanceAptitude}m`,
-        surfaceMarker:
-          Object.entries(horse.surfaceAptitude).find(([_, v]) => v === 1.0)?.[0] +
-          " Affinity Marker",
+        surfaceMarker: surfaceAffinity
+          ? surfaceAffinity[0] + " Affinity Marker"
+          : "Balanced Surface Affinity",
         hiddenColorCarrier,
         abilityMarkers,
       };

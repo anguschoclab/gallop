@@ -118,18 +118,21 @@ type NamingPattern =
   | "legacy"; // Churchill Cup
 
 /**
- * Determine regional system from track.
+ * Determine regional system from track or country name.
  *
- * Maps a track's country to its regional naming system (north_america, europe,
- * asia, south_america, australia).
+ * Maps a track's country or a direct country name to its regional naming system
+ * (north_america, europe, asia, south_america, australia).
  *
- * @param track - The track to map
+ * @param trackOrCountry - The track object or country name string
  * @returns Regional system identifier
  *
  * @example
  * const region = getRegionalSystem(track);
+ * const region2 = getRegionalSystem("Japan");
  */
-export function getRegionalSystem(track: Track): RegionalSystem {
+export function getRegionalSystem(trackOrCountry: Track | string): RegionalSystem {
+  const country = typeof trackOrCountry === "string" ? trackOrCountry : trackOrCountry.country;
+
   // Map country to regional system
   const countryToRegion: Record<string, RegionalSystem> = {
     Canada: "north_america",
@@ -154,9 +157,13 @@ export function getRegionalSystem(track: Track): RegionalSystem {
     "Czech Republic": "europe",
     Hungary: "europe",
     Spain: "europe",
+    Australia: "australia",
+    "New Zealand": "australia",
+    Singapore: "asia",
+    "Saudi Arabia": "asia",
   };
 
-  return countryToRegion[track.country] || "north_america";
+  return countryToRegion[country] || "north_america";
 }
 
 // Select naming pattern based on race class and region

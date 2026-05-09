@@ -26,6 +26,7 @@ import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAI";
 import { recordJockeyOutcome } from "@/core/ai/jockeyAI";
 import { recordCampaignOutcome } from "@/core/ai/campaignAI";
+import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -98,7 +99,11 @@ export const raceResolutionPhase: PipelinePhase = {
               if (stableAI.jockeyAI) {
                  const runner = runners.find(r => r.horseId === res.horseId);
                  if (runner && runner.jockeyId) {
-                    const prize = 0; // prize calculation would be complex here, using 0 for now as proxy
+                    // Calculate prize money for learning
+                    const prize = res.position <= PRIZE_SPLIT.length 
+                      ? Math.round(race.purse * PRIZE_SPLIT[res.position - 1]) 
+                      : 0;
+                    
                     stableAI.jockeyAI = recordJockeyOutcome(
                       stableAI.jockeyAI,
                       runner.jockeyId,
@@ -113,12 +118,16 @@ export const raceResolutionPhase: PipelinePhase = {
 
               // 3. Learn from campaign targeting
               if (stableAI.campaignAI && race.graded?.key) {
+                 const prize = res.position <= PRIZE_SPLIT.length 
+                   ? Math.round(race.purse * PRIZE_SPLIT[res.position - 1]) 
+                   : 0;
+
                  stableAI.campaignAI = recordCampaignOutcome(
                    stableAI.campaignAI,
                    res.horseId,
                    race.graded.key,
                    res.position,
-                   0, // prize proxy
+                   prize,
                    newDay
                  );
               }

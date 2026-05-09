@@ -30,6 +30,7 @@ import {
   getPrepRaceStrategy,
   createCampaignAIState,
 } from "@/core/ai/campaignAI";
+import type { TripleCrownProgress } from "@/core/campaign/types";
 import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 
 // ── Distance band helpers ────────────────────────────────────────────────────
@@ -73,6 +74,7 @@ export type PlannerInput = {
   currentDay: number;
   stable?: Stable;
   npcAIManager?: NpcAIManager;
+  triplecrownHistory?: TripleCrownProgress[];
 };
 
 /**
@@ -119,6 +121,7 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
           horse,
           stable,
           currentDay,
+          input.triplecrownHistory ?? [],
         );
         if (optimalTarget) {
           const targetGraded = GRADED_RACES.find((g) => g.key === optimalTarget);

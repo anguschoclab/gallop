@@ -111,7 +111,12 @@ export function getCareerStats(horse: Horse): CareerStats {
     if (entry.position === 3) stats.shows++;
 
     if (entry.grade) stats.gradedStarts++;
-    if (won && (entry.grade || entry.raceClass === "Stakes" || entry.raceClass === "Group")) stats.stakesWins++;
+    
+    // Count stakes wins: Graded (G1-G3), Listed, Group, or Stakes class
+    if (won && (entry.grade || entry.raceClass === "Stakes" || entry.raceClass === "Group" || entry.raceClass === "Listed" || entry.raceClass === "Graded")) {
+      stats.stakesWins++;
+    }
+    
     if (won && entry.grade) {
       stats.gradedWins++;
       if (entry.grade === "G1") stats.g1Wins++;
@@ -122,15 +127,31 @@ export function getCareerStats(horse: Horse): CareerStats {
     stats.earnings += entry.purseEarned || 0;
 
     // Surface
-    if (entry.surface === "Turf") { stats.turfStarts++; if (won) stats.turfWins++; }
-    else if (entry.surface === "Dirt") { stats.dirtStarts++; if (won) stats.dirtWins++; }
-    else if (entry.surface) { stats.syntheticStarts++; if (won) stats.syntheticWins++; }
+    if (entry.surface === "Turf") { 
+      stats.turfStarts++; 
+      if (won) stats.turfWins++; 
+    } else if (entry.surface === "Dirt") { 
+      stats.dirtStarts++; 
+      if (won) stats.dirtWins++; 
+    } else if (entry.surface === "Synthetic") { 
+      stats.syntheticStarts++; 
+      if (won) stats.syntheticWins++; 
+    }
 
     // Distance
     const dist = entry.distance || 0;
-    if (dist < 1400) { stats.sprintStarts++; if (won) stats.sprintWins++; }
-    else if (dist < 2000) { stats.classicStarts++; if (won) stats.classicWins++; }
-    else if (dist >= 2000) { stats.stayerStarts++; if (won) stats.stayerWins++; }
+    if (dist > 0) {
+      if (dist < 1400) { 
+        stats.sprintStarts++; 
+        if (won) stats.sprintWins++; 
+      } else if (dist < 2000) { 
+        stats.classicStarts++; 
+        if (won) stats.classicWins++; 
+      } else { 
+        stats.stayerStarts++; 
+        if (won) stats.stayerWins++; 
+      }
+    }
   }
 
   return stats;

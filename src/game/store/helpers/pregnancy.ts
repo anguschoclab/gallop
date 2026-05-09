@@ -34,9 +34,7 @@ import {
  * @returns The regional system associated with the country
  */
 function getRegionalSystemFromCountry(country: string): RegionalSystem {
-  // Create a minimal Track-like object for getRegionalSystem
-  const trackLike = { id: "temp", name: "temp", country, surfaces: ["Dirt"], courses: [] } as const;
-  return getRegionalSystem(trackLike as unknown as Track);
+  return getRegionalSystem(country);
 }
 
 export type PregnancyResult = {
