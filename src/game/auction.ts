@@ -47,7 +47,12 @@ export function netProceeds(hammerPrice: number): number {
   return Math.round(hammerPrice * (1 - CONSIGNMENT_COMMISSION));
 }
 
-/** Compute the commission taken from a hammer price. */
+/**
+ * Compute the commission taken from a hammer price.
+ *
+ * @param hammerPrice - The hammer price of the lot
+ * @returns Commission amount
+ */
 export function commissionAmount(hammerPrice: number): number {
   return hammerPrice - netProceeds(hammerPrice);
 }
@@ -58,7 +63,16 @@ export function commissionAmount(hammerPrice: number): number {
 
 /**
  * Calculate how much a stable values a given auction lot.
- * Returns a dollar figure representing their ceiling bid.
+ *
+ * Returns a dollar figure representing their ceiling bid. Considers pedigree multiplier,
+ * stable personality, sale kind, horse attributes, and various premiums.
+ *
+ * @param horse - The horse being valued
+ * @param stable - The stable making the valuation
+ * @param saleKind - Type of auction sale
+ * @param allHorses - All horses in the game (for pedigree calculations)
+ * @param horseMap - Map of horse IDs to horses
+ * @returns Ceiling bid amount
  */
 export function calculateLotValuation(
   horse: Horse,
@@ -317,9 +331,14 @@ export function isLotEligible(
 }
 
 /**
- * Generate a "breeze time" for a 2YO-in-training lot, expressed in seconds
- * for a 1/8-mile (≈202m) burst. Real OBS works range ~9.6s (elite) to ~11.0s
- * (slow). Faster horses get faster breezes; small RNG noise on top.
+ * Generate a "breeze time" for a 2YO-in-training lot.
+ *
+ * Expressed in seconds for a 1/8-mile (≈202m) burst. Real OBS works range ~9.6s (elite)
+ * to ~11.0s (slow). Faster horses get faster breezes; small RNG noise on top.
+ *
+ * @param horse - The horse to generate breeze time for
+ * @param rng - Random number generator
+ * @returns Breeze time in seconds
  */
 export function generateBreezeSeconds(horse: Horse, rng: Rng): number {
   const speed = horse.stats.speed; // 0-100
@@ -335,17 +354,16 @@ export function generateBreezeSeconds(horse: Horse, rng: Rng): number {
 // ---------------------------------------------------------------------------
 
 /**
- * Decide which of a stable's horses it wants to put through the ring for
- * this sale kind. Each personality has its own logic; the goal is that
- * every personality has a coherent reason to consign, so sales feel
- * populated and varied rather than monotonous.
+ * Decide which of a stable's horses it wants to consign for a sale.
  *
- * Returns:
- *   - `consign`: the existing horses they'll list
- *   - `freshCount`: how many fresh NPC-generated lots they want to add on top
- *     (used when their actual inventory is thin / for filler stables)
- *   - `reserveMultiplier`: scales the reserve price (prestige sets high
- *     reserves on headliners; trader sets low to clear stock)
+ * Each personality has its own logic for consignment. Returns consigned horses,
+ * fresh lot count for filler, and reserve multiplier.
+ *
+ * @param stable - The stable consigning horses
+ * @param kind - Type of auction sale
+ * @param allHorses - All horses in the game
+ * @param rng - Random number generator
+ * @returns Object with consign array, freshCount, and reserveMultiplier
  */
 export function personalityConsignmentPolicy(
   stable: Stable,

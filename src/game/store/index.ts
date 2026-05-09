@@ -20,6 +20,9 @@ import { persist } from "zustand/middleware";
 import type { GameState } from "@/game/types";
 import { createRacingSlice, type RacingSlice } from "./slices/racingSlice";
 import { createMarketSlice, type MarketSlice } from "./slices/marketSlice";
+import { createScoutingSlice } from "./slices/scoutingSlice";
+import { createAuctionSlice } from "./slices/auctionSlice";
+import { createPrivateSaleSlice } from "./slices/privateSaleSlice";
 import { createBreedingSlice, type BreedingSlice } from "./slices/breedingSlice";
 import { createCampaignSlice, type CampaignSlice } from "./slices/campaignSlice";
 import { createCoreSlice, type CoreSlice } from "./slices/coreSlice";
@@ -51,7 +54,12 @@ let storageWorker: Remote<StorageWorkerApi> | null = null;
 let initializationWorker: Remote<InitializationWorkerApi> | null = null;
 
 /**
- * Initialize engine worker
+ * Initialize engine worker.
+ *
+ * Creates and wraps the engine worker for race simulation and other computations.
+ * Only initializes in browser context where Worker API is available.
+ *
+ * @returns Promise that resolves when worker is initialized
  */
 export async function initEngineWorker(): Promise<void> {
   if (engineWorker) return;
@@ -69,7 +77,12 @@ export async function initEngineWorker(): Promise<void> {
 }
 
 /**
- * Initialize storage worker
+ * Initialize storage worker.
+ *
+ * Creates and wraps the storage worker for persistence operations.
+ * Only initializes in browser context where Worker API is available.
+ *
+ * @returns Promise that resolves when worker is initialized
  */
 export async function initStorageWorker(): Promise<void> {
   if (storageWorker) return;
@@ -87,7 +100,12 @@ export async function initStorageWorker(): Promise<void> {
 }
 
 /**
- * Initialize initialization worker
+ * Initialize initialization worker.
+ *
+ * Creates and wraps the initialization worker for game setup operations.
+ * Only initializes in browser context where Worker API is available.
+ *
+ * @returns Promise that resolves when worker is initialized
  */
 export async function initInitializationWorker(): Promise<void> {
   if (initializationWorker) return;
@@ -105,7 +123,12 @@ export async function initInitializationWorker(): Promise<void> {
 }
 
 /**
- * Get engine worker instance
+ * Get engine worker instance.
+ *
+ * Returns the initialized engine worker. Throws error if not initialized.
+ *
+ * @returns Engine worker remote instance
+ * @throws Error if engine worker not initialized
  */
 export function getEngineWorker(): Remote<EngineWorkerApi> {
   if (!engineWorker) {
@@ -115,7 +138,12 @@ export function getEngineWorker(): Remote<EngineWorkerApi> {
 }
 
 /**
- * Get storage worker instance
+ * Get storage worker instance.
+ *
+ * Returns the initialized storage worker. Throws error if not initialized.
+ *
+ * @returns Storage worker remote instance
+ * @throws Error if storage worker not initialized
  */
 export function getStorageWorker(): Remote<StorageWorkerApi> {
   if (!storageWorker) {
@@ -125,7 +153,12 @@ export function getStorageWorker(): Remote<StorageWorkerApi> {
 }
 
 /**
- * Get initialization worker instance
+ * Get initialization worker instance.
+ *
+ * Returns the initialized initialization worker. Throws error if not initialized.
+ *
+ * @returns Initialization worker remote instance
+ * @throws Error if initialization worker not initialized
  */
 export function getInitializationWorker(): Remote<InitializationWorkerApi> {
   if (!initializationWorker) {
@@ -163,6 +196,15 @@ export const useGame = create<StoreType>()(
 
       // Market slice
       ...createMarketSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Scouting slice
+      ...createScoutingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Auction slice
+      ...createAuctionSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Private sale slice
+      ...createPrivateSaleSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Breeding slice
       ...createBreedingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),

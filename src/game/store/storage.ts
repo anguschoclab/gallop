@@ -17,7 +17,12 @@ import type { GameState } from "@/game/types";
 import { loadGameState, saveGameState } from "@/services/storageAdapter";
 
 /**
- * Creates the OPFS storage adapter for Zustand persist
+ * Creates the OPFS storage adapter for Zustand persist.
+ *
+ * Provides custom storage implementation using OPFS for game state persistence.
+ * Handles loading, saving, and removing game state.
+ *
+ * @returns Zustand persist storage adapter with getItem, setItem, and removeItem methods
  */
 export function createOpfsStorage() {
   return {
@@ -54,8 +59,13 @@ export const hydrationComplete = {
 };
 
 /**
- * Creates a rehydrate function that can be called with the store instance
+ * Creates a rehydrate function that can be called with the store instance.
+ *
+ * Returns an async function that rehydrates the store from saved state or
+ * initializes with default state if no save exists.
+ *
  * @param initialState - Function to create initial state if no save exists
+ * @returns Async rehydrate function that takes the store instance
  */
 export function createRehydrateStore(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

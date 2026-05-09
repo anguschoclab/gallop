@@ -42,8 +42,20 @@ import { PRIZE_SPLIT } from "./constants/gameConstants";
 
 /**
  * Resolves a race and applies impacts for live race simulation.
+ *
  * This is used when the player watches a race live, as opposed to the pipeline-based
- * resolution which runs during day-rollover.
+ * resolution which runs during day-rollover. Applies energy, form, fame, race history,
+ * prize money, blue hen, stud career, jockey stats, pace sample, and log impacts.
+ *
+ * @param race - Race to resolve
+ * @param result - Race results with horse IDs, positions, and times
+ * @param runners - Runner objects from race simulation
+ * @param horses - Array of all horses
+ * @param jockeys - Array of all jockeys
+ * @param npcStables - Array of NPC stables
+ * @param day - Current simulation day
+ * @param calibratedPars - Optional calibrated par times by distance bucket
+ * @returns Resolver context with updated state and applied impacts
  */
 export function resolveLiveRaceWithImpacts(
   race: Race,

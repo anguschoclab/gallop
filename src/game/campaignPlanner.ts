@@ -77,7 +77,12 @@ export type PlannerInput = {
 
 /**
  * Build a fresh set of CampaignRaceSlots from available races + GRADED_RACES calendar.
- * Existing "entered" or "completed" slots are preserved.
+ *
+ * Existing "entered" or "completed" slots are preserved. Uses AI-driven major race targeting
+ * for NPCs when AI manager is available.
+ *
+ * @param input - Planner input including horse, campaign, races, current day, stable, and AI manager
+ * @returns Array of campaign race slots
  */
 export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
   const { horse, campaign, races, currentDay, stable, npcAIManager } = input;
@@ -358,6 +363,17 @@ function buildMaidenSlots(
 
 // ── Flag generation ───────────────────────────────────────────────────────────
 
+/**
+ * Generate campaign flags for a horse based on current state.
+ *
+ * Creates flags for low energy, health issues, and upgrade availability.
+ * Preserves existing flags unless dismissed.
+ *
+ * @param horse - The horse to generate flags for
+ * @param campaign - The horse's campaign
+ * @param currentDay - Current simulation day
+ * @returns Array of campaign flags
+ */
 export function generateCampaignFlags(
   horse: Horse,
   campaign: HorseCampaign,
@@ -409,6 +425,17 @@ export function generateCampaignFlags(
 
 // ── Aptitude update from race result ─────────────────────────────────────────
 
+/**
+ * Update campaign aptitudes from a race result.
+ *
+ * Increments surface and distance band start counts. Confirms surface and distance band
+ * after 3 starts with 60% majority.
+ *
+ * @param apts - Current confirmed aptitudes
+ * @param surface - Surface of the race
+ * @param distance - Distance of the race in meters
+ * @returns Updated confirmed aptitudes
+ */
 export function updateCampaignAptitudes(
   apts: ConfirmedAptitudes,
   surface: "Turf" | "Dirt" | "Synthetic",

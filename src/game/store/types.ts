@@ -14,6 +14,9 @@ import type { SystemsState } from "@/game/state/systemsState";
 import type { NewGameOptions } from "@/game/state";
 import type { RacingSlice } from "./slices/racingSlice";
 import type { MarketSlice } from "./slices/marketSlice";
+import type { ScoutingSlice } from "./slices/scoutingSlice";
+import type { AuctionSlice } from "./slices/auctionSlice";
+import type { PrivateSaleSlice } from "./slices/privateSaleSlice";
 import type { BreedingSlice } from "./slices/breedingSlice";
 import type { CampaignSlice } from "./slices/campaignSlice";
 import type { CoreSlice } from "./slices/coreSlice";
@@ -37,6 +40,9 @@ export type StoreType = CoreState &
   SystemsState &
   RacingSlice &
   MarketSlice &
+  ScoutingSlice &
+  AuctionSlice &
+  PrivateSaleSlice &
   BreedingSlice &
   CampaignSlice &
   CoreSlice &

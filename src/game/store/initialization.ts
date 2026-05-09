@@ -29,9 +29,14 @@ import type { FacilityLevel } from "@/core/facilities";
 import { STARTING_CASH } from "@/game/constants/gameConstants";
 
 /**
- * Creates the initial game state for a new game
+ * Creates the initial game state for a new game.
+ *
+ * Generates player horses (backstory-driven if options provided), market horses,
+ * races for the first week and full graded stakes schedule, NPC stables and horses,
+ * jockeys, and facilities. Applies backstory upgrades to facilities if provided.
+ *
  * @param options - Optional new game options including backstory and profile
- * @returns Initial game state
+ * @returns Initial game state with all entities populated
  */
 export function createInitialState(options?: NewGameOptions): GameState {
   const profileSeed = options?.profile.stableName ?? "initial_setup";

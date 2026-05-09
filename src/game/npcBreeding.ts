@@ -34,11 +34,19 @@ import {
 import { BREEDING_FEE, GESTATION_DAYS } from "@/game/constants/gameConstants";
 
 /**
- * Run autonomous NPC breeding for the current day. Personality-aware:
+ * Run autonomous NPC breeding for the current day.
+ *
+ * Personality-aware breeding decisions:
  * - Aggressive stables breed more often and take more risks.
  * - Conservative stables wait for higher-quality pairings.
  * - Budget stables look for value sires.
  * - Trader stables breed for marketability.
+ *
+ * @param state - Current game state
+ * @param stables - Array of NPC stables
+ * @param rng - Random number generator
+ * @param leaderboards - Optional leaderboards for stallion scoring
+ * @returns Updated game state with new pregnancies
  */
 export function runAutonomousBreeding(
   state: GameState,

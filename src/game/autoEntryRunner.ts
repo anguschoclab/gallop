@@ -34,7 +34,11 @@ export type AutoEntryResult = {
 
 /**
  * Scans campaign slots and auto-enters eligible planned races within the day window.
- * Only runs for auto-managed campaigns.
+ *
+ * Only runs for auto-managed campaigns. Checks eligibility, budget, and race availability.
+ *
+ * @param ctx - Auto entry context including horse, campaign, races, current day, cash, and enter function
+ * @returns Object with entered races, skipped slots with reasons, and updated slots
  */
 export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
   const { horse, campaign, races, currentDay, cash, enterRaceFn } = ctx;
@@ -110,7 +114,12 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
 
 /**
  * Mark completed slots based on resolved races in the horse's race history.
- * Also updates aptitude counts in ConfirmedAptitudes.
+ *
+ * Updates slot status to "completed" for entered races that have been resolved.
+ *
+ * @param campaign - The horse's campaign
+ * @param races - All races in the game
+ * @returns Updated campaign slots with completed status
  */
 export function reconcileSlotStatuses(
   campaign: HorseCampaign,

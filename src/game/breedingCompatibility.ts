@@ -30,11 +30,14 @@ export {
 };
 
 /**
- * Calculate blue hen contribution based on dam's production record
- * Based on the Breednet article on Blue Hens:
- * - Blue hens are exceptional broodmares that produce multiple high-quality offspring
- * - They often produce multiple Group 1 winners (e.g., Polished Gem produced Kyprios and other G1 winners)
- * - Blue hen status is determined by the quality and quantity of offspring
+ * Calculate blue hen contribution based on dam's production record.
+ *
+ * Based on the Breednet article on Blue Hens. Blue hens are exceptional broodmares
+ * that produce multiple high-quality offspring, often including multiple Group 1 winners.
+ * Blue hen status is determined by the quality and quantity of offspring.
+ *
+ * @param dam - Dam horse to evaluate
+ * @returns Object with score (0-1), description, and blue hen status
  */
 export function calculateBlueHenContribution(dam: Horse): {
   score: number;
@@ -75,9 +78,15 @@ export function calculateBlueHenContribution(dam: Horse): {
 }
 
 /**
- * Calculate foundation stock proximity score
- * Horses closer to foundation stock (especially the 3 major sires and foundation mares) get a bonus
- * Based on the Wikipedia article on Foundation Stock which notes the importance of tracing to foundation animals
+ * Calculate foundation stock proximity score.
+ *
+ * Horses closer to foundation stock (especially the 3 major sires and foundation mares)
+ * get a bonus. Based on the Wikipedia article on Foundation Stock which notes the
+ * importance of tracing to foundation animals.
+ *
+ * @param sireName - Name of the sire
+ * @param damName - Name of the dam
+ * @returns Object with score (0-0.5) and description
  */
 export function calculateFoundationStockProximity(
   sireName: string,
@@ -151,7 +160,14 @@ export function calculateFoundationStockProximity(
 }
 
 /**
- * Check if there's a nicking affinity between sire and dam lines
+ * Check if there's a nicking affinity between sire and dam lines.
+ *
+ * Checks the nicking database for known successful sire × dam sire combinations.
+ * Returns affinity score and description if found.
+ *
+ * @param sireName - Name of the sire
+ * @param damName - Name of the dam
+ * @returns Object with hasAffinity flag, affinity score, and description
  */
 export function checkNickingAffinity(
   sireName: string,
@@ -199,8 +215,15 @@ export function checkNickingAffinity(
 }
 
 /**
- * Calculate dosage compatibility between sire and dam
- * Returns a score from 0-1, with higher being better compatibility
+ * Calculate dosage compatibility between sire and dam.
+ *
+ * Returns a score from 0-1, with higher being better compatibility.
+ * Ideal breeding balances speed and stamina: high-speed sires should breed to
+ * stamina-oriented dams for complementary dosage profiles.
+ *
+ * @param sireName - Name of the sire
+ * @param damName - Name of the dam
+ * @returns Object with score (0-1) and description
  */
 export function calculateDosageCompatibility(
   sireName: string,
@@ -238,8 +261,14 @@ export function calculateDosageCompatibility(
 }
 
 /**
- * Calculate parent performance score based on race history
- * "Breed the best to the best" - good racehorses make better breeding stock
+ * Calculate parent performance score based on race history.
+ *
+ * "Breed the best to the best" - good racehorses make better breeding stock.
+ * Evaluates both sire and dam performance including wins, places, and graded stakes results.
+ *
+ * @param sire - Sire horse to evaluate
+ * @param dam - Dam horse to evaluate
+ * @returns Object with score (0-1) and description
  */
 export function calculateParentPerformance(
   sire: Horse,
@@ -310,6 +339,16 @@ export interface BreedingCompatibilityResult {
   recommendation: string;
 }
 
+/**
+ * Calculate cross-family affinity between sire bloodline and dam Bruce Lowe family.
+ *
+ * Checks documented cross-family affinities where certain sire bloodlines
+ * have historically produced well with specific Bruce Lowe families.
+ *
+ * @param sire - Sire horse to evaluate
+ * @param dam - Dam horse to evaluate
+ * @returns Object with score (0-1) and description
+ */
 export function calculateCrossFamilyAffinity(
   sire: Horse,
   dam: Horse,
@@ -329,6 +368,17 @@ export function calculateCrossFamilyAffinity(
   return { score: bonus, description: `Standard cross: ${bloodline} × Family ${family}` };
 }
 
+/**
+ * Calculate overall breeding compatibility score.
+ *
+ * Combines all factors with appropriate weights: nicking, dosage, inbreeding,
+ * parent performance, conformation, temperament, foundation stock, founder effect,
+ * genetic compatibility, blue hen contribution, and cross-family affinity.
+ *
+ * @param sire - Sire horse to evaluate
+ * @param dam - Dam horse to evaluate
+ * @returns Comprehensive breeding compatibility result with overall score, individual factor scores, and recommendation
+ */
 export function calculateBreedingCompatibility(
   sire: Horse,
   dam: Horse,
