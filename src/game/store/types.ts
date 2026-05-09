@@ -2,15 +2,16 @@
  * store/types.ts - Store type definitions
  *
  * This file provides type definitions for the Zustand store, including the
- * composed StoreType, ActionResult, and NewGameOptions interfaces.
+ * composed StoreType and ActionResult interface.
  *
- * Dependencies: zustand (StateCreator), @/game/state/coreState (CoreState), ./slices/* (all slice types)
+ * Dependencies: zustand (StateCreator), @/game/state/coreState (CoreState), @/game/state (NewGameOptions), ./slices/* (all slice types)
  * Related files: store/index.ts (uses these types), all slice files (implement slice types)
  */
 
 import type { StateCreator } from "zustand";
 import type { CoreState } from "@/game/state/coreState";
 import type { SystemsState } from "@/game/state/systemsState";
+import type { NewGameOptions } from "@/game/state";
 import type { RacingSlice } from "./slices/racingSlice";
 import type { MarketSlice } from "./slices/marketSlice";
 import type { BreedingSlice } from "./slices/breedingSlice";
@@ -28,20 +29,6 @@ import type { UtilitySlice } from "./slices/utilitySlice";
  * Standard action result type for store actions
  */
 export type ActionResult = { ok: true } | { ok: false; reason: string };
-
-/**
- * Options for starting a new game
- */
-export interface NewGameOptions {
-  profile: {
-    stableName: string;
-    ownerName: string;
-    silk: any;
-    backstoryId: string;
-    founded: number;
-  };
-  backstory: any;
-}
 
 /**
  * Composed store type combining all slices

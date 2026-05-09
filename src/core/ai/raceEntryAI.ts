@@ -53,7 +53,13 @@ export interface HorseDevelopmentTrack {
 }
 
 /**
- * Create AI state for race entry decisions
+ * Create AI state for race entry decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and strategic plan for race entries.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized race entry AI state
  */
 export function createRaceEntryAIState(stable: Stable): RaceEntryAIState {
   return {
@@ -68,8 +74,17 @@ export function createRaceEntryAIState(stable: Stable): RaceEntryAIState {
 }
 
 /**
- * Calculate strategic entry score for a horse in a race
- * Combines suitability, learning, and strategic planning
+ * Calculate strategic entry score for a horse in a race.
+ *
+ * Combines suitability, learning, and strategic planning to determine
+ * the strategic value of entering a specific race.
+ *
+ * @param aiState - Current race entry AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race to evaluate
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Strategic entry score
  */
 export function calculateStrategicEntryScore(
   aiState: RaceEntryAIState,
@@ -148,7 +163,17 @@ function evaluateStrategicValue(
 }
 
 /**
- * Update horse development tracking after a race
+ * Update horse development tracking after a race.
+ *
+ * Updates the horse's development track with race results,
+ * adjusts progress based on performance, and potentially upgrades target grade.
+ *
+ * @param aiState - Current race entry AI state
+ * @param horse - The horse that raced
+ * @param race - The race that was run
+ * @param position - Final race position
+ * @param beyer - Beyer figure from the race
+ * @returns Updated race entry AI state
  */
 export function updateHorseDevelopment(
   aiState: RaceEntryAIState,
@@ -208,7 +233,18 @@ export function updateHorseDevelopment(
 }
 
 /**
- * Record race entry outcome for learning
+ * Record race entry outcome for learning.
+ *
+ * Records the race entry outcome in the learning state for
+ * adaptive strategy improvement.
+ *
+ * @param aiState - Current race entry AI state
+ * @param horse - The horse that entered the race
+ * @param race - The race that was entered
+ * @param currentDay - Current game day
+ * @param success - Whether the entry was successful
+ * @param position - Final race position (optional)
+ * @returns Updated race entry AI state
  */
 export function recordRaceEntryOutcome(
   aiState: RaceEntryAIState,
@@ -239,8 +275,18 @@ export function recordRaceEntryOutcome(
 }
 
 /**
- * Generate multi-race entry strategy for a stable
- * Plans entries across multiple upcoming races
+ * Generate multi-race entry strategy for a stable.
+ *
+ * Plans entries across multiple upcoming races based on
+ * strategic fit and horse availability.
+ *
+ * @param aiState - Current race entry AI state
+ * @param stable - The stable planning entries
+ * @param horses - Available horses
+ * @param races - Available races
+ * @param currentDay - Current game day
+ * @param daysAhead - Number of days ahead to plan
+ * @returns Strategy mapping race IDs to horse IDs
  */
 export function generateMultiRaceStrategy(
   aiState: RaceEntryAIState,
@@ -286,7 +332,14 @@ export function generateMultiRaceStrategy(
 }
 
 /**
- * Adapt strategy based on learning outcomes
+ * Adapt strategy based on learning outcomes.
+ *
+ * Adjusts strategy confidence based on overall success rate
+ * from past race entry decisions.
+ *
+ * @param aiState - Current race entry AI state
+ * @param currentDay - Current game day
+ * @returns Updated race entry AI state
  */
 export function adaptStrategy(aiState: RaceEntryAIState, currentDay: number): RaceEntryAIState {
   const outcomes = aiState.learningState.outcomes;

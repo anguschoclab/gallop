@@ -41,7 +41,13 @@ export interface RaceStrategy {
 }
 
 /**
- * Create AI state for jockey strategy decisions
+ * Create AI state for jockey strategy decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and strategy history.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized jockey strategy AI state
  */
 export function createJockeyStrategyAIState(stable: Stable): JockeyStrategyAIState {
   return {
@@ -52,7 +58,17 @@ export function createJockeyStrategyAIState(stable: Stable): JockeyStrategyAISta
 }
 
 /**
- * Calculate optimal tactics for a horse in a race
+ * Calculate optimal tactics for a horse in a race.
+ *
+ * Determines the optimal racing tactics based on horse running style,
+ * personality, jockey skill, and energy.
+ *
+ * @param aiState - Current jockey strategy AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race being run
+ * @param jockey - The jockey riding the horse
+ * @param stable - The stable making the decision
+ * @returns Optimal tactics string (lead, rail, save, late_kick, outside, default)
  */
 export function calculateOptimalTactics(
   aiState: JockeyStrategyAIState,
@@ -100,7 +116,17 @@ export function calculateOptimalTactics(
 }
 
 /**
- * Calculate optimal running style for a horse in a race
+ * Calculate optimal running style for a horse in a race.
+ *
+ * Evaluates all possible running styles and selects the one
+ * with the highest score based on horse, race, and jockey factors.
+ *
+ * @param aiState - Current jockey strategy AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race being run
+ * @param jockey - The jockey riding the horse
+ * @param stable - The stable making the decision
+ * @returns Optimal running style (E, EP, P, or S)
  */
 export function calculateOptimalRunningStyle(
   aiState: JockeyStrategyAIState,
@@ -197,7 +223,17 @@ function calculateStyleScore(
 }
 
 /**
- * Calculate jockey aggressiveness for a race
+ * Calculate jockey aggressiveness for a race.
+ *
+ * Determines the appropriate aggressiveness level based on personality,
+ * horse quality, race distance, jockey temperament, and learning.
+ *
+ * @param aiState - Current jockey strategy AI state
+ * @param horse - The horse being ridden
+ * @param race - The race being run
+ * @param jockey - The jockey riding the horse
+ * @param stable - The stable making the decision
+ * @returns Aggressiveness score (0-1)
  */
 export function calculateJockeyAggressiveness(
   aiState: JockeyStrategyAIState,
@@ -238,7 +274,18 @@ export function calculateJockeyAggressiveness(
 }
 
 /**
- * Determine if jockey should make tactical move during race
+ * Determine if jockey should make tactical move during race.
+ *
+ * Evaluates whether to make a tactical move based on race progress,
+ * current position, personality, and jockey stats.
+ *
+ * @param aiState - Current jockey strategy AI state
+ * @param horse - The horse being ridden
+ * @param race - The race being run
+ * @param jockey - The jockey riding the horse
+ * @param currentPosition - Current position in the race
+ * @param raceProgress - Progress through the race (0-1)
+ * @returns Object with shouldMove flag, targetPosition, and moveType
  */
 export function shouldMakeTacticalMove(
   aiState: JockeyStrategyAIState,
@@ -300,7 +347,21 @@ export function shouldMakeTacticalMove(
 }
 
 /**
- * Record race strategy for learning
+ * Record race strategy for learning.
+ *
+ * Records the race strategy in history and updates the
+ * learning state for adaptive improvement.
+ *
+ * @param aiState - Current jockey strategy AI state
+ * @param horse - The horse that raced
+ * @param race - The race that was run
+ * @param jockey - The jockey who rode the horse
+ * @param stable - The stable making the decision
+ * @param runningStyle - The running style used
+ * @param aggressiveness - The aggressiveness level used
+ * @param position - Final race position
+ * @param currentDay - Current game day
+ * @returns Updated jockey strategy AI state
  */
 export function recordRaceStrategy(
   aiState: JockeyStrategyAIState,
@@ -353,7 +414,14 @@ export function recordRaceStrategy(
 }
 
 /**
- * Get strategy insights for a stable
+ * Get strategy insights for a stable.
+ *
+ * Calculates strategy statistics including total races, average position,
+ * style usage distribution, and average aggressiveness.
+ *
+ * @param aiState - Current jockey strategy AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with strategy statistics
  */
 export function getStrategyInsights(
   aiState: JockeyStrategyAIState,

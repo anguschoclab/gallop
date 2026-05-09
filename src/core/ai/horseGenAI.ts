@@ -50,7 +50,13 @@ export interface RosterComposition {
 }
 
 /**
- * Create AI state for horse generation decisions
+ * Create AI state for horse generation decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * generation history, and roster composition.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized horse generation AI state
  */
 export function createHorseGenAIState(stable: Stable): HorseGenAIState {
   const targetHorseCount = stable.personality === "prestige" ? 15 : 10;
@@ -130,7 +136,15 @@ function calculateTargetQualityLevel(personality: Stable["personality"]): number
 }
 
 /**
- * Calculate generation priority for a horse age
+ * Calculate generation priority for a horse age.
+ *
+ * Evaluates the priority of generating a horse of a specific age
+ * based on roster deficit and personality preferences.
+ *
+ * @param aiState - Current horse generation AI state
+ * @param age - The horse age to evaluate
+ * @param stable - The stable making the decision
+ * @returns Generation priority score (0-100)
  */
 export function calculateAgeGenerationPriority(
   aiState: HorseGenAIState,
@@ -152,7 +166,15 @@ export function calculateAgeGenerationPriority(
 }
 
 /**
- * Calculate generation priority for a horse quality
+ * Calculate generation priority for a horse quality.
+ *
+ * Evaluates the priority of generating a horse of a specific quality
+ * based on target quality level and personality preferences.
+ *
+ * @param aiState - Current horse generation AI state
+ * @param horseRating - The horse rating to evaluate
+ * @param stable - The stable making the decision
+ * @returns Generation priority score (0-100)
  */
 export function calculateQualityGenerationPriority(
   aiState: HorseGenAIState,
@@ -178,7 +200,15 @@ export function calculateQualityGenerationPriority(
 }
 
 /**
- * Determine if stable should generate a horse of specific age
+ * Determine if stable should generate a horse of specific age.
+ *
+ * Evaluates whether to generate a horse of a specific age based on
+ * generation priority, roster capacity, and personality threshold.
+ *
+ * @param aiState - Current horse generation AI state
+ * @param age - The horse age to generate
+ * @param stable - The stable making the decision
+ * @returns True if stable should generate a horse of this age
  */
 export function shouldGenerateHorseOfAge(
   aiState: HorseGenAIState,
@@ -203,7 +233,14 @@ export function shouldGenerateHorseOfAge(
 }
 
 /**
- * Update roster composition after horse generation
+ * Update roster composition after horse generation.
+ *
+ * Updates the roster composition with the new horse's age
+ * and recalculates the average quality level.
+ *
+ * @param aiState - Current horse generation AI state
+ * @param horse - The horse being added to the roster
+ * @returns Updated horse generation AI state
  */
 export function updateRosterComposition(aiState: HorseGenAIState, horse: Horse): HorseGenAIState {
   const composition = aiState.rosterComposition;
@@ -232,7 +269,16 @@ export function updateRosterComposition(aiState: HorseGenAIState, horse: Horse):
 }
 
 /**
- * Record horse generation for learning
+ * Record horse generation for learning.
+ *
+ * Records the horse generation in history, updates the learning state,
+ * and updates the roster composition.
+ *
+ * @param aiState - Current horse generation AI state
+ * @param horse - The horse being generated
+ * @param stable - The stable generating the horse
+ * @param currentDay - Current game day
+ * @returns Updated horse generation AI state
  */
 export function recordHorseGeneration(
   aiState: HorseGenAIState,
@@ -277,7 +323,16 @@ export function recordHorseGeneration(
 }
 
 /**
- * Record horse career outcome for learning
+ * Record horse career outcome for learning.
+ *
+ * Finds the matching generation, records the career outcome,
+ * and updates the learning state for adaptive improvement.
+ *
+ * @param aiState - Current horse generation AI state
+ * @param horseId - ID of the horse
+ * @param careerEarnings - Career earnings of the horse
+ * @param currentDay - Current game day
+ * @returns Updated horse generation AI state
  */
 export function recordHorseCareerOutcome(
   aiState: HorseGenAIState,
@@ -319,7 +374,14 @@ export function recordHorseCareerOutcome(
 }
 
 /**
- * Get generation insights for a stable
+ * Get generation insights for a stable.
+ *
+ * Calculates generation statistics including total generated,
+ * average quality, success rate, average career earnings, and roster balance.
+ *
+ * @param aiState - Current horse generation AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with generation statistics
  */
 export function getGenerationInsights(
   aiState: HorseGenAIState,

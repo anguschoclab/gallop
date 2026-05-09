@@ -47,7 +47,13 @@ export interface ReserveState {
 }
 
 /**
- * Create AI state for upkeep budgeting decisions
+ * Create AI state for upkeep budgeting decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * budget history, and reserve state.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized upkeep AI state
  */
 export function createUpkeepAIState(stable: Stable): UpkeepAIState {
   return {
@@ -89,7 +95,16 @@ function calculateTargetReserveRatio(personality: Stable["personality"]): number
 }
 
 /**
- * Calculate monthly expense budget
+ * Calculate monthly expense budget.
+ *
+ * Calculates total budget, category budgets, and reserve target
+ * based on personality and horse count.
+ *
+ * @param aiState - Current upkeep AI state
+ * @param stable - The stable to budget for
+ * @param horses - List of horses in the stable
+ * @param currentDay - Current game day
+ * @returns Object with total budget, category budgets, and reserve target
  */
 export function calculateMonthlyExpenseBudget(
   aiState: UpkeepAIState,
@@ -150,7 +165,17 @@ export function calculateMonthlyExpenseBudget(
 }
 
 /**
- * Determine if stable should spend on a category
+ * Determine if stable should spend on a category.
+ *
+ * Evaluates spending decisions based on cash reserves, personality
+ * spending propensity, learning-based adjustments, and budget constraints.
+ *
+ * @param aiState - Current upkeep AI state
+ * @param category - The spending category
+ * @param amount - The amount to spend
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns True if stable should spend on the category
  */
 export function shouldSpendOnCategory(
   aiState: UpkeepAIState,
@@ -188,7 +213,16 @@ export function shouldSpendOnCategory(
 }
 
 /**
- * Update reserve state
+ * Update reserve state.
+ *
+ * Updates the reserve state with current reserve ratio,
+ * target reserve ratio, and last adjustment day.
+ *
+ * @param aiState - Current upkeep AI state
+ * @param stable - The stable to update reserves for
+ * @param monthlyExpenses - Monthly expense amount
+ * @param currentDay - Current game day
+ * @returns Updated upkeep AI state
  */
 export function updateReserveState(
   aiState: UpkeepAIState,
@@ -212,7 +246,15 @@ export function updateReserveState(
 }
 
 /**
- * Determine if stable should conserve cash
+ * Determine if stable should conserve cash.
+ *
+ * Evaluates cash conservation based on reserve ratio, target ratio,
+ * and personality-based buffer.
+ *
+ * @param aiState - Current upkeep AI state
+ * @param stable - The stable to evaluate
+ * @param monthlyExpenses - Monthly expense amount
+ * @returns True if stable should conserve cash
  */
 export function shouldConserveCash(
   aiState: UpkeepAIState,
@@ -236,7 +278,18 @@ export function shouldConserveCash(
 }
 
 /**
- * Record budget decision for learning
+ * Record budget decision for learning.
+ *
+ * Records the budget decision in history and updates the
+ * learning state for adaptive improvement.
+ *
+ * @param aiState - Current upkeep AI state
+ * @param totalBudget - Total budget for the period
+ * @param spent - Amount actually spent
+ * @param categorySpending - Spending by category
+ * @param stable - The stable making the budget
+ * @param currentDay - Current game day
+ * @returns Updated upkeep AI state
  */
 export function recordBudgetDecision(
   aiState: UpkeepAIState,
@@ -285,7 +338,14 @@ export function recordBudgetDecision(
 }
 
 /**
- * Get budget insights for a stable
+ * Get budget insights for a stable.
+ *
+ * Calculates budget statistics including total budgets, average spending,
+ * budget adherence, and reserve ratios.
+ *
+ * @param aiState - Current upkeep AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with budget statistics
  */
 export function getBudgetInsights(
   aiState: UpkeepAIState,

@@ -44,7 +44,13 @@ export interface WithdrawalDecision {
 }
 
 /**
- * Create AI state for withdrawal decisions
+ * Create AI state for withdrawal decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and withdrawal history.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized withdrawal AI state
  */
 export function createWithdrawalAIState(stable: Stable): WithdrawalAIState {
   return {
@@ -55,7 +61,16 @@ export function createWithdrawalAIState(stable: Stable): WithdrawalAIState {
 }
 
 /**
- * Calculate withdrawal risk score
+ * Calculate withdrawal risk score.
+ *
+ * Evaluates risk based on health, energy, form, race difficulty,
+ * distance mismatch, and surface mismatch.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race being considered
+ * @param stable - The stable making the decision
+ * @returns Risk score (0-100)
  */
 export function calculateWithdrawalRisk(
   aiState: WithdrawalAIState,
@@ -98,7 +113,17 @@ export function calculateWithdrawalRisk(
 }
 
 /**
- * Determine if horse should be withdrawn from race
+ * Determine if horse should be withdrawn from race.
+ *
+ * Evaluates withdrawal decision based on risk score, personality
+ * risk tolerance, learning-based adjustments, and strategic considerations.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race being considered
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Object with shouldWithdraw flag and optional reason
  */
 export function shouldWithdrawHorse(
   aiState: WithdrawalAIState,
@@ -147,7 +172,16 @@ export function shouldWithdrawHorse(
 }
 
 /**
- * Calculate withdrawal opportunity cost
+ * Calculate withdrawal opportunity cost.
+ *
+ * Calculates the cost of withdrawing including entry fee loss,
+ * transportation cost loss, potential prize loss, and personality-based cost perception.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse being withdrawn
+ * @param race - The race being withdrawn from
+ * @param stable - The stable making the decision
+ * @returns Opportunity cost of withdrawal
  */
 export function calculateWithdrawalOpportunityCost(
   aiState: WithdrawalAIState,
@@ -180,7 +214,17 @@ export function calculateWithdrawalOpportunityCost(
 }
 
 /**
- * Determine if withdrawal is strategically beneficial
+ * Determine if withdrawal is strategically beneficial.
+ *
+ * Evaluates whether withdrawal is strategically beneficial based on
+ * personality, reason for withdrawal, and opportunity cost.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse being evaluated
+ * @param race - The race being considered
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns True if withdrawal is strategically beneficial
  */
 export function isWithdrawalStrategic(
   aiState: WithdrawalAIState,
@@ -212,7 +256,19 @@ export function isWithdrawalStrategic(
 }
 
 /**
- * Record withdrawal decision for learning
+ * Record withdrawal decision for learning.
+ *
+ * Records the withdrawal decision in history and updates the
+ * learning state for adaptive improvement.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse being evaluated
+ * @param race - The race being considered
+ * @param stable - The stable making the decision
+ * @param withdrew - Whether the horse was withdrawn
+ * @param reason - Reason for withdrawal (optional)
+ * @param currentDay - Current game day
+ * @returns Updated withdrawal AI state
  */
 export function recordWithdrawalDecision(
   aiState: WithdrawalAIState,
@@ -259,7 +315,18 @@ export function recordWithdrawalDecision(
 }
 
 /**
- * Record withdrawal outcome for learning
+ * Record withdrawal outcome for learning.
+ *
+ * Finds the matching decision, records the outcome, and updates
+ * the learning state for adaptive improvement.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horseId - ID of the horse
+ * @param raceId - ID of the race
+ * @param horseResult - Result if horse ran (optional)
+ * @param alternativeRaceResult - Result from alternative race (optional)
+ * @param currentDay - Current game day
+ * @returns Updated withdrawal AI state
  */
 export function recordWithdrawalOutcome(
   aiState: WithdrawalAIState,
@@ -310,7 +377,14 @@ export function recordWithdrawalOutcome(
 }
 
 /**
- * Get withdrawal insights for a stable
+ * Get withdrawal insights for a stable.
+ *
+ * Calculates withdrawal statistics including total decisions,
+ * withdrawal rate, average risk score, strategic success, and common reasons.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with withdrawal statistics
  */
 export function getWithdrawalInsights(
   aiState: WithdrawalAIState,

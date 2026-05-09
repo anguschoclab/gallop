@@ -43,7 +43,13 @@ export interface ClaimingDecision {
 }
 
 /**
- * Create AI state for claiming decisions
+ * Create AI state for claiming decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and claiming history.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized claiming AI state
  */
 export function createClaimingAIState(stable: Stable): ClaimingAIState {
   return {
@@ -54,7 +60,16 @@ export function createClaimingAIState(stable: Stable): ClaimingAIState {
 }
 
 /**
- * Calculate claiming value score for a horse
+ * Calculate claiming value score for a horse.
+ *
+ * Evaluates the value of claiming a horse based on rating vs price,
+ * personality modifiers, learning-based adjustments, and horse form.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race with claiming price
+ * @param stable - The stable making the decision
+ * @returns Claiming value score (0-100)
  */
 export function calculateClaimingValue(
   aiState: ClaimingAIState,
@@ -103,7 +118,14 @@ function assessHorseForm(horse: Horse): number {
 }
 
 /**
- * Calculate risk score for claiming a horse
+ * Calculate risk score for claiming a horse.
+ *
+ * Evaluates risk based on age, health, energy, and overpayment risk.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race with claiming price
+ * @returns Risk score (0-100)
  */
 export function calculateClaimingRisk(aiState: ClaimingAIState, horse: Horse, race: Race): number {
   let risk = 0;
@@ -128,7 +150,17 @@ export function calculateClaimingRisk(aiState: ClaimingAIState, horse: Horse, ra
 }
 
 /**
- * Determine if stable should claim a horse
+ * Determine if stable should claim a horse.
+ *
+ * Evaluates value and risk, applies adaptive threshold based on
+ * personality and learning, and makes claiming decision.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horse - The horse to claim
+ * @param race - The race with claiming price
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns True if stable should claim the horse
  */
 export function shouldClaimHorse(
   aiState: ClaimingAIState,
@@ -166,7 +198,17 @@ export function shouldClaimHorse(
 }
 
 /**
- * Record claiming decision for learning
+ * Record claiming decision for learning.
+ *
+ * Records the claiming decision in history for tracking
+ * and learning purposes.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horse - The horse being claimed
+ * @param race - The race with claiming price
+ * @param stable - The stable making the claim
+ * @param currentDay - Current game day
+ * @returns Updated claiming AI state
  */
 export function recordClaimingDecision(
   aiState: ClaimingAIState,
@@ -198,7 +240,18 @@ export function recordClaimingDecision(
 }
 
 /**
- * Record claiming outcome for learning
+ * Record claiming outcome for learning.
+ *
+ * Finds the matching decision, records the outcome, and updates
+ * the learning state for adaptive improvement.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horseId - ID of the claimed horse
+ * @param raceId - ID of the race
+ * @param success - Whether the claim was successful
+ * @param value - Value of the outcome
+ * @param currentDay - Current game day
+ * @returns Updated claiming AI state
  */
 export function recordClaimingOutcome(
   aiState: ClaimingAIState,
@@ -244,7 +297,14 @@ export function recordClaimingOutcome(
 }
 
 /**
- * Get claiming insights for a stable
+ * Get claiming insights for a stable.
+ *
+ * Calculates claiming statistics including total claims, success rate,
+ * average value, and average risk.
+ *
+ * @param aiState - Current claiming AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with claiming statistics
  */
 export function getClaimingInsights(
   aiState: ClaimingAIState,

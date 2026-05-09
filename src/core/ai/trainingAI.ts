@@ -45,7 +45,13 @@ export interface TrainingSession {
 }
 
 /**
- * Create AI state for training decisions
+ * Create AI state for training decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and horse development tracking.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized training AI state
  */
 export function createTrainingAIState(stable: Stable): TrainingAIState {
   return {
@@ -56,7 +62,16 @@ export function createTrainingAIState(stable: Stable): TrainingAIState {
 }
 
 /**
- * Calculate training priority score for a horse and stat
+ * Calculate training priority score for a horse and stat.
+ *
+ * Evaluates the priority of training a specific stat based on deficiency,
+ * personality modifiers, learning-based adjustments, and strategic considerations.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse to evaluate
+ * @param stat - The stat to prioritize (speed, stamina, or acceleration)
+ * @param currentDay - Current game day
+ * @returns Training priority score
  */
 export function calculateTrainingPriority(
   aiState: TrainingAIState,
@@ -106,7 +121,15 @@ export function calculateTrainingPriority(
 }
 
 /**
- * Select optimal training type for a horse
+ * Select optimal training type for a horse.
+ *
+ * Calculates priority scores for all stats and returns the stat
+ * with the highest priority.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse to select training for
+ * @param currentDay - Current game day
+ * @returns Optimal training type (speed, stamina, or acceleration)
  */
 export function selectTrainingType(
   aiState: TrainingAIState,
@@ -127,7 +150,17 @@ export function selectTrainingType(
 }
 
 /**
- * Update horse development tracking after training
+ * Update horse development tracking after training.
+ *
+ * Records the training session, updates training history,
+ * and adjusts the current focus based on recent training patterns.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse being trained
+ * @param trainingType - Type of training performed
+ * @param energyBefore - Energy level before training
+ * @param currentDay - Current game day
+ * @returns Updated training AI state
  */
 export function updateHorseTraining(
   aiState: TrainingAIState,
@@ -189,7 +222,18 @@ export function updateHorseTraining(
 }
 
 /**
- * Record training outcome for learning
+ * Record training outcome for learning.
+ *
+ * Records the training outcome in the learning state and updates
+ * stat gains in the development track.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse that was trained
+ * @param trainingType - Type of training performed
+ * @param success - Whether the training was successful
+ * @param statGain - Amount of stat gain from training
+ * @param currentDay - Current game day
+ * @returns Updated training AI state
  */
 export function recordTrainingOutcome(
   aiState: TrainingAIState,
@@ -239,7 +283,15 @@ export function recordTrainingOutcome(
 }
 
 /**
- * Determine if horse should be trained today
+ * Determine if horse should be trained today.
+ *
+ * Checks energy levels and training frequency based on personality
+ * to determine if training should occur.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse to evaluate
+ * @param currentDay - Current game day
+ * @returns True if horse should be trained today
  */
 export function shouldTrainToday(
   aiState: TrainingAIState,

@@ -54,7 +54,13 @@ export interface JockeyRetention {
 }
 
 /**
- * Create AI state for jockey decisions
+ * Create AI state for jockey decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * jockey history, and retention records.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized jockey AI state
  */
 export function createJockeyAIState(stable: Stable): JockeyAIState {
   return {
@@ -66,7 +72,16 @@ export function createJockeyAIState(stable: Stable): JockeyAIState {
 }
 
 /**
- * Calculate jockey suitability score for a horse
+ * Calculate jockey suitability score for a horse.
+ *
+ * Evaluates jockey suitability based on stats, personality modifiers,
+ * and learning-based adjustments.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockey - The jockey to evaluate
+ * @param horse - The horse to evaluate
+ * @param stable - The stable making the decision
+ * @returns Jockey suitability score (0-100)
  */
 export function calculateJockeySuitability(
   aiState: JockeyAIState,
@@ -109,7 +124,16 @@ export function calculateJockeySuitability(
 }
 
 /**
- * Select best jockey for a horse
+ * Select best jockey for a horse.
+ *
+ * Evaluates all available jockeys and returns the one with the
+ * highest suitability score.
+ *
+ * @param aiState - Current jockey AI state
+ * @param horse - The horse to select jockey for
+ * @param availableJockeys - List of available jockeys
+ * @param stable - The stable making the decision
+ * @returns Best jockey or null if no suitable jockey found
  */
 export function selectBestJockey(
   aiState: JockeyAIState,
@@ -131,7 +155,16 @@ export function selectBestJockey(
 }
 
 /**
- * Calculate maximum jockey fee willing to pay
+ * Calculate maximum jockey fee willing to pay.
+ *
+ * Determines the maximum fee based on personality risk tolerance,
+ * horse quality, and budget constraints.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockey - The jockey to evaluate
+ * @param horse - The horse being raced
+ * @param stable - The stable making the decision
+ * @returns Maximum jockey fee willing to pay
  */
 export function calculateMaxJockeyFee(
   aiState: JockeyAIState,
@@ -158,7 +191,16 @@ export function calculateMaxJockeyFee(
 }
 
 /**
- * Determine if jockey should be retained
+ * Determine if jockey should be retained.
+ *
+ * Evaluates jockey retention based on performance metrics,
+ * personality criteria, and learning-based adjustments.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockey - The jockey to evaluate
+ * @param stable - The stable owning the jockey
+ * @param currentDay - Current game day
+ * @returns True if jockey should be retained
  */
 export function shouldRetainJockey(
   aiState: JockeyAIState,
@@ -219,7 +261,18 @@ export function shouldRetainJockey(
 }
 
 /**
- * Record jockey assignment for learning
+ * Record jockey assignment for learning.
+ *
+ * Records the jockey assignment and updates retention records.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockey - The jockey being assigned
+ * @param horse - The horse being raced
+ * @param raceId - ID of the race
+ * @param stable - The stable making the assignment
+ * @param fee - Jockey fee
+ * @param currentDay - Current game day
+ * @returns Updated jockey AI state
  */
 export function recordJockeyAssignment(
   aiState: JockeyAIState,
@@ -283,7 +336,19 @@ export function recordJockeyAssignment(
 }
 
 /**
- * Record jockey outcome for learning
+ * Record jockey outcome for learning.
+ *
+ * Finds the matching assignment, records the race outcome,
+ * updates retention records, and updates the learning state.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockeyId - ID of the jockey
+ * @param horseId - ID of the horse
+ * @param raceId - ID of the race
+ * @param position - Final race position
+ * @param prize - Prize money won
+ * @param currentDay - Current game day
+ * @returns Updated jockey AI state
  */
 export function recordJockeyOutcome(
   aiState: JockeyAIState,
@@ -343,7 +408,14 @@ export function recordJockeyOutcome(
 }
 
 /**
- * Get jockey insights for a stable
+ * Get jockey insights for a stable.
+ *
+ * Calculates jockey statistics including total assignments,
+ * average position, total prize, average fee, and retained jockeys.
+ *
+ * @param aiState - Current jockey AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with jockey statistics
  */
 export function getJockeyInsights(
   aiState: JockeyAIState,

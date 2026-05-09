@@ -51,7 +51,13 @@ export interface PortfolioState {
 }
 
 /**
- * Create AI state for market decisions
+ * Create AI state for market decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * purchase history, and portfolio state.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized market AI state
  */
 export function createMarketAIState(stable: Stable): MarketAIState {
   return {
@@ -69,7 +75,16 @@ export function createMarketAIState(stable: Stable): MarketAIState {
 }
 
 /**
- * Calculate purchase value score for a horse
+ * Calculate purchase value score for a horse.
+ *
+ * Evaluates the value of purchasing a horse based on rating vs price,
+ * personality modifiers, learning-based adjustments, and portfolio fit.
+ *
+ * @param aiState - Current market AI state
+ * @param horse - The horse to evaluate
+ * @param price - The purchase price
+ * @param stable - The stable making the decision
+ * @returns Purchase value score (0-100)
  */
 export function calculatePurchaseValue(
   aiState: MarketAIState,
@@ -124,7 +139,17 @@ export function calculatePurchaseValue(
 }
 
 /**
- * Determine if stable should purchase a horse from market
+ * Determine if stable should purchase a horse from market.
+ *
+ * Evaluates purchase decision based on value score, adaptive threshold,
+ * and personality-based threshold adjustment.
+ *
+ * @param aiState - Current market AI state
+ * @param horse - The horse to purchase
+ * @param price - The purchase price
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns True if stable should purchase the horse
  */
 export function shouldPurchaseHorse(
   aiState: MarketAIState,
@@ -161,7 +186,15 @@ export function shouldPurchaseHorse(
 }
 
 /**
- * Calculate maximum purchase price for a horse
+ * Calculate maximum purchase price for a horse.
+ *
+ * Calculates the maximum price based on estimated value, personality
+ * risk tolerance, budget constraints, and learning-based adjustments.
+ *
+ * @param aiState - Current market AI state
+ * @param horse - The horse to evaluate
+ * @param stable - The stable making the decision
+ * @returns Maximum purchase price
  */
 export function calculateMaxPurchasePrice(
   aiState: MarketAIState,
@@ -192,7 +225,17 @@ export function calculateMaxPurchasePrice(
 }
 
 /**
- * Record market purchase for learning
+ * Record market purchase for learning.
+ *
+ * Records the market purchase in history, updates portfolio state,
+ * and updates the learning state for adaptive improvement.
+ *
+ * @param aiState - Current market AI state
+ * @param horse - The horse being purchased
+ * @param price - The purchase price
+ * @param stable - The stable making the purchase
+ * @param currentDay - Current game day
+ * @returns Updated market AI state
  */
 export function recordMarketPurchase(
   aiState: MarketAIState,
@@ -250,7 +293,17 @@ export function recordMarketPurchase(
 }
 
 /**
- * Record market outcome for learning
+ * Record market outcome for learning.
+ *
+ * Finds the matching purchase, records the outcome, and updates
+ * the learning state for adaptive improvement.
+ *
+ * @param aiState - Current market AI state
+ * @param horseId - ID of the purchased horse
+ * @param success - Whether the purchase was successful
+ * @param value - Value of the outcome
+ * @param currentDay - Current game day
+ * @returns Updated market AI state
  */
 export function recordMarketOutcome(
   aiState: MarketAIState,
@@ -293,7 +346,14 @@ export function recordMarketOutcome(
 }
 
 /**
- * Get market insights for a stable
+ * Get market insights for a stable.
+ *
+ * Calculates market statistics including total purchases, success rate,
+ * average value, average purchase price, and portfolio health.
+ *
+ * @param aiState - Current market AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with market statistics
  */
 export function getMarketInsights(
   aiState: MarketAIState,

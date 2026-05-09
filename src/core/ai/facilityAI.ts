@@ -59,7 +59,13 @@ export interface FacilityROI {
 }
 
 /**
- * Create AI state for facility decisions
+ * Create AI state for facility decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * investment history, and ROI tracking.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized facility AI state
  */
 export function createFacilityAIState(stable: Stable): FacilityAIState {
   return {
@@ -71,7 +77,17 @@ export function createFacilityAIState(stable: Stable): FacilityAIState {
 }
 
 /**
- * Calculate investment priority score for a facility upgrade
+ * Calculate investment priority score for a facility upgrade.
+ *
+ * Evaluates the priority of upgrading a facility based on facility type,
+ * current level, budget, ROI learning, and personality modifiers.
+ *
+ * @param aiState - Current facility AI state
+ * @param facilityType - The facility type to evaluate
+ * @param currentLevel - Current level of the facility
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Upgrade priority score (0-100+)
  */
 export function calculateFacilityUpgradePriority(
   aiState: FacilityAIState,
@@ -170,7 +186,17 @@ function getFacilityPriority(
 }
 
 /**
- * Determine if stable should upgrade a facility
+ * Determine if stable should upgrade a facility.
+ *
+ * Evaluates whether to upgrade based on priority score, adaptive threshold,
+ * and personality-based threshold adjustment.
+ *
+ * @param aiState - Current facility AI state
+ * @param facilityType - The facility type to evaluate
+ * @param currentLevel - Current level of the facility
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns True if stable should upgrade the facility
  */
 export function shouldUpgradeFacility(
   aiState: FacilityAIState,
@@ -210,7 +236,15 @@ export function shouldUpgradeFacility(
 }
 
 /**
- * Calculate facility budget allocation
+ * Calculate facility budget allocation.
+ *
+ * Calculates the total facility budget as a percentage of cash
+ * and allocates it between upgrades and maintenance based on personality.
+ *
+ * @param aiState - Current facility AI state
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Object with totalBudget, upgradeBudget, and maintenanceBudget
  */
 export function calculateFacilityBudget(
   aiState: FacilityAIState,
@@ -247,7 +281,16 @@ export function calculateFacilityBudget(
 }
 
 /**
- * Select best facility to upgrade
+ * Select best facility to upgrade.
+ *
+ * Evaluates all facilities and selects the one with the highest
+ * priority score that fits within the upgrade budget.
+ *
+ * @param aiState - Current facility AI state
+ * @param facilities - Current facility levels
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Best facility type to upgrade or null if none suitable
  */
 export function selectFacilityToUpgrade(
   aiState: FacilityAIState,
@@ -285,7 +328,19 @@ export function selectFacilityToUpgrade(
 }
 
 /**
- * Record facility investment for learning
+ * Record facility investment for learning.
+ *
+ * Records the facility investment in history and initializes
+ * ROI tracking for the upgraded facility.
+ *
+ * @param aiState - Current facility AI state
+ * @param facilityType - The facility type being upgraded
+ * @param fromLevel - Previous level before upgrade
+ * @param toLevel - New level after upgrade
+ * @param cost - Cost of the upgrade
+ * @param stable - The stable making the investment
+ * @param currentDay - Current game day
+ * @returns Updated facility AI state
  */
 export function recordFacilityInvestment(
   aiState: FacilityAIState,
@@ -339,7 +394,17 @@ export function recordFacilityInvestment(
 }
 
 /**
- * Update facility ROI tracking
+ * Update facility ROI tracking.
+ *
+ * Updates the ROI tracking for a facility with new benefit data,
+ * calculates days owned, and updates the learning state.
+ *
+ * @param aiState - Current facility AI state
+ * @param facilityType - The facility type to update
+ * @param level - The facility level to update
+ * @param benefit - Benefit value to add
+ * @param currentDay - Current game day
+ * @returns Updated facility AI state
  */
 export function updateFacilityROI(
   aiState: FacilityAIState,
@@ -387,7 +452,14 @@ export function updateFacilityROI(
 }
 
 /**
- * Get facility insights for a stable
+ * Get facility insights for a stable.
+ *
+ * Calculates facility statistics including total investments,
+ * average ROI, total facilities owned, and facility levels.
+ *
+ * @param aiState - Current facility AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with facility statistics
  */
 export function getFacilityInsights(
   aiState: FacilityAIState,

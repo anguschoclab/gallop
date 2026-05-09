@@ -22,6 +22,7 @@ import type {
   Claim,
   Stable,
   Race,
+  AuctionLot,
 } from "@/game/types";
 import type { MarketState } from "@/game/state/marketState";
 import { createDefaultMarketState } from "@/game/state/marketState";
@@ -33,6 +34,7 @@ import type { PurchaseIntent, ScoutIntent } from "@/core/resolver/intents";
 import { DEFAULT_PLAYER_RESERVE_RATIO, calculateLotValuation } from "@/game/auction";
 import { formatCurrency } from "@/lib/formatting";
 import type { StoreSet, StoreGet } from "../types";
+import { requireHorse, requireOwned } from "../guards";
 
 export type MarketSlice = MarketState & {
   buyHorse: (horseId: string) => void;
@@ -83,7 +85,7 @@ export type MarketSlice = MarketState & {
 };
 
 export function createMarketSlice(
-  set: StoreSet,
+  set: any,
   get: StoreGet,
   enqueueIntent: (intent: any) => void,
 ): MarketSlice {
@@ -221,7 +223,7 @@ export function createMarketSlice(
                   l.id === lotId
                     ? {
                         ...l,
-                        bids: [...(l.bids || []), { bidderId: "player", amount, day: s.day }],
+                        bidHistory: [...(l.bidHistory || []), { bidderId: "player", amount, day: s.day }],
                       }
                     : l,
                 ),

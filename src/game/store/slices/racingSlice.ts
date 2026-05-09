@@ -35,9 +35,9 @@ export type RacingSlice = RacingState & {
 };
 
 export function createRacingSlice(
-  set: StoreSet,
+  set: any,
   get: StoreGet,
-  enqueueIntent: (intent: TrainingIntent) => void,
+  enqueueIntent: (intent: any) => void,
 ): RacingSlice {
   return {
     ...createDefaultRacingState(),
@@ -91,7 +91,7 @@ export function createRacingSlice(
     },
 
     setTrainingUsed: (horseId, count) => {
-      set((state) => ({
+      set((state: any) => ({
         trainingUsed: { ...state.trainingUsed, [horseId]: count },
       }));
     },

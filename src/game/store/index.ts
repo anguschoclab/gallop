@@ -33,12 +33,14 @@ import { createUtilitySlice } from "./slices/utilitySlice";
 import { createOpfsStorage, hydrationComplete, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/state/coreState";
+
 import { shallow } from "zustand/shallow";
 import { wrap, expose, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
-import type { StoreType, NewGameOptions, ActionResult } from "./types";
+import type { StoreType, ActionResult } from "./types";
+import type { NewGameOptions } from "@/game/state";
 import type { AnyIntent } from "@/core/resolver/intents";
 
 /**
@@ -154,40 +156,40 @@ export const useGame = create<StoreType>()(
       } as any, // Type assertion to handle Map vs Record mismatch
 
       // Core slice
-      ...createCoreSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createCoreSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Racing slice
-      ...createRacingSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createRacingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Market slice
-      ...createMarketSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createMarketSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Breeding slice
-      ...createBreedingSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createBreedingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Campaign slice
-      ...createCampaignSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createCampaignSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Jockey slice
-      ...createJockeySlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createJockeySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Facility slice
-      ...createFacilitySlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createFacilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Settings slice
-      ...createSettingsSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createSettingsSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Breeding program slice
-      ...createBreedingProgramSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createBreedingProgramSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Horse admin slice
-      ...createHorseAdminSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createHorseAdminSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Award slice
-      ...createAwardSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createAwardSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Utility slice
-      ...createUtilitySlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      ...createUtilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Start new game action
       startNewGame: async (options: NewGameOptions) => {
@@ -198,7 +200,7 @@ export const useGame = create<StoreType>()(
 
         // Clear OPFS storage when starting a new game
         await (await import("@/services/storageAdapter")).clearGameState();
-        set({ ...createInitialState(options) });
+        set({ ...createInitialState(options) } as any);
       },
     }),
     {
@@ -212,7 +214,11 @@ export const useGame = create<StoreType>()(
         races: state.races,
         trainingUsed: state.trainingUsed,
         log: state.log,
+        news: state.news,
+        archive: state.archive,
         pregnancies: state.pregnancies,
+        activeBreedingProgram: state.activeBreedingProgram,
+        triplecrownHistory: state.triplecrownHistory,
         paceSamples: state.paceSamples,
         calibratedPars: state.calibratedPars,
         lastCalibrationDay: state.lastCalibrationDay,
@@ -239,6 +245,8 @@ export const useGame = create<StoreType>()(
         usedJockeyNames: state.usedJockeyNames,
         seasonRecords: state.seasonRecords,
         hallOfFame: state.hallOfFame,
+        staffPool: state.staffPool,
+        hiredStaff: state.hiredStaff,
       }),
       onRehydrateStorage: () => async (state) => {
         // Initialize workers on rehydration (app load or existing save load)

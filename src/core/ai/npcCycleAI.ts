@@ -64,7 +64,14 @@ export interface NpcAIManager {
 }
 
 /**
- * Create initial AI state for a stable
+ * Create initial AI state for a stable.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and last update day.
+ *
+ * @param stable - The stable to create AI state for
+ * @param currentDay - Current game day
+ * @returns Initial stable AI state
  */
 export function createStableAIState(stable: Stable, currentDay: number): StableAIState {
   return {
@@ -76,7 +83,15 @@ export function createStableAIState(stable: Stable, currentDay: number): StableA
 }
 
 /**
- * Create or get AI state for a stable
+ * Create or get AI state for a stable.
+ *
+ * Returns the existing AI state if available, otherwise creates
+ * a new one and stores it in the manager.
+ *
+ * @param manager - The NPC AI manager
+ * @param stable - The stable to get or create AI state for
+ * @param currentDay - Current game day
+ * @returns Stable AI state (cloned to avoid mutation)
  */
 export function getOrCreateStableAIState(
   manager: NpcAIManager,
@@ -93,7 +108,13 @@ export function getOrCreateStableAIState(
 
 
 /**
- * Update stable AI state after daily cycle
+ * Update stable AI state after daily cycle.
+ *
+ * Updates the last update day for the stable AI state.
+ *
+ * @param state - Current stable AI state
+ * @param currentDay - Current game day
+ * @returns Updated stable AI state
  */
 export function updateStableAIState(state: StableAIState, currentDay: number): StableAIState {
   return {
@@ -104,7 +125,14 @@ export function updateStableAIState(state: StableAIState, currentDay: number): S
 
 
 /**
- * Prune old learning data for all stables
+ * Prune old learning data for all stables.
+ *
+ * Removes learning outcomes older than the cutoff day for all
+ * stable states in the manager.
+ *
+ * @param manager - The NPC AI manager
+ * @param cutoffDay - Day cutoff for pruning learning data
+ * @returns Updated NPC AI manager
  */
 export function pruneAllLearningData(manager: NpcAIManager, cutoffDay: number): NpcAIManager {
   const newStableStates = { ...manager.stableStates };
@@ -122,7 +150,14 @@ export function pruneAllLearningData(manager: NpcAIManager, cutoffDay: number): 
 }
 
 /**
- * Get strategic coordination insights for a stable
+ * Get strategic coordination insights for a stable.
+ *
+ * Returns strategic insights including total decisions, overall success
+ * rate, strategy confidence, and last update day.
+ *
+ * @param manager - The NPC AI manager
+ * @param stableId - ID of the stable to get insights for
+ * @returns Strategic insights object or null if stable not found
  */
 export function getStrategicInsights(
   manager: NpcAIManager,

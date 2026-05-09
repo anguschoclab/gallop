@@ -37,9 +37,9 @@ export type CampaignSlice = {
 };
 
 export function createCampaignSlice(
-  set: StoreSet,
+  set: any,
   get: StoreGet,
-  enqueueIntent: (intent: AnyIntent) => void,
+  enqueueIntent: (intent: any) => void,
 ): CampaignSlice {
   return {
 

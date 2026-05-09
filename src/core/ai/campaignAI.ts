@@ -56,7 +56,13 @@ export interface CampaignDecision {
 }
 
 /**
- * Create AI state for campaign decisions
+ * Create AI state for campaign decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * contender tracking, and campaign history.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized campaign AI state
  */
 export function createCampaignAIState(stable: Stable): CampaignAIState {
   return {
@@ -68,7 +74,15 @@ export function createCampaignAIState(stable: Stable): CampaignAIState {
 }
 
 /**
- * Detect if a horse is a contender for major races
+ * Detect if a horse is a contender for major races.
+ *
+ * Evaluates horses for Triple Crown, Breeders Cup, Dubai World Cup,
+ * and other major G1 races based on age, rating, and distance aptitude.
+ *
+ * @param aiState - Current campaign AI state
+ * @param horse - The horse to evaluate
+ * @param currentDay - Current game day
+ * @returns Updated campaign AI state with contender status
  */
 export function detectContender(
   aiState: CampaignAIState,
@@ -171,7 +185,16 @@ export function detectContender(
 }
 
 /**
- * Get optimal major race target for a contender horse
+ * Get optimal major race target for a contender horse.
+ *
+ * Evaluates all target races for the horse and selects the one
+ * with the highest score based on distance, surface, and prestige.
+ *
+ * @param aiState - Current campaign AI state
+ * @param horse - The horse to evaluate
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Optimal target race key or null if not a contender
  */
 export function getOptimalMajorRaceTarget(
   aiState: CampaignAIState,
@@ -250,7 +273,17 @@ function calculateRaceTargetScore(
 }
 
 /**
- * Determine if stable should target a major race for a horse
+ * Determine if stable should target a major race for a horse.
+ *
+ * Evaluates whether to target a major race based on contender status,
+ * target score, adaptive threshold, and personality.
+ *
+ * @param aiState - Current campaign AI state
+ * @param horse - The horse to evaluate
+ * @param race - The major race being considered
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns True if stable should target the major race
  */
 export function shouldTargetMajorRace(
   aiState: CampaignAIState,
@@ -293,7 +326,17 @@ export function shouldTargetMajorRace(
 }
 
 /**
- * Determine prep race strategy for major race targeting
+ * Determine prep race strategy for major race targeting.
+ *
+ * Calculates the optimal prep race schedule based on personality,
+ * target race type (Triple Crown, Breeders Cup, etc.), and learning.
+ *
+ * @param aiState - Current campaign AI state
+ * @param horse - The horse being prepared
+ * @param targetRace - The target major race
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Object with prep race strategy parameters
  */
 export function getPrepRaceStrategy(
   aiState: CampaignAIState,
@@ -340,7 +383,18 @@ export function getPrepRaceStrategy(
 }
 
 /**
- * Record campaign decision for learning
+ * Record campaign decision for learning.
+ *
+ * Records the campaign decision in history for tracking
+ * and learning purposes.
+ *
+ * @param aiState - Current campaign AI state
+ * @param horse - The horse being targeted
+ * @param raceKey - Key of the race being entered
+ * @param targetRaceKey - Key of the target major race
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Updated campaign AI state
  */
 export function recordCampaignDecision(
   aiState: CampaignAIState,
@@ -371,7 +425,18 @@ export function recordCampaignDecision(
 }
 
 /**
- * Record campaign outcome for learning
+ * Record campaign outcome for learning.
+ *
+ * Finds the matching decision, records the outcome, and updates
+ * the learning state for adaptive improvement.
+ *
+ * @param aiState - Current campaign AI state
+ * @param horseId - ID of the horse
+ * @param targetRaceKey - Key of the target major race
+ * @param position - Final race position
+ * @param prize - Prize money won
+ * @param currentDay - Current game day
+ * @returns Updated campaign AI state
  */
 export function recordCampaignOutcome(
   aiState: CampaignAIState,
@@ -419,7 +484,14 @@ export function recordCampaignOutcome(
 }
 
 /**
- * Get campaign insights for a stable
+ * Get campaign insights for a stable.
+ *
+ * Calculates campaign statistics including total campaigns, success rate,
+ * average position, total prize, and current contender count.
+ *
+ * @param aiState - Current campaign AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with campaign statistics
  */
 export function getCampaignInsights(
   aiState: CampaignAIState,
