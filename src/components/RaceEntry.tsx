@@ -396,7 +396,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                     to="/stable/$horseId"
                     params={{ horseId: selectedHorse.id }}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener"
                     className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-gold"
                   >
                     {selectedHorse.name}
