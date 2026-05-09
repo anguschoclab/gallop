@@ -17,12 +17,15 @@ import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/imp
 import { createTransportRequest } from "@/core/transportation";
 import { createTransaction } from "@/core/transactions";
 import { generateUUID } from "@/game/uuid";
+import { selectBestJockey, createJockeyAIState } from "@/core/ai/jockeyAI";
+import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 
 /**
  * Race Entry Resolution Phase (Order 15)
  * Resolves RaceEntryIntents into impacts:
  * - Race entry (adds horse to race.entries)
  * - Entry fee (cash already deducted when intent was enqueued)
+ * - NPC Jockey assignment (automatically assigns jockeys to NPC entries)
  */
 export const raceEntryResolutionPhase: PipelinePhase = {
   name: "raceEntryResolution",
@@ -38,6 +41,11 @@ export const raceEntryResolutionPhase: PipelinePhase = {
 
     const horseMap = new Map(state.horses.map(h => [h.id, h]));
     const raceMap = new Map(state.races.map(r => [r.id, r]));
+    const jockeys = state.jockeys ?? [];
+    const freeAgents = jockeys.filter(j => !j.stableId && j.lastRaceDay !== newDay);
+    
+    // Sort free agents by fame for fallback selection
+    freeAgents.sort((a, b) => b.fame - a.fame);
 
     for (const intent of raceEntryIntents) {
       const race = raceMap.get(intent.raceId);
@@ -48,6 +56,34 @@ export const raceEntryResolutionPhase: PipelinePhase = {
       if (race.entries.some((e) => e.horseId === intent.horseId)) continue;
       if (race.entries.length >= race.fieldSize) continue;
 
+      let jockeyId = intent.jockeyId;
+
+      // Automatically assign jockey for NPC entries if not specified
+      if (!jockeyId && intent.source === "npc" && intent.sourceId) {
+        const stable = state.npcStables.find(s => s.id === intent.sourceId);
+        if (stable) {
+          // 1. Check for retainer
+          const retainer = jockeys.find(j => j.stableId === stable.id);
+          if (retainer) {
+            jockeyId = retainer.id;
+          } else if (freeAgents.length > 0) {
+            // 2. Use AI to select best free agent
+            if (state.npcAIManager) {
+              const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
+              const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
+              const chosen = selectBestJockey(jockeyAI, horse, freeAgents, stable);
+              if (chosen) {
+                jockeyId = chosen.id;
+              }
+            }
+            
+            // 3. Fallback to best available if AI selection failed
+            if (!jockeyId) {
+              jockeyId = freeAgents[0].id;
+            }
+          }
+        }
+      }
 
       // Generate race entry impact
       impacts.push({
@@ -59,6 +95,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
         type: "race_entry",
         raceId: intent.raceId,
         horseId: intent.horseId,
+        jockeyId,
         entryFee: race.entryFee,
         reason: "Race entry",
       });

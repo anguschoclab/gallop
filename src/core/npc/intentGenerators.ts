@@ -42,6 +42,11 @@ import {
 } from "@/core/ai/raceEntryAI";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import {
+  createWithdrawalAIState,
+  shouldWithdrawHorse,
+  recordWithdrawalDecision,
+} from "@/core/ai/withdrawalAI";
+import {
   getOrCreateStableAIState,
   updateStableAIState,
   type NpcAIManager,
@@ -278,43 +283,9 @@ function generateNpcBreedingIntents(
   ownedHorses: Horse[],
   activePregnanciesByDam: Set<string>,
 ): BreedingIntent[] {
-  const intents: BreedingIntent[] = [];
-
-  // Find eligible mares and stallions
-  const mares = ownedHorses.filter((h) => h.gender === "mare" && h.age >= 3 && h.age <= 15);
-  const stallions = ownedHorses.filter(
-    (h) => (h.gender === "horse" || h.gender === "gelding") && h.stud?.atStud,
-  );
-
-  for (const mare of mares) {
-    // Skip if already pregnant
-    if (activePregnanciesByDam.has(mare.id)) continue;
-
-    for (const stallion of stallions) {
-      // Simple logic: breed if stable has cash and stallion has bookings available
-      if (
-        stable.cash >= 2000 &&
-        stallion.stud &&
-        stallion.stud.seasonBookings < stallion.stud.bookSize
-      ) {
-        intents.push({
-          id: generateUUID(),
-          entityId: mare.id,
-          source: "npc",
-          sourceId: stable.id,
-          day,
-          priority: 50,
-          type: "breeding",
-          sireId: stallion.id,
-          damId: mare.id,
-          liveFoalGuarantee: false,
-        });
-        break; // One breeding per mare per day
-      }
-    }
-  }
-
-  return intents;
+  // Breeding is now handled entirely by the autonomous npcBreedingPhase
+  // at the start of the breeding season.
+  return [];
 }
 
 /**
@@ -386,7 +357,11 @@ function generateNpcWithdrawalIntents(
   horseMap: Map<string, Horse>,
 ): WithdrawFromClaimingIntent[] {
   const intents: WithdrawFromClaimingIntent[] = [];
-  const personality = PERSONALITY_CONFIG[stable.personality];
+
+  // Use persisted AI state if available, otherwise fallback to temporary state
+  const withdrawalAI =
+    stableAI?.withdrawalAI ||
+    (stableAI ? (stableAI.withdrawalAI = createWithdrawalAIState(stable)) : createWithdrawalAIState(stable));
 
   for (const race of upcomingRaces) {
     // Skip if not a claiming race
@@ -398,15 +373,13 @@ function generateNpcWithdrawalIntents(
       const horse = horseMap.get(entry.horseId);
       if (!horse) continue;
 
-      // Withdrawal logic: Withdraw if horse is too valuable to lose or health is poor
-      const rating = calculateOverallRating(horse);
-      const estValue = rating * 1000;
+      // Use AI to determine if horse should be withdrawn from claiming
+      const { shouldWithdraw, reason } = shouldWithdrawHorse(withdrawalAI, horse, race, stable, day);
 
-      // Withdraw if value significantly exceeds claiming price (and personality is not reckless)
-      const valueRatio = estValue / race.claimingPrice;
-      const withdrawThreshold = personality.riskTolerance < 0.3 ? 1.2 : 1.5;
+      if (shouldWithdraw) {
+        // Record the decision
+        recordWithdrawalDecision(withdrawalAI, horse, race, stable, true, reason || "risk_assessment", day);
 
-      if (valueRatio > withdrawThreshold || horse.healthStatus !== "healthy") {
         intents.push({
           id: generateUUID(),
           entityId: horse.id,
@@ -414,7 +387,7 @@ function generateNpcWithdrawalIntents(
           sourceId: stable.id,
           day,
           priority: 70,
-          type: "withdraw_claiming",
+          type: "withdraw_from_claiming",
           raceId: race.id,
           horseId: horse.id,
         });

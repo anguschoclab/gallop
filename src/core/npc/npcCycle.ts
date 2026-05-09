@@ -24,11 +24,6 @@ import {
 } from "@/core/ai/facilityAI";
 import { upgradeFacility } from "@/core/facilities";
 import type { Facility } from "@/core/facilities/facilityTypes";
-import {
-  shouldWithdrawHorse,
-  createWithdrawalAIState,
-  recordWithdrawalDecision,
-} from "@/core/ai/withdrawalAI";
 
 /**
  * NPC Cycle Result
@@ -129,41 +124,6 @@ export function runNpcCycle(
     // Initialize sub-AIs if not present
     if (!stableAIState.facilityAI) {
       stableAIState.facilityAI = createFacilityAIState(stable);
-    }
-    if (!stableAIState.withdrawalAI) {
-      stableAIState.withdrawalAI = createWithdrawalAIState(stable);
-    }
-
-    // AI-driven claiming withdrawals
-    for (const race of claimingRaces) {
-      const entry = race.entries.find((e) => {
-        const horse = horseMap.get(e.horseId);
-        return horse && horse.stableId === stable.id;
-      });
-      if (entry) {
-        const horse = horseMap.get(entry.horseId);
-        if (horse) {
-          const { shouldWithdraw, reason } = shouldWithdrawHorse(
-            stableAIState.withdrawalAI,
-            horse,
-            race,
-            stable,
-            currentDay,
-          );
-          if (shouldWithdraw) {
-            entry.withdrawnFromClaiming = true;
-            stableAIState.withdrawalAI = recordWithdrawalDecision(
-              stableAIState.withdrawalAI,
-              horse,
-              race,
-              stable,
-              true,
-              reason || "risk_assessment",
-              currentDay,
-            );
-          }
-        }
-      }
     }
 
     // AI-driven facility upgrades
