@@ -33,6 +33,7 @@ import { createDefaultGameState } from "@/game/state";
 import { useGame } from "@/game/store";
 import type { Horse } from "@/game/types";
 import * as opfsService from "@/services/opfsService";
+import { DAYS_PER_MONTH } from "@/game/constants/gameConstants";
 
 // Mock helpers
 let mockOPFSData: Map<string, any> = new Map();
@@ -157,7 +158,7 @@ describe("Headless Triple Crown Simulation", () => {
     useGame.setState(initialState);
 
     // Advance a few days to generate some races
-    await useGame.getState().advanceMultipleDays(30, true);
+    await useGame.getState().advanceMultipleDays(DAYS_PER_MONTH, true);
 
     const state = useGame.getState();
 

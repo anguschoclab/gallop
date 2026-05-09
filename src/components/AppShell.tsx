@@ -36,6 +36,7 @@ import { PlayerRacePrompt } from "./PlayerRacePrompt";
 import { AutoSimPanel } from "./AutoSimPanel";
 import { AwardCeremony } from "./awards";
 import { useState, useEffect } from "react";
+import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/game/constants/gameConstants";
 
 const navSections = [
   {
@@ -212,7 +213,7 @@ export function AppShell() {
             <Button
               onClick={() => {
                 // Use setTimeout to ensure the click completes before starting the async operation
-                setTimeout(() => advanceMultipleDays(7), 0);
+                setTimeout(() => advanceMultipleDays(DAYS_PER_WEEK), 0);
               }}
               className="col-span-1 tabular-nums"
               size="sm"
@@ -224,7 +225,7 @@ export function AppShell() {
             <Button
               onClick={() => {
                 // Use setTimeout to ensure the click completes before starting the async operation
-                setTimeout(() => advanceMultipleDays(30), 0);
+                setTimeout(() => advanceMultipleDays(DAYS_PER_MONTH), 0);
               }}
               className="col-span-1 tabular-nums"
               size="sm"

@@ -3,117 +3,13 @@ import type { Rng } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
 import { selectPersonality, getSpecialistPreferences } from "@/core/stable/stableSelection";
 import { randomSilk } from "@/core/horse/visuals";
-
-// Base stable info without generated fields
-export type StablePoolEntry = Omit<
-  Stable,
-  | "id"
-  | "founded"
-  | "cash"
-  | "horses"
-  | "tier"
-  | "reputation"
-  | "personality"
-  | "preferredDistance"
-  | "preferredSurface"
->;
-
-// Filler stable name components for generation
-export const FILLER_PREFIXES = [
-  "Oak",
-  "Pine",
-  "Maple",
-  "Cedar",
-  "Willow",
-  "Birch",
-  "Elm",
-  "Ash",
-  "Spring",
-  "Summer",
-  "Autumn",
-  "Winter",
-  "Morning",
-  "Evening",
-  "Sunset",
-  "Golden",
-  "Silver",
-  "Copper",
-  "Iron",
-  "Diamond",
-  "Ruby",
-  "Emerald",
-  "Royal",
-  "Crown",
-  "Imperial",
-  "Sovereign",
-  "Regal",
-  "Noble",
-  "Running",
-  "Galloping",
-  "Flying",
-  "Racing",
-  "Thunder",
-  "Lightning",
-  "Prairie",
-  "Meadow",
-  "Valley",
-  "Ridge",
-  "Hill",
-  "Brook",
-  "Creek",
-  "Star",
-  "Moon",
-  "Sun",
-  "Sky",
-  "Cloud",
-  "Storm",
-  "Rain",
-  "Victory",
-  "Champion",
-  "Winner",
-  "Triumph",
-  "Glory",
-];
-
-export const FILLER_SUFFIXES = [
-  "Racing",
-  "Stables",
-  "Farm",
-  "Stud",
-  "Thoroughbreds",
-  "Bloodstock",
-  "Ranch",
-  "Meadows",
-  "Acres",
-  "Fields",
-  "Estates",
-  "Park",
-  "Lane Stables",
-  "Ridge Farm",
-  "Valley Stud",
-  "Hill Racing",
-  "Downs",
-  "Heights",
-  "Hollow",
-  "Glen",
-  "Crossing",
-  "Point",
-];
-
-const FILLER_OWNERS = [
-  "Racing Partnership",
-  "Thoroughbred LLC",
-  "Bloodstock Group",
-  "Racing Syndicate",
-  "Farm Inc.",
-  "Stables Ltd",
-  "Racing Club",
-  "Partnership Group",
-  "Investment LLC",
-  "Bloodstock Partners",
-  "Racing Ventures",
-  "Farm Group",
-];
+import {
+  FILLER_PREFIXES,
+  FILLER_SUFFIXES,
+  FILLER_OWNERS,
+  FILLER_COUNTRIES,
+  type StablePoolEntry,
+} from "./stablePoolData";
 
 /**
  * Generate a random stable name using filler prefixes and suffixes
@@ -130,26 +26,6 @@ export function randomStableName(rng: Rng): string {
 export function randomOwnerName(rng: Rng): string {
   return rng.pick(FILLER_OWNERS);
 }
-
-const FILLER_COUNTRIES = [
-  "USA",
-  "UK",
-  "Ireland",
-  "France",
-  "Germany",
-  "Italy",
-  "Spain",
-  "Japan",
-  "Australia",
-  "New Zealand",
-  "Hong Kong",
-  "Singapore",
-  "UAE",
-  "South Africa",
-  "Argentina",
-  "Brazil",
-  "Canada",
-];
 
 /**
  * Generate a single filler stable

@@ -3,14 +3,7 @@ import type { Rng } from "@/game/rng";
 import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "./types";
 import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
 import type { RegionalSystem } from "./types";
-
-const ARCHETYPES: JockeyArchetype[] = [
-  "front_runner",
-  "closer",
-  "clinical",
-  "finisher",
-  "versatile",
-];
+import { ARCHETYPES, SILK_PALETTE, SILK_PATTERNS } from "./jockeyData";
 
 export type JockeyGenerationOptions = {
   tier?: "budget" | "mid" | "elite";
@@ -106,40 +99,6 @@ export function generateJockey({
     ridingFee: Math.round(50 + Math.min(100, totalStats + careerWins / 100) * 10),
   };
 }
-
-export const SILK_PALETTE: string[] = [
-  "#dc2626",
-  "#ea580c",
-  "#f59e0b",
-  "#facc15",
-  "#84cc16",
-  "#16a34a",
-  "#10b981",
-  "#06b6d4",
-  "#0ea5e9",
-  "#2563eb",
-  "#4f46e5",
-  "#7c3aed",
-  "#a855f7",
-  "#d946ef",
-  "#ec4899",
-  "#f43f5e",
-  "#0f172a",
-  "#ffffff",
-  "#78716c",
-  "#57534e",
-];
-export const SILK_PATTERNS: JockeySilk["pattern"][] = [
-  "solid",
-  "stripes",
-  "halves",
-  "quarters",
-  "chevron",
-  "diamond",
-  "star",
-  "sash",
-  "hoops",
-];
 
 export function generateSilk(rng: Rng): JockeySilk {
   const primary = rng.pick(SILK_PALETTE);
