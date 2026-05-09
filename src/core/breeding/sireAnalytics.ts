@@ -11,6 +11,7 @@
 
 import type { Horse } from "@/game/types";
 import { getRunnersBy, foalLifetimeEarnings, getFoalsBy } from "./lineage";
+import { getCareerStats } from "@/core/horse/stats";
 
 /**
  * Calculate Average Earnings Index (AEI) for a stallion.
@@ -181,29 +182,14 @@ export function getSireSurfaceBias(
     return "balanced";
   }
 
-  let turfWins = 0,
-    dirtWins = 0,
-    syntheticWins = 0;
-  let turfStarts = 0,
-    dirtStarts = 0,
-    syntheticStarts = 0;
-
+  let turfWins = 0, dirtWins = 0, syntheticWins = 0;
+  let turfStarts = 0, dirtStarts = 0, syntheticStarts = 0;
   for (const foal of runners) {
-    for (const race of foal.raceHistory) {
-      if (!race.surface) continue;
-      if (race.surface === "Turf") {
-        turfStarts++;
-        if (race.position === 1) turfWins++;
-      } else if (race.surface === "Dirt") {
-        dirtStarts++;
-        if (race.position === 1) dirtWins++;
-      } else {
-        syntheticStarts++;
-        if (race.position === 1) syntheticWins++;
-      }
-    }
+    const cs = getCareerStats(foal);
+    turfWins += cs.turfWins; turfStarts += cs.turfStarts;
+    dirtWins += cs.dirtWins; dirtStarts += cs.dirtStarts;
+    syntheticWins += cs.syntheticWins; syntheticStarts += cs.syntheticStarts;
   }
-
   const turfRate = turfStarts > 0 ? turfWins / turfStarts : 0;
   const dirtRate = dirtStarts > 0 ? dirtWins / dirtStarts : 0;
   const syntheticRate = syntheticStarts > 0 ? syntheticWins / syntheticStarts : 0;
@@ -243,29 +229,14 @@ export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): 
   const runners = getRunnersBy({ horses: allHorses }, stallion.id);
   if (runners.length < 5) return "versatile";
 
-  let sprintWins = 0,
-    classicWins = 0,
-    stayerWins = 0;
-  let sprintStarts = 0,
-    classicStarts = 0,
-    stayerStarts = 0;
-
+  let sprintWins = 0, classicWins = 0, stayerWins = 0;
+  let sprintStarts = 0, classicStarts = 0, stayerStarts = 0;
   for (const foal of runners) {
-    for (const race of foal.raceHistory) {
-      const dist = race.distance || 0;
-      if (dist < 1400) {
-        sprintStarts++;
-        if (race.position === 1) sprintWins++;
-      } else if (dist < 2000) {
-        classicStarts++;
-        if (race.position === 1) classicWins++;
-      } else {
-        stayerStarts++;
-        if (race.position === 1) stayerWins++;
-      }
-    }
+    const cs = getCareerStats(foal);
+    sprintWins += cs.sprintWins; sprintStarts += cs.sprintStarts;
+    classicWins += cs.classicWins; classicStarts += cs.classicStarts;
+    stayerWins += cs.stayerWins; stayerStarts += cs.stayerStarts;
   }
-
   const sprintRate = sprintStarts > 0 ? sprintWins / sprintStarts : 0;
   const classicRate = classicStarts > 0 ? classicWins / classicStarts : 0;
   const stayerRate = stayerStarts > 0 ? stayerWins / stayerStarts : 0;
