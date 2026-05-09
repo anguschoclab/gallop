@@ -242,7 +242,7 @@ function SchedulerPage() {
                         variant="ghost"
                         className="h-5 w-5 shrink-0 text-warning hover:text-cream"
                         onClick={() => dismissCampaignFlag(campaign.horseId, fi)}
-                        aria-label="Dismiss flag"
+                        aria-label={`Dismiss flag: ${flag.message}`}
                       >
                         <X className="h-3 w-3" />
                       </Button>
