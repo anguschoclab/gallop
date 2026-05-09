@@ -16,6 +16,7 @@ import { Route as SireWatchRouteImport } from './routes/sire-watch'
 import { Route as SireLeaderboardsRouteImport } from './routes/sire-leaderboards'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SchedulerRouteImport } from './routes/scheduler'
+import { Route as RecordsRouteImport } from './routes/records'
 import { Route as RecapRouteImport } from './routes/recap'
 import { Route as RacesRouteImport } from './routes/races'
 import { Route as RaceBrowserRouteImport } from './routes/race-browser'
@@ -76,6 +77,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const SchedulerRoute = SchedulerRouteImport.update({
   id: '/scheduler',
   path: '/scheduler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordsRoute = RecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecapRoute = RecapRouteImport.update({
@@ -227,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
+  '/records': typeof RecordsRoute
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
+  '/records': typeof RecordsRoute
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
@@ -297,6 +305,7 @@ export interface FileRoutesById {
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
+  '/records': typeof RecordsRoute
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
@@ -334,6 +343,7 @@ export interface FileRouteTypes {
     | '/race-browser'
     | '/races'
     | '/recap'
+    | '/records'
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
@@ -368,6 +378,7 @@ export interface FileRouteTypes {
     | '/race-browser'
     | '/races'
     | '/recap'
+    | '/records'
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
@@ -403,6 +414,7 @@ export interface FileRouteTypes {
     | '/race-browser'
     | '/races'
     | '/recap'
+    | '/records'
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
@@ -439,6 +451,7 @@ export interface RootRouteChildren {
   RaceBrowserRoute: typeof RaceBrowserRoute
   RacesRoute: typeof RacesRoute
   RecapRoute: typeof RecapRoute
+  RecordsRoute: typeof RecordsRoute
   SchedulerRoute: typeof SchedulerRoute
   SettingsRoute: typeof SettingsRoute
   SireLeaderboardsRoute: typeof SireLeaderboardsRoute
@@ -501,6 +514,13 @@ declare module '@tanstack/react-router' {
       path: '/scheduler'
       fullPath: '/scheduler'
       preLoaderRoute: typeof SchedulerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/records': {
+      id: '/records'
+      path: '/records'
+      fullPath: '/records'
+      preLoaderRoute: typeof RecordsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recap': {
@@ -754,6 +774,7 @@ const rootRouteChildren: RootRouteChildren = {
   RaceBrowserRoute: RaceBrowserRoute,
   RacesRoute: RacesRoute,
   RecapRoute: RecapRoute,
+  RecordsRoute: RecordsRoute,
   SchedulerRoute: SchedulerRoute,
   SettingsRoute: SettingsRoute,
   SireLeaderboardsRoute: SireLeaderboardsRoute,

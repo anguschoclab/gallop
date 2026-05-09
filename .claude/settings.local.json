@@ -48,7 +48,9 @@
       "mcp__plugin_playwright_playwright__browser_evaluate",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4444/)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5555/)",
-      "mcp__plugin_playwright_playwright__browser_resize"
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "Bash(git push *)",
+      "Bash(git fetch *)"
     ]
   }
 }
