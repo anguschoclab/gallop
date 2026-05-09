@@ -48,6 +48,11 @@ export function crossover(
 /**
  * Incomplete dominance inheritance for marker traits
  * Implements probability-based inheritance with regression to mean
+ *
+ * @param a - Trait of the first parent
+ * @param b - Trait of the second parent
+ * @param rng - Random number generator
+ * @returns Inherited trait level
  */
 function inheritTrait(
   a: "excellent" | "good" | "fair" | "poor",

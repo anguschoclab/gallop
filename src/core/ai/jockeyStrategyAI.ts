@@ -183,6 +183,14 @@ export function calculateOptimalRunningStyle(
 
 /**
  * Calculate score for a specific running style
+ *
+ * @param aiState - Current jockey strategy AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race being run
+ * @param jockey - The jockey riding the horse
+ * @param stable - The stable making the decision
+ * @param style - The running style to score
+ * @returns Numerical score for the style
  */
 function calculateStyleScore(
   aiState: JockeyStrategyAIState,

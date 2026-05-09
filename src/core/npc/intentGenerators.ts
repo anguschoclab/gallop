@@ -175,6 +175,14 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
 
 /**
  * Generate training intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param activePregnanciesByDam - Set of IDs for horses that are currently pregnant
+ * @returns Array of training intents
  */
 function generateNpcTrainingIntents(
   state: GameState,
@@ -219,6 +227,15 @@ function generateNpcTrainingIntents(
 
 /**
  * Generate race entry intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param upcomingRaces - Array of upcoming races to consider
+ * @param raceEntrySets - Map of race IDs to sets of horse IDs already entered
+ * @returns Array of race entry intents
  */
 function generateNpcRaceEntryIntents(
   state: GameState,
@@ -283,6 +300,14 @@ function generateNpcRaceEntryIntents(
 
 /**
  * Generate breeding intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param activePregnanciesByDam - Set of IDs for horses that are currently pregnant
+ * @returns Array of breeding intents (currently empty as breeding is handled elsewhere)
  */
 function generateNpcBreedingIntents(
   state: GameState,
@@ -299,6 +324,14 @@ function generateNpcBreedingIntents(
 
 /**
  * Generate claiming intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param upcomingRaces - Array of upcoming races to consider
+ * @param horseMap - Map of all horses for fast lookup
+ * @returns Array of claiming intents
  */
 function generateNpcClaimingIntents(
   state: GameState,
@@ -355,6 +388,15 @@ function generateNpcClaimingIntents(
 
 /**
  * Generate withdrawal intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param upcomingRaces - Array of upcoming races to consider
+ * @param horseMap - Map of all horses for fast lookup
+ * @returns Array of withdrawal intents
  */
 function generateNpcWithdrawalIntents(
   state: GameState,

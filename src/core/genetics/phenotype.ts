@@ -454,6 +454,15 @@ type MarkingsLocus = {
   splashWhite: [number, number];
 };
 
+/**
+ * Resolve markings from marker genotype.
+ *
+ * Returns the horse's markings (socks, face white, silver dapple, sabino, splash white)
+ * based on the marker genotype.
+ *
+ * @param locus - Marker genotype locus with dynamic structure
+ * @returns Markings object
+ */
 export function resolveMarkings(locus: MarkingsLocus) {
   // Shared logic for resolving cosmetic flags
   return {
@@ -465,6 +474,12 @@ export function resolveMarkings(locus: MarkingsLocus) {
   };
 }
 
+/**
+ * Resolve sock height from locus.
+ *
+ * @param locus - Sock locus
+ * @returns Sock height
+ */
 function resolveSocks(locus: Locus): SockHeight {
   const sum = locus[0] + locus[1];
   if (sum <= 3) return "none";
@@ -472,6 +487,12 @@ function resolveSocks(locus: Locus): SockHeight {
   return "stocking";
 }
 
+/**
+ * Resolve face white pattern from locus.
+ *
+ * @param locus - Face white locus
+ * @returns Face white pattern
+ */
 function resolveFaceWhite(locus: Locus): FaceWhite {
   const sum = locus[0] + locus[1];
   if (sum <= 3) return "none";

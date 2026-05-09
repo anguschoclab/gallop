@@ -46,10 +46,14 @@ export interface NpcCycleResult {
  *
  * @param npcStables - Array of NPC stables
  * @param horses - Current horse roster
+ * @param jockeys - Current jockeys
  * @param races - Current race schedule
  * @param currentDay - The current game day
+ * @param rng - Random number generator
  * @param raceEntryDaysAhead - How many days ahead to enter races (default: 3)
+ * @param pregnantIds - Set of IDs for pregnant mares
  * @param aiManager - Existing AI manager
+ * @param npcFacilities - Optional record of NPC facilities
  * @returns Updated horses, races, and AI manager
  */
 export function runNpcCycle(

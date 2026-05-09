@@ -222,6 +222,7 @@ function getOutcomeKey(decisionType: string, context: Record<string, unknown>): 
  * applies risk tolerance, and adds novelty bonus.
  *
  * @param aiState - Current personality AI state
+ * @param decision - Object containing decision metrics
  * @param decision.shortTermValue - Short-term value of the decision
  * @param decision.longTermValue - Long-term value of the decision
  * @param decision.risk - Risk factor of the decision
