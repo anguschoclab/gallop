@@ -491,7 +491,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                                     ? 300
                                     : 200
                               : 150) +
-                            (wantToClaim ? race.claimingPrice! : 0),
+                            (wantToClaim ? claimingPrice! : 0),
                     )}
                   </span>
                 </div>
