@@ -16,7 +16,12 @@
 import type { StableTier } from "@/game/types";
 
 /**
- * Get Tailwind CSS color classes for stable tier badges
+ * Get Tailwind CSS color classes for stable tier badges.
+ *
+ * Returns appropriate color classes for displaying stable tier badges in the UI.
+ *
+ * @param tier - Stable tier (elite, mid, budget)
+ * @returns Tailwind CSS color class string
  */
 export function getTierColor(tier: StableTier | string): string {
   switch (tier) {
@@ -32,7 +37,13 @@ export function getTierColor(tier: StableTier | string): string {
 }
 
 /**
- * Get star representation of reputation score (0-100)
+ * Get star representation of reputation score (0-100).
+ *
+ * Converts a reputation score to a 5-star representation with filled stars
+ * for every 20 reputation points.
+ *
+ * @param rep - Reputation score (0-100)
+ * @returns String with star characters (★ for filled, ☆ for empty)
  */
 export function getReputationStars(rep: number): string {
   const stars = Math.floor(rep / 20);

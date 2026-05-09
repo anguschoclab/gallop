@@ -13,7 +13,14 @@ import type { Rng } from "@/game/rng";
 import { PERSONALITY_WEIGHTS } from "./stableConfig";
 
 /**
- * Shuffle array and return a random subset
+ * Shuffle array and return a random subset.
+ *
+ * Randomly shuffles the input array and returns the first N elements.
+ *
+ * @param array - Array to shuffle and pick from
+ * @param count - Number of elements to pick
+ * @param rng - Random number generator
+ * @returns Random subset of the array
  */
 export function shuffleAndPick<T>(array: T[], count: number, rng: Rng): T[] {
   const shuffled = [...array].sort(() => rng.next() - 0.5);
@@ -21,7 +28,14 @@ export function shuffleAndPick<T>(array: T[], count: number, rng: Rng): T[] {
 }
 
 /**
- * Select a random personality based on tier weights
+ * Select a random personality based on tier weights.
+ *
+ * Uses weighted random selection based on PERSONALITY_WEIGHTS configuration
+ * to choose a personality appropriate for the given stable tier.
+ *
+ * @param tier - Stable tier (elite, mid, budget)
+ * @param rng - Random number generator
+ * @returns Selected personality
  */
 export function selectPersonality(tier: StableTier, rng: Rng): StablePersonality {
   const weights = PERSONALITY_WEIGHTS[tier];
@@ -39,7 +53,12 @@ export function selectPersonality(tier: StableTier, rng: Rng): StablePersonality
 }
 
 /**
- * Get random specialist preferences for specialist personality
+ * Get random specialist preferences for specialist personality.
+ *
+ * Generates random preferred distance and surface for specialist stables.
+ *
+ * @param rng - Random number generator
+ * @returns Object with preferredDistance and preferredSurface
  */
 export function getSpecialistPreferences(rng: Rng) {
   const distances = [1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];

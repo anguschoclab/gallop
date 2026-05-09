@@ -14,28 +14,52 @@ import type { Rng } from "@/game/rng";
 import { STALLION_FARM_MAPPING } from "@/core/stable/stallionFarmMapping";
 
 /**
- * Get stable by ID
+ * Get stable by ID.
+ *
+ * Finds and returns a stable with the specified ID from the stable array.
+ *
+ * @param stables - Array of stables to search
+ * @param id - Stable ID to find
+ * @returns Stable with matching ID, or undefined if not found
  */
 export function getStableById(stables: Stable[], id: string): Stable | undefined {
   return stables.find((s) => s.id === id);
 }
 
 /**
- * Get all major stables (non-filler)
+ * Get all major stables (non-filler).
+ *
+ * Filters the stable array to return only major stables (isMajor: true).
+ *
+ * @param stables - Array of stables to filter
+ * @returns Array of major stables
  */
 export function getMajorStables(stables: Stable[]): Stable[] {
   return stables.filter((s) => s.isMajor);
 }
 
 /**
- * Get stables by tier
+ * Get stables by tier.
+ *
+ * Filters the stable array to return only stables of the specified tier.
+ *
+ * @param stables - Array of stables to filter
+ * @param tier - Stable tier to filter by (elite, mid, budget)
+ * @returns Array of stables matching the tier
  */
 export function getStablesByTier(stables: Stable[], tier: StableTier): Stable[] {
   return stables.filter((s) => s.tier === tier);
 }
 
 /**
- * Calculate starting cash for a stable based on tier
+ * Calculate starting cash for a stable based on tier.
+ *
+ * Returns a random starting cash amount appropriate for the stable tier.
+ * Elite: 500k-1M, Mid: 150k-350k, Budget: 20k-70k.
+ *
+ * @param tier - Stable tier (elite, mid, budget)
+ * @param rng - Random number generator
+ * @returns Starting cash amount
  */
 export function getStartingCashForTier(tier: StableTier, rng: Rng): number {
   switch (tier) {
@@ -49,7 +73,15 @@ export function getStartingCashForTier(tier: StableTier, rng: Rng): number {
 }
 
 /**
- * Calculate target horse count for a stable based on tier
+ * Calculate target horse count for a stable based on tier.
+ *
+ * Returns a random target horse count appropriate for the stable tier.
+ * Elite: 30-40, Mid: 20-30, Budget: 15-25. Filler stables always have 10.
+ *
+ * @param tier - Stable tier (elite, mid, budget)
+ * @param isMajor - Whether the stable is a major stable (non-filler)
+ * @param rng - Random number generator
+ * @returns Target horse count
  */
 export function getTargetHorseCountForTier(tier: StableTier, isMajor: boolean, rng: Rng): number {
   if (!isMajor) return 10; // Filler stables always have 10
@@ -64,8 +96,14 @@ export function getTargetHorseCountForTier(tier: StableTier, isMajor: boolean, r
 }
 
 /**
- * Map a famous stallion to an appropriate game stable
+ * Map a famous stallion to an appropriate game stable.
+ *
  * Uses real-world stud farm name to match with game stables, with tier-based fallback
+ * based on stud fee if no match is found.
+ *
+ * @param stallion - Pedigree horse data with stud farm information
+ * @param stables - Array of available stables
+ * @returns Matching stable
  */
 export function mapStallionToStable(stallion: PedigreeHorse, stables: Stable[]): Stable {
   // Try exact match first

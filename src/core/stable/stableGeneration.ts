@@ -22,7 +22,12 @@ import {
 } from "./stablePoolData";
 
 /**
- * Generate a random stable name using filler prefixes and suffixes
+ * Generate a random stable name using filler prefixes and suffixes.
+ *
+ * Combines a random prefix and suffix from the filler pool to create a unique stable name.
+ *
+ * @param rng - Random number generator
+ * @returns Generated stable name
  */
 export function randomStableName(rng: Rng): string {
   const prefix = rng.pick(FILLER_PREFIXES);
@@ -31,14 +36,27 @@ export function randomStableName(rng: Rng): string {
 }
 
 /**
- * Generate a random owner name using filler owners
+ * Generate a random owner name using filler owners.
+ *
+ * Selects a random owner name from the filler pool.
+ *
+ * @param rng - Random number generator
+ * @returns Generated owner name
  */
 export function randomOwnerName(rng: Rng): string {
   return rng.pick(FILLER_OWNERS);
 }
 
 /**
- * Generate a single filler stable
+ * Generate a single filler stable.
+ *
+ * Creates a budget-tier stable with procedurally generated name, owner, country,
+ * personality, and other properties. Used to populate the world with background stables.
+ *
+ * @param index - Index for generation (currently unused)
+ * @param day - Current game day for founding date calculation
+ * @param rng - Random number generator
+ * @returns Generated filler stable
  */
 export function generateFillerStable(index: number, day: number, rng: Rng): Stable {
   const prefix = rng.pick(FILLER_PREFIXES);
@@ -66,7 +84,17 @@ export function generateFillerStable(index: number, day: number, rng: Rng): Stab
 }
 
 /**
- * Generate a stable from a template pool entry
+ * Generate a stable from a template pool entry.
+ *
+ * Creates a stable from a predefined template with tier-specific cash ranges,
+ * reputation, founding date, and personality. Used for generating named stables.
+ *
+ * @param template - Stable pool entry with name and owner
+ * @param tier - Stable tier (elite, mid, budget)
+ * @param reputationRange - Min/max reputation range for the tier
+ * @param day - Current game day for founding date calculation
+ * @param rng - Random number generator
+ * @returns Generated stable
  */
 export function generateStableFromTemplate(
   template: StablePoolEntry,
