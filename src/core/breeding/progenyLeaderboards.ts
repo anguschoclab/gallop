@@ -34,7 +34,7 @@ function computeBeyerLeaderboard(runners: Horse[], currentDay: number): ProgenyL
       sireId: h.pedigree?.sireId,
       sireName: h.sireName,
       value: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
-      metrics: {
+      metrics: (() => {
         const stats = getCareerStats(h);
         return {
           age: h.age,
@@ -44,7 +44,7 @@ function computeBeyerLeaderboard(runners: Horse[], currentDay: number): ProgenyL
           bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
           gradeWins: stats.gradedWins,
         };
-      }(),
+      })(),
     }))
     .filter((h) => h.value > 0)
     .sort((a, b) => b.value - a.value)
@@ -71,7 +71,7 @@ function computeEarningsLeaderboard(runners: Horse[], currentDay: number): Proge
       sireId: h.pedigree?.sireId,
       sireName: h.sireName,
       value: h.lifetimeEarnings,
-      metrics: {
+      metrics: (() => {
         const stats = getCareerStats(h);
         return {
           age: h.age,
@@ -81,7 +81,7 @@ function computeEarningsLeaderboard(runners: Horse[], currentDay: number): Proge
           bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
           gradeWins: stats.gradedWins,
         };
-      }(),
+      })(),
     }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 50)
@@ -107,7 +107,7 @@ function computeStakesWinnersLeaderboard(runners: Horse[], currentDay: number): 
       sireId: h.pedigree?.sireId,
       sireName: h.sireName,
       value: getCareerStats(h).stakesWins,
-      metrics: {
+      metrics: (() => {
         const stats = getCareerStats(h);
         return {
           age: h.age,
@@ -117,7 +117,7 @@ function computeStakesWinnersLeaderboard(runners: Horse[], currentDay: number): 
           bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
           gradeWins: stats.gradedWins,
         };
-      }(),
+      })(),
     }))
     .filter((h) => h.value > 0)
     .sort((a, b) => b.value - a.value)

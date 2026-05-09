@@ -370,6 +370,3 @@ function selectSireByTraditionalScoring(
   scored.sort((a, b) => b.score - a.score);
   return scored[0].sire;
 }
-a.score);
-  return scored[0].sire;
-}

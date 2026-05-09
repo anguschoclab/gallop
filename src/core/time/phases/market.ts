@@ -96,12 +96,3 @@ export const marketPhase = {
     };
   },
 };
-     ...state,
-        market,
-        npcStables,
-        npcAIManager,
-        staffPool,
-      },
-    };
-  },
-};

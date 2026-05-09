@@ -430,10 +430,3 @@ function getInjuryColor(proneness?: number): string {
 }
 
 export default HorseCard;
-ream-muted";
-  if (proneness < 0.06) return "text-success font-medium";
-  if (proneness < 0.09) return "text-warning font-medium";
-  return "text-destructive font-bold";
-}
-
-export default HorseCard;
