@@ -1,44 +1,44 @@
-/**
- * Race Entry AI System
- * Multi-factor race selection, field analysis, and budget management
- */
-
 import type { Horse, Race, Stable } from "@/game/types";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import {
+  getPersonalityAIState,
+} from "./personalitySystem";
 import {
   createLearningState,
   recordOutcome,
   getSuccessRate,
-  getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateRaceSuitability } from "@/core/race/entryScoring";
+import { calculateTrackGeometryScore, calculateGradientScore } from "@/core/race/trackGeometry";
 import { applyPersonalityModifiers } from "@/core/stable/personalityModifiers";
+
+/**
+ * Strategic Race Entry System
+ * Long-term race schedule planning, horse development tracking, multi-race strategy optimization
+ */
 
 export interface RaceEntryAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;
-  entryHistory: EntryDecision[];
+  strategicPlan: StrategicPlan;
+}
+
+export interface StrategicPlan {
+  targetRaces: Array<{
+    raceId: string;
+    day: number;
+    priority: number;
+    horseId?: string;
+  }>;
   horseDevelopment: Record<string, HorseDevelopmentTrack>;
   budgetAllocation: Record<string, number>; // raceId -> budget
 }
 
-export interface EntryDecision {
-  horseId: string;
-  raceId: string;
-  expectedPosition: number;
-  actualPosition?: number;
-  stableId: string;
-  day: number;
-  success?: boolean;
-}
-
 export interface HorseDevelopmentTrack {
   horseId: string;
-  classLevel: string;
   targetGrade: string;
-  lastRaceDay: number;
-  formTrend: number[];
+  currentProgress: number;
+  recentRaces: Array<{ raceId: string; position: number; beyer: number }>;
   projectedPeak: number;
 }
 
@@ -49,39 +49,33 @@ export function createRaceEntryAIState(stable: Stable): RaceEntryAIState {
   return {
     personalityState: getPersonalityAIState(stable.personality),
     learningState: createLearningState(),
-    entryHistory: [],
-    horseDevelopment: {},
-    budgetAllocation: {},
+    strategicPlan: {
+      targetRaces: [],
+      horseDevelopment: {},
+      budgetAllocation: {},
+    },
   };
 }
 
 /**
- * Calculate race suitability score for a horse
+ * Calculate strategic entry score for a horse in a race
+ * Combines suitability, learning, and strategic planning
  */
-export function calculateRaceSuitability(
+export function calculateStrategicEntryScore(
   aiState: RaceEntryAIState,
   horse: Horse,
   race: Race,
   stable: Stable,
   currentDay: number,
 ): number {
-  let score = 0;
+  // Base suitability score
+  let score = calculateRaceSuitability(horse, race, stable);
 
-  // Distance fit
-  const distDiff = Math.abs(horse.distanceAptitude - race.distance);
-  if (distDiff < 200) score += 30;
-  else if (distDiff < 400) score += 15;
+  // Add track geometry and gradient scores
+  score += calculateTrackGeometryScore(horse, race);
+  score += calculateGradientScore(horse, race);
 
-  // Surface fit
-  if (race.surface && horse.surfaceAptitude[race.surface as "Turf" | "Dirt" | "Synthetic"]) {
-    score += horse.surfaceAptitude[race.surface as "Turf" | "Dirt" | "Synthetic"] * 20;
-  }
-
-  // Energy check
-  if (horse.energy < 40) return 0;
-  score += (horse.energy - 40) / 2;
-
-  // Personality modifiers
+  // Apply personality modifiers
   score = applyPersonalityModifiers(score, horse, race, stable);
 
   // Learning-based adjustment
@@ -94,7 +88,7 @@ export function calculateRaceSuitability(
   const strategicValue = evaluateStrategicValue(aiState, horse, race, currentDay);
   score += strategicValue;
 
-  return Math.max(0, score);
+  return score;
 }
 
 /**
@@ -110,7 +104,7 @@ function evaluateStrategicValue(
   let strategicValue = 0;
 
   // Check if race aligns with horse development plan
-  const devTrack = aiState.horseDevelopment[horse.id];
+  const devTrack = aiState.strategicPlan.horseDevelopment[horse.id];
   if (devTrack) {
     // Bonus for races that advance development goals
     if (race.graded?.grade === devTrack.targetGrade) {
@@ -124,34 +118,156 @@ function evaluateStrategicValue(
     }
   }
 
+  // Competitive positioning - avoid races with too many top competitors
+  if (race.entries.length > 0) {
+    // In real implementation, would look up horse stats
+    const avgCompetitorQuality = 50; 
+
+    if (avgCompetitorQuality > 80) {
+      strategicValue -= 10; // Penalty for very competitive fields
+    }
+  }
+
+  // Budget consideration
+  const raceBudget = aiState.strategicPlan.budgetAllocation[race.id] || 0;
+  if (race.purse > raceBudget * 2 && raceBudget > 0) {
+    strategicValue -= 5; // Penalty for overspending on single race
+  }
+
   return strategicValue;
 }
 
 /**
- * Determine optimal race entry strategy for a stable's roster
+ * Update horse development tracking after a race
  */
-export function determineEntryStrategy(
+export function updateHorseDevelopment(
   aiState: RaceEntryAIState,
-  stableHorses: Horse[],
-  upcomingRaces: Race[],
-  stable: Stable,
+  horse: Horse,
+  race: Race,
+  position: number,
+  beyer: number,
+): RaceEntryAIState {
+  const devTrack = aiState.strategicPlan.horseDevelopment[horse.id] || {
+    horseId: horse.id,
+    targetGrade: race.graded?.grade || "open",
+    currentProgress: 0,
+    recentRaces: [],
+    projectedPeak: horse.age < 4 ? horse.age * 365 + 365 : horse.age * 365,
+  };
+
+  // Add race result
+  const newRecentRaces = [...devTrack.recentRaces, { raceId: race.id, position, beyer }];
+  const trimmedRecentRaces = newRecentRaces.length > 5 ? newRecentRaces.slice(-5) : newRecentRaces;
+
+  // Update progress based on performance
+  let currentProgress = devTrack.currentProgress;
+  if (position <= 3) {
+    currentProgress += 10;
+  } else if (position <= 5) {
+    currentProgress += 5;
+  }
+
+  let targetGrade = devTrack.targetGrade;
+  // Adjust target grade if performing well
+  if (currentProgress > 80 && targetGrade !== "G1") {
+    const grades = ["open", "G3", "G2", "G1"];
+    const currentIndex = grades.indexOf(targetGrade);
+    if (currentIndex < grades.length - 1) {
+      targetGrade = grades[currentIndex + 1];
+      currentProgress = 0; // Reset progress for new goal
+    }
+  }
+
+  const updatedDevTrack = {
+    ...devTrack,
+    targetGrade,
+    currentProgress,
+    recentRaces: trimmedRecentRaces,
+  };
+
+  return {
+    ...aiState,
+    strategicPlan: {
+      ...aiState.strategicPlan,
+      horseDevelopment: {
+        ...aiState.strategicPlan.horseDevelopment,
+        [horse.id]: updatedDevTrack,
+      },
+    },
+  };
+}
+
+/**
+ * Record race entry outcome for learning
+ */
+export function recordRaceEntryOutcome(
+  aiState: RaceEntryAIState,
+  horse: Horse,
+  race: Race,
   currentDay: number,
+  success: boolean,
+  position?: number,
+): RaceEntryAIState {
+  const contextKey = `${race.distance}:${race.surface || "unknown"}:${race.graded?.grade || "open"}`;
+  const value = success && position ? (10 - position) * 10 : 0;
+
+  const newLearningState = recordOutcome(
+    aiState.learningState,
+    "race_entry",
+    contextKey,
+    success,
+    value,
+    Date.now(),
+    currentDay,
+    aiState.personalityState.memoryDepth,
+  );
+
+  return {
+    ...aiState,
+    learningState: newLearningState,
+  };
+}
+
+/**
+ * Generate multi-race entry strategy for a stable
+ * Plans entries across multiple upcoming races
+ */
+export function generateMultiRaceStrategy(
+  aiState: RaceEntryAIState,
+  stable: Stable,
+  horses: Horse[],
+  races: Race[],
+  currentDay: number,
+  daysAhead: number,
 ): Record<string, string[]> {
-  const strategy: Record<string, string[]> = {}; // raceId -> horseIds
+  const strategy: Record<string, string[]> = {};
 
+  // Filter upcoming races
+  const upcomingRaces = races.filter(
+    (r) => r.day > currentDay && r.day <= currentDay + daysAhead && !r.resolved,
+  );
+
+  // Sort races by day and priority
+  upcomingRaces.sort((a, b) => {
+    const dayDiff = a.day - b.day;
+    if (dayDiff !== 0) return dayDiff;
+    return (b.purse || 0) - (a.purse || 0); 
+  });
+
+  // Assign horses to races based on strategic fit
   for (const race of upcomingRaces) {
-    if (race.entries.length >= race.fieldSize) continue;
-
-    const candidates = stableHorses
+    const candidates = horses
+      .filter((h) => h.stableId === stable.id)
       .map((horse) => ({
         horse,
-        score: calculateRaceSuitability(aiState, horse, race, stable, currentDay),
+        score: calculateStrategicEntryScore(aiState, horse, race, stable, currentDay),
       }))
-      .filter((c) => c.score > 60)
+      .filter((c) => c.score > 50) 
       .sort((a, b) => b.score - a.score);
 
-    if (candidates.length > 0) {
-      const selected = candidates.slice(0, 2).map((c) => c.horse.id);
+    // Select top candidates (max 2 per race)
+    const selected = candidates.slice(0, 2).map((c) => c.horse.id);
+    if (selected.length > 0) {
       strategy[race.id] = selected;
     }
   }
@@ -160,33 +276,27 @@ export function determineEntryStrategy(
 }
 
 /**
- * Record race entry for learning
+ * Adapt strategy based on learning outcomes
  */
-export function recordEntryDecision(
-  aiState: RaceEntryAIState,
-  horse: Horse,
-  race: Race,
-  expectedPosition: number,
-  currentDay: number,
-): RaceEntryAIState {
-  const decision: EntryDecision = {
-    horseId: horse.id,
-    raceId: race.id,
-    expectedPosition,
-    stableId: horse.stableId!,
-    day: currentDay,
-  };
+export function adaptStrategy(aiState: RaceEntryAIState, currentDay: number): RaceEntryAIState {
+  const outcomes = aiState.learningState.outcomes;
+  const totalDecisions = outcomes.length;
+  const successRate =
+    totalDecisions > 0
+      ? outcomes.filter((o) => o.success).length / totalDecisions
+      : 0.5;
 
-  const newHistory = [...aiState.entryHistory, decision];
-
-  // Trim history
-  const maxHistory = aiState.personalityState.memoryDepth;
-  if (newHistory.length > maxHistory) {
-    newHistory.splice(0, newHistory.length - maxHistory);
+  // If success rate is low, become more conservative
+  if (successRate < 0.4 && totalDecisions > 10) {
+    const newPersonalityState = {
+      ...aiState.personalityState,
+      strategyConfidence: Math.max(0.3, aiState.personalityState.strategyConfidence - 0.1),
+    };
+    return {
+      ...aiState,
+      personalityState: newPersonalityState,
+    };
   }
 
-  return {
-    ...aiState,
-    entryHistory: newHistory,
-  };
+  return aiState;
 }

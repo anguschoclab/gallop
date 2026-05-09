@@ -1,6 +1,6 @@
 /**
  * Market AI System
- * personality-driven horse acquisition and disposal (private sales, auctions)
+ * Learning from market purchases, strategic purchase decisions, portfolio buying
  */
 
 import type { Horse, Stable } from "@/game/types";
@@ -17,20 +17,27 @@ import { calculateOverallRating } from "@/core/horse/stats";
 export interface MarketAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;
-  acquisitionHistory: MarketDecision[];
-  disposalHistory: MarketDecision[];
-  ageDistribution: Record<number, number>;
+  purchaseHistory: MarketPurchase[];
+  portfolio: PortfolioState;
 }
 
-export interface MarketDecision {
+export interface MarketPurchase {
   horseId: string;
-  price: number;
   horseRating: number;
+  purchasePrice: number;
   stableId: string;
+  personality: Stable["personality"];
   day: number;
-  type: "buy" | "sell" | "claim" | "auction";
   success?: boolean;
   value?: number;
+}
+
+export interface PortfolioState {
+  targetHorseCount: number;
+  currentHorseCount: number;
+  budgetRemaining: number;
+  ageDistribution: Record<number, number>;
+  qualityTarget: number;
 }
 
 /**
@@ -40,114 +47,274 @@ export function createMarketAIState(stable: Stable): MarketAIState {
   return {
     personalityState: getPersonalityAIState(stable.personality),
     learningState: createLearningState(),
-    acquisitionHistory: [],
-    disposalHistory: [],
-    ageDistribution: {},
+    purchaseHistory: [],
+    portfolio: {
+      targetHorseCount: stable.personality === "prestige" ? 15 : 10,
+      currentHorseCount: 0,
+      budgetRemaining: stable.cash,
+      ageDistribution: {},
+      qualityTarget: 60,
+    },
   };
 }
 
 /**
- * Calculate market value score for a horse
+ * Calculate purchase value score for a horse
  */
-export function calculateMarketValue(
+export function calculatePurchaseValue(
   aiState: MarketAIState,
   horse: Horse,
+  price: number,
   stable: Stable,
 ): number {
   let score = 0;
 
-  // Base value from horse rating
+  // Base value from horse rating vs price
   const horseRating = calculateOverallRating(horse);
-  const estimatedValue = horseRating * 1100;
-  
-  // Higher score if we need this age group
-  const currentDist = aiState.ageDistribution;
-  const targetCount = 5; // Simplified target
-  const ageCount = currentDist[horse.age] || 0;
-  if (ageCount < targetCount) score += 20;
+  const estimatedValue = horseRating * 1000;
+  const valueRatio = estimatedValue / (price || 1);
+
+  // Higher score for undervalued horses
+  score += Math.max(0, (valueRatio - 1) * 40);
 
   // Personality modifiers
   const factors: Record<string, number> = {
-    horse_rating: horseRating,
+    value_ratio: valueRatio,
     horse_age: horse.age,
-    stable_cash: stable.cash,
-    estimated_value: estimatedValue,
+    horse_rating: horseRating,
+    purchase_price: price,
   };
 
-  score = calculateUtilityScore(aiState.personalityState, "market_acquisition", factors);
+  score = calculateUtilityScore(aiState.personalityState, "market_purchase", factors);
 
   // Learning-based adjustment
-  const contextKey = `${horse.age}:${horseRating > 60 ? "quality" : "budget"}`;
-  const successRate = getSuccessRate(aiState.learningState, "market_acquisition", contextKey);
+  const contextKey = `${horse.age}`;
+  const successRate = getSuccessRate(aiState.learningState, "market_purchase", contextKey);
   const adaptiveBonus = (successRate - 0.5) * 15;
   score += adaptiveBonus;
+
+  // Portfolio fit
+  const portfolio = aiState.portfolio;
+  if (portfolio.currentHorseCount < portfolio.targetHorseCount) {
+    score += 15;
+  }
+
+  // Age distribution fit
+  const ageCount = portfolio.ageDistribution[horse.age] || 0;
+  if (ageCount < 3) {
+    score += 10;
+  }
+
+  // Quality fit
+  if (horseRating >= portfolio.qualityTarget) {
+    score += 15;
+  }
 
   return Math.max(0, Math.min(100, score));
 }
 
 /**
- * Determine if stable should buy a horse from private sale
+ * Determine if stable should purchase a horse from market
  */
-export function shouldBuyHorse(
+export function shouldPurchaseHorse(
   aiState: MarketAIState,
   horse: Horse,
   price: number,
   stable: Stable,
   currentDay: number,
 ): boolean {
-  if (stable.cash < price * 1.2) return false;
+  // Basic checks
+  if (stable.cash < price * 1.1) return false;
 
-  const valueScore = calculateMarketValue(aiState, horse, stable);
-  
+  // Calculate value score
+  const valueScore = calculatePurchaseValue(aiState, horse, price, stable);
+
   // Get adaptive threshold
-  const contextKey = `${horse.age}:${price > 50000 ? "expensive" : "cheap"}`;
-  const baseThreshold = 60;
+  const contextKey = `${horse.age}`;
+  const baseThreshold = 50;
   const adaptiveThreshold = getAdaptiveThreshold(
     aiState.learningState,
-    "market_acquisition",
+    "market_purchase",
     contextKey,
     baseThreshold,
     aiState.personalityState.adaptationSpeed,
   );
 
-  return valueScore > adaptiveThreshold;
+  // Personality-based threshold adjustment
+  const config = aiState.personalityState;
+  let threshold = adaptiveThreshold;
+
+  if (config.personality === "aggressive") threshold -= 10;
+  if (config.personality === "conservative") threshold += 10;
+
+  return valueScore > threshold;
 }
 
 /**
- * Record market acquisition for learning
+ * Calculate maximum purchase price for a horse
  */
-export function recordAcquisition(
+export function calculateMaxPurchasePrice(
+  aiState: MarketAIState,
+  horse: Horse,
+  stable: Stable,
+): number {
+  const horseRating = calculateOverallRating(horse);
+  const estimatedValue = horseRating * 1000;
+
+  // Base max price is estimated value
+  let maxPrice = estimatedValue;
+
+  // Personality-based risk tolerance
+  const riskTolerance = aiState.personalityState.conservatism < 0.5 ? 1.2 : 0.8;
+  maxPrice *= riskTolerance;
+
+  // Budget constraint (max 20% of cash per horse)
+  maxPrice = Math.min(maxPrice, stable.cash * 0.2);
+
+  // Learning-based adjustment
+  const contextKey = `${horse.age}`;
+  const successRate = getSuccessRate(aiState.learningState, "market_purchase", contextKey);
+  if (successRate < 0.4) {
+    maxPrice *= 0.8;
+  }
+
+  return Math.floor(maxPrice);
+}
+
+/**
+ * Record market purchase for learning
+ */
+export function recordMarketPurchase(
   aiState: MarketAIState,
   horse: Horse,
   price: number,
-  type: MarketDecision["type"],
   stable: Stable,
   currentDay: number,
 ): MarketAIState {
-  const decision: MarketDecision = {
+  const purchase: MarketPurchase = {
     horseId: horse.id,
-    price,
     horseRating: calculateOverallRating(horse),
+    purchasePrice: price,
     stableId: stable.id,
+    personality: stable.personality,
     day: currentDay,
-    type,
   };
 
-  const newHistory = [...aiState.acquisitionHistory, decision];
+  const newHistory = [...aiState.purchaseHistory, purchase];
 
-  // Trim history
+  // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (newHistory.length > maxHistory) {
-    newHistory.splice(0, newHistory.length - maxHistory);
-  }
+  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
-  // Update age distribution
-  const newDist = { ...aiState.ageDistribution };
-  newDist[horse.age] = (newDist[horse.age] || 0) + 1;
+  // Update portfolio
+  const newPortfolio = {
+    ...aiState.portfolio,
+    currentHorseCount: aiState.portfolio.currentHorseCount + 1,
+    budgetRemaining: aiState.portfolio.budgetRemaining - price,
+    ageDistribution: {
+      ...aiState.portfolio.ageDistribution,
+      [horse.age]: (aiState.portfolio.ageDistribution[horse.age] || 0) + 1,
+    },
+  };
+
+  // Update learning state
+  const contextKey = `${horse.age}`;
+  const value = calculateOverallRating(horse) - price / 1000;
+  const newLearningState = recordOutcome(
+    aiState.learningState,
+    "market_purchase",
+    contextKey,
+    true,
+    value,
+    Date.now(),
+    currentDay,
+    aiState.personalityState.memoryDepth,
+  );
 
   return {
     ...aiState,
-    acquisitionHistory: newHistory,
-    ageDistribution: newDist,
+    purchaseHistory: trimmedHistory,
+    portfolio: newPortfolio,
+    learningState: newLearningState,
+  };
+}
+
+/**
+ * Record market outcome for learning
+ */
+export function recordMarketOutcome(
+  aiState: MarketAIState,
+  horseId: string,
+  success: boolean,
+  value: number,
+  currentDay: number,
+): MarketAIState {
+  const purchaseIndex = aiState.purchaseHistory.findIndex((p) => p.horseId === horseId && p.success === undefined);
+
+  if (purchaseIndex !== -1) {
+    const purchase = { ...aiState.purchaseHistory[purchaseIndex] };
+    purchase.success = success;
+    purchase.value = value;
+
+    const newHistory = [...aiState.purchaseHistory];
+    newHistory[purchaseIndex] = purchase;
+
+    // Update learning state
+    const contextKey = `${purchase.horseRating}`;
+    const newLearningState = recordOutcome(
+      aiState.learningState,
+      "market_purchase",
+      contextKey,
+      success,
+      value,
+      Date.now(),
+      currentDay,
+      aiState.personalityState.memoryDepth,
+    );
+
+    return {
+      ...aiState,
+      purchaseHistory: newHistory,
+      learningState: newLearningState,
+    };
+  }
+
+  return aiState;
+}
+
+/**
+ * Get market insights for a stable
+ */
+export function getMarketInsights(
+  aiState: MarketAIState,
+  stableId: string,
+): {
+  totalPurchases: number;
+  successRate: number;
+  avgValue: number;
+  avgPurchasePrice: number;
+  portfolioHealth: number;
+} {
+  const stablePurchases = aiState.purchaseHistory.filter((p) => p.stableId === stableId);
+  const totalPurchases = stablePurchases.length;
+  const successes = stablePurchases.filter((p) => p.success).length;
+  const successRate = totalPurchases > 0 ? successes / totalPurchases : 0.5;
+  const avgValue =
+    totalPurchases > 0
+      ? stablePurchases.reduce((sum, p) => sum + (p.value || 0), 0) / totalPurchases
+      : 0;
+  const avgPurchasePrice =
+    totalPurchases > 0
+      ? stablePurchases.reduce((sum, p) => sum + p.purchasePrice, 0) / totalPurchases
+      : 0;
+
+  const portfolioHealth = aiState.portfolio.currentHorseCount / (aiState.portfolio.targetHorseCount || 1);
+
+  return {
+    totalPurchases,
+    successRate,
+    avgValue,
+    avgPurchasePrice,
+    portfolioHealth,
   };
 }

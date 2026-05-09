@@ -319,7 +319,7 @@ export function recordJockeyOutcome(
       currentDay,
       aiState.personalityState.memoryDepth,
     );
-    
+
     return {
       ...aiState,
       jockeyHistory: newHistory,
@@ -350,10 +350,10 @@ export function getJockeyInsights(
   const totalAssignments = stableAssignments.length;
   const avgPosition =
     totalAssignments > 0
-      ? stableAssignments.reduce((sum, a) => sum + a.result!.position, 0) / totalAssignments
+      ? stableAssignments.reduce((sum, a) => sum + (a.result!.position || 5), 0) / totalAssignments
       : 5;
   const totalPrize =
-    totalAssignments > 0 ? stableAssignments.reduce((sum, a) => sum + a.result!.prize, 0) : 0;
+    totalAssignments > 0 ? stableAssignments.reduce((sum, a) => sum + (a.result!.prize || 0), 0) : 0;
   const avgFee =
     totalAssignments > 0
       ? stableAssignments.reduce((sum, a) => sum + a.fee, 0) / totalAssignments

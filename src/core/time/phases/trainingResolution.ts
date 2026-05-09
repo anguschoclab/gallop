@@ -5,16 +5,14 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
 import type {
   AnyImpact,
-  HorseStatImpact,
-  EnergyImpact,
-  HealthStatusImpact,
 } from "@/core/resolver/impacts";
 import { createRng, hashStr } from "@/game/rng";
-import type { Horse } from "@/game/types";
 import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";
 import { generateUUID } from "@/game/uuid";
 import { createTransaction } from "@/core/transactions";
+import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { recordTrainingOutcome } from "@/core/ai/trainingAI";
 
 /**
  * Training Resolution Phase (Order 45)
@@ -166,6 +164,7 @@ export const trainingResolutionPhase: PipelinePhase = {
       }
 
       // Apply stat gains based on workout type
+      let totalGain = 0;
       if (intent.trainingType !== "rest") {
         // Generate RNG for this training session
         const trainingRng = createRng(hashStr(`training_${intent.horseId}_${newDay}`));
@@ -236,6 +235,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           // Base gain with facility and workout bonuses
           let gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
           gain = Math.round(gain * (1 + trackBonus) * config.gainBonus);
+          totalGain += gain;
 
           impacts.push({
             id: generateUUID(),
@@ -255,6 +255,7 @@ export const trainingResolutionPhase: PipelinePhase = {
             const secondaryGap = effectivePotential - horse.stats[config.secondary];
             if (secondaryGap > 0) {
               const secondaryGain = Math.min(secondaryGap, 1);
+              totalGain += secondaryGain;
               impacts.push({
                 id: generateUUID(),
                 intentId: intent.id,
@@ -289,6 +290,25 @@ export const trainingResolutionPhase: PipelinePhase = {
             recoveryDay: newDay + recoveryDuration,
             reason: `OCD injury during ${intent.trainingType} - ${recoveryDuration} day recovery`,
           });
+        }
+      }
+
+      // Record training outcome for NPC AI
+      if (state.npcAIManager && horse.stableId) {
+        const stable = state.npcStables.find(s => s.id === horse.stableId);
+        if (stable) {
+          const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
+          if (stableAI.trainingAI) {
+            stableAI.trainingAI = recordTrainingOutcome(
+              stableAI.trainingAI,
+              horse,
+              intent.trainingType,
+              totalGain > 0,
+              totalGain,
+              newDay
+            );
+            state.npcAIManager.stableStates[stable.id] = stableAI;
+          }
         }
       }
     }

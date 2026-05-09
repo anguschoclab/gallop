@@ -4,12 +4,11 @@
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { getPersonalityAIState } from "./personalitySystem";
 import {
   createLearningState,
   recordOutcome,
   getSuccessRate,
-  getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
@@ -71,10 +70,7 @@ export function calculateWithdrawalRisk(
     risk += (50 - horse.form) / 2;
   }
 
-  // Recent poor performance (would need race history)
-  // For now, use form as proxy
-
-  // Race difficulty risk (grade from graded object)
+  // Race difficulty risk
   if (race.graded?.grade === "G1") risk += 10;
   if (race.graded?.grade === "G2") risk += 5;
 
@@ -109,7 +105,7 @@ export function shouldWithdrawHorse(
 
   if (config.personality === "conservative") riskTolerance = 35;
   if (config.personality === "aggressive") riskTolerance = 65;
-  if (config.personality === "win-now") riskTolerance = 55; // Will take more risks for wins
+  if (config.personality === "win-now") riskTolerance = 55;
 
   // Learning-based adjustment
   const contextKey = `${horse.age}`;
@@ -133,7 +129,6 @@ export function shouldWithdrawHorse(
     reason = "poor_form";
   }
 
-  // Decision: withdraw if risk exceeds tolerance
   if (riskScore > riskTolerance) {
     return { shouldWithdraw: true, reason };
   }
@@ -156,19 +151,19 @@ export function calculateWithdrawalOpportunityCost(
   cost += race.entryFee || 0;
 
   // Transportation cost loss
-  cost += 500; // Average transport cost
+  cost += 500;
 
   // Potential prize loss
   const horseRating = calculateOverallRating(horse);
-  const expectedPrize = horseRating * 100; // Rough estimate
-  cost += expectedPrize * 0.1; // 10% chance of winning
+  const expectedPrize = horseRating * 100;
+  cost += expectedPrize * 0.1;
 
   // Personality-based cost perception
   const config = aiState.personalityState;
   if (config.personality === "conservative") {
-    cost *= 0.8; // Less sensitive to opportunity cost
+    cost *= 0.8;
   } else if (config.personality === "aggressive") {
-    cost *= 1.2; // More sensitive to opportunity cost
+    cost *= 1.2;
   }
 
   return cost;
@@ -188,25 +183,19 @@ export function isWithdrawalStrategic(
 
   if (!shouldWithdraw) return false;
 
-  // Check if there's a better alternative race soon
   const opportunityCost = calculateWithdrawalOpportunityCost(aiState, horse, race, stable);
-
-  // Personality-based strategic decision
   const config = aiState.personalityState;
 
-  // Conservative stables withdraw more readily to protect horses
   if (config.personality === "conservative" && reason === "health_concern") {
     return true;
   }
 
-  // Win-now stables only withdraw for serious reasons
   if (config.personality === "win-now" && reason !== "health_concern") {
     return false;
   }
 
-  // Aggressive stables take risks
   if (config.personality === "aggressive" && opportunityCost > 10000) {
-    return false; // Won't withdraw if prize is high
+    return false;
   }
 
   return true;
@@ -234,18 +223,14 @@ export function recordWithdrawalDecision(
     reason,
   };
 
-  aiState.withdrawalHistory.push(decision);
+  const newHistory = [...aiState.withdrawalHistory, decision];
 
-  // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.withdrawalHistory.length > maxHistory) {
-    aiState.withdrawalHistory = aiState.withdrawalHistory.slice(-maxHistory);
-  }
+  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
-  // Update learning state
   const contextKey = `${horse.age}`;
-  const value = withdrew ? -1 : 1; // Simple success metric
-  aiState.learningState = recordOutcome(
+  const value = withdrew ? -1 : 1;
+  const newLearningState = recordOutcome(
     aiState.learningState,
     "withdrawal",
     contextKey,
@@ -256,7 +241,11 @@ export function recordWithdrawalDecision(
     aiState.personalityState.memoryDepth,
   );
 
-  return aiState;
+  return {
+    ...aiState,
+    withdrawalHistory: trimmedHistory,
+    learningState: newLearningState,
+  };
 }
 
 /**
@@ -270,23 +259,26 @@ export function recordWithdrawalOutcome(
   alternativeRaceResult: number | undefined,
   currentDay: number,
 ): WithdrawalAIState {
-  const decision = aiState.withdrawalHistory.find(
+  const decisionIndex = aiState.withdrawalHistory.findIndex(
     (d) => d.horseId === horseId && d.raceId === raceId && !d.outcome,
   );
 
-  if (decision) {
+  if (decisionIndex !== -1) {
+    const decision = { ...aiState.withdrawalHistory[decisionIndex] };
     decision.outcome = {
       horseResult,
       alternativeRaceResult,
     };
 
-    // Update learning state
+    const newHistory = [...aiState.withdrawalHistory];
+    newHistory[decisionIndex] = decision;
+
     const contextKey = decision.personality;
     const success = decision.withdrew
       ? (alternativeRaceResult || 0) > (horseResult || 0)
       : (horseResult || 0) <= 3;
 
-    aiState.learningState = recordOutcome(
+    const newLearningState = recordOutcome(
       aiState.learningState,
       "withdrawal",
       contextKey,
@@ -296,6 +288,12 @@ export function recordWithdrawalOutcome(
       currentDay,
       aiState.personalityState.memoryDepth,
     );
+
+    return {
+      ...aiState,
+      withdrawalHistory: newHistory,
+      learningState: newLearningState,
+    };
   }
 
   return aiState;
@@ -319,11 +317,9 @@ export function getWithdrawalInsights(
   const withdrawals = stableHistory.filter((d) => d.withdrew).length;
   const withdrawalRate = totalDecisions > 0 ? withdrawals / totalDecisions : 0;
 
-  // Calculate average risk score for withdrawals
   const withdrawalDecisions = stableHistory.filter((d) => d.withdrew);
-  const avgRiskScore = withdrawalDecisions.length > 0 ? 60 : 40; // Simplified
+  const avgRiskScore = withdrawalDecisions.length > 0 ? 60 : 40;
 
-  // Strategic success: did withdrawals lead to better outcomes?
   const successfulWithdrawals = stableHistory.filter(
     (d) =>
       d.withdrew &&
@@ -335,7 +331,6 @@ export function getWithdrawalInsights(
   const strategicSuccess =
     withdrawalDecisions.length > 0 ? successfulWithdrawals / withdrawalDecisions.length : 0.5;
 
-  // Common reasons
   const commonReasons: Record<string, number> = {};
   for (const decision of withdrawalDecisions) {
     if (decision.reason) {

@@ -1,171 +1,295 @@
+import type { StablePersonality } from "@/game/types";
+import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+
 /**
- * Personality AI System
- * Core utility scoring and configuration for NPC stable personalities
+ * Hybrid AI Personality System
+ * Combines Utility AI scoring, Behavior Trees, Learning System, and Strategic Planning
  */
 
-import type { Stable } from "@/game/types";
-
-export type StablePersonality =
-  | "aggressive"
-  | "conservative"
-  | "balanced"
-  | "win-now"
-  | "prestige"
-  | "frugal";
-
-export interface PersonalityConfig {
+export interface PersonalityAIState {
   personality: StablePersonality;
-  riskTolerance: number; // 0-1
-  conservatism: number; // 0-1
-  ambition: number; // 0-1
-  patience: number; // 0-1
-  prestigeFocus: number; // 0-1
-  adaptationSpeed: number; // 0-1
-  memoryDepth: number; // number of decisions to remember
-  utilityWeights: Record<string, Record<string, number>>;
-  strategyConfidence: number; // 0-1
-}
-
-export interface PersonalityAIState extends PersonalityConfig {
-  stableId: string;
-  lastUpdate: number;
+  learningRate: number;
+  memoryDepth: number;
+  adaptationSpeed: number;
+  strategicHorizon: number;
+  competitiveAwareness: number;
+  conservatism: number;
+  innovation: number;
+  // Learning memory
+  outcomes: DecisionOutcome[];
   successRates: Record<string, number>;
+  // Strategic state
+  currentStrategy: string;
+  strategyConfidence: number;
+  lastStrategyChange: number;
 }
 
-export const PERSONALITY_MAP: Record<StablePersonality, PersonalityConfig> = {
-  aggressive: {
-    personality: "aggressive",
-    riskTolerance: 0.8,
-    conservatism: 0.2,
-    ambition: 0.9,
-    patience: 0.3,
-    prestigeFocus: 0.7,
-    adaptationSpeed: 0.6,
-    memoryDepth: 50,
-    strategyConfidence: 0.7,
-    utilityWeights: {
-      training: { energy: -0.2, deficiency: 0.5, ambition: 0.3 },
-      claiming: { value_ratio: 0.4, risk: -0.2, ambition: 0.4 },
-      auction_valuation: { horse_rating: 0.5, stable_cash: -0.1, ambition: 0.4 },
-      jockey_selection: { jockey_skill: 0.6, fee: -0.2, ambition: 0.2 },
-    },
-  },
-  conservative: {
-    personality: "conservative",
-    riskTolerance: 0.3,
-    conservatism: 0.8,
-    ambition: 0.4,
-    patience: 0.8,
-    prestigeFocus: 0.4,
-    adaptationSpeed: 0.3,
-    memoryDepth: 100,
-    strategyConfidence: 0.5,
-    utilityWeights: {
-      training: { energy: 0.5, deficiency: 0.3, patience: 0.2 },
-      claiming: { value_ratio: 0.6, risk: -0.5, patience: -0.1 },
-      auction_valuation: { horse_rating: 0.4, stable_cash: 0.4, risk: -0.2 },
-      jockey_selection: { jockey_skill: 0.4, fee: 0.5, patience: 0.1 },
-    },
-  },
-  balanced: {
-    personality: "balanced",
-    riskTolerance: 0.5,
-    conservatism: 0.5,
-    ambition: 0.6,
-    patience: 0.5,
-    prestigeFocus: 0.5,
-    adaptationSpeed: 0.5,
-    memoryDepth: 75,
-    strategyConfidence: 0.6,
-    utilityWeights: {
-      training: { energy: 0.1, deficiency: 0.4, ambition: 0.2 },
-      claiming: { value_ratio: 0.5, risk: -0.3, ambition: 0.2 },
-      auction_valuation: { horse_rating: 0.5, stable_cash: 0.2, ambition: 0.3 },
-      jockey_selection: { jockey_skill: 0.5, fee: 0.3, ambition: 0.2 },
-    },
-  },
-  "win-now": {
-    personality: "win-now",
-    riskTolerance: 0.7,
-    conservatism: 0.3,
-    ambition: 0.8,
-    patience: 0.2,
-    prestigeFocus: 0.6,
-    adaptationSpeed: 0.8,
-    memoryDepth: 30,
-    strategyConfidence: 0.8,
-    utilityWeights: {
-      training: { energy: -0.1, deficiency: 0.6, ambition: 0.5 },
-      claiming: { value_ratio: 0.3, risk: -0.1, ambition: 0.6 },
-      auction_valuation: { horse_rating: 0.6, stable_cash: -0.2, ambition: 0.6 },
-      jockey_selection: { jockey_skill: 0.8, fee: -0.4, ambition: 0.6 },
-    },
-  },
-  prestige: {
-    personality: "prestige",
-    riskTolerance: 0.6,
-    conservatism: 0.4,
-    ambition: 0.7,
-    patience: 0.6,
-    prestigeFocus: 0.9,
-    adaptationSpeed: 0.4,
-    memoryDepth: 80,
-    strategyConfidence: 0.7,
-    utilityWeights: {
-      training: { energy: 0.2, deficiency: 0.3, prestigeFocus: 0.5 },
-      claiming: { value_ratio: 0.2, risk: -0.3, prestigeFocus: 0.5 },
-      auction_valuation: { horse_rating: 0.4, stable_cash: 0.1, prestigeFocus: 0.5 },
-      jockey_selection: { jockey_skill: 0.7, fee: -0.1, prestigeFocus: 0.4 },
-    },
-  },
-  frugal: {
-    personality: "frugal",
-    riskTolerance: 0.2,
-    conservatism: 0.9,
-    ambition: 0.3,
-    patience: 0.7,
-    prestigeFocus: 0.2,
-    adaptationSpeed: 0.2,
-    memoryDepth: 150,
-    strategyConfidence: 0.4,
-    utilityWeights: {
-      training: { energy: 0.4, deficiency: 0.2, patience: 0.4 },
-      claiming: { value_ratio: 0.8, risk: -0.4, stable_cash: 0.6 },
-      auction_valuation: { horse_rating: 0.3, stable_cash: 0.8, risk: -0.3 },
-      jockey_selection: { jockey_skill: 0.2, fee: 0.8, patience: 0.2 },
-    },
-  },
-};
+export interface DecisionOutcome {
+  decisionType: string;
+  context: Record<string, unknown>;
+  success: boolean;
+  value: number;
+  timestamp: number;
+}
 
 /**
- * Get AI state for a personality type
+ * Get AI state for a personality
  */
-export function getPersonalityAIState(personality: StablePersonality): PersonalityConfig {
-  return PERSONALITY_MAP[personality] || PERSONALITY_MAP.balanced;
+export function getPersonalityAIState(personality: StablePersonality): PersonalityAIState {
+  const config = PERSONALITY_CONFIG[personality];
+  return {
+    personality,
+    learningRate: config.learningRate,
+    memoryDepth: config.memoryDepth,
+    adaptationSpeed: config.adaptationSpeed,
+    strategicHorizon: config.strategicHorizon,
+    competitiveAwareness: config.competitiveAwareness,
+    conservatism: config.conservatism,
+    innovation: config.innovation,
+    outcomes: [],
+    successRates: {},
+    currentStrategy: "default",
+    strategyConfidence: 0.5,
+    lastStrategyChange: 0,
+  };
 }
 
 /**
- * Calculate utility score based on personality weights and factors
+ * Utility AI scoring function
+ * Calculates utility score for a decision based on personality traits
  */
 export function calculateUtilityScore(
-  config: PersonalityConfig,
+  aiState: PersonalityAIState,
   decisionType: string,
   factors: Record<string, number>,
 ): number {
-  const weights = config.utilityWeights[decisionType];
-  if (!weights) return 50; // Default middle score
-
+  const config = PERSONALITY_CONFIG[aiState.personality];
   let score = 0;
-  let totalWeight = 0;
 
-  for (const factor in weights) {
-    const weight = weights[factor];
-    const value = factors[factor] || 0;
+  // Apply personality-based weighting to factors
+  for (const [factor, value] of Object.entries(factors)) {
+    let weight = 1;
+
+    // Risk tolerance affects risky factors
+    if (factor.includes("risk") || factor.includes("variance")) {
+      weight *= config.riskTolerance;
+    }
+
+    // Youth preference affects age-related factors
+    if (factor.includes("youth") || factor.includes("age")) {
+      weight *= config.youthPreference;
+    }
+
+    // Genetic insight affects DNA-related factors
+    if (factor.includes("genetic") || factor.includes("pedigree")) {
+      weight *= config.geneticInsightMod;
+    }
+
+    // Graded race bonus affects stakes factors
+    if (factor.includes("graded") || factor.includes("stakes")) {
+      weight *= config.gradedRaceBonus / 10;
+    }
+
     score += value * weight;
-    totalWeight += Math.abs(weight);
   }
 
-  // Normalize and scale to 0-100
-  const normalized = totalWeight > 0 ? score / totalWeight : 0.5;
-  return Math.max(0, Math.min(100, normalized * 100));
+  // Apply conservatism modifier (reduces score for unfamiliar strategies)
+  if (aiState.currentStrategy !== "default" && aiState.strategyConfidence < 0.5) {
+    score *= config.conservatism;
+  }
+
+  // Apply innovation modifier (boosts score for novel approaches)
+  if (decisionType === "novel") {
+    score *= 1 + config.innovation * 0.5;
+  }
+
+  return Math.max(0, Math.min(1, score));
+}
+
+/**
+ * Record a decision outcome for learning
+ */
+export function recordOutcome(
+  aiState: PersonalityAIState,
+  decisionType: string,
+  context: Record<string, unknown>,
+  success: boolean,
+  value: number,
+  timestamp: number,
+): PersonalityAIState {
+  const outcome: DecisionOutcome = {
+    decisionType,
+    context,
+    success,
+    value,
+    timestamp,
+  };
+
+  // Add to memory
+  const newOutcomes = [...aiState.outcomes, outcome];
+
+  // Trim to memory depth
+  const trimmedOutcomes =
+    newOutcomes.length > aiState.memoryDepth
+      ? newOutcomes.slice(-aiState.memoryDepth)
+      : newOutcomes;
+
+  // Update success rates
+  const key = getOutcomeKey(decisionType, context);
+  const history = trimmedOutcomes.filter((o) => getOutcomeKey(o.decisionType, o.context) === key);
+  const successCount = history.filter((o) => o.success).length;
+  const successRate = history.length > 0 ? successCount / history.length : 0;
+  
+  const newSuccessRates = {
+    ...aiState.successRates,
+    [key]: successRate,
+  };
+
+  let newState = {
+    ...aiState,
+    outcomes: trimmedOutcomes,
+    successRates: newSuccessRates,
+  };
+
+  // Adapt strategy if needed
+  if (shouldAdaptStrategy(newState, key, successRate)) {
+    newState = adaptStrategy(newState, key, successRate, timestamp);
+  }
+
+  return newState;
+}
+
+/**
+ * Get composite key for outcome tracking
+ */
+function getOutcomeKey(decisionType: string, context: Record<string, unknown>): string {
+  const contextKey = Object.entries(context)
+    .filter(([_, v]) => typeof v === "string" || typeof v === "number")
+    .map(([k, v]) => `${k}:${v}`)
+    .sort()
+    .join("|");
+  return `${decisionType}:${contextKey}`;
+}
+
+/**
+ * Determine if strategy should be adapted
+ */
+function shouldAdaptStrategy(
+  aiState: PersonalityAIState,
+  key: string,
+  successRate: number,
+): boolean {
+  // Adapt if success rate is low and enough data collected
+  const history = aiState.outcomes.filter((o) => getOutcomeKey(o.decisionType, o.context) === key);
+  if (history.length < 5) return false;
+
+  // Conservative personalities adapt slower
+  const threshold = 0.5 - aiState.conservatism * 0.2;
+  return successRate < threshold;
+}
+
+/**
+ * Adapt strategy based on outcomes
+ */
+function adaptStrategy(
+  aiState: PersonalityAIState,
+  key: string,
+  successRate: number,
+  timestamp: number,
+): PersonalityAIState {
+  const config = PERSONALITY_CONFIG[aiState.personality];
+  const confidenceChange = (1 - successRate) * config.adaptationSpeed;
+
+  const newConfidence = Math.max(0.1, aiState.strategyConfidence - confidenceChange);
+  
+  let currentStrategy = aiState.currentStrategy;
+  let finalConfidence = newConfidence;
+
+  // Switch to alternative strategy if confidence is low
+  if (newConfidence < 0.3) {
+    currentStrategy = getAlternativeStrategy(aiState.currentStrategy);
+    finalConfidence = 0.6;
+  }
+
+  return {
+    ...aiState,
+    strategyConfidence: finalConfidence,
+    currentStrategy,
+    lastStrategyChange: timestamp,
+  };
+}
+
+/**
+ * Get alternative strategy based on current strategy
+ */
+function getAlternativeStrategy(currentStrategy: string): string {
+  const alternatives: Record<string, string> = {
+    default: "aggressive",
+    aggressive: "conservative",
+    conservative: "balanced",
+    balanced: "innovative",
+    innovative: "default",
+  };
+  return alternatives[currentStrategy] || "default";
+}
+
+/**
+ * Get strategic planning score for long-term decisions
+ */
+export function calculateStrategicScore(
+  aiState: PersonalityAIState,
+  decision: {
+    shortTermValue: number;
+    longTermValue: number;
+    risk: number;
+    novelty: number;
+  },
+): number {
+  const config = PERSONALITY_CONFIG[aiState.personality];
+
+  // Balance short-term vs long-term based on strategic horizon
+  const horizonWeight = Math.min(1, aiState.strategicHorizon / 90); // Normalize to 0-1
+  const strategicValue =
+    decision.shortTermValue * (1 - horizonWeight) + decision.longTermValue * horizonWeight;
+
+  // Apply risk tolerance
+  const riskAdjustedValue = strategicValue * (1 - decision.risk * (1 - config.riskTolerance));
+
+  // Apply innovation preference
+  const noveltyBonus = decision.novelty * config.innovation * 0.3;
+
+  return Math.max(0, Math.min(1, riskAdjustedValue + noveltyBonus));
+}
+
+/**
+ * Get competitive awareness modifier
+ * Adjusts decisions based on player/other NPC actions
+ */
+export function getCompetitiveModifier(
+  aiState: PersonalityAIState,
+  competitorActions: Array<{ type: string; success: boolean }>,
+): number {
+  const config = PERSONALITY_CONFIG[aiState.personality];
+  let modifier = 1;
+
+  // Analyze competitor actions
+  const successfulCompetitors = competitorActions.filter((a) => a.success).length;
+  const totalCompetitors = competitorActions.length;
+
+  if (totalCompetitors > 0) {
+    const competitorSuccessRate = successfulCompetitors / totalCompetitors;
+
+    // If competitors are succeeding, conservative personalities may avoid
+    // Innovative personalities may try to compete
+    if (competitorSuccessRate > 0.7) {
+      modifier *= 1 - config.conservatism * 0.3 + config.innovation * 0.2;
+    }
+
+    // If competitors are failing, may be opportunity
+    if (competitorSuccessRate < 0.3) {
+      modifier *= 1 + config.innovation * 0.2;
+    }
+  }
+
+  return modifier;
 }

@@ -63,7 +63,7 @@ export function detectContender(
   aiState: CampaignAIState,
   horse: Horse,
   currentDay: number,
-): ContenderStatus {
+): CampaignAIState {
   const horseRating = calculateOverallRating(horse);
   const avgStat = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
 
@@ -145,13 +145,18 @@ export function detectContender(
   const status: ContenderStatus = {
     horseId: horse.id,
     isContender,
-    targetRaces: [...new Set(targetRaces)], // Deduplicate
+    targetRaces: [...new Set(targetRaces)],
     confidence,
     lastAssessmentDay: currentDay,
   };
 
-  aiState.contenderTracking[horse.id] = status;
-  return status;
+  return {
+    ...aiState,
+    contenderTracking: {
+      ...aiState.contenderTracking,
+      [horse.id]: status,
+    },
+  };
 }
 
 /**
@@ -207,13 +212,13 @@ function calculateRaceTargetScore(
   }
 
   // Race prestige
-  if (race.triplecrownKey) score += 40; // Triple Crown races most prestigious
-  if (race.bcKey === "breeders-cup") score += 35; // Breeders Cup
-  if (race.key === "dubai-world-cup") score += 35; // Dubai World Cup
-  if (race.grade === "G1") score += 25; // Other G1s
+  if (race.triplecrownKey) score += 40;
+  if (race.bcKey === "breeders-cup") score += 35;
+  if (race.key === "dubai-world-cup") score += 35;
+  if (race.grade === "G1") score += 25;
 
   // Purse value
-  score += Math.min(20, race.purse / 100000); // Up to 20 points for purse
+  score += Math.min(20, race.purse / 100000);
 
   // Personality modifiers
   const factors: Record<string, number> = {
@@ -243,9 +248,8 @@ export function shouldTargetMajorRace(
   stable: Stable,
   currentDay: number,
 ): boolean {
-  // Check if horse is a contender
-  const contenderStatus = detectContender(aiState, horse, currentDay);
-  if (!contenderStatus.isContender) return false;
+  const contenderStatus = aiState.contenderTracking[horse.id];
+  if (!contenderStatus || !contenderStatus.isContender) return false;
 
   // Check if race is in target races
   if (!contenderStatus.targetRaces.includes(race.key)) return false;
@@ -268,10 +272,10 @@ export function shouldTargetMajorRace(
   const config = aiState.personalityState;
   let threshold = adaptiveThreshold;
 
-  if (config.personality === "aggressive") threshold -= 10; // More likely to target
-  if (config.personality === "conservative") threshold += 10; // More cautious
+  if (config.personality === "aggressive") threshold -= 10;
+  if (config.personality === "conservative") threshold += 10;
   if (config.personality === "prestige" && (race.triplecrownKey || race.bcKey === "breeders-cup")) {
-    threshold -= 15; // Prestige stables prioritize major races
+    threshold -= 15;
   }
 
   return score > threshold;
@@ -287,9 +291,9 @@ export function getPrepRaceStrategy(
   stable: Stable,
   currentDay: number,
 ): {
-  prepRaceDaysBefore: number; // How many days before target to schedule prep
-  prepRaceGrade: string; // Minimum grade for prep races
-  numberOfPreps: number; // How many prep races to schedule
+  prepRaceDaysBefore: number;
+  prepRaceGrade: string;
+  numberOfPreps: number;
 } {
   const config = aiState.personalityState;
 
@@ -300,25 +304,23 @@ export function getPrepRaceStrategy(
 
   // Personality-based adjustments
   if (config.personality === "aggressive") {
-    prepRaceDaysBefore = 21; // Shorter prep for aggressive stables
-    numberOfPreps = 3; // More prep races
+    prepRaceDaysBefore = 21;
+    numberOfPreps = 3;
   } else if (config.personality === "conservative") {
-    prepRaceDaysBefore = 45; // Longer prep for conservative stables
-    numberOfPreps = 1; // Fewer prep races
-    prepRaceGrade = "G2"; // Higher quality preps
+    prepRaceDaysBefore = 45;
+    numberOfPreps = 1;
+    prepRaceGrade = "G2";
   } else if (config.personality === "win-now") {
-    prepRaceDaysBefore = 28; // Moderate prep
+    prepRaceDaysBefore = 28;
     numberOfPreps = 2;
-    prepRaceGrade = "G2"; // Better preps for win-now
+    prepRaceGrade = "G2";
   }
 
-  // Triple Crown races require specific prep patterns
   if (targetRace.triplecrownKey) {
-    prepRaceDaysBefore = 21; // Shorter preps for TC series
-    numberOfPreps = 2; // Standard 2-prep pattern
+    prepRaceDaysBefore = 21;
+    numberOfPreps = 2;
   }
 
-  // Breeders Cup allows longer prep
   if (targetRace.bcKey === "breeders-cup") {
     prepRaceDaysBefore = 35;
   }
@@ -348,9 +350,8 @@ export function recordCampaignDecision(
 
   const newHistory = [...aiState.campaignHistory, decision];
 
-  // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-memoryDepth) : newHistory;
+  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   return {
     ...aiState,
@@ -369,19 +370,23 @@ export function recordCampaignOutcome(
   prize: number,
   currentDay: number,
 ): CampaignAIState {
-  const decision = aiState.campaignHistory.find(
-    (d) => d.horseId === horseId && d.targetRaceKey === targetRaceKey && !d.success,
+  const decisionIndex = aiState.campaignHistory.findIndex(
+    (d) => d.horseId === horseId && d.targetRaceKey === targetRaceKey && d.success === undefined,
   );
 
-  if (decision) {
-    decision.success = position <= 3; // Top 3 is success
+  if (decisionIndex !== -1) {
+    const decision = { ...aiState.campaignHistory[decisionIndex] };
+    decision.success = position <= 3;
     decision.position = position;
     decision.prize = prize;
 
+    const newHistory = [...aiState.campaignHistory];
+    newHistory[decisionIndex] = decision;
+
     // Update learning state
     const contextKey = `${decision.personality}:${targetRaceKey}`;
-    const value = prize > 0 ? prize / 10000 : -position; // Normalize value
-    aiState.learningState = recordOutcome(
+    const value = prize > 0 ? prize / 10000 : -position;
+    const newLearningState = recordOutcome(
       aiState.learningState,
       "campaign_targeting",
       contextKey,
@@ -391,6 +396,12 @@ export function recordCampaignOutcome(
       currentDay,
       aiState.personalityState.memoryDepth,
     );
+
+    return {
+      ...aiState,
+      campaignHistory: newHistory,
+      learningState: newLearningState,
+    };
   }
 
   return aiState;
@@ -414,7 +425,7 @@ export function getCampaignInsights(
   );
   const totalCampaigns = stableHistory.length;
   const successes = stableHistory.filter((d) => d.success).length;
-  const successRate = totalClaims > 0 ? successes / totalDecisions : 0.5;
+  const successRate = totalCampaigns > 0 ? successes / totalCampaigns : 0.5;
   const avgPosition =
     totalCampaigns > 0
       ? stableHistory.reduce((sum, d) => sum + (d.position || 5), 0) / totalCampaigns

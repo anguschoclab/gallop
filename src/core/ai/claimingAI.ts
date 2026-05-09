@@ -89,8 +89,6 @@ export function calculateClaimingValue(
  * Assess horse form based on recent performance
  */
 function assessHorseForm(horse: Horse): number {
-  // Check recent race history (would need to be passed in from game state)
-  // For now, use form stat as proxy
   return horse.form / 10; // Form is 0-100, normalize to 0-10
 }
 
@@ -177,15 +175,16 @@ export function recordClaimingDecision(
     day: currentDay,
   };
 
-  aiState.claimingHistory.push(decision);
+  const newHistory = [...aiState.claimingHistory, decision];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.claimingHistory.length > maxHistory) {
-    aiState.claimingHistory = aiState.claimingHistory.slice(-maxHistory);
-  }
+  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
-  return aiState;
+  return {
+    ...aiState,
+    claimingHistory: trimmedHistory,
+  };
 }
 
 /**
@@ -199,18 +198,21 @@ export function recordClaimingOutcome(
   value: number,
   currentDay: number,
 ): ClaimingAIState {
-  // Find the decision
-  const decision = aiState.claimingHistory.find(
+  const decisionIndex = aiState.claimingHistory.findIndex(
     (d) => d.horseId === horseId && d.raceId === raceId && !d.success,
   );
 
-  if (decision) {
+  if (decisionIndex !== -1) {
+    const decision = { ...aiState.claimingHistory[decisionIndex] };
     decision.success = success;
     decision.value = value;
 
+    const newHistory = [...aiState.claimingHistory];
+    newHistory[decisionIndex] = decision;
+
     // Update learning state
     const contextKey = `${decision.horseRating}:${decision.claimingPrice}`;
-    aiState.learningState = recordOutcome(
+    const newLearningState = recordOutcome(
       aiState.learningState,
       "claiming",
       contextKey,
@@ -220,6 +222,12 @@ export function recordClaimingOutcome(
       currentDay,
       aiState.personalityState.memoryDepth,
     );
+
+    return {
+      ...aiState,
+      claimingHistory: newHistory,
+      learningState: newLearningState,
+    };
   }
 
   return aiState;

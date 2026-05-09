@@ -17,6 +17,8 @@ import type { MarketAIState } from "./marketAI";
 import type { UpkeepAIState } from "./upkeepAI";
 import type { WithdrawalAIState } from "./withdrawalAI";
 import type { HorseGenAIState } from "./horseGenAI";
+import type { RaceEntryAIState } from "./raceEntryAI";
+import type { BreedingAIState } from "./breedingAI";
 
 /**
  * Per-stable AI state that persists across all NPC decision-making
@@ -26,7 +28,7 @@ export interface StableAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: ReturnType<typeof createLearningState>;
   lastUpdateDay: number;
-  // Subsystem-specific AI states (will be populated by respective AI modules)
+  // Subsystem-specific AI states
   trainingAI?: TrainingAIState;
   claimingAI?: ClaimingAIState;
   auctionAI?: AuctionAIState;
@@ -38,6 +40,8 @@ export interface StableAIState {
   upkeepAI?: UpkeepAIState;
   withdrawalAI?: WithdrawalAIState;
   horseGenAI?: HorseGenAIState;
+  raceEntryAI?: RaceEntryAIState;
+  breedingAI?: BreedingAIState;
 }
 
 /**
@@ -73,7 +77,6 @@ export function getOrCreateStableAIState(
     state = createStableAIState(stable, currentDay);
     manager.stableStates[stable.id] = state;
   }
-  // Return a shallow clone; deep cloning via JSON is too slow for 500+ NPC stables
   return { ...state };
 }
 
@@ -82,8 +85,10 @@ export function getOrCreateStableAIState(
  * Update stable AI state after daily cycle
  */
 export function updateStableAIState(state: StableAIState, currentDay: number): StableAIState {
-  state.lastUpdateDay = currentDay;
-  return state;
+  return {
+    ...state,
+    lastUpdateDay: currentDay,
+  };
 }
 
 
@@ -91,14 +96,18 @@ export function updateStableAIState(state: StableAIState, currentDay: number): S
  * Prune old learning data for all stables
  */
 export function pruneAllLearningData(manager: NpcAIManager, cutoffDay: number): NpcAIManager {
-  for (const id in manager.stableStates) {
-    const state = manager.stableStates[id];
+  const newStableStates = { ...manager.stableStates };
+  for (const id in newStableStates) {
+    const state = newStableStates[id];
     const prunedLearning = pruneOldOutcomes(state.learningState, cutoffDay);
     if (prunedLearning !== state.learningState) {
-      manager.stableStates[id] = { ...state, learningState: prunedLearning };
+      newStableStates[id] = { ...state, learningState: prunedLearning };
     }
   }
-  return manager;
+  return {
+    ...manager,
+    stableStates: newStableStates,
+  };
 }
 
 /**

@@ -4,15 +4,13 @@
  */
 
 import type { Stable, Horse } from "@/game/types";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { getPersonalityAIState } from "./personalitySystem";
 import {
   createLearningState,
   recordOutcome,
   getSuccessRate,
-  getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
-import type { Expense } from "@/core/expenses";
 
 export interface UpkeepAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -60,21 +58,21 @@ export function createUpkeepAIState(stable: Stable): UpkeepAIState {
 function calculateTargetReserveRatio(personality: Stable["personality"]): number {
   switch (personality) {
     case "conservative":
-      return 6; // 6 months reserve
+      return 6;
     case "aggressive":
-      return 2; // 2 months reserve
+      return 2;
     case "developer":
-      return 4; // 4 months reserve for investment flexibility
+      return 4;
     case "win-now":
-      return 2.5; // Less reserve, more spending on racing
+      return 2.5;
     case "prestige":
-      return 3.5; // Moderate reserve
+      return 3.5;
     case "trader":
-      return 2; // Low reserve, high turnover
+      return 2;
     case "specialist":
-      return 3; // Standard reserve
+      return 3;
     case "breeder":
-      return 4; // Higher reserve for breeding operations
+      return 4;
     default:
       return 3;
   }
@@ -95,7 +93,7 @@ export function calculateMonthlyExpenseBudget(
 } {
   // Estimate monthly expenses
   const horseCount = horses.filter((h) => h.stableId === stable.id).length;
-  const basePerHorse = 500; // Base monthly cost per horse
+  const basePerHorse = 500;
   const totalMonthlyExpenses = horseCount * basePerHorse;
 
   // Personality-based spending multiplier
@@ -120,14 +118,14 @@ export function calculateMonthlyExpenseBudget(
 
   // Personality-based category adjustments
   if (config.personality === "prestige") {
-    categoryBudgets.facilities *= 1.5; // More on facilities
-    categoryBudgets.feed *= 1.2; // Better feed
+    categoryBudgets.facilities *= 1.5;
+    categoryBudgets.feed *= 1.2;
   }
   if (config.personality === "developer") {
-    categoryBudgets.veterinary *= 1.2; // More health care
+    categoryBudgets.veterinary *= 1.2;
   }
   if (config.personality === "win-now") {
-    categoryBudgets.training *= 1.3; // More training
+    categoryBudgets.training *= 1.3;
   }
 
   // Reserve target
@@ -154,7 +152,7 @@ export function shouldSpendOnCategory(
   // Basic cash check
   const monthlyBudget = calculateMonthlyExpenseBudget(aiState, stable, [], currentDay);
   if (stable.cash < monthlyBudget.reserveTarget) {
-    return false; // Below reserve target, conserve cash
+    return false;
   }
 
   // Personality-based spending propensity
@@ -174,7 +172,7 @@ export function shouldSpendOnCategory(
 
   // Budget check
   const categoryBudget = monthlyBudget.categoryBudgets[category] || 0;
-  const budgetRatio = amount / categoryBudget;
+  const budgetRatio = amount / (categoryBudget || 1);
 
   return budgetRatio <= spendingPropensity;
 }
@@ -190,9 +188,8 @@ export function updateReserveState(
 ): UpkeepAIState {
   const targetReserveRatio = calculateTargetReserveRatio(aiState.personalityState.personality);
   const currentReserve = stable.cash;
-  const currentReserveRatio = currentReserve / monthlyExpenses;
+  const currentReserveRatio = currentReserve / (monthlyExpenses || 1);
 
-  // Create new objects to avoid mutating frozen/read-only objects
   return {
     ...aiState,
     reserves: {
@@ -212,7 +209,7 @@ export function shouldConserveCash(
   stable: Stable,
   monthlyExpenses: number,
 ): boolean {
-  const currentReserveRatio = stable.cash / monthlyExpenses;
+  const currentReserveRatio = stable.cash / (monthlyExpenses || 1);
   const targetReserveRatio = aiState.reserves.targetReserveRatio;
 
   // Conserve if below target
@@ -220,7 +217,7 @@ export function shouldConserveCash(
 
   // Personality-based buffer
   const config = aiState.personalityState;
-  let buffer = 0.5; // 0.5 months buffer
+  let buffer = 0.5;
 
   if (config.personality === "conservative") buffer = 1.0;
   if (config.personality === "aggressive") buffer = 0.2;
@@ -249,7 +246,6 @@ export function recordBudgetDecision(
     personality: stable.personality,
   };
 
-  // Clone array to avoid mutating frozen/read-only objects
   const newBudgetHistory = [...aiState.budgetHistory, decision];
 
   // Trim history to memory depth
@@ -258,9 +254,9 @@ export function recordBudgetDecision(
     newBudgetHistory.length > maxHistory ? newBudgetHistory.slice(-maxHistory) : newBudgetHistory;
 
   // Update learning state
-  const success = spent <= totalBudget * 1.1; // Within 10% of budget is success
-  const value = totalBudget - spent; // Savings
-  const updatedLearningState = recordOutcome(
+  const success = spent <= totalBudget * 1.1;
+  const value = totalBudget - spent;
+  const newLearningState = recordOutcome(
     aiState.learningState,
     "upkeep_spending",
     "budget",
@@ -271,11 +267,10 @@ export function recordBudgetDecision(
     aiState.personalityState.memoryDepth,
   );
 
-  // Return new state to avoid mutating frozen/read-only objects
   return {
     ...aiState,
     budgetHistory: trimmedHistory,
-    learningState: updatedLearningState,
+    learningState: newLearningState,
   };
 }
 
@@ -297,8 +292,8 @@ export function getBudgetInsights(
   const avgSpending =
     totalBudgets > 0 ? stableHistory.reduce((sum, b) => sum + b.spent, 0) / totalBudgets : 0;
 
-  const successfulBudgets = stableHistory.filter((b) => b.success).length;
-  const budgetAdherence = totalBudgets > 0 ? successfulBudgets / totalBudgets : 1;
+  const successes = stableHistory.filter((b) => b.success).length;
+  const budgetAdherence = totalBudgets > 0 ? successes / totalBudgets : 1;
 
   const avgReserveRatio = aiState.reserves.currentReserveRatio;
   const targetReserveRatio = aiState.reserves.targetReserveRatio;

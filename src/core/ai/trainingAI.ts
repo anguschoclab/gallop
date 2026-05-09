@@ -136,20 +136,18 @@ export function updateHorseTraining(
   };
 
   // Add training to history
-  devTrack.trainingHistory.push({
+  const newHistory = [...devTrack.trainingHistory, {
     day: currentDay,
     type: trainingType,
     energyBefore,
     energyAfter: horse.energy,
-  });
+  }];
 
   // Trim history to last 10 trainings
-  if (devTrack.trainingHistory.length > 10) {
-    devTrack.trainingHistory = devTrack.trainingHistory.slice(-10);
-  }
+  const trimmedHistory = newHistory.length > 10 ? newHistory.slice(-10) : newHistory;
 
   // Update focus based on recent training
-  const recentTrainings = devTrack.trainingHistory.slice(-3);
+  const recentTrainings = trimmedHistory.slice(-3);
   const typeCounts = recentTrainings.reduce(
     (acc, t) => {
       acc[t.type] = (acc[t.type] || 0) + 1;
@@ -158,18 +156,24 @@ export function updateHorseTraining(
     {} as Record<string, number>,
   );
 
+  let newFocus = devTrack.currentFocus;
   const dominantType = Object.entries(typeCounts).sort((a, b) => b[1] - a[1])[0];
   if (dominantType && typeCounts[dominantType[0]] >= 2) {
-    devTrack.currentFocus = dominantType[0] as "speed" | "stamina" | "acceleration" | "balanced";
+    newFocus = dominantType[0] as "speed" | "stamina" | "acceleration" | "balanced";
   }
 
-  devTrack.lastTrainingDay = currentDay;
-  
+  const updatedDevTrack = {
+    ...devTrack,
+    trainingHistory: trimmedHistory,
+    currentFocus: newFocus,
+    lastTrainingDay: currentDay,
+  };
+
   return {
     ...aiState,
     horseDevelopment: {
       ...aiState.horseDevelopment,
-      [horse.id]: devTrack,
+      [horse.id]: updatedDevTrack,
     },
   };
 }
@@ -238,7 +242,7 @@ export function shouldTrainToday(
   // Check training frequency (personality-driven)
   const devTrack = aiState.horseDevelopment[horse.id];
   if (devTrack) {
-    const daysSinceTraining = currentDay - devTrack.lastTrainingDay;
+    const daysSinceTraining = currentDay - devTrack.lastUpdateDay;
     const config = aiState.personalityState;
 
     // Aggressive personalities train more frequently

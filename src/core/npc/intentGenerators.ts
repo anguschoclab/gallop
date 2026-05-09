@@ -27,6 +27,10 @@ import {
   recordClaimingDecision,
 } from "@/core/ai/claimingAI";
 import {
+  createRaceEntryAIState,
+  calculateRaceSuitability,
+} from "@/core/ai/raceEntryAI";
+import {
   getOrCreateStableAIState,
   updateStableAIState,
   type NpcAIManager,
@@ -207,11 +211,23 @@ function generateNpcRaceEntryIntents(
 ): RaceEntryIntent[] {
   const intents: RaceEntryIntent[] = [];
 
+  // Use persisted AI state if available, otherwise fallback to temporary state
+  const raceEntryAI =
+    stableAI?.raceEntryAI ||
+    (stableAI
+      ? (stableAI.raceEntryAI = createRaceEntryAIState(stable))
+      : createRaceEntryAIState(stable));
+
   for (const race of upcomingRaces) {
     const entrySet = raceEntrySets.get(race.id);
     for (const horse of ownedHorses) {
-      // Simple logic: enter if horse is eligible and has energy
-      if (horse.energy >= 40 && (!entrySet || !entrySet.has(horse.id))) {
+      // Skip if already entered
+      if (entrySet && entrySet.has(horse.id)) continue;
+
+      // Use AI to determine suitability
+      const suitability = calculateRaceSuitability(raceEntryAI, horse, race, stable, day);
+
+      if (suitability > 60) {
         if (race.entries.length < race.fieldSize) {
           intents.push({
             id: generateUUID(),

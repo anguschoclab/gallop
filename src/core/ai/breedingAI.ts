@@ -150,15 +150,16 @@ export function recordBreedingDecision(
     score,
   };
 
-  aiState.breedingHistory.push(decision);
+  const newHistory = [...aiState.breedingHistory, decision];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.breedingHistory.length > maxHistory) {
-    aiState.breedingHistory = aiState.breedingHistory.slice(-maxHistory);
-  }
+  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
-  return aiState;
+  return {
+    ...aiState,
+    breedingHistory: trimmedHistory,
+  };
 }
 
 /**

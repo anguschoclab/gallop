@@ -1,19 +1,21 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import { rngForRace } from "@/services/raceSimulationService";
-import type { Race, Horse } from "@/game/types";
+import type { Race } from "@/game/types";
 import type { ClaimingIntent } from "@/core/resolver/intents";
-import { getReputationTier } from "@/core/reputation";
 import { simulateRace } from "@/services/raceSimulationExecutor";
 import { generateRaceImpacts } from "@/services/raceImpactGenerator";
 import { processClaimingResolution } from "@/services/claimingResolutionService";
 import { recordRaceHistory, checkHallOfFameInduction } from "@/services/historyService";
 import { generateUUID } from "@/game/uuid";
+import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAI";
+import { recordJockeyOutcome } from "@/core/ai/jockeyAI";
+import { recordCampaignOutcome } from "@/core/ai/campaignAI";
 
 /**
  * Race Resolution Phase (Order 70)
  * Simulates unresolved races and generates all race resolution impacts.
- * This replaces the old resolveRace function with impact-based resolution.
  */
 export const raceResolutionPhase: PipelinePhase = {
   name: "raceResolution",
@@ -24,6 +26,7 @@ export const raceResolutionPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
     const updatedRaces: typeof state.races = [...state.races];
     const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= newDay);
+    
     if (overdueRaces.length > 0) {
       console.log(`      - Resolving ${overdueRaces.length} races...`);
     }
@@ -31,10 +34,7 @@ export const raceResolutionPhase: PipelinePhase = {
     let resolvedCount = 0;
     for (const race of overdueRaces) {
       resolvedCount++;
-      if (resolvedCount % 10 === 0) {
-        console.log(`        ... resolved ${resolvedCount}/${overdueRaces.length} races`);
-      }
-      const raceStart = Date.now();
+      
       // Simulate race using service
       const { result, runners, snapshots } = simulateRace(
         race,
@@ -45,10 +45,6 @@ export const raceResolutionPhase: PipelinePhase = {
         state.npcAIManager,
         newDay
       );
-      const raceDuration = Date.now() - raceStart;
-      if (raceDuration > 100) {
-        console.log(`        [SLOW RACE] ${race.name} (id: ${race.id}) took ${raceDuration}ms`);
-      }
 
       const rng = rngForRace(race);
 
@@ -56,6 +52,62 @@ export const raceResolutionPhase: PipelinePhase = {
       const raceIndex = updatedRaces.findIndex((r) => r.id === race.id);
       if (raceIndex !== -1) {
         updatedRaces[raceIndex] = { ...race, resolved: true, result, snapshots };
+      }
+
+      // Record outcomes for NPC AI
+      if (state.npcAIManager) {
+        for (const res of result) {
+          const horse = state.horses.find(h => h.id === res.horseId);
+          if (horse && horse.stableId) {
+            const stable = state.npcStables.find(s => s.id === horse.stableId);
+            if (stable) {
+              const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
+              
+              // 1. Learn from race entry performance
+              if (stableAI.raceEntryAI) {
+                stableAI.raceEntryAI = recordRaceEntryOutcome(
+                  stableAI.raceEntryAI,
+                  horse,
+                  race,
+                  newDay,
+                  res.position <= 3,
+                  res.position
+                );
+              }
+
+              // 2. Learn from jockey performance
+              if (stableAI.jockeyAI) {
+                 const runner = runners.find(r => r.horseId === res.horseId);
+                 if (runner && runner.jockeyId) {
+                    const prize = 0; // prize calculation would be complex here, using 0 for now as proxy
+                    stableAI.jockeyAI = recordJockeyOutcome(
+                      stableAI.jockeyAI,
+                      runner.jockeyId,
+                      res.horseId,
+                      race.id,
+                      res.position,
+                      prize,
+                      newDay
+                    );
+                 }
+              }
+
+              // 3. Learn from campaign targeting
+              if (stableAI.campaignAI && race.graded?.key) {
+                 stableAI.campaignAI = recordCampaignOutcome(
+                   stableAI.campaignAI,
+                   res.horseId,
+                   race.graded.key,
+                   res.position,
+                   0, // prize proxy
+                   newDay
+                 );
+              }
+
+              state.npcAIManager.stableStates[stable.id] = stableAI;
+            }
+          }
+        }
       }
 
       // Generate race impacts using service
@@ -96,8 +148,7 @@ export const raceResolutionPhase: PipelinePhase = {
         const winnerId = result.find(r => r.position === 1)?.horseId;
         const winner = state.horses.find(h => h.id === winnerId);
         if (winner && winner.id) {
-          // Calculate temporary stats to see if they cross the threshold
-          const prizeMoney = race.purse * 0.6; // Winner gets 60%
+          const prizeMoney = race.purse * 0.6;
           const tempHorse = {
             ...winner,
             lifetimeEarnings: winner.lifetimeEarnings + prizeMoney,
@@ -119,17 +170,6 @@ export const raceResolutionPhase: PipelinePhase = {
               type: "hall_of_fame_induction",
               entry: hofEntry,
               reason: "G1 winner reached HoF criteria",
-            } as any);
-
-            impacts.push({
-              id: generateUUID(),
-              intentId: race.id,
-              day: newDay,
-              phase: "raceResolution",
-              logLevel: "always",
-              type: "log",
-              text: `Hall of Fame induction: ${winner.name} after G1 victory in ${race.name}`,
-              reason: "HoF induction",
             } as any);
           }
         }
@@ -156,7 +196,7 @@ export const raceResolutionPhase: PipelinePhase = {
       }
     }
 
-    // Cleanup: Remove resolved races older than 30 days to prevent array accumulation
+    // Cleanup
     const prunedRaces = updatedRaces.filter((r) => !r.resolved || r.day >= newDay - 30);
 
     return {

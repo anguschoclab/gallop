@@ -1,5 +1,4 @@
-import type { Horse, Race, Stable, Pregnancy, Jockey } from "@/game/types";
-import { runNpcTraining, runNpcRaceEntry, updateHorseFame } from "@/game/npcRaceEntry";
+import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import {
   NpcAIManager,
@@ -35,8 +34,8 @@ export interface NpcCycleResult {
 /**
  * Run the complete NPC cycle for a single day
  * This orchestrates:
- * 1. NPC Training
- * 2. NPC Race Entry (3 days ahead)
+ * 1. NPC Training (handled via Intent pipeline)
+ * 2. NPC Race Entry (handled via Intent pipeline)
  * 3. Horse Fame Updates for yesterday's races
  * 4. AI state management and pruning
  *
@@ -45,7 +44,7 @@ export interface NpcCycleResult {
  * @param races - Current race schedule
  * @param currentDay - The current game day
  * @param raceEntryDaysAhead - How many days ahead to enter races (default: 3)
- * @param aiManager - Existing AI manager (optional, for persistence)
+ * @param aiManager - Existing AI manager
  * @returns Updated horses, races, and AI manager
  */
 export function runNpcCycle(
@@ -57,7 +56,7 @@ export function runNpcCycle(
   rng: Rng,
   raceEntryDaysAhead: number = 3,
   pregnantIds: Set<string> = new Set(),
-  aiManager: NpcAIManager = { stableStates: new Map(), globalDay: currentDay },
+  aiManager: NpcAIManager = { stableStates: {}, globalDay: currentDay },
   npcFacilities?: Record<string, Record<string, Facility>>,
 ): NpcCycleResult {
   // Skip if no NPC stables
@@ -66,22 +65,19 @@ export function runNpcCycle(
   }
 
   // 1. NPC Training and 2. NPC Race Entry are now handled via the Intent/Impact pipeline
-  // to avoid duplication and ensure consistent resolution.
   const horsesAfterTraining = horses;
   const racesAfterEntry = races;
 
   // 3. Update fame for horses in yesterday's races
   const yesterdayRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
   let horsesAfterFame = [...horsesAfterTraining];
-  const horseToIndex = new Map(horsesAfterFame.map((h, i) => [h.id, i]));
+  const horseMap = new RecordMap(horsesAfterFame.map((h) => [h.id, h]));
   
-  // Use a mutable pattern inside this phase to avoid O(R*H) array copies
   for (const race of yesterdayRaces) {
     if (!race.result) continue;
     for (const result of race.result) {
-      const idx = horseToIndex.get(result.horseId);
-      if (idx !== undefined) {
-        const horse = horsesAfterFame[idx];
+      const horse = horseMap.get(result.horseId);
+      if (horse) {
         let fameGain = 0;
         if (result.position === 1) {
           fameGain = race.graded?.grade === "G1" ? 20 : race.graded?.grade === "G2" ? 15 : race.graded?.grade === "G3" ? 10 : 5;
@@ -93,22 +89,22 @@ export function runNpcCycle(
         if (race.purse > 500000) fameGain += 3;
         else if (race.purse > 100000) fameGain += 1;
         
-        horsesAfterFame[idx] = {
-          ...horse,
-          fame: Math.min(100, horse.fame + fameGain)
-        };
+        const horseIdx = horsesAfterFame.findIndex(h => h.id === horse.id);
+        if (horseIdx !== -1) {
+          horsesAfterFame[horseIdx] = {
+            ...horse,
+            fame: Math.min(100, horse.fame + fameGain)
+          };
+        }
       }
     }
   }
 
-
-
   // 4. AI state management
-  // Clone AI manager to avoid mutating frozen/read-only objects
   let updatedAiManager = {
     ...aiManager,
     globalDay: currentDay,
-    stableStates: new Map(aiManager.stableStates),
+    stableStates: { ...aiManager.stableStates },
   };
 
   // Check horses entered in claiming races and decide whether to withdraw
@@ -116,20 +112,14 @@ export function runNpcCycle(
     (r) => r.raceClass === "Claiming" && r.day === currentDay + raceEntryDaysAhead,
   );
 
-  // Index horses for fast lookup
-  const horseMap = new Map(horsesAfterTraining.map(h => [h.id, h]));
-
   // Create or update AI state for each stable
   for (const stable of npcStables) {
-    const stableAIState = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
-    updatedAiManager.stableStates.set(stable.id, updateStableAIState(stableAIState, currentDay));
+    let stableAIState = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
 
-    // Initialize facility AI if not present
+    // Initialize sub-AIs if not present
     if (!stableAIState.facilityAI) {
       stableAIState.facilityAI = createFacilityAIState(stable);
     }
-
-    // Initialize withdrawal AI if not present
     if (!stableAIState.withdrawalAI) {
       stableAIState.withdrawalAI = createWithdrawalAIState(stable);
     }
@@ -143,7 +133,7 @@ export function runNpcCycle(
       if (entry) {
         const horse = horseMap.get(entry.horseId);
         if (horse) {
-          const shouldWithdraw = shouldWithdrawHorse(
+          const { shouldWithdraw, reason } = shouldWithdrawHorse(
             stableAIState.withdrawalAI,
             horse,
             race,
@@ -151,16 +141,14 @@ export function runNpcCycle(
             currentDay,
           );
           if (shouldWithdraw) {
-            // Mark entry as withdrawn from claiming
             entry.withdrawnFromClaiming = true;
-            // Record withdrawal decision for AI learning
-            recordWithdrawalDecision(
+            stableAIState.withdrawalAI = recordWithdrawalDecision(
               stableAIState.withdrawalAI,
               horse,
               race,
               stable,
               true,
-              "risk_assessment",
+              reason || "risk_assessment",
               currentDay,
             );
           }
@@ -168,8 +156,7 @@ export function runNpcCycle(
       }
     }
 
-
-    // AI-driven facility upgrades (if facilities are available)
+    // AI-driven facility upgrades
     if (npcFacilities && npcFacilities[stable.id]) {
       const facilities = npcFacilities[stable.id];
       const facilityBudget = calculateFacilityBudget(stableAIState.facilityAI, stable, currentDay);
@@ -177,32 +164,35 @@ export function runNpcCycle(
       if (facilityBudget.upgradeBudget > 0 && stable.cash >= facilityBudget.upgradeBudget) {
         const facilityToUpgrade = selectFacilityToUpgrade(
           stableAIState.facilityAI,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           facilities as any,
           stable,
           currentDay,
         );
-        const currentFacility = facilities[facilityToUpgrade];
-        const upgraded = upgradeFacility(currentFacility, currentDay);
-        if (upgraded) {
-          stable.cash -= upgraded.upgradeCost;
-          facilities[facilityToUpgrade] = upgraded;
-          // Record investment for AI learning
-          recordFacilityInvestment(
-            stableAIState.facilityAI,
-            facilityToUpgrade,
-            currentFacility.level,
-            upgraded.level,
-            upgraded.upgradeCost,
-            stable,
-            currentDay,
-          );
+        if (facilityToUpgrade) {
+          const currentFacility = facilities[facilityToUpgrade];
+          const upgraded = upgradeFacility(currentFacility, currentDay);
+          if (upgraded) {
+            stable.cash -= upgraded.upgradeCost;
+            facilities[facilityToUpgrade] = upgraded;
+            stableAIState.facilityAI = recordFacilityInvestment(
+              stableAIState.facilityAI,
+              facilityToUpgrade,
+              currentFacility.level,
+              upgraded.level,
+              upgraded.upgradeCost,
+              stable,
+              currentDay,
+            );
+          }
         }
       }
     }
+
+    // Update stable state in manager
+    updatedAiManager.stableStates[stable.id] = updateStableAIState(stableAIState, currentDay);
   }
 
-  // Prune old learning data (90-day memory depth)
+  // Prune old learning data
   const cutoffDay = currentDay - 90;
   updatedAiManager = pruneAllLearningData(updatedAiManager, cutoffDay);
 
@@ -213,4 +203,13 @@ export function runNpcCycle(
     aiManager: updatedAiManager,
     npcFacilities,
   };
+}
+
+// Helper for Record-based lookup
+class RecordMap<V> {
+  private record: Record<string, V> = {};
+  constructor(entries: [string, V][]) {
+    for (const [k, v] of entries) this.record[k] = v;
+  }
+  get(key: string): V | undefined { return this.record[key]; }
 }
