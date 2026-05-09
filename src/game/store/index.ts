@@ -185,9 +185,9 @@ export const useGame = create<StoreType>()(
       staffPool: [],
       hiredStaff: [],
       npcAIManager: {
-        stableStates: new Map(),
+        stableStates: {},
         globalDay: 1,
-      } as any, // Type assertion to handle Map vs Record mismatch
+      },
 
       // Core slice
       ...createCoreSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),

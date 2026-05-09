@@ -197,7 +197,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     return {
       npcStables: [],
       npcAIManager: {
-        stableStates: new Map(),
+        stableStates: {},
         globalDay: 1,
       },
       breedingPrograms: [],

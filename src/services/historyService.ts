@@ -18,7 +18,7 @@ export function recordRaceHistory(
   race: Race,
   result: Array<{ horseId: string; position: number; time: number }>,
   runners: any[],
-  horses: Horse[],
+  horses: Horse[] | Map<string, Horse>,
   day: number
 ): SeasonRecord | null {
   // Only record G1 races in season history
@@ -27,7 +27,7 @@ export function recordRaceHistory(
   const winner = result.find(r => r.position === 1);
   if (!winner) return null;
 
-  const winnerHorse = horses.find(h => h.id === winner.horseId);
+  const winnerHorse = horses instanceof Map ? (horses as Map<string, Horse>).get(winner.horseId) : horses.find(h => h.id === winner.horseId);
   const runner = runners.find(r => r.horseId === winner.horseId);
 
   return {

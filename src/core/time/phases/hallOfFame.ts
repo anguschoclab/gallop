@@ -12,6 +12,7 @@
 // Inducts legendary horses into the Hall of Fame based on career achievements
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
+import { getCareerStats } from "@/core/horse/stats";
 import type { AnyImpact, HallOfFameInductionImpact, LogImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 

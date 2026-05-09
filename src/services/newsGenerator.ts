@@ -30,13 +30,13 @@ export function createNewsItem(params: Omit<NewsItem, "id">): NewsItem {
 export function generateRaceNews(
   race: Race,
   result: { horseId: string; position: number }[],
-  horses: Horse[],
+  horses: Horse[] | Map<string, Horse>,
   day: number
 ): NewsItem | null {
   const winnerEntry = result.find(r => r.position === 1);
   if (!winnerEntry) return null;
 
-  const winner = horses.find(h => h.id === winnerEntry.horseId);
+  const winner = horses instanceof Map ? (horses as Map<string, Horse>).get(winnerEntry.horseId) : horses.find(h => h.id === winnerEntry.horseId);
   if (!winner) return null;
 
   const grade = race.graded?.grade;

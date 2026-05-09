@@ -148,6 +148,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     log: [{ day: 1, text: welcomeText }],
     pregnancies: [],
     npcStables: updatedStables,
+    npcAIManager: { stableStates: {}, globalDay: 1 },
     scoutReports: [],
     auctions: [],
     jockeys,

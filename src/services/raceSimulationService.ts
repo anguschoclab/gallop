@@ -113,9 +113,9 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   }
 
   // 4. Build the final Runner objects with assigned barriers
-  const horseMap = new Map(horses.map(h => [h.id, h]));
-  const jockeyMap = new Map(dependencies.jockeys.map(j => [j.id, j]));
-  const stableMap = npcStables ? new Map(npcStables.map(s => [s.id, s])) : new Map();
+  const horseMap = horses instanceof Map ? (horses as Map<string, Horse>) : new Map(horses.map(h => [h.id, h]));
+  const jockeyMap = dependencies.jockeys instanceof Map ? (dependencies.jockeys as Map<string, Jockey>) : new Map(dependencies.jockeys.map(j => [j.id, j]));
+  const stableMap = npcStables instanceof Map ? (npcStables as Map<string, Stable>) : (npcStables ? new Map(npcStables.map(s => [s.id, s])) : new Map());
   const fillerMap = new Map(fillerHorses.map(h => [h.id, h]));
   
   const runners: Runner[] = [];

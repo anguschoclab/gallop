@@ -311,13 +311,25 @@ export function createCoreSlice(
         applyDayResult(finalState, newLogs, playerUpkeep, newDay);
       } catch (error) {
         // Fallback: Worker not available (SSR context), use synchronous pipeline
-        console.warn("Worker not available, using synchronous pipeline execution", error);
+        if (!(error instanceof Error && error.message.includes("Worker not available"))) {
+            // Only log if it's NOT just a missing worker
+            console.warn("Worker not available or failed to clone state, using synchronous pipeline execution");
+        }
 
         // Execute pipeline for all phases
         const pipelineContext: PipelineContext = {
           previousDay: s.day,
           newDay,
-          state: { ...s, horses },
+          state: {
+            ...s,
+            horses,
+            npcAIManager: s.npcAIManager
+              ? {
+                  ...s.npcAIManager,
+                  stableStates: { ...s.npcAIManager.stableStates },
+                }
+              : undefined,
+          },
           logs: [],
           dailyRng: createRng(hashStr("daily_" + newDay)),
           // Intent/impact resolver fields

@@ -10,6 +10,7 @@
 
 import type { PipelineContext } from "../pipeline";
 import { refreshMarket } from "@/game/store/helpers/market";
+import { calculateRaceRating } from "@/core/horse/stats";
 import { createRng, hashStr } from "@/game/rng";
 import {
   shouldPurchaseHorse,

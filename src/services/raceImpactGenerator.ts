@@ -50,8 +50,8 @@ export interface GenerateRaceImpactsProps {
   race: Race;
   result: Array<{ horseId: string; position: number; time: number }>;
   runners: Array<{ horseId: string; barrier?: number; lane?: number }>;
-  horses: Horse[];
-  jockeys: Jockey[];
+  horses: Horse[] | Map<string, Horse>;
+  jockeys: Jockey[] | Map<string, Jockey>;
   newDay: number;
   stateCash: number;
   stateReputation?: ManagerReputation;
@@ -68,8 +68,8 @@ export interface GenerateRaceImpactsProps {
  * @param props.race - The completed race
  * @param props.result - Final race result positions and times
  * @param props.runners - The field of runners with lane/barrier data
- * @param props.horses - Current horse population
- * @param props.jockeys - Current jockey population
+ * @param props.horses - Current horse population (or pre-indexed Map)
+ * @param props.jockeys - Current jockey population (or pre-indexed Map)
  * @param props.newDay - Game day of the race
  * @param props.stateCash - Current player cash
  * @param props.stateReputation - Current manager reputation
@@ -95,8 +95,10 @@ export function generateRaceImpacts({
 }: GenerateRaceImpactsProps): AnyImpact[] {
   const impacts: AnyImpact[] = [];
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
-  const horseMap = new Map(horses.map(h => [h.id, h]));
-  const jockeyMap = new Map(jockeys.map(j => [j.id, j]));
+  
+  const horseMap = horses instanceof Map ? (horses as Map<string, Horse>) : new Map(horses.map(h => [h.id, h]));
+  const jockeyMap = jockeys instanceof Map ? (jockeys as Map<string, Jockey>) : new Map(jockeys.map(j => [j.id, j]));
+  
   const runnersMap = new Map(runners.map(run => [run.horseId, run]));
   const entriesMap = new Map(race.entries.map(e => [e.horseId, e]));
 

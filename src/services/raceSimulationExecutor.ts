@@ -37,10 +37,10 @@ export interface RaceSimulationResult {
  */
 export function simulateRace(
   race: Race, 
-  horses: Horse[], 
-  jockeys: Jockey[],
+  horses: Horse[] | Map<string, Horse>, 
+  jockeys: Jockey[] | Map<string, Jockey>,
   hiredStaff?: StaffMember[],
-  npcStables?: Stable[],
+  npcStables?: Stable[] | Map<string, Stable>,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
   recordSnapshots?: boolean

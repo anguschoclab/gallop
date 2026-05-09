@@ -14,6 +14,7 @@
  */
 
 import type { Horse, Stable } from "@/game/types";
+import { calculateRaceRating } from "@/core/horse/stats";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,

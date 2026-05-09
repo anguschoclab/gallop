@@ -79,14 +79,12 @@ export function runNpcCycle(
 
   // 3. Update fame for horses in yesterday's races
   const yesterdayRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
-  let horsesAfterFame = [...horsesAfterTraining];
-  const horseMap = new RecordMap(horsesAfterFame.map((h) => [h.id, h]));
   
-  for (const race of yesterdayRaces) {
-    if (!race.result) continue;
-    for (const result of race.result) {
-      const horse = horseMap.get(result.horseId);
-      if (horse) {
+  if (yesterdayRaces.length > 0) {
+    const fameGains = new Map<string, number>();
+    for (const race of yesterdayRaces) {
+      if (!race.result) continue;
+      for (const result of race.result) {
         let fameGain = 0;
         if (result.position === 1) {
           fameGain = race.graded?.grade === "G1" ? 20 : race.graded?.grade === "G2" ? 15 : race.graded?.grade === "G3" ? 10 : 5;
@@ -98,14 +96,21 @@ export function runNpcCycle(
         if (race.purse > 500000) fameGain += 3;
         else if (race.purse > 100000) fameGain += 1;
         
-        const horseIdx = horsesAfterFame.findIndex(h => h.id === horse.id);
-        if (horseIdx !== -1) {
-          horsesAfterFame[horseIdx] = {
-            ...horse,
-            fame: Math.min(100, horse.fame + fameGain)
-          };
+        if (fameGain > 0) {
+          const current = fameGains.get(result.horseId) || 0;
+          fameGains.set(result.horseId, current + fameGain);
         }
       }
+    }
+
+    if (fameGains.size > 0) {
+      horses = horses.map(h => {
+        const gain = fameGains.get(h.id);
+        if (gain) {
+          return { ...h, fame: Math.min(100, h.fame + gain) };
+        }
+        return h;
+      });
     }
   }
 
@@ -171,7 +176,7 @@ export function runNpcCycle(
   updatedAiManager = pruneAllLearningData(updatedAiManager, cutoffDay);
 
   return {
-    horses: horsesAfterFame,
+    horses,
     races: racesAfterEntry,
     jockeys,
     aiManager: updatedAiManager,

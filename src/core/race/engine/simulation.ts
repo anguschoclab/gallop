@@ -51,37 +51,40 @@ export function computePaceContext(runners: Runner[], distance: number): PaceCon
   let alive = 0;
   const laneDensity = new Array(12).fill(0);
 
+  // Find leader first (needed for lead group calculation)
   for (const r of runners) {
     if (r.position > leaderPos) {
       leaderPos = r.position;
       leaderVelocity = r.velocity;
     }
+  }
+
+  let leadGroupCount = 0;
+  let frontRunnersInLeadGroup = 0;
+
+  for (const r of runners) {
     if (r.finishTime === null) {
       totalProgress += r.position / distance;
       alive++;
       const laneIdx = Math.floor(r.lane / 1.2);
       if (laneIdx >= 0 && laneIdx < 12) laneDensity[laneIdx]++;
+
+      // Pace pressure and lead group check
+      if (leaderPos - r.position <= 4) {
+        leadGroupCount++;
+        if (r.runningStyle === "E") frontRunnersInLeadGroup++;
+      }
     } else {
       totalProgress += 1;
     }
   }
 
   // Calculate Pace Rating
-  // Expected velocity for a top-tier horse at this distance
   const expectedVel = 18.5 - (distance / 3000) * 2.5; 
   const paceRating = leaderVelocity / expectedVel;
-
-  let leadGroupCount = 0;
-  let frontRunnersInLeadGroup = 0;
-  for (const r of runners) {
-    if (r.finishTime !== null) continue;
-    if (leaderPos - r.position <= 4) {
-      leadGroupCount++;
-      if (r.runningStyle === "E") frontRunnersInLeadGroup++;
-    }
-  }
   const pacePressure = clamp((frontRunnersInLeadGroup - 1) / 2, 0, 1);
   const progress = alive > 0 ? totalProgress / runners.length : 1;
+
   return {
     leaderPos,
     leaderVelocity,
@@ -97,12 +100,15 @@ const DRAFT_DISTANCE = 3;
 const DRAFT_SPEED_BONUS = 1.015;
 const DRAFT_STAMINA_PRESERVE = 0.5;
 
-function getDraftingHorseId(r: Runner, runners: Runner[]): string | null {
-  for (const other of runners) {
+function getDraftingHorseId(r: Runner, sortedField: Runner[]): string | null {
+  for (const other of sortedField) {
     if (other.horseId === r.horseId) continue;
     const gap = other.position - r.position;
+    if (gap <= 0) break; // Optimization: stop early
+    if (gap > DRAFT_DISTANCE) continue;
+    
     const laneGap = Math.abs(other.lane - r.lane);
-    if (gap > 0 && gap <= DRAFT_DISTANCE && laneGap < 0.8) return other.horseId;
+    if (laneGap < 0.8) return other.horseId;
   }
   return null;
 }
@@ -128,34 +134,6 @@ function getTrackSection(
   return course.sections[0];
 }
 
-function getTrackRadius(pos: number, distance: number, course?: CourseSpecification): number {
-  const section = getTrackSection(pos, distance, course);
-  return section?.type === "turn" ? (section.radius ?? Infinity) : Infinity;
-}
-
-function getTrackGradient(pos: number, distance: number, course?: CourseSpecification): number {
-  const section = getTrackSection(pos, distance, course);
-  return section?.gradient ?? 0;
-}
-
-/**
- * Step a single runner forward in time.
- *
- * Updates runner position, velocity, and lane based on physics, drafting,
- * track geometry, stamina fade, jockey skills, and tactical adjustments.
- *
- * @param r - The runner to step
- * @param dt - Time delta in seconds
- * @param t - Current simulation time
- * @param distance - Race distance in meters
- * @param rng - Random number generator
- * @param field - All runners in the race
- * @param pace - Current pace context
- * @param course - Optional track course specification
- *
- * @example
- * stepRunner(runner, 0.1, 5.0, 1600, rng, runners, pace, course);
- */
 /**
  * Step a single runner forward in time by dt.
  *
@@ -167,7 +145,7 @@ function getTrackGradient(pos: number, distance: number, course?: CourseSpecific
  * @param t - Current simulation time
  * @param distance - Race distance in meters
  * @param rng - Random number generator
- * @param field - All runners in the race (for drafting/collision)
+ * @param sortedField - Runners in the race sorted by position descending (for spatial lookups)
  * @param pace - Current pace context (for tactical decisions)
  * @param course - Track course specification (for geometry effects)
  */
@@ -177,14 +155,15 @@ export function stepRunner(
   t: number,
   distance: number,
   rng: { next: () => number } | Rng,
-  field?: Runner[],
+  sortedField?: Runner[],
   pace?: PaceContext,
   course?: CourseSpecification,
 ) {
   if (r.finishTime !== null) return;
   const progress = r.position / distance;
 
-  r.draftingHorseId = field ? getDraftingHorseId(r, field) : null;
+  // Optimize drafting lookup using sortedField
+  r.draftingHorseId = sortedField ? getDraftingHorseId(r, sortedField) : null;
 
   const LANE_WIDTH = 1.2;
   const MAX_LATERAL_SPEED = 2.0;
@@ -197,17 +176,21 @@ export function stepRunner(
   if (r.tactics === "outside" && progress < 0.8) targetLane = 2;
   if (r.tactics === "lead" && progress < 0.2) targetLane = 0;
 
-  if (field && pace) {
+  if (sortedField && pace) {
     const laneIdx = Math.floor(r.lane / LANE_WIDTH);
     if (laneIdx === 0 && pace.laneDensity[0] > 4 && progress < 0.7) {
       if (r.position < pace.leaderPos - 2) targetLane = 1;
     }
 
-    for (const other of field) {
+    // Faster blocking lookup using sortedField
+    for (const other of sortedField) {
       if (other.horseId === r.horseId) continue;
       const gap = other.position - r.position;
+      if (gap <= 0) break; // Optimization: stop early
+      if (gap >= 2.5) continue;
+      
       const laneGap = Math.abs(other.lane - r.lane);
-      if (gap > 0 && gap < 2.5 && laneGap < 0.8) {
+      if (laneGap < 0.8) {
         targetLane = Math.min(10, laneIdx + 1);
         break;
       }
@@ -222,8 +205,10 @@ export function stepRunner(
     r.lane += step;
   }
 
-  const radius = getTrackRadius(r.position, distance, course);
-  const gradient = getTrackGradient(r.position, distance, course);
+  // Optimize track lookups by calling getTrackSection once
+  const section = getTrackSection(r.position, distance, course);
+  const radius = section?.type === "turn" ? (section.radius ?? Infinity) : Infinity;
+  const gradient = section?.gradient ?? 0;
   const arcFactor = radius === Infinity ? 1 : 1 + r.lane / radius;
 
   const gradientSpeedMul = 1 - gradient / 100;
@@ -391,13 +376,13 @@ export function stepRunner(
 
   // --- Tactical AI Integration (Throttle to ~1Hz) ---
   if (Math.floor(t / 1.0) !== Math.floor((t - dt) / 1.0) && pace) {
-    const tactical = calculateTacticalAdjustment(r, pace, field || []);
+    const tactical = calculateTacticalAdjustment(r, pace, sortedField || []);
     r.velocity *= (1 + (tactical.velocityMod - 1) * dt);
     r.lane += (tactical.targetLane - r.lane) * 0.1 * dt;
   }
 
-  // --- Traffic & Blocking Penalty ---
-  const blockingHorse = (field || []).find(other => 
+  // Faster blocking lookup using sortedField
+  const blockingHorse = (sortedField || []).find(other => 
     other.horseId !== r.horseId &&
     other.finishTime === null &&
     other.position > r.position &&
@@ -407,7 +392,6 @@ export function stepRunner(
   if (blockingHorse) {
     r.velocity = Math.min(r.velocity, blockingHorse.velocity * 0.98);
   }
-
 
   r.position += finalDs;
 
@@ -467,10 +451,29 @@ export function runRaceToCompletion(
 } {
   let t = 0;
   const snapshots: RaceSnapshot[] = [];
+  const numRunners = runners.length;
+  let finishedCount = 0;
 
-  while (runners.some((r) => r.finishTime === null) && t < maxTime) {
+  // Initialize finishedCount in case some runners start finished (unlikely but safe)
+  for (const r of runners) {
+    if (r.finishTime !== null) finishedCount++;
+  }
+
+  while (finishedCount < numRunners && t < maxTime) {
     const pace = computePaceContext(runners, distance);
-    for (const r of runners) stepRunner(r, dt, t, distance, rng, runners, pace, course);
+    
+    // Sort runners by position for faster spatial lookups in stepRunner
+    const sortedField = [...runners].sort((a, b) => b.position - a.position);
+
+    for (const r of runners) {
+      if (r.finishTime !== null) continue;
+      
+      stepRunner(r, dt, t, distance, rng, sortedField, pace, course);
+      
+      if (r.finishTime !== null) {
+        finishedCount++;
+      }
+    }
 
     if (recordSnapshots) {
       snapshots.push({

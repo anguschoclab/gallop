@@ -141,23 +141,40 @@ export function generatePedigree(sireName?: string): PedigreeNode[] {
   return pedigree;
 }
 
+const DOSAGE_CACHE = new Map<string, any>();
+
 /**
  * Calculate all dosage metrics for a horse
  * @param sireName - Name of the sire
  * @returns Object containing dosageProfile, dosageIndex, and centerOfDistribution
  */
 export function calculateDosageMetrics(sireName?: string) {
+  if (!sireName) {
+    return {
+      pedigree: [],
+      dosageProfile: { brilliant: 0, intermediate: 0, classic: 0, solid: 0, professional: 0 },
+      dosageIndex: 1.0,
+      centerOfDistribution: 0,
+    };
+  }
+
+  const cached = DOSAGE_CACHE.get(sireName);
+  if (cached) return cached;
+
   const pedigree = generatePedigree(sireName);
   const dosageProfile = calculateDosageProfile(pedigree);
   const dosageIndex = calculateDosageIndex(dosageProfile);
   const centerOfDistribution = calculateCenterOfDistribution(dosageProfile);
 
-  return {
+  const result = {
     pedigree,
     dosageProfile,
     dosageIndex,
     centerOfDistribution,
   };
+
+  DOSAGE_CACHE.set(sireName, result);
+  return result;
 }
 
 /**

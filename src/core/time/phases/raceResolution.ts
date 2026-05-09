@@ -45,6 +45,11 @@ export const raceResolutionPhase: PipelinePhase = {
       console.log(`      - Resolving ${overdueRaces.length} races...`);
     }
 
+    // PRE-INDEX: Create maps for O(1) lookups during resolution
+    const horseMap = new Map(state.horses.map(h => [h.id, h]));
+    const npcStableMap = new Map(state.npcStables.map(s => [s.id, s]));
+    const jockeyMap = new Map((state.jockeys || []).map(j => [j.id, j]));
+
     let resolvedCount = 0;
     for (const race of overdueRaces) {
       resolvedCount++;
@@ -52,10 +57,10 @@ export const raceResolutionPhase: PipelinePhase = {
       // Simulate race using service
       const { result, runners, snapshots } = simulateRace(
         race,
-        state.horses,
-        state.jockeys ?? [],
+        horseMap,
+        jockeyMap,
         state.hiredStaff,
-        state.npcStables,
+        npcStableMap,
         state.npcAIManager,
         newDay
       );
@@ -71,9 +76,9 @@ export const raceResolutionPhase: PipelinePhase = {
       // Record outcomes for NPC AI
       if (state.npcAIManager) {
         for (const res of result) {
-          const horse = state.horses.find(h => h.id === res.horseId);
+          const horse = horseMap.get(res.horseId);
           if (horse && horse.stableId) {
-            const stable = state.npcStables.find(s => s.id === horse.stableId);
+            const stable = npcStableMap.get(horse.stableId);
             if (stable) {
               const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
               
@@ -129,8 +134,8 @@ export const raceResolutionPhase: PipelinePhase = {
         race,
         result,
         runners,
-        horses: state.horses,
-        jockeys: state.jockeys ?? [],
+        horses: horseMap,
+        jockeys: jockeyMap,
         newDay,
         stateCash: state.cash,
         stateReputation: state.reputation,
@@ -146,7 +151,7 @@ export const raceResolutionPhase: PipelinePhase = {
 
       // --- Historical Records & Hall of Fame ---
       const winnerResult = result.find(r => r.position === 1);
-      const winnerHorse = winnerResult ? state.horses.find(h => h.id === winnerResult.horseId) : null;
+      const winnerHorse = winnerResult ? horseMap.get(winnerResult.horseId) : null;
 
       if (winnerResult && winnerHorse) {
         const trackRecord = checkTrackRecord(
@@ -173,7 +178,7 @@ export const raceResolutionPhase: PipelinePhase = {
       }
 
       if (race.graded?.grade === "G1") {
-        const historyRecord = recordRaceHistory(race, result, runners, state.horses, newDay);
+        const historyRecord = recordRaceHistory(race, result, runners, horseMap, newDay);
         if (historyRecord) {
           impacts.push({
             id: generateUUID(),
@@ -188,7 +193,7 @@ export const raceResolutionPhase: PipelinePhase = {
 
         // Check winner for Hall of Fame induction
         const winnerId = result.find(r => r.position === 1)?.horseId;
-        const winner = state.horses.find(h => h.id === winnerId);
+        const winner = winnerId ? horseMap.get(winnerId) : null;
         if (winner && winner.id) {
           const prizeMoney = race.purse * 0.6;
           const tempHorse = {
