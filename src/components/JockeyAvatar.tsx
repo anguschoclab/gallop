@@ -20,11 +20,11 @@ interface Props {
  * (e.g. mobile cards, table cells). The inner SVG scales with width.
  */
 export const SIZE_MAP: Record<JockeyAvatarSize, { w: number; h: number }> = {
-  xs: { w: 28, h: 34 }, // table rows / inline name chips
+  xs: { w: 30, h: 36 }, // table rows / inline name chips
   sm: { w: 40, h: 48 }, // dense lists, mobile cards
-  md: { w: 56, h: 68 }, // default — JockeyCard, race summary
-  lg: { w: 72, h: 88 }, // detail headers
-  xl: { w: 96, h: 116 }, // hero / profile pages
+  md: { w: 55, h: 66 }, // default — JockeyCard, race summary
+  lg: { w: 70, h: 84 }, // detail headers
+  xl: { w: 95, h: 114 }, // hero / profile pages
 };
 
 // Aspect ratio invariant — referenced by tests
