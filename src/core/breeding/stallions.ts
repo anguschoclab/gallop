@@ -14,6 +14,7 @@ import type { Stable } from "@/game/types";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { calculateBaseHorseValue } from "@/core/horse/pricing";
 import { isMaleHorse } from "@/core/horse/gender";
+import { getCareerStats } from "@/core/horse/stats";
 
 const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
 
@@ -87,12 +88,9 @@ export function isStallionMaterial(horse: Horse): boolean {
   if (!isMaleHorse(horse.gender)) return false;
   
   // Basic track performance criteria
-  const hasG1Win = horse.raceHistory.some(
-    (r) => r.position === 1 && r.grade === "G1",
-  );
-  const hasGradedWin = horse.raceHistory.some(
-    (r) => r.position === 1 && (r.grade === "G2" || r.grade === "G3" || r.raceClass === "Stakes"),
-  );
+  const careerStats = getCareerStats(horse);
+  const hasG1Win = careerStats.g1Wins > 0;
+  const hasGradedWin = careerStats.g2Wins > 0 || careerStats.g3Wins > 0 || careerStats.stakesWins > 0;
 
   // Elite performers or very famous ones
   if (hasG1Win) return true;

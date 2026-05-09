@@ -113,9 +113,9 @@ export function createBreedingSlice(
 
     retireToPasture: (horseId: string) => {
       const s = get();
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
-      if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+      const horse = requireHorse(s.horses, horseId);
+      const ownershipGuard = requireOwned(horse);
+      if (ownershipGuard) return ownershipGuard;
       if (horse.age < 3)
         return { ok: false, reason: "Horse must be at least 3 years old to retire." };
 

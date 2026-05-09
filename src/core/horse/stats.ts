@@ -57,6 +57,20 @@ export interface CareerStats {
   g2Wins: number;
   g3Wins: number;
   earnings: number;
+  // Surface breakdown
+  turfStarts: number;
+  turfWins: number;
+  dirtStarts: number;
+  dirtWins: number;
+  syntheticStarts: number;
+  syntheticWins: number;
+  // Distance breakdown (sprint <1400m, classic 1400–2000m, stayer ≥2000m)
+  sprintStarts: number;
+  sprintWins: number;
+  classicStarts: number;
+  classicWins: number;
+  stayerStarts: number;
+  stayerWins: number;
 }
 
 /**
@@ -82,25 +96,23 @@ export function getCareerStats(horse: Horse): CareerStats {
     g2Wins: 0,
     g3Wins: 0,
     earnings: 0,
+    turfStarts: 0, turfWins: 0,
+    dirtStarts: 0, dirtWins: 0,
+    syntheticStarts: 0, syntheticWins: 0,
+    sprintStarts: 0, sprintWins: 0,
+    classicStarts: 0, classicWins: 0,
+    stayerStarts: 0, stayerWins: 0,
   };
 
   for (const entry of history) {
-    if (entry.position === 1) stats.wins++;
+    const won = entry.position === 1;
+    if (won) stats.wins++;
     if (entry.position === 2) stats.places++;
     if (entry.position === 3) stats.shows++;
 
-    if (entry.grade) {
-      stats.gradedStarts++;
-    }
-
-    if (
-      entry.position === 1 &&
-      (entry.grade || entry.raceClass === "Stakes" || entry.raceClass === "Group")
-    ) {
-      stats.stakesWins++;
-    }
-
-    if (entry.position === 1 && entry.grade) {
+    if (entry.grade) stats.gradedStarts++;
+    if (won && (entry.grade || entry.raceClass === "Stakes" || entry.raceClass === "Group")) stats.stakesWins++;
+    if (won && entry.grade) {
       stats.gradedWins++;
       if (entry.grade === "G1") stats.g1Wins++;
       if (entry.grade === "G2") stats.g2Wins++;
@@ -108,6 +120,17 @@ export function getCareerStats(horse: Horse): CareerStats {
     }
 
     stats.earnings += entry.purseEarned || 0;
+
+    // Surface
+    if (entry.surface === "Turf") { stats.turfStarts++; if (won) stats.turfWins++; }
+    else if (entry.surface === "Dirt") { stats.dirtStarts++; if (won) stats.dirtWins++; }
+    else if (entry.surface) { stats.syntheticStarts++; if (won) stats.syntheticWins++; }
+
+    // Distance
+    const dist = entry.distance || 0;
+    if (dist < 1400) { stats.sprintStarts++; if (won) stats.sprintWins++; }
+    else if (dist < 2000) { stats.classicStarts++; if (won) stats.classicWins++; }
+    else if (dist >= 2000) { stats.stayerStarts++; if (won) stats.stayerWins++; }
   }
 
   return stats;

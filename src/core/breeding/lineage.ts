@@ -11,6 +11,7 @@
 
 import type { Horse, GameState } from "@/game/types";
 import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
+import { getCareerStats } from "@/core/horse/stats";
 
 // Reverse-lookup helpers: given a sire/dam ID, find that horse's foals in the
 // live horses[] array. Linear scans for now — fine at the scale of a single
@@ -66,10 +67,10 @@ export function getFoalsOf(state: Pick<GameState, "horses">, damId: string): Hor
  * }
  */
 export function isStakesWinner(foal: Horse): boolean {
-  return foal.raceHistory.some(
-    (r) =>
-      r.position === 1 && (r.grade !== undefined || (r.purse !== undefined && r.purse >= 18000)),
-  );
+  const stats = getCareerStats(foal);
+  return stats.stakesWins > 0 || (stats.wins > 0 && (foal.raceHistory || []).some(
+    (r) => r.position === 1 && r.purse !== undefined && r.purse >= 18000,
+  ));
 }
 
 /**
@@ -86,7 +87,7 @@ export function isStakesWinner(foal: Horse): boolean {
  * }
  */
 export function isG1Winner(foal: Horse): boolean {
-  return foal.raceHistory.some((r) => r.position === 1 && r.grade === "G1");
+  return getCareerStats(foal).g1Wins > 0;
 }
 
 /**

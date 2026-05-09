@@ -47,9 +47,9 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
 
   retireToStud: (horseId) => {
     const s = get();
-    const horse = s.horses.find((h) => h.id === horseId);
-    if (!horse) return { ok: false, reason: "Horse not found." };
-    if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+    const horse = requireHorse(s.horses, horseId);
+    const ownershipGuard = requireOwned(horse);
+    if (ownershipGuard) return ownershipGuard;
     if (horse.gender !== "horse" && horse.gender !== "colt")
       return { ok: false, reason: "Only male horses can stand at stud." };
     if (horse.age < 4)
@@ -72,9 +72,9 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
 
   geldingHorse: (horseId) => {
     const s = get();
-    const horse = s.horses.find((h) => h.id === horseId);
-    if (!horse) return { ok: false, reason: "Horse not found." };
-    if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+    const horse = requireHorse(s.horses, horseId);
+    const ownershipGuard = requireOwned(horse);
+    if (ownershipGuard) return ownershipGuard;
     if (horse.gender === "horse" || horse.gender === "gelding")
       return { ok: false, reason: "Horse is already male." };
 
@@ -93,9 +93,9 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
 
   renameHorse: (horseId, newName) => {
     const s = get();
-    const horse = s.horses.find((h) => h.id === horseId);
-    if (!horse) return { ok: false, reason: "Horse not found." };
-    if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+    const horse = requireHorse(s.horses, horseId);
+    const ownershipGuard = requireOwned(horse);
+    if (ownershipGuard) return ownershipGuard;
 
     const lowerNewName = newName.toLowerCase();
     if (s.usedHorseNames.includes(lowerNewName) && lowerNewName !== horse.name.toLowerCase()) {

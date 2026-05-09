@@ -30,7 +30,7 @@ import {
   resolveCoatColor,
 } from "./phenotype";
 import type { RunningStyle, CoatColor } from "@/core/horse/types";
-import { computeCoiFromSnapshot } from "@/core/breeding/populationGenetics";
+import { computeProspectiveCoi } from "@/core/breeding/populationGenetics";
 import { calculateGeneticCompatibility } from "@/game/breedingCompatibility";
 
 export type SimulationResult = {
@@ -319,7 +319,7 @@ export function runBreedingSimulation(
       },
       {} as Record<CoatColor, number>,
     ),
-    coiEstimate: 0, // TODO: Implement computeProspectiveCoi
+    coiEstimate: computeProspectiveCoi(sire, dam),
     compatScore: calculateGeneticCompatibility(sire, dam).score,
   };
 

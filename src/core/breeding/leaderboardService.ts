@@ -9,6 +9,7 @@
  */
 
 import type { Horse } from "@/game/types";
+import { getCareerStats } from "@/core/horse/stats";
 import { getSireAnalytics, getSireSurfaceBias, getSireDistancePreference } from "./sireAnalytics";
 import { getRunnersBy, getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "./lineage";
 import type { Leaderboard, LeaderboardType, SireRanking, SireTrendData } from "./leaderboardTypes";
@@ -60,12 +61,9 @@ export function computeAllLeaderboards(
     let stakesFoals = 0;
     let g1Foals = 0;
     for (const r of runners) {
-      if (r.raceHistory?.some(rh => rh.position === 1 && (rh.grade === "G1" || rh.grade === "G2" || rh.grade === "G3" || rh.grade === "Stakes"))) {
-        stakesFoals++;
-      }
-      if (r.raceHistory?.some(rh => rh.position === 1 && rh.grade === "G1")) {
-        g1Foals++;
-      }
+      const cs = getCareerStats(r);
+      if (cs.stakesWins > 0 || cs.gradedWins > 0) stakesFoals++;
+      if (cs.g1Wins > 0) g1Foals++;
     }
 
     stallionAnalytics.set(s.id, {
@@ -345,18 +343,12 @@ function computeTurfLeaderboard(
   const rankings = stallions
     .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let turfWins = 0,
-        turfStarts = 0;
-
+      let turfWins = 0, turfStarts = 0;
       for (const foal of runners) {
-        for (const race of foal.raceHistory) {
-          if (race.surface === "Turf") {
-            turfStarts++;
-            if (race.position === 1) turfWins++;
-          }
-        }
+        const cs = getCareerStats(foal);
+        turfWins += cs.turfWins;
+        turfStarts += cs.turfStarts;
       }
-
       const turfRate = turfStarts > 0 ? turfWins / turfStarts : 0;
       const analytics = getSireAnalytics(s, allHorses, 0);
 

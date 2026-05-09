@@ -13,6 +13,7 @@ import { formatCurrency } from "@/lib/formatting";
 import { generateUUID } from "@/game/uuid";
 import type { ActionResult } from "../types";
 import type { GameStateCreator } from "../types";
+import { requireOwned, requireHorse } from "../guards";
 
 export type JockeySlice = {
   hireJockey: (jockeyId: string) => ActionResult;
@@ -83,9 +84,9 @@ export const createJockeySlice: GameStateCreator<JockeySlice> = (set, get) => ({
     const s = get();
     const race = s.races.find((r) => r.id === raceId);
     if (!race) return { ok: false, reason: "Race not found." };
-    const horse = s.horses.find((h) => h.id === horseId);
-    if (!horse) return { ok: false, reason: "Horse not found." };
-    if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
+    const horse = requireHorse(s.horses, horseId);
+    const ownershipGuard = requireOwned(horse);
+    if (ownershipGuard) return ownershipGuard;
     const jockey = s.jockeys?.find((j: Jockey) => j.id === jockeyId);
     if (!jockey) return { ok: false, reason: "Jockey not found." };
 

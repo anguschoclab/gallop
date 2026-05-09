@@ -171,9 +171,26 @@ export function recordOutcome(
     learningState: newLearningState,
   };
 
-  // Adapt strategy if needed
-  if (shouldAdaptStrategy(newState, decisionType, contextKey, successRate)) {
-    newState = adaptStrategy(newState, decisionType, contextKey, successRate, timestamp);
+  // Adapt strategy if success rate is low and enough data collected
+  const data = newLearningState.successRates[`${decisionType}:${contextKey}`];
+  const threshold = 0.5 - newState.conservatism * 0.2;
+  if (data && data.total >= 5 && successRate < threshold) {
+    const config = PERSONALITY_CONFIG[newState.personality];
+    const confidenceChange = (1 - successRate) * config.adaptationSpeed;
+    const newConfidence = Math.max(0.1, newState.strategyConfidence - confidenceChange);
+    const shouldSwitch = newConfidence < 0.3;
+    const strategyAlternatives: Record<string, string> = {
+      default: "aggressive", aggressive: "conservative",
+      conservative: "balanced", balanced: "innovative", innovative: "default",
+    };
+    newState = {
+      ...newState,
+      strategyConfidence: shouldSwitch ? 0.6 : newConfidence,
+      currentStrategy: shouldSwitch
+        ? (strategyAlternatives[newState.currentStrategy] || "default")
+        : newState.currentStrategy,
+      lastStrategyChange: shouldSwitch ? timestamp : newState.lastStrategyChange,
+    };
   }
 
   return newState;
@@ -196,95 +213,6 @@ function getOutcomeKey(decisionType: string, context: Record<string, unknown>): 
     .sort()
     .join("|");
   return `${decisionType}:${contextKey}`;
-}
-
-/**
- * Determine if strategy should be adapted.
- *
- * Evaluates whether to adapt strategy based on success rate,
- * data sufficiency, and personality conservatism.
- *
- * @param aiState - Current personality AI state
- * @param decisionType - Type of decision made
- * @param contextKey - Context key for the decision
- * @param successRate - Current success rate for this context
- * @returns True if strategy should be adapted
- */
-function shouldAdaptStrategy(
-  aiState: PersonalityAIState,
-  decisionType: string,
-  contextKey: string,
-  successRate: number,
-): boolean {
-  // Adapt if success rate is low and enough data collected
-  const data = aiState.learningState.successRates[`${decisionType}:${contextKey}`];
-  if (!data || data.total < 5) return false;
-
-  // Conservative personalities adapt slower
-  const threshold = 0.5 - aiState.conservatism * 0.2;
-  return successRate < threshold;
-}
-
-/**
- * Adapt strategy based on outcomes.
- *
- * Adjusts strategy confidence based on success rate and adaptation speed.
- * Switches to alternative strategy if confidence falls too low.
- *
- * @param aiState - Current personality AI state
- * @param _decisionType - Type of decision made (unused)
- * @param _contextKey - Context key for the decision (unused)
- * @param successRate - Current success rate for this context
- * @param timestamp - Current timestamp
- * @returns Updated personality AI state
- */
-function adaptStrategy(
-  aiState: PersonalityAIState,
-  _decisionType: string,
-  _contextKey: string,
-  successRate: number,
-  timestamp: number,
-): PersonalityAIState {
-  const config = PERSONALITY_CONFIG[aiState.personality];
-  const confidenceChange = (1 - successRate) * config.adaptationSpeed;
-
-  const newConfidence = Math.max(0.1, aiState.strategyConfidence - confidenceChange);
-
-  let currentStrategy = aiState.currentStrategy;
-  let finalConfidence = newConfidence;
-
-  // Switch to alternative strategy if confidence is low
-  if (newConfidence < 0.3) {
-    currentStrategy = getAlternativeStrategy(aiState.currentStrategy);
-    finalConfidence = 0.6;
-  }
-
-  return {
-    ...aiState,
-    strategyConfidence: finalConfidence,
-    currentStrategy,
-    lastStrategyChange: timestamp,
-  };
-}
-
-/**
- * Get alternative strategy based on current strategy.
- *
- * Returns the next strategy in the cycle: default → aggressive →
- * conservative → balanced → innovative → default.
- *
- * @param currentStrategy - Current strategy name
- * @returns Alternative strategy name
- */
-function getAlternativeStrategy(currentStrategy: string): string {
-  const alternatives: Record<string, string> = {
-    default: "aggressive",
-    aggressive: "conservative",
-    conservative: "balanced",
-    balanced: "innovative",
-    innovative: "default",
-  };
-  return alternatives[currentStrategy] || "default";
 }
 
 /**
