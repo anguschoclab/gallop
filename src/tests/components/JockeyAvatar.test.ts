@@ -34,7 +34,7 @@ describe("JockeyAvatar", () => {
       expect(html).toContain(`data-size="${size}"`);
       expect(html).toContain(`width:${w}px`);
       expect(html).toContain(`height:${h}px`);
-      expect(html).toContain("aspect-ratio:5/6");
+      expect(html).toContain("aspect-ratio:5 / 6");
       // Cannot overflow parent
       expect(html).toContain("max-w-full");
       // Always renders the SVG portrait
