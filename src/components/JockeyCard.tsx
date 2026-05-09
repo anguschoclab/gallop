@@ -57,8 +57,8 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
         <div className="flex justify-between items-start">
           <div className="flex gap-3">
             <div className="relative">
-              <div className="h-12 w-12 rounded-md bg-muted flex items-center justify-center border border-border overflow-hidden">
-                <RacingSilks silk={jockey.silk} size={44} />
+              <div className="h-16 w-14 rounded-md bg-gradient-to-b from-muted to-muted/40 flex items-center justify-center border border-border overflow-hidden">
+                <JockeyPortrait jockey={jockey} size={52} />
               </div>
               {isRetained && (
                 <button
