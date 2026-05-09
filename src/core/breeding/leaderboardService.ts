@@ -390,18 +390,12 @@ function computeDirtLeaderboard(
   const rankings = stallions
     .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let dirtWins = 0,
-        dirtStarts = 0;
-
+      let dirtWins = 0, dirtStarts = 0;
       for (const foal of runners) {
-        for (const race of foal.raceHistory) {
-          if (race.surface === "Dirt") {
-            dirtStarts++;
-            if (race.position === 1) dirtWins++;
-          }
-        }
+        const cs = getCareerStats(foal);
+        dirtWins += cs.dirtWins;
+        dirtStarts += cs.dirtStarts;
       }
-
       const dirtRate = dirtStarts > 0 ? dirtWins / dirtStarts : 0;
       const analytics = getSireAnalytics(s, allHorses, 0);
 
@@ -443,19 +437,12 @@ function computeSprintLeaderboard(
   const rankings = stallions
     .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let sprintWins = 0,
-        sprintStarts = 0;
-
+      let sprintWins = 0, sprintStarts = 0;
       for (const foal of runners) {
-        for (const race of foal.raceHistory) {
-          const dist = race.distance || 0;
-          if (dist < 1400) {
-            sprintStarts++;
-            if (race.position === 1) sprintWins++;
-          }
-        }
+        const cs = getCareerStats(foal);
+        sprintWins += cs.sprintWins;
+        sprintStarts += cs.sprintStarts;
       }
-
       const sprintRate = sprintStarts > 0 ? sprintWins / sprintStarts : 0;
       const analytics = getSireAnalytics(s, allHorses, 0);
 
@@ -497,19 +484,12 @@ function computeStayingLeaderboard(
   const rankings = stallions
     .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let stayerWins = 0,
-        stayerStarts = 0;
-
+      let stayerWins = 0, stayerStarts = 0;
       for (const foal of runners) {
-        for (const race of foal.raceHistory) {
-          const dist = race.distance || 0;
-          if (dist >= 2000) {
-            stayerStarts++;
-            if (race.position === 1) stayerWins++;
-          }
-        }
+        const cs = getCareerStats(foal);
+        stayerWins += cs.stayerWins;
+        stayerStarts += cs.stayerStarts;
       }
-
       const stayerRate = stayerStarts > 0 ? stayerWins / stayerStarts : 0;
       const analytics = getSireAnalytics(s, allHorses, 0);
 
