@@ -12,7 +12,7 @@ import type { Horse, Stable, GameState } from "@/game/types";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
-import { scoreStallion, overallRating } from "@/core/breeding/strategy";
+import { scoreStallion } from "@/core/breeding/strategy";
 import { runBreedingSimulation } from "@/core/genetics/breedingSimulator";
 import { cachedSimulation } from "@/core/genetics/genotypeCache";
 import { getArchetypeById, getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";

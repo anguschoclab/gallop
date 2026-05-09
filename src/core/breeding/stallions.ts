@@ -119,9 +119,10 @@ export function calculateRecommendedStudFee(horse: Horse, stableOrTier?: Stable 
   const baseValue = calculateBaseHorseValue(horse, tier);
 
   // Calculate win frequency and quality
-  const g1Wins = horse.raceHistory.filter(r => r.position === 1 && r.grade === "G1").length;
-  const gradedWins = horse.raceHistory.filter(r => r.position === 1 && r.grade).length;
-  const totalWins = horse.raceHistory.filter(r => r.position === 1).length;
+  const cs = getCareerStats(horse);
+  const g1Wins = cs.g1Wins;
+  const gradedWins = cs.gradedWins;
+  const totalWins = cs.wins;
 
   // Base fee is ~5-10% of market value, but weighted heavily by G1 wins
   let fee = baseValue * 0.1;
