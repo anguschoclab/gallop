@@ -14,7 +14,17 @@ import { getRunnersBy, getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "./line
 import type { Leaderboard, LeaderboardType, SireRanking, SireTrendData } from "./leaderboardTypes";
 
 /**
- * Compute all leaderboards for the current game state
+ * Compute all leaderboards for the current game state.
+ *
+ * Calculates stallion leaderboards (AEI, CI, classification), progeny leaderboards
+ * (Beyer, earnings, stakes winners), and sire trend data. Pre-indexes horses by sire
+ * for efficient analytics calculation.
+ *
+ * @param horses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for AEI calculation
+ * @param currentDay - Current simulation day
+ * @param trendHistory - Optional historical trend data for sires
+ * @returns Record of all leaderboard types with their computed rankings
  */
 export function computeAllLeaderboards(
   horses: Horse[],

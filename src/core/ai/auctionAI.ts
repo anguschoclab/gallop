@@ -69,7 +69,13 @@ export interface PortfolioState {
 }
 
 /**
- * Create AI state for auction decisions
+ * Create AI state for auction decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * bidding history, consignment history, and portfolio state.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized auction AI state
  */
 export function createAuctionAIState(stable: Stable): AuctionAIState {
   return {
@@ -88,7 +94,17 @@ export function createAuctionAIState(stable: Stable): AuctionAIState {
 }
 
 /**
- * Calculate bidding value score for a horse
+ * Calculate bidding value score for a horse.
+ *
+ * Evaluates the horse's value relative to current bid, applies personality
+ * modifiers, learning-based adjustments, and strategic considerations.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to evaluate
+ * @param lot - The auction lot
+ * @param stable - The stable making the bid
+ * @param currentDay - Current game day
+ * @returns Bidding value score (0-100)
  */
 export function calculateBiddingValue(
   aiState: AuctionAIState,
@@ -164,7 +180,17 @@ function evaluateStrategicBiddingValue(
 }
 
 /**
- * Calculate maximum bid for a horse
+ * Calculate maximum bid for a horse.
+ *
+ * Determines the maximum bid based on estimated value, personality risk
+ * tolerance, budget constraints, and learning-based adjustments.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to bid on
+ * @param lot - The auction lot
+ * @param stable - The stable making the bid
+ * @param currentDay - Current game day
+ * @returns Maximum bid amount
  */
 export function calculateMaxBid(
   aiState: AuctionAIState,
@@ -198,7 +224,17 @@ export function calculateMaxBid(
 }
 
 /**
- * Determine if stable should bid on a horse
+ * Determine if stable should bid on a horse.
+ *
+ * Checks budget constraints, calculates value score and max bid,
+ * and uses adaptive threshold for decision making.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to bid on
+ * @param lot - The auction lot
+ * @param stable - The stable making the bid
+ * @param currentDay - Current game day
+ * @returns True if stable should bid
  */
 export function shouldBidOnHorse(
   aiState: AuctionAIState,
@@ -232,7 +268,15 @@ export function shouldBidOnHorse(
 }
 
 /**
- * Calculate bid increment
+ * Calculate bid increment.
+ *
+ * Determines how much to increase the bid based on current bid,
+ * max bid, and aggressiveness factor.
+ *
+ * @param currentBid - Current bid amount
+ * @param maxBid - Maximum bid allowed
+ * @param aggressiveness - Aggressiveness factor (0-1)
+ * @returns Bid increment amount
  */
 export function calculateBidIncrement(
   currentBid: number,
@@ -246,7 +290,16 @@ export function calculateBidIncrement(
 }
 
 /**
- * Determine if horse should be consigned
+ * Determine if horse should be consigned.
+ *
+ * Evaluates horse for consignment based on underperformance, surplus,
+ * age rebalancing, or retirement criteria.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to evaluate
+ * @param stable - The stable owning the horse
+ * @param currentDay - Current game day
+ * @returns Object with shouldConsign flag and optional reason
  */
 export function shouldConsignHorse(
   aiState: AuctionAIState,
@@ -288,7 +341,20 @@ export function shouldConsignHorse(
 }
 
 /**
- * Record bidding decision for learning
+ * Record bidding decision for learning.
+ *
+ * Records the bidding decision, updates learning state, and adjusts
+ * portfolio if the bid was won.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse bid on
+ * @param lot - The auction lot
+ * @param stable - The stable making the bid
+ * @param maxBid - Maximum bid amount
+ * @param finalBid - Final bid amount
+ * @param won - Whether the bid was won
+ * @param currentDay - Current game day
+ * @returns Updated auction AI state
  */
 export function recordBiddingDecision(
   aiState: AuctionAIState,
@@ -352,7 +418,17 @@ export function recordBiddingDecision(
 }
 
 /**
- * Record consignment decision for learning
+ * Record consignment decision for learning.
+ *
+ * Records the consignment decision and updates portfolio state.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse being consigned
+ * @param reason - Reason for consignment
+ * @param minPrice - Minimum price for consignment
+ * @param stable - The stable consigning the horse
+ * @param currentDay - Current game day
+ * @returns Updated auction AI state
  */
 export function recordConsignmentDecision(
   aiState: AuctionAIState,
@@ -396,7 +472,14 @@ export function recordConsignmentDecision(
 }
 
 /**
- * Get auction insights for a stable
+ * Get auction insights for a stable.
+ *
+ * Calculates bidding statistics, consignment statistics, and
+ * portfolio health metrics for a stable.
+ *
+ * @param aiState - Current auction AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with bidding, consignment, and portfolio metrics
  */
 export function getAuctionInsights(
   aiState: AuctionAIState,

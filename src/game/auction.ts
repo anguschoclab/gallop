@@ -37,6 +37,12 @@ export const CONSIGNMENT_COMMISSION = 0.06;
 export const DEFAULT_PLAYER_RESERVE_RATIO = 0.7;
 
 /** Compute net proceeds the player receives after commission. */
+/**
+ * Calculate net proceeds from hammer price after commission.
+ *
+ * @param hammerPrice - The hammer price of the lot
+ * @returns Net proceeds after consignment commission
+ */
 export function netProceeds(hammerPrice: number): number {
   return Math.round(hammerPrice * (1 - CONSIGNMENT_COMMISSION));
 }
@@ -161,6 +167,23 @@ const BUDGET_CAPS: Record<Stable["personality"], number> = {
  * Returns the next NPC bid amount, or null if the stable passes.
  * AI-driven decisions when npcAIManager is provided.
  */
+/**
+ * Calculate NPC bid for an auction lot.
+ *
+ * Uses AI-driven bidding if AI manager is available, otherwise falls back to
+ * original valuation logic. Returns null if the stable should not bid.
+ *
+ * @param stable - The stable making the bid
+ * @param horse - The horse being bid on
+ * @param currentBid - Current bid amount
+ * @param saleKind - Type of auction sale
+ * @param rng - Random number generator
+ * @param allHorses - All horses in the game (for pedigree calculations)
+ * @param horseMap - Map of horse IDs to horses
+ * @param npcAIManager - Optional AI manager for advanced bidding logic
+ * @param currentDay - Current game day
+ * @returns Bid amount or null if should not bid
+ */
 export function calculateNpcBid(
   stable: Stable,
   horse: Horse,
@@ -262,6 +285,14 @@ const HEMISPHERE_BY_KIND: Record<AuctionSaleKind, "Northern" | "Southern" | unde
 /**
  * Sale-kind eligibility filter. Returns true when this horse is appropriate
  * stock for this kind of sale. Layered on top of the age filter.
+ */
+/**
+ * Check if a horse is eligible for a specific auction sale kind.
+ *
+ * @param horse - The horse to check
+ * @param kind - Type of auction sale
+ * @param pregnancies - Optional pregnancy data for broodmare checks
+ * @returns True if horse is eligible for this sale kind
  */
 export function isLotEligible(
   horse: Horse,
@@ -421,7 +452,19 @@ export function personalityConsignmentPolicy(
 
 /**
  * Generate a new AuctionSale with lots from NPC consignors + player-eligible horses.
+ *
  * Player horses must be consigned separately via consignHorse().
+ *
+ * @param saleId - Unique ID for the sale
+ * @param name - Display name of the sale
+ * @param day - Day the sale occurs
+ * @param kind - Type of auction sale
+ * @param stables - All NPC stables
+ * @param horses - All horses in the game
+ * @param pregnancies - All pregnancies (for broodmare sales)
+ * @param rng - Random number generator
+ * @param horseMap - Map of horse IDs to horses
+ * @returns Generated auction sale with lots
  */
 export function generateAuctionLots(
   day: number,
@@ -506,8 +549,19 @@ export type ResolvedSale = {
 };
 
 /**
- * Run the full NPC-vs-NPC (and player bids already recorded) auction resolution.
- * Returns updated lots with hammerPrice / soldToStableId / passed set.
+ * Run the full NPC-vs-NPC auction resolution.
+ *
+ * Processes all lots, resolves bids, and returns updated lots with hammerPrice,
+ * soldToStableId, and passed status set. Player bids are already recorded.
+ *
+ * @param sale - The auction sale to resolve
+ * @param stables - All NPC stables for bidding
+ * @param horses - All horses in the game
+ * @param horseMap - Map of horse IDs to horses
+ * @param rng - Random number generator
+ * @param npcAIManager - Optional AI manager for advanced bidding
+ * @param currentDay - Current game day
+ * @returns Resolved sale with updated lots and log
  */
 export function resolveAuctionSale(
   sale: AuctionSale,

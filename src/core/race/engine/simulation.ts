@@ -156,6 +156,21 @@ function getTrackGradient(pos: number, distance: number, course?: CourseSpecific
  * @example
  * stepRunner(runner, 0.1, 5.0, 1600, rng, runners, pace, course);
  */
+/**
+ * Step a single runner forward in time by dt.
+ *
+ * Updates runner position, velocity, lane, and energy based on physics,
+ * drafting, track geometry, and tactical AI. Returns early if runner has finished.
+ *
+ * @param r - Runner to step
+ * @param dt - Time delta in seconds
+ * @param t - Current simulation time
+ * @param distance - Race distance in meters
+ * @param rng - Random number generator
+ * @param field - All runners in the race (for drafting/collision)
+ * @param pace - Current pace context (for tactical decisions)
+ * @param course - Track course specification (for geometry effects)
+ */
 export function stepRunner(
   r: Runner,
   dt: number,
@@ -422,6 +437,21 @@ export function stepRunner(
  *
  * @example
  * const { result, snapshots } = runRaceToCompletion(runners, 1600, rng, 0.1, 600, course, true);
+ */
+/**
+ * Run a race to completion and return results.
+ *
+ * Simulates all runners stepping forward until all finish or maxTime is reached.
+ * Optionally records snapshots for replay visualization.
+ *
+ * @param runners - All runners in the race
+ * @param distance - Race distance in meters
+ * @param rng - Random number generator
+ * @param dt - Time step in seconds (default 0.1)
+ * @param maxTime - Maximum simulation time in seconds (default 600)
+ * @param course - Track course specification for geometry effects
+ * @param recordSnapshots - Whether to record snapshots for replay (default false)
+ * @returns Race result with positions, times, and optional snapshots
  */
 export function runRaceToCompletion(
   runners: Runner[],

@@ -10,6 +10,7 @@
 
 import type { StateCreator } from "zustand";
 import type { CoreState } from "@/game/state/coreState";
+import type { SystemsState } from "@/game/state/systemsState";
 import type { RacingSlice } from "./slices/racingSlice";
 import type { MarketSlice } from "./slices/marketSlice";
 import type { BreedingSlice } from "./slices/breedingSlice";
@@ -46,6 +47,7 @@ export interface NewGameOptions {
  * Composed store type combining all slices
  */
 export type StoreType = CoreState &
+  SystemsState &
   RacingSlice &
   MarketSlice &
   BreedingSlice &
@@ -63,6 +65,7 @@ export type StoreType = CoreState &
 
 /**
  * Helper type for creating store slices with full store access
+ * Matches Zustand's actual set function signature with persist middleware
  */
 export type StoreSet = (
   partial: StoreType | Partial<StoreType> | ((state: StoreType) => StoreType | Partial<StoreType>),
@@ -71,9 +74,11 @@ export type StoreSet = (
 
 export type StoreGet = () => StoreType;
 
-export type GameStateCreator<TSlice> = StateCreator<
-  StoreType,
-  [["zustand/persist", unknown]],
-  [],
-  TSlice
->;
+/**
+ * Slice creator type that matches Zustand's actual signature with persist middleware
+ */
+export type SliceCreator<TSlice> = (
+  set: any,
+  get: StoreGet,
+  enqueueIntent: (intent: any) => void,
+) => TSlice;

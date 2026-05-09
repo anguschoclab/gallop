@@ -38,7 +38,7 @@ import { wrap, expose, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
-import type { StoreType, NewGameOptions } from "./types";
+import type { StoreType, NewGameOptions, ActionResult } from "./types";
 import type { AnyIntent } from "@/core/resolver/intents";
 
 /**
@@ -140,6 +140,19 @@ export function getInitializationWorker(): Remote<InitializationWorkerApi> {
 export const useGame = create<StoreType>()(
   persist(
     (set, get) => ({
+      // Systems state properties (required fields from SystemsState)
+      npcStables: [],
+      breedingPrograms: [],
+      awards: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
+      staffPool: [],
+      hiredStaff: [],
+      npcAIManager: {
+        stableStates: new Map(),
+        globalDay: 1,
+      } as any, // Type assertion to handle Map vs Record mismatch
+
       // Core slice
       ...createCoreSlice(set, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
@@ -258,3 +271,6 @@ export const useGameWithShallow = <T>(selector: (state: StoreType) => T): T =>
 
 // Alias for backwards compatibility
 export { useGame as useGallopStore };
+
+// Export common types for external use
+export type { ActionResult };

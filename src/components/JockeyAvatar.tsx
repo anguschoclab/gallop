@@ -19,6 +19,13 @@ interface Props {
  * Container uses max-width:100% so it cannot overflow narrow parents
  * (e.g. mobile cards, table cells). The inner SVG scales with width.
  */
+/**
+ * Sizing tokens for jockey avatar components.
+ * Import these to enforce consistent sizing across the app:
+ * ```typescript
+ * import { SIZE_MAP, JOCKEY_AVATAR_ASPECT } from "@/components/JockeyAvatar"
+ * ```
+ */
 export const SIZE_MAP: Record<JockeyAvatarSize, { w: number; h: number }> = {
   xs: { w: 30, h: 36 }, // table rows / inline name chips
   sm: { w: 40, h: 48 }, // dense lists, mobile cards
@@ -27,7 +34,7 @@ export const SIZE_MAP: Record<JockeyAvatarSize, { w: number; h: number }> = {
   xl: { w: 95, h: 114 }, // hero / profile pages
 };
 
-// Aspect ratio invariant — referenced by tests
+/** Aspect ratio invariant (5:6) — referenced by tests and layout calculations */
 export const JOCKEY_AVATAR_ASPECT = 5 / 6;
 
 export function JockeyAvatar({ jockey, size = "md", className, rounded = "md" }: Props) {

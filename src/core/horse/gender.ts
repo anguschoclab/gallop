@@ -84,14 +84,32 @@ export function getGenderFromProps(isMale: boolean, age: number, isGelding?: boo
 export const SIRE_GENDERS: HorseGender[] = ["colt", "horse"];
 export const DAM_GENDERS: HorseGender[] = ["filly", "mare"];
 
+/**
+ * Check if a horse gender is male.
+ *
+ * @param gender - Horse gender
+ * @returns True if male (colt, horse, or gelding)
+ */
 export function isMaleHorse(gender: HorseGender): boolean {
   return gender === "colt" || gender === "horse" || gender === "gelding";
 }
 
+/**
+ * Check if a horse gender is female.
+ *
+ * @param gender - Horse gender
+ * @returns True if female (filly or mare)
+ */
 export function isFemaleHorse(gender: HorseGender): boolean {
   return gender === "filly" || gender === "mare";
 }
 
+/**
+ * Get display label for horse gender.
+ *
+ * @param gender - Horse gender
+ * @returns Capitalized gender label
+ */
 export function genderLabel(gender: HorseGender): string {
   switch (gender) {
     case "colt":
@@ -109,6 +127,12 @@ export function genderLabel(gender: HorseGender): string {
   }
 }
 
+/**
+ * Get gender symbol for display.
+ *
+ * @param gender - Horse gender
+ * @returns Unicode gender symbol (♂, ♀, or ⚲ for gelding)
+ */
 export function genderSymbol(gender: HorseGender): string {
   if (gender === "gelding") return "⚲";
   return gender === "colt" || gender === "horse" ? "♂" : "♀";

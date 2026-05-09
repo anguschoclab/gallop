@@ -35,6 +35,7 @@ import type { ManagerReputation } from "@/core/reputation";
 import type { TransportRequest } from "@/core/transportation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
+import type { HallOfFameEntry } from "@/core/history/historyTypes";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -133,17 +134,7 @@ export interface SystemsState {
 
   // Hall of Fame system (optional)
   /** Legendary horses inducted into Hall of Fame */
-  hallOfFame?: Array<{
-    horseId: string;
-    horseName: string;
-    inductedOnDay: number;
-    careerHighlights: {
-      g1Wins: number;
-      gradedWins: number;
-      lifetimeEarnings: number;
-      horseOfTheYearAwards: number;
-    };
-  }>;
+  hallOfFame?: HallOfFameEntry[];
 
   // Player profile (optional - set after completing new game wizard)
   /** Player's stable identity from the new game wizard */

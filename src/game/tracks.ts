@@ -62,14 +62,32 @@ export const TRACK_BY_NAME: Record<string, Track> = Object.fromEntries(
 export const TRACK_BY_ID: Record<string, Track> = Object.fromEntries(TRACKS.map((t) => [t.id, t]));
 
 // Helper functions
+/**
+ * Get track by name.
+ *
+ * @param name - Track name
+ * @returns Track or undefined if not found
+ */
 export function getTrackByName(name: string): Track | undefined {
   return TRACK_BY_NAME[name];
 }
 
+/**
+ * Get track by ID.
+ *
+ * @param id - Track ID
+ * @returns Track or undefined if not found
+ */
 export function getTrackById(id: string): Track | undefined {
   return TRACK_BY_ID[id];
 }
 
+/**
+ * Get country by track name.
+ *
+ * @param name - Track name
+ * @returns Country code or "Other" if track not found
+ */
 export function getCountryByTrackName(name: string): string {
   const track = getTrackByName(name);
   return track?.country || "Other";

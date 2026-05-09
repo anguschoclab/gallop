@@ -40,7 +40,14 @@ export interface PersonalityAIState {
 }
 
 /**
- * Get AI state for a personality
+ * Get AI state for a personality.
+ *
+ * Initializes the personality AI state with learning rate, memory depth,
+ * adaptation speed, strategic horizon, competitive awareness, conservatism,
+ * innovation, learning state, and strategic state.
+ *
+ * @param personality - The stable personality
+ * @returns Initialized personality AI state
  */
 export function getPersonalityAIState(personality: StablePersonality): PersonalityAIState {
   const config = PERSONALITY_CONFIG[personality];
@@ -61,8 +68,16 @@ export function getPersonalityAIState(personality: StablePersonality): Personali
 }
 
 /**
- * Utility AI scoring function
- * Calculates utility score for a decision based on personality traits
+ * Utility AI scoring function.
+ *
+ * Calculates utility score for a decision based on personality traits.
+ * Applies personality-based weighting to factors and modifies based on
+ * conservatism and innovation.
+ *
+ * @param aiState - Current personality AI state
+ * @param decisionType - Type of decision being made
+ * @param factors - Record of factor names to values
+ * @returns Utility score (0-1)
  */
 export function calculateUtilityScore(
   aiState: PersonalityAIState,
@@ -113,7 +128,18 @@ export function calculateUtilityScore(
 }
 
 /**
- * Record a decision outcome for learning
+ * Record a decision outcome for learning.
+ *
+ * Records the outcome and adapts strategy if needed based on success rate.
+ *
+ * @param aiState - Current personality AI state
+ * @param decisionType - Type of decision made
+ * @param context - Context of the decision
+ * @param success - Whether the decision was successful
+ * @param value - Value of the outcome
+ * @param timestamp - Timestamp of the outcome
+ * @param day - Current game day
+ * @returns Updated personality AI state
  */
 export function recordOutcome(
   aiState: PersonalityAIState,
@@ -230,7 +256,14 @@ function getAlternativeStrategy(currentStrategy: string): string {
 }
 
 /**
- * Get strategic planning score for long-term decisions
+ * Get strategic planning score for long-term decisions.
+ *
+ * Balances short-term vs long-term value based on strategic horizon,
+ * applies risk tolerance, and adds novelty bonus.
+ *
+ * @param aiState - Current personality AI state
+ * @param decision - Decision object with shortTermValue, longTermValue, risk, novelty
+ * @returns Strategic score (0-1)
  */
 export function calculateStrategicScore(
   aiState: PersonalityAIState,
@@ -258,8 +291,14 @@ export function calculateStrategicScore(
 }
 
 /**
- * Get competitive awareness modifier
- * Adjusts decisions based on player/other NPC actions
+ * Get competitive awareness modifier.
+ *
+ * Adjusts decisions based on competitor actions. Conservative personalities
+ * may avoid when competitors succeed, innovative personalities may try to compete.
+ *
+ * @param aiState - Current personality AI state
+ * @param competitorActions - Array of competitor actions with type and success
+ * @returns Competitive modifier value
  */
 export function getCompetitiveModifier(
   aiState: PersonalityAIState,

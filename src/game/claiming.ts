@@ -13,7 +13,7 @@
 
 import type { Horse, Race, Claim, ClaimingPrice } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { createRng, hashStr } from "./rng";
+import { createRng, hashStr, type Rng } from "./rng";
 import { formatCurrency } from "@/lib/formatting";
 
 // Horse transfer result from a claiming race

@@ -51,7 +51,13 @@ export interface BreedingDecision {
 }
 
 /**
- * Create AI state for breeding decisions
+ * Create AI state for breeding decisions.
+ *
+ * Initializes the AI state with personality state, breeding history,
+ * active program, program distance history, and cooldown.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized breeding AI state
  */
 export function createBreedingAIState(stable: Stable): BreedingAIState {
   return {
@@ -64,8 +70,18 @@ export function createBreedingAIState(stable: Stable): BreedingAIState {
 }
 
 /**
- * Calculate AI-enhanced stallion score
+ * Calculate AI-enhanced stallion score.
+ *
  * Combines traditional scoring with learning-based adjustments
+ * and strategic planning based on breeding history.
+ *
+ * @param aiState - Current breeding AI state
+ * @param stallion - The stallion to evaluate
+ * @param mare - The mare to evaluate
+ * @param stable - The stable making the breeding decision
+ * @param maxFee - Maximum stud fee allowed
+ * @param leaderboards - Optional leaderboards for additional context
+ * @returns Enhanced stallion score
  */
 export function calculateAIStallionScore(
   aiState: BreedingAIState,
@@ -129,7 +145,20 @@ function calculateStrategicBreedingBonus(
 }
 
 /**
- * Record breeding decision for learning
+ * Record breeding decision for learning.
+ *
+ * Records the breeding decision and trims history to memory depth.
+ *
+ * @param aiState - Current breeding AI state
+ * @param sireId - ID of the sire
+ * @param damId - ID of the dam
+ * @param sireName - Name of the sire
+ * @param damName - Name of the dam
+ * @param stableId - ID of the stable
+ * @param personality - Stable personality
+ * @param day - Current game day
+ * @param score - Decision score
+ * @returns Updated breeding AI state
  */
 export function recordBreedingDecision(
   aiState: BreedingAIState,
@@ -166,7 +195,19 @@ export function recordBreedingDecision(
 }
 
 /**
- * Record breeding outcome for learning
+ * Record breeding outcome for learning.
+ *
+ * Finds the matching breeding decision and records the outcome,
+ * updating the personality state with the learning result.
+ *
+ * @param aiState - Current breeding AI state
+ * @param sireId - ID of the sire
+ * @param damId - ID of the dam
+ * @param foalId - ID of the resulting foal
+ * @param foalRating - Rating of the foal
+ * @param success - Whether the breeding was successful
+ * @param currentDay - Current game day
+ * @returns Updated breeding AI state
  */
 export function recordBreedingOutcome(
   aiState: BreedingAIState,
@@ -217,7 +258,14 @@ export function recordBreedingOutcome(
 }
 
 /**
- * Get breeding insights for a stable
+ * Get breeding insights for a stable.
+ *
+ * Calculates breeding statistics including success rate,
+ * average foal rating, and top performing sires.
+ *
+ * @param aiState - Current breeding AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with breeding statistics and top sires
  */
 export function getBreedingInsights(
   aiState: BreedingAIState,

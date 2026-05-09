@@ -30,7 +30,12 @@ export interface LearningState {
 }
 
 /**
- * Create a new learning state
+ * Create a new learning state.
+ *
+ * Initializes the learning state with empty outcomes, success rates,
+ * patterns, and last update timestamp.
+ *
+ * @returns New learning state
  */
 export function createLearningState(): LearningState {
   return {
@@ -42,7 +47,20 @@ export function createLearningState(): LearningState {
 }
 
 /**
- * Record an outcome for learning
+ * Record an outcome for learning.
+ *
+ * Records the outcome, trims to memory depth, updates success rates,
+ * and updates pattern recognition.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision made
+ * @param contextKey - Context key for the decision
+ * @param success - Whether the decision was successful
+ * @param value - Value of the outcome
+ * @param timestamp - Timestamp of the outcome
+ * @param day - Current game day
+ * @param memoryDepth - Maximum number of outcomes to keep
+ * @returns Updated learning state
  */
 export function recordOutcome(
   state: LearningState,
@@ -111,7 +129,15 @@ function updatePatterns(
 }
 
 /**
- * Get success rate for a decision type and context
+ * Get success rate for a decision type and context.
+ *
+ * Returns the success rate for a specific decision type and context key.
+ * Defaults to 0.5 if no data available.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision
+ * @param contextKey - Context key for the decision
+ * @returns Success rate (0-1)
  */
 export function getSuccessRate(
   state: LearningState,
@@ -124,7 +150,15 @@ export function getSuccessRate(
 }
 
 /**
- * Get pattern score for a decision type
+ * Get pattern score for a decision type.
+ *
+ * Returns the pattern recognition score for a specific decision type and context.
+ * Defaults to 0.5 if no pattern data available.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision
+ * @param context - Context string
+ * @returns Pattern score (0-1)
  */
 export function getPatternScore(
   state: LearningState,
@@ -136,8 +170,16 @@ export function getPatternScore(
 }
 
 /**
- * Get adaptive threshold based on learning
- * Adjusts decision thresholds based on past success rates
+ * Get adaptive threshold based on learning.
+ *
+ * Adjusts decision thresholds based on past success rates and adaptation speed.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision
+ * @param contextKey - Context key for the decision
+ * @param baseThreshold - Base threshold value
+ * @param adaptationSpeed - Speed of adaptation (0-1)
+ * @returns Adaptive threshold value
  */
 export function getAdaptiveThreshold(
   state: LearningState,
@@ -152,7 +194,14 @@ export function getAdaptiveThreshold(
 }
 
 /**
- * Prune old outcomes outside time window
+ * Prune old outcomes outside time window.
+ *
+ * Removes outcomes older than the cutoff day and recalculates
+ * success rates based on remaining outcomes.
+ *
+ * @param state - Current learning state
+ * @param cutoffDay - Day cutoff for pruning outcomes
+ * @returns Updated learning state
  */
 export function pruneOldOutcomes(state: LearningState, cutoffDay: number): LearningState {
   const outcomes = state.outcomes.filter((o) => o.day >= cutoffDay);
@@ -188,7 +237,14 @@ export function pruneOldOutcomes(state: LearningState, cutoffDay: number): Learn
 }
 
 /**
- * Get learning insights for a decision type
+ * Get learning insights for a decision type.
+ *
+ * Returns statistics including total decisions, success rate, average value,
+ * and pattern scores for a specific decision type.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision to get insights for
+ * @returns Object with learning insights
  */
 export function getLearningInsights(
   state: LearningState,

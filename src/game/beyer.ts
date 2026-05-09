@@ -29,10 +29,26 @@ function defaultParTime(distance: number): number {
   return distance / 16.7; // ~60s per 1000m
 }
 
+/**
+ * Calculate distance bucket for par time calibration.
+ *
+ * @param distance - Race distance in meters
+ * @returns Distance bucket (rounded to nearest 200m)
+ */
 export function distanceBucket(distance: number): number {
   return Math.max(200, Math.round(distance / 200) * 200);
 }
 
+/**
+ * Calculate par time for a given distance.
+ *
+ * Uses calibrated pars if available, otherwise falls back to analytical default.
+ * Blends with neighboring bucket data for smooth interpolation.
+ *
+ * @param distance - Race distance in meters
+ * @param calibratedPars - Optional calibrated par times by distance bucket
+ * @returns Par time in seconds
+ */
 export function parTime(distance: number, calibratedPars: Record<number, number> = {}): number {
   const b = distanceBucket(distance);
   // Blend: if calibration exists for this bucket, lean on it; otherwise fall
@@ -48,6 +64,15 @@ export function parTime(distance: number, calibratedPars: Record<number, number>
   return defaultParTime(distance);
 }
 
+/**
+ * Calculate Beyer-style speed figure.
+ *
+ * Scales linearly with how far finish time beats par time, with grade/race-class uplift.
+ * Output clamped to 30-125 (Beyer "Big Figs" rarely exceed 120).
+ *
+ * @param input - Beyer calculation parameters
+ * @returns Beyer figure (30-125)
+ */
 export function beyerFigure({
   distance,
   finishTime,

@@ -105,8 +105,9 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
     }
     if (aiState.campaignAI) {
       // Check if horse is a contender
-      const contenderStatus = detectContender(aiState.campaignAI, horse, currentDay);
-      if (contenderStatus.isContender && !targetRaceKey) {
+      const updatedState = detectContender(aiState.campaignAI, horse, currentDay);
+      const horseStatus = updatedState.contenderTracking[horse.id];
+      if (horseStatus?.isContender && !targetRaceKey) {
         // Auto-assign optimal major race target
         const optimalTarget = getOptimalMajorRaceTarget(
           aiState.campaignAI,
