@@ -49,7 +49,15 @@ import {
 } from "@/core/ai/npcCycleAI";
 
 /**
- * Generate all NPC intents for the day
+ * Generate all NPC intents for the day.
+ *
+ * Generates intent objects for all NPC stables including breeding, race entries,
+ * claiming, auction participation, and facility upgrades based on AI state and
+ * current game conditions.
+ *
+ * @param state - Current game state
+ * @param day - Current game day
+ * @returns Array of intent objects for all NPC actions
  */
 export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
   const intents: AnyIntent[] = [];

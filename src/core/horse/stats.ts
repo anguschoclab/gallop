@@ -17,7 +17,13 @@ import type { Rng } from "@/game/rng";
  */
 
 /**
- * Calculate overall horse rating from stats
+ * Calculate overall horse rating from stats.
+ *
+ * Computes the average of all four stats (speed, stamina, acceleration, consistency)
+ * to provide a single overall rating for the horse.
+ *
+ * @param horse - The horse to calculate rating for
+ * @returns Overall rating (0-100)
  */
 export function calculateOverallRating(horse: Horse): number {
   return Math.round(
@@ -27,8 +33,13 @@ export function calculateOverallRating(horse: Horse): number {
 }
 
 /**
- * Calculate race-specific rating (3-stat average)
- * Used in AI contexts where consistency is intentionally excluded
+ * Calculate race-specific rating (3-stat average).
+ *
+ * Computes the average of speed, stamina, and acceleration (excluding consistency).
+ * Used in AI contexts where consistency is intentionally excluded.
+ *
+ * @param horse - The horse to calculate rating for
+ * @returns Race rating (0-100)
  */
 export function calculateRaceRating(horse: Horse): number {
   return Math.round((horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3);
@@ -49,7 +60,13 @@ export interface CareerStats {
 }
 
 /**
- * Calculate career performance summary from race history
+ * Calculate career performance summary from race history.
+ *
+ * Analyzes the horse's race history to compute career statistics including
+ * starts, wins, places, shows, graded wins, stakes wins, and earnings.
+ *
+ * @param horse - The horse to calculate career stats for
+ * @returns Career statistics object
  */
 export function getCareerStats(horse: Horse): CareerStats {
   const history = horse.raceHistory || [];
@@ -98,10 +115,13 @@ export function getCareerStats(horse: Horse): CareerStats {
 
 /**
  * Current and potential ability — single-number summary of a horse's level.
+ *
  * Current: average of the four stats today.
- * Potential: where those stats can grow to (capped by the horse's potential
- * ceiling). Both are 0–100. Use this for at-a-glance comparisons and for
- * sorting markets/stables.
+ * Potential: where those stats can grow to (capped by the horse's potential ceiling).
+ * Both are 0–100. Use this for at-a-glance comparisons and for sorting markets/stables.
+ *
+ * @param horse - The horse to calculate ability for
+ * @returns Object with current and potential ability scores
  */
 export function getAbility(horse: Horse): { current: number; potential: number } {
   const current = calculateOverallRating(horse);
@@ -113,7 +133,13 @@ export function getAbility(horse: Horse): { current: number; potential: number }
 }
 
 /**
- * Letter grade based on a 0–100 ability score. Convenient for UI badges.
+ * Letter grade based on a 0–100 ability score.
+ *
+ * Converts a numeric ability score to a letter grade (S, A, B, C, D, F).
+ * Convenient for UI badges.
+ *
+ * @param score - Ability score (0-100)
+ * @returns Letter grade (S, A, B, C, D, or F)
  */
 export function abilityGrade(score: number): string {
   if (score >= 90) return "S";
@@ -125,7 +151,14 @@ export function abilityGrade(score: number): string {
 }
 
 /**
- * Determine logical running style from base stats
+ * Determine logical running style from base stats.
+ *
+ * Calculates the horse's running style based on the balance between
+ * speed/acceleration (early bias) and stamina (late bias), with RNG variation.
+ *
+ * @param stats - Object containing speed, stamina, and acceleration stats
+ * @param rng - Random number generator
+ * @returns Running style (E, EP, P, or S)
  */
 export function rollRunningStyle(
   stats: { speed: number; stamina: number; acceleration: number },

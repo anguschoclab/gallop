@@ -13,6 +13,7 @@
 
 import type { Race } from "./types";
 import type { Track, TrackSchedule } from "./tracks";
+import type { Rng } from "./rng";
 import { createRng, hashStr } from "@/game/rng";
 import { getTrackById } from "./tracks";
 import { generateRace, makeGradedRace } from "./raceGeneration/raceGen";
@@ -36,22 +37,38 @@ function getBreedersCupTrack(year: number): { trackId: string; name: string } {
 import { DAYS_PER_YEAR } from "@/game/constants/gameConstants";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 
-// Helper: Get current year from game day
 /**
  * Returns the 1-based game year counter (Day 1-365 = Year 1).
+ *
  * Distinct from calendar year (2026-based).
+ *
+ * @param gameDay - Current game day
+ * @returns Game year number
  */
 export function getCurrentYear(gameDay: number): number {
   // Day 1 = Year 1, Day 366 = Year 2, etc.
   return Math.floor((gameDay - 1) / DAYS_PER_YEAR) + 1;
 }
 
-// Helper: Get day of week (0=Sunday, 6=Saturday) from game day
+/**
+ * Get day of week from game day.
+ *
+ * @param gameDay - Current game day
+ * @returns Day of week (0=Sunday, 6=Saturday)
+ */
 export function getDayOfWeek(gameDay: number): number {
   return (gameDay - 1) % 7;
 }
 
-// Helper: Check if a track is racing on a given day
+/**
+ * Check if a track is racing on a given day.
+ *
+ * Checks if the track's schedule includes this day of week and if within meet dates.
+ *
+ * @param schedule - Track schedule
+ * @param gameDay - Current game day
+ * @returns True if track is racing on this day
+ */
 export function isTrackRacing(schedule: TrackSchedule, gameDay: number): boolean {
   const dayOfWeek = getDayOfWeek(gameDay);
   const doy = dayOfYear(gameDay);
@@ -80,8 +97,18 @@ export function isTrackRacing(schedule: TrackSchedule, gameDay: number): boolean
   return true;
 }
 
-// Generate races for a specific track on a specific day
-// Uses regional-specific generators for authentic race patterns
+/**
+ * Generate races for a specific track on a specific day.
+ *
+ * Uses regional-specific generators for authentic race patterns.
+ *
+ * @param track - Track to generate races for
+ * @param schedule - Track schedule
+ * @param gameDay - Current game day
+ * @param existingRaces - Existing races to avoid conflicts
+ * @param rng - Random number generator
+ * @returns Array of generated races
+ */
 export function generateTrackRaces(
   track: Track,
   schedule: TrackSchedule,
@@ -110,7 +137,17 @@ export function generateTrackRaces(
   return races;
 }
 
-// Main function: Generate all track races for a given day
+/**
+ * Generate all track races for a given day.
+ *
+ * Generates graded stakes and track-specific races based on schedules.
+ *
+ * @param gameDay - Current game day
+ * @param existingRaces - Existing races
+ * @param schedules - Array of track schedules
+ * @param rng - Random number generator
+ * @returns Array of all races for the day
+ */
 export function generateTrackSchedule(
   gameDay: number,
   existingRaces: Race[],
@@ -141,8 +178,16 @@ export function generateTrackSchedule(
   return races;
 }
 
-// Generate all graded races for a given game year (called on year transition)
-// Uses dayOfYearVariance to apply deterministic jitter to each race's schedule date
+/**
+ * Generate all graded races for a given game year.
+ *
+ * Called on year transition. Uses dayOfYearVariance to apply deterministic
+ * jitter to each race's schedule date. Handles Breeders' Cup track rotation.
+ *
+ * @param year - Game year
+ * @param existingRaces - Existing races
+ * @returns Array of graded races for the year
+ */
 export function generateAnnualCalendar(year: number, existingRaces: Race[]): Race[] {
   const yearRng = createRng(hashStr(`annual_calendar_${year}`));
   const firstDayOfYear = (year - 1) * 365 + 1;
@@ -184,13 +229,23 @@ export function generateAnnualCalendar(year: number, existingRaces: Race[]): Rac
   return races;
 }
 
-// Generate upcoming races for the next 7 days
-// Each day uses a derived seed for determinism
+/**
+ * Generate upcoming races for the next 7 days.
+ *
+ * Each day uses a derived seed for determinism. Adds only new races
+ * to avoid duplicates.
+ *
+ * @param currentRaces - Current races
+ * @param newDay - Starting day for generation
+ * @param schedules - Array of track schedules
+ * @param baseRng - Base random number generator
+ * @returns Array of upcoming races
+ */
 export function generateUpcomingRaces(
   currentRaces: Race[],
   newDay: number,
   schedules: TrackSchedule[],
-  baseRng: Rng, // Used if we need global randomness, but we prefer daily seeds
+  baseRng: Rng,
 ): Race[] {
   const races = [...currentRaces];
   // We don't actually need baseRng if we derive daily seeds,

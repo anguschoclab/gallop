@@ -11,8 +11,12 @@
 import type { Rng } from "@/game/rng";
 
 /**
- * Generate a proper UUID v4
- * Uses provided rng if available for determinism, falls back to crypto.randomUUID()
+ * Generate a proper UUID v4.
+ *
+ * Uses provided rng if available for determinism, falls back to crypto.randomUUID().
+ *
+ * @param rng - Optional random number generator for deterministic generation
+ * @returns UUID v4 string
  */
 export function generateUUID(rng?: Rng): string {
   if (rng) {
@@ -43,8 +47,11 @@ export function generateUUID(rng?: Rng): string {
 }
 
 /**
- * Generate a short unique ID (for internal use only, not for entities)
- * 8 character alphanumeric string
+ * Generate a short unique ID (for internal use only, not for entities).
+ *
+ * Generates an 8 character alphanumeric string using secure random values.
+ *
+ * @returns Short ID string
  */
 export function generateShortId(): string {
   if (typeof crypto !== "undefined" && crypto.getRandomValues) {
@@ -73,7 +80,12 @@ export function generateShortId(): string {
 }
 
 /**
- * Check if a string is a valid UUID v4 format
+ * Check if a string is a valid UUID v4 format.
+ *
+ * Validates the string against UUID v4 regex pattern.
+ *
+ * @param str - String to validate
+ * @returns True if valid UUID v4 format
  */
 export function isValidUUID(str: string): boolean {
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

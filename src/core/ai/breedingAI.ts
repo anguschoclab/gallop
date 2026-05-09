@@ -15,7 +15,7 @@ import { getSuccessRate } from "./learningModule";
 import { scoreStallion, overallRating } from "@/core/breeding/strategy";
 import { runBreedingSimulation } from "@/core/genetics/breedingSimulator";
 import { cachedSimulation } from "@/core/genetics/genotypeCache";
-import { getArchetypeById } from "@/core/breeding/archetypes";
+import { getArchetypeById, getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
 import { calculateGeneticDistance } from "@/core/breeding/programs";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { Rng } from "@/game/rng";
@@ -42,11 +42,13 @@ export interface BreedingDecision {
   personality: Stable["personality"];
   day: number;
   score: number;
+  tripleCrownSeries?: string; // Target triple crown series for this breeding
   outcome?: {
     foalId?: string;
     foalRating?: number;
     success: boolean;
     value: number;
+    tripleCrownWin?: string; // Series key if foal won a triple crown leg
   };
 }
 
@@ -74,6 +76,7 @@ export function createBreedingAIState(stable: Stable): BreedingAIState {
  *
  * Combines traditional scoring with learning-based adjustments
  * and strategic planning based on breeding history.
+ * Adds bonus for sires with progeny success in target triple crown series.
  *
  * @param aiState - Current breeding AI state
  * @param stallion - The stallion to evaluate
@@ -104,11 +107,30 @@ export function calculateAIStallionScore(
   const strategicBonus = calculateStrategicBreedingBonus(aiState, stallion, mare, stable);
   score += strategicBonus;
 
+  // Series-specific success bonus for triple crown breeding
+  if (stable.breedingArchetype) {
+    const targetSeries = getTripleCrownKeysForArchetype(stable.breedingArchetype);
+    const seriesSuccessBonus = targetSeries.reduce((bonus, tcKey) => {
+      const successRate = getProgenyTripleCrownSuccess(aiState, stallion.id, tcKey);
+      return bonus + successRate * 10; // Up to +10 per series
+    }, 0);
+    score += seriesSuccessBonus;
+  }
+
   return score;
 }
 
 /**
- * Calculate strategic breeding bonus based on history
+ * Calculate strategic breeding bonus based on history.
+ *
+ * Analyzes breeding history to provide bonuses for proven sires and
+ * historically successful crosses.
+ *
+ * @param aiState - Current breeding AI state
+ * @param stallion - The stallion being evaluated
+ * @param mare - The mare being evaluated
+ * @param stable - The stable making the breeding decision
+ * @returns Strategic breeding bonus (0-15)
  */
 function calculateStrategicBreedingBonus(
   aiState: BreedingAIState,
@@ -158,6 +180,7 @@ function calculateStrategicBreedingBonus(
  * @param personality - Stable personality
  * @param day - Current game day
  * @param score - Decision score
+ * @param tripleCrownSeries - Optional target triple crown series
  * @returns Updated breeding AI state
  */
 export function recordBreedingDecision(
@@ -170,6 +193,7 @@ export function recordBreedingDecision(
   personality: Stable["personality"],
   day: number,
   score: number,
+  tripleCrownSeries?: string,
 ): BreedingAIState {
   const decision: BreedingDecision = {
     sireId,
@@ -180,6 +204,7 @@ export function recordBreedingDecision(
     personality,
     day,
     score,
+    tripleCrownSeries,
   };
 
   const newHistory = [...aiState.breedingHistory, decision];
@@ -199,6 +224,7 @@ export function recordBreedingDecision(
  *
  * Finds the matching breeding decision and records the outcome,
  * updating the personality state with the learning result.
+ * Tracks triple crown wins by series for learning.
  *
  * @param aiState - Current breeding AI state
  * @param sireId - ID of the sire
@@ -207,6 +233,7 @@ export function recordBreedingDecision(
  * @param foalRating - Rating of the foal
  * @param success - Whether the breeding was successful
  * @param currentDay - Current game day
+ * @param tripleCrownWin - Optional series key if foal won a triple crown leg
  * @returns Updated breeding AI state
  */
 export function recordBreedingOutcome(
@@ -217,6 +244,7 @@ export function recordBreedingOutcome(
   foalRating: number,
   success: boolean,
   currentDay: number,
+  tripleCrownWin?: string,
 ): BreedingAIState {
   // Find the decision
   const decisionIndex = aiState.breedingHistory.findIndex(
@@ -231,6 +259,7 @@ export function recordBreedingOutcome(
         foalRating,
         success,
         value: foalRating,
+        tripleCrownWin,
       },
     };
     const newBreedingHistory = [...aiState.breedingHistory];
@@ -246,6 +275,28 @@ export function recordBreedingOutcome(
       Date.now(),
       currentDay,
     );
+
+    // If foal won a triple crown leg, record series-specific learning
+    if (tripleCrownWin && decision.tripleCrownSeries) {
+      const contextKey = { tripleCrownSeries: tripleCrownWin };
+      // Use personality state's learning module to record series-specific outcome
+      const seriesSuccess = decision.tripleCrownSeries === tripleCrownWin;
+      const newPersonalityStateWithSeries = recordOutcome(
+        newPersonalityState,
+        "breeding",
+        contextKey,
+        seriesSuccess,
+        foalRating,
+        Date.now(),
+        currentDay,
+      );
+
+      return {
+        ...aiState,
+        breedingHistory: newBreedingHistory,
+        personalityState: newPersonalityStateWithSeries,
+      };
+    }
 
     return {
       ...aiState,
@@ -319,7 +370,39 @@ export function getBreedingInsights(
 }
 
 /**
- * Adapt breeding strategy based on learning outcomes
+ * Get progeny triple crown success rate for a sire in a specific series.
+ *
+ * Returns the success rate of a sire's progeny in a specific triple crown series.
+ *
+ * @param aiState - Current breeding AI state
+ * @param sireId - ID of the sire
+ * @param tcKey - Triple crown series key
+ * @returns Success rate (0-1)
+ */
+export function getProgenyTripleCrownSuccess(
+  aiState: BreedingAIState,
+  sireId: string,
+  tcKey: string,
+): number {
+  const sireHistory = aiState.breedingHistory.filter(
+    (d) => d.sireId === sireId && d.outcome && d.outcome.tripleCrownWin,
+  );
+
+  if (sireHistory.length === 0) return 0.5; // Default neutral
+
+  const seriesWins = sireHistory.filter((d) => d.outcome?.tripleCrownWin === tcKey).length;
+  return seriesWins / sireHistory.length;
+}
+
+/**
+ * Adapt breeding strategy based on learning outcomes.
+ *
+ * Adjusts strategy confidence based on breeding success rate. Decreases confidence
+ * if success rate is low (< 0.4), increases if high (> 0.7).
+ *
+ * @param aiState - Current breeding AI state
+ * @param currentDay - Current game day
+ * @returns Updated breeding AI state
  */
 export function adaptBreedingStrategy(
   aiState: BreedingAIState,
@@ -345,8 +428,18 @@ export function adaptBreedingStrategy(
 }
 
 /**
- * Select sire for dam using breeding simulator if stable has breeding program
- * Falls back to traditional scoring if no breeding program or simulation shows poor match
+ * Select sire for dam using breeding simulator if stable has breeding program.
+ *
+ * Uses breeding simulator to find the sire that produces foals closest to the
+ * stable's breeding archetype. Falls back to traditional scoring if no breeding
+ * program or simulation shows poor match.
+ *
+ * @param dam - The mare to breed
+ * @param candidateSires - Array of candidate sires
+ * @param stable - The stable making the breeding decision
+ * @param gameState - Current game state
+ * @param rng - Random number generator
+ * @returns Selected sire or null if no suitable sire found
  */
 export function selectSireForDam(
   dam: Horse,
@@ -399,7 +492,16 @@ export function selectSireForDam(
 }
 
 /**
- * Select sire using traditional scoring (fallback when breeding program not applicable)
+ * Select sire using traditional scoring (fallback when breeding program not applicable).
+ *
+ * Selects the sire with the highest overall rating from candidate sires.
+ * Used as a fallback when breeding program simulation is not applicable.
+ *
+ * @param dam - The mare to breed
+ * @param candidateSires - Array of candidate sires
+ * @param stable - The stable making the breeding decision
+ * @param gameState - Current game state
+ * @returns Selected sire or null if no candidates
  */
 function selectSireByTraditionalScoring(
   dam: Horse,

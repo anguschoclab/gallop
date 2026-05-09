@@ -148,7 +148,16 @@ export function calculateBiddingValue(
 }
 
 /**
- * Evaluate strategic bidding value
+ * Evaluate strategic bidding value.
+ *
+ * Calculates strategic value based on portfolio fit, age distribution fit,
+ * and quality fit. Returns bonus points for horses that fill gaps in the stable's portfolio.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to evaluate
+ * @param stable - The stable making the bid
+ * @param currentDay - Current game day
+ * @returns Strategic value bonus (0-25)
  */
 function evaluateStrategicBiddingValue(
   aiState: AuctionAIState,

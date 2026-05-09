@@ -52,7 +52,7 @@ describe("Triple Crown Detection", () => {
     const result = [{ horseId: "horse-1", position: 1, time: 120.5 }];
     const runners = [{ horseId: "horse-1" }];
 
-    const { impacts } = generateRaceImpacts({
+    const impacts = generateRaceImpacts({
       race,
       result,
       runners,
@@ -60,6 +60,7 @@ describe("Triple Crown Detection", () => {
       jockeys,
       newDay: 100,
       stateCash: 10000,
+      calibratedPars: {},
     });
 
     // Check that a triple crown progress impact was generated
@@ -134,7 +135,7 @@ describe("Triple Crown Detection", () => {
     const result = [{ horseId: "horse-1", position: 1, time: 120.5 }];
     const runners = [{ horseId: "horse-1" }];
 
-    const { impacts } = generateRaceImpacts({
+    const impacts = generateRaceImpacts({
       race,
       result,
       runners,
@@ -142,6 +143,7 @@ describe("Triple Crown Detection", () => {
       jockeys,
       newDay: 100,
       stateCash: 10000,
+      calibratedPars: {},
     });
 
     const tcImpact = impacts.find((i) => i.type === "triple_crown_progress");
@@ -182,7 +184,7 @@ describe("Triple Crown Detection", () => {
     const result = [{ horseId: "horse-1", position: 1, time: 120.5 }];
     const runners = [{ horseId: "horse-1" }];
 
-    const { impacts } = generateRaceImpacts({
+    const impacts = generateRaceImpacts({
       race,
       result,
       runners,
@@ -190,6 +192,7 @@ describe("Triple Crown Detection", () => {
       jockeys,
       newDay: 100,
       stateCash: 10000,
+      calibratedPars: {},
     });
 
     const tcImpact = impacts.find((i) => i.type === "triple_crown_progress");
@@ -230,7 +233,7 @@ describe("Triple Crown Detection", () => {
     const result = [{ horseId: "horse-1", position: 3, time: 125.5 }]; // 3rd place
     const runners = [{ horseId: "horse-1" }];
 
-    const { impacts } = generateRaceImpacts({
+    const impacts = generateRaceImpacts({
       race,
       result,
       runners,
@@ -238,23 +241,43 @@ describe("Triple Crown Detection", () => {
       jockeys,
       newDay: 100,
       stateCash: 10000,
+      calibratedPars: {},
     });
 
     const tcImpact = impacts.find((i) => i.type === "triple_crown_progress");
     expect(tcImpact).toBeUndefined();
   });
 
-  it("should track all three triple crown regions (USA, Canada, UK)", () => {
-    const tripleCrownKeys = new Set(["usa-tc", "canada-tc", "uk-classics"]);
+  it("should track all triple crown regions and triple tiaras", () => {
+    const tripleCrownKeys = new Set([
+      "usa-tc",
+      "canada-tc",
+      "uk-classics",
+      "japan-tc",
+      "ireland-tc",
+      "france-tc",
+      "italy-tc",
+      "argentina-tc",
+      "hongkong-tc",
+      "hungary-tc",
+      "japan-tiara",
+      "usa-tiara",
+      "canada-tiara",
+      "australia-tc",
+      "germany-tc",
+      "brazil-tc",
+      "brazil-tiara",
+      "chile-tc",
+    ]);
     const tcRaces = GRADED_RACES.filter((r) => r.triplecrownKey);
 
-    // Verify all three regions have races
+    // Verify all regions have races
     const foundKeys = new Set(tcRaces.map((r) => r.triplecrownKey));
-    expect(foundKeys.has("usa-tc")).toBe(true);
-    expect(foundKeys.has("canada-tc")).toBe(true);
-    expect(foundKeys.has("uk-classics")).toBe(true);
+    for (const key of tripleCrownKeys) {
+      expect(foundKeys.has(key)).toBe(true);
+    }
 
-    // Each region should have at least 3 races (some may have more)
+    // Each region should have at least 3 races (Triple Crown) or 3 races (Triple Tiara)
     for (const key of tripleCrownKeys) {
       const races = tcRaces.filter((r) => r.triplecrownKey === key);
       expect(races.length).toBeGreaterThanOrEqual(3);

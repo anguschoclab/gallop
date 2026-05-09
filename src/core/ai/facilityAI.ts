@@ -146,7 +146,15 @@ export function calculateFacilityUpgradePriority(
 }
 
 /**
- * Get base priority for a facility type based on personality
+ * Get base priority for a facility type based on personality.
+ *
+ * Returns a base priority score for each facility type, adjusted for
+ * personality preferences. Higher priority for essential facilities like
+ * main_track and barn.
+ *
+ * @param facilityType - The facility type to evaluate
+ * @param personality - The stable personality for adjustment
+ * @returns Base priority score (0-50)
  */
 function getFacilityPriority(
   facilityType: FacilityType,

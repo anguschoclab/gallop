@@ -239,6 +239,114 @@ export const TRIPLE_CROWN_ARCHETYPES: Archetype[] = [
     weights: { speed: 0.25, stamina: 0.4, acceleration: 0.15, consistency: 0.2 },
   },
   {
+    id: "triple-crown-european-turf",
+    name: "European Turf Triple Crown Specialist",
+    description:
+      "Focus on European turf triple crowns (Ireland, France, Germany, Italy). High stamina for 2000-3000m staying races, turf surface, balanced speed/stamina for versatile distances, style P/S, peakAge 3-4",
+    targetPhenotype: {
+      speed: 0.7,
+      stamina: 0.9,
+      acceleration: 0.7,
+      consistency: 0.8,
+      distance: 2400,
+      surface: "Turf",
+      trainability: 0.75,
+      durability: 0.85,
+      peakAge: 4,
+    },
+    weights: { speed: 0.2, stamina: 0.45, acceleration: 0.15, consistency: 0.2 },
+  },
+  {
+    id: "triple-crown-asian-turf",
+    name: "Asian Turf Triple Crown Specialist",
+    description:
+      "Focus on Asian turf triple crowns (Japan, Hong Kong, Australia). High speed for 1600-3000m races, turf surface, early-maturing for Australian series, style P/S, peakAge 3",
+    targetPhenotype: {
+      speed: 0.8,
+      stamina: 0.85,
+      acceleration: 0.75,
+      consistency: 0.8,
+      distance: 2000,
+      surface: "Turf",
+      trainability: 0.8,
+      durability: 0.85,
+      peakAge: 3,
+    },
+    weights: { speed: 0.3, stamina: 0.35, acceleration: 0.15, consistency: 0.2 },
+  },
+  {
+    id: "triple-crown-south-america",
+    name: "South American Triple Crown Specialist",
+    description:
+      "Focus on South American triple crowns (Argentina, Brazil, Chile). Balanced speed/stamina for 1600-2500m races, dirt/turf surfaces, versatile for varying conditions, style P/S, peakAge 3",
+    targetPhenotype: {
+      speed: 0.75,
+      stamina: 0.8,
+      acceleration: 0.7,
+      consistency: 0.8,
+      distance: 2000,
+      surface: "Versatile",
+      trainability: 0.75,
+      durability: 0.8,
+      peakAge: 3,
+    },
+    weights: { speed: 0.3, stamina: 0.3, acceleration: 0.15, consistency: 0.25 },
+  },
+  {
+    id: "triple-crown-hungary",
+    name: "Hungarian Triple Crown Specialist",
+    description:
+      "Focus on Hungarian Triple Crown. Turf surface, stamina-focused for 1400-2800m progression, early speed for sprint leg, style P/S, peakAge 3",
+    targetPhenotype: {
+      speed: 0.7,
+      stamina: 0.85,
+      acceleration: 0.7,
+      consistency: 0.8,
+      distance: 2000,
+      surface: "Turf",
+      trainability: 0.75,
+      durability: 0.85,
+      peakAge: 3,
+    },
+    weights: { speed: 0.25, stamina: 0.4, acceleration: 0.15, consistency: 0.2 },
+  },
+  {
+    id: "triple-tiara-turf",
+    name: "Triple Tiara Turf Specialist",
+    description:
+      "Focus on fillies' triple tiaras on turf (Japan, Brazil). High speed for fillies' races, turf surface, early-maturing, style P, peakAge 3",
+    targetPhenotype: {
+      speed: 0.8,
+      stamina: 0.75,
+      acceleration: 0.8,
+      consistency: 0.8,
+      distance: 1800,
+      surface: "Turf",
+      trainability: 0.8,
+      durability: 0.8,
+      peakAge: 3,
+    },
+    weights: { speed: 0.35, stamina: 0.25, acceleration: 0.25, consistency: 0.15 },
+  },
+  {
+    id: "triple-tiara-dirt",
+    name: "Triple Tiara Dirt Specialist",
+    description:
+      "Focus on fillies' triple tiaras on dirt (USA, Canada). Balanced speed/stamina for fillies' races, dirt/synthetic surface, durable for series, style P/S, peakAge 3",
+    targetPhenotype: {
+      speed: 0.75,
+      stamina: 0.8,
+      acceleration: 0.75,
+      consistency: 0.8,
+      distance: 1800,
+      surface: "Versatile",
+      trainability: 0.75,
+      durability: 0.85,
+      peakAge: 3,
+    },
+    weights: { speed: 0.3, stamina: 0.3, acceleration: 0.2, consistency: 0.2 },
+  },
+  {
     id: "triple-crown-specialist",
     name: "Triple Crown Specialist",
     description:
@@ -289,4 +397,57 @@ export function getArchetypesBySurface(
   surface: "Turf" | "Dirt" | "Synthetic" | "Versatile",
 ): Archetype[] {
   return ALL_ARCHETYPES.filter((a) => a.targetPhenotype.surface === surface);
+}
+
+/**
+ * Mapping of triple crown series keys to their primary archetypes.
+ * Groups similar regional series by surface/distance patterns.
+ */
+export const TRIPLE_CROWN_SERIES_TO_ARCHETYPE: Record<string, string> = {
+  "usa-tc": "triple-crown-usa",
+  "canada-tc": "triple-crown-canada",
+  "uk-classics": "triple-crown-uk-classics",
+  "ireland-tc": "triple-crown-european-turf",
+  "france-tc": "triple-crown-european-turf",
+  "germany-tc": "triple-crown-european-turf",
+  "italy-tc": "triple-crown-european-turf",
+  "japan-tc": "triple-crown-asian-turf",
+  "hongkong-tc": "triple-crown-asian-turf",
+  "australia-tc": "triple-crown-asian-turf",
+  "argentina-tc": "triple-crown-south-america",
+  "brazil-tc": "triple-crown-south-america",
+  "chile-tc": "triple-crown-south-america",
+  "hungary-tc": "triple-crown-hungary",
+  "japan-tiara": "triple-tiara-turf",
+  "brazil-tiara": "triple-tiara-turf",
+  "usa-tiara": "triple-tiara-dirt",
+  "canada-tiara": "triple-tiara-dirt",
+};
+
+/**
+ * Get archetype for a specific triple crown series.
+ *
+ * @param tcKey - The triple crown series key
+ * @returns The archetype ID for the series, or undefined if not found
+ *
+ * @example
+ * const archetypeId = getArchetypeForTripleCrownKey("japan-tc");
+ */
+export function getArchetypeForTripleCrownKey(tcKey: string): string | undefined {
+  return TRIPLE_CROWN_SERIES_TO_ARCHETYPE[tcKey];
+}
+
+/**
+ * Get all triple crown series keys for a specific archetype.
+ *
+ * @param archetypeId - The archetype ID
+ * @returns Array of triple crown series keys that map to this archetype
+ *
+ * @example
+ * const seriesKeys = getTripleCrownKeysForArchetype("triple-crown-european-turf");
+ */
+export function getTripleCrownKeysForArchetype(archetypeId: string): string[] {
+  return Object.entries(TRIPLE_CROWN_SERIES_TO_ARCHETYPE)
+    .filter(([_, archetype]) => archetype === archetypeId)
+    .map(([tcKey, _]) => tcKey);
 }

@@ -111,7 +111,12 @@ export function calculateClaimingValue(
 }
 
 /**
- * Assess horse form based on recent performance
+ * Assess horse form based on recent performance.
+ *
+ * Returns a normalized form score (0-10) based on the horse's current form (0-100).
+ *
+ * @param horse - The horse to assess
+ * @returns Normalized form score (0-10)
  */
 function assessHorseForm(horse: Horse): number {
   return horse.form / 10; // Form is 0-100, normalize to 0-10

@@ -15,7 +15,18 @@ import { getFormTolerance } from "@/core/stable/personalityModifiers";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 
 /**
- * Check if a horse should enter a race (basic eligibility + suitability)
+ * Check if a horse should enter a race (basic eligibility + suitability).
+ *
+ * Performs comprehensive eligibility checks including race eligibility, energy levels,
+ * consignment status, form requirements, stable entry limits, and duplicate entry prevention.
+ * Calculates suitability score with personality modifiers.
+ *
+ * @param horse - Horse to evaluate
+ * @param race - Race to enter
+ * @param currentEntries - Current race entries
+ * @param pregnantIds - Set of pregnant horse IDs to exclude
+ * @param stable - Stable owning the horse
+ * @returns Object with shouldEnter flag and suitability score
  */
 export function shouldEnterHorse(
   horse: Horse,

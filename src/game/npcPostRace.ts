@@ -11,7 +11,15 @@
 import type { Horse, Race } from "./types";
 
 /**
- * Update horse fame after race results
+ * Update horse fame after race results.
+ *
+ * Updates horse fame based on finishing position, race grade, and purse size.
+ * Winners get more fame for graded races, with bonuses for high-purse events.
+ *
+ * @param horses - Array of horses to update
+ * @param race - Race with results
+ * @param horseMap - Optional map of horse IDs to array indices
+ * @returns Updated array of horses with modified fame values
  */
 export function updateHorseFame(
   horses: Horse[],

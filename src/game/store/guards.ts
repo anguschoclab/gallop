@@ -11,15 +11,23 @@
 import type { Horse } from "@/game/types";
 
 /**
- * requireHorse — Lookup a horse in the state and return it if found.
+ * Lookup a horse in the state and return it if found.
+ *
+ * @param horses - Array of horses to search
+ * @param id - Horse ID to look up
+ * @returns Horse if found, undefined otherwise
  */
 export function requireHorse(horses: Horse[], id: string): Horse | undefined {
   return horses.find((h) => h.id === id);
 }
 
 /**
- * requireOwned — Ensure the horse exists and is player-owned.
+ * Ensure the horse exists and is player-owned.
+ *
  * Returns null if valid, otherwise returns an ActionResult-style error object.
+ *
+ * @param horse - Horse to check
+ * @returns Null if valid, error object otherwise
  */
 export function requireOwned(horse: Horse | undefined): { ok: false; reason: string } | null {
   if (!horse) {

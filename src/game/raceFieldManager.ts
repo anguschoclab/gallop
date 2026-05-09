@@ -11,8 +11,16 @@
 import type { Race, Stable, Horse } from "./types";
 
 /**
- * Fill remaining race spots with filler horses
- * Called when building race field if pre-entries don't fill the race
+ * Fill remaining race spots with filler horses.
+ *
+ * Called when building race field if pre-entries don't fill the race. Uses non-major stables
+ * and eligible filler horses with sufficient energy.
+ *
+ * @param race - Race to fill
+ * @param stables - Array of all stables
+ * @param horses - Array of all horses
+ * @param needed - Number of filler horses needed
+ * @returns Object with updated race and any new horses
  */
 export function fillRaceWithFillerHorses(
   race: Race,

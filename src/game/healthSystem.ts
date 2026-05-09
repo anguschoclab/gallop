@@ -20,7 +20,15 @@ export interface Injury {
 }
 
 /**
- * Roll for potential injury during a high-stress event (race or heavy training)
+ * Roll for potential injury during a high-stress event (race or heavy training).
+ *
+ * Rolls for injury based on the horse's genetic injury proneness, event type,
+ * and fatigue level. Returns injury details if an injury occurs.
+ *
+ * @param horse - The horse to roll for injury
+ * @param eventType - Type of event causing stress ("race" or "training")
+ * @param rng - Random number generator
+ * @returns Injury object if injury occurs, null otherwise
  */
 export function rollForInjury(
   horse: Horse,

@@ -172,7 +172,15 @@ export function computeAllLeaderboards(
 
 
 /**
- * Overall leaderboard ranked by AEI
+ * Overall leaderboard ranked by AEI.
+ *
+ * Computes the overall sire leaderboard ranked by Average Earnings Index (AEI).
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for AEI calculation
+ * @param currentDay - Current simulation day
+ * @returns Overall leaderboard with AEI rankings
  */
 function computeOverallLeaderboard(
   stallions: Horse[],
@@ -204,7 +212,15 @@ function computeOverallLeaderboard(
 }
 
 /**
- * CI leaderboard ranked by Comparable Index
+ * CI leaderboard ranked by Comparable Index.
+ *
+ * Computes the sire leaderboard ranked by Comparable Index (CI).
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for CI calculation
+ * @param currentDay - Current simulation day
+ * @returns CI leaderboard with rankings
  */
 function computeCiLeaderboard(
   stallions: Horse[],
@@ -236,7 +252,14 @@ function computeCiLeaderboard(
 }
 
 /**
- * Stakes producers leaderboard
+ * Stakes producers leaderboard.
+ *
+ * Computes the leaderboard ranking sires by total stakes winners.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param currentDay - Current simulation day
+ * @returns Stakes producers leaderboard
  */
 function computeStakesLeaderboard(
   stallions: Horse[],
@@ -267,7 +290,14 @@ function computeStakesLeaderboard(
 }
 
 /**
- * G1 producers leaderboard
+ * G1 producers leaderboard.
+ *
+ * Computes the leaderboard ranking sires by total Group 1 winners.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param currentDay - Current simulation day
+ * @returns G1 producers leaderboard
  */
 function computeG1Leaderboard(
   stallions: Horse[],
@@ -298,7 +328,14 @@ function computeG1Leaderboard(
 }
 
 /**
- * Turf specialists leaderboard
+ * Turf specialists leaderboard.
+ *
+ * Computes the leaderboard ranking sires by turf progeny win rate.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param currentDay - Current simulation day
+ * @returns Turf specialists leaderboard
  */
 function computeTurfLeaderboard(
   stallions: Horse[],
@@ -344,7 +381,14 @@ function computeTurfLeaderboard(
 }
 
 /**
- * Dirt specialists leaderboard
+ * Dirt specialists leaderboard.
+ *
+ * Computes the leaderboard ranking sires by dirt progeny win rate.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param currentDay - Current simulation day
+ * @returns Dirt specialists leaderboard
  */
 function computeDirtLeaderboard(
   stallions: Horse[],
@@ -390,7 +434,14 @@ function computeDirtLeaderboard(
 }
 
 /**
- * Sprint sires leaderboard
+ * Sprint sires leaderboard.
+ *
+ * Computes the leaderboard ranking sires by sprint progeny win rate.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param currentDay - Current simulation day
+ * @returns Sprint sires leaderboard
  */
 function computeSprintLeaderboard(
   stallions: Horse[],
@@ -437,7 +488,14 @@ function computeSprintLeaderboard(
 }
 
 /**
- * Staying sires leaderboard
+ * Staying sires leaderboard.
+ *
+ * Computes the leaderboard ranking sires by staying progeny win rate.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param currentDay - Current simulation day
+ * @returns Staying sires leaderboard
  */
 function computeStayingLeaderboard(
   stallions: Horse[],
@@ -484,7 +542,15 @@ function computeStayingLeaderboard(
 }
 
 /**
- * Value sires leaderboard (AEI per $1,000 of fee)
+ * Value sires leaderboard (AEI per $1,000 of fee).
+ *
+ * Computes the leaderboard ranking sires by AEI relative to stud fee.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for AEI calculation
+ * @param currentDay - Current simulation day
+ * @returns Value sires leaderboard
  */
 function computeValueLeaderboard(
   stallions: Horse[],
@@ -519,7 +585,14 @@ function computeValueLeaderboard(
 }
 
 /**
- * Freshman watch leaderboard (first crop sires)
+ * Freshman watch leaderboard (first crop sires).
+ *
+ * Computes the leaderboard for sires with their first crop racing.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param currentDay - Current simulation day
+ * @returns Freshman watch leaderboard
  */
 function computeFreshmanLeaderboard(
   stallions: Horse[],
@@ -557,7 +630,15 @@ function computeFreshmanLeaderboard(
 }
 
 /**
- * Rising stars leaderboard (trending upward)
+ * Rising stars leaderboard (trending upward).
+ *
+ * Computes the leaderboard for sires with improving progeny performance.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param currentDay - Current simulation day
+ * @param trendHistory - Optional historical trend data for sires
+ * @returns Rising stars leaderboard
  */
 function computeRisingStarsLeaderboard(
   stallions: Horse[],
@@ -607,7 +688,14 @@ function computeRisingStarsLeaderboard(
 }
 
 /**
- * Fallback for rising stars when no trend history exists
+ * Fallback for rising stars when no trend history exists.
+ *
+ * Computes a fallback leaderboard ranking sires by recent stakes production.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param currentDay - Current simulation day
+ * @returns Rising stars fallback leaderboard
  */
 function computeRecentStakesLeaderboard(
   stallions: Horse[],
@@ -638,7 +726,15 @@ function computeRecentStakesLeaderboard(
 }
 
 /**
- * Regional leaderboard by hemisphere
+ * Regional leaderboard by hemisphere.
+ *
+ * Computes the leaderboard ranking sires by AEI within a specific hemisphere.
+ *
+ * @param stallions - All stallions in the game state
+ * @param allHorses - All horses in the game state
+ * @param hemisphere - Hemisphere to filter by (Northern or Southern)
+ * @param currentDay - Current simulation day
+ * @returns Regional leaderboard
  */
 function computeRegionalLeaderboard(
   stallions: Horse[],

@@ -22,6 +22,15 @@ export type JockeyGenerationOptions = {
   usedNames?: Set<string>;
 };
 
+/**
+ * Generate a jockey with archetypes, stats, traits, and silk customization.
+ *
+ * Creates a jockey with tier-based stat ranges, archetype bonuses, career history,
+ * and custom silk colors. Stats are clamped to valid ranges.
+ *
+ * @param options - Jockey generation options including tier, RNG, region, and used names
+ * @returns Generated jockey object
+ */
 export function generateJockey({
   tier = "mid",
   rng,
@@ -110,6 +119,15 @@ export function generateJockey({
   };
 }
 
+/**
+ * Generate a jockey silk with colors and pattern.
+ *
+ * Selects primary, secondary, and cap colors from the palette, ensuring
+ * primary and secondary are different. Applies a random pattern.
+ *
+ * @param rng - Random number generator
+ * @returns Jockey silk object with pattern and colors
+ */
 export function generateSilk(rng: Rng): JockeySilk {
   const primary = rng.pick(SILK_PALETTE);
   let secondary = rng.pick(SILK_PALETTE);
@@ -121,6 +139,17 @@ export function generateSilk(rng: Rng): JockeySilk {
   return { pattern, primary, secondary, cap };
 }
 
+/**
+ * Generate initial jockeys for the game.
+ *
+ * Creates a specified number of jockeys with randomized tiers and regions.
+ * Distributes across regional systems for variety.
+ *
+ * @param rng - Random number generator
+ * @param count - Number of jockeys to generate (default: 20)
+ * @param usedNames - Optional set of used names to avoid duplicates
+ * @returns Array of generated jockeys
+ */
 export function generateInitialJockeys(
   rng: Rng,
   count: number = 20,

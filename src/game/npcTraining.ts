@@ -12,8 +12,16 @@ import type { Horse, Stable } from "./types";
 import type { Rng } from "@/game/rng";
 
 /**
- * AI Training - NPC stables train their horses
- * Called during advanceDay()
+ * AI Training - NPC stables train their horses.
+ *
+ * Called during advanceDay(). Training slots vary by tier (elite: 8, mid: 5, budget: 3).
+ * Elite stables train intelligently focusing on stats below potential, lower tiers train more randomly.
+ *
+ * @param stables - Array of NPC stables
+ * @param horses - Array of all horses
+ * @param currentDay - Current simulation day
+ * @param rng - Random number generator
+ * @returns Updated array of horses with training applied
  */
 export function runNpcTraining(
   stables: Stable[],

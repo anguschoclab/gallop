@@ -117,8 +117,16 @@ export function calculateStrategicEntryScore(
 }
 
 /**
- * Evaluate strategic value of entering a race
- * Considers long-term goals, horse development, and competitive positioning
+ * Evaluate strategic value of entering a race.
+ *
+ * Considers long-term goals, horse development, and competitive positioning.
+ * Provides bonuses for races that advance development goals and target peak form.
+ *
+ * @param aiState - Current race entry AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race to evaluate
+ * @param currentDay - Current game day
+ * @returns Strategic value score
  */
 function evaluateStrategicValue(
   aiState: RaceEntryAIState,

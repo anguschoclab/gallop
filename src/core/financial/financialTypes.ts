@@ -109,14 +109,24 @@ export interface CashFlowEntry {
 export type CashFlowCategory = "income" | "expense" | "transfer" | "adjustment";
 
 /**
- * Calculate net profit from income and expenses
+ * Calculate net profit from income and expenses.
+ *
+ * Returns the net profit by subtracting total expenses from total income.
+ *
+ * @param income - Income summary object
+ * @param expenses - Expense summary object
+ * @returns Net profit value
  */
 export function calculateNetProfit(income: IncomeSummary, expenses: ExpenseSummary): number {
   return income.total - expenses.total;
 }
 
 /**
- * Create an empty income summary
+ * Create an empty income summary.
+ *
+ * Returns an income summary object with all values initialized to zero.
+ *
+ * @returns Empty income summary object
  */
 export function createEmptyIncome(): IncomeSummary {
   return {
@@ -130,7 +140,11 @@ export function createEmptyIncome(): IncomeSummary {
 }
 
 /**
- * Create an empty expense summary
+ * Create an empty expense summary.
+ *
+ * Returns an expense summary object with all values initialized to zero.
+ *
+ * @returns Empty expense summary object
  */
 export function createEmptyExpenses(): ExpenseSummary {
   return {
@@ -150,7 +164,13 @@ export function createEmptyExpenses(): ExpenseSummary {
 }
 
 /**
- * Format currency for display
+ * Format currency for display.
+ *
+ * Formats a number as USD currency with no decimal places.
+ * Handles negative values by prefixing with a minus sign.
+ *
+ * @param amount - The amount to format
+ * @returns Formatted currency string
  */
 export function formatCurrency(amount: number): string {
   const absAmount = Math.abs(amount);
@@ -165,7 +185,12 @@ export function formatCurrency(amount: number): string {
 }
 
 /**
- * Format profit/loss with sign
+ * Format profit/loss with sign.
+ *
+ * Formats a profit/loss value with a plus sign for positive values.
+ *
+ * @param amount - The profit/loss amount to format
+ * @returns Formatted profit/loss string with sign
  */
 export function formatProfitLoss(amount: number): string {
   const formatted = formatCurrency(amount);

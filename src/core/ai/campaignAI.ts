@@ -5,7 +5,7 @@
  * Dubai World Cup with contender detection, personality-driven targeting,
  * and learning integration for NPC stables.
  *
- * Dependencies: @/game/types (Horse, Race, Stable), @/game/gradedRaces (GradedRace, GRADED_RACES), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating, calculateRaceRating)
+ * Dependencies: @/game/types (Horse, Race, Stable), @/game/gradedRaces (GradedRace, GRADED_RACES), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating, calculateRaceRating), @/core/breeding/archetypes (getTripleCrownKeysForArchetype)
  * Related files: npcCycleAI.ts (uses campaign AI), personalitySystem.ts (provides personality state)
  */
 
@@ -27,6 +27,7 @@ import {
 } from "./learningModule";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { calculateOverallRating, calculateRaceRating } from "@/core/horse/stats";
+import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
 
 export interface CampaignAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -41,6 +42,12 @@ export interface ContenderStatus {
   targetRaces: string[]; // Race keys for major races
   confidence: number; // 0-1, how confident we are this horse is a contender
   lastAssessmentDay: number;
+  contenderSeries: Record<string, { // Per triple crown series
+    isContender: boolean;
+    confidence: number;
+    targetRaces: string[];
+    lastAssessmentDay: number;
+  }>;
 }
 
 export interface CampaignDecision {
@@ -78,16 +85,19 @@ export function createCampaignAIState(stable: Stable): CampaignAIState {
  *
  * Evaluates horses for Triple Crown, Breeders Cup, Dubai World Cup,
  * and other major G1 races based on age, rating, and distance aptitude.
+ * Uses stable's breedingArchetype to determine target triple crown series.
  *
  * @param aiState - Current campaign AI state
  * @param horse - The horse to evaluate
  * @param currentDay - Current game day
+ * @param stable - The stable making the decision (optional for backward compatibility)
  * @returns Updated campaign AI state with contender status
  */
 export function detectContender(
   aiState: CampaignAIState,
   horse: Horse,
   currentDay: number,
+  stable?: Stable,
 ): CampaignAIState {
   const horseRating = calculateOverallRating(horse);
   const avgStat = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
@@ -95,19 +105,57 @@ export function detectContender(
   let isContender = false;
   let confidence = 0;
   const targetRaces: string[] = [];
+  const contenderSeries: Record<string, {
+    isContender: boolean;
+    confidence: number;
+    targetRaces: string[];
+    lastAssessmentDay: number;
+  }> = {};
 
-  // Triple Crown contender criteria
+  // Determine target triple crown series based on stable's breeding archetype
+  const targetSeriesKeys = stable?.breedingArchetype
+    ? getTripleCrownKeysForArchetype(stable.breedingArchetype)
+    : [];
+
+  // Triple Crown contender criteria - evaluate all series or target series if specified
   if (horse.age === 3 && avgStat > 70) {
     const tcRaces = GRADED_RACES.filter((r) => r.triplecrownKey);
     for (const race of tcRaces) {
+      // If stable has breeding archetype, only evaluate matching series
+      if (targetSeriesKeys.length > 0 && !targetSeriesKeys.includes(race.triplecrownKey || "")) {
+        continue;
+      }
+
       if (
         horse.distanceAptitude > race.distance - 300 &&
         horse.distanceAptitude < race.distance + 300
       ) {
         targetRaces.push(race.key);
         confidence += 0.2;
+
+        // Track per-series contender status
+        const tcKey = race.triplecrownKey || "";
+        if (!contenderSeries[tcKey]) {
+          contenderSeries[tcKey] = {
+            isContender: false,
+            confidence: 0,
+            targetRaces: [],
+            lastAssessmentDay: currentDay,
+          };
+        }
+        contenderSeries[tcKey].targetRaces.push(race.key);
+        contenderSeries[tcKey].confidence += 0.2;
       }
     }
+
+    // Mark series as contender if they have enough target races
+    for (const tcKey in contenderSeries) {
+      if (contenderSeries[tcKey].targetRaces.length >= 2) {
+        contenderSeries[tcKey].isContender = true;
+        contenderSeries[tcKey].confidence = Math.min(1, contenderSeries[tcKey].confidence + 0.3);
+      }
+    }
+
     if (targetRaces.length >= 2) {
       isContender = true;
       confidence = Math.min(1, confidence + 0.3);
@@ -173,6 +221,7 @@ export function detectContender(
     targetRaces: [...new Set(targetRaces)],
     confidence,
     lastAssessmentDay: currentDay,
+    contenderSeries,
   };
 
   return {
@@ -223,7 +272,18 @@ export function getOptimalMajorRaceTarget(
 }
 
 /**
- * Calculate score for targeting a specific major race
+ * Calculate score for targeting a specific major race.
+ *
+ * Evaluates race fit based on distance, surface, prestige, purse value,
+ * personality modifiers, and learning-based adjustments.
+ * Adds bonus for series matching stable's breeding archetype and series progress.
+ *
+ * @param aiState - Current campaign AI state
+ * @param horse - The horse being evaluated
+ * @param race - The race being considered
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Race target score (0-100+)
  */
 function calculateRaceTargetScore(
   aiState: CampaignAIState,
@@ -246,7 +306,21 @@ function calculateRaceTargetScore(
   }
 
   // Race prestige
-  if (race.triplecrownKey) score += 40;
+  if (race.triplecrownKey) {
+    score += 40; // Base triple crown bonus
+
+    // Bonus for matching stable's breeding archetype
+    if (stable.breedingArchetype) {
+      const targetSeries = getTripleCrownKeysForArchetype(stable.breedingArchetype);
+      if (targetSeries.includes(race.triplecrownKey || "")) {
+        score += 20; // Additional bonus for targeted series
+      }
+    }
+
+    // TODO: Add bonus for series progress (requires access to triplecrownHistory from game state)
+    // This is a "Should Have" feature from the plan, deferred for now
+  }
+
   if (race.bcKey === "breeders-cup") score += 35;
   if (race.key === "dubai-world-cup") score += 35;
   if (race.grade === "G1") score += 25;
@@ -330,6 +404,7 @@ export function shouldTargetMajorRace(
  *
  * Calculates the optimal prep race schedule based on personality,
  * target race type (Triple Crown, Breeders Cup, etc.), and learning.
+ * For triple crown series, uses actual day gaps between legs from GRADED_RACES.
  *
  * @param aiState - Current campaign AI state
  * @param horse - The horse being prepared
@@ -370,8 +445,27 @@ export function getPrepRaceStrategy(
     prepRaceGrade = "G2";
   }
 
+  // Series-specific prep strategies based on actual day gaps
   if (targetRace.triplecrownKey) {
-    prepRaceDaysBefore = 21;
+    const seriesRaces = GRADED_RACES.filter((r) => r.triplecrownKey === targetRace.triplecrownKey);
+    if (seriesRaces.length >= 2) {
+      // Sort by dayOfYear to find gaps
+      const sortedRaces = seriesRaces.sort((a, b) => a.dayOfYear - b.dayOfYear);
+      const targetIndex = sortedRaces.findIndex((r) => r.key === targetRace.key);
+
+      // Calculate gap to previous leg (if not first leg)
+      if (targetIndex > 0) {
+        const gap = sortedRaces[targetIndex].dayOfYear - sortedRaces[targetIndex - 1].dayOfYear;
+        // Set prep race days before based on gap (use ~40% of gap)
+        prepRaceDaysBefore = Math.max(14, Math.floor(gap * 0.4));
+      } else {
+        // First leg: use default but slightly shorter
+        prepRaceDaysBefore = 21;
+      }
+    } else {
+      // Fallback for series with fewer than 2 races
+      prepRaceDaysBefore = 21;
+    }
     numberOfPreps = 2;
   }
 

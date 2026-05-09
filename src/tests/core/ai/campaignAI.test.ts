@@ -170,7 +170,8 @@ describe("detectContender", () => {
     const horse = createMockHorse({ stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 } });
     const currentDay = 100;
 
-    const status = detectContender(state, horse, currentDay);
+    const updatedState = detectContender(state, horse, currentDay);
+    const status = updatedState.contenderTracking[horse.id];
     expect(status).toBeDefined();
     expect(status.horseId).toBe(horse.id);
     expect(status.isContender).toBe(true);
@@ -181,7 +182,8 @@ describe("detectContender", () => {
     const horse = createMockHorse({ stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 } });
     const currentDay = 100;
 
-    const status = detectContender(state, horse, currentDay);
+    const updatedState = detectContender(state, horse, currentDay);
+    const status = updatedState.contenderTracking[horse.id];
     expect(status.isContender).toBe(false);
   });
 
@@ -191,8 +193,11 @@ describe("detectContender", () => {
     const mismatchingHorse = createMockHorse({ distanceAptitude: 1000 });
     const currentDay = 100;
 
-    const matchingStatus = detectContender(state, matchingHorse, currentDay);
-    const mismatchingStatus = detectContender(state, mismatchingHorse, currentDay);
+    const matchingState = detectContender(state, matchingHorse, currentDay);
+    const mismatchingState = detectContender(state, mismatchingHorse, currentDay);
+
+    const matchingStatus = matchingState.contenderTracking[matchingHorse.id];
+    const mismatchingStatus = mismatchingState.contenderTracking[mismatchingHorse.id];
 
     expect(matchingStatus.targetRaces.length).toBeGreaterThanOrEqual(mismatchingStatus.targetRaces.length);
   });
@@ -203,8 +208,11 @@ describe("detectContender", () => {
     const fourYearOld = createMockHorse({ age: 4, stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 } });
     const currentDay = 100;
 
-    const threeStatus = detectContender(state, threeYearOld, currentDay);
-    const fourStatus = detectContender(state, fourYearOld, currentDay);
+    const threeState = detectContender(state, threeYearOld, currentDay);
+    const fourState = detectContender(state, fourYearOld, currentDay);
+
+    const threeStatus = threeState.contenderTracking[threeYearOld.id];
+    const fourStatus = fourState.contenderTracking[fourYearOld.id];
 
     // 3-year-olds have Triple Crown options
     expect(threeStatus.targetRaces.length).toBeGreaterThanOrEqual(0);
@@ -230,9 +238,9 @@ describe("getOptimalMajorRaceTarget", () => {
     const currentDay = 100;
 
     // First detect the horse as a contender
-    detectContender(state, horse, currentDay);
+    const updatedState = detectContender(state, horse, currentDay, stable);
 
-    const target = getOptimalMajorRaceTarget(state, horse, stable, currentDay);
+    const target = getOptimalMajorRaceTarget(updatedState, horse, stable, currentDay);
     expect(target).toBeDefined();
     expect(typeof target).toBe("string");
   });
@@ -471,7 +479,7 @@ describe("getCampaignInsights", () => {
     const insights = getCampaignInsights(updatedState, stable.id);
 
     expect(insights.totalCampaigns).toBeGreaterThanOrEqual(4);
-    expect(insights.avgPosition).toBeCloseTo(2.75, 1);
+    expect(insights.avgPosition).toBeCloseTo(3, 1); // Average of positions 1,2,3,4,5 = 3
     expect(insights.totalPrize).toBeGreaterThanOrEqual(1100000);
     expect(insights.successRate).toBeGreaterThanOrEqual(0);
   });
@@ -503,10 +511,10 @@ describe("getCampaignInsights", () => {
     const horse2 = createMockHorse({ id: "horse-2", stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 } });
     const currentDay = 100;
 
-    detectContender(state, horse1, currentDay);
-    detectContender(state, horse2, currentDay);
+    const updatedState1 = detectContender(state, horse1, currentDay);
+    const updatedState2 = detectContender(updatedState1, horse2, currentDay);
 
-    const insights = getCampaignInsights(state, "stable-1");
+    const insights = getCampaignInsights(updatedState2, "stable-1");
     expect(insights.contenderCount).toBe(2);
   });
 });

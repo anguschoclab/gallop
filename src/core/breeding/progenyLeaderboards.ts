@@ -18,7 +18,16 @@ import type {
 } from "./leaderboardTypes";
 
 /**
- * Compute progeny leaderboards tracking top performers by various metrics
+ * Compute progeny leaderboards tracking top performers by various metrics.
+ *
+ * Generates three leaderboards for racing-age horses (age 2+ with race history):
+ * - Beyer leaderboard: highest Beyer figures achieved
+ * - Earnings leaderboard: highest lifetime earnings
+ * - Stakes winners leaderboard: most stakes wins
+ *
+ * @param horses - All horses in the game
+ * @param currentDay - Current game day
+ * @returns Object with beyer, earnings, and stakes_winners leaderboards
  */
 export function computeProgenyLeaderboards(
   horses: Horse[],
@@ -34,7 +43,13 @@ export function computeProgenyLeaderboards(
 }
 
 /**
- * Beyer leaderboard - highest Beyer figures achieved
+ * Beyer leaderboard - highest Beyer figures achieved.
+ *
+ * Computes the leaderboard ranking horses by their highest Beyer figures.
+ *
+ * @param runners - Racing-age horses with race history
+ * @param currentDay - Current game day
+ * @returns ProgenyLeaderboard with Beyer rankings
  */
 function computeBeyerLeaderboard(runners: Horse[], currentDay: number): ProgenyLeaderboard {
   const rankings = runners
@@ -71,7 +86,13 @@ function computeBeyerLeaderboard(runners: Horse[], currentDay: number): ProgenyL
 }
 
 /**
- * Earnings leaderboard - highest lifetime earnings
+ * Earnings leaderboard - highest lifetime earnings.
+ *
+ * Computes the leaderboard ranking horses by their lifetime earnings.
+ *
+ * @param runners - Racing-age horses with race history
+ * @param currentDay - Current game day
+ * @returns ProgenyLeaderboard with earnings rankings
  */
 function computeEarningsLeaderboard(runners: Horse[], currentDay: number): ProgenyLeaderboard {
   const rankings = runners
@@ -107,7 +128,13 @@ function computeEarningsLeaderboard(runners: Horse[], currentDay: number): Proge
 }
 
 /**
- * Stakes winners leaderboard - most stakes wins
+ * Stakes winners leaderboard - most stakes wins.
+ *
+ * Computes the leaderboard ranking horses by their number of stakes wins.
+ *
+ * @param runners - Racing-age horses with race history
+ * @param currentDay - Current game day
+ * @returns ProgenyLeaderboard with stakes winners rankings
  */
 function computeStakesWinnersLeaderboard(runners: Horse[], currentDay: number): ProgenyLeaderboard {
   const rankings = runners

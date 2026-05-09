@@ -13,8 +13,13 @@ import { foalLifetimeEarnings } from "./lineage";
 
 /**
  * Compute the industry mean earnings for all racing-age horses.
- * This is the baseline used for AEI (Average Earnings Index) calculation.
- * A sire's AEI = (progeny average earnings / industry mean) × 100
+ *
+ * Calculates the average lifetime earnings for all racing-age horses (age 2+)
+ * that have actually raced. This is the baseline used for AEI (Average Earnings
+ * Index) calculation. A sire's AEI = (progeny average earnings / industry mean) × 100.
+ *
+ * @param allHorses - All horses in the game
+ * @returns Industry mean earnings value
  */
 export function computeIndustryMeanEarnings(allHorses: Horse[]): number {
   // Filter for racing-age horses (2+) that have actually raced

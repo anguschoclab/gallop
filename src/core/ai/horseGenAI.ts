@@ -77,7 +77,15 @@ export function createHorseGenAIState(stable: Stable): HorseGenAIState {
 }
 
 /**
- * Calculate target age distribution based on personality
+ * Calculate target age distribution based on personality.
+ *
+ * Returns a distribution of horses by age based on personality preferences.
+ * Prestige stables favor younger horses (2-3), win-now focuses on 3-5,
+ * conservative spreads evenly across 2-6.
+ *
+ * @param personality - The stable personality
+ * @param targetCount - Target total horse count
+ * @returns Object mapping age to target count
  */
 function calculateTargetAgeDistribution(
   personality: Stable["personality"],
@@ -118,7 +126,13 @@ function calculateTargetAgeDistribution(
 }
 
 /**
- * Calculate target quality level based on personality
+ * Calculate target quality level based on personality.
+ *
+ * Returns the target overall rating for horses based on personality.
+ * Prestige stables target 75, win-now targets 70, conservative targets 60.
+ *
+ * @param personality - The stable personality
+ * @returns Target quality level (rating 0-100)
  */
 function calculateTargetQualityLevel(personality: Stable["personality"]): number {
   switch (personality) {

@@ -18,7 +18,14 @@ import {
 } from "./facilityTypes";
 
 /**
- * Create a default facility at a given level
+ * Create a default facility at a given level.
+ *
+ * Creates a facility object with the specified type, level, and maintenance/upgrade costs.
+ *
+ * @param type - The facility type
+ * @param level - The facility level
+ * @param currentDay - The current game day
+ * @returns New facility object
  */
 export function createFacility(
   type: FacilityType,
@@ -35,8 +42,13 @@ export function createFacility(
 }
 
 /**
- * Create default facilities for a new player stable
- * Starts with all basic facilities
+ * Create default facilities for a new player stable.
+ *
+ * Starts with all basic facilities: main_track, barn, exercise_pool, treadmill,
+ * veterinary_clinic, starting_gates, transport, spa, nutrition_lab, rehab_center.
+ *
+ * @param currentDay - The current game day
+ * @returns Default player facilities object
  */
 export function createDefaultPlayerFacilities(currentDay: number = 1): PlayerFacilities {
   const facilityTypes: FacilityType[] = [
@@ -62,10 +74,14 @@ export function createDefaultPlayerFacilities(currentDay: number = 1): PlayerFac
 }
 
 /**
- * Create facilities for an NPC stable based on tier
- * - Elite: Mostly premium/elite
- * - Mid: Standard/premium mix
- * - Budget: Basic/standard only
+ * Create facilities for an NPC stable based on tier.
+ *
+ * Elite stables get mostly premium/elite facilities, mid stables get a standard/premium mix,
+ * and budget stables get basic/standard only.
+ *
+ * @param tier - The NPC stable tier (elite, mid, or budget)
+ * @param currentDay - The current game day
+ * @returns NPC facilities object
  */
 export function createNPCFacilities(
   tier: "elite" | "mid" | "budget",
@@ -109,7 +125,12 @@ export function createNPCFacilities(
 }
 
 /**
- * Calculate total daily maintenance cost for all facilities
+ * Calculate total daily maintenance cost for all facilities.
+ *
+ * Sums the maintenance cost of all facilities in the player's stable.
+ *
+ * @param facilities - The player's facilities
+ * @returns Total daily maintenance cost
  */
 export function calculateTotalMaintenance(facilities: PlayerFacilities): number {
   let total = 0;
@@ -122,8 +143,14 @@ export function calculateTotalMaintenance(facilities: PlayerFacilities): number 
 }
 
 /**
- * Get facility bonus multiplier for a given facility type
- * Returns 0 if facility doesn't exist
+ * Get facility bonus multiplier for a given facility type.
+ *
+ * Returns the bonus multiplier based on facility level (basic: 0, standard: 0.1,
+ * premium: 0.25, elite: 0.4). Returns 0 if facility doesn't exist.
+ *
+ * @param facilities - The player's facilities
+ * @param type - The facility type to check
+ * @returns Bonus multiplier (0-0.4)
  */
 export function getFacilityBonus(facilities: PlayerFacilities, type: FacilityType): number {
   const facility = facilities[type];
@@ -140,7 +167,13 @@ export function getFacilityBonus(facilities: PlayerFacilities, type: FacilityTyp
 }
 
 /**
- * Check if a facility enables a specific workout type
+ * Check if a facility enables a specific workout type.
+ *
+ * Returns true if any facility in the stable enables the specified workout type.
+ *
+ * @param facilities - The player's facilities
+ * @param workoutType - The workout type to check
+ * @returns True if the workout is enabled by a facility
  */
 export function isWorkoutEnabled(facilities: PlayerFacilities, workoutType: string): boolean {
   for (const [facilityType, enabledWorkouts] of Object.entries(FACILITY_ENABLED_WORKOUTS)) {
@@ -154,8 +187,14 @@ export function isWorkoutEnabled(facilities: PlayerFacilities, workoutType: stri
 }
 
 /**
- * Upgrade a facility to the next level
- * Returns null if already at max level or upgrade not possible
+ * Upgrade a facility to the next level.
+ *
+ * Returns the upgraded facility object. Returns null if already at max level (elite)
+ * or upgrade is not possible.
+ *
+ * @param facility - The facility to upgrade
+ * @param currentDay - The current game day
+ * @returns Upgraded facility or null if at max level
  */
 export function upgradeFacility(facility: Facility, currentDay: number): Facility | null {
   const levelOrder: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
@@ -170,8 +209,13 @@ export function upgradeFacility(facility: Facility, currentDay: number): Facilit
 }
 
 /**
- * Downgrade a facility (for emergency cost cutting)
- * Returns null if already at basic level
+ * Downgrade a facility (for emergency cost cutting).
+ *
+ * Returns the downgraded facility object. Returns null if already at minimum level (basic).
+ *
+ * @param facility - The facility to downgrade
+ * @param currentDay - The current game day
+ * @returns Downgraded facility or null if at minimum level
  */
 export function downgradeFacility(facility: Facility, currentDay: number): Facility | null {
   const levelOrder: FacilityLevel[] = ["basic", "standard", "premium", "elite"];

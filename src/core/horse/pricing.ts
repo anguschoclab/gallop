@@ -14,7 +14,13 @@ import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 
 /**
  * Canonical base valuation formula shared by horsePrice() and stallions.valueOf().
- * Avoids the circular-dep issue that forced a local copy in stallions.ts.
+ *
+ * Calculates horse value based on overall rating, age, fame, and stable tier.
+ * Avoids circular dependency issues.
+ *
+ * @param horse - The horse to value
+ * @param tier - The stable tier for valuation
+ * @returns Base horse value
  */
 export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number {
   const overall = calculateOverallRating(horse);
@@ -26,13 +32,25 @@ export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number 
 
 /**
  * NPC Stable valuation alias.
+ *
+ * Calculates horse value for NPC stables using the base valuation formula.
+ *
+ * @param horse - The horse to value
+ * @param tier - The NPC stable tier
+ * @returns Horse value for NPC stable
  */
 export function calculateNpcHorseValue(horse: Horse, tier: StableTier): number {
   return calculateBaseHorseValue(horse, tier);
 }
 
 /**
- * Get stud fee for a horse based on its value
+ * Get stud fee for a horse based on its value.
+ *
+ * Returns the stud fee for a stallion or colt age 4+. Returns 0 for other genders or younger horses.
+ *
+ * @param horse - The horse to calculate stud fee for
+ * @param stable - The stable with tier information
+ * @returns Stud fee value
  */
 export function getStudFee(horse: Horse, stable: Pick<Stable, "tier">): number {
   if (horse.gender !== "horse" && horse.gender !== "colt") return 0;
@@ -41,7 +59,13 @@ export function getStudFee(horse: Horse, stable: Pick<Stable, "tier">): number {
 }
 
 /**
- * Get broodmare fee for a horse based on its value
+ * Get broodmare fee for a horse based on its value.
+ *
+ * Returns the broodmare fee for a mare or filly age 3+. Returns 0 for other genders or younger horses.
+ *
+ * @param horse - The horse to calculate broodmare fee for
+ * @param stable - The stable with tier information
+ * @returns Broodmare fee value
  */
 export function getBroodmareFee(horse: Horse, stable: Pick<Stable, "tier">): number {
   if (horse.gender !== "mare" && horse.gender !== "filly") return 0;
@@ -51,7 +75,12 @@ export function getBroodmareFee(horse: Horse, stable: Pick<Stable, "tier">): num
 
 /**
  * Market price for a player-owned horse (no tier context needed).
- * Used in the horse market and consignment reserve pricing.
+ *
+ * Calculates market price based on overall rating, age, potential, conformation,
+ * temperament, and injury proneness. Used in the horse market and consignment reserve pricing.
+ *
+ * @param h - The horse to price
+ * @returns Market price
  */
 export function horsePrice(h: Horse): number {
   const overall = calculateOverallRating(h);
@@ -71,9 +100,14 @@ export function horsePrice(h: Horse): number {
 }
 
 /**
- * Pedigree-aware market price. When a horses[] context is available,
- * applies the same multiplier the auction uses so reserve and mental
- * price track each other.
+ * Pedigree-aware market price.
+ *
+ * When a horses[] context is available, applies the same multiplier the auction uses
+ * so reserve and mental price track each other.
+ *
+ * @param h - The horse to price
+ * @param allHorses - All horses in the game for pedigree context
+ * @returns Pedigree-adjusted market price
  */
 export function horsePriceWithPedigree(h: Horse, allHorses: Horse[]): number {
   const base = horsePrice(h);

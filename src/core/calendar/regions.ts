@@ -51,8 +51,22 @@ const CANADIAN_TRIPLE_CROWN = new Set([
   "ca-breeders-stakes",
 ]);
 
+// Canadian Triple Tiara races (fillies)
+const CANADIAN_TRIPLE_TIARA = new Set([
+  "ca-woodbine-oaks",
+  "ca-bison-city-stakes",
+  "ca-wonder-where-stakes",
+]);
+
 // USA Triple Crown races
 const USA_TRIPLE_CROWN = new Set(["usa-kentucky-derby", "usa-preakness", "usa-belmont-stakes"]);
+
+// USA Triple Tiara races (fillies)
+const USA_TRIPLE_TIARA = new Set([
+  "usa-kentucky-oaks",
+  "usa-black-eyed-susan-stakes",
+  "usa-acorn-stakes",
+]);
 
 // UK Classics (Guineas, Derby, Oaks, St Leger) - using gb- prefix from gradedRaces.ts
 const UK_CLASSICS = new Set([
@@ -63,6 +77,97 @@ const UK_CLASSICS = new Set([
   "gb-st-leger-stakes",
 ]);
 
+// Ireland Triple Crown races
+const IRELAND_TRIPLE_CROWN = new Set([
+  "ie-irish-2-000-guineas",
+  "ie-irish-derby",
+  "ie-irish-st-leger",
+]);
+
+// France Triple Crown races
+const FRANCE_TRIPLE_CROWN = new Set([
+  "fr-poule-d-essai-des-poulains",
+  "fr-prix-du-jockey-club",
+  "fr-grand-prix-de-paris",
+]);
+
+// Italy Triple Crown races
+const ITALY_TRIPLE_CROWN = new Set([
+  "it-premio-parioli",
+  "it-derby-italiano",
+  "it-st-leger-italiano",
+]);
+
+// Argentina Triple Crown races
+const ARGENTINA_TRIPLE_CROWN = new Set([
+  "argentina-gran-premio-polla-de-potrillos",
+  "argentina-gran-premio-jockey-club",
+  "argentina-gran-premio-nacional",
+]);
+
+// Hong Kong Triple Crown races
+const HONG_KONG_TRIPLE_CROWN = new Set([
+  "hk-stewards-cup",
+  "hk-hong-kong-gold-cup",
+  "hk-champions-chater-cup",
+]);
+
+// Hungary Triple Crown races
+const HUNGARY_TRIPLE_CROWN = new Set([
+  "hu-nemzeti-dij",
+  "hu-magyar-derby",
+  "hu-magyar-st-leger",
+]);
+
+// Japan Triple Crown races
+const JAPAN_TRIPLE_CROWN = new Set([
+  "jp-satsuki-sho",
+  "jp-tokyo-yushun",
+  "jp-kikuka-sho",
+]);
+
+// Japan Triple Tiara races (fillies)
+const JAPAN_TRIPLE_TIARA = new Set([
+  "jp-oka-sho",
+  "jp-yushun-himba",
+  "jp-shuka-sho",
+]);
+
+// Australia Triple Crown races
+const AUSTRALIA_TRIPLE_CROWN = new Set([
+  "au-randwick-guineas",
+  "au-rosehill-guineas",
+  "au-victoria-derby",
+]);
+
+// Germany Triple Crown races
+const GERMANY_TRIPLE_CROWN = new Set([
+  "de-mehl-mulhens-rennen",
+  "de-deutsches-derby",
+  "de-deutsches-st-leger",
+]);
+
+// Brazil Triple Crown races (males)
+const BRAZIL_TRIPLE_CROWN = new Set([
+  "brazil-grande-pr-mio-estado-do-rio-de-janeiro",
+  "brazil-grande-pr-mio-francisco-eduardo-e-linneo-eduardo-de-p",
+  "brazil-grande-pr-mio-cruzeiro-do-sul-brazilian-derby",
+]);
+
+// Brazil Triple Tiara races (fillies)
+const BRAZIL_TRIPLE_TIARA = new Set([
+  "brazil-grande-pr-mio-henrique-possollo",
+  "brazil-grande-pr-mio-diana",
+  "brazil-grande-pr-mio-z-lia-gonzaga-peixoto-de-castro",
+]);
+
+// Chile Triple Crown races
+const CHILE_TRIPLE_CROWN = new Set([
+  "chile-cl-sico-el-ensayo",
+  "chile-cl-sico-st-leger",
+  "chile-cl-sico-el-derby",
+]);
+
 export const REGIONS: Record<RegionId, RegionConfig> = {
   canada: {
     id: "canada",
@@ -70,8 +175,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
     title: "Canadian Flat Racing Calendar",
     subtitle: "Grade 1, 2, and 3 stakes races across Canada",
     tracks: ["Woodbine", "Fort Erie", "Century Mile", "Hastings"],
-    specialRaceKeys: CANADIAN_TRIPLE_CROWN,
-    specialFilterName: "Triple Crown",
+    specialRaceKeys: new Set([...CANADIAN_TRIPLE_CROWN, ...CANADIAN_TRIPLE_TIARA]),
+    specialFilterName: "Triple Crown & Tiara",
     continent: "north_america",
   },
   usa: {
@@ -96,8 +201,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
       "Lone Star Park",
       "Belmont at the Big A",
     ],
-    specialRaceKeys: USA_TRIPLE_CROWN,
-    specialFilterName: "Triple Crown",
+    specialRaceKeys: new Set([...USA_TRIPLE_CROWN, ...USA_TRIPLE_TIARA]),
+    specialFilterName: "Triple Crown & Tiara",
     continent: "north_america",
   },
   uk: {
@@ -128,6 +233,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
     title: "Irish Racing Calendar",
     subtitle: "Classic and graded stakes from the Curragh to Leopardstown",
     tracks: ["Curragh", "Leopardstown", "Navan", "Naas"],
+    specialRaceKeys: IRELAND_TRIPLE_CROWN,
+    specialFilterName: "Triple Crown",
     continent: "europe",
   },
   france: {
@@ -136,6 +243,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
     title: "French Racing Calendar",
     subtitle: "Prestigious stakes including the Prix de l'Arc de Triomphe",
     tracks: ["Saint-Cloud", "Longchamp", "Deauville", "Chantilly", "Vichy", "Toulouse"],
+    specialRaceKeys: FRANCE_TRIPLE_CROWN,
+    specialFilterName: "Triple Crown",
     continent: "europe",
   },
   germany: {
@@ -144,6 +253,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
     title: "German Racing Calendar",
     subtitle: "Grade stakes across Germany's historic racecourses",
     tracks: ["Düsseldorf", "Cologne", "Baden-Baden", "Hanover", "Krefeld", "Hoppegarten"],
+    specialRaceKeys: GERMANY_TRIPLE_CROWN,
+    specialFilterName: "Triple Crown",
     continent: "europe",
   },
   scandinavia: {
@@ -186,6 +297,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
       "Kochi",
       "Oi",
     ],
+    specialRaceKeys: new Set([...JAPAN_TRIPLE_CROWN, ...JAPAN_TRIPLE_TIARA]),
+    specialFilterName: "Triple Crown & Tiara",
     continent: "asia_pacific",
   },
   "hong-kong": {
@@ -194,6 +307,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
     title: "Hong Kong Racing Calendar",
     subtitle: "Premier racing at Sha Tin and Happy Valley",
     tracks: ["Sha Tin", "Happy Valley"],
+    specialRaceKeys: HONG_KONG_TRIPLE_CROWN,
+    specialFilterName: "Triple Crown",
     continent: "asia_pacific",
   },
   australia: {
@@ -210,6 +325,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
       "Eagle Farm",
       "Morphettville",
     ],
+    specialRaceKeys: AUSTRALIA_TRIPLE_CROWN,
+    specialFilterName: "Triple Crown",
     continent: "asia_pacific",
   },
   "south-america": {
@@ -227,6 +344,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
       "Club Hípico de Santiago",
       "Hipódromo Chile",
     ],
+    specialRaceKeys: new Set([...ARGENTINA_TRIPLE_CROWN, ...BRAZIL_TRIPLE_CROWN, ...BRAZIL_TRIPLE_TIARA, ...CHILE_TRIPLE_CROWN]),
+    specialFilterName: "Triple Crown & Tiara",
     continent: "south_america",
   },
   italy: {
@@ -235,6 +354,8 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
     title: "Italian Racing Calendar",
     subtitle: "Historic stakes at Capannelle and San Siro",
     tracks: ["Capannelle", "San Siro"],
+    specialRaceKeys: ITALY_TRIPLE_CROWN,
+    specialFilterName: "Triple Crown",
     continent: "europe",
   },
   spain: {

@@ -69,7 +69,13 @@ export function createUpkeepAIState(stable: Stable): UpkeepAIState {
 }
 
 /**
- * Calculate target reserve ratio based on personality
+ * Calculate target reserve ratio based on personality.
+ *
+ * Returns the target reserve ratio (months of expenses to keep in reserve)
+ * based on personality. Conservative stables keep 6 months, aggressive 2 months.
+ *
+ * @param personality - The stable personality
+ * @returns Target reserve ratio in months
  */
 function calculateTargetReserveRatio(personality: Stable["personality"]): number {
   switch (personality) {

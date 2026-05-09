@@ -95,6 +95,10 @@ export function getCountryByTrackName(name: string): string {
 
 /**
  * Returns the specific course specification for a track and surface.
+ *
+ * @param trackId - Track ID
+ * @param surface - Surface type
+ * @returns Course specification or undefined if not found
  */
 export function getCourseSpec(
   trackId: string,
@@ -106,6 +110,9 @@ export function getCourseSpec(
 
 /**
  * Helper to get the correct course specification for a given race.
+ *
+ * @param race - Race object
+ * @returns Course specification or undefined if not found
  */
 export function getCourseForRace(race: Race): CourseSpecification | undefined {
   const trackId = race.trackId || race.graded?.trackId;

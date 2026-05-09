@@ -111,7 +111,16 @@ export function recordOutcome(
 }
 
 /**
- * Update pattern recognition
+ * Update pattern recognition.
+ *
+ * Updates pattern recognition scores based on outcomes. Increases score
+ * for successful decisions, decreases slightly for failures.
+ *
+ * @param patterns - Current pattern scores
+ * @param decisionType - Type of decision made
+ * @param contextKey - Context key for the decision
+ * @param success - Whether the decision was successful
+ * @returns Updated pattern scores
  */
 function updatePatterns(
   patterns: Record<string, number>,

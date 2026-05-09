@@ -17,6 +17,17 @@ import { resolveBloodline } from "@/core/breeding/populationGenetics";
 import { activeStallions2020s } from "@/core/data/pedigreeData";
 import { mapStallionToStable } from "@/core/stable/stableQueries";
 
+/**
+ * Generate famous active stallions from real-world pedigree data.
+ *
+ * Creates horse objects for famous stallions from the 2020s, mapping them to
+ * stables and assigning stud fees based on their achievements. Uses research-based
+ * genotype generation for realistic genetics.
+ *
+ * @param stables - Array of stable objects to assign stallions to
+ * @param rng - Random number generator
+ * @returns Array of famous stallion horse objects
+ */
 export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
   const famousStallions: Horse[] = [];
   const active = activeStallions2020s.filter((s) => s.currentStatus === "active");

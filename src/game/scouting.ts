@@ -29,7 +29,14 @@ const ACCURACY_BASE = 0.8; // 80% base accuracy
 const ACCURACY_VARIANCE = 0.15; // ±15% variance
 
 /**
- * Calculate scouting cost for a horse
+ * Calculate scouting cost for a horse.
+ *
+ * Cost varies based on horse fame (cheaper for famous horses) and stable reputation
+ * (more expensive for high-reputation stables).
+ *
+ * @param horse - Horse to scout
+ * @param stable - Stable owning the horse
+ * @returns Scouting cost in dollars
  */
 export function calculateScoutCost(horse: Horse, stable: Stable): number {
   let cost = SCOUT_COST_BASE;
@@ -45,8 +52,13 @@ export function calculateScoutCost(horse: Horse, stable: Stable): number {
 }
 
 /**
- * Determine which stats are automatically visible based on fame
- * Returns visible stat keys
+ * Determine which stats are automatically visible based on fame.
+ *
+ * Returns visible stat keys based on horse fame level. Famous horses show all stats,
+ * somewhat known horses show 2 random stats, unknown horses show 1 stat hint.
+ *
+ * @param horse - Horse to check
+ * @returns Array of visible stat keys
  */
 export function getVisibleStats(horse: Horse): (keyof HorseStats)[] {
   // All horses show overall rating vaguely
@@ -122,8 +134,17 @@ function generateScoutNotes(horse: Horse, accuracy: number): string {
 }
 
 /**
- * Perform a scouting action on a horse
- * Returns a ScoutReport with revealed stats
+ * Perform a scouting action on a horse.
+ *
+ * Returns a ScoutReport with revealed stats based on accuracy. Higher accuracy
+ * reveals more stats with less error. Includes genetic insight at high accuracy.
+ *
+ * @param horse - Horse to scout
+ * @param stable - Stable owning the horse
+ * @param day - Current game day
+ * @param playerCash - Player's available cash
+ * @param rng - Random number generator
+ * @returns Scout result with success status, report, cost, and message
  */
 export function scoutHorse(
   horse: Horse,
@@ -229,7 +250,16 @@ export function scoutHorse(
 }
 
 /**
- * Get displayable stats for a horse (combining known info + scout reports)
+ * Get displayable stats for a horse (combining known info + scout reports).
+ *
+ * Combines auto-visible stats based on fame with recent scout reports to determine
+ * what stats are visible and their confidence level. Provides overall estimate if not
+ * fully known.
+ *
+ * @param horse - Horse to check
+ * @param scoutReports - Array of scout reports
+ * @param currentDay - Current game day
+ * @returns Object with displayable stats, confidence level, and overall estimate
  */
 export function getDisplayableStats(
   horse: Horse,
@@ -238,7 +268,7 @@ export function getDisplayableStats(
 ): {
   stats: Partial<HorseStats>;
   confidence: "full" | "high" | "medium" | "low" | "unknown";
-  overallEstimate?: number; // Estimated overall rating if not fully known
+  overallEstimate?: number;
 } {
   // Check for recent scout report (within last 30 days)
   const recentReport = scoutReports
@@ -299,7 +329,14 @@ export function getDisplayableStats(
 }
 
 /**
- * Get scout status indicator for UI
+ * Get scout status indicator for UI.
+ *
+ * Returns icon, label, color, and scout availability based on confidence level.
+ *
+ * @param horse - Horse to check
+ * @param scoutReports - Array of scout reports
+ * @param currentDay - Current game day
+ * @returns Object with icon, label, color, and canScout flag
  */
 export function getScoutStatus(
   horse: Horse,
@@ -328,7 +365,14 @@ export function getScoutStatus(
 }
 
 /**
- * Get intel summary string for a horse
+ * Get intel summary string for a horse.
+ *
+ * Returns a human-readable summary of what is known about the horse.
+ *
+ * @param horse - Horse to check
+ * @param scoutReports - Array of scout reports
+ * @param currentDay - Current game day
+ * @returns Intel summary string
  */
 export function getIntelSummary(
   horse: Horse,

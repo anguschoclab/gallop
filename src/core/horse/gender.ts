@@ -27,7 +27,14 @@ type GenderRestriction =
   | undefined;
 
 /**
- * Check if a horse's gender matches the race's gender restriction
+ * Check if a horse's gender matches the race's gender restriction.
+ *
+ * Evaluates whether a horse is eligible for a race based on the race's
+ * gender restriction (e.g., colts-only, fillies-and-mares, etc.).
+ *
+ * @param horseGender - The horse's gender
+ * @param restriction - The race's gender restriction string
+ * @returns True if the horse is eligible for the race
  */
 export function isGenderEligible(
   horseGender: Horse["gender"],
@@ -62,16 +69,28 @@ export function isGenderEligible(
 }
 
 /**
- * Roll for gender based on standard population distribution
- * - Male (Colt): 50%
- * - Female (Filly): 50%
+ * Roll for gender based on standard population distribution.
+ *
+ * Generates a random gender for a new horse based on standard
+ * population distribution: 50% male (Colt), 50% female (Filly).
+ *
+ * @param rng - Random number generator
+ * @returns Gender (colt or filly)
  */
 export function rollGender(rng: Rng): Horse["gender"] {
   return rng.next() < 0.5 ? "colt" : "filly";
 }
 
 /**
- * Get gender from boolean (isMale) and age
+ * Get gender from boolean (isMale) and age.
+ *
+ * Determines the appropriate horse gender based on sex, age, and
+ * gelding status. Colts/fillies under age 4 become horses/mares.
+ *
+ * @param isMale - Whether the horse is male
+ * @param age - The horse's age
+ * @param isGelding - Whether the horse has been gelded (optional)
+ * @returns Horse gender (colt, filly, horse, mare, or gelding)
  */
 export function getGenderFromProps(isMale: boolean, age: number, isGelding?: boolean): Horse["gender"] {
   if (age < 4) {
@@ -140,7 +159,12 @@ export function genderSymbol(gender: HorseGender): string {
 
 /**
  * Transition a male horse (Colt/Horse) to a Gelding.
- * Improves consistency (reduces noise) but removes breeding capability.
+ *
+ * Converts a colt or horse to a gelding. This improves consistency
+ * (reduces noise) but removes breeding capability.
+ *
+ * @param h - The horse to geld
+ * @returns Updated horse with gelding gender
  */
 export function geldHorse(h: Horse): Horse {
   if (h.gender !== "colt" && h.gender !== "horse") return h;

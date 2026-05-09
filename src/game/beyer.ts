@@ -87,8 +87,19 @@ export function beyerFigure({
   return Math.max(30, Math.min(125, Math.round(fig)));
 }
 
-// Estimate a horse's expected Beyer at a given distance based on current
-// stats, form, energy, and track complexity.
+/**
+ * Estimate a horse's expected Beyer at a given distance.
+ *
+ * Calculates expected Beyer based on current stats, form, energy, and track complexity.
+ * Applies penalties for tight turns and steep gradients based on horse aptitudes.
+ *
+ * @param h - Horse to calculate for
+ * @param distance - Race distance in meters
+ * @param classBonus - Optional class bonus (0-10)
+ * @param course - Optional course specification for complexity calculations
+ * @param calibratedPars - Optional calibrated par times by distance bucket
+ * @returns Expected Beyer figure
+ */
 export function expectedBeyer(
   h: Horse,
   distance: number,
@@ -132,7 +143,17 @@ export function expectedBeyer(
   return beyerFigure({ distance, finishTime, classBonus, calibratedPars });
 }
 
-// Calculate Beyer for a race result
+/**
+ * Calculate Beyer for a race result.
+ *
+ * Convenience wrapper for beyerFigure using individual parameters.
+ *
+ * @param distance - Race distance in meters
+ * @param finishTime - Finish time in seconds
+ * @param classBonus - Optional class bonus (0-10)
+ * @param calibratedPars - Optional calibrated par times by distance bucket
+ * @returns Beyer figure (30-125)
+ */
 export function calculateBeyerForResult(
   distance: number,
   finishTime: number,

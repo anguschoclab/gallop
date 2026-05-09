@@ -27,8 +27,15 @@ import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/core/breeding/ar
 import { ELITE_POOL, MID_POOL, BUDGET_POOL } from "@/core/stable/stablePoolData";
 
 /**
- * Generate all NPC stables (named + filler)
- * Named stables are randomly selected from pools based on config counts
+ * Generate all NPC stables (named + filler).
+ *
+ * Named stables are randomly selected from pools based on config counts.
+ * Assigns breeding archetypes based on tier and personality.
+ *
+ * @param day - Current game day
+ * @param rng - Random number generator
+ * @param config - Stable configuration (defaults to STABLE_CONFIG)
+ * @returns Array of generated stable objects
  */
 export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG): Stable[] {
   const stables: Stable[] = [];
@@ -63,25 +70,31 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
   // Assign breeding archetypes based on tier/personality
   for (const stable of stables) {
     if (stable.tier === "elite" && stable.isMajor) {
-      // Elite tier prestige: regional Triple Crown archetype (random for elite stables)
+      // Elite tier prestige: random triple crown archetype (any of the new archetypes)
       if (stable.personality === "prestige") {
-        const tripleCrownArchetypes = TRIPLE_CROWN_ARCHETYPES.filter(
-          (a) => a.id === "triple-crown-specialist",
+        const allTCArchetypes = TRIPLE_CROWN_ARCHETYPES.filter(
+          (a) => a.id !== "triple-crown-specialist", // Exclude generic specialist
         );
         stable.breedingArchetype =
-          tripleCrownArchetypes.length > 0 ? rng.pick(tripleCrownArchetypes).id : undefined;
+          allTCArchetypes.length > 0 ? rng.pick(allTCArchetypes).id : undefined;
       }
-      // Elite tier specialist: random specialist archetype
+      // Elite tier specialist: random specialist archetype (including new ones)
       else if (stable.personality === "specialist") {
         const specialistArchetypes = ORIGINAL_ARCHETYPES.filter(
           (a) => a.id === "dirt-sprinter" || a.id === "turf-specialist" || a.id === "iron-horse",
+        ).concat(
+          TRIPLE_CROWN_ARCHETYPES.filter((a) => a.id !== "triple-crown-specialist")
         );
         stable.breedingArchetype =
           specialistArchetypes.length > 0 ? rng.pick(specialistArchetypes).id : undefined;
       }
     } else if (stable.tier === "mid" && stable.isMajor) {
-      // Mid tier: random original archetype
-      stable.breedingArchetype = rng.pick(ORIGINAL_ARCHETYPES).id;
+      // Mid tier: random archetype including new triple crown archetypes
+      const midTierArchetypes = [
+        ...ORIGINAL_ARCHETYPES,
+        ...TRIPLE_CROWN_ARCHETYPES.filter((a) => a.id !== "triple-crown-specialist"),
+      ];
+      stable.breedingArchetype = rng.pick(midTierArchetypes).id;
     }
     // Budget/starter tier: no archetype (undefined)
   }

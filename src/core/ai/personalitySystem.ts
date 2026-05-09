@@ -180,7 +180,14 @@ export function recordOutcome(
 }
 
 /**
- * Get composite key for outcome tracking
+ * Get composite key for outcome tracking.
+ *
+ * Generates a unique key for tracking outcomes based on decision type
+ * and context. Sorts context entries for consistent key generation.
+ *
+ * @param decisionType - Type of decision made
+ * @param context - Context object with decision parameters
+ * @returns Composite key for outcome tracking
  */
 function getOutcomeKey(decisionType: string, context: Record<string, unknown>): string {
   const contextKey = Object.entries(context)
@@ -192,7 +199,16 @@ function getOutcomeKey(decisionType: string, context: Record<string, unknown>): 
 }
 
 /**
- * Determine if strategy should be adapted
+ * Determine if strategy should be adapted.
+ *
+ * Evaluates whether to adapt strategy based on success rate,
+ * data sufficiency, and personality conservatism.
+ *
+ * @param aiState - Current personality AI state
+ * @param decisionType - Type of decision made
+ * @param contextKey - Context key for the decision
+ * @param successRate - Current success rate for this context
+ * @returns True if strategy should be adapted
  */
 function shouldAdaptStrategy(
   aiState: PersonalityAIState,
@@ -210,7 +226,17 @@ function shouldAdaptStrategy(
 }
 
 /**
- * Adapt strategy based on outcomes
+ * Adapt strategy based on outcomes.
+ *
+ * Adjusts strategy confidence based on success rate and adaptation speed.
+ * Switches to alternative strategy if confidence falls too low.
+ *
+ * @param aiState - Current personality AI state
+ * @param _decisionType - Type of decision made (unused)
+ * @param _contextKey - Context key for the decision (unused)
+ * @param successRate - Current success rate for this context
+ * @param timestamp - Current timestamp
+ * @returns Updated personality AI state
  */
 function adaptStrategy(
   aiState: PersonalityAIState,
@@ -242,7 +268,13 @@ function adaptStrategy(
 }
 
 /**
- * Get alternative strategy based on current strategy
+ * Get alternative strategy based on current strategy.
+ *
+ * Returns the next strategy in the cycle: default → aggressive →
+ * conservative → balanced → innovative → default.
+ *
+ * @param currentStrategy - Current strategy name
+ * @returns Alternative strategy name
  */
 function getAlternativeStrategy(currentStrategy: string): string {
   const alternatives: Record<string, string> = {
@@ -262,7 +294,10 @@ function getAlternativeStrategy(currentStrategy: string): string {
  * applies risk tolerance, and adds novelty bonus.
  *
  * @param aiState - Current personality AI state
- * @param decision - Decision object with shortTermValue, longTermValue, risk, novelty
+ * @param decision.shortTermValue - Short-term value of the decision
+ * @param decision.longTermValue - Long-term value of the decision
+ * @param decision.risk - Risk factor of the decision
+ * @param decision.novelty - Novelty factor of the decision
  * @returns Strategic score (0-1)
  */
 export function calculateStrategicScore(

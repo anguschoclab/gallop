@@ -20,8 +20,16 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { shouldEnterHorse } from "./npcRaceEntryHelpers";
 
 /**
- * AI decision: Enter horses from a stable into a specific race
- * Returns array of horses to enter
+ * AI decision: Enter horses from a stable into a specific race.
+ *
+ * Evaluates all eligible horses and selects top candidates based on entry score.
+ * Returns array of horses to enter.
+ *
+ * @param stable - Stable entering horses
+ * @param horseMap - Map of horse IDs to horse objects
+ * @param race - Race to enter
+ * @param pregnantIds - Set of pregnant horse IDs to exclude
+ * @returns Array of horses to enter
  */
 export function selectHorsesForRaceEntry(
   stable: Stable,
@@ -55,8 +63,22 @@ export function selectHorsesForRaceEntry(
 }
 
 /**
- * Run race entry for all NPC stables for races in the next N days
- * This is called during advanceDay()
+ * Run race entry for all NPC stables for races in the next N days.
+ *
+ * This is called during advanceDay(). Evaluates races ahead and enters eligible,
+ * competitive horses using modular scoring, geometry, and AI systems. Assigns jockeys
+ * and calculates tactics for entries.
+ *
+ * @param stables - Array of NPC stables
+ * @param horses - Array of all horses
+ * @param jockeys - Array of all jockeys
+ * @param races - Array of all races
+ * @param currentDay - Current simulation day
+ * @param rng - Random number generator
+ * @param daysAhead - Number of days ahead to evaluate (default: 3)
+ * @param pregnantIds - Set of pregnant horse IDs to exclude
+ * @param aiManager - Optional NPC AI manager for advanced tactics
+ * @returns Updated array of races with NPC entries
  */
 export function runNpcRaceEntry(
   stables: Stable[],

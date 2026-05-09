@@ -101,6 +101,18 @@ export type SireClassification =
   | "developing" // AEI > 0.5, CI > 0.3
   | "unproven"; // AEI <= 0.5 or insufficient data
 
+/**
+ * Classify a stallion based on their AEI/CI performance.
+ *
+ * Returns a classification tier based on progeny performance metrics.
+ * Classifications: elite (AEI > 2.0, CI > 1.0), premium (AEI > 1.5, CI > 0.8),
+ * solid (AEI > 1.0, CI > 0.5), developing (AEI > 0.5, CI > 0.3), unproven.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @returns Sire classification tier
+ */
 export function classifySire(
   stallion: Horse,
   allHorses: Horse[],
@@ -134,7 +146,26 @@ export function classifySire(
  */
 export type SurfaceBias = "dirt" | "turf" | "synthetic" | "balanced";
 
-export function getSireSurfaceBias(stallion: Horse, allHorses: Horse[]): SurfaceBias {
+/**
+ * Get surface bias for a stallion based on progeny performance.
+ *
+ * Analyzes progeny race results to determine if the stallion produces horses
+ * that perform better on dirt, turf, synthetic, or has no bias.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @returns Surface bias classification
+ */
+export function getSireSurfaceBias(
+  /**
+   * The stallion horse
+   */
+  stallion: Horse,
+  /**
+   * All horses in the game state
+   */
+  allHorses: Horse[],
+): SurfaceBias {
   const runners = getRunnersBy({ horses: allHorses }, stallion.id);
   if (runners.length < 5) {
     // Fallback to bloodline-based for insufficient data
@@ -198,6 +229,16 @@ export function getSireSurfaceBias(stallion: Horse, allHorses: Horse[]): Surface
  */
 export type DistancePreference = "sprint" | "classic" | "stayer" | "versatile";
 
+/**
+ * Get distance preference for a stallion based on progeny performance.
+ *
+ * Analyzes progeny race results to determine if the stallion produces horses
+ * that perform better at sprint, classic, stayer, or versatile distances.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @returns Distance preference classification
+ */
 export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): DistancePreference {
   const runners = getRunnersBy({ horses: allHorses }, stallion.id);
   if (runners.length < 5) return "versatile";
@@ -286,6 +327,17 @@ export interface SireAnalytics {
   standingFee: number;
 }
 
+/**
+ * Get sire analytics summary.
+ *
+ * Returns a comprehensive analytics object containing all key metrics
+ * for evaluating stallion performance.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @returns SireAnalytics object with all metrics
+ */
 export function getSireAnalytics(
   stallion: Horse,
   allHorses: Horse[],

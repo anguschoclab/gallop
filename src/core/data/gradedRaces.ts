@@ -203,6 +203,15 @@ function getCountry(track: string): string {
   return trackToCountry[track] || "Other";
 }
 
+/**
+ * Get the country for a graded race.
+ *
+ * Returns the country specified in the race data, or falls back to
+ * the track's country if not specified.
+ *
+ * @param race - The graded race
+ * @returns Country name
+ */
 export function getRaceCountry(race: GradedRace): string {
   return race.country || getCountry(race.track);
 }
@@ -245,10 +254,27 @@ const COUNTRY_TO_CONTINENT: Record<string, Continent> = {
   Chile: "south_america",
 };
 
+/**
+ * Get the country for a track.
+ *
+ * Looks up the country for a given track name using the track-to-country mapping.
+ *
+ * @param track - The track name
+ * @returns Country name
+ */
 export function getTrackCountry(track: string): string {
   return getCountry(track);
 }
 
+/**
+ * Get the continent for a track.
+ *
+ * Looks up the continent for a given track by first getting the country,
+ * then mapping the country to its continent.
+ *
+ * @param track - The track name
+ * @returns Continent (north_america, europe, asia_pacific, or south_america)
+ */
 export function getTrackContinent(track: string): Continent {
   const country = getCountry(track);
   return COUNTRY_TO_CONTINENT[country] || "europe";
@@ -1124,6 +1150,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 251,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts" },
     note: "Colts",
+    triplecrownKey: "argentina-tc",
   },
   {
     uuid: "a614fb1c-8f27-4cd2-ac86-5b4a1be3b53f",
@@ -1178,6 +1205,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 250000,
     dayOfYear: 294,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "argentina-tc",
   },
   {
     uuid: "75c15206-c8e3-421f-b100-b6e54d93f5a8",
@@ -1258,6 +1286,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 750000,
     dayOfYear: 322,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "argentina-tc",
   },
   {
     uuid: "22dce33d-04ea-4d4b-91ff-b2f4dae5e959",
@@ -1364,6 +1393,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 45,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts" },
     note: "Colts",
+    triplecrownKey: "brazil-tc",
   },
   {
     uuid: "ff4b248a-eae2-4f8b-8681-c476888691d5",
@@ -1378,6 +1408,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 54,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "brazil-tiara",
   },
   {
     uuid: "3ab04688-d593-422a-93ec-df06874b0d03",
@@ -1392,6 +1423,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 64,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "brazil-tiara",
   },
   {
     uuid: "e5669ec5-06fc-4468-8479-1546c7c6361d",
@@ -1406,6 +1438,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 62,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts" },
     note: "Colts",
+    triplecrownKey: "brazil-tc",
   },
   {
     uuid: "52dd68b5-0632-46f3-8244-6317bad2f363",
@@ -1419,6 +1452,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 750000,
     dayOfYear: 109,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "brazil-tc",
   },
   {
     uuid: "8a79c4c3-2758-4c41-9764-031c745f5c5b",
@@ -1433,6 +1467,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 116,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "brazil-tiara",
   },
   {
     uuid: "1a55d259-9482-44a2-ad74-69f3598632a3",
@@ -1719,6 +1754,37 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 750000,
     dayOfYear: 34,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "chile-tc",
+  },
+
+  // ============= Chile — Triple Crown (3yo) =============
+  {
+    uuid: "aa000020-0000-4000-8000-000000000030",
+    key: "chile-cl-sico-el-ensayo",
+    name: "Clásico El Ensayo",
+    track: "Club Hípico de Santiago",
+    trackId: "8cd8068a-d06f-4b40-a8a7-b9d6012afd0e",
+    grade: "G1",
+    distance: 2400,
+    surface: "Turf",
+    purse: 750000,
+    dayOfYear: doy(2, 15),
+    restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "chile-tc",
+  },
+  {
+    uuid: "aa000020-0000-4000-8000-000000000031",
+    key: "chile-cl-sico-st-leger",
+    name: "Clásico St. Leger",
+    track: "Hipódromo Chile",
+    trackId: "8cd8068a-d06f-4b40-a8a7-b9d6012afd0f",
+    grade: "G1",
+    distance: 2200,
+    surface: "Dirt",
+    purse: 500000,
+    dayOfYear: doy(12, 1),
+    restrictions: { minAge: 3 },
+    triplecrownKey: "chile-tc",
   },
   {
     uuid: "d6676c0c-ae40-4b74-a0ef-1e1c540157d6",
@@ -1817,6 +1883,53 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: doy(10, 5),
     restrictions: { minAge: 3, maxAge: 3 },
     triplecrownKey: "canada-tc",
+  },
+
+  // ============= Canada — Triple Tiara (Fillies) =============
+  {
+    uuid: "aa000020-0000-4000-8000-000000000023",
+    key: "ca-woodbine-oaks",
+    name: "Woodbine Oaks",
+    track: "Woodbine",
+    trackId: "a4e790db-a9ad-458d-9191-817b61b9069c",
+    grade: "G2",
+    distance: 1811,
+    surface: "Synthetic",
+    purse: 391200,
+    dayOfYear: doy(5, 25),
+    restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
+    note: "Fillies",
+    triplecrownKey: "canada-tiara",
+  },
+  {
+    uuid: "aa000020-0000-4000-8000-000000000024",
+    key: "ca-bison-city-stakes",
+    name: "Bison City Stakes",
+    track: "Fort Erie",
+    trackId: "4e5db0cb-d4b2-4c6f-b675-903139668491",
+    grade: "G3",
+    distance: 1709,
+    surface: "Synthetic",
+    purse: 191725,
+    dayOfYear: doy(6, 15),
+    restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
+    note: "Fillies",
+    triplecrownKey: "canada-tiara",
+  },
+  {
+    uuid: "aa000020-0000-4000-8000-000000000025",
+    key: "ca-wonder-where-stakes",
+    name: "Wonder Where Stakes",
+    track: "Woodbine",
+    trackId: "a4e790db-a9ad-458d-9191-817b61b9069c",
+    grade: "G3",
+    distance: 1811,
+    surface: "Turf",
+    purse: 150000,
+    dayOfYear: doy(8, 1),
+    restrictions: { minAge: 3, gender: "fillies-and-mares" },
+    note: "Fillies & Mares",
+    triplecrownKey: "canada-tiara",
   },
 
   // ============= Canada — Grade 2 (Woodbine) =============
@@ -2466,6 +2579,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 105,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "japan-tiara",
   },
   {
     uuid: "01021a5e-b228-48e7-9335-ccc6bb6d9828",
@@ -2479,6 +2593,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 800000,
     dayOfYear: 105,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "japan-tc",
   },
   {
     uuid: "6e9ecb9e-20c4-4497-9cd2-6bb85d904e02",
@@ -2533,6 +2648,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "japan-tiara",
   },
   {
     uuid: "4ed6bb45-83c0-4c89-b29a-80bc04a00aa4",
@@ -2546,6 +2662,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 800000,
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "japan-tc",
   },
   {
     uuid: "b898c8ca-34b6-498e-8f0d-54e2aa84e337",
@@ -2599,6 +2716,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 288,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "japan-tiara",
   },
   {
     uuid: "227f9b63-3b14-4a2d-98a2-69a5d4815f30",
@@ -2612,6 +2730,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 800000,
     dayOfYear: 288,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "japan-tc",
   },
   {
     uuid: "2b19e567-e1fa-4f1e-bdac-882ce23548ac",
@@ -4742,6 +4861,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 250000,
     dayOfYear: doy(5, 12),
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "italy-tc",
   },
   {
     uuid: "3491686c-c8ed-4ae5-99ed-6c38f423302d",
@@ -4853,6 +4973,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 3000000,
     dayOfYear: 15,
     restrictions: { minAge: 3 },
+    triplecrownKey: "hongkong-tc",
   },
   {
     uuid: "4b6c06ef-6c74-405d-929a-01194a0f5d9e",
@@ -4879,6 +5000,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 3000000,
     dayOfYear: 46,
     restrictions: { minAge: 3 },
+    triplecrownKey: "hongkong-tc",
   },
   {
     uuid: "b2f738c7-3d6e-49ef-a49f-f75324ef3a1d",
@@ -4944,6 +5066,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 3000000,
     dayOfYear: 135,
     restrictions: { minAge: 3 },
+    triplecrownKey: "hongkong-tc",
   },
   {
     uuid: "0396f0e1-9353-4ec4-9f61-c393f4a70243",
@@ -7347,6 +7470,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 800000,
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "france-tc",
   },
   {
     uuid: "00e521fc-5114-44fa-b957-f791052c2850",
@@ -7401,6 +7525,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "france-tc",
   },
   {
     uuid: "6b89ca1a-6acc-4d32-ae86-4a219a35c7ca",
@@ -7456,6 +7581,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 196,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "france-tc",
   },
   {
     uuid: "2a9d46e2-0c80-4b11-a46f-724a4b814e3f",
@@ -8850,6 +8976,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "ireland-tc",
   },
   {
     uuid: "3db36a1d-abab-4be2-97f3-0a6321f688ce",
@@ -8905,6 +9032,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 166,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "ireland-tc",
   },
   {
     uuid: "cd822f7c-b3f7-426b-baa0-1fd3436c6734",
@@ -9028,6 +9156,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 800000,
     dayOfYear: 258,
     restrictions: { minAge: 3 },
+    triplecrownKey: "ireland-tc",
   },
   {
     uuid: "bbb93531-9c0a-4fad-9443-68c2661d4b46",
@@ -9821,6 +9950,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 196,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "germany-tc",
   },
   {
     uuid: "c111fe38-d11d-4b2d-9c32-01c3301720a9",
@@ -9940,7 +10070,9 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "germany-tc",
   },
+
   {
     uuid: "20f5607a-f631-420b-805b-dd103dbf25a2",
     key: "de-grosser-preis-der-badischen-wirtschaft",
@@ -10284,6 +10416,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 150000,
     dayOfYear: 258,
     restrictions: { minAge: 3 },
+    triplecrownKey: "germany-tc",
   },
   {
     uuid: "d7b5bb0c-9534-44f4-96cd-ef05b38e84ad",
@@ -10418,6 +10551,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 105,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts" },
     note: "Colts",
+    triplecrownKey: "italy-tc",
   },
   {
     uuid: "7a2d11c3-f464-40c4-9259-7779a45115ee",
@@ -10526,6 +10660,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 150000,
     dayOfYear: 288,
     restrictions: { minAge: 3 },
+    triplecrownKey: "italy-tc",
   },
   {
     uuid: "d10bc390-b549-4c53-b35f-d79ec17802e6",
@@ -10997,6 +11132,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "hungary-tc",
   },
   {
     uuid: "6f35a800-a1bd-4aec-b3fa-ae1543c37a10",
@@ -11038,6 +11174,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 196,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "hungary-tc",
   },
   {
     uuid: "4b561d8a-d4bf-4c7f-9ea9-510b52a013e6",
@@ -11186,6 +11323,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: 288,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "hungary-tc",
   },
   {
     uuid: "2dd38e7d-a0b6-4d0a-a9e5-640f8bc64c4e",
@@ -11728,6 +11866,37 @@ const GRADED_RACES_BASE: GradedRace[] = [
     dayOfYear: doy(5, 2),
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "usa-tiara",
+  },
+  {
+    uuid: "aa000020-0000-4000-8000-000000000021",
+    key: "usa-black-eyed-susan-stakes",
+    name: "Black-Eyed Susan Stakes",
+    track: "Pimlico",
+    trackId: "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5e",
+    grade: "G2",
+    distance: 1811,
+    surface: "Dirt",
+    purse: 300000,
+    dayOfYear: doy(5, 17),
+    restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
+    note: "Fillies",
+    triplecrownKey: "usa-tiara",
+  },
+  {
+    uuid: "aa000020-0000-4000-8000-000000000022",
+    key: "usa-acorn-stakes",
+    name: "Acorn Stakes",
+    track: "Belmont Park",
+    trackId: "d3c4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+    grade: "G1",
+    distance: 1709,
+    surface: "Dirt",
+    purse: 500000,
+    dayOfYear: doy(6, 7),
+    restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
+    note: "Fillies",
+    triplecrownKey: "usa-tiara",
   },
   {
     uuid: "aa000021-0000-4000-8000-000000000021",
@@ -12202,6 +12371,37 @@ const GRADED_RACES_BASE: GradedRace[] = [
     purse: 2000000,
     dayOfYear: doy(11, 2),
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "australia-tc",
+  },
+
+  // ============= Australia — Triple Crown (3yo) =============
+  {
+    uuid: "aa000020-0000-4000-8000-000000000026",
+    key: "au-randwick-guineas",
+    name: "Randwick Guineas",
+    track: "Randwick",
+    trackId: "a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6e",
+    grade: "G1",
+    distance: 1600,
+    surface: "Turf",
+    purse: 1000000,
+    dayOfYear: doy(3, 1),
+    restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "australia-tc",
+  },
+  {
+    uuid: "aa000020-0000-4000-8000-000000000027",
+    key: "au-rosehill-guineas",
+    name: "Rosehill Guineas",
+    track: "Rosehill",
+    trackId: "a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6f",
+    grade: "G1",
+    distance: 2000,
+    surface: "Turf",
+    purse: 1000000,
+    dayOfYear: doy(3, 15),
+    restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "australia-tc",
   },
   {
     uuid: "au000008-0000-4000-8000-000000000008",

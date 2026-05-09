@@ -4,11 +4,12 @@
  * This file provides pure functions for filtering races by criteria,
  * separating upcoming from past races, and sorting by day.
  *
- * Dependencies: @/game/types (Race)
+ * Dependencies: @/game/types (Race), @/game/gradedRaces (GRADED_RACES)
  * Related files: Used throughout UI components for race list filtering
  */
 
 import type { Race } from "@/game/types";
+import { GRADED_RACES } from "@/game/gradedRaces";
 
 /**
  * Pure race filtering logic
@@ -64,7 +65,11 @@ export function filterRacesByCriteria(
 
     // Filter by triple crown
     if (filters.tripleCrown !== "all" && filters.tripleCrown !== undefined) {
-      const tripleCrownKeys = new Set(["usa-tc", "canada-tc", "uk-classics"]);
+      const tripleCrownKeys = new Set(
+        GRADED_RACES
+          .filter((r) => r.triplecrownKey)
+          .map((r) => r.triplecrownKey)
+      );
       const isTripleCrown = race.graded && tripleCrownKeys.has(race.graded.triplecrownKey || "");
       if (filters.tripleCrown && !isTripleCrown) return false;
       if (!filters.tripleCrown && isTripleCrown) return false;
