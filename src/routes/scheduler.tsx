@@ -216,7 +216,7 @@ function SchedulerPage() {
                     className="h-7 w-7 text-cream-muted"
                     onClick={() => deleteCampaign(campaign.horseId)}
                     title="Delete campaign"
-                    aria-label="Delete campaign"
+                    aria-label={`Delete campaign for ${horse.name}`}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
