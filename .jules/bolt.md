@@ -11,3 +11,6 @@
 ## 2024-05-09 - [Avoid O(n²) array lookups during loop iterations in components]
 **Learning:** When rendering complex UI lists across categories (e.g. grading categories mapping over upcoming races, and looking up entries in a global `horses` array using `.find()`), doing an inner array `.find()` results in a hidden O(n²) operation per frame/render if left unmemoized. This does not scale well with a growing list of entities like horses.
 **Action:** Lift array-to-Map transformations (`new Map(horses.map(h => [h.id, h]))`) to the top of components and cache them with `useMemo` alongside the data loop. Replace the `.find()` usage inside inner loops with an efficient `map.get()` lookup.
+## 2026-05-09 - [Avoid O(n²) array lookups during loop iterations in components]
+**Learning:** When rendering UI lists that map over global state (like the `HallOfFame` mapping over global `horses`), an inner `.find()` on an array is an O(n²) operation per render that creates scaling bottlenecks.
+**Action:** Always extract the array into a Map indexed by ID via `useMemo` and perform an O(1) `.get()` lookup instead. Document expected impact metrics in code comments explicitly.
