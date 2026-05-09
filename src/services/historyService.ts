@@ -61,24 +61,6 @@ export function checkHallOfFameInduction(
       lifetimeWins: stats.wins,
     };
   }
-      bestBeyer: Math.max(...horse.raceHistory.map(h => h.beyer || 0), 0),
-      silk: horse.silk,
-      pedigree: {
-        sireName: horse.sireName,
-        damName: horse.damName,
-      }
-    };
-  }
-
-  return null;
-}
-ilk,
-      pedigree: {
-        sireName: horse.sireName,
-        damName: horse.damName,
-      }
-    };
-  }
 
   return null;
 }
