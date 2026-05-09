@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
