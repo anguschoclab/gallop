@@ -45,7 +45,8 @@ import { getGradeColorClass } from "@/core/race/grading";
 import { GradeBreakdown } from "@/components/races/GradeBreakdown";
 import { RaceCard } from "@/components/races/RaceCard";
 import { RaceRow } from "@/components/races/RaceRow";
-import { NumericValue, formatCurrency } from "@/components/HorseBits";
+import { NumericValue } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 
 type RaceFilters = {

@@ -13,7 +13,7 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
 import { runRaceToCompletion } from "@/game/raceSim";
 import { getCourseForRace } from "@/game/tracks";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);

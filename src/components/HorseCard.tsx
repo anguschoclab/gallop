@@ -50,13 +50,11 @@ export function HorseCard({
     showScoutInfo && horse.stableId ? getDisplayableStats(horse, scoutReports, day) : null;
 
   // Gender icon
-  const getGenderIcon = () => {
-    if (horse.gender === "gelding") return "⚲";
-    return horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀";
-  };
+  const getGenderIcon = () => genderSymbol(horse.gender);
+
   const getGenderColor = () => {
     if (horse.gender === "gelding") return "text-cream-muted";
-    return horse.gender === "colt" || horse.gender === "horse" ? "text-chart-1" : "text-chart-5";
+    return isMaleHorse(horse.gender) ? "text-chart-1" : "text-chart-5";
   };
 
   const genderIcon = getGenderIcon();
@@ -426,6 +424,13 @@ function getInjuryLabel(proneness?: number): string {
 
 function getInjuryColor(proneness?: number): string {
   if (!proneness) return "text-cream-muted";
+  if (proneness < 0.06) return "text-success font-medium";
+  if (proneness < 0.09) return "text-warning font-medium";
+  return "text-destructive font-bold";
+}
+
+export default HorseCard;
+ream-muted";
   if (proneness < 0.06) return "text-success font-medium";
   if (proneness < 0.09) return "text-warning font-medium";
   return "text-destructive font-bold";

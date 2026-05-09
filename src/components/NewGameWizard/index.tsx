@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Dice5 } from "lucide-react";
 import { useGame } from "@/game/store";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import type { NewGameOptions } from "@/game/state";
 import { createRng, hashStr } from "@/game/rng";
 import { generateSilk, SILK_PALETTE, SILK_PATTERNS } from "@/game/jockeyGen";

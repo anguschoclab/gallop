@@ -296,11 +296,14 @@ export function runBreedingSimulation(
       },
       {} as Record<CoatColor, number>,
     ),
-    coiEstimate: computeCoiFromSnapshot({
-      sireId: sire.id,
-      damId: dam.id,
-      sirePedigree: sire.pedigree,
-      damPedigree: dam.pedigree,
+    coiEstimate: computeProspectiveCoi(sire, dam),
+
+    compatScore: calculateGeneticCompatibility(sire, dam).score,
+  };
+
+  return result;
+}
+dam.pedigree,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any),
 

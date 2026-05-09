@@ -48,70 +48,60 @@ export function isGenderEligible(
   };
 
   // Try direct match or fuzzy match
-  if (genderEligibilityMap[normalized])
-    return genderEligibilityMap[normalized].includes(horseGender);
-
-  // Fallback: search for keywords
-  if (normalized.includes("filly") || normalized.includes("mare")) {
-    if (
-      normalized.includes("colt") ||
-      normalized.includes("horse") ||
-      normalized.includes("gelding")
-    ) {
-      return ["colt", "filly", "horse", "mare", "gelding"].includes(horseGender);
-    }
-    return ["filly", "mare"].includes(horseGender);
-  }
-
-  if (
-    normalized.includes("colt") ||
-    normalized.includes("horse") ||
-    normalized.includes("gelding")
-  ) {
-    return ["colt", "horse", "gelding"].includes(horseGender);
-  }
-
-  return true;
+  return genderEligibilityMap[normalized]?.includes(horseGender) ?? true;
 }
 
 /**
- * Get a human-readable label for a gender restriction
+ * Roll for gender based on standard population distribution
+ * - Male (Colt): 50%
+ * - Female (Filly): 50%
  */
-export function getGenderRestrictionLabel(restriction: GenderRestriction): string {
-  if (!restriction) return "Open";
-  const labelMap: Record<string, string> = {
-    colt: "Colts",
-    colts: "Colts",
-    filly: "Fillies",
-    fillies: "Fillies",
-    mares: "Mares",
-    "fillies-and-mares": "Fillies & Mares",
-    "colts-and-fillies": "Colts & Fillies",
-    horses: "Horses",
-    "colts-and-geldings": "Colts & Geldings",
-  };
-  return labelMap[restriction] || restriction;
+export function rollGender(rng: Rng): Horse["gender"] {
+  return rng.next() < 0.5 ? "colt" : "filly";
 }
 
 /**
- * Roll a gender for a newly generated horse. Canonical implementation —
- * horseGen.ts, npcHorseGen.ts, and createHorseFromDNA all defer here.
- *
- * Rules:
- *  - 55% male, 45% female
- *  - 35% of males are gelded (for racing consistency)
- *  - Colts/fillies up to age 4; horse/mare at 5+
+ * Get gender from boolean (isMale) and age
  */
-export function rollGender(age: number, rng: Rng): HorseGender {
-  const isMale = rng.next() < 0.55;
-  const isGelding = isMale && rng.next() < 0.35;
-
-  if (age <= 4) {
-    if (isMale) return isGelding ? "gelding" : "colt";
-    return "filly";
+export function getGenderFromProps(isMale: boolean, age: number, isGelding?: boolean): Horse["gender"] {
+  if (age < 4) {
+    return isMale ? "colt" : "filly";
   }
   if (isMale) return isGelding ? "gelding" : "horse";
   return "mare";
+}
+
+export const SIRE_GENDERS: HorseGender[] = ["colt", "horse"];
+export const DAM_GENDERS: HorseGender[] = ["filly", "mare"];
+
+export function isMaleHorse(gender: HorseGender): boolean {
+  return gender === "colt" || gender === "horse" || gender === "gelding";
+}
+
+export function isFemaleHorse(gender: HorseGender): boolean {
+  return gender === "filly" || gender === "mare";
+}
+
+export function genderLabel(gender: HorseGender): string {
+  switch (gender) {
+    case "colt":
+      return "Colt";
+    case "filly":
+      return "Filly";
+    case "horse":
+      return "Horse";
+    case "mare":
+      return "Mare";
+    case "gelding":
+      return "Gelding";
+    default:
+      return gender;
+  }
+}
+
+export function genderSymbol(gender: HorseGender): string {
+  if (gender === "gelding") return "⚲";
+  return gender === "colt" || gender === "horse" ? "♂" : "♀";
 }
 
 /**

@@ -105,6 +105,19 @@ export function computeCoiFromSnapshot(
   return _computeCoiFromSnapshot(pedigree, maxDepth);
 }
 
+/**
+ * Compute COI for a prospective mating between two horses.
+ */
+export function computeProspectiveCoi(sire: Horse, dam: Horse, maxDepth: number = 8): number {
+  const prospectivePedigree: any = {
+    sireId: sire.id,
+    damId: dam.id,
+    sirePedigree: sire.pedigree,
+    damPedigree: dam.pedigree,
+  };
+  return computeCoiFromSnapshot(prospectivePedigree, maxDepth);
+}
+
 function _computeCoiFromSnapshot(pedigree: Pedigree, maxDepth: number = 8): number {
   const sireDepths = new Map<string, number>();
   const damDepths = new Map<string, number>();

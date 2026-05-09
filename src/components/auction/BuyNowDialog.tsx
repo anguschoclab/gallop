@@ -11,7 +11,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Zap } from "lucide-react";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 
 interface BuyNowDialogProps {

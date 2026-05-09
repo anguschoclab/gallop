@@ -5,7 +5,6 @@
 import { describe, it, expect } from "vitest";
 import {
   getCurrentYear,
-  getDayOfYear,
   getDayOfWeek,
   isTrackRacing,
   generateTrackRaces,
@@ -13,6 +12,7 @@ import {
   generateUpcomingRaces,
   generateAnnualCalendar,
 } from "@/game/raceSchedule";
+import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { createRng } from "@/game/rng";
 import type { Race } from "@/game/types";
 import type { Track, TrackSchedule } from "@/game/tracks";
@@ -37,12 +37,12 @@ describe("getCurrentYear", () => {
   });
 });
 
-describe("getDayOfYear", () => {
+describe("dayOfYear", () => {
   it("should return day of year correctly", () => {
-    expect(getDayOfYear(1)).toBe(1);
-    expect(getDayOfYear(365)).toBe(365);
-    expect(getDayOfYear(366)).toBe(1);
-    expect(getDayOfYear(730)).toBe(365);
+    expect(dayOfYear(1)).toBe(1);
+    expect(dayOfYear(365)).toBe(365);
+    expect(dayOfYear(366)).toBe(1);
+    expect(dayOfYear(730)).toBe(365);
   });
 });
 
@@ -364,7 +364,7 @@ describe("generateAnnualCalendar", () => {
 
     // All races should have valid day of year (1-365)
     races.forEach((race) => {
-      const doy = getDayOfYear(race.day);
+      const doy = dayOfYear(race.day);
       expect(doy).toBeGreaterThanOrEqual(1);
       expect(doy).toBeLessThanOrEqual(365);
     });

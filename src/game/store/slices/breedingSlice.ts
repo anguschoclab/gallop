@@ -13,7 +13,8 @@ import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
 import { generateUUID } from "@/game/uuid";
 import type { BreedingIntent } from "@/core/resolver/intents";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants/gameConstants";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
+import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 
 export type BreedingSlice = BreedingState & {
@@ -175,6 +176,10 @@ export function createBreedingSlice(
       if (!archetype) return;
       const updated = updateProgramProgress(s.activeBreedingProgram, horse, archetype, s.day);
       set({ activeBreedingProgram: updated });
+    },
+  };
+}
+et({ activeBreedingProgram: updated });
     },
   };
 }

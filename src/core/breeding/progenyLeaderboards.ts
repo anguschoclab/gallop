@@ -1,3 +1,4 @@
+import { getCareerStats } from "@/core/horse/stats";
 import type { Horse } from "@/game/types";
 import { foalLifetimeEarnings } from "./lineage";
 import type {
@@ -34,13 +35,16 @@ function computeBeyerLeaderboard(runners: Horse[], currentDay: number): ProgenyL
       sireName: h.sireName,
       value: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
       metrics: {
-        age: h.age,
-        starts: h.careerStarts,
-        wins: h.careerWins,
-        earnings: h.lifetimeEarnings,
-        bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
-        gradeWins: h.raceHistory.filter((r) => r.grade && r.position === 1).length,
-      },
+        const stats = getCareerStats(h);
+        return {
+          age: h.age,
+          starts: stats.starts,
+          wins: stats.wins,
+          earnings: stats.earnings,
+          bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
+          gradeWins: stats.gradedWins,
+        };
+      }(),
     }))
     .filter((h) => h.value > 0)
     .sort((a, b) => b.value - a.value)
@@ -68,13 +72,16 @@ function computeEarningsLeaderboard(runners: Horse[], currentDay: number): Proge
       sireName: h.sireName,
       value: h.lifetimeEarnings,
       metrics: {
-        age: h.age,
-        starts: h.careerStarts,
-        wins: h.careerWins,
-        earnings: h.lifetimeEarnings,
-        bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
-        gradeWins: h.raceHistory.filter((r) => r.grade && r.position === 1).length,
-      },
+        const stats = getCareerStats(h);
+        return {
+          age: h.age,
+          starts: stats.starts,
+          wins: stats.wins,
+          earnings: stats.earnings,
+          bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
+          gradeWins: stats.gradedWins,
+        };
+      }(),
     }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 50)
@@ -99,17 +106,18 @@ function computeStakesWinnersLeaderboard(runners: Horse[], currentDay: number): 
       horseName: h.name,
       sireId: h.pedigree?.sireId,
       sireName: h.sireName,
-      value: h.raceHistory.filter(
-        (r) => (r.grade || r.raceClass === "Stakes" || r.raceClass === "Group") && r.position === 1,
-      ).length,
+      value: getCareerStats(h).stakesWins,
       metrics: {
-        age: h.age,
-        starts: h.careerStarts,
-        wins: h.careerWins,
-        earnings: h.lifetimeEarnings,
-        bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
-        gradeWins: h.raceHistory.filter((r) => r.grade && r.position === 1).length,
-      },
+        const stats = getCareerStats(h);
+        return {
+          age: h.age,
+          starts: stats.starts,
+          wins: stats.wins,
+          earnings: stats.earnings,
+          bestBeyer: Math.max(...h.raceHistory.map((r) => r.beyer || 0)),
+          gradeWins: stats.gradedWins,
+        };
+      }(),
     }))
     .filter((h) => h.value > 0)
     .sort((a, b) => b.value - a.value)

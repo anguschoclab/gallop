@@ -13,8 +13,15 @@ import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
-import { UPKEEP_PER_HORSE } from "@/game/constants/gameConstants";
+import {
+  UPKEEP_PER_HORSE,
+  DAYS_PER_YEAR,
+  DAYS_PER_MONTH,
+  DAYS_PER_WEEK,
+} from "@/game/constants/gameConstants";
+import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";
+import type { StoreSet, StoreGet } from "../types";
 
 export type CoreSlice = CoreState & {
   enterRace: (raceId: string, horseId: string) => ActionResult;
@@ -62,10 +69,11 @@ export function createCoreSlice(
       const s = get();
       const race = s.races.find((r: Race) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
-      if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
-      if (horse.energy < 50) return { ok: false, reason: "Horse lacks sufficient energy." };
+      const horse = requireHorse(s.horses, horseId);
+      const ownershipGuard = requireOwned(horse);
+      if (ownershipGuard) return ownershipGuard;
+      
+      if (horse!.energy < 50) return { ok: false, reason: "Horse lacks sufficient energy." };
       if (race.entries.some((e: any) => e.horseId === horseId))
         return { ok: false, reason: "Horse already entered." };
 
@@ -335,15 +343,15 @@ export function createCoreSlice(
     },
 
     advanceWeek: async (headless?: boolean) => {
-      await get().advanceMultipleDays(7, headless);
+      await get().advanceMultipleDays(DAYS_PER_WEEK, headless);
     },
 
     advanceMonth: async (headless?: boolean) => {
-      await get().advanceMultipleDays(30, headless);
+      await get().advanceMultipleDays(DAYS_PER_MONTH, headless);
     },
 
     advanceYear: async (headless?: boolean) => {
-      await get().advanceMultipleDays(365, headless);
+      await get().advanceMultipleDays(DAYS_PER_YEAR, headless);
     },
 
     setDay: (day) => {

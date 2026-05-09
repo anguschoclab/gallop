@@ -15,7 +15,7 @@ import {
   type LearningState,
 } from "./learningModule";
 import { GRADED_RACES } from "@/game/gradedRaces";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating, calculateRaceRating } from "@/core/horse/stats";
 
 export interface CampaignAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

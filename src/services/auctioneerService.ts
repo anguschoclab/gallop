@@ -8,6 +8,7 @@
 // "buckets" derived from displayable signals (fame, scout reports,
 // conformation/temperament, breeze times) — never raw potential or stats.
 
+import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import type { Horse, Stable } from "@/game/types";
 import type { AuctionTickEvent } from "@/game/auctionRunner";
 import type { Rng } from "@/game/rng";
@@ -130,9 +131,9 @@ function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
     dam: horse?.damName,
     coat: horse?.coatColor,
     gender: horse
-      ? horse.gender === "filly" || horse.gender === "mare"
+      ? isFemaleHorse(horse.gender)
         ? "filly"
-        : horse.gender === "colt" || horse.gender === "horse"
+        : isMaleHorse(horse.gender)
           ? "colt"
           : horse.gender
       : undefined,

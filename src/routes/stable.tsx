@@ -7,7 +7,8 @@ import { TrophyCase } from "@/components/awards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { NumericValue, formatCurrency } from "@/components/HorseBits";
+import { NumericValue } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { Building2, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 

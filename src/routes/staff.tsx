@@ -3,7 +3,7 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
 import { Users, Briefcase, Zap, HeartPulse, UserPlus, X, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";

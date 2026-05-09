@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 describe("formatCurrency", () => {
   it("formats zero as $0", () => {

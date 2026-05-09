@@ -13,7 +13,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { PaddleCard } from "./PaddleCard";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
+import { genderSymbol } from "@/core/horse/gender";
 import { PHASES, chantToPhaseIndex } from "./auctionPhaseStrip";
 import { useScoreboard } from "./useScoreboard";
 import { BidHistoryPanel } from "./BidHistoryPanel";
@@ -480,9 +481,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                       </button>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {currentHorse.gender === "filly" || currentHorse.gender === "mare"
-                        ? "♀"
-                        : "♂"}{" "}
+                      {genderSymbol(currentHorse.gender)}{" "}
                       {currentHorse.gender.charAt(0).toUpperCase() + currentHorse.gender.slice(1)} ·
                       Age {currentHorse.age} · {currentHorse.hemisphere}
                     </p>

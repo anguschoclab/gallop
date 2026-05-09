@@ -4,7 +4,7 @@
 import type { Horse, Race, Claim, ClaimingPrice } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { createRng, hashStr } from "./rng";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 // Horse transfer result from a claiming race
 export type HorseTransfer = {

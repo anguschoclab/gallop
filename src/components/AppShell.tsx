@@ -29,7 +29,7 @@ import {
   LayoutGrid,
   Star,
 } from "lucide-react";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";

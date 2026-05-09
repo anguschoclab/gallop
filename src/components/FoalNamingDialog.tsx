@@ -15,6 +15,7 @@ import { useGallopStore } from "@/game/store";
 import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
 import { validateHorseName } from "@/core/horse/naming/jockeyClubRules";
 import { createRng } from "@/game/rng";
+import { genderLabel } from "@/core/horse/gender";
 
 interface FoalNamingDialogProps {
   foalId: string;
@@ -22,67 +23,55 @@ interface FoalNamingDialogProps {
   onClose: () => void;
 }
 
-export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOpen, onClose }) => {
-  const { horses, usedHorseNames, hallOfFame, renameHorse } = useGallopStore();
-  const foal = horses.find((h) => h.id === foalId);
+export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
+  foalId,
+  isOpen,
+  onClose,
+}) => {
+  const horses = useGallopStore((s) => s.horses);
+  const nameHorse = useGallopStore((s) => s.nameHorse);
+  const foal = useMemo(() => horses.find((h) => h.id === foalId), [horses, foalId]);
 
   const [name, setName] = useState("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [validation, setValidation] = useState<{ valid: boolean; reason?: string }>({
+    valid: true,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const existingNamesSet = useMemo(() => new Set(usedHorseNames), [usedHorseNames]);
-  const deceasedNamesSet = useMemo(
-    () => new Set((hallOfFame || []).map((h) => h.horseName.toLowerCase())),
-    [hallOfFame],
-  );
-
-  const generateSuggestions = useCallback(() => {
-    if (!foal) return;
-    const rng = createRng(Date.now());
-    const newSuggestions: string[] = [];
-
-    // Generate 3 suggestions
-    for (let i = 0; i < 3; i++) {
-      const suggestion = generateProceduralHorseName(
-        {
-          sireName: foal.sireName,
-          damName: foal.damName,
-          existingNames: existingNamesSet,
-          deceasedNames: deceasedNamesSet,
-        },
-        rng,
-        { strategy: "hybrid" },
-      );
-      newSuggestions.push(suggestion);
-    }
-    setSuggestions(newSuggestions);
-  }, [foal, existingNamesSet, deceasedNamesSet]);
-
+  // Initialize with current name or a suggestion
   useEffect(() => {
-    if (isOpen && foal) {
-      generateSuggestions();
-      setName("");
-      setError(null);
-    }
-  }, [isOpen, foal, generateSuggestions, foalId]);
-
-  useEffect(() => {
-    if (name) {
-      const validation = validateHorseName(name, existingNamesSet, deceasedNamesSet);
-      if (!validation.isValid) {
-        setError(validation.reason || "Invalid name.");
+    if (foal && isOpen) {
+      if (foal.name && !foal.name.startsWith("Foal #")) {
+        setName(foal.name);
       } else {
-        setError(null);
+        generateSuggestion();
       }
-    } else {
-      setError(null);
     }
-  }, [name, existingNamesSet, deceasedNamesSet]);
+  }, [foal, isOpen]);
 
-  const handleSave = () => {
-    if (!error && name) {
-      renameHorse(foalId, name);
+  const generateSuggestion = useCallback(() => {
+    if (!foal) return;
+    const rng = createRng(`foal-name-${foal.id}-${Date.now()}`);
+    const suggestion = generateProceduralHorseName(foal, rng);
+    setName(suggestion);
+    setValidation(validateHorseName(suggestion, horses));
+  }, [foal, horses]);
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setName(newName);
+    setValidation(validateHorseName(newName, horses));
+  };
+
+  const handleSubmit = async () => {
+    if (!foal || !validation.valid) return;
+
+    setIsSubmitting(true);
+    try {
+      nameHorse(foal.id, name);
       onClose();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -99,7 +88,7 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
             </Badge>
           </DialogTitle>
           <p className="text-slate-400 text-sm">
-            {foal.gender === "colt" ? "Colt" : "Filly"} by {foal.sireName} out of {foal.damName}
+            {genderLabel(foal.gender)} by {foal.sireName} out of {foal.damName}
           </p>
         </DialogHeader>
 
@@ -112,64 +101,68 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
               <Input
                 id="name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter a unique name..."
-                className={`bg-slate-950 border-slate-800 text-white pr-10 ${error ? "border-red-500 focus-visible:ring-red-500" : "focus-visible:ring-emerald-500"}`}
+                onChange={handleNameChange}
+                className="bg-slate-950 border-slate-800 text-white pr-10"
+                placeholder="Enter horse name..."
                 maxLength={18}
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {name && !error ? (
-                  <Check className="w-4 h-4 text-emerald-500" />
-                ) : name && error ? (
-                  <AlertCircle className="w-4 h-4 text-red-500" />
-                ) : null}
-              </div>
+              <button
+                onClick={generateSuggestion}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-amber-500 transition-colors"
+                title="Generate random name"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
             </div>
-            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
-            <p className="text-[10px] text-slate-500">Max 18 characters. No special symbols.</p>
+            {!validation.valid && (
+              <p className="text-rose-500 text-xs flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                {validation.reason}
+              </p>
+            )}
+            {validation.valid && name.length > 0 && (
+              <p className="text-emerald-500 text-xs flex items-center gap-1">
+                <Check className="w-3 h-3" />
+                Name is valid and available
+              </p>
+            )}
           </div>
 
-          <div className="grid gap-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-slate-300">Suggested Names</Label>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={generateSuggestions}
-                className="h-6 px-2 text-slate-400 hover:text-white hover:bg-slate-800"
-              >
-                <RefreshCw className="w-3 h-3 mr-1" />
-                Refresh
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              {suggestions.map((s, i) => (
-                <button
-                  key={i}
-                  onClick={() => setName(s)}
-                  className="text-left px-3 py-2 rounded-md bg-slate-800/50 border border-slate-800 hover:bg-slate-800 hover:border-slate-700 transition-colors text-sm font-medium"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
+          <div className="bg-slate-950/50 rounded-lg p-4 border border-slate-800">
+            <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+              Jockey Club Rules
+            </h4>
+            <ul className="grid gap-2 text-xs text-slate-400">
+              <li className="flex items-start gap-2">
+                <div className="w-1 h-1 rounded-full bg-slate-700 mt-1.5 shrink-0" />
+                Maximum 18 characters including spaces
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="w-1 h-1 rounded-full bg-slate-700 mt-1.5 shrink-0" />
+                No punctuation except internal apostrophes
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="w-1 h-1 rounded-full bg-slate-700 mt-1.5 shrink-0" />
+                Must be unique within the current world
+              </li>
+            </ul>
           </div>
         </div>
 
         <DialogFooter>
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={onClose}
-            className="border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="text-slate-400 hover:text-white hover:bg-slate-800"
           >
-            Skip for Now
+            Skip for now
           </Button>
           <Button
-            onClick={handleSave}
-            disabled={!!error || !name}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+            onClick={handleSubmit}
+            disabled={!validation.valid || isSubmitting}
+            className="bg-amber-600 hover:bg-amber-700 text-white"
           >
-            Register Name
+            {isSubmitting ? "Naming..." : "Confirm Name"}
           </Button>
         </DialogFooter>
       </DialogContent>

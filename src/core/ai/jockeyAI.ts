@@ -5,6 +5,7 @@
 
 import type { Horse, Jockey, Stable } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { calculateRaceRating } from "@/core/horse/stats";
 import {
   createLearningState,
   recordOutcome,
@@ -135,7 +136,7 @@ export function calculateMaxJockeyFee(
   maxFee *= riskTolerance;
 
   // Horse quality adjustment
-  const horseQuality = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
+  const horseQuality = calculateRaceRating(horse);
   if (horseQuality > 70) {
     maxFee *= 1.2; // Will pay more for quality horses
   }

@@ -24,7 +24,7 @@ import type { StaffMember } from "@/core/staff/staffTypes";
 import type { Rng } from "@/game/rng";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/game/uuid";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { beyerFigure } from "@/game/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { recalcStandingFee } from "@/core/breeding/stallions";

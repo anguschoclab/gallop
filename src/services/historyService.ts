@@ -42,9 +42,9 @@ export function checkHallOfFameInduction(
   // Induction criteria:
   // 1. At least 3 G1 wins
   // 2. OR at least $1,000,000 in earnings
-  
-  const g1Wins = horse.raceHistory.filter(h => h.grade === "G1" && h.position === 1).length;
-  const isInducted = g1Wins >= 3 || horse.lifetimeEarnings >= 1000000;
+  const stats = getCareerStats(horse);
+  const g1Wins = stats.g1Wins;
+  const isInducted = g1Wins >= 3 || stats.earnings >= 1000000;
 
   if (isInducted) {
     return {
@@ -54,14 +54,25 @@ export function checkHallOfFameInduction(
       inductionYear: Math.floor((day - 1) / 365) + 1,
       achievements: [
         g1Wins >= 3 ? `${g1Wins} Grade 1 Victories` : "",
-        horse.lifetimeEarnings >= 1000000 ? `$${(horse.lifetimeEarnings / 1000000).toFixed(1)}M in Lifetime Earnings` : ""
+        stats.earnings >= 1000000 ? `$${(stats.earnings / 1000000).toFixed(1)}M in Lifetime Earnings` : ""
       ].filter(Boolean),
-      lifetimeEarnings: horse.lifetimeEarnings,
-      lifetimeStarts: horse.careerStarts,
-      lifetimeWins: horse.careerWins,
-      g1Wins,
+      lifetimeEarnings: stats.earnings,
+      lifetimeStarts: stats.starts,
+      lifetimeWins: stats.wins,
+    };
+  }
       bestBeyer: Math.max(...horse.raceHistory.map(h => h.beyer || 0), 0),
       silk: horse.silk,
+      pedigree: {
+        sireName: horse.sireName,
+        damName: horse.damName,
+      }
+    };
+  }
+
+  return null;
+}
+ilk,
       pedigree: {
         sireName: horse.sireName,
         damName: horse.damName,

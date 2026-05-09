@@ -1,3 +1,4 @@
+import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import type { Horse, Pregnancy, Stable, AuctionLot, AuctionSale, AuctionSaleKind } from "./types";
 import { generateNpcHorse } from "@/core/horse/horseFactory";
 import { calculateNpcHorseValue } from "@/core/horse/pricing";
@@ -85,7 +86,7 @@ export function calculateLotValuation(
   const cfg = PERSONALITY_CONFIG[p];
   const isYearling = saleKind === "yearling" || saleKind === "yearling_south";
   const isWeanling = saleKind === "weanling" || saleKind === "weanling_south";
-  const isFilly = horse.gender === "filly" || horse.gender === "mare";
+  const isFilly = isFemaleHorse(horse.gender);
   const is2yoTraining = saleKind === "2yo_training";
   const isBroodmare = saleKind === "broodmare";
   const isRacingAge = saleKind === "racing_age";
@@ -343,9 +344,9 @@ export function personalityConsignmentPolicy(
   let reserveMultiplier = 0.5;
 
   // Helper picks
-  const fillies = owned.filter((h) => h.gender === "filly" || h.gender === "mare");
+  const fillies = owned.filter((h) => isFemaleHorse(h.gender));
   const colts = owned.filter(
-    (h) => h.gender === "colt" || h.gender === "horse" || h.gender === "gelding",
+    (h) => isMaleHorse(h.gender) || h.gender === "gelding",
   );
   const unraced = owned.filter((h) => h.careerStarts === 0);
   const fading = owned.filter((h) => h.age >= h.peakAge + 2);

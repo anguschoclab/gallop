@@ -10,7 +10,7 @@ import {
   type FacilityLevel,
 } from "@/core/facilities";
 import { ArrowUp, Check, X, Dumbbell } from "lucide-react";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 /**
  * Facilities Panel Component

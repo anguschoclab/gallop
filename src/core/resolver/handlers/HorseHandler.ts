@@ -1,6 +1,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
+import { isMaleHorse } from "@/core/horse/gender";
 import type { ImpactHandler } from "./types";
 
 export class HorseHandler implements ImpactHandler {
@@ -77,7 +78,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "gelding": {
-        if (horse && (horse.gender === "colt" || horse.gender === "horse")) {
+        if (horse && (isMaleHorse(horse.gender))) {
           horse.gender = "gelding";
         }
         break;

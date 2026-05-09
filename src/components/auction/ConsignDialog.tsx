@@ -25,7 +25,7 @@ import {
   KIND_LABELS,
   netProceeds,
 } from "@/game/auction";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { horsePriceWithPedigree } from "@/core/horse/pricing";
 import type { Horse, AuctionSale } from "@/game/types";
 

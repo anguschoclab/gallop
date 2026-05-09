@@ -12,8 +12,10 @@ import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PregnancyTimeline } from "@/components/PregnancyTimeline";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { isFemaleHorse } from "@/core/horse/gender";
 import { getAvailableStallions } from "@/core/breeding/stallions";
-import { NumericValue, formatCurrency } from "@/components/HorseBits";
+import { NumericValue } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
 import { FoalNamingDialog } from "@/components/FoalNamingDialog";
 import { BreedingProgramPanel } from "@/components/BreedingProgramPanel";
@@ -197,7 +199,7 @@ function BreedingPage() {
                     <option value="">Select dam…</option>
                     {adults
                       .filter(
-                        (h) => (h.gender === "filly" || h.gender === "mare") && h.id !== sireId,
+                        (h) => (isFemaleHorse(h.gender)) && h.id !== sireId,
                       )
                       .map((h) => (
                         <option key={h.id} value={h.id}>

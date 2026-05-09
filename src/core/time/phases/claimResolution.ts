@@ -3,7 +3,7 @@ import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { netProceeds } from "@/game/auction";
 import { hashStr } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 /**
  * Phase: Claim Resolution

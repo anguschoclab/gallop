@@ -30,6 +30,13 @@ export const STARTING_CASH = 5000;
 export const BREEDING_FEE = 2000;
 
 /**
+ * Game calendar constants
+ */
+export const DAYS_PER_YEAR = 365;
+export const DAYS_PER_MONTH = 30;
+export const DAYS_PER_WEEK = 7;
+
+/**
  * Additional fee for live foal guarantee
  */
 export const LIVE_FOAL_GUARANTEE_FEE = 1000;

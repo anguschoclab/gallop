@@ -20,7 +20,7 @@ import { createRng, hashStr } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
 import type { PurchaseIntent, ScoutIntent } from "@/core/resolver/intents";
 import { DEFAULT_PLAYER_RESERVE_RATIO, calculateLotValuation } from "@/game/auction";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import type { StoreSet, StoreGet } from "../types";
 
 export type MarketSlice = MarketState & {
@@ -141,10 +141,11 @@ export function createMarketSlice(
 
     consignHorse: (horseId: string, saleId: string, reservePrice?: number) => {
       const s = get();
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
-      if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
-      if (horse.consignedSaleId) return { ok: false, reason: "Already consigned to a sale." };
+      const horse = requireHorse(s.horses, horseId);
+      const ownershipGuard = requireOwned(horse);
+      if (ownershipGuard) return ownershipGuard;
+      
+      if (horse!.consignedSaleId) return { ok: false, reason: "Already consigned to a sale." };
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
       if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
@@ -445,6 +446,14 @@ export function createMarketSlice(
 
     setPrivateSaleOffers: (offers) => {
       set({ privateSaleOffers: offers });
+    },
+
+    setClaims: (claims) => {
+      set({ claims });
+    },
+  };
+}
+    set({ privateSaleOffers: offers });
     },
 
     setClaims: (claims) => {

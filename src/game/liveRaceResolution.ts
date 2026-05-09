@@ -16,7 +16,7 @@ import type { Race, Horse, Jockey } from "./types";
 import type { Runner } from "@/core/race/raceSim";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { beyerFigure } from "./beyer";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,

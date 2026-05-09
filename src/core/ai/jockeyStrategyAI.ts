@@ -5,6 +5,7 @@
 
 import type { Horse, Jockey, Stable, Race, RunningStyle } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { calculateRaceRating } from "@/core/horse/stats";
 import {
   createLearningState,
   recordOutcome,
@@ -204,7 +205,7 @@ export function calculateJockeyAggressiveness(
   if (config.personality === "win-now") aggressiveness += 0.2;
 
   // Horse quality
-  const horseQuality = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
+  const horseQuality = calculateRaceRating(horse);
   if (horseQuality > 75) aggressiveness += 0.15; // High-quality horses can be ridden aggressively
 
   // Race distance

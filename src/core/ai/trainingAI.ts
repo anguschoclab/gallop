@@ -60,7 +60,7 @@ export function calculateTrainingPriority(
   // Base score based on stat deficiency
   const stats = horse.stats;
   const statValue = stats[stat];
-  const avgStat = (stats.speed + stats.stamina + stats.acceleration) / 3;
+  const avgStat = calculateRaceRating(horse);
   const deficiency = avgStat - statValue;
   score += deficiency * 2; // Higher priority for lower stats
 
@@ -252,6 +252,13 @@ export function shouldTrainToday(
         : config.personality === "conservative"
           ? 7
           : 5;
+
+    if (daysSinceTraining < minDaysBetween) return false;
+  }
+
+  return true;
+}
+: 5;
 
     if (daysSinceTraining < minDaysBetween) return false;
   }

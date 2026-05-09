@@ -29,7 +29,8 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { getDisplayableStats } from "@/game/scouting";
 import { KIND_LABELS, netProceeds, commissionAmount, CONSIGNMENT_COMMISSION } from "@/game/auction";
 import { Gavel, ChevronLeft, ChevronRight, Trophy, Trash2, Search } from "lucide-react";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
+import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
 import { toast } from "sonner";
 import type { AuctionLot } from "@/game/types";
 import { cn } from "@/lib/utils";
@@ -505,7 +506,7 @@ function AuctionSalePage() {
                     <div>
                       <CardTitle className="text-xl text-cream">{horse.name}</CardTitle>
                       <p className="text-sm text-cream-muted mt-0.5 tabular-nums">
-                        {horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀"}{" "}
+                        {genderSymbol(horse.gender)}{" "}
                         {horse.gender.charAt(0).toUpperCase() + horse.gender.slice(1)} · Age{" "}
                         {horse.age}
                         {horse.hemisphere === "Southern" ? " · Southern" : ""}

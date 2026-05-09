@@ -23,15 +23,17 @@ function getBreedersCupTrack(year: number): { trackId: string; name: string } {
   return BREEDERS_CUP_TRACKS[index];
 }
 
+import { DAYS_PER_YEAR } from "@/game/constants/gameConstants";
+import { dayOfYear } from "@/core/calendar/dateFormatting";
+
 // Helper: Get current year from game day
+/**
+ * Returns the 1-based game year counter (Day 1-365 = Year 1).
+ * Distinct from calendar year (2026-based).
+ */
 export function getCurrentYear(gameDay: number): number {
   // Day 1 = Year 1, Day 366 = Year 2, etc.
-  return Math.floor((gameDay - 1) / 365) + 1;
-}
-
-// Helper: Get day of year (1-365) from game day
-export function getDayOfYear(gameDay: number): number {
-  return ((gameDay - 1) % 365) + 1;
+  return Math.floor((gameDay - 1) / DAYS_PER_YEAR) + 1;
 }
 
 // Helper: Get day of week (0=Sunday, 6=Saturday) from game day
@@ -42,7 +44,7 @@ export function getDayOfWeek(gameDay: number): number {
 // Helper: Check if a track is racing on a given day
 export function isTrackRacing(schedule: TrackSchedule, gameDay: number): boolean {
   const dayOfWeek = getDayOfWeek(gameDay);
-  const dayOfYear = getDayOfYear(gameDay);
+  const doy = dayOfYear(gameDay);
 
   // Check if this is a race day for the track
   if (!schedule.raceDays.includes(dayOfWeek)) {
@@ -54,14 +56,14 @@ export function isTrackRacing(schedule: TrackSchedule, gameDay: number): boolean
   if (meetStart && meetEnd) {
     if (meetStart <= meetEnd) {
       // Normal case: meet within same year
-      if (dayOfYear < meetStart || dayOfYear > meetEnd) return false;
+      if (doy < meetStart || doy > meetEnd) return false;
     } else {
       // Cross-year meet (e.g., meetStart=300, meetEnd=90)
-      if (dayOfYear < meetStart && dayOfYear > meetEnd) return false;
+      if (doy < meetStart && doy > meetEnd) return false;
     }
-  } else if (meetStart && dayOfYear < meetStart) {
+  } else if (meetStart && doy < meetStart) {
     return false;
-  } else if (meetEnd && dayOfYear > meetEnd) {
+  } else if (meetEnd && doy > meetEnd) {
     return false;
   }
 
@@ -106,11 +108,11 @@ export function generateTrackSchedule(
   rng: Rng,
 ): Race[] {
   const races = [...existingRaces];
-  const dayOfYear = getDayOfYear(gameDay);
+  const doy = dayOfYear(gameDay);
 
   // Add graded stakes whose dayOfYear falls on this day
   for (const g of GRADED_RACES) {
-    if (g.dayOfYear !== dayOfYear) continue;
+    if (g.dayOfYear !== doy) continue;
     if (races.some((r) => r.graded?.key === g.key && r.day === gameDay)) continue;
     races.push(makeGradedRace(g, gameDay, rng));
   }
@@ -151,7 +153,7 @@ export function generateAnnualCalendar(year: number, existingRaces: Race[]): Rac
 
     if (
       races.some(
-        (r) => r.graded?.key === g.key && r.day >= firstDayOfYear && r.day < firstDayOfYear + 365,
+        (r) => r.graded?.key === g.key && r.day >= firstDayOfYear && r.day < firstDayOfYear + DAYS_PER_YEAR,
       )
     ) {
       continue;

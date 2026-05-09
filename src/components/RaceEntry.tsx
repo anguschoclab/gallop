@@ -30,7 +30,7 @@ import { JockeyCard } from "./JockeyCard";
 import { RacingSilks } from "./RacingSilks";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
 import { getCurrentYear } from "@/game/raceSchedule";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 
 interface RaceEntryProps {

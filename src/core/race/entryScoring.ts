@@ -1,5 +1,6 @@
 import type { Horse, Race, Stable, StableTier } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { isFemaleHorse } from "@/core/horse/gender";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice, getSuggestedClaimingPriceRange } from "@/game/claiming";
 import { calculateTrackGeometryScore, calculateGradientScore } from "./trackGeometry";
@@ -170,7 +171,7 @@ export function calculateAssignedWeight(horse: Horse, race: Race): number {
       !race.restrictions.gender.toLowerCase().includes("mare") &&
       !race.restrictions.gender.toLowerCase().includes("colt"));
 
-  if (isMixedRace && (horse.gender === "filly" || horse.gender === "mare")) {
+  if (isMixedRace && (isFemaleHorse(horse.gender))) {
     weight -= 3; // 3 lb sex allowance
   }
 

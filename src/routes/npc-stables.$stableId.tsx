@@ -43,7 +43,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { TrophyCase } from "@/components/awards";
-import { NumericValue, formatCurrency } from "@/components/HorseBits";
+import { isMaleHorse } from "@/core/horse/gender";
+import { NumericValue } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { useState } from "react";
 import type { Horse, PrivateSaleOffer } from "@/game/types";
 
@@ -101,8 +103,8 @@ function NpcStableDetailPage() {
   const activeHorses = stableHorses.filter(
     (h: Horse) => !h.healthStatus || h.healthStatus === "healthy",
   );
-  const colts = stableHorses.filter((h: Horse) => h.gender === "colt" || h.gender === "horse");
-  const fillies = stableHorses.filter((h: Horse) => h.gender === "filly" || h.gender === "mare");
+  const colts = stableHorses.filter((h: Horse) => isMaleHorse(h.gender));
+  const fillies = stableHorses.filter((h: Horse) => isFemaleHorse(h.gender));
 
   function handleSubmitOffer() {
     if (!offerHorse) return;

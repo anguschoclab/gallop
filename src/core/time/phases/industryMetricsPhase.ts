@@ -1,7 +1,7 @@
 import type { PipelineContext } from "../pipeline";
 import { computeIndustryMeanEarnings } from "@/core/breeding/industryMetrics";
 import type { Horse } from "@/game/types";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 /**
  * Phase: Industry Metrics

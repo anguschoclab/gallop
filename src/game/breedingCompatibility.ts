@@ -254,10 +254,11 @@ export function calculateParentPerformance(
   let damScore = 0;
 
   // Evaluate sire's performance
-  const sireWins = sire.raceHistory.filter((r) => r.position === 1).length;
-  const sirePlaces = sire.raceHistory.filter((r) => r.position <= 3).length;
+  const sireStats = getCareerStats(sire);
+  const sireWins = sireStats.wins;
+  const sirePlaces = sireStats.wins + sireStats.places + sireStats.shows;
   const sireGraded = sire.raceHistory.filter((r) => r.grade).length;
-  const sireGradedWins = sire.raceHistory.filter((r) => r.grade && r.position === 1).length;
+  const sireGradedWins = sireStats.gradedWins;
 
   // Sire scoring
   sireScore += sireWins * 2;
@@ -266,10 +267,11 @@ export function calculateParentPerformance(
   sireScore += sireGraded * 0.5; // Bonus for graded appearances
 
   // Evaluate dam's performance (mares can outbreed their track record)
-  const damWins = dam.raceHistory.filter((r) => r.position === 1).length;
-  const damPlaces = dam.raceHistory.filter((r) => r.position <= 3).length;
-  const damGraded = dam.raceHistory.filter((r) => r.grade).length;
-  const damGradedWins = dam.raceHistory.filter((r) => r.grade && r.position === 1).length;
+  const damStats = getCareerStats(dam);
+  const damWins = damStats.wins;
+  const damPlaces = damStats.wins + damStats.places + damStats.shows;
+  const damGraded = damStats.gradedStarts;
+  const damGradedWins = damStats.gradedWins;
 
   // Dam scoring (slightly higher weight as quality mares produce high-class runners)
   damScore += damWins * 2.5;

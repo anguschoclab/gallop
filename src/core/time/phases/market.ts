@@ -34,8 +34,7 @@ export const marketPhase = {
         // Check if stable should purchase any horse from market
         for (const horse of market) {
           // Estimate price based on horse stats (since Horse doesn't have price field)
-          const horseRating =
-            (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
+          const horseRating = calculateRaceRating(horse);
           const estimatedPrice = Math.floor(horseRating * 1000);
 
           const shouldPurchase = shouldPurchaseHorse(
@@ -79,6 +78,15 @@ export const marketPhase = {
       ...context,
       state: {
         ...state,
+        market,
+        npcStables,
+        npcAIManager,
+        staffPool,
+      },
+    };
+  },
+};
+     ...state,
         market,
         npcStables,
         npcAIManager,

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import type { AuctionBidRecord, Stable } from "@/game/types";
 
 interface BidHistoryPanelProps {

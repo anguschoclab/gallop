@@ -64,13 +64,6 @@ export const MAX_COI: Record<Stable["personality"], number> = {
 };
 
 /**
- * Calculate overall rating for a horse
- */
-export function overallRating(h: Horse): number {
-  return (h.stats.speed + h.stats.stamina + h.stats.acceleration + h.stats.consistency) / 4;
-}
-
-/**
  * Personality-specific stallion scoring. Compatibility, fee, stakes record,
  * fertility, fame, and leaderboard rankings all weight differently per personality.
  */

@@ -72,7 +72,7 @@ export function dayOfYear(day: number): number {
  * Returns the in-game calendar year (starts at 2026 on day 1)
  */
 export function gameYearNumber(day: number): number {
-  return 2026 + Math.floor((day - 1) / 365);
+  return 2026 + Math.floor((day - 1) / DAYS_PER_YEAR);
 }
 
 /**

@@ -2,7 +2,7 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { generateUUID } from "@/game/uuid";
 import type { StudCareerImpact, LogImpact } from "@/core/resolver/impacts";
 import { calculateRecommendedStudFee } from "@/core/breeding/stallions";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 /**
  * Phase: Stallion Retirement (Order 145)

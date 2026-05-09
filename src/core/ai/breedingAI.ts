@@ -374,9 +374,12 @@ function selectSireByTraditionalScoring(
   // Simple scoring based on overall rating
   const scored = candidateSires.map((sire) => ({
     sire,
-    score: overallRating(sire),
+    score: calculateOverallRating(sire),
   }));
 
   scored.sort((a, b) => b.score - a.score);
+  return scored[0].sire;
+}
+a.score);
   return scored[0].sire;
 }

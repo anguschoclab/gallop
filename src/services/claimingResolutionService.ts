@@ -1,6 +1,6 @@
 import type { AnyImpact, CashImpact, ClaimingImpact, LogImpact } from "@/core/resolver/impacts";
 import { generateUUID } from "@/game/uuid";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import { processClaims, type ClaimAttempt } from "@/game/claiming";
 import type { Rng } from "@/game/rng";

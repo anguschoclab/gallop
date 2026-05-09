@@ -229,10 +229,10 @@ export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
   return famousStallions;
 }
 
+import { calculateOverallRating } from "@/core/horse/stats";
+
 export function calculateNpcHorseValue(horse: Horse, stableTier: StableTier): number {
-  const overall =
-    (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) /
-    4;
+  const overall = calculateOverallRating(horse);
   const ageMod = horse.age <= 3 ? 1.3 : horse.age >= 7 ? 0.5 : 0.9;
   const fameMod = 1 + horse.fame / 200;
   const tierMod = stableTier === "elite" ? 1.5 : stableTier === "mid" ? 1.2 : 1.0;

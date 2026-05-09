@@ -17,6 +17,76 @@ export function calculateOverallRating(horse: Horse): number {
 }
 
 /**
+ * Calculate race-specific rating (3-stat average)
+ * Used in AI contexts where consistency is intentionally excluded
+ */
+export function calculateRaceRating(horse: Horse): number {
+  return Math.round((horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3);
+}
+
+export interface CareerStats {
+  starts: number;
+  wins: number;
+  places: number; // finished exactly 2nd
+  shows: number; // finished exactly 3rd
+  gradedWins: number;
+  gradedStarts: number;
+  stakesWins: number;
+  g1Wins: number;
+  g2Wins: number;
+  g3Wins: number;
+  earnings: number;
+}
+
+/**
+ * Calculate career performance summary from race history
+ */
+export function getCareerStats(horse: Horse): CareerStats {
+  const history = horse.raceHistory || [];
+  const stats: CareerStats = {
+    starts: history.length,
+    wins: 0,
+    places: 0,
+    shows: 0,
+    gradedWins: 0,
+    gradedStarts: 0,
+    stakesWins: 0,
+    g1Wins: 0,
+    g2Wins: 0,
+    g3Wins: 0,
+    earnings: 0,
+  };
+
+  for (const entry of history) {
+    if (entry.position === 1) stats.wins++;
+    if (entry.position === 2) stats.places++;
+    if (entry.position === 3) stats.shows++;
+
+    if (entry.grade) {
+      stats.gradedStarts++;
+    }
+
+    if (
+      entry.position === 1 &&
+      (entry.grade || entry.raceClass === "Stakes" || entry.raceClass === "Group")
+    ) {
+      stats.stakesWins++;
+    }
+
+    if (entry.position === 1 && entry.grade) {
+      stats.gradedWins++;
+      if (entry.grade === "G1") stats.g1Wins++;
+      if (entry.grade === "G2") stats.g2Wins++;
+      if (entry.grade === "G3") stats.g3Wins++;
+    }
+
+    stats.earnings += entry.purseEarned || 0;
+  }
+
+  return stats;
+}
+
+/**
  * Current and potential ability — single-number summary of a horse's level.
  * Current: average of the four stats today.
  * Potential: where those stats can grow to (capped by the horse's potential
@@ -45,9 +115,7 @@ export function abilityGrade(score: number): string {
 }
 
 /**
- * Pick a running style biased by the horse's stat profile. Speed/acceleration
- * tilt toward front-runner; stamina tilts toward closer; balanced horses lean
- * stalker. There's still randomness so identical-stat horses can differ.
+ * Determine logical running style from base stats
  */
 export function rollRunningStyle(
   stats: { speed: number; stamina: number; acceleration: number },

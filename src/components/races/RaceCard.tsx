@@ -8,7 +8,7 @@ import { getGradeColorClass } from "@/core/race/grading";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import type { Race } from "@/game/types";
 
 interface RaceCardProps {

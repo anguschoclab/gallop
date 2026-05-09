@@ -13,7 +13,9 @@ import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import type { PlayerFacilities } from "@/core/facilities";
 import type { ManagerReputation } from "@/core/reputation";
 import type { BreedingProgram } from "@/core/breeding/programs";
-import { formatCurrency } from "@/components/HorseBits";
+import { isMaleHorse } from "@/core/horse/gender";
+import { formatCurrency } from "@/lib/formatting";
+import { requireOwned, requireHorse } from "../guards";
 import type { GameStateCreator } from "../types";
 
 export type SystemsSlice = SystemsState & {
@@ -176,10 +178,11 @@ export const createSystemsSlice: GameStateCreator<SystemsSlice> = (set, get) => 
 
     updateStudFee: (horseId: string, newFee: number) => {
       const s = get();
-      const horse = s.horses.find((h: any) => h.id === horseId);
-      if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
-      if (!horse.stud) return { ok: false, reason: "Horse is not standing at stud." };
+      const horse = requireHorse(s.horses, horseId);
+      const ownershipGuard = requireOwned(horse);
+      if (ownershipGuard) return ownershipGuard;
+      
+      if (!horse!.stud) return { ok: false, reason: "Horse is not standing at stud." };
 
       get().enqueueIntent({
         id: generateUUID(),
@@ -469,6 +472,16 @@ export const createSystemsSlice: GameStateCreator<SystemsSlice> = (set, get) => 
                 enrolledDamIds: p.enrolledDamIds.includes(damId)
                   ? p.enrolledDamIds
                   : [...p.enrolledDamIds, damId],
+              }
+            : p,
+        ),
+      }));
+    },
+  };
+}
+};
+}
+ds, damId],
               }
             : p,
         ),

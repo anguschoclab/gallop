@@ -8,7 +8,7 @@ import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getFoalsBy } from "@/core/breeding/lineage";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import {
   BREEDING_FEE,
   GESTATION_DAYS,

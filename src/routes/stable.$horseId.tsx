@@ -22,6 +22,7 @@ import { HorseAwardsPanel } from "@/components/awards";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
 import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
+import { isMaleHorse, genderSymbol } from "@/core/horse/gender";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
 import { TRAINING_COST } from "@/game/constants/gameConstants";
 import { GRADED_RACES } from "@/game/gradedRaces";
@@ -69,7 +70,7 @@ function HorseDetail() {
 
   const canRetireToStud =
     horse.owned &&
-    (horse.gender === "colt" || horse.gender === "horse") &&
+    (isMaleHorse(horse.gender)) &&
     horse.age >= 3 &&
     !horse.stud?.atStud &&
     !isConsigned;

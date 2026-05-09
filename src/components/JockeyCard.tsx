@@ -13,7 +13,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { User, Trophy, Calendar, DollarSign, Target, RefreshCw } from "lucide-react";
 import { RacingSilks } from "./RacingSilks";
 import { useGame } from "@/game/store";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 interface JockeyCardProps {
   jockey: Jockey;
