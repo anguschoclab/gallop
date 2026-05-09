@@ -13,13 +13,15 @@ import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
+const EMPTY_ARRAY: any[] = [];
+
 /**
  * Systems state selectors for optional subsystems and advanced features
  */
-export const useNpcStables = () => useGame((s: GameState) => s.npcStables);
-export const useJockeys = () => useGameWithShallow((s: GameState) => s.jockeys ?? []);
-export const useAwards = () => useGame((s: GameState) => s.awards);
-export const useCampaigns = () => useGameWithShallow((s: GameState) => s.campaigns ?? []);
+export const useNpcStables = () => useGame((s: GameState) => s.npcStables ?? EMPTY_ARRAY);
+export const useJockeys = () => useGameWithShallow((s: GameState) => s.jockeys ?? EMPTY_ARRAY);
+export const useAwards = () => useGame((s: GameState) => s.awards ?? EMPTY_ARRAY);
+export const useCampaigns = () => useGameWithShallow((s: GameState) => s.campaigns ?? EMPTY_ARRAY);
 export const useUserSettings = () => useGame((s: GameState) => s.userSettings);
 export const useSireLeaderboards = () => useGame((s: GameState) => s.sireLeaderboards);
 export const useIndustryMeanEarnings = () => useGame((s: GameState) => s.industryMeanEarnings ?? 0);
@@ -37,3 +39,16 @@ export const useSystemsState = () =>
     awards: s.awards,
     campaigns: s.campaigns ?? [],
   }));
+
+/**
+ * Settings action selectors for user preferences
+ */
+export const useSettingsActions = () => {
+  return useGameWithShallow((s) => ({
+    updateDisplaySettings: s.updateDisplaySettings,
+    updateGameplaySettings: s.updateGameplaySettings,
+    updateNotificationSettings: s.updateNotificationSettings,
+    updateAudioSettings: s.updateAudioSettings,
+    resetSettings: s.resetSettings,
+  }));
+};

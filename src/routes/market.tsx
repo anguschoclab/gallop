@@ -88,7 +88,7 @@ function MarketPage() {
                           "text-base font-[family-name:var(--font-mono)] tabular-nums border border-gold-muted bg-t700 text-cream",
                         )}
                       >
-                        ${formatCurrency(price)}
+                        {formatCurrency(price)}
                       </Badge>
                     </div>
                     <HorseStats horse={h} />

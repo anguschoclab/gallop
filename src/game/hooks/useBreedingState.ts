@@ -12,12 +12,14 @@ import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
+const EMPTY_ARRAY: any[] = [];
+
 /**
  * Breeding state selectors for reproduction tracking and lineage
  */
-export const usePregnancies = () => useGame((s: GameState) => s.pregnancies);
+export const usePregnancies = () => useGame((s: GameState) => s.pregnancies ?? EMPTY_ARRAY);
 
-export const useTripleCrownHistory = () => useGameWithShallow((s) => s.triplecrownHistory ?? []);
+export const useTripleCrownHistory = () => useGameWithShallow((s) => s.triplecrownHistory ?? EMPTY_ARRAY);
 
 /**
  * Multiple breeding state values with shallow comparison

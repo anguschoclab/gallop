@@ -12,6 +12,8 @@ import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
+const EMPTY_ARRAY: any[] = [];
+
 /**
  * Core state selectors for essential game loop properties
  */
@@ -21,7 +23,7 @@ export const useHorses = () => useGame((s: GameState) => s.horses);
 export const useRaces = () => useGame((s: GameState) => s.races);
 export const useLog = () => useGame((s: GameState) => s.log);
 
-export const useExpenses = () => useGameWithShallow((s: GameState) => s.expenses);
+export const useExpenses = () => useGameWithShallow((s: GameState) => s.expenses ?? EMPTY_ARRAY);
 
 /**
  * Multiple core state values with shallow comparison

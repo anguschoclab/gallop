@@ -53,16 +53,19 @@ export function NewGameWizard() {
     }
   }, []);
 
-  // Save wizard state on any change
+  // Save wizard state on any change (debounced)
   useEffect(() => {
-    const state: WizardState = {
-      step,
-      stableName,
-      ownerName,
-      silk,
-      backstoryId: backstoryId || "",
-    };
-    saveWizardState(state);
+    const timeoutId = setTimeout(() => {
+      const state: WizardState = {
+        step,
+        stableName,
+        ownerName,
+        silk,
+        backstoryId: backstoryId || "",
+      };
+      saveWizardState(state);
+    }, 300);
+    return () => clearTimeout(timeoutId);
   }, [step, stableName, ownerName, silk, backstoryId]);
 
   const selectedBackstory = useMemo(
@@ -110,7 +113,8 @@ export function NewGameWizard() {
     };
     await startNewGame(options);
     clearWizardState();
-    navigate({ to: "/" });
+    // Use replace to avoid router path generation warning
+    navigate({ to: "/", replace: true });
   };
 
   return (

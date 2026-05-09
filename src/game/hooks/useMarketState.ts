@@ -12,12 +12,14 @@ import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 
+const EMPTY_ARRAY: any[] = [];
+
 /**
  * Market state selectors for trading, auctions, and scouting
  */
-export const useMarket = () => useGame((s: GameState) => s.market);
-export const useAuctions = () => useGameWithShallow((s: GameState) => s.auctions ?? []);
-export const useScoutReports = () => useGame((s: GameState) => s.scoutReports);
+export const useMarket = () => useGame((s: GameState) => s.market ?? EMPTY_ARRAY);
+export const useAuctions = () => useGameWithShallow((s: GameState) => s.auctions ?? EMPTY_ARRAY);
+export const useScoutReports = () => useGame((s: GameState) => s.scoutReports ?? EMPTY_ARRAY);
 
 /**
  * Multiple market state values with shallow comparison

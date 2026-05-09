@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
+import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
 import { JargonTooltip } from "./ui/JargonTooltip";
 import { useGame } from "@/game/store";
 import { SilkDot } from "./SilkDot";

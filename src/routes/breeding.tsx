@@ -25,9 +25,9 @@ export const Route = createFileRoute("/breeding")({
 });
 
 function BreedingPage() {
-  const horses = useGame((s) => s.horses);
-  const pregnancies = useGame((s) => s.pregnancies);
-  const log = useGame((s) => s.log);
+  const horses = useGame((s) => s.horses || []);
+  const pregnancies = useGame((s) => s.pregnancies || []);
+  const log = useGame((s) => s.log || []);
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const breed = useGame((s) => s.breed);
@@ -42,7 +42,9 @@ function BreedingPage() {
   const breedLogs = log.filter((l) => /Mated|Foal/.test(l.text));
 
   // Get available stallions for Northern hemisphere (default for player breeding)
-  const availableStallions = getAvailableStallions({ horses, day }, "Northern");
+  // FIX: getAvailableStallions expects (horses: Horse[], mare: Horse)
+  const dummyMare = { id: damId } as any; 
+  const availableStallions = getAvailableStallions(horses, dummyMare);
 
   const onBreed = () => {
     if (!sireId || !damId) return;

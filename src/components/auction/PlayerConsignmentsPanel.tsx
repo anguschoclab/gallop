@@ -83,7 +83,7 @@ export function PlayerConsignmentsPanel({
                         <div className="flex items-center justify-between">
                           <span className="text-cream-muted">Hammer price</span>
                           <span className="tabular-nums font-medium">
-                            ${formatCurrency(lot.hammerPrice)}
+                            {formatCurrency(lot.hammerPrice)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
@@ -91,13 +91,13 @@ export function PlayerConsignmentsPanel({
                             Commission ({Math.round(CONSIGNMENT_COMMISSION * 100)}%)
                           </span>
                           <span className="tabular-nums text-destructive">
-                            −${formatCurrency(commissionAmount(lot.hammerPrice))}
+                            −{formatCurrency(commissionAmount(lot.hammerPrice))}
                           </span>
                         </div>
                         <div className="flex items-center justify-between font-semibold">
                           <span className="text-cream-muted">Net proceeds</span>
                           <span className="tabular-nums text-success">
-                            ${formatCurrency(netProceeds(lot.hammerPrice))}
+                            {formatCurrency(netProceeds(lot.hammerPrice))}
                           </span>
                         </div>
                       </>
@@ -124,7 +124,7 @@ export function PlayerConsignmentsPanel({
         <p className="text-sm text-cream-muted tabular-nums">
           <strong className="text-cream">{soldLots.length}</strong>{" "}
           {soldLots.length === 1 ? "horse" : "horses"} sold · Total net proceeds:{" "}
-          <strong className="text-cream">${formatCurrency(totalNet)}</strong> (after{" "}
+          <strong className="text-cream">{formatCurrency(totalNet)}</strong> (after{" "}
           {Math.round(CONSIGNMENT_COMMISSION * 100)}% commission)
         </p>
       )}

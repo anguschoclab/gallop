@@ -312,7 +312,7 @@ export const useGame = create<StoreType>()(
 );
 
 // Export rehydrate function
-export const rehydrateStoreMain = createRehydrateStore(createInitialState);
+export const rehydrateStoreMain = createRehydrateStore(createInitialState, useGame);
 
 // Export as rehydrateStore for backwards compatibility
 export { rehydrateStoreMain as rehydrateStore };

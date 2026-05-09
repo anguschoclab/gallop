@@ -124,7 +124,7 @@ export function runNpcRaceEntry(
   let freeAgents = jockeys.filter((j) => !j.stableId && j.lastRaceDay !== currentDay);
   freeAgents.sort((a, b) => b.fame - a.fame);
 
-  for (const race of upcomingRaces) {
+  for (const race of workingUpcoming) {
     // Skip if race is full
     if (race.entries.length >= race.fieldSize) continue;
 

@@ -32,6 +32,8 @@ import {
 import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { useDay, useCash, useHorses } from "@/game/hooks/useCoreState";
+import { useAwards } from "@/game/hooks/useSystemsState";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
 import { AutoSimPanel } from "./AutoSimPanel";
 import { AwardCeremony } from "./awards";
@@ -91,9 +93,9 @@ const navSections = [
 
 export function AppShell() {
   const navigate = useNavigate();
-  const day = useGame((s) => s.day);
-  const cash = useGame((s) => s.cash);
-  const horses = useGame((s) => s.horses);
+  const day = useDay();
+  const cash = useCash();
+  const horses = useHorses();
   const advanceDay = useGame((s) => s.advanceDay);
   const advanceMultipleDays = useGame((s) => s.advanceMultipleDays);
   const startNewGame = useGame((s) => s.startNewGame);
@@ -101,6 +103,7 @@ export function AppShell() {
   const [autoSimOpen, setAutoSimOpen] = useState(false);
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
 
+  const awards = useAwards();
   const pendingCeremonies = useGame((s) => s.pendingAwardCeremonies);
   const [showCeremony, setShowCeremony] = useState(false);
   const clearPendingCeremonies = useGame((s) => s.clearPendingCeremonies);

@@ -21,6 +21,7 @@ import {
 } from "@/services/traitCompatibility";
 import { computeCoiFromSnapshot } from "@/core/breeding/populationGenetics";
 import { NICKING_AFFINITIES, CROSS_FAMILY_AFFINITIES } from "@/core/breeding/breedingAffinityData";
+import { getCareerStats } from "@/core/horse/stats";
 
 export {
   calculateGeneticCompatibility,

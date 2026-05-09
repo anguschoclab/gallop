@@ -65,22 +65,35 @@ export const hydrationComplete = {
  * initializes with default state if no save exists.
  *
  * @param initialState - Function to create initial state if no save exists
- * @returns Async rehydrate function that takes the store instance
+ * @param useGameStore - Default store instance to use
+ * @returns Async rehydrate function that takes an optional store instance
  */
 export function createRehydrateStore(
   initialState: any,
-  useGame: any,
+  useGameStore: any,
 ) {
-  return async function rehydrateStore(): Promise<void> {
+  return async function rehydrateStore(passedStore?: any): Promise<void> {
+    const store = passedStore || useGameStore;
+    
+    if (!store) {
+      console.warn("No store instance provided for rehydration");
+      return;
+    }
+
     const state = await loadGameState();
     if (state) {
       // Use the persist middleware's built-in rehydrate
       // This will call getItem from our custom storage
-      await useGame.persist.rehydrate();
+      if (store.persist) {
+        await store.persist.rehydrate();
+      } else {
+        console.warn("Store persist middleware not found during rehydration, using direct setState");
+        store.setState(state);
+      }
       hydrationComplete.value = true;
     } else {
       // No saved state, initialize with default
-      useGame.setState(initialState());
+      store.setState(initialState());
       hydrationComplete.value = true;
     }
   };

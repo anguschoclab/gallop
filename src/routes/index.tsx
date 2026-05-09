@@ -91,7 +91,7 @@ function Dashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold font-[family-name:var(--font-mono)] tabular-nums text-cream">
-              ${formatCurrency(cash)}
+              {formatCurrency(cash)}
             </p>
           </CardContent>
         </Card>
@@ -102,7 +102,7 @@ function Dashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <NumericValue value={horses.length} className="text-3xl font-bold text-cream" />
+            <NumericValue value={horses.filter(h => h.owned).length} className="text-3xl font-bold text-cream" />
           </CardContent>
         </Card>
         <Card className="border-gold-muted">
@@ -150,7 +150,7 @@ function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {news && news.length > 0 ? (
               news.slice(0, 2).map((item, i) => (
-                <div key={item.id} className={cn("space-y-1", i === 0 && news.length > 1 && "md:border-r md:border-[#d3d3d3] md:pr-6")}>
+                <div key={`${item.id}-${i}`} className={cn("space-y-1", i === 0 && news.length > 1 && "md:border-r md:border-[#d3d3d3] md:pr-6")}>
                   <Badge variant="outline" className="text-[9px] uppercase bg-[#2c2c2c] text-white border-none rounded-none h-4 px-1">
                     {item.category}
                   </Badge>
@@ -363,7 +363,7 @@ function Dashboard() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">
-                    ${formatCurrency(r.purse)}
+                    {formatCurrency(r.purse)}
                   </p>
                   {r.entries.some((e) => e.owned) && (
                     <Badge className="text-[9px] bg-success text-t950">Entered</Badge>

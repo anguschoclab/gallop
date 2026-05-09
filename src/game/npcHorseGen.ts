@@ -149,7 +149,6 @@ export function generateAllNpcHorses(
         if (!stallionsByStable.has(s.stableId)) stallionsByStable.set(s.stableId, []);
         stallionsByStable.get(s.stableId)!.push(s);
       }
-      allHorses.push(s);
     }
   }
 

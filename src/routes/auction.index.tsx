@@ -305,7 +305,7 @@ function AuctionPage() {
                             <span className="font-[family-name:var(--font-display)] text-cream">
                               {topHorse.name}
                             </span>{" "}
-                            ${formatCurrency(topLot.hammerPrice!)}
+                            {formatCurrency(topLot.hammerPrice!)}
                           </>
                         )}
                       </p>

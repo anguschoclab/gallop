@@ -560,10 +560,11 @@ export const FILLER_SUFFIXES = [
 ];
 
 export const FILLER_OWNERS = [
-  "Racing Partnership", "Thoroughbred LLC", "Bloodstock Group",
-  "Racing Syndicate", "Farm Inc.", "Stables Ltd", "Racing Club",
-  "Partnership Group", "Investment LLC", "Bloodstock Partners",
-  "Racing Ventures", "Farm Group",
+  "James Whitfield", "Sarah Montague", "Robert Sterling", "Elena Rodriguez",
+  "Michael Chang", "Alistair Thorne", "Isabella Rossi", "David Thompson",
+  "Charlotte Hughes", "William Barrett", "Amelia Vance", "Thomas O'Connell",
+  "Sophia Leclerc", "Arthur Sinclair", "Olivia Bennett", "Marcus Aurelius",
+  "Grace Hamilton", "Edward Kensington", "Victoria Thorne", "Julian Black",
 ];
 
 export const FILLER_COUNTRIES = [

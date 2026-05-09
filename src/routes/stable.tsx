@@ -154,7 +154,7 @@ function StablePage() {
                             "font-[family-name:var(--font-mono)] tabular-nums bg-t700 text-cream",
                           )}
                         >
-                          ${formatCurrency(stable.cash)}
+                          {formatCurrency(stable.cash)}
                         </Badge>
                       </div>
                     </CardContent>

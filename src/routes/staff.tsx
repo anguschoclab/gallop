@@ -78,7 +78,7 @@ function StaffManagement() {
                           <Badge variant="outline" className="text-[10px] h-4 px-1">{STAFF_TIER_LABELS[staff.tier]}</Badge>
                         </div>
                         <p className="text-xs text-gold font-medium uppercase tracking-wider">{STAFF_ROLE_LABELS[staff.role]}</p>
-                        <p className="text-xs text-cream-muted mt-1">Salary: ${formatCurrency(staff.salary)}/day</p>
+                        <p className="text-xs text-cream-muted mt-1">Salary: {formatCurrency(staff.salary)}/day</p>
                         {staff.traits.length > 0 && (
                           <div className="flex gap-1 mt-2">
                             {staff.traits.map(t => (
@@ -122,7 +122,7 @@ function StaffManagement() {
                         <Zap className="w-3 h-3 text-gold" /> Bonus: +{Math.round(staff.bonusValue * 100)}%
                       </p>
                       <p className="text-[10px] text-cream-muted flex items-center gap-1">
-                        <DollarSign className="w-3 h-3 text-success" /> ${formatCurrency(staff.salary)}/day
+                        <DollarSign className="w-3 h-3 text-success" /> {formatCurrency(staff.salary)}/day
                       </p>
                     </div>
                   </div>

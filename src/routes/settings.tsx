@@ -6,7 +6,8 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Settings, Volume2, Monitor, Database, Bell, Gamepad2, RotateCcw } from "lucide-react";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
+import { useUserSettings, useSettingsActions } from "@/game/hooks/useSystemsState";
 import { shallow } from "zustand/shallow";
 
 export const Route = createFileRoute("/settings")({
@@ -14,25 +15,14 @@ export const Route = createFileRoute("/settings")({
 });
 
 function SettingsPage() {
-  // Use shallow comparison to prevent unnecessary re-renders
+  const userSettings = useUserSettings();
   const {
-    userSettings,
     updateDisplaySettings,
     updateGameplaySettings,
     updateNotificationSettings,
     updateAudioSettings,
     resetSettings,
-  } = useGame(
-    (state) => ({
-      userSettings: state.userSettings,
-      updateDisplaySettings: state.updateDisplaySettings,
-      updateGameplaySettings: state.updateGameplaySettings,
-      updateNotificationSettings: state.updateNotificationSettings,
-      updateAudioSettings: state.updateAudioSettings,
-      resetSettings: state.resetSettings,
-    }),
-    shallow,
-  );
+  } = useSettingsActions();
 
   const display = userSettings?.display;
   const gameplay = userSettings?.gameplay;

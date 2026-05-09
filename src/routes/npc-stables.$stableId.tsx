@@ -106,7 +106,7 @@ function NpcStableDetailPage() {
                 <NumericValue value={horses.length} /> horses
               </span>
               <span className="flex items-center gap-1 font-[family-name:var(--font-mono)] tabular-nums">
-                <DollarSign className="w-4 h-4" />${formatCurrency(stable.cash)}
+                <DollarSign className="w-4 h-4" />{formatCurrency(stable.cash)}
               </span>
               <span className="text-fame">{getReputationStars(stable.reputation)}</span>
             </div>

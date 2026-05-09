@@ -20,6 +20,7 @@ import {
   FILLER_COUNTRIES,
   type StablePoolEntry,
 } from "./stablePoolData";
+import { FIRST_NAMES, LAST_NAMES } from "./personNames";
 
 /**
  * Generate a random stable name using filler prefixes and suffixes.
@@ -36,15 +37,17 @@ export function randomStableName(rng: Rng): string {
 }
 
 /**
- * Generate a random owner name using filler owners.
+ * Generate a random owner name using procedural name pools.
  *
- * Selects a random owner name from the filler pool.
+ * Selects a random first and last name to create a realistic person name.
  *
  * @param rng - Random number generator
  * @returns Generated owner name
  */
 export function randomOwnerName(rng: Rng): string {
-  return rng.pick(FILLER_OWNERS);
+  const first = rng.pick(FIRST_NAMES);
+  const last = rng.pick(LAST_NAMES);
+  return `${first} ${last}`;
 }
 
 /**
@@ -61,7 +64,7 @@ export function randomOwnerName(rng: Rng): string {
 export function generateFillerStable(index: number, day: number, rng: Rng): Stable {
   const prefix = rng.pick(FILLER_PREFIXES);
   const suffix = rng.pick(FILLER_SUFFIXES);
-  const owner = rng.pick(FILLER_OWNERS);
+  const owner = randomOwnerName(rng);
   const country = rng.pick(FILLER_COUNTRIES);
   const personality = selectPersonality("budget", rng);
   const isSpecialist = personality === "specialist";

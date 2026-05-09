@@ -27,8 +27,8 @@ export const Gazette: React.FC = () => {
       <div className="gazette-body">
         <main className="gazette-main-column">
           {mainNews.length > 0 ? (
-            mainNews.map(item => (
-              <NewsArticle key={item.id} item={item} />
+            mainNews.map((item, index) => (
+              <NewsArticle key={`${item.id}-${index}`} item={item} />
             ))
           ) : (
             <div className="news-item">
@@ -42,8 +42,8 @@ export const Gazette: React.FC = () => {
           <section className="sidebar-section">
             <h3 className="sidebar-title">Local Snippets</h3>
             {sideNews.length > 0 ? (
-              sideNews.map(item => (
-                <div key={item.id} className="news-snippet" style={{ marginBottom: '1rem' }}>
+              sideNews.map((item, index) => (
+                <div key={`${item.id}-${index}`} className="news-snippet" style={{ marginBottom: '1rem' }}>
                   <h4 style={{ margin: '0 0 0.2rem 0', fontSize: '1rem' }}>{item.headline}</h4>
                   <p style={{ margin: 0, fontSize: '0.85rem' }}>{item.body}</p>
                 </div>
@@ -80,10 +80,10 @@ function renderBodyWithLinks(body: string, links?: EntityLink[]) {
 
   // Simple implementation: replace exact name matches with links
   // In a real app, you'd use a more robust regex or structured body
-  let parts: (string | JSX.Element)[] = [body];
+  let parts: (string | React.ReactNode)[] = [body];
 
   links.forEach(link => {
-    const newParts: (string | JSX.Element)[] = [];
+    const newParts: (string | React.ReactNode)[] = [];
     parts.forEach(part => {
       if (typeof part !== 'string') {
         newParts.push(part);
@@ -95,8 +95,8 @@ function renderBodyWithLinks(body: string, links?: EntityLink[]) {
         newParts.push(seg);
         if (i < segments.length - 1) {
           newParts.push(
-            <span 
-              key={`${link.id}-${i}`} 
+            <span
+              key={`${link.id}-${i}`}
               className="entity-link"
               onClick={() => {
                 // In a real app, use navigation

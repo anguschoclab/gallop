@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, DollarSign, Zap, Timer } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
-import { formatTime } from "@/core/calendar/dateFormatting";
+import { formatCurrency, formatTime } from "@/lib/formatting";
+
+const EMPTY_OBJECT = {};
 
 export const Route = createFileRoute("/records")({
   component: RecordsDashboard,
 });
 
 function RecordsDashboard() {
-  const horseLeaderboards = useGame((s) => s.horseLeaderboards || {});
-  const trackRecords = useGame((s) => s.trackRecords || {});
+  const horseLeaderboards = useGameWithShallow((s) => s.horseLeaderboards || EMPTY_OBJECT) as any;
+  const trackRecords = useGameWithShallow((s) => s.trackRecords || EMPTY_OBJECT) as any;
 
   const trackRecordsList = Object.values(trackRecords).sort((a, b) => {
     if (a.trackName !== b.trackName) return a.trackName.localeCompare(b.trackName);

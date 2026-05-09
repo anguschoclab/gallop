@@ -130,22 +130,19 @@ function ColorSwatchPicker({ label, tooltip, value, onChange }: ColorSwatchPicke
         {SILK_PALETTE.map((hex) => {
           const selected = hex.toLowerCase() === value.toLowerCase();
           return (
-            <Tooltip key={hex}>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={() => onChange(hex)}
-                  className={`h-8 w-8 rounded-full border-2 transition-all ${
-                    selected
-                      ? "border-gold scale-110 ring-2 ring-gold/40"
-                      : "border-t700 hover:border-cream-muted"
-                  }`}
-                  style={{ backgroundColor: hex }}
-                  aria-label={`${label} ${hex}`}
-                />
-              </TooltipTrigger>
-              <TooltipContent>{hex}</TooltipContent>
-            </Tooltip>
+            <button
+              key={hex}
+              type="button"
+              onClick={() => onChange(hex)}
+              className={`h-8 w-8 rounded-full border-2 transition-all ${
+                selected
+                  ? "border-gold scale-110 ring-2 ring-gold/40"
+                  : "border-t700 hover:border-cream-muted"
+              }`}
+              style={{ backgroundColor: hex }}
+              aria-label={`${label} ${hex}`}
+              title={hex}
+            />
           );
         })}
       </div>
