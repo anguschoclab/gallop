@@ -62,7 +62,12 @@ export {
 export type GameState = CoreState & MarketState & BreedingState & RacingState & SystemsState;
 
 /**
- * Create a complete default GameState for new games
+ * Create a complete default GameState for new games.
+ *
+ * Combines all domain state creators (core, market, breeding, racing, systems)
+ * into a single game state object.
+ *
+ * @returns Complete default game state with all domain states initialized
  */
 export function createDefaultGameState(): GameState {
   return {

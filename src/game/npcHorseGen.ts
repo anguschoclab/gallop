@@ -33,6 +33,19 @@ import {
 
 // ─── Stable horse generation ──────────────────────────────────────────────────
 
+/**
+ * Generate horses for an NPC stable.
+ *
+ * Uses AI-driven age distribution when AI manager is available, otherwise uses
+ * tier-based distribution. Calculates starting fame for each horse.
+ *
+ * @param stable - The stable to generate horses for
+ * @param rng - Random number generator
+ * @param usedNames - Set of used horse names to avoid duplicates
+ * @param npcAIManager - Optional AI manager for AI-driven generation
+ * @param currentDay - Current simulation day for AI learning
+ * @returns Array of generated horses
+ */
 export function generateStableHorses(
   stable: Stable,
   rng: Rng,
@@ -104,6 +117,19 @@ export function generateStableHorses(
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
+/**
+ * Generate horses for all NPC stables.
+ *
+ * Integrates famous stallions if provided, sets up stud careers for retiring horses,
+ * and returns updated stables with horse IDs and all horses.
+ *
+ * @param stables - All NPC stables
+ * @param rng - Random number generator
+ * @param npcAIManager - Optional AI manager for AI-driven generation
+ * @param currentDay - Current simulation day for AI learning
+ * @param famousStallions - Optional famous stallions to integrate
+ * @returns Object with updated stables, all horses, and used names
+ */
 export function generateAllNpcHorses(
   stables: Stable[],
   rng: Rng,

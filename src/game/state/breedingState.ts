@@ -27,7 +27,9 @@ export interface BreedingState {
 }
 
 /**
- * Default breeding state for new games
+ * Create default breeding state for new games.
+ *
+ * @returns Default breeding state with empty pregnancies and no active breeding program
  */
 export function createDefaultBreedingState(): BreedingState {
   return {

@@ -28,7 +28,9 @@ export interface RacingState {
 }
 
 /**
- * Default racing state for new games
+ * Create default racing state for new games.
+ *
+ * @returns Default racing state with empty training usage
  */
 export function createDefaultRacingState(): RacingState {
   return {

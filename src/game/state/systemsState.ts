@@ -154,8 +154,13 @@ export interface SystemsState {
 }
 
 /**
- * Default systems state for new games
- * When options are provided, uses the backstory to customize facilities and reputation
+ * Create default systems state for new games.
+ *
+ * When options are provided, uses the backstory to customize facilities and reputation.
+ * Otherwise uses default facilities and zero reputation.
+ *
+ * @param options - Optional new game options including profile and backstory
+ * @returns Default systems state with NPC stables, facilities, reputation, and other subsystems initialized
  */
 export function createDefaultSystemsState(options?: NewGameOptions): SystemsState {
   if (options) {

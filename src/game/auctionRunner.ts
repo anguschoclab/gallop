@@ -94,19 +94,17 @@ export type AuctionRunner = {
 };
 
 /**
- * Compute the next minimum bid increment, identical to the existing UI.
- * Increments by 5% + $200, rounded up to nearest $100.
+ * Compute the next minimum bid increment.
+ *
+ * Identical to the existing UI. Increments by 5% + $200, rounded up to nearest $100.
+ *
+ * @param currentBid - Current bid amount
+ * @returns Next minimum bid amount
  */
 export function nextBidAmount(currentBid: number): number {
   return Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
 }
 
-/**
- * Construct a runner. `seed` makes outcomes reproducible (the existing
- * resolveAuctionSale derives one from lot/stable/bid identifiers — we do the
- * same here, hashed once per (lot, scan) pair so identical inputs yield
- * identical outputs across paths).
- */
 export type AuctionRunnerOptions = {
   /**
    * When true, the runner is driving the live AuctionTheater UI. The Theater
@@ -130,6 +128,20 @@ export type AuctionRunnerOptions = {
   onAutoRaise?: (amount: number) => boolean;
 };
 
+/**
+ * Construct a deterministic auction runner.
+ *
+ * Seed makes outcomes reproducible. The existing resolveAuctionSale derives one from
+ * lot/stable/bid identifiers — we do the same here, hashed once per (lot, scan) pair
+ * so identical inputs yield identical outputs across paths.
+ *
+ * @param sale - The auction sale to simulate
+ * @param stables - All NPC stables for bidding
+ * @param horses - All horses in the game
+ * @param baseSeed - Base seed for deterministic RNG (defaults to hash of sale ID)
+ * @param options - Optional runner configuration including live mode, AI manager, and callbacks
+ * @returns Auction runner interface
+ */
 export function createAuctionRunner(
   sale: AuctionSale,
   stables: readonly Stable[],

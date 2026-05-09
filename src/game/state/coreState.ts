@@ -48,8 +48,13 @@ export interface CoreState {
 }
 
 /**
- * Default core state for new games
+ * Create default core state for new games.
+ *
  * When options are provided, uses the backstory to customize starting resources
+ * including player horses, cash, and initial news items.
+ *
+ * @param options - Optional new game options including profile and backstory
+ * @returns Core game state with day, cash, horses, races, log, news, season records, hall of fame, and archive
  */
 export function createDefaultCoreState(options?: NewGameOptions): CoreState {
   if (options) {

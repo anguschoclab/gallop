@@ -79,7 +79,19 @@ function getTrackQuality(country: string): "low" | "mid" | "high" {
   return "low";
 }
 
-// Generate a single North American race
+/**
+ * Generate a single North American race.
+ *
+ * Uses NA-specific race distribution (70% claiming races), selects claiming price
+ * based on track quality, and generates appropriate race names.
+ *
+ * @param track - Track to generate race for
+ * @param day - Day the race takes place
+ * @param rng - Random number generator
+ * @param surface - Optional surface to use
+ * @param usedNames - Set of used race names to avoid duplicates
+ * @returns Complete race object
+ */
 export function generateNorthAmericanRace(
   track: Track,
   day: number,
@@ -185,7 +197,17 @@ export function generateNorthAmericanRace(
   return race;
 }
 
-// Generate multiple races for a track on a given day
+/**
+ * Generate multiple races for a track on a given day.
+ *
+ * Creates a race card by alternating between available track surfaces.
+ *
+ * @param track - Track to generate races for
+ * @param day - Day the races take place
+ * @param numRaces - Number of races to generate
+ * @param rng - Random number generator
+ * @returns Array of generated races
+ */
 export function generateNorthAmericanRaceCard(
   track: Track,
   day: number,

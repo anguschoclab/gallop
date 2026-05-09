@@ -11,11 +11,17 @@
 import type { PlayerFacilities } from "@/core/facilities";
 import { formatCurrency } from "@/lib/formatting";
 import { generateUUID } from "@/game/uuid";
+import { facilityUpgradeCost } from "@/core/facilities";
 import type { ActionResult } from "../types";
 import type { GameStateCreator } from "../types";
 
 export type FacilitySlice = {
+  /**
+   * Upgrades a specific player facility to the next quality level.
+   * Validates sufficient cash and checks if facility is already at max level.
+   */
   upgradeFacility: (facilityType: string) => ActionResult;
+  /** Sets the collection of player stable facilities */
   setFacilities: (facilities: PlayerFacilities) => void;
 };
 
@@ -25,13 +31,19 @@ export const createFacilitySlice: GameStateCreator<FacilitySlice> = (set, get) =
     if (!s.facilities) return { ok: false, reason: "Facilities not initialized." };
     const facility = s.facilities[facilityType as keyof PlayerFacilities];
     if (!facility) return { ok: false, reason: "Facility not found." };
-    const nextLevel = facility.level + 1;
-    const cost = Math.floor(5000 * Math.pow(1.5, nextLevel - 1));
+    
+    if (facility.level === "elite") return { ok: false, reason: "Facility already at maximum level." };
+    
+    const cost = facilityUpgradeCost(facility.level);
     if (s.cash < cost)
       return {
         ok: false,
         reason: `Insufficient cash. Upgrade costs ${formatCurrency(cost)}.`,
       };
+
+    const levelOrder: import("@/core/facilities").FacilityLevel[] = ["basic", "standard", "premium", "elite"];
+    const nextLevelIndex = levelOrder.indexOf(facility.level) + 1;
+    const nextLevel = levelOrder[nextLevelIndex];
 
     get().enqueueIntent({
       id: generateUUID(),

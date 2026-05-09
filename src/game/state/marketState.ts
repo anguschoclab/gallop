@@ -32,7 +32,9 @@ export interface MarketState {
 }
 
 /**
- * Default market state for new games
+ * Create default market state for new games.
+ *
+ * @returns Default market state with empty market, scout reports, private sale offers, and claims
  */
 export function createDefaultMarketState(): MarketState {
   return {

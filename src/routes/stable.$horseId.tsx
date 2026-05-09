@@ -1,7 +1,5 @@
-import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { shallow } from "zustand/shallow";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,20 +13,19 @@ import {
 import { HorseStats, NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
-import { ArrowLeft, Tag, Lock } from "lucide-react";
+import { ArrowLeft, Tag } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
 import { BeyerChart } from "@/components/BeyerChart";
 import { HorseAwardsPanel } from "@/components/awards";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
 import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
+import { TrainingPanel } from "@/components/horse/TrainingPanel";
+import { StaffSupportPanel } from "@/components/horse/StaffSupportPanel";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
-import { isMaleHorse, genderSymbol } from "@/core/horse/gender";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
-import { TRAINING_COST } from "@/game/constants/gameConstants";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { getCurrentYear } from "@/game/raceSchedule";
-import { isWorkoutEnabled } from "@/core/facilities";
-import { cn } from "@/lib/utils";
+import { useHorseActions } from "@/hooks/useHorseActions";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
@@ -44,7 +41,16 @@ export const Route = createFileRoute("/stable/$horseId")({
 
 function HorseDetail() {
   const { horseId } = Route.useParams();
-  const horse = useGame((s) => s.horses.find((h) => h.id === horseId));
+  const {
+    horse,
+    isConsigned,
+    canRetireToStud,
+    canRetireToPasture,
+    consignedSale,
+    eligibleSale,
+    day,
+  } = useHorseActions(horseId);
+
   const trainHorse = useGame((s) => s.trainHorse);
   const consignHorse = useGame((s) => s.consignHorse);
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
@@ -54,8 +60,6 @@ function HorseDetail() {
   const retireToPasture = useGame((s) => s.retireToPasture);
   const facilities = useGame((s) => s.facilities);
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
-  const day = useGame((s) => s.day);
-  const auctions = useGameWithShallow((s) => s.auctions ?? []);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
 
   // Persist raceHistoryLimit to localStorage
@@ -66,36 +70,7 @@ function HorseDetail() {
   if (!horse) throw notFound();
 
   const isPregnant = !!pregnancy;
-  const isConsigned = !!horse.consignedSaleId;
-
-  const canRetireToStud =
-    horse.owned &&
-    (isMaleHorse(horse.gender)) &&
-    horse.age >= 3 &&
-    !horse.stud?.atStud &&
-    !isConsigned;
-
-  const canRetireToPasture = horse.owned && horse.lifecycleStatus === "active" && !isConsigned;
-
   const slotsLeft = 2 - trainingUsed;
-  const consignedSale = isConsigned
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ? auctions.find((a: any) => a.id === horse.consignedSaleId)
-    : undefined;
-  // Find eligible upcoming sales to consign to
-  const eligibleSale =
-    !isConsigned && horse.owned
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ? auctions.find((a: any) => {
-          if (a.resolved) return false;
-          const ageMatch =
-            (horse.age === 0 && (a.kind === "weanling" || a.kind === "weanling_south")) ||
-            ((horse.age === 1 || horse.age === 2) &&
-              (a.kind === "yearling" || a.kind === "yearling_south"));
-          return ageMatch;
-        })
-      : undefined;
-
   const ovr = calculateOverallRating(horse);
 
   return (

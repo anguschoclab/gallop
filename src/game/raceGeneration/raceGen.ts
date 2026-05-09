@@ -44,6 +44,17 @@ export const CLASS_CONFIG: Record<
   Graded: { entry: 0, purse: 0, dist: [1200, 2400] },
 };
 
+/**
+ * Create a graded race from a GradedRace definition.
+ *
+ * Sets entry fees and minimum stats based on grade, generates random weather
+ * and track conditions with temperate/turf bias.
+ *
+ * @param g - Graded race definition
+ * @param gameDay - Day the race takes place
+ * @param rng - Random number generator (defaults to nondeterministic)
+ * @returns Complete race object
+ */
 export function makeGradedRace(
   g: GradedRace,
   gameDay: number,
@@ -77,6 +88,16 @@ export function makeGradedRace(
   };
 }
 
+/**
+ * Generate a random race with weighted class distribution.
+ *
+ * Uses weighted random selection for race class, then generates distance,
+ * field size, weather, and track conditions.
+ *
+ * @param day - Day the race takes place
+ * @param rng - Random number generator (defaults to nondeterministic)
+ * @returns Complete race object
+ */
 export function generateRace(day: number, rng: Rng = nondeterministicRng()): Race {
   const r = rng.next();
   let cls: RaceClass;

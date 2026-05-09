@@ -228,3 +228,17 @@ export function downgradeFacility(facility: Facility, currentDay: number): Facil
   const newLevel = levelOrder[currentIndex - 1];
   return createFacility(facility.type, newLevel, currentDay);
 }
+
+/**
+ * Calculates the one-time cost to upgrade a facility from its current level.
+ * Formula: 5000 * 1.5^(current_rank - 1)
+ * basic (rank 1) -> standard costs 5000 * 1.5^0 = 5000
+ *
+ * @param currentLevel - The current level of the facility
+ * @returns The cost to upgrade to the next level
+ */
+export function facilityUpgradeCost(currentLevel: FacilityLevel): number {
+  const levelOrder: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
+  const rank = levelOrder.indexOf(currentLevel) + 1;
+  return Math.floor(5000 * Math.pow(1.5, rank - 1));
+}

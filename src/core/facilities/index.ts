@@ -34,4 +34,5 @@ export {
   isWorkoutEnabled,
   upgradeFacility,
   downgradeFacility,
+  facilityUpgradeCost,
 } from "./facilityDefaults";
