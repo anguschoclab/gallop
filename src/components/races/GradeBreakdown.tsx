@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getGradeColorClass } from "@/core/race/grading";
 import type { Race, Horse } from "@/game/types";
@@ -9,44 +10,51 @@ interface GradeBreakdownProps {
 }
 
 export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
-  const upcoming = races.filter((r) => !r.resolved && r.day >= day);
-  const grades = ["G1", "G2", "G3"] as const;
+  const { gradeData, avgBeyer } = useMemo(() => {
+    const upcoming = races.filter((r) => !r.resolved && r.day >= day);
+    const grades = ["G1", "G2", "G3"] as const;
 
-  const gradeData = grades.map((grade) => {
-    const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
-    const ownedEntries = gradeRaces.filter((r) => r.entries.some((e) => e.owned));
+    const horseMap = new Map(horses.map((h) => [h.id, h]));
 
-    let topProj = null;
-    const allOwnedProjs: number[] = [];
+    const gradeData = grades.map((grade) => {
+      const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
+      const ownedEntries = gradeRaces.filter((r) => r.entries.some((e) => e.owned));
 
-    for (const r of ownedEntries) {
-      const ownedIds = r.entries.filter((e) => e.owned).map((e) => e.horseId);
-      for (const id of ownedIds) {
-        const horse = horses.find((h) => h.id === id);
-        if (horse) {
-          const proj = horse.stats.speed + horse.stats.acceleration; // Simple proj Beyer
-          allOwnedProjs.push(proj);
-          if (!topProj || proj > topProj.proj) {
-            topProj = { name: horse.name, proj };
+      let topProj: { name: string; proj: number } | null = null;
+      const allOwnedProjs: number[] = [];
+
+      for (const r of ownedEntries) {
+        for (const entry of r.entries) {
+          if (!entry.owned) continue;
+
+          const horse = horseMap.get(entry.horseId);
+          if (horse) {
+            const proj = horse.stats.speed + horse.stats.acceleration; // Simple proj Beyer
+            allOwnedProjs.push(proj);
+            if (!topProj || proj > topProj.proj) {
+              topProj = { name: horse.name, proj };
+            }
           }
         }
       }
+
+      return {
+        grade,
+        total: gradeRaces.length,
+        ownedCount: ownedEntries.length,
+        topOwned: topProj,
+        allOwnedProjs,
+      };
+    });
+
+    const allOwnedProjs = gradeData.flatMap((d) => d.allOwnedProjs);
+    let avgBeyer = null;
+    if (allOwnedProjs.length > 0) {
+      avgBeyer = Math.round(allOwnedProjs.reduce((s, v) => s + v, 0) / allOwnedProjs.length);
     }
 
-    return {
-      grade,
-      total: gradeRaces.length,
-      ownedCount: ownedEntries.length,
-      topOwned: topProj,
-      allOwnedProjs,
-    };
-  });
-
-  const allOwnedProjs = gradeData.flatMap((d) => d.allOwnedProjs);
-  let avgBeyer = null;
-  if (allOwnedProjs.length > 0) {
-    avgBeyer = Math.round(allOwnedProjs.reduce((s, v) => s + v, 0) / allOwnedProjs.length);
-  }
+    return { gradeData, avgBeyer };
+  }, [races, horses, day]);
 
   return (
     <Card>
