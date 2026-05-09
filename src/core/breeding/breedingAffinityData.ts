@@ -1,3 +1,13 @@
+/**
+ * breedingAffinityData.ts - Breeding affinity data
+ *
+ * This file provides famous nicking affinities and cross-family affinities
+ * based on historical breeding data for sire line × dam line crosses.
+ *
+ * Dependencies: None (self-contained data)
+ * Related files: strategy.ts (uses affinities for breeding scoring)
+ */
+
 // Famous nicking affinities - specific sire line × dam line crosses that have produced exceptional results
 // Based on historical breeding data and Wikipedia article on Thoroughbred breeding theories
 export const NICKING_AFFINITIES: Record<string, string[]> = {
