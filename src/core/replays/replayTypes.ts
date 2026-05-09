@@ -28,7 +28,16 @@ export interface RaceReplay {
 }
 
 /**
- * Create a race replay from simulation data
+ * Create a race replay from simulation data.
+ *
+ * @param raceId - Unique identifier for the race
+ * @param day - Game day the race occurred
+ * @param checkpoints - Time-series data of all horse positions
+ * @param winner - Horse ID of the race winner
+ * @param finalPositions - Final positions and times for all runners
+ * @param trackId - ID of the track where the race was run
+ * @param distance - Total race distance in meters
+ * @returns Complete RaceReplay object
  */
 export function createRaceReplay(
   raceId: string,
@@ -52,7 +61,12 @@ export function createRaceReplay(
 }
 
 /**
- * Get horse position at a specific time in the replay
+ * Get horse position at a specific time in the replay.
+ *
+ * @param replay - The race replay data to search
+ * @param horseId - ID of the horse to find
+ * @param time - Elapsed time in seconds
+ * @returns RaceCheckpoint if found, otherwise null
  */
 export function getHorsePositionAtTime(
   replay: RaceReplay,
@@ -67,7 +81,11 @@ export function getHorsePositionAtTime(
 }
 
 /**
- * Get all horse positions at a specific time
+ * Get all horse positions at a specific time.
+ *
+ * @param replay - The race replay data
+ * @param time - Elapsed time in seconds
+ * @returns Array of checkpoints for all horses at that time step
  */
 export function getAllPositionsAtTime(replay: RaceReplay, time: number): RaceCheckpoint[] {
   const timeIndex = Math.floor(time);

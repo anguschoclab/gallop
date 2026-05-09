@@ -186,7 +186,10 @@ export const CATEGORY_DISPLAY: Record<ExpenseCategory, CategoryDisplay> = {
  * @param amount - The expense amount
  * @param description - Description of the expense
  * @param day - The game day the expense occurred
- * @param options - Optional parameters (horseId, raceId, recurring)
+ * @param options - Optional parameters
+ * @param options.horseId - Optional horse associated with expense
+ * @param options.raceId - Optional race associated with expense
+ * @param options.recurring - Whether this is a recurring daily expense
  * @returns New expense record
  */
 export function createExpense(

@@ -2,6 +2,10 @@ import type { RaceSnapshot, HorseSnapshot } from "@/core/race/engine/raceSnapsho
 
 /**
  * Interpolates horse positions between two snapshots based on a timestamp.
+ *
+ * @param snapshots - Array of race snapshots to interpolate between
+ * @param currentTime - The target simulation time for interpolation
+ * @returns Array of interpolated horse snapshots
  */
 export function interpolateSnapshots(
   snapshots: RaceSnapshot[],
@@ -34,6 +38,9 @@ export function interpolateSnapshots(
 
 /**
  * Calculates the total duration of the race replay.
+ *
+ * @param snapshots - Array of race snapshots
+ * @returns Total duration in simulation time units
  */
 export function getReplayDuration(snapshots: RaceSnapshot[]): number {
   if (snapshots.length === 0) return 0;

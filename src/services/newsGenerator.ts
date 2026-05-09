@@ -3,6 +3,12 @@ import type { NewsItem, NewsCategory, NewsImportance } from "@/core/narrative/ne
 import type { Race, Horse, Jockey } from "@/game/types";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 
+/**
+ * Create a new NewsItem with a unique identifier.
+ *
+ * @param params - News item properties (excluding ID)
+ * @returns Fully hydrated NewsItem object
+ */
 export function createNewsItem(params: Omit<NewsItem, "id">): NewsItem {
   return {
     id: generateUUID(),
@@ -10,6 +16,17 @@ export function createNewsItem(params: Omit<NewsItem, "id">): NewsItem {
   };
 }
 
+/**
+ * Generate a news item summarizing a significant race result.
+ *
+ * Only generates news for high-stakes or graded races.
+ *
+ * @param race - The race that was run
+ * @param result - Summary of the race result positions
+ * @param horses - All horses in the race for name lookup
+ * @param day - Current game day
+ * @returns NewsItem if significant, otherwise null
+ */
 export function generateRaceNews(
   race: Race,
   result: { horseId: string; position: number }[],
@@ -60,6 +77,14 @@ export function generateRaceNews(
   });
 }
 
+/**
+ * Generate a news item for a high-value market transaction.
+ *
+ * @param horse - The horse that was sold
+ * @param price - The final sale price
+ * @param day - Current game day
+ * @returns NewsItem summarizing the sale
+ */
 export function generateMarketNews(
   horse: Horse,
   price: number,
@@ -75,6 +100,12 @@ export function generateMarketNews(
   });
 }
 
+/**
+ * Generate a random flavor news item for general atmosphere.
+ *
+ * @param day - Current game day
+ * @returns Randomly selected flavor NewsItem
+ */
 export function generateFlavorNews(day: number): NewsItem {
   const flavorStories = [
     {

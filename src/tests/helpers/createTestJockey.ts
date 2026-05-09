@@ -8,7 +8,10 @@ import type {
 } from "@/game/types";
 
 /**
- * Creates a valid test jockey stats object
+ * Creates a valid test jockey stats object.
+ *
+ * @param overrides - Optional stat properties to override defaults
+ * @returns Complete JockeyStats object
  */
 function createTestJockeyStats(overrides?: Partial<JockeyStats>): JockeyStats {
   return {
@@ -22,7 +25,10 @@ function createTestJockeyStats(overrides?: Partial<JockeyStats>): JockeyStats {
 }
 
 /**
- * Creates a valid test jockey silk
+ * Creates a valid test jockey silk.
+ *
+ * @param overrides - Optional silk properties to override defaults
+ * @returns Complete JockeySilk object
  */
 function createTestJockeySilk(overrides?: Partial<JockeySilk>): JockeySilk {
   return {
@@ -35,7 +41,10 @@ function createTestJockeySilk(overrides?: Partial<JockeySilk>): JockeySilk {
 }
 
 /**
- * Creates a complete valid test jockey with all required properties
+ * Creates a complete valid test jockey with all required properties.
+ *
+ * @param overrides - Optional jockey properties to override defaults
+ * @returns Complete Jockey object
  */
 export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
   return {
@@ -55,7 +64,10 @@ export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
 }
 
 /**
- * Creates an array of test jockeys for race simulation
+ * Creates an array of test jockeys for race simulation.
+ *
+ * @param count - Number of jockeys to create (defaults to 10)
+ * @returns Array of Jockey objects
  */
 export function createTestJockeys(count: number = 10): Jockey[] {
   return Array.from({ length: count }, (_, i) =>

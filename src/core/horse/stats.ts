@@ -180,6 +180,9 @@ export function abilityGrade(score: number): string {
  * speed/acceleration (early bias) and stamina (late bias), with RNG variation.
  *
  * @param stats - Object containing speed, stamina, and acceleration stats
+ * @param stats.speed - Horse's top speed potential
+ * @param stats.stamina - Horse's endurance potential
+ * @param stats.acceleration - Horse's burst potential
  * @param rng - Random number generator
  * @returns Running style (E, EP, P, or S)
  */

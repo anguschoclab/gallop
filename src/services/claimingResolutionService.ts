@@ -14,6 +14,20 @@ export interface ProcessClaimingProps {
   rng: Rng;
 }
 
+/**
+ * Resolve claiming intents for a race and generate associated impacts.
+ *
+ * This includes handling refunds for withdrawn horses, processing successful claims
+ * (transfers and payments), and logging results.
+ *
+ * @param props - Properties object for claiming resolution
+ * @param props.race - The race being resolved
+ * @param props.claimIntents - Array of player and NPC claiming intents
+ * @param props.horses - Current global horse array
+ * @param props.newDay - Current game day
+ * @param props.rng - Random number generator for tie-breaking
+ * @returns Object containing all generated Impacts
+ */
 export function processClaimingResolution({
   race,
   claimIntents,

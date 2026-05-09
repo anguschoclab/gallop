@@ -6,13 +6,14 @@ import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 /**
  * Hook to manage the complex race simulation loop using requestAnimationFrame.
  * 
- * @param race The race being simulated.
- * @param runners The field of runners in the race.
- * @param resolveRaceWithImpacts Callback to finalize race results in the store.
- * @param narrativeRef Reference to the narrative generator service.
- * @param messageQueue Reference to the commentary message queue.
- * @param rngRef Reference to the random number generator for the race.
- * @returns An object containing simulation state (tick, finished, paused, speed) and controls.
+ * @param options - Simulation options
+ * @param options.race - The race being simulated
+ * @param options.runners - The field of runners in the race
+ * @param options.resolveRaceWithImpacts - Callback to finalize race results in the store
+ * @param options.narrativeRef - Reference to the narrative generator service
+ * @param options.messageQueue - Reference to the commentary message queue
+ * @param options.rngRef - Reference to the random number generator for the race
+ * @returns An object containing simulation state (tick, finished, paused, speed) and controls
  */
 export function useLiveRaceSimulation({
   race,

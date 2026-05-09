@@ -66,17 +66,34 @@ function isHoty(category: RegionalAwardCategory): boolean {
   return category === "horse_of_the_year";
 }
 
-// Get SVG data for a specific award
+/**
+ * Get SVG data for a specific award.
+ *
+ * @param region - Awarding region
+ * @param category - Award category
+ * @returns SVG path and color metadata
+ */
 export function getAwardSvg(region: AwardRegion, category: RegionalAwardCategory): AwardSvgData {
   const type = isHoty(category) ? "hoty" : "category";
   return AWARD_SVGS[region][type];
 }
 
-// Get color for region (for fallback/icons)
+/**
+ * Get color for region (for fallback/icons).
+ *
+ * @param region - Target region
+ * @returns Primary color hex/variable
+ */
 export function getRegionColor(region: AwardRegion): string {
   return AWARD_SVGS[region].hoty.color;
 }
 
+/**
+ * Get accent color for region.
+ *
+ * @param region - Target region
+ * @returns Accent color hex/variable
+ */
 export function getRegionAccent(region: AwardRegion): string {
   return AWARD_SVGS[region].hoty.accent;
 }

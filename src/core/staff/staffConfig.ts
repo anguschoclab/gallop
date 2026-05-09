@@ -43,14 +43,22 @@ export const STAFF_TIER_LABELS: Record<StaffTier, string> = {
 };
 
 /**
- * Get bonus value for a staff role and tier
+ * Get bonus value for a staff role and tier.
+ *
+ * @param role - Staff role (vet, farrier, etc.)
+ * @param tier - Staff tier (budget, mid, elite)
+ * @returns Numeric bonus multiplier
  */
 export function getStaffBonus(role: StaffRole, tier: StaffTier): number {
   return STAFF_CONFIG[role][tier].bonus;
 }
 
 /**
- * Get salary for a staff role and tier
+ * Get salary for a staff role and tier.
+ *
+ * @param role - Staff role
+ * @param tier - Staff tier
+ * @returns Daily salary in dollars
  */
 export function getStaffSalary(role: StaffRole, tier: StaffTier): number {
   return STAFF_CONFIG[role][tier].salary;

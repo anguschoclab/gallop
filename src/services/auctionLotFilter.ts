@@ -8,6 +8,15 @@ export interface AuctionLotFilterOptions {
   q?: string;
 }
 
+/**
+ * Filter and sort auction lots based on user-provided options.
+ * Supports filtering by sex, age band, reserve price, and search query.
+ *
+ * @param lots - All auction lots for the sale
+ * @param horses - All horses in the game for metadata lookup
+ * @param options - Filtering and sorting options
+ * @returns Filtered and sorted array of auction lots
+ */
 export function filterAndSortLots(
   lots: AuctionLot[],
   horses: Horse[],

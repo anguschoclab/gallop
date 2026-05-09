@@ -82,7 +82,10 @@ export interface UserSettings {
 }
 
 /**
- * Default settings for new games
+ * Default settings for new games.
+ *
+ * @param currentDay - Current game day to set as last modified (defaults to 1)
+ * @returns Complete UserSettings object with defaults
  */
 export function createDefaultUserSettings(currentDay: number = 1): UserSettings {
   return {

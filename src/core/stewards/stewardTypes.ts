@@ -48,7 +48,18 @@ export interface StewardsInquiry {
 }
 
 /**
- * Create a new stewards inquiry
+ * Create a new stewards inquiry.
+ *
+ * @param raceId - Unique identifier for the race
+ * @param day - Game day the inquiry occurred
+ * @param type - Category of the inquiry
+ * @param accusedHorseId - Horse ID of the horse under investigation
+ * @param description - Detailed description of the incident
+ * @param options - Optional investigation metadata
+ * @param options.accusedJockeyId - Optional jockey ID if related to riding
+ * @param options.reportingHorseId - Optional horse ID of the reporter
+ * @param options.evidence - Optional array of evidence descriptions
+ * @returns Complete StewardsInquiry object
  */
 export function createStewardsInquiry(
   raceId: string,
@@ -77,7 +88,12 @@ export function createStewardsInquiry(
 }
 
 /**
- * Randomly generate an inquiry (for atmosphere)
+ * Randomly generate an inquiry (for atmosphere).
+ *
+ * @param raceId - Unique identifier for the race
+ * @param day - Game day
+ * @param horseIds - Array of horse IDs in the race
+ * @returns StewardsInquiry or null if no inquiry generated
  */
 export function generateRandomInquiry(
   raceId: string,
@@ -109,7 +125,13 @@ export function generateRandomInquiry(
 }
 
 /**
- * Resolve an inquiry with an outcome
+ * Resolve an inquiry with an outcome.
+ *
+ * @param inquiry - The inquiry to resolve
+ * @param outcome - The final investigation outcome
+ * @param fineAmount - Optional fine amount in dollars
+ * @param suspensionDays - Optional number of suspension days
+ * @returns Updated StewardsInquiry object
  */
 export function resolveInquiry(
   inquiry: StewardsInquiry,
@@ -127,7 +149,10 @@ export function resolveInquiry(
 }
 
 /**
- * Format inquiry type for display
+ * Format inquiry type for display.
+ *
+ * @param type - Inquiry type to format
+ * @returns Human-readable label
  */
 export function formatInquiryType(type: InquiryType): string {
   const labels: Record<InquiryType, string> = {
@@ -142,7 +167,10 @@ export function formatInquiryType(type: InquiryType): string {
 }
 
 /**
- * Format inquiry outcome for display
+ * Format inquiry outcome for display.
+ *
+ * @param outcome - Inquiry outcome to format
+ * @returns Human-readable label
  */
 export function formatInquiryOutcome(outcome: InquiryOutcome): string {
   const labels: Record<InquiryOutcome, string> = {

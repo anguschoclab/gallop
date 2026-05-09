@@ -21,6 +21,11 @@ import type { Race } from "@/game/types";
  * Returns a human-readable string for age restrictions like "2+ YO", "2-3YO", or "3YO only".
  *
  * @param restrictions - Race restrictions object
+ * @param restrictions.minAge - Minimum horse age
+ * @param restrictions.maxAge - Maximum horse age
+ * @param restrictions.gender - Optional gender filter
+ * @param restrictions.minAgeNorthern - Minimum age for Northern hemisphere horses
+ * @param restrictions.minAgeSouthern - Minimum age for Southern hemisphere horses
  * @returns Formatted age restriction string
  *
  * @example

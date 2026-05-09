@@ -28,7 +28,11 @@ export type JockeyGenerationOptions = {
  * Creates a jockey with tier-based stat ranges, archetype bonuses, career history,
  * and custom silk colors. Stats are clamped to valid ranges.
  *
- * @param options - Jockey generation options including tier, RNG, region, and used names
+ * @param options - Jockey generation options
+ * @param options.tier - Stat tier (budget, mid, elite)
+ * @param options.rng - Random number generator
+ * @param options.region - Regional system for naming
+ * @param options.usedNames - Optional set of used names to avoid duplicates
  * @returns Generated jockey object
  */
 export function generateJockey({

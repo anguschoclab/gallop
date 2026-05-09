@@ -5,6 +5,9 @@ import type { NarrativeGenerator } from "@/services/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import { createRng, hashStr } from "@/game/rng";
 
+/**
+ * Props for the useRaceSimulation hook.
+ */
 interface UseRaceSimulationProps {
   race: Race | null;
   runners: Runner[];
@@ -18,6 +21,22 @@ interface UseRaceSimulationProps {
   onTick: () => void;
 }
 
+/**
+ * Orchestrates a live race simulation with requestAnimationFrame.
+ *
+ * @param props - Simulation orchestration properties
+ * @param props.race - The race being simulated
+ * @param props.runners - The field of runners being tracked
+ * @param props.narrativeGenerator - Service for generating live commentary
+ * @param props.messageQueue - Ref for queuing commentary lines
+ * @param props.finishOrderRef - Ref for recording finish positions/times
+ * @param props.speedRef - Ref for controlling simulation speed
+ * @param props.pausedRef - Ref for handling pause state
+ * @param props.simTimeRef - Ref for tracking simulation time
+ * @param props.onFinished - Callback when all runners have finished
+ * @param props.onTick - Callback for each simulation step
+ * @returns Object (empty, hook for side effects)
+ */
 export function useRaceSimulation({
   race,
   runners,

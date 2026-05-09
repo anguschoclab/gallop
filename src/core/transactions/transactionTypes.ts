@@ -55,7 +55,19 @@ export interface Transaction {
 }
 
 /**
- * Create a new transaction record
+ * Create a new transaction record.
+ *
+ * @param type - Transaction category (income, expense, etc.)
+ * @param subcategory - Specific subcategory for tracking
+ * @param amount - Transaction amount in dollars
+ * @param description - Human-readable description
+ * @param day - Game day the transaction occurred
+ * @param balanceAfter - Running balance after this transaction
+ * @param options - Optional metadata
+ * @param options.horseId - Optional horse associated with transaction
+ * @param options.raceId - Optional race associated with transaction
+ * @param options.recurring - Whether this is a repeating daily transaction
+ * @returns Complete Transaction object
  */
 export function createTransaction(
   type: TransactionType,
@@ -85,7 +97,11 @@ export function createTransaction(
 }
 
 /**
- * Filter transactions by type
+ * Filter transactions by type.
+ *
+ * @param transactions - Array of transactions to filter
+ * @param type - Target transaction type
+ * @returns Filtered array of transactions
  */
 export function filterTransactionsByType(
   transactions: Transaction[],
@@ -95,7 +111,11 @@ export function filterTransactionsByType(
 }
 
 /**
- * Filter transactions by subcategory
+ * Filter transactions by subcategory.
+ *
+ * @param transactions - Array of transactions to filter
+ * @param subcategory - Target subcategory
+ * @returns Filtered array of transactions
  */
 export function filterTransactionsBySubcategory(
   transactions: Transaction[],
@@ -105,7 +125,12 @@ export function filterTransactionsBySubcategory(
 }
 
 /**
- * Filter transactions by day range
+ * Filter transactions by day range.
+ *
+ * @param transactions - Array of transactions to filter
+ * @param startDay - Starting day (inclusive)
+ * @param endDay - Ending day (inclusive)
+ * @returns Filtered array of transactions
  */
 export function filterTransactionsByDayRange(
   transactions: Transaction[],
@@ -116,28 +141,40 @@ export function filterTransactionsByDayRange(
 }
 
 /**
- * Calculate total income from transactions
+ * Calculate total income from transactions.
+ *
+ * @param transactions - Array of transactions to sum
+ * @returns Total income amount
  */
 export function calculateTotalIncome(transactions: Transaction[]): number {
   return transactions.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
 }
 
 /**
- * Calculate total expenses from transactions
+ * Calculate total expenses from transactions.
+ *
+ * @param transactions - Array of transactions to sum
+ * @returns Total expense amount (positive number)
  */
 export function calculateTotalExpenses(transactions: Transaction[]): number {
   return transactions.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
 }
 
 /**
- * Calculate net cash flow (income - expenses)
+ * Calculate net cash flow (income - expenses).
+ *
+ * @param transactions - Array of transactions to calculate for
+ * @returns Net cash flow amount
  */
 export function calculateNetCashFlow(transactions: Transaction[]): number {
   return calculateTotalIncome(transactions) - calculateTotalExpenses(transactions);
 }
 
 /**
- * Group transactions by subcategory
+ * Group transactions by subcategory.
+ *
+ * @param transactions - Array of transactions to group
+ * @returns Map of subcategories to count and total amount
  */
 export function groupTransactionsBySubcategory(
   transactions: Transaction[],
@@ -156,7 +193,10 @@ export function groupTransactionsBySubcategory(
 }
 
 /**
- * Format transaction type for display
+ * Format transaction type for display.
+ *
+ * @param type - Transaction type to format
+ * @returns Human-readable label
  */
 export function formatTransactionType(type: TransactionType): string {
   const labels: Record<TransactionType, string> = {
@@ -169,7 +209,10 @@ export function formatTransactionType(type: TransactionType): string {
 }
 
 /**
- * Format transaction subcategory for display
+ * Format transaction subcategory for display.
+ *
+ * @param subcategory - Subcategory to format
+ * @returns Human-readable label
  */
 export function formatTransactionSubcategory(subcategory: TransactionSubcategory): string {
   const labels: Record<TransactionSubcategory, string> = {

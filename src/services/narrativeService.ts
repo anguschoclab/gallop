@@ -24,6 +24,12 @@ import {
 
 const METERS_PER_LENGTH = 2.4;
 
+/**
+ * Orchestrates real-time race commentary generation.
+ *
+ * This class tracks race state, detects significant events (lead changes, surges, fades),
+ * and generates human-readable commentary using templates and expert insights.
+ */
 export class NarrativeGenerator {
   private lastRanks: Map<string, number> = new Map();
   private lastLeaderId: string | null = null;
@@ -40,6 +46,14 @@ export class NarrativeGenerator {
   private hasAnnouncedBio: Set<string> = new Set();
   private announcedMilestones: Set<number> = new Set();
 
+  /**
+   * Initialize the narrative generator for a specific race.
+   *
+   * @param race - The race being simulated
+   * @param horses - All horses participating in the race
+   * @param stables - All stables involved in the race
+   * @param rng - Random number generator for variety in commentary
+   */
   constructor(race: Race, horses: Horse[], stables: Stable[], rng: Rng) {
     this.race = race;
     this.horses = horses;
@@ -47,6 +61,14 @@ export class NarrativeGenerator {
     this.rng = rng;
   }
 
+  /**
+   * Update the narrative generator with current runner positions and sim time.
+   *
+   * @param runners - Current state of all runners
+   * @param simTime - Current elapsed simulation time in seconds
+   * @param pacePressure - Current pace pressure metric for the race
+   * @returns Array of new commentary lines generated in this step
+   */
   public update(runners: Runner[], simTime: number, pacePressure: number): CommentaryLine[] {
     const newLines: CommentaryLine[] = [];
 
@@ -211,6 +233,12 @@ export class NarrativeGenerator {
     return newLines;
   }
 
+  /**
+   * Determine if a horse at a specific position is currently in a turn.
+   *
+   * @param pos - Current position of the horse in meters
+   * @returns True if the horse is in a turn section of the track
+   */
   private isInTurn(pos: number): boolean {
     // Basic oval assumption: 400m home straight, 400m turn, 400m back straight, 400m turn
     const distFromFinish = this.race.distance - pos;
@@ -218,6 +246,13 @@ export class NarrativeGenerator {
     return (trackPos > 400 && trackPos <= 800) || trackPos > 1200;
   }
 
+  /**
+   * Check for race milestones (halfway, final 400m, etc.) and generate announcements.
+   *
+   * @param newLines - Accumulator for new commentary lines
+   * @param leaderPos - Current position of the race leader
+   * @param simTime - Current elapsed simulation time
+   */
   private checkMilestones(newLines: CommentaryLine[], leaderPos: number, simTime: number) {
     const milestones = [
       { pos: this.race.distance * 0.5, id: 50, text: "Passing the halfway point now." },
@@ -243,6 +278,12 @@ export class NarrativeGenerator {
     }
   }
 
+  /**
+   * Generate an expert insight line for a specific runner.
+   *
+   * @param runner - The runner to generate insight for
+   * @returns Expert insight string or null if no insight generated
+   */
   private generateExpertInsight(runner: Runner): string | null {
     const horse = this.getHorse(runner.horseId);
     if (!horse) return null;
@@ -251,6 +292,15 @@ export class NarrativeGenerator {
     return generateExpertInsight(runner, horse, this.race, stable, this.rng);
   }
 
+  /**
+   * Helper to create a fully hydrated CommentaryLine object.
+   *
+   * @param type - The type of narrative event
+   * @param timestamp - Current simulation time
+   * @param runner - Optional runner involved in the event
+   * @param lengths - Optional distance gap in lengths
+   * @returns Hydrated CommentaryLine object
+   */
   private createLine(
     type: NarrativeEvent,
     timestamp: number,
@@ -277,18 +327,45 @@ export class NarrativeGenerator {
     );
   }
 
+  /**
+   * Helper to find a Horse object by its ID.
+   *
+   * @param id - Unique identifier for the horse
+   * @returns Horse object or undefined if not found
+   */
   private getHorse(id: string): Horse | undefined {
     return this.horses.find((h) => h.id === id);
   }
 
+  /**
+   * Helper to find a Stable object by its ID.
+   *
+   * @param id - Unique identifier for the stable
+   * @returns Stable object or undefined if not found
+   */
   private getStable(id: string): Stable | undefined {
     return this.stables.find((s) => s.id === id);
   }
 
+  /**
+   * Determine if a stable is considered a "major" player for commentary focus.
+   *
+   * @param id - Unique identifier for the stable
+   * @returns True if it is a major stable
+   */
   private isMajorStable(id: string): boolean {
     return this.getStable(id)?.isMajor || false;
   }
 
+  /**
+   * Check if a specific event type can be announced (cooldown check).
+   *
+   * @param type - Narrative event type
+   * @param key - Context key for the cooldown (e.g. horse ID or "global")
+   * @param simTime - Current simulation time
+   * @param defaultCooldown - Cooldown duration in seconds (defaults to 10)
+   * @returns True if the event can be announced
+   */
   private canAnnounce(
     type: NarrativeEvent,
     key: string,
@@ -300,10 +377,23 @@ export class NarrativeGenerator {
     return simTime >= expiry;
   }
 
+  /**
+   * Set a cooldown for a specific event type and context.
+   *
+   * @param type - Narrative event type
+   * @param key - Context key for the cooldown
+   * @param simTime - Current simulation time
+   * @param seconds - Cooldown duration in seconds
+   */
   private setCooldown(type: NarrativeEvent, key: string, simTime: number, seconds: number) {
     this.cooldowns.set(`${type}:${key}`, simTime + seconds);
   }
 
+  /**
+   * Get the full commentary history for the race.
+   *
+   * @returns Array of all generated CommentaryLine objects
+   */
   public getHistory(): CommentaryLine[] {
     return this.commentary;
   }

@@ -3,6 +3,17 @@ import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/core/history/
 import { generateUUID } from "@/game/uuid";
 import { getCareerStats } from "@/core/horse/stats";
 
+/**
+ * Record a race result in the seasonal history.
+ * Only records Grade 1 races for historical tracking.
+ *
+ * @param race - The race that was run
+ * @param result - Position and time data for all finishers
+ * @param runners - Runner objects for the race
+ * @param horses - Global horse collection for metadata lookup
+ * @param day - Current game day
+ * @returns SeasonRecord object if recorded, otherwise null
+ */
 export function recordRaceHistory(
   race: Race,
   result: Array<{ horseId: string; position: number; time: number }>,
@@ -36,6 +47,13 @@ export function recordRaceHistory(
   };
 }
 
+/**
+ * Check if a horse qualifies for the Hall of Fame based on its career stats.
+ *
+ * @param horse - The horse to evaluate
+ * @param day - Current game day
+ * @returns HallOfFameEntry if inducted, otherwise null
+ */
 export function checkHallOfFameInduction(
   horse: Horse,
   day: number
@@ -66,6 +84,17 @@ export function checkHallOfFameInduction(
   return null;
 }
 
+/**
+ * Check if a race result sets a new track record for its distance and surface.
+ *
+ * @param race - The race that was run
+ * @param winnerId - ID of the winning horse
+ * @param winnerName - Name of the winning horse
+ * @param time - Final winning time
+ * @param day - Current game day
+ * @param existingRecords - Current global track record collection
+ * @returns New TrackRecord if a record was set, otherwise null
+ */
 export function checkTrackRecord(
   race: Race,
   winnerId: string,

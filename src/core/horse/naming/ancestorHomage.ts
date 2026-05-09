@@ -16,6 +16,10 @@ import { ABSTRACT_TERMS, RACING_SPIRIT_NOUNS, RACING_SPIRIT_ADJECTIVES } from ".
 /**
  * Extracts a significant key word from a horse name.
  * Filters out short words and prefers the last word or longest word.
+ *
+ * @param name - The horse name to extract from
+ * @param rng - Random number generator for selection
+ * @returns A single significant word from the name
  */
 function extractKeyWord(name: string, rng: Rng): string {
   const words = name.split(" ").filter((w) => w.length > 2);

@@ -2,11 +2,16 @@ import type { Horse } from "@/game/types";
 import { TRAIT_SCORE } from "@/core/genetics/phenotype";
 
 /**
- * Calculate genetic compatibility based on horse genome research
+ * Calculate genetic compatibility based on horse genome research.
+ *
  * Based on the Wikipedia article on Horse Genome which identified:
  * - Genes governing sensory perception, signal transduction, and immunity
  * - Breed-specific genetic variations (1 million SNPs cataloged)
  * - Leopard complex (Lp) gene linked to TRPM1 and CSNB risk
+ *
+ * @param sire - The sire horse data
+ * @param dam - The dam horse data
+ * @returns Object containing compatibility score, description, and warnings
  */
 export function calculateGeneticCompatibility(
   sire: Horse,
@@ -68,6 +73,13 @@ export function calculateGeneticCompatibility(
   };
 }
 
+/**
+ * Helper to evaluate a genetic trait score from parental traits.
+ *
+ * @param sireTrait - Genetic trait identifier for sire
+ * @param damTrait - Genetic trait identifier for dam
+ * @returns Averaged trait score (0-1)
+ */
 function evaluateGeneticTrait(sireTrait: string | undefined, damTrait: string | undefined): number {
   const sireValue = TRAIT_SCORE[sireTrait || "fair"] ?? 0.5;
   const damValue = TRAIT_SCORE[damTrait || "fair"] ?? 0.5;

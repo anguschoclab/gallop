@@ -106,6 +106,9 @@ export function computeFounderInfluence(
  * 
  * Filters for horses that have reached a minimum threshold of immediate progeny 
  * quality (e.g., Blue Hens or elite Sires).
+ *
+ * @param horses - Population of horses to analyze
+ * @returns Array of horses identified as potential founders
  */
 export function identifyFounders(horses: Horse[]): Horse[] {
   return horses.filter(h => {

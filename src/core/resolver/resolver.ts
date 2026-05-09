@@ -40,9 +40,11 @@ export interface ResolverContext {
 }
 
 /**
- * Apply a single impact to the state using Immer for immutability
- * @param state
- * @param impact
+ * Apply a single impact to the state using Immer for immutability.
+ *
+ * @param state - Current game state
+ * @param impact - Impact to apply
+ * @returns Updated game state
  */
 function applyImpact(state: GameState, impact: AnyImpact): GameState {
   return produce(state, (draft) => {

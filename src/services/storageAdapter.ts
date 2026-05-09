@@ -19,7 +19,9 @@ const GAME_STATE_FILENAME = "gameState.json";
 let opfsInitialized = false;
 
 /**
- * Initialize storage adapter
+ * Initialize storage adapter.
+ *
+ * @returns Promise resolving when OPFS is initialized
  */
 async function initializeStorage(): Promise<void> {
   if (opfsInitialized) return;
@@ -29,7 +31,9 @@ async function initializeStorage(): Promise<void> {
 }
 
 /**
- * Load game state from OPFS
+ * Load game state from OPFS.
+ *
+ * @returns Promise resolving to GameState or null if load fails
  */
 export async function loadGameState(): Promise<GameState | null> {
   await initializeStorage();
@@ -43,7 +47,10 @@ export async function loadGameState(): Promise<GameState | null> {
 }
 
 /**
- * Save game state to OPFS
+ * Save game state to OPFS.
+ *
+ * @param state - The game state object to persist
+ * @returns Promise resolving when save is complete
  */
 export async function saveGameState(state: GameState): Promise<void> {
   await initializeStorage();
@@ -57,7 +64,9 @@ export async function saveGameState(state: GameState): Promise<void> {
 }
 
 /**
- * Clear game state from OPFS
+ * Clear game state from OPFS.
+ *
+ * @returns Promise resolving when state is deleted
  */
 export async function clearGameState(): Promise<void> {
   await initializeStorage();
@@ -71,7 +80,9 @@ export async function clearGameState(): Promise<void> {
 }
 
 /**
- * Load race filters from localStorage (always localStorage)
+ * Load race filters from localStorage (always localStorage).
+ *
+ * @returns Object mapping filter keys to values
  */
 export function loadRaceFilters(): Record<string, string> {
   try {
@@ -86,7 +97,9 @@ export function loadRaceFilters(): Record<string, string> {
 }
 
 /**
- * Save race filters to localStorage (always localStorage)
+ * Save race filters to localStorage (always localStorage).
+ *
+ * @param filters - Object mapping filter keys to values
  */
 export function saveRaceFilters(filters: Record<string, string>): void {
   try {
@@ -97,7 +110,9 @@ export function saveRaceFilters(filters: Record<string, string>): void {
 }
 
 /**
- * Load race history limit from localStorage (always localStorage)
+ * Load race history limit from localStorage (always localStorage).
+ *
+ * @returns Number of race records to keep (10, 20, or 50)
  */
 export function loadRaceHistoryLimit(): number {
   try {
@@ -115,7 +130,9 @@ export function loadRaceHistoryLimit(): number {
 }
 
 /**
- * Save race history limit to localStorage (always localStorage)
+ * Save race history limit to localStorage (always localStorage).
+ *
+ * @param limit - Number of race records to keep
  */
 export function saveRaceHistoryLimit(limit: number): void {
   try {
@@ -126,7 +143,9 @@ export function saveRaceHistoryLimit(limit: number): void {
 }
 
 /**
- * Load day jump value from localStorage (always localStorage)
+ * Load day jump value from localStorage (always localStorage).
+ *
+ * @returns The stored day jump value or undefined
  */
 export function loadDayJump(): string | undefined {
   try {
@@ -141,7 +160,9 @@ export function loadDayJump(): string | undefined {
 }
 
 /**
- * Save day jump value to localStorage (always localStorage)
+ * Save day jump value to localStorage (always localStorage).
+ *
+ * @param value - The day jump string to save
  */
 export function saveDayJump(value: string): void {
   try {
@@ -165,7 +186,9 @@ export function clearSettings(): void {
 }
 
 /**
- * Clear all game data (both OPFS and localStorage)
+ * Clear all game data (both OPFS and localStorage).
+ *
+ * @returns Promise resolving when all data is cleared
  */
 export async function clearAllGameData(): Promise<void> {
   await clearGameState();
@@ -187,7 +210,9 @@ export interface WizardState {
 }
 
 /**
- * Load wizard state from localStorage
+ * Load wizard state from localStorage.
+ *
+ * @returns WizardState object or null if not found
  */
 export function loadWizardState(): WizardState | null {
   try {
@@ -202,7 +227,9 @@ export function loadWizardState(): WizardState | null {
 }
 
 /**
- * Save wizard state to localStorage
+ * Save wizard state to localStorage.
+ *
+ * @param state - The wizard state object to persist
  */
 export function saveWizardState(state: WizardState): void {
   try {

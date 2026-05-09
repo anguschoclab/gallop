@@ -43,6 +43,9 @@ import type { ManagerReputation } from "@/core/reputation";
 import { createTransaction } from "@/core/transactions";
 import type { Transaction } from "@/core/transactions";
 
+/**
+ * Props for the generateRaceImpacts function.
+ */
 export interface GenerateRaceImpactsProps {
   race: Race;
   result: Array<{ horseId: string; position: number; time: number }>;
@@ -58,6 +61,24 @@ export interface GenerateRaceImpactsProps {
   calibratedPars: Record<number, number>;
 }
 
+/**
+ * Generate all impacts resulting from a completed race.
+ *
+ * @param props - Impact generation properties
+ * @param props.race - The completed race
+ * @param props.result - Final race result positions and times
+ * @param props.runners - The field of runners with lane/barrier data
+ * @param props.horses - Current horse population
+ * @param props.jockeys - Current jockey population
+ * @param props.newDay - Game day of the race
+ * @param props.stateCash - Current player cash
+ * @param props.stateReputation - Current manager reputation
+ * @param props.hiredStaff - Active staff bonuses
+ * @param props.rng - Random number generator
+ * @param props.snapshots - Optional detailed race snapshots
+ * @param props.calibratedPars - Speed pars for Beyer calculation
+ * @returns Array of impacts to be applied to the game state
+ */
 export function generateRaceImpacts({
   race,
   result,

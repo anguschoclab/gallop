@@ -18,7 +18,11 @@ export interface RaceFilterServiceDependencies {
 }
 
 /**
- * Get filtered and sorted races based on criteria
+ * Get filtered and sorted races based on criteria.
+ *
+ * @param dependencies - Context dependencies (races and current day)
+ * @param filters - Active filter criteria
+ * @returns Object containing upcoming and past races
  */
 export function getFilteredRaces(
   dependencies: RaceFilterServiceDependencies,
@@ -36,7 +40,11 @@ export function getFilteredRaces(
 }
 
 /**
- * Get races grouped by track
+ * Get races grouped by track.
+ *
+ * @param dependencies - Context dependencies
+ * @param filters - Active filter criteria
+ * @returns Record mapping track names to arrays of races
  */
 export function getRacesByTrack(
   dependencies: RaceFilterServiceDependencies,
@@ -66,7 +74,11 @@ export function getRacesByTrack(
 }
 
 /**
- * Get races grouped by month
+ * Get races grouped by month.
+ *
+ * @param dependencies - Context dependencies
+ * @param filters - Active filter criteria
+ * @returns Record mapping month names to arrays of races
  */
 export function getRacesByMonth(
   dependencies: RaceFilterServiceDependencies,

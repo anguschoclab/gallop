@@ -64,11 +64,24 @@ export type GradedRace = {
   fieldSize?: number; // Real-life field size for this race (defaults to 12 if not specified)
 };
 
+/**
+ * Calculate the day of the year (1-365).
+ *
+ * @param month - Month (1-12)
+ * @param day - Day of month
+ * @returns Day of the year
+ */
 function doy(month: number, day: number): number {
   const cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
   return cum[month - 1] + day;
 }
 
+/**
+ * Get the country for a given track name.
+ *
+ * @param track - The track name
+ * @returns Country name
+ */
 function getCountry(track: string): string {
   const trackToCountry: Record<string, string> = {
     // Canada

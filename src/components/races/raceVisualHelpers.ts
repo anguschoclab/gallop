@@ -138,6 +138,7 @@ export function getAnimationDuration(velocity: number): string {
  * @param distance - Total race distance in meters
  * @param simTime - Current simulation time
  * @param classBonus - Class bonus for the race
+ * @param calibratedPars - Speed pars for Beyer calculation
  * @returns Projected Beyer figure, or null if calculation is not possible
  */
 export function projectedBeyer(

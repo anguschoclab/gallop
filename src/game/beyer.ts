@@ -71,6 +71,10 @@ export function parTime(distance: number, calibratedPars: Record<number, number>
  * Output clamped to 30-125 (Beyer "Big Figs" rarely exceed 120).
  *
  * @param input - Beyer calculation parameters
+ * @param input.distance - Race distance in meters
+ * @param input.finishTime - Finish time in seconds
+ * @param input.classBonus - Optional grade/stakes uplift
+ * @param input.calibratedPars - Optional calibrated par times
  * @returns Beyer figure (30-125)
  */
 export function beyerFigure({

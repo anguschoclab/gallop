@@ -1,10 +1,14 @@
 import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeData";
 
 /**
- * Calculate founder effect score
+ * Calculate founder effect score.
+ *
  * Based on the Wikipedia article on Foundation Stock which explains the founder effect:
  * "The loss of genetic variation that occurs when a new population is established by a very small number of individuals"
- * Founder effect creates standardized breeds through fixation of traits, but excessive inbreeding can make populations vulnerable
+ *
+ * @param sireName - Name of the sire
+ * @param damName - Name of the dam
+ * @returns Object containing diversity score, description, and optional warning
  */
 export function calculateFounderEffect(
   sireName: string,
@@ -21,6 +25,13 @@ export function calculateFounderEffect(
   const sireAncestors = new Set<string>();
   const damAncestors = new Set<string>();
 
+  /**
+   * Internal recursive helper to collect ancestors up to a specified depth.
+   *
+   * @param horse - Current horse in pedigree
+   * @param depth - Current recursion depth
+   * @param ancestors - Set to collect ancestor names in
+   */
   function collectAncestors(
     horse: PedigreeHorse | undefined,
     depth: number = 0,

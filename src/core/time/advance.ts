@@ -11,7 +11,12 @@
 import type { GameState, Race } from "@/game/types";
 
 /**
- * Pre-compute player race days for O(1) lookup during multi-day advance
+ * Pre-compute player race days for O(1) lookup during multi-day advance.
+ *
+ * @param races - All races in the game
+ * @param startDay - Starting day of the range
+ * @param endDay - Ending day of the range
+ * @returns Set of day numbers where player has at least one entry
  */
 export function computePlayerRaceDays(
   races: Race[],
@@ -33,8 +38,15 @@ export function computePlayerRaceDays(
 }
 
 /**
- * Advance multiple days with player race detection
- * Returns the number of days actually advanced (may be less than requested if player race encountered)
+ * Advance multiple days with player race detection.
+ *
+ * Advancing may be less than requested if a player race is encountered.
+ *
+ * @param state - Current game state
+ * @param daysToAdvance - Number of days requested to advance
+ * @param advanceDayFn - Function to call for each day advancement
+ * @param headless - Whether to ignore player races (defaults to false)
+ * @returns Result object with days advanced and race detection info
  */
 export function advanceMultipleDaysWithRaceDetection(
   state: GameState,

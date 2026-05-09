@@ -88,7 +88,11 @@ export function getVisibleStats(horse: Horse): (keyof HorseStats)[] {
 }
 
 /**
- * Generate scouting notes flavortext
+ * Generate descriptive scouting notes based on horse state and report accuracy.
+ *
+ * @param horse - The horse being scouted
+ * @param accuracy - The accuracy of the scouting report (0-1)
+ * @returns Flavortext scouting notes string
  */
 function generateScoutNotes(horse: Horse, accuracy: number): string {
   const notes: string[] = [];

@@ -95,6 +95,12 @@ import { clamp } from "@/game/math";
 
 // --- Internal Helpers ---
 
+/**
+ * Resolve high-level phenotype traits from a genotype.
+ *
+ * @param genotype - The genetic blueprint to resolve traits from
+ * @returns Object containing heart score, fiber bias, trainability, and other resolved traits
+ */
 function resolveDnaTraits(genotype: Genotype) {
   return {
     heartScore: resolveHeartScore(genotype.heart),
@@ -127,6 +133,7 @@ function resolveDnaTraits(genotype: Genotype) {
  *
  * @param genotype - The genetic blueprint containing all DNA information
  * @param rng - Random number generator for deterministic variation
+ * @param opts - Configuration options for the horse
  * @param opts.name - Optional horse name (defaults to "Unnamed")
  * @param opts.age - Optional horse age in years (defaults to 2)
  * @param opts.gender - Optional horse gender (defaults to "colt")
@@ -227,6 +234,7 @@ export function createHorseFromDNA(
  * function for creating horses for the market, starter stables, or other procedural
  * generation needs. It uses tier-based generation to control quality distribution.
  *
+ * @param opts - Generation options
  * @param opts.tier - Quality tier affecting stat ranges (defaults to "budget")
  * @param opts.owned - Whether the horse is player-owned (defaults to false)
  * @param opts.hemisphere - Racing hemisphere (defaults to random)
@@ -285,6 +293,7 @@ export function generateHorse(
  * @param rng - Random number generator for deterministic variation
  * @param npcAIManager - Optional AI manager for advanced decision-making
  * @param currentDay - Optional current game day for age calculations
+ * @param opts - Generation overrides
  * @param opts.tier - Override stable tier for generation (defaults to stable.tier)
  * @param opts.forcedAge - Force specific age instead of random
  * @param opts.forcedGender - Force specific gender instead of random

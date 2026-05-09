@@ -27,9 +27,11 @@ import {
 } from "@/game/constants/gameConstants";
 
 /**
- * Helper function to get regional system from country string
- * Maps country to regional system without requiring a full Track object
- * @param country
+ * Helper function to get regional system from country string.
+ * Maps country to regional system without requiring a full Track object.
+ *
+ * @param country - Country name
+ * @returns The regional system associated with the country
  */
 function getRegionalSystemFromCountry(country: string): RegionalSystem {
   // Create a minimal Track-like object for getRegionalSystem
@@ -45,12 +47,13 @@ export type PregnancyResult = {
 };
 
 /**
- * Resolves pregnancies that are due on the current day
- * Handles live foals, stillbirths, and live foal guarantee retries
+ * Resolves pregnancies that are due on the current day.
+ * Handles live foals, stillbirths, and live foal guarantee retries.
+ *
  * @param currentPregnancies - Current pregnancy records
  * @param horses - All horses in the game (for sire/dam lookup)
- * @param stables
- * @param usedNames
+ * @param stables - All stables (for naming context)
+ * @param usedNames - Set of used names to avoid duplicates
  * @param newDay - Current simulation day
  * @returns Result object with updated pregnancies, new foals, cash adjustments, and logs
  */

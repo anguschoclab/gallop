@@ -473,15 +473,12 @@ export function personalityConsignmentPolicy(
  *
  * Player horses must be consigned separately via consignHorse().
  *
- * @param saleId - Unique ID for the sale
- * @param name - Display name of the sale
  * @param day - Day the sale occurs
- * @param kind - Type of auction sale
  * @param stables - All NPC stables
- * @param horses - All horses in the game
- * @param pregnancies - All pregnancies (for broodmare sales)
+ * @param allHorses - All horses in the game
+ * @param kind - Type of auction sale
+ * @param name - Display name of the sale
  * @param rng - Random number generator
- * @param horseMap - Map of horse IDs to horses
  * @returns Generated auction sale with lots
  */
 export function generateAuctionLots(
@@ -574,11 +571,7 @@ export type ResolvedSale = {
  *
  * @param sale - The auction sale to resolve
  * @param stables - All NPC stables for bidding
- * @param horses - All horses in the game
- * @param horseMap - Map of horse IDs to horses
- * @param rng - Random number generator
- * @param npcAIManager - Optional AI manager for advanced bidding
- * @param currentDay - Current game day
+ * @param allHorses - All horses in the game
  * @returns Resolved sale with updated lots and log
  */
 export function resolveAuctionSale(

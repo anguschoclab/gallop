@@ -5,11 +5,10 @@
  */
 
 /**
- * formatCurrency — Format a number as currency with proper typography.
+ * Format a number as currency with proper typography.
  *
- * Design Bible:
- * - Uses IBM Plex Mono with tabular-nums
- * - Uses Intl.NumberFormat for consistent formatting
+ * @param amount - The numeric value to format
+ * @returns Formatted currency string (e.g. "$1,000")
  */
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -20,11 +19,11 @@ export function formatCurrency(amount: number): string {
 }
 
 /**
- * formatTime — Format race time with proper decimals.
+ * Format race time with proper decimal precision.
  *
- * Design Bible:
- * - Finish time: two decimal places (92.41s)
- * - Split time: one decimal place (23.4s)
+ * @param seconds - Total time in seconds
+ * @param decimals - Number of decimal places (1 or 2, defaults to 2)
+ * @returns Formatted time string (e.g. "92.41s")
  */
 export function formatTime(seconds: number, decimals: 1 | 2 = 2): string {
   return `${seconds.toFixed(decimals)}s`;

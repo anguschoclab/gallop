@@ -25,7 +25,10 @@ import { calculateOverallRating } from "@/core/horse/stats";
  * Southern hemisphere: age is calendar year - 1.
  *
  * @param horseHemisphere - The horse's hemisphere
- * @param restrictions - Optional race restrictions with minAge values
+ * @param restrictions - Optional race restrictions
+ * @param restrictions.minAge - General minimum age
+ * @param restrictions.minAgeNorthern - Minimum age override for Northern hemisphere
+ * @param restrictions.minAgeSouthern - Minimum age override for Southern hemisphere
  * @returns Minimum age for the horse to be eligible
  *
  * @example

@@ -8,7 +8,9 @@ let isOPFSAvailable: boolean = false;
 let initPromise: Promise<void> | null = null;
 
 /**
- * Initialize OPFS directory
+ * Initialize OPFS directory.
+ *
+ * @returns Promise resolving when OPFS is initialized
  */
 export async function initOPFS(): Promise<void> {
   if (initPromise) {
@@ -43,7 +45,9 @@ export async function initOPFS(): Promise<void> {
 }
 
 /**
- * Check if OPFS is available
+ * Check if OPFS is available.
+ *
+ * @returns Promise resolving to availability status
  */
 export async function checkOPFSAvailable(): Promise<boolean> {
   await initOPFS();
@@ -51,9 +55,11 @@ export async function checkOPFSAvailable(): Promise<boolean> {
 }
 
 /**
- * Write JSON data to OPFS file
- * @param filename
- * @param data
+ * Write JSON data to OPFS file.
+ *
+ * @param filename - Destination filename
+ * @param data - Serialized JSON data
+ * @returns Promise resolving when write is complete
  */
 export async function writeFile(filename: string, data: unknown): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -76,8 +82,10 @@ export async function writeFile(filename: string, data: unknown): Promise<void> 
 }
 
 /**
- * Read JSON data from OPFS file
- * @param filename
+ * Read JSON data from OPFS file.
+ *
+ * @param filename - Target filename
+ * @returns Promise resolving to deserialized data or null if not found
  */
 export async function readFile<T>(filename: string): Promise<T | null> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -99,8 +107,10 @@ export async function readFile<T>(filename: string): Promise<T | null> {
 }
 
 /**
- * Delete file from OPFS
- * @param filename
+ * Delete file from OPFS.
+ *
+ * @param filename - Target filename
+ * @returns Promise resolving to success status
  */
 export async function deleteFile(filename: string): Promise<boolean> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -118,7 +128,9 @@ export async function deleteFile(filename: string): Promise<boolean> {
 }
 
 /**
- * List all files in OPFS directory
+ * List all files in OPFS directory.
+ *
+ * @returns Promise resolving to array of filenames
  */
 export async function listFiles(): Promise<string[]> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -141,7 +153,9 @@ export async function listFiles(): Promise<string[]> {
 }
 
 /**
- * Clear all OPFS data
+ * Clear all OPFS data.
+ *
+ * @returns Promise resolving when all files are cleared
  */
 export async function clearAll(): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {

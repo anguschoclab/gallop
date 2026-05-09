@@ -23,12 +23,17 @@ export interface RaceSimulationResult {
 }
 
 /**
- * Simulates a race to completion
+ * Simulates a race to completion.
+ *
  * @param race - The race to simulate
  * @param horses - All horses in the game state
  * @param jockeys - All jockeys in the game state
+ * @param hiredStaff - Optional staff members with active bonuses
+ * @param npcStables - Optional array of NPC stables
+ * @param npcAIManager - Optional AI manager for NPC decision making
+ * @param currentDay - Current game day
  * @param recordSnapshots - Whether to record detailed race snapshots (default: only if player horse involved)
- * @returns Race simulation result
+ * @returns Race simulation result including final positions and optional snapshots
  */
 export function simulateRace(
   race: Race, 

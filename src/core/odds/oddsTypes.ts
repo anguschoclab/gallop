@@ -22,7 +22,14 @@ export interface BettingPool {
 }
 
 /**
- * Calculate win probability from horse stats
+ * Calculate win probability from horse stats.
+ *
+ * @param speed - Horse speed stat (0-100)
+ * @param stamina - Horse stamina stat (0-100)
+ * @param acceleration - Horse acceleration stat (0-100)
+ * @param form - Current horse form (0-100)
+ * @param classBonus - Optional bonus based on race class
+ * @returns Win probability as a number (0-1)
  */
 export function calculateWinProbability(
   speed: number,
@@ -48,7 +55,10 @@ export function calculateWinProbability(
 }
 
 /**
- * Calculate morning line odds from probability
+ * Calculate morning line odds from probability.
+ *
+ * @param probability - Win probability (0-1)
+ * @returns Numeric odds representing X-1
  */
 export function probabilityToMorningLine(probability: number): number {
   if (probability >= 0.5) return 1; // 1-1 or less
@@ -66,7 +76,10 @@ export function probabilityToMorningLine(probability: number): number {
 }
 
 /**
- * Format odds for display (e.g., "5-1", "2-1", "1-1")
+ * Format odds for display (e.g., "5-1", "2-1", "1-1").
+ *
+ * @param odds - Numeric odds to format
+ * @returns String representation (e.g. "5-1")
  */
 export function formatOdds(odds: number): string {
   if (odds < 1) return "1-1";
@@ -76,7 +89,11 @@ export function formatOdds(odds: number): string {
 }
 
 /**
- * Create a betting pool for a race
+ * Create a betting pool for a race.
+ *
+ * @param raceId - Unique identifier for the race
+ * @param horseProbabilities - Map of horse IDs to win probabilities
+ * @returns Initial BettingPool object
  */
 export function createBettingPool(
   raceId: string,
@@ -110,7 +127,12 @@ export function createBettingPool(
 }
 
 /**
- * Update odds based on betting activity (simulate betting flow)
+ * Update odds based on betting activity (simulate betting flow).
+ *
+ * @param pool - The current betting pool
+ * @param horseId - Horse ID receiving the bet
+ * @param betAmount - Amount of money bet in dollars
+ * @returns Updated BettingPool object
  */
 export function updateOdds(pool: BettingPool, horseId: string, betAmount: number): BettingPool {
   const newPool = { ...pool };

@@ -54,6 +54,7 @@ export interface NamingOptions {
  *
  * @param context - Naming context with pedigree and preferences
  * @param rng - Random number generator for deterministic variation
+ * @param options - Options for controlling name generation strategy
  * @param options.strategy - Naming strategy to use (defaults to "hybrid")
  * @param options.maxAttempts - Maximum validation attempts (defaults to 20)
  * @returns Generated horse name that passes validation
@@ -124,6 +125,13 @@ export function generateProceduralHorseName(
   return `${finalFallback.slice(0, 14)} ${rng.int(10, 99)}`;
 }
 
+/**
+ * Randomly selects a naming strategy based on the available context.
+ *
+ * @param context - Naming context with pedigree and preferences
+ * @param rng - Random number generator
+ * @returns Selected naming strategy
+ */
 function pickStrategy(context: NamingContext, rng: Rng): NamingOptions["strategy"] {
   const r = rng.next();
   if (context.sireName && context.damName && r < 0.4) return "pedigree";

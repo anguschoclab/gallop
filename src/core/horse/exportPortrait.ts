@@ -18,6 +18,7 @@ import { getOrDeriveAppearance } from "@/core/horse/proceduralPortrait";
  * canvas at the requested resolution, and saves via an anchor click.
  *
  * @param horse - Horse object with id, name, coatColor, markings, gender, and appearance
+ * @param options - Export configuration
  * @param options.view - View type: "head" or "full" (defaults to "full")
  * @param options.size - Image size in pixels (defaults to 1024)
  * @param options.filename - Optional custom filename (defaults to "{name}_{view}.png")
@@ -84,6 +85,12 @@ export async function exportHorsePortraitPng(
   }
 }
 
+/**
+ * Helper to load an image from a source URL into an HTMLImageElement.
+ *
+ * @param src - The image source URL
+ * @returns Promise that resolves with the loaded Image element
+ */
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();

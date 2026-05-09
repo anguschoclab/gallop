@@ -36,8 +36,13 @@ export interface PipelinePhase {
 }
 
 /**
- * Execute pipeline phases in order
- * Phases are sorted by order field before execution
+ * Execute pipeline phases in order.
+ *
+ * Phases are sorted by order field before execution.
+ *
+ * @param phases - Array of phases to execute
+ * @param context - Initial pipeline context
+ * @returns Final pipeline context after all phases execute
  */
 export function executePipeline(
   phases: PipelinePhase[],
@@ -75,7 +80,13 @@ export function executePipeline(
 }
 
 /**
- * Create a pipeline phase from a function
+ * Create a pipeline phase from a function.
+ *
+ * @param name - Human-readable name of the phase
+ * @param order - Execution order (lower runs first)
+ * @param execute - The core execution function
+ * @param skipIf - Optional predicate to skip this phase
+ * @returns Complete PipelinePhase object
  */
 export function createPhase(
   name: string,
