@@ -26,10 +26,16 @@ export const useTrainingUsed = () => useGame((s: GameState) => s.trainingUsed);
  * Note: Uses type assertion to work around Zustand typing limitation with shallow comparison
  */
 
-export const useRacingState = () =>
-  useGameWithShallow((s: GameState) => ({
-    paceSamples: s.paceSamples,
-    calibratedPars: s.calibratedPars,
-    lastCalibrationDay: s.lastCalibrationDay,
-    trainingUsed: s.trainingUsed,
-  }));
+export const useRacingState = () => {
+  const paceSamples = useGame((s: GameState) => s.paceSamples);
+  const calibratedPars = useGame((s: GameState) => s.calibratedPars);
+  const lastCalibrationDay = useGame((s: GameState) => s.lastCalibrationDay);
+  const trainingUsed = useGame((s: GameState) => s.trainingUsed);
+
+  return {
+    paceSamples,
+    calibratedPars,
+    lastCalibrationDay,
+    trainingUsed,
+  };
+};

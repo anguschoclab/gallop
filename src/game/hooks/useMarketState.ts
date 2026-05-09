@@ -27,9 +27,14 @@ export const useScoutReports = () => useGame((s: GameState) => s.scoutReports ??
  * Note: Uses type assertion to work around Zustand typing limitation with shallow comparison
  */
 
-export const useMarketState = () =>
-  useGameWithShallow((s: GameState) => ({
-    market: s.market,
-    auctions: s.auctions ?? [],
-    scoutReports: s.scoutReports,
-  }));
+export const useMarketState = () => {
+  const market = useGame((s: GameState) => s.market);
+  const auctions = useGame((s: GameState) => s.auctions ?? EMPTY_ARRAY);
+  const scoutReports = useGame((s: GameState) => s.scoutReports);
+
+  return {
+    market,
+    auctions,
+    scoutReports,
+  };
+};

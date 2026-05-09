@@ -27,8 +27,12 @@ export const useTripleCrownHistory = () => useGameWithShallow((s) => s.triplecro
  * Note: Uses type assertion to work around Zustand typing limitation
  */
 
-export const useBreedingState = () =>
-  useGameWithShallow((s: GameState) => ({
-    pregnancies: s.pregnancies,
-    triplecrownHistory: s.triplecrownHistory ?? [],
-  }));
+export const useBreedingState = () => {
+  const pregnancies = useGame((s: GameState) => s.pregnancies);
+  const triplecrownHistory = useGame((s: GameState) => s.triplecrownHistory ?? EMPTY_ARRAY);
+
+  return {
+    pregnancies,
+    triplecrownHistory,
+  };
+};

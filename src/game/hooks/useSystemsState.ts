@@ -32,23 +32,35 @@ export const useIndustryMeanEarnings = () => useGame((s: GameState) => s.industr
  * Note: Uses type assertion to work around Zustand typing limitation with shallow comparison
  */
 
-export const useSystemsState = () =>
-  useGameWithShallow((s: GameState) => ({
-    npcStables: s.npcStables,
-    jockeys: s.jockeys ?? [],
-    awards: s.awards,
-    campaigns: s.campaigns ?? [],
-  }));
+export const useSystemsState = () => {
+  const npcStables = useGame((s: GameState) => s.npcStables);
+  const jockeys = useGame((s: GameState) => s.jockeys ?? EMPTY_ARRAY);
+  const awards = useGame((s: GameState) => s.awards);
+  const campaigns = useGame((s: GameState) => s.campaigns ?? EMPTY_ARRAY);
+
+  return {
+    npcStables,
+    jockeys,
+    awards,
+    campaigns,
+  };
+};
 
 /**
  * Settings action selectors for user preferences
  */
 export const useSettingsActions = () => {
-  return useGameWithShallow((s) => ({
-    updateDisplaySettings: s.updateDisplaySettings,
-    updateGameplaySettings: s.updateGameplaySettings,
-    updateNotificationSettings: s.updateNotificationSettings,
-    updateAudioSettings: s.updateAudioSettings,
-    resetSettings: s.resetSettings,
-  }));
+  const updateDisplaySettings = useGame((s) => s.updateDisplaySettings);
+  const updateGameplaySettings = useGame((s) => s.updateGameplaySettings);
+  const updateNotificationSettings = useGame((s) => s.updateNotificationSettings);
+  const updateAudioSettings = useGame((s) => s.updateAudioSettings);
+  const resetSettings = useGame((s) => s.resetSettings);
+
+  return {
+    updateDisplaySettings,
+    updateGameplaySettings,
+    updateNotificationSettings,
+    updateAudioSettings,
+    resetSettings,
+  };
 };

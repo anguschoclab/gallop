@@ -38,6 +38,7 @@ import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/state/coreState";
 
 import { shallow } from "zustand/shallow";
+import { useShallow } from "zustand/react/shallow";
 import { wrap, expose, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
@@ -323,14 +324,8 @@ export { hydrationComplete };
 // Export shallow for use in components that need to compare object/array selectors
 export { shallow };
 
-// Custom hook that supports shallow comparison for object/array selectors
 export const useGameWithShallow = <T>(selector: (state: StoreType) => T): T =>
-  (
-    useGame as unknown as (
-      selector: (state: StoreType) => T,
-      equalityFn: (a: T, b: T) => boolean,
-    ) => T
-  )(selector, shallow);
+  useGame(useShallow(selector));
 
 // Alias for backwards compatibility
 export { useGame as useGallopStore };

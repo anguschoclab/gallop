@@ -31,5 +31,9 @@ export const useExpenses = () => useGameWithShallow((s: GameState) => s.expenses
  * Note: Uses type assertion to work around Zustand typing limitation
  */
 
-export const useCoreState = () =>
-  useGameWithShallow((s: GameState) => ({ day: s.day, cash: s.cash }));
+export const useCoreState = () => {
+  const day = useGame((s: GameState) => s.day);
+  const cash = useGame((s: GameState) => s.cash);
+
+  return { day, cash };
+};
