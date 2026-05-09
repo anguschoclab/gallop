@@ -268,10 +268,3 @@ export function shouldTrainToday(
 
   return true;
 }
-: 5;
-
-    if (daysSinceTraining < minDaysBetween) return false;
-  }
-
-  return true;
-}

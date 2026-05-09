@@ -179,7 +179,3 @@ export function createBreedingSlice(
     },
   };
 }
-et({ activeBreedingProgram: updated });
-    },
-  };
-}

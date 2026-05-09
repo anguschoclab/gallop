@@ -453,11 +453,3 @@ export function createMarketSlice(
     },
   };
 }
-    set({ privateSaleOffers: offers });
-    },
-
-    setClaims: (claims) => {
-      set({ claims });
-    },
-  };
-}
