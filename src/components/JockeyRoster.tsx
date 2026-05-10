@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Search, Filter, UserCheck, Users, Palette, Info, ShieldCheck, Briefcase, ChevronRight, Zap } from "lucide-react";
 import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 import { cn } from "@/lib/utils";
@@ -210,15 +211,14 @@ export function JockeyRoster() {
                 {myJockeys.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filterList(myJockeys).map((j: any) => (
-                      <div key={j.id} className="relative group">
-                         <div className="absolute top-0 left-0 w-1 h-full bg-blue-500/20 group-hover:bg-blue-500 transition-colors z-10" />
-                         <JockeyCard
-                          jockey={j}
-                          isRetained
-                          actionLabel="RELEASE_CONTRACT"
-                          onAction={(jockey) => releaseJockey(jockey.id)}
-                        />
-                      </div>
+                      <JockeyCard
+                        key={j.id}
+                        jockey={j}
+                        isRetained
+                        actionLabel="RELEASE_CONTRACT"
+                        onAction={(jockey) => releaseJockey(jockey.id)}
+                        onClick={() => window.location.href = `/jockey/${j.id}`}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -233,14 +233,13 @@ export function JockeyRoster() {
               <TabsContent value="market" className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 focus-visible:outline-none">
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {filterList(market).map((j: any) => (
-                    <div key={j.id} className="relative group">
-                        <div className="absolute top-0 left-0 w-1 h-full bg-gold/10 group-hover:bg-gold transition-colors z-10" />
-                        <JockeyCard
-                        jockey={j}
-                        onAction={(jockey) => hireJockey(jockey.id, "retainer")}
-                        actionLabel="SECURE_RETAINER"
-                      />
-                    </div>
+                    <JockeyCard
+                      key={j.id}
+                      jockey={j}
+                      onAction={(jockey) => hireJockey(jockey.id, "retainer")}
+                      actionLabel="SECURE_RETAINER"
+                      onClick={() => navigate({ to: "/jockey/$jockeyId", params: { jockeyId: j.id } })}
+                    />
                   ))}
                 </div>
               </TabsContent>
@@ -248,5 +247,17 @@ export function JockeyRoster() {
         </main>
       </div>
     </div>
+  );
+}
+))}
+                </div>
+              </TabsContent>
+           </Tabs>
+        </main>
+      </div>
+    </div>
+  );
+}
+>
   );
 }

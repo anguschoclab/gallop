@@ -36,6 +36,9 @@ import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StableIndexRouteImport } from './routes/stable.index'
+import { Route as SireWatchIndexRouteImport } from './routes/sire-watch.index'
+import { Route as NpcStablesIndexRouteImport } from './routes/npc-stables.index'
 import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
 import { Route as AuctionIndexRouteImport } from './routes/auction.index'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
@@ -181,6 +184,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StableIndexRoute = StableIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StableRoute,
+} as any)
+const SireWatchIndexRoute = SireWatchIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SireWatchRoute,
+} as any)
+const NpcStablesIndexRoute = NpcStablesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NpcStablesRoute,
+} as any)
 const CalendarIndexRoute = CalendarIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -264,6 +282,9 @@ export interface FileRoutesByFullPath {
   '/stable/$horseId': typeof StableHorseIdRoute
   '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
+  '/npc-stables/': typeof NpcStablesIndexRoute
+  '/sire-watch/': typeof SireWatchIndexRoute
+  '/stable/': typeof StableIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -278,7 +299,6 @@ export interface FileRoutesByTo {
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
   '/new-game': typeof NewGameRoute
-  '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
@@ -286,8 +306,6 @@ export interface FileRoutesByTo {
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
-  '/sire-watch': typeof SireWatchRouteWithChildren
-  '/stable': typeof StableRouteWithChildren
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
   '/test-jockey-avatar': typeof TestJockeyAvatarRoute
@@ -300,6 +318,9 @@ export interface FileRoutesByTo {
   '/stable/$horseId': typeof StableHorseIdRoute
   '/auction': typeof AuctionIndexRoute
   '/calendar': typeof CalendarIndexRoute
+  '/npc-stables': typeof NpcStablesIndexRoute
+  '/sire-watch': typeof SireWatchIndexRoute
+  '/stable': typeof StableIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -339,6 +360,9 @@ export interface FileRoutesById {
   '/stable/$horseId': typeof StableHorseIdRoute
   '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
+  '/npc-stables/': typeof NpcStablesIndexRoute
+  '/sire-watch/': typeof SireWatchIndexRoute
+  '/stable/': typeof StableIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -379,6 +403,9 @@ export interface FileRouteTypes {
     | '/stable/$horseId'
     | '/auction/'
     | '/calendar/'
+    | '/npc-stables/'
+    | '/sire-watch/'
+    | '/stable/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -393,7 +420,6 @@ export interface FileRouteTypes {
     | '/jockeys'
     | '/market'
     | '/new-game'
-    | '/npc-stables'
     | '/race-browser'
     | '/races'
     | '/recap'
@@ -401,8 +427,6 @@ export interface FileRouteTypes {
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
-    | '/sire-watch'
-    | '/stable'
     | '/staff'
     | '/stallions'
     | '/test-jockey-avatar'
@@ -415,6 +439,9 @@ export interface FileRouteTypes {
     | '/stable/$horseId'
     | '/auction'
     | '/calendar'
+    | '/npc-stables'
+    | '/sire-watch'
+    | '/stable'
   id:
     | '__root__'
     | '/'
@@ -453,6 +480,9 @@ export interface FileRouteTypes {
     | '/stable/$horseId'
     | '/auction/'
     | '/calendar/'
+    | '/npc-stables/'
+    | '/sire-watch/'
+    | '/stable/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -678,6 +708,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stable/': {
+      id: '/stable/'
+      path: '/'
+      fullPath: '/stable/'
+      preLoaderRoute: typeof StableIndexRouteImport
+      parentRoute: typeof StableRoute
+    }
+    '/sire-watch/': {
+      id: '/sire-watch/'
+      path: '/'
+      fullPath: '/sire-watch/'
+      preLoaderRoute: typeof SireWatchIndexRouteImport
+      parentRoute: typeof SireWatchRoute
+    }
+    '/npc-stables/': {
+      id: '/npc-stables/'
+      path: '/'
+      fullPath: '/npc-stables/'
+      preLoaderRoute: typeof NpcStablesIndexRouteImport
+      parentRoute: typeof NpcStablesRoute
+    }
     '/calendar/': {
       id: '/calendar/'
       path: '/'
@@ -773,10 +824,12 @@ const CalendarRouteWithChildren = CalendarRoute._addFileChildren(
 
 interface NpcStablesRouteChildren {
   NpcStablesStableIdRoute: typeof NpcStablesStableIdRoute
+  NpcStablesIndexRoute: typeof NpcStablesIndexRoute
 }
 
 const NpcStablesRouteChildren: NpcStablesRouteChildren = {
   NpcStablesStableIdRoute: NpcStablesStableIdRoute,
+  NpcStablesIndexRoute: NpcStablesIndexRoute,
 }
 
 const NpcStablesRouteWithChildren = NpcStablesRoute._addFileChildren(
@@ -785,10 +838,12 @@ const NpcStablesRouteWithChildren = NpcStablesRoute._addFileChildren(
 
 interface SireWatchRouteChildren {
   SireWatchStallionIdRoute: typeof SireWatchStallionIdRoute
+  SireWatchIndexRoute: typeof SireWatchIndexRoute
 }
 
 const SireWatchRouteChildren: SireWatchRouteChildren = {
   SireWatchStallionIdRoute: SireWatchStallionIdRoute,
+  SireWatchIndexRoute: SireWatchIndexRoute,
 }
 
 const SireWatchRouteWithChildren = SireWatchRoute._addFileChildren(
@@ -797,10 +852,12 @@ const SireWatchRouteWithChildren = SireWatchRoute._addFileChildren(
 
 interface StableRouteChildren {
   StableHorseIdRoute: typeof StableHorseIdRoute
+  StableIndexRoute: typeof StableIndexRoute
 }
 
 const StableRouteChildren: StableRouteChildren = {
   StableHorseIdRoute: StableHorseIdRoute,
+  StableIndexRoute: StableIndexRoute,
 }
 
 const StableRouteWithChildren =
