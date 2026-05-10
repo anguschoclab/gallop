@@ -80,22 +80,25 @@ function NpcStableDetailPage() {
   const colts = stableHorses.filter((h: Horse) => isMaleHorse(h.gender));
   const fillies = stableHorses.filter((h: Horse) => isFemaleHorse(h.gender));
 
+  const tab = Route.useSearch({ select: (s) => s.tab });
+  const navigate = Route.useNavigate();
+
   return (
     <div className="space-y-6">
       {/* Back link */}
       <Link
         to="/npc-stables"
-        className="text-gold hover:underline mb-4 inline-flex items-center gap-1"
+        className="text-gold hover:underline inline-flex items-center gap-1"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Stables
       </Link>
 
       {/* Header */}
-      <div className="mb-8">
+      <div>
         <div className="flex items-start gap-4 mb-4">
           <div
-            className="w-16 h-16 rounded-full border-4 shadow-lg"
+            className="w-16 h-16 rounded-full border-4 shadow-lg shrink-0"
             style={{
               backgroundColor: stable.colors.primary,
               borderColor: stable.colors.secondary,
@@ -109,180 +112,281 @@ function NpcStableDetailPage() {
               <Badge className={getTierColor(stable.tier)}>{stable.tier.toUpperCase()}</Badge>
             </div>
             <p className="text-cream-muted mt-1">{stable.owner}</p>
-            <div className="flex items-center gap-4 mt-2 text-sm text-cream-muted">
+            <div className="flex items-center gap-4 mt-2 text-sm text-cream-muted flex-wrap">
               <span className="flex items-center gap-1">
                 <Globe className="w-4 h-4" />
                 {stable.country}
               </span>
-              <span className="flex items-center gap-1 font-[family-name:var(--font-mono)] tabular-nums">
+              <span className="flex items-center gap-1 font-mono tabular-nums">
                 <Users className="w-4 h-4" />
-                <NumericValue value={horses.length} /> horses
+                <NumericValue value={stableHorses.length} /> horses
               </span>
-              <span className="flex items-center gap-1 font-[family-name:var(--font-mono)] tabular-nums">
-                <DollarSign className="w-4 h-4" />{formatCurrency(stable.cash)}
+              <span className="flex items-center gap-1 font-mono tabular-nums">
+                <DollarSign className="w-4 h-4" />
+                {formatCurrency(stable.cash)}
               </span>
               <span className="text-fame">{getReputationStars(stable.reputation)}</span>
             </div>
           </div>
         </div>
-
-        {stable.description && (
-          <p className="text-cream-muted bg-t700 p-4 rounded-lg">{stable.description}</p>
-        )}
-
-        {/* Personality */}
-        <div className="mt-4 flex items-center gap-3">
-          <Badge
-            variant="outline"
-            className="flex items-center gap-1 px-3 py-1 border-gold-muted text-cream"
-          >
-            <Brain className="w-3 h-3" />
-            <span className="capitalize">{stable.personality.replace("-", " ")}</span>
-          </Badge>
-          <span className="text-sm text-cream-muted">
-            {PERSONALITY_CONFIG[stable.personality]?.description}
-          </span>
-          {stable.preferredDistance && (
-            <Badge className="text-xs bg-t700 text-cream">
-              Specialist: {stable.preferredDistance}m {stable.preferredSurface}
-            </Badge>
-          )}
-        </div>
       </div>
 
-      {/* Awards */}
-      <TrophyCase
-        awards={awards?.filter((a) => a.stableId === stableId) ?? []}
-        ownerName={stable.name}
-        variant="compact"
-        className="mb-6"
-      />
+      {/* Body: main + sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
+        <div className="space-y-6 min-w-0">
+          {/* Tab nav */}
+          <div className="flex flex-wrap gap-2 border-b border-gold-muted pb-2">
+            {(
+              [
+                { key: "overview", label: "Overview", icon: Building2 },
+                { key: "roster", label: "Roster", icon: ListChecks },
+                { key: "staff", label: "Staff", icon: Users },
+                { key: "history", label: "History", icon: History },
+              ] as const
+            ).map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => navigate({ search: { tab: key } })}
+                className={cn(
+                  "px-3 py-1.5 rounded-md text-sm flex items-center gap-2 transition-colors",
+                  tab === key
+                    ? "bg-gold text-t950"
+                    : "text-cream-muted hover:text-cream hover:bg-t700",
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </button>
+            ))}
+          </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card className="border-gold-muted">
-          <CardContent className="pt-4">
-            <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums">
-              <NumericValue value={stableHorses.length} />
-            </div>
-            <div className="text-sm text-cream-muted">Total Horses</div>
-          </CardContent>
-        </Card>
-        <Card className="border-gold-muted">
-          <CardContent className="pt-4">
-            <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums">
-              <NumericValue value={activeHorses.length} />
-            </div>
-            <div className="text-sm text-cream-muted">Active Horses</div>
-          </CardContent>
-        </Card>
-        <Card className="border-gold-muted">
-          <CardContent className="pt-4">
-            <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums">
-              <NumericValue value={colts.length} />
-            </div>
-            <div className="text-sm text-cream-muted">Colts/Horses</div>
-          </CardContent>
-        </Card>
-        <Card className="border-gold-muted">
-          <CardContent className="pt-4">
-            <div className="text-2xl font-bold font-[family-name:var(--font-mono)] tabular-nums">
-              <NumericValue value={fillies.length} />
-            </div>
-            <div className="text-sm text-cream-muted">Fillies/Mares</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Horses List */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-[family-name:var(--font-display)]">
-          <Building2 className="w-5 h-5" />
-          Horses
-        </h2>
-
-        <div className="space-y-3">
-          {stableHorses.map((horse: Horse) => {
-            const scoutCost = calculateScoutCost(horse, stable!);
-            const canScout = !horse.lastScoutedDay || day - horse.lastScoutedDay > 0;
-
-            // Find any active offer for this horse from the player
-            const activeOffer = privateSaleOffers.find(
-              (o: PrivateSaleOffer) =>
-                o.horseId === horse.id &&
-                o.fromStableId === undefined &&
-                (o.status === "pending" || o.status === "countered"),
-            );
-            const hasInAuction = !!horse.consignedSaleId;
-
-            const handleScout = () => {
-              const result = scoutHorse(horse.id);
-              if (result.success) {
-                toast.success(result.message);
-              } else {
-                toast.error(result.message);
-              }
-            };
-
-            return (
-              <div key={horse.id} className="space-y-2">
-                <div className="relative">
-                  <HorseCard horse={horse} variant="scout" showScoutInfo />
-                  <div className="absolute top-4 right-4 flex gap-2">
-                    {/* D2 — Make an Offer button */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setOfferHorse(horse)}
-                      disabled={!!activeOffer || hasInAuction}
-                      title={
-                        activeOffer
-                          ? "Offer pending"
-                          : hasInAuction
-                            ? "This horse is currently in a sale."
-                            : undefined
-                      }
-                      className="flex items-center gap-1"
-                    >
-                      <HandCoins className="w-4 h-4" />
-                      {activeOffer ? "Offer pending" : "Make an Offer"}
-                    </Button>
-                    {canScout && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={handleScout}
-                        disabled={cash < scoutCost}
-                        className="flex items-center gap-1"
-                      >
-                        <Eye className="w-4 h-4" />
-                        Scout ${scoutCost.toLocaleString()}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                {/* D2 — Counter offer card */}
-                {activeOffer && (
-                  <PrivateSaleCounterCard
-                    offer={activeOffer}
-                    horse={horse}
-                    stable={stable!}
-                    cash={cash}
-                    onRespond={respondToPrivateSale}
-                  />
+          {tab === "overview" && (
+            <div className="space-y-4">
+              {stable.description && (
+                <p className="text-cream-muted bg-t700 p-4 rounded-lg">{stable.description}</p>
+              )}
+              <div className="flex items-center gap-3 flex-wrap">
+                <Badge
+                  variant="outline"
+                  className="flex items-center gap-1 px-3 py-1 border-gold-muted text-cream"
+                >
+                  <Brain className="w-3 h-3" />
+                  <span className="capitalize">{stable.personality.replace("-", " ")}</span>
+                </Badge>
+                <span className="text-sm text-cream-muted">
+                  {PERSONALITY_CONFIG[stable.personality]?.description}
+                </span>
+                {stable.preferredDistance && (
+                  <Badge className="text-xs bg-t700 text-cream">
+                    Specialist: {stable.preferredDistance}m {stable.preferredSurface}
+                  </Badge>
                 )}
               </div>
-            );
-          })}
+
+              <TrophyCase
+                awards={awards?.filter((a) => a.stableId === stableId) ?? []}
+                ownerName={stable.name}
+                variant="compact"
+              />
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <StatTile label="Total Horses" value={stableHorses.length} />
+                <StatTile label="Active" value={activeHorses.length} />
+                <StatTile label="Colts/Horses" value={colts.length} />
+                <StatTile label="Fillies/Mares" value={fillies.length} />
+              </div>
+            </div>
+          )}
+
+          {tab === "roster" && (
+            <div className="space-y-3">
+              {stableHorses.map((horse: Horse) => {
+                const scoutCost = calculateScoutCost(horse, stable!);
+                const canScout = !horse.lastScoutedDay || day - horse.lastScoutedDay > 0;
+
+                const activeOffer = privateSaleOffers.find(
+                  (o: PrivateSaleOffer) =>
+                    o.horseId === horse.id &&
+                    o.fromStableId === undefined &&
+                    (o.status === "pending" || o.status === "countered"),
+                );
+                const hasInAuction = !!horse.consignedSaleId;
+
+                const handleScout = () => {
+                  const result = scoutHorse(horse.id);
+                  if (result.success) toast.success(result.message);
+                  else toast.error(result.message);
+                };
+
+                return (
+                  <div key={horse.id} className="space-y-2">
+                    <div className="relative">
+                      <HorseCard horse={horse} variant="scout" showScoutInfo />
+                      <div className="absolute top-4 right-4 flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setOfferHorse(horse)}
+                          disabled={!!activeOffer || hasInAuction}
+                          title={
+                            activeOffer
+                              ? "Offer pending"
+                              : hasInAuction
+                                ? "This horse is currently in a sale."
+                                : undefined
+                          }
+                          className="flex items-center gap-1"
+                        >
+                          <HandCoins className="w-4 h-4" />
+                          {activeOffer ? "Offer pending" : "Make an Offer"}
+                        </Button>
+                        {canScout && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleScout}
+                            disabled={cash < scoutCost}
+                            className="flex items-center gap-1"
+                          >
+                            <Eye className="w-4 h-4" />
+                            Scout ${scoutCost.toLocaleString()}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    {activeOffer && (
+                      <PrivateSaleCounterCard
+                        offer={activeOffer}
+                        horse={horse}
+                        stable={stable!}
+                        cash={cash}
+                        onRespond={respondToPrivateSale}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+              {stableHorses.length === 0 && (
+                <p className="text-cream-muted text-center py-8">
+                  No horses currently in this stable.
+                </p>
+              )}
+            </div>
+          )}
+
+          {tab === "staff" && (
+            <Card className="border-gold-muted">
+              <CardHeader>
+                <CardTitle className="text-lg">Staff Roster</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {Object.entries(stable.staff || {}).map(([role, name]) => (
+                    <div
+                      key={role}
+                      className="flex items-center justify-between p-3 bg-t700 rounded-md"
+                    >
+                      <span className="text-sm text-cream-muted capitalize">
+                        {role.replace(/_/g, " ")}
+                      </span>
+                      <span className="text-sm font-medium text-cream">
+                        {name || <span className="italic text-cream-muted">Vacant</span>}
+                      </span>
+                    </div>
+                  ))}
+                  {Object.keys(stable.staff || {}).length === 0 && (
+                    <p className="text-cream-muted italic text-sm">No staff information available.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {tab === "history" && (
+            <Card className="border-gold-muted">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <History className="w-5 h-5" /> Stable History
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-cream-muted">Founded</span>
+                  <span className="font-mono tabular-nums">{stable.founded}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-cream-muted">Reputation</span>
+                  <span className="font-mono tabular-nums">{stable.reputation}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-cream-muted">Cash on hand</span>
+                  <span className="font-mono tabular-nums">{formatCurrency(stable.cash)}</span>
+                </div>
+                <TrophyCase
+                  awards={awards?.filter((a) => a.stableId === stableId) ?? []}
+                  ownerName={stable.name}
+                  variant="compact"
+                />
+              </CardContent>
+            </Card>
+          )}
         </div>
 
-        {stableHorses.length === 0 && (
-          <p className="text-cream-muted text-center py-8">No horses currently in this stable.</p>
-        )}
+        {/* Sidebar */}
+        <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
+          <Card className="border-gold-muted">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm uppercase tracking-wide text-cream-muted">
+                Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <SidebarRow label="Tier">
+                <Badge className={getTierColor(stable.tier)}>{stable.tier}</Badge>
+              </SidebarRow>
+              <SidebarRow label="Country">{stable.country ?? "—"}</SidebarRow>
+              <SidebarRow label="Founded">{stable.founded}</SidebarRow>
+              <SidebarRow label="Reputation">{getReputationStars(stable.reputation)}</SidebarRow>
+              <SidebarRow label="Horses">{stableHorses.length}</SidebarRow>
+              <SidebarRow label="Cash">{formatCurrency(stable.cash)}</SidebarRow>
+            </CardContent>
+          </Card>
+
+          <Card className="border-gold-muted">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm uppercase tracking-wide text-cream-muted">
+                Quick Links
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <SidebarLink onClick={() => navigate({ search: { tab: "roster" } })} icon={ListChecks}>
+                Horses ({stableHorses.length})
+              </SidebarLink>
+              <SidebarLink onClick={() => navigate({ search: { tab: "staff" } })} icon={Users}>
+                Staff
+              </SidebarLink>
+              <SidebarLink onClick={() => navigate({ search: { tab: "history" } })} icon={History}>
+                History
+              </SidebarLink>
+              <Link
+                to="/race-browser"
+                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm text-cream-muted hover:text-gold hover:bg-t700 transition-colors"
+              >
+                <CalendarDays className="w-4 h-4" /> Upcoming Races
+              </Link>
+              <Link
+                to="/hall-of-fame"
+                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm text-cream-muted hover:text-gold hover:bg-t700 transition-colors"
+              >
+                <Trophy className="w-4 h-4" /> Hall of Fame
+              </Link>
+            </CardContent>
+          </Card>
+        </aside>
       </div>
 
-      {/* D2 — Make an Offer dialog */}
+      {/* Make an Offer dialog */}
       {offerHorse && (
         <PrivateSaleOfferDialog
           horse={offerHorse}
@@ -294,5 +398,46 @@ function NpcStableDetailPage() {
         />
       )}
     </div>
+  );
+}
+
+function StatTile({ label, value }: { label: string; value: number }) {
+  return (
+    <Card className="border-gold-muted">
+      <CardContent className="pt-4">
+        <div className="text-2xl font-bold font-mono tabular-nums">
+          <NumericValue value={value} />
+        </div>
+        <div className="text-sm text-cream-muted">{label}</div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function SidebarRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex justify-between items-center text-sm">
+      <span className="text-cream-muted">{label}</span>
+      <span className="font-mono tabular-nums text-cream">{children}</span>
+    </div>
+  );
+}
+
+function SidebarLink({
+  onClick,
+  icon: Icon,
+  children,
+}: {
+  onClick: () => void;
+  icon: typeof ListChecks;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm text-cream-muted hover:text-gold hover:bg-t700 transition-colors text-left"
+    >
+      <Icon className="w-4 h-4" /> {children}
+    </button>
   );
 }
