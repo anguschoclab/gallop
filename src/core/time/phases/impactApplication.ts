@@ -12,6 +12,10 @@
 // Applies all impacts to the state using the resolver
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
+import {
+  HALL_OF_FAME_MAX_SIZE,
+  SEASON_RECORDS_MAX_SIZE,
+} from "@/game/constants/gameConstants";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 
 /**

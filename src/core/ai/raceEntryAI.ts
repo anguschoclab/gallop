@@ -9,13 +9,15 @@
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import { getPersonalityAIState } from "./personalitySystem";
+import { calculateOverallRating } from "@/core/horse/stats";
+import { RECENT_RACES_MAX_COUNT } from "@/game/constants/gameConstants";
 import {
   createLearningState,
   recordOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
+import { RECENT_RACES_MAX_COUNT } from "@/game/constants/gameConstants";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import { calculateTrackGeometryScore, calculateGradientScore } from "@/core/race/trackGeometry";
 import { applyPersonalityModifiers } from "@/core/stable/personalityModifiers";
@@ -198,7 +200,7 @@ export function updateHorseDevelopment(
 
   // Add race result
   const newRecentRaces = [...devTrack.recentRaces, { raceId: race.id, position, beyer }];
-  const trimmedRecentRaces = newRecentRaces.length > 5 ? newRecentRaces.slice(-5) : newRecentRaces;
+  const trimmedRecentRaces = newRecentRaces.length > RECENT_RACES_MAX_COUNT ? newRecentRaces.slice(-RECENT_RACES_MAX_COUNT) : newRecentRaces;
 
   // Update progress based on performance
   let currentProgress = devTrack.currentProgress;

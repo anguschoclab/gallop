@@ -23,24 +23,21 @@ import { randomRaceName } from "@/core/race/naming/legacyFallback";
  * and northAmerica.ts. Replaces the identical classConfig in horseGen.ts and
  * NA_CLASS_CONFIG in northAmerica.ts.
  */
-export const CLASS_CONFIG: Record<
-  RaceClass,
-  { entry: number; purse: number; minStat?: number; dist: [number, number] }
-> = {
-  Maiden: { entry: 100, purse: 2000, dist: [1000, 1400] },
-  MaidenSpecialWeight: { entry: 150, purse: 3000, minStat: 40, dist: [1000, 1600] },
-  MaidenClaiming: { entry: 100, purse: 2000, dist: [1000, 1400] },
-  MaidenOptionalClaiming: { entry: 120, purse: 2500, minStat: 35, dist: [1000, 1400] },
-  MaidenStakes: { entry: 500, purse: 10000, minStat: 45, dist: [1200, 1800] },
-  Allowance: { entry: 300, purse: 6000, minStat: 50, dist: [1200, 1800] },
-  OptionalClaiming: { entry: 350, purse: 7000, minStat: 52, dist: [1200, 1800] },
-  StarterAllowance: { entry: 250, purse: 5000, minStat: 48, dist: [1200, 1800] },
-  StarterHandicap: { entry: 200, purse: 4500, minStat: 45, dist: [1200, 2000] },
-  Stakes: { entry: 800, purse: 18000, minStat: 65, dist: [1400, 2200] },
-  Claiming: { entry: 150, purse: 3000, minStat: 40, dist: [1000, 1800] },
-  Handicap: { entry: 400, purse: 8000, minStat: 55, dist: [1200, 2400] },
-  Listed: { entry: 1500, purse: 40000, minStat: 72, dist: [1400, 2400] },
-  Group: { entry: 2000, purse: 50000, minStat: 78, dist: [1600, 2400] },
+export const CLASS_CONFIG: Record<RaceClass, { entry: number; purse: number; minStat?: number; dist: [number, number] }> = {
+  Maiden: { entry: ENTRY_MAIDEN, purse: PURSE_MAIDEN, dist: [1000, 1400] },
+  MaidenSpecialWeight: { entry: ENTRY_MAIDEN_SPECIAL_WEIGHT, purse: PURSE_MAIDEN_SPECIAL_WEIGHT, minStat: MINSTAT_MAIDEN_SPECIAL_WEIGHT, dist: [1000, 1600] },
+  MaidenClaiming: { entry: ENTRY_MAIDEN_CLAIMING, purse: PURSE_MAIDEN_CLAIMING, dist: [1000, 1400] },
+  MaidenOptionalClaiming: { entry: ENTRY_MAIDEN_OPTIONAL_CLAIMING, purse: PURSE_MAIDEN_OPTIONAL_CLAIMING, minStat: MINSTAT_MAIDEN_OPTIONAL_CLAIMING, dist: [1000, 1400] },
+  MaidenStakes: { entry: ENTRY_MAIDEN_STAKES, purse: PURSE_MAIDEN_STAKES, minStat: MINSTAT_MAIDEN_STAKES, dist: [1200, 1800] },
+  Allowance: { entry: ENTRY_ALLOWANCE, purse: PURSE_ALLOWANCE, minStat: MINSTAT_ALLOWANCE, dist: [1200, 1800] },
+  OptionalClaiming: { entry: ENTRY_OPTIONAL_CLAIMING, purse: PURSE_OPTIONAL_CLAIMING, minStat: MINSTAT_OPTIONAL_CLAIMING, dist: [1200, 1800] },
+  StarterAllowance: { entry: ENTRY_STARTER_ALLOWANCE, purse: PURSE_STARTER_ALLOWANCE, minStat: MINSTAT_STARTER_ALLOWANCE, dist: [1200, 1800] },
+  StarterHandicap: { entry: ENTRY_STARTER_HANDICAP, purse: PURSE_STARTER_HANDICAP, minStat: MINSTAT_STARTER_HANDICAP, dist: [1200, 2000] },
+  Stakes: { entry: ENTRY_STAKES, purse: PURSE_STAKES, minStat: MINSTAT_STAKES, dist: [1400, 2200] },
+  Claiming: { entry: ENTRY_CLAIMING, purse: PURSE_CLAIMING, minStat: MINSTAT_CLAIMING, dist: [1000, 1800] },
+  Handicap: { entry: ENTRY_HANDICAP, purse: PURSE_HANDICAP, minStat: MINSTAT_HANDICAP, dist: [1200, 2400] },
+  Listed: { entry: ENTRY_LISTED, purse: PURSE_LISTED, minStat: MINSTAT_LISTED, dist: [1400, 2400] },
+  Group: { entry: ENTRY_GROUP, purse: PURSE_GROUP, minStat: MINSTAT_GROUP, dist: [1600, 2400] },
   Graded: { entry: 0, purse: 0, dist: [1200, 2400] },
 };
 
