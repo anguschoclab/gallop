@@ -41,22 +41,22 @@ export const impactApplicationPhase: PipelinePhase = {
 
     // Cleanup: Cap other arrays to prevent memory bloat
     const cleanedState = { ...updatedContext.state };
-    if (cleanedState.seasonRecords && cleanedState.seasonRecords.length > 500) {
-      cleanedState.seasonRecords = cleanedState.seasonRecords.slice(-500);
+    if (cleanedState.seasonRecords && cleanedState.seasonRecords.length > SEASON_RECORDS_MAX_SIZE) {
+      cleanedState.seasonRecords = cleanedState.seasonRecords.slice(-SEASON_RECORDS_MAX_SIZE);
     }
-    if (cleanedState.scoutReports && cleanedState.scoutReports.length > 100) {
-      cleanedState.scoutReports = cleanedState.scoutReports.slice(-100);
+    if (cleanedState.scoutReports && cleanedState.scoutReports.length > SCOUT_REPORTS_MAX_SIZE) {
+      cleanedState.scoutReports = cleanedState.scoutReports.slice(-SCOUT_REPORTS_MAX_SIZE);
     }
-    if (cleanedState.triplecrownHistory && cleanedState.triplecrownHistory.length > 100) {
-      cleanedState.triplecrownHistory = cleanedState.triplecrownHistory.slice(-100);
+    if (cleanedState.triplecrownHistory && cleanedState.triplecrownHistory.length > TRIPLE_CROWN_HISTORY_MAX_SIZE) {
+      cleanedState.triplecrownHistory = cleanedState.triplecrownHistory.slice(-TRIPLE_CROWN_HISTORY_MAX_SIZE);
     }
     if (cleanedState.paceSamples) {
       // Pace samples is an object with arrays, clean each bucket
       const newPaceSamples: any = {};
       for (const key in cleanedState.paceSamples) {
         newPaceSamples[key] =
-          cleanedState.paceSamples[key].length > 100
-            ? cleanedState.paceSamples[key].slice(-100)
+          cleanedState.paceSamples[key].length > PACE_SAMPLES_MAX_SIZE
+            ? cleanedState.paceSamples[key].slice(-PACE_SAMPLES_MAX_SIZE)
             : cleanedState.paceSamples[key];
       }
       cleanedState.paceSamples = newPaceSamples;

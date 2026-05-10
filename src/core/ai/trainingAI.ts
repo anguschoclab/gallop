@@ -14,7 +14,7 @@
  */
 
 import type { Horse, Stable } from "@/game/types";
-import { calculateRaceRating } from "@/core/horse/stats";
+import { TRAINING_HISTORY_MAX_SIZE } from "@/game/constants/gameConstants";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
@@ -190,7 +190,7 @@ export function updateHorseTraining(
     },
   ];
 
-  // Trim history to last 10 trainings
+  // Trim history to last 10 trainings1010
   const trimmedHistory = newHistory.length > 10 ? newHistory.slice(-10) : newHistory;
 
   // Update focus based on recent training

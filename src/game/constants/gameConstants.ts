@@ -390,6 +390,37 @@ export const INACTIVITY_RETIREMENT_DAYS = 90;
  */
 export const NAME_MIN_WORD_LENGTH = 2;
 
+/**
+ * Maximum parent name length for pedigree patterns
+ */
+export const PARENT_NAME_MAX_LENGTH = 10;
+
+/**
+ * Maximum training history size
+ */
+export const TRAINING_HISTORY_MAX_SIZE = 10;
+
+/**
+ * Maximum scout reports history size
+ */
+export const SCOUT_REPORTS_MAX_SIZE = 100;
+
+/**
+ * Maximum triple crown history size
+ */
+export const TRIPLE_CROWN_HISTORY_MAX_SIZE = 100;
+
+/**
+ * Maximum pace samples per bucket
+ */
+export const PACE_SAMPLES_MAX_SIZE = 100;
+
+/**
+ * Injury proneness thresholds for pricing modifiers
+ */
+export const INJURY_PRONENESS_LOW_THRESHOLD = 0.04;
+export const INJURY_PRONENESS_HIGH_THRESHOLD = 0.08;
+
 // ============================================================================
 // AGE
 // ============================================================================

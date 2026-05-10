@@ -9,6 +9,7 @@
  */
 
 import type { Rng } from "@/game/rng";
+import { PARENT_NAME_MAX_LENGTH } from "@/game/constants/gameConstants";
 
 /**
  * Generate a portmanteau from sire and dam names.
@@ -84,7 +85,7 @@ export function generateSoundAlike(parent: string, rng: Rng): string {
   const suffixes = ["ure", "it", "ic", "al", "on", "er", "ly", "is"];
   const suffix = suffixes[rng.int(0, suffixes.length - 1)];
 
-  if (parent.length > 10) {
+  if (parent.length > PARENT_NAME_MAX_LENGTH) {
     return parent.slice(0, 10) + suffix;
   }
 

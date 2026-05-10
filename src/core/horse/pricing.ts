@@ -94,8 +94,8 @@ export function horsePrice(h: Horse): number {
   if (h.conformation === "poor") bioMod -= 0.1;
   if (h.temperament === "poor") bioMod -= 0.1;
 
-  if (h.injuryProneness < 0.04) bioMod += 0.15;
-  if (h.injuryProneness > 0.08) bioMod -= 0.2;
+  if (h.injuryProneness < INJURY_PRONENESS_LOW_THRESHOLD) bioMod += 0.15;
+  if (h.injuryProneness > INJURY_PRONENESS_HIGH_THRESHOLD) bioMod -= 0.2;
 
   return Math.round((overall * 80 * ageMod * potMod * bioMod) / 50) * 50;
 }
