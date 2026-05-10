@@ -18,6 +18,7 @@ import { calculateAssignedWeight, MAX_HORSES_PER_STABLE_PER_RACE } from "@/core/
 import { calculateOptimalTactics } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { shouldEnterHorse } from "./npcRaceEntryHelpers";
+import { isHatedRival } from "@/core/stable/rivalry";
 
 /**
  * AI decision: Enter horses from a stable into a specific race.
@@ -128,10 +129,16 @@ export function runNpcRaceEntry(
     // Skip if race is full
     if (race.entries.length >= race.fieldSize) continue;
 
+    // Imperial Expansion: Check if player has an entry to trigger rivalry tactics
+    const playerEntry = race.entries.find(e => e.owned);
+
     // Each stable evaluates this race
     for (const stable of stables) {
       // Skip if stable has no horses
       if (stable.horses.length === 0) continue;
+
+      const stableAI = aiManager?.stableStates[stable.id];
+      const isRival = playerEntry && stableAI && isHatedRival(stableAI.friction);
 
       // Select horses to enter
       const horsesToEnter = selectHorsesForRaceEntry(stable, horseMap, race, pregnantIds);
@@ -173,7 +180,11 @@ export function runNpcRaceEntry(
 
         // Calculate tactics for NPC entry
         let tactics = "default";
-        if (aiManager && jockey) {
+        
+        // Imperial Expansion: Spoiler Tactic
+        if (isRival && horse.stats.speed > 70 && horse.stats.stamina < 50) {
+            tactics = "lead"; // Force a blistering pace to ruin the player's peaking horse
+        } else if (aiManager && jockey) {
           const stableState = aiManager.stableStates[stable.id];
           if (stableState?.jockeyStrategyAI) {
             tactics = calculateOptimalTactics(
@@ -204,4 +215,3 @@ export function runNpcRaceEntry(
 
   return updatedRaces;
 }
-

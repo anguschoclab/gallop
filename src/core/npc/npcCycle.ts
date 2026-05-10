@@ -24,6 +24,7 @@ import {
 } from "@/core/ai/facilityAI";
 import { upgradeFacility } from "@/core/facilities";
 import type { Facility } from "@/core/facilities/facilityTypes";
+import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
 
 /**
  * NPC Cycle Result
@@ -65,7 +66,7 @@ export function runNpcCycle(
   rng: Rng,
   raceEntryDaysAhead: number = 3,
   pregnantIds: Set<string> = new Set(),
-  aiManager: NpcAIManager = { stableStates: {}, globalDay: currentDay },
+  aiManager: NpcAIManager = { stableStates: {}, globalDay: currentDay, regionalKings: {} },
   npcFacilities?: Record<string, Record<string, Facility>>,
 ): NpcCycleResult {
   // Skip if no NPC stables
@@ -115,11 +116,59 @@ export function runNpcCycle(
   }
 
   // 4. AI state management
-  let updatedAiManager = {
+  let updatedAiManager: NpcAIManager = {
     ...aiManager,
     globalDay: currentDay,
     stableStates: { ...aiManager.stableStates },
+    regionalKings: { ...(aiManager.regionalKings || {}) },
   };
+
+  // --- REGIONAL DOMINANCE & FRICTION DECAY (Imperial Expansion) ---
+  for (const race of yesterdayRaces) {
+    const winner = race.result![0];
+    const region = race.country || "North America (East)";
+    const currentKingId = updatedAiManager.regionalKings[region];
+    
+    const winningHorse = horses.find(h => h.id === winner.horseId);
+    if (!winningHorse) continue;
+    const winningStableId = winningHorse.stableId || "player";
+    
+    if (winningStableId === currentKingId) {
+        // King defended their turf
+        const kingAI = updatedAiManager.stableStates[currentKingId];
+        if (kingAI) kingAI.winsAgainstPlayer = 0; 
+    } else {
+        // Challenger won!
+        if (winningStableId === "player") {
+            if (currentKingId && currentKingId !== "player") {
+                const kingAI = updatedAiManager.stableStates[currentKingId];
+                if (kingAI) kingAI.friction = Math.min(100, kingAI.friction + RIVALRY_CONSTANTS.FRICTION.WIN_GRADED_RACE_OVER_NPC);
+            }
+        } else {
+            const stable = npcStables.find(s => s.id === winningStableId);
+            if (stable) {
+                const stableAI = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
+                if (currentKingId === "player") {
+                    stableAI.winsAgainstPlayer++;
+                    if (stableAI.winsAgainstPlayer >= RIVALRY_CONSTANTS.DOMINANCE.UNSEAT_WIN_STREAK) {
+                        updatedAiManager.regionalKings[region] = winningStableId;
+                        stableAI.winsAgainstPlayer = 0;
+                    }
+                } else {
+                    updatedAiManager.regionalKings[region] = winningStableId;
+                }
+                stableAI.regionalPrestige[region] = (stableAI.regionalPrestige[region] || 0) + 1;
+                updatedAiManager.stableStates[stable.id] = stableAI;
+            }
+        }
+    }
+  }
+
+  // Decay friction for all stables
+  for (const id in updatedAiManager.stableStates) {
+      updatedAiManager.stableStates[id].friction *= RIVALRY_CONSTANTS.FRICTION.DECAY_RATE;
+  }
+  // --- END RIVALRY LOGIC ---
 
   // Check horses entered in claiming races and decide whether to withdraw
   const claimingRaces = races.filter(

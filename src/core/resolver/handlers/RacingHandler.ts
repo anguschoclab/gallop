@@ -27,7 +27,8 @@ export class RacingHandler implements ImpactHandler {
       "race_history",
       "claiming",
       "triple_crown_progress",
-      "tactics"
+      "tactics",
+      "jockey_affinity_gain"
     ].includes(type);
   }
 
@@ -87,12 +88,15 @@ export class RacingHandler implements ImpactHandler {
       }
 
       case "jockey_contract": {
-        const { jockeyId, stableId, contractUntil } = impactAny;
+        const { jockeyId, stableId, contractUntil, stableAffinity, isApprentice, loyalty } = impactAny;
         const jockey =
           lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
         if (jockey) {
           jockey.stableId = stableId;
           jockey.contractUntil = contractUntil;
+          if (stableAffinity !== undefined) jockey.stableAffinity = stableAffinity;
+          if (isApprentice !== undefined) jockey.isApprentice = isApprentice;
+          if (loyalty !== undefined) jockey.loyalty = loyalty;
         }
         break;
       }
@@ -173,6 +177,17 @@ export class RacingHandler implements ImpactHandler {
           if (entry) {
             entry.tactics = tactics;
           }
+        }
+        break;
+      }
+
+      case "jockey_affinity_gain": {
+        const { jockeyId, horseId, xp } = impactAny;
+        const jockey =
+          lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
+        if (jockey) {
+          if (!jockey.affinityMap) jockey.affinityMap = {};
+          jockey.affinityMap[horseId] = (jockey.affinityMap[horseId] || 0) + xp;
         }
         break;
       }

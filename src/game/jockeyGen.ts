@@ -142,6 +142,31 @@ export function generateJockey({
     careerWins,
     fame: Math.min(100, totalStats + careerWins / 100),
     ridingFee: Math.round(50 + Math.min(100, totalStats + careerWins / 100) * 10),
+    affinityMap: {},
+    stableAffinity: 0,
+    isApprentice: false,
+    loyalty: 100,
+  };
+}
+
+/**
+ * Generate an apprentice jockey (teenager, low stats, high potential for academy).
+ */
+export function generateApprentice({
+  rng,
+  region = "north_america",
+  usedNames,
+}: Omit<JockeyGenerationOptions, "tier">): Jockey {
+  const jockey = generateJockey({ tier: "budget", rng, region, usedNames });
+  return {
+    ...jockey,
+    age: rng.range(16, 18),
+    careerStarts: 0,
+    careerWins: 0,
+    fame: 10,
+    ridingFee: 50,
+    isApprentice: true,
+    loyalty: 100,
   };
 }
 

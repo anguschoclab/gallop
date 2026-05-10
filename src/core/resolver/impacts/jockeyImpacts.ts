@@ -46,8 +46,18 @@ export interface JockeyStatsImpact extends Impact {
   reason: string;
 }
 
+// Jockey affinity impact
+export interface JockeyAffinityImpact extends Impact {
+  type: "jockey_affinity_gain";
+  jockeyId: string;
+  horseId: string;
+  xp: number;
+  reason: string;
+}
+
 export type JockeyImpact =
   | JockeyContractImpact
   | JockeyAssignmentImpact
   | JockeySilkImpact
-  | JockeyStatsImpact;
+  | JockeyStatsImpact
+  | JockeyAffinityImpact;

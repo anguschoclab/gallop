@@ -57,4 +57,10 @@ export type Jockey = {
   fame: number;
   ridingFee: number;
   lastRaceDay?: number;
+
+  // Imperial Expansion: Relationships & Affinity
+  affinityMap: Record<string, number>; // horseId -> XP (The Hand)
+  stableAffinity: number; // 0-100, baseline bonus for any horse in the same stable (Retainers)
+  isApprentice: boolean; // Academy talent
+  loyalty: number; // 0-100, resistance to poaching
 };

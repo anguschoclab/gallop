@@ -45,7 +45,10 @@ export function runNpcTraining(
 
       const horse = updatedHorses[horseIndex];
 
-      // Skip if horse has been racing recently or low energy
+      // Skip if horse is too fatigued (Banister model)
+      if ((horse.fatigue ?? 0) > 60) continue;
+
+      // Skip if horse has low energy
       if (horse.energy < 40) continue;
 
       // Elite stables train more intelligently

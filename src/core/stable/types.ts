@@ -10,6 +10,7 @@
 
 import type { JockeySilk } from "@/core/jockey/types";
 import type { Archetype } from "@/core/breeding/archetypes";
+import type { Outpost } from "@/core/facilities/outpostTypes";
 
 export type StableTier = "elite" | "mid" | "budget";
 
@@ -42,6 +43,9 @@ export type Stable = {
   breedingArchetype?: Archetype["id"];
   staff: Record<import("@/core/staff/staffTypes").StaffRole, string | null>;
   lastBankruptcyInjectionDay?: number;
+  
+  // Imperial Expansion: Outposts
+  outposts: Outpost[];
 };
 
 export type BackstoryId = "inheritor" | "bloodstock_heir" | "claiming_trainer" | "bootstrapper";

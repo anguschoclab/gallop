@@ -23,6 +23,9 @@ import { generateUUID } from "@/game/uuid";
 import { createTransaction } from "@/core/transactions";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordTrainingOutcome } from "@/core/ai/trainingAI";
+import { BANISTER_CONSTANTS, calculateImpulse } from "@/core/health/banister";
+import { getOutpostSpecialty } from "@/core/facilities/outpostTypes";
+import { getBranchModifiers } from "@/core/facilities/facilityBranching";
 
 /**
  * Training Resolution Phase (Order 45)
@@ -31,6 +34,8 @@ import { recordTrainingOutcome } from "@/core/ai/trainingAI";
  * - Energy changes
  * - Cash changes (already deducted when intent was enqueued)
  * - Health status changes (OCD risk)
+ * - Banister impulses (fitness and fatigue)
+ * - Outpost Specialization bonuses
  */
 export const trainingResolutionPhase: PipelinePhase = {
   name: "trainingResolution",
@@ -79,6 +84,38 @@ export const trainingResolutionPhase: PipelinePhase = {
       
       const nutritionist = staffForStable.find(s => s.role === "nutritionist");
       const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
+
+      // --- BANISTER IMPULSES ---
+      if (intent.trainingType !== "rest") {
+        const intensity = BANISTER_CONSTANTS.WORKOUT_INTENSITY[intent.trainingType] ?? 10;
+        const fitnessDelta = calculateImpulse(intensity, BANISTER_CONSTANTS.FITNESS_K);
+        const fatigueDelta = calculateImpulse(intensity, BANISTER_CONSTANTS.FATIGUE_K);
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "fitness_change",
+          horseId: horse.id,
+          delta: fitnessDelta,
+          reason: `${intent.trainingType} training impulse`,
+        } as any);
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "fatigue_change",
+          horseId: horse.id,
+          delta: fatigueDelta,
+          reason: `${intent.trainingType} training impulse`,
+        } as any);
+      }
+      // --- END BANISTER IMPULSES ---
 
       // Record training expense (only for actual training, not rest)
       if (intent.trainingType !== "rest") {
@@ -239,12 +276,34 @@ export const trainingResolutionPhase: PipelinePhase = {
         // Apply main_track facility bonus and trainer bonus to training chance
         const facilities = state.facilities;
         const trackBonus = facilities ? getFacilityBonus(facilities, "main_track") : 0;
+        
+        // --- OUTPOST SPECIALIZATION (Imperial Expansion) ---
+        const npcStables = state.npcStables;
+        const stable = horse.stableId ? npcStables.find(s => s.id === horse.stableId) : state; // Player state hack for now
+        let branchMod = null;
+        if (stable && (stable as any).outposts && horse.outpostId) {
+            const outpost = (stable as any).outposts.find((o: any) => o.id === horse.outpostId);
+            if (outpost) {
+                const specialty = getOutpostSpecialty(outpost);
+                branchMod = getBranchModifiers(specialty);
+            }
+        }
+        // --- END SPECIALIZATION ---
+
         const trainingChance = 0.65 * horse.trainability * (1 + trackBonus + trainerBonus);
 
         if (gap > 0 && trainingRng.next() < trainingChance) {
           // Base gain with facility and workout bonuses
           let gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
           gain = Math.round(gain * (1 + trackBonus) * config.gainBonus);
+          
+          // Apply branch multiplier
+          if (branchMod) {
+              if (config.primary === "stamina" && branchMod.staminaGain) gain *= branchMod.staminaGain;
+              if (config.primary === "speed" && (branchMod as any).speedGain) gain *= (branchMod as any).speedGain;
+              gain = Math.round(gain);
+          }
+          
           totalGain += gain;
 
           impacts.push({

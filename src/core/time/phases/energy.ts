@@ -11,6 +11,7 @@
 import type { PipelineContext } from "../pipeline";
 import { getFacilityBonus } from "@/core/facilities";
 import { resolveEpmRisk } from "@/core/genetics/phenotype";
+import { BANISTER_CONSTANTS, decayValue, calculatePeakingIndex } from "@/core/health/banister";
 
 const RECOVERY_DAYS = 30;
 const COVERING_SICKNESS_DURATION = 7;
@@ -21,6 +22,7 @@ const ILLNESS_DURATION_MAX = 30;
  * Phase: Energy Restoration
  * Restore energy for all horses (35 points, capped at 100)
  * Also handles health status recovery (covering_sickness -> recovering -> healthy)
+ * Recalculates Banister fitness/fatigue decay.
  */
 export const energyPhase = {
   name: "energy",
@@ -36,7 +38,7 @@ export const energyPhase = {
         if (!staffByStable.has(stableId)) {
           staffByStable.set(stableId, []);
         }
-        staffByStable.get(stableId)!.push(staff);
+        staffByStable.get(staff.stableId)!.push(staff);
       }
     }
 
@@ -121,10 +123,34 @@ export const energyPhase = {
       const recoveryGain = baseRecoveryGain * (h.recoveryRate || 1.0);
       const newRecoveryPoints = Math.min(100, currentRecoveryPoints + recoveryGain);
 
+      // --- BANISTER DECAY ---
+      const currentFitness = h.fitness ?? 0;
+      const currentFatigue = h.fatigue ?? 0;
+
+      const newFitness = decayValue(currentFitness, BANISTER_CONSTANTS.FITNESS_TAU);
+      const newFatigue = decayValue(currentFatigue, BANISTER_CONSTANTS.FATIGUE_TAU);
+      const newPeakingIndex = calculatePeakingIndex(newFitness, newFatigue);
+      // --- END BANISTER DECAY ---
+
+      // --- ACCLIMATIZATION DECAY ---
+      if (h.outpostId) {
+          const stable = npcStables.find(s => s.id === stableId);
+          if (stable && (stable as any).outposts) {
+              const outpost = (stable as any).outposts.find((o: any) => o.id === h.outpostId);
+              if (outpost && outpost.acclimatizationDays?.[h.id] > 0) {
+                  outpost.acclimatizationDays[h.id]--;
+              }
+          }
+      }
+      // --- END ACCLIMATIZATION ---
+
       return {
-        ...h,
+      ...h,
         energy: newEnergy,
         recoveryPoints: newRecoveryPoints,
+        fitness: newFitness,
+        fatigue: newFatigue,
+        peakingIndex: newPeakingIndex,
         healthStatus: newHealthStatus,
         healthStatusDay:
           newHealthStatus !== h.healthStatus && newHealthStatus !== "healthy"

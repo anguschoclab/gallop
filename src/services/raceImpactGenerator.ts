@@ -42,6 +42,8 @@ import { createReputationEvent, calculateRaceWinReputation } from "@/core/reputa
 import type { ManagerReputation } from "@/core/reputation";
 import { createTransaction } from "@/core/transactions";
 import type { Transaction } from "@/core/transactions";
+import { getPeakingBeyerMultiplier } from "@/core/health/banister";
+import { AFFINITY_CONSTANTS } from "@/core/jockey/affinity";
 
 /**
  * Props for the generateRaceImpacts function.
@@ -166,7 +168,7 @@ export function generateRaceImpacts({
     impacts.push({
       id: generateUUID(),
       intentId: "",
-      day: newDay,
+      day,
       phase: "raceResolution",
       logLevel: "conditional",
       type: "form_change",
@@ -181,7 +183,7 @@ export function generateRaceImpacts({
       impacts.push({
         id: generateUUID(),
         intentId: "",
-        day: newDay,
+        day,
         phase: "raceResolution",
         logLevel: "conditional",
         type: "fame_change",
@@ -191,7 +193,7 @@ export function generateRaceImpacts({
       } as FameImpact);
     }
 
-    // Performance: Beyer calculation with inbreeding-based performance dampeners
+    // Performance: Beyer calculation with inbreeding-based performance dampeners and peaking multiplier
     const beyer = beyerFigure({
       distance: race.distance,
       finishTime: r.time,
@@ -200,7 +202,8 @@ export function generateRaceImpacts({
     });
     const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
     const dampener = inbreedingPerformanceDampener(inbreedingPattern);
-    const adjustedBeyer = Math.max(0, beyer - dampener);
+    const peakingMultiplier = getPeakingBeyerMultiplier(horse.peakingIndex ?? 0);
+    const adjustedBeyer = Math.max(0, Math.round((beyer - dampener) * peakingMultiplier));
 
     // Fatigue: Recovery points drain based on race distance and performance intensity (Beyer)
     const recoveryDrain = Math.min(30, Math.floor(race.distance / 100) + Math.floor(adjustedBeyer / 20));
@@ -429,6 +432,22 @@ export function generateRaceImpacts({
             metadata: { horseId: horse.id, raceId: race.id },
           } as TransactionImpact);
         }
+
+        // --- AFFINITY XP GAIN ---
+        const xpGain = AFFINITY_CONSTANTS.XP_PER_RACE + (r.position === 1 ? AFFINITY_CONSTANTS.XP_PER_WIN_BONUS : 0);
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "conditional",
+          type: "jockey_affinity_gain",
+          jockeyId: jockey.id,
+          horseId: horse.id,
+          xp: xpGain,
+          reason: `Raced ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,
+        } as any);
+        // --- END AFFINITY XP GAIN ---
       }
     }
 
@@ -443,7 +462,7 @@ export function generateRaceImpacts({
         impacts.push({
           id: generateUUID(),
           intentId: "",
-          day: newDay,
+          day,
           phase: "raceResolution",
           logLevel: "conditional",
           type: "blue hen_status",
@@ -483,7 +502,7 @@ export function generateRaceImpacts({
                   lifetimeG1Foals: newG1Foals,
                 },
               },
-              { horses, npcStables: [] },
+              { horses: Array.from(horseMap.values()), npcStables: [] },
             )
           : sire.stud.standingFee;
 
@@ -609,7 +628,7 @@ export function generateRaceImpacts({
   }
 
   // 10. Narrative: Dynamic news generation for major races
-  const newsItem = generateRaceNews(race, result, horses, newDay);
+  const newsItem = generateRaceNews(race, result, Array.from(horseMap.values()), newDay);
   if (newsItem) {
     impacts.push({
       id: generateUUID(),
@@ -624,4 +643,3 @@ export function generateRaceImpacts({
 
   return impacts;
 }
-

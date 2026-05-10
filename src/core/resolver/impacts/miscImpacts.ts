@@ -102,6 +102,27 @@ export interface AuctionResolutionImpact extends Impact {
   reason: string;
 }
 
+// Transport impact - Imperial Expansion
+export interface TransportImpact extends Impact {
+  type: "transport_horse";
+  horseId: string;
+  fromOutpostId: string;
+  toOutpostId: string;
+  fatigueSpike: number;
+  acclimatizationDays: number;
+  reason: string;
+}
+
+// Outpost impact - Imperial Expansion
+export interface OutpostImpact extends Impact {
+  type: "outpost_action";
+  stableId: string;
+  action: "create" | "upgrade_slot" | "assign_trainer";
+  outpostId: string;
+  metadata?: Record<string, any>;
+  reason: string;
+}
+
 export type MiscImpact =
   | NewsImpact
   | TrackRecordImpact
@@ -112,4 +133,6 @@ export type MiscImpact =
   | ScoutReportImpact
   | ConsignmentImpact
   | ConsignmentWithdrawalImpact
-  | AuctionResolutionImpact;
+  | AuctionResolutionImpact
+  | TransportImpact
+  | OutpostImpact;

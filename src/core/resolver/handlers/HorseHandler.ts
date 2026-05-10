@@ -31,6 +31,9 @@ export class HorseHandler implements ImpactHandler {
       "injury",
       "horse_creation",
       "recovery_change",
+      "fitness_change",
+      "fatigue_change",
+      "peaking_index_update",
       "beyer_update"
     ].includes(type);
   }
@@ -160,6 +163,30 @@ export class HorseHandler implements ImpactHandler {
         const { delta } = impactAny;
         if (horse) {
           horse.recoveryPoints = Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta));
+        }
+        break;
+      }
+
+      case "fitness_change": {
+        const { delta } = impactAny;
+        if (horse) {
+          horse.fitness = Math.max(0, (horse.fitness ?? 0) + delta);
+        }
+        break;
+      }
+
+      case "fatigue_change": {
+        const { delta } = impactAny;
+        if (horse) {
+          horse.fatigue = Math.max(0, (horse.fatigue ?? 0) + delta);
+        }
+        break;
+      }
+
+      case "peaking_index_update": {
+        const { value } = impactAny;
+        if (horse) {
+          horse.peakingIndex = value;
         }
         break;
       }

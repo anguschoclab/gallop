@@ -44,7 +44,13 @@ export function rollForInjury(
   if (eventType === "race") chance *= 2.0;
   if (eventType === "training") chance *= 1.2;
 
-  // Fatigue factor (horses under 60 energy are more prone)
+  // Fatigue factor (Banister model)
+  const fatigue = horse.fatigue ?? 0;
+  if (fatigue > 50) {
+    chance *= (1 + (fatigue - 50) / 100); // Risk increases linearly with fatigue > 50
+  }
+
+  // Energy factor (horses under 60 energy are more prone)
   if (horse.energy < 60) {
     chance *= 1.5;
   }

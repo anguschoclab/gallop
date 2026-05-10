@@ -166,6 +166,30 @@ export interface RecoveryImpact extends Impact {
   reason: string;
 }
 
+// Fitness impact - for Banister model
+export interface FitnessImpact extends Impact {
+  type: "fitness_change";
+  horseId: string;
+  delta: number;
+  reason: string;
+}
+
+// Fatigue impact - for Banister model
+export interface FatigueImpact extends Impact {
+  type: "fatigue_change";
+  horseId: string;
+  delta: number;
+  reason: string;
+}
+
+// Peaking index impact - for Banister model
+export interface PeakingIndexImpact extends Impact {
+  type: "peaking_index_update";
+  horseId: string;
+  value: number;
+  reason: string;
+}
+
 // Beyer impact - for tracking last race performance
 export interface BeyerImpact extends Impact {
   type: "beyer_update";
@@ -194,4 +218,7 @@ export type HorseImpact =
   | SeasonHistoryImpact
   | BlueHenImpact
   | RecoveryImpact
+  | FitnessImpact
+  | FatigueImpact
+  | PeakingIndexImpact
   | BeyerImpact;

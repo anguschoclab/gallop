@@ -39,6 +39,7 @@ import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/game/uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import { PRIZE_SPLIT } from "./constants/gameConstants";
+import { getPeakingBeyerMultiplier } from "@/core/health/banister";
 
 /**
  * Resolves a race and applies impacts for live race simulation.
@@ -135,16 +136,18 @@ export function resolveLiveRaceWithImpacts(
       } as FameImpact);
     }
 
-    // Beyer calculation with inbreeding dampener
+    // Beyer calculation with inbreeding dampener and peaking multiplier
     const beyer = beyerFigure({
       distance: race.distance,
       finishTime: r.time,
       classBonus,
       calibratedPars,
     });
+    
     const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
     const dampener = inbreedingPerformanceDampener(inbreedingPattern);
-    const adjustedBeyer = Math.max(0, beyer - dampener);
+    const peakingMultiplier = getPeakingBeyerMultiplier(horse.peakingIndex ?? 0);
+    const adjustedBeyer = Math.max(0, Math.round((beyer - dampener) * peakingMultiplier));
 
     // Win and You're In qualification
     let winAndYouInQualified = undefined;

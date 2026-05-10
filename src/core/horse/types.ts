@@ -132,7 +132,11 @@ export type Horse = {
   stats: HorseStats;
   genotype: Genotype;
   energy: number;
+  fitness: number; // Chronic training load (Banister model)
+  fatigue: number; // Acute training load (Banister model)
+  peakingIndex: number; // Form (Fitness - Fatigue)
   form: number;
+  outpostId?: string; // Current location (Imperial Expansion)
   potential: number;
   recoveryPoints: number; // Dynamic form: 0-100, represents horse's physical condition
   lastBeyer?: number; // Track last race performance for bounce calculation

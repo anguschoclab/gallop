@@ -39,6 +39,12 @@ export interface StableAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: ReturnType<typeof createLearningState>;
   lastUpdateDay: number;
+  
+  // Imperial Expansion: Rivalry & Dominance
+  friction: number; // -100 to 100 relationship with player
+  winsAgainstPlayer: number; // Streak tracking for unseating
+  regionalPrestige: Record<string, number>; // Prestige per region
+  
   // Subsystem-specific AI states
   trainingAI?: TrainingAIState;
   claimingAI?: ClaimingAIState;
@@ -61,6 +67,7 @@ export interface StableAIState {
 export interface NpcAIManager {
   stableStates: Record<string, StableAIState>;
   globalDay: number;
+  regionalKings: Record<string, string>; // regionName -> stableId
 }
 
 /**
@@ -79,6 +86,9 @@ export function createStableAIState(stable: Stable, currentDay: number): StableA
     personalityState: getPersonalityAIState(stable.personality),
     learningState: createLearningState(),
     lastUpdateDay: currentDay,
+    friction: 0,
+    winsAgainstPlayer: 0,
+    regionalPrestige: {},
   };
 }
 

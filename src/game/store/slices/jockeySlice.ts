@@ -16,20 +16,23 @@ import type { GameStateCreator } from "../types";
 import { requireOwned, requireHorse } from "../guards";
 
 export type JockeySlice = {
-  hireJockey: (jockeyId: string) => ActionResult;
+  hireJockey: (jockeyId: string, contractType: "standard" | "retainer") => ActionResult;
+  hireApprentice: (jockeyId: string) => ActionResult;
   rerollJockeySilk: (jockeyId: string) => ActionResult;
   assignJockey: (raceId: string, horseId: string, jockeyId: string) => ActionResult;
   setJockeys: (jockeys: Jockey[]) => void;
 };
 
 export const createJockeySlice: GameStateCreator<JockeySlice> = (set, get) => ({
-  hireJockey: (jockeyId: string) => {
+  hireJockey: (jockeyId: string, contractType: "standard" | "retainer" = "standard") => {
     const s = get();
     const jockey = s.jockeys?.find((j: Jockey) => j.id === jockeyId);
     if (!jockey) return { ok: false, reason: "Jockey not found." };
     if (jockey.stableId) return { ok: false, reason: "Jockey is already under contract." };
 
-    const bonus = jockey.ridingFee * 30;
+    const bonusMultiplier = contractType === "retainer" ? 100 : 30;
+    const bonus = jockey.ridingFee * bonusMultiplier;
+    
     if (s.cash < bonus)
       return {
         ok: false,
@@ -45,9 +48,35 @@ export const createJockeySlice: GameStateCreator<JockeySlice> = (set, get) => ({
       type: "jockey_contract",
       jockeyId,
       stableId: "player",
-      contractUntil: s.day + 90,
+      contractUntil: s.day + (contractType === "retainer" ? 180 : 90),
       bonus,
-    });
+      stableAffinity: contractType === "retainer" ? 50 : 0, // Retainers start with 50 stable affinity
+    } as any);
+
+    return { ok: true };
+  },
+
+  hireApprentice: (jockeyId: string) => {
+    const s = get();
+    const jockey = s.jockeys?.find((j: Jockey) => j.id === jockeyId);
+    if (!jockey) return { ok: false, reason: "Jockey not found." };
+    if (!jockey.isApprentice) return { ok: false, reason: "Jockey is not an apprentice." };
+    if (jockey.stableId) return { ok: false, reason: "Jockey is already under contract." };
+
+    // Apprentices are free to enroll but require academy facility (checked in intent validation)
+    get().enqueueIntent({
+      id: generateUUID(),
+      entityId: jockeyId,
+      source: "player",
+      day: s.day,
+      priority: 100,
+      type: "jockey_contract",
+      jockeyId,
+      stableId: "player",
+      contractUntil: s.day + 365, // Year-long enrollment
+      bonus: 0,
+      stableAffinity: 20,
+    } as any);
 
     return { ok: true };
   },
@@ -56,7 +85,7 @@ export const createJockeySlice: GameStateCreator<JockeySlice> = (set, get) => ({
     const s = get();
     const jockey = s.jockeys?.find((j: Jockey) => j.id === jockeyId);
     if (!jockey) return { ok: false, reason: "Jockey not found." };
-    if (!jockey.stableId || jockey.stableId !== "player")
+    if (!jockey.stableId || (jockey.stableId !== "player" && jockey.stableId !== "player_academy"))
       return { ok: false, reason: "Can only reroll silk for your jockeys." };
 
     const rerollCost = 100;

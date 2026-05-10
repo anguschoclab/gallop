@@ -1,7 +1,8 @@
 /**
  * handlers/InfrastructureHandler.ts - Infrastructure impact handler
  *
- * This file handles infrastructure-related impacts including facility upgrades and staff.
+ * This file handles infrastructure-related impacts including facility upgrades,
+ * staff management, horse transport, and outpost actions.
  *
  * Dependencies: immer (WritableDraft), @/game/types (GameState), ../impacts (AnyImpact), ./types (ImpactHandler)
  * Related files: ../resolver.ts (uses handler), ../impacts/miscImpacts.ts (provides impact types)
@@ -14,7 +15,7 @@ import type { ImpactHandler } from "./types";
 
 export class InfrastructureHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return ["facility_upgrade", "staff"].includes(type);
+    return ["facility_upgrade", "staff", "transport_horse", "outpost_action"].includes(type);
   }
 
   handle(
@@ -72,6 +73,49 @@ export class InfrastructureHandler implements ImpactHandler {
         break;
       }
 
+      case "transport_horse": {
+        const { horseId, toOutpostId, fatigueSpike, acclimatizationDays } = impactAny;
+        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+        if (horse) {
+          horse.outpostId = toOutpostId;
+          horse.fatigue = (horse.fatigue ?? 0) + fatigueSpike;
+          
+          // Add to outpost acclimatization list
+          const stableId = horse.stableId || "player";
+          const stable = lookupMaps?.stableMap.get(stableId) || draft.npcStables.find(s => s.id === stableId);
+          if (stable && stable.outposts) {
+              const outpost = stable.outposts.find((o: any) => o.id === toOutpostId);
+              if (outpost) {
+                  if (!outpost.acclimatizationDays) outpost.acclimatizationDays = {};
+                  outpost.acclimatizationDays[horseId] = acclimatizationDays;
+              }
+          }
+        }
+        break;
+      }
+
+      case "outpost_action": {
+        const { stableId, action, outpostId, metadata } = impactAny;
+        const stable = stableId === "player" ? draft : draft.npcStables.find(s => s.id === stableId);
+        if (stable && (stable as any).outposts) {
+            const outposts = (stable as any).outposts as import("@/core/facilities/outpostTypes").Outpost[];
+            if (action === "create") {
+                outposts.push({
+                    id: outpostId,
+                    name: metadata?.name || "New Outpost",
+                    region: metadata?.region || "North America (East)",
+                    totalSlots: 12,
+                    facilities: {},
+                    acclimatizationDays: {},
+                    headTrainerId: metadata?.headTrainerId
+                });
+            } else if (action === "assign_trainer") {
+                const outpost = outposts.find(o => o.id === outpostId);
+                if (outpost) outpost.headTrainerId = metadata?.trainerId;
+            }
+        }
+        break;
+      }
     }
   }
 

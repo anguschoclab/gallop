@@ -22,6 +22,7 @@ import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGe
 import { calculateDosageMetrics } from "@/game/dosage";
 import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { calculateTheHandBonus } from "@/core/jockey/affinity";
 
 export type RunnerBonuses = {
   farrier?: number;
@@ -47,6 +48,7 @@ export type Runner = {
   accel: number;
   staminaFactor: number;
   noise: number;
+  affinityBonus: number; // Imperial Expansion: The Hand
   runningStyle: RunningStyleT;
   draftingHorseId: string | null;
   horse: HorseT;
@@ -387,6 +389,10 @@ export function buildRunner(
 
   const noise = ((110 - h.stats.consistency) / 100) * genderNoiseMul * temperamentMod;
 
+  // Imperial Expansion: Apply "The Hand" affinity bonus
+  const affinityBonus = jockey ? calculateTheHandBonus(jockey, h.id) : 0;
+  const reducedNoise = noise * (1 - affinityBonus);
+
   const LANE_WIDTH = 1.2;
   return {
     horseId: h.id,
@@ -404,7 +410,8 @@ export function buildRunner(
     topSpeed: topSpeed * genderSpeedMul * weightMod * strideMod,
     accel: accel * weightMod,
     staminaFactor: clamp(staminaFactor + ((h.heartScore ?? 1.0) - 1.0) * 0.5, 0.2, 1),
-    noise,
+    noise: reducedNoise,
+    affinityBonus,
     runningStyle,
     draftingHorseId: null,
     horse: h,
