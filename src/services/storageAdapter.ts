@@ -88,6 +88,7 @@ export async function saveGameState(state: GameState): Promise<void> {
       localStorage.setItem(STORAGE_KEYS.GAME_STATE_FALLBACK, serialized);
     } catch (e) {
       console.error("Failed to save game state to localStorage:", e);
+      throw e;
     }
     return;
   }
