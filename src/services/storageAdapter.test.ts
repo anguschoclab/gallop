@@ -169,7 +169,7 @@ describe("storageAdapter", () => {
           });
           const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-          await storageAdapter.saveGameState(mockState);
+          await expect(storageAdapter.saveGameState(mockState)).rejects.toThrow("localStorage quota exceeded");
 
           expect(consoleErrorSpy).toHaveBeenCalled();
           consoleErrorSpy.mockRestore();
