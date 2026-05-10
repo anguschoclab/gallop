@@ -290,6 +290,21 @@ export const POTENTIAL_MAX = 90;
  */
 export const HORSE_PRICE_ROUNDING = 50;
 
+/**
+ * Age at which horses start to decline in stud value
+ */
+export const AGE_STUD_DECLINE = 15;
+
+/**
+ * Age at which stud value declines severely
+ */
+export const AGE_STUD_SEVERE_DECLINE = 18;
+
+/**
+ * Low fame threshold for retirement/scouting decisions
+ */
+export const FAME_LOW_THRESHOLD = 20;
+
 // ============================================================================
 // AGE
 // ============================================================================
@@ -332,6 +347,11 @@ export const JOCKEY_AGE_MAX = 53;
  * Jockey contract duration in days
  */
 export const JOCKEY_CONTRACT_DAYS = 90;
+
+/**
+ * Jockey retainer contract duration in days
+ */
+export const JOCKEY_RETAINER_DAYS = 180;
 
 /**
  * Jockey bonus multipliers by contract type

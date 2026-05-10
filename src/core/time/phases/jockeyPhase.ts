@@ -18,6 +18,7 @@ import {
   recordJockeyAssignment,
 } from "@/core/ai/jockeyAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS } from "@/game/constants/gameConstants";
 
 /**
  * Phase: Jockey Management
@@ -97,7 +98,7 @@ export const jockeyPhase = {
               stable.cash -= signOnBonus;
               jockeys = jockeys.map((j) =>
                 j.id === chosen.id
-                  ? { ...j, stableId: stable.id, contractUntil: newDay + 90, stableAffinity: 30 }
+                  ? { ...j, stableId: stable.id, contractUntil: newDay + JOCKEY_CONTRACT_DAYS, stableAffinity: 30 }
                   : j,
               );
             }
@@ -133,7 +134,7 @@ export const jockeyPhase = {
                 ? {
                     ...j,
                     stableId: stable.id,
-                    contractUntil: newDay + 180,
+                    contractUntil: newDay + JOCKEY_RETAINER_DAYS,
                     stableAffinity: 50,
                     loyalty: 100,
                   }

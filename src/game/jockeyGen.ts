@@ -13,6 +13,16 @@ import type { Rng } from "@/game/rng";
 import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "./types";
 import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
 import type { RegionalSystem } from "./types";
+import {
+  JOCKEY_SALARY_ELITE_MIN,
+  JOCKEY_SALARY_ELITE_MAX,
+  JOCKEY_SALARY_MID_MIN,
+  JOCKEY_SALARY_MID_MAX,
+  JOCKEY_SALARY_BUDGET_MIN,
+  JOCKEY_SALARY_BUDGET_MAX,
+  JOCKEY_AGE_MIN,
+  JOCKEY_AGE_MAX,
+} from "@/game/constants/gameConstants";
 import { ARCHETYPES, SILK_PALETTE, SILK_PATTERNS } from "./jockeyData";
 
 export type JockeyGenerationOptions = {
@@ -121,7 +131,7 @@ export function generateJockey({
   });
 
   // Career history: older jockeys have more starts
-  const age = 18 + Math.floor(rng.next() * 35);
+  const age = JOCKEY_AGE_MIN + Math.floor(rng.next() * (JOCKEY_AGE_MAX - JOCKEY_AGE_MIN));
   const yearsActive = age - 18;
   const careerStarts = Math.floor(yearsActive * (50 + rng.next() * 150));
   const winRate = 0.05 + (stats.vigor + stats.pacing) / 1000 + rng.next() * 0.1;

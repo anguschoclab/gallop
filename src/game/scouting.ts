@@ -13,6 +13,7 @@
 
 import type { Horse, HorseStats, ScoutReport, Stable, Rng } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { FAME_LOW_THRESHOLD } from "@/game/constants/gameConstants";
 import { resolveCoatColor } from "@/core/genetics/phenotype";
 
 // Scouting costs
@@ -123,7 +124,7 @@ function generateScoutNotes(horse: Horse, accuracy: number): string {
   // Fame/reputation notes
   if (horse.fame > 60) {
     notes.push("Well-known runner - scout confirms the reputation.");
-  } else if (horse.fame < 20) {
+  } else if (horse.fame < FAME_LOW_THRESHOLD) {
     notes.push("Virtual unknown - could be a surprise packet.");
   }
 

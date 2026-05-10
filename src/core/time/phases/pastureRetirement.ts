@@ -13,7 +13,9 @@
 // Automatically retires NPC horses to pasture based on age and inactivity
 // Also deletes dead/retired horses with no wins to prevent array accumulation
 
-import type { PipelineContext, PipelinePhase } from "../pipeline";
+import type { PipelineContext } from "../pipeline";
+import { createRng, hashStr } from "@/game/rng";
+import { AGE_RETIREMENT_THRESHOLD, FAME_LOW_THRESHOLD } from "@/game/constants/gameConstants";
 import type {
   AnyImpact,
   PastureRetirementImpact,

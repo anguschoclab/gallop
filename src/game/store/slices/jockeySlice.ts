@@ -13,6 +13,7 @@ import { formatCurrency } from "@/lib/formatting";
 import { generateUUID } from "@/game/uuid";
 import type { ActionResult, SliceCreator } from "../types";
 import { requireOwned, requireHorse } from "../guards";
+import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS } from "@/game/constants/gameConstants";
 
 export type JockeySlice = {
   hireJockey: (jockeyId: string, contractType: "standard" | "retainer") => ActionResult;
@@ -48,7 +49,7 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
       type: "jockey_contract",
       jockeyId,
       stableId: "player",
-      contractUntil: s.day + (contractType === "retainer" ? 180 : 90),
+      contractUntil: s.day + (contractType === "retainer" ? JOCKEY_RETAINER_DAYS : JOCKEY_CONTRACT_DAYS),
       bonus,
       stableAffinity: contractType === "retainer" ? 50 : 0, // Retainers start with 50 stable affinity
     } as any);

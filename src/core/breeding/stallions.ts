@@ -15,6 +15,7 @@ import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { calculateBaseHorseValue } from "@/core/horse/pricing";
 import { isMaleHorse } from "@/core/horse/gender";
 import { getCareerStats } from "@/core/horse/stats";
+import { STUD_FEE_MID, STUD_BOOK_SIZE_MID } from "@/game/constants/gameConstants";
 
 const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
 
@@ -23,7 +24,7 @@ const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
 // budget stallions remain available cheap for low-tier players.
 const STUD_DEFAULTS: Record<StableTier, { fee: number; bookSize: number }> = {
   elite: { fee: 75000, bookSize: 180 },
-  mid: { fee: 12000, bookSize: 120 },
+  mid: { fee: STUD_FEE_MID, bookSize: STUD_BOOK_SIZE_MID },
   budget: { fee: 2500, bookSize: 80 },
 };
 
@@ -152,7 +153,7 @@ export function calculateRecommendedStudFee(
   }
 
   // Round to nearest $100
-  return Math.round(fee / 100) * 100;
+  return Math.round(fee / STUD_FEE_ROUNDING) * STUD_FEE_ROUNDING;
 }
 
 /**
@@ -198,8 +199,8 @@ export function recalcStandingFee(horse: Horse, currentDay: number): number {
   if (horse.stud.lifetimeG1Foals > 2) multiplier += 0.5;
 
   // Aging impact: fee drops after age 15
-  if (horse.age > 15) multiplier -= 0.1;
-  if (horse.age > 18) multiplier -= 0.15;
+  if (horse.age > AGE_STUD_DECLINE) multiplier -= 0.1;
+  if (horse.age > AGE_STUD_SEVERE_DECLINE) multiplier -= 0.15;
 
   // Round to nearest $100
   return Math.max(500, Math.round((currentFee * multiplier) / 100) * 100);

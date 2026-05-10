@@ -12,6 +12,7 @@ import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import type { Horse, Stable } from "@/game/types";
 import type { AuctionTickEvent } from "@/game/auctionRunner";
 import type { Rng } from "@/game/rng";
+import { JOCKEY_FAME_HOUSEHOLD_NAME, JOCKEY_FAME_TALKED_ABOUT } from "@/game/constants/gameConstants";
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -86,7 +87,7 @@ export function generateAuctioneerLine(
  * @returns Descriptive label string
  */
 function fameBucket(fame: number): string {
-  if (fame >= 60) return "household name";
+  if (fame >= JOCKEY_FAME_HOUSEHOLD_NAME) return "household name";
   if (fame >= 35) return "well-known";
   if (fame >= 15) return "talked-about";
   return "unknown quantity";
