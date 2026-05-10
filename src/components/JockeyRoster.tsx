@@ -1,12 +1,13 @@
 import { useGame } from "@/game/store";
 import { JockeyCard } from "./JockeyCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from "react";
-import { Search, Filter, UserCheck, Users, Palette, Info } from "lucide-react";
+import { Search, Filter, UserCheck, Users, Palette, Info, ShieldCheck, Briefcase, ChevronRight, Zap } from "lucide-react";
 import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
+import { cn } from "@/lib/utils";
+import { NumericValue } from "@/components/HorseBits";
 
 export function JockeyRoster() {
   const jockeys = useGame((s) => s.jockeys);
@@ -17,9 +18,7 @@ export function JockeyRoster() {
   const [patternFilter, setPatternFilter] = useState<JockeySilkPattern | "all">("all");
   const [colorFilter, setColorFilter] = useState<string>("all");
 
-  // Player jockeys: undefined stableId AND have an active contract (player-signed)
   const myJockeys = jockeys?.filter((j) => !j.stableId && !!j.contractUntil) ?? [];
-  // Free-agent market: not contracted to anyone
   const market = jockeys?.filter((j) => !j.stableId && !j.contractUntil) ?? [];
 
   const filterList = (list: typeof jockeys) => {
@@ -53,269 +52,197 @@ export function JockeyRoster() {
     "hoops",
   ];
   const commonColors = [
-    { value: "all", label: "All Colors", hex: "#ffffff" },
-    { value: "#ff0000", label: "Red", hex: "#ff0000" },
-    { value: "#0000ff", label: "Blue", hex: "#0000ff" },
-    { value: "#00ff00", label: "Green", hex: "#00ff00" },
-    { value: "#ffff00", label: "Yellow", hex: "#ffff00" },
-    { value: "#ffffff", label: "White", hex: "#ffffff" },
-    { value: "#000000", label: "Black", hex: "#000000" },
-    { value: "#ff8000", label: "Orange", hex: "#ff8000" },
-    { value: "#800080", label: "Purple", hex: "#800080" },
-    { value: "#ff00ff", label: "Pink", hex: "#ff00ff" },
-    { value: "#00ffff", label: "Cyan", hex: "#00ffff" },
+    { value: "all", label: "ALL_COLORS", hex: "#ffffff" },
+    { value: "#ff0000", label: "RED_ZONE", hex: "#ff0000" },
+    { value: "#0000ff", label: "BLUE_SECTOR", hex: "#0000ff" },
+    { value: "#00ff00", label: "GREEN_OPS", hex: "#00ff00" },
+    { value: "#ffff00", label: "YELLOW_ALERT", hex: "#ffff00" },
+    { value: "#ffffff", label: "WHITE_NOISE", hex: "#ffffff" },
+    { value: "#000000", label: "BLACK_VOID", hex: "#000000" },
+    { value: "#ff8000", label: "ORANGE_CMD", hex: "#ff8000" },
+    { value: "#800080", label: "PURPLE_Haze", hex: "#800080" },
   ];
 
-  // Visual representation of silk patterns
   const PatternPreview = ({ pattern, color }: { pattern: JockeySilkPattern; color: string }) => {
-    const baseStyle = { width: 32, height: 32, border: "1px solid #333" };
-
+    const baseStyle = { width: 24, height: 24, border: "1px solid rgba(255,255,255,0.1)" };
     switch (pattern) {
-      case "solid":
-        return <div style={{ ...baseStyle, backgroundColor: color }} />;
-      case "stripes":
-        return (
-          <div style={{ ...baseStyle, backgroundColor: color }}>
-            <div
-              style={{
-                height: "100%",
-                background:
-                  "repeating-linear-gradient(90deg, transparent, transparent 4px, #fff 4px, #fff 8px)",
-              }}
-            />
-          </div>
-        );
-      case "halves":
-        return (
-          <div
-            style={{ ...baseStyle, background: `linear-gradient(90deg, ${color} 50%, #fff 50%)` }}
-          />
-        );
-      case "quarters":
-        return (
-          <div
-            style={{ ...baseStyle, background: `linear-gradient(135deg, ${color} 50%, #fff 50%)` }}
-          />
-        );
-      case "chevron":
-        return (
-          <div style={{ ...baseStyle, backgroundColor: color }}>
-            <div
-              style={{
-                height: "100%",
-                background:
-                  "linear-gradient(180deg, transparent 40%, #fff 40%, #fff 60%, transparent 60%)",
-              }}
-            />
-          </div>
-        );
-      case "diamond":
-        return (
-          <div style={{ ...baseStyle, backgroundColor: color }}>
-            <div
-              style={{
-                height: "100%",
-                backgroundImage: "radial-gradient(circle, #fff 20%, transparent 20%)",
-                backgroundSize: "16px 16px",
-              }}
-            />
-          </div>
-        );
-      case "star":
-        return (
-          <div style={{ ...baseStyle, backgroundColor: color }}>
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                fontSize: 16,
-              }}
-            >
-              ★
-            </div>
-          </div>
-        );
-      case "sash":
-        return (
-          <div style={{ ...baseStyle, backgroundColor: color }}>
-            <div
-              style={{
-                height: "100%",
-                background:
-                  "linear-gradient(90deg, transparent 40%, #fff 40%, #fff 60%, transparent 60%)",
-              }}
-            />
-          </div>
-        );
-      case "hoops":
-        return (
-          <div style={{ ...baseStyle, backgroundColor: color }}>
-            <div
-              style={{
-                height: "100%",
-                background:
-                  "repeating-linear-gradient(0deg, transparent, transparent 4px, #fff 4px, #fff 8px)",
-              }}
-            />
-          </div>
-        );
-      default:
-        return <div style={{ ...baseStyle, backgroundColor: color }} />;
+      case "solid": return <div style={{ ...baseStyle, backgroundColor: color }} />;
+      default: return <div style={{ ...baseStyle, backgroundColor: color }} className="opacity-50" />;
     }
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+    <div className="space-y-6 pb-20 animate-fade-in">
+      {/* Registry Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-blue-500/20 pb-6">
         <div>
-          <h2 className="text-3xl font-black tracking-tight uppercase italic text-gold font-[family-name:var(--font-display)]">
-            Jockey Roster
-          </h2>
-          <p className="text-cream-muted text-sm font-medium font-[family-name:var(--font-body)]">
-            Manage your retained riders and scout the free agent market.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap gap-2 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              size={16}
-            />
-            <Input
-              placeholder="Search jockeys..."
-              aria-label="Search jockeys"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-card border-white/10"
-            />
+          <div className="flex items-center gap-2 text-blue-400 uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
+            <Briefcase className="h-3.5 w-3.5" />
+            Personnel Procurement
           </div>
-          <select
-            className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
-            aria-label="Filter by riding style"
-            value={archetypeFilter}
-            onChange={(e) => setArchetypeFilter(e.target.value as JockeyArchetype | "all")}
-          >
-            <option value="all">All Styles</option>
-            {archetypes.map((a) => (
-              <option key={a} value={a}>
-                {a.replace("_", " ")}
-              </option>
-            ))}
-          </select>
-          <select
-            className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
-            aria-label="Filter by silk pattern"
-            value={patternFilter}
-            onChange={(e) => setPatternFilter(e.target.value as JockeySilkPattern | "all")}
-          >
-            <option value="all">All Patterns</option>
-            {patterns.map((p) => (
-              <option key={p} value={p}>
-                {p.charAt(0).toUpperCase() + p.slice(1)}
-              </option>
-            ))}
-          </select>
-          <select
-            className="bg-card border border-white/10 rounded-md px-3 text-sm font-medium"
-            aria-label="Filter by silk color"
-            value={colorFilter}
-            onChange={(e) => setColorFilter(e.target.value)}
-          >
-            {commonColors.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="bg-card border border-border rounded-md px-3 py-2 hover:bg-muted transition-colors"
-                  aria-label="View silk patterns information"
-                >
-                  <Info size={16} className="text-muted-foreground" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="p-4 max-w-sm">
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-sm mb-2">Silk Patterns</h4>
-                  <div className="grid grid-cols-3 gap-2">
-                    {patterns.map((pattern) => (
-                      <div key={pattern} className="flex flex-col items-center gap-1">
-                        <PatternPreview pattern={pattern} color="#ff0000" />
-                        <span className="text-xs capitalize">{pattern}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
+             Registry of Personnel
+          </h1>
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+             <span>Retained: <NumericValue value={myJockeys.length} /></span>
+             <span className="w-1 h-1 rounded-full bg-white/20" />
+             <span>Market Pool: <NumericValue value={market.length} /></span>
+             <span className="w-1 h-1 rounded-full bg-white/20" />
+             <span>Status: <span className="text-success font-black">AUTHORIZED</span></span>
+          </div>
+        </div>
+        
+        <div className="flex gap-2">
+           <Badge variant="outline" className="border-blue-500/30 text-blue-400 bg-blue-500/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none">
+              Auth_Level: PERSONNEL_MGMT
+           </Badge>
         </div>
       </div>
 
-      <Tabs defaultValue="my" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2 mb-8 bg-card border border-white/5">
-          <TabsTrigger
-            value="my"
-            className="flex items-center gap-2 font-black uppercase tracking-widest text-[10px]"
-          >
-            <UserCheck size={14} />
-            My Jockeys ({myJockeys.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="market"
-            className="flex items-center gap-2 font-black uppercase tracking-widest text-[10px]"
-          >
-            <Users size={14} />
-            Market ({market.length})
-          </TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Pillar: Search & Filter */}
+        <aside className="lg:col-span-3 space-y-8 lg:sticky lg:top-6">
+          <section className="space-y-4">
+             <div className="flex items-center gap-2 mb-2 px-1">
+                <Filter className="h-3.5 w-3.5 text-blue-400/60" />
+                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-cream/40">Personnel Specs</h2>
+             </div>
+             <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-blue-400/40">
+                <CardContent className="p-5 space-y-5">
+                   <div className="space-y-1.5">
+                      <label className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">Search ID</label>
+                      <div className="relative">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
+                        <Input
+                          placeholder="JOCKEY_NAME..."
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                          className="h-9 bg-slate-950/60 border-white/5 text-xs font-mono pl-8 uppercase tracking-tighter focus-visible:ring-blue-500/30"
+                        />
+                      </div>
+                   </div>
 
-        <TabsContent value="my" className="space-y-4 focus-visible:outline-none">
-          {myJockeys.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filterList(myJockeys).map((j) => (
-                <JockeyCard
-                  key={j.id}
-                  jockey={j}
-                  isRetained
-                  actionLabel="Release Jockey"
-                  onAction={(jockey) => releaseJockey(jockey.id)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-20 bg-card/30 rounded-xl border border-dashed border-white/10">
-              <Users size={48} className="text-muted-foreground mb-4 opacity-20" />
-              <p className="text-muted-foreground font-bold">
-                You haven't retained any jockeys yet.
-              </p>
-              <p className="text-sm text-muted-foreground/60">
-                Scout the market to find the best talent for your stable.
-              </p>
-            </div>
-          )}
-        </TabsContent>
+                   <div className="space-y-1.5">
+                      <label className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">Tactical Style</label>
+                      <select
+                        className="w-full h-9 bg-slate-950/60 border border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest text-cream px-2"
+                        value={archetypeFilter}
+                        onChange={(e) => setArchetypeFilter(e.target.value as JockeyArchetype | "all")}
+                      >
+                        <option value="all">ALL_ARCHETYPES</option>
+                        {archetypes.map((a) => (
+                          <option key={a} value={a}>{a.replace("_", " ").toUpperCase()}</option>
+                        ))}
+                      </select>
+                   </div>
 
-        <TabsContent value="market" className="space-y-4 focus-visible:outline-none">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filterList(market).map((j) => (
-              <JockeyCard
-                key={j.id}
-                jockey={j}
-                onAction={(jockey) => hireJockey(jockey.id, "retainer")}
-                actionLabel="Sign Retainer"
-              />
-            ))}
+                   <div className="space-y-1.5">
+                      <label className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">Silk Pattern</label>
+                      <select
+                        className="w-full h-9 bg-slate-950/60 border border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest text-cream px-2"
+                        value={patternFilter}
+                        onChange={(e) => setPatternFilter(e.target.value as JockeySilkPattern | "all")}
+                      >
+                        <option value="all">ALL_PATTERNS</option>
+                        {patterns.map((p) => (
+                          <option key={p} value={p}>{p.toUpperCase()}</option>
+                        ))}
+                      </select>
+                   </div>
+
+                   <div className="space-y-1.5">
+                      <label className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">Visual Sector</label>
+                      <select
+                        className="w-full h-9 bg-slate-950/60 border border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest text-cream px-2"
+                        value={colorFilter}
+                        onChange={(e) => setColorFilter(e.target.value)}
+                      >
+                        {commonColors.map((c) => (
+                          <option key={c.value} value={c.value}>{c.label}</option>
+                        ))}
+                      </select>
+                   </div>
+
+                   <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full h-8 text-[9px] font-black uppercase tracking-[0.2em] text-cream/10 hover:text-cream/30 border border-dashed border-white/5 mt-2"
+                    onClick={() => {
+                      setSearch("");
+                      setArchetypeFilter("all");
+                      setPatternFilter("all");
+                      setColorFilter("all");
+                    }}
+                  >
+                    Reset Intel Filters
+                  </Button>
+                </CardContent>
+             </Card>
+          </section>
+
+          <div className="p-4 bg-black/40 border border-white/5 text-center">
+             <div className="text-[8px] font-black uppercase text-blue-400/40 tracking-[0.2em] mb-2 px-1">Contract Compliance</div>
+             <p className="text-[8px] font-mono text-cream/20 uppercase leading-relaxed italic">All retained riders must maintain active health certification and gear standards.</p>
           </div>
-        </TabsContent>
-      </Tabs>
+        </aside>
+
+        {/* Right Pillar: Main Registry View */}
+        <main className="lg:col-span-9 space-y-8">
+           <Tabs defaultValue="my" className="w-full space-y-6">
+              <div className="flex items-center justify-between bg-slate-900/40 p-1 border border-white/5 rounded-lg">
+                <TabsList className="bg-transparent h-10 gap-2">
+                  <TabsTrigger value="my" className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-6 transition-all">
+                    <UserCheck className="w-3.5 h-3.5" /> 
+                    Retained Roster
+                  </TabsTrigger>
+                  <TabsTrigger value="market" className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-6 transition-all">
+                    <Users className="w-3.5 h-3.5" /> 
+                    Free Agent Pool
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              <TabsContent value="my" className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 focus-visible:outline-none">
+                {myJockeys.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {filterList(myJockeys).map((j) => (
+                      <div key={j.id} className="relative group">
+                         <div className="absolute top-0 left-0 w-1 h-full bg-blue-500/20 group-hover:bg-blue-500 transition-colors z-10" />
+                         <JockeyCard
+                          jockey={j}
+                          isRetained
+                          actionLabel="RELEASE_CONTRACT"
+                          onAction={(jockey) => releaseJockey(jockey.id)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
+                     <Users className="h-16 w-16 mx-auto mb-6 text-cream/5" />
+                     <p className="font-bold text-cream/40 uppercase tracking-[0.3em] font-[family-name:var(--font-display)]">No Retained Personnel</p>
+                     <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">Scout the market to procurement elite riding assets.</p>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="market" className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 focus-visible:outline-none">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {filterList(market).map((j) => (
+                    <div key={j.id} className="relative group">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-gold/10 group-hover:bg-gold transition-colors z-10" />
+                        <JockeyCard
+                        jockey={j}
+                        onAction={(jockey) => hireJockey(jockey.id, "retainer")}
+                        actionLabel="SECURE_RETAINER"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+           </Tabs>
+        </main>
+      </div>
     </div>
   );
 }
