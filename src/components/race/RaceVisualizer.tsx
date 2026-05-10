@@ -175,7 +175,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         </div>
       </div>
 
-      <div className="race-progress-bar" style={{ width: `${(currentTime / duration) * 100}%` }} />
+      <div className="race-progress-bar" role="progressbar" aria-valuemin={0} aria-valuemax={duration} aria-valuenow={currentTime} style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }} />
 
       <div className="race-controls">
         <button
