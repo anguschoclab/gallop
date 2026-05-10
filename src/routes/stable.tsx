@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NumericValue } from "@/components/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
-import { Building2, Users } from "lucide-react";
+import { Building2, Users, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/stable")({
