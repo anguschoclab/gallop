@@ -14,7 +14,7 @@ import {
 import { HorseStats, NumericValue } from "@/components/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { HorseStatsRadar } from "@/components/HorseStatsRadar";
-import { ArrowLeft, Tag } from "lucide-react";
+import { ArrowLeft, Tag, Zap, Heart, TrendingUp, HandMetal } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
 import { BeyerChart } from "@/components/BeyerChart";
 import { HorseAwardsPanel } from "@/components/awards";
@@ -29,6 +29,9 @@ import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAd
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { useHorseActions } from "@/hooks/useHorseActions";
+import { getAffinityLevel, calculateTheHandBonus } from "@/core/jockey/affinity";
+import { getPeakingBeyerMultiplier } from "@/core/health/banister";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
@@ -92,6 +95,17 @@ function HorseDetail() {
   const slotsLeft = 2 - trainingUsed;
   const ovr = calculateOverallRating(horse);
   
+  // Imperial Expansion: Peaking & Affinity
+  const peakingMultiplier = getPeakingBeyerMultiplier(horse.peakingIndex ?? 0);
+  const peakingStatus = (horse.peakingIndex ?? 0) > 20 ? "Peak" : (horse.peakingIndex ?? 0) > 0 ? "Good" : (horse.peakingIndex ?? 0) > -10 ? "Standard" : "Fatigued";
+  
+  // Find assigned jockey
+  const currentRace = useGame((s) => s.races.find(r => r.entries.some(e => e.horseId === horseId && !r.resolved)));
+  const assignedJockeyId = currentRace?.entries.find(e => e.horseId === horseId)?.jockeyId;
+  const assignedJockey = useGame((s) => s.jockeys.find(j => j.id === assignedJockeyId));
+  const affinityBonus = assignedJockey ? calculateTheHandBonus(assignedJockey, horse.id) : 0;
+  const affinityLevel = assignedJockey ? getAffinityLevel(assignedJockey.affinityMap[horse.id] || 0) : null;
+
   // Check if horse is a G1 winner (eligible for syndication)
   const g1Wins = horse.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
   const isG1Winner = g1Wins > 0;
@@ -170,6 +184,29 @@ function HorseDetail() {
           </CardHeader>
           <CardContent className="space-y-4">
             <HorseStatsRadar horse={horse} />
+            
+            {/* Imperial Expansion: Banister Metrics */}
+            <div className="grid grid-cols-2 gap-3 p-3 bg-t800 rounded-lg border border-gold-muted/20">
+                <div className="space-y-1">
+                    <p className="text-[10px] text-cream-muted uppercase font-bold flex items-center gap-1">
+                        <Heart className="w-3 h-3 text-red-400" /> Fitness (Chronic)
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <NumericValue value={Math.round(horse.fitness ?? 0)} className="text-xl font-bold text-cream" />
+                        <span className="text-[10px] text-cream-muted italic">Potential ceiling</span>
+                    </div>
+                </div>
+                <div className="space-y-1">
+                    <p className="text-[10px] text-cream-muted uppercase font-bold flex items-center gap-1">
+                        <Zap className="w-3 h-3 text-gold" /> Fatigue (Acute)
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <NumericValue value={Math.round(horse.fatigue ?? 0)} className="text-xl font-bold text-cream" />
+                        <span className="text-[10px] text-cream-muted italic">Performance cost</span>
+                    </div>
+                </div>
+            </div>
+
             <HorseStats horse={horse} />
             <div className="flex flex-wrap gap-2 pt-2">
               <Badge className="bg-t700 text-cream">Energy ⚡ {horse.energy}/100</Badge>
@@ -197,6 +234,18 @@ function HorseDetail() {
               >
                 Recovery {(horse.recoveryPoints ?? 100)}/100
               </Badge>
+              
+              {/* Imperial Expansion: Peaking Status */}
+              <Badge 
+                className={cn(
+                    "gap-1",
+                    peakingStatus === "Peak" ? "bg-fame text-t950" : peakingStatus === "Good" ? "bg-gold text-t950" : "bg-t700 text-cream"
+                )}
+              >
+                <TrendingUp className="w-3 h-3" />
+                {peakingStatus} ({Math.round((peakingMultiplier - 1) * 100)}% Beyer)
+              </Badge>
+
               {isPregnant && (
                 <Badge className="bg-fame text-t950 border-fame" variant="outline">
                   In foal · due day {pregnancy!.dueDay} ({Math.max(0, pregnancy!.dueDay - day)}d)
@@ -220,6 +269,28 @@ function HorseDetail() {
                   </>
                 )}
             </div>
+            
+            {/* Imperial Expansion: Jockey Affinity */}
+            {assignedJockey && (
+                <div className="pt-4 border-t border-gold-muted/30">
+                    <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">Jockey Partnership</p>
+                    <div className="flex items-center justify-between p-2 bg-t800 rounded border border-gold-muted/10">
+                        <div className="flex items-center gap-2">
+                            <HandMetal className="w-4 h-4 text-gold" />
+                            <div>
+                                <p className="text-sm font-medium text-cream">{assignedJockey.name}</p>
+                                <p className="text-[10px] text-cream-muted italic">{affinityLevel}</p>
+                            </div>
+                        </div>
+                        <Badge variant="outline" className="text-gold border-gold/30">
+                            +{Math.round(affinityBonus * 100)}% Hand
+                        </Badge>
+                    </div>
+                    <p className="text-[9px] text-cream-muted mt-2 italic">
+                        *A deep partnership buffers against race-day interference and noise.
+                    </p>
+                </div>
+            )}
           </CardContent>
         </Card>
 
