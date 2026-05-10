@@ -1,6 +1,8 @@
 import type { Horse } from "@/game/types";
+import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
