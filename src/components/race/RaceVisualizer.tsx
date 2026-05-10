@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { Play, Pause, RotateCcw, Camera, SkipForward } from 'lucide-react';
-import { interpolateSnapshots, getReplayDuration } from '@/services/racePlaybackService';
-import type { RaceSnapshot, HorseSnapshot } from '@/core/race/engine/raceSnapshotTypes';
-import './RaceVisualizer.css';
+import React, { useRef, useEffect, useState, useMemo } from "react";
+import { Play, Pause, RotateCcw, Camera, SkipForward } from "lucide-react";
+import { interpolateSnapshots, getReplayDuration } from "@/services/racePlaybackService";
+import type { RaceSnapshot, HorseSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import "./RaceVisualizer.css";
 
 interface RunnerInfo {
   horseId: string;
@@ -28,16 +28,16 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
   distance,
   runners,
   onComplete,
-  trackType = "Turf"
+  trackType = "Turf",
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [cameraMode, setCameraMode] = useState<'leader' | 'player' | 'free'>('leader');
-  
+  const [cameraMode, setCameraMode] = useState<"leader" | "player" | "free">("leader");
+
   const duration = useMemo(() => getReplayDuration(snapshots), [snapshots]);
-  const playerHorseId = useMemo(() => runners.find(r => r.owned)?.horseId, [runners]);
+  const playerHorseId = useMemo(() => runners.find((r) => r.owned)?.horseId, [runners]);
 
   // Animation Frame
   useEffect(() => {
@@ -47,7 +47,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     const animate = (now: number) => {
       if (isPlaying) {
         const dt = (now - lastTime) / 1000;
-        setCurrentTime(t => {
+        setCurrentTime((t) => {
           const nextT = t + dt * playbackSpeed;
           if (nextT >= duration) {
             setIsPlaying(false);
@@ -69,20 +69,20 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
   const render = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     const currentHorses = interpolateSnapshots(snapshots, currentTime);
-    
+
     // Determine Camera X
     let focusX = 0;
-    if (cameraMode === 'leader') {
-      focusX = Math.max(...currentHorses.map(h => h.position)) * PIXELS_PER_METER;
-    } else if (cameraMode === 'player' && playerHorseId) {
-      const player = currentHorses.find(h => h.horseId === playerHorseId);
+    if (cameraMode === "leader") {
+      focusX = Math.max(0, ...currentHorses.map((h) => h.position)) * PIXELS_PER_METER;
+    } else if (cameraMode === "player" && playerHorseId) {
+      const player = currentHorses.find((h) => h.horseId === playerHorseId);
       focusX = (player?.position ?? 0) * PIXELS_PER_METER;
     }
-    
+
     const viewportWidth = canvas.width;
     const offsetX = viewportWidth / 2 - focusX;
 
@@ -130,8 +130,8 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     }
 
     // Draw Horses
-    currentHorses.forEach(h => {
-      const runner = runners.find(r => r.horseId === h.horseId);
+    currentHorses.forEach((h) => {
+      const runner = runners.find((r) => r.horseId === h.horseId);
       const x = h.position * PIXELS_PER_METER + offsetX;
       const y = 100 + (h.lane + 0.5) * LANE_HEIGHT;
 
@@ -140,7 +140,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       ctx.beginPath();
       ctx.arc(x, y, HORSE_RADIUS, 0, Math.PI * 2);
       ctx.fill();
-      
+
       // Outline for player horse
       if (runner?.owned) {
         ctx.strokeStyle = "#facc15";
@@ -158,34 +158,57 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
 
   return (
     <div className="race-visualizer-container">
-      <canvas 
-        ref={canvasRef} 
-        width={1000} 
-        height={500} 
-        className="race-visualizer-canvas"
-      />
-      
+      <canvas ref={canvasRef} width={1000} height={500} className="race-visualizer-canvas" role="img" aria-label="Race track visualization" />
+
       <div className="race-overlay">
-        <div className="race-stats">
+        <div className="race-stats tabular-nums">
           <span>Time: {currentTime.toFixed(2)}s</span>
-          <span>Leader: {Math.max(...snapshots.find(s => s.t > currentTime - 0.1 && s.t <= currentTime)?.horses.map(h => h.position) || [0]).toFixed(0)}m / {distance}m</span>
+          <span>
+            Leader:{" "}
+            {Math.max(
+              ...(snapshots
+                .find((s) => s.t > currentTime - 0.1 && s.t <= currentTime)
+                ?.horses.map((h) => h.position) || [0]),
+            ).toFixed(0)}
+            m / {distance}m
+          </span>
         </div>
       </div>
 
-      <div className="race-progress-bar" style={{ width: `${(currentTime / duration) * 100}%` }} />
+      <div className="race-progress-bar" role="progressbar" aria-valuemin={0} aria-valuemax={duration} aria-valuenow={currentTime} style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }} />
 
       <div className="race-controls">
-        <button className="race-control-btn" onClick={() => setIsPlaying(!isPlaying)}>
+        <button
+          className="race-control-btn"
+          onClick={() => setIsPlaying(!isPlaying)}
+          aria-label={isPlaying ? "Pause race" : "Play race"}
+          title={isPlaying ? "Pause" : "Play"}
+        >
           {isPlaying ? <Pause size={20} /> : <Play size={20} />}
         </button>
-        <button className="race-control-btn" onClick={() => setCurrentTime(0)}>
+        <button
+          className="race-control-btn"
+          onClick={() => setCurrentTime(0)}
+          aria-label="Restart race"
+          title="Restart"
+        >
           <RotateCcw size={20} />
         </button>
-        <button className="race-control-btn" onClick={() => setCameraMode(cameraMode === 'leader' ? 'player' : 'leader')}>
-          <Camera size={20} color={cameraMode === 'player' ? '#facc15' : '#fff'} />
+        <button
+          className="race-control-btn"
+          onClick={() => setCameraMode(cameraMode === "leader" ? "player" : "leader")}
+          aria-label={`Toggle camera focus: currently following ${cameraMode}`}
+          title="Toggle Camera Focus"
+        >
+          <Camera size={20} color={cameraMode === "player" ? "#facc15" : "#fff"} />
         </button>
-        <button className="race-control-btn" onClick={() => setPlaybackSpeed(playbackSpeed === 1 ? 2 : 1)}>
-          <SkipForward size={20} color={playbackSpeed > 1 ? '#facc15' : '#fff'} />
+        <button
+          className="race-control-btn"
+          onClick={() => setPlaybackSpeed(playbackSpeed === 1 ? 2 : 1)}
+          aria-label={`Toggle playback speed: currently ${playbackSpeed}x`}
+          title={`Speed: ${playbackSpeed}x`}
+        >
+          <SkipForward size={20} color={playbackSpeed > 1 ? "#facc15" : "#fff"} />
         </button>
       </div>
     </div>
