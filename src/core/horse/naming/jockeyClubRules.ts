@@ -53,18 +53,25 @@ export function validateHorseName(
   name: string,
   existingNames: Set<string>,
   deceasedNames?: Set<string>,
-): NameValidation {
+): { isValid: boolean; reason?: string } {
   const trimmed = name.trim();
-
-  // 1. Length rule (max 18 characters)
-  if (trimmed.length === 0) return { isValid: false, reason: "Name cannot be empty." };
-  if (trimmed.length > 18) return { isValid: false, reason: "Name cannot exceed 18 characters." };
-
-  // 2. Uniqueness rule (against active horses)
   const lowerName = trimmed.toLowerCase();
+
+  // 1. Length check
+  if (trimmed.length === 0) {
+    return { isValid: false, reason: "Name cannot be empty." };
+  }
+
+  if (trimmed.length > 18) {
+    return { isValid: false, reason: "Name cannot exceed 18 characters." };
+  }
+
+  // 2. Uniqueness check (allow reuse of deceased names)
   if (existingNames.has(lowerName)) {
-    // If it's in deceasedNames, it can be reused (Jockey Club rule)
-    if (!deceasedNames || !deceasedNames.has(lowerName)) {
+    // Check if it's a deceased name that can be reused
+    if (deceasedNames && deceasedNames.has(lowerName)) {
+      // Allow reuse of deceased names
+    } else {
       return { isValid: false, reason: "Name is already in use by an active horse." };
     }
   }
@@ -89,13 +96,8 @@ export function validateHorseName(
     return { isValid: false, reason: "Name contains prohibited characters or numbers." };
   }
 
-  // 7. Standard character check (allow only letters, spaces, hyphens, and apostrophes)
-  if (!/^[-a-zA-Z ']+$/i.test(trimmed)) {
-    return {
-      isValid: false,
-      reason: "Name can only contain letters, spaces, hyphens, and apostrophes.",
-    };
-  }
+  // Debug logging
+  console.log(`Validation passed for: ${trimmed}`);
 
   return { isValid: true };
 }
