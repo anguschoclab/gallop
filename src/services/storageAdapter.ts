@@ -3,11 +3,12 @@
  * Routes game state to OPFS and settings to localStorage
  */
 
-import { initOPFS, writeFile, readFile, deleteFile } from "./opfsService";
+import { initOPFS, writeFile, readFile, deleteFile, checkOPFSAvailable } from "./opfsService";
 import type { GameState } from "@/game/types";
 
 export const STORAGE_KEYS = {
   GAME_STATE: "gallop_game_state",
+  GAME_STATE_FALLBACK: "gallop_game_state_fallback",
   RACE_FILTERS: "gallop_race_filters",
   RACE_HISTORY_LIMIT: "gallop_race_history_limit",
   RACES_DAY_JUMP: "gallop_races_day_jump",
@@ -17,6 +18,13 @@ export const STORAGE_KEYS = {
 const GAME_STATE_FILENAME = "gameState.json";
 
 let opfsInitialized = false;
+export let useLocalStorageFallback = false;
+
+// For testing purposes only
+export function _resetStorageAdapterState() {
+  opfsInitialized = false;
+  useLocalStorageFallback = false;
+}
 
 /**
  * Initialize storage adapter.
@@ -25,6 +33,13 @@ let opfsInitialized = false;
  */
 async function initializeStorage(): Promise<void> {
   if (opfsInitialized) return;
+
+  const opfsAvailable = await checkOPFSAvailable();
+  if (!opfsAvailable) {
+    useLocalStorageFallback = true;
+    opfsInitialized = true; // Mark initialized to avoid repeatedly checking
+    return;
+  }
 
   await initOPFS();
   opfsInitialized = true;
@@ -37,6 +52,18 @@ async function initializeStorage(): Promise<void> {
  */
 export async function loadGameState(): Promise<GameState | null> {
   await initializeStorage();
+
+  if (useLocalStorageFallback) {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
+      if (stored) {
+        return JSON.parse(stored) as GameState;
+      }
+    } catch (error) {
+      console.error("Failed to load game state from localStorage:", error);
+    }
+    return null;
+  }
 
   try {
     return await readFile<GameState>(GAME_STATE_FILENAME);
@@ -55,6 +82,16 @@ export async function loadGameState(): Promise<GameState | null> {
 export async function saveGameState(state: GameState): Promise<void> {
   await initializeStorage();
 
+  if (useLocalStorageFallback) {
+    try {
+      const serialized = JSON.stringify(state);
+      localStorage.setItem(STORAGE_KEYS.GAME_STATE_FALLBACK, serialized);
+    } catch (e) {
+      console.error("Failed to save game state to localStorage:", e);
+    }
+    return;
+  }
+
   try {
     await writeFile(GAME_STATE_FILENAME, state);
   } catch (error) {
@@ -70,6 +107,15 @@ export async function saveGameState(state: GameState): Promise<void> {
  */
 export async function clearGameState(): Promise<void> {
   await initializeStorage();
+
+  if (useLocalStorageFallback) {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
+    } catch (e) {
+      console.error("Failed to clear game state from localStorage:", e);
+    }
+    return;
+  }
 
   try {
     await deleteFile(GAME_STATE_FILENAME);
