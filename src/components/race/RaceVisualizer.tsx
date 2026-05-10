@@ -161,7 +161,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       <canvas ref={canvasRef} width={1000} height={500} className="race-visualizer-canvas" role="img" aria-label="Race track visualization" />
 
       <div className="race-overlay">
-        <div className="race-stats">
+        <div className="race-stats tabular-nums">
           <span>Time: {currentTime.toFixed(2)}s</span>
           <span>
             Leader:{" "}
