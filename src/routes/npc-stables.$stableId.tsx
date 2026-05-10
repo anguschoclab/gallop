@@ -1,5 +1,5 @@
 // NPC Stable Detail - View stable info and horses with scouting
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Eye,
@@ -49,6 +49,7 @@ export const Route = createFileRoute("/npc-stables/$stableId")({
 
 function NpcStableDetailPage() {
   const { stableId } = Route.useParams();
+  const router = useRouter();
   const npcStables = useNpcStables();
   const horses = useHorses();
   const day = useDay();
@@ -86,13 +87,19 @@ function NpcStableDetailPage() {
   return (
     <div className="space-y-6">
       {/* Back link */}
-      <Link
-        to="/npc-stables"
-        className="text-gold hover:underline inline-flex items-center gap-1"
+      <button
+        onClick={() => {
+          if (window.history.length > 2) {
+            router.history.back();
+          } else {
+            router.navigate({ to: "/npc-stables" });
+          }
+        }}
+        className="text-gold hover:underline inline-flex items-center gap-1 text-sm"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Stables
-      </Link>
+      </button>
 
       {/* Header */}
       <div>
