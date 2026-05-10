@@ -158,7 +158,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
 
   return (
     <div className="race-visualizer-container">
-      <canvas ref={canvasRef} width={1000} height={500} className="race-visualizer-canvas" />
+      <canvas ref={canvasRef} width={1000} height={500} className="race-visualizer-canvas" role="img" aria-label="Race track visualization" />
 
       <div className="race-overlay">
         <div className="race-stats">
