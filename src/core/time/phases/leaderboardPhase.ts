@@ -9,7 +9,8 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import { computeAllLeaderboards } from "@/core/breeding/leaderboardService";
+import { updateLeaderboard } from "@/core/race/leaderboard";
+import { PHASE_ORDER_LEADERBOARD } from "@/game/constants/gameConstants";
 import { computeProgenyLeaderboards } from "@/core/breeding/progenyLeaderboards";
 import { identifyFounders, computeFounderInfluence } from "@/core/history/lineageCrawler";
 import type { SireTrendData } from "@/core/breeding/leaderboardTypes";
@@ -22,8 +23,8 @@ import { SEASON_DAYS } from "@/game/constants/gameConstants";
  * Records trend data for rising star detection
  */
 export const leaderboardPhase = {
-  name: "leaderboardUpdate",
-  order: 72, // After races (60) and raceResolution (70), before awards (80)
+  name: "leaderboard",
+  order: PHASE_ORDER_LEADERBOARD, // After races (60) and raceResolution (70), before awards (80)
 
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;

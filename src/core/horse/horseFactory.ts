@@ -99,6 +99,7 @@ import {
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { activeStallions2020s, type PedigreeHorse } from "@/core/data/pedigreeData";
 import { clamp } from "@/game/math";
+import { POTENTIAL_MIN, POTENTIAL_MAX } from "@/game/constants/gameConstants";
 
 // --- Internal Helpers ---
 
@@ -197,7 +198,7 @@ export function createHorseFromDNA(
     genotype,
     energy: 100,
     form: 50,
-    potential: 50 + Math.floor(rng.next() * 40), // 50-90 base
+    potential: POTENTIAL_MIN + Math.floor(rng.next() * (POTENTIAL_MAX - POTENTIAL_MIN)), // 50-90 base
     fame: 0,
     raceHistory: [],
     owned: opts.owned ?? false,

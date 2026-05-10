@@ -10,6 +10,24 @@
 
 import type { Horse, Race } from "./types";
 
+// Fame gain constants
+const FAME_GAIN = {
+  WINNER_G1: 20,
+  WINNER_G2: 15,
+  WINNER_G3: 10,
+  WINNER_OTHER: 5,
+  TOP3_G1: 10,
+  TOP3_G2: 8,
+  TOP3_G3: 5,
+  TOP3_OTHER: 2,
+  TOP5: 1,
+  LARGE_PURSE_BONUS: 3,
+  MEDIUM_PURSE_BONUS: 1,
+  LARGE_PURSE_THRESHOLD: 500000,
+  MEDIUM_PURSE_THRESHOLD: 100000,
+  MAX_FAME: 100,
+} as const;
+
 /**
  * Update horse fame after race results.
  *
@@ -42,35 +60,35 @@ export function updateHorseFame(
     if (result.position === 1) {
       fameGain =
         race.graded?.grade === "G1"
-          ? 20
+          ? FAME_GAIN.WINNER_G1
           : race.graded?.grade === "G2"
-            ? 15
+            ? FAME_GAIN.WINNER_G2
             : race.graded?.grade === "G3"
-              ? 10
-              : 5;
+              ? FAME_GAIN.WINNER_G3
+              : FAME_GAIN.WINNER_OTHER;
     } else if (result.position <= 3) {
       fameGain =
         race.graded?.grade === "G1"
-          ? 10
+          ? FAME_GAIN.TOP3_G1
           : race.graded?.grade === "G2"
-            ? 8
+            ? FAME_GAIN.TOP3_G2
             : race.graded?.grade === "G3"
-              ? 5
-              : 2;
+              ? FAME_GAIN.TOP3_G3
+              : FAME_GAIN.TOP3_OTHER;
     } else if (result.position <= 5) {
-      fameGain = 1;
+      fameGain = FAME_GAIN.TOP5;
     }
 
     // Big purse races give bonus fame
-    if (race.purse > 500000) {
-      fameGain += 3;
-    } else if (race.purse > 100000) {
-      fameGain += 1;
+    if (race.purse > FAME_GAIN.LARGE_PURSE_THRESHOLD) {
+      fameGain += FAME_GAIN.LARGE_PURSE_BONUS;
+    } else if (race.purse > FAME_GAIN.MEDIUM_PURSE_THRESHOLD) {
+      fameGain += FAME_GAIN.MEDIUM_PURSE_BONUS;
     }
 
     updatedHorses[horseIndex] = {
       ...horse,
-      fame: Math.min(100, horse.fame + fameGain),
+      fame: Math.min(FAME_GAIN.MAX_FAME, horse.fame + fameGain),
     };
   }
 

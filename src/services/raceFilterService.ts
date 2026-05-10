@@ -6,6 +6,7 @@ import {
   type RaceFilters,
 } from "@/core/race/filtering";
 import { MONTH_NAMES_FULL } from "@/core/calendar/dateFormatting";
+import { DAYS_PER_MONTH } from "@/game/constants/gameConstants";
 
 /**
  * Race filtering orchestration with dependency injection
@@ -89,7 +90,7 @@ export function getRacesByMonth(
 
   const racesByMonth = filtered.reduce(
     (acc, race) => {
-      const month = Math.floor((race.day - 1) / 30) + 1;
+      const month = Math.floor((race.day - 1) / DAYS_PER_MONTH) + 1;
       const monthName = MONTH_NAMES_FULL[month - 1] || "Unknown";
       if (!acc[monthName]) {
         acc[monthName] = [];

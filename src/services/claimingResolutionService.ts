@@ -48,15 +48,18 @@ export function processClaimingResolution({
     return { impacts };
   }
 
+  // Optimize: Create a Map for entry lookups to avoid repeated find operations
+  const entryMap = new Map(race.entries.map(e => [e.horseId, e]));
+
   // Filter out horses withdrawn from claiming
   const eligibleClaims = claimIntents.filter((claim) => {
-    const entry = race.entries.find((e) => e.horseId === claim.horseId);
+    const entry = entryMap.get(claim.horseId);
     return entry && !entry.withdrawnFromClaiming;
   });
 
   // Refund claimants for withdrawn horses
   const withdrawnClaims = claimIntents.filter((claim) => {
-    const entry = race.entries.find((e) => e.horseId === claim.horseId);
+    const entry = entryMap.get(claim.horseId);
     return entry && entry.withdrawnFromClaiming;
   });
 
@@ -108,6 +111,9 @@ export function processClaimingResolution({
       successful: false,
     }));
 
+    // Optimize: Create a Map for intent lookups
+    const intentMap = new Map(eligibleClaims.map(i => [i.horseId, i]));
+
     // Process claims using existing function
     const { transfers, logs: claimLogs } = processClaims(race, claimAttempts, horses, newDay, rng);
 
@@ -116,7 +122,7 @@ export function processClaimingResolution({
       // ClaimingImpact for horse transfer
       impacts.push({
         id: generateUUID(),
-        intentId: eligibleClaims.find((i) => i.horseId === transfer.horseId)?.id || "",
+        intentId: intentMap.get(transfer.horseId)?.id || "",
         day: newDay,
         phase: "raceResolution",
         logLevel: "always",

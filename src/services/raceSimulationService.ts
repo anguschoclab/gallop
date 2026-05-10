@@ -14,7 +14,7 @@ import { createRng, hashStr, type Rng } from "@/game/rng";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
-import type { RunnerBonuses } from "@/core/race/engine/simulation";
+import type { RunnerBonuses } from "@/core/race/engine/runnerBuilder";
 
 /**
  * Race simulation orchestration with dependency injection
@@ -140,12 +140,13 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
       // Get stable for AI-driven decisions
       const stableObj = horse.stableId ? stableMap.get(horse.stableId) : undefined;
 
-      // Get staff for this stable
+      // Get staff for this stable - optimize with Map for role lookup
       const stableId = horse.stableId ?? "";
       const staffForStable = hiredStaff.filter((s) => s.stableId === stableId);
+      const staffRoleMap = new Map(staffForStable.map(s => [s.role, s]));
 
-      const farrier = staffForStable.find((s) => s.role === "farrier");
-      const groom = staffForStable.find((s) => s.role === "groom");
+      const farrier = staffRoleMap.get("farrier");
+      const groom = staffRoleMap.get("groom");
 
       const runnerBonuses: RunnerBonuses = {
         farrier: farrier?.bonusValue,

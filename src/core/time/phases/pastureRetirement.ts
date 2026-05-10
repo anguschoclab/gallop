@@ -85,7 +85,7 @@ export const pastureRetirementPhase: PipelinePhase = {
 
       // Determine retirement eligibility
       const isOld = horse.age >= 8;
-      const isOldAndInactive = horse.age >= 6 && inactiveDays > 90;
+      const isOldAndInactive = horse.age >= AGE_RETIREMENT_THRESHOLD && inactiveDays > 90;
       const isLowAchiever = horse.age >= 5 && horse.fame < 20 && gradedWins === 0;
 
       if (isOld || isOldAndInactive || isLowAchiever) {

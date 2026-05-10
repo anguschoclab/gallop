@@ -37,7 +37,17 @@ import {
 } from "@/core/breeding/populationGenetics";
 import type { Race, Horse, Jockey } from "@/game/types";
 import { getCurrentYear } from "@/game/raceSchedule";
-import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
+import {
+  PRIZE_SPLIT,
+  GRADED_PRIZE_SPLIT,
+  JOCKEY_FEE_PERCENTAGE,
+  BASE_JOCKEY_RIDING_FEE,
+  STAMINA_DRAIN_DISTANCE_DIVISOR,
+  STAMINA_DRAIN_BEYER_DIVISOR,
+  STAMINA_DRAIN_MAX,
+  RACE_ENERGY_IMPACT,
+  MAX_FAME,
+} from "@/game/constants/gameConstants";
 import { GRADED_RACES } from "@/core/data/gradedRaces";
 import { createReputationEvent, calculateRaceWinReputation } from "@/core/reputation";
 import type { ManagerReputation } from "@/core/reputation";
@@ -59,10 +69,10 @@ import { AFFINITY_CONSTANTS } from "@/core/jockey/affinity";
 function getPrizeSplitForRace(race: Race): number[] {
   // Graded races have a different prize split (more to winner)
   if (race.graded) {
-    return [0.7, 0.2, 0.075, 0.025];
+    return GRADED_PRIZE_SPLIT;
   }
   // Default prize split for regular races
-  return [0.6, 0.25, 0.1, 0.05];
+  return PRIZE_SPLIT;
 }
 
 /**
@@ -125,7 +135,7 @@ function generateEnergyImpact(horseId: string, newDay: number): EnergyImpact {
     logLevel: "conditional",
     type: "energy_change",
     horseId,
-    delta: -25,
+    delta: RACE_ENERGY_IMPACT,
     reason: "Race energy expenditure",
   } as EnergyImpact;
 }
@@ -223,8 +233,8 @@ function generateBeyerAndRecoveryImpacts(
 
   // Fatigue: Recovery points drain based on race distance and performance intensity (Beyer)
   const recoveryDrain = Math.min(
-    30,
-    Math.floor(race.distance / 100) + Math.floor(adjustedBeyer / 20),
+    STAMINA_DRAIN_MAX,
+    Math.floor(race.distance / STAMINA_DRAIN_DISTANCE_DIVISOR) + Math.floor(adjustedBeyer / STAMINA_DRAIN_BEYER_DIVISOR),
   );
 
   return {
@@ -472,7 +482,7 @@ function generateJockeyFeeImpacts(
   horseId: string,
   raceId: string,
 ): { cashImpact: CashImpact; transactionImpact?: TransactionImpact } {
-  const ridingFee = jockey.ridingFee || 100;
+  const ridingFee = jockey.ridingFee || BASE_JOCKEY_RIDING_FEE;
 
   const cashImpact: CashImpact = {
     id: generateUUID(),
@@ -523,7 +533,7 @@ function generatePercentageJockeyFeeImpacts(
   owned: boolean,
   stableId?: string,
 ): CashImpact | null {
-  const jockeyFee = Math.round(winAmount * 0.1); // Jockeys take 10% of purse earnings
+  const jockeyFee = Math.round(winAmount * JOCKEY_FEE_PERCENTAGE); // Jockeys take 10% of purse earnings
   if (jockeyFee <= 0) return null;
 
   return {
@@ -771,7 +781,7 @@ export function generateRaceImpacts({
           jockeyId: jockey.id,
           careerStarts: jockey.careerStarts + 1,
           careerWins: jockey.careerWins + (r.position === 1 ? 1 : 0),
-          fame: Math.min(100, jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0)),
+          fame: Math.min(MAX_FAME, jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0)),
           reason: `Rode ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,
         } as JockeyStatsImpact);
 

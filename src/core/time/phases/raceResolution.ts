@@ -4,11 +4,13 @@
  * This file provides the race resolution phase that simulates unresolved races
  * and generates all race resolution impacts.
  *
- * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/impacts/index (AnyImpact), @/services/raceSimulationService (rngForRace), @/game/types (Race), @/core/resolver/intents (ClaimingIntent), @/services/raceSimulationExecutor (simulateRace), @/services/raceImpactGenerator (generateRaceImpacts), @/services/claimingResolutionService (processClaimingResolution), @/services/historyService (recordRaceHistory, checkHallOfFameInduction), @/game/uuid (generateUUID), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/raceEntryAI (recordRaceEntryOutcome), @/core/ai/jockeyAI (recordJockeyOutcome), @/core/ai/campaignAI (recordCampaignOutcome)
+ * Dependencies: ../pipeline (PipelineContext), @/core/race/raceResolution (resolveRaces), @/game/constants/gameConstants (PHASE_ORDER_RACE_RESOLUTION), @/core/resolver/impacts/index (AnyImpact), @/services/raceSimulationService (rngForRace), @/game/types (Race), @/core/resolver/intents (ClaimingIntent), @/services/raceSimulationExecutor (simulateRace), @/services/raceImpactGenerator (generateRaceImpacts), @/services/claimingResolutionService (processClaimingResolution), @/services/historyService (recordRaceHistory, checkHallOfFameInduction), @/game/uuid (generateUUID), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/raceEntryAI (recordRaceEntryOutcome), @/core/ai/jockeyAI (recordJockeyOutcome), @/core/ai/campaignAI (recordCampaignOutcome)
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import type { PipelineContext, PipelinePhase } from "../pipeline";
+import type { PipelineContext } from "../pipeline";
+import { resolveRaces } from "@/core/race/raceResolution";
+import { PHASE_ORDER_RACE_RESOLUTION } from "@/game/constants/gameConstants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/raceSimulationService";
 import type { Race } from "@/game/types";

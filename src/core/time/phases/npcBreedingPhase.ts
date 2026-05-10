@@ -10,6 +10,7 @@
 
 import type { PipelineContext } from "../pipeline";
 import { runAutonomousBreeding } from "@/game/npcBreeding";
+import { PHASE_ORDER_NPC_BREEDING } from "@/game/constants/gameConstants";
 
 /**
  * Phase: NPC Autonomous Breeding
@@ -22,7 +23,7 @@ import { runAutonomousBreeding } from "@/game/npcBreeding";
  */
 export const npcBreedingPhase = {
   name: "npcBreeding",
-  order: 38,
+  order: PHASE_ORDER_NPC_BREEDING,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, dailyRng } = context;
     const updatedState = runAutonomousBreeding(state, state.npcStables, dailyRng);

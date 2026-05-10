@@ -11,6 +11,7 @@
 import type { PipelineContext } from "../pipeline";
 import { runNpcCycle } from "@/core/npc/npcCycle";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { PHASE_ORDER_NPC_CYCLE } from "@/game/constants/gameConstants";
 
 /**
  * Phase: NPC Cycle
@@ -18,7 +19,7 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
  */
 export const npcCyclePhase = {
   name: "npcCycle",
-  order: 80,
+  order: PHASE_ORDER_NPC_CYCLE,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 

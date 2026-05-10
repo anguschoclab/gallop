@@ -19,10 +19,11 @@ import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/game/uuid";
 import type { AwardRegion, RegionalAward } from "@/game/awards/types";
 import { AWARD_CEREMONY_SCHEDULE } from "@/game/awards/types";
+import { PHASE_ORDER_AWARDS } from "@/game/constants/gameConstants";
 
 export const awardsPhase = {
   name: "awards",
-  order: 95, // Run before state update phase
+  order: PHASE_ORDER_AWARDS, // Run before state update phase
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, logs } = context;
     const doy = dayOfYear(newDay);

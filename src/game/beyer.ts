@@ -15,6 +15,7 @@
 // Output is clamped 30..125 (Beyer "Big Figs" rarely exceed 120).
 import type { Horse } from "./types";
 import type { CourseSpecification } from "./tracks";
+import { BEYER_MIN, BEYER_MAX, BEYER_BASE } from "@/game/constants/gameConstants";
 
 export type BeyerInput = {
   distance: number; // meters
@@ -87,8 +88,8 @@ export function beyerFigure({
   const par = parTime(distance, calibratedPars);
   // Each ~1% faster than par = ~5 Beyer points.
   const delta = (par - finishTime) / par;
-  const fig = 80 + delta * 500 + classBonus;
-  return Math.max(30, Math.min(125, Math.round(fig)));
+  const fig = BEYER_BASE + delta * 500 + classBonus;
+  return Math.max(BEYER_MIN, Math.min(BEYER_MAX, Math.round(fig)));
 }
 
 /**

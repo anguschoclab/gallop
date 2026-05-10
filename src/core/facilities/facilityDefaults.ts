@@ -16,6 +16,10 @@ import {
   FACILITY_UPGRADE_COSTS,
   FACILITY_ENABLED_WORKOUTS,
 } from "./facilityTypes";
+import {
+  FACILITY_UPGRADE_BASE_COST,
+  FACILITY_UPGRADE_MULTIPLIER,
+} from "@/game/constants/gameConstants";
 
 /**
  * Create a default facility at a given level.
@@ -240,5 +244,5 @@ export function downgradeFacility(facility: Facility, currentDay: number): Facil
 export function facilityUpgradeCost(currentLevel: FacilityLevel): number {
   const levelOrder: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
   const rank = levelOrder.indexOf(currentLevel) + 1;
-  return Math.floor(5000 * Math.pow(1.5, rank - 1));
+  return Math.floor(FACILITY_UPGRADE_BASE_COST * Math.pow(FACILITY_UPGRADE_MULTIPLIER, rank - 1));
 }

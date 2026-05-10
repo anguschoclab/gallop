@@ -10,6 +10,15 @@
 
 import type { Horse, RunningStyle } from "@/game/types";
 import type { Rng } from "@/game/rng";
+import {
+  GRADE_S_THRESHOLD,
+  GRADE_A_THRESHOLD,
+  GRADE_B_THRESHOLD,
+  GRADE_C_THRESHOLD,
+  GRADE_D_THRESHOLD,
+  GRADE_E_THRESHOLD,
+  GRADE_EP_THRESHOLD,
+} from "@/game/constants/gameConstants";
 
 /**
  * Pure functions for horse stat calculations
@@ -204,11 +213,11 @@ export function getAbility(horse: Horse): { current: number; potential: number }
  * @returns Letter grade (S, A, B, C, D, or F)
  */
 export function abilityGrade(score: number): string {
-  if (score >= 90) return "S";
-  if (score >= 80) return "A";
-  if (score >= 70) return "B";
-  if (score >= 60) return "C";
-  if (score >= 50) return "D";
+  if (score >= GRADE_S_THRESHOLD) return "S";
+  if (score >= GRADE_A_THRESHOLD) return "A";
+  if (score >= GRADE_B_THRESHOLD) return "B";
+  if (score >= GRADE_C_THRESHOLD) return "C";
+  if (score >= GRADE_D_THRESHOLD) return "D";
   return "F";
 }
 
@@ -233,8 +242,8 @@ export function rollRunningStyle(
   const lateBias = stats.stamina;
   const tilt = earlyBias - lateBias; // ~ -50..+50
   const r = rng.next() * 100 - tilt; // tilt shifts the distribution
-  if (r < 25) return "E";
-  if (r < 55) return "EP";
+  if (r < GRADE_E_THRESHOLD) return "E";
+  if (r < GRADE_EP_THRESHOLD) return "EP";
   if (r < 80) return "P";
   return "S";
 }

@@ -2,6 +2,7 @@ import type { Race, Horse } from "@/game/types";
 import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/core/history/historyTypes";
 import { generateUUID } from "@/game/uuid";
 import { getCareerStats } from "@/core/horse/stats";
+import { DAYS_PER_YEAR } from "@/game/constants/gameConstants";
 
 /**
  * Record a race result in the seasonal history.
@@ -35,7 +36,7 @@ export function recordRaceHistory(
 
   return {
     id: generateUUID(),
-    year: Math.floor((day - 1) / 365) + 1,
+    year: Math.floor((day - 1) / DAYS_PER_YEAR) + 1,
     day,
     raceId: race.id,
     raceName: race.name,

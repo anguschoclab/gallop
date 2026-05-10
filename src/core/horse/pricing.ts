@@ -11,6 +11,7 @@
 import type { Horse, StableTier, GameState, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
+import { AGE_YOUNG_THRESHOLD, AGE_OLD_THRESHOLD, AGE_RETIREMENT_THRESHOLD } from "@/game/constants/gameConstants";
 
 /**
  * Canonical base valuation formula shared by horsePrice() and stallions.valueOf().
@@ -24,7 +25,7 @@ import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
  */
 export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number {
   const overall = calculateOverallRating(horse);
-  const ageMod = horse.age <= 3 ? 1.3 : horse.age >= 7 ? 0.5 : 0.9;
+  const ageMod = horse.age <= AGE_YOUNG_THRESHOLD ? 1.3 : horse.age >= AGE_OLD_THRESHOLD ? 0.5 : 0.9;
   const fameMod = 1 + horse.fame / 200;
   const tierMod = tier === "elite" ? 1.5 : tier === "mid" ? 1.2 : 1.0;
   return Math.round((overall * 100 * ageMod * fameMod * tierMod) / 100) * 100;
@@ -84,7 +85,7 @@ export function getBroodmareFee(horse: Horse, stable: Pick<Stable, "tier">): num
  */
 export function horsePrice(h: Horse): number {
   const overall = calculateOverallRating(h);
-  const ageMod = h.age <= 3 ? 1.2 : h.age >= 6 ? 0.7 : 1;
+  const ageMod = h.age <= AGE_YOUNG_THRESHOLD ? 1.2 : h.age >= AGE_RETIREMENT_THRESHOLD ? 0.7 : 1;
   const potMod = 0.5 + h.potential / 100;
 
   let bioMod = 1.0;

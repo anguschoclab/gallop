@@ -13,6 +13,7 @@ import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { netProceeds } from "@/game/auction";
 import { hashStr } from "@/game/rng";
 import { generateUUID } from "@/game/uuid";
+import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/game/constants/gameConstants";
 import { formatCurrency } from "@/lib/formatting";
 
 /**
@@ -31,7 +32,7 @@ import { formatCurrency } from "@/lib/formatting";
  */
 export const claimResolutionPhase = {
   name: "claimResolution",
-  order: 75, // After raceResolution (~65-70)
+  order: PHASE_ORDER_CLAIM_RESOLUTION, // After raceResolution (~65-70)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, logs } = context;
     const allClaims: Claim[] = state.claims ?? [];

@@ -1,4 +1,12 @@
 import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeData";
+import {
+  DEFAULT_GENETIC_DIVERSITY,
+  INBREEDING_EXPECTED_MAX_ANCESTORS,
+  INBREEDING_DIVERSITY_HIGH,
+  INBREEDING_DIVERSITY_MODERATE,
+  INBREEDING_DIVERSITY_LOW,
+  INBREEDING_SCORE_BONUS,
+} from "@/game/constants/gameConstants";
 
 /**
  * Calculate founder effect score.
@@ -27,7 +35,7 @@ export function calculateFounderEffect(
   const dam = findHorseByName(damName);
 
   if (!sire || !dam) {
-    return { score: 0.5, description: "Unknown pedigree" };
+    return { score: DEFAULT_GENETIC_DIVERSITY, description: "Unknown pedigree" };
   }
 
   // Count unique ancestors in 4 generations to assess genetic diversity
@@ -68,17 +76,17 @@ export function calculateFounderEffect(
 
   // Expected maximum unique ancestors in 4 generations (theoretical maximum is ~30)
   // Lower count indicates stronger founder effect (more inbreeding)
-  const expectedMax = 30;
+  const expectedMax = INBREEDING_EXPECTED_MAX_ANCESTORS;
   const diversityRatio = uniqueCount / expectedMax;
 
   let description = "";
   let warning = "";
 
-  if (diversityRatio >= 0.8) {
+  if (diversityRatio >= INBREEDING_DIVERSITY_HIGH) {
     description = "High genetic diversity - low founder effect";
-  } else if (diversityRatio >= 0.6) {
+  } else if (diversityRatio >= INBREEDING_DIVERSITY_MODERATE) {
     description = "Moderate genetic diversity";
-  } else if (diversityRatio >= 0.4) {
+  } else if (diversityRatio >= INBREEDING_DIVERSITY_LOW) {
     description = "Limited genetic diversity - moderate founder effect";
   } else if (diversityRatio >= 0.2) {
     description = "Low genetic diversity - strong founder effect";
@@ -90,7 +98,7 @@ export function calculateFounderEffect(
 
   // Score: higher diversity is better for long-term viability
   // However, some founder effect is necessary for breed standardization
-  const score = Math.min(diversityRatio + 0.2, 1); // Base score with minimum
+  const score = Math.min(diversityRatio + INBREEDING_SCORE_BONUS, 1); // Base score with minimum
 
   return { score, description, warning };
 }

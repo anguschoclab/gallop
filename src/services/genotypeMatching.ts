@@ -1,5 +1,13 @@
 import type { Horse } from "@/game/types";
 import { TRAIT_SCORE } from "@/core/genetics/phenotype";
+import {
+  GENETIC_TRAIT_WEIGHT,
+  DEFAULT_GENETIC_DIVERSITY,
+  GENETIC_COMPATIBILITY_EXCELLENT_THRESHOLD,
+  GENETIC_COMPATIBILITY_GOOD_THRESHOLD,
+  GENETIC_COMPATIBILITY_MODERATE_THRESHOLD,
+  DEFAULT_TRAIT_SCORE,
+} from "@/game/constants/gameConstants";
 
 /**
  * Calculate genetic compatibility based on horse genome research.
@@ -28,24 +36,24 @@ export function calculateGeneticCompatibility(
     sireGenetics.sensoryPerception,
     damGenetics.sensoryPerception,
   );
-  score += sensoryScore * 0.25;
+  score += sensoryScore * GENETIC_TRAIT_WEIGHT;
 
   // Evaluate signal transduction genes
   const signalScore = evaluateGeneticTrait(
     sireGenetics.signalTransduction,
     damGenetics.signalTransduction,
   );
-  score += signalScore * 0.25;
+  score += signalScore * GENETIC_TRAIT_WEIGHT;
 
   // Evaluate immunity genes
   const immunityScore = evaluateGeneticTrait(sireGenetics.immunity, damGenetics.immunity);
-  score += immunityScore * 0.25;
+  score += immunityScore * GENETIC_TRAIT_WEIGHT;
 
   // Evaluate genetic diversity (breed-specific variations)
-  const sireDiversity = sireGenetics.geneticDiversity || 0.5;
-  const damDiversity = damGenetics.geneticDiversity || 0.5;
+  const sireDiversity = sireGenetics.geneticDiversity || DEFAULT_GENETIC_DIVERSITY;
+  const damDiversity = damGenetics.geneticDiversity || DEFAULT_GENETIC_DIVERSITY;
   const avgDiversity = (sireDiversity + damDiversity) / 2;
-  score += avgDiversity * 0.25;
+  score += avgDiversity * GENETIC_TRAIT_WEIGHT;
 
   // Check for Leopard complex (Lp) homozygous risk
   if (sireGenetics.leopardComplex === "dominant" && damGenetics.leopardComplex === "dominant") {
@@ -61,9 +69,9 @@ export function calculateGeneticCompatibility(
   }
 
   let description = "Moderate genetic compatibility";
-  if (score >= 0.8) description = "Excellent genetic compatibility";
-  else if (score >= 0.6) description = "Good genetic compatibility";
-  else if (score >= 0.4) description = "Moderate genetic compatibility";
+  if (score >= GENETIC_COMPATIBILITY_EXCELLENT_THRESHOLD) description = "Excellent genetic compatibility";
+  else if (score >= GENETIC_COMPATIBILITY_GOOD_THRESHOLD) description = "Good genetic compatibility";
+  else if (score >= GENETIC_COMPATIBILITY_MODERATE_THRESHOLD) description = "Moderate genetic compatibility";
   else description = "Poor genetic compatibility";
 
   return {
@@ -81,7 +89,7 @@ export function calculateGeneticCompatibility(
  * @returns Averaged trait score (0-1)
  */
 function evaluateGeneticTrait(sireTrait: string | undefined, damTrait: string | undefined): number {
-  const sireValue = TRAIT_SCORE[sireTrait || "fair"] ?? 0.5;
-  const damValue = TRAIT_SCORE[damTrait || "fair"] ?? 0.5;
+  const sireValue = TRAIT_SCORE[sireTrait || "fair"] ?? DEFAULT_TRAIT_SCORE;
+  const damValue = TRAIT_SCORE[damTrait || "fair"] ?? DEFAULT_TRAIT_SCORE;
   return (sireValue + damValue) / 2;
 }

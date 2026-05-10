@@ -11,8 +11,9 @@
 // Training Resolution Phase
 // Converts TrainingIntents into impacts (stat changes, energy changes, cash changes)
 
-import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
+import type { PipelineContext } from "../pipeline";
+import { resolveTraining } from "@/core/training/trainingResolution";
+import { PHASE_ORDER_TRAINING_RESOLUTION } from "@/game/constants/gameConstants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";
 import { getFacilityBonus } from "@/core/facilities";
@@ -37,7 +38,7 @@ import { getBranchModifiers } from "@/core/facilities/facilityBranching";
  */
 export const trainingResolutionPhase: PipelinePhase = {
   name: "trainingResolution",
-  order: 45,
+  order: PHASE_ORDER_TRAINING_RESOLUTION,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
