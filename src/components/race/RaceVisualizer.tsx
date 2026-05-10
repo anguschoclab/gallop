@@ -77,7 +77,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     // Determine Camera X
     let focusX = 0;
     if (cameraMode === "leader") {
-      focusX = Math.max(...currentHorses.map((h) => h.position)) * PIXELS_PER_METER;
+      focusX = Math.max(0, ...currentHorses.map((h) => h.position)) * PIXELS_PER_METER;
     } else if (cameraMode === "player" && playerHorseId) {
       const player = currentHorses.find((h) => h.horseId === playerHorseId);
       focusX = (player?.position ?? 0) * PIXELS_PER_METER;
