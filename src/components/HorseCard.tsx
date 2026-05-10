@@ -436,6 +436,49 @@ export function HorseCard({
             </div>
           </div>
         )}
+
+        {/* Quick action buttons (owned horses only) */}
+        {horse.owned && (
+          <div className="mt-3 pt-3 border-t flex gap-2 flex-wrap">
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="flex-1 min-w-[90px]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Link to="/stable/$horseId" params={{ horseId: horse.id }}>
+                <Eye className="w-3 h-3" /> View
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="flex-1 min-w-[90px]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Link
+                to="/stable/$horseId"
+                params={{ horseId: horse.id }}
+                hash="stats"
+              >
+                <Activity className="w-3 h-3" /> Stats
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="flex-1 min-w-[90px]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Link to="/scheduler">
+                <Calendar className="w-3 h-3" /> Schedule
+              </Link>
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
