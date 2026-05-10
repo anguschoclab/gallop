@@ -8,7 +8,7 @@ import { HorsePortrait } from "@/components/HorsePortrait";
 import { Badge } from "@/components/ui/badge";
 import { genderSymbol } from "@/core/horse/gender";
 import { formatCurrency } from "@/lib/formatting";
-import { PHASES, chantToPhaseIndex } from "./auctionPhaseStrip";
+import { PHASES, chantToPhaseIndex } from "../auctionPhaseStrip";
 import { cn } from "@/lib/utils";
 import type { Horse, AuctionLot } from "@/game/types";
 import type { ChantPhase } from "@/game/auctionRunner";
