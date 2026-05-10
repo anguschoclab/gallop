@@ -102,7 +102,7 @@ function StablePage() {
         <TabsList>
           <TabsTrigger value="roster" className="gap-2">
             <Users className="h-4 w-4" />
-            Active Roster
+            My Stable
           </TabsTrigger>
           <TabsTrigger value="rivals" className="gap-2">
             <Building2 className="h-4 w-4" />
