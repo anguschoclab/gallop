@@ -40,7 +40,7 @@ function StablePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
-          Stable Management
+          Stables
         </h1>
         <p className="text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">
           <NumericValue value={myHorses.length} /> horses in training
