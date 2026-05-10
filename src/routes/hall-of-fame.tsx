@@ -51,7 +51,13 @@ function HallOfFame() {
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <CardTitle className="font-[family-name:var(--font-display)] text-lg">
-                        {inductee.horseName}
+                        <Link
+                          to="/stable/$horseId"
+                          params={{ horseId: inductee.horseId }}
+                          className="hover:underline hover:text-gold transition-colors"
+                        >
+                          {inductee.horseName}
+                        </Link>
                       </CardTitle>
                       <Badge className="bg-gold text-t900">
                         <Trophy className="h-3 w-3 mr-1" />
