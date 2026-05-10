@@ -114,6 +114,7 @@ export async function clearGameState(): Promise<void> {
       localStorage.removeItem(STORAGE_KEYS.GAME_STATE_FALLBACK);
     } catch (e) {
       console.error("Failed to clear game state from localStorage:", e);
+      throw e;
     }
     return;
   }
