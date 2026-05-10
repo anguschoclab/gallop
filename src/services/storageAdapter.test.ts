@@ -1,14 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-// Mock opfsService module before importing storageAdapter
+import * as opfsService from "./opfsService";
+import { checkOPFSAvailable } from "./opfsService";
+
 vi.mock("./opfsService", () => ({
   initOPFS: vi.fn(),
   writeFile: vi.fn(),
   readFile: vi.fn(),
   deleteFile: vi.fn(),
+  checkOPFSAvailable: vi.fn(),
 }));
-
-import * as opfsService from "./opfsService";
 import * as storageAdapter from "./storageAdapter";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/state";
@@ -17,6 +18,7 @@ import { createDefaultGameState } from "@/game/state";
 let mockOPFSData: Map<string, any> = new Map();
 
 function resetOPFSMocks() {
+  vi.mocked(checkOPFSAvailable).mockResolvedValue(true);
   mockOPFSData = new Map();
 
   vi.mocked(opfsService.initOPFS).mockResolvedValue(undefined);
@@ -29,6 +31,7 @@ function resetOPFSMocks() {
   vi.mocked(opfsService.deleteFile).mockImplementation(async (filename: string) => {
     mockOPFSData.delete(filename);
   });
+  vi.mocked(checkOPFSAvailable).mockResolvedValue(true);
 }
 
 function mockLocalStorage() {
@@ -72,6 +75,7 @@ const originalLocalStorage = (global as any).localStorage;
 describe("storageAdapter", () => {
   beforeEach(() => {
     resetOPFSMocks();
+    storageAdapter._resetStorageAdapterState();
   });
 
   afterEach(() => {
@@ -94,6 +98,34 @@ describe("storageAdapter", () => {
         expect(loaded).toEqual(mockState);
       });
 
+      describe("when OPFS is unavailable (fallback)", () => {
+        beforeEach(() => {
+          mockLocalStorage();
+          vi.mocked(checkOPFSAvailable).mockResolvedValue(false);
+        });
+
+        it("loads game state from localStorage fallback", async () => {
+          const mockState = createMockGameState();
+          localStorage.setItem("gallop_game_state_fallback", JSON.stringify(mockState));
+
+          const loaded = await storageAdapter.loadGameState();
+          expect(loaded).toEqual(mockState);
+          expect(storageAdapter.useLocalStorageFallback).toBe(true);
+        });
+
+        it("returns null and handles parsing errors", async () => {
+          localStorage.setItem("gallop_game_state_fallback", "{ invalid }");
+          const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+          const loaded = await storageAdapter.loadGameState();
+
+          expect(loaded).toBeNull();
+          expect(consoleErrorSpy).toHaveBeenCalled();
+          consoleErrorSpy.mockRestore();
+        });
+      });
+
+
       it("returns null when file is not found", async () => {
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
         
@@ -113,6 +145,37 @@ describe("storageAdapter", () => {
         const loaded = await storageAdapter.loadGameState();
         expect(loaded).toEqual(mockState);
       });
+
+      describe("when OPFS is unavailable (fallback)", () => {
+        beforeEach(() => {
+          mockLocalStorage();
+          vi.mocked(checkOPFSAvailable).mockResolvedValue(false);
+        });
+
+        it("saves game state to localStorage fallback", async () => {
+          const mockState = createMockGameState();
+
+          await storageAdapter.saveGameState(mockState);
+
+          const stored = localStorage.getItem("gallop_game_state_fallback");
+          expect(stored).toBe(JSON.stringify(mockState));
+          expect(storageAdapter.useLocalStorageFallback).toBe(true);
+        });
+
+        it("handles localStorage exceptions", async () => {
+          const mockState = createMockGameState();
+          vi.spyOn(localStorage, "setItem").mockImplementation(() => {
+            throw new Error("localStorage quota exceeded");
+          });
+          const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+          await expect(storageAdapter.saveGameState(mockState)).rejects.toThrow("localStorage quota exceeded");
+
+          expect(consoleErrorSpy).toHaveBeenCalled();
+          consoleErrorSpy.mockRestore();
+        });
+      });
+
 
       it("successfully saves large game state objects", async () => {
         const largeState = createMockGameState();
@@ -141,6 +204,27 @@ describe("storageAdapter", () => {
         const loaded = await storageAdapter.loadGameState();
         expect(loaded).toBeNull();
       });
+
+      describe("when OPFS is unavailable (fallback)", () => {
+        beforeEach(() => {
+          mockLocalStorage();
+          vi.mocked(checkOPFSAvailable).mockResolvedValue(false);
+        });
+
+        it("clears game state from localStorage fallback", async () => {
+          const mockState = createMockGameState();
+          localStorage.setItem("gallop_game_state_fallback", JSON.stringify(mockState));
+
+          // First set the useLocalStorageFallback flag by initializing storage
+          await storageAdapter.loadGameState();
+
+          await storageAdapter.clearGameState();
+
+          const stored = localStorage.getItem("gallop_game_state_fallback");
+          expect(stored).toBeNull();
+        });
+      });
+
     });
   });
 
