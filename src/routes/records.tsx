@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -111,7 +111,13 @@ function LeaderboardTable({ leaderboard, icon, valueFormatter }: any) {
                     #{entry.rank}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="font-bold uppercase tracking-tight">{entry.horseName}</div>
+                    <Link
+                      to="/stable/$horseId"
+                      params={{ horseId: entry.horseId }}
+                      className="font-bold uppercase tracking-tight hover:text-gold transition-colors"
+                    >
+                      {entry.horseName}
+                    </Link>
                     <div className="text-[10px] text-muted-foreground uppercase tracking-widest">
                       Age {entry.metrics.age}
                     </div>

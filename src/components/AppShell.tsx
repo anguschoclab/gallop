@@ -53,7 +53,7 @@ const navSections = [
   {
     label: "My Stable",
     items: [
-      { to: "/stable", label: "Roster", icon: Trophy, exact: false },
+      { to: "/stable", label: "Stables", icon: Trophy, exact: false },
       { to: "/horse-gallery", label: "Horse Gallery", icon: LayoutGrid, exact: false },
       { to: "/staff", label: "Staff", icon: Users, exact: false },
       { to: "/jockeys", label: "Jockeys", icon: User, exact: false },

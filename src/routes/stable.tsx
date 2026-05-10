@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NumericValue } from "@/components/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
-import { Building2, Users } from "lucide-react";
+import { Building2, Users, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/stable")({
@@ -40,7 +40,7 @@ function StablePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
-          Stable Management
+          Stables
         </h1>
         <p className="text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">
           <NumericValue value={myHorses.length} /> horses in training
@@ -102,7 +102,7 @@ function StablePage() {
         <TabsList>
           <TabsTrigger value="roster" className="gap-2">
             <Users className="h-4 w-4" />
-            Active Roster
+            My Stable
           </TabsTrigger>
           <TabsTrigger value="rivals" className="gap-2">
             <Building2 className="h-4 w-4" />
@@ -134,15 +134,25 @@ function StablePage() {
             {npcStables.map((stable) => {
               const stableHorseCount = horseCountsByStable.get(stable.id) || 0;
               return (
-                <Link key={stable.id} to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
-                  <Card className="hover:bg-t700 transition-colors border-gold-muted">
+                <Link
+                  key={stable.id}
+                  to="/npc-stables/$stableId"
+                  params={{ stableId: stable.id }}
+                  className="group"
+                >
+                  <Card className="hover:bg-t700 hover:border-gold transition-colors border-gold-muted cursor-pointer h-full">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-base font-[family-name:var(--font-display)]">
-                        {stable.name}
-                      </CardTitle>
-                      <p className="text-xs text-cream-muted capitalize font-[family-name:var(--font-body)]">
-                        {stable.personality} strategy
-                      </p>
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <CardTitle className="text-base font-[family-name:var(--font-display)] group-hover:text-gold transition-colors">
+                            {stable.name}
+                          </CardTitle>
+                          <p className="text-xs text-cream-muted capitalize font-[family-name:var(--font-body)]">
+                            {stable.personality} strategy
+                          </p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-cream-muted group-hover:text-gold transition-colors shrink-0 mt-1" />
+                      </div>
                     </CardHeader>
                     <CardContent>
                       <div className="flex justify-between items-center text-sm">
@@ -157,6 +167,9 @@ function StablePage() {
                           {formatCurrency(stable.cash)}
                         </Badge>
                       </div>
+                      <p className="text-[10px] text-cream-muted mt-2 group-hover:text-gold transition-colors">
+                        View roster →
+                      </p>
                     </CardContent>
                   </Card>
                 </Link>
