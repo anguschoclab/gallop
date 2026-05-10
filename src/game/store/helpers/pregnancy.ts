@@ -13,7 +13,7 @@
  * Pure business logic for resolving pregnancies and foaling
  */
 
-import type { Horse, Pregnancy, Stable, RegionalSystem } from "@/game/types";
+import type { Horse, Pregnancy, Stable, RegionalSystem, GameState } from "@/game/types";
 import type { Track } from "@/game/tracks";
 import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
@@ -61,6 +61,7 @@ export function resolvePregnancies(
   stables: Stable[],
   usedNames: Set<string>,
   newDay: number,
+  state?: Pick<GameState, "horses">,
 ): PregnancyResult {
   const newLogs: { day: number; text: string }[] = [];
   const pregnancies = currentPregnancies.map((p) => ({ ...p }));
@@ -96,7 +97,7 @@ export function resolvePregnancies(
       }
     }
 
-    const outcome = resolveFoaling(p, sire, dam, namingContext, newDay);
+    const outcome = resolveFoaling(p, sire, dam, namingContext, newDay, state);
 
     if (outcome.kind === "live") {
       const foal = outcome.foal;

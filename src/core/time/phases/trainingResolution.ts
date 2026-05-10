@@ -53,6 +53,7 @@ export const trainingResolutionPhase: PipelinePhase = {
     const hiredStaffByStable = new Map<string, typeof state.hiredStaff>();
     if (state.hiredStaff) {
       for (const staff of state.hiredStaff) {
+        if (!staff.stableId) continue;
         if (!hiredStaffByStable.has(staff.stableId)) hiredStaffByStable.set(staff.stableId, []);
         hiredStaffByStable.get(staff.stableId)!.push(staff);
       }
@@ -278,14 +279,26 @@ export const trainingResolutionPhase: PipelinePhase = {
         const trackBonus = facilities ? getFacilityBonus(facilities, "main_track") : 0;
         
         // --- OUTPOST SPECIALIZATION (Imperial Expansion) ---
-        const npcStables = state.npcStables;
-        const stable = horse.stableId ? npcStables.find(s => s.id === horse.stableId) : state; // Player state hack for now
         let branchMod = null;
-        if (stable && (stable as any).outposts && horse.outpostId) {
-            const outpost = (stable as any).outposts.find((o: any) => o.id === horse.outpostId);
-            if (outpost) {
-                const specialty = getOutpostSpecialty(outpost);
-                branchMod = getBranchModifiers(specialty);
+        if (horse.outpostId) {
+            // Check if horse belongs to NPC stable
+            if (horse.stableId && state.npcStables) {
+                const npcStable = state.npcStables.find(s => s.id === horse.stableId);
+                if (npcStable && (npcStable as any).outposts) {
+                    const outpost = (npcStable as any).outposts.find((o: any) => o.id === horse.outpostId);
+                    if (outpost) {
+                        const specialty = getOutpostSpecialty(outpost);
+                        branchMod = getBranchModifiers(specialty);
+                    }
+                }
+            }
+            // Check if horse belongs to player (player may have outposts in future)
+            else if (!horse.stableId && (state as any).outposts) {
+                const outpost = (state as any).outposts.find((o: any) => o.id === horse.outpostId);
+                if (outpost) {
+                    const specialty = getOutpostSpecialty(outpost);
+                    branchMod = getBranchModifiers(specialty);
+                }
             }
         }
         // --- END SPECIALIZATION ---
@@ -299,8 +312,12 @@ export const trainingResolutionPhase: PipelinePhase = {
           
           // Apply branch multiplier
           if (branchMod) {
-              if (config.primary === "stamina" && branchMod.staminaGain) gain *= branchMod.staminaGain;
-              if (config.primary === "speed" && (branchMod as any).speedGain) gain *= (branchMod as any).speedGain;
+              if (config.primary === "stamina" && "staminaGain" in branchMod && branchMod.staminaGain) {
+                  gain *= branchMod.staminaGain;
+              }
+              if (config.primary === "speed" && "speedGain" in branchMod && branchMod.speedGain) {
+                  gain *= branchMod.speedGain;
+              }
               gain = Math.round(gain);
           }
           

@@ -14,9 +14,39 @@
  */
 
 export const OFFENSIVE_WORDS = [
-  "offensive", // Placeholder for actual offensive words
-  "profanity",
-  // In a real app, this would be a comprehensive list or use a library
+  // Common profanity (mild to moderate)
+  "damn",
+  "hell",
+  "ass",
+  "bastard",
+  "bitch",
+  "shit",
+  "crap",
+  "piss",
+  "offensive",
+  // Slurs and hate speech (blocked)
+  "nigger",
+  "nigga",
+  "faggot",
+  "fag",
+  "retard",
+  "retarded",
+  // Sexual content (blocked)
+  "fuck",
+  "sex",
+  "porn",
+  // Violence and hate (blocked)
+  "kill",
+  "murder",
+  "death",
+  "die",
+  // Drugs (blocked)
+  "drug",
+  "cocaine",
+  "heroin",
+  "meth",
+  // Additional filters can be added as needed
+  // This list is intentionally conservative for a general audience
 ];
 
 export const TRADE_NAMES = [

@@ -11,6 +11,7 @@ import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
 export function JockeyRoster() {
   const jockeys = useGame((s) => s.jockeys);
   const hireJockey = useGame((s) => s.hireJockey);
+  const releaseJockey = useGame((s) => s.releaseJockey);
   const [search, setSearch] = useState("");
   const [archetypeFilter, setArchetypeFilter] = useState<JockeyArchetype | "all">("all");
   const [patternFilter, setPatternFilter] = useState<JockeySilkPattern | "all">("all");
@@ -284,8 +285,8 @@ export function JockeyRoster() {
                   key={j.id}
                   jockey={j}
                   isRetained
-                  actionLabel="Contract Details"
-                  onAction={() => {}}
+                  actionLabel="Release Jockey"
+                  onAction={(jockey) => releaseJockey(jockey.id)}
                 />
               ))}
             </div>
@@ -308,7 +309,7 @@ export function JockeyRoster() {
               <JockeyCard
                 key={j.id}
                 jockey={j}
-                onAction={(jockey) => hireJockey(jockey.id)}
+                onAction={(jockey) => hireJockey(jockey.id, "retainer")}
                 actionLabel="Sign Retainer"
               />
             ))}

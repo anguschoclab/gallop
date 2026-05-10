@@ -13,9 +13,24 @@ import type { Horse, GameState } from "@/game/types";
 import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
 import { getCareerStats } from "@/core/horse/stats";
 
-// Reverse-lookup helpers: given a sire/dam ID, find that horse's foals in the
-// live horses[] array. Linear scans for now — fine at the scale of a single
-// stable + a couple hundred NPC horses. Memoize later if needed.
+// Memoization cache for lineage lookups
+const foalsCache = new Map<string, Horse[]>();
+const stakesCache = new Map<string, number>();
+const g1Cache = new Map<string, number>();
+const earningsCache = new Map<string, number>();
+const runnersCache = new Map<string, Horse[]>();
+
+/**
+ * Clear all lineage caches.
+ * Call this when horses array changes significantly (e.g., new breeding season).
+ */
+export function clearLineageCache(): void {
+  foalsCache.clear();
+  stakesCache.clear();
+  g1Cache.clear();
+  earningsCache.clear();
+  runnersCache.clear();
+}
 
 /**
  * Get all foals by a given stallion.
@@ -30,7 +45,13 @@ import { getCareerStats } from "@/core/horse/stats";
  * const foals = getFoalsBy(gameState, stallion.id);
  */
 export function getFoalsBy(state: Pick<GameState, "horses">, stallionId: string): Horse[] {
-  return state.horses.filter((h) => h.pedigree?.sireId === stallionId);
+  const cacheKey = stallionId;
+  if (foalsCache.has(cacheKey)) {
+    return foalsCache.get(cacheKey)!;
+  }
+  const foals = state.horses.filter((h) => h.pedigree?.sireId === stallionId);
+  foalsCache.set(cacheKey, foals);
+  return foals;
 }
 
 /**
@@ -101,7 +122,13 @@ export function isG1Winner(foal: Horse): boolean {
  * const count = getStakesFoalsBy(gameState, stallion.id);
  */
 export function getStakesFoalsBy(state: Pick<GameState, "horses">, stallionId: string): number {
-  return getFoalsBy(state, stallionId).filter(isStakesWinner).length;
+  const cacheKey = stallionId;
+  if (stakesCache.has(cacheKey)) {
+    return stakesCache.get(cacheKey)!;
+  }
+  const count = getFoalsBy(state, stallionId).filter(isStakesWinner).length;
+  stakesCache.set(cacheKey, count);
+  return count;
 }
 
 /**
@@ -115,7 +142,13 @@ export function getStakesFoalsBy(state: Pick<GameState, "horses">, stallionId: s
  * const count = getG1FoalsBy(gameState, stallion.id);
  */
 export function getG1FoalsBy(state: Pick<GameState, "horses">, stallionId: string): number {
-  return getFoalsBy(state, stallionId).filter(isG1Winner).length;
+  const cacheKey = stallionId;
+  if (g1Cache.has(cacheKey)) {
+    return g1Cache.get(cacheKey)!;
+  }
+  const count = getFoalsBy(state, stallionId).filter(isG1Winner).length;
+  g1Cache.set(cacheKey, count);
+  return count;
 }
 
 // Total earnings across a stallion's foals. Sums all raceHistory entries,
@@ -155,7 +188,13 @@ export function foalLifetimeEarnings(foal: Horse): number {
  * const total = totalEarningsBy(gameState, stallion.id);
  */
 export function totalEarningsBy(state: Pick<GameState, "horses">, stallionId: string): number {
-  return getFoalsBy(state, stallionId).reduce((sum, h) => sum + foalLifetimeEarnings(h), 0);
+  const cacheKey = stallionId;
+  if (earningsCache.has(cacheKey)) {
+    return earningsCache.get(cacheKey)!;
+  }
+  const total = getFoalsBy(state, stallionId).reduce((sum, h) => sum + foalLifetimeEarnings(h), 0);
+  earningsCache.set(cacheKey, total);
+  return total;
 }
 
 // Foals per the "racing age" definition (2 or older). Used for AEI denominator
@@ -174,5 +213,11 @@ export function totalEarningsBy(state: Pick<GameState, "horses">, stallionId: st
  * const runners = getRunnersBy(gameState, stallion.id);
  */
 export function getRunnersBy(state: Pick<GameState, "horses">, stallionId: string): Horse[] {
-  return getFoalsBy(state, stallionId).filter((h) => h.age >= 2 && h.raceHistory.length > 0);
+  const cacheKey = stallionId;
+  if (runnersCache.has(cacheKey)) {
+    return runnersCache.get(cacheKey)!;
+  }
+  const runners = getFoalsBy(state, stallionId).filter((h) => h.age >= 2 && h.raceHistory.length > 0);
+  runnersCache.set(cacheKey, runners);
+  return runners;
 }

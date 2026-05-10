@@ -168,7 +168,7 @@ export function generateRaceImpacts({
     impacts.push({
       id: generateUUID(),
       intentId: "",
-      day,
+      day: newDay,
       phase: "raceResolution",
       logLevel: "conditional",
       type: "form_change",
@@ -183,7 +183,7 @@ export function generateRaceImpacts({
       impacts.push({
         id: generateUUID(),
         intentId: "",
-        day,
+        day: newDay,
         phase: "raceResolution",
         logLevel: "conditional",
         type: "fame_change",
@@ -462,7 +462,7 @@ export function generateRaceImpacts({
         impacts.push({
           id: generateUUID(),
           intentId: "",
-          day,
+          day: newDay,
           phase: "raceResolution",
           logLevel: "conditional",
           type: "blue hen_status",

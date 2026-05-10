@@ -15,6 +15,7 @@ describe("Tactics Selector", () => {
     // Reset store before each test
     useGame.setState({
       pendingPlayerRaceId: undefined,
+      pendingIntents: [],
       races: [],
       horses: [],
       jockeys: [],
@@ -48,11 +49,12 @@ describe("Tactics Selector", () => {
       useGame.getState().setRaceTactics(raceId, horseId, tactics);
       
       const pendingIntents = useGame.getState().pendingIntents;
-      const tacticsIntent = pendingIntents?.find(
+      const tacticsIntents = pendingIntents?.filter(
         (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
       );
+      const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
       
-      expect((tacticsIntent as any)?.tactics).toBe(tactics);
+      expect((latestTactics as any)?.tactics).toBe(tactics);
     });
   });
 

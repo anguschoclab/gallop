@@ -14,6 +14,15 @@ export function calculateFounderEffect(
   sireName: string,
   damName: string,
 ): { score: number; description: string; warning?: string } {
+  // Explicit check for identical names (direct inbreeding)
+  if (sireName === damName && sireName !== "") {
+    return {
+      score: 0,
+      description: "Direct inbreeding detected",
+      warning: "Sire and dam have identical names - this represents direct inbreeding",
+    };
+  }
+
   const sire = findHorseByName(sireName);
   const dam = findHorseByName(damName);
 

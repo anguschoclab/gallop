@@ -32,7 +32,6 @@ import { auctionsPhase } from "./auctions";
 import { leaderboardPhase } from "./leaderboardPhase";
 import { awardsPhase } from "./awards";
 import { schedulerPhase } from "./schedulerPhase";
-import { stateUpdatePhase } from "./stateUpdate";
 import { raceEntryResolutionPhase } from "./raceEntryResolution";
 import { consignmentResolutionPhase } from "./consignmentResolution";
 import { purchaseResolutionPhase } from "./purchaseResolution";
@@ -78,7 +77,6 @@ export const GAME_PIPELINE_PHASES = [
   leaderboardPhase,
   awardsPhase,
   schedulerPhase,
-  stateUpdatePhase,
   // Resolution phases (convert intents to impacts)
   raceEntryResolutionPhase,
   consignmentResolutionPhase,

@@ -37,6 +37,7 @@ export const pregnancyPhase = {
       state.npcStables,
       usedNamesSet,
       newDay,
+      { horses: state.horses },
     );
     const { pregnancies, foals, cashAdjustment } = pregResult;
 

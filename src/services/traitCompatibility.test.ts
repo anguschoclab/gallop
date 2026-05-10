@@ -60,7 +60,7 @@ describe("traitCompatibility", () => {
         name: "Test Sire",
         gender: "horse" as const,
         age: 5,
-        temperament: "calm" as const,
+        temperament: "good" as const,
       } as unknown as Horse;
 
       const dam = {
@@ -68,7 +68,7 @@ describe("traitCompatibility", () => {
         name: "Test Dam",
         gender: "mare" as const,
         age: 5,
-        temperament: "calm" as const,
+        temperament: "good" as const,
       } as unknown as Horse;
 
       const result = calculateTemperamentCompatibility(sire, dam);

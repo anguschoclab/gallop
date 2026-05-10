@@ -29,7 +29,7 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
   onClose,
 }) => {
   const horses = useGallopStore((s) => s.horses);
-  const nameHorse = useGallopStore((s) => s.nameHorse);
+  const renameHorse = useGallopStore((s) => s.renameHorse);
   const foal = useMemo(() => horses.find((h) => h.id === foalId), [horses, foalId]);
 
   const [name, setName] = useState("");
@@ -52,15 +52,19 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
   const generateSuggestion = useCallback(() => {
     if (!foal) return;
     const rng = createRng(`foal-name-${foal.id}-${Date.now()}`);
-    const suggestion = generateProceduralHorseName(foal, rng);
+    const existingNames = new Set(horses.map((h) => h.name));
+    const suggestion = generateProceduralHorseName({ sireName: foal.sireName, damName: foal.damName, existingNames }, rng);
     setName(suggestion);
-    setValidation(validateHorseName(suggestion, horses));
+    const validation = validateHorseName(suggestion, existingNames);
+    setValidation({ valid: validation.isValid, reason: validation.reason });
   }, [foal, horses]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
     setName(newName);
-    setValidation(validateHorseName(newName, horses));
+    const existingNames = new Set(horses.map((h) => h.name));
+    const validation = validateHorseName(newName, existingNames);
+    setValidation({ valid: validation.isValid, reason: validation.reason });
   };
 
   const handleSubmit = async () => {
@@ -68,7 +72,7 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
 
     setIsSubmitting(true);
     try {
-      nameHorse(foal.id, name);
+      renameHorse(foal.id, name);
       onClose();
     } finally {
       setIsSubmitting(false);
@@ -155,7 +159,7 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
             onClick={onClose}
             className="text-slate-400 hover:text-white hover:bg-slate-800"
           >
-            Skip for now
+            Cancel
           </Button>
           <Button
             onClick={handleSubmit}

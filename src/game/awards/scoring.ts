@@ -156,9 +156,10 @@ function isEligibleForCategory(
     case "champion_filly_or_mare":
       return gender === "filly" || gender === "mare";
 
-    // Steeplechase (not implemented)
+    // Steeplechase - longer distance turf races (heuristic until proper steeplechase type added)
     case "champion_steeplechase":
-      return false;
+      // Steeplechase races are typically long-distance (3200m+) on turf
+      return distance >= 3200 && surface === "turf";
 
     // Award of merit (special handling)
     case "award_of_merit":

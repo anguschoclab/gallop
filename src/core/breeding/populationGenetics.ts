@@ -17,10 +17,9 @@ import { cachedCoi, cachedBloodline } from "@/core/genetics/genotypeCache";
 // Bloodline tagging — sire-line founder identification
 // ============================================================================
 
-// Real-world dominant sire lines plus invented lore-friendly placeholders for
-// procedural NPC pedigrees. The set is intentionally small — the goal is for
-// every horse to belong to roughly one of these tags so cross-tag matings are
-// strategically meaningful.
+// Real-world dominant sire lines for procedural NPC pedigrees. The set is intentionally
+// comprehensive — the goal is for every horse to belong to roughly one of these tags
+// so cross-tag matings are strategically meaningful.
 export const KNOWN_BLOODLINES = [
   "Northern Dancer", // dominant globally, especially turf
   "Mr. Prospector", // dominant in NA dirt
@@ -32,6 +31,16 @@ export const KNOWN_BLOODLINES = [
   "A.P. Indy", // NA dirt classic
   "Seattle Slew", // NA dirt
   "Native Dancer", // historical
+  "Danzig", // NA dirt speed line
+  "Danehill", // Australian/speed line
+  "Dubawi", // Modern European turf
+  "Frankel", // Modern European turf superstar
+  "Tapit", // Modern NA dirt
+  "Into Mischief", // Modern NA dirt speed
+  "Medaglia d'Oro", // Modern NA dirt
+  "Unbridled's Song", // NA dirt
+  "Hansel", // NA dirt
+  "Liam the Map", // Modern turf influence
 ] as const;
 
 export type Bloodline = (typeof KNOWN_BLOODLINES)[number] | "Unaffiliated";
@@ -52,6 +61,16 @@ export const REGIONAL_LINE_BIAS: Record<
   "Seattle Slew": { surface: "Dirt", boost: 0.015 },
   "Bold Ruler": { surface: "Dirt", boost: 0.015 },
   "Native Dancer": { boost: 0.01 },
+  "Danzig": { surface: "Dirt", boost: 0.015 },
+  "Danehill": { surface: "Dirt", boost: 0.015 },
+  "Dubawi": { surface: "Turf", boost: 0.015 },
+  "Frankel": { surface: "Turf", boost: 0.02 },
+  "Tapit": { surface: "Dirt", boost: 0.015 },
+  "Into Mischief": { surface: "Dirt", boost: 0.015 },
+  "Medaglia d'Oro": { surface: "Dirt", boost: 0.015 },
+  "Unbridled's Song": { surface: "Dirt", boost: 0.015 },
+  "Hansel": { surface: "Dirt", boost: 0.01 },
+  "Liam the Map": { surface: "Turf", boost: 0.01 },
   Unaffiliated: { boost: 0 },
 };
 

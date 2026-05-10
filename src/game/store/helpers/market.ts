@@ -81,7 +81,6 @@ export function generateUpcomingRaces(currentRaces: Race[], newDay: number, rng:
 /**
  * Removes old resolved races from the schedule
  * Keeps graded races for 365 days, ungraded resolved races for 30 days
- * Keeps graded races for 365 days, ungraded resolved races for 3 days
  * @param races - Current races array
  * @param newDay - Current simulation day
  * @returns Filtered races array
@@ -90,6 +89,6 @@ export function pruneOldRaces(races: Race[], newDay: number): Race[] {
   return races.filter((r) => {
     if (!r.resolved) return true;
     if (r.graded) return r.day > newDay - 365;
-    return r.day > newDay - 3;
+    return r.day > newDay - 30;
   });
 }

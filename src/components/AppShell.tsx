@@ -272,7 +272,7 @@ export function AppShell() {
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    startNewGame(undefined);
+                    window.location.href = "/new-game";
                     setNewGameDialogOpen(false);
                   }}
                 >
@@ -288,8 +288,7 @@ export function AppShell() {
           <Outlet />
         </div>
       </main>
-      {/* Temporarily disabled due to infinite loop bug - blocking Comlink testing */}
-      {/* <PlayerRacePrompt /> */}
+      <PlayerRacePrompt />
       <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
       <AwardCeremony
         isOpen={showCeremony}

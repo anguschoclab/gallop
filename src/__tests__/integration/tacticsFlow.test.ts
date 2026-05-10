@@ -15,6 +15,7 @@ describe("Tactics Flow Integration", () => {
     // Reset store before each test
     useGame.setState({
       pendingPlayerRaceId: undefined,
+      pendingIntents: [],
       races: [],
       horses: [],
       jockeys: [],
@@ -114,10 +115,11 @@ describe("Tactics Flow Integration", () => {
     validTactics.forEach((tactics) => {
       useGame.getState().setRaceTactics(raceId, horseId, tactics);
       const pendingIntents = useGame.getState().pendingIntents;
-      const tacticsIntent = pendingIntents?.find(
+      const tacticsIntents = pendingIntents?.filter(
         (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
       );
-      expect((tacticsIntent as any)?.tactics).toBe(tactics);
+      const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
+      expect((latestTactics as any)?.tactics).toBe(tactics);
     });
   });
 });

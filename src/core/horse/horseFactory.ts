@@ -20,6 +20,7 @@ import type {
   RunningStyle,
   Stable,
   StableTier,
+  GameState,
 } from "@/game/types";
 import type { Rng } from "@/core/common/types";
 
@@ -279,13 +280,18 @@ export function generateHorse(
     { strategy: "regional" },
   );
 
-  return createHorseFromDNA(genotype, rng, {
+  const horse = createHorseFromDNA(genotype, rng, {
     name: horseName,
     age,
     gender,
     hemisphere,
     owned: opts.owned,
   });
+
+  // Assign Bruce Lowe family for procedural horses
+  horse.bruceLoweFamily = rollProceduralFamily(rng);
+
+  return horse;
 }
 
 /**
@@ -352,6 +358,9 @@ export function generateNpcHorse(
       { strategy: "regional" },
     );
 
+  // Assign Bruce Lowe family for NPC horses
+  horse.bruceLoweFamily = rollProceduralFamily(rng);
+
   return horse;
 }
 
@@ -368,11 +377,12 @@ export function generateNpcHorse(
  * @param dam - The dam horse (must have genotype)
  * @param namingContext - Optional context for name generation (region, theme, existing names)
  * @param newDay - Optional game day when foaling occurs
+ * @param state - Optional game state with horses array for Bruce Lowe family resolution
  * @returns Either a live foal with Horse object, or a complication with type description
  * @throws {Error} If sire or dam is missing genotype
  *
  * @example
- * const result = resolveFoaling(pregnancy, sire, dam, namingContext, currentDay);
+ * const result = resolveFoaling(pregnancy, sire, dam, namingContext, currentDay, state);
  * if (result.kind === "live") {
  *   console.log("Foal born:", result.foal.name);
  * } else {
@@ -385,6 +395,7 @@ export function resolveFoaling(
   dam: Horse,
   namingContext?: Partial<NamingContext>,
   newDay?: number,
+  state?: Pick<GameState, "horses">,
 ): { kind: "live"; foal: Horse; transmission?: boolean } | { kind: "complication"; type: string } {
 
   const rng = createRng(hashStr(pregnancy.id));
@@ -437,6 +448,21 @@ export function resolveFoaling(
     createdAtDay: newDay,
   });
 
+  // Set pedigree
+  foal.pedigree = {
+    sireId: sire.id,
+    damId: dam.id,
+    sireName: sire.name,
+    damName: dam.name,
+  };
+
+  // Resolve Bruce Lowe family from dam line
+  if (state) {
+    foal.bruceLoweFamily = resolveBruceLoweFamily(foal, state);
+  } else {
+    // Fallback: use dam's family if available, otherwise roll procedural
+    foal.bruceLoweFamily = dam.bruceLoweFamily ?? rollProceduralFamily(rng);
+  }
 
   foal.name = generateProceduralHorseName(
     {

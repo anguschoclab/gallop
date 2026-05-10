@@ -11,19 +11,19 @@
 import type { Jockey } from "@/game/types";
 import { formatCurrency } from "@/lib/formatting";
 import { generateUUID } from "@/game/uuid";
-import type { ActionResult } from "../types";
-import type { GameStateCreator } from "../types";
+import type { ActionResult, SliceCreator } from "../types";
 import { requireOwned, requireHorse } from "../guards";
 
 export type JockeySlice = {
   hireJockey: (jockeyId: string, contractType: "standard" | "retainer") => ActionResult;
   hireApprentice: (jockeyId: string) => ActionResult;
+  releaseJockey: (jockeyId: string) => ActionResult;
   rerollJockeySilk: (jockeyId: string) => ActionResult;
   assignJockey: (raceId: string, horseId: string, jockeyId: string) => ActionResult;
   setJockeys: (jockeys: Jockey[]) => void;
 };
 
-export const createJockeySlice: GameStateCreator<JockeySlice> = (set, get) => ({
+export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
   hireJockey: (jockeyId: string, contractType: "standard" | "retainer" = "standard") => {
     const s = get();
     const jockey = s.jockeys?.find((j: Jockey) => j.id === jockeyId);
@@ -76,6 +76,26 @@ export const createJockeySlice: GameStateCreator<JockeySlice> = (set, get) => ({
       contractUntil: s.day + 365, // Year-long enrollment
       bonus: 0,
       stableAffinity: 20,
+    } as any);
+
+    return { ok: true };
+  },
+
+  releaseJockey: (jockeyId: string) => {
+    const s = get();
+    const jockey = s.jockeys?.find((j: Jockey) => j.id === jockeyId);
+    if (!jockey) return { ok: false, reason: "Jockey not found." };
+    if (!jockey.stableId || jockey.stableId !== "player")
+      return { ok: false, reason: "Jockey is not under contract with your stable." };
+
+    get().enqueueIntent({
+      id: generateUUID(),
+      entityId: jockeyId,
+      source: "player",
+      day: s.day,
+      priority: 100,
+      type: "jockey_release",
+      jockeyId,
     } as any);
 
     return { ok: true };
