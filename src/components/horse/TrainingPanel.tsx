@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { TRAINING_COST } from "@/game/constants/gameConstants";
 import { isWorkoutEnabled } from "@/core/facilities";
-import type { Horse, FacilityState } from "@/game/types";
+import type { Horse, PlayerFacilities } from "@/game/types";
 
 /**
  * Props for the TrainingPanel component.
@@ -17,7 +17,7 @@ interface TrainingPanelProps {
   /** Player's current cash balance. */
   cash: number;
   /** Current facility state to check for unlocked workouts. */
-  facilities: FacilityState | null;
+  facilities: PlayerFacilities | null;
   /** Callback function to trigger a training session. */
   onTrain: (horseId: string, type: any) => void;
 }
@@ -37,13 +37,21 @@ export function TrainingPanel({
 }: TrainingPanelProps) {
   const basicTrainingTypes = ["speed", "stamina", "acceleration"] as const;
 
-  const advancedWorkouts = [
+  type AdvancedWorkout = {
+    key: string;
+    label: string;
+    cost: number;
+    energy: number;
+    stat?: string;
+  };
+
+  const advancedWorkouts: AdvancedWorkout[] = [
     { key: "bullet", label: "Bullet", cost: 100, energy: 25, stat: "speed" },
     { key: "breeze", label: "Breeze", cost: 85, energy: 20 },
     { key: "gate_work", label: "Gate Work", cost: 90, energy: 22 },
     { key: "swimming", label: "Swimming", cost: 80, energy: 15 },
     { key: "gallop", label: "Gallop", cost: 70, energy: 16 },
-  ] as const;
+  ];
 
   return (
     <div className="space-y-2">
@@ -76,7 +84,7 @@ export function TrainingPanel({
           {advancedWorkouts.map((workout) => {
             const isEnabled = facilities && isWorkoutEnabled(facilities, workout.key as any);
             const isStatCapped =
-              workout.stat &&
+              workout.stat !== undefined &&
               horse.stats[workout.stat as keyof typeof horse.stats] >= horse.potential;
 
             return (

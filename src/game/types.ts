@@ -21,3 +21,13 @@ export * from "@/core/campaign/types";
 // Re-export specific external dependencies
 export type { GameState } from "./state";
 export type { RegionalAward, AwardRegion } from "./awards/types";
+export type { BreedingCompatibilityResult } from "./breedingCompatibility";
+export type { PlayerFacilities } from "@/core/facilities/facilityTypes";
+
+// Type aliases for horse properties
+export type CoatColor = string;
+export type HorseMarkings = string;
+export type HorseGender = "colt" | "filly" | "horse" | "mare" | "gelding";
+
+// Type alias for facilities
+export type FacilityState = Record<string, any>;

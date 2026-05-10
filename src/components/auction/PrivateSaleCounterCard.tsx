@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
-import type { Horse, NPCStable, PrivateSaleOffer } from "@/game/types";
+import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
 
 /**
  * Props for the PrivateSaleCounterCard component.
@@ -24,7 +24,7 @@ interface PrivateSaleCounterCardProps {
   /** The horse being offered. */
   horse: Horse;
   /** The stable that made the counter offer. */
-  stable: NPCStable;
+  stable: Stable;
   /** Player's current cash balance. */
   cash: number;
   /** Callback to respond to the private sale offer (accept/decline). */

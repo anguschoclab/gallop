@@ -12,7 +12,7 @@ import {
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/formatting";
 import { calculateLotValuation } from "@/game/auction";
-import type { Horse, NPCStable } from "@/game/types";
+import type { Horse, Stable } from "@/game/types";
 
 /**
  * Helper to get a flavored decline message based on stable personality.
@@ -39,7 +39,7 @@ interface PrivateSaleOfferDialogProps {
   /** The horse being offered for purchase. */
   horse: Horse;
   /** The stable that owns the horse. */
-  stable: NPCStable;
+  stable: Stable;
   /** Whether the dialog is open. */
   isOpen: boolean;
   /** Callback to close the dialog. */

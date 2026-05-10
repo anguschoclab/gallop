@@ -4,7 +4,7 @@ import { HorsePortrait } from "@/components/HorsePortrait";
 import { formatCurrency } from "@/lib/formatting";
 import { netProceeds, commissionAmount } from "@/game/auction";
 import { CONSIGNMENT_COMMISSION } from "@/game/constants/gameConstants";
-import type { AuctionLot, Horse, NPCStable } from "@/game/types";
+import type { AuctionLot, Horse, Stable } from "@/game/types";
 
 /**
  * Props for the PlayerConsignmentsPanel component.
@@ -15,7 +15,7 @@ interface PlayerConsignmentsPanelProps {
   /** List of all horses to look up consigned horse data. */
   horses: Horse[];
   /** List of all stables to look up buyer names. */
-  stables: NPCStable[];
+  stables: Stable[];
 }
 
 /**

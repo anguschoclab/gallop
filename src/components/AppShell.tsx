@@ -48,7 +48,6 @@ const navSections = [
       { to: "/", label: "Dashboard", icon: Home, exact: true },
       { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
-      { to: "/settings", label: "Settings", icon: Settings, exact: false },
     ],
   },
   {
@@ -89,6 +88,10 @@ const navSections = [
       { to: "/sire-watch", label: "Sire Watch", icon: Star, exact: false },
       { to: "/sire-leaderboards", label: "Sire Leaderboards", icon: Trophy, exact: false },
     ],
+  },
+  {
+    label: "Configuration",
+    items: [{ to: "/settings", label: "Settings", icon: Settings, exact: false }],
   },
 ] as const;
 

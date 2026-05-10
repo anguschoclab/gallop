@@ -117,6 +117,14 @@ export type Horse = {
   heartScore: number;
   bloodline: string;
   fiberBias: string;
+  coatColor?: string;
+  markings?: string;
+  height?: number;
+  weight?: number;
+  injuryProneness?: number;
+  lastScoutedDay?: number;
+  conformation?: number;
+  temperament?: number;
   healthStatus: "healthy" | "covering_sickness" | "recovering" | "other_illness";
   healthStatusDay: number;
   isBlueHen: boolean;
