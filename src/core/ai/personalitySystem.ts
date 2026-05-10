@@ -36,7 +36,7 @@ export interface PersonalityAIState {
   // Strategic state
   currentStrategy: string;
   strategyConfidence: number;
-  lastStrategyChange: number;
+  lastStrategyChangeDay: number;
 }
 
 /**
@@ -63,7 +63,7 @@ export function getPersonalityAIState(personality: StablePersonality): Personali
     learningState: createLearningState(),
     currentStrategy: "default",
     strategyConfidence: 0.5,
-    lastStrategyChange: 0,
+    lastStrategyChangeDay: 0,
   };
 }
 
@@ -137,7 +137,6 @@ export function calculateUtilityScore(
  * @param context - Context of the decision
  * @param success - Whether the decision was successful
  * @param value - Value of the outcome
- * @param timestamp - Timestamp of the outcome
  * @param day - Current game day
  * @returns Updated personality AI state
  */
@@ -147,7 +146,6 @@ export function recordOutcome(
   context: Record<string, unknown>,
   success: boolean,
   value: number,
-  timestamp: number,
   day: number,
 ): PersonalityAIState {
   const contextKey = getOutcomeKey(decisionType, context);
@@ -159,7 +157,6 @@ export function recordOutcome(
     contextKey,
     success,
     value,
-    timestamp,
     day,
     aiState.memoryDepth,
   );
@@ -192,7 +189,7 @@ export function recordOutcome(
       currentStrategy: shouldSwitch
         ? strategyAlternatives[newState.currentStrategy] || "default"
         : newState.currentStrategy,
-      lastStrategyChange: shouldSwitch ? timestamp : newState.lastStrategyChange,
+      lastStrategyChangeDay: shouldSwitch ? day : newState.lastStrategyChangeDay,
     };
   }
 

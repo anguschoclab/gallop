@@ -34,6 +34,7 @@ import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { useDay, useCash, useHorses } from "@/game/hooks/useCoreState";
 import { useAwards } from "@/game/hooks/useSystemsState";
+import { useAutoSave } from "@/game/hooks/useAutoSave";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
 import { AutoSimPanel } from "./AutoSimPanel";
 import { AwardCeremony } from "./awards";
@@ -92,6 +93,7 @@ const navSections = [
 ] as const;
 
 export function AppShell() {
+  useAutoSave();
   const navigate = useNavigate();
   const day = useDay();
   const cash = useCash();

@@ -14,13 +14,8 @@
  */
 
 import type { Stable, Horse } from "@/game/types";
-import { getPersonalityAIState } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  type LearningState,
-} from "./learningModule";
+import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
+import { createLearningState, recordOutcome as recordLearningOutcome, getSuccessRate, type LearningState } from "./learningModule";
 
 export interface UpkeepAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -360,13 +355,20 @@ export function recordBudgetDecision(
   // Update learning state
   const success = spent <= totalBudget * 1.1;
   const value = totalBudget - spent;
-  const newLearningState = recordOutcome(
+  const newPersonalityState = recordOutcome(
+    aiState.personalityState,
+    "upkeep",
+    { stableId: stable.id },
+    success,
+    value,
+    currentDay,
+  );
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "upkeep_spending",
     "budget",
     success,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );
@@ -375,6 +377,7 @@ export function recordBudgetDecision(
     ...aiState,
     budgetHistory: trimmedHistory,
     learningState: newLearningState,
+    personalityState: newPersonalityState,
   };
 }
 

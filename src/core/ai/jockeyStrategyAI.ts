@@ -13,15 +13,15 @@
  * NPC jockey instructions for race simulation based on personality and learning
  */
 
-import type { Horse, Jockey, Stable, Race, RunningStyle } from "@/game/types";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
-import { calculateRaceRating } from "@/core/horse/stats";
+import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
+import { getPersonalityAIState, recordOutcome, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome,
+  recordOutcome as recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
+import { calculateRaceRating } from "@/core/horse/stats";
 
 export interface JockeyStrategyAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -469,20 +469,29 @@ export function recordRaceStrategy(
   const success = position <= 3; // Top 3 is success
   const contextKey = `${horse.age}:${race.distance}:${runningStyle}`;
   const value = 10 - position; // Higher value for better positions
-  const newLearningState = recordOutcome(
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "jockey_strategy",
-    contextKey,
+    `${race.id}:${horse.id}`,
     success,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
+  );
+
+  const newPersonalityState = recordOutcome(
+    aiState.personalityState,
+    "jockey_strategy",
+    { raceId: race.id, horseId: horse.id },
+    success,
+    value,
+    currentDay,
   );
 
   return {
     ...aiState,
     strategyHistory: trimmedHistory,
+    personalityState: newPersonalityState,
     learningState: newLearningState,
   };
 }

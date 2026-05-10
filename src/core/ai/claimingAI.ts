@@ -15,13 +15,8 @@
 
 import type { Horse, Race, Stable } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  getAdaptiveThreshold,
-  type LearningState,
-} from "./learningModule";
+import { createLearningState, recordOutcome as recordLearningOutcome } from "./learningModule";
+import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export interface ClaimingAIState {
@@ -280,14 +275,12 @@ export function recordClaimingOutcome(
     newHistory[decisionIndex] = decision;
 
     // Update learning state
-    const contextKey = `${decision.horseRating}:${decision.claimingPrice}`;
-    const newLearningState = recordOutcome(
+    const newLearningState = recordLearningOutcome(
       aiState.learningState,
       "claiming",
-      contextKey,
+      `${raceId}:${horseId}`,
       success,
       value,
-      Date.now(),
       currentDay,
       aiState.personalityState.memoryDepth,
     );

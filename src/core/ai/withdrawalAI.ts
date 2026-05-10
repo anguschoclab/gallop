@@ -14,10 +14,10 @@
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import { getPersonalityAIState } from "./personalitySystem";
+import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome,
+  recordOutcome as recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
@@ -302,21 +302,30 @@ export function recordWithdrawalDecision(
 
   const contextKey = `${horse.age}`;
   const value = withdrew ? -1 : 1;
-  const newLearningState = recordOutcome(
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "withdrawal",
     contextKey,
     true,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
+  );
+
+  const newPersonalityState = recordOutcome(
+    aiState.personalityState,
+    "withdrawal",
+    { raceId: race.id, horseId: horse.id },
+    true,
+    value,
+    currentDay,
   );
 
   return {
     ...aiState,
     withdrawalHistory: trimmedHistory,
     learningState: newLearningState,
+    personalityState: newPersonalityState,
   };
 }
 
@@ -361,13 +370,12 @@ export function recordWithdrawalOutcome(
       ? (alternativeRaceResult || 0) > (horseResult || 0)
       : (horseResult || 0) <= 3;
 
-    const newLearningState = recordOutcome(
+    const newLearningState = recordLearningOutcome(
       aiState.learningState,
       "withdrawal",
       contextKey,
       success,
       decision.withdrew ? (alternativeRaceResult || 0) - (horseResult || 0) : horseResult || 0,
-      Date.now(),
       currentDay,
       aiState.personalityState.memoryDepth,
     );

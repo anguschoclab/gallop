@@ -18,10 +18,10 @@
 import type { Horse, Race, Stable } from "@/game/types";
 import type { GradedRace } from "@/game/gradedRaces";
 import type { TripleCrownProgress } from "@/core/campaign/types";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { getPersonalityAIState, calculateUtilityScore, recordOutcome } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome,
+  recordOutcome as recordLearningOutcome,
   getSuccessRate,
   getAdaptiveThreshold,
   type LearningState,
@@ -635,21 +635,19 @@ export function recordCampaignOutcome(
     // Update learning state
     const contextKey = `${decision.personality}:${targetRaceKey}`;
     const value = prize > 0 ? prize / 10000 : -position;
-    const newLearningState = recordOutcome(
-      aiState.learningState,
-      "campaign_targeting",
-      contextKey,
+    const newPersonalityState = recordOutcome(
+      aiState.personalityState,
+      "campaign",
+      { horseId, raceKey: decision.raceKey, targetRaceKey },
       decision.success,
       value,
-      Date.now(),
       currentDay,
-      aiState.personalityState.memoryDepth,
     );
 
     return {
       ...aiState,
       campaignHistory: newHistory,
-      learningState: newLearningState,
+      personalityState: newPersonalityState,
     };
   }
 

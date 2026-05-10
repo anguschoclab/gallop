@@ -278,7 +278,6 @@ export function recordBreedingOutcome(
       { sireId, personality: decision.personality },
       success,
       foalRating,
-      Date.now(),
       currentDay,
     );
 
@@ -293,7 +292,6 @@ export function recordBreedingOutcome(
         contextKey,
         seriesSuccess,
         foalRating,
-        Date.now(),
         currentDay,
       );
 

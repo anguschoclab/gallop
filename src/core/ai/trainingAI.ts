@@ -16,12 +16,8 @@
 import type { Horse, Stable } from "@/game/types";
 import { TRAINING_HISTORY_MAX_SIZE } from "@/game/constants/gameConstants";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  type LearningState,
-} from "./learningModule";
+import { createLearningState, recordOutcome as recordLearningOutcome, getSuccessRate, type LearningState } from "./learningModule";
+import { calculateRaceRating } from "@/core/horse/stats";
 
 export interface TrainingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -248,13 +244,12 @@ export function recordTrainingOutcome(
   currentDay: number,
 ): TrainingAIState {
   const contextKey = `${horse.age}:${trainingType}`;
-  const newLearningState = recordOutcome(
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "training",
     contextKey,
     success,
     statGain,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );

@@ -265,20 +265,19 @@ export function recordRaceEntryOutcome(
   const contextKey = `${race.distance}:${race.surface || "unknown"}:${race.graded?.grade || "open"}`;
   const value = success && position ? (10 - position) * 10 : 0;
 
-  const newLearningState = recordOutcome(
-    aiState.learningState,
+  const newPersonalityState = recordOutcome(
+    aiState.personalityState,
     "race_entry",
-    contextKey,
+    { raceId: race.id, horseId: horse.id },
     success,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );
 
   return {
     ...aiState,
-    learningState: newLearningState,
+    personalityState: newPersonalityState,
   };
 }
 

@@ -13,15 +13,10 @@
  * Learning from auction outcomes, strategic bidding, portfolio management
  */
 
-import type { Horse, Stable, AuctionLot } from "@/game/types";
+import type { Horse, Race, Stable, AuctionLot } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  getAdaptiveThreshold,
-  type LearningState,
-} from "./learningModule";
+import { createLearningState, recordOutcome as recordLearningOutcome } from "./learningModule";
+import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export interface AuctionAIState {
@@ -394,13 +389,12 @@ export function recordBiddingDecision(
   // Update learning state (use horse age as context key)
   const contextKey = `${horse.age}`;
   const value = won ? decision.horseRating - finalBid / 1000 : -finalBid / 1000;
-  const newLearningState = recordOutcome(
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
-    "bidding",
-    contextKey,
+    "auction",
+    `${horse.id}:${lot.id}`,
     won,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );

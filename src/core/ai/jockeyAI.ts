@@ -13,12 +13,13 @@
  * Personality-driven jockey selection, retention, and contract negotiation
  */
 
-import type { Horse, Jockey, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/game/types";
+import type { Jockey } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import { calculateRaceRating } from "@/core/horse/stats";
 import {
   createLearningState,
-  recordOutcome,
+  recordOutcome as recordLearningOutcome,
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
@@ -386,13 +387,12 @@ export function recordJockeyOutcome(
     const contextKey = `${jockeyId}`;
     const success = position <= 3; // Top 3 is success
     const value = prize - assignment.fee; // Net value
-    const newLearningState = recordOutcome(
+    const newLearningState = recordLearningOutcome(
       aiState.learningState,
-      "jockey_selection",
-      contextKey,
+      "jockey_contract",
+      jockeyId,
       success,
       value,
-      Date.now(),
       currentDay,
       aiState.personalityState.memoryDepth,
     );

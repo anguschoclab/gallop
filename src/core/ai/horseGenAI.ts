@@ -13,9 +13,9 @@
  * Personality-driven stock generation, roster composition, learning from outcomes
  */
 
-import type { Stable, Horse } from "@/game/types";
-import { getPersonalityAIState } from "./personalitySystem";
-import { createLearningState, recordOutcome, type LearningState } from "./learningModule";
+import type { Horse, Race, Stable } from "@/game/types";
+import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
+import { createLearningState, recordOutcome as recordLearningOutcome, getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export interface HorseGenAIState {
@@ -388,15 +388,14 @@ export function recordHorseGeneration(
   const trimmedHistory =
     newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
-  const contextKey = `${stable.personality}:${horse.age}`;
+  const contextKey = horse.id;
   const value = calculateOverallRating(horse);
-  const newLearningState = recordOutcome(
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "horse_generation",
     contextKey,
-    true,
+    generation.success ?? true,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );
@@ -440,15 +439,23 @@ export function recordHorseCareerOutcome(
     const newHistory = [...aiState.generationHistory];
     newHistory[generationIndex] = generation;
 
-    const contextKey = `${generation.personality}:${generation.age}`;
+    const contextKey = { horseId };
     const value = careerEarnings / 10000;
-    const newLearningState = recordOutcome(
-      aiState.learningState,
+    const newPersonalityState = recordOutcome(
+      aiState.personalityState,
       "horse_generation",
       contextKey,
-      generation.success,
+      true,
       value,
-      Date.now(),
+      currentDay,
+    );
+
+    const newLearningState = recordLearningOutcome(
+      aiState.learningState,
+      "horse_generation",
+      horseId,
+      true,
+      value,
       currentDay,
       aiState.personalityState.memoryDepth,
     );
@@ -457,6 +464,7 @@ export function recordHorseCareerOutcome(
       ...aiState,
       generationHistory: newHistory,
       learningState: newLearningState,
+      personalityState: newPersonalityState,
     };
   }
 

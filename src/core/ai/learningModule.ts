@@ -18,7 +18,6 @@ export interface LearningOutcome {
   contextKey: string;
   success: boolean;
   value: number;
-  timestamp: number;
   day: number;
 }
 
@@ -26,14 +25,14 @@ export interface LearningState {
   outcomes: LearningOutcome[];
   successRates: Record<string, { successes: number; total: number; rate: number }>;
   patterns: Record<string, number>; // Pattern recognition scores
-  lastUpdate: number;
+  lastUpdateDay: number;
 }
 
 /**
  * Create a new learning state.
  *
  * Initializes the learning state with empty outcomes, success rates,
- * patterns, and last update timestamp.
+ * patterns, and last update day.
  *
  * @returns New learning state
  */
@@ -42,7 +41,7 @@ export function createLearningState(): LearningState {
     outcomes: [],
     successRates: {},
     patterns: {},
-    lastUpdate: 0,
+    lastUpdateDay: 0,
   };
 }
 
@@ -57,7 +56,6 @@ export function createLearningState(): LearningState {
  * @param contextKey - Context key for the decision
  * @param success - Whether the decision was successful
  * @param value - Value of the outcome
- * @param timestamp - Timestamp of the outcome
  * @param day - Current game day
  * @param memoryDepth - Maximum number of outcomes to keep
  * @returns Updated learning state
@@ -68,7 +66,6 @@ export function recordOutcome(
   contextKey: string,
   success: boolean,
   value: number,
-  timestamp: number,
   day: number,
   memoryDepth: number,
 ): LearningState {
@@ -77,7 +74,6 @@ export function recordOutcome(
     contextKey,
     success,
     value,
-    timestamp,
     day,
   };
 
@@ -106,7 +102,7 @@ export function recordOutcome(
     outcomes: trimmedOutcomes,
     successRates: newSuccessRates,
     patterns: newPatterns,
-    lastUpdate: timestamp,
+    lastUpdateDay: day,
   };
 }
 

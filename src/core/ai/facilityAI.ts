@@ -13,20 +13,14 @@
  * Learning from facility ROI, strategic investment decisions, budget management
  */
 
-import type { Stable } from "@/game/types";
 import type {
   FacilityType,
   FacilityLevel,
   PlayerFacilities,
 } from "@/core/facilities/facilityTypes";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  getAdaptiveThreshold,
-  type LearningState,
-} from "./learningModule";
+import type { Stable } from "@/game/types";
+import { getPersonalityAIState, recordOutcome, calculateUtilityScore } from "./personalitySystem";
+import { createLearningState, recordOutcome as recordLearningOutcome, getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
 
 export interface FacilityAIState {
@@ -436,20 +430,18 @@ export function updateFacilityROI(
     // Update learning state
     const contextKey = facilityType;
     const success = benefit > 50; // Benefit threshold
-    const newLearningState = recordOutcome(
-      aiState.learningState,
+    const newPersonalityState = recordOutcome(
+      aiState.personalityState,
       "facility_upgrade",
-      contextKey,
+      { facilityId: `${facilityType}:${level}` },
       success,
       benefit,
-      Date.now(),
       currentDay,
-      aiState.personalityState.memoryDepth,
     );
 
     return {
       ...aiState,
-      learningState: newLearningState,
+      personalityState: newPersonalityState,
       roiTracking: {
         ...aiState.roiTracking,
         [roiKey]: updatedRoi,

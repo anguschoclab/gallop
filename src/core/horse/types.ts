@@ -9,9 +9,19 @@
  * Related files: stats.ts (uses types), healthTypes.ts (injury types)
  */
 
-import type { Genotype, AppearanceDNA, Hemisphere } from "@/core/genetics/types";
-import type { ActiveInjury } from "./healthTypes";
+import type { Genotype } from "@/core/genetics/types";
 import type { InsurancePolicy } from "../insurance/insuranceTypes";
+
+export type Hemisphere = "Northern" | "Southern";
+
+export type ActiveInjury = {
+  type: string;
+  severity: number;
+  recoveryDays: number;
+  onsetDay: number;
+};
+
+export type AppearanceDNA = Record<string, unknown>;
 
 // Horse Type Definitions
 
@@ -97,6 +107,7 @@ export type Horse = {
   peakAge: number;
   strideType: "long" | "short" | "average";
   trackPreference: "left" | "right" | "balanced";
+  runningStyle: RunningStyle;
   winAndYouInQualified?: { year: number; raceId: string; raceKey: string }[];
   bleederRisk: number;
   roarerRisk: number;

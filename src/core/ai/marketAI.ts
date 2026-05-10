@@ -14,14 +14,9 @@
  */
 
 import type { Horse, Stable } from "@/game/types";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  getAdaptiveThreshold,
-  type LearningState,
-} from "./learningModule";
+import { getPersonalityAIState, recordOutcome, calculateUtilityScore } from "./personalitySystem";
+import { createLearningState, recordOutcome as recordLearningOutcome } from "./learningModule";
+import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export interface MarketAIState {
@@ -274,13 +269,12 @@ export function recordMarketPurchase(
   // Update learning state
   const contextKey = `${horse.age}`;
   const value = calculateOverallRating(horse) - price / 1000;
-  const newLearningState = recordOutcome(
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "market_purchase",
     contextKey,
     true,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );
@@ -325,15 +319,13 @@ export function recordMarketOutcome(
     const newHistory = [...aiState.purchaseHistory];
     newHistory[purchaseIndex] = purchase;
 
-    // Update learning state
-    const contextKey = `${purchase.horseRating}`;
-    const newLearningState = recordOutcome(
+    // Update personality state
+    const newLearningState = recordLearningOutcome(
       aiState.learningState,
-      "market_purchase",
-      contextKey,
+      "sale",
+      horseId,
       success,
       value,
-      Date.now(),
       currentDay,
       aiState.personalityState.memoryDepth,
     );
