@@ -10,7 +10,7 @@
 
 import type { Horse } from "@/game/types";
 import { getCareerStats } from "@/core/horse/stats";
-import { getSireAnalytics, getSireSurfaceBias, getSireDistancePreference } from "./sireAnalytics";
+import { getSireAnalytics, getSireSurfaceBias, getSireDistancePreference, type SireAnalytics } from "./sireAnalytics";
 import { getRunnersBy, getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "./lineage";
 import type { Leaderboard, LeaderboardType, SireRanking, SireTrendData } from "./leaderboardTypes";
 
@@ -99,130 +99,133 @@ export function computeAllLeaderboards(
   // Helper to get analytics
   const getA = (sId: string) => stallionAnalytics.get(sId)!;
 
+  /**
+   * Generic helper to create leaderboard rankings.
+   *
+   * @param valueGetter - Function to extract the ranking value from analytics
+   * @param filterFn - Optional filter function for rankings
+   * @param leaderboardType - Type identifier for the leaderboard
+   * @param title - Display title for the leaderboard
+   * @param description - Description for the leaderboard
+   * @returns Leaderboard object with rankings
+   */
+  const createLeaderboardRankings = (
+    valueGetter: (analytics: SireAnalytics) => number,
+    filterFn?: (ranking: { metrics: SireAnalytics; value: number }) => boolean,
+    leaderboardType?: LeaderboardType,
+    title?: string,
+    description: string = "",
+  ): Leaderboard => {
+    const rankings = stallions
+      .map((s) => ({
+        stallionId: s.id,
+        stallionName: s.name,
+        value: valueGetter(getA(s.id)),
+        metrics: getA(s.id),
+      }))
+      .filter(filterFn || (() => true))
+      .sort((a, b) => b.value - a.value)
+      .map((r, i) => ({ ...r, rank: i + 1 }));
+
+    return {
+      type: leaderboardType || "overall",
+      title: title || "Rankings",
+      description,
+      lastUpdated: currentDay,
+      rankings,
+    };
+  };
+
   return {
-    overall: {
-      type: "overall",
-      title: "Overall Sire Rankings",
-      description: "Ranked by AEI",
-      lastUpdated: currentDay,
-      rankings: stallions
-        .map((s) => ({
-          stallionId: s.id,
-          stallionName: s.name,
-          value: getA(s.id).aei,
-          metrics: getA(s.id),
-        }))
-        .filter((r) => r.metrics.lifetimeFoals >= 5)
-        .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 })),
-    },
-    ci: {
-      type: "ci",
-      title: "CI Rankings",
-      description: "Ranked by CI",
-      lastUpdated: currentDay,
-      rankings: stallions
-        .map((s) => ({
-          stallionId: s.id,
-          stallionName: s.name,
-          value: getA(s.id).ci,
-          metrics: getA(s.id),
-        }))
-        .filter((r) => r.metrics.lifetimeFoals >= 5)
-        .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 })),
-    },
-    stakes_producers: {
-      type: "stakes_producers",
-      title: "Stakes Producers",
-      description: "Ranked by Stakes winners",
-      lastUpdated: currentDay,
-      rankings: stallions
-        .map((s) => ({
-          stallionId: s.id,
-          stallionName: s.name,
-          value: getA(s.id).lifetimeStakesFoals,
-          metrics: getA(s.id),
-        }))
-        .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 })),
-    },
-    g1_producers: {
-      type: "g1_producers",
-      title: "G1 Producers",
-      description: "Ranked by G1 winners",
-      lastUpdated: currentDay,
-      rankings: stallions
-        .map((s) => ({
-          stallionId: s.id,
-          stallionName: s.name,
-          value: getA(s.id).lifetimeG1Foals,
-          metrics: getA(s.id),
-        }))
-        .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 })),
-    },
+    overall: createLeaderboardRankings(
+      (a) => a.aei,
+      (r) => r.metrics.lifetimeFoals >= 5,
+      "overall",
+      "Overall Sire Rankings",
+      "Ranked by AEI",
+    ),
+    ci: createLeaderboardRankings(
+      (a) => a.ci,
+      (r) => r.metrics.lifetimeFoals >= 5,
+      "ci",
+      "CI Rankings",
+      "Ranked by CI",
+    ),
+    stakes_producers: createLeaderboardRankings(
+      (a) => a.lifetimeStakesFoals,
+      undefined,
+      "stakes_producers",
+      "Stakes Producers",
+      "Ranked by Stakes winners",
+    ),
+    g1_producers: createLeaderboardRankings(
+      (a) => a.lifetimeG1Foals,
+      undefined,
+      "g1_producers",
+      "G1 Producers",
+      "Ranked by G1 winners",
+    ),
     // Simplified specialists for leaderboard speed (no nested loops)
     turf_specialists: {
       type: "turf_specialists",
       title: "Turf Specialists",
+      description: "Ranked by turf progeny win rate",
       lastUpdated: currentDay,
       rankings: [],
     },
     dirt_specialists: {
       type: "dirt_specialists",
       title: "Dirt Specialists",
+      description: "Ranked by dirt progeny win rate",
       lastUpdated: currentDay,
       rankings: [],
     },
     sprint_sires: {
       type: "sprint_sires",
       title: "Sprint Sires",
+      description: "Ranked by sprint progeny win rate",
       lastUpdated: currentDay,
       rankings: [],
     },
     staying_sires: {
       type: "staying_sires",
       title: "Staying Sires",
+      description: "Ranked by staying progeny win rate",
       lastUpdated: currentDay,
       rankings: [],
     },
-    value_sires: {
-      type: "value_sires",
-      title: "Value Sires",
-      description: "AEI per $1,000 fee",
-      lastUpdated: currentDay,
-      rankings: stallions
-        .map((s) => {
-          const a = getA(s.id);
-          const val = a.aei / ((a.standingFee || 1) / 1000);
-          return { stallionId: s.id, stallionName: s.name, value: val, metrics: a };
-        })
-        .filter((r) => r.metrics.lifetimeFoals >= 5)
-        .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 })),
-    },
+    value_sires: createLeaderboardRankings(
+      (a) => a.aei / ((a.standingFee || 1) / 1000),
+      (r) => r.metrics.lifetimeFoals >= 5,
+      "value_sires",
+      "Value Sires",
+      "AEI per $1,000 fee",
+    ),
     freshman_watch: {
       type: "freshman_watch",
       title: "Freshman Watch",
+      description: "First crop sires ranked by stakes winners",
       lastUpdated: currentDay,
       rankings: [],
     },
     rising_stars: {
       type: "rising_stars",
       title: "Rising Stars",
+      description: "Sires with improving progeny performance",
       lastUpdated: currentDay,
       rankings: [],
     },
     regional_north: {
       type: "regional_north",
       title: "North Hemisphere",
+      description: "Ranked by AEI for northern hemisphere sires",
       lastUpdated: currentDay,
       rankings: [],
     },
     regional_south: {
       type: "regional_south",
       title: "South Hemisphere",
+      description: "Ranked by AEI for southern hemisphere sires",
       lastUpdated: currentDay,
       rankings: [],
     },

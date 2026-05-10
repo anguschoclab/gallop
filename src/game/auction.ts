@@ -87,46 +87,134 @@ interface ValuationContext {
   isRacingAge: boolean;
 }
 
+/**
+ * Aggressive valuation strategy.
+ *
+ * Aggressive stables bid 30% above base value, with an additional 25% premium for 2yo training.
+ *
+ * @param ctx - Valuation context
+ * @returns Valuation multiplier
+ */
+function aggressiveValuation(ctx: ValuationContext): number {
+  let mod = 1.3;
+  if (ctx.is2yoTraining) mod *= 1.25;
+  return mod;
+}
+
+/**
+ * Conservative valuation strategy.
+ *
+ * Conservative stables bid 25% below base value.
+ *
+ * @param ctx - Valuation context
+ * @returns Valuation multiplier
+ */
+function conservativeValuation(ctx: ValuationContext): number {
+  return 0.75;
+}
+
+/**
+ * Developer valuation strategy.
+ *
+ * Developers pay premiums for yearlings (40%) and weanlings (20%), but discount racing age horses (30%).
+ * They also value broodmares (10% premium) but discount 2yo training (10% discount).
+ *
+ * @param ctx - Valuation context
+ * @returns Valuation multiplier
+ */
+function developerValuation(ctx: ValuationContext): number {
+  let mod = ctx.isYearling ? 1.4 : ctx.isWeanling ? 1.2 : 0.8;
+  if (ctx.is2yoTraining) mod *= 0.9;
+  if (ctx.isBroodmare) mod *= 1.1;
+  if (ctx.isRacingAge) mod *= 0.7;
+  return mod;
+}
+
+/**
+ * Win-now valuation strategy.
+ *
+ * Win-now stables focus on racing age horses (30% premium) and 2yo training (25% premium).
+ * They discount weanlings (40% discount) and broodmares (60% discount).
+ *
+ * @param ctx - Valuation context
+ * @returns Valuation multiplier
+ */
+function winNowValuation(ctx: ValuationContext): number {
+  let mod = ctx.isWeanling ? 0.6 : ctx.isYearling ? 0.9 : 1.0;
+  if (ctx.is2yoTraining) mod *= 1.25;
+  if (ctx.isBroodmare) mod *= 0.4;
+  if (ctx.isRacingAge) mod *= 1.3;
+  return mod;
+}
+
+/**
+ * Specialist valuation strategy.
+ *
+ * Specialists pay a 50% premium if the horse matches their preferred distance, otherwise a 50% discount.
+ *
+ * @param ctx - Valuation context
+ * @returns Valuation multiplier
+ */
+function specialistValuation(ctx: ValuationContext): number {
+  const distanceMatch =
+    ctx.stable.preferredDistance !== undefined &&
+    Math.abs((ctx.stable.preferredDistance ?? 1600) - 1600) < 400;
+  return distanceMatch ? 1.5 : 0.5;
+}
+
+/**
+ * Breeder valuation strategy.
+ *
+ * Breeders pay a 60% premium for fillies and a 50% premium for broodmares.
+ * They also pay an additional 20% premium for Blue Hen dams.
+ *
+ * @param ctx - Valuation context
+ * @returns Valuation multiplier
+ */
+function breederValuation(ctx: ValuationContext): number {
+  let mod = ctx.isFilly ? 1.6 : 0.7;
+  if (ctx.horse.damName && ctx.horse.blueHenStatus?.isBlueHen) mod *= 1.2;
+  if (ctx.isBroodmare) mod *= 1.5;
+  return mod;
+}
+
+/**
+ * Trader valuation strategy.
+ *
+ * Traders bid 15% below base value, looking for bargains they can flip.
+ *
+ * @param ctx - Valuation context
+ * @returns Valuation multiplier
+ */
+function traderValuation(ctx: ValuationContext): number {
+  return 0.85;
+}
+
+/**
+ * Prestige valuation strategy.
+ *
+ * Prestige stables pay premiums based on horse fame (0.5% per fame point), with a base 20% premium.
+ * They only bid on horses valued over $5,000 and pay an additional 30% premium for racing age horses.
+ *
+ * @param ctx - Valuation context
+ * @returns Valuation multiplier
+ */
+function prestigeValuation(ctx: ValuationContext): number {
+  let mod = 1.2 + ctx.horse.fame / 200;
+  if (ctx.base < 5000) mod = 0;
+  if (ctx.isRacingAge) mod *= 1.3;
+  return mod;
+}
+
 const VALUATION_STRATEGIES: Record<Stable["personality"], (ctx: ValuationContext) => number> = {
-  aggressive: (ctx) => {
-    let mod = 1.3;
-    if (ctx.is2yoTraining) mod *= 1.25;
-    return mod;
-  },
-  conservative: () => 0.75,
-  developer: (ctx) => {
-    let mod = ctx.isYearling ? 1.4 : ctx.isWeanling ? 1.2 : 0.8;
-    if (ctx.is2yoTraining) mod *= 0.9;
-    if (ctx.isBroodmare) mod *= 1.1;
-    if (ctx.isRacingAge) mod *= 0.7;
-    return mod;
-  },
-  "win-now": (ctx) => {
-    let mod = ctx.isWeanling ? 0.6 : ctx.isYearling ? 0.9 : 1.0;
-    if (ctx.is2yoTraining) mod *= 1.25;
-    if (ctx.isBroodmare) mod *= 0.4;
-    if (ctx.isRacingAge) mod *= 1.3;
-    return mod;
-  },
-  specialist: (ctx) => {
-    const distanceMatch =
-      ctx.stable.preferredDistance !== undefined &&
-      Math.abs((ctx.stable.preferredDistance ?? 1600) - 1600) < 400;
-    return distanceMatch ? 1.5 : 0.5;
-  },
-  breeder: (ctx) => {
-    let mod = ctx.isFilly ? 1.6 : 0.7;
-    if (ctx.horse.damName && ctx.horse.blueHenStatus?.isBlueHen) mod *= 1.2;
-    if (ctx.isBroodmare) mod *= 1.5;
-    return mod;
-  },
-  trader: () => 0.85,
-  prestige: (ctx) => {
-    let mod = 1.2 + ctx.horse.fame / 200;
-    if (ctx.base < 5000) mod = 0;
-    if (ctx.isRacingAge) mod *= 1.3;
-    return mod;
-  },
+  aggressive: aggressiveValuation,
+  conservative: conservativeValuation,
+  developer: developerValuation,
+  "win-now": winNowValuation,
+  specialist: specialistValuation,
+  breeder: breederValuation,
+  trader: traderValuation,
+  prestige: prestigeValuation,
 };
 
 /**

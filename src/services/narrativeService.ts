@@ -22,15 +22,43 @@ import {
   detectAtmosphere,
 } from "./narrative/eventDetector";
 
-const METERS_PER_LENGTH = 2.4;
-
 // Milestone configuration
-const MILESTONE_FINAL_400M = 400;
-const MILESTONE_FINAL_200M = 200;
-const MILESTONE_FINAL_100M = 100;
-const MIN_DISTANCE_FOR_FINAL_400 = 800;
-const MIN_DISTANCE_FOR_FINAL_200 = 600;
-const MIN_DISTANCE_FOR_FINAL_100 = 400;
+export const NARRATIVE_THRESHOLDS = {
+  METERS_PER_LENGTH: 2.4,
+  MILESTONE_FINAL_400M: 400,
+  MILESTONE_FINAL_200M: 200,
+  MILESTONE_FINAL_100M: 100,
+  MIN_DISTANCE_FOR_FINAL_400: 800,
+  MIN_DISTANCE_FOR_FINAL_200: 600,
+  MIN_DISTANCE_FOR_FINAL_100: 400,
+  // Event detection thresholds
+  ATMOSPHERE_PROBABILITY: 0.005,
+  ATMOSPHERE_COOLDOWN: 45,
+  GAP_THRESHOLD_LENGTHS: 2.0,
+  GAP_COOLDOWN: 25,
+  STABLE_WATCH_START_TIME: 2,
+  STABLE_WATCH_END_TIME: 15,
+  STABLE_WATCH_COOLDOWN: 60,
+  LEAD_CHANGE_THRESHOLD: 20,
+  LEAD_CHANGE_COOLDOWN: 15,
+  STRETCH_THRESHOLD: 0.85,
+  SURGE_RANK_DIFF: 2,
+  SURGE_TOP3_RANK_DIFF: 3,
+  FADE_RANK_DIFF: 3,
+  SURGE_FADE_COOLDOWN: 20,
+  DRAFTING_COOLDOWN: 40,
+  LANE_THRESHOLD: 3.6,
+  LANE_WATCH_COOLDOWN: 45,
+  // Turn position thresholds
+  TURN_SEGMENT_LENGTH: 1600,
+  TURN_SEGMENT_START: 400,
+  TURN_SEGMENT_END: 800,
+  TURN_SEGMENT_FINAL_START: 1200,
+  // Milestone positions
+  HALFWAY_POSITION: 0.5,
+  // Default cooldown
+  DEFAULT_COOLDOWN: 10,
+} as const;
 
 /**
  * Orchestrates real-time race commentary generation.
@@ -46,7 +74,9 @@ export class NarrativeGenerator {
   private race: Race;
   private lineCounter = 0;
   private horses: Horse[];
+  private horsesMap: Map<string, Horse>;
   private stables: Stable[];
+  private stablesMap: Map<string, Stable>;
   private rng: Rng;
   private hasAnnouncedStart = false;
   private hasAnnouncedFinish = false;
@@ -65,7 +95,9 @@ export class NarrativeGenerator {
   constructor(race: Race, horses: Horse[], stables: Stable[], rng: Rng) {
     this.race = race;
     this.horses = horses;
+    this.horsesMap = new Map(horses.map((h) => [h.id, h]));
     this.stables = stables;
+    this.stablesMap = new Map(stables.map((s) => [s.id, s]));
     this.rng = rng;
   }
 
@@ -79,6 +111,9 @@ export class NarrativeGenerator {
    */
   public update(runners: Runner[], simTime: number, pacePressure: number): CommentaryLine[] {
     const newLines: CommentaryLine[] = [];
+
+    // Create Map for O(1) runner lookups
+    const runnersMap = new Map(runners.map((r) => [r.horseId, r]));
 
     // 1. Race Start & Weather & Initial Insights
     if (simTime > 0 && !this.hasAnnouncedStart) {
@@ -114,34 +149,34 @@ export class NarrativeGenerator {
     if (
       this.hasAnnouncedStart &&
       !this.hasAnnouncedFinish &&
-      this.rng.next() < 0.005 &&
-      this.canAnnounce("ATMOSPHERE", "global", simTime, 45)
+      this.rng.next() < NARRATIVE_THRESHOLDS.ATMOSPHERE_PROBABILITY &&
+      this.canAnnounce("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN)
     ) {
       newLines.push(this.createLine("ATMOSPHERE", simTime));
-      this.setCooldown("ATMOSPHERE", "global", simTime, 45);
+      this.setCooldown("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN);
     }
 
     // 5. Gap Announcements
     if (this.hasAnnouncedStart && !this.hasAnnouncedFinish && sorted.length > 1) {
       const gapMeters = sorted[0].position - sorted[1].position;
-      const lengths = (gapMeters / METERS_PER_LENGTH).toFixed(1);
+      const lengths = (gapMeters / NARRATIVE_THRESHOLDS.METERS_PER_LENGTH).toFixed(1);
       if (
-        parseFloat(lengths) >= 2.0 &&
-        this.canAnnounce("GAP_ANNOUNCEMENT", "leader", simTime, 25)
+        parseFloat(lengths) >= NARRATIVE_THRESHOLDS.GAP_THRESHOLD_LENGTHS &&
+        this.canAnnounce("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN)
       ) {
         newLines.push(this.createLine("GAP_ANNOUNCEMENT", simTime, sorted[0], lengths));
-        this.setCooldown("GAP_ANNOUNCEMENT", "leader", simTime, 25);
+        this.setCooldown("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN);
       }
     }
 
     // 6. Stable Watch
-    if (simTime > 2 && simTime < 15) {
+    if (simTime > NARRATIVE_THRESHOLDS.STABLE_WATCH_START_TIME && simTime < NARRATIVE_THRESHOLDS.STABLE_WATCH_END_TIME) {
       for (const r of runners) {
         const horse = this.getHorse(r.horseId);
         if (horse?.stableId && this.isMajorStable(horse.stableId)) {
-          if (this.canAnnounce("STABLE_WATCH", r.horseId, simTime, 60)) {
+          if (this.canAnnounce("STABLE_WATCH", r.horseId, simTime, NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN)) {
             newLines.push(this.createLine("STABLE_WATCH", simTime, r));
-            this.setCooldown("STABLE_WATCH", r.horseId, simTime, 60);
+            this.setCooldown("STABLE_WATCH", r.horseId, simTime, NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN);
             break;
           }
         }
@@ -153,13 +188,13 @@ export class NarrativeGenerator {
       if (
         this.lastLeaderId &&
         currentLeader.horseId !== this.lastLeaderId &&
-        currentLeader.position > 20
+        currentLeader.position > NARRATIVE_THRESHOLDS.LEAD_CHANGE_THRESHOLD
       ) {
         if (this.canAnnounce("LEAD_CHANGE", currentLeader.horseId, simTime)) {
           const line = this.createLine("LEAD_CHANGE", simTime, currentLeader);
           line.isHighImpact = true;
           newLines.push(line);
-          this.setCooldown("LEAD_CHANGE", currentLeader.horseId, simTime, 15);
+          this.setCooldown("LEAD_CHANGE", currentLeader.horseId, simTime, NARRATIVE_THRESHOLDS.LEAD_CHANGE_COOLDOWN);
         }
       }
       this.lastLeaderId = currentLeader.horseId;
@@ -167,7 +202,7 @@ export class NarrativeGenerator {
 
     // 8. Stretch Run
     if (
-      currentLeader.position > this.race.distance * 0.85 &&
+      currentLeader.position > this.race.distance * NARRATIVE_THRESHOLDS.STRETCH_THRESHOLD &&
       !this.hasAnnouncedStretch &&
       !this.hasAnnouncedFinish
     ) {
@@ -192,15 +227,15 @@ export class NarrativeGenerator {
         const currentRank = ranks.get(r.horseId)!;
 
         if (lastRank !== undefined && lastRank !== currentRank) {
-          if (lastRank - currentRank >= 2 || (currentRank <= 3 && lastRank > 3)) {
+          if (lastRank - currentRank >= NARRATIVE_THRESHOLDS.SURGE_RANK_DIFF || (currentRank <= NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF && lastRank > NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF)) {
             if (this.canAnnounce("SURGE", r.horseId, simTime)) {
               newLines.push(this.createLine("SURGE", simTime, r));
-              this.setCooldown("SURGE", r.horseId, simTime, 20);
+              this.setCooldown("SURGE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
             }
-          } else if (currentRank - lastRank >= 3) {
+          } else if (currentRank - lastRank >= NARRATIVE_THRESHOLDS.FADE_RANK_DIFF) {
             if (this.canAnnounce("FADE", r.horseId, simTime)) {
               newLines.push(this.createLine("FADE", simTime, r));
-              this.setCooldown("FADE", r.horseId, simTime, 20);
+              this.setCooldown("FADE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
             }
           }
         }
@@ -210,13 +245,13 @@ export class NarrativeGenerator {
 
     // 11. Drafting
     for (const r of runners) {
-      if (r.draftingHorseId && this.canAnnounce("DRAFTING", r.horseId, simTime, 40)) {
-        const other = runners.find((rr) => rr.horseId === r.draftingHorseId);
+      if (r.draftingHorseId && this.canAnnounce("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN)) {
+        const other = runnersMap.get(r.draftingHorseId);
         if (other) {
           const line = this.createLine("DRAFTING", simTime, r);
           line.text = line.text.replace("{other}", other.name);
           newLines.push(line);
-          this.setCooldown("DRAFTING", r.horseId, simTime, 40);
+          this.setCooldown("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN);
         }
       }
     }
@@ -226,12 +261,12 @@ export class NarrativeGenerator {
       for (const r of runners) {
         // If they are in Lane 3+ (3.6m+) and likely in a turn
         if (
-          r.lane >= 3.6 &&
+          r.lane >= NARRATIVE_THRESHOLDS.LANE_THRESHOLD &&
           this.isInTurn(r.position) &&
-          this.canAnnounce("LANE_WATCH", r.horseId, simTime, 45)
+          this.canAnnounce("LANE_WATCH", r.horseId, simTime, NARRATIVE_THRESHOLDS.LANE_WATCH_COOLDOWN)
         ) {
           newLines.push(this.createLine("LANE_WATCH", simTime, r));
-          this.setCooldown("LANE_WATCH", r.horseId, simTime, 45);
+          this.setCooldown("LANE_WATCH", r.horseId, simTime, NARRATIVE_THRESHOLDS.LANE_WATCH_COOLDOWN);
         }
       }
     }
@@ -250,8 +285,8 @@ export class NarrativeGenerator {
   private isInTurn(pos: number): boolean {
     // Basic oval assumption: 400m home straight, 400m turn, 400m back straight, 400m turn
     const distFromFinish = this.race.distance - pos;
-    const trackPos = distFromFinish % 1600;
-    return (trackPos > 400 && trackPos <= 800) || trackPos > 1200;
+    const trackPos = distFromFinish % NARRATIVE_THRESHOLDS.TURN_SEGMENT_LENGTH;
+    return (trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_START && trackPos <= NARRATIVE_THRESHOLDS.TURN_SEGMENT_END) || trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_FINAL_START;
   }
 
   /**
@@ -264,33 +299,33 @@ export class NarrativeGenerator {
 
     // Halfway point (always included)
     milestones.push({
-      pos: distance * 0.5,
+      pos: distance * NARRATIVE_THRESHOLDS.HALFWAY_POSITION,
       id: 50,
       text: "Passing the halfway point now.",
     });
 
     // Final 400m (only if race is long enough)
-    if (distance >= MIN_DISTANCE_FOR_FINAL_400) {
+    if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_400) {
       milestones.push({
-        pos: distance - MILESTONE_FINAL_400M,
+        pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_400M,
         id: 400,
         text: "Entering the final 400 meters!",
       });
     }
 
     // Final 200m (only if race is long enough)
-    if (distance >= MIN_DISTANCE_FOR_FINAL_200) {
+    if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_200) {
       milestones.push({
-        pos: distance - MILESTONE_FINAL_200M,
+        pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_200M,
         id: 200,
         text: "Just 200 meters to the wire!",
       });
     }
 
     // Final 100m (only if race is long enough)
-    if (distance >= MIN_DISTANCE_FOR_FINAL_100) {
+    if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_100) {
       milestones.push({
-        pos: distance - MILESTONE_FINAL_100M,
+        pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_100M,
         id: 100,
         text: "They're inside the final 100! Who wants it more?",
       });
@@ -372,23 +407,17 @@ export class NarrativeGenerator {
   }
 
   /**
-   * Helper to find a Horse object by its ID.
-   *
-   * @param id - Unique identifier for the horse
-   * @returns Horse object or undefined if not found
+   * Get horse by ID (optimized with Map lookup).
    */
   private getHorse(id: string): Horse | undefined {
-    return this.horses.find((h) => h.id === id);
+    return this.horsesMap.get(id);
   }
 
   /**
-   * Helper to find a Stable object by its ID.
-   *
-   * @param id - Unique identifier for the stable
-   * @returns Stable object or undefined if not found
+   * Get stable by ID (optimized with Map lookup).
    */
   private getStable(id: string): Stable | undefined {
-    return this.stables.find((s) => s.id === id);
+    return this.stablesMap.get(id);
   }
 
   /**
@@ -414,7 +443,7 @@ export class NarrativeGenerator {
     type: NarrativeEvent,
     key: string,
     simTime: number,
-    defaultCooldown: number = 10,
+    defaultCooldown: number = NARRATIVE_THRESHOLDS.DEFAULT_COOLDOWN,
   ): boolean {
     const cooldownKey = `${type}:${key}`;
     const expiry = this.cooldowns.get(cooldownKey) || 0;

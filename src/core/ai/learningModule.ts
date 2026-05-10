@@ -13,6 +13,62 @@
  * Tracks outcomes, patterns, and success rates for AI decision-making
  */
 
+// Cache configuration
+const CACHE_MAX_SIZE = 1000;
+const CACHE_TTL_MS = 60000; // 1 minute
+
+interface CacheEntry<T> {
+  value: T;
+  timestamp: number;
+}
+
+class LearningCache<T> {
+  private cache: Map<string, CacheEntry<T>> = new Map();
+  private maxSize: number;
+  private ttl: number;
+
+  constructor(maxSize: number = CACHE_MAX_SIZE, ttl: number = CACHE_TTL_MS) {
+    this.maxSize = maxSize;
+    this.ttl = ttl;
+  }
+
+  get(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+
+    // Check if entry has expired
+    if (Date.now() - entry.timestamp > this.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return entry.value;
+  }
+
+  set(key: string, value: T): void {
+    // Evict oldest entries if cache is full
+    if (this.cache.size >= this.maxSize) {
+      const oldestKey = this.cache.keys().next().value;
+      if (oldestKey) this.cache.delete(oldestKey);
+    }
+
+    this.cache.set(key, { value, timestamp: Date.now() });
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+
+  get size(): number {
+    return this.cache.size;
+  }
+}
+
+// Global cache instances
+const successRateCache = new LearningCache<number>();
+const patternScoreCache = new LearningCache<number>();
+const adaptiveThresholdCache = new LearningCache<number>();
+
 export interface LearningOutcome {
   decisionType: string;
   contextKey: string;
@@ -141,7 +197,7 @@ function updatePatterns(
  * Get success rate for a decision type and context.
  *
  * Returns the success rate for a specific decision type and context key.
- * Defaults to 0.5 if no data available.
+ * Defaults to 0.5 if no data available. Uses cache for performance.
  *
  * @param state - Current learning state
  * @param decisionType - Type of decision
@@ -153,16 +209,23 @@ export function getSuccessRate(
   decisionType: string,
   contextKey: string,
 ): number {
+  const cacheKey = `${state.lastUpdate}:${decisionType}:${contextKey}`;
+  const cached = successRateCache.get(cacheKey);
+  if (cached !== null) return cached;
+
   const key = `${decisionType}:${contextKey}`;
   const data = state.successRates[key];
-  return data?.rate ?? 0.5; // Default to 50% if no data
+  const result = data?.rate ?? 0.5; // Default to 50% if no data
+
+  successRateCache.set(cacheKey, result);
+  return result;
 }
 
 /**
  * Get pattern score for a decision type.
  *
  * Returns the pattern recognition score for a specific decision type and context.
- * Defaults to 0.5 if no pattern data available.
+ * Defaults to 0.5 if no pattern data available. Uses cache for performance.
  *
  * @param state - Current learning state
  * @param decisionType - Type of decision
@@ -174,14 +237,22 @@ export function getPatternScore(
   decisionType: string,
   context: string,
 ): number {
+  const cacheKey = `${state.lastUpdate}:${decisionType}:${context}`;
+  const cached = patternScoreCache.get(cacheKey);
+  if (cached !== null) return cached;
+
   const patternKey = `${decisionType}:${context}`;
-  return state.patterns[patternKey] ?? 0.5;
+  const result = state.patterns[patternKey] ?? 0.5;
+
+  patternScoreCache.set(cacheKey, result);
+  return result;
 }
 
 /**
  * Get adaptive threshold based on learning.
  *
  * Adjusts decision thresholds based on past success rates and adaptation speed.
+ * Uses cache for performance.
  *
  * @param state - Current learning state
  * @param decisionType - Type of decision
@@ -197,9 +268,16 @@ export function getAdaptiveThreshold(
   baseThreshold: number,
   adaptationSpeed: number,
 ): number {
+  const cacheKey = `${state.lastUpdate}:${decisionType}:${contextKey}:${baseThreshold}:${adaptationSpeed}`;
+  const cached = adaptiveThresholdCache.get(cacheKey);
+  if (cached !== null) return cached;
+
   const successRate = getSuccessRate(state, decisionType, contextKey);
   const adjustment = (successRate - 0.5) * adaptationSpeed * baseThreshold;
-  return Math.max(0, baseThreshold - adjustment);
+  const result = Math.max(0, baseThreshold - adjustment);
+
+  adaptiveThresholdCache.set(cacheKey, result);
+  return result;
 }
 
 /**
