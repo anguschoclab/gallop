@@ -14,7 +14,7 @@ import { generateNpcHorse } from "@/core/horse/horseFactory";
 import { calculateNpcHorseValue } from "@/core/horse/pricing";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { createRng, hashStr, type Rng } from "@/game/rng";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import {
   calculateBiddingValue,

@@ -11,7 +11,7 @@
 import type { PipelineContext } from "../pipeline";
 import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { calculateLotValuation } from "@/game/auction";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Phase: NPC Claiming

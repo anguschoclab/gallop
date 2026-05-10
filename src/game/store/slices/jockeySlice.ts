@@ -10,7 +10,7 @@
 
 import type { Jockey } from "@/game/types";
 import { formatCurrency } from "@/lib/formatting";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { ActionResult, SliceCreator } from "../types";
 import { requireOwned, requireHorse } from "../guards";
 import {

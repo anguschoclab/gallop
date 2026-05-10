@@ -1,4 +1,4 @@
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { NewsItem, NewsCategory, NewsImportance } from "@/core/narrative/newsTypes";
 import type { Race, Horse, Jockey } from "@/game/types";
 import { getOrdinalSuffix } from "@/core/common/ordinal";

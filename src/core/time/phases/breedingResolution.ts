@@ -23,7 +23,7 @@ import type {
   CashImpact,
   StudCareerImpact,
 } from "@/core/resolver/impacts/index";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { Pregnancy } from "@/game/types";
 import { GESTATION_DAYS } from "@/game/constants/gameConstants";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";

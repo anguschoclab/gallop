@@ -15,7 +15,7 @@
 import type { Race, RaceClass, ClaimingPrice } from "../types";
 import type { Track } from "../tracks";
 import type { Rng } from "@/game/rng";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { randomWeather, rand } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/trackConditions";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";

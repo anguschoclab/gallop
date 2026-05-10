@@ -14,7 +14,7 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { generateNpcIntents } from "@/core/npc/intentGenerators";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Intent Collection Phase (Order 5)

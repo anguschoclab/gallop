@@ -22,7 +22,7 @@ import type {
   ShareTransactionImpact,
   SyndicateFeeDistributionImpact,
 } from "../impacts/breedingImpacts";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Resolve syndication intents into impacts.

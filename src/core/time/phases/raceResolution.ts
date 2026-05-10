@@ -23,7 +23,7 @@ import {
   checkHallOfFameInduction,
   checkTrackRecord,
 } from "@/services/historyService";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAI";
 import { recordJockeyOutcome } from "@/core/ai/jockeyAI";

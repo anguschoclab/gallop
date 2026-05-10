@@ -18,7 +18,7 @@ import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";
 import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { createTransaction } from "@/core/transactions";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordTrainingOutcome } from "@/core/ai/trainingAI";

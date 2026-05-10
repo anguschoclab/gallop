@@ -27,7 +27,7 @@ import type {
   ShareSaleIntent,
 } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/game/rng";
 import { scoutHorse } from "@/game/scouting";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";

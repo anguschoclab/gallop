@@ -16,7 +16,7 @@
 
 import type { HorseCampaign, TripleCrownProgress } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 
 import type { StoreSet, StoreGet } from "../types";
 

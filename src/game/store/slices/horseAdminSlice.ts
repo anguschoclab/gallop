@@ -8,7 +8,7 @@
  * Related files: store/index.ts (uses this slice), ../guards.ts (validation guards)
  */
 
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { requireOwned, requireHorse } from "../guards";
 import type { ActionResult } from "../types";
 import type { GameStateCreator } from "../types";

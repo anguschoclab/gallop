@@ -18,7 +18,7 @@ import type { Horse } from "@/game/types";
 import type { RacingState } from "@/game/state/racingState";
 import { createDefaultRacingState } from "@/game/state/racingState";
 import type { TrainingIntent } from "@/core/resolver/intents";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { TRAINING_COST } from "@/game/constants/gameConstants";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";

@@ -14,7 +14,7 @@ import type {
 import { SyndicationValidator } from "@/core/resolver/validators/SyndicationValidator";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 
 describe("SyndicationValidator", () => {
   let validator: SyndicationValidator;

@@ -15,7 +15,7 @@
 import type { Horse, Race } from "../types";
 import type { NewsItem } from "@/core/narrative/newsTypes";
 import type { HallOfFameEntry, SeasonRecord } from "@/core/history/historyTypes";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/game/rng";
 import { generateHorse } from "@/core/horse/horseFactory";
 import type { NewGameOptions } from "./types";

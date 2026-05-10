@@ -10,7 +10,7 @@
 
 import type { PlayerFacilities } from "@/core/facilities";
 import { formatCurrency } from "@/lib/formatting";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { facilityUpgradeCost } from "@/core/facilities";
 import type { ActionResult } from "../types";
 import type { GameStateCreator } from "../types";

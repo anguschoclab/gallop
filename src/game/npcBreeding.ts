@@ -11,7 +11,7 @@
  */
 
 import type { Horse, Pregnancy, Stable, GameState } from "./types";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { canBreed } from "@/core/breeding/eligibility";
 import { getAvailableStallions } from "@/core/breeding/stallions";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";

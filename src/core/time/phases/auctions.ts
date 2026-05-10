@@ -15,7 +15,7 @@ import { generateAuctionLots } from "@/game/auction";
 import { SALE_TRIGGERS } from "@/game/auctionData";
 import { createAuctionRunner } from "@/game/auctionRunner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { PHASE_ORDER_AUCTIONS, AUCTION_RETENTION_DAYS } from "@/game/constants/gameConstants";
 
 /**

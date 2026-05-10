@@ -36,7 +36,7 @@ import { recalcStandingFee } from "@/core/breeding/stallions";
 import { getCurrentYear } from "./raceSchedule";
 import { GRADED_RACES } from "@/core/data/gradedRaces";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import { PRIZE_SPLIT } from "./constants/gameConstants";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";

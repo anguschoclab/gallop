@@ -8,7 +8,7 @@
  * Related files: jockeyData.ts (provides constants), npcStables.ts (uses jockey generation)
  */
 
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { Rng } from "@/game/rng";
 import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "./types";
 import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";

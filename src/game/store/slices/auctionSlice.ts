@@ -10,7 +10,7 @@
 
 import type { Horse, AuctionSale, AuctionLot } from "@/game/types";
 import { horsePriceWithPedigree } from "@/core/horse/pricing";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/game/auction";
 import { formatCurrency } from "@/lib/formatting";
 import type { StoreGet } from "../types";

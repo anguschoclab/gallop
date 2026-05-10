@@ -14,7 +14,7 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact, HorseDeathImpact, LogImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Phase: Horse Death

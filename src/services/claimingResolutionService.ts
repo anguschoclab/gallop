@@ -4,7 +4,7 @@ import type {
   ClaimingImpact,
   LogImpact,
 } from "@/core/resolver/impacts/index";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { formatCurrency } from "@/lib/formatting";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import { processClaims, type ClaimAttempt } from "@/game/claiming";

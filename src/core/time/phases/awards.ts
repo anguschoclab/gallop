@@ -16,7 +16,7 @@
 import type { PipelineContext } from "../pipeline";
 import { determineAllRegionalWinners, determineRegionalWinners } from "@/game/awards/scoring";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { AwardRegion, RegionalAward } from "@/game/awards/types";
 import { AWARD_CEREMONY_SCHEDULE } from "@/game/awards/types";
 import { PHASE_ORDER_AWARDS } from "@/game/constants/gameConstants";

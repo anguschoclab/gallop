@@ -33,7 +33,7 @@ import {
 } from "@/game/constants/gameConstants";
 import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { StoreSet, StoreGet } from "../types";
 
 export type CoreSlice = CoreState & {

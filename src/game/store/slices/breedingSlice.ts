@@ -21,7 +21,7 @@ import { createBreedingProgram, updateProgramProgress } from "@/core/breeding/pr
 import { getArchetypeById } from "@/core/breeding/archetypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type {
   BreedingIntent,
   SyndicateCreationIntent,

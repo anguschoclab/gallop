@@ -9,7 +9,7 @@
  */
 
 import type { Horse, PrivateSaleOffer, Claim, Race } from "@/game/types";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { StoreGet } from "../types";
 
 export type PrivateSaleSlice = {

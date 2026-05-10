@@ -18,7 +18,7 @@ import type {
   HallOfFameInductionImpact,
   LogImpact,
 } from "@/core/resolver/impacts/index";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Phase: Hall of Fame Induction

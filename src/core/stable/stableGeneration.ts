@@ -10,7 +10,7 @@
 
 import type { Stable, StableTier, StablePersonality } from "@/game/types";
 import type { Rng } from "@/game/rng";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { selectPersonality, getSpecialistPreferences } from "@/core/stable/stableSelection";
 import { randomSilk } from "@/core/horse/visuals";
 import {

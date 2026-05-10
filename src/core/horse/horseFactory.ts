@@ -34,7 +34,7 @@ export type FoalOutcome =
   | { kind: "live"; foal: Horse; transmission: boolean }
   | { kind: "complication"; type: "stillborn" | "twins" | "injury"; foal?: Horse };
 import { createRng, hashStr, nondeterministicRng } from "@/game/rng";
-import { generateUUID } from "@/core/common/uuid";
+import { generateUUID } from "@/core/uuid";
 import { generateAppearanceDNA, getPalette } from "@/core/horse/proceduralPortrait";
 import {
   generateGenotype,

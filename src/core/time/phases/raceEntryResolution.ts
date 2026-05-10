@@ -16,7 +16,7 @@ import type { AnyIntent, RaceEntryIntent } from "@/core/resolver/intents";
 import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/impacts/index";
 import { createTransportRequest } from "@/core/transportation";
 import { createTransaction } from "@/core/transactions";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { selectBestJockey, createJockeyAIState } from "@/core/ai/jockeyAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 

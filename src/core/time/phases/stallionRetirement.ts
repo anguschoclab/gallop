@@ -9,7 +9,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { StudCareerImpact, LogImpact } from "@/core/resolver/impacts/index";
 import { calculateRecommendedStudFee } from "@/core/breeding/stallions";
 import { formatCurrency } from "@/lib/formatting";

@@ -22,7 +22,7 @@ import type {
   LogImpact,
   HorseDeletionImpact,
 } from "@/core/resolver/impacts/index";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Phase: Pasture Retirement

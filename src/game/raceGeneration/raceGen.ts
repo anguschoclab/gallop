@@ -13,7 +13,7 @@ import type { Race, RaceClass } from "../types";
 import type { Rng } from "@/game/rng";
 import { nondeterministicRng } from "@/game/rng";
 import type { GradedRace } from "@/core/data/gradedRaces";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { rand, randomWeather } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/trackConditions";
 import { randomRaceName } from "@/core/race/naming/legacyFallback";

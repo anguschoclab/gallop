@@ -21,7 +21,7 @@ import type {
   WithdrawFromClaimingIntent,
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable, Jockey } from "@/game/types";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
 import { calculateOverallRating } from "@/core/horse/stats";

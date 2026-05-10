@@ -13,7 +13,7 @@ import { createExpense } from "@/core/expenses";
 import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
 import { generateFlavorNews } from "@/services/newsGenerator";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import {
   calculateMonthlyExpenseBudget,

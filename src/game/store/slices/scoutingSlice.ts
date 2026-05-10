@@ -9,7 +9,7 @@
 
 import type { Horse, ScoutReport, Stable } from "@/game/types";
 import { calculateScoutCost } from "@/game/scouting";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { formatCurrency } from "@/lib/formatting";
 import type { StoreGet } from "../types";
 
