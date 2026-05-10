@@ -9,6 +9,10 @@ import {
   Users,
   DollarSign,
   HandCoins,
+  Trophy,
+  CalendarDays,
+  ListChecks,
+  History,
 } from "lucide-react";
 import { useHorses, useDay, useCash } from "@/game/hooks/useCoreState";
 import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
@@ -22,8 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrophyCase } from "@/components/awards";
-import { isMaleHorse } from "@/core/horse/gender";
-import { isFemaleHorse } from "@/core/horse/gender";
+import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import { NumericValue } from "@/components/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
 import { useState } from "react";
@@ -31,8 +34,18 @@ import type { Horse, PrivateSaleOffer } from "@/game/types";
 import { PrivateSaleOfferDialog } from "@/components/auction/PrivateSaleOfferDialog";
 import { PrivateSaleCounterCard } from "@/components/auction/PrivateSaleCounterCard";
 import { toast } from "sonner";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { z } from "zod";
+import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/npc-stables/$stableId")({ component: NpcStableDetailPage });
+const searchSchema = z.object({
+  tab: fallback(z.enum(["overview", "roster", "staff", "history"]), "overview").default("overview"),
+});
+
+export const Route = createFileRoute("/npc-stables/$stableId")({
+  component: NpcStableDetailPage,
+  validateSearch: zodValidator(searchSchema),
+});
 
 function NpcStableDetailPage() {
   const { stableId } = Route.useParams();
