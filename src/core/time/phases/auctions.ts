@@ -16,6 +16,7 @@ import { SALE_TRIGGERS } from "@/game/auctionData";
 import { createAuctionRunner } from "@/game/auctionRunner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/game/uuid";
+import { PHASE_ORDER_AUCTIONS, AUCTION_RETENTION_DAYS } from "@/game/constants/gameConstants";
 
 /**
  * Phase: Auctions (order 90).
@@ -35,7 +36,7 @@ import { generateUUID } from "@/game/uuid";
  */
 export const auctionsPhase = {
   name: "auctions",
-  order: 90,
+  order: PHASE_ORDER_AUCTIONS,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 
@@ -132,8 +133,8 @@ export const auctionsPhase = {
       return { ...sale, lots: finalLots, resolved: true };
     });
 
-    // Prune auctions older than 30 days.
-    auctions = auctions.filter((a) => a.day >= newDay - 30);
+    // Prune auctions older than AUCTION_RETENTION_DAYS.
+    auctions = auctions.filter((a) => a.day >= newDay - AUCTION_RETENTION_DAYS);
 
     return {
       ...context,

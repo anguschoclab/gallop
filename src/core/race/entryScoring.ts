@@ -15,6 +15,7 @@ import { isFemaleHorse } from "@/core/horse/gender";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice, getSuggestedClaimingPriceRange } from "@/game/claiming";
 import { calculateTrackGeometryScore, calculateGradientScore } from "./trackGeometry";
+import { BASE_RACE_WEIGHT_LBS } from "@/game/constants/gameConstants";
 
 // Entry limits per stable per race
 export const MAX_HORSES_PER_STABLE_PER_RACE = 2;
@@ -99,7 +100,7 @@ const SCORING_CONSTANTS = {
   CLAIMING_HISTORY_THRESHOLD: 10000,
   CLAIMING_HISTORY_BONUS: 15,
   // Weight calculations
-  BASE_WEIGHT_LBS: 126,
+  BASE_WEIGHT_LBS: BASE_RACE_WEIGHT_LBS,
   SEX_ALLOWANCE_LBS: 3,
   AGE_ALLOWANCE_LBS: 2,
 } as const;

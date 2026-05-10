@@ -15,6 +15,10 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import {
   HALL_OF_FAME_MAX_SIZE,
   SEASON_RECORDS_MAX_SIZE,
+  SCOUT_REPORTS_MAX_SIZE,
+  TRIPLE_CROWN_HISTORY_MAX_SIZE,
+  PACE_SAMPLES_MAX_SIZE,
+  PHASE_ORDER_IMPACT_APPLICATION,
 } from "@/game/constants/gameConstants";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 
@@ -27,7 +31,7 @@ import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
  */
 export const impactApplicationPhase: PipelinePhase = {
   name: "impactApplication",
-  order: 200,
+  order: PHASE_ORDER_IMPACT_APPLICATION,
   execute: (context: PipelineContext): PipelineContext => {
     const resolverContext: ResolverContext = {
       state: context.state,
@@ -61,8 +65,8 @@ export const impactApplicationPhase: PipelinePhase = {
       }
       cleanedState.paceSamples = newPaceSamples;
     }
-    if (cleanedState.hallOfFame && cleanedState.hallOfFame.length > 200) {
-      cleanedState.hallOfFame = cleanedState.hallOfFame.slice(-200) as any;
+    if (cleanedState.hallOfFame && cleanedState.hallOfFame.length > HALL_OF_FAME_MAX_SIZE) {
+      cleanedState.hallOfFame = cleanedState.hallOfFame.slice(-HALL_OF_FAME_MAX_SIZE) as any;
     }
 
     return {

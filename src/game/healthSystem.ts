@@ -9,6 +9,23 @@
  */
 
 import type { Horse, Rng } from "./types";
+import {
+  EVENT_INJURY_MULTIPLIER_RACE,
+  EVENT_INJURY_MULTIPLIER_TRAINING,
+  FATIGUE_INJURY_THRESHOLD,
+  FATIGUE_INJURY_DIVISOR,
+  ENERGY_LOW_THRESHOLD,
+  ENERGY_INJURY_MULTIPLIER,
+  INJURY_SEVERITY_CAREER_ENDING_THRESHOLD,
+  INJURY_SEVERITY_MAJOR_THRESHOLD,
+  INJURY_SEVERITY_MODERATE_THRESHOLD,
+  INJURY_RECOVERY_CAREER_ENDING,
+  INJURY_RECOVERY_MAJOR_MIN,
+  INJURY_RECOVERY_MAJOR_MAX,
+  INJURY_RECOVERY_MODERATE_MIN,
+  INJURY_RECOVERY_MODERATE_MAX,
+  INJURY_RECOVERY_MINOR,
+} from "@/game/constants/gameConstants";
 
 export type InjurySeverity = "minor" | "moderate" | "major" | "career-ending";
 
@@ -41,37 +58,37 @@ export function rollForInjury(
   let chance = horse.injuryProneness;
 
   // Event multipliers
-  if (eventType === "race") chance *= 2.0;
-  if (eventType === "training") chance *= 1.2;
+  if (eventType === "race") chance *= EVENT_INJURY_MULTIPLIER_RACE;
+  if (eventType === "training") chance *= EVENT_INJURY_MULTIPLIER_TRAINING;
 
   // Fatigue factor (Banister model)
   const fatigue = horse.fatigue ?? 0;
-  if (fatigue > 50) {
-    chance *= 1 + (fatigue - 50) / 100; // Risk increases linearly with fatigue > 50
+  if (fatigue > FATIGUE_INJURY_THRESHOLD) {
+    chance *= 1 + (fatigue - FATIGUE_INJURY_THRESHOLD) / FATIGUE_INJURY_DIVISOR; // Risk increases linearly with fatigue
   }
 
-  // Energy factor (horses under 60 energy are more prone)
-  if (horse.energy < 60) {
-    chance *= 1.5;
+  // Energy factor
+  if (horse.energy < ENERGY_LOW_THRESHOLD) {
+    chance *= ENERGY_INJURY_MULTIPLIER;
   }
 
   if (rng.next() < chance) {
     const severityRoll = rng.next();
     let severity: InjurySeverity = "minor";
-    let recoveryDays = 7;
+    let recoveryDays = INJURY_RECOVERY_MINOR;
     let type = "Soft Tissue Strain";
 
-    if (severityRoll > 0.98) {
+    if (severityRoll > INJURY_SEVERITY_CAREER_ENDING_THRESHOLD) {
       severity = "career-ending";
-      recoveryDays = 999;
+      recoveryDays = INJURY_RECOVERY_CAREER_ENDING;
       type = "Fractured Sesamoidean";
-    } else if (severityRoll > 0.85) {
+    } else if (severityRoll > INJURY_SEVERITY_MAJOR_THRESHOLD) {
       severity = "major";
-      recoveryDays = 60 + rng.int(0, 120);
+      recoveryDays = INJURY_RECOVERY_MAJOR_MIN + rng.int(0, INJURY_RECOVERY_MAJOR_MAX - INJURY_RECOVERY_MAJOR_MIN);
       type = "Tendon Tear";
-    } else if (severityRoll > 0.6) {
+    } else if (severityRoll > INJURY_SEVERITY_MODERATE_THRESHOLD) {
       severity = "moderate";
-      recoveryDays = 14 + rng.int(0, 28);
+      recoveryDays = INJURY_RECOVERY_MODERATE_MIN + rng.int(0, INJURY_RECOVERY_MODERATE_MAX - INJURY_RECOVERY_MODERATE_MIN);
       type = "Shin Splints";
     }
 

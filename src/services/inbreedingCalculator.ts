@@ -5,6 +5,7 @@ import {
   INBREEDING_DIVERSITY_HIGH,
   INBREEDING_DIVERSITY_MODERATE,
   INBREEDING_DIVERSITY_LOW,
+  INBREEDING_DIVERSITY_VERY_LOW,
   INBREEDING_SCORE_BONUS,
 } from "@/game/constants/gameConstants";
 
@@ -88,7 +89,7 @@ export function calculateFounderEffect(
     description = "Moderate genetic diversity";
   } else if (diversityRatio >= INBREEDING_DIVERSITY_LOW) {
     description = "Limited genetic diversity - moderate founder effect";
-  } else if (diversityRatio >= 0.2) {
+  } else if (diversityRatio >= INBREEDING_DIVERSITY_VERY_LOW) {
     description = "Low genetic diversity - strong founder effect";
     warning = "Strong founder effect may limit genetic variation";
   } else {

@@ -72,7 +72,7 @@ export function checkHallOfFameInduction(horse: Horse, day: number): HallOfFameE
       horseId: horse.id,
       name: horse.name,
       inductionDay: day,
-      inductionYear: Math.floor((day - 1) / 365) + 1,
+      inductionYear: Math.floor((day - 1) / DAYS_PER_YEAR) + 1,
       achievements: [
         g1Wins >= 3 ? `${g1Wins} Grade 1 Victories` : "",
         earnings >= 1000000 ? `$${(earnings / 1000000).toFixed(1)}M in Lifetime Earnings` : "",
@@ -131,7 +131,7 @@ export function checkTrackRecord(
       horseId: winnerId,
       horseName: winnerName,
       day,
-      year: Math.floor((day - 1) / 365) + 1,
+      year: Math.floor((day - 1) / DAYS_PER_YEAR) + 1,
     };
   }
 

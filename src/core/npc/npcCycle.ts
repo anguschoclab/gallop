@@ -25,22 +25,22 @@ import {
 import { upgradeFacility } from "@/core/facilities";
 import type { Facility } from "@/core/facilities/facilityTypes";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
-
-// Fame constants
-const FAME_GAIN_G1_WIN = 20;
-const FAME_GAIN_G2_WIN = 15;
-const FAME_GAIN_G3_WIN = 10;
-const FAME_GAIN_OTHER_WIN = 5;
-const FAME_GAIN_G1_TOP3 = 10;
-const FAME_GAIN_G2_TOP3 = 8;
-const FAME_GAIN_G3_TOP3 = 5;
-const FAME_GAIN_OTHER_TOP3 = 2;
-const FAME_GAIN_TOP5 = 1;
-const FAME_BONUS_LARGE_PURSE = 3;
-const FAME_BONUS_MEDIUM_PURSE = 1;
-const LARGE_PURSE_THRESHOLD = 500000;
-const MEDIUM_PURSE_THRESHOLD = 100000;
-const MAX_FAME = 100;
+import {
+  FAME_GAIN_G1_WIN,
+  FAME_GAIN_G2_WIN,
+  FAME_GAIN_G3_WIN,
+  FAME_GAIN_OTHER_WIN,
+  FAME_GAIN_G1_TOP3,
+  FAME_GAIN_G2_TOP3,
+  FAME_GAIN_G3_TOP3,
+  FAME_GAIN_OTHER_TOP3,
+  FAME_GAIN_TOP5,
+  FAME_BONUS_LARGE_PURSE,
+  FAME_BONUS_MEDIUM_PURSE,
+  LARGE_PURSE_THRESHOLD,
+  MEDIUM_PURSE_THRESHOLD,
+  MAX_FAME,
+} from "@/game/constants/gameConstants";
 
 /**
  * Calculate fame gains for horses based on race results.

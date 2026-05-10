@@ -99,7 +99,19 @@ import {
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { activeStallions2020s, type PedigreeHorse } from "@/core/data/pedigreeData";
 import { clamp } from "@/game/math";
-import { POTENTIAL_MIN, POTENTIAL_MAX } from "@/game/constants/gameConstants";
+import {
+  POTENTIAL_MIN,
+  POTENTIAL_MAX,
+  CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD,
+  CORNERING_APTITUDE_LARGE_PENALTY,
+  CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD,
+  CORNERING_APTITUDE_SMALL_BONUS,
+  FOALING_AGE_RISK_THRESHOLD,
+  FOALING_AGE_RISK_MULTIPLIER,
+  FOALING_BASE_COMPLICATION_RATE,
+  LETHAL_RECESSIVE_CHANCE,
+  TWIN_REDUCTION_CHANCE,
+} from "@/game/constants/gameConstants";
 
 // --- Internal Helpers ---
 
@@ -182,8 +194,8 @@ export function createHorseFromDNA(
   const { height, weight } = resolveSize(genotype.size);
 
   const sizeSum = genotype.size[0] + genotype.size[1];
-  if (sizeSum >= 8) corneringAptitude -= 0.15;
-  if (sizeSum <= 4) corneringAptitude += 0.1;
+  if (sizeSum >= CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD) corneringAptitude -= CORNERING_APTITUDE_LARGE_PENALTY;
+  if (sizeSum <= CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD) corneringAptitude += CORNERING_APTITUDE_SMALL_BONUS;
 
   const dnaTraits = resolveDnaTraits(genotype);
 
@@ -408,9 +420,9 @@ export function resolveFoaling(
   // --- Complication Checks ---
 
   // 1. Age-based risk
-  const ageRisk = Math.max(0, (dam.age - 10) * 0.02); // 2% per year over 10
+  const ageRisk = Math.max(0, (dam.age - FOALING_AGE_RISK_THRESHOLD) * FOALING_AGE_RISK_MULTIPLIER);
   const baseRoll = rng.next();
-  if (baseRoll < 0.01 + ageRisk) {
+  if (baseRoll < FOALING_BASE_COMPLICATION_RATE + ageRisk) {
     const types = ["stillborn", "unable to stand", "early loss", "mid loss"];
     return { kind: "complication", type: types[Math.floor(rng.next() * types.length)] };
   }
@@ -424,7 +436,7 @@ export function resolveFoaling(
       (sMarkers.hypp && dMarkers.hypp) ||
       (sMarkers.olws && dMarkers.olws)
     ) {
-      if (rng.next() < 0.25) {
+      if (rng.next() < LETHAL_RECESSIVE_CHANCE) {
         // 25% chance for homozygous lethal
         return { kind: "complication", type: "lethal recessive" };
       }
@@ -432,7 +444,7 @@ export function resolveFoaling(
   }
 
   // 3. Rare random complication
-  if (rng.next() < 0.005) {
+  if (rng.next() < TWIN_REDUCTION_CHANCE) {
     return { kind: "complication", type: "twin reduction (single survivor)" };
   }
 

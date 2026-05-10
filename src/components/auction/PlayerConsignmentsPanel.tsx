@@ -2,7 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HorsePortrait } from "@/components/HorsePortrait";
 import { formatCurrency } from "@/lib/formatting";
-import { netProceeds, commissionAmount, CONSIGNMENT_COMMISSION } from "@/game/auction";
+import { netProceeds, commissionAmount } from "@/game/auction";
+import { CONSIGNMENT_COMMISSION } from "@/game/constants/gameConstants";
 import type { AuctionLot, Horse, NPCStable } from "@/game/types";
 
 /**

@@ -10,6 +10,7 @@
 
 import type { PipelineContext } from "../pipeline";
 import { updateLeaderboard } from "@/core/race/leaderboard";
+import { computeAllLeaderboards } from "@/core/breeding/leaderboardService";
 import { PHASE_ORDER_LEADERBOARD } from "@/game/constants/gameConstants";
 import { computeProgenyLeaderboards } from "@/core/breeding/progenyLeaderboards";
 import { identifyFounders, computeFounderInfluence } from "@/core/history/lineageCrawler";

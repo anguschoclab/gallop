@@ -13,7 +13,13 @@ import { formatCurrency } from "@/lib/formatting";
 import { generateUUID } from "@/game/uuid";
 import type { ActionResult, SliceCreator } from "../types";
 import { requireOwned, requireHorse } from "../guards";
-import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS } from "@/game/constants/gameConstants";
+import {
+  JOCKEY_CONTRACT_DAYS,
+  JOCKEY_RETAINER_DAYS,
+  JOCKEY_RETAINER_BONUS_MULTIPLIER,
+  JOCKEY_PER_RACE_BONUS_MULTIPLIER,
+  DAYS_PER_YEAR,
+} from "@/game/constants/gameConstants";
 
 export type JockeySlice = {
   hireJockey: (jockeyId: string, contractType: "standard" | "retainer") => ActionResult;
@@ -31,7 +37,7 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
     if (!jockey) return { ok: false, reason: "Jockey not found." };
     if (jockey.stableId) return { ok: false, reason: "Jockey is already under contract." };
 
-    const bonusMultiplier = contractType === "retainer" ? 100 : 30;
+    const bonusMultiplier = contractType === "retainer" ? JOCKEY_RETAINER_BONUS_MULTIPLIER : JOCKEY_PER_RACE_BONUS_MULTIPLIER;
     const bonus = jockey.ridingFee * bonusMultiplier;
 
     if (s.cash < bonus)
@@ -74,7 +80,7 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
       type: "jockey_contract",
       jockeyId,
       stableId: "player",
-      contractUntil: s.day + 365, // Year-long enrollment
+      contractUntil: s.day + DAYS_PER_YEAR, // Year-long enrollment
       bonus: 0,
       stableAffinity: 20,
     } as any);

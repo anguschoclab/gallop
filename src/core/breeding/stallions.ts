@@ -15,7 +15,14 @@ import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { calculateBaseHorseValue } from "@/core/horse/pricing";
 import { isMaleHorse } from "@/core/horse/gender";
 import { getCareerStats } from "@/core/horse/stats";
-import { STUD_FEE_MID, STUD_BOOK_SIZE_MID } from "@/game/constants/gameConstants";
+import {
+  STUD_FEE_MID,
+  STUD_BOOK_SIZE_MID,
+  STUD_FEE_ROUNDING,
+  STUD_FEE_MIN,
+  AGE_STUD_DECLINE,
+  AGE_STUD_SEVERE_DECLINE,
+} from "@/game/constants/gameConstants";
 
 const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
 
@@ -203,7 +210,7 @@ export function recalcStandingFee(horse: Horse, currentDay: number): number {
   if (horse.age > AGE_STUD_SEVERE_DECLINE) multiplier -= 0.15;
 
   // Round to nearest $100
-  return Math.max(500, Math.round((currentFee * multiplier) / 100) * 100);
+  return Math.max(STUD_FEE_MIN, Math.round((currentFee * multiplier) / STUD_FEE_ROUNDING) * STUD_FEE_ROUNDING);
 }
 
 /**

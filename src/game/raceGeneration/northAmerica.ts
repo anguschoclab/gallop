@@ -20,9 +20,10 @@ import { randomWeather, rand } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/trackConditions";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
+import { NA_CLAIMING_RACE_PERCENTAGE } from "@/game/constants/gameConstants";
 
 // Configuration for North American race distribution
-// 70% claiming races as per real-world statistics
+// Matches NA_CLAIMING_RACE_PERCENTAGE (70%) as per real-world statistics
 const NA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "MaidenClaiming", probability: 0.15 },
   { class: "Claiming", probability: 0.25 },
@@ -82,8 +83,8 @@ function getTrackQuality(country: string): "low" | "mid" | "high" {
 /**
  * Generate a single North American race.
  *
- * Uses NA-specific race distribution (70% claiming races), selects claiming price
- * based on track quality, and generates appropriate race names.
+ * Uses NA-specific race distribution (governed by NA_CLAIMING_RACE_PERCENTAGE),
+ * selects claiming price based on track quality, and generates appropriate race names.
  *
  * @param track - Track to generate race for
  * @param day - Day the race takes place

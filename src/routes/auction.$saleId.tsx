@@ -20,6 +20,7 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { getDisplayableStats } from "@/game/scouting";
 import { KIND_LABELS } from "@/game/auctionData";
 import { netProceeds } from "@/game/auction";
+import { CONSIGNMENT_COMMISSION } from "@/game/constants/gameConstants";
 import { Gavel, ChevronLeft, ChevronRight, Trophy, Trash2, Search } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { genderSymbol } from "@/core/horse/gender";

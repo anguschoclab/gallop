@@ -25,13 +25,32 @@ import {
 } from "@/core/ai/auctionAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { SALE_TRIGGERS, KIND_LABELS } from "./auctionData";
+import {
+  CONSIGNMENT_COMMISSION,
+  AUCTION_AGGRESSIVE_PREMIUM,
+  AUCTION_2YO_TRAINING_PREMIUM,
+  AUCTION_CONSERVATIVE_DISCOUNT,
+  AUCTION_YEARLING_PREMIUM,
+  AUCTION_WEANLING_PREMIUM,
+  AUCTION_RACING_AGE_DISCOUNT,
+  AUCTION_WEANLING_DISCOUNT,
+  AUCTION_BROODMARE_DISCOUNT,
+  AUCTION_FILLY_PREMIUM,
+  AUCTION_BROODMARE_PREMIUM,
+  AUCTION_RACING_AGE_PREMIUM,
+  AUCTION_RESERVE_SPECIALIST,
+  AUCTION_RESERVE_AGGRESSIVE,
+  AUCTION_RESERVE_SPECIALIST_LOW,
+  AUCTION_RESERVE_BREEDER,
+  AUCTION_RESERVE_CONSERVATIVE,
+  AUCTION_RESERVE_ELITE,
+  AUCTION_AGGRESSIVE_BID_MIN_PERCENT,
+  AUCTION_AGGRESSIVE_BID_VARIANCE,
+} from "@/game/constants/gameConstants";
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-
-/** Sale-house cut taken from the hammer price of player consignments. 6%. */
-export const CONSIGNMENT_COMMISSION = 0.06;
 
 /** Default reserve as a fraction of base value when the player consigns. */
 export const DEFAULT_PLAYER_RESERVE_RATIO = 0.7;
@@ -96,8 +115,8 @@ interface ValuationContext {
  * @returns Valuation multiplier
  */
 function aggressiveValuation(ctx: ValuationContext): number {
-  let mod = 1.3;
-  if (ctx.is2yoTraining) mod *= 1.25;
+  let mod = 1.0 + AUCTION_AGGRESSIVE_PREMIUM;
+  if (ctx.is2yoTraining) mod *= 1.0 + AUCTION_2YO_TRAINING_PREMIUM;
   return mod;
 }
 
@@ -110,7 +129,7 @@ function aggressiveValuation(ctx: ValuationContext): number {
  * @returns Valuation multiplier
  */
 function conservativeValuation(ctx: ValuationContext): number {
-  return 0.75;
+  return 1.0 - AUCTION_CONSERVATIVE_DISCOUNT;
 }
 
 /**
@@ -123,10 +142,14 @@ function conservativeValuation(ctx: ValuationContext): number {
  * @returns Valuation multiplier
  */
 function developerValuation(ctx: ValuationContext): number {
-  let mod = ctx.isYearling ? 1.4 : ctx.isWeanling ? 1.2 : 0.8;
+  let mod = ctx.isYearling
+    ? 1.0 + AUCTION_YEARLING_PREMIUM
+    : ctx.isWeanling
+      ? 1.0 + AUCTION_WEANLING_PREMIUM
+      : 1.0 - AUCTION_RACING_AGE_DISCOUNT;
   if (ctx.is2yoTraining) mod *= 0.9;
   if (ctx.isBroodmare) mod *= 1.1;
-  if (ctx.isRacingAge) mod *= 0.7;
+  if (ctx.isRacingAge) mod *= 1.0 - AUCTION_RACING_AGE_DISCOUNT;
   return mod;
 }
 
@@ -140,10 +163,14 @@ function developerValuation(ctx: ValuationContext): number {
  * @returns Valuation multiplier
  */
 function winNowValuation(ctx: ValuationContext): number {
-  let mod = ctx.isWeanling ? 0.6 : ctx.isYearling ? 0.9 : 1.0;
-  if (ctx.is2yoTraining) mod *= 1.25;
-  if (ctx.isBroodmare) mod *= 0.4;
-  if (ctx.isRacingAge) mod *= 1.3;
+  let mod = ctx.isWeanling
+    ? 1.0 - AUCTION_WEANLING_DISCOUNT
+    : ctx.isYearling
+      ? 0.9
+      : 1.0;
+  if (ctx.is2yoTraining) mod *= 1.0 + AUCTION_2YO_TRAINING_PREMIUM;
+  if (ctx.isBroodmare) mod *= 1.0 - AUCTION_BROODMARE_DISCOUNT;
+  if (ctx.isRacingAge) mod *= 1.0 + AUCTION_RACING_AGE_PREMIUM;
   return mod;
 }
 
@@ -172,9 +199,9 @@ function specialistValuation(ctx: ValuationContext): number {
  * @returns Valuation multiplier
  */
 function breederValuation(ctx: ValuationContext): number {
-  let mod = ctx.isFilly ? 1.6 : 0.7;
+  let mod = ctx.isFilly ? 1.0 + AUCTION_FILLY_PREMIUM : 0.7;
   if (ctx.horse.damName && ctx.horse.blueHenStatus?.isBlueHen) mod *= 1.2;
-  if (ctx.isBroodmare) mod *= 1.5;
+  if (ctx.isBroodmare) mod *= 1.0 + AUCTION_BROODMARE_PREMIUM;
   return mod;
 }
 
@@ -202,7 +229,7 @@ function traderValuation(ctx: ValuationContext): number {
 function prestigeValuation(ctx: ValuationContext): number {
   let mod = 1.2 + ctx.horse.fame / 200;
   if (ctx.base < 5000) mod = 0;
-  if (ctx.isRacingAge) mod *= 1.3;
+  if (ctx.isRacingAge) mod *= 1.0 + AUCTION_RACING_AGE_PREMIUM;
   return mod;
 }
 
@@ -292,14 +319,14 @@ export function calculateLotValuation(
 // ---------------------------------------------------------------------------
 
 const BUDGET_CAPS: Record<Stable["personality"], number> = {
-  aggressive: 0.35,
+  aggressive: AUCTION_RESERVE_AGGRESSIVE,
   conservative: 0.15,
   developer: 0.3,
   "win-now": 0.2,
-  specialist: 0.25,
-  breeder: 0.35,
+  specialist: AUCTION_RESERVE_SPECIALIST_LOW,
+  breeder: AUCTION_RESERVE_BREEDER,
   trader: 0.2,
-  prestige: 0.4,
+  prestige: AUCTION_RESERVE_ELITE,
 };
 
 /**
@@ -379,7 +406,10 @@ export function calculateNpcBid(
 
   // Aggressive/prestige personalities bid near ceiling immediately
   if (stable.personality === "aggressive" || stable.personality === "prestige") {
-    const aggressiveBid = Math.min(Math.round(ceiling * (0.88 + rng.range(0, 0.07))), maxBid);
+    const aggressiveBid = Math.min(
+      Math.round(ceiling * (AUCTION_AGGRESSIVE_BID_MIN_PERCENT + rng.range(0, AUCTION_AGGRESSIVE_BID_VARIANCE))),
+      maxBid
+    );
     return aggressiveBid > currentBid ? Math.ceil(aggressiveBid / 100) * 100 : nextBid;
   }
 
@@ -523,7 +553,7 @@ const CONSIGNMENT_STRATEGIES: Record<
   conservative: (ctx) => ({
     consign: ctx.owned.length > 8 ? ctx.owned.slice(8, 10) : [],
     freshCount: ctx.rng.int(0, 1),
-    reserveMultiplier: 0.7,
+    reserveMultiplier: AUCTION_RESERVE_CONSERVATIVE,
   }),
   developer: (ctx) => ({
     consign:
@@ -570,7 +600,7 @@ const CONSIGNMENT_STRATEGIES: Record<
     return {
       consign: offNiche.slice(0, 3),
       freshCount: ctx.rng.int(0, 2),
-      reserveMultiplier: 0.5,
+      reserveMultiplier: AUCTION_RESERVE_SPECIALIST,
     };
   },
   breeder: (ctx) => ({
@@ -579,7 +609,7 @@ const CONSIGNMENT_STRATEGIES: Record<
         ? ctx.fading.filter((h) => h.gender === "mare").slice(0, 4)
         : ctx.colts.slice(0, 4),
     freshCount: ctx.rng.int(2, 4),
-    reserveMultiplier: 0.5,
+    reserveMultiplier: AUCTION_RESERVE_BREEDER,
   }),
   trader: (ctx) => ({
     consign: ctx.owned.slice(0, 5),
@@ -589,7 +619,7 @@ const CONSIGNMENT_STRATEGIES: Record<
   prestige: (ctx) => ({
     consign: ctx.top.filter((h) => h.fame >= 25 || h.potential >= 85).slice(0, 2),
     freshCount: ctx.rng.int(0, 1),
-    reserveMultiplier: 0.85,
+    reserveMultiplier: AUCTION_RESERVE_ELITE,
   }),
 };
 

@@ -24,6 +24,14 @@ import {
 } from "@/core/ai/horseGenAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { type AgeCategory, getAgeFromCategory, calculateStartingFame } from "./npcHorseGenHelpers";
+import {
+  NPC_HORSE_COUNT_ELITE_MIN,
+  NPC_HORSE_COUNT_ELITE_MAX,
+  NPC_HORSE_COUNT_MID_MIN,
+  NPC_HORSE_COUNT_MID_MAX,
+  NPC_HORSE_COUNT_BUDGET_MIN,
+  NPC_HORSE_COUNT_BUDGET_MAX,
+} from "@/game/constants/gameConstants";
 
 // ─── Stable horse generation ──────────────────────────────────────────────────
 
@@ -60,13 +68,13 @@ export function generateStableHorses(
   } else {
     switch (stable.tier) {
       case "elite":
-        targetCount = rand(30, 40, rng);
+        targetCount = rand(NPC_HORSE_COUNT_ELITE_MIN, NPC_HORSE_COUNT_ELITE_MAX, rng);
         break;
       case "mid":
-        targetCount = rand(20, 30, rng);
+        targetCount = rand(NPC_HORSE_COUNT_MID_MIN, NPC_HORSE_COUNT_MID_MAX, rng);
         break;
       default:
-        targetCount = rand(15, 25, rng);
+        targetCount = rand(NPC_HORSE_COUNT_BUDGET_MIN, NPC_HORSE_COUNT_BUDGET_MAX, rng);
         break;
     }
   }

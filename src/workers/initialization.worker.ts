@@ -16,7 +16,11 @@ import { runNpcRaceEntry } from "@/game/npcRaceEntry";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
-import { STARTING_CASH } from "@/game/constants/gameConstants";
+import {
+  STARTING_CASH,
+  INITIALIZATION_BUDGET_TIER_THRESHOLD,
+  INITIALIZATION_HORSE_COUNT_THRESHOLD,
+} from "@/game/constants/gameConstants";
 
 export type InitializeInput = {
   options?: NewGameOptions;
@@ -60,7 +64,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
 
   const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
-    const tier: "starter" | "budget" | "mid" | "elite" = r < 0.6 ? "budget" : "mid";
+    const tier: "starter" | "budget" | "mid" | "elite" = r < INITIALIZATION_BUDGET_TIER_THRESHOLD ? "budget" : "mid";
     return generateHorse({ tier }, setupRng);
   });
 
@@ -72,7 +76,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
   const races: Race[] = [];
   for (let d = 1; d <= 7; d++) {
     const dayRng = createRng(hashStr(`raceGen_${d}`));
-    const count = dayRng.next() < 0.7 ? 2 : 3;
+    const count = dayRng.next() < INITIALIZATION_HORSE_COUNT_THRESHOLD ? 2 : 3;
     for (let i = 0; i < count; i++) races.push(generateRace(d, dayRng));
   }
   for (const g of GRADED_RACES) {

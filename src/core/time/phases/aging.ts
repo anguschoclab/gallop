@@ -11,6 +11,7 @@
 import type { PipelineContext } from "../pipeline";
 import type { Horse } from "@/game/types";
 import { isUniversalBirthday } from "@/core/calendar/breedingCalendar";
+import { PHASE_ORDER_AGING } from "@/game/constants/gameConstants";
 
 /**
  * Phase: Aging
@@ -19,7 +20,7 @@ import { isUniversalBirthday } from "@/core/calendar/breedingCalendar";
  */
 export const agingPhase = {
   name: "aging",
-  order: 30,
+  order: PHASE_ORDER_AGING,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const northernTick = isUniversalBirthday(newDay, "Northern");

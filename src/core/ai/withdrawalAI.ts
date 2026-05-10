@@ -22,6 +22,11 @@ import {
   type LearningState,
 } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
+import {
+  AI_RISK_TOLERANCE_CONSERVATIVE,
+  AI_RISK_TOLERANCE_AGGRESSIVE,
+  AI_RISK_TOLERANCE_WIN_NOW,
+} from "@/game/constants/gameConstants";
 
 export interface WithdrawalAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -138,9 +143,9 @@ export function shouldWithdrawHorse(
   const config = aiState.personalityState;
   let riskTolerance = 50;
 
-  if (config.personality === "conservative") riskTolerance = 35;
-  if (config.personality === "aggressive") riskTolerance = 65;
-  if (config.personality === "win-now") riskTolerance = 55;
+  if (config.personality === "conservative") riskTolerance = AI_RISK_TOLERANCE_CONSERVATIVE;
+  if (config.personality === "aggressive") riskTolerance = AI_RISK_TOLERANCE_AGGRESSIVE;
+  if (config.personality === "win-now") riskTolerance = AI_RISK_TOLERANCE_WIN_NOW;
 
   // Learning-based adjustment
   const contextKey = `${horse.age}`;

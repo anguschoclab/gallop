@@ -96,6 +96,7 @@ export const DEFAULT_TRAIT_SCORE = 0.5;
 export const INBREEDING_DIVERSITY_HIGH = 0.8;
 export const INBREEDING_DIVERSITY_MODERATE = 0.6;
 export const INBREEDING_DIVERSITY_LOW = 0.4;
+export const INBREEDING_DIVERSITY_VERY_LOW = 0.2;
 
 /**
  * Expected maximum number of ancestors for inbreeding calculation
@@ -166,6 +167,14 @@ export const STAMINA_DRAIN_MAX = 30;
  * Energy impact from racing
  */
 export const RACE_ENERGY_IMPACT = -25;
+
+/**
+ * Cornering aptitude modifiers based on horse size
+ */
+export const CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD = 8;
+export const CORNERING_APTITUDE_LARGE_PENALTY = 0.15;
+export const CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD = 4;
+export const CORNERING_APTITUDE_SMALL_BONUS = 0.1;
 
 // ============================================================================
 // FAME & REPUTATION
@@ -509,6 +518,15 @@ export const BLUE_HEN_STAKES_WINNER_MULTIPLIER = 15;
 export const BLUE_HEN_STAKES_WINNER_CAP = 60;
 export const BLUE_HEN_G1_WINNER_MULTIPLIER = 20;
 
+/**
+ * Foaling complications and risks
+ */
+export const FOALING_AGE_RISK_THRESHOLD = 10;
+export const FOALING_AGE_RISK_MULTIPLIER = 0.02;
+export const FOALING_BASE_COMPLICATION_RATE = 0.01;
+export const LETHAL_RECESSIVE_CHANCE = 0.25;
+export const TWIN_REDUCTION_CHANCE = 0.005;
+
 // ============================================================================
 // AUCTION
 // ============================================================================
@@ -581,6 +599,32 @@ export const INJURY_RECOVERY_MIN = 60;
 export const INJURY_RECOVERY_MAX = 180;
 
 /**
+ * Injury severity thresholds
+ */
+export const INJURY_SEVERITY_CAREER_ENDING_THRESHOLD = 0.98;
+export const INJURY_SEVERITY_MAJOR_THRESHOLD = 0.85;
+export const INJURY_SEVERITY_MODERATE_THRESHOLD = 0.6;
+
+/**
+ * Injury recovery times by severity
+ */
+export const INJURY_RECOVERY_CAREER_ENDING = 999;
+export const INJURY_RECOVERY_MAJOR_MIN = 60;
+export const INJURY_RECOVERY_MAJOR_MAX = 180;
+export const INJURY_RECOVERY_MODERATE_MIN = 14;
+export const INJURY_RECOVERY_MODERATE_MAX = 42;
+export const INJURY_RECOVERY_MINOR = 7;
+
+/**
+ * Event-based injury multipliers
+ */
+export const EVENT_INJURY_MULTIPLIER_RACE = 2.0;
+export const EVENT_INJURY_MULTIPLIER_TRAINING = 1.2;
+export const FATIGUE_INJURY_THRESHOLD = 50;
+export const FATIGUE_INJURY_DIVISOR = 100;
+export const ENERGY_INJURY_MULTIPLIER = 1.5;
+
+/**
  * Injury severity threshold
  */
 export const INJURY_SEVERITY_THRESHOLD = 0.85;
@@ -600,6 +644,11 @@ export const RACE_HISTORY_LIMIT_HIGH = 50;
  * Retention days for ungraded race history
  */
 export const RACE_HISTORY_UNGRADED_RETENTION_DAYS = 30;
+
+/**
+ * Retention days for auction data
+ */
+export const AUCTION_RETENTION_DAYS = 30;
 
 // ============================================================================
 // CALENDAR

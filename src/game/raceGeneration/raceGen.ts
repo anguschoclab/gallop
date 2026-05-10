@@ -17,6 +17,57 @@ import { generateUUID } from "@/game/uuid";
 import { rand, randomWeather } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/trackConditions";
 import { randomRaceName } from "@/core/race/naming/legacyFallback";
+import {
+  ENTRY_MAIDEN,
+  PURSE_MAIDEN,
+  ENTRY_MAIDEN_SPECIAL_WEIGHT,
+  PURSE_MAIDEN_SPECIAL_WEIGHT,
+  MINSTAT_MAIDEN_SPECIAL_WEIGHT,
+  ENTRY_MAIDEN_CLAIMING,
+  PURSE_MAIDEN_CLAIMING,
+  ENTRY_MAIDEN_OPTIONAL_CLAIMING,
+  PURSE_MAIDEN_OPTIONAL_CLAIMING,
+  MINSTAT_MAIDEN_OPTIONAL_CLAIMING,
+  ENTRY_MAIDEN_STAKES,
+  PURSE_MAIDEN_STAKES,
+  MINSTAT_MAIDEN_STAKES,
+  ENTRY_ALLOWANCE,
+  PURSE_ALLOWANCE,
+  MINSTAT_ALLOWANCE,
+  ENTRY_OPTIONAL_CLAIMING,
+  PURSE_OPTIONAL_CLAIMING,
+  MINSTAT_OPTIONAL_CLAIMING,
+  ENTRY_STARTER_ALLOWANCE,
+  PURSE_STARTER_ALLOWANCE,
+  MINSTAT_STARTER_ALLOWANCE,
+  ENTRY_STARTER_HANDICAP,
+  PURSE_STARTER_HANDICAP,
+  MINSTAT_STARTER_HANDICAP,
+  ENTRY_STAKES,
+  PURSE_STAKES,
+  MINSTAT_STAKES,
+  ENTRY_CLAIMING,
+  PURSE_CLAIMING,
+  MINSTAT_CLAIMING,
+  ENTRY_HANDICAP,
+  PURSE_HANDICAP,
+  MINSTAT_HANDICAP,
+  ENTRY_LISTED,
+  PURSE_LISTED,
+  MINSTAT_LISTED,
+  ENTRY_GROUP,
+  PURSE_GROUP,
+  MINSTAT_GROUP,
+  GRADE_G1_MIN_STAT,
+  GRADE_G2_MIN_STAT,
+  GRADE_G3_MIN_STAT,
+  RACE_CLASS_MAIDEN_PROB,
+  RACE_CLASS_ALLOWANCE_PROB,
+  RACE_CLASS_HANDICAP_PROB,
+  RACE_CLASS_STARTER_ALLOWANCE_PROB,
+  RACE_CLASS_STARTER_HANDICAP_PROB,
+  RACE_CLASS_MAIDEN_STAKES_PROB,
+} from "@/game/constants/gameConstants";
 
 /**
  * Single authoritative class config shared by the generic fallback generator
@@ -58,7 +109,7 @@ export function makeGradedRace(
   rng: Rng = nondeterministicRng(),
 ): Race {
   const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
-  const minStat = g.grade === "G1" ? 78 : g.grade === "G2" ? 70 : 62;
+  const minStat = g.grade === "G1" ? GRADE_G1_MIN_STAT : g.grade === "G2" ? GRADE_G2_MIN_STAT : GRADE_G3_MIN_STAT;
   return {
     id: generateUUID(rng),
     name: g.name,
@@ -98,18 +149,18 @@ export function makeGradedRace(
 export function generateRace(day: number, rng: Rng = nondeterministicRng()): Race {
   const r = rng.next();
   let cls: RaceClass;
-  if (r < 0.25) cls = "Maiden";
+  if (r < RACE_CLASS_MAIDEN_PROB) cls = "Maiden";
   else if (r < 0.3) cls = "MaidenClaiming";
-  else if (r < 0.45) cls = "Allowance";
+  else if (r < RACE_CLASS_ALLOWANCE_PROB) cls = "Allowance";
   else if (r < 0.5) cls = "Claiming";
   else if (r < 0.6) cls = "Stakes";
-  else if (r < 0.65) cls = "Handicap";
+  else if (r < RACE_CLASS_HANDICAP_PROB) cls = "Handicap";
   else if (r < 0.7) cls = "OptionalClaiming";
-  else if (r < 0.75) cls = "StarterAllowance";
+  else if (r < RACE_CLASS_STARTER_ALLOWANCE_PROB) cls = "StarterAllowance";
   else if (r < 0.8) cls = "MaidenSpecialWeight";
-  else if (r < 0.85) cls = "StarterHandicap";
+  else if (r < RACE_CLASS_STARTER_HANDICAP_PROB) cls = "StarterHandicap";
   else if (r < 0.9) cls = "MaidenOptionalClaiming";
-  else if (r < 0.95) cls = "MaidenStakes";
+  else if (r < RACE_CLASS_MAIDEN_STAKES_PROB) cls = "MaidenStakes";
   else if (r < 0.98) cls = "Listed";
   else cls = "Group";
 
