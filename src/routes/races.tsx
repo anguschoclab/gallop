@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { useRaces, useHorses } from "@/game/hooks/useCoreState";
+import { formatCurrency } from "@/core/financial";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

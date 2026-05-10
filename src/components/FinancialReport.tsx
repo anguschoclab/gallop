@@ -17,12 +17,14 @@ import {
   ExternalLink
 } from "lucide-react";
 import { useGame } from "@/game/store";
+import { useTransactions } from "@/game/hooks/useCoreState";
 import { formatCurrency, formatProfitLoss } from "@/core/financial";
 import { buildProfitLossReport } from "@/core/financial/reportBuilder";
 import { formatTransactionSubcategory } from "@/core/transactions/transactionTypes";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { NumericValue } from "@/components/HorseBits";
+import { FinancialChart } from "@/components/FinancialChart";
 
 type PeriodKey = "week" | "month" | "year" | "allTime";
 
@@ -31,7 +33,7 @@ type PeriodKey = "week" | "month" | "year" | "allTime";
  * Redesigned for the "Fiscal Performance Ledger" aesthetic
  */
 export function FinancialReport() {
-  const transactions = useGame((s) => s.transactions || []);
+  const transactions = useTransactions();
   const cash = useGame((s) => s.cash);
   const day = useGame((s) => s.day);
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodKey>("month");
@@ -175,6 +177,10 @@ export function FinancialReport() {
           </CardContent>
         </Card>
       </div>
+
+      <section className="pt-4">
+         <FinancialChart transactions={transactions} day={day} period={selectedPeriod} />
+      </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
         {/* Revenue Analysis */}

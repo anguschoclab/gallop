@@ -1,7 +1,11 @@
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { JockeyCard } from "./JockeyCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from "react";
 import { Search, Filter, UserCheck, Users, Palette, Info, ShieldCheck, Briefcase, ChevronRight, Zap } from "lucide-react";
@@ -10,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { NumericValue } from "@/components/HorseBits";
 
 export function JockeyRoster() {
-  const jockeys = useGame((s) => s.jockeys);
+  const jockeys = (useGame as any)((s: any) => s.jockeys, shallow);
   const hireJockey = useGame((s) => s.hireJockey);
   const releaseJockey = useGame((s) => s.releaseJockey);
   const [search, setSearch] = useState("");
@@ -18,12 +22,12 @@ export function JockeyRoster() {
   const [patternFilter, setPatternFilter] = useState<JockeySilkPattern | "all">("all");
   const [colorFilter, setColorFilter] = useState<string>("all");
 
-  const myJockeys = jockeys?.filter((j) => !j.stableId && !!j.contractUntil) ?? [];
-  const market = jockeys?.filter((j) => !j.stableId && !j.contractUntil) ?? [];
+  const myJockeys = jockeys?.filter((j: any) => !j.stableId && !!j.contractUntil) ?? [];
+  const market = jockeys?.filter((j: any) => !j.stableId && !j.contractUntil) ?? [];
 
   const filterList = (list: typeof jockeys) => {
     if (!list) return [];
-    return list.filter((j) => {
+    return list.filter((j: any) => {
       const matchesSearch = j.name.toLowerCase().includes(search.toLowerCase());
       const matchesArchetype = archetypeFilter === "all" || j.archetype === archetypeFilter;
       const matchesPattern = patternFilter === "all" || j.silk.pattern === patternFilter;
@@ -205,7 +209,7 @@ export function JockeyRoster() {
               <TabsContent value="my" className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 focus-visible:outline-none">
                 {myJockeys.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filterList(myJockeys).map((j) => (
+                    {filterList(myJockeys).map((j: any) => (
                       <div key={j.id} className="relative group">
                          <div className="absolute top-0 left-0 w-1 h-full bg-blue-500/20 group-hover:bg-blue-500 transition-colors z-10" />
                          <JockeyCard
@@ -228,7 +232,7 @@ export function JockeyRoster() {
 
               <TabsContent value="market" className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 focus-visible:outline-none">
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filterList(market).map((j) => (
+                  {filterList(market).map((j: any) => (
                     <div key={j.id} className="relative group">
                         <div className="absolute top-0 left-0 w-1 h-full bg-gold/10 group-hover:bg-gold transition-colors z-10" />
                         <JockeyCard

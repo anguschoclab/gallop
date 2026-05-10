@@ -167,5 +167,6 @@ export function createInitialState(options?: NewGameOptions): GameState {
     usedJockeyNames: Array.from(usedJockeyNames),
     seasonRecords: [],
     hallOfFame: [],
+    transactions: [],
   };
 }

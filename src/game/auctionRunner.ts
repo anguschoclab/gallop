@@ -19,7 +19,7 @@
 //
 // Same seeded RNG → same final lots, regardless of which path runs.
 
-import { generateUUID } from "./uuid";
+import { generateUUID } from "@/core/uuid";
 
 import type { AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord } from "./types";
 import { calculateNpcBid, netProceeds } from "./auction";

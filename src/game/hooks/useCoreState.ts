@@ -47,6 +47,11 @@ export const useLog = () => useGame((s: GameState) => s.log);
 export const useExpenses = () => useGameWithShallow((s: GameState) => s.expenses ?? EMPTY_ARRAY);
 
 /**
+ * @returns Array of financial transactions
+ */
+export const useTransactions = () => useGameWithShallow((s: GameState) => s.transactions ?? EMPTY_ARRAY);
+
+/**
  * Multiple core state values with shallow comparison.
  * Use this when you need multiple core state values in a single hook call.
  * Note: Uses type assertion to work around Zustand typing limitation.

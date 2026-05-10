@@ -7,7 +7,6 @@ import {
   PolarRadiusAxis,
   Radar,
   RadarChart,
-  ResponsiveContainer,
 } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { User, Trophy, Calendar, DollarSign, Target, RefreshCw } from "lucide-react";
@@ -134,23 +133,21 @@ export function JockeyCard({ jockey, isRetained, onAction, actionLabel }: Jockey
 
           <div className="h-32 w-32 -mr-4">
             <ChartContainer config={chartConfig} className="h-full w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart data={statsData}>
-                  <PolarGrid stroke="hsl(var(--border))" />
-                  <PolarAngleAxis
-                    dataKey="stat"
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 8 }}
-                  />
-                  <Radar
-                    name="Skill"
-                    dataKey="value"
-                    stroke="var(--primary)"
-                    strokeWidth={2}
-                    fill="var(--primary)"
-                    fillOpacity={0.4}
-                  />
-                </RadarChart>
-              </ResponsiveContainer>
+              <RadarChart data={statsData} width={128} height={128}>
+                <PolarGrid stroke="hsl(var(--border))" />
+                <PolarAngleAxis
+                  dataKey="stat"
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 8 }}
+                />
+                <Radar
+                  name="Skill"
+                  dataKey="value"
+                  stroke="var(--primary)"
+                  strokeWidth={2}
+                  fill="var(--primary)"
+                  fillOpacity={0.4}
+                />
+              </RadarChart>
             </ChartContainer>
           </div>
         </div>

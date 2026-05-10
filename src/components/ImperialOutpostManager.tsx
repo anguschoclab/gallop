@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,7 @@ export function ImperialOutpostManager() {
 
   // Note: For now we'll assume player outposts are stored in a new state field
   // or we'll mock them from existing root facilities for this demo component.
-  const outposts = (useGame((s) => (s as any).playerOutposts) as Outpost[]) || [
+  const outposts = (useGameWithShallow((s) => (s as any).playerOutposts) as Outpost[]) || [
     {
       id: "main",
       name: "Main Farm",
@@ -42,7 +42,7 @@ export function ImperialOutpostManager() {
           builtDay: 1,
         },
         6: {
-          type: "jockey_academy",
+          type: "starting_gates",
           level: "standard",
           branch: "neutral",
           maintenanceCost: 25,
@@ -55,14 +55,20 @@ export function ImperialOutpostManager() {
     },
   ];
 
-  const selectedOutpost =
-    outposts.find((o) => o.id === (selectedOutpostId || outposts[0].id)) || outposts[0];
+  const selectedOutpost = useMemo(
+    () => outposts.find((o) => o.id === (selectedOutpostId || outposts[0].id)) || outposts[0],
+    [outposts, selectedOutpostId]
+  );
   const cash = useGame((s) => s.cash);
 
   // Calculate used slots
-  const usedSlots = Object.entries(selectedOutpost.facilities).reduce((sum, [_, f]) => {
-    return sum + (OUTPOST_CONSTANTS.SLOT_FOOTPRINTS[f.type] || 1);
-  }, 0);
+  const usedSlots = useMemo(
+    () =>
+      Object.entries(selectedOutpost.facilities).reduce((sum, [_, f]) => {
+        return sum + (OUTPOST_CONSTANTS.SLOT_FOOTPRINTS[f.type] || 1);
+      }, 0),
+    [selectedOutpost.facilities]
+  );
 
   return (
     <div className="space-y-6">

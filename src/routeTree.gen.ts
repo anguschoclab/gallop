@@ -30,6 +30,7 @@ import { Route as HallOfFameRouteImport } from './routes/hall-of-fame'
 import { Route as GazetteRouteImport } from './routes/gazette'
 import { Route as FinancialReportRouteImport } from './routes/financial-report'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
+import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as AwardsRouteImport } from './routes/awards'
@@ -150,6 +151,11 @@ const FacilitiesRoute = FacilitiesRouteImport.update({
   path: '/facilities',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BroodmaresRoute = BroodmaresRouteImport.update({
   id: '/broodmares',
   path: '/broodmares',
@@ -176,9 +182,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CalendarIndexRoute = CalendarIndexRouteImport.update({
-  id: '/calendar/',
-  path: '/calendar/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => CalendarRoute,
 } as any)
 const AuctionIndexRoute = AuctionIndexRouteImport.update({
   id: '/',
@@ -211,9 +217,9 @@ const JockeyJockeyIdRoute = JockeyJockeyIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CalendarRegionIdRoute = CalendarRegionIdRouteImport.update({
-  id: '/calendar/$regionId',
-  path: '/calendar/$regionId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$regionId',
+  path: '/$regionId',
+  getParentRoute: () => CalendarRoute,
 } as any)
 const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
   id: '/$saleId',
@@ -227,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/calendar': typeof CalendarRouteWithChildren
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
   '/gazette': typeof GazetteRoute
@@ -301,6 +308,7 @@ export interface FileRoutesById {
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/calendar': typeof CalendarRouteWithChildren
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
   '/gazette': typeof GazetteRoute
@@ -340,6 +348,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/calendar'
     | '/facilities'
     | '/financial-report'
     | '/gazette'
@@ -413,6 +422,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/calendar'
     | '/facilities'
     | '/financial-report'
     | '/gazette'
@@ -451,6 +461,7 @@ export interface RootRouteChildren {
   AwardsRoute: typeof AwardsRoute
   BreedingRoute: typeof BreedingRoute
   BroodmaresRoute: typeof BroodmaresRoute
+  CalendarRoute: typeof CalendarRouteWithChildren
   FacilitiesRoute: typeof FacilitiesRoute
   FinancialReportRoute: typeof FinancialReportRoute
   GazetteRoute: typeof GazetteRoute
@@ -472,10 +483,8 @@ export interface RootRouteChildren {
   StaffRoute: typeof StaffRoute
   StallionsRoute: typeof StallionsRoute
   TestJockeyAvatarRoute: typeof TestJockeyAvatarRoute
-  CalendarRegionIdRoute: typeof CalendarRegionIdRoute
   JockeyJockeyIdRoute: typeof JockeyJockeyIdRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
-  CalendarIndexRoute: typeof CalendarIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -627,6 +636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FacilitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/broodmares': {
       id: '/broodmares'
       path: '/broodmares'
@@ -664,10 +680,10 @@ declare module '@tanstack/react-router' {
     }
     '/calendar/': {
       id: '/calendar/'
-      path: '/calendar'
+      path: '/'
       fullPath: '/calendar/'
       preLoaderRoute: typeof CalendarIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CalendarRoute
     }
     '/auction/': {
       id: '/auction/'
@@ -713,10 +729,10 @@ declare module '@tanstack/react-router' {
     }
     '/calendar/$regionId': {
       id: '/calendar/$regionId'
-      path: '/calendar/$regionId'
+      path: '/$regionId'
       fullPath: '/calendar/$regionId'
       preLoaderRoute: typeof CalendarRegionIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CalendarRoute
     }
     '/auction/$saleId': {
       id: '/auction/$saleId'
@@ -740,6 +756,20 @@ const AuctionRouteChildren: AuctionRouteChildren = {
 
 const AuctionRouteWithChildren =
   AuctionRoute._addFileChildren(AuctionRouteChildren)
+
+interface CalendarRouteChildren {
+  CalendarRegionIdRoute: typeof CalendarRegionIdRoute
+  CalendarIndexRoute: typeof CalendarIndexRoute
+}
+
+const CalendarRouteChildren: CalendarRouteChildren = {
+  CalendarRegionIdRoute: CalendarRegionIdRoute,
+  CalendarIndexRoute: CalendarIndexRoute,
+}
+
+const CalendarRouteWithChildren = CalendarRoute._addFileChildren(
+  CalendarRouteChildren,
+)
 
 interface NpcStablesRouteChildren {
   NpcStablesStableIdRoute: typeof NpcStablesStableIdRoute
@@ -782,6 +812,7 @@ const rootRouteChildren: RootRouteChildren = {
   AwardsRoute: AwardsRoute,
   BreedingRoute: BreedingRoute,
   BroodmaresRoute: BroodmaresRoute,
+  CalendarRoute: CalendarRouteWithChildren,
   FacilitiesRoute: FacilitiesRoute,
   FinancialReportRoute: FinancialReportRoute,
   GazetteRoute: GazetteRoute,
@@ -803,10 +834,8 @@ const rootRouteChildren: RootRouteChildren = {
   StaffRoute: StaffRoute,
   StallionsRoute: StallionsRoute,
   TestJockeyAvatarRoute: TestJockeyAvatarRoute,
-  CalendarRegionIdRoute: CalendarRegionIdRoute,
   JockeyJockeyIdRoute: JockeyJockeyIdRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,
-  CalendarIndexRoute: CalendarIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
