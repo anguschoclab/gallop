@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,6 +44,7 @@ export const Route = createFileRoute("/stable/$horseId")({
 
 function HorseDetail() {
   const { horseId } = Route.useParams();
+  const router = useRouter();
   const {
     horse,
     isConsigned,
@@ -72,6 +73,19 @@ function HorseDetail() {
     saveRaceHistoryLimit(raceHistoryLimit);
   }, [raceHistoryLimit]);
 
+  // Deep-linking hash scroll
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const id = hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        // Delay slightly to ensure content is rendered
+        setTimeout(() => element.scrollIntoView({ behavior: "smooth" }), 100);
+      }
+    }
+  }, []);
+
   if (!horse) throw notFound();
 
   const isPregnant = !!pregnancy;
@@ -86,12 +100,18 @@ function HorseDetail() {
   return (
     <div className="space-y-6">
       <div>
-        <Link
-          to="/stable"
+        <button
+          onClick={() => {
+            if (window.history.length > 2) {
+              router.history.back();
+            } else {
+              router.navigate({ to: "/stable" });
+            }
+          }}
           className="inline-flex items-center gap-1 text-sm text-cream-muted hover:text-cream mb-3 font-[family-name:var(--font-body)]"
         >
           <ArrowLeft className="h-4 w-4" /> Back to stable
-        </Link>
+        </button>
         <div className="flex items-start gap-6">
           {/* Design Bible: SilkDot for identity */}
           <SilkDot color={horse.silk} size="lg" />
@@ -144,7 +164,7 @@ function HorseDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-gold-muted">
+        <Card id="stats" className="border-gold-muted">
           <CardHeader>
             <CardTitle className="font-[family-name:var(--font-display)]">Stats</CardTitle>
           </CardHeader>
@@ -203,7 +223,7 @@ function HorseDetail() {
           </CardContent>
         </Card>
 
-        <Card className="border-gold-muted">
+        <Card id="health" className="border-gold-muted">
           <CardHeader>
             <CardTitle className="font-[family-name:var(--font-display)]">Health & Welfare</CardTitle>
           </CardHeader>
@@ -270,7 +290,7 @@ function HorseDetail() {
 
         {/* Consignment and Retirement */}
         {horse.owned && (isConsigned || eligibleSale || canRetireToStud) && (
-          <Card className="border-gold-muted">
+          <Card id="management" className="border-gold-muted">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-[family-name:var(--font-display)]">
                 <Tag className="h-4 w-4" /> Management
@@ -384,7 +404,7 @@ function HorseDetail() {
           </Card>
         )}
 
-        <Card className="border-gold-muted">
+        <Card id="training" className="border-gold-muted">
           <CardHeader>
             <CardTitle className="font-[family-name:var(--font-display)]">Training</CardTitle>
             <p className="text-xs text-cream-muted">
@@ -408,7 +428,7 @@ function HorseDetail() {
 
       <FounderLegacy horseId={horse.id} />
 
-      <Card className="border-gold-muted">
+      <Card id="beyer" className="border-gold-muted">
         <CardHeader>
           <CardTitle className="font-[family-name:var(--font-display)]">
             Beyer Speed Figure trend
@@ -426,7 +446,7 @@ function HorseDetail() {
 
       <HorseAwardsPanel horse={horse} />
 
-      <Card className="border-gold-muted">
+      <Card id="history" className="border-gold-muted">
         <CardHeader>
           <CardTitle className="font-[family-name:var(--font-display)]">Race history</CardTitle>
           <div className="flex items-center gap-2 mt-2">
@@ -476,7 +496,7 @@ function HorseDetail() {
         </CardContent>
       </Card>
 
-      <Card className="border-gold-muted">
+      <Card id="lineage" className="border-gold-muted">
         <CardHeader>
           <CardTitle className="font-[family-name:var(--font-display)]">Lineage</CardTitle>
           <p className="text-xs text-cream-muted">Sire (top) and dam (bottom) for 4 generations (COI calculated to 8)</p>

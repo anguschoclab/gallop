@@ -9,10 +9,14 @@ import {
   Users,
   DollarSign,
   HandCoins,
+<<<<<<< Updated upstream
   Trophy,
   CalendarDays,
   ListChecks,
   History,
+=======
+  Calendar,
+>>>>>>> Stashed changes
 } from "lucide-react";
 import { useHorses, useDay, useCash } from "@/game/hooks/useCoreState";
 import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
@@ -112,11 +116,19 @@ function NpcStableDetailPage() {
             }}
           />
           <div className="flex-1">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-3xl font-bold text-cream font-[family-name:var(--font-display)]">
-                {stable.name}
-              </h1>
-              <Badge className={getTierColor(stable.tier)}>{stable.tier.toUpperCase()}</Badge>
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-bold text-cream font-[family-name:var(--font-display)]">
+                  {stable.name}
+                </h1>
+                <Badge className={getTierColor(stable.tier)}>{stable.tier.toUpperCase()}</Badge>
+              </div>
+              <Link to="/races" search={{ stableId }}>
+                <Button variant="outline" size="sm" className="gap-2 border-gold text-gold hover:bg-gold hover:text-t950">
+                  <Calendar className="w-4 h-4" />
+                  Upcoming Races
+                </Button>
+              </Link>
             </div>
             <p className="text-cream-muted mt-1">{stable.owner}</p>
             <div className="flex items-center gap-4 mt-2 text-sm text-cream-muted flex-wrap">

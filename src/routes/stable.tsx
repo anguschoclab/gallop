@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+=======
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMemo } from "react";
+>>>>>>> Stashed changes
 import { useHorses } from "@/game/hooks/useCoreState";
 import { useAwards, useNpcStables } from "@/game/hooks/useSystemsState";
 import { HorseCard } from "@/components/HorseCard";
@@ -17,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { NumericValue } from "@/components/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
+<<<<<<< Updated upstream
 import { Building2, Users, ChevronRight, Search, Activity, Heart, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
@@ -26,13 +32,39 @@ const stableSearchSchema = z.object({
   status: fallback(z.enum(["active", "retired", "auctioned", "all"]), "active").default("active"),
   tab: fallback(z.enum(["roster", "rivals"]), "roster").default("roster"),
 });
+=======
+import { Building2, Users, Search, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+
+type StableSearch = {
+  tab: "roster" | "rivals";
+  rivalQ: string;
+  rivalTier: string;
+};
+>>>>>>> Stashed changes
 
 export const Route = createFileRoute("/stable")({
+  validateSearch: (search: Record<string, unknown>): StableSearch => ({
+    tab: (search.tab as "roster" | "rivals") || "roster",
+    rivalQ: (search.rivalQ as string) || "",
+    rivalTier: (search.rivalTier as string) || "all",
+  }),
   component: StablePage,
   validateSearch: zodValidator(stableSearchSchema),
 });
 
 function StablePage() {
+  const { tab, rivalQ, rivalTier } = Route.useSearch();
+  const navigate = useNavigate();
   const horses = useHorses();
   const awards = useAwards();
   const npcStables = useNpcStables();
@@ -94,6 +126,26 @@ function StablePage() {
     return list;
   }, [npcStables, rivalSearch, personalityFilter, tierFilter, sortBy, horseCountsByStable]);
 
+  const filteredRivalStables = useMemo(() => {
+    return npcStables.filter((s) => {
+      const matchesSearch = s.name.toLowerCase().includes(rivalQ.toLowerCase());
+      const matchesTier = rivalTier === "all" || s.tier === rivalTier;
+      return matchesSearch && matchesTier;
+    });
+  }, [npcStables, rivalQ, rivalTier]);
+
+  const updateRivalFilter = (key: "rivalQ" | "rivalTier", value: string) => {
+    navigate({
+      search: (prev) => ({ ...prev, [key]: value }),
+    });
+  };
+
+  const clearRivalFilters = () => {
+    navigate({
+      search: (prev) => ({ ...prev, rivalQ: "", rivalTier: "all" }),
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -150,9 +202,13 @@ function StablePage() {
 
       <Tabs
         value={tab}
+<<<<<<< Updated upstream
         onValueChange={(v) =>
           navigate({ search: (prev) => ({ ...prev, tab: v as "roster" | "rivals" }) })
         }
+=======
+        onValueChange={(v) => navigate({ search: (prev) => ({ ...prev, tab: v as any }) })}
+>>>>>>> Stashed changes
         className="space-y-4"
       >
         <TabsList>
@@ -219,6 +275,7 @@ function StablePage() {
         </TabsContent>
 
         <TabsContent value="rivals" className="space-y-4">
+<<<<<<< Updated upstream
           {/* Filters */}
           <div className="flex flex-wrap gap-2 items-center">
             <div className="relative flex-1 min-w-[180px]">
@@ -347,10 +404,86 @@ function StablePage() {
                   No stables match your filters.
                 </CardContent>
               </Card>
+=======
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <div className="relative w-64">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-cream-muted" />
+              <Input
+                placeholder="Search rivals..."
+                className="pl-8 h-9 text-sm"
+                value={rivalQ}
+                onChange={(e) => updateRivalFilter("rivalQ", e.target.value)}
+              />
+            </div>
+            <Select value={rivalTier} onValueChange={(v) => updateRivalFilter("rivalTier", v)}>
+              <SelectTrigger className="h-9 w-32 text-sm">
+                <SelectValue placeholder="All Tiers" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Tiers</SelectItem>
+                <SelectItem value="elite">Elite</SelectItem>
+                <SelectItem value="mid">Mid-Tier</SelectItem>
+                <SelectItem value="budget">Budget</SelectItem>
+              </SelectContent>
+            </Select>
+            {(rivalQ || rivalTier !== "all") && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearRivalFilters}
+                className="h-9 gap-1 text-cream-muted hover:text-cream"
+              >
+                <X className="w-4 h-4" />
+                Clear
+              </Button>
+>>>>>>> Stashed changes
             )}
           </div>
+
+          {filteredRivalStables.length === 0 ? (
+            <Card className="border-dashed border-gold-muted">
+              <CardContent className="p-12 text-center text-cream-muted">
+                <p>No rival stables match your current filters.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredRivalStables.map((stable) => {
+                const stableHorseCount = horseCountsByStable.get(stable.id) || 0;
+                return (
+                  <Link key={stable.id} to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
+                    <Card className="hover:bg-t700 transition-colors border-gold-muted">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base font-[family-name:var(--font-display)]">
+                          {stable.name}
+                        </CardTitle>
+                        <p className="text-xs text-cream-muted capitalize font-[family-name:var(--font-body)]">
+                          {stable.personality} strategy
+                        </p>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-cream-muted font-[family-name:var(--font-body)]">
+                            <NumericValue value={stableHorseCount} /> horses
+                          </span>
+                          <Badge
+                            className={cn(
+                              "font-[family-name:var(--font-mono)] tabular-nums bg-t700 text-cream",
+                            )}
+                          >
+                            {formatCurrency(stable.cash)}
+                          </Badge>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>
   );
 }
+

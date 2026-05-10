@@ -40,6 +40,7 @@ export const Route = createFileRoute("/races")({
     track: (search.track as string) || "all",
     owned: (search.owned as string) || "all",
     q: (search.q as string) || "",
+    stableId: (search.stableId as string) || undefined,
   }),
   component: RacesPage,
 });
@@ -246,6 +247,7 @@ function RacesPage() {
                       track: "all",
                       owned: "all",
                       q: "",
+                      stableId: undefined,
                     },
                   })
                 }
