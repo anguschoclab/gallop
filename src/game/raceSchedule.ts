@@ -19,6 +19,10 @@ import { getTrackById } from "./tracks";
 import { generateRace, makeGradedRace } from "./raceGeneration/raceGen";
 import { GRADED_RACES } from "@/core/data/gradedRaces";
 import { generateNorthAmericanRaceCard } from "./raceGeneration/northAmerica";
+import { generateEuropeanRaceCard } from "./raceGeneration/europe";
+import { generateAustralianRaceCard } from "./raceGeneration/australia";
+import { generateAsianRaceCard } from "./raceGeneration/asia";
+import { generateSouthAmericanRaceCard } from "./raceGeneration/southAmerica";
 
 // Breeders' Cup rotation pool
 const BREEDERS_CUP_TRACKS = [
@@ -119,22 +123,30 @@ export function generateTrackRaces(
   const numRaces = rng.int(schedule.racesPerDay[0], schedule.racesPerDay[1]);
 
   // Use regional-specific generator based on track's regional system
-  if (schedule.regionalSystem === "north_america") {
-    return generateNorthAmericanRaceCard(track, gameDay, numRaces, rng);
+  switch (schedule.regionalSystem) {
+    case "north_america":
+      return generateNorthAmericanRaceCard(track, gameDay, numRaces, rng);
+    case "europe":
+      return generateEuropeanRaceCard(track, gameDay, numRaces, rng);
+    case "australia":
+      return generateAustralianRaceCard(track, gameDay, numRaces, rng);
+    case "asia":
+      return generateAsianRaceCard(track, gameDay, numRaces, rng);
+    case "south_america":
+      return generateSouthAmericanRaceCard(track, gameDay, numRaces, rng);
+    default:
+      // Fallback to generic generator if regional system is unknown
+      const races: Race[] = [];
+      const trackSurfaces = track.courses.map((c) => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
+      const availableSurfaces = trackSurfaces.length > 0 ? trackSurfaces : ["Dirt" as const];
+      for (let i = 0; i < numRaces; i++) {
+        const race = generateRace(gameDay, rng);
+        race.trackId = track.id;
+        race.surface = rng.pick(availableSurfaces);
+        races.push(race);
+      }
+      return races;
   }
-
-  // Fallback to generic generator for other regions (will be expanded in future sprints)
-  const races: Race[] = [];
-  const trackSurfaces = track.courses.map((c) => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
-  const availableSurfaces = trackSurfaces.length > 0 ? trackSurfaces : ["Dirt" as const];
-  for (let i = 0; i < numRaces; i++) {
-    const race = generateRace(gameDay, rng);
-    race.trackId = track.id;
-    race.surface = rng.pick(availableSurfaces);
-    races.push(race);
-  }
-
-  return races;
 }
 
 /**

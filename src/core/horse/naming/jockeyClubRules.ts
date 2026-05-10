@@ -90,7 +90,7 @@ export function validateHorseName(
   }
 
   // 7. Standard character check (allow only letters, spaces, hyphens, and apostrophes)
-  if (!/^[a-zA-Z\s'-]+$/.test(trimmed)) {
+  if (!/^[-a-zA-Z ']+$/i.test(trimmed)) {
     return {
       isValid: false,
       reason: "Name can only contain letters, spaces, hyphens, and apostrophes.",

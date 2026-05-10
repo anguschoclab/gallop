@@ -3,130 +3,53 @@
  *
  * This file provides type definitions for horse-related concepts including stats,
  * conformation, temperament, running style, health status, injuries, blue hen status,
- * genetic markers, and pedigree.
+ * genetic markers, phenotype metrics, and the core Horse interface.
  *
- * Dependencies: @/core/genetics/types (Genotype), @/core/race/sharedTypes (RaceClass)
- * Related files: Used throughout the horse module and game state
+ * Dependencies: @/core/genetics/types (Genotype, AppearanceDNA, Hemisphere)
+ * Related files: stats.ts (uses types), healthTypes.ts (injury types)
  */
 
-import type { Genotype } from "@/core/genetics/types";
-import type { RaceClass } from "@/core/race/sharedTypes";
+import type { Genotype, AppearanceDNA, Hemisphere } from "@/core/genetics/types";
+import type { ActiveInjury } from "./healthTypes";
+import type { InsurancePolicy } from "../insurance/insuranceTypes";
 
-export type HorseStats = {
+// Horse Type Definitions
+
+/**
+ * Horse physical and mental statistics (0-100 scale)
+ */
+export interface HorseStats {
   speed: number;
   stamina: number;
   acceleration: number;
+  temperament: number;
+  conformation: number;
   consistency: number;
-};
+}
 
-export type Conformation = "excellent" | "good" | "fair" | "poor";
-export type Temperament = "excellent" | "good" | "fair" | "poor";
-
+/**
+ * Racing styles
+ * E: Early runner (prefers to lead)
+ * EP: Early/Presser (prefers to track the leader)
+ * P: Presser (prefers to stay in the middle of the pack)
+ * S: Sustainer/Closer (prefers to stay at the back and close late)
+ */
 export type RunningStyle = "E" | "EP" | "P" | "S";
 
-export type HealthStatus = "healthy" | "covering_sickness" | "recovering" | "other_illness";
-
-export interface ActiveInjury {
-  type: string;
-  severity: "minor" | "moderate" | "major" | "career-ending";
-  recoveryDays: number;
-  onsetDay: number;
-}
-
-export interface BlueHenStatus {
-  isBlueHen: boolean;
-  stakesWinnersProduced: number;
-  group1WinnersProduced: number;
-  blueHenScore: number;
-  foalsProduced?: number;
-}
-
-export interface GeneticMarkers {
-  leopardComplex?: "dominant" | "recessive" | "heterozygous";
-  csnbRisk?: "high" | "low";
-  sensoryPerception?: "excellent" | "good" | "fair" | "poor";
-  signalTransduction?: "excellent" | "good" | "fair" | "poor";
-  immunity?: "excellent" | "good" | "fair" | "poor";
-  geneticDiversity?: number;
-  lethalCarriers?: { csnb?: boolean; hypp?: boolean; olws?: boolean; ffs1?: boolean };
-}
-
-export type Pedigree = {
-  sireId?: string;
-  damId?: string;
-  sireName?: string;
-  damName?: string;
-  sirePedigree?: Pedigree;
-  damPedigree?: Pedigree;
-  sireFromFoundation?: boolean;
-  damFromFoundation?: boolean;
-};
-
-export type StudCareer = {
-  atStud: boolean;
-  standingFee: number;
-  previousStandingFee?: number;
-  bookSize: number;
-  seasonBookings: number;
-  lifetimeFoals: number;
-  lifetimeStakesFoals: number;
-  lifetimeG1Foals: number;
-  retiredOnDay: number;
-};
-
-export type HorseGender = "colt" | "filly" | "horse" | "mare" | "gelding";
-export type Hemisphere = "Northern" | "Southern";
-
-export type CoatColor =
-  | "bay"
-  | "black"
-  | "chestnut"
-  | "dark-bay"
-  | "gray"
-  | "roan"
-  | "palomino"
-  | "white"
-  | "seal-brown"
-  | "liver-chestnut"
-  | "buckskin"
-  | "dun"
-  | "grulla"
-  | "champagne";
-
-export type SockHeight = "none" | "sock" | "stocking";
-export type FaceWhite = "none" | "star" | "blaze" | "bald";
-
-export type HorseMarkings = {
-  socks: SockHeight;
-  face: FaceWhite;
-  silverDapple: boolean;
-  sabino: boolean;
-  splashWhite: boolean;
-};
-
-export type AppearanceDNA = {
-  seed: number;
-  headTilt: number;
-  headLength: number;
-  earSpread: number;
-  eyeY: number;
-  forelockSweep: number;
-  maneWaves: number[];
-  bodyLength: number;
-  bodyDepth: number;
-  legLength: number;
-  tailSweep: number;
-  tailFullness: number;
-  socks: [SockHeight, SockHeight, SockHeight, SockHeight];
-  dapples: { x: number; y: number; r: number }[];
-  flecks: { x: number; y: number; r: number }[];
-};
-
+/**
+ * Core Horse interface - represents a horse in the game population
+ */
 export type Horse = {
   id: string;
   name: string;
+  sireId?: string;
+  damId?: string;
+  sireName: string;
+  damName: string;
+  pedigree: { sireId?: string; damId?: string };
+  birthDay: number;
   age: number;
-  gender: HorseGender;
+  gender: "colt" | "filly" | "horse" | "mare" | "gelding";
   hemisphere: Hemisphere;
   silk: string;
   stats: HorseStats;
@@ -147,73 +70,60 @@ export type Horse = {
     position: number;
     day: number;
     beyer?: number;
-    grade?: "G1" | "G2" | "G3";
+    grade?: string;
     distance?: number;
     surface?: string;
     purse?: number;
     fieldSize?: number;
-    raceClass?: RaceClass;
+    raceClass?: string;
     barrier?: number;
     lane?: number;
+    winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
   }[];
-  owned: boolean;
-  sireName?: string;
-  damName?: string;
-  conformation?: Conformation;
-  temperament?: Temperament;
-  geneticMarkers?: GeneticMarkers;
-  healthStatus?: HealthStatus;
-  healthStatusDay?: number;
-  blueHenStatus?: BlueHenStatus;
-  foalsProduced?: string[];
-  coatColor?: CoatColor;
-  lastFoaledDay?: number;
-  runningStyle?: RunningStyle;
-  stableId?: string;
   fame: number;
-  scoutedStats?: Partial<HorseStats>;
-  lastScoutedDay?: number;
+  owned: boolean;
+  stableId?: string;
   consignedSaleId?: string;
-  pedigree?: Pedigree;
-  stud?: StudCareer;
-  bruceLoweFamily?: number;
+  stud?: {
+    atStud: boolean;
+    standingFee: number;
+    previousStandingFee?: number;
+    lifetimeStakesFoals: number;
+    lifetimeG1Foals: number;
+  };
   distanceAptitude: number;
   surfaceAptitude: Record<"Turf" | "Dirt" | "Synthetic", number>;
-  climbingAptitude: number;
-  corneringAptitude: number;
-  injuryProneness: number;
-  height: number;
-  weight: number;
-  lifetimeEarnings: number;
-  careerStarts: number;
-  careerWins: number;
-  winAndYouInQualified?: { raceKey: string; year: number }[];
-  heartScore: number;
-  fiberBias: "sprinter" | "balanced" | "stayer";
-  strideType: "short" | "balanced" | "long";
-  trackPreference: "left" | "balanced" | "right";
   mudAptitude: number;
-  trainability: number;
   peakAge: number;
-  recoveryRate: number;
-  fertility: number;
-  foalingEase: number;
-  markings: HorseMarkings;
+  strideType: "long" | "short" | "average";
+  trackPreference: "left" | "right" | "balanced";
+  winAndYouInQualified?: { year: number; raceId: string; raceKey: string }[];
   bleederRisk: number;
   roarerRisk: number;
   ocdRisk: number;
-  bloodline?: string;
-  heterozygosity?: number;
-  coefficientOfInbreeding?: number;
-  ancestralHistoryCoefficient?: number;
-  inbreedingTier?: "outcross" | "linebreeding" | "close-inbreeding";
-  prepotency?: number;
-  racingViable: boolean;
+  recoveryRate: number;
+  trainability: number;
+  heartScore: number;
+  bloodline: string;
+  fiberBias: string;
+  healthStatus: "healthy" | "covering_sickness" | "recovering" | "other_illness";
+  healthStatusDay: number;
+  isBlueHen: boolean;
+  blueHenStatus?: {
+    isBlueHen: boolean;
+    stakesWinnersProduced: number;
+    group1WinnersProduced: number;
+    blueHenScore: number;
+    foalsProduced: number;
+  };
+  gelded: boolean;
   lifecycleStatus: "active" | "retired" | "deceased";
   retiredOnDay?: number;
   deceasedOnDay?: number;
   createdAtDay?: number;
   causeOfDeath?: string;
+  
+  insurancePolicy?: InsurancePolicy;
 
   appearance?: AppearanceDNA;
   activeInjury?: ActiveInjury;
