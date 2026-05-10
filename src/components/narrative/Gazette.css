@@ -1,147 +1,52 @@
+/* Gazette Industrial Aesthetic Refinements */
+
 .gazette-container {
-  background-color: #f4f1ea;
-  background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
-  color: #2c2c2c;
-  padding: 2rem;
-  border: 1px solid #d3d3d3;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  font-family: 'Playfair Display', serif;
-  max-width: 1000px;
-  margin: 2rem auto;
-  min-height: 80vh;
+  /* We are now using Tailwind classes for layout, but keeping this for specific thematic overrides */
 }
 
-.gazette-header {
-  text-align: center;
-  border-bottom: 4px double #2c2c2c;
-  padding-bottom: 1rem;
-  margin-bottom: 2rem;
+/* Custom scrollbar for the intelligence feed */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
 }
 
-.gazette-title {
-  font-size: 4rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  margin: 0;
-  letter-spacing: 2px;
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
 }
 
-.gazette-meta {
-  display: flex;
-  justify-content: space-between;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  font-weight: bold;
-  border-top: 1px solid #2c2c2c;
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.2);
 }
 
-.gazette-body {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.4);
 }
 
-.gazette-main-column {
-  border-right: 1px solid #d3d3d3;
-  padding-right: 2rem;
+/* Specific entity link animation on hover */
+.entity-link-hover:hover {
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
 }
 
-.news-item {
-  margin-bottom: 2.5rem;
-  padding-bottom: 2.5rem;
-  border-bottom: 1px solid #e0e0e0;
+/* Decorative corner brackets for high-importance news */
+.news-importance-high::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border-top: 2px solid rgba(212, 175, 55, 0.3);
+  border-right: 2px solid rgba(212, 175, 55, 0.3);
+  pointer-events: none;
 }
 
-.news-item:last-child {
-  border-bottom: none;
+/* News article serif typography override for readability */
+.news-article-body {
+  font-family: var(--font-body), serif;
+  line-height: 1.7;
 }
 
-.news-importance-high .news-headline {
-  font-size: 2.5rem;
-  line-height: 1.1;
-  color: #1a1a1a;
-}
-
-.news-headline {
-  font-size: 1.8rem;
-  margin-bottom: 0.75rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.news-headline:hover {
-  color: #5c4033;
-}
-
-.news-category {
-  display: inline-block;
-  background: #2c2c2c;
-  color: #fff;
-  padding: 0.1rem 0.5rem;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  letter-spacing: 1px;
-}
-
-.news-body {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #333;
-  column-count: 1;
-}
-
-.news-importance-high .news-body {
-  column-count: 2;
-  column-gap: 2rem;
-}
-
-.entity-link {
-  color: #5c4033;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.entity-link:hover {
-  background: rgba(92, 64, 51, 0.1);
-}
-
-.gazette-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.sidebar-section {
-  border: 1px solid #2c2c2c;
-  padding: 1rem;
-}
-
-.sidebar-title {
-  font-size: 1.2rem;
-  text-transform: uppercase;
-  border-bottom: 1px solid #2c2c2c;
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.2rem;
-  font-weight: 900;
-}
-
-.sidebar-content {
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-@media (max-width: 800px) {
-  .gazette-body {
-    grid-template-columns: 1fr;
-  }
-  .gazette-main-column {
-    border-right: none;
-    padding-right: 0;
-  }
+/* Stamped effect for news categories */
+.news-category-stamped {
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.5);
 }

@@ -1,4 +1,3 @@
-// NPC Stable Detail - View stable info and horses with scouting
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -14,6 +13,10 @@ import {
   Calendar,
   ListChecks,
   History,
+  ShieldCheck,
+  Zap,
+  Activity,
+  Briefcase
 } from "lucide-react";
 import { useHorses, useDay, useCash } from "@/game/hooks/useCoreState";
 import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
@@ -21,16 +24,16 @@ import { useGame } from "@/game/store";
 import { getStableById } from "@/core/stable/stableQueries";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { calculateScoutCost } from "@/game/scouting";
-import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
 import { HorseCard } from "@/components/HorseCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrophyCase } from "@/components/awards";
 import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue, overall } from "@/components/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Horse, PrivateSaleOffer } from "@/game/types";
 import { PrivateSaleOfferDialog } from "@/components/auction/PrivateSaleOfferDialog";
 import { PrivateSaleCounterCard } from "@/components/auction/PrivateSaleCounterCard";
@@ -59,206 +62,183 @@ function NpcStableDetailPage() {
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
   const privateSaleOffers: PrivateSaleOffer[] = useGame((s) => s.privateSaleOffers ?? []);
+  const npcAIManager = useGame((s) => (s as any).npcAIManager);
 
-  // Offer dialog state
   const [offerHorse, setOfferHorse] = useState<Horse | null>(null);
 
   const stable = getStableById(npcStables, stableId);
   if (!stable) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold text-cream">Stable Not Found</h1>
-        <Link to="/npc-stables" className="text-gold hover:underline mt-4 inline-block">
-          ← Back to Stables
+      <div className="p-12 text-center space-y-4">
+        <h1 className="text-4xl font-black font-[family-name:var(--font-display)] text-cream">ENTITY_NOT_FOUND</h1>
+        <Link to="/stable" search={{ tab: 'rivals' }} className="text-blue-400 uppercase font-mono text-xs tracking-widest hover:underline">
+          Return to Registry
         </Link>
       </div>
     );
   }
 
   const stableHorses = horses.filter((h: Horse) => h.stableId === stableId);
-  const activeHorses = stableHorses.filter(
-    (h: Horse) => !h.healthStatus || h.healthStatus === "healthy",
-  );
+  const activeHorses = stableHorses.filter((h: Horse) => !h.healthStatus || h.healthStatus === "healthy");
   const colts = stableHorses.filter((h: Horse) => isMaleHorse(h.gender));
   const fillies = stableHorses.filter((h: Horse) => isFemaleHorse(h.gender));
 
-  const tab = Route.useSearch({ select: (s) => s.tab });
+  const { tab } = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  return (
-    <div className="space-y-6">
-      {/* Back link */}
-      <button
-        onClick={() => {
-          if (window.history.length > 2) {
-            router.history.back();
-          } else {
-            router.navigate({ to: "/npc-stables" });
-          }
-        }}
-        className="text-gold hover:underline inline-flex items-center gap-1 text-sm"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Stables
-      </button>
+  const stableAI = npcAIManager?.stableStates?.[stable.id];
+  const friction = stableAI?.friction ?? 0;
 
+  return (
+    <div className="space-y-6 pb-20 animate-fade-in">
       {/* Header */}
-      <div>
-        <div className="flex items-start gap-4 mb-4">
-          <div
-            className="w-16 h-16 rounded-full border-4 shadow-lg shrink-0"
-            style={{
-              backgroundColor: stable.colors.primary,
-              borderColor: stable.colors.secondary,
-            }}
-          />
-          <div className="flex-1">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold text-cream font-[family-name:var(--font-display)]">
-                  {stable.name}
-                </h1>
-                <Badge className={getTierColor(stable.tier)}>{stable.tier.toUpperCase()}</Badge>
-              </div>
-              <Link to="/races" search={{ stableId }}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2 border-gold text-gold hover:bg-gold hover:text-t950"
-                >
-                  <Calendar className="w-4 h-4" />
-                  Upcoming Races
-                </Button>
-              </Link>
-            </div>
-            <p className="text-cream-muted mt-1">{stable.owner}</p>
-            <div className="flex items-center gap-4 mt-2 text-sm text-cream-muted flex-wrap">
-              <span className="flex items-center gap-1">
-                <Globe className="w-4 h-4" />
-                {stable.country}
-              </span>
-              <span className="flex items-center gap-1 font-mono tabular-nums">
-                <Users className="w-4 h-4" />
-                <NumericValue value={stableHorses.length} /> horses
-              </span>
-              <span className="flex items-center gap-1 font-mono tabular-nums">
-                <DollarSign className="w-4 h-4" />
-                {formatCurrency(stable.cash)}
-              </span>
-              <span className="text-fame">{getReputationStars(stable.reputation)}</span>
-            </div>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-blue-500/20 pb-6">
+        <div>
+          <button
+            onClick={() => navigate({ to: "/stable", search: { tab: 'rivals' } })}
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cream/30 hover:text-blue-400 transition-colors mb-4"
+          >
+            <ArrowLeft className="h-3 w-3" /> Registry Archives
+          </button>
+          <div className="flex items-center gap-4 mb-2">
+            <div
+              className="w-10 h-10 rounded-sm rotate-45 border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] shrink-0"
+              style={{ backgroundColor: stable.colors.primary }}
+            />
+            <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)] uppercase text-left">
+              {stable.name}
+            </h1>
           </div>
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+             <span><Globe className="h-3 w-3 inline mr-1" />{stable.country}</span>
+             <span className="w-1 h-1 rounded-full bg-white/20" />
+             <span>Assets: <NumericValue value={stableHorses.length} /></span>
+             <span className="w-1 h-1 rounded-full bg-white/20" />
+             <span>Type: {stable.personality}</span>
+          </div>
+        </div>
+        
+        <div className="flex flex-col items-end gap-1">
+           <div className="text-[10px] font-mono text-cream/20 uppercase tracking-widest">Liquid_Capital</div>
+           <div className="text-2xl font-black font-mono text-success tabular-nums tracking-tighter">{formatCurrency(stable.cash)}</div>
         </div>
       </div>
 
-      {/* Body: main + sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8 items-start">
+        {/* Main Content */}
         <div className="space-y-6 min-w-0">
-          {/* Tab nav */}
-          <div className="flex flex-wrap gap-2 border-b border-gold-muted pb-2">
-            {(
-              [
-                { key: "overview", label: "Overview", icon: Building2 },
-                { key: "roster", label: "Roster", icon: ListChecks },
-                { key: "staff", label: "Staff", icon: Users },
-                { key: "history", label: "History", icon: History },
-              ] as const
-            ).map(({ key, label, icon: Icon }) => (
-              <button
-                key={key}
-                onClick={() => navigate({ search: { tab: key } })}
-                className={cn(
-                  "px-3 py-1.5 rounded-md text-sm flex items-center gap-2 transition-colors",
-                  tab === key
-                    ? "bg-gold text-t950"
-                    : "text-cream-muted hover:text-cream hover:bg-t700",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-              </button>
-            ))}
-          </div>
+          <Tabs
+            value={tab}
+            onValueChange={(v) => navigate({ search: { tab: v as any } })}
+            className="space-y-6"
+          >
+            <div className="flex items-center justify-between bg-slate-900/40 p-1 border border-white/5 rounded-lg">
+              <TabsList className="bg-transparent h-10 gap-2">
+                <TabsTrigger value="overview" className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all">
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger value="roster" className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all">
+                  Roster
+                </TabsTrigger>
+                <TabsTrigger value="staff" className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all">
+                  Staff
+                </TabsTrigger>
+                <TabsTrigger value="history" className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all">
+                  History
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-          {tab === "overview" && (
-            <div className="space-y-4">
-              {stable.description && (
-                <p className="text-cream-muted bg-t700 p-4 rounded-lg">{stable.description}</p>
-              )}
-              <div className="flex items-center gap-3 flex-wrap">
-                <Badge
-                  variant="outline"
-                  className="flex items-center gap-1 px-3 py-1 border-gold-muted text-cream"
-                >
-                  <Brain className="w-3 h-3" />
-                  <span className="capitalize">{stable.personality.replace("-", " ")}</span>
-                </Badge>
-                <span className="text-sm text-cream-muted">
-                  {PERSONALITY_CONFIG[stable.personality]?.description}
-                </span>
-                {stable.preferredDistance && (
-                  <Badge className="text-xs bg-t700 text-cream">
-                    Specialist: {stable.preferredDistance}m {stable.preferredSurface}
-                  </Badge>
-                )}
-              </div>
+            <TabsContent value="overview" className="mt-0 space-y-6 animate-in fade-in duration-300">
+              <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
+                 <CardContent className="p-6 space-y-6">
+                    {stable.description && (
+                      <p className="text-sm text-cream/80 font-serif italic border-l-2 border-white/10 pl-4">{stable.description}</p>
+                    )}
+                    
+                    <div className="flex flex-wrap items-center gap-3">
+                      <Badge variant="outline" className="flex items-center gap-1.5 px-3 py-1 border-white/10 text-cream/60 rounded-none font-mono text-[10px] uppercase">
+                        <Brain className="w-3 h-3 text-blue-400" />
+                        {stable.personality.replace("-", " ")}
+                      </Badge>
+                      <span className="text-[10px] text-cream/40 font-mono uppercase tracking-tighter">
+                        {PERSONALITY_CONFIG[stable.personality]?.description}
+                      </span>
+                      {stable.preferredDistance && (
+                        <Badge className="text-[9px] bg-black/40 text-cream/60 border border-white/5 rounded-none px-2 font-black tracking-widest uppercase">
+                          SPEC: {stable.preferredDistance}m {stable.preferredSurface}
+                        </Badge>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-white/5">
+                      <div className="bg-black/20 p-3 border border-white/5 text-center">
+                         <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">Total Assets</div>
+                         <div className="text-xl font-bold font-mono text-cream">{stableHorses.length}</div>
+                      </div>
+                      <div className="bg-black/20 p-3 border border-white/5 text-center">
+                         <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">Active</div>
+                         <div className="text-xl font-bold font-mono text-success">{activeHorses.length}</div>
+                      </div>
+                      <div className="bg-black/20 p-3 border border-white/5 text-center">
+                         <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">Colts/Horses</div>
+                         <div className="text-xl font-bold font-mono text-blue-400">{colts.length}</div>
+                      </div>
+                      <div className="bg-black/20 p-3 border border-white/5 text-center">
+                         <div className="text-[9px] font-black uppercase text-cream/30 tracking-widest mb-1">Fillies/Mares</div>
+                         <div className="text-xl font-bold font-mono text-pink-400">{fillies.length}</div>
+                      </div>
+                    </div>
+                 </CardContent>
+              </Card>
 
               <TrophyCase
                 awards={awards?.filter((a) => a.stableId === stableId) ?? []}
                 ownerName={stable.name}
                 variant="compact"
               />
+            </TabsContent>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatTile label="Total Horses" value={stableHorses.length} />
-                <StatTile label="Active" value={activeHorses.length} />
-                <StatTile label="Colts/Horses" value={colts.length} />
-                <StatTile label="Fillies/Mares" value={fillies.length} />
-              </div>
-            </div>
-          )}
+            <TabsContent value="roster" className="mt-0 space-y-6 animate-in fade-in duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {stableHorses.sort((a, b) => overall(b) - overall(a)).map((horse: Horse) => {
+                  const scoutCost = calculateScoutCost(horse, stable!);
+                  const canScout = !horse.lastScoutedDay || day - horse.lastScoutedDay > 0;
 
-          {tab === "roster" && (
-            <div className="space-y-3">
-              {stableHorses.map((horse: Horse) => {
-                const scoutCost = calculateScoutCost(horse, stable!);
-                const canScout = !horse.lastScoutedDay || day - horse.lastScoutedDay > 0;
+                  const activeOffer = privateSaleOffers.find(
+                    (o: PrivateSaleOffer) =>
+                      o.horseId === horse.id &&
+                      o.fromStableId === undefined &&
+                      (o.status === "pending" || o.status === "countered"),
+                  );
+                  const hasInAuction = !!horse.consignedSaleId;
 
-                const activeOffer = privateSaleOffers.find(
-                  (o: PrivateSaleOffer) =>
-                    o.horseId === horse.id &&
-                    o.fromStableId === undefined &&
-                    (o.status === "pending" || o.status === "countered"),
-                );
-                const hasInAuction = !!horse.consignedSaleId;
+                  const handleScout = (e: React.MouseEvent) => {
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    const result = scoutHorse(horse.id);
+                    if (result.success) toast.success(result.message);
+                    else toast.error(result.message);
+                  };
 
-                const handleScout = () => {
-                  const result = scoutHorse(horse.id);
-                  if (result.success) toast.success(result.message);
-                  else toast.error(result.message);
-                };
+                  return (
+                    <div key={horse.id} className="relative group">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-blue-500/10 group-hover:bg-blue-500 transition-colors z-10" />
+                      
+                      <Link to="/stable/$horseId" params={{ horseId: horse.id }} className="block">
+                        <HorseCard horse={horse} variant="scout" showScoutInfo className="hover:border-blue-500/40" />
+                      </Link>
 
-                return (
-                  <div key={horse.id} className="space-y-2">
-                    <div className="relative">
-                      <HorseCard horse={horse} variant="scout" showScoutInfo />
-                      <div className="absolute top-4 right-4 flex gap-2">
+                      <div className="absolute top-4 right-4 flex gap-2 z-20">
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => setOfferHorse(horse)}
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOfferHorse(horse); }}
                           disabled={!!activeOffer || hasInAuction}
-                          title={
-                            activeOffer
-                              ? "Offer pending"
-                              : hasInAuction
-                                ? "This horse is currently in a sale."
-                                : undefined
-                          }
-                          className="flex items-center gap-1"
+                          className="h-7 px-3 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-gold/10 hover:text-gold hover:border-gold/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-cream/60"
                         >
-                          <HandCoins className="w-4 h-4" />
-                          {activeOffer ? "Offer pending" : "Make an Offer"}
+                          <HandCoins className="w-3 h-3 mr-1.5" />
+                          {activeOffer ? "PENDING" : "OFFER"}
                         </Button>
                         {canScout && (
                           <Button
@@ -266,147 +246,151 @@ function NpcStableDetailPage() {
                             variant="outline"
                             onClick={handleScout}
                             disabled={cash < scoutCost}
-                            className="flex items-center gap-1"
+                            className="h-7 px-3 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-blue-400/10 hover:text-blue-400 hover:border-blue-400/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-cream/60"
                           >
-                            <Eye className="w-4 h-4" />
-                            Scout ${scoutCost.toLocaleString()}
+                            <Eye className="w-3 h-3 mr-1.5" />
+                            SCOUT_[-${formatCurrency(scoutCost).replace('$', '')}]
                           </Button>
                         )}
                       </div>
-                    </div>
 
-                    {activeOffer && (
-                      <PrivateSaleCounterCard
-                        offer={activeOffer}
-                        horse={horse}
-                        stable={stable!}
-                        cash={cash}
-                        onRespond={respondToPrivateSale}
-                      />
+                      {activeOffer && (
+                        <div className="mt-2">
+                           <PrivateSaleCounterCard
+                             offer={activeOffer}
+                             horse={horse}
+                             stable={stable!}
+                             cash={cash}
+                             onRespond={respondToPrivateSale}
+                           />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              {stableHorses.length === 0 && (
+                <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
+                   <ShieldCheck className="h-16 w-16 mx-auto mb-6 text-cream/5" />
+                   <p className="font-bold text-cream/40 uppercase tracking-[0.3em] font-[family-name:var(--font-display)]">Zero Assets Detected</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="staff" className="mt-0 animate-in fade-in duration-300">
+              <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
+                <CardHeader className="bg-black/20 border-b border-white/5">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40">Retained Personnel</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="divide-y divide-white/5">
+                    {Object.entries(stable.staff || {}).map(([role, name]) => (
+                      <div key={role} className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-cream/40 flex items-center gap-2">
+                           <Briefcase className="h-3 w-3" /> {role.replace(/_/g, " ")}
+                        </span>
+                        <span className="text-xs font-bold text-cream uppercase text-right">
+                          {name || <span className="italic text-cream/20 font-mono">VACANT_POSITION</span>}
+                        </span>
+                      </div>
+                    ))}
+                    {Object.keys(stable.staff || {}).length === 0 && (
+                      <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">No personnel records found.</div>
                     )}
                   </div>
-                );
-              })}
-              {stableHorses.length === 0 && (
-                <p className="text-cream-muted text-center py-8">
-                  No horses currently in this stable.
-                </p>
-              )}
-            </div>
-          )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          {tab === "staff" && (
-            <Card className="border-gold-muted">
-              <CardHeader>
-                <CardTitle className="text-lg">Staff Roster</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {Object.entries(stable.staff || {}).map(([role, name]) => (
-                    <div
-                      key={role}
-                      className="flex items-center justify-between p-3 bg-t700 rounded-md"
-                    >
-                      <span className="text-sm text-cream-muted capitalize">
-                        {role.replace(/_/g, " ")}
-                      </span>
-                      <span className="text-sm font-medium text-cream">
-                        {name || <span className="italic text-cream-muted">Vacant</span>}
-                      </span>
+            <TabsContent value="history" className="mt-0 animate-in fade-in duration-300">
+              <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
+                <CardHeader className="bg-black/20 border-b border-white/5">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40">Entity Records</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="divide-y divide-white/5">
+                    <div className="flex justify-between p-4">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">Established</span>
+                      <span className="font-mono text-xs text-cream tabular-nums">{stable.founded}</span>
                     </div>
-                  ))}
-                  {Object.keys(stable.staff || {}).length === 0 && (
-                    <p className="text-cream-muted italic text-sm">
-                      No staff information available.
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {tab === "history" && (
-            <Card className="border-gold-muted">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <History className="w-5 h-5" /> Stable History
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-cream-muted">Founded</span>
-                  <span className="font-mono tabular-nums">{stable.founded}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-cream-muted">Reputation</span>
-                  <span className="font-mono tabular-nums">{stable.reputation}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-cream-muted">Cash on hand</span>
-                  <span className="font-mono tabular-nums">{formatCurrency(stable.cash)}</span>
-                </div>
-                <TrophyCase
-                  awards={awards?.filter((a) => a.stableId === stableId) ?? []}
-                  ownerName={stable.name}
-                  variant="compact"
-                />
-              </CardContent>
-            </Card>
-          )}
+                    <div className="flex justify-between p-4">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">Reputation</span>
+                      <span className="font-mono text-xs text-fame tabular-nums">{stable.reputation}</span>
+                    </div>
+                    <div className="flex justify-between p-4">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">Liquid Assets</span>
+                      <span className="font-mono text-xs text-success tabular-nums">{formatCurrency(stable.cash)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
 
-        {/* Sidebar */}
-        <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
-          <Card className="border-gold-muted">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm uppercase tracking-wide text-cream-muted">
-                Overview
-              </CardTitle>
+        {/* Right Sidebar */}
+        <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
+          <Card className="bg-slate-900/60 border-white/5 rounded-none shadow-2xl">
+            <CardHeader className="pb-3 border-b border-white/5 bg-black/40">
+              <CardTitle className="text-[9px] font-black uppercase tracking-[0.2em] text-cream/40">Entity Brief</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <SidebarRow label="Tier">
-                <Badge className={getTierColor(stable.tier)}>{stable.tier}</Badge>
-              </SidebarRow>
-              <SidebarRow label="Country">{stable.country ?? "—"}</SidebarRow>
-              <SidebarRow label="Founded">{stable.founded}</SidebarRow>
-              <SidebarRow label="Reputation">{getReputationStars(stable.reputation)}</SidebarRow>
-              <SidebarRow label="Horses">{stableHorses.length}</SidebarRow>
-              <SidebarRow label="Cash">{formatCurrency(stable.cash)}</SidebarRow>
+            <CardContent className="p-0">
+              <div className="divide-y divide-white/5">
+                 <div className="flex justify-between items-center p-4">
+                   <span className="text-[9px] font-black uppercase tracking-widest text-cream/30">Tier</span>
+                   <Badge className={cn("rounded-none h-4 px-1.5 text-[8px] font-black uppercase tracking-widest", 
+                     stable.tier === 'elite' ? 'bg-fame text-slate-950' : 
+                     stable.tier === 'mid' ? 'bg-gold text-slate-950' : 'bg-slate-700 text-cream'
+                   )}>{stable.tier}</Badge>
+                 </div>
+                 <div className="flex justify-between items-center p-4">
+                   <span className="text-[9px] font-black uppercase tracking-widest text-cream/30">Relation</span>
+                   <span className={cn("text-[10px] font-bold uppercase", 
+                      friction > 50 ? "text-destructive" : friction < -30 ? "text-success" : "text-cream/60"
+                   )}>
+                      {friction > 70 ? "HATED" : friction > 30 ? "TENSE" : friction < -50 ? "ALLY" : "NEUTRAL"}
+                   </span>
+                 </div>
+                 <div className="flex justify-between items-center p-4">
+                   <span className="text-[9px] font-black uppercase tracking-widest text-cream/30">Reputation</span>
+                   <span className="text-fame flex gap-0.5">
+                     {Array.from({ length: 5 }).map((_, i) => (
+                       <Trophy key={i} className={cn("h-3 w-3", i < Math.floor(stable.reputation / 20) ? "fill-current" : "opacity-20")} />
+                     ))}
+                   </span>
+                 </div>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="border-gold-muted">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm uppercase tracking-wide text-cream-muted">
-                Quick Links
-              </CardTitle>
+          <Card className="bg-slate-900/60 border-white/5 rounded-none shadow-2xl">
+            <CardHeader className="pb-3 border-b border-white/5 bg-black/40">
+              <CardTitle className="text-[9px] font-black uppercase tracking-[0.2em] text-cream/40">Quick Access</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-1">
-              <SidebarLink
-                onClick={() => navigate({ search: { tab: "roster" } })}
-                icon={ListChecks}
-              >
-                Horses ({stableHorses.length})
-              </SidebarLink>
-              <SidebarLink onClick={() => navigate({ search: { tab: "staff" } })} icon={Users}>
-                Staff
-              </SidebarLink>
-              <SidebarLink onClick={() => navigate({ search: { tab: "history" } })} icon={History}>
-                History
-              </SidebarLink>
-              <Link
-                to="/races"
-                search={{ stableId }}
-                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm text-cream-muted hover:text-gold hover:bg-t700 transition-colors"
-              >
-                <CalendarDays className="w-4 h-4" /> Upcoming Races
-              </Link>
-              <Link
-                to="/hall-of-fame"
-                className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm text-cream-muted hover:text-gold hover:bg-t700 transition-colors"
-              >
-                <Trophy className="w-4 h-4" /> Hall of Fame
-              </Link>
+            <CardContent className="p-0">
+               <div className="divide-y divide-white/5">
+                 <button onClick={() => navigate({ search: { tab: "roster" } })} className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group">
+                    <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream/40 group-hover:text-blue-400">
+                      <ListChecks className="h-3 w-3" /> Asset Roster
+                    </span>
+                    <span className="font-mono text-[10px] text-cream/20">{stableHorses.length}</span>
+                 </button>
+                 <button onClick={() => navigate({ search: { tab: "staff" } })} className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group">
+                    <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream/40 group-hover:text-blue-400">
+                      <Users className="h-3 w-3" /> Personnel
+                    </span>
+                 </button>
+                 <button onClick={() => navigate({ search: { tab: "history" } })} className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group">
+                    <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream/40 group-hover:text-blue-400">
+                      <History className="h-3 w-3" /> Records
+                    </span>
+                 </button>
+                 <Link to="/races" search={{ stableId }} className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group">
+                    <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream/40 group-hover:text-gold">
+                      <CalendarDays className="h-3 w-3" /> Schedule
+                    </span>
+                 </Link>
+               </div>
             </CardContent>
           </Card>
         </aside>
@@ -427,43 +411,4 @@ function NpcStableDetailPage() {
   );
 }
 
-function StatTile({ label, value }: { label: string; value: number }) {
-  return (
-    <Card className="border-gold-muted">
-      <CardContent className="pt-4">
-        <div className="text-2xl font-bold font-mono tabular-nums">
-          <NumericValue value={value} />
-        </div>
-        <div className="text-sm text-cream-muted">{label}</div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function SidebarRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex justify-between items-center text-sm">
-      <span className="text-cream-muted">{label}</span>
-      <span className="font-mono tabular-nums text-cream">{children}</span>
-    </div>
-  );
-}
-
-function SidebarLink({
-  onClick,
-  icon: Icon,
-  children,
-}: {
-  onClick: () => void;
-  icon: typeof ListChecks;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm text-cream-muted hover:text-gold hover:bg-t700 transition-colors text-left"
-    >
-      <Icon className="w-4 h-4" /> {children}
-    </button>
-  );
-}
+import React from "react";

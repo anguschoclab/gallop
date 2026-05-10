@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { overall, NumericValue, HorseBit } from "@/components/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
+import { NewsContent } from "@/components/narrative/NewsContent";
 import { 
   Trophy, 
   Calendar, 
@@ -129,10 +130,10 @@ function Dashboard() {
                     </Badge>
                     <h3 className={cn("font-extrabold leading-[1.05] tracking-tighter text-[#1a1a1a] font-[family-name:var(--font-display)] group-hover:text-gold-dark transition-colors", 
                       item.importance === "high" ? "text-2xl" : "text-xl")}>
-                      {item.headline}
+                      <NewsContent text={item.headline} links={item.entityLinks} linkClassName="text-[#1a1a1a] hover:text-gold-dark border-b border-dotted border-[#1a1a1a]/40" />
                     </h3>
                     <p className="text-sm line-clamp-3 leading-relaxed opacity-90 font-serif italic text-[#333]">
-                      {item.body}
+                      <NewsContent text={item.body} links={item.entityLinks} linkClassName="text-[#333] hover:text-gold-dark border-b border-dotted border-[#333]/40" />
                     </p>
                   </div>
                 ))
