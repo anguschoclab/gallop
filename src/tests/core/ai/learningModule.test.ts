@@ -19,8 +19,8 @@ describe("createLearningState", () => {
     const state = createLearningState();
 
     expect(state.outcomes).toEqual([]);
-    expect(state.successRates).toBeInstanceOf(Map);
-    expect(state.patterns).toBeInstanceOf(Map);
+    expect(state.successRates).toBeInstanceOf(Object);
+    expect(state.patterns).toBeInstanceOf(Object);
     expect(state.lastUpdate).toBe(0);
   });
 });
@@ -91,7 +91,7 @@ describe("recordOutcome", () => {
       );
     }
 
-    const successRate = updatedState.successRates.get("breeding:test_context");
+    const successRate = updatedState.successRates["breeding:test_context"];
     expect(successRate?.successes).toBe(3);
     expect(successRate?.total).toBe(5);
     expect(successRate?.rate).toBe(0.6);
@@ -116,7 +116,7 @@ describe("recordOutcome", () => {
       );
     }
 
-    const patternScore = updatedState.patterns.get("decision:context:value");
+    const patternScore = updatedState.patterns["decision:context:value"];
     expect(patternScore).toBeDefined();
     expect(patternScore).toBeGreaterThan(0);
   });
@@ -423,7 +423,7 @@ describe("pruneOldOutcomes", () => {
     // Prune to keep only the failures (days 5-9)
     updatedState = pruneOldOutcomes(updatedState, 5);
 
-    const successRate = updatedState.successRates.get("decision:context");
+    const successRate = updatedState.successRates["decision:context"];
     expect(successRate?.rate).toBe(0.0);
   });
 
@@ -524,7 +524,7 @@ describe("getLearningInsights", () => {
 
     const insights = getLearningInsights(updatedState, "decision");
     const patternKeys = insights.patterns.map((p) => p.key);
-    expect(patternKeys).toContain("type1");
-    expect(patternKeys).toContain("type2");
+    expect(patternKeys).toContain("type1:value");
+    expect(patternKeys).toContain("type2:value");
   });
 });

@@ -271,8 +271,12 @@ export function getLearningInsights(
   const avgValue =
     totalDecisions > 0 ? relevantOutcomes.reduce((sum, o) => sum + o.value, 0) / totalDecisions : 0;
 
+<<<<<<< Updated upstream
   let patterns: Array<{ key: string; score: number }>;
   patterns = [];
+=======
+  const patterns: Array<{ key: string; score: number }> = [];
+>>>>>>> Stashed changes
   for (const key in state.patterns) {
     if (key.startsWith(decisionType + ":")) {
       patterns.push({ key: key.substring(decisionType.length + 1), score: state.patterns[key] });

@@ -4,6 +4,9 @@ import type { Race, Horse } from '@/game/types';
 
 describe('newsGenerator', () => {
   it('should generate news for a G1 win', () => {
+    const originalRandom = Math.random;
+    Math.random = () => 0; // Always pick the first headline
+    
     const race = {
       id: 'race-1',
       name: 'Kentucky Derby',
@@ -24,6 +27,8 @@ describe('newsGenerator', () => {
     expect(news?.importance).toBe('high');
     expect(news?.headline).toContain('Secretariat');
     expect(news?.headline).toContain('Kentucky Derby');
+    
+    Math.random = originalRandom;
   });
 
   it('should NOT generate news for a maiden race', () => {

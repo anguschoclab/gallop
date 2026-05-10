@@ -140,8 +140,15 @@ export function calculateRecommendedStudFee(horse: Horse, stableOrTier?: Stable 
     fee *= 1.2;
   }
 
-  // Round to nearest $500
-  return Math.round(fee / 500) * 500;
+  // Progeny performance impact (for established sires)
+  if (horse.stud && horse.stud.lifetimeFoals > 10) {
+    const stakesRate = horse.stud.lifetimeStakesFoals / horse.stud.lifetimeFoals;
+    if (stakesRate > 0.05) fee += 5000;
+    if (stakesRate > 0.10) fee += 10000;
+  }
+
+  // Round to nearest $100
+  return Math.round(fee / 100) * 100;
 }
 
 /**
@@ -168,6 +175,13 @@ export function recalcStandingFee(horse: Horse, currentDay: number): number {
   const currentFee = horse.stud.standingFee;
   let multiplier = 1.0;
 
+  // Own performance impact (for recently retired stallions with few progeny)
+  const careerStats = getCareerStats(horse);
+  if (horse.stud.lifetimeFoals < 20) {
+    if (careerStats.g1Wins > 0) multiplier += 0.15;
+    if (careerStats.stakesWins > 0) multiplier += 0.1;
+  }
+
   // Progeny performance impact
   const stakesRate = horse.stud.lifetimeFoals > 0 
     ? (horse.stud.lifetimeStakesFoals / horse.stud.lifetimeFoals)
@@ -184,7 +198,8 @@ export function recalcStandingFee(horse: Horse, currentDay: number): number {
   if (horse.age > 15) multiplier -= 0.1;
   if (horse.age > 18) multiplier -= 0.15;
 
-  return Math.max(500, Math.round((currentFee * multiplier) / 500) * 500);
+  // Round to nearest $100
+  return Math.max(500, Math.round((currentFee * multiplier) / 100) * 100);
 }
 
 /**

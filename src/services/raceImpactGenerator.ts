@@ -47,37 +47,46 @@ import type { Transaction } from "@/core/transactions";
  * Props for the generateRaceImpacts function.
  */
 export interface GenerateRaceImpactsProps {
+  /** The completed race data */
   race: Race;
+  /** Final race result positions and times for each participant */
   result: Array<{ horseId: string; position: number; time: number }>;
+  /** The field of runners with lane and barrier data */
   runners: Array<{ horseId: string; barrier?: number; lane?: number }>;
+  /** Current horse population (can be an array or a pre-indexed Map) */
   horses: Horse[] | Map<string, Horse>;
+  /** Current jockey population (can be an array or a pre-indexed Map) */
   jockeys: Jockey[] | Map<string, Jockey>;
+  /** Game day of the race resolution */
   newDay: number;
+  /** Current player cash balance */
   stateCash: number;
+  /** Current manager reputation state */
   stateReputation?: ManagerReputation;
+  /** Active staff members with potential bonuses */
   hiredStaff?: StaffMember[];
+  /** Optional random number generator for stochastic events (e.g., injuries) */
   rng?: Rng;
+  /** Optional detailed race snapshots for replay/summary purposes */
   snapshots?: RaceSnapshot[];
+  /** Speed pars for Beyer speed figure calculation, indexed by distance */
   calibratedPars: Record<number, number>;
 }
 
 /**
- * Generate all impacts resulting from a completed race.
+ * Generate all state impacts resulting from a completed race.
+ *
+ * This function orchestrates the post-race resolution logic, including:
+ * - Result recording and history updates
+ * - Energy expenditure and injury rolls
+ * - Performance metrics (Beyer Figures) with genetic dampeners
+ * - Financial transactions (prize money, jockey fees)
+ * - Reputation and fame updates
+ * - Career milestones (Triple Crown progress, blue hen status, stud fees)
+ * - Narrative and news generation
  *
  * @param props - Impact generation properties
- * @param props.race - The completed race
- * @param props.result - Final race result positions and times
- * @param props.runners - The field of runners with lane/barrier data
- * @param props.horses - Current horse population (or pre-indexed Map)
- * @param props.jockeys - Current jockey population (or pre-indexed Map)
- * @param props.newDay - Game day of the race
- * @param props.stateCash - Current player cash
- * @param props.stateReputation - Current manager reputation
- * @param props.hiredStaff - Active staff bonuses
- * @param props.rng - Random number generator
- * @param props.snapshots - Optional detailed race snapshots
- * @param props.calibratedPars - Speed pars for Beyer calculation
- * @returns Array of impacts to be applied to the game state
+ * @returns Array of impacts to be applied to the game state by the resolver
  */
 export function generateRaceImpacts({
   race,
@@ -96,13 +105,14 @@ export function generateRaceImpacts({
   const impacts: AnyImpact[] = [];
   const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
   
+  // Normalize collections to Maps for O(1) lookups
   const horseMap = horses instanceof Map ? (horses as Map<string, Horse>) : new Map(horses.map(h => [h.id, h]));
   const jockeyMap = jockeys instanceof Map ? (jockeys as Map<string, Jockey>) : new Map(jockeys.map(j => [j.id, j]));
   
   const runnersMap = new Map(runners.map(run => [run.horseId, run]));
   const entriesMap = new Map(race.entries.map(e => [e.horseId, e]));
 
-  // Generate race result impact
+  // 1. Record the overall race result
   impacts.push({
     id: generateUUID(),
     intentId: "",
@@ -116,14 +126,14 @@ export function generateRaceImpacts({
     reason: "Race resolved",
   } as RaceResultImpact);
 
-  // Generate per-horse impacts
+  // 2. Process per-horse consequences
   for (const r of result) {
     const horse = horseMap.get(r.horseId);
     if (!horse) continue;
 
     const runner = runnersMap.get(r.horseId);
 
-    // Energy impact (-25)
+    // Energy expenditure: Constant drain per race
     impacts.push({
       id: generateUUID(),
       intentId: "",
@@ -136,7 +146,7 @@ export function generateRaceImpacts({
       reason: "Race energy expenditure",
     } as EnergyImpact);
 
-    // Roll for injury
+    // Health: Roll for potential injuries based on current condition and staff bonuses
     if (rng) {
       const injury = rollForInjury(rng, horse, newDay, hiredStaff);
       if (injury) {
@@ -144,12 +154,13 @@ export function generateRaceImpacts({
       }
     }
 
-    // Form impact based on position
+    // Form: Morale/Form changes based on finish position
     const stableId = horse.stableId || "";
     const groom = hiredStaff.find(s => s.role === 'groom' && s.stableId === stableId);
 
     const baseFormDelta =
       r.position === 1 ? 3 : r.position === 2 ? 2 : r.position === 3 ? 1 : r.position <= 5 ? 0 : -1;
+    // Grooms prevent negative form delta from poor performance
     const formDelta = baseFormDelta < 0 && groom ? 0 : baseFormDelta;
 
     impacts.push({
@@ -164,7 +175,7 @@ export function generateRaceImpacts({
       reason: `Race position: ${r.position}`,
     } as FormImpact);
 
-    // Fame impact based on position
+    // Fame: Increases for top 3 finishers
     const fameDelta = r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0;
     if (fameDelta > 0) {
       impacts.push({
@@ -180,7 +191,7 @@ export function generateRaceImpacts({
       } as FameImpact);
     }
 
-    // Beyer calculation with inbreeding dampener
+    // Performance: Beyer calculation with inbreeding-based performance dampeners
     const beyer = beyerFigure({
       distance: race.distance,
       finishTime: r.time,
@@ -191,7 +202,7 @@ export function generateRaceImpacts({
     const dampener = inbreedingPerformanceDampener(inbreedingPattern);
     const adjustedBeyer = Math.max(0, beyer - dampener);
 
-    // Dynamic Form: Recovery points draining based on distance and Beyer
+    // Fatigue: Recovery points drain based on race distance and performance intensity (Beyer)
     const recoveryDrain = Math.min(30, Math.floor(race.distance / 100) + Math.floor(adjustedBeyer / 20));
     impacts.push({
       id: generateUUID(),
@@ -205,7 +216,7 @@ export function generateRaceImpacts({
       reason: "Race fatigue",
     } as RecoveryImpact);
 
-    // Dynamic Form: Update lastBeyer and lastRaceDay
+    // Update Beyer history for future valuations and AI logic
     impacts.push({
       id: generateUUID(),
       intentId: "",
@@ -219,7 +230,7 @@ export function generateRaceImpacts({
       reason: "Race performance",
     } as BeyerImpact);
 
-    // Win and You're In qualification
+    // Eligibility: Check for "Win and You're In" qualifications for year-end championships
     let winAndYouInQualified = undefined;
     if (r.position === 1 && race.graded?.winAndYouInTarget) {
       const currentYear = getCurrentYear(newDay);
@@ -230,7 +241,7 @@ export function generateRaceImpacts({
       };
     }
 
-    // Race history impact
+    // History: Record permanent entry in the horse's race career log
     impacts.push({
       id: generateUUID(),
       intentId: "",
@@ -258,7 +269,7 @@ export function generateRaceImpacts({
       reason: "Race completed",
     } as RaceHistoryImpact);
 
-    // Triple Crown progress tracking
+    // Milestones: Progress tracking for Triple Crown series
     if (r.position === 1 && race.graded?.triplecrownKey) {
       const currentYear = getCurrentYear(newDay);
       const triplecrownKey = race.graded.triplecrownKey;
@@ -308,7 +319,7 @@ export function generateRaceImpacts({
       } as TripleCrownProgressImpact);
     }
 
-    // Prize money impact
+    // 3. Financials: Prize money distribution
     if (r.position - 1 < PRIZE_SPLIT.length) {
       const prize = Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
       if (prize > 0) {
@@ -339,7 +350,7 @@ export function generateRaceImpacts({
             reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
           } as CashImpact);
 
-          // Record transaction for prize money income
+          // Record ledger transaction for player income
           impacts.push({
             id: generateUUID(),
             intentId: "",
@@ -353,7 +364,7 @@ export function generateRaceImpacts({
             metadata: { horseId: horse.id, raceId: race.id },
           } as TransactionImpact);
 
-          // Track reputation for wins
+          // Reputation: Manager reputation increases for wins
           if (r.position === 1) {
             const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);
             impacts.push({
@@ -373,7 +384,7 @@ export function generateRaceImpacts({
       }
     }
 
-    // Jockey riding fee deduction
+    // 4. Financials: Jockey riding fees
     const entry = entriesMap.get(horse.id);
     if (entry?.jockeyId) {
       const jockey = jockeyMap.get(entry.jockeyId);
@@ -421,7 +432,7 @@ export function generateRaceImpacts({
       }
     }
 
-    // Blue hen impact for graded stakes winners
+    // 5. Breeding: "Blue Hen" status tracking for high-performing mares
     if (
       r.position === 1 &&
       (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")
@@ -451,7 +462,7 @@ export function generateRaceImpacts({
         } as BlueHenImpact);
       }
 
-      // Stud career impact for sire
+      // 6. Breeding: Stallion stud career and fee recalibration
       const sire = horse.pedigree?.sireId ? horseMap.get(horse.pedigree.sireId) : undefined;
 
       if (sire && sire.stud?.atStud) {
@@ -496,14 +507,14 @@ export function generateRaceImpacts({
       }
     }
 
-    // Jockey stats impact
+    // 7. Jockey performance and stats tracking
     const raceEntry = entriesMap.get(horse.id);
     if (raceEntry?.jockeyId && r.position - 1 < PRIZE_SPLIT.length) {
       const jockey = jockeyMap.get(raceEntry.jockeyId);
 
       if (jockey) {
         const winAmount = PRIZE_SPLIT[r.position - 1] * race.purse;
-        const jockeyFee = Math.round(winAmount * 0.1);
+        const jockeyFee = Math.round(winAmount * 0.1); // Jockeys take 10% of purse earnings
 
         impacts.push({
           id: generateUUID(),
@@ -550,7 +561,7 @@ export function generateRaceImpacts({
     }
   }
 
-  // Pace sample impact for winner
+  // 8. Analytics: Global pace samples for handicapping logic
   if (result.length > 0) {
     const winner = result[0];
     impacts.push({
@@ -566,7 +577,7 @@ export function generateRaceImpacts({
     } as PaceSampleImpact);
   }
 
-  // Log impact for race summary
+  // 9. Narrative: Generate race summary logs for the player
   const ownedHorses = result.filter((r) => {
     const horse = horseMap.get(r.horseId);
     return horse && !horse.stableId;
@@ -597,7 +608,7 @@ export function generateRaceImpacts({
     } as LogImpact);
   }
 
-  // Generate News Impact
+  // 10. Narrative: Dynamic news generation for major races
   const newsItem = generateRaceNews(race, result, horses, newDay);
   if (newsItem) {
     impacts.push({
@@ -613,3 +624,4 @@ export function generateRaceImpacts({
 
   return impacts;
 }
+

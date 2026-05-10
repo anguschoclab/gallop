@@ -57,6 +57,7 @@ export interface CareerStats {
   g2Wins: number;
   g3Wins: number;
   earnings: number;
+  bestBeyer: number;
   // Surface breakdown
   turfStarts: number;
   turfWins: number;
@@ -96,6 +97,7 @@ export function getCareerStats(horse: Horse): CareerStats {
     g2Wins: 0,
     g3Wins: 0,
     earnings: 0,
+    bestBeyer: 0,
     turfStarts: 0, turfWins: 0,
     dirtStarts: 0, dirtWins: 0,
     syntheticStarts: 0, syntheticWins: 0,
@@ -125,6 +127,9 @@ export function getCareerStats(horse: Horse): CareerStats {
     }
 
     stats.earnings += entry.purseEarned || 0;
+    if (entry.beyer && entry.beyer > stats.bestBeyer) {
+      stats.bestBeyer = entry.beyer;
+    }
 
     // Surface
     if (entry.surface === "Turf") { 

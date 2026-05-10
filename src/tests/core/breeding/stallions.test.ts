@@ -67,7 +67,7 @@ describe("initialStandingFee", () => {
   it("rounds to nearest $500", () => {
     const h = mkHorse();
     const fee = initialStandingFee(h, "mid");
-    expect(fee % 500).toBe(0);
+    expect(fee % 100).toBe(0);
   });
 });
 

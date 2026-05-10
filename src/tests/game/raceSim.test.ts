@@ -66,8 +66,8 @@ describe("raceSim determinism", () => {
     const conditions = getConditionsModifier({});
     const runA = horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions));
     const runB = horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions));
-    const a = runRaceToCompletion(runA, 1600, createRng(42));
-    const b = runRaceToCompletion(runB, 1600, createRng(42));
+    const a = runRaceToCompletion(runA, 1600, createRng(42)).result;
+    const b = runRaceToCompletion(runB, 1600, createRng(42)).result;
     expect(a.map((r) => r.horseId)).toEqual(b.map((r) => r.horseId));
     expect(a.map((r) => Math.round(r.time * 1000))).toEqual(
       b.map((r) => Math.round(r.time * 1000)),
@@ -81,12 +81,12 @@ describe("raceSim determinism", () => {
       horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions)),
       1600,
       createRng(1),
-    );
+    ).result;
     const b = runRaceToCompletion(
       horses.map((h) => buildRunner(h, true, 1600, "Turf", conditions)),
       1600,
       createRng(99),
-    );
+    ).result;
     // Times will almost certainly differ; if order is the same, that's fine.
     const sameTimes = a.every((r, i) => r.time === b[i].time);
     expect(sameTimes).toBe(false);
@@ -102,12 +102,12 @@ describe("raceSim conditions", () => {
       horses.map((h) => buildRunner(h, true, 1600, "Turf", fair)),
       1600,
       createRng(42),
-    );
+    ).result;
     const foulResult = runRaceToCompletion(
       horses.map((h) => buildRunner(h, true, 1600, "Turf", foul)),
       1600,
       createRng(42),
-    );
+    ).result;
     const fairWinner = fairResult[0].time;
     const foulWinner = foulResult[0].time;
     expect(foulWinner).toBeGreaterThan(fairWinner);

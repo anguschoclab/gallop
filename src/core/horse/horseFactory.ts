@@ -23,6 +23,12 @@ import type {
 } from "@/game/types";
 import type { Rng } from "@/core/common/types";
 
+/**
+ * Represents the outcome of a foaling event.
+ *
+ * Can be a live foal with associated metadata or a complication
+ * describing why the foaling failed or resulted in a non-standard outcome.
+ */
 export type FoalOutcome =
   | { kind: "live"; foal: Horse; transmission: boolean }
   | { kind: "complication"; type: "stillborn" | "twins" | "injury"; foal?: Horse };

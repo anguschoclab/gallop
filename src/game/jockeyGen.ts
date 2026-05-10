@@ -23,6 +23,60 @@ export type JockeyGenerationOptions = {
 };
 
 /**
+ * Archetype Strategy for jockey generation.
+ */
+interface ArchetypeStrategy {
+  apply: (stats: JockeyStats, traits: JockeyTrait[], rng: Rng) => void;
+}
+
+/**
+ * Registry of archetype strategies indexed by jockey archetype.
+ */
+const JOCKEY_ARCHETYPE_STRATEGIES: Record<JockeyArchetype, ArchetypeStrategy> = {
+  front_runner: {
+    apply: (stats, traits) => {
+      stats.gateSkill += 15;
+      stats.pacing += 10;
+      stats.vigor -= 10;
+      traits.push("gate_master");
+    },
+  },
+  closer: {
+    apply: (stats, traits) => {
+      stats.vigor += 15;
+      stats.positioning += 10;
+      stats.gateSkill -= 10;
+      traits.push("hill_specialist");
+    },
+  },
+  clinical: {
+    apply: (stats, traits) => {
+      stats.positioning += 15;
+      stats.pacing += 10;
+      traits.push("bullring_expert");
+    },
+  },
+  finisher: {
+    apply: (stats, traits) => {
+      stats.vigor += 20;
+      stats.gateSkill += 5;
+      stats.pacing -= 10;
+      traits.push("long_straight_pro");
+    },
+  },
+  versatile: {
+    apply: (stats, traits, rng) => {
+      stats.pacing += 5;
+      stats.positioning += 5;
+      stats.vigor += 5;
+      stats.gateSkill += 5;
+      stats.temperament += 5;
+      if (rng.next() < 0.2) traits.push(rng.pick(["gate_master", "hill_specialist"]));
+    },
+  },
+};
+
+/**
  * Generate a jockey with archetypes, stats, traits, and silk customization.
  *
  * Creates a jockey with tier-based stat ranges, archetype bonuses, career history,
@@ -58,40 +112,8 @@ export function generateJockey({
 
   const traits: JockeyTrait[] = [];
 
-  // Apply archetype bonuses and traits
-  switch (archetype) {
-    case "front_runner":
-      stats.gateSkill += 15;
-      stats.pacing += 10;
-      stats.vigor -= 10;
-      traits.push("gate_master");
-      break;
-    case "closer":
-      stats.vigor += 15;
-      stats.positioning += 10;
-      stats.gateSkill -= 10;
-      traits.push("hill_specialist");
-      break;
-    case "clinical":
-      stats.positioning += 15;
-      stats.pacing += 10;
-      traits.push("bullring_expert");
-      break;
-    case "finisher":
-      stats.vigor += 20;
-      stats.gateSkill += 5;
-      stats.pacing -= 10;
-      traits.push("long_straight_pro");
-      break;
-    case "versatile":
-      stats.pacing += 5;
-      stats.positioning += 5;
-      stats.vigor += 5;
-      stats.gateSkill += 5;
-      stats.temperament += 5;
-      if (rng.next() < 0.2) traits.push(rng.pick(["gate_master", "hill_specialist"]));
-      break;
-  }
+  // Apply archetype bonuses and traits via strategy pattern
+  JOCKEY_ARCHETYPE_STRATEGIES[archetype].apply(stats, traits, rng);
 
   // Clamp stats
   Object.keys(stats).forEach((k) => {

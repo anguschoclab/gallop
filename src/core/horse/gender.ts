@@ -141,9 +141,27 @@ export function genderLabel(gender: HorseGender): string {
       return "Mare";
     case "gelding":
       return "Gelding";
-    default:
-      return gender;
   }
+}
+
+/**
+ * Get display label for gender restriction.
+ *
+ * @param restriction - The gender restriction string
+ * @returns Human-readable gender restriction label
+ */
+export function getGenderRestrictionLabel(restriction: string | undefined): string {
+  if (!restriction) return "Open";
+
+  const normalized = restriction.toLowerCase();
+  if (normalized === "colt" || normalized === "colts") return "Colts";
+  if (normalized === "filly" || normalized === "fillies") return "Fillies";
+  if (normalized === "mares") return "Mares";
+  if (normalized === "fillies-and-mares") return "Fillies & Mares";
+  if (normalized === "colts-and-fillies") return "Colts & Fillies";
+  if (normalized === "horses") return "Horses";
+
+  return restriction;
 }
 
 /**

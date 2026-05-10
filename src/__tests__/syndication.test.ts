@@ -170,7 +170,7 @@ describe("SyndicationValidator", () => {
   describe("share_purchase", () => {
     beforeEach(() => {
       mockState.syndicates = {
-        stallion1: {
+        syndicate_stallion1: {
           id: "syndicate_stallion1",
           stallionId: "stallion1",
           stallionName: "Test Stallion",
@@ -243,7 +243,7 @@ describe("SyndicationValidator", () => {
   describe("share_sale", () => {
     beforeEach(() => {
       mockState.syndicates = {
-        stallion1: {
+        syndicate_stallion1: {
           id: "syndicate_stallion1",
           stallionId: "stallion1",
           stallionName: "Test Stallion",
@@ -341,7 +341,7 @@ describe("resolveSyndicationIntent", () => {
       ],
       cash: 1000000,
       syndicates: {
-        stallion1: {
+        syndicate_stallion1: {
           id: "syndicate_stallion1",
           stallionId: "stallion1",
           stallionName: "Test Stallion",
@@ -488,14 +488,14 @@ describe("SyndicationHandler", () => {
     };
 
     handler.handle(mockState as any, impact as any);
-    expect(mockState.syndicates?.["stallion1"]).toBeDefined();
-    expect(mockState.syndicates?.["stallion1"].stallionName).toBe("Test Stallion");
-    expect(mockState.syndicates?.["stallion1"].shareHolders.player).toBe(20);
+    expect(mockState.syndicates?.["syndicate_stallion1"]).toBeDefined();
+    expect(mockState.syndicates?.["syndicate_stallion1"].stallionName).toBe("Test Stallion");
+    expect(mockState.syndicates?.["syndicate_stallion1"].shareHolders.player).toBe(20);
   });
 
   it("should handle share_transaction impact for purchase", () => {
     mockState.syndicates = {
-      stallion1: {
+      syndicate_stallion1: {
         id: "syndicate_stallion1",
         stallionId: "stallion1",
         stallionName: "Test Stallion",
@@ -523,13 +523,13 @@ describe("SyndicationHandler", () => {
     };
 
     handler.handle(mockState as any, impact as any);
-    expect(mockState.syndicates?.["stallion1"].shareHolders.player).toBe(25);
+    expect(mockState.syndicates?.["syndicate_stallion1"].shareHolders.player).toBe(25);
     expect(mockState.shareTransactions).toHaveLength(1);
   });
 
   it("should handle share_transaction impact for sale", () => {
     mockState.syndicates = {
-      stallion1: {
+      syndicate_stallion1: {
         id: "syndicate_stallion1",
         stallionId: "stallion1",
         stallionName: "Test Stallion",
@@ -557,6 +557,6 @@ describe("SyndicationHandler", () => {
     };
 
     handler.handle(mockState as any, impact as any);
-    expect(mockState.syndicates?.["stallion1"].shareHolders.player).toBe(15);
+    expect(mockState.syndicates?.["syndicate_stallion1"].shareHolders.player).toBe(15);
   });
 });

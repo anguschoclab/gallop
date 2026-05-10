@@ -226,6 +226,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       horseLeaderboards: {},
       founders: {},
       syndicates: {},
+      shareTransactions: [],
       usedHorseNames: [],
       usedJockeyNames: [],
       staffPool: [],
@@ -265,6 +266,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     horseLeaderboards: {},
     founders: {},
     syndicates: {},
+    shareTransactions: [],
     usedHorseNames: [],
     usedJockeyNames: [],
 

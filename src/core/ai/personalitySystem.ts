@@ -212,7 +212,7 @@ function getOutcomeKey(decisionType: string, context: Record<string, unknown>): 
     .map(([k, v]) => `${k}:${v}`)
     .sort()
     .join("|");
-  return `${decisionType}:${contextKey}`;
+  return contextKey || "default";
 }
 
 /**

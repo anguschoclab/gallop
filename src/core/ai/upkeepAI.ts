@@ -69,35 +69,90 @@ export function createUpkeepAIState(stable: Stable): UpkeepAIState {
 }
 
 /**
+ * Configuration for personality-driven upkeep strategy.
+ */
+interface UpkeepStrategy {
+  targetReserveRatio: number;
+  spendingMultiplier: number;
+  categoryAdjustments?: (budgets: Record<string, number>) => void;
+  baseSpendingPropensity: number;
+  categoryPropensity?: Record<string, number>;
+  conserveBuffer: number;
+}
+
+/**
+ * Registry of upkeep strategies indexed by stable personality.
+ */
+const UPKEEP_STRATEGIES: Record<Stable["personality"], UpkeepStrategy> = {
+  conservative: {
+    targetReserveRatio: 6,
+    spendingMultiplier: 0.8,
+    baseSpendingPropensity: 0.4,
+    conserveBuffer: 1.0,
+  },
+  aggressive: {
+    targetReserveRatio: 2,
+    spendingMultiplier: 1.3,
+    baseSpendingPropensity: 0.8,
+    conserveBuffer: 0.2,
+  },
+  developer: {
+    targetReserveRatio: 4,
+    spendingMultiplier: 1.1,
+    categoryAdjustments: (b) => { b.veterinary *= 1.2; },
+    baseSpendingPropensity: 0.5,
+    conserveBuffer: 0.5,
+  },
+  "win-now": {
+    targetReserveRatio: 2.5,
+    spendingMultiplier: 1.0,
+    categoryAdjustments: (b) => { b.training *= 1.3; },
+    baseSpendingPropensity: 0.5,
+    categoryPropensity: { training: 0.9 },
+    conserveBuffer: 0.5,
+  },
+  prestige: {
+    targetReserveRatio: 3.5,
+    spendingMultiplier: 1.2,
+    categoryAdjustments: (b) => {
+      b.facilities *= 1.5;
+      b.feed *= 1.2;
+    },
+    baseSpendingPropensity: 0.5,
+    categoryPropensity: { facilities: 0.9 },
+    conserveBuffer: 0.5,
+  },
+  trader: {
+    targetReserveRatio: 2,
+    spendingMultiplier: 1.0,
+    baseSpendingPropensity: 0.5,
+    conserveBuffer: 0.5,
+  },
+  specialist: {
+    targetReserveRatio: 3,
+    spendingMultiplier: 1.0,
+    baseSpendingPropensity: 0.5,
+    conserveBuffer: 0.5,
+  },
+  breeder: {
+    targetReserveRatio: 4,
+    spendingMultiplier: 1.0,
+    baseSpendingPropensity: 0.5,
+    conserveBuffer: 0.5,
+  },
+};
+
+/**
  * Calculate target reserve ratio based on personality.
  *
  * Returns the target reserve ratio (months of expenses to keep in reserve)
- * based on personality. Conservative stables keep 6 months, aggressive 2 months.
+ * based on personality.
  *
  * @param personality - The stable personality
  * @returns Target reserve ratio in months
  */
 function calculateTargetReserveRatio(personality: Stable["personality"]): number {
-  switch (personality) {
-    case "conservative":
-      return 6;
-    case "aggressive":
-      return 2;
-    case "developer":
-      return 4;
-    case "win-now":
-      return 2.5;
-    case "prestige":
-      return 3.5;
-    case "trader":
-      return 2;
-    case "specialist":
-      return 3;
-    case "breeder":
-      return 4;
-    default:
-      return 3;
-  }
+  return UPKEEP_STRATEGIES[personality].targetReserveRatio;
 }
 
 /**
@@ -122,21 +177,15 @@ export function calculateMonthlyExpenseBudget(
   categoryBudgets: Record<string, number>;
   reserveTarget: number;
 } {
+  const strategy = UPKEEP_STRATEGIES[stable.personality];
+  
   // Estimate monthly expenses
   const horseCount = horses.filter((h) => h.stableId === stable.id).length;
   const basePerHorse = 500;
   const totalMonthlyExpenses = horseCount * basePerHorse;
 
   // Personality-based spending multiplier
-  const config = aiState.personalityState;
-  let spendingMultiplier = 1.0;
-
-  if (config.personality === "aggressive") spendingMultiplier = 1.3;
-  if (config.personality === "conservative") spendingMultiplier = 0.8;
-  if (config.personality === "prestige") spendingMultiplier = 1.2;
-  if (config.personality === "developer") spendingMultiplier = 1.1;
-
-  const totalBudget = totalMonthlyExpenses * spendingMultiplier;
+  const totalBudget = totalMonthlyExpenses * strategy.spendingMultiplier;
 
   // Calculate category budgets
   const categoryBudgets: Record<string, number> = {
@@ -148,20 +197,10 @@ export function calculateMonthlyExpenseBudget(
   };
 
   // Personality-based category adjustments
-  if (config.personality === "prestige") {
-    categoryBudgets.facilities *= 1.5;
-    categoryBudgets.feed *= 1.2;
-  }
-  if (config.personality === "developer") {
-    categoryBudgets.veterinary *= 1.2;
-  }
-  if (config.personality === "win-now") {
-    categoryBudgets.training *= 1.3;
-  }
+  strategy.categoryAdjustments?.(categoryBudgets);
 
   // Reserve target
-  const targetReserveRatio = calculateTargetReserveRatio(config.personality);
-  const reserveTarget = totalMonthlyExpenses * targetReserveRatio;
+  const reserveTarget = totalMonthlyExpenses * strategy.targetReserveRatio;
 
   return {
     totalBudget,
@@ -197,16 +236,12 @@ export function shouldSpendOnCategory(
   }
 
   // Personality-based spending propensity
-  const config = aiState.personalityState;
-  let spendingPropensity = 0.5;
-
-  if (config.personality === "aggressive") spendingPropensity = 0.8;
-  if (config.personality === "conservative") spendingPropensity = 0.4;
-  if (config.personality === "prestige" && category === "facilities") spendingPropensity = 0.9;
-  if (config.personality === "win-now" && category === "training") spendingPropensity = 0.9;
+  const strategy = UPKEEP_STRATEGIES[stable.personality];
+  let spendingPropensity =
+    strategy.categoryPropensity?.[category] ?? strategy.baseSpendingPropensity;
 
   // Learning-based adjustment
-  const contextKey = `${config.personality}:${category}`;
+  const contextKey = `${stable.personality}:${category}`;
   const successRate = getSuccessRate(aiState.learningState, "upkeep_spending", contextKey);
   const adaptiveBonus = (successRate - 0.5) * 0.2;
   spendingPropensity += adaptiveBonus;
@@ -274,13 +309,9 @@ export function shouldConserveCash(
   if (currentReserveRatio < targetReserveRatio) return true;
 
   // Personality-based buffer
-  const config = aiState.personalityState;
-  let buffer = 0.5;
+  const strategy = UPKEEP_STRATEGIES[stable.personality];
 
-  if (config.personality === "conservative") buffer = 1.0;
-  if (config.personality === "aggressive") buffer = 0.2;
-
-  return currentReserveRatio < targetReserveRatio + buffer;
+  return currentReserveRatio < targetReserveRatio + strategy.conserveBuffer;
 }
 
 /**

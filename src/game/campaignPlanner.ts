@@ -78,6 +78,45 @@ export type PlannerInput = {
 };
 
 /**
+ * Strategy for building campaign slots based on goal type.
+ */
+interface GoalStrategy {
+  build: (
+    candidateRaces: Race[],
+    preserved: CampaignRaceSlot[],
+    apts: ConfirmedAptitudes,
+    currentDay: number,
+  ) => CampaignRaceSlot[];
+}
+
+/**
+ * Registry of goal strategies indexed by campaign goal type.
+ */
+const CAMPAIGN_GOAL_STRATEGIES: Record<HorseCampaign["goalType"], GoalStrategy> = {
+  chase_g1: {
+    build: (races, preserved, apts, day) => buildGradeChaseSlots(races, "G1", preserved, apts, day),
+  },
+  chase_g2: {
+    build: (races, preserved, apts, day) => buildGradeChaseSlots(races, "G2", preserved, apts, day),
+  },
+  chase_g3: {
+    build: (races, preserved, apts, day) => buildGradeChaseSlots(races, "G3", preserved, apts, day),
+  },
+  maximize_earnings: {
+    build: (races, preserved, apts, day) => buildEarningsSlots(races, preserved, apts, day),
+  },
+  develop_maiden: {
+    build: (races, preserved, _apts, day) => buildMaidenSlots(races, preserved, day),
+  },
+  chase_major_race: {
+    build: (_races, preserved) => preserved, // Handled separately for contender detection
+  },
+  free_run: {
+    build: (_races, preserved) => preserved,
+  },
+};
+
+/**
  * Build a fresh set of CampaignRaceSlots from available races + GRADED_RACES calendar.
  *
  * Existing "entered" or "completed" slots are preserved. Uses AI-driven major race targeting
@@ -157,22 +196,13 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
     }
   }
 
-  // Otherwise select races by goal
-  switch (goalType) {
-    case "chase_g1":
-      return buildGradeChaseSlots(candidateRaces, "G1", preserved, confirmedAptitudes, currentDay);
-    case "chase_g2":
-      return buildGradeChaseSlots(candidateRaces, "G2", preserved, confirmedAptitudes, currentDay);
-    case "chase_g3":
-      return buildGradeChaseSlots(candidateRaces, "G3", preserved, confirmedAptitudes, currentDay);
-    case "maximize_earnings":
-      return buildEarningsSlots(candidateRaces, preserved, confirmedAptitudes, currentDay);
-    case "develop_maiden":
-      return buildMaidenSlots(candidateRaces, preserved, currentDay);
-    case "free_run":
-    default:
-      return preserved;
-  }
+  // Otherwise select races by goal via strategy pattern
+  return CAMPAIGN_GOAL_STRATEGIES[goalType].build(
+    candidateRaces,
+    preserved,
+    confirmedAptitudes,
+    currentDay,
+  );
 }
 
 function buildPrepChain(

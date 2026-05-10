@@ -49,7 +49,7 @@ export class SyndicationHandler implements ImpactHandler {
         if (g1Wins === 0) return; // Only G1 winners can be syndicated
         
         // Check if syndicate already exists
-        if (draft.syndicates?.[stallionId]) return;
+        if (draft.syndicates?.[syndicateId]) return;
         
         // Create syndicate
         if (!draft.syndicates) draft.syndicates = {};
@@ -66,7 +66,7 @@ export class SyndicationHandler implements ImpactHandler {
           lifetimeEarnings: 0,
         };
         
-        draft.syndicates[stallionId] = syndicate;
+        draft.syndicates[syndicateId] = syndicate;
         break;
       }
 

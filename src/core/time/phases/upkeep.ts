@@ -37,7 +37,7 @@ export const upkeepPhase = {
   order: 20,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const playerHorses = state.horses.filter((h) => !h.stableId && h.lifecycleStatus === "active");
+    const playerHorses = state.horses.filter((h) => !h.stableId && (!h.lifecycleStatus || h.lifecycleStatus === "active"));
     const playerHorseCount = playerHorses.length;
     const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 
@@ -104,7 +104,8 @@ export const upkeepPhase = {
     // Pre-calculate counts and staff
     const horseCountsByStable = new Map<string, number>();
     for (const h of state.horses) {
-      if (h.stableId && h.lifecycleStatus === "active") {
+      const isActive = !h.lifecycleStatus || h.lifecycleStatus === "active";
+      if (h.stableId && isActive) {
         horseCountsByStable.set(h.stableId, (horseCountsByStable.get(h.stableId) ?? 0) + 1);
       }
     }

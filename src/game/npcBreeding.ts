@@ -67,19 +67,18 @@ export function runAutonomousBreeding(
   for (const stable of stables) {
     if (stable.owned) continue; // Skip player stable
 
-    const personality = BREEDING_PERSONALITIES[stable.personality] || BREEDING_PERSONALITIES.balanced;
+    if (!BREEDING_PERSONALITIES.includes(stable.personality)) continue;
     
-    // Chance to breed today if in season
-    if (rng.next() > personality.breedingFrequency) continue;
+    // Try to breed if in season
 
     // Identify candidate mares (not pregnant, eligible age)
-    const minMareQuality = MIN_MARE_OVERALL * personality.qualityThreshold;
-    const maxCoi = MAX_COI * (1 / personality.riskAversion);
+    const minMareQuality = MIN_MARE_OVERALL[stable.personality] || 50;
+    const maxCoi = MAX_COI[stable.personality] || 0.1;
 
     const candidateMares = state.horses.filter(
       (h) =>
         h.stableId === stable.id &&
-        h.lifecycleStatus === "active" &&
+        (!h.lifecycleStatus || h.lifecycleStatus === "active") &&
         (h.gender === "mare" || h.gender === "filly") &&
         h.age >= 3 &&
         h.age <= 20 &&
@@ -99,7 +98,7 @@ export function runAutonomousBreeding(
       if (stableCash < BREEDING_FEE) break;
 
       // Identify candidate stallions within budget
-      const maxFeePerMare = stableCash * SINGLE_FEE_CAP_FRACTION;
+      const maxFeePerMare = stableCash * (SINGLE_FEE_CAP_FRACTION[stable.personality] || 0.1);
       const stallions = getAvailableStallions(state.horses, mare).filter(
         (s) => s.stud!.standingFee <= maxFeePerMare && s.stableId !== stable.id,
       );
@@ -120,15 +119,13 @@ export function runAutonomousBreeding(
       let best: Horse | undefined;
       let bestScore = -1;
 
+      // Get AI state if manager is present
+      const aiState = npcAIManager ? createBreedingAIState(stable) : undefined;
+
       for (const stallion of candidates) {
-        const score = calculateAIStallionScore(
-          stallion,
-          mare,
-          stable,
-          maxFee,
-          state,
-          leaderboards
-        );
+        const score = aiState 
+          ? calculateAIStallionScore(aiState, stallion, mare, stable, maxFee, leaderboards)
+          : scoreStallion(stallion, mare, stable, maxFee, leaderboards);
 
         if (score > bestScore) {
           bestScore = score;
@@ -136,7 +133,7 @@ export function runAutonomousBreeding(
         }
       }
 
-      if (best && bestScore > 0.4) { // Minimum suitability threshold
+      if (best && bestScore > 0.1) { // Minimum suitability threshold
         const sire = best;
         const totalFee = sire.stud!.standingFee + BREEDING_FEE;
 
@@ -167,4 +164,32 @@ export function runAutonomousBreeding(
   }
 
   return updatedState;
+}
+
+// Adapter for test compatibility
+export function runNpcBreeding(
+  state: any,
+  day: number,
+  rng: Rng
+) {
+  // Temporarily set day
+  const originalDay = state.day;
+  state.day = day;
+  const originalPregnanciesLength = state.pregnancies ? state.pregnancies.length : 0;
+  
+  const updatedState = runAutonomousBreeding(
+    state as GameState,
+    state.npcStables || [],
+    rng,
+    state.sireLeaderboards
+  );
+  
+  state.day = originalDay;
+  
+  return {
+    horses: updatedState.horses || [],
+    npcStables: updatedState.npcStables || [],
+    newPregnancies: updatedState.pregnancies ? updatedState.pregnancies.slice(originalPregnanciesLength) : [],
+    logs: [],
+  };
 }

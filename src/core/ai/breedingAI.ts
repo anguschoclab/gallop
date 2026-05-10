@@ -13,6 +13,7 @@ import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
 import { scoreStallion } from "@/core/breeding/strategy";
+import { calculateOverallRating } from "@/core/horse/stats";
 import { runBreedingSimulation } from "@/core/genetics/breedingSimulator";
 import { cachedSimulation } from "@/core/genetics/genotypeCache";
 import { getArchetypeById, getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";

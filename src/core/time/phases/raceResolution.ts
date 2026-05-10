@@ -48,7 +48,7 @@ export const raceResolutionPhase: PipelinePhase = {
 
     // PRE-INDEX: Create maps for O(1) lookups during resolution
     const horseMap = new Map(state.horses.map(h => [h.id, h]));
-    const npcStableMap = new Map(state.npcStables.map(s => [s.id, s]));
+    const npcStableMap = new Map((state.npcStables || []).map(s => [s.id, s]));
     const jockeyMap = new Map((state.jockeys || []).map(j => [j.id, j]));
 
     let resolvedCount = 0;

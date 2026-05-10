@@ -63,7 +63,8 @@ export function checkHallOfFameInduction(
   // 2. OR at least $1,000,000 in earnings
   const stats = getCareerStats(horse);
   const g1Wins = stats.g1Wins;
-  const isInducted = g1Wins >= 3 || stats.earnings >= 1000000;
+  const earnings = Math.max(horse.lifetimeEarnings || 0, stats.earnings);
+  const isInducted = g1Wins >= 3 || earnings >= 1000000;
 
   if (isInducted) {
     return {
@@ -73,11 +74,18 @@ export function checkHallOfFameInduction(
       inductionYear: Math.floor((day - 1) / 365) + 1,
       achievements: [
         g1Wins >= 3 ? `${g1Wins} Grade 1 Victories` : "",
-        stats.earnings >= 1000000 ? `$${(stats.earnings / 1000000).toFixed(1)}M in Lifetime Earnings` : ""
+        earnings >= 1000000 ? `$${(earnings / 1000000).toFixed(1)}M in Lifetime Earnings` : ""
       ].filter(Boolean),
-      lifetimeEarnings: stats.earnings,
-      lifetimeStarts: stats.starts,
-      lifetimeWins: stats.wins,
+      lifetimeEarnings: earnings,
+      lifetimeStarts: Math.max(horse.careerStarts || 0, stats.starts),
+      lifetimeWins: Math.max(horse.careerWins || 0, stats.wins),
+      g1Wins: stats.g1Wins,
+      bestBeyer: stats.bestBeyer,
+      silk: horse.silk,
+      pedigree: {
+        sireName: horse.sireName,
+        damName: horse.damName,
+      },
     };
   }
 

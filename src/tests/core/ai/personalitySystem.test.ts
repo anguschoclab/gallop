@@ -37,8 +37,8 @@ describe("getPersonalityAIState", () => {
       expect(state.competitiveAwareness).toBeGreaterThan(0);
       expect(state.conservatism).toBeGreaterThan(0);
       expect(state.innovation).toBeGreaterThan(0);
-      expect(state.outcomes).toEqual([]);
-      expect(state.successRates).toBeInstanceOf(Map);
+      expect(state.learningState.outcomes).toEqual([]);
+      expect(state.learningState.successRates).toBeInstanceOf(Object);
       expect(state.currentStrategy).toBe("default");
       expect(state.strategyConfidence).toBe(0.5);
       expect(state.lastStrategyChange).toBe(0);
@@ -191,11 +191,11 @@ describe("recordOutcome", () => {
       timestamp,
     );
 
-    expect(updatedState.outcomes).toHaveLength(1);
-    expect(updatedState.outcomes[0].decisionType).toBe("race_entry");
-    expect(updatedState.outcomes[0].success).toBe(true);
-    expect(updatedState.outcomes[0].value).toBe(1000);
-    expect(updatedState.outcomes[0].timestamp).toBe(timestamp);
+    expect(updatedState.learningState.outcomes).toHaveLength(1);
+    expect(updatedState.learningState.outcomes[0].decisionType).toBe("race_entry");
+    expect(updatedState.learningState.outcomes[0].success).toBe(true);
+    expect(updatedState.learningState.outcomes[0].value).toBe(1000);
+    expect(updatedState.learningState.outcomes[0].timestamp).toBe(timestamp);
   });
 
   it("should trim history to memory depth", () => {
@@ -217,7 +217,7 @@ describe("recordOutcome", () => {
       );
     }
 
-    expect(updatedState.outcomes).toHaveLength(5);
+    expect(updatedState.learningState.outcomes).toHaveLength(5);
   });
 
   it("should update success rates", () => {
@@ -237,8 +237,8 @@ describe("recordOutcome", () => {
       );
     }
 
-    const successRate = updatedState.successRates.get("breeding:context:test");
-    expect(successRate).toBe(0.6);
+    const successRate = updatedState.learningState.successRates["breeding:context:test"];
+    expect(successRate?.rate).toBe(0.6);
   });
 
   it("should adapt strategy when success rate is low", () => {

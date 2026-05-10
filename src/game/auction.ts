@@ -74,6 +74,74 @@ export function commissionAmount(hammerPrice: number): number {
  * @param horseMap - Map of horse IDs to horses
  * @returns Ceiling bid amount
  */
+interface ValuationContext {
+  horse: Horse;
+  stable: Stable;
+  saleKind: AuctionSaleKind;
+  base: number;
+  isYearling: boolean;
+  isWeanling: boolean;
+  isFilly: boolean;
+  is2yoTraining: boolean;
+  isBroodmare: boolean;
+  isRacingAge: boolean;
+}
+
+const VALUATION_STRATEGIES: Record<Stable["personality"], (ctx: ValuationContext) => number> = {
+  aggressive: (ctx) => {
+    let mod = 1.3;
+    if (ctx.is2yoTraining) mod *= 1.25;
+    return mod;
+  },
+  conservative: () => 0.75,
+  developer: (ctx) => {
+    let mod = ctx.isYearling ? 1.4 : ctx.isWeanling ? 1.2 : 0.8;
+    if (ctx.is2yoTraining) mod *= 0.9;
+    if (ctx.isBroodmare) mod *= 1.1;
+    if (ctx.isRacingAge) mod *= 0.7;
+    return mod;
+  },
+  "win-now": (ctx) => {
+    let mod = ctx.isWeanling ? 0.6 : ctx.isYearling ? 0.9 : 1.0;
+    if (ctx.is2yoTraining) mod *= 1.25;
+    if (ctx.isBroodmare) mod *= 0.4;
+    if (ctx.isRacingAge) mod *= 1.3;
+    return mod;
+  },
+  specialist: (ctx) => {
+    const distanceMatch =
+      ctx.stable.preferredDistance !== undefined &&
+      Math.abs((ctx.stable.preferredDistance ?? 1600) - 1600) < 400;
+    return distanceMatch ? 1.5 : 0.5;
+  },
+  breeder: (ctx) => {
+    let mod = ctx.isFilly ? 1.6 : 0.7;
+    if (ctx.horse.damName && ctx.horse.blueHenStatus?.isBlueHen) mod *= 1.2;
+    if (ctx.isBroodmare) mod *= 1.5;
+    return mod;
+  },
+  trader: () => 0.85,
+  prestige: (ctx) => {
+    let mod = 1.2 + ctx.horse.fame / 200;
+    if (ctx.base < 5000) mod = 0;
+    if (ctx.isRacingAge) mod *= 1.3;
+    return mod;
+  },
+};
+
+/**
+ * Calculate how much a stable values a given auction lot.
+ *
+ * Returns a dollar figure representing their ceiling bid. Considers pedigree multiplier,
+ * stable personality, sale kind, horse attributes, and various premiums.
+ *
+ * @param horse - The horse being valued
+ * @param stable - The stable making the valuation
+ * @param saleKind - Type of auction sale
+ * @param allHorses - All horses in the game (for pedigree calculations)
+ * @param horseMap - Map of horse IDs to horses
+ * @returns Ceiling bid amount
+ */
 export function calculateLotValuation(
   horse: Horse,
   stable: Stable,
@@ -81,9 +149,6 @@ export function calculateLotValuation(
   allHorses?: readonly Horse[],
   horseMap?: Map<string, Horse>,
 ): number {
-  // Pedigree multiplier raises the ceiling for foals by elite stallions out
-  // of blue-hen mares. Falls back to 1× when allHorses isn't passed (older
-  // call sites still work; new sites pass the live horses[] array).
   const pedigreeMul = allHorses ? pedigreeMultiplier(horse, { horses: allHorses }, horseMap) : 1;
   const base = Math.round(calculateNpcHorseValue(horse, stable.tier) * pedigreeMul);
 
@@ -96,43 +161,23 @@ export function calculateLotValuation(
   const isBroodmare = saleKind === "broodmare";
   const isRacingAge = saleKind === "racing_age";
 
-  let mod = 1.0;
+  const ctx: ValuationContext = {
+    horse,
+    stable,
+    saleKind,
+    base,
+    isYearling,
+    isWeanling,
+    isFilly,
+    is2yoTraining,
+    isBroodmare,
+    isRacingAge,
+  };
 
-  switch (p) {
-    case "aggressive":
-      mod = 1.3;
-      break;
-    case "conservative":
-      mod = 0.75;
-      break;
-    case "developer":
-      mod = isYearling ? 1.4 : isWeanling ? 1.2 : 0.8;
-      break;
-    case "win-now":
-      mod = isWeanling ? 0.6 : isYearling ? 0.9 : 1.0;
-      break;
-    case "specialist": {
-      const distanceMatch =
-        stable.preferredDistance !== undefined &&
-        Math.abs((stable.preferredDistance ?? 1600) - 1600) < 400;
-      mod = distanceMatch ? 1.5 : 0.5;
-      break;
-    }
-    case "breeder":
-      mod = isFilly ? 1.6 : 0.7;
-      // Blue hen dam premium
-      if (horse.damName && horse.blueHenStatus?.isBlueHen) mod *= 1.2;
-      break;
-    case "trader":
-      mod = 0.85;
-      break;
-    case "prestige":
-      mod = 1.2 + horse.fame / 200;
-      if (base < 5000) mod = 0; // skip cheap lots
-      break;
-  }
+  const strategy = VALUATION_STRATEGIES[p] || (() => 1.0);
+  let mod = strategy(ctx);
 
-  // Apply conformation and temperament premiums (both affect resale/performance)
+  // Common premiums applied to all personalities
   if (horse.conformation === "excellent") mod *= 1.1;
   if (horse.temperament === "excellent") mod *= 1.05;
 
@@ -141,22 +186,14 @@ export function calculateLotValuation(
     mod *= 1 + (cfg.youthPreference - 0.5) * 0.3;
   }
 
-  // Sale-kind specific premiums layered on top of personality mod
-  if (is2yoTraining) {
-    // Win-now and aggressive love a fast-breezing 2YO
-    if (p === "win-now" || p === "aggressive") mod *= 1.25;
-    if (p === "developer") mod *= 0.9; // they wanted them younger
+  // Broodmare specific common premium
+  if (isBroodmare && horse.blueHenStatus?.isBlueHen) {
+    mod *= 1.3;
   }
-  if (isBroodmare) {
-    if (p === "breeder") mod *= 1.5;
-    if (p === "developer") mod *= 1.1;
-    if (p === "win-now") mod *= 0.4;
-    if (horse.blueHenStatus?.isBlueHen) mod *= 1.3;
-  }
-  if (isRacingAge) {
-    if (p === "win-now" || p === "prestige") mod *= 1.3;
-    if (p === "developer") mod *= 0.7;
-    if (horse.fame > 30) mod *= 1.0 + horse.fame / 200;
+
+  // Racing age fame premium
+  if (isRacingAge && horse.fame > 30) {
+    mod *= 1.0 + horse.fame / 200;
   }
 
   return Math.max(0, Math.round(base * mod));
@@ -365,6 +402,122 @@ export function generateBreezeSeconds(horse: Horse, rng: Rng): number {
  * @param rng - Random number generator
  * @returns Object with consign array, freshCount, and reserveMultiplier
  */
+interface ConsignmentContext {
+  stable: Stable;
+  kind: AuctionSaleKind;
+  allHorses: readonly Horse[];
+  rng: Rng;
+  owned: Horse[];
+  fillies: Horse[];
+  colts: Horse[];
+  unraced: Horse[];
+  fading: Horse[];
+  top: Horse[];
+}
+
+type ConsignmentPolicyResult = {
+  consign: Horse[];
+  freshCount: number;
+  reserveMultiplier: number;
+};
+
+const CONSIGNMENT_STRATEGIES: Record<
+  Stable["personality"],
+  (ctx: ConsignmentContext) => ConsignmentPolicyResult
+> = {
+  aggressive: (ctx) => ({
+    consign: ctx.owned.filter((h) => h.age === 0).slice(0, 3),
+    freshCount:
+      ctx.kind === "weanling" || ctx.kind === "weanling_south"
+        ? ctx.rng.int(1, 3)
+        : ctx.rng.int(0, 2),
+    reserveMultiplier: 0.5,
+  }),
+  conservative: (ctx) => ({
+    consign: ctx.owned.length > 8 ? ctx.owned.slice(8, 10) : [],
+    freshCount: ctx.rng.int(0, 1),
+    reserveMultiplier: 0.7,
+  }),
+  developer: (ctx) => ({
+    consign:
+      ctx.kind === "yearling" || ctx.kind === "yearling_south"
+        ? ctx.owned.slice(0, 4)
+        : ctx.kind === "weanling" || ctx.kind === "weanling_south"
+          ? ctx.owned.slice(0, 2)
+          : ctx.owned.slice(0, 1),
+    freshCount: ctx.rng.int(1, 3),
+    reserveMultiplier: 0.5,
+  }),
+  "win-now": (ctx) => {
+    let consign: Horse[] = [];
+    if (ctx.kind === "broodmare")
+      consign = ctx.fading.filter((h) => h.gender === "mare").slice(0, 3);
+    else if (ctx.kind === "racing_age")
+      consign = ctx.fading.filter((h) => h.gender !== "mare").slice(0, 3);
+    else if (ctx.kind === "2yo_training") consign = ctx.unraced.filter((h) => h.age === 2).slice(0, 3);
+    else if (ctx.kind === "mixed") consign = ctx.fading.slice(0, 2);
+
+    return {
+      consign,
+      reserveMultiplier: 0.4,
+      freshCount: ctx.rng.int(0, 2),
+    };
+  },
+  specialist: (ctx) => {
+    const offNiche = ctx.owned.filter((h) => {
+      if (
+        ctx.stable.preferredDistance &&
+        Math.abs(h.distanceAptitude - ctx.stable.preferredDistance) > 600
+      )
+        return true;
+      if (ctx.stable.preferredSurface) {
+        const apts = h.surfaceAptitude;
+        const best = (Object.entries(apts) as [keyof typeof apts, number][]).sort(
+          (a, b) => b[1] - a[1],
+        )[0];
+        if (best[0] !== ctx.stable.preferredSurface) return true;
+      }
+      return false;
+    });
+    return {
+      consign: offNiche.slice(0, 3),
+      freshCount: ctx.rng.int(0, 2),
+      reserveMultiplier: 0.5,
+    };
+  },
+  breeder: (ctx) => ({
+    consign:
+      ctx.kind === "broodmare"
+        ? ctx.fading.filter((h) => h.gender === "mare").slice(0, 4)
+        : ctx.colts.slice(0, 4),
+    freshCount: ctx.rng.int(2, 4),
+    reserveMultiplier: 0.5,
+  }),
+  trader: (ctx) => ({
+    consign: ctx.owned.slice(0, 5),
+    freshCount: ctx.rng.int(1, 3),
+    reserveMultiplier: 0.55,
+  }),
+  prestige: (ctx) => ({
+    consign: ctx.top.filter((h) => h.fame >= 25 || h.potential >= 85).slice(0, 2),
+    freshCount: ctx.rng.int(0, 1),
+    reserveMultiplier: 0.85,
+  }),
+};
+
+/**
+ * High-level consignment policy for NPC stables.
+ *
+ * Each personality type decides what horses to list based on age, gender, and
+ * performance. Returns an object describing the horses to consign from their
+ * own roster + how many "fresh" NPC horses to generate for that sale.
+ *
+ * @param stable - The NPC stable
+ * @param kind - Type of auction sale
+ * @param allHorses - All horses in the game
+ * @param rng - Random number generator
+ * @returns Object with consign array, freshCount, and reserveMultiplier
+ */
 export function personalityConsignmentPolicy(
   stable: Stable,
   kind: AuctionSaleKind,
@@ -374,98 +527,38 @@ export function personalityConsignmentPolicy(
   const owned = allHorses.filter((h) => h.stableId === stable.id && isLotEligible(h, kind));
   const p = stable.personality;
 
-  // Default reserve floor (50% of valuation) — overridden below.
-  let reserveMultiplier = 0.5;
-
   // Helper picks
   const fillies = owned.filter((h) => isFemaleHorse(h.gender));
-  const colts = owned.filter(
-    (h) => isMaleHorse(h.gender) || h.gender === "gelding",
-  );
+  const colts = owned.filter((h) => isMaleHorse(h.gender) || h.gender === "gelding");
   const unraced = owned.filter((h) => h.careerStarts === 0);
   const fading = owned.filter((h) => h.age >= h.peakAge + 2);
   const top = [...owned].sort((a, b) => b.fame + b.potential - (a.fame + a.potential));
 
-  let consign: Horse[] = [];
-  let freshCount = 0;
+  const ctx: ConsignmentContext = {
+    stable,
+    kind,
+    allHorses,
+    rng,
+    owned,
+    fillies,
+    colts,
+    unraced,
+    fading,
+    top,
+  };
 
-  switch (p) {
-    case "aggressive":
-      // Sells weanlings & off-niche stock to fund yearling + racing buys.
-      consign = owned.filter((h) => h.age === 0).slice(0, 3);
-      freshCount = kind === "weanling" || kind === "weanling_south" ? rng.int(1, 3) : rng.int(0, 2);
-      break;
-    case "conservative":
-      // Rare consignor. Only excess lots, with high reserves.
-      consign = owned.length > 8 ? owned.slice(8, 10) : [];
-      freshCount = rng.int(0, 1);
-      reserveMultiplier = 0.7;
-      break;
-    case "developer":
-      // Consigns yearlings they've prepped (existing core behavior).
-      consign =
-        kind === "yearling" || kind === "yearling_south"
-          ? owned.slice(0, 4)
-          : kind === "weanling" || kind === "weanling_south"
-            ? owned.slice(0, 2)
-            : owned.slice(0, 1);
-      freshCount = rng.int(1, 3);
-      break;
-    case "win-now":
-      // Dumps unraced 2YOs and fading older horses; doesn't really consign foals.
-      if (kind === "broodmare") consign = fading.filter((h) => h.gender === "mare").slice(0, 3);
-      else if (kind === "racing_age")
-        consign = fading.filter((h) => h.gender !== "mare").slice(0, 3);
-      else if (kind === "2yo_training") consign = unraced.filter((h) => h.age === 2).slice(0, 3);
-      else if (kind === "mixed") consign = fading.slice(0, 2);
-      reserveMultiplier = 0.4; // wants to clear
-      freshCount = rng.int(0, 2);
-      break;
-    case "specialist": {
-      // Consigns horses outside their distance/surface niche.
-      const offNiche = owned.filter((h) => {
-        if (
-          stable.preferredDistance &&
-          Math.abs(h.distanceAptitude - stable.preferredDistance) > 600
-        )
-          return true;
-        if (stable.preferredSurface) {
-          const apts = h.surfaceAptitude;
-          const best = (Object.entries(apts) as [keyof typeof apts, number][]).sort(
-            (a, b) => b[1] - a[1],
-          )[0];
-          if (best[0] !== stable.preferredSurface) return true;
-        }
-        return false;
-      });
-      consign = offNiche.slice(0, 3);
-      freshCount = rng.int(0, 2);
-      break;
-    }
-    case "breeder":
-      // Consigns colts (keeps fillies as future broodmares); broodmares past peak.
-      if (kind === "broodmare") consign = fading.filter((h) => h.gender === "mare").slice(0, 4);
-      else consign = colts.slice(0, 4);
-      freshCount = rng.int(2, 4);
-      break;
-    case "trader":
-      // Flips anything past margin — generalist consignor.
-      consign = owned.slice(0, 5);
-      freshCount = rng.int(1, 3);
-      reserveMultiplier = 0.55;
-      break;
-    case "prestige":
-      // Selective. Only lists genuine headliners — and asks a king's ransom.
-      consign = top.filter((h) => h.fame >= 25 || h.potential >= 85).slice(0, 2);
-      freshCount = rng.int(0, 1);
-      reserveMultiplier = 0.85;
-      break;
-  }
+  const strategy = CONSIGNMENT_STRATEGIES[p] || (() => ({
+    consign: [],
+    freshCount: 0,
+    reserveMultiplier: 0.5,
+  }));
+
+  const result = strategy(ctx);
 
   // Filter out anything already consigned to a different sale.
-  consign = consign.filter((h) => !h.consignedSaleId);
-  // Filter out broodmares the consignor wants to keep covering this season — too noisy without state.
-  return { consign, freshCount, reserveMultiplier };
+  result.consign = result.consign.filter((h) => !h.consignedSaleId);
+
+  return result;
 }
 
 /**

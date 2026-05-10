@@ -100,48 +100,27 @@ export function createCoreSlice(
     newDay: number,
   ) => {
     const s = get();
-    set({
+
+    // Keys that are managed via special logic instead of a direct copy from worker state
+    const overrides = {
       day: newDay,
-      cash: finalState.cash,
-      horses: finalState.horses,
-      market: finalState.market,
-      races: finalState.races,
+      pendingIntents: [],
       trainingUsed: {},
-      pregnancies: finalState.pregnancies,
-      calibratedPars: finalState.calibratedPars,
-      lastCalibrationDay: finalState.lastCalibrationDay,
-      npcStables: finalState.npcStables,
-      scoutReports: finalState.scoutReports,
-      auctions: finalState.auctions,
-      awards: finalState.awards,
-      lastAwardYear: finalState.lastAwardYear,
-      pendingAwardCeremonies: finalState.pendingAwardCeremonies,
-      currentCeremonyIndex: finalState.currentCeremonyIndex,
-      industryMeanEarnings: finalState.industryMeanEarnings,
-      industryEarningsUpdatedDay: finalState.industryEarningsUpdatedDay,
-      sireLeaderboards: finalState.sireLeaderboards,
-      sireTrendHistory: finalState.sireTrendHistory,
-      leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
-      trackRecords: finalState.trackRecords,
-      horseLeaderboards: finalState.horseLeaderboards,
-      jockeys: finalState.jockeys,
-      campaigns: finalState.campaigns,
-      expenses: finalState.expenses,
-      transactions: finalState.transactions,
-      reputation: finalState.reputation,
-      transports: finalState.transports,
-      hallOfFame: finalState.hallOfFame,
-      npcAIManager: finalState.npcAIManager,
-      privateSaleOffers: finalState.privateSaleOffers,
-      claims: finalState.claims,
-      archive: finalState.archive,
-      pendingIntents: [], // Clear pending intents after processing
       log: [
         ...newLogs,
         { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` },
         ...s.log,
-      ].slice(0, 50),
-    });
+      ].slice(0, 1000), // Persist more history, but cap it
+    };
+
+    // Build the update by merging finalState and overrides
+    const update: any = { ...finalState, ...overrides };
+
+    // Explicitly remove keys that shouldn't be in the store (e.g. worker-only metadata)
+    delete update.lastFrameTime;
+    delete update.isAdvancing;
+
+    set(update);
   };
 
   return {

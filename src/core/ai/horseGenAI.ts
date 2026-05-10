@@ -50,6 +50,135 @@ export interface RosterComposition {
 }
 
 /**
+ * Configuration for personality-driven horse generation strategy.
+ */
+interface HorseGenStrategy {
+  targetHorseCount: number;
+  targetQualityLevel: number;
+  ageDistribution: (targetCount: number) => Record<number, number>;
+  agePriorityBonus: (age: number) => number;
+  qualityPriorityBonus: (rating: number) => number;
+  generationThreshold: (age: number) => number;
+}
+
+/**
+ * Registry of horse generation strategies indexed by stable personality.
+ */
+const HORSE_GEN_STRATEGIES: Record<Stable["personality"], HorseGenStrategy> = {
+  prestige: {
+    targetHorseCount: 15,
+    targetQualityLevel: 75,
+    ageDistribution: (target) => ({
+      2: target * 0.3,
+      3: target * 0.3,
+      4: target * 0.2,
+      5: target * 0.1,
+      6: target * 0.1,
+    }),
+    agePriorityBonus: (age) => (age <= 3 ? 15 : 0),
+    qualityPriorityBonus: (rating) => (rating > 75 ? 20 : 0),
+    generationThreshold: (age) => (age <= 3 ? 20 : 30),
+  },
+  "win-now": {
+    targetHorseCount: 10,
+    targetQualityLevel: 70,
+    ageDistribution: (target) => ({
+      3: target * 0.2,
+      4: target * 0.4,
+      5: target * 0.3,
+      6: target * 0.1,
+    }),
+    agePriorityBonus: (age) => (age >= 3 && age <= 5 ? 15 : 0),
+    qualityPriorityBonus: (rating) => (rating > 70 ? 15 : 0),
+    generationThreshold: (age) => (age >= 4 ? 25 : 30),
+  },
+  conservative: {
+    targetHorseCount: 10,
+    targetQualityLevel: 60,
+    ageDistribution: (target) => ({
+      2: target * 0.2,
+      3: target * 0.25,
+      4: target * 0.25,
+      5: target * 0.2,
+      6: target * 0.1,
+    }),
+    agePriorityBonus: () => 0,
+    qualityPriorityBonus: () => 0,
+    generationThreshold: () => 40,
+  },
+  aggressive: {
+    targetHorseCount: 10,
+    targetQualityLevel: 65,
+    ageDistribution: (target) => ({
+      2: target * 0.25,
+      3: target * 0.25,
+      4: target * 0.25,
+      5: target * 0.15,
+      6: target * 0.1,
+    }),
+    agePriorityBonus: () => 0,
+    qualityPriorityBonus: () => 0,
+    generationThreshold: () => 30,
+  },
+  developer: {
+    targetHorseCount: 10,
+    targetQualityLevel: 60,
+    ageDistribution: (target) => ({
+      2: target * 0.25,
+      3: target * 0.25,
+      4: target * 0.25,
+      5: target * 0.15,
+      6: target * 0.1,
+    }),
+    agePriorityBonus: () => 0,
+    qualityPriorityBonus: () => 0,
+    generationThreshold: () => 30,
+  },
+  trader: {
+    targetHorseCount: 10,
+    targetQualityLevel: 60,
+    ageDistribution: (target) => ({
+      2: target * 0.25,
+      3: target * 0.25,
+      4: target * 0.25,
+      5: target * 0.15,
+      6: target * 0.1,
+    }),
+    agePriorityBonus: () => 0,
+    qualityPriorityBonus: () => 0,
+    generationThreshold: () => 30,
+  },
+  specialist: {
+    targetHorseCount: 10,
+    targetQualityLevel: 60,
+    ageDistribution: (target) => ({
+      2: target * 0.25,
+      3: target * 0.25,
+      4: target * 0.25,
+      5: target * 0.15,
+      6: target * 0.1,
+    }),
+    agePriorityBonus: () => 0,
+    qualityPriorityBonus: () => 0,
+    generationThreshold: () => 30,
+  },
+  breeder: {
+    targetHorseCount: 10,
+    targetQualityLevel: 60,
+    ageDistribution: (target) => ({
+      2: target * 0.25,
+      3: target * 0.25,
+      4: target * 0.25,
+      5: target * 0.15,
+      6: target * 0.1,
+    }),
+    agePriorityBonus: () => 0,
+    qualityPriorityBonus: () => 0,
+    generationThreshold: () => 30,
+  },
+};
+
+/**
  * Create AI state for horse generation decisions.
  *
  * Initializes the AI state with personality state, learning state,
@@ -59,18 +188,18 @@ export interface RosterComposition {
  * @returns Initialized horse generation AI state
  */
 export function createHorseGenAIState(stable: Stable): HorseGenAIState {
-  const targetHorseCount = stable.personality === "prestige" ? 15 : 10;
+  const strategy = HORSE_GEN_STRATEGIES[stable.personality];
 
   return {
     personalityState: getPersonalityAIState(stable.personality),
     learningState: createLearningState(),
     generationHistory: [],
     rosterComposition: {
-      targetAgeDistribution: calculateTargetAgeDistribution(stable.personality, targetHorseCount),
+      targetAgeDistribution: strategy.ageDistribution(strategy.targetHorseCount),
       currentAgeDistribution: {},
-      targetQualityLevel: calculateTargetQualityLevel(stable.personality),
+      targetQualityLevel: strategy.targetQualityLevel,
       currentQualityLevel: 50,
-      targetHorseCount,
+      targetHorseCount: strategy.targetHorseCount,
       currentHorseCount: 0,
     },
   };
@@ -80,8 +209,6 @@ export function createHorseGenAIState(stable: Stable): HorseGenAIState {
  * Calculate target age distribution based on personality.
  *
  * Returns a distribution of horses by age based on personality preferences.
- * Prestige stables favor younger horses (2-3), win-now focuses on 3-5,
- * conservative spreads evenly across 2-6.
  *
  * @param personality - The stable personality
  * @param targetCount - Target total horse count
@@ -91,62 +218,19 @@ function calculateTargetAgeDistribution(
   personality: Stable["personality"],
   targetCount: number,
 ): Record<number, number> {
-  const distribution: Record<number, number> = {};
-
-  switch (personality) {
-    case "prestige":
-      distribution[2] = targetCount * 0.3;
-      distribution[3] = targetCount * 0.3;
-      distribution[4] = targetCount * 0.2;
-      distribution[5] = targetCount * 0.1;
-      distribution[6] = targetCount * 0.1;
-      break;
-    case "win-now":
-      distribution[3] = targetCount * 0.2;
-      distribution[4] = targetCount * 0.4;
-      distribution[5] = targetCount * 0.3;
-      distribution[6] = targetCount * 0.1;
-      break;
-    case "conservative":
-      distribution[2] = targetCount * 0.2;
-      distribution[3] = targetCount * 0.25;
-      distribution[4] = targetCount * 0.25;
-      distribution[5] = targetCount * 0.2;
-      distribution[6] = targetCount * 0.1;
-      break;
-    default:
-      distribution[2] = targetCount * 0.25;
-      distribution[3] = targetCount * 0.25;
-      distribution[4] = targetCount * 0.25;
-      distribution[5] = targetCount * 0.15;
-      distribution[6] = targetCount * 0.1;
-  }
-
-  return distribution;
+  return HORSE_GEN_STRATEGIES[personality].ageDistribution(targetCount);
 }
 
 /**
  * Calculate target quality level based on personality.
  *
  * Returns the target overall rating for horses based on personality.
- * Prestige stables target 75, win-now targets 70, conservative targets 60.
  *
  * @param personality - The stable personality
  * @returns Target quality level (rating 0-100)
  */
 function calculateTargetQualityLevel(personality: Stable["personality"]): number {
-  switch (personality) {
-    case "prestige":
-      return 75;
-    case "win-now":
-      return 70;
-    case "conservative":
-      return 60;
-    case "aggressive":
-      return 65;
-    default:
-      return 60;
-  }
+  return HORSE_GEN_STRATEGIES[personality].targetQualityLevel;
 }
 
 /**
@@ -172,9 +256,8 @@ export function calculateAgeGenerationPriority(
   const deficit = targetCount - currentCount;
   let priority = Math.max(0, deficit * 20);
 
-  const config = aiState.personalityState;
-  if (config.personality === "prestige" && age <= 3) priority += 15;
-  if (config.personality === "win-now" && age >= 3 && age <= 5) priority += 15;
+  const strategy = HORSE_GEN_STRATEGIES[stable.personality];
+  priority += strategy.agePriorityBonus(age);
 
   return Math.min(100, priority);
 }
@@ -206,9 +289,8 @@ export function calculateQualityGenerationPriority(
     priority += (horseRating / targetQuality) * 30;
   }
 
-  const config = aiState.personalityState;
-  if (config.personality === "prestige" && horseRating > 75) priority += 20;
-  if (config.personality === "win-now" && horseRating > 70) priority += 15;
+  const strategy = HORSE_GEN_STRATEGIES[stable.personality];
+  priority += strategy.qualityPriorityBonus(horseRating);
 
   return Math.min(100, priority);
 }
@@ -236,12 +318,8 @@ export function shouldGenerateHorseOfAge(
     return false;
   }
 
-  const config = aiState.personalityState;
-  let threshold = 30;
-
-  if (config.personality === "prestige" && age <= 3) threshold = 20;
-  if (config.personality === "win-now" && age >= 4) threshold = 25;
-  if (config.personality === "conservative") threshold = 40;
+  const strategy = HORSE_GEN_STRATEGIES[stable.personality];
+  const threshold = strategy.generationThreshold(age);
 
   return priority > threshold;
 }
