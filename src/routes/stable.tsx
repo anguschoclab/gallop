@@ -1,10 +1,5 @@
-<<<<<<< Updated upstream
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-=======
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
->>>>>>> Stashed changes
+import { useMemo, useState } from "react";
 import { useHorses } from "@/game/hooks/useCoreState";
 import { useAwards, useNpcStables } from "@/game/hooks/useSystemsState";
 import { HorseCard } from "@/components/HorseCard";
@@ -12,6 +7,7 @@ import { TrophyCase } from "@/components/awards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -22,54 +18,29 @@ import {
 } from "@/components/ui/select";
 import { NumericValue } from "@/components/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
-<<<<<<< Updated upstream
-import { Building2, Users, ChevronRight, Search, Activity, Heart, Tag } from "lucide-react";
+import { Building2, Users, ChevronRight, Search, Activity, Heart, Tag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
 const stableSearchSchema = z.object({
-  status: fallback(z.enum(["active", "retired", "auctioned", "all"]), "active").default("active"),
   tab: fallback(z.enum(["roster", "rivals"]), "roster").default("roster"),
+  status: fallback(z.enum(["active", "retired", "auctioned", "all"]), "active").default("active"),
+  rivalQ: fallback(z.string(), "").default(""),
+  rivalTier: fallback(z.string(), "all").default("all"),
 });
-=======
-import { Building2, Users, Search, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-
-type StableSearch = {
-  tab: "roster" | "rivals";
-  rivalQ: string;
-  rivalTier: string;
-};
->>>>>>> Stashed changes
 
 export const Route = createFileRoute("/stable")({
-  validateSearch: (search: Record<string, unknown>): StableSearch => ({
-    tab: (search.tab as "roster" | "rivals") || "roster",
-    rivalQ: (search.rivalQ as string) || "",
-    rivalTier: (search.rivalTier as string) || "all",
-  }),
-  component: StablePage,
   validateSearch: zodValidator(stableSearchSchema),
+  component: StablePage,
 });
 
 function StablePage() {
-  const { tab, rivalQ, rivalTier } = Route.useSearch();
-  const navigate = useNavigate();
+  const { tab, status, rivalQ, rivalTier } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const horses = useHorses();
   const awards = useAwards();
   const npcStables = useNpcStables();
-  const { status, tab } = Route.useSearch();
-  const navigate = Route.useNavigate();
 
   const myHorses = useMemo(() => horses.filter((h) => h.owned), [horses]);
   const playerAwards = useMemo(() => awards.filter((a) => !a.stableId), [awards]);
@@ -90,12 +61,6 @@ function StablePage() {
     return myHorses.filter((h) => h.lifecycleStatus === "active" && !h.consignedSaleId);
   }, [myHorses, status]);
 
-  // Rival filters
-  const [rivalSearch, setRivalSearch] = useState("");
-  const [personalityFilter, setPersonalityFilter] = useState<string>("all");
-  const [tierFilter, setTierFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("name");
-
   const horseCountsByStable = useMemo(() => {
     const counts = new Map<string, number>();
     horses.forEach((h) => {
@@ -103,28 +68,6 @@ function StablePage() {
     });
     return counts;
   }, [horses]);
-
-  const personalities = useMemo(
-    () => Array.from(new Set(npcStables.map((s) => s.personality))).sort(),
-    [npcStables],
-  );
-
-  const filteredRivals = useMemo(() => {
-    let list = npcStables.filter((s) => {
-      if (rivalSearch && !s.name.toLowerCase().includes(rivalSearch.toLowerCase())) return false;
-      if (personalityFilter !== "all" && s.personality !== personalityFilter) return false;
-      if (tierFilter !== "all" && s.tier !== tierFilter) return false;
-      return true;
-    });
-    list = [...list].sort((a, b) => {
-      if (sortBy === "horses")
-        return (horseCountsByStable.get(b.id) || 0) - (horseCountsByStable.get(a.id) || 0);
-      if (sortBy === "reputation") return b.reputation - a.reputation;
-      if (sortBy === "cash") return b.cash - a.cash;
-      return a.name.localeCompare(b.name);
-    });
-    return list;
-  }, [npcStables, rivalSearch, personalityFilter, tierFilter, sortBy, horseCountsByStable]);
 
   const filteredRivalStables = useMemo(() => {
     return npcStables.filter((s) => {
@@ -202,13 +145,9 @@ function StablePage() {
 
       <Tabs
         value={tab}
-<<<<<<< Updated upstream
         onValueChange={(v) =>
           navigate({ search: (prev) => ({ ...prev, tab: v as "roster" | "rivals" }) })
         }
-=======
-        onValueChange={(v) => navigate({ search: (prev) => ({ ...prev, tab: v as any }) })}
->>>>>>> Stashed changes
         className="space-y-4"
       >
         <TabsList>
@@ -275,136 +214,6 @@ function StablePage() {
         </TabsContent>
 
         <TabsContent value="rivals" className="space-y-4">
-<<<<<<< Updated upstream
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2 items-center">
-            <div className="relative flex-1 min-w-[180px]">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-cream-muted" />
-              <Input
-                value={rivalSearch}
-                onChange={(e) => setRivalSearch(e.target.value)}
-                placeholder="Search stables..."
-                className="pl-8"
-              />
-            </div>
-            <Select value={personalityFilter} onValueChange={setPersonalityFilter}>
-              <SelectTrigger className="w-[170px]">
-                <SelectValue placeholder="Personality" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All personalities</SelectItem>
-                {personalities.map((p) => (
-                  <SelectItem key={p} value={p} className="capitalize">
-                    {p.replace("-", " ")}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={tierFilter} onValueChange={setTierFilter}>
-              <SelectTrigger className="w-[130px]">
-                <SelectValue placeholder="Tier" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All tiers</SelectItem>
-                <SelectItem value="elite">Elite</SelectItem>
-                <SelectItem value="mid">Mid</SelectItem>
-                <SelectItem value="budget">Budget</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Sort" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="name">Name (A–Z)</SelectItem>
-                <SelectItem value="horses">Most horses</SelectItem>
-                <SelectItem value="reputation">Reputation</SelectItem>
-                <SelectItem value="cash">Cash</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <p className="text-xs text-cream-muted">
-            Showing <NumericValue value={filteredRivals.length} /> of{" "}
-            <NumericValue value={npcStables.length} /> stables
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredRivals.map((stable) => {
-              const stableHorseCount = horseCountsByStable.get(stable.id) || 0;
-              return (
-                <Card
-                  key={stable.id}
-                  className="hover:border-gold transition-colors border-gold-muted h-full flex flex-col"
-                >
-                  <Link
-                    to="/npc-stables/$stableId"
-                    params={{ stableId: stable.id }}
-                    className="group"
-                  >
-                    <CardHeader className="pb-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-6 h-6 rounded-full border-2 shrink-0"
-                            style={{
-                              backgroundColor: stable.colors.primary,
-                              borderColor: stable.colors.secondary,
-                            }}
-                          />
-                          <div>
-                            <CardTitle className="text-base font-[family-name:var(--font-display)] group-hover:text-gold transition-colors">
-                              {stable.name}
-                            </CardTitle>
-                            <p className="text-xs text-cream-muted capitalize">
-                              {stable.personality.replace("-", " ")} · {stable.tier}
-                            </p>
-                          </div>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-cream-muted group-hover:text-gold transition-colors shrink-0 mt-1" />
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-cream-muted">
-                          <NumericValue value={stableHorseCount} /> horses
-                        </span>
-                        <Badge className="font-mono tabular-nums bg-t700 text-cream">
-                          {formatCurrency(stable.cash)}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Link>
-                  {/* Sub-nav inside the card */}
-                  <div className="mt-auto px-4 pb-3 flex gap-1 border-t border-gold-muted/40 pt-2">
-                    {(
-                      [
-                        { tab: "roster", label: "Roster" },
-                        { tab: "staff", label: "Staff" },
-                        { tab: "history", label: "History" },
-                      ] as const
-                    ).map((item) => (
-                      <Link
-                        key={item.tab}
-                        to="/npc-stables/$stableId"
-                        params={{ stableId: stable.id }}
-                        search={{ tab: item.tab }}
-                        className="flex-1 text-center text-xs py-1 rounded text-cream-muted hover:bg-t700 hover:text-gold transition-colors"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </Card>
-              );
-            })}
-            {filteredRivals.length === 0 && (
-              <Card className="col-span-full border-gold-muted">
-                <CardContent className="p-8 text-center text-cream-muted italic">
-                  No stables match your filters.
-                </CardContent>
-              </Card>
-=======
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <div className="relative w-64">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-cream-muted" />
@@ -436,7 +245,6 @@ function StablePage() {
                 <X className="w-4 h-4" />
                 Clear
               </Button>
->>>>>>> Stashed changes
             )}
           </div>
 
@@ -451,32 +259,69 @@ function StablePage() {
               {filteredRivalStables.map((stable) => {
                 const stableHorseCount = horseCountsByStable.get(stable.id) || 0;
                 return (
-                  <Link key={stable.id} to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
-                    <Card className="hover:bg-t700 transition-colors border-gold-muted">
+                  <Card
+                    key={stable.id}
+                    className="hover:border-gold transition-colors border-gold-muted h-full flex flex-col"
+                  >
+                    <Link
+                      to="/npc-stables/$stableId"
+                      params={{ stableId: stable.id }}
+                      className="group"
+                    >
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-base font-[family-name:var(--font-display)]">
-                          {stable.name}
-                        </CardTitle>
-                        <p className="text-xs text-cream-muted capitalize font-[family-name:var(--font-body)]">
-                          {stable.personality} strategy
-                        </p>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-6 h-6 rounded-full border-2 shrink-0"
+                              style={{
+                                backgroundColor: stable.colors.primary,
+                                borderColor: stable.colors.secondary,
+                              }}
+                            />
+                            <div>
+                              <CardTitle className="text-base font-[family-name:var(--font-display)] group-hover:text-gold transition-colors">
+                                {stable.name}
+                              </CardTitle>
+                              <p className="text-xs text-cream-muted capitalize">
+                                {stable.personality.replace("-", " ")} · {stable.tier}
+                              </p>
+                            </div>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-cream-muted group-hover:text-gold transition-colors shrink-0 mt-1" />
+                        </div>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="pb-2">
                         <div className="flex justify-between items-center text-sm">
-                          <span className="text-cream-muted font-[family-name:var(--font-body)]">
+                          <span className="text-cream-muted">
                             <NumericValue value={stableHorseCount} /> horses
                           </span>
-                          <Badge
-                            className={cn(
-                              "font-[family-name:var(--font-mono)] tabular-nums bg-t700 text-cream",
-                            )}
-                          >
+                          <Badge className="font-mono tabular-nums bg-t700 text-cream">
                             {formatCurrency(stable.cash)}
                           </Badge>
                         </div>
                       </CardContent>
-                    </Card>
-                  </Link>
+                    </Link>
+                    {/* Sub-nav inside the card */}
+                    <div className="mt-auto px-4 pb-3 flex gap-1 border-t border-gold-muted/40 pt-2">
+                      {(
+                        [
+                          { tab: "roster", label: "Roster" },
+                          { tab: "staff", label: "Staff" },
+                          { tab: "history", label: "History" },
+                        ] as const
+                      ).map((item) => (
+                        <Link
+                          key={item.tab}
+                          to="/npc-stables/$stableId"
+                          params={{ stableId: stable.id }}
+                          search={{ tab: item.tab }}
+                          className="flex-1 text-center text-xs py-1 rounded text-cream-muted hover:bg-t700 hover:text-gold transition-colors"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </Card>
                 );
               })}
             </div>

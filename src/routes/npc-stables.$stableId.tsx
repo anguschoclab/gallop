@@ -9,14 +9,11 @@ import {
   Users,
   DollarSign,
   HandCoins,
-<<<<<<< Updated upstream
   Trophy,
   CalendarDays,
+  Calendar,
   ListChecks,
   History,
-=======
-  Calendar,
->>>>>>> Stashed changes
 } from "lucide-react";
 import { useHorses, useDay, useCash } from "@/game/hooks/useCoreState";
 import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
