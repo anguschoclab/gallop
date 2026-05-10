@@ -87,8 +87,22 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
       recovery: [3, 3],
       fertility: [3, 3],
       foalingEase: [3, 3],
-      markings: { socks: [3, 3], face: [3, 3], silverDapple: [3, 3], sabino: [3, 3], splashWhite: [3, 3] },
-      health: { bleeder: [3, 3], roarer: [3, 3], ocd: [3, 3], efna5: [3, 3], pssm: [3, 3], rer: [3, 3], epm: [3, 3] },
+      markings: {
+        socks: [3, 3],
+        face: [3, 3],
+        silverDapple: [3, 3],
+        sabino: [3, 3],
+        splashWhite: [3, 3],
+      },
+      health: {
+        bleeder: [3, 3],
+        roarer: [3, 3],
+        ocd: [3, 3],
+        efna5: [3, 3],
+        pssm: [3, 3],
+        rer: [3, 3],
+        epm: [3, 3],
+      },
     },
     form: 0.8,
     potential: 80,
@@ -113,7 +127,13 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     recoveryRate: 0.7,
     fertility: 0.7,
     foalingEase: 0.7,
-    markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+    markings: {
+      socks: "none",
+      face: "none",
+      silverDapple: false,
+      sabino: false,
+      splashWhite: false,
+    },
     bleederRisk: 0.1,
     roarerRisk: 0.1,
     ocdRisk: 0.1,
@@ -154,8 +174,12 @@ describe("createJockeyStrategyAIState", () => {
   });
 
   it("should have different personality states for different personalities", () => {
-    const aggressiveState = createJockeyStrategyAIState(createMockStable({ personality: "aggressive" }));
-    const conservativeState = createJockeyStrategyAIState(createMockStable({ personality: "conservative" }));
+    const aggressiveState = createJockeyStrategyAIState(
+      createMockStable({ personality: "aggressive" }),
+    );
+    const conservativeState = createJockeyStrategyAIState(
+      createMockStable({ personality: "conservative" }),
+    );
 
     expect(aggressiveState.personalityState.personality).toBe("aggressive");
     expect(conservativeState.personalityState.personality).toBe("conservative");
@@ -188,7 +212,10 @@ describe("calculateOptimalRunningStyle", () => {
 
   it("should prefer stalking for closer jockeys", () => {
     const state = createJockeyStrategyAIState(createMockStable());
-    const closer = createMockJockey({ archetype: "closer", stats: { pacing: 85, positioning: 85, vigor: 85, gateSkill: 85, temperament: 85 } });
+    const closer = createMockJockey({
+      archetype: "closer",
+      stats: { pacing: 85, positioning: 85, vigor: 85, gateSkill: 85, temperament: 85 },
+    });
     const horse = createMockHorse({ energy: 75, distanceAptitude: 1600 });
     const race = createMockRace({ distance: 1600 });
     const stable = createMockStable();
@@ -206,8 +233,20 @@ describe("calculateOptimalRunningStyle", () => {
     const race = createMockRace();
     const stable = createMockStable();
 
-    const highEnergyStyle = calculateOptimalRunningStyle(state, highEnergyHorse, race, jockey, stable);
-    const lowEnergyStyle = calculateOptimalRunningStyle(state, lowEnergyHorse, race, jockey, stable);
+    const highEnergyStyle = calculateOptimalRunningStyle(
+      state,
+      highEnergyHorse,
+      race,
+      jockey,
+      stable,
+    );
+    const lowEnergyStyle = calculateOptimalRunningStyle(
+      state,
+      lowEnergyHorse,
+      race,
+      jockey,
+      stable,
+    );
 
     expect(highEnergyStyle).toBeDefined();
     expect(lowEnergyStyle).toBeDefined();
@@ -228,15 +267,31 @@ describe("calculateJockeyAggressiveness", () => {
   });
 
   it("should be higher for aggressive personalities", () => {
-    const aggressiveState = createJockeyStrategyAIState(createMockStable({ personality: "aggressive" }));
-    const conservativeState = createJockeyStrategyAIState(createMockStable({ personality: "conservative" }));
+    const aggressiveState = createJockeyStrategyAIState(
+      createMockStable({ personality: "aggressive" }),
+    );
+    const conservativeState = createJockeyStrategyAIState(
+      createMockStable({ personality: "conservative" }),
+    );
     const jockey = createMockJockey();
     const horse = createMockHorse();
     const race = createMockRace();
     const stable = createMockStable();
 
-    const aggressiveAggr = calculateJockeyAggressiveness(aggressiveState, horse, race, jockey, stable);
-    const conservativeAggr = calculateJockeyAggressiveness(conservativeState, horse, race, jockey, stable);
+    const aggressiveAggr = calculateJockeyAggressiveness(
+      aggressiveState,
+      horse,
+      race,
+      jockey,
+      stable,
+    );
+    const conservativeAggr = calculateJockeyAggressiveness(
+      conservativeState,
+      horse,
+      race,
+      jockey,
+      stable,
+    );
 
     expect(aggressiveAggr).toBeGreaterThan(conservativeAggr);
   });
@@ -258,8 +313,12 @@ describe("calculateJockeyAggressiveness", () => {
   it("should be higher for high-quality horses", () => {
     const state = createJockeyStrategyAIState(createMockStable());
     const jockey = createMockJockey();
-    const highQualityHorse = createMockHorse({ stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 } });
-    const lowQualityHorse = createMockHorse({ stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 } });
+    const highQualityHorse = createMockHorse({
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+    });
+    const lowQualityHorse = createMockHorse({
+      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
+    });
     const race = createMockRace();
     const stable = createMockStable();
 
@@ -352,7 +411,17 @@ describe("recordRaceStrategy", () => {
 
     let updatedState = state;
     for (let i = 0; i < 15; i++) {
-      updatedState = recordRaceStrategy(updatedState, horse, race, jockey, stable, "E", 0.7, 1, 100 + i);
+      updatedState = recordRaceStrategy(
+        updatedState,
+        horse,
+        race,
+        jockey,
+        stable,
+        "E",
+        0.7,
+        1,
+        100 + i,
+      );
     }
 
     expect(updatedState.strategyHistory.length).toBeLessThanOrEqual(10);
@@ -410,7 +479,17 @@ describe("getStrategyInsights", () => {
     // Record multiple strategies
     for (let i = 0; i < 5; i++) {
       const style = i < 2 ? "E" : i < 4 ? "P" : "S";
-      updatedState = recordRaceStrategy(updatedState, horse, race, jockey, stable, style, 0.7, i + 1, 100 + i);
+      updatedState = recordRaceStrategy(
+        updatedState,
+        horse,
+        race,
+        jockey,
+        stable,
+        style,
+        0.7,
+        i + 1,
+        100 + i,
+      );
     }
 
     const insights = getStrategyInsights(updatedState, stable.id);

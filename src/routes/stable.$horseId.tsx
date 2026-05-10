@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -94,20 +94,32 @@ function HorseDetail() {
   const isPregnant = !!pregnancy;
   const slotsLeft = 2 - trainingUsed;
   const ovr = calculateOverallRating(horse);
-  
+
   // Imperial Expansion: Peaking & Affinity
   const peakingMultiplier = getPeakingBeyerMultiplier(horse.peakingIndex ?? 0);
-  const peakingStatus = (horse.peakingIndex ?? 0) > 20 ? "Peak" : (horse.peakingIndex ?? 0) > 0 ? "Good" : (horse.peakingIndex ?? 0) > -10 ? "Standard" : "Fatigued";
-  
+  const peakingStatus =
+    (horse.peakingIndex ?? 0) > 20
+      ? "Peak"
+      : (horse.peakingIndex ?? 0) > 0
+        ? "Good"
+        : (horse.peakingIndex ?? 0) > -10
+          ? "Standard"
+          : "Fatigued";
+
   // Find assigned jockey
-  const currentRace = useGame((s) => s.races.find(r => r.entries.some(e => e.horseId === horseId && !r.resolved)));
-  const assignedJockeyId = currentRace?.entries.find(e => e.horseId === horseId)?.jockeyId;
-  const assignedJockey = useGame((s) => s.jockeys.find(j => j.id === assignedJockeyId));
+  const currentRace = useGame((s) =>
+    s.races.find((r) => r.entries.some((e) => e.horseId === horseId && !r.resolved)),
+  );
+  const assignedJockeyId = currentRace?.entries.find((e) => e.horseId === horseId)?.jockeyId;
+  const assignedJockey = useGame((s) => s.jockeys.find((j) => j.id === assignedJockeyId));
   const affinityBonus = assignedJockey ? calculateTheHandBonus(assignedJockey, horse.id) : 0;
-  const affinityLevel = assignedJockey ? getAffinityLevel(assignedJockey.affinityMap[horse.id] || 0) : null;
+  const affinityLevel = assignedJockey
+    ? getAffinityLevel(assignedJockey.affinityMap[horse.id] || 0)
+    : null;
 
   // Check if horse is a G1 winner (eligible for syndication)
-  const g1Wins = horse.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+  const g1Wins =
+    horse.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
   const isG1Winner = g1Wins > 0;
   const isSyndicated = !!syndicates[horseId];
 
@@ -135,8 +147,8 @@ function HorseDetail() {
               {horse.name}
             </h1>
             <p className="text-cream-muted font-[family-name:var(--font-body)]">
-              Age <NumericValue value={Math.floor(horse.age)} /> · OVR <NumericValue value={ovr} /> · Potential{" "}
-              <NumericValue value={horse.potential} />
+              Age <NumericValue value={Math.floor(horse.age)} /> · OVR <NumericValue value={ovr} />{" "}
+              · Potential <NumericValue value={horse.potential} />
             </p>
             {(() => {
               const ability = getAbility(horse);
@@ -184,27 +196,33 @@ function HorseDetail() {
           </CardHeader>
           <CardContent className="space-y-4">
             <HorseStatsRadar horse={horse} />
-            
+
             {/* Imperial Expansion: Banister Metrics */}
             <div className="grid grid-cols-2 gap-3 p-3 bg-t800 rounded-lg border border-gold-muted/20">
-                <div className="space-y-1">
-                    <p className="text-[10px] text-cream-muted uppercase font-bold flex items-center gap-1">
-                        <Heart className="w-3 h-3 text-red-400" /> Fitness (Chronic)
-                    </p>
-                    <div className="flex items-center gap-2">
-                        <NumericValue value={Math.round(horse.fitness ?? 0)} className="text-xl font-bold text-cream" />
-                        <span className="text-[10px] text-cream-muted italic">Potential ceiling</span>
-                    </div>
+              <div className="space-y-1">
+                <p className="text-[10px] text-cream-muted uppercase font-bold flex items-center gap-1">
+                  <Heart className="w-3 h-3 text-red-400" /> Fitness (Chronic)
+                </p>
+                <div className="flex items-center gap-2">
+                  <NumericValue
+                    value={Math.round(horse.fitness ?? 0)}
+                    className="text-xl font-bold text-cream"
+                  />
+                  <span className="text-[10px] text-cream-muted italic">Potential ceiling</span>
                 </div>
-                <div className="space-y-1">
-                    <p className="text-[10px] text-cream-muted uppercase font-bold flex items-center gap-1">
-                        <Zap className="w-3 h-3 text-gold" /> Fatigue (Acute)
-                    </p>
-                    <div className="flex items-center gap-2">
-                        <NumericValue value={Math.round(horse.fatigue ?? 0)} className="text-xl font-bold text-cream" />
-                        <span className="text-[10px] text-cream-muted italic">Performance cost</span>
-                    </div>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] text-cream-muted uppercase font-bold flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-gold" /> Fatigue (Acute)
+                </p>
+                <div className="flex items-center gap-2">
+                  <NumericValue
+                    value={Math.round(horse.fatigue ?? 0)}
+                    className="text-xl font-bold text-cream"
+                  />
+                  <span className="text-[10px] text-cream-muted italic">Performance cost</span>
                 </div>
+              </div>
             </div>
 
             <HorseStats horse={horse} />
@@ -232,14 +250,18 @@ function HorseDetail() {
                         : "bg-destructive/20 text-destructive"
                 }
               >
-                Recovery {(horse.recoveryPoints ?? 100)}/100
+                Recovery {horse.recoveryPoints ?? 100}/100
               </Badge>
-              
+
               {/* Imperial Expansion: Peaking Status */}
-              <Badge 
+              <Badge
                 className={cn(
-                    "gap-1",
-                    peakingStatus === "Peak" ? "bg-fame text-t950" : peakingStatus === "Good" ? "bg-gold text-t950" : "bg-t700 text-cream"
+                  "gap-1",
+                  peakingStatus === "Peak"
+                    ? "bg-fame text-t950"
+                    : peakingStatus === "Good"
+                      ? "bg-gold text-t950"
+                      : "bg-t700 text-cream",
                 )}
               >
                 <TrendingUp className="w-3 h-3" />
@@ -269,34 +291,38 @@ function HorseDetail() {
                   </>
                 )}
             </div>
-            
+
             {/* Imperial Expansion: Jockey Affinity */}
             {assignedJockey && (
-                <div className="pt-4 border-t border-gold-muted/30">
-                    <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">Jockey Partnership</p>
-                    <div className="flex items-center justify-between p-2 bg-t800 rounded border border-gold-muted/10">
-                        <div className="flex items-center gap-2">
-                            <HandMetal className="w-4 h-4 text-gold" />
-                            <div>
-                                <p className="text-sm font-medium text-cream">{assignedJockey.name}</p>
-                                <p className="text-[10px] text-cream-muted italic">{affinityLevel}</p>
-                            </div>
-                        </div>
-                        <Badge variant="outline" className="text-gold border-gold/30">
-                            +{Math.round(affinityBonus * 100)}% Hand
-                        </Badge>
+              <div className="pt-4 border-t border-gold-muted/30">
+                <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">
+                  Jockey Partnership
+                </p>
+                <div className="flex items-center justify-between p-2 bg-t800 rounded border border-gold-muted/10">
+                  <div className="flex items-center gap-2">
+                    <HandMetal className="w-4 h-4 text-gold" />
+                    <div>
+                      <p className="text-sm font-medium text-cream">{assignedJockey.name}</p>
+                      <p className="text-[10px] text-cream-muted italic">{affinityLevel}</p>
                     </div>
-                    <p className="text-[9px] text-cream-muted mt-2 italic">
-                        *A deep partnership buffers against race-day interference and noise.
-                    </p>
+                  </div>
+                  <Badge variant="outline" className="text-gold border-gold/30">
+                    +{Math.round(affinityBonus * 100)}% Hand
+                  </Badge>
                 </div>
+                <p className="text-[9px] text-cream-muted mt-2 italic">
+                  *A deep partnership buffers against race-day interference and noise.
+                </p>
+              </div>
             )}
           </CardContent>
         </Card>
 
         <Card id="health" className="border-gold-muted">
           <CardHeader>
-            <CardTitle className="font-[family-name:var(--font-display)]">Health & Welfare</CardTitle>
+            <CardTitle className="font-[family-name:var(--font-display)]">
+              Health & Welfare
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {horse.activeInjury && (
@@ -307,42 +333,76 @@ function HorseDetail() {
                 </div>
                 <p className="text-cream font-medium text-xs mt-1">{horse.activeInjury.type}</p>
                 <div className="flex justify-between items-end mt-2">
-                  <Badge variant="destructive" className="text-[9px] h-4 px-1">{horse.activeInjury.severity.toUpperCase()}</Badge>
-                  <span className="text-[10px] text-cream-muted font-[family-name:var(--font-mono)]">Est. {horse.activeInjury.recoveryDays} days remaining</span>
+                  <Badge variant="destructive" className="text-[9px] h-4 px-1">
+                    {horse.activeInjury.severity.toUpperCase()}
+                  </Badge>
+                  <span className="text-[10px] text-cream-muted font-[family-name:var(--font-mono)]">
+                    Est. {horse.activeInjury.recoveryDays} days remaining
+                  </span>
                 </div>
               </div>
             )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-xs text-cream-muted uppercase tracking-wider font-bold">Recovery Rate</p>
+                <p className="text-xs text-cream-muted uppercase tracking-wider font-bold">
+                  Recovery Rate
+                </p>
                 <NumericValue value={horse.recoveryRate} />
                 <p className="text-[10px] text-cream-muted italic">Speed of energy return</p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-cream-muted uppercase tracking-wider font-bold">Trainability</p>
+                <p className="text-xs text-cream-muted uppercase tracking-wider font-bold">
+                  Trainability
+                </p>
                 <NumericValue value={horse.trainability} />
                 <p className="text-[10px] text-cream-muted italic">Likelihood of stat gains</p>
               </div>
             </div>
 
             <div className="pt-4 border-t border-gold-muted/30">
-              <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">Hidden Risk Profile</p>
+              <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">
+                Hidden Risk Profile
+              </p>
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-cream-muted">Bleeder Risk</span>
-                  <Badge variant={horse.bleederRisk > 70 ? "destructive" : horse.bleederRisk > 30 ? "secondary" : "outline"}>
+                  <Badge
+                    variant={
+                      horse.bleederRisk > 70
+                        ? "destructive"
+                        : horse.bleederRisk > 30
+                          ? "secondary"
+                          : "outline"
+                    }
+                  >
                     {horse.bleederRisk > 70 ? "High" : horse.bleederRisk > 30 ? "Moderate" : "Low"}
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-cream-muted">Roarer Risk</span>
-                  <Badge variant={horse.roarerRisk > 70 ? "destructive" : horse.roarerRisk > 30 ? "secondary" : "outline"}>
+                  <Badge
+                    variant={
+                      horse.roarerRisk > 70
+                        ? "destructive"
+                        : horse.roarerRisk > 30
+                          ? "secondary"
+                          : "outline"
+                    }
+                  >
                     {horse.roarerRisk > 70 ? "High" : horse.roarerRisk > 30 ? "Moderate" : "Low"}
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-cream-muted">OCD Risk</span>
-                  <Badge variant={horse.ocdRisk > 70 ? "destructive" : horse.ocdRisk > 30 ? "secondary" : "outline"}>
+                  <Badge
+                    variant={
+                      horse.ocdRisk > 70
+                        ? "destructive"
+                        : horse.ocdRisk > 30
+                          ? "secondary"
+                          : "outline"
+                    }
+                  >
                     {horse.ocdRisk > 70 ? "High" : horse.ocdRisk > 30 ? "Moderate" : "Low"}
                   </Badge>
                 </div>
@@ -353,7 +413,9 @@ function HorseDetail() {
             </div>
 
             <div className="pt-4 border-t border-gold-muted/30">
-              <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">Staff Support</p>
+              <p className="text-xs text-cream-muted uppercase tracking-wider font-bold mb-2">
+                Staff Support
+              </p>
               <StaffSupportPanel stableId={horse.stableId ?? ""} />
             </div>
           </CardContent>
@@ -570,7 +632,9 @@ function HorseDetail() {
       <Card id="lineage" className="border-gold-muted">
         <CardHeader>
           <CardTitle className="font-[family-name:var(--font-display)]">Lineage</CardTitle>
-          <p className="text-xs text-cream-muted">Sire (top) and dam (bottom) for 4 generations (COI calculated to 8)</p>
+          <p className="text-xs text-cream-muted">
+            Sire (top) and dam (bottom) for 4 generations (COI calculated to 8)
+          </p>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <Lineage
@@ -582,7 +646,7 @@ function HorseDetail() {
           />
         </CardContent>
       </Card>
-      
+
       <SyndicateDialog
         isOpen={syndicateDialogOpen}
         onClose={() => setSyndicateDialogOpen(false)}

@@ -34,7 +34,7 @@ export class HorseHandler implements ImpactHandler {
       "fitness_change",
       "fatigue_change",
       "peaking_index_update",
-      "beyer_update"
+      "beyer_update",
     ].includes(type);
   }
 
@@ -49,8 +49,7 @@ export class HorseHandler implements ImpactHandler {
   ): void {
     const impactAny = impact as any;
     const horseId = impactAny.horseId || impactAny.entityId;
-    const horse =
-      lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
 
     switch (impact.type) {
       case "horse_creation": {
@@ -94,7 +93,7 @@ export class HorseHandler implements ImpactHandler {
       }
 
       case "gelding": {
-        if (horse && (isMaleHorse(horse.gender))) {
+        if (horse && isMaleHorse(horse.gender)) {
           horse.gender = "gelding";
         }
         break;

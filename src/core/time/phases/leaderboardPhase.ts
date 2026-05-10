@@ -46,7 +46,8 @@ export const leaderboardPhase = {
 
     // Update founder records once a season (30 days) to save performance
     let updatedFounders = state.founders || {};
-    const shouldUpdateFounders = !state.lastFounderUpdateDay || newDay - state.lastFounderUpdateDay >= SEASON_DAYS;
+    const shouldUpdateFounders =
+      !state.lastFounderUpdateDay || newDay - state.lastFounderUpdateDay >= SEASON_DAYS;
 
     if (shouldUpdateFounders) {
       const candidates = identifyFounders(state.horses);

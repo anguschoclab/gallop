@@ -33,7 +33,7 @@ interface PrivateSaleCounterCardProps {
 
 /**
  * Component to display and handle a counter offer from an NPC stable.
- * 
+ *
  * EXTRACTED FROM: src/routes/npc-stables.$stableId.tsx
  */
 export function PrivateSaleCounterCard({
@@ -55,13 +55,9 @@ export function PrivateSaleCounterCard({
           <div>
             <p className="font-medium text-sm">
               Counter offer from {stable.name}:{" "}
-              <span className="tabular-nums font-bold">
-                {formatCurrency(counterAmt)}
-              </span>
+              <span className="tabular-nums font-bold">{formatCurrency(counterAmt)}</span>
             </p>
-            <p className="text-xs text-cream-muted">
-              Expires day {offer.expiresDay}
-            </p>
+            <p className="text-xs text-cream-muted">Expires day {offer.expiresDay}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -86,8 +82,8 @@ export function PrivateSaleCounterCard({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Accept counter offer?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    You will pay {formatCurrency(counterAmt)} for {horse.name}.
-                    This cannot be undone.
+                    You will pay {formatCurrency(counterAmt)} for {horse.name}. This cannot be
+                    undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -110,12 +106,7 @@ export function PrivateSaleCounterCard({
               </AlertDialogContent>
             </AlertDialog>
           ) : (
-            <Button
-              size="sm"
-              variant="outline"
-              disabled
-              title="Insufficient funds"
-            >
+            <Button size="sm" variant="outline" disabled title="Insufficient funds">
               Accept {formatCurrency(counterAmt)}
             </Button>
           )}

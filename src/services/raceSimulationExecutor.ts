@@ -9,15 +9,15 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 export interface RaceSimulationResult {
   raceId: string;
   result: Array<{ horseId: string; position: number; time: number }>;
-  runners: Array<{ 
-    horseId: string; 
-    name: string; 
-    silk: string; 
-    owned: boolean; 
-    jockeyId: string; 
-    jockeyName: string; 
-    barrier?: number; 
-    lane?: number 
+  runners: Array<{
+    horseId: string;
+    name: string;
+    silk: string;
+    owned: boolean;
+    jockeyId: string;
+    jockeyName: string;
+    barrier?: number;
+    lane?: number;
   }>;
   snapshots: RaceSnapshot[];
 }
@@ -36,14 +36,14 @@ export interface RaceSimulationResult {
  * @returns Race simulation result including final positions and optional snapshots
  */
 export function simulateRace(
-  race: Race, 
-  horses: Horse[] | Map<string, Horse>, 
+  race: Race,
+  horses: Horse[] | Map<string, Horse>,
   jockeys: Jockey[] | Map<string, Jockey>,
   hiredStaff?: StaffMember[],
   npcStables?: Stable[] | Map<string, Stable>,
   npcAIManager?: NpcAIManager,
   currentDay?: number,
-  recordSnapshots?: boolean
+  recordSnapshots?: boolean,
 ): RaceSimulationResult {
   // Skip debug logging for performance in long-term simulations
   // console.log(`          [DEBUG] Simulating race ${race.id} (${race.name})`);
@@ -59,31 +59,37 @@ export function simulateRace(
 
   const rng = rngForRace(race);
   const course = getCourseForRace(race);
-  
+
   // Default to recording snapshots only if a player-owned horse is in the field
-  const shouldRecord = recordSnapshots ?? runners.some(r => r.owned);
-  
+  const shouldRecord = recordSnapshots ?? runners.some((r) => r.owned);
+
   // Use a larger time step for background simulations to increase performance
   const dt = shouldRecord ? 0.1 : 5.0;
-  
-  const { result, snapshots } = runRaceToCompletion(runners, race.distance, rng, dt, 30, course, shouldRecord);
 
+  const { result, snapshots } = runRaceToCompletion(
+    runners,
+    race.distance,
+    rng,
+    dt,
+    30,
+    course,
+    shouldRecord,
+  );
 
   return {
     raceId: race.id,
     result,
-    runners: runners.map(({ horseId, name, silk, owned, jockey, barrier, lane }) => ({ 
-      horseId, 
-      name, 
-      silk, 
-      owned, 
+    runners: runners.map(({ horseId, name, silk, owned, jockey, barrier, lane }) => ({
+      horseId,
+      name,
+      silk,
+      owned,
       jockeyId: jockey?.id || "ai",
       jockeyName: jockey?.name || "AI Jockey",
-      barrier, 
-      lane 
+      barrier,
+      lane,
     })),
 
     snapshots,
   };
 }
-

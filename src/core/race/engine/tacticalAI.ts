@@ -28,7 +28,7 @@ import type { Runner, PaceContext } from "./runnerBuilder";
 export function calculateTacticalAdjustment(
   runner: Runner,
   pace: PaceContext,
-  runners: Runner[]
+  runners: Runner[],
 ): { velocityMod: number; targetLane: number } {
   const jockey = runner.jockey;
   // If no jockey, just follow basic physics
@@ -36,7 +36,7 @@ export function calculateTacticalAdjustment(
 
   const skill = (jockey.stats.pacing + jockey.stats.positioning) / 200; // 0 to 1
   const progress = runner.position / (pace.leaderPos || 1);
-  
+
   let velocityMod = 1.0;
   let targetLane = runner.lane;
 
@@ -57,12 +57,13 @@ export function calculateTacticalAdjustment(
 
   // 2. Lane Management & Traffic
   // Check for traffic directly in front
-  const horsesInFront = runners.filter(r => 
-    r.horseId !== runner.horseId && 
-    r.finishTime === null &&
-    r.position > runner.position &&
-    r.position - runner.position < 3 &&
-    Math.abs(r.lane - runner.lane) < 0.5
+  const horsesInFront = runners.filter(
+    (r) =>
+      r.horseId !== runner.horseId &&
+      r.finishTime === null &&
+      r.position > runner.position &&
+      r.position - runner.position < 3 &&
+      Math.abs(r.lane - runner.lane) < 0.5,
   );
 
   if (horsesInFront.length > 0) {
@@ -75,7 +76,7 @@ export function calculateTacticalAdjustment(
   // 3. Tactic Specifics
   if (runner.tactics === "save") {
     // Prioritize drafting and staying on rail
-    velocityMod *= 0.995; 
+    velocityMod *= 0.995;
     targetLane = 0;
   }
 

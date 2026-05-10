@@ -28,7 +28,8 @@ export class MarketValidator implements IntentValidator {
         const purchaseIntent = intent as PurchaseIntent;
         const horse = state.market.find((h) => h.id === purchaseIntent.horseId);
         if (!horse) return { valid: false, reason: "Horse not in market" };
-        if (state.cash < purchaseIntent.price) return { valid: false, reason: "Insufficient funds" };
+        if (state.cash < purchaseIntent.price)
+          return { valid: false, reason: "Insufficient funds" };
         break;
       }
 

@@ -126,17 +126,19 @@ describe("generateTrackRaces", () => {
       id: "track-1",
       name: "Test Track",
       country: "USA",
-      courses: [{
-        surface: "Dirt",
-        circumference: 2000,
-        straightLength: 400,
-        sections: [
-          { type: "straight", length: 400 },
-          { type: "turn", length: 600, radius: 191 },
-          { type: "straight", length: 400 },
-          { type: "turn", length: 600, radius: 191 },
-        ],
-      }],
+      courses: [
+        {
+          surface: "Dirt",
+          circumference: 2000,
+          straightLength: 400,
+          sections: [
+            { type: "straight", length: 400 },
+            { type: "turn", length: 600, radius: 191 },
+            { type: "straight", length: 400 },
+            { type: "turn", length: 600, radius: 191 },
+          ],
+        },
+      ],
     };
 
     const schedule: TrackSchedule = {
@@ -156,17 +158,19 @@ describe("generateTrackRaces", () => {
       id: "track-1",
       name: "Test Track",
       country: "USA",
-      courses: [{
-        surface: "Dirt",
-        circumference: 2000,
-        straightLength: 400,
-        sections: [
-          { type: "straight", length: 400 },
-          { type: "turn", length: 600, radius: 191 },
-          { type: "straight", length: 400 },
-          { type: "turn", length: 600, radius: 191 },
-        ],
-      }],
+      courses: [
+        {
+          surface: "Dirt",
+          circumference: 2000,
+          straightLength: 400,
+          sections: [
+            { type: "straight", length: 400 },
+            { type: "turn", length: 600, radius: 191 },
+            { type: "straight", length: 400 },
+            { type: "turn", length: 600, radius: 191 },
+          ],
+        },
+      ],
     };
 
     const schedule: TrackSchedule = {
@@ -185,17 +189,19 @@ describe("generateTrackRaces", () => {
       id: "track-1",
       name: "Test Track",
       country: "USA",
-      courses: [{
-        surface: "Dirt",
-        circumference: 2000,
-        straightLength: 400,
-        sections: [
-          { type: "straight", length: 400 },
-          { type: "turn", length: 600, radius: 191 },
-          { type: "straight", length: 400 },
-          { type: "turn", length: 600, radius: 191 },
-        ],
-      }],
+      courses: [
+        {
+          surface: "Dirt",
+          circumference: 2000,
+          straightLength: 400,
+          sections: [
+            { type: "straight", length: 400 },
+            { type: "turn", length: 600, radius: 191 },
+            { type: "straight", length: 400 },
+            { type: "turn", length: 600, radius: 191 },
+          ],
+        },
+      ],
     };
 
     const schedule: TrackSchedule = {

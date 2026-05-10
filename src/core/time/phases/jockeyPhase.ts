@@ -79,7 +79,7 @@ export const jockeyPhase = {
     // Stables might try to hire or poach jockeys
     npcStables = npcStables.map((stable) => {
       const hasRetained = jockeys.some((j) => j.stableId === stable.id);
-      
+
       // A. Standard Hiring (if without jockey)
       if (!hasRetained && dailyRng.next() < 0.1) {
         const freeAgents = jockeys.filter((j) => !j.stableId);
@@ -96,7 +96,9 @@ export const jockeyPhase = {
             if (stable.cash >= signOnBonus) {
               stable.cash -= signOnBonus;
               jockeys = jockeys.map((j) =>
-                j.id === chosen.id ? { ...j, stableId: stable.id, contractUntil: newDay + 90, stableAffinity: 30 } : j,
+                j.id === chosen.id
+                  ? { ...j, stableId: stable.id, contractUntil: newDay + 90, stableAffinity: 30 }
+                  : j,
               );
             }
           }
@@ -104,38 +106,49 @@ export const jockeyPhase = {
       }
 
       // B. Imperial Poaching (Attempt to steal star apprentices or low-loyalty player jockeys)
-      if (stable.tier === "elite" && dailyRng.next() < 0.05) { // Elite stables poach 5% of the time
-        const playerJockeys = jockeys.filter(j => j.stableId === "player" || j.stableId === "player_academy");
-        const poachable = playerJockeys.filter(j => {
-            // Target star apprentices or jockeys with low loyalty
-            return (j.isApprentice && j.fame > 40) || (j.loyalty < 70);
+      if (stable.tier === "elite" && dailyRng.next() < 0.05) {
+        // Elite stables poach 5% of the time
+        const playerJockeys = jockeys.filter(
+          (j) => j.stableId === "player" || j.stableId === "player_academy",
+        );
+        const poachable = playerJockeys.filter((j) => {
+          // Target star apprentices or jockeys with low loyalty
+          return (j.isApprentice && j.fame > 40) || j.loyalty < 70;
         });
 
         if (poachable.length > 0) {
-            const target = dailyRng.pick(poachable);
-            // Loyalty check: Fame vs Player Reputation vs Loyalty
-            const playerRep = state.reputation?.total || 50;
-            const poachSuccessChance = (target.fame - playerRep) / 100 + (1 - target.loyalty / 100);
-            
-            if (dailyRng.next() < poachSuccessChance) {
-                // Poaching success!
-                log.push({
-                    day: newDay,
-                    text: `POACHED: ${stable.name} has signed your star jockey ${target.name} to a life-changing contract!`,
-                });
-                jockeys = jockeys.map(j => 
-                    j.id === target.id ? { ...j, stableId: stable.id, contractUntil: newDay + 180, stableAffinity: 50, loyalty: 100 } : j
-                );
-            } else if (dailyRng.next() < 0.2) {
-                // Poaching attempt failed but loyalty dropped
-                log.push({
-                    day: newDay,
-                    text: `Rumors: ${stable.name} made a secret offer to ${target.name}. Your jockey remains for now, but seems unsettled.`,
-                });
-                jockeys = jockeys.map(j => 
-                    j.id === target.id ? { ...j, loyalty: Math.max(0, j.loyalty - 15) } : j
-                );
-            }
+          const target = dailyRng.pick(poachable);
+          // Loyalty check: Fame vs Player Reputation vs Loyalty
+          const playerRep = state.reputation?.total || 50;
+          const poachSuccessChance = (target.fame - playerRep) / 100 + (1 - target.loyalty / 100);
+
+          if (dailyRng.next() < poachSuccessChance) {
+            // Poaching success!
+            log.push({
+              day: newDay,
+              text: `POACHED: ${stable.name} has signed your star jockey ${target.name} to a life-changing contract!`,
+            });
+            jockeys = jockeys.map((j) =>
+              j.id === target.id
+                ? {
+                    ...j,
+                    stableId: stable.id,
+                    contractUntil: newDay + 180,
+                    stableAffinity: 50,
+                    loyalty: 100,
+                  }
+                : j,
+            );
+          } else if (dailyRng.next() < 0.2) {
+            // Poaching attempt failed but loyalty dropped
+            log.push({
+              day: newDay,
+              text: `Rumors: ${stable.name} made a secret offer to ${target.name}. Your jockey remains for now, but seems unsettled.`,
+            });
+            jockeys = jockeys.map((j) =>
+              j.id === target.id ? { ...j, loyalty: Math.max(0, j.loyalty - 15) } : j,
+            );
+          }
         }
       }
 

@@ -13,9 +13,7 @@
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
-import type {
-  AnyImpact,
-} from "@/core/resolver/impacts/index";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";
 import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";
@@ -49,7 +47,7 @@ export const trainingResolutionPhase: PipelinePhase = {
     // Filter for training intents
     const trainingIntents = intents.filter((i): i is TrainingIntent => i.type === "training");
 
-    const horseMap = new Map(state.horses.map(h => [h.id, h]));
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
     const hiredStaffByStable = new Map<string, typeof state.hiredStaff>();
     if (state.hiredStaff) {
       for (const staff of state.hiredStaff) {
@@ -74,16 +72,15 @@ export const trainingResolutionPhase: PipelinePhase = {
         horse.healthStatus === "other_illness"
       )
         continue;
-      
+
       // Get staff bonuses for this stable
       const stableId = horse.stableId ?? "";
       const staffForStable = hiredStaffByStable.get(stableId) || [];
 
-      
-      const trainer = staffForStable.find(s => s.role === "trainer");
+      const trainer = staffForStable.find((s) => s.role === "trainer");
       const trainerBonus = trainer ? trainer.bonusValue : 0;
-      
-      const nutritionist = staffForStable.find(s => s.role === "nutritionist");
+
+      const nutritionist = staffForStable.find((s) => s.role === "nutritionist");
       const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
 
       // --- BANISTER IMPULSES ---
@@ -277,29 +274,31 @@ export const trainingResolutionPhase: PipelinePhase = {
         // Apply main_track facility bonus and trainer bonus to training chance
         const facilities = state.facilities;
         const trackBonus = facilities ? getFacilityBonus(facilities, "main_track") : 0;
-        
+
         // --- OUTPOST SPECIALIZATION (Imperial Expansion) ---
         let branchMod = null;
         if (horse.outpostId) {
-            // Check if horse belongs to NPC stable
-            if (horse.stableId && state.npcStables) {
-                const npcStable = state.npcStables.find(s => s.id === horse.stableId);
-                if (npcStable && (npcStable as any).outposts) {
-                    const outpost = (npcStable as any).outposts.find((o: any) => o.id === horse.outpostId);
-                    if (outpost) {
-                        const specialty = getOutpostSpecialty(outpost);
-                        branchMod = getBranchModifiers(specialty);
-                    }
-                }
+          // Check if horse belongs to NPC stable
+          if (horse.stableId && state.npcStables) {
+            const npcStable = state.npcStables.find((s) => s.id === horse.stableId);
+            if (npcStable && (npcStable as any).outposts) {
+              const outpost = (npcStable as any).outposts.find(
+                (o: any) => o.id === horse.outpostId,
+              );
+              if (outpost) {
+                const specialty = getOutpostSpecialty(outpost);
+                branchMod = getBranchModifiers(specialty);
+              }
             }
-            // Check if horse belongs to player (player may have outposts in future)
-            else if (!horse.stableId && (state as any).outposts) {
-                const outpost = (state as any).outposts.find((o: any) => o.id === horse.outpostId);
-                if (outpost) {
-                    const specialty = getOutpostSpecialty(outpost);
-                    branchMod = getBranchModifiers(specialty);
-                }
+          }
+          // Check if horse belongs to player (player may have outposts in future)
+          else if (!horse.stableId && (state as any).outposts) {
+            const outpost = (state as any).outposts.find((o: any) => o.id === horse.outpostId);
+            if (outpost) {
+              const specialty = getOutpostSpecialty(outpost);
+              branchMod = getBranchModifiers(specialty);
             }
+          }
         }
         // --- END SPECIALIZATION ---
 
@@ -309,18 +308,22 @@ export const trainingResolutionPhase: PipelinePhase = {
           // Base gain with facility and workout bonuses
           let gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
           gain = Math.round(gain * (1 + trackBonus) * config.gainBonus);
-          
+
           // Apply branch multiplier
           if (branchMod) {
-              if (config.primary === "stamina" && "staminaGain" in branchMod && branchMod.staminaGain) {
-                  gain *= branchMod.staminaGain;
-              }
-              if (config.primary === "speed" && "speedGain" in branchMod && branchMod.speedGain) {
-                  gain *= branchMod.speedGain;
-              }
-              gain = Math.round(gain);
+            if (
+              config.primary === "stamina" &&
+              "staminaGain" in branchMod &&
+              branchMod.staminaGain
+            ) {
+              gain *= branchMod.staminaGain;
+            }
+            if (config.primary === "speed" && "speedGain" in branchMod && branchMod.speedGain) {
+              gain *= branchMod.speedGain;
+            }
+            gain = Math.round(gain);
           }
-          
+
           totalGain += gain;
 
           impacts.push({
@@ -381,7 +384,7 @@ export const trainingResolutionPhase: PipelinePhase = {
 
       // Record training outcome for NPC AI
       if (state.npcAIManager && horse.stableId) {
-        const stable = state.npcStables.find(s => s.id === horse.stableId);
+        const stable = state.npcStables.find((s) => s.id === horse.stableId);
         if (stable) {
           const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
           if (stableAI.trainingAI) {
@@ -391,7 +394,7 @@ export const trainingResolutionPhase: PipelinePhase = {
               intent.trainingType,
               totalGain > 0,
               totalGain,
-              newDay
+              newDay,
             );
             state.npcAIManager.stableStates[stable.id] = stableAI;
           }

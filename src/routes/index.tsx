@@ -102,7 +102,10 @@ function Dashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <NumericValue value={horses.filter(h => h.owned).length} className="text-3xl font-bold text-cream" />
+            <NumericValue
+              value={horses.filter((h) => h.owned).length}
+              className="text-3xl font-bold text-cream"
+            />
           </CardContent>
         </Card>
         <Card className="border-gold-muted">
@@ -150,14 +153,25 @@ function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {news && news.length > 0 ? (
               news.slice(0, 2).map((item, i) => (
-                <div key={`${item.id}-${i}`} className={cn("space-y-1", i === 0 && news.length > 1 && "md:border-r md:border-[#d3d3d3] md:pr-6")}>
-                  <Badge variant="outline" className="text-[9px] uppercase bg-[#2c2c2c] text-white border-none rounded-none h-4 px-1">
+                <div
+                  key={`${item.id}-${i}`}
+                  className={cn(
+                    "space-y-1",
+                    i === 0 && news.length > 1 && "md:border-r md:border-[#d3d3d3] md:pr-6",
+                  )}
+                >
+                  <Badge
+                    variant="outline"
+                    className="text-[9px] uppercase bg-[#2c2c2c] text-white border-none rounded-none h-4 px-1"
+                  >
                     {item.category}
                   </Badge>
-                  <h3 className={cn(
-                    "font-extrabold leading-tight tracking-tighter",
-                    item.importance === 'high' ? "text-xl" : "text-lg"
-                  )}>
+                  <h3
+                    className={cn(
+                      "font-extrabold leading-tight tracking-tighter",
+                      item.importance === "high" ? "text-xl" : "text-lg",
+                    )}
+                  >
                     {item.headline}
                   </h3>
                   <p className="text-sm line-clamp-2 leading-snug opacity-80 font-serif">
@@ -170,7 +184,10 @@ function Dashboard() {
             )}
           </div>
           <div className="mt-4 pt-2 border-t border-[#d3d3d3] flex justify-end">
-            <Link to="/gazette" className="text-xs font-bold uppercase hover:underline flex items-center gap-1">
+            <Link
+              to="/gazette"
+              className="text-xs font-bold uppercase hover:underline flex items-center gap-1"
+            >
               Read Full Gazette →
             </Link>
           </div>

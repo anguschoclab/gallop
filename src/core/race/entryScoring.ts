@@ -201,7 +201,7 @@ export function calculateAssignedWeight(horse: Horse, race: Race): number {
       !race.restrictions.gender.toLowerCase().includes("mare") &&
       !race.restrictions.gender.toLowerCase().includes("colt"));
 
-  if (isMixedRace && (isFemaleHorse(horse.gender))) {
+  if (isMixedRace && isFemaleHorse(horse.gender)) {
     weight -= 3; // 3 lb sex allowance
   }
 

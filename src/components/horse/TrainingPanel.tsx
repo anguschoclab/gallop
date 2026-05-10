@@ -24,7 +24,7 @@ interface TrainingPanelProps {
 
 /**
  * Component to render the horse training management interface.
- * 
+ *
  * EXTRACTED FROM: src/routes/stable.$horseId.tsx
  */
 export function TrainingPanel({
@@ -75,7 +75,9 @@ export function TrainingPanel({
         <div className="grid grid-cols-2 gap-2">
           {advancedWorkouts.map((workout) => {
             const isEnabled = facilities && isWorkoutEnabled(facilities, workout.key as any);
-            const isStatCapped = workout.stat && horse.stats[workout.stat as keyof typeof horse.stats] >= horse.potential;
+            const isStatCapped =
+              workout.stat &&
+              horse.stats[workout.stat as keyof typeof horse.stats] >= horse.potential;
 
             return (
               <Button

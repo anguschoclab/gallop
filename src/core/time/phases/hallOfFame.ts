@@ -13,7 +13,11 @@
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { getCareerStats } from "@/core/horse/stats";
-import type { AnyImpact, HallOfFameInductionImpact, LogImpact } from "@/core/resolver/impacts/index";
+import type {
+  AnyImpact,
+  HallOfFameInductionImpact,
+  LogImpact,
+} from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 
 /**

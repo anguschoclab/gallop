@@ -180,14 +180,17 @@ export function recordOutcome(
     const newConfidence = Math.max(0.1, newState.strategyConfidence - confidenceChange);
     const shouldSwitch = newConfidence < 0.3;
     const strategyAlternatives: Record<string, string> = {
-      default: "aggressive", aggressive: "conservative",
-      conservative: "balanced", balanced: "innovative", innovative: "default",
+      default: "aggressive",
+      aggressive: "conservative",
+      conservative: "balanced",
+      balanced: "innovative",
+      innovative: "default",
     };
     newState = {
       ...newState,
       strategyConfidence: shouldSwitch ? 0.6 : newConfidence,
       currentStrategy: shouldSwitch
-        ? (strategyAlternatives[newState.currentStrategy] || "default")
+        ? strategyAlternatives[newState.currentStrategy] || "default"
         : newState.currentStrategy,
       lastStrategyChange: shouldSwitch ? timestamp : newState.lastStrategyChange,
     };

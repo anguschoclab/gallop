@@ -114,7 +114,7 @@ describe("Advanced Features Integration", () => {
 
       const pendingIntents = useGame.getState().pendingIntents;
       const tacticsIntent = pendingIntents?.find(
-        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
       );
       expect((tacticsIntent as any)?.tactics).toBe(tactics);
     });
@@ -128,7 +128,7 @@ describe("Advanced Features Integration", () => {
         useGame.getState().setRaceTactics(raceId, horseId, tactic);
         const pendingIntents = useGame.getState().pendingIntents;
         const tacticsIntents = pendingIntents?.filter(
-          (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+          (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
         );
         const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
         expect((latestTactics as any)?.tactics).toBe(tactic);
@@ -187,7 +187,7 @@ describe("Advanced Features Integration", () => {
 
       const pendingIntents = useGame.getState().pendingIntents;
       const tacticsIntent = pendingIntents?.find(
-        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
       );
       expect((tacticsIntent as any)?.tactics).toBe(tactics);
       expect(horse.recoveryPoints).toBe(75);
@@ -229,7 +229,7 @@ describe("Advanced Features Integration", () => {
       const syndicates = useGame.getState().syndicates;
       const pendingIntents = useGame.getState().pendingIntents;
       const tacticsIntent = pendingIntents?.find(
-        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
       );
 
       if (syndicates) {

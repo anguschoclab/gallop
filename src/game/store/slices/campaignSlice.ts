@@ -54,7 +54,6 @@ export function createCampaignSlice(
   enqueueIntent: (intent: any) => void,
 ): CampaignSlice {
   return {
-
     campaigns: [],
     triplecrownHistory: [],
 
@@ -68,7 +67,13 @@ export function createCampaignSlice(
         priority: 100,
         type: "campaign_creation",
         horseId: campaign.horseId,
-        goalType: campaign.goalType as "chase_g1" | "chase_g2" | "chase_g3" | "maximize_earnings" | "develop_maiden" | "free_run",
+        goalType: campaign.goalType as
+          | "chase_g1"
+          | "chase_g2"
+          | "chase_g3"
+          | "maximize_earnings"
+          | "develop_maiden"
+          | "free_run",
         targetRaceKey: campaign.targetRaceKey,
       });
     },
@@ -132,7 +137,13 @@ export function createCampaignSlice(
         priority: 100,
         type: "campaign_creation",
         horseId,
-        goalType: goalType as "chase_g1" | "chase_g2" | "chase_g3" | "maximize_earnings" | "develop_maiden" | "free_run",
+        goalType: goalType as
+          | "chase_g1"
+          | "chase_g2"
+          | "chase_g3"
+          | "maximize_earnings"
+          | "develop_maiden"
+          | "free_run",
         targetRaceKey,
       });
     },

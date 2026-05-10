@@ -10,9 +10,7 @@
 
 import type { Horse, Stable, StableTier } from "./types";
 import type { Rng } from "./rng";
-import {
-  generateNpcHorse as _generateNpcHorse,
-} from "@/core/horse/horseFactory";
+import { generateNpcHorse as _generateNpcHorse } from "@/core/horse/horseFactory";
 import { rand } from "@/core/common/random";
 import {
   shouldRetireAtStartup,
@@ -25,11 +23,7 @@ import {
   recordHorseGeneration,
 } from "@/core/ai/horseGenAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { 
-  type AgeCategory, 
-  getAgeFromCategory, 
-  calculateStartingFame 
-} from "./npcHorseGenHelpers";
+import { type AgeCategory, getAgeFromCategory, calculateStartingFame } from "./npcHorseGenHelpers";
 
 // ─── Stable horse generation ──────────────────────────────────────────────────
 

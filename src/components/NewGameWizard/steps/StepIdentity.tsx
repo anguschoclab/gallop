@@ -12,7 +12,12 @@ interface StepIdentityProps {
   setOwnerName: (v: string) => void;
 }
 
-export function StepIdentity({ stableName, setStableName, ownerName, setOwnerName }: StepIdentityProps) {
+export function StepIdentity({
+  stableName,
+  setStableName,
+  ownerName,
+  setOwnerName,
+}: StepIdentityProps) {
   return (
     <div className="space-y-6">
       <FieldWithRandom

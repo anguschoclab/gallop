@@ -34,7 +34,7 @@ interface ClaimingRacePanelProps {
 
 /**
  * Component to display claiming race entries and handle claim filing.
- * 
+ *
  * EXTRACTED FROM: src/routes/races.tsx
  */
 export function ClaimingRacePanel({
@@ -49,7 +49,9 @@ export function ClaimingRacePanel({
   if (!race.claiming) return null;
 
   const price = race.claiming.price;
-  const pendingHorse = pendingClaimHorseId ? horses.find(h => h.id === pendingClaimHorseId) : null;
+  const pendingHorse = pendingClaimHorseId
+    ? horses.find((h) => h.id === pendingClaimHorseId)
+    : null;
 
   return (
     <>
@@ -69,7 +71,7 @@ export function ClaimingRacePanel({
                 c.claimantStableId === undefined,
             );
             const canAfford = cash >= price;
-            
+
             return (
               <div
                 key={entry.horseId}
@@ -81,19 +83,12 @@ export function ClaimingRacePanel({
                   className="text-sm text-cream font-medium hover:underline hover:text-gold"
                 >
                   {entryHorse?.name ?? entry.horseId}
-                  {isOwned && (
-                    <span className="ml-2 text-xs text-success">(your horse)</span>
-                  )}
+                  {isOwned && <span className="ml-2 text-xs text-success">(your horse)</span>}
                 </Link>
                 <div>
                   {!isOwned &&
                     (playerClaimFiled ? (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        disabled
-                        className="text-xs"
-                      >
+                      <Button size="sm" variant="ghost" disabled className="text-xs">
                         Claim filed
                       </Button>
                     ) : (
@@ -145,7 +140,9 @@ export function ClaimingRacePanel({
                 onClick={() => {
                   const result = fileClaim(race.id, pendingClaimHorseId);
                   if (result.ok) {
-                    toast.success(`Claim filed on ${pendingHorse?.name} for ${formatCurrency(price)}.`);
+                    toast.success(
+                      `Claim filed on ${pendingHorse?.name} for ${formatCurrency(price)}.`,
+                    );
                   } else {
                     toast.error(`Claim failed: ${result.reason}`);
                   }

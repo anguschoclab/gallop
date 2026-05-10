@@ -94,4 +94,3 @@ export function calculateFounderEffect(
 
   return { score, description, warning };
 }
-

@@ -27,7 +27,6 @@ export interface PipelineContext {
   impactLog: ImpactLogEntry[];
 }
 
-
 export interface PipelinePhase {
   name: string;
   order: number;
@@ -63,17 +62,6 @@ export function executePipeline(
     if (duration >= 0) {
       console.log(`  [PERF] Phase ${phase.name} took ${duration}ms`);
     }
-
-
-
-
-
-
-
-
-
-
-
   }
 
   return currentContext;

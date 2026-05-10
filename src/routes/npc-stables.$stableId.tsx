@@ -121,7 +121,11 @@ function NpcStableDetailPage() {
                 <Badge className={getTierColor(stable.tier)}>{stable.tier.toUpperCase()}</Badge>
               </div>
               <Link to="/races" search={{ stableId }}>
-                <Button variant="outline" size="sm" className="gap-2 border-gold text-gold hover:bg-gold hover:text-t950">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 border-gold text-gold hover:bg-gold hover:text-t950"
+                >
                   <Calendar className="w-4 h-4" />
                   Upcoming Races
                 </Button>
@@ -312,7 +316,9 @@ function NpcStableDetailPage() {
                     </div>
                   ))}
                   {Object.keys(stable.staff || {}).length === 0 && (
-                    <p className="text-cream-muted italic text-sm">No staff information available.</p>
+                    <p className="text-cream-muted italic text-sm">
+                      No staff information available.
+                    </p>
                   )}
                 </div>
               </CardContent>
@@ -376,7 +382,10 @@ function NpcStableDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-1">
-              <SidebarLink onClick={() => navigate({ search: { tab: "roster" } })} icon={ListChecks}>
+              <SidebarLink
+                onClick={() => navigate({ search: { tab: "roster" } })}
+                icon={ListChecks}
+              >
                 Horses ({stableHorses.length})
               </SidebarLink>
               <SidebarLink onClick={() => navigate({ search: { tab: "staff" } })} icon={Users}>

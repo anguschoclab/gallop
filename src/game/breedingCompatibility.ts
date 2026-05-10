@@ -388,7 +388,15 @@ export function calculateBreedingCompatibility(
   const nicking = checkNickingAffinity(sire.sireName || "", dam.sireName || "");
   const dosage = calculateDosageCompatibility(sire.sireName || "", dam.sireName || "");
   const coi = computeProspectiveCoi(sire, dam, 8);
-  const inbreeding = { coefficient: coi, warning: coi > 0.125 ? "High inbreeding - may reduce vigor" : coi > 0.0625 ? "Moderate inbreeding - monitor closely" : "" };
+  const inbreeding = {
+    coefficient: coi,
+    warning:
+      coi > 0.125
+        ? "High inbreeding - may reduce vigor"
+        : coi > 0.0625
+          ? "Moderate inbreeding - monitor closely"
+          : "",
+  };
   const parentPerformance = calculateParentPerformance(sire, dam);
   const conformation = calculateConformationCompatibility(sire, dam);
   const temperament = calculateTemperamentCompatibility(sire, dam);

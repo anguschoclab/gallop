@@ -34,7 +34,7 @@ describe("Tactics Flow Integration", () => {
     // Verify tactics intent was enqueued
     const pendingIntents = useGame.getState().pendingIntents;
     const tacticsIntent = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
     );
     expect((tacticsIntent as any)?.tactics).toBe(tactics);
   });
@@ -50,7 +50,7 @@ describe("Tactics Flow Integration", () => {
     // Verify tactics are enqueued
     const pendingIntents = useGame.getState().pendingIntents;
     const tacticsIntent = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
     );
     expect((tacticsIntent as any)?.tactics).toBe("rail");
   });
@@ -66,7 +66,7 @@ describe("Tactics Flow Integration", () => {
 
     const pendingIntents = useGame.getState().pendingIntents;
     const tacticsIntents = pendingIntents?.filter(
-      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
     );
     const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
     expect((latestTactics as any)?.tactics).toBe("outside");
@@ -82,7 +82,7 @@ describe("Tactics Flow Integration", () => {
 
     const pendingIntents = useGame.getState().pendingIntents;
     const tacticsIntent = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === npcHorseId
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === npcHorseId,
     );
     expect((tacticsIntent as any)?.tactics).toBe("save");
   });
@@ -98,10 +98,10 @@ describe("Tactics Flow Integration", () => {
 
     const pendingIntents = useGame.getState().pendingIntents;
     const tactics1 = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === race1Id && i.horseId === horseId
+      (i: any) => i.type === "tactics" && i.raceId === race1Id && i.horseId === horseId,
     );
     const tactics2 = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === race2Id && i.horseId === horseId
+      (i: any) => i.type === "tactics" && i.raceId === race2Id && i.horseId === horseId,
     );
     expect((tactics1 as any)?.tactics).toBe("lead");
     expect((tactics2 as any)?.tactics).toBe("late_kick");
@@ -116,7 +116,7 @@ describe("Tactics Flow Integration", () => {
       useGame.getState().setRaceTactics(raceId, horseId, tactics);
       const pendingIntents = useGame.getState().pendingIntents;
       const tacticsIntents = pendingIntents?.filter(
-        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
       );
       const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
       expect((latestTactics as any)?.tactics).toBe(tactics);

@@ -13,12 +13,12 @@
 /**
  * Staff roles within a stable
  */
-export type StaffRole = 'veterinarian' | 'farrier' | 'nutritionist' | 'groom' | 'trainer';
+export type StaffRole = "veterinarian" | "farrier" | "nutritionist" | "groom" | "trainer";
 
 /**
  * Staff experience and quality tiers
  */
-export type StaffTier = 'budget' | 'mid' | 'elite';
+export type StaffTier = "budget" | "mid" | "elite";
 
 /**
  * Individual staff member details

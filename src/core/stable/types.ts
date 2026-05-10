@@ -43,7 +43,7 @@ export type Stable = {
   breedingArchetype?: Archetype["id"];
   staff: Record<import("@/core/staff/staffTypes").StaffRole, string | null>;
   lastBankruptcyInjectionDay?: number;
-  
+
   // Imperial Expansion: Outposts
   outposts: Outpost[];
 };

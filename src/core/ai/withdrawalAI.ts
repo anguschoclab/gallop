@@ -292,7 +292,8 @@ export function recordWithdrawalDecision(
   const newHistory = [...aiState.withdrawalHistory, decision];
 
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   const contextKey = `${horse.age}`;
   const value = withdrew ? -1 : 1;

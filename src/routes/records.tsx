@@ -35,7 +35,10 @@ function RecordsDashboard() {
 
       <Tabs defaultValue="earnings" className="w-full">
         <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-muted/50 p-1 mb-8">
-          <TabsTrigger value="earnings" className="uppercase font-black text-[10px] tracking-widest">
+          <TabsTrigger
+            value="earnings"
+            className="uppercase font-black text-[10px] tracking-widest"
+          >
             <DollarSign size={14} className="mr-2" />
             Top Earnings
           </TabsTrigger>
@@ -50,16 +53,16 @@ function RecordsDashboard() {
         </TabsList>
 
         <TabsContent value="earnings">
-          <LeaderboardTable 
-            leaderboard={horseLeaderboards.earnings} 
+          <LeaderboardTable
+            leaderboard={horseLeaderboards.earnings}
             icon={<DollarSign className="text-gold" />}
             valueFormatter={(val) => formatCurrency(val)}
           />
         </TabsContent>
 
         <TabsContent value="beyer">
-          <LeaderboardTable 
-            leaderboard={horseLeaderboards.beyer} 
+          <LeaderboardTable
+            leaderboard={horseLeaderboards.beyer}
             icon={<Zap className="text-primary" />}
             valueFormatter={(val) => val.toString()}
           />
@@ -175,22 +178,27 @@ function TrackRecordsTable({ records }: { records: any[] }) {
             </thead>
             <tbody className="divide-y divide-white/5">
               {records.map((record) => (
-                <tr key={`${record.trackId}_${record.surface}_${record.distance}`} className="hover:bg-primary/5 transition-colors group">
+                <tr
+                  key={`${record.trackId}_${record.surface}_${record.distance}`}
+                  className="hover:bg-primary/5 transition-colors group"
+                >
                   <td className="px-6 py-4 font-bold uppercase tracking-tight group-hover:text-gold transition-colors">
                     {record.trackName}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`text-[10px] px-2 py-0.5 rounded font-black uppercase tracking-widest ${
-                      record.surface === "Turf" ? "bg-green-500/20 text-green-500" :
-                      record.surface === "Dirt" ? "bg-amber-900/30 text-amber-600" :
-                      "bg-blue-500/20 text-blue-500"
-                    }`}>
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded font-black uppercase tracking-widest ${
+                        record.surface === "Turf"
+                          ? "bg-green-500/20 text-green-500"
+                          : record.surface === "Dirt"
+                            ? "bg-amber-900/30 text-amber-600"
+                            : "bg-blue-500/20 text-blue-500"
+                      }`}
+                    >
                       {record.surface}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-xs tabular-nums font-bold">
-                    {record.distance}m
-                  </td>
+                  <td className="px-6 py-4 text-xs tabular-nums font-bold">{record.distance}m</td>
                   <td className="px-6 py-4 text-right font-black tabular-nums text-primary group-hover:text-gold transition-colors">
                     {formatTime(record.time)}
                   </td>

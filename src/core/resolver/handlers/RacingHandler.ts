@@ -28,7 +28,7 @@ export class RacingHandler implements ImpactHandler {
       "claiming",
       "triple_crown_progress",
       "tactics",
-      "jockey_affinity_gain"
+      "jockey_affinity_gain",
     ].includes(type);
   }
 
@@ -49,7 +49,8 @@ export class RacingHandler implements ImpactHandler {
       case "race_entry": {
         const { raceId, horseId, jockeyId, weight, tactics } = impactAny;
         const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
-        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+        const horse =
+          lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (race && horse) {
           race.entries.push({
             horseId,
@@ -88,7 +89,8 @@ export class RacingHandler implements ImpactHandler {
       }
 
       case "jockey_contract": {
-        const { jockeyId, stableId, contractUntil, stableAffinity, isApprentice, loyalty } = impactAny;
+        const { jockeyId, stableId, contractUntil, stableAffinity, isApprentice, loyalty } =
+          impactAny;
         const jockey =
           lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
         if (jockey) {
@@ -137,7 +139,8 @@ export class RacingHandler implements ImpactHandler {
 
       case "race_history": {
         const { horseId, raceHistoryEntry } = impactAny;
-        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+        const horse =
+          lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (horse) {
           horse.raceHistory.push(raceHistoryEntry);
         }
@@ -146,7 +149,8 @@ export class RacingHandler implements ImpactHandler {
 
       case "claiming": {
         const { horseId, toStableId } = impactAny;
-        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+        const horse =
+          lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (horse) {
           horse.stableId = toStableId;
           horse.owned = !toStableId;
@@ -193,5 +197,4 @@ export class RacingHandler implements ImpactHandler {
       }
     }
   }
-
 }

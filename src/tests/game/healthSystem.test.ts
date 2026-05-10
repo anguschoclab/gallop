@@ -12,16 +12,16 @@ describe("Health System - Injury Rolls", () => {
       health: {
         bleeder: 0,
         ocd: 0,
-      }
+      },
     } as any,
     ocdRisk: 0,
-    stableId: ""
+    stableId: "",
   };
 
   it("should rarely trigger injury for healthy horses", () => {
     const rng = createRng(123);
     const horse = { ...mockHorse } as Horse;
-    
+
     // Run 1000 trials
     let injuries = 0;
     for (let i = 0; i < 1000; i++) {
@@ -29,8 +29,8 @@ describe("Health System - Injury Rolls", () => {
         injuries++;
       }
     }
-    
-    // Base chance is 0.1%, so expected is ~1. 
+
+    // Base chance is 0.1%, so expected is ~1.
     // We expect it to be very low.
     expect(injuries).toBeLessThan(10);
   });
@@ -38,14 +38,14 @@ describe("Health System - Injury Rolls", () => {
   it("should increase injury risk for exhausted horses", () => {
     const rng = createRng(123);
     const exhaustedHorse = { ...mockHorse, energy: 10 } as Horse;
-    
+
     let injuries = 0;
     for (let i = 0; i < 1000; i++) {
       if (rollForInjury(rng, exhaustedHorse, 1)) {
         injuries++;
       }
     }
-    
+
     // Risk is 3x for energy < 30
     expect(injuries).toBeGreaterThan(0);
   });
@@ -54,7 +54,7 @@ describe("Health System - Injury Rolls", () => {
     const rng1 = createRng(123);
     const rng2 = createRng(123);
     const horse = { ...mockHorse, energy: 20 } as Horse;
-    
+
     const vet: StaffMember = {
       id: "vet-1",
       name: "Dr. Smith",
@@ -63,7 +63,7 @@ describe("Health System - Injury Rolls", () => {
       salary: 1000,
       bonusValue: 0.5, // 50% reduction
       traits: [],
-      stableId: ""
+      stableId: "",
     };
 
     let withoutVet = 0;

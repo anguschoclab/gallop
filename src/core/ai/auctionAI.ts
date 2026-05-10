@@ -14,10 +14,7 @@
  */
 
 import type { Horse, Stable, AuctionLot } from "@/game/types";
-import {
-  getPersonalityAIState,
-  calculateUtilityScore,
-} from "./personalitySystem";
+import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
   recordOutcome,
@@ -391,7 +388,8 @@ export function recordBiddingDecision(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update learning state (use horse age as context key)
   const contextKey = `${horse.age}`;
@@ -461,7 +459,8 @@ export function recordConsignmentDecision(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update portfolio
   const newPortfolio = {
@@ -518,7 +517,8 @@ export function getAuctionInsights(
   const sellRate = totalConsignments > 0 ? sold / totalConsignments : 0.5;
 
   // Portfolio health: ratio of current to target horses
-  const portfolioHealth = aiState.portfolio.currentHorseCount / (aiState.portfolio.targetHorseCount || 1);
+  const portfolioHealth =
+    aiState.portfolio.currentHorseCount / (aiState.portfolio.targetHorseCount || 1);
 
   return {
     totalBids,

@@ -16,13 +16,8 @@
 import type { Stable } from "./types";
 import type { Rng } from "@/game/rng";
 import { STABLE_CONFIG } from "@/core/stable/stableConfig";
-import {
-  shuffleAndPick,
-} from "@/core/stable/stableSelection";
-import {
-  generateFillerStable,
-  generateStableFromTemplate,
-} from "@/core/stable/stableGeneration";
+import { shuffleAndPick } from "@/core/stable/stableSelection";
+import { generateFillerStable, generateStableFromTemplate } from "@/core/stable/stableGeneration";
 import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/core/breeding/archetypes";
 import { ELITE_POOL, MID_POOL, BUDGET_POOL } from "@/core/stable/stablePoolData";
 
@@ -82,9 +77,7 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
       else if (stable.personality === "specialist") {
         const specialistArchetypes = ORIGINAL_ARCHETYPES.filter(
           (a) => a.id === "dirt-sprinter" || a.id === "turf-specialist" || a.id === "iron-horse",
-        ).concat(
-          TRIPLE_CROWN_ARCHETYPES.filter((a) => a.id !== "triple-crown-specialist")
-        );
+        ).concat(TRIPLE_CROWN_ARCHETYPES.filter((a) => a.id !== "triple-crown-specialist"));
         stable.breedingArchetype =
           specialistArchetypes.length > 0 ? rng.pick(specialistArchetypes).id : undefined;
       }

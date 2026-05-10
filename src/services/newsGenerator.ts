@@ -31,17 +31,21 @@ export function generateRaceNews(
   race: Race,
   result: { horseId: string; position: number }[],
   horses: Horse[] | Map<string, Horse>,
-  day: number
+  day: number,
 ): NewsItem | null {
-  const winnerEntry = result.find(r => r.position === 1);
+  const winnerEntry = result.find((r) => r.position === 1);
   if (!winnerEntry) return null;
 
-  const winner = horses instanceof Map ? (horses as Map<string, Horse>).get(winnerEntry.horseId) : horses.find(h => h.id === winnerEntry.horseId);
+  const winner =
+    horses instanceof Map
+      ? (horses as Map<string, Horse>).get(winnerEntry.horseId)
+      : horses.find((h) => h.id === winnerEntry.horseId);
   if (!winner) return null;
 
   const grade = race.graded?.grade;
   const isHighImportance = grade === "G1" || grade === "G2";
-  const isMediumImportance = grade === "G3" || race.raceClass === "Stakes" || race.raceClass === "Group";
+  const isMediumImportance =
+    grade === "G3" || race.raceClass === "Stakes" || race.raceClass === "Group";
 
   if (!isHighImportance && !isMediumImportance) return null;
 
@@ -85,11 +89,7 @@ export function generateRaceNews(
  * @param day - Current game day
  * @returns NewsItem summarizing the sale
  */
-export function generateMarketNews(
-  horse: Horse,
-  price: number,
-  day: number
-): NewsItem {
+export function generateMarketNews(horse: Horse, price: number, day: number): NewsItem {
   return createNewsItem({
     day,
     category: "market",

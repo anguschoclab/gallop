@@ -51,12 +51,12 @@ export function computeAllLeaderboards(
   for (const s of stallions) {
     const runners = horsesBySire.get(s.id) || [];
     const totalProgenyEarnings = runners.reduce((sum, f) => {
-       // Inline foalLifetimeEarnings to avoid imports/lookups
-       return sum + (f.lifetimeEarnings || 0);
+      // Inline foalLifetimeEarnings to avoid imports/lookups
+      return sum + (f.lifetimeEarnings || 0);
     }, 0);
     const avgProgenyEarnings = runners.length > 0 ? totalProgenyEarnings / runners.length : 0;
     const aei = industryMeanEarnings > 0 ? (avgProgenyEarnings / industryMeanEarnings) * 100 : 0;
-    
+
     // Stakes/G1 foals
     let stakesFoals = 0;
     let g1Foals = 0;
@@ -83,9 +83,10 @@ export function computeAllLeaderboards(
   }
 
   // Second pass: Calculate CI and finalize
-  const avgAei = stallions.length > 0 
-    ? Array.from(stallionAnalytics.values()).reduce((sum, a) => sum + a.aei, 0) / stallions.length 
-    : 0;
+  const avgAei =
+    stallions.length > 0
+      ? Array.from(stallionAnalytics.values()).reduce((sum, a) => sum + a.aei, 0) / stallions.length
+      : 0;
 
   for (const [id, a] of stallionAnalytics) {
     a.ci = avgAei > 0 ? Math.round((a.aei / avgAei) * 1000) / 10 : 0;
@@ -105,10 +106,15 @@ export function computeAllLeaderboards(
       description: "Ranked by AEI",
       lastUpdated: currentDay,
       rankings: stallions
-        .map(s => ({ stallionId: s.id, stallionName: s.name, value: getA(s.id).aei, metrics: getA(s.id) }))
-        .filter(r => r.metrics.lifetimeFoals >= 5)
+        .map((s) => ({
+          stallionId: s.id,
+          stallionName: s.name,
+          value: getA(s.id).aei,
+          metrics: getA(s.id),
+        }))
+        .filter((r) => r.metrics.lifetimeFoals >= 5)
         .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 }))
+        .map((r, i) => ({ ...r, rank: i + 1 })),
     },
     ci: {
       type: "ci",
@@ -116,10 +122,15 @@ export function computeAllLeaderboards(
       description: "Ranked by CI",
       lastUpdated: currentDay,
       rankings: stallions
-        .map(s => ({ stallionId: s.id, stallionName: s.name, value: getA(s.id).ci, metrics: getA(s.id) }))
-        .filter(r => r.metrics.lifetimeFoals >= 5)
+        .map((s) => ({
+          stallionId: s.id,
+          stallionName: s.name,
+          value: getA(s.id).ci,
+          metrics: getA(s.id),
+        }))
+        .filter((r) => r.metrics.lifetimeFoals >= 5)
         .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 }))
+        .map((r, i) => ({ ...r, rank: i + 1 })),
     },
     stakes_producers: {
       type: "stakes_producers",
@@ -127,9 +138,14 @@ export function computeAllLeaderboards(
       description: "Ranked by Stakes winners",
       lastUpdated: currentDay,
       rankings: stallions
-        .map(s => ({ stallionId: s.id, stallionName: s.name, value: getA(s.id).lifetimeStakesFoals, metrics: getA(s.id) }))
+        .map((s) => ({
+          stallionId: s.id,
+          stallionName: s.name,
+          value: getA(s.id).lifetimeStakesFoals,
+          metrics: getA(s.id),
+        }))
         .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 }))
+        .map((r, i) => ({ ...r, rank: i + 1 })),
     },
     g1_producers: {
       type: "g1_producers",
@@ -137,37 +153,81 @@ export function computeAllLeaderboards(
       description: "Ranked by G1 winners",
       lastUpdated: currentDay,
       rankings: stallions
-        .map(s => ({ stallionId: s.id, stallionName: s.name, value: getA(s.id).lifetimeG1Foals, metrics: getA(s.id) }))
+        .map((s) => ({
+          stallionId: s.id,
+          stallionName: s.name,
+          value: getA(s.id).lifetimeG1Foals,
+          metrics: getA(s.id),
+        }))
         .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 }))
+        .map((r, i) => ({ ...r, rank: i + 1 })),
     },
     // Simplified specialists for leaderboard speed (no nested loops)
-    turf_specialists: { type: "turf_specialists", title: "Turf Specialists", lastUpdated: currentDay, rankings: [] },
-    dirt_specialists: { type: "dirt_specialists", title: "Dirt Specialists", lastUpdated: currentDay, rankings: [] },
-    sprint_sires: { type: "sprint_sires", title: "Sprint Sires", lastUpdated: currentDay, rankings: [] },
-    staying_sires: { type: "staying_sires", title: "Staying Sires", lastUpdated: currentDay, rankings: [] },
+    turf_specialists: {
+      type: "turf_specialists",
+      title: "Turf Specialists",
+      lastUpdated: currentDay,
+      rankings: [],
+    },
+    dirt_specialists: {
+      type: "dirt_specialists",
+      title: "Dirt Specialists",
+      lastUpdated: currentDay,
+      rankings: [],
+    },
+    sprint_sires: {
+      type: "sprint_sires",
+      title: "Sprint Sires",
+      lastUpdated: currentDay,
+      rankings: [],
+    },
+    staying_sires: {
+      type: "staying_sires",
+      title: "Staying Sires",
+      lastUpdated: currentDay,
+      rankings: [],
+    },
     value_sires: {
       type: "value_sires",
       title: "Value Sires",
       description: "AEI per $1,000 fee",
       lastUpdated: currentDay,
       rankings: stallions
-        .map(s => {
-           const a = getA(s.id);
-           const val = a.aei / ((a.standingFee || 1) / 1000);
-           return { stallionId: s.id, stallionName: s.name, value: val, metrics: a };
+        .map((s) => {
+          const a = getA(s.id);
+          const val = a.aei / ((a.standingFee || 1) / 1000);
+          return { stallionId: s.id, stallionName: s.name, value: val, metrics: a };
         })
-        .filter(r => r.metrics.lifetimeFoals >= 5)
+        .filter((r) => r.metrics.lifetimeFoals >= 5)
         .sort((a, b) => b.value - a.value)
-        .map((r, i) => ({ ...r, rank: i + 1 }))
+        .map((r, i) => ({ ...r, rank: i + 1 })),
     },
-    freshman_watch: { type: "freshman_watch", title: "Freshman Watch", lastUpdated: currentDay, rankings: [] },
-    rising_stars: { type: "rising_stars", title: "Rising Stars", lastUpdated: currentDay, rankings: [] },
-    regional_north: { type: "regional_north", title: "North Hemisphere", lastUpdated: currentDay, rankings: [] },
-    regional_south: { type: "regional_south", title: "South Hemisphere", lastUpdated: currentDay, rankings: [] },
+    freshman_watch: {
+      type: "freshman_watch",
+      title: "Freshman Watch",
+      lastUpdated: currentDay,
+      rankings: [],
+    },
+    rising_stars: {
+      type: "rising_stars",
+      title: "Rising Stars",
+      lastUpdated: currentDay,
+      rankings: [],
+    },
+    regional_north: {
+      type: "regional_north",
+      title: "North Hemisphere",
+      lastUpdated: currentDay,
+      rankings: [],
+    },
+    regional_south: {
+      type: "regional_south",
+      title: "South Hemisphere",
+      lastUpdated: currentDay,
+      rankings: [],
+    },
   };
 }
-
 
 /**
  * Overall leaderboard ranked by AEI.
@@ -343,7 +403,8 @@ function computeTurfLeaderboard(
   const rankings = stallions
     .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let turfWins = 0, turfStarts = 0;
+      let turfWins = 0,
+        turfStarts = 0;
       for (const foal of runners) {
         const cs = getCareerStats(foal);
         turfWins += cs.turfWins;
@@ -390,7 +451,8 @@ function computeDirtLeaderboard(
   const rankings = stallions
     .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let dirtWins = 0, dirtStarts = 0;
+      let dirtWins = 0,
+        dirtStarts = 0;
       for (const foal of runners) {
         const cs = getCareerStats(foal);
         dirtWins += cs.dirtWins;
@@ -437,7 +499,8 @@ function computeSprintLeaderboard(
   const rankings = stallions
     .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let sprintWins = 0, sprintStarts = 0;
+      let sprintWins = 0,
+        sprintStarts = 0;
       for (const foal of runners) {
         const cs = getCareerStats(foal);
         sprintWins += cs.sprintWins;
@@ -484,7 +547,8 @@ function computeStayingLeaderboard(
   const rankings = stallions
     .map((s) => {
       const runners = getRunnersBy({ horses: allHorses }, s.id);
-      let stayerWins = 0, stayerStarts = 0;
+      let stayerWins = 0,
+        stayerStarts = 0;
       for (const foal of runners) {
         const cs = getCareerStats(foal);
         stayerWins += cs.stayerWins;

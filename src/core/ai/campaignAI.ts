@@ -43,12 +43,16 @@ export interface ContenderStatus {
   targetRaces: string[]; // Race keys for major races
   confidence: number; // 0-1, how confident we are this horse is a contender
   lastAssessmentDay: number;
-  contenderSeries: Record<string, { // Per triple crown series
-    isContender: boolean;
-    confidence: number;
-    targetRaces: string[];
-    lastAssessmentDay: number;
-  }>;
+  contenderSeries: Record<
+    string,
+    {
+      // Per triple crown series
+      isContender: boolean;
+      confidence: number;
+      targetRaces: string[];
+      lastAssessmentDay: number;
+    }
+  >;
 }
 
 export interface CampaignDecision {
@@ -106,12 +110,15 @@ export function detectContender(
   let isContender = false;
   let confidence = 0;
   const targetRaces: string[] = [];
-  const contenderSeries: Record<string, {
-    isContender: boolean;
-    confidence: number;
-    targetRaces: string[];
-    lastAssessmentDay: number;
-  }> = {};
+  const contenderSeries: Record<
+    string,
+    {
+      isContender: boolean;
+      confidence: number;
+      targetRaces: string[];
+      lastAssessmentDay: number;
+    }
+  > = {};
 
   // Determine target triple crown series based on stable's breeding archetype
   const targetSeriesKeys = stable?.breedingArchetype
@@ -264,7 +271,14 @@ export function getOptimalMajorRaceTarget(
     const race = GRADED_RACES.find((r) => r.key === raceKey);
     if (!race) continue;
 
-    const score = calculateRaceTargetScore(aiState, horse, race, stable, currentDay, triplecrownHistory);
+    const score = calculateRaceTargetScore(
+      aiState,
+      horse,
+      race,
+      stable,
+      currentDay,
+      triplecrownHistory,
+    );
     if (score > bestScore) {
       bestScore = score;
       bestRaceKey = raceKey;
@@ -286,6 +300,7 @@ export function getOptimalMajorRaceTarget(
  * @param race - The race being considered
  * @param stable - The stable making the decision
  * @param currentDay - Current game day
+ * @param triplecrownHistory
  * @returns Race target score (0-100+)
  */
 function calculateRaceTargetScore(
@@ -372,6 +387,7 @@ function calculateRaceTargetScore(
  * @param race - The major race being considered
  * @param stable - The stable making the decision
  * @param currentDay - Current game day
+ * @param triplecrownHistory
  * @returns True if stable should target the major race
  */
 export function shouldTargetMajorRace(
@@ -407,10 +423,11 @@ export function shouldTargetMajorRace(
     const beyerHistory = horse.raceHistory
       .filter((r) => r.beyer !== undefined)
       .map((r) => r.beyer!);
-    const avgBeyer = beyerHistory.length > 0
-      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
-      : 80;
-    
+    const avgBeyer =
+      beyerHistory.length > 0
+        ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+        : 80;
+
     // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days
     if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
       bounceRisk = true;
@@ -423,7 +440,14 @@ export function shouldTargetMajorRace(
   }
 
   // Calculate target score
-  const score = calculateRaceTargetScore(aiState, horse, race, stable, currentDay, triplecrownHistory);
+  const score = calculateRaceTargetScore(
+    aiState,
+    horse,
+    race,
+    stable,
+    currentDay,
+    triplecrownHistory,
+  );
 
   // Get adaptive threshold
   const contextKey = `${stable.personality}:${race.key}`;
@@ -564,7 +588,8 @@ export function recordCampaignDecision(
   const newHistory = [...aiState.campaignHistory, decision];
 
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   return {
     ...aiState,

@@ -158,7 +158,14 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
 
   return (
     <div className="race-visualizer-container">
-      <canvas ref={canvasRef} width={1000} height={500} className="race-visualizer-canvas" role="img" aria-label="Race track visualization" />
+      <canvas
+        ref={canvasRef}
+        width={1000}
+        height={500}
+        className="race-visualizer-canvas"
+        role="img"
+        aria-label="Race track visualization"
+      />
 
       <div className="race-overlay">
         <div className="race-stats tabular-nums">
@@ -175,7 +182,14 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         </div>
       </div>
 
-      <div className="race-progress-bar" role="progressbar" aria-valuemin={0} aria-valuemax={duration} aria-valuenow={currentTime} style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }} />
+      <div
+        className="race-progress-bar"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={duration}
+        aria-valuenow={currentTime}
+        style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+      />
 
       <div className="race-controls">
         <button

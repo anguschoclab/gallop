@@ -18,14 +18,16 @@ interface AuctionFilterBarProps {
   /** Whether any filters are currently active. */
   hasActiveFilters: boolean;
   /** Callback to update search filters in the URL. */
-  onUpdateFilter: (update: Partial<AuctionBrowseSearch> | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch)) => void;
+  onUpdateFilter: (
+    update: Partial<AuctionBrowseSearch> | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
+  ) => void;
   /** Callback to reset all filters. */
   onReset: () => void;
 }
 
 /**
  * Component to render the auction browsing filter and sort interface.
- * 
+ *
  * EXTRACTED FROM: src/routes/auction.$saleId.tsx
  */
 export function AuctionFilterBar({
@@ -107,11 +109,7 @@ export function AuctionFilterBar({
 
         <div className="flex items-center gap-2">
           {hasActiveFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onReset}
-            >
+            <Button variant="ghost" size="sm" onClick={onReset}>
               Reset
             </Button>
           )}

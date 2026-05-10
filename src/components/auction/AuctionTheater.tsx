@@ -147,7 +147,11 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
             Live Auction Stream · Day {day}
           </p>
         </div>
-        <AuctionScoreboard cash={cash} lotsRemaining={totalLots - lotIndex} scoreboard={scoreboard} />
+        <AuctionScoreboard
+          cash={cash}
+          lotsRemaining={totalLots - lotIndex}
+          scoreboard={scoreboard}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

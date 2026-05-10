@@ -68,13 +68,10 @@ export const hydrationComplete = {
  * @param useGameStore - Default store instance to use
  * @returns Async rehydrate function that takes an optional store instance
  */
-export function createRehydrateStore(
-  initialState: any,
-  useGameStore: any,
-) {
+export function createRehydrateStore(initialState: any, useGameStore: any) {
   return async function rehydrateStore(passedStore?: any): Promise<void> {
     const store = passedStore || useGameStore;
-    
+
     if (!store) {
       console.warn("No store instance provided for rehydration");
       return;
@@ -87,7 +84,9 @@ export function createRehydrateStore(
       if (store.persist) {
         await store.persist.rehydrate();
       } else {
-        console.warn("Store persist middleware not found during rehydration, using direct setState");
+        console.warn(
+          "Store persist middleware not found during rehydration, using direct setState",
+        );
         store.setState(state);
       }
       hydrationComplete.value = true;

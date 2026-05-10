@@ -236,7 +236,8 @@ export function recordClaimingDecision(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   return {
     ...aiState,

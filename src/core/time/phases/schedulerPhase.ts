@@ -31,8 +31,8 @@ export const schedulerPhase = {
       return context;
     }
 
-    const horseMap = new Map(state.horses.map(h => [h.id, h]));
-    const raceMap = new Map(state.races.map(r => [r.id, r]));
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const raceMap = new Map(state.races.map((r) => [r.id, r]));
 
     const updatedCampaigns: HorseCampaign[] = state.campaigns.map((campaign) => {
       const horse = horseMap.get(campaign.horseId);
@@ -118,7 +118,6 @@ export const schedulerPhase = {
 
       updatedCampaigns[i] = { ...campaign, slots: result.updatedSlots };
     }
-
 
     const updatedLogs = [...entryLogs, ...context.logs];
 

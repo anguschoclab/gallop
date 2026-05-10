@@ -35,7 +35,7 @@ export class SystemHandler implements ImpactHandler {
       "news_item",
       "hall_of_fame_induction",
       "season_history_record",
-      "track_record"
+      "track_record",
     ].includes(type);
   }
 
@@ -90,7 +90,8 @@ export class SystemHandler implements ImpactHandler {
       case "campaign_slot": {
         const { horseId, slotIndex, slot } = impactAny;
         const campaign =
-          lookupMaps?.campaignMap.get(horseId) || draft.campaigns?.find((c) => c.horseId === horseId);
+          lookupMaps?.campaignMap.get(horseId) ||
+          draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.slots[slotIndex] = { ...campaign.slots[slotIndex], ...slot };
         }
@@ -100,7 +101,8 @@ export class SystemHandler implements ImpactHandler {
       case "campaign_flag": {
         const { horseId, flag } = impactAny;
         const campaign =
-          lookupMaps?.campaignMap.get(horseId) || draft.campaigns?.find((c) => c.horseId === horseId);
+          lookupMaps?.campaignMap.get(horseId) ||
+          draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.flags.push(flag);
         }
@@ -110,7 +112,8 @@ export class SystemHandler implements ImpactHandler {
       case "campaign_flag_dismissal": {
         const { horseId, flag } = impactAny;
         const campaign =
-          lookupMaps?.campaignMap.get(horseId) || draft.campaigns?.find((c) => c.horseId === horseId);
+          lookupMaps?.campaignMap.get(horseId) ||
+          draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.flags = campaign.flags.filter(
             (f: any) =>
@@ -143,7 +146,8 @@ export class SystemHandler implements ImpactHandler {
       case "auto_manage_toggle": {
         const { horseId, autoManaged } = impactAny;
         const campaign =
-          lookupMaps?.campaignMap.get(horseId) || draft.campaigns?.find((c) => c.horseId === horseId);
+          lookupMaps?.campaignMap.get(horseId) ||
+          draft.campaigns?.find((c) => c.horseId === horseId);
         if (campaign) {
           campaign.autoManaged = autoManaged;
         }
@@ -153,7 +157,13 @@ export class SystemHandler implements ImpactHandler {
       case "reputation_change": {
         const { delta, reason, source, metadata } = impactAny;
         if (draft.reputation) {
-          const newEvent = createReputationEvent(source as any, delta, reason, impact.day, metadata);
+          const newEvent = createReputationEvent(
+            source as any,
+            delta,
+            reason,
+            impact.day,
+            metadata,
+          );
           draft.reputation.events.push(newEvent);
           draft.reputation.score += delta;
           draft.reputation.tier = getReputationTier(draft.reputation.score);
@@ -183,29 +193,33 @@ export class SystemHandler implements ImpactHandler {
 
       case "staff": {
         const { action, stableId, staffId, role } = impactAny;
-        
+
         if (action === "hire") {
-          const staffIndex = draft.staffPool.findIndex(s => s.id === staffId);
+          const staffIndex = draft.staffPool.findIndex((s) => s.id === staffId);
           if (staffIndex !== -1) {
             const staff = draft.staffPool[staffIndex];
             staff.stableId = stableId;
             draft.hiredStaff.push(staff);
             draft.staffPool.splice(staffIndex, 1);
-            
+
             if (stableId !== "") {
-              const stable = lookupMaps?.stableMap.get(stableId) || draft.npcStables.find(s => s.id === stableId);
+              const stable =
+                lookupMaps?.stableMap.get(stableId) ||
+                draft.npcStables.find((s) => s.id === stableId);
               if (stable) {
                 stable.staff[role] = staffId;
               }
             }
           }
         } else if (action === "fire") {
-          const staffIndex = draft.hiredStaff.findIndex(s => s.id === staffId);
+          const staffIndex = draft.hiredStaff.findIndex((s) => s.id === staffId);
           if (staffIndex !== -1) {
             draft.hiredStaff.splice(staffIndex, 1);
-            
+
             if (stableId !== "") {
-              const stable = lookupMaps?.stableMap.get(stableId) || draft.npcStables.find(s => s.id === stableId);
+              const stable =
+                lookupMaps?.stableMap.get(stableId) ||
+                draft.npcStables.find((s) => s.id === stableId);
               if (stable) {
                 stable.staff[role] = null;
               }
@@ -221,12 +235,12 @@ export class SystemHandler implements ImpactHandler {
         draft.news = [newsItem, ...draft.news].slice(0, 500);
         break;
       }
-      
+
       case "hall_of_fame_induction": {
         const { entry } = impactAny;
         if (!draft.hallOfFame) draft.hallOfFame = [];
         // Prevent duplicates
-        if (!draft.hallOfFame.find(e => e.horseId === entry.horseId)) {
+        if (!draft.hallOfFame.find((e) => e.horseId === entry.horseId)) {
           draft.hallOfFame.push(entry);
         }
         break;
@@ -248,5 +262,4 @@ export class SystemHandler implements ImpactHandler {
       }
     }
   }
-
 }

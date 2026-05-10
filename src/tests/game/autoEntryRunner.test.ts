@@ -46,8 +46,22 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
       recovery: [3, 3],
       fertility: [3, 3],
       foalingEase: [3, 3],
-      markings: { socks: [3, 3], face: [3, 3], silverDapple: [3, 3], sabino: [3, 3], splashWhite: [3, 3] },
-      health: { bleeder: [3, 3], roarer: [3, 3], ocd: [3, 3], efna5: [3, 3], pssm: [3, 3], rer: [3, 3], epm: [3, 3] },
+      markings: {
+        socks: [3, 3],
+        face: [3, 3],
+        silverDapple: [3, 3],
+        sabino: [3, 3],
+        splashWhite: [3, 3],
+      },
+      health: {
+        bleeder: [3, 3],
+        roarer: [3, 3],
+        ocd: [3, 3],
+        efna5: [3, 3],
+        pssm: [3, 3],
+        rer: [3, 3],
+        epm: [3, 3],
+      },
     },
     form: 0.8,
     potential: 80,
@@ -72,7 +86,13 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     recoveryRate: 0.7,
     fertility: 0.7,
     foalingEase: 0.7,
-    markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+    markings: {
+      socks: "none",
+      face: "none",
+      silverDapple: false,
+      sabino: false,
+      splashWhite: false,
+    },
     bleederRisk: 0.1,
     roarerRisk: 0.1,
     ocdRisk: 0.1,
@@ -175,8 +195,16 @@ describe("runAutoEntries", () => {
 
   it("should skip when no matching race found", () => {
     const horse = createMockHorse();
-    const campaign = createMockCampaign({ 
-      slots: [{ status: "planned", dayTarget: 100, dayWindow: 7, role: "target", constraintDistance: 3000 }] 
+    const campaign = createMockCampaign({
+      slots: [
+        {
+          status: "planned",
+          dayTarget: 100,
+          dayWindow: 7,
+          role: "target",
+          constraintDistance: 3000,
+        },
+      ],
     });
     const races = [createMockRace({ id: "race-2", distance: 1600 })]; // Distance doesn't match constraint
     const currentDay = 95;
@@ -224,7 +252,9 @@ describe("runAutoEntries", () => {
   it("should handle already entered slots", () => {
     const horse = createMockHorse();
     const campaign = createMockCampaign({
-      slots: [{ status: "entered", dayTarget: 100, dayWindow: 7, raceId: "race-1", role: "target" }],
+      slots: [
+        { status: "entered", dayTarget: 100, dayWindow: 7, raceId: "race-1", role: "target" },
+      ],
     });
     const races = [createMockRace()];
     const currentDay = 95;
@@ -255,7 +285,9 @@ describe("runAutoEntries", () => {
 describe("reconcileSlotStatuses", () => {
   it("should return unchanged slots for non-entered slots", () => {
     const campaign = createMockCampaign({
-      slots: [{ status: "planned", dayTarget: 100, dayWindow: 7, raceId: "race-1", role: "target" }],
+      slots: [
+        { status: "planned", dayTarget: 100, dayWindow: 7, raceId: "race-1", role: "target" },
+      ],
     });
     const races = [createMockRace({ id: "race-1", resolved: true })];
 
@@ -266,7 +298,9 @@ describe("reconcileSlotStatuses", () => {
 
   it("should mark entered slots as completed when race is resolved", () => {
     const campaign = createMockCampaign({
-      slots: [{ status: "entered", dayTarget: 100, dayWindow: 7, raceId: "race-1", role: "target" }],
+      slots: [
+        { status: "entered", dayTarget: 100, dayWindow: 7, raceId: "race-1", role: "target" },
+      ],
     });
     const races = [createMockRace({ id: "race-1", resolved: true })];
 
@@ -277,7 +311,9 @@ describe("reconcileSlotStatuses", () => {
 
   it("should keep entered status when race is not resolved", () => {
     const campaign = createMockCampaign({
-      slots: [{ status: "entered", dayTarget: 100, dayWindow: 7, raceId: "race-1", role: "target" }],
+      slots: [
+        { status: "entered", dayTarget: 100, dayWindow: 7, raceId: "race-1", role: "target" },
+      ],
     });
     const races = [createMockRace({ id: "race-1", resolved: false })];
 
@@ -299,7 +335,15 @@ describe("reconcileSlotStatuses", () => {
 
   it("should handle missing races", () => {
     const campaign = createMockCampaign({
-      slots: [{ status: "entered", dayTarget: 100, dayWindow: 7, raceId: "nonexistent-race", role: "target" }],
+      slots: [
+        {
+          status: "entered",
+          dayTarget: 100,
+          dayWindow: 7,
+          raceId: "nonexistent-race",
+          role: "target",
+        },
+      ],
     });
     const races = [createMockRace({ id: "race-1", resolved: true })];
 

@@ -78,10 +78,10 @@ export function calculateOptimalTactics(
   stable: Stable,
 ): string {
   const personality = aiState.personalityState.personality;
-  
+
   // Jockey competency check - more skilled jockeys are better at riding to strength
   const isSkilled = (jockey.stats.positioning + jockey.stats.pacing) / 2 > 70;
-  
+
   // Dynamic Form: Check recoveryPoints - adjust tactics for fatigued horses
   const recoveryPoints = horse.recoveryPoints ?? 100;
   if (recoveryPoints < 50) {
@@ -96,10 +96,11 @@ export function calculateOptimalTactics(
     const beyerHistory = horse.raceHistory
       .filter((r) => r.beyer !== undefined)
       .map((r) => r.beyer!);
-    const avgBeyer = beyerHistory.length > 0
-      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
-      : 80;
-    
+    const avgBeyer =
+      beyerHistory.length > 0
+        ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+        : 80;
+
     // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days
     if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
       bounceRisk = true;
@@ -112,7 +113,7 @@ export function calculateOptimalTactics(
     if (horse.runningStyle === "S") return "save"; // Save more for late kick
     return "save"; // Default to save for bounce risk
   }
-  
+
   // Strategy: Try to race to strength
   if (horse.runningStyle === "E") {
     // Front runners want to lead or be on the rail
@@ -218,10 +219,11 @@ function calculateStyleScore(
     const beyerHistory = horse.raceHistory
       .filter((r) => r.beyer !== undefined)
       .map((r) => r.beyer!);
-    const avgBeyer = beyerHistory.length > 0
-      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
-      : 80;
-    
+    const avgBeyer =
+      beyerHistory.length > 0
+        ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+        : 80;
+
     if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
       bounceRisk = true;
     }
@@ -460,7 +462,8 @@ export function recordRaceStrategy(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update learning state
   const success = position <= 3; // Top 3 is success

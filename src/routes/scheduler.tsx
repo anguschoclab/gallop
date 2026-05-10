@@ -146,7 +146,12 @@ function SchedulerPage() {
                 >
                   Create
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setAddingHorseId(null)} aria-label="Cancel adding campaign">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setAddingHorseId(null)}
+                  aria-label="Cancel adding campaign"
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </div>

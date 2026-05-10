@@ -19,8 +19,9 @@ interface ResultOverlayProps {
  */
 function generateJockeyFeedback(runner: Runner, position: number, ordered: Runner[]): string {
   const winner = ordered[0];
-  const timeDiff = runner.finishTime && winner.finishTime ? runner.finishTime - winner.finishTime : 0;
-  
+  const timeDiff =
+    runner.finishTime && winner.finishTime ? runner.finishTime - winner.finishTime : 0;
+
   if (position === 1) {
     return "Perfect ride! Jockey executed the race plan flawlessly.";
   } else if (position <= 3) {
@@ -39,13 +40,13 @@ function generateJockeyFeedback(runner: Runner, position: number, ordered: Runne
 /**
  * Component to display the final race results in a modal overlay.
  * Calculates prizes and displays finish times and silk colors.
- * 
+ *
  * EXTRACTED FROM: src/routes/race.$raceId.tsx
  */
 export function ResultOverlay({ race, runners, onClose }: ResultOverlayProps) {
   const PRIZE = [0.6, 0.25, 0.1, 0.05];
   const ordered = [...runners].sort((a, b) => (a.finishTime ?? 999) - (b.finishTime ?? 999));
-  
+
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
       <div className="bg-card text-card-foreground rounded-xl shadow-2xl max-w-md w-full p-6 border border-white/10">

@@ -10,11 +10,11 @@
 
 /**
  * Stallion Farm Mapping
- * 
+ *
  * Maps real-world stud farm names (found in pedigree data) to in-game NPC stables.
  * This ensures famous stallions are associated with the correct operation when
  * they appear in the game world.
- * 
+ *
  * NOTE: Entries must be kept in sync with ELITE_POOL and MID_POOL in stablePoolData.ts.
  */
 export const STALLION_FARM_MAPPING: Record<string, string> = {

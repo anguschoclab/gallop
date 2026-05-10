@@ -87,9 +87,7 @@ export function SyndicateMarket() {
               <Badge variant={playerShares > 0 ? "default" : "secondary"}>
                 {playerShares > 0 ? `You own ${playerShares} shares` : "Not owned"}
               </Badge>
-              {playerShares > 0 && (
-                <Badge variant="outline">{ownershipPercent.toFixed(0)}%</Badge>
-              )}
+              {playerShares > 0 && <Badge variant="outline">{ownershipPercent.toFixed(0)}%</Badge>}
             </div>
 
             <div className="flex gap-2">

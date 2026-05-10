@@ -9,12 +9,12 @@ describe("generateAllNpcHorses", () => {
     const rng = createRng(hashStr("test_uniqueness"));
     const stables = generateAllStables(1, rng);
     const famousStallions = generateFamousStallions(stables, rng);
-    
+
     const { horses } = generateAllNpcHorses(stables, rng, undefined, 1, famousStallions);
-    
-    const ids = horses.map(h => h.id);
+
+    const ids = horses.map((h) => h.id);
     const uniqueIds = new Set(ids);
-    
+
     expect(ids.length).toBe(uniqueIds.size);
   });
 
@@ -22,9 +22,9 @@ describe("generateAllNpcHorses", () => {
     const rng = createRng(hashStr("test_duplicates"));
     const stables = generateAllStables(1, rng);
     const famousStallions = generateFamousStallions(stables, rng);
-    
+
     const { horses } = generateAllNpcHorses(stables, rng, undefined, 1, famousStallions);
-    
+
     // Check for object equality (not just ID equality)
     const uniqueObjects = new Set(horses);
     expect(horses.length).toBe(uniqueObjects.size);

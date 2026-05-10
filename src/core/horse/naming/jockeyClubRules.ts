@@ -76,9 +76,12 @@ export function validateHorseName(
     }
   }
 
-  // 3. Offensive words
-  if (OFFENSIVE_WORDS.some((w) => lowerName.includes(w.toLowerCase()))) {
-    return { isValid: false, reason: "Name contains offensive language." };
+  // 3. Offensive words (check for whole words only, not substrings)
+  for (const word of OFFENSIVE_WORDS) {
+    const regex = new RegExp(`\\b${word.toLowerCase()}\\b`, "i");
+    if (regex.test(lowerName)) {
+      return { isValid: false, reason: "Name contains offensive language." };
+    }
   }
 
   // 4. Trade names
@@ -95,9 +98,6 @@ export function validateHorseName(
   if (PROHIBITED_PATTERNS.some((p) => p.test(trimmed))) {
     return { isValid: false, reason: "Name contains prohibited characters or numbers." };
   }
-
-  // Debug logging
-  console.log(`Validation passed for: ${trimmed}`);
 
   return { isValid: true };
 }

@@ -14,7 +14,12 @@
 // Also deletes dead/retired horses with no wins to prevent array accumulation
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact, PastureRetirementImpact, LogImpact, HorseDeletionImpact } from "@/core/resolver/impacts/index";
+import type {
+  AnyImpact,
+  PastureRetirementImpact,
+  LogImpact,
+  HorseDeletionImpact,
+} from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
 
 /**
@@ -118,7 +123,8 @@ export const pastureRetirementPhase: PipelinePhase = {
 
     // 3. Delete dead/retired horses with no wins to prevent array accumulation
     const horsesToDelete = state.horses.filter(
-      (h) => (h.lifecycleStatus === "deceased" || h.lifecycleStatus === "retired") && h.careerWins === 0
+      (h) =>
+        (h.lifecycleStatus === "deceased" || h.lifecycleStatus === "retired") && h.careerWins === 0,
     );
 
     for (const horse of horsesToDelete) {

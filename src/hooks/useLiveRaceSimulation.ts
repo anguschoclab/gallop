@@ -5,7 +5,7 @@ import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 
 /**
  * Hook to manage the complex race simulation loop using requestAnimationFrame.
- * 
+ *
  * @param options - Simulation options
  * @param options.race - The race being simulated
  * @param options.runners - The field of runners in the race
@@ -51,7 +51,7 @@ export function useLiveRaceSimulation({
 
   useEffect(() => {
     if (!race || race.resolved) return;
-    
+
     let raf = 0;
     let last = performance.now();
     const FIXED_DT = 0.05;
@@ -61,22 +61,22 @@ export function useLiveRaceSimulation({
     const loop = (now: number) => {
       const real = (now - last) / 1000;
       last = now;
-      
+
       if (!pausedRef.current) {
         accumulator += real * speedRef.current;
       }
-      
+
       let stillRunning = runners.some((r) => r.finishTime === null);
       let steps = 0;
-      
+
       while (accumulator >= FIXED_DT && stillRunning && steps < MAX_STEPS_PER_FRAME) {
         accumulator -= FIXED_DT;
         simTimeRef.current += FIXED_DT;
         steps++;
         stillRunning = false;
-        
+
         const pace = computePaceContext(runners, race.distance);
-        
+
         if (narrativeRef.current) {
           const newCommentary = narrativeRef.current.update(
             runners,
@@ -87,7 +87,7 @@ export function useLiveRaceSimulation({
             messageQueue.current.push(...newCommentary);
           }
         }
-        
+
         for (const r of runners) {
           if (r.finishTime === null) {
             stepRunner(
@@ -111,9 +111,9 @@ export function useLiveRaceSimulation({
           }
         }
       }
-      
+
       setTick((t) => t + 1);
-      
+
       if (stillRunning) {
         raf = requestAnimationFrame(loop);
       } else {
@@ -121,7 +121,7 @@ export function useLiveRaceSimulation({
         resolveRaceWithImpacts(race.id, finishOrderRef.current);
       }
     };
-    
+
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [race, runners, resolveRaceWithImpacts, narrativeRef, messageQueue, rngRef]);

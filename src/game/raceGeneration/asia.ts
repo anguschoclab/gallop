@@ -1,6 +1,6 @@
 /**
  * raceGeneration/asia.ts - Asian race generator (Japan, HK, UAE)
- * 
+ *
  * Focus: High class, no claiming, mixed distances, high purses.
  */
 
@@ -15,9 +15,9 @@ import { CLASS_CONFIG } from "./raceGen";
 
 const ASIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Maiden", probability: 0.15 },
-  { class: "Allowance", probability: 0.40 },
-  { class: "Listed", probability: 0.20 },
-  { class: "Stakes", probability: 0.20 },
+  { class: "Allowance", probability: 0.4 },
+  { class: "Listed", probability: 0.2 },
+  { class: "Stakes", probability: 0.2 },
   { class: "Handicap", probability: 0.05 },
 ];
 
@@ -40,10 +40,10 @@ export function generateAsianRace(
 ): Race {
   const raceClass = selectAsiaRaceClass(rng);
   const cfg = CLASS_CONFIG[raceClass];
-  
+
   const trackSurfaces = track.courses.map((c) => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
   const selectedSurface = surface || rng.pick(trackSurfaces.length > 0 ? trackSurfaces : ["Turf"]);
-  
+
   const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
 
   const name = generateRaceName({

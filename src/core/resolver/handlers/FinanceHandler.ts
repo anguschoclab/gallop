@@ -32,7 +32,8 @@ export class FinanceHandler implements ImpactHandler {
       case "cash_change": {
         const { entityId, amount } = impactAny;
         if (entityId && entityId !== "player") {
-          const stable = lookupMaps?.stableMap.get(entityId) || draft.npcStables.find((s) => s.id === entityId);
+          const stable =
+            lookupMaps?.stableMap.get(entityId) || draft.npcStables.find((s) => s.id === entityId);
           if (stable) {
             stable.cash = Math.max(0, stable.cash + amount);
           }
@@ -44,7 +45,8 @@ export class FinanceHandler implements ImpactHandler {
 
       case "horse_transfer": {
         const { horseId, toStableId } = impactAny;
-        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+        const horse =
+          lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (horse) {
           horse.stableId = toStableId;
           horse.owned = !toStableId;
@@ -53,5 +55,4 @@ export class FinanceHandler implements ImpactHandler {
       }
     }
   }
-
 }

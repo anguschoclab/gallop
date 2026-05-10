@@ -167,7 +167,6 @@ export function createAuctionRunner(
       consecutiveBidders: [],
     }));
 
-
   const bidderStables = stables.filter((s) => s.isMajor);
   const log: string[] = [];
   let lotIndex = 0;

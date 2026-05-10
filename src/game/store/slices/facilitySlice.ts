@@ -31,9 +31,10 @@ export const createFacilitySlice: GameStateCreator<FacilitySlice> = (set, get) =
     if (!s.facilities) return { ok: false, reason: "Facilities not initialized." };
     const facility = s.facilities[facilityType as keyof PlayerFacilities];
     if (!facility) return { ok: false, reason: "Facility not found." };
-    
-    if (facility.level === "elite") return { ok: false, reason: "Facility already at maximum level." };
-    
+
+    if (facility.level === "elite")
+      return { ok: false, reason: "Facility already at maximum level." };
+
     const cost = facilityUpgradeCost(facility.level);
     if (s.cash < cost)
       return {
@@ -41,7 +42,12 @@ export const createFacilitySlice: GameStateCreator<FacilitySlice> = (set, get) =
         reason: `Insufficient cash. Upgrade costs ${formatCurrency(cost)}.`,
       };
 
-    const levelOrder: import("@/core/facilities").FacilityLevel[] = ["basic", "standard", "premium", "elite"];
+    const levelOrder: import("@/core/facilities").FacilityLevel[] = [
+      "basic",
+      "standard",
+      "premium",
+      "elite",
+    ];
     const nextLevelIndex = levelOrder.indexOf(facility.level) + 1;
     const nextLevel = levelOrder[nextLevelIndex];
 

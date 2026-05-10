@@ -78,7 +78,10 @@ import {
 } from "@/core/breeding/bruceLowe";
 import { rollGender, geldHorse } from "@/core/horse/gender";
 import { randomSilk, rand } from "@/core/common/random";
-import { generateProceduralHorseName, type NamingContext } from "@/core/horse/naming/nameGenerator.ts";
+import {
+  generateProceduralHorseName,
+  type NamingContext,
+} from "@/core/horse/naming/nameGenerator.ts";
 import {
   resolveBloodline,
   computeCoiFromSnapshot,
@@ -87,10 +90,7 @@ import {
 } from "@/core/breeding/populationGenetics";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
-import {
-  shouldRetireAtStartup,
-  defaultStudParams,
-} from "@/core/breeding/stallions";
+import { shouldRetireAtStartup, defaultStudParams } from "@/core/breeding/stallions";
 import {
   shouldGenerateHorseOfAge,
   createHorseGenAIState,
@@ -166,7 +166,6 @@ export function createHorseFromDNA(
     stableId?: string;
     createdAtDay?: number;
   } = {},
-
 ): Horse {
   const stats = resolveStats(genotype.stats);
   const coatColor = resolveCoatColor(genotype.color);
@@ -224,7 +223,6 @@ export function createHorseFromDNA(
     recoveryPoints: 100, // Dynamic Form: Initialize at full recovery
     createdAtDay: opts.createdAtDay,
     appearance: generateAppearanceDNA(
-
       Math.floor(rng.next() * 2147483647),
       undefined,
       getPalette(coatColor),
@@ -397,7 +395,6 @@ export function resolveFoaling(
   newDay?: number,
   state?: Pick<GameState, "horses">,
 ): { kind: "live"; foal: Horse; transmission?: boolean } | { kind: "complication"; type: string } {
-
   const rng = createRng(hashStr(pregnancy.id));
 
   // Genetic crossover

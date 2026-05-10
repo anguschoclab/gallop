@@ -39,11 +39,11 @@ export const raceEntryResolutionPhase: PipelinePhase = {
     // Filter for race entry intents
     const raceEntryIntents = intents.filter((i): i is RaceEntryIntent => i.type === "race_entry");
 
-    const horseMap = new Map(state.horses.map(h => [h.id, h]));
-    const raceMap = new Map(state.races.map(r => [r.id, r]));
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const raceMap = new Map(state.races.map((r) => [r.id, r]));
     const jockeys = state.jockeys ?? [];
-    const freeAgents = jockeys.filter(j => !j.stableId && j.lastRaceDay !== newDay);
-    
+    const freeAgents = jockeys.filter((j) => !j.stableId && j.lastRaceDay !== newDay);
+
     // Sort free agents by fame for fallback selection
     freeAgents.sort((a, b) => b.fame - a.fame);
 
@@ -60,23 +60,24 @@ export const raceEntryResolutionPhase: PipelinePhase = {
 
       // Automatically assign jockey for NPC entries if not specified
       if (!jockeyId && intent.source === "npc" && intent.sourceId) {
-        const stable = state.npcStables.find(s => s.id === intent.sourceId);
+        const stable = state.npcStables.find((s) => s.id === intent.sourceId);
         if (stable) {
           // 1. Check for retainer
-          const retainer = jockeys.find(j => j.stableId === stable.id);
+          const retainer = jockeys.find((j) => j.stableId === stable.id);
           if (retainer) {
             jockeyId = retainer.id;
           } else if (freeAgents.length > 0) {
             // 2. Use AI to select best free agent
             if (state.npcAIManager) {
               const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
-              const jockeyAI = stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
+              const jockeyAI =
+                stableAI.jockeyAI || (stableAI.jockeyAI = createJockeyAIState(stable));
               const chosen = selectBestJockey(jockeyAI, horse, freeAgents, stable);
               if (chosen) {
                 jockeyId = chosen.id;
               }
             }
-            
+
             // 3. Fallback to best available if AI selection failed
             if (!jockeyId) {
               jockeyId = freeAgents[0].id;

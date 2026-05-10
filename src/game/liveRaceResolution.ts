@@ -143,7 +143,7 @@ export function resolveLiveRaceWithImpacts(
       classBonus,
       calibratedPars,
     });
-    
+
     const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
     const dampener = inbreedingPerformanceDampener(inbreedingPattern);
     const peakingMultiplier = getPeakingBeyerMultiplier(horse.peakingIndex ?? 0);

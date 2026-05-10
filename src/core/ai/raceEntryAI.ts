@@ -9,9 +9,7 @@
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import {
-  getPersonalityAIState,
-} from "./personalitySystem";
+import { getPersonalityAIState } from "./personalitySystem";
 import {
   createLearningState,
   recordOutcome,
@@ -154,7 +152,7 @@ function evaluateStrategicValue(
   // Competitive positioning - avoid races with too many top competitors
   if (race.entries.length > 0) {
     // In real implementation, would look up horse stats
-    const avgCompetitorQuality = 50; 
+    const avgCompetitorQuality = 50;
 
     if (avgCompetitorQuality > 80) {
       strategicValue -= 10; // Penalty for very competitive fields
@@ -315,7 +313,7 @@ export function generateMultiRaceStrategy(
   upcomingRaces.sort((a, b) => {
     const dayDiff = a.day - b.day;
     if (dayDiff !== 0) return dayDiff;
-    return (b.purse || 0) - (a.purse || 0); 
+    return (b.purse || 0) - (a.purse || 0);
   });
 
   // Assign horses to races based on strategic fit
@@ -326,7 +324,7 @@ export function generateMultiRaceStrategy(
         horse,
         score: calculateStrategicEntryScore(aiState, horse, race, stable, currentDay),
       }))
-      .filter((c) => c.score > 50) 
+      .filter((c) => c.score > 50)
       .sort((a, b) => b.score - a.score);
 
     // Select top candidates (max 2 per race)
@@ -353,9 +351,7 @@ export function adaptStrategy(aiState: RaceEntryAIState, currentDay: number): Ra
   const outcomes = aiState.learningState.outcomes;
   const totalDecisions = outcomes.length;
   const successRate =
-    totalDecisions > 0
-      ? outcomes.filter((o) => o.success).length / totalDecisions
-      : 0.5;
+    totalDecisions > 0 ? outcomes.filter((o) => o.success).length / totalDecisions : 0.5;
 
   // If success rate is low, become more conservative
   if (successRate < 0.4 && totalDecisions > 10) {

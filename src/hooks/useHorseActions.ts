@@ -4,7 +4,7 @@ import type { Horse, AuctionSale } from "@/game/types";
 
 /**
  * Hook to manage horse-specific management actions and eligibility.
- * 
+ *
  * @param horseId The unique identifier of the horse.
  * @returns An object containing the horse data, consignment status, retirement eligibility, and relevant sale data.
  */

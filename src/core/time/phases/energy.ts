@@ -29,7 +29,7 @@ export const energyPhase = {
   order: 40,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    
+
     // Index staff by stableId for fast lookup
     const staffByStable = new Map<string, any[]>();
     if (state.hiredStaff) {
@@ -49,13 +49,12 @@ export const energyPhase = {
       // Get staff bonuses for this stable
       const stableId = h.stableId ?? "";
       const staffForStable = staffByStable.get(stableId) ?? [];
-      
-      const nutritionist = staffForStable.find(s => s.role === "nutritionist");
-      const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
-      
-      const vet = staffForStable.find(s => s.role === "veterinarian");
-      const vetBonus = vet ? vet.bonusValue : 0;
 
+      const nutritionist = staffForStable.find((s) => s.role === "nutritionist");
+      const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
+
+      const vet = staffForStable.find((s) => s.role === "veterinarian");
+      const vetBonus = vet ? vet.bonusValue : 0;
 
       // Health status recovery logic
       let newHealthStatus = h.healthStatus;
@@ -134,18 +133,18 @@ export const energyPhase = {
 
       // --- ACCLIMATIZATION DECAY ---
       if (h.outpostId) {
-          const stable = npcStables.find(s => s.id === stableId);
-          if (stable && (stable as any).outposts) {
-              const outpost = (stable as any).outposts.find((o: any) => o.id === h.outpostId);
-              if (outpost && outpost.acclimatizationDays?.[h.id] > 0) {
-                  outpost.acclimatizationDays[h.id]--;
-              }
+        const stable = npcStables.find((s) => s.id === stableId);
+        if (stable && (stable as any).outposts) {
+          const outpost = (stable as any).outposts.find((o: any) => o.id === h.outpostId);
+          if (outpost && outpost.acclimatizationDays?.[h.id] > 0) {
+            outpost.acclimatizationDays[h.id]--;
           }
+        }
       }
       // --- END ACCLIMATIZATION ---
 
       return {
-      ...h,
+        ...h,
         energy: newEnergy,
         recoveryPoints: newRecoveryPoints,
         fitness: newFitness,

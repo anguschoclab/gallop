@@ -1,5 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { JockeyAvatar, SIZE_MAP, JOCKEY_AVATAR_ASPECT, type JockeyAvatarSize } from "./JockeyAvatar";
+import {
+  JockeyAvatar,
+  SIZE_MAP,
+  JOCKEY_AVATAR_ASPECT,
+  type JockeyAvatarSize,
+} from "./JockeyAvatar";
 
 const stubJockey = {
   id: "test-jockey-1",
@@ -49,7 +54,9 @@ export const AllSizes: Story = {
             <JockeyAvatar jockey={stubJockey} size={size} />
             <div className="text-xs text-muted-foreground space-y-1 text-center font-mono">
               <div className="font-bold uppercase">{size}</div>
-              <div>{w}×{h}px</div>
+              <div>
+                {w}×{h}px
+              </div>
               <div className="text-[10px]">Ratio: {(w / h).toFixed(2)}</div>
             </div>
           </div>
@@ -97,7 +104,8 @@ export const NarrowContainer: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Tests that the avatar scales down without overflowing narrow containers (max-width:100%).",
+        story:
+          "Tests that the avatar scales down without overflowing narrow containers (max-width:100%).",
       },
     },
   },

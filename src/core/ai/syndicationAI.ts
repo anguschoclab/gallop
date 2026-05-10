@@ -21,20 +21,21 @@ import type { Syndicate } from "@/core/breeding/types";
  * @returns Estimated syndicate value in dollars
  */
 export function calculateSyndicateValue(stallion: Horse): number {
-  const g1Wins = stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+  const g1Wins =
+    stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
   const lifetimeEarnings = stallion.lifetimeEarnings || 0;
   const age = stallion.age;
 
   // Base value from G1 wins
   const g1Value = g1Wins * 500000;
-  
+
   // Earnings multiplier
-  const earningsMultiplier = 1 + (lifetimeEarnings / 10000000);
+  const earningsMultiplier = 1 + lifetimeEarnings / 10000000;
   const earningsValue = lifetimeEarnings * 0.1 * earningsMultiplier;
-  
+
   // Age depreciation (stallions decline after age 15)
-  const ageMultiplier = age > 15 ? 1 - ((age - 15) * 0.05) : 1;
-  
+  const ageMultiplier = age > 15 ? 1 - (age - 15) * 0.05 : 1;
+
   return Math.round((g1Value + earningsValue) * Math.max(0.5, ageMultiplier));
 }
 
@@ -73,21 +74,22 @@ export function shouldCreateSyndicate(
 ): boolean {
   // Check if stallion is owned by NPC
   if (stallion.stableId !== npcStable.id) return false;
-  
+
   // Check if stallion is a G1 winner
-  const g1Wins = stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+  const g1Wins =
+    stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
   if (g1Wins === 0) return false;
-  
+
   // Check if stallion is at stud
   if (!stallion.stud?.atStud) return false;
-  
+
   // Check if already syndicated
   if (existingSyndicates[stallion.id]) return false;
-  
+
   // Check if NPC has sufficient cash for initial share distribution (20 shares at $10k each)
   const initialCost = 200000;
   if ((npcStable.cash || 0) < initialCost) return false;
-  
+
   return true;
 }
 
@@ -114,16 +116,16 @@ export function calculateSharePurchase(
   const currentShares = syndicate.shareHolders[npcStable.id] || 0;
   const maxShares = Math.floor(syndicate.totalShares * 0.3); // Max 30% ownership
   const availableShares = maxShares - currentShares;
-  
+
   if (availableShares <= 0) return 0;
-  
+
   const sharePrice = calculateSharePrice(syndicate, stallion);
   const maxAffordable = Math.floor(cash / sharePrice);
   const sharesToBuy = Math.min(availableShares, maxAffordable);
-  
+
   // Only buy if can afford at least 1 share
   if (sharesToBuy < 1) return 0;
-  
+
   // Conservative: only buy 25% of affordable shares
   return Math.floor(sharesToBuy * 0.25);
 }
@@ -148,24 +150,24 @@ export function calculateShareSale(
 ): number {
   const currentShares = syndicate.shareHolders[npcStable.id] || 0;
   if (currentShares <= 0) return 0;
-  
+
   const sharePrice = calculateSharePrice(syndicate, stallion);
   const syndicateValue = calculateSyndicateValue(stallion);
-  
+
   // Sell if overvalued by more than 50%
   const fairPrice = syndicateValue / syndicate.totalShares;
   const isOvervalued = sharePrice > fairPrice * 1.5;
-  
+
   // Sell if stallion is old and declining
   const isDeclining = stallion.age > 18 && stallion.stud?.seasonBookings === 0;
-  
+
   // Sell if NPC needs cash (less than $100k)
   const needsCash = (npcStable.cash || 0) < 100000;
-  
+
   if (isOvervalued || isDeclining || needsCash) {
     // Sell 50% of holdings
     return Math.floor(currentShares * 0.5);
   }
-  
+
   return 0;
 }

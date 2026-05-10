@@ -17,7 +17,7 @@ export type RaceFilters = {
 
 /**
  * Hook to manage race filtering logic and derive available filter options.
- * 
+ *
  * @param races The complete list of races.
  * @param day The current game day.
  * @param filters The current filter values.
@@ -37,7 +37,9 @@ export function useRaceFilters(races: Race[], day: number, filters: RaceFilters)
         }
         return true;
       })
-      .filter((r: Race) => (country === "all" ? true : getCountry(r.graded?.trackId ?? "") === country))
+      .filter((r: Race) =>
+        country === "all" ? true : getCountry(r.graded?.trackId ?? "") === country,
+      )
       .filter((r: Race) => (surface === "all" ? true : r.surface === surface))
       .filter((r: Race) => (track === "all" ? true : r.graded?.track === track))
       .filter((r: Race) => {

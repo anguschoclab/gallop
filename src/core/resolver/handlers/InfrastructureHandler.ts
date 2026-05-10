@@ -37,7 +37,9 @@ export class InfrastructureHandler implements ImpactHandler {
     switch (impact.type) {
       case "facility_upgrade": {
         const { facilityId, nextLevel } = impactAny;
-        const facility = lookupMaps?.facilityMap.get(facilityId) || draft.facilities.find((f) => f.id === facilityId);
+        const facility =
+          lookupMaps?.facilityMap.get(facilityId) ||
+          draft.facilities.find((f) => f.id === facilityId);
         if (facility) {
           facility.level = nextLevel;
         }
@@ -45,9 +47,21 @@ export class InfrastructureHandler implements ImpactHandler {
       }
 
       case "staff": {
-        const { action, staffType, staffId, salary, specialty, skill, name, tier, bonusValue, traits, fame } = impactAny;
+        const {
+          action,
+          staffType,
+          staffId,
+          salary,
+          specialty,
+          skill,
+          name,
+          tier,
+          bonusValue,
+          traits,
+          fame,
+        } = impactAny;
         if (!draft.hiredStaff) draft.hiredStaff = [];
-        
+
         if (action === "hire") {
           const newStaff = {
             id: staffId,
@@ -59,12 +73,12 @@ export class InfrastructureHandler implements ImpactHandler {
             traits: traits || [],
             fame: fame || 0,
             stableId: impactAny.stableId,
-            contractUntil: impactAny.contractUntil
+            contractUntil: impactAny.contractUntil,
           };
           draft.hiredStaff.push(newStaff);
           if (lookupMaps) lookupMaps.staffMap.set(staffId, newStaff);
         } else if (action === "fire") {
-          const index = draft.hiredStaff.findIndex(s => s.id === staffId);
+          const index = draft.hiredStaff.findIndex((s) => s.id === staffId);
           if (index !== -1) {
             draft.hiredStaff.splice(index, 1);
             if (lookupMaps) lookupMaps.staffMap.delete(staffId);
@@ -75,20 +89,22 @@ export class InfrastructureHandler implements ImpactHandler {
 
       case "transport_horse": {
         const { horseId, toOutpostId, fatigueSpike, acclimatizationDays } = impactAny;
-        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+        const horse =
+          lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (horse) {
           horse.outpostId = toOutpostId;
           horse.fatigue = (horse.fatigue ?? 0) + fatigueSpike;
-          
+
           // Add to outpost acclimatization list
           const stableId = horse.stableId || "player";
-          const stable = lookupMaps?.stableMap.get(stableId) || draft.npcStables.find(s => s.id === stableId);
+          const stable =
+            lookupMaps?.stableMap.get(stableId) || draft.npcStables.find((s) => s.id === stableId);
           if (stable && stable.outposts) {
-              const outpost = stable.outposts.find((o: any) => o.id === toOutpostId);
-              if (outpost) {
-                  if (!outpost.acclimatizationDays) outpost.acclimatizationDays = {};
-                  outpost.acclimatizationDays[horseId] = acclimatizationDays;
-              }
+            const outpost = stable.outposts.find((o: any) => o.id === toOutpostId);
+            if (outpost) {
+              if (!outpost.acclimatizationDays) outpost.acclimatizationDays = {};
+              outpost.acclimatizationDays[horseId] = acclimatizationDays;
+            }
           }
         }
         break;
@@ -96,27 +112,28 @@ export class InfrastructureHandler implements ImpactHandler {
 
       case "outpost_action": {
         const { stableId, action, outpostId, metadata } = impactAny;
-        const stable = stableId === "player" ? draft : draft.npcStables.find(s => s.id === stableId);
+        const stable =
+          stableId === "player" ? draft : draft.npcStables.find((s) => s.id === stableId);
         if (stable && (stable as any).outposts) {
-            const outposts = (stable as any).outposts as import("@/core/facilities/outpostTypes").Outpost[];
-            if (action === "create") {
-                outposts.push({
-                    id: outpostId,
-                    name: metadata?.name || "New Outpost",
-                    region: metadata?.region || "North America (East)",
-                    totalSlots: 12,
-                    facilities: {},
-                    acclimatizationDays: {},
-                    headTrainerId: metadata?.headTrainerId
-                });
-            } else if (action === "assign_trainer") {
-                const outpost = outposts.find(o => o.id === outpostId);
-                if (outpost) outpost.headTrainerId = metadata?.trainerId;
-            }
+          const outposts = (stable as any)
+            .outposts as import("@/core/facilities/outpostTypes").Outpost[];
+          if (action === "create") {
+            outposts.push({
+              id: outpostId,
+              name: metadata?.name || "New Outpost",
+              region: metadata?.region || "North America (East)",
+              totalSlots: 12,
+              facilities: {},
+              acclimatizationDays: {},
+              headTrainerId: metadata?.headTrainerId,
+            });
+          } else if (action === "assign_trainer") {
+            const outpost = outposts.find((o) => o.id === outpostId);
+            if (outpost) outpost.headTrainerId = metadata?.trainerId;
+          }
         }
         break;
       }
     }
   }
-
 }

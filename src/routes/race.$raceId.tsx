@@ -310,11 +310,11 @@ function LiveRace() {
             <RaceVisualizer
               snapshots={race.snapshots!}
               distance={race.distance}
-              runners={runners.map(r => ({
+              runners={runners.map((r) => ({
                 horseId: r.horseId,
                 name: r.name,
                 silk: r.silk,
-                owned: r.owned
+                owned: r.owned,
               }))}
               trackType={race.surface}
             />
@@ -677,5 +677,3 @@ function HorseSprite({
     />
   );
 }
-
-

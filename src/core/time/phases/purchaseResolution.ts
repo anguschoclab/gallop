@@ -50,7 +50,6 @@ export const purchaseResolutionPhase: PipelinePhase = {
         price: intent.price,
         reason: "Purchase from market",
       });
-
     }
 
     // Remove purchased horses from market

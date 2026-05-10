@@ -68,7 +68,7 @@ export function createAuctionSlice(
       const horse = requireHorse(s.horses, horseId);
       const ownershipGuard = requireOwned(horse);
       if (ownershipGuard) return ownershipGuard;
-      
+
       if (horse!.consignedSaleId) return { ok: false, reason: "Already consigned to a sale." };
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
@@ -134,7 +134,10 @@ export function createAuctionSlice(
                   l.id === lotId
                     ? {
                         ...l,
-                        bidHistory: [...(l.bidHistory || []), { bidderId: "player", amount, day: s.day }],
+                        bidHistory: [
+                          ...(l.bidHistory || []),
+                          { bidderId: "player", amount, day: s.day },
+                        ],
                       }
                     : l,
                 ),

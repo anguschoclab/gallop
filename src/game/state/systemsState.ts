@@ -23,8 +23,8 @@ import type {
 } from "../types";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { RegionalAward, AwardRegion } from "../awards/types";
-import type { 
-  Leaderboard, 
+import type {
+  Leaderboard,
   SireTrendData,
   ProgenyLeaderboard,
   ProgenyLeaderboardType,
@@ -165,7 +165,7 @@ export interface SystemsState {
   usedHorseNames: string[];
   /** Set of all jockey names currently in use to ensure uniqueness */
   usedJockeyNames: string[];
-  
+
   // Staff system
   /** Pool of staff available for hire */
   staffPool: StaffMember[];

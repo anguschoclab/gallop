@@ -180,12 +180,15 @@ export function updateHorseTraining(
   };
 
   // Add training to history
-  const newHistory = [...devTrack.trainingHistory, {
-    day: currentDay,
-    type: trainingType,
-    energyBefore,
-    energyAfter: horse.energy,
-  }];
+  const newHistory = [
+    ...devTrack.trainingHistory,
+    {
+      day: currentDay,
+      type: trainingType,
+      energyBefore,
+      energyAfter: horse.energy,
+    },
+  ];
 
   // Trim history to last 10 trainings
   const trimmedHistory = newHistory.length > 10 ? newHistory.slice(-10) : newHistory;

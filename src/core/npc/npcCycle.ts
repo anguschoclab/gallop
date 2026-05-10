@@ -26,6 +26,172 @@ import { upgradeFacility } from "@/core/facilities";
 import type { Facility } from "@/core/facilities/facilityTypes";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
 
+// Fame constants
+const FAME_GAIN_G1_WIN = 20;
+const FAME_GAIN_G2_WIN = 15;
+const FAME_GAIN_G3_WIN = 10;
+const FAME_GAIN_OTHER_WIN = 5;
+const FAME_GAIN_G1_TOP3 = 10;
+const FAME_GAIN_G2_TOP3 = 8;
+const FAME_GAIN_G3_TOP3 = 5;
+const FAME_GAIN_OTHER_TOP3 = 2;
+const FAME_GAIN_TOP5 = 1;
+const FAME_BONUS_LARGE_PURSE = 3;
+const FAME_BONUS_MEDIUM_PURSE = 1;
+const LARGE_PURSE_THRESHOLD = 500000;
+const MEDIUM_PURSE_THRESHOLD = 100000;
+const MAX_FAME = 100;
+
+/**
+ * Calculate fame gains for horses based on race results.
+ * @param races
+ * @returns A map of horseId to fame gain amount.
+ */
+function calculateFameGainsForRaces(races: Race[]): Map<string, number> {
+  const fameGains = new Map<string, number>();
+
+  for (const race of races) {
+    if (!race.result) continue;
+    for (const result of race.result) {
+      let fameGain = 0;
+
+      // Base fame from position and grade
+      if (result.position === 1) {
+        fameGain =
+          race.graded?.grade === "G1"
+            ? FAME_GAIN_G1_WIN
+            : race.graded?.grade === "G2"
+              ? FAME_GAIN_G2_WIN
+              : race.graded?.grade === "G3"
+                ? FAME_GAIN_G3_WIN
+                : FAME_GAIN_OTHER_WIN;
+      } else if (result.position <= 3) {
+        fameGain =
+          race.graded?.grade === "G1"
+            ? FAME_GAIN_G1_TOP3
+            : race.graded?.grade === "G2"
+              ? FAME_GAIN_G2_TOP3
+              : race.graded?.grade === "G3"
+                ? FAME_GAIN_G3_TOP3
+                : FAME_GAIN_OTHER_TOP3;
+      } else if (result.position <= 5) {
+        fameGain = FAME_GAIN_TOP5;
+      }
+
+      // Bonus fame from purse size
+      if (race.purse > LARGE_PURSE_THRESHOLD) {
+        fameGain += FAME_BONUS_LARGE_PURSE;
+      } else if (race.purse > MEDIUM_PURSE_THRESHOLD) {
+        fameGain += FAME_BONUS_MEDIUM_PURSE;
+      }
+
+      if (fameGain > 0) {
+        const current = fameGains.get(result.horseId) || 0;
+        fameGains.set(result.horseId, current + fameGain);
+      }
+    }
+  }
+
+  return fameGains;
+}
+
+/**
+ * Apply fame gains to horses.
+ * @param horses
+ * @param fameGains
+ * @returns Updated horses array with applied fame changes.
+ */
+function applyFameGainsToHorses(horses: Horse[], fameGains: Map<string, number>): Horse[] {
+  return horses.map((h) => {
+    const gain = fameGains.get(h.id);
+    if (gain) {
+      return { ...h, fame: Math.min(MAX_FAME, h.fame + gain) };
+    }
+    return h;
+  });
+}
+
+/**
+ * Process regional dominance updates based on race winners.
+ * Updates the AI manager with new regional kings and friction values.
+ * @param races
+ * @param horses
+ * @param npcStables
+ * @param aiManager
+ * @param currentDay
+ * @returns Updated AI manager with new regional kings and friction values.
+ */
+function processRegionalDominance(
+  races: Race[],
+  horses: Horse[],
+  npcStables: Stable[],
+  aiManager: NpcAIManager,
+  currentDay: number,
+): NpcAIManager {
+  const updatedAiManager = { ...aiManager };
+
+  for (const race of races) {
+    const winner = race.result![0];
+    const region = (race as any).country || "North America (East)";
+    const currentKingId = updatedAiManager.regionalKings[region];
+
+    const winningHorse = horses.find((h) => h.id === winner.horseId);
+    if (!winningHorse) continue;
+    const winningStableId = winningHorse.stableId || "player";
+
+    if (winningStableId === currentKingId) {
+      // King defended their turf
+      const kingAI = updatedAiManager.stableStates[currentKingId];
+      if (kingAI) kingAI.winsAgainstPlayer = 0;
+    } else {
+      // Challenger won!
+      if (winningStableId === "player") {
+        if (currentKingId && currentKingId !== "player") {
+          const kingAI = updatedAiManager.stableStates[currentKingId];
+          if (kingAI)
+            kingAI.friction = Math.min(
+              100,
+              kingAI.friction + RIVALRY_CONSTANTS.FRICTION.WIN_GRADED_RACE_OVER_NPC,
+            );
+        }
+      } else {
+        const stable = npcStables.find((s) => s.id === winningStableId);
+        if (stable) {
+          const stableAI = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
+          if (currentKingId === "player") {
+            stableAI.winsAgainstPlayer++;
+            if (stableAI.winsAgainstPlayer >= RIVALRY_CONSTANTS.DOMINANCE.UNSEAT_WIN_STREAK) {
+              updatedAiManager.regionalKings[region] = winningStableId;
+              stableAI.winsAgainstPlayer = 0;
+            }
+          } else {
+            updatedAiManager.regionalKings[region] = winningStableId;
+          }
+          stableAI.regionalPrestige[region] = (stableAI.regionalPrestige[region] || 0) + 1;
+          updatedAiManager.stableStates[stable.id] = stableAI;
+        }
+      }
+    }
+  }
+
+  return updatedAiManager;
+}
+
+/**
+ * Apply friction decay to all stable AI states.
+ * @param aiManager
+ * @returns Updated AI manager with decayed friction values.
+ */
+function applyFrictionDecay(aiManager: NpcAIManager): NpcAIManager {
+  const updatedAiManager = { ...aiManager, stableStates: { ...aiManager.stableStates } };
+
+  for (const id in updatedAiManager.stableStates) {
+    updatedAiManager.stableStates[id].friction *= RIVALRY_CONSTANTS.FRICTION.DECAY_RATE;
+  }
+
+  return updatedAiManager;
+}
+
 /**
  * NPC Cycle Result
  */
@@ -80,38 +246,11 @@ export function runNpcCycle(
 
   // 3. Update fame for horses in yesterday's races
   const yesterdayRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
-  
-  if (yesterdayRaces.length > 0) {
-    const fameGains = new Map<string, number>();
-    for (const race of yesterdayRaces) {
-      if (!race.result) continue;
-      for (const result of race.result) {
-        let fameGain = 0;
-        if (result.position === 1) {
-          fameGain = race.graded?.grade === "G1" ? 20 : race.graded?.grade === "G2" ? 15 : race.graded?.grade === "G3" ? 10 : 5;
-        } else if (result.position <= 3) {
-          fameGain = race.graded?.grade === "G1" ? 10 : race.graded?.grade === "G2" ? 8 : race.graded?.grade === "G3" ? 5 : 2;
-        } else if (result.position <= 5) {
-          fameGain = 1;
-        }
-        if (race.purse > 500000) fameGain += 3;
-        else if (race.purse > 100000) fameGain += 1;
-        
-        if (fameGain > 0) {
-          const current = fameGains.get(result.horseId) || 0;
-          fameGains.set(result.horseId, current + fameGain);
-        }
-      }
-    }
 
+  if (yesterdayRaces.length > 0) {
+    const fameGains = calculateFameGainsForRaces(yesterdayRaces);
     if (fameGains.size > 0) {
-      horses = horses.map(h => {
-        const gain = fameGains.get(h.id);
-        if (gain) {
-          return { ...h, fame: Math.min(100, h.fame + gain) };
-        }
-        return h;
-      });
+      horses = applyFameGainsToHorses(horses, fameGains);
     }
   }
 
@@ -123,52 +262,15 @@ export function runNpcCycle(
     regionalKings: { ...(aiManager.regionalKings || {}) },
   };
 
-  // --- REGIONAL DOMINANCE & FRICTION DECAY (Imperial Expansion) ---
-  for (const race of yesterdayRaces) {
-    const winner = race.result![0];
-    const region = race.country || "North America (East)";
-    const currentKingId = updatedAiManager.regionalKings[region];
-    
-    const winningHorse = horses.find(h => h.id === winner.horseId);
-    if (!winningHorse) continue;
-    const winningStableId = winningHorse.stableId || "player";
-    
-    if (winningStableId === currentKingId) {
-        // King defended their turf
-        const kingAI = updatedAiManager.stableStates[currentKingId];
-        if (kingAI) kingAI.winsAgainstPlayer = 0; 
-    } else {
-        // Challenger won!
-        if (winningStableId === "player") {
-            if (currentKingId && currentKingId !== "player") {
-                const kingAI = updatedAiManager.stableStates[currentKingId];
-                if (kingAI) kingAI.friction = Math.min(100, kingAI.friction + RIVALRY_CONSTANTS.FRICTION.WIN_GRADED_RACE_OVER_NPC);
-            }
-        } else {
-            const stable = npcStables.find(s => s.id === winningStableId);
-            if (stable) {
-                const stableAI = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
-                if (currentKingId === "player") {
-                    stableAI.winsAgainstPlayer++;
-                    if (stableAI.winsAgainstPlayer >= RIVALRY_CONSTANTS.DOMINANCE.UNSEAT_WIN_STREAK) {
-                        updatedAiManager.regionalKings[region] = winningStableId;
-                        stableAI.winsAgainstPlayer = 0;
-                    }
-                } else {
-                    updatedAiManager.regionalKings[region] = winningStableId;
-                }
-                stableAI.regionalPrestige[region] = (stableAI.regionalPrestige[region] || 0) + 1;
-                updatedAiManager.stableStates[stable.id] = stableAI;
-            }
-        }
-    }
-  }
-
-  // Decay friction for all stables
-  for (const id in updatedAiManager.stableStates) {
-      updatedAiManager.stableStates[id].friction *= RIVALRY_CONSTANTS.FRICTION.DECAY_RATE;
-  }
-  // --- END RIVALRY LOGIC ---
+  // Regional dominance & friction decay
+  updatedAiManager = processRegionalDominance(
+    yesterdayRaces,
+    horses,
+    npcStables,
+    updatedAiManager,
+    currentDay,
+  );
+  updatedAiManager = applyFrictionDecay(updatedAiManager);
 
   // Check horses entered in claiming races and decide whether to withdraw
   const claimingRaces = races.filter(
@@ -177,7 +279,7 @@ export function runNpcCycle(
 
   // Create or update AI state for each stable
   for (const stable of npcStables) {
-    let stableAIState = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
+    const stableAIState = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
 
     // Initialize sub-AIs if not present
     if (!stableAIState.facilityAI) {
@@ -239,5 +341,7 @@ class RecordMap<V> {
   constructor(entries: [string, V][]) {
     for (const [k, v] of entries) this.record[k] = v;
   }
-  get(key: string): V | undefined { return this.record[key]; }
+  get(key: string): V | undefined {
+    return this.record[key];
+  }
 }

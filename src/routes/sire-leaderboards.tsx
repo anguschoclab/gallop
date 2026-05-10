@@ -25,7 +25,11 @@ function SireLeaderboardsPage() {
     );
   }
 
-  const tabs: { key: LeaderboardType; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  const tabs: {
+    key: LeaderboardType;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+  }[] = [
     { key: "overall", label: "Overall", icon: Trophy },
     { key: "ci", label: "Comparable Index", icon: Target },
     { key: "stakes_producers", label: "Stakes Producers", icon: Award },

@@ -1,6 +1,6 @@
 /**
  * raceGeneration/southAmerica.ts - South American race generator
- * 
+ *
  * Focus: Mixed surfaces, similar to NA but with more maiden/stakes focus.
  */
 
@@ -14,10 +14,10 @@ import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
 
 const SA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
-  { class: "Maiden", probability: 0.40 },
-  { class: "Claiming", probability: 0.30 },
-  { class: "Stakes", probability: 0.20 },
-  { class: "Allowance", probability: 0.10 },
+  { class: "Maiden", probability: 0.4 },
+  { class: "Claiming", probability: 0.3 },
+  { class: "Stakes", probability: 0.2 },
+  { class: "Allowance", probability: 0.1 },
 ];
 
 const SA_CLAIMING_PRICES: ClaimingPrice[] = [2000, 4000, 6000, 8000, 12000, 15000];
@@ -41,10 +41,10 @@ export function generateSouthAmericanRace(
 ): Race {
   const raceClass = selectSARaceClass(rng);
   const cfg = CLASS_CONFIG[raceClass];
-  
+
   const trackSurfaces = track.courses.map((c) => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
   const selectedSurface = surface || rng.pick(trackSurfaces.length > 0 ? trackSurfaces : ["Dirt"]);
-  
+
   const distance = rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
 
   let claimingPrice: ClaimingPrice | undefined;
@@ -81,8 +81,8 @@ export function generateSouthAmericanRace(
   };
 
   if (claimingPrice) {
-      race.claimingPrice = claimingPrice;
-      race.purse = claimingPrice * 1.5 + rng.int(0, 2000);
+    race.claimingPrice = claimingPrice;
+    race.purse = claimingPrice * 1.5 + rng.int(0, 2000);
   }
 
   return race;

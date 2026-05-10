@@ -43,7 +43,6 @@ export const intentCollectionPhase: PipelinePhase = {
       intents.push(intent);
     }
 
-
     // Collect system intents: auto-managed campaign race entries
     if (state.campaigns) {
       for (const campaign of state.campaigns) {

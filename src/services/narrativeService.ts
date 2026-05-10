@@ -24,6 +24,14 @@ import {
 
 const METERS_PER_LENGTH = 2.4;
 
+// Milestone configuration
+const MILESTONE_FINAL_400M = 400;
+const MILESTONE_FINAL_200M = 200;
+const MILESTONE_FINAL_100M = 100;
+const MIN_DISTANCE_FOR_FINAL_400 = 800;
+const MIN_DISTANCE_FOR_FINAL_200 = 600;
+const MIN_DISTANCE_FOR_FINAL_100 = 400;
+
 /**
  * Orchestrates real-time race commentary generation.
  *
@@ -247,6 +255,51 @@ export class NarrativeGenerator {
   }
 
   /**
+   * Generate dynamic milestones based on race distance.
+   * @returns Array of milestone objects with position, id, and text.
+   */
+  private generateDynamicMilestones(): Array<{ pos: number; id: number; text: string }> {
+    const distance = this.race.distance;
+    const milestones: Array<{ pos: number; id: number; text: string }> = [];
+
+    // Halfway point (always included)
+    milestones.push({
+      pos: distance * 0.5,
+      id: 50,
+      text: "Passing the halfway point now.",
+    });
+
+    // Final 400m (only if race is long enough)
+    if (distance >= MIN_DISTANCE_FOR_FINAL_400) {
+      milestones.push({
+        pos: distance - MILESTONE_FINAL_400M,
+        id: 400,
+        text: "Entering the final 400 meters!",
+      });
+    }
+
+    // Final 200m (only if race is long enough)
+    if (distance >= MIN_DISTANCE_FOR_FINAL_200) {
+      milestones.push({
+        pos: distance - MILESTONE_FINAL_200M,
+        id: 200,
+        text: "Just 200 meters to the wire!",
+      });
+    }
+
+    // Final 100m (only if race is long enough)
+    if (distance >= MIN_DISTANCE_FOR_FINAL_100) {
+      milestones.push({
+        pos: distance - MILESTONE_FINAL_100M,
+        id: 100,
+        text: "They're inside the final 100! Who wants it more?",
+      });
+    }
+
+    return milestones.sort((a, b) => a.pos - b.pos);
+  }
+
+  /**
    * Check for race milestones (halfway, final 400m, etc.) and generate announcements.
    *
    * @param newLines - Accumulator for new commentary lines
@@ -254,16 +307,7 @@ export class NarrativeGenerator {
    * @param simTime - Current elapsed simulation time
    */
   private checkMilestones(newLines: CommentaryLine[], leaderPos: number, simTime: number) {
-    const milestones = [
-      { pos: this.race.distance * 0.5, id: 50, text: "Passing the halfway point now." },
-      { pos: this.race.distance - 400, id: 400, text: "Entering the final 400 meters!" },
-      { pos: this.race.distance - 200, id: 200, text: "Just 200 meters to the wire!" },
-      {
-        pos: this.race.distance - 100,
-        id: 100,
-        text: "They're inside the final 100! Who wants it more?",
-      },
-    ];
+    const milestones = this.generateDynamicMilestones();
 
     for (const m of milestones) {
       if (leaderPos >= m.pos && !this.announcedMilestones.has(m.id)) {

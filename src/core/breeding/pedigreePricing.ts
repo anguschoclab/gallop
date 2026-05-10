@@ -53,7 +53,6 @@ export function pedigreeMultiplier(
       : undefined;
   }
 
-
   // Normalize sire fee against the upper end of the elite range ($250k).
   const sireFeeNorm = Math.min(1, (sire?.stud?.standingFee ?? 0) / 250000);
   const blueHenNorm = (dam?.blueHenStatus?.blueHenScore ?? 0) / 100;

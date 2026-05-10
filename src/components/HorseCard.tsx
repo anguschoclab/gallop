@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
 import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
+import { getCoatColor, getInjuryColor, getInjuryLabel } from "@/core/horse/uiHelpers";
 import { JargonTooltip } from "./ui/JargonTooltip";
 import { useGame } from "@/game/store";
 import { SilkDot } from "./SilkDot";
@@ -117,20 +118,21 @@ export function HorseCard({
   // Dynamic Form: Bounce risk indicator
   const getBounceRiskIndicator = () => {
     if (!horse.lastBeyer || !horse.lastRaceDay || !day) return null;
-    
+
     const daysSinceLastRace = day - horse.lastRaceDay;
     const beyerHistory = horse.raceHistory
       .filter((r) => r.beyer !== undefined)
       .map((r) => r.beyer!);
-    const avgBeyer = beyerHistory.length > 0
-      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
-      : 80;
-    
+    const avgBeyer =
+      beyerHistory.length > 0
+        ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+        : 80;
+
     // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days
     if (horse.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
       return <Badge className="bg-gold/10 text-gold border-gold/30">Bounce Risk</Badge>;
     }
-    
+
     return null;
   };
 
@@ -458,11 +460,7 @@ export function HorseCard({
               className="flex-1 min-w-[90px]"
               onClick={(e) => e.stopPropagation()}
             >
-              <Link
-                to="/stable/$horseId"
-                params={{ horseId: horse.id }}
-                hash="stats"
-              >
+              <Link to="/stable/$horseId" params={{ horseId: horse.id }} hash="stats">
                 <Activity className="w-3 h-3" /> Stats
               </Link>
             </Button>
@@ -482,42 +480,6 @@ export function HorseCard({
       </CardContent>
     </Card>
   );
-}
-
-function getCoatColor(color?: string): string {
-  // Use CSS custom properties defined in styles.css instead of hardcoded hex codes
-  const map: Record<string, string> = {
-    bay: "var(--coat-bay)",
-    "dark-bay": "var(--coat-dark-bay)",
-    black: "var(--coat-black)",
-    chestnut: "var(--coat-chestnut)",
-    gray: "var(--coat-gray)",
-    palomino: "var(--coat-palomino)",
-    buckskin: "var(--coat-buckskin)",
-    roan: "var(--coat-roan)",
-    white: "var(--coat-white)",
-    "seal-brown": "var(--coat-seal-brown)",
-    "liver-chestnut": "var(--coat-liver-chestnut)",
-    dun: "var(--coat-dun)",
-    grulla: "var(--coat-grulla)",
-    champagne: "var(--coat-champagne)",
-  };
-  return map[color || "bay"] || "var(--coat-bay)";
-}
-
-function getInjuryLabel(proneness?: number): string {
-  if (!proneness) return "Solid";
-  if (proneness < 0.03) return "Iron Horse";
-  if (proneness < 0.06) return "Durable";
-  if (proneness < 0.09) return "Average";
-  return "Fragile";
-}
-
-function getInjuryColor(proneness?: number): string {
-  if (!proneness) return "text-cream-muted";
-  if (proneness < 0.06) return "text-success font-medium";
-  if (proneness < 0.09) return "text-warning font-medium";
-  return "text-destructive font-bold";
 }
 
 export default HorseCard;

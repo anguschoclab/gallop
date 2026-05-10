@@ -12,11 +12,11 @@
 // Processes player intents for infrastructure, jockeys, and horse management
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { 
-  AnyIntent, 
-  JockeyContractIntent, 
-  JockeyAssignmentIntent, 
-  FacilityUpgradeIntent, 
+import type {
+  AnyIntent,
+  JockeyContractIntent,
+  JockeyAssignmentIntent,
+  FacilityUpgradeIntent,
   UpdateStudFeeIntent,
   GeldingIntent,
   RenameIntent,
@@ -24,7 +24,7 @@ import type {
   StudRetirementIntent,
   SyndicateCreationIntent,
   SharePurchaseIntent,
-  ShareSaleIntent
+  ShareSaleIntent,
 } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/game/uuid";
@@ -154,7 +154,6 @@ export const managementResolutionPhase: PipelinePhase = {
           } as any);
           break;
         }
-
 
         case "reroll_silk": {
           const typedIntent = intent as RerollSilkIntent;

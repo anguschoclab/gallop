@@ -86,11 +86,12 @@ export function shouldRetireAtStartup(horse: Horse, stable: Stable | undefined):
  */
 export function isStallionMaterial(horse: Horse): boolean {
   if (!isMaleHorse(horse.gender)) return false;
-  
+
   // Basic track performance criteria
   const careerStats = getCareerStats(horse);
   const hasG1Win = careerStats.g1Wins > 0;
-  const hasGradedWin = careerStats.g2Wins > 0 || careerStats.g3Wins > 0 || careerStats.stakesWins > 0;
+  const hasGradedWin =
+    careerStats.g2Wins > 0 || careerStats.g3Wins > 0 || careerStats.stakesWins > 0;
 
   // Elite performers or very famous ones
   if (hasG1Win) return true;
@@ -114,7 +115,10 @@ export function isStallionMaterial(horse: Horse): boolean {
  * const fee = calculateRecommendedStudFee(horse, stable);
  * const fee2 = calculateRecommendedStudFee(horse, "elite");
  */
-export function calculateRecommendedStudFee(horse: Horse, stableOrTier?: Stable | StableTier): number {
+export function calculateRecommendedStudFee(
+  horse: Horse,
+  stableOrTier?: Stable | StableTier,
+): number {
   const tier = typeof stableOrTier === "string" ? stableOrTier : stableOrTier?.tier || "mid";
   const baseValue = calculateBaseHorseValue(horse, tier);
 
@@ -144,7 +148,7 @@ export function calculateRecommendedStudFee(horse: Horse, stableOrTier?: Stable 
   if (horse.stud && horse.stud.lifetimeFoals > 10) {
     const stakesRate = horse.stud.lifetimeStakesFoals / horse.stud.lifetimeFoals;
     if (stakesRate > 0.05) fee += 5000;
-    if (stakesRate > 0.10) fee += 10000;
+    if (stakesRate > 0.1) fee += 10000;
   }
 
   // Round to nearest $100
@@ -171,7 +175,7 @@ export const initialStandingFee = calculateRecommendedStudFee;
  */
 export function recalcStandingFee(horse: Horse, currentDay: number): number {
   if (!horse.stud || !horse.stud.atStud) return 0;
-  
+
   const currentFee = horse.stud.standingFee;
   let multiplier = 1.0;
 
@@ -183,13 +187,12 @@ export function recalcStandingFee(horse: Horse, currentDay: number): number {
   }
 
   // Progeny performance impact
-  const stakesRate = horse.stud.lifetimeFoals > 0 
-    ? (horse.stud.lifetimeStakesFoals / horse.stud.lifetimeFoals)
-    : 0;
+  const stakesRate =
+    horse.stud.lifetimeFoals > 0 ? horse.stud.lifetimeStakesFoals / horse.stud.lifetimeFoals : 0;
 
   if (stakesRate > 0.1) multiplier += 0.25;
   if (stakesRate > 0.05) multiplier += 0.1;
-  
+
   // Recent crop G1 win impact
   // (In a real system we'd track last update day, for now we just look at lifetime counts)
   if (horse.stud.lifetimeG1Foals > 2) multiplier += 0.5;
@@ -217,12 +220,12 @@ export function recalcStandingFee(horse: Horse, currentDay: number): number {
  */
 export function valueOf(horse: Horse, stable: Stable): number {
   const baseValue = calculateBaseHorseValue(horse, stable.tier);
-  
+
   if (!horse.stud || !horse.stud.atStud) return baseValue;
 
   // Stud value is heavily influenced by their book size and fee
   const annualStudRevenue = horse.stud.standingFee * horse.stud.bookSize * 0.7; // 70% fill rate
-  
+
   return baseValue + annualStudRevenue * 2; // Valued at base + 2 years of stud income
 }
 

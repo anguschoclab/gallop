@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  selectHorsesForRaceEntry,
-  runNpcRaceEntry,
-} from "@/game/npcRaceEntry";
+import { selectHorsesForRaceEntry, runNpcRaceEntry } from "@/game/npcRaceEntry";
 import { fillRaceWithFillerHorses } from "@/game/raceFieldManager";
 import { updateHorseFame } from "@/game/npcPostRace";
 import { createRng } from "@/game/rng";
@@ -75,7 +72,7 @@ describe("selectHorsesForRaceEntry", () => {
       mkHorse({ id: "h2", stableId: "s1" }),
       mkHorse({ id: "h3", stableId: "s1" }),
     ];
-    const horseMap = new Map(horses.map(h => [h.id, h]));
+    const horseMap = new Map(horses.map((h) => [h.id, h]));
     const stable = mkStable({ horses: ["h1", "h2", "h3"] });
     const result = selectHorsesForRaceEntry(stable, horseMap, mkRace(), new Set());
     expect(result.length).toBeLessThanOrEqual(2);

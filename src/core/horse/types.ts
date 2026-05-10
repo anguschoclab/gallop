@@ -122,7 +122,7 @@ export type Horse = {
   deceasedOnDay?: number;
   createdAtDay?: number;
   causeOfDeath?: string;
-  
+
   insurancePolicy?: InsurancePolicy;
 
   appearance?: AppearanceDNA;

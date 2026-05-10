@@ -19,10 +19,15 @@ interface TestRunner {
 }
 
 // Mock generateJockeyFeedback function (extracted from ResultOverlay)
-function generateJockeyFeedback(runner: TestRunner, position: number, ordered: TestRunner[]): string {
+function generateJockeyFeedback(
+  runner: TestRunner,
+  position: number,
+  ordered: TestRunner[],
+): string {
   const winner = ordered[0];
-  const timeDiff = runner.finishTime && winner.finishTime ? runner.finishTime - winner.finishTime : 0;
-  
+  const timeDiff =
+    runner.finishTime && winner.finishTime ? runner.finishTime - winner.finishTime : 0;
+
   if (position === 1) {
     return "Perfect ride! Jockey executed the race plan flawlessly.";
   } else if (position <= 3) {
@@ -48,7 +53,7 @@ describe("Jockey Feedback Generation", () => {
       owned: true,
     };
     const ordered = [runner];
-    
+
     const feedback = generateJockeyFeedback(runner, 1, ordered);
     expect(feedback).toContain("Perfect ride");
     expect(feedback).toContain("flawlessly");
@@ -70,7 +75,7 @@ describe("Jockey Feedback Generation", () => {
       owned: true,
     };
     const ordered = [winner, runner];
-    
+
     const feedback = generateJockeyFeedback(runner, 2, ordered);
     expect(feedback).toContain("Strong finish");
     expect(feedback).toContain("great heart");
@@ -92,7 +97,7 @@ describe("Jockey Feedback Generation", () => {
       owned: true,
     };
     const ordered = [winner, runner];
-    
+
     const feedback = generateJockeyFeedback(runner, 2, ordered);
     expect(feedback).toContain("Good effort");
     expect(feedback).toContain("competitive");
@@ -114,7 +119,7 @@ describe("Jockey Feedback Generation", () => {
       owned: true,
     };
     const ordered = [winner, runner];
-    
+
     const feedback = generateJockeyFeedback(runner, 5, ordered);
     expect(feedback).toContain("Difficult race");
     expect(feedback).toContain("pace or traffic");
@@ -136,7 +141,7 @@ describe("Jockey Feedback Generation", () => {
       owned: true,
     };
     const ordered = [winner, runner];
-    
+
     const feedback = generateJockeyFeedback(runner, 5, ordered);
     expect(feedback).toContain("Mid-pack finish");
     expect(feedback).toContain("managed the race well");
@@ -158,7 +163,7 @@ describe("Jockey Feedback Generation", () => {
       owned: true,
     };
     const ordered = [winner, runner];
-    
+
     const feedback = generateJockeyFeedback(runner, 5, ordered);
     expect(feedback).toContain("Mid-pack finish");
   });

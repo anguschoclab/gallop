@@ -1,6 +1,6 @@
 /**
  * raceGeneration/europe.ts - European race generator
- * 
+ *
  * Focus: Turf-heavy, longer distances, no claiming, high frequency of handicaps and conditions.
  */
 
@@ -16,7 +16,7 @@ import { CLASS_CONFIG } from "./raceGen";
 const EUROPE_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Maiden", probability: 0.25 },
   { class: "Allowance", probability: 0.35 }, // Conditions races
-  { class: "Handicap", probability: 0.30 },
+  { class: "Handicap", probability: 0.3 },
   { class: "Listed", probability: 0.05 },
   { class: "Stakes", probability: 0.05 },
 ];
@@ -40,10 +40,10 @@ export function generateEuropeanRace(
 ): Race {
   const raceClass = selectEuropeRaceClass(rng);
   const cfg = CLASS_CONFIG[raceClass];
-  
+
   // European tracks are overwhelmingly Turf
   const selectedSurface = surface || "Turf";
-  
+
   // Europe favors longer distances
   const distance = rand(Math.max(cfg.dist[0], 1600) / 100, cfg.dist[1] / 100, rng) * 100;
 

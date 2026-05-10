@@ -225,7 +225,7 @@ export function scoutHorse(
       }
 
       const surfaceAffinity = Object.entries(horse.surfaceAptitude).find(([_, v]) => v >= 0.8);
-      
+
       geneticInsight = {
         distanceMarker: `Genetic bias for ${horse.distanceAptitude}m`,
         surfaceMarker: surfaceAffinity

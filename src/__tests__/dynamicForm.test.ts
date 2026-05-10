@@ -61,7 +61,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
     it("should calculate recovery drain based on distance and Beyer", () => {
       const distance = 2000; // 2km race
       const beyer = 100;
-      
+
       // Formula: min(30, floor(distance/100) + floor(beyer/20))
       const expectedDrain = Math.min(30, Math.floor(distance / 100) + Math.floor(beyer / 20));
       expect(expectedDrain).toBe(25); // 20 + 5 = 25
@@ -70,7 +70,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
     it("should cap recovery drain at 30", () => {
       const distance = 2400; // 2.4km race
       const beyer = 120;
-      
+
       const drain = Math.min(30, Math.floor(distance / 100) + Math.floor(beyer / 20));
       expect(drain).toBe(30); // Capped at 30
     });
@@ -80,11 +80,11 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       const recoveryRate = 0.5;
       const barnBonus = 0.1;
       const nutritionistBonus = 0.05;
-      
+
       const baseGain = 10 * (1 + barnBonus + nutritionistBonus);
       const recoveryGain = baseGain * recoveryRate;
       const newRecovery = Math.min(100, currentRecovery + recoveryGain);
-      
+
       expect(newRecovery).toBeGreaterThan(50);
       expect(newRecovery).toBeLessThanOrEqual(100);
     });
@@ -95,7 +95,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       const lastBeyer = 100;
       const avgBeyer = 80;
       const daysSinceLastRace = 20;
-      
+
       const isBounceRisk = lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28;
       expect(isBounceRisk).toBe(true);
     });
@@ -104,7 +104,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       const lastBeyer = 90;
       const avgBeyer = 80;
       const daysSinceLastRace = 20;
-      
+
       const isBounceRisk = lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28;
       expect(isBounceRisk).toBe(false);
     });
@@ -113,7 +113,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       const lastBeyer = 100;
       const avgBeyer = 80;
       const daysSinceLastRace = 30;
-      
+
       const isBounceRisk = lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28;
       expect(isBounceRisk).toBe(false);
     });
@@ -122,7 +122,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       const bouncePenalty = 0.9;
       const baseTopSpeed = 60;
       const modifiedTopSpeed = baseTopSpeed * bouncePenalty;
-      
+
       expect(modifiedTopSpeed).toBe(54);
     });
   });
@@ -131,14 +131,14 @@ describe("Dynamic Form & Bounce Mechanic", () => {
     it("should calculate fatigueMod when recoveryPoints < 50", () => {
       const recoveryPoints = 40;
       const fatigueMod = 0.7 + (recoveryPoints / 50) * 0.3;
-      
+
       expect(fatigueMod).toBe(0.94); // 0.7 + 0.8 * 0.3 = 0.94
     });
 
     it("should not apply fatigueMod when recoveryPoints >= 50", () => {
       const recoveryPoints = 70;
       const fatigueMod = recoveryPoints < 50 ? 0.7 + (recoveryPoints / 50) * 0.3 : 1.0;
-      
+
       expect(fatigueMod).toBe(1.0);
     });
 
@@ -146,7 +146,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       const baseTopSpeed = 60;
       const fatigueMod = 0.8;
       const modifiedTopSpeed = baseTopSpeed * fatigueMod;
-      
+
       expect(modifiedTopSpeed).toBe(48);
     });
   });
@@ -155,7 +155,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
     it("should display Peaking when recoveryPoints > 80", () => {
       const recoveryPoints = 85;
       let label: string;
-      
+
       if (recoveryPoints > 80) {
         label = "Peaking";
       } else if (recoveryPoints >= 50) {
@@ -165,14 +165,14 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       } else {
         label = "Exhausted";
       }
-      
+
       expect(label).toBe("Peaking");
     });
 
     it("should display Fresh when recoveryPoints 50-80", () => {
       const recoveryPoints = 65;
       let label: string;
-      
+
       if (recoveryPoints > 80) {
         label = "Peaking";
       } else if (recoveryPoints >= 50) {
@@ -182,14 +182,14 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       } else {
         label = "Exhausted";
       }
-      
+
       expect(label).toBe("Fresh");
     });
 
     it("should display Fatigued when recoveryPoints 30-50", () => {
       const recoveryPoints = 40;
       let label: string;
-      
+
       if (recoveryPoints > 80) {
         label = "Peaking";
       } else if (recoveryPoints >= 50) {
@@ -199,14 +199,14 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       } else {
         label = "Exhausted";
       }
-      
+
       expect(label).toBe("Fatigued");
     });
 
     it("should display Exhausted when recoveryPoints < 30", () => {
       const recoveryPoints = 20;
       let label: string;
-      
+
       if (recoveryPoints > 80) {
         label = "Peaking";
       } else if (recoveryPoints >= 50) {
@@ -216,7 +216,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
       } else {
         label = "Exhausted";
       }
-      
+
       expect(label).toBe("Exhausted");
     });
   });

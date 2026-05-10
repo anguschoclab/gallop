@@ -88,13 +88,13 @@ describe("storageAdapter", () => {
     describe("loadGameState", () => {
       it("successfully loads game state from OPFS", async () => {
         const mockState = createMockGameState();
-        
+
         // First save the state
         await storageAdapter.saveGameState(mockState);
-        
+
         // Then load it
         const loaded = await storageAdapter.loadGameState();
-        
+
         expect(loaded).toEqual(mockState);
       });
 
@@ -125,12 +125,11 @@ describe("storageAdapter", () => {
         });
       });
 
-
       it("returns null when file is not found", async () => {
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = await storageAdapter.loadGameState();
-        
+
         expect(loaded).toBeNull();
         consoleErrorSpy.mockRestore();
       });
@@ -139,9 +138,9 @@ describe("storageAdapter", () => {
     describe("saveGameState", () => {
       it("successfully saves game state to OPFS", async () => {
         const mockState = createMockGameState();
-        
+
         await storageAdapter.saveGameState(mockState);
-        
+
         const loaded = await storageAdapter.loadGameState();
         expect(loaded).toEqual(mockState);
       });
@@ -169,13 +168,14 @@ describe("storageAdapter", () => {
           });
           const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-          await expect(storageAdapter.saveGameState(mockState)).rejects.toThrow("localStorage quota exceeded");
+          await expect(storageAdapter.saveGameState(mockState)).rejects.toThrow(
+            "localStorage quota exceeded",
+          );
 
           expect(consoleErrorSpy).toHaveBeenCalled();
           consoleErrorSpy.mockRestore();
         });
       });
-
 
       it("successfully saves large game state objects", async () => {
         const largeState = createMockGameState();
@@ -186,9 +186,9 @@ describe("storageAdapter", () => {
           gender: "horse" as const,
           age: 3,
         })) as any;
-        
+
         await storageAdapter.saveGameState(largeState);
-        
+
         const loaded = await storageAdapter.loadGameState();
         expect(loaded?.horses.length).toBe(1000);
       });
@@ -197,10 +197,10 @@ describe("storageAdapter", () => {
     describe("clearGameState", () => {
       it("successfully deletes game state file", async () => {
         const mockState = createMockGameState();
-        
+
         await storageAdapter.saveGameState(mockState);
         await storageAdapter.clearGameState();
-        
+
         const loaded = await storageAdapter.loadGameState();
         expect(loaded).toBeNull();
       });
@@ -224,7 +224,6 @@ describe("storageAdapter", () => {
           expect(stored).toBeNull();
         });
       });
-
     });
   });
 
@@ -238,20 +237,20 @@ describe("storageAdapter", () => {
       it("successfully loads race filters from localStorage", () => {
         const freshStorage = storageAdapter;
         const mockFilters = { track: "Churchill Downs", grade: "G1" };
-        
+
         localStorage.setItem("gallop_race_filters", JSON.stringify(mockFilters));
-        
+
         const loaded = freshStorage.loadRaceFilters();
-        
+
         expect(loaded).toEqual(mockFilters);
       });
 
       it("returns empty object when key doesn't exist", () => {
         const freshStorage = storageAdapter;
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadRaceFilters();
-        
+
         expect(loaded).toEqual({});
         consoleErrorSpy.mockRestore();
       });
@@ -260,9 +259,9 @@ describe("storageAdapter", () => {
         const freshStorage = storageAdapter;
         localStorage.setItem("gallop_race_filters", "{ invalid }");
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadRaceFilters();
-        
+
         expect(loaded).toEqual({});
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
@@ -274,9 +273,9 @@ describe("storageAdapter", () => {
           throw new Error("localStorage disabled");
         });
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadRaceFilters();
-        
+
         expect(loaded).toEqual({});
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
@@ -287,9 +286,9 @@ describe("storageAdapter", () => {
       it("successfully saves race filters to localStorage", () => {
         const freshStorage = storageAdapter;
         const mockFilters = { track: "Churchill Downs", grade: "G1" };
-        
+
         freshStorage.saveRaceFilters(mockFilters);
-        
+
         const stored = localStorage.getItem("gallop_race_filters");
         expect(stored).toBe(JSON.stringify(mockFilters));
       });
@@ -301,9 +300,9 @@ describe("storageAdapter", () => {
           throw new Error("localStorage disabled");
         });
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         freshStorage.saveRaceFilters(mockFilters);
-        
+
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
       });
@@ -313,18 +312,18 @@ describe("storageAdapter", () => {
       it("successfully loads valid race history limit", () => {
         const freshStorage = storageAdapter;
         localStorage.setItem("gallop_race_history_limit", "20");
-        
+
         const loaded = freshStorage.loadRaceHistoryLimit();
-        
+
         expect(loaded).toBe(20);
       });
 
       it("returns default 50 when key doesn't exist", () => {
         const freshStorage = storageAdapter;
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadRaceHistoryLimit();
-        
+
         expect(loaded).toBe(50);
         consoleErrorSpy.mockRestore();
       });
@@ -333,9 +332,9 @@ describe("storageAdapter", () => {
         const freshStorage = storageAdapter;
         localStorage.setItem("gallop_race_history_limit", "invalid");
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadRaceHistoryLimit();
-        
+
         expect(loaded).toBe(50);
         consoleErrorSpy.mockRestore();
       });
@@ -344,9 +343,9 @@ describe("storageAdapter", () => {
         const freshStorage = storageAdapter;
         localStorage.setItem("gallop_race_history_limit", "100");
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadRaceHistoryLimit();
-        
+
         expect(loaded).toBe(50);
         consoleErrorSpy.mockRestore();
       });
@@ -355,9 +354,9 @@ describe("storageAdapter", () => {
         const freshStorage = storageAdapter;
         localStorage.setItem("gallop_race_history_limit", "abc");
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadRaceHistoryLimit();
-        
+
         expect(loaded).toBe(50);
         consoleErrorSpy.mockRestore();
       });
@@ -366,9 +365,9 @@ describe("storageAdapter", () => {
     describe("saveRaceHistoryLimit", () => {
       it("successfully saves valid race history limit", () => {
         const freshStorage = storageAdapter;
-        
+
         freshStorage.saveRaceHistoryLimit(20);
-        
+
         const stored = localStorage.getItem("gallop_race_history_limit");
         expect(stored).toBe("20");
       });
@@ -379,9 +378,9 @@ describe("storageAdapter", () => {
           throw new Error("localStorage disabled");
         });
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         freshStorage.saveRaceHistoryLimit(20);
-        
+
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
       });
@@ -391,18 +390,18 @@ describe("storageAdapter", () => {
       it("successfully loads day jump value", () => {
         const freshStorage = storageAdapter;
         localStorage.setItem("gallop_races_day_jump", "7");
-        
+
         const loaded = freshStorage.loadDayJump();
-        
+
         expect(loaded).toBe("7");
       });
 
       it("returns undefined when key doesn't exist", () => {
         const freshStorage = storageAdapter;
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadDayJump();
-        
+
         expect(loaded).toBeUndefined();
         consoleErrorSpy.mockRestore();
       });
@@ -411,9 +410,9 @@ describe("storageAdapter", () => {
     describe("saveDayJump", () => {
       it("successfully saves day jump value", () => {
         const freshStorage = storageAdapter;
-        
+
         freshStorage.saveDayJump("7");
-        
+
         const stored = localStorage.getItem("gallop_races_day_jump");
         expect(stored).toBe("7");
       });
@@ -424,9 +423,9 @@ describe("storageAdapter", () => {
           throw new Error("localStorage disabled");
         });
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         freshStorage.saveDayJump("7");
-        
+
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
       });
@@ -438,19 +437,18 @@ describe("storageAdapter", () => {
         localStorage.setItem("gallop_race_filters", "{}");
         localStorage.setItem("gallop_race_history_limit", "20");
         localStorage.setItem("gallop_races_day_jump", "7");
-        
+
         freshStorage.clearSettings();
-        
+
         expect(localStorage.getItem("gallop_race_filters")).toBeNull();
         expect(localStorage.getItem("gallop_race_history_limit")).toBeNull();
         expect(localStorage.getItem("gallop_races_day_jump")).toBeNull();
       });
 
-
       it("handles gracefully when keys don't exist", () => {
         const freshStorage = storageAdapter;
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         expect(() => freshStorage.clearSettings()).not.toThrow();
         consoleErrorSpy.mockRestore();
       });
@@ -467,20 +465,20 @@ describe("storageAdapter", () => {
       it("successfully loads wizard state from localStorage", () => {
         const freshStorage = storageAdapter;
         const mockState = createMockWizardState();
-        
+
         localStorage.setItem("gallop_new_game_wizard", JSON.stringify(mockState));
-        
+
         const loaded = freshStorage.loadWizardState();
-        
+
         expect(loaded).toEqual(mockState);
       });
 
       it("returns null when key doesn't exist", () => {
         const freshStorage = storageAdapter;
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadWizardState();
-        
+
         expect(loaded).toBeNull();
         consoleErrorSpy.mockRestore();
       });
@@ -489,9 +487,9 @@ describe("storageAdapter", () => {
         const freshStorage = storageAdapter;
         localStorage.setItem("gallop_new_game_wizard", "{ invalid }");
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadWizardState();
-        
+
         expect(loaded).toBeNull();
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
@@ -503,9 +501,9 @@ describe("storageAdapter", () => {
           throw new Error("localStorage disabled");
         });
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         const loaded = freshStorage.loadWizardState();
-        
+
         expect(loaded).toBeNull();
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
@@ -516,9 +514,9 @@ describe("storageAdapter", () => {
       it("successfully saves wizard state to localStorage", () => {
         const freshStorage = storageAdapter;
         const mockState = createMockWizardState();
-        
+
         freshStorage.saveWizardState(mockState);
-        
+
         const stored = localStorage.getItem("gallop_new_game_wizard");
         expect(stored).toBe(JSON.stringify(mockState));
       });
@@ -526,9 +524,9 @@ describe("storageAdapter", () => {
       it("saves all wizard state properties", () => {
         const freshStorage = storageAdapter;
         const mockState = createMockWizardState();
-        
+
         freshStorage.saveWizardState(mockState);
-        
+
         const stored = JSON.parse(localStorage.getItem("gallop_new_game_wizard")!);
         expect(stored).toHaveProperty("step");
         expect(stored).toHaveProperty("stableName");
@@ -544,9 +542,9 @@ describe("storageAdapter", () => {
           throw new Error("localStorage disabled");
         });
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         freshStorage.saveWizardState(mockState);
-        
+
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
       });
@@ -556,9 +554,9 @@ describe("storageAdapter", () => {
       it("successfully removes wizard state key", () => {
         const freshStorage = storageAdapter;
         localStorage.setItem("gallop_new_game_wizard", JSON.stringify(createMockWizardState()));
-        
+
         freshStorage.clearWizardState();
-        
+
         expect(localStorage.getItem("gallop_new_game_wizard")).toBeNull();
       });
 
@@ -568,9 +566,9 @@ describe("storageAdapter", () => {
           throw new Error("localStorage disabled");
         });
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         freshStorage.clearWizardState();
-        
+
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
       });
@@ -578,7 +576,7 @@ describe("storageAdapter", () => {
       it("handles gracefully when key doesn't exist", () => {
         const freshStorage = storageAdapter;
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         expect(() => freshStorage.clearWizardState()).not.toThrow();
         consoleErrorSpy.mockRestore();
       });
@@ -590,13 +588,13 @@ describe("storageAdapter", () => {
     describe("clearAllGameData", () => {
       it("successfully clears both OPFS game state and localStorage settings", async () => {
         mockLocalStorage();
-        
+
         // Save game state
         await storageAdapter.saveGameState(createMockGameState());
         localStorage.setItem("gallop_race_filters", "{}");
-        
+
         await storageAdapter.clearAllGameData();
-        
+
         const loaded = await storageAdapter.loadGameState();
         expect(loaded).toBeNull();
         expect(localStorage.getItem("gallop_race_filters")).toBeNull();
@@ -604,9 +602,9 @@ describe("storageAdapter", () => {
 
       it("logs error when localStorage fails but OPFS succeeds", async () => {
         mockLocalStorage();
-        
+
         await storageAdapter.saveGameState(createMockGameState());
-        
+
         // Mock localStorage to throw
         const localStorageMock = (global as any).localStorage;
         const originalRemoveItem = localStorageMock.removeItem;
@@ -614,9 +612,9 @@ describe("storageAdapter", () => {
           throw new Error("localStorage disabled");
         };
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         await storageAdapter.clearAllGameData();
-        
+
         const loaded = await storageAdapter.loadGameState();
         expect(loaded).toBeNull(); // OPFS should still be cleared
         expect(consoleErrorSpy).toHaveBeenCalled();
@@ -637,9 +635,9 @@ describe("storageAdapter", () => {
           throw new Error("localStorage disabled");
         };
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-        
+
         storageAdapter.loadRaceFilters();
-        
+
         expect(consoleErrorSpy).toHaveBeenCalled();
         localStorageMock.getItem = originalGetItem;
         consoleErrorSpy.mockRestore();
@@ -649,20 +647,20 @@ describe("storageAdapter", () => {
     describe("Data Integrity", () => {
       it("round-trip: saveGameState then loadGameState returns identical data", async () => {
         const mockState = createMockGameState();
-        
+
         await storageAdapter.saveGameState(mockState);
         const loaded = await storageAdapter.loadGameState();
-        
+
         expect(loaded).toEqual(mockState);
       });
 
       it("wizard state round-trip returns identical data", () => {
         mockLocalStorage();
         const mockState = createMockWizardState();
-        
+
         storageAdapter.saveWizardState(mockState);
         const loaded = storageAdapter.loadWizardState();
-        
+
         expect(loaded).toEqual(mockState);
       });
     });

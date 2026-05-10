@@ -29,31 +29,38 @@ export function useAuctionTheater(saleId: string) {
   const debitForLiveBid = useGame((s) => s.debitForLiveBid);
   const commitAuctionResult = useGame((s) => s.commitAuctionResult);
 
-  // Theater-local state
-  const [autoWatch, setAutoWatch] = useState(true);
-  const [paused, setPaused] = useState(false);
-  const [chantLines, setChantLines] = useState<AuctioneerLine[]>([]);
-  const [activePaddle, setActivePaddle] = useState<string | null>(null);
-  const [hammerFlash, setHammerFlash] = useState(false);
-  const [done, setDone] = useState(false);
-  const [committed, setCommitted] = useState(false);
-  const [, forceTick] = useReducer((x: number) => x + 1, 0);
+  // Theater-local state - consolidated into groups
+  const [theaterState, setTheaterState] = useState({
+    autoWatch: true,
+    paused: false,
+    done: false,
+    committed: false,
+  });
+
+  const [uiState, setUiState] = useState({
+    chantLines: [] as AuctioneerLine[],
+    activePaddle: null as string | null,
+    hammerFlash: false,
+    bannerFlash: false,
+    historyOpen: false,
+    winOverlay: null as { horseName: string; hammerPrice: number } | null,
+    bidError: null as string | null,
+  });
 
   const [playerMaxBidState, setPlayerMaxBidState] = useState<number | undefined>(undefined);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [bannerFlash, setBannerFlash] = useState(false);
-  const [winOverlay, setWinOverlay] = useState<{
-    horseName: string;
-    hammerPrice: number;
-  } | null>(null);
-
-  const [bidError, setBidError] = useState<string | null>(null);
+  const [, forceTick] = useReducer((x: number) => x + 1, 0);
 
   const prevLotIndexRef = useRef(0);
   const prevLeadingRef = useRef<boolean | undefined>(undefined);
   const runnerRef = useRef<AuctionRunner | null>(null);
   const rngRef = useRef(createRng(hashStr((sale?.id ?? "fallback") + ":theater")));
   const timerRef = useRef<number | null>(null);
+
+  // Timer cleanup refs
+  const activePaddleTimerRef = useRef<number | null>(null);
+  const hammerFlashTimerRef = useRef<number | null>(null);
+  const bannerFlashTimerRef = useRef<number | null>(null);
+  const bidErrorTimerRef = useRef<number | null>(null);
 
   // Initialize runner once per sale.
   useEffect(() => {
@@ -64,21 +71,27 @@ export function useAuctionTheater(saleId: string) {
         const result = debitForLiveBid(amount);
         if (!result.ok) {
           setPlayerMaxBidState(undefined);
-          setBidError(`Auto-bid cancelled: ${result.reason}`);
+          setUiState((prev) => ({ ...prev, bidError: `Auto-bid cancelled: ${result.reason}` }));
           return false;
         }
         return true;
       },
     });
-    setChantLines([]);
-    setDone(false);
-    setCommitted(false);
+    setUiState((prev) => ({ ...prev, chantLines: [] }));
+    setTheaterState((prev) => ({ ...prev, done: false, committed: false }));
     setPlayerMaxBidState(undefined);
-    setHistoryOpen(false);
-    setWinOverlay(null);
+    setUiState((prev) => ({ ...prev, historyOpen: false, winOverlay: null }));
     prevLotIndexRef.current = 0;
     prevLeadingRef.current = undefined;
     forceTick();
+
+    // Cleanup all timers on unmount
+    return () => {
+      if (activePaddleTimerRef.current) clearTimeout(activePaddleTimerRef.current);
+      if (hammerFlashTimerRef.current) clearTimeout(hammerFlashTimerRef.current);
+      if (bannerFlashTimerRef.current) clearTimeout(bannerFlashTimerRef.current);
+      if (bidErrorTimerRef.current) clearTimeout(bidErrorTimerRef.current);
+    };
   }, [sale?.id, stables, horses, debitForLiveBid]);
 
   // Sync playerMaxBidState changes to runner.
@@ -94,21 +107,23 @@ export function useAuctionTheater(saleId: string) {
   const totalLots = sale?.lots.filter((l) => !l.withdrawn).length ?? 0;
   const lotIndex = runnerRef.current?.currentLotIndex() ?? 0;
   const playerIsLeading =
-    !done && currentBid > 0 && leadingBidder === undefined && lotState?.chant !== "open";
+    !theaterState.done &&
+    currentBid > 0 &&
+    leadingBidder === undefined &&
+    lotState?.chant !== "open";
   const bidHistory: AuctionBidRecord[] = lotState?.bidHistory ?? [];
 
   const stepAndRender = useCallback(
     (playerBid?: number) => {
       const runner = runnerRef.current;
-      if (!runner || done) return;
+      if (!runner || theaterState.done) return;
 
       const result = runner.step(playerBid);
 
       if (result.currentLotIndex !== prevLotIndexRef.current) {
         setPlayerMaxBidState(undefined);
         runner.setPlayerMaxBid(undefined);
-        setHistoryOpen(false);
-        setWinOverlay(null);
+        setUiState((prev) => ({ ...prev, historyOpen: false, winOverlay: null }));
         prevLotIndexRef.current = result.currentLotIndex;
       }
 
@@ -151,40 +166,58 @@ export function useAuctionTheater(saleId: string) {
 
         if (event.type === "SOLD" && event.toStableId === undefined) {
           const winHorse = horses.find((h) => h.id === lot?.horseId);
-          setWinOverlay({
-            horseName: winHorse?.name ?? "Horse",
-            hammerPrice: event.amount,
-          });
+          setUiState((prev) => ({
+            ...prev,
+            winOverlay: {
+              horseName: winHorse?.name ?? "Horse",
+              hammerPrice: event.amount,
+            },
+          }));
         }
       }
 
       if (newLines.length > 0) {
-        setChantLines((prev) => [...prev, ...newLines].slice(-12));
+        setUiState((prev) => ({
+          ...prev,
+          chantLines: [...prev.chantLines, ...newLines].slice(-12),
+        }));
       }
       if (flashStable) {
-        setActivePaddle(flashStable);
-        setTimeout(() => setActivePaddle(null), 800);
+        setUiState((prev) => ({ ...prev, activePaddle: flashStable }));
+        if (activePaddleTimerRef.current) clearTimeout(activePaddleTimerRef.current);
+        activePaddleTimerRef.current = window.setTimeout(
+          () => setUiState((prev) => ({ ...prev, activePaddle: null })),
+          800,
+        );
       }
       if (sawHammer) {
-        setHammerFlash(true);
-        setTimeout(() => setHammerFlash(false), 1200);
+        setUiState((prev) => ({ ...prev, hammerFlash: true }));
+        if (hammerFlashTimerRef.current) clearTimeout(hammerFlashTimerRef.current);
+        hammerFlashTimerRef.current = window.setTimeout(
+          () => setUiState((prev) => ({ ...prev, hammerFlash: false })),
+          1200,
+        );
       }
-      if (result.done) setDone(true);
+      if (result.done) setTheaterState((prev) => ({ ...prev, done: true }));
       forceTick();
     },
-    [sale, horses, stables, scoutReports, day, done],
+    [sale, horses, stables, scoutReports, day, theaterState.done],
   );
 
   useEffect(() => {
     if (prevLeadingRef.current === false && playerIsLeading) {
-      setBannerFlash(true);
-      setTimeout(() => setBannerFlash(false), 1000);
+      setUiState((prev) => ({ ...prev, bannerFlash: true }));
+      if (bannerFlashTimerRef.current) clearTimeout(bannerFlashTimerRef.current);
+      bannerFlashTimerRef.current = window.setTimeout(
+        () => setUiState((prev) => ({ ...prev, bannerFlash: false })),
+        1000,
+      );
     }
     prevLeadingRef.current = playerIsLeading;
   }, [playerIsLeading]);
 
   useEffect(() => {
-    if (done || paused || !autoWatch) {
+    if (theaterState.done || theaterState.paused || !theaterState.autoWatch) {
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
@@ -199,7 +232,7 @@ export function useAuctionTheater(saleId: string) {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [done, paused, autoWatch, stepAndRender]);
+  }, [theaterState.done, theaterState.paused, theaterState.autoWatch, stepAndRender]);
 
   const handleBid = useCallback(
     (amount?: number) => {
@@ -209,8 +242,12 @@ export function useAuctionTheater(saleId: string) {
       const bidValue = amount ?? nextBidAmount(currentBid);
       const result = debitForLiveBid(bidValue);
       if (!result.ok) {
-        setBidError(result.reason);
-        setTimeout(() => setBidError(null), 3000);
+        setUiState((prev) => ({ ...prev, bidError: result.reason }));
+        if (bidErrorTimerRef.current) clearTimeout(bidErrorTimerRef.current);
+        bidErrorTimerRef.current = window.setTimeout(
+          () => setUiState((prev) => ({ ...prev, bidError: null })),
+          3000,
+        );
         return;
       }
 
@@ -221,25 +258,25 @@ export function useAuctionTheater(saleId: string) {
 
   const handlePass = useCallback(() => {
     const runner = runnerRef.current;
-    if (!runner || done) return;
+    if (!runner || theaterState.done) return;
     runner.skipLot();
     stepAndRender();
-  }, [done, stepAndRender]);
+  }, [theaterState.done, stepAndRender]);
 
   const handleSkip = useCallback(() => {
     const runner = runnerRef.current;
-    if (!runner || done) return;
+    if (!runner || theaterState.done) return;
     runner.finishSale();
-    setDone(true);
+    setTheaterState((prev) => ({ ...prev, done: true }));
     forceTick();
-  }, [done]);
+  }, [theaterState.done]);
 
   const handleCommit = useCallback(() => {
-    if (!runnerRef.current || committed) return;
+    if (!runnerRef.current || theaterState.committed) return;
     const finalState = runnerRef.current.getFinalState();
     commitAuctionResult(finalState);
-    setCommitted(true);
-  }, [commitAuctionResult, committed]);
+    setTheaterState((prev) => ({ ...prev, committed: true }));
+  }, [commitAuctionResult, theaterState.committed]);
 
   return {
     sale,
@@ -252,22 +289,22 @@ export function useAuctionTheater(saleId: string) {
     lotIndex,
     playerIsLeading,
     bidHistory,
-    chantLines,
-    activePaddle,
-    hammerFlash,
-    done,
-    committed,
-    paused,
-    setPaused,
-    autoWatch,
-    setAutoWatch,
+    chantLines: uiState.chantLines,
+    activePaddle: uiState.activePaddle,
+    hammerFlash: uiState.hammerFlash,
+    done: theaterState.done,
+    committed: theaterState.committed,
+    paused: theaterState.paused,
+    setPaused: (value: boolean) => setTheaterState((prev) => ({ ...prev, paused: value })),
+    autoWatch: theaterState.autoWatch,
+    setAutoWatch: (value: boolean) => setTheaterState((prev) => ({ ...prev, autoWatch: value })),
     playerMaxBidState,
     setPlayerMaxBidState,
-    historyOpen,
-    setHistoryOpen,
-    bannerFlash,
-    winOverlay,
-    bidError,
+    historyOpen: uiState.historyOpen,
+    setHistoryOpen: (value: boolean) => setUiState((prev) => ({ ...prev, historyOpen: value })),
+    bannerFlash: uiState.bannerFlash,
+    winOverlay: uiState.winOverlay,
+    bidError: uiState.bidError,
     handleBid,
     handlePass,
     handleSkip,

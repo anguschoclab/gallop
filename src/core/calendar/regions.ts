@@ -113,25 +113,13 @@ const HONG_KONG_TRIPLE_CROWN = new Set([
 ]);
 
 // Hungary Triple Crown races
-const HUNGARY_TRIPLE_CROWN = new Set([
-  "hu-nemzeti-dij",
-  "hu-magyar-derby",
-  "hu-magyar-st-leger",
-]);
+const HUNGARY_TRIPLE_CROWN = new Set(["hu-nemzeti-dij", "hu-magyar-derby", "hu-magyar-st-leger"]);
 
 // Japan Triple Crown races
-const JAPAN_TRIPLE_CROWN = new Set([
-  "jp-satsuki-sho",
-  "jp-tokyo-yushun",
-  "jp-kikuka-sho",
-]);
+const JAPAN_TRIPLE_CROWN = new Set(["jp-satsuki-sho", "jp-tokyo-yushun", "jp-kikuka-sho"]);
 
 // Japan Triple Tiara races (fillies)
-const JAPAN_TRIPLE_TIARA = new Set([
-  "jp-oka-sho",
-  "jp-yushun-himba",
-  "jp-shuka-sho",
-]);
+const JAPAN_TRIPLE_TIARA = new Set(["jp-oka-sho", "jp-yushun-himba", "jp-shuka-sho"]);
 
 // Australia Triple Crown races
 const AUSTRALIA_TRIPLE_CROWN = new Set([
@@ -344,7 +332,12 @@ export const REGIONS: Record<RegionId, RegionConfig> = {
       "Club Hípico de Santiago",
       "Hipódromo Chile",
     ],
-    specialRaceKeys: new Set([...ARGENTINA_TRIPLE_CROWN, ...BRAZIL_TRIPLE_CROWN, ...BRAZIL_TRIPLE_TIARA, ...CHILE_TRIPLE_CROWN]),
+    specialRaceKeys: new Set([
+      ...ARGENTINA_TRIPLE_CROWN,
+      ...BRAZIL_TRIPLE_CROWN,
+      ...BRAZIL_TRIPLE_TIARA,
+      ...CHILE_TRIPLE_CROWN,
+    ]),
     specialFilterName: "Triple Crown & Tiara",
     continent: "south_america",
   },

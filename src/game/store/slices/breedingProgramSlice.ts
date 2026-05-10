@@ -27,9 +27,7 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
 
   updateBreedingProgram: (program) => {
     set((s) => ({
-      breedingPrograms: s.breedingPrograms.map((p) =>
-        p.id === program.id ? program : p,
-      ),
+      breedingPrograms: s.breedingPrograms.map((p) => (p.id === program.id ? program : p)),
     }));
   },
 

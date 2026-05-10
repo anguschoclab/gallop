@@ -52,7 +52,7 @@ interface PrivateSaleOfferDialogProps {
 
 /**
  * Component to handle making a private sale offer for an NPC horse.
- * 
+ *
  * EXTRACTED FROM: src/routes/npc-stables.$stableId.tsx
  */
 export function PrivateSaleOfferDialog({

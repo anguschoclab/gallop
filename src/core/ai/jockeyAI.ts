@@ -296,7 +296,8 @@ export function recordJockeyAssignment(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update retention record
   let retention = aiState.retention.find(
@@ -436,7 +437,9 @@ export function getJockeyInsights(
       ? stableAssignments.reduce((sum, a) => sum + (a.result!.position || 5), 0) / totalAssignments
       : 5;
   const totalPrize =
-    totalAssignments > 0 ? stableAssignments.reduce((sum, a) => sum + (a.result!.prize || 0), 0) : 0;
+    totalAssignments > 0
+      ? stableAssignments.reduce((sum, a) => sum + (a.result!.prize || 0), 0)
+      : 0;
   const avgFee =
     totalAssignments > 0
       ? stableAssignments.reduce((sum, a) => sum + a.fee, 0) / totalAssignments

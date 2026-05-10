@@ -39,7 +39,6 @@ export const auctionsPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 
-
     let auctions: AuctionSale[] = [...(state.auctions ?? [])];
     const logs = [...(context.logs ?? [])];
     const impacts = [...(context.impacts ?? [])];

@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { calculateConformationCompatibility, calculateTemperamentCompatibility } from "./traitCompatibility";
+import {
+  calculateConformationCompatibility,
+  calculateTemperamentCompatibility,
+} from "./traitCompatibility";
 import type { Horse } from "@/game/types";
 
 describe("traitCompatibility", () => {

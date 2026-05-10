@@ -23,12 +23,14 @@ export const INSURANCE_CONFIG = {
     injury_only: 0.5,
     mortality_only: 0.5,
     comprehensive: 0.75,
-  }
+  },
 };
 
 /**
  * Calculate the daily premium for a horse.
  * base_premium + (valuation * risk_premium)
+ * @param policyType
+ * @param horseValue
  */
 export function calculateDailyPremium(policyType: InsurancePolicyType, horseValue: number): number {
   if (policyType === "none") return 0;

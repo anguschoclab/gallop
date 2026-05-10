@@ -32,7 +32,7 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
 
     const bonusMultiplier = contractType === "retainer" ? 100 : 30;
     const bonus = jockey.ridingFee * bonusMultiplier;
-    
+
     if (s.cash < bonus)
       return {
         ok: false,

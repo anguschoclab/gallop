@@ -27,9 +27,7 @@ import {
   getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
-import {
-  FACILITY_UPGRADE_COSTS,
-} from "@/core/facilities/facilityTypes";
+import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
 
 export interface FacilityAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -373,23 +371,26 @@ export function recordFacilityInvestment(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Initialize ROI tracking
   const roiKey = `${facilityType}:${toLevel}`;
   const existingRoi = aiState.roiTracking[roiKey];
-  
-  const roi = existingRoi ? {
-    ...existingRoi,
-    totalInvestment: existingRoi.totalInvestment + cost,
-  } : {
-    facilityType,
-    level: toLevel,
-    totalInvestment: cost,
-    totalBenefit: 0,
-    daysOwned: 0,
-    lastUpdateDay: currentDay,
-  };
+
+  const roi = existingRoi
+    ? {
+        ...existingRoi,
+        totalInvestment: existingRoi.totalInvestment + cost,
+      }
+    : {
+        facilityType,
+        level: toLevel,
+        totalInvestment: cost,
+        totalBenefit: 0,
+        daysOwned: 0,
+        lastUpdateDay: currentDay,
+      };
 
   return {
     ...aiState,

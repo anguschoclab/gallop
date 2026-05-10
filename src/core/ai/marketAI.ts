@@ -257,7 +257,8 @@ export function recordMarketPurchase(
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update portfolio
   const newPortfolio = {
@@ -312,7 +313,9 @@ export function recordMarketOutcome(
   value: number,
   currentDay: number,
 ): MarketAIState {
-  const purchaseIndex = aiState.purchaseHistory.findIndex((p) => p.horseId === horseId && p.success === undefined);
+  const purchaseIndex = aiState.purchaseHistory.findIndex(
+    (p) => p.horseId === horseId && p.success === undefined,
+  );
 
   if (purchaseIndex !== -1) {
     const purchase = { ...aiState.purchaseHistory[purchaseIndex] };
@@ -378,7 +381,8 @@ export function getMarketInsights(
       ? stablePurchases.reduce((sum, p) => sum + p.purchasePrice, 0) / totalPurchases
       : 0;
 
-  const portfolioHealth = aiState.portfolio.currentHorseCount / (aiState.portfolio.targetHorseCount || 1);
+  const portfolioHealth =
+    aiState.portfolio.currentHorseCount / (aiState.portfolio.targetHorseCount || 1);
 
   return {
     totalPurchases,

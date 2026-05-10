@@ -25,25 +25,33 @@ export function FounderLegacy({ horseId }: FounderLegacyProps) {
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">Influence Score</p>
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+              Influence Score
+            </p>
             <div className="text-2xl font-black italic text-gold tabular-nums">
               {founder.influenceScore.toLocaleString()}
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">Descendants</p>
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+              Descendants
+            </p>
             <div className="text-2xl font-black italic text-gold tabular-nums">
               {founder.descendantCount}
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">Stakes Winners</p>
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+              Stakes Winners
+            </p>
             <div className="text-2xl font-black italic text-gold tabular-nums text-primary">
               {founder.stakesWinners}
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">G1 Winners</p>
+            <p className="text-[10px] text-gold/60 uppercase font-black tracking-widest">
+              G1 Winners
+            </p>
             <div className="text-2xl font-black italic text-gold tabular-nums text-fame">
               {founder.g1Winners}
             </div>
@@ -56,16 +64,22 @@ export function FounderLegacy({ horseId }: FounderLegacyProps) {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <TrendingUp size={14} className="text-gold" />
-              <h4 className="text-xs font-black uppercase tracking-widest text-gold">Dynastic Impact</h4>
+              <h4 className="text-xs font-black uppercase tracking-widest text-gold">
+                Dynastic Impact
+              </h4>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm border-b border-gold/10 pb-1">
                 <span className="text-gold/60">Generation Depth</span>
-                <span className="font-bold tabular-nums text-gold">{founder.generationDepth} Generations</span>
+                <span className="font-bold tabular-nums text-gold">
+                  {founder.generationDepth} Generations
+                </span>
               </div>
               <div className="flex justify-between text-sm border-b border-gold/10 pb-1">
                 <span className="text-gold/60">Total Descendant Earnings</span>
-                <span className="font-bold tabular-nums text-gold">{formatCurrency(founder.totalEarnings)}</span>
+                <span className="font-bold tabular-nums text-gold">
+                  {formatCurrency(founder.totalEarnings)}
+                </span>
               </div>
             </div>
           </div>
@@ -75,10 +89,12 @@ export function FounderLegacy({ horseId }: FounderLegacyProps) {
               <Users size={24} />
             </div>
             <div>
-              <p className="text-xs font-black uppercase tracking-tight text-gold">Historical Founder Status</p>
+              <p className="text-xs font-black uppercase tracking-tight text-gold">
+                Historical Founder Status
+              </p>
               <p className="text-[10px] text-gold/70 italic leading-tight mt-1">
-                This horse's influence has reached the permanent bloodline records. 
-                Their descendants have collectively defined the standard of excellence in the simulation.
+                This horse's influence has reached the permanent bloodline records. Their
+                descendants have collectively defined the standard of excellence in the simulation.
               </p>
             </div>
           </div>

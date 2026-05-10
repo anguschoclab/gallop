@@ -53,6 +53,7 @@ export type PregnancyResult = {
  * @param stables - All stables (for naming context)
  * @param usedNames - Set of used names to avoid duplicates
  * @param newDay - Current simulation day
+ * @param state
  * @returns Result object with updated pregnancies, new foals, cash adjustments, and logs
  */
 export function resolvePregnancies(

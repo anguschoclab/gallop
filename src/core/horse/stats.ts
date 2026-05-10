@@ -98,12 +98,18 @@ export function getCareerStats(horse: Horse): CareerStats {
     g3Wins: 0,
     earnings: 0,
     bestBeyer: 0,
-    turfStarts: 0, turfWins: 0,
-    dirtStarts: 0, dirtWins: 0,
-    syntheticStarts: 0, syntheticWins: 0,
-    sprintStarts: 0, sprintWins: 0,
-    classicStarts: 0, classicWins: 0,
-    stayerStarts: 0, stayerWins: 0,
+    turfStarts: 0,
+    turfWins: 0,
+    dirtStarts: 0,
+    dirtWins: 0,
+    syntheticStarts: 0,
+    syntheticWins: 0,
+    sprintStarts: 0,
+    sprintWins: 0,
+    classicStarts: 0,
+    classicWins: 0,
+    stayerStarts: 0,
+    stayerWins: 0,
   };
 
   for (const entry of history) {
@@ -113,12 +119,19 @@ export function getCareerStats(horse: Horse): CareerStats {
     if (entry.position === 3) stats.shows++;
 
     if (entry.grade) stats.gradedStarts++;
-    
+
     // Count stakes wins: Graded (G1-G3), Listed, Group, or Stakes class
-    if (won && (entry.grade || entry.raceClass === "Stakes" || entry.raceClass === "Group" || entry.raceClass === "Listed" || entry.raceClass === "Graded")) {
+    if (
+      won &&
+      (entry.grade ||
+        entry.raceClass === "Stakes" ||
+        entry.raceClass === "Group" ||
+        entry.raceClass === "Listed" ||
+        entry.raceClass === "Graded")
+    ) {
       stats.stakesWins++;
     }
-    
+
     if (won && entry.grade) {
       stats.gradedWins++;
       if (entry.grade === "G1") stats.g1Wins++;
@@ -132,29 +145,29 @@ export function getCareerStats(horse: Horse): CareerStats {
     }
 
     // Surface
-    if (entry.surface === "Turf") { 
-      stats.turfStarts++; 
-      if (won) stats.turfWins++; 
-    } else if (entry.surface === "Dirt") { 
-      stats.dirtStarts++; 
-      if (won) stats.dirtWins++; 
-    } else if (entry.surface === "Synthetic") { 
-      stats.syntheticStarts++; 
-      if (won) stats.syntheticWins++; 
+    if (entry.surface === "Turf") {
+      stats.turfStarts++;
+      if (won) stats.turfWins++;
+    } else if (entry.surface === "Dirt") {
+      stats.dirtStarts++;
+      if (won) stats.dirtWins++;
+    } else if (entry.surface === "Synthetic") {
+      stats.syntheticStarts++;
+      if (won) stats.syntheticWins++;
     }
 
     // Distance
     const dist = entry.distance || 0;
     if (dist > 0) {
-      if (dist < 1400) { 
-        stats.sprintStarts++; 
-        if (won) stats.sprintWins++; 
-      } else if (dist < 2000) { 
-        stats.classicStarts++; 
-        if (won) stats.classicWins++; 
-      } else { 
-        stats.stayerStarts++; 
-        if (won) stats.stayerWins++; 
+      if (dist < 1400) {
+        stats.sprintStarts++;
+        if (won) stats.sprintWins++;
+      } else if (dist < 2000) {
+        stats.classicStarts++;
+        if (won) stats.classicWins++;
+      } else {
+        stats.stayerStarts++;
+        if (won) stats.stayerWins++;
       }
     }
   }

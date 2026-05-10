@@ -98,7 +98,13 @@ function calculateGini(cashValues: number[]): number {
 /**
  * Calculate percentiles
  */
-function calculatePercentiles(values: number[]): { p10: number; p25: number; p50: number; p75: number; p90: number } {
+function calculatePercentiles(values: number[]): {
+  p10: number;
+  p25: number;
+  p50: number;
+  p75: number;
+  p90: number;
+} {
   if (values.length === 0) return { p10: 0, p25: 0, p50: 0, p75: 0, p90: 0 };
   const sorted = [...values].sort((a, b) => a - b);
   const n = sorted.length;
@@ -164,12 +170,15 @@ async function runHighPerfAnalysis(years: number = 30) {
         }
         // Prune dead/retired horses with no wins to reduce array accumulation
         if (draft.horses.length > 5000) {
-          const horsesToPrune = draft.horses.filter((h: any) =>
-            (h.lifecycleStatus === 'deceased' || h.lifecycleStatus === 'retired') &&
-            h.careerWins === 0
+          const horsesToPrune = draft.horses.filter(
+            (h: any) =>
+              (h.lifecycleStatus === "deceased" || h.lifecycleStatus === "retired") &&
+              h.careerWins === 0,
           );
           if (horsesToPrune.length > 0) {
-            draft.horses = draft.horses.filter((h: any) => !horsesToPrune.some((p: any) => p.id === h.id));
+            draft.horses = draft.horses.filter(
+              (h: any) => !horsesToPrune.some((p: any) => p.id === h.id),
+            );
           }
         }
       });
@@ -189,9 +198,11 @@ async function runHighPerfAnalysis(years: number = 30) {
     try {
       const resultContext = executePipeline(PHASES, context);
       state = resultContext.state;
-      
+
       // Track population
-      populationHistory.push(state.horses.filter((h: any) => h.lifecycleStatus !== 'deceased').length);
+      populationHistory.push(
+        state.horses.filter((h: any) => h.lifecycleStatus !== "deceased").length,
+      );
       // Track player cash (not state.cash which is total system cash)
       const playerStable = state.npcStables?.find((s: any) => s.isPlayer);
       economicHistory.push(playerStable?.cash ?? 0);
@@ -218,11 +229,23 @@ async function runHighPerfAnalysis(years: number = 30) {
       if (day % 30 === 0 && state.auctions) {
         const resolvedAuctions = state.auctions.filter((a: any) => a.resolved && a.day >= day - 30);
         if (resolvedAuctions.length > 0) {
-          const totalLots = resolvedAuctions.reduce((sum: number, a: any) => sum + a.lots.length, 0);
-          const soldLots = resolvedAuctions.reduce((sum: number, a: any) => sum + a.lots.filter((l: any) => !l.passed).length, 0);
-          const avgPrice = resolvedAuctions.reduce((sum: number, a: any) => {
-            return sum + a.lots.filter((l: any) => l.hammerPrice).reduce((s: number, l: any) => s + l.hammerPrice!, 0);
-          }, 0) / (soldLots || 1);
+          const totalLots = resolvedAuctions.reduce(
+            (sum: number, a: any) => sum + a.lots.length,
+            0,
+          );
+          const soldLots = resolvedAuctions.reduce(
+            (sum: number, a: any) => sum + a.lots.filter((l: any) => !l.passed).length,
+            0,
+          );
+          const avgPrice =
+            resolvedAuctions.reduce((sum: number, a: any) => {
+              return (
+                sum +
+                a.lots
+                  .filter((l: any) => l.hammerPrice)
+                  .reduce((s: number, l: any) => s + l.hammerPrice!, 0)
+              );
+            }, 0) / (soldLots || 1);
 
           auctionMetrics.push({
             day,
@@ -238,10 +261,19 @@ async function runHighPerfAnalysis(years: number = 30) {
 
       // Track breeding metrics
       if (day % 30 === 0) {
-        const foalsBornThisPeriod = state.horses.filter((h: any) => h.createdAtDay && h.createdAtDay >= day - 30).length;
-        const activeStallions = state.horses.filter((h: any) => h.gender === 'horse' && h.stud?.atStud).length;
-        const totalBookings = state.horses.reduce((sum: number, h: any) => sum + (h.stud?.seasonBookings || 0), 0);
-        const eligibleMares = state.horses.filter((h: any) => h.gender === 'mare' && h.age >= 3 && h.age <= 15).length;
+        const foalsBornThisPeriod = state.horses.filter(
+          (h: any) => h.createdAtDay && h.createdAtDay >= day - 30,
+        ).length;
+        const activeStallions = state.horses.filter(
+          (h: any) => h.gender === "horse" && h.stud?.atStud,
+        ).length;
+        const totalBookings = state.horses.reduce(
+          (sum: number, h: any) => sum + (h.stud?.seasonBookings || 0),
+          0,
+        );
+        const eligibleMares = state.horses.filter(
+          (h: any) => h.gender === "mare" && h.age >= 3 && h.age <= 15,
+        ).length;
         const activePregnancies = state.pregnancies?.filter((p: any) => !p.resolved).length || 0;
 
         breedingMetrics.push({
@@ -275,23 +307,30 @@ async function runHighPerfAnalysis(years: number = 30) {
       if (day % 365 === 0 && day > 365) {
         const prevPopulation = populationHistory[populationHistory.length - 365];
         const currentPopulation = populationHistory[populationHistory.length - 1];
-        const growthRate = prevPopulation > 0 ? ((currentPopulation - prevPopulation) / prevPopulation) * 100 : 0;
+        const growthRate =
+          prevPopulation > 0 ? ((currentPopulation - prevPopulation) / prevPopulation) * 100 : 0;
 
-        const prevBankruptCount = bankruptcyHistory[Math.max(0, bankruptcyHistory.length - 12)] || 0;
+        const prevBankruptCount =
+          bankruptcyHistory[Math.max(0, bankruptcyHistory.length - 12)] || 0;
         const currentBankruptCount = bankruptcyHistory[bankruptcyHistory.length - 1];
-        const bankruptcyRate = state.npcStables.length > 0 ? (currentBankruptCount / state.npcStables.length) * 100 : 0;
+        const bankruptcyRate =
+          state.npcStables.length > 0 ? (currentBankruptCount / state.npcStables.length) * 100 : 0;
 
         if (growthRate > 10) {
-          console.log(`⚠️ ALERT: Population growth rate ${growthRate.toFixed(1)}% exceeds 10%/year threshold`);
+          console.log(
+            `⚠️ ALERT: Population growth rate ${growthRate.toFixed(1)}% exceeds 10%/year threshold`,
+          );
         }
         if (bankruptcyRate > 5) {
-          console.log(`⚠️ ALERT: Bankruptcy rate ${bankruptcyRate.toFixed(1)}% exceeds 5%/year threshold`);
+          console.log(
+            `⚠️ ALERT: Bankruptcy rate ${bankruptcyRate.toFixed(1)}% exceeds 5%/year threshold`,
+          );
         }
       }
 
       // Track G1 winners from recently resolved races
       for (const race of state.races) {
-        if (race.day === day && race.resolved && race.graded?.grade === 'G1' && race.result) {
+        if (race.day === day && race.resolved && race.graded?.grade === "G1" && race.result) {
           const winnerId = race.result.find((r: any) => r.position === 1)?.horseId;
           if (winnerId) g1Winners.add(winnerId);
         }
@@ -301,7 +340,9 @@ async function runHighPerfAnalysis(years: number = 30) {
         process.stdout.write(".");
       }
       const dayDuration = Date.now() - dayStart;
-      console.log(`Day ${day} finished in ${dayDuration}ms (Horses: ${state.horses.length}, Races: ${state.races.length})`);
+      console.log(
+        `Day ${day} finished in ${dayDuration}ms (Horses: ${state.horses.length}, Races: ${state.races.length})`,
+      );
 
       // Cleanup state to prevent memory bloat during 30-year run
       state = produce(state, (draft: any) => {
@@ -314,7 +355,6 @@ async function runHighPerfAnalysis(years: number = 30) {
         // Trim Hall of Fame to most recent 100 entries to save space
         draft.hallOfFame = draft.hallOfFame.slice(-100);
       });
-
     } catch (e) {
       console.error(`\nFAILED on Day ${day}:`, e);
       break;
@@ -323,7 +363,9 @@ async function runHighPerfAnalysis(years: number = 30) {
 
   console.log("\n\n=== Analysis Complete ===");
   console.log(`Final Year: ${Math.floor((state.day - 1) / 365) + 1}`);
-  console.log(`Total Population: ${state.horses.filter((h: any) => h.lifecycleStatus !== 'deceased').length}`);
+  console.log(
+    `Total Population: ${state.horses.filter((h: any) => h.lifecycleStatus !== "deceased").length}`,
+  );
   console.log(`Unique G1 Winners Produced: ${g1Winners.size}`);
   console.log(`Total NPC Cash in System: ${Math.round(state.cash)}`);
 
@@ -331,7 +373,7 @@ async function runHighPerfAnalysis(years: number = 30) {
   const summary = {
     finalDay: state.day,
     finalYear: Math.floor((state.day - 1) / 365) + 1,
-    finalPopulation: state.horses.filter((h: any) => h.lifecycleStatus !== 'deceased').length,
+    finalPopulation: state.horses.filter((h: any) => h.lifecycleStatus !== "deceased").length,
     g1WinnersCount: g1Winners.size,
     economicTrend: economicHistory.filter((_, i) => i % 30 === 0),
     populationTrend: populationHistory.filter((_, i) => i % 30 === 0),
@@ -351,7 +393,9 @@ async function runHighPerfAnalysis(years: number = 30) {
   console.log("\n=== NPC Cash Distribution (Final) ===");
   if (summary.npcCashHistory.length > 0) {
     const finalCash = summary.npcCashHistory[summary.npcCashHistory.length - 1];
-    console.log(`P10: $${Math.round(finalCash.p10)}, P25: $${Math.round(finalCash.p25)}, P50: $${Math.round(finalCash.p50)}, P75: $${Math.round(finalCash.p75)}, P90: $${Math.round(finalCash.p90)}`);
+    console.log(
+      `P10: $${Math.round(finalCash.p10)}, P25: $${Math.round(finalCash.p25)}, P50: $${Math.round(finalCash.p50)}, P75: $${Math.round(finalCash.p75)}, P90: $${Math.round(finalCash.p90)}`,
+    );
     console.log(`Gini Coefficient: ${finalCash.gini.toFixed(3)}`);
     console.log(`Bankrupt NPCs: ${finalCash.bankruptCount}/${finalCash.totalNPCs}`);
   }
@@ -377,11 +421,8 @@ async function runHighPerfAnalysis(years: number = 30) {
   }
 
   // Write full results to file
-  const fs = require('fs');
-  fs.writeFileSync(
-    `simulation-results-${Date.now()}.json`,
-    JSON.stringify(summary, null, 2)
-  );
+  const fs = require("fs");
+  fs.writeFileSync(`simulation-results-${Date.now()}.json`, JSON.stringify(summary, null, 2));
   console.log(`\nFull results saved to simulation-results-${Date.now()}.json`);
 }
 

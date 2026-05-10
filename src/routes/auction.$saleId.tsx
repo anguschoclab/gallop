@@ -109,9 +109,7 @@ function AuctionSalePage() {
     sex !== undefined || ageBand !== undefined || reserveBand !== undefined || q !== undefined;
 
   const onUpdateFilter = (
-    update:
-      | Partial<AuctionBrowseSearch>
-      | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
+    update: Partial<AuctionBrowseSearch> | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
   ) => {
     navigate({
       search: (prev) => (typeof update === "function" ? update(prev) : { ...prev, ...update }),

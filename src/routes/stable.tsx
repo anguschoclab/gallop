@@ -18,7 +18,17 @@ import {
 } from "@/components/ui/select";
 import { NumericValue } from "@/components/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
-import { Building2, Users, ChevronRight, Search, Activity, Heart, Tag, X, Flame } from "lucide-react";
+import {
+  Building2,
+  Users,
+  ChevronRight,
+  Search,
+  Activity,
+  Heart,
+  Tag,
+  X,
+  Flame,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -98,7 +108,8 @@ function StablePage() {
           Stables
         </h1>
         <p className="text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">
-          <NumericValue value={counts.active} /> active · <NumericValue value={counts.retired} /> retired · <NumericValue value={counts.auctioned} /> in auction
+          <NumericValue value={counts.active} /> active · <NumericValue value={counts.retired} />{" "}
+          retired · <NumericValue value={counts.auctioned} /> in auction
         </p>
       </div>
 
@@ -260,12 +271,24 @@ function StablePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredRivalStables.map((stable) => {
                 const stableHorseCount = horseCountsByStable.get(stable.id) || 0;
-                
+
                 // Imperial Expansion: Rivalry Friction
                 const stableAI = npcAIManager?.stableStates?.[stable.id];
                 const friction = stableAI?.friction ?? 0;
-                const frictionColor = friction > 50 ? "text-red-400" : friction < -30 ? "text-green-400" : "text-cream-muted";
-                const frictionLabel = friction > 70 ? "Hated Rival" : friction > 30 ? "Tense" : friction < -50 ? "Ally" : "Neutral";
+                const frictionColor =
+                  friction > 50
+                    ? "text-red-400"
+                    : friction < -30
+                      ? "text-green-400"
+                      : "text-cream-muted";
+                const frictionLabel =
+                  friction > 70
+                    ? "Hated Rival"
+                    : friction > 30
+                      ? "Tense"
+                      : friction < -50
+                        ? "Ally"
+                        : "Neutral";
 
                 return (
                   <Card
@@ -302,10 +325,16 @@ function StablePage() {
                       <CardContent className="pb-2">
                         {/* Imperial Expansion: Relationship Indicator */}
                         <div className="flex justify-between items-center text-[10px] mb-3 px-2 py-1 bg-t900/50 rounded border border-gold-muted/10">
-                            <span className="uppercase font-bold tracking-tighter text-cream-muted flex items-center gap-1">
-                                <Flame className={cn("w-3 h-3", friction > 50 ? "text-red-500" : "text-cream-muted")} /> Relationship
-                            </span>
-                            <span className={cn("font-bold", frictionColor)}>{frictionLabel}</span>
+                          <span className="uppercase font-bold tracking-tighter text-cream-muted flex items-center gap-1">
+                            <Flame
+                              className={cn(
+                                "w-3 h-3",
+                                friction > 50 ? "text-red-500" : "text-cream-muted",
+                              )}
+                            />{" "}
+                            Relationship
+                          </span>
+                          <span className={cn("font-bold", frictionColor)}>{frictionLabel}</span>
                         </div>
 
                         <div className="flex justify-between items-center text-sm">

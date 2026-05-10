@@ -34,10 +34,7 @@ interface Track {
 
 const analysis: TrackStatus[] = (tracks as Track[]).map((t) => {
   const hasSections = t.courses.some((c) => c.sections && c.sections.length > 0);
-  const sectionsCount = t.courses.reduce(
-    (acc: number, c) => acc + (c.sections?.length || 0),
-    0,
-  );
+  const sectionsCount = t.courses.reduce((acc: number, c) => acc + (c.sections?.length || 0), 0);
 
   // Primary course for reporting
   const primaryCourse = t.courses[0] || {};

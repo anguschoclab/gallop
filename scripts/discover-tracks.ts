@@ -128,9 +128,14 @@ async function discoverCountry(countryName: string) {
       if (existingNames.has(name.toLowerCase())) continue;
 
       const sections = calculateSections(way.geometry);
-      const circumference = Math.round(sections.reduce((acc: number, s: Section) => acc + s.length, 0));
+      const circumference = Math.round(
+        sections.reduce((acc: number, s: Section) => acc + s.length, 0),
+      );
       const straightLength = Math.round(
-        Math.max(...sections.filter((s: Section) => s.type === "straight").map((s: Section) => s.length), 300),
+        Math.max(
+          ...sections.filter((s: Section) => s.type === "straight").map((s: Section) => s.length),
+          300,
+        ),
       );
 
       existingTracks.push({

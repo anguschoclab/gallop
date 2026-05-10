@@ -30,11 +30,11 @@ export const OUTPOST_CONSTANTS = {
   BASE_SLOTS: 12,
   TRANSPORT_FATIGUE_SPIKE: 40, // Spike in fatigue when shipping
   ACCLIMATIZATION_PERIOD: 7, // Days until transport fatigue decays fully
-  
+
   BRANCH_REQUIREMENTS: {
     TIER_GATE: "premium" as FacilityLevel,
   },
-  
+
   SLOT_FOOTPRINTS: {
     main_track: 4,
     barn: 2,
@@ -53,8 +53,9 @@ export const OUTPOST_CONSTANTS = {
 
 /**
  * Check if an outpost is specialized.
+ * @param outpost
  */
 export function getOutpostSpecialty(outpost: Outpost): FacilityBranch {
-  const track = Object.values(outpost.facilities).find(f => f.type === "main_track");
+  const track = Object.values(outpost.facilities).find((f) => f.type === "main_track");
   return track?.branch || "neutral";
 }

@@ -23,7 +23,6 @@ async function runSimulation() {
   const initialState = createInitialState();
   useGame.setState(initialState);
 
-
   let yearsTaken = 0;
   let winningHorse: Horse | null = null;
   let triplecrownKey: string | null = null;
@@ -36,7 +35,7 @@ async function runSimulation() {
 
   for (let year = 1; year <= maxYears && !foundWinner; year++) {
     console.log(`Simulating year ${year}...`);
-    
+
     try {
       // Advance one year in headless mode
       await useGame.getState().advanceMultipleDays(DAYS_PER_YEAR, true);
@@ -52,7 +51,7 @@ async function runSimulation() {
         const topWinner = winners[0];
         triplecrownKey = topWinner.key;
         winningHorse = state.horses.find((h: Horse) => h.id === topWinner.horseId) || null;
-        
+
         // Find sire fee (before/after comparison)
         if (winningHorse && winningHorse.pedigree?.sireId) {
           const sire = state.horses.find((h: Horse) => h.id === winningHorse!.pedigree!.sireId);
@@ -60,14 +59,16 @@ async function runSimulation() {
             sireFeeAfter = sire.stud.standingFee;
             // Since we're checking after the fact, we can only see current fee.
             // But news history might have it.
-            const news = state.news?.find(n => n.text.includes(sire.name) && n.text.includes("Fee:"));
+            const news = state.news?.find(
+              (n) => n.text.includes(sire.name) && n.text.includes("Fee:"),
+            );
             if (news) {
-               // $50,000 → $75,000
-               const match = news.text.match(/\$(\d+,?\d+) → \$(\d+,?\d+)/);
-               if (match) {
-                 sireFeeBefore = parseInt(match[1].replace(/,/g, ''));
-                 sireFeeAfter = parseInt(match[2].replace(/,/g, ''));
-               }
+              // $50,000 → $75,000
+              const match = news.text.match(/\$(\d+,?\d+) → \$(\d+,?\d+)/);
+              if (match) {
+                sireFeeBefore = parseInt(match[1].replace(/,/g, ""));
+                sireFeeAfter = parseInt(match[2].replace(/,/g, ""));
+              }
             }
           }
         }
@@ -84,14 +85,18 @@ async function runSimulation() {
     console.log(`Horse: ${winningHorse.name} (${winningHorse.age}YO ${winningHorse.gender})`);
     console.log(`Sire: ${winningHorse.sireName}`);
     console.log(`Dam: ${winningHorse.damName}`);
-    
+
     if (sireFeeBefore > 0) {
       console.log(`\nSire Stud Fee Impact:`);
       console.log(`Before: $${sireFeeBefore.toLocaleString()}`);
       console.log(`After:  $${sireFeeAfter.toLocaleString()}`);
-      console.log(`Increase: $${(sireFeeAfter - sireFeeBefore).toLocaleString()} (${Math.round((sireFeeAfter / sireFeeBefore - 1) * 100)}%)`);
+      console.log(
+        `Increase: $${(sireFeeAfter - sireFeeBefore).toLocaleString()} (${Math.round((sireFeeAfter / sireFeeBefore - 1) * 100)}%)`,
+      );
     } else {
-      console.log(`\nSire Stud Fee: $${sireFeeAfter.toLocaleString()} (Initial fee data not found)`);
+      console.log(
+        `\nSire Stud Fee: $${sireFeeAfter.toLocaleString()} (Initial fee data not found)`,
+      );
     }
   } else {
     console.log("\n❌ No Triple Crown winner found within simulation limit.");

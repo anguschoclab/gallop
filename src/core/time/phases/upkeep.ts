@@ -37,13 +37,15 @@ export const upkeepPhase = {
   order: 20,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const playerHorses = state.horses.filter((h) => !h.stableId && (!h.lifecycleStatus || h.lifecycleStatus === "active"));
+    const playerHorses = state.horses.filter(
+      (h) => !h.stableId && (!h.lifecycleStatus || h.lifecycleStatus === "active"),
+    );
     const playerHorseCount = playerHorses.length;
     const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 
     // Calculate staff salaries for player
     const hiredStaff = state.hiredStaff ?? [];
-    const playerStaff = hiredStaff.filter(s => s.stableId === "");
+    const playerStaff = hiredStaff.filter((s) => s.stableId === "");
     const playerStaffSalaries = playerStaff.reduce((sum, s) => sum + s.salary, 0);
 
     const facilityMaintenance = state.facilities ? calculateTotalMaintenance(state.facilities) : 0;
@@ -70,15 +72,11 @@ export const upkeepPhase = {
     }
 
     // Record staff salary expenses
-    playerStaff.forEach(staff => {
+    playerStaff.forEach((staff) => {
       newExpenses.push(
-        createExpense(
-          "upkeep",
-          staff.salary,
-          `${staff.role} salary for ${staff.name}`,
-          newDay,
-          { recurring: true }
-        )
+        createExpense("upkeep", staff.salary, `${staff.role} salary for ${staff.name}`, newDay, {
+          recurring: true,
+        }),
       );
     });
 
@@ -129,10 +127,10 @@ export const upkeepPhase = {
 
         const ownedCount = horseCountsByStable.get(stable.id) ?? 0;
         const horseCost = ownedCount * UPKEEP_PER_HORSE;
-        
+
         const stableStaff = staffByStable.get(stable.id) ?? [];
         const staffSalaries = stableStaff.reduce((sum, s) => sum + s.salary, 0);
-        
+
         const cost = horseCost + staffSalaries;
         const monthlyExpenses = cost * 30; // Estimate monthly expenses
 
@@ -186,7 +184,9 @@ export const upkeepPhase = {
         const daysSinceInjection = newDay - lastInjectionDay;
 
         if (daysSinceInjection >= BANKRUPTCY_COOLDOWN_DAYS) {
-          console.log(`[BANKRUPTCY PROTECTION] Injecting $${BANKRUPTCY_INJECTION} into stable ${stable.name} (cash: $${stable.cash})`);
+          console.log(
+            `[BANKRUPTCY PROTECTION] Injecting $${BANKRUPTCY_INJECTION} into stable ${stable.name} (cash: $${stable.cash})`,
+          );
           return {
             ...stable,
             cash: stable.cash + BANKRUPTCY_INJECTION,
@@ -196,7 +196,6 @@ export const upkeepPhase = {
       }
       return stable;
     });
-
 
     return {
       ...context,
@@ -209,15 +208,19 @@ export const upkeepPhase = {
       },
       impacts: [
         ...(context.impacts || []),
-        ...((Math.random() < 0.1) ? [{
-          id: generateUUID(),
-          intentId: "",
-          day: newDay,
-          phase: "upkeep",
-          logLevel: "always",
-          type: "news_item",
-          newsItem: generateFlavorNews(newDay),
-        } as AnyImpact] : [])
+        ...(Math.random() < 0.1
+          ? [
+              {
+                id: generateUUID(),
+                intentId: "",
+                day: newDay,
+                phase: "upkeep",
+                logLevel: "always",
+                type: "news_item",
+                newsItem: generateFlavorNews(newDay),
+              } as AnyImpact,
+            ]
+          : []),
       ],
       logs: [...context.logs],
     };

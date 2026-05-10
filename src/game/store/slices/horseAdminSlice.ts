@@ -28,7 +28,7 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
     const horse = requireHorse(s.horses, horseId);
     const ownershipGuard = requireOwned(horse);
     if (ownershipGuard) return ownershipGuard;
-    
+
     if (!horse!.stud) return { ok: false, reason: "Horse is not standing at stud." };
 
     get().enqueueIntent({

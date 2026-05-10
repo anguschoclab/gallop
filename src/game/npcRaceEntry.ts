@@ -98,20 +98,20 @@ export function runNpcRaceEntry(
   }
   // Index horses and jockeys for fast lookup
 
-  const horseMap = new Map(horses.map(h => [h.id, h]));
-  const jockeyMap = new Map(jockeys.map(j => [j.id, j]));
-  const stableJockeyMap = new Map(jockeys.filter(j => j.stableId).map(j => [j.stableId!, j]));
+  const horseMap = new Map(horses.map((h) => [h.id, h]));
+  const jockeyMap = new Map(jockeys.map((j) => [j.id, j]));
+  const stableJockeyMap = new Map(jockeys.filter((j) => j.stableId).map((j) => [j.stableId!, j]));
 
   // Look at races in the next daysAhead days
   const upcomingRaces = races.filter(
     (r) => r.day > currentDay && r.day <= currentDay + daysAhead && !r.resolved,
   );
-  
+
   if (upcomingRaces.length === 0) return races;
 
   // We only need to clone the races we might modify
-  const upcomingRaceIds = new Set(upcomingRaces.map(r => r.id));
-  const updatedRaces = races.map(r => {
+  const upcomingRaceIds = new Set(upcomingRaces.map((r) => r.id));
+  const updatedRaces = races.map((r) => {
     if (upcomingRaceIds.has(r.id)) {
       return { ...r, entries: [...r.entries] };
     }
@@ -119,8 +119,8 @@ export function runNpcRaceEntry(
   });
 
   // Re-fetch upcoming from the cloned array
-  const workingUpcoming = updatedRaces.filter(r => upcomingRaceIds.has(r.id));
-  
+  const workingUpcoming = updatedRaces.filter((r) => upcomingRaceIds.has(r.id));
+
   // Cache free agents
   let freeAgents = jockeys.filter((j) => !j.stableId && j.lastRaceDay !== currentDay);
   freeAgents.sort((a, b) => b.fame - a.fame);
@@ -130,7 +130,7 @@ export function runNpcRaceEntry(
     if (race.entries.length >= race.fieldSize) continue;
 
     // Imperial Expansion: Check if player has an entry to trigger rivalry tactics
-    const playerEntry = race.entries.find(e => e.owned);
+    const playerEntry = race.entries.find((e) => e.owned);
 
     // Each stable evaluates this race
     for (const stable of stables) {
@@ -162,9 +162,9 @@ export function runNpcRaceEntry(
             });
             const pool = matches.length > 0 ? matches : freeAgents;
             chosenJockey = pool[0];
-            
+
             // Mark as used today
-            freeAgents = freeAgents.filter(j => j.id !== chosenJockey!.id);
+            freeAgents = freeAgents.filter((j) => j.id !== chosenJockey!.id);
             const jockeyIndex = jockeys.findIndex((j) => j.id === chosenJockey!.id);
             if (jockeyIndex !== -1) {
               jockeys[jockeyIndex] = { ...chosenJockey!, lastRaceDay: currentDay };
@@ -180,10 +180,10 @@ export function runNpcRaceEntry(
 
         // Calculate tactics for NPC entry
         let tactics = "default";
-        
+
         // Imperial Expansion: Spoiler Tactic
         if (isRival && horse.stats.speed > 70 && horse.stats.stamina < 50) {
-            tactics = "lead"; // Force a blistering pace to ruin the player's peaking horse
+          tactics = "lead"; // Force a blistering pace to ruin the player's peaking horse
         } else if (aiManager && jockey) {
           const stableState = aiManager.stableStates[stable.id];
           if (stableState?.jockeyStrategyAI) {

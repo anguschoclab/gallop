@@ -32,10 +32,7 @@ import {
   updateHorseTraining,
   recordTrainingOutcome,
 } from "@/core/ai/trainingAI";
-import {
-  createRaceEntryAIState,
-  calculateStrategicEntryScore,
-} from "@/core/ai/raceEntryAI";
+import { createRaceEntryAIState, calculateStrategicEntryScore } from "@/core/ai/raceEntryAI";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import {
   createClaimingAIState,
@@ -210,7 +207,9 @@ function generateNpcTrainingIntents(
   // Use persisted AI state if available, otherwise fallback to temporary state
   const trainingAI =
     stableAI?.trainingAI ||
-    (stableAI ? (stableAI.trainingAI = createTrainingAIState(stable)) : createTrainingAIState(stable));
+    (stableAI
+      ? (stableAI.trainingAI = createTrainingAIState(stable))
+      : createTrainingAIState(stable));
 
   for (const horse of ownedHorses) {
     // AI-driven training decision
@@ -269,11 +268,14 @@ function generateNpcRaceEntryIntents(
       : createRaceEntryAIState(stable));
 
   // Initialize jockey strategy AI if not present
-  const jockeyStrategyAI = stableAI?.jockeyStrategyAI || 
-    (stableAI ? (stableAI.jockeyStrategyAI = createJockeyStrategyAIState(stable)) : createJockeyStrategyAIState(stable));
+  const jockeyStrategyAI =
+    stableAI?.jockeyStrategyAI ||
+    (stableAI
+      ? (stableAI.jockeyStrategyAI = createJockeyStrategyAIState(stable))
+      : createJockeyStrategyAIState(stable));
 
   // Create a jockey map for tactics calculation (use first available jockey for now)
-  const jockeyMap = new Map((state.jockeys || []).map(j => [j.id, j]));
+  const jockeyMap = new Map((state.jockeys || []).map((j) => [j.id, j]));
 
   for (const race of upcomingRaces) {
     const entrySet = raceEntrySets.get(race.id);
@@ -289,8 +291,14 @@ function generateNpcRaceEntryIntents(
           // Calculate optimal tactics for this horse in this race
           const jockey = (state.jockeys || [])[0]; // Use first jockey for tactics calculation
           if (!jockey) continue;
-          const tactics = calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable) as "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
-          
+          const tactics = calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable) as
+            | "lead"
+            | "rail"
+            | "outside"
+            | "save"
+            | "late_kick"
+            | "default";
+
           intents.push({
             id: generateUUID(),
             entityId: race.id,
@@ -359,7 +367,9 @@ function generateNpcClaimingIntents(
   // Use persisted AI state if available, otherwise fallback to temporary state
   const claimingAI =
     stableAI?.claimingAI ||
-    (stableAI ? (stableAI.claimingAI = createClaimingAIState(stable)) : createClaimingAIState(stable));
+    (stableAI
+      ? (stableAI.claimingAI = createClaimingAIState(stable))
+      : createClaimingAIState(stable));
 
   for (const race of upcomingRaces) {
     // Skip if not a claiming race
@@ -425,7 +435,9 @@ function generateNpcWithdrawalIntents(
   // Use persisted AI state if available, otherwise fallback to temporary state
   const withdrawalAI =
     stableAI?.withdrawalAI ||
-    (stableAI ? (stableAI.withdrawalAI = createWithdrawalAIState(stable)) : createWithdrawalAIState(stable));
+    (stableAI
+      ? (stableAI.withdrawalAI = createWithdrawalAIState(stable))
+      : createWithdrawalAIState(stable));
 
   for (const race of upcomingRaces) {
     // Skip if not a claiming race
@@ -438,11 +450,25 @@ function generateNpcWithdrawalIntents(
       if (!horse) continue;
 
       // Use AI to determine if horse should be withdrawn from claiming
-      const { shouldWithdraw, reason } = shouldWithdrawHorse(withdrawalAI, horse, race, stable, day);
+      const { shouldWithdraw, reason } = shouldWithdrawHorse(
+        withdrawalAI,
+        horse,
+        race,
+        stable,
+        day,
+      );
 
       if (shouldWithdraw) {
         // Record the decision
-        recordWithdrawalDecision(withdrawalAI, horse, race, stable, true, reason || "risk_assessment", day);
+        recordWithdrawalDecision(
+          withdrawalAI,
+          horse,
+          race,
+          stable,
+          true,
+          reason || "risk_assessment",
+          day,
+        );
 
         intents.push({
           id: generateUUID(),

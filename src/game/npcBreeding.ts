@@ -55,7 +55,7 @@ export function runAutonomousBreeding(
   leaderboards?: Record<string, Leaderboard>,
 ): GameState {
   const { day, npcAIManager } = state;
-  let updatedState = { ...state };
+  const updatedState = { ...state };
 
   // Northern/Southern hemisphere seasons differ
   const month = Math.floor(((day - 1) % 365) / 30) + 1;
@@ -68,7 +68,7 @@ export function runAutonomousBreeding(
     if (stable.owned) continue; // Skip player stable
 
     if (!BREEDING_PERSONALITIES.includes(stable.personality)) continue;
-    
+
     // Try to breed if in season
 
     // Identify candidate mares (not pregnant, eligible age)
@@ -123,7 +123,7 @@ export function runAutonomousBreeding(
       const aiState = npcAIManager ? createBreedingAIState(stable) : undefined;
 
       for (const stallion of candidates) {
-        const score = aiState 
+        const score = aiState
           ? calculateAIStallionScore(aiState, stallion, mare, stable, maxFee, leaderboards)
           : scoreStallion(stallion, mare, stable, maxFee, leaderboards);
 
@@ -133,7 +133,8 @@ export function runAutonomousBreeding(
         }
       }
 
-      if (best && bestScore > 0.1) { // Minimum suitability threshold
+      if (best && bestScore > 0.1) {
+        // Minimum suitability threshold
         const sire = best;
         const totalFee = sire.stud!.standingFee + BREEDING_FEE;
 
@@ -156,8 +157,8 @@ export function runAutonomousBreeding(
 
         // Record decision in AI state if possible
         if (npcAIManager) {
-           const aiState = createBreedingAIState(stable);
-           recordBreedingDecision(aiState, mare, sire, true, day);
+          const aiState = createBreedingAIState(stable);
+          recordBreedingDecision(aiState, mare, sire, true, day);
         }
       }
     }
@@ -167,29 +168,27 @@ export function runAutonomousBreeding(
 }
 
 // Adapter for test compatibility
-export function runNpcBreeding(
-  state: any,
-  day: number,
-  rng: Rng
-) {
+export function runNpcBreeding(state: any, day: number, rng: Rng) {
   // Temporarily set day
   const originalDay = state.day;
   state.day = day;
   const originalPregnanciesLength = state.pregnancies ? state.pregnancies.length : 0;
-  
+
   const updatedState = runAutonomousBreeding(
     state as GameState,
     state.npcStables || [],
     rng,
-    state.sireLeaderboards
+    state.sireLeaderboards,
   );
-  
+
   state.day = originalDay;
-  
+
   return {
     horses: updatedState.horses || [],
     npcStables: updatedState.npcStables || [],
-    newPregnancies: updatedState.pregnancies ? updatedState.pregnancies.slice(originalPregnanciesLength) : [],
+    newPregnancies: updatedState.pregnancies
+      ? updatedState.pregnancies.slice(originalPregnanciesLength)
+      : [],
     logs: [],
   };
 }

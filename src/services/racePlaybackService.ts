@@ -9,22 +9,23 @@ import type { RaceSnapshot, HorseSnapshot } from "@/core/race/engine/raceSnapsho
  */
 export function interpolateSnapshots(
   snapshots: RaceSnapshot[],
-  currentTime: number
+  currentTime: number,
 ): HorseSnapshot[] {
   if (snapshots.length === 0) return [];
   if (currentTime <= snapshots[0].t) return snapshots[0].horses;
-  if (currentTime >= snapshots[snapshots.length - 1].t) return snapshots[snapshots.length - 1].horses;
+  if (currentTime >= snapshots[snapshots.length - 1].t)
+    return snapshots[snapshots.length - 1].horses;
 
   // Find the two snapshots to interpolate between
-  const nextIndex = snapshots.findIndex(s => s.t > currentTime);
+  const nextIndex = snapshots.findIndex((s) => s.t > currentTime);
   if (nextIndex === -1) return snapshots[snapshots.length - 1].horses;
 
   const prev = snapshots[nextIndex - 1];
   const next = snapshots[nextIndex];
   const alpha = (currentTime - prev.t) / (next.t - prev.t);
 
-  return prev.horses.map(prevHorse => {
-    const nextHorse = next.horses.find(h => h.horseId === prevHorse.horseId);
+  return prev.horses.map((prevHorse) => {
+    const nextHorse = next.horses.find((h) => h.horseId === prevHorse.horseId);
     if (!nextHorse) return prevHorse;
 
     return {

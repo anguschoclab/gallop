@@ -73,8 +73,22 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
       recovery: [3, 3],
       fertility: [3, 3],
       foalingEase: [3, 3],
-      markings: { socks: [3, 3], face: [3, 3], silverDapple: [3, 3], sabino: [3, 3], splashWhite: [3, 3] },
-      health: { bleeder: [3, 3], roarer: [3, 3], ocd: [3, 3], efna5: [3, 3], pssm: [3, 3], rer: [3, 3], epm: [3, 3] },
+      markings: {
+        socks: [3, 3],
+        face: [3, 3],
+        silverDapple: [3, 3],
+        sabino: [3, 3],
+        splashWhite: [3, 3],
+      },
+      health: {
+        bleeder: [3, 3],
+        roarer: [3, 3],
+        ocd: [3, 3],
+        efna5: [3, 3],
+        pssm: [3, 3],
+        rer: [3, 3],
+        epm: [3, 3],
+      },
     },
     form: 0.8,
     potential: 80,
@@ -99,7 +113,13 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     recoveryRate: 0.7,
     fertility: 0.7,
     foalingEase: 0.7,
-    markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+    markings: {
+      socks: "none",
+      face: "none",
+      silverDapple: false,
+      sabino: false,
+      splashWhite: false,
+    },
     bleederRisk: 0.1,
     roarerRisk: 0.1,
     ocdRisk: 0.1,
@@ -141,7 +161,9 @@ describe("createJockeyAIState", () => {
 
   it("should have different personality states for different personalities", () => {
     const aggressiveState = createJockeyAIState(createMockStable({ personality: "aggressive" }));
-    const conservativeState = createJockeyAIState(createMockStable({ personality: "conservative" }));
+    const conservativeState = createJockeyAIState(
+      createMockStable({ personality: "conservative" }),
+    );
 
     expect(aggressiveState.personalityState.personality).toBe("aggressive");
     expect(conservativeState.personalityState.personality).toBe("conservative");
@@ -151,7 +173,9 @@ describe("createJockeyAIState", () => {
 describe("calculateJockeySuitability", () => {
   it("should calculate base score from jockey stats", () => {
     const state = createJockeyAIState(createMockStable());
-    const jockey = createMockJockey({ stats: { pacing: 90, positioning: 90, vigor: 90, gateSkill: 90, temperament: 90 } });
+    const jockey = createMockJockey({
+      stats: { pacing: 90, positioning: 90, vigor: 90, gateSkill: 90, temperament: 90 },
+    });
     const horse = createMockHorse();
     const stable = createMockStable();
 
@@ -161,8 +185,12 @@ describe("calculateJockeySuitability", () => {
 
   it("should prefer higher vigor jockeys for aggressive personalities", () => {
     const state = createJockeyAIState(createMockStable({ personality: "aggressive" }));
-    const highVigorJockey = createMockJockey({ stats: { pacing: 70, positioning: 70, vigor: 90, gateSkill: 70, temperament: 70 } });
-    const lowVigorJockey = createMockJockey({ stats: { pacing: 70, positioning: 70, vigor: 50, gateSkill: 70, temperament: 70 } });
+    const highVigorJockey = createMockJockey({
+      stats: { pacing: 70, positioning: 70, vigor: 90, gateSkill: 70, temperament: 70 },
+    });
+    const lowVigorJockey = createMockJockey({
+      stats: { pacing: 70, positioning: 70, vigor: 50, gateSkill: 70, temperament: 70 },
+    });
     const horse = createMockHorse();
     const stable = createMockStable({ personality: "aggressive" });
 
@@ -180,7 +208,15 @@ describe("calculateJockeySuitability", () => {
     const stable = createMockStable();
 
     // Record successful assignment
-    const stateWithLearning = recordJockeyAssignment(state, jockey, horse, "race-1", stable, 1000, 1);
+    const stateWithLearning = recordJockeyAssignment(
+      state,
+      jockey,
+      horse,
+      "race-1",
+      stable,
+      1000,
+      1,
+    );
 
     const score = calculateJockeySuitability(stateWithLearning, jockey, horse, stable);
     // Score should be different after learning
@@ -189,7 +225,9 @@ describe("calculateJockeySuitability", () => {
 
   it("should clamp score between 0 and 100", () => {
     const state = createJockeyAIState(createMockStable());
-    const jockey = createMockJockey({ stats: { pacing: 100, positioning: 100, vigor: 100, gateSkill: 100, temperament: 100 } });
+    const jockey = createMockJockey({
+      stats: { pacing: 100, positioning: 100, vigor: 100, gateSkill: 100, temperament: 100 },
+    });
     const horse = createMockHorse();
     const stable = createMockStable();
 
@@ -211,7 +249,9 @@ describe("selectBestJockey", () => {
 
   it("should return the only jockey when only one available", () => {
     const state = createJockeyAIState(createMockStable());
-    const jockey = createMockJockey({ stats: { pacing: 85, positioning: 85, vigor: 85, gateSkill: 85, temperament: 85 } });
+    const jockey = createMockJockey({
+      stats: { pacing: 85, positioning: 85, vigor: 85, gateSkill: 85, temperament: 85 },
+    });
     const horse = createMockHorse();
     const stable = createMockStable();
 
@@ -350,7 +390,9 @@ describe("calculateMaxJockeyFee", () => {
 
   it("should apply personality modifiers", () => {
     const aggressiveState = createJockeyAIState(createMockStable({ personality: "aggressive" }));
-    const conservativeState = createJockeyAIState(createMockStable({ personality: "conservative" }));
+    const conservativeState = createJockeyAIState(
+      createMockStable({ personality: "conservative" }),
+    );
     const jockey = createMockJockey();
     const horse = createMockHorse();
     const stable = createMockStable({ cash: 100000 });
@@ -397,7 +439,15 @@ describe("recordJockeyAssignment", () => {
 
     let updatedState = state;
     for (let i = 0; i < 15; i++) {
-      updatedState = recordJockeyAssignment(updatedState, jockey, horse, `race-${i}`, stable, 1000, i);
+      updatedState = recordJockeyAssignment(
+        updatedState,
+        jockey,
+        horse,
+        `race-${i}`,
+        stable,
+        1000,
+        i,
+      );
     }
 
     expect(updatedState.jockeyHistory.length).toBeLessThanOrEqual(10);
@@ -411,7 +461,9 @@ describe("recordJockeyAssignment", () => {
 
     const updatedState = recordJockeyAssignment(state, jockey, horse, "race-1", stable, 1000, 1);
 
-    const retention = updatedState.retention.find((r) => r.jockeyId === jockey.id && r.stableId === stable.id);
+    const retention = updatedState.retention.find(
+      (r) => r.jockeyId === jockey.id && r.stableId === stable.id,
+    );
     expect(retention).toBeDefined();
     expect(retention?.hireDay).toBe(1);
     expect(retention?.totalRides).toBe(1);
@@ -425,8 +477,24 @@ describe("recordJockeyOutcome", () => {
     const horse = createMockHorse();
     const stable = createMockStable();
 
-    const stateWithAssignment = recordJockeyAssignment(state, jockey, horse, "race-1", stable, 1000, 1);
-    const updatedState = recordJockeyOutcome(stateWithAssignment, jockey.id, horse.id, "race-1", 1, 5000, 1);
+    const stateWithAssignment = recordJockeyAssignment(
+      state,
+      jockey,
+      horse,
+      "race-1",
+      stable,
+      1000,
+      1,
+    );
+    const updatedState = recordJockeyOutcome(
+      stateWithAssignment,
+      jockey.id,
+      horse.id,
+      "race-1",
+      1,
+      5000,
+      1,
+    );
 
     expect(updatedState.learningState.outcomes).toHaveLength(1);
     expect(updatedState.learningState.outcomes[0].success).toBe(true);
@@ -439,8 +507,24 @@ describe("recordJockeyOutcome", () => {
     const horse = createMockHorse();
     const stable = createMockStable();
 
-    const stateWithAssignment = recordJockeyAssignment(state, jockey, horse, "race-1", stable, 1000, 1);
-    const stateWithOutcome = recordJockeyOutcome(stateWithAssignment, jockey.id, horse.id, "race-1", 1, 5000, 1);
+    const stateWithAssignment = recordJockeyAssignment(
+      state,
+      jockey,
+      horse,
+      "race-1",
+      stable,
+      1000,
+      1,
+    );
+    const stateWithOutcome = recordJockeyOutcome(
+      stateWithAssignment,
+      jockey.id,
+      horse.id,
+      "race-1",
+      1,
+      5000,
+      1,
+    );
 
     const lastAssignment = stateWithOutcome.jockeyHistory[0];
     expect(lastAssignment.result).toBeDefined();
@@ -454,10 +538,28 @@ describe("recordJockeyOutcome", () => {
     const horse = createMockHorse();
     const stable = createMockStable();
 
-    const stateWithAssignment = recordJockeyAssignment(state, jockey, horse, "race-1", stable, 1000, 1);
-    const stateWithOutcome = recordJockeyOutcome(stateWithAssignment, jockey.id, horse.id, "race-1", 1, 5000, 1);
+    const stateWithAssignment = recordJockeyAssignment(
+      state,
+      jockey,
+      horse,
+      "race-1",
+      stable,
+      1000,
+      1,
+    );
+    const stateWithOutcome = recordJockeyOutcome(
+      stateWithAssignment,
+      jockey.id,
+      horse.id,
+      "race-1",
+      1,
+      5000,
+      1,
+    );
 
-    const retention = stateWithOutcome.retention.find((r) => r.jockeyId === jockey.id && r.stableId === stable.id);
+    const retention = stateWithOutcome.retention.find(
+      (r) => r.jockeyId === jockey.id && r.stableId === stable.id,
+    );
     expect(retention?.totalPrize).toBe(5000);
   });
 
@@ -467,8 +569,24 @@ describe("recordJockeyOutcome", () => {
     const horse = createMockHorse();
     const stable = createMockStable();
 
-    const stateWithAssignment = recordJockeyAssignment(state, jockey, horse, "race-1", stable, 1000, 1);
-    const stateWithOutcome = recordJockeyOutcome(stateWithAssignment, jockey.id, horse.id, "race-1", 3, 2000, 1);
+    const stateWithAssignment = recordJockeyAssignment(
+      state,
+      jockey,
+      horse,
+      "race-1",
+      stable,
+      1000,
+      1,
+    );
+    const stateWithOutcome = recordJockeyOutcome(
+      stateWithAssignment,
+      jockey.id,
+      horse.id,
+      "race-1",
+      3,
+      2000,
+      1,
+    );
 
     expect(stateWithOutcome.learningState.outcomes[0].success).toBe(true);
   });
@@ -479,8 +597,24 @@ describe("recordJockeyOutcome", () => {
     const horse = createMockHorse();
     const stable = createMockStable();
 
-    const stateWithAssignment = recordJockeyAssignment(state, jockey, horse, "race-1", stable, 1000, 1);
-    const stateWithOutcome = recordJockeyOutcome(stateWithAssignment, jockey.id, horse.id, "race-1", 5, 500, 1);
+    const stateWithAssignment = recordJockeyAssignment(
+      state,
+      jockey,
+      horse,
+      "race-1",
+      stable,
+      1000,
+      1,
+    );
+    const stateWithOutcome = recordJockeyOutcome(
+      stateWithAssignment,
+      jockey.id,
+      horse.id,
+      "race-1",
+      5,
+      500,
+      1,
+    );
 
     expect(stateWithOutcome.learningState.outcomes[0].success).toBe(false);
   });

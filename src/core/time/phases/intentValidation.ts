@@ -26,9 +26,9 @@ export const intentValidationPhase: PipelinePhase = {
   order: 10,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state } = context;
-    const horseMap = new Map(state.horses.map(h => [h.id, h]));
-    const raceMap = new Map(state.races.map(r => [r.id, r]));
-    const stableMap = new Map(state.npcStables.map(s => [s.id, s]));
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const raceMap = new Map(state.races.map((r) => [r.id, r]));
+    const stableMap = new Map(state.npcStables.map((s) => [s.id, s]));
 
     const validIntents: typeof intents = [];
 

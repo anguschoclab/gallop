@@ -281,13 +281,12 @@ export function buildRunner(
   if (h.lastBeyer && h.lastRaceDay && currentDay) {
     const daysSinceLastRace = currentDay - h.lastRaceDay;
     // Calculate average Beyer from race history
-    const beyerHistory = h.raceHistory
-      .filter((r) => r.beyer !== undefined)
-      .map((r) => r.beyer!);
-    const avgBeyer = beyerHistory.length > 0
-      ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
-      : 80;
-    
+    const beyerHistory = h.raceHistory.filter((r) => r.beyer !== undefined).map((r) => r.beyer!);
+    const avgBeyer =
+      beyerHistory.length > 0
+        ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
+        : 80;
+
     // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days
     if (h.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
       bouncePenalty = 0.9; // 10% reduction
@@ -331,16 +330,16 @@ export function buildRunner(
   );
 
   let runningStyle: RunningStyleT = h.runningStyle ?? "P";
-  
+
   // Use tactics from race entry if available (for both player and NPC)
-  const entry = race?.entries.find(e => e.horseId === h.id);
+  const entry = race?.entries.find((e) => e.horseId === h.id);
   if (entry?.tactics && entry.tactics !== "default") {
     const tacticsMap: Record<string, RunningStyleT> = {
-      "lead": "E",
-      "rail": "EP",
-      "outside": "P",
-      "save": "P",
-      "late_kick": "S"
+      lead: "E",
+      rail: "EP",
+      outside: "P",
+      save: "P",
+      late_kick: "S",
     };
     runningStyle = tacticsMap[entry.tactics] || runningStyle;
   } else if (npcAIManager && currentDay && stable && jockey && race && !owned) {

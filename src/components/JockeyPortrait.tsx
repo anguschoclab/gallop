@@ -97,12 +97,7 @@ export function JockeyPortrait({ jockey, size = 80, className }: Props) {
 
       {/* Neck */}
       <path d={`M42 78 L42 92 L58 92 L58 78 Z`} fill={skin} stroke={stroke} strokeWidth={strokeW} />
-      <path
-        d={`M42 88 Q50 92 58 88`}
-        fill="none"
-        stroke="rgba(0,0,0,0.25)"
-        strokeWidth={strokeW}
-      />
+      <path d={`M42 88 Q50 92 58 88`} fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth={strokeW} />
 
       {/* Jacket collar */}
       <path
@@ -121,8 +116,24 @@ export function JockeyPortrait({ jockey, size = 80, className }: Props) {
       />
 
       {/* Ears */}
-      <ellipse cx="29" cy="58" rx={earSize} ry={earSize + 1.5} fill={skin} stroke={stroke} strokeWidth={strokeW} />
-      <ellipse cx="71" cy="58" rx={earSize} ry={earSize + 1.5} fill={skin} stroke={stroke} strokeWidth={strokeW} />
+      <ellipse
+        cx="29"
+        cy="58"
+        rx={earSize}
+        ry={earSize + 1.5}
+        fill={skin}
+        stroke={stroke}
+        strokeWidth={strokeW}
+      />
+      <ellipse
+        cx="71"
+        cy="58"
+        rx={earSize}
+        ry={earSize + 1.5}
+        fill={skin}
+        stroke={stroke}
+        strokeWidth={strokeW}
+      />
 
       {/* Face */}
       <path d={facePath} fill={skin} stroke={stroke} strokeWidth={strokeW} />
@@ -149,7 +160,14 @@ export function JockeyPortrait({ jockey, size = 80, className }: Props) {
 
       {/* Eyebrows */}
       <rect x={38} y={54} width={eyeWidth + 4} height={browThickness} rx={1} fill={hair} />
-      <rect x={58 - (eyeWidth + 4 - 6)} y={54} width={eyeWidth + 4} height={browThickness} rx={1} fill={hair} />
+      <rect
+        x={58 - (eyeWidth + 4 - 6)}
+        y={54}
+        width={eyeWidth + 4}
+        height={browThickness}
+        rx={1}
+        fill={hair}
+      />
 
       {/* Eyes */}
       <ellipse cx={42} cy={60} rx={eyeWidth} ry={2} fill="#fff" stroke={stroke} strokeWidth={0.5} />
@@ -171,9 +189,7 @@ export function JockeyPortrait({ jockey, size = 80, className }: Props) {
       )}
 
       {/* Mustache */}
-      {hasMustache && (
-        <path d="M44 75 Q50 77 56 75 Q56 73 50 74 Q44 73 44 75" fill={hair} />
-      )}
+      {hasMustache && <path d="M44 75 Q50 77 56 75 Q56 73 50 74 Q44 73 44 75" fill={hair} />}
 
       {/* Stubble */}
       {hasStubble && (
@@ -189,9 +205,21 @@ export function JockeyPortrait({ jockey, size = 80, className }: Props) {
 
       {/* Mouth */}
       {smile ? (
-        <path d={`M44 78 Q50 ${hasMustache ? 81 : 82} 56 78`} fill="none" stroke={stroke} strokeWidth={0.8} strokeLinecap="round" />
+        <path
+          d={`M44 78 Q50 ${hasMustache ? 81 : 82} 56 78`}
+          fill="none"
+          stroke={stroke}
+          strokeWidth={0.8}
+          strokeLinecap="round"
+        />
       ) : (
-        <path d={`M44 79 L56 79`} fill="none" stroke={stroke} strokeWidth={0.8} strokeLinecap="round" />
+        <path
+          d={`M44 79 L56 79`}
+          fill="none"
+          stroke={stroke}
+          strokeWidth={0.8}
+          strokeLinecap="round"
+        />
       )}
 
       {/* Helmet (silk cap) */}
@@ -214,13 +242,35 @@ export function JockeyPortrait({ jockey, size = 80, className }: Props) {
       {/* Helmet button */}
       <circle cx="50" cy="24" r="1.6" fill={secondary} stroke={stroke} strokeWidth={0.4} />
       {/* Helmet shine */}
-      <path d="M30 28 Q35 24 44 24" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth={1.4} strokeLinecap="round" />
+      <path
+        d="M30 28 Q35 24 44 24"
+        fill="none"
+        stroke="rgba(255,255,255,0.45)"
+        strokeWidth={1.4}
+        strokeLinecap="round"
+      />
 
       {/* Goggles strap across helmet */}
       <rect x="22" y="44" width="56" height="3" fill="rgba(0,0,0,0.6)" />
       {/* Goggles lenses on visor edge */}
-      <ellipse cx="40" cy="49.5" rx="6" ry="3" fill="rgba(80,140,180,0.55)" stroke={stroke} strokeWidth={0.6} />
-      <ellipse cx="60" cy="49.5" rx="6" ry="3" fill="rgba(80,140,180,0.55)" stroke={stroke} strokeWidth={0.6} />
+      <ellipse
+        cx="40"
+        cy="49.5"
+        rx="6"
+        ry="3"
+        fill="rgba(80,140,180,0.55)"
+        stroke={stroke}
+        strokeWidth={0.6}
+      />
+      <ellipse
+        cx="60"
+        cy="49.5"
+        rx="6"
+        ry="3"
+        fill="rgba(80,140,180,0.55)"
+        stroke={stroke}
+        strokeWidth={0.6}
+      />
       <line x1="46" y1="49.5" x2="54" y2="49.5" stroke="rgba(0,0,0,0.6)" strokeWidth="1" />
 
       {/* Chin strap */}

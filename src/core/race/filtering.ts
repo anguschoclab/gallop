@@ -66,9 +66,7 @@ export function filterRacesByCriteria(
     // Filter by triple crown
     if (filters.tripleCrown !== "all" && filters.tripleCrown !== undefined) {
       const tripleCrownKeys = new Set(
-        GRADED_RACES
-          .filter((r) => r.triplecrownKey)
-          .map((r) => r.triplecrownKey)
+        GRADED_RACES.filter((r) => r.triplecrownKey).map((r) => r.triplecrownKey),
       );
       const isTripleCrown = race.graded && tripleCrownKeys.has(race.graded.triplecrownKey || "");
       if (filters.tripleCrown && !isTripleCrown) return false;

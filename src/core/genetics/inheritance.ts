@@ -288,7 +288,6 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
     return [3, 3]; // Default fallback
   };
 
-
   // Leopard complex (independent assortment)
   const lp =
     sire.markers.leopardComplex === "dominant" || dam.markers.leopardComplex === "dominant"

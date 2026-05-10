@@ -14,9 +14,7 @@ import type { IntentValidator, ValidationCache } from "./types";
 
 export class RacingValidator implements IntentValidator {
   canValidate(type: AnyIntent["type"]): boolean {
-    return (
-      type === "race_entry" || type === "withdraw_from_claiming" || type === "race_withdrawal"
-    );
+    return type === "race_entry" || type === "withdraw_from_claiming" || type === "race_withdrawal";
   }
 
   validate(

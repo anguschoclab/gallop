@@ -20,7 +20,7 @@ interface PlayerConsignmentsPanelProps {
 /**
  * Component to display results for auction lots consigned by the player.
  * Only shown when an auction is resolved.
- * 
+ *
  * EXTRACTED FROM: src/routes/auction.$saleId.tsx
  */
 export function PlayerConsignmentsPanel({
@@ -44,7 +44,7 @@ export function PlayerConsignmentsPanel({
         const buyer = lot.soldToStableId
           ? stables.find((s) => s.id === lot.soldToStableId)
           : undefined;
-        
+
         return (
           <Card key={lot.id}>
             <CardContent className="p-4">
@@ -60,9 +60,7 @@ export function PlayerConsignmentsPanel({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <p className="font-semibold text-cream">
-                        {lotHorse?.name ?? "Unknown"}
-                      </p>
+                      <p className="font-semibold text-cream">{lotHorse?.name ?? "Unknown"}</p>
                       <p className="text-xs text-cream-muted">
                         {lotHorse
                           ? `${lotHorse.gender.charAt(0).toUpperCase() + lotHorse.gender.slice(1)} · Age ${lotHorse.age}${lotHorse.hemisphere === "Southern" ? " · Southern" : ""}`
@@ -105,11 +103,7 @@ export function PlayerConsignmentsPanel({
                     <div className="flex items-center justify-between text-xs pt-0.5">
                       <span className="text-cream-muted">Sold to</span>
                       <span className="font-medium">
-                        {lot.passed
-                          ? "Passed — reserve not met"
-                          : buyer
-                            ? buyer.name
-                            : "Unknown"}
+                        {lot.passed ? "Passed — reserve not met" : buyer ? buyer.name : "Unknown"}
                       </span>
                     </div>
                   </div>
@@ -119,7 +113,7 @@ export function PlayerConsignmentsPanel({
           </Card>
         );
       })}
-      
+
       {soldLots.length > 0 && (
         <p className="text-sm text-cream-muted tabular-nums">
           <strong className="text-cream">{soldLots.length}</strong>{" "}

@@ -56,8 +56,22 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
       recovery: [3, 3],
       fertility: [3, 3],
       foalingEase: [3, 3],
-      markings: { socks: [3, 3], face: [3, 3], silverDapple: [3, 3], sabino: [3, 3], splashWhite: [3, 3] },
-      health: { bleeder: [3, 3], roarer: [3, 3], ocd: [3, 3], efna5: [3, 3], pssm: [3, 3], rer: [3, 3], epm: [3, 3] },
+      markings: {
+        socks: [3, 3],
+        face: [3, 3],
+        silverDapple: [3, 3],
+        sabino: [3, 3],
+        splashWhite: [3, 3],
+      },
+      health: {
+        bleeder: [3, 3],
+        roarer: [3, 3],
+        ocd: [3, 3],
+        efna5: [3, 3],
+        pssm: [3, 3],
+        rer: [3, 3],
+        epm: [3, 3],
+      },
     },
     form: 0.8,
     potential: 80,
@@ -82,7 +96,13 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     recoveryRate: 0.7,
     fertility: 0.7,
     foalingEase: 0.7,
-    markings: { socks: "none", face: "none", silverDapple: false, sabino: false, splashWhite: false },
+    markings: {
+      socks: "none",
+      face: "none",
+      silverDapple: false,
+      sabino: false,
+      splashWhite: false,
+    },
     bleederRisk: 0.1,
     roarerRisk: 0.1,
     ocdRisk: 0.1,
@@ -157,7 +177,9 @@ describe("createCampaignAIState", () => {
 
   it("should have different personality states for different personalities", () => {
     const aggressiveState = createCampaignAIState(createMockStable({ personality: "aggressive" }));
-    const conservativeState = createCampaignAIState(createMockStable({ personality: "conservative" }));
+    const conservativeState = createCampaignAIState(
+      createMockStable({ personality: "conservative" }),
+    );
 
     expect(aggressiveState.personalityState.personality).toBe("aggressive");
     expect(conservativeState.personalityState.personality).toBe("conservative");
@@ -167,7 +189,9 @@ describe("createCampaignAIState", () => {
 describe("detectContender", () => {
   it("should detect contender based on horse stats", () => {
     const state = createCampaignAIState(createMockStable());
-    const horse = createMockHorse({ stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 } });
+    const horse = createMockHorse({
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+    });
     const currentDay = 100;
 
     const updatedState = detectContender(state, horse, currentDay);
@@ -179,7 +203,9 @@ describe("detectContender", () => {
 
   it("should not detect contender for low-quality horses", () => {
     const state = createCampaignAIState(createMockStable());
-    const horse = createMockHorse({ stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 } });
+    const horse = createMockHorse({
+      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
+    });
     const currentDay = 100;
 
     const updatedState = detectContender(state, horse, currentDay);
@@ -199,13 +225,21 @@ describe("detectContender", () => {
     const matchingStatus = matchingState.contenderTracking[matchingHorse.id];
     const mismatchingStatus = mismatchingState.contenderTracking[mismatchingHorse.id];
 
-    expect(matchingStatus.targetRaces.length).toBeGreaterThanOrEqual(mismatchingStatus.targetRaces.length);
+    expect(matchingStatus.targetRaces.length).toBeGreaterThanOrEqual(
+      mismatchingStatus.targetRaces.length,
+    );
   });
 
   it("should consider horse age for Triple Crown", () => {
     const state = createCampaignAIState(createMockStable());
-    const threeYearOld = createMockHorse({ age: 3, stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 } });
-    const fourYearOld = createMockHorse({ age: 4, stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 } });
+    const threeYearOld = createMockHorse({
+      age: 3,
+      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+    });
+    const fourYearOld = createMockHorse({
+      age: 4,
+      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+    });
     const currentDay = 100;
 
     const threeState = detectContender(state, threeYearOld, currentDay);
@@ -223,7 +257,9 @@ describe("detectContender", () => {
 describe("getOptimalMajorRaceTarget", () => {
   it("should return null for non-contenders", () => {
     const state = createCampaignAIState(createMockStable());
-    const horse = createMockHorse({ stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 } });
+    const horse = createMockHorse({
+      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
+    });
     const stable = createMockStable();
     const currentDay = 100;
 
@@ -233,7 +269,10 @@ describe("getOptimalMajorRaceTarget", () => {
 
   it("should return optimal target for contenders", () => {
     const state = createCampaignAIState(createMockStable());
-    const horse = createMockHorse({ stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 }, distanceAptitude: 2000 });
+    const horse = createMockHorse({
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+      distanceAptitude: 2000,
+    });
     const stable = createMockStable();
     const currentDay = 100;
 
@@ -249,7 +288,9 @@ describe("getOptimalMajorRaceTarget", () => {
 describe("shouldTargetMajorRace", () => {
   it("should return false for non-contenders", () => {
     const state = createCampaignAIState(createMockStable());
-    const horse = createMockHorse({ stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 } });
+    const horse = createMockHorse({
+      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
+    });
     const targetRace = createMockGradedRace({ grade: "G1", distance: 2000 });
     const stable = createMockStable();
     const currentDay = 100;
@@ -260,7 +301,10 @@ describe("shouldTargetMajorRace", () => {
 
   it("should return true for high-quality contenders", () => {
     const state = createCampaignAIState(createMockStable());
-    const horse = createMockHorse({ stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 }, distanceAptitude: 2000 });
+    const horse = createMockHorse({
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+      distanceAptitude: 2000,
+    });
     const targetRace = createMockGradedRace({ grade: "G1", distance: 2000 });
     const stable = createMockStable();
     const currentDay = 100;
@@ -272,14 +316,31 @@ describe("shouldTargetMajorRace", () => {
 
   it("should be more likely for aggressive personalities", () => {
     const aggressiveState = createCampaignAIState(createMockStable({ personality: "aggressive" }));
-    const conservativeState = createCampaignAIState(createMockStable({ personality: "conservative" }));
-    const horse = createMockHorse({ stats: { speed: 75, stamina: 75, acceleration: 75, consistency: 75 }, distanceAptitude: 2000 });
+    const conservativeState = createCampaignAIState(
+      createMockStable({ personality: "conservative" }),
+    );
+    const horse = createMockHorse({
+      stats: { speed: 75, stamina: 75, acceleration: 75, consistency: 75 },
+      distanceAptitude: 2000,
+    });
     const targetRace = createMockGradedRace({ grade: "G1", distance: 2000 });
     const stable = createMockStable();
     const currentDay = 100;
 
-    const aggressiveDecision = shouldTargetMajorRace(aggressiveState, horse, targetRace, stable, currentDay);
-    const conservativeDecision = shouldTargetMajorRace(conservativeState, horse, targetRace, stable, currentDay);
+    const aggressiveDecision = shouldTargetMajorRace(
+      aggressiveState,
+      horse,
+      targetRace,
+      stable,
+      currentDay,
+    );
+    const conservativeDecision = shouldTargetMajorRace(
+      conservativeState,
+      horse,
+      targetRace,
+      stable,
+      currentDay,
+    );
 
     // Both should return boolean results (aggressive may still return false based on scoring)
     expect(typeof aggressiveDecision).toBe("boolean");
@@ -303,16 +364,32 @@ describe("getPrepRaceStrategy", () => {
 
   it("should recommend more preps for aggressive personalities", () => {
     const aggressiveState = createCampaignAIState(createMockStable({ personality: "aggressive" }));
-    const conservativeState = createCampaignAIState(createMockStable({ personality: "conservative" }));
+    const conservativeState = createCampaignAIState(
+      createMockStable({ personality: "conservative" }),
+    );
     const horse = createMockHorse();
     const targetRace = createMockGradedRace({ grade: "G1", dayOfYear: 200 });
     const stable = createMockStable();
     const currentDay = 100;
 
-    const aggressiveStrategy = getPrepRaceStrategy(aggressiveState, horse, targetRace, stable, currentDay);
-    const conservativeStrategy = getPrepRaceStrategy(conservativeState, horse, targetRace, stable, currentDay);
+    const aggressiveStrategy = getPrepRaceStrategy(
+      aggressiveState,
+      horse,
+      targetRace,
+      stable,
+      currentDay,
+    );
+    const conservativeStrategy = getPrepRaceStrategy(
+      conservativeState,
+      horse,
+      targetRace,
+      stable,
+      currentDay,
+    );
 
-    expect(aggressiveStrategy.numberOfPreps).toBeGreaterThanOrEqual(conservativeStrategy.numberOfPreps);
+    expect(aggressiveStrategy.numberOfPreps).toBeGreaterThanOrEqual(
+      conservativeStrategy.numberOfPreps,
+    );
   });
 
   it("should adjust for Triple Crown races", () => {
@@ -346,7 +423,14 @@ describe("recordCampaignDecision", () => {
     const stable = createMockStable();
     const currentDay = 100;
 
-    const updatedState = recordCampaignDecision(state, horse, "prep-race-1", targetRace.key, stable, currentDay);
+    const updatedState = recordCampaignDecision(
+      state,
+      horse,
+      "prep-race-1",
+      targetRace.key,
+      stable,
+      currentDay,
+    );
 
     expect(updatedState.campaignHistory).toHaveLength(1);
     expect(updatedState.campaignHistory[0].horseId).toBe(horse.id);
@@ -362,7 +446,14 @@ describe("recordCampaignDecision", () => {
 
     let updatedState = state;
     for (let i = 0; i < 15; i++) {
-      updatedState = recordCampaignDecision(updatedState, horse, `prep-race-${i}`, targetRace.key, stable, 100 + i);
+      updatedState = recordCampaignDecision(
+        updatedState,
+        horse,
+        `prep-race-${i}`,
+        targetRace.key,
+        stable,
+        100 + i,
+      );
     }
 
     expect(updatedState.campaignHistory.length).toBeLessThanOrEqual(10);
@@ -390,13 +481,27 @@ describe("recordCampaignOutcome", () => {
     const currentDay = 100;
 
     // First record the decision
-    let updatedState = recordCampaignDecision(state, horse, "prep-race-1", targetRace.key, stable, currentDay);
+    let updatedState = recordCampaignDecision(
+      state,
+      horse,
+      "prep-race-1",
+      targetRace.key,
+      stable,
+      currentDay,
+    );
 
     // Then record the outcome
-    updatedState = recordCampaignOutcome(updatedState, horse.id, targetRace.key, 1, 100000, currentDay);
+    updatedState = recordCampaignOutcome(
+      updatedState,
+      horse.id,
+      targetRace.key,
+      1,
+      100000,
+      currentDay,
+    );
 
     const decision = updatedState.campaignHistory.find(
-      (d) => d.horseId === horse.id && d.targetRaceKey === targetRace.key
+      (d) => d.horseId === horse.id && d.targetRaceKey === targetRace.key,
     );
     expect(decision?.success).toBe(true);
     expect(decision?.position).toBe(1);
@@ -410,8 +515,22 @@ describe("recordCampaignOutcome", () => {
     const stable = createMockStable();
     const currentDay = 100;
 
-    let updatedState = recordCampaignDecision(state, horse, "prep-race-1", targetRace.key, stable, currentDay);
-    updatedState = recordCampaignOutcome(updatedState, horse.id, targetRace.key, 1, 100000, currentDay);
+    let updatedState = recordCampaignDecision(
+      state,
+      horse,
+      "prep-race-1",
+      targetRace.key,
+      stable,
+      currentDay,
+    );
+    updatedState = recordCampaignOutcome(
+      updatedState,
+      horse.id,
+      targetRace.key,
+      1,
+      100000,
+      currentDay,
+    );
 
     expect(updatedState.learningState.outcomes).toHaveLength(1);
   });
@@ -423,11 +542,25 @@ describe("recordCampaignOutcome", () => {
     const stable = createMockStable();
     const currentDay = 100;
 
-    let updatedState = recordCampaignDecision(state, horse, "prep-race-1", targetRace.key, stable, currentDay);
-    updatedState = recordCampaignOutcome(updatedState, horse.id, targetRace.key, 3, 50000, currentDay);
+    let updatedState = recordCampaignDecision(
+      state,
+      horse,
+      "prep-race-1",
+      targetRace.key,
+      stable,
+      currentDay,
+    );
+    updatedState = recordCampaignOutcome(
+      updatedState,
+      horse.id,
+      targetRace.key,
+      3,
+      50000,
+      currentDay,
+    );
 
     const decision = updatedState.campaignHistory.find(
-      (d) => d.horseId === horse.id && d.targetRaceKey === targetRace.key
+      (d) => d.horseId === horse.id && d.targetRaceKey === targetRace.key,
     );
     expect(decision?.success).toBe(true);
   });
@@ -439,11 +572,25 @@ describe("recordCampaignOutcome", () => {
     const stable = createMockStable();
     const currentDay = 100;
 
-    let updatedState = recordCampaignDecision(state, horse, "prep-race-1", targetRace.key, stable, currentDay);
-    updatedState = recordCampaignOutcome(updatedState, horse.id, targetRace.key, 5, 10000, currentDay);
+    let updatedState = recordCampaignDecision(
+      state,
+      horse,
+      "prep-race-1",
+      targetRace.key,
+      stable,
+      currentDay,
+    );
+    updatedState = recordCampaignOutcome(
+      updatedState,
+      horse.id,
+      targetRace.key,
+      5,
+      10000,
+      currentDay,
+    );
 
     const decision = updatedState.campaignHistory.find(
-      (d) => d.horseId === horse.id && d.targetRaceKey === targetRace.key
+      (d) => d.horseId === horse.id && d.targetRaceKey === targetRace.key,
     );
     expect(decision?.success).toBe(false);
   });
@@ -472,8 +619,22 @@ describe("getCampaignInsights", () => {
     let updatedState = state;
     // Record multiple campaigns
     for (let i = 0; i < 5; i++) {
-      updatedState = recordCampaignDecision(updatedState, horse, `prep-race-${i}`, targetRace.key, stable, currentDay);
-      updatedState = recordCampaignOutcome(updatedState, horse.id, targetRace.key, i + 1, 100000 * (i + 1), currentDay);
+      updatedState = recordCampaignDecision(
+        updatedState,
+        horse,
+        `prep-race-${i}`,
+        targetRace.key,
+        stable,
+        currentDay,
+      );
+      updatedState = recordCampaignOutcome(
+        updatedState,
+        horse.id,
+        targetRace.key,
+        i + 1,
+        100000 * (i + 1),
+        currentDay,
+      );
     }
 
     const insights = getCampaignInsights(updatedState, stable.id);
@@ -493,10 +654,38 @@ describe("getCampaignInsights", () => {
     const currentDay = 100;
 
     let updatedState = state;
-    updatedState = recordCampaignDecision(updatedState, horse, "prep-race-1", targetRace.key, stable1, currentDay);
-    updatedState = recordCampaignOutcome(updatedState, horse.id, targetRace.key, 1, 100000, currentDay);
-    updatedState = recordCampaignDecision(updatedState, horse, "prep-race-2", targetRace.key, stable2, currentDay);
-    updatedState = recordCampaignOutcome(updatedState, horse.id, targetRace.key, 2, 50000, currentDay);
+    updatedState = recordCampaignDecision(
+      updatedState,
+      horse,
+      "prep-race-1",
+      targetRace.key,
+      stable1,
+      currentDay,
+    );
+    updatedState = recordCampaignOutcome(
+      updatedState,
+      horse.id,
+      targetRace.key,
+      1,
+      100000,
+      currentDay,
+    );
+    updatedState = recordCampaignDecision(
+      updatedState,
+      horse,
+      "prep-race-2",
+      targetRace.key,
+      stable2,
+      currentDay,
+    );
+    updatedState = recordCampaignOutcome(
+      updatedState,
+      horse.id,
+      targetRace.key,
+      2,
+      50000,
+      currentDay,
+    );
 
     const insights1 = getCampaignInsights(updatedState, "stable-1");
     const insights2 = getCampaignInsights(updatedState, "stable-2");
@@ -507,8 +696,14 @@ describe("getCampaignInsights", () => {
 
   it("should count contenders", () => {
     const state = createCampaignAIState(createMockStable());
-    const horse1 = createMockHorse({ id: "horse-1", stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 } });
-    const horse2 = createMockHorse({ id: "horse-2", stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 } });
+    const horse1 = createMockHorse({
+      id: "horse-1",
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+    });
+    const horse2 = createMockHorse({
+      id: "horse-2",
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+    });
     const currentDay = 100;
 
     const updatedState1 = detectContender(state, horse1, currentDay);

@@ -23,11 +23,7 @@ interface FoalNamingDialogProps {
   onClose: () => void;
 }
 
-export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
-  foalId,
-  isOpen,
-  onClose,
-}) => {
+export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOpen, onClose }) => {
   const horses = useGallopStore((s) => s.horses);
   const renameHorse = useGallopStore((s) => s.renameHorse);
   const foal = useMemo(() => horses.find((h) => h.id === foalId), [horses, foalId]);
@@ -53,7 +49,10 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({
     if (!foal) return;
     const rng = createRng(`foal-name-${foal.id}-${Date.now()}`);
     const existingNames = new Set(horses.map((h) => h.name));
-    const suggestion = generateProceduralHorseName({ sireName: foal.sireName, damName: foal.damName, existingNames }, rng);
+    const suggestion = generateProceduralHorseName(
+      { sireName: foal.sireName, damName: foal.damName, existingNames },
+      rng,
+    );
     setName(suggestion);
     const validation = validateHorseName(suggestion, existingNames);
     setValidation({ valid: validation.isValid, reason: validation.reason });

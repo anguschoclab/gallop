@@ -89,9 +89,13 @@ export function getFoalsOf(state: Pick<GameState, "horses">, damId: string): Hor
  */
 export function isStakesWinner(foal: Horse): boolean {
   const stats = getCareerStats(foal);
-  return stats.stakesWins > 0 || (stats.wins > 0 && (foal.raceHistory || []).some(
-    (r) => r.position === 1 && r.purse !== undefined && r.purse >= 18000,
-  ));
+  return (
+    stats.stakesWins > 0 ||
+    (stats.wins > 0 &&
+      (foal.raceHistory || []).some(
+        (r) => r.position === 1 && r.purse !== undefined && r.purse >= 18000,
+      ))
+  );
 }
 
 /**
@@ -217,7 +221,9 @@ export function getRunnersBy(state: Pick<GameState, "horses">, stallionId: strin
   if (runnersCache.has(cacheKey)) {
     return runnersCache.get(cacheKey)!;
   }
-  const runners = getFoalsBy(state, stallionId).filter((h) => h.age >= 2 && h.raceHistory.length > 0);
+  const runners = getFoalsBy(state, stallionId).filter(
+    (h) => h.age >= 2 && h.raceHistory.length > 0,
+  );
   runnersCache.set(cacheKey, runners);
   return runners;
 }

@@ -31,14 +31,10 @@ export interface ImpactHandler {
       facilityMap: Map<string, WritableDraft<any>>;
       staffMap: Map<string, WritableDraft<any>>;
     },
-
-
-
   ): void;
-  
+
   /**
    * Returns true if this handler can process the given impact type
    */
   canHandle(type: string): boolean;
 }
-

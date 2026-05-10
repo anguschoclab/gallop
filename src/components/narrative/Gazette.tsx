@@ -1,14 +1,14 @@
-import React from 'react';
-import { useGame as useGameStore } from '@/game/store';
-import type { NewsItem, EntityLink } from '@/core/narrative/newsTypes';
-import './Gazette.css';
+import React from "react";
+import { useGame as useGameStore } from "@/game/store";
+import type { NewsItem, EntityLink } from "@/core/narrative/newsTypes";
+import "./Gazette.css";
 
 export const Gazette: React.FC = () => {
   const { news, day } = useGameStore();
 
-  const highImportance = news.filter(n => n.importance === 'high');
-  const mediumImportance = news.filter(n => n.importance === 'medium');
-  const lowImportance = news.filter(n => n.importance === 'low');
+  const highImportance = news.filter((n) => n.importance === "high");
+  const mediumImportance = news.filter((n) => n.importance === "medium");
+  const lowImportance = news.filter((n) => n.importance === "low");
 
   const mainNews = [...highImportance, ...mediumImportance].slice(0, 5);
   const sideNews = lowImportance.slice(0, 10);
@@ -27,13 +27,13 @@ export const Gazette: React.FC = () => {
       <div className="gazette-body">
         <main className="gazette-main-column">
           {mainNews.length > 0 ? (
-            mainNews.map((item, index) => (
-              <NewsArticle key={`${item.id}-${index}`} item={item} />
-            ))
+            mainNews.map((item, index) => <NewsArticle key={`${item.id}-${index}`} item={item} />)
           ) : (
             <div className="news-item">
               <h2 className="news-headline">Quiet Day at the Tracks</h2>
-              <p className="news-body">The racing world is catching its breath. No major results reported today.</p>
+              <p className="news-body">
+                The racing world is catching its breath. No major results reported today.
+              </p>
             </div>
           )}
         </main>
@@ -43,9 +43,13 @@ export const Gazette: React.FC = () => {
             <h3 className="sidebar-title">Local Snippets</h3>
             {sideNews.length > 0 ? (
               sideNews.map((item, index) => (
-                <div key={`${item.id}-${index}`} className="news-snippet" style={{ marginBottom: '1rem' }}>
-                  <h4 style={{ margin: '0 0 0.2rem 0', fontSize: '1rem' }}>{item.headline}</h4>
-                  <p style={{ margin: 0, fontSize: '0.85rem' }}>{item.body}</p>
+                <div
+                  key={`${item.id}-${index}`}
+                  className="news-snippet"
+                  style={{ marginBottom: "1rem" }}
+                >
+                  <h4 style={{ margin: "0 0 0.2rem 0", fontSize: "1rem" }}>{item.headline}</h4>
+                  <p style={{ margin: 0, fontSize: "0.85rem" }}>{item.body}</p>
                 </div>
               ))
             ) : (
@@ -53,9 +57,13 @@ export const Gazette: React.FC = () => {
             )}
           </section>
 
-          <section className="sidebar-section" style={{ background: '#2c2c2c', color: '#fff' }}>
-            <h3 className="sidebar-title" style={{ borderColor: '#fff' }}>Classifieds</h3>
-            <p className="sidebar-content">Looking for prime pasture? Contact the Kentucky Syndicate.</p>
+          <section className="sidebar-section" style={{ background: "#2c2c2c", color: "#fff" }}>
+            <h3 className="sidebar-title" style={{ borderColor: "#fff" }}>
+              Classifieds
+            </h3>
+            <p className="sidebar-content">
+              Looking for prime pasture? Contact the Kentucky Syndicate.
+            </p>
           </section>
         </aside>
       </div>
@@ -68,9 +76,7 @@ const NewsArticle: React.FC<{ item: NewsItem }> = ({ item }) => {
     <article className={`news-item news-importance-${item.importance}`}>
       <span className="news-category">{item.category}</span>
       <h2 className="news-headline">{item.headline}</h2>
-      <div className="news-body">
-        {renderBodyWithLinks(item.body, item.entityLinks)}
-      </div>
+      <div className="news-body">{renderBodyWithLinks(item.body, item.entityLinks)}</div>
     </article>
   );
 };
@@ -82,10 +88,10 @@ function renderBodyWithLinks(body: string, links?: EntityLink[]) {
   // In a real app, you'd use a more robust regex or structured body
   let parts: (string | React.ReactNode)[] = [body];
 
-  links.forEach(link => {
+  links.forEach((link) => {
     const newParts: (string | React.ReactNode)[] = [];
-    parts.forEach(part => {
-      if (typeof part !== 'string') {
+    parts.forEach((part) => {
+      if (typeof part !== "string") {
         newParts.push(part);
         return;
       }
@@ -101,11 +107,13 @@ function renderBodyWithLinks(body: string, links?: EntityLink[]) {
               onClick={() => {
                 // In a real app, use navigation
                 console.log(`Navigate to ${link.type}: ${link.id}`);
-                window.dispatchEvent(new CustomEvent('navigate', { detail: { type: link.type, id: link.id } }));
+                window.dispatchEvent(
+                  new CustomEvent("navigate", { detail: { type: link.type, id: link.id } }),
+                );
               }}
             >
               {link.name}
-            </span>
+            </span>,
           );
         }
       });

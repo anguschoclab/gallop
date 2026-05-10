@@ -291,8 +291,10 @@ export function createCoreSlice(
       } catch (error) {
         // Fallback: Worker not available (SSR context), use synchronous pipeline
         if (!(error instanceof Error && error.message.includes("Worker not available"))) {
-            // Only log if it's NOT just a missing worker
-            console.warn("Worker not available or failed to clone state, using synchronous pipeline execution");
+          // Only log if it's NOT just a missing worker
+          console.warn(
+            "Worker not available or failed to clone state, using synchronous pipeline execution",
+          );
         }
 
         // Execute pipeline for all phases

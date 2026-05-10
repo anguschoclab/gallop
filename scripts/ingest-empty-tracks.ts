@@ -93,7 +93,9 @@ async function getTrackGeometry(name: string, country: string) {
             .filter((e: any) => e.type === "node")
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .forEach((n: any) => nodeMap.set(n.id, n));
-          const nodes = way.nodes.map((id: number) => nodeMap.get(id)).filter(Boolean) as GeometryNode[];
+          const nodes = way.nodes
+            .map((id: number) => nodeMap.get(id))
+            .filter(Boolean) as GeometryNode[];
           return { nodes, osmId: way.id.toString(), matchedName: tryName };
         }
       }
@@ -195,7 +197,9 @@ async function run() {
 
         track.courses.forEach((c) => {
           c.sections = sections;
-          c.circumference = Math.round(sections.reduce((acc: number, s: Section) => acc + s.length, 0));
+          c.circumference = Math.round(
+            sections.reduce((acc: number, s: Section) => acc + s.length, 0),
+          );
           const straights = sections.filter((s) => s.type === "straight");
           c.straightLength =
             straights.length > 0

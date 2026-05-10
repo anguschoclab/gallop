@@ -22,7 +22,13 @@ import { getArchetypeById } from "@/core/breeding/archetypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import { canBreed, type BreedResult } from "@/core/breeding/eligibility";
 import { generateUUID } from "@/game/uuid";
-import type { BreedingIntent, SyndicateCreationIntent, SharePurchaseIntent, ShareSaleIntent, SyndicateFeeDistributionIntent } from "@/core/resolver/intents";
+import type {
+  BreedingIntent,
+  SyndicateCreationIntent,
+  SharePurchaseIntent,
+  ShareSaleIntent,
+  SyndicateFeeDistributionIntent,
+} from "@/core/resolver/intents";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants/gameConstants";
 import { formatCurrency } from "@/lib/formatting";
 import { requireOwned, requireHorse } from "../guards";
@@ -100,16 +106,16 @@ export function createBreedingSlice(
         if (sire!.hemisphere !== dam!.hemisphere) {
           return fail("Cross-hemisphere breeding is not supported.");
         }
-        
+
         // Check if stallion is syndicated and apply fee reduction
         const syndicate = s.syndicates?.[sireId];
         const playerShareCount = syndicate?.shareHolders?.["player"] || 0;
         const totalShares = syndicate?.totalShares || 1;
         const playerSharePercentage = playerShareCount / totalShares;
-        
+
         // Apply fee reduction: player only pays their share of the stud fee
         studFee = sire!.stud.standingFee * (1 - playerSharePercentage);
-        
+
         // Enqueue fee distribution intent if syndicated
         if (syndicate && syndicate.totalShares > 0) {
           const feeDistIntent: SyndicateFeeDistributionIntent = {
@@ -190,11 +196,13 @@ export function createBreedingSlice(
       if (ownershipGuard) return ownershipGuard;
 
       // Validate stallion is a G1 winner
-      const g1Wins = stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
+      const g1Wins =
+        stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
       if (g1Wins === 0) return { ok: false, reason: "Stallion must be a G1 winner to syndicate." };
 
       // Check if syndicate already exists
-      if (s.syndicates?.[stallionId]) return { ok: false, reason: "Stallion is already syndicated." };
+      if (s.syndicates?.[stallionId])
+        return { ok: false, reason: "Stallion is already syndicated." };
 
       const intent: SyndicateCreationIntent = {
         id: generateUUID(),

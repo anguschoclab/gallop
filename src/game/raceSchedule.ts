@@ -137,7 +137,11 @@ export function generateTrackRaces(
     default:
       // Fallback to generic generator if regional system is unknown
       const races: Race[] = [];
-      const trackSurfaces = track.courses.map((c) => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
+      const trackSurfaces = track.courses.map((c) => c.surface) as (
+        | "Turf"
+        | "Dirt"
+        | "Synthetic"
+      )[];
       const availableSurfaces = trackSurfaces.length > 0 ? trackSurfaces : ["Dirt" as const];
       for (let i = 0; i < numRaces; i++) {
         const race = generateRace(gameDay, rng);
@@ -220,7 +224,10 @@ export function generateAnnualCalendar(year: number, existingRaces: Race[]): Rac
 
     if (
       races.some(
-        (r) => r.graded?.key === g.key && r.day >= firstDayOfYear && r.day < firstDayOfYear + DAYS_PER_YEAR,
+        (r) =>
+          r.graded?.key === g.key &&
+          r.day >= firstDayOfYear &&
+          r.day < firstDayOfYear + DAYS_PER_YEAR,
       )
     ) {
       continue;

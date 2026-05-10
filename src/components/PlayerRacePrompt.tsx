@@ -41,7 +41,9 @@ export function PlayerRacePrompt() {
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
   const setRaceTactics = useGame((s) => s.setRaceTactics);
   const navigate = useNavigate();
-  const [selectedTactics, setSelectedTactics] = useState<"default" | "lead" | "rail" | "outside" | "save" | "late_kick">("default");
+  const [selectedTactics, setSelectedTactics] = useState<
+    "default" | "lead" | "rail" | "outside" | "save" | "late_kick"
+  >("default");
 
   const race = races.find((r) => r.id === pendingRaceId);
   if (!race) return null;
@@ -64,7 +66,7 @@ export function PlayerRacePrompt() {
     if (enteredHorse) {
       setRaceTactics(race!.id, enteredHorse.id, selectedTactics);
     }
-    
+
     const { runners } = buildRaceField({ race: race!, horses, jockeys });
     const course = getCourseForRace(race!);
     const result = runRaceToCompletion(

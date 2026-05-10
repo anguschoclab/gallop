@@ -39,8 +39,9 @@ function NpcStablesPage() {
 
   const filteredStables = useMemo(() => {
     return majorStables.filter((s) => {
-      const matchesSearch = s.name.toLowerCase().includes(q.toLowerCase()) || 
-                           s.owner.toLowerCase().includes(q.toLowerCase());
+      const matchesSearch =
+        s.name.toLowerCase().includes(q.toLowerCase()) ||
+        s.owner.toLowerCase().includes(q.toLowerCase());
       const matchesTier = tier === "all" || s.tier === tier;
       return matchesSearch && matchesTier;
     });
@@ -72,8 +73,8 @@ function NpcStablesPage() {
             Rival Stables
           </h1>
           <p className="text-cream-muted mt-2 font-[family-name:var(--font-body)]">
-            Browse {npcStables.length} NPC stables worldwide — from elite international operations to
-            regional breeders.
+            Browse {npcStables.length} NPC stables worldwide — from elite international operations
+            to regional breeders.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">

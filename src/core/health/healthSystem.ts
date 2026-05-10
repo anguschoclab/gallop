@@ -39,10 +39,12 @@ export function rollForInjury(
   rng: Rng,
   horse: Horse,
   day: number,
-  hiredStaff: StaffMember[] = []
+  hiredStaff: StaffMember[] = [],
 ): InjuryImpact | null {
   // Get vet bonus
-  const vet = hiredStaff.find(s => s.role === 'veterinarian' && s.stableId === (horse.stableId || ""));
+  const vet = hiredStaff.find(
+    (s) => s.role === "veterinarian" && s.stableId === (horse.stableId || ""),
+  );
   const vetBonus = vet ? vet.bonusValue : 0;
 
   // Base injury chance (0.1%)
@@ -58,7 +60,7 @@ export function rollForInjury(
   baseChance += (bleederRisk + ocdRisk) * 0.01;
 
   // Reduce by vet bonus
-  baseChance *= (1 - vetBonus);
+  baseChance *= 1 - vetBonus;
 
   if (rng.next() < baseChance) {
     // Injury occurred!

@@ -92,7 +92,11 @@ export function rollGender(rng: Rng): Horse["gender"] {
  * @param isGelding - Whether the horse has been gelded (optional)
  * @returns Horse gender (colt, filly, horse, mare, or gelding)
  */
-export function getGenderFromProps(isMale: boolean, age: number, isGelding?: boolean): Horse["gender"] {
+export function getGenderFromProps(
+  isMale: boolean,
+  age: number,
+  isGelding?: boolean,
+): Horse["gender"] {
   if (age < 4) {
     return isMale ? "colt" : "filly";
   }

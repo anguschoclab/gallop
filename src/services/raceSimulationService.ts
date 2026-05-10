@@ -113,32 +113,40 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   }
 
   // 4. Build the final Runner objects with assigned barriers
-  const horseMap = horses instanceof Map ? (horses as Map<string, Horse>) : new Map(horses.map(h => [h.id, h]));
-  const jockeyMap = dependencies.jockeys instanceof Map ? (dependencies.jockeys as Map<string, Jockey>) : new Map(dependencies.jockeys.map(j => [j.id, j]));
-  const stableMap = npcStables instanceof Map ? (npcStables as Map<string, Stable>) : (npcStables ? new Map(npcStables.map(s => [s.id, s])) : new Map());
-  const fillerMap = new Map(fillerHorses.map(h => [h.id, h]));
-  
+  const horseMap =
+    horses instanceof Map ? (horses as Map<string, Horse>) : new Map(horses.map((h) => [h.id, h]));
+  const jockeyMap =
+    dependencies.jockeys instanceof Map
+      ? (dependencies.jockeys as Map<string, Jockey>)
+      : new Map(dependencies.jockeys.map((j) => [j.id, j]));
+  const stableMap =
+    npcStables instanceof Map
+      ? (npcStables as Map<string, Stable>)
+      : npcStables
+        ? new Map(npcStables.map((s) => [s.id, s]))
+        : new Map();
+  const fillerMap = new Map(fillerHorses.map((h) => [h.id, h]));
+
   const runners: Runner[] = [];
   for (let i = 0; i < shuffled.length; i++) {
     const entryData = shuffled[i];
     const barrier = i + 1;
 
     // Find the horse
-    let horse = horseMap.get(entryData.horseId) || fillerMap.get(entryData.horseId);
+    const horse = horseMap.get(entryData.horseId) || fillerMap.get(entryData.horseId);
 
     if (horse) {
       const jockeyObj = entryData.jockeyId ? jockeyMap.get(entryData.jockeyId) : undefined;
       // Get stable for AI-driven decisions
       const stableObj = horse.stableId ? stableMap.get(horse.stableId) : undefined;
-        
+
       // Get staff for this stable
       const stableId = horse.stableId ?? "";
-      const staffForStable = hiredStaff.filter(s => s.stableId === stableId);
-      
-      const farrier = staffForStable.find(s => s.role === "farrier");
-      const groom = staffForStable.find(s => s.role === "groom");
+      const staffForStable = hiredStaff.filter((s) => s.stableId === stableId);
 
-      
+      const farrier = staffForStable.find((s) => s.role === "farrier");
+      const groom = staffForStable.find((s) => s.role === "groom");
+
       const runnerBonuses: RunnerBonuses = {
         farrier: farrier?.bonusValue,
         groom: groom?.bonusValue,

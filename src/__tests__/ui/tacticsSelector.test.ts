@@ -33,9 +33,9 @@ describe("Tactics Selector", () => {
     // Verify the intent was enqueued (check pendingIntents)
     const pendingIntents = useGame.getState().pendingIntents;
     const tacticsIntent = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
     );
-    
+
     expect(tacticsIntent).toBeDefined();
     expect((tacticsIntent as any)?.tactics).toBe(tactics);
   });
@@ -47,13 +47,13 @@ describe("Tactics Selector", () => {
 
     tacticsOptions.forEach((tactics) => {
       useGame.getState().setRaceTactics(raceId, horseId, tactics);
-      
+
       const pendingIntents = useGame.getState().pendingIntents;
       const tacticsIntents = pendingIntents?.filter(
-        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+        (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
       );
       const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
-      
+
       expect((latestTactics as any)?.tactics).toBe(tactics);
     });
   });
@@ -67,9 +67,9 @@ describe("Tactics Selector", () => {
 
     const pendingIntents = useGame.getState().pendingIntents;
     const tacticsIntents = pendingIntents?.filter(
-      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
     );
-    
+
     // Should have 2 intents (the latest one should be "rail")
     expect(tacticsIntents?.length).toBeGreaterThanOrEqual(1);
     const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
@@ -86,10 +86,10 @@ describe("Tactics Selector", () => {
 
     const pendingIntents = useGame.getState().pendingIntents;
     const tactics1 = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horse1Id
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horse1Id,
     );
     const tactics2 = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horse2Id
+      (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horse2Id,
     );
 
     expect((tactics1 as any)?.tactics).toBe("lead");
@@ -106,10 +106,10 @@ describe("Tactics Selector", () => {
 
     const pendingIntents = useGame.getState().pendingIntents;
     const tactics1 = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === race1Id && i.horseId === horseId
+      (i: any) => i.type === "tactics" && i.raceId === race1Id && i.horseId === horseId,
     );
     const tactics2 = pendingIntents?.find(
-      (i: any) => i.type === "tactics" && i.raceId === race2Id && i.horseId === horseId
+      (i: any) => i.type === "tactics" && i.raceId === race2Id && i.horseId === horseId,
     );
 
     expect((tactics1 as any)?.tactics).toBe("lead");

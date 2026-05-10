@@ -1,7 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import { JockeyAvatar, SIZE_MAP, JOCKEY_AVATAR_ASPECT, type JockeyAvatarSize } from "@/components/JockeyAvatar";
+import {
+  JockeyAvatar,
+  SIZE_MAP,
+  JOCKEY_AVATAR_ASPECT,
+  type JockeyAvatarSize,
+} from "@/components/JockeyAvatar";
 import type { Jockey } from "@/game/types";
 
 const stubJockey: Pick<Jockey, "id" | "silk" | "age" | "archetype"> = {
@@ -28,9 +33,7 @@ describe("JockeyAvatar", () => {
   it("renders at every size with the correct framing styles", () => {
     for (const size of SIZES) {
       const { w, h } = SIZE_MAP[size];
-      const html = renderToStaticMarkup(
-        createElement(JockeyAvatar, { jockey: stubJockey, size }),
-      );
+      const html = renderToStaticMarkup(createElement(JockeyAvatar, { jockey: stubJockey, size }));
       expect(html).toContain(`data-size="${size}"`);
       expect(html).toContain(`width:${w}px`);
       expect(html).toContain(`height:${h}px`);

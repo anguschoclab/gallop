@@ -12,7 +12,11 @@
 // Converts BreedingIntents into impacts (pregnancy creation, stud fee transfers)
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyIntent, BreedingIntent, SyndicateFeeDistributionIntent } from "@/core/resolver/intents";
+import type {
+  AnyIntent,
+  BreedingIntent,
+  SyndicateFeeDistributionIntent,
+} from "@/core/resolver/intents";
 import type {
   AnyImpact,
   PregnancyCreationImpact,

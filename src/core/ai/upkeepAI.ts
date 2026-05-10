@@ -99,14 +99,18 @@ const UPKEEP_STRATEGIES: Record<Stable["personality"], UpkeepStrategy> = {
   developer: {
     targetReserveRatio: 4,
     spendingMultiplier: 1.1,
-    categoryAdjustments: (b) => { b.veterinary *= 1.2; },
+    categoryAdjustments: (b) => {
+      b.veterinary *= 1.2;
+    },
     baseSpendingPropensity: 0.5,
     conserveBuffer: 0.5,
   },
   "win-now": {
     targetReserveRatio: 2.5,
     spendingMultiplier: 1.0,
-    categoryAdjustments: (b) => { b.training *= 1.3; },
+    categoryAdjustments: (b) => {
+      b.training *= 1.3;
+    },
     baseSpendingPropensity: 0.5,
     categoryPropensity: { training: 0.9 },
     conserveBuffer: 0.5,
@@ -178,7 +182,7 @@ export function calculateMonthlyExpenseBudget(
   reserveTarget: number;
 } {
   const strategy = UPKEEP_STRATEGIES[stable.personality];
-  
+
   // Estimate monthly expenses
   const horseCount = horses.filter((h) => h.stableId === stable.id).length;
   const basePerHorse = 500;

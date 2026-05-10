@@ -32,7 +32,8 @@ const tracksRaw = tracksMatch[1];
 // Improved parser using more robust regex patterns
 // Matches complete track objects while handling nested arrays
 const trackObjects: MigratedTrack[] = [];
-const trackRegex = /\{\s*id:\s*"([^"]+)"\s*,\s*name:\s*"([^"]+)"\s*,\s*country:\s*"([^"]+)"\s*,\s*surfaces:\s*\[([^\]]*)\](?:\s*,\s*circumference:\s*(\d+))?(?:\s*,\s*straightLength:\s*(\d+))?\s*\}/g;
+const trackRegex =
+  /\{\s*id:\s*"([^"]+)"\s*,\s*name:\s*"([^"]+)"\s*,\s*country:\s*"([^"]+)"\s*,\s*surfaces:\s*\[([^\]]*)\](?:\s*,\s*circumference:\s*(\d+))?(?:\s*,\s*straightLength:\s*(\d+))?\s*\}/g;
 let match;
 
 while ((match = trackRegex.exec(tracksRaw)) !== null) {

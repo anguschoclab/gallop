@@ -43,7 +43,7 @@ function BreedingPage() {
 
   // Get available stallions for Northern hemisphere (default for player breeding)
   // FIX: getAvailableStallions expects (horses: Horse[], mare: Horse)
-  const dummyMare = { id: damId } as any; 
+  const dummyMare = { id: damId } as any;
   const availableStallions = getAvailableStallions(horses, dummyMare);
 
   const onBreed = () => {
@@ -198,9 +198,7 @@ function BreedingPage() {
                   >
                     <option value="">Select dam…</option>
                     {adults
-                      .filter(
-                        (h) => (isFemaleHorse(h.gender)) && h.id !== sireId,
-                      )
+                      .filter((h) => isFemaleHorse(h.gender) && h.id !== sireId)
                       .map((h) => (
                         <option key={h.id} value={h.id}>
                           {h.name} (age {Math.floor(h.age)})
@@ -240,9 +238,7 @@ function BreedingPage() {
                 stand/nurse, you get a free re-breeding (up to 3 attempts).
               </p>
 
-              {compatibility && (
-                <BreedingCompatibilityCard compatibility={compatibility} />
-              )}
+              {compatibility && <BreedingCompatibilityCard compatibility={compatibility} />}
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,6 +1,6 @@
 /**
  * raceGeneration/australia.ts - Australian race generator
- * 
+ *
  * Focus: Turf-centric, sprint-heavy, frequent handicaps.
  */
 
@@ -14,10 +14,10 @@ import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
 
 const AUSTRALIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
-  { class: "Maiden", probability: 0.30 },
-  { class: "Handicap", probability: 0.50 },
-  { class: "Allowance", probability: 0.10 },
-  { class: "Stakes", probability: 0.10 },
+  { class: "Maiden", probability: 0.3 },
+  { class: "Handicap", probability: 0.5 },
+  { class: "Allowance", probability: 0.1 },
+  { class: "Stakes", probability: 0.1 },
 ];
 
 function selectAustraliaRaceClass(rng: Rng): RaceClass {
@@ -39,14 +39,14 @@ export function generateAustralianRace(
 ): Race {
   const raceClass = selectAustraliaRaceClass(rng);
   const cfg = CLASS_CONFIG[raceClass];
-  
+
   const trackSurfaces = track.courses.map((c) => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
   const selectedSurface = surface || rng.pick(trackSurfaces.length > 0 ? trackSurfaces : ["Turf"]);
-  
+
   // Australia favors sprints (1000m-1400m)
   const isSprint = rng.next() < 0.6;
-  const distance = isSprint 
-    ? rand(10, 14, rng) * 100 
+  const distance = isSprint
+    ? rand(10, 14, rng) * 100
     : rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
 
   const name = generateRaceName({

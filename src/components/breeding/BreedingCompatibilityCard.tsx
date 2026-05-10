@@ -16,7 +16,7 @@ interface BreedingCompatibilityCardProps {
 /**
  * Component to display detailed breeding compatibility between two horses.
  * Includes a radar chart of factors and a breakdown of scores and recommendations.
- * 
+ *
  * EXTRACTED FROM: src/routes/breeding.tsx
  */
 export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibilityCardProps) {
@@ -106,9 +106,7 @@ export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibili
               <JargonTooltip term="Nicking">Nicking</JargonTooltip>
               <span
                 className={
-                  compatibility.factors.nicking.score > 0
-                    ? "text-success"
-                    : "text-cream-muted"
+                  compatibility.factors.nicking.score > 0 ? "text-success" : "text-cream-muted"
                 }
               >
                 {compatibility.factors.nicking.description}
@@ -118,9 +116,7 @@ export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibili
               <JargonTooltip term="Dosage">Dosage</JargonTooltip>
               <span
                 className={
-                  compatibility.factors.dosage.score >= 0.7
-                    ? "text-success"
-                    : "text-cream-muted"
+                  compatibility.factors.dosage.score >= 0.7 ? "text-success" : "text-cream-muted"
                 }
               >
                 {compatibility.factors.dosage.description}
@@ -130,9 +126,7 @@ export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibili
               <JargonTooltip term="Inbreeding">Inbreeding</JargonTooltip>
               <span
                 className={
-                  compatibility.factors.inbreeding.warning
-                    ? "text-warning"
-                    : "text-success"
+                  compatibility.factors.inbreeding.warning ? "text-warning" : "text-success"
                 }
               >
                 {compatibility.factors.inbreeding.description}

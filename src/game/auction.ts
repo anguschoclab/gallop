@@ -246,7 +246,6 @@ export function calculateNpcBid(
   npcAIManager?: NpcAIManager,
   currentDay?: number,
 ): number | null {
-
   // Use AI-driven bidding if AI manager is available
   if (npcAIManager && currentDay !== undefined) {
     const aiState = npcAIManager.stableStates[stable.id];
@@ -454,7 +453,8 @@ const CONSIGNMENT_STRATEGIES: Record<
       consign = ctx.fading.filter((h) => h.gender === "mare").slice(0, 3);
     else if (ctx.kind === "racing_age")
       consign = ctx.fading.filter((h) => h.gender !== "mare").slice(0, 3);
-    else if (ctx.kind === "2yo_training") consign = ctx.unraced.filter((h) => h.age === 2).slice(0, 3);
+    else if (ctx.kind === "2yo_training")
+      consign = ctx.unraced.filter((h) => h.age === 2).slice(0, 3);
     else if (ctx.kind === "mixed") consign = ctx.fading.slice(0, 2);
 
     return {
@@ -547,11 +547,13 @@ export function personalityConsignmentPolicy(
     top,
   };
 
-  const strategy = CONSIGNMENT_STRATEGIES[p] || (() => ({
-    consign: [],
-    freshCount: 0,
-    reserveMultiplier: 0.5,
-  }));
+  const strategy =
+    CONSIGNMENT_STRATEGIES[p] ||
+    (() => ({
+      consign: [],
+      freshCount: 0,
+      reserveMultiplier: 0.5,
+    }));
 
   const result = strategy(ctx);
 
@@ -690,7 +692,6 @@ export function resolveAuctionSale(
       updatedLots.push({ ...lot, passed: true });
       continue;
     }
-
 
     if (horse.lifecycleStatus === "deceased") {
       updatedLots.push({ ...lot, withdrawn: true });

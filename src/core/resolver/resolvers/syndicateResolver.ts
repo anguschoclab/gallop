@@ -44,7 +44,7 @@ export function resolveSyndicationIntent(
     case "syndicate_creation": {
       const syndicateIntent = intent as SyndicateCreationIntent;
       const stallion = state.horses.find((h) => h.id === syndicateIntent.stallionId);
-      
+
       if (!stallion) return [];
 
       const impact: SyndicateCreationImpact = {

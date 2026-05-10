@@ -19,16 +19,19 @@ export function recordRaceHistory(
   result: Array<{ horseId: string; position: number; time: number }>,
   runners: any[],
   horses: Horse[] | Map<string, Horse>,
-  day: number
+  day: number,
 ): SeasonRecord | null {
   // Only record G1 races in season history
   if (!race.graded || race.graded.grade !== "G1") return null;
 
-  const winner = result.find(r => r.position === 1);
+  const winner = result.find((r) => r.position === 1);
   if (!winner) return null;
 
-  const winnerHorse = horses instanceof Map ? (horses as Map<string, Horse>).get(winner.horseId) : horses.find(h => h.id === winner.horseId);
-  const runner = runners.find(r => r.horseId === winner.horseId);
+  const winnerHorse =
+    horses instanceof Map
+      ? (horses as Map<string, Horse>).get(winner.horseId)
+      : horses.find((h) => h.id === winner.horseId);
+  const runner = runners.find((r) => r.horseId === winner.horseId);
 
   return {
     id: generateUUID(),
@@ -54,10 +57,7 @@ export function recordRaceHistory(
  * @param day - Current game day
  * @returns HallOfFameEntry if inducted, otherwise null
  */
-export function checkHallOfFameInduction(
-  horse: Horse,
-  day: number
-): HallOfFameEntry | null {
+export function checkHallOfFameInduction(horse: Horse, day: number): HallOfFameEntry | null {
   // Induction criteria:
   // 1. At least 3 G1 wins
   // 2. OR at least $1,000,000 in earnings
@@ -74,7 +74,7 @@ export function checkHallOfFameInduction(
       inductionYear: Math.floor((day - 1) / 365) + 1,
       achievements: [
         g1Wins >= 3 ? `${g1Wins} Grade 1 Victories` : "",
-        earnings >= 1000000 ? `$${(earnings / 1000000).toFixed(1)}M in Lifetime Earnings` : ""
+        earnings >= 1000000 ? `$${(earnings / 1000000).toFixed(1)}M in Lifetime Earnings` : "",
       ].filter(Boolean),
       lifetimeEarnings: earnings,
       lifetimeStarts: Math.max(horse.careerStarts || 0, stats.starts),
@@ -109,7 +109,7 @@ export function checkTrackRecord(
   winnerName: string,
   time: number,
   day: number,
-  existingRecords: Record<string, TrackRecord> = {}
+  existingRecords: Record<string, TrackRecord> = {},
 ): TrackRecord | null {
   const trackId = race.trackId || race.graded?.trackId;
   const surface = race.surface || race.graded?.surface;

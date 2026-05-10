@@ -20,7 +20,12 @@ interface SyndicateDialogProps {
   stallionName: string;
 }
 
-export function SyndicateDialog({ isOpen, onClose, stallionId, stallionName }: SyndicateDialogProps) {
+export function SyndicateDialog({
+  isOpen,
+  onClose,
+  stallionId,
+  stallionName,
+}: SyndicateDialogProps) {
   const [totalShares, setTotalShares] = useState(40);
   const [sharePrice, setSharePrice] = useState(10000);
   const [initialPlayerShares, setInitialPlayerShares] = useState(20);

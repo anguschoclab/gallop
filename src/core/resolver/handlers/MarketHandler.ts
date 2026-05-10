@@ -16,12 +16,9 @@ import { generateUUID } from "@/game/uuid";
 
 export class MarketHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return [
-      "scout_report",
-      "consignment",
-      "consignment_withdrawal",
-      "auction_resolution"
-    ].includes(type);
+    return ["scout_report", "consignment", "consignment_withdrawal", "auction_resolution"].includes(
+      type,
+    );
   }
 
   handle(
@@ -47,11 +44,13 @@ export class MarketHandler implements ImpactHandler {
 
       case "consignment": {
         const { horseId, saleId, reservePrice, consignorStableId, breezeSeconds } = impactAny;
-        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+        const horse =
+          lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (horse) {
           horse.consignedSaleId = saleId;
         }
-        const auction = lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
+        const auction =
+          lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
         if (auction) {
           auction.lots.push({
             id: generateUUID(),
@@ -69,11 +68,13 @@ export class MarketHandler implements ImpactHandler {
 
       case "consignment_withdrawal": {
         const { horseId, saleId } = impactAny;
-        const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+        const horse =
+          lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
         if (horse) {
           horse.consignedSaleId = undefined;
         }
-        const auction = lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
+        const auction =
+          lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
         if (auction) {
           const index = auction.lots.findIndex((l) => l.horseId === horseId);
           if (index !== -1) {
@@ -93,7 +94,8 @@ export class MarketHandler implements ImpactHandler {
           bidHistory,
           wasPlayerConsignment,
         } = impactAny;
-        const auction = lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
+        const auction =
+          lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
         if (auction) {
           const lot = auction.lots.find((l) => l.id === lotId);
           if (lot) {
@@ -102,7 +104,9 @@ export class MarketHandler implements ImpactHandler {
             lot.passed = passed;
             if (bidHistory) lot.bidHistory = bidHistory;
             if (wasPlayerConsignment) {
-              const horse = lookupMaps?.horseMap.get(lot.horseId) || draft.horses.find((h) => h.id === lot.horseId);
+              const horse =
+                lookupMaps?.horseMap.get(lot.horseId) ||
+                draft.horses.find((h) => h.id === lot.horseId);
               if (horse) horse.consignedSaleId = undefined;
             }
           }
@@ -111,5 +115,4 @@ export class MarketHandler implements ImpactHandler {
       }
     }
   }
-
 }

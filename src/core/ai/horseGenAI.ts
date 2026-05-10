@@ -15,11 +15,7 @@
 
 import type { Stable, Horse } from "@/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  type LearningState,
-} from "./learningModule";
+import { createLearningState, recordOutcome, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export interface HorseGenAIState {
@@ -345,8 +341,7 @@ export function updateRosterComposition(aiState: HorseGenAIState, horse: Horse):
   const newCount = composition.currentHorseCount + 1;
 
   const horseRating = calculateOverallRating(horse);
-  const totalQuality =
-    composition.currentQualityLevel * (newCount - 1) + horseRating;
+  const totalQuality = composition.currentQualityLevel * (newCount - 1) + horseRating;
   const newQualityLevel = totalQuality / newCount;
 
   return {
@@ -390,7 +385,8 @@ export function recordHorseGeneration(
   const newHistory = [...aiState.generationHistory, generation];
 
   const maxHistory = aiState.personalityState.memoryDepth;
-  const trimmedHistory = newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   const contextKey = `${stable.personality}:${horse.age}`;
   const value = calculateOverallRating(horse);
@@ -432,7 +428,9 @@ export function recordHorseCareerOutcome(
   careerEarnings: number,
   currentDay: number,
 ): HorseGenAIState {
-  const generationIndex = aiState.generationHistory.findIndex((g) => g.horseId === horseId && g.success === undefined);
+  const generationIndex = aiState.generationHistory.findIndex(
+    (g) => g.horseId === horseId && g.success === undefined,
+  );
 
   if (generationIndex !== -1) {
     const generation = { ...aiState.generationHistory[generationIndex] };

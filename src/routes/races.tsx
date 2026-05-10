@@ -13,14 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Calendar,
-  Filter,
-  Search,
-  History,
-  LayoutGrid,
-  List,
-} from "lucide-react";
+import { Calendar, Filter, Search, History, LayoutGrid, List } from "lucide-react";
 import { useState } from "react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { RaceEntry } from "@/components/RaceEntry";

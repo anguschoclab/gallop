@@ -80,7 +80,8 @@ function SireProfilePage() {
                 </Badge>
               </div>
               <p className="text-sm text-cream-muted">
-                <JargonTooltip term="Bloodline">Bloodline</JargonTooltip>: {stallion.bloodline || "Unknown"} · Age {stallion.age}
+                <JargonTooltip term="Bloodline">Bloodline</JargonTooltip>:{" "}
+                {stallion.bloodline || "Unknown"} · Age {stallion.age}
               </p>
             </div>
             <div className="text-right">

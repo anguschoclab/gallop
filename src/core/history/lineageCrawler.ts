@@ -13,8 +13,8 @@ import type { FounderRecord } from "./historyTypes";
 
 /**
  * Calculate the multi-generational influence of a founder horse.
- * 
- * Performs a breadth-first search to find all descendants up to a reasonable 
+ *
+ * Performs a breadth-first search to find all descendants up to a reasonable
  * generation depth and sums their achievements.
  *
  * @param founder - The horse to analyze as a founder
@@ -25,7 +25,7 @@ import type { FounderRecord } from "./historyTypes";
 export function computeFounderInfluence(
   founder: Horse,
   allHorses: Horse[],
-  currentDay: number
+  currentDay: number,
 ): FounderRecord {
   const descendants = new Set<string>();
   const queue: { id: string; gen: number }[] = [{ id: founder.id, gen: 0 }];
@@ -59,13 +59,13 @@ export function computeFounderInfluence(
       descendants.add(id);
       maxGen = Math.max(maxGen, gen);
 
-      const horse = allHorses.find(h => h.id === id);
+      const horse = allHorses.find((h) => h.id === id);
       if (horse) {
         const stats = getCareerStats(horse);
         totalEarnings += stats.earnings;
         if (stats.stakesWins > 0) stakesWinners++;
         if (stats.g1Wins > 0) g1Winners++;
-        
+
         // Influence Score Calculation:
         // Base points for being a descendant + bonuses for quality
         influenceScore += 10; // Base presence
@@ -103,17 +103,18 @@ export function computeFounderInfluence(
 
 /**
  * Identify potential "Founders" from a population of horses.
- * 
- * Filters for horses that have reached a minimum threshold of immediate progeny 
+ *
+ * Filters for horses that have reached a minimum threshold of immediate progeny
  * quality (e.g., Blue Hens or elite Sires).
  *
  * @param horses - Population of horses to analyze
  * @returns Array of horses identified as potential founders
  */
 export function identifyFounders(horses: Horse[]): Horse[] {
-  return horses.filter(h => {
+  return horses.filter((h) => {
     // Elite sires or Blue Hens
-    const isEliteSire = (h.gender === "colt" || h.gender === "horse") && h.progenyCount && h.progenyCount > 10;
+    const isEliteSire =
+      (h.gender === "colt" || h.gender === "horse") && h.progenyCount && h.progenyCount > 10;
     const isBlueHen = h.blueHenStatus?.isBlueHen;
     return isEliteSire || isBlueHen;
   });

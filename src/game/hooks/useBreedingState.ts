@@ -24,7 +24,8 @@ export const usePregnancies = () => useGame((s: GameState) => s.pregnancies ?? E
 /**
  * @returns Array of Triple Crown winners
  */
-export const useTripleCrownHistory = () => useGameWithShallow((s) => s.triplecrownHistory ?? EMPTY_ARRAY);
+export const useTripleCrownHistory = () =>
+  useGameWithShallow((s) => s.triplecrownHistory ?? EMPTY_ARRAY);
 
 /**
  * Multiple breeding state values with shallow comparison.

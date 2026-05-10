@@ -1,5 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { JockeyAvatar, SIZE_MAP, JOCKEY_AVATAR_ASPECT, type JockeyAvatarSize } from "@/components/JockeyAvatar";
+import {
+  JockeyAvatar,
+  SIZE_MAP,
+  JOCKEY_AVATAR_ASPECT,
+  type JockeyAvatarSize,
+} from "@/components/JockeyAvatar";
 
 const stubJockey = {
   id: "test-jockey-1",
@@ -36,7 +41,9 @@ function JockeyAvatarTestPage() {
                   <JockeyAvatar jockey={stubJockey} size={size} />
                   <div className="text-xs text-muted-foreground space-y-1 text-center">
                     <div className="font-bold uppercase">{size}</div>
-                    <div>{w}×{h}px</div>
+                    <div>
+                      {w}×{h}px
+                    </div>
                     <div className="text-[10px]">Ratio: {(w / h).toFixed(2)}</div>
                   </div>
                 </div>

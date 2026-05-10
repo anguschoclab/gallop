@@ -39,12 +39,12 @@ export interface StableAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: ReturnType<typeof createLearningState>;
   lastUpdateDay: number;
-  
+
   // Imperial Expansion: Rivalry & Dominance
   friction: number; // -100 to 100 relationship with player
   winsAgainstPlayer: number; // Streak tracking for unseating
   regionalPrestige: Record<string, number>; // Prestige per region
-  
+
   // Subsystem-specific AI states
   trainingAI?: TrainingAIState;
   claimingAI?: ClaimingAIState;
@@ -116,7 +116,6 @@ export function getOrCreateStableAIState(
   return { ...state };
 }
 
-
 /**
  * Update stable AI state after daily cycle.
  *
@@ -132,7 +131,6 @@ export function updateStableAIState(state: StableAIState, currentDay: number): S
     lastUpdateDay: currentDay,
   };
 }
-
 
 /**
  * Prune old learning data for all stables.

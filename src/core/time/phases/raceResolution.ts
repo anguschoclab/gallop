@@ -16,10 +16,10 @@ import type { ClaimingIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/raceSimulationExecutor";
 import { generateRaceImpacts } from "@/services/raceImpactGenerator";
 import { processClaimingResolution } from "@/services/claimingResolutionService";
-import { 
-  recordRaceHistory, 
+import {
+  recordRaceHistory,
   checkHallOfFameInduction,
-  checkTrackRecord 
+  checkTrackRecord,
 } from "@/services/historyService";
 import { generateUUID } from "@/game/uuid";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
@@ -41,20 +41,20 @@ export const raceResolutionPhase: PipelinePhase = {
     const impacts: AnyImpact[] = [];
     const updatedRaces: typeof state.races = [...state.races];
     const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= newDay);
-    
+
     if (overdueRaces.length > 0) {
       console.log(`      - Resolving ${overdueRaces.length} races...`);
     }
 
     // PRE-INDEX: Create maps for O(1) lookups during resolution
-    const horseMap = new Map(state.horses.map(h => [h.id, h]));
-    const npcStableMap = new Map((state.npcStables || []).map(s => [s.id, s]));
-    const jockeyMap = new Map((state.jockeys || []).map(j => [j.id, j]));
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const npcStableMap = new Map((state.npcStables || []).map((s) => [s.id, s]));
+    const jockeyMap = new Map((state.jockeys || []).map((j) => [j.id, j]));
 
     let resolvedCount = 0;
     for (const race of overdueRaces) {
       resolvedCount++;
-      
+
       // Simulate race using service
       const { result, runners, snapshots } = simulateRace(
         race,
@@ -63,7 +63,7 @@ export const raceResolutionPhase: PipelinePhase = {
         state.hiredStaff,
         npcStableMap,
         state.npcAIManager,
-        newDay
+        newDay,
       );
 
       const rng = rngForRace(race);
@@ -82,7 +82,7 @@ export const raceResolutionPhase: PipelinePhase = {
             const stable = npcStableMap.get(horse.stableId);
             if (stable) {
               const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
-              
+
               // 1. Learn from race entry performance
               if (stableAI.raceEntryAI) {
                 stableAI.raceEntryAI = recordRaceEntryOutcome(
@@ -91,45 +91,47 @@ export const raceResolutionPhase: PipelinePhase = {
                   race,
                   newDay,
                   res.position <= 3,
-                  res.position
+                  res.position,
                 );
               }
 
               // 2. Learn from jockey performance
               if (stableAI.jockeyAI) {
-                 const runner = runners.find(r => r.horseId === res.horseId);
-                 if (runner && runner.jockeyId) {
-                    // Calculate prize money for learning
-                    const prize = res.position <= PRIZE_SPLIT.length 
-                      ? Math.round(race.purse * PRIZE_SPLIT[res.position - 1]) 
+                const runner = runners.find((r) => r.horseId === res.horseId);
+                if (runner && runner.jockeyId) {
+                  // Calculate prize money for learning
+                  const prize =
+                    res.position <= PRIZE_SPLIT.length
+                      ? Math.round(race.purse * PRIZE_SPLIT[res.position - 1])
                       : 0;
-                    
-                    stableAI.jockeyAI = recordJockeyOutcome(
-                      stableAI.jockeyAI,
-                      runner.jockeyId,
-                      res.horseId,
-                      race.id,
-                      res.position,
-                      prize,
-                      newDay
-                    );
-                 }
+
+                  stableAI.jockeyAI = recordJockeyOutcome(
+                    stableAI.jockeyAI,
+                    runner.jockeyId,
+                    res.horseId,
+                    race.id,
+                    res.position,
+                    prize,
+                    newDay,
+                  );
+                }
               }
 
               // 3. Learn from campaign targeting
               if (stableAI.campaignAI && race.graded?.key) {
-                 const prize = res.position <= PRIZE_SPLIT.length 
-                   ? Math.round(race.purse * PRIZE_SPLIT[res.position - 1]) 
-                   : 0;
+                const prize =
+                  res.position <= PRIZE_SPLIT.length
+                    ? Math.round(race.purse * PRIZE_SPLIT[res.position - 1])
+                    : 0;
 
-                 stableAI.campaignAI = recordCampaignOutcome(
-                   stableAI.campaignAI,
-                   res.horseId,
-                   race.graded.key,
-                   res.position,
-                   prize,
-                   newDay
-                 );
+                stableAI.campaignAI = recordCampaignOutcome(
+                  stableAI.campaignAI,
+                  res.horseId,
+                  race.graded.key,
+                  res.position,
+                  prize,
+                  newDay,
+                );
               }
 
               state.npcAIManager.stableStates[stable.id] = stableAI;
@@ -159,7 +161,7 @@ export const raceResolutionPhase: PipelinePhase = {
       }
 
       // --- Historical Records & Hall of Fame ---
-      const winnerResult = result.find(r => r.position === 1);
+      const winnerResult = result.find((r) => r.position === 1);
       const winnerHorse = winnerResult ? horseMap.get(winnerResult.horseId) : null;
 
       if (winnerResult && winnerHorse) {
@@ -169,7 +171,7 @@ export const raceResolutionPhase: PipelinePhase = {
           winnerHorse.name,
           winnerResult.time,
           newDay,
-          state.trackRecords || {}
+          state.trackRecords || {},
         );
 
         if (trackRecord) {
@@ -181,7 +183,7 @@ export const raceResolutionPhase: PipelinePhase = {
             logLevel: "always",
             type: "track_record",
             record: trackRecord,
-            reason: "New track record set!"
+            reason: "New track record set!",
           } as any);
         }
       }
@@ -196,12 +198,12 @@ export const raceResolutionPhase: PipelinePhase = {
             phase: "raceResolution",
             logLevel: "never",
             type: "season_history_record",
-            record: historyRecord
+            record: historyRecord,
           } as any);
         }
 
         // Check winner for Hall of Fame induction
-        const winnerId = result.find(r => r.position === 1)?.horseId;
+        const winnerId = result.find((r) => r.position === 1)?.horseId;
         const winner = winnerId ? horseMap.get(winnerId) : null;
         if (winner && winner.id) {
           const prizeMoney = race.purse * 0.6;
@@ -209,14 +211,11 @@ export const raceResolutionPhase: PipelinePhase = {
             ...winner,
             lifetimeEarnings: winner.lifetimeEarnings + prizeMoney,
             careerWins: winner.careerWins + 1,
-            raceHistory: [
-              ...winner.raceHistory,
-              { grade: "G1", position: 1, day: newDay } as any
-            ]
+            raceHistory: [...winner.raceHistory, { grade: "G1", position: 1, day: newDay } as any],
           };
 
           const hofEntry = checkHallOfFameInduction(tempHorse, newDay);
-          if (hofEntry && !state.hallOfFame.find(e => e.horseId === winner.id)) {
+          if (hofEntry && !state.hallOfFame.find((e) => e.horseId === winner.id)) {
             impacts.push({
               id: generateUUID(),
               intentId: race.id,

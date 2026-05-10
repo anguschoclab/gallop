@@ -7,9 +7,7 @@ describe("HorseHandler - Injury Handling", () => {
   it("should update horse health status when injured", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [
-        { id: "horse-1", name: "Star", healthStatus: "healthy" }
-      ]
+      horses: [{ id: "horse-1", name: "Star", healthStatus: "healthy" }],
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -23,7 +21,7 @@ describe("HorseHandler - Injury Handling", () => {
       severity: "moderate",
       injuryType: "Sore shins",
       recoveryDays: 20,
-      reason: "Race injury"
+      reason: "Race injury",
     };
 
     const draft = JSON.parse(JSON.stringify(state));
@@ -39,9 +37,7 @@ describe("HorseHandler - Injury Handling", () => {
   it("should mark horse as other_illness for career-ending injuries", () => {
     const handler = new HorseHandler();
     const state = {
-      horses: [
-        { id: "horse-1", name: "Star", healthStatus: "healthy" }
-      ]
+      horses: [{ id: "horse-1", name: "Star", healthStatus: "healthy" }],
     } as unknown as GameState;
 
     const impact: InjuryImpact = {
@@ -55,7 +51,7 @@ describe("HorseHandler - Injury Handling", () => {
       severity: "career-ending",
       injuryType: "Severe fracture",
       recoveryDays: 999,
-      reason: "Race injury"
+      reason: "Race injury",
     };
 
     const draft = JSON.parse(JSON.stringify(state));

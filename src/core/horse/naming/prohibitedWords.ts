@@ -80,6 +80,18 @@ export const PROHIBITED_PATTERNS = [
   /[#]/, // Hash
   /[$]/, // Dollar sign
   /[%]/, // Percent sign
-  /[\/]/, // Forward slash
-  /[?]/, // Question mark
+  /[\^]/, // Caret
+  /[&]/, // Ampersand
+  /[*]/, // Asterisk
+  /[()]/, // Parentheses
+  /[_]/, // Underscore
+  /[+]/, // Plus sign
+  /[\[\]]/, // Square brackets
+  /[{}]/, // Curly brackets
+  /[;:]/, // Semicolon and colon
+  /["\\]/, // Quote and backslash
+  /[|]/, // Pipe
+  /[,.]/, // Comma and period
+  /[<>]/, // Angle brackets
+  /[\/?]/, // Forward slash and question mark
 ];

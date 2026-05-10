@@ -45,11 +45,7 @@ function JockeyPage() {
             jockey={jockey}
             isRetained={isRetained}
             actionLabel={isRetained ? "Release Jockey" : "Sign Retainer"}
-            onAction={
-              isRetained
-                ? (j) => releaseJockey(j.id)
-                : (j) => hireJockey(j.id, "retainer")
-            }
+            onAction={isRetained ? (j) => releaseJockey(j.id) : (j) => hireJockey(j.id, "retainer")}
           />
         </div>
       </div>

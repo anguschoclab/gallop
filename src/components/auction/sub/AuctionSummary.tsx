@@ -45,11 +45,7 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
           <SummaryStat
             label="Net received"
             value={formatCurrency(sb.netReceived)}
-            hint={
-              sb.sold > 0
-                ? `after commission`
-                : undefined
-            }
+            hint={sb.sold > 0 ? `after commission` : undefined}
           />
         </div>
 
@@ -83,7 +79,11 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
           )}
         </div>
 
-        <UIButton size="xl" className="w-full h-16 text-lg font-black rounded-2xl shadow-xl" onClick={onClose}>
+        <UIButton
+          size="xl"
+          className="w-full h-16 text-lg font-black rounded-2xl shadow-xl"
+          onClick={onClose}
+        >
           Return to Sales
         </UIButton>
       </CardContent>
@@ -98,7 +98,9 @@ function SummaryStat({ label, value, hint }: { label: string; value: string; hin
         {label}
       </p>
       <p className="text-2xl font-black tabular-nums text-foreground">{value}</p>
-      {hint && <p className="text-[10px] text-muted-foreground/70 font-medium mt-1 italic">{hint}</p>}
+      {hint && (
+        <p className="text-[10px] text-muted-foreground/70 font-medium mt-1 italic">{hint}</p>
+      )}
     </div>
   );
 }

@@ -50,9 +50,10 @@ export const impactApplicationPhase: PipelinePhase = {
       // Pace samples is an object with arrays, clean each bucket
       const newPaceSamples: any = {};
       for (const key in cleanedState.paceSamples) {
-        newPaceSamples[key] = cleanedState.paceSamples[key].length > 100
-          ? cleanedState.paceSamples[key].slice(-100)
-          : cleanedState.paceSamples[key];
+        newPaceSamples[key] =
+          cleanedState.paceSamples[key].length > 100
+            ? cleanedState.paceSamples[key].slice(-100)
+            : cleanedState.paceSamples[key];
       }
       cleanedState.paceSamples = newPaceSamples;
     }

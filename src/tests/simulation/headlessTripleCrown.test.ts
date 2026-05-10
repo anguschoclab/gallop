@@ -81,7 +81,7 @@ describe("Headless Triple Crown Simulation", () => {
     // Reset store before each test
     useGame.setState(createDefaultGameState());
     // Suppress worker warnings to reduce output noise
-    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -131,7 +131,9 @@ describe("Headless Triple Crown Simulation", () => {
     console.log(`Winning Horse: ${winningHorse.name} (ID: ${winningHorse.id})`);
     console.log(`Sire: ${winningHorse.pedigree?.sireName} (ID: ${winningHorse.pedigree?.sireId})`);
     console.log(`Dam: ${winningHorse.pedigree?.damName} (ID: ${winningHorse.pedigree?.damId})`);
-    console.log(`Sire Standing Fee: $${sireFeeBefore.toLocaleString()} → $${sireFeeAfter.toLocaleString()}`);
+    console.log(
+      `Sire Standing Fee: $${sireFeeBefore.toLocaleString()} → $${sireFeeAfter.toLocaleString()}`,
+    );
     console.log(`Fee Increase: $${(sireFeeAfter - sireFeeBefore).toLocaleString()}`);
     console.log("=====================================\n");
 
@@ -139,8 +141,12 @@ describe("Headless Triple Crown Simulation", () => {
     console.log("\n=== Answers to Your Questions ===");
     console.log(`1. How many years it took: ${yearsTaken} years`);
     console.log(`2. Pedigree of the horse:`);
-    console.log(`   - Sire: ${winningHorse.pedigree?.sireName} (ID: ${winningHorse.pedigree?.sireId})`);
-    console.log(`   - Dam: ${winningHorse.pedigree?.damName} (ID: ${winningHorse.pedigree?.damId})`);
+    console.log(
+      `   - Sire: ${winningHorse.pedigree?.sireName} (ID: ${winningHorse.pedigree?.sireId})`,
+    );
+    console.log(
+      `   - Dam: ${winningHorse.pedigree?.damName} (ID: ${winningHorse.pedigree?.damId})`,
+    );
     console.log(`3. Did the win increase the sire breeding price: YES`);
     console.log(`   Increase: $${(sireFeeAfter - sireFeeBefore).toLocaleString()}`);
     console.log("=====================================\n");

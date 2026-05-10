@@ -6,7 +6,11 @@
 
 import { describe, it, expect, beforeEach } from "vitest";
 import type { GameState } from "@/game/types";
-import type { SyndicateCreationIntent, SharePurchaseIntent, ShareSaleIntent } from "@/core/resolver/intents";
+import type {
+  SyndicateCreationIntent,
+  SharePurchaseIntent,
+  ShareSaleIntent,
+} from "@/core/resolver/intents";
 import { SyndicationValidator } from "@/core/resolver/validators/SyndicationValidator";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler";

@@ -61,15 +61,15 @@ export const REGIONAL_LINE_BIAS: Record<
   "Seattle Slew": { surface: "Dirt", boost: 0.015 },
   "Bold Ruler": { surface: "Dirt", boost: 0.015 },
   "Native Dancer": { boost: 0.01 },
-  "Danzig": { surface: "Dirt", boost: 0.015 },
-  "Danehill": { surface: "Dirt", boost: 0.015 },
-  "Dubawi": { surface: "Turf", boost: 0.015 },
-  "Frankel": { surface: "Turf", boost: 0.02 },
-  "Tapit": { surface: "Dirt", boost: 0.015 },
+  Danzig: { surface: "Dirt", boost: 0.015 },
+  Danehill: { surface: "Dirt", boost: 0.015 },
+  Dubawi: { surface: "Turf", boost: 0.015 },
+  Frankel: { surface: "Turf", boost: 0.02 },
+  Tapit: { surface: "Dirt", boost: 0.015 },
   "Into Mischief": { surface: "Dirt", boost: 0.015 },
   "Medaglia d'Oro": { surface: "Dirt", boost: 0.015 },
   "Unbridled's Song": { surface: "Dirt", boost: 0.015 },
-  "Hansel": { surface: "Dirt", boost: 0.01 },
+  Hansel: { surface: "Dirt", boost: 0.01 },
   "Liam the Map": { surface: "Turf", boost: 0.01 },
   Unaffiliated: { boost: 0 },
 };
@@ -202,7 +202,8 @@ function _computeCoiFromSnapshot(pedigree: Pedigree, maxDepth: number = 8): numb
     // Weighted contribution: near generations have stronger impact
     const totalDepth = ds + dd;
     let weight = 1.0;
-    if (totalDepth >= 7) weight = 0.25; // Distant generations (7-8)
+    if (totalDepth >= 7)
+      weight = 0.25; // Distant generations (7-8)
     else if (totalDepth >= 4) weight = 0.5; // Middle generations (4-6)
     // Near generations (1-3) keep full weight (1.0)
     coi += weight * Math.pow(0.5, ds + dd + 1);
