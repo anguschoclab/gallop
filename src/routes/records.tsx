@@ -111,7 +111,13 @@ function LeaderboardTable({ leaderboard, icon, valueFormatter }: any) {
                     #{entry.rank}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="font-bold uppercase tracking-tight">{entry.horseName}</div>
+                    <Link
+                      to="/stable/$horseId"
+                      params={{ horseId: entry.horseId }}
+                      className="font-bold uppercase tracking-tight hover:text-gold transition-colors"
+                    >
+                      {entry.horseName}
+                    </Link>
                     <div className="text-[10px] text-muted-foreground uppercase tracking-widest">
                       Age {entry.metrics.age}
                     </div>
