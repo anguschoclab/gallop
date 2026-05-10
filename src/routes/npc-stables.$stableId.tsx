@@ -377,7 +377,8 @@ function NpcStableDetailPage() {
                 History
               </SidebarLink>
               <Link
-                to="/race-browser"
+                to="/races"
+                search={{ stableId }}
                 className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm text-cream-muted hover:text-gold hover:bg-t700 transition-colors"
               >
                 <CalendarDays className="w-4 h-4" /> Upcoming Races
