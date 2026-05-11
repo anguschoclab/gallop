@@ -20,7 +20,7 @@ import * as saHoty from "./south-america/hoty";
 import * as saCategory from "./south-america/category";
 
 export interface AwardSvgData {
-  svg: string;
+  Icon: React.ComponentType<{ width: number; height: number; className?: string }>;
   color: string;
   accent: string;
 }
@@ -28,33 +28,33 @@ export interface AwardSvgData {
 // Map of all award SVGs by region and category type
 const AWARD_SVGS: Record<AwardRegion, { hoty: AwardSvgData; category: AwardSvgData }> = {
   north_america: {
-    hoty: { svg: naHoty.hotySvg, color: naHoty.hotyColor, accent: naHoty.hotyAccent },
+    hoty: { Icon: naHoty.HotyIcon, color: naHoty.hotyColor, accent: naHoty.hotyAccent },
     category: {
-      svg: naCategory.categorySvg,
+      Icon: naCategory.CategoryIcon,
       color: naCategory.categoryColor,
       accent: naCategory.categoryAccent,
     },
   },
   europe: {
-    hoty: { svg: euHoty.hotySvg, color: euHoty.hotyColor, accent: euHoty.hotyAccent },
+    hoty: { Icon: euHoty.HotyIcon, color: euHoty.hotyColor, accent: euHoty.hotyAccent },
     category: {
-      svg: euCategory.categorySvg,
+      Icon: euCategory.CategoryIcon,
       color: euCategory.categoryColor,
       accent: euCategory.categoryAccent,
     },
   },
   asia_pacific: {
-    hoty: { svg: apacHoty.hotySvg, color: apacHoty.hotyColor, accent: apacHoty.hotyAccent },
+    hoty: { Icon: apacHoty.HotyIcon, color: apacHoty.hotyColor, accent: apacHoty.hotyAccent },
     category: {
-      svg: apacCategory.categorySvg,
+      Icon: apacCategory.CategoryIcon,
       color: apacCategory.categoryColor,
       accent: apacCategory.categoryAccent,
     },
   },
   south_america: {
-    hoty: { svg: saHoty.hotySvg, color: saHoty.hotyColor, accent: saHoty.hotyAccent },
+    hoty: { Icon: saHoty.HotyIcon, color: saHoty.hotyColor, accent: saHoty.hotyAccent },
     category: {
-      svg: saCategory.categorySvg,
+      Icon: saCategory.CategoryIcon,
       color: saCategory.categoryColor,
       accent: saCategory.categoryAccent,
     },

@@ -57,7 +57,7 @@ export function ImperialOutpostManager() {
 
   const selectedOutpost = useMemo(
     () => outposts.find((o) => o.id === (selectedOutpostId || outposts[0].id)) || outposts[0],
-    [outposts, selectedOutpostId]
+    [outposts, selectedOutpostId],
   );
   const cash = useGame((s) => s.cash);
 
@@ -67,7 +67,7 @@ export function ImperialOutpostManager() {
       Object.entries(selectedOutpost.facilities).reduce((sum, [_, f]) => {
         return sum + (OUTPOST_CONSTANTS.SLOT_FOOTPRINTS[f.type] || 1);
       }, 0),
-    [selectedOutpost.facilities]
+    [selectedOutpost.facilities],
   );
 
   return (
@@ -185,7 +185,12 @@ export function ImperialOutpostManager() {
                   <p className="text-sm font-bold text-cream">Marcus Sterling</p>
                   <p className="text-[10px] text-gold uppercase font-bold">Elite Strategist</p>
                 </div>
-                <Button size="icon" variant="ghost" className="h-8 w-8 text-cream-muted">
+                <Button
+                  aria-label="Swap head trainer"
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-cream-muted"
+                >
                   <ArrowRightLeft className="w-4 h-4" />
                 </Button>
               </div>
