@@ -101,6 +101,7 @@ export function AppShell() {
   const day = useDay();
   const cash = useCash();
   const horses = useHorses();
+  const playerProfile = useGame((s) => s.playerProfile);
   const advanceDay = useGame((s) => s.advanceDay);
   const advanceMultipleDays = useGame((s) => s.advanceMultipleDays);
   const startNewGame = useGame((s) => s.startNewGame);
@@ -122,6 +123,8 @@ export function AppShell() {
   const isRace = location.pathname.startsWith("/race/");
   if (isRace) return <Outlet />;
 
+  const showSidebar = !!playerProfile;
+
   return (
     <div className="flex min-h-screen bg-t900 animate-fade-in">
       {/* Skip to content link for accessibility */}
@@ -131,6 +134,7 @@ export function AppShell() {
       >
         Skip to content
       </a>
+      {showSidebar && (
       <aside className="w-[248px] shrink-0 border-r border-gold-muted bg-t950 flex flex-col">
         <div className="p-5 border-b border-gold-muted">
           {/* Design Bible: Brand title uses display font */}
@@ -288,6 +292,7 @@ export function AppShell() {
           </Dialog>
         </div>
       </aside>
+      )}
       <main id="main-content" className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto p-6">
           <Outlet />

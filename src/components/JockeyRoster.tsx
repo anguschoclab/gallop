@@ -249,15 +249,3 @@ export function JockeyRoster() {
     </div>
   );
 }
-))}
-                </div>
-              </TabsContent>
-           </Tabs>
-        </main>
-      </div>
-    </div>
-  );
-}
->
-  );
-}

@@ -1,13 +1,4 @@
-Description
-Array.filter() over lots calls horses.find() for each lot inside a search query filter.
-
-Location
-src/services/auctionLotFilter.ts:77
-
-Rationale
-Pre-computing a Map for horses allows an O(1) lookup in the loop.
-
-Code contextimport React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
