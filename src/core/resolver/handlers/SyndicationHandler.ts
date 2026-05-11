@@ -13,6 +13,7 @@ import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
 import type { Syndicate } from "@/core/breeding/types";
+import { generateUUID } from "@/core/uuid";
 
 export class SyndicationHandler implements ImpactHandler {
   canHandle(type: string): boolean {
@@ -104,7 +105,7 @@ export class SyndicationHandler implements ImpactHandler {
 
         // Record transaction
         const transaction = {
-          id: `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          id: generateUUID(),
           syndicateId,
           stableId,
           shares,

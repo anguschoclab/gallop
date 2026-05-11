@@ -45,8 +45,6 @@ export function simulateRace(
   currentDay?: number,
   recordSnapshots?: boolean,
 ): RaceSimulationResult {
-  // Skip debug logging for performance in long-term simulations
-  // console.log(`          [DEBUG] Simulating race ${race.id} (${race.name})`);
   const { runners, fillerHorses } = buildRaceField({
     race,
     horses,

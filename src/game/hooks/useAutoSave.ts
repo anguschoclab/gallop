@@ -22,7 +22,6 @@ export function useAutoSave() {
         try {
           const state = useGame.getState() as unknown as GameState;
           await saveToSlot("autosave", "Auto-Save", state, true);
-          console.log(`[Auto-Save] Game saved successfully on day ${day}`);
           lastSavedDay.current = day;
         } catch (error) {
           console.error("[Auto-Save] Failed to save game:", error);

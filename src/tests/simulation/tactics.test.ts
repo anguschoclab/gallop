@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { runRaceToCompletion, computePaceContext } from "@/core/race/engine/simulation";
 import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
 import type { Horse, Jockey } from "@/game/types";
+import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
 
 describe("Advanced AI Tactics", () => {
   const mockHorse = (id: string, style: any): Horse =>
@@ -81,12 +82,38 @@ describe("Advanced AI Tactics", () => {
   });
 
   it("should identify hot pace and adjust closers", () => {
-    const pace: any = { paceRating: 1.2, leaderPos: 100 }; // Hot pace
-    const runner: any = {
+    const pace: PaceContext = {
+      leaderPos: 100,
+      leaderVelocity: 16,
+      leadGroupCount: 3,
+      pacePressure: 0.8,
+      progress: 0.5,
+      laneDensity: [0.2, 0.3, 0.2, 0.1, 0.1, 0.1],
+      paceRating: 1.2, // Hot pace
+    };
+    const runner: Runner = {
+      horseId: "H1",
+      name: "Horse 1",
+      silk: "#ff0000",
+      owned: false,
       position: 50,
-      runningStyle: "S",
-      jockey: mockJockey(100), // Skilled jockey
+      velocity: 15,
+      finishTime: null,
       lane: 0,
+      targetLane: 0,
+      laneVelocity: 15,
+      barrier: 1,
+      topSpeed: 16,
+      accel: 8,
+      staminaFactor: 1.0,
+      noise: 0.3,
+      affinityBonus: 0,
+      runningStyle: "S",
+      draftingHorseId: null,
+      horse: mockHorse("H1", "S") as Horse,
+      jockey: mockJockey(100), // Skilled jockey
+      weight: 126,
+      tactics: "hold",
     };
 
     const result = calculateTacticalAdjustment(runner, pace, []);

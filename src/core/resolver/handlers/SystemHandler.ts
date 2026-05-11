@@ -50,6 +50,11 @@ export class SystemHandler implements ImpactHandler {
   ): void {
     const impactAny = impact as any;
 
+    // Cache campaign Map for O(1) lookups if not provided
+    const campaignMap = lookupMaps?.campaignMap || new Map(
+      draft.campaigns?.map((c) => [c.horseId, c]) || []
+    );
+
     switch (impact.type) {
       case "horse_creation": {
         const { horse } = impactAny;
@@ -89,9 +94,7 @@ export class SystemHandler implements ImpactHandler {
 
       case "campaign_slot": {
         const { horseId, slotIndex, slot } = impactAny;
-        const campaign =
-          lookupMaps?.campaignMap.get(horseId) ||
-          draft.campaigns?.find((c) => c.horseId === horseId);
+        const campaign = campaignMap.get(horseId);
         if (campaign) {
           campaign.slots[slotIndex] = { ...campaign.slots[slotIndex], ...slot };
         }
@@ -100,9 +103,7 @@ export class SystemHandler implements ImpactHandler {
 
       case "campaign_flag": {
         const { horseId, flag } = impactAny;
-        const campaign =
-          lookupMaps?.campaignMap.get(horseId) ||
-          draft.campaigns?.find((c) => c.horseId === horseId);
+        const campaign = campaignMap.get(horseId);
         if (campaign) {
           campaign.flags.push(flag);
         }
@@ -111,9 +112,7 @@ export class SystemHandler implements ImpactHandler {
 
       case "campaign_flag_dismissal": {
         const { horseId, flag } = impactAny;
-        const campaign =
-          lookupMaps?.campaignMap.get(horseId) ||
-          draft.campaigns?.find((c) => c.horseId === horseId);
+        const campaign = campaignMap.get(horseId);
         if (campaign) {
           campaign.flags = campaign.flags.filter(
             (f: any) =>
@@ -127,6 +126,7 @@ export class SystemHandler implements ImpactHandler {
         const { campaign } = impactAny;
         if (!draft.campaigns) draft.campaigns = [];
         draft.campaigns.push(campaign);
+        campaignMap.set(campaign.horseId, campaign);
         if (lookupMaps) lookupMaps.campaignMap.set(campaign.horseId, campaign);
         break;
       }
@@ -137,6 +137,7 @@ export class SystemHandler implements ImpactHandler {
           const index = draft.campaigns.findIndex((c) => c.horseId === horseId);
           if (index !== -1) {
             draft.campaigns.splice(index, 1);
+            campaignMap.delete(horseId);
             if (lookupMaps) lookupMaps.campaignMap.delete(horseId);
           }
         }
@@ -145,9 +146,7 @@ export class SystemHandler implements ImpactHandler {
 
       case "auto_manage_toggle": {
         const { horseId, autoManaged } = impactAny;
-        const campaign =
-          lookupMaps?.campaignMap.get(horseId) ||
-          draft.campaigns?.find((c) => c.horseId === horseId);
+        const campaign = campaignMap.get(horseId);
         if (campaign) {
           campaign.autoManaged = autoManaged;
         }
@@ -239,8 +238,9 @@ export class SystemHandler implements ImpactHandler {
       case "hall_of_fame_induction": {
         const { entry } = impactAny;
         if (!draft.hallOfFame) draft.hallOfFame = [];
-        // Prevent duplicates
-        if (!draft.hallOfFame.find((e) => e.horseId === entry.horseId)) {
+        // Prevent duplicates using Set for O(1) lookup
+        const existingIds = new Set(draft.hallOfFame.map((e) => e.horseId));
+        if (!existingIds.has(entry.horseId)) {
           draft.hallOfFame.push(entry);
         }
         break;

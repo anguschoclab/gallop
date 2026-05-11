@@ -103,13 +103,13 @@ export function detectPositionChange(
  * Detect drafting event.
  *
  * @param runner - The runner to check
- * @param runners - All runners in the race
+ * @param runnersMap - Map of horse ID to runner for O(1) lookup
  * @returns DetectedEvent if drafting, otherwise null
  */
-export function detectDrafting(runner: Runner, runners: Runner[]): DetectedEvent | null {
+export function detectDrafting(runner: Runner, runnersMap: Map<string, Runner>): DetectedEvent | null {
   if (!runner.draftingHorseId) return null;
 
-  const other = runners.find((r) => r.horseId === runner.draftingHorseId);
+  const other = runnersMap.get(runner.draftingHorseId);
   if (!other) return null;
 
   return {
@@ -278,23 +278,23 @@ function isInTurn(pos: number, race: Race): boolean {
  * Detect stable watch event.
  *
  * @param runner - The runner to check
- * @param horses - Global horse array for lookup
- * @param stables - Global stable array for lookup
+ * @param horsesMap - Map of horse ID to horse object for O(1) lookup
+ * @param stablesMap - Map of stable ID to stable object for O(1) lookup
  * @param simTime - Current simulation time
  * @returns DetectedEvent if horse is from a major stable, otherwise null
  */
 export function detectStableWatch(
   runner: Runner,
-  horses: { id: string; stableId?: string }[],
-  stables: { id: string; isMajor: boolean }[],
+  horsesMap: Map<string, { id: string; stableId?: string }>,
+  stablesMap: Map<string, { id: string; isMajor: boolean }>,
   simTime: number,
 ): DetectedEvent | null {
   if (simTime < 2 || simTime > 15) return null;
 
-  const horse = horses.find((h) => h.id === runner.horseId);
+  const horse = horsesMap.get(runner.horseId);
   if (!horse?.stableId) return null;
 
-  const stable = stables.find((s) => s.id === horse.stableId);
+  const stable = stablesMap.get(horse.stableId);
   if (!stable?.isMajor) return null;
 
   return {

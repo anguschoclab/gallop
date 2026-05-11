@@ -81,20 +81,24 @@ export const REGIONAL_LINE_BIAS: Record<
  * in-game horses via ID and curated foundation data via name chain.
  *
  * @param horse - The horse to resolve the bloodline for
- * @param state - Game state containing the horses array
+ * @param horseMap - Map of horse ID to horse object for O(1) lookup
  * @param depth - Current recursion depth (for internal use)
  * @returns Bloodline name, or "Unaffiliated" if not found
  *
  * @example
- * const bloodline = resolveBloodline(horse, gameState);
+ * const bloodline = resolveBloodline(horse, horseMap);
  */
 export function resolveBloodline(
   horse: Horse,
+<<<<<<< Updated upstream
   state: Pick<GameState, "horses"> & { horseMap?: Map<string, Horse> },
+=======
+  horseMap: Map<string, Horse>,
+>>>>>>> Stashed changes
   depth: number = 0,
 ): Bloodline {
   if (depth === 0) {
-    return cachedBloodline(horse.id, () => resolveBloodline(horse, state, 1));
+    return cachedBloodline(horse.id, () => resolveBloodline(horse, horseMap, 1));
   }
   if (depth > 6) return "Unaffiliated";
   if (horse.bloodline) return horse.bloodline as Bloodline;
@@ -107,10 +111,15 @@ export function resolveBloodline(
   // Walk up via in-game sire id
   const sireId = horse.pedigree?.sireId;
   if (sireId) {
+<<<<<<< Updated upstream
     const sire = state.horseMap
       ? state.horseMap.get(sireId)
       : state.horses.find((h) => h.id === sireId);
     if (sire) return resolveBloodline(sire, state, depth + 1);
+=======
+    const sire = horseMap.get(sireId);
+    if (sire) return resolveBloodline(sire, horseMap, depth + 1);
+>>>>>>> Stashed changes
   }
 
   // Fall back through curated pedigree data via name chain
@@ -312,14 +321,15 @@ export function detectInbreedingPattern(
  * deleterious recessives). Approximated using parents' AHC and racing success.
  *
  * @param pedigree - The pedigree structure to analyze
- * @param state - Game state containing the horses array
+ * @param horseMap - Map of horse ID to horse object for O(1) lookup
  * @returns AHC value between 0 and 1
  *
  * @example
- * const ahc = computeAhc(horse.pedigree, gameState);
+ * const ahc = computeAhc(horse.pedigree, horseMap);
  */
 export function computeAhc(
   pedigree: Pedigree | undefined,
+<<<<<<< Updated upstream
   state: Pick<GameState, "horses"> & { horseMap?: Map<string, Horse> },
 ): number {
   if (!pedigree) return 0;
@@ -333,6 +343,13 @@ export function computeAhc(
       ? state.horseMap.get(pedigree.damId)
       : state.horses.find((h) => h.id === pedigree.damId)
     : undefined;
+=======
+  horseMap: Map<string, Horse>,
+): number {
+  if (!pedigree) return 0;
+  const sire = pedigree.sireId ? horseMap.get(pedigree.sireId) : undefined;
+  const dam = pedigree.damId ? horseMap.get(pedigree.damId) : undefined;
+>>>>>>> Stashed changes
   if (!sire || !dam) return 0;
 
   // Parents' AHC propagates with decay; bumped by their own racing success

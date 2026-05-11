@@ -14,17 +14,9 @@
 // game's 365-day annual cycle (day 1 = Jan 1).
 
 import { TRACK_BY_NAME } from "@/game/tracks";
+import { generateUUID } from "@/core/uuid";
 
 export type Grade = "G1" | "G2" | "G3";
-
-// UUID v4 generator for race UUIDs
-const generateUUID = () => {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-};
 
 export type GradedRace = {
   uuid: string; // Unique identifier for this race

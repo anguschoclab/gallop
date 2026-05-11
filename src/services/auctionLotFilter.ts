@@ -38,10 +38,13 @@ export function filterAndSortLots(
 ): AuctionLot[] {
   let result: AuctionLot[] = lots;
 
+  // Create Map for O(1) horse lookups
+  const horseMap = new Map(horses.map((h) => [h.id, h]));
+
   // Sex filter
   if (options.sex) {
     result = result.filter((l) => {
-      const h = horses.find((h) => h.id === l.horseId);
+      const h = horseMap.get(l.horseId);
       return h?.gender === options.sex;
     });
   }
@@ -49,7 +52,7 @@ export function filterAndSortLots(
   // Age band filter
   if (options.ageBand) {
     result = result.filter((l) => {
-      const h = horses.find((h) => h.id === l.horseId);
+      const h = horseMap.get(l.horseId);
       if (!h) return false;
       if (options.ageBand === "weanling") return h.age === FILTER_CONSTANTS.WEANLING_AGE;
       if (options.ageBand === "yearling") return h.age === FILTER_CONSTANTS.YEARLING_AGE;
@@ -74,7 +77,7 @@ export function filterAndSortLots(
   if (options.q && options.q.trim().length > 0) {
     const needle = options.q.trim().toLowerCase();
     result = result.filter((l) => {
-      const h = horses.find((h) => h.id === l.horseId);
+      const h = horseMap.get(l.horseId);
       if (!h) return false;
       return (
         h.name.toLowerCase().includes(needle) || (h.sireName ?? "").toLowerCase().includes(needle)

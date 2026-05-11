@@ -2,13 +2,15 @@ import { describe, it, expect } from "vitest";
 import { buildRunner, runRaceToCompletion } from "@/game/raceSim";
 import { createRng, hashStr } from "@/game/rng";
 import type { Horse, HorseGender } from "@/game/types";
+import type { Genotype } from "@/core/genetics/types";
+import type { Locus } from "@/core/common/types";
 
 // Mock Horse generator
 function mockHorse(
   id: string,
   gender: HorseGender,
-  stats: { speed: number; stamina: number; acceleration: number; consistency: number },
-): Horse {
+  stats: { speed: number; stamina: number; acceleration: number; consistency: number; temperament: number; conformation: number },
+): Partial<Horse> {
   return {
     id,
     name: `${gender}_${id}`,
@@ -24,16 +26,40 @@ function mockHorse(
     owned: true,
     distanceAptitude: 1600,
     surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
-    climbingAptitude: 1.0,
-    corneringAptitude: 1.0,
     injuryProneness: 0,
     height: 16,
     weight: 500,
-    lifetimeEarnings: 0,
-    careerStarts: 0,
-    careerWins: 0,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    genotype: {} as any,
+    genotype: {
+      color: { extension: [5, 5], agouti: [5, 5], gray: [5, 5], cream: [5, 5] },
+      stats: { speed: [], stamina: [], acceleration: [], consistency: [] },
+      preferences: { distance: [5, 5], surface: [5, 5], climbing: [5, 5], cornering: [5, 5] },
+      style: [5, 5],
+      mental: [5, 5],
+      physical: [5, 5],
+      durability: [5, 5],
+      size: [5, 5],
+      markers: {
+        leopardComplex: "recessive",
+        csnbRisk: "low",
+        sensoryPerception: "good",
+        signalTransduction: "good",
+        immunity: "good",
+        geneticDiversity: 0.5,
+        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
+      },
+      heart: [],
+      fiberType: [5, 5],
+      stride: [5, 5],
+      trackBias: [5, 5],
+      mudAptitude: [5, 5],
+      trainability: [5, 5],
+      peakAge: [5, 5],
+      recovery: [5, 5],
+      fertility: [5, 5],
+      foalingEase: [5, 5],
+      markings: { socks: [5, 5], face: [5, 5], silverDapple: [5, 5], sabino: [5, 5], splashWhite: [5, 5] },
+      health: { bleeder: [5, 5], roarer: [5, 5], ocd: [5, 5], efna5: [5, 5], pssm: [5, 5], rer: [5, 5], epm: [5, 5] },
+    } satisfies Genotype,
   };
 }
 
@@ -47,7 +73,9 @@ describe("Gender and Weight Influence", () => {
       stamina: 80,
       acceleration: 80,
       consistency: 80,
-    });
+      temperament: 50,
+      conformation: 50,
+    }) as Horse;
 
     // Light weight vs Heavy weight
     const runnerLight = buildRunner(
@@ -76,9 +104,9 @@ describe("Gender and Weight Influence", () => {
   });
 
   it("should give stallions higher peak power but higher noise than geldings", () => {
-    const baseStats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80 };
-    const stallionHorse = mockHorse("stallion", "horse", baseStats);
-    const geldingHorse = mockHorse("gelding", "gelding", baseStats);
+    const baseStats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    const stallionHorse = mockHorse("stallion", "horse", baseStats) as Horse;
+    const geldingHorse = mockHorse("gelding", "gelding", baseStats) as Horse;
 
     const runnerStallion = buildRunner(
       stallionHorse,
@@ -112,9 +140,9 @@ describe("Gender and Weight Influence", () => {
   });
 
   it("should show that fillies are slower than stallions but get weight allowance", () => {
-    const baseStats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80 };
-    const stallionHorse = mockHorse("stallion", "horse", baseStats);
-    const fillyHorse = mockHorse("filly", "filly", baseStats);
+    const baseStats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    const stallionHorse = mockHorse("stallion", "horse", baseStats) as Horse;
+    const fillyHorse = mockHorse("filly", "filly", baseStats) as Horse;
 
     // Stallion at 126lbs vs Filly at 121lbs (5lb allowance)
     const runnerStallion = buildRunner(
@@ -152,9 +180,9 @@ describe("Gender and Weight Influence", () => {
   });
 
   it("should demonstrate gelding consistency in multi-race simulation", () => {
-    const baseStats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80 };
-    const stallionHorse = mockHorse("stallion", "horse", baseStats);
-    const geldingHorse = mockHorse("gelding", "gelding", baseStats);
+    const baseStats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    const stallionHorse = mockHorse("stallion", "horse", baseStats) as Horse;
+    const geldingHorse = mockHorse("gelding", "gelding", baseStats) as Horse;
 
     const stallionTimes: number[] = [];
     const geldingTimes: number[] = [];
