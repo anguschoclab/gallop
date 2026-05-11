@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getGradeColorClass } from "@/core/race/grading";
 import type { Race, Horse } from "@/game/types";
@@ -12,6 +13,15 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
   const upcoming = races.filter((r) => !r.resolved && r.day >= day);
   const grades = ["G1", "G2", "G3"] as const;
 
+  // ⚡ Bolt: Replace O(N^2) array lookup inside loop with O(N) hash map construction + O(1) lookup
+  const horsesById = useMemo(() => {
+    const map = new Map<string, Horse>();
+    for (const horse of horses) {
+      map.set(horse.id, horse);
+    }
+    return map;
+  }, [horses]);
+
   const gradeData = grades.map((grade) => {
     const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
     const ownedEntries = gradeRaces.filter((r) => r.entries.some((e) => e.owned));
@@ -22,7 +32,7 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
     for (const r of ownedEntries) {
       const ownedIds = r.entries.filter((e) => e.owned).map((e) => e.horseId);
       for (const id of ownedIds) {
-        const horse = horses.find((h) => h.id === id);
+        const horse = horsesById.get(id);
         if (horse) {
           const proj = horse.stats.speed + horse.stats.acceleration; // Simple proj Beyer
           allOwnedProjs.push(proj);
