@@ -31,6 +31,8 @@ export interface CoreState {
   cash: number;
   /** All horses in the game (player owned and NPC owned) */
   horses: Horse[];
+  /** Optimized lookup map for horses by ID */
+  horseMap: Map<string, Horse>;
   /** All scheduled races */
   races: Race[];
   /** Game log for significant events */
@@ -79,6 +81,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
       day: 1,
       cash: backstory.startingCash,
       horses: playerHorses,
+      horseMap: new Map(playerHorses.map((h) => [h.id, h])),
       races: [],
       log: [
         {
@@ -112,6 +115,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
     day: 1,
     cash: 50000,
     horses: [],
+    horseMap: new Map(),
     races: [],
     log: [{ day: 1, text: "Welcome to Gallop! Your stable is now open for business." }],
     news: [

@@ -314,6 +314,11 @@ export const useGame = create<StoreType>()(
         await initStorageWorker();
         await initInitializationWorker();
 
+        // Initialize horseMap after hydration
+        if (state) {
+          (state as any).horseMap = new Map(state.horses.map((h: Horse) => [h.id, h]));
+        }
+
         hydrationComplete.value = true;
       },
     },

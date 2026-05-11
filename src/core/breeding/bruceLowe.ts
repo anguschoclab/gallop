@@ -72,7 +72,7 @@ export function familyRole(
  */
 export function resolveBruceLoweFamily(
   horse: Horse,
-  state: Pick<GameState, "horses">,
+  state: Pick<GameState, "horses"> & { horseMap?: Map<string, Horse> },
   depth: number = 0,
 ): number | undefined {
   if (depth > 6) return undefined;
@@ -80,7 +80,11 @@ export function resolveBruceLoweFamily(
 
   // Step 1: walk dam line through live horses.
   const damId = horse.pedigree?.damId;
-  const dam = damId ? state.horses.find((h) => h.id === damId) : undefined;
+  const dam = damId
+    ? state.horseMap
+      ? state.horseMap.get(damId)
+      : state.horses.find((h) => h.id === damId)
+    : undefined;
   if (dam) {
     if (dam.bruceLoweFamily !== undefined) return dam.bruceLoweFamily;
     const recursive = resolveBruceLoweFamily(dam, state, depth + 1);
