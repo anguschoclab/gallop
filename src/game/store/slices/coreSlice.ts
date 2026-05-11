@@ -116,6 +116,11 @@ export function createCoreSlice(
     // Build the update by merging finalState and overrides
     const update: any = { ...finalState, ...overrides };
 
+    // Sync horseMap if horses changed
+    if (finalState.horses) {
+      update.horseMap = new Map(finalState.horses.map((h: Horse) => [h.id, h]));
+    }
+
     // Explicitly remove keys that shouldn't be in the store (e.g. worker-only metadata)
     delete update.lastFrameTime;
     delete update.isAdvancing;
@@ -381,7 +386,10 @@ export function createCoreSlice(
     },
 
     setHorses: (horses) => {
-      set({ horses });
+      set({
+        horses,
+        horseMap: new Map(horses.map((h) => [h.id, h])),
+      });
     },
 
     setRaces: (races) => {
