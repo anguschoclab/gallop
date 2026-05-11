@@ -27,6 +27,11 @@ const ILLNESS_DURATION_MAX = 30;
 export const energyPhase = {
   name: "energy",
   order: 40,
+  /**
+   * Execute the energy restoration phase
+   * @param context - The pipeline context containing state and current day
+   * @returns Updated pipeline context with restored energy and health status
+   */
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 

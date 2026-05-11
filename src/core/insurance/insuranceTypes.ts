@@ -29,8 +29,9 @@ export const INSURANCE_CONFIG = {
 /**
  * Calculate the daily premium for a horse.
  * base_premium + (valuation * risk_premium)
- * @param policyType
- * @param horseValue
+ * @param policyType - The insurance policy type
+ * @param horseValue - The value of the horse
+ * @returns The daily premium amount
  */
 export function calculateDailyPremium(policyType: InsurancePolicyType, horseValue: number): number {
   if (policyType === "none") return 0;

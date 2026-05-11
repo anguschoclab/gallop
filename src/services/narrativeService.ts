@@ -419,6 +419,8 @@ export class NarrativeGenerator {
 
   /**
    * Get horse by ID (optimized with Map lookup).
+   * @param id - The horse ID to look up
+   * @returns The horse object or undefined if not found
    */
   private getHorse(id: string): Horse | undefined {
     return this.horsesMap.get(id);
@@ -426,6 +428,8 @@ export class NarrativeGenerator {
 
   /**
    * Get stable by ID (optimized with Map lookup).
+   * @param id - The stable ID to look up
+   * @returns The stable object or undefined if not found
    */
   private getStable(id: string): Stable | undefined {
     return this.stablesMap.get(id);

@@ -393,10 +393,10 @@ function generateTripleCrownProgressImpact(
 
 /**
  * Generate prize money impacts for a horse.
- * @param horse
- * @param position
- * @param race
- * @param newDay
+ * @param horse - The horse to generate prize money for
+ * @param position - Finishing position (1-based)
+ * @param race - The race data
+ * @param newDay - Current game day
  * @returns Object containing the cash impact and optional transaction and reputation impacts, or null if no prize.
  */
 function generatePrizeMoneyImpacts(
@@ -468,11 +468,11 @@ function generatePrizeMoneyImpacts(
 
 /**
  * Generate jockey fee impacts for a horse.
- * @param horse
- * @param jockey
- * @param newDay
- * @param horseId
- * @param raceId
+ * @param horse - The horse that ran the race
+ * @param jockey - The jockey who rode the horse
+ * @param newDay - Current game day
+ * @param horseId - The horse ID (for stable identification)
+ * @param raceId - The race ID
  * @returns Object containing the cash impact and optional transaction impact.
  */
 function generateJockeyFeeImpacts(
@@ -549,6 +549,33 @@ function generatePercentageJockeyFeeImpacts(
   } as CashImpact;
 }
 
+/**
+ * Generate all state impacts resulting from a completed race.
+ *
+ * This function orchestrates the post-race resolution logic, including:
+ * - Result recording and history updates
+ * - Energy expenditure and injury rolls
+ * - Performance metrics (Beyer Figures) with genetic dampeners
+ * - Financial transactions (prize money, jockey fees)
+ * - Reputation and fame updates
+ * - Career milestones (Triple Crown progress, blue hen status, stud fees)
+ * - Narrative and news generation
+ *
+ * @param props - Impact generation properties
+ * @param props.race - The completed race data
+ * @param props.result - Final race result positions and times for each participant
+ * @param props.runners - The field of runners with lane and barrier data
+ * @param props.horses - Current horse population (can be an array or a pre-indexed Map)
+ * @param props.jockeys - Current jockey population (can be an array or a pre-indexed Map)
+ * @param props.newDay - Game day of the race resolution
+ * @param props.stateCash - Current player cash balance
+ * @param props.stateReputation - Current manager reputation state
+ * @param props.hiredStaff - Active staff members with potential bonuses
+ * @param props.rng - Optional random number generator for stochastic events (e.g., injuries)
+ * @param props.snapshots - Optional detailed race snapshots for replay/summary purposes
+ * @param props.calibratedPars - Speed pars for Beyer speed figure calculation, indexed by distance
+ * @returns Array of impacts to be applied to the game state by the resolver
+ */
 export function generateRaceImpacts({
   race,
   result,

@@ -20,6 +20,11 @@ const AUSTRALIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] =
   { class: "Stakes", probability: 0.1 },
 ];
 
+/**
+ * Select a race class based on Australian race distribution
+ * @param rng - Random number generator
+ * @returns Selected race class
+ */
 function selectAustraliaRaceClass(rng: Rng): RaceClass {
   const r = rng.next();
   let cumulative = 0;
@@ -30,6 +35,15 @@ function selectAustraliaRaceClass(rng: Rng): RaceClass {
   return "Handicap";
 }
 
+/**
+ * Generate a single Australian race
+ * @param track - Track to generate race for
+ * @param day - Current game day
+ * @param rng - Random number generator
+ * @param surface - Optional surface type (Turf, Dirt, or Synthetic)
+ * @param usedNames - Set of already used race names
+ * @returns Generated race object
+ */
 export function generateAustralianRace(
   track: Track,
   day: number,
@@ -78,6 +92,14 @@ export function generateAustralianRace(
   };
 }
 
+/**
+ * Generate a full Australian race card (multiple races)
+ * @param track - Track to generate races for
+ * @param day - Current game day
+ * @param numRaces - Number of races to generate
+ * @param rng - Random number generator
+ * @returns Array of generated races
+ */
 export function generateAustralianRaceCard(
   track: Track,
   day: number,

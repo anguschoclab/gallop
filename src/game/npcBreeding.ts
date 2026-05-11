@@ -167,7 +167,13 @@ export function runAutonomousBreeding(
   return updatedState;
 }
 
-// Adapter for test compatibility
+/**
+ * Adapter for test compatibility
+ * @param state - Game state (any type for test compatibility)
+ * @param day - Current game day
+ * @param rng - Random number generator
+ * @returns Object containing horses, npcStables, newPregnancies, and logs
+ */
 export function runNpcBreeding(state: any, day: number, rng: Rng) {
   // Temporarily set day
   const originalDay = state.day;

@@ -33,8 +33,9 @@ export const BANISTER_CONSTANTS = {
 /**
  * Calculate the new value after 1 day of decay.
  * Formula: V_new = V_old * exp(-1 / tau)
- * @param currentValue
- * @param tau
+ * @param currentValue - The current value to decay
+ * @param tau - The decay time constant in days
+ * @returns The decayed value after 1 day
  */
 export function decayValue(currentValue: number, tau: number): number {
   return currentValue * Math.exp(-1 / tau);
@@ -43,8 +44,9 @@ export function decayValue(currentValue: number, tau: number): number {
 /**
  * Calculate the impulse gain from a workout.
  * Formula: Gain = intensity * k
- * @param intensity
- * @param k
+ * @param intensity - The workout intensity value
+ * @param k - The gain constant
+ * @returns The impulse gain value
  */
 export function calculateImpulse(intensity: number, k: number): number {
   return intensity * k;
@@ -53,8 +55,9 @@ export function calculateImpulse(intensity: number, k: number): number {
 /**
  * Calculate the peaking index (Form).
  * Formula: Form = Fitness - Fatigue
- * @param fitness
- * @param fatigue
+ * @param fitness - The current fitness value
+ * @param fatigue - The current fatigue value
+ * @returns The peaking index (form)
  */
 export function calculatePeakingIndex(fitness: number, fatigue: number): number {
   return fitness - fatigue;
@@ -63,7 +66,8 @@ export function calculatePeakingIndex(fitness: number, fatigue: number): number 
 /**
  * Get the impact of the peaking index on Beyer Speed Figure.
  * Returns a multiplier (e.g., 0.95 to 1.05).
- * @param peakingIndex
+ * @param peakingIndex - The peaking index value
+ * @returns The Beyer speed figure multiplier
  */
 export function getPeakingBeyerMultiplier(peakingIndex: number): number {
   // Peak zone is generally positive but not too high (which might imply undertraining)

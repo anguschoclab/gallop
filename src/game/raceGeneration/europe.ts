@@ -21,6 +21,11 @@ const EUROPE_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Stakes", probability: 0.05 },
 ];
 
+/**
+ * Select a race class based on European race distribution
+ * @param rng - Random number generator
+ * @returns Selected race class
+ */
 function selectEuropeRaceClass(rng: Rng): RaceClass {
   const r = rng.next();
   let cumulative = 0;
@@ -31,6 +36,15 @@ function selectEuropeRaceClass(rng: Rng): RaceClass {
   return "Allowance";
 }
 
+/**
+ * Generate a single European race
+ * @param track - Track to generate race for
+ * @param day - Current game day
+ * @param rng - Random number generator
+ * @param surface - Optional surface type (Turf, Dirt, or Synthetic)
+ * @param usedNames - Set of already used race names
+ * @returns Generated race object
+ */
 export function generateEuropeanRace(
   track: Track,
   day: number,
@@ -76,6 +90,14 @@ export function generateEuropeanRace(
   };
 }
 
+/**
+ * Generate a full European race card (multiple races)
+ * @param track - Track to generate races for
+ * @param day - Current game day
+ * @param numRaces - Number of races to generate
+ * @param rng - Random number generator
+ * @returns Array of generated races
+ */
 export function generateEuropeanRaceCard(
   track: Track,
   day: number,

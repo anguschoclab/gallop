@@ -20,8 +20,11 @@ const GAME_STATE_FILENAME = "gameState.json";
 let opfsInitialized = false;
 export let useLocalStorageFallback = false;
 
-// For testing purposes only
-export function _resetStorageAdapterState() {
+/**
+ * Reset storage adapter state (for testing purposes only)
+ * @returns void
+ */
+export function _resetStorageAdapterState(): void {
   opfsInitialized = false;
   useLocalStorageFallback = false;
 }
@@ -148,6 +151,7 @@ export function loadRaceFilters(): Record<string, string> {
  * Save race filters to localStorage (always localStorage).
  *
  * @param filters - Object mapping filter keys to values
+ * @returns void
  */
 export function saveRaceFilters(filters: Record<string, string>): void {
   try {
@@ -181,6 +185,7 @@ export function loadRaceHistoryLimit(): number {
  * Save race history limit to localStorage (always localStorage).
  *
  * @param limit - Number of race records to keep
+ * @returns void
  */
 export function saveRaceHistoryLimit(limit: number): void {
   try {
@@ -211,6 +216,7 @@ export function loadDayJump(): string | undefined {
  * Save day jump value to localStorage (always localStorage).
  *
  * @param value - The day jump string to save
+ * @returns void
  */
 export function saveDayJump(value: string): void {
   try {
@@ -222,6 +228,7 @@ export function saveDayJump(value: string): void {
 
 /**
  * Clear all settings from localStorage
+ * @returns void
  */
 export function clearSettings(): void {
   try {
@@ -278,6 +285,7 @@ export function loadWizardState(): WizardState | null {
  * Save wizard state to localStorage.
  *
  * @param state - The wizard state object to persist
+ * @returns void
  */
 export function saveWizardState(state: WizardState): void {
   try {
@@ -289,6 +297,7 @@ export function saveWizardState(state: WizardState): void {
 
 /**
  * Clear wizard state from localStorage
+ * @returns void
  */
 export function clearWizardState(): void {
   try {

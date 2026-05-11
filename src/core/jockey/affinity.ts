@@ -33,8 +33,9 @@ export const AFFINITY_CONSTANTS = {
 /**
  * Calculate the total affinity bonus ("The Hand") for a Jockey-Horse pair.
  * Factors in horse-specific XP and stable-wide retainer bonus.
- * @param jockey
- * @param horseId
+ * @param jockey - The jockey object containing affinity data
+ * @param horseId - The ID of the horse to calculate affinity for
+ * @returns The total affinity bonus as a decimal (e.g., 0.05 for 5%)
  */
 export function calculateTheHandBonus(jockey: Jockey, horseId: string): number {
   const horseXP = jockey.affinityMap[horseId] || 0;
@@ -61,7 +62,8 @@ export function calculateTheHandBonus(jockey: Jockey, horseId: string): number {
 
 /**
  * Get the descriptive level of the partnership.
- * @param xp
+ * @param xp - The affinity XP value
+ * @returns The partnership level name (e.g., "Soulmates", "Bonded", "Trusted", "Familiar", "Acquaintances")
  */
 export function getAffinityLevel(xp: number): string {
   if (xp >= AFFINITY_CONSTANTS.LEVELS.soulmates) return "Soulmates";

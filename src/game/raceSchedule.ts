@@ -32,7 +32,11 @@ const BREEDERS_CUP_TRACKS = [
   { trackId: "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d", name: "Churchill Downs" },
 ];
 
-// Helper: Get Breeders' Cup track for a given year
+/**
+ * Get Breeders' Cup track for a given year
+ * @param year - Game year
+ * @returns Track ID and name for the Breeders' Cup host track
+ */
 function getBreedersCupTrack(year: number): { trackId: string; name: string } {
   const index = (year - 1) % 4;
   return BREEDERS_CUP_TRACKS[index];

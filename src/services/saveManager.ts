@@ -24,6 +24,7 @@ const METADATA_STORAGE_KEY = "gallop_saves_metadata";
 
 /**
  * Get all available save slots and their metadata.
+ * @returns Array of save slot metadata objects
  */
 export async function getSaveSlots(): Promise<SaveSlotMetadata[]> {
   const opfsAvailable = await checkOPFSAvailable();
@@ -49,6 +50,11 @@ export async function getSaveSlots(): Promise<SaveSlotMetadata[]> {
 
 /**
  * Save the provided state to a specific slot.
+ * @param slotId - The slot ID to save to
+ * @param name - The name for the save slot
+ * @param state - The game state to save
+ * @param isAutoSave - Whether this is an auto-save (default false)
+ * @returns Promise that resolves when save is complete
  */
 export async function saveToSlot(
   slotId: string,
@@ -107,6 +113,8 @@ export async function saveToSlot(
 
 /**
  * Load state from a specific slot and overwrite the working state.
+ * @param slotId - The slot ID to load from
+ * @returns Promise that resolves when load is complete
  */
 export async function loadFromSlot(slotId: string): Promise<void> {
   const opfsAvailable = await checkOPFSAvailable();
@@ -145,6 +153,8 @@ export async function loadFromSlot(slotId: string): Promise<void> {
 
 /**
  * Delete a save slot and its metadata.
+ * @param slotId - The slot ID to delete
+ * @returns Promise that resolves when deletion is complete
  */
 export async function deleteSaveSlot(slotId: string): Promise<void> {
   const opfsAvailable = await checkOPFSAvailable();

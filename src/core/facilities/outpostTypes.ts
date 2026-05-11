@@ -53,7 +53,8 @@ export const OUTPOST_CONSTANTS = {
 
 /**
  * Check if an outpost is specialized.
- * @param outpost
+ * @param outpost - The outpost to check
+ * @returns The facility branch type (turf, dirt, or neutral)
  */
 export function getOutpostSpecialty(outpost: Outpost): FacilityBranch {
   const track = Object.values(outpost.facilities).find((f) => f.type === "main_track");

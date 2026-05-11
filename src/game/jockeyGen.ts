@@ -161,10 +161,11 @@ export function generateJockey({
 
 /**
  * Generate an apprentice jockey (teenager, low stats, high potential for academy).
- * @param root0
- * @param root0.rng
- * @param root0.region
- * @param root0.usedNames
+ * @param options - Options object
+ * @param options.rng - Random number generator
+ * @param options.region - Region for jockey generation (default north_america)
+ * @param options.usedNames - Set of already used names
+ * @returns Generated apprentice jockey
  */
 export function generateApprentice({
   rng,

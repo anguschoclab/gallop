@@ -21,6 +21,11 @@ const ASIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Handicap", probability: 0.05 },
 ];
 
+/**
+ * Select a race class based on Asian race distribution
+ * @param rng - Random number generator
+ * @returns Selected race class
+ */
 function selectAsiaRaceClass(rng: Rng): RaceClass {
   const r = rng.next();
   let cumulative = 0;
@@ -31,6 +36,15 @@ function selectAsiaRaceClass(rng: Rng): RaceClass {
   return "Allowance";
 }
 
+/**
+ * Generate a single Asian race
+ * @param track - Track to generate race for
+ * @param day - Current game day
+ * @param rng - Random number generator
+ * @param surface - Optional surface type (Turf, Dirt, or Synthetic)
+ * @param usedNames - Set of already used race names
+ * @returns Generated race object
+ */
 export function generateAsianRace(
   track: Track,
   day: number,
@@ -75,6 +89,14 @@ export function generateAsianRace(
   };
 }
 
+/**
+ * Generate a full Asian race card (multiple races)
+ * @param track - Track to generate races for
+ * @param day - Current game day
+ * @param numRaces - Number of races to generate
+ * @param rng - Random number generator
+ * @returns Array of generated races
+ */
 export function generateAsianRaceCard(
   track: Track,
   day: number,

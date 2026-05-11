@@ -16,11 +16,12 @@ import {
 
 /**
  * Aggregates transactions into a single financial period.
- * @param transactions
- * @param startDay
- * @param endDay
- * @param label
- * @param startingCash
+ * @param transactions - Array of transactions to aggregate
+ * @param startDay - Starting day of the period
+ * @param endDay - Ending day of the period
+ * @param label - Label for the period
+ * @param startingCash - Starting cash balance (default 0)
+ * @returns Financial period with income, expenses, and profit/loss
  */
 export function buildFinancialPeriod(
   transactions: Transaction[],
@@ -116,8 +117,9 @@ export function buildFinancialPeriod(
 
 /**
  * Builds a full Profit & Loss report across various time horizons.
- * @param transactions
- * @param currentDay
+ * @param transactions - Array of all transactions
+ * @param currentDay - Current game day
+ * @returns Profit & Loss report with weekly, monthly, yearly, and all-time periods
  */
 export function buildProfitLossReport(
   transactions: Transaction[],

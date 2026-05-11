@@ -22,6 +22,11 @@ const SA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
 
 const SA_CLAIMING_PRICES: ClaimingPrice[] = [2000, 4000, 6000, 8000, 12000, 15000];
 
+/**
+ * Select a race class based on South American race distribution
+ * @param rng - Random number generator
+ * @returns Selected race class
+ */
 function selectSARaceClass(rng: Rng): RaceClass {
   const r = rng.next();
   let cumulative = 0;
@@ -32,6 +37,15 @@ function selectSARaceClass(rng: Rng): RaceClass {
   return "Maiden";
 }
 
+/**
+ * Generate a single South American race
+ * @param track - Track to generate race for
+ * @param day - Current game day
+ * @param rng - Random number generator
+ * @param surface - Optional surface type (Turf, Dirt, or Synthetic)
+ * @param usedNames - Set of already used race names
+ * @returns Generated race object
+ */
 export function generateSouthAmericanRace(
   track: Track,
   day: number,
@@ -88,6 +102,14 @@ export function generateSouthAmericanRace(
   return race;
 }
 
+/**
+ * Generate a full South American race card (multiple races)
+ * @param track - Track to generate races for
+ * @param day - Current game day
+ * @param numRaces - Number of races to generate
+ * @param rng - Random number generator
+ * @returns Array of generated races
+ */
 export function generateSouthAmericanRaceCard(
   track: Track,
   day: number,

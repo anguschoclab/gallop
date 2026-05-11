@@ -22,7 +22,8 @@ export const BRANCH_MODIFIERS = {
 
 /**
  * Apply outpost specialization modifiers to a horse.
- * @param branch
+ * @param branch - The facility branch type
+ * @returns Branch modifiers object or null if branch is neutral
  */
 export function getBranchModifiers(branch: FacilityBranch) {
   if (branch === "neutral") return null;
@@ -31,8 +32,9 @@ export function getBranchModifiers(branch: FacilityBranch) {
 
 /**
  * Check if a horse is acclimatized to its current outpost.
- * @param horse
- * @param outposts
+ * @param horse - The horse to check
+ * @param outposts - Array of outpost objects
+ * @returns True if horse is acclimatized or has no outpost
  */
 export function isHorseAcclimatized(horse: Horse, outposts: any[]): boolean {
   if (!horse.outpostId) return true;

@@ -37,8 +37,9 @@ export const RIVALRY_CONSTANTS = {
 
 /**
  * Calculate the outcome of a provocation.
- * @param currentFriction
- * @param change
+ * @param currentFriction - Current friction value
+ * @param change - Amount to change friction by
+ * @returns New friction value clamped between MIN and MAX
  */
 export function calculateFrictionChange(currentFriction: number, change: number): number {
   return Math.min(
@@ -49,7 +50,8 @@ export function calculateFrictionChange(currentFriction: number, change: number)
 
 /**
  * Determine if a stable is a "Hated Rival" (Trigger for Spoilers).
- * @param friction
+ * @param friction - Current friction value
+ * @returns True if friction is 70 or higher
  */
 export function isHatedRival(friction: number): boolean {
   return friction >= 70;
@@ -57,7 +59,8 @@ export function isHatedRival(friction: number): boolean {
 
 /**
  * Determine if a stable is a "Friendly Competitor".
- * @param friction
+ * @param friction - Current friction value
+ * @returns True if friction is -50 or lower
  */
 export function isFriendlyCompetitor(friction: number): boolean {
   return friction <= -50;
