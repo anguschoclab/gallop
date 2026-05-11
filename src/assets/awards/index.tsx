@@ -19,6 +19,8 @@ import * as apacCategory from "./asia-pacific/category";
 import * as saHoty from "./south-america/hoty";
 import * as saCategory from "./south-america/category";
 
+import type React from "react";
+
 export interface AwardSvgData {
   Icon: React.ComponentType<{ width: number; height: number; className?: string }>;
   color: string;
