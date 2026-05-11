@@ -119,7 +119,6 @@ export async function deleteFile(filename: string): Promise<boolean> {
 
   try {
     await opfsRoot.removeEntry(filename);
-    console.log(`Deleted ${filename} from OPFS`);
     return true;
   } catch (error) {
     console.warn(`Could not delete ${filename} from OPFS:`, error);
