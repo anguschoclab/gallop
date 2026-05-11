@@ -53,10 +53,10 @@ describe("Stallion Fee Recommendation", () => {
         { purse: 1000000, position: 1, grade: "G1" },
       ],
     } as Horse;
-    
+
     const lowFee = calculateRecommendedStudFee(baseHorse, mockState);
     const highFee = calculateRecommendedStudFee(legend, mockState);
-    
+
     expect(highFee).toBeGreaterThan(lowFee);
   });
 
@@ -71,7 +71,7 @@ describe("Stallion Fee Recommendation", () => {
         lifetimeFoals: 50,
         lifetimeStakesFoals: 10,
         lifetimeG1Foals: 2,
-      }
+      },
     } as Horse;
 
     const fee = calculateRecommendedStudFee(provenSire, mockState);
@@ -94,19 +94,19 @@ describe("Stallion Fee Recommendation", () => {
         lifetimeFoals: 50,
         lifetimeStakesFoals: 0,
         lifetimeG1Foals: 0,
-      }
+      },
     };
-    
+
     const initialFee = calculateRecommendedStudFee(sire, mockState);
-    
+
     const updatedSire = {
       ...sire,
       stud: {
         ...sire.stud,
         lifetimeStakesFoals: 5, // Significant stakes success!
-      }
+      },
     };
-    
+
     const newFee = recalcStandingFee(updatedSire, mockState);
     expect(newFee).toBeGreaterThan(initialFee);
   });

@@ -75,7 +75,10 @@ export function detectContender(
   if (horse.age === 3 && avgStat > 70) {
     const tcRaces = GRADED_RACES.filter((r) => r.triplecrownKey);
     for (const race of tcRaces) {
-      if (horse.distanceAptitude > race.distance - 300 && horse.distanceAptitude < race.distance + 300) {
+      if (
+        horse.distanceAptitude > race.distance - 300 &&
+        horse.distanceAptitude < race.distance + 300
+      ) {
         targetRaces.push(race.key);
         confidence += 0.2;
       }
@@ -90,7 +93,10 @@ export function detectContender(
   if (horse.age >= 3 && horseRating > 65) {
     const bcRaces = GRADED_RACES.filter((r) => r.bcKey === "breeders-cup");
     for (const race of bcRaces) {
-      if (horse.distanceAptitude > race.distance - 300 && horse.distanceAptitude < race.distance + 300) {
+      if (
+        horse.distanceAptitude > race.distance - 300 &&
+        horse.distanceAptitude < race.distance + 300
+      ) {
         targetRaces.push(race.key);
         confidence += 0.15;
       }
@@ -104,7 +110,11 @@ export function detectContender(
   // Dubai World Cup contender criteria
   if (horse.age >= 4 && horseRating > 75) {
     const dwcRace = GRADED_RACES.find((r) => r.key === "dubai-world-cup");
-    if (dwcRace && horse.distanceAptitude > dwcRace.distance - 300 && horse.distanceAptitude < dwcRace.distance + 300) {
+    if (
+      dwcRace &&
+      horse.distanceAptitude > dwcRace.distance - 300 &&
+      horse.distanceAptitude < dwcRace.distance + 300
+    ) {
       targetRaces.push(dwcRace.key);
       isContender = true;
       confidence = Math.min(1, confidence + 0.25);
@@ -114,10 +124,14 @@ export function detectContender(
   // Other G1 races with $1M+ purses
   if (horseRating > 70) {
     const majorG1Races = GRADED_RACES.filter(
-      (r) => r.grade === "G1" && r.purse >= 1000000 && !r.triplecrownKey && r.bcKey !== "breeders-cup",
+      (r) =>
+        r.grade === "G1" && r.purse >= 1000000 && !r.triplecrownKey && r.bcKey !== "breeders-cup",
     );
     for (const race of majorG1Races) {
-      if (horse.distanceAptitude > race.distance - 300 && horse.distanceAptitude < race.distance + 300) {
+      if (
+        horse.distanceAptitude > race.distance - 300 &&
+        horse.distanceAptitude < race.distance + 300
+      ) {
         targetRaces.push(race.key);
         confidence += 0.1;
       }
@@ -394,7 +408,9 @@ export function getCampaignInsights(
   totalPrize: number;
   contenderCount: number;
 } {
-  const stableHistory = aiState.campaignHistory.filter((d) => d.stableId === stableId && d.success !== undefined);
+  const stableHistory = aiState.campaignHistory.filter(
+    (d) => d.stableId === stableId && d.success !== undefined,
+  );
   const totalCampaigns = stableHistory.length;
   const successes = stableHistory.filter((d) => d.success).length;
   const successRate = totalCampaigns > 0 ? successes / totalCampaigns : 0.5;
@@ -403,9 +419,7 @@ export function getCampaignInsights(
       ? stableHistory.reduce((sum, d) => sum + (d.position || 5), 0) / totalCampaigns
       : 5;
   const totalPrize =
-    totalCampaigns > 0
-      ? stableHistory.reduce((sum, d) => sum + (d.prize || 0), 0)
-      : 0;
+    totalCampaigns > 0 ? stableHistory.reduce((sum, d) => sum + (d.prize || 0), 0) : 0;
 
   const contenderCount = Array.from(aiState.contenderTracking.values()).filter(
     (c) => c.isContender && c.lastAssessmentDay > 0,

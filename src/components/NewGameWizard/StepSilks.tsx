@@ -189,9 +189,7 @@ export function StepSilks({ silk, onChange, onNext, onBack }: StepSilksProps) {
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button onClick={handleNext}>
-          Next
-        </Button>
+        <Button onClick={handleNext}>Next</Button>
       </div>
     </div>
   );

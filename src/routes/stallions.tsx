@@ -37,7 +37,7 @@ function StallionsPage() {
   const stallions = horses.filter((h) => h.stud?.atStud);
   const myStallions = stallions.filter((h) => h.owned);
   const rosterStallions = stallions.filter((h) => !h.owned || h.stableId === undefined); // Show all public ones
-  
+
   const filtered = stallions
     .filter((h) => hemisphere === "all" || h.hemisphere === hemisphere)
     .sort((a, b) => a.stud!.standingFee - b.stud!.standingFee);
@@ -156,7 +156,8 @@ function StallionsPage() {
             ))}
             {myStallions.length === 0 && (
               <p className="text-sm text-cream-muted col-span-full">
-                You don't have any stallions at stud. Retire a colt or horse to stud from their stable page.
+                You don't have any stallions at stud. Retire a colt or horse to stud from their
+                stable page.
               </p>
             )}
           </div>
@@ -212,7 +213,7 @@ function MyStallionCard({
         <div className="space-y-2">
           <div className="flex justify-between items-end">
             <label className="text-xs text-cream-muted">Standing Fee</label>
-            <button 
+            <button
               className="text-[10px] text-gold hover:underline"
               onClick={() => {
                 setFeeInput(recommendedFee.toString());
@@ -225,15 +226,15 @@ function MyStallionCard({
           <div className="flex gap-2">
             <div className="relative flex-1">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cream-muted">$</span>
-              <Input 
+              <Input
                 className="pl-6 bg-t900/50 border-gold-muted text-cream"
                 type="number"
                 value={feeInput}
                 onChange={(e) => setFeeInput(e.target.value)}
               />
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="border-gold text-gold hover:bg-gold hover:text-t900"
               onClick={() => onUpdateFee(parseInt(feeInput) || 0)}
             >

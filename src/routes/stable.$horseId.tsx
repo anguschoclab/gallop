@@ -75,10 +75,7 @@ function HorseDetail() {
     !horse.stud?.atStud &&
     !isConsigned;
 
-  const canRetireToPasture =
-    horse.owned &&
-    horse.lifecycleStatus === "active" &&
-    !isConsigned;
+  const canRetireToPasture = horse.owned && horse.lifecycleStatus === "active" && !isConsigned;
 
   const slotsLeft = 2 - trainingUsed;
   const consignedSale = isConsigned

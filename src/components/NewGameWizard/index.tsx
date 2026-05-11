@@ -3,12 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
@@ -20,22 +15,22 @@ import { Dice5 } from "lucide-react";
 import { useGame } from "@/game/store";
 import type { NewGameOptions } from "@/game/state";
 import { createRng, hashStr } from "@/game/rng";
-import {
-  generateSilk,
-  SILK_PALETTE,
-  SILK_PATTERNS,
-} from "@/game/jockeyGen";
+import { generateSilk, SILK_PALETTE, SILK_PATTERNS } from "@/game/jockeyGen";
 import { randomStableName, randomOwnerName } from "@/core/stable/stableGeneration";
 import { BACKSTORIES, type Backstory } from "@/core/newGame/backstories";
 import type { JockeySilk, JockeySilkPattern, BackstoryId } from "@/game/types";
 import { SilkPreview } from "./SilkPreview";
-import { loadWizardState, saveWizardState, clearWizardState, type WizardState } from "@/services/storageAdapter";
+import {
+  loadWizardState,
+  saveWizardState,
+  clearWizardState,
+  type WizardState,
+} from "@/services/storageAdapter";
 
 type Step = 0 | 1 | 2 | 3;
 
 const TOTAL_HORSES = (b: Backstory) => b.horses.reduce((sum, h) => sum + h.count, 0);
-const FACILITY_UPGRADE_COUNT = (b: Backstory) =>
-  Object.keys(b.facilityUpgrades).length;
+const FACILITY_UPGRADE_COUNT = (b: Backstory) => Object.keys(b.facilityUpgrades).length;
 
 function makeWizardRng(seed: string) {
   return createRng(hashStr(`wizard_${seed}_${Date.now()}_${Math.random()}`));
@@ -46,12 +41,8 @@ export function NewGameWizard() {
   const startNewGame = useGame((s) => s.startNewGame);
 
   const [step, setStep] = useState<Step>(0);
-  const [stableName, setStableName] = useState(() =>
-    randomStableName(makeWizardRng("stable")),
-  );
-  const [ownerName, setOwnerName] = useState(() =>
-    randomOwnerName(makeWizardRng("owner")),
-  );
+  const [stableName, setStableName] = useState(() => randomStableName(makeWizardRng("stable")));
+  const [ownerName, setOwnerName] = useState(() => randomOwnerName(makeWizardRng("owner")));
   const [silk, setSilk] = useState<JockeySilk>(() => generateSilk(makeWizardRng("silk")));
   const [backstoryId, setBackstoryId] = useState<BackstoryId | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
@@ -111,7 +102,7 @@ export function NewGameWizard() {
 
   const handleStart = async () => {
     if (!selectedBackstory) return;
-    
+
     // Final validation check - prevent game start with invalid silks
     const isHexColor = (v: unknown): v is string =>
       typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v);
@@ -121,12 +112,12 @@ export function NewGameWizard() {
       isHexColor(silk.secondary) &&
       isHexColor(silk.cap) &&
       (SILK_PATTERNS as readonly string[]).includes(silk.pattern);
-    
+
     if (!silkValid) {
       alert("Invalid silks data. Please check your silks configuration before starting.");
       return;
     }
-    
+
     setSubmitting(true);
     const options: NewGameOptions = {
       profile: {
@@ -191,19 +182,22 @@ export function NewGameWizard() {
             <Button
               variant="ghost"
               disabled={step === 0 || submitting}
-              onClick={() => setStep((s) => (Math.max(0, s - 1) as Step))}
+              onClick={() => setStep((s) => Math.max(0, s - 1) as Step)}
             >
               Back
             </Button>
             {step < 3 ? (
               <Button
                 disabled={!canProceed || submitting}
-                onClick={() => setStep((s) => (Math.min(3, s + 1) as Step))}
+                onClick={() => setStep((s) => Math.min(3, s + 1) as Step)}
               >
                 Continue
               </Button>
             ) : (
-              <Button disabled={!selectedBackstory || !silkValid || submitting} onClick={handleStart}>
+              <Button
+                disabled={!selectedBackstory || !silkValid || submitting}
+                onClick={handleStart}
+              >
                 {submitting ? "Starting…" : "Begin"}
               </Button>
             )}
@@ -222,13 +216,7 @@ function StepIndicator({ step }: { step: Step }) {
       {STEP_TITLES.map((title, i) => (
         <li
           key={title}
-          className={
-            i === step
-              ? "text-gold"
-              : i < step
-                ? "text-cream"
-                : "text-cream-muted/50"
-          }
+          className={i === step ? "text-gold" : i < step ? "text-cream" : "text-cream-muted/50"}
         >
           {i + 1}. {title}
           {i < STEP_TITLES.length - 1 && <span className="ml-2 text-cream-muted/30">›</span>}
@@ -248,12 +236,7 @@ interface StepIdentityProps {
   ownerName: string;
   setOwnerName: (v: string) => void;
 }
-function StepIdentity({
-  stableName,
-  setStableName,
-  ownerName,
-  setOwnerName,
-}: StepIdentityProps) {
+function StepIdentity({ stableName, setStableName, ownerName, setOwnerName }: StepIdentityProps) {
   return (
     <div className="space-y-6">
       <FieldWithRandom
@@ -365,12 +348,14 @@ function StepSilks({ silk, setSilk }: StepSilksProps) {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setSilk({
-                  pattern: "solid",
-                  primary: "#FFFFFF",
-                  secondary: "#FFFFFF",
-                  cap: "#FFFFFF",
-                })}
+                onClick={() =>
+                  setSilk({
+                    pattern: "solid",
+                    primary: "#FFFFFF",
+                    secondary: "#FFFFFF",
+                    cap: "#FFFFFF",
+                  })
+                }
               >
                 Reset
               </Button>
@@ -554,7 +539,9 @@ function StepReview({ stableName, ownerName, silk, backstory }: StepReviewProps)
             <TooltipTrigger asChild>
               <dt className="text-cream-muted cursor-help">Starting cash</dt>
             </TooltipTrigger>
-            <TooltipContent>Operating capital. You'll spend this on training, entries, and horses.</TooltipContent>
+            <TooltipContent>
+              Operating capital. You'll spend this on training, entries, and horses.
+            </TooltipContent>
           </Tooltip>
           <dd className="text-cream">${backstory.startingCash.toLocaleString()}</dd>
 
@@ -562,19 +549,21 @@ function StepReview({ stableName, ownerName, silk, backstory }: StepReviewProps)
             <TooltipTrigger asChild>
               <dt className="text-cream-muted cursor-help">Starting horses</dt>
             </TooltipTrigger>
-            <TooltipContent>Generated from your stable seed; pedigree and stats will be unique.</TooltipContent>
+            <TooltipContent>
+              Generated from your stable seed; pedigree and stats will be unique.
+            </TooltipContent>
           </Tooltip>
           <dd className="text-cream">
-            {backstory.horses
-              .map((h) => `${h.count}× ${h.tier}`)
-              .join(", ")}
+            {backstory.horses.map((h) => `${h.count}× ${h.tier}`).join(", ")}
           </dd>
 
           <Tooltip>
             <TooltipTrigger asChild>
               <dt className="text-cream-muted cursor-help">Facility upgrades</dt>
             </TooltipTrigger>
-            <TooltipContent>You always start with all facilities at "basic"; these are upgrades on top.</TooltipContent>
+            <TooltipContent>
+              You always start with all facilities at "basic"; these are upgrades on top.
+            </TooltipContent>
           </Tooltip>
           <dd className="text-cream">
             {Object.entries(backstory.facilityUpgrades).length === 0
@@ -588,7 +577,9 @@ function StepReview({ stableName, ownerName, silk, backstory }: StepReviewProps)
             <TooltipTrigger asChild>
               <dt className="text-cream-muted cursor-help">Reputation</dt>
             </TooltipTrigger>
-            <TooltipContent>0–1000 score. Affects scouting access and future race invitations.</TooltipContent>
+            <TooltipContent>
+              0–1000 score. Affects scouting access and future race invitations.
+            </TooltipContent>
           </Tooltip>
           <dd className="text-cream">{backstory.reputationScore}</dd>
         </dl>

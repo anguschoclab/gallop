@@ -44,11 +44,7 @@ export function detectLeadChange(
   const sorted = [...runners].sort((a, b) => b.position - a.position);
   const currentLeader = sorted[0];
 
-  if (
-    lastLeaderId &&
-    currentLeader.horseId !== lastLeaderId &&
-    currentLeader.position > 20
-  ) {
+  if (lastLeaderId && currentLeader.horseId !== lastLeaderId && currentLeader.position > 20) {
     return {
       type: "LEAD_CHANGE",
       horseId: currentLeader.horseId,

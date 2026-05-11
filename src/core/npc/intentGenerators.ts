@@ -67,10 +67,7 @@ function generateNpcTrainingIntents(
 
   for (const horse of ownedHorses) {
     // AI-driven training decision
-    if (
-      horse.energy >= 15 &&
-      !state.pregnancies.some((p) => !p.resolved && p.damId === horse.id)
-    ) {
+    if (horse.energy >= 15 && !state.pregnancies.some((p) => !p.resolved && p.damId === horse.id)) {
       // Use AI to determine if horse should train today
       if (shouldTrainToday(trainingAI, horse, day)) {
         // Use AI to select training type

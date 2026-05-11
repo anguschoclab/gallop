@@ -3,7 +3,11 @@ import type { Horse, Pregnancy } from "@/game/types";
 import { resolveFoaling } from "@/game/foalGen";
 import { getFoalsBy } from "@/core/breeding/lineage";
 import { resolvePregnancies } from "@/game/store/helpers/pregnancy";
-import { createReputationEvent, calculateBreedingReputation, getReputationTier } from "@/core/reputation";
+import {
+  createReputationEvent,
+  calculateBreedingReputation,
+  getReputationTier,
+} from "@/core/reputation";
 
 /**
  * Phase: Pregnancy Resolution
@@ -54,8 +58,7 @@ export const pregnancyPhase = {
               score:
                 state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
               tier: getReputationTier(
-                state.reputation.score +
-                  newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
+                state.reputation.score + newReputationEvents.reduce((sum, e) => sum + e.amount, 0),
               ),
             }
           : state.reputation,

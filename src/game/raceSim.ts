@@ -266,7 +266,13 @@ export function buildRunner(
   if (npcAIManager && currentDay && stable && jockey && race && !owned) {
     const aiState = npcAIManager.stableStates.get(stable.id);
     if (aiState?.jockeyStrategyAI) {
-      const optimalStyle = calculateOptimalRunningStyle(aiState.jockeyStrategyAI, h, race, jockey, stable);
+      const optimalStyle = calculateOptimalRunningStyle(
+        aiState.jockeyStrategyAI,
+        h,
+        race,
+        jockey,
+        stable,
+      );
       if (optimalStyle) {
         runningStyle = optimalStyle;
       }

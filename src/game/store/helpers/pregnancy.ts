@@ -6,7 +6,11 @@
 import type { Horse, Pregnancy } from "@/game/types";
 import { resolveFoaling } from "@/game/foalGen";
 import { getFoalsBy } from "@/core/breeding/lineage";
-import { BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants/gameConstants";
+import {
+  BREEDING_FEE,
+  GESTATION_DAYS,
+  LIVE_FOAL_GUARANTEE_FEE,
+} from "@/game/constants/gameConstants";
 
 export type PregnancyResult = {
   pregnancies: Pregnancy[];

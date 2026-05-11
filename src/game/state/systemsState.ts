@@ -1,7 +1,14 @@
 // Systems State - Optional subsystems and advanced features
 // Includes NPC stables, jockeys, awards, campaigns, leaderboards, facilities, and pending intents
 
-import type { Stable, ScoutReport, Jockey, HorseCampaign, TripleCrownProgress, PlayerProfile } from "../types";
+import type {
+  Stable,
+  ScoutReport,
+  Jockey,
+  HorseCampaign,
+  TripleCrownProgress,
+  PlayerProfile,
+} from "../types";
 import type { RegionalAward, AwardRegion } from "../awards/types";
 import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { AnyIntent } from "@/core/resolver/intents";
@@ -135,11 +142,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     // Build facilities from backstory spec (complete replace, not merge)
     const facilities: Partial<PlayerFacilities> = {};
     for (const [type, level] of Object.entries(backstory.facilityUpgrades)) {
-      facilities[type as keyof PlayerFacilities] = createFacility(
-        type as any,
-        level as any,
-        1,
-      );
+      facilities[type as keyof PlayerFacilities] = createFacility(type as any, level as any, 1);
     }
 
     return {

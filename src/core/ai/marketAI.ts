@@ -218,7 +218,7 @@ export function recordMarketPurchase(
 
   // Update learning state
   const contextKey = `${horse.age}`;
-  const value = purchase.horseRating - (price / 1000); // Net value
+  const value = purchase.horseRating - price / 1000; // Net value
   aiState.learningState = recordOutcome(
     aiState.learningState,
     "market_purchase",

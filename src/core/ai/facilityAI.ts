@@ -4,7 +4,12 @@
  */
 
 import type { Stable, Horse } from "@/game/types";
-import type { Facility, FacilityType, FacilityLevel, PlayerFacilities } from "@/core/facilities/facilityTypes";
+import type {
+  Facility,
+  FacilityType,
+  FacilityLevel,
+  PlayerFacilities,
+} from "@/core/facilities/facilityTypes";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
@@ -121,7 +126,10 @@ export function calculateFacilityUpgradePriority(
 /**
  * Get base priority for a facility type based on personality
  */
-function getFacilityPriority(facilityType: FacilityType, personality: Stable["personality"]): number {
+function getFacilityPriority(
+  facilityType: FacilityType,
+  personality: Stable["personality"],
+): number {
   const basePriorities: Record<FacilityType, number> = {
     main_track: 50, // Essential for training
     barn: 40, // Recovery is important
@@ -165,7 +173,13 @@ export function shouldUpgradeFacility(
   stable: Stable,
   currentDay: number,
 ): boolean {
-  const priorityScore = calculateFacilityUpgradePriority(aiState, facilityType, currentLevel, stable, currentDay);
+  const priorityScore = calculateFacilityUpgradePriority(
+    aiState,
+    facilityType,
+    currentLevel,
+    stable,
+    currentDay,
+  );
 
   // Get adaptive threshold
   const contextKey = `${stable.personality}:${facilityType}`;
@@ -367,7 +381,8 @@ export function getFacilityInsights(
 
   const rois = Array.from(aiState.roiTracking.values());
   const totalBenefit = rois.reduce((sum, r) => sum + r.totalBenefit, 0);
-  const avgROI = totalInvestedAmount > 0 ? (totalBenefit - totalInvestedAmount) / totalInvestedAmount : 0;
+  const avgROI =
+    totalInvestedAmount > 0 ? (totalBenefit - totalInvestedAmount) / totalInvestedAmount : 0;
 
   const facilityLevels: Record<FacilityType, FacilityLevel> = {} as any;
   for (const investment of stableInvestments) {

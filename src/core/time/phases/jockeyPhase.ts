@@ -52,7 +52,7 @@ export const jockeyPhase = {
         // Find best available jockeys
         const freeAgents = jockeys.filter((j) => !j.stableId);
         if (freeAgents.length > 0) {
-          let chosen: typeof freeAgents[0] | null = null;
+          let chosen: (typeof freeAgents)[0] | null = null;
 
           // Skip AI-driven selection for now to avoid frozen object errors
           // TODO: Re-enable AI state once frozen object issues are resolved

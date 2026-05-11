@@ -42,9 +42,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
   const profileSeed = options?.profile.stableName ?? "initial_setup";
   const setupRng = createRng(hashStr(profileSeed));
 
-  const playerHorseSpecs = options?.backstory.horses ?? [
-    { tier: "starter" as const, count: 2 },
-  ];
+  const playerHorseSpecs = options?.backstory.horses ?? [{ tier: "starter" as const, count: 2 }];
   const playerSilkColor = options?.profile.silk.primary;
   const horses: any[] = [];
   for (const spec of playerHorseSpecs) {

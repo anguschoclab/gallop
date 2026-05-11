@@ -88,7 +88,12 @@ export const upkeepPhase = {
         const monthlyExpenses = cost * 30; // Estimate monthly expenses
 
         // Update reserve state based on current cash and expenses
-        const updatedAIState = updateReserveState(aiState.upkeepAI, stable, monthlyExpenses, newDay);
+        const updatedAIState = updateReserveState(
+          aiState.upkeepAI,
+          stable,
+          monthlyExpenses,
+          newDay,
+        );
 
         // Check if stable should conserve cash
         const shouldConserve = shouldConserveCash(updatedAIState, stable, monthlyExpenses);

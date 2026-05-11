@@ -103,9 +103,7 @@ export function FinancialReport() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">
-              {formatCurrency(income.total)}
-            </div>
+            <div className="text-2xl font-bold text-success">{formatCurrency(income.total)}</div>
             <p className="text-xs text-muted-foreground">
               Prize money from {races.filter((r) => r.resolved).length} resolved races
             </p>

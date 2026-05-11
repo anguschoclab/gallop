@@ -14,7 +14,11 @@ import {
   overallRating,
   scoreStallion,
 } from "@/core/breeding/strategy";
-import { calculateAIStallionScore, createBreedingAIState, recordBreedingDecision } from "@/core/ai/breedingAI";
+import {
+  calculateAIStallionScore,
+  createBreedingAIState,
+  recordBreedingDecision,
+} from "@/core/ai/breedingAI";
 import { BREEDING_FEE, GESTATION_DAYS } from "./constants/gameConstants";
 
 /**

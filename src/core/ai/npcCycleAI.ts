@@ -80,10 +80,7 @@ export function getOrCreateStableAIState(
 /**
  * Update stable AI state after daily cycle
  */
-export function updateStableAIState(
-  state: StableAIState,
-  currentDay: number,
-): StableAIState {
+export function updateStableAIState(state: StableAIState, currentDay: number): StableAIState {
   state.lastUpdateDay = currentDay;
   return state;
 }
@@ -91,15 +88,10 @@ export function updateStableAIState(
 /**
  * Prune old learning data for all stables
  */
-export function pruneAllLearningData(
-  manager: NpcAIManager,
-  cutoffDay: number,
-): NpcAIManager {
+export function pruneAllLearningData(manager: NpcAIManager, cutoffDay: number): NpcAIManager {
   for (const state of manager.stableStates.values()) {
     // Prune learning state outcomes older than cutoff
-    state.learningState.outcomes = state.learningState.outcomes.filter(
-      (o) => o.day >= cutoffDay,
-    );
+    state.learningState.outcomes = state.learningState.outcomes.filter((o) => o.day >= cutoffDay);
   }
   return manager;
 }

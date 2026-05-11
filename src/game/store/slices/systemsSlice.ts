@@ -30,11 +30,7 @@ export type SystemsSlice = SystemsState & {
   ) => void;
   dismissCampaignFlag: (horseId: string, flagIndex: number) => void;
   deleteCampaign: (horseId: string) => void;
-  generateAutoCampaign: (
-    horseId: string,
-    goalType: string,
-    targetRaceKey?: string,
-  ) => void;
+  generateAutoCampaign: (horseId: string, goalType: string, targetRaceKey?: string) => void;
   updateUserSettings: (settings: Partial<UserSettings>) => void;
   updateDisplaySettings: (settings: Partial<UserSettings["display"]>) => void;
   updateGameplaySettings: (settings: Partial<UserSettings["gameplay"]>) => void;
@@ -105,7 +101,12 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
         cash: s.cash - rerollCost,
         jockeys: s.jockeys?.map((j: Jockey) =>
           j.id === jockeyId
-            ? { ...j, silk: `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0")}` }
+            ? {
+                ...j,
+                silk: `#${Math.floor(Math.random() * 16777215)
+                  .toString(16)
+                  .padStart(6, "0")}`,
+              }
             : j,
         ),
         log: [
@@ -190,9 +191,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
 
       set({
         horses: s.horses.map((h: any) =>
-          h.id === horseId
-            ? { ...h, stud: { ...h.stud, standingFee: newFee } }
-            : h,
+          h.id === horseId ? { ...h, stud: { ...h.stud, standingFee: newFee } } : h,
         ),
         log: [
           {
@@ -212,7 +211,8 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
       if (horse.gender !== "horse" && horse.gender !== "colt")
         return { ok: false, reason: "Only male horses can stand at stud." };
-      if (horse.age < 4) return { ok: false, reason: "Horse must be at least 4 years old to stand at stud." };
+      if (horse.age < 4)
+        return { ok: false, reason: "Horse must be at least 4 years old to stand at stud." };
 
       set({
         horses: s.horses.map((h: any) =>
@@ -249,9 +249,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
         return { ok: false, reason: "Horse is already male." };
 
       set({
-        horses: s.horses.map((h: any) =>
-          h.id === horseId ? { ...h, gender: "gelding" } : h,
-        ),
+        horses: s.horses.map((h: any) => (h.id === horseId ? { ...h, gender: "gelding" } : h)),
         log: [
           {
             day: s.day,
@@ -270,9 +268,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
       if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
 
       set({
-        horses: s.horses.map((h: any) =>
-          h.id === horseId ? { ...h, name: newName } : h,
-        ),
+        horses: s.horses.map((h: any) => (h.id === horseId ? { ...h, name: newName } : h)),
         log: [
           {
             day: s.day,
@@ -308,9 +304,7 @@ export function createSystemsSlice(set: any, get: any): SystemsSlice {
           c.horseId === horseId
             ? {
                 ...c,
-                slots: c.slots.map((s, i) =>
-                  i === slotIndex ? { ...s, ...patch } : s,
-                ),
+                slots: c.slots.map((s, i) => (i === slotIndex ? { ...s, ...patch } : s)),
               }
             : c,
         ),

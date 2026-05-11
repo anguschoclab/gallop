@@ -64,7 +64,10 @@ export function createHorseGenAIState(stable: Stable): HorseGenAIState {
 /**
  * Calculate target age distribution based on personality
  */
-function calculateTargetAgeDistribution(personality: Stable["personality"], targetCount: number): Map<number, number> {
+function calculateTargetAgeDistribution(
+  personality: Stable["personality"],
+  targetCount: number,
+): Map<number, number> {
   const distribution = new Map<number, number>();
 
   switch (personality) {
@@ -175,7 +178,7 @@ export function calculateQualityGenerationPriority(
     priority += 50;
     priority += (horseRating - targetQuality) * 2; // Bonus for exceeding target
   } else {
-    priority += horseRating / targetQuality * 30; // Partial credit for below target
+    priority += (horseRating / targetQuality) * 30; // Partial credit for below target
   }
 
   // Personality modifiers
@@ -216,10 +219,7 @@ export function shouldGenerateHorseOfAge(
 /**
  * Update roster composition after horse generation
  */
-export function updateRosterComposition(
-  aiState: HorseGenAIState,
-  horse: Horse,
-): HorseGenAIState {
+export function updateRosterComposition(aiState: HorseGenAIState, horse: Horse): HorseGenAIState {
   const composition = aiState.rosterComposition;
 
   // Update age distribution
@@ -231,7 +231,8 @@ export function updateRosterComposition(
 
   // Update quality level (running average)
   const horseRating = calculateOverallRating(horse);
-  const totalQuality = composition.currentQualityLevel * (composition.currentHorseCount - 1) + horseRating;
+  const totalQuality =
+    composition.currentQualityLevel * (composition.currentHorseCount - 1) + horseRating;
   composition.currentQualityLevel = totalQuality / composition.currentHorseCount;
 
   return aiState;

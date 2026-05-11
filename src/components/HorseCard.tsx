@@ -69,7 +69,9 @@ export function HorseCard({
       return <Badge className="bg-gold/20 text-gold border-gold/30">Retired</Badge>;
     }
     if (horse.lifecycleStatus === "deceased") {
-      return <Badge className="bg-destructive/20 text-destructive border-destructive/30">Deceased</Badge>;
+      return (
+        <Badge className="bg-destructive/20 text-destructive border-destructive/30">Deceased</Badge>
+      );
     }
     return null;
   };
@@ -82,7 +84,10 @@ export function HorseCard({
       other_illness: { color: "bg-chart-4/10 text-chart-4", label: "Ill" },
       recovering: { color: "bg-chart-2/10 text-chart-2", label: "Recovering" },
     };
-    const config = statusConfig[horse.healthStatus] || { color: "bg-t700", label: horse.healthStatus };
+    const config = statusConfig[horse.healthStatus] || {
+      color: "bg-t700",
+      label: horse.healthStatus,
+    };
     return <Badge className={config.color}>{config.label}</Badge>;
   };
 

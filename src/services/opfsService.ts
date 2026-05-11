@@ -118,7 +118,7 @@ export async function listFiles(): Promise<string[]> {
   try {
     const files: string[] = [];
     // Iterate through directory entries
-    for await (const entry of opfsRoot as any) {
+    for await (const entry of opfsRoot as unknown as AsyncIterable<FileSystemHandle>) {
       if (entry.kind === "file") {
         files.push(entry.name);
       }
@@ -141,7 +141,7 @@ export async function clearAll(): Promise<void> {
   try {
     // Collect all file names first
     const fileNames: string[] = [];
-    for await (const entry of opfsRoot as any) {
+    for await (const entry of opfsRoot as unknown as AsyncIterable<FileSystemHandle>) {
       if (entry.kind === "file") {
         fileNames.push(entry.name);
       }
@@ -153,4 +153,13 @@ export async function clearAll(): Promise<void> {
   } catch (error) {
     console.error("Failed to clear OPFS:", error);
   }
+}
+
+/**
+ * FOR TESTING ONLY: Reset module state
+ */
+export function _resetForTest(): void {
+  opfsRoot = null;
+  isOPFSAvailable = false;
+  initPromise = null;
 }

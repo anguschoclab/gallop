@@ -54,7 +54,9 @@ export type CoreSlice = CoreState & {
   ) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
-  advanceDay: (progressCallback?: (stage: number, total: number, name: string) => void) => Promise<void>;
+  advanceDay: (
+    progressCallback?: (stage: number, total: number, name: string) => void,
+  ) => Promise<void>;
   advanceMultipleDays: (n: number, headless?: boolean) => Promise<void>;
   advanceWeek: (headless?: boolean) => Promise<void>;
   advanceMonth: (headless?: boolean) => Promise<void>;

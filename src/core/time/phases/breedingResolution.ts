@@ -37,10 +37,8 @@ export const breedingResolutionPhase: PipelinePhase = {
       if (!sire || !dam) continue;
 
       // Check if sire is external (belongs to a different stable than the breeder)
-      const isExternal = 
-        intent.source === "player" 
-          ? !!sire.stableId 
-          : sire.stableId !== intent.sourceId;
+      const isExternal =
+        intent.source === "player" ? !!sire.stableId : sire.stableId !== intent.sourceId;
       let studFee = 0;
 
       if (isExternal && sire.stableId) {

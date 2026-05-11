@@ -67,7 +67,13 @@ export function calculateJockeySuitability(
   let score = 0;
 
   // Base score from jockey stats
-  const avgStat = (jockey.stats.pacing + jockey.stats.positioning + jockey.stats.vigor + jockey.stats.gateSkill + jockey.stats.temperament) / 5;
+  const avgStat =
+    (jockey.stats.pacing +
+      jockey.stats.positioning +
+      jockey.stats.vigor +
+      jockey.stats.gateSkill +
+      jockey.stats.temperament) /
+    5;
   score += avgStat * 0.3;
   score += jockey.stats.vigor * 0.2; // Final stretch push
   score += jockey.stats.positioning * 0.2; // Finding rail, avoiding traffic
@@ -151,13 +157,16 @@ export function shouldRetainJockey(
   currentDay: number,
 ): boolean {
   // Get jockey retention history
-  const retention = aiState.retention.find((r) => r.jockeyId === jockey.id && r.stableId === stable.id);
+  const retention = aiState.retention.find(
+    (r) => r.jockeyId === jockey.id && r.stableId === stable.id,
+  );
   if (!retention) return true; // New jockey, retain by default
 
   // Calculate value metrics
   const daysSinceHire = currentDay - retention.hireDay;
   const daysSinceUse = currentDay - retention.lastUseDay;
-  const avgPrizePerRide = retention.totalRides > 0 ? retention.totalPrize / retention.totalRides : 0;
+  const avgPrizePerRide =
+    retention.totalRides > 0 ? retention.totalPrize / retention.totalRides : 0;
 
   // Learning-based adjustment
   const contextKey = `${jockey.id}`;
@@ -173,7 +182,13 @@ export function shouldRetainJockey(
   }
   // Aggressive: retain if high skill or good recent performance
   else if (config.personality === "aggressive") {
-    const avgSkill = (jockey.stats.pacing + jockey.stats.positioning + jockey.stats.vigor + jockey.stats.gateSkill + jockey.stats.temperament) / 5;
+    const avgSkill =
+      (jockey.stats.pacing +
+        jockey.stats.positioning +
+        jockey.stats.vigor +
+        jockey.stats.gateSkill +
+        jockey.stats.temperament) /
+      5;
     shouldRetain = avgSkill > 80 || avgPrizePerRide > 8000;
   }
   // Win-now: retain if recent wins
@@ -223,7 +238,9 @@ export function recordJockeyAssignment(
   }
 
   // Update retention record
-  let retention = aiState.retention.find((r) => r.jockeyId === jockey.id && r.stableId === stable.id);
+  let retention = aiState.retention.find(
+    (r) => r.jockeyId === jockey.id && r.stableId === stable.id,
+  );
   if (!retention) {
     retention = {
       jockeyId: jockey.id,
@@ -264,7 +281,9 @@ export function recordJockeyOutcome(
     assignment.result = { position, prize };
 
     // Update retention record
-    const retention = aiState.retention.find((r) => r.jockeyId === jockeyId && r.stableId === assignment.stableId);
+    const retention = aiState.retention.find(
+      (r) => r.jockeyId === jockeyId && r.stableId === assignment.stableId,
+    );
     if (retention) {
       retention.totalPrize += prize;
     }
@@ -301,22 +320,24 @@ export function getJockeyInsights(
   avgFee: number;
   retainedJockeys: number;
 } {
-  const stableAssignments = aiState.jockeyHistory.filter((a) => a.stableId === stableId && a.result);
+  const stableAssignments = aiState.jockeyHistory.filter(
+    (a) => a.stableId === stableId && a.result,
+  );
   const totalAssignments = stableAssignments.length;
   const avgPosition =
     totalAssignments > 0
       ? stableAssignments.reduce((sum, a) => sum + a.result!.position, 0) / totalAssignments
       : 5;
   const totalPrize =
-    totalAssignments > 0
-      ? stableAssignments.reduce((sum, a) => sum + a.result!.prize, 0)
-      : 0;
+    totalAssignments > 0 ? stableAssignments.reduce((sum, a) => sum + a.result!.prize, 0) : 0;
   const avgFee =
     totalAssignments > 0
       ? stableAssignments.reduce((sum, a) => sum + a.fee, 0) / totalAssignments
       : 0;
 
-  const retainedJockeys = aiState.retention.filter((r) => r.stableId === stableId && r.retained).length;
+  const retainedJockeys = aiState.retention.filter(
+    (r) => r.stableId === stableId && r.retained,
+  ).length;
 
   return {
     totalAssignments,

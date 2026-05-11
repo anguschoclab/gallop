@@ -21,9 +21,17 @@ export type MarketSlice = MarketState & {
     cost: number;
     message: string;
   };
-  consignHorse: (horseId: string, saleId: string, reservePrice?: number) => { ok: true } | { ok: false; reason: string };
+  consignHorse: (
+    horseId: string,
+    saleId: string,
+    reservePrice?: number,
+  ) => { ok: true } | { ok: false; reason: string };
   withdrawConsignment: (horseId: string) => { ok: true } | { ok: false; reason: string };
-  placeBookBid: (saleId: string, lotId: string, amount: number) => { ok: true } | { ok: false; reason: string };
+  placeBookBid: (
+    saleId: string,
+    lotId: string,
+    amount: number,
+  ) => { ok: true } | { ok: false; reason: string };
   debitForLiveBid: (amount: number) => { ok: true } | { ok: false; reason: string };
   commitAuctionResult: (
     saleId: string,
@@ -121,7 +129,9 @@ export function createMarketSlice(
       const baseValue = horsePriceWithPedigree(horse, s.horses);
       const finalReserve = Math.round(reservePrice ?? baseValue * DEFAULT_PLAYER_RESERVE_RATIO);
       set({
-        horses: s.horses.map((h: Horse) => (h.id === horseId ? { ...h, consignedSaleId: saleId } : h)),
+        horses: s.horses.map((h: Horse) =>
+          h.id === horseId ? { ...h, consignedSaleId: saleId } : h,
+        ),
         auctions: (s.auctions ?? []).map((a: AuctionSale) =>
           a.id === saleId
             ? {
@@ -160,9 +170,11 @@ export function createMarketSlice(
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === horse.consignedSaleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
       if (sale.resolved) return { ok: false, reason: "Sale already resolved." };
-      
+
       set({
-        horses: s.horses.map((h: Horse) => (h.id === horseId ? { ...h, consignedSaleId: undefined } : h)),
+        horses: s.horses.map((h: Horse) =>
+          h.id === horseId ? { ...h, consignedSaleId: undefined } : h,
+        ),
         auctions: (s.auctions ?? []).map((a: AuctionSale) =>
           a.id === sale.id
             ? {
@@ -193,7 +205,7 @@ export function createMarketSlice(
       if (!lot) return { ok: false, reason: "Lot not found." };
       if (lot.withdrawn || lot.passed) return { ok: false, reason: "Lot not available." };
       if (s.cash < amount) return { ok: false, reason: "Insufficient funds." };
-      
+
       set({
         cash: s.cash - amount,
         auctions: (s.auctions ?? []).map((a: AuctionSale) =>
@@ -233,7 +245,7 @@ export function createMarketSlice(
       const s = get();
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
-      
+
       // Apply impacts via resolver (this would be handled by the main store's applyImpacts)
       // For now, just update the auction state
       set({

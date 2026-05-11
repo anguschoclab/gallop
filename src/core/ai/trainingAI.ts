@@ -150,10 +150,13 @@ export function updateHorseTraining(
 
   // Update focus based on recent training
   const recentTrainings = devTrack.trainingHistory.slice(-3);
-  const typeCounts = recentTrainings.reduce((acc, t) => {
-    acc[t.type] = (acc[t.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const typeCounts = recentTrainings.reduce(
+    (acc, t) => {
+      acc[t.type] = (acc[t.type] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const dominantType = Object.entries(typeCounts).sort((a, b) => b[1] - a[1])[0];
   if (dominantType && typeCounts[dominantType[0]] >= 2) {

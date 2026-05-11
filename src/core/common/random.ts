@@ -44,7 +44,6 @@ export function randomWeather(rng: Rng): Weather {
   return "night";
 }
 
-
 /**
  * Generate random horse name
  */

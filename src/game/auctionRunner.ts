@@ -165,7 +165,16 @@ export function createAuctionRunner(
     // bidders self-select via valuation/budget gates inside calculateNpcBid.
     for (const stable of eligible) {
       const rng = rngFor(state.lot, tick * 31 + bidderStables.indexOf(stable));
-      const bid = calculateNpcBid(stable, horse, state.currentBid, sale.kind, rng, horses, npcAIManager, currentDay);
+      const bid = calculateNpcBid(
+        stable,
+        horse,
+        state.currentBid,
+        sale.kind,
+        rng,
+        horses,
+        npcAIManager,
+        currentDay,
+      );
       if (bid !== null && bid > state.currentBid) {
         state.currentBid = bid;
         state.leadingBidder = stable.id;

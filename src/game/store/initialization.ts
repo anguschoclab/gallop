@@ -26,9 +26,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
   const setupRng = createRng(hashStr(profileSeed));
 
   // Generate player horses — backstory-driven if options provided, else default 2 starters
-  const playerHorseSpecs = options?.backstory.horses ?? [
-    { tier: "starter" as const, count: 2 },
-  ];
+  const playerHorseSpecs = options?.backstory.horses ?? [{ tier: "starter" as const, count: 2 }];
   const playerSilkColor = options?.profile.silk.primary;
   const horses: Horse[] = [];
   for (const spec of playerHorseSpecs) {

@@ -19,7 +19,7 @@ export const marketPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, dailyRng, newDay } = context;
     let market = refreshMarket(state.market, dailyRng);
-    let { npcStables, npcAIManager } = state;
+    const { npcStables, npcAIManager } = state;
 
     // NPC AI-driven market purchases
     if (npcAIManager && npcStables.length > 0) {
@@ -32,10 +32,17 @@ export const marketPhase = {
         // Check if stable should purchase any horse from market
         for (const horse of market) {
           // Estimate price based on horse stats (since Horse doesn't have price field)
-          const horseRating = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
+          const horseRating =
+            (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
           const estimatedPrice = Math.floor(horseRating * 1000);
 
-          const shouldPurchase = shouldPurchaseHorse(aiState.marketAI, horse, estimatedPrice, stable, newDay);
+          const shouldPurchase = shouldPurchaseHorse(
+            aiState.marketAI,
+            horse,
+            estimatedPrice,
+            stable,
+            newDay,
+          );
           if (shouldPurchase) {
             const maxPrice = calculateMaxPurchasePrice(aiState.marketAI, horse, stable);
 

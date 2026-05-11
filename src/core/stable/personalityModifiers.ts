@@ -18,12 +18,12 @@ export function applyPersonalityModifiers(
   if (race.minStat) {
     const overall = horse.stats.speed + horse.stats.stamina + horse.stats.acceleration;
     const gap = overall - race.minStat;
-    
+
     // Risk-takers are more willing to enter underqualified or overqualified horses
     if (gap < -5) {
-      score *= (1 + personality.riskTolerance * 0.2); // Bonus for taking risk on underqualified
+      score *= 1 + personality.riskTolerance * 0.2; // Bonus for taking risk on underqualified
     } else if (gap > 15) {
-      score *= (1 - personality.riskTolerance * 0.1); // Penalty for overqualified (wasted effort)
+      score *= 1 - personality.riskTolerance * 0.1; // Penalty for overqualified (wasted effort)
     }
   }
 
@@ -37,7 +37,7 @@ export function applyPersonalityModifiers(
   // Graded race affinity
   if (race.graded?.grade) {
     const gradeBonus = personality.gradedRaceBonus / 20;
-    score *= (1 + gradeBonus * 0.15);
+    score *= 1 + gradeBonus * 0.15;
   }
 
   // Genetic insight modifier for unproven horses
@@ -54,7 +54,7 @@ export function applyPersonalityModifiers(
  */
 export function getFormTolerance(personality: StablePersonality): number {
   const config = PERSONALITY_CONFIG[personality];
-  return -3 + (config.riskTolerance * 2); // Range: -3 to -1
+  return -3 + config.riskTolerance * 2; // Range: -3 to -1
 }
 
 /**

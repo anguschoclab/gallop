@@ -291,7 +291,7 @@ export function recordWithdrawalOutcome(
       "withdrawal",
       contextKey,
       success,
-      decision.withdrew ? (alternativeRaceResult || 0) - (horseResult || 0) : (horseResult || 0),
+      decision.withdrew ? (alternativeRaceResult || 0) - (horseResult || 0) : horseResult || 0,
       Date.now(),
       currentDay,
       aiState.personalityState.memoryDepth,
@@ -325,9 +325,15 @@ export function getWithdrawalInsights(
 
   // Strategic success: did withdrawals lead to better outcomes?
   const successfulWithdrawals = stableHistory.filter(
-    (d) => d.withdrew && d.outcome && d.outcome.alternativeRaceResult && d.outcome.horseResult && d.outcome.alternativeRaceResult < d.outcome.horseResult,
+    (d) =>
+      d.withdrew &&
+      d.outcome &&
+      d.outcome.alternativeRaceResult &&
+      d.outcome.horseResult &&
+      d.outcome.alternativeRaceResult < d.outcome.horseResult,
   ).length;
-  const strategicSuccess = withdrawalDecisions.length > 0 ? successfulWithdrawals / withdrawalDecisions.length : 0.5;
+  const strategicSuccess =
+    withdrawalDecisions.length > 0 ? successfulWithdrawals / withdrawalDecisions.length : 0.5;
 
   // Common reasons
   const commonReasons: Record<string, number> = {};

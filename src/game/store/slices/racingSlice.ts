@@ -35,7 +35,7 @@ export function createRacingSlice(
       if (!horse) return;
       if (!horse.owned) return;
       if (s.pregnancies.some((p: any) => !p.resolved && p.damId === horseId)) return;
-      
+
       // Check if horse has covering sickness or is recovering - prevent training
       if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering") {
         set({
@@ -49,11 +49,11 @@ export function createRacingSlice(
         });
         return;
       }
-      
+
       const usedToday = s.trainingUsed[horseId] || 0;
       if (usedToday >= TRAINING_SLOTS_PER_DAY) return;
       if (horse.energy < 10) return;
-      
+
       if (kind === "rest") {
         // Rest is immediate, not queued
         const updatedHorses = s.horses.map((h: Horse) =>

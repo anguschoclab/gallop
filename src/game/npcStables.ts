@@ -313,7 +313,6 @@ const BUDGET_POOL: StablePoolEntry[] = [
   },
 ];
 
-
 /**
  * Generate all NPC stables (named + filler)
  * Named stables are randomly selected from pools based on config counts
@@ -332,9 +331,7 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
   // Select and create mid-tier stables from pool
   const selectedMid = shuffleAndPick(MID_POOL, config.mid.count, rng);
   for (const template of selectedMid) {
-    stables.push(
-      generateStableFromTemplate(template, "mid", config.mid.reputationRange, day, rng),
-    );
+    stables.push(generateStableFromTemplate(template, "mid", config.mid.reputationRange, day, rng));
   }
 
   // Select and create budget stables from pool

@@ -117,8 +117,9 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
         ? dependencies.jockeys.find((j) => j.id === entryData.jockeyId)
         : undefined;
       // Get stable for AI-driven decisions
-      const stableObj = horse.stableId && npcStables ? npcStables.find((s) => s.id === horse.stableId) : undefined;
-      
+      const stableObj =
+        horse.stableId && npcStables ? npcStables.find((s) => s.id === horse.stableId) : undefined;
+
       runners.push(
         buildRunner(
           horse,

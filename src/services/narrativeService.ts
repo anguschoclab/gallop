@@ -247,7 +247,7 @@ export class NarrativeGenerator {
     const horse = this.getHorse(runner.horseId);
     if (!horse) return null;
 
-    const stable = horse.stableId ? this.getStable(horse.stableId) ?? null : null;
+    const stable = horse.stableId ? (this.getStable(horse.stableId) ?? null) : null;
     return generateExpertInsight(runner, horse, this.race, stable, this.rng);
   }
 
@@ -258,18 +258,23 @@ export class NarrativeGenerator {
     lengths?: string,
   ): CommentaryLine {
     const horse = runner ? this.getHorse(runner.horseId) : undefined;
-    const stable = horse?.stableId ? this.getStable(horse.stableId) ?? null : null;
+    const stable = horse?.stableId ? (this.getStable(horse.stableId) ?? null) : null;
 
-    return generateCommentaryLine(type, timestamp, {
-      race: this.race,
-      runner,
-      horse,
-      stable,
-      rng: this.rng,
-      lengths,
-      hasAnnouncedBio: this.hasAnnouncedBio,
-      lastRanks: this.lastRanks,
-    }, { value: this.lineCounter });
+    return generateCommentaryLine(
+      type,
+      timestamp,
+      {
+        race: this.race,
+        runner,
+        horse,
+        stable,
+        rng: this.rng,
+        lengths,
+        hasAnnouncedBio: this.hasAnnouncedBio,
+        lastRanks: this.lastRanks,
+      },
+      { value: this.lineCounter },
+    );
   }
 
   private getHorse(id: string): Horse | undefined {

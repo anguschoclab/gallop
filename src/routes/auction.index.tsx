@@ -24,7 +24,9 @@ function AuctionPage() {
   const day = useGame((s) => s.day);
 
   const [consignOpen, setConsignOpen] = useState(false);
-  const [consignTarget, setConsignTarget] = useState<{ horse: Horse; sale: AuctionSale } | null>(null);
+  const [consignTarget, setConsignTarget] = useState<{ horse: Horse; sale: AuctionSale } | null>(
+    null,
+  );
 
   const upcoming = auctions.filter((a) => !a.resolved).sort((a, b) => a.day - b.day);
   const todaysSales = upcoming.filter((s) => s.day === day);
@@ -62,7 +64,8 @@ function AuctionPage() {
           Sales
         </h1>
         <p className="text-cream-muted font-[family-name:var(--font-body)]">
-          Eight sales a year — weanlings, yearlings, 2YOs in training, mixed, racing-age, and broodmare dispersals.
+          Eight sales a year — weanlings, yearlings, 2YOs in training, mixed, racing-age, and
+          broodmare dispersals.
         </p>
       </div>
 
@@ -85,7 +88,8 @@ function AuctionPage() {
                   <h3 className="text-xl font-bold">{sale.name}</h3>
                   <p className="text-sm text-cream-muted">
                     {KIND_LABELS[sale.kind] ?? sale.kind} ·{" "}
-                    <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots in the ring
+                    <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> lots in
+                    the ring
                   </p>
                 </div>
                 <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
@@ -121,7 +125,7 @@ function AuctionPage() {
                 key={sale.id}
                 className={cn(
                   "border-l-4 border-gold-muted",
-                  isToday ? "border-l-warning" : "border-l-gold"
+                  isToday ? "border-l-warning" : "border-l-gold",
                 )}
               >
                 <CardHeader className="pb-2">
@@ -157,7 +161,11 @@ function AuctionPage() {
                     </p>
                   )}
                   <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
-                    <Button size="sm" className="w-full" variant={isToday ? "default" : "secondary"}>
+                    <Button
+                      size="sm"
+                      className="w-full"
+                      variant={isToday ? "default" : "secondary"}
+                    >
                       <Gavel className="h-4 w-4 mr-2" />
                       {isToday ? "Enter Ring" : "Preview Lots"}
                     </Button>
@@ -193,7 +201,8 @@ function AuctionPage() {
                       {horse.name}
                     </p>
                     <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                      {ageLabel(horse)} · {horse.gender} · → {sale.name.split(" ").slice(0, 3).join(" ")}
+                      {ageLabel(horse)} · {horse.gender} · →{" "}
+                      {sale.name.split(" ").slice(0, 3).join(" ")}
                     </p>
                   </div>
                 </div>

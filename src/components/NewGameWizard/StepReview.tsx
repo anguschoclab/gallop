@@ -98,7 +98,9 @@ export function StepReview({ profile, backstoryId, onBegin, onBack }: StepReview
                 <TooltipTrigger asChild>
                   <div className="flex justify-between items-center">
                     <span className="text-cream-muted">Starting Cash</span>
-                    <span className="text-cream font-medium">${backstory.startingCash.toLocaleString()}</span>
+                    <span className="text-cream font-medium">
+                      ${backstory.startingCash.toLocaleString()}
+                    </span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
