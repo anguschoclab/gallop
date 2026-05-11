@@ -1,4 +1,4 @@
-import { getAwardSvg, type AwardSvgData } from "@/assets/awards";
+import { getAwardSvg } from "@/assets/awards";
 import type { AwardRegion, RegionalAwardCategory } from "@/game/awards/types";
 import { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } from "@/game/awards/types";
 import { cn } from "@/lib/utils";
@@ -30,14 +30,8 @@ export function AwardIcon({
   className,
   showTooltip = false,
 }: AwardIconProps) {
-  const { svg, color } = getAwardSvg(region, category);
+  const { Icon, color } = getAwardSvg(region, category);
   const config = SIZE_CONFIG[size];
-
-  // Replace width/height in SVG string
-  const sizedSvg = svg
-    .replace(/width="48"/, `width="${config.width}"`)
-    .replace(/height="48"/, `height="${config.height}"`)
-    .replace(/viewBox="0 0 48 48"/, `viewBox="0 0 48 48"`);
 
   return (
     <div
@@ -50,8 +44,12 @@ export function AwardIcon({
       )}
       style={{ color }}
       title={showTooltip ? getTooltipText(region, category, year) : undefined}
-      dangerouslySetInnerHTML={{ __html: sizedSvg }}
-    />
+    >
+      <Icon
+        width={config.width}
+        height={config.height}
+      />
+    </div>
   );
 }
 
