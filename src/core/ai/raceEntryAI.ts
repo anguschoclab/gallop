@@ -17,7 +17,6 @@ import {
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
-import { RECENT_RACES_MAX_COUNT } from "@/game/constants/gameConstants";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import { calculateTrackGeometryScore, calculateGradientScore } from "@/core/race/trackGeometry";
 import { applyPersonalityModifiers } from "@/core/stable/personalityModifiers";
