@@ -59,7 +59,7 @@ export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG
 
   // Create filler stables
   for (let i = 0; i < config.filler.count; i++) {
-    stables.push(generateFillerStable(i, day, rng));
+    stables.push(generateFillerStable(day, rng));
   }
 
   // Assign breeding archetypes based on tier/personality

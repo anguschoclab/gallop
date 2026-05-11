@@ -1,4 +1,4 @@
-import { getAwardSvg, type AwardSvgData } from "@/assets/awards";
+import { getAwardSvg } from "@/assets/awards";
 import type { AwardRegion, RegionalAwardCategory } from "@/game/awards/types";
 import { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } from "@/game/awards/types";
 import { cn } from "@/lib/utils";
@@ -45,7 +45,10 @@ export function AwardIcon({
       style={{ color }}
       title={showTooltip ? getTooltipText(region, category, year) : undefined}
     >
-      <Icon width={config.width} height={config.height} />
+      <Icon
+        width={config.width}
+        height={config.height}
+      />
     </div>
   );
 }

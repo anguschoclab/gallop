@@ -14,3 +14,6 @@
 ## 2026-05-09 - [Avoid O(n²) array lookups during loop iterations in components]
 **Learning:** When rendering UI lists that map over global state (like the `HallOfFame` mapping over global `horses`), an inner `.find()` on an array is an O(n²) operation per render that creates scaling bottlenecks.
 **Action:** Always extract the array into a Map indexed by ID via `useMemo` and perform an O(1) `.get()` lookup instead. Document expected impact metrics in code comments explicitly.
+## 2024-05-10 - [Avoid O(n²) array lookups in auction consignment loops]
+**Learning:** When displaying player consigned lots in `src/components/auction/PlayerConsignmentsPanel.tsx`, iterating over `playerConsignedLots` while simultaneously running `.find()` over global arrays like `horses` and `stables` for each item generates a hidden O(n²) bottleneck per render.
+**Action:** Extract large arrays into lookup Maps using `useMemo` at the top of the component (e.g. `const horseMap = new Map(horses.map(h => [h.id, h]))`) and replace `.find()` usage within `.map()` iteration blocks with `.get()` for O(1) efficiency.

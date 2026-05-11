@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HorsePortrait } from "@/components/HorsePortrait";
@@ -34,6 +35,17 @@ export function PlayerConsignmentsPanel({
   const soldLots = playerConsignedLots.filter((l) => !l.passed && l.hammerPrice);
   const totalNet = soldLots.reduce((sum, l) => sum + netProceeds(l.hammerPrice!), 0);
 
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash maps for O(1) lookups instead of running O(N) .find() inside the .map() loop.
+  // Impact: Reduces rendering complexity of player consignments from O(N^2) to O(N),
+  // significantly improving performance when processing large auction datasets.
+  const { horseMap, stableMap } = useMemo(() => {
+    return {
+      horseMap: new Map(horses.map((h) => [h.id, h])),
+      stableMap: new Map(stables.map((s) => [s.id, s])),
+    };
+  }, [horses, stables]);
+
   return (
     <div className="space-y-3">
       <div>
@@ -41,10 +53,8 @@ export function PlayerConsignmentsPanel({
         <div className="border-b mt-1" />
       </div>
       {playerConsignedLots.map((lot) => {
-        const lotHorse = horses.find((h) => h.id === lot.horseId);
-        const buyer = lot.soldToStableId
-          ? stables.find((s) => s.id === lot.soldToStableId)
-          : undefined;
+        const lotHorse = horseMap.get(lot.horseId);
+        const buyer = lot.soldToStableId ? stableMap.get(lot.soldToStableId) : undefined;
 
         return (
           <Card key={lot.id}>

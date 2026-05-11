@@ -56,12 +56,11 @@ export function randomOwnerName(rng: Rng): string {
  * Creates a budget-tier stable with procedurally generated name, owner, country,
  * personality, and other properties. Used to populate the world with background stables.
  *
- * @param index - Index for generation (currently unused)
  * @param day - Current game day for founding date calculation
  * @param rng - Random number generator
  * @returns Generated filler stable
  */
-export function generateFillerStable(index: number, day: number, rng: Rng): Stable {
+export function generateFillerStable(day: number, rng: Rng): Stable {
   const prefix = rng.pick(FILLER_PREFIXES);
   const suffix = rng.pick(FILLER_SUFFIXES);
   const owner = randomOwnerName(rng);

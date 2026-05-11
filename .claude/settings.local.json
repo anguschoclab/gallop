@@ -58,7 +58,8 @@
       "Bash(sed -n '110,125p' src/game/store/slices/breedingSlice.ts)",
       "Bash(sed -n '20,35p' src/game/store/slices/horseAdminSlice.ts)",
       "Bash(sed -i 's/import { computeCoiFromSnapshot } from \"@\\\\/core\\\\/breeding\\\\/populationGenetics\";/import { computeProspectiveCoi } from \"@\\\\/core\\\\/breeding\\\\/populationGenetics\";/' src/core/genetics/breedingSimulator.ts)",
-      "Bash(sed -i 's/coiEstimate: 0, \\\\/\\\\/ TODO: Implement computeProspectiveCoi/coiEstimate: computeProspectiveCoi\\(sire, dam\\),/' src/core/genetics/breedingSimulator.ts)"
+      "Bash(sed -i 's/coiEstimate: 0, \\\\/\\\\/ TODO: Implement computeProspectiveCoi/coiEstimate: computeProspectiveCoi\\(sire, dam\\),/' src/core/genetics/breedingSimulator.ts)",
+      "Bash(claude plugin *)"
     ]
   }
 }
