@@ -8,9 +8,9 @@ import {
   generateAuctionLots,
   resolveAuctionSale,
   netProceeds,
-  CONSIGNMENT_COMMISSION,
   personalityConsignmentPolicy,
 } from "@/game/auction";
+import { CONSIGNMENT_COMMISSION } from "@/game/constants/gameConstants";
 import { createRng } from "@/game/rng";
 import { createAuctionRunner } from "@/game/auctionRunner";
 import type { GameState, Horse, Stable } from "@/game/types";

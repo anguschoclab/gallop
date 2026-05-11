@@ -2,8 +2,12 @@ import type { Horse } from "@/game/types";
 import { TRAIT_SCORE } from "@/core/genetics/phenotype";
 
 /**
- * Calculate conformation compatibility
- * Conformation is the single most important factor
+ * Calculate conformation compatibility between a sire and a dam.
+ * Conformation is the single most important factor for physical soundness.
+ *
+ * @param sire - The stallion
+ * @param dam - The mare
+ * @returns Score and descriptive summary
  */
 export function calculateConformationCompatibility(
   sire: Horse,
@@ -28,8 +32,12 @@ export function calculateConformationCompatibility(
 }
 
 /**
- * Calculate temperament compatibility
- * Temperament is important for racehorse confidence
+ * Calculate temperament compatibility between a sire and a dam.
+ * Temperament is important for racehorse confidence and focus.
+ *
+ * @param sire - The stallion
+ * @param dam - The mare
+ * @returns Score and descriptive summary
  */
 export function calculateTemperamentCompatibility(
   sire: Horse,

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
 import { AlertTriangle } from "lucide-react";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import type { Race } from "@/game/types";
 
 interface RaceRowProps {

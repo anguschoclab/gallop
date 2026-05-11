@@ -1,10 +1,28 @@
+/**
+ * exportPortrait.ts - Horse portrait export functionality
+ *
+ * This file provides client-side horse portrait export to PNG, rendering procedural
+ * SVG portraits to canvas and triggering downloads.
+ *
+ * Dependencies: @/game/types (Horse), ./proceduralPortrait (getOrDeriveAppearance)
+ * Related files: proceduralPortrait.ts (procedural generation), portrait.ts (static assets)
+ */
+
 import type { Horse } from "@/game/types";
 import { getOrDeriveAppearance } from "@/core/horse/proceduralPortrait";
 
 /**
  * Render a procedural horse portrait to a PNG and trigger a download.
+ *
  * Works fully client-side: serializes the rendered SVG, draws it onto a
  * canvas at the requested resolution, and saves via an anchor click.
+ *
+ * @param horse - Horse object with id, name, coatColor, markings, gender, and appearance
+ * @param options - Export configuration
+ * @param options.view - View type: "head" or "full" (defaults to "full")
+ * @param options.size - Image size in pixels (defaults to 1024)
+ * @param options.filename - Optional custom filename (defaults to "{name}_{view}.png")
+ * @returns Promise that resolves when the download is triggered
  */
 export async function exportHorsePortraitPng(
   horse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance">,
@@ -67,6 +85,12 @@ export async function exportHorsePortraitPng(
   }
 }
 
+/**
+ * Helper to load an image from a source URL into an HTMLImageElement.
+ *
+ * @param src - The image source URL
+ * @returns Promise that resolves with the loaded Image element
+ */
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();

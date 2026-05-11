@@ -1,60 +1,53 @@
+/**
+ * npcHorseGen.ts - NPC stable horse generation
+ *
+ * This file generates horses for NPC stables based on tier, age categories, and
+ * AI state, including initial fame calculation and stud fee determination.
+ *
+ * Dependencies: ./types (Horse, Stable, StableTier), ./rng (Rng), @/core/horse/horseFactory (generateNpcHorse), @/core/common/random (rand), @/core/breeding/stallions (shouldRetireAtStartup, initialStandingFee, defaultStudParams), @/core/ai/horseGenAI (shouldGenerateHorseOfAge, createHorseGenAIState, recordHorseGeneration), @/core/ai/npcCycleAI (NpcAIManager), ./npcHorseGenHelpers (AgeCategory, getAgeFromCategory, calculateStartingFame)
+ * Related files: npcStables.ts (uses horse generation), npcHorseGenHelpers.ts (helper functions)
+ */
+
 import type { Horse, Stable, StableTier } from "./types";
 import type { Rng } from "./rng";
-import {
-  createHorseFromDNA,
-  generateNpcHorse as _generateNpcHorse,
-} from "@/core/horse/horseFactory";
-import { generateResearchBasedGenotype } from "@/core/genetics/generation";
+import { generateNpcHorse as _generateNpcHorse } from "@/core/horse/horseFactory";
 import { rand } from "@/core/common/random";
 import {
   shouldRetireAtStartup,
   initialStandingFee,
   defaultStudParams,
 } from "@/core/breeding/stallions";
-import { rollProceduralFamily } from "@/core/breeding/bruceLowe";
-import { resolveBloodline } from "@/core/breeding/populationGenetics";
 import {
   shouldGenerateHorseOfAge,
   createHorseGenAIState,
   recordHorseGeneration,
 } from "@/core/ai/horseGenAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { activeStallions2020s } from "@/core/data/pedigreeData";
-import { mapStallionToStable } from "./npcStables";
-
-// ─── Internal helpers ─────────────────────────────────────────────────────────
-
-type AgeCategory = "2yo" | "prime" | "veteran" | "breeding";
-
-function rollAgeCategory(rng: Rng): AgeCategory {
-  const r = rng.next();
-  if (r < 0.3) return "2yo";
-  if (r < 0.7) return "prime";
-  if (r < 0.9) return "veteran";
-  return "breeding";
-}
-
-function getAgeFromCategory(cat: AgeCategory, rng: Rng): number {
-  switch (cat) {
-    case "2yo":
-      return 2;
-    case "prime":
-      return rng.next() < 0.5 ? 3 : 4;
-    case "veteran":
-      return rng.next() < 0.5 ? 5 : 6;
-    case "breeding":
-      return rand(7, 10, rng);
-  }
-}
-
-function calculateStartingFame(tier: StableTier, age: number, rng: Rng): number {
-  const base =
-    tier === "elite" ? rand(20, 40, rng) : tier === "mid" ? rand(10, 25, rng) : rand(0, 15, rng);
-  return Math.min(100, base + (age - 2) * 3);
-}
+import { type AgeCategory, getAgeFromCategory, calculateStartingFame } from "./npcHorseGenHelpers";
+import {
+  NPC_HORSE_COUNT_ELITE_MIN,
+  NPC_HORSE_COUNT_ELITE_MAX,
+  NPC_HORSE_COUNT_MID_MIN,
+  NPC_HORSE_COUNT_MID_MAX,
+  NPC_HORSE_COUNT_BUDGET_MIN,
+  NPC_HORSE_COUNT_BUDGET_MAX,
+} from "@/game/constants/gameConstants";
 
 // ─── Stable horse generation ──────────────────────────────────────────────────
 
+/**
+ * Generate horses for an NPC stable.
+ *
+ * Uses AI-driven age distribution when AI manager is available, otherwise uses
+ * tier-based distribution. Calculates starting fame for each horse.
+ *
+ * @param stable - The stable to generate horses for
+ * @param rng - Random number generator
+ * @param usedNames - Set of used horse names to avoid duplicates
+ * @param npcAIManager - Optional AI manager for AI-driven generation
+ * @param currentDay - Current simulation day for AI learning
+ * @returns Array of generated horses
+ */
 export function generateStableHorses(
   stable: Stable,
   rng: Rng,
@@ -64,7 +57,7 @@ export function generateStableHorses(
 ): Horse[] {
   const horses: Horse[] = [];
 
-  const aiState = npcAIManager?.stableStates.get(stable.id);
+  const aiState = npcAIManager?.stableStates[stable.id];
   if (aiState && !aiState.horseGenAI) {
     aiState.horseGenAI = createHorseGenAIState(stable);
   }
@@ -75,13 +68,13 @@ export function generateStableHorses(
   } else {
     switch (stable.tier) {
       case "elite":
-        targetCount = rand(30, 40, rng);
+        targetCount = rand(NPC_HORSE_COUNT_ELITE_MIN, NPC_HORSE_COUNT_ELITE_MAX, rng);
         break;
       case "mid":
-        targetCount = rand(20, 30, rng);
+        targetCount = rand(NPC_HORSE_COUNT_MID_MIN, NPC_HORSE_COUNT_MID_MAX, rng);
         break;
       default:
-        targetCount = rand(15, 25, rng);
+        targetCount = rand(NPC_HORSE_COUNT_BUDGET_MIN, NPC_HORSE_COUNT_BUDGET_MAX, rng);
         break;
     }
   }
@@ -126,6 +119,19 @@ export function generateStableHorses(
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
+/**
+ * Generate horses for all NPC stables.
+ *
+ * Integrates famous stallions if provided, sets up stud careers for retiring horses,
+ * and returns updated stables with horse IDs and all horses.
+ *
+ * @param stables - All NPC stables
+ * @param rng - Random number generator
+ * @param npcAIManager - Optional AI manager for AI-driven generation
+ * @param currentDay - Current simulation day for AI learning
+ * @param famousStallions - Optional famous stallions to integrate
+ * @returns Object with updated stables, all horses, and used names
+ */
 export function generateAllNpcHorses(
   stables: Stable[],
   rng: Rng,
@@ -145,7 +151,6 @@ export function generateAllNpcHorses(
         if (!stallionsByStable.has(s.stableId)) stallionsByStable.set(s.stableId, []);
         stallionsByStable.get(s.stableId)!.push(s);
       }
-      allHorses.push(s);
     }
   }
 
@@ -176,77 +181,4 @@ export function generateAllNpcHorses(
   }
 
   return { stables: updatedStables, horses: allHorses, usedNames };
-}
-
-export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
-  const famousStallions: Horse[] = [];
-  const active = activeStallions2020s.filter((s) => s.currentStatus === "active");
-
-  for (const data of active) {
-    const stable = mapStallionToStable(data, stables);
-    const age = 2026 - (data.birthYear ?? 2020);
-    const tier: StableTier =
-      (data.studFee ?? 0) >= 100000 ? "elite" : (data.studFee ?? 0) >= 25000 ? "mid" : "budget";
-
-    const genotype = generateResearchBasedGenotype(
-      data.name,
-      tier,
-      data.dosageGroups,
-      data.achievements,
-    );
-    const horse = createHorseFromDNA(genotype, rng, {
-      name: data.name,
-      age,
-      gender: "horse",
-      hemisphere: data.hemisphere ?? "Northern",
-      owned: false,
-    });
-
-    horse.sireName = data.sire;
-    horse.damName = data.dam;
-    horse.stableId = stable.id;
-    horse.bloodline = resolveBloodline(horse, { horses: [] });
-    horse.bruceLoweFamily = data.bruceLoweFamily ?? rollProceduralFamily(rng);
-    horse.fame = Math.min(
-      100,
-      ((data.studFee ?? 0) >= 200000 ? 70 : (data.studFee ?? 0) >= 100000 ? 50 : 30) +
-        (age - 4) * 2,
-    );
-    horse.stud = {
-      atStud: true,
-      standingFee: data.studFee ?? 50000,
-      bookSize: data.bookSize ?? 150,
-      seasonBookings: 0,
-      lifetimeFoals: 0,
-      lifetimeStakesFoals: 0,
-      lifetimeG1Foals: 0,
-      retiredOnDay: 1,
-    };
-
-    famousStallions.push(horse);
-  }
-
-  return famousStallions;
-}
-
-export function calculateNpcHorseValue(horse: Horse, stableTier: StableTier): number {
-  const overall =
-    (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration + horse.stats.consistency) /
-    4;
-  const ageMod = horse.age <= 3 ? 1.3 : horse.age >= 7 ? 0.5 : 0.9;
-  const fameMod = 1 + horse.fame / 200;
-  const tierMod = stableTier === "elite" ? 1.5 : stableTier === "mid" ? 1.2 : 1.0;
-  return Math.round((overall * 100 * ageMod * fameMod * tierMod) / 100) * 100;
-}
-
-export function getStudFee(horse: Horse, stable: Stable): number {
-  if (horse.gender !== "horse" && horse.gender !== "colt") return 0;
-  if (horse.age < 4) return 0;
-  return calculateNpcHorseValue(horse, stable.tier);
-}
-
-export function getBroodmareFee(horse: Horse, stable: Stable): number {
-  if (horse.gender !== "mare" && horse.gender !== "filly") return 0;
-  if (horse.age < 3) return 0;
-  return Math.round(calculateNpcHorseValue(horse, stable.tier) * 0.3);
 }

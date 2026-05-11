@@ -1,122 +1,34 @@
+/**
+ * stableGeneration.ts - Stable generation
+ *
+ * This file provides functions for generating random stable names, owner names,
+ * and filler stables with procedurally generated properties.
+ *
+ * Dependencies: @/game/types (Stable, StableTier, StablePersonality), @/game/rng (Rng), @/game/uuid (generateUUID), ./stableSelection (selectPersonality, getSpecialistPreferences), @/core/horse/visuals (randomSilk), ./stablePoolData (FILLER_PREFIXES, FILLER_SUFFIXES, FILLER_OWNERS, FILLER_COUNTRIES, StablePoolEntry)
+ * Related files: stablePoolData.ts (provides pool data), stableSelection.ts (provides selection logic)
+ */
+
 import type { Stable, StableTier, StablePersonality } from "@/game/types";
 import type { Rng } from "@/game/rng";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { selectPersonality, getSpecialistPreferences } from "@/core/stable/stableSelection";
 import { randomSilk } from "@/core/horse/visuals";
-
-// Base stable info without generated fields
-export type StablePoolEntry = Omit<
-  Stable,
-  | "id"
-  | "founded"
-  | "cash"
-  | "horses"
-  | "tier"
-  | "reputation"
-  | "personality"
-  | "preferredDistance"
-  | "preferredSurface"
->;
-
-// Filler stable name components for generation
-export const FILLER_PREFIXES = [
-  "Oak",
-  "Pine",
-  "Maple",
-  "Cedar",
-  "Willow",
-  "Birch",
-  "Elm",
-  "Ash",
-  "Spring",
-  "Summer",
-  "Autumn",
-  "Winter",
-  "Morning",
-  "Evening",
-  "Sunset",
-  "Golden",
-  "Silver",
-  "Copper",
-  "Iron",
-  "Diamond",
-  "Ruby",
-  "Emerald",
-  "Royal",
-  "Crown",
-  "Imperial",
-  "Sovereign",
-  "Regal",
-  "Noble",
-  "Running",
-  "Galloping",
-  "Flying",
-  "Racing",
-  "Thunder",
-  "Lightning",
-  "Prairie",
-  "Meadow",
-  "Valley",
-  "Ridge",
-  "Hill",
-  "Brook",
-  "Creek",
-  "Star",
-  "Moon",
-  "Sun",
-  "Sky",
-  "Cloud",
-  "Storm",
-  "Rain",
-  "Victory",
-  "Champion",
-  "Winner",
-  "Triumph",
-  "Glory",
-];
-
-export const FILLER_SUFFIXES = [
-  "Racing",
-  "Stables",
-  "Farm",
-  "Stud",
-  "Thoroughbreds",
-  "Bloodstock",
-  "Ranch",
-  "Meadows",
-  "Acres",
-  "Fields",
-  "Estates",
-  "Park",
-  "Lane Stables",
-  "Ridge Farm",
-  "Valley Stud",
-  "Hill Racing",
-  "Downs",
-  "Heights",
-  "Hollow",
-  "Glen",
-  "Crossing",
-  "Point",
-];
-
-const FILLER_OWNERS = [
-  "Racing Partnership",
-  "Thoroughbred LLC",
-  "Bloodstock Group",
-  "Racing Syndicate",
-  "Farm Inc.",
-  "Stables Ltd",
-  "Racing Club",
-  "Partnership Group",
-  "Investment LLC",
-  "Bloodstock Partners",
-  "Racing Ventures",
-  "Farm Group",
-];
+import {
+  FILLER_PREFIXES,
+  FILLER_SUFFIXES,
+  FILLER_OWNERS,
+  FILLER_COUNTRIES,
+  type StablePoolEntry,
+} from "./stablePoolData";
+import { FIRST_NAMES, LAST_NAMES } from "./personNames";
 
 /**
- * Generate a random stable name using filler prefixes and suffixes
+ * Generate a random stable name using filler prefixes and suffixes.
+ *
+ * Combines a random prefix and suffix from the filler pool to create a unique stable name.
+ *
+ * @param rng - Random number generator
+ * @returns Generated stable name
  */
 export function randomStableName(rng: Rng): string {
   const prefix = rng.pick(FILLER_PREFIXES);
@@ -125,39 +37,34 @@ export function randomStableName(rng: Rng): string {
 }
 
 /**
- * Generate a random owner name using filler owners
+ * Generate a random owner name using procedural name pools.
+ *
+ * Selects a random first and last name to create a realistic person name.
+ *
+ * @param rng - Random number generator
+ * @returns Generated owner name
  */
 export function randomOwnerName(rng: Rng): string {
-  return rng.pick(FILLER_OWNERS);
+  const first = rng.pick(FIRST_NAMES);
+  const last = rng.pick(LAST_NAMES);
+  return `${first} ${last}`;
 }
 
-const FILLER_COUNTRIES = [
-  "USA",
-  "UK",
-  "Ireland",
-  "France",
-  "Germany",
-  "Italy",
-  "Spain",
-  "Japan",
-  "Australia",
-  "New Zealand",
-  "Hong Kong",
-  "Singapore",
-  "UAE",
-  "South Africa",
-  "Argentina",
-  "Brazil",
-  "Canada",
-];
-
 /**
- * Generate a single filler stable
+ * Generate a single filler stable.
+ *
+ * Creates a budget-tier stable with procedurally generated name, owner, country,
+ * personality, and other properties. Used to populate the world with background stables.
+ *
+ * @param index - Index for generation (currently unused)
+ * @param day - Current game day for founding date calculation
+ * @param rng - Random number generator
+ * @returns Generated filler stable
  */
 export function generateFillerStable(index: number, day: number, rng: Rng): Stable {
   const prefix = rng.pick(FILLER_PREFIXES);
   const suffix = rng.pick(FILLER_SUFFIXES);
-  const owner = rng.pick(FILLER_OWNERS);
+  const owner = randomOwnerName(rng);
   const country = rng.pick(FILLER_COUNTRIES);
   const personality = selectPersonality("budget", rng);
   const isSpecialist = personality === "specialist";
@@ -180,7 +87,17 @@ export function generateFillerStable(index: number, day: number, rng: Rng): Stab
 }
 
 /**
- * Generate a stable from a template pool entry
+ * Generate a stable from a template pool entry.
+ *
+ * Creates a stable from a predefined template with tier-specific cash ranges,
+ * reputation, founding date, and personality. Used for generating named stables.
+ *
+ * @param template - Stable pool entry with name and owner
+ * @param tier - Stable tier (elite, mid, budget)
+ * @param reputationRange - Min/max reputation range for the tier
+ * @param day - Current game day for founding date calculation
+ * @param rng - Random number generator
+ * @returns Generated stable
  */
 export function generateStableFromTemplate(
   template: StablePoolEntry,

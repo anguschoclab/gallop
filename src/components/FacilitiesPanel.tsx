@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import {
   FACILITY_UPGRADE_COSTS,
@@ -9,51 +9,50 @@ import {
   type FacilityType,
   type FacilityLevel,
 } from "@/core/facilities";
-import { ArrowUp, Check, X, Dumbbell } from "lucide-react";
-import { formatCurrency } from "@/components/HorseBits";
+import { ArrowUp, Check, X, Dumbbell, ShieldCheck, Zap, Activity, Package, HardDrive } from "lucide-react";
+import { formatCurrency } from "@/lib/formatting";
+import { cn } from "@/lib/utils";
 
 /**
  * Facilities Panel Component
- * Displays player's facilities and allows upgrading them
+ * Redesigned for the "Infrastructure Registry" aesthetic
  */
 export function FacilitiesPanel() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const facilities = (useGame as any)((s: any) => s.facilities, shallow);
+  const facilities = useGameWithShallow((s) => s.facilities);
   const cash = useGame((s) => s.cash);
   const upgradeFacility = useGame((s) => s.upgradeFacility);
-  const day = useGame((s) => s.day);
 
   if (!facilities) {
     return null;
   }
 
-  const facilityTypes: FacilityType[] = [
-    "main_track",
-    "barn",
-    "exercise_pool",
-    "treadmill",
-    "veterinary_clinic",
-    "starting_gates",
-    "transport",
-    "spa",
-    "nutrition_lab",
-    "rehab_center",
-  ];
+  const facilityCategories: Record<string, { types: FacilityType[], icon: any, color: string }> = {
+    "Physical Optimization": {
+      types: ["main_track", "starting_gates", "treadmill", "exercise_pool"],
+      icon: Dumbbell,
+      color: "text-gold"
+    },
+    "Medical & Wellness": {
+      types: ["veterinary_clinic", "rehab_center", "spa", "nutrition_lab"],
+      icon: Activity,
+      color: "text-blue-400"
+    },
+    "Logistics & Housing": {
+      types: ["barn", "transport"],
+      icon: Package,
+      color: "text-success"
+    }
+  };
 
   const FACILITY_LEVELS: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
 
-  const getLevelColor = (level: string) => {
+  const getRankValue = (level: string) => {
     switch (level) {
-      case "basic":
-        return "bg-t600";
-      case "standard":
-        return "bg-info";
-      case "premium":
-        return "bg-chart-4";
-      case "elite":
-        return "bg-gold";
-      default:
-        return "bg-t600";
+      case "basic": return 1;
+      case "standard": return 2;
+      case "premium": return 3;
+      case "elite": return 4;
+      default: return 0;
     }
   };
 
@@ -65,97 +64,138 @@ export function FacilitiesPanel() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold font-[family-name:var(--font-display)]">Facilities</h2>
-          <p className="text-sm text-cream-muted">
-            Upgrade your facilities to improve training and operations
-          </p>
+    <div className="space-y-12">
+      <div className="flex items-center justify-between bg-black/40 p-6 border border-white/5 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1 h-full bg-gold" />
+        <div className="relative z-10">
+          <h2 className="text-xl font-black font-[family-name:var(--font-display)] text-cream uppercase tracking-widest flex items-center gap-2">
+             <ShieldCheck className="h-5 w-5 text-gold" />
+             Infrastructure Liquidity
+          </h2>
+          <p className="text-[10px] font-mono text-cream/40 uppercase tracking-tighter mt-1">Available operational capital for asset upgrades</p>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-cream-muted">Available Cash</p>
-          <p className="text-2xl font-bold">{formatCurrency(cash)}</p>
+        <div className="relative z-10 text-right">
+          <div className="text-[10px] font-mono text-gold-muted/60 uppercase font-black tracking-widest mb-1">CASH_ON_HAND</div>
+          <div className="text-3xl font-black font-mono text-success tabular-nums leading-none tracking-tighter">
+             {formatCurrency(cash)}
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {facilityTypes.map((type) => {
-          const facility = facilities[type];
-          if (!facility) return null;
+      {Object.entries(facilityCategories).map(([category, data]) => (
+        <section key={category} className="space-y-6">
+          <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
+             <data.icon className={cn("h-4 w-4", data.color)} />
+             <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">{category}</h3>
+          </div>
 
-          const currentLevelIndex = FACILITY_LEVELS.indexOf(facility.level);
-          const maxLevel = currentLevelIndex >= FACILITY_LEVELS.length - 1;
-          const upgradeCost = facility.upgradeCost;
-          const canAfford = cash >= upgradeCost;
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {data.types.map((type) => {
+              const facility = facilities[type];
+              if (!facility) return null;
 
-          return (
-            <Card key={type}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base capitalize">{type.replace(/_/g, " ")}</CardTitle>
-                  <Badge className={getLevelColor(facility.level)}>{facility.level}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="text-sm space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Maintenance Cost</span>
-                    <span>{formatCurrency(facility.maintenanceCost)}/day</span>
-                  </div>
-                  {!maxLevel && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Upgrade Cost</span>
-                      <span className="font-semibold">{formatCurrency(upgradeCost)}</span>
+              const currentLevelIndex = FACILITY_LEVELS.indexOf(facility.level);
+              const maxLevel = currentLevelIndex >= FACILITY_LEVELS.length - 1;
+              const upgradeCost = facility.upgradeCost;
+              const canAfford = cash >= upgradeCost;
+              const rankVal = getRankValue(facility.level);
+
+              return (
+                <Card key={type} className="bg-slate-900/40 border-white/5 rounded-none group hover:border-white/20 transition-all duration-300 relative overflow-hidden shadow-xl">
+                  <div className="absolute top-0 left-0 w-full h-0.5 bg-white/5 group-hover:bg-gold/40 transition-colors" />
+                  
+                  <CardHeader className="pb-3 bg-black/20 border-b border-white/5">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <CardTitle className="text-sm font-black uppercase tracking-tight text-cream group-hover:text-gold transition-colors leading-none">
+                           {type.replace(/_/g, " ")}
+                        </CardTitle>
+                        <div className="flex gap-1 pt-1">
+                           {[1, 2, 3, 4].map(i => (
+                             <div key={i} className={cn(
+                                "h-1 w-3 rounded-full",
+                                i <= rankVal ? "bg-gold shadow-[0_0_8px_rgba(212,175,55,0.4)]" : "bg-white/5"
+                             )} />
+                           ))}
+                        </div>
+                      </div>
+                      <Badge variant="outline" className={cn(
+                        "text-[8px] font-black uppercase tracking-widest h-5 rounded-none px-2",
+                        rankVal === 4 ? "border-gold text-gold bg-gold/5" : "border-white/10 text-cream/40"
+                      )}>
+                        RANK_0{rankVal}
+                      </Badge>
                     </div>
-                  )}
-                </div>
+                  </CardHeader>
 
-                {/* Display enabled workouts */}
-                {FACILITY_ENABLED_WORKOUTS[type] && FACILITY_ENABLED_WORKOUTS[type].length > 0 && (
-                  <div className="pt-2 border-t">
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-                      <Dumbbell className="h-3 w-3" />
-                      <span>Enables:</span>
+                  <CardContent className="p-5 space-y-5">
+                    <div className="grid grid-cols-2 gap-4">
+                       <div className="space-y-1">
+                          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">Maintenance</div>
+                          <div className="text-xs font-mono font-bold text-cream/60 tabular-nums">-{formatCurrency(facility.maintenanceCost)}<span className="text-[8px] opacity-40">/D</span></div>
+                       </div>
+                       {!maxLevel && (
+                          <div className="space-y-1 text-right">
+                             <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">Upgrade Cost</div>
+                             <div className={cn("text-xs font-mono font-bold tabular-nums", canAfford ? "text-success" : "text-destructive/60")}>
+                                {formatCurrency(upgradeCost)}
+                             </div>
+                          </div>
+                       )}
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                      {FACILITY_ENABLED_WORKOUTS[type].map((workout) => (
-                        <Badge key={workout} variant="outline" className="text-[10px] capitalize">
-                          {workout.replace("_", " ")}
-                        </Badge>
-                      ))}
+
+                    {/* Enabled workouts as Technical Capabilities */}
+                    {FACILITY_ENABLED_WORKOUTS[type] && FACILITY_ENABLED_WORKOUTS[type].length > 0 && (
+                      <div className="space-y-2">
+                        <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.2em] flex items-center gap-1.5 px-1">
+                          <HardDrive className="h-2.5 w-2.5 opacity-40" />
+                          Enabled_Specs
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {FACILITY_ENABLED_WORKOUTS[type].map((workout) => (
+                            <div key={workout} className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-cream/60 uppercase tracking-tighter rounded-sm">
+                              {workout.replace("_", " ")}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="pt-2">
+                      {maxLevel ? (
+                        <div className="flex items-center justify-center gap-2 p-2 bg-success/5 border border-success/20">
+                          <Check className="h-3 w-3 text-success" />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-success">Optimal Performance</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                           <Button
+                            onClick={() => handleUpgrade(type)}
+                            disabled={!canAfford}
+                            variant={canAfford ? "default" : "outline"}
+                            className={cn(
+                               "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
+                               canAfford 
+                                ? "bg-gold hover:bg-gold-bright text-slate-950 shadow-lg" 
+                                : "border-white/5 text-cream/20 bg-transparent"
+                            )}
+                          >
+                            <ArrowUp className="h-3 w-3 mr-2" />
+                            Provision Level_{rankVal + 1}
+                          </Button>
+                          {!canAfford && (
+                            <p className="text-center text-[8px] font-black uppercase text-destructive/40 tracking-tighter animate-pulse">Insufficient Capital Reserves</p>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
-
-                {maxLevel ? (
-                  <div className="flex items-center gap-2 text-sm text-cream-muted">
-                    <Check className="h-4 w-4 text-success" />
-                    <span>Maximum level reached</span>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() => handleUpgrade(type)}
-                    disabled={!canAfford}
-                    className="w-full"
-                    size="sm"
-                  >
-                    <ArrowUp className="h-4 w-4 mr-2" />
-                    Upgrade to {FACILITY_LEVELS[currentLevelIndex + 1]}
-                  </Button>
-                )}
-
-                {!maxLevel && !canAfford && (
-                  <div className="flex items-center gap-2 text-xs text-cream-muted">
-                    <X className="h-3 w-3" />
-                    <span>Insufficient funds</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }

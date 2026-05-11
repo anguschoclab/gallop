@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateFounderEffect, calculateInbreedingCoefficient } from "./inbreedingCalculator";
+import { calculateFounderEffect } from "./inbreedingCalculator";
 
 describe("inbreedingCalculator", () => {
   describe("calculateFounderEffect", () => {
@@ -22,32 +22,6 @@ describe("inbreedingCalculator", () => {
       if (result.warning) {
         expect(result.warning).toMatch(/inbreeding|founder/i);
       }
-    });
-  });
-
-  describe("calculateInbreedingCoefficient", () => {
-    it("calculates inbreeding coefficient for two horse names", () => {
-      const result = calculateInbreedingCoefficient("SireName", "DamName");
-
-      expect(result).toHaveProperty("coefficient");
-      expect(result.coefficient).toBeGreaterThanOrEqual(0);
-      expect(result.coefficient).toBeLessThanOrEqual(1);
-      expect(result).toHaveProperty("warning");
-      expect(typeof result.warning).toBe("string");
-    });
-
-    it("returns higher coefficient for closely related horses", () => {
-      const unrelated = calculateInbreedingCoefficient("HorseA", "HorseB");
-      const related = calculateInbreedingCoefficient("SameName", "SameName");
-
-      expect(related.coefficient).toBeGreaterThanOrEqual(unrelated.coefficient);
-    });
-
-    it("returns warning for high inbreeding coefficient", () => {
-      const result = calculateInbreedingCoefficient("SameName", "SameName");
-
-      expect(result.warning).toBeTruthy();
-      expect(result.warning).toMatch(/inbreeding|high/i);
     });
   });
 });

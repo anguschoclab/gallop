@@ -1,14 +1,27 @@
+/**
+ * beyer.ts - Beyer-style speed figure calculation
+ *
+ * This file provides lightweight Beyer-style speed figure calculation based on
+ * finish time vs par time, with optional calibrated pars and class bonuses.
+ *
+ * Dependencies: ./types (Horse), ./tracks (CourseSpecification)
+ * Related files: raceSim.ts (uses Beyer figures for race results), projections.ts (uses for race analysis)
+ */
+
 // Lightweight Beyer-style speed figure.
 // Real Beyer figures use track-specific daily variants from par times.
 // We approximate: figure scales linearly with how far finish time beats a
 // par time for the distance, with grade/race-class adding a small uplift.
 // Output is clamped 30..125 (Beyer "Big Figs" rarely exceed 120).
-import type { Horse, CourseSpecification } from "./types";
+import type { Horse } from "./types";
+import type { CourseSpecification } from "./tracks";
+import { BEYER_MIN, BEYER_MAX, BEYER_BASE } from "@/game/constants/gameConstants";
 
 export type BeyerInput = {
   distance: number; // meters
   finishTime: number; // seconds
   classBonus?: number; // 0..10 — grade/stakes uplift
+  calibratedPars?: Record<number, number>; // Optional injected pars
 };
 
 // Default par time (s) for an "average" winner at a given distance.
@@ -17,30 +30,34 @@ function defaultParTime(distance: number): number {
   return distance / 16.7; // ~60s per 1000m
 }
 
-// Calibrated par lookup, populated by the simulator each "season" from
-// observed finish times. Keys are 200m-rounded distance buckets.
-let CALIBRATED_PARS: Record<number, number> = {};
-
+/**
+ * Calculate distance bucket for par time calibration.
+ *
+ * @param distance - Race distance in meters
+ * @returns Distance bucket (rounded to nearest 200m)
+ */
 export function distanceBucket(distance: number): number {
   return Math.max(200, Math.round(distance / 200) * 200);
 }
 
-export function setCalibratedPars(pars: Record<number, number>) {
-  CALIBRATED_PARS = { ...pars };
-}
-
-export function getCalibratedPars(): Record<number, number> {
-  return CALIBRATED_PARS;
-}
-
-export function parTime(distance: number): number {
+/**
+ * Calculate par time for a given distance.
+ *
+ * Uses calibrated pars if available, otherwise falls back to analytical default.
+ * Blends with neighboring bucket data for smooth interpolation.
+ *
+ * @param distance - Race distance in meters
+ * @param calibratedPars - Optional calibrated par times by distance bucket
+ * @returns Par time in seconds
+ */
+export function parTime(distance: number, calibratedPars: Record<number, number> = {}): number {
   const b = distanceBucket(distance);
   // Blend: if calibration exists for this bucket, lean on it; otherwise fall
   // back to the analytical default. Also nudge toward neighboring buckets so
   // an unsampled distance still benefits from nearby data.
-  const direct = CALIBRATED_PARS[b];
+  const direct = calibratedPars[b];
   if (direct) return direct * (distance / b);
-  const neighbors = [b - 200, b + 200].map((k) => CALIBRATED_PARS[k]).filter(Boolean);
+  const neighbors = [b - 200, b + 200].map((k) => calibratedPars[k]).filter(Boolean);
   if (neighbors.length) {
     const avg = neighbors.reduce((s, v) => s + v, 0) / neighbors.length;
     return avg * (distance / b);
@@ -48,22 +65,52 @@ export function parTime(distance: number): number {
   return defaultParTime(distance);
 }
 
-export function beyerFigure({ distance, finishTime, classBonus = 0 }: BeyerInput): number {
+/**
+ * Calculate Beyer-style speed figure.
+ *
+ * Scales linearly with how far finish time beats par time, with grade/race-class uplift.
+ * Output clamped to 30-125 (Beyer "Big Figs" rarely exceed 120).
+ *
+ * @param input - Beyer calculation parameters
+ * @param input.distance - Race distance in meters
+ * @param input.finishTime - Finish time in seconds
+ * @param input.classBonus - Optional grade/stakes uplift
+ * @param input.calibratedPars - Optional calibrated par times
+ * @returns Beyer figure (30-125)
+ */
+export function beyerFigure({
+  distance,
+  finishTime,
+  classBonus = 0,
+  calibratedPars = {},
+}: BeyerInput): number {
   if (!isFinite(finishTime) || finishTime <= 0) return 0;
-  const par = parTime(distance);
+  const par = parTime(distance, calibratedPars);
   // Each ~1% faster than par = ~5 Beyer points.
   const delta = (par - finishTime) / par;
-  const fig = 80 + delta * 500 + classBonus;
-  return Math.max(30, Math.min(125, Math.round(fig)));
+  const fig = BEYER_BASE + delta * 500 + classBonus;
+  return Math.max(BEYER_MIN, Math.min(BEYER_MAX, Math.round(fig)));
 }
 
-// Estimate a horse's expected Beyer at a given distance based on current
-// stats, form, energy, and track complexity.
+/**
+ * Estimate a horse's expected Beyer at a given distance.
+ *
+ * Calculates expected Beyer based on current stats, form, energy, and track complexity.
+ * Applies penalties for tight turns and steep gradients based on horse aptitudes.
+ *
+ * @param h - Horse to calculate for
+ * @param distance - Race distance in meters
+ * @param classBonus - Optional class bonus (0-10)
+ * @param course - Optional course specification for complexity calculations
+ * @param calibratedPars - Optional calibrated par times by distance bucket
+ * @returns Expected Beyer figure
+ */
 export function expectedBeyer(
   h: Horse,
   distance: number,
   classBonus = 0,
   course?: CourseSpecification,
+  calibratedPars: Record<number, number> = {},
 ): number {
   const formMod = 1 + h.form / 100;
   const energyMod = 0.8 + (h.energy / 100) * 0.2;
@@ -98,14 +145,25 @@ export function expectedBeyer(
   // Average pace = 60% at top + 40% scaled by avg fade (1 + staminaFactor)/2.
   const avgPace = topSpeed * (0.6 + 0.4 * ((1 + staminaFactor) / 2));
   const finishTime = distance / Math.max(1, avgPace);
-  return beyerFigure({ distance, finishTime, classBonus });
+  return beyerFigure({ distance, finishTime, classBonus, calibratedPars });
 }
 
-// Calculate Beyer for a race result
+/**
+ * Calculate Beyer for a race result.
+ *
+ * Convenience wrapper for beyerFigure using individual parameters.
+ *
+ * @param distance - Race distance in meters
+ * @param finishTime - Finish time in seconds
+ * @param classBonus - Optional class bonus (0-10)
+ * @param calibratedPars - Optional calibrated par times by distance bucket
+ * @returns Beyer figure (30-125)
+ */
 export function calculateBeyerForResult(
   distance: number,
   finishTime: number,
   classBonus = 0,
+  calibratedPars: Record<number, number> = {},
 ): number {
-  return beyerFigure({ distance, finishTime, classBonus });
+  return beyerFigure({ distance, finishTime, classBonus, calibratedPars });
 }

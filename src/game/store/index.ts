@@ -1,4 +1,16 @@
 /**
+ * store/index.ts - Main Zustand store composition
+ *
+ * This file composes all state slices into the unified Zustand store, including
+ * racing, market, breeding, campaign, core, jockey, facility, settings, breeding
+ * program, horse admin, award, and utility slices. It also manages worker initialization
+ * and storage operations.
+ *
+ * Dependencies: zustand (create, persist, shallow), ./types (StoreType, NewGameOptions), ./slices/* (all slice creators), ./storage (createOpfsStorage, hydrationComplete, createRehydrateStore), ./initialization (createInitialState), comlink (wrap, expose), @/workers/engine.worker (EngineWorkerApi), @/workers/storage.worker (StorageWorkerApi), @/workers/initialization.worker (InitializationWorkerApi), @/core/resolver/intents (AnyIntent)
+ * Related files: All slice files in store/slices/, storage.ts (storage operations)
+ */
+
+/**
  * Main Store Index
  * Composes all slices into the unified Zustand store
  */
@@ -8,19 +20,82 @@ import { persist } from "zustand/middleware";
 import type { GameState } from "@/game/types";
 import { createRacingSlice, type RacingSlice } from "./slices/racingSlice";
 import { createMarketSlice, type MarketSlice } from "./slices/marketSlice";
+import { createScoutingSlice } from "./slices/scoutingSlice";
+import { createAuctionSlice } from "./slices/auctionSlice";
+import { createPrivateSaleSlice } from "./slices/privateSaleSlice";
 import { createBreedingSlice, type BreedingSlice } from "./slices/breedingSlice";
-import { createSystemsSlice, type SystemsSlice } from "./slices/systemsSlice";
 import { createCampaignSlice, type CampaignSlice } from "./slices/campaignSlice";
 import { createCoreSlice, type CoreSlice } from "./slices/coreSlice";
+import { createJockeySlice } from "./slices/jockeySlice";
+import { createFacilitySlice } from "./slices/facilitySlice";
+import { createSettingsSlice } from "./slices/settingsSlice";
+import { createBreedingProgramSlice } from "./slices/breedingProgramSlice";
+import { createHorseAdminSlice } from "./slices/horseAdminSlice";
+import { createAwardSlice } from "./slices/awardSlice";
+import { createUtilitySlice } from "./slices/utilitySlice";
 import { createOpfsStorage, hydrationComplete, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/state/coreState";
+
 import { shallow } from "zustand/shallow";
+import { useShallow } from "zustand/react/shallow";
 import { wrap, expose, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
-import { setCalibratedPars } from "@/game/beyer";
+import type { StoreType, ActionResult } from "./types";
+import type { NewGameOptions } from "@/game/state";
+import type { AnyIntent } from "@/core/resolver/intents";
+
+// List of state keys that should be persisted to storage.
+// Any new game state fields should be added here to ensure they survive a refresh.
+const PERSISTED_KEYS: (keyof GameState)[] = [
+  "day",
+  "cash",
+  "horses",
+  "market",
+  "races",
+  "trainingUsed",
+  "log",
+  "news",
+  "archive",
+  "pregnancies",
+  "activeBreedingProgram",
+  "triplecrownHistory",
+  "paceSamples",
+  "calibratedPars",
+  "lastCalibrationDay",
+  "npcStables",
+  "npcAIManager",
+  "scoutReports",
+  "auctions",
+  "jockeys",
+  "awards",
+  "campaigns",
+  "expenses",
+  "transactions",
+  "replays",
+  "reputation",
+  "transports",
+  "userSettings",
+  "facilities",
+  "npcFacilities",
+  "playerProfile",
+  "privateSaleOffers",
+  "claims",
+  "breedingPrograms",
+  "usedHorseNames",
+  "usedJockeyNames",
+  "seasonRecords",
+  "hallOfFame",
+  "trackRecords",
+  "horseLeaderboards",
+  "founders",
+  "lastFounderUpdateDay",
+  "syndicates",
+  "staffPool",
+  "hiredStaff",
+];
 
 /**
  * Worker instances
@@ -30,7 +105,12 @@ let storageWorker: Remote<StorageWorkerApi> | null = null;
 let initializationWorker: Remote<InitializationWorkerApi> | null = null;
 
 /**
- * Initialize engine worker
+ * Initialize engine worker.
+ *
+ * Creates and wraps the engine worker for race simulation and other computations.
+ * Only initializes in browser context where Worker API is available.
+ *
+ * @returns Promise that resolves when worker is initialized
  */
 export async function initEngineWorker(): Promise<void> {
   if (engineWorker) return;
@@ -48,7 +128,12 @@ export async function initEngineWorker(): Promise<void> {
 }
 
 /**
- * Initialize storage worker
+ * Initialize storage worker.
+ *
+ * Creates and wraps the storage worker for persistence operations.
+ * Only initializes in browser context where Worker API is available.
+ *
+ * @returns Promise that resolves when worker is initialized
  */
 export async function initStorageWorker(): Promise<void> {
   if (storageWorker) return;
@@ -66,7 +151,12 @@ export async function initStorageWorker(): Promise<void> {
 }
 
 /**
- * Initialize initialization worker
+ * Initialize initialization worker.
+ *
+ * Creates and wraps the initialization worker for game setup operations.
+ * Only initializes in browser context where Worker API is available.
+ *
+ * @returns Promise that resolves when worker is initialized
  */
 export async function initInitializationWorker(): Promise<void> {
   if (initializationWorker) return;
@@ -84,7 +174,12 @@ export async function initInitializationWorker(): Promise<void> {
 }
 
 /**
- * Get engine worker instance
+ * Get engine worker instance.
+ *
+ * Returns the initialized engine worker. Throws error if not initialized.
+ *
+ * @returns Engine worker remote instance
+ * @throws Error if engine worker not initialized
  */
 export function getEngineWorker(): Remote<EngineWorkerApi> {
   if (!engineWorker) {
@@ -94,7 +189,12 @@ export function getEngineWorker(): Remote<EngineWorkerApi> {
 }
 
 /**
- * Get storage worker instance
+ * Get storage worker instance.
+ *
+ * Returns the initialized storage worker. Throws error if not initialized.
+ *
+ * @returns Storage worker remote instance
+ * @throws Error if storage worker not initialized
  */
 export function getStorageWorker(): Remote<StorageWorkerApi> {
   if (!storageWorker) {
@@ -104,7 +204,12 @@ export function getStorageWorker(): Remote<StorageWorkerApi> {
 }
 
 /**
- * Get initialization worker instance
+ * Get initialization worker instance.
+ *
+ * Returns the initialized initialization worker. Throws error if not initialized.
+ *
+ * @returns Initialization worker remote instance
+ * @throws Error if initialization worker not initialized
  */
 export function getInitializationWorker(): Remote<InitializationWorkerApi> {
   if (!initializationWorker) {
@@ -116,53 +221,75 @@ export function getInitializationWorker(): Remote<InitializationWorkerApi> {
 }
 
 /**
- * Standard action result type for store actions
- */
-export type ActionResult = { ok: true } | { ok: false; reason: string };
-
-/**
- * Composed store type combining all slices
- */
-export type StoreType = CoreState &
-  RacingSlice &
-  MarketSlice &
-  BreedingSlice &
-  SystemsSlice &
-  CampaignSlice &
-  CoreSlice & {
-    startNewGame: (options: any) => Promise<void>;
-  };
-
-/**
  * Main Zustand store composed from all slices
  */
 export const useGame = create<StoreType>()(
   persist(
     (set, get) => ({
+      // Systems state properties (required fields from SystemsState)
+      npcStables: [],
+      breedingPrograms: [],
+      awards: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
+      staffPool: [],
+      hiredStaff: [],
+      npcAIManager: {
+        stableStates: {},
+        globalDay: 1,
+      },
+
       // Core slice
-      ...createCoreSlice(set, get),
+      ...createCoreSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Racing slice
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...createRacingSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
+      ...createRacingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Market slice
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...createMarketSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
+      ...createMarketSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Scouting slice
+      ...createScoutingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Auction slice
+      ...createAuctionSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Private sale slice
+      ...createPrivateSaleSlice(set as any, get, (intent: AnyIntent) =>
+        get().enqueueIntent(intent),
+      ),
 
       // Breeding slice
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...createBreedingSlice(set, get, (intent: any) => get().enqueueIntent(intent)),
-
-      // Systems slice
-      ...createSystemsSlice(set, get),
+      ...createBreedingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Campaign slice
-      ...createCampaignSlice(set, get),
+      ...createCampaignSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Jockey slice
+      ...createJockeySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Facility slice
+      ...createFacilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Settings slice
+      ...createSettingsSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Breeding program slice
+      ...createBreedingProgramSlice(set as any, get, (intent: AnyIntent) =>
+        get().enqueueIntent(intent),
+      ),
+
+      // Horse admin slice
+      ...createHorseAdminSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Award slice
+      ...createAwardSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Utility slice
+      ...createUtilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Start new game action
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      startNewGame: async (options: any) => {
+      startNewGame: async (options: NewGameOptions) => {
         // Initialize workers if not already initialized
         await initEngineWorker();
         await initStorageWorker();
@@ -170,46 +297,17 @@ export const useGame = create<StoreType>()(
 
         // Clear OPFS storage when starting a new game
         await (await import("@/services/storageAdapter")).clearGameState();
-        set({ ...createInitialState(options) });
+        set({ ...createInitialState(options) } as any);
       },
     }),
     {
       name: "gallop-game-state",
       storage: createOpfsStorage(),
-      partialize: (state) => ({
-        day: state.day,
-        cash: state.cash,
-        horses: state.horses,
-        market: state.market,
-        races: state.races,
-        trainingUsed: state.trainingUsed,
-        log: state.log,
-        pregnancies: state.pregnancies,
-        paceSamples: state.paceSamples,
-        calibratedPars: state.calibratedPars,
-        lastCalibrationDay: state.lastCalibrationDay,
-        npcStables: state.npcStables,
-        npcAIManager: state.npcAIManager,
-        scoutReports: state.scoutReports,
-        auctions: state.auctions,
-        jockeys: state.jockeys,
-        awards: state.awards,
-        campaigns: state.campaigns,
-        expenses: state.expenses,
-        transactions: state.transactions,
-        replays: state.replays,
-        reputation: state.reputation,
-        transports: state.transports,
-        userSettings: state.userSettings,
-        facilities: state.facilities,
-        npcFacilities: state.npcFacilities,
-        playerProfile: state.playerProfile,
-        privateSaleOffers: state.privateSaleOffers,
-        claims: state.claims,
-        breedingPrograms: state.breedingPrograms,
-        usedHorseNames: state.usedHorseNames,
-        usedJockeyNames: state.usedJockeyNames,
-      }),
+      partialize: (state) =>
+        PERSISTED_KEYS.reduce((acc, key) => {
+          acc[key] = state[key] as any;
+          return acc;
+        }, {} as any),
       onRehydrateStorage: () => async (state) => {
         // Initialize workers on rehydration (app load or existing save load)
         await initEngineWorker();
@@ -217,16 +315,13 @@ export const useGame = create<StoreType>()(
         await initInitializationWorker();
 
         hydrationComplete.value = true;
-        if (state?.calibratedPars) {
-          setCalibratedPars(state.calibratedPars);
-        }
       },
     },
   ),
 );
 
 // Export rehydrate function
-export const rehydrateStoreMain = createRehydrateStore(createInitialState);
+export const rehydrateStoreMain = createRehydrateStore(createInitialState, useGame);
 
 // Export as rehydrateStore for backwards compatibility
 export { rehydrateStoreMain as rehydrateStore };
@@ -237,10 +332,11 @@ export { hydrationComplete };
 // Export shallow for use in components that need to compare object/array selectors
 export { shallow };
 
-// Custom hook that supports shallow comparison for object/array selectors
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useGameWithShallow = <T>(selector: (state: StoreType) => T): T =>
-  (useGame as any)(selector, shallow);
+  useGame(useShallow(selector));
 
 // Alias for backwards compatibility
 export { useGame as useGallopStore };
+
+// Export common types for external use
+export type { ActionResult };

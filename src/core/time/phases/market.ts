@@ -1,5 +1,16 @@
+/**
+ * phases/market.ts - Market refresh phase
+ *
+ * This file provides the market refresh phase that refreshes the horse market
+ * and handles NPC AI-driven purchases.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/store/helpers/market (refreshMarket), @/game/rng (createRng, hashStr), @/core/ai/marketAI (shouldPurchaseHorse, calculateMaxPurchasePrice, createMarketAIState, recordMarketPurchase), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/staff/staffGenerator (generateStaffPool)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { refreshMarket } from "@/game/store/helpers/market";
+import { calculateRaceRating } from "@/core/horse/stats";
 import { createRng, hashStr } from "@/game/rng";
 import {
   shouldPurchaseHorse,
@@ -8,6 +19,7 @@ import {
   recordMarketPurchase,
 } from "@/core/ai/marketAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { generateStaffPool } from "@/core/staff/staffGenerator";
 
 /**
  * Phase: Market Refresh
@@ -33,8 +45,7 @@ export const marketPhase = {
         // Check if stable should purchase any horse from market
         for (const horse of market) {
           // Estimate price based on horse stats (since Horse doesn't have price field)
-          const horseRating =
-            (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
+          const horseRating = calculateRaceRating(horse);
           const estimatedPrice = Math.floor(horseRating * 1000);
 
           const shouldPurchase = shouldPurchaseHorse(
@@ -67,6 +78,13 @@ export const marketPhase = {
       }
     }
 
+    // Staff pool replenishment
+    let staffPool = state.staffPool ?? [];
+    if (staffPool.length < 4) {
+      const newStaff = generateStaffPool(dailyRng, 6 - staffPool.length);
+      staffPool = [...staffPool, ...newStaff];
+    }
+
     return {
       ...context,
       state: {
@@ -74,6 +92,7 @@ export const marketPhase = {
         market,
         npcStables,
         npcAIManager,
+        staffPool,
       },
     };
   },

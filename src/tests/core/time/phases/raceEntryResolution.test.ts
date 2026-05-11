@@ -38,6 +38,7 @@ describe("raceEntryResolutionPhase", () => {
     newDay: 1,
     state,
     logs: [],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dailyRng: {} as any,
     intents,
     impacts: [],
@@ -92,6 +93,7 @@ describe("raceEntryResolutionPhase", () => {
       horses: [horse],
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const context = createTestContext(state, [] as any);
     const result = raceEntryResolutionPhase.execute(context);
 

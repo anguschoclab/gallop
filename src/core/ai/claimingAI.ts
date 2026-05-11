@@ -1,17 +1,22 @@
 /**
+ * claimingAI.ts - Claiming AI system
+ *
+ * This file provides learning from claiming outcomes, strategic value assessment,
+ * and risk evaluation for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating)
+ * Related files: npcCycleAI.ts (uses claiming AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Claiming AI System
  * Learning from claiming outcomes, strategic value assessment, risk evaluation
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  getAdaptiveThreshold,
-  type LearningState,
-} from "./learningModule";
+import { createLearningState, recordOutcome as recordLearningOutcome } from "./learningModule";
+import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export interface ClaimingAIState {
@@ -33,7 +38,13 @@ export interface ClaimingDecision {
 }
 
 /**
- * Create AI state for claiming decisions
+ * Create AI state for claiming decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and claiming history.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized claiming AI state
  */
 export function createClaimingAIState(stable: Stable): ClaimingAIState {
   return {
@@ -44,7 +55,16 @@ export function createClaimingAIState(stable: Stable): ClaimingAIState {
 }
 
 /**
- * Calculate claiming value score for a horse
+ * Calculate claiming value score for a horse.
+ *
+ * Evaluates the value of claiming a horse based on rating vs price,
+ * personality modifiers, learning-based adjustments, and horse form.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race with claiming price
+ * @param stable - The stable making the decision
+ * @returns Claiming value score (0-100)
  */
 export function calculateClaimingValue(
   aiState: ClaimingAIState,
@@ -86,16 +106,26 @@ export function calculateClaimingValue(
 }
 
 /**
- * Assess horse form based on recent performance
+ * Assess horse form based on recent performance.
+ *
+ * Returns a normalized form score (0-10) based on the horse's current form (0-100).
+ *
+ * @param horse - The horse to assess
+ * @returns Normalized form score (0-10)
  */
 function assessHorseForm(horse: Horse): number {
-  // Check recent race history (would need to be passed in from game state)
-  // For now, use form stat as proxy
   return horse.form / 10; // Form is 0-100, normalize to 0-10
 }
 
 /**
- * Calculate risk score for claiming a horse
+ * Calculate risk score for claiming a horse.
+ *
+ * Evaluates risk based on age, health, energy, and overpayment risk.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race with claiming price
+ * @returns Risk score (0-100)
  */
 export function calculateClaimingRisk(aiState: ClaimingAIState, horse: Horse, race: Race): number {
   let risk = 0;
@@ -120,7 +150,17 @@ export function calculateClaimingRisk(aiState: ClaimingAIState, horse: Horse, ra
 }
 
 /**
- * Determine if stable should claim a horse
+ * Determine if stable should claim a horse.
+ *
+ * Evaluates value and risk, applies adaptive threshold based on
+ * personality and learning, and makes claiming decision.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horse - The horse to claim
+ * @param race - The race with claiming price
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns True if stable should claim the horse
  */
 export function shouldClaimHorse(
   aiState: ClaimingAIState,
@@ -158,7 +198,17 @@ export function shouldClaimHorse(
 }
 
 /**
- * Record claiming decision for learning
+ * Record claiming decision for learning.
+ *
+ * Records the claiming decision in history for tracking
+ * and learning purposes.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horse - The horse being claimed
+ * @param race - The race with claiming price
+ * @param stable - The stable making the claim
+ * @param currentDay - Current game day
+ * @returns Updated claiming AI state
  */
 export function recordClaimingDecision(
   aiState: ClaimingAIState,
@@ -177,19 +227,32 @@ export function recordClaimingDecision(
     day: currentDay,
   };
 
-  aiState.claimingHistory.push(decision);
+  const newHistory = [...aiState.claimingHistory, decision];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.claimingHistory.length > maxHistory) {
-    aiState.claimingHistory = aiState.claimingHistory.slice(-maxHistory);
-  }
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
-  return aiState;
+  return {
+    ...aiState,
+    claimingHistory: trimmedHistory,
+  };
 }
 
 /**
- * Record claiming outcome for learning
+ * Record claiming outcome for learning.
+ *
+ * Finds the matching decision, records the outcome, and updates
+ * the learning state for adaptive improvement.
+ *
+ * @param aiState - Current claiming AI state
+ * @param horseId - ID of the claimed horse
+ * @param raceId - ID of the race
+ * @param success - Whether the claim was successful
+ * @param value - Value of the outcome
+ * @param currentDay - Current game day
+ * @returns Updated claiming AI state
  */
 export function recordClaimingOutcome(
   aiState: ClaimingAIState,
@@ -199,34 +262,48 @@ export function recordClaimingOutcome(
   value: number,
   currentDay: number,
 ): ClaimingAIState {
-  // Find the decision
-  const decision = aiState.claimingHistory.find(
+  const decisionIndex = aiState.claimingHistory.findIndex(
     (d) => d.horseId === horseId && d.raceId === raceId && !d.success,
   );
 
-  if (decision) {
+  if (decisionIndex !== -1) {
+    const decision = { ...aiState.claimingHistory[decisionIndex] };
     decision.success = success;
     decision.value = value;
 
+    const newHistory = [...aiState.claimingHistory];
+    newHistory[decisionIndex] = decision;
+
     // Update learning state
-    const contextKey = `${decision.horseRating}:${decision.claimingPrice}`;
-    aiState.learningState = recordOutcome(
+    const newLearningState = recordLearningOutcome(
       aiState.learningState,
       "claiming",
-      contextKey,
+      `${raceId}:${horseId}`,
       success,
       value,
-      Date.now(),
       currentDay,
       aiState.personalityState.memoryDepth,
     );
+
+    return {
+      ...aiState,
+      claimingHistory: newHistory,
+      learningState: newLearningState,
+    };
   }
 
   return aiState;
 }
 
 /**
- * Get claiming insights for a stable
+ * Get claiming insights for a stable.
+ *
+ * Calculates claiming statistics including total claims, success rate,
+ * average value, and average risk.
+ *
+ * @param aiState - Current claiming AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with claiming statistics
  */
 export function getClaimingInsights(
   aiState: ClaimingAIState,

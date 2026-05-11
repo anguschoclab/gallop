@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -52,8 +52,7 @@ function SchedulerPage() {
   const day = useGame((s) => s.day);
   const horses = useGame((s) => s.horses);
   const races = useGame((s) => s.races);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const campaigns = (useGame as any)((s: any) => s.campaigns, shallow);
+  const campaigns = useGameWithShallow((s) => s.campaigns ?? []);
   const setCampaign = useGame((s) => s.setCampaign);
   const deleteCampaign = useGame((s) => s.deleteCampaign);
   const generateAutoCampaign = useGame((s) => s.generateAutoCampaign);
@@ -147,7 +146,12 @@ function SchedulerPage() {
                 >
                   Create
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setAddingHorseId(null)}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setAddingHorseId(null)}
+                  aria-label="Cancel adding campaign"
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
@@ -217,6 +221,7 @@ function SchedulerPage() {
                     className="h-7 w-7 text-cream-muted"
                     onClick={() => deleteCampaign(campaign.horseId)}
                     title="Delete campaign"
+                    aria-label={`Delete campaign for ${horse.name}`}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
@@ -242,6 +247,7 @@ function SchedulerPage() {
                         variant="ghost"
                         className="h-5 w-5 shrink-0 text-warning hover:text-cream"
                         onClick={() => dismissCampaignFlag(campaign.horseId, fi)}
+                        aria-label={`Dismiss flag: ${flag.message}`}
                       >
                         <X className="h-3 w-3" />
                       </Button>

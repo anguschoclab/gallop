@@ -4,6 +4,41 @@ import path from "path";
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
 
+interface Section {
+  type: string;
+  length: number;
+  radius?: number;
+}
+
+interface Course {
+  sections?: Section[];
+  circumference?: number;
+  straightLength?: number;
+  width?: number;
+  name?: string;
+  elevationChange?: number;
+}
+
+interface Track {
+  id: string;
+  name: string;
+  country: string;
+  courses: Course[];
+  dataSource?: string;
+}
+
+interface UpdateResult {
+  id: string;
+  name: string;
+  circumference?: number;
+  straightLength?: number;
+  coursesCount?: number;
+  sectionsCount?: number;
+  source?: string;
+  country?: string;
+  width?: number;
+}
+
 // Official track data from verified sources (Wikipedia, official track websites, JRA, etc.)
 const OFFICIAL_TRACK_DATA: Record<
   string,
@@ -741,17 +776,17 @@ function run() {
   console.log(`Backup created: ${backupPath}\n`);
 
   const results = {
-    updated: [] as any[],
-    notFound: [] as any[],
-    skipped: [] as any[],
+    updated: [] as UpdateResult[],
+    notFound: [] as UpdateResult[],
+    skipped: [] as UpdateResult[],
   };
 
-  for (const track of tracks) {
+  for (const track of tracks as Track[]) {
     const officialData = OFFICIAL_TRACK_DATA[track.name];
 
     if (officialData) {
       // Check if already has sections
-      const hasExistingData = track.courses.some((c: any) => c.sections && c.sections.length > 0);
+      const hasExistingData = track.courses.some((c) => c.sections && c.sections.length > 0);
       if (hasExistingData) {
         console.log(`⏭️  ${track.name} - skipped (already has data)`);
         results.skipped.push({ id: track.id, name: track.name });
@@ -811,6 +846,7 @@ function run() {
 
   if (results.notFound.length > 0) {
     console.log("\n=== Tracks Needing Manual Research ===");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     results.notFound.forEach((t: any) => {
       console.log(`  - ${t.name} (${t.country})`);
     });

@@ -20,7 +20,7 @@ interface MigratedTrack {
   courses: Course[];
 }
 
-// Extract the TRACKS array content
+// Extract the TRACKS array content with improved regex
 const tracksMatch = content.match(/export const TRACKS: Track\[] = \[([\s\S]*?)\];/);
 if (!tracksMatch) {
   console.error("Could not find TRACKS array in tracks.ts");
@@ -29,28 +29,24 @@ if (!tracksMatch) {
 
 const tracksRaw = tracksMatch[1];
 
-// A very hacky parser for the current TRACKS array
-// We look for objects: { id: "...", name: "...", ... }
+// Improved parser using more robust regex patterns
+// Matches complete track objects while handling nested arrays
 const trackObjects: MigratedTrack[] = [];
-const objectRegex = /\{([\s\S]*?)\}/g;
+const trackRegex =
+  /\{\s*id:\s*"([^"]+)"\s*,\s*name:\s*"([^"]+)"\s*,\s*country:\s*"([^"]+)"\s*,\s*surfaces:\s*\[([^\]]*)\](?:\s*,\s*circumference:\s*(\d+))?(?:\s*,\s*straightLength:\s*(\d+))?\s*\}/g;
 let match;
 
-while ((match = objectRegex.exec(tracksRaw)) !== null) {
-  const objContent = match[1];
+while ((match = trackRegex.exec(tracksRaw)) !== null) {
+  const [, id, name, country, surfacesRaw, circumferenceRaw, straightLengthRaw] = match;
 
-  // Extract fields
-  const id = objContent.match(/id: "(.*?)"/)?.[1];
-  const name = objContent.match(/name: "(.*?)"/)?.[1];
-  const country = objContent.match(/country: "(.*?)"/)?.[1];
-  const surfacesMatch = objContent.match(/surfaces: \[(.*?)\]/);
-  const surfaces = surfacesMatch
-    ? surfacesMatch[1]
-        .replace(/"/g, "")
-        .split(",")
-        .map((s) => s.trim())
-    : [];
-  const circumference = parseInt(objContent.match(/circumference: (\d+)/)?.[1] || "1600");
-  const straightLength = parseInt(objContent.match(/straightLength: (\d+)/)?.[1] || "400");
+  // Parse surfaces array more robustly
+  const surfaces = surfacesRaw
+    .split(",")
+    .map((s) => s.trim().replace(/"/g, ""))
+    .filter((s) => s.length > 0);
+
+  const circumference = circumferenceRaw ? parseInt(circumferenceRaw, 10) : 1600;
+  const straightLength = straightLengthRaw ? parseInt(straightLengthRaw, 10) : 400;
 
   if (id && name && country) {
     trackObjects.push({

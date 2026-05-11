@@ -1,0 +1,517 @@
+{
+  "finalDay": 1,
+  "finalYear": 1,
+  "finalPopulation": 2796,
+  "g1WinnersCount": 258,
+  "economicTrend": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "populationTrend": [
+    2753,
+    2245,
+    2270,
+    2492,
+    2514,
+    2577,
+    2578,
+    2595,
+    2652,
+    2680,
+    2748,
+    2775,
+    2792
+  ],
+  "npcCashHistory": [
+    {
+      "day": 30,
+      "year": 1,
+      "p10": 4343,
+      "p25": 9680,
+      "p50": 24480,
+      "p75": 115616,
+      "p90": 346804,
+      "gini": 0.8091696828973989,
+      "bankruptCount": 8,
+      "totalNPCs": 128
+    },
+    {
+      "day": 60,
+      "year": 1,
+      "p10": -2104,
+      "p25": 11480,
+      "p50": 72842,
+      "p75": 271231,
+      "p90": 1159017,
+      "gini": 0.8090558811206892,
+      "bankruptCount": 15,
+      "totalNPCs": 128
+    },
+    {
+      "day": 90,
+      "year": 1,
+      "p10": 5055,
+      "p25": 38247,
+      "p50": 169207,
+      "p75": 680690,
+      "p90": 1818862,
+      "gini": 0.7543335768238763,
+      "bankruptCount": 9,
+      "totalNPCs": 128
+    },
+    {
+      "day": 120,
+      "year": 1,
+      "p10": 7985,
+      "p25": 63644,
+      "p50": 285392,
+      "p75": 910807,
+      "p90": 2960195,
+      "gini": 0.714406772598459,
+      "bankruptCount": 9,
+      "totalNPCs": 128
+    },
+    {
+      "day": 150,
+      "year": 1,
+      "p10": 8859,
+      "p25": 109529,
+      "p50": 394491,
+      "p75": 1181327,
+      "p90": 3846341,
+      "gini": 0.7039511439678441,
+      "bankruptCount": 5,
+      "totalNPCs": 128
+    },
+    {
+      "day": 180,
+      "year": 1,
+      "p10": 78610,
+      "p25": 210466,
+      "p50": 592259,
+      "p75": 1484265,
+      "p90": 4433841,
+      "gini": 0.6601125887841413,
+      "bankruptCount": 3,
+      "totalNPCs": 128
+    },
+    {
+      "day": 210,
+      "year": 1,
+      "p10": 87562,
+      "p25": 254205,
+      "p50": 657059,
+      "p75": 1542805,
+      "p90": 4621853,
+      "gini": 0.6460728607808832,
+      "bankruptCount": 2,
+      "totalNPCs": 128
+    },
+    {
+      "day": 240,
+      "year": 1,
+      "p10": 136426,
+      "p25": 358519,
+      "p50": 765676,
+      "p75": 1833026,
+      "p90": 4859917,
+      "gini": 0.6203836227187022,
+      "bankruptCount": 2,
+      "totalNPCs": 128
+    },
+    {
+      "day": 270,
+      "year": 1,
+      "p10": 260687,
+      "p25": 446026,
+      "p50": 888399,
+      "p75": 2051570,
+      "p90": 5137514,
+      "gini": 0.5977722100581075,
+      "bankruptCount": 2,
+      "totalNPCs": 128
+    },
+    {
+      "day": 300,
+      "year": 1,
+      "p10": 307737,
+      "p25": 570690,
+      "p50": 1090550,
+      "p75": 2222207,
+      "p90": 7168996,
+      "gini": 0.5989662815792086,
+      "bankruptCount": 1,
+      "totalNPCs": 128
+    },
+    {
+      "day": 330,
+      "year": 1,
+      "p10": 442013,
+      "p25": 673422,
+      "p50": 1335110,
+      "p75": 3112692,
+      "p90": 8295220,
+      "gini": 0.5965079336067844,
+      "bankruptCount": 1,
+      "totalNPCs": 128
+    },
+    {
+      "day": 360,
+      "year": 1,
+      "p10": 427026,
+      "p25": 681591,
+      "p50": 1334870,
+      "p75": 3094692,
+      "p90": 8268278,
+      "gini": 0.5969767332676171,
+      "bankruptCount": 2,
+      "totalNPCs": 128
+    }
+  ],
+  "bankruptcyHistory": [
+    8,
+    15,
+    9,
+    9,
+    5,
+    3,
+    2,
+    2,
+    2,
+    1,
+    1,
+    2
+  ],
+  "auctionMetrics": [
+    {
+      "day": 90,
+      "year": 1,
+      "auctionsResolved": 2,
+      "totalLots": 107,
+      "soldLots": 107,
+      "sellThroughRate": 1,
+      "avgPrice": 24652.33644859813
+    },
+    {
+      "day": 120,
+      "year": 1,
+      "auctionsResolved": 2,
+      "totalLots": 108,
+      "soldLots": 108,
+      "sellThroughRate": 1,
+      "avgPrice": 24672.222222222223
+    },
+    {
+      "day": 180,
+      "year": 1,
+      "auctionsResolved": 1,
+      "totalLots": 91,
+      "soldLots": 70,
+      "sellThroughRate": 0.7692307692307693,
+      "avgPrice": 19747.14285714286
+    },
+    {
+      "day": 240,
+      "year": 1,
+      "auctionsResolved": 1,
+      "totalLots": 39,
+      "soldLots": 39,
+      "sellThroughRate": 1,
+      "avgPrice": 18617.94871794872
+    },
+    {
+      "day": 270,
+      "year": 1,
+      "auctionsResolved": 2,
+      "totalLots": 102,
+      "soldLots": 91,
+      "sellThroughRate": 0.8921568627450981,
+      "avgPrice": 30948.351648351647
+    },
+    {
+      "day": 300,
+      "year": 1,
+      "auctionsResolved": 2,
+      "totalLots": 97,
+      "soldLots": 86,
+      "sellThroughRate": 0.8865979381443299,
+      "avgPrice": 31325.581395348836
+    },
+    {
+      "day": 360,
+      "year": 1,
+      "auctionsResolved": 1,
+      "totalLots": 41,
+      "soldLots": 29,
+      "sellThroughRate": 0.7073170731707317,
+      "avgPrice": 22272.41379310345
+    }
+  ],
+  "breedingMetrics": [
+    {
+      "day": 30,
+      "year": 1,
+      "foalsBorn": 0,
+      "activeStallions": 1017,
+      "stallionUtilization": 0,
+      "eligibleMares": 535,
+      "activePregnancies": 189,
+      "mareUtilization": 0.3532710280373832
+    },
+    {
+      "day": 60,
+      "year": 1,
+      "foalsBorn": 73,
+      "activeStallions": 988,
+      "stallionUtilization": 0.23076923076923078,
+      "eligibleMares": 537,
+      "activePregnancies": 256,
+      "mareUtilization": 0.4767225325884544
+    },
+    {
+      "day": 90,
+      "year": 1,
+      "foalsBorn": 140,
+      "activeStallions": 980,
+      "stallionUtilization": 0.23265306122448978,
+      "eligibleMares": 538,
+      "activePregnancies": 115,
+      "mareUtilization": 0.2137546468401487
+    },
+    {
+      "day": 120,
+      "year": 1,
+      "foalsBorn": 0,
+      "activeStallions": 978,
+      "stallionUtilization": 0.2331288343558282,
+      "eligibleMares": 540,
+      "activePregnancies": 115,
+      "mareUtilization": 0.21296296296296297
+    },
+    {
+      "day": 150,
+      "year": 1,
+      "foalsBorn": 0,
+      "activeStallions": 976,
+      "stallionUtilization": 0.2336065573770492,
+      "eligibleMares": 544,
+      "activePregnancies": 115,
+      "mareUtilization": 0.2113970588235294
+    },
+    {
+      "day": 180,
+      "year": 1,
+      "foalsBorn": 0,
+      "activeStallions": 976,
+      "stallionUtilization": 0.2336065573770492,
+      "eligibleMares": 546,
+      "activePregnancies": 115,
+      "mareUtilization": 0.21062271062271062
+    },
+    {
+      "day": 210,
+      "year": 1,
+      "foalsBorn": 0,
+      "activeStallions": 976,
+      "stallionUtilization": 0.2336065573770492,
+      "eligibleMares": 551,
+      "activePregnancies": 115,
+      "mareUtilization": 0.20871143375680581
+    },
+    {
+      "day": 240,
+      "year": 1,
+      "foalsBorn": 0,
+      "activeStallions": 981,
+      "stallionUtilization": 0.2324159021406728,
+      "eligibleMares": 590,
+      "activePregnancies": 115,
+      "mareUtilization": 0.19491525423728814
+    },
+    {
+      "day": 270,
+      "year": 1,
+      "foalsBorn": 0,
+      "activeStallions": 979,
+      "stallionUtilization": 0.24923391215526047,
+      "eligibleMares": 590,
+      "activePregnancies": 124,
+      "mareUtilization": 0.21016949152542372
+    },
+    {
+      "day": 300,
+      "year": 1,
+      "foalsBorn": 8,
+      "activeStallions": 979,
+      "stallionUtilization": 0.24923391215526047,
+      "eligibleMares": 592,
+      "activePregnancies": 116,
+      "mareUtilization": 0.19594594594594594
+    },
+    {
+      "day": 330,
+      "year": 1,
+      "foalsBorn": 0,
+      "activeStallions": 982,
+      "stallionUtilization": 0.2484725050916497,
+      "eligibleMares": 596,
+      "activePregnancies": 116,
+      "mareUtilization": 0.19463087248322147
+    },
+    {
+      "day": 360,
+      "year": 1,
+      "foalsBorn": 0,
+      "activeStallions": 982,
+      "stallionUtilization": 0.2484725050916497,
+      "eligibleMares": 597,
+      "activePregnancies": 116,
+      "mareUtilization": 0.19430485762144054
+    }
+  ],
+  "systemHealthMetrics": [
+    {
+      "day": 30,
+      "year": 1,
+      "horseCount": 2176,
+      "raceCount": 1580,
+      "pregnancyCount": 189,
+      "transactionCount": 2764,
+      "expenseCount": 2764,
+      "logCount": 50,
+      "newsCount": 30
+    },
+    {
+      "day": 60,
+      "year": 1,
+      "horseCount": 2236,
+      "raceCount": 1540,
+      "pregnancyCount": 330,
+      "transactionCount": 2573,
+      "expenseCount": 2573,
+      "logCount": 50,
+      "newsCount": 72
+    },
+    {
+      "day": 90,
+      "year": 1,
+      "horseCount": 2456,
+      "raceCount": 1845,
+      "pregnancyCount": 330,
+      "transactionCount": 1198,
+      "expenseCount": 1198,
+      "logCount": 50,
+      "newsCount": 100
+    },
+    {
+      "day": 120,
+      "year": 1,
+      "horseCount": 2515,
+      "raceCount": 2204,
+      "pregnancyCount": 330,
+      "transactionCount": 2807,
+      "expenseCount": 2807,
+      "logCount": 50,
+      "newsCount": 100
+    },
+    {
+      "day": 150,
+      "year": 1,
+      "horseCount": 2540,
+      "raceCount": 1454,
+      "pregnancyCount": 330,
+      "transactionCount": 2810,
+      "expenseCount": 2810,
+      "logCount": 50,
+      "newsCount": 100
+    },
+    {
+      "day": 180,
+      "year": 1,
+      "horseCount": 2578,
+      "raceCount": 1247,
+      "pregnancyCount": 330,
+      "transactionCount": 2778,
+      "expenseCount": 2778,
+      "logCount": 50,
+      "newsCount": 100
+    },
+    {
+      "day": 210,
+      "year": 1,
+      "horseCount": 2594,
+      "raceCount": 1744,
+      "pregnancyCount": 330,
+      "transactionCount": 2812,
+      "expenseCount": 2812,
+      "logCount": 50,
+      "newsCount": 100
+    },
+    {
+      "day": 240,
+      "year": 1,
+      "horseCount": 2651,
+      "raceCount": 1377,
+      "pregnancyCount": 330,
+      "transactionCount": 2819,
+      "expenseCount": 2819,
+      "logCount": 50,
+      "newsCount": 100
+    },
+    {
+      "day": 270,
+      "year": 1,
+      "horseCount": 2678,
+      "raceCount": 843,
+      "pregnancyCount": 339,
+      "transactionCount": 2787,
+      "expenseCount": 2787,
+      "logCount": 50,
+      "newsCount": 100
+    },
+    {
+      "day": 300,
+      "year": 1,
+      "horseCount": 2746,
+      "raceCount": 797,
+      "pregnancyCount": 339,
+      "transactionCount": 2424,
+      "expenseCount": 2424,
+      "logCount": 50,
+      "newsCount": 100
+    },
+    {
+      "day": 330,
+      "year": 1,
+      "horseCount": 2775,
+      "raceCount": 749,
+      "pregnancyCount": 339,
+      "transactionCount": 2797,
+      "expenseCount": 2797,
+      "logCount": 50,
+      "newsCount": 100
+    },
+    {
+      "day": 360,
+      "year": 1,
+      "horseCount": 2791,
+      "raceCount": 378,
+      "pregnancyCount": 339,
+      "transactionCount": 2834,
+      "expenseCount": 2834,
+      "logCount": 50,
+      "newsCount": 100
+    }
+  ]
+}

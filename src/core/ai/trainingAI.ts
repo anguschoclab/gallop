@@ -1,21 +1,28 @@
 /**
+ * trainingAI.ts - Training AI system
+ *
+ * This file provides personality-driven training priorities with learning
+ * from effectiveness for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Stable), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions)
+ * Related files: npcCycleAI.ts (uses training AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Training AI System
  * Personality-driven training priorities with learning from effectiveness
  */
 
 import type { Horse, Stable } from "@/game/types";
+import { TRAINING_HISTORY_MAX_SIZE } from "@/game/constants/gameConstants";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  type LearningState,
-} from "./learningModule";
+import { createLearningState, recordOutcome as recordLearningOutcome, getSuccessRate, type LearningState } from "./learningModule";
+import { calculateRaceRating } from "@/core/horse/stats";
 
 export interface TrainingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
   learningState: LearningState;
-  horseDevelopment: Map<string, HorseTrainingTrack>;
+  horseDevelopment: Record<string, HorseTrainingTrack>;
 }
 
 export interface HorseTrainingTrack {
@@ -23,7 +30,7 @@ export interface HorseTrainingTrack {
   targetStats: Array<"speed" | "stamina" | "acceleration">;
   currentFocus: "speed" | "stamina" | "acceleration" | "balanced";
   trainingHistory: TrainingSession[];
-  statGains: Map<string, number>;
+  statGains: Record<string, number>;
   lastTrainingDay: number;
 }
 
@@ -35,18 +42,33 @@ export interface TrainingSession {
 }
 
 /**
- * Create AI state for training decisions
+ * Create AI state for training decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and horse development tracking.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized training AI state
  */
 export function createTrainingAIState(stable: Stable): TrainingAIState {
   return {
     personalityState: getPersonalityAIState(stable.personality),
     learningState: createLearningState(),
-    horseDevelopment: new Map(),
+    horseDevelopment: {},
   };
 }
 
 /**
- * Calculate training priority score for a horse and stat
+ * Calculate training priority score for a horse and stat.
+ *
+ * Evaluates the priority of training a specific stat based on deficiency,
+ * personality modifiers, learning-based adjustments, and strategic considerations.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse to evaluate
+ * @param stat - The stat to prioritize (speed, stamina, or acceleration)
+ * @param currentDay - Current game day
+ * @returns Training priority score
  */
 export function calculateTrainingPriority(
   aiState: TrainingAIState,
@@ -60,7 +82,7 @@ export function calculateTrainingPriority(
   // Base score based on stat deficiency
   const stats = horse.stats;
   const statValue = stats[stat];
-  const avgStat = (stats.speed + stats.stamina + stats.acceleration) / 3;
+  const avgStat = calculateRaceRating(horse);
   const deficiency = avgStat - statValue;
   score += deficiency * 2; // Higher priority for lower stats
 
@@ -80,7 +102,7 @@ export function calculateTrainingPriority(
   score += adaptiveBonus;
 
   // Strategic considerations
-  const devTrack = aiState.horseDevelopment.get(horse.id);
+  const devTrack = aiState.horseDevelopment[horse.id];
   if (devTrack) {
     // Bonus for training focused stat
     if (devTrack.currentFocus === stat) {
@@ -96,7 +118,15 @@ export function calculateTrainingPriority(
 }
 
 /**
- * Select optimal training type for a horse
+ * Select optimal training type for a horse.
+ *
+ * Calculates priority scores for all stats and returns the stat
+ * with the highest priority.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse to select training for
+ * @param currentDay - Current game day
+ * @returns Optimal training type (speed, stamina, or acceleration)
  */
 export function selectTrainingType(
   aiState: TrainingAIState,
@@ -117,7 +147,17 @@ export function selectTrainingType(
 }
 
 /**
- * Update horse development tracking after training
+ * Update horse development tracking after training.
+ *
+ * Records the training session, updates training history,
+ * and adjusts the current focus based on recent training patterns.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse being trained
+ * @param trainingType - Type of training performed
+ * @param energyBefore - Energy level before training
+ * @param currentDay - Current game day
+ * @returns Updated training AI state
  */
 export function updateHorseTraining(
   aiState: TrainingAIState,
@@ -126,30 +166,31 @@ export function updateHorseTraining(
   energyBefore: number,
   currentDay: number,
 ): TrainingAIState {
-  const devTrack: HorseTrainingTrack = aiState.horseDevelopment.get(horse.id) || {
+  const devTrack: HorseTrainingTrack = aiState.horseDevelopment[horse.id] || {
     horseId: horse.id,
     targetStats: [],
     currentFocus: "balanced",
     trainingHistory: [] as TrainingSession[],
-    statGains: new Map(),
+    statGains: {},
     lastTrainingDay: 0,
   };
 
   // Add training to history
-  devTrack.trainingHistory.push({
-    day: currentDay,
-    type: trainingType,
-    energyBefore,
-    energyAfter: horse.energy,
-  });
+  const newHistory = [
+    ...devTrack.trainingHistory,
+    {
+      day: currentDay,
+      type: trainingType,
+      energyBefore,
+      energyAfter: horse.energy,
+    },
+  ];
 
-  // Trim history to last 10 trainings
-  if (devTrack.trainingHistory.length > 10) {
-    devTrack.trainingHistory = devTrack.trainingHistory.slice(-10);
-  }
+  // Trim history to last 10 trainings1010
+  const trimmedHistory = newHistory.length > 10 ? newHistory.slice(-10) : newHistory;
 
   // Update focus based on recent training
-  const recentTrainings = devTrack.trainingHistory.slice(-3);
+  const recentTrainings = trimmedHistory.slice(-3);
   const typeCounts = recentTrainings.reduce(
     (acc, t) => {
       acc[t.type] = (acc[t.type] || 0) + 1;
@@ -158,19 +199,41 @@ export function updateHorseTraining(
     {} as Record<string, number>,
   );
 
+  let newFocus = devTrack.currentFocus;
   const dominantType = Object.entries(typeCounts).sort((a, b) => b[1] - a[1])[0];
   if (dominantType && typeCounts[dominantType[0]] >= 2) {
-    devTrack.currentFocus = dominantType[0] as "speed" | "stamina" | "acceleration" | "balanced";
+    newFocus = dominantType[0] as "speed" | "stamina" | "acceleration" | "balanced";
   }
 
-  devTrack.lastTrainingDay = currentDay;
-  aiState.horseDevelopment.set(horse.id, devTrack);
+  const updatedDevTrack = {
+    ...devTrack,
+    trainingHistory: trimmedHistory,
+    currentFocus: newFocus,
+    lastTrainingDay: currentDay,
+  };
 
-  return aiState;
+  return {
+    ...aiState,
+    horseDevelopment: {
+      ...aiState.horseDevelopment,
+      [horse.id]: updatedDevTrack,
+    },
+  };
 }
 
 /**
- * Record training outcome for learning
+ * Record training outcome for learning.
+ *
+ * Records the training outcome in the learning state and updates
+ * stat gains in the development track.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse that was trained
+ * @param trainingType - Type of training performed
+ * @param success - Whether the training was successful
+ * @param statGain - Amount of stat gain from training
+ * @param currentDay - Current game day
+ * @returns Updated training AI state
  */
 export function recordTrainingOutcome(
   aiState: TrainingAIState,
@@ -181,30 +244,53 @@ export function recordTrainingOutcome(
   currentDay: number,
 ): TrainingAIState {
   const contextKey = `${horse.age}:${trainingType}`;
-  aiState.learningState = recordOutcome(
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "training",
     contextKey,
     success,
     statGain,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );
 
   // Update stat gains in development track
-  const devTrack = aiState.horseDevelopment.get(horse.id);
+  const devTrack = aiState.horseDevelopment[horse.id];
   if (devTrack) {
-    const currentGain = devTrack.statGains.get(trainingType) || 0;
-    devTrack.statGains.set(trainingType, currentGain + statGain);
-    aiState.horseDevelopment.set(horse.id, devTrack);
+    const currentGain = devTrack.statGains[trainingType] || 0;
+    const updatedDevTrack = {
+      ...devTrack,
+      statGains: {
+        ...devTrack.statGains,
+        [trainingType]: currentGain + statGain,
+      },
+    };
+    return {
+      ...aiState,
+      learningState: newLearningState,
+      horseDevelopment: {
+        ...aiState.horseDevelopment,
+        [horse.id]: updatedDevTrack,
+      },
+    };
   }
 
-  return aiState;
+  return {
+    ...aiState,
+    learningState: newLearningState,
+  };
 }
 
 /**
- * Determine if horse should be trained today
+ * Determine if horse should be trained today.
+ *
+ * Checks energy levels and training frequency based on personality
+ * to determine if training should occur.
+ *
+ * @param aiState - Current training AI state
+ * @param horse - The horse to evaluate
+ * @param currentDay - Current game day
+ * @returns True if horse should be trained today
  */
 export function shouldTrainToday(
   aiState: TrainingAIState,
@@ -215,7 +301,7 @@ export function shouldTrainToday(
   if (horse.energy < 15) return false;
 
   // Check training frequency (personality-driven)
-  const devTrack = aiState.horseDevelopment.get(horse.id);
+  const devTrack = aiState.horseDevelopment[horse.id];
   if (devTrack) {
     const daysSinceTraining = currentDay - devTrack.lastTrainingDay;
     const config = aiState.personalityState;

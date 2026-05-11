@@ -1,9 +1,24 @@
+/**
+ * phases/hallOfFame.ts - Hall of Fame induction phase
+ *
+ * This file provides the Hall of Fame induction phase that inducts legendary
+ * horses into the Hall of Fame based on career achievements.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/impacts/index (AnyImpact, HallOfFameInductionImpact, LogImpact), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Hall of Fame Phase
 // Inducts legendary horses into the Hall of Fame based on career achievements
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact, HallOfFameInductionImpact, LogImpact } from "@/core/resolver/impacts";
-import { generateUUID } from "@/game/uuid";
+import { getCareerStats } from "@/core/horse/stats";
+import type {
+  AnyImpact,
+  HallOfFameInductionImpact,
+  LogImpact,
+} from "@/core/resolver/impacts/index";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Phase: Hall of Fame Induction
@@ -33,13 +48,9 @@ export const hallOfFamePhase: PipelinePhase = {
       // Check fame threshold
       if (horse.fame < 85) continue;
 
-      // Count G1 wins
-      const g1Wins = horse.raceHistory.filter((r) => r.position === 1 && r.grade === "G1").length;
-
-      // Count total graded wins
-      const gradedWins = horse.raceHistory.filter(
-        (r) => r.position === 1 && r.grade && ["G1", "G2", "G3"].includes(r.grade),
-      ).length;
+      const stats = getCareerStats(horse);
+      const g1Wins = stats.g1Wins;
+      const gradedWins = stats.gradedWins;
 
       // Check for Horse of the Year awards
       const horseOfTheYearAwards = (state.awards || []).filter(

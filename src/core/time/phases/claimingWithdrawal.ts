@@ -1,10 +1,20 @@
+/**
+ * phases/claimingWithdrawal.ts - Claiming withdrawal phase
+ *
+ * This file provides the claiming withdrawal phase that processes
+ * WithdrawFromClaimingIntents to mark horses as withdrawn from claiming.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, WithdrawFromClaimingIntent), @/core/resolver/impacts/index (AnyImpact, LogImpact), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Claiming Withdrawal Phase
 // Processes WithdrawFromClaimingIntents to mark horses as withdrawn from claiming
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
-import type { AnyImpact, LogImpact } from "@/core/resolver/impacts";
-import { generateUUID } from "@/game/uuid";
+import type { AnyImpact, LogImpact } from "@/core/resolver/impacts/index";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Claiming Withdrawal Phase (Order 67)

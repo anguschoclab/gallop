@@ -1,6 +1,22 @@
+/**
+ * phases/leaderboardPhase.ts - Leaderboard update phase
+ *
+ * This file provides the leaderboard update phase that updates sire leaderboards
+ * every 7 days (weekly) and records trend data for rising star detection.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/breeding/leaderboardService (computeAllLeaderboards), @/core/breeding/leaderboardTypes (SireTrendData)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
+import { updateLeaderboard } from "@/core/race/leaderboard";
 import { computeAllLeaderboards } from "@/core/breeding/leaderboardService";
+import { PHASE_ORDER_LEADERBOARD } from "@/game/constants/gameConstants";
+import { computeProgenyLeaderboards } from "@/core/breeding/progenyLeaderboards";
+import { identifyFounders, computeFounderInfluence } from "@/core/history/lineageCrawler";
 import type { SireTrendData } from "@/core/breeding/leaderboardTypes";
+import type { FounderRecord } from "@/core/history/historyTypes";
+import { SEASON_DAYS } from "@/game/constants/gameConstants";
 
 /**
  * Phase: Leaderboard Update
@@ -8,8 +24,9 @@ import type { SireTrendData } from "@/core/breeding/leaderboardTypes";
  * Records trend data for rising star detection
  */
 export const leaderboardPhase = {
-  name: "leaderboardUpdate",
-  order: 70, // After races (60), before awards (80)
+  name: "leaderboard",
+  order: PHASE_ORDER_LEADERBOARD, // After races (60) and raceResolution (70), before awards (80)
+
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 
@@ -26,6 +43,22 @@ export const leaderboardPhase = {
       newDay,
       state.sireTrendHistory,
     );
+
+    const horseLeaderboards = computeProgenyLeaderboards(state.horses, newDay);
+
+    // Update founder records once a season (30 days) to save performance
+    let updatedFounders = state.founders || {};
+    const shouldUpdateFounders =
+      !state.lastFounderUpdateDay || newDay - state.lastFounderUpdateDay >= SEASON_DAYS;
+
+    if (shouldUpdateFounders) {
+      const candidates = identifyFounders(state.horses);
+      const newFounders: Record<string, FounderRecord> = {};
+      for (const candidate of candidates) {
+        newFounders[candidate.id] = computeFounderInfluence(candidate, state.horses, newDay);
+      }
+      updatedFounders = newFounders;
+    }
 
     // Record trend data for all ranked stallions
     const trendEntry: SireTrendData[] = leaderboards.overall.rankings.map((r) => ({
@@ -48,8 +81,11 @@ export const leaderboardPhase = {
       state: {
         ...state,
         sireLeaderboards: leaderboards,
+        horseLeaderboards,
+        founders: updatedFounders,
         sireTrendHistory: trendHistory,
         leaderboardsUpdatedDay: newDay,
+        lastFounderUpdateDay: shouldUpdateFounders ? newDay : state.lastFounderUpdateDay,
       },
       logs: [
         ...context.logs,

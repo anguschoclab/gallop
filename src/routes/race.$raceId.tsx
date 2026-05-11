@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { useJockeys } from "@/game/hooks/useSystemsState";
 import { shallow } from "zustand/shallow";
 import { useEffect, useRef, useState, useMemo } from "react";
@@ -20,7 +20,6 @@ import {
   rngForRace,
   type RaceSimulationDependencies,
 } from "@/services/raceSimulationService";
-import type { Weather } from "@/game/types";
 import { Pause, Play, Camera } from "lucide-react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { NarrativeGenerator } from "@/services/narrativeService";
@@ -36,6 +35,11 @@ import {
   projectedBeyer,
 } from "@/components/races/raceVisualHelpers";
 import { BroadcastCommentary } from "@/components/races/BroadcastCommentary";
+import { RaceVisualizer } from "@/components/race/RaceVisualizer";
+import { useLiveRaceSimulation } from "@/hooks/useLiveRaceSimulation";
+import { ResultOverlay } from "@/components/race/ResultOverlay";
+import { SilkDot } from "@/components/SilkDot";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -58,8 +62,7 @@ function LiveRace() {
   const navigate = useNavigate();
   const race = useGame((s) => s.races.find((r) => r.id === raceId));
   const horses = useGame((s) => s.horses);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const jockeys = (useGame as any)((s: any) => s.jockeys ?? [], shallow);
+  const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
   const stables = useGame((s) => s.npcStables);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
 
@@ -71,10 +74,23 @@ function LiveRace() {
   });
   const rngRef = useRef(race ? rngForRace(race) : null);
 
-  const [tick, setTick] = useState(0);
-  const [speed, setSpeed] = useState(1);
-  const [finished, setFinished] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const narrativeRef = useRef<NarrativeGenerator | null>(null);
+  const messageQueue = useRef<CommentaryLine[]>([]);
+  const lastMessageTime = useRef<number>(0);
+
+  if (!narrativeRef.current && race) {
+    narrativeRef.current = new NarrativeGenerator(race, horses, stables, rngRef.current!);
+  }
+
+  const { tick, speed, setSpeed, finished, paused, setPaused, simTime } = useLiveRaceSimulation({
+    race,
+    runners,
+    resolveRaceWithImpacts,
+    narrativeRef,
+    messageQueue,
+    rngRef,
+  });
+
   const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
   const [minBeyer, setMinBeyer] = useState(0);
@@ -86,13 +102,6 @@ function LiveRace() {
   const [announcement, setAnnouncement] = useState<string>("");
   const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
   const [subjectHorseId, setSubjectHorseId] = useState<string | null>(null);
-  const narrativeRef = useRef<NarrativeGenerator | null>(null);
-  const messageQueue = useRef<CommentaryLine[]>([]);
-  const lastMessageTime = useRef<number>(0);
-
-  if (!narrativeRef.current && race) {
-    narrativeRef.current = new NarrativeGenerator(race, horses, stables, rngRef.current!);
-  }
 
   // Paced message delivery effect
   useEffect(() => {
@@ -118,13 +127,6 @@ function LiveRace() {
   const lastAnnouncedPosition = useRef<Map<string, number>>(new Map());
   const lastAnnouncementTime = useRef<number>(0);
 
-  const simTimeRef = useRef(0);
-  const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
-  const speedRef = useRef(speed);
-  const pausedRef = useRef(paused);
-  speedRef.current = speed;
-  pausedRef.current = paused;
-
   const classBonus = race ? calculateClassBonus(race.graded?.grade, race.raceClass) : 0;
 
   // Calculate odds for each runner
@@ -147,74 +149,6 @@ function LiveRace() {
     return oddsMap;
   }, [runners, horses, classBonus]);
 
-  // Race simulation loop effect
-  useEffect(() => {
-    if (!race || race.resolved) return;
-    let raf = 0;
-    let last = performance.now();
-    const FIXED_DT = 0.05;
-    let accumulator = 0;
-    const MAX_STEPS_PER_FRAME = 64;
-
-    const loop = (now: number) => {
-      const real = (now - last) / 1000;
-      last = now;
-      if (!pausedRef.current) {
-        accumulator += real * speedRef.current;
-      }
-      let stillRunning = runners.some((r) => r.finishTime === null);
-      let steps = 0;
-      while (accumulator >= FIXED_DT && stillRunning && steps < MAX_STEPS_PER_FRAME) {
-        accumulator -= FIXED_DT;
-        simTimeRef.current += FIXED_DT;
-        steps++;
-        stillRunning = false;
-        const pace = computePaceContext(runners, race.distance);
-        if (narrativeRef.current) {
-          const newCommentary = narrativeRef.current.update(
-            runners,
-            simTimeRef.current,
-            pace.pacePressure,
-          );
-          if (newCommentary.length > 0) {
-            messageQueue.current.push(...newCommentary);
-          }
-        }
-        for (const r of runners) {
-          if (r.finishTime === null) {
-            stepRunner(
-              r,
-              FIXED_DT,
-              simTimeRef.current,
-              race.distance,
-              rngRef.current!,
-              runners,
-              pace,
-            );
-            if (r.finishTime !== null) {
-              finishOrderRef.current.push({
-                horseId: r.horseId,
-                position: finishOrderRef.current.length + 1,
-                time: r.finishTime,
-              });
-            } else {
-              stillRunning = true;
-            }
-          }
-        }
-      }
-      setTick((t) => t + 1);
-      if (stillRunning) {
-        raf = requestAnimationFrame(loop);
-      } else {
-        setFinished(true);
-        resolveRaceWithImpacts(race!.id, finishOrderRef.current);
-      }
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [race, race?.resolved, runners, resolveRaceWithImpacts]);
-
   // Keyboard controls effect
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -225,35 +159,19 @@ function LiveRace() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [finished]);
+  }, [finished, setPaused]);
 
   // Early return checks after all hooks
   if (!race) throw notFound();
-  if (race.resolved) {
-    return (
-      <div className="p-8 text-center">
-        <p className="text-cream-muted">This race has already been run.</p>
-        <Link
-          to="/races"
-          search={{
-            grade: "all",
-            country: "all",
-            surface: "all",
-            track: "all",
-            owned: "all",
-            q: "",
-          }}
-        >
-          <Button className="mt-4">Back to races</Button>
-        </Link>
-      </div>
-    );
-  }
 
-  void tick;
+  // If the race is resolved and has snapshots, we can show the replay
+  const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
+
+  const calibratedPars = useGame((s) => s.calibratedPars);
+
   const rows = runners.map((r) => ({
     r,
-    beyer: projectedBeyer(r, race.distance, simTimeRef.current, classBonus),
+    beyer: projectedBeyer(r, race.distance, simTime, classBonus, calibratedPars),
   }));
 
   const positionRank = new Map(
@@ -388,16 +306,30 @@ function LiveRace() {
 
       <div className="relative z-10 p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
         <div>
-          <Track
-            runners={runners}
-            distance={race.distance}
-            tick={tick}
-            surface={race.graded?.surface}
-            weather={race.weather}
-            followTarget={followTarget}
-            paused={paused}
-            subjectHorseId={subjectHorseId}
-          />
+          {hasReplay ? (
+            <RaceVisualizer
+              snapshots={race.snapshots!}
+              distance={race.distance}
+              runners={runners.map((r) => ({
+                horseId: r.horseId,
+                name: r.name,
+                silk: r.silk,
+                owned: r.owned,
+              }))}
+              trackType={race.surface}
+            />
+          ) : (
+            <Track
+              runners={runners}
+              distance={race.distance}
+              tick={tick}
+              surface={race.graded?.surface}
+              weather={race.weather}
+              followTarget={followTarget}
+              paused={paused}
+              subjectHorseId={subjectHorseId}
+            />
+          )}
           <BroadcastCommentary commentary={commentary} />
         </div>
         <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
@@ -630,13 +562,38 @@ function Track({
 
               {/* Tactical Indicators */}
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-1 items-center">
-                {r.draftingHorseId && (
+                {r.tactics === "rail" && r.lane === 0 && (
+                  <div className="px-1.5 py-0.5 rounded-full bg-cyan-500/80 text-[8px] font-black text-white flex items-center gap-1">
+                    RAIL
+                  </div>
+                )}
+                {r.tactics === "outside" && r.lane > 1 && (
+                  <div className="px-1.5 py-0.5 rounded-full bg-orange-500/80 text-[8px] font-black text-white flex items-center gap-1">
+                    OUTSIDE
+                  </div>
+                )}
+                {r.tactics === "save" && r.draftingHorseId && (
+                  <div className="px-1.5 py-0.5 rounded-full bg-emerald-500/80 text-[8px] font-black text-white flex items-center gap-1">
+                    SAVING
+                  </div>
+                )}
+                {r.tactics === "lead" && r.position >= leaderPos - 2 && (
+                  <div className="px-1.5 py-0.5 rounded-full bg-gold/80 text-[8px] font-black text-t950 flex items-center gap-1">
+                    LEADING
+                  </div>
+                )}
+                {r.tactics === "late_kick" && r.position / distance > 0.85 && (
+                  <div className="px-1.5 py-0.5 rounded-full bg-red-600 text-[8px] font-black text-white flex items-center gap-1 animate-pulse">
+                    KICKING
+                  </div>
+                )}
+                {r.draftingHorseId && !r.tactics && (
                   <div className="px-1.5 py-0.5 rounded-full bg-muted text-[8px] font-bold text-foreground flex items-center gap-1 animate-pulse">
                     <span className="h-1 w-1 rounded-full bg-foreground" />
                     Drafting
                   </div>
                 )}
-                {r.velocity > 18 && (
+                {r.velocity > 18.5 && (
                   <div className="px-1.5 py-0.5 rounded-full bg-warning/80 text-[8px] font-bold text-warning-foreground flex items-center gap-1 animate-bounce">
                     <span className="h-1 w-1 rounded-full bg-warning-foreground" />
                     Flying
@@ -718,64 +675,5 @@ function HorseSprite({
           isRunning && !prefersReducedMotion ? "pulse 0.5s ease-in-out infinite" : undefined,
       }}
     />
-  );
-}
-
-function ResultOverlay({
-  race,
-  runners,
-  onClose,
-}: {
-  race: { name: string; purse: number };
-  runners: Runner[];
-  onClose: () => void;
-}) {
-  const PRIZE = [0.6, 0.25, 0.1, 0.05];
-  const ordered = [...runners].sort((a, b) => (a.finishTime ?? 99) - (b.finishTime ?? 99));
-  return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-      <div className="bg-card text-card-foreground rounded-xl shadow-2xl max-w-md w-full p-6 border border-white/10">
-        <h2 className="text-2xl font-bold mb-1 text-cream">{race.name}</h2>
-        <p className="text-sm text-cream-muted mb-4">Final result</p>
-        <div className="space-y-2">
-          {ordered.map((r, i) => {
-            const prize = i < PRIZE.length ? Math.round(race.purse * PRIZE[i]) : 0;
-            return (
-              <div
-                key={r.horseId}
-                className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0"
-              >
-                <span className="w-6 font-bold tabular-nums text-cream-muted">{i + 1}</span>
-                <div
-                  className="h-5 w-5 rounded-full border border-white/20"
-                  style={{ backgroundColor: r.silk }}
-                />
-                <Link
-                  to="/stable/$horseId"
-                  params={{ horseId: r.horseId }}
-                  className={`flex-1 truncate hover:underline ${r.owned ? "font-bold text-success" : ""}`}
-                >
-                  {r.name}
-                </Link>
-                <span className="text-xs text-cream-muted tabular-nums">
-                  {r.finishTime?.toFixed(2)}s
-                </span>
-                {prize > 0 && r.owned && (
-                  <span className="text-sm font-bold text-success tabular-nums">
-                    +${prize.toLocaleString()}
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <Button
-          onClick={onClose}
-          className="w-full mt-6 bg-t700 hover:bg-t600 text-cream font-bold"
-        >
-          Close results
-        </Button>
-      </div>
-    </div>
   );
 }

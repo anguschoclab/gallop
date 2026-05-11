@@ -48,7 +48,7 @@ export const Route = createRootRoute({
       {
         httpEquiv: "Content-Security-Policy",
         content:
-          "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; object-src 'none';",
+          "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.transparenttextures.com; worker-src 'self' blob:; object-src 'none';",
       },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Gallop — Stable Manager" },
@@ -119,7 +119,9 @@ function RootComponent() {
     // Redirect to wizard if no player profile exists (fresh install)
     if (isHydrated && !playerProfile) {
       // Navigate to wizard - TanStack Router will handle route type after regeneration
-      navigate({ to: "/new-game" as any });
+      navigate({ to: "/new-game" }).catch((error) => {
+        console.error("Navigation error:", error);
+      });
     }
   }, [isHydrated, playerProfile, navigate]);
 

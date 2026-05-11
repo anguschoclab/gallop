@@ -1,7 +1,17 @@
+/**
+ * phases/npcClaiming.ts - NPC claiming phase
+ *
+ * This file provides the NPC claiming phase where NPC stables evaluate whether
+ * to file claims on horses entered in claiming races running today.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (Race, Claim, Horse, Stable), @/game/auction (calculateLotValuation), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { calculateLotValuation } from "@/game/auction";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Phase: NPC Claiming
@@ -23,12 +33,13 @@ export const npcClaimingPhase = {
     const newClaims: Claim[] = [...(state.claims ?? [])];
     const npcStables: Stable[] = state.npcStables;
     const allHorses: Horse[] = state.horses;
+    const horseMap = new Map(allHorses.map((h) => [h.id, h]));
 
     for (const race of claimingRaces) {
       const price = race.claiming!.price;
       for (const entry of race.entries) {
         // Only file claims on horses the NPC doesn't already own
-        const horse = allHorses.find((h: Horse) => h.id === entry.horseId);
+        const horse = horseMap.get(entry.horseId);
         if (!horse) continue;
 
         for (const stable of npcStables) {
@@ -43,7 +54,7 @@ export const npcClaimingPhase = {
           );
           if (alreadyClaimed) continue;
 
-          const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses);
+          const valuation = calculateLotValuation(horse, stable, "racing_age", allHorses, horseMap);
           if (price <= valuation * 0.85 && stable.cash >= price) {
             newClaims.push({
               id: generateUUID(),

@@ -1,3 +1,13 @@
+/**
+ * gradedRaces.ts - Graded stakes race data
+ *
+ * This file provides a comprehensive dataset of graded stakes races worldwide,
+ * including race definitions, schedules, restrictions, and Triple Crown groupings.
+ *
+ * Dependencies: @/game/tracks (TRACK_BY_NAME)
+ * Related files: Used throughout race scheduling and calendar systems
+ */
+
 // Canadian Grade 1 stakes races (run at Woodbine).
 // Source: Wikipedia – Category:Grade 1 stakes races in Canada.
 // Distances normalized to meters. dayOfYear schedules each race on the
@@ -51,13 +61,27 @@ export type GradedRace = {
   winAndYouInTarget?: string; // e.g. "bc-classic" - target race for automatic qualification (Win and You're In)
   dayOfYearVariance?: number; // max ±days to shift from base dayOfYear each year (default: 3)
   purseGrowthRate?: number; // annual % purse growth (default: 0.02)
+  fieldSize?: number; // Real-life field size for this race (defaults to 12 if not specified)
 };
 
+/**
+ * Calculate the day of the year (1-365).
+ *
+ * @param month - Month (1-12)
+ * @param day - Day of month
+ * @returns Day of the year
+ */
 function doy(month: number, day: number): number {
   const cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
   return cum[month - 1] + day;
 }
 
+/**
+ * Get the country for a given track name.
+ *
+ * @param track - The track name
+ * @returns Country name
+ */
 function getCountry(track: string): string {
   const trackToCountry: Record<string, string> = {
     // Canada
@@ -192,6 +216,15 @@ function getCountry(track: string): string {
   return trackToCountry[track] || "Other";
 }
 
+/**
+ * Get the country for a graded race.
+ *
+ * Returns the country specified in the race data, or falls back to
+ * the track's country if not specified.
+ *
+ * @param race - The graded race
+ * @returns Country name
+ */
 export function getRaceCountry(race: GradedRace): string {
   return race.country || getCountry(race.track);
 }
@@ -234,18 +267,86 @@ const COUNTRY_TO_CONTINENT: Record<string, Continent> = {
   Chile: "south_america",
 };
 
+/**
+ * Get the country for a track.
+ *
+ * Looks up the country for a given track name using the track-to-country mapping.
+ *
+ * @param track - The track name
+ * @returns Country name
+ */
 export function getTrackCountry(track: string): string {
   return getCountry(track);
 }
 
+/**
+ * Get the continent for a track.
+ *
+ * Looks up the continent for a given track by first getting the country,
+ * then mapping the country to its continent.
+ *
+ * @param track - The track name
+ * @returns Continent (north_america, europe, asia_pacific, or south_america)
+ */
 export function getTrackContinent(track: string): Continent {
   const country = getCountry(track);
   return COUNTRY_TO_CONTINENT[country] || "europe";
 }
 
-export const GRADED_RACES: GradedRace[] = [
+// Field size assignment helpers based on real-life research
+function getDefaultFieldSize(grade: Grade, country: string): number {
+  // Region mapping for field size heuristics
+  const region = getCountryRegion(country);
+
+  // Heuristic matrix based on research of real-life field sizes
+  const fieldSizeMatrix: Record<string, Record<Grade, number>> = {
+    north_america: { G1: 13, G2: 10, G3: 8 },
+    europe: { G1: 15, G2: 11, G3: 9 },
+    asia_pacific: { G1: 15, G2: 11, G3: 9 },
+    japan: { G1: 17, G2: 13, G3: 11 },
+    hong_kong: { G1: 13, G2: 11, G3: 9 },
+    uae: { G1: 11, G2: 9, G3: 7 },
+    south_america: { G1: 13, G2: 9, G3: 7 },
+  };
+
+  return fieldSizeMatrix[region]?.[grade] ?? 12;
+}
+
+function getCountryRegion(country: string): string {
+  const regionMap: Record<string, string> = {
+    USA: "north_america",
+    Canada: "north_america",
+    "Great Britain": "europe",
+    Ireland: "europe",
+    France: "europe",
+    Germany: "europe",
+    Italy: "europe",
+    Spain: "europe",
+    Austria: "europe",
+    Belgium: "europe",
+    "Czech Republic": "europe",
+    Hungary: "europe",
+    Sweden: "europe",
+    Norway: "europe",
+    Denmark: "europe",
+    Turkey: "europe",
+    UAE: "uae",
+    Australia: "asia_pacific",
+    "New Zealand": "asia_pacific",
+    Singapore: "asia_pacific",
+    "Saudi Arabia": "asia_pacific",
+    Japan: "japan",
+    "Hong Kong": "hong_kong",
+    Argentina: "south_america",
+    Brazil: "south_america",
+    Chile: "south_america",
+  };
+  return regionMap[country] ?? "europe"; // Default to Europe
+}
+
+const GRADED_RACES_BASE: GradedRace[] = [
   {
-    uuid: "d5d972e0-b7d3-4a73-987e-7d298c734474",
+    uuid: "40aec8bd-6f18-4efc-8a9e-2fb95565d39c",
     key: "woodbine-mile",
     name: "Woodbine Mile",
     track: "Woodbine",
@@ -258,7 +359,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "c1142636-12c2-412e-9f83-934b614d9e32",
+    uuid: "1c054efe-3103-4ef8-a1ca-bac1e4acb134",
     key: "ep-taylor",
     name: "E. P. Taylor Stakes",
     track: "Woodbine",
@@ -271,7 +372,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "5e3f278c-7bbb-4931-946c-de99bc74da86",
+    uuid: "8b1ee4df-3531-41c9-967e-a6911f4d2c61",
     key: "canadian-international",
     name: "Canadian International Stakes",
     track: "Woodbine",
@@ -284,7 +385,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "f992dc9d-1a00-4a6a-8bda-25a5b4da8b4f",
+    uuid: "1c6aed69-dace-4ef0-9dae-b9d9c78f14ec",
     key: "northern-dancer-turf",
     name: "Northern Dancer Turf Stakes",
     track: "Woodbine",
@@ -297,7 +398,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "d50874b4-7a55-4574-bb5a-04855cc38e7f",
+    uuid: "f9b3058c-37db-4e35-95f8-eb1522500c6b",
     key: "highlander",
     name: "Highlander Stakes",
     track: "Woodbine",
@@ -310,7 +411,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b8268b39-f5e5-4a73-af86-8ddf0367ea6e",
+    uuid: "a4835cbd-e59d-4698-b008-82f96eee597f",
     key: "summer-stakes",
     name: "Summer Stakes",
     track: "Woodbine",
@@ -323,7 +424,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "e0512977-9031-402e-8e69-074126bcda97",
+    uuid: "a84cbb0e-a84f-455a-a093-2b2d0dd50db9",
     key: "natalma",
     name: "Natalma Stakes",
     track: "Woodbine",
@@ -338,7 +439,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= UAE — Group 1 (Meydan, Dubai World Cup Carnival/Night) =============
   {
-    uuid: "0bfe1159-bb65-4869-b852-dde86637705e",
+    uuid: "04f00a58-b2e8-40c8-911e-1689aaa3661c",
     key: "jebel-hatta",
     name: "Jebel Hatta",
     track: "Meydan",
@@ -351,7 +452,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "ec58258d-3334-4e37-bf30-cb7c763d7ef8",
+    uuid: "22369f74-0164-422a-8470-5479f8b0d61a",
     key: "al-maktoum-challenge",
     name: "Al Maktoum Challenge R3",
     track: "Meydan",
@@ -364,7 +465,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "ff000000-0000-4000-8000-000000000001",
+    uuid: "7365a75b-275c-4ce4-ac84-d8d22503b508",
     key: "al-maktoum-challenge-r1",
     name: "Al Maktoum Challenge R1",
     track: "Meydan",
@@ -377,7 +478,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "02a67f95-7b78-40a4-875f-0ee72bd13ec8",
+    uuid: "bac9cf68-227c-4f0f-87fc-84da0d7a4995",
     key: "al-quoz-sprint",
     name: "Al Quoz Sprint",
     track: "Meydan",
@@ -390,7 +491,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "4e6ea8d1-2e14-4de0-b91a-ca8fbe504ea1",
+    uuid: "8c8f63cd-555f-402f-bd92-9590631e1f81",
     key: "dubai-golden-shaheen",
     name: "Dubai Golden Shaheen",
     track: "Meydan",
@@ -403,7 +504,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "7c5f6bd6-44ed-4a8c-aaff-77b1b791c731",
+    uuid: "4cf6a497-2096-4e6d-8146-70abfd86a368",
     key: "dubai-sheema-classic",
     name: "Dubai Sheema Classic",
     track: "Meydan",
@@ -414,9 +515,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 6000000,
     dayOfYear: doy(3, 30),
     restrictions: { minAgeNorthern: 4, minAgeSouthern: 3 },
+    fieldSize: 14,
   },
   {
-    uuid: "d6be4762-25a0-42bb-816b-8460384753e5",
+    uuid: "b71978c5-97b2-423e-a9d0-5fc6aea12b89",
     key: "dubai-turf",
     name: "Dubai Turf",
     track: "Meydan",
@@ -427,9 +529,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 5000000,
     dayOfYear: doy(3, 30),
     restrictions: { minAgeNorthern: 4, minAgeSouthern: 3 },
+    fieldSize: 14,
   },
   {
-    uuid: "05edc9f6-f773-46f0-a9e3-15b2ae8de753",
+    uuid: "59825000-5ba2-4138-b186-f810197c97cc",
     key: "dubai-world-cup",
     name: "Dubai World Cup",
     track: "Meydan",
@@ -440,11 +543,12 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 12000000,
     dayOfYear: doy(3, 30),
     restrictions: { minAgeNorthern: 4, minAgeSouthern: 3 },
+    fieldSize: 11,
   },
 
   // ============= UAE — Group 2 =============
   {
-    uuid: "291f6506-2347-480d-ad74-8a8a04799e0f",
+    uuid: "69a5f6b7-b43d-4f0d-a513-8219a2a5c80c",
     key: "al-fahidi-fort",
     name: "Al Fahidi Fort",
     track: "Meydan",
@@ -457,7 +561,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "78434809-5b15-4e10-a3ae-dd1dfa9ff7aa",
+    uuid: "3cd35ee0-027b-48d7-bc2e-185d745c3b05",
     key: "al-rashidiya",
     name: "Al Rashidiya",
     track: "Meydan",
@@ -470,7 +574,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "7cf756e7-217d-4ce4-a18b-ecc32b8faa58",
+    uuid: "87189fe2-e62f-4e17-9001-7089a08517f0",
     key: "balanchine",
     name: "Balanchine",
     track: "Meydan",
@@ -484,7 +588,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "7d4d1710-a211-4513-a11d-84943b39267b",
+    uuid: "e23fad17-5870-4528-bec0-f77ba83a0d2f",
     key: "cape-verdi",
     name: "Cape Verdi",
     track: "Meydan",
@@ -498,7 +602,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "2c73ecba-a5a4-4688-969e-a1159ced86e6",
+    uuid: "7eb6437c-c816-42d7-b8ef-733f2aea6b4d",
     key: "dubai-city-of-gold",
     name: "Dubai City of Gold",
     track: "Meydan",
@@ -511,7 +615,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "0eb2b9e8-c140-46f2-955f-0798d60ab08b",
+    uuid: "d67b1e2d-7441-4899-9bc1-9a80fc083e5d",
     key: "dubai-gold-cup",
     name: "Dubai Gold Cup",
     track: "Meydan",
@@ -524,7 +628,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d3a805f5-36c3-41d6-8d82-e29d4459a25c",
+    uuid: "5e65af57-11a5-4e9e-80da-72e07927117a",
     key: "godolphin-mile",
     name: "Godolphin Mile",
     track: "Meydan",
@@ -537,7 +641,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "5c68b452-711d-4d8e-845b-5f078eb14101",
+    uuid: "0834f2e3-63fb-478d-979b-5733fdcb36e4",
     key: "al-maktoum-mile",
     name: "Al Maktoum Mile",
     track: "Meydan",
@@ -550,7 +654,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "ffe10def-28e6-4950-8847-9846d8f2f248",
+    uuid: "26a6542d-2b6a-496a-b69d-695716b625ab",
     key: "al-maktoum-classic",
     name: "Al Maktoum Classic R2",
     track: "Meydan",
@@ -563,7 +667,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "94c35d2c-083e-4dfd-9aff-a995ea28a25a",
+    uuid: "3f3dcad5-5dcf-4f94-8c9d-4d574844c7d1",
     key: "meydan-sprint",
     name: "Meydan Sprint",
     track: "Meydan",
@@ -576,7 +680,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "f954d866-006b-4d8e-81cc-2169fa61db23",
+    uuid: "f47b6a11-899b-40f8-941c-1c180d947f16",
     key: "singspiel-stakes",
     name: "Singspiel Stakes",
     track: "Meydan",
@@ -589,7 +693,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "674f9f5f-e4e6-4d15-b7bc-a1ce4d9d5c97",
+    uuid: "56a42404-4093-42d4-b5ba-7e4798805531",
     key: "uae-derby",
     name: "UAE Derby",
     track: "Meydan",
@@ -602,7 +706,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "06a7d7e1-ff8e-43a7-85db-2898d1380b34",
+    uuid: "0c1043f6-3a63-4e2a-b403-8b17df26009a",
     key: "zabeel-mile",
     name: "Zabeel Mile",
     track: "Meydan",
@@ -617,7 +721,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= UAE — Group 3 =============
   {
-    uuid: "fa9dba0e-e7e2-4927-a35a-3809b23a4cfb",
+    uuid: "0ded1104-710d-4049-9db8-3c1fabafe852",
     key: "abu-dhabi-championship",
     name: "Abu Dhabi Championship",
     track: "Abu Dhabi",
@@ -630,7 +734,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "c63526a4-5d40-4319-ab03-2e20ffa3aba7",
+    uuid: "67712259-d2d5-4077-8060-8d9c83a4d44f",
     key: "al-shindagha-sprint",
     name: "Al Shindagha Sprint",
     track: "Meydan",
@@ -643,7 +747,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "8dc7eb6d-5cce-4958-b0c0-b4f4b3782c09",
+    uuid: "ff93b8b7-4cc7-476d-a797-ca942d0781dd",
     key: "burj-nahaar",
     name: "Burj Nahaar",
     track: "Meydan",
@@ -656,7 +760,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "bd41938b-561a-43b4-be31-a30bbd87f780",
+    uuid: "bb4cde61-a137-4eb8-b516-1c82d6086ce4",
     key: "dubai-millennium-stakes",
     name: "Dubai Millennium Stakes",
     track: "Meydan",
@@ -669,7 +773,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "e83fcc99-e99a-4a8a-9935-b18e2daca6f3",
+    uuid: "5077df17-5d84-47ca-b667-b00e8ee7e314",
     key: "dubawi-stakes",
     name: "Dubawi Stakes",
     track: "Meydan",
@@ -682,7 +786,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b9254577-788c-4620-9638-75cc194208bd",
+    uuid: "5866c8fb-c36f-4a0a-abbe-cd7c6d9eda3b",
     key: "firebreak-stakes",
     name: "Firebreak Stakes",
     track: "Meydan",
@@ -695,7 +799,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "4168bdbf-07a4-44d5-be28-46cbc05dab59",
+    uuid: "bba62966-9317-4a28-ad13-fd65e18980d9",
     key: "jebel-ali-mile",
     name: "Jebel Ali Mile",
     track: "Jebel Ali",
@@ -708,7 +812,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "46ac792e-e12d-46c8-acfb-dfcfb634a634",
+    uuid: "dad6a870-2ebf-47d1-9185-dd1fa97dfc58",
     key: "mahab-al-shimaal",
     name: "Mahab Al Shimaal",
     track: "Meydan",
@@ -721,7 +825,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "134acc90-d293-4b3c-a9f8-f3e9b1db7f79",
+    uuid: "931a8c35-13d0-4b4c-987c-6db731e02375",
     key: "nad-al-sheba-trophy",
     name: "Nad Al Sheba Trophy",
     track: "Meydan",
@@ -734,7 +838,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "85e96c0e-b0f3-4608-82ba-70f9333d66f8",
+    uuid: "0e7d6d43-8b4e-4568-93b3-f95913a6b2b1",
     key: "nad-al-sheba-turf-sprint",
     name: "Nad Al Sheba Turf Sprint",
     track: "Meydan",
@@ -747,7 +851,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b9166840-4b03-4c77-8c1d-c483e85ff87a",
+    uuid: "8f168d79-8046-4fa5-870e-20e6eb002b7c",
     key: "uae-oaks",
     name: "UAE Oaks",
     track: "Meydan",
@@ -761,7 +865,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "9165b31c-dcb8-4b24-a420-a2a74e5291a0",
+    uuid: "7c50a303-d1b6-498a-8019-4f9d8506b907",
     key: "uae-2000-guineas",
     name: "UAE 2000 Guineas",
     track: "Meydan",
@@ -776,7 +880,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= South America — Group One (Argentina, Brazil, Chile) =============
   {
-    uuid: "f65efc5a-6489-400d-946b-129a8216aa01",
+    uuid: "e1ea0b15-b036-4e1f-b45d-a7fdb3504774",
     key: "argentina-gran-premio-miguel-alfredo-mart-nez-de-hoz",
     name: "Gran Premio Miguel Alfredo Martínez de Hoz",
     track: "Hipódromo de San Isidro",
@@ -789,7 +893,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "9a2cc380-95ce-49cd-b3d9-9f8f52ab6a91",
+    uuid: "4e43a0bf-fca2-4d49-bcb7-66ed29f267f5",
     key: "argentina-gran-premio-gilberto-lerena",
     name: "Gran Premio Gilberto Lerena",
     track: "Hipódromo Argentino de Palermo",
@@ -803,7 +907,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "518d10f0-b608-49d0-9073-3a4f7885e5c1",
+    uuid: "4c0273ee-a692-44f4-880a-e06a15de75ab",
     key: "argentina-gran-premio-de-honor",
     name: "Gran Premio de Honor",
     track: "Hipódromo Argentino de Palermo",
@@ -816,7 +920,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "240cd75e-1200-4629-be47-fef5746bb43d",
+    uuid: "23a65bbc-4b41-4ef7-b842-66d61d77cde1",
     key: "argentina-gran-premio-jorge-de-atucha",
     name: "Gran Premio Jorge de Atucha",
     track: "Hipódromo Argentino de Palermo",
@@ -830,7 +934,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "66746f1b-da26-4de2-9847-6c2de50901be",
+    uuid: "c046e22b-ab38-46bf-b912-97906fb85806",
     key: "argentina-gran-premio-montevideo",
     name: "Gran Premio Montevideo",
     track: "Hipódromo Argentino de Palermo",
@@ -844,7 +948,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "e1cfc45b-c7fb-4ab0-b086-8986d8b562dc",
+    uuid: "be3b1131-0b6f-467f-b35a-e4ce244f2334",
     key: "argentina-gran-premio-ciudad-de-buenos-aires",
     name: "Gran Premio Ciudad de Buenos Aires",
     track: "Hipódromo Argentino de Palermo",
@@ -857,7 +961,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "e758c4f0-3dc6-4fb3-95fe-8b6e91474fb3",
+    uuid: "edd4c9f4-3ce1-4c26-8845-803583441be6",
     key: "argentina-gran-premio-de-las-am-ricas-osaf",
     name: "Gran Premio de Las Américas - OSAF",
     track: "Hipódromo Argentino de Palermo",
@@ -870,7 +974,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "54c553b1-b01d-4748-84ee-25d893459f7f",
+    uuid: "c1dfa486-e384-4696-8db2-b93dfa230b82",
     key: "argentina-gran-premio-criadores",
     name: "Gran Premio Criadores",
     track: "Hipódromo Argentino de Palermo",
@@ -884,7 +988,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "1247fdad-c2eb-41da-89da-196c8267e44c",
+    uuid: "91832687-e7b5-43ab-8702-d9706a63fe9c",
     key: "argentina-gran-premio-rep-blica-argentina",
     name: "Gran Premio República Argentina",
     track: "Hipódromo Argentino de Palermo",
@@ -897,7 +1001,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "e5eb4fde-ccc4-4632-b7b9-4c71872f332a",
+    uuid: "e28c8702-c8ba-471f-a790-4be70bcb1b8c",
     key: "argentina-gran-premio-25-de-mayo-copa-dr-enrique-olivera",
     name: "Gran Premio 25 de Mayo - Copa Dr. Enrique Olivera",
     track: "Hipódromo de San Isidro",
@@ -910,7 +1014,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "64edabea-2b2e-4b79-b410-8261f1e4399c",
+    uuid: "a0e49361-7037-4ccc-91fc-ced8ebfc90bd",
     key: "argentina-gran-premio-de-potrancas",
     name: "Gran Premio de Potrancas",
     track: "Hipódromo de San Isidro",
@@ -924,7 +1028,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "a669d8b3-3fe8-4dc7-8030-2aec0eca8715",
+    uuid: "415381cc-b1d4-48b0-b8c9-140bc874e68d",
     key: "argentina-gran-premio-gran-criterium",
     name: "Gran Premio Gran Criterium",
     track: "Hipódromo de San Isidro",
@@ -938,7 +1042,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "746b26e8-57e7-498c-b9e5-8d16fe92e76b",
+    uuid: "cc5baac9-e632-4723-a27c-89bc1e2af280",
     key: "argentina-gran-premio-estrellas-juvenile-fillies",
     name: "Gran Premio Estrellas Juvenile Fillies",
     track: "Hipódromo Argentino de Palermo",
@@ -952,7 +1056,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "562a470c-e97e-426a-91fa-0ac9cf2d500d",
+    uuid: "a5debf13-646d-41c5-ac5a-641a68c382f3",
     key: "argentina-gran-premio-estrellas-juvenile",
     name: "Gran Premio Estrellas Juvenile",
     track: "Hipódromo Argentino de Palermo",
@@ -966,7 +1070,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "94130cad-9b6b-4446-9fb1-a78de4085d23",
+    uuid: "e1990e69-70d0-490f-a633-c5e3b2d9e225",
     key: "argentina-gran-premio-estrellas-sprint",
     name: "Gran Premio Estrellas Sprint",
     track: "Hipódromo Argentino de Palermo",
@@ -979,7 +1083,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "bbb02c11-1400-4e77-8439-89b86b13a836",
+    uuid: "1599407c-655c-4270-ae5f-fc913080a09b",
     key: "argentina-gran-premio-estrellas-mile",
     name: "Gran Premio Estrellas Mile",
     track: "Hipódromo Argentino de Palermo",
@@ -992,7 +1096,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b75aef20-e67c-47b8-889e-d6a90fe98b1a",
+    uuid: "bc7827f6-1766-4dd4-be17-7d4aa259b9e8",
     key: "argentina-gran-premio-estrellas-classic",
     name: "Gran Premio Estrellas Classic",
     track: "Hipódromo Argentino de Palermo",
@@ -1005,7 +1109,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "9cc873c2-7189-4904-9f26-ba5a2350e78f",
+    uuid: "4811a406-7346-475a-8e87-0b69faa8f944",
     key: "argentina-gran-premio-estrellas-distaff",
     name: "Gran Premio Estrellas Distaff",
     track: "Hipódromo Argentino de Palermo",
@@ -1019,7 +1123,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "82277434-613d-4e24-a342-033b4a909f08",
+    uuid: "9809ab57-9f59-40c5-bb59-2270fb945555",
     key: "argentina-dos-mil-guineas",
     name: "Dos Mil Guineas",
     track: "Hipódromo de San Isidro",
@@ -1033,7 +1137,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "358159fb-89bd-4481-8e5b-fabf5cb87ddb",
+    uuid: "3834d529-7f9b-4f37-a767-72b50c4e965a",
     key: "argentina-gran-premio-polla-de-potrancas",
     name: "Gran Premio Polla de Potrancas",
     track: "Hipódromo Argentino de Palermo",
@@ -1047,7 +1151,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "35d91063-d4f7-43af-957b-5ef2862a38df",
+    uuid: "9de3e8e4-f539-4d19-8a7b-604a64d18e07",
     key: "argentina-gran-premio-polla-de-potrillos",
     name: "Gran Premio Polla de Potrillos",
     track: "Hipódromo Argentino de Palermo",
@@ -1059,9 +1163,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 251,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts" },
     note: "Colts",
+    triplecrownKey: "argentina-tc",
   },
   {
-    uuid: "a614fb1c-8f27-4cd2-ac86-5b4a1be3b53f",
+    uuid: "8dba0ef1-afd6-418c-9afb-6fcee0cec67c",
     key: "argentina-gran-premio-general-san-mart-n",
     name: "Gran Premio General San Martín",
     track: "Hipódromo Argentino de Palermo",
@@ -1074,7 +1179,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d6993bf8-c484-47b1-b61f-c2d736e34aee",
+    uuid: "c00c4999-95fa-421e-aa87-c511e62bad6c",
     key: "argentina-gran-premio-selecci-n-de-potrancas",
     name: "Gran Premio Selección de Potrancas",
     track: "Hipódromo de La Plata",
@@ -1088,7 +1193,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "1f9c2f8a-9013-4b44-b558-1758d300dadb",
+    uuid: "5f5e4c68-48c9-4110-882b-d79c4feffae0",
     key: "argentina-gran-premio-selecci-n",
     name: "Gran Premio Selección",
     track: "Hipódromo Argentino de Palermo",
@@ -1102,7 +1207,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "79989733-363e-4d2c-bfc6-6f981a0eefed",
+    uuid: "3777a983-ef47-4df7-aaac-f20b36867c92",
     key: "argentina-gran-premio-jockey-club",
     name: "Gran Premio Jockey Club",
     track: "Hipódromo de San Isidro",
@@ -1113,9 +1218,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 250000,
     dayOfYear: 294,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "argentina-tc",
   },
   {
-    uuid: "75c15206-c8e3-421f-b100-b6e54d93f5a8",
+    uuid: "91732320-9470-48cc-b5a1-0643295fe99c",
     key: "argentina-gran-premio-san-isidro-copa-melchor-ngel-posse",
     name: "Gran Premio San Isidro - Copa Melchor Ángel Posse",
     track: "Hipódromo de San Isidro",
@@ -1128,7 +1234,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "479eb046-178c-4f0a-bcd8-01cef3d135dd",
+    uuid: "59b50584-69be-44a9-8b82-401544edbb23",
     key: "argentina-gran-premio-suipacha",
     name: "Gran Premio Suipacha",
     track: "Hipódromo de San Isidro",
@@ -1141,7 +1247,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "f645a1d6-bc1f-4b3c-b45e-8a12193e3d09",
+    uuid: "7e6884d0-d074-4bb6-9e18-cb4ba38b8a4f",
     key: "argentina-gran-premio-diamante",
     name: "Gran Premio Diamante",
     track: "Hipódromo de San Isidro",
@@ -1155,7 +1261,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "24b0b90b-e73f-48bd-b04a-6feaaa73ed32",
+    uuid: "2d142713-18fe-4048-ae69-99df545d7d79",
     key: "argentina-gran-premio-copa-de-oro-alfredo-lalor",
     name: "Gran Premio Copa de Oro - Alfredo Lalor",
     track: "Hipódromo de San Isidro",
@@ -1168,7 +1274,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "2cb1e993-03b0-4ee9-90ea-d5ae41054ea1",
+    uuid: "5d760d51-b602-4420-a299-20c0160fa582",
     key: "argentina-gran-premio-enrique-acebal",
     name: "Gran Premio Enrique Acebal",
     track: "Hipódromo de San Isidro",
@@ -1182,7 +1288,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "79873c61-653e-4837-8e01-472a60bf7c29",
+    uuid: "d4d9a34e-95de-406b-953b-9a5449d3ae33",
     key: "argentina-gran-premio-nacional",
     name: "Gran Premio Nacional",
     track: "Hipódromo Argentino de Palermo",
@@ -1193,9 +1299,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 750000,
     dayOfYear: 322,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "argentina-tc",
   },
   {
-    uuid: "22dce33d-04ea-4d4b-91ff-b2f4dae5e959",
+    uuid: "d376642f-ae67-407e-8363-b67b6f881d9d",
     key: "argentina-gran-premio-maip",
     name: "Gran Premio Maipú",
     track: "Hipódromo Argentino de Palermo",
@@ -1208,7 +1315,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "722254f1-1afe-4bdd-9f0a-ef3cc7d2613a",
+    uuid: "34bf5a94-eebd-41df-97b1-ebb6a839026a",
     key: "argentina-gran-premio-palermo",
     name: "Gran Premio Palermo",
     track: "Hipódromo Argentino de Palermo",
@@ -1221,7 +1328,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "71b71312-7a23-4aa4-9205-c000dbab4492",
+    uuid: "ca747a02-4171-42ef-8f02-8175485cb7d0",
     key: "argentina-gran-premio-dardo-rocha",
     name: "Gran Premio Dardo Rocha",
     track: "Hipódromo de La Plata",
@@ -1234,7 +1341,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fd17e883-7e2f-4ea2-a4e0-ed27e421167e",
+    uuid: "eb21f789-fd0d-4ca7-b8f3-cb8ef4e8c43f",
     key: "argentina-gran-premio-copa-de-plata-roberto-vasquez-mansilla",
     name: "Gran Premio Copa de Plata Roberto Vasquez Mansilla Internacional",
     track: "Hipódromo de San Isidro",
@@ -1248,7 +1355,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "321dfc1c-6f18-486d-9f9d-d4a8fbf77313",
+    uuid: "cb5f8170-6adf-4ac6-abb7-505dc28d3ef8",
     key: "argentina-gran-premio-carlos-pellegrini-internacional",
     name: "Gran Premio Carlos Pellegrini Internacional",
     track: "Hipódromo de San Isidro",
@@ -1261,7 +1368,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ae0638b7-0987-4649-a3b0-a243a0530b43",
+    uuid: "af559dac-0e1e-42a4-b4b4-94bd3b1f79c1",
     key: "argentina-gran-premio-f-lix-de-lzaga-unzu-internacional",
     name: "Gran Premio Félix de Álzaga Unzué Internacional",
     track: "Hipódromo de San Isidro",
@@ -1274,7 +1381,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ab4bcf14-fef9-4433-bf98-c36166a53606",
+    uuid: "83215922-64a9-47f9-a44d-3eb6e823ddcc",
     key: "argentina-gran-premio-joaqu-n-s-de-anchorena-internacional",
     name: "Gran Premio Joaquín S. de Anchorena Internacional",
     track: "Hipódromo de San Isidro",
@@ -1287,7 +1394,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "bde16503-6ce4-4388-9551-f2a3da8cdcc8",
+    uuid: "e50e44a4-6559-4935-b8bf-5c2ef51e0593",
     key: "brazil-grande-pr-mio-estado-do-rio-de-janeiro",
     name: "Grande Prêmio Estado do Rio de Janeiro",
     track: "Hipódromo da Gávea",
@@ -1299,9 +1406,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 45,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts" },
     note: "Colts",
+    triplecrownKey: "brazil-tc",
   },
   {
-    uuid: "ff4b248a-eae2-4f8b-8681-c476888691d5",
+    uuid: "7ce010f7-e536-49f1-8d3e-960241ecf4ff",
     key: "brazil-grande-pr-mio-henrique-possollo",
     name: "Grande Prêmio Henrique Possollo",
     track: "Hipódromo da Gávea",
@@ -1313,9 +1421,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 54,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "brazil-tiara",
   },
   {
-    uuid: "3ab04688-d593-422a-93ec-df06874b0d03",
+    uuid: "cd91e6fc-62d1-4845-bc56-5a607ea4d75a",
     key: "brazil-grande-pr-mio-diana",
     name: "Grande Prêmio Diana",
     track: "Hipódromo da Gávea",
@@ -1327,9 +1436,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 64,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "brazil-tiara",
   },
   {
-    uuid: "e5669ec5-06fc-4468-8479-1546c7c6361d",
+    uuid: "11da1950-cdff-4831-991c-ef58e7b43e67",
     key: "brazil-grande-pr-mio-francisco-eduardo-e-linneo-eduardo-de-p",
     name: "Grande Prêmio Francisco Eduardo e Linneo Eduardo de Paula Machado",
     track: "Hipódromo da Gávea",
@@ -1341,9 +1451,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 62,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts" },
     note: "Colts",
+    triplecrownKey: "brazil-tc",
   },
   {
-    uuid: "52dd68b5-0632-46f3-8244-6317bad2f363",
+    uuid: "f0c0b1ac-75a8-4fd3-bc51-88e4bf83cc43",
     key: "brazil-grande-pr-mio-cruzeiro-do-sul-brazilian-derby",
     name: "Grande Prêmio Cruzeiro do Sul (Brazilian Derby)",
     track: "Hipódromo da Gávea",
@@ -1354,9 +1465,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 750000,
     dayOfYear: 109,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "brazil-tc",
   },
   {
-    uuid: "8a79c4c3-2758-4c41-9764-031c745f5c5b",
+    uuid: "08a5bda0-131f-4ce9-8914-b111751ead56",
     key: "brazil-grande-pr-mio-z-lia-gonzaga-peixoto-de-castro",
     name: "Grande Prêmio Zélia Gonzaga Peixoto de Castro",
     track: "Hipódromo da Gávea",
@@ -1368,9 +1480,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 116,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "brazil-tiara",
   },
   {
-    uuid: "1a55d259-9482-44a2-ad74-69f3598632a3",
+    uuid: "3013ad8f-5fe7-42e7-8fb6-7d9941354b34",
     key: "brazil-grande-pr-mio-juliano-martins",
     name: "Grande Prêmio Juliano Martins",
     track: "Hipódromo Cidade Jardim",
@@ -1383,7 +1496,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "81b7a0c4-837c-48ec-aeae-3d7bdb5b2472",
+    uuid: "3252a430-3c5e-4637-8299-c532f77e086c",
     key: "brazil-grande-pr-mio-jo-o-cec-lio-ferraz",
     name: "Grande Prêmio João Cecílio Ferraz",
     track: "Hipódromo Cidade Jardim",
@@ -1397,7 +1510,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "6c3f6d1d-3b8a-45ea-9d52-b83074627aff",
+    uuid: "6e55ca62-0b36-4016-a21b-e3415b2a4b82",
     key: "brazil-grande-pr-mio-a-b-c-p-c-c",
     name: "Grande Prêmio A.B.C.P.C.C.",
     track: "Hipódromo Cidade Jardim",
@@ -1410,7 +1523,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2 },
   },
   {
-    uuid: "d5969476-3b10-472e-9ecf-fdcbf19ade82",
+    uuid: "c18196e3-9dd8-4601-a0f7-ad7d50b01e76",
     key: "brazil-grande-pr-mio-o-s-a-f-organizacion-sudamericana-de-fo",
     name: "Grande Prêmio O.S.A.F. - Organizacion Sudamericana de Fomento del Sangre Pura de Carrera",
     track: "Hipódromo Cidade Jardim",
@@ -1424,7 +1537,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "8dfed8ca-5061-4e91-b8ce-2018c90d17ed",
+    uuid: "b1c940c9-51ca-4003-a7f3-92efaeef0396",
     key: "brazil-grande-pr-mio-s-o-paulo",
     name: "Grande Prêmio São Paulo",
     track: "Hipódromo Cidade Jardim",
@@ -1437,7 +1550,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "4f3af985-a675-4e02-984a-a1ced1ebec46",
+    uuid: "b35413cd-b690-45c3-bc31-d009cf57a81a",
     key: "brazil-grande-pr-mio-jockey-club-brasileiro",
     name: "Grande Prêmio Jockey Club Brasileiro",
     track: "Hipódromo da Gávea",
@@ -1451,7 +1564,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "70ddba38-1696-4d87-a65c-e107547c9e4a",
+    uuid: "a23f1ddf-5c79-4c98-ba86-cedd1e8a6235",
     key: "brazil-grande-pr-mio-major-suckow",
     name: "Grande Prêmio Major Suckow",
     track: "Hipódromo da Gávea",
@@ -1464,7 +1577,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "30c079c4-2abc-47f9-ac81-179b8b45abff",
+    uuid: "a1188d8a-cb00-4f12-975a-4e9f93d712fe",
     key: "brazil-grande-pr-mio-brasil",
     name: "Grande Prêmio Brasil",
     track: "Hipódromo da Gávea",
@@ -1477,7 +1590,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "8e878cdf-3a54-491e-b7d9-dde230b54805",
+    uuid: "25bf34e0-24fa-462b-ae47-910c3dda014d",
     key: "brazil-grande-pr-mio-presidente-da-rep-blica",
     name: "Grande Prêmio Presidente da República",
     track: "Hipódromo da Gávea",
@@ -1490,7 +1603,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2b4fed3f-f10c-4af3-81c0-964dabde769e",
+    uuid: "61ec3342-9238-4fce-bd41-423b4001fade",
     key: "brazil-grande-pr-mio-roberto-e-nelson-grimaldi-seabra",
     name: "Grande Prêmio Roberto e Nelson Grimaldi Seabra",
     track: "Hipódromo da Gávea",
@@ -1504,7 +1617,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "6264c244-1bfe-4e7d-8dc2-67b5b302374d",
+    uuid: "6042dd3f-bf0e-4dbf-9312-d611383608fa",
     key: "brazil-grande-pr-mio-margarida-polak-lara-ta-a-de-prata",
     name: "Grande Prêmio Margarida Polak Lara - Taça de Prata",
     track: "Hipódromo da Gávea",
@@ -1518,7 +1631,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "2e845203-9826-44a0-9c16-ae4f7abd9bd9",
+    uuid: "bcafda70-7158-4b68-b411-2aa7e53c7d32",
     key: "brazil-grande-pr-mio-jo-o-adhemar-de-almeida-prado-ta-a-de-p",
     name: "Grande Prêmio João Adhemar de Almeida Prado - Taça de Prata",
     track: "Hipódromo da Gávea",
@@ -1532,7 +1645,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "d222ed60-49a7-44b8-a0d4-9019a78faf10",
+    uuid: "53ce40b3-ea60-4c2a-a817-00b84df55fdd",
     key: "brazil-grande-pr-mio-mathias-machline-abcpcc-cl-ssica",
     name: "Grande Prêmio Mathias Machline - ABCPCC Clássica",
     track: "Hipódromo da Gávea",
@@ -1545,7 +1658,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fa4680d3-f79c-4064-9325-4a5b68ab21c4",
+    uuid: "c28dcc94-a966-4960-9962-4fd11a6065d2",
     key: "brazil-grande-pr-mio-ipiranga",
     name: "Grande Prêmio Ipiranga",
     track: "Hipódromo Cidade Jardim",
@@ -1559,7 +1672,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "afc44081-bf77-44ba-bd98-110a5e32e58e",
+    uuid: "bf97dd7f-8bdb-4dbf-ac68-243b9c21c9ff",
     key: "brazil-grande-pr-mio-bar-o-de-piracicaba",
     name: "Grande Prêmio Barão de Piracicaba",
     track: "Hipódromo Cidade Jardim",
@@ -1573,7 +1686,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "9c2a395a-3204-4b87-8c48-93ef8d841205",
+    uuid: "e634f13b-7f09-4b63-998a-1d4a644c012b",
     key: "brazil-grande-pr-mio-jockey-club-de-s-o-paulo",
     name: "Grande Prêmio Jockey Club de São Paulo",
     track: "Hipódromo Cidade Jardim",
@@ -1587,7 +1700,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "e76f66e0-5be5-49d9-833d-cf8422686c6b",
+    uuid: "910a7baa-2319-4238-814c-05d78cbb28f8",
     key: "brazil-grande-pr-mio-henrique-de-toledo-lara",
     name: "Grande Prêmio Henrique de Toledo Lara",
     track: "Hipódromo Cidade Jardim",
@@ -1601,7 +1714,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "1a8558cc-db1d-4c9e-a6c4-9436a3314617",
+    uuid: "d275959a-a104-484d-82e8-2918814ff4c6",
     key: "brazil-grande-pr-mio-derby-paulista",
     name: "Grande Prêmio Derby Paulista",
     track: "Hipódromo Cidade Jardim",
@@ -1615,7 +1728,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "0f9370c8-f383-47ad-81da-283154951d03",
+    uuid: "0ef805a7-879f-4bdd-808c-017237738e8c",
     key: "brazil-grande-pr-mio-diana-x",
     name: "Grande Prêmio Diana",
     track: "Hipódromo Cidade Jardim",
@@ -1629,7 +1742,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "f9f31281-75c2-48d4-9147-f7d2f4311185",
+    uuid: "401cd798-c55b-4644-ae50-2caeedafce34",
     key: "brazil-grande-pr-mio-linneo-de-paula-machado",
     name: "Grande Prêmio Linneo de Paula Machado",
     track: "Hipódromo da Gávea",
@@ -1643,7 +1756,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "880f1dde-5058-40b2-ac03-66aa8fc0aaf0",
+    uuid: "eab6490d-9a84-4666-beb1-6b332c06014f",
     key: "chile-cl-sico-el-derby",
     name: "Clásico El Derby",
     track: "Valparaiso Sporting Club",
@@ -1654,9 +1767,40 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 750000,
     dayOfYear: 34,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "chile-tc",
+  },
+
+  // ============= Chile — Triple Crown (3yo) =============
+  {
+    uuid: "7e800260-6694-4529-8132-e55cce569dc0",
+    key: "chile-cl-sico-el-ensayo",
+    name: "Clásico El Ensayo",
+    track: "Club Hípico de Santiago",
+    trackId: "8cd8068a-d06f-4b40-a8a7-b9d6012afd0e",
+    grade: "G1",
+    distance: 2400,
+    surface: "Turf",
+    purse: 750000,
+    dayOfYear: doy(2, 15),
+    restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "chile-tc",
   },
   {
-    uuid: "d6676c0c-ae40-4b74-a0ef-1e1c540157d6",
+    uuid: "3e7be2a6-92bd-4d5e-9d2b-abea9765b474",
+    key: "chile-cl-sico-st-leger",
+    name: "Clásico St. Leger",
+    track: "Hipódromo Chile",
+    trackId: "8cd8068a-d06f-4b40-a8a7-b9d6012afd0f",
+    grade: "G1",
+    distance: 2200,
+    surface: "Dirt",
+    purse: 500000,
+    dayOfYear: doy(12, 1),
+    restrictions: { minAge: 3 },
+    triplecrownKey: "chile-tc",
+  },
+  {
+    uuid: "e9255857-693b-44cb-9527-cb187e57011f",
     key: "chile-gran-premio-hip-dromo-chile",
     name: "Gran Premio Hipódromo Chile",
     track: "Hipódromo Chile",
@@ -1669,7 +1813,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "47d4854d-a2c4-4502-9433-399c0a2fd8dc",
+    uuid: "78fe99c1-ee4a-4fd7-8097-00550f32be60",
     key: "chile-cl-sico-club-h-pico-de-santiago-falabella",
     name: "Clásico Club Hípico de Santiago - Falabella",
     track: "Club Hípico de Santiago",
@@ -1682,7 +1826,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "4375f346-860c-41be-8ffe-92269169c7bb",
+    uuid: "263ac052-0b3a-400b-9b27-ce0aae19a6b4",
     key: "chile-cl-sico-arturo-lyon-pe-a",
     name: "Clásico Arturo Lyon Peña",
     track: "Club Hípico de Santiago",
@@ -1696,7 +1840,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "d456abaa-0f2a-4812-86f2-14dea48a8514",
+    uuid: "4f0207c1-b149-405d-a35e-1836559110d0",
     key: "chile-cl-sico-alberto-vial-infante",
     name: "Clásico Alberto Vial Infante",
     track: "Club Hípico de Santiago",
@@ -1712,7 +1856,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= Canada — Triple Crown =============
   {
-    uuid: "0dc08218-db6e-46d1-96fd-0a08a30c6c6f",
+    uuid: "49bb238c-0165-4198-898e-b7b1881d718c",
     key: "ca-kings-plate",
     name: "King's Plate",
     track: "Woodbine",
@@ -1726,7 +1870,7 @@ export const GRADED_RACES: GradedRace[] = [
     triplecrownKey: "canada-tc",
   },
   {
-    uuid: "492aae8c-9ba8-4bce-b7c2-1f5c9404c703",
+    uuid: "7edbf250-80eb-4509-a0e8-ec11768f0520",
     key: "ca-prince-of-wales",
     name: "Prince of Wales Stakes",
     track: "Fort Erie",
@@ -1740,7 +1884,7 @@ export const GRADED_RACES: GradedRace[] = [
     triplecrownKey: "canada-tc",
   },
   {
-    uuid: "71c573ae-c6c8-4ed9-a9a3-c4b3fac18d30",
+    uuid: "88923bf9-2e91-42aa-b699-a5e21e9df66d",
     key: "ca-breeders-stakes",
     name: "Breeders' Stakes",
     track: "Woodbine",
@@ -1754,9 +1898,56 @@ export const GRADED_RACES: GradedRace[] = [
     triplecrownKey: "canada-tc",
   },
 
+  // ============= Canada — Triple Tiara (Fillies) =============
+  {
+    uuid: "fde10431-6cd2-42c8-a490-9090cbc5c476",
+    key: "ca-woodbine-oaks",
+    name: "Woodbine Oaks",
+    track: "Woodbine",
+    trackId: "a4e790db-a9ad-458d-9191-817b61b9069c",
+    grade: "G2",
+    distance: 1811,
+    surface: "Synthetic",
+    purse: 391200,
+    dayOfYear: doy(5, 25),
+    restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
+    note: "Fillies",
+    triplecrownKey: "canada-tiara",
+  },
+  {
+    uuid: "b6d38132-5a5d-49f8-8fc0-652c64bc8c69",
+    key: "ca-bison-city-stakes",
+    name: "Bison City Stakes",
+    track: "Fort Erie",
+    trackId: "4e5db0cb-d4b2-4c6f-b675-903139668491",
+    grade: "G3",
+    distance: 1709,
+    surface: "Synthetic",
+    purse: 191725,
+    dayOfYear: doy(6, 15),
+    restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
+    note: "Fillies",
+    triplecrownKey: "canada-tiara",
+  },
+  {
+    uuid: "ba6494d4-58b4-4c0e-b235-1a1da75cce8d",
+    key: "ca-wonder-where-stakes",
+    name: "Wonder Where Stakes",
+    track: "Woodbine",
+    trackId: "a4e790db-a9ad-458d-9191-817b61b9069c",
+    grade: "G3",
+    distance: 1811,
+    surface: "Turf",
+    purse: 150000,
+    dayOfYear: doy(8, 1),
+    restrictions: { minAge: 3, gender: "fillies-and-mares" },
+    note: "Fillies & Mares",
+    triplecrownKey: "canada-tiara",
+  },
+
   // ============= Canada — Grade 2 (Woodbine) =============
   {
-    uuid: "421e6079-c966-40f4-9a12-5a7417485ed0",
+    uuid: "043af30c-7f47-45d0-92ed-43086ca9550c",
     key: "ca-eclipse",
     name: "Eclipse Stakes",
     track: "Woodbine",
@@ -1769,7 +1960,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "10fbbdcd-5d9e-4455-b3bb-303859826e40",
+    uuid: "ed89b329-5031-44cd-aafa-20db47fbd8ea",
     key: "ca-nassau",
     name: "Nassau Stakes",
     track: "Woodbine",
@@ -1783,7 +1974,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "2a33418c-6bd9-4e38-9bfe-8d712239cef1",
+    uuid: "5eeb4253-1214-4f2a-9afc-47dae153939b",
     key: "ca-connaught-cup",
     name: "Connaught Cup Stakes",
     track: "Woodbine",
@@ -1796,7 +1987,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "7490f6f5-f4a3-4293-85d1-adf724644581",
+    uuid: "c8fd0620-956f-460f-a6e6-f43a25726509",
     key: "ca-king-edward",
     name: "King Edward Stakes",
     track: "Woodbine",
@@ -1809,7 +2000,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "16892ce7-34da-41ef-a365-93b00a0eb213",
+    uuid: "08710f0d-c980-4dac-abea-afd967f994a0",
     key: "ca-dance-smartly",
     name: "Dance Smartly Stakes",
     track: "Woodbine",
@@ -1823,7 +2014,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "a182c036-4c8c-4ac8-b102-00ca61de5d0a",
+    uuid: "79aaeea3-992a-40c9-a42c-e564f096cd5f",
     key: "ca-nijinsky",
     name: "Nijinsky Stakes",
     track: "Woodbine",
@@ -1836,7 +2027,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "68007537-3354-49e4-a3b7-e6feba1d8377",
+    uuid: "2951ca04-aae2-4683-aa3f-15db2de7b4b8",
     key: "ca-play-the-king",
     name: "Play the King Stakes",
     track: "Woodbine",
@@ -1849,7 +2040,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b23837e6-786c-4821-a926-63040f62449a",
+    uuid: "f4a80117-ce45-4394-8847-93bf41331e93",
     key: "ca-sky-classic",
     name: "Sky Classic Stakes",
     track: "Woodbine",
@@ -1862,7 +2053,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "574f7164-e00b-4529-b36b-5e142612d787",
+    uuid: "345ff4cd-c693-4d80-91ce-f403be9cd256",
     key: "ca-royal-north",
     name: "Royal North Stakes",
     track: "Woodbine",
@@ -1876,7 +2067,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "874ce111-e265-4fe3-b7c7-7b9cc5bbe90b",
+    uuid: "0337e762-9116-4049-b591-c4488bcf4ffd",
     key: "ca-canadian-stakes",
     name: "Canadian Stakes",
     track: "Woodbine",
@@ -1890,7 +2081,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "c6297d89-38aa-47f4-a0ca-4519a50c435c",
+    uuid: "9a4756ed-c0f9-41b8-99d3-d511e1c28cd2",
     key: "ca-nearctic",
     name: "Nearctic Stakes",
     track: "Woodbine",
@@ -1903,7 +2094,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "c6bba3c2-e6a0-42d3-8622-073144a91489",
+    uuid: "13306bfa-44db-4737-abd8-65ac9a1b44fc",
     key: "ca-bessarabian",
     name: "Bessarabian Stakes",
     track: "Woodbine",
@@ -1917,7 +2108,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "69055cd9-4b43-421e-8866-9f8d99a76c8c",
+    uuid: "6de63bb3-f6ab-4cef-b9d6-05f70ecb8878",
     key: "ca-kennedy-road",
     name: "Kennedy Road Stakes",
     track: "Woodbine",
@@ -1932,7 +2123,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= Canada — Grade 3 =============
   {
-    uuid: "8315668f-cc45-4858-8a7e-e40fd3fff6a6",
+    uuid: "e686dcd5-0abe-4510-8cc1-889a88dc1f5f",
     key: "ca-whimsical",
     name: "Whimsical Stakes",
     track: "Woodbine",
@@ -1946,7 +2137,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "c7f7ec68-e843-4322-98d7-1c5e6d429b8d",
+    uuid: "2a360a20-a05b-44ca-99d8-86919309dc74",
     key: "ca-marine",
     name: "Marine Stakes",
     track: "Woodbine",
@@ -1959,7 +2150,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "cabcf6c0-f59f-4363-abc3-24b679e0927c",
+    uuid: "c34a3c07-f409-4942-b708-a3fd9f10722b",
     key: "ca-hendrie",
     name: "Hendrie Stakes",
     track: "Woodbine",
@@ -1973,7 +2164,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "0cc1d130-ff0c-44aa-8ce8-b1cc0a2b8823",
+    uuid: "abcfea90-7eb3-4c38-bfde-fa34ed36ce28",
     key: "ca-selene",
     name: "Selene Stakes",
     track: "Woodbine",
@@ -1987,7 +2178,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "bb10b6d1-9ec6-4422-b054-b3bbea83cf00",
+    uuid: "ae6e6cac-6e3a-4a6c-bc55-1e81529c8392",
     key: "ca-jacques-cartier",
     name: "Jacques Cartier Stakes",
     track: "Woodbine",
@@ -2000,7 +2191,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d29678ff-6ccd-4201-aad3-ea98059275b7",
+    uuid: "6c6b141a-06ce-4801-8a36-713fb943aa22",
     key: "ca-trillium",
     name: "Trillium Stakes",
     track: "Woodbine",
@@ -2014,7 +2205,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "e3095124-e2bf-404e-8f2b-be14196fdadd",
+    uuid: "9c3a03a8-74c2-4da0-a566-4c781e3d1e16",
     key: "ca-singspiel",
     name: "Singspiel Stakes (Canada)",
     track: "Woodbine",
@@ -2027,7 +2218,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "6a9d597c-56d9-47ca-aa52-9ead4857b566",
+    uuid: "b4ea798b-44a2-42bc-ac85-b1c6a23ccd76",
     key: "ca-dominion-day",
     name: "Dominion Day Stakes",
     track: "Woodbine",
@@ -2040,7 +2231,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "6cb8b1a8-cfb8-4489-89d7-c4e79be22cfa",
+    uuid: "5398dd51-5207-4a25-9f95-1c223421649f",
     key: "ca-vigil",
     name: "Vigil Stakes",
     track: "Woodbine",
@@ -2053,7 +2244,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "b5e6df6f-6ebf-4b3e-ae6b-7a20659094c3",
+    uuid: "48d85718-a74e-460a-b03c-b800a3269080",
     key: "ca-ontario-matron",
     name: "Ontario Matron Stakes",
     track: "Woodbine",
@@ -2067,7 +2258,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "4c791ce7-6a85-4fbd-91b9-e5baffbf5283",
+    uuid: "1416cb4d-2f9b-417e-812a-ac14f578fff9",
     key: "ca-seagram-cup",
     name: "Seagram Cup Stakes",
     track: "Woodbine",
@@ -2080,7 +2271,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "52a98cf2-c696-4ab1-bdb8-e54c32d2c70d",
+    uuid: "305fb075-18ef-416f-9132-526c93b1f917",
     key: "ca-ontario-colleen",
     name: "Ontario Colleen Stakes",
     track: "Woodbine",
@@ -2094,7 +2285,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "3999a8f0-16f6-4a1c-8cc1-95acea35c046",
+    uuid: "0b75f589-8a18-4194-a368-9b8a3b97bff2",
     key: "ca-canadian-derby",
     name: "Canadian Derby",
     track: "Century Mile",
@@ -2107,7 +2298,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "6e1ca96d-9a9d-4803-8704-242047e32f69",
+    uuid: "b309860b-5a26-483a-9146-300c62bcef9a",
     key: "ca-ballerina",
     name: "Ballerina Stakes",
     track: "Hastings",
@@ -2121,7 +2312,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "91ad481c-3bb1-495d-ab38-f30a6235903c",
+    uuid: "5abb9cbf-dbfe-4da2-b753-b52ca6769ead",
     key: "ca-bold-venture",
     name: "Bold Venture Stakes",
     track: "Woodbine",
@@ -2134,7 +2325,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ec930c87-46b3-40c4-8475-dcf35927f3f2",
+    uuid: "0eb6b444-4475-446f-9ad4-3ccf435782f6",
     key: "ca-seaway",
     name: "Seaway Stakes",
     track: "Woodbine",
@@ -2148,7 +2339,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "21f28d42-6bf9-48bc-bb07-1d6bf8a0f8ca",
+    uuid: "5eb13e16-729d-4461-a713-2a50ee456441",
     key: "ca-bc-derby",
     name: "British Columbia Derby",
     track: "Hastings",
@@ -2161,7 +2352,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "c77ea105-ee16-48a4-98ce-4ebe6e2ddea0",
+    uuid: "ced487a4-75f3-4e15-9ffb-99782354dc67",
     key: "ca-grey",
     name: "Grey Stakes",
     track: "Woodbine",
@@ -2174,7 +2365,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "51778614-9fce-492a-927c-72a387270550",
+    uuid: "0d29da95-6f1e-4b83-aaa7-9bb0bc716650",
     key: "ca-mazarine",
     name: "Mazarine Stakes",
     track: "Woodbine",
@@ -2188,7 +2379,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "71c702a5-7ebf-4c23-acab-eed7a3e8bd45",
+    uuid: "9caba2f8-77f9-4f20-a3c2-ade9c337fbfd",
     key: "ca-ontario-derby",
     name: "Ontario Derby",
     track: "Woodbine",
@@ -2201,7 +2392,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "1b0054e2-9a53-4272-8e47-fe37ee0929c4",
+    uuid: "4f4015a1-ec9c-40fa-a090-3b936a3a9540",
     key: "ca-bc-premiers",
     name: "BC Premier's Handicap",
     track: "Hastings",
@@ -2214,7 +2405,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "4047a2e4-3ebf-49e5-b7d1-64bffc5bf037",
+    uuid: "a7add62f-7bde-40ca-bbef-13a49da8c105",
     key: "ca-durham-cup",
     name: "Durham Cup Stakes",
     track: "Woodbine",
@@ -2227,7 +2418,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "568390de-9bc3-4aca-8a1a-61befbb276a6",
+    uuid: "6f010ef5-dbd5-4f9c-9192-4653c5460f94",
     key: "ca-autumn",
     name: "Autumn Stakes",
     track: "Woodbine",
@@ -2240,7 +2431,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "15269d6d-7c0a-4afd-9c35-6dc29877a02f",
+    uuid: "78e40f60-af2e-4507-939f-e14115fbb7bc",
     key: "ca-maple-leaf",
     name: "Maple Leaf Stakes",
     track: "Woodbine",
@@ -2254,7 +2445,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "0f270e50-7cd8-4bee-8050-3f68fc337991",
+    uuid: "f4ab589a-cd33-403f-b6a6-02090dbc7ca5",
     key: "ca-ontario-fashion",
     name: "Ontario Fashion Stakes",
     track: "Woodbine",
@@ -2268,7 +2459,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "1c9f7071-d0a9-4408-b993-b686357730db",
+    uuid: "2aa9c528-c3e3-4e2b-9a7a-a11579c219c7",
     key: "ca-valedictory",
     name: "Valedictory Stakes",
     track: "Woodbine",
@@ -2283,7 +2474,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= Scandinavia — Group 3 =============
   {
-    uuid: "fc771b83-6a98-4363-990c-151765e48378",
+    uuid: "c429ace7-7a95-4f91-9c14-7027a624e13d",
     key: "sc-stockholms-stora-pris",
     name: "Stockholms Stora Pris",
     track: "Bro Park",
@@ -2296,7 +2487,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "6c45bf85-6567-4a3d-8804-08b2b930659d",
+    uuid: "3ad2dfd8-3606-490a-859b-504cea2cccd2",
     key: "sc-oslo-cup",
     name: "Oslo Cup",
     track: "Øvrevoll",
@@ -2309,7 +2500,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "f4761c20-c9d5-46d6-b166-c86eb442c123",
+    uuid: "a999d3a1-1001-45e1-89f6-8fd5137801d4",
     key: "sc-scandinavian-open-championship",
     name: "Scandinavian Open Championship",
     track: "Klampenborg",
@@ -2322,7 +2513,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "27152f88-8588-4efe-acc4-b77c95936210",
+    uuid: "6814ccbc-c0d2-41c8-b067-0d0ac97d6c23",
     key: "sc-marit-sveaas-minnelop",
     name: "Marit Sveaas Minneløp",
     track: "Øvrevoll",
@@ -2335,7 +2526,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "3c69dd6f-ada8-47ea-95f8-f4c5209e43eb",
+    uuid: "ae3751c6-f028-42b6-bd30-a05c9cd83080",
     key: "sc-stockholm-cup-international",
     name: "Stockholm Cup International",
     track: "Bro Park",
@@ -2350,7 +2541,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= Japan — JRA & NAR Graded =============
   {
-    uuid: "6902de0b-17d2-4ee0-ae82-b03fb9c33871",
+    uuid: "9dd1185b-8135-422c-ac58-d86f4cd9e2fb",
     key: "jp-february-stakes",
     name: "February Stakes",
     track: "Tokyo",
@@ -2363,7 +2554,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d8d5ddb2-e885-47ce-8135-46b0c4b5ca22",
+    uuid: "d9d1a38f-8739-4b50-92a4-3647dbbacd55",
     key: "jp-takamatsunomiya-kinen",
     name: "Takamatsunomiya Kinen",
     track: "Chukyo",
@@ -2376,7 +2567,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "84568423-af9f-46d3-9cf5-5f3833e69ef2",
+    uuid: "676b1ea6-1eeb-4a8c-ad84-c29b7d887b79",
     key: "jp-osaka-hai",
     name: "Ōsaka Hai",
     track: "Hanshin",
@@ -2389,7 +2580,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "93746f3c-13ac-466b-b224-148451ef26b8",
+    uuid: "fcf71335-5aa0-40d6-9e12-6c7a1ba33148",
     key: "jp-oka-sho",
     name: "Oka Sho",
     track: "Hanshin",
@@ -2401,9 +2592,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 105,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "japan-tiara",
   },
   {
-    uuid: "01021a5e-b228-48e7-9335-ccc6bb6d9828",
+    uuid: "1da3f09d-48e6-42e1-b9ac-08a8da88e8f5",
     key: "jp-satsuki-sho",
     name: "Satsuki Shō",
     track: "Nakayama",
@@ -2414,9 +2606,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 105,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "japan-tc",
   },
   {
-    uuid: "6e9ecb9e-20c4-4497-9cd2-6bb85d904e02",
+    uuid: "fe09c29d-04de-4724-88db-5544184dcf9b",
     key: "jp-tenno-sho-spring",
     name: "Tennō Shō (Spring)",
     track: "Kyoto",
@@ -2429,7 +2622,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "e0ba6e01-9151-4f51-90ce-1a8948879f98",
+    uuid: "b634dd63-1122-426f-9dcd-f47438ab958f",
     key: "jp-nhk-mile-cup",
     name: "NHK Mile Cup",
     track: "Tokyo",
@@ -2442,7 +2635,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "981479ce-9784-4c82-8084-faa47f550ded",
+    uuid: "79a69f0b-5065-4e52-bb37-b3e3edfe8017",
     key: "jp-victoria-mile",
     name: "Victoria Mile",
     track: "Tokyo",
@@ -2456,7 +2649,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "14819e8a-373a-4ed7-821e-292877c463eb",
+    uuid: "d0f62482-cbd8-421d-b4b0-a8aff5e7ebf8",
     key: "jp-yushun-himba",
     name: "Yushun Himba",
     track: "Tokyo",
@@ -2468,9 +2661,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "japan-tiara",
   },
   {
-    uuid: "4ed6bb45-83c0-4c89-b29a-80bc04a00aa4",
+    uuid: "8ab1966f-23a8-4e24-868b-dc27b6fb2fe8",
     key: "jp-tokyo-yushun",
     name: "Tōkyō Yūshun",
     track: "Tokyo",
@@ -2481,9 +2675,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "japan-tc",
   },
   {
-    uuid: "b898c8ca-34b6-498e-8f0d-54e2aa84e337",
+    uuid: "22398792-7e02-4bcb-b915-142981e0e44d",
     key: "jp-yasuda-kinen",
     name: "Yasuda Kinen",
     track: "Tokyo",
@@ -2496,7 +2691,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "8e57dd67-75ae-487e-9565-8ea420ec759b",
+    uuid: "e71876f3-919a-46c1-8764-25758e63fdb9",
     key: "jp-takarazuka-kinen",
     name: "Takarazuka Kinen",
     track: "Hanshin",
@@ -2509,7 +2704,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "95c0375d-9666-4ecd-b5ca-332f1ecb5b35",
+    uuid: "4be5bb40-6754-4abf-b519-c03d8b961d4f",
     key: "jp-sprinters-stakes",
     name: "Sprinters Stakes",
     track: "Nakayama",
@@ -2522,7 +2717,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "1b3cb2f1-d289-4561-a2d6-fe5c8119849c",
+    uuid: "01fd37bb-da6a-4d38-b4c5-f55047007861",
     key: "jp-shuka-sho",
     name: "Shūka Sho",
     track: "Kyoto",
@@ -2534,9 +2729,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 288,
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "japan-tiara",
   },
   {
-    uuid: "227f9b63-3b14-4a2d-98a2-69a5d4815f30",
+    uuid: "80c266e1-b6d7-4d7f-b027-66a0fa8eff16",
     key: "jp-kikuka-sho",
     name: "Kikuka-shō",
     track: "Kyoto",
@@ -2547,9 +2743,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 288,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "japan-tc",
   },
   {
-    uuid: "2b19e567-e1fa-4f1e-bdac-882ce23548ac",
+    uuid: "f7987167-d358-4398-82b0-7a1ab888b67c",
     key: "jp-tenno-sho-autumn",
     name: "Tennō Shō (Autumn)",
     track: "Tokyo",
@@ -2562,7 +2759,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "c2ace58a-f5f9-4549-b83a-a9ad31beb686",
+    uuid: "a6baabc5-9bc3-40fa-93cb-97bafcb1884b",
     key: "jp-queen-elizabeth-ii-cup",
     name: "Queen Elizabeth II Cup",
     track: "Kyoto",
@@ -2576,7 +2773,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "b1377079-c7b1-4f53-a3eb-6c4e23333406",
+    uuid: "1535ea2e-6d0d-4cd9-a2b5-a699a3d30aba",
     key: "jp-mile-championship",
     name: "Mile Championship",
     track: "Kyoto",
@@ -2589,7 +2786,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "22eb78d4-b868-4d2e-95a8-f5ac220f7f8d",
+    uuid: "79c3970b-0b98-4ac3-89d7-589d1419deec",
     key: "jp-japan-cup",
     name: "Japan Cup",
     track: "Tokyo",
@@ -2600,9 +2797,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 319,
     restrictions: { minAge: 3 },
+    fieldSize: 18,
   },
   {
-    uuid: "449a86d9-23a0-48ab-8b45-556a8ac3afc8",
+    uuid: "ad81afaa-4638-4754-8203-c194d3f5227a",
     key: "jp-champions-cup",
     name: "Champions Cup",
     track: "Chukyo",
@@ -2615,7 +2813,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "455b04f1-0b82-457f-9c9a-84fe86eb29fb",
+    uuid: "93eadc45-1607-4864-b523-a01b36933450",
     key: "jp-hanshin-juvenile-fillies",
     name: "Hanshin Juvenile Fillies",
     track: "Hanshin",
@@ -2629,7 +2827,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "64bba060-c875-4028-b57f-634b9eac6a98",
+    uuid: "b4c78f5f-0f49-443b-a8e5-086847537e76",
     key: "jp-asahi-hai-futurity-stakes",
     name: "Asahi Hai Futurity Stakes",
     track: "Hanshin",
@@ -2642,7 +2840,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "913ba500-104c-444f-97e0-275164ce39d4",
+    uuid: "687cff7a-9c70-4115-9fc5-056efdb2cb0e",
     key: "jp-arima-kinen",
     name: "Arima Kinen",
     track: "Nakayama",
@@ -2656,7 +2854,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "df77f2e2-d76f-4b2c-8c44-53c88d4e7bae",
+    uuid: "9f80f43f-dc33-441d-af1b-015e59c4e142",
     key: "jp-hopeful-stakes",
     name: "Hopeful Stakes",
     track: "Nakayama",
@@ -2669,7 +2867,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "76b30b9f-b31d-4fcc-94ae-1373df7bd461",
+    uuid: "da641fd1-e537-45c0-af67-14bab0babd14",
     key: "jp-nikkei-shinshun-hai",
     name: "Nikkei Shinshun Hai",
     track: "Kyoto",
@@ -2682,7 +2880,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "b5adf215-0a88-48ad-b482-bf8350d7e74a",
+    uuid: "6c9c75cd-1e91-4bb5-80b1-fc22f8994978",
     key: "jp-american-jockey-club-cup",
     name: "American Jockey Club Cup",
     track: "Nakayama",
@@ -2695,7 +2893,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "0079be5a-2f1e-4131-8553-655cf2c6da93",
+    uuid: "02e72b3a-0ffc-49e5-b0ec-8095de673618",
     key: "jp-procyon-stakes",
     name: "Procyon Stakes",
     track: "Chukyo",
@@ -2708,7 +2906,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "6b6f09d0-6aef-4d42-a9b5-896e71f50a43",
+    uuid: "9862355d-aeed-4306-b3ea-3a0d23c1c674",
     key: "jp-kyoto-kinen",
     name: "Kyoto Kinen",
     track: "Kyoto",
@@ -2721,7 +2919,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "1897146c-d67d-4061-9a37-3366c51ba5ab",
+    uuid: "8f6d7103-9b34-4a1b-8479-7c4d90b031ae",
     key: "jp-nakayama-kinen",
     name: "Nakayama Kinen",
     track: "Nakayama",
@@ -2734,7 +2932,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "2758f3fa-9262-4238-a991-362bc363cc6f",
+    uuid: "62cbe7c4-bd22-45b1-ac9b-6f56fed54f3d",
     key: "jp-tulip-sho",
     name: "Tulip Sho",
     track: "Hanshin",
@@ -2748,7 +2946,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "23957a7f-b680-42ee-85d0-1fd994f068ac",
+    uuid: "512254ce-e264-4689-b158-534d8d198d0c",
     key: "jp-yayoi-sho",
     name: "Yayoi Sho",
     track: "Nakayama",
@@ -2761,7 +2959,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "f54f0829-0831-4cb1-859f-50d5283eae4e",
+    uuid: "6d9ef49d-29df-4886-80d3-55380823de6c",
     key: "jp-fillies-revue",
     name: "Fillies' Revue",
     track: "Hanshin",
@@ -2775,7 +2973,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "da935883-09ae-459d-9269-6a102759759c",
+    uuid: "f14a6b5d-711b-418f-ba4b-fad1357a897c",
     key: "jp-kinko-sho",
     name: "Kinko Sho",
     track: "Chukyo",
@@ -2788,7 +2986,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "3c4234e3-8760-4680-8a69-6e035999c161",
+    uuid: "3a82d292-ad61-4147-991c-a42c13244eaf",
     key: "jp-spring-stakes",
     name: "Spring Stakes",
     track: "Nakayama",
@@ -2802,7 +3000,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "fbdf0ae7-bc02-4573-b485-cefed9a2ef56",
+    uuid: "2def5506-d478-482a-a10d-0ecf2dc9ee26",
     key: "jp-hanshin-daishoten",
     name: "Hanshin Daishoten",
     track: "Hanshin",
@@ -2815,7 +3013,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "e4cfaba4-69d6-42ea-9a12-485654a0c178",
+    uuid: "18d3d3e5-fb0a-45ed-946c-99582a3918f9",
     key: "jp-nikkei-sho",
     name: "Nikkei Sho",
     track: "Nakayama",
@@ -2828,7 +3026,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "1a60004b-1b11-4163-8109-79b7744bb3d1",
+    uuid: "29971dd7-76e1-41ea-917d-c4929a54ab57",
     key: "jp-new-zealand-trophy",
     name: "New Zealand Trophy",
     track: "Nakayama",
@@ -2842,7 +3040,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "33c180cf-fb80-46da-88a3-02179288a89b",
+    uuid: "5895cb40-fad4-4d84-9e21-cc624560f66e",
     key: "jp-hanshin-himba-stakes",
     name: "Hanshin Himba Stakes",
     track: "Hanshin",
@@ -2856,7 +3054,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "890f79fc-cd1f-4e57-9cf4-dceeb2a5f226",
+    uuid: "2865a794-4889-4263-899e-33ac62dcd47d",
     key: "jp-flora-stakes",
     name: "Flora Stakes",
     track: "Tokyo",
@@ -2870,7 +3068,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "ff4239f5-c1b9-452b-a333-03e904ae46e3",
+    uuid: "e66b072d-5747-4ea0-930b-cb00b2450eed",
     key: "jp-yomiuri-milers-cup",
     name: "Yomiuri Milers Cup",
     track: "Kyoto",
@@ -2883,7 +3081,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "b7131524-c44b-4301-b658-9c9bef623d0f",
+    uuid: "95951e30-f925-4d74-ad01-3efd2020f616",
     key: "jp-aoba-sho",
     name: "Aoba Sho",
     track: "Tokyo",
@@ -2896,7 +3094,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "6a6c23b5-f45f-4eff-9a7d-f4e7c1252771",
+    uuid: "88a2abbb-064a-4167-b197-814968dcc7f5",
     key: "jp-kyoto-shimbun-hai",
     name: "Kyoto Shimbun Hai",
     track: "Kyoto",
@@ -2909,7 +3107,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "c15fc316-b196-4ed5-a56b-a95ae05f8212",
+    uuid: "982264c9-8238-4fd3-97af-4df990ecbc8e",
     key: "jp-keio-hai-spring-cup",
     name: "Keio Hai Spring Cup",
     track: "Tokyo",
@@ -2922,7 +3120,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "bd520634-205b-470c-8fbf-aa506aee80e0",
+    uuid: "915fa39f-3329-4b74-888d-9b6b72a2ecff",
     key: "jp-meguro-kinen",
     name: "Meguro Kinen",
     track: "Tokyo",
@@ -2935,7 +3133,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "1c9d439f-b81c-4f1b-b383-3d8a31e9aa3c",
+    uuid: "1a2b5d8c-bb5c-4be2-8752-4a0105368998",
     key: "jp-sapporo-kinen",
     name: "Sapporo Kinen",
     track: "Sapporo",
@@ -2948,7 +3146,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "deffacc3-5d64-4fcc-afdd-7ce3723e6e8d",
+    uuid: "edd5d9e4-7b2f-4a84-9fca-47b91c6bc416",
     key: "jp-shion-stakes",
     name: "Shion Stakes",
     track: "Nakayama",
@@ -2962,7 +3160,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "4bedcf4b-9aaa-4b45-a93c-8d75fa8d4ffd",
+    uuid: "e505c6af-7082-4ac6-b243-0be01f41965e",
     key: "jp-centaur-stakes",
     name: "Centaur Stakes",
     track: "Hanshin",
@@ -2975,7 +3173,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2f1ecb80-3546-4358-8249-2a188961aaa9",
+    uuid: "f50d3a47-d0c0-4480-aa94-fa3e3acf8b69",
     key: "jp-rose-stakes",
     name: "Rose Stakes",
     track: "Hanshin",
@@ -2989,7 +3187,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "bf9ed06c-ec60-4f18-be41-0909a22abe77",
+    uuid: "7f86f15a-c498-47ca-8fa6-9ff6d7785520",
     key: "jp-st-lite-kinen",
     name: "St Lite Kinen",
     track: "Nakayama",
@@ -3002,7 +3200,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "1e153bf8-9251-4b61-a977-163bf3474d1b",
+    uuid: "7e414277-d1c0-4cee-b2e1-f523be98950d",
     key: "jp-sankei-sho-all-comers",
     name: "Sankei Sho All Comers",
     track: "Nakayama",
@@ -3015,7 +3213,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a403c38d-16e1-4fd6-ad99-85bd7d1a5060",
+    uuid: "c41da276-423b-4c4e-816f-7ed4ff07b6e1",
     key: "jp-kobe-shimbun-hai",
     name: "Kobe Shimbun Hai",
     track: "Hanshin",
@@ -3029,7 +3227,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "cf0224e6-4cb8-4129-adf7-681c6dc29845",
+    uuid: "f6cb93c2-3be2-44b3-b629-92f2f1f691da",
     key: "jp-mainichi-okan",
     name: "Mainichi Okan",
     track: "Tokyo",
@@ -3042,7 +3240,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "bdd7b85f-a718-4649-aef1-e6a80d0560f9",
+    uuid: "ce20d7ad-2c64-4103-9ac1-557f639c1720",
     key: "jp-kyoto-daishoten",
     name: "Kyoto Daishoten",
     track: "Kyoto",
@@ -3055,7 +3253,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "9b1cbc59-ef04-42b8-8f46-e56ec808b3c1",
+    uuid: "bfe89ed3-ab8d-4ae0-9504-0fc31ee65a68",
     key: "jp-ireland-trophy",
     name: "Ireland Trophy",
     track: "Tokyo",
@@ -3069,7 +3267,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "de658140-15b5-4a48-acb8-4f1f321a301c",
+    uuid: "78b6f367-de36-4b1e-a965-cf86e151d615",
     key: "jp-fuji-stakes",
     name: "Fuji Stakes",
     track: "Tokyo",
@@ -3082,7 +3280,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "9c23526c-2275-4793-9ffa-555ad7f83ea7",
+    uuid: "1b4d103d-fba3-48be-8c68-52fcf418b206",
     key: "jp-swan-stakes",
     name: "Swan Stakes",
     track: "Kyoto",
@@ -3095,7 +3293,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "1036fc7e-7f82-4788-a766-020f97251ce7",
+    uuid: "8f574f7d-9fb6-448c-8af9-0c73dbac95de",
     key: "jp-keio-hai-nisai-stakes",
     name: "Keio Hai Nisai Stakes",
     track: "Tokyo",
@@ -3108,7 +3306,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "6a3c571d-a833-4eff-a05a-95ec7dc1a050",
+    uuid: "c48afd7a-f95a-412b-a5d7-700a81858576",
     key: "jp-copa-republica-argentina",
     name: "Copa Republica Argentina",
     track: "Tokyo",
@@ -3121,7 +3319,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "dbe70eee-9b98-41ba-a9ee-33b389b68dd0",
+    uuid: "c21f2b86-cb24-43ec-ad8f-4cb5e21ab9f8",
     key: "jp-daily-hai-nisai-stakes",
     name: "Daily Hai Nisai Stakes",
     track: "Kyoto",
@@ -3134,7 +3332,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "65478013-d040-4921-a549-f375068e9840",
+    uuid: "48beeeaa-6a76-4ecc-b9ec-635a4376c3da",
     key: "jp-tokyo-sports-hai-nisai-stakes",
     name: "Tokyo Sports Hai Nisai Stakes",
     track: "Tokyo",
@@ -3147,7 +3345,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "c08d4870-9294-4e3a-bc79-90e8accc07e3",
+    uuid: "e0ef2ba6-d483-42aa-9040-f9143f55168a",
     key: "jp-stayers-stakes",
     name: "Stayers Stakes",
     track: "Nakayama",
@@ -3160,7 +3358,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "d07a4318-7599-42af-a706-9b85d6a3e658",
+    uuid: "2b835867-9f9b-48cf-a77e-49969c1c29f9",
     key: "jp-hanshin-cup",
     name: "Hanshin Cup",
     track: "Hanshin",
@@ -3173,7 +3371,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "d5583f78-d4bd-4741-944d-0e9e13ed2c1e",
+    uuid: "8e691553-605e-483a-ac6b-7a8c95203c25",
     key: "jp-nakayama-kimpai",
     name: "Nakayama Kimpai",
     track: "Nakayama",
@@ -3186,7 +3384,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "5005dca1-0861-4f5b-abbe-a881df0545ff",
+    uuid: "753170f1-0871-4878-beb0-d1b34c51251c",
     key: "jp-kyoto-kimpai",
     name: "Kyoto Kimpai",
     track: "Kyoto",
@@ -3199,7 +3397,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "9d845a54-628f-4782-ae47-95c834f7c233",
+    uuid: "a2b284bd-91cc-4b73-b6bf-a6e5297931eb",
     key: "jp-fairy-stakes",
     name: "Fairy Stakes",
     track: "Nakayama",
@@ -3213,7 +3411,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "6fb866a4-1911-43ea-88c2-a05d79eaf1dc",
+    uuid: "74fc60c8-4b9d-4c5c-913e-e73d8642ad82",
     key: "jp-shinzan-kinen",
     name: "Shinzan Kinen",
     track: "Kyoto",
@@ -3226,7 +3424,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "1f05d180-e72f-4f48-b779-d518e25178fa",
+    uuid: "6be6f1c0-0ca8-4049-b32c-d271ec93fd62",
     key: "jp-keisei-hai",
     name: "Keisei Hai",
     track: "Nakayama",
@@ -3239,7 +3437,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "a5151bdb-a76a-48d7-9363-28942abe1826",
+    uuid: "79ff52f7-bad0-46af-890e-0bf2fe713615",
     key: "jp-kokura-himba-stakes",
     name: "Kokura Himba Stakes",
     track: "Kokura",
@@ -3253,7 +3451,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "a973dd41-a142-43b0-895d-36d1e0f4ca6b",
+    uuid: "01e249ad-f207-4705-a195-b4a9eee2f0b3",
     key: "jp-negishi-stakes",
     name: "Negishi Stakes",
     track: "Tokyo",
@@ -3266,7 +3464,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "bff9b5be-1fe0-47a2-8f63-05e935934d0a",
+    uuid: "a833fa11-58cc-4020-b034-d0b90498ace0",
     key: "jp-silk-road-stakes",
     name: "Silk Road Stakes",
     track: "Kyoto",
@@ -3279,7 +3477,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "1a73eb96-f5b5-451d-9587-92c86a83ad6e",
+    uuid: "e4e86e24-7678-4d3a-a4f9-508a182c183f",
     key: "jp-tokyo-shimbun-hai",
     name: "Tokyo Shimbun Hai",
     track: "Tokyo",
@@ -3292,7 +3490,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "964f2182-603c-4123-9d38-81ec5cc91bfa",
+    uuid: "b31ffcc8-2757-4e3f-ba0e-1873b77839a0",
     key: "jp-kisaragi-sho",
     name: "Kisaragi Sho",
     track: "Kyoto",
@@ -3305,7 +3503,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "a6fe0339-f8a7-427e-af1a-0be0079f632c",
+    uuid: "4f9ea1e8-19af-4d13-b970-95bcb9b88111",
     key: "jp-queen-cup",
     name: "Queen Cup",
     track: "Tokyo",
@@ -3319,7 +3517,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "b1f79f4b-5a98-44f3-abbd-ea68e9ce7b84",
+    uuid: "e0bdb4a2-e376-4148-a09f-7152b1b1c910",
     key: "jp-tokinominoru-kinen",
     name: "Tokinominoru Kinen",
     track: "Tokyo",
@@ -3332,7 +3530,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "2b354d3c-c95c-4932-acbd-711cc251bd16",
+    uuid: "b22f64ea-d127-4cb0-a063-c99b692d57c2",
     key: "jp-diamond-stakes",
     name: "Diamond Stakes",
     track: "Tokyo",
@@ -3345,7 +3543,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d3345c5d-7925-41b6-9a0a-78694c71f886",
+    uuid: "0f82cb37-4e0b-4332-8977-83903118b988",
     key: "jp-kokura-daishoten",
     name: "Kokura Daishoten",
     track: "Kokura",
@@ -3358,7 +3556,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "e03c1bf2-9a83-4911-90c6-e2ca697c4c40",
+    uuid: "98a92e46-8719-4e9c-8b70-3c6565ca85e1",
     key: "jp-hankyu-hai",
     name: "Hankyu Hai",
     track: "Hanshin",
@@ -3371,7 +3569,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "9b9a872e-c7c2-4074-aa5c-14fb4c04ea69",
+    uuid: "6af8eef8-7e73-4da3-bfc0-ac735a441016",
     key: "jp-aichi-hai",
     name: "Aichi Hai",
     track: "Chukyo",
@@ -3385,7 +3583,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "9169e487-c0fd-4bdd-906e-632ec6619f26",
+    uuid: "8e3ecad9-7b9f-4fc5-8a7c-24636fab39c1",
     key: "jp-ocean-stakes",
     name: "Ocean Stakes",
     track: "Nakayama",
@@ -3398,7 +3596,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "8a183f82-0009-4dca-8d4f-96b4c40007be",
+    uuid: "26a2c280-f35c-4a66-82bc-bc2cbd577e47",
     key: "jp-nakayama-himba-stakes",
     name: "Nakayama Himba Stakes",
     track: "Nakayama",
@@ -3412,7 +3610,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "dd406e2e-7044-4510-accd-17bffcafad9a",
+    uuid: "32ab0d93-b3a8-4c5d-b9d9-0d8ac33037fa",
     key: "jp-flower-cup",
     name: "Flower Cup",
     track: "Nakayama",
@@ -3426,7 +3624,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "38f2bd5f-b730-4dc4-918e-afb44b140899",
+    uuid: "4c5a3ac0-647f-415a-96c8-ec02f2805e65",
     key: "jp-falcon-stakes",
     name: "Falcon Stakes",
     track: "Chukyo",
@@ -3439,7 +3637,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "ece06c36-2d3a-44b5-b582-d9b112a9b9f9",
+    uuid: "2a280191-7bdd-441d-90b9-958f701cbb7f",
     key: "jp-mainichi-hai",
     name: "Mainichi Hai",
     track: "Hanshin",
@@ -3452,7 +3650,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "9abe9a15-9311-4efb-8ea3-1fb3aad6eb4b",
+    uuid: "1353bce1-bde1-40e0-82c9-97d3e5f24bad",
     key: "jp-march-stakes",
     name: "March Stakes",
     track: "Nakayama",
@@ -3465,7 +3663,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "876a956d-d5b9-4e8c-971a-4a451b50873a",
+    uuid: "0e25b95f-d76b-4fd7-bfed-6c5a018c04e2",
     key: "jp-lord-derby-challenge-trophy",
     name: "Lord Derby Challenge Trophy",
     track: "Nakayama",
@@ -3478,7 +3676,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "da304a67-11b1-4a8b-b3b9-c312b86ac600",
+    uuid: "3794d629-6ba6-43fd-82ec-57ee8a934fe1",
     key: "jp-churchill-downs-cup",
     name: "Churchill Downs Cup",
     track: "Hanshin",
@@ -3491,7 +3689,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "1a7d0c02-559c-49dc-b5ac-38129becc03c",
+    uuid: "6dcea035-d0a9-47e1-a67b-9e58fea45c7b",
     key: "jp-antares-stakes",
     name: "Antares Stakes",
     track: "Hanshin",
@@ -3504,7 +3702,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "390d36cf-4375-4b29-8dd3-fe92be756110",
+    uuid: "476669ed-f71c-41df-9c86-1c75a56dda07",
     key: "jp-fukushima-himba-stakes",
     name: "Fukushima Himba Stakes",
     track: "Fukushima",
@@ -3518,7 +3716,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "f7594177-216e-4897-ae06-3f7d719a8b34",
+    uuid: "10c123da-0221-4492-8e80-8098257ca573",
     key: "jp-niigata-daishoten",
     name: "Niigata Daishoten",
     track: "Niigata",
@@ -3531,7 +3729,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d75067c5-bd24-400d-b511-1a4c07cd019c",
+    uuid: "930f11cd-e5f5-418c-9426-e8cfc0bda435",
     key: "jp-unicorn-stakes",
     name: "Unicorn Stakes",
     track: "Kyoto",
@@ -3544,7 +3742,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "416b64a3-2b7b-4d21-8eda-500fb98b8b84",
+    uuid: "744beb6d-77e0-4c26-b2c1-78877ab74d0e",
     key: "jp-heian-stakes",
     name: "Heian Stakes",
     track: "Kyoto",
@@ -3557,7 +3755,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "17f31bb3-f463-4fd3-88f1-01f64db93429",
+    uuid: "5ece394e-907c-44fe-be35-835ea38d482b",
     key: "jp-aoi-stakes",
     name: "Aoi Stakes",
     track: "Kyoto",
@@ -3570,7 +3768,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "99f80f19-44e4-420f-9107-bc7dfb84a8d1",
+    uuid: "c63428a4-6aa2-4adf-87e7-0e0f25da7d09",
     key: "jp-epsom-cup",
     name: "Epsom Cup",
     track: "Tokyo",
@@ -3583,7 +3781,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2e054605-4da7-42ad-bc75-8984dfb69a3e",
+    uuid: "7545d494-54df-41d6-95bc-7ea183990708",
     key: "jp-fuchu-himba-stakes",
     name: "Fuchu Himba Stakes",
     track: "Tokyo",
@@ -3597,7 +3795,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "98ab03e2-f16e-455c-93d3-a35160a9502e",
+    uuid: "72e836be-422c-451f-9094-9f6fae9913aa",
     key: "jp-hakodate-sprint-stakes",
     name: "Hakodate Sprint Stakes",
     track: "Hakodate",
@@ -3610,7 +3808,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fb35071b-880d-41d0-88f1-fb7afff4b754",
+    uuid: "a385b91c-d595-49b7-b116-86fc1920b30c",
     key: "jp-radio-nikkei-sho",
     name: "Radio Nikkei Sho",
     track: "Fukushima",
@@ -3623,7 +3821,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "f5f6fdcc-ed6d-4821-930b-7ecd4a7f4247",
+    uuid: "6efb1078-66a8-409a-bd56-34efc9836ec0",
     key: "jp-kitakyushu-kinen",
     name: "Kitakyushu Kinen",
     track: "Kokura",
@@ -3636,7 +3834,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "cb7b5b87-79ef-43b9-8974-006c23963e99",
+    uuid: "974a9b87-a4dc-4f6e-ac24-3640b5f3950a",
     key: "jp-shirasagi-stakes",
     name: "Shirasagi Stakes",
     track: "Hanshin",
@@ -3649,7 +3847,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a3e3279f-a00a-4e73-851c-bed38641457f",
+    uuid: "23ecf7ce-71e4-45da-b9c3-da0d89d2d78e",
     key: "jp-tanabata-sho",
     name: "Tanabata Sho",
     track: "Fukushima",
@@ -3662,7 +3860,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "1727d1db-3b57-46f8-b99f-93b11532dd5a",
+    uuid: "49db24f9-365b-4ca6-b424-ab64ef992453",
     key: "jp-tokai-stakes",
     name: "Tokai Stakes",
     track: "Chukyo",
@@ -3675,7 +3873,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "694e31a2-aa07-4e7d-acc8-c24161ae170a",
+    uuid: "33a134ea-2892-43fb-8bbc-a12227d75e81",
     key: "jp-hakodate-kinen",
     name: "Hakodate Kinen",
     track: "Hakodate",
@@ -3688,7 +3886,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "7666b0c3-436d-42a0-9822-1288daabd1b3",
+    uuid: "37732f2a-a441-48b2-83b7-1741b86cf612",
     key: "jp-chukyo-kinen",
     name: "Chukyo Kinen",
     track: "Chukyo",
@@ -3701,7 +3899,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "4e13dd57-b7f7-4091-a784-911a2ebc048c",
+    uuid: "0bc7b477-35ac-41fb-9950-21ba6fc0d2d4",
     key: "jp-hakodate-nisai-stakes",
     name: "Hakodate Nisai Stakes",
     track: "Hakodate",
@@ -3714,7 +3912,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "0e53cad2-941f-4d5c-8d7b-86c9cc3bec0c",
+    uuid: "0540b67c-9712-4a75-bfd9-db6d55b855c5",
     key: "jp-ibis-summer-dash",
     name: "Ibis Summer Dash",
     track: "Niigata",
@@ -3727,7 +3925,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "e1306a48-4545-4986-930a-1f3b73ae01c8",
+    uuid: "8af623da-a11a-4376-b087-1ce40716d996",
     key: "jp-queen-stakes",
     name: "Queen Stakes",
     track: "Sapporo",
@@ -3741,7 +3939,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "1e01a842-7630-43fb-8727-e17ea1ce83b5",
+    uuid: "678d508d-a2c4-4e43-99af-4d79fdab3c93",
     key: "jp-leopard-stakes",
     name: "Leopard Stakes",
     track: "Niigata",
@@ -3754,7 +3952,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "50b47d62-f9ab-4d13-8871-74e1071bd49b",
+    uuid: "8f51ebc4-c4c8-4d41-8b81-8cc739f12a2c",
     key: "jp-kokura-kinen",
     name: "Kokura Kinen",
     track: "Kokura",
@@ -3767,7 +3965,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "82623b06-e626-4cb1-9844-dbbd69d2e066",
+    uuid: "4318ba67-19ce-4887-9cb3-ce108a26dcbb",
     key: "jp-sekiya-kinen",
     name: "Sekiya Kinen",
     track: "Niigata",
@@ -3780,7 +3978,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "896b2393-5812-40fb-9db5-8b10daa10a97",
+    uuid: "0217bf6a-2d4f-49c9-bb5e-867d82535543",
     key: "jp-cbc-sho",
     name: "CBC Sho",
     track: "Chukyo",
@@ -3793,7 +3991,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "f1856b2e-4687-47f6-a30d-1dcefae27881",
+    uuid: "ffd1d8f2-fb88-450e-9054-3b65a0b4fa93",
     key: "jp-elm-stakes",
     name: "Elm Stakes",
     track: "Sapporo",
@@ -3806,7 +4004,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "5c93d40e-7b7b-4c27-b34f-a72e69646dc9",
+    uuid: "108db430-dedf-453c-b4d5-ed04c904d230",
     key: "jp-niigata-nisai-stakes",
     name: "Niigata Nisai Stakes",
     track: "Niigata",
@@ -3819,7 +4017,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "97805f1f-25e9-499f-8d92-5a7fcf7c3c1e",
+    uuid: "500b8397-c243-4546-a00d-7a6f04144234",
     key: "jp-keeneland-cup",
     name: "Keeneland Cup",
     track: "Sapporo",
@@ -3832,7 +4030,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "11d4fcf2-bcf4-4cf0-ad51-5aa96ddeb9e0",
+    uuid: "668fb7d0-4051-4f18-8ee1-52ac56e6ef43",
     key: "jp-sapporo-nisai-stakes",
     name: "Sapporo Nisai Stakes",
     track: "Sapporo",
@@ -3845,7 +4043,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "337da605-a09a-42cb-99b6-792f9237c33f",
+    uuid: "bdc4f47f-43c4-47df-9684-fb35524af032",
     key: "jp-chukyo-nisai-stakes",
     name: "Chukyo Nisai Stakes",
     track: "Chukyo",
@@ -3858,7 +4056,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "1331802e-6eab-4a73-8665-3a5fd38535e3",
+    uuid: "5ce0d15c-2af2-4e3c-b4a5-ffd2b278e988",
     key: "jp-niigata-kinen",
     name: "Niigata Kinen",
     track: "Niigata",
@@ -3871,7 +4069,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "4a29c162-48ef-46fd-ab4c-052315cbb6eb",
+    uuid: "4edee1cb-887f-44da-a2d5-9a5c42771772",
     key: "jp-keisei-hai-autumn-handicap",
     name: "Keisei Hai Autumn Handicap",
     track: "Nakayama",
@@ -3884,7 +4082,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "3753db07-0dc8-4e15-a0cf-e5e3e6b90eb0",
+    uuid: "338dc476-889d-47d3-8abb-941fb1605bf0",
     key: "jp-challenge-cup",
     name: "Challenge Cup",
     track: "Hanshin",
@@ -3897,7 +4095,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "889bbf8f-f09d-4ba6-b218-c24d97092070",
+    uuid: "fc94d94a-9440-4966-8279-ca13402144a5",
     key: "jp-sirius-stakes",
     name: "Sirius Stakes",
     track: "Hanshin",
@@ -3910,7 +4108,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "32c7f8d1-1d60-4a65-9a46-68cb7dd6436f",
+    uuid: "a4186ba4-385f-4290-a7b3-5e927cddee8e",
     key: "jp-saudi-arabia-royal-cup",
     name: "Saudi Arabia Royal Cup",
     track: "Tokyo",
@@ -3923,7 +4121,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "02e73084-497a-4578-b708-9a39b8ba8c13",
+    uuid: "1e264d93-e8b4-4e97-b90d-df86bf2dbc8f",
     key: "jp-artemis-stakes",
     name: "Artemis Stakes",
     track: "Tokyo",
@@ -3937,7 +4135,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "40e7fdfc-c27e-4a84-8b0d-c3a018282e15",
+    uuid: "e074ae07-7533-4582-8653-4cb2a8783f67",
     key: "jp-fantasy-stakes",
     name: "Fantasy Stakes",
     track: "Kyoto",
@@ -3951,7 +4149,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "87c75660-1734-4465-a9d1-32822b5bf78f",
+    uuid: "384ad00e-04d5-4330-a545-1a5758bbbe0b",
     key: "jp-miyako-stakes",
     name: "Miyako Stakes",
     track: "Kyoto",
@@ -3964,7 +4162,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "86042df2-b32c-4f1f-984a-93a3655a65d8",
+    uuid: "ec020ade-67e7-472a-9431-407b6e8e3b71",
     key: "jp-musashino-stakes",
     name: "Musashino Stakes",
     track: "Tokyo",
@@ -3977,7 +4175,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fc7c1c28-7cb1-48aa-bfa0-796d2edab369",
+    uuid: "0c3b909c-0eaf-4eb9-909b-a249df496a0c",
     key: "jp-fukushima-kinen",
     name: "Fukushima Kinen",
     track: "Fukushima",
@@ -3990,7 +4188,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "d0e31f9b-2975-4c04-aac9-b350fd430a04",
+    uuid: "8fe9d649-a25b-446f-bc5f-b15fb700e43a",
     key: "jp-kyoto-nisai-stakes",
     name: "Kyoto Nisai Stakes",
     track: "Kyoto",
@@ -4003,7 +4201,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "29a679e3-e117-444f-934d-d74ed55d5d6f",
+    uuid: "419fb952-baa5-4eb7-bce8-68fb3c611976",
     key: "jp-keihan-hai",
     name: "Keihan Hai",
     track: "Kyoto",
@@ -4016,7 +4214,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "35dc5c7b-7368-49e1-a89a-0c913c880493",
+    uuid: "74fb3fed-a200-4921-8f31-482e8f73ae37",
     key: "jp-naruo-kinen",
     name: "Naruo Kinen",
     track: "Hanshin",
@@ -4029,7 +4227,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a9322761-11b4-4a33-acbb-15062616c2fe",
+    uuid: "6decf7aa-b1cb-4701-abd3-75f110d8b01b",
     key: "jp-chunichi-shimbun-hai",
     name: "Chunichi Shimbun Hai",
     track: "Chukyo",
@@ -4042,7 +4240,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2263e2cf-6175-4690-bffa-6d9f5b9a0450",
+    uuid: "cac25ba0-39d6-45a2-9aa8-335984057181",
     key: "jp-capella-stakes",
     name: "Capella Stakes",
     track: "Nakayama",
@@ -4055,7 +4253,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "6c0ca867-700c-4cf5-98c2-91013b77f5cc",
+    uuid: "4965be6f-b892-47cc-8b10-1e9b9b8edfb0",
     key: "jp-turquoise-stakes",
     name: "Turquoise Stakes",
     track: "Nakayama",
@@ -4069,7 +4267,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "c6543812-afcf-489e-9080-233f00b48883",
+    uuid: "310ffd0a-2327-45aa-856a-fca650b87131",
     key: "jp-tokyo-daishoten",
     name: "Tokyo Daishōten",
     track: "Ohi",
@@ -4082,7 +4280,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "e91b34a4-2714-4364-b5dc-bf00969f392c",
+    uuid: "f7b9f8f5-4409-4eba-a6e1-a076d57b7019",
     key: "jp-kawasaki-kinen",
     name: "Kawasaki Kinen",
     track: "Kawasaki",
@@ -4095,7 +4293,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "7247af02-eb97-42fd-b61c-65d0901f28b6",
+    uuid: "d51f9dc4-f2e0-451f-9fc4-ea56f25cfeb1",
     key: "jp-haneda-hai",
     name: "Haneda Hai",
     track: "Ohi",
@@ -4108,7 +4306,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "5001ca63-caaa-4e0c-9363-6c7edd1f4dba",
+    uuid: "ac1df2ae-272d-48db-95df-0df1d69a1f1e",
     key: "jp-kashiwa-kinen",
     name: "Kashiwa Kinen",
     track: "Funabashi",
@@ -4121,7 +4319,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "ce95a0ca-01a9-4b3f-a8f4-e2be58d8d97e",
+    uuid: "a8a3a394-1d00-4a37-b5cc-57343baf1a66",
     key: "jp-tokyo-derby",
     name: "Tokyo Derby",
     track: "Ohi",
@@ -4134,7 +4332,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "18ad7574-c31c-4e32-a7d2-ede5a7d5cced",
+    uuid: "a388b5a7-32f9-4ea9-ac11-c67853a175fe",
     key: "jp-sakitama-hai",
     name: "Sakitama Hai",
     track: "Urawa",
@@ -4147,7 +4345,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "1c46021a-677b-4cb5-924f-cb0c44342ff7",
+    uuid: "adddbef7-a60e-4450-8ed1-1c5c59e6d529",
     key: "jp-teio-sho",
     name: "Teio Sho",
     track: "Ohi",
@@ -4160,7 +4358,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "dec9a847-77c1-48e6-9fcb-b30118272f63",
+    uuid: "2add6f66-ceb0-405a-a518-3edb87d42384",
     key: "jp-japan-dirt-classic",
     name: "Japan Dirt Classic",
     track: "Ohi",
@@ -4173,7 +4371,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "c647639e-2f1a-43c6-a581-2ead8064f2a7",
+    uuid: "ea7e8f3c-d67b-4e9f-8d10-1d76adb53cb9",
     key: "jp-mile-championship-nambu-hai",
     name: "Mile Championship Nambu Hai",
     track: "Morioka",
@@ -4186,7 +4384,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "5c89dc95-bb8c-4129-b15c-29a9c9eab433",
+    uuid: "63bf73f8-f7fb-45fb-b34b-884c856d9d0c",
     key: "jp-japan-breeding-farm-s-cup-ladies-classic",
     name: "Japan Breeding Farm's Cup Ladies' Classic",
     track: "Various",
@@ -4200,7 +4398,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "bdcf7d84-9b2d-4ff7-b98d-acf01161f3aa",
+    uuid: "a3271bdb-b8a9-4e83-bec0-fe9dea5c8987",
     key: "jp-japan-breeding-farms-cup-sprint",
     name: "Japan Breeding Farms' Cup Sprint",
     track: "Various",
@@ -4213,7 +4411,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "230c7c9a-187e-439e-b159-fffd7df660d8",
+    uuid: "a3fe9bc0-a2e2-41ca-b3ee-de913b2c8bf6",
     key: "jp-japan-breeding-farms-cup-classic",
     name: "Japan Breeding Farms' Cup Classic",
     track: "Various",
@@ -4226,7 +4424,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "342230b1-186e-45cb-9641-fffe621e9fe6",
+    uuid: "a750526f-be97-4756-a457-1047615c7dde",
     key: "jp-zen-nippon-nisai-yushun",
     name: "Zen-Nippon Nisai Yushun",
     track: "Kawasaki",
@@ -4239,7 +4437,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "f703f46d-bb29-4f7f-9d0a-0c428cd9ae2c",
+    uuid: "560a909c-adbb-4c10-9c78-3d34531fcaa5",
     key: "jp-diolite-kinen",
     name: "Diolite Kinen",
     track: "Funabashi",
@@ -4252,7 +4450,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "907c74b8-f717-4053-80ee-76548743e64e",
+    uuid: "84db1c09-d607-4f95-87f0-24021095ae78",
     key: "jp-keihin-hai",
     name: "Keihin Hai",
     track: "Ohi",
@@ -4265,7 +4463,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "5aab5a48-3ea1-4356-9e71-6bcffee0430a",
+    uuid: "131c7477-71a3-476d-b14c-2cc5059642bc",
     key: "jp-hyogo-championship",
     name: "Hyogo Championship",
     track: "Sonoda",
@@ -4278,7 +4476,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "eef07cc5-7c82-4832-aacf-2559c4ec3236",
+    uuid: "745b956e-1ee1-42d2-8fb6-a6eed8132cd4",
     key: "jp-nagoya-grand-prix",
     name: "Nagoya Grand Prix",
     track: "Nagoya",
@@ -4291,7 +4489,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "bd1e44e1-cfae-4b04-97cd-bb0bb79a4302",
+    uuid: "04be79e2-14db-4488-a308-6d3aa035f9a1",
     key: "jp-empress-hai",
     name: "Empress Hai",
     track: "Kawasaki",
@@ -4305,7 +4503,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "2b01d416-8f53-45b8-a2f2-fa389161c8d8",
+    uuid: "f308297b-9cc7-4e4e-8741-df9b79b2de8b",
     key: "jp-kanto-oaks",
     name: "Kanto Oaks",
     track: "Kawasaki",
@@ -4319,7 +4517,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "01cb968e-ec72-4cb4-8586-89345476b089",
+    uuid: "a04a770b-28f4-4369-b971-40fe4e8a45d5",
     key: "jp-furukata-award",
     name: "Furukata Award",
     track: "Morioka",
@@ -4332,7 +4530,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "7f4f2494-e5e6-4b3a-ab71-e95951719db1",
+    uuid: "7e7c17cf-a07d-45e8-9169-04b88baab428",
     key: "jp-nippon-tv-hai",
     name: "Nippon TV Hai",
     track: "Funabashi",
@@ -4345,7 +4543,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "8d5f52bf-b2f1-4a58-9cfa-91b1ba0aa2e3",
+    uuid: "61aa6e4f-d20f-4e10-9434-aaf4df01eee1",
     key: "jp-ladies-prelude",
     name: "Ladies' Prelude",
     track: "Ohi",
@@ -4359,7 +4557,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "2174ff3b-adf5-4062-98ac-e8350ab9bb64",
+    uuid: "91a94a89-599e-4303-9f51-36ebabaed2ad",
     key: "jp-tokyo-hai",
     name: "Tokyo Hai",
     track: "Ohi",
@@ -4372,7 +4570,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2d8b3bb6-5807-4d51-b1a8-d09c3645ea51",
+    uuid: "ca6e880a-de8b-4a77-920e-a2fbde08f9e9",
     key: "jp-urawa-kinen",
     name: "Urawa Kinen",
     track: "Urawa Kinen",
@@ -4385,7 +4583,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "58a8efa6-b3d3-4480-992d-a1f1ce3cc8db",
+    uuid: "f5fb76fb-b0d2-4853-b4e5-ce1e75883912",
     key: "jp-hyogo-junior-grand-prix",
     name: "Hyogo Junior Grand Prix",
     track: "Sonoda",
@@ -4398,7 +4596,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "83df9388-03a2-419b-9abf-992816ac2fb2",
+    uuid: "7e5a7f90-7dc5-4c1b-a5b0-ead392c459cc",
     key: "jp-bluebird-cup",
     name: "Bluebird Cup",
     track: "Funabashi",
@@ -4411,7 +4609,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "99ffec2c-095e-452b-b888-2a15cb505b3e",
+    uuid: "712c0fae-2b32-472f-a31e-7033905b2d3b",
     key: "jp-queen-sho",
     name: "Queen Sho",
     track: "Funabashi",
@@ -4425,7 +4623,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "755d1385-55a3-4463-8553-9ccc2f4cf3f3",
+    uuid: "6074eefd-c95f-413c-a7d4-319280ae1eb0",
     key: "jp-saga-kinen",
     name: "Saga Kinen",
     track: "Saga",
@@ -4438,7 +4636,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "fed0e251-d72e-41d6-b2bc-9f827d9b6d6e",
+    uuid: "e6c92fe0-8a2f-4654-a392-da5986c4682e",
     key: "jp-kumotori-sho",
     name: "Kumotori Sho",
     track: "Oi",
@@ -4451,7 +4649,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "49bd529e-1e98-4102-ad50-f3cf7066fd4a",
+    uuid: "03f0837a-02f8-4e84-885f-ea95a746e50c",
     key: "jp-iris-kinen",
     name: "Iris Kinen",
     track: "Nagoya",
@@ -4464,7 +4662,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "683f003e-f3c5-4445-8b05-50e44f9bfae4",
+    uuid: "87d55616-75b6-4305-9fbe-e1b45a11ff9a",
     key: "jp-kurofune-sho",
     name: "Kurofune Sho",
     track: "Kochi",
@@ -4477,7 +4675,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "4b9ecf7c-dffc-4f66-bf7d-301c41790662",
+    uuid: "6449e9c6-ca92-4852-84d2-12d8ad7dd65e",
     key: "jp-hyogo-queen-cup",
     name: "Hyogo Queen Cup",
     track: "Sonoda",
@@ -4491,7 +4689,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "b0b87201-e635-4547-a1c9-8fd497e9ace5",
+    uuid: "b93ced8c-5e09-4672-b12a-baed0286f609",
     key: "jp-tokyo-sprint",
     name: "Tokyo Sprint",
     track: "Oi",
@@ -4504,7 +4702,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "ecffd7a0-f1e3-4f5c-8ce8-46c7a204c36b",
+    uuid: "a97adc1f-2eca-42e3-848e-38428f3a842e",
     key: "jp-sparking-lady-cup",
     name: "Sparking Lady Cup",
     track: "Kawasaki",
@@ -4518,7 +4716,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "7381e5dc-bf0c-4847-b015-5bb500840a8a",
+    uuid: "3d429a9c-7824-4740-a5e7-6f33b1a9b5f5",
     key: "jp-mercury-cup",
     name: "Mercury Cup",
     track: "Morioka",
@@ -4531,7 +4729,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "1fb80067-23d9-4d82-9fd1-dc1bf3e7af1d",
+    uuid: "ce799370-3d40-451a-88c9-7e01432a9d7a",
     key: "jp-cluster-cup",
     name: "Cluster Cup",
     track: "Morioka",
@@ -4544,7 +4742,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "9e8915c1-a3b7-4ed8-942a-4ffc49328c00",
+    uuid: "2cfdb040-b642-4a89-988b-46d45374b5af",
     key: "jp-hokkaido-sprint-cup",
     name: "Hokkaido Sprint Cup",
     track: "Monbetsu",
@@ -4557,7 +4755,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "1ad258a3-71f9-4812-ac8d-6abe8a048aa2",
+    uuid: "1a729d7d-0d5f-4290-bdf3-53f94547081b",
     key: "jp-breeders-gold-cup",
     name: "Breeders' Gold Cup",
     track: "Monbetsu",
@@ -4571,7 +4769,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "eb8bbfd6-434c-4cb7-9984-dbd4c370a5fa",
+    uuid: "40311eaa-12fd-4fbe-895e-bcc9af754d85",
     key: "jp-summer-champion",
     name: "Summer Champion",
     track: "Saga",
@@ -4584,7 +4782,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "204e1da3-fe85-4314-8832-2494707b052c",
+    uuid: "667fdf37-6c8d-4e2e-bd38-d35186c7aacc",
     key: "jp-oval-sprint",
     name: "Oval Sprint",
     track: "Urawa",
@@ -4597,7 +4795,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "c53cf44e-3da1-4021-9ddf-e284762e07cc",
+    uuid: "c87cd5e5-448d-46ca-8a37-6b6913625c08",
     key: "jp-hakusan-daishoten",
     name: "Hakusan Daishoten",
     track: "Kanazawa",
@@ -4610,7 +4808,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "5c5f34d5-1fef-4f97-98e8-e6ed11ae0b29",
+    uuid: "a59683b2-ede7-4adb-8299-9be7a455b3ec",
     key: "jp-edelweiss-sho",
     name: "Edelweiss Sho",
     track: "Monbetsu",
@@ -4624,7 +4822,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "7163cc33-c37a-481d-a37a-f4c0787f2bfa",
+    uuid: "a66c1ec4-af26-46ad-b758-5b8ffd137bfe",
     key: "jp-jbc-two-year-old-championship",
     name: "JBC Two-Year-Old Championship",
     track: "Monbetsu",
@@ -4637,7 +4835,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "a5486bb6-abb9-47f2-9273-769bcbc78817",
+    uuid: "50a53dbb-1557-4c4d-b9cf-b7cbedab8ff8",
     key: "jp-nagoya-daishoten",
     name: "Nagoya Daishoten",
     track: "Nagoya",
@@ -4650,7 +4848,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "d1ad264a-3c14-44c0-bd69-a50ae81422ca",
+    uuid: "1742de57-42e6-4b69-9111-802cc58362aa",
     key: "jp-hyogo-gold-trophy",
     name: "Hyogo Gold Trophy",
     track: "Sonoda",
@@ -4665,7 +4863,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= Italy — Group 2 (Highest current level) =============
   {
-    uuid: "e5f9fec2-0f06-4333-83bc-ce3b5ee2e7e8",
+    uuid: "b604a448-bbf9-413e-90b5-1ad926035a50",
     key: "it-derby-italiano",
     name: "Derby Italiano",
     track: "Capannelle",
@@ -4676,9 +4874,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 250000,
     dayOfYear: doy(5, 12),
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "italy-tc",
   },
   {
-    uuid: "3491686c-c8ed-4ae5-99ed-6c38f423302d",
+    uuid: "51dd299b-67e0-40e7-9427-90fd5413299a",
     key: "it-oaks-d-italia",
     name: "Oaks d'Italia",
     track: "San Siro",
@@ -4692,7 +4891,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "d3a87cd5-d475-471f-8c4a-1d939ae43664",
+    uuid: "25019583-fbee-4cbc-9f8b-b2487fed7dff",
     key: "it-gran-premio-del-jockey-club",
     name: "Gran Premio del Jockey Club",
     track: "San Siro",
@@ -4705,7 +4904,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "7b36c205-67a9-4f2c-b127-04317e8fccb7",
+    uuid: "0f6fde9a-03d9-4c0a-82c2-244bea7ee200",
     key: "it-premio-lydia-tesio",
     name: "Premio Lydia Tesio",
     track: "Capannelle",
@@ -4719,7 +4918,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "31b9839d-2a4f-42bf-acb1-ef4254bdcd33",
+    uuid: "c30d6133-c49c-45c9-bb01-8c13fb848904",
     key: "it-premio-vittorio-di-capua",
     name: "Premio Vittorio di Capua",
     track: "San Siro",
@@ -4732,7 +4931,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ca011d69-02f3-4098-a9c6-83ce665e735c",
+    uuid: "4f4e896a-a0a0-41a9-86dd-0aa2949934d4",
     key: "it-premio-dormello",
     name: "Premio Dormello",
     track: "San Siro",
@@ -4746,7 +4945,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "f2623497-1a7b-4a03-8241-737d10a13508",
+    uuid: "ab3f8edd-611d-424b-b10b-7d6c9aec5efd",
     key: "it-premio-roma",
     name: "Premio Roma",
     track: "Capannelle",
@@ -4761,7 +4960,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= Italy — Group 3 =============
   {
-    uuid: "c54dd8a4-ab76-4496-8c30-d7320343a43f",
+    uuid: "996bedf3-eeea-404c-8bca-aabdcea8b0fb",
     key: "it-gran-premio-di-milano",
     name: "Gran Premio di Milano",
     track: "San Siro",
@@ -4776,7 +4975,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= Hong Kong — HKJC Group races (Sha Tin/Happy Valley) =============
   {
-    uuid: "7d6bb27f-67dc-42e6-b545-c0af0e923b85",
+    uuid: "5ab67314-6cc6-4f2d-b1e3-e7183abaf3da",
     key: "hk-stewards-cup",
     name: "Stewards' Cup",
     track: "Sha Tin",
@@ -4787,9 +4986,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 3000000,
     dayOfYear: 15,
     restrictions: { minAge: 3 },
+    triplecrownKey: "hongkong-tc",
   },
   {
-    uuid: "4b6c06ef-6c74-405d-929a-01194a0f5d9e",
+    uuid: "f6204408-ddd2-46bd-b7ad-e4c373621bfd",
     key: "hk-centenary-sprint-cup",
     name: "Centenary Sprint Cup",
     track: "Sha Tin",
@@ -4802,7 +5002,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b62559d9-f454-4f6f-a72e-fd651a0aa154",
+    uuid: "d7fa7c88-cc4a-4914-98a4-f7de7cf46a8e",
     key: "hk-hong-kong-gold-cup",
     name: "Hong Kong Gold Cup",
     track: "Sha Tin",
@@ -4813,9 +5013,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 3000000,
     dayOfYear: 46,
     restrictions: { minAge: 3 },
+    triplecrownKey: "hongkong-tc",
   },
   {
-    uuid: "b2f738c7-3d6e-49ef-a49f-f75324ef3a1d",
+    uuid: "0c132a50-a154-408a-9ecb-33fb6761a6e8",
     key: "hk-queen-s-silver-jubilee-cup",
     name: "Queen's Silver Jubilee Cup",
     track: "Sha Tin",
@@ -4828,7 +5029,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "af74ca9a-6d46-4753-8084-b30cb7b1fab1",
+    uuid: "4cce811b-6957-44f3-a9a7-079682d2b52f",
     key: "hk-queen-elizabeth-ii-cup",
     name: "Queen Elizabeth II Cup",
     track: "Sha Tin",
@@ -4841,7 +5042,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "9c935890-8faa-44e7-9695-53ac2851df22",
+    uuid: "8ad4a10f-d07a-4a8e-b781-12c023a8d97c",
     key: "hk-champions-mile",
     name: "Champions Mile",
     track: "Sha Tin",
@@ -4854,7 +5055,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "02d3089b-a631-4950-866a-168f0d95122b",
+    uuid: "29b926bd-116d-4f61-b644-2955c2660d70",
     key: "hk-chairman-s-sprint-prize",
     name: "Chairman's Sprint Prize",
     track: "Sha Tin",
@@ -4867,7 +5068,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "787af10f-093b-4e09-b1f5-59f094f16f3a",
+    uuid: "45d591e1-7c20-4b8f-b21b-d3a8db8908d7",
     key: "hk-champions-chater-cup",
     name: "Champions & Chater Cup",
     track: "Sha Tin",
@@ -4878,9 +5079,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 3000000,
     dayOfYear: 135,
     restrictions: { minAge: 3 },
+    triplecrownKey: "hongkong-tc",
   },
   {
-    uuid: "0396f0e1-9353-4ec4-9f61-c393f4a70243",
+    uuid: "88c116a6-eded-4377-95af-480c0bef08bd",
     key: "hk-hong-kong-sprint",
     name: "Hong Kong Sprint",
     track: "Sha Tin",
@@ -4893,7 +5095,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fdbfea69-1ae9-434d-bab7-ed51ef9e1221",
+    uuid: "a400c87a-2602-4529-9e8f-f73d54eba628",
     key: "hk-hong-kong-mile",
     name: "Hong Kong Mile",
     track: "Sha Tin",
@@ -4906,7 +5108,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2c0180d8-8e01-47c8-a1f6-fe6c2b58d46a",
+    uuid: "91993988-327a-46ba-9414-f543896bdc7e",
     key: "hk-hong-kong-vase",
     name: "Hong Kong Vase",
     track: "Sha Tin",
@@ -4919,7 +5121,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "afd92b40-7372-4317-8448-d637e5afc9fb",
+    uuid: "296ce010-703a-4797-be6e-017d3a4512bb",
     key: "hk-hong-kong-cup",
     name: "Hong Kong Cup",
     track: "Sha Tin",
@@ -4932,7 +5134,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2871a948-e042-40b0-8eee-3001c9a24b8a",
+    uuid: "10c84e50-d14b-4a90-b6d5-c03f8d62d209",
     key: "hk-sprint-cup",
     name: "Sprint Cup",
     track: "Sha Tin",
@@ -4945,7 +5147,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "add6e733-5129-4158-a9b2-b962ce00144e",
+    uuid: "52d8c7a0-b840-46cf-a68a-0200c675b548",
     key: "hk-chairman-s-trophy",
     name: "Chairman's Trophy",
     track: "Sha Tin",
@@ -4958,7 +5160,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "e62d5e61-1f73-44dc-9e85-79fe1de3f5ac",
+    uuid: "e760225a-639d-4e4f-a858-1b56b52c7650",
     key: "hk-premier-bowl",
     name: "Premier Bowl",
     track: "Sha Tin",
@@ -4971,7 +5173,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2c0df840-f5ee-46eb-a261-d5f30cd65fcc",
+    uuid: "39c3dced-1302-4a9f-9c29-c7d450a10328",
     key: "hk-sha-tin-trophy",
     name: "Sha Tin Trophy",
     track: "Sha Tin",
@@ -4984,7 +5186,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "7507f5c8-6a70-4c8d-a9b4-fe4ea09c9ec5",
+    uuid: "81614fcc-3d72-489b-abc1-339ff8c1cde4",
     key: "hk-jockey-club-cup",
     name: "Jockey Club Cup",
     track: "Sha Tin",
@@ -4997,7 +5199,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "5b50eb90-6683-4c9a-9114-9eb66cadfdd7",
+    uuid: "9ff8afd8-e7eb-42ab-b088-d92fc2d25ab2",
     key: "hk-jockey-club-mile",
     name: "Jockey Club Mile",
     track: "Sha Tin",
@@ -5010,7 +5212,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "59c28c57-51e9-40f0-8566-086a9e76f9b6",
+    uuid: "f81264d3-168a-4d92-b981-7a5910638d06",
     key: "hk-jockey-club-sprint",
     name: "Jockey Club Sprint",
     track: "Sha Tin",
@@ -5023,7 +5225,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "e619dc3e-2cfb-4327-8290-c3755afdf0d1",
+    uuid: "7c476237-8cdd-48bc-9d69-dec4976e09f8",
     key: "hk-chinese-club-challenge-cup",
     name: "Chinese Club Challenge Cup",
     track: "Sha Tin",
@@ -5036,7 +5238,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ea574642-c2cb-4ea0-b646-ceadf94f3c0f",
+    uuid: "d0725cb5-4e9a-42ef-ba4f-c51f19c845fa",
     key: "hk-bauhinia-sprint-trophy",
     name: "Bauhinia Sprint Trophy",
     track: "Sha Tin",
@@ -5049,7 +5251,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "41325ae3-a506-49ca-848d-350e127c2ad7",
+    uuid: "7504b8e4-8dda-4a0d-94fd-303823825fb7",
     key: "hk-january-cup",
     name: "January Cup",
     track: "Happy Valley",
@@ -5062,7 +5264,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a6cb4a2b-6eca-40b8-8d11-40f724a45da8",
+    uuid: "36095dd8-085e-424c-9e26-baac11a8e719",
     key: "hk-centenary-vase",
     name: "Centenary Vase",
     track: "Sha Tin",
@@ -5075,7 +5277,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "4a3c7779-54c4-46c6-adbb-a2165a9d37c7",
+    uuid: "2859e76c-a0cc-4f11-8ed5-10fdd7bcc498",
     key: "hk-queen-mother-memorial-cup",
     name: "Queen Mother Memorial Cup",
     track: "Sha Tin",
@@ -5088,7 +5290,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b2737127-ef65-4fd1-92f2-dd3575bebbe3",
+    uuid: "f0ae57a0-aac0-4a01-991e-47b126fe77d3",
     key: "hk-sha-tin-vase",
     name: "Sha Tin Vase",
     track: "Sha Tin",
@@ -5101,7 +5303,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "dc885743-b659-4553-9b4d-ff12c4a6fd45",
+    uuid: "a8816c6b-153b-4e52-a0df-4ead508eab6a",
     key: "hk-lion-rock-trophy",
     name: "Lion Rock Trophy",
     track: "Sha Tin",
@@ -5114,7 +5316,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "faa792d8-f3f0-4e21-b62a-bc2360fd9400",
+    uuid: "539df26f-e974-495f-8f28-5039a92b9d9d",
     key: "hk-premier-cup",
     name: "Premier Cup",
     track: "Sha Tin",
@@ -5127,7 +5329,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "3f45e417-3f5c-4a67-ab05-9af4ed98a3ed",
+    uuid: "d684b529-43b1-461a-a6e9-267e2753af75",
     key: "hk-premier-plate",
     name: "Premier Plate",
     track: "Sha Tin",
@@ -5140,7 +5342,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ea8bab45-c120-48e0-84dc-9ed44a096a05",
+    uuid: "f0521195-68cd-4781-8385-ebdb2669d752",
     key: "hk-national-day-cup",
     name: "National Day Cup",
     track: "Sha Tin",
@@ -5153,7 +5355,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "3deb93e8-6c4a-4356-b77d-d2c1609fa0f6",
+    uuid: "0a55b639-930a-4962-bfbc-e9cf0cdf1617",
     key: "hk-celebration-cup",
     name: "Celebration Cup",
     track: "Sha Tin",
@@ -5166,7 +5368,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2e6b641e-3da6-4965-9612-ff92cbbcff76",
+    uuid: "748d4743-18ca-447b-bb27-dfbf40fa1a56",
     key: "hk-ladies-purse",
     name: "Ladies' Purse",
     track: "Sha Tin",
@@ -5181,7 +5383,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= Great Britain — BHA Group races =============
   {
-    uuid: "3ce3a43e-cfc3-4f43-9a00-32447b7195a9",
+    uuid: "65e47993-ab45-492a-836b-a33040d24e2d",
     key: "gb-2000-guineas-stakes",
     name: "2000 Guineas Stakes",
     track: "Newmarket",
@@ -5195,7 +5397,7 @@ export const GRADED_RACES: GradedRace[] = [
     triplecrownKey: "uk-classics",
   },
   {
-    uuid: "70d96855-b65c-456e-81fa-63f82dd6c84d",
+    uuid: "9a43b83b-f26a-4b54-b798-54ddc1eb1773",
     key: "gb-1000-guineas-stakes",
     name: "1000 Guineas Stakes",
     track: "Newmarket",
@@ -5210,7 +5412,7 @@ export const GRADED_RACES: GradedRace[] = [
     triplecrownKey: "uk-classics",
   },
   {
-    uuid: "983dfd97-f9a8-4144-a853-90149cc5f3e4",
+    uuid: "7547a3b6-f331-47c1-994d-a2c69486cd52",
     key: "gb-lockinge-stakes",
     name: "Lockinge Stakes",
     track: "Newbury",
@@ -5223,7 +5425,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "7cc32fba-bcf6-4079-83c2-74bbdc69df86",
+    uuid: "e8623a54-d30f-4e14-a737-1c6e0ad484db",
     key: "gb-oaks-stakes",
     name: "Oaks Stakes",
     track: "Epsom",
@@ -5238,7 +5440,7 @@ export const GRADED_RACES: GradedRace[] = [
     triplecrownKey: "uk-classics",
   },
   {
-    uuid: "83c486e6-9561-47f3-8604-b81424890603",
+    uuid: "6432ad15-ea15-41a7-9aeb-b8c4848afd8e",
     key: "gb-coronation-cup",
     name: "Coronation Cup",
     track: "Epsom",
@@ -5251,7 +5453,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d0482261-cf51-4de9-a3a9-a74f2048edf6",
+    uuid: "510b7cea-4d5a-44e2-9874-f97a39ed9389",
     key: "gb-derby-stakes",
     name: "Derby Stakes",
     track: "Epsom",
@@ -5265,7 +5467,7 @@ export const GRADED_RACES: GradedRace[] = [
     triplecrownKey: "uk-classics",
   },
   {
-    uuid: "a1f3f85c-ba94-4f43-b30e-682122e522a1",
+    uuid: "1aa0b78d-504d-4fe7-89f4-ea2c0ff83a57",
     key: "gb-queen-anne-stakes",
     name: "Queen Anne Stakes",
     track: "Ascot",
@@ -5278,7 +5480,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "fe5f4230-f95d-4b98-b25b-4230a2bef4c2",
+    uuid: "62a7b5b6-5d63-46a5-8792-96c59e4e1b4a",
     key: "gb-king-charles-iii-stakes",
     name: "King Charles III Stakes",
     track: "Ascot",
@@ -5291,7 +5493,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "eac6e0e4-4103-4a72-8ee9-a55a0a29742a",
+    uuid: "726f75f4-1f99-4a16-b383-d64a554f78af",
     key: "gb-st-james-s-palace-stakes",
     name: "St. James's Palace Stakes",
     track: "Ascot",
@@ -5304,7 +5506,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "79a81ca0-954a-44a1-bd6f-551e5dad4066",
+    uuid: "713844e4-8d7b-4011-9568-6d1ee5445d39",
     key: "gb-prince-of-wales-s-stakes",
     name: "Prince of Wales's Stakes",
     track: "Ascot",
@@ -5317,7 +5519,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "6187a142-5298-4498-9fc6-d56f489738cb",
+    uuid: "bbed9a12-cb00-492a-8753-f014fa956f86",
     key: "gb-gold-cup",
     name: "Gold Cup",
     track: "Ascot",
@@ -5330,7 +5532,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "0ff0cfc1-9d77-42de-b4ff-120e9846db7a",
+    uuid: "0333c2dc-dff8-476b-b919-50bf2686bbab",
     key: "gb-commonwealth-cup",
     name: "Commonwealth Cup",
     track: "Ascot",
@@ -5343,7 +5545,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "0a2c6dc5-e3bd-43be-9d9a-633eb745b7a5",
+    uuid: "7e963b55-24d7-47b4-ac2a-dbf0bcf3b555",
     key: "gb-coronation-stakes",
     name: "Coronation Stakes",
     track: "Ascot",
@@ -5357,7 +5559,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "f4d960dc-8a8b-4e88-9c9c-11207fc96fc1",
+    uuid: "67cfaf55-d347-406d-a2ef-d4cd1911030d",
     key: "gb-queen-elizabeth-ii-jubilee-stakes",
     name: "Queen Elizabeth II Jubilee Stakes",
     track: "Ascot",
@@ -5370,7 +5572,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "9b17dca9-74ed-4639-b73f-811277ec8404",
+    uuid: "dc850000-0c37-42bd-8cc1-49a6dc5479a3",
     key: "gb-eclipse-stakes",
     name: "Eclipse Stakes",
     track: "Sandown",
@@ -5383,7 +5585,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "7f1b3184-f51d-4f08-829b-e7170e8c5124",
+    uuid: "1b4043ac-aae4-442c-91d8-51acab7ef061",
     key: "gb-falmouth-stakes",
     name: "Falmouth Stakes",
     track: "Newmarket (July)",
@@ -5397,7 +5599,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "48e118f6-cd76-4da5-bcc8-4c696044e63e",
+    uuid: "37c70b79-a164-4be4-87ef-f7aee156f148",
     key: "gb-july-cup",
     name: "July Cup",
     track: "Newmarket (July)",
@@ -5410,7 +5612,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "859c4856-2eec-4288-94f3-bfa97c8e48b0",
+    uuid: "2d46a5a5-278f-417a-8762-b78cfa3c5441",
     key: "gb-king-george-vi-and-queen-elizabeth-stakes",
     name: "King George VI and Queen Elizabeth Stakes",
     track: "Ascot",
@@ -5423,7 +5625,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "d21b1565-b26e-44e1-b0d0-2660189885ad",
+    uuid: "9b8cff30-16cb-4e26-9d6f-65c8257f2b7a",
     key: "gb-goodwood-cup",
     name: "Goodwood Cup",
     track: "Goodwood",
@@ -5436,7 +5638,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "7dce2817-3ae9-4ab6-99cb-44431d19ce93",
+    uuid: "fa4a6d96-9f49-4105-a972-ad56be38c5bf",
     key: "gb-sussex-stakes",
     name: "Sussex Stakes",
     track: "Goodwood",
@@ -5449,7 +5651,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "93e56aa6-7e10-4f72-b33d-3d48eac14d5d",
+    uuid: "2294e5d2-1c50-4b61-bcf1-d2cb7416c31e",
     key: "gb-nassau-stakes",
     name: "Nassau Stakes",
     track: "Goodwood",
@@ -5463,7 +5665,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "4a34efdb-f984-4c55-8abe-91854bda3230",
+    uuid: "8537fd59-09f7-46a6-aaba-1ce536947678",
     key: "gb-juddmonte-international",
     name: "Juddmonte International",
     track: "York",
@@ -5476,7 +5678,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "278f4f9c-525b-4152-8750-f86c9e5bf726",
+    uuid: "ad778800-45b6-496c-a1e4-050f4285f52b",
     key: "gb-yorkshire-oaks",
     name: "Yorkshire Oaks",
     track: "York",
@@ -5490,7 +5692,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "c5087ab1-7e51-4d04-b798-252970f2dc4c",
+    uuid: "6fca1a82-da91-46cc-a98c-0a2dd571a9d5",
     key: "gb-nunthorpe-stakes",
     name: "Nunthorpe Stakes",
     track: "York",
@@ -5503,7 +5705,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2 },
   },
   {
-    uuid: "bfdcf648-6d1a-48ab-ac24-3887c6800639",
+    uuid: "4fd435b3-2595-4dde-b1eb-d7a749663260",
     key: "gb-city-of-york-stakes",
     name: "City of York Stakes",
     track: "York",
@@ -5516,7 +5718,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "39d2ab5c-2a64-4eb6-bcd8-b8c62a1a1a9d",
+    uuid: "199d25e7-538b-40da-87e1-eb07e2b21302",
     key: "gb-sprint-cup",
     name: "Sprint Cup",
     track: "Haydock",
@@ -5529,7 +5731,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "130d3937-4598-4a36-b733-4d2da6b4f7a3",
+    uuid: "ac081de1-2172-4938-b52a-04aa6459b071",
     key: "gb-st-leger-stakes",
     name: "St Leger Stakes",
     track: "Doncaster",
@@ -5542,7 +5744,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "c44d5e13-e760-4445-81a8-ef60b6527c6d",
+    uuid: "6e96779b-7764-43e8-99ea-e22936f805e8",
     key: "gb-cheveley-park-stakes",
     name: "Cheveley Park Stakes",
     track: "Newmarket",
@@ -5556,7 +5758,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "c5ba1bc1-ebf8-4fd1-9038-aa1cf61ef876",
+    uuid: "d46cad62-a7ef-474e-8195-b0ee4fcb076c",
     key: "gb-middle-park-stakes",
     name: "Middle Park Stakes",
     track: "Newmarket",
@@ -5569,7 +5771,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "300eb6f7-8caa-4d44-b5fc-f47e466a03cf",
+    uuid: "f82bb5b5-19b7-4086-b744-0654540c8611",
     key: "gb-sun-chariot-stakes",
     name: "Sun Chariot Stakes",
     track: "Newmarket",
@@ -5583,7 +5785,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "eaa5aa38-8668-483e-a64f-e2ca15133508",
+    uuid: "cd6df57c-dd96-40b2-b157-c8c1e68c1802",
     key: "gb-fillies-mile",
     name: "Fillies' Mile",
     track: "Newmarket",
@@ -5597,7 +5799,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "49953c97-1109-4c4f-86e6-83c28b823d92",
+    uuid: "6d799da8-5c59-4909-9e57-b9504bd93456",
     key: "gb-dewhurst-stakes",
     name: "Dewhurst Stakes",
     track: "Newmarket",
@@ -5610,7 +5812,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "165f2190-efc0-4559-9f17-6d9b6da5b9a8",
+    uuid: "99b41dad-5d71-4c93-9f5b-0d3939d1703a",
     key: "gb-british-champions-long-distance-cup",
     name: "British Champions Long Distance Cup",
     track: "Ascot",
@@ -5623,7 +5825,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "4a55afda-16ff-487e-b69b-3d6e10b54aed",
+    uuid: "33c15465-5dca-4b26-9162-24044bd951e5",
     key: "gb-british-champions-sprint-stakes",
     name: "British Champions Sprint Stakes",
     track: "Ascot",
@@ -5636,7 +5838,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "e4c72ac9-f76f-411c-b376-47de7b041959",
+    uuid: "07c7337d-3090-4463-8cf5-4025aaa0d43e",
     key: "gb-british-champions-fillies-and-mares-stakes",
     name: "British Champions Fillies' and Mares' Stakes",
     track: "Ascot",
@@ -5650,7 +5852,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "69e67e8f-8f9b-4d4d-8d9d-7380f3a24306",
+    uuid: "be419598-5aea-4aaf-95a0-d31fb356d2bf",
     key: "gb-queen-elizabeth-ii-stakes",
     name: "Queen Elizabeth II Stakes",
     track: "Ascot",
@@ -5663,7 +5865,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a8336efd-794d-47f3-b28e-7153ac1d2101",
+    uuid: "a91d7e3f-86bb-45fc-a731-4fe944c1a410",
     key: "gb-champion-stakes",
     name: "Champion Stakes",
     track: "Ascot",
@@ -5676,7 +5878,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "1b5280c5-d6e2-42fd-97ce-04d796de90c4",
+    uuid: "9c01c611-28cd-43ff-82d7-b32c244e221e",
     key: "gb-futurity-trophy",
     name: "Futurity Trophy",
     track: "Doncaster",
@@ -5689,7 +5891,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "ebae4c86-3948-480c-bf80-cf450fc2b178",
+    uuid: "275b4791-40bb-4dd6-bc79-db907b082aa7",
     key: "gb-sandown-mile",
     name: "Sandown Mile",
     track: "Sandown",
@@ -5702,7 +5904,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "c1e53014-9fb0-4c39-957b-b10f5c82cb87",
+    uuid: "ec2e359e-4b26-44d3-be24-942a4d8870c1",
     key: "gb-jockey-club-stakes",
     name: "Jockey Club Stakes",
     track: "Newmarket",
@@ -5715,7 +5917,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "c9733cff-d862-4243-b8c2-53319de8fab8",
+    uuid: "89868e2e-b028-4c9b-92fc-4964cfe114e5",
     key: "gb-dahlia-stakes",
     name: "Dahlia Stakes",
     track: "Newmarket",
@@ -5729,7 +5931,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "aaa5bd07-8590-43a4-b0e5-60b20dea66a0",
+    uuid: "24a6cd80-38d3-48bf-8236-2c491580dc43",
     key: "gb-huxley-stakes",
     name: "Huxley Stakes",
     track: "Chester",
@@ -5742,7 +5944,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "27f41f23-c3ec-4029-a9d2-84d0a108a402",
+    uuid: "03c21761-00a1-497a-8ebf-f0f9f77564b0",
     key: "gb-minster-stakes",
     name: "Minster Stakes",
     track: "York",
@@ -5755,7 +5957,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "09040b38-d868-48e0-a73e-c7cbceede883",
+    uuid: "988aaf1e-3394-4cca-b9e6-abfcb2af74a9",
     key: "gb-middleton-stakes",
     name: "Middleton Stakes",
     track: "York",
@@ -5769,7 +5971,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "6ba873ee-7166-40de-a400-9a26ff6b2fc8",
+    uuid: "8e895827-839d-4d51-b9fb-b6cea473e5fc",
     key: "gb-dante-stakes",
     name: "Dante Stakes",
     track: "York",
@@ -5782,7 +5984,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "f0f30caf-364b-400b-8b74-ea307ae20ac5",
+    uuid: "57341dda-9c8a-4bdc-bc2c-3cd224de641f",
     key: "gb-yorkshire-cup",
     name: "Yorkshire Cup",
     track: "York",
@@ -5795,7 +5997,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "bd8d378d-d951-4903-ac43-bb7241ac58bb",
+    uuid: "28e2192c-994c-4b52-b6f9-fb4150276472",
     key: "gb-sandy-lane-stakes",
     name: "Sandy Lane Stakes",
     track: "Haydock",
@@ -5808,7 +6010,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "b6bb2102-da7c-4b20-ba17-7d1810e5e86e",
+    uuid: "c64823b2-d037-4223-872c-483a99ae2f6a",
     key: "gb-temple-stakes",
     name: "Temple Stakes",
     track: "Haydock",
@@ -5821,7 +6023,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "5144251e-9384-4369-b512-f9a9822299c0",
+    uuid: "ad3873e7-77e1-46d2-8d72-2e8cc5491771",
     key: "gb-coventry-stakes",
     name: "Coventry Stakes",
     track: "Ascot",
@@ -5834,7 +6036,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "c8dde5f2-5c8c-4c65-a425-6f6b11d31684",
+    uuid: "9cb554eb-c997-44c9-be39-e70cb1a99741",
     key: "gb-queen-mary-stakes",
     name: "Queen Mary Stakes",
     track: "Ascot",
@@ -5848,7 +6050,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "38753fb3-3e4d-49eb-9143-4e36c68a5d5f",
+    uuid: "0c28d68d-f6fa-4e1c-be6f-7a85f9474231",
     key: "gb-queen-s-vase",
     name: "Queen's Vase",
     track: "Ascot",
@@ -5861,7 +6063,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "cb151cf3-9f80-4c3f-92de-751da1eedb0a",
+    uuid: "fa56ce0c-2a8f-4ae7-91b4-e26b716ea9bd",
     key: "gb-duke-of-cambridge-stakes",
     name: "Duke of Cambridge Stakes",
     track: "Ascot",
@@ -5875,7 +6077,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "bf993d5c-4931-4b6b-b280-e23c4b81739d",
+    uuid: "b450f9ec-6306-473c-b3b6-8c835d824ca5",
     key: "gb-norfolk-stakes",
     name: "Norfolk Stakes",
     track: "Ascot",
@@ -5888,7 +6090,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "fa4fa064-4210-4576-a1fa-603e3f3f8938",
+    uuid: "c270c411-d54b-40d7-bcaf-fc1a6816deb8",
     key: "gb-ribblesdale-stakes",
     name: "Ribblesdale Stakes",
     track: "Ascot",
@@ -5902,7 +6104,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "e794bd3b-c9c9-4232-abd5-b88a43df4881",
+    uuid: "727b2f9e-7b3c-4e67-84e1-38acdf7375da",
     key: "gb-king-edward-vii-stakes",
     name: "King Edward VII Stakes",
     track: "Ascot",
@@ -5915,7 +6117,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "6d940375-3d98-4e52-a6ac-dfc8be7d4e51",
+    uuid: "28ea2781-b690-479b-8c1f-7356fa6157dc",
     key: "gb-hardwicke-stakes",
     name: "Hardwicke Stakes",
     track: "Ascot",
@@ -5928,7 +6130,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "89877e48-7c3e-4cf4-90ae-a67871663ee9",
+    uuid: "f573d4f8-2a95-4c57-8354-742506cead95",
     key: "gb-lancashire-oaks",
     name: "Lancashire Oaks",
     track: "Haydock",
@@ -5942,7 +6144,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "287ee58f-cead-4c29-8f29-a27d3011bcdb",
+    uuid: "2205e339-b66e-4bdf-9f81-50614a76f0f8",
     key: "gb-july-stakes",
     name: "July Stakes",
     track: "Newmarket (July)",
@@ -5955,7 +6157,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "436c9692-dbbd-4d8a-a1f3-f28232ced25a",
+    uuid: "9f7dc982-369c-40dd-820f-712a309468b2",
     key: "gb-princess-of-wales-s-stakes",
     name: "Princess of Wales's Stakes",
     track: "Newmarket (July)",
@@ -5968,7 +6170,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "6b7ed633-921b-4261-94b0-89e69f16ad93",
+    uuid: "637181a3-052f-41dc-a30b-92da7b0ed628",
     key: "gb-duchess-of-cambridge-stakes",
     name: "Duchess of Cambridge Stakes",
     track: "Newmarket (July)",
@@ -5982,7 +6184,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "44563b8f-5a35-43e2-8b51-3bfc07a8a1d6",
+    uuid: "e2d47175-6db8-41f8-99a5-14e1da68a849",
     key: "gb-superlative-stakes",
     name: "Superlative Stakes",
     track: "Newmarket (July)",
@@ -5995,7 +6197,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "0d816494-387b-4dae-9e46-8b6f1e85d76d",
+    uuid: "03a078e3-4e90-4e4a-a6ec-a2b5b225da4f",
     key: "gb-summer-mile-stakes",
     name: "Summer Mile Stakes",
     track: "Ascot",
@@ -6008,7 +6210,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "1d4a94d3-17b6-46db-91c4-f8f4c7bc33d4",
+    uuid: "39bb6695-3796-4e2f-8a3d-77ff5168383a",
     key: "gb-york-stakes",
     name: "York Stakes",
     track: "York",
@@ -6021,7 +6223,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "243e9e1a-09b1-413f-a52c-a604942ef3d8",
+    uuid: "7a23703f-0daf-446e-a496-66ba67a3d3bb",
     key: "gb-vintage-stakes",
     name: "Vintage Stakes",
     track: "Goodwood",
@@ -6034,7 +6236,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "695c46ae-51bd-430c-8131-e7363972b69c",
+    uuid: "1b720ce1-bb04-4997-9709-1839c6bbadb7",
     key: "gb-lennox-stakes",
     name: "Lennox Stakes",
     track: "Goodwood",
@@ -6047,7 +6249,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "7757d987-10a7-40b2-ae0c-98d5643d262b",
+    uuid: "a9005835-9b85-4a88-8fd5-b9e70caf0b39",
     key: "gb-richmond-stakes",
     name: "Richmond Stakes",
     track: "Goodwood",
@@ -6060,7 +6262,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "11e68a15-a4e0-433e-85e1-0528a1369884",
+    uuid: "7bdc060f-8a92-4c04-ae03-bba00bf8038f",
     key: "gb-king-george-stakes",
     name: "King George Stakes",
     track: "Goodwood",
@@ -6073,7 +6275,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "31145887-3241-430e-8151-0dc78aafa3d4",
+    uuid: "d7ec8ce5-4248-45a1-a066-2f2099252983",
     key: "gb-lillie-langtry-stakes",
     name: "Lillie Langtry Stakes",
     track: "Goodwood",
@@ -6087,7 +6289,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "4a5a8b84-2383-40d4-b0ce-2d9d05682346",
+    uuid: "fcafe679-f130-458f-acdb-69f9744b3556",
     key: "gb-hungerford-stakes",
     name: "Hungerford Stakes",
     track: "Newbury",
@@ -6100,7 +6302,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "333ca69b-82e4-4941-8e44-8197eadfc3a5",
+    uuid: "4afd9b4f-7dde-487c-b894-74f40315a09f",
     key: "gb-great-voltigeur-stakes",
     name: "Great Voltigeur Stakes",
     track: "York",
@@ -6113,7 +6315,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "edba2a0c-f2ae-4897-ac8d-c5a9e0e3aa81",
+    uuid: "dcb7fac0-1889-4edf-a1b1-0d68a993992d",
     key: "gb-lowther-stakes",
     name: "Lowther Stakes",
     track: "York",
@@ -6127,7 +6329,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "592bd1e6-901c-490b-924a-cf9bea7c30a1",
+    uuid: "88470e8f-e331-4c07-9bf3-51705fa49fc7",
     key: "gb-lonsdale-cup",
     name: "Lonsdale Cup",
     track: "York",
@@ -6140,7 +6342,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a8b6a4e6-526b-4232-813e-ae21af631907",
+    uuid: "a968b127-d12e-4303-a833-95f82a8ab0a4",
     key: "gb-gimcrack-stakes",
     name: "Gimcrack Stakes",
     track: "York",
@@ -6153,7 +6355,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "8de4df4c-441d-428d-ab23-04d3ed4c791e",
+    uuid: "ffe45b77-42e2-4eb7-916c-f175c651f6e4",
     key: "gb-celebration-mile",
     name: "Celebration Mile",
     track: "Goodwood",
@@ -6166,7 +6368,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "43ec0c98-dd00-465f-b970-28afc16d7c6e",
+    uuid: "fbea0f7e-bf4c-4b4a-9635-37aab05e1c40",
     key: "gb-may-hill-stakes",
     name: "May Hill Stakes",
     track: "Doncaster",
@@ -6180,7 +6382,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "a7c0612c-f484-4ca1-8599-7f83ed4584bd",
+    uuid: "bd9caaa9-0eea-4f25-9f1e-e30855437425",
     key: "gb-park-hill-stakes",
     name: "Park Hill Stakes",
     track: "Doncaster",
@@ -6194,7 +6396,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "1450849f-c538-4a14-8174-712a8a1a6d22",
+    uuid: "42041558-9228-4b78-babc-debfd471d8fd",
     key: "gb-flying-childers-stakes",
     name: "Flying Childers Stakes",
     track: "Doncaster",
@@ -6207,7 +6409,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "85230754-3469-4081-9e12-b3964a6b1577",
+    uuid: "07df2f4f-4b30-4f8a-8eac-19a5df4b0164",
     key: "gb-doncaster-cup",
     name: "Doncaster Cup",
     track: "Doncaster",
@@ -6220,7 +6422,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "087aa838-6cea-4e74-b9a8-502d01e267c1",
+    uuid: "e94d205e-0238-4c96-91a0-087ed2f28676",
     key: "gb-champagne-stakes",
     name: "Champagne Stakes",
     track: "Doncaster",
@@ -6233,7 +6435,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "68e679f6-8ca4-47d4-a7d8-bd1debf7fa91",
+    uuid: "44ce9f79-4d43-422f-81b6-66949438231c",
     key: "gb-park-stakes",
     name: "Park Stakes",
     track: "Doncaster",
@@ -6246,7 +6448,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fd5a639c-1b91-4e09-86a7-53dec4c685b2",
+    uuid: "3fb29ad9-70e9-4a3f-89ba-30068714168f",
     key: "gb-mill-reef-stakes",
     name: "Mill Reef Stakes",
     track: "Newbury",
@@ -6259,7 +6461,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "02659846-827b-44b1-a569-cec27acfb764",
+    uuid: "81be0ab0-0e47-4a9a-8560-d13126ecf227",
     key: "gb-rockfel-stakes",
     name: "Rockfel Stakes",
     track: "Newmarket",
@@ -6273,7 +6475,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "5415f6b1-0189-4bfb-ac6b-dc1fa1901d94",
+    uuid: "58097480-53d6-4d4c-8e66-5b829ed521b9",
     key: "gb-joel-stakes",
     name: "Joel Stakes",
     track: "Newmarket",
@@ -6286,7 +6488,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "dcd0278e-f80d-45a2-9676-c2acf5452380",
+    uuid: "f315479a-3d1d-46a6-86a8-14a550668e82",
     key: "gb-royal-lodge-stakes",
     name: "Royal Lodge Stakes",
     track: "Newmarket",
@@ -6299,7 +6501,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "fe9776d1-7b6e-4fba-92f9-ac3ce96cc7c9",
+    uuid: "3af23435-4f15-4984-aac5-acba0ed74e23",
     key: "gb-challenge-stakes",
     name: "Challenge Stakes",
     track: "Newmarket",
@@ -6312,7 +6514,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "337444e1-89b9-4c56-818e-45f44f8f76a3",
+    uuid: "a86d0bf7-5935-45b4-80a3-376fa8667337",
     key: "gb-earl-of-sefton-stakes",
     name: "Earl of Sefton Stakes",
     track: "Newmarket",
@@ -6325,7 +6527,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "5f1bc9d6-8df7-4e6c-8c3c-cf84983c8944",
+    uuid: "d4dc9099-271a-4d7e-ae49-d20f727fae42",
     key: "gb-winter-derby",
     name: "Winter Derby",
     track: "Lingfield",
@@ -6338,7 +6540,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "4ff8d74f-1503-4335-b1ab-fa2b86f1cc41",
+    uuid: "70c62d4e-6282-4bc9-acfa-54dad4dc0cb8",
     key: "gb-nell-gwyn-stakes",
     name: "Nell Gwyn Stakes",
     track: "Newmarket",
@@ -6352,7 +6554,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "9a0882d1-cc16-407a-b628-2030dabd9abd",
+    uuid: "840324e2-8088-48a1-949b-8b4929c82731",
     key: "gb-abernant-stakes",
     name: "Abernant Stakes",
     track: "Newmarket",
@@ -6365,7 +6567,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "3d510cd6-ce94-4db0-9f28-f1367a8cb996",
+    uuid: "e4d43844-ff07-424b-b93f-2365d57b04e0",
     key: "gb-craven-stakes",
     name: "Craven Stakes",
     track: "Newmarket",
@@ -6378,7 +6580,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "6db2efdc-4dce-4098-a397-b0fbf4a9de6b",
+    uuid: "e5c78a6f-0f39-4d3b-96ea-4a2b4a70ac4b",
     key: "gb-fred-darling-stakes",
     name: "Fred Darling Stakes",
     track: "Newbury",
@@ -6392,7 +6594,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "0087f294-6759-4f11-92ea-390caa0fc21a",
+    uuid: "43594711-faa9-4832-ae01-f5dc714e7390",
     key: "gb-greenham-stakes",
     name: "Greenham Stakes",
     track: "Newbury",
@@ -6405,7 +6607,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "64a33629-9d34-466d-a69a-0d8a34caff58",
+    uuid: "47f1cafe-eade-4613-b10a-9dde8325c7c1",
     key: "gb-john-porter-stakes",
     name: "John Porter Stakes",
     track: "Newbury",
@@ -6418,7 +6620,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "735f6067-37a1-4f26-91a5-efe9e6457f31",
+    uuid: "d96734ad-fd5c-4042-b313-7bac4cfd217b",
     key: "gb-gordon-richards-stakes",
     name: "Gordon Richards Stakes",
     track: "Sandown",
@@ -6431,7 +6633,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "718c1b79-13c8-43e8-8831-1d6bf641836d",
+    uuid: "574e4f04-5012-4bed-909b-76b1d6f9adf4",
     key: "gb-sandown-classic-trial",
     name: "Sandown Classic Trial",
     track: "Sandown",
@@ -6444,7 +6646,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "3226f2e7-273d-4304-a421-9753078373fe",
+    uuid: "118db813-2188-46c2-9f36-b0690c7f3fad",
     key: "gb-sagaro-stakes",
     name: "Sagaro Stakes",
     track: "Ascot",
@@ -6457,7 +6659,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "be91b972-0295-4a8e-b088-0ebb71fb986e",
+    uuid: "e6e85152-6843-4095-9c0c-c7246b531809",
     key: "gb-pavilion-stakes",
     name: "Pavilion Stakes",
     track: "Ascot",
@@ -6470,7 +6672,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "2b6fa162-2cc0-492c-a39b-3745f5e09154",
+    uuid: "e63ae0bc-0bce-45a9-8078-e583f2e6c55f",
     key: "gb-palace-house-stakes",
     name: "Palace House Stakes",
     track: "Newmarket",
@@ -6483,7 +6685,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "9c409cac-3c78-4c8c-9544-3d36cb9578cd",
+    uuid: "3bac325e-c21b-4091-a3ea-c4db4cf37673",
     key: "gb-chester-vase",
     name: "Chester Vase",
     track: "Chester",
@@ -6496,7 +6698,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "15f992d7-fccd-440c-93e8-39e78c938d91",
+    uuid: "dbe7055a-ac61-4fe9-8418-fda8f189818f",
     key: "gb-ormonde-stakes",
     name: "Ormonde Stakes",
     track: "Chester",
@@ -6509,7 +6711,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "6591d50b-d979-469f-8daa-212f04f75880",
+    uuid: "55ccb0ea-6b43-492c-bcf2-b4c7f0ecc340",
     key: "gb-chartwell-fillies-stakes",
     name: "Chartwell Fillies' Stakes",
     track: "Lingfield",
@@ -6523,7 +6725,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "8a94e9c5-00d6-4809-8cf1-2abea6985b8b",
+    uuid: "31204fa5-f0ad-4ca8-98b9-bfc32640647c",
     key: "gb-musidora-stakes",
     name: "Musidora Stakes",
     track: "York",
@@ -6537,7 +6739,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "39997004-6acf-4f3b-b970-f647f966bb27",
+    uuid: "fb0acbae-2af8-41a0-a110-3e45579edc64",
     key: "gb-aston-park-stakes",
     name: "Aston Park Stakes",
     track: "Newbury",
@@ -6550,7 +6752,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "7ad3e265-de37-4b04-aeac-4599e94a955e",
+    uuid: "e6b9c3eb-9c62-4882-8480-e403578d2d19",
     key: "gb-bronte-cup",
     name: "Brontë Cup",
     track: "York",
@@ -6564,7 +6766,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "eeac6dfa-79b2-40e4-8bfe-b6c6c6f50408",
+    uuid: "e9a687d4-494a-448e-a751-1e9462c07caf",
     key: "gb-henry-ii-stakes",
     name: "Henry II Stakes",
     track: "Sandown",
@@ -6577,7 +6779,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "bd65af6c-7591-4532-b56e-533e8e55d1b7",
+    uuid: "e7524516-f7d6-4363-bcb4-f2f947b1814e",
     key: "gb-brigadier-gerard-stakes",
     name: "Brigadier Gerard Stakes",
     track: "Sandown",
@@ -6590,7 +6792,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "c91da4ed-bcbf-43d1-8f9c-bfd1d44bf687",
+    uuid: "f67773d1-685a-4e86-92bb-e2f80b74cec0",
     key: "gb-lester-piggott-stakes",
     name: "Lester Piggott Stakes",
     track: "Haydock",
@@ -6604,7 +6806,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "1eaf9f1b-233a-461f-bc92-7a204f951686",
+    uuid: "8f0fef6b-99cd-40d4-8a0c-27004ba49a1b",
     key: "gb-diomed-stakes",
     name: "Diomed Stakes",
     track: "Epsom",
@@ -6617,7 +6819,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "9d7d3d0c-8f6f-449e-8ac4-d22a94c3229d",
+    uuid: "8cc0d7a0-133f-4f9e-a63b-05b8c0caf94c",
     key: "gb-tattenham-corner-stakes",
     name: "Tattenham Corner Stakes",
     track: "Epsom",
@@ -6630,7 +6832,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "204321ad-128b-45f4-ab61-49d3e04fcbea",
+    uuid: "6a99f8e6-86f6-4a32-90c8-d23e5cf151ca",
     key: "gb-princess-elizabeth-stakes",
     name: "Princess Elizabeth Stakes",
     track: "Epsom",
@@ -6644,7 +6846,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "546d95ca-a367-41f2-9b14-f7cb23c3484e",
+    uuid: "366a04a6-cba1-4659-aa8c-495d0686ea4a",
     key: "gb-hampton-court-stakes",
     name: "Hampton Court Stakes",
     track: "Ascot",
@@ -6657,7 +6859,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "a0f8589d-a014-4a96-9aca-03da36386ee9",
+    uuid: "a6be6b6e-a7fd-46d1-b1e6-1170bb9068ee",
     key: "gb-albany-stakes",
     name: "Albany Stakes",
     track: "Ascot",
@@ -6671,7 +6873,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "8a949304-6b28-4e55-9c2c-8102d8acdae4",
+    uuid: "85b4d4a8-c52b-4f85-8da7-bbf12cf7541a",
     key: "gb-jersey-stakes",
     name: "Jersey Stakes",
     track: "Ascot",
@@ -6684,7 +6886,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "3857a56b-276e-4c51-b339-50c9241f0dca",
+    uuid: "48122f1d-0707-4619-852e-0df1f8c894bc",
     key: "gb-criterion-stakes",
     name: "Criterion Stakes",
     track: "York",
@@ -6697,7 +6899,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "1a4c09ef-f951-4c97-a637-533ad535cec4",
+    uuid: "f5855404-891b-46e7-baa6-d65b6df9a19d",
     key: "gb-hoppings-stakes",
     name: "Hoppings Stakes",
     track: "Newcastle",
@@ -6711,7 +6913,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "e0116d3f-8dba-463e-888e-3391dc1faa9c",
+    uuid: "f16e66ed-f4b3-40be-b3fd-1327b93d9e4c",
     key: "gb-chipchase-stakes",
     name: "Chipchase Stakes",
     track: "Newcastle",
@@ -6724,7 +6926,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ce22ed69-4041-4cf9-8f45-03bd0893b965",
+    uuid: "d83a9cb2-7484-4ebb-9755-87c70e873483",
     key: "gb-sprint-stakes",
     name: "Sprint Stakes",
     track: "Sandown",
@@ -6737,7 +6939,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "1888374d-9588-485a-80ea-89f0bc7bd9b4",
+    uuid: "2806df4e-afd4-46b7-bd9b-4d4cef33c400",
     key: "gb-bahrain-trophy",
     name: "Bahrain Trophy",
     track: "Newmarket (July)",
@@ -6750,7 +6952,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "4b22fa83-6a5d-4838-a235-0b1e2ff168ca",
+    uuid: "ec1f5d72-0255-4595-a0cc-78e8ea62097e",
     key: "gb-summer-stakes",
     name: "Summer Stakes",
     track: "York",
@@ -6764,7 +6966,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "9859cf82-a2ab-470f-aa94-128c804d0df6",
+    uuid: "563eda67-e2d5-4fa3-828b-d4a4126ae83e",
     key: "gb-john-smith-s-silver-cup-stakes",
     name: "John Smith's Silver Cup Stakes",
     track: "York",
@@ -6777,7 +6979,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d1d66fb4-4514-43e4-ace1-0b82d5d6ede5",
+    uuid: "39e6a6cd-ab09-4333-a1a2-c8e3ffb76963",
     key: "gb-hackwood-stakes",
     name: "Hackwood Stakes",
     track: "Newbury",
@@ -6790,7 +6992,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "3b805c1f-9672-46f1-a9ef-6939af557282",
+    uuid: "9fc9ca9c-2392-404a-b1fa-d4b468efdeae",
     key: "gb-princess-margaret-stakes",
     name: "Princess Margaret Stakes",
     track: "Ascot",
@@ -6804,7 +7006,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "8efec064-bcad-4735-8ec0-c2737b0871fa",
+    uuid: "43605d38-2e37-4081-957b-2b3d941a8f27",
     key: "gb-valiant-stakes",
     name: "Valiant Stakes",
     track: "Ascot",
@@ -6818,7 +7020,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "7280e03b-0e3c-4f1b-8651-d5d1ad6b72a8",
+    uuid: "a4706edd-cdd2-49ec-9321-27c159c4fbbc",
     key: "gb-oak-tree-stakes",
     name: "Oak Tree Stakes",
     track: "Goodwood",
@@ -6832,7 +7034,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "84fe4835-ebef-4846-9f80-3516540fe90a",
+    uuid: "28f8d8d2-ff3f-4afe-8ed5-2c2f83bcd55c",
     key: "gb-molecomb-stakes",
     name: "Molecomb Stakes",
     track: "Goodwood",
@@ -6845,7 +7047,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "4e857601-db58-4b2c-ba18-1383c71108f9",
+    uuid: "4eab19ec-900e-43ab-86de-20c133ef2b88",
     key: "gb-gordon-stakes",
     name: "Gordon Stakes",
     track: "Goodwood",
@@ -6858,7 +7060,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "62ff54bb-20a4-4f03-8032-21aad8e2dd4a",
+    uuid: "f43966d4-837f-41f3-ae95-676b44093659",
     key: "gb-thoroughbred-stakes",
     name: "Thoroughbred Stakes",
     track: "Goodwood",
@@ -6871,7 +7073,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "f53be180-e400-44fd-bbd5-981f63bf6074",
+    uuid: "79353e83-420c-4117-a708-3725002d6737",
     key: "gb-glorious-stakes",
     name: "Glorious Stakes",
     track: "Goodwood",
@@ -6884,7 +7086,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "3b5aaa7e-5838-4146-a5ab-c79129032292",
+    uuid: "604f6977-8d13-46f9-a961-ba7a0c3cc64d",
     key: "gb-rose-of-lancaster-stakes",
     name: "Rose of Lancaster Stakes",
     track: "Haydock",
@@ -6897,7 +7099,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "aaf3722b-de73-44e5-83f8-cda75e6a26ab",
+    uuid: "5f8d7930-7537-4910-9f33-9ea896794db7",
     key: "gb-sweet-solera-stakes",
     name: "Sweet Solera Stakes",
     track: "Newmarket (July)",
@@ -6911,7 +7113,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "da78cb02-640a-444e-a6b3-745bf47054d9",
+    uuid: "de9c5653-dd28-43f2-b918-ae1e077a4de7",
     key: "gb-geoffrey-freer-stakes",
     name: "Geoffrey Freer Stakes",
     track: "Newbury",
@@ -6924,7 +7126,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a2333830-e86c-40fc-8344-09b1508424ea",
+    uuid: "60e6aa1b-36a5-4ca9-b592-e73a20363821",
     key: "gb-acomb-stakes",
     name: "Acomb Stakes",
     track: "York",
@@ -6937,7 +7139,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "d2376d25-379f-43ff-ae85-0339c74ab50f",
+    uuid: "aa633ad2-02f7-4080-8f58-1baeb4a00525",
     key: "gb-strensall-stakes",
     name: "Strensall Stakes",
     track: "York",
@@ -6950,7 +7152,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "8e51b399-ee44-44fe-bf98-0978456d167a",
+    uuid: "14bb809e-1d9d-44fe-a496-9ce3aa156eb5",
     key: "gb-winter-hill-stakes",
     name: "Winter Hill Stakes",
     track: "Windsor",
@@ -6963,7 +7165,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "a65f23f4-28ed-4284-b7dd-18767f8ec423",
+    uuid: "d9c2b238-b1e4-4df9-aac0-8b8683ea94d7",
     key: "gb-prestige-stakes",
     name: "Prestige Stakes",
     track: "Goodwood",
@@ -6977,7 +7179,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "fa7db9fe-56c8-48d2-a411-e07e27b14d48",
+    uuid: "d9d3f390-2e0e-418f-9237-1cf6d40f216c",
     key: "gb-solario-stakes",
     name: "Solario Stakes",
     track: "Sandown",
@@ -6990,7 +7192,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "72e5e8b5-c224-4c94-ad41-41602927298c",
+    uuid: "bd3c38f1-6913-472d-86b3-04237a76c56d",
     key: "gb-atalanta-stakes",
     name: "Atalanta Stakes",
     track: "Sandown",
@@ -7004,7 +7206,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "b4ced625-3511-4c79-8df2-b18c2dfb4989",
+    uuid: "6c264df0-c9dc-4af9-ae05-2f0c27bebcab",
     key: "gb-september-stakes",
     name: "September Stakes",
     track: "Kempton",
@@ -7017,7 +7219,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ed0395b0-95eb-4abe-ab7c-27ebcad85c49",
+    uuid: "94bbb8dc-bcc9-47f0-927d-1efffd1c5628",
     key: "gb-sirenia-stakes",
     name: "Sirenia Stakes",
     track: "Kempton",
@@ -7030,7 +7232,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "6aa89fb5-a161-4104-a206-e11fcead3c9a",
+    uuid: "e99dac4c-a0ed-4eed-86ae-60a64d00fda6",
     key: "gb-dick-poole-fillies-stakes",
     name: "Dick Poole Fillies' Stakes",
     track: "Salisbury",
@@ -7044,7 +7246,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "978d5af1-2836-4bd9-9756-613d31c8dc8b",
+    uuid: "8e3c8a3d-96c0-45e7-b377-a3a07358c46e",
     key: "gb-superior-mile",
     name: "Superior Mile",
     track: "Haydock",
@@ -7057,7 +7259,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "6abd519b-0167-4bb3-84d1-db54b49f2ee5",
+    uuid: "641aec46-544e-4131-82b1-cfede80fc049",
     key: "gb-sceptre-stakes",
     name: "Sceptre Stakes",
     track: "Doncaster",
@@ -7071,7 +7273,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "febd5281-c406-4818-a4ce-8b429fe90d78",
+    uuid: "c87bfb56-e6c0-44a8-89d6-766ffb1a59cf",
     key: "gb-firth-of-clyde-stakes",
     name: "Firth of Clyde Stakes",
     track: "Ayr",
@@ -7085,7 +7287,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "c236da34-7ea5-42c4-8926-6d3a13c67c4d",
+    uuid: "22f5ab4e-94ec-4823-b27c-8790f006310f",
     key: "gb-world-trophy",
     name: "World Trophy",
     track: "Newbury",
@@ -7098,7 +7300,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "29b992f7-3e4a-4ca0-a714-fd7d4317321b",
+    uuid: "af93f08d-4e7c-4e04-ab5a-47543c84b432",
     key: "gb-somerville-tattersall-stakes",
     name: "Somerville Tattersall Stakes",
     track: "Newmarket",
@@ -7111,7 +7313,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "d335931a-8199-4c31-9bdf-9378f2ca8b87",
+    uuid: "0b99044c-94cc-4398-990d-b4a5f1a56f12",
     key: "gb-princess-royal-stakes",
     name: "Princess Royal Stakes",
     track: "Newmarket",
@@ -7125,7 +7327,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "47da2795-8b7c-4d22-b0ff-0d7602f5bb85",
+    uuid: "c9ee53b6-8572-4bb5-9b93-40b1d7c21810",
     key: "gb-cumberland-lodge-stakes",
     name: "Cumberland Lodge Stakes",
     track: "Ascot",
@@ -7138,7 +7340,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "16ab0ae4-1e22-4638-a465-657b7fc6e2ba",
+    uuid: "8f8d0ec4-34a0-45c7-baee-61635597bf68",
     key: "gb-bengough-stakes",
     name: "Bengough Stakes",
     track: "Ascot",
@@ -7151,7 +7353,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "78ade390-35b6-4d90-b688-061142fb4487",
+    uuid: "7abe2f25-3058-4177-900b-ea862910737f",
     key: "gb-cornwallis-stakes",
     name: "Cornwallis Stakes",
     track: "Newmarket",
@@ -7164,7 +7366,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "ba9ec580-2bae-4551-a857-35ac9772a9b7",
+    uuid: "6797dce5-60cb-4340-a525-52ba0ce2bb4e",
     key: "gb-oh-so-sharp-stakes",
     name: "Oh So Sharp Stakes",
     track: "Newmarket",
@@ -7178,7 +7380,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "26f995ae-78c4-4abd-b463-b4c8ce99f914",
+    uuid: "9c12c2fe-0613-4974-ac9f-0676e037dbc0",
     key: "gb-pride-stakes",
     name: "Pride Stakes",
     track: "Newmarket",
@@ -7192,7 +7394,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "27712ef2-e605-4d1b-be5e-117556b2eeaa",
+    uuid: "e9ac9b8b-70ec-4998-b4a1-d144b088fe5e",
     key: "gb-darley-stakes",
     name: "Darley Stakes",
     track: "Newmarket",
@@ -7205,7 +7407,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "304a2b8d-7b2a-4aea-a09f-eb1f86c9de68",
+    uuid: "f672b524-6d10-421c-a3cb-9d264fd8b5b0",
     key: "gb-zetland-stakes",
     name: "Zetland Stakes",
     track: "Newmarket",
@@ -7218,7 +7420,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "048f1b11-e61a-42c7-8dfb-843324405709",
+    uuid: "53c6e0e5-c470-4a26-8b05-66c775267855",
     key: "gb-autumn-stakes",
     name: "Autumn Stakes",
     track: "Newmarket",
@@ -7231,7 +7433,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "706dfe2f-e886-4ca7-8955-bc9139780180",
+    uuid: "9de2c122-2f4b-4cb9-a3b3-796321bbdca6",
     key: "gb-st-simon-stakes",
     name: "St. Simon Stakes",
     track: "Newbury",
@@ -7244,7 +7446,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "20b3dc02-88aa-4559-a2ac-e63e16537690",
+    uuid: "695fbad5-eb9f-4a44-965a-c4629c6142dd",
     key: "gb-horris-hill-stakes",
     name: "Horris Hill Stakes",
     track: "Newbury",
@@ -7257,7 +7459,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "f78887e5-fd7c-41de-aed0-3528f12b1008",
+    uuid: "b0852459-089f-486f-a8df-df8645ede695",
     key: "fr-prix-ganay",
     name: "Prix Ganay",
     track: "Longchamp",
@@ -7270,7 +7472,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "b5474b97-383c-4e91-8671-a986a82e4da0",
+    uuid: "aa3d4e32-9e75-42c1-aa18-67dec3265839",
     key: "fr-poule-d-essai-des-poulains",
     name: "Poule d'Essai des Poulains",
     track: "Longchamp",
@@ -7281,9 +7483,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "france-tc",
   },
   {
-    uuid: "00e521fc-5114-44fa-b957-f791052c2850",
+    uuid: "4b49e476-9c98-4b25-8e7b-6de8e50dbb04",
     key: "fr-poule-d-essai-des-pouliches",
     name: "Poule d'Essai des Pouliches",
     track: "Longchamp",
@@ -7297,7 +7500,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "08d7a4a6-d4cf-4627-a234-a2c8fdec928e",
+    uuid: "bc545b7c-63d4-4e6b-b62b-d210c29a70d5",
     key: "fr-prix-d-ispahan",
     name: "Prix d'Ispahan",
     track: "Longchamp",
@@ -7310,7 +7513,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "f425039c-8b7b-4a4b-9bc5-b846b6266872",
+    uuid: "8ef86fc0-b566-4a07-96e8-326e09aaea63",
     key: "fr-prix-vicomtesse-vigier",
     name: "Prix Vicomtesse Vigier",
     track: "Longchamp",
@@ -7323,7 +7526,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "8113456c-9ddb-431c-9b7c-13a47170dcb6",
+    uuid: "83b2c04d-c71c-430a-85f7-fb1acb85d1cf",
     key: "fr-prix-du-jockey-club",
     name: "Prix du Jockey Club",
     track: "Chantilly",
@@ -7335,9 +7538,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "france-tc",
   },
   {
-    uuid: "6b89ca1a-6acc-4d32-ae86-4a219a35c7ca",
+    uuid: "c6836079-3afa-4f1f-8279-b60494e16040",
     key: "fr-prix-de-diane",
     name: "Prix de Diane",
     track: "Chantilly",
@@ -7351,7 +7555,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "677bef7f-2d61-494f-9b50-339cbe111b50",
+    uuid: "5910718f-b9ca-4c3e-aa33-d4b2ef79fe93",
     key: "fr-grand-prix-de-saint-cloud",
     name: "Grand Prix de Saint-Cloud",
     track: "Saint-Cloud",
@@ -7364,7 +7568,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "3484fd7b-6cfb-46a4-8117-19647070ae23",
+    uuid: "8a0eaf5b-2331-4847-9820-0fe5987508fb",
     key: "fr-prix-jean-prat",
     name: "Prix Jean Prat",
     track: "Deauville",
@@ -7378,7 +7582,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "c108b791-e50e-4f3f-9309-c67d9d412eb5",
+    uuid: "b6ce2e12-8d10-421e-a036-e0c422aea4f2",
     key: "fr-grand-prix-de-paris",
     name: "Grand Prix de Paris",
     track: "Longchamp",
@@ -7390,9 +7594,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 196,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "france-tc",
   },
   {
-    uuid: "2a9d46e2-0c80-4b11-a46f-724a4b814e3f",
+    uuid: "56e9cf6f-b490-42cf-a0bb-3565e70b777f",
     key: "fr-prix-rothschild",
     name: "Prix Rothschild",
     track: "Deauville",
@@ -7406,7 +7611,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "a317fe73-ddfd-4849-b5ba-d91b883af11e",
+    uuid: "544a0326-fbed-4a28-aa9a-ef042a8c3819",
     key: "fr-prix-maurice-de-gheest",
     name: "Prix Maurice de Gheest",
     track: "Deauville",
@@ -7419,7 +7624,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "6befad29-2892-4719-8581-8fbd2fd8c941",
+    uuid: "2282014c-ca15-4848-8a15-7ff98f27c21c",
     key: "fr-prix-jacques-le-marois",
     name: "Prix Jacques Le Marois",
     track: "Deauville",
@@ -7433,7 +7638,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "7903fe64-cdc3-47bc-9493-492bd012b690",
+    uuid: "c4dcbe6a-5f97-40ab-b47b-3550ca085699",
     key: "fr-prix-jean-romanet",
     name: "Prix Jean Romanet",
     track: "Deauville",
@@ -7447,7 +7652,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "2d40740a-8723-402b-ba07-5421ab239903",
+    uuid: "06207153-3bd4-4e81-8a4f-1a971cbcf5b6",
     key: "fr-prix-morny",
     name: "Prix Morny",
     track: "Deauville",
@@ -7461,7 +7666,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "d1f61c09-1501-4a27-b189-d0ac289dbca5",
+    uuid: "7f3b65da-bc37-45fd-8117-69f42a53f898",
     key: "fr-prix-du-moulin-de-longchamp",
     name: "Prix du Moulin de Longchamp",
     track: "Longchamp",
@@ -7474,7 +7679,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "95cbf17a-0fd0-44f4-88f8-f045932fe10b",
+    uuid: "87ab574a-20f5-4a5d-8acf-0f75225b2d2d",
     key: "fr-prix-vermeille",
     name: "Prix Vermeille",
     track: "Longchamp",
@@ -7488,7 +7693,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "a3c9f6ad-621a-45bd-afe1-40995addac77",
+    uuid: "a240d753-5f05-4a06-b0d8-c7e60acc0756",
     key: "fr-prix-de-royallieu",
     name: "Prix de Royallieu",
     track: "Longchamp",
@@ -7502,7 +7707,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "147a5a06-adbb-4754-bfd8-993cf7b887fc",
+    uuid: "095b0161-bc7c-4949-955c-b53bf15f6b07",
     key: "fr-prix-du-cadran",
     name: "Prix du Cadran",
     track: "Longchamp",
@@ -7515,7 +7720,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "023052cb-c3c8-48da-96e8-3d0ad91d4ea9",
+    uuid: "247f5907-9dbc-4ae1-ab48-c3e5b19cb8f8",
     key: "fr-prix-de-l-abbaye-de-longchamp",
     name: "Prix de l'Abbaye de Longchamp",
     track: "Longchamp",
@@ -7528,7 +7733,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "57a4b7f1-be32-4a4a-8e0b-c5f666290845",
+    uuid: "b65cfde8-3bb3-42fb-bf68-ee1a06a2fad9",
     key: "fr-prix-de-l-opera",
     name: "Prix de l'Opéra",
     track: "Longchamp",
@@ -7542,7 +7747,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "eca50376-6483-4bbf-8f34-655b7f3d86f3",
+    uuid: "574f5e35-c819-4259-8c2c-45ebb44f5804",
     key: "fr-prix-de-la-foret",
     name: "Prix de la Forêt",
     track: "Longchamp",
@@ -7555,7 +7760,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "d8fbc757-93c0-4d8f-8802-b26fdada0de2",
+    uuid: "2c41c955-ecac-4abf-9a52-5959567254ab",
     key: "fr-prix-de-l-arc-de-triomphe",
     name: "Prix de l'Arc de Triomphe",
     track: "Longchamp",
@@ -7566,9 +7771,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 288,
     restrictions: { minAge: 3 },
+    fieldSize: 24,
   },
   {
-    uuid: "a2e6d57a-ac19-48f3-a488-410bd9c6caeb",
+    uuid: "4e6142cb-7c78-44b0-a584-d67581e87888",
     key: "fr-prix-jean-luc-lagardere",
     name: "Prix Jean-Luc Lagardère",
     track: "Longchamp",
@@ -7582,7 +7788,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "89dad787-c54e-48a4-b179-14599c82a52a",
+    uuid: "75331379-2b4f-4727-bc2e-ff3817426e10",
     key: "fr-prix-marcel-boussac",
     name: "Prix Marcel Boussac",
     track: "Longchamp",
@@ -7596,7 +7802,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "98234cb8-fea5-485e-b9cb-60c623988077",
+    uuid: "67829aec-2457-42a8-9041-70515a5d9367",
     key: "fr-criterium-de-saint-cloud",
     name: "Critérium de Saint-Cloud",
     track: "Saint-Cloud",
@@ -7610,7 +7816,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "346b833b-641b-44d8-b108-f151f564e3f9",
+    uuid: "312a7da7-eec5-44ac-9569-266516f6aa96",
     key: "fr-criterium-international",
     name: "Critérium International",
     track: "Saint-Cloud",
@@ -7624,7 +7830,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "7b4a78ad-bb21-4ed9-882c-2487b58444ed",
+    uuid: "040cd44e-c65a-4a6f-a82d-ac5ce84d4761",
     key: "fr-prix-royal-oak",
     name: "Prix Royal-Oak",
     track: "Saint-Cloud",
@@ -7637,7 +7843,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "6575b762-d3d2-4024-b351-5bcdfee5cc17",
+    uuid: "26670cda-fe73-4e73-bd36-6da396f2aa3a",
     key: "fr-prix-d-harcourt",
     name: "Prix d'Harcourt",
     track: "Longchamp",
@@ -7650,7 +7856,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "44741c2f-fe65-4fc0-84d8-9c2207f0dde3",
+    uuid: "a5ceba29-b766-4d85-8c83-c789cd069643",
     key: "fr-prix-du-muguet",
     name: "Prix du Muguet",
     track: "Saint-Cloud",
@@ -7663,7 +7869,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "df6c4116-81b8-490c-b918-41527d21ca86",
+    uuid: "c2c6ca20-4053-4843-b301-6d7cc47b8e4a",
     key: "fr-prix-saint-alary",
     name: "Prix Saint-Alary",
     track: "Longchamp",
@@ -7677,7 +7883,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "d31e4624-6189-41b1-aef9-922ddc56e627",
+    uuid: "7c017512-6416-4276-8fd6-c388a2655304",
     key: "fr-prix-corrida",
     name: "Prix Corrida",
     track: "Longchamp",
@@ -7691,7 +7897,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "6344139e-ac85-48fc-942a-078b1f900284",
+    uuid: "724788ee-d220-4067-85e8-17d70f926a79",
     key: "fr-grand-prix-de-chantilly",
     name: "Grand Prix de Chantilly",
     track: "Chantilly",
@@ -7704,7 +7910,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "4a1a4dcc-cf9e-4bc4-8599-169ca3021152",
+    uuid: "4a1b2bae-13d3-42c9-b525-0efd50ecda28",
     key: "fr-prix-de-sandringham",
     name: "Prix de Sandringham",
     track: "Chantilly",
@@ -7718,7 +7924,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "b29b9f1b-2cbf-4c3d-a2c3-790793c8cf0d",
+    uuid: "eb4aa5a1-a081-479b-a2c1-1507cea53010",
     key: "fr-prix-paul-de-moussac",
     name: "Prix Paul de Moussac",
     track: "Longchamp",
@@ -7731,7 +7937,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "9a6b2d1c-8438-4a42-a3cb-b23359efbbf4",
+    uuid: "69d19bdf-0481-4589-86eb-51196c9051f6",
     key: "fr-prix-eugene-adam",
     name: "Prix Eugène Adam",
     track: "Saint-Cloud",
@@ -7744,7 +7950,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "5eaf213d-a574-4813-a2ba-320f3d25e3f6",
+    uuid: "85888017-8b7f-410f-9fcf-215438bf3360",
     key: "fr-prix-de-malleret",
     name: "Prix de Malleret",
     track: "Longchamp",
@@ -7758,7 +7964,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "7ec3501a-1444-431d-89c6-1e3171035312",
+    uuid: "072d0b31-d60b-4b2b-8bf4-d8e0da902224",
     key: "fr-prix-maurice-de-nieuil",
     name: "Prix Maurice de Nieuil",
     track: "Longchamp",
@@ -7771,7 +7977,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "0945cc34-62aa-4cc6-8cac-6e5cf08e53eb",
+    uuid: "bb6a5983-6228-47df-bedf-45d33d7fdedb",
     key: "fr-prix-robert-papin",
     name: "Prix Robert Papin",
     track: "Chantilly",
@@ -7784,7 +7990,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "41fcc402-b0bf-4585-bfad-cceb6fe6d477",
+    uuid: "da633f83-f1cd-41f4-94fd-65f75ca47ea2",
     key: "fr-prix-de-pomone",
     name: "Prix de Pomone",
     track: "Deauville",
@@ -7798,7 +8004,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "c18ed4bc-9411-4635-8e80-e8cfd41755fc",
+    uuid: "68c3c2b8-3025-4780-925a-dcd391019745",
     key: "fr-prix-guillaume-d-ornano",
     name: "Prix Guillaume d'Ornano",
     track: "Deauville",
@@ -7811,7 +8017,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "dcc9490d-713a-498e-b53c-065737618e01",
+    uuid: "fe5ea31c-fbfc-453d-88a1-09070a4c2f55",
     key: "fr-prix-du-calvados",
     name: "Prix du Calvados",
     track: "Deauville",
@@ -7825,7 +8031,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "36377323-d2e6-4ea5-bcc3-b7a45d7c3ae3",
+    uuid: "e4c42d30-15da-4cc9-83d7-7a88384a91c7",
     key: "fr-prix-kergorlay",
     name: "Prix Kergorlay",
     track: "Deauville",
@@ -7838,7 +8044,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ee054f11-b0ec-408d-b8e1-f647453c5657",
+    uuid: "8544e93e-e667-4041-9791-bac0b8a32474",
     key: "fr-grand-prix-de-deauville",
     name: "Grand Prix de Deauville",
     track: "Deauville",
@@ -7851,7 +8057,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "98835330-0de4-4445-b4da-2f134676e93b",
+    uuid: "65affd66-a51c-4e61-aa55-739254e79a3f",
     key: "fr-prix-d-aumale",
     name: "Prix d'Aumale",
     track: "Longchamp",
@@ -7865,7 +8071,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "798a32b2-65c9-41ac-8c93-9a2288abf5a0",
+    uuid: "b0b2176a-efdf-4762-8f7e-0a34fd4d9c4a",
     key: "fr-prix-foy",
     name: "Prix Foy",
     track: "Longchamp",
@@ -7878,7 +8084,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "c96ce3dc-3bd3-4c19-9af2-a5e6a8d7aee7",
+    uuid: "133d2339-b232-44b2-a5f0-818ef20eeb41",
     key: "fr-prix-niel",
     name: "Prix Niel",
     track: "Longchamp",
@@ -7891,7 +8097,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "9dad791a-78ff-4bd7-bebd-6f6907093a96",
+    uuid: "83e581ff-f51a-4207-aadf-1f28b20e1731",
     key: "fr-prix-chaudenay",
     name: "Prix Chaudenay",
     track: "Longchamp",
@@ -7904,7 +8110,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "cfd8884f-bedf-4ed4-ad21-0893fda7e137",
+    uuid: "25c42973-3fe8-4ac5-b952-58ff74e491c6",
     key: "fr-prix-daniel-wildenstein",
     name: "Prix Daniel Wildenstein",
     track: "Longchamp",
@@ -7917,7 +8123,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b56f8cdd-ce76-470c-9b52-ac39ac855c15",
+    uuid: "925af786-5fb8-4f3c-8f4b-1257c40a6fb3",
     key: "fr-prix-dollar",
     name: "Prix Dollar",
     track: "Longchamp",
@@ -7930,7 +8136,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2a45e49d-de2f-4fb5-8321-992810c59483",
+    uuid: "ed3e4706-488f-4b68-a1dd-53bcd430240b",
     key: "fr-criterium-de-maisons-laffitte",
     name: "Critérium de Maisons-Laffitte",
     track: "Chantilly",
@@ -7943,7 +8149,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "8051a0b9-b6ad-4862-887f-33cf32c1a08e",
+    uuid: "c966851c-76fb-40db-92b4-15fd296b308b",
     key: "fr-prix-du-conseil-de-paris",
     name: "Prix du Conseil de Paris",
     track: "Longchamp",
@@ -7956,7 +8162,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a6ab0076-d056-4fe0-8e25-0f16d0c86f9d",
+    uuid: "98d837ff-dabb-4211-9184-cec6a57002a4",
     key: "fr-prix-exbury",
     name: "Prix Exbury",
     track: "Saint-Cloud",
@@ -7969,7 +8175,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "3c2e81fe-f15c-407a-8968-86761bfb5937",
+    uuid: "48a4f199-ad02-4d45-bb5b-3213138a1e1e",
     key: "fr-prix-edmond-blanc",
     name: "Prix Edmond Blanc",
     track: "Saint-Cloud",
@@ -7982,7 +8188,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "b13a6b73-6646-4824-8d97-1c681817aff9",
+    uuid: "54463b03-f24e-486c-8d5b-306800ec7bee",
     key: "fr-prix-la-force",
     name: "Prix La Force",
     track: "Longchamp",
@@ -7996,7 +8202,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Geldings",
   },
   {
-    uuid: "d8eb17f0-1d91-4315-9316-5f0b5c6610e3",
+    uuid: "1550ca0b-becf-415a-98ab-c667873bbb39",
     key: "fr-prix-vanteaux",
     name: "Prix Vanteaux",
     track: "Longchamp",
@@ -8010,7 +8216,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "f72c3679-9e85-404c-820f-a8689552fda7",
+    uuid: "1a29de09-fbed-46fc-b208-183c8e8d9508",
     key: "fr-prix-djebel",
     name: "Prix Djebel",
     track: "Deauville",
@@ -8024,7 +8230,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Geldings",
   },
   {
-    uuid: "484fe4fa-dd86-42db-8664-e62921933cc3",
+    uuid: "9a5575c5-a144-488a-9ac9-a3c5fa7b43b4",
     key: "fr-prix-imprudence",
     name: "Prix Imprudence",
     track: "Deauville",
@@ -8038,7 +8244,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "89de8654-26f3-40df-b7bf-c5bf4fa4724c",
+    uuid: "b4d3cf89-bb10-4fbe-bae9-42699b1e2fad",
     key: "fr-prix-de-la-grotte",
     name: "Prix de la Grotte",
     track: "Longchamp",
@@ -8052,7 +8258,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "6a2ccc6f-5ce9-4ba7-b8d0-ef6963916cb6",
+    uuid: "72d55390-8a56-4934-add3-a716966a0cae",
     key: "fr-prix-de-fontainebleau",
     name: "Prix de Fontainebleau",
     track: "Longchamp",
@@ -8066,7 +8272,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Geldings",
   },
   {
-    uuid: "ebd04fab-6cc0-4db4-a010-156413bd1780",
+    uuid: "18ed44c7-0f2d-4d3d-9256-f856a943d41c",
     key: "fr-prix-noailles",
     name: "Prix Noailles",
     track: "Longchamp",
@@ -8079,7 +8285,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "325f5b43-127d-4d22-8690-a9a735116029",
+    uuid: "0e0c4d31-1fa4-4572-91dd-d3ce9f6874d1",
     key: "fr-prix-sigy",
     name: "Prix Sigy",
     track: "Chantilly",
@@ -8092,7 +8298,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "d8d5558b-0db9-4258-b144-aec8343d2690",
+    uuid: "753ded40-83f5-48af-a97d-9b90e0949d77",
     key: "fr-prix-cleopatre",
     name: "Prix Cléopâtre",
     track: "Saint-Cloud",
@@ -8106,7 +8312,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "642e6fdc-0652-4ae1-a611-8b303ffae1c5",
+    uuid: "0dc4cad3-76aa-4c57-8a43-abdf8078208d",
     key: "fr-prix-de-barbeville",
     name: "Prix de Barbeville",
     track: "Longchamp",
@@ -8119,7 +8325,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "2821d998-bf4f-422c-b7f5-8043a1af0dea",
+    uuid: "714bd604-4ea2-48ba-b0ef-6b6352cb6c5f",
     key: "fr-prix-allez-france",
     name: "Prix Allez France",
     track: "Saint-Cloud",
@@ -8133,7 +8339,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "498e2d14-5c8d-44e9-ae09-f316ec250a70",
+    uuid: "b81aecf2-468e-457a-8ab7-3ee53c4de8da",
     key: "fr-prix-d-hedouville",
     name: "Prix d'Hédouville",
     track: "Longchamp",
@@ -8146,7 +8352,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "4264a0b4-f5c2-4fba-844b-dcb6a3b5dc67",
+    uuid: "8783faa6-4d04-435f-b40c-a32780fde040",
     key: "fr-prix-de-guiche",
     name: "Prix de Guiche",
     track: "Chantilly",
@@ -8160,7 +8366,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Geldings",
   },
   {
-    uuid: "ad1afe83-ed78-4816-9b28-54c077ab1a94",
+    uuid: "8c9d854e-d055-4faa-8898-7e4fae7a304e",
     key: "fr-prix-greffulhe",
     name: "Prix Greffulhe",
     track: "Saint-Cloud",
@@ -8173,7 +8379,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "1b3fc4e2-360e-4caa-8dea-ae79feba1a6a",
+    uuid: "18ab9539-a778-44aa-91b5-36c0a9c28e57",
     key: "fr-prix-de-saint-georges",
     name: "Prix de Saint-Georges",
     track: "Longchamp",
@@ -8186,7 +8392,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "bd7aec89-a6c7-4eab-9697-1a4b3f85a564",
+    uuid: "9fa86b6a-616d-4200-b4cb-5086ec73942d",
     key: "fr-prix-texanita",
     name: "Prix Texanita",
     track: "Chantilly",
@@ -8199,7 +8405,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "cdfdcf50-dbcd-4994-b5f0-6a0bcc4d980a",
+    uuid: "337afac9-89c4-410d-8771-a29140445858",
     key: "fr-prix-du-palais-royal",
     name: "Prix du Palais-Royal",
     track: "Longchamp",
@@ -8212,7 +8418,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b9fdb9fd-b8bb-4e4a-bc3f-c3eb4eb5ea73",
+    uuid: "b0757829-3428-415b-904c-8ad2423e3718",
     key: "fr-prix-hocquart",
     name: "Prix Hocquart",
     track: "Longchamp",
@@ -8225,7 +8431,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "f6ac6d8e-2b23-49b3-9ed3-15a34349cb4f",
+    uuid: "c7231356-2432-4f12-9d1f-6c14d4b07568",
     key: "fr-prix-de-royaumont",
     name: "Prix de Royaumont",
     track: "Chantilly",
@@ -8239,7 +8445,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "d57d1bb3-568e-49fc-ae2b-f2a9a93c28b5",
+    uuid: "0bc32f0b-c465-4d42-bfb6-0c85c9844e39",
     key: "fr-prix-du-gros-chene",
     name: "Prix du Gros Chêne",
     track: "Chantilly",
@@ -8252,7 +8458,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "23da6046-de83-41de-b88e-16f68a218f0e",
+    uuid: "2ead4d05-6715-4e86-b0ea-fb9b5bd2b142",
     key: "fr-la-coupe",
     name: "La Coupe",
     track: "Longchamp",
@@ -8265,7 +8471,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "95618752-23b8-4284-80b2-49661d81aad8",
+    uuid: "e4509555-196c-49e3-bb09-8911868490c7",
     key: "fr-prix-bertrand-du-breuil",
     name: "Prix Bertrand du Breuil",
     track: "Chantilly",
@@ -8278,7 +8484,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "8aa0f6e9-45a8-4f85-a69c-94ecd003ba8d",
+    uuid: "217d7f27-7569-48d3-aeab-1c63b56f80ff",
     key: "fr-prix-du-lys",
     name: "Prix du Lys",
     track: "Chantilly",
@@ -8291,7 +8497,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "08162e3a-5e4d-4ef8-b691-2184b116b84e",
+    uuid: "82381092-e88c-4a29-9ae5-fa73501f9a0f",
     key: "fr-prix-de-la-porte-maillot",
     name: "Prix de la Porte Maillot",
     track: "Longchamp",
@@ -8304,7 +8510,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "cd78747c-a089-4243-b5df-bca15bf0fa27",
+    uuid: "123b3010-3d48-460a-808e-07b428dc92d9",
     key: "fr-prix-du-bois",
     name: "Prix du Bois",
     track: "Chantilly",
@@ -8317,7 +8523,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "448d8091-3782-43bb-9009-cad6fb53d371",
+    uuid: "d8d041ef-d413-4bfe-89d9-da0e335fdf2a",
     key: "fr-prix-de-ris-orangis",
     name: "Prix de Ris-Orangis",
     track: "Deauville",
@@ -8330,7 +8536,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "94cd64c6-f01d-4f36-8e67-8479c520e8bc",
+    uuid: "92dac538-563d-47d8-89be-ac44f12a1af0",
     key: "fr-prix-chloe",
     name: "Prix Chloé",
     track: "Chantilly",
@@ -8344,7 +8550,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "de584e31-1bee-46a9-b073-f440f1f1ea0e",
+    uuid: "c6763eee-9e30-4e1a-ae9a-83c77ffc1465",
     key: "fr-prix-messidor",
     name: "Prix Messidor",
     track: "Chantilly",
@@ -8357,7 +8563,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2e38bd23-daab-4b5c-b796-546c163b9885",
+    uuid: "ce1cc842-d318-486b-bab6-d7bc7d7529df",
     key: "fr-grand-prix-de-vichy",
     name: "Grand Prix de Vichy",
     track: "Vichy",
@@ -8370,7 +8576,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "29baf9f4-163f-44be-a98c-1dd2e6a11cb4",
+    uuid: "5b7fa779-0811-48b9-af50-861c1b470c5a",
     key: "fr-prix-de-cabourg",
     name: "Prix de Cabourg",
     track: "Deauville",
@@ -8383,7 +8589,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "2e8dfead-35a0-4438-8196-6d0ce19d9ee3",
+    uuid: "a54e8142-b639-4638-b6bd-559e6b528312",
     key: "fr-prix-de-psyche",
     name: "Prix de Psyché",
     track: "Deauville",
@@ -8397,7 +8603,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "05f6c18c-f459-42fa-bae8-9d633a33973b",
+    uuid: "4be44a32-4acf-4d68-be4b-d31eaeb096cc",
     key: "fr-prix-six-perfections",
     name: "Prix Six Perfections",
     track: "Deauville",
@@ -8411,7 +8617,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "713762ff-7062-4529-a523-3b2e5cf171a4",
+    uuid: "d3042437-79c3-4e07-a9e9-2e6b52988472",
     key: "fr-prix-de-reux",
     name: "Prix de Reux",
     track: "Deauville",
@@ -8424,7 +8630,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "522d37f6-2756-471b-bd48-b793d633853f",
+    uuid: "c766bde2-2be7-483c-88dd-6779fb4dc87e",
     key: "fr-prix-daphnis",
     name: "Prix Daphnis",
     track: "Deauville",
@@ -8437,7 +8643,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "524c6b64-ba00-456d-aae7-463f08039dea",
+    uuid: "baa2aa98-4b63-4dcb-90b5-f16fec33cfbe",
     key: "fr-prix-de-lieurey",
     name: "Prix de Lieurey",
     track: "Deauville",
@@ -8451,7 +8657,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "e58c3d00-1e2e-41bd-995b-f79187cdcfd3",
+    uuid: "9f0b1e0b-da20-41d8-8087-371dee3cb9f4",
     key: "fr-prix-gontaut-biron",
     name: "Prix Gontaut-Biron",
     track: "Deauville",
@@ -8464,7 +8670,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "e957139e-5c18-4790-a240-65da51b85391",
+    uuid: "d2b63564-5d7b-4591-82a9-241dc390b988",
     key: "fr-prix-francois-boutin",
     name: "Prix François Boutin",
     track: "Deauville",
@@ -8477,7 +8683,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "1e7657bc-0246-4543-b0bf-203b429a2cab",
+    uuid: "4e602938-d583-4cf7-8383-24d8f282a9dc",
     key: "fr-prix-minerve",
     name: "Prix Minerve",
     track: "Deauville",
@@ -8491,7 +8697,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "22fad407-c1de-44b6-9e74-a799cca8d56e",
+    uuid: "005be70d-2b45-4d63-9e68-bcc7f643cc60",
     key: "fr-prix-de-meautry",
     name: "Prix de Meautry",
     track: "Deauville",
@@ -8504,7 +8710,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "80efc577-afc6-423e-b63e-144d81b54465",
+    uuid: "5a62d6d3-f286-4d02-a958-b567f7382f5e",
     key: "fr-prix-quincey",
     name: "Prix Quincey",
     track: "Deauville",
@@ -8517,7 +8723,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "73fc489e-40d6-40d8-9bf8-ef7dd489baa4",
+    uuid: "52d42aab-1aca-472b-87ad-db748a75739f",
     key: "fr-prix-d-arenberg",
     name: "Prix d'Arenberg",
     track: "Longchamp",
@@ -8530,7 +8736,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "4aeb813a-37af-4d2a-bc3c-6a84219deab0",
+    uuid: "e8b45dee-d8ed-4319-9a16-83e3fe399dbd",
     key: "fr-prix-gerald-de-geoffre",
     name: "Prix Gérald de Geoffre",
     track: "Longchamp",
@@ -8543,7 +8749,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "dfb7d731-9d62-4013-ae65-d782bcc960fa",
+    uuid: "f3f2fe5b-9cbe-4ffe-aa78-b01715101946",
     key: "fr-prix-la-rochette",
     name: "Prix La Rochette",
     track: "Longchamp",
@@ -8556,7 +8762,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "8f95dcba-56b5-4bd9-9074-7371f9d77a02",
+    uuid: "7f5541cc-3140-48f8-aef1-b0df3f59caa6",
     key: "fr-prix-gladiateur",
     name: "Prix Gladiateur",
     track: "Longchamp",
@@ -8569,7 +8775,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "20071166-aaa9-47d1-9eb2-deb6f50c7205",
+    uuid: "63c59e6c-4b05-4e9c-8d42-c1cc4a28a90b",
     key: "fr-prix-du-petit-couvert",
     name: "Prix du Petit Couvert",
     track: "Longchamp",
@@ -8582,7 +8788,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "188d4b9c-3623-4c52-9334-be65b7262cda",
+    uuid: "94f227e0-e1e7-4fa4-bf6a-f3190c75bdc3",
     key: "fr-prix-du-pin",
     name: "Prix du Pin",
     track: "Longchamp",
@@ -8595,7 +8801,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "d7ff46c1-922f-419f-8cce-7557c31bc1c8",
+    uuid: "5bbd22b5-21eb-4ecc-a3e4-058746108845",
     key: "fr-prix-du-prince-d-orange",
     name: "Prix du Prince d'Orange",
     track: "Longchamp",
@@ -8608,7 +8814,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2177442b-fed0-44bb-ab56-73f7c3090db4",
+    uuid: "623a67d3-a688-4238-a016-9771d32f4642",
     key: "fr-prix-bertrand-de-tarragon",
     name: "Prix Bertrand de Tarragon",
     track: "Chantilly",
@@ -8622,7 +8828,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "0756deb9-2a4d-4edb-b659-752c5fa89557",
+    uuid: "15e84f21-56eb-4416-914b-263ed5a6d80c",
     key: "fr-prix-des-chenes",
     name: "Prix des Chênes",
     track: "Chantilly",
@@ -8636,7 +8842,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Geldings",
   },
   {
-    uuid: "fa3f87c4-e824-414e-aba5-f5c057e2cb8b",
+    uuid: "106921dc-217f-4c37-97b0-37489725432e",
     key: "fr-prix-eclipse",
     name: "Prix Eclipse",
     track: "Chantilly",
@@ -8649,7 +8855,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "1a5222b6-5467-4e5c-a213-71a307455084",
+    uuid: "87c8ff7a-38ee-49ab-9313-51a6818de5ab",
     key: "fr-prix-de-conde",
     name: "Prix de Condé",
     track: "Saint-Cloud",
@@ -8662,7 +8868,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "6f19c907-3d71-413b-979f-c07b0fa1ae46",
+    uuid: "a5ec643e-e1fb-42c1-9522-db585d55572f",
     key: "fr-prix-belle-de-nuit",
     name: "Prix Belle de Nuit",
     track: "Saint-Cloud",
@@ -8676,7 +8882,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "6a4e85e0-ba18-44d8-8cbf-0fb51829a146",
+    uuid: "ef4b5007-eedd-4892-86ab-14b1606ad03d",
     key: "fr-prix-de-flore",
     name: "Prix de Flore",
     track: "Saint-Cloud",
@@ -8690,7 +8896,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "c9e7ab5c-0ccf-42bf-ad82-b60f37c6d928",
+    uuid: "94040f5b-aa3f-4a1b-a248-b6c5420424c2",
     key: "fr-prix-perth",
     name: "Prix Perth",
     track: "Saint-Cloud",
@@ -8703,7 +8909,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "200d5d11-1859-410b-91f1-47bae865edda",
+    uuid: "ab0ff1bf-9c9f-4bc4-9cf7-09b3507ec874",
     key: "fr-prix-des-reservoirs",
     name: "Prix des Réservoirs",
     track: "Chantilly",
@@ -8717,7 +8923,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "df0c99c3-4263-468f-a51f-6d484a212f30",
+    uuid: "44696194-d281-455f-81d6-596b7ec98c5a",
     key: "fr-prix-de-seine-et-oise",
     name: "Prix de Seine-et-Oise",
     track: "Chantilly",
@@ -8730,7 +8936,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ba40a1f7-999a-4ce8-9b67-edf61a6ad225",
+    uuid: "53400c93-3d2f-4b91-908e-00c65807278e",
     key: "fr-prix-fille-de-l-air",
     name: "Prix Fille de l'Air",
     track: "Toulouse",
@@ -8744,7 +8950,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "ae62e586-7cee-4bed-8d06-27f25eaf8ec9",
+    uuid: "1b2a5bd7-9d8d-4e69-9adb-22899a72ef35",
     key: "fr-prix-miesque",
     name: "Prix Miesque",
     track: "Chantilly",
@@ -8758,7 +8964,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "e998d245-0bce-4ec6-9ba5-e679bc6918d6",
+    uuid: "811134fc-0094-4809-81ef-7e3e76302a28",
     key: "fr-prix-thomas-bryon",
     name: "Prix Thomas Bryon",
     track: "Chantilly",
@@ -8771,7 +8977,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "18d803a6-fa06-4ac9-a8c2-ed977b6b860a",
+    uuid: "67de111b-d466-43d5-8169-f88528f09d25",
     key: "ie-irish-2-000-guineas",
     name: "Irish 2,000 Guineas",
     track: "Curragh",
@@ -8783,9 +8989,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "ireland-tc",
   },
   {
-    uuid: "3db36a1d-abab-4be2-97f3-0a6321f688ce",
+    uuid: "10e7f43f-b9d1-4825-914e-109d2df74566",
     key: "ie-tattersalls-gold-cup",
     name: "Tattersalls Gold Cup",
     track: "Curragh",
@@ -8798,7 +9005,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "975aae15-9bd3-4a32-86ed-70889e7ba0fd",
+    uuid: "64a8ed68-bcea-4b2a-aeae-78cb79641199",
     key: "ie-irish-1-000-guineas",
     name: "Irish 1,000 Guineas",
     track: "Curragh",
@@ -8812,7 +9019,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "97f24ede-f57d-4bd0-b424-23ecbe68cb44",
+    uuid: "575c0a52-5c01-45ce-aeef-7665b6ae1159",
     key: "ie-pretty-polly-stakes",
     name: "Pretty Polly Stakes",
     track: "Curragh",
@@ -8826,7 +9033,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "a747f327-67f9-4a72-8f56-a721aec22cde",
+    uuid: "307b38b6-f6de-4de6-ab73-e0eca5832815",
     key: "ie-irish-derby",
     name: "Irish Derby",
     track: "Curragh",
@@ -8838,9 +9045,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 166,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "ireland-tc",
   },
   {
-    uuid: "cd822f7c-b3f7-426b-baa0-1fd3436c6734",
+    uuid: "fda224b2-1fbc-4e29-9db7-5194d28ba4b6",
     key: "ie-irish-oaks",
     name: "Irish Oaks",
     track: "Curragh",
@@ -8854,7 +9062,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "c0c4b9c7-1d63-4173-aee9-40d43798bd84",
+    uuid: "f979c5c4-0302-4093-874f-c2f6228c40bb",
     key: "ie-phoenix-stakes",
     name: "Phoenix Stakes",
     track: "Curragh",
@@ -8868,7 +9076,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "755c8d88-fc60-4a34-b46c-d49b75dbabc8",
+    uuid: "9df1c990-1410-4804-85a7-84239e350176",
     key: "ie-juvenile-turf-stakes",
     name: "Juvenile Turf Stakes",
     track: "Leopardstown",
@@ -8882,7 +9090,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "32baad79-a835-4825-b336-3c32f4f60753",
+    uuid: "a56e5daf-03c1-487d-8885-b3d4dd6b744a",
     key: "ie-matron-stakes",
     name: "Matron Stakes",
     track: "Leopardstown",
@@ -8896,7 +9104,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "1dedd0ab-b55b-4a5e-b4ad-1a1831f4cbc7",
+    uuid: "6a6068ee-7f65-458f-b520-de734b0b8b79",
     key: "ie-irish-champion-stakes",
     name: "Irish Champion Stakes",
     track: "Leopardstown",
@@ -8909,7 +9117,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "986d8f77-c729-4ef3-afd1-432f271b79d0",
+    uuid: "5566b9a5-30f7-4c7e-bb9f-f68a504f7fbe",
     key: "ie-moyglare-stud-stakes",
     name: "Moyglare Stud Stakes",
     track: "Curragh",
@@ -8923,7 +9131,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "d06482db-1f02-4419-8dec-3765574adf40",
+    uuid: "887c2ec0-7dd0-4296-84a0-c092200d53a9",
     key: "ie-flying-five-stakes",
     name: "Flying Five Stakes",
     track: "Curragh",
@@ -8936,7 +9144,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "66b5cf2b-0010-42c8-a37c-a30674d718a9",
+    uuid: "eb1e9b9a-841a-4976-9129-f72c10bf0aad",
     key: "ie-vincent-o-brien-national-stakes",
     name: "Vincent O'Brien National Stakes",
     track: "Curragh",
@@ -8950,7 +9158,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "202a154b-8259-45be-b14d-29cd074f2f2c",
+    uuid: "a079dfa2-b900-4787-8e6e-5c23559b3e3c",
     key: "ie-irish-st-leger",
     name: "Irish St. Leger",
     track: "Curragh",
@@ -8961,9 +9169,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 800000,
     dayOfYear: 258,
     restrictions: { minAge: 3 },
+    triplecrownKey: "ireland-tc",
   },
   {
-    uuid: "bbb93531-9c0a-4fad-9443-68c2661d4b46",
+    uuid: "a280d177-a46f-4fd8-832e-f581b2c6b136",
     key: "ie-mooresbridge-stakes",
     name: "Mooresbridge Stakes",
     track: "Curragh",
@@ -8976,7 +9185,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "e5dacc0e-d167-405c-92c0-76d41ea52427",
+    uuid: "609578e2-45bf-4095-95e9-841992fdc4f4",
     key: "ie-greenlands-stakes",
     name: "Greenlands Stakes",
     track: "Curragh",
@@ -8989,7 +9198,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "52f5d42d-202c-4cae-940c-e0eea797518b",
+    uuid: "db805452-79d6-41c4-8a55-f30d3da00047",
     key: "ie-ridgewood-pearl-stakes",
     name: "Ridgewood Pearl Stakes",
     track: "Curragh",
@@ -9003,7 +9212,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "142dd94f-df0b-4455-a144-0834c57c86f7",
+    uuid: "ccb7267f-eda4-4ec0-94be-bf1e41192c4d",
     key: "ie-airlie-stud-stakes",
     name: "Airlie Stud Stakes",
     track: "Curragh",
@@ -9017,7 +9226,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "d985fba2-323e-4e86-b055-eaf0534aa7ce",
+    uuid: "c8ef72af-d4f3-4c5d-a83d-bd0379d04df9",
     key: "ie-railway-stakes",
     name: "Railway Stakes",
     track: "Curragh",
@@ -9030,7 +9239,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "195dbbb6-43a5-4547-a460-c198b0b85eca",
+    uuid: "9fbfbc4f-5b6b-4d7e-9c73-db2f2ac542bc",
     key: "ie-sapphire-stakes",
     name: "Sapphire Stakes",
     track: "Curragh",
@@ -9043,7 +9252,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "9a8b0cb7-ee7e-4ac6-ae4a-7d1b1c6e7b0f",
+    uuid: "94ce90fb-3b1f-48a9-ac9f-25f422fa094e",
     key: "ie-curragh-cup",
     name: "Curragh Cup",
     track: "Curragh",
@@ -9056,7 +9265,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "12a1a90c-01f2-493d-a07a-a46d3b54aeba",
+    uuid: "13c2785f-b7d0-4d97-86f5-482719caa0b6",
     key: "ie-minstrel-stakes",
     name: "Minstrel Stakes",
     track: "Curragh",
@@ -9069,7 +9278,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "222e6695-5eb2-4c33-aa0a-e6239da68a0d",
+    uuid: "ed7787b9-55c2-47ee-bec2-6f5b56a8d952",
     key: "ie-debutante-stakes",
     name: "Debutante Stakes",
     track: "Curragh",
@@ -9083,7 +9292,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "a8f0330d-135c-406c-ab75-b22e761ec72b",
+    uuid: "67e8d5d5-2448-4fa7-8aa3-e215cb273c96",
     key: "ie-futurity-stakes",
     name: "Futurity Stakes",
     track: "Curragh",
@@ -9096,7 +9305,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "c806217e-1e60-490f-8071-b1990fcade39",
+    uuid: "e7851071-ef61-4e7f-b1fe-8f8b893d66b1",
     key: "ie-solonaway-stakes",
     name: "Solonaway Stakes",
     track: "Leopardstown",
@@ -9109,7 +9318,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "cab95512-6e7c-400a-a91a-68013ce5fd09",
+    uuid: "10e3c51a-06fd-4ee9-b4c3-1d8cd35b8019",
     key: "ie-blandford-stakes",
     name: "Blandford Stakes",
     track: "Curragh",
@@ -9123,7 +9332,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "3b77fa12-38ac-4d45-a4ac-2201c0207ba8",
+    uuid: "a20632ec-6ae5-4527-8f53-f957e4f52cbe",
     key: "ie-beresford-stakes",
     name: "Beresford Stakes",
     track: "Curragh",
@@ -9136,7 +9345,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "cecfee88-6fdd-43be-a630-919de9ff49bc",
+    uuid: "314124a8-360d-469f-8a8c-358a2197760b",
     key: "ie-park-express-stakes",
     name: "Park Express Stakes",
     track: "Curragh",
@@ -9150,7 +9359,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "96d593f3-e68e-426a-bcdb-f7f007f30d23",
+    uuid: "c6f3b42c-0fe9-4bda-b425-a01e2e1da507",
     key: "ie-leopardstown-2-000-guineas-trial-stakes",
     name: "Leopardstown 2,000 Guineas Trial Stakes",
     track: "Leopardstown",
@@ -9164,7 +9373,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Geldings",
   },
   {
-    uuid: "1dfc2a32-2882-4ecc-bd45-177d3cf677a2",
+    uuid: "dde7ca20-f996-4a8b-a782-a753dfff6094",
     key: "ie-leopardstown-1-000-guineas-trial-stakes",
     name: "Leopardstown 1,000 Guineas Trial Stakes",
     track: "Leopardstown",
@@ -9178,7 +9387,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "fce64d38-3c41-4d3e-bee9-d938bf154bc8",
+    uuid: "9f602f5c-e4cd-41ef-ad6a-6aa6ebe7b41e",
     key: "ie-ballysax-stakes",
     name: "Ballysax Stakes",
     track: "Leopardstown",
@@ -9191,7 +9400,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "9d5ca716-71f6-4873-beb6-667c19411e4f",
+    uuid: "ecff5181-7835-4b5b-8e8a-38632849ab8a",
     key: "ie-alleged-stakes",
     name: "Alleged Stakes",
     track: "Curragh",
@@ -9204,7 +9413,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "94b159d4-766b-461c-ad34-4a57f749af80",
+    uuid: "43fe503a-8da3-4081-8355-3777492902e2",
     key: "ie-salsabil-stakes",
     name: "Salsabil Stakes",
     track: "Navan",
@@ -9218,7 +9427,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "6271ae47-2918-463b-a934-77a7c1149bbd",
+    uuid: "a5b7315b-02a2-4154-ba9a-5a1dfc976efe",
     key: "ie-athasi-stakes",
     name: "Athasi Stakes",
     track: "Curragh",
@@ -9232,7 +9441,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "a5003f35-e4e8-4444-b43d-ef95e718d2c9",
+    uuid: "6a583afe-4fb3-40d5-9add-f0ace478a23c",
     key: "ie-mutamakina-stakes",
     name: "Mutamakina Stakes",
     track: "Leopardstown",
@@ -9246,7 +9455,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "b064a1fe-eaff-4e10-8d72-8f4bbaf5b7ed",
+    uuid: "d098834b-407f-4fc3-bd59-164f3cacdfb1",
     key: "ie-cashel-palace-hotel-derby-trial",
     name: "Cashel Palace Hotel Derby Trial",
     track: "Leopardstown",
@@ -9259,7 +9468,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "d34b4b90-10f6-447a-b072-fbb27b3f9949",
+    uuid: "0e4930ed-f6b5-48dc-9492-1f7fd5d31f87",
     key: "ie-saval-beg-stakes",
     name: "Saval Beg Stakes",
     track: "Leopardstown",
@@ -9272,7 +9481,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "b56ad2a0-ce67-4229-bd7a-670178357cc9",
+    uuid: "fbe9cac7-0f2b-40e9-9d90-196a3158b22d",
     key: "ie-lacken-stakes",
     name: "Lacken Stakes",
     track: "Naas",
@@ -9285,7 +9494,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "ba90eca1-0d96-4de6-89ab-0d00b37d0305",
+    uuid: "d215f196-e671-4c28-a4df-d8ff7ccf4e21",
     key: "ie-fillies-sprint-stakes",
     name: "Fillies' Sprint Stakes",
     track: "Naas",
@@ -9299,7 +9508,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "5561d9b1-4681-4644-aaaf-a314aebc341c",
+    uuid: "40ad4b1a-f27b-4b1a-ac35-9790bc5c35f8",
     key: "ie-gallinule-stakes",
     name: "Gallinule Stakes",
     track: "Curragh",
@@ -9312,7 +9521,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "74332486-c58c-4396-9c4d-8f8be5f7e304",
+    uuid: "84f575b6-2dd1-4937-93e9-356a34860b38",
     key: "ie-marble-hill-stakes",
     name: "Marble Hill Stakes",
     track: "Curragh",
@@ -9325,7 +9534,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "6af3a9d1-bb0e-417a-a6ce-4e87bc9a0d53",
+    uuid: "de67f36a-e19d-4c91-8cb7-4faf080a29fc",
     key: "ie-ballycorus-stakes",
     name: "Ballycorus Stakes",
     track: "Leopardstown",
@@ -9338,7 +9547,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "0fb83204-2d5d-4541-84a5-c1ce2e8e47c7",
+    uuid: "9c98c4b9-76a5-43fa-bb0f-c17edcbe539e",
     key: "ie-munster-oaks",
     name: "Munster Oaks",
     track: "Cork",
@@ -9352,7 +9561,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "683abf69-db06-442d-bf2a-2ee68fa30d77",
+    uuid: "da95cb70-8f28-4b31-86b9-eeaddbf64fd1",
     key: "ie-blue-wind-stakes",
     name: "Blue Wind Stakes",
     track: "Naas",
@@ -9366,7 +9575,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "ceb651ba-c270-4f2c-bcbe-c7e0c276b27b",
+    uuid: "1915f14c-6b1e-4f91-89dd-d516ae1e1c1e",
     key: "ie-anglesey-stakes",
     name: "Anglesey Stakes",
     track: "Curragh",
@@ -9379,7 +9588,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "62361e7f-b14e-4ff0-8af9-a57776f3336b",
+    uuid: "3dbde342-03c2-421f-9893-08e8678d9500",
     key: "ie-international-stakes",
     name: "International Stakes",
     track: "Curragh",
@@ -9392,7 +9601,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "287ee430-523a-4a85-a20a-181b8fc3af10",
+    uuid: "2b433e63-7f26-4feb-9806-bf4974e33d49",
     key: "ie-brownstown-stakes",
     name: "Brownstown Stakes",
     track: "Leopardstown",
@@ -9406,7 +9615,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "f5ad96ef-8470-4c24-9c3f-796ad4170a6c",
+    uuid: "0257f7ca-101d-44c2-b7bc-5a88709e2b7b",
     key: "ie-stannera-stakes",
     name: "Stannera Stakes",
     track: "Fairyhouse",
@@ -9420,7 +9629,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "6823df88-fd9c-4c41-94f3-66de44f947e8",
+    uuid: "094e8cd1-a524-472c-870d-cd6eb033a4d0",
     key: "ie-meld-stakes",
     name: "Meld Stakes",
     track: "Leopardstown",
@@ -9433,7 +9642,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "bfe7c776-1535-44ac-9019-1939a3750a45",
+    uuid: "9eaee1a7-dc16-4d93-847f-f82f9ae866bb",
     key: "ie-rathbride-stakes",
     name: "Rathbride Stakes",
     track: "Curragh",
@@ -9447,7 +9656,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "fd0498c6-f138-4769-9c93-5d1be2865d26",
+    uuid: "e5d0992d-4f80-462c-8fbd-b6654caa3b47",
     key: "ie-silver-flash-stakes",
     name: "Silver Flash Stakes",
     track: "Leopardstown",
@@ -9461,7 +9670,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "0338a70e-f256-481b-a5df-8b3a74fdb18c",
+    uuid: "8c42449d-2e10-4e5e-bb34-a701cf4124f2",
     key: "ie-tyros-stakes",
     name: "Tyros Stakes",
     track: "Leopardstown",
@@ -9474,7 +9683,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "6aa13c9f-70e6-474c-b958-3e2fbded1033",
+    uuid: "2d7eb6b0-684d-4f4a-b397-b33d489e4699",
     key: "ie-ballyroan-stakes",
     name: "Ballyroan Stakes",
     track: "Leopardstown",
@@ -9487,7 +9696,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "df857e8b-ce86-450f-be79-cefd6e6b4b84",
+    uuid: "cd4a563a-8b62-45ec-a369-014f21bce8ee",
     key: "ie-desmond-stakes",
     name: "Desmond Stakes",
     track: "Leopardstown",
@@ -9500,7 +9709,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "c7a51d98-cf7b-4341-945f-b53a1928ab64",
+    uuid: "9f9c490d-262d-4b5f-85fa-0e2ce2dd3d36",
     key: "ie-phoenix-sprint-stakes",
     name: "Phoenix Sprint Stakes",
     track: "Curragh",
@@ -9513,7 +9722,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "aae4e060-e8ae-4fcc-b81e-2d21e2a64718",
+    uuid: "0c0cb6f2-5ff0-4b1c-9930-a469f76ba004",
     key: "ie-give-thanks-stakes",
     name: "Give Thanks Stakes",
     track: "Cork",
@@ -9527,7 +9736,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "fc1eb575-6493-4169-8b7e-585a5846ee5d",
+    uuid: "19c7b8eb-bf4e-4883-825c-e733e78026d9",
     key: "ie-royal-whip-stakes",
     name: "Royal Whip Stakes",
     track: "Curragh",
@@ -9540,7 +9749,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "e4c49df9-2d16-45ac-8d98-6123a7a26591",
+    uuid: "7d26d37f-1f0a-4b03-b30b-eac5d62aebc2",
     key: "ie-irish-st-leger-trial-stakes",
     name: "Irish St Leger Trial Stakes",
     track: "Curragh",
@@ -9553,7 +9762,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "067c5c9d-ada5-4d9d-96a3-c33fd0877d1c",
+    uuid: "db8715fd-ce64-48b8-960b-f2be9e96169b",
     key: "ie-ballyogan-stakes",
     name: "Ballyogan Stakes",
     track: "Naas",
@@ -9567,7 +9776,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "d797d237-f5d0-48fc-b122-1b68dcddc345",
+    uuid: "85cacaf5-3211-4206-bf87-40ab819fe257",
     key: "ie-flame-of-tara-stakes",
     name: "Flame Of Tara Stakes",
     track: "Curragh",
@@ -9581,7 +9790,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "9c5e86d1-fc99-48d9-8421-147fed00932f",
+    uuid: "5799da12-a73a-40ae-a428-cec7c518499d",
     key: "ie-round-tower-stakes",
     name: "Round Tower Stakes",
     track: "Curragh",
@@ -9594,7 +9803,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "afbb9fec-d9fa-46de-8dd7-ce73e861ed2f",
+    uuid: "ab98cb8c-fd38-48cd-a93e-0af79aefecaf",
     key: "ie-snow-fairy-stakes",
     name: "Snow Fairy Stakes",
     track: "Curragh",
@@ -9608,7 +9817,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "7ac0c8b7-1394-477c-8930-06605ade8562",
+    uuid: "25282ae7-ae3f-4f09-b5a3-588713262d6f",
     key: "ie-fairy-bridge-stakes",
     name: "Fairy Bridge Stakes",
     track: "Cork",
@@ -9622,7 +9831,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "3f9b56d3-ac07-44c0-9026-6f159fb6a996",
+    uuid: "ad94cd28-e2be-4d60-bc3b-790b5f765043",
     key: "ie-cmg-group-stakes",
     name: "CMG Group Stakes",
     track: "Leopardstown",
@@ -9635,7 +9844,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "7ec2406e-f3d3-4cc4-8bb7-484ef2438fff",
+    uuid: "6c389201-5c51-4e92-91ef-2a9bd6b9ae1c",
     key: "ie-denny-cordell-lavarack-fillies-stakes",
     name: "Denny Cordell Lavarack Fillies Stakes",
     track: "Gowran Park",
@@ -9649,7 +9858,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "e18dcbca-a32c-4caa-9a87-85ba0eb93db3",
+    uuid: "3f44fa9a-b14c-4661-8d6c-72d309606256",
     key: "ie-weld-park-stakes",
     name: "Weld Park Stakes",
     track: "Curragh",
@@ -9663,7 +9872,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "2aa7bf90-2dfc-4310-8df5-25930ad2ac4d",
+    uuid: "7604793b-7f57-4dd3-ad12-3c2b86fb65fb",
     key: "ie-renaissance-stakes",
     name: "Renaissance Stakes",
     track: "Curragh",
@@ -9676,7 +9885,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "d09f8009-c0de-41af-9f9a-59abad5fd8d8",
+    uuid: "5796e551-e8c1-4fb3-8fcb-e2ca71e87697",
     key: "ie-killavullan-stakes",
     name: "Killavullan Stakes",
     track: "Leopardstown",
@@ -9689,7 +9898,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "9cfcbbd2-2670-4846-a754-f85ccf37720a",
+    uuid: "cb0d5af7-d77c-44b4-88d3-8360cecda16c",
     key: "ie-eyrefield-stakes",
     name: "Eyrefield Stakes",
     track: "Leopardstown",
@@ -9702,7 +9911,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "569163e8-cb57-40aa-9d11-537bd02ed153",
+    uuid: "281519e6-6cad-4924-a601-2605c8af04ee",
     key: "ie-staffordstown-stud-stakes",
     name: "Staffordstown Stud Stakes",
     track: "Curragh",
@@ -9716,7 +9925,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "44f6c71c-00f2-48d7-bb71-efed469a0965",
+    uuid: "dc90f488-c311-4b2a-a342-aefaad870b84",
     key: "ie-mercury-stakes",
     name: "Mercury Stakes",
     track: "Dundalk",
@@ -9729,7 +9938,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2 },
   },
   {
-    uuid: "de6a5433-fe62-43e1-a71a-69249362c244",
+    uuid: "b4003cff-5d0c-4d31-a162-42e0939fb1c9",
     key: "ie-loughbrown-stakes",
     name: "Loughbrown Stakes",
     track: "Curragh",
@@ -9742,7 +9951,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a7b02f05-90bb-4d62-9b5b-232e2f490456",
+    uuid: "5b905fa1-b9a5-45ea-9549-cf989e2ca149",
     key: "de-deutsches-derby",
     name: "Deutsches Derby",
     track: "Hamburg",
@@ -9754,9 +9963,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 196,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "germany-tc",
   },
   {
-    uuid: "c111fe38-d11d-4b2d-9c32-01c3301720a9",
+    uuid: "cc416d5d-1f38-4d66-bcf5-6e6bde40cc9f",
     key: "de-bayerisches-zuchtrennen",
     name: "Bayerisches Zuchtrennen",
     track: "Munich",
@@ -9769,7 +9979,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "68019c21-4a75-445c-8cc0-45fbcd6282d0",
+    uuid: "3103a642-8315-4629-a920-45eea3680c0c",
     key: "de-preis-der-diana",
     name: "Preis der Diana",
     track: "Düsseldorf",
@@ -9783,7 +9993,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "2f3f5545-6b67-4a9e-8b42-d5037f29185b",
+    uuid: "f49bb6f5-29c0-418c-945f-1adfb9bec24a",
     key: "de-grosser-preis-von-berlin",
     name: "Grosser Preis von Berlin",
     track: "Hoppegarten",
@@ -9796,7 +10006,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "bc5fad82-8046-4ac9-ae91-bae84eab1c5d",
+    uuid: "34e81bfe-408c-4eb2-acde-5a283beb0242",
     key: "de-grosser-preis-von-baden",
     name: "Grosser Preis von Baden",
     track: "Baden-Baden",
@@ -9809,7 +10019,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "8aed70db-3418-4591-b95e-c63a50ae3119",
+    uuid: "a756d29b-95b9-4833-a0d0-570c0cdf9b58",
     key: "de-preis-von-europa",
     name: "Preis von Europa",
     track: "Cologne",
@@ -9822,7 +10032,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "dca9c2a9-e9da-4bf1-95f5-ee736a981af1",
+    uuid: "81f1f6ae-6b8f-4aab-8fed-615ba83177ad",
     key: "de-grosser-preis-von-bayern",
     name: "Grosser Preis von Bayern",
     track: "Munich",
@@ -9835,7 +10045,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ef8d18e1-6c17-4069-aecc-0067626a5171",
+    uuid: "7d3cd6d1-ccfa-42cd-90cf-340e9baa9c0d",
     key: "de-gerling-preis",
     name: "Gerling-Preis",
     track: "Cologne",
@@ -9848,7 +10058,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "b9b64bab-07e3-48e2-abcc-2f9dfe94b64d",
+    uuid: "2be6bc6b-b937-4293-894b-689ca3a1ad8b",
     key: "de-oleander-rennen",
     name: "Oleander-Rennen",
     track: "Hoppegarten",
@@ -9861,7 +10071,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "045147b6-98ec-4abc-aa3f-c2c0e7408a3c",
+    uuid: "655d603f-368a-4bfe-9a57-4dd52dd43344",
     key: "de-mehl-mulhens-rennen",
     name: "Mehl-Mülhens-Rennen",
     track: "Cologne",
@@ -9873,9 +10083,11 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "germany-tc",
   },
+
   {
-    uuid: "20f5607a-f631-420b-805b-dd103dbf25a2",
+    uuid: "a3ea286d-5e9f-4591-920e-840de34f14db",
     key: "de-grosser-preis-der-badischen-wirtschaft",
     name: "Grosser Preis der Badischen Wirtschaft",
     track: "Baden-Baden",
@@ -9888,7 +10100,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "1a3381a0-ccca-46c3-9d8e-fe4932bc76b0",
+    uuid: "36099040-89f7-49d4-8dbd-88e194bc0fc5",
     key: "de-badener-meile",
     name: "Badener Meile",
     track: "Baden-Baden",
@@ -9901,7 +10113,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fe99694b-5357-4ead-b68c-ac775f811537",
+    uuid: "2d4a6e6f-67ae-4359-9ed5-259ab8eb9418",
     key: "de-german-1-000-guineas",
     name: "German 1,000 Guineas",
     track: "Düsseldorf",
@@ -9915,7 +10127,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "680c281f-dd3d-492b-8e41-3d74591e042a",
+    uuid: "4abb1c14-a90e-475d-99b2-c820ebc12726",
     key: "de-union-rennen",
     name: "Union-Rennen",
     track: "Cologne",
@@ -9928,7 +10140,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "c9e020b9-3b99-4788-9e26-84388cf036a0",
+    uuid: "dceb8913-9db2-4964-8e84-bcc3347b13d1",
     key: "de-hansa-preis",
     name: "Hansa-Preis",
     track: "Hamburg",
@@ -9941,7 +10153,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fa32c334-8cc4-44e7-bee2-2926f12c33f2",
+    uuid: "df0f63d5-18ed-4ad5-8bc8-251d0918dbf8",
     key: "de-oettingen-rennen",
     name: "Oettingen-Rennen",
     track: "Baden-Baden",
@@ -9954,7 +10166,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "f286a2c7-589d-49c2-a2f7-cfb5b21543ff",
+    uuid: "28e3342b-42d8-400a-ad3e-ee4389d9ac14",
     key: "de-baden-racing-stuten-preis",
     name: "Baden Racing Stuten-Preis",
     track: "Baden-Baden",
@@ -9968,7 +10180,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "f171bd40-dda7-49c4-b32d-4093dd2633aa",
+    uuid: "601934ee-d2ab-404c-998d-4822d77bf52a",
     key: "de-fruhjahrs-meile",
     name: "Frühjahrs-Meile",
     track: "Düsseldorf",
@@ -9981,7 +10193,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "2a5c93c7-f10c-4c58-b829-66d0cb7db377",
+    uuid: "34c85b81-0d41-4798-ac13-4f46710b6b71",
     key: "de-dr-busch-memorial",
     name: "Dr. Busch-Memorial",
     track: "Krefeld",
@@ -9994,7 +10206,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "ba187ae8-fd16-4e1b-a86d-20cdde56e7d5",
+    uuid: "8c12c74e-d2a1-4448-b687-e9ca5e46cf95",
     key: "de-silberne-peitsche",
     name: "Silberne Peitsche",
     track: "Munich",
@@ -10007,7 +10219,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "2b1f8881-f808-49fa-8aaa-fc65f3836031",
+    uuid: "9ef67f83-52d4-4b4b-ad9f-671f7fffec16",
     key: "de-derby-trial",
     name: "Derby-Trial",
     track: "Baden-Baden",
@@ -10020,7 +10232,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "a45114e0-faa9-4b46-a67b-5218d9e0eca8",
+    uuid: "bdef16c7-4e33-4678-9bcd-acb1de77d0ef",
     key: "de-schwarzgold-rennen",
     name: "Schwarzgold-Rennen",
     track: "Cologne",
@@ -10034,7 +10246,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "7d86ed62-c632-43c5-91be-7cf77d6b9bef",
+    uuid: "801b8b1d-40d8-491d-9269-205ec8e30c32",
     key: "de-bavarian-classic",
     name: "Bavarian Classic",
     track: "Munich",
@@ -10047,7 +10259,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "04b8cfeb-d3b1-49da-abf4-035ee12dfe7a",
+    uuid: "d56c11ed-d6a3-40ea-a773-cefdec8759ea",
     key: "de-diana-trial",
     name: "Diana-Trial",
     track: "Hoppegarten",
@@ -10061,7 +10273,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "55e76259-f4c6-451a-8dcb-44cc6e58b8bc",
+    uuid: "645b261c-0d8e-418e-bf53-cc76bb87feeb",
     key: "de-dortmund-grand-prix",
     name: "Dortmund Grand Prix",
     track: "Dortmund",
@@ -10074,7 +10286,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "79e9d95d-6041-4621-874e-f8bb3d7ba784",
+    uuid: "a37fa51b-5a35-49cb-8133-11a1cb658b1a",
     key: "de-grosser-preis-von-lotto-hamburg",
     name: "Grosser Preis von LOTTO Hamburg",
     track: "Hamburg",
@@ -10087,7 +10299,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "37be2248-ed19-4176-8cbe-ed046fb1cbcc",
+    uuid: "c3573fbe-5b88-469a-af69-41ee22fcaf75",
     key: "de-flieger-trophy",
     name: "Flieger Trophy",
     track: "Hamburg",
@@ -10100,7 +10312,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "84e2bbd3-6659-46e1-a66a-d876fb5ef5e6",
+    uuid: "07ca5799-eb36-4cf4-956c-181458de5d53",
     key: "de-hamburger-stutenmeile",
     name: "Hamburger Stutenmeile",
     track: "Hamburg",
@@ -10114,7 +10326,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "90878787-5a12-4b96-b183-2a810d7114bd",
+    uuid: "bd8c3abf-8053-47b6-bfff-3f4c3e34d2a4",
     key: "de-hamburger-stuten-preis",
     name: "Hamburger Stuten-Preis",
     track: "Hamburg",
@@ -10128,7 +10340,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "5d3945fb-2f24-4f5f-a406-ed9fab7d24b2",
+    uuid: "971ac28a-043a-497f-9011-c3685da842be",
     key: "de-meilen-trophy",
     name: "Meilen-Trophy",
     track: "Cologne",
@@ -10141,7 +10353,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "0e9db48b-0b86-48d4-a6fb-960d954e7655",
+    uuid: "82db6edd-b27a-4ee8-8f9a-c5812392534b",
     key: "de-preis-der-sparkassen-finanzgruppe",
     name: "Preis der Sparkassen-Finanzgruppe",
     track: "Baden-Baden",
@@ -10154,7 +10366,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "89054640-bd5e-4f60-87f7-d6445eeb0841",
+    uuid: "f586e7a3-31d8-49d9-99cb-7f4fc3badbc6",
     key: "de-furstenberg-rennen",
     name: "Fürstenberg-Rennen",
     track: "Baden-Baden",
@@ -10167,7 +10379,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "ff349a55-85dd-4fb7-95e6-72ea34b2001e",
+    uuid: "8ce7428a-3634-4fdd-a9da-950e3e39a6f7",
     key: "de-zukunfts-rennen",
     name: "Zukunfts-Rennen",
     track: "Baden-Baden",
@@ -10180,7 +10392,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "6073947c-6699-4db8-b7d4-8e6199618caa",
+    uuid: "2de97f78-9628-4478-aa07-7aad6eb6e136",
     key: "de-goldene-peitsche",
     name: "Goldene Peitsche",
     track: "Baden-Baden",
@@ -10193,7 +10405,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "034899a0-557e-41a5-8496-f16d491f5ae5",
+    uuid: "a6fffc95-fa29-4ac2-ace6-c4bd276fe869",
     key: "de-grosse-europa-meile",
     name: "Grosse Europa-Meile",
     track: "Munich",
@@ -10206,7 +10418,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a7b9cfe9-9626-464a-8f76-4d15452abfb7",
+    uuid: "95f66704-da05-4666-abe4-b8d829b14615",
     key: "de-deutsches-st-leger",
     name: "Deutsches St. Leger",
     track: "Dortmund",
@@ -10217,9 +10429,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 150000,
     dayOfYear: 258,
     restrictions: { minAge: 3 },
+    triplecrownKey: "germany-tc",
   },
   {
-    uuid: "d7b5bb0c-9534-44f4-96cd-ef05b38e84ad",
+    uuid: "957bb520-ed52-4fd8-ab46-3bb729529954",
     key: "de-preis-der-deutschen-einheit",
     name: "Preis der Deutschen Einheit",
     track: "Hoppegarten",
@@ -10232,7 +10445,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "983eb183-bf63-42ff-a286-05809a7a08c5",
+    uuid: "8065f218-fd26-404a-be36-d568b29d2527",
     key: "de-grosser-preis-der-landeshauptstadt-dusseldorf",
     name: "Grosser Preis der Landeshauptstadt Düsseldorf",
     track: "Düsseldorf",
@@ -10245,7 +10458,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "da76fd39-e3e5-4846-9288-0407c09894d6",
+    uuid: "958e1645-e4ba-4e7f-995d-bbb74265c0c3",
     key: "de-preis-des-winterfavoriten",
     name: "Preis des Winterfavoriten",
     track: "Cologne",
@@ -10258,7 +10471,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "dac869ea-5a54-4b72-b597-879743f5d7bf",
+    uuid: "d7a5c0cc-98e6-45c9-9bb0-55d34c955bc7",
     key: "de-baden-wurttemberg-trophy",
     name: "Baden-Württemberg-Trophy",
     track: "Baden-Baden",
@@ -10271,7 +10484,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "37674043-6cf1-4b65-9819-e2ed1c0772a3",
+    uuid: "778be6c1-e1cc-42db-a7df-00330397d3d5",
     key: "de-preis-der-winterkonigin",
     name: "Preis der Winterkönigin",
     track: "Baden-Baden",
@@ -10285,7 +10498,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "39085de4-a655-4727-8feb-4accab17aace",
+    uuid: "e714696f-a197-4dae-9ec4-a057b86241c4",
     key: "de-herbst-stutenpreis",
     name: "Herbst Stutenpreis",
     track: "Hanover",
@@ -10299,7 +10512,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "6ad52202-2229-4a2c-8330-38e29d05e635",
+    uuid: "be6660f6-4a28-41e0-859a-9a190972f564",
     key: "de-herzog-von-ratibor-rennen",
     name: "Herzog von Ratibor-Rennen",
     track: "Krefeld",
@@ -10312,7 +10525,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "4bdf7824-4140-4a6a-8b09-a73d360247e9",
+    uuid: "9ab9456a-e8bb-499d-904c-2f24a1348a65",
     key: "de-niederrhein-pokal",
     name: "Niederrhein-Pokal",
     track: "Krefeld",
@@ -10326,7 +10539,7 @@ export const GRADED_RACES: GradedRace[] = [
   },
   // Italy — Group 3
   {
-    uuid: "7b9c59c4-d4e9-4271-ac19-50a91ea39058",
+    uuid: "2d730692-5197-449a-8ad5-15f31f651af4",
     key: "it-premio-ambrosiano",
     name: "Premio Ambrosiano",
     track: "San Siro",
@@ -10339,7 +10552,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "4d8d3b3f-8341-42bd-a429-0b2ce5d46f0a",
+    uuid: "7962b989-a2ae-4b24-82a8-539d30f105e8",
     key: "it-premio-parioli",
     name: "Premio Parioli",
     track: "Capannelle",
@@ -10351,9 +10564,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 105,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts" },
     note: "Colts",
+    triplecrownKey: "italy-tc",
   },
   {
-    uuid: "7a2d11c3-f464-40c4-9259-7779a45115ee",
+    uuid: "074ae2ce-d5d6-4895-9eb8-b6bf325b4b83",
     key: "it-premio-regina-elena",
     name: "Premio Regina Elena",
     track: "Capannelle",
@@ -10367,7 +10581,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "d9cf7f0a-5012-4796-a53c-038520711ef5",
+    uuid: "995f5586-6888-4f9e-8bfb-cb60c590e19b",
     key: "it-premio-presidente-della-repubblica",
     name: "Premio Presidente della Repubblica",
     track: "Capannelle",
@@ -10380,7 +10594,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d050c299-1227-4e2a-8ebb-27857803d66a",
+    uuid: "8dce494f-a03f-4a31-8ee0-1375159f41ba",
     key: "it-premio-carlo-vittadini",
     name: "Premio Carlo Vittadini",
     track: "San Siro",
@@ -10393,7 +10607,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "bfe51346-6206-421d-80d3-21d7ab220871",
+    uuid: "88ee5979-e0a9-40e4-9bec-90aad8045b75",
     key: "it-premio-del-giubileo",
     name: "Premio del Giubileo",
     track: "San Siro",
@@ -10407,7 +10621,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "669e1539-4922-4bfc-ba1f-e1d07176964b",
+    uuid: "3a10a30a-b654-4b70-9280-49afb8516d7e",
     key: "it-premio-verziere",
     name: "Premio Verziere",
     track: "San Siro",
@@ -10421,7 +10635,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "81256e7f-d032-4906-8eb1-4ed0e650db97",
+    uuid: "e189c648-74f1-4dc7-849a-5f992d61c6f0",
     key: "it-gran-criterium",
     name: "Gran Criterium",
     track: "San Siro",
@@ -10435,7 +10649,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "6a57b198-c9d4-4e2c-89c0-eb736bd0278a",
+    uuid: "2a753043-409a-4726-a5f7-b6868e2989ba",
     key: "it-premio-del-piazzale",
     name: "Premio del Piazzale",
     track: "San Siro",
@@ -10448,7 +10662,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a9ffd251-7348-42f4-b5a9-1c067e17073a",
+    uuid: "f29f0acb-66cf-442d-bf6a-788b023a1062",
     key: "it-st-leger-italiano",
     name: "St. Leger Italiano",
     track: "San Siro",
@@ -10459,9 +10673,10 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 150000,
     dayOfYear: 288,
     restrictions: { minAge: 3 },
+    triplecrownKey: "italy-tc",
   },
   {
-    uuid: "d10bc390-b549-4c53-b35f-d79ec17802e6",
+    uuid: "f04c6ef7-d917-4061-b9bc-4f18c20eacb0",
     key: "it-premio-guido-berardelli",
     name: "Premio Guido Berardelli",
     track: "Capannelle",
@@ -10474,7 +10689,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "63fa560c-3807-423b-b6ec-e00b80bf8e9f",
+    uuid: "318372eb-5e6e-4343-99c1-8da52a684349",
     key: "it-premio-ribot",
     name: "Premio Ribot",
     track: "Capannelle",
@@ -10487,7 +10702,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "03214753-3ed8-4923-b679-948e6355a80e",
+    uuid: "65b9a3bc-04e7-43b2-8b5e-1f453b527750",
     key: "it-premio-federico-tesio",
     name: "Premio Federico Tesio",
     track: "San Siro",
@@ -10501,7 +10716,7 @@ export const GRADED_RACES: GradedRace[] = [
   },
   // Scandinavia — Group 3
   {
-    uuid: "69d1f302-064a-4532-b086-907a93b294e8",
+    uuid: "5ae5f53b-9310-498d-aa63-f9fb43e39bea",
     key: "scn-stockholms-stora-pris",
     name: "Stockholms Stora Pris",
     track: "Bro Park",
@@ -10514,7 +10729,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "f4804bc9-f4ea-4d83-a61c-7cec4ace5496",
+    uuid: "d44bc5ca-d21b-492e-b279-4621f29e6460",
     key: "scn-oslo-cup",
     name: "Oslo Cup",
     track: "Øvrevoll",
@@ -10527,7 +10742,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "60f634a9-4f52-4b1c-9222-5b438b242f51",
+    uuid: "999f4913-ef78-44bc-881b-1ead00030ab7",
     key: "scn-scandinavian-open-championship",
     name: "Scandinavian Open Championship",
     track: "Klampenborg",
@@ -10540,7 +10755,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "bc4a87ad-9a8d-4b37-86b2-3e7e4373d287",
+    uuid: "8ca83f8f-522a-4828-9b4f-c568170bc45d",
     key: "scn-marit-sveaas-minnelop",
     name: "Marit Sveaas Minneløp",
     track: "Øvrevoll",
@@ -10553,7 +10768,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "cdc17076-bb4c-4e1f-af29-70aea6b76c14",
+    uuid: "5143a60f-0d12-432f-97cc-e770be061ab3",
     key: "scn-stockholm-cup-international",
     name: "Stockholm Cup International",
     track: "Bro Park",
@@ -10567,7 +10782,7 @@ export const GRADED_RACES: GradedRace[] = [
   },
   // Scandinavia — Listed / other notable
   {
-    uuid: "2b3619a0-b157-467c-9694-63a8335c8d61",
+    uuid: "aaf8e237-041d-4b5a-b0f4-fa33cba052f6",
     key: "scn-pramms-memorial",
     name: "Pramms Memorial",
     track: "Jägersro",
@@ -10580,7 +10795,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "fac4c764-1c90-4d07-bd1e-7f624d91f2af",
+    uuid: "ded5c745-3365-42ec-b5b2-c2ddc380e840",
     key: "scn-zawawi-cup",
     name: "Zawawi Cup",
     track: "Jägersro",
@@ -10593,7 +10808,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "e7f45ff2-85d2-4fc7-806c-8e41cdbad56c",
+    uuid: "05cdaa5e-14c8-407f-a1f8-1c1a1d34192c",
     key: "scn-polar-cup",
     name: "Polar Cup",
     track: "Øvrevoll",
@@ -10606,7 +10821,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "c710423a-2065-4203-840d-52640647916d",
+    uuid: "4974d771-75e0-4ed6-a161-3fb96cee6168",
     key: "scn-svenskt-derby",
     name: "Svenskt Derby",
     track: "Jägersro",
@@ -10619,7 +10834,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "23414323-c60b-42e6-9795-14b762738e6e",
+    uuid: "f76c178e-36fe-41db-a75a-619737c6de23",
     key: "scn-norsk-derby",
     name: "Norsk Derby",
     track: "Øvrevoll",
@@ -10632,7 +10847,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "50761a4d-08a4-4ded-b768-cc63d5481547",
+    uuid: "673f868e-a5b1-453b-86ad-73188a787ee8",
     key: "scn-bro-park-sprint-championship",
     name: "Bro Park Sprint Championship",
     track: "Bro Park",
@@ -10646,7 +10861,7 @@ export const GRADED_RACES: GradedRace[] = [
   },
   // Turkey
   {
-    uuid: "89a2de4f-199b-44e0-ac2f-b39fa6928cca",
+    uuid: "63cb9a96-5b57-4573-a2fb-635db05ca5fd",
     key: "tr-international-bosphorus-cup",
     name: "International Bosphorus Cup",
     track: "Veliefendi",
@@ -10660,7 +10875,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "a297f318-7a28-4782-87a9-8f66fda5e28a",
+    uuid: "081c4be5-dc29-4c87-9252-2061dd6269f6",
     key: "tr-international-topkapi-trophy",
     name: "International Topkapi Trophy",
     track: "Veliefendi",
@@ -10674,7 +10889,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "f09446f7-2e75-4f59-9659-671634b9f70f",
+    uuid: "00805e82-beaf-49cf-ad07-4da6ef167316",
     key: "tr-international-istanbul-trophy",
     name: "International Istanbul Trophy",
     track: "Veliefendi",
@@ -10688,7 +10903,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "aa15921a-1d62-4c81-a773-ca878fe9a12b",
+    uuid: "1056d116-e90c-431b-a0b0-63779630167a",
     key: "tr-international-anatolia-trophy",
     name: "International Anatolia Trophy",
     track: "Veliefendi",
@@ -10701,7 +10916,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b43f31e6-5e5b-4ad6-a38f-0b4b24f674aa",
+    uuid: "bcbd69a7-f44a-4ab0-a50e-d28bd032fd2f",
     key: "tr-international-trakya-trophy",
     name: "International Trakya Trophy",
     track: "Veliefendi",
@@ -10715,7 +10930,7 @@ export const GRADED_RACES: GradedRace[] = [
   },
   // Austria
   {
-    uuid: "9bdb42d4-a6b5-414c-94fb-0edda790438d",
+    uuid: "35c5cd60-9ebc-42a9-af1f-8b492f821d16",
     key: "at-austrian-derby",
     name: "Österreichisches Galopper-Derby",
     track: "Ebreichsdorf",
@@ -10729,7 +10944,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "0092426f-0d2a-4e17-85f5-0c34add5e9f8",
+    uuid: "3a6980fe-13bd-4368-9c11-f65a467be6df",
     key: "at-st-leger",
     name: "St. Leger (AUT)",
     track: "Freudenau",
@@ -10743,7 +10958,7 @@ export const GRADED_RACES: GradedRace[] = [
   },
   // Belgium
   {
-    uuid: "e052de09-e9ba-4bf9-b416-d3ed352154bd",
+    uuid: "b404ad05-c152-4cf9-9f6a-5de611a11e5e",
     key: "be-prijs-prince-rose",
     name: "Prijs Prince Rose",
     track: "Ostend",
@@ -10756,7 +10971,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "aa7ca704-9afc-4f0b-8dc5-75f294787248",
+    uuid: "4f62b2e6-37b5-4819-a13b-a3d4a32fea61",
     key: "be-open-de-mons",
     name: "Open de Mons",
     track: "Mons",
@@ -10770,7 +10985,7 @@ export const GRADED_RACES: GradedRace[] = [
   },
   // Czech Republic
   {
-    uuid: "d1a7e06c-f537-4b09-bc94-136e685d42c7",
+    uuid: "6cc5b5b6-b9e5-411e-8810-bcfb4c0028e7",
     key: "cz-jarni-cena-klisen",
     name: "Jarní cena klisen (Czech 1000 Guineas)",
     track: "Prague",
@@ -10784,7 +10999,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "5b167ba9-ed05-4d0a-8b0f-801d05e8157e",
+    uuid: "8d1e2902-cb8f-4aa4-b248-ca7194901547",
     key: "cz-velka-jarni-cena",
     name: "Velká jarní cena (Czech 2000 Guineas)",
     track: "Prague",
@@ -10797,7 +11012,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "2f77b065-8e19-404a-8e66-ca8abea15949",
+    uuid: "50a195a7-0402-46a2-a130-967af7eaa336",
     key: "cz-ceske-derby",
     name: "České Derby",
     track: "Prague",
@@ -10810,7 +11025,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "d305664c-c314-48d6-b41b-df53fac316a0",
+    uuid: "a4f79184-b072-45e0-8d28-d2e0a82b05ef",
     key: "cz-ceske-oaks",
     name: "České Oaks",
     track: "Most",
@@ -10824,7 +11039,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "e4283a71-de72-4e32-841f-8440b5d0a9cc",
+    uuid: "7201957a-d14f-4dd6-b946-53b56f57fe42",
     key: "cz-cesky-st-leger",
     name: "Český St. Leger",
     track: "Prague",
@@ -10837,7 +11052,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "8b95bc80-512f-4bdb-952e-5723da9988ad",
+    uuid: "4d04821a-a21c-4322-b352-dbbe1f6935df",
     key: "cz-velka-cena-ceskeho-turfu",
     name: "Velká cena ceského Turfu",
     track: "Prague",
@@ -10850,7 +11065,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fbafd2a2-face-4afa-94fb-be4c5a85a130",
+    uuid: "5213f2cc-ec91-4666-addf-51df4dbe0b6f",
     key: "cz-velka-cena-prahy",
     name: "Velká cena Prahy",
     track: "Prague",
@@ -10863,7 +11078,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "7ce91dea-6d98-4751-bd08-feb0b01efdc5",
+    uuid: "d8da6538-1643-40df-8c69-a4d50377a80d",
     key: "cz-cena-zimni-kralovny",
     name: "Cena Zimní královny",
     track: "Karlovy Vary",
@@ -10877,7 +11092,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "f7b5459b-654e-42cb-813f-a2a2a598cd6a",
+    uuid: "93b19f56-6bfc-4c5d-8dae-951def15bf62",
     key: "cz-cena-zimniho-favorita",
     name: "Cena zimního favorita",
     track: "Prague",
@@ -10891,7 +11106,7 @@ export const GRADED_RACES: GradedRace[] = [
   },
   // Hungary (Kincsem Park)
   {
-    uuid: "376ac748-c256-4816-b1d7-4b5a93c0af6b",
+    uuid: "3bb4ccbc-6750-4573-962c-298a1a663d47",
     key: "hu-batthyany-hunyady-dij",
     name: "Batthyány-Hunyady Díj",
     track: "Kincsem Park",
@@ -10904,7 +11119,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "8b02bf92-f4f1-4ac7-ac29-701926691212",
+    uuid: "12ce4320-12ef-409b-9a7e-ae01965b04ac",
     key: "hu-hazafi-dij",
     name: "Hazafi Díj (Hungarian 1000 Guineas)",
     track: "Kincsem Park",
@@ -10918,7 +11133,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "71ea6a77-351e-4cbb-914e-8bc41f7e1476",
+    uuid: "00a14efd-656c-4646-b8f3-2bafebeb08cc",
     key: "hu-nemzeti-dij",
     name: "Nemzeti Díj (Hungarian 2000 Guineas)",
     track: "Kincsem Park",
@@ -10930,9 +11145,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 135,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "hungary-tc",
   },
   {
-    uuid: "6f35a800-a1bd-4aec-b3fa-ae1543c37a10",
+    uuid: "be8fcbe4-e177-464a-be18-19341549e4c9",
     key: "hu-millenniumi-dij",
     name: "Millenniumi Díj",
     track: "Kincsem Park",
@@ -10945,7 +11161,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "975cd6ca-9303-44e3-898a-6404165ba3e2",
+    uuid: "37632b3e-df33-4295-b49c-d424e17a93c1",
     key: "hu-alagi-dij",
     name: "Alagi Díj",
     track: "Kincsem Park",
@@ -10959,7 +11175,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "07789052-8891-4d5e-b039-0f7b21129b8f",
+    uuid: "f5432bda-5c1a-4946-a3fd-a4e9c3f0cac0",
     key: "hu-magyar-derby",
     name: "Magyar Derby",
     track: "Kincsem Park",
@@ -10971,9 +11187,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 196,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "hungary-tc",
   },
   {
-    uuid: "4b561d8a-d4bf-4c7f-9ea9-510b52a013e6",
+    uuid: "153cb83b-1ab8-4fe6-b68f-126d66ed3392",
     key: "hu-magyar-kancadij",
     name: "Magyar Kancadíj",
     track: "Kincsem Park",
@@ -10987,7 +11204,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "64bb54fd-f4a4-4f80-ae4f-2924fc7a1768",
+    uuid: "08252d52-0ff0-4aba-9365-8633f3ea3fce",
     key: "hu-kozma-ferenc",
     name: "Kozma Ferenc Emlékverseny",
     track: "Kincsem Park",
@@ -11000,7 +11217,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "13d0a9d4-2684-4d00-b278-6ab3bbadcc21",
+    uuid: "59a2f3b7-0dd2-4a7b-95f8-f7aed62fc1f6",
     key: "hu-kisber-dij",
     name: "Kisbér Díj",
     track: "Kincsem Park",
@@ -11013,7 +11230,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "831234c6-6c86-4eab-97f8-781fcafe9486",
+    uuid: "ed2ec65a-f225-4113-9536-7ac265a29de8",
     key: "hu-kincsem-dij",
     name: "Kincsem Díj",
     track: "Kincsem Park",
@@ -11026,7 +11243,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "93a1d5f7-a0fd-42c4-9f7c-a1f4e650404c",
+    uuid: "cb6371c7-c624-4903-b157-b08a6afc6277",
     key: "hu-imperial-dij",
     name: "Imperiál Díj",
     track: "Kincsem Park",
@@ -11039,7 +11256,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "bb60d634-00b4-463a-9210-afbfdb22e8a8",
+    uuid: "499798dc-351f-4db9-bcd3-641c45508953",
     key: "hu-overdose-dij",
     name: "Overdose Díj",
     track: "Kincsem Park",
@@ -11052,7 +11269,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "fbaeac29-6869-47b1-845b-e20a50b0bc77",
+    uuid: "a114eba1-a270-43fa-a6c8-3b285217b124",
     key: "hu-kovacs-mihaly",
     name: "Kovács Mihály Emlékverseny (3yo Grand Prix)",
     track: "Kincsem Park",
@@ -11065,7 +11282,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "2a5ad213-3ef0-44c9-9078-1d5c050f2406",
+    uuid: "49dfd6fc-1092-4a54-b706-be9b6adf7bfa",
     key: "hu-grof-karolyi",
     name: "Gróf Károlyi Gyula Emlékverseny",
     track: "Kincsem Park",
@@ -11079,7 +11296,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "a4ad30a6-a350-4f7b-9b8a-625f76d6c449",
+    uuid: "0547af39-ae32-40e6-946f-8ffbb5ae2236",
     key: "hu-grof-szechenyi",
     name: "Gróf Széchenyi István Emlékverseny",
     track: "Kincsem Park",
@@ -11093,7 +11310,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "8fbc81b2-d958-42c0-bda2-82e9409de72a",
+    uuid: "9d344f7a-e079-44ae-a52d-56a25a0045a0",
     key: "hu-szent-laszlo",
     name: "Szent László Díj",
     track: "Kincsem Park",
@@ -11107,7 +11324,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "564cac4b-b4d2-4fd1-a180-5e92b0d13e99",
+    uuid: "5cd3ee9f-4364-435d-8210-3a4840ffe91d",
     key: "hu-magyar-st-leger",
     name: "Magyar St. Leger",
     track: "Kincsem Park",
@@ -11119,9 +11336,10 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: 288,
     restrictions: { minAge: 3, maxAge: 3, gender: "colts-and-fillies" },
     note: "Colts & Fillies",
+    triplecrownKey: "hungary-tc",
   },
   {
-    uuid: "2dd38e7d-a0b6-4d0a-a9e5-640f8bc64c4e",
+    uuid: "be45ff4b-ba87-4137-a31a-3ae6983dc2da",
     key: "hu-kallai-pal",
     name: "Kállai Pál Emlékverseny (Budapesti Díj)",
     track: "Kincsem Park",
@@ -11134,7 +11352,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2 },
   },
   {
-    uuid: "c89f6969-8b08-45e8-b5c9-68ad92093d94",
+    uuid: "b37c6017-0715-44b3-a109-2d3aa431331c",
     key: "hu-ketevesek-kriteriuma",
     name: "Kétévesek Kritériuma",
     track: "Kincsem Park",
@@ -11148,7 +11366,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts & Fillies",
   },
   {
-    uuid: "87c265a2-b635-419d-811e-6df1b2c61b49",
+    uuid: "18d7b92c-5468-497e-84c7-ccc3d20b3530",
     key: "hu-lovaregyleti-dij",
     name: "Lovaregyleti Díj",
     track: "Kincsem Park",
@@ -11162,7 +11380,7 @@ export const GRADED_RACES: GradedRace[] = [
   },
   // Spain
   {
-    uuid: "8eec00c4-38e3-4afa-8c9f-d1e08a3ef394",
+    uuid: "105aa527-8409-4131-ab68-5914aed54370",
     key: "es-poule-de-potrancas",
     name: "Gran Premio Valderas/Poule de Potrancas",
     track: "Madrid",
@@ -11176,7 +11394,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "f17288a4-1fcf-425a-9e34-69b81f1b0494",
+    uuid: "b3d54728-bc6c-47b0-b0ad-03275653441b",
     key: "es-poule-de-potros",
     name: "Gran Premio Cimera/Poule de Potros",
     track: "Madrid",
@@ -11190,7 +11408,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Colts",
   },
   {
-    uuid: "68709bc3-8729-4bbf-b5e9-8a13b170cbe6",
+    uuid: "3c3db110-7afc-4131-b0f9-628d55068508",
     key: "es-duque-de-alburquerque",
     name: "Gran Premio Duque de Alburquerque",
     track: "Madrid",
@@ -11203,7 +11421,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "d5afc9c8-b201-4e48-b68a-6a713c084861",
+    uuid: "43adaefc-4c3a-433b-bce5-c623e7446826",
     key: "es-gp-nacional",
     name: "Gran Premio Nacional",
     track: "Madrid",
@@ -11216,7 +11434,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "0d352697-31e0-4217-b4fb-a1c65ebb70ab",
+    uuid: "93a36ee5-5db1-40d6-931b-773a302df64d",
     key: "es-oaks-espanol",
     name: "Gran Premio Beamonte/Oaks Español",
     track: "Madrid",
@@ -11230,7 +11448,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
   },
   {
-    uuid: "0c58e251-efea-469d-aedb-228fad1a61e6",
+    uuid: "06c32517-5de6-4d7a-83af-d0cad6329dc1",
     key: "es-derby-espanol",
     name: "Gran Premio Villapadierna/Derby Español",
     track: "Madrid",
@@ -11243,7 +11461,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "5d996148-6656-4f39-92bb-b7b793e462e6",
+    uuid: "c623e772-66f2-4cd9-a0c4-816c6d1b1cea",
     key: "es-claudio-carudel",
     name: "Gran Premio Claudio Carudel",
     track: "Madrid",
@@ -11256,7 +11474,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "f33b5340-2a2c-4d55-94f0-594fa14885a5",
+    uuid: "aa161c10-b285-4c61-b42a-ea78723ae038",
     key: "es-gp-de-madrid",
     name: "Gran Premio de Madrid",
     track: "Madrid",
@@ -11269,7 +11487,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "5e4c9cf4-b530-4676-b3fb-de591402222e",
+    uuid: "a6551699-f105-4317-a005-c332eb4c26c1",
     key: "es-hotel-maria-cristina",
     name: "Gran Premio Hotel Maria Cristina",
     track: "San Sebastián",
@@ -11283,7 +11501,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "188d7b38-abf6-42dd-98ea-8973f55c6f43",
+    uuid: "b3165011-cd42-4783-bd9e-db4b119cb61a",
     key: "es-copa-de-oro",
     name: "Copa de Oro de San Sebastián",
     track: "San Sebastián",
@@ -11296,7 +11514,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "ef916f5a-218d-4c91-bdbf-fa785db26981",
+    uuid: "0ba27d75-37ce-456d-8d3d-7c337dd0e42c",
     key: "es-gobierno-vasco",
     name: "Gran Premio Gobierno Vasco",
     track: "San Sebastián",
@@ -11309,7 +11527,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "6e6ab507-01f5-423f-a037-d04460004edd",
+    uuid: "466c3d6a-881b-4899-8c50-5cfc7c7cd6bf",
     key: "es-criterium-internacional-ss",
     name: "Critérium Internacional de San Sebastián",
     track: "San Sebastián",
@@ -11322,7 +11540,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "945697f3-15e0-4ea3-af20-6eb1e157016f",
+    uuid: "f7f48fa2-69d9-40d8-93fa-1dc0e580510c",
     key: "es-gp-san-sebastian",
     name: "Gran Premio San Sebastián",
     track: "San Sebastián",
@@ -11335,7 +11553,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "5381389d-1033-4586-ae3e-f1305929bb5b",
+    uuid: "f421b777-a220-45fb-b2b1-baf69b5c776e",
     key: "es-subasta-acpsie",
     name: "Gran Premio Subasta ACPSIE",
     track: "Madrid",
@@ -11348,7 +11566,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "c44e8603-8711-4c3f-bdee-da92f7870a1d",
+    uuid: "4d1c59c1-adee-4f6c-872a-4e504a92e3a3",
     key: "es-ricardo-ruiz-benitez",
     name: "Gran Premio Ricardo Ruiz Benítez de Lugo",
     track: "Madrid",
@@ -11362,7 +11580,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "87139402-1f9c-4125-aa7c-528c21c8b927",
+    uuid: "34c00953-c9e7-43e9-8830-6c4a3b2b11ca",
     key: "es-hispanidad",
     name: "Gran Premio de La Hispanidad",
     track: "Madrid",
@@ -11375,7 +11593,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "b5068854-868e-42f3-9689-9e6e59149dbe",
+    uuid: "5bdaae43-4d10-4165-a8f0-aed5119958df",
     key: "es-gran-criterium",
     name: "Gran Critérium",
     track: "Madrid",
@@ -11388,7 +11606,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
   },
   {
-    uuid: "91e626fd-bc3e-49bc-8dc9-dccb936417d9",
+    uuid: "112294d0-8c7e-4e33-9aa6-b58533fe157f",
     key: "es-duque-de-toledo",
     name: "Gran Premio Memorial Duque de Toledo",
     track: "Madrid",
@@ -11401,7 +11619,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "a9192a8a-ecb0-4123-b85b-ac10bcf95202",
+    uuid: "1fb08cb0-53df-4a76-a33c-06c0222f997b",
     key: "es-roman-martin",
     name: "Gran Premio Román Martín",
     track: "Madrid",
@@ -11415,7 +11633,7 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
   },
   {
-    uuid: "054950b2-e81d-4c02-b05d-3c31b963bec6",
+    uuid: "d83fdbcd-7184-49a3-909d-03ccab0908ce",
     key: "es-aniversario-zarzuela",
     name: "Gran Premio Aniversario Reapertura de La Zarzuela",
     track: "Madrid",
@@ -11428,7 +11646,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "44c3f067-c9b2-4406-9851-bedb9326c9c4",
+    uuid: "965645fb-1c42-4feb-a611-5f28faa553c1",
     key: "es-antonio-blasco",
     name: "Gran Premio Antonio Blasco",
     track: "Madrid",
@@ -11441,7 +11659,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
   },
   {
-    uuid: "5e5f9552-e6aa-407a-9ae0-1849a141a1a4",
+    uuid: "472a19b3-513c-4c1d-9362-3e4dac4c1346",
     key: "es-villamejor-st-leger",
     name: "Gran Premio Villamejor (St Leger)",
     track: "Madrid",
@@ -11454,7 +11672,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "51e15a2e-84cc-4307-ba4b-c1832f6d6c64",
+    uuid: "808b4ca2-ba81-4bd8-93d4-e346641ea559",
     key: "es-dos-hermanas",
     name: "Gran Critérium Ciudad de Dos Hermanas",
     track: "Dos Hermanas",
@@ -11469,7 +11687,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= USA — Triple Crown =============
   {
-    uuid: "aa000001-0000-4000-8000-000000000001",
+    uuid: "e5ea486b-4f59-40be-b135-20248c8315dd",
     key: "usa-kentucky-derby",
     name: "Kentucky Derby",
     track: "Churchill Downs",
@@ -11482,9 +11700,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
     triplecrownKey: "usa-tc",
     dayOfYearVariance: 0,
+    fieldSize: 20,
   },
   {
-    uuid: "aa000002-0000-4000-8000-000000000002",
+    uuid: "f1f2c917-fc7f-43cd-bfb6-15e87d6e2f9d",
     key: "usa-preakness",
     name: "Preakness Stakes",
     track: "Pimlico",
@@ -11497,9 +11716,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
     triplecrownKey: "usa-tc",
     dayOfYearVariance: 0,
+    fieldSize: 12,
   },
   {
-    uuid: "aa000003-0000-4000-8000-000000000003",
+    uuid: "b92eefae-b6f0-4f36-9b48-6f8380767c42",
     key: "usa-belmont-stakes",
     name: "Belmont Stakes",
     track: "Belmont Park",
@@ -11512,11 +11732,12 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
     triplecrownKey: "usa-tc",
     dayOfYearVariance: 0,
+    fieldSize: 12,
   },
 
   // ============= USA — Major G1s (prep chain to Triple Crown) =============
   {
-    uuid: "aa000010-0000-4000-8000-000000000010",
+    uuid: "30c8dd75-99ef-4303-98c8-e46b71783667",
     key: "usa-blue-grass",
     name: "Blue Grass Stakes",
     track: "Keeneland",
@@ -11529,7 +11750,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "aa000011-0000-4000-8000-000000000011",
+    uuid: "278e6115-a90e-4c51-83c9-f34218ddfeec",
     key: "usa-arkansas-derby",
     name: "Arkansas Derby",
     track: "Oaklawn Park",
@@ -11542,7 +11763,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "aa000012-0000-4000-8000-000000000012",
+    uuid: "d9c96d89-90d3-4ce4-abdc-a68794931ee5",
     key: "usa-wood-memorial",
     name: "Wood Memorial",
     track: "Aqueduct",
@@ -11555,7 +11776,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "aa000013-0000-4000-8000-000000000013",
+    uuid: "6e5943be-b255-440d-b814-1940a9e76e12",
     key: "usa-santa-anita-derby",
     name: "Santa Anita Derby",
     track: "Santa Anita",
@@ -11568,7 +11789,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "aa000014-0000-4000-8000-000000000014",
+    uuid: "e8c589e4-6701-4fd5-80f1-255a384c2537",
     key: "usa-florida-derby",
     name: "Florida Derby",
     track: "Gulfstream Park",
@@ -11581,7 +11802,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "aa000015-0000-4000-8000-000000000015",
+    uuid: "ed8d256b-d316-4b53-b391-affe6aef6f53",
     key: "usa-travers",
     name: "Travers Stakes",
     track: "Saratoga",
@@ -11594,7 +11815,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
   {
-    uuid: "aa000016-0000-4000-8000-000000000016",
+    uuid: "4891064b-1a0f-4d5c-bcac-ddbb60d54957",
     key: "usa-whitney",
     name: "Whitney Stakes",
     track: "Saratoga",
@@ -11607,7 +11828,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "aa000017-0000-4000-8000-000000000017",
+    uuid: "78bee71a-0f1a-4796-9b30-453d8f76518b",
     key: "usa-jockey-club-gold-cup",
     name: "Jockey Club Gold Cup",
     track: "Belmont Park",
@@ -11620,7 +11841,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "aa000018-0000-4000-8000-000000000018",
+    uuid: "2bce4834-272b-47fc-8e91-6b63d55e7e2c",
     key: "usa-pacific-classic",
     name: "Pacific Classic",
     track: "Del Mar",
@@ -11633,7 +11854,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "aa000019-0000-4000-8000-000000000019",
+    uuid: "e5beffa1-5b71-4452-9860-1b04bf55259b",
     key: "usa-santa-anita-handicap",
     name: "Santa Anita Handicap",
     track: "Santa Anita",
@@ -11646,7 +11867,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "aa000020-0000-4000-8000-000000000020",
+    uuid: "a052bc01-a889-4b80-ab52-dfe26af165ec",
     key: "usa-kentucky-oaks",
     name: "Kentucky Oaks",
     track: "Churchill Downs",
@@ -11658,9 +11879,40 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: doy(5, 2),
     restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
     note: "Fillies",
+    triplecrownKey: "usa-tiara",
   },
   {
-    uuid: "aa000021-0000-4000-8000-000000000021",
+    uuid: "741710cf-ba20-4c8c-8598-9382e0b2ddac",
+    key: "usa-black-eyed-susan-stakes",
+    name: "Black-Eyed Susan Stakes",
+    track: "Pimlico",
+    trackId: "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5e",
+    grade: "G2",
+    distance: 1811,
+    surface: "Dirt",
+    purse: 300000,
+    dayOfYear: doy(5, 17),
+    restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
+    note: "Fillies",
+    triplecrownKey: "usa-tiara",
+  },
+  {
+    uuid: "f164cf85-e3f3-4f6e-a596-096826e79aac",
+    key: "usa-acorn-stakes",
+    name: "Acorn Stakes",
+    track: "Belmont Park",
+    trackId: "d3c4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+    grade: "G1",
+    distance: 1709,
+    surface: "Dirt",
+    purse: 500000,
+    dayOfYear: doy(6, 7),
+    restrictions: { minAge: 3, maxAge: 3, gender: "fillies" },
+    note: "Fillies",
+    triplecrownKey: "usa-tiara",
+  },
+  {
+    uuid: "272f2cbb-29c0-4009-856e-59137e987f4d",
     key: "usa-man-o-war",
     name: "Man o' War Stakes",
     track: "Belmont Park",
@@ -11673,7 +11925,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "aa000022-0000-4000-8000-000000000022",
+    uuid: "ca680e20-a4f8-4cc0-8fbe-eeca72c0aeb9",
     key: "usa-metropolitan",
     name: "Metropolitan Handicap",
     track: "Belmont Park",
@@ -11686,7 +11938,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
   },
   {
-    uuid: "aa000024-0000-4000-8000-000000000024",
+    uuid: "bcbb1c8e-68c9-49d9-ad5e-e6acf87ad4e4",
     key: "usa-donn-handicap",
     name: "Donn Handicap",
     track: "Gulfstream Park",
@@ -11700,7 +11952,7 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYearVariance: 7,
   },
   {
-    uuid: "aa000025-0000-4000-8000-000000000025",
+    uuid: "01d6ca8b-fef1-461b-af30-6128e7325e90",
     key: "usa-gulfstream-park-handicap",
     name: "Gulfstream Park Handicap",
     track: "Gulfstream Park",
@@ -11714,7 +11966,7 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYearVariance: 7,
   },
   {
-    uuid: "aa000023-0000-4000-8000-000000000023",
+    uuid: "df73e6b8-80da-4464-9bd3-be47d2fe6a93",
     key: "usa-pegasus-world-cup",
     name: "Pegasus World Cup Invitational Stakes",
     track: "Gulfstream Park",
@@ -11731,7 +11983,7 @@ export const GRADED_RACES: GradedRace[] = [
 
   // ============= USA — Breeders' Cup (full 14-race card, Keeneland Nov) =============
   {
-    uuid: "bc000001-0000-4000-8000-000000000001",
+    uuid: "05490e4c-fbbe-4463-97c3-1a7b95c450ac",
     key: "bc-classic",
     name: "Breeders' Cup Classic",
     track: "Keeneland",
@@ -11744,9 +11996,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000002-0000-4000-8000-000000000002",
+    uuid: "8964279a-f0ca-4bf8-8555-d6601a15c827",
     key: "bc-turf",
     name: "Breeders' Cup Turf",
     track: "Keeneland",
@@ -11759,9 +12012,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000003-0000-4000-8000-000000000003",
+    uuid: "3613eb5f-7db9-4be6-b8cb-a7b7296b0cb3",
     key: "bc-distaff",
     name: "Breeders' Cup Distaff",
     track: "Keeneland",
@@ -11775,9 +12029,10 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000004-0000-4000-8000-000000000004",
+    uuid: "23c0795f-95ff-4a1f-a56f-9cc2b576762e",
     key: "bc-mile",
     name: "Breeders' Cup Mile",
     track: "Keeneland",
@@ -11790,9 +12045,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000005-0000-4000-8000-000000000005",
+    uuid: "0c477d2a-a348-4c96-9a1a-dbdfb66f075e",
     key: "bc-sprint",
     name: "Breeders' Cup Sprint",
     track: "Keeneland",
@@ -11805,9 +12061,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000006-0000-4000-8000-000000000006",
+    uuid: "2ba0cef8-89e5-4115-9f96-d1088287ff6f",
     key: "bc-filly-mare-turf",
     name: "Breeders' Cup Filly & Mare Turf",
     track: "Keeneland",
@@ -11821,9 +12078,10 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000007-0000-4000-8000-000000000007",
+    uuid: "60dd72d5-0dbb-43b9-8291-5dcd1c2dc459",
     key: "bc-juvenile",
     name: "Breeders' Cup Juvenile",
     track: "Keeneland",
@@ -11836,9 +12094,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000008-0000-4000-8000-000000000008",
+    uuid: "a50c856e-0c8c-437c-a738-41aa4a0fb3dd",
     key: "bc-juvenile-fillies",
     name: "Breeders' Cup Juvenile Fillies",
     track: "Keeneland",
@@ -11852,9 +12111,10 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000009-0000-4000-8000-000000000009",
+    uuid: "0d40d0c3-8a65-47a8-859c-8fdcf2a04b2a",
     key: "bc-turf-sprint",
     name: "Breeders' Cup Turf Sprint",
     track: "Keeneland",
@@ -11867,9 +12127,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 12,
   },
   {
-    uuid: "bc000010-0000-4000-8000-000000000010",
+    uuid: "cb2baf60-eebc-44eb-b9ff-539ca9e8baec",
     key: "bc-dirt-mile",
     name: "Breeders' Cup Dirt Mile",
     track: "Keeneland",
@@ -11882,9 +12143,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 12,
   },
   {
-    uuid: "bc000011-0000-4000-8000-000000000011",
+    uuid: "cec0d3d5-923a-40c9-9034-35d714194e51",
     key: "bc-filly-mare-sprint",
     name: "Breeders' Cup Filly & Mare Sprint",
     track: "Keeneland",
@@ -11898,9 +12160,10 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies & Mares",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000012-0000-4000-8000-000000000012",
+    uuid: "4fc101da-5590-4e0f-a681-3df450da645d",
     key: "bc-juvenile-turf",
     name: "Breeders' Cup Juvenile Turf",
     track: "Keeneland",
@@ -11913,9 +12176,10 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 2, maxAge: 2 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000013-0000-4000-8000-000000000013",
+    uuid: "a559feef-5150-47cd-9b48-ae355bb131d3",
     key: "bc-juvenile-fillies-turf",
     name: "Breeders' Cup Juvenile Fillies Turf",
     track: "Keeneland",
@@ -11929,9 +12193,10 @@ export const GRADED_RACES: GradedRace[] = [
     note: "Fillies",
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
-    uuid: "bc000014-0000-4000-8000-000000000014",
+    uuid: "3c087346-0e52-4fde-a46c-8f383211c21f",
     key: "bc-marathon",
     name: "Breeders' Cup Marathon",
     track: "Keeneland",
@@ -11944,6 +12209,7 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 4 },
     bcKey: "breeders-cup",
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
 
   // ============= Saudi Arabia — Saudi Cup Weekend =============
@@ -11960,6 +12226,7 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: doy(2, 22),
     restrictions: { minAge: 4 },
     dayOfYearVariance: 7,
+    fieldSize: 14,
   },
   {
     uuid: "sa000005-0000-4000-8000-000000000005",
@@ -12031,6 +12298,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 8000000,
     dayOfYear: doy(11, 5),
     restrictions: { minAge: 3 },
+    fieldSize: 24,
     dayOfYearVariance: 0,
   },
   {
@@ -12046,6 +12314,7 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: doy(10, 26),
     restrictions: { minAge: 3 },
     dayOfYearVariance: 0,
+    fieldSize: 14,
   },
   {
     uuid: "au000003-0000-4000-8000-000000000003",
@@ -12060,6 +12329,7 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: doy(10, 19),
     restrictions: { minAge: 3 },
     dayOfYearVariance: 0,
+    fieldSize: 18,
   },
   {
     uuid: "au000004-0000-4000-8000-000000000004",
@@ -12074,6 +12344,7 @@ export const GRADED_RACES: GradedRace[] = [
     dayOfYear: doy(10, 19),
     restrictions: { minAge: 3 },
     dayOfYearVariance: 0,
+    fieldSize: 12,
   },
   {
     uuid: "au000005-0000-4000-8000-000000000005",
@@ -12113,6 +12384,37 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 2000000,
     dayOfYear: doy(11, 2),
     restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "australia-tc",
+  },
+
+  // ============= Australia — Triple Crown (3yo) =============
+  {
+    uuid: "f3072a85-4a20-48bf-9440-36bf88e46f81",
+    key: "au-randwick-guineas",
+    name: "Randwick Guineas",
+    track: "Randwick",
+    trackId: "a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6e",
+    grade: "G1",
+    distance: 1600,
+    surface: "Turf",
+    purse: 1000000,
+    dayOfYear: doy(3, 1),
+    restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "australia-tc",
+  },
+  {
+    uuid: "19dcb68a-1e3a-4ae1-913c-ba98b4f124bc",
+    key: "au-rosehill-guineas",
+    name: "Rosehill Guineas",
+    track: "Rosehill",
+    trackId: "a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6f",
+    grade: "G1",
+    distance: 2000,
+    surface: "Turf",
+    purse: 1000000,
+    dayOfYear: doy(3, 15),
+    restrictions: { minAge: 3, maxAge: 3 },
+    triplecrownKey: "australia-tc",
   },
   {
     uuid: "au000008-0000-4000-8000-000000000008",
@@ -12166,6 +12468,7 @@ export const GRADED_RACES: GradedRace[] = [
     purse: 5000000,
     dayOfYear: doy(11, 9),
     restrictions: { minAge: 3 },
+    fieldSize: 14,
   },
   {
     uuid: "au000012-0000-4000-8000-000000000012",
@@ -12235,6 +12538,14 @@ export const GRADED_RACES: GradedRace[] = [
     restrictions: { minAge: 3, maxAge: 3 },
   },
 ];
+
+// Apply fieldSize heuristics to races without explicit fieldSize
+const GRADED_RACES_WITH_FIELD_SIZES: GradedRace[] = GRADED_RACES_BASE.map((race) => ({
+  ...race,
+  fieldSize: race.fieldSize ?? getDefaultFieldSize(race.grade, race.country || "USA"),
+}));
+
+export const GRADED_RACES = GRADED_RACES_WITH_FIELD_SIZES;
 
 // Duplicate detection check to ensure no race keys are duplicated across sources
 function validateNoDuplicateRaces() {

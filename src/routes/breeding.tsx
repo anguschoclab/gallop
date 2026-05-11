@@ -4,28 +4,30 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Info, FileText, Baby, Calendar, Target } from "lucide-react";
+import { Heart, FileText, Baby, Calendar, Target } from "lucide-react";
 import { toast } from "sonner";
-import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
-import { BreedingRadarChart } from "@/components/BreedingRadarChart";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PregnancyTimeline } from "@/components/PregnancyTimeline";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { isFemaleHorse } from "@/core/horse/gender";
 import { getAvailableStallions } from "@/core/breeding/stallions";
-import { NumericValue, formatCurrency } from "@/components/HorseBits";
+import { NumericValue } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
 import { FoalNamingDialog } from "@/components/FoalNamingDialog";
 import { BreedingProgramPanel } from "@/components/BreedingProgramPanel";
+import { useBreedingCompatibility } from "@/hooks/useBreedingCompatibility";
+import { BreedingCompatibilityCard } from "@/components/breeding/BreedingCompatibilityCard";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
 });
 
 function BreedingPage() {
-  const horses = useGame((s) => s.horses);
-  const pregnancies = useGame((s) => s.pregnancies);
-  const log = useGame((s) => s.log);
+  const horses = useGame((s) => s.horses || []);
+  const pregnancies = useGame((s) => s.pregnancies || []);
+  const log = useGame((s) => s.log || []);
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const breed = useGame((s) => s.breed);
@@ -34,15 +36,15 @@ function BreedingPage() {
   const [liveFoalGuarantee, setLiveFoalGuarantee] = useState(false);
   const [namingFoalId, setNamingFoalId] = useState<string | null>(null);
 
+  const { sire, dam, compatibility } = useBreedingCompatibility(sireId, damId);
+
   const adults = horses.filter((h) => h.age >= 3);
   const breedLogs = log.filter((l) => /Mated|Foal/.test(l.text));
 
-  const sire = adults.find((h) => h.id === sireId);
-  const dam = adults.find((h) => h.id === damId);
-  const compatibility = sire && dam ? calculateBreedingCompatibility(sire, dam) : null;
-
   // Get available stallions for Northern hemisphere (default for player breeding)
-  const availableStallions = getAvailableStallions({ horses, day }, "Northern");
+  // FIX: getAvailableStallions expects (horses: Horse[], mare: Horse)
+  const dummyMare = { id: damId } as any;
+  const availableStallions = getAvailableStallions(horses, dummyMare);
 
   const onBreed = () => {
     if (!sireId || !damId) return;
@@ -196,9 +198,7 @@ function BreedingPage() {
                   >
                     <option value="">Select dam…</option>
                     {adults
-                      .filter(
-                        (h) => (h.gender === "filly" || h.gender === "mare") && h.id !== sireId,
-                      )
+                      .filter((h) => isFemaleHorse(h.gender) && h.id !== sireId)
                       .map((h) => (
                         <option key={h.id} value={h.id}>
                           {h.name} (age {Math.floor(h.age)})
@@ -238,157 +238,7 @@ function BreedingPage() {
                 stand/nurse, you get a free re-breeding (up to 3 attempts).
               </p>
 
-              {compatibility && (
-                <div className="space-y-4">
-                  <BreedingRadarChart
-                    data={[
-                      {
-                        factor: "Nicking",
-                        score: compatibility.factors.nicking.score,
-                        fullMark: 100,
-                      },
-                      {
-                        factor: "Dosage",
-                        score: compatibility.factors.dosage.score,
-                        fullMark: 100,
-                      },
-                      {
-                        factor: "Inbreeding",
-                        score: compatibility.factors.inbreeding.score,
-                        fullMark: 100,
-                      },
-                      {
-                        factor: "Parent Performance",
-                        score: compatibility.factors.parentPerformance.score,
-                        fullMark: 100,
-                      },
-                      {
-                        factor: "Conformation",
-                        score: compatibility.factors.conformation.score,
-                        fullMark: 100,
-                      },
-                      {
-                        factor: "Temperament",
-                        score: compatibility.factors.temperament.score,
-                        fullMark: 100,
-                      },
-                      {
-                        factor: "Foundation Stock",
-                        score: compatibility.factors.foundationStock.score,
-                        fullMark: 100,
-                      },
-                      {
-                        factor: "Founder Effect",
-                        score: compatibility.factors.founderEffect.score,
-                        fullMark: 100,
-                      },
-                      {
-                        factor: "Genetic",
-                        score: compatibility.factors.genetic.score,
-                        fullMark: 100,
-                      },
-                      {
-                        factor: "Blue Hen",
-                        score: compatibility.factors.blueHen.score,
-                        fullMark: 100,
-                      },
-                    ]}
-                  />
-                  <Card className="bg-t700 border-gold-muted">
-                    <CardHeader>
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <Info className="h-4 w-4" />
-                        Breeding Compatibility Details
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3 text-sm">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">Overall Score</span>
-                        <Badge
-                          variant={
-                            compatibility.overallScore >= 0.65
-                              ? "default"
-                              : compatibility.overallScore >= 0.5
-                                ? "secondary"
-                                : "destructive"
-                          }
-                          className="tabular-nums"
-                        >
-                          {Math.round(compatibility.overallScore * 100)}%
-                        </Badge>
-                      </div>
-                      <p className="text-cream-muted">{compatibility.recommendation}</p>
-
-                      <div className="space-y-2 pt-2 border-t">
-                        <div className="flex items-center justify-between text-xs">
-                          <JargonTooltip term="Nicking">Nicking</JargonTooltip>
-                          <span
-                            className={
-                              compatibility.factors.nicking.score > 0
-                                ? "text-success"
-                                : "text-cream-muted"
-                            }
-                          >
-                            {compatibility.factors.nicking.description}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs">
-                          <JargonTooltip term="Dosage">Dosage</JargonTooltip>
-                          <span
-                            className={
-                              compatibility.factors.dosage.score >= 0.7
-                                ? "text-success"
-                                : "text-cream-muted"
-                            }
-                          >
-                            {compatibility.factors.dosage.description}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs">
-                          <JargonTooltip term="Inbreeding">Inbreeding</JargonTooltip>
-                          <span
-                            className={
-                              compatibility.factors.inbreeding.warning
-                                ? "text-warning"
-                                : "text-success"
-                            }
-                          >
-                            {compatibility.factors.inbreeding.description}
-                            {compatibility.factors.inbreeding.warning &&
-                              ` (${compatibility.factors.inbreeding.warning})`}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span>Parent Performance</span>
-                          <span
-                            className={
-                              compatibility.factors.parentPerformance.score >= 0.5
-                                ? "text-success"
-                                : "text-cream-muted"
-                            }
-                          >
-                            {compatibility.factors.parentPerformance.description}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs font-medium border-t pt-2 mt-2">
-                          <JargonTooltip term="Blue hen">Blue Hen Status</JargonTooltip>
-                          <span
-                            className={
-                              compatibility.factors.blueHen.isBlueHen
-                                ? "text-info"
-                                : compatibility.factors.blueHen.score >= 0.5
-                                  ? "text-success"
-                                  : "text-cream-muted"
-                            }
-                          >
-                            {compatibility.factors.blueHen.description}
-                          </span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
+              {compatibility && <BreedingCompatibilityCard compatibility={compatibility} />}
             </CardContent>
           </Card>
         </TabsContent>

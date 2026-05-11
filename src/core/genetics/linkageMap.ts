@@ -1,4 +1,14 @@
 /**
+ * linkageMap.ts - Linkage map for genetic loci
+ *
+ * This file provides a linkage map that maps every locus to its chromosome
+ * and position (0-1), defining which loci are linked and tend to be inherited together.
+ *
+ * Dependencies: ./chromosomes (LocusCoord, ChromosomeId)
+ * Related files: inheritance.ts (uses linkage map for chromosome-aware crossover), chromosomes.ts (provides chromosome identifiers)
+ */
+
+/**
  * Linkage Map for Genetic Loci
  * Maps every locus to its chromosome and position (0-1)
  */

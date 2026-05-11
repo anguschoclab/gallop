@@ -1,3 +1,13 @@
+/**
+ * awards/scoring.ts - Regional awards scoring engine
+ *
+ * This file calculates award points based on race performance for regional
+ * awards (North America, Europe, Asia-Pacific, South America).
+ *
+ * Dependencies: ../types (Horse, Race), ./types (AwardRegion, RegionalAwardCategory, RegionalAward, REGIONAL_SCORING, COUNTRY_TO_REGION, NORTH_AMERICAN_CATEGORIES, EUROPEAN_CATEGORIES, ASIA_PACIFIC_CATEGORIES, SOUTH_AMERICAN_CATEGORIES), @/core/data/gradedRaces (getTrackContinent, Continent)
+ * Related files: types.ts (award type definitions), index.ts (re-exports)
+ */
+
 // Regional Awards Scoring Engine
 // Calculates award points based on race performance
 
@@ -146,9 +156,10 @@ function isEligibleForCategory(
     case "champion_filly_or_mare":
       return gender === "filly" || gender === "mare";
 
-    // Steeplechase (not implemented)
+    // Steeplechase - longer distance turf races (heuristic until proper steeplechase type added)
     case "champion_steeplechase":
-      return false;
+      // Steeplechase races are typically long-distance (3200m+) on turf
+      return distance >= 3200 && surface === "turf";
 
     // Award of merit (special handling)
     case "award_of_merit":
@@ -164,7 +175,19 @@ function isEligibleForCategory(
   }
 }
 
-// Calculate total points for a horse in a region's awards
+/**
+ * Calculate total points for a horse in a region's awards.
+ *
+ * Filters race history to relevant year and region, checks category eligibility,
+ * and sums points based on race performance (grade wins, places, Beyer bonuses).
+ *
+ * @param horse - The horse to calculate points for
+ * @param races - All races in the game
+ * @param year - Award year
+ * @param region - Award region
+ * @param category - Award category
+ * @returns Total points earned in this category
+ */
 export function calculateAwardPoints(
   horse: Horse,
   races: Race[],
@@ -204,7 +227,18 @@ export function calculateAwardPoints(
   return totalPoints;
 }
 
-// Determine winners for all awards in a region
+/**
+ * Determine winners for all awards in a region.
+ *
+ * Calculates points for all eligible horses in each category and selects
+ * the highest-scoring horse as the winner.
+ *
+ * @param horses - All horses in the game
+ * @param races - All races in the game
+ * @param year - Award year
+ * @param region - Award region
+ * @returns Array of regional award winners without ID and ceremony day
+ */
 export function determineRegionalWinners(
   horses: Horse[],
   races: Race[],
@@ -261,7 +295,17 @@ export function determineRegionalWinners(
   return winners;
 }
 
-// Determine winners for all regions
+/**
+ * Determine winners for all regions.
+ *
+ * Aggregates regional winners from North America, Europe, Asia-Pacific,
+ * and South America into a single array.
+ *
+ * @param horses - All horses in the game
+ * @param races - All races in the game
+ * @param year - Award year
+ * @returns Array of all regional award winners without ID and ceremony day
+ */
 export function determineAllRegionalWinners(
   horses: Horse[],
   races: Race[],

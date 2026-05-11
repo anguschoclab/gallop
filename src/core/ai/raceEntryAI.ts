@@ -1,20 +1,26 @@
+/**
+ * raceEntryAI.ts - Race entry AI system
+ *
+ * This file provides strategic race entry system with long-term race schedule
+ * planning, horse development tracking, and multi-race strategy optimization.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable), ./personalitySystem (getPersonalityAIState), ./learningModule (learning functions), @/core/race/entryScoring (calculateRaceSuitability), @/core/race/trackGeometry (calculateTrackGeometryScore, calculateGradientScore), @/core/stable/personalityModifiers (applyPersonalityModifiers)
+ * Related files: npcCycleAI.ts (uses race entry AI), personalitySystem.ts (provides personality state)
+ */
+
 import type { Horse, Race, Stable } from "@/game/types";
-import type { Rng } from "@/game/rng";
-import {
-  getPersonalityAIState,
-  calculateUtilityScore,
-  calculateStrategicScore,
-} from "./personalitySystem";
+import { calculateOverallRating } from "@/core/horse/stats";
+import { RECENT_RACES_MAX_COUNT } from "@/game/constants/gameConstants";
 import {
   createLearningState,
   recordOutcome,
   getSuccessRate,
-  getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
+import { RECENT_RACES_MAX_COUNT } from "@/game/constants/gameConstants";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import { calculateTrackGeometryScore, calculateGradientScore } from "@/core/race/trackGeometry";
-import { applyPersonalityModifiers, getFormTolerance } from "@/core/stable/personalityModifiers";
+import { applyPersonalityModifiers } from "@/core/stable/personalityModifiers";
 
 /**
  * Strategic Race Entry System
@@ -34,8 +40,8 @@ export interface StrategicPlan {
     priority: number;
     horseId?: string;
   }>;
-  horseDevelopment: Map<string, HorseDevelopmentTrack>;
-  budgetAllocation: Map<string, number>; // raceId -> budget
+  horseDevelopment: Record<string, HorseDevelopmentTrack>;
+  budgetAllocation: Record<string, number>; // raceId -> budget
 }
 
 export interface HorseDevelopmentTrack {
@@ -47,7 +53,13 @@ export interface HorseDevelopmentTrack {
 }
 
 /**
- * Create AI state for race entry decisions
+ * Create AI state for race entry decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and strategic plan for race entries.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized race entry AI state
  */
 export function createRaceEntryAIState(stable: Stable): RaceEntryAIState {
   return {
@@ -55,15 +67,24 @@ export function createRaceEntryAIState(stable: Stable): RaceEntryAIState {
     learningState: createLearningState(),
     strategicPlan: {
       targetRaces: [],
-      horseDevelopment: new Map(),
-      budgetAllocation: new Map(),
+      horseDevelopment: {},
+      budgetAllocation: {},
     },
   };
 }
 
 /**
- * Calculate strategic entry score for a horse in a race
- * Combines suitability, learning, and strategic planning
+ * Calculate strategic entry score for a horse in a race.
+ *
+ * Combines suitability, learning, and strategic planning to determine
+ * the strategic value of entering a specific race.
+ *
+ * @param aiState - Current race entry AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race to evaluate
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Strategic entry score
  */
 export function calculateStrategicEntryScore(
   aiState: RaceEntryAIState,
@@ -96,8 +117,16 @@ export function calculateStrategicEntryScore(
 }
 
 /**
- * Evaluate strategic value of entering a race
- * Considers long-term goals, horse development, and competitive positioning
+ * Evaluate strategic value of entering a race.
+ *
+ * Considers long-term goals, horse development, and competitive positioning.
+ * Provides bonuses for races that advance development goals and target peak form.
+ *
+ * @param aiState - Current race entry AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race to evaluate
+ * @param currentDay - Current game day
+ * @returns Strategic value score
  */
 function evaluateStrategicValue(
   aiState: RaceEntryAIState,
@@ -108,7 +137,7 @@ function evaluateStrategicValue(
   let strategicValue = 0;
 
   // Check if race aligns with horse development plan
-  const devTrack = aiState.strategicPlan.horseDevelopment.get(horse.id);
+  const devTrack = aiState.strategicPlan.horseDevelopment[horse.id];
   if (devTrack) {
     // Bonus for races that advance development goals
     if (race.graded?.grade === devTrack.targetGrade) {
@@ -124,20 +153,17 @@ function evaluateStrategicValue(
 
   // Competitive positioning - avoid races with too many top competitors
   if (race.entries.length > 0) {
-    const competitorQuality =
-      race.entries.reduce((sum, e) => {
-        // In real implementation, would look up horse stats
-        return sum + 50; // Placeholder
-      }, 0) / race.entries.length;
+    // In real implementation, would look up horse stats
+    const avgCompetitorQuality = 50;
 
-    if (competitorQuality > 80) {
+    if (avgCompetitorQuality > 80) {
       strategicValue -= 10; // Penalty for very competitive fields
     }
   }
 
   // Budget consideration
-  const raceBudget = aiState.strategicPlan.budgetAllocation.get(race.id) || 0;
-  if (race.purse > raceBudget * 2) {
+  const raceBudget = aiState.strategicPlan.budgetAllocation[race.id] || 0;
+  if (race.purse > raceBudget * 2 && raceBudget > 0) {
     strategicValue -= 5; // Penalty for overspending on single race
   }
 
@@ -145,7 +171,17 @@ function evaluateStrategicValue(
 }
 
 /**
- * Update horse development tracking after a race
+ * Update horse development tracking after a race.
+ *
+ * Updates the horse's development track with race results,
+ * adjusts progress based on performance, and potentially upgrades target grade.
+ *
+ * @param aiState - Current race entry AI state
+ * @param horse - The horse that raced
+ * @param race - The race that was run
+ * @param position - Final race position
+ * @param beyer - Beyer figure from the race
+ * @returns Updated race entry AI state
  */
 export function updateHorseDevelopment(
   aiState: RaceEntryAIState,
@@ -154,7 +190,7 @@ export function updateHorseDevelopment(
   position: number,
   beyer: number,
 ): RaceEntryAIState {
-  const devTrack = aiState.strategicPlan.horseDevelopment.get(horse.id) || {
+  const devTrack = aiState.strategicPlan.horseDevelopment[horse.id] || {
     horseId: horse.id,
     targetGrade: race.graded?.grade || "open",
     currentProgress: 0,
@@ -163,35 +199,60 @@ export function updateHorseDevelopment(
   };
 
   // Add race result
-  devTrack.recentRaces.push({ raceId: race.id, position, beyer });
-  if (devTrack.recentRaces.length > 5) {
-    devTrack.recentRaces = devTrack.recentRaces.slice(-5);
-  }
+  const newRecentRaces = [...devTrack.recentRaces, { raceId: race.id, position, beyer }];
+  const trimmedRecentRaces = newRecentRaces.length > RECENT_RACES_MAX_COUNT ? newRecentRaces.slice(-RECENT_RACES_MAX_COUNT) : newRecentRaces;
 
   // Update progress based on performance
+  let currentProgress = devTrack.currentProgress;
   if (position <= 3) {
-    devTrack.currentProgress += 10;
+    currentProgress += 10;
   } else if (position <= 5) {
-    devTrack.currentProgress += 5;
+    currentProgress += 5;
   }
 
+  let targetGrade = devTrack.targetGrade;
   // Adjust target grade if performing well
-  if (devTrack.currentProgress > 80 && devTrack.targetGrade !== "G1") {
+  if (currentProgress > 80 && targetGrade !== "G1") {
     const grades = ["open", "G3", "G2", "G1"];
-    const currentIndex = grades.indexOf(devTrack.targetGrade);
+    const currentIndex = grades.indexOf(targetGrade);
     if (currentIndex < grades.length - 1) {
-      devTrack.targetGrade = grades[currentIndex + 1];
-      devTrack.currentProgress = 0; // Reset progress for new goal
+      targetGrade = grades[currentIndex + 1];
+      currentProgress = 0; // Reset progress for new goal
     }
   }
 
-  aiState.strategicPlan.horseDevelopment.set(horse.id, devTrack);
+  const updatedDevTrack = {
+    ...devTrack,
+    targetGrade,
+    currentProgress,
+    recentRaces: trimmedRecentRaces,
+  };
 
-  return aiState;
+  return {
+    ...aiState,
+    strategicPlan: {
+      ...aiState.strategicPlan,
+      horseDevelopment: {
+        ...aiState.strategicPlan.horseDevelopment,
+        [horse.id]: updatedDevTrack,
+      },
+    },
+  };
 }
 
 /**
- * Record race entry outcome for learning
+ * Record race entry outcome for learning.
+ *
+ * Records the race entry outcome in the learning state for
+ * adaptive strategy improvement.
+ *
+ * @param aiState - Current race entry AI state
+ * @param horse - The horse that entered the race
+ * @param race - The race that was entered
+ * @param currentDay - Current game day
+ * @param success - Whether the entry was successful
+ * @param position - Final race position (optional)
+ * @returns Updated race entry AI state
  */
 export function recordRaceEntryOutcome(
   aiState: RaceEntryAIState,
@@ -204,29 +265,35 @@ export function recordRaceEntryOutcome(
   const contextKey = `${race.distance}:${race.surface || "unknown"}:${race.graded?.grade || "open"}`;
   const value = success && position ? (10 - position) * 10 : 0;
 
-  aiState.learningState = recordOutcome(
-    aiState.learningState,
+  const newPersonalityState = recordOutcome(
+    aiState.personalityState,
     "race_entry",
-    contextKey,
+    { raceId: race.id, horseId: horse.id },
     success,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );
 
-  // Update personality state if successful
-  if (success) {
-    // Note: Using learning state for now, personality state updates would need proper context
-    // aiState.personalityState would be updated here if we had the full context
-  }
-
-  return aiState;
+  return {
+    ...aiState,
+    personalityState: newPersonalityState,
+  };
 }
 
 /**
- * Generate multi-race entry strategy for a stable
- * Plans entries across multiple upcoming races
+ * Generate multi-race entry strategy for a stable.
+ *
+ * Plans entries across multiple upcoming races based on
+ * strategic fit and horse availability.
+ *
+ * @param aiState - Current race entry AI state
+ * @param stable - The stable planning entries
+ * @param horses - Available horses
+ * @param races - Available races
+ * @param currentDay - Current game day
+ * @param daysAhead - Number of days ahead to plan
+ * @returns Strategy mapping race IDs to horse IDs
  */
 export function generateMultiRaceStrategy(
   aiState: RaceEntryAIState,
@@ -235,8 +302,8 @@ export function generateMultiRaceStrategy(
   races: Race[],
   currentDay: number,
   daysAhead: number,
-): Map<string, string[]> {
-  const strategy = new Map<string, string[]>(); // raceId -> horseIds
+): Record<string, string[]> {
+  const strategy: Record<string, string[]> = {};
 
   // Filter upcoming races
   const upcomingRaces = races.filter(
@@ -247,7 +314,7 @@ export function generateMultiRaceStrategy(
   upcomingRaces.sort((a, b) => {
     const dayDiff = a.day - b.day;
     if (dayDiff !== 0) return dayDiff;
-    return (b.purse || 0) - (a.purse || 0); // Higher purse priority on same day
+    return (b.purse || 0) - (a.purse || 0);
   });
 
   // Assign horses to races based on strategic fit
@@ -258,13 +325,13 @@ export function generateMultiRaceStrategy(
         horse,
         score: calculateStrategicEntryScore(aiState, horse, race, stable, currentDay),
       }))
-      .filter((c) => c.score > 50) // Minimum threshold
+      .filter((c) => c.score > 50)
       .sort((a, b) => b.score - a.score);
 
     // Select top candidates (max 2 per race)
     const selected = candidates.slice(0, 2).map((c) => c.horse.id);
     if (selected.length > 0) {
-      strategy.set(race.id, selected);
+      strategy[race.id] = selected;
     }
   }
 
@@ -272,29 +339,31 @@ export function generateMultiRaceStrategy(
 }
 
 /**
- * Adapt strategy based on learning outcomes
+ * Adapt strategy based on learning outcomes.
+ *
+ * Adjusts strategy confidence based on overall success rate
+ * from past race entry decisions.
+ *
+ * @param aiState - Current race entry AI state
+ * @param currentDay - Current game day
+ * @returns Updated race entry AI state
  */
 export function adaptStrategy(aiState: RaceEntryAIState, currentDay: number): RaceEntryAIState {
-  // Prune old learning data
-  const cutoffDay = currentDay - aiState.personalityState.memoryDepth;
-  // Note: learningModule.pruneOldOutcomes would be called here
-
-  // Adjust strategic thresholds based on learning
-  const insights = {
-    totalDecisions: aiState.learningState.outcomes.length,
-    successRate:
-      aiState.learningState.outcomes.length > 0
-        ? aiState.learningState.outcomes.filter((o) => o.success).length /
-          aiState.learningState.outcomes.length
-        : 0.5,
-  };
+  const outcomes = aiState.learningState.outcomes;
+  const totalDecisions = outcomes.length;
+  const successRate =
+    totalDecisions > 0 ? outcomes.filter((o) => o.success).length / totalDecisions : 0.5;
 
   // If success rate is low, become more conservative
-  if (insights.successRate < 0.4 && insights.totalDecisions > 10) {
-    aiState.personalityState.strategyConfidence = Math.max(
-      0.3,
-      aiState.personalityState.strategyConfidence - 0.1,
-    );
+  if (successRate < 0.4 && totalDecisions > 10) {
+    const newPersonalityState = {
+      ...aiState.personalityState,
+      strategyConfidence: Math.max(0.3, aiState.personalityState.strategyConfidence - 0.1),
+    };
+    return {
+      ...aiState,
+      personalityState: newPersonalityState,
+    };
   }
 
   return aiState;

@@ -1,3 +1,14 @@
+/**
+ * auctionRunner.ts - Deterministic auction simulation runner
+ *
+ * This file provides a deterministic, lot-by-lot auction simulation that powers
+ * both the live AuctionTheater UI and the day-rollover phase, producing the same
+ * final outcomes regardless of which path runs.
+ *
+ * Dependencies: ./uuid (generateUUID), ./types (AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord), ./auction (calculateNpcBid, netProceeds), ./rng (createRng, hashStr, Rng), @/core/resolver/impacts/index (AnyImpact), @/core/ai/npcCycleAI (NpcAIManager)
+ * Related files: auction.ts (valuation logic), auctionData.ts (sale configuration)
+ */
+
 // Deterministic, lot-by-lot auction simulation.
 //
 // Powers two paths from a single source of truth:
@@ -8,12 +19,12 @@
 //
 // Same seeded RNG → same final lots, regardless of which path runs.
 
-import { generateUUID } from "./uuid";
+import { generateUUID } from "@/core/uuid";
 
 import type { AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord } from "./types";
 import { calculateNpcBid, netProceeds } from "./auction";
 import { createRng, hashStr, type Rng } from "./rng";
-import type { AnyImpact } from "@/core/resolver/impacts";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 export type ChantPhase = "open" | "bidding" | "going_once" | "going_twice" | "sold" | "passed";
@@ -83,19 +94,17 @@ export type AuctionRunner = {
 };
 
 /**
- * Compute the next minimum bid increment, identical to the existing UI.
- * Increments by 5% + $200, rounded up to nearest $100.
+ * Compute the next minimum bid increment.
+ *
+ * Identical to the existing UI. Increments by 5% + $200, rounded up to nearest $100.
+ *
+ * @param currentBid - Current bid amount
+ * @returns Next minimum bid amount
  */
 export function nextBidAmount(currentBid: number): number {
   return Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
 }
 
-/**
- * Construct a runner. `seed` makes outcomes reproducible (the existing
- * resolveAuctionSale derives one from lot/stable/bid identifiers — we do the
- * same here, hashed once per (lot, scan) pair so identical inputs yield
- * identical outputs across paths).
- */
 export type AuctionRunnerOptions = {
   /**
    * When true, the runner is driving the live AuctionTheater UI. The Theater
@@ -119,6 +128,20 @@ export type AuctionRunnerOptions = {
   onAutoRaise?: (amount: number) => boolean;
 };
 
+/**
+ * Construct a deterministic auction runner.
+ *
+ * Seed makes outcomes reproducible. The existing resolveAuctionSale derives one from
+ * lot/stable/bid identifiers — we do the same here, hashed once per (lot, scan) pair
+ * so identical inputs yield identical outputs across paths.
+ *
+ * @param sale - The auction sale to simulate
+ * @param stables - All NPC stables for bidding
+ * @param horses - All horses in the game
+ * @param baseSeed - Base seed for deterministic RNG (defaults to hash of sale ID)
+ * @param options - Optional runner configuration including live mode, AI manager, and callbacks
+ * @returns Auction runner interface
+ */
 export function createAuctionRunner(
   sale: AuctionSale,
   stables: readonly Stable[],
@@ -127,6 +150,8 @@ export function createAuctionRunner(
   options: AuctionRunnerOptions = {},
 ): AuctionRunner {
   const { liveMode = false, npcAIManager, currentDay, onAutoRaise } = options;
+
+  const horseMap = new Map(horses.map((h) => [h.id, h]));
 
   // Proxy bid cap — cleared per lot and on cancel.
   let playerMaxBid: number | undefined = undefined;
@@ -169,7 +194,7 @@ export function createAuctionRunner(
   }
 
   function tryNpcRaise(state: LotState): AuctionTickEvent | null {
-    const horse = horses.find((h) => h.id === state.lot.horseId);
+    const horse = horseMap.get(state.lot.horseId);
     if (!horse) return null;
     const eligible = findEligibleBidders(state);
     // First-eligible-wins keeps it deterministic; specifically interesting
@@ -183,6 +208,7 @@ export function createAuctionRunner(
         sale.kind,
         rng,
         horses,
+        horseMap,
         npcAIManager,
         currentDay,
       );
@@ -200,7 +226,7 @@ export function createAuctionRunner(
 
   function finalizeCurrent(state: LotState): AuctionTickEvent[] {
     const events: AuctionTickEvent[] = [];
-    const horse = horses.find((h) => h.id === state.lot.horseId);
+    const horse = horseMap.get(state.lot.horseId);
     const horseName = horse?.name ?? "Lot";
 
     if (
@@ -356,7 +382,7 @@ export function createAuctionRunner(
   function currentLot() {
     if (done || lotIndex >= lots.length) return undefined;
     const state = lots[lotIndex];
-    const horse = horses.find((h) => h.id === state.lot.horseId);
+    const horse = horseMap.get(state.lot.horseId);
     return {
       lot: state.lot,
       horse,

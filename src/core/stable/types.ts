@@ -1,5 +1,16 @@
+/**
+ * types.ts - Stable types
+ *
+ * This file provides stable-related types including StableTier, StablePersonality,
+ * Stable, BackstoryId, and PlayerProfile.
+ *
+ * Dependencies: @/core/jockey/types (JockeySilk), @/core/breeding/archetypes (Archetype)
+ * Related files: stableConfig.ts (uses types), personalityModifiers.ts (uses types)
+ */
+
 import type { JockeySilk } from "@/core/jockey/types";
 import type { Archetype } from "@/core/breeding/archetypes";
+import type { Outpost } from "@/core/facilities/outpostTypes";
 
 export type StableTier = "elite" | "mid" | "budget";
 
@@ -30,9 +41,14 @@ export type Stable = {
   preferredDistance?: number;
   preferredSurface?: "Turf" | "Dirt" | "Synthetic";
   breedingArchetype?: Archetype["id"];
+  staff: Record<import("@/core/staff/staffTypes").StaffRole, string | null>;
+  lastBankruptcyInjectionDay?: number;
+
+  // Imperial Expansion: Outposts
+  outposts: Outpost[];
 };
 
-export type BackstoryId = "heir" | "trainer" | "investor" | "owner";
+export type BackstoryId = "inheritor" | "bloodstock_heir" | "claiming_trainer" | "bootstrapper";
 
 export interface PlayerProfile {
   stableName: string;

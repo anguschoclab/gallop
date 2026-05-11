@@ -10,8 +10,9 @@ interface GradeBreakdownProps {
 }
 
 export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
-  const upcoming = races.filter((r) => !r.resolved && r.day >= day);
-  const grades = ["G1", "G2", "G3"] as const;
+  const { gradeData, avgBeyer } = useMemo(() => {
+    const upcoming = races.filter((r) => !r.resolved && r.day >= day);
+    const grades = ["G1", "G2", "G3"] as const;
 
   // ⚡ Bolt: Replace O(N^2) array lookup inside loop with O(N) hash map construction + O(1) lookup
   const horsesById = useMemo(() => {
@@ -26,8 +27,9 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
     const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
     const ownedEntries = gradeRaces.filter((r) => r.entries.some((e) => e.owned));
 
-    let topProj = null;
-    const allOwnedProjs: number[] = [];
+    const gradeData = grades.map((grade) => {
+      const gradeRaces = upcoming.filter((r) => r.graded?.grade === grade);
+      const ownedEntries = gradeRaces.filter((r) => r.entries.some((e) => e.owned));
 
     for (const r of ownedEntries) {
       const ownedIds = r.entries.filter((e) => e.owned).map((e) => e.horseId);
@@ -41,22 +43,24 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
           }
         }
       }
+
+      return {
+        grade,
+        total: gradeRaces.length,
+        ownedCount: ownedEntries.length,
+        topOwned: topProj,
+        allOwnedProjs,
+      };
+    });
+
+    const allOwnedProjs = gradeData.flatMap((d) => d.allOwnedProjs);
+    let avgBeyer = null;
+    if (allOwnedProjs.length > 0) {
+      avgBeyer = Math.round(allOwnedProjs.reduce((s, v) => s + v, 0) / allOwnedProjs.length);
     }
 
-    return {
-      grade,
-      total: gradeRaces.length,
-      ownedCount: ownedEntries.length,
-      topOwned: topProj,
-      allOwnedProjs,
-    };
-  });
-
-  const allOwnedProjs = gradeData.flatMap((d) => d.allOwnedProjs);
-  let avgBeyer = null;
-  if (allOwnedProjs.length > 0) {
-    avgBeyer = Math.round(allOwnedProjs.reduce((s, v) => s + v, 0) / allOwnedProjs.length);
-  }
+    return { gradeData, avgBeyer };
+  }, [races, horses, day]);
 
   return (
     <Card>

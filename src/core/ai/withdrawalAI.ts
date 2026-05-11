@@ -1,18 +1,32 @@
 /**
+ * withdrawalAI.ts - Withdrawal AI system
+ *
+ * This file provides risk assessment and strategic management of race
+ * withdrawals for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable), ./personalitySystem (getPersonalityAIState), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating)
+ * Related files: npcCycleAI.ts (uses withdrawal AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Withdrawal AI System
  * Risk assessment, strategic management of race withdrawals
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
 import {
   createLearningState,
-  recordOutcome,
+  recordOutcome as recordLearningOutcome,
   getSuccessRate,
-  getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
+import {
+  AI_RISK_TOLERANCE_CONSERVATIVE,
+  AI_RISK_TOLERANCE_AGGRESSIVE,
+  AI_RISK_TOLERANCE_WIN_NOW,
+} from "@/game/constants/gameConstants";
 
 export interface WithdrawalAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -35,7 +49,13 @@ export interface WithdrawalDecision {
 }
 
 /**
- * Create AI state for withdrawal decisions
+ * Create AI state for withdrawal decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * and withdrawal history.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized withdrawal AI state
  */
 export function createWithdrawalAIState(stable: Stable): WithdrawalAIState {
   return {
@@ -46,7 +66,16 @@ export function createWithdrawalAIState(stable: Stable): WithdrawalAIState {
 }
 
 /**
- * Calculate withdrawal risk score
+ * Calculate withdrawal risk score.
+ *
+ * Evaluates risk based on health, energy, form, race difficulty,
+ * distance mismatch, and surface mismatch.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race being considered
+ * @param stable - The stable making the decision
+ * @returns Risk score (0-100)
  */
 export function calculateWithdrawalRisk(
   aiState: WithdrawalAIState,
@@ -71,10 +100,7 @@ export function calculateWithdrawalRisk(
     risk += (50 - horse.form) / 2;
   }
 
-  // Recent poor performance (would need race history)
-  // For now, use form as proxy
-
-  // Race difficulty risk (grade from graded object)
+  // Race difficulty risk
   if (race.graded?.grade === "G1") risk += 10;
   if (race.graded?.grade === "G2") risk += 5;
 
@@ -92,7 +118,17 @@ export function calculateWithdrawalRisk(
 }
 
 /**
- * Determine if horse should be withdrawn from race
+ * Determine if horse should be withdrawn from race.
+ *
+ * Evaluates withdrawal decision based on risk score, personality
+ * risk tolerance, learning-based adjustments, and strategic considerations.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse to evaluate
+ * @param race - The race being considered
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns Object with shouldWithdraw flag and optional reason
  */
 export function shouldWithdrawHorse(
   aiState: WithdrawalAIState,
@@ -107,9 +143,9 @@ export function shouldWithdrawHorse(
   const config = aiState.personalityState;
   let riskTolerance = 50;
 
-  if (config.personality === "conservative") riskTolerance = 35;
-  if (config.personality === "aggressive") riskTolerance = 65;
-  if (config.personality === "win-now") riskTolerance = 55; // Will take more risks for wins
+  if (config.personality === "conservative") riskTolerance = AI_RISK_TOLERANCE_CONSERVATIVE;
+  if (config.personality === "aggressive") riskTolerance = AI_RISK_TOLERANCE_AGGRESSIVE;
+  if (config.personality === "win-now") riskTolerance = AI_RISK_TOLERANCE_WIN_NOW;
 
   // Learning-based adjustment
   const contextKey = `${horse.age}`;
@@ -133,7 +169,6 @@ export function shouldWithdrawHorse(
     reason = "poor_form";
   }
 
-  // Decision: withdraw if risk exceeds tolerance
   if (riskScore > riskTolerance) {
     return { shouldWithdraw: true, reason };
   }
@@ -142,7 +177,16 @@ export function shouldWithdrawHorse(
 }
 
 /**
- * Calculate withdrawal opportunity cost
+ * Calculate withdrawal opportunity cost.
+ *
+ * Calculates the cost of withdrawing including entry fee loss,
+ * transportation cost loss, potential prize loss, and personality-based cost perception.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse being withdrawn
+ * @param race - The race being withdrawn from
+ * @param stable - The stable making the decision
+ * @returns Opportunity cost of withdrawal
  */
 export function calculateWithdrawalOpportunityCost(
   aiState: WithdrawalAIState,
@@ -156,26 +200,36 @@ export function calculateWithdrawalOpportunityCost(
   cost += race.entryFee || 0;
 
   // Transportation cost loss
-  cost += 500; // Average transport cost
+  cost += 500;
 
   // Potential prize loss
   const horseRating = calculateOverallRating(horse);
-  const expectedPrize = horseRating * 100; // Rough estimate
-  cost += expectedPrize * 0.1; // 10% chance of winning
+  const expectedPrize = horseRating * 100;
+  cost += expectedPrize * 0.1;
 
   // Personality-based cost perception
   const config = aiState.personalityState;
   if (config.personality === "conservative") {
-    cost *= 0.8; // Less sensitive to opportunity cost
+    cost *= 0.8;
   } else if (config.personality === "aggressive") {
-    cost *= 1.2; // More sensitive to opportunity cost
+    cost *= 1.2;
   }
 
   return cost;
 }
 
 /**
- * Determine if withdrawal is strategically beneficial
+ * Determine if withdrawal is strategically beneficial.
+ *
+ * Evaluates whether withdrawal is strategically beneficial based on
+ * personality, reason for withdrawal, and opportunity cost.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse being evaluated
+ * @param race - The race being considered
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns True if withdrawal is strategically beneficial
  */
 export function isWithdrawalStrategic(
   aiState: WithdrawalAIState,
@@ -188,32 +242,38 @@ export function isWithdrawalStrategic(
 
   if (!shouldWithdraw) return false;
 
-  // Check if there's a better alternative race soon
   const opportunityCost = calculateWithdrawalOpportunityCost(aiState, horse, race, stable);
-
-  // Personality-based strategic decision
   const config = aiState.personalityState;
 
-  // Conservative stables withdraw more readily to protect horses
   if (config.personality === "conservative" && reason === "health_concern") {
     return true;
   }
 
-  // Win-now stables only withdraw for serious reasons
   if (config.personality === "win-now" && reason !== "health_concern") {
     return false;
   }
 
-  // Aggressive stables take risks
   if (config.personality === "aggressive" && opportunityCost > 10000) {
-    return false; // Won't withdraw if prize is high
+    return false;
   }
 
   return true;
 }
 
 /**
- * Record withdrawal decision for learning
+ * Record withdrawal decision for learning.
+ *
+ * Records the withdrawal decision in history and updates the
+ * learning state for adaptive improvement.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horse - The horse being evaluated
+ * @param race - The race being considered
+ * @param stable - The stable making the decision
+ * @param withdrew - Whether the horse was withdrawn
+ * @param reason - Reason for withdrawal (optional)
+ * @param currentDay - Current game day
+ * @returns Updated withdrawal AI state
  */
 export function recordWithdrawalDecision(
   aiState: WithdrawalAIState,
@@ -234,33 +294,54 @@ export function recordWithdrawalDecision(
     reason,
   };
 
-  aiState.withdrawalHistory.push(decision);
+  const newHistory = [...aiState.withdrawalHistory, decision];
 
-  // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.withdrawalHistory.length > maxHistory) {
-    aiState.withdrawalHistory = aiState.withdrawalHistory.slice(-maxHistory);
-  }
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
-  // Update learning state
   const contextKey = `${horse.age}`;
-  const value = withdrew ? -1 : 1; // Simple success metric
-  aiState.learningState = recordOutcome(
+  const value = withdrew ? -1 : 1;
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "withdrawal",
     contextKey,
     true,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );
 
-  return aiState;
+  const newPersonalityState = recordOutcome(
+    aiState.personalityState,
+    "withdrawal",
+    { raceId: race.id, horseId: horse.id },
+    true,
+    value,
+    currentDay,
+  );
+
+  return {
+    ...aiState,
+    withdrawalHistory: trimmedHistory,
+    learningState: newLearningState,
+    personalityState: newPersonalityState,
+  };
 }
 
 /**
- * Record withdrawal outcome for learning
+ * Record withdrawal outcome for learning.
+ *
+ * Finds the matching decision, records the outcome, and updates
+ * the learning state for adaptive improvement.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param horseId - ID of the horse
+ * @param raceId - ID of the race
+ * @param horseResult - Result if horse ran (optional)
+ * @param alternativeRaceResult - Result from alternative race (optional)
+ * @param currentDay - Current game day
+ * @returns Updated withdrawal AI state
  */
 export function recordWithdrawalOutcome(
   aiState: WithdrawalAIState,
@@ -270,39 +351,54 @@ export function recordWithdrawalOutcome(
   alternativeRaceResult: number | undefined,
   currentDay: number,
 ): WithdrawalAIState {
-  const decision = aiState.withdrawalHistory.find(
+  const decisionIndex = aiState.withdrawalHistory.findIndex(
     (d) => d.horseId === horseId && d.raceId === raceId && !d.outcome,
   );
 
-  if (decision) {
+  if (decisionIndex !== -1) {
+    const decision = { ...aiState.withdrawalHistory[decisionIndex] };
     decision.outcome = {
       horseResult,
       alternativeRaceResult,
     };
 
-    // Update learning state
+    const newHistory = [...aiState.withdrawalHistory];
+    newHistory[decisionIndex] = decision;
+
     const contextKey = decision.personality;
     const success = decision.withdrew
       ? (alternativeRaceResult || 0) > (horseResult || 0)
       : (horseResult || 0) <= 3;
 
-    aiState.learningState = recordOutcome(
+    const newLearningState = recordLearningOutcome(
       aiState.learningState,
       "withdrawal",
       contextKey,
       success,
       decision.withdrew ? (alternativeRaceResult || 0) - (horseResult || 0) : horseResult || 0,
-      Date.now(),
       currentDay,
       aiState.personalityState.memoryDepth,
     );
+
+    return {
+      ...aiState,
+      withdrawalHistory: newHistory,
+      learningState: newLearningState,
+    };
   }
 
   return aiState;
 }
 
 /**
- * Get withdrawal insights for a stable
+ * Get withdrawal insights for a stable.
+ *
+ * Calculates withdrawal statistics including total decisions,
+ * withdrawal rate, average risk score, strategic success, and common reasons.
+ *
+ * @param aiState - Current withdrawal AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with withdrawal statistics
  */
 export function getWithdrawalInsights(
   aiState: WithdrawalAIState,
@@ -319,11 +415,9 @@ export function getWithdrawalInsights(
   const withdrawals = stableHistory.filter((d) => d.withdrew).length;
   const withdrawalRate = totalDecisions > 0 ? withdrawals / totalDecisions : 0;
 
-  // Calculate average risk score for withdrawals
   const withdrawalDecisions = stableHistory.filter((d) => d.withdrew);
-  const avgRiskScore = withdrawalDecisions.length > 0 ? 60 : 40; // Simplified
+  const avgRiskScore = withdrawalDecisions.length > 0 ? 60 : 40;
 
-  // Strategic success: did withdrawals lead to better outcomes?
   const successfulWithdrawals = stableHistory.filter(
     (d) =>
       d.withdrew &&
@@ -335,7 +429,6 @@ export function getWithdrawalInsights(
   const strategicSuccess =
     withdrawalDecisions.length > 0 ? successfulWithdrawals / withdrawalDecisions.length : 0.5;
 
-  // Common reasons
   const commonReasons: Record<string, number> = {};
   for (const decision of withdrawalDecisions) {
     if (decision.reason) {

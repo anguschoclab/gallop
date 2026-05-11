@@ -1,7 +1,24 @@
+/**
+ * state/coreState.ts - Core state management
+ *
+ * This file provides core game state that is always present and required for the game
+ * to function, including day, cash, horses, races, log, news, season records, hall of
+ * fame, and archive for historical data.
+ *
+ * Dependencies: ../types (Horse, Race), @/core/narrative/newsTypes (NewsItem), @/core/history/historyTypes (HallOfFameEntry, SeasonRecord), ../uuid (generateUUID), ../rng (createRng, hashStr)
+ * Related files: store.ts (uses core state), types.ts (core types)
+ */
+
 // Core State - Essential game loop properties
 // These fields are always present and the game cannot run without them
 
 import type { Horse, Race } from "../types";
+import type { NewsItem } from "@/core/narrative/newsTypes";
+import type { HallOfFameEntry, SeasonRecord } from "@/core/history/historyTypes";
+import { generateUUID } from "@/core/uuid";
+import { createRng, hashStr } from "@/game/rng";
+import { generateHorse } from "@/core/horse/horseFactory";
+import type { NewGameOptions } from "./types";
 
 /**
  * Core game state that is always present and required for the game to function.
@@ -18,11 +35,29 @@ export interface CoreState {
   races: Race[];
   /** Game log for significant events */
   log: { day: number; text: string }[];
+  /** Structured news items for the Gallop Gazette */
+  news: NewsItem[];
+  /** Historical records of major race winners */
+  seasonRecords: SeasonRecord[];
+  /** Legendary horses preserved for history */
+  hallOfFame: HallOfFameEntry[];
+  /** Historical data moved out of active state for performance */
+  archive: {
+    horses: Horse[];
+    races: Race[];
+    pregnancies: any[];
+    news: NewsItem[];
+  };
 }
 
 /**
- * Default core state for new games
+ * Create default core state for new games.
+ *
  * When options are provided, uses the backstory to customize starting resources
+ * including player horses, cash, and initial news items.
+ *
+ * @param options - Optional new game options including profile and backstory
+ * @returns Core game state with day, cash, horses, races, log, news, season records, hall of fame, and archive
  */
 export function createDefaultCoreState(options?: NewGameOptions): CoreState {
   if (options) {
@@ -51,6 +86,24 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
           text: `${profile.stableName} opens its doors. Welcome, ${profile.ownerName}.`,
         },
       ],
+      news: [
+        {
+          id: generateUUID(),
+          day: 1,
+          category: "milestone",
+          importance: "high",
+          headline: `${profile.stableName} Opens for Business!`,
+          body: `The local racing community is abuzz as ${profile.ownerName} officially registers ${profile.stableName}. "We're here to make history," the new owner stated at the morning trials.`,
+        },
+      ],
+      seasonRecords: [],
+      hallOfFame: [],
+      archive: {
+        horses: [],
+        races: [],
+        pregnancies: [],
+        news: [],
+      },
     };
   }
 
@@ -61,5 +114,23 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
     horses: [],
     races: [],
     log: [{ day: 1, text: "Welcome to Gallop! Your stable is now open for business." }],
+    news: [
+      {
+        id: generateUUID(),
+        day: 1,
+        category: "milestone",
+        importance: "high",
+        headline: "Welcome to Gallop!",
+        body: "Your stable is now open for business. Good luck on the road to the Triple Crown!",
+      },
+    ],
+    seasonRecords: [],
+    hallOfFame: [],
+    archive: {
+      horses: [],
+      races: [],
+      pregnancies: [],
+      news: [],
+    },
   };
 }

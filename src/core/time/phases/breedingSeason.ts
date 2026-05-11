@@ -1,5 +1,16 @@
+/**
+ * phases/breedingSeason.ts - Breeding season reset phase
+ *
+ * This file provides the breeding season reset phase that zeros out stud.seasonBookings
+ * for stallions on the first day of each hemisphere's breeding season.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/calendar/breedingCalendar (isBreedingSeasonStart)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
+import { PHASE_ORDER_BREEDING_SEASON } from "@/game/constants/gameConstants";
 
 /**
  * Phase: Breeding Season Reset
@@ -9,7 +20,7 @@ import { isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
  */
 export const breedingSeasonPhase = {
   name: "breedingSeason",
-  order: 35, // After aging (30), before market (50)
+  order: PHASE_ORDER_BREEDING_SEASON, // After aging (30), before market (50)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const northernStart = isBreedingSeasonStart(newDay, "Northern");

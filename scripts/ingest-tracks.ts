@@ -160,7 +160,9 @@ async function run() {
       // In a real scenario, we'd distinguish between multiple ways on OSM
       track.courses.forEach((c) => {
         c.sections = sections;
-        c.circumference = Math.round(sections.reduce((acc: number, s: Section) => acc + s.length, 0));
+        c.circumference = Math.round(
+          sections.reduce((acc: number, s: Section) => acc + s.length, 0),
+        );
         // Find longest straight for home straight
         const straights = sections.filter((s) => s.type === "straight");
         c.straightLength =

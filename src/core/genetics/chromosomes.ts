@@ -1,4 +1,14 @@
 /**
+ * chromosomes.ts - Chromosome model for genetic inheritance
+ *
+ * This file implements chromosome-based crossover with linkage groups,
+ * providing chromosome identifiers, locus coordinates, and crossover events.
+ *
+ * Dependencies: @/game/rng (Rng), ./types (Locus)
+ * Related files: inheritance.ts (uses chromosome crossover), linkageMap.ts (provides linkage data)
+ */
+
+/**
  * Chromosome Model for Genetic Inheritance
  * Implements chromosome-based crossover with linkage groups
  */

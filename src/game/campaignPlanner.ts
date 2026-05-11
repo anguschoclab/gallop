@@ -1,3 +1,13 @@
+/**
+ * campaignPlanner.ts - Campaign planning and slot generation
+ *
+ * This file generates and updates campaign race slots by scanning upcoming races
+ * and matching them to the horse's goal and aptitudes.
+ *
+ * Dependencies: ./types (Horse, Race, HorseCampaign, CampaignRaceSlot, CampaignFlag, ConfirmedAptitudes, Stable), ./gradedRaces (GRADED_RACES, GradedRace), ./raceSchedule (getCurrentYear), @/core/ai/campaignAI (detectContender, getOptimalMajorRaceTarget, getPrepRaceStrategy, createCampaignAIState), @/core/ai/npcCycleAI (getOrCreateStableAIState, NpcAIManager)
+ * Related files: autoEntryRunner.ts (uses campaign slots for auto-entry), scheduler.ts (uses for campaign management)
+ */
+
 // Campaign Planner
 // Generates and updates CampaignRaceSlot[] for a HorseCampaign by scanning
 // upcoming races and matching them to the horse's goal and aptitudes.
@@ -20,6 +30,7 @@ import {
   getPrepRaceStrategy,
   createCampaignAIState,
 } from "@/core/ai/campaignAI";
+import type { TripleCrownProgress } from "@/core/campaign/types";
 import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 
 // ── Distance band helpers ────────────────────────────────────────────────────
@@ -63,11 +74,56 @@ export type PlannerInput = {
   currentDay: number;
   stable?: Stable;
   npcAIManager?: NpcAIManager;
+  triplecrownHistory?: TripleCrownProgress[];
+};
+
+/**
+ * Strategy for building campaign slots based on goal type.
+ */
+interface GoalStrategy {
+  build: (
+    candidateRaces: Race[],
+    preserved: CampaignRaceSlot[],
+    apts: ConfirmedAptitudes,
+    currentDay: number,
+  ) => CampaignRaceSlot[];
+}
+
+/**
+ * Registry of goal strategies indexed by campaign goal type.
+ */
+const CAMPAIGN_GOAL_STRATEGIES: Record<HorseCampaign["goalType"], GoalStrategy> = {
+  chase_g1: {
+    build: (races, preserved, apts, day) => buildGradeChaseSlots(races, "G1", preserved, apts, day),
+  },
+  chase_g2: {
+    build: (races, preserved, apts, day) => buildGradeChaseSlots(races, "G2", preserved, apts, day),
+  },
+  chase_g3: {
+    build: (races, preserved, apts, day) => buildGradeChaseSlots(races, "G3", preserved, apts, day),
+  },
+  maximize_earnings: {
+    build: (races, preserved, apts, day) => buildEarningsSlots(races, preserved, apts, day),
+  },
+  develop_maiden: {
+    build: (races, preserved, _apts, day) => buildMaidenSlots(races, preserved, day),
+  },
+  chase_major_race: {
+    build: (_races, preserved) => preserved, // Handled separately for contender detection
+  },
+  free_run: {
+    build: (_races, preserved) => preserved,
+  },
 };
 
 /**
  * Build a fresh set of CampaignRaceSlots from available races + GRADED_RACES calendar.
- * Existing "entered" or "completed" slots are preserved.
+ *
+ * Existing "entered" or "completed" slots are preserved. Uses AI-driven major race targeting
+ * for NPCs when AI manager is available.
+ *
+ * @param input - Planner input including horse, campaign, races, current day, stable, and AI manager
+ * @returns Array of campaign race slots
  */
 export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
   const { horse, campaign, races, currentDay, stable, npcAIManager } = input;
@@ -95,14 +151,16 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
     }
     if (aiState.campaignAI) {
       // Check if horse is a contender
-      const contenderStatus = detectContender(aiState.campaignAI, horse, currentDay);
-      if (contenderStatus.isContender && !targetRaceKey) {
+      const updatedState = detectContender(aiState.campaignAI, horse, currentDay);
+      const horseStatus = updatedState.contenderTracking[horse.id];
+      if (horseStatus?.isContender && !targetRaceKey) {
         // Auto-assign optimal major race target
         const optimalTarget = getOptimalMajorRaceTarget(
           aiState.campaignAI,
           horse,
           stable,
           currentDay,
+          input.triplecrownHistory ?? [],
         );
         if (optimalTarget) {
           const targetGraded = GRADED_RACES.find((g) => g.key === optimalTarget);
@@ -138,22 +196,13 @@ export function buildCampaignSlots(input: PlannerInput): CampaignRaceSlot[] {
     }
   }
 
-  // Otherwise select races by goal
-  switch (goalType) {
-    case "chase_g1":
-      return buildGradeChaseSlots(candidateRaces, "G1", preserved, confirmedAptitudes, currentDay);
-    case "chase_g2":
-      return buildGradeChaseSlots(candidateRaces, "G2", preserved, confirmedAptitudes, currentDay);
-    case "chase_g3":
-      return buildGradeChaseSlots(candidateRaces, "G3", preserved, confirmedAptitudes, currentDay);
-    case "maximize_earnings":
-      return buildEarningsSlots(candidateRaces, preserved, confirmedAptitudes, currentDay);
-    case "develop_maiden":
-      return buildMaidenSlots(candidateRaces, preserved, currentDay);
-    case "free_run":
-    default:
-      return preserved;
-  }
+  // Otherwise select races by goal via strategy pattern
+  return CAMPAIGN_GOAL_STRATEGIES[goalType].build(
+    candidateRaces,
+    preserved,
+    confirmedAptitudes,
+    currentDay,
+  );
 }
 
 function buildPrepChain(
@@ -347,6 +396,17 @@ function buildMaidenSlots(
 
 // ── Flag generation ───────────────────────────────────────────────────────────
 
+/**
+ * Generate campaign flags for a horse based on current state.
+ *
+ * Creates flags for low energy, health issues, and upgrade availability.
+ * Preserves existing flags unless dismissed.
+ *
+ * @param horse - The horse to generate flags for
+ * @param campaign - The horse's campaign
+ * @param currentDay - Current simulation day
+ * @returns Array of campaign flags
+ */
 export function generateCampaignFlags(
   horse: Horse,
   campaign: HorseCampaign,
@@ -398,6 +458,17 @@ export function generateCampaignFlags(
 
 // ── Aptitude update from race result ─────────────────────────────────────────
 
+/**
+ * Update campaign aptitudes from a race result.
+ *
+ * Increments surface and distance band start counts. Confirms surface and distance band
+ * after 3 starts with 60% majority.
+ *
+ * @param apts - Current confirmed aptitudes
+ * @param surface - Surface of the race
+ * @param distance - Distance of the race in meters
+ * @returns Updated confirmed aptitudes
+ */
 export function updateCampaignAptitudes(
   apts: ConfirmedAptitudes,
   surface: "Turf" | "Dirt" | "Synthetic",

@@ -14,7 +14,10 @@ import type {
 import { createTestGenotype } from "./createTestGenotype";
 
 /**
- * Creates valid test horse stats
+ * Creates valid test horse stats.
+ *
+ * @param overrides - Optional stat properties to override defaults
+ * @returns Complete HorseStats object
  */
 function createTestHorseStats(overrides?: Partial<HorseStats>): HorseStats {
   return {
@@ -27,7 +30,9 @@ function createTestHorseStats(overrides?: Partial<HorseStats>): HorseStats {
 }
 
 /**
- * Creates valid test horse markings
+ * Creates valid test horse markings.
+ *
+ * @returns Complete HorseMarkings object
  */
 function createTestHorseMarkings(): HorseMarkings {
   return {
@@ -40,7 +45,10 @@ function createTestHorseMarkings(): HorseMarkings {
 }
 
 /**
- * Creates a complete valid test horse with ALL required properties
+ * Creates a complete valid test horse with ALL required properties.
+ *
+ * @param overrides - Optional horse properties to override defaults
+ * @returns Complete Horse object
  */
 export function createTestHorse(overrides?: Partial<Horse>): Horse {
   return {
@@ -141,7 +149,10 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
 }
 
 /**
- * Creates a test horse with specific gender
+ * Creates a test horse with specific gender (colt).
+ *
+ * @param overrides - Optional horse properties to override defaults
+ * @returns Complete Horse object
  */
 export function createTestColt(overrides?: Partial<Horse>): Horse {
   return createTestHorse({ gender: "colt", age: 3, ...overrides });
@@ -151,7 +162,7 @@ export function createTestFilly(overrides?: Partial<Horse>): Horse {
   return createTestHorse({ gender: "filly", age: 3, ...overrides });
 }
 
-export function createTestAdultHorse(overrides?: Partial<Horse>): Horse {
+export function createTestStallion(overrides?: Partial<Horse>): Horse {
   return createTestHorse({ gender: "horse", age: 5, ...overrides });
 }
 
@@ -164,7 +175,11 @@ export function createTestGelding(overrides?: Partial<Horse>): Horse {
 }
 
 /**
- * Creates an array of test horses
+ * Creates an array of test horses.
+ *
+ * @param count - Number of horses to create
+ * @param baseOverrides - Optional horse properties to apply to all horses
+ * @returns Array of Horse objects
  */
 export function createTestHorses(count: number, baseOverrides?: Partial<Horse>): Horse[] {
   return Array.from({ length: count }, (_, i) =>
@@ -177,7 +192,10 @@ export function createTestHorses(count: number, baseOverrides?: Partial<Horse>):
 }
 
 /**
- * Creates a test horse owned by NPC
+ * Creates a test horse owned by NPC.
+ *
+ * @param overrides - Optional horse properties to override defaults
+ * @returns Complete Horse object
  */
 export function createTestNpcHorse(overrides?: Partial<Horse>): Horse {
   return createTestHorse({

@@ -1,3 +1,14 @@
+/**
+ * npc/intentGenerators.ts - NPC intent generators
+ *
+ * This file provides intent generation for NPC stables during the intent
+ * collection phase, including training, race entry, breeding, claiming,
+ * and withdrawal intents.
+ *
+ * Dependencies: @/core/resolver/intents (intent types), @/game/types (GameState, Horse, Race, Stable), @/game/uuid (generateUUID), @/core/stable/stableConfig (PERSONALITY_CONFIG), @/game/claiming (isHorseEligibleForClaimingPrice), @/core/horse/stats (calculateOverallRating), @/core/ai/trainingAI (training AI functions), @/core/ai/claimingAI (claiming AI functions), @/core/ai/raceEntryAI (race entry AI functions), @/core/ai/npcCycleAI (NpcAIManager functions)
+ * Related files: npcCycle.ts (uses intents)
+ */
+
 // NPC Intent Generators
 // Generates intents for NPC stables during the intent collection phase
 
@@ -9,8 +20,8 @@ import type {
   ClaimingIntent,
   WithdrawFromClaimingIntent,
 } from "@/core/resolver/intents";
-import type { GameState, Horse, Race, Stable } from "@/game/types";
-import { generateUUID } from "@/game/uuid";
+import type { GameState, Horse, Race, Stable, Jockey } from "@/game/types";
+import { generateUUID } from "@/core/uuid";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
 import { calculateOverallRating } from "@/core/horse/stats";
@@ -21,28 +32,152 @@ import {
   updateHorseTraining,
   recordTrainingOutcome,
 } from "@/core/ai/trainingAI";
+import { createRaceEntryAIState, calculateStrategicEntryScore } from "@/core/ai/raceEntryAI";
+import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import {
   createClaimingAIState,
   shouldClaimHorse,
-  recordClaimingDecision,
+  recordClaimingOutcome,
 } from "@/core/ai/claimingAI";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import {
+  createWithdrawalAIState,
+  shouldWithdrawHorse,
+  recordWithdrawalDecision,
+} from "@/core/ai/withdrawalAI";
+import {
+  getOrCreateStableAIState,
+  updateStableAIState,
+  type NpcAIManager,
+  type StableAIState,
+} from "@/core/ai/npcCycleAI";
+import { calculateOptimalTactics, createJockeyStrategyAIState } from "@/core/ai/jockeyStrategyAI";
 
 /**
- * Generate all NPC intents for the day
+ * Generate all NPC intents for the day.
+ *
+ * Generates intent objects for all NPC stables including breeding, race entries,
+ * claiming, auction participation, and facility upgrades based on AI state and
+ * current game conditions.
+ *
+ * @param state - Current game state
+ * @param day - Current game day
+ * @returns Array of intent objects for all NPC actions
  */
 export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
   const intents: AnyIntent[] = [];
+  const aiManager = state.npcAIManager;
 
-  // Generate training intents for each NPC stable
+  // Index horses by stable for fast lookup
+  const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+  const horsesByStable = new Map<string, Horse[]>();
+  for (const horse of state.horses) {
+    if (horse.stableId) {
+      if (!horsesByStable.has(horse.stableId)) horsesByStable.set(horse.stableId, []);
+      horsesByStable.get(horse.stableId)!.push(horse);
+    }
+  }
+
+  // Pre-index active pregnancies
+  const activePregnanciesByDam = new Set<string>();
+  if (state.pregnancies) {
+    for (const p of state.pregnancies) {
+      if (!p.resolved) activePregnanciesByDam.add(p.damId);
+    }
+  }
+
+  // Cache upcoming races and index them by region
+  const upcomingRaces = state.races.filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
+
+  const racesByRegion = new Map<string, Race[]>();
+  const globalGradedRaces: Race[] = [];
+
+  for (const race of upcomingRaces) {
+    const region = race.graded ? race.graded.country || "Other" : "Other";
+    if (!racesByRegion.has(region)) racesByRegion.set(region, []);
+    racesByRegion.get(region)!.push(race);
+
+    if (race.graded) {
+      globalGradedRaces.push(race);
+    }
+  }
+
+  // Pre-index entries for faster lookup in loops
+  const raceEntrySets = new Map<string, Set<string>>();
+  for (const race of upcomingRaces) {
+    raceEntrySets.set(race.id, new Set(race.entries.map((e) => e.horseId)));
+  }
+
+  // Generate intents for each NPC stable
   for (const stable of state.npcStables) {
-    intents.push(...generateNpcTrainingIntents(state, stable, day));
-    intents.push(...generateNpcRaceEntryIntents(state, stable, day));
-    intents.push(...generateNpcBreedingIntents(state, stable, day));
-    // NPC auction bidding lives in auctionRunner / resolveAuctionSale, not the
-    // intent pipeline — auctions are theatrical and resolve in their own pass.
-    intents.push(...generateNpcClaimingIntents(state, stable, day));
-    intents.push(...generateNpcWithdrawalIntents(state, stable, day));
+    const ownedHorses = horsesByStable.get(stable.id) || [];
+
+    // Get or create AI state for this stable
+    const stableAI = aiManager ? getOrCreateStableAIState(aiManager, stable, day) : undefined;
+
+    // Only check races in the stable's country, plus any Graded races (which are "global")
+    const stableRegion = stable.country || "Other";
+    const relevantRaces = [
+      ...(racesByRegion.get(stableRegion) || []),
+      ...globalGradedRaces.filter((r) => r.graded?.country !== stableRegion),
+    ];
+
+    intents.push(
+      ...generateNpcTrainingIntents(
+        state,
+        stable,
+        stableAI,
+        day,
+        ownedHorses,
+        activePregnanciesByDam,
+      ),
+    );
+    intents.push(
+      ...generateNpcRaceEntryIntents(
+        state,
+        stable,
+        stableAI,
+        day,
+        ownedHorses,
+        relevantRaces,
+        raceEntrySets,
+      ),
+    );
+    intents.push(
+      ...generateNpcBreedingIntents(
+        state,
+        stable,
+        stableAI,
+        day,
+        ownedHorses,
+        activePregnanciesByDam,
+      ),
+    );
+    intents.push(
+      ...generateNpcClaimingIntents(state, stable, stableAI, day, relevantRaces, horseMap),
+    );
+    intents.push(
+      ...generateNpcWithdrawalIntents(
+        state,
+        stable,
+        stableAI,
+        day,
+        ownedHorses,
+        relevantRaces,
+        horseMap,
+      ),
+    );
+
+    // Update stable AI state in the manager
+    if (aiManager && stableAI) {
+      const updatedState = updateStableAIState(stableAI, day);
+      // Use a safer way to update the state that handles potential readonly issues
+      try {
+        aiManager.stableStates[stable.id] = updatedState;
+      } catch (e) {
+        // Fallback for readonly state (e.g. during development/tests)
+        // Note: This won't persist if the manager isn't updated in the state
+      }
+    }
   }
 
   return intents;
@@ -50,24 +185,35 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
 
 /**
  * Generate training intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param activePregnanciesByDam - Set of IDs for horses that are currently pregnant
+ * @returns Array of training intents
  */
 function generateNpcTrainingIntents(
   state: GameState,
   stable: Stable,
+  stableAI: StableAIState | undefined,
   day: number,
+  ownedHorses: Horse[],
+  activePregnanciesByDam: Set<string>,
 ): TrainingIntent[] {
   const intents: TrainingIntent[] = [];
-  const ownedHorses = state.horses.filter((h) => h.stableId === stable.id);
 
-  // Skip AI state management for now to avoid stack overflow
-  // TODO: Re-enable AI state once serialization issues are resolved
-
-  // Create training AI state
-  const trainingAI = createTrainingAIState(stable);
+  // Use persisted AI state if available, otherwise fallback to temporary state
+  const trainingAI =
+    stableAI?.trainingAI ||
+    (stableAI
+      ? (stableAI.trainingAI = createTrainingAIState(stable))
+      : createTrainingAIState(stable));
 
   for (const horse of ownedHorses) {
     // AI-driven training decision
-    if (horse.energy >= 15 && !state.pregnancies.some((p) => !p.resolved && p.damId === horse.id)) {
+    if (horse.energy >= 15 && !activePregnanciesByDam.has(horse.id)) {
       // Use AI to determine if horse should train today
       if (shouldTrainToday(trainingAI, horse, day)) {
         // Use AI to select training type
@@ -93,21 +239,66 @@ function generateNpcTrainingIntents(
 
 /**
  * Generate race entry intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param upcomingRaces - Array of upcoming races to consider
+ * @param raceEntrySets - Map of race IDs to sets of horse IDs already entered
+ * @returns Array of race entry intents
  */
 function generateNpcRaceEntryIntents(
   state: GameState,
   stable: Stable,
+  stableAI: StableAIState | undefined,
   day: number,
+  ownedHorses: Horse[],
+  upcomingRaces: Race[],
+  raceEntrySets: Map<string, Set<string>>,
 ): RaceEntryIntent[] {
   const intents: RaceEntryIntent[] = [];
-  const ownedHorses = state.horses.filter((h) => h.stableId === stable.id);
-  const upcomingRaces = state.races.filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
+
+  // Use persisted AI state if available, otherwise fallback to temporary state
+  const raceEntryAI =
+    stableAI?.raceEntryAI ||
+    (stableAI
+      ? (stableAI.raceEntryAI = createRaceEntryAIState(stable))
+      : createRaceEntryAIState(stable));
+
+  // Initialize jockey strategy AI if not present
+  const jockeyStrategyAI =
+    stableAI?.jockeyStrategyAI ||
+    (stableAI
+      ? (stableAI.jockeyStrategyAI = createJockeyStrategyAIState(stable))
+      : createJockeyStrategyAIState(stable));
+
+  // Create a jockey map for tactics calculation (use first available jockey for now)
+  const jockeyMap = new Map((state.jockeys || []).map((j) => [j.id, j]));
 
   for (const race of upcomingRaces) {
+    const entrySet = raceEntrySets.get(race.id);
     for (const horse of ownedHorses) {
-      // Simple logic: enter if horse is eligible and has energy
-      if (horse.energy >= 40 && !race.entries.some((e) => e.horseId === horse.id)) {
+      // Skip if already entered
+      if (entrySet && entrySet.has(horse.id)) continue;
+
+      // Use AI to determine suitability
+      const suitability = calculateStrategicEntryScore(raceEntryAI, horse, race, stable, day);
+
+      if (suitability > 60) {
         if (race.entries.length < race.fieldSize) {
+          // Calculate optimal tactics for this horse in this race
+          const jockey = (state.jockeys || [])[0]; // Use first jockey for tactics calculation
+          if (!jockey) continue;
+          const tactics = calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable) as
+            | "lead"
+            | "rail"
+            | "outside"
+            | "save"
+            | "late_kick"
+            | "default";
+
           intents.push({
             id: generateUUID(),
             entityId: race.id,
@@ -118,6 +309,7 @@ function generateNpcRaceEntryIntents(
             type: "race_entry",
             raceId: race.id,
             horseId: horse.id,
+            tactics,
           });
         }
       }
@@ -129,72 +321,63 @@ function generateNpcRaceEntryIntents(
 
 /**
  * Generate breeding intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param activePregnanciesByDam - Set of IDs for horses that are currently pregnant
+ * @returns Array of breeding intents (currently empty as breeding is handled elsewhere)
  */
 function generateNpcBreedingIntents(
   state: GameState,
   stable: Stable,
+  stableAI: StableAIState | undefined,
   day: number,
+  ownedHorses: Horse[],
+  activePregnanciesByDam: Set<string>,
 ): BreedingIntent[] {
-  const intents: BreedingIntent[] = [];
-  const ownedHorses = state.horses.filter((h) => h.stableId === stable.id);
-
-  // Find eligible mares and stallions
-  const mares = ownedHorses.filter((h) => h.gender === "mare" && h.age >= 3 && h.age <= 15);
-  const stallions = ownedHorses.filter(
-    (h) => (h.gender === "horse" || h.gender === "gelding") && h.stud?.atStud,
-  );
-
-  for (const mare of mares) {
-    // Skip if already pregnant
-    if (state.pregnancies.some((p) => !p.resolved && p.damId === mare.id)) continue;
-
-    for (const stallion of stallions) {
-      // Simple logic: breed if stable has cash and stallion has bookings available
-      if (
-        stable.cash >= 2000 &&
-        stallion.stud &&
-        stallion.stud.seasonBookings < stallion.stud.bookSize
-      ) {
-        intents.push({
-          id: generateUUID(),
-          entityId: mare.id,
-          source: "npc",
-          sourceId: stable.id,
-          day,
-          priority: 50,
-          type: "breeding",
-          sireId: stallion.id,
-          damId: mare.id,
-          liveFoalGuarantee: false,
-        });
-        break; // One breeding per mare per day
-      }
-    }
-  }
-
-  return intents;
+  // Breeding is now handled entirely by the autonomous npcBreedingPhase
+  // at the start of the breeding season.
+  return [];
 }
 
 /**
  * Generate claiming intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param upcomingRaces - Array of upcoming races to consider
+ * @param horseMap - Map of all horses for fast lookup
+ * @returns Array of claiming intents
  */
 function generateNpcClaimingIntents(
   state: GameState,
   stable: Stable,
+  stableAI: StableAIState | undefined,
   day: number,
+  upcomingRaces: Race[],
+  horseMap: Map<string, Horse>,
 ): ClaimingIntent[] {
   const intents: ClaimingIntent[] = [];
-  const upcomingRaces = state.races.filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
 
-  // Create claiming AI state
-  const claimingAI = createClaimingAIState(stable);
+  // Use persisted AI state if available, otherwise fallback to temporary state
+  const claimingAI =
+    stableAI?.claimingAI ||
+    (stableAI
+      ? (stableAI.claimingAI = createClaimingAIState(stable))
+      : createClaimingAIState(stable));
 
   for (const race of upcomingRaces) {
     // Skip if not a claiming race
     if (!race.claimingPrice) continue;
 
     for (const entry of race.entries) {
-      const horse = state.horses.find((h) => h.id === entry.horseId);
+      const horse = horseMap.get(entry.horseId);
+
       if (!horse) continue;
       if (horse.stableId === stable.id) continue; // Don't claim own horses
 
@@ -228,46 +411,65 @@ function generateNpcClaimingIntents(
 
 /**
  * Generate withdrawal intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @param upcomingRaces - Array of upcoming races to consider
+ * @param horseMap - Map of all horses for fast lookup
+ * @returns Array of withdrawal intents
  */
 function generateNpcWithdrawalIntents(
   state: GameState,
   stable: Stable,
+  stableAI: StableAIState | undefined,
   day: number,
+  ownedHorses: Horse[],
+  upcomingRaces: Race[],
+  horseMap: Map<string, Horse>,
 ): WithdrawFromClaimingIntent[] {
   const intents: WithdrawFromClaimingIntent[] = [];
-  const personality = PERSONALITY_CONFIG[stable.personality];
-  const upcomingRaces = state.races.filter((r) => !r.resolved && r.day >= day && r.day <= day + 7);
+
+  // Use persisted AI state if available, otherwise fallback to temporary state
+  const withdrawalAI =
+    stableAI?.withdrawalAI ||
+    (stableAI
+      ? (stableAI.withdrawalAI = createWithdrawalAIState(stable))
+      : createWithdrawalAIState(stable));
 
   for (const race of upcomingRaces) {
-    // Skip if not an optional claiming race
-    if (race.raceClass !== "OptionalClaiming" && race.raceClass !== "MaidenOptionalClaiming")
-      continue;
-
-    // Personality-based withdrawal propensity
-    const withdrawalPropensity =
-      stable.personality === "conservative"
-        ? 0.7
-        : stable.personality === "developer"
-          ? 0.6
-          : stable.personality === "breeder"
-            ? 0.5
-            : 0.2;
+    // Skip if not a claiming race
+    if (!race.claimingPrice) continue;
 
     for (const entry of race.entries) {
-      const horse = state.horses.find((h) => h.id === entry.horseId);
+      if (entry.stableId !== stable.id) continue;
+
+      const horse = horseMap.get(entry.horseId);
       if (!horse) continue;
-      if (horse.stableId !== stable.id) continue; // Only own horses
-      if (entry.withdrawnFromClaiming) continue; // Already withdrawn
 
-      // Random check based on personality
-      if (Math.random() > withdrawalPropensity) continue;
+      // Use AI to determine if horse should be withdrawn from claiming
+      const { shouldWithdraw, reason } = shouldWithdrawHorse(
+        withdrawalAI,
+        horse,
+        race,
+        stable,
+        day,
+      );
 
-      // Check horse value vs claiming price
-      const overall = calculateOverallRating(horse);
-      const estimatedValue = overall * 1000;
+      if (shouldWithdraw) {
+        // Record the decision
+        recordWithdrawalDecision(
+          withdrawalAI,
+          horse,
+          race,
+          stable,
+          true,
+          reason || "risk_assessment",
+          day,
+        );
 
-      // Withdraw if horse is significantly undervalued
-      if (estimatedValue > race.claimingPrice! * 1.3) {
         intents.push({
           id: generateUUID(),
           entityId: horse.id,

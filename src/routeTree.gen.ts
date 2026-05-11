@@ -9,12 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestJockeyAvatarRouteImport } from './routes/test-jockey-avatar'
 import { Route as StallionsRouteImport } from './routes/stallions'
+import { Route as StaffRouteImport } from './routes/staff'
 import { Route as StableRouteImport } from './routes/stable'
 import { Route as SireWatchRouteImport } from './routes/sire-watch'
 import { Route as SireLeaderboardsRouteImport } from './routes/sire-leaderboards'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SchedulerRouteImport } from './routes/scheduler'
+import { Route as RecordsRouteImport } from './routes/records'
 import { Route as RecapRouteImport } from './routes/recap'
 import { Route as RacesRouteImport } from './routes/races'
 import { Route as RaceBrowserRouteImport } from './routes/race-browser'
@@ -24,13 +27,18 @@ import { Route as MarketRouteImport } from './routes/market'
 import { Route as JockeysRouteImport } from './routes/jockeys'
 import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
 import { Route as HallOfFameRouteImport } from './routes/hall-of-fame'
+import { Route as GazetteRouteImport } from './routes/gazette'
 import { Route as FinancialReportRouteImport } from './routes/financial-report'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
+import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as BroodmaresRouteImport } from './routes/broodmares'
 import { Route as BreedingRouteImport } from './routes/breeding'
 import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AuctionRouteImport } from './routes/auction'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StableIndexRouteImport } from './routes/stable.index'
+import { Route as SireWatchIndexRouteImport } from './routes/sire-watch.index'
+import { Route as NpcStablesIndexRouteImport } from './routes/npc-stables.index'
 import { Route as CalendarIndexRouteImport } from './routes/calendar.index'
 import { Route as AuctionIndexRouteImport } from './routes/auction.index'
 import { Route as StableHorseIdRouteImport } from './routes/stable.$horseId'
@@ -41,9 +49,19 @@ import { Route as JockeyJockeyIdRouteImport } from './routes/jockey.$jockeyId'
 import { Route as CalendarRegionIdRouteImport } from './routes/calendar.$regionId'
 import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
 
+const TestJockeyAvatarRoute = TestJockeyAvatarRouteImport.update({
+  id: '/test-jockey-avatar',
+  path: '/test-jockey-avatar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StallionsRoute = StallionsRouteImport.update({
   id: '/stallions',
   path: '/stallions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StableRoute = StableRouteImport.update({
@@ -69,6 +87,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const SchedulerRoute = SchedulerRouteImport.update({
   id: '/scheduler',
   path: '/scheduler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordsRoute = RecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecapRoute = RecapRouteImport.update({
@@ -116,6 +139,11 @@ const HallOfFameRoute = HallOfFameRouteImport.update({
   path: '/hall-of-fame',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GazetteRoute = GazetteRouteImport.update({
+  id: '/gazette',
+  path: '/gazette',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FinancialReportRoute = FinancialReportRouteImport.update({
   id: '/financial-report',
   path: '/financial-report',
@@ -124,6 +152,11 @@ const FinancialReportRoute = FinancialReportRouteImport.update({
 const FacilitiesRoute = FacilitiesRouteImport.update({
   id: '/facilities',
   path: '/facilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BroodmaresRoute = BroodmaresRouteImport.update({
@@ -151,10 +184,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StableIndexRoute = StableIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StableRoute,
+} as any)
+const SireWatchIndexRoute = SireWatchIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SireWatchRoute,
+} as any)
+const NpcStablesIndexRoute = NpcStablesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NpcStablesRoute,
+} as any)
 const CalendarIndexRoute = CalendarIndexRouteImport.update({
-  id: '/calendar/',
-  path: '/calendar/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => CalendarRoute,
 } as any)
 const AuctionIndexRoute = AuctionIndexRouteImport.update({
   id: '/',
@@ -187,9 +235,9 @@ const JockeyJockeyIdRoute = JockeyJockeyIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CalendarRegionIdRoute = CalendarRegionIdRouteImport.update({
-  id: '/calendar/$regionId',
-  path: '/calendar/$regionId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$regionId',
+  path: '/$regionId',
+  getParentRoute: () => CalendarRoute,
 } as any)
 const AuctionSaleIdRoute = AuctionSaleIdRouteImport.update({
   id: '/$saleId',
@@ -203,8 +251,10 @@ export interface FileRoutesByFullPath {
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/calendar': typeof CalendarRouteWithChildren
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
+  '/gazette': typeof GazetteRoute
   '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
@@ -214,12 +264,15 @@ export interface FileRoutesByFullPath {
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
+  '/records': typeof RecordsRoute
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
   '/stable': typeof StableRouteWithChildren
+  '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
+  '/test-jockey-avatar': typeof TestJockeyAvatarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
@@ -229,6 +282,9 @@ export interface FileRoutesByFullPath {
   '/stable/$horseId': typeof StableHorseIdRoute
   '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
+  '/npc-stables/': typeof NpcStablesIndexRoute
+  '/sire-watch/': typeof SireWatchIndexRoute
+  '/stable/': typeof StableIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -237,21 +293,22 @@ export interface FileRoutesByTo {
   '/broodmares': typeof BroodmaresRoute
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
+  '/gazette': typeof GazetteRoute
   '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
   '/new-game': typeof NewGameRoute
-  '/npc-stables': typeof NpcStablesRouteWithChildren
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
+  '/records': typeof RecordsRoute
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
-  '/sire-watch': typeof SireWatchRouteWithChildren
-  '/stable': typeof StableRouteWithChildren
+  '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
+  '/test-jockey-avatar': typeof TestJockeyAvatarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
@@ -261,6 +318,9 @@ export interface FileRoutesByTo {
   '/stable/$horseId': typeof StableHorseIdRoute
   '/auction': typeof AuctionIndexRoute
   '/calendar': typeof CalendarIndexRoute
+  '/npc-stables': typeof NpcStablesIndexRoute
+  '/sire-watch': typeof SireWatchIndexRoute
+  '/stable': typeof StableIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -269,8 +329,10 @@ export interface FileRoutesById {
   '/awards': typeof AwardsRoute
   '/breeding': typeof BreedingRoute
   '/broodmares': typeof BroodmaresRoute
+  '/calendar': typeof CalendarRouteWithChildren
   '/facilities': typeof FacilitiesRoute
   '/financial-report': typeof FinancialReportRoute
+  '/gazette': typeof GazetteRoute
   '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
   '/jockeys': typeof JockeysRoute
@@ -280,12 +342,15 @@ export interface FileRoutesById {
   '/race-browser': typeof RaceBrowserRoute
   '/races': typeof RacesRoute
   '/recap': typeof RecapRoute
+  '/records': typeof RecordsRoute
   '/scheduler': typeof SchedulerRoute
   '/settings': typeof SettingsRoute
   '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/sire-watch': typeof SireWatchRouteWithChildren
   '/stable': typeof StableRouteWithChildren
+  '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
+  '/test-jockey-avatar': typeof TestJockeyAvatarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
   '/jockey/$jockeyId': typeof JockeyJockeyIdRoute
@@ -295,6 +360,9 @@ export interface FileRoutesById {
   '/stable/$horseId': typeof StableHorseIdRoute
   '/auction/': typeof AuctionIndexRoute
   '/calendar/': typeof CalendarIndexRoute
+  '/npc-stables/': typeof NpcStablesIndexRoute
+  '/sire-watch/': typeof SireWatchIndexRoute
+  '/stable/': typeof StableIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -304,8 +372,10 @@ export interface FileRouteTypes {
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/calendar'
     | '/facilities'
     | '/financial-report'
+    | '/gazette'
     | '/hall-of-fame'
     | '/horse-gallery'
     | '/jockeys'
@@ -315,12 +385,15 @@ export interface FileRouteTypes {
     | '/race-browser'
     | '/races'
     | '/recap'
+    | '/records'
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
     | '/sire-watch'
     | '/stable'
+    | '/staff'
     | '/stallions'
+    | '/test-jockey-avatar'
     | '/auction/$saleId'
     | '/calendar/$regionId'
     | '/jockey/$jockeyId'
@@ -330,6 +403,9 @@ export interface FileRouteTypes {
     | '/stable/$horseId'
     | '/auction/'
     | '/calendar/'
+    | '/npc-stables/'
+    | '/sire-watch/'
+    | '/stable/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -338,21 +414,22 @@ export interface FileRouteTypes {
     | '/broodmares'
     | '/facilities'
     | '/financial-report'
+    | '/gazette'
     | '/hall-of-fame'
     | '/horse-gallery'
     | '/jockeys'
     | '/market'
     | '/new-game'
-    | '/npc-stables'
     | '/race-browser'
     | '/races'
     | '/recap'
+    | '/records'
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
-    | '/sire-watch'
-    | '/stable'
+    | '/staff'
     | '/stallions'
+    | '/test-jockey-avatar'
     | '/auction/$saleId'
     | '/calendar/$regionId'
     | '/jockey/$jockeyId'
@@ -362,6 +439,9 @@ export interface FileRouteTypes {
     | '/stable/$horseId'
     | '/auction'
     | '/calendar'
+    | '/npc-stables'
+    | '/sire-watch'
+    | '/stable'
   id:
     | '__root__'
     | '/'
@@ -369,8 +449,10 @@ export interface FileRouteTypes {
     | '/awards'
     | '/breeding'
     | '/broodmares'
+    | '/calendar'
     | '/facilities'
     | '/financial-report'
+    | '/gazette'
     | '/hall-of-fame'
     | '/horse-gallery'
     | '/jockeys'
@@ -380,12 +462,15 @@ export interface FileRouteTypes {
     | '/race-browser'
     | '/races'
     | '/recap'
+    | '/records'
     | '/scheduler'
     | '/settings'
     | '/sire-leaderboards'
     | '/sire-watch'
     | '/stable'
+    | '/staff'
     | '/stallions'
+    | '/test-jockey-avatar'
     | '/auction/$saleId'
     | '/calendar/$regionId'
     | '/jockey/$jockeyId'
@@ -395,6 +480,9 @@ export interface FileRouteTypes {
     | '/stable/$horseId'
     | '/auction/'
     | '/calendar/'
+    | '/npc-stables/'
+    | '/sire-watch/'
+    | '/stable/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -403,8 +491,10 @@ export interface RootRouteChildren {
   AwardsRoute: typeof AwardsRoute
   BreedingRoute: typeof BreedingRoute
   BroodmaresRoute: typeof BroodmaresRoute
+  CalendarRoute: typeof CalendarRouteWithChildren
   FacilitiesRoute: typeof FacilitiesRoute
   FinancialReportRoute: typeof FinancialReportRoute
+  GazetteRoute: typeof GazetteRoute
   HallOfFameRoute: typeof HallOfFameRoute
   HorseGalleryRoute: typeof HorseGalleryRoute
   JockeysRoute: typeof JockeysRoute
@@ -414,25 +504,40 @@ export interface RootRouteChildren {
   RaceBrowserRoute: typeof RaceBrowserRoute
   RacesRoute: typeof RacesRoute
   RecapRoute: typeof RecapRoute
+  RecordsRoute: typeof RecordsRoute
   SchedulerRoute: typeof SchedulerRoute
   SettingsRoute: typeof SettingsRoute
   SireLeaderboardsRoute: typeof SireLeaderboardsRoute
   SireWatchRoute: typeof SireWatchRouteWithChildren
   StableRoute: typeof StableRouteWithChildren
+  StaffRoute: typeof StaffRoute
   StallionsRoute: typeof StallionsRoute
-  CalendarRegionIdRoute: typeof CalendarRegionIdRoute
+  TestJockeyAvatarRoute: typeof TestJockeyAvatarRoute
   JockeyJockeyIdRoute: typeof JockeyJockeyIdRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
-  CalendarIndexRoute: typeof CalendarIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-jockey-avatar': {
+      id: '/test-jockey-avatar'
+      path: '/test-jockey-avatar'
+      fullPath: '/test-jockey-avatar'
+      preLoaderRoute: typeof TestJockeyAvatarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stallions': {
       id: '/stallions'
       path: '/stallions'
       fullPath: '/stallions'
       preLoaderRoute: typeof StallionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stable': {
@@ -468,6 +573,13 @@ declare module '@tanstack/react-router' {
       path: '/scheduler'
       fullPath: '/scheduler'
       preLoaderRoute: typeof SchedulerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/records': {
+      id: '/records'
+      path: '/records'
+      fullPath: '/records'
+      preLoaderRoute: typeof RecordsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recap': {
@@ -533,6 +645,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HallOfFameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gazette': {
+      id: '/gazette'
+      path: '/gazette'
+      fullPath: '/gazette'
+      preLoaderRoute: typeof GazetteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/financial-report': {
       id: '/financial-report'
       path: '/financial-report'
@@ -545,6 +664,13 @@ declare module '@tanstack/react-router' {
       path: '/facilities'
       fullPath: '/facilities'
       preLoaderRoute: typeof FacilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/broodmares': {
@@ -582,12 +708,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stable/': {
+      id: '/stable/'
+      path: '/'
+      fullPath: '/stable/'
+      preLoaderRoute: typeof StableIndexRouteImport
+      parentRoute: typeof StableRoute
+    }
+    '/sire-watch/': {
+      id: '/sire-watch/'
+      path: '/'
+      fullPath: '/sire-watch/'
+      preLoaderRoute: typeof SireWatchIndexRouteImport
+      parentRoute: typeof SireWatchRoute
+    }
+    '/npc-stables/': {
+      id: '/npc-stables/'
+      path: '/'
+      fullPath: '/npc-stables/'
+      preLoaderRoute: typeof NpcStablesIndexRouteImport
+      parentRoute: typeof NpcStablesRoute
+    }
     '/calendar/': {
       id: '/calendar/'
-      path: '/calendar'
+      path: '/'
       fullPath: '/calendar/'
       preLoaderRoute: typeof CalendarIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CalendarRoute
     }
     '/auction/': {
       id: '/auction/'
@@ -633,10 +780,10 @@ declare module '@tanstack/react-router' {
     }
     '/calendar/$regionId': {
       id: '/calendar/$regionId'
-      path: '/calendar/$regionId'
+      path: '/$regionId'
       fullPath: '/calendar/$regionId'
       preLoaderRoute: typeof CalendarRegionIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CalendarRoute
     }
     '/auction/$saleId': {
       id: '/auction/$saleId'
@@ -661,12 +808,28 @@ const AuctionRouteChildren: AuctionRouteChildren = {
 const AuctionRouteWithChildren =
   AuctionRoute._addFileChildren(AuctionRouteChildren)
 
+interface CalendarRouteChildren {
+  CalendarRegionIdRoute: typeof CalendarRegionIdRoute
+  CalendarIndexRoute: typeof CalendarIndexRoute
+}
+
+const CalendarRouteChildren: CalendarRouteChildren = {
+  CalendarRegionIdRoute: CalendarRegionIdRoute,
+  CalendarIndexRoute: CalendarIndexRoute,
+}
+
+const CalendarRouteWithChildren = CalendarRoute._addFileChildren(
+  CalendarRouteChildren,
+)
+
 interface NpcStablesRouteChildren {
   NpcStablesStableIdRoute: typeof NpcStablesStableIdRoute
+  NpcStablesIndexRoute: typeof NpcStablesIndexRoute
 }
 
 const NpcStablesRouteChildren: NpcStablesRouteChildren = {
   NpcStablesStableIdRoute: NpcStablesStableIdRoute,
+  NpcStablesIndexRoute: NpcStablesIndexRoute,
 }
 
 const NpcStablesRouteWithChildren = NpcStablesRoute._addFileChildren(
@@ -675,10 +838,12 @@ const NpcStablesRouteWithChildren = NpcStablesRoute._addFileChildren(
 
 interface SireWatchRouteChildren {
   SireWatchStallionIdRoute: typeof SireWatchStallionIdRoute
+  SireWatchIndexRoute: typeof SireWatchIndexRoute
 }
 
 const SireWatchRouteChildren: SireWatchRouteChildren = {
   SireWatchStallionIdRoute: SireWatchStallionIdRoute,
+  SireWatchIndexRoute: SireWatchIndexRoute,
 }
 
 const SireWatchRouteWithChildren = SireWatchRoute._addFileChildren(
@@ -687,10 +852,12 @@ const SireWatchRouteWithChildren = SireWatchRoute._addFileChildren(
 
 interface StableRouteChildren {
   StableHorseIdRoute: typeof StableHorseIdRoute
+  StableIndexRoute: typeof StableIndexRoute
 }
 
 const StableRouteChildren: StableRouteChildren = {
   StableHorseIdRoute: StableHorseIdRoute,
+  StableIndexRoute: StableIndexRoute,
 }
 
 const StableRouteWithChildren =
@@ -702,8 +869,10 @@ const rootRouteChildren: RootRouteChildren = {
   AwardsRoute: AwardsRoute,
   BreedingRoute: BreedingRoute,
   BroodmaresRoute: BroodmaresRoute,
+  CalendarRoute: CalendarRouteWithChildren,
   FacilitiesRoute: FacilitiesRoute,
   FinancialReportRoute: FinancialReportRoute,
+  GazetteRoute: GazetteRoute,
   HallOfFameRoute: HallOfFameRoute,
   HorseGalleryRoute: HorseGalleryRoute,
   JockeysRoute: JockeysRoute,
@@ -713,16 +882,17 @@ const rootRouteChildren: RootRouteChildren = {
   RaceBrowserRoute: RaceBrowserRoute,
   RacesRoute: RacesRoute,
   RecapRoute: RecapRoute,
+  RecordsRoute: RecordsRoute,
   SchedulerRoute: SchedulerRoute,
   SettingsRoute: SettingsRoute,
   SireLeaderboardsRoute: SireLeaderboardsRoute,
   SireWatchRoute: SireWatchRouteWithChildren,
   StableRoute: StableRouteWithChildren,
+  StaffRoute: StaffRoute,
   StallionsRoute: StallionsRoute,
-  CalendarRegionIdRoute: CalendarRegionIdRoute,
+  TestJockeyAvatarRoute: TestJockeyAvatarRoute,
   JockeyJockeyIdRoute: JockeyJockeyIdRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,
-  CalendarIndexRoute: CalendarIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

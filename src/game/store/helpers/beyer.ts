@@ -1,10 +1,19 @@
 /**
+ * store/helpers/beyer.ts - Beyer figure calculation helpers
+ *
+ * This file provides pure business logic for Beyer par recalibration, including
+ * periodic recalibration based on pace samples and recompute functions.
+ *
+ * Dependencies: @/game/constants/gameConstants (SEASON_DAYS)
+ * Related files: @/game/beyer.ts (Beyer calculation logic), store/slices/racingSlice.ts (uses these helpers)
+ */
+
+/**
  * Beyer Figure Helper Functions
  * Pure business logic for Beyer par recalibration
  */
 
 import { SEASON_DAYS } from "@/game/constants/gameConstants";
-import { setCalibratedPars } from "@/game/beyer";
 
 export type RecalibrationResult = {
   calibratedPars: Record<number, number> | undefined;
@@ -34,7 +43,6 @@ export function maybeRecalibratePars(
   if (Object.keys(recomputed).length === 0) {
     return { calibratedPars: currentPars, lastCalibrationDay, log: null };
   }
-  setCalibratedPars(recomputed);
   const buckets = Object.keys(recomputed).length;
   return {
     calibratedPars: recomputed,

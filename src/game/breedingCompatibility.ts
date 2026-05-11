@@ -1,31 +1,45 @@
+/**
+ * breedingCompatibility.ts - Breeding compatibility calculation
+ *
+ * This file provides comprehensive breeding compatibility scoring including genetic
+ * compatibility, founder effect, conformation/temperament compatibility, COI,
+ * nicking affinities, and blue hen contribution.
+ *
+ * Dependencies: ./types (Horse), ./dosage (calculateDosageMetrics, interpretDosageIndex), @/core/data/pedigreeData (findHorseByName, PedigreeHorse), @/core/genetics/phenotype (TRAIT_SCORE), @/services/genotypeMatching (calculateGeneticCompatibility), @/services/inbreedingCalculator (calculateFounderEffect), @/services/traitCompatibility (calculateConformationCompatibility, calculateTemperamentCompatibility), @/core/breeding/populationGenetics (computeCoiFromSnapshot), @/core/breeding/breedingAffinityData (NICKING_AFFINITIES, CROSS_FAMILY_AFFINITIES)
+ * Related files: Used throughout breeding systems for compatibility evaluation
+ */
+
 import type { Horse } from "./types";
 import { calculateDosageMetrics, interpretDosageIndex } from "./dosage";
 import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeData";
 import { TRAIT_SCORE } from "@/core/genetics/phenotype";
 import { calculateGeneticCompatibility } from "@/services/genotypeMatching";
-import {
-  calculateFounderEffect,
-  calculateInbreedingCoefficient,
-} from "@/services/inbreedingCalculator";
+import { calculateFounderEffect } from "@/services/inbreedingCalculator";
 import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
 } from "@/services/traitCompatibility";
+import { computeCoiFromSnapshot, computeProspectiveCoi } from "@/core/breeding/populationGenetics";
+import { NICKING_AFFINITIES, CROSS_FAMILY_AFFINITIES } from "@/core/breeding/breedingAffinityData";
+import { getCareerStats } from "@/core/horse/stats";
 
 export {
   calculateGeneticCompatibility,
   calculateFounderEffect,
-  calculateInbreedingCoefficient,
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
+  computeProspectiveCoi,
 };
 
 /**
- * Calculate blue hen contribution based on dam's production record
- * Based on the Breednet article on Blue Hens:
- * - Blue hens are exceptional broodmares that produce multiple high-quality offspring
- * - They often produce multiple Group 1 winners (e.g., Polished Gem produced Kyprios and other G1 winners)
- * - Blue hen status is determined by the quality and quantity of offspring
+ * Calculate blue hen contribution based on dam's production record.
+ *
+ * Based on the Breednet article on Blue Hens. Blue hens are exceptional broodmares
+ * that produce multiple high-quality offspring, often including multiple Group 1 winners.
+ * Blue hen status is determined by the quality and quantity of offspring.
+ *
+ * @param dam - Dam horse to evaluate
+ * @returns Object with score (0-1), description, and blue hen status
  */
 export function calculateBlueHenContribution(dam: Horse): {
   score: number;
@@ -66,9 +80,15 @@ export function calculateBlueHenContribution(dam: Horse): {
 }
 
 /**
- * Calculate foundation stock proximity score
- * Horses closer to foundation stock (especially the 3 major sires and foundation mares) get a bonus
- * Based on the Wikipedia article on Foundation Stock which notes the importance of tracing to foundation animals
+ * Calculate foundation stock proximity score.
+ *
+ * Horses closer to foundation stock (especially the 3 major sires and foundation mares)
+ * get a bonus. Based on the Wikipedia article on Foundation Stock which notes the
+ * importance of tracing to foundation animals.
+ *
+ * @param sireName - Name of the sire
+ * @param damName - Name of the dam
+ * @returns Object with score (0-0.5) and description
  */
 export function calculateFoundationStockProximity(
   sireName: string,
@@ -125,14 +145,14 @@ export function calculateFoundationStockProximity(
     }
   }
 
-  // Cap the score at 0.5 (50% bonus maximum from foundation stock)
-  score = Math.min(score, 0.5);
+  // Cap the score at 1.0 (normalized for weighting)
+  score = Math.min(score * 2, 1.0);
 
   let description = "Limited foundation stock proximity";
-  if (score >= 0.4) description = "Excellent foundation stock proximity";
-  else if (score >= 0.25) description = "Strong foundation stock proximity";
-  else if (score >= 0.15) description = "Moderate foundation stock proximity";
-  else if (score >= 0.05) description = "Some foundation stock influence";
+  if (score >= 0.8) description = "Excellent foundation stock proximity";
+  else if (score >= 0.5) description = "Strong foundation stock proximity";
+  else if (score >= 0.3) description = "Moderate foundation stock proximity";
+  else if (score >= 0.1) description = "Some foundation stock influence";
 
   if (reasons.length > 0) {
     description += ` (${reasons.slice(0, 2).join(", ")})`;
@@ -141,25 +161,15 @@ export function calculateFoundationStockProximity(
   return { score, description };
 }
 
-// Famous nicking affinities - specific sire line × dam line crosses that have produced exceptional results
-// Based on historical breeding data and Wikipedia article on Thoroughbred breeding theories
-const NICKING_AFFINITIES: Record<string, string[]> = {
-  Danzig: ["Mr. Prospector", "Raise a Native", "Native Dancer"],
-  "Mr. Prospector": ["Danzig", "Northern Dancer", "Storm Bird"],
-  "Northern Dancer": ["Mr. Prospector", "Raise a Native", "Bold Ruler"],
-  "Storm Cat": ["Mr. Prospector", "A.P. Indy", "Seattle Slew"],
-  "A.P. Indy": ["Mr. Prospector", "Storm Cat", "Danzig"],
-  "Seattle Slew": ["Mr. Prospector", "Bold Ruler", "Northern Dancer"],
-  "Sadler's Wells": ["Danzig", "Storm Cat", "Mr. Prospector"],
-  Galileo: ["Danzig", "Storm Cat", "Sadler's Wells"],
-  Tapit: ["A.P. Indy", "Mr. Prospector", "Storm Cat"],
-  "Bold Ruler": ["Princequillo", "Nasrullah", "Nearco"],
-  Nasrullah: ["Princequillo", "Bold Ruler", "Nearco"],
-  Secretariat: ["Princequillo", "Bold Ruler", "Nasrullah"],
-};
-
 /**
- * Check if there's a nicking affinity between sire and dam lines
+ * Check if there's a nicking affinity between sire and dam lines.
+ *
+ * Checks the nicking database for known successful sire × dam sire combinations.
+ * Returns affinity score and description if found.
+ *
+ * @param sireName - Name of the sire
+ * @param damName - Name of the dam
+ * @returns Object with hasAffinity flag, affinity score, and description
  */
 export function checkNickingAffinity(
   sireName: string,
@@ -185,7 +195,7 @@ export function checkNickingAffinity(
   if (affinities.includes(damSireLine)) {
     return {
       hasAffinity: true,
-      affinity: 0.3, // 30% bonus for known nicking
+      affinity: 1.0, // Strong nicking
       description: `Strong nicking: ${sireLine} × ${damSireLine}`,
     };
   }
@@ -197,7 +207,7 @@ export function checkNickingAffinity(
     if (affinities.includes(grandSire)) {
       return {
         hasAffinity: true,
-        affinity: 0.15, // 15% bonus for indirect nicking
+        affinity: 0.5, // Moderate nicking
         description: `Moderate nicking: ${sireLine} × ${damSireLine} (via ${grandSire})`,
       };
     }
@@ -207,8 +217,15 @@ export function checkNickingAffinity(
 }
 
 /**
- * Calculate dosage compatibility between sire and dam
- * Returns a score from 0-1, with higher being better compatibility
+ * Calculate dosage compatibility between sire and dam.
+ *
+ * Returns a score from 0-1, with higher being better compatibility.
+ * Ideal breeding balances speed and stamina: high-speed sires should breed to
+ * stamina-oriented dams for complementary dosage profiles.
+ *
+ * @param sireName - Name of the sire
+ * @param damName - Name of the dam
+ * @returns Object with score (0-1) and description
  */
 export function calculateDosageCompatibility(
   sireName: string,
@@ -246,8 +263,14 @@ export function calculateDosageCompatibility(
 }
 
 /**
- * Calculate parent performance score based on race history
- * "Breed the best to the best" - good racehorses make better breeding stock
+ * Calculate parent performance score based on race history.
+ *
+ * "Breed the best to the best" - good racehorses make better breeding stock.
+ * Evaluates both sire and dam performance including wins, places, and graded stakes results.
+ *
+ * @param sire - Sire horse to evaluate
+ * @param dam - Dam horse to evaluate
+ * @returns Object with score (0-1) and description
  */
 export function calculateParentPerformance(
   sire: Horse,
@@ -257,10 +280,11 @@ export function calculateParentPerformance(
   let damScore = 0;
 
   // Evaluate sire's performance
-  const sireWins = sire.raceHistory.filter((r) => r.position === 1).length;
-  const sirePlaces = sire.raceHistory.filter((r) => r.position <= 3).length;
+  const sireStats = getCareerStats(sire);
+  const sireWins = sireStats.wins;
+  const sirePlaces = sireStats.wins + sireStats.places + sireStats.shows;
   const sireGraded = sire.raceHistory.filter((r) => r.grade).length;
-  const sireGradedWins = sire.raceHistory.filter((r) => r.grade && r.position === 1).length;
+  const sireGradedWins = sireStats.gradedWins;
 
   // Sire scoring
   sireScore += sireWins * 2;
@@ -269,10 +293,11 @@ export function calculateParentPerformance(
   sireScore += sireGraded * 0.5; // Bonus for graded appearances
 
   // Evaluate dam's performance (mares can outbreed their track record)
-  const damWins = dam.raceHistory.filter((r) => r.position === 1).length;
-  const damPlaces = dam.raceHistory.filter((r) => r.position <= 3).length;
-  const damGraded = dam.raceHistory.filter((r) => r.grade).length;
-  const damGradedWins = dam.raceHistory.filter((r) => r.grade && r.position === 1).length;
+  const damStats = getCareerStats(dam);
+  const damWins = damStats.wins;
+  const damPlaces = damStats.wins + damStats.places + damStats.shows;
+  const damGraded = damStats.gradedStarts;
+  const damGradedWins = damStats.gradedWins;
 
   // Dam scoring (slightly higher weight as quality mares produce high-class runners)
   damScore += damWins * 2.5;
@@ -316,22 +341,16 @@ export interface BreedingCompatibilityResult {
   recommendation: string;
 }
 
-// Cross-family nicking — Bruce Lowe family × sire-line affinities. Specific
-// historical pairings produced exceptional progeny rates. Curated table:
-// keys are sire bloodlines; values are { family: bonus } where bonus is the
-// score boost (0..1) when dam belongs to that Bruce Lowe family.
-const CROSS_FAMILY_AFFINITIES: Record<string, Record<number, number>> = {
-  "Northern Dancer": { 1: 0.8, 5: 0.7, 9: 0.6 },
-  "Mr. Prospector": { 1: 0.75, 4: 0.7, 9: 0.65 },
-  "Sadler's Wells": { 1: 0.85, 14: 0.7 },
-  "Storm Cat": { 4: 0.7, 8: 0.65 },
-  "Sunday Silence": { 1: 0.7, 9: 0.65, 12: 0.6 },
-  Galileo: { 1: 0.85, 14: 0.75 },
-  "A.P. Indy": { 1: 0.7, 8: 0.65 },
-  "Seattle Slew": { 1: 0.7, 8: 0.6 },
-  "Bold Ruler": { 4: 0.7, 14: 0.65 },
-};
-
+/**
+ * Calculate cross-family affinity between sire bloodline and dam Bruce Lowe family.
+ *
+ * Checks documented cross-family affinities where certain sire bloodlines
+ * have historically produced well with specific Bruce Lowe families.
+ *
+ * @param sire - Sire horse to evaluate
+ * @param dam - Dam horse to evaluate
+ * @returns Object with score (0-1) and description
+ */
 export function calculateCrossFamilyAffinity(
   sire: Horse,
   dam: Horse,
@@ -351,13 +370,33 @@ export function calculateCrossFamilyAffinity(
   return { score: bonus, description: `Standard cross: ${bloodline} × Family ${family}` };
 }
 
+/**
+ * Calculate overall breeding compatibility score.
+ *
+ * Combines all factors with appropriate weights: nicking, dosage, inbreeding,
+ * parent performance, conformation, temperament, foundation stock, founder effect,
+ * genetic compatibility, blue hen contribution, and cross-family affinity.
+ *
+ * @param sire - Sire horse to evaluate
+ * @param dam - Dam horse to evaluate
+ * @returns Comprehensive breeding compatibility result with overall score, individual factor scores, and recommendation
+ */
 export function calculateBreedingCompatibility(
   sire: Horse,
   dam: Horse,
 ): BreedingCompatibilityResult {
   const nicking = checkNickingAffinity(sire.sireName || "", dam.sireName || "");
   const dosage = calculateDosageCompatibility(sire.sireName || "", dam.sireName || "");
-  const inbreeding = calculateInbreedingCoefficient(sire.sireName || "", dam.sireName || "");
+  const coi = computeProspectiveCoi(sire, dam, 8);
+  const inbreeding = {
+    coefficient: coi,
+    warning:
+      coi > 0.125
+        ? "High inbreeding - may reduce vigor"
+        : coi > 0.0625
+          ? "Moderate inbreeding - monitor closely"
+          : "",
+  };
   const parentPerformance = calculateParentPerformance(sire, dam);
   const conformation = calculateConformationCompatibility(sire, dam);
   const temperament = calculateTemperamentCompatibility(sire, dam);

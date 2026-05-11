@@ -29,7 +29,11 @@ export interface JockeyInstructions {
 }
 
 /**
- * Create default jockey instructions
+ * Create default jockey instructions for a horse in a specific race.
+ *
+ * @param horseId - Unique identifier for the horse
+ * @param raceId - Unique identifier for the race
+ * @returns Default JockeyInstructions object
  */
 export function createDefaultInstructions(horseId: string, raceId: string): JockeyInstructions {
   return {
@@ -43,7 +47,10 @@ export function createDefaultInstructions(horseId: string, raceId: string): Jock
 }
 
 /**
- * Get riding style description
+ * Get a human-readable description for a riding style.
+ *
+ * @param style - The riding style to describe
+ * @returns Short description string
  */
 export function getRidingStyleDescription(style: RidingStyle): string {
   const descriptions: Record<RidingStyle, string> = {
@@ -56,7 +63,10 @@ export function getRidingStyleDescription(style: RidingStyle): string {
 }
 
 /**
- * Get early position description
+ * Get a human-readable description for an early race position.
+ *
+ * @param position - The early position to describe
+ * @returns Short description string
  */
 export function getEarlyPositionDescription(position: EarlyPosition): string {
   const descriptions: Record<EarlyPosition, string> = {
@@ -69,7 +79,10 @@ export function getEarlyPositionDescription(position: EarlyPosition): string {
 }
 
 /**
- * Get move timing description
+ * Get a human-readable description for move timing.
+ *
+ * @param timing - The move timing to describe
+ * @returns Short description string
  */
 export function getMoveTimingDescription(timing: MoveTiming): string {
   const descriptions: Record<MoveTiming, string> = {
@@ -81,7 +94,12 @@ export function getMoveTimingDescription(timing: MoveTiming): string {
 }
 
 /**
- * Calculate style bonus based on horse stats
+ * Calculate performance bonus based on tactics and horse stats.
+ *
+ * @param instructions - Jockey instructions for the race
+ * @param horseSpeed - Horse's current speed rating
+ * @param horseStamina - Horse's current stamina rating
+ * @returns Calculated performance bonus (0-5)
  */
 export function calculateStyleBonus(
   instructions: JockeyInstructions,
@@ -113,7 +131,10 @@ export function calculateStyleBonus(
 }
 
 /**
- * Format aggressiveness level
+ * Format numeric aggressiveness level as a descriptive string.
+ *
+ * @param level - Aggressiveness level (0-100)
+ * @returns Human-readable aggressiveness label
  */
 export function formatAggressiveness(level: number): string {
   if (level < 30) return "Conservative";

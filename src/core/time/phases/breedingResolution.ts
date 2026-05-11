@@ -1,17 +1,32 @@
+/**
+ * phases/breedingResolution.ts - Breeding resolution phase
+ *
+ * This file provides the breeding resolution phase that converts BreedingIntents
+ * into impacts (pregnancy creation, stud fee transfers).
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, BreedingIntent), @/core/resolver/impacts/index (AnyImpact, PregnancyCreationImpact, CashImpact, StudCareerImpact), @/game/uuid (generateUUID), @/game/types (Pregnancy), @/game/constants/gameConstants (GESTATION_DAYS)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Breeding Resolution Phase
 // Converts BreedingIntents into impacts (pregnancy creation, stud fee transfers)
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyIntent, BreedingIntent } from "@/core/resolver/intents";
+import type {
+  AnyIntent,
+  BreedingIntent,
+  SyndicateFeeDistributionIntent,
+} from "@/core/resolver/intents";
 import type {
   AnyImpact,
   PregnancyCreationImpact,
   CashImpact,
   StudCareerImpact,
-} from "@/core/resolver/impacts";
-import { generateUUID } from "@/game/uuid";
+} from "@/core/resolver/impacts/index";
+import { generateUUID } from "@/core/uuid";
 import type { Pregnancy } from "@/game/types";
 import { GESTATION_DAYS } from "@/game/constants/gameConstants";
+import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 
 /**
  * Breeding Resolution Phase (Order 25)
@@ -47,18 +62,37 @@ export const breedingResolutionPhase: PipelinePhase = {
         if (sire.hemisphere !== dam.hemisphere) continue;
         studFee = sire.stud.standingFee;
 
-        // Transfer stud fee to NPC stable
-        impacts.push({
-          id: generateUUID(),
-          intentId: intent.id,
-          day: newDay,
-          phase: "breedingResolution",
-          logLevel: "conditional",
-          type: "cash_change",
-          entityId: sire.stableId,
-          amount: studFee,
-          reason: "Stud fee",
-        });
+        // Check if stallion is syndicated and handle fee distribution
+        const syndicate = state.syndicates?.[sire.id];
+        if (syndicate && syndicate.totalShares > 0) {
+          // Generate syndicate fee distribution intent
+          const feeDistIntent: SyndicateFeeDistributionIntent = {
+            id: generateUUID(),
+            entityId: sire.id,
+            source: "system",
+            day: newDay,
+            priority: 50,
+            type: "syndicate_fee_distribution",
+            syndicateId: syndicate.id,
+            totalFee: studFee,
+            breedingDay: newDay,
+          };
+          const feeDistImpacts = resolveSyndicationIntent(feeDistIntent, state, newDay);
+          impacts.push(...feeDistImpacts);
+        } else {
+          // Transfer stud fee to NPC stable (non-syndicated)
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "breedingResolution",
+            logLevel: "conditional",
+            type: "cash_change",
+            entityId: sire.stableId,
+            amount: studFee,
+            reason: "Stud fee",
+          });
+        }
 
         // Update stud career (seasonBookings)
         impacts.push({
@@ -103,6 +137,21 @@ export const breedingResolutionPhase: PipelinePhase = {
         pregnancy,
         reason: "Breeding",
       });
+
+      // Deduct fee from breeder (player)
+      if (intent.source === "player" && intent.fee && intent.fee > 0) {
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "breedingResolution",
+          logLevel: "always",
+          type: "cash_change",
+          entityId: "player",
+          amount: -intent.fee,
+          reason: "Breeding fee",
+        });
+      }
     }
 
     return {

@@ -1,3 +1,13 @@
+/**
+ * leaderboardTypes.ts - Leaderboard type definitions
+ *
+ * This file provides type definitions for sire leaderboards including
+ * leaderboard types, ranking data, and related interfaces.
+ *
+ * Dependencies: None
+ * Related files: Used throughout the breeding module and game state
+ */
+
 import type {
   SurfaceBias,
   DistancePreference,
@@ -5,23 +15,20 @@ import type {
   SireAnalytics,
 } from "./sireAnalytics";
 
-/**
- * All available leaderboard types for sire rankings
- */
 export type LeaderboardType =
-  | "overall" // By AEI (Average Earnings Index)
-  | "ci" // By Comparable Index
-  | "stakes_producers" // By stakes winners
-  | "g1_producers" // By G1 winners
-  | "turf_specialists" // By turf progeny win rate
-  | "dirt_specialists" // By dirt progeny win rate
-  | "sprint_sires" // By sprint progeny win rate
-  | "staying_sires" // By staying progeny win rate
-  | "value_sires" // By AEI/fee ratio
-  | "freshman_watch" // First crop sires
-  | "rising_stars" // Trending upward
-  | "regional_north" // Northern hemisphere
-  | "regional_south"; // Southern hemisphere
+  | "overall"
+  | "ci"
+  | "stakes_producers"
+  | "g1_producers"
+  | "turf_specialists"
+  | "dirt_specialists"
+  | "sprint_sires"
+  | "staying_sires"
+  | "value_sires"
+  | "freshman_watch"
+  | "rising_stars"
+  | "regional_north"
+  | "regional_south";
 
 /**
  * Individual sire ranking entry in a leaderboard

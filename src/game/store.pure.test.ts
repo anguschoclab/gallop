@@ -85,23 +85,23 @@ describe("pruneOldRaces", () => {
     expect(pruned).toContain(gradedRace);
   });
 
-  it("should keep races from last 3 days", () => {
-    const recentRace: Race = { ...generateRace(8), day: 8 };
-    const currentDay = 10;
+  it("should keep races from last 30 days", () => {
+    const recentRace: Race = { ...generateRace(270), day: 270 };
+    const currentDay = 300;
     const pruned = pruneOldRaces([recentRace], currentDay);
     expect(pruned).toContain(recentRace);
   });
 
-  it("should remove races older than 3 days if not graded", () => {
+  it("should remove races older than 30 days if not graded", () => {
     const oldRace: Race = { ...generateRace(1), day: 1, resolved: true };
-    const currentDay = 10;
+    const currentDay = 35;
     const pruned = pruneOldRaces([oldRace], currentDay);
     expect(pruned).not.toContain(oldRace);
   });
 
-  it("should remove races exactly 4 days old if not graded", () => {
-    const oldRace: Race = { ...generateRace(6), day: 6, resolved: true };
-    const currentDay = 10;
+  it("should remove races exactly 31 days old if not graded", () => {
+    const oldRace: Race = { ...generateRace(269), day: 269, resolved: true };
+    const currentDay = 300;
     const pruned = pruneOldRaces([oldRace], currentDay);
     expect(pruned).not.toContain(oldRace);
   });

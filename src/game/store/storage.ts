@@ -1,14 +1,28 @@
 /**
+ * store/storage.ts - Zustand persist storage adapter
+ *
+ * This file provides a custom OPFS-based storage adapter for Zustand persist
+ * middleware, including hydration tracking and rehydration functions.
+ *
+ * Dependencies: @/game/types (GameState), @/services/storageAdapter (loadGameState, saveGameState, clearGameState)
+ * Related files: store/index.ts (uses storage adapter), storageAdapter.ts (storage service)
+ */
+
+/**
  * Storage Adapter for Zustand Persist
  * Custom OPFS-based storage for game state persistence
  */
 
 import type { GameState } from "@/game/types";
 import { loadGameState, saveGameState } from "@/services/storageAdapter";
-import { setCalibratedPars } from "@/game/beyer";
 
 /**
- * Creates the OPFS storage adapter for Zustand persist
+ * Creates the OPFS storage adapter for Zustand persist.
+ *
+ * Provides custom storage implementation using OPFS for game state persistence.
+ * Handles loading, saving, and removing game state.
+ *
+ * @returns Zustand persist storage adapter with getItem, setItem, and removeItem methods
  */
 export function createOpfsStorage() {
   return {
@@ -45,21 +59,40 @@ export const hydrationComplete = {
 };
 
 /**
- * Creates a rehydrate function that can be called with the store instance
+ * Creates a rehydrate function that can be called with the store instance.
+ *
+ * Returns an async function that rehydrates the store from saved state or
+ * initializes with default state if no save exists.
+ *
  * @param initialState - Function to create initial state if no save exists
+ * @param useGameStore - Default store instance to use
+ * @returns Async rehydrate function that takes an optional store instance
  */
-export function createRehydrateStore(initialState: () => GameState & any) {
-  return async function rehydrateStore(useGame: any): Promise<void> {
+export function createRehydrateStore(initialState: any, useGameStore: any) {
+  return async function rehydrateStore(passedStore?: any): Promise<void> {
+    const store = passedStore || useGameStore;
+
+    if (!store) {
+      console.warn("No store instance provided for rehydration");
+      return;
+    }
+
     const state = await loadGameState();
     if (state) {
       // Use the persist middleware's built-in rehydrate
       // This will call getItem from our custom storage
-      await useGame.persist.rehydrate();
+      if (store.persist) {
+        await store.persist.rehydrate();
+      } else {
+        console.warn(
+          "Store persist middleware not found during rehydration, using direct setState",
+        );
+        store.setState(state);
+      }
       hydrationComplete.value = true;
-      if (state.calibratedPars) setCalibratedPars(state.calibratedPars);
     } else {
       // No saved state, initialize with default
-      useGame.setState(initialState());
+      store.setState(initialState());
       hydrationComplete.value = true;
     }
   };

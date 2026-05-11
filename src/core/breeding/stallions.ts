@@ -1,28 +1,76 @@
+/**
+ * stallions.ts - Stallion management and stud fee calculation
+ *
+ * This file provides functions for determining stallion eligibility, calculating
+ * stud fees, and managing stallion retirement decisions. It handles both player
+ * and NPC stallions with tier-based defaults.
+ *
+ * Dependencies: @/game/types (Horse, Hemisphere, GameState, StableTier, Stable), @/core/calendar/breedingCalendar (inBreedingSeason), @/core/horse/pricing (calculateBaseHorseValue), @/core/horse/gender (isMaleHorse)
+ * Related files: horseFactory.ts (uses shouldRetireAtStartup), pricing.ts (base value calculation)
+ */
+
 import type { Horse, Hemisphere, GameState, StableTier } from "@/game/types";
 import type { Stable } from "@/game/types";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { calculateBaseHorseValue } from "@/core/horse/pricing";
+import { isMaleHorse } from "@/core/horse/gender";
+import { getCareerStats } from "@/core/horse/stats";
+import {
+  STUD_FEE_MID,
+  STUD_BOOK_SIZE_MID,
+  STUD_FEE_ROUNDING,
+  STUD_FEE_MIN,
+  AGE_STUD_DECLINE,
+  AGE_STUD_SEVERE_DECLINE,
+} from "@/game/constants/gameConstants";
+
+const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
 
 // Tier-driven defaults for retirement-to-stud parameters. Numbers chosen so
 // that elite stallions are scarce, expensive, and command large books — and
 // budget stallions remain available cheap for low-tier players.
 const STUD_DEFAULTS: Record<StableTier, { fee: number; bookSize: number }> = {
   elite: { fee: 75000, bookSize: 180 },
-  mid: { fee: 12000, bookSize: 120 },
+  mid: { fee: STUD_FEE_MID, bookSize: STUD_BOOK_SIZE_MID },
   budget: { fee: 2500, bookSize: 80 },
 };
 
+/**
+ * Get default stud parameters for a stable tier.
+ *
+ * Returns the default standing fee and book size for a given stable tier.
+ * Used for NPC stallions and as a baseline for player stallions.
+ *
+ * @param tier - The stable tier (defaults to "budget" if undefined)
+ * @returns Object with fee and bookSize
+ *
+ * @example
+ * const params = defaultStudParams("elite");
+ * // Returns { fee: 75000, bookSize: 180 }
+ */
 export function defaultStudParams(tier: StableTier | undefined): { fee: number; bookSize: number } {
   return STUD_DEFAULTS[tier ?? "budget"];
 }
 
-// Decide which NPC stallions stand at stud at world generation. Tier-driven
-// proportions: elite stables retire all male 5+ horses to stud, mid retire
-// most, budget retire some. Player horses never start at stud — that's the
-// player's call via the retireToStud action.
+/**
+ * Determine if an NPC horse should retire to stud at world generation.
+ *
+ * Tier-driven proportions: elite stables retire all male 5+ horses to stud,
+ * mid retire most, budget retire some. Player horses never start at stud —
+ * that's the player's call via the retireToStud action.
+ *
+ * @param horse - The horse to evaluate
+ * @param stable - The stable the horse belongs to
+ * @returns True if the horse should retire to stud at startup
+ *
+ * @example
+ * if (shouldRetireAtStartup(horse, stable)) {
+ *   horse.stud = { atStud: true, standingFee: ..., maxBookSize: ... };
+ * }
+ */
 export function shouldRetireAtStartup(horse: Horse, stable: Stable | undefined): boolean {
   if (!stable) return false;
-  if (horse.gender !== "horse" && horse.gender !== "colt") return false;
+  if (!isMaleHorse(horse.gender)) return false;
   if (horse.age < 5) return false;
   if (stable.tier === "elite") return true;
   if (stable.tier === "mid") return horse.age >= 6;
@@ -30,105 +78,231 @@ export function shouldRetireAtStartup(horse: Horse, stable: Stable | undefined):
 }
 
 /**
- * Unified recommendation engine for stallion standing fees.
- * Considers racing performance, pedigree valuation, and progeny success.
+ * Determine if a horse is suitable for standing at stud.
+ *
+ * NPC stallions are retired based on performance and fame. G1 winners are
+ * highly likely to stand at stud. This function evaluates whether a horse
+ * meets the criteria for stallion material based on race performance and fame.
+ *
+ * @param horse - The horse to evaluate
+ * @returns True if the horse is suitable for standing at stud
+ *
+ * @example
+ * if (isStallionMaterial(horse)) {
+ *   considerForStud(horse);
+ * }
+ */
+export function isStallionMaterial(horse: Horse): boolean {
+  if (!isMaleHorse(horse.gender)) return false;
+
+  // Basic track performance criteria
+  const careerStats = getCareerStats(horse);
+  const hasG1Win = careerStats.g1Wins > 0;
+  const hasGradedWin =
+    careerStats.g2Wins > 0 || careerStats.g3Wins > 0 || careerStats.stakesWins > 0;
+
+  // Elite performers or very famous ones
+  if (hasG1Win) return true;
+  if (hasGradedWin && horse.fame > 60) return true;
+  if (horse.fame > 80) return true;
+
+  return false;
+}
+
+/**
+ * Recommended initial stud fee for a horse based on performance and value.
+ *
+ * Used for both player and NPC retirement. Calculates a fee based on the horse's
+ * market value, weighted heavily by G1 wins and graded stakes performance.
+ *
+ * @param horse - The horse to calculate the fee for
+ * @param stableOrTier - Optional stable for tier context, or tier directly
+ * @returns Recommended stud fee in dollars
+ *
+ * @example
+ * const fee = calculateRecommendedStudFee(horse, stable);
+ * const fee2 = calculateRecommendedStudFee(horse, "elite");
  */
 export function calculateRecommendedStudFee(
-  stallion: Horse,
-  state: Pick<GameState, "horses" | "npcStables">,
+  horse: Horse,
+  stableOrTier?: Stable | StableTier,
 ): number {
-  const stable = stallion.stableId
-    ? state.npcStables.find((s) => s.id === stallion.stableId)
-    : undefined;
-  const tier = stable?.tier ?? "budget";
+  const tier = typeof stableOrTier === "string" ? stableOrTier : stableOrTier?.tier || "mid";
+  const baseValue = calculateBaseHorseValue(horse, tier);
 
-  // 1. Base Physical Value (40%)
-  const baseValue = calculateBaseHorseValue(stallion, tier);
+  // Calculate win frequency and quality
+  const cs = getCareerStats(horse);
+  const g1Wins = cs.g1Wins;
+  const gradedWins = cs.gradedWins;
+  const totalWins = cs.wins;
 
-  // 2. Career Performance Bonus (30%)
-  const grade1Wins = stallion.raceHistory.filter(
-    (r) => r.position === 1 && r.grade === "G1",
-  ).length;
-  const stakesWins = stallion.raceHistory.filter(
-    (r) => r.position === 1 && (r.grade === "G2" || r.grade === "G3" || r.raceClass === "Stakes"),
-  ).length;
+  // Base fee is ~5-10% of market value, but weighted heavily by G1 wins
+  let fee = baseValue * 0.1;
 
-  const careerMultiplier =
-    1 + grade1Wins * 0.5 + stakesWins * 0.15 + (stallion.lifetimeEarnings ?? 0) / 1000000;
+  if (g1Wins > 0) {
+    fee += g1Wins * 10000;
+  }
 
-  // 3. Progeny Performance (30%)
-  const progenyMultiplier = stallion.stud
-    ? 1 +
-      (stallion.stud.lifetimeStakesFoals ?? 0) * 0.2 +
-      (stallion.stud.lifetimeG1Foals ?? 0) * 0.6
-    : 1;
+  if (gradedWins > 0) {
+    fee += (gradedWins - g1Wins) * 3500;
+  }
 
-  // Combine components
-  const isProven = stallion.stud && stallion.stud.lifetimeFoals > 5;
-  const performanceWeight = isProven ? 0.6 : 1.0;
+  // Bonus for overall win record
+  if (totalWins > 5) {
+    fee *= 1.2;
+  }
 
-  const rawFee = baseValue * 0.5 * careerMultiplier * performanceWeight * progenyMultiplier;
+  // Progeny performance impact (for established sires)
+  if (horse.stud && horse.stud.lifetimeFoals > 10) {
+    const stakesRate = horse.stud.lifetimeStakesFoals / horse.stud.lifetimeFoals;
+    if (stakesRate > 0.05) fee += 5000;
+    if (stakesRate > 0.1) fee += 10000;
+  }
 
-  // Round to nearest 500 for low fees, 2500 for mid, 10000 for elite
-  const rounded =
-    rawFee < 10000
-      ? Math.round(rawFee / 500) * 500
-      : rawFee < 100000
-        ? Math.round(rawFee / 2500) * 2500
-        : Math.round(rawFee / 10000) * 10000;
-
-  // Cap between $500 and $500,000 for most stallions, up to $1M for legends
-  const absoluteCap =
-    grade1Wins >= 5 || (stallion.stud?.lifetimeG1Foals ?? 0) >= 3 ? 1000000 : 500000;
-  return Math.min(absoluteCap, Math.max(500, rounded));
+  // Round to nearest $100
+  return Math.round(fee / STUD_FEE_ROUNDING) * STUD_FEE_ROUNDING;
 }
 
-// Compute the standing-fee for a stallion based on stable tier and the
-// horse's stat profile. Uses the existing calculateNpcHorseValue infra
-// scaled down so a brand-new stallion isn't priced like a proven sire.
-// If realWorldFee is provided, use it directly (for famous stallions).
-export function initialStandingFee(horse: Horse, tier: StableTier, realWorldFee?: number): number {
-  // If real-world fee is provided, use it directly
-  if (realWorldFee) return realWorldFee;
+/**
+ * Alias for calculateRecommendedStudFee for backward compatibility.
+ */
+export const initialStandingFee = calculateRecommendedStudFee;
 
-  const { fee: tierBase } = STUD_DEFAULTS[tier];
-  // Mix tier baseline with stat-based valuation; stat-driven half lets
-  // exceptional budget stallions out-earn average mid stallions.
-  const statValue = calculateBaseHorseValue(horse, tier);
-  const blended = (tierBase + statValue * 0.4) / 2;
-  return Math.round(blended / 500) * 500;
+/**
+ * Recalculate standing fee after new progeny results or major wins.
+ *
+ * Adjusts the stallion's fee based on progeny performance stakes rate and G1 winners.
+ * Fees increase with successful progeny and decrease with age.
+ *
+ * @param horse - The stallion horse
+ * @param currentDay - Current game day
+ * @returns Recalculated standing fee in dollars
+ *
+ * @example
+ * const newFee = recalcStandingFee(stallion, currentDay);
+ */
+export function recalcStandingFee(horse: Horse, currentDay: number): number {
+  if (!horse.stud || !horse.stud.atStud) return 0;
+
+  const currentFee = horse.stud.standingFee;
+  let multiplier = 1.0;
+
+  // Own performance impact (for recently retired stallions with few progeny)
+  const careerStats = getCareerStats(horse);
+  if (horse.stud.lifetimeFoals < 20) {
+    if (careerStats.g1Wins > 0) multiplier += 0.15;
+    if (careerStats.stakesWins > 0) multiplier += 0.1;
+  }
+
+  // Progeny performance impact
+  const stakesRate =
+    horse.stud.lifetimeFoals > 0 ? horse.stud.lifetimeStakesFoals / horse.stud.lifetimeFoals : 0;
+
+  if (stakesRate > 0.1) multiplier += 0.25;
+  if (stakesRate > 0.05) multiplier += 0.1;
+
+  // Recent crop G1 win impact
+  // (In a real system we'd track last update day, for now we just look at lifetime counts)
+  if (horse.stud.lifetimeG1Foals > 2) multiplier += 0.5;
+
+  // Aging impact: fee drops after age 15
+  if (horse.age > AGE_STUD_DECLINE) multiplier -= 0.1;
+  if (horse.age > AGE_STUD_SEVERE_DECLINE) multiplier -= 0.15;
+
+  // Round to nearest $100
+  return Math.max(STUD_FEE_MIN, Math.round((currentFee * multiplier) / STUD_FEE_ROUNDING) * STUD_FEE_ROUNDING);
 }
 
-// Re-price a stallion based on his progeny record. Capped at 4× the original
-// baseline to keep climbs convergent (stops a 3-G1-foal stallion from racing
-// to $5M overnight). Called after each stakes/G1 win in resolveRace.
-export function recalcStandingFee(
-  stallion: Horse,
-  state: Pick<GameState, "horses" | "npcStables">,
-): number {
-  if (!stallion.stud) return 0;
-  return calculateRecommendedStudFee(stallion, state);
+/**
+ * valueOf — current financial value of the stallion to the stable.
+ *
+ * Used for taxes, accounting, and AI buy/sell decisions. Calculates the stallion's
+ * total value as base horse value plus stud income potential (valued at 2 years of stud revenue).
+ *
+ * @param horse - The stallion horse
+ * @param stable - The stable owning the horse
+ * @returns Total financial value in dollars
+ *
+ * @example
+ * const value = valueOf(stallion, stable);
+ */
+export function valueOf(horse: Horse, stable: Stable): number {
+  const baseValue = calculateBaseHorseValue(horse, stable.tier);
+
+  if (!horse.stud || !horse.stud.atStud) return baseValue;
+
+  // Stud value is heavily influenced by their book size and fee
+  const annualStudRevenue = horse.stud.standingFee * horse.stud.bookSize * 0.7; // 70% fill rate
+
+  return baseValue + annualStudRevenue * 2; // Valued at base + 2 years of stud income
 }
 
-// True if this stallion can accept a new booking right now: at-stud, has
-// remaining book capacity, and is in his hemisphere's breeding season.
+/**
+ * Get available stallions for breeding with a specific mare.
+ *
+ * Filters all horses to find stallions that are available for breeding with the given mare.
+ * Considers gender, stud status, and basic eligibility criteria.
+ *
+ * @param horses - All horses in the game state
+ * @param mare - The mare to breed with
+ * @returns Array of available stallions
+ *
+ * @example
+ * const stallions = getAvailableStallions(state.horses, mare);
+ */
+export function getAvailableStallions(horses: Horse[], mare: Horse): Horse[] {
+  return horses.filter((horse) => {
+    // Must be a male horse
+    if (!SIRE_GENDERS.includes(horse.gender)) return false;
+
+    // Must be at stud
+    if (!horse.stud || !horse.stud.atStud) return false;
+
+    // Must be alive
+    if (horse.lifecycleStatus === "deceased") return false;
+
+    // Must be of breeding age
+    if (horse.age < 3) return false;
+
+    // Cannot breed with itself
+    if (horse.id === mare.id) return false;
+
+    // Basic health check
+    if (horse.healthStatus === "covering_sickness") return false;
+
+    return true;
+  });
+}
+
+/**
+ * Check if a stallion is available for breeding on a given day.
+ *
+ * Considers stud status, breeding season, and booking availability.
+ *
+ * @param stallion - The stallion horse
+ * @param day - Current game day
+ * @returns True if the stallion is available for breeding
+ *
+ * @example
+ * if (isStallionAvailable(stallion, currentDay)) {
+ *   bookBreeding(stallion);
+ * }
+ */
 export function isStallionAvailable(stallion: Horse, day: number): boolean {
-  if (!stallion.stud?.atStud) return false;
-  if (stallion.stud.seasonBookings >= stallion.stud.bookSize) return false;
-  if (!inBreedingSeason(day, stallion.hemisphere)) return false;
-  return true;
-}
+  // Must be at stud
+  if (!stallion.stud || !stallion.stud.atStud) return false;
 
-// Returns the full set of stallions a mare can be booked to right now.
-// Includes player-owned stallions and NPC stallions that match the mare's
-// hemisphere. Sorted by fee ascending (cheapest first) for browsing.
-export function getAvailableStallions(
-  state: Pick<GameState, "horses" | "day">,
-  mareHemisphere: Hemisphere,
-): Horse[] {
-  return state.horses
-    .filter((h) => h.stud?.atStud)
-    .filter((h) => h.hemisphere === mareHemisphere)
-    .filter((h) => isStallionAvailable(h, state.day))
-    .sort((a, b) => a.stud!.standingFee - b.stud!.standingFee);
+  // Must be alive
+  if (stallion.lifecycleStatus === "deceased") return false;
+
+  // Must be in breeding season
+  if (!inBreedingSeason(day, stallion.hemisphere)) return false;
+
+  // Must have available booking slots
+  if (stallion.stud.seasonBookings >= stallion.stud.bookSize) return false;
+
+  // Basic health check
+  if (stallion.healthStatus === "covering_sickness") return false;
+
+  return true;
 }

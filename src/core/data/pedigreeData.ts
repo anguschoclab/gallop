@@ -1,3 +1,14 @@
+/**
+ * pedigreeData.ts - Famous thoroughbred pedigree data
+ *
+ * This file provides a curated dataset of famous thoroughbred sires and dams,
+ * including foundation sires, dosage classifications, Bruce Lowe families,
+ * and lookup functions for pedigree resolution.
+ *
+ * Dependencies: @/game/rng (nondeterministicRng, Rng)
+ * Related files: Used throughout breeding, genetics, and horse generation systems
+ */
+
 // Curated dataset of famous thoroughbred sires and dams
 // Sources: Wikipedia (Leading Sire in North America), TBHeritage.com (Foundation Sires)
 
@@ -14470,24 +14481,53 @@ export const pedigreeMap = new Map<string, PedigreeHorse>(
   pedigreeDataset.map((horse) => [horse.name.toLowerCase(), horse]),
 );
 
-// Function to find a horse by name (case-insensitive)
+/**
+ * Find a horse by name (case-insensitive).
+ *
+ * Looks up a horse in the pedigree dataset by name, ignoring case.
+ *
+ * @param name - The horse name to search for
+ * @returns Pedigree horse data or undefined if not found
+ */
 export function findHorseByName(name: string): PedigreeHorse | undefined {
   return pedigreeMap.get(name.toLowerCase());
 }
 
-// Function to get sire of a horse by name
+/**
+ * Get sire of a horse by name.
+ *
+ * Looks up a horse by name and returns its sire's name.
+ *
+ * @param horseName - The horse name to look up
+ * @returns Sire name or undefined if not found
+ */
 export function getSireByName(horseName: string): string | undefined {
   const horse = findHorseByName(horseName);
   return horse?.sire;
 }
 
-// Function to get dam of a horse by name
+/**
+ * Get dam of a horse by name.
+ *
+ * Looks up a horse by name and returns its dam's name.
+ *
+ * @param horseName - The horse name to look up
+ * @returns Dam name or undefined if not found
+ */
 export function getDamByName(horseName: string): string | undefined {
   const horse = findHorseByName(horseName);
   return horse?.dam;
 }
 
-// Function to get random horse from a specific era
+/**
+ * Get random horse from a specific era.
+ *
+ * Returns a random horse from the pedigree dataset filtered by era.
+ *
+ * @param era - The era to filter by
+ * @param rng - Random number generator (defaults to nondeterministic)
+ * @returns Random pedigree horse or undefined if no horses in era
+ */
 export function getRandomHorseFromEra(
   era: PedigreeHorse["era"],
   rng: Rng = nondeterministicRng(),
@@ -14497,14 +14537,28 @@ export function getRandomHorseFromEra(
   return horses[Math.floor(rng.next() * horses.length)];
 }
 
-// Function to get random sire from the dataset
+/**
+ * Get random sire from the dataset.
+ *
+ * Returns a random horse that can serve as a sire (has sire data or is foundation).
+ *
+ * @param rng - Random number generator (defaults to nondeterministic)
+ * @returns Random pedigree horse suitable as sire or undefined
+ */
 export function getRandomSire(rng: Rng = nondeterministicRng()): PedigreeHorse | undefined {
   const sires = pedigreeDataset.filter((h) => h.sire !== undefined || h.era === "foundation");
   if (sires.length === 0) return undefined;
   return sires[Math.floor(rng.next() * sires.length)];
 }
 
-// Function to get random dam from the dataset
+/**
+ * Get random dam from the dataset.
+ *
+ * Returns a random horse that can serve as a dam (has dam data).
+ *
+ * @param rng - Random number generator (defaults to nondeterministic)
+ * @returns Random pedigree horse suitable as dam or undefined
+ */
 export function getRandomDam(rng: Rng = nondeterministicRng()): PedigreeHorse | undefined {
   const dams = pedigreeDataset.filter((h) => h.dam !== undefined);
   if (dams.length === 0) return undefined;

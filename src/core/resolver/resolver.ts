@@ -1,12 +1,22 @@
+/**
+ * resolver.ts - Core resolver logic
+ *
+ * This file provides core resolver logic for the impact resolver system,
+ * handling intent collection, validation, and impact application using Immer.
+ *
+ * Dependencies: immer (produce), @/game/types (GameState), ./intents (AnyIntent), ./impacts (AnyImpact), ./handlers (ALL_HANDLERS), ./validators (ALL_VALIDATORS, ValidationCache)
+ * Related files: intents.ts (provides intent types), handlers/ (handle intents), validators/ (validate intents)
+ */
+
 // Core resolver logic for the impact resolver system
 // Handles intent collection, validation, and impact application using Immer
 
-import { produce } from "immer";
-import type { GameState } from "@/game/types";
+import { produce, type WritableDraft } from "immer";
+import type { GameState, Horse, Stable } from "@/game/types";
 import type { AnyIntent } from "./intents";
 import type { AnyImpact } from "./impacts";
-import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
-import { generateUUID } from "@/game/uuid";
+import { ALL_HANDLERS } from "./handlers";
+import { ALL_VALIDATORS, type ValidationCache } from "./validators";
 
 // Impact log entry for debugging and audit trail
 export interface ImpactLogEntry {
@@ -30,616 +40,193 @@ export interface ResolverContext {
 }
 
 /**
- * Apply a single impact to the state using Immer for immutability
+ * Apply a single impact to the state using Immer for immutability.
+ *
+ * @param state - Current game state
+ * @param impact - Impact to apply
+ * @returns Updated game state
  */
 function applyImpact(state: GameState, impact: AnyImpact): GameState {
   return produce(state, (draft) => {
-    switch (impact.type) {
-      case "cash_change": {
-        const { entityId, amount, reason } = impact;
-        if (entityId && entityId !== "player") {
-          // NPC stable cash change
-          const stable = draft.npcStables.find((s) => s.id === entityId);
-          if (stable) {
-            stable.cash = Math.max(0, stable.cash + amount);
-          }
-        } else {
-          // Player cash change (entityId is falsy or "player")
-          draft.cash = Math.max(0, draft.cash + amount);
-        }
+    let handled = false;
+    for (const handler of ALL_HANDLERS) {
+      if (handler.canHandle(impact.type)) {
+        handler.handle(draft, impact);
+        handled = true;
         break;
       }
+    }
 
-      case "horse_stat_change": {
-        const { horseId, stat, delta } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.stats[stat] = Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta));
-        }
-        break;
-      }
-
-      case "energy_change": {
-        const { horseId, delta } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.energy = Math.min(100, Math.max(0, horse.energy + delta));
-        }
-        break;
-      }
-
-      case "form_change": {
-        const { horseId, delta } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.form = Math.min(10, Math.max(-10, horse.form + delta));
-        }
-        break;
-      }
-
-      case "fame_change": {
-        const { horseId, delta } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.fame = Math.min(100, Math.max(0, horse.fame + delta));
-        }
-        break;
-      }
-
-      case "horse_creation": {
-        const { horse } = impact;
-        draft.horses.push(horse);
-        break;
-      }
-
-      case "horse_deletion": {
-        const { horseId } = impact;
-        const index = draft.horses.findIndex((h) => h.id === horseId);
-        if (index !== -1) {
-          draft.horses.splice(index, 1);
-        }
-        break;
-      }
-
-      case "horse_transfer": {
-        const { horseId, fromStableId, toStableId } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.stableId = toStableId;
-          horse.owned = !toStableId;
-        }
-        break;
-      }
-
-      case "race_entry": {
-        const { raceId, horseId, jockeyId, weight } = impact;
-        const race = draft.races.find((r) => r.id === raceId);
-        if (race) {
-          race.entries.push({
-            horseId,
-            owned: false, // Will be updated by transfer impact
-            jockeyId,
-            weight,
-          });
-        }
-        break;
-      }
-
-      case "race_withdrawal": {
-        const { raceId, horseId } = impact;
-        const race = draft.races.find((r) => r.id === raceId);
-        if (race) {
-          const index = race.entries.findIndex((e) => e.horseId === horseId);
-          if (index !== -1) {
-            race.entries.splice(index, 1);
-          }
-        }
-        break;
-      }
-
-      case "race_result": {
-        const { raceId, results } = impact;
-        const race = draft.races.find((r) => r.id === raceId);
-        if (race) {
-          race.result = results;
-          race.resolved = true;
-        }
-        break;
-      }
-
-      case "pregnancy_creation": {
-        const { pregnancy } = impact;
-        draft.pregnancies.push(pregnancy);
-        break;
-      }
-
-      case "pregnancy_update": {
-        const { pregnancyId, updates } = impact;
-        const index = draft.pregnancies.findIndex((p) => p.id === pregnancyId);
-        if (index !== -1) {
-          Object.assign(draft.pregnancies[index], updates);
-        }
-        break;
-      }
-
-      case "pregnancy_deletion": {
-        const { pregnancyId } = impact;
-        const index = draft.pregnancies.findIndex((p) => p.id === pregnancyId);
-        if (index !== -1) {
-          draft.pregnancies.splice(index, 1);
-        }
-        break;
-      }
-
-      case "stud_career": {
-        const { horseId, studCareer } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.stud = studCareer;
-        }
-        break;
-      }
-
-      case "jockey_contract": {
-        const { jockeyId, stableId, contractUntil } = impact;
-        const jockey = draft.jockeys?.find((j) => j.id === jockeyId);
-        if (jockey) {
-          jockey.stableId = stableId;
-          jockey.contractUntil = contractUntil;
-        }
-        break;
-      }
-
-      case "jockey_assignment": {
-        const { raceId, horseId, jockeyId } = impact;
-        const race = draft.races.find((r) => r.id === raceId);
-        if (race) {
-          const entry = race.entries.find((e) => e.horseId === horseId);
-          if (entry) {
-            entry.jockeyId = jockeyId;
-          }
-        }
-        break;
-      }
-
-      case "scout_report": {
-        const { report } = impact;
-        draft.scoutReports.push(report);
-        break;
-      }
-
-      case "consignment": {
-        const { horseId, saleId, reservePrice, consignorStableId, breezeSeconds } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.consignedSaleId = saleId;
-        }
-        const auction = draft.auctions?.find((a) => a.id === saleId);
-        if (auction) {
-          auction.lots.push({
-            id: generateUUID(),
-            horseId,
-            saleId,
-            consignorStableId,
-            reservePrice,
-            passed: false,
-            withdrawn: false,
-            breezeSeconds,
-          });
-        }
-        break;
-      }
-
-      case "consignment_withdrawal": {
-        const { horseId, saleId } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.consignedSaleId = undefined;
-        }
-        const auction = draft.auctions?.find((a) => a.id === saleId);
-        if (auction) {
-          const index = auction.lots.findIndex((l) => l.horseId === horseId);
-          if (index !== -1) {
-            auction.lots.splice(index, 1);
-          }
-        }
-        break;
-      }
-
-      case "auction_resolution": {
-        const {
-          saleId,
-          lotId,
-          hammerPrice,
-          soldToStableId,
-          passed,
-          bidHistory,
-          wasPlayerConsignment,
-        } = impact;
-        const auction = draft.auctions?.find((a) => a.id === saleId);
-        if (auction) {
-          const lot = auction.lots.find((l) => l.id === lotId);
-          if (lot) {
-            lot.hammerPrice = hammerPrice;
-            lot.soldToStableId = soldToStableId;
-            lot.passed = passed;
-            if (bidHistory) lot.bidHistory = bidHistory;
-            // Player-consigned lot — clear the horse's consignedSaleId
-            // regardless of sold/passed (sold horse leaves player's hands;
-            // passed horse goes back to the player free to re-list).
-            if (wasPlayerConsignment) {
-              const horse = draft.horses.find((h) => h.id === lot.horseId);
-              if (horse) horse.consignedSaleId = undefined;
-            }
-          }
-        }
-        break;
-      }
-
-      case "gelding": {
-        const { horseId } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse && (horse.gender === "colt" || horse.gender === "horse")) {
-          horse.gender = "gelding";
-        }
-        break;
-      }
-
-      case "rename": {
-        const { horseId, newName } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.name = newName;
-        }
-        break;
-      }
-
-      case "campaign_slot": {
-        const { horseId, slotIndex, slot } = impact;
-        const campaign = draft.campaigns?.find((c) => c.horseId === horseId);
-        if (campaign) {
-          campaign.slots[slotIndex] = { ...campaign.slots[slotIndex], ...slot };
-        }
-        break;
-      }
-
-      case "campaign_flag": {
-        const { horseId, flag } = impact;
-        const campaign = draft.campaigns?.find((c) => c.horseId === horseId);
-        if (campaign) {
-          campaign.flags.push(flag);
-        }
-        break;
-      }
-
-      case "campaign_creation": {
-        const { campaign } = impact;
-        if (!draft.campaigns) draft.campaigns = [];
-        draft.campaigns.push(campaign);
-        break;
-      }
-
-      case "campaign_deletion": {
-        const { horseId } = impact;
-        if (draft.campaigns) {
-          const index = draft.campaigns.findIndex((c) => c.horseId === horseId);
-          if (index !== -1) {
-            draft.campaigns.splice(index, 1);
-          }
-        }
-        break;
-      }
-
-      case "auto_manage_toggle": {
-        const { horseId, autoManaged } = impact;
-        const campaign = draft.campaigns?.find((c) => c.horseId === horseId);
-        if (campaign) {
-          campaign.autoManaged = autoManaged;
-        }
-        break;
-      }
-
-      case "aging": {
-        const { horseId, newAge } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.age = newAge;
-        }
-        break;
-      }
-
-      case "race_history": {
-        const { horseId, raceHistoryEntry } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.raceHistory.push(raceHistoryEntry);
-        }
-        break;
-      }
-
-      case "claiming": {
-        const { horseId, fromStableId, toStableId } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.stableId = toStableId;
-          horse.owned = !toStableId;
-        }
-        break;
-      }
-
-      case "blue hen_status": {
-        const { horseId, blueHenStatus } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.blueHenStatus = blueHenStatus;
-        }
-        break;
-      }
-
-      case "jockey_stats": {
-        const { jockeyId, careerStarts, careerWins, fame } = impact;
-        const jockey = draft.jockeys?.find((j) => j.id === jockeyId);
-        if (jockey) {
-          jockey.careerStarts = careerStarts;
-          jockey.careerWins = careerWins;
-          jockey.fame = fame;
-        }
-        break;
-      }
-
-      case "log": {
-        const { text } = impact;
-        draft.log = [{ day: impact.day, text }, ...draft.log].slice(0, 50);
-        break;
-      }
-
-      case "health_status_change": {
-        const { horseId, status, recoveryDay } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.healthStatus = status;
-          horse.healthStatusDay = impact.day;
-          // If a recovery day is specified, store it (for future auto-recovery logic)
-          if (recoveryDay) {
-            // Store the expected recovery day for reference
-            // The actual recovery logic is handled by the energy phase
-          }
-        }
-        break;
-      }
-
-      case "pace_sample": {
-        const { distance, time } = impact;
-        if (!draft.paceSamples) {
-          draft.paceSamples = {};
-        }
-        const bucket = Math.floor(distance / 100);
-        if (!draft.paceSamples[bucket]) {
-          draft.paceSamples[bucket] = [];
-        }
-        draft.paceSamples[bucket].push(time);
-        break;
-      }
-
-      case "pasture_retirement": {
-        const { horseId, retiredOnDay } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.lifecycleStatus = "retired";
-          horse.retiredOnDay = retiredOnDay;
-        }
-        break;
-      }
-
-      case "horse_death": {
-        const { horseId, cause, deceasedOnDay } = impact;
-        const horse = draft.horses.find((h) => h.id === horseId);
-        if (horse) {
-          horse.lifecycleStatus = "deceased";
-          horse.deceasedOnDay = deceasedOnDay;
-          horse.causeOfDeath = cause;
-        }
-        break;
-      }
-
-      case "hall_of_fame_induction": {
-        const { horseId, horseName, inductedOnDay, careerHighlights } = impact;
-        if (!draft.hallOfFame) {
-          draft.hallOfFame = [];
-        }
-        // Check if already inducted
-        if (!draft.hallOfFame.some((h) => h.horseId === horseId)) {
-          draft.hallOfFame.push({
-            horseId,
-            horseName,
-            inductedOnDay,
-            careerHighlights,
-          });
-        }
-        break;
-      }
-
-      case "claimResolution": {
-        // The actual horse/cash transfers are emitted as separate CashImpact /
-        // HorseTransferImpact impacts by the claiming resolution logic.
-        // This impact is a marker for the post-race recap UI — no additional
-        // state mutation needed here beyond what those impacts already apply.
-        break;
-      }
-
-      default:
-        // Unknown impact type - log warning
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        console.warn(`Unknown impact type: ${(impact as any).type}`);
+    if (!handled) {
+      // Unknown impact type - log warning
+      console.warn(`Unknown impact type: ${impact.type}`);
     }
   });
 }
 
 /**
- * Apply all impacts to the state in order
+ * Apply all impacts to the state in order.
+ *
+ * Processes all impacts in the context, applying them to the game state using Immer
+ * for immutability. Creates pre-indexed maps for O(1) lookups during impact resolution.
+ *
+ * @param context - Resolver context containing state, intents, impacts, and impact log
+ * @returns Updated resolver context with new state and impact log
  */
 export function applyImpacts(context: ResolverContext): ResolverContext {
-  let state = context.state;
   const impactLog: ImpactLogEntry[] = [];
 
-  for (const impact of context.impacts) {
-    state = applyImpact(state, impact);
-
-    // Log impact based on logLevel
-    if (impact.logLevel !== "never") {
-      impactLog.push({
-        impactId: impact.id,
-        intentId: impact.intentId,
-        day: impact.day,
-        phase: impact.phase,
-        type: impact.type,
-        entityId:
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (impact as any).entityId ||
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (impact as any).horseId ||
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (impact as any).raceId ||
-          "unknown",
-        details:
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (impact as any).reason ||
-          impact.type,
-
-        logLevel: impact.logLevel,
-      });
+  const newState = produce(context.state, (draft) => {
+    // PRE-INDEX: Create maps for O(1) lookups during impact resolution
+    // Note: We use the DRAFT as source, but once a horse is modified,
+    // the proxy stays the same in the map, so it's safe.
+    const horseMap = new Map<string, WritableDraft<Horse>>();
+    for (const h of draft.horses) {
+      horseMap.set(h.id, h);
     }
-  }
+
+    const stableMap = new Map<string, WritableDraft<Stable>>();
+    for (const s of draft.npcStables) {
+      stableMap.set(s.id, s);
+    }
+
+    const campaignMap = new Map<string, WritableDraft<any>>();
+    if (draft.campaigns) {
+      for (const c of draft.campaigns) {
+        campaignMap.set(c.horseId, c);
+      }
+    }
+
+    const raceMap = new Map<string, WritableDraft<any>>();
+    for (const r of draft.races) {
+      raceMap.set(r.id, r);
+    }
+
+    const jockeyMap = new Map<string, WritableDraft<any>>();
+    if (draft.jockeys) {
+      for (const j of draft.jockeys) {
+        jockeyMap.set(j.id, j);
+      }
+    }
+
+    const auctionMap = new Map<string, WritableDraft<any>>();
+    if (draft.auctions) {
+      for (const a of draft.auctions) {
+        auctionMap.set(a.id, a);
+      }
+    }
+
+    const facilityMap = new Map<string, WritableDraft<any>>();
+    if (draft.facilities) {
+      for (const f of Object.values(draft.facilities)) {
+        if (f) facilityMap.set(f.type, f);
+      }
+    }
+
+    const staffMap = new Map<string, WritableDraft<any>>();
+    if (draft.hiredStaff) {
+      for (const s of draft.hiredStaff) {
+        staffMap.set(s.id, s);
+      }
+    }
+
+    for (const impact of context.impacts) {
+      let handled = false;
+
+      for (const handler of ALL_HANDLERS) {
+        if (handler.canHandle(impact.type)) {
+          handler.handle(draft, impact, {
+            horseMap,
+            stableMap,
+            campaignMap,
+            raceMap,
+            jockeyMap,
+            auctionMap,
+            facilityMap,
+            staffMap,
+          });
+          handled = true;
+          break;
+        }
+      }
+
+      if (!handled) {
+        console.warn(`Unknown impact type: ${impact.type}`);
+      }
+
+      // Log impact based on logLevel
+      if (impact.logLevel !== "never") {
+        impactLog.push({
+          impactId: impact.id,
+          intentId: impact.intentId,
+          day: impact.day,
+          phase: impact.phase,
+          type: impact.type,
+          entityId: impact.entityId || impact.horseId || impact.raceId || "unknown",
+          details: impact.reason || impact.type,
+          logLevel: impact.logLevel,
+        });
+      }
+    }
+  });
 
   return {
     ...context,
-    state,
+    state: newState as GameState,
     impactLog: [...context.impactLog, ...impactLog],
   };
 }
 
 /**
- * Validate an intent before resolution
- * Returns { valid: boolean, reason?: string }
+ * Validate an intent before resolution.
+ *
+ * Finds and runs the appropriate validator for the intent type. Returns validation
+ * result with validity flag and optional reason if invalid. Defaults to valid if no
+ * specific validator found.
+ *
+ * @param intent - Intent to validate
+ * @param state - Current game state
+ * @param cache - Optional validation cache for performance
+ * @returns Validation result with valid flag and optional reason
  */
 export function validateIntent(
   intent: AnyIntent,
   state: GameState,
+  cache?: ValidationCache,
 ): { valid: boolean; reason?: string } {
-  // Basic validation based on intent type
-  switch (intent.type) {
-    case "training": {
-      const horse = state.horses.find((h) => h.id === intent.horseId);
-      if (!horse) return { valid: false, reason: "Horse not found" };
-      if (horse.consignedSaleId)
-        return { valid: false, reason: "Horse is consigned to an auction" };
-      if (horse.energy < 20) return { valid: false, reason: "Insufficient energy" };
-      break;
+  // Find appropriate validator from registry
+  for (const validator of ALL_VALIDATORS) {
+    if (validator.canValidate(intent.type)) {
+      return validator.validate(intent, state, cache);
     }
-
-    case "race_entry": {
-      const horse = state.horses.find((h) => h.id === intent.horseId);
-      const race = state.races.find((r) => r.id === intent.raceId);
-      if (!horse) return { valid: false, reason: "Horse not found" };
-      if (horse.consignedSaleId)
-        return { valid: false, reason: "Horse is consigned to an auction" };
-      if (!race) return { valid: false, reason: "Race not found" };
-      if (race.resolved) return { valid: false, reason: "Race already resolved" };
-      if (horse.energy < 40) return { valid: false, reason: "Insufficient energy" };
-      break;
-    }
-
-    case "breeding": {
-      const sire = state.horses.find((h) => h.id === intent.sireId);
-      const dam = state.horses.find((h) => h.id === intent.damId);
-      if (!sire) return { valid: false, reason: "Sire not found" };
-      if (!dam) return { valid: false, reason: "Dam not found" };
-      if (sire.gender !== "horse" && sire.gender !== "gelding")
-        return { valid: false, reason: "Invalid sire gender" };
-      if (dam.gender !== "mare") return { valid: false, reason: "Invalid dam gender" };
-      if (state.cash < 2000) return { valid: false, reason: "Insufficient funds for breeding" };
-      break;
-    }
-
-    case "purchase": {
-      const horse = state.market.find((h) => h.id === intent.horseId);
-      if (!horse) return { valid: false, reason: "Horse not in market" };
-      if (state.cash < intent.price) return { valid: false, reason: "Insufficient funds" };
-      break;
-    }
-
-    case "claiming": {
-      const race = state.races.find((r) => r.id === intent.raceId);
-      const horse = state.horses.find((h) => h.id === intent.horseId);
-      if (!race) return { valid: false, reason: "Race not found" };
-      if (!horse) return { valid: false, reason: "Horse not found" };
-      if (horse.consignedSaleId)
-        return { valid: false, reason: "Horse is consigned to an auction" };
-      if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
-      if (!race.entries.some((e) => e.horseId === intent.horseId)) {
-        return { valid: false, reason: "Horse is not entered in this race" };
-      }
-      if (horse.stableId === intent.claimantStableId) {
-        return { valid: false, reason: "Cannot claim own horse" };
-      }
-
-      // Check claimant has sufficient funds
-      if (intent.claimantStableId) {
-        const stable = state.npcStables.find((s) => s.id === intent.claimantStableId);
-        if (!stable || stable.cash < race.claimingPrice) {
-          return { valid: false, reason: "Insufficient funds" };
-        }
-      } else {
-        if (state.cash < race.claimingPrice) {
-          return { valid: false, reason: "Insufficient funds" };
-        }
-      }
-
-      // Check horse eligibility for claiming price
-      if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) {
-        return { valid: false, reason: "Horse is not eligible for this claiming price" };
-      }
-
-      break;
-    }
-
-    case "withdraw_from_claiming": {
-      const race = state.races.find((r) => r.id === intent.raceId);
-      const horse = state.horses.find((h) => h.id === intent.horseId);
-      if (!race) return { valid: false, reason: "Race not found" };
-      if (!horse) return { valid: false, reason: "Horse not found" };
-      if (race.resolved) return { valid: false, reason: "Race already resolved" };
-      if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
-      if (race.raceClass !== "OptionalClaiming" && race.raceClass !== "MaidenOptionalClaiming") {
-        return { valid: false, reason: "Withdrawal only allowed in optional claiming races" };
-      }
-      const entry = race.entries.find((e) => e.horseId === intent.horseId);
-      if (!entry) return { valid: false, reason: "Horse not entered in this race" };
-      if (entry.withdrawnFromClaiming) {
-        return { valid: false, reason: "Horse already withdrawn from claiming" };
-      }
-      break;
-    }
-
-    default:
-      // Pass through for other intent types
-      break;
   }
 
+  // Default to valid if no specific validator found
   return { valid: true };
 }
 
 /**
- * Sort intents by priority (higher priority first)
- * Player intents have priority 100, NPC intents have priority 50, System intents have priority 10
+ * Sort intents by priority (higher priority first).
+ *
+ * Sorts intents by their priority field. Player intents have priority 100, NPC intents
+ * have priority 50, System intents have priority 10.
+ *
+ * @param intents - Intents to sort
+ * @returns Sorted intents array with highest priority first
  */
 export function sortIntents(intents: AnyIntent[]): AnyIntent[] {
   return [...intents].sort((a, b) => b.priority - a.priority);
 }
 
 /**
- * Resolve conflicts between intents
- * Currently uses priority-based resolution with logging
+ * Resolve conflicts between intents.
+ *
+ * Groups intents by entity and type, keeping only the highest-priority intent for each.
+ * Lower-priority intents are logged as conflicts. Uses priority-based resolution.
+ *
+ * @param intents - Intents to resolve conflicts for
+ * @param state - Current game state
+ * @returns Resolved intents array and conflicts log
  */
 export function resolveIntentConflicts(
   intents: AnyIntent[],

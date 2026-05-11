@@ -1,4 +1,14 @@
 /**
+ * genotypeCache.ts - In-memory caching for expensive genetic calculations
+ *
+ * This file provides caching for simulator results, COI calculations, bloodline
+ * resolution, and breeding compatibility to avoid redundant computations.
+ *
+ * Dependencies: ./breedingSimulator (SimulationResult), ../breeding/populationGenetics (Bloodline), @/game/breedingCompatibility (BreedingCompatibilityResult)
+ * Related files: breedingSimulator.ts (uses simulator cache), populationGenetics.ts (uses COI cache)
+ */
+
+/**
  * Genotype Cache
  * In-memory caching for expensive genetic calculations
  */
@@ -20,7 +30,14 @@ const bloodlineCache = new Map<string, Bloodline>();
 const compatCache = new Map<string, BreedingCompatibilityResult>();
 
 /**
- * Get or compute simulator result
+ * Get or compute simulator result.
+ *
+ * Returns cached simulator result if available, otherwise computes and caches it.
+ *
+ * @param sireId - The sire horse ID
+ * @param damId - The dam horse ID
+ * @param computeFn - Function to compute the result if not cached
+ * @returns Simulator result
  */
 export function cachedSimulation(
   sireId: string,
@@ -37,7 +54,15 @@ export function cachedSimulation(
 }
 
 /**
- * Get or compute COI
+ * Get or compute COI (Coefficient of Inbreeding).
+ *
+ * Returns cached COI if available, otherwise computes and caches it.
+ * COI cache is never invalidated as pedigree is immutable.
+ *
+ * @param sireId - The sire horse ID
+ * @param damId - The dam horse ID
+ * @param computeFn - Function to compute the COI if not cached
+ * @returns COI value
  */
 export function cachedCoi(sireId: string, damId: string, computeFn: () => number): number {
   const key = `coi:${sireId}:${damId}`;
@@ -50,7 +75,14 @@ export function cachedCoi(sireId: string, damId: string, computeFn: () => number
 }
 
 /**
- * Get or compute bloodline
+ * Get or compute bloodline.
+ *
+ * Returns cached bloodline if available, otherwise computes and caches it.
+ * Bloodline cache is never invalidated as sire line doesn't change.
+ *
+ * @param horseId - The horse ID
+ * @param computeFn - Function to compute the bloodline if not cached
+ * @returns Bloodline object
  */
 export function cachedBloodline(horseId: string, computeFn: () => Bloodline): Bloodline {
   const key = `bloodline:${horseId}`;
@@ -63,7 +95,15 @@ export function cachedBloodline(horseId: string, computeFn: () => Bloodline): Bl
 }
 
 /**
- * Get or compute compatibility
+ * Get or compute compatibility.
+ *
+ * Returns cached compatibility result if available, otherwise computes and caches it.
+ * Compatibility cache is invalidated when race results are applied.
+ *
+ * @param sireId - The sire horse ID
+ * @param damId - The dam horse ID
+ * @param computeFn - Function to compute compatibility if not cached
+ * @returns Breeding compatibility result
  */
 export function cachedCompat(
   sireId: string,
@@ -80,8 +120,12 @@ export function cachedCompat(
 }
 
 /**
- * Invalidate compatibility cache for a specific horse
- * Called when race results are applied (careerWins, earnings, blueHenStatus change)
+ * Invalidate compatibility cache for a specific horse.
+ *
+ * Called when race results are applied (careerWins, earnings, blueHenStatus change).
+ * Removes all compatibility cache entries involving the specified horse.
+ *
+ * @param horseId - The horse ID to invalidate compatibility for
  */
 export function invalidateCompatFor(horseId: string): void {
   const keysToDelete: string[] = [];
@@ -96,17 +140,19 @@ export function invalidateCompatFor(horseId: string): void {
 }
 
 /**
- * Clear simulator cache
+ * Clear simulator cache.
+ *
  * Called when genetic testing reveals new alleles (future feature)
- * or for session cleanup
+ * or for session cleanup.
  */
 export function clearSimulatorCache(): void {
   simulatorCache.clear();
 }
 
 /**
- * Clear all caches
- * Called for session cleanup
+ * Clear all caches.
+ *
+ * Called for session cleanup. Clears simulator, COI, bloodline, and compatibility caches.
  */
 export function clearAllCaches(): void {
   simulatorCache.clear();
@@ -116,7 +162,11 @@ export function clearAllCaches(): void {
 }
 
 /**
- * Get cache statistics (for debugging/monitoring)
+ * Get cache statistics (for debugging/monitoring).
+ *
+ * Returns the size of each cache for monitoring cache hit rates and memory usage.
+ *
+ * @returns Object with cache sizes for simulator, COI, bloodline, and compat
  */
 export function getCacheStats(): {
   simulator: number;

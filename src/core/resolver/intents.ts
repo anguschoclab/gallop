@@ -1,3 +1,13 @@
+/**
+ * intents.ts - Intent type definitions
+ *
+ * This file provides intent type definitions for the impact resolver system.
+ * All player and NPC actions generate intents instead of mutating state directly.
+ *
+ * Dependencies: @/game/types (Horse, Race, Jockey)
+ * Related files: resolver.ts (uses intents), handlers/ (handle intents), validators/ (validate intents)
+ */
+
 // Intent type definitions for the impact resolver system
 // All player and NPC actions generate intents instead of mutating state directly
 
@@ -35,6 +45,7 @@ export interface RaceEntryIntent extends Intent {
   raceId: string;
   horseId: string;
   jockeyId?: string;
+  tactics?: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
 }
 
 // Race withdrawal intent
@@ -50,6 +61,7 @@ export interface BreedingIntent extends Intent {
   sireId: string;
   damId: string;
   liveFoalGuarantee: boolean;
+  fee?: number;
 }
 
 // Stud retirement intent
@@ -73,6 +85,7 @@ export interface JockeyContractIntent extends Intent {
   jockeyId: string;
   stableId?: string;
   contractUntil?: number;
+  bonus?: number;
 }
 
 // Jockey assignment intent
@@ -109,6 +122,12 @@ export interface ConsignmentWithdrawalIntent extends Intent {
 export interface GeldingIntent extends Intent {
   type: "gelding";
   horseId: string;
+}
+
+export interface RerollSilkIntent extends Intent {
+  type: "reroll_silk";
+  jockeyId: string;
+  cost: number;
 }
 
 // Rename intent
@@ -233,6 +252,81 @@ export interface WithdrawFromClaimingIntent extends Intent {
   horseId: string;
 }
 
+// Tactics intent
+export interface TacticsIntent extends Intent {
+  type: "tactics";
+  raceId: string;
+  horseId: string;
+  tactics: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+}
+
+// Staff intent
+export interface StaffIntent extends Intent {
+  type: "staff";
+  action: "hire" | "fire";
+  staffType: "trainer" | "vet" | "farrier" | "groom";
+  staffId?: string;
+  salary: number;
+  specialty?: string;
+  skill: number;
+}
+
+// Facility upgrade intent
+export interface FacilityUpgradeIntent extends Intent {
+  type: "facility_upgrade";
+  facilityId: string;
+  nextLevel: number;
+  cost: number;
+}
+
+// Pasture retirement intent
+export interface PastureRetirementIntent extends Intent {
+  type: "pasture_retirement";
+  horseId: string;
+}
+
+// Update stud fee intent
+export interface UpdateStudFeeIntent extends Intent {
+  type: "update_stud_fee";
+  horseId: string;
+  newFee: number;
+}
+
+// Syndicate creation intent
+export interface SyndicateCreationIntent extends Intent {
+  type: "syndicate_creation";
+  stallionId: string;
+  totalShares: number;
+  sharePrice: number;
+  initialShareholders: Record<string, number>; // stableId -> share count
+}
+
+// Share purchase intent
+export interface SharePurchaseIntent extends Intent {
+  type: "share_purchase";
+  syndicateId: string;
+  buyerStableId?: string; // undefined for player
+  shares: number;
+  pricePerShare: number;
+}
+
+// Share sale intent
+export interface ShareSaleIntent extends Intent {
+  type: "share_sale";
+  syndicateId: string;
+  sellerStableId?: string; // undefined for player
+  shares: number;
+  pricePerShare: number;
+}
+
+// Syndicate fee distribution intent
+export interface SyndicateFeeDistributionIntent extends Intent {
+  type: "syndicate_fee_distribution";
+  syndicateId: string;
+  totalFee: number;
+  breedingDay: number;
+}
+
 // Union type for all intents
 export type AnyIntent =
   | TrainingIntent
@@ -247,6 +341,7 @@ export type AnyIntent =
   | ConsignmentIntent
   | ConsignmentWithdrawalIntent
   | GeldingIntent
+  | RerollSilkIntent
   | RenameIntent
   | CampaignSlotIntent
   | CampaignFlagDismissalIntent
@@ -260,4 +355,13 @@ export type AnyIntent =
   | PregnancyResolutionIntent
   | RaceResolutionIntent
   | ClaimingIntent
-  | WithdrawFromClaimingIntent;
+  | WithdrawFromClaimingIntent
+  | TacticsIntent
+  | StaffIntent
+  | FacilityUpgradeIntent
+  | PastureRetirementIntent
+  | UpdateStudFeeIntent
+  | SyndicateCreationIntent
+  | SharePurchaseIntent
+  | ShareSaleIntent
+  | SyndicateFeeDistributionIntent;

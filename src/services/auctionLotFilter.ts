@@ -1,5 +1,19 @@
 import type { AuctionLot, Horse } from "@/game/types";
 
+// Auction filter constants
+const FILTER_CONSTANTS = {
+  // Age thresholds
+  WEANLING_AGE: 0,
+  YEARLING_AGE: 1,
+  TWO_YO_AGE: 2,
+  THREE_YO_PLUS_AGE: 3,
+  // Reserve price thresholds
+  RESERVE_UNDER_10K: 10_000,
+  RESERVE_10K_TO_50K_MIN: 10_000,
+  RESERVE_10K_TO_50K_MAX: 50_000,
+  RESERVE_OVER_50K: 50_000,
+} as const;
+
 export interface AuctionLotFilterOptions {
   sex?: "colt" | "filly" | "gelding" | "mare";
   ageBand?: "weanling" | "yearling" | "2yo" | "3yo+";
@@ -8,6 +22,15 @@ export interface AuctionLotFilterOptions {
   q?: string;
 }
 
+/**
+ * Filter and sort auction lots based on user-provided options.
+ * Supports filtering by sex, age band, reserve price, and search query.
+ *
+ * @param lots - All auction lots for the sale
+ * @param horses - All horses in the game for metadata lookup
+ * @param options - Filtering and sorting options
+ * @returns Filtered and sorted array of auction lots
+ */
 export function filterAndSortLots(
   lots: AuctionLot[],
   horses: Horse[],
@@ -28,10 +51,10 @@ export function filterAndSortLots(
     result = result.filter((l) => {
       const h = horses.find((h) => h.id === l.horseId);
       if (!h) return false;
-      if (options.ageBand === "weanling") return h.age === 0;
-      if (options.ageBand === "yearling") return h.age === 1;
-      if (options.ageBand === "2yo") return h.age === 2;
-      if (options.ageBand === "3yo+") return h.age >= 3;
+      if (options.ageBand === "weanling") return h.age === FILTER_CONSTANTS.WEANLING_AGE;
+      if (options.ageBand === "yearling") return h.age === FILTER_CONSTANTS.YEARLING_AGE;
+      if (options.ageBand === "2yo") return h.age === FILTER_CONSTANTS.TWO_YO_AGE;
+      if (options.ageBand === "3yo+") return h.age >= FILTER_CONSTANTS.THREE_YO_PLUS_AGE;
       return true;
     });
   }
@@ -39,10 +62,10 @@ export function filterAndSortLots(
   // Reserve band filter
   if (options.reserveBand) {
     result = result.filter((l) => {
-      if (options.reserveBand === "under10k") return l.reservePrice < 10_000;
+      if (options.reserveBand === "under10k") return l.reservePrice < FILTER_CONSTANTS.RESERVE_UNDER_10K;
       if (options.reserveBand === "10k-50k")
-        return l.reservePrice >= 10_000 && l.reservePrice <= 50_000;
-      if (options.reserveBand === "over50k") return l.reservePrice > 50_000;
+        return l.reservePrice >= FILTER_CONSTANTS.RESERVE_10K_TO_50K_MIN && l.reservePrice <= FILTER_CONSTANTS.RESERVE_10K_TO_50K_MAX;
+      if (options.reserveBand === "over50k") return l.reservePrice > FILTER_CONSTANTS.RESERVE_OVER_50K;
       return true;
     });
   }

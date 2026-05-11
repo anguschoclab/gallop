@@ -36,7 +36,30 @@
       "Bash(sed -i 's|import { findHorseByName } from \"@/game/pedigreeData\";|import { findHorseByName } from \"@/core/data/pedigreeData\";|g' src/core/breeding/bruceLowe.ts src/core/horse/naming/ancestorHomage.ts)",
       "Bash(sed -i 's|from \"@/game/pedigreeData\"|from \"@/core/data/pedigreeData\"|g' src/core/horse/horseFactory.ts)",
       "Bash(sed -i \"s/|| PERSONALITY_CONFIG.balanced/|| PERSONALITY_CONFIG.developer/\" src/core/horse/horseFactory.ts)",
-      "Bash(sed -i \"s/getRegionalSystem\\(stable.country\\)/getRegionalSystem\\(\\(stable.country ?? 'Belmont'\\) as any\\)/\" src/core/horse/horseFactory.ts)"
+      "Bash(sed -i \"s/getRegionalSystem\\(stable.country\\)/getRegionalSystem\\(\\(stable.country ?? 'Belmont'\\) as any\\)/\" src/core/horse/horseFactory.ts)",
+      "Bash(grep -n *)",
+      "Bash(sed -i 's/import type { Horse, CourseSpecification } from \".\\\\/types\";/import type { Horse } from \".\\\\/types\";\\\\nimport type { CourseSpecification } from \".\\\\/tracks\";/' src/game/beyer.ts)",
+      "Bash(sed -i 's/import type { BackstoryId } from \"@\\\\/game\\\\/types\";/import type { BackstoryId } from \"@\\\\/core\\\\/stable\\\\/types\";/' src/core/newGame/backstories.ts)",
+      "Bash(xargs sed -i 's|from \"immer/dist/internal\"|from \"immer\"|g')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3737/)",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4444/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5555/)",
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "Bash(git push *)",
+      "Bash(git fetch *)",
+      "Bash(sed -n '44,60p' src/game/store/slices/horseAdminSlice.ts)",
+      "Bash(sed -n '70,100p' src/game/store/slices/horseAdminSlice.ts)",
+      "Bash(sed -n '83,95p' src/game/store/slices/jockeySlice.ts)",
+      "Bash(sed -n '112,122p' src/game/store/slices/breedingSlice.ts)",
+      "Bash(sed -n '110,125p' src/game/store/slices/breedingSlice.ts)",
+      "Bash(sed -n '20,35p' src/game/store/slices/horseAdminSlice.ts)",
+      "Bash(sed -i 's/import { computeCoiFromSnapshot } from \"@\\\\/core\\\\/breeding\\\\/populationGenetics\";/import { computeProspectiveCoi } from \"@\\\\/core\\\\/breeding\\\\/populationGenetics\";/' src/core/genetics/breedingSimulator.ts)",
+      "Bash(sed -i 's/coiEstimate: 0, \\\\/\\\\/ TODO: Implement computeProspectiveCoi/coiEstimate: computeProspectiveCoi\\(sire, dam\\),/' src/core/genetics/breedingSimulator.ts)",
+      "Bash(claude plugin *)"
     ]
   }
 }

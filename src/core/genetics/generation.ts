@@ -1,3 +1,13 @@
+/**
+ * generation.ts - Genotype generation
+ *
+ * This file provides functions for generating horse genotypes from scratch or based on
+ * research data, with support for tier-based quality levels and dosage group biases.
+ *
+ * Dependencies: ./types (Genotype, MarkerGenotype), @/core/common/types (Locus, Rng), @/game/rng (createRng, hashStr), @/core/data/pedigreeData (AptitudinalGroup), @/core/data/stallionDNAData (getStallionResearchData, hasCompleteData), ./mapper (mapResearchDataToGenotype)
+ * Related files: inheritance.ts (uses generated genotypes for breeding), phenotype.ts (resolves generated genotypes to phenotypes)
+ */
+
 import type { Genotype, MarkerGenotype } from "./types";
 import type { Locus } from "@/core/common/types";
 import type { Rng } from "@/core/common/types";
@@ -41,6 +51,19 @@ const DOSAGE_BIASES: Record<
   Professional: { speedBias: 0, staminaBias: 0, styleBias: 2.5, fiberBias: 0, durabilityBias: 0 },
 };
 
+/**
+ * Generate random genotype based on tier.
+ *
+ * Creates a complete genotype with random alleles based on the specified tier
+ * (starter, budget, mid, elite). Higher tiers have better allele ranges.
+ *
+ * @param rng - Random number generator
+ * @param tier - Quality tier
+ * @returns Generated genotype
+ *
+ * @example
+ * const genotype = generateGenotype(rng, "elite");
+ */
 export function generateGenotype(
   rng: Rng,
   tier: "starter" | "budget" | "mid" | "elite" = "budget",
@@ -188,6 +211,20 @@ export function generateGenotype(
   };
 }
 
+/**
+ * Apply dosage biases to genotype.
+ *
+ * Modifies genotype alleles based on dosage group biases for speed, stamina,
+ * style, fiber type, and durability.
+ *
+ * @param genotype - Base genotype
+ * @param dosageGroups - Dosage groups to apply
+ * @param tier - Quality tier
+ * @returns Modified genotype
+ *
+ * @example
+ * const biased = applyDosageBiases(genotype, ["Brilliant"], "elite");
+ */
 export function applyDosageBiases(
   genotype: Genotype,
   dosageGroups?: AptitudinalGroup[],
@@ -259,6 +296,21 @@ export function applyDosageBiases(
   return genotype;
 }
 
+/**
+ * Generate deterministic genotype from stallion name.
+ *
+ * Creates a deterministic genotype based on stallion name using seeded RNG,
+ * with optional dosage biases applied.
+ *
+ * @param stallionName - Name of stallion (seed for RNG)
+ * @param tier - Quality tier
+ * @param dosageGroups - Optional dosage groups to apply
+ * @param achievements - Optional achievements
+ * @returns Generated genotype
+ *
+ * @example
+ * const genotype = generateDeterministicGenotype("Secretariat", "elite");
+ */
 export function generateDeterministicGenotype(
   stallionName: string,
   tier: "starter" | "budget" | "mid" | "elite" = "budget",
@@ -272,6 +324,21 @@ export function generateDeterministicGenotype(
   return biasedGenotype;
 }
 
+/**
+ * Generate research-based genotype from stallion name.
+ *
+ * Uses research data if available for the stallion, otherwise falls back to
+ * deterministic generation.
+ *
+ * @param stallionName - Name of stallion
+ * @param tier - Quality tier
+ * @param dosageGroups - Optional dosage groups to apply
+ * @param achievements - Optional achievements
+ * @returns Generated genotype
+ *
+ * @example
+ * const genotype = generateResearchBasedGenotype("Secretariat", "elite");
+ */
 export function generateResearchBasedGenotype(
   stallionName: string,
   tier: "starter" | "budget" | "mid" | "elite" = "budget",

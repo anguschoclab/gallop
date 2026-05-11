@@ -1,10 +1,20 @@
+/**
+ * claiming.ts - Claiming race mechanics
+ *
+ * This file handles claiming transactions, horse transfers, and claiming eligibility
+ * for claiming races.
+ *
+ * Dependencies: ./types (Horse, Race, Claim, ClaimingPrice), @/core/horse/stats (calculateOverallRating), ./rng (createRng, hashStr), @/lib/formatting (formatCurrency)
+ * Related files: raceSim.ts (uses claiming mechanics), resolver.ts (handles claiming transactions)
+ */
+
 // Claiming Race Mechanics
 // Handles claiming transactions, horse transfers, and claiming eligibility
 
-import type { Horse, Race, Claim, ClaimingPrice, ClaimingRaceEntry } from "./types";
+import type { Horse, Race, Claim, ClaimingPrice } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { createRng, hashStr } from "./rng";
-import { formatCurrency } from "@/components/HorseBits";
+import { createRng, hashStr, type Rng } from "./rng";
+import { formatCurrency } from "@/lib/formatting";
 
 // Horse transfer result from a claiming race
 export type HorseTransfer = {
@@ -26,8 +36,18 @@ export type ClaimAttempt = {
   reason?: string;
 };
 
-// Process claims after a race resolves
-// Returns transfers and logs
+/**
+ * Process claims after a race resolves.
+ *
+ * Returns transfers and logs. If multiple claims for same horse, randomly selects winner.
+ *
+ * @param race - Race with claiming configuration
+ * @param claims - Array of claim attempts
+ * @param horses - All horses in the game
+ * @param currentDay - Current simulation day
+ * @param rng - Optional random number generator
+ * @returns Object with transfers array and logs array
+ */
 export function processClaims(
   race: Race,
   claims: ClaimAttempt[],
@@ -102,8 +122,17 @@ export function processClaims(
   return { transfers, logs };
 }
 
-// Check if a horse is eligible for a claiming price
-// Horses should not be significantly over-qualified for the claiming level
+/**
+ * Check if a horse is eligible for a claiming price.
+ *
+ * Horses should not be significantly over-qualified for the claiming level.
+ * Checks value estimation and high-level race wins.
+ *
+ * @param horse - Horse to check
+ * @param claimingPrice - Claiming price to check against
+ * @param allHorses - All horses in the game
+ * @returns True if horse is eligible for claiming price
+ */
 export function isHorseEligibleForClaimingPrice(
   horse: Horse,
   claimingPrice: ClaimingPrice,
@@ -135,7 +164,15 @@ export function isHorseEligibleForClaimingPrice(
   return true;
 }
 
-// Get suggested claiming price range for a horse
+/**
+ * Get suggested claiming price range for a horse.
+ *
+ * Returns a range of claiming prices based on the horse's overall rating
+ * and estimated value.
+ *
+ * @param horse - Horse to calculate range for
+ * @returns Tuple of [minPrice, maxPrice] claiming prices
+ */
 export function getSuggestedClaimingPriceRange(horse: Horse): [ClaimingPrice, ClaimingPrice] {
   const overall = calculateOverallRating(horse);
   const estimatedValue = overall * 1000;
@@ -163,7 +200,14 @@ export function getSuggestedClaimingPriceRange(horse: Horse): [ClaimingPrice, Cl
   return [priceTiers[minIndex], priceTiers[maxIndex]];
 }
 
-// Validate that a claiming race configuration is valid
+/**
+ * Validate that a claiming race configuration is valid.
+ *
+ * Checks claiming price range, purse requirements, and optional claiming rules.
+ *
+ * @param race - Race to validate
+ * @returns Object with valid flag and array of issues
+ */
 export function validateClaimingRace(race: Race): { valid: boolean; issues: string[] } {
   const issues: string[] = [];
 

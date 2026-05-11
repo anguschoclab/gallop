@@ -1,3 +1,13 @@
+/**
+ * eligibility.ts - Race eligibility checking logic
+ *
+ * This file provides pure functions for checking whether a horse is eligible
+ * to enter a race based on age, gender, energy, pregnancy status, and win conditions.
+ *
+ * Dependencies: @/game/types (Horse, Race, Hemisphere), @/core/horse/gender (isGenderEligible), @/core/horse/stats (calculateOverallRating)
+ * Related files: raceSim.ts (uses eligibility checks), store.ts (race entry validation)
+ */
+
 import type { Horse, Race } from "@/game/types";
 import type { Hemisphere } from "@/game/types";
 import { isGenderEligible as checkGenderEligibility } from "@/core/horse/gender";
@@ -9,9 +19,20 @@ import { calculateOverallRating } from "@/core/horse/stats";
  */
 
 /**
- * Get the minimum age for a horse based on hemisphere and race restrictions
- * Northern hemisphere: age matches calendar year
- * Southern hemisphere: age is calendar year - 1
+ * Get the minimum age for a horse based on hemisphere and race restrictions.
+ *
+ * Northern hemisphere: age matches calendar year.
+ * Southern hemisphere: age is calendar year - 1.
+ *
+ * @param horseHemisphere - The horse's hemisphere
+ * @param restrictions - Optional race restrictions
+ * @param restrictions.minAge - General minimum age
+ * @param restrictions.minAgeNorthern - Minimum age override for Northern hemisphere
+ * @param restrictions.minAgeSouthern - Minimum age override for Southern hemisphere
+ * @returns Minimum age for the horse to be eligible
+ *
+ * @example
+ * const minAge = getMinimumAgeForHemisphere("Northern", race.restrictions);
  */
 export function getMinimumAgeForHemisphere(
   horseHemisphere: Hemisphere,
@@ -30,8 +51,18 @@ export function getMinimumAgeForHemisphere(
 }
 
 /**
- * Check if a horse is eligible to enter a race
- * Considers age, gender restrictions, energy, and pregnancy status
+ * Check if a horse is eligible to enter a race.
+ *
+ * Considers age, gender restrictions, energy, pregnancy status, maiden status,
+ * and win conditions (N3L, N1X, N2X).
+ *
+ * @param horse - The horse to check
+ * @param race - The race to enter
+ * @param pregnantHorseIds - Set of pregnant horse IDs
+ * @returns True if the horse is eligible for the race
+ *
+ * @example
+ * const eligible = isHorseEligibleForRace(horse, race, pregnantHorseIds);
  */
 export function isHorseEligibleForRace(
   horse: Horse,

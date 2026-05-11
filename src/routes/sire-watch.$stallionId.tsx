@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Trophy, TrendingUp, Zap } from "lucide-react";
 import { getSireAnalytics, type SireClassification } from "@/core/breeding/sireAnalytics";
+import { JargonTooltip } from "@/components/ui/JargonTooltip";
 
 export const Route = createFileRoute("/sire-watch/$stallionId")({
   component: SireProfilePage,
@@ -79,7 +80,8 @@ function SireProfilePage() {
                 </Badge>
               </div>
               <p className="text-sm text-cream-muted">
-                Bloodline: {stallion.bloodline || "Unknown"} · Age {stallion.age}
+                <JargonTooltip term="Bloodline">Bloodline</JargonTooltip>:{" "}
+                {stallion.bloodline || "Unknown"} · Age {stallion.age}
               </p>
             </div>
             <div className="text-right">

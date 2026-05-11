@@ -11,21 +11,30 @@ import type {
 } from "@/game/types";
 
 /**
- * Creates a valid test allele (1-10)
+ * Creates a valid test allele (1-10).
+ *
+ * @param value - Initial allele value (defaults to 5)
+ * @returns Valid Allele number
  */
 function createAllele(value: number = 5): Allele {
   return Math.max(1, Math.min(5, value));
 }
 
 /**
- * Creates a valid test locus
+ * Creates a valid test locus.
+ *
+ * @param allele1 - First allele value (defaults to 5)
+ * @param allele2 - Second allele value (defaults to 5)
+ * @returns Locus tuple [Allele, Allele]
  */
 function createLocus(allele1: number = 5, allele2: number = 5): Locus {
   return [createAllele(allele1), createAllele(allele2)];
 }
 
 /**
- * Creates a valid test color genotype
+ * Creates a valid test color genotype.
+ *
+ * @returns ColorGenotype object
  */
 function createColorGenotype(): ColorGenotype {
   return {
@@ -37,7 +46,9 @@ function createColorGenotype(): ColorGenotype {
 }
 
 /**
- * Creates a valid test stat genotype (10 loci each)
+ * Creates a valid test stat genotype (10 loci each).
+ *
+ * @returns StatGenotype object
  */
 function createStatGenotype(): StatGenotype {
   return {
@@ -57,7 +68,9 @@ function createStatGenotype(): StatGenotype {
 }
 
 /**
- * Creates a valid test preference genotype
+ * Creates a valid test preference genotype.
+ *
+ * @returns PreferenceGenotype object
  */
 function createPreferenceGenotype(): PreferenceGenotype {
   return {
@@ -69,7 +82,9 @@ function createPreferenceGenotype(): PreferenceGenotype {
 }
 
 /**
- * Creates a valid test marker genotype
+ * Creates a valid test marker genotype.
+ *
+ * @returns MarkerGenotype object
  */
 function createMarkerGenotype(): MarkerGenotype {
   return {
@@ -89,7 +104,9 @@ function createMarkerGenotype(): MarkerGenotype {
 }
 
 /**
- * Creates a valid test health genotype
+ * Creates a valid test health genotype.
+ *
+ * @returns HealthGenotype object
  */
 function createHealthGenotype(): HealthGenotype {
   return {
@@ -101,7 +118,9 @@ function createHealthGenotype(): HealthGenotype {
 }
 
 /**
- * Creates a valid test markings genotype
+ * Creates a valid test markings genotype.
+ *
+ * @returns MarkingsGenotype object
  */
 function createMarkingsGenotype(): MarkingsGenotype {
   return {
@@ -114,7 +133,10 @@ function createMarkingsGenotype(): MarkingsGenotype {
 }
 
 /**
- * Creates a complete valid test genotype with all required properties
+ * Creates a complete valid test genotype with all required properties.
+ *
+ * @param overrides - Optional genotype properties to override defaults
+ * @returns Complete Genotype object
  */
 export function createTestGenotype(overrides?: Partial<Genotype>): Genotype {
   return {

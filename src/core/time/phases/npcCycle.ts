@@ -1,6 +1,17 @@
+/**
+ * phases/npcCycle.ts - NPC cycle phase
+ *
+ * This file provides the NPC cycle phase that runs NPC training, race entry,
+ * fame updates, and AI state management.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/npc/npcCycle (runNpcCycle), @/core/ai/npcCycleAI (NpcAIManager)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { runNpcCycle } from "@/core/npc/npcCycle";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { PHASE_ORDER_NPC_CYCLE } from "@/game/constants/gameConstants";
 
 /**
  * Phase: NPC Cycle
@@ -8,7 +19,7 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
  */
 export const npcCyclePhase = {
   name: "npcCycle",
-  order: 80,
+  order: PHASE_ORDER_NPC_CYCLE,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 
@@ -20,9 +31,8 @@ export const npcCyclePhase = {
     const pregnantIds = new Set(state.pregnancies.filter((p) => !p.resolved).map((p) => p.damId));
 
     // Get existing AI manager or create new one
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const aiManager: NpcAIManager = (state as any).npcAIManager || {
-      stableStates: new Map(),
+    const aiManager: NpcAIManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager || {
+      stableStates: {},
       globalDay: newDay,
     };
 

@@ -6,6 +6,7 @@ import {
   type RaceFilters,
 } from "@/core/race/filtering";
 import { MONTH_NAMES_FULL } from "@/core/calendar/dateFormatting";
+import { DAYS_PER_MONTH } from "@/game/constants/gameConstants";
 
 /**
  * Race filtering orchestration with dependency injection
@@ -18,7 +19,11 @@ export interface RaceFilterServiceDependencies {
 }
 
 /**
- * Get filtered and sorted races based on criteria
+ * Get filtered and sorted races based on criteria.
+ *
+ * @param dependencies - Context dependencies (races and current day)
+ * @param filters - Active filter criteria
+ * @returns Object containing upcoming and past races
  */
 export function getFilteredRaces(
   dependencies: RaceFilterServiceDependencies,
@@ -36,7 +41,11 @@ export function getFilteredRaces(
 }
 
 /**
- * Get races grouped by track
+ * Get races grouped by track.
+ *
+ * @param dependencies - Context dependencies
+ * @param filters - Active filter criteria
+ * @returns Record mapping track names to arrays of races
  */
 export function getRacesByTrack(
   dependencies: RaceFilterServiceDependencies,
@@ -66,7 +75,11 @@ export function getRacesByTrack(
 }
 
 /**
- * Get races grouped by month
+ * Get races grouped by month.
+ *
+ * @param dependencies - Context dependencies
+ * @param filters - Active filter criteria
+ * @returns Record mapping month names to arrays of races
  */
 export function getRacesByMonth(
   dependencies: RaceFilterServiceDependencies,
@@ -77,7 +90,7 @@ export function getRacesByMonth(
 
   const racesByMonth = filtered.reduce(
     (acc, race) => {
-      const month = Math.floor((race.day - 1) / 30) + 1;
+      const month = Math.floor((race.day - 1) / DAYS_PER_MONTH) + 1;
       const monthName = MONTH_NAMES_FULL[month - 1] || "Unknown";
       if (!acc[monthName]) {
         acc[monthName] = [];

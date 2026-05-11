@@ -1,9 +1,28 @@
+/**
+ * phases/pastureRetirement.ts - Pasture retirement phase
+ *
+ * This file provides the pasture retirement phase that automatically retires
+ * NPC horses to pasture based on age and inactivity, and deletes dead/retired
+ * horses with no wins to prevent array accumulation.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/impacts/index (AnyImpact, PastureRetirementImpact, LogImpact, HorseDeletionImpact), @/game/uuid (generateUUID)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Pasture Retirement Phase
 // Automatically retires NPC horses to pasture based on age and inactivity
+// Also deletes dead/retired horses with no wins to prevent array accumulation
 
-import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact, PastureRetirementImpact, LogImpact } from "@/core/resolver/impacts";
-import { generateUUID } from "@/game/uuid";
+import type { PipelineContext } from "../pipeline";
+import { createRng, hashStr } from "@/game/rng";
+import { AGE_RETIREMENT_THRESHOLD, FAME_LOW_THRESHOLD, INACTIVITY_RETIREMENT_DAYS } from "@/game/constants/gameConstants";
+import type {
+  AnyImpact,
+  PastureRetirementImpact,
+  LogImpact,
+  HorseDeletionImpact,
+} from "@/core/resolver/impacts/index";
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Phase: Pasture Retirement
@@ -16,10 +35,40 @@ export const pastureRetirementPhase: PipelinePhase = {
   name: "pastureRetirement",
   order: 150, // After stallion retirement (145)
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay } = context;
+    const { state, newDay, intents } = context;
     const impacts: AnyImpact[] = [];
 
-    // Only run for NPC horses
+    // 1. Process player intents
+    const retirementIntents = intents.filter((i) => i.type === "pasture_retirement");
+    for (const intent of retirementIntents) {
+      const horse = state.horses.find((h) => h.id === (intent as any).horseId);
+      if (horse && horse.lifecycleStatus === "active") {
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "pastureRetirement",
+          logLevel: "always",
+          type: "pasture_retirement",
+          horseId: horse.id,
+          retiredOnDay: newDay,
+          reason: "Voluntary retirement to pasture",
+        } as PastureRetirementImpact);
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "pastureRetirement",
+          logLevel: "always",
+          type: "log",
+          text: `${horse.name} has been retired to pasture.`,
+          reason: "Player pasture retirement",
+        } as LogImpact);
+      }
+    }
+
+    // 2. Automatic NPC retirement
     const npcHorses = state.horses.filter((h) => h.stableId && h.lifecycleStatus === "active");
 
     for (const horse of npcHorses) {
@@ -38,7 +87,7 @@ export const pastureRetirementPhase: PipelinePhase = {
 
       // Determine retirement eligibility
       const isOld = horse.age >= 8;
-      const isOldAndInactive = horse.age >= 6 && inactiveDays > 90;
+      const isOldAndInactive = horse.age >= AGE_RETIREMENT_THRESHOLD && inactiveDays > INACTIVITY_RETIREMENT_DAYS;
       const isLowAchiever = horse.age >= 5 && horse.fame < 20 && gradedWins === 0;
 
       if (isOld || isOldAndInactive || isLowAchiever) {
@@ -72,6 +121,24 @@ export const pastureRetirementPhase: PipelinePhase = {
           reason: "NPC pasture retirement",
         } as LogImpact);
       }
+    }
+
+    // 3. Delete dead/retired horses with no wins to prevent array accumulation
+    const horsesToDelete = state.horses.filter(
+      (h) =>
+        (h.lifecycleStatus === "deceased" || h.lifecycleStatus === "retired") && h.careerWins === 0,
+    );
+
+    for (const horse of horsesToDelete) {
+      impacts.push({
+        id: generateUUID(),
+        intentId: "",
+        day: newDay,
+        phase: "pastureRetirement",
+        logLevel: "never",
+        type: "horse_deletion",
+        horseId: horse.id,
+      } as HorseDeletionImpact);
     }
 
     return {

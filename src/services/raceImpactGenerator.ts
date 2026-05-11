@@ -1,3 +1,5 @@
+import type { RaceSnapshot } from "@/core/race/types";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type {
   AnyImpact,
   RaceResultImpact,
@@ -11,10 +13,21 @@ import type {
   PaceSampleImpact,
   JockeyStatsImpact,
   LogImpact,
-} from "@/core/resolver/impacts";
+  TripleCrownProgressImpact,
+  ReputationImpact,
+  TransactionImpact,
+  InjuryImpact,
+  NewsImpact,
+  RecoveryImpact,
+  BeyerImpact,
+} from "@/core/resolver/impacts/index";
+import { generateRaceNews } from "@/services/newsGenerator";
+import { rollForInjury } from "@/core/health/healthSystem";
+import type { StaffMember } from "@/core/staff/staffTypes";
+import type { Rng } from "@/game/rng";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { generateUUID } from "@/game/uuid";
-import { formatCurrency } from "@/components/HorseBits";
+import { generateUUID } from "@/core/uuid";
+import { formatCurrency } from "@/lib/formatting";
 import { beyerFigure } from "@/game/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { recalcStandingFee } from "@/core/breeding/stallions";
@@ -24,21 +37,516 @@ import {
 } from "@/core/breeding/populationGenetics";
 import type { Race, Horse, Jockey } from "@/game/types";
 import { getCurrentYear } from "@/game/raceSchedule";
-import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
+import {
+  PRIZE_SPLIT,
+  GRADED_PRIZE_SPLIT,
+  JOCKEY_FEE_PERCENTAGE,
+  BASE_JOCKEY_RIDING_FEE,
+  STAMINA_DRAIN_DISTANCE_DIVISOR,
+  STAMINA_DRAIN_BEYER_DIVISOR,
+  STAMINA_DRAIN_MAX,
+  RACE_ENERGY_IMPACT,
+  MAX_FAME,
+} from "@/game/constants/gameConstants";
+import { GRADED_RACES } from "@/core/data/gradedRaces";
 import { createReputationEvent, calculateRaceWinReputation } from "@/core/reputation";
+import type { ManagerReputation } from "@/core/reputation";
 import { createTransaction } from "@/core/transactions";
 import type { Transaction } from "@/core/transactions";
+import { getPeakingBeyerMultiplier } from "@/core/health/banister";
+import { AFFINITY_CONSTANTS } from "@/core/jockey/affinity";
 
+/**
+ * Get prize split percentages for a specific race.
+ *
+ * Returns different prize splits based on race type:
+ * - Graded races: Higher percentage to winner (70% vs 60%)
+ * - Regular races: Standard split (60%, 25%, 10%, 5%)
+ *
+ * @param race - The race to get prize split for
+ * @returns Array of prize split percentages
+ */
+function getPrizeSplitForRace(race: Race): number[] {
+  // Graded races have a different prize split (more to winner)
+  if (race.graded) {
+    return GRADED_PRIZE_SPLIT;
+  }
+  // Default prize split for regular races
+  return PRIZE_SPLIT;
+}
+
+/**
+ * Props for the generateRaceImpacts function.
+ */
 export interface GenerateRaceImpactsProps {
+  /** The completed race data */
   race: Race;
+  /** Final race result positions and times for each participant */
   result: Array<{ horseId: string; position: number; time: number }>;
+  /** The field of runners with lane and barrier data */
   runners: Array<{ horseId: string; barrier?: number; lane?: number }>;
-  horses: Horse[];
-  jockeys: Jockey[];
+  /** Current horse population (can be an array or a pre-indexed Map) */
+  horses: Horse[] | Map<string, Horse>;
+  /** Current jockey population (can be an array or a pre-indexed Map) */
+  jockeys: Jockey[] | Map<string, Jockey>;
+  /** Game day of the race resolution */
   newDay: number;
+  /** Current player cash balance */
   stateCash: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stateReputation?: any;
+  /** Current manager reputation state */
+  stateReputation?: ManagerReputation;
+  /** Active staff members with potential bonuses */
+  hiredStaff?: StaffMember[];
+  /** Optional random number generator for stochastic events (e.g., injuries) */
+  rng?: Rng;
+  /** Optional detailed race snapshots for replay/summary purposes */
+  snapshots?: RaceSnapshot[];
+  /** Speed pars for Beyer speed figure calculation, indexed by distance */
+  calibratedPars: Record<number, number>;
+}
+
+/**
+ * Generate all state impacts resulting from a completed race.
+ *
+ * This function orchestrates the post-race resolution logic, including:
+ * - Result recording and history updates
+ * - Energy expenditure and injury rolls
+ * - Performance metrics (Beyer Figures) with genetic dampeners
+ * - Financial transactions (prize money, jockey fees)
+ * - Reputation and fame updates
+ * - Career milestones (Triple Crown progress, blue hen status, stud fees)
+ * - Narrative and news generation
+ *
+ * @param props - Impact generation properties
+ * @returns Array of impacts to be applied to the game state by the resolver
+ */
+/**
+ * Generate energy expenditure impact for a horse.
+ * @param horseId
+ * @param newDay
+ * @returns The energy impact object.
+ */
+function generateEnergyImpact(horseId: string, newDay: number): EnergyImpact {
+  return {
+    id: generateUUID(),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "conditional",
+    type: "energy_change",
+    horseId,
+    delta: RACE_ENERGY_IMPACT,
+    reason: "Race energy expenditure",
+  } as EnergyImpact;
+}
+
+/**
+ * Generate form change impact based on finish position.
+ * @param horse
+ * @param position
+ * @param newDay
+ * @param hiredStaff
+ * @returns The form impact object.
+ */
+function generateFormImpact(
+  horse: Horse,
+  position: number,
+  newDay: number,
+  hiredStaff: any[],
+): FormImpact {
+  const stableId = horse.stableId || "";
+  const groom = hiredStaff.find((s) => s.role === "groom" && s.stableId === stableId);
+
+  const baseFormDelta =
+    position === 1 ? 3 : position === 2 ? 2 : position === 3 ? 1 : position <= 5 ? 0 : -1;
+  // Grooms prevent negative form delta from poor performance
+  const formDelta = baseFormDelta < 0 && groom ? 0 : baseFormDelta;
+
+  return {
+    id: generateUUID(),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "conditional",
+    type: "form_change",
+    horseId: horse.id,
+    delta: formDelta,
+    reason: `Race position: ${position}`,
+  } as FormImpact;
+}
+
+/**
+ * Generate fame change impact for top 3 finishers.
+ * @param horse
+ * @param position
+ * @param newDay
+ * @returns The fame impact object, or null if no fame change.
+ */
+function generateFameImpact(horse: Horse, position: number, newDay: number): FameImpact | null {
+  const fameDelta = position === 1 ? 2 : position <= 3 ? 0.5 : 0;
+  if (fameDelta > 0) {
+    return {
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "fame_change",
+      horseId: horse.id,
+      delta: fameDelta,
+      reason: `Race position: ${position}`,
+    } as FameImpact;
+  }
+  return null;
+}
+
+/**
+ * Generate Beyer figure and recovery impacts.
+ * @param horse
+ * @param position
+ * @param time
+ * @param race
+ * @param classBonus
+ * @param calibratedPars
+ * @param newDay
+ * @returns Object containing the Beyer impact and recovery impact.
+ */
+function generateBeyerAndRecoveryImpacts(
+  horse: Horse,
+  position: number,
+  time: number,
+  race: Race,
+  classBonus: number,
+  calibratedPars: any,
+  newDay: number,
+): { beyerImpact: BeyerImpact; recoveryImpact: RecoveryImpact } {
+  const beyer = beyerFigure({
+    distance: race.distance,
+    finishTime: time,
+    classBonus,
+    calibratedPars,
+  });
+  const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
+  const dampener = inbreedingPerformanceDampener(inbreedingPattern);
+  const peakingMultiplier = getPeakingBeyerMultiplier(horse.peakingIndex ?? 0);
+  const adjustedBeyer = Math.max(0, Math.round((beyer - dampener) * peakingMultiplier));
+
+  // Fatigue: Recovery points drain based on race distance and performance intensity (Beyer)
+  const recoveryDrain = Math.min(
+    STAMINA_DRAIN_MAX,
+    Math.floor(race.distance / STAMINA_DRAIN_DISTANCE_DIVISOR) + Math.floor(adjustedBeyer / STAMINA_DRAIN_BEYER_DIVISOR),
+  );
+
+  return {
+    beyerImpact: {
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "beyer_update",
+      horseId: horse.id,
+      beyer: adjustedBeyer,
+      raceDay: newDay,
+      reason: "Race performance",
+    } as BeyerImpact,
+    recoveryImpact: {
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "recovery_change",
+      horseId: horse.id,
+      delta: -recoveryDrain,
+      reason: "Race fatigue",
+    } as RecoveryImpact,
+  };
+}
+
+/**
+ * Generate race history impact.
+ * @param horse
+ * @param position
+ * @param time
+ * @param race
+ * @param adjustedBeyer
+ * @param newDay
+ * @param runner
+ * @param runner.horseId
+ * @param runner.barrier
+ * @param runner.lane
+ * @returns The race history impact object.
+ */
+function generateRaceHistoryImpact(
+  horse: Horse,
+  position: number,
+  time: number,
+  race: Race,
+  adjustedBeyer: number,
+  newDay: number,
+  runner?: { horseId: string; barrier?: number; lane?: number },
+): RaceHistoryImpact {
+  // Eligibility: Check for "Win and You're In" qualifications for year-end championships
+  let winAndYouInQualified = undefined;
+  if (position === 1 && race.graded?.winAndYouInTarget) {
+    const currentYear = getCurrentYear(newDay);
+    winAndYouInQualified = {
+      year: currentYear,
+      raceId: race.id,
+      raceKey: race.graded.winAndYouInTarget,
+    };
+  }
+
+  return {
+    id: generateUUID(),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "always",
+    type: "race_history",
+    horseId: horse.id,
+    raceHistoryEntry: {
+      raceId: race.id,
+      raceName: race.name,
+      position,
+      day: newDay,
+      beyer: adjustedBeyer,
+      grade: race.graded?.grade,
+      distance: race.distance,
+      surface: race.graded?.surface,
+      purse: race.purse,
+      fieldSize: 0, // Will be set by caller
+      raceClass: race.raceClass,
+      barrier: runner?.barrier,
+      lane: runner?.lane,
+      winAndYouInQualified,
+    },
+    reason: "Race completed",
+  } as RaceHistoryImpact;
+}
+
+/**
+ * Generate Triple Crown progress impact for winners of TC races.
+ * @param horse
+ * @param position
+ * @param race
+ * @param newDay
+ * @returns The Triple Crown progress impact object, or null if not applicable.
+ */
+function generateTripleCrownProgressImpact(
+  horse: Horse,
+  position: number,
+  race: Race,
+  newDay: number,
+): TripleCrownProgressImpact | null {
+  if (position === 1 && race.graded?.triplecrownKey) {
+    const currentYear = getCurrentYear(newDay);
+    const triplecrownKey = race.graded.triplecrownKey;
+
+    // Get all races for this triple crown series
+    const tcRaces = GRADED_RACES.filter((g) => g.triplecrownKey === triplecrownKey);
+
+    // Check horse's race history for all legs
+    const legs = tcRaces.map((tcRace) => {
+      // If this is the current race being resolved, use the current result
+      if (tcRace.key === race.graded?.key) {
+        return {
+          raceKey: tcRace.key,
+          position,
+          day: newDay,
+        };
+      }
+      // Otherwise check race history
+      const historyEntry = horse.raceHistory.find(
+        (rh) => rh.raceId === tcRace.key || rh.raceName === tcRace.name,
+      );
+      return {
+        raceKey: tcRace.key,
+        position: historyEntry?.position ?? 999,
+        day: historyEntry?.day ?? 0,
+      };
+    });
+
+    // Check if won all legs (all positions === 1)
+    const won = legs.every((leg) => leg.position === 1);
+
+    return {
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "triple_crown_progress",
+      horseId: horse.id,
+      triplecrownKey,
+      year: currentYear,
+      legs,
+      won,
+      reason: won
+        ? `Triple Crown winner! ${horse.name} won ${triplecrownKey}`
+        : `Triple Crown progress updated for ${horse.name}`,
+    } as TripleCrownProgressImpact;
+  }
+  return null;
+}
+
+/**
+ * Generate prize money impacts for a horse.
+ * @param horse
+ * @param position
+ * @param race
+ * @param newDay
+ * @returns Object containing the cash impact and optional transaction and reputation impacts, or null if no prize.
+ */
+function generatePrizeMoneyImpacts(
+  horse: Horse,
+  position: number,
+  race: Race,
+  newDay: number,
+): {
+  cashImpact: CashImpact;
+  transactionImpact?: TransactionImpact;
+  reputationImpact?: ReputationImpact;
+} | null {
+  const prizeSplit = getPrizeSplitForRace(race);
+  if (position - 1 >= prizeSplit.length) return null;
+
+  const prize = Math.round(race.purse * prizeSplit[position - 1]);
+  if (prize <= 0) return null;
+
+  const cashImpact: CashImpact = {
+    id: generateUUID(),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "conditional",
+    type: "cash_change",
+    entityId: horse.stableId || "",
+    amount: prize,
+    reason: `Prize money: ${position}${getOrdinalSuffix(position)} in ${race.name}`,
+  };
+
+  let transactionImpact: TransactionImpact | undefined;
+  let reputationImpact: ReputationImpact | undefined;
+
+  // Player-specific impacts
+  if (!horse.stableId) {
+    transactionImpact = {
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "transaction",
+      amount: prize,
+      category: "prize_money",
+      description: `Prize money: ${position}${getOrdinalSuffix(position)} in ${race.name}`,
+      metadata: { horseId: horse.id, raceId: race.id },
+    } as TransactionImpact;
+
+    // Reputation: Manager reputation increases for wins
+    if (position === 1) {
+      const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);
+      reputationImpact = {
+        id: generateUUID(),
+        intentId: "",
+        day: newDay,
+        phase: "raceResolution",
+        logLevel: "always",
+        type: "reputation_change",
+        delta: repGain,
+        source: "race_win",
+        reason: `Win in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
+        metadata: { horseId: horse.id, raceId: race.id },
+      } as ReputationImpact;
+    }
+  }
+
+  return { cashImpact, transactionImpact, reputationImpact };
+}
+
+/**
+ * Generate jockey fee impacts for a horse.
+ * @param horse
+ * @param jockey
+ * @param newDay
+ * @param horseId
+ * @param raceId
+ * @returns Object containing the cash impact and optional transaction impact.
+ */
+function generateJockeyFeeImpacts(
+  horse: Horse,
+  jockey: Jockey,
+  newDay: number,
+  horseId: string,
+  raceId: string,
+): { cashImpact: CashImpact; transactionImpact?: TransactionImpact } {
+  const ridingFee = jockey.ridingFee || BASE_JOCKEY_RIDING_FEE;
+
+  const cashImpact: CashImpact = {
+    id: generateUUID(),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "conditional",
+    type: "cash_change",
+    entityId: horse.stableId || "",
+    amount: -ridingFee,
+    reason: `Jockey fee: ${jockey.name}`,
+  };
+
+  let transactionImpact: TransactionImpact | undefined;
+
+  // Player-specific transaction
+  if (!horse.stableId) {
+    transactionImpact = {
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "transaction",
+      amount: -ridingFee,
+      category: "jockey_fee",
+      description: `Jockey fee: ${jockey.name} for ${horse.name}`,
+      metadata: { horseId, raceId },
+    } as TransactionImpact;
+  }
+
+  return { cashImpact, transactionImpact };
+}
+
+/**
+ * Generate percentage-based jockey fee impacts (10% of purse earnings).
+ * @param jockey
+ * @param winAmount
+ * @param newDay
+ * @param owned
+ * @param stableId
+ * @returns The cash impact object, or null if no fee applies.
+ */
+function generatePercentageJockeyFeeImpacts(
+  jockey: Jockey,
+  winAmount: number,
+  newDay: number,
+  owned: boolean,
+  stableId?: string,
+): CashImpact | null {
+  const jockeyFee = Math.round(winAmount * JOCKEY_FEE_PERCENTAGE); // Jockeys take 10% of purse earnings
+  if (jockeyFee <= 0) return null;
+
+  return {
+    id: generateUUID(),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "conditional",
+    type: "cash_change",
+    entityId: owned ? "" : stableId || "",
+    amount: -jockeyFee,
+    reason: `Jockey fee for ${jockey.name}`,
+  } as CashImpact;
 }
 
 export function generateRaceImpacts({
@@ -50,254 +558,157 @@ export function generateRaceImpacts({
   newDay,
   stateCash,
   stateReputation,
-}: GenerateRaceImpactsProps): {
-  impacts: AnyImpact[];
-  transactions: Transaction[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  reputationEvents: any[];
-} {
-  const impacts: AnyImpact[] = [];
-  const newTransactions: Transaction[] = [];
-  const newReputationEvents = stateReputation?.events ?? [];
-  const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
+  hiredStaff = [],
+  rng,
+  snapshots = [],
+  calibratedPars,
+}: GenerateRaceImpactsProps): AnyImpact[] {
+  try {
+    const impacts: AnyImpact[] = [];
+    const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
 
-  // Generate race result impact
-  impacts.push({
-    id: generateUUID(),
-    intentId: "",
-    day: newDay,
-    phase: "raceResolution",
-    logLevel: "always",
-    type: "race_result",
-    raceId: race.id,
-    results: result.map(({ horseId, position, time }) => ({ horseId, position, time })),
-    reason: "Race resolved",
-  } as RaceResultImpact);
+    // Normalize collections to Maps for O(1) lookups
+    const horseMap =
+      horses instanceof Map ? (horses as Map<string, Horse>) : new Map(horses.map((h) => [h.id, h]));
+    const jockeyMap =
+      jockeys instanceof Map
+        ? (jockeys as Map<string, Jockey>)
+        : new Map(jockeys.map((j) => [j.id, j]));
 
-  // Generate per-horse impacts
-  for (const r of result) {
-    const horse = horses.find((h) => h.id === r.horseId);
-    if (!horse) continue;
+    const runnersMap = new Map(runners.map((run) => [run.horseId, run]));
+    const entriesMap = new Map(race.entries.map((e) => [e.horseId, e]));
 
-    const runner = runners.find((run) => run.horseId === r.horseId);
-
-    // Energy impact (-25)
-    impacts.push({
-      id: generateUUID(),
-      intentId: "",
-      day: newDay,
-      phase: "raceResolution",
-      logLevel: "conditional",
-      type: "energy_change",
-      horseId: horse.id,
-      delta: -25,
-      reason: "Race energy expenditure",
-    } as EnergyImpact);
-
-    // Form impact based on position
-    const formDelta =
-      r.position === 1 ? 3 : r.position === 2 ? 2 : r.position === 3 ? 1 : r.position <= 5 ? 0 : -1;
-    impacts.push({
-      id: generateUUID(),
-      intentId: "",
-      day: newDay,
-      phase: "raceResolution",
-      logLevel: "conditional",
-      type: "form_change",
-      horseId: horse.id,
-      delta: formDelta,
-      reason: `Race position: ${r.position}`,
-    } as FormImpact);
-
-    // Fame impact based on position
-    const fameDelta = r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0;
-    if (fameDelta > 0) {
-      impacts.push({
-        id: generateUUID(),
-        intentId: "",
-        day: newDay,
-        phase: "raceResolution",
-        logLevel: "conditional",
-        type: "fame_change",
-        horseId: horse.id,
-        delta: fameDelta,
-        reason: `Race position: ${r.position}`,
-      } as FameImpact);
-    }
-
-    // Beyer calculation with inbreeding dampener
-    const beyer = beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
-    const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
-    const dampener = inbreedingPerformanceDampener(inbreedingPattern);
-    const adjustedBeyer = Math.max(0, beyer - dampener);
-
-    // Win and You're In qualification
-    let winAndYouInQualified = undefined;
-    if (r.position === 1 && race.graded?.winAndYouInTarget) {
-      const currentYear = getCurrentYear(newDay);
-      winAndYouInQualified = {
-        year: currentYear,
-        raceId: race.id,
-        raceKey: race.graded.winAndYouInTarget,
-      };
-    }
-
-    // Race history impact
+    // 1. Record the overall race result
     impacts.push({
       id: generateUUID(),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
       logLevel: "always",
-      type: "race_history",
-      horseId: horse.id,
-      raceHistoryEntry: {
-        raceId: race.id,
-        raceName: race.name,
-        position: r.position,
-        day: newDay,
-        beyer: adjustedBeyer,
-        grade: race.graded?.grade,
-        distance: race.distance,
-        surface: race.graded?.surface,
-        purse: race.purse,
-        fieldSize: result.length,
-        raceClass: race.raceClass,
-        barrier: runner?.barrier,
-        lane: runner?.lane,
-        winAndYouInQualified,
-      },
-      reason: "Race completed",
-    } as RaceHistoryImpact);
+      type: "race_result",
+      raceId: race.id,
+      results: result.map(({ horseId, position, time }) => ({ horseId, position, time })),
+      snapshots,
+      reason: "Race resolved",
+    } as RaceResultImpact);
 
-    // Prize money impact
-    if (r.position - 1 < PRIZE_SPLIT.length) {
-      const prize = Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
-      if (prize > 0) {
-        if (horse.stableId) {
-          // NPC stable gets prize money
-          impacts.push({
-            id: generateUUID(),
-            intentId: "",
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "conditional",
-            type: "cash_change",
-            entityId: horse.stableId,
-            amount: prize,
-            reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
-          } as CashImpact);
-        } else {
-          // Player gets prize money
-          impacts.push({
-            id: generateUUID(),
-            intentId: "",
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "conditional",
-            type: "cash_change",
-            entityId: "",
-            amount: prize,
-            reason: `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
-          } as CashImpact);
+    // 2. Process per-horse consequences
+    for (const r of result) {
+      const horse = horseMap.get(r.horseId);
+      if (!horse) continue;
 
-          // Record transaction for prize money income
-          newTransactions.push(
-            createTransaction(
-              "income",
-              "prize_money",
-              prize,
-              `Prize money: ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
-              newDay,
-              stateCash + prize,
-              { horseId: horse.id, raceId: race.id },
-            ),
-          );
+      const runner = runnersMap.get(r.horseId);
 
-          // Track reputation for wins
-          if (r.position === 1) {
-            const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);
-            newReputationEvents.push(
-              createReputationEvent(
-                "race_win",
-                repGain,
-                `Win in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
-                newDay,
-                { horseId: horse.id, raceId: race.id },
-              ),
-            );
-          }
+      // Energy expenditure
+      impacts.push(generateEnergyImpact(horse.id, newDay));
+
+      // Health: Roll for potential injuries
+      if (rng) {
+        const injury = rollForInjury(rng, horse, newDay, hiredStaff);
+        if (injury) {
+          impacts.push(injury);
         }
       }
-    }
 
-    // Jockey riding fee deduction
-    const entry = race.entries.find((e) => e.horseId === horse.id);
-    if (entry?.jockeyId) {
-      const jockey = jockeys?.find((j) => j.id === entry.jockeyId);
-      if (jockey) {
-        const ridingFee = jockey.ridingFee || 100;
-        if (horse.stableId) {
+      // Form change
+      impacts.push(generateFormImpact(horse, r.position, newDay, hiredStaff));
+
+      // Fame change
+      const fameImpact = generateFameImpact(horse, r.position, newDay);
+      if (fameImpact) {
+        impacts.push(fameImpact);
+      }
+
+      // Beyer and recovery impacts
+      const { beyerImpact, recoveryImpact } = generateBeyerAndRecoveryImpacts(
+        horse,
+        r.position,
+        r.time,
+        race,
+        classBonus,
+        calibratedPars,
+        newDay,
+      );
+      impacts.push(beyerImpact, recoveryImpact);
+
+      // Race history impact
+      const historyImpact = generateRaceHistoryImpact(
+        horse,
+        r.position,
+        r.time,
+        race,
+        beyerImpact.beyer,
+        newDay,
+        runner,
+      );
+      historyImpact.raceHistoryEntry.fieldSize = result.length;
+      impacts.push(historyImpact);
+
+      // Triple Crown progress
+      const tcImpact = generateTripleCrownProgressImpact(horse, r.position, race, newDay);
+      if (tcImpact) {
+        impacts.push(tcImpact);
+      }
+
+      // Prize money distribution
+      const prizeImpacts = generatePrizeMoneyImpacts(horse, r.position, race, newDay);
+      if (prizeImpacts) {
+        impacts.push(prizeImpacts.cashImpact);
+        if (prizeImpacts.transactionImpact) impacts.push(prizeImpacts.transactionImpact);
+        if (prizeImpacts.reputationImpact) impacts.push(prizeImpacts.reputationImpact);
+      }
+
+      // Jockey riding fees
+      const entry = entriesMap.get(horse.id);
+      if (entry?.jockeyId) {
+        const jockey = jockeyMap.get(entry.jockeyId);
+        if (jockey) {
+          const jockeyFeeImpacts = generateJockeyFeeImpacts(horse, jockey, newDay, horse.id, race.id);
+          impacts.push(jockeyFeeImpacts.cashImpact);
+          if (jockeyFeeImpacts.transactionImpact) impacts.push(jockeyFeeImpacts.transactionImpact);
+
+          // --- AFFINITY XP GAIN ---
+          const xpGain =
+            AFFINITY_CONSTANTS.XP_PER_RACE +
+            (r.position === 1 ? AFFINITY_CONSTANTS.XP_PER_WIN_BONUS : 0);
           impacts.push({
             id: generateUUID(),
             intentId: "",
             day: newDay,
             phase: "raceResolution",
             logLevel: "conditional",
-            type: "cash_change",
-            entityId: horse.stableId,
-            amount: -ridingFee,
-            reason: `Jockey fee: ${jockey.name}`,
-          } as CashImpact);
-        } else {
-          impacts.push({
-            id: generateUUID(),
-            intentId: "",
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "conditional",
-            type: "cash_change",
-            entityId: "",
-            amount: -ridingFee,
-            reason: `Jockey fee: ${jockey.name}`,
-          } as CashImpact);
-
-          newTransactions.push(
-            createTransaction(
-              "expense",
-              "jockey_fee",
-              -ridingFee,
-              `Jockey fee: ${jockey.name} for ${horse.name}`,
-              newDay,
-              stateCash - ridingFee,
-              { horseId: horse.id, raceId: race.id },
-            ),
-          );
+            type: "jockey_affinity_gain",
+            jockeyId: jockey.id,
+            horseId: horse.id,
+            xp: xpGain,
+            reason: `Raced ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,
+          } as any);
+          // --- END AFFINITY XP GAIN ---
         }
       }
-    }
 
-    // Blue hen impact for graded stakes winners
-    if (
-      r.position === 1 &&
-      (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")
-    ) {
-      const dam = horses.find((h) => h.id === horse.pedigree?.damId);
-      if (dam) {
-        impacts.push({
-          id: generateUUID(),
-          intentId: "",
-          day: newDay,
-          phase: "raceResolution",
-          logLevel: "conditional",
-          type: "blue hen_status",
-          horseId: dam.id,
-          blueHenStatus: {
-            isBlueHen: dam.blueHenStatus?.isBlueHen || false,
-            stakesWinnersProduced: (dam.blueHenStatus?.stakesWinnersProduced ?? 0) + 1,
-            group1WinnersProduced:
-              race.graded?.grade === "G1"
-                ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1
+      // 5. Breeding: "Blue Hen" status tracking for high-performing mares
+      if (
+        r.position === 1 &&
+        (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")
+      ) {
+        const dam = horse.pedigree?.damId ? horseMap.get(horse.pedigree.damId) : undefined;
+
+        if (dam) {
+          impacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "conditional",
+            type: "blue hen_status",
+            horseId: dam.id,
+            blueHenStatus: {
+              isBlueHen: dam.blueHenStatus?.isBlueHen || false,
+              stakesWinnersProduced: (dam.blueHenStatus?.stakesWinnersProduced ?? 0) + 1,
+              group1WinnersProduced:
+                race.graded?.grade === "G1"
+                  ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1
                 : dam.blueHenStatus?.group1WinnersProduced,
             blueHenScore: dam.blueHenStatus?.blueHenScore || 0,
             foalsProduced: dam.blueHenStatus?.foalsProduced || 0,
@@ -306,8 +717,9 @@ export function generateRaceImpacts({
         } as BlueHenImpact);
       }
 
-      // Stud career impact for sire
-      const sire = horses.find((h) => h.id === horse.pedigree?.sireId);
+      // 6. Breeding: Stallion stud career and fee recalibration
+      const sire = horse.pedigree?.sireId ? horseMap.get(horse.pedigree.sireId) : undefined;
+
       if (sire && sire.stud?.atStud) {
         const newStakesFoals = (sire.stud.lifetimeStakesFoals ?? 0) + 1;
         const newG1Foals =
@@ -315,6 +727,7 @@ export function generateRaceImpacts({
             ? (sire.stud.lifetimeG1Foals ?? 0) + 1
             : sire.stud.lifetimeG1Foals;
 
+        const previousFee = sire.stud.standingFee;
         const newFee = sire.stableId
           ? recalcStandingFee(
               {
@@ -325,7 +738,7 @@ export function generateRaceImpacts({
                   lifetimeG1Foals: newG1Foals,
                 },
               },
-              { horses, npcStables: [] },
+              { horses: Array.from(horseMap.values()), npcStables: [] },
             )
           : sire.stud.standingFee;
 
@@ -340,21 +753,23 @@ export function generateRaceImpacts({
           studCareer: {
             ...sire.stud,
             standingFee: newFee,
+            previousStandingFee: previousFee,
             lifetimeStakesFoals: newStakesFoals,
             lifetimeG1Foals: newG1Foals,
           },
-          reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee adjusted to ${formatCurrency(newFee)}.` : ""}`,
+          reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee: $${formatCurrency(previousFee)} → $${formatCurrency(newFee)}.` : ""}`,
         } as StudCareerImpact);
       }
     }
 
-    // Jockey stats impact
-    const raceEntry = race.entries.find((e) => e.horseId === horse.id);
-    if (raceEntry?.jockeyId && r.position - 1 < PRIZE_SPLIT.length) {
-      const jockey = jockeys?.find((j) => j.id === raceEntry.jockeyId);
+    // 7. Jockey performance and stats tracking
+    const raceEntry = entriesMap.get(horse.id);
+    const prizeSplit = getPrizeSplitForRace(race);
+    if (raceEntry?.jockeyId && r.position - 1 < prizeSplit.length) {
+      const jockey = jockeyMap.get(raceEntry.jockeyId);
+
       if (jockey) {
-        const winAmount = PRIZE_SPLIT[r.position - 1] * race.purse;
-        const jockeyFee = Math.round(winAmount * 0.1);
+        const winAmount = prizeSplit[r.position - 1] * race.purse;
 
         impacts.push({
           id: generateUUID(),
@@ -366,42 +781,25 @@ export function generateRaceImpacts({
           jockeyId: jockey.id,
           careerStarts: jockey.careerStarts + 1,
           careerWins: jockey.careerWins + (r.position === 1 ? 1 : 0),
-          fame: Math.min(100, jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0)),
+          fame: Math.min(MAX_FAME, jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0)),
           reason: `Rode ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,
         } as JockeyStatsImpact);
 
-        if (jockeyFee > 0) {
-          if (raceEntry.owned) {
-            impacts.push({
-              id: generateUUID(),
-              intentId: "",
-              day: newDay,
-              phase: "raceResolution",
-              logLevel: "conditional",
-              type: "cash_change",
-              entityId: "",
-              amount: -jockeyFee,
-              reason: `Jockey fee for ${jockey.name}`,
-            } as CashImpact);
-          } else if (raceEntry.stableId) {
-            impacts.push({
-              id: generateUUID(),
-              intentId: "",
-              day: newDay,
-              phase: "raceResolution",
-              logLevel: "conditional",
-              type: "cash_change",
-              entityId: raceEntry.stableId,
-              amount: -jockeyFee,
-              reason: `Jockey fee for ${jockey.name}`,
-            } as CashImpact);
-          }
+        const percentageFeeImpact = generatePercentageJockeyFeeImpacts(
+          jockey,
+          winAmount,
+          newDay,
+          raceEntry.owned || false,
+          raceEntry.stableId,
+        );
+        if (percentageFeeImpact) {
+          impacts.push(percentageFeeImpact);
         }
       }
     }
   }
 
-  // Pace sample impact for winner
+  // 8. Analytics: Global pace samples for handicapping logic
   if (result.length > 0) {
     const winner = result[0];
     impacts.push({
@@ -417,21 +815,23 @@ export function generateRaceImpacts({
     } as PaceSampleImpact);
   }
 
-  // Log impact for race summary
+  // 9. Narrative: Generate race summary logs for the player
   const ownedHorses = result.filter((r) => {
-    const horse = horses.find((h) => h.id === r.horseId);
+    const horse = horseMap.get(r.horseId);
     return horse && !horse.stableId;
   });
   if (ownedHorses.length > 0) {
     const summary = ownedHorses
       .map((r) => {
-        const horse = horses.find((h) => h.id === r.horseId);
+        const horse = horseMap.get(r.horseId);
         return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
       })
       .join(", ");
+
     const prize = ownedHorses.reduce((sum, r) => {
-      if (r.position - 1 < PRIZE_SPLIT.length) {
-        return sum + Math.round(race.purse * PRIZE_SPLIT[r.position - 1]);
+      const prizeSplit = getPrizeSplitForRace(race);
+      if (r.position - 1 < prizeSplit.length) {
+        return sum + Math.round(race.purse * prizeSplit[r.position - 1]);
       }
       return sum;
     }, 0);
@@ -447,5 +847,24 @@ export function generateRaceImpacts({
     } as LogImpact);
   }
 
-  return { impacts, transactions: newTransactions, reputationEvents: newReputationEvents };
+  // 10. Narrative: Dynamic news generation for major races
+  const newsItem = generateRaceNews(race, result, Array.from(horseMap.values()), newDay);
+  if (newsItem) {
+    impacts.push({
+      id: generateUUID(),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "always",
+      type: "news_item",
+      newsItem,
+    } as NewsImpact);
+  }
+
+    return impacts;
+  } catch (error) {
+    console.error("Error in generateRaceImpacts:", error);
+    // Return empty impacts array on error to prevent corruption
+    return [];
+  }
 }

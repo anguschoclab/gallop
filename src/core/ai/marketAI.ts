@@ -1,17 +1,22 @@
 /**
+ * marketAI.ts - Market AI system
+ *
+ * This file provides learning from market purchases, strategic purchase decisions,
+ * and portfolio buying for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Stable), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating)
+ * Related files: npcCycleAI.ts (uses market AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Market AI System
  * Learning from market purchases, strategic purchase decisions, portfolio buying
  */
 
 import type { Horse, Stable } from "@/game/types";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  getAdaptiveThreshold,
-  type LearningState,
-} from "./learningModule";
+import { getPersonalityAIState, recordOutcome, calculateUtilityScore } from "./personalitySystem";
+import { createLearningState, recordOutcome as recordLearningOutcome } from "./learningModule";
+import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export interface MarketAIState {
@@ -36,12 +41,18 @@ export interface PortfolioState {
   targetHorseCount: number;
   currentHorseCount: number;
   budgetRemaining: number;
-  ageDistribution: Map<number, number>;
+  ageDistribution: Record<number, number>;
   qualityTarget: number;
 }
 
 /**
- * Create AI state for market decisions
+ * Create AI state for market decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * purchase history, and portfolio state.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized market AI state
  */
 export function createMarketAIState(stable: Stable): MarketAIState {
   return {
@@ -49,17 +60,26 @@ export function createMarketAIState(stable: Stable): MarketAIState {
     learningState: createLearningState(),
     purchaseHistory: [],
     portfolio: {
-      targetHorseCount: stable.personality === "developer" ? 15 : 10,
+      targetHorseCount: stable.personality === "prestige" ? 15 : 10,
       currentHorseCount: 0,
       budgetRemaining: stable.cash,
-      ageDistribution: new Map(),
+      ageDistribution: {},
       qualityTarget: 60,
     },
   };
 }
 
 /**
- * Calculate purchase value score for a horse
+ * Calculate purchase value score for a horse.
+ *
+ * Evaluates the value of purchasing a horse based on rating vs price,
+ * personality modifiers, learning-based adjustments, and portfolio fit.
+ *
+ * @param aiState - Current market AI state
+ * @param horse - The horse to evaluate
+ * @param price - The purchase price
+ * @param stable - The stable making the decision
+ * @returns Purchase value score (0-100)
  */
 export function calculatePurchaseValue(
   aiState: MarketAIState,
@@ -72,7 +92,7 @@ export function calculatePurchaseValue(
   // Base value from horse rating vs price
   const horseRating = calculateOverallRating(horse);
   const estimatedValue = horseRating * 1000;
-  const valueRatio = estimatedValue / price;
+  const valueRatio = estimatedValue / (price || 1);
 
   // Higher score for undervalued horses
   score += Math.max(0, (valueRatio - 1) * 40);
@@ -96,25 +116,35 @@ export function calculatePurchaseValue(
   // Portfolio fit
   const portfolio = aiState.portfolio;
   if (portfolio.currentHorseCount < portfolio.targetHorseCount) {
-    score += 15; // Need more horses
+    score += 15;
   }
 
   // Age distribution fit
-  const ageCount = portfolio.ageDistribution.get(horse.age) || 0;
+  const ageCount = portfolio.ageDistribution[horse.age] || 0;
   if (ageCount < 3) {
-    score += 10; // Need horses of this age
+    score += 10;
   }
 
   // Quality fit
   if (horseRating >= portfolio.qualityTarget) {
-    score += 15; // High-quality horse
+    score += 15;
   }
 
   return Math.max(0, Math.min(100, score));
 }
 
 /**
- * Determine if stable should purchase a horse from market
+ * Determine if stable should purchase a horse from market.
+ *
+ * Evaluates purchase decision based on value score, adaptive threshold,
+ * and personality-based threshold adjustment.
+ *
+ * @param aiState - Current market AI state
+ * @param horse - The horse to purchase
+ * @param price - The purchase price
+ * @param stable - The stable making the decision
+ * @param currentDay - Current game day
+ * @returns True if stable should purchase the horse
  */
 export function shouldPurchaseHorse(
   aiState: MarketAIState,
@@ -146,14 +176,20 @@ export function shouldPurchaseHorse(
 
   if (config.personality === "aggressive") threshold -= 10;
   if (config.personality === "conservative") threshold += 10;
-  if (config.personality === "trader") threshold -= 15; // Traders buy more
-  if (config.personality === "developer") threshold -= 5; // Developers build stock
 
   return valueScore > threshold;
 }
 
 /**
- * Calculate maximum purchase price for a horse
+ * Calculate maximum purchase price for a horse.
+ *
+ * Calculates the maximum price based on estimated value, personality
+ * risk tolerance, budget constraints, and learning-based adjustments.
+ *
+ * @param aiState - Current market AI state
+ * @param horse - The horse to evaluate
+ * @param stable - The stable making the decision
+ * @returns Maximum purchase price
  */
 export function calculateMaxPurchasePrice(
   aiState: MarketAIState,
@@ -177,14 +213,24 @@ export function calculateMaxPurchasePrice(
   const contextKey = `${horse.age}`;
   const successRate = getSuccessRate(aiState.learningState, "market_purchase", contextKey);
   if (successRate < 0.4) {
-    maxPrice *= 0.8; // Reduce price if success rate is low
+    maxPrice *= 0.8;
   }
 
   return Math.floor(maxPrice);
 }
 
 /**
- * Record market purchase for learning
+ * Record market purchase for learning.
+ *
+ * Records the market purchase in history, updates portfolio state,
+ * and updates the learning state for adaptive improvement.
+ *
+ * @param aiState - Current market AI state
+ * @param horse - The horse being purchased
+ * @param price - The purchase price
+ * @param stable - The stable making the purchase
+ * @param currentDay - Current game day
+ * @returns Updated market AI state
  */
 export function recordMarketPurchase(
   aiState: MarketAIState,
@@ -202,39 +248,57 @@ export function recordMarketPurchase(
     day: currentDay,
   };
 
-  aiState.purchaseHistory.push(purchase);
+  const newHistory = [...aiState.purchaseHistory, purchase];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.purchaseHistory.length > maxHistory) {
-    aiState.purchaseHistory = aiState.purchaseHistory.slice(-maxHistory);
-  }
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update portfolio
-  aiState.portfolio.currentHorseCount++;
-  aiState.portfolio.budgetRemaining -= price;
-  const ageCount = aiState.portfolio.ageDistribution.get(horse.age) || 0;
-  aiState.portfolio.ageDistribution.set(horse.age, ageCount + 1);
+  const newPortfolio = {
+    ...aiState.portfolio,
+    currentHorseCount: aiState.portfolio.currentHorseCount + 1,
+    budgetRemaining: aiState.portfolio.budgetRemaining - price,
+    ageDistribution: {
+      ...aiState.portfolio.ageDistribution,
+      [horse.age]: (aiState.portfolio.ageDistribution[horse.age] || 0) + 1,
+    },
+  };
 
   // Update learning state
   const contextKey = `${horse.age}`;
-  const value = purchase.horseRating - price / 1000; // Net value
-  aiState.learningState = recordOutcome(
+  const value = calculateOverallRating(horse) - price / 1000;
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
     "market_purchase",
     contextKey,
     true,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );
 
-  return aiState;
+  return {
+    ...aiState,
+    purchaseHistory: trimmedHistory,
+    portfolio: newPortfolio,
+    learningState: newLearningState,
+  };
 }
 
 /**
- * Record market outcome for learning
+ * Record market outcome for learning.
+ *
+ * Finds the matching purchase, records the outcome, and updates
+ * the learning state for adaptive improvement.
+ *
+ * @param aiState - Current market AI state
+ * @param horseId - ID of the purchased horse
+ * @param success - Whether the purchase was successful
+ * @param value - Value of the outcome
+ * @param currentDay - Current game day
+ * @returns Updated market AI state
  */
 export function recordMarketOutcome(
   aiState: MarketAIState,
@@ -243,31 +307,48 @@ export function recordMarketOutcome(
   value: number,
   currentDay: number,
 ): MarketAIState {
-  const purchase = aiState.purchaseHistory.find((p) => p.horseId === horseId && !p.success);
+  const purchaseIndex = aiState.purchaseHistory.findIndex(
+    (p) => p.horseId === horseId && p.success === undefined,
+  );
 
-  if (purchase) {
+  if (purchaseIndex !== -1) {
+    const purchase = { ...aiState.purchaseHistory[purchaseIndex] };
     purchase.success = success;
     purchase.value = value;
 
-    // Update learning state
-    const contextKey = `${purchase.horseRating}`;
-    aiState.learningState = recordOutcome(
+    const newHistory = [...aiState.purchaseHistory];
+    newHistory[purchaseIndex] = purchase;
+
+    // Update personality state
+    const newLearningState = recordLearningOutcome(
       aiState.learningState,
-      "market_purchase",
-      contextKey,
+      "sale",
+      horseId,
       success,
       value,
-      Date.now(),
       currentDay,
       aiState.personalityState.memoryDepth,
     );
+
+    return {
+      ...aiState,
+      purchaseHistory: newHistory,
+      learningState: newLearningState,
+    };
   }
 
   return aiState;
 }
 
 /**
- * Get market insights for a stable
+ * Get market insights for a stable.
+ *
+ * Calculates market statistics including total purchases, success rate,
+ * average value, average purchase price, and portfolio health.
+ *
+ * @param aiState - Current market AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with market statistics
  */
 export function getMarketInsights(
   aiState: MarketAIState,
@@ -292,8 +373,8 @@ export function getMarketInsights(
       ? stablePurchases.reduce((sum, p) => sum + p.purchasePrice, 0) / totalPurchases
       : 0;
 
-  // Portfolio health: ratio of current to target horses
-  const portfolioHealth = aiState.portfolio.currentHorseCount / aiState.portfolio.targetHorseCount;
+  const portfolioHealth =
+    aiState.portfolio.currentHorseCount / (aiState.portfolio.targetHorseCount || 1);
 
   return {
     totalPurchases,

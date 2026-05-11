@@ -5,7 +5,8 @@ describe("opfsService deleteFile error path", () => {
   const originalNavigator = global.navigator;
 
   beforeEach(() => {
-    vi.resetModules();
+    // vi.resetModules() was removed in Vitest v2
+    // Dynamic import on line 27 handles module reloading
   });
 
   afterEach(() => {

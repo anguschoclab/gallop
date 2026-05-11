@@ -1,8 +1,19 @@
+/**
+ * scouting.ts - Scouting system for fog of war
+ *
+ * This file provides fog of war for NPC horse stats, where famous horses are well-known
+ * and obscure horses require scouting with cost calculation and accuracy variance.
+ *
+ * Dependencies: ./types (Horse, HorseStats, ScoutReport, Stable, Rng), @/core/horse/stats (calculateOverallRating), @/core/genetics/phenotype (resolveCoatColor)
+ * Related files: store.ts (uses scouting reports), market.ts (scouting affects market visibility)
+ */
+
 // Scouting System - Fog of war for NPC horse stats
 // Famous horses are well-known; obscure horses require scouting
 
 import type { Horse, HorseStats, ScoutReport, Stable, Rng } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { FAME_LOW_THRESHOLD } from "@/game/constants/gameConstants";
 import { resolveCoatColor } from "@/core/genetics/phenotype";
 
 // Scouting costs
@@ -19,7 +30,14 @@ const ACCURACY_BASE = 0.8; // 80% base accuracy
 const ACCURACY_VARIANCE = 0.15; // ±15% variance
 
 /**
- * Calculate scouting cost for a horse
+ * Calculate scouting cost for a horse.
+ *
+ * Cost varies based on horse fame (cheaper for famous horses) and stable reputation
+ * (more expensive for high-reputation stables).
+ *
+ * @param horse - Horse to scout
+ * @param stable - Stable owning the horse
+ * @returns Scouting cost in dollars
  */
 export function calculateScoutCost(horse: Horse, stable: Stable): number {
   let cost = SCOUT_COST_BASE;
@@ -35,8 +53,13 @@ export function calculateScoutCost(horse: Horse, stable: Stable): number {
 }
 
 /**
- * Determine which stats are automatically visible based on fame
- * Returns visible stat keys
+ * Determine which stats are automatically visible based on fame.
+ *
+ * Returns visible stat keys based on horse fame level. Famous horses show all stats,
+ * somewhat known horses show 2 random stats, unknown horses show 1 stat hint.
+ *
+ * @param horse - Horse to check
+ * @returns Array of visible stat keys
  */
 export function getVisibleStats(horse: Horse): (keyof HorseStats)[] {
   // All horses show overall rating vaguely
@@ -66,7 +89,11 @@ export function getVisibleStats(horse: Horse): (keyof HorseStats)[] {
 }
 
 /**
- * Generate scouting notes flavortext
+ * Generate descriptive scouting notes based on horse state and report accuracy.
+ *
+ * @param horse - The horse being scouted
+ * @param accuracy - The accuracy of the scouting report (0-1)
+ * @returns Flavortext scouting notes string
  */
 function generateScoutNotes(horse: Horse, accuracy: number): string {
   const notes: string[] = [];
@@ -97,7 +124,7 @@ function generateScoutNotes(horse: Horse, accuracy: number): string {
   // Fame/reputation notes
   if (horse.fame > 60) {
     notes.push("Well-known runner - scout confirms the reputation.");
-  } else if (horse.fame < 20) {
+  } else if (horse.fame < FAME_LOW_THRESHOLD) {
     notes.push("Virtual unknown - could be a surprise packet.");
   }
 
@@ -112,8 +139,17 @@ function generateScoutNotes(horse: Horse, accuracy: number): string {
 }
 
 /**
- * Perform a scouting action on a horse
- * Returns a ScoutReport with revealed stats
+ * Perform a scouting action on a horse.
+ *
+ * Returns a ScoutReport with revealed stats based on accuracy. Higher accuracy
+ * reveals more stats with less error. Includes genetic insight at high accuracy.
+ *
+ * @param horse - Horse to scout
+ * @param stable - Stable owning the horse
+ * @param day - Current game day
+ * @param playerCash - Player's available cash
+ * @param rng - Random number generator
+ * @returns Scout result with success status, report, cost, and message
  */
 export function scoutHorse(
   horse: Horse,
@@ -189,11 +225,13 @@ export function scoutHorse(
         hiddenColorCarrier = "Gray Allele Carrier";
       }
 
+      const surfaceAffinity = Object.entries(horse.surfaceAptitude).find(([_, v]) => v >= 0.8);
+
       geneticInsight = {
         distanceMarker: `Genetic bias for ${horse.distanceAptitude}m`,
-        surfaceMarker:
-          Object.entries(horse.surfaceAptitude).find(([_, v]) => v === 1.0)?.[0] +
-          " Affinity Marker",
+        surfaceMarker: surfaceAffinity
+          ? surfaceAffinity[0] + " Affinity Marker"
+          : "Balanced Surface Affinity",
         hiddenColorCarrier,
         abilityMarkers,
       };
@@ -219,7 +257,16 @@ export function scoutHorse(
 }
 
 /**
- * Get displayable stats for a horse (combining known info + scout reports)
+ * Get displayable stats for a horse (combining known info + scout reports).
+ *
+ * Combines auto-visible stats based on fame with recent scout reports to determine
+ * what stats are visible and their confidence level. Provides overall estimate if not
+ * fully known.
+ *
+ * @param horse - Horse to check
+ * @param scoutReports - Array of scout reports
+ * @param currentDay - Current game day
+ * @returns Object with displayable stats, confidence level, and overall estimate
  */
 export function getDisplayableStats(
   horse: Horse,
@@ -228,7 +275,7 @@ export function getDisplayableStats(
 ): {
   stats: Partial<HorseStats>;
   confidence: "full" | "high" | "medium" | "low" | "unknown";
-  overallEstimate?: number; // Estimated overall rating if not fully known
+  overallEstimate?: number;
 } {
   // Check for recent scout report (within last 30 days)
   const recentReport = scoutReports
@@ -289,7 +336,14 @@ export function getDisplayableStats(
 }
 
 /**
- * Get scout status indicator for UI
+ * Get scout status indicator for UI.
+ *
+ * Returns icon, label, color, and scout availability based on confidence level.
+ *
+ * @param horse - Horse to check
+ * @param scoutReports - Array of scout reports
+ * @param currentDay - Current game day
+ * @returns Object with icon, label, color, and canScout flag
  */
 export function getScoutStatus(
   horse: Horse,
@@ -318,7 +372,14 @@ export function getScoutStatus(
 }
 
 /**
- * Get intel summary string for a horse
+ * Get intel summary string for a horse.
+ *
+ * Returns a human-readable summary of what is known about the horse.
+ *
+ * @param horse - Horse to check
+ * @param scoutReports - Array of scout reports
+ * @param currentDay - Current game day
+ * @returns Intel summary string
  */
 export function getIntelSummary(
   horse: Horse,

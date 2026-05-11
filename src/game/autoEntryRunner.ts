@@ -1,3 +1,14 @@
+/**
+ * autoEntryRunner.ts - Auto-managed campaign race entry
+ *
+ * This file provides functionality for automatically entering horses into planned
+ * races for auto-managed campaigns when within the slot's day window, if eligibility
+ * and budget allow.
+ *
+ * Dependencies: ./types (Horse, Race, HorseCampaign, CampaignRaceSlot), ./store (ActionResult), @/core/race/eligibility (isHorseEligibleForRace)
+ * Related files: campaignPlanner.ts (uses for campaign management), scheduler.ts (uses for auto-entry)
+ */
+
 // Auto Entry Runner
 // For auto-managed campaigns: automatically enters the horse into planned races
 // when within the slot's day window, if eligibility and budget allow.
@@ -23,7 +34,11 @@ export type AutoEntryResult = {
 
 /**
  * Scans campaign slots and auto-enters eligible planned races within the day window.
- * Only runs for auto-managed campaigns.
+ *
+ * Only runs for auto-managed campaigns. Checks eligibility, budget, and race availability.
+ *
+ * @param ctx - Auto entry context including horse, campaign, races, current day, cash, and enter function
+ * @returns Object with entered races, skipped slots with reasons, and updated slots
  */
 export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
   const { horse, campaign, races, currentDay, cash, enterRaceFn } = ctx;
@@ -31,6 +46,8 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
   if (!campaign.autoManaged) {
     return { entered: [], skipped: [], updatedSlots: campaign.slots };
   }
+
+  const raceMap = new Map(races.map((r) => [r.id, r]));
 
   const entered: AutoEntryResult["entered"] = [];
   const skipped: AutoEntryResult["skipped"] = [];
@@ -43,9 +60,9 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
     if (currentDay < windowStart || currentDay > windowEnd) return slot;
 
     // Find the race — prefer matched raceId, fallback to matching by day + constraints
-    let race: Race | undefined = slot.raceId
-      ? races.find((r) => r.id === slot.raceId && !r.resolved)
-      : undefined;
+    let race: Race | undefined = slot.raceId ? raceMap.get(slot.raceId) : undefined;
+
+    if (race && race.resolved) race = undefined;
 
     if (!race) {
       race = races.find(
@@ -95,15 +112,21 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
 
 /**
  * Mark completed slots based on resolved races in the horse's race history.
- * Also updates aptitude counts in ConfirmedAptitudes.
+ *
+ * Updates slot status to "completed" for entered races that have been resolved.
+ *
+ * @param campaign - The horse's campaign
+ * @param races - All races in the game
+ * @returns Updated campaign slots with completed status
  */
 export function reconcileSlotStatuses(
   campaign: HorseCampaign,
   races: Race[],
 ): HorseCampaign["slots"] {
+  const raceMap = new Map(races.map((r) => [r.id, r]));
   return campaign.slots.map((slot) => {
     if (slot.status !== "entered") return slot;
-    const race = slot.raceId ? races.find((r) => r.id === slot.raceId) : undefined;
+    const race = slot.raceId ? raceMap.get(slot.raceId) : undefined;
     if (race?.resolved) {
       return { ...slot, status: "completed" as const };
     }

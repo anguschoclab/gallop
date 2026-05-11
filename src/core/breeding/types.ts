@@ -1,3 +1,13 @@
+/**
+ * types.ts - Breeding type definitions
+ *
+ * This file provides type definitions for breeding-related concepts including
+ * pregnancy, dosage profiles, and pedigree nodes.
+ *
+ * Dependencies: None (self-contained type definitions)
+ * Related files: Used throughout the breeding module and game state
+ */
+
 export type Pregnancy = {
   id: string;
   sireId: string;
@@ -31,3 +41,24 @@ export type PedigreeNode = {
   generation: number;
   aptitudinalGroup?: string;
 };
+
+export interface ShareTransaction {
+  id: string;
+  syndicateId: string;
+  stableId: string;
+  shares: number;
+  pricePerShare: number;
+  day: number;
+}
+
+export interface Syndicate {
+  id: string;
+  stallionId: string;
+  stallionName: string;
+  totalShares: number; // usually 40 in real life
+  shareHolders: Record<string, number>; // stableId -> share count
+  sharePrice: number;
+  studFee: number;
+  isPublic: boolean;
+  lifetimeEarnings: number; // accumulated stud fees
+}

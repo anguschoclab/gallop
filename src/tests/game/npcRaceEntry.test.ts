@@ -1,10 +1,7 @@
 import { describe, it, expect } from "vitest";
-import {
-  selectHorsesForRaceEntry,
-  runNpcRaceEntry,
-  fillRaceWithFillerHorses,
-  updateHorseFame,
-} from "@/game/npcRaceEntry";
+import { selectHorsesForRaceEntry, runNpcRaceEntry } from "@/game/npcRaceEntry";
+import { fillRaceWithFillerHorses } from "@/game/raceFieldManager";
+import { updateHorseFame } from "@/game/npcPostRace";
 import { createRng } from "@/game/rng";
 import type { Horse, Race, Stable } from "@/game/types";
 
@@ -65,7 +62,7 @@ function mkRace(overrides: Partial<Race> = {}): Race {
 describe("selectHorsesForRaceEntry", () => {
   it("returns empty array when stable has no horses", () => {
     const stable = mkStable({ horses: [] });
-    const result = selectHorsesForRaceEntry(stable, [], mkRace(), new Set());
+    const result = selectHorsesForRaceEntry(stable, new Map(), mkRace(), new Set());
     expect(result).toHaveLength(0);
   });
 
@@ -75,30 +72,34 @@ describe("selectHorsesForRaceEntry", () => {
       mkHorse({ id: "h2", stableId: "s1" }),
       mkHorse({ id: "h3", stableId: "s1" }),
     ];
+    const horseMap = new Map(horses.map((h) => [h.id, h]));
     const stable = mkStable({ horses: ["h1", "h2", "h3"] });
-    const result = selectHorsesForRaceEntry(stable, horses, mkRace(), new Set());
+    const result = selectHorsesForRaceEntry(stable, horseMap, mkRace(), new Set());
     expect(result.length).toBeLessThanOrEqual(2);
   });
 
   it("does not enter horses with energy < 50", () => {
     const lowEnergy = mkHorse({ id: "h1", energy: 40, stableId: "s1" });
+    const horseMap = new Map([["h1", lowEnergy]]);
     const stable = mkStable({ horses: ["h1"] });
-    const result = selectHorsesForRaceEntry(stable, [lowEnergy], mkRace(), new Set());
+    const result = selectHorsesForRaceEntry(stable, horseMap, mkRace(), new Set());
     expect(result).toHaveLength(0);
   });
 
   it("does not enter pregnant horses", () => {
     const horse = mkHorse({ id: "h1", stableId: "s1", energy: 80 });
+    const horseMap = new Map([["h1", horse]]);
     const stable = mkStable({ horses: ["h1"] });
-    const result = selectHorsesForRaceEntry(stable, [horse], mkRace(), new Set(["h1"]));
+    const result = selectHorsesForRaceEntry(stable, horseMap, mkRace(), new Set(["h1"]));
     expect(result).toHaveLength(0);
   });
 
   it("does not enter horses already in race", () => {
     const horse = mkHorse({ id: "h1", stableId: "s1", energy: 80 });
+    const horseMap = new Map([["h1", horse]]);
     const race = mkRace({ entries: [{ horseId: "h1", owned: false, stableId: "s1", npc: true }] });
     const stable = mkStable({ horses: ["h1"] });
-    const result = selectHorsesForRaceEntry(stable, [horse], race, new Set());
+    const result = selectHorsesForRaceEntry(stable, horseMap, race, new Set());
     expect(result).toHaveLength(0);
   });
 });

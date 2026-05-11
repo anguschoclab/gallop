@@ -1,13 +1,29 @@
+/**
+ * grading.ts - Grade color calculation for UI
+ *
+ * This file provides Tailwind CSS class strings for race grades.
+ * Uses app theme colors for UI consistency: G1 = fame (gold), G2 = muted-foreground (silver),
+ * G3 = info (bronze).
+ *
+ * Dependencies: @/game/gradedRaces (Grade)
+ * Related files: Used throughout UI components for displaying grade badges
+ */
+
 import type { Grade } from "@/game/gradedRaces";
 
 /**
- * Pure grade color calculation
- * Returns the Tailwind CSS class string for a given grade
- * Uses app theme colors for UI consistency (Decision 0008 in design bible)
- * G1 = fame (gold/celebratory), G2 = muted-foreground (silver/secondary), G3 = info (bronze/tertiary)
- * Extracted from: races.tsx, stable.$horseId.tsx, track-schedule.tsx, canadian-calendar.tsx,
- *                 uae-calendar.tsx, south-american-calendar.tsx, german-calendar.tsx,
- *                 scandinavian-calendar.tsx, recap.tsx
+ * Pure grade color calculation.
+ *
+ * Returns the Tailwind CSS class string for a given grade.
+ * Uses app theme colors for UI consistency (Decision 0008 in design bible).
+ * G1 = fame (gold/celebratory), G2 = muted-foreground (silver/secondary), G3 = info (bronze/tertiary).
+ *
+ * @param grade - The race grade
+ * @returns Tailwind CSS class string
+ *
+ * @example
+ * const className = getGradeColorClass("G1");
+ * // Returns "text-fame border-fame/40 bg-fame/10"
  */
 export function getGradeColorClass(grade: Grade): string {
   const gradeColorMap: Record<Grade, string> = {

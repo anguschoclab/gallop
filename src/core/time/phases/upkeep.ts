@@ -1,7 +1,20 @@
+/**
+ * phases/upkeep.ts - Upkeep phase
+ *
+ * This file provides the upkeep phase where player pays $50/horse/day and NPC stables
+ * pay the same on their own roster to close asymmetric drain.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/expenses (createExpense), @/core/transactions (createTransaction), @/core/facilities (calculateTotalMaintenance), @/services/newsGenerator (generateFlavorNews), @/game/uuid (generateUUID), @/core/resolver/impacts/index (AnyImpact), @/core/ai/upkeepAI (calculateMonthlyExpenseBudget, shouldConserveCash, createUpkeepAIState, recordBudgetDecision, updateReserveState), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/game/constants/gameConstants (UPKEEP_PER_HORSE)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { createExpense } from "@/core/expenses";
 import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
+import { generateFlavorNews } from "@/services/newsGenerator";
+import { generateUUID } from "@/core/uuid";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import {
   calculateMonthlyExpenseBudget,
   shouldConserveCash,
@@ -24,13 +37,19 @@ export const upkeepPhase = {
   order: 20,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const playerHorses = state.horses.filter((h) => !h.stableId && h.lifecycleStatus === "active");
+    const playerHorses = state.horses.filter(
+      (h) => !h.stableId && (!h.lifecycleStatus || h.lifecycleStatus === "active"),
+    );
     const playerHorseCount = playerHorses.length;
     const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 
-    // Calculate facility maintenance costs
+    // Calculate staff salaries for player
+    const hiredStaff = state.hiredStaff ?? [];
+    const playerStaff = hiredStaff.filter((s) => s.stableId === "");
+    const playerStaffSalaries = playerStaff.reduce((sum, s) => sum + s.salary, 0);
+
     const facilityMaintenance = state.facilities ? calculateTotalMaintenance(state.facilities) : 0;
-    const totalDailyCost = playerUpkeep + facilityMaintenance;
+    const totalDailyCost = playerUpkeep + facilityMaintenance + playerStaffSalaries;
 
     // Record expense entries for each horse
     const newExpenses = playerHorses.map((horse) =>
@@ -40,7 +59,6 @@ export const upkeepPhase = {
       }),
     );
 
-    // Record facility maintenance expense
     if (facilityMaintenance > 0) {
       newExpenses.push(
         createExpense(
@@ -53,6 +71,15 @@ export const upkeepPhase = {
       );
     }
 
+    // Record staff salary expenses
+    playerStaff.forEach((staff) => {
+      newExpenses.push(
+        createExpense("upkeep", staff.salary, `${staff.role} salary for ${staff.name}`, newDay, {
+          recurring: true,
+        }),
+      );
+    });
+
     // Record transaction entries for total upkeep (single transaction for the day)
     const newTransactions: typeof state.transactions = [];
     if (totalDailyCost > 0) {
@@ -61,7 +88,7 @@ export const upkeepPhase = {
           "expense",
           "upkeep",
           -totalDailyCost,
-          `Daily upkeep: ${playerHorseCount} horse${playerHorseCount !== 1 ? "s" : ""} + facilities`,
+          `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
           newDay,
           state.cash - totalDailyCost,
           { recurring: true },
@@ -71,20 +98,40 @@ export const upkeepPhase = {
 
     // Charge each NPC stable for its own horses.
     let npcStables = state.npcStables;
+
+    // Pre-calculate counts and staff
+    const horseCountsByStable = new Map<string, number>();
+    for (const h of state.horses) {
+      const isActive = !h.lifecycleStatus || h.lifecycleStatus === "active";
+      if (h.stableId && isActive) {
+        horseCountsByStable.set(h.stableId, (horseCountsByStable.get(h.stableId) ?? 0) + 1);
+      }
+    }
+
+    const staffByStable = new Map<string, any[]>();
+    if (state.hiredStaff) {
+      for (const staff of state.hiredStaff) {
+        const sid = staff.stableId ?? "";
+        if (!staffByStable.has(sid)) staffByStable.set(sid, []);
+        staffByStable.get(sid)!.push(staff);
+      }
+    }
+
     if (state.npcAIManager) {
       const aiManager = state.npcAIManager; // Capture to satisfy TypeScript
-      // Ensure stableStates is a Map (it may have been serialized to an object)
-      if (!(aiManager.stableStates instanceof Map)) {
-        aiManager.stableStates = new Map(Object.entries(aiManager.stableStates || {}));
-      }
       npcStables = state.npcStables.map((stable) => {
         const aiState = getOrCreateStableAIState(aiManager, stable, newDay);
         if (!aiState.upkeepAI) {
           aiState.upkeepAI = createUpkeepAIState(stable);
         }
 
-        const owned = state.horses.filter((h) => h.stableId === stable.id);
-        const cost = owned.length * UPKEEP_PER_HORSE;
+        const ownedCount = horseCountsByStable.get(stable.id) ?? 0;
+        const horseCost = ownedCount * UPKEEP_PER_HORSE;
+
+        const stableStaff = staffByStable.get(stable.id) ?? [];
+        const staffSalaries = stableStaff.reduce((sum, s) => sum + s.salary, 0);
+
+        const cost = horseCost + staffSalaries;
         const monthlyExpenses = cost * 30; // Estimate monthly expenses
 
         // Update reserve state based on current cash and expenses
@@ -119,11 +166,36 @@ export const upkeepPhase = {
       });
     } else {
       npcStables = state.npcStables.map((stable) => {
-        const owned = state.horses.filter((h) => h.stableId === stable.id);
-        const cost = owned.length * UPKEEP_PER_HORSE;
+        const ownedCount = horseCountsByStable.get(stable.id) ?? 0;
+        const cost = ownedCount * UPKEEP_PER_HORSE;
         return { ...stable, cash: stable.cash - cost };
       });
     }
+
+    // Bankruptcy protection: Inject cash to NPCs that have gone bankrupt
+    const BANKRUPTCY_THRESHOLD = -10000; // Allow some debt before intervention
+    const BANKRUPTCY_INJECTION = 50000; // Cash injection amount
+    const BANKRUPTCY_COOLDOWN_DAYS = 365; // One year between injections per stable
+
+    npcStables = npcStables.map((stable) => {
+      if (stable.cash < BANKRUPTCY_THRESHOLD) {
+        // Check if this stable recently received an injection
+        const lastInjectionDay = stable.lastBankruptcyInjectionDay || 0;
+        const daysSinceInjection = newDay - lastInjectionDay;
+
+        if (daysSinceInjection >= BANKRUPTCY_COOLDOWN_DAYS) {
+          console.log(
+            `[BANKRUPTCY PROTECTION] Injecting $${BANKRUPTCY_INJECTION} into stable ${stable.name} (cash: $${stable.cash})`,
+          );
+          return {
+            ...stable,
+            cash: stable.cash + BANKRUPTCY_INJECTION,
+            lastBankruptcyInjectionDay: newDay,
+          };
+        }
+      }
+      return stable;
+    });
 
     return {
       ...context,
@@ -131,9 +203,25 @@ export const upkeepPhase = {
         ...state,
         cash: state.cash - totalDailyCost,
         npcStables,
-        expenses: [...(state.expenses ?? []), ...newExpenses],
-        transactions: [...(state.transactions ?? []), ...newTransactions],
+        expenses: [...(state.expenses ?? []), ...newExpenses].slice(-1000), // Cap at 1000 entries
+        transactions: [...(state.transactions ?? []), ...newTransactions].slice(-1000), // Cap at 1000 entries
       },
+      impacts: [
+        ...(context.impacts || []),
+        ...(Math.random() < 0.1
+          ? [
+              {
+                id: generateUUID(),
+                intentId: "",
+                day: newDay,
+                phase: "upkeep",
+                logLevel: "always",
+                type: "news_item",
+                newsItem: generateFlavorNews(newDay),
+              } as AnyImpact,
+            ]
+          : []),
+      ],
       logs: [...context.logs],
     };
   },

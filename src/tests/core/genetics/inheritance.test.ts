@@ -86,8 +86,11 @@ describe("breedingSimulator — RNG diversity", () => {
     sire.fiberType = [5, 1]; // heterozygous
     dam.fiberType = [5, 1]; // heterozygous
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sireHorse = { id: "s1", genotype: sire, pedigree: undefined } as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const damHorse = { id: "d1", genotype: dam, pedigree: undefined } as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const state = { horses: [], npcStables: [] } as any;
 
     const result = runBreedingSimulation(sireHorse, damHorse, state, rng);

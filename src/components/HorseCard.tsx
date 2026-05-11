@@ -1,26 +1,33 @@
 import type { Horse } from "@/game/types";
+import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
-import { JargonTooltip } from "./ui/JargonTooltip";
+import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
+import { getCoatColor, getInjuryColor, getInjuryLabel } from "@/core/horse/uiHelpers";
 import { useGame } from "@/game/store";
 import { SilkDot } from "./SilkDot";
 import { NumericValue, StatBar } from "./HorseBits";
+import {
+  LineChart,
+  Line,
+  ResponsiveContainer,
+  YAxis
+} from "recharts";
 import {
   Trophy,
   Zap,
   TrendingUp,
   Activity,
-  Dna,
   Calendar,
-  User,
-  Building2,
   Eye,
   Ruler,
   Weight,
   HeartPulse,
+  ShieldCheck,
+  AlertCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -43,101 +50,52 @@ export function HorseCard({
   const day = useGame((s) => s.day);
   const ovr = calculateOverallRating(horse);
 
-  // Scout info if applicable
-  const scoutStatus =
-    showScoutInfo && horse.stableId ? getScoutStatus(horse, scoutReports, day) : null;
-  const displayStats =
-    showScoutInfo && horse.stableId ? getDisplayableStats(horse, scoutReports, day) : null;
+  const scoutStatus = showScoutInfo && horse.stableId ? getScoutStatus(horse, scoutReports, day) : null;
+  const displayStats = showScoutInfo && horse.stableId ? getDisplayableStats(horse, scoutReports, day) : null;
 
-  // Gender icon
-  const getGenderIcon = () => {
-    if (horse.gender === "gelding") return "⚲";
-    return horse.gender === "colt" || horse.gender === "horse" ? "♂" : "♀";
-  };
-  const getGenderColor = () => {
-    if (horse.gender === "gelding") return "text-cream-muted";
-    return horse.gender === "colt" || horse.gender === "horse" ? "text-chart-1" : "text-chart-5";
-  };
+  const genderColor = horse.gender === "gelding" ? "text-cream/40" : isMaleHorse(horse.gender) ? "text-blue-400" : "text-pink-400";
 
-  const genderIcon = getGenderIcon();
-  const genderColor = getGenderColor();
-
-  // Lifecycle status indicator (retired/deceased)
-  const getLifecycleStatus = () => {
-    if (horse.lifecycleStatus === "retired") {
-      return <Badge className="bg-gold/20 text-gold border-gold/30">Retired</Badge>;
-    }
-    if (horse.lifecycleStatus === "deceased") {
-      return (
-        <Badge className="bg-destructive/20 text-destructive border-destructive/30">Deceased</Badge>
-      );
-    }
-    return null;
-  };
-
-  // Health status indicator
-  const getHealthStatus = () => {
-    if (!horse.healthStatus || horse.healthStatus === "healthy") return null;
-    const statusConfig: Record<string, { color: string; label: string }> = {
-      covering_sickness: { color: "bg-destructive/10 text-destructive", label: "Dourine" },
-      other_illness: { color: "bg-chart-4/10 text-chart-4", label: "Ill" },
-      recovering: { color: "bg-chart-2/10 text-chart-2", label: "Recovering" },
-    };
-    const config = statusConfig[horse.healthStatus] || {
-      color: "bg-t700",
-      label: horse.healthStatus,
-    };
-    return <Badge className={config.color}>{config.label}</Badge>;
-  };
+  // Velocity Sparkline Data
+  const sparklineData = horse.raceHistory
+    ?.filter((h) => typeof h.beyer === "number")
+    .slice(-8)
+    .map((h, i) => ({ idx: i, beyer: h.beyer! })) || [];
 
   if (variant === "compact") {
     return (
       <Card
         className={cn(
-          "hover:bg-t700 transition-colors cursor-pointer border-gold-muted",
+          "bg-slate-900/40 border-white/5 rounded-none hover:border-gold/40 transition-all duration-300 relative overflow-hidden group cursor-pointer shadow-xl",
           className,
         )}
         onClick={onClick}
       >
-        <CardContent className="p-3">
-          <div className="flex items-center gap-3">
-            {/* Identity: SilkDot + Name */}
-            <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
-            <div className="flex-1 min-w-0">
+        <div className="absolute top-0 left-0 w-1 h-full bg-gold/10 group-hover:bg-gold transition-colors z-10" />
+        <CardContent className="p-3 pl-4 flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <SilkDot color={getCoatColor(horse.coatColor)} size="sm" />
+            <div className="flex-1 min-w-0 space-y-0.5">
               <div className="flex items-center gap-2">
-                <span className={cn(genderColor, "text-sm")}>{genderIcon}</span>
-                <span className="font-semibold text-cream font-[family-name:var(--font-display)] truncate">
+                <span className={cn("text-xs font-bold uppercase tracking-tight text-cream group-hover:text-gold transition-colors truncate")}>
                   {horse.name}
                 </span>
+                {horse.activeInjury && <AlertCircle className="h-3 w-3 text-destructive animate-pulse shrink-0" />}
               </div>
-              {/* Qualifiers */}
-              <div className="text-xs text-cream-muted flex items-center gap-2">
-                <NumericValue value={Math.floor(horse.age)} suffix="yo" className="font-semibold" />
-                <span>·</span>
-                <JargonTooltip term="OVR">
-                  <span className="font-[family-name:var(--font-body)]">OVR</span>{" "}
-                  <NumericValue value={ovr} />
-                </JargonTooltip>
-                {horse.stableId && (
-                  <>
-                    <span>·</span>
-                    <span className="text-chart-4">
-                      <NumericValue value={horse.fame} prefix="★ " />
-                    </span>
-                  </>
-                )}
+              <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-cream/40">
+                <span className={genderColor}>{genderSymbol(horse.gender)}</span>
+                <span>Age_{Math.floor(horse.age)}</span>
+                <span className="w-1 h-1 bg-white/20 rounded-full" />
+                <span>OVR_{ovr}</span>
               </div>
             </div>
-            {/* Numbers */}
-            <div className="flex flex-col items-end gap-1">
-              <Badge className="text-xs bg-t700 text-cream">
-                <Zap className="w-3 h-3 mr-1" />
-                <NumericValue value={horse.energy} />
-              </Badge>
-              {scoutStatus && (
-                <Badge className={cn("text-xs", scoutStatus.color)}>{scoutStatus.icon}</Badge>
-              )}
-            </div>
+          </div>
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <Badge className={cn("text-[9px] font-mono h-4 rounded-none px-1 border border-white/5", horse.energy > 50 ? "bg-success/10 text-success" : "bg-warning/10 text-warning")}>
+              E:{horse.energy}%
+            </Badge>
+            {scoutStatus && (
+              <Badge variant="outline" className={cn("text-[8px] h-3.5 px-1 rounded-none", scoutStatus.color)}>{scoutStatus.label}</Badge>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -145,76 +103,71 @@ export function HorseCard({
   }
 
   if (variant === "scout") {
-    // Scouting view - shows fog of war mechanics
     const knownStats = displayStats?.stats || {};
     const hasAllStats = Object.keys(knownStats).length === 4;
 
     return (
-      <Card className={className}>
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
+      <Card className={cn("bg-slate-900/60 border-white/5 rounded-none shadow-xl relative overflow-hidden group", className)}>
+        <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none">
+          <Eye className="h-32 w-32 -rotate-12" />
+        </div>
+        <CardHeader className="pb-3 border-b border-white/5 bg-black/20">
+          <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <SilkDot color={getCoatColor(horse.coatColor)} size="lg" />
-              <div>
+              <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
+              <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
-                  <span className={cn(genderColor, "text-lg")}>{genderIcon}</span>
-                  <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)]">
+                  <span className={cn(genderColor, "text-sm")}>{genderSymbol(horse.gender)}</span>
+                  <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors">
                     {horse.name}
                   </span>
                 </div>
-                <div className="text-sm text-cream-muted flex items-center gap-2">
-                  <NumericValue value={Math.floor(horse.age)} suffix=" years old" />
-                  <span>·</span>
-                  <span className="text-chart-4">
-                    Fame: <NumericValue value={horse.fame} suffix="/100" />
-                  </span>
+                <div className="text-[9px] text-cream/40 font-mono uppercase tracking-widest flex items-center gap-2">
+                  <span>Age_{Math.floor(horse.age)}</span>
+                  <span className="w-1 h-1 bg-white/20 rounded-full" />
+                  <span className="text-fame flex items-center gap-1"><Trophy className="h-2.5 w-2.5" /> {horse.fame}</span>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-end gap-1">
-              {scoutStatus && (
-                <Badge className={scoutStatus.color}>
-                  {scoutStatus.icon} {scoutStatus.label}
-                </Badge>
-              )}
-            </div>
+            {scoutStatus && (
+              <Badge variant="outline" className={cn("rounded-none text-[8px] font-black tracking-widest uppercase h-5", scoutStatus.color)}>
+                {scoutStatus.icon} {scoutStatus.label}
+              </Badge>
+            )}
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
-          <div className="grid grid-cols-2 gap-3">
+        <CardContent className="pt-4 space-y-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3">
             {["speed", "stamina", "acceleration", "consistency"].map((stat) => {
               const value = knownStats[stat as keyof typeof knownStats];
               const isUnknown = value === undefined;
               return (
-                <div key={stat} className={isUnknown ? "opacity-50" : ""}>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-cream-muted capitalize">{stat}</span>
-                    <span className="font-medium tabular-nums">
-                      {isUnknown ? "???" : Math.round(value)}
+                <div key={stat} className={isUnknown ? "opacity-30" : ""}>
+                  <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-cream/40 mb-1">
+                    <span>{stat.substring(0, 3)}</span>
+                    <span className="font-mono text-cream/80">
+                      {isUnknown ? "---" : Math.round(value)}
                     </span>
                   </div>
-                  <Progress value={isUnknown ? 0 : value} className="h-1.5" />
+                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                     <div className="h-full bg-blue-400/60" style={{ width: isUnknown ? '0%' : `${value}%` }} />
+                  </div>
                 </div>
               );
             })}
           </div>
-          <div className="mt-3 flex items-center justify-between">
-            <div className="text-sm">
-              <span className="text-cream-muted">Overall: </span>
-              <span className="font-bold">
-                {hasAllStats
-                  ? ovr
-                  : displayStats?.overallEstimate
-                    ? `~${displayStats.overallEstimate}`
-                    : "???"}
-              </span>
+          <div className="pt-3 border-t border-white/5 flex items-center justify-between bg-black/20 p-2 rounded">
+            <div className="space-y-0.5">
+              <div className="text-[8px] font-black uppercase tracking-widest text-cream/30">OVR_Estimate</div>
+              <div className="text-sm font-black font-mono text-cream">
+                {hasAllStats ? ovr : displayStats?.overallEstimate ? `~${displayStats.overallEstimate}` : "LOCKED"}
+              </div>
             </div>
-            <div className="flex items-center gap-1 text-xs text-cream-muted">
-              <Activity className="w-3 h-3" />
-              <span className="tabular-nums">
-                Form: {horse.form > 0 ? "+" : ""}
-                {horse.form}
-              </span>
+            <div className="text-right space-y-0.5">
+              <div className="text-[8px] font-black uppercase tracking-widest text-cream/30">Form_Trend</div>
+              <div className={cn("text-xs font-black font-mono", horse.form > 0 ? "text-success" : horse.form < 0 ? "text-destructive" : "text-cream/40")}>
+                {horse.form > 0 ? "+" : ""}{horse.form}
+              </div>
             </div>
           </div>
         </CardContent>
@@ -222,213 +175,190 @@ export function HorseCard({
     );
   }
 
-  // Full variant
+  // Full Variant - "Asset Dossier"
   return (
     <Card
       className={cn(
-        "hover:bg-t700 transition-colors border-gold-muted",
-        onClick && "cursor-pointer",
+        "bg-slate-900/60 border-white/5 rounded-none shadow-2xl relative overflow-hidden group flex flex-col h-full",
+        onClick && "cursor-pointer hover:border-gold/40 transition-all duration-300",
         className,
       )}
       onClick={onClick}
     >
-      <CardContent className="p-5">
-        {/* Header - Design Bible: Identity | Qualifiers | Numbers */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <SilkDot color={getCoatColor(horse.coatColor)} size="lg" />
-            <div>
-              {/* Identity */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gold/20 group-hover:bg-gold transition-colors z-10" />
+      
+      <CardHeader className="p-5 border-b border-white/5 bg-black/40">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
+            <div className="space-y-0.5 min-w-0">
               <div className="flex items-center gap-2">
-                <span className={cn(genderColor, "text-lg")}>{genderIcon}</span>
-                <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)]">
+                <span className={cn(genderColor, "text-sm leading-none")}>{genderSymbol(horse.gender)}</span>
+                <span className="font-bold text-xl text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-gold transition-colors truncate">
                   {horse.name}
                 </span>
-                {getLifecycleStatus()}
-                {getHealthStatus()}
               </div>
-              {/* Qualifiers */}
-              <div className="text-sm text-cream-muted flex items-center gap-2 flex-wrap font-[family-name:var(--font-body)]">
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  <NumericValue value={Math.floor(horse.age)} suffix=" years old" />
-                </span>
-                {horse.hemisphere && (
+              <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-cream/40 flex-wrap">
+                <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> AGE_{Math.floor(horse.age)}</span>
+                {horse.hemisphere === 'Southern' && (
                   <>
-                    <span>·</span>
-                    <span>{horse.hemisphere}</span>
+                    <span className="w-1 h-1 bg-white/20 rounded-full" />
+                    <span className="text-blue-400/60">SH</span>
                   </>
                 )}
-                {horse.stableId && (
+                {horse.fame > 0 && (
                   <>
-                    <span>·</span>
-                    <span className="text-chart-4 flex items-center gap-1">
-                      <Trophy className="w-3 h-3" />
-                      <NumericValue value={horse.fame} suffix=" fame" />
-                    </span>
+                    <span className="w-1 h-1 bg-white/20 rounded-full" />
+                    <span className="text-fame flex items-center gap-1"><Trophy className="h-2.5 w-2.5" /> F_{horse.fame}</span>
                   </>
                 )}
               </div>
             </div>
           </div>
-          {/* Numbers */}
-          <div className="flex flex-col items-end gap-1">
-            <Badge className="flex items-center gap-1 bg-t700 text-cream">
-              <Zap className="w-3 h-3" />
-              <NumericValue value={horse.energy} suffix=" Energy" />
-            </Badge>
-            {horse.form !== 0 && (
-              <Badge
-                className={cn(
-                  "text-xs flex items-center gap-1",
-                  horse.form > 0
-                    ? "bg-gold text-t950"
-                    : "bg-destructive text-destructive-foreground",
-                )}
-              >
-                <TrendingUp className="w-3 h-3" />
-                <NumericValue
-                  value={horse.form}
-                  prefix={horse.form > 0 ? "+" : ""}
-                  suffix=" Form"
-                />
-              </Badge>
-            )}
+
+          <div className="flex flex-col items-end gap-1 shrink-0">
+             {horse.lifecycleStatus !== 'active' && (
+                <Badge variant="outline" className={cn(
+                  "rounded-none text-[8px] font-black tracking-widest uppercase h-4 px-1",
+                  horse.lifecycleStatus === 'retired' ? 'border-gold text-gold bg-gold/5' : 'border-destructive text-destructive bg-destructive/5'
+                )}>
+                  {horse.lifecycleStatus}
+                </Badge>
+             )}
+             {horse.healthStatus && horse.healthStatus !== 'healthy' && (
+                <Badge variant="destructive" className="rounded-none text-[8px] font-black tracking-widest uppercase h-4 px-1 animate-pulse">
+                  {horse.healthStatus === 'recovering' ? 'RECOVERING' : 'ILLNESS_DETECTED'}
+                </Badge>
+             )}
           </div>
         </div>
+      </CardHeader>
 
+      <CardContent className="p-0 flex-1 flex flex-col">
         {/* Biometrics Strip */}
-        <div className="flex items-center gap-4 mb-4 p-2 bg-t700 rounded-lg text-xs">
-          <div className="flex items-center gap-1.5">
-            <Ruler className="w-3.5 h-3.5 text-cream-muted" />
-            <span className="font-medium">{horse.height?.toFixed(1)} hh</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Weight className="w-3.5 h-3.5 text-cream-muted" />
-            <span className="font-medium">{Math.round(horse.weight)} kg</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div
-              className="w-3 h-3 rounded-full border border-gold-muted"
-              style={{ backgroundColor: getCoatColor(horse.coatColor) }}
-            />
-            <span className="capitalize">{horse.coatColor?.replace("-", " ")}</span>
-          </div>
-          <div className="flex items-center gap-1.5 ml-auto">
-            <HeartPulse className="w-3.5 h-3.5 text-cream-muted" />
-            <span className={getInjuryColor(horse.injuryProneness)}>
-              {getInjuryLabel(horse.injuryProneness)}
-            </span>
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <StatBar label="Speed" value={horse.stats.speed} />
-          <StatBar label="Stamina" value={horse.stats.stamina} />
-          <StatBar label="Acceleration" value={horse.stats.acceleration} />
-          <StatBar label="Consistency" value={horse.stats.consistency} />
-        </div>
-
-        {/* Footer Info */}
-        <div className="flex items-center justify-between pt-3 border-t text-sm">
+        <div className="flex items-center justify-between px-5 py-2 bg-white/[0.02] border-b border-white/5 text-[9px] font-mono uppercase tracking-widest text-cream/40">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <Activity className="w-4 h-4 text-cream-muted" />
-              <JargonTooltip term="OVR" className="text-cream-muted">
-                OVR
-              </JargonTooltip>
-              <span className="font-bold text-lg tabular-nums">{ovr}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Dna className="w-4 h-4 text-cream-muted" />
-              <JargonTooltip term="Pot" className="text-cream-muted">
-                Pot
-              </JargonTooltip>
-              <span className="font-semibold tabular-nums">{horse.potential}</span>
-            </div>
+            <span className="flex items-center gap-1"><Ruler className="h-3 w-3 text-gold/40" /> {horse.height?.toFixed(1)}HH</span>
+            <span className="flex items-center gap-1"><Weight className="h-3 w-3 text-gold/40" /> {Math.round(horse.weight)}KG</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-cream-muted">
-            {horse.runningStyle && (
-              <Badge variant="outline" className="text-xs capitalize">
-                {horse.runningStyle.replace("-", " ")}
-              </Badge>
-            )}
-            {horse.conformation && <span className="capitalize">{horse.conformation} form</span>}
+          <div className="flex items-center gap-1">
+             <HeartPulse className="h-3 w-3 text-destructive/40" />
+             <span className={getInjuryColor(horse.injuryProneness)}>{getInjuryLabel(horse.injuryProneness)}</span>
           </div>
         </div>
 
-        {/* Pedigree (if available) */}
-        {(horse.sireName || horse.damName) && (
-          <div className="mt-3 pt-3 border-t text-xs text-cream-muted">
-            <div className="flex items-center gap-1 mb-1">
-              <User className="w-3 h-3" />
-              <span>Pedigree:</span>
-            </div>
-            <div className="flex gap-4">
-              {horse.sireName && (
-                <span>
-                  Sire: <span className="font-medium">{horse.sireName}</span>
-                </span>
-              )}
-              {horse.damName && (
-                <span>
-                  Dam: <span className="font-medium">{horse.damName}</span>
-                </span>
-              )}
-            </div>
-          </div>
-        )}
+        <div className="p-5 flex-1 space-y-6">
+           <div className="grid grid-cols-2 gap-4">
+              {/* Stats Block */}
+              <div className="space-y-3">
+                 <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest flex items-center gap-1">
+                    <ShieldCheck className="h-3 w-3" /> Core_Specs
+                 </div>
+                 <div className="space-y-2">
+                    <StatBar label="SPD" value={horse.stats.speed} />
+                    <StatBar label="STA" value={horse.stats.stamina} />
+                    <StatBar label="ACC" value={horse.stats.acceleration} />
+                    <StatBar label="CON" value={horse.stats.consistency} />
+                 </div>
+              </div>
 
-        {/* Stable info for NPC horses */}
-        {horse.stableId && (
-          <div className="mt-3 pt-3 border-t">
-            <div className="flex items-center gap-2 text-xs text-cream-muted">
-              <Building2 className="w-3 h-3" />
-              <span>Belongs to rival stable</span>
-              {horse.lastScoutedDay && <span>· Last scouted Day {horse.lastScoutedDay}</span>}
-            </div>
+              {/* Data Viz Block: Velocity Sparkline or Pot/Form */}
+              <div className="space-y-3 pl-4 border-l border-white/5 flex flex-col">
+                 <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest flex items-center gap-1">
+                    <Activity className="h-3 w-3" /> Perf_Telemetry
+                 </div>
+                 
+                 {sparklineData.length > 2 ? (
+                    <div className="flex-1 min-h-[60px] relative mt-1 bg-black/20 border border-white/5 rounded-sm p-1">
+                       <ResponsiveContainer width="100%" height="100%">
+                         <LineChart data={sparklineData}>
+                           <YAxis domain={['dataMin - 5', 'dataMax + 5']} hide />
+                           <Line 
+                             type="step" 
+                             dataKey="beyer" 
+                             stroke="#d4af37" 
+                             strokeWidth={1.5} 
+                             dot={{ r: 1.5, fill: "#020617", stroke: "#d4af37" }} 
+                             isAnimationActive={false}
+                           />
+                         </LineChart>
+                       </ResponsiveContainer>
+                       <div className="absolute top-1 left-1.5 text-[8px] font-mono text-gold/40">BEYER</div>
+                       <div className="absolute bottom-1 right-1.5 text-[9px] font-mono font-black text-gold">{sparklineData[sparklineData.length-1].beyer}</div>
+                    </div>
+                 ) : (
+                    <div className="flex-1 flex flex-col justify-center space-y-3 bg-black/20 border border-white/5 rounded-sm p-3">
+                       <div className="flex justify-between items-end border-b border-white/5 pb-1">
+                          <span className="text-[9px] font-mono text-cream/40 uppercase">Energy</span>
+                          <span className={cn("text-xs font-mono font-black", horse.energy > 50 ? "text-success" : "text-warning")}>{horse.energy}%</span>
+                       </div>
+                       <div className="flex justify-between items-end">
+                          <span className="text-[9px] font-mono text-cream/40 uppercase">Form</span>
+                          <span className={cn("text-xs font-mono font-black", horse.form > 0 ? "text-success" : horse.form < 0 ? "text-destructive" : "text-cream")}>
+                            {horse.form > 0 ? "+" : ""}{horse.form}
+                          </span>
+                       </div>
+                    </div>
+                 )}
+              </div>
+           </div>
+           
+           <div className="flex items-center justify-between bg-black/40 p-2 rounded-sm border border-white/5">
+              <div className="flex items-center gap-2">
+                 <span className="text-[8px] font-black uppercase text-cream/30 tracking-widest">OVR_RATING</span>
+                 <span className="text-lg font-mono font-black text-cream">{ovr}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                 <span className="text-[8px] font-black uppercase text-cream/30 tracking-widest">POTENTIAL</span>
+                 <span className="text-sm font-mono font-black text-gold-muted">{horse.potential}</span>
+              </div>
+           </div>
+
+           {(horse.runningStyle || horse.conformation) && (
+             <div className="flex flex-wrap gap-1.5">
+                {horse.runningStyle && (
+                  <Badge variant="outline" className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter">
+                    STY: {horse.runningStyle.replace('-', ' ')}
+                  </Badge>
+                )}
+                {horse.conformation && (
+                  <Badge variant="outline" className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter">
+                    CNF: {horse.conformation}
+                  </Badge>
+                )}
+             </div>
+           )}
+
+           {(horse.sireName || horse.damName) && (
+              <div className="pt-3 border-t border-white/5 space-y-1">
+                 <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-widest">Genetic Lineage</div>
+                 <div className="flex items-center gap-2 text-[10px] font-mono text-cream/60 uppercase truncate">
+                    <span className="truncate">{horse.sireName || 'UNKNOWN'}</span>
+                    <span className="text-pink-500/40">×</span>
+                    <span className="truncate">{horse.damName || 'UNKNOWN'}</span>
+                 </div>
+              </div>
+           )}
+        </div>
+
+        {/* Action Footer */}
+        {horse.owned && (
+          <div className="p-3 bg-black/40 border-t border-white/5 flex gap-2">
+            <Link to="/stable/$horseId" params={{ horseId: horse.id }} className="flex-1" onClick={(e) => e.stopPropagation()}>
+               <Button variant="outline" className="w-full h-8 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-gold/10 hover:text-gold hover:border-gold/30 rounded-none text-cream/60">
+                 <Eye className="h-3 w-3 mr-1.5" /> Dossier
+               </Button>
+            </Link>
+            <Link to="/scheduler" className="flex-1" onClick={(e) => e.stopPropagation()}>
+               <Button variant="outline" className="w-full h-8 text-[9px] font-black uppercase tracking-widest border-white/10 hover:bg-blue-400/10 hover:text-blue-400 hover:border-blue-400/30 rounded-none text-cream/60">
+                 <Calendar className="h-3 w-3 mr-1.5" /> Deploy
+               </Button>
+            </Link>
           </div>
         )}
       </CardContent>
     </Card>
   );
-}
-
-function getCoatColor(color?: string): string {
-  // Use CSS custom properties defined in styles.css instead of hardcoded hex codes
-  const map: Record<string, string> = {
-    bay: "var(--coat-bay)",
-    "dark-bay": "var(--coat-dark-bay)",
-    black: "var(--coat-black)",
-    chestnut: "var(--coat-chestnut)",
-    gray: "var(--coat-gray)",
-    palomino: "var(--coat-palomino)",
-    buckskin: "var(--coat-buckskin)",
-    roan: "var(--coat-roan)",
-    white: "var(--coat-white)",
-    "seal-brown": "var(--coat-seal-brown)",
-    "liver-chestnut": "var(--coat-liver-chestnut)",
-    dun: "var(--coat-dun)",
-    grulla: "var(--coat-grulla)",
-    champagne: "var(--coat-champagne)",
-  };
-  return map[color || "bay"] || "var(--coat-bay)";
-}
-
-function getInjuryLabel(proneness?: number): string {
-  if (!proneness) return "Solid";
-  if (proneness < 0.03) return "Iron Horse";
-  if (proneness < 0.06) return "Durable";
-  if (proneness < 0.09) return "Average";
-  return "Fragile";
-}
-
-function getInjuryColor(proneness?: number): string {
-  if (!proneness) return "text-cream-muted";
-  if (proneness < 0.06) return "text-success font-medium";
-  if (proneness < 0.09) return "text-warning font-medium";
-  return "text-destructive font-bold";
 }
 
 export default HorseCard;

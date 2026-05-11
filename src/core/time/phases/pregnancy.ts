@@ -1,3 +1,13 @@
+/**
+ * phases/pregnancy.ts - Pregnancy resolution phase
+ *
+ * This file provides the pregnancy resolution phase that resolves pregnancies
+ * and handles foaling events, including AI outcome recording for NPCs.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (Horse, Pregnancy), @/core/breeding/lineage (getFoalsBy), @/game/store/helpers/pregnancy (resolvePregnancies), @/core/reputation (createReputationEvent, calculateBreedingReputation, getReputationTier), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/breedingAI (recordBreedingOutcome), @/core/horse/stats (calculateOverallRating)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import type { Horse, Pregnancy } from "@/game/types";
 import { getFoalsBy } from "@/core/breeding/lineage";
@@ -7,6 +17,9 @@ import {
   calculateBreedingReputation,
   getReputationTier,
 } from "@/core/reputation";
+import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { recordBreedingOutcome } from "@/core/ai/breedingAI";
+import { calculateOverallRating } from "@/core/horse/stats";
 
 /**
  * Phase: Pregnancy Resolution
@@ -24,8 +37,39 @@ export const pregnancyPhase = {
       state.npcStables,
       usedNamesSet,
       newDay,
+      { horses: state.horses },
     );
     const { pregnancies, foals, cashAdjustment } = pregResult;
+
+    // Record breeding outcomes for NPC AI
+    if (state.npcAIManager) {
+      for (const foal of foals) {
+        const pregnancy = pregnancies.find((p) => p.foalId === foal.id);
+        if (pregnancy) {
+          // If sire is NPC-owned, record outcome for that stable's AI
+          const sire = state.horses.find((h) => h.id === pregnancy.sireId);
+          if (sire && sire.stableId) {
+            const stable = state.npcStables.find((s) => s.id === sire.stableId);
+            if (stable) {
+              const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
+              if (stableAI.breedingAI) {
+                const foalRating = calculateOverallRating(foal);
+                stableAI.breedingAI = recordBreedingOutcome(
+                  stableAI.breedingAI,
+                  pregnancy.sireId,
+                  pregnancy.damId,
+                  foal.id,
+                  foalRating,
+                  true, // Successful foaling
+                  newDay,
+                );
+                state.npcAIManager.stableStates[stable.id] = stableAI;
+              }
+            }
+          }
+        }
+      }
+    }
 
     // Add reputation events for player-owned foals born
     const newReputationEvents = state.reputation?.events ?? [];

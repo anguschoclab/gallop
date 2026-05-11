@@ -1,6 +1,12 @@
 /**
- * Breeding Simulator
- * Runs Monte Carlo simulations to predict offspring phenotype distribution
+ * breedingSimulator.ts - Breeding simulation and prediction
+ *
+ * This file provides Monte Carlo simulation for breeding prediction, running
+ * multiple iterations to estimate offspring phenotype distribution, health risks,
+ * and genetic compatibility.
+ *
+ * Dependencies: @/game/types (Horse, GameState), @/core/common/types (Rng), @/game/rng (createRng), ./inheritance (inheritDNA), ./phenotype (resolveStats, resolveFiberBias, resolveStrideType, resolveRunningStyle, resolveTrainability, resolvePeakAge, resolveRecoveryRate, resolveBleederRisk, resolveRoarerRisk, resolvePssmRisk, resolveRerRisk, resolveEpmRisk, resolveCoatColor), @/core/horse/types (RunningStyle, CoatColor), @/core/breeding/populationGenetics (computeCoiFromSnapshot), @/game/breedingCompatibility (calculateGeneticCompatibility)
+ * Related files: inheritance.ts (provides DNA inheritance), phenotype.ts (provides phenotype resolution)
  */
 
 import type { Horse } from "@/game/types";
@@ -24,7 +30,7 @@ import {
   resolveCoatColor,
 } from "./phenotype";
 import type { RunningStyle, CoatColor } from "@/core/horse/types";
-import { computeCoiFromSnapshot } from "@/core/breeding/populationGenetics";
+import { computeProspectiveCoi } from "@/core/breeding/populationGenetics";
 import { calculateGeneticCompatibility } from "@/game/breedingCompatibility";
 
 export type SimulationResult = {
@@ -58,7 +64,11 @@ export type SimulationResult = {
 const SIMULATION_ITERATIONS = 250;
 
 /**
- * Calculate percentile from sorted array
+ * Calculate percentile from sorted array.
+ *
+ * @param sorted - Sorted array of numbers
+ * @param p - Percentile (0-100)
+ * @returns Value at percentile
  */
 function percentile(sorted: number[], p: number): number {
   const index = Math.ceil((p / 100) * sorted.length) - 1;
@@ -66,27 +76,40 @@ function percentile(sorted: number[], p: number): number {
 }
 
 /**
- * Calculate mean of array
+ * Calculate mean of array.
+ *
+ * @param arr - Array of numbers
+ * @returns Mean value
  */
 function mean(arr: number[]): number {
   return arr.reduce((a, b) => a + b, 0) / arr.length;
 }
 
 /**
- * Calculate range of array
+ * Calculate range of array.
+ *
+ * @param arr - Array of numbers
+ * @returns Min and max values
  */
 function range(arr: number[]): [number, number] {
   return [Math.min(...arr), Math.max(...arr)];
 }
 
 /**
- * Run breeding simulation
+ * Run breeding simulation.
+ *
+ * Runs Monte Carlo simulation (250 iterations) to predict offspring phenotype
+ * distribution including stats, traits, health risks, coat colors, COI estimate,
+ * and genetic compatibility score.
  *
  * @param sire - Sire horse
  * @param dam - Dam horse
  * @param state - Game state (for COI calculation)
  * @param rng - Random number generator
- * @returns SimulationResult with phenotype distribution
+ * @returns Simulation result with phenotype distribution
+ *
+ * @example
+ * const result = runBreedingSimulation(sire, dam, gameState, rng);
  */
 export function runBreedingSimulation(
   sire: Horse,
@@ -122,8 +145,7 @@ export function runBreedingSimulation(
     const simulationRng = createRng(iterationSeed);
 
     // Inherit DNA
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const offspringGenotype = inheritDNA(sire.genotype, dam.genotype, simulationRng as any);
+    const offspringGenotype = inheritDNA(sire.genotype, dam.genotype, simulationRng);
 
     // Resolve to phenotype
     const stats = resolveStats(offspringGenotype.stats);
@@ -248,7 +270,7 @@ export function runBreedingSimulation(
         EP: runningStyleValues.filter((v) => v === "EP").length / SIMULATION_ITERATIONS,
         P: runningStyleValues.filter((v) => v === "P").length / SIMULATION_ITERATIONS,
         S: runningStyleValues.filter((v) => v === "S").length / SIMULATION_ITERATIONS,
-      } as any,
+      },
 
       trainability: {
         mean: mean(trainabilityValues),
@@ -295,14 +317,7 @@ export function runBreedingSimulation(
       },
       {} as Record<CoatColor, number>,
     ),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    coiEstimate: computeCoiFromSnapshot({
-      sireId: sire.id,
-      damId: dam.id,
-      sirePedigree: sire.pedigree,
-      damPedigree: dam.pedigree,
-    } as any),
-
+    coiEstimate: computeProspectiveCoi(sire, dam),
     compatScore: calculateGeneticCompatibility(sire, dam).score,
   };
 

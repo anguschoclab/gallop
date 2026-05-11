@@ -1,5 +1,12 @@
 /**
- * Personality-based naming themes for stables.
+ * thematicNaming.ts - Personality-based naming themes for stables
+ *
+ * This file provides theme-based name generation tied to stable personalities.
+ * Each theme has specific word pools and naming patterns that reflect the stable's
+ * approach to racing (aggressive, conservative, breeder, etc.).
+ *
+ * Dependencies: @/game/rng (Rng), ./nameDatabase (word pools)
+ * Related files: nameGenerator.ts (uses this for thematic strategy), stableConfig.ts (personality definitions)
  */
 
 import type { Rng } from "@/game/rng";
@@ -9,12 +16,14 @@ import {
   ARISTOCRATIC_TITLES,
   RACING_TERMS,
   NATURE_TERMS,
-  NATURE_TERMS,
   ABSTRACT_TERMS,
   RACING_SPIRIT_ADJECTIVES,
   RACING_SPIRIT_NOUNS,
 } from "./nameDatabase";
 
+/**
+ * Naming themes corresponding to stable personalities.
+ */
 export type NamingTheme =
   | "aggressive"
   | "conservative"
@@ -60,7 +69,7 @@ const THEMES: Record<NamingTheme, ThemeDefinition> = {
     wordPools: [ABSTRACT_TERMS, RACING_TERMS],
     patterns: ["{W1} Deal", "Value {W1}", "Bargain {W1}", "Market {W1}"],
   },
-  elite: {
+  prestige: {
     wordPools: [ABSTRACT_TERMS],
     patterns: ["{W1} Elite", "Royal {W1}", "Grand {W1}", "{W1} Excellence"],
   },
@@ -70,6 +79,20 @@ const THEMES: Record<NamingTheme, ThemeDefinition> = {
   },
 };
 
+/**
+ * Generate a name based on a naming theme.
+ *
+ * Selects a pattern from the theme and fills in placeholders with words from
+ * the theme's word pools. Patterns use {W1} and {W2} placeholders for word insertion.
+ *
+ * @param theme - The naming theme to use
+ * @param rng - Random number generator for pattern and word selection
+ * @returns Generated name matching the theme's style
+ *
+ * @example
+ * const name = generateThematicName("aggressive", rng);
+ * // Returns e.g., "Storm Surge" or "Bold Victory"
+ */
 export function generateThematicName(theme: NamingTheme, rng: Rng): string {
   const def = THEMES[theme];
   const pool = def.wordPools[rng.int(0, def.wordPools.length - 1)];

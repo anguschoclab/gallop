@@ -1,9 +1,27 @@
+/**
+ * personalityModifiers.ts - Personality-based modifiers
+ *
+ * This file provides personality-based modifiers for race entry decisions,
+ * adjusting base suitability scores based on personality traits.
+ *
+ * Dependencies: @/game/types (Horse, Race, Personality), ./stableConfig (PERSONALITY_CONFIG)
+ * Related files: ../ai/raceEntryAI.ts (uses modifiers), stableConfig.ts (provides config)
+ */
+
 import type { Horse, Race, Stable, StablePersonality } from "@/game/types";
 import { PERSONALITY_CONFIG } from "./stableConfig";
 
 /**
- * Apply personality-based modifiers to race entry decisions
- * These modifiers adjust the base suitability score based on personality traits
+ * Apply personality-based modifiers to race entry decisions.
+ *
+ * These modifiers adjust the base suitability score based on personality traits,
+ * including risk tolerance, youth preference, graded race affinity, and genetic insight.
+ *
+ * @param baseScore - Base suitability score before modifiers
+ * @param horse - Horse being evaluated
+ * @param race - Race being evaluated
+ * @param stable - Stable making the decision
+ * @returns Modified suitability score
  */
 export function applyPersonalityModifiers(
   baseScore: number,
@@ -49,8 +67,13 @@ export function applyPersonalityModifiers(
 }
 
 /**
- * Get form tolerance threshold based on personality
- * Aggressive stables tolerate worse form than conservative stables
+ * Get form tolerance threshold based on personality.
+ *
+ * Aggressive stables tolerate worse form than conservative stables.
+ * Returns a threshold value that horses must exceed to be considered.
+ *
+ * @param personality - Stable personality
+ * @returns Form tolerance threshold (range: -3 to -1)
  */
 export function getFormTolerance(personality: StablePersonality): number {
   const config = PERSONALITY_CONFIG[personality];
@@ -58,8 +81,13 @@ export function getFormTolerance(personality: StablePersonality): number {
 }
 
 /**
- * Get race entry frequency modifier based on personality
- * Affects how many races a stable enters overall
+ * Get race entry frequency modifier based on personality.
+ *
+ * Affects how many races a stable enters overall. Higher values mean
+ * more frequent race entry.
+ *
+ * @param personality - Stable personality
+ * @returns Entry frequency modifier (range: 0.7 to 1.5)
  */
 export function getEntryFrequencyModifier(personality: StablePersonality): number {
   const config = PERSONALITY_CONFIG[personality];
@@ -67,8 +95,13 @@ export function getEntryFrequencyModifier(personality: StablePersonality): numbe
 }
 
 /**
- * Get claiming race preference based on personality
- * Traders love claiming races, others avoid them
+ * Get claiming race preference based on personality.
+ *
+ * Traders love claiming races, while prestige stables avoid them.
+ * Returns a multiplier for claiming race suitability.
+ *
+ * @param personality - Stable personality
+ * @returns Claiming race preference multiplier
  */
 export function getClaimingPreference(personality: StablePersonality): number {
   if (personality === "trader") return 1.3;
@@ -78,8 +111,13 @@ export function getClaimingPreference(personality: StablePersonality): number {
 }
 
 /**
- * Get purse sensitivity based on personality
- * How much purse size affects entry decisions
+ * Get purse sensitivity based on personality.
+ *
+ * Determines how much purse size affects entry decisions. Lower values
+ * mean the stable is less sensitive to purse size.
+ *
+ * @param personality - Stable personality
+ * @returns Purse sensitivity modifier (range: 0.6 to 1.3)
  */
 export function getPurseSensitivity(personality: StablePersonality): number {
   const config = PERSONALITY_CONFIG[personality];

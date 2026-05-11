@@ -1,3 +1,13 @@
+/**
+ * market/types.ts - Market types
+ *
+ * This file provides types for market operations including scout reports,
+ * auction lots and sales, private sale offers, and claiming races.
+ *
+ * Dependencies: @/core/horse/types (HorseStats)
+ * Related files: None
+ */
+
 import type { HorseStats } from "@/core/horse/types";
 
 export type ScoutReport = {

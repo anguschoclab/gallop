@@ -58,7 +58,10 @@ export interface ManagerReputation {
 }
 
 /**
- * Calculate reputation tier from score
+ * Calculate reputation tier from score.
+ *
+ * @param score - Current reputation score (0-1000)
+ * @returns The corresponding ReputationTier
  */
 export function getReputationTier(score: number): ReputationTier {
   if (score >= 900) return "legendary";
@@ -71,7 +74,16 @@ export function getReputationTier(score: number): ReputationTier {
 }
 
 /**
- * Create a new reputation event
+ * Create a new reputation event.
+ *
+ * @param source - Category of the reputation gain
+ * @param amount - Numeric increase to reputation score
+ * @param description - Human-readable explanation
+ * @param day - Game day the event occurred
+ * @param options - Optional event metadata
+ * @param options.horseId - Horse associated with the event
+ * @param options.raceId - Race associated with the event
+ * @returns Complete ReputationEvent object
  */
 export function createReputationEvent(
   source: ReputationSource,
@@ -95,7 +107,11 @@ export function createReputationEvent(
 }
 
 /**
- * Calculate reputation gain for a race win
+ * Calculate reputation gain for a race win.
+ *
+ * @param grade - Race grade (G1, G2, etc.)
+ * @param purse - Total purse amount in dollars
+ * @returns Reputation points gained
  */
 export function calculateRaceWinReputation(grade: string | undefined, purse: number): number {
   let base = 10; // Base reputation for any win
@@ -113,7 +129,10 @@ export function calculateRaceWinReputation(grade: string | undefined, purse: num
 }
 
 /**
- * Calculate reputation gain for breeding success
+ * Calculate reputation gain for breeding success.
+ *
+ * @param foalQuality - Calculated quality score of the foal (0-100)
+ * @returns Reputation points gained
  */
 export function calculateBreedingReputation(foalQuality: number): number {
   // foalQuality is 0-100, scale to reputation
@@ -121,7 +140,10 @@ export function calculateBreedingReputation(foalQuality: number): number {
 }
 
 /**
- * Format reputation tier for display
+ * Format reputation tier for display.
+ *
+ * @param tier - The tier to format
+ * @returns Human-readable label
  */
 export function formatReputationTier(tier: ReputationTier): string {
   const labels: Record<ReputationTier, string> = {

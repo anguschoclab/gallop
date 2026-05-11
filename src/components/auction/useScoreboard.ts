@@ -4,6 +4,9 @@ import { netProceeds } from "@/game/auction";
 
 /**
  * Pure-derived scoreboard — what the player has done so far in this sale.
+ *
+ * @param saleId - Unique ID of the auction sale
+ * @returns Object containing auction stats (won, sold, spent, netReceived)
  */
 export function useScoreboard(saleId: string) {
   const auctions = useGame((s) => s.auctions);

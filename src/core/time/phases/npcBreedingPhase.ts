@@ -1,5 +1,16 @@
+/**
+ * phases/npcBreedingPhase.ts - NPC autonomous breeding phase
+ *
+ * This file provides the NPC autonomous breeding phase that runs at the start of
+ * each hemisphere's breeding season for breeder/developer/prestige stables.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/npcBreeding (runNpcBreeding)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
-import { runNpcBreeding } from "@/game/npcBreeding";
+import { runAutonomousBreeding } from "@/game/npcBreeding";
+import { PHASE_ORDER_NPC_BREEDING } from "@/game/constants/gameConstants";
 
 /**
  * Phase: NPC Autonomous Breeding
@@ -12,20 +23,13 @@ import { runNpcBreeding } from "@/game/npcBreeding";
  */
 export const npcBreedingPhase = {
   name: "npcBreeding",
-  order: 38,
+  order: PHASE_ORDER_NPC_BREEDING,
   execute: (context: PipelineContext): PipelineContext => {
-    const { state, newDay, dailyRng } = context;
-    const result = runNpcBreeding(state, newDay, dailyRng);
-    if (result.newPregnancies.length === 0 && result.logs.length === 0) return context;
+    const { state, dailyRng } = context;
+    const updatedState = runAutonomousBreeding(state, state.npcStables, dailyRng);
     return {
       ...context,
-      state: {
-        ...state,
-        horses: result.horses,
-        npcStables: result.npcStables,
-        pregnancies: [...result.newPregnancies, ...state.pregnancies],
-      },
-      logs: [...context.logs, ...result.logs],
+      state: updatedState,
     };
   },
 };

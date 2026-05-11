@@ -1,16 +1,29 @@
-import { generateUUID } from "@/game/uuid";
+/**
+ * jockeyGen.ts - Jockey generation
+ *
+ * This file provides jockey generation with archetypes, stats, traits, and silk
+ * customization based on tier and region.
+ *
+ * Dependencies: @/game/uuid (generateUUID), @/game/rng (Rng), ./types (Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk, RegionalSystem), @/core/jockey/proceduralNaming (generateProceduralJockeyName), ./jockeyData (ARCHETYPES, SILK_PALETTE, SILK_PATTERNS)
+ * Related files: jockeyData.ts (provides constants), npcStables.ts (uses jockey generation)
+ */
+
+import { generateUUID } from "@/core/uuid";
 import type { Rng } from "@/game/rng";
 import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "./types";
 import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
 import type { RegionalSystem } from "./types";
-
-const ARCHETYPES: JockeyArchetype[] = [
-  "front_runner",
-  "closer",
-  "clinical",
-  "finisher",
-  "versatile",
-];
+import {
+  JOCKEY_SALARY_ELITE_MIN,
+  JOCKEY_SALARY_ELITE_MAX,
+  JOCKEY_SALARY_MID_MIN,
+  JOCKEY_SALARY_MID_MAX,
+  JOCKEY_SALARY_BUDGET_MIN,
+  JOCKEY_SALARY_BUDGET_MAX,
+  JOCKEY_AGE_MIN,
+  JOCKEY_AGE_MAX,
+} from "@/game/constants/gameConstants";
+import { ARCHETYPES, SILK_PALETTE, SILK_PATTERNS } from "./jockeyData";
 
 export type JockeyGenerationOptions = {
   tier?: "budget" | "mid" | "elite";
@@ -19,6 +32,73 @@ export type JockeyGenerationOptions = {
   usedNames?: Set<string>;
 };
 
+/**
+ * Archetype Strategy for jockey generation.
+ */
+interface ArchetypeStrategy {
+  apply: (stats: JockeyStats, traits: JockeyTrait[], rng: Rng) => void;
+}
+
+/**
+ * Registry of archetype strategies indexed by jockey archetype.
+ */
+const JOCKEY_ARCHETYPE_STRATEGIES: Record<JockeyArchetype, ArchetypeStrategy> = {
+  front_runner: {
+    apply: (stats, traits) => {
+      stats.gateSkill += 15;
+      stats.pacing += 10;
+      stats.vigor -= 10;
+      traits.push("gate_master");
+    },
+  },
+  closer: {
+    apply: (stats, traits) => {
+      stats.vigor += 15;
+      stats.positioning += 10;
+      stats.gateSkill -= 10;
+      traits.push("hill_specialist");
+    },
+  },
+  clinical: {
+    apply: (stats, traits) => {
+      stats.positioning += 15;
+      stats.pacing += 10;
+      traits.push("bullring_expert");
+    },
+  },
+  finisher: {
+    apply: (stats, traits) => {
+      stats.vigor += 20;
+      stats.gateSkill += 5;
+      stats.pacing -= 10;
+      traits.push("long_straight_pro");
+    },
+  },
+  versatile: {
+    apply: (stats, traits, rng) => {
+      stats.pacing += 5;
+      stats.positioning += 5;
+      stats.vigor += 5;
+      stats.gateSkill += 5;
+      stats.temperament += 5;
+      if (rng.next() < 0.2) traits.push(rng.pick(["gate_master", "hill_specialist"]));
+    },
+  },
+};
+
+/**
+ * Generate a jockey with archetypes, stats, traits, and silk customization.
+ *
+ * Creates a jockey with tier-based stat ranges, archetype bonuses, career history,
+ * and custom silk colors. Stats are clamped to valid ranges.
+ *
+ * @param options - Jockey generation options
+ * @param options.tier - Stat tier (budget, mid, elite)
+ * @param options.rng - Random number generator
+ * @param options.region - Regional system for naming
+ * @param options.usedNames - Optional set of used names to avoid duplicates
+ * @returns Generated jockey object
+ */
 export function generateJockey({
   tier = "mid",
   rng,
@@ -42,40 +122,8 @@ export function generateJockey({
 
   const traits: JockeyTrait[] = [];
 
-  // Apply archetype bonuses and traits
-  switch (archetype) {
-    case "front_runner":
-      stats.gateSkill += 15;
-      stats.pacing += 10;
-      stats.vigor -= 10;
-      traits.push("gate_master");
-      break;
-    case "closer":
-      stats.vigor += 15;
-      stats.positioning += 10;
-      stats.gateSkill -= 10;
-      traits.push("hill_specialist");
-      break;
-    case "clinical":
-      stats.positioning += 15;
-      stats.pacing += 10;
-      traits.push("bullring_expert");
-      break;
-    case "finisher":
-      stats.vigor += 20;
-      stats.gateSkill += 5;
-      stats.pacing -= 10;
-      traits.push("long_straight_pro");
-      break;
-    case "versatile":
-      stats.pacing += 5;
-      stats.positioning += 5;
-      stats.vigor += 5;
-      stats.gateSkill += 5;
-      stats.temperament += 5;
-      if (rng.next() < 0.2) traits.push(rng.pick(["gate_master", "hill_specialist"]));
-      break;
-  }
+  // Apply archetype bonuses and traits via strategy pattern
+  JOCKEY_ARCHETYPE_STRATEGIES[archetype].apply(stats, traits, rng);
 
   // Clamp stats
   Object.keys(stats).forEach((k) => {
@@ -83,7 +131,7 @@ export function generateJockey({
   });
 
   // Career history: older jockeys have more starts
-  const age = 18 + Math.floor(rng.next() * 35);
+  const age = JOCKEY_AGE_MIN + Math.floor(rng.next() * (JOCKEY_AGE_MAX - JOCKEY_AGE_MIN));
   const yearsActive = age - 18;
   const careerStarts = Math.floor(yearsActive * (50 + rng.next() * 150));
   const winRate = 0.05 + (stats.vigor + stats.pacing) / 1000 + rng.next() * 0.1;
@@ -104,43 +152,47 @@ export function generateJockey({
     careerWins,
     fame: Math.min(100, totalStats + careerWins / 100),
     ridingFee: Math.round(50 + Math.min(100, totalStats + careerWins / 100) * 10),
+    affinityMap: {},
+    stableAffinity: 0,
+    isApprentice: false,
+    loyalty: 100,
   };
 }
 
-export const SILK_PALETTE: string[] = [
-  "#dc2626",
-  "#ea580c",
-  "#f59e0b",
-  "#facc15",
-  "#84cc16",
-  "#16a34a",
-  "#10b981",
-  "#06b6d4",
-  "#0ea5e9",
-  "#2563eb",
-  "#4f46e5",
-  "#7c3aed",
-  "#a855f7",
-  "#d946ef",
-  "#ec4899",
-  "#f43f5e",
-  "#0f172a",
-  "#ffffff",
-  "#78716c",
-  "#57534e",
-];
-export const SILK_PATTERNS: JockeySilk["pattern"][] = [
-  "solid",
-  "stripes",
-  "halves",
-  "quarters",
-  "chevron",
-  "diamond",
-  "star",
-  "sash",
-  "hoops",
-];
+/**
+ * Generate an apprentice jockey (teenager, low stats, high potential for academy).
+ * @param root0
+ * @param root0.rng
+ * @param root0.region
+ * @param root0.usedNames
+ */
+export function generateApprentice({
+  rng,
+  region = "north_america",
+  usedNames,
+}: Omit<JockeyGenerationOptions, "tier">): Jockey {
+  const jockey = generateJockey({ tier: "budget", rng, region, usedNames });
+  return {
+    ...jockey,
+    age: rng.range(16, 18),
+    careerStarts: 0,
+    careerWins: 0,
+    fame: 10,
+    ridingFee: 50,
+    isApprentice: true,
+    loyalty: 100,
+  };
+}
 
+/**
+ * Generate a jockey silk with colors and pattern.
+ *
+ * Selects primary, secondary, and cap colors from the palette, ensuring
+ * primary and secondary are different. Applies a random pattern.
+ *
+ * @param rng - Random number generator
+ * @returns Jockey silk object with pattern and colors
+ */
 export function generateSilk(rng: Rng): JockeySilk {
   const primary = rng.pick(SILK_PALETTE);
   let secondary = rng.pick(SILK_PALETTE);
@@ -152,6 +204,17 @@ export function generateSilk(rng: Rng): JockeySilk {
   return { pattern, primary, secondary, cap };
 }
 
+/**
+ * Generate initial jockeys for the game.
+ *
+ * Creates a specified number of jockeys with randomized tiers and regions.
+ * Distributes across regional systems for variety.
+ *
+ * @param rng - Random number generator
+ * @param count - Number of jockeys to generate (default: 20)
+ * @param usedNames - Optional set of used names to avoid duplicates
+ * @returns Array of generated jockeys
+ */
 export function generateInitialJockeys(
   rng: Rng,
   count: number = 20,

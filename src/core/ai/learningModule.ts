@@ -1,4 +1,14 @@
 /**
+ * learningModule.ts - Shared learning infrastructure
+ *
+ * This file provides shared learning infrastructure that tracks outcomes,
+ * patterns, and success rates for AI decision-making across all AI subsystems.
+ *
+ * Dependencies: None
+ * Related files: personalitySystem.ts (uses learning state), npcCycleAI.ts (uses learning functions)
+ */
+
+/**
  * Shared Learning Infrastructure
  * Tracks outcomes, patterns, and success rates for AI decision-making
  */
@@ -8,31 +18,47 @@ export interface LearningOutcome {
   contextKey: string;
   success: boolean;
   value: number;
-  timestamp: number;
   day: number;
 }
 
 export interface LearningState {
   outcomes: LearningOutcome[];
-  successRates: Map<string, { successes: number; total: number; rate: number }>;
-  patterns: Map<string, number>; // Pattern recognition scores
-  lastUpdate: number;
+  successRates: Record<string, { successes: number; total: number; rate: number }>;
+  patterns: Record<string, number>; // Pattern recognition scores
+  lastUpdateDay: number;
 }
 
 /**
- * Create a new learning state
+ * Create a new learning state.
+ *
+ * Initializes the learning state with empty outcomes, success rates,
+ * patterns, and last update day.
+ *
+ * @returns New learning state
  */
 export function createLearningState(): LearningState {
   return {
     outcomes: [],
-    successRates: new Map(),
-    patterns: new Map(),
-    lastUpdate: 0,
+    successRates: {},
+    patterns: {},
+    lastUpdateDay: 0,
   };
 }
 
 /**
- * Record an outcome for learning
+ * Record an outcome for learning.
+ *
+ * Records the outcome, trims to memory depth, updates success rates,
+ * and updates pattern recognition.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision made
+ * @param contextKey - Context key for the decision
+ * @param success - Whether the decision was successful
+ * @param value - Value of the outcome
+ * @param day - Current game day
+ * @param memoryDepth - Maximum number of outcomes to keep
+ * @returns Updated learning state
  */
 export function recordOutcome(
   state: LearningState,
@@ -40,7 +66,6 @@ export function recordOutcome(
   contextKey: string,
   success: boolean,
   value: number,
-  timestamp: number,
   day: number,
   memoryDepth: number,
 ): LearningState {
@@ -49,7 +74,6 @@ export function recordOutcome(
     contextKey,
     success,
     value,
-    timestamp,
     day,
   };
 
@@ -60,18 +84,17 @@ export function recordOutcome(
   const trimmedOutcomes =
     newOutcomes.length > memoryDepth ? newOutcomes.slice(-memoryDepth) : newOutcomes;
 
-  // Update success rates - clone Map to avoid mutating
+  // Update success rates
   const key = `${decisionType}:${contextKey}`;
-  const existing = state.successRates.get(key) || { successes: 0, total: 0, rate: 0 };
+  const existing = state.successRates[key] || { successes: 0, total: 0, rate: 0 };
   const updated = {
     successes: existing.successes + (success ? 1 : 0),
     total: existing.total + 1,
     rate: (existing.successes + (success ? 1 : 0)) / (existing.total + 1),
   };
-  const newSuccessRates = new Map(state.successRates);
-  newSuccessRates.set(key, updated);
+  const newSuccessRates = { ...state.successRates, [key]: updated };
 
-  // Update patterns - clone Map to avoid mutating
+  // Update patterns
   const newPatterns = updatePatterns(state.patterns, decisionType, contextKey, success);
 
   // Return new state to avoid mutating frozen/read-only objects
@@ -79,29 +102,47 @@ export function recordOutcome(
     outcomes: trimmedOutcomes,
     successRates: newSuccessRates,
     patterns: newPatterns,
-    lastUpdate: timestamp,
+    lastUpdateDay: day,
   };
 }
 
 /**
- * Update pattern recognition
+ * Update pattern recognition.
+ *
+ * Updates pattern recognition scores based on outcomes. Increases score
+ * for successful decisions, decreases slightly for failures.
+ *
+ * @param patterns - Current pattern scores
+ * @param decisionType - Type of decision made
+ * @param contextKey - Context key for the decision
+ * @param success - Whether the decision was successful
+ * @returns Updated pattern scores
  */
 function updatePatterns(
-  patterns: Map<string, number>,
+  patterns: Record<string, number>,
   decisionType: string,
   contextKey: string,
   success: boolean,
-): Map<string, number> {
-  const patternKey = `${decisionType}:${contextKey.split(":")[0]}`; // Use first context dimension
-  const existing = patterns.get(patternKey) || 0.5;
+): Record<string, number> {
+  const patternKey = `${decisionType}:${contextKey}`; // Use full context key
+  const existing = patterns[patternKey] ?? 0.5;
   const weight = success ? 0.1 : -0.05;
-  const newPatterns = new Map(patterns);
-  newPatterns.set(patternKey, Math.max(0, Math.min(1, existing + weight)));
-  return newPatterns;
+  return {
+    ...patterns,
+    [patternKey]: Math.max(0, Math.min(1, existing + weight)),
+  };
 }
 
 /**
- * Get success rate for a decision type and context
+ * Get success rate for a decision type and context.
+ *
+ * Returns the success rate for a specific decision type and context key.
+ * Defaults to 0.5 if no data available.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision
+ * @param contextKey - Context key for the decision
+ * @returns Success rate (0-1)
  */
 export function getSuccessRate(
   state: LearningState,
@@ -109,25 +150,41 @@ export function getSuccessRate(
   contextKey: string,
 ): number {
   const key = `${decisionType}:${contextKey}`;
-  const data = state.successRates.get(key);
+  const data = state.successRates[key];
   return data?.rate ?? 0.5; // Default to 50% if no data
 }
 
 /**
- * Get pattern score for a decision type
+ * Get pattern score for a decision type.
+ *
+ * Returns the pattern recognition score for a specific decision type and context.
+ * Defaults to 0.5 if no pattern data available.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision
+ * @param context - Context string
+ * @returns Pattern score (0-1)
  */
 export function getPatternScore(
   state: LearningState,
   decisionType: string,
   context: string,
 ): number {
-  const patternKey = `${decisionType}:${context.split(":")[0]}`;
-  return state.patterns.get(patternKey) ?? 0.5;
+  const patternKey = `${decisionType}:${context}`;
+  return state.patterns[patternKey] ?? 0.5;
 }
 
 /**
- * Get adaptive threshold based on learning
- * Adjusts decision thresholds based on past success rates
+ * Get adaptive threshold based on learning.
+ *
+ * Adjusts decision thresholds based on past success rates and adaptation speed.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision
+ * @param contextKey - Context key for the decision
+ * @param baseThreshold - Base threshold value
+ * @param adaptationSpeed - Speed of adaptation (0-1)
+ * @returns Adaptive threshold value
  */
 export function getAdaptiveThreshold(
   state: LearningState,
@@ -142,39 +199,57 @@ export function getAdaptiveThreshold(
 }
 
 /**
- * Prune old outcomes outside time window
+ * Prune old outcomes outside time window.
+ *
+ * Removes outcomes older than the cutoff day and recalculates
+ * success rates based on remaining outcomes.
+ *
+ * @param state - Current learning state
+ * @param cutoffDay - Day cutoff for pruning outcomes
+ * @returns Updated learning state
  */
 export function pruneOldOutcomes(state: LearningState, cutoffDay: number): LearningState {
-  state.outcomes = state.outcomes.filter((o) => o.day >= cutoffDay);
+  const outcomes = state.outcomes.filter((o) => o.day >= cutoffDay);
+  if (outcomes.length === state.outcomes.length) return state;
 
   // Recalculate success rates after pruning
-  const newSuccessRates = new Map();
-  const grouped = new Map<string, { successes: number; total: number }>();
+  const newSuccessRates: Record<string, { successes: number; total: number; rate: number }> = {};
+  const grouped: Record<string, { successes: number; total: number }> = {};
 
-  for (const outcome of state.outcomes) {
+  for (const outcome of outcomes) {
     const key = `${outcome.decisionType}:${outcome.contextKey}`;
-    const existing = grouped.get(key) || { successes: 0, total: 0 };
-    grouped.set(key, {
+    const existing = grouped[key] || { successes: 0, total: 0 };
+    grouped[key] = {
       successes: existing.successes + (outcome.success ? 1 : 0),
       total: existing.total + 1,
-    });
+    };
   }
 
-  for (const [key, data] of grouped.entries()) {
-    newSuccessRates.set(key, {
+  for (const key in grouped) {
+    const data = grouped[key];
+    newSuccessRates[key] = {
       successes: data.successes,
       total: data.total,
       rate: data.successes / data.total,
-    });
+    };
   }
 
-  state.successRates = newSuccessRates;
-
-  return state;
+  return {
+    ...state,
+    outcomes,
+    successRates: newSuccessRates,
+  };
 }
 
 /**
- * Get learning insights for a decision type
+ * Get learning insights for a decision type.
+ *
+ * Returns statistics including total decisions, success rate, average value,
+ * and pattern scores for a specific decision type.
+ *
+ * @param state - Current learning state
+ * @param decisionType - Type of decision to get insights for
+ * @returns Object with learning insights
  */
 export function getLearningInsights(
   state: LearningState,
@@ -193,9 +268,9 @@ export function getLearningInsights(
     totalDecisions > 0 ? relevantOutcomes.reduce((sum, o) => sum + o.value, 0) / totalDecisions : 0;
 
   const patterns: Array<{ key: string; score: number }> = [];
-  for (const [key, score] of state.patterns.entries()) {
-    if (key.startsWith(decisionType)) {
-      patterns.push({ key: key.split(":")[1], score });
+  for (const key in state.patterns) {
+    if (key.startsWith(decisionType + ":")) {
+      patterns.push({ key: key.substring(decisionType.length + 1), score: state.patterns[key] });
     }
   }
 

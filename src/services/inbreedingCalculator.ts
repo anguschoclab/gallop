@@ -1,26 +1,55 @@
 import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeData";
+import {
+  DEFAULT_GENETIC_DIVERSITY,
+  INBREEDING_EXPECTED_MAX_ANCESTORS,
+  INBREEDING_DIVERSITY_HIGH,
+  INBREEDING_DIVERSITY_MODERATE,
+  INBREEDING_DIVERSITY_LOW,
+  INBREEDING_DIVERSITY_VERY_LOW,
+  INBREEDING_SCORE_BONUS,
+} from "@/game/constants/gameConstants";
 
 /**
- * Calculate founder effect score
+ * Calculate founder effect score.
+ *
  * Based on the Wikipedia article on Foundation Stock which explains the founder effect:
  * "The loss of genetic variation that occurs when a new population is established by a very small number of individuals"
- * Founder effect creates standardized breeds through fixation of traits, but excessive inbreeding can make populations vulnerable
+ *
+ * @param sireName - Name of the sire
+ * @param damName - Name of the dam
+ * @returns Object containing diversity score, description, and optional warning
  */
 export function calculateFounderEffect(
   sireName: string,
   damName: string,
 ): { score: number; description: string; warning?: string } {
+  // Explicit check for identical names (direct inbreeding)
+  if (sireName === damName && sireName !== "") {
+    return {
+      score: 0,
+      description: "Direct inbreeding detected",
+      warning: "Sire and dam have identical names - this represents direct inbreeding",
+    };
+  }
+
   const sire = findHorseByName(sireName);
   const dam = findHorseByName(damName);
 
   if (!sire || !dam) {
-    return { score: 0.5, description: "Unknown pedigree" };
+    return { score: DEFAULT_GENETIC_DIVERSITY, description: "Unknown pedigree" };
   }
 
   // Count unique ancestors in 4 generations to assess genetic diversity
   const sireAncestors = new Set<string>();
   const damAncestors = new Set<string>();
 
+  /**
+   * Internal recursive helper to collect ancestors up to a specified depth.
+   *
+   * @param horse - Current horse in pedigree
+   * @param depth - Current recursion depth
+   * @param ancestors - Set to collect ancestor names in
+   */
   function collectAncestors(
     horse: PedigreeHorse | undefined,
     depth: number = 0,
@@ -48,19 +77,19 @@ export function calculateFounderEffect(
 
   // Expected maximum unique ancestors in 4 generations (theoretical maximum is ~30)
   // Lower count indicates stronger founder effect (more inbreeding)
-  const expectedMax = 30;
+  const expectedMax = INBREEDING_EXPECTED_MAX_ANCESTORS;
   const diversityRatio = uniqueCount / expectedMax;
 
   let description = "";
   let warning = "";
 
-  if (diversityRatio >= 0.8) {
+  if (diversityRatio >= INBREEDING_DIVERSITY_HIGH) {
     description = "High genetic diversity - low founder effect";
-  } else if (diversityRatio >= 0.6) {
+  } else if (diversityRatio >= INBREEDING_DIVERSITY_MODERATE) {
     description = "Moderate genetic diversity";
-  } else if (diversityRatio >= 0.4) {
+  } else if (diversityRatio >= INBREEDING_DIVERSITY_LOW) {
     description = "Limited genetic diversity - moderate founder effect";
-  } else if (diversityRatio >= 0.2) {
+  } else if (diversityRatio >= INBREEDING_DIVERSITY_VERY_LOW) {
     description = "Low genetic diversity - strong founder effect";
     warning = "Strong founder effect may limit genetic variation";
   } else {
@@ -70,88 +99,7 @@ export function calculateFounderEffect(
 
   // Score: higher diversity is better for long-term viability
   // However, some founder effect is necessary for breed standardization
-  const score = Math.min(diversityRatio + 0.2, 1); // Base score with minimum
+  const score = Math.min(diversityRatio + INBREEDING_SCORE_BONUS, 1); // Base score with minimum
 
   return { score, description, warning };
-}
-
-/**
- * Calculate inbreeding coefficient based on shared ancestors in pedigree
- * Simplified version - checks for common ancestors in first 4 generations
- */
-export function calculateInbreedingCoefficient(
-  sireName: string,
-  damName: string,
-): { coefficient: number; warning: string } {
-  const sire = findHorseByName(sireName);
-  const dam = findHorseByName(damName);
-
-  if (!sire || !dam) {
-    return { coefficient: 0, warning: "" };
-  }
-
-  // BFS both pedigrees to depth 4 so dam-line ancestors aren't ignored.
-  const sireAncestors = new Set<string>();
-  const damAncestors = new Set<string>();
-  // Without this, two horses sharing only a common dam-line ancestor would
-  // register as unrelated.
-  const collectAncestorsByDepth = (root: ReturnType<typeof findHorseByName>) => {
-    const depths = new Map<string, number>();
-    if (!root) return depths;
-    type Frontier = { node: typeof root; depth: number };
-    const queue: Frontier[] = [{ node: root, depth: 0 }];
-    while (queue.length) {
-      const item = queue.shift()!;
-      const node = item.node;
-      const depth = item.depth;
-      if (!node || depth > 4) continue;
-      if (!depths.has(node.name) || depths.get(node.name)! > depth) {
-        depths.set(node.name, depth);
-      }
-      if (depth >= 4) continue;
-      if (node.sire) {
-        const next = findHorseByName(node.sire);
-        if (next) queue.push({ node: next, depth: depth + 1 });
-      }
-      if (node.dam) {
-        const next = findHorseByName(node.dam);
-        if (next) queue.push({ node: next, depth: depth + 1 });
-      }
-    }
-    return depths;
-  };
-
-  const sireDepths = collectAncestorsByDepth(sire);
-  const damDepths = collectAncestorsByDepth(dam);
-  for (const k of sireDepths.keys()) sireAncestors.add(k);
-  for (const k of damDepths.keys()) damAncestors.add(k);
-
-  // Find common ancestors
-  const common = [...sireAncestors].filter((x) => damAncestors.has(x));
-
-  if (common.length === 0) {
-    return { coefficient: 0, warning: "" };
-  }
-
-  // Wright's coefficient: each common ancestor contributes (1/2)^(d_s + d_d + 1)
-  // where d_s and d_d are its shallowest depth in each pedigree (0 = self,
-  // which is filtered out below). Walking dam lines via BFS above means
-  // mare-side relatedness now contributes too.
-  let coefficient = 0;
-  for (const ancestor of common) {
-    const ds = sireDepths.get(ancestor);
-    const dd = damDepths.get(ancestor);
-    if (ds === undefined || dd === undefined) continue;
-    if (ds === 0 || dd === 0) continue; // skip the parents themselves
-    coefficient += Math.pow(0.5, ds + dd + 1);
-  }
-
-  // Warning for excessive inbreeding
-  if (coefficient > 0.125) {
-    return { coefficient, warning: "High inbreeding - may reduce vigor" };
-  } else if (coefficient > 0.0625) {
-    return { coefficient, warning: "Moderate inbreeding - monitor closely" };
-  }
-
-  return { coefficient, warning: "" };
 }

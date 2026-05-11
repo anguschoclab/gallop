@@ -1,15 +1,26 @@
 /**
+ * jockeyAI.ts - Jockey AI system
+ *
+ * This file provides personality-driven jockey selection, retention,
+ * and contract negotiation for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Jockey, Stable), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), @/core/horse/stats (calculateRaceRating), ./learningModule (learning functions)
+ * Related files: npcCycleAI.ts (uses jockey AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Jockey AI System
  * Personality-driven jockey selection, retention, and contract negotiation
  */
 
-import type { Horse, Jockey, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/game/types";
+import type { Jockey } from "@/game/types";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { calculateRaceRating } from "@/core/horse/stats";
 import {
   createLearningState,
-  recordOutcome,
+  recordOutcome as recordLearningOutcome,
   getSuccessRate,
-  getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
 
@@ -44,7 +55,13 @@ export interface JockeyRetention {
 }
 
 /**
- * Create AI state for jockey decisions
+ * Create AI state for jockey decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * jockey history, and retention records.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized jockey AI state
  */
 export function createJockeyAIState(stable: Stable): JockeyAIState {
   return {
@@ -56,7 +73,16 @@ export function createJockeyAIState(stable: Stable): JockeyAIState {
 }
 
 /**
- * Calculate jockey suitability score for a horse
+ * Calculate jockey suitability score for a horse.
+ *
+ * Evaluates jockey suitability based on stats, personality modifiers,
+ * and learning-based adjustments.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockey - The jockey to evaluate
+ * @param horse - The horse to evaluate
+ * @param stable - The stable making the decision
+ * @returns Jockey suitability score (0-100)
  */
 export function calculateJockeySuitability(
   aiState: JockeyAIState,
@@ -99,7 +125,16 @@ export function calculateJockeySuitability(
 }
 
 /**
- * Select best jockey for a horse
+ * Select best jockey for a horse.
+ *
+ * Evaluates all available jockeys and returns the one with the
+ * highest suitability score.
+ *
+ * @param aiState - Current jockey AI state
+ * @param horse - The horse to select jockey for
+ * @param availableJockeys - List of available jockeys
+ * @param stable - The stable making the decision
+ * @returns Best jockey or null if no suitable jockey found
  */
 export function selectBestJockey(
   aiState: JockeyAIState,
@@ -114,14 +149,23 @@ export function selectBestJockey(
       jockey,
       score: calculateJockeySuitability(aiState, jockey, horse, stable),
     }))
-    .filter((j) => j.score > 50)
+    .filter((j) => j.score > 0)
     .sort((a, b) => b.score - a.score);
 
   return scoredJockeys.length > 0 ? scoredJockeys[0].jockey : null;
 }
 
 /**
- * Calculate maximum jockey fee willing to pay
+ * Calculate maximum jockey fee willing to pay.
+ *
+ * Determines the maximum fee based on personality risk tolerance,
+ * horse quality, and budget constraints.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockey - The jockey to evaluate
+ * @param horse - The horse being raced
+ * @param stable - The stable making the decision
+ * @returns Maximum jockey fee willing to pay
  */
 export function calculateMaxJockeyFee(
   aiState: JockeyAIState,
@@ -136,7 +180,7 @@ export function calculateMaxJockeyFee(
   maxFee *= riskTolerance;
 
   // Horse quality adjustment
-  const horseQuality = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
+  const horseQuality = calculateRaceRating(horse);
   if (horseQuality > 70) {
     maxFee *= 1.2; // Will pay more for quality horses
   }
@@ -148,7 +192,16 @@ export function calculateMaxJockeyFee(
 }
 
 /**
- * Determine if jockey should be retained
+ * Determine if jockey should be retained.
+ *
+ * Evaluates jockey retention based on performance metrics,
+ * personality criteria, and learning-based adjustments.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockey - The jockey to evaluate
+ * @param stable - The stable owning the jockey
+ * @param currentDay - Current game day
+ * @returns True if jockey should be retained
  */
 export function shouldRetainJockey(
   aiState: JockeyAIState,
@@ -209,7 +262,18 @@ export function shouldRetainJockey(
 }
 
 /**
- * Record jockey assignment for learning
+ * Record jockey assignment for learning.
+ *
+ * Records the jockey assignment and updates retention records.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockey - The jockey being assigned
+ * @param horse - The horse being raced
+ * @param raceId - ID of the race
+ * @param stable - The stable making the assignment
+ * @param fee - Jockey fee
+ * @param currentDay - Current game day
+ * @returns Updated jockey AI state
  */
 export function recordJockeyAssignment(
   aiState: JockeyAIState,
@@ -229,13 +293,12 @@ export function recordJockeyAssignment(
     fee,
   };
 
-  aiState.jockeyHistory.push(assignment);
+  const newHistory = [...aiState.jockeyHistory, assignment];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.jockeyHistory.length > maxHistory) {
-    aiState.jockeyHistory = aiState.jockeyHistory.slice(-maxHistory);
-  }
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update retention record
   let retention = aiState.retention.find(
@@ -251,17 +314,43 @@ export function recordJockeyAssignment(
       totalPrize: 0,
       retained: true,
     };
-    aiState.retention.push(retention);
   }
 
-  retention.lastUseDay = currentDay;
-  retention.totalRides++;
+  const updatedRetention = {
+    ...retention,
+    lastUseDay: currentDay,
+    totalRides: retention.totalRides + 1,
+  };
 
-  return aiState;
+  const newRetention = aiState.retention.some(
+    (r) => r.jockeyId === jockey.id && r.stableId === stable.id,
+  )
+    ? aiState.retention.map((r) =>
+        r.jockeyId === jockey.id && r.stableId === stable.id ? updatedRetention : r,
+      )
+    : [...aiState.retention, updatedRetention];
+
+  return {
+    ...aiState,
+    jockeyHistory: trimmedHistory,
+    retention: newRetention,
+  };
 }
 
 /**
- * Record jockey outcome for learning
+ * Record jockey outcome for learning.
+ *
+ * Finds the matching assignment, records the race outcome,
+ * updates retention records, and updates the learning state.
+ *
+ * @param aiState - Current jockey AI state
+ * @param jockeyId - ID of the jockey
+ * @param horseId - ID of the horse
+ * @param raceId - ID of the race
+ * @param position - Final race position
+ * @param prize - Prize money won
+ * @param currentDay - Current game day
+ * @returns Updated jockey AI state
  */
 export function recordJockeyOutcome(
   aiState: JockeyAIState,
@@ -273,42 +362,61 @@ export function recordJockeyOutcome(
   currentDay: number,
 ): JockeyAIState {
   // Find the assignment
-  const assignment = aiState.jockeyHistory.find(
+  const assignmentIndex = aiState.jockeyHistory.findIndex(
     (a) => a.jockeyId === jockeyId && a.horseId === horseId && a.raceId === raceId && !a.result,
   );
 
-  if (assignment) {
-    assignment.result = { position, prize };
+  if (assignmentIndex !== -1) {
+    const assignment = { ...aiState.jockeyHistory[assignmentIndex], result: { position, prize } };
+    const newHistory = [...aiState.jockeyHistory];
+    newHistory[assignmentIndex] = assignment;
 
     // Update retention record
-    const retention = aiState.retention.find(
+    const retentionIndex = aiState.retention.findIndex(
       (r) => r.jockeyId === jockeyId && r.stableId === assignment.stableId,
     );
-    if (retention) {
+    let newRetention = aiState.retention;
+    if (retentionIndex !== -1) {
+      const retention = { ...aiState.retention[retentionIndex] };
       retention.totalPrize += prize;
+      newRetention = [...aiState.retention];
+      newRetention[retentionIndex] = retention;
     }
 
     // Update learning state
     const contextKey = `${jockeyId}`;
     const success = position <= 3; // Top 3 is success
     const value = prize - assignment.fee; // Net value
-    aiState.learningState = recordOutcome(
+    const newLearningState = recordLearningOutcome(
       aiState.learningState,
-      "jockey_selection",
-      contextKey,
+      "jockey_contract",
+      jockeyId,
       success,
       value,
-      Date.now(),
       currentDay,
       aiState.personalityState.memoryDepth,
     );
+
+    return {
+      ...aiState,
+      jockeyHistory: newHistory,
+      retention: newRetention,
+      learningState: newLearningState,
+    };
   }
 
   return aiState;
 }
 
 /**
- * Get jockey insights for a stable
+ * Get jockey insights for a stable.
+ *
+ * Calculates jockey statistics including total assignments,
+ * average position, total prize, average fee, and retained jockeys.
+ *
+ * @param aiState - Current jockey AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with jockey statistics
  */
 export function getJockeyInsights(
   aiState: JockeyAIState,
@@ -326,10 +434,12 @@ export function getJockeyInsights(
   const totalAssignments = stableAssignments.length;
   const avgPosition =
     totalAssignments > 0
-      ? stableAssignments.reduce((sum, a) => sum + a.result!.position, 0) / totalAssignments
+      ? stableAssignments.reduce((sum, a) => sum + (a.result!.position || 5), 0) / totalAssignments
       : 5;
   const totalPrize =
-    totalAssignments > 0 ? stableAssignments.reduce((sum, a) => sum + a.result!.prize, 0) : 0;
+    totalAssignments > 0
+      ? stableAssignments.reduce((sum, a) => sum + (a.result!.prize || 0), 0)
+      : 0;
   const avgFee =
     totalAssignments > 0
       ? stableAssignments.reduce((sum, a) => sum + a.fee, 0) / totalAssignments

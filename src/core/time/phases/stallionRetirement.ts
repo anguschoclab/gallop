@@ -1,8 +1,18 @@
+/**
+ * phases/stallionRetirement.ts - Stallion retirement phase
+ *
+ * This file provides the stallion retirement phase that automatically retires
+ * eligible NPC stallions to stud based on career performance and age.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/game/uuid (generateUUID), @/core/resolver/impacts/index (StudCareerImpact, LogImpact), @/core/breeding/stallions (calculateRecommendedStudFee), @/lib/formatting (formatCurrency)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { generateUUID } from "@/game/uuid";
-import type { StudCareerImpact, LogImpact } from "@/core/resolver/impacts";
+import { generateUUID } from "@/core/uuid";
+import type { StudCareerImpact, LogImpact } from "@/core/resolver/impacts/index";
 import { calculateRecommendedStudFee } from "@/core/breeding/stallions";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 /**
  * Phase: Stallion Retirement (Order 145)

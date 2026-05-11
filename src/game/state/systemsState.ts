@@ -1,3 +1,15 @@
+/**
+ * state/systemsState.ts - Systems state management
+ *
+ * This file provides systems state for optional subsystems and advanced features,
+ * including NPC stables, breeding programs, jockeys, awards, campaigns, leaderboards,
+ * facilities, user settings, expenses, transactions, replays, reputation, transportation,
+ * staff, and pending intents.
+ *
+ * Dependencies: ../types (Stable, ScoutReport, Jockey, HorseCampaign, TripleCrownProgress, PlayerProfile), @/core/breeding/programs (BreedingProgram), ../awards/types (RegionalAward, AwardRegion), @/core/breeding/leaderboardTypes (Leaderboard, SireTrendData), @/core/resolver/intents (AnyIntent), @/core/facilities (FacilityType, FacilityLevel, PlayerFacilities), @/core/settings/settingsTypes (UserSettings), @/core/expenses (Expense), @/core/transactions (Transaction), @/core/replays (RaceReplay), @/core/reputation (ManagerReputation), @/core/transportation (TransportRequest), @/core/ai/npcCycleAI (NpcAIManager), @/core/staff/staffTypes (StaffMember), @/core/facilities/facilityDefaults (createFacility, createDefaultPlayerFacilities), @/core/settings/settingsTypes (createDefaultUserSettings), @/core/reputation (getReputationTier), ./index (NewGameOptions)
+ * Related files: store.ts (uses systems state), npcStables.ts (NPC stable logic)
+ */
+
 // Systems State - Optional subsystems and advanced features
 // Includes NPC stables, jockeys, awards, campaigns, leaderboards, facilities, and pending intents
 
@@ -11,8 +23,15 @@ import type {
 } from "../types";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { RegionalAward, AwardRegion } from "../awards/types";
-import type { Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
+import type {
+  Leaderboard,
+  SireTrendData,
+  ProgenyLeaderboard,
+  ProgenyLeaderboardType,
+} from "@/core/breeding/leaderboardTypes";
+import type { Syndicate } from "@/core/breeding/types";
 import type { AnyIntent } from "@/core/resolver/intents";
+import type { FacilityType, FacilityLevel } from "@/core/facilities";
 import type { PlayerFacilities } from "@/core/facilities";
 import type { UserSettings } from "@/core/settings/settingsTypes";
 import type { Expense } from "@/core/expenses";
@@ -21,6 +40,8 @@ import type { RaceReplay } from "@/core/replays";
 import type { ManagerReputation } from "@/core/reputation";
 import type { TransportRequest } from "@/core/transportation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { StaffMember } from "@/core/staff/staffTypes";
+import type { HallOfFameEntry, TrackRecord, FounderRecord } from "@/core/history/historyTypes";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -119,17 +140,21 @@ export interface SystemsState {
 
   // Hall of Fame system (optional)
   /** Legendary horses inducted into Hall of Fame */
-  hallOfFame?: Array<{
-    horseId: string;
-    horseName: string;
-    inductedOnDay: number;
-    careerHighlights: {
-      g1Wins: number;
-      gradedWins: number;
-      lifetimeEarnings: number;
-      horseOfTheYearAwards: number;
-    };
-  }>;
+  hallOfFame?: HallOfFameEntry[];
+
+  // Global historical records (optional)
+  /** Lifetime track records keyed by trackId_surface_distance */
+  trackRecords?: Record<string, TrackRecord>;
+  /** Cached progeny/horse leaderboards (Beyer, Earnings, etc.) */
+  horseLeaderboards?: Record<string, ProgenyLeaderboard>;
+  /** Multi-generational influence records */
+  founders?: Record<string, FounderRecord>;
+  /** Day of last founder analysis update */
+  lastFounderUpdateDay?: number;
+  /** Stallion syndicates keyed by stallionId */
+  syndicates?: Record<string, Syndicate>;
+  /** Share transaction history for syndicates */
+  shareTransactions?: any[];
 
   // Player profile (optional - set after completing new game wizard)
   /** Player's stable identity from the new game wizard */
@@ -140,11 +165,22 @@ export interface SystemsState {
   usedHorseNames: string[];
   /** Set of all jockey names currently in use to ensure uniqueness */
   usedJockeyNames: string[];
+
+  // Staff system
+  /** Pool of staff available for hire */
+  staffPool: StaffMember[];
+  /** All staff currently hired by any stable (player or NPC) */
+  hiredStaff: StaffMember[];
 }
 
 /**
- * Default systems state for new games
- * When options are provided, uses the backstory to customize facilities and reputation
+ * Create default systems state for new games.
+ *
+ * When options are provided, uses the backstory to customize facilities and reputation.
+ * Otherwise uses default facilities and zero reputation.
+ *
+ * @param options - Optional new game options including profile and backstory
+ * @returns Default systems state with NPC stables, facilities, reputation, and other subsystems initialized
  */
 export function createDefaultSystemsState(options?: NewGameOptions): SystemsState {
   if (options) {
@@ -153,18 +189,22 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     // Build facilities from backstory spec (complete replace, not merge)
     const facilities: Partial<PlayerFacilities> = {};
     for (const [type, level] of Object.entries(backstory.facilityUpgrades)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      facilities[type as keyof PlayerFacilities] = createFacility(type as any, level as any, 1);
+      const facilityType = type as FacilityType;
+      const facilityLevel = level as FacilityLevel;
+      facilities[facilityType] = createFacility(facilityType, facilityLevel, 1);
     }
 
     return {
       npcStables: [],
       npcAIManager: {
-        stableStates: new Map(),
+        stableStates: {},
         globalDay: 1,
       },
       breedingPrograms: [],
+      jockeys: [],
       awards: [],
+      campaigns: [],
+      triplecrownHistory: [],
       facilities: facilities as PlayerFacilities,
       npcFacilities: {},
       userSettings: createDefaultUserSettings(1),
@@ -182,8 +222,15 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       transports: [],
       playerProfile: profile,
       hallOfFame: [],
+      trackRecords: {},
+      horseLeaderboards: {},
+      founders: {},
+      syndicates: {},
+      shareTransactions: [],
       usedHorseNames: [],
       usedJockeyNames: [],
+      staffPool: [],
+      hiredStaff: [],
     };
   }
 
@@ -191,11 +238,14 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
   return {
     npcStables: [],
     npcAIManager: {
-      stableStates: new Map(),
+      stableStates: {},
       globalDay: 1,
     },
     breedingPrograms: [],
+    jockeys: [],
     awards: [],
+    campaigns: [],
+    triplecrownHistory: [],
     facilities: createDefaultPlayerFacilities(1),
     npcFacilities: {},
     userSettings: createDefaultUserSettings(1),
@@ -212,7 +262,15 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     },
     transports: [],
     hallOfFame: [],
+    trackRecords: {},
+    horseLeaderboards: {},
+    founders: {},
+    syndicates: {},
+    shareTransactions: [],
     usedHorseNames: [],
     usedJockeyNames: [],
+
+    staffPool: [],
+    hiredStaff: [],
   };
 }

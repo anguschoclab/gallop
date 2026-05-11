@@ -1,346 +1,557 @@
-import type {
-  Horse,
-  Race,
-  RunningStyle,
-  TrackCondition,
-  Weather,
-  Jockey,
-  Stable,
-} from "@/game/types";
-import { TRAIT_VALUES, fiberDistanceModifier } from "@/core/genetics/phenotype";
+/**
+ * simulation.ts - Race simulation engine
+ *
+ * This file provides the core race simulation engine, including pace context calculation,
+ * runner stepping logic, drafting, track geometry effects, stamina fade, and tactical AI
+ * integration. Generates race results and optional replay snapshots.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable, Jockey), @/game/tracks (CourseSpecification, TrackSection), @/core/common/types (Rng), @/game/math (clamp), ./raceSnapshotTypes (RaceSnapshot), ./tacticalAI (calculateTacticalAdjustment), ./runnerBuilder (Runner, PaceContext, paceShapeMul)
+ * Related files: runnerBuilder.ts (provides runner objects), tacticalAI.ts (provides tactical adjustments)
+ */
+
+import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import type { CourseSpecification, TrackSection } from "@/game/tracks";
 import type { Rng } from "@/core/common/types";
 import { clamp } from "@/game/math";
-import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
-import { calculateDosageMetrics } from "@/game/dosage";
-import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStrategyAI";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { RaceSnapshot } from "./raceSnapshotTypes";
+import { calculateTacticalAdjustment } from "./tacticalAI";
+import { type Runner, type PaceContext, paceShapeMul } from "./runnerBuilder";
 
 // Standardizing imports for relocated file
-import type {
-  Horse as HorseT,
-  Race as RaceT,
-  Stable as StableT,
-  Jockey as JockeyT,
-  RunningStyle as RunningStyleT,
-} from "@/game/types";
+import type { Race as RaceT } from "@/game/types";
 
-export type Runner = {
-  horseId: string;
-  name: string;
-  silk: string;
-  coatColor?: string;
-  owned: boolean;
-  position: number;
-  velocity: number;
-  finishTime: number | null;
-  lane: number;
-  targetLane: number;
-  laneVelocity: number;
-  barrier: number;
-  topSpeed: number;
-  accel: number;
-  staminaFactor: number;
-  noise: number;
-  runningStyle: RunningStyleT;
-  draftingHorseId: string | null;
-  horse: HorseT;
-  jockey?: JockeyT;
-  weight: number;
-};
-
-function paceShapeMul(style: RunningStyleT, progress: number): number {
-  switch (style) {
-    case "E":
-      return 1.05 - 0.07 * progress;
-    case "EP":
-      return 1.01 - 0.02 * progress;
-    case "P":
-      return 0.98 + 0.04 * Math.sin(Math.PI * progress);
-    case "S":
-      if (progress < 0.6) return 0.93 + 0.05 * progress;
-      return 0.96 + 0.11 * ((progress - 0.6) / 0.4);
-  }
-}
-
-function styleStaminaFactor(style: RunningStyleT, baseStaminaFactor: number): number {
-  switch (style) {
-    case "E":
-      return clamp(baseStaminaFactor - 0.05, 0.2, 1);
-    case "EP":
-      return baseStaminaFactor;
-    case "P":
-      return baseStaminaFactor;
-    case "S":
-      return clamp(baseStaminaFactor + 0.05, 0.2, 1);
-  }
-}
-
-export type ConditionsModifier = {
-  speedMul: number;
-  staminaDrainMul: number;
-};
-
-const TRACK_SPEED_MUL: Record<string, number> = {
-  fast: 1.0,
-  good: 0.985,
-  soft: 0.95,
-  heavy: 0.93,
-  yielding: 0.9,
-};
-
-const WEATHER_SPEED_MUL: Record<string, number> = {
-  sunny: 1.0,
-  cloudy: 1.0,
-  sunset: 1.0,
-  night: 0.99,
-  rainy: 0.97,
-};
-
-const WEATHER_DRAIN_MUL: Record<string, number> = {
-  sunny: 1.0,
-  cloudy: 1.0,
-  sunset: 1.0,
-  night: 1.0,
-  rainy: 1.06,
-};
-
-export function getConditionsModifier(
-  race: Pick<RaceT, "weather" | "trackCondition">,
-): ConditionsModifier {
-  const trackMul = race.trackCondition ? TRACK_SPEED_MUL[race.trackCondition] : 1;
-  const weatherSpeedMul = race.weather ? WEATHER_SPEED_MUL[race.weather] : 1;
-  const weatherDrainMul = race.weather ? WEATHER_DRAIN_MUL[race.weather] : 1;
-  const trackDrainMul = trackMul < 1 ? 1 + (1 - trackMul) * 1.5 : 1;
-  return {
-    speedMul: trackMul * weatherSpeedMul,
-    staminaDrainMul: weatherDrainMul * trackDrainMul,
-  };
-}
-
-const MAX_FORM_ENERGY_MUL = 1.25;
-const TOP_SPEED_CEILING = 22;
-
-export function buildRunner(
-  h: HorseT,
-  owned: boolean,
-  raceDistance: number,
-  surface: "Turf" | "Dirt" | "Synthetic" | null,
-  conditions: ConditionsModifier = { speedMul: 1, staminaDrainMul: 1 },
-  barrier: number = 1,
-  jockey?: JockeyT,
-  weight?: number,
-  handedness?: "left" | "right" | "balanced",
-  npcAIManager?: NpcAIManager,
-  currentDay?: number,
-  stable?: StableT,
-  race?: RaceT,
-): Runner {
-  const formMod = 1 + h.form / 100;
-  const energyMod = 0.8 + (h.energy / 100) * 0.2;
-  const formEnergy = clamp(formMod * energyMod, 0.5, MAX_FORM_ENERGY_MUL);
-
-  const distDiff = Math.abs(h.distanceAptitude - raceDistance);
-  const distanceMod = 1 - Math.min(0.1, Math.max(0, distDiff - 400) / 8000);
-  const surfaceMod = surface ? (h.surfaceAptitude[surface] ?? 0.95) : 1.0;
-
-  const fiberMods = h.fiberBias
-    ? fiberDistanceModifier(h.fiberBias, raceDistance)
-    : { speedMul: 1, staminaMul: 1 };
-
-  const conditionsHarsh = conditions.speedMul < 0.97;
-  const mudMod = conditionsHarsh ? (h.mudAptitude ?? 1.0) : 1.0;
-
-  const lineBias = h.bloodline ? REGIONAL_LINE_BIAS[h.bloodline as Bloodline] : undefined;
-  const lineSurfaceMul =
-    lineBias && (!lineBias.surface || lineBias.surface === surface) ? 1 + lineBias.boost : 1;
-
-  const handednessMod =
-    handedness && h.trackPreference
-      ? handedness === "balanced" || h.trackPreference === "balanced"
-        ? 1.0
-        : handedness === h.trackPreference
-          ? 1.02
-          : 0.98
-      : 1.0;
-
-  const dosageMetrics = calculateDosageMetrics(h.sireName);
-  const dosageDI = dosageMetrics.dosageIndex;
-  let dosageDistanceMod = 1.0;
-  if (isFinite(dosageDI)) {
-    const preferredDistance =
-      dosageDI >= 4.0
-        ? 1200
-        : dosageDI >= 3.0
-          ? 1400
-          : dosageDI >= 2.4
-            ? 1600
-            : dosageDI >= 1.5
-              ? 2000
-              : 2400;
-    const dosageDistDiff = Math.abs(raceDistance - preferredDistance);
-    dosageDistanceMod = 1 - Math.min(0.03, dosageDistDiff / 10000);
-  }
-
-  const rawTopSpeed =
-    (12 + (h.stats.speed / 100) * 10) *
-    formEnergy *
-    conditions.speedMul *
-    distanceMod *
-    surfaceMod *
-    fiberMods.speedMul *
-    mudMod *
-    lineSurfaceMul *
-    handednessMod *
-    dosageDistanceMod;
-  const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
-  const accel = 1.5 + (h.stats.acceleration / 100) * 3.5;
-  const strideMod =
-    h.strideType === "long"
-      ? raceDistance >= 1800
-        ? 1.02
-        : 0.98
-      : h.strideType === "short"
-        ? raceDistance < 1400
-          ? 1.02
-          : 0.99
-        : 1;
-  const baseStamina = (0.4 + (h.stats.stamina / 100) * 0.6) * fiberMods.staminaMul;
-  const temperamentMod = 1 + (TRAIT_VALUES[h.temperament || "fair"] - 2) * -0.1;
-  const conformationMod = 1 + (TRAIT_VALUES[h.conformation || "fair"] - 2) * -0.03;
-
-  const conditionStamina = clamp(
-    1 - (1 - baseStamina) * conditions.staminaDrainMul * conformationMod,
-    0.2,
-    1,
-  );
-
-  let runningStyle: RunningStyleT = h.runningStyle ?? "P";
-  if (npcAIManager && currentDay && stable && jockey && race && !owned) {
-    const aiState = npcAIManager.stableStates.get(stable.id);
-    if (aiState?.jockeyStrategyAI) {
-      const optimalStyle = calculateOptimalRunningStyle(
-        aiState.jockeyStrategyAI,
-        h,
-        race,
-        jockey,
-        stable,
-      );
-      if (optimalStyle) {
-        runningStyle = optimalStyle;
-      }
-    }
-  }
-  const staminaFactor = styleStaminaFactor(runningStyle, conditionStamina);
-
-  let genderSpeedMul = 1.0;
-  let genderNoiseMul = 1.0;
-
-  switch (h.gender) {
-    case "colt":
-    case "horse":
-      genderSpeedMul = 1.015;
-      genderNoiseMul = 1.25;
-      break;
-    case "gelding":
-      genderSpeedMul = 1.0;
-      genderNoiseMul = 0.6;
-      break;
-    case "filly":
-    case "mare":
-      genderSpeedMul = 0.99;
-      genderNoiseMul = 1.0;
-      break;
-  }
-
-  const assignedWeight = weight ?? 126;
-  const sizeCapacity = (h.weight - 500) / 10;
-  const standardWeightThreshold = 126 + sizeCapacity;
-
-  const weightPenalty = Math.max(0, (assignedWeight - standardWeightThreshold) * 0.0015);
-  const weightMod = clamp(1 - weightPenalty, 0.8, 1.05);
-
-  const noise = ((110 - h.stats.consistency) / 100) * genderNoiseMul * temperamentMod;
-
-  const LANE_WIDTH = 1.2;
-  return {
-    horseId: h.id,
-    name: h.name,
-    silk: h.silk,
-    coatColor: h.coatColor,
-    owned,
-    position: 0,
-    velocity: 0,
-    finishTime: null,
-    lane: (barrier - 1) * LANE_WIDTH,
-    targetLane: 0,
-    laneVelocity: 0,
-    barrier,
-    topSpeed: topSpeed * genderSpeedMul * weightMod * strideMod,
-    accel: accel * weightMod,
-    staminaFactor: clamp(staminaFactor + ((h.heartScore ?? 1.0) - 1.0) * 0.5, 0.2, 1),
-    noise,
-    runningStyle,
-    draftingHorseId: null,
-    horse: h,
-    jockey,
-    weight: assignedWeight,
-  };
-}
-
-export type PaceContext = {
-  leaderPos: number;
-  leadGroupCount: number;
-  pacePressure: number;
-  progress: number;
-  laneDensity: number[];
-};
-
+/**
+ * Compute pace context from current runner positions.
+ *
+ * Calculates leader position, velocity, lead group count, pace pressure,
+ * race progress, lane density, and pace rating for tactical decisions.
+ *
+ * @param runners - All runners in the race
+ * @param distance - Race distance in meters
+ * @returns Pace context object
+ *
+ * @example
+ * const pace = computePaceContext(runners, 1600);
+ */
 export function computePaceContext(runners: Runner[], distance: number): PaceContext {
   let leaderPos = 0;
+  let leaderVelocity = 0;
   let totalProgress = 0;
   let alive = 0;
   const laneDensity = new Array(12).fill(0);
 
+  // Find leader first (needed for lead group calculation)
   for (const r of runners) {
-    if (r.position > leaderPos) leaderPos = r.position;
+    if (r.position > leaderPos) {
+      leaderPos = r.position;
+      leaderVelocity = r.velocity;
+    }
+  }
+
+  let leadGroupCount = 0;
+  let frontRunnersInLeadGroup = 0;
+
+  for (const r of runners) {
     if (r.finishTime === null) {
       totalProgress += r.position / distance;
       alive++;
       const laneIdx = Math.floor(r.lane / 1.2);
       if (laneIdx >= 0 && laneIdx < 12) laneDensity[laneIdx]++;
+
+      // Pace pressure and lead group check
+      if (leaderPos - r.position <= 4) {
+        leadGroupCount++;
+        if (r.runningStyle === "E") frontRunnersInLeadGroup++;
+      }
     } else {
       totalProgress += 1;
     }
   }
-  let leadGroupCount = 0;
-  let frontRunnersInLeadGroup = 0;
-  for (const r of runners) {
-    if (r.finishTime !== null) continue;
-    if (leaderPos - r.position <= 4) {
-      leadGroupCount++;
-      if (r.runningStyle === "E") frontRunnersInLeadGroup++;
-    }
-  }
+
+  // Calculate Pace Rating
+  const expectedVel = 18.5 - (distance / 3000) * 2.5;
+  const paceRating = leaderVelocity / expectedVel;
   const pacePressure = clamp((frontRunnersInLeadGroup - 1) / 2, 0, 1);
   const progress = alive > 0 ? totalProgress / runners.length : 1;
-  return { leaderPos, leadGroupCount, pacePressure, progress, laneDensity };
+
+  return {
+    leaderPos,
+    leaderVelocity,
+    leadGroupCount,
+    pacePressure,
+    progress,
+    laneDensity,
+    paceRating,
+  };
 }
 
+// Drafting constants
 const DRAFT_DISTANCE = 3;
 const DRAFT_SPEED_BONUS = 1.015;
 const DRAFT_STAMINA_PRESERVE = 0.5;
 
-function getDraftingHorseId(r: Runner, runners: Runner[]): string | null {
-  for (const other of runners) {
+// Track geometry constants
+const LANE_WIDTH = 1.2;
+const MAX_LATERAL_SPEED = 2.0;
+
+// Lane change thresholds
+const LANE_GAP_THRESHOLD = 0.8;
+const POSITION_GAP_THRESHOLD = 2.5;
+const LATERAL_DIFF_THRESHOLD = 0.01;
+
+// Progress thresholds for running styles
+const STALKER_PROGRESS_THRESHOLD = 0.4;
+const OUTSIDE_PROGRESS_THRESHOLD = 0.8;
+const LEAD_PROGRESS_THRESHOLD = 0.2;
+const CONGESTED_LANE_PROGRESS_THRESHOLD = 0.7;
+const CONGESTED_LANE_DENSITY_THRESHOLD = 4;
+const LANE_POSITION_GAP_THRESHOLD = 2;
+
+// Turn physics constants
+const AGILITY_MITIGATION_FACTOR = 0.6;
+const POSITIONING_SKILL_FACTOR = 0.5; // 1/200 of positioning stat
+const BULLRING_TRAIT_BONUS = 0.2;
+const MAX_TURN_PENALTY = 0.4;
+
+// Stamina constants
+const STAMINA_FADE_START = 0.6;
+const STAMINA_FADE_DURATION = 0.4;
+const PACE_PRESSURE_STAMINA_PENALTY = 0.08;
+const BLEEDER_DISTANCE_THRESHOLD = 1600;
+const BLEEDER_PROGRESS_THRESHOLD = 0.7;
+const BLEEDER_RISK_MULTIPLIER = 0.5;
+const BLEEDER_STAMINA_PENALTY = 0.2;
+const ROANER_SPEED_THRESHOLD = 0.95;
+const ROANER_RISK_MULTIPLIER = 0.3;
+const ROANER_STAMINA_PENALTY = 0.15;
+const SAVE_TACTICS_PROGRESS_THRESHOLD = 0.7;
+const SAVE_TACTICS_STAMINA_BONUS = 0.1;
+const EARLY_SPEED_PENALTY_THRESHOLD = 0.2;
+const EARLY_SPEED_LANE_THRESHOLD = 2.4;
+const EARLY_SPEED_STAMINA_PENALTY = 0.98;
+
+// Style and jockey constants
+const SHORT_STRAIGHT_THRESHOLD = 350;
+const LONG_STRAIGHT_THRESHOLD = 500;
+const FRONT_RUNNER_PROGRESS_THRESHOLD = 0.8;
+const CLOSER_PROGRESS_THRESHOLD = 0.7;
+const LATE_KICK_PROGRESS_THRESHOLD = 0.85;
+const LATE_KICK_BOOST_THRESHOLD = 0.92;
+const FRONT_RUNNER_BONUS = 0.02;
+const CLOSER_BONUS = 0.02;
+const FRONT_RUNNER_STYLE_MULTIPLIER = 1.03;
+const CLOSER_STYLE_MULTIPLIER = 1.02;
+const LATE_KICK_MULTIPLIER = 1.08;
+const POSITIONING_BONUS_FACTOR = 0.001;
+const PACING_BONUS_FACTOR = 0.001;
+const VIGOR_BONUS_FACTOR = 0.001;
+const LONG_STRAIGHT_VIGOR_THRESHOLD = 0.85;
+const LONG_STRAIGHT_VIGOR_FACTOR = 0.0025; // 1/400
+const PACE_PRESSURE_STYLE_BONUS = 0.05;
+const STALKER_PACE_PRESSURE_THRESHOLD = 0.6;
+const FRONT_RUNNER_PACE_THRESHOLD = 3;
+const FRONT_RUNNER_STYLE_PENALTY = 0.98;
+const POSITIONING_BONUS_TURN = 0.4;
+const MATCHED_ARCHETYPE_PROGRESS_THRESHOLD = 0.4;
+const PACING_STAMINA_BONUS_FACTOR = 0.0002; // 0.02/100
+const FRONT_RUNNER_STALKER_MISMATCH_VELOCITY_BONUS = 0.2;
+const FRONT_RUNNER_STALKER_MISMATCH_STAMINA_PENALTY = 0.97;
+const VIGOR_BOOST_FACTOR = 0.0003; // 0.03/100
+const VIGOR_PROGRESS_THRESHOLD = 0.8;
+const LATE_KICK_VIGOR_MULTIPLIER = 1.5;
+const GATE_SKILL_VELOCITY_BONUS = 0.005; // 0.5/100
+const GATE_SKILL_PROGRESS_THRESHOLD = 0.05;
+
+/**
+ * Calculate target lane based on running style, tactics, and race conditions.
+ * @param r
+ * @param progress
+ * @param sortedField
+ * @param pace
+ * @returns The target lane position for the runner.
+ */
+function calculateTargetLane(
+  r: Runner,
+  progress: number,
+  sortedField?: Runner[],
+  pace?: PaceContext,
+): number {
+  let targetLane = 0;
+  if (r.runningStyle === "S" && progress < STALKER_PROGRESS_THRESHOLD) targetLane = 1;
+
+  // Tactics-based lane bias
+  if (r.tactics === "rail") targetLane = 0;
+  if (r.tactics === "outside" && progress < OUTSIDE_PROGRESS_THRESHOLD) targetLane = 2;
+  if (r.tactics === "lead" && progress < LEAD_PROGRESS_THRESHOLD) targetLane = 0;
+
+  if (sortedField && pace) {
+    const laneIdx = Math.floor(r.lane / LANE_WIDTH);
+    if (
+      laneIdx === 0 &&
+      pace.laneDensity[0] > CONGESTED_LANE_DENSITY_THRESHOLD &&
+      progress < CONGESTED_LANE_PROGRESS_THRESHOLD
+    ) {
+      if (r.position < pace.leaderPos - LANE_POSITION_GAP_THRESHOLD) targetLane = 1;
+    }
+
+    // Faster blocking lookup using sortedField
+    for (const other of sortedField) {
+      if (other.horseId === r.horseId) continue;
+      const gap = other.position - r.position;
+      if (gap <= 0) break; // Optimization: stop early
+      if (gap >= POSITION_GAP_THRESHOLD) continue;
+
+      const laneGap = Math.abs(other.lane - r.lane);
+      if (laneGap < LANE_GAP_THRESHOLD) {
+        targetLane = Math.min(10, laneIdx + 1);
+        break;
+      }
+    }
+  }
+  return targetLane;
+}
+
+/**
+ * Update lane position towards target lane.
+ * @param r
+ * @param targetLane
+ * @param dt
+ * @returns void
+ */
+function updateLanePosition(r: Runner, targetLane: number, dt: number): void {
+  const targetPos = targetLane * LANE_WIDTH;
+  const lateralDiff = targetPos - r.lane;
+  if (Math.abs(lateralDiff) > LATERAL_DIFF_THRESHOLD) {
+    const step = Math.sign(lateralDiff) * Math.min(Math.abs(lateralDiff), MAX_LATERAL_SPEED * dt);
+    r.lane += step;
+  }
+  r.targetLane = targetLane;
+}
+
+/**
+ * Calculate track geometry modifiers (gradient and turn effects).
+ * @param r
+ * @param position
+ * @param distance
+ * @param course
+ * @returns Track geometry modifiers including speed multipliers, stamina multiplier, arc factor, and turn radius.
+ */
+function calculateTrackGeometryModifiers(
+  r: Runner,
+  position: number,
+  distance: number,
+  course?: CourseSpecification,
+): {
+  turnSpeedMul: number;
+  gradientSpeedMul: number;
+  gradientStaminaMul: number;
+  arcFactor: number;
+  radius: number;
+} {
+  const section = getTrackSection(position, distance, course);
+  const radius = section?.type === "turn" ? (section.radius ?? Infinity) : Infinity;
+  const gradient = section?.gradient ?? 0;
+  const arcFactor = radius === Infinity ? 1 : 1 + r.lane / radius;
+
+  const gradientSpeedMul = 1 - gradient / 100;
+  const isHillSpecialist = r.jockey?.traits.includes("hill_specialist");
+  const climbingApt = (r.horse as any)?.climbingAptitude ?? 1.0;
+
+  let gradientStaminaMul = gradient > 0 ? 1 - gradient / (200 * climbingApt) : 1;
+  if (gradient > 0 && isHillSpecialist) {
+    gradientStaminaMul = 1 - gradient / (400 * climbingApt);
+  }
+
+  let turnSpeedMul = 1.0;
+  if (radius !== Infinity) {
+    const centrifugalPressure = (r.velocity * r.velocity) / (radius * 10);
+    const agilityMitigation = (r.horse.stats.acceleration / 100) * AGILITY_MITIGATION_FACTOR;
+    const corneringApt = (r.horse as any)?.corneringAptitude ?? 1.0;
+    const isBullringExpert = r.jockey?.traits.includes("bullring_expert");
+    const positioningSkill = (r.jockey?.stats.positioning ?? 50) * POSITIONING_SKILL_FACTOR;
+    const traitBonus = isBullringExpert ? BULLRING_TRAIT_BONUS : 0;
+
+    const totalPenalty = Math.min(
+      MAX_TURN_PENALTY,
+      Math.max(
+        0,
+        centrifugalPressure - agilityMitigation * corneringApt - positioningSkill - traitBonus,
+      ),
+    );
+    turnSpeedMul = 1 - totalPenalty;
+  }
+
+  return { turnSpeedMul, gradientSpeedMul, gradientStaminaMul, arcFactor, radius };
+}
+
+/**
+ * Calculate stamina multiplier based on progress, drafting, pace pressure, and health risks.
+ * @param r
+ * @param progress
+ * @param distance
+ * @param pace
+ * @param rng
+ * @param dt
+ * @returns The stamina multiplier to apply to the runner.
+ */
+function calculateStaminaMultiplier(
+  r: Runner,
+  progress: number,
+  distance: number,
+  pace?: PaceContext,
+  rng?: { next: () => number } | Rng,
+  dt?: number,
+): number {
+  let staminaMul = 1;
+  if (progress > STAMINA_FADE_START) {
+    const fade = (progress - STAMINA_FADE_START) / STAMINA_FADE_DURATION;
+    let effectiveStamina = r.staminaFactor;
+    if (r.draftingHorseId) {
+      effectiveStamina = effectiveStamina + (1 - effectiveStamina) * DRAFT_STAMINA_PRESERVE;
+    }
+    if (pace && pace.pacePressure > 0 && r.runningStyle === "E") {
+      effectiveStamina = clamp(
+        effectiveStamina - PACE_PRESSURE_STAMINA_PENALTY * pace.pacePressure,
+        0.2,
+        1,
+      );
+    }
+    const bleederRisk = r.horse.bleederRisk ?? 0;
+    if (
+      bleederRisk > 0 &&
+      distance >= BLEEDER_DISTANCE_THRESHOLD &&
+      progress > BLEEDER_PROGRESS_THRESHOLD &&
+      rng &&
+      dt
+    ) {
+      if (rng.next() < bleederRisk * dt * BLEEDER_RISK_MULTIPLIER) {
+        effectiveStamina = clamp(effectiveStamina - BLEEDER_STAMINA_PENALTY, 0.1, 1);
+      }
+    }
+    const roanerRisk = r.horse.roarerRisk ?? 0;
+    if (roanerRisk > 0 && r.velocity > r.topSpeed * ROANER_SPEED_THRESHOLD && rng && dt) {
+      if (rng.next() < roanerRisk * dt * ROANER_RISK_MULTIPLIER) {
+        effectiveStamina = clamp(effectiveStamina - ROANER_STAMINA_PENALTY, 0.1, 1);
+      }
+    }
+
+    // "Save" tactics preservation
+    if (r.tactics === "save" && progress < SAVE_TACTICS_PROGRESS_THRESHOLD) {
+      effectiveStamina = clamp(effectiveStamina + SAVE_TACTICS_STAMINA_BONUS, 0, 1.1);
+    }
+
+    staminaMul = 1 - (1 - effectiveStamina) * fade;
+  }
+
+  // Early speed penalty from wide lane
+  if (
+    r.runningStyle === "E" &&
+    progress < EARLY_SPEED_PENALTY_THRESHOLD &&
+    r.lane > EARLY_SPEED_LANE_THRESHOLD
+  ) {
+    staminaMul *= EARLY_SPEED_STAMINA_PENALTY;
+  }
+
+  return staminaMul;
+}
+
+/**
+ * Calculate style multiplier based on running style, progress, track straight, and jockey bonuses.
+ * @param r
+ * @param progress
+ * @param pace
+ * @param course
+ * @returns The style multiplier to apply to the runner.
+ */
+function calculateStyleMultiplier(
+  r: Runner,
+  progress: number,
+  pace?: PaceContext,
+  course?: CourseSpecification,
+): number {
+  let styleMul = paceShapeMul(r.runningStyle, progress);
+
+  const straight = course?.straightLength ?? 400;
+  if (straight < SHORT_STRAIGHT_THRESHOLD) {
+    if (r.runningStyle === "E" && progress > FRONT_RUNNER_PROGRESS_THRESHOLD) {
+      const isFrontRunnerJockey = r.jockey?.archetype === "front_runner";
+      const jockeyBonus =
+        (r.jockey?.stats.positioning ?? 50) * POSITIONING_BONUS_FACTOR +
+        (isFrontRunnerJockey ? FRONT_RUNNER_BONUS : 0);
+      styleMul *= FRONT_RUNNER_STYLE_MULTIPLIER + jockeyBonus;
+    }
+  } else if (straight > LONG_STRAIGHT_THRESHOLD) {
+    if (
+      (r.runningStyle === "S" || r.runningStyle === "P") &&
+      progress > CLOSER_PROGRESS_THRESHOLD
+    ) {
+      const isCloserJockey = r.jockey?.archetype === "closer";
+      const isLongStraightPro = r.jockey?.traits.includes("long_straight_pro");
+      const jockeyBonus =
+        (r.jockey?.stats.pacing ?? 50) * PACING_BONUS_FACTOR + (isCloserJockey ? CLOSER_BONUS : 0);
+      const traitBonus =
+        progress > LONG_STRAIGHT_VIGOR_THRESHOLD && isLongStraightPro
+          ? (r.jockey?.stats.vigor ?? 50) * LONG_STRAIGHT_VIGOR_FACTOR
+          : 0;
+      styleMul *= CLOSER_STYLE_MULTIPLIER + jockeyBonus + traitBonus;
+    }
+  }
+
+  // "Late Kick" velocity boost
+  if (r.tactics === "late_kick" && progress > LATE_KICK_PROGRESS_THRESHOLD) {
+    styleMul *= LATE_KICK_MULTIPLIER + (r.jockey?.stats.vigor ?? 50) * VIGOR_BONUS_FACTOR;
+  }
+
+  if (r.runningStyle === "E" && pace && pace.leaderPos - r.position > FRONT_RUNNER_PACE_THRESHOLD) {
+    styleMul *= FRONT_RUNNER_STYLE_PENALTY;
+  }
+
+  if (
+    pace &&
+    pace.pacePressure > 0 &&
+    r.runningStyle === "S" &&
+    progress > STALKER_PACE_PRESSURE_THRESHOLD
+  ) {
+    styleMul *= 1 + PACE_PRESSURE_STYLE_BONUS * pace.pacePressure;
+  }
+
+  return styleMul;
+}
+
+/**
+ * Calculate draft multiplier based on drafting status and tactics.
+ * @param r
+ * @param progress
+ * @returns The draft multiplier to apply to the runner.
+ */
+function calculateDraftMultiplier(r: Runner, progress: number): number {
+  let draftMul = 1;
+  if (r.draftingHorseId && progress < LATE_KICK_PROGRESS_THRESHOLD) {
+    draftMul = DRAFT_SPEED_BONUS;
+    // "Rail" tactics bonus for drafting
+    if (r.tactics === "rail") draftMul *= 1.005;
+  }
+  return draftMul;
+}
+
+/**
+ * Apply jockey-specific effects to velocity and stamina.
+ * @param r
+ * @param progress
+ * @param radius
+ * @param arcFactor
+ * @param dt
+ * @param staminaMul
+ * @returns The final distance step and updated stamina multiplier.
+ */
+function applyJockeyEffects(
+  r: Runner,
+  progress: number,
+  radius: number,
+  arcFactor: number,
+  dt: number,
+  staminaMul: number,
+): { finalDs: number; staminaMul: number } {
+  let finalDs = r.velocity * dt;
+  let updatedStaminaMul = staminaMul;
+
+  if (r.jockey) {
+    const stats = r.jockey.stats;
+    const arch = r.jockey.archetype;
+
+    if (progress < GATE_SKILL_PROGRESS_THRESHOLD) {
+      r.velocity += (stats.gateSkill / 100) * GATE_SKILL_VELOCITY_BONUS * dt;
+    }
+
+    if (radius !== Infinity) {
+      const positioningBonus = (stats.positioning / 100) * POSITIONING_BONUS_TURN;
+      const effectiveLane = Math.max(0, r.lane * (1 - positioningBonus));
+      const adjustedArcFactor = 1 + effectiveLane / radius;
+      finalDs = (r.velocity * dt) / adjustedArcFactor;
+    } else {
+      finalDs = (r.velocity * dt) / arcFactor;
+    }
+
+    const isMatched =
+      (arch === "front_runner" && r.runningStyle === "E") ||
+      (arch === "closer" && r.runningStyle === "S") ||
+      (arch === "clinical" && r.runningStyle === "EP") ||
+      (arch === "finisher" && r.runningStyle === "P");
+
+    if (isMatched && progress > MATCHED_ARCHETYPE_PROGRESS_THRESHOLD) {
+      updatedStaminaMul *= 1 + (stats.pacing / 100) * PACING_STAMINA_BONUS_FACTOR * 100;
+    }
+
+    if (
+      arch === "front_runner" &&
+      r.runningStyle === "S" &&
+      progress < MATCHED_ARCHETYPE_PROGRESS_THRESHOLD
+    ) {
+      r.velocity += FRONT_RUNNER_STALKER_MISMATCH_VELOCITY_BONUS * dt;
+      updatedStaminaMul *= FRONT_RUNNER_STALKER_MISMATCH_STAMINA_PENALTY;
+    }
+
+    if (progress > VIGOR_PROGRESS_THRESHOLD) {
+      let vigorBoost = (stats.vigor / 100) * VIGOR_BOOST_FACTOR * 100;
+      // "Late Kick" tactic bonus
+      if (r.tactics === "late_kick" && progress > LATE_KICK_BOOST_THRESHOLD) {
+        vigorBoost *= LATE_KICK_VIGOR_MULTIPLIER;
+      }
+      r.velocity += vigorBoost * dt;
+    }
+  } else {
+    finalDs = (r.velocity * dt) / arcFactor;
+  }
+
+  return { finalDs, staminaMul: updatedStaminaMul };
+}
+
+/**
+ * Find blocking horse and apply velocity penalty if blocked.
+ * @param r
+ * @param sortedField
+ * @returns void
+ */
+function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
+  const blockingHorse = (sortedField || []).find(
+    (other) =>
+      other.horseId !== r.horseId &&
+      other.finishTime === null &&
+      other.position > r.position &&
+      other.position - r.position < 1.5 &&
+      Math.abs(other.lane - r.lane) < 0.4,
+  );
+  if (blockingHorse) {
+    r.velocity = Math.min(r.velocity, blockingHorse.velocity * 0.98);
+  }
+}
+
+/**
+ * Find the horse that this runner is drafting behind.
+ * @param r
+ * @param sortedField
+ * @returns The ID of the horse being drafted, or null if not drafting.
+ */
+function getDraftingHorseId(r: Runner, sortedField: Runner[]): string | null {
+  for (const other of sortedField) {
     if (other.horseId === r.horseId) continue;
     const gap = other.position - r.position;
+    if (gap <= 0) break; // Optimization: stop early
+    if (gap > DRAFT_DISTANCE) continue;
+
     const laneGap = Math.abs(other.lane - r.lane);
-    if (gap > 0 && gap <= DRAFT_DISTANCE && laneGap < 0.8) return other.horseId;
+    if (laneGap < 0.8) return other.horseId;
   }
   return null;
 }
 
+/**
+ * Get the track section at a specific position.
+ * @param pos
+ * @param distance
+ * @param course
+ * @returns The track section at the given position, or null if not found.
+ */
 function getTrackSection(
   pos: number,
   distance: number,
@@ -362,155 +573,58 @@ function getTrackSection(
   return course.sections[0];
 }
 
-function getTrackRadius(pos: number, distance: number, course?: CourseSpecification): number {
-  const section = getTrackSection(pos, distance, course);
-  return section?.type === "turn" ? (section.radius ?? Infinity) : Infinity;
-}
-
-function getTrackGradient(pos: number, distance: number, course?: CourseSpecification): number {
-  const section = getTrackSection(pos, distance, course);
-  return section?.gradient ?? 0;
-}
-
+/**
+ * Step a single runner forward in time by dt.
+ *
+ * Updates runner position, velocity, lane, and energy based on physics,
+ * drafting, track geometry, and tactical AI. Returns early if runner has finished.
+ *
+ * @param r - Runner to step
+ * @param dt - Time delta in seconds
+ * @param t - Current simulation time
+ * @param distance - Race distance in meters
+ * @param rng - Random number generator
+ * @param sortedField - Runners in the race sorted by position descending (for spatial lookups)
+ * @param pace - Current pace context (for tactical decisions)
+ * @param course - Track course specification (for geometry effects)
+ */
 export function stepRunner(
   r: Runner,
   dt: number,
   t: number,
   distance: number,
   rng: { next: () => number } | Rng,
-  field?: Runner[],
+  sortedField?: Runner[],
   pace?: PaceContext,
   course?: CourseSpecification,
 ) {
   if (r.finishTime !== null) return;
   const progress = r.position / distance;
 
-  r.draftingHorseId = field ? getDraftingHorseId(r, field) : null;
+  // Optimize drafting lookup using sortedField
+  r.draftingHorseId = sortedField ? getDraftingHorseId(r, sortedField) : null;
 
-  const LANE_WIDTH = 1.2;
-  const MAX_LATERAL_SPEED = 2.0;
+  // Calculate and update lane position
+  const targetLane = calculateTargetLane(r, progress, sortedField, pace);
+  updateLanePosition(r, targetLane, dt);
 
-  let targetLane = 0;
-  if (r.runningStyle === "S" && progress < 0.4) targetLane = 1;
+  // Calculate track geometry modifiers
+  const { turnSpeedMul, gradientSpeedMul, gradientStaminaMul, arcFactor, radius } =
+    calculateTrackGeometryModifiers(r, r.position, distance, course);
 
-  if (field && pace) {
-    const laneIdx = Math.floor(r.lane / LANE_WIDTH);
-    if (laneIdx === 0 && pace.laneDensity[0] > 4 && progress < 0.7) {
-      if (r.position < pace.leaderPos - 2) targetLane = 1;
-    }
+  // Calculate stamina multiplier
+  let staminaMul = calculateStaminaMultiplier(r, progress, distance, pace, rng, dt);
 
-    for (const other of field) {
-      if (other.horseId === r.horseId) continue;
-      const gap = other.position - r.position;
-      const laneGap = Math.abs(other.lane - r.lane);
-      if (gap > 0 && gap < 2.5 && laneGap < 0.8) {
-        targetLane = Math.min(10, laneIdx + 1);
-        break;
-      }
-    }
-  }
-  r.targetLane = targetLane;
+  // Calculate style multiplier
+  const styleMul = calculateStyleMultiplier(r, progress, pace, course);
 
-  const targetPos = r.targetLane * LANE_WIDTH;
-  const lateralDiff = targetPos - r.lane;
-  if (Math.abs(lateralDiff) > 0.01) {
-    const step = Math.sign(lateralDiff) * Math.min(Math.abs(lateralDiff), MAX_LATERAL_SPEED * dt);
-    r.lane += step;
-  }
+  // Calculate draft multiplier
+  const draftMul = calculateDraftMultiplier(r, progress);
 
-  const radius = getTrackRadius(r.position, distance, course);
-  const gradient = getTrackGradient(r.position, distance, course);
-  const arcFactor = radius === Infinity ? 1 : 1 + r.lane / radius;
+  // Apply gradient stamina modifier
+  staminaMul *= gradientStaminaMul;
 
-  const gradientSpeedMul = 1 - gradient / 100;
-  const isHillSpecialist = r.jockey?.traits.includes("hill_specialist");
-  const climbingApt = r.horse?.climbingAptitude ?? 1.0;
-
-  let gradientStaminaMul = gradient > 0 ? 1 - gradient / (200 * climbingApt) : 1;
-  if (gradient > 0 && isHillSpecialist) {
-    gradientStaminaMul = 1 - gradient / (400 * climbingApt);
-  }
-
-  let turnSpeedMul = 1.0;
-  if (radius !== Infinity) {
-    const centrifugalPressure = (r.velocity * r.velocity) / (radius * 10);
-    const agilityMitigation = (r.horse.stats.acceleration / 100) * 0.6;
-    const corneringApt = r.horse?.corneringAptitude ?? 1.0;
-    const isBullringExpert = r.jockey?.traits.includes("bullring_expert");
-    const positioningSkill = (r.jockey?.stats.positioning ?? 50) / 200;
-    const traitBonus = isBullringExpert ? 0.2 : 0;
-
-    const totalPenalty = Math.min(
-      0.4,
-      Math.max(
-        0,
-        centrifugalPressure - agilityMitigation * corneringApt - positioningSkill - traitBonus,
-      ),
-    );
-    turnSpeedMul = 1 - totalPenalty;
-  }
-
-  let staminaMul = 1;
-  if (progress > 0.6) {
-    const fade = (progress - 0.6) / 0.4;
-    let effectiveStamina = r.staminaFactor;
-    if (r.draftingHorseId) {
-      effectiveStamina = effectiveStamina + (1 - effectiveStamina) * DRAFT_STAMINA_PRESERVE;
-    }
-    if (pace && pace.pacePressure > 0 && r.runningStyle === "E") {
-      effectiveStamina = clamp(effectiveStamina - 0.08 * pace.pacePressure, 0.2, 1);
-    }
-    const bleederRisk = r.horse.bleederRisk ?? 0;
-    if (bleederRisk > 0 && distance >= 1600 && progress > 0.7) {
-      if (rng.next() < bleederRisk * dt * 0.5) {
-        effectiveStamina = clamp(effectiveStamina - 0.2, 0.1, 1);
-      }
-    }
-    const roarerRisk = r.horse.roarerRisk ?? 0;
-    if (roarerRisk > 0 && r.velocity > r.topSpeed * 0.95) {
-      if (rng.next() < roarerRisk * dt * 0.3) {
-        effectiveStamina = clamp(effectiveStamina - 0.15, 0.1, 1);
-      }
-    }
-    staminaMul = 1 - (1 - effectiveStamina) * fade;
-  }
-
-  let styleMul = paceShapeMul(r.runningStyle, progress);
-
-  const straight = course?.straightLength ?? 400;
-  if (straight < 350) {
-    if (r.runningStyle === "E" && progress > 0.8) {
-      const isFrontRunnerJockey = r.jockey?.archetype === "front_runner";
-      const jockeyBonus =
-        (r.jockey?.stats.positioning ?? 50) / 1000 + (isFrontRunnerJockey ? 0.02 : 0);
-      styleMul *= 1.03 + jockeyBonus;
-    }
-  } else if (straight > 500) {
-    if ((r.runningStyle === "S" || r.runningStyle === "P") && progress > 0.7) {
-      const isCloserJockey = r.jockey?.archetype === "closer";
-      const isLongStraightPro = r.jockey?.traits.includes("long_straight_pro");
-      const jockeyBonus = (r.jockey?.stats.pacing ?? 50) / 1000 + (isCloserJockey ? 0.02 : 0);
-      const traitBonus =
-        progress > 0.85 && isLongStraightPro ? (r.jockey?.stats.vigor ?? 50) / 400 : 0;
-      styleMul *= 1.02 + jockeyBonus + traitBonus;
-    }
-  }
-
-  if (r.runningStyle === "E" && pace && pace.leaderPos - r.position > 3) {
-    styleMul *= 0.98;
-  }
-
-  if (pace && pace.pacePressure > 0 && r.runningStyle === "S" && progress > 0.6) {
-    styleMul *= 1 + 0.05 * pace.pacePressure;
-  }
-
-  if (r.runningStyle === "E" && progress < 0.2 && r.lane > 2.4) {
-    staminaMul *= 0.98;
-  }
-
-  let draftMul = 1;
-  if (r.draftingHorseId && progress < 0.95) draftMul = DRAFT_SPEED_BONUS;
-
+  // Calculate target speed
   const targetSpeed =
     r.topSpeed *
     staminaMul *
@@ -520,54 +634,35 @@ export function stepRunner(
     gradientSpeedMul *
     (1 + (rng.next() - 0.5) * 0.08 * r.noise);
 
+  // Update velocity towards target
   const diff = targetSpeed - r.velocity;
   r.velocity += Math.sign(diff) * Math.min(Math.abs(diff), r.accel * dt);
 
-  const ds = r.velocity * dt;
+  // Apply jockey effects and get final distance step
+  const { finalDs, staminaMul: updatedStaminaMul } = applyJockeyEffects(
+    r,
+    progress,
+    radius,
+    arcFactor,
+    dt,
+    staminaMul,
+  );
+  staminaMul = updatedStaminaMul;
 
-  let finalDs = ds;
-  if (r.jockey) {
-    const stats = r.jockey.stats;
-    const arch = r.jockey.archetype;
-
-    if (progress < 0.05) {
-      r.velocity += (stats.gateSkill / 100) * 0.5 * dt;
-    }
-
-    if (radius !== Infinity) {
-      const positioningBonus = (stats.positioning / 100) * 0.4;
-      const effectiveLane = Math.max(0, r.lane * (1 - positioningBonus));
-      const adjustedArcFactor = 1 + effectiveLane / radius;
-      finalDs = (r.velocity * dt) / adjustedArcFactor;
-    } else {
-      finalDs = (r.velocity * dt) / arcFactor;
-    }
-
-    const isMatched =
-      (arch === "front_runner" && r.runningStyle === "E") ||
-      (arch === "closer" && r.runningStyle === "S") ||
-      (arch === "clinical" && r.runningStyle === "EP") ||
-      (arch === "finisher" && r.runningStyle === "P");
-
-    if (isMatched && progress > 0.4) {
-      staminaMul *= 1 + (stats.pacing / 100) * 0.02;
-    }
-
-    if (arch === "front_runner" && r.runningStyle === "S" && progress < 0.4) {
-      r.velocity += 0.2 * dt;
-      staminaMul *= 0.97;
-    }
-
-    if (progress > 0.8) {
-      const vigorBoost = (stats.vigor / 100) * 0.03;
-      r.velocity += vigorBoost * dt;
-    }
-  } else {
-    finalDs = ds / arcFactor;
+  // Tactical AI Integration (Throttle to ~1Hz)
+  if (Math.floor(t / 1.0) !== Math.floor((t - dt) / 1.0) && pace) {
+    const tactical = calculateTacticalAdjustment(r, pace, sortedField || []);
+    r.velocity *= 1 + (tactical.velocityMod - 1) * dt;
+    r.lane += (tactical.targetLane - r.lane) * 0.1 * dt;
   }
 
+  // Apply blocking effect
+  applyBlockingEffect(r, sortedField);
+
+  // Update position
   r.position += finalDs;
 
+  // Check for finish
   if (r.position >= distance) {
     const overshoot = r.position - distance;
     const tFinish = r.velocity > 0 ? t - (overshoot * arcFactor) / r.velocity : t;
@@ -576,6 +671,40 @@ export function stepRunner(
   }
 }
 
+/**
+ * Run race to completion.
+ *
+ * Simulates a full race from start to finish, stepping all runners forward
+ * until all finish or max time is reached. Returns final results and optional
+ * replay snapshots.
+ *
+ * @param runners - All runners in the race
+ * @param distance - Race distance in meters
+ * @param rng - Random number generator
+ * @param dt - Time delta per step in seconds
+ * @param maxTime - Maximum simulation time in seconds
+ * @param course - Optional track course specification
+ * @param recordSnapshots - Whether to record replay snapshots
+ * @returns Race result and optional snapshots
+ *
+ * @example
+ * const { result, snapshots } = runRaceToCompletion(runners, 1600, rng, 0.1, 600, course, true);
+ */
+/**
+ * Run a race to completion and return results.
+ *
+ * Simulates all runners stepping forward until all finish or maxTime is reached.
+ * Optionally records snapshots for replay visualization.
+ *
+ * @param runners - All runners in the race
+ * @param distance - Race distance in meters
+ * @param rng - Random number generator
+ * @param dt - Time step in seconds (default 0.1)
+ * @param maxTime - Maximum simulation time in seconds (default 600)
+ * @param course - Track course specification for geometry effects
+ * @param recordSnapshots - Whether to record snapshots for replay (default false)
+ * @returns Race result with positions, times, and optional snapshots
+ */
 export function runRaceToCompletion(
   runners: Runner[],
   distance: number,
@@ -583,15 +712,61 @@ export function runRaceToCompletion(
   dt: number = 0.1,
   maxTime: number = 600,
   course?: CourseSpecification,
-): { horseId: string; position: number; time: number }[] {
+  recordSnapshots: boolean = false,
+): {
+  result: { horseId: string; position: number; time: number }[];
+  snapshots: RaceSnapshot[];
+} {
   let t = 0;
-  while (runners.some((r) => r.finishTime === null) && t < maxTime) {
+  const snapshots: RaceSnapshot[] = [];
+  const numRunners = runners.length;
+  let finishedCount = 0;
+
+  // Initialize finishedCount in case some runners start finished (unlikely but safe)
+  for (const r of runners) {
+    if (r.finishTime !== null) finishedCount++;
+  }
+
+  while (finishedCount < numRunners && t < maxTime) {
     const pace = computePaceContext(runners, distance);
-    for (const r of runners) stepRunner(r, dt, t, distance, rng, runners, pace, course);
+
+    // Sort runners by position for faster spatial lookups in stepRunner
+    const sortedField = [...runners].sort((a, b) => b.position - a.position);
+
+    for (const r of runners) {
+      if (r.finishTime !== null) continue;
+
+      stepRunner(r, dt, t, distance, rng, sortedField, pace, course);
+
+      if (r.finishTime !== null) {
+        finishedCount++;
+      }
+    }
+
+    if (recordSnapshots) {
+      snapshots.push({
+        t,
+        horses: runners.map((r) => ({
+          horseId: r.horseId,
+          position: r.position,
+          lane: r.lane,
+          velocity: r.velocity,
+        })),
+      });
+    }
+
     t += dt;
   }
+
   const ranked = [...runners]
     .map((r) => ({ horseId: r.horseId, time: r.finishTime ?? Infinity }))
     .sort((a, b) => a.time - b.time);
-  return ranked.map((r, idx) => ({ horseId: r.horseId, position: idx + 1, time: r.time }));
+
+  const result = ranked.map((r, idx) => ({
+    horseId: r.horseId,
+    position: idx + 1,
+    time: r.time,
+  }));
+
+  return { result, snapshots };
 }

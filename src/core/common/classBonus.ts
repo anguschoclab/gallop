@@ -1,10 +1,27 @@
+/**
+ * classBonus.ts - Class bonus calculation
+ *
+ * This file provides a pure function for calculating Beyer class bonuses based on
+ * race grade and class level.
+ *
+ * Dependencies: @/game/gradedRaces (Grade), @/game/types (RaceClass)
+ * Related files: None
+ */
+
 import type { Grade } from "@/game/gradedRaces";
 import type { RaceClass } from "@/game/types";
 
 /**
- * Pure class bonus calculation
- * Returns the Beyer class bonus for a race based on grade and class
- * Extracted from: races.tsx, race.$raceId.tsx, store.ts
+ * Calculate the Beyer class bonus for a race based on grade and class.
+ *
+ * Higher grades and classes provide larger bonuses to Beyer figures.
+ *
+ * @param grade - Race grade (G1, G2, G3)
+ * @param raceClass - Race class (Group, Stakes, etc.)
+ * @returns Class bonus value
+ *
+ * @example
+ * const bonus = calculateClassBonus("G1", "Group"); // 8
  */
 export function calculateClassBonus(grade?: Grade, raceClass?: RaceClass): number {
   if (grade === "G1") return 8;

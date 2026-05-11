@@ -109,12 +109,12 @@ describe("Track Size Influence", () => {
 
     const resultsLarge = runRaceToCompletion(runnersLarge, 1200, mockRng, 0.1, 600, largeTrack);
 
-    const eTimeTight = resultsTight.find((r) => r.horseId === "1")!.time;
-    const sTimeTight = resultsTight.find((r) => r.horseId === "2")!.time;
+    const eTimeTight = resultsTight.result.find((r) => r.horseId === "1")!.time;
+    const sTimeTight = resultsTight.result.find((r) => r.horseId === "2")!.time;
     const tightMargin = sTimeTight - eTimeTight;
 
-    const eTimeLarge = resultsLarge.find((r) => r.horseId === "1")!.time;
-    const sTimeLarge = resultsLarge.find((r) => r.horseId === "2")!.time;
+    const eTimeLarge = resultsLarge.result.find((r) => r.horseId === "1")!.time;
+    const sTimeLarge = resultsLarge.result.find((r) => r.horseId === "2")!.time;
     const largeMargin = sTimeLarge - eTimeLarge;
 
     console.log(`Tight Track (Margin E over S): ${tightMargin.toFixed(3)}s`);
@@ -148,8 +148,8 @@ describe("Track Size Influence", () => {
 
     const results = runRaceToCompletion(runners, 1000, mockRng, 0.1, 600, tightTrack);
 
-    const agileTime = results.find((r) => r.horseId === "A")!.time;
-    const lumberingTime = results.find((r) => r.horseId === "L")!.time;
+    const agileTime = results.result.find((r) => r.horseId === "A")!.time;
+    const lumberingTime = results.result.find((r) => r.horseId === "L")!.time;
 
     console.log(`Agile Horse Time: ${agileTime.toFixed(3)}s`);
     console.log(`Lumbering Horse Time: ${lumberingTime.toFixed(3)}s`);

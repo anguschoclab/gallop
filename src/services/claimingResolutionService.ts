@@ -1,6 +1,11 @@
-import type { AnyImpact, CashImpact, ClaimingImpact, LogImpact } from "@/core/resolver/impacts";
-import { generateUUID } from "@/game/uuid";
-import { formatCurrency } from "@/components/HorseBits";
+import type {
+  AnyImpact,
+  CashImpact,
+  ClaimingImpact,
+  LogImpact,
+} from "@/core/resolver/impacts/index";
+import { generateUUID } from "@/core/uuid";
+import { formatCurrency } from "@/lib/formatting";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import { processClaims, type ClaimAttempt } from "@/game/claiming";
 import type { Rng } from "@/game/rng";
@@ -14,6 +19,20 @@ export interface ProcessClaimingProps {
   rng: Rng;
 }
 
+/**
+ * Resolve claiming intents for a race and generate associated impacts.
+ *
+ * This includes handling refunds for withdrawn horses, processing successful claims
+ * (transfers and payments), and logging results.
+ *
+ * @param props - Properties object for claiming resolution
+ * @param props.race - The race being resolved
+ * @param props.claimIntents - Array of player and NPC claiming intents
+ * @param props.horses - Current global horse array
+ * @param props.newDay - Current game day
+ * @param props.rng - Random number generator for tie-breaking
+ * @returns Object containing all generated Impacts
+ */
 export function processClaimingResolution({
   race,
   claimIntents,
@@ -29,15 +48,18 @@ export function processClaimingResolution({
     return { impacts };
   }
 
+  // Optimize: Create a Map for entry lookups to avoid repeated find operations
+  const entryMap = new Map(race.entries.map(e => [e.horseId, e]));
+
   // Filter out horses withdrawn from claiming
   const eligibleClaims = claimIntents.filter((claim) => {
-    const entry = race.entries.find((e) => e.horseId === claim.horseId);
+    const entry = entryMap.get(claim.horseId);
     return entry && !entry.withdrawnFromClaiming;
   });
 
   // Refund claimants for withdrawn horses
   const withdrawnClaims = claimIntents.filter((claim) => {
-    const entry = race.entries.find((e) => e.horseId === claim.horseId);
+    const entry = entryMap.get(claim.horseId);
     return entry && entry.withdrawnFromClaiming;
   });
 
@@ -89,6 +111,9 @@ export function processClaimingResolution({
       successful: false,
     }));
 
+    // Optimize: Create a Map for intent lookups
+    const intentMap = new Map(eligibleClaims.map(i => [i.horseId, i]));
+
     // Process claims using existing function
     const { transfers, logs: claimLogs } = processClaims(race, claimAttempts, horses, newDay, rng);
 
@@ -97,7 +122,7 @@ export function processClaimingResolution({
       // ClaimingImpact for horse transfer
       impacts.push({
         id: generateUUID(),
-        intentId: eligibleClaims.find((i) => i.horseId === transfer.horseId)?.id || "",
+        intentId: intentMap.get(transfer.horseId)?.id || "",
         day: newDay,
         phase: "raceResolution",
         logLevel: "always",

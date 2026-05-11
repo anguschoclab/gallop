@@ -1,4 +1,15 @@
 /**
+ * store/slices/racingSlice.ts - Racing state slice
+ *
+ * This file provides racing-related state and actions for training and performance
+ * analytics, including horse training, pace samples, calibrated pars, and training
+ * usage tracking.
+ *
+ * Dependencies: @/game/types (Horse), @/game/state/racingState (RacingState, createDefaultRacingState), @/core/resolver/intents (TrainingIntent, AnyIntent), @/game/uuid (generateUUID), @/game/constants/gameConstants (TRAINING_COST), ../types (StoreSet, StoreGet)
+ * Related files: store/index.ts (uses this slice), @/game/beyer.ts (Beyer calculation)
+ */
+
+/**
  * Racing Slice
  * Racing-related state and actions for training and performance analytics
  */
@@ -7,8 +18,10 @@ import type { Horse } from "@/game/types";
 import type { RacingState } from "@/game/state/racingState";
 import { createDefaultRacingState } from "@/game/state/racingState";
 import type { TrainingIntent } from "@/core/resolver/intents";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { TRAINING_COST } from "@/game/constants/gameConstants";
+import type { StoreSet, StoreGet } from "../types";
+import type { AnyIntent } from "@/core/resolver/intents";
 
 const TRAINING_SLOTS_PER_DAY = 2;
 
@@ -21,10 +34,21 @@ export type RacingSlice = RacingState & {
   setLastCalibrationDay: (day: number) => void;
 };
 
+/**
+ * Create the racing state slice with training and performance analytics actions.
+ *
+ * Provides horse training, pace samples, calibrated pars, and training usage tracking.
+ * Uses intent-based state updates for training actions.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Racing slice with state and actions
+ */
 export function createRacingSlice(
   set: any,
-  get: any,
-  enqueueIntent: (intent: TrainingIntent) => void,
+  get: StoreGet,
+  enqueueIntent: (intent: any) => void,
 ): RacingSlice {
   return {
     ...createDefaultRacingState(),
@@ -34,7 +58,7 @@ export function createRacingSlice(
       const horse = s.horses.find((h: Horse) => h.id === horseId);
       if (!horse) return;
       if (!horse.owned) return;
-      if (s.pregnancies.some((p: any) => !p.resolved && p.damId === horseId)) return;
+      if (s.pregnancies.some((p) => !p.resolved && p.damId === horseId)) return;
 
       // Check if horse has covering sickness or is recovering - prevent training
       if (horse.healthStatus === "covering_sickness" || horse.healthStatus === "recovering") {
@@ -54,38 +78,27 @@ export function createRacingSlice(
       if (usedToday >= TRAINING_SLOTS_PER_DAY) return;
       if (horse.energy < 10) return;
 
-      if (kind === "rest") {
-        // Rest is immediate, not queued
-        const updatedHorses = s.horses.map((h: Horse) =>
-          h.id === horseId ? { ...h, energy: Math.min(100, h.energy + 30) } : h,
-        );
-        set({
-          horses: updatedHorses,
-          trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
-        });
-      } else {
-        if (s.cash < TRAINING_COST) return;
-        if (horse.energy < 15) return;
+      const isRest = kind === "rest";
+      if (!isRest && s.cash < TRAINING_COST) return;
+      if (!isRest && horse.energy < 15) return;
 
-        // Enqueue TrainingIntent for next day advance
-        const intent: TrainingIntent = {
-          id: generateUUID(),
-          entityId: horseId,
-          source: "player",
-          day: s.day,
-          priority: 100,
-          type: "training",
-          horseId,
-          trainingType: kind,
-        };
+      // Enqueue TrainingIntent for next day advance
+      const intent: TrainingIntent = {
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "training",
+        horseId,
+        trainingType: kind,
+      };
 
-        enqueueIntent(intent);
+      enqueueIntent(intent);
 
-        set({
-          cash: s.cash - TRAINING_COST,
-          trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
-        });
-      }
+      set({
+        trainingUsed: { ...s.trainingUsed, [horseId]: usedToday + 1 },
+      });
     },
 
     setTrainingUsed: (horseId, count) => {

@@ -32,6 +32,7 @@ function mockHorse(
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     genotype: {} as any,
   };
 }
@@ -184,8 +185,8 @@ describe("Gender and Weight Influence", () => {
       const resS = runRaceToCompletion([rS], distance, raceRng);
       const resG = runRaceToCompletion([rG], distance, raceRng);
 
-      stallionTimes.push(resS[0].time);
-      geldingTimes.push(resG[0].time);
+      stallionTimes.push(resS.result[0].time);
+      geldingTimes.push(resG.result[0].time);
     }
 
     const stallionVariance = Math.max(...stallionTimes) - Math.min(...stallionTimes);

@@ -1,60 +1,54 @@
 /**
+ * store/slices/coreSlice.ts - Core game state slice
+ *
+ * This file provides the core game loop properties and essential state management,
+ * including race entry/withdrawal, race tactics, race resolution, claiming,
+ * and day advancement functions.
+ *
+ * Dependencies: immer (applyPatches), @/game/state/coreState (CoreState, createDefaultCoreState), @/game/types (Horse, Race, PlayerProfile), @/game/store (ActionResult), @/core/time/pipeline (executePipeline, PipelineContext), @/core/time/phases (GAME_PIPELINE_PHASES), @/game/rng (createRng, hashStr), @/game/raceSchedule (getCurrentYear), @/core/time/advance (computePlayerRaceDays), @/game/constants/gameConstants (UPKEEP_PER_HORSE, DAYS_PER_YEAR, DAYS_PER_MONTH, DAYS_PER_WEEK), ../guards (requireOwned, requireHorse), ../types (StoreSet, StoreGet)
+ * Related files: store/index.ts (uses this slice), @/core/time/pipeline.ts (day advancement logic)
+ */
+
+/**
  * Core Slice
  * Core game loop properties and essential state management
  */
 
+import { applyPatches } from "immer";
 import type { CoreState } from "@/game/state/coreState";
 import { createDefaultCoreState } from "@/game/state/coreState";
 import type { Horse, Race, PlayerProfile } from "@/game/types";
 import type { ActionResult } from "@/game/store";
+import type { AnyIntent } from "@/core/resolver/intents";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
-import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
-import { intentValidationPhase } from "@/core/time/phases/intentValidation";
-import { upkeepPhase } from "@/core/time/phases/upkeep";
-import { agingPhase } from "@/core/time/phases/aging";
-import { breedingSeasonPhase } from "@/core/time/phases/breedingSeason";
-import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
-import { npcBreedingPhase } from "@/core/time/phases/npcBreedingPhase";
-import { energyPhase } from "@/core/time/phases/energy";
-import { marketPhase } from "@/core/time/phases/market";
-import { racesPhase } from "@/core/time/phases/races";
-import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
-import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
-import { pregnancyPhase } from "@/core/time/phases/pregnancy";
-import { npcCyclePhase } from "@/core/time/phases/npcCycle";
-import { stallionRetirementPhase } from "@/core/time/phases/stallionRetirement";
-import { pastureRetirementPhase } from "@/core/time/phases/pastureRetirement";
-import { hallOfFamePhase } from "@/core/time/phases/hallOfFame";
-import { horseDeathPhase } from "@/core/time/phases/horseDeath";
-import { auctionsPhase } from "@/core/time/phases/auctions";
-import { leaderboardPhase } from "@/core/time/phases/leaderboardPhase";
-import { awardsPhase } from "@/core/time/phases/awards";
-import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
-import { stateUpdatePhase } from "@/core/time/phases/stateUpdate";
-import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
-import { consignmentResolutionPhase } from "@/core/time/phases/consignmentResolution";
-import { purchaseResolutionPhase } from "@/core/time/phases/purchaseResolution";
-import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
-import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
-import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
-import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
-import { privateSaleExpiryPhase } from "@/core/time/phases/privateSaleExpiry";
-import { npcClaimingPhase } from "@/core/time/phases/npcClaiming";
-import { claimResolutionPhase } from "@/core/time/phases/claimResolution";
+import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { createRng, hashStr } from "@/game/rng";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
-import { UPKEEP_PER_HORSE } from "@/game/constants/gameConstants";
+import {
+  UPKEEP_PER_HORSE,
+  DAYS_PER_YEAR,
+  DAYS_PER_MONTH,
+  DAYS_PER_WEEK,
+} from "@/game/constants/gameConstants";
+import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";
+import { generateUUID } from "@/core/uuid";
+import type { StoreSet, StoreGet } from "../types";
 
 export type CoreSlice = CoreState & {
+  enqueueIntent: (intent: AnyIntent) => void;
   enterRace: (raceId: string, horseId: string) => ActionResult;
   withdrawRace: (raceId: string, horseId: string) => ActionResult;
+  setRaceTactics: (
+    raceId: string,
+    horseId: string,
+    tactics: import("@/core/resolver/intents").TacticsIntent["tactics"],
+  ) => void;
   resolveRaceWithImpacts: (
     raceId: string,
     result: { horseId: string; position: number; time: number }[],
-    runners?: any[],
+    runners?: Array<{ horseId: string; owned?: boolean }>,
   ) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
@@ -74,89 +68,146 @@ export type CoreSlice = CoreState & {
   addLogEntry: (entry: { day: number; text: string }) => void;
 };
 
-export function createCoreSlice(set: any, get: any): CoreSlice {
+/**
+ * Create the core game state slice with all game loop actions.
+ *
+ * Provides race entry/withdrawal, race tactics, race resolution, claiming,
+ * day advancement, and state setters. Uses intent-based state updates.
+ *
+ * @param set - Zustand set function
+ * @param get - Zustand get function
+ * @param enqueueIntent - Function to enqueue intents for processing
+ * @returns Core slice with state and actions
+ */
+export function createCoreSlice(
+  set: StoreSet,
+  get: StoreGet,
+  enqueueIntent: (intent: AnyIntent) => void,
+): CoreSlice {
+  /**
+   * Helper to apply day advancement results to the store state.
+   * This consolidates the state updates from both worker and synchronous paths.
+   *
+   * @param finalState - The final game state after pipeline processing
+   * @param newLogs - New logs generated during the day advancement
+   * @param playerUpkeep - The calculated upkeep cost for the player
+   * @param newDay - The new day number
+   */
+  const applyDayResult = (
+    finalState: any,
+    newLogs: { day: number; text: string }[],
+    playerUpkeep: number,
+    newDay: number,
+  ) => {
+    const s = get();
+
+    // Keys that are managed via special logic instead of a direct copy from worker state
+    const overrides = {
+      day: newDay,
+      pendingIntents: [],
+      trainingUsed: {},
+      log: [
+        ...newLogs,
+        { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` },
+        ...s.log,
+      ].slice(0, 1000), // Persist more history, but cap it
+    };
+
+    // Build the update by merging finalState and overrides
+    const update: any = { ...finalState, ...overrides };
+
+    // Explicitly remove keys that shouldn't be in the store (e.g. worker-only metadata)
+    delete update.lastFrameTime;
+    delete update.isAdvancing;
+
+    set(update);
+  };
+
   return {
     ...createDefaultCoreState(),
+
+    enqueueIntent: (intent) => {
+      set((state: any) => ({
+        pendingIntents: [...(state.pendingIntents || []), intent],
+      }));
+    },
 
     enterRace: (raceId: string, horseId: string) => {
       const s = get();
       const race = s.races.find((r: Race) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
-      const horse = s.horses.find((h: Horse) => h.id === horseId);
-      if (!horse) return { ok: false, reason: "Horse not found." };
-      if (!horse.owned) return { ok: false, reason: "You don't own this horse." };
-      if (horse.energy < 50) return { ok: false, reason: "Horse lacks sufficient energy." };
-      if (race.entries.some((e: any) => e.horseId === horseId))
+      const horse = requireHorse(s.horses, horseId);
+      const ownershipGuard = requireOwned(horse);
+      if (ownershipGuard) return ownershipGuard;
+
+      if (horse!.energy < 50) return { ok: false, reason: "Horse lacks sufficient energy." };
+      if (race.entries.some((e) => e.horseId === horseId))
         return { ok: false, reason: "Horse already entered." };
 
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId
-            ? {
-                ...r,
-                entries: [
-                  ...r.entries,
-                  {
-                    horseId,
-                    jockeyId: undefined,
-                    scratched: false,
-                  },
-                ],
-              }
-            : r,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `${horse.name} entered in ${race.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "race_entry",
+        raceId,
+        horseId,
       });
+
       return { ok: true };
+    },
+
+    setRaceTactics: (raceId: string, horseId: string, tactics: any) => {
+      const s = get();
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "tactics",
+        raceId,
+        horseId,
+        tactics,
+      });
     },
 
     withdrawRace: (raceId: string, horseId: string) => {
       const s = get();
       const race = s.races.find((r: Race) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
-      const entry = race.entries.find((e: any) => e.horseId === horseId);
+      const entry = race.entries.find((e) => e.horseId === horseId);
       if (!entry) return { ok: false, reason: "Horse not entered in this race." };
 
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId
-            ? {
-                ...r,
-                entries: r.entries.filter((e: any) => e.horseId !== horseId),
-              }
-            : r,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Horse withdrawn from ${race.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "race_withdrawal",
+        raceId,
+        horseId,
       });
+
       return { ok: true };
     },
 
     resolveRaceWithImpacts: (
       raceId: string,
       result: { horseId: string; position: number; time: number }[],
-      runners?: any[],
     ) => {
       const s = get();
-      const race = s.races.find((r: Race) => r.id === raceId);
-      if (!race) return;
-
-      // Update race with results
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId ? { ...r, resolved: true, results: result } : r,
-        ),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: raceId,
+        source: "system",
+        day: s.day,
+        priority: 10,
+        type: "race_resolution",
+        raceId,
+        results: result,
       });
     },
 
@@ -168,25 +219,18 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
       if (!horse) return { ok: false, reason: "Horse not found." };
       if (horse.owned) return { ok: false, reason: "Cannot claim your own horse." };
 
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId
-            ? {
-                ...r,
-                entries: r.entries.map((e: any) =>
-                  e.horseId === horseId ? { ...e, claimed: true } : e,
-                ),
-              }
-            : r,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Claim submitted for ${horse.name} in ${race.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "claiming",
+        raceId,
+        horseId,
+        claimingPrice: race.claimingPrice || 0,
       });
+
       return { ok: true };
     },
 
@@ -195,25 +239,17 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
       const race = s.races.find((r: Race) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
 
-      set({
-        races: s.races.map((r: Race) =>
-          r.id === raceId
-            ? {
-                ...r,
-                entries: r.entries.map((e: any) =>
-                  e.horseId === horseId ? { ...e, claimed: false } : e,
-                ),
-              }
-            : r,
-        ),
-        log: [
-          {
-            day: s.day,
-            text: `Claim withdrawn for horse in ${race.name}.`,
-          },
-          ...s.log,
-        ].slice(0, 50),
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "withdraw_from_claiming",
+        raceId,
+        horseId,
       });
+
       return { ok: true };
     },
 
@@ -246,56 +282,35 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
           progressCallback,
         });
 
-        const { state: finalState, logs: newLogs } = result;
+        const { patches, logs: newLogs } = result;
 
-        set({
-          day: newDay,
-          cash: finalState.cash,
-          horses: finalState.horses,
-          market: finalState.market,
-          races: finalState.races,
-          trainingUsed: {},
-          pregnancies: finalState.pregnancies,
-          calibratedPars: finalState.calibratedPars,
-          lastCalibrationDay: finalState.lastCalibrationDay,
-          npcStables: finalState.npcStables,
-          scoutReports: finalState.scoutReports,
-          auctions: finalState.auctions,
-          awards: finalState.awards,
-          lastAwardYear: finalState.lastAwardYear,
-          pendingAwardCeremonies: finalState.pendingAwardCeremonies,
-          currentCeremonyIndex: finalState.currentCeremonyIndex,
-          industryMeanEarnings: finalState.industryMeanEarnings,
-          industryEarningsUpdatedDay: finalState.industryEarningsUpdatedDay,
-          sireLeaderboards: finalState.sireLeaderboards,
-          sireTrendHistory: finalState.sireTrendHistory,
-          leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
-          jockeys: finalState.jockeys,
-          campaigns: finalState.campaigns,
-          expenses: finalState.expenses,
-          transactions: finalState.transactions,
-          reputation: finalState.reputation,
-          transports: finalState.transports,
-          hallOfFame: finalState.hallOfFame,
-          npcAIManager: finalState.npcAIManager,
-          privateSaleOffers: finalState.privateSaleOffers,
-          claims: finalState.claims,
-          pendingIntents: [], // Clear pending intents after processing
-          log: [
-            ...newLogs,
-            { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` },
-            ...s.log,
-          ].slice(0, 50),
-        });
+        // Apply patches to get the final state
+        const finalState = applyPatches(s, patches);
+
+        applyDayResult(finalState, newLogs, playerUpkeep, newDay);
       } catch (error) {
         // Fallback: Worker not available (SSR context), use synchronous pipeline
-        console.warn("Worker not available, using synchronous pipeline execution", error);
+        if (!(error instanceof Error && error.message.includes("Worker not available"))) {
+          // Only log if it's NOT just a missing worker
+          console.warn(
+            "Worker not available or failed to clone state, using synchronous pipeline execution",
+          );
+        }
 
         // Execute pipeline for all phases
         const pipelineContext: PipelineContext = {
           previousDay: s.day,
           newDay,
-          state: { ...s, horses },
+          state: {
+            ...s,
+            horses,
+            npcAIManager: s.npcAIManager
+              ? {
+                  ...s.npcAIManager,
+                  stableStates: { ...s.npcAIManager.stableStates },
+                }
+              : undefined,
+          },
           logs: [],
           dailyRng: createRng(hashStr("daily_" + newDay)),
           // Intent/impact resolver fields
@@ -304,94 +319,12 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
           impactLog: [],
         };
 
-        const phases = [
-          // Intent/impact resolver phases
-          intentCollectionPhase,
-          intentValidationPhase,
-          // D2 — Private sale offer expiry (very early)
-          privateSaleExpiryPhase,
-          // Existing phases
-          upkeepPhase,
-          agingPhase,
-          breedingSeasonPhase,
-          industryMetricsPhase,
-          npcBreedingPhase,
-          energyPhase,
-          marketPhase,
-          racesPhase,
-          beyerRecalibrationPhase,
-          jockeyPhase,
-          pregnancyPhase,
-          npcCyclePhase,
-          stallionRetirementPhase,
-          pastureRetirementPhase,
-          hallOfFamePhase,
-          horseDeathPhase,
-          auctionsPhase,
-          leaderboardPhase,
-          awardsPhase,
-          schedulerPhase,
-          stateUpdatePhase,
-          // Resolution phases (convert intents to impacts)
-          raceEntryResolutionPhase,
-          consignmentResolutionPhase,
-          purchaseResolutionPhase,
-          breedingResolutionPhase,
-          trainingResolutionPhase,
-          claimingWithdrawalPhase,
-          // D3 — NPC claim filing (before race resolution)
-          npcClaimingPhase,
-          raceResolutionPhase,
-          // D3 — Claim resolution (after race resolution)
-          claimResolutionPhase,
-          // Impact application phase (final)
-          impactApplicationPhase,
-        ];
-
-        const updatedContext = executePipeline(phases, pipelineContext);
+        const updatedContext = executePipeline(GAME_PIPELINE_PHASES, pipelineContext);
 
         // Extract final state from pipeline context
         const { state: finalState, logs: newLogs } = updatedContext;
 
-        set({
-          day: newDay,
-          cash: finalState.cash,
-          horses: finalState.horses,
-          market: finalState.market,
-          races: finalState.races,
-          trainingUsed: {},
-          pregnancies: finalState.pregnancies,
-          calibratedPars: finalState.calibratedPars,
-          lastCalibrationDay: finalState.lastCalibrationDay,
-          npcStables: finalState.npcStables,
-          scoutReports: finalState.scoutReports,
-          auctions: finalState.auctions,
-          awards: finalState.awards,
-          lastAwardYear: finalState.lastAwardYear,
-          pendingAwardCeremonies: finalState.pendingAwardCeremonies,
-          currentCeremonyIndex: finalState.currentCeremonyIndex,
-          industryMeanEarnings: finalState.industryMeanEarnings,
-          industryEarningsUpdatedDay: finalState.industryEarningsUpdatedDay,
-          sireLeaderboards: finalState.sireLeaderboards,
-          sireTrendHistory: finalState.sireTrendHistory,
-          leaderboardsUpdatedDay: finalState.leaderboardsUpdatedDay,
-          jockeys: finalState.jockeys,
-          campaigns: finalState.campaigns,
-          expenses: finalState.expenses,
-          transactions: finalState.transactions,
-          reputation: finalState.reputation,
-          transports: finalState.transports,
-          hallOfFame: finalState.hallOfFame,
-          npcAIManager: finalState.npcAIManager,
-          privateSaleOffers: finalState.privateSaleOffers,
-          claims: finalState.claims,
-          pendingIntents: [], // Clear pending intents after processing
-          log: [
-            ...newLogs,
-            { day: newDay, text: `Day ${newDay} begins. Upkeep: $${playerUpkeep}.` },
-            ...s.log,
-          ].slice(0, 50),
-        });
+        applyDayResult(finalState, newLogs, playerUpkeep, newDay);
       }
     },
 
@@ -410,7 +343,7 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
         // O(1) lookup instead of O(n) array.find
         if (playerRaceDays.has(nextDay) && !headless) {
           const playerRace = currentS.races.find(
-            (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e: any) => e.owned),
+            (r: Race) => !r.resolved && r.day === nextDay && r.entries.some((e) => e.owned),
           );
           if (playerRace) {
             set({ pendingPlayerRaceId: playerRace.id });
@@ -428,15 +361,15 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
     },
 
     advanceWeek: async (headless?: boolean) => {
-      await get().advanceMultipleDays(7, headless);
+      await get().advanceMultipleDays(DAYS_PER_WEEK, headless);
     },
 
     advanceMonth: async (headless?: boolean) => {
-      await get().advanceMultipleDays(30, headless);
+      await get().advanceMultipleDays(DAYS_PER_MONTH, headless);
     },
 
     advanceYear: async (headless?: boolean) => {
-      await get().advanceMultipleDays(365, headless);
+      await get().advanceMultipleDays(DAYS_PER_YEAR, headless);
     },
 
     setDay: (day) => {
@@ -464,8 +397,8 @@ export function createCoreSlice(set: any, get: any): CoreSlice {
     },
 
     addLogEntry: (entry) => {
-      set((state: any) => ({
-        log: [entry, ...state.log].slice(0, 50),
+      set((state) => ({
+        log: [entry, ...state.log].slice(0, 500),
       }));
     },
   };

@@ -41,7 +41,22 @@ export interface CommentaryLine {
 }
 
 /**
- * Generate a commentary line from a template
+ * Generate a commentary line from a template.
+ *
+ * @param type - Narrative event type
+ * @param timestamp - Simulation time when event occurred
+ * @param context - Narrative context for template resolution
+ * @param context.race - Current race data
+ * @param context.runner - Runner associated with event
+ * @param context.horse - Horse data for the runner
+ * @param context.stable - Stable data for the horse
+ * @param context.rng - RNG service for template selection
+ * @param context.lengths - Optional gap distance string
+ * @param context.hasAnnouncedBio - Set of horses with announced biographies
+ * @param context.lastRanks - Map of previous field ranks
+ * @param lineCounter - Object wrapping unique ID counter
+ * @param lineCounter.value - The current counter value
+ * @returns Formatted CommentaryLine object
  */
 export function generateCommentaryLine(
   type: NarrativeEvent,
@@ -127,7 +142,14 @@ export function generateCommentaryLine(
 }
 
 /**
- * Generate expert insight commentary
+ * Generate expert insight commentary based on horse form and race context.
+ *
+ * @param runner - The runner to analyze
+ * @param horse - Horse data for the runner
+ * @param race - Current race data
+ * @param stable - Stable data for the horse
+ * @param rng - RNG service for selection
+ * @returns Insight text or null if no insights applicable
  */
 export function generateExpertInsight(
   runner: Runner,
@@ -161,7 +183,10 @@ export function generateExpertInsight(
 }
 
 /**
- * Get ordinal number string (1st, 2nd, 3rd, etc.)
+ * Get ordinal number string (1st, 2nd, 3rd, etc.).
+ *
+ * @param n - Number to format
+ * @returns Ordinal string
  */
 export function getOrdinal(n: number): string {
   const s = ["th", "st", "nd", "rd"];

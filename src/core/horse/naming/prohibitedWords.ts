@@ -1,12 +1,52 @@
 /**
+ * prohibitedWords.ts - Prohibited word lists for naming validation
+ *
+ * This file provides lists of offensive words, trade names, reserved names, and
+ * prohibited patterns for horse naming validation based on Jockey Club guidelines.
+ *
+ * Dependencies: None (self-contained data)
+ * Related files: jockeyClubRules.ts (uses these lists for validation)
+ */
+
+/**
  * Prohibited and offensive word lists for horse naming validation.
  * Based on Jockey Club guidelines and general offensive word filters.
  */
 
 export const OFFENSIVE_WORDS = [
-  "offensive", // Placeholder for actual offensive words
-  "profanity",
-  // In a real app, this would be a comprehensive list or use a library
+  // Common profanity (mild to moderate)
+  "damn",
+  "hell",
+  "ass",
+  "bastard",
+  "bitch",
+  "shit",
+  "crap",
+  "piss",
+  "offensive",
+  // Slurs and hate speech (blocked)
+  "nigger",
+  "nigga",
+  "faggot",
+  "fag",
+  "retard",
+  "retarded",
+  // Sexual content (blocked)
+  "fuck",
+  "sex",
+  "porn",
+  // Violence and hate (blocked)
+  "kill",
+  "murder",
+  "death",
+  "die",
+  // Drugs (blocked)
+  "drug",
+  "cocaine",
+  "heroin",
+  "meth",
+  // Additional filters can be added as needed
+  // This list is intentionally conservative for a general audience
 ];
 
 export const TRADE_NAMES = [
@@ -35,5 +75,23 @@ export const RESERVED_NAMES = ["Unnamed", "Anonymous", "System", "Admin", "N/A",
 
 export const PROHIBITED_PATTERNS = [
   /\b\d+\b/, // No standalone numbers
-  /[!@#$%^&*()_=+[\]{};:"\\|,.<>/?]/, // Removed ' and - is already allowed by exclusion
+  /[!]/, // Exclamation mark
+  /[@]/, // At sign
+  /[#]/, // Hash
+  /[$]/, // Dollar sign
+  /[%]/, // Percent sign
+  /[\^]/, // Caret
+  /[&]/, // Ampersand
+  /[*]/, // Asterisk
+  /[()]/, // Parentheses
+  /[_]/, // Underscore
+  /[+]/, // Plus sign
+  /[\[\]]/, // Square brackets
+  /[{}]/, // Curly brackets
+  /[;:]/, // Semicolon and colon
+  /["\\]/, // Quote and backslash
+  /[|]/, // Pipe
+  /[,.]/, // Comma and period
+  /[<>]/, // Angle brackets
+  /[\/?]/, // Forward slash and question mark
 ];

@@ -1,3 +1,13 @@
+/**
+ * jockey/proceduralNaming.ts - Procedural jockey name generation
+ *
+ * This file provides regional jockey name pools and procedural name generation
+ * for different racing regions.
+ *
+ * Dependencies: @/game/rng (Rng), @/game/types (RegionalSystem)
+ * Related files: types.ts (provides jockey types)
+ */
+
 import type { Rng } from "@/game/rng";
 import type { RegionalSystem } from "@/game/types";
 
@@ -261,6 +271,17 @@ const REGIONAL_POOLS: Record<RegionalSystem, JockeyNamePool> = {
 
 /**
  * Generate a procedural jockey name based on the region.
+ *
+ * Uses regional name pools to generate culturally appropriate jockey names.
+ * Avoids duplicate names by checking against a set of used names.
+ *
+ * @param region - Regional system for name pool selection
+ * @param rng - Random number generator
+ * @param usedNames - Optional set of already used names to avoid duplicates
+ * @returns Generated jockey name
+ *
+ * @example
+ * const name = generateProceduralJockeyName("north_america", rng);
  */
 export function generateProceduralJockeyName(
   region: RegionalSystem,

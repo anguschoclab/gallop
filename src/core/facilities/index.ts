@@ -1,3 +1,13 @@
+/**
+ * facilities/index.ts - Facilities module
+ *
+ * This module provides infrastructure management for racing stables.
+ * Facilities affect training, recovery, injury healing, and racing operations.
+ *
+ * Dependencies: ./facilityTypes (types), ./facilityDefaults (functions)
+ * Related files: facilityTypes.ts, facilityDefaults.ts
+ */
+
 // Facilities Module - Infrastructure management for racing stables
 // Facilities affect training, recovery, injury healing, and racing operations
 
@@ -24,4 +34,5 @@ export {
   isWorkoutEnabled,
   upgradeFacility,
   downgradeFacility,
+  facilityUpgradeCost,
 } from "./facilityDefaults";

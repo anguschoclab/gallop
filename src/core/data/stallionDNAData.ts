@@ -1,3 +1,14 @@
+/**
+ * stallionDNAData.ts - Stallion research data for DNA generation
+ *
+ * This file provides research data for stallions gathered from real-world sources,
+ * used to generate historically accurate DNA instead of procedural generation.
+ * Includes physical traits, racing performance, progeny performance, and genetic markers.
+ *
+ * Dependencies: @/core/genetics/types (Genotype, Locus, MarkerGenotype)
+ * Related files: genetics/mapper.ts (uses research data for genotype mapping), genetics/generation.ts (uses for deterministic generation)
+ */
+
 import type { Genotype, Locus, MarkerGenotype } from "@/core/genetics/types";
 
 /**
@@ -11127,7 +11138,13 @@ export const stallionResearchData: Map<string, StallionResearchData> = new Map([
 ]);
 
 /**
- * Check if a stallion has complete research data
+ * Check if a stallion has complete research data.
+ *
+ * Returns true if the stallion has at least one piece of research data
+ * (physical traits, racing performance, or progeny performance).
+ *
+ * @param data - The stallion research data
+ * @returns True if the stallion has complete data
  */
 export function hasCompleteData(data: StallionResearchData): boolean {
   return !!(
@@ -11141,14 +11158,23 @@ export function hasCompleteData(data: StallionResearchData): boolean {
 }
 
 /**
- * Get research data for a stallion
+ * Get research data for a stallion.
+ *
+ * Looks up research data for a stallion by name.
+ *
+ * @param name - The stallion name
+ * @returns Stallion research data or undefined if not found
  */
 export function getStallionResearchData(name: string): StallionResearchData | undefined {
   return stallionResearchData.get(name);
 }
 
 /**
- * Add research data for a stallion
+ * Add research data for a stallion.
+ *
+ * Stores or updates research data for a stallion in the data map.
+ *
+ * @param data - The stallion research data to add
  */
 export function addStallionResearchData(data: StallionResearchData): void {
   stallionResearchData.set(data.name, data);

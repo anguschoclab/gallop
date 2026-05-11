@@ -1,3 +1,12 @@
+/**
+ * reputation/index.ts - Reputation module
+ *
+ * This module provides manager prestige and reputation tracking functionality.
+ *
+ * Dependencies: ./reputationTypes (types and functions)
+ * Related files: reputationTypes.ts (provides types and functions)
+ */
+
 // Reputation Module - Manager prestige and reputation tracking
 
 export type {

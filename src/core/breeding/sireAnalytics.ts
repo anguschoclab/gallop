@@ -1,10 +1,31 @@
+/**
+ * sireAnalytics.ts - Stallion performance analytics
+ *
+ * This file provides analytics functions for evaluating stallion performance including
+ * Average Earnings Index (AEI), Comparable Index (CI), classification, surface bias,
+ * distance preference, and crop maturity classification.
+ *
+ * Dependencies: @/game/types (Horse), ./lineage (getRunnersBy, foalLifetimeEarnings, getFoalsBy)
+ * Related files: stallions.ts (uses analytics for fee calculation), leaderboardService.ts (uses for rankings)
+ */
+
 import type { Horse } from "@/game/types";
 import { getRunnersBy, foalLifetimeEarnings, getFoalsBy } from "./lineage";
+import { getCareerStats } from "@/core/horse/stats";
 
 /**
- * Calculate Average Earnings Index (AEI) for a stallion
- * AEI measures the average earnings of a stallion's progeny relative to the industry mean
+ * Calculate Average Earnings Index (AEI) for a stallion.
+ *
+ * AEI measures the average earnings of a stallion's progeny relative to the industry mean.
  * Formula: (Progeny Average Earnings / Industry Mean Earnings) × 100
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @returns AEI value
+ *
+ * @example
+ * const aei = calculateAei(stallion, allHorses, industryMean);
  */
 export function calculateAei(
   stallion: Horse,
@@ -27,9 +48,18 @@ export function calculateAei(
 }
 
 /**
- * Calculate Comparable Index (CI) for a stallion
- * CI compares a stallion's progeny performance to other stallions with similar mated mares
+ * Calculate Comparable Index (CI) for a stallion.
+ *
+ * CI compares a stallion's progeny performance to other stallions with similar mated mares.
  * Formula: (Progeny Average Earnings / Comparable Sires' Progeny Average Earnings) × 100
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @returns CI value
+ *
+ * @example
+ * const ci = calculateCi(stallion, allHorses, industryMean);
  */
 export function calculateCi(
   stallion: Horse,
@@ -51,7 +81,19 @@ export function calculateCi(
 }
 
 /**
- * Classify a stallion based on their AEI/CI performance
+ * Classify a stallion based on their AEI/CI performance.
+ *
+ * Returns a classification tier based on progeny performance metrics.
+ * Classifications: elite (AEI > 2.0, CI > 1.0), premium (AEI > 1.5, CI > 0.8),
+ * solid (AEI > 1.0, CI > 0.5), developing (AEI > 0.5, CI > 0.3), unproven.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @returns Sire classification tier
+ *
+ * @example
+ * const classification = classifySire(stallion, allHorses, industryMean);
  */
 export type SireClassification =
   | "elite" // AEI > 2.0, CI > 1.0
@@ -60,6 +102,18 @@ export type SireClassification =
   | "developing" // AEI > 0.5, CI > 0.3
   | "unproven"; // AEI <= 0.5 or insufficient data
 
+/**
+ * Classify a stallion based on their AEI/CI performance.
+ *
+ * Returns a classification tier based on progeny performance metrics.
+ * Classifications: elite (AEI > 2.0, CI > 1.0), premium (AEI > 1.5, CI > 0.8),
+ * solid (AEI > 1.0, CI > 0.5), developing (AEI > 0.5, CI > 0.3), unproven.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @returns Sire classification tier
+ */
 export function classifySire(
   stallion: Horse,
   allHorses: Horse[],
@@ -79,11 +133,40 @@ export function classifySire(
 }
 
 /**
- * Get surface bias for a stallion based on progeny performance
+ * Get surface bias for a stallion based on progeny performance.
+ *
+ * Analyzes progeny race results to determine if the stallion produces horses
+ * that perform better on dirt, turf, synthetic, or are balanced.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @returns Surface bias classification
+ *
+ * @example
+ * const bias = getSireSurfaceBias(stallion, allHorses);
  */
 export type SurfaceBias = "dirt" | "turf" | "synthetic" | "balanced";
 
-export function getSireSurfaceBias(stallion: Horse, allHorses: Horse[]): SurfaceBias {
+/**
+ * Get surface bias for a stallion based on progeny performance.
+ *
+ * Analyzes progeny race results to determine if the stallion produces horses
+ * that perform better on dirt, turf, synthetic, or has no bias.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @returns Surface bias classification
+ */
+export function getSireSurfaceBias(
+  /**
+   * The stallion horse
+   */
+  stallion: Horse,
+  /**
+   * All horses in the game state
+   */
+  allHorses: Horse[],
+): SurfaceBias {
   const runners = getRunnersBy({ horses: allHorses }, stallion.id);
   if (runners.length < 5) {
     // Fallback to bloodline-based for insufficient data
@@ -105,23 +188,15 @@ export function getSireSurfaceBias(stallion: Horse, allHorses: Horse[]): Surface
   let turfStarts = 0,
     dirtStarts = 0,
     syntheticStarts = 0;
-
   for (const foal of runners) {
-    for (const race of foal.raceHistory) {
-      if (!race.surface) continue;
-      if (race.surface === "Turf") {
-        turfStarts++;
-        if (race.position === 1) turfWins++;
-      } else if (race.surface === "Dirt") {
-        dirtStarts++;
-        if (race.position === 1) dirtWins++;
-      } else {
-        syntheticStarts++;
-        if (race.position === 1) syntheticWins++;
-      }
-    }
+    const cs = getCareerStats(foal);
+    turfWins += cs.turfWins;
+    turfStarts += cs.turfStarts;
+    dirtWins += cs.dirtWins;
+    dirtStarts += cs.dirtStarts;
+    syntheticWins += cs.syntheticWins;
+    syntheticStarts += cs.syntheticStarts;
   }
-
   const turfRate = turfStarts > 0 ? turfWins / turfStarts : 0;
   const dirtRate = dirtStarts > 0 ? dirtWins / dirtStarts : 0;
   const syntheticRate = syntheticStarts > 0 ? syntheticWins / syntheticStarts : 0;
@@ -133,10 +208,30 @@ export function getSireSurfaceBias(stallion: Horse, allHorses: Horse[]): Surface
 }
 
 /**
- * Get distance preference for a stallion based on progeny performance
+ * Get distance preference for a stallion based on progeny performance.
+ *
+ * Analyzes progeny race results to determine if the stallion produces horses
+ * that perform better at sprint, classic, stayer, or versatile distances.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @returns Distance preference classification
+ *
+ * @example
+ * const preference = getSireDistancePreference(stallion, allHorses);
  */
 export type DistancePreference = "sprint" | "classic" | "stayer" | "versatile";
 
+/**
+ * Get distance preference for a stallion based on progeny performance.
+ *
+ * Analyzes progeny race results to determine if the stallion produces horses
+ * that perform better at sprint, classic, stayer, or versatile distances.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @returns Distance preference classification
+ */
 export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): DistancePreference {
   const runners = getRunnersBy({ horses: allHorses }, stallion.id);
   if (runners.length < 5) return "versatile";
@@ -147,23 +242,15 @@ export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): 
   let sprintStarts = 0,
     classicStarts = 0,
     stayerStarts = 0;
-
   for (const foal of runners) {
-    for (const race of foal.raceHistory) {
-      const dist = race.distance || 0;
-      if (dist < 1400) {
-        sprintStarts++;
-        if (race.position === 1) sprintWins++;
-      } else if (dist < 2000) {
-        classicStarts++;
-        if (race.position === 1) classicWins++;
-      } else {
-        stayerStarts++;
-        if (race.position === 1) stayerWins++;
-      }
-    }
+    const cs = getCareerStats(foal);
+    sprintWins += cs.sprintWins;
+    sprintStarts += cs.sprintStarts;
+    classicWins += cs.classicWins;
+    classicStarts += cs.classicStarts;
+    stayerWins += cs.stayerWins;
+    stayerStarts += cs.stayerStarts;
   }
-
   const sprintRate = sprintStarts > 0 ? sprintWins / sprintStarts : 0;
   const classicRate = classicStarts > 0 ? classicWins / classicStarts : 0;
   const stayerRate = stayerStarts > 0 ? stayerWins / stayerStarts : 0;
@@ -175,7 +262,15 @@ export function getSireDistancePreference(stallion: Horse, allHorses: Horse[]): 
 }
 
 /**
- * Calculate win percentage for a stallion's progeny
+ * Calculate win percentage for a stallion's progeny.
+ *
+ * Returns the percentage of progeny that are stakes winners.
+ *
+ * @param stallion - The stallion horse
+ * @returns Win percentage (0-100)
+ *
+ * @example
+ * const winPct = calculateProgenyWinPercentage(stallion);
  */
 export function calculateProgenyWinPercentage(stallion: Horse): number {
   if (!stallion.stud || !stallion.stud.lifetimeFoals) return 0;
@@ -189,7 +284,18 @@ export function calculateProgenyWinPercentage(stallion: Horse): number {
 }
 
 /**
- * Get sire analytics summary
+ * Get sire analytics summary.
+ *
+ * Returns a comprehensive analytics object containing all key metrics
+ * for evaluating stallion performance.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @returns SireAnalytics object with all metrics
+ *
+ * @example
+ * const analytics = getSireAnalytics(stallion, allHorses, industryMean);
  */
 export interface SireAnalytics {
   stallionId: string;
@@ -206,6 +312,17 @@ export interface SireAnalytics {
   standingFee: number;
 }
 
+/**
+ * Get sire analytics summary.
+ *
+ * Returns a comprehensive analytics object containing all key metrics
+ * for evaluating stallion performance.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @returns SireAnalytics object with all metrics
+ */
 export function getSireAnalytics(
   stallion: Horse,
   allHorses: Horse[],
@@ -242,6 +359,20 @@ export type CropTier =
 // his foals in the live horses array. Freshman = first crop is racing age
 // for the first time this season; second-crop = oldest crop is now 4yo
 // (at least one full season of results); established = 3+ crops on record.
+/**
+ * Classify a stallion by the maturity of his crops.
+ *
+ * Returns the crop tier based on the ages of the stallion's foals:
+ * freshman (first crop 2-3yo), second-crop (oldest 4yo), established (3+ crops),
+ * unproven (no racing-age progeny).
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @returns Crop tier classification
+ *
+ * @example
+ * const tier = classifyStallion(stallion, allHorses);
+ */
 export function classifyStallion(stallion: Horse, allHorses: Horse[]): CropTier {
   if (!stallion.stud?.atStud) return "unproven";
   const foals = getFoalsBy({ horses: allHorses }, stallion.id);
@@ -264,6 +395,21 @@ export function classifyStallion(stallion: Horse, allHorses: Horse[]): CropTier 
 // his value-vs-fee ratio, his surface dominance, his Group 1 strike rate, etc.
 // Lightweight templating — no heavy NLG. Returns a string ready for display
 // in the leaderboard.
+/**
+ * Generate editorial-style narrative for a stallion.
+ *
+ * Builds a one-line summary picking the most notable angle: sire's hot crop,
+ * value-vs-fee ratio, surface dominance, Group 1 strike rate, etc. Uses lightweight
+ * templating for display in leaderboards.
+ *
+ * @param stallion - The stallion horse
+ * @param allHorses - All horses in the game state
+ * @param industryMeanEarnings - Industry mean earnings for comparison
+ * @returns Narrative string for display
+ *
+ * @example
+ * const narrative = generateSireNarrative(stallion, allHorses, industryMean);
+ */
 export function generateSireNarrative(
   stallion: Horse,
   allHorses: Horse[],

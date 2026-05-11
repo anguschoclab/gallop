@@ -1,19 +1,41 @@
 /**
+ * store/helpers/pregnancy.ts - Pregnancy resolution helpers
+ *
+ * This file provides pure business logic for resolving pregnancies and foaling,
+ * including live foals, stillbirths, live foal guarantee retries, and cash adjustments.
+ *
+ * Dependencies: @/game/types (Horse, Pregnancy, Stable), @/core/horse/horseFactory (resolveFoaling), @/core/race/naming/raceNameGenerator (getRegionalSystem), @/core/stable/stableConfig (PERSONALITY_CONFIG), @/core/breeding/lineage (getFoalsBy), @/lib/formatting (formatCurrency), @/game/constants/gameConstants (BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE)
+ * Related files: store/slices/breedingSlice.ts (uses pregnancy helpers)
+ */
+
+/**
  * Pregnancy Resolution Helper Functions
  * Pure business logic for resolving pregnancies and foaling
  */
 
-import type { Horse, Pregnancy, Stable } from "@/game/types";
+import type { Horse, Pregnancy, Stable, RegionalSystem, GameState } from "@/game/types";
+import type { Track } from "@/game/tracks";
 import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getFoalsBy } from "@/core/breeding/lineage";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import {
   BREEDING_FEE,
   GESTATION_DAYS,
   LIVE_FOAL_GUARANTEE_FEE,
 } from "@/game/constants/gameConstants";
+
+/**
+ * Helper function to get regional system from country string.
+ * Maps country to regional system without requiring a full Track object.
+ *
+ * @param country - Country name
+ * @returns The regional system associated with the country
+ */
+function getRegionalSystemFromCountry(country: string): RegionalSystem {
+  return getRegionalSystem(country);
+}
 
 export type PregnancyResult = {
   pregnancies: Pregnancy[];
@@ -23,11 +45,15 @@ export type PregnancyResult = {
 };
 
 /**
- * Resolves pregnancies that are due on the current day
- * Handles live foals, stillbirths, and live foal guarantee retries
+ * Resolves pregnancies that are due on the current day.
+ * Handles live foals, stillbirths, and live foal guarantee retries.
+ *
  * @param currentPregnancies - Current pregnancy records
  * @param horses - All horses in the game (for sire/dam lookup)
+ * @param stables - All stables (for naming context)
+ * @param usedNames - Set of used names to avoid duplicates
  * @param newDay - Current simulation day
+ * @param state
  * @returns Result object with updated pregnancies, new foals, cash adjustments, and logs
  */
 export function resolvePregnancies(
@@ -36,6 +62,7 @@ export function resolvePregnancies(
   stables: Stable[],
   usedNames: Set<string>,
   newDay: number,
+  state?: Pick<GameState, "horses">,
 ): PregnancyResult {
   const newLogs: { day: number; text: string }[] = [];
   const pregnancies = currentPregnancies.map((p) => ({ ...p }));
@@ -62,16 +89,16 @@ export function resolvePregnancies(
     if (dam?.stableId) {
       const stable = stables.find((s) => s.id === dam.stableId);
       if (stable) {
+        const regionalSystem = getRegionalSystemFromCountry(stable.country || "USA");
         namingContext = {
-          region: getRegionalSystem(stable.country || "USA"),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          namingTheme: (PERSONALITY_CONFIG as any)[stable.personality]?.namingTheme,
+          region: regionalSystem,
+          namingTheme: PERSONALITY_CONFIG[stable.personality]?.namingTheme,
           existingNames: usedNames,
         };
       }
     }
 
-    const outcome = resolveFoaling(p, sire, dam, namingContext);
+    const outcome = resolveFoaling(p, sire, dam, namingContext, newDay, state);
 
     if (outcome.kind === "live") {
       const foal = outcome.foal;

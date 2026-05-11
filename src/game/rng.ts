@@ -1,3 +1,14 @@
+/**
+ * rng.ts - Seeded RNG for reproducible gameplay
+ *
+ * This file provides seeded RNG used by race simulation, foal generation, and any
+ * other gameplay code that needs to be reproducible from a deterministic input.
+ * Uses the mulberry32 algorithm for small, well-distributed game RNG.
+ *
+ * Dependencies: None (self-contained functions)
+ * Related files: Used throughout the codebase for deterministic random generation
+ */
+
 // Seeded RNG used by race simulation, foal generation, and any other gameplay
 // code that needs to be reproducible from a deterministic input. Replays of
 // the same race or pregnancy must produce identical outcomes.
@@ -13,6 +24,15 @@ export type Rng = {
   gauss: (mean?: number, sd?: number) => number;
 };
 
+/**
+ * Create a seeded random number generator.
+ *
+ * Uses the mulberry32 algorithm for deterministic random number generation.
+ * Replays of the same race or pregnancy must produce identical outcomes.
+ *
+ * @param seed - Seed value (number or string)
+ * @returns RNG interface with next, int, range, pick, and gauss methods
+ */
 export function createRng(seed: number | string): Rng {
   const seedNum = typeof seed === "string" ? hashStr(seed) : seed;
   let state = seedNum | 0 || 1;
@@ -38,7 +58,14 @@ export function createRng(seed: number | string): Rng {
   };
 }
 
-// FNV-1a 32-bit. Stable hash for deriving a seed from a string id.
+/**
+ * Hash a string to a 32-bit integer using FNV-1a algorithm.
+ *
+ * Stable hash for deriving a seed from a string id.
+ *
+ * @param s - String to hash
+ * @returns 32-bit hash value
+ */
 export function hashStr(s: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < s.length; i++) {
@@ -48,8 +75,14 @@ export function hashStr(s: string): number {
   return h >>> 0;
 }
 
-// Convenience for fallback paths that genuinely don't need determinism
-// (e.g. ad-hoc market refresh). Keep these rare — explicit seeds are better.
+/**
+ * Create a non-deterministic RNG for fallback paths.
+ *
+ * Convenience for fallback paths that genuinely don't need determinism
+ * (e.g. ad-hoc market refresh). Keep these rare — explicit seeds are better.
+ *
+ * @returns RNG interface with random seed
+ */
 export function nondeterministicRng(): Rng {
   return createRng((Math.random() * 0xffffffff) | 0);
 }

@@ -1,3 +1,14 @@
+/**
+ * liveRaceResolution.ts - Live race resolution with impacts
+ *
+ * This file resolves races and applies impacts for live race simulation, used when
+ * the player watches a race live as opposed to the pipeline-based resolution during
+ * day-rollover.
+ *
+ * Dependencies: @/core/resolver/impacts/index (AnyImpact, EnergyImpact, FormImpact, FameImpact, RaceHistoryImpact, CashImpact, BlueHenImpact, StudCareerImpact, PaceSampleImpact, JockeyStatsImpact, LogImpact, TripleCrownProgressImpact), ./types (Race, Horse, Jockey), @/core/race/raceSim (Runner), @/core/common/classBonus (calculateClassBonus), ./beyer (beyerFigure), @/lib/formatting (formatCurrency), @/core/breeding/populationGenetics (detectInbreedingPattern, inbreedingPerformanceDampener), @/core/breeding/stallions (recalcStandingFee), ./raceSchedule (getCurrentYear), @/core/data/gradedRaces (GRADED_RACES), @/core/common/ordinal (getOrdinalSuffix), ./uuid (generateUUID), @/core/resolver/resolver (applyImpacts, ResolverContext), ./constants/gameConstants (PRIZE_SPLIT)
+ * Related files: raceSim.ts (provides race results), resolver.ts (applies impacts)
+ */
+
 import type {
   AnyImpact,
   EnergyImpact,
@@ -10,27 +21,42 @@ import type {
   PaceSampleImpact,
   JockeyStatsImpact,
   LogImpact,
-} from "@/core/resolver/impacts";
-import type { Race, Horse, Jockey } from "./types";
-import type { Runner } from "@/core/race/raceSim";
+  TripleCrownProgressImpact,
+} from "@/core/resolver/impacts/index";
+import type { Race, Horse, Jockey, Stable, GameState } from "./types";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { beyerFigure } from "./beyer";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
 } from "@/core/breeding/populationGenetics";
 import { recalcStandingFee } from "@/core/breeding/stallions";
 import { getCurrentYear } from "./raceSchedule";
+import { GRADED_RACES } from "@/core/data/gradedRaces";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import { PRIZE_SPLIT } from "./constants/gameConstants";
+import { getPeakingBeyerMultiplier } from "@/core/health/banister";
 
 /**
  * Resolves a race and applies impacts for live race simulation.
+ *
  * This is used when the player watches a race live, as opposed to the pipeline-based
- * resolution which runs during day-rollover.
+ * resolution which runs during day-rollover. Applies energy, form, fame, race history,
+ * prize money, blue hen, stud career, jockey stats, pace sample, and log impacts.
+ *
+ * @param race - Race to resolve
+ * @param result - Race results with horse IDs, positions, and times
+ * @param runners - Runner objects from race simulation
+ * @param horses - Array of all horses
+ * @param jockeys - Array of all jockeys
+ * @param npcStables - Array of NPC stables
+ * @param day - Current simulation day
+ * @param calibratedPars - Optional calibrated par times by distance bucket
+ * @returns Resolver context with updated state and applied impacts
  */
 export function resolveLiveRaceWithImpacts(
   race: Race,
@@ -38,14 +64,13 @@ export function resolveLiveRaceWithImpacts(
   runners: Runner[],
   horses: Horse[],
   jockeys: Jockey[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  npcStables: any[],
+  npcStables: Stable[],
   day: number,
+  calibratedPars: Record<number, number> = {},
 ): ResolverContext {
   if (race.resolved) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return {
-      state: { horses, jockeys, npcStables, races: [race] } as any,
+      state: { horses, jockeys, npcStables, races: [race] } as GameState,
       intents: [],
       impacts: [],
       impactLog: [],
@@ -111,11 +136,18 @@ export function resolveLiveRaceWithImpacts(
       } as FameImpact);
     }
 
-    // Beyer calculation with inbreeding dampener
-    const beyer = beyerFigure({ distance: race.distance, finishTime: r.time, classBonus });
+    // Beyer calculation with inbreeding dampener and peaking multiplier
+    const beyer = beyerFigure({
+      distance: race.distance,
+      finishTime: r.time,
+      classBonus,
+      calibratedPars,
+    });
+
     const inbreedingPattern = detectInbreedingPattern(horse.pedigree);
     const dampener = inbreedingPerformanceDampener(inbreedingPattern);
-    const adjustedBeyer = Math.max(0, beyer - dampener);
+    const peakingMultiplier = getPeakingBeyerMultiplier(horse.peakingIndex ?? 0);
+    const adjustedBeyer = Math.max(0, Math.round((beyer - dampener) * peakingMultiplier));
 
     // Win and You're In qualification
     let winAndYouInQualified = undefined;
@@ -155,6 +187,56 @@ export function resolveLiveRaceWithImpacts(
       },
       reason: "Race completed",
     } as RaceHistoryImpact);
+
+    // Triple Crown progress tracking
+    if (r.position === 1 && race.graded?.triplecrownKey) {
+      const currentYear = getCurrentYear(day);
+      const triplecrownKey = race.graded.triplecrownKey;
+
+      // Get all races for this triple crown series
+      const tcRaces = GRADED_RACES.filter((g) => g.triplecrownKey === triplecrownKey);
+
+      // Check horse's race history for all legs
+      const legs = tcRaces.map((tcRace) => {
+        // If this is the current race being resolved, use the current result
+        if (tcRace.key === race.graded?.key) {
+          return {
+            raceKey: tcRace.key,
+            position: r.position,
+            day,
+          };
+        }
+        // Otherwise check race history
+        const historyEntry = horse.raceHistory.find(
+          (rh) => rh.raceId === tcRace.key || rh.raceName === tcRace.name,
+        );
+        return {
+          raceKey: tcRace.key,
+          position: historyEntry?.position ?? 999,
+          day: historyEntry?.day ?? 0,
+        };
+      });
+
+      // Check if won all legs (all positions === 1)
+      const won = legs.every((leg) => leg.position === 1);
+
+      impacts.push({
+        id: generateUUID(),
+        intentId: "",
+        day,
+        phase: "raceResolution",
+        logLevel: "always",
+        type: "triple_crown_progress",
+        horseId: horse.id,
+        triplecrownKey,
+        year: currentYear,
+        legs,
+        won,
+        reason: won
+          ? `Triple Crown winner! ${horse.name} won ${triplecrownKey}`
+          : `Triple Crown progress updated for ${horse.name}`,
+      } as TripleCrownProgressImpact);
+    }
 
     // Prize money impact
     if (r.position - 1 < PRIZE_SPLIT.length) {
@@ -229,6 +311,7 @@ export function resolveLiveRaceWithImpacts(
             : sire.stud.lifetimeG1Foals;
 
         // Only NPCs auto-adjust fees; players manage their own
+        const previousFee = sire.stud.standingFee;
         const newFee = sire.stableId
           ? recalcStandingFee(
               {
@@ -239,8 +322,7 @@ export function resolveLiveRaceWithImpacts(
                   lifetimeG1Foals: newG1Foals,
                 },
               },
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              { horses, npcStables } as any,
+              day,
             )
           : sire.stud.standingFee;
 
@@ -255,10 +337,11 @@ export function resolveLiveRaceWithImpacts(
           studCareer: {
             ...sire.stud,
             standingFee: newFee,
+            previousStandingFee: previousFee,
             lifetimeStakesFoals: newStakesFoals,
             lifetimeG1Foals: newG1Foals,
           },
-          reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee adjusted to ${formatCurrency(newFee)}.` : ""}`,
+          reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee: $${formatCurrency(previousFee)} → $${formatCurrency(newFee)}.` : ""}`,
         } as StudCareerImpact);
       }
     }
@@ -364,9 +447,8 @@ export function resolveLiveRaceWithImpacts(
   }
 
   // Apply impacts to state
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const resolverContext: ResolverContext = {
-    state: { horses, jockeys, npcStables, races: [race] } as any,
+    state: { horses, jockeys, npcStables, races: [race] } as GameState,
     intents: [],
     impacts,
     impactLog: [],

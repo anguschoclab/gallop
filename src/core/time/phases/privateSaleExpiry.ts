@@ -1,3 +1,14 @@
+/**
+ * phases/privateSaleExpiry.ts - Private sale expiry phase
+ *
+ * This file provides the private sale expiry phase that transitions pending/countered
+ * offers to 'expired' when their expiry day is reached and prunes expired offers
+ * older than 7 game days.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (PrivateSaleOffer)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import type { PrivateSaleOffer } from "@/game/types";
 

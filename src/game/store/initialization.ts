@@ -1,4 +1,14 @@
 /**
+ * store/initialization.ts - Game state initialization
+ *
+ * This file provides game state initialization logic for creating the initial
+ * game state for new games, including horses, races, jockeys, stables, and facilities.
+ *
+ * Dependencies: @/game/types (GameState, Horse, Race), @/game/state (NewGameOptions), @/game/horseGen (generateHorse), @/game/raceGeneration/raceGen (generateRace, makeGradedRace), @/game/jockeyGen (generateInitialJockeys), @/game/npcStables (generateAllStables), @/game/npcHorseGen (generateAllNpcHorses), @/game/famousStallions (generateFamousStallions), @/game/npcRaceEntry (runNpcRaceEntry), @/game/rng (createRng, hashStr, Rng), @/game/gradedRaces (GRADED_RACES), @/core/facilities (createDefaultPlayerFacilities, createFacility, FacilityLevel), @/game/constants/gameConstants (STARTING_CASH)
+ * Related files: store/index.ts (uses initialization), types.ts (state types)
+ */
+
+/**
  * Game Initialization Logic
  * Creates the initial game state for new games
  */
@@ -9,17 +19,24 @@ import { generateHorse } from "@/game/horseGen";
 import { generateRace, makeGradedRace } from "@/game/raceGeneration/raceGen";
 import { generateInitialJockeys } from "@/game/jockeyGen";
 import { generateAllStables } from "@/game/npcStables";
-import { generateAllNpcHorses, generateFamousStallions } from "@/game/npcHorseGen";
+import { generateAllNpcHorses } from "@/game/npcHorseGen";
+import { generateFamousStallions } from "@/game/famousStallions";
 import { runNpcRaceEntry } from "@/game/npcRaceEntry";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
+import type { FacilityLevel } from "@/core/facilities";
 import { STARTING_CASH } from "@/game/constants/gameConstants";
 
 /**
- * Creates the initial game state for a new game
+ * Creates the initial game state for a new game.
+ *
+ * Generates player horses (backstory-driven if options provided), market horses,
+ * races for the first week and full graded stakes schedule, NPC stables and horses,
+ * jockeys, and facilities. Applies backstory upgrades to facilities if provided.
+ *
  * @param options - Optional new game options including backstory and profile
- * @returns Initial game state
+ * @returns Initial game state with all entities populated
  */
 export function createInitialState(options?: NewGameOptions): GameState {
   const profileSeed = options?.profile.stableName ?? "initial_setup";
@@ -103,10 +120,11 @@ export function createInitialState(options?: NewGameOptions): GameState {
   if (options) {
     for (const [type, level] of Object.entries(options.backstory.facilityUpgrades)) {
       if (level) {
+        const facilityType = type as Parameters<typeof createFacility>[0];
+        const facilityLevel = level as FacilityLevel;
         facilities[type as keyof typeof facilities] = createFacility(
-          type as Parameters<typeof createFacility>[0],
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          level as any,
+          facilityType,
+          facilityLevel,
           1,
         );
       }
@@ -130,6 +148,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     log: [{ day: 1, text: welcomeText }],
     pregnancies: [],
     npcStables: updatedStables,
+    npcAIManager: { stableStates: {}, globalDay: 1 },
     scoutReports: [],
     auctions: [],
     jockeys,
@@ -146,5 +165,8 @@ export function createInitialState(options?: NewGameOptions): GameState {
     playerProfile: options?.profile,
     usedHorseNames: Array.from(usedNames),
     usedJockeyNames: Array.from(usedJockeyNames),
+    seasonRecords: [],
+    hallOfFame: [],
+    transactions: [],
   };
 }

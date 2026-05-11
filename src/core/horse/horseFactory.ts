@@ -1,3 +1,13 @@
+/**
+ * horseFactory.ts - Horse creation and foaling
+ *
+ * This file provides functions for creating horses from genetics, resolving
+ * phenotypes, and handling pregnancy outcomes including live foals and complications.
+ *
+ * Dependencies: @/game/types (Horse, Genotype, HorseGender, Hemisphere, Pregnancy, Pedigree, HorseStats, CoatColor, RunningStyle, Stable, StableTier), @/core/common/types (Rng), @/game/rng (createRng, hashStr, nondeterministicRng), @/core/common/uuid (generateUUID), ./proceduralPortrait (generateAppearanceDNA, getPalette), @/core/genetics/generation (generateGenotype, generateDeterministicGenotype, generateResearchBasedGenotype), @/core/genetics/phenotype (various resolve functions), @/core/breeding/bruceLowe (resolveBruceLoweFamily), @/core/breeding/populationGenetics (resolveBloodline, getGenomeModifiers), @/core/breeding/eligibility (canBreed), @/game/constants/gameConstants (various constants)
+ * Related files: Used throughout game initialization and breeding systems
+ */
+
 import type {
   Horse,
   Genotype,
@@ -10,10 +20,21 @@ import type {
   RunningStyle,
   Stable,
   StableTier,
+  GameState,
 } from "@/game/types";
 import type { Rng } from "@/core/common/types";
+
+/**
+ * Represents the outcome of a foaling event.
+ *
+ * Can be a live foal with associated metadata or a complication
+ * describing why the foaling failed or resulted in a non-standard outcome.
+ */
+export type FoalOutcome =
+  | { kind: "live"; foal: Horse; transmission: boolean }
+  | { kind: "complication"; type: "stillborn" | "twins" | "injury"; foal?: Horse };
 import { createRng, hashStr, nondeterministicRng } from "@/game/rng";
-import { generateUUID } from "@/core/common/uuid";
+import { generateUUID } from "@/core/uuid";
 import { generateAppearanceDNA, getPalette } from "@/core/horse/proceduralPortrait";
 import {
   generateGenotype,
@@ -57,7 +78,10 @@ import {
 } from "@/core/breeding/bruceLowe";
 import { rollGender, geldHorse } from "@/core/horse/gender";
 import { randomSilk, rand } from "@/core/common/random";
-import { generateProceduralHorseName, type NamingContext } from "@/core/horse/naming/nameGenerator";
+import {
+  generateProceduralHorseName,
+  type NamingContext,
+} from "@/core/horse/naming/nameGenerator.ts";
 import {
   resolveBloodline,
   computeCoiFromSnapshot,
@@ -66,11 +90,7 @@ import {
 } from "@/core/breeding/populationGenetics";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
-import {
-  shouldRetireAtStartup,
-  initialStandingFee,
-  defaultStudParams,
-} from "@/core/breeding/stallions";
+import { shouldRetireAtStartup, defaultStudParams } from "@/core/breeding/stallions";
 import {
   shouldGenerateHorseOfAge,
   createHorseGenAIState,
@@ -79,9 +99,28 @@ import {
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { activeStallions2020s, type PedigreeHorse } from "@/core/data/pedigreeData";
 import { clamp } from "@/game/math";
+import {
+  POTENTIAL_MIN,
+  POTENTIAL_MAX,
+  CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD,
+  CORNERING_APTITUDE_LARGE_PENALTY,
+  CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD,
+  CORNERING_APTITUDE_SMALL_BONUS,
+  FOALING_AGE_RISK_THRESHOLD,
+  FOALING_AGE_RISK_MULTIPLIER,
+  FOALING_BASE_COMPLICATION_RATE,
+  LETHAL_RECESSIVE_CHANCE,
+  TWIN_REDUCTION_CHANCE,
+} from "@/game/constants/gameConstants";
 
 // --- Internal Helpers ---
 
+/**
+ * Resolve high-level phenotype traits from a genotype.
+ *
+ * @param genotype - The genetic blueprint to resolve traits from
+ * @returns Object containing heart score, fiber bias, trainability, and other resolved traits
+ */
 function resolveDnaTraits(genotype: Genotype) {
   return {
     heartScore: resolveHeartScore(genotype.heart),
@@ -107,6 +146,26 @@ function resolveDnaTraits(genotype: Genotype) {
 
 /**
  * Low-level builder: DNA -> Fully hydrated Horse object
+ *
+ * This function takes a genotype and resolves all phenotype traits (stats, coat color,
+ * running style, aptitudes, health risks, etc.) to create a complete Horse object.
+ * It's the core horse creation primitive used by all other generation functions.
+ *
+ * @param genotype - The genetic blueprint containing all DNA information
+ * @param rng - Random number generator for deterministic variation
+ * @param opts - Configuration options for the horse
+ * @param opts.name - Optional horse name (defaults to "Unnamed")
+ * @param opts.age - Optional horse age in years (defaults to 2)
+ * @param opts.gender - Optional horse gender (defaults to "colt")
+ * @param opts.hemisphere - Optional racing hemisphere (defaults to "Northern")
+ * @param opts.owned - Optional ownership flag (defaults to false)
+ * @param opts.stableId - Optional stable ID assignment
+ * @param opts.createdAtDay - Optional game day when horse was created
+ * @returns Fully hydrated Horse object with all phenotype traits resolved
+ *
+ * @example
+ * const genotype = generateGenotype(rng, "elite");
+ * const horse = createHorseFromDNA(genotype, rng, { name: "Thunder", age: 3 });
  */
 export function createHorseFromDNA(
   genotype: Genotype,
@@ -118,6 +177,7 @@ export function createHorseFromDNA(
     hemisphere?: Hemisphere;
     owned?: boolean;
     stableId?: string;
+    createdAtDay?: number;
   } = {},
 ): Horse {
   const stats = resolveStats(genotype.stats);
@@ -134,8 +194,8 @@ export function createHorseFromDNA(
   const { height, weight } = resolveSize(genotype.size);
 
   const sizeSum = genotype.size[0] + genotype.size[1];
-  if (sizeSum >= 8) corneringAptitude -= 0.15;
-  if (sizeSum <= 4) corneringAptitude += 0.1;
+  if (sizeSum >= CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD) corneringAptitude -= CORNERING_APTITUDE_LARGE_PENALTY;
+  if (sizeSum <= CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD) corneringAptitude += CORNERING_APTITUDE_SMALL_BONUS;
 
   const dnaTraits = resolveDnaTraits(genotype);
 
@@ -150,7 +210,7 @@ export function createHorseFromDNA(
     genotype,
     energy: 100,
     form: 50,
-    potential: 50 + Math.floor(rng.next() * 40), // 50-90 base
+    potential: POTENTIAL_MIN + Math.floor(rng.next() * (POTENTIAL_MAX - POTENTIAL_MIN)), // 50-90 base
     fame: 0,
     raceHistory: [],
     owned: opts.owned ?? false,
@@ -173,6 +233,8 @@ export function createHorseFromDNA(
     healthStatus: resolveHealthStatus(genotype.health),
     lifecycleStatus: "active",
     ...dnaTraits,
+    recoveryPoints: 100, // Dynamic Form: Initialize at full recovery
+    createdAtDay: opts.createdAtDay,
     appearance: generateAppearanceDNA(
       Math.floor(rng.next() * 2147483647),
       undefined,
@@ -185,6 +247,24 @@ export function createHorseFromDNA(
 
 /**
  * Procedural generation for market/starter horses
+ *
+ * Generates a complete horse with genotype, phenotype, and name. This is the primary
+ * function for creating horses for the market, starter stables, or other procedural
+ * generation needs. It uses tier-based generation to control quality distribution.
+ *
+ * @param opts - Generation options
+ * @param opts.tier - Quality tier affecting stat ranges (defaults to "budget")
+ * @param opts.owned - Whether the horse is player-owned (defaults to false)
+ * @param opts.hemisphere - Racing hemisphere (defaults to random)
+ * @param opts.age - Horse age in years (defaults to 2-5 random)
+ * @param opts.gender - Horse gender (defaults to age-appropriate random)
+ * @param rng - Random number generator (defaults to nondeterministic)
+ * @param namingContext - Context for name generation (region, theme, existing names)
+ * @returns Fully generated Horse object with name, stats, and appearance
+ *
+ * @example
+ * const horse = generateHorse({ tier: "elite", owned: true });
+ * const budgetHorse = generateHorse({ tier: "budget" });
  */
 export function generateHorse(
   opts: {
@@ -200,7 +280,7 @@ export function generateHorse(
   const tier = opts.tier ?? "budget";
   const genotype = generateGenotype(rng, tier);
   const age = opts.age ?? (rng.next() < 0.2 ? rng.range(2, 3) : rng.range(2, 6));
-  const gender = opts.gender ?? rollGender(age, rng);
+  const gender = opts.gender ?? rollGender(rng);
   const hemisphere: Hemisphere = opts.hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
 
   // Naming logic...
@@ -211,17 +291,41 @@ export function generateHorse(
     { strategy: "regional" },
   );
 
-  return createHorseFromDNA(genotype, rng, {
+  const horse = createHorseFromDNA(genotype, rng, {
     name: horseName,
     age,
     gender,
     hemisphere,
     owned: opts.owned,
   });
+
+  // Assign Bruce Lowe family for procedural horses
+  horse.bruceLoweFamily = rollProceduralFamily(rng);
+
+  return horse;
 }
 
 /**
  * Personality-driven generation for NPC stables
+ *
+ * Generates a horse tailored to an NPC stable's personality and tier. The stable's
+ * personality influences naming themes and quality preferences. This function is used
+ * during world generation and daily NPC horse production.
+ *
+ * @param stable - The NPC stable generating the horse (provides tier, personality, country)
+ * @param rng - Random number generator for deterministic variation
+ * @param npcAIManager - Optional AI manager for advanced decision-making
+ * @param currentDay - Optional current game day for age calculations
+ * @param opts - Generation overrides
+ * @param opts.tier - Override stable tier for generation (defaults to stable.tier)
+ * @param opts.forcedAge - Force specific age instead of random
+ * @param opts.forcedGender - Force specific gender instead of random
+ * @param opts.forcedName - Force specific name instead of procedural generation
+ * @param opts.hemisphere - Override hemisphere (defaults to "Northern")
+ * @returns Generated Horse object assigned to the stable
+ *
+ * @example
+ * const horse = generateNpcHorse(stable, rng, aiManager, currentDay, { forcedAge: 3 });
  */
 export function generateNpcHorse(
   stable: Stable,
@@ -241,16 +345,12 @@ export function generateNpcHorse(
 
   // Personality config
   const config = stable.personality
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ((PERSONALITY_CONFIG as any)[stable.personality] || PERSONALITY_CONFIG.conservative)
+    ? PERSONALITY_CONFIG[stable.personality] || PERSONALITY_CONFIG.conservative
     : PERSONALITY_CONFIG.conservative;
-  const region = stable.country
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      getRegionalSystem((stable.country ?? "Belmont") as any)
-    : "north_america";
+  const region = getRegionalSystem(stable.country ?? "USA");
 
   const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : rng.range(3, 6));
-  const gender = opts.forcedGender ?? rollGender(age, rng);
+  const gender = opts.forcedGender ?? rollGender(rng);
 
   const genotype = generateGenotype(rng, genTier);
 
@@ -269,17 +369,44 @@ export function generateNpcHorse(
       { strategy: "regional" },
     );
 
+  // Assign Bruce Lowe family for NPC horses
+  horse.bruceLoweFamily = rollProceduralFamily(rng);
+
   return horse;
 }
 
 /**
  * Breeding resolution: resolves pregnancy into foal or complication
+ *
+ * This function handles the foaling process, including genetic inheritance from
+ * sire and dam, complication checks (age-based risks, lethal recessives, rare events),
+ * and foal creation. It uses a deterministic RNG seeded by the pregnancy ID for
+ * consistent results.
+ *
+ * @param pregnancy - The pregnancy record to resolve
+ * @param sire - The sire horse (must have genotype)
+ * @param dam - The dam horse (must have genotype)
+ * @param namingContext - Optional context for name generation (region, theme, existing names)
+ * @param newDay - Optional game day when foaling occurs
+ * @param state - Optional game state with horses array for Bruce Lowe family resolution
+ * @returns Either a live foal with Horse object, or a complication with type description
+ * @throws {Error} If sire or dam is missing genotype
+ *
+ * @example
+ * const result = resolveFoaling(pregnancy, sire, dam, namingContext, currentDay, state);
+ * if (result.kind === "live") {
+ *   console.log("Foal born:", result.foal.name);
+ * } else {
+ *   console.log("Complication:", result.type);
+ * }
  */
 export function resolveFoaling(
   pregnancy: Pregnancy,
   sire: Horse,
   dam: Horse,
   namingContext?: Partial<NamingContext>,
+  newDay?: number,
+  state?: Pick<GameState, "horses">,
 ): { kind: "live"; foal: Horse; transmission?: boolean } | { kind: "complication"; type: string } {
   const rng = createRng(hashStr(pregnancy.id));
 
@@ -293,9 +420,9 @@ export function resolveFoaling(
   // --- Complication Checks ---
 
   // 1. Age-based risk
-  const ageRisk = Math.max(0, (dam.age - 10) * 0.02); // 2% per year over 10
+  const ageRisk = Math.max(0, (dam.age - FOALING_AGE_RISK_THRESHOLD) * FOALING_AGE_RISK_MULTIPLIER);
   const baseRoll = rng.next();
-  if (baseRoll < 0.01 + ageRisk) {
+  if (baseRoll < FOALING_BASE_COMPLICATION_RATE + ageRisk) {
     const types = ["stillborn", "unable to stand", "early loss", "mid loss"];
     return { kind: "complication", type: types[Math.floor(rng.next() * types.length)] };
   }
@@ -309,7 +436,7 @@ export function resolveFoaling(
       (sMarkers.hypp && dMarkers.hypp) ||
       (sMarkers.olws && dMarkers.olws)
     ) {
-      if (rng.next() < 0.25) {
+      if (rng.next() < LETHAL_RECESSIVE_CHANCE) {
         // 25% chance for homozygous lethal
         return { kind: "complication", type: "lethal recessive" };
       }
@@ -317,7 +444,7 @@ export function resolveFoaling(
   }
 
   // 3. Rare random complication
-  if (rng.next() < 0.005) {
+  if (rng.next() < TWIN_REDUCTION_CHANCE) {
     return { kind: "complication", type: "twin reduction (single survivor)" };
   }
 
@@ -328,7 +455,24 @@ export function resolveFoaling(
     gender: rng.next() < 0.5 ? "colt" : "filly",
     owned: dam.owned,
     stableId: dam.stableId,
+    createdAtDay: newDay,
   });
+
+  // Set pedigree
+  foal.pedigree = {
+    sireId: sire.id,
+    damId: dam.id,
+    sireName: sire.name,
+    damName: dam.name,
+  };
+
+  // Resolve Bruce Lowe family from dam line
+  if (state) {
+    foal.bruceLoweFamily = resolveBruceLoweFamily(foal, state);
+  } else {
+    // Fallback: use dam's family if available, otherwise roll procedural
+    foal.bruceLoweFamily = dam.bruceLoweFamily ?? rollProceduralFamily(rng);
+  }
 
   foal.name = generateProceduralHorseName(
     {

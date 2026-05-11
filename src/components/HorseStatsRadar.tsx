@@ -1,12 +1,11 @@
 import {
   PolarAngleAxis,
   PolarGrid,
-  PolarRadiusAxis,
   Radar,
   RadarChart,
   ResponsiveContainer,
+  PolarRadiusAxis,
 } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import type { Horse } from "@/game/types";
 
 interface HorseStatsRadarProps {
@@ -15,58 +14,51 @@ interface HorseStatsRadarProps {
 
 export function HorseStatsRadar({ horse }: HorseStatsRadarProps) {
   const data = [
-    { stat: "Speed", value: horse.stats.speed, max: 100 },
-    { stat: "Stamina", value: horse.stats.stamina, max: 100 },
-    { stat: "Acceleration", value: horse.stats.acceleration, max: 100 },
-    { stat: "Consistency", value: horse.stats.consistency, max: 100 },
+    { stat: "SPEED", value: horse.stats.speed },
+    { stat: "STAMINA", value: horse.stats.stamina },
+    { stat: "ACCEL", value: horse.stats.acceleration },
+    { stat: "CONSIST", value: horse.stats.consistency },
   ];
 
-  const chartConfig = {
-    value: {
-      label: "Stat Value",
-      color: "hsl(var(--primary))",
-    },
-    potential: {
-      label: "Potential",
-      color: "hsl(var(--secondary))",
-    },
-  };
-
   return (
-    <ChartContainer config={chartConfig} className="aspect-square max-h-[250px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <RadarChart data={data}>
-          <PolarGrid stroke="hsl(var(--border))" />
+    <div className="h-[250px] w-full relative">
+       <ResponsiveContainer width="100%" height="100%">
+        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
+          <PolarGrid 
+            stroke="rgba(212,175,55,0.2)" 
+            gridType="polygon" 
+            radialLines={true}
+          />
           <PolarAngleAxis
             dataKey="stat"
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+            tick={{ 
+              fill: "rgba(245,245,220,0.6)", 
+              fontSize: 10, 
+              fontFamily: 'monospace',
+              fontWeight: 'bold',
+              letterSpacing: '0.1em'
+            }}
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 9 }}
-            tickCount={5}
+            tick={false}
+            axisLine={false}
           />
           <Radar
-            name="Current Stats"
+            name="OPERATIONAL_SPEC"
             dataKey="value"
-            stroke="var(--primary)"
+            stroke="#d4af37" // Gold
             strokeWidth={2}
-            fill="var(--primary)"
+            fill="#d4af37"
             fillOpacity={0.3}
+            animationDuration={1000}
           />
-          <Radar
-            name="Potential"
-            dataKey="max"
-            stroke="var(--secondary)"
-            strokeWidth={1}
-            fill="var(--secondary)"
-            fillOpacity={0.1}
-            strokeDasharray="4 4"
-          />
-          <ChartTooltip content={<ChartTooltipContent />} />
         </RadarChart>
       </ResponsiveContainer>
-    </ChartContainer>
+      
+      {/* Decorative center point */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-gold rounded-full shadow-[0_0_8px_rgba(212,175,55,0.8)]" />
+    </div>
   );
 }

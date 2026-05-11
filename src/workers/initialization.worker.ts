@@ -5,7 +5,7 @@
  */
 
 import { expose } from "comlink";
-import type { GameState } from "@/game/types";
+import type { GameState, Horse, Race } from "@/game/types";
 import type { NewGameOptions } from "@/game/state";
 import { generateHorse } from "@/game/horseGen";
 import { generateRace, makeGradedRace } from "@/game/raceGeneration/raceGen";
@@ -16,7 +16,11 @@ import { runNpcRaceEntry } from "@/game/npcRaceEntry";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
-import { STARTING_CASH } from "@/game/constants/gameConstants";
+import {
+  STARTING_CASH,
+  INITIALIZATION_BUDGET_TIER_THRESHOLD,
+  INITIALIZATION_HORSE_COUNT_THRESHOLD,
+} from "@/game/constants/gameConstants";
 
 export type InitializeInput = {
   options?: NewGameOptions;
@@ -44,7 +48,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
 
   const playerHorseSpecs = options?.backstory.horses ?? [{ tier: "starter" as const, count: 2 }];
   const playerSilkColor = options?.profile.silk.primary;
-  const horses: any[] = [];
+  const horses: Horse[] = [];
   for (const spec of playerHorseSpecs) {
     for (let i = 0; i < spec.count; i++) {
       const h = generateHorse({ tier: spec.tier, owned: true }, setupRng);
@@ -58,9 +62,9 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     progressCallback(2, totalStages, "Generating market horses");
   }
 
-  const market: any[] = Array.from({ length: 5 }, () => {
+  const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
-    const tier: "starter" | "budget" | "mid" | "elite" = r < 0.6 ? "budget" : "mid";
+    const tier: "starter" | "budget" | "mid" | "elite" = r < INITIALIZATION_BUDGET_TIER_THRESHOLD ? "budget" : "mid";
     return generateHorse({ tier }, setupRng);
   });
 
@@ -69,10 +73,10 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     progressCallback(3, totalStages, "Generating races");
   }
 
-  const races: any[] = [];
+  const races: Race[] = [];
   for (let d = 1; d <= 7; d++) {
     const dayRng = createRng(hashStr(`raceGen_${d}`));
-    const count = dayRng.next() < 0.7 ? 2 : 3;
+    const count = dayRng.next() < INITIALIZATION_HORSE_COUNT_THRESHOLD ? 2 : 3;
     for (let i = 0; i < count; i++) races.push(generateRace(d, dayRng));
   }
   for (const g of GRADED_RACES) {
@@ -130,7 +134,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
       if (level) {
         facilities[type as keyof typeof facilities] = createFacility(
           type as Parameters<typeof createFacility>[0],
-          level as any,
+          level as unknown as number, // Object.entries returns string, convert to number
           1,
         );
       }

@@ -1,3 +1,14 @@
+/**
+ * expenseTypes.ts - Expense type definitions and functions
+ *
+ * This file provides type definitions for expense categories, expense records,
+ * expense summaries, and configuration. It also includes helper functions for
+ * creating, grouping, and filtering expenses.
+ *
+ * Dependencies: None (self-contained types and functions)
+ * Related files: index.ts (re-exports types and functions)
+ */
+
 // Expense Types - Categorized expense tracking for stable operations
 
 /**
@@ -166,7 +177,20 @@ export const CATEGORY_DISPLAY: Record<ExpenseCategory, CategoryDisplay> = {
 };
 
 /**
- * Create a new expense record
+ * Create a new expense record.
+ *
+ * Creates an expense object with a unique ID, category, amount, description,
+ * and optional horse/race associations.
+ *
+ * @param category - The expense category
+ * @param amount - The expense amount
+ * @param description - Description of the expense
+ * @param day - The game day the expense occurred
+ * @param options - Optional parameters
+ * @param options.horseId - Optional horse associated with expense
+ * @param options.raceId - Optional race associated with expense
+ * @param options.recurring - Whether this is a recurring daily expense
+ * @returns New expense record
  */
 export function createExpense(
   category: ExpenseCategory,
@@ -192,7 +216,12 @@ export function createExpense(
 }
 
 /**
- * Group expenses by category
+ * Group expenses by category.
+ *
+ * Aggregates expenses by category, calculating total amount and count per category.
+ *
+ * @param expenses - Array of expenses to group
+ * @returns Array of expenses grouped by category with totals
  */
 export function groupExpensesByCategory(expenses: Expense[]): ExpenseByCategory[] {
   const grouped = new Map<ExpenseCategory, { amount: number; count: number }>();
@@ -213,7 +242,14 @@ export function groupExpensesByCategory(expenses: Expense[]): ExpenseByCategory[
 }
 
 /**
- * Filter expenses by day range
+ * Filter expenses by day range.
+ *
+ * Returns expenses that occurred within the specified day range (inclusive).
+ *
+ * @param expenses - Array of expenses to filter
+ * @param startDay - Start day of the range
+ * @param endDay - End day of the range
+ * @returns Filtered expenses within the day range
  */
 export function filterExpensesByDayRange(
   expenses: Expense[],
@@ -224,7 +260,13 @@ export function filterExpensesByDayRange(
 }
 
 /**
- * Calculate total expenses for a category
+ * Calculate total expenses for a category.
+ *
+ * Sums all expenses that match the specified category.
+ *
+ * @param expenses - Array of expenses
+ * @param category - The category to sum
+ * @returns Total amount for the category
  */
 export function calculateCategoryTotal(expenses: Expense[], category: ExpenseCategory): number {
   return expenses.filter((e) => e.category === category).reduce((sum, e) => sum + e.amount, 0);

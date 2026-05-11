@@ -8,9 +8,11 @@
 // "buckets" derived from displayable signals (fame, scout reports,
 // conformation/temperament, breeze times) — never raw potential or stats.
 
+import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import type { Horse, Stable } from "@/game/types";
 import type { AuctionTickEvent } from "@/game/auctionRunner";
 import type { Rng } from "@/game/rng";
+import { JOCKEY_FAME_HOUSEHOLD_NAME, JOCKEY_FAME_TALKED_ABOUT } from "@/game/constants/gameConstants";
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -34,6 +36,14 @@ export type AuctioneerLine = {
   isHighImpact: boolean;
 };
 
+/**
+ * Generate a descriptive auctioneer line based on a tick event and current lot context.
+ *
+ * @param event - The current auction tick event (bid, open, sold, etc.)
+ * @param ctx - Context for the current lot (horse, consignor, hypometer)
+ * @param rng - Random number generator for deterministic template selection
+ * @returns Object containing the generated text and impact level
+ */
 export function generateAuctioneerLine(
   event: AuctionTickEvent,
   ctx: AuctioneerContext,
@@ -70,13 +80,25 @@ export function generateAuctioneerLine(
 // Hint helpers — buckets, never raw stats
 // ---------------------------------------------------------------------------
 
+/**
+ * Map a numeric fame score to a descriptive bucket label.
+ *
+ * @param fame - Numeric fame score (0-100)
+ * @returns Descriptive label string
+ */
 function fameBucket(fame: number): string {
-  if (fame >= 60) return "household name";
+  if (fame >= JOCKEY_FAME_HOUSEHOLD_NAME) return "household name";
   if (fame >= 35) return "well-known";
   if (fame >= 15) return "talked-about";
   return "unknown quantity";
 }
 
+/**
+ * Generate a potential hint label based on the overall scouted quality.
+ *
+ * @param overall - Optional overall quality score (0-100)
+ * @returns Descriptive potential label or null
+ */
 function potentialHintFromOverall(overall?: number): string | null {
   if (overall === undefined) return null;
   if (overall >= 85) return "blue-chip";
@@ -86,6 +108,12 @@ function potentialHintFromOverall(overall?: number): string | null {
   return "modest";
 }
 
+/**
+ * Map a breeze time to a descriptive bucket label.
+ *
+ * @param breezeSec - Breeze time in seconds
+ * @returns Descriptive breeze label or null
+ */
 function breezeBucket(breezeSec?: number): string | null {
   if (breezeSec === undefined) return null;
   if (breezeSec <= 9.8) return "blistering :09 and change";
@@ -94,6 +122,13 @@ function breezeBucket(breezeSec?: number): string | null {
   return "workmanlike effort";
 }
 
+/**
+ * Generate a formatted pedigree fragment (e.g. "by [Sire] out of [Dam]").
+ *
+ * @param horse - The horse to generate pedigree for
+ * @param rng - Random number generator for variant selection
+ * @returns Formatted pedigree string or null
+ */
 function pedigreeFragment(horse: Horse | undefined, rng: Rng): string | null {
   if (!horse) return null;
   const sire = horse.sireName;
@@ -120,6 +155,14 @@ type RenderCtx = AuctioneerContext & {
   reserve?: number;
 };
 
+/**
+ * Substitute template tokens with actual values from the context.
+ *
+ * @param template - Template string with {token} placeholders
+ * @param ctx - Context containing values for substitution
+ * @param rng - Random number generator for nested fragments
+ * @returns Fully rendered string
+ */
 function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
   const horse = ctx.horse;
   const stable = ctx.winner ?? ctx.consignor;
@@ -130,9 +173,9 @@ function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
     dam: horse?.damName,
     coat: horse?.coatColor,
     gender: horse
-      ? horse.gender === "filly" || horse.gender === "mare"
+      ? isFemaleHorse(horse.gender)
         ? "filly"
-        : horse.gender === "colt" || horse.gender === "horse"
+        : isMaleHorse(horse.gender)
           ? "colt"
           : horse.gender
       : undefined,
@@ -160,6 +203,12 @@ function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
     .trim();
 }
 
+/**
+ * Map internal running style codes to descriptive labels.
+ *
+ * @param s - Running style code (E, EP, P, S)
+ * @returns Descriptive label or undefined
+ */
 function runningStyleLabel(s: Horse["runningStyle"] | undefined): string | undefined {
   if (!s) return undefined;
   return ({ E: "early speed", EP: "press the pace", P: "pace stalker", S: "deep closer" } as const)[
@@ -167,6 +216,15 @@ function runningStyleLabel(s: Horse["runningStyle"] | undefined): string | undef
   ];
 }
 
+/**
+ * Pick a random template and render it with context.
+ *
+ * @param templates - Array of template strings
+ * @param ctx - Render context
+ * @param rng - Random number generator
+ * @param isHighImpact - Whether this line should be highlighted in the UI
+ * @returns Rendered line object
+ */
 function pickLine(
   templates: readonly string[],
   ctx: RenderCtx,
@@ -181,6 +239,15 @@ function pickLine(
   return { text, isHighImpact };
 }
 
+/**
+ * Specifically render a bid announcement line.
+ *
+ * @param amount - The bid amount
+ * @param stableId - ID of the bidder (undefined for player)
+ * @param ctx - Current auction context
+ * @param rng - Random number generator
+ * @returns Rendered bid string
+ */
 function renderBidLine(
   amount: number,
   stableId: string | undefined,

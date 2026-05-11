@@ -1,14 +1,28 @@
+/**
+ * mapper.ts - Research data to genotype mapping
+ *
+ * This file provides functions for converting real-world stallion research data
+ * to game DNA loci, including physical traits, racing performance, and genetic markers.
+ *
+ * Dependencies: @/core/genetics/types (Genotype, Locus, MarkerGenotype), @/core/data/stallionDNAData (StallionResearchData), ./generation (generateDeterministicGenotype)
+ * Related files: generation.ts (provides fallback genotype generation), @/core/data/stallionDNAData (provides research data)
+ */
+
 import type { Genotype, Locus, MarkerGenotype } from "@/core/genetics/types";
 import type { StallionResearchData } from "@/core/data/stallionDNAData";
 import { generateDeterministicGenotype } from "@/core/genetics/generation";
 
 /**
- * Mapping functions to convert real-world research data to game DNA loci
+ * Mapping functions to convert real-world research data to game DNA loci.
  */
 
 /**
- * Map height (in hands) to size locus
- * 14.0h = locus 1, 18.0h = locus 10 (linear interpolation)
+ * Map height (in hands) to size locus.
+ *
+ * 14.0h = locus 1, 18.0h = locus 10 (linear interpolation).
+ *
+ * @param height - Height in hands
+ * @returns Size locus
  */
 function mapHeightToSize(height: number): Locus {
   const normalized = (height - 14.0) / 4.0; // 0.0 to 1.0
@@ -18,6 +32,9 @@ function mapHeightToSize(height: number): Locus {
 
 /**
  * Map trait rating (excellent/good/fair/poor) to locus
+ *
+ * @param trait - The rating to map
+ * @returns The resulting DNA locus
  */
 function mapTraitToLocus(trait: "excellent" | "good" | "fair" | "poor"): Locus {
   const mapping: Record<string, number> = { excellent: 9, good: 7, fair: 5, poor: 3 };
@@ -27,6 +44,9 @@ function mapTraitToLocus(trait: "excellent" | "good" | "fair" | "poor"): Locus {
 
 /**
  * Map distance preference to distance locus
+ *
+ * @param pref - The distance preference to map
+ * @returns The resulting DNA locus
  */
 function mapDistanceToPreference(pref: "sprint" | "mile" | "classic" | "stayer"): Locus {
   const mapping: Record<string, number> = { sprint: 2, mile: 5, classic: 8, stayer: 10 };
@@ -35,6 +55,9 @@ function mapDistanceToPreference(pref: "sprint" | "mile" | "classic" | "stayer")
 
 /**
  * Map surface preference to surface locus
+ *
+ * @param pref - The surface preference to map
+ * @returns The resulting DNA locus
  */
 function mapSurfaceToPreference(pref: "dirt" | "turf" | "synthetic"): Locus {
   const mapping: Record<string, number> = { dirt: 8, turf: 2, synthetic: 5 };
@@ -43,6 +66,9 @@ function mapSurfaceToPreference(pref: "dirt" | "turf" | "synthetic"): Locus {
 
 /**
  * Map running style to style locus
+ *
+ * @param style - The running style to map
+ * @returns The resulting DNA locus
  */
 function mapStyleToLocus(style: "E" | "EP" | "P" | "S"): Locus {
   const mapping: Record<string, number> = { E: 1, EP: 2, P: 3, S: 4 };
@@ -51,6 +77,9 @@ function mapStyleToLocus(style: "E" | "EP" | "P" | "S"): Locus {
 
 /**
  * Map physical traits to DNA
+ *
+ * @param traits - The research physical traits data
+ * @returns Object containing mapped loci for size, physical, and mental traits
  */
 function mapPhysicalTraitsToDNA(traits: StallionResearchData["physicalTraits"]): {
   size: Locus;
@@ -66,6 +95,10 @@ function mapPhysicalTraitsToDNA(traits: StallionResearchData["physicalTraits"]):
 
 /**
  * Map racing performance to DNA
+ *
+ * @param perf - The research performance data
+ * @param tier - The quality tier of the horse
+ * @returns Object containing mapped stats, preferences, and style
  */
 function mapRacingPerformanceToDNA(
   perf: StallionResearchData["racingPerformance"],
@@ -119,6 +152,9 @@ function mapRacingPerformanceToDNA(
 
 /**
  * Map genetic markers directly
+ *
+ * @param markers - The research genetic marker data
+ * @returns The mapped marker genotype
  */
 function mapGeneticMarkers(markers: StallionResearchData["geneticMarkers"]): MarkerGenotype {
   return {
@@ -138,7 +174,18 @@ function mapGeneticMarkers(markers: StallionResearchData["geneticMarkers"]): Mar
 }
 
 /**
- * Map research data to genotype
+ * Map research data to genotype.
+ *
+ * Converts stallion research data to a genotype by mapping physical traits,
+ * racing performance, and genetic markers, with fallback to deterministic generation
+ * for unmapped fields.
+ *
+ * @param researchData - Stallion research data
+ * @param tier - Quality tier
+ * @returns Generated genotype
+ *
+ * @example
+ * const genotype = mapResearchDataToGenotype(stallionData, "elite");
  */
 export function mapResearchDataToGenotype(
   researchData: StallionResearchData,

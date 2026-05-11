@@ -31,7 +31,13 @@ export interface DetectedEvent {
 }
 
 /**
- * Detect lead change event
+ * Detect lead change event.
+ *
+ * @param runners - All runners in the race
+ * @param lastLeaderId - ID of the previous leader
+ * @param hasAnnouncedStart - Whether start has been announced
+ * @param hasAnnouncedFinish - Whether finish has been announced
+ * @returns DetectedEvent if lead changed, otherwise null
  */
 export function detectLeadChange(
   runners: Runner[],
@@ -55,7 +61,15 @@ export function detectLeadChange(
 }
 
 /**
- * Detect surge/fade events based on rank changes
+ * Detect surge/fade events based on rank changes.
+ *
+ * @param runner - The runner to check
+ * @param lastRank - Previous position in field
+ * @param currentRank - Current position in field
+ * @param simTime - Current simulation time
+ * @param hasAnnouncedStart - Whether start has been announced
+ * @param hasAnnouncedFinish - Whether finish has been announced
+ * @returns DetectedEvent for SURGE or FADE, otherwise null
  */
 export function detectPositionChange(
   runner: Runner,
@@ -86,7 +100,11 @@ export function detectPositionChange(
 }
 
 /**
- * Detect drafting event
+ * Detect drafting event.
+ *
+ * @param runner - The runner to check
+ * @param runners - All runners in the race
+ * @returns DetectedEvent if drafting, otherwise null
  */
 export function detectDrafting(runner: Runner, runners: Runner[]): DetectedEvent | null {
   if (!runner.draftingHorseId) return null;
@@ -102,7 +120,13 @@ export function detectDrafting(runner: Runner, runners: Runner[]): DetectedEvent
 }
 
 /**
- * Detect lane watch event (trapped wide on turn)
+ * Detect lane watch event (trapped wide on turn).
+ *
+ * @param runner - The runner to check
+ * @param race - The current race
+ * @param hasAnnouncedStart - Whether start has been announced
+ * @param hasAnnouncedFinish - Whether finish has been announced
+ * @returns DetectedEvent if trapped wide, otherwise null
  */
 export function detectLaneWatch(
   runner: Runner,
@@ -125,7 +149,12 @@ export function detectLaneWatch(
 }
 
 /**
- * Detect gap announcement
+ * Detect gap announcement.
+ *
+ * @param runners - All runners in the race
+ * @param hasAnnouncedStart - Whether start has been announced
+ * @param hasAnnouncedFinish - Whether finish has been announced
+ * @returns DetectedEvent if gap is significant, otherwise null
  */
 export function detectGapAnnouncement(
   runners: Runner[],
@@ -151,7 +180,13 @@ export function detectGapAnnouncement(
 }
 
 /**
- * Detect stretch run event
+ * Detect stretch run event.
+ *
+ * @param leaderPosition - Position of the race leader
+ * @param race - The current race
+ * @param hasAnnouncedStretch - Whether stretch has been announced
+ * @param hasAnnouncedFinish - Whether finish has been announced
+ * @returns DetectedEvent if in stretch, otherwise null
  */
 export function detectStretch(
   leaderPosition: number,
@@ -171,7 +206,11 @@ export function detectStretch(
 }
 
 /**
- * Detect finish event
+ * Detect finish event.
+ *
+ * @param leaderFinishTime - Finish time of the leader, or null if not finished
+ * @param hasAnnouncedFinish - Whether finish has been announced
+ * @returns DetectedEvent if finished, otherwise null
  */
 export function detectFinish(
   leaderFinishTime: number | null,
@@ -186,7 +225,12 @@ export function detectFinish(
 }
 
 /**
- * Detect milestone events
+ * Detect milestone events (distance markers).
+ *
+ * @param leaderPosition - Position of the race leader
+ * @param race - The current race
+ * @param announcedMilestones - Set of already announced milestone IDs
+ * @returns DetectedEvent for milestone, otherwise null
  */
 export function detectMilestones(
   leaderPosition: number,
@@ -217,8 +261,12 @@ export function detectMilestones(
 }
 
 /**
- * Check if position is in a turn
- * Basic oval assumption: 400m home straight, 400m turn, 400m back straight, 400m turn
+ * Check if position is in a turn.
+ * Basic oval assumption: 400m home straight, 400m turn, 400m back straight, 400m turn.
+ *
+ * @param pos - Position on track
+ * @param race - The current race
+ * @returns True if position is in a turn
  */
 function isInTurn(pos: number, race: Race): boolean {
   const distFromFinish = race.distance - pos;
@@ -227,7 +275,13 @@ function isInTurn(pos: number, race: Race): boolean {
 }
 
 /**
- * Detect stable watch event
+ * Detect stable watch event.
+ *
+ * @param runner - The runner to check
+ * @param horses - Global horse array for lookup
+ * @param stables - Global stable array for lookup
+ * @param simTime - Current simulation time
+ * @returns DetectedEvent if horse is from a major stable, otherwise null
  */
 export function detectStableWatch(
   runner: Runner,
@@ -251,7 +305,12 @@ export function detectStableWatch(
 }
 
 /**
- * Detect atmosphere event
+ * Detect atmosphere event.
+ *
+ * @param simTime - Current simulation time
+ * @param hasAnnouncedStart - Whether start has been announced
+ * @param hasAnnouncedFinish - Whether finish has been announced
+ * @returns DetectedEvent for general atmosphere
  */
 export function detectAtmosphere(
   simTime: number,

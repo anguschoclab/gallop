@@ -1,3 +1,14 @@
+/**
+ * strategy.ts - Personality-driven breeding strategy configuration
+ *
+ * This file provides breeding strategy parameters and scoring logic tied to stable
+ * personalities. Each personality has different preferences for stud fees, mare quality,
+ * inbreeding tolerance, and stallion scoring weights.
+ *
+ * Dependencies: @/game/types (Horse, Stable), @/core/breeding/leaderboardTypes (Leaderboard), @/game/breedingCompatibility (calculateBreedingCompatibility)
+ * Related files: archetypes.ts (program archetype matching), npcDailyCycle.ts (uses strategy for NPC breeding decisions)
+ */
+
 import type { Horse, Stable } from "@/game/types";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
@@ -64,15 +75,92 @@ export const MAX_COI: Record<Stable["personality"], number> = {
 };
 
 /**
- * Calculate overall rating for a horse
+ * Parameters passed to personality scoring strategies.
  */
-export function overallRating(h: Horse): number {
-  return (h.stats.speed + h.stats.stamina + h.stats.acceleration + h.stats.consistency) / 4;
+interface ScoringContext {
+  compat: number;
+  stakesRate: number;
+  feeNorm: number;
+  fertilityBonus: number;
+  fameBonus: number;
+  leaderboardBonus: number;
+  programTerm: number;
+  stallion: Horse;
+  mare: Horse;
+  stable: Stable;
 }
 
 /**
- * Personality-specific stallion scoring. Compatibility, fee, stakes record,
- * fertility, fame, and leaderboard rankings all weight differently per personality.
+ * Strategy function for stallion scoring.
+ */
+type ScoringStrategy = (ctx: ScoringContext) => number;
+
+/**
+ * Registry of scoring strategies indexed by stable personality.
+ * Strictly typed to ensure all personalities are handled.
+ */
+const SCORING_STRATEGIES: Record<Stable["personality"], ScoringStrategy> = {
+  breeder: (ctx) =>
+    ctx.compat * 0.45 +
+    ctx.stakesRate * 0.25 +
+    (1 - ctx.feeNorm) * 0.15 +
+    ctx.fertilityBonus * 0.05 +
+    ctx.fameBonus * 0.05 +
+    ctx.leaderboardBonus * 0.05 +
+    ctx.programTerm,
+
+  developer: (ctx) =>
+    ctx.compat * 0.3 +
+    (1 - ctx.feeNorm) * 0.35 +
+    ctx.stakesRate * 0.15 +
+    ctx.fertilityBonus * 0.1 +
+    ctx.leaderboardBonus * 0.1 +
+    ctx.programTerm,
+
+  prestige: (ctx) =>
+    ctx.compat * 0.25 +
+    ctx.stakesRate * 0.25 +
+    ctx.fameBonus * 0.2 +
+    ctx.feeNorm * 0.1 +
+    ctx.fertilityBonus * 0.05 +
+    ctx.leaderboardBonus * 0.15 +
+    ctx.programTerm,
+
+  specialist: (ctx) => {
+    const stableDist = ctx.stable.preferredDistance ?? 1600;
+    const stallionDistDiff = Math.abs((ctx.stallion.distanceAptitude ?? 1600) - stableDist);
+    const distMatch = Math.max(0, 1 - stallionDistDiff / 1000);
+    return (
+      ctx.compat * 0.35 +
+      distMatch * 0.25 +
+      ctx.stakesRate * 0.2 +
+      (1 - ctx.feeNorm) * 0.1 +
+      ctx.leaderboardBonus * 0.1 +
+      ctx.programTerm
+    );
+  },
+
+  // Fallbacks for personalities that don't typically breed but might in edge cases
+  aggressive: (ctx) => ctx.compat + ctx.leaderboardBonus * 0.1,
+  conservative: (ctx) => ctx.compat + ctx.leaderboardBonus * 0.1,
+  "win-now": (ctx) => ctx.compat + ctx.leaderboardBonus * 0.1,
+  trader: (ctx) => ctx.compat + ctx.leaderboardBonus * 0.1,
+};
+
+/**
+ * Personality-specific stallion scoring.
+ *
+ * Compatibility, fee, stakes record, fertility, fame, and leaderboard rankings
+ * all weight differently per personality. Returns a score used for stallion
+ * selection during NPC breeding.
+ *
+ * @param stallion - The stallion horse being evaluated
+ * @param mare - The mare being bred
+ * @param stable - The stable making the breeding decision
+ * @param maxFee - Maximum stud fee the stable is willing to pay
+ * @param leaderboards - Optional leaderboard data for ranking bonuses
+ * @param archetypeFitDelta - Optional archetype fit bonus
+ * @returns Stallion score (higher is better)
  */
 export function scoreStallion(
   stallion: Horse,
@@ -129,50 +217,17 @@ export function scoreStallion(
   const programWeight = PROGRAM_WEIGHT[stable.personality] ?? 0;
   const programTerm = archetypeFitDelta * programWeight;
 
-  switch (stable.personality) {
-    case "breeder":
-      return (
-        compat * 0.45 +
-        stakesRate * 0.25 +
-        (1 - feeNorm) * 0.15 +
-        fertilityBonus * 0.05 +
-        fameBonus * 0.05 +
-        leaderboardBonus * 0.05 +
-        programTerm
-      );
-    case "developer":
-      return (
-        compat * 0.3 +
-        (1 - feeNorm) * 0.35 +
-        stakesRate * 0.15 +
-        fertilityBonus * 0.1 +
-        leaderboardBonus * 0.1 +
-        programTerm
-      );
-    case "prestige":
-      return (
-        compat * 0.25 +
-        stakesRate * 0.25 +
-        fameBonus * 0.2 +
-        feeNorm * 0.1 +
-        fertilityBonus * 0.05 +
-        leaderboardBonus * 0.15 +
-        programTerm
-      );
-    case "specialist": {
-      const stableDist = stable.preferredDistance ?? 1600;
-      const stallionDistDiff = Math.abs((stallion.distanceAptitude ?? 1600) - stableDist);
-      const distMatch = Math.max(0, 1 - stallionDistDiff / 1000);
-      return (
-        compat * 0.35 +
-        distMatch * 0.25 +
-        stakesRate * 0.2 +
-        (1 - feeNorm) * 0.1 +
-        leaderboardBonus * 0.1 +
-        programTerm
-      );
-    }
-    default:
-      return compat + leaderboardBonus * 0.1;
-  }
+  const strategy = SCORING_STRATEGIES[stable.personality];
+  return strategy({
+    compat,
+    stakesRate,
+    feeNorm,
+    fertilityBonus,
+    fameBonus,
+    leaderboardBonus,
+    programTerm,
+    stallion,
+    mare,
+    stable,
+  });
 }

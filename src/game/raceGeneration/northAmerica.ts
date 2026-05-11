@@ -1,3 +1,13 @@
+/**
+ * raceGeneration/northAmerica.ts - North American race generator
+ *
+ * This file generates races with NA-specific patterns: 70% claiming races, optional
+ * claiming, starter races, with graded races able to be handicaps in NA.
+ *
+ * Dependencies: ../types (Race, RaceClass, ClaimingPrice), ../tracks (Track), ../rng (Rng), ../uuid (generateUUID), @/core/common/random (randomWeather, rand), @/core/trackConditions (randomTrackConditionWithClimateBias), @/core/race/naming/raceNameGenerator (generateRaceName), ./raceGen (CLASS_CONFIG)
+ * Related files: raceGen.ts (base race generation), raceSchedule.ts (uses generated races)
+ */
+
 // North American Race Generator
 // Generates races with NA-specific patterns: 70% claiming races, optional claiming, starter races
 // Graded races can be handicaps in NA
@@ -5,14 +15,15 @@
 import type { Race, RaceClass, ClaimingPrice } from "../types";
 import type { Track } from "../tracks";
 import type { Rng } from "@/game/rng";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { randomWeather, rand } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/trackConditions";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
+import { NA_CLAIMING_RACE_PERCENTAGE } from "@/game/constants/gameConstants";
 
 // Configuration for North American race distribution
-// 70% claiming races as per real-world statistics
+// Matches NA_CLAIMING_RACE_PERCENTAGE (70%) as per real-world statistics
 const NA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "MaidenClaiming", probability: 0.15 },
   { class: "Claiming", probability: 0.25 },
@@ -69,7 +80,19 @@ function getTrackQuality(country: string): "low" | "mid" | "high" {
   return "low";
 }
 
-// Generate a single North American race
+/**
+ * Generate a single North American race.
+ *
+ * Uses NA-specific race distribution (governed by NA_CLAIMING_RACE_PERCENTAGE),
+ * selects claiming price based on track quality, and generates appropriate race names.
+ *
+ * @param track - Track to generate race for
+ * @param day - Day the race takes place
+ * @param rng - Random number generator
+ * @param surface - Optional surface to use
+ * @param usedNames - Set of used race names to avoid duplicates
+ * @returns Complete race object
+ */
 export function generateNorthAmericanRace(
   track: Track,
   day: number,
@@ -175,7 +198,17 @@ export function generateNorthAmericanRace(
   return race;
 }
 
-// Generate multiple races for a track on a given day
+/**
+ * Generate multiple races for a track on a given day.
+ *
+ * Creates a race card by alternating between available track surfaces.
+ *
+ * @param track - Track to generate races for
+ * @param day - Day the races take place
+ * @param numRaces - Number of races to generate
+ * @param rng - Random number generator
+ * @returns Array of generated races
+ */
 export function generateNorthAmericanRaceCard(
   track: Track,
   day: number,

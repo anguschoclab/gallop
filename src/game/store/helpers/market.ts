@@ -1,4 +1,14 @@
 /**
+ * store/helpers/market.ts - Market and day advancement helpers
+ *
+ * This file provides pure business logic for market refresh, horse aging based on
+ * hemisphere-specific universal birthdays, and race scheduling.
+ *
+ * Dependencies: @/game/types (Horse, Race), @/game/horseGen (generateHorse), @/game/raceSchedule (generateUpcomingRaces), @/game/tracks (TRACK_SCHEDULES), @/core/calendar/breedingCalendar (isUniversalBirthday), @/game/rng (Rng)
+ * Related files: store/slices/coreSlice.ts (uses market helpers), store/slices/racingSlice.ts (uses race scheduling)
+ */
+
+/**
  * Market and Day Advancement Helper Functions
  * Pure business logic for market refresh and race scheduling
  */
@@ -70,15 +80,15 @@ export function generateUpcomingRaces(currentRaces: Race[], newDay: number, rng:
 
 /**
  * Removes old resolved races from the schedule
- * Keeps graded races indefinitely, ungraded resolved races for 30 days
+ * Keeps graded races for 365 days, ungraded resolved races for 30 days
  * @param races - Current races array
  * @param newDay - Current simulation day
  * @returns Filtered races array
  */
 export function pruneOldRaces(races: Race[], newDay: number): Race[] {
   return races.filter((r) => {
-    if (r.graded) return true;
     if (!r.resolved) return true;
-    return r.day > newDay - 3;
+    if (r.graded) return r.day > newDay - 365;
+    return r.day > newDay - 30;
   });
 }

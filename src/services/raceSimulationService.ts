@@ -13,6 +13,8 @@ import { calculateClassBonus } from "@/core/common/classBonus";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { StaffMember } from "@/core/staff/staffTypes";
+import type { RunnerBonuses } from "@/core/race/engine/runnerBuilder";
 
 /**
  * Race simulation orchestration with dependency injection
@@ -23,10 +25,10 @@ export interface RaceSimulationDependencies {
   race: Race;
   horses: Horse[];
   jockeys: Jockey[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  npcStables?: any[];
+  npcStables?: Stable[];
   npcAIManager?: NpcAIManager;
   currentDay?: number;
+  hiredStaff?: StaffMember[];
 }
 
 export interface SimulationResult {
@@ -36,6 +38,12 @@ export interface SimulationResult {
 }
 
 // Seed any race simulation off the race id so reruns are reproducible.
+/**
+ * Generate a deterministic RNG for a specific race based on its ID.
+ *
+ * @param race - The race object (requires id)
+ * @returns Rng instance seeded with the race ID
+ */
 export function rngForRace(race: Pick<Race, "id">): Rng {
   return createRng(hashStr(race.id));
 }
@@ -55,9 +63,12 @@ export interface RaceFieldResult {
  *
  * Returns both the Runner array and any generated filler Horse objects so
  * callers can persist them into game state (avoids ghost IDs in results).
+ *
+ * @param dependencies - Objects required for simulation (race, horses, jockeys, etc.)
+ * @returns Object containing the runner field and generated filler horses
  */
 export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFieldResult {
-  const { race, horses, npcStables, npcAIManager, currentDay } = dependencies;
+  const { race, horses, npcStables, npcAIManager, currentDay, hiredStaff = [] } = dependencies;
   const conditions = getConditionsModifier(race);
   const fillerHorses: Horse[] = [];
   const surface = race.surface || race.graded?.surface;
@@ -102,24 +113,45 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   }
 
   // 4. Build the final Runner objects with assigned barriers
+  const horseMap =
+    horses instanceof Map ? (horses as Map<string, Horse>) : new Map(horses.map((h) => [h.id, h]));
+  const jockeyMap =
+    dependencies.jockeys instanceof Map
+      ? (dependencies.jockeys as Map<string, Jockey>)
+      : new Map(dependencies.jockeys.map((j) => [j.id, j]));
+  const stableMap =
+    npcStables instanceof Map
+      ? (npcStables as Map<string, Stable>)
+      : npcStables
+        ? new Map(npcStables.map((s) => [s.id, s]))
+        : new Map();
+  const fillerMap = new Map(fillerHorses.map((h) => [h.id, h]));
+
   const runners: Runner[] = [];
   for (let i = 0; i < shuffled.length; i++) {
     const entryData = shuffled[i];
     const barrier = i + 1;
 
-    // Find the horse (either from dependencies.horses or from the new fillerHorses)
-    let horse = horses.find((h) => h.id === entryData.horseId);
-    if (!horse) {
-      horse = fillerHorses.find((h) => h.id === entryData.horseId);
-    }
+    // Find the horse
+    const horse = horseMap.get(entryData.horseId) || fillerMap.get(entryData.horseId);
 
     if (horse) {
-      const jockeyObj = entryData.jockeyId
-        ? dependencies.jockeys.find((j) => j.id === entryData.jockeyId)
-        : undefined;
+      const jockeyObj = entryData.jockeyId ? jockeyMap.get(entryData.jockeyId) : undefined;
       // Get stable for AI-driven decisions
-      const stableObj =
-        horse.stableId && npcStables ? npcStables.find((s) => s.id === horse.stableId) : undefined;
+      const stableObj = horse.stableId ? stableMap.get(horse.stableId) : undefined;
+
+      // Get staff for this stable - optimize with Map for role lookup
+      const stableId = horse.stableId ?? "";
+      const staffForStable = hiredStaff.filter((s) => s.stableId === stableId);
+      const staffRoleMap = new Map(staffForStable.map(s => [s.role, s]));
+
+      const farrier = staffRoleMap.get("farrier");
+      const groom = staffRoleMap.get("groom");
+
+      const runnerBonuses: RunnerBonuses = {
+        farrier: farrier?.bonusValue,
+        groom: groom?.bonusValue,
+      };
 
       runners.push(
         buildRunner(
@@ -136,6 +168,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
           currentDay,
           stableObj,
           race,
+          runnerBonuses,
         ),
       );
     }
@@ -146,6 +179,14 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
 
 /**
  * Simulate a single time step for all runners.
+ *
+ * @param runners - All runners currently in the race
+ * @param dt - Time delta for the step in seconds
+ * @param simTime - Total elapsed simulation time
+ * @param distance - Total race distance
+ * @param rng - Random number generator for stochastic movement
+ * @param course - Optional course specification for turn/track logic
+ * @returns Object indicating if the race is still running and the finish order
  */
 export function simulateStep(
   runners: Runner[],
@@ -181,7 +222,10 @@ export function simulateStep(
 }
 
 /**
- * Get the appropriate AI horse tier for a race class
+ * Get the appropriate AI horse tier for a race class.
+ *
+ * @param raceClass - The classification of the race
+ * @returns "elite", "mid", or "budget"
  */
 function getTierForRaceClass(raceClass: Race["raceClass"]): string {
   const tierMap: Record<Race["raceClass"], string> = {
@@ -205,7 +249,10 @@ function getTierForRaceClass(raceClass: Race["raceClass"]): string {
 }
 
 /**
- * Calculate class bonus for a race
+ * Calculate the class-based performance bonus for a race.
+ *
+ * @param race - The race to calculate bonus for
+ * @returns Numeric bonus value
  */
 export function getRaceClassBonus(race: Race): number {
   return calculateClassBonus(race.graded?.grade, race.raceClass);

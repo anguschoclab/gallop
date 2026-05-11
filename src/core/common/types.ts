@@ -1,3 +1,13 @@
+/**
+ * types.ts - Common type definitions
+ *
+ * This file provides common type definitions used across the codebase, including
+ * Rng (re-exported), Allele, and Locus types for genetics.
+ *
+ * Dependencies: @/game/rng (Rng)
+ * Related files: Used throughout the codebase, especially in genetics and horse modules
+ */
+
 import type { Rng } from "@/game/rng";
 
 export type { Rng };

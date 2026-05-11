@@ -1,19 +1,14 @@
-export type RaceClass =
-  | "Maiden"
-  | "MaidenSpecialWeight"
-  | "MaidenClaiming"
-  | "MaidenOptionalClaiming"
-  | "MaidenStakes"
-  | "Allowance"
-  | "OptionalClaiming"
-  | "StarterAllowance"
-  | "StarterHandicap"
-  | "Stakes"
-  | "Claiming"
-  | "Handicap"
-  | "Listed"
-  | "Group"
-  | "Graded";
+/**
+ * types.ts - Race type definitions
+ *
+ * This file provides type definitions for race-related concepts including
+ * claiming prices, win conditions, weather, track conditions, and the main Race type.
+ *
+ * Dependencies: ./engine/raceSnapshotTypes (RaceSnapshot), ./sharedTypes (RaceClass)
+ * Related files: Used throughout the race module and game state
+ */
+
+import { RaceClass } from "./sharedTypes";
 
 export type ClaimingPrice =
   | 5000
@@ -35,6 +30,14 @@ export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 
 export type TrackCondition = "fast" | "good" | "soft" | "heavy" | "yielding";
 
+import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
+
+/**
+ * Main Race type definition.
+ *
+ * Represents a complete race with entries, conditions, results, and
+ * optional graded race information.
+ */
 export type Race = {
   id: string;
   name: string;
@@ -54,9 +57,11 @@ export type Race = {
     jockeyId?: string;
     weight?: number;
     withdrawnFromClaiming?: boolean;
+    tactics?: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
   }[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
+  snapshots?: RaceSnapshot[];
   graded?: {
     key: string;
     grade: "G1" | "G2" | "G3";
@@ -77,8 +82,7 @@ export type Race = {
   restrictions?: {
     minAge?: number;
     maxAge?: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    gender?: any; // Avoiding deep nest for now
+    gender?: "colt" | "filly" | "gelding" | "mare" | "stallion";
     minAgeNorthern?: number;
     minAgeSouthern?: number;
     nonWinnersOf?: number;

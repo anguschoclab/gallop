@@ -6,9 +6,9 @@ import { MapPin, Globe, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import type { Race } from "@/game/types";
 
 interface RaceCardProps {
@@ -23,8 +23,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
   const isClaiming = !!race.claiming;
   const claimingPrice: number | undefined = race.claiming?.price;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const horses = (useGame as any)((s: any) => s.horses, shallow);
+  const horses = useGameWithShallow((s) => s.horses);
   const classBonus = useGame((s) => {
     // Calculate class bonus for odds
     if (race.graded?.grade) {

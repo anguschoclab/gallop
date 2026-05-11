@@ -1,3 +1,14 @@
+/**
+ * awards/types.ts - Regional awards type definitions and constants
+ *
+ * This file provides type definitions for regional awards (North America, Europe,
+ * Asia-Pacific, South America) based on real-world horse racing awards like Eclipse,
+ * Cartier, Australian, Sovereign, and JRA awards.
+ *
+ * Dependencies: @/core/data/gradedRaces (Continent)
+ * Related files: scoring.ts (uses these types for calculation), index.ts (re-exports)
+ */
+
 // Regional Awards System - Types and Constants
 // Based on real-world horse racing awards: Eclipse (USA), Cartier (Europe), Australian, Sovereign (Canada), JRA (Japan)
 

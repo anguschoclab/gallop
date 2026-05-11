@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +13,12 @@ export const Route = createFileRoute("/hall-of-fame")({
 function HallOfFame() {
   const hallOfFame = useGame((s) => s.hallOfFame || []);
   const horses = useGame((s) => s.horses);
+
+  // ⚡ Bolt: Cache horses in an O(1) map to replace the previous O(N^2) `.find` inside the loop below.
+  // Impact: Prevents N * M iterations where N is hallOfFame length and M is horses length.
+  const horsesMap = useMemo(() => {
+    return new Map(horses.map((h) => [h.id, h]));
+  }, [horses]);
 
   return (
     <div className="space-y-6">
@@ -38,13 +45,19 @@ function HallOfFame() {
           {hallOfFame
             .sort((a, b) => b.inductedOnDay - a.inductedOnDay)
             .map((inductee) => {
-              const horse = horses.find((h) => h.id === inductee.horseId);
+              const horse = horsesMap.get(inductee.horseId);
               return (
                 <Card key={inductee.horseId} className="border-gold-muted bg-gold/5">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <CardTitle className="font-[family-name:var(--font-display)] text-lg">
-                        {inductee.horseName}
+                        <Link
+                          to="/stable/$horseId"
+                          params={{ horseId: inductee.horseId }}
+                          className="hover:underline hover:text-gold transition-colors"
+                        >
+                          {inductee.horseName}
+                        </Link>
                       </CardTitle>
                       <Badge className="bg-gold text-t900">
                         <Trophy className="h-3 w-3 mr-1" />

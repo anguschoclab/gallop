@@ -1,20 +1,30 @@
+/**
+ * phases/trainingResolution.ts - Training resolution phase
+ *
+ * This file provides the training resolution phase that converts TrainingIntents
+ * into impacts (stat changes, energy changes, cash changes).
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, TrainingIntent), @/core/resolver/impacts/index (AnyImpact), @/game/rng (createRng, hashStr), @/core/facilities (getFacilityBonus), @/core/expenses (createExpense), @/game/uuid (generateUUID), @/core/transactions (createTransaction), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/trainingAI (recordTrainingOutcome)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 // Training Resolution Phase
 // Converts TrainingIntents into impacts (stat changes, energy changes, cash changes)
 
-import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
-import type {
-  AnyImpact,
-  HorseStatImpact,
-  EnergyImpact,
-  HealthStatusImpact,
-} from "@/core/resolver/impacts";
+import type { PipelineContext } from "../pipeline";
+import { resolveTraining } from "@/core/training/trainingResolution";
+import { PHASE_ORDER_TRAINING_RESOLUTION } from "@/game/constants/gameConstants";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";
-import type { Horse } from "@/game/types";
 import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import { createTransaction } from "@/core/transactions";
+import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { recordTrainingOutcome } from "@/core/ai/trainingAI";
+import { BANISTER_CONSTANTS, calculateImpulse } from "@/core/health/banister";
+import { getOutpostSpecialty } from "@/core/facilities/outpostTypes";
+import { getBranchModifiers } from "@/core/facilities/facilityBranching";
 
 /**
  * Training Resolution Phase (Order 45)
@@ -23,10 +33,12 @@ import { createTransaction } from "@/core/transactions";
  * - Energy changes
  * - Cash changes (already deducted when intent was enqueued)
  * - Health status changes (OCD risk)
+ * - Banister impulses (fitness and fatigue)
+ * - Outpost Specialization bonuses
  */
 export const trainingResolutionPhase: PipelinePhase = {
   name: "trainingResolution",
-  order: 45,
+  order: PHASE_ORDER_TRAINING_RESOLUTION,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
@@ -36,8 +48,18 @@ export const trainingResolutionPhase: PipelinePhase = {
     // Filter for training intents
     const trainingIntents = intents.filter((i): i is TrainingIntent => i.type === "training");
 
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const hiredStaffByStable = new Map<string, typeof state.hiredStaff>();
+    if (state.hiredStaff) {
+      for (const staff of state.hiredStaff) {
+        if (!staff.stableId) continue;
+        if (!hiredStaffByStable.has(staff.stableId)) hiredStaffByStable.set(staff.stableId, []);
+        hiredStaffByStable.get(staff.stableId)!.push(staff);
+      }
+    }
+
     for (const intent of trainingIntents) {
-      const horse = state.horses.find((h) => h.id === intent.horseId);
+      const horse = horseMap.get(intent.horseId);
       if (!horse) continue;
 
       // Skip training for retired or deceased horses
@@ -51,6 +73,48 @@ export const trainingResolutionPhase: PipelinePhase = {
         horse.healthStatus === "other_illness"
       )
         continue;
+
+      // Get staff bonuses for this stable
+      const stableId = horse.stableId ?? "";
+      const staffForStable = hiredStaffByStable.get(stableId) || [];
+
+      const trainer = staffForStable.find((s) => s.role === "trainer");
+      const trainerBonus = trainer ? trainer.bonusValue : 0;
+
+      const nutritionist = staffForStable.find((s) => s.role === "nutritionist");
+      const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
+
+      // --- BANISTER IMPULSES ---
+      if (intent.trainingType !== "rest") {
+        const intensity = BANISTER_CONSTANTS.WORKOUT_INTENSITY[intent.trainingType] ?? 10;
+        const fitnessDelta = calculateImpulse(intensity, BANISTER_CONSTANTS.FITNESS_K);
+        const fatigueDelta = calculateImpulse(intensity, BANISTER_CONSTANTS.FATIGUE_K);
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "fitness_change",
+          horseId: horse.id,
+          delta: fitnessDelta,
+          reason: `${intent.trainingType} training impulse`,
+        } as any);
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "fatigue_change",
+          horseId: horse.id,
+          delta: fatigueDelta,
+          reason: `${intent.trainingType} training impulse`,
+        } as any);
+      }
+      // --- END BANISTER IMPULSES ---
 
       // Record training expense (only for actual training, not rest)
       if (intent.trainingType !== "rest") {
@@ -89,6 +153,19 @@ export const trainingResolutionPhase: PipelinePhase = {
             { horseId: horse.id },
           ),
         );
+
+        // Add cash change impact
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: "player",
+          amount: -cost,
+          reason: `${intent.trainingType} training cost`,
+        } as any);
       }
 
       // Deduct energy (only for actual training, not rest)
@@ -104,7 +181,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           swimming: -15, // Low impact
           gallop: -16, // Standard work
         };
-        const energyDelta = energyCostMap[intent.trainingType] ?? -18;
+        const energyDelta = (energyCostMap[intent.trainingType] ?? -18) * (1 - nutritionistBonus);
 
         impacts.push({
           id: generateUUID(),
@@ -133,6 +210,7 @@ export const trainingResolutionPhase: PipelinePhase = {
       }
 
       // Apply stat gains based on workout type
+      let totalGain = 0;
       if (intent.trainingType !== "rest") {
         // Generate RNG for this training session
         const trainingRng = createRng(hashStr(`training_${intent.horseId}_${newDay}`));
@@ -194,15 +272,60 @@ export const trainingResolutionPhase: PipelinePhase = {
         const effectivePotential = horse.potential * ageRatio;
         const gap = effectivePotential - primaryStat;
 
-        // Apply main_track facility bonus to training chance
+        // Apply main_track facility bonus and trainer bonus to training chance
         const facilities = state.facilities;
         const trackBonus = facilities ? getFacilityBonus(facilities, "main_track") : 0;
-        const trainingChance = 0.65 * horse.trainability * (1 + trackBonus);
+
+        // --- OUTPOST SPECIALIZATION (Imperial Expansion) ---
+        let branchMod = null;
+        if (horse.outpostId) {
+          // Check if horse belongs to NPC stable
+          if (horse.stableId && state.npcStables) {
+            const npcStable = state.npcStables.find((s) => s.id === horse.stableId);
+            if (npcStable && (npcStable as any).outposts) {
+              const outpost = (npcStable as any).outposts.find(
+                (o: any) => o.id === horse.outpostId,
+              );
+              if (outpost) {
+                const specialty = getOutpostSpecialty(outpost);
+                branchMod = getBranchModifiers(specialty);
+              }
+            }
+          }
+          // Check if horse belongs to player (player may have outposts in future)
+          else if (!horse.stableId && (state as any).outposts) {
+            const outpost = (state as any).outposts.find((o: any) => o.id === horse.outpostId);
+            if (outpost) {
+              const specialty = getOutpostSpecialty(outpost);
+              branchMod = getBranchModifiers(specialty);
+            }
+          }
+        }
+        // --- END SPECIALIZATION ---
+
+        const trainingChance = 0.65 * horse.trainability * (1 + trackBonus + trainerBonus);
 
         if (gap > 0 && trainingRng.next() < trainingChance) {
           // Base gain with facility and workout bonuses
           let gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
           gain = Math.round(gain * (1 + trackBonus) * config.gainBonus);
+
+          // Apply branch multiplier
+          if (branchMod) {
+            if (
+              config.primary === "stamina" &&
+              "staminaGain" in branchMod &&
+              branchMod.staminaGain
+            ) {
+              gain *= branchMod.staminaGain;
+            }
+            if (config.primary === "speed" && "speedGain" in branchMod && branchMod.speedGain) {
+              gain *= branchMod.speedGain;
+            }
+            gain = Math.round(gain);
+          }
+
+          totalGain += gain;
 
           impacts.push({
             id: generateUUID(),
@@ -222,6 +345,7 @@ export const trainingResolutionPhase: PipelinePhase = {
             const secondaryGap = effectivePotential - horse.stats[config.secondary];
             if (secondaryGap > 0) {
               const secondaryGain = Math.min(secondaryGap, 1);
+              totalGain += secondaryGain;
               impacts.push({
                 id: generateUUID(),
                 intentId: intent.id,
@@ -256,6 +380,25 @@ export const trainingResolutionPhase: PipelinePhase = {
             recoveryDay: newDay + recoveryDuration,
             reason: `OCD injury during ${intent.trainingType} - ${recoveryDuration} day recovery`,
           });
+        }
+      }
+
+      // Record training outcome for NPC AI
+      if (state.npcAIManager && horse.stableId) {
+        const stable = state.npcStables.find((s) => s.id === horse.stableId);
+        if (stable) {
+          const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
+          if (stableAI.trainingAI) {
+            stableAI.trainingAI = recordTrainingOutcome(
+              stableAI.trainingAI,
+              horse,
+              intent.trainingType,
+              totalGain > 0,
+              totalGain,
+              newDay,
+            );
+            state.npcAIManager.stableStates[stable.id] = stableAI;
+          }
         }
       }
     }

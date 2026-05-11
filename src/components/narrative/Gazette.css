@@ -1,0 +1,52 @@
+/* Gazette Industrial Aesthetic Refinements */
+
+.gazette-container {
+  /* We are now using Tailwind classes for layout, but keeping this for specific thematic overrides */
+}
+
+/* Custom scrollbar for the intelligence feed */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.4);
+}
+
+/* Specific entity link animation on hover */
+.entity-link-hover:hover {
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+}
+
+/* Decorative corner brackets for high-importance news */
+.news-importance-high::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border-top: 2px solid rgba(212, 175, 55, 0.3);
+  border-right: 2px solid rgba(212, 175, 55, 0.3);
+  pointer-events: none;
+}
+
+/* News article serif typography override for readability */
+.news-article-body {
+  font-family: var(--font-body), serif;
+  line-height: 1.7;
+}
+
+/* Stamped effect for news categories */
+.news-category-stamped {
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.5);
+}

@@ -1,4 +1,14 @@
 /**
+ * phases/awards.ts - Awards ceremony phase
+ *
+ * This file provides the awards ceremony phase that calculates and presents
+ * regional awards at year end.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/awards/scoring (determineAllRegionalWinners, determineRegionalWinners), @/core/calendar/dateFormatting (dayOfYear), @/game/uuid (generateUUID), @/game/awards/types (AwardRegion, RegionalAward, AWARD_CEREMONY_SCHEDULE)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
+/**
  * Phase: Awards Ceremony
  * Calculate and present regional awards at year end
  */
@@ -6,13 +16,14 @@
 import type { PipelineContext } from "../pipeline";
 import { determineAllRegionalWinners, determineRegionalWinners } from "@/game/awards/scoring";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
-import { generateUUID } from "@/game/uuid";
+import { generateUUID } from "@/core/uuid";
 import type { AwardRegion, RegionalAward } from "@/game/awards/types";
 import { AWARD_CEREMONY_SCHEDULE } from "@/game/awards/types";
+import { PHASE_ORDER_AWARDS } from "@/game/constants/gameConstants";
 
 export const awardsPhase = {
   name: "awards",
-  order: 95, // Run before state update phase
+  order: PHASE_ORDER_AWARDS, // Run before state update phase
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, logs } = context;
     const doy = dayOfYear(newDay);

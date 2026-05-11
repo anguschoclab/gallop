@@ -29,13 +29,17 @@ import {
   LayoutGrid,
   Star,
 } from "lucide-react";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+import { useDay, useCash, useHorses } from "@/game/hooks/useCoreState";
+import { useAwards } from "@/game/hooks/useSystemsState";
+import { useAutoSave } from "@/game/hooks/useAutoSave";
 import { PlayerRacePrompt } from "./PlayerRacePrompt";
 import { AutoSimPanel } from "./AutoSimPanel";
 import { AwardCeremony } from "./awards";
 import { useState, useEffect } from "react";
+import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/game/constants/gameConstants";
 
 const navSections = [
   {
@@ -44,15 +48,15 @@ const navSections = [
       { to: "/", label: "Dashboard", icon: Home, exact: true },
       { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
-      { to: "/settings", label: "Settings", icon: Settings, exact: false },
     ],
   },
   {
     label: "My Stable",
     items: [
-      { to: "/stable", label: "Roster", icon: Trophy, exact: false },
+      { to: "/stable", label: "Stables", icon: Trophy, exact: false },
       { to: "/horse-gallery", label: "Horse Gallery", icon: LayoutGrid, exact: false },
-      { to: "/jockeys", label: "Jockeys", icon: Users, exact: false },
+      { to: "/staff", label: "Staff", icon: Users, exact: false },
+      { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
       { to: "/scheduler", label: "Scheduler", icon: Clock, exact: false },
       {
         to: "/breeding",
@@ -64,7 +68,7 @@ const navSections = [
           { to: "/broodmares", label: "Broodmares", icon: Baby, exact: false },
         ],
       },
-      { to: "/hall-of-fame", label: "Hall of Fame", icon: Award, exact: false },
+      { to: "/records", label: "Hall of Records", icon: Award, exact: false },
     ],
   },
   {
@@ -85,13 +89,18 @@ const navSections = [
       { to: "/sire-leaderboards", label: "Sire Leaderboards", icon: Trophy, exact: false },
     ],
   },
+  {
+    label: "Configuration",
+    items: [{ to: "/settings", label: "Settings", icon: Settings, exact: false }],
+  },
 ] as const;
 
 export function AppShell() {
+  useAutoSave();
   const navigate = useNavigate();
-  const day = useGame((s) => s.day);
-  const cash = useGame((s) => s.cash);
-  const horses = useGame((s) => s.horses);
+  const day = useDay();
+  const cash = useCash();
+  const horses = useHorses();
   const advanceDay = useGame((s) => s.advanceDay);
   const advanceMultipleDays = useGame((s) => s.advanceMultipleDays);
   const startNewGame = useGame((s) => s.startNewGame);
@@ -99,6 +108,7 @@ export function AppShell() {
   const [autoSimOpen, setAutoSimOpen] = useState(false);
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
 
+  const awards = useAwards();
   const pendingCeremonies = useGame((s) => s.pendingAwardCeremonies);
   const [showCeremony, setShowCeremony] = useState(false);
   const clearPendingCeremonies = useGame((s) => s.clearPendingCeremonies);
@@ -211,7 +221,7 @@ export function AppShell() {
             <Button
               onClick={() => {
                 // Use setTimeout to ensure the click completes before starting the async operation
-                setTimeout(() => advanceMultipleDays(7), 0);
+                setTimeout(() => advanceMultipleDays(DAYS_PER_WEEK), 0);
               }}
               className="col-span-1 tabular-nums"
               size="sm"
@@ -223,7 +233,7 @@ export function AppShell() {
             <Button
               onClick={() => {
                 // Use setTimeout to ensure the click completes before starting the async operation
-                setTimeout(() => advanceMultipleDays(30), 0);
+                setTimeout(() => advanceMultipleDays(DAYS_PER_MONTH), 0);
               }}
               className="col-span-1 tabular-nums"
               size="sm"
@@ -267,7 +277,7 @@ export function AppShell() {
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    startNewGame(undefined);
+                    window.location.href = "/new-game";
                     setNewGameDialogOpen(false);
                   }}
                 >
@@ -283,8 +293,7 @@ export function AppShell() {
           <Outlet />
         </div>
       </main>
-      {/* Temporarily disabled due to infinite loop bug - blocking Comlink testing */}
-      {/* <PlayerRacePrompt /> */}
+      <PlayerRacePrompt />
       <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
       <AwardCeremony
         isOpen={showCeremony}

@@ -69,7 +69,12 @@ export const TRANSPORT_CONFIGS: Record<TransportMode, TransportConfig> = {
 };
 
 /**
- * Calculate transport cost
+ * Calculate transport cost based on distance and mode.
+ *
+ * @param distance - Trip distance in miles
+ * @param mode - Transport mode (road, air, rail)
+ * @param horseCount - Number of horses being shipped (defaults to 1)
+ * @returns Total shipping cost in dollars
  */
 export function calculateTransportCost(
   distance: number,
@@ -82,7 +87,11 @@ export function calculateTransportCost(
 }
 
 /**
- * Calculate transport duration in days
+ * Calculate transport duration in days.
+ *
+ * @param distance - Trip distance in miles
+ * @param mode - Transport mode
+ * @returns Estimated travel time in days
  */
 export function calculateTransportDuration(distance: number, mode: TransportMode): number {
   const config = TRANSPORT_CONFIGS[mode];
@@ -90,7 +99,12 @@ export function calculateTransportDuration(distance: number, mode: TransportMode
 }
 
 /**
- * Get appropriate transport mode for distance
+ * Get appropriate transport mode for distance.
+ *
+ * Defaults to road, air for long distance, rail for medium.
+ *
+ * @param distance - Trip distance in miles
+ * @returns Selected TransportMode
  */
 export function getTransportModeForDistance(distance: number): TransportMode {
   if (distance >= 200 && distance <= 5000) return "air";
@@ -99,7 +113,15 @@ export function getTransportModeForDistance(distance: number): TransportMode {
 }
 
 /**
- * Create a transport request
+ * Create a transport request.
+ *
+ * @param horseId - Unique identifier for the horse to ship
+ * @param fromLocation - Starting location name
+ * @param toLocation - Destination location name
+ * @param distance - Trip distance in miles
+ * @param currentDay - Current game day
+ * @param mode - Optional mode override
+ * @returns Complete TransportRequest object
  */
 export function createTransportRequest(
   horseId: string,
@@ -128,7 +150,10 @@ export function createTransportRequest(
 }
 
 /**
- * Format transport mode for display
+ * Format transport mode for display.
+ *
+ * @param mode - Transport mode to format
+ * @returns Human-readable label
  */
 export function formatTransportMode(mode: TransportMode): string {
   const labels: Record<TransportMode, string> = {

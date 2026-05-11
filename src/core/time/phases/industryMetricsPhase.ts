@@ -1,7 +1,17 @@
+/**
+ * phases/industryMetricsPhase.ts - Industry metrics phase
+ *
+ * This file provides the industry metrics phase that recomputes industry mean earnings
+ * every season (30 days) for AEI (Average Earnings Index) calculation.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/breeding/industryMetrics (computeIndustryMeanEarnings), @/game/types (Horse), @/lib/formatting (formatCurrency)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext } from "../pipeline";
 import { computeIndustryMeanEarnings } from "@/core/breeding/industryMetrics";
 import type { Horse } from "@/game/types";
-import { formatCurrency } from "@/components/HorseBits";
+import { formatCurrency } from "@/lib/formatting";
 
 /**
  * Phase: Industry Metrics

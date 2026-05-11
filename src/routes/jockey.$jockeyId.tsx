@@ -20,6 +20,7 @@ function JockeyPage() {
   const { jockeyId } = Route.useParams();
   const jockeys = useGame((s) => s.jockeys);
   const hireJockey = useGame((s) => s.hireJockey);
+  const releaseJockey = useGame((s) => s.releaseJockey);
 
   const jockey = jockeys?.find((j) => j.id === jockeyId);
 
@@ -43,12 +44,8 @@ function JockeyPage() {
           <JockeyCard
             jockey={jockey}
             isRetained={isRetained}
-            actionLabel={isRetained ? "Contract Details" : "Sign Retainer"}
-            onAction={
-              isRetained
-                ? () => {} // Could add contract renewal logic here
-                : (j) => hireJockey(j.id)
-            }
+            actionLabel={isRetained ? "Release Jockey" : "Sign Retainer"}
+            onAction={isRetained ? (j) => releaseJockey(j.id) : (j) => hireJockey(j.id, "retainer")}
           />
         </div>
       </div>

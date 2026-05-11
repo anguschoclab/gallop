@@ -1,7 +1,17 @@
+/**
+ * phases/consignmentResolution.ts - Consignment resolution phase
+ *
+ * This file provides the consignment resolution phase that converts player
+ * ConsignmentIntents into impacts.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/impacts/index (AnyImpact), @/game/uuid (generateUUID), @/core/resolver/intents (ConsignmentIntent, ConsignmentWithdrawalIntent)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { ConsignmentIntent } from "@/core/resolver/intents";
-import type { AnyImpact } from "@/core/resolver/impacts";
-import { generateUUID } from "@/game/uuid";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
+import { generateUUID } from "@/core/uuid";
+import type { ConsignmentIntent, ConsignmentWithdrawalIntent } from "@/core/resolver/intents";
 
 /**
  * Consignment Resolution Phase (Order 16)
@@ -16,6 +26,10 @@ export const consignmentResolutionPhase: PipelinePhase = {
 
     const consignmentIntents = intents.filter(
       (i): i is ConsignmentIntent => i.type === "consignment",
+    );
+
+    const withdrawalIntents = intents.filter(
+      (i): i is ConsignmentWithdrawalIntent => i.type === "consignment_withdrawal",
     );
 
     for (const intent of consignmentIntents) {
@@ -37,6 +51,27 @@ export const consignmentResolutionPhase: PipelinePhase = {
         saleId: intent.saleId,
         reservePrice: intent.reservePrice,
         reason: "Player consignment",
+      });
+    }
+
+    for (const intent of withdrawalIntents) {
+      const horse = state.horses.find((h) => h.id === intent.horseId);
+      const auction = state.auctions?.find((a) => a.id === intent.saleId);
+
+      if (!horse || !auction) continue;
+      if (auction.resolved) continue;
+      if (horse.consignedSaleId !== intent.saleId) continue;
+
+      impacts.push({
+        id: generateUUID(),
+        intentId: intent.id,
+        day: newDay,
+        phase: "consignmentResolution",
+        logLevel: "always",
+        type: "consignment_withdrawal",
+        horseId: intent.horseId,
+        saleId: intent.saleId,
+        reason: "Player withdrawal",
       });
     }
 

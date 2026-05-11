@@ -4,7 +4,8 @@
 
 import { describe, it, expect, vi } from "vitest";
 import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
-import type { GameState, Race } from "@/game/types";
+import { getCurrentYear } from "@/game/raceSchedule";
+import type { GameState, Race, Horse } from "@/game/types";
 
 describe("computePlayerRaceDays", () => {
   it("should return empty set when no races have player entries", () => {
@@ -176,6 +177,12 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      privateSaleOffers: [],
+      claims: [],
+      activeBreedingProgram: null,
+      breedingPrograms: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
     };
 
     const advanceDayFn = vi.fn();
@@ -218,6 +225,12 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      privateSaleOffers: [],
+      claims: [],
+      activeBreedingProgram: null,
+      breedingPrograms: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
     };
 
     const advanceDayFn = vi.fn();
@@ -261,6 +274,12 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      privateSaleOffers: [],
+      claims: [],
+      activeBreedingProgram: null,
+      breedingPrograms: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
     };
 
     const advanceDayFn = vi.fn();
@@ -303,6 +322,12 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      privateSaleOffers: [],
+      claims: [],
+      activeBreedingProgram: null,
+      breedingPrograms: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
     };
 
     const advanceDayFn = vi.fn();
@@ -345,6 +370,12 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
       trainingUsed: {},
       log: [],
       scoutReports: [],
+      privateSaleOffers: [],
+      claims: [],
+      activeBreedingProgram: null,
+      breedingPrograms: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
     };
 
     const advanceDayFn = vi.fn();
@@ -353,5 +384,149 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
     expect(result.daysAdvanced).toBe(5);
     expect(result.encounteredPlayerRace).toBe(false);
     expect(advanceDayFn).toHaveBeenCalledTimes(5);
+  });
+});
+
+describe("Year Advance Integration", () => {
+  it("should detect year boundary correctly", () => {
+    expect(getCurrentYear(1)).toBe(1);
+    expect(getCurrentYear(365)).toBe(1);
+    expect(getCurrentYear(366)).toBe(2);
+    expect(getCurrentYear(730)).toBe(2);
+    expect(getCurrentYear(731)).toBe(3);
+  });
+
+  it("should advance full year in headless mode", () => {
+    const state: GameState = {
+      day: 1,
+      cash: 5000,
+      horses: [],
+      races: [],
+      pregnancies: [],
+      npcStables: [],
+      awards: [],
+      market: [],
+      auctions: [],
+      lastCalibrationDay: 0,
+      calibratedPars: {},
+      paceSamples: {},
+      pendingAwardCeremonies: [],
+      trainingUsed: {},
+      log: [],
+      scoutReports: [],
+      privateSaleOffers: [],
+      claims: [],
+      activeBreedingProgram: null,
+      breedingPrograms: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
+    };
+
+    const advanceDayFn = vi.fn();
+    const result = advanceMultipleDaysWithRaceDetection(state, 365, advanceDayFn, true);
+
+    expect(result.daysAdvanced).toBe(365);
+    expect(result.encounteredPlayerRace).toBe(false);
+    expect(advanceDayFn).toHaveBeenCalledTimes(365);
+  });
+
+  it("should handle year boundary with player races", () => {
+    const state: GameState = {
+      day: 360, // Near end of year 1
+      cash: 5000,
+      horses: [],
+      races: [
+        {
+          id: "race-1",
+          name: "Test Race",
+          day: 365, // In year 2, within advance range
+          distance: 2000,
+          raceClass: "Maiden",
+          entryFee: 500,
+          purse: 10000,
+          minStat: 70,
+          fieldSize: 8,
+          entries: [{ horseId: "horse-1", owned: true, npc: false }],
+          resolved: false,
+        },
+      ],
+      pregnancies: [],
+      npcStables: [],
+      awards: [],
+      market: [],
+      auctions: [],
+      lastCalibrationDay: 0,
+      calibratedPars: {},
+      paceSamples: {},
+      pendingAwardCeremonies: [],
+      trainingUsed: {},
+      log: [],
+      scoutReports: [],
+      privateSaleOffers: [],
+      claims: [],
+      activeBreedingProgram: null,
+      breedingPrograms: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
+    };
+
+    const advanceDayFn = vi.fn(() => {
+      state.day++;
+    });
+    const result = advanceMultipleDaysWithRaceDetection(state, 10, advanceDayFn, false);
+
+    // Should stop at the player race
+    expect(result.daysAdvanced).toBeLessThan(10);
+    expect(result.encounteredPlayerRace).toBe(true);
+    expect(result.playerRaceDay).toBe(365);
+  });
+
+  it("should skip player races across year boundary in headless mode", () => {
+    const state: GameState = {
+      day: 360, // Near end of year 1
+      cash: 5000,
+      horses: [],
+      races: [
+        {
+          id: "race-1",
+          name: "Test Race",
+          day: 400, // In year 2
+          distance: 2000,
+          raceClass: "Maiden",
+          entryFee: 500,
+          purse: 10000,
+          minStat: 70,
+          fieldSize: 8,
+          entries: [{ horseId: "horse-1", owned: true, npc: false }],
+          resolved: false,
+        },
+      ],
+      pregnancies: [],
+      npcStables: [],
+      awards: [],
+      market: [],
+      auctions: [],
+      lastCalibrationDay: 0,
+      calibratedPars: {},
+      paceSamples: {},
+      pendingAwardCeremonies: [],
+      trainingUsed: {},
+      log: [],
+      scoutReports: [],
+      privateSaleOffers: [],
+      claims: [],
+      activeBreedingProgram: null,
+      breedingPrograms: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
+    };
+
+    const advanceDayFn = vi.fn();
+    const result = advanceMultipleDaysWithRaceDetection(state, 50, advanceDayFn, true);
+
+    // Should skip player race in headless mode
+    expect(result.daysAdvanced).toBe(50);
+    expect(result.encounteredPlayerRace).toBe(false);
+    expect(advanceDayFn).toHaveBeenCalledTimes(50);
   });
 });

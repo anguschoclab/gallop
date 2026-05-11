@@ -1,4 +1,14 @@
-import type { BackstoryId } from "@/game/types";
+/**
+ * newGame/backstories.ts - New game backstories
+ *
+ * This file provides backstory configurations for new game starts, including
+ * difficulty levels, starting resources, horses, and facility upgrades.
+ *
+ * Dependencies: @/core/stable/types (BackstoryId), @/core/facilities (FacilityType, FacilityLevel)
+ * Related files: stable/types.ts (provides BackstoryId)
+ */
+
+import type { BackstoryId } from "@/core/stable/types";
 import type { FacilityType, FacilityLevel } from "@/core/facilities";
 
 export type BackstoryDifficulty = "easy" | "standard" | "hard" | "very_hard";
@@ -89,6 +99,18 @@ export const BACKSTORIES: Backstory[] = RAW_BACKSTORIES.map((b) => ({
   reputation: b.reputationScore,
 }));
 
+/**
+ * Get backstory by ID.
+ *
+ * Returns the backstory configuration for the given backstory ID.
+ *
+ * @param id - Backstory ID
+ * @returns Backstory configuration
+ * @throws Error if backstory not found
+ *
+ * @example
+ * const backstory = getBackstory("inheritor");
+ */
 export function getBackstory(id: BackstoryId): Backstory {
   const found = BACKSTORIES.find((b) => b.id === id);
   if (!found) throw new Error(`Unknown backstory: ${id}`);

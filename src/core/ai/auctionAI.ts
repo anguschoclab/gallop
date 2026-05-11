@@ -1,21 +1,22 @@
 /**
+ * auctionAI.ts - Auction AI system
+ *
+ * This file provides learning from auction outcomes, strategic bidding,
+ * and portfolio management for NPC stables.
+ *
+ * Dependencies: @/game/types (Horse, Stable, AuctionLot), ./personalitySystem (getPersonalityAIState, calculateUtilityScore), ./learningModule (learning functions), @/core/horse/stats (calculateOverallRating)
+ * Related files: npcCycleAI.ts (uses auction AI), personalitySystem.ts (provides personality state)
+ */
+
+/**
  * Auction AI System
  * Learning from auction outcomes, strategic bidding, portfolio management
  */
 
-import type { Horse, Stable, AuctionLot } from "@/game/types";
-import {
-  getPersonalityAIState,
-  calculateUtilityScore,
-  calculateStrategicScore,
-} from "./personalitySystem";
-import {
-  createLearningState,
-  recordOutcome,
-  getSuccessRate,
-  getAdaptiveThreshold,
-  type LearningState,
-} from "./learningModule";
+import type { Horse, Race, Stable, AuctionLot } from "@/game/types";
+import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { createLearningState, recordOutcome as recordLearningOutcome } from "./learningModule";
+import { getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export interface AuctionAIState {
@@ -55,12 +56,18 @@ export interface PortfolioState {
   targetHorseCount: number;
   currentHorseCount: number;
   budgetRemaining: number;
-  ageDistribution: Map<number, number>;
+  ageDistribution: Record<number, number>;
   qualityTarget: number;
 }
 
 /**
- * Create AI state for auction decisions
+ * Create AI state for auction decisions.
+ *
+ * Initializes the AI state with personality state, learning state,
+ * bidding history, consignment history, and portfolio state.
+ *
+ * @param stable - The stable to create AI state for
+ * @returns Initialized auction AI state
  */
 export function createAuctionAIState(stable: Stable): AuctionAIState {
   return {
@@ -69,17 +76,27 @@ export function createAuctionAIState(stable: Stable): AuctionAIState {
     biddingHistory: [],
     consignmentHistory: [],
     portfolio: {
-      targetHorseCount: stable.personality === "developer" ? 15 : 10,
+      targetHorseCount: stable.personality === "prestige" ? 15 : 10,
       currentHorseCount: 0,
       budgetRemaining: stable.cash,
-      ageDistribution: new Map(),
+      ageDistribution: {},
       qualityTarget: 60,
     },
   };
 }
 
 /**
- * Calculate bidding value score for a horse
+ * Calculate bidding value score for a horse.
+ *
+ * Evaluates the horse's value relative to current bid, applies personality
+ * modifiers, learning-based adjustments, and strategic considerations.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to evaluate
+ * @param lot - The auction lot
+ * @param stable - The stable making the bid
+ * @param currentDay - Current game day
+ * @returns Bidding value score (0-100)
  */
 export function calculateBiddingValue(
   aiState: AuctionAIState,
@@ -94,7 +111,7 @@ export function calculateBiddingValue(
   const horseRating = calculateOverallRating(horse);
   const estimatedValue = horseRating * 1000;
   const currentBid = lot.hammerPrice || lot.reservePrice;
-  const valueRatio = estimatedValue / currentBid;
+  const valueRatio = estimatedValue / (currentBid || 1);
 
   // Higher score for undervalued horses
   score += Math.max(0, (valueRatio - 1) * 30);
@@ -123,7 +140,16 @@ export function calculateBiddingValue(
 }
 
 /**
- * Evaluate strategic bidding value
+ * Evaluate strategic bidding value.
+ *
+ * Calculates strategic value based on portfolio fit, age distribution fit,
+ * and quality fit. Returns bonus points for horses that fill gaps in the stable's portfolio.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to evaluate
+ * @param stable - The stable making the bid
+ * @param currentDay - Current game day
+ * @returns Strategic value bonus (0-25)
  */
 function evaluateStrategicBiddingValue(
   aiState: AuctionAIState,
@@ -140,7 +166,7 @@ function evaluateStrategicBiddingValue(
   }
 
   // Age distribution fit
-  const ageCount = portfolio.ageDistribution.get(horse.age) || 0;
+  const ageCount = portfolio.ageDistribution[horse.age] || 0;
   if (ageCount < 3) {
     strategicValue += 5; // Need horses of this age
   }
@@ -155,7 +181,17 @@ function evaluateStrategicBiddingValue(
 }
 
 /**
- * Calculate maximum bid for a horse
+ * Calculate maximum bid for a horse.
+ *
+ * Determines the maximum bid based on estimated value, personality risk
+ * tolerance, budget constraints, and learning-based adjustments.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to bid on
+ * @param lot - The auction lot
+ * @param stable - The stable making the bid
+ * @param currentDay - Current game day
+ * @returns Maximum bid amount
  */
 export function calculateMaxBid(
   aiState: AuctionAIState,
@@ -189,7 +225,17 @@ export function calculateMaxBid(
 }
 
 /**
- * Determine if stable should bid on a horse
+ * Determine if stable should bid on a horse.
+ *
+ * Checks budget constraints, calculates value score and max bid,
+ * and uses adaptive threshold for decision making.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to bid on
+ * @param lot - The auction lot
+ * @param stable - The stable making the bid
+ * @param currentDay - Current game day
+ * @returns True if stable should bid
  */
 export function shouldBidOnHorse(
   aiState: AuctionAIState,
@@ -219,11 +265,19 @@ export function shouldBidOnHorse(
   );
 
   // Decision: bid if value exceeds threshold and within budget
-  return valueScore > adaptiveThreshold && maxBid >= lot.reservePrice;
+  return valueScore > adaptiveThreshold && maxBid >= (lot.hammerPrice || lot.reservePrice);
 }
 
 /**
- * Calculate bid increment
+ * Calculate bid increment.
+ *
+ * Determines how much to increase the bid based on current bid,
+ * max bid, and aggressiveness factor.
+ *
+ * @param currentBid - Current bid amount
+ * @param maxBid - Maximum bid allowed
+ * @param aggressiveness - Aggressiveness factor (0-1)
+ * @returns Bid increment amount
  */
 export function calculateBidIncrement(
   currentBid: number,
@@ -237,7 +291,16 @@ export function calculateBidIncrement(
 }
 
 /**
- * Determine if horse should be consigned
+ * Determine if horse should be consigned.
+ *
+ * Evaluates horse for consignment based on underperformance, surplus,
+ * age rebalancing, or retirement criteria.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse to evaluate
+ * @param stable - The stable owning the horse
+ * @param currentDay - Current game day
+ * @returns Object with shouldConsign flag and optional reason
  */
 export function shouldConsignHorse(
   aiState: AuctionAIState,
@@ -265,7 +328,7 @@ export function shouldConsignHorse(
   }
 
   // Check for age rebalancing
-  const ageCount = portfolio.ageDistribution.get(horse.age) || 0;
+  const ageCount = portfolio.ageDistribution[horse.age] || 0;
   if (ageCount > 4 && horse.age > 6) {
     return { shouldConsign: true, reason: "rebalancing" };
   }
@@ -279,7 +342,20 @@ export function shouldConsignHorse(
 }
 
 /**
- * Record bidding decision for learning
+ * Record bidding decision for learning.
+ *
+ * Records the bidding decision, updates learning state, and adjusts
+ * portfolio if the bid was won.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse bid on
+ * @param lot - The auction lot
+ * @param stable - The stable making the bid
+ * @param maxBid - Maximum bid amount
+ * @param finalBid - Final bid amount
+ * @param won - Whether the bid was won
+ * @param currentDay - Current game day
+ * @returns Updated auction AI state
  */
 export function recordBiddingDecision(
   aiState: AuctionAIState,
@@ -303,41 +379,57 @@ export function recordBiddingDecision(
     day: currentDay,
   };
 
-  aiState.biddingHistory.push(decision);
+  const newHistory = [...aiState.biddingHistory, decision];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.biddingHistory.length > maxHistory) {
-    aiState.biddingHistory = aiState.biddingHistory.slice(-maxHistory);
-  }
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update learning state (use horse age as context key)
   const contextKey = `${horse.age}`;
   const value = won ? decision.horseRating - finalBid / 1000 : -finalBid / 1000;
-  aiState.learningState = recordOutcome(
+  const newLearningState = recordLearningOutcome(
     aiState.learningState,
-    "bidding",
-    contextKey,
+    "auction",
+    `${horse.id}:${lot.id}`,
     won,
     value,
-    Date.now(),
     currentDay,
     aiState.personalityState.memoryDepth,
   );
 
   // Update portfolio if won
+  const newPortfolio = { ...aiState.portfolio };
   if (won) {
-    aiState.portfolio.currentHorseCount++;
-    aiState.portfolio.budgetRemaining -= finalBid;
-    const ageCount = aiState.portfolio.ageDistribution.get(horse.age) || 0;
-    aiState.portfolio.ageDistribution.set(horse.age, ageCount + 1);
+    newPortfolio.currentHorseCount++;
+    newPortfolio.budgetRemaining -= finalBid;
+    newPortfolio.ageDistribution = {
+      ...newPortfolio.ageDistribution,
+      [horse.age]: (newPortfolio.ageDistribution[horse.age] || 0) + 1,
+    };
   }
 
-  return aiState;
+  return {
+    ...aiState,
+    biddingHistory: trimmedHistory,
+    learningState: newLearningState,
+    portfolio: newPortfolio,
+  };
 }
 
 /**
- * Record consignment decision for learning
+ * Record consignment decision for learning.
+ *
+ * Records the consignment decision and updates portfolio state.
+ *
+ * @param aiState - Current auction AI state
+ * @param horse - The horse being consigned
+ * @param reason - Reason for consignment
+ * @param minPrice - Minimum price for consignment
+ * @param stable - The stable consigning the horse
+ * @param currentDay - Current game day
+ * @returns Updated auction AI state
  */
 export function recordConsignmentDecision(
   aiState: AuctionAIState,
@@ -357,24 +449,39 @@ export function recordConsignmentDecision(
     day: currentDay,
   };
 
-  aiState.consignmentHistory.push(decision);
+  const newHistory = [...aiState.consignmentHistory, decision];
 
   // Trim history to memory depth
   const maxHistory = aiState.personalityState.memoryDepth;
-  if (aiState.consignmentHistory.length > maxHistory) {
-    aiState.consignmentHistory = aiState.consignmentHistory.slice(-maxHistory);
-  }
+  const trimmedHistory =
+    newHistory.length > maxHistory ? newHistory.slice(-maxHistory) : newHistory;
 
   // Update portfolio
-  aiState.portfolio.currentHorseCount--;
-  const ageCount = aiState.portfolio.ageDistribution.get(horse.age) || 0;
-  aiState.portfolio.ageDistribution.set(horse.age, Math.max(0, ageCount - 1));
+  const newPortfolio = {
+    ...aiState.portfolio,
+    currentHorseCount: Math.max(0, aiState.portfolio.currentHorseCount - 1),
+    ageDistribution: {
+      ...aiState.portfolio.ageDistribution,
+      [horse.age]: Math.max(0, (aiState.portfolio.ageDistribution[horse.age] || 0) - 1),
+    },
+  };
 
-  return aiState;
+  return {
+    ...aiState,
+    consignmentHistory: trimmedHistory,
+    portfolio: newPortfolio,
+  };
 }
 
 /**
- * Get auction insights for a stable
+ * Get auction insights for a stable.
+ *
+ * Calculates bidding statistics, consignment statistics, and
+ * portfolio health metrics for a stable.
+ *
+ * @param aiState - Current auction AI state
+ * @param stableId - ID of the stable to get insights for
+ * @returns Object with bidding, consignment, and portfolio metrics
  */
 export function getAuctionInsights(
   aiState: AuctionAIState,
@@ -404,7 +511,8 @@ export function getAuctionInsights(
   const sellRate = totalConsignments > 0 ? sold / totalConsignments : 0.5;
 
   // Portfolio health: ratio of current to target horses
-  const portfolioHealth = aiState.portfolio.currentHorseCount / aiState.portfolio.targetHorseCount;
+  const portfolioHealth =
+    aiState.portfolio.currentHorseCount / (aiState.portfolio.targetHorseCount || 1);
 
   return {
     totalBids,
