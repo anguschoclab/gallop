@@ -61,5 +61,29 @@
       "Bash(sed -i 's/coiEstimate: 0, \\\\/\\\\/ TODO: Implement computeProspectiveCoi/coiEstimate: computeProspectiveCoi\\(sire, dam\\),/' src/core/genetics/breedingSimulator.ts)",
       "Bash(claude plugin *)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // \"\"' | { read -r f; [ -n \"$f\" ] && bunx prettier --write \"$f\" --ignore-unknown 2>/dev/null; } || true"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // \"\"' | { read -r f; echo \"$f\" | grep -qE '(\\.env[^/]*$|wrangler\\.jsonc?$)' && echo '{\"decision\":\"block\",\"reason\":\"Blocked: editing env/wrangler config requires manual confirmation\"}' || true; }"
+          }
+        ]
+      }
+    ]
   }
 }
