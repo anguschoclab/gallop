@@ -40,3 +40,21 @@ export const CROSS_FAMILY_AFFINITIES: Record<string, Record<number, number>> = {
   "Seattle Slew": { 1: 0.7, 8: 0.6 },
   "Bold Ruler": { 4: 0.7, 14: 0.65 },
 };
+
+export interface BreedingCompatibilityResult {
+  overallScore: number;
+  factors: {
+    nicking: { score: number; description: string };
+    dosage: { score: number; description: string };
+    inbreeding: { score: number; description: string; warning?: string };
+    parentPerformance: { score: number; description: string };
+    conformation: { score: number; description: string };
+    temperament: { score: number; description: string };
+    foundationStock: { score: number; description: string };
+    founderEffect: { score: number; description: string; warning?: string };
+    genetic: { score: number; description: string; warning?: string };
+    blueHen: { score: number; description: string; isBlueHen: boolean };
+    crossFamily: { score: number; description: string };
+  };
+  recommendation: string;
+}

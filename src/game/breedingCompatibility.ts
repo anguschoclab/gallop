@@ -323,23 +323,7 @@ export function calculateParentPerformance(
  * Overall breeding compatibility score
  * Combines all factors with appropriate weights
  */
-export interface BreedingCompatibilityResult {
-  overallScore: number;
-  factors: {
-    nicking: { score: number; description: string };
-    dosage: { score: number; description: string };
-    inbreeding: { score: number; description: string; warning?: string };
-    parentPerformance: { score: number; description: string };
-    conformation: { score: number; description: string };
-    temperament: { score: number; description: string };
-    foundationStock: { score: number; description: string };
-    founderEffect: { score: number; description: string; warning?: string };
-    genetic: { score: number; description: string; warning?: string };
-    blueHen: { score: number; description: string; isBlueHen: boolean };
-    crossFamily: { score: number; description: string };
-  };
-  recommendation: string;
-}
+export type { BreedingCompatibilityResult } from "@/core/breeding/breedingAffinityData";
 
 /**
  * Calculate cross-family affinity between sire bloodline and dam Bruce Lowe family.

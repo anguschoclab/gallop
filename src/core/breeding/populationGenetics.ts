@@ -90,11 +90,7 @@ export const REGIONAL_LINE_BIAS: Record<
  */
 export function resolveBloodline(
   horse: Horse,
-<<<<<<< Updated upstream
-  state: Pick<GameState, "horses"> & { horseMap?: Map<string, Horse> },
-=======
   horseMap: Map<string, Horse>,
->>>>>>> Stashed changes
   depth: number = 0,
 ): Bloodline {
   if (depth === 0) {
@@ -111,15 +107,8 @@ export function resolveBloodline(
   // Walk up via in-game sire id
   const sireId = horse.pedigree?.sireId;
   if (sireId) {
-<<<<<<< Updated upstream
-    const sire = state.horseMap
-      ? state.horseMap.get(sireId)
-      : state.horses.find((h) => h.id === sireId);
-    if (sire) return resolveBloodline(sire, state, depth + 1);
-=======
     const sire = horseMap.get(sireId);
     if (sire) return resolveBloodline(sire, horseMap, depth + 1);
->>>>>>> Stashed changes
   }
 
   // Fall back through curated pedigree data via name chain
@@ -329,27 +318,11 @@ export function detectInbreedingPattern(
  */
 export function computeAhc(
   pedigree: Pedigree | undefined,
-<<<<<<< Updated upstream
-  state: Pick<GameState, "horses"> & { horseMap?: Map<string, Horse> },
-): number {
-  if (!pedigree) return 0;
-  const sire = pedigree.sireId
-    ? state.horseMap
-      ? state.horseMap.get(pedigree.sireId)
-      : state.horses.find((h) => h.id === pedigree.sireId)
-    : undefined;
-  const dam = pedigree.damId
-    ? state.horseMap
-      ? state.horseMap.get(pedigree.damId)
-      : state.horses.find((h) => h.id === pedigree.damId)
-    : undefined;
-=======
   horseMap: Map<string, Horse>,
 ): number {
   if (!pedigree) return 0;
   const sire = pedigree.sireId ? horseMap.get(pedigree.sireId) : undefined;
   const dam = pedigree.damId ? horseMap.get(pedigree.damId) : undefined;
->>>>>>> Stashed changes
   if (!sire || !dam) return 0;
 
   // Parents' AHC propagates with decay; bumped by their own racing success
