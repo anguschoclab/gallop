@@ -158,18 +158,38 @@ export function createTestColt(overrides?: Partial<Horse>): Horse {
   return createTestHorse({ gender: "colt", age: 3, ...overrides });
 }
 
+/**
+ * Create a test filly (female horse, age 3)
+ * @param overrides - Optional properties to override
+ * @returns Complete Horse object
+ */
 export function createTestFilly(overrides?: Partial<Horse>): Horse {
   return createTestHorse({ gender: "filly", age: 3, ...overrides });
 }
 
+/**
+ * Create a test stallion (male horse, age 5)
+ * @param overrides - Optional properties to override
+ * @returns Complete Horse object
+ */
 export function createTestStallion(overrides?: Partial<Horse>): Horse {
   return createTestHorse({ gender: "horse", age: 5, ...overrides });
 }
 
+/**
+ * Create a test mare (female horse, age 5)
+ * @param overrides - Optional properties to override
+ * @returns Complete Horse object
+ */
 export function createTestMare(overrides?: Partial<Horse>): Horse {
   return createTestHorse({ gender: "mare", age: 5, ...overrides });
 }
 
+/**
+ * Create a test gelding (castrated male horse, age 4)
+ * @param overrides - Optional properties to override
+ * @returns Complete Horse object
+ */
 export function createTestGelding(overrides?: Partial<Horse>): Horse {
   return createTestHorse({ gender: "gelding", age: 4, ...overrides });
 }

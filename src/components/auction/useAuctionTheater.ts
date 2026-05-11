@@ -19,6 +19,11 @@ import type { AuctionBidRecord, Horse, Stable, AuctionSale } from "@/game/types"
 
 const TICK_MS = 1500;
 
+/**
+ * Hook for managing the live auction theater loop
+ * @param saleId - The ID of the auction sale to manage
+ * @returns Theater state and handler functions for auction interaction
+ */
 export function useAuctionTheater(saleId: string) {
   const sale = useGame((s) => s.auctions?.find((a) => a.id === saleId));
   const stables = useGame((s) => s.npcStables);
