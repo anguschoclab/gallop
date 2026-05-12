@@ -78,7 +78,7 @@ function NpcStableDetailPage() {
           search={{ tab: "rivals" }}
           className="text-blue-400 uppercase font-mono text-xs tracking-widest hover:underline"
         >
-          Return to Registry
+          All Stables
         </Link>
       </div>
     );
@@ -106,7 +106,7 @@ function NpcStableDetailPage() {
             onClick={() => navigate({ to: "/stable", search: { tab: "rivals" } })}
             className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cream/30 hover:text-blue-400 transition-colors mb-4"
           >
-            <ArrowLeft className="h-3 w-3" /> Registry Archives
+            <ArrowLeft className="h-3 w-3" /> Stables
           </button>
           <div className="flex items-center gap-4 mb-2">
             <div
@@ -365,9 +365,7 @@ function NpcStableDetailPage() {
                           <Briefcase className="h-3 w-3" /> {role.replace(/_/g, " ")}
                         </span>
                         <span className="text-xs font-bold text-cream uppercase text-right">
-                          {name || (
-                            <span className="italic text-cream/20 font-mono">VACANT_POSITION</span>
-                          )}
+                          {name || <span className="italic text-cream/20 font-mono">Vacant</span>}
                         </span>
                       </div>
                     ))}
