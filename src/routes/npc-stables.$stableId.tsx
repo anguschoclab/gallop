@@ -21,6 +21,7 @@ import {
 import { useHorses, useDay, useCash } from "@/game/hooks/useCoreState";
 import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { getStableById } from "@/core/stable/stableQueries";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { calculateScoutCost } from "@/game/scouting";
@@ -61,7 +62,7 @@ function NpcStableDetailPage() {
   const awards = useAwards();
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
-  const privateSaleOffers: PrivateSaleOffer[] = useGame((s) => s.privateSaleOffers ?? []);
+  const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)((s) => s.privateSaleOffers ?? [], shallow);
   const npcAIManager = useGame((s) => (s as any).npcAIManager);
 
   const [offerHorse, setOfferHorse] = useState<Horse | null>(null);

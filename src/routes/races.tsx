@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { useRaces, useHorses } from "@/game/hooks/useCoreState";
 import { formatCurrency } from "@/core/financial";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,7 +60,7 @@ function RacesPage() {
   const navigate = Route.useNavigate();
   const races = useRaces();
   const horses = useHorses();
-  const claims: Claim[] = useGame((s) => s.claims ?? []);
+  const claims: Claim[] = (useGame as any)((s) => s.claims ?? [], shallow);
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const fileClaim = useGame((s) => s.fileClaim);

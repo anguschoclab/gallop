@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Medal, DollarSign, Calendar } from "lucide-react";
@@ -11,7 +12,7 @@ export const Route = createFileRoute("/hall-of-fame")({
 });
 
 function HallOfFame() {
-  const hallOfFame = useGame((s) => s.hallOfFame || []);
+  const hallOfFame = (useGame as any)((s) => s.hallOfFame || [], shallow);
   const horses = useGame((s) => s.horses);
 
   // ⚡ Bolt: Cache horses in an O(1) map to replace the previous O(N^2) `.find` inside the loop below.

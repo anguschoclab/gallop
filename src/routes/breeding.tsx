@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,9 +36,9 @@ export const Route = createFileRoute("/breeding")({
 });
 
 function BreedingPage() {
-  const horses = useGame((s) => s.horses || []);
-  const pregnancies = useGame((s) => s.pregnancies || []);
-  const log = useGame((s) => s.log || []);
+  const horses = (useGame as any)((s) => s.horses || [], shallow);
+  const pregnancies = (useGame as any)((s) => s.pregnancies || [], shallow);
+  const log = (useGame as any)((s) => s.log || [], shallow);
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const breed = useGame((s) => s.breed);

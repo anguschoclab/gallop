@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -89,7 +90,7 @@ function HorseDetail() {
   const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
-  const syndicates = useGame((s) => s.syndicates || {});
+  const syndicates = (useGame as any)((s) => s.syndicates || {}, shallow);
 
   useEffect(() => {
     saveRaceHistoryLimit(raceHistoryLimit);

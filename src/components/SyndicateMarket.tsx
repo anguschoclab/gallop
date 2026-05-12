@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
+import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +8,7 @@ import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 
 export function SyndicateMarket() {
-  const syndicates = useGame((s) => s.syndicates || {});
+  const syndicates = (useGame as any)((s) => s.syndicates || {}, shallow);
   const horses = useGame((s) => s.horses);
   const purchaseShares = useGame((s) => s.purchaseShares);
   const sellShares = useGame((s) => s.sellShares);
