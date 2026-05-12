@@ -25,43 +25,64 @@ function FacilitiesPage() {
             Infrastructure & Logistics
           </div>
           <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
-             Registry of Operations
+            Our Facilities
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
-             <span>Active Facilities: <NumericValue value={facilityCount} /></span>
-             <span className="w-1 h-1 rounded-full bg-white/20" />
-             <span>Global Outposts: <NumericValue value={1} /></span>
-             <span className="w-1 h-1 rounded-full bg-white/20" />
-             <span>Network: <span className="text-success font-black">ENCRYPTED</span></span>
+            <span>
+              Active Facilities: <NumericValue value={facilityCount} />
+            </span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span>
+              Global Outposts: <NumericValue value={1} />
+            </span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span>
+              Status: <span className="text-success font-black">Active</span>
+            </span>
           </div>
         </div>
-        
+
         <div className="flex gap-2">
-           <Badge variant="outline" className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none">
-              Auth_Level: OVERSIGHT
-           </Badge>
+          <Badge
+            variant="outline"
+            className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none"
+          >
+            Auth_Level: OVERSIGHT
+          </Badge>
         </div>
       </div>
 
       <Tabs defaultValue="classic" className="space-y-6">
         <div className="flex items-center justify-between bg-slate-900/40 p-1 border border-white/5 rounded-lg">
           <TabsList className="bg-transparent h-10 gap-2">
-            <TabsTrigger value="classic" className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-6 transition-all">
-              <Hammer className="w-3.5 h-3.5" /> 
+            <TabsTrigger
+              value="classic"
+              className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-6 transition-all"
+            >
+              <Hammer className="w-3.5 h-3.5" />
               Central H.Q. Upgrades
             </TabsTrigger>
-            <TabsTrigger value="outposts" className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-6 transition-all">
-              <Globe className="w-3.5 h-3.5" /> 
+            <TabsTrigger
+              value="outposts"
+              className="gap-2 uppercase text-[10px] font-black tracking-[0.2em] data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-6 transition-all"
+            >
+              <Globe className="w-3.5 h-3.5" />
               Imperial Outposts
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="outposts" className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <TabsContent
+          value="outposts"
+          className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300"
+        >
           <ImperialOutpostManager />
         </TabsContent>
 
-        <TabsContent value="classic" className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <TabsContent
+          value="classic"
+          className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300"
+        >
           <FacilitiesPanel />
         </TabsContent>
       </Tabs>

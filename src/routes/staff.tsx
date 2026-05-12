@@ -64,7 +64,7 @@ function StaffManagement() {
             Operations Personnel Division
           </div>
           <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
-            Registry of Specialists
+            Our Staff
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
             <span>
