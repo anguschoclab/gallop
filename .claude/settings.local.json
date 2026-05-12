@@ -67,19 +67,7 @@
       "Bash(grep -v \"^\\\\s*//\")",
       "Bash(echo \"\")",
       "Bash(cat)",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop add src/routes/index.tsx)",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop commit -m \"copy: remove military jargon from dashboard route\")",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop add src/routes/stable.index.tsx)",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop commit -m \"copy: remove military jargon from stable index route\")",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop add src/routes/market.tsx src/routes/staff.tsx)",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop commit -m \"copy: remove military jargon from market and staff routes\")",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop add 'src/routes/stable.$horseId.tsx')",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop commit -m \"copy: remove military jargon from horse detail route\")",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop add src/routes/auction.index.tsx)",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop commit -m \"copy: remove military jargon from auction index route\")",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop add 'src/routes/auction.$saleId.tsx')",
-      "Bash(git -C /Users/amauricia/Documents/GitHub/gallop commit -m \"copy: remove military jargon from auction sale route\")",
-      "Bash(git *)"
+      "Bash(git merge *)"
     ]
   },
   "hooks": {
