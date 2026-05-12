@@ -16,6 +16,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { exportHorsePortraitPng } from "@/core/horse/exportPortrait";
 import type { Horse } from "@/game/types";
+import { makeAppearanceDNA } from "@/tests/helpers/sampleGameState";
 
 // Mock React server-side rendering
 vi.mock("react-dom/server", () => ({
@@ -153,7 +154,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       // Set up image to load successfully
@@ -172,7 +173,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -190,7 +191,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -208,7 +209,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -226,7 +227,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -246,7 +247,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -267,7 +268,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -287,7 +288,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -308,7 +309,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -339,7 +340,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -364,7 +365,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -388,7 +389,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -405,7 +406,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -431,7 +432,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -449,7 +450,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -467,7 +468,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -485,7 +486,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -503,7 +504,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -523,7 +524,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -542,7 +543,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -568,7 +569,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnerror = (e: Error) => {
@@ -586,7 +587,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -607,7 +608,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -639,7 +640,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -658,7 +659,7 @@ describe("exportPortrait", () => {
         coatColor: "bay",
         markings: "none",
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
