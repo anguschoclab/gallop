@@ -158,7 +158,7 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
                     Entry Label
                   </label>
                   <Input
-                    placeholder="ASSIGN_IDENTIFIER..."
+                    placeholder="Save name..."
                     value={newSaveName}
                     onChange={(e) => setNewSaveName(e.target.value.toUpperCase())}
                     className="bg-transparent border-none p-0 h-auto text-cream font-mono placeholder:text-slate-700 focus-visible:ring-0 text-lg uppercase"

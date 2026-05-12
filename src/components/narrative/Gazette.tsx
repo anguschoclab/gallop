@@ -39,7 +39,7 @@ export const Gazette: React.FC = () => {
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>
-              Security: <span className="text-success font-black">UNCLASSIFIED</span>
+              Status: <span className="text-success font-black">Published</span>
             </span>
           </div>
         </div>
