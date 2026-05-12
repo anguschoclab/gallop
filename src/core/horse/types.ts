@@ -62,6 +62,7 @@ export type ActiveInjury = {
 
 // AppearanceDNA is now imported from genetics/types
 
+
 // Horse Type Definitions
 
 /**

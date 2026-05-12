@@ -132,4 +132,9 @@ export interface AppearanceDNA {
   socks: ("none" | "sock" | "stocking")[];
   dapples: { x: number; y: number; r: number }[];
   flecks: { x: number; y: number; r: number }[];
+  /** Optional face marking variant. */
+  face?: string;
+  // Forward-compat: allow extra fields without losing checking on the rest.
+  [key: string]: unknown;
 }
+
