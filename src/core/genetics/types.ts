@@ -111,3 +111,25 @@ export type Genotype = {
   markings: MarkingsGenotype;
   health: HealthGenotype;
 };
+
+/**
+ * Appearance DNA for procedural horse portraits.
+ * Controls visual variation parameters like head shape, leg length, and markings.
+ */
+export interface AppearanceDNA {
+  seed: number;
+  headTilt: number;
+  headLength: number;
+  earSpread: number;
+  eyeY: number;
+  forelockSweep: number;
+  maneWaves: number[];
+  bodyLength: number;
+  bodyDepth: number;
+  legLength: number;
+  tailSweep: number;
+  tailFullness: number;
+  socks: ("none" | "sock" | "stocking")[];
+  dapples: { x: number; y: number; r: number }[];
+  flecks: { x: number; y: number; r: number }[];
+}

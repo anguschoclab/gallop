@@ -40,7 +40,7 @@ interface RaceEntryProps {
 }
 
 export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [selectedHorseId, setSelectedHorseId] = useState<string | null>(null);
   const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
   const [selectedTactics, setSelectedTactics] = useState<

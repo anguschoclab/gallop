@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -102,18 +102,18 @@ export function AppShell() {
   const day = useDay();
   const cash = useCash();
   const horses = useHorses();
-  const playerProfile = useGame((s) => s.playerProfile);
-  const advanceDay = useGame((s) => s.advanceDay);
-  const advanceMultipleDays = useGame((s) => s.advanceMultipleDays);
-  const startNewGame = useGame((s) => s.startNewGame);
+  const playerProfile = useGame((s: StoreType) => s.playerProfile);
+  const advanceDay = useGame((s: StoreType) => s.advanceDay);
+  const advanceMultipleDays = useGame((s: StoreType) => s.advanceMultipleDays);
+  const startNewGame = useGame((s: StoreType) => s.startNewGame);
   const location = useLocation();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
 
   const awards = useAwards();
-  const pendingCeremonies = (useGame as any)((s: any) => s.pendingAwardCeremonies, shallow);
+  const pendingCeremonies = useGameWithShallow((s: StoreType) => s.pendingAwardCeremonies);
   const [showCeremony, setShowCeremony] = useState(false);
-  const clearPendingCeremonies = useGame((s) => s.clearPendingCeremonies);
+  const clearPendingCeremonies = useGame((s: StoreType) => s.clearPendingCeremonies);
 
   useEffect(() => {
     if (pendingCeremonies && pendingCeremonies.length > 0) {

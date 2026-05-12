@@ -24,10 +24,12 @@ export type { RegionalAward, AwardRegion } from "./awards/types";
 export type { BreedingCompatibilityResult } from "./breedingCompatibility";
 export type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 
-// Type aliases for horse properties
-export type CoatColor = string;
-export type HorseMarkings = string;
-export type HorseGender = "colt" | "filly" | "horse" | "mare" | "gelding";
+// Type aliases for horse properties (preferring core definitions)
+export type { CoatColor, HorseGender, HealthStatus, SockHeight, FaceWhite, HorseMarkings } from "@/core/horse/types";
+
+// Financial types
+export type { Transaction, TransactionType, TransactionSubcategory } from "@/core/transactions";
+export type { Expense, ExpenseCategory } from "@/core/expenses";
 
 // Type alias for facilities
 export type FacilityState = Record<string, any>;

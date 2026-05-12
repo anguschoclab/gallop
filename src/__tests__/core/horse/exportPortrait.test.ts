@@ -151,9 +151,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       // Set up image to load successfully
@@ -170,9 +170,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder's Lightning",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -188,9 +188,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -206,9 +206,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -224,9 +224,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -244,9 +244,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -265,9 +265,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -285,9 +285,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -306,9 +306,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -324,7 +324,7 @@ describe("exportPortrait", () => {
         expect.objectContaining({
           id: "test-horse-1",
           coatColor: "bay",
-          markings: "none",
+          markings: { socks: ["none", "none", "none", "none"], face: "none", dapples: [], flecks: [] },
           gender: "colt",
           view: "full",
         }),
@@ -337,9 +337,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: ["none", "none", "none", "none"], face: "none", dapples: [], flecks: [] },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0, headLength: 1.0, earSpread: 1.0, eyeY: 0, forelockSweep: 0, maneWaves: [0, 0, 0, 0], bodyLength: 1.0, bodyDepth: 1.0, legLength: 1.0, tailSweep: 0, tailFullness: 1.0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -352,8 +352,8 @@ describe("exportPortrait", () => {
       expect(getOrDeriveAppearance).toHaveBeenCalledWith(
         "test-horse-1",
         "bay",
-        "none",
-        { seed: 12345, headTilt: 0 },
+        { socks: ["none", "none", "none", "none"], face: "none", dapples: [], flecks: [] },
+        { seed: 12345, headTilt: 0, headLength: 1.0, earSpread: 1.0, eyeY: 0, forelockSweep: 0, maneWaves: [0, 0, 0, 0], bodyLength: 1.0, bodyDepth: 1.0, legLength: 1.0, tailSweep: 0, tailFullness: 1.0 } as any,
       );
     });
 
@@ -362,9 +362,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -386,9 +386,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -403,9 +403,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -429,9 +429,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -447,9 +447,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -465,9 +465,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -483,9 +483,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -501,9 +501,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -521,9 +521,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -540,9 +540,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -566,9 +566,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnerror = (e: Error) => {
@@ -584,9 +584,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -605,9 +605,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -637,9 +637,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};
@@ -656,9 +656,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: { seed: 12345, headTilt: 0 } as any,
       };
 
       mockImageOnload = () => {};

@@ -24,6 +24,7 @@ import {
   JOCKEY_AGE_MAX,
 } from "@/game/constants/gameConstants";
 import { ARCHETYPES, SILK_PALETTE, SILK_PATTERNS } from "./jockeyData";
+export { ARCHETYPES, SILK_PALETTE, SILK_PATTERNS };
 
 export type JockeyGenerationOptions = {
   tier?: "budget" | "mid" | "elite";

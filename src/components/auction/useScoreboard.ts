@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import { netProceeds } from "@/game/auction";
 
 /**
@@ -10,8 +9,8 @@ import { netProceeds } from "@/game/auction";
  * @returns Object containing auction stats (won, sold, spent, netReceived)
  */
 export function useScoreboard(saleId: string) {
-  const auctions = (useGame as any)((s) => s.auctions, shallow);
-  const horses = (useGame as any)((s) => s.horses, shallow);
+  const auctions = useGameWithShallow((s: StoreType) => s.auctions);
+  const horses = useGameWithShallow((s: StoreType) => s.horses);
   return useMemo(() => {
     const sale = auctions?.find((a) => a.id === saleId);
     if (!sale) return null;

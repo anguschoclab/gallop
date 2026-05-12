@@ -142,6 +142,14 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     // REQUIRED racing viability
     racingViable: true,
     lifecycleStatus: "active" as const,
+    appearance: createTestAppearance(),
+    healthStatusDay: 1,
+    gelded: false,
+    fitness: 50,
+    fatigue: 0,
+    peakingIndex: 50,
+    recoveryPoints: 100,
+    birthDay: 1,
 
     // Apply any overrides
     ...overrides,

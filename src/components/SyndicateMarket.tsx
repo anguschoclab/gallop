@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { useGame } from "@/game/store";
-import { shallow } from "zustand/shallow";
+import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,11 +7,11 @@ import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 
 export function SyndicateMarket() {
-  const syndicates = (useGame as any)((s) => s.syndicates || {}, shallow);
-  const horses = (useGame as any)((s) => s.horses, shallow);
-  const purchaseShares = useGame((s) => s.purchaseShares);
-  const sellShares = useGame((s) => s.sellShares);
-  const cash = useGame((s) => s.cash);
+  const syndicates = useGameWithShallow((s: StoreType) => s.syndicates || {});
+  const horses = useGameWithShallow((s: StoreType) => s.horses);
+  const purchaseShares = useGame((s: StoreType) => s.purchaseShares);
+  const sellShares = useGame((s: StoreType) => s.sellShares);
+  const cash = useGame((s: StoreType) => s.cash);
 
   const syndicateList = useMemo(() => {
     return Object.entries(syndicates).map(([stallionId, syndicate]) => {

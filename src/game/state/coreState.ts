@@ -12,7 +12,7 @@
 // Core State - Essential game loop properties
 // These fields are always present and the game cannot run without them
 
-import type { Horse, Race } from "../types";
+import type { Horse, Race, Transaction, Expense } from "../types";
 import type { NewsItem } from "@/core/narrative/newsTypes";
 import type { HallOfFameEntry, SeasonRecord } from "@/core/history/historyTypes";
 import { generateUUID } from "@/core/uuid";
@@ -50,6 +50,10 @@ export interface CoreState {
     pregnancies: any[];
     news: NewsItem[];
   };
+  /** Comprehensive ledger of all financial events */
+  transactions: Transaction[];
+  /** Detailed record of fixed and recurring costs */
+  expenses: Expense[];
 }
 
 /**
@@ -107,6 +111,8 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
         pregnancies: [],
         news: [],
       },
+      transactions: [],
+      expenses: [],
     };
   }
 
@@ -136,5 +142,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
       pregnancies: [],
       news: [],
     },
+    transactions: [],
+    expenses: [],
   };
 }

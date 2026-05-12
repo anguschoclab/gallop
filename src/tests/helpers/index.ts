@@ -1,6 +1,7 @@
 // Test helper utilities for creating complete test objects
 export { createTestRng } from "./createTestRng";
 export { createTestGenotype } from "./createTestGenotype";
+export { createTestAppearance } from "./createTestAppearance";
 export { createTestJockey, createTestJockeys } from "./createTestJockey";
 export {
   createTestHorse,

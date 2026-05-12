@@ -134,7 +134,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
       if (level) {
         facilities[type as keyof typeof facilities] = createFacility(
           type as Parameters<typeof createFacility>[0],
-          level as unknown as number, // Object.entries returns string, convert to number
+          level as unknown as any,
           1,
         );
       }
@@ -147,32 +147,69 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     ? `${options.profile.stableName} opens its doors. Welcome, ${options.profile.ownerName}.`
     : "Welcome to your stable. Train your horses and enter them in races.";
 
-  return {
-    state: {
-      day: 1,
-      cash: startingCash,
-      horses: [...horses, ...npcHorses],
-      market,
-      races: racesWithEntries,
-      trainingUsed: {},
-      log: [{ day: 1, text: welcomeText }],
-      pregnancies: [],
-      npcStables: updatedStables,
-      scoutReports: [],
-      auctions: [],
-      jockeys: generateInitialJockeys(createRng(hashStr("initial_jockeys")), 25),
-      awards: [],
-      facilities,
-      reputation: {
-        score: reputationScore,
-        events: [],
-        gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
-        totalWins: 0,
-        yearsActive: 0,
-        tier: "unknown",
-      },
-      playerProfile: options?.profile,
+  const state: any = {
+    day: 1,
+    cash: startingCash,
+    horses: [...horses, ...npcHorses],
+    market,
+    races: racesWithEntries,
+    trainingUsed: {},
+    log: [{ day: 1, text: welcomeText }],
+    pregnancies: [],
+    npcStables: updatedStables,
+    scoutReports: [],
+    auctions: [],
+    jockeys: generateInitialJockeys(createRng(hashStr("initial_jockeys")), 25),
+    awards: [],
+    facilities,
+    reputation: {
+      score: reputationScore,
+      events: [],
+      gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+      totalWins: 0,
+      yearsActive: 0,
+      tier: "unknown",
     },
+    playerProfile: options?.profile,
+    news: [],
+    archive: {
+      horses: [],
+      races: [],
+      pregnancies: [],
+      news: [],
+    },
+    horseMap: new Map([...horses, ...npcHorses].map((h) => [h.id, h])),
+    activeBreedingProgram: undefined,
+    triplecrownHistory: [],
+    paceSamples: {},
+    calibratedPars: {},
+    lastCalibrationDay: 0,
+    npcAIManager: { stableStates: {}, globalDay: 1 },
+    campaigns: [],
+    expenses: [],
+    transactions: [],
+    replays: [],
+    transports: [],
+    hallOfFame: [],
+    trackRecords: {},
+    horseLeaderboards: {},
+    founders: {},
+    lastFounderUpdateDay: 0,
+    syndicates: {},
+    staffPool: [],
+    hiredStaff: [],
+    breedingPrograms: [],
+    usedHorseNames: [],
+    usedJockeyNames: [],
+    seasonRecords: [],
+    privateSaleOffers: [],
+    claims: [],
+    breedingProgramProgress: {},
+    awardsHistory: {},
+  };
+
+  return {
+    state: state as GameState,
   };
 }
 

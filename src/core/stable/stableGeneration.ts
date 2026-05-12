@@ -20,6 +20,7 @@ import {
   FILLER_COUNTRIES,
   type StablePoolEntry,
 } from "./stablePoolData";
+export { FILLER_PREFIXES, FILLER_SUFFIXES, FILLER_OWNERS, FILLER_COUNTRIES };
 import { FIRST_NAMES, LAST_NAMES } from "./personNames";
 
 /**

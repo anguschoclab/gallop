@@ -13,6 +13,7 @@
 
 import type { Pregnancy, TripleCrownProgress } from "../types";
 import type { BreedingProgram } from "@/core/breeding/programs";
+import type { Syndicate } from "@/core/breeding/types";
 
 /**
  * Breeding-related state for reproduction tracking and lineage.
@@ -24,6 +25,8 @@ export interface BreedingState {
   triplecrownHistory?: TripleCrownProgress[];
   /** Player's active multi-generation breeding program (one at a time) */
   activeBreedingProgram: BreedingProgram | null;
+  /** Stallion syndicates indexed by stallion ID */
+  syndicates: Record<string, Syndicate>;
 }
 
 /**
@@ -36,5 +39,6 @@ export function createDefaultBreedingState(): BreedingState {
     pregnancies: [],
     triplecrownHistory: [],
     activeBreedingProgram: null,
+    syndicates: {},
   };
 }

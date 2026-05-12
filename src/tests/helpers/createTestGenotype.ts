@@ -114,6 +114,9 @@ function createHealthGenotype(): HealthGenotype {
     roarer: createLocus(2, 2), // Low roarer risk
     ocd: createLocus(2, 2), // Low OCD risk
     efna5: createLocus(8, 8), // Good EFNA5 (racing viable)
+    pssm: createLocus(2, 2),
+    rer: createLocus(2, 2),
+    epm: createLocus(2, 2),
   };
 }
 

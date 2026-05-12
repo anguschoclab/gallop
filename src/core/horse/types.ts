@@ -9,10 +9,49 @@
  * Related files: stats.ts (uses types), healthTypes.ts (injury types)
  */
 
-import type { Genotype } from "@/core/genetics/types";
+import type { Genotype, AppearanceDNA } from "@/core/genetics/types";
 import type { InsurancePolicy } from "../insurance/insuranceTypes";
 
 export type Hemisphere = "Northern" | "Southern";
+
+export type CoatColor =
+  | "bay"
+  | "dark-bay"
+  | "black"
+  | "chestnut"
+  | "liver-chestnut"
+  | "seal-brown"
+  | "gray"
+  | "white"
+  | "roan"
+  | "palomino"
+  | "buckskin"
+  | "dun"
+  | "grulla"
+  | "champagne";
+
+export type SockHeight = "none" | "sock" | "stocking";
+export type FaceWhite = "none" | "star" | "blaze" | "bald";
+export type HealthStatus = "healthy" | "covering_sickness" | "recovering" | "other_illness";
+export type HorseGender = "colt" | "filly" | "horse" | "mare" | "gelding";
+
+export interface HorseMarkings {
+  socks: SockHeight;
+  face: FaceWhite;
+  silverDapple?: boolean;
+  sabino?: boolean;
+  splashWhite?: boolean;
+}
+
+export interface GeneticMarkers {
+  leopardComplex: "dominant" | "recessive" | "heterozygous";
+  csnbRisk: "high" | "low";
+  sensoryPerception: "excellent" | "good" | "fair" | "poor";
+  signalTransduction: "excellent" | "good" | "fair" | "poor";
+  immunity: "excellent" | "good" | "fair" | "poor";
+  geneticDiversity: number;
+  lethalCarriers: { csnb: boolean; hypp: boolean; olws: boolean; ffs1: boolean };
+}
 
 export type ActiveInjury = {
   type: string;
@@ -21,7 +60,7 @@ export type ActiveInjury = {
   onsetDay: number;
 };
 
-export type AppearanceDNA = Record<string, unknown>;
+// AppearanceDNA is now imported from genetics/types
 
 // Horse Type Definitions
 
@@ -59,7 +98,7 @@ export type Horse = {
   pedigree: { sireId?: string; damId?: string };
   birthDay: number;
   age: number;
-  gender: "colt" | "filly" | "horse" | "mare" | "gelding";
+  gender: HorseGender;
   hemisphere: Hemisphere;
   silk: string;
   stats: HorseStats;
@@ -100,6 +139,10 @@ export type Horse = {
     previousStandingFee?: number;
     lifetimeStakesFoals: number;
     lifetimeG1Foals: number;
+    bookSize: number;
+    seasonBookings: number;
+    lifetimeFoals: number;
+    retiredOnDay?: number;
   };
   distanceAptitude: number;
   surfaceAptitude: Record<"Turf" | "Dirt" | "Synthetic", number>;
@@ -117,15 +160,15 @@ export type Horse = {
   heartScore: number;
   bloodline: string;
   fiberBias: string;
-  coatColor?: string;
-  markings?: string;
+  coatColor?: CoatColor;
+  markings?: HorseMarkings;
   height?: number;
   weight?: number;
   injuryProneness?: number;
   lastScoutedDay?: number;
   conformation?: number;
   temperament?: number;
-  healthStatus: "healthy" | "covering_sickness" | "recovering" | "other_illness";
+  healthStatus: HealthStatus;
   healthStatusDay: number;
   isBlueHen: boolean;
   blueHenStatus?: {
