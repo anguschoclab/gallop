@@ -101,7 +101,7 @@ export function FinancialReport() {
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>
-              Protocol: <span className="text-success font-black">STABLE</span>
+              Status: <span className="text-success font-black">Healthy</span>
             </span>
           </div>
         </div>
@@ -341,7 +341,7 @@ export function FinancialReport() {
                 <thead className="bg-black/20 border-b border-white/5">
                   <tr className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/30">
                     <th className="px-8 py-3 font-black w-1">D.OY</th>
-                    <th className="px-4 py-3 font-black w-1">SIG</th>
+                    <th className="px-4 py-3 font-black w-1">Date</th>
                     <th className="px-4 py-3 font-black">Sector</th>
                     <th className="px-4 py-3 font-black text-right">Amount</th>
                     <th className="px-8 py-3 font-black">Operational_Description</th>

@@ -28,7 +28,9 @@ export function BeyerChart({ history }: { history: Entry[] }) {
   if (data.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-10 bg-black/20 border border-white/5">
-         <p className="text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">Zero Velocity Data Logged</p>
+        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+          Zero Velocity Data Logged
+        </p>
       </div>
     );
   }
@@ -42,39 +44,47 @@ export function BeyerChart({ history }: { history: Entry[] }) {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-6">
         <div className="space-y-0.5">
-          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">AVG_VELOCITY</div>
+          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+            Avg Beyer
+          </div>
           <div className="text-sm font-mono font-bold text-cream tabular-nums">{avg}</div>
         </div>
         <div className="space-y-0.5 border-l border-white/5 pl-6">
-          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">PEAK_VELOCITY</div>
+          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+            Best Beyer
+          </div>
           <div className="text-sm font-mono font-bold text-fame tabular-nums">{best}</div>
         </div>
         <div className="space-y-0.5 border-l border-white/5 pl-6">
-          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">LATEST_LOG</div>
-          <div className="text-sm font-mono font-bold text-gold tabular-nums">{data[data.length - 1].beyer}</div>
+          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+            Last Run
+          </div>
+          <div className="text-sm font-mono font-bold text-gold tabular-nums">
+            {data[data.length - 1].beyer}
+          </div>
         </div>
       </div>
-      
+
       <div className="h-56 w-full bg-black/40 border border-white/5 p-4 relative">
         {/* Corner brackets for industrial feel */}
         <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-gold/40" />
         <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-gold/40" />
         <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-gold/40" />
         <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-gold/40" />
-        
+
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 8, right: 12, left: -20, bottom: 4 }}>
             <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.05)" vertical={false} />
             <XAxis
               dataKey="day"
-              tick={{ fontSize: 9, fontFamily: 'monospace', fill: 'rgba(245,245,220,0.4)' }}
+              tick={{ fontSize: 9, fontFamily: "monospace", fill: "rgba(245,245,220,0.4)" }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `D${v}`}
             />
             <YAxis
               domain={[min, max]}
-              tick={{ fontSize: 9, fontFamily: 'monospace', fill: 'rgba(245,245,220,0.4)' }}
+              tick={{ fontSize: 9, fontFamily: "monospace", fill: "rgba(245,245,220,0.4)" }}
               axisLine={false}
               tickLine={false}
               width={40}
@@ -86,15 +96,21 @@ export function BeyerChart({ history }: { history: Entry[] }) {
                 border: "1px solid rgba(212,175,55,0.3)", // gold/30
                 borderRadius: 0,
                 padding: "8px 12px",
-                boxShadow: "0 0 20px rgba(0,0,0,0.5)"
+                boxShadow: "0 0 20px rgba(0,0,0,0.5)",
               }}
-              itemStyle={{ fontFamily: 'monospace', fontSize: 12, fontWeight: 'bold' }}
-              labelStyle={{ fontFamily: 'monospace', fontSize: 9, color: 'rgba(245,245,220,0.6)', textTransform: 'uppercase', marginBottom: 4 }}
+              itemStyle={{ fontFamily: "monospace", fontSize: 12, fontWeight: "bold" }}
+              labelStyle={{
+                fontFamily: "monospace",
+                fontSize: 9,
+                color: "rgba(245,245,220,0.6)",
+                textTransform: "uppercase",
+                marginBottom: 4,
+              }}
               formatter={(v: number) => [<span className="text-gold">{v} BEYER</span>, "Velocity"]}
               labelFormatter={(_, p) => {
                 const d = p?.[0]?.payload as (typeof data)[0] | undefined;
                 return d
-                  ? `${d.raceName} | D${String(d.day).padStart(3, '0')} | P_${d.position}`
+                  ? `${d.raceName} | D${String(d.day).padStart(3, "0")} | P_${d.position}`
                   : "DATA_LOG";
               }}
             />
