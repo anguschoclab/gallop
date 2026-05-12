@@ -146,7 +146,30 @@ export function AppShell() {
             {gameCalendarDate(day)}
           </p>
         </div>
-        <div className="text-[9px] text-cream/50 p-4">Navigation temporarily disabled</div>
+        <div className="p-3 border-t border-gold-muted space-y-4">
+          {navSections.map((section) => (
+            <div key={section.label}>
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-cream-muted font-[family-name:var(--font-mono)] mb-2">
+                {section.label}
+              </p>
+              <div className="space-y-1">
+                {section.items.map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className="flex items-center gap-2 text-sm text-cream-muted hover:text-gold transition-colors"
+                    activeProps={{
+                      className: "text-gold font-medium",
+                    }}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
         <div className="p-3 border-t border-gold-muted space-y-2">
           <div className="px-3 py-2 rounded-md bg-t800 border border-gold-muted">
             <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Cash</p>
@@ -157,8 +180,7 @@ export function AppShell() {
             <p className="text-[10px] text-cream-muted/60 mt-1">
               {horses.length} horses
             </p>
-            {/* Temporarily disabled to isolate infinite loop */}
-            {/* <div className="grid grid-cols-4 gap-1">
+            <div className="grid grid-cols-4 gap-1">
               <Button
                 onClick={() => advanceDay()}
                 className="col-span-1"
@@ -201,21 +223,17 @@ export function AppShell() {
               >
                 <Settings className="h-3 w-3" />
               </Button>
-            </div> */}
-            <div className="text-[9px] text-cream/50 mt-2">Day advance buttons temporarily disabled</div>
+            </div>
           </div>
-          {/* Temporarily disabled to isolate infinite loop */}
-          {/* <Button
+          <Button
             onClick={() => setNewGameDialogOpen(true)}
             className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
             size="sm"
             variant="ghost"
           >
             Start new game
-          </Button> */}
-          <div className="text-[9px] text-cream/50">Start new game button temporarily disabled</div>
-          {/* Temporarily disabled to isolate infinite loop */}
-          {/* <Dialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
+          </Button>
+          <Dialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Start New Game</DialogTitle>
@@ -237,8 +255,7 @@ export function AppShell() {
                 </Button>
               </DialogFooter>
             </DialogContent>
-          </Dialog> */}
-          <div className="text-[9px] text-cream/50">Dialog temporarily disabled</div>
+          </Dialog>
         </div>
       </aside>
       )}
@@ -247,17 +264,14 @@ export function AppShell() {
           <Outlet />
         </div>
       </main>
-      {/* Temporarily disabled to isolate infinite loop */}
-      {/* <PlayerRacePrompt /> */}
-      {/* <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} /> */}
-      {/* Temporarily disabled to isolate infinite loop */}
-      {/* <AwardCeremony
+      <PlayerRacePrompt />
+      <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
+      <AwardCeremony
         isOpen={showCeremony}
         onClose={() => setShowCeremony(false)}
         ceremonies={pendingCeremonies || []}
         onComplete={() => clearPendingCeremonies?.()}
-      /> */}
-      <div className="text-[9px] text-cream/50">AwardCeremony temporarily disabled</div>
+      />
     </div>
   );
 }

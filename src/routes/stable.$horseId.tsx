@@ -82,20 +82,20 @@ function HorseDetail() {
   const trainHorse = useGame((s) => s.trainHorse);
   const consignHorse = useGame((s) => s.consignHorse);
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
-  const trainingUsed = useGame((s: any) => s.trainingUsed[horseId] ?? 0);
+  const trainingUsed = (useGame as any)((s: any) => s.trainingUsed[horseId] ?? 0, shallow);
   const cash = useGame((s: any) => s.cash);
   const retireToStud = useGame((s: any) => s.retireToStud);
   const retireToPasture = useGame((s: any) => s.retireToPasture);
-  const facilities = useGame((s: any) => s.facilities);
-  const pregnancies = useGame((s: any) => s.pregnancies);
+  const facilities = (useGame as any)((s: any) => s.facilities, shallow);
+  const pregnancies = (useGame as any)((s: any) => s.pregnancies, shallow);
   const pregnancy = pregnancies?.find((p: any) => !p.resolved && p.damId === horseId);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
-  const syndicates = useGame((s: any) => s.syndicates || {});
-  const races = useGame((s: any) => s.races);
+  const syndicates = (useGame as any)((s: any) => s.syndicates || {}, shallow);
+  const races = (useGame as any)((s: any) => s.races, shallow);
   const currentRace = races?.find((r: any) => r.entries.some((e: any) => e.horseId === horseId && !r.resolved));
   const assignedJockeyId = currentRace?.entries.find((e: any) => e.horseId === horseId)?.jockeyId;
-  const jockeys = useGame((s: any) => s.jockeys);
+  const jockeys = (useGame as any)((s: any) => s.jockeys, shallow);
   const assignedJockey = jockeys?.find((j: any) => j.id === assignedJockeyId);
 
   const handleTrain = useCallback((horseId: string, type: any) => {
