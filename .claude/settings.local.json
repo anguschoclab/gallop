@@ -67,7 +67,8 @@
       "Bash(grep -v \"^\\\\s*//\")",
       "Bash(echo \"\")",
       "Bash(cat)",
-      "Bash(git merge *)"
+      "Bash(git merge *)",
+      "Bash(git commit *)"
     ]
   },
   "hooks": {
