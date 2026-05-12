@@ -273,7 +273,7 @@ function AuctionSalePage() {
                     <div className="relative">
                       <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
                       <Input
-                        placeholder="SEARCH_NAME_SIRE..."
+                        placeholder="Horse or sire name..."
                         className="h-10 bg-slate-950/60 border-white/5 text-xs font-mono pl-8 uppercase tracking-tighter focus-visible:ring-gold/30"
                         value={searchDraft}
                         onChange={(e) => setSearchDraft(e.target.value)}
@@ -398,7 +398,7 @@ function AuctionSalePage() {
                           {horse.hemisphere === "Southern" && (
                             <>
                               <span className="w-1 h-1 rounded-full bg-white/20" />
-                              <span className="text-blue-400/60">SOUTHERN_H</span>
+                              <span className="text-blue-400/60">S. Hemi.</span>
                             </>
                           )}
                         </div>
@@ -618,7 +618,7 @@ function AuctionSalePage() {
                                     </label>
                                     <div className="flex gap-2">
                                       <Input
-                                        placeholder="AMOUNT..."
+                                        placeholder="Amount..."
                                         value={bidInput}
                                         onChange={(e) => setBidInput(e.target.value)}
                                         className="h-10 bg-slate-950 border-white/5 text-xs font-mono uppercase tracking-tighter focus-visible:ring-success/30 rounded-none"
@@ -638,7 +638,7 @@ function AuctionSalePage() {
                                     </label>
                                     <div className="flex gap-2">
                                       <Input
-                                        placeholder="LIMIT..."
+                                        placeholder="Limit..."
                                         value={maxBid}
                                         onChange={(e) => setMaxBid(e.target.value)}
                                         className="h-10 bg-slate-950 border-white/5 text-xs font-mono uppercase tracking-tighter focus-visible:ring-gold/30 rounded-none"
