@@ -215,7 +215,7 @@ function AuctionSalePage() {
                   : "bg-gold text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.3)]",
               )}
             >
-              {isResolved ? "RESOLVED" : "ACTIVE_FLOOR"}
+              {isResolved ? "Resolved" : "Active"}
             </Badge>
           </div>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
@@ -335,7 +335,7 @@ function AuctionSalePage() {
                                 isActive ? "text-gold" : "text-cream/60 group-hover:text-cream",
                               )}
                             >
-                              {lotHorse?.name || "UNKNOWN_ASSET"}
+                              {lotHorse?.name || "Unknown"}
                             </span>
                           </div>
                           <div className="text-[8px] font-mono text-cream/20 uppercase tracking-tighter">
@@ -430,7 +430,7 @@ function AuctionSalePage() {
                           >
                             {stables
                               .find((s) => s.id === currentLot.soldToStableId)
-                              ?.name?.toUpperCase() ?? "NPC_ENTITY"}
+                              ?.name?.toUpperCase() ?? "Unknown"}
                           </Badge>
                         </div>
                       )}
@@ -520,7 +520,7 @@ function AuctionSalePage() {
                                   {spec.replace(/([A-Z])/g, "_$1").toUpperCase()}
                                 </div>
                                 <div className="text-xs font-mono font-bold text-cream/80 uppercase">
-                                  {horse[spec]?.toString().replace("-", " ") || "DATA_LOCKED"}
+                                  {horse[spec]?.toString().replace("-", " ") || "—"}
                                 </div>
                               </div>
                             ))}
@@ -577,7 +577,7 @@ function AuctionSalePage() {
                                     Market Valuation
                                   </div>
                                   <div className="text-3xl font-black font-mono text-success tabular-nums tracking-tighter">
-                                    {currentPrice > 0 ? formatCurrency(currentPrice) : "NO_OFFERS"}
+                                    {currentPrice > 0 ? formatCurrency(currentPrice) : "No bids"}
                                   </div>
                                 </div>
                                 <div className="text-right space-y-0.5">
@@ -687,8 +687,8 @@ function AuctionSalePage() {
                               {currentLot.soldToStableId
                                 ? (stables
                                     .find((s) => s.id === currentLot.soldToStableId)
-                                    ?.name?.toUpperCase() ?? "NPC_ENTITY")
-                                : "PLAYER_STABLE"}
+                                    ?.name?.toUpperCase() ?? "Unknown")
+                                : "Your Stable"}
                             </div>
                           </div>
                         )}
@@ -716,7 +716,7 @@ function AuctionSalePage() {
                               variant="destructive"
                               className="h-10 px-6 font-black uppercase text-[10px] tracking-widest rounded-none"
                             >
-                              DECOMMISSION_ASSET
+                              Withdraw
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent className="bg-slate-950 border-destructive/30 rounded-none">

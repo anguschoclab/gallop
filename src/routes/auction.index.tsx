@@ -118,7 +118,7 @@ function AuctionPage() {
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>
-              Exchange: <span className="text-success font-black">OPEN</span>
+              Exchange: <span className="text-success font-black">Open</span>
             </span>
           </div>
         </div>
@@ -128,7 +128,7 @@ function AuctionPage() {
             variant="outline"
             className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none"
           >
-            TRADING_FLOOR_ACCESS
+            Buyer Access
           </Badge>
         </div>
       </div>
@@ -151,7 +151,7 @@ function AuctionPage() {
                     Eligible Horses
                   </CardTitle>
                   <span className="text-[9px] font-mono text-gold-bright font-black uppercase">
-                    POOL: {consignablePairs.length}
+                    Available: {consignablePairs.length}
                   </span>
                 </div>
               </CardHeader>
@@ -416,7 +416,7 @@ function AuctionPage() {
                                     : "text-cream/40",
                                 )}
                               >
-                                {daysAway === 0 ? "ENTER_RING" : "VIEW_CATALOG"}
+                                {daysAway === 0 ? "Enter Sale" : "View Lots"}
                               </Button>
                             </Link>
                           )}

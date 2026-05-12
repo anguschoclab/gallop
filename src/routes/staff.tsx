@@ -61,7 +61,7 @@ function StaffManagement() {
         <div>
           <div className="flex items-center gap-2 text-blue-400 uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
             <Users className="h-3.5 w-3.5" />
-            Operations Personnel Division
+            Stable Staff
           </div>
           <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
             Our Staff
@@ -86,7 +86,7 @@ function StaffManagement() {
             variant="outline"
             className="border-blue-500/30 text-blue-400 bg-blue-500/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none"
           >
-            Auth_Level: STAFF_MGMT
+            Access: Manager
           </Badge>
         </div>
       </div>
@@ -97,7 +97,7 @@ function StaffManagement() {
           <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
             <ShieldCheck className="h-4 w-4 text-blue-400" />
             <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">
-              Active Operational Personnel
+              Our Team
             </h3>
           </div>
 
@@ -108,7 +108,7 @@ function StaffManagement() {
                 No Retained Staff
               </p>
               <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
-                Team roster is currently vacant. Procure specialists from the pool.
+                Team roster is currently vacant. Hire staff from the pool.
               </p>
             </div>
           ) : (
@@ -143,7 +143,7 @@ function StaffManagement() {
                           )}
                         />
                         <div className="text-[8px] font-black uppercase mt-2 opacity-40 tabular-nums">
-                          ID_{staff.id.substring(0, 4)}
+                          #{staff.id.substring(0, 4)}
                         </div>
                       </div>
 
@@ -167,7 +167,7 @@ function StaffManagement() {
                           </div>
                           <div className="text-right space-y-1">
                             <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest leading-none">
-                              Day_Rate
+                              Day Rate
                             </div>
                             <div className="text-sm font-black font-mono text-destructive tracking-tighter">
                               -{formatCurrency(staff.salary)}
@@ -195,7 +195,7 @@ function StaffManagement() {
                             className="h-7 px-3 text-[9px] font-black uppercase border border-white/5 text-destructive hover:bg-destructive/10 rounded-none tracking-widest"
                             onClick={() => handleFire(staff)}
                           >
-                            DECOMMISSION_ASSET
+                            Release
                           </Button>
                         </div>
                       </div>
@@ -212,7 +212,7 @@ function StaffManagement() {
           <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
             <UserPlus className="h-4 w-4 text-gold" />
             <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">
-              Personnel Procurement Pool
+              Available to Hire
             </h3>
           </div>
 
@@ -244,7 +244,7 @@ function StaffManagement() {
                     </div>
                     <div className="text-right">
                       <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest mb-1">
-                        PROVISION_COST
+                        Weekly Cost
                       </div>
                       <div className="text-lg font-black font-mono text-success tabular-nums tracking-tighter">
                         {formatCurrency(staff.salary)}
@@ -256,7 +256,7 @@ function StaffManagement() {
                   <div className="grid grid-cols-2 gap-4 mb-5 bg-black/20 p-3 border border-white/5">
                     <div className="space-y-1">
                       <div className="text-[8px] font-black uppercase text-gold/40 tracking-widest flex items-center gap-1.5">
-                        <Zap className="h-2.5 w-2.5" /> SPEC_BONUS
+                        <Zap className="h-2.5 w-2.5" /> Speciality
                       </div>
                       <div className="text-sm font-black font-mono text-gold-bright">
                         +{Math.round(staff.bonusValue * 100)}%
@@ -264,11 +264,9 @@ function StaffManagement() {
                     </div>
                     <div className="space-y-1 border-l border-white/5 pl-4">
                       <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest flex items-center gap-1.5">
-                        <Activity className="h-2.5 w-2.5" /> RECOGNITION
+                        <Activity className="h-2.5 w-2.5" /> Status
                       </div>
-                      <div className="text-[10px] font-mono text-cream/60 uppercase">
-                        ACTIVE_CERTIFIED
-                      </div>
+                      <div className="text-[10px] font-mono text-cream/60 uppercase">Active</div>
                     </div>
                   </div>
 
@@ -277,7 +275,7 @@ function StaffManagement() {
                     className="w-full h-10 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-[10px] shadow-lg"
                     onClick={() => handleHire(staff.id)}
                   >
-                    PROCURE_SPECIALIST
+                    Hire
                   </Button>
                 </CardContent>
               </Card>

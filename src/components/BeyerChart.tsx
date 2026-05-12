@@ -109,9 +109,7 @@ export function BeyerChart({ history }: { history: Entry[] }) {
               formatter={(v: number) => [<span className="text-gold">{v} BEYER</span>, "Velocity"]}
               labelFormatter={(_, p) => {
                 const d = p?.[0]?.payload as (typeof data)[0] | undefined;
-                return d
-                  ? `${d.raceName} | D${String(d.day).padStart(3, "0")} | P_${d.position}`
-                  : "DATA_LOG";
+                return d ? `${d.raceName} | Day ${d.day} | Pos. ${d.position}` : "No data";
               }}
             />
             <Line

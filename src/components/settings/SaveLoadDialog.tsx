@@ -77,9 +77,7 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
 
   const handleLoad = async (slotId: string) => {
     if (
-      !window.confirm(
-        "CONFIRM RECALL: Current live state will be overwritten by this ledger entry.",
-      )
+      !window.confirm("CONFIRM Load: Current live state will be overwritten by this ledger entry.")
     ) {
       return;
     }
@@ -185,7 +183,7 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
                       save={save}
                       onAction={() => handleManualSave(save.id, save.name)}
                       onDelete={(e) => handleDelete(save.id, e)}
-                      actionLabel="REWRITE"
+                      actionLabel="Save"
                     />
                   ))}
               </div>
@@ -202,7 +200,7 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
                   save={save}
                   onAction={() => handleLoad(save.id)}
                   onDelete={(e) => handleDelete(save.id, e)}
-                  actionLabel="RECALL"
+                  actionLabel="Load"
                   isLoading={isLoading}
                 />
               ))}
@@ -322,7 +320,7 @@ function LedgerEntry({
             <span
               className={cn(
                 "text-[10px] font-bold uppercase transition-all opacity-0 group-hover:opacity-100",
-                actionLabel === "RECALL" ? "text-blue-400" : "text-gold",
+                actionLabel === "Load" ? "text-blue-400" : "text-gold",
               )}
             >
               {actionLabel}
@@ -330,7 +328,7 @@ function LedgerEntry({
             <div
               className={cn(
                 "h-8 w-8 flex items-center justify-center border rounded-full transition-all shrink-0",
-                actionLabel === "RECALL"
+                actionLabel === "Load"
                   ? "border-blue-500/40 text-blue-500 group-hover/btn:bg-blue-500 group-hover/btn:text-slate-950"
                   : "border-gold/40 text-gold group-hover/btn:bg-gold group-hover/btn:text-slate-950",
               )}

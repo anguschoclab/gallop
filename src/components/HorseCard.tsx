@@ -92,9 +92,9 @@ export function HorseCard({
               </div>
               <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-cream/40">
                 <span className={genderColor}>{genderSymbol(horse.gender)}</span>
-                <span>Age_{Math.floor(horse.age)}</span>
+                <span>Age: {Math.floor(horse.age)}</span>
                 <span className="w-1 h-1 bg-white/20 rounded-full" />
-                <span>OVR_{ovr}</span>
+                <span>OVR: {ovr}</span>
               </div>
             </div>
           </div>
@@ -194,7 +194,7 @@ export function HorseCard({
           <div className="pt-3 border-t border-white/5 flex items-center justify-between bg-black/20 p-2 rounded">
             <div className="space-y-0.5">
               <div className="text-[8px] font-black uppercase tracking-widest text-cream/30">
-                OVR_Estimate
+                OVR Estimate
               </div>
               <div className="text-sm font-black font-mono text-cream">
                 {hasAllStats
@@ -206,7 +206,7 @@ export function HorseCard({
             </div>
             <div className="text-right space-y-0.5">
               <div className="text-[8px] font-black uppercase tracking-widest text-cream/30">
-                Form_Trend
+                Form Trend
               </div>
               <div
                 className={cn(
@@ -255,7 +255,7 @@ export function HorseCard({
               </div>
               <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-cream/40 flex-wrap">
                 <span className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" /> AGE_{Math.floor(horse.age)}
+                  <Calendar className="h-3 w-3" /> Age: {Math.floor(horse.age)}
                 </span>
                 {horse.hemisphere === "Southern" && (
                   <>
@@ -294,7 +294,7 @@ export function HorseCard({
                 variant="destructive"
                 className="rounded-none text-[8px] font-black tracking-widest uppercase h-4 px-1 animate-pulse"
               >
-                {horse.healthStatus === "recovering" ? "RECOVERING" : "ILLNESS_DETECTED"}
+                {horse.healthStatus === "recovering" ? "Recovering" : "Unwell"}
               </Badge>
             )}
           </div>
@@ -400,7 +400,7 @@ export function HorseCard({
           <div className="flex items-center justify-between bg-black/40 p-2 rounded-sm border border-white/5">
             <div className="flex items-center gap-2">
               <span className="text-[8px] font-black uppercase text-cream/30 tracking-widest">
-                OVR_RATING
+                OVR Rating
               </span>
               <span className="text-lg font-mono font-black text-cream">{ovr}</span>
             </div>

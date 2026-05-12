@@ -107,7 +107,7 @@ export function JockeyCard({
                 </Badge>
                 {isRetained && (
                   <Badge className="bg-blue-500 text-slate-950 text-[9px] font-black uppercase tracking-widest h-4 px-1.5 rounded-none">
-                    RETAINED
+                    Signed
                   </Badge>
                 )}
               </div>
@@ -115,7 +115,7 @@ export function JockeyCard({
           </div>
           <div className="text-right">
             <div className="text-[8px] font-black uppercase text-blue-400/40 tracking-widest leading-none mb-1">
-              Mount_Fee
+              Mount Fee
             </div>
             <div className="text-lg font-black font-mono text-gold tabular-nums tracking-tighter">
               {formatCurrency(jockey.ridingFee)}
@@ -129,7 +129,7 @@ export function JockeyCard({
         <div className="flex items-center justify-between px-5 py-2 bg-white/[0.02] border-b border-white/5 text-[9px] font-mono uppercase tracking-widest text-cream/40">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <Calendar className="h-3 w-3 opacity-40" /> AGE_{jockey.age}
+              <Calendar className="h-3 w-3 opacity-40" /> Age: {jockey.age}
             </span>
             <span className="flex items-center gap-1">
               <Trophy className="h-3 w-3 text-fame/60" /> {jockey.careerWins} WINS
@@ -137,7 +137,7 @@ export function JockeyCard({
           </div>
           <div className="flex items-center gap-1">
             <Target className="h-3 w-3 text-warning/40" />
-            <span>FAME_{jockey.fame.toFixed(0)}</span>
+            <span>Fame: {jockey.fame.toFixed(0)}</span>
           </div>
         </div>
 
@@ -227,7 +227,7 @@ export function JockeyCard({
               className="w-full h-9 bg-blue-500 hover:bg-blue-400 text-slate-950 font-black uppercase tracking-widest text-[10px] rounded-none shadow-lg"
             >
               <DollarSign className="h-3 w-3 mr-2" />
-              {actionLabel || "HIRE_PERSONNEL"}
+              {actionLabel || "Hire"}
             </Button>
           </div>
         )}

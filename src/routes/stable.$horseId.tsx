@@ -265,7 +265,7 @@ function HorseDetail() {
                     Vitals
                   </span>
                   <span className="text-xs font-mono text-cream/60">
-                    AGE_{Math.floor(horse.age)} · GEN_{horse.gender.toUpperCase()}
+                    Age: {Math.floor(horse.age)} · {horse.gender}
                   </span>
                 </div>
                 <div className="space-y-0.5">
@@ -576,10 +576,10 @@ function HorseDetail() {
                 <CardHeader className="pb-2 border-b border-white/5">
                   <div className="flex justify-between items-center">
                     <CardTitle className="text-[10px] font-black uppercase tracking-widest text-cream/40">
-                      Resource Allocation
+                      Training Schedule
                     </CardTitle>
                     <span className="text-[10px] font-mono text-gold-bright font-black uppercase">
-                      {slotsLeft} SLOT_REMAINING
+                      {slotsLeft} slots left
                     </span>
                   </div>
                 </CardHeader>

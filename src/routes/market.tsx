@@ -140,9 +140,9 @@ function MarketPage() {
                             {h.name}
                           </h3>
                           <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-widest text-cream/30">
-                            <span>AGE_{Math.floor(h.age)}</span>
+                            <span>Age: {Math.floor(h.age)}</span>
                             <span className="w-1 h-1 rounded-full bg-white/10" />
-                            <span>OVR_{ovr}</span>
+                            <span>OVR: {ovr}</span>
                           </div>
                         </div>
                       </div>
@@ -175,7 +175,7 @@ function MarketPage() {
                           : "border-white/5 text-cream/20 bg-transparent",
                       )}
                     >
-                      {canAfford ? "ACQUIRE_ASSET" : "INSUFFICIENT_LIQUIDITY"}
+                      {canAfford ? "Buy" : "Can't afford"}
                     </Button>
                   </CardContent>
                 </Card>

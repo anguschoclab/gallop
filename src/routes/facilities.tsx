@@ -47,7 +47,7 @@ function FacilitiesPage() {
             variant="outline"
             className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-widest px-3 py-1 h-8 rounded-none"
           >
-            Auth_Level: OVERSIGHT
+            Access: Owner
           </Badge>
         </div>
       </div>
