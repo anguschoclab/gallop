@@ -16,6 +16,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { exportHorsePortraitPng } from "@/core/horse/exportPortrait";
 import type { Horse } from "@/game/types";
+import { makeAppearanceDNA } from "@/tests/helpers/sampleGameState";
 
 // Mock React server-side rendering
 vi.mock("react-dom/server", () => ({
