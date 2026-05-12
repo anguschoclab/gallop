@@ -314,6 +314,7 @@ export const useGame = create<StoreType>()(
       return partial;
     },
   },
+  ),
 );
 
 // Export rehydrate function
