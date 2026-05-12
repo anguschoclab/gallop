@@ -12,6 +12,7 @@ export const Route = createFileRoute("/broodmares")({
 
 function BroodmaresPage() {
   const horses = useGame((s) => s.horses);
+  const horseMap = useGame((s) => s.horseMap);
   const pregnancies = useGame((s) => s.pregnancies);
   const day = useGame((s) => s.day);
   const log = useGame((s) => s.log);
@@ -19,11 +20,14 @@ function BroodmaresPage() {
   // Get all active pregnancies (unresolved)
   const activePregnancies = pregnancies.filter((p) => !p.resolved);
 
+  // ⚡ Bolt Optimization:
+  // Used O(1) horseMap lookups instead of O(N) horses.find() inside the map loop.
+  // Impact: Reduces rendering complexity of the broodmares list from O(N^2) to O(N).
   // Group pregnancies by dam to show each broodmare once
   const broodmareData = activePregnancies
     .map((pregnancy) => {
-      const dam = horses.find((h) => h.id === pregnancy.damId);
-      const sire = horses.find((h) => h.id === pregnancy.sireId);
+      const dam = horseMap.get(pregnancy.damId);
+      const sire = horseMap.get(pregnancy.sireId);
       const daysRemaining = pregnancy.dueDay - day;
 
       // Get maternity log entries for this dam
