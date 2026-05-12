@@ -223,9 +223,9 @@ export function getInitializationWorker(): Remote<InitializationWorkerApi> {
 /**
  * Main Zustand store composed from all slices
  */
-// Temporarily disable persist middleware to isolate infinite loop
 export const useGame = create<StoreType>()(
-  (set, get) => ({
+  persist(
+    (set, get) => ({
     // Systems state properties (required fields from SystemsState)
     npcStables: [],
     breedingPrograms: [],
@@ -300,6 +300,20 @@ export const useGame = create<StoreType>()(
       set({ ...createInitialState(options) } as any);
     },
   }),
+  {
+    name: "gallop-game-state",
+    storage: createOpfsStorage(),
+    onRehydrateStorage: () => (state) => {
+      hydrationComplete.value = true;
+    },
+    partialize: (state) => {
+      const partial: any = {};
+      PERSISTED_KEYS.forEach((key) => {
+        partial[key] = state[key];
+      });
+      return partial;
+    },
+  },
 );
 
 // Export rehydrate function

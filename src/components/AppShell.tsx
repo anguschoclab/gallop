@@ -111,7 +111,7 @@ export function AppShell() {
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
 
   const awards = useAwards();
-  const pendingCeremonies = (useGame as any)((s) => s.pendingAwardCeremonies, shallow);
+  const pendingCeremonies = (useGame as any)((s: any) => s.pendingAwardCeremonies, shallow);
   const [showCeremony, setShowCeremony] = useState(false);
   const clearPendingCeremonies = useGame((s) => s.clearPendingCeremonies);
 

@@ -82,21 +82,21 @@ function HorseDetail() {
   const trainHorse = useGame((s) => s.trainHorse);
   const consignHorse = useGame((s) => s.consignHorse);
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
-  const trainingUsed = (useGame as any)((s) => s.trainingUsed[horseId] ?? 0, shallow);
-  const cash = useGame((s) => s.cash);
-  const retireToStud = useGame((s) => s.retireToStud);
-  const retireToPasture = useGame((s) => s.retireToPasture);
-  const facilities = (useGame as any)((s) => s.facilities, shallow);
-  const pregnancies = (useGame as any)((s) => s.pregnancies, shallow);
-  const pregnancy = pregnancies.find((p) => !p.resolved && p.damId === horseId);
+  const trainingUsed = useGame((s: any) => s.trainingUsed[horseId] ?? 0);
+  const cash = useGame((s: any) => s.cash);
+  const retireToStud = useGame((s: any) => s.retireToStud);
+  const retireToPasture = useGame((s: any) => s.retireToPasture);
+  const facilities = useGame((s: any) => s.facilities);
+  const pregnancies = useGame((s: any) => s.pregnancies);
+  const pregnancy = pregnancies?.find((p: any) => !p.resolved && p.damId === horseId);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
-  const syndicates = (useGame as any)((s) => s.syndicates, shallow);
-  const races = (useGame as any)((s) => s.races, shallow);
-  const currentRace = races.find((r) => r.entries.some((e) => e.horseId === horseId && !r.resolved));
-  const assignedJockeyId = currentRace?.entries.find((e) => e.horseId === horseId)?.jockeyId;
-  const jockeys = (useGame as any)((s) => s.jockeys, shallow);
-  const assignedJockey = jockeys.find((j) => j.id === assignedJockeyId);
+  const syndicates = useGame((s: any) => s.syndicates || {});
+  const races = useGame((s: any) => s.races);
+  const currentRace = races?.find((r: any) => r.entries.some((e: any) => e.horseId === horseId && !r.resolved));
+  const assignedJockeyId = currentRace?.entries.find((e: any) => e.horseId === horseId)?.jockeyId;
+  const jockeys = useGame((s: any) => s.jockeys);
+  const assignedJockey = jockeys?.find((j: any) => j.id === assignedJockeyId);
 
   const handleTrain = useCallback((horseId: string, type: any) => {
     trainHorse(horseId, type);
@@ -172,7 +172,7 @@ function HorseDetail() {
   const g1Wins =
     horse.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
   const isG1Winner = g1Wins > 0;
-  const isSyndicated = syndicates ? !!syndicates[horseId] : false;
+  const isSyndicated = !!syndicates[horseId];
 
   return (
     <div className="flex gap-8 relative pb-20 animate-fade-in">
