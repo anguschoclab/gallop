@@ -109,7 +109,7 @@ function StablePage() {
             Stability Division
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
-            Registry of Assets
+            Horse Registry
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
             <span>
@@ -284,7 +284,7 @@ function StablePage() {
                 <thead className="bg-black/40 border-b border-white/10">
                   <tr className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold-muted/60">
                     <th className="px-6 py-3 font-black w-1">#</th>
-                    <th className="px-4 py-3 font-black">Identified Asset</th>
+                    <th className="px-4 py-3 font-black">Horse</th>
                     <th className="px-4 py-3 font-black text-center">Age</th>
                     <th className="px-4 py-3 font-black text-center">Rating</th>
                     <th className="px-4 py-3 font-black text-center">Condition</th>
@@ -389,7 +389,7 @@ function StablePage() {
                                 variant="ghost"
                                 size="sm"
                                 className="h-7 w-7 p-0 hover:bg-blue-400/10 hover:text-blue-400 text-cream/20"
-                                title="Mission Plan"
+                                title="Race Plan"
                               >
                                 <Clock className="h-3.5 w-3.5" />
                               </Button>
@@ -485,9 +485,7 @@ function StablePage() {
 
           {filteredRivalStables.length === 0 ? (
             <div className="p-20 text-center border border-dashed border-white/10 opacity-40">
-              <p className="font-mono text-xs uppercase tracking-widest">
-                No Intelligence Data Available
-              </p>
+              <p className="font-mono text-xs uppercase tracking-widest">No data available</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
