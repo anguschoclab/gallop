@@ -1,5 +1,6 @@
 import type { Horse } from "@/game/types";
 import { Link } from "@tanstack/react-router";
+import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,7 +42,7 @@ export function HorseCard({
   onClick,
   className = "",
 }: HorseCardProps) {
-  const scoutReports = useGame((s) => s.scoutReports);
+  const scoutReports = (useGame as any)((s) => s.scoutReports, shallow);
   const day = useGame((s) => s.day);
   const ovr = calculateOverallRating(horse);
 

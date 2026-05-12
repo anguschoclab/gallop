@@ -60,10 +60,10 @@ export const Route = createFileRoute("/race/$raceId")({
 function LiveRace() {
   const { raceId } = Route.useParams();
   const navigate = useNavigate();
-  const race = useGame((s) => s.races.find((r) => r.id === raceId));
-  const horses = useGame((s) => s.horses);
+  const race = (useGame as any)((s) => s.races.find((r) => r.id === raceId), shallow);
+  const horses = (useGame as any)((s) => s.horses, shallow);
   const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
-  const stables = useGame((s) => s.npcStables);
+  const stables = (useGame as any)((s) => s.npcStables, shallow);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
 
   const [runners] = useState<Runner[]>(() => {
@@ -167,7 +167,7 @@ function LiveRace() {
   // If the race is resolved and has snapshots, we can show the replay
   const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
 
-  const calibratedPars = useGame((s) => s.calibratedPars);
+  const calibratedPars = (useGame as any)((s) => s.calibratedPars, shallow);
 
   const rows = runners.map((r) => ({
     r,

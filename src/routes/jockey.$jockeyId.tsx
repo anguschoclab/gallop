@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import { JockeyCard } from "@/components/JockeyCard";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/jockey/$jockeyId")({
 
 function JockeyPage() {
   const { jockeyId } = Route.useParams();
-  const jockeys = useGame((s) => s.jockeys);
+  const jockeys = (useGame as any)((s) => s.jockeys, shallow);
   const hireJockey = useGame((s) => s.hireJockey);
   const releaseJockey = useGame((s) => s.releaseJockey);
 

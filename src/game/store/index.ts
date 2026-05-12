@@ -223,106 +223,83 @@ export function getInitializationWorker(): Remote<InitializationWorkerApi> {
 /**
  * Main Zustand store composed from all slices
  */
+// Temporarily disable persist middleware to isolate infinite loop
 export const useGame = create<StoreType>()(
-  persist(
-    (set, get) => ({
-      // Systems state properties (required fields from SystemsState)
-      npcStables: [],
-      breedingPrograms: [],
-      awards: [],
-      usedHorseNames: [],
-      usedJockeyNames: [],
-      staffPool: [],
-      hiredStaff: [],
-      npcAIManager: {
-        stableStates: {},
-        globalDay: 1,
-      },
-
-      // Core slice
-      ...createCoreSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Racing slice
-      ...createRacingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Market slice
-      ...createMarketSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Scouting slice
-      ...createScoutingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Auction slice
-      ...createAuctionSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Private sale slice
-      ...createPrivateSaleSlice(set as any, get, (intent: AnyIntent) =>
-        get().enqueueIntent(intent),
-      ),
-
-      // Breeding slice
-      ...createBreedingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Campaign slice
-      ...createCampaignSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Jockey slice
-      ...createJockeySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Facility slice
-      ...createFacilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Settings slice
-      ...createSettingsSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Breeding program slice
-      ...createBreedingProgramSlice(set as any, get, (intent: AnyIntent) =>
-        get().enqueueIntent(intent),
-      ),
-
-      // Horse admin slice
-      ...createHorseAdminSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Award slice
-      ...createAwardSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Utility slice
-      ...createUtilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
-
-      // Start new game action
-      startNewGame: async (options: NewGameOptions) => {
-        // Initialize workers if not already initialized
-        await initEngineWorker();
-        await initStorageWorker();
-        await initInitializationWorker();
-
-        // Clear OPFS storage when starting a new game
-        await (await import("@/services/storageAdapter")).clearGameState();
-        set({ ...createInitialState(options) } as any);
-      },
-    }),
-    {
-      name: "gallop-game-state",
-      storage: createOpfsStorage(),
-      partialize: (state) =>
-        PERSISTED_KEYS.reduce((acc, key) => {
-          acc[key] = state[key] as any;
-          return acc;
-        }, {} as any),
-      onRehydrateStorage: () => async (state) => {
-        // Initialize workers on rehydration (app load or existing save load)
-        await initEngineWorker();
-        await initStorageWorker();
-        await initInitializationWorker();
-
-        // Initialize horseMap after hydration
-        if (state) {
-          (state as any).horseMap = new Map(state.horses.map((h: Horse) => [h.id, h]));
-        }
-
-        hydrationComplete.value = true;
-      },
+  (set, get) => ({
+    // Systems state properties (required fields from SystemsState)
+    npcStables: [],
+    breedingPrograms: [],
+    awards: [],
+    usedHorseNames: [],
+    usedJockeyNames: [],
+    staffPool: [],
+    hiredStaff: [],
+    npcAIManager: {
+      stableStates: {},
+      globalDay: 1,
     },
-  ),
+
+    // Core slice
+    ...createCoreSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Racing slice
+    ...createRacingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Market slice
+    ...createMarketSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Scouting slice
+    ...createScoutingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Auction slice
+    ...createAuctionSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Private sale slice
+    ...createPrivateSaleSlice(set as any, get, (intent: AnyIntent) =>
+      get().enqueueIntent(intent),
+    ),
+
+    // Breeding slice
+    ...createBreedingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Campaign slice
+    ...createCampaignSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Jockey slice
+    ...createJockeySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Facility slice
+    ...createFacilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Settings slice
+    ...createSettingsSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Breeding program slice
+    ...createBreedingProgramSlice(set as any, get, (intent: AnyIntent) =>
+      get().enqueueIntent(intent),
+    ),
+
+    // Horse admin slice
+    ...createHorseAdminSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Award slice
+    ...createAwardSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Utility slice
+    ...createUtilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+    // Start new game action
+    startNewGame: async (options: NewGameOptions) => {
+      // Initialize workers if not already initialized
+      await initEngineWorker();
+      await initStorageWorker();
+      await initInitializationWorker();
+
+      // Clear OPFS storage when starting a new game
+      await (await import("@/services/storageAdapter")).clearGameState();
+      set({ ...createInitialState(options) } as any);
+    },
+  }),
 );
 
 // Export rehydrate function

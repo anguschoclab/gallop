@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import { useAuctions } from "@/game/hooks/useMarketState";
 import { useState } from "react";
@@ -46,7 +47,7 @@ export const Route = createFileRoute("/auction/")({
 
 function AuctionPage() {
   const auctions = useAuctions() as AuctionSale[];
-  const horses = useGame((s) => s.horses);
+  const horses = (useGame as any)((s) => s.horses, shallow);
   const day = useGame((s) => s.day);
 
   const [consignOpen, setConsignOpen] = useState(false);

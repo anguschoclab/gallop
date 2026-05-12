@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export function SyndicateMarket() {
   const syndicates = (useGame as any)((s) => s.syndicates || {}, shallow);
-  const horses = useGame((s) => s.horses);
+  const horses = (useGame as any)((s) => s.horses, shallow);
   const purchaseShares = useGame((s) => s.purchaseShares);
   const sellShares = useGame((s) => s.sellShares);
   const cash = useGame((s) => s.cash);

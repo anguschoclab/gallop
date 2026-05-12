@@ -50,8 +50,8 @@ function SlotStatusBadge({ status }: { status: string }) {
 
 function SchedulerPage() {
   const day = useGame((s) => s.day);
-  const horses = useGame((s) => s.horses);
-  const races = useGame((s) => s.races);
+  const horses = (useGame as any)((s) => s.horses, shallow);
+  const races = (useGame as any)((s) => s.races, shallow);
   const campaigns = useGameWithShallow((s) => s.campaigns ?? []);
   const setCampaign = useGame((s) => s.setCampaign);
   const deleteCampaign = useGame((s) => s.deleteCampaign);

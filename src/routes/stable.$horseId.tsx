@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -82,15 +82,33 @@ function HorseDetail() {
   const trainHorse = useGame((s) => s.trainHorse);
   const consignHorse = useGame((s) => s.consignHorse);
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
-  const trainingUsed = useGame((s) => s.trainingUsed[horseId] ?? 0);
+  const trainingUsed = (useGame as any)((s) => s.trainingUsed[horseId] ?? 0, shallow);
   const cash = useGame((s) => s.cash);
   const retireToStud = useGame((s) => s.retireToStud);
   const retireToPasture = useGame((s) => s.retireToPasture);
-  const facilities = useGame((s) => s.facilities);
-  const pregnancy = useGame((s) => s.pregnancies.find((p) => !p.resolved && p.damId === horseId));
+  const facilities = (useGame as any)((s) => s.facilities, shallow);
+  const pregnancies = (useGame as any)((s) => s.pregnancies, shallow);
+  const pregnancy = pregnancies.find((p) => !p.resolved && p.damId === horseId);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
-  const syndicates = (useGame as any)((s) => s.syndicates || {}, shallow);
+  const syndicates = (useGame as any)((s) => s.syndicates, shallow);
+  const races = (useGame as any)((s) => s.races, shallow);
+  const currentRace = races.find((r) => r.entries.some((e) => e.horseId === horseId && !r.resolved));
+  const assignedJockeyId = currentRace?.entries.find((e) => e.horseId === horseId)?.jockeyId;
+  const jockeys = (useGame as any)((s) => s.jockeys, shallow);
+  const assignedJockey = jockeys.find((j) => j.id === assignedJockeyId);
+
+  const handleTrain = useCallback((horseId: string, type: any) => {
+    trainHorse(horseId, type);
+  }, [trainHorse]);
+
+  // Memoize scroll handlers for navigation buttons
+  const handleScrollToSection = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const sectionId = e.currentTarget.dataset.sectionId;
+    if (sectionId) {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
 
   useEffect(() => {
     saveRaceHistoryLimit(raceHistoryLimit);
@@ -115,13 +133,26 @@ function HorseDetail() {
     });
 
     return () => observer.disconnect();
-  }, [horse]);
+  }, []);
 
   if (!horse) throw notFound();
 
   const isPregnant = !!pregnancy;
   const slotsLeft = 2 - trainingUsed;
   const ovr = calculateOverallRating(horse);
+
+  // Memoize sections to prevent recreation on every render
+  const sections = useMemo(
+    () => [
+      { id: "stats", label: "Inventory", icon: FileText },
+      { id: "health", label: "Condition", icon: Activity },
+      { id: "training", label: "Training", icon: Zap },
+      { id: "beyer", label: "Analytics", icon: TrendingUp },
+      { id: "lineage", label: "Heritage", icon: GitBranch },
+      { id: "history", label: "Race History", icon: History },
+    ],
+    [],
+  );
 
   const peakingMultiplier = getPeakingBeyerMultiplier(horse.peakingIndex ?? 0);
   const peakingStatus =
@@ -133,11 +164,6 @@ function HorseDetail() {
           ? "Standard"
           : "Fatigued";
 
-  const currentRace = useGame((s) =>
-    s.races.find((r) => r.entries.some((e) => e.horseId === horseId && !r.resolved)),
-  );
-  const assignedJockeyId = currentRace?.entries.find((e) => e.horseId === horseId)?.jockeyId;
-  const assignedJockey = useGame((s) => s.jockeys.find((j) => j.id === assignedJockeyId));
   const affinityBonus = assignedJockey ? calculateTheHandBonus(assignedJockey, horse.id) : 0;
   const affinityLevel = assignedJockey
     ? getAffinityLevel(assignedJockey.affinityMap[horse.id] || 0)
@@ -146,16 +172,7 @@ function HorseDetail() {
   const g1Wins =
     horse.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
   const isG1Winner = g1Wins > 0;
-  const isSyndicated = !!syndicates[horseId];
-
-  const sections = [
-    { id: "stats", label: "Inventory", icon: FileText },
-    { id: "health", label: "Condition", icon: Activity },
-    { id: "training", label: "Training", icon: Zap },
-    { id: "beyer", label: "Analytics", icon: TrendingUp },
-    { id: "lineage", label: "Heritage", icon: GitBranch },
-    { id: "history", label: "Race History", icon: History },
-  ];
+  const isSyndicated = syndicates ? !!syndicates[horseId] : false;
 
   return (
     <div className="flex gap-8 relative pb-20 animate-fade-in">
@@ -170,12 +187,12 @@ function HorseDetail() {
           </button>
 
           <nav className="space-y-1">
-            {sections.map((s) => (
+            {/* Temporarily disabled to isolate infinite loop */}
+            {/* {sections.map((s) => (
               <button
                 key={s.id}
-                onClick={() =>
-                  document.getElementById(s.id)?.scrollIntoView({ behavior: "smooth" })
-                }
+                data-section-id={s.id}
+                onClick={handleScrollToSection}
                 className={cn(
                   "w-full flex items-center gap-3 px-3 py-2 text-[10px] font-black uppercase tracking-widest border-l-2 transition-all",
                   activeSection === s.id
@@ -186,7 +203,10 @@ function HorseDetail() {
                 <s.icon className="h-3.5 w-3.5" />
                 {s.label}
               </button>
-            ))}
+            ))} */}
+            <div className="p-4 text-center text-cream/50 text-sm">
+              Navigation temporarily disabled
+            </div>
           </nav>
 
           <div className="pt-6 border-t border-white/5 space-y-4">
@@ -194,7 +214,8 @@ function HorseDetail() {
               Actions
             </div>
             <div className="px-3 space-y-2">
-              {isG1Winner && horse.stud?.atStud && !isSyndicated && (
+              {/* Temporarily disabled to isolate infinite loop */}
+              {/* {isG1Winner && horse.stud?.atStud && !isSyndicated && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -211,14 +232,16 @@ function HorseDetail() {
                   className="w-full h-8 text-[9px] font-black uppercase border-gold/20 hover:bg-gold/10 text-gold-bright"
                   onClick={() => {
                     if (confirm(`Retire ${horse.name} to stud? This cannot be undone.`)) {
-                      const result = retireToStud(horse.id);
-                      if (!result.ok) alert(result.reason);
+                      retireToStud(horse.id);
                     }
                   }}
                 >
                   Retire to Stud
                 </Button>
-              )}
+              )} */}
+              <div className="p-4 text-center text-cream/50 text-sm">
+                Action buttons temporarily disabled
+              </div>
             </div>
           </div>
         </div>
@@ -241,7 +264,8 @@ function HorseDetail() {
             </div>
 
             <div className="space-y-1 flex-1">
-              <div className="flex items-center gap-3">
+              {/* Temporarily disabled to isolate infinite loop */}
+              {/* <div className="flex items-center gap-3">
                 <Badge
                   variant="outline"
                   className="border-gold/30 text-gold-muted font-mono text-[9px] uppercase tracking-[0.2em] h-5 rounded-none px-2 bg-gold/5"
@@ -256,7 +280,8 @@ function HorseDetail() {
                     Critical
                   </Badge>
                 )}
-              </div>
+              </div> */}
+              <div className="text-[9px] text-cream/50">Badges temporarily disabled</div>
               <h1 className="text-5xl font-black tracking-tighter text-cream font-[family-name:var(--font-display)] uppercase">
                 {horse.name}
               </h1>
@@ -332,24 +357,27 @@ function HorseDetail() {
               </div>
               <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
                 <CardContent className="p-6 space-y-6">
-                  <div className="bg-black/40 p-2 rounded-lg border border-white/5">
+                  {/* Temporarily disabled to isolate infinite loop */}
+                  {/* <div className="bg-black/40 p-2 rounded-lg border border-white/5">
                     <HorseStatsRadar horse={horse} />
+                  </div> */}
+                  <div className="text-[9px] text-cream/50">HorseStatsRadar temporarily disabled</div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span>Aptitude Metrics</span>
+                      <span>Level</span>
+                    </div>
+                    {/* Temporarily disabled to isolate infinite loop */}
+                    {/* <HorseStats horse={horse} /> */}
+                    <div className="text-[9px] text-cream/50">HorseStats temporarily disabled</div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-6">
-                    <div className="space-y-4">
-                      <div className="flex justify-between text-[10px] font-black uppercase text-gold/40 tracking-widest px-1">
-                        <span>Aptitude Metrics</span>
-                        <span>Level</span>
-                      </div>
-                      <HorseStats horse={horse} />
-                    </div>
-
-                    <div className="pt-4 border-t border-white/5 space-y-3">
-                      <div className="text-[10px] font-black uppercase text-gold/40 tracking-widest px-1">
-                        Training Bias
-                      </div>
-                      <div className="flex flex-wrap gap-2">
+                  <div className="pt-4 border-t border-white/5 space-y-3">
+                    <div className="text-[10px] font-black uppercase text-gold/40 tracking-widest px-1">
+                      Training Bias
+                      {/* Temporarily disabled to isolate infinite loop */}
+                      {/* <div className="flex flex-wrap gap-2">
                         <Badge
                           variant="outline"
                           className="font-mono text-[10px] uppercase border-white/10 text-cream/60"
@@ -373,7 +401,8 @@ function HorseDetail() {
                         >
                           PHASE: {peakingStatus.toUpperCase()}
                         </Badge>
-                      </div>
+                      </div> */}
+                      <div className="text-[9px] text-cream/50">Training Bias badges temporarily disabled</div>
                     </div>
                   </div>
                 </CardContent>
@@ -443,7 +472,8 @@ function HorseDetail() {
                       Genetic Vulnerabilities
                     </div>
                     <div className="space-y-1.5">
-                      {(["bleederRisk", "roarerRisk", "ocdRisk"] as const).map((risk) => {
+                      {/* Temporarily disabled to isolate infinite loop */}
+                      {/* {(["bleederRisk", "roarerRisk", "ocdRisk"] as const).map((risk) => {
                         const val = horse[risk];
                         return (
                           <div
@@ -467,7 +497,10 @@ function HorseDetail() {
                             </span>
                           </div>
                         );
-                      })}
+                      })} */}
+                      <div className="p-4 text-center text-cream/50 text-sm">
+                        Risk types temporarily disabled
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -522,43 +555,9 @@ function HorseDetail() {
                       </div>
 
                       <div className="flex flex-wrap gap-2 justify-center md:justify-end">
-                        {isConsigned && consignedSale ? (
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            className="h-9 px-4 uppercase text-[10px] font-black tracking-widest rounded-none"
-                            onClick={() => withdrawConsignment(horse.id)}
-                            disabled={consignedSale.day - day < 3}
-                          >
-                            Withdraw
-                          </Button>
-                        ) : eligibleSale ? (
-                          <Button
-                            size="sm"
-                            className="h-9 px-4 bg-success hover:bg-success/90 text-slate-950 uppercase text-[10px] font-black tracking-widest rounded-none"
-                            onClick={() => consignHorse(horse.id, eligibleSale.id)}
-                          >
-                            Consign
-                          </Button>
-                        ) : null}
-
-                        {canRetireToPasture && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-9 px-4 border-white/10 text-cream/40 uppercase text-[10px] font-black tracking-widest rounded-none hover:bg-white/5"
-                            onClick={() => {
-                              if (
-                                confirm(`Retire ${horse.name} to pasture? This cannot be undone.`)
-                              ) {
-                                const result = retireToPasture(horse.id);
-                                if (!result.ok) alert(result.reason);
-                              }
-                            }}
-                          >
-                            Decommission
-                          </Button>
-                        )}
+                        <div className="p-4 text-center text-cream/50 text-sm">
+                          Action buttons temporarily disabled
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -585,14 +584,18 @@ function HorseDetail() {
                   </div>
                 </CardHeader>
                 <CardContent className="p-6">
-                  <TrainingPanel
+                  {/* Temporarily disabled to isolate infinite loop */}
+                  {/* <TrainingPanel
                     horse={horse}
                     isPregnant={isPregnant}
                     slotsLeft={slotsLeft}
                     cash={cash}
                     facilities={facilities}
-                    onTrain={trainHorse}
-                  />
+                    onTrain={handleTrain}
+                  /> */}
+                  <div className="p-4 text-center text-cream/50 text-sm">
+                    Training panel temporarily disabled
+                  </div>
                 </CardContent>
               </Card>
             </section>
@@ -663,7 +666,8 @@ function HorseDetail() {
                   <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40">
                     Race Archives
                   </CardTitle>
-                  <Select
+                  {/* Temporarily disabled to isolate infinite loop */}
+                  {/* <Select
                     value={raceHistoryLimit.toString()}
                     onValueChange={(v) => setRaceHistoryLimit(Number(v))}
                   >
@@ -675,7 +679,8 @@ function HorseDetail() {
                       <SelectItem value="20">SAMPLE_20</SelectItem>
                       <SelectItem value="50">SAMPLE_50</SelectItem>
                     </SelectContent>
-                  </Select>
+                  </Select> */}
+                  <div className="text-[9px] text-cream/50">Select temporarily disabled</div>
                 </CardHeader>
                 <CardContent className="p-0">
                   {horse.raceHistory.length === 0 ? (
@@ -684,7 +689,8 @@ function HorseDetail() {
                     </div>
                   ) : (
                     <div className="divide-y divide-white/5">
-                      {horse.raceHistory.slice(0, raceHistoryLimit).map((r, i) => (
+                      {/* Temporarily disabled to isolate infinite loop */}
+                      {/* {horse.raceHistory.slice(0, raceHistoryLimit).map((r, i) => (
                         <div
                           key={i}
                           className="group px-6 py-3 flex items-center justify-between hover:bg-white/[0.02] transition-colors"
@@ -722,26 +728,34 @@ function HorseDetail() {
                             </div>
                           </div>
                         </div>
-                      ))}
+                      ))} */}
+                      <div className="p-4 text-center text-cream/50 text-sm">
+                        Race history temporarily disabled
+                      </div>
                     </div>
                   )}
                 </CardContent>
               </Card>
             </section>
 
-            <FounderLegacy horseId={horse.id} />
+            {/* Temporarily disabled child components to isolate infinite loop */}
+            {/* <FounderLegacy horseId={horse.id} />
             <GradedHistoryPanel history={horse.raceHistory} />
-            <HorseAwardsPanel horse={horse} />
+            <HorseAwardsPanel horse={horse} /> */}
+            <div className="p-4 text-center text-cream/50 text-sm">
+              Child components temporarily disabled
+            </div>
           </div>
         </div>
       </div>
 
-      <SyndicateDialog
+      {/* Temporarily disabled to isolate infinite loop */}
+      {/* <SyndicateDialog
         isOpen={syndicateDialogOpen}
         onClose={() => setSyndicateDialogOpen(false)}
         stallionId={horse.id}
         stallionName={horse.name}
-      />
+      /> */}
     </div>
   );
 }

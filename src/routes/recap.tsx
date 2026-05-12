@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,9 +17,9 @@ export const Route = createFileRoute("/recap")({
 });
 
 function RecapPage() {
-  const races = useGame((s) => s.races);
-  const horses = useGame((s) => s.horses);
-  const calibratedPars = useGame((s) => s.calibratedPars);
+  const races = (useGame as any)((s) => s.races, shallow);
+  const horses = (useGame as any)((s) => s.horses, shallow);
+  const calibratedPars = (useGame as any)((s) => s.calibratedPars, shallow);
   const day = useGame((s) => s.day);
 
   // Get resolved graded races from the past 7 days

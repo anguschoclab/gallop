@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,13 +24,13 @@ export const Route = createFileRoute("/stallions")({
 });
 
 function StallionsPage() {
-  const horses = useGame((s) => s.horses);
-  const npcStables = useGame((s) => s.npcStables);
+  const horses = (useGame as any)((s) => s.horses, shallow);
+  const npcStables = (useGame as any)((s) => s.npcStables, shallow);
   const day = useGame((s) => s.day);
   const cash = useGame((s) => s.cash);
   const breed = useGame((s) => s.breed);
   const updateStudFee = useGame((s) => s.updateStudFee);
-  const pregnancies = useGame((s) => s.pregnancies);
+  const pregnancies = (useGame as any)((s) => s.pregnancies, shallow);
 
   const [hemisphere, setHemisphere] = useState<Hemisphere | "all">("all");
   const [selectedMareId, setSelectedMareId] = useState<string>("");

@@ -40,6 +40,7 @@ import { AutoSimPanel } from "./AutoSimPanel";
 import { AwardCeremony } from "./awards";
 import { useState, useEffect } from "react";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/game/constants/gameConstants";
+import { shallow } from "zustand/shallow";
 
 const navSections = [
   {
@@ -110,7 +111,7 @@ export function AppShell() {
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
 
   const awards = useAwards();
-  const pendingCeremonies = useGame((s) => s.pendingAwardCeremonies);
+  const pendingCeremonies = (useGame as any)((s) => s.pendingAwardCeremonies, shallow);
   const [showCeremony, setShowCeremony] = useState(false);
   const clearPendingCeremonies = useGame((s) => s.clearPendingCeremonies);
 
@@ -145,133 +146,81 @@ export function AppShell() {
             {gameCalendarDate(day)}
           </p>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
-          {navSections.map((section) => (
-            <div key={section.label}>
-              <span className="text-[9px] tracking-[0.14em] uppercase text-cream-muted px-3 pb-2 block">
-                {section.label}
-              </span>
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const active = item.exact
-                  ? location.pathname === item.to
-                  : location.pathname.startsWith(item.to);
-                return (
-                  <div key={item.to}>
-                    <Link
-                      to={item.to}
-                      className={cn(
-                        "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                        active
-                          ? "border-l-2 border-gold text-gold bg-gold-subtle"
-                          : "text-cream-muted/70 hover:bg-gold-subtle hover:text-cream",
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {item.label}
-                    </Link>
-                    {"subItems" in item && item.subItems && (
-                      <div className="ml-6 mt-1 space-y-1">
-                        {item.subItems.map((subItem) => {
-                          const SubIcon = subItem.icon;
-                          const subActive = subItem.exact
-                            ? location.pathname === subItem.to
-                            : location.pathname.startsWith(subItem.to);
-                          return (
-                            <Link
-                              key={subItem.to}
-                              to={subItem.to}
-                              className={cn(
-                                "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors",
-                                subActive
-                                  ? "border-l-2 border-gold text-gold bg-gold-subtle"
-                                  : "text-cream-muted/60 hover:bg-gold-subtle hover:text-cream",
-                              )}
-                            >
-                              <SubIcon className="h-3 w-3" />
-                              {subItem.label}
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-        </nav>
+        <div className="text-[9px] text-cream/50 p-4">Navigation temporarily disabled</div>
         <div className="p-3 border-t border-gold-muted space-y-2">
           <div className="px-3 py-2 rounded-md bg-t800 border border-gold-muted">
             <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Cash</p>
             {/* Design Bible: Numbers use IBM Plex Mono with tabular-nums */}
             <p className="text-[22px] font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">
-              {formatCurrency(cash)}
+              ${cash.toLocaleString()}
             </p>
+            <p className="text-[10px] text-cream-muted/60 mt-1">
+              {horses.length} horses
+            </p>
+            {/* Temporarily disabled to isolate infinite loop */}
+            {/* <div className="grid grid-cols-4 gap-1">
+              <Button
+                onClick={() => advanceDay()}
+                className="col-span-1"
+                size="sm"
+                variant="outline"
+                aria-label="Advance 1 day"
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+              <Button
+                onClick={() => {
+                  // Use setTimeout to ensure the click completes before starting the async operation
+                  setTimeout(() => advanceMultipleDays(DAYS_PER_WEEK), 0);
+                }}
+                className="col-span-1"
+                size="sm"
+                variant="outline"
+                title="Advance 1 week"
+              >
+                7d
+              </Button>
+              <Button
+                onClick={() => {
+                  // Use setTimeout to ensure the click completes before starting the async operation
+                  setTimeout(() => advanceMultipleDays(DAYS_PER_MONTH), 0);
+                }}
+                className="col-span-1"
+                size="sm"
+                variant="outline"
+                title="Advance 1 month"
+              >
+                30d
+              </Button>
+              <Button
+                onClick={() => setAutoSimOpen(true)}
+                className="col-span-1"
+                size="sm"
+                variant="outline"
+                aria-label="AutoSim settings"
+              >
+                <Settings className="h-3 w-3" />
+              </Button>
+            </div> */}
+            <div className="text-[9px] text-cream/50 mt-2">Day advance buttons temporarily disabled</div>
           </div>
-          <div className="px-3 py-1 text-xs text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">
-            {horses.length} horses
-          </div>
-          <div className="grid grid-cols-4 gap-1">
-            <Button
-              onClick={() => advanceDay()}
-              className="col-span-1"
-              size="sm"
-              title="Advance 1 day"
-              aria-label="Advance 1 day"
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-            <Button
-              onClick={() => {
-                // Use setTimeout to ensure the click completes before starting the async operation
-                setTimeout(() => advanceMultipleDays(DAYS_PER_WEEK), 0);
-              }}
-              className="col-span-1 tabular-nums"
-              size="sm"
-              variant="secondary"
-              title="Advance 1 week"
-            >
-              7d
-            </Button>
-            <Button
-              onClick={() => {
-                // Use setTimeout to ensure the click completes before starting the async operation
-                setTimeout(() => advanceMultipleDays(DAYS_PER_MONTH), 0);
-              }}
-              className="col-span-1 tabular-nums"
-              size="sm"
-              variant="secondary"
-              title="Advance 1 month"
-            >
-              30d
-            </Button>
-            <Button
-              onClick={() => setAutoSimOpen(true)}
-              className="col-span-1"
-              size="sm"
-              variant="ghost"
-              title="AutoSim settings"
-              aria-label="AutoSim settings"
-            >
-              <Settings className="h-3 w-3" />
-            </Button>
-          </div>
-
-          <Button
+          {/* Temporarily disabled to isolate infinite loop */}
+          {/* <Button
             onClick={() => setNewGameDialogOpen(true)}
             className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
             size="sm"
             variant="ghost"
           >
             Start new game
-          </Button>
-          <Dialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
+          </Button> */}
+          <div className="text-[9px] text-cream/50">Start new game button temporarily disabled</div>
+          {/* Temporarily disabled to isolate infinite loop */}
+          {/* <Dialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Start a new game?</DialogTitle>
+                <DialogTitle>Start New Game</DialogTitle>
                 <DialogDescription>
-                  All current progress will be lost. This cannot be undone.
+                  This will delete your current game progress and start a new one. This action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -282,14 +231,14 @@ export function AppShell() {
                   variant="destructive"
                   onClick={() => {
                     window.location.href = "/new-game";
-                    setNewGameDialogOpen(false);
                   }}
                 >
                   Start new game
                 </Button>
               </DialogFooter>
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
+          <div className="text-[9px] text-cream/50">Dialog temporarily disabled</div>
         </div>
       </aside>
       )}
@@ -298,14 +247,17 @@ export function AppShell() {
           <Outlet />
         </div>
       </main>
-      <PlayerRacePrompt />
-      <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
-      <AwardCeremony
+      {/* Temporarily disabled to isolate infinite loop */}
+      {/* <PlayerRacePrompt /> */}
+      {/* <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} /> */}
+      {/* Temporarily disabled to isolate infinite loop */}
+      {/* <AwardCeremony
         isOpen={showCeremony}
         onClose={() => setShowCeremony(false)}
         ceremonies={pendingCeremonies || []}
         onComplete={() => clearPendingCeremonies?.()}
-      />
+      /> */}
+      <div className="text-[9px] text-cream/50">AwardCeremony temporarily disabled</div>
     </div>
   );
 }

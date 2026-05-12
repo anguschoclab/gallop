@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,7 +39,7 @@ const COAT_COLORS = [
 ] as const;
 
 function HorseGalleryPage() {
-  const allHorses = useGame((s) => s.horses);
+  const allHorses = (useGame as any)((s) => s.horses, shallow);
   const horses = useMemo(() => allHorses.filter((h) => h.owned), [allHorses]);
   const [coatFilter, setCoatFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"ovr" | "age" | "name">("ovr");

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,11 +12,11 @@ export const Route = createFileRoute("/broodmares")({
 });
 
 function BroodmaresPage() {
-  const horses = useGame((s) => s.horses);
-  const horseMap = useGame((s) => s.horseMap);
-  const pregnancies = useGame((s) => s.pregnancies);
+  const horses = (useGame as any)((s) => s.horses, shallow);
+  const horseMap = (useGame as any)((s) => s.horseMap, shallow);
+  const pregnancies = (useGame as any)((s) => s.pregnancies, shallow);
   const day = useGame((s) => s.day);
-  const log = useGame((s) => s.log);
+  const log = (useGame as any)((s) => s.log, shallow);
 
   // Get all active pregnancies (unresolved)
   const activePregnancies = pregnancies.filter((p) => !p.resolved);
