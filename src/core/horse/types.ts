@@ -27,27 +27,33 @@ export type ActiveInjury = {
  * so legacy saves with partial DNA still type-check; renderers should fall
  * back to defaults when a field is missing.
  */
+/**
+ * Per-horse procedural portrait DNA. Numeric fields are dimensionless shape
+ * modifiers consumed by ProceduralHorsePortrait. All fields are required —
+ * generateAppearanceDNA always populates them. Legacy saves missing this
+ * data should be re-derived (the portrait cache does this automatically).
+ */
 export type AppearanceDNA = {
-  seed?: number;
-  headTilt?: number;
-  headLength?: number;
-  earSpread?: number;
-  eyeY?: number;
-  forelockSweep?: number;
-  /** Mane wave offsets (typically 4 values along the neck). */
-  maneWaves?: number[];
-  bodyLength?: number;
-  bodyDepth?: number;
-  legLength?: number;
-  tailSweep?: number;
-  tailFullness?: number;
+  seed: number;
+  headTilt: number;
+  headLength: number;
+  earSpread: number;
+  eyeY: number;
+  forelockSweep: number;
+  /** Mane wave offsets (4 values along the neck). */
+  maneWaves: number[];
+  bodyLength: number;
+  bodyDepth: number;
+  legLength: number;
+  tailSweep: number;
+  tailFullness: number;
   /** Sock height per leg (front-left, front-right, rear-left, rear-right). */
-  socks?: Array<"none" | "sock" | "stocking">;
-  dapples?: Array<{ x: number; y: number; r: number }>;
-  flecks?: Array<{ x: number; y: number; r: number }>;
-  /** Face marking variant — referenced by ProceduralHorsePortrait when present. */
+  socks: Array<"none" | "sock" | "stocking">;
+  dapples: Array<{ x: number; y: number; r: number }>;
+  flecks: Array<{ x: number; y: number; r: number }>;
+  /** Optional face marking variant. */
   face?: string;
-  // Allow forward-compat extra fields without losing type checking on the rest.
+  // Forward-compat: allow extra fields without losing checking on the rest.
   [key: string]: unknown;
 };
 
