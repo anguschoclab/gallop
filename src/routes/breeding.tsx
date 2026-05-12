@@ -4,7 +4,17 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, FileText, Baby, Calendar, Target } from "lucide-react";
+import {
+  Heart,
+  FileText,
+  Baby,
+  Calendar,
+  Target,
+  ChevronRight,
+  Users,
+  BarChart2,
+  Trophy,
+} from "lucide-react";
 import { toast } from "sonner";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -97,42 +107,36 @@ function BreedingPage() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="flex flex-wrap gap-3">
         <Link to="/stallions">
-          <Card className="hover:bg-t700 transition-colors border-gold-muted">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-[family-name:var(--font-display)]">
-                Stallions at Stud
-              </CardTitle>
-              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                View available stallions for breeding
-              </p>
-            </CardHeader>
-          </Card>
+          <Button
+            variant="outline"
+            className="h-10 px-5 gap-2 border-gold/30 text-cream hover:bg-gold/10 hover:border-gold/60 hover:text-gold transition-all font-[family-name:var(--font-display)] text-sm font-semibold"
+          >
+            <Users className="h-4 w-4 text-gold/60" />
+            Stallions at Stud
+            <ChevronRight className="h-3.5 w-3.5 opacity-40" />
+          </Button>
         </Link>
         <Link to="/sire-watch">
-          <Card className="hover:bg-t700 transition-colors border-gold-muted">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-[family-name:var(--font-display)]">
-                Sire Watch
-              </CardTitle>
-              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                Analytics and performance metrics for stallions
-              </p>
-            </CardHeader>
-          </Card>
+          <Button
+            variant="outline"
+            className="h-10 px-5 gap-2 border-gold/30 text-cream hover:bg-gold/10 hover:border-gold/60 hover:text-gold transition-all font-[family-name:var(--font-display)] text-sm font-semibold"
+          >
+            <BarChart2 className="h-4 w-4 text-gold/60" />
+            Sire Watch
+            <ChevronRight className="h-3.5 w-3.5 opacity-40" />
+          </Button>
         </Link>
         <Link to="/sire-leaderboards">
-          <Card className="hover:bg-t700 transition-colors border-gold-muted">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-[family-name:var(--font-display)]">
-                Sire Leaderboards
-              </CardTitle>
-              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                Track stallion performance across multiple dimensions
-              </p>
-            </CardHeader>
-          </Card>
+          <Button
+            variant="outline"
+            className="h-10 px-5 gap-2 border-gold/30 text-cream hover:bg-gold/10 hover:border-gold/60 hover:text-gold transition-all font-[family-name:var(--font-display)] text-sm font-semibold"
+          >
+            <Trophy className="h-4 w-4 text-gold/60" />
+            Sire Leaderboards
+            <ChevronRight className="h-3.5 w-3.5 opacity-40" />
+          </Button>
         </Link>
       </div>
 
