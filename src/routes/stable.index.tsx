@@ -101,7 +101,7 @@ function StablePage() {
 
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
-      {/* Registry Header */}
+      {/* Stable Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gold/20 pb-6">
         <div>
           <div className="flex items-center gap-2 text-gold-bright uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
@@ -109,7 +109,7 @@ function StablePage() {
             Stability Division
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
-            Registry of Assets
+            Our Horses
           </h1>
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-widest text-cream/40">
             <span>
@@ -163,7 +163,7 @@ function StablePage() {
               value="roster"
               className="gap-2 uppercase text-[10px] font-black tracking-widest data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-6"
             >
-              Main Registry
+              All Horses
             </TabsTrigger>
             <TabsTrigger
               value="rivals"
@@ -207,7 +207,7 @@ function StablePage() {
         >
           {playerAwards.length > 0 && <TrophyCase awards={playerAwards} variant="compact" />}
 
-          {/* Registry Filters */}
+          {/* Filters */}
           <div className="flex flex-wrap items-center justify-between gap-4 bg-black/20 p-4 border border-white/5">
             <div className="flex flex-wrap gap-2">
               {(
@@ -263,7 +263,7 @@ function StablePage() {
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
                 <Input
-                  placeholder="Registry Search..."
+                  placeholder="Search horses..."
                   className="h-8 bg-slate-950/50 border-white/5 text-[10px] font-mono pl-8 w-48 focus-visible:ring-gold/30 uppercase"
                 />
               </div>
@@ -284,7 +284,7 @@ function StablePage() {
                 <thead className="bg-black/40 border-b border-white/10">
                   <tr className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold-muted/60">
                     <th className="px-6 py-3 font-black w-1">#</th>
-                    <th className="px-4 py-3 font-black">Identified Asset</th>
+                    <th className="px-4 py-3 font-black">Horse</th>
                     <th className="px-4 py-3 font-black text-center">Age</th>
                     <th className="px-4 py-3 font-black text-center">Rating</th>
                     <th className="px-4 py-3 font-black text-center">Condition</th>
@@ -389,7 +389,7 @@ function StablePage() {
                                 variant="ghost"
                                 size="sm"
                                 className="h-7 w-7 p-0 hover:bg-blue-400/10 hover:text-blue-400 text-cream/20"
-                                title="Mission Plan"
+                                title="Race Plan"
                               >
                                 <Clock className="h-3.5 w-3.5" />
                               </Button>
@@ -485,9 +485,7 @@ function StablePage() {
 
           {filteredRivalStables.length === 0 ? (
             <div className="p-20 text-center border border-dashed border-white/10 opacity-40">
-              <p className="font-mono text-xs uppercase tracking-widest">
-                No Intelligence Data Available
-              </p>
+              <p className="font-mono text-xs uppercase tracking-widest">No data available</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

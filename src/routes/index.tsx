@@ -360,7 +360,7 @@ function Dashboard() {
                   variant="outline"
                   className="w-full h-8 text-[10px] uppercase font-bold tracking-widest border-gold/20 hover:bg-gold/10 text-gold-muted"
                 >
-                  Manage Assets
+                  Manage Horses
                 </Button>
               </Link>
               <Link to="/settings" className="w-full">
@@ -504,7 +504,7 @@ function Dashboard() {
           <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-success/60 mb-2 px-1 flex justify-between">
-                <span>Upcoming Targets</span>
+                <span>Upcoming Races</span>
                 <span>D / P</span>
               </div>
               <div className="space-y-2">
@@ -593,11 +593,11 @@ function Dashboard() {
 
       {/* --- BOTTOM ROW: LOGS & TROPHIES --- */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
-        {/* Intelligence Feed */}
+        {/* News Feed */}
         <Card className="lg:col-span-8 border-gold-muted bg-slate-900/40 border-t-2 border-t-gold/40">
           <CardHeader className="py-3 border-b border-white/5 flex flex-row items-center justify-between bg-black/20">
             <CardTitle className="text-[10px] font-bold uppercase tracking-[0.4em] text-cream-muted">
-              Intelligence Feed
+              News Feed
             </CardTitle>
             <Activity className="h-3 w-3 text-cream-muted/40 animate-pulse" />
           </CardHeader>

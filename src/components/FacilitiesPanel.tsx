@@ -9,7 +9,17 @@ import {
   type FacilityType,
   type FacilityLevel,
 } from "@/core/facilities";
-import { ArrowUp, Check, X, Dumbbell, ShieldCheck, Zap, Activity, Package, HardDrive } from "lucide-react";
+import {
+  ArrowUp,
+  Check,
+  X,
+  Dumbbell,
+  ShieldCheck,
+  Zap,
+  Activity,
+  Package,
+  HardDrive,
+} from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
 
@@ -26,33 +36,38 @@ export function FacilitiesPanel() {
     return null;
   }
 
-  const facilityCategories: Record<string, { types: FacilityType[], icon: any, color: string }> = {
+  const facilityCategories: Record<string, { types: FacilityType[]; icon: any; color: string }> = {
     "Physical Optimization": {
       types: ["main_track", "starting_gates", "treadmill", "exercise_pool"],
       icon: Dumbbell,
-      color: "text-gold"
+      color: "text-gold",
     },
     "Medical & Wellness": {
       types: ["veterinary_clinic", "rehab_center", "spa", "nutrition_lab"],
       icon: Activity,
-      color: "text-blue-400"
+      color: "text-blue-400",
     },
     "Logistics & Housing": {
       types: ["barn", "transport"],
       icon: Package,
-      color: "text-success"
-    }
+      color: "text-success",
+    },
   };
 
   const FACILITY_LEVELS: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
 
   const getRankValue = (level: string) => {
     switch (level) {
-      case "basic": return 1;
-      case "standard": return 2;
-      case "premium": return 3;
-      case "elite": return 4;
-      default: return 0;
+      case "basic":
+        return 1;
+      case "standard":
+        return 2;
+      case "premium":
+        return 3;
+      case "elite":
+        return 4;
+      default:
+        return 0;
     }
   };
 
@@ -69,15 +84,19 @@ export function FacilitiesPanel() {
         <div className="absolute top-0 left-0 w-1 h-full bg-gold" />
         <div className="relative z-10">
           <h2 className="text-xl font-black font-[family-name:var(--font-display)] text-cream uppercase tracking-widest flex items-center gap-2">
-             <ShieldCheck className="h-5 w-5 text-gold" />
-             Infrastructure Liquidity
+            <ShieldCheck className="h-5 w-5 text-gold" />
+            Infrastructure Liquidity
           </h2>
-          <p className="text-[10px] font-mono text-cream/40 uppercase tracking-tighter mt-1">Available operational capital for asset upgrades</p>
+          <p className="text-[10px] font-mono text-cream/40 uppercase tracking-tighter mt-1">
+            Available operational capital for asset upgrades
+          </p>
         </div>
         <div className="relative z-10 text-right">
-          <div className="text-[10px] font-mono text-gold-muted/60 uppercase font-black tracking-widest mb-1">CASH_ON_HAND</div>
+          <div className="text-[10px] font-mono text-gold-muted/60 uppercase font-black tracking-widest mb-1">
+            Cash on Hand
+          </div>
           <div className="text-3xl font-black font-mono text-success tabular-nums leading-none tracking-tighter">
-             {formatCurrency(cash)}
+            {formatCurrency(cash)}
           </div>
         </div>
       </div>
@@ -85,8 +104,10 @@ export function FacilitiesPanel() {
       {Object.entries(facilityCategories).map(([category, data]) => (
         <section key={category} className="space-y-6">
           <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
-             <data.icon className={cn("h-4 w-4", data.color)} />
-             <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">{category}</h3>
+            <data.icon className={cn("h-4 w-4", data.color)} />
+            <h3 className="text-xs font-black uppercase tracking-[0.4em] text-cream/60">
+              {category}
+            </h3>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -101,28 +122,41 @@ export function FacilitiesPanel() {
               const rankVal = getRankValue(facility.level);
 
               return (
-                <Card key={type} className="bg-slate-900/40 border-white/5 rounded-none group hover:border-white/20 transition-all duration-300 relative overflow-hidden shadow-xl">
+                <Card
+                  key={type}
+                  className="bg-slate-900/40 border-white/5 rounded-none group hover:border-white/20 transition-all duration-300 relative overflow-hidden shadow-xl"
+                >
                   <div className="absolute top-0 left-0 w-full h-0.5 bg-white/5 group-hover:bg-gold/40 transition-colors" />
-                  
+
                   <CardHeader className="pb-3 bg-black/20 border-b border-white/5">
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
                         <CardTitle className="text-sm font-black uppercase tracking-tight text-cream group-hover:text-gold transition-colors leading-none">
-                           {type.replace(/_/g, " ")}
+                          {type.replace(/_/g, " ")}
                         </CardTitle>
                         <div className="flex gap-1 pt-1">
-                           {[1, 2, 3, 4].map(i => (
-                             <div key={i} className={cn(
+                          {[1, 2, 3, 4].map((i) => (
+                            <div
+                              key={i}
+                              className={cn(
                                 "h-1 w-3 rounded-full",
-                                i <= rankVal ? "bg-gold shadow-[0_0_8px_rgba(212,175,55,0.4)]" : "bg-white/5"
-                             )} />
-                           ))}
+                                i <= rankVal
+                                  ? "bg-gold shadow-[0_0_8px_rgba(212,175,55,0.4)]"
+                                  : "bg-white/5",
+                              )}
+                            />
+                          ))}
                         </div>
                       </div>
-                      <Badge variant="outline" className={cn(
-                        "text-[8px] font-black uppercase tracking-widest h-5 rounded-none px-2",
-                        rankVal === 4 ? "border-gold text-gold bg-gold/5" : "border-white/10 text-cream/40"
-                      )}>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-[8px] font-black uppercase tracking-widest h-5 rounded-none px-2",
+                          rankVal === 4
+                            ? "border-gold text-gold bg-gold/5"
+                            : "border-white/10 text-cream/40",
+                        )}
+                      >
                         RANK_0{rankVal}
                       </Badge>
                     </div>
@@ -130,61 +164,81 @@ export function FacilitiesPanel() {
 
                   <CardContent className="p-5 space-y-5">
                     <div className="grid grid-cols-2 gap-4">
-                       <div className="space-y-1">
-                          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">Maintenance</div>
-                          <div className="text-xs font-mono font-bold text-cream/60 tabular-nums">-{formatCurrency(facility.maintenanceCost)}<span className="text-[8px] opacity-40">/D</span></div>
-                       </div>
-                       {!maxLevel && (
-                          <div className="space-y-1 text-right">
-                             <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">Upgrade Cost</div>
-                             <div className={cn("text-xs font-mono font-bold tabular-nums", canAfford ? "text-success" : "text-destructive/60")}>
-                                {formatCurrency(upgradeCost)}
-                             </div>
+                      <div className="space-y-1">
+                        <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+                          Maintenance
+                        </div>
+                        <div className="text-xs font-mono font-bold text-cream/60 tabular-nums">
+                          -{formatCurrency(facility.maintenanceCost)}
+                          <span className="text-[8px] opacity-40">/D</span>
+                        </div>
+                      </div>
+                      {!maxLevel && (
+                        <div className="space-y-1 text-right">
+                          <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
+                            Upgrade Cost
                           </div>
-                       )}
+                          <div
+                            className={cn(
+                              "text-xs font-mono font-bold tabular-nums",
+                              canAfford ? "text-success" : "text-destructive/60",
+                            )}
+                          >
+                            {formatCurrency(upgradeCost)}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Enabled workouts as Technical Capabilities */}
-                    {FACILITY_ENABLED_WORKOUTS[type] && FACILITY_ENABLED_WORKOUTS[type].length > 0 && (
-                      <div className="space-y-2">
-                        <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.2em] flex items-center gap-1.5 px-1">
-                          <HardDrive className="h-2.5 w-2.5 opacity-40" />
-                          Enabled_Specs
+                    {FACILITY_ENABLED_WORKOUTS[type] &&
+                      FACILITY_ENABLED_WORKOUTS[type].length > 0 && (
+                        <div className="space-y-2">
+                          <div className="text-[8px] font-black uppercase text-cream/20 tracking-[0.2em] flex items-center gap-1.5 px-1">
+                            <HardDrive className="h-2.5 w-2.5 opacity-40" />
+                            Enabled_Specs
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {FACILITY_ENABLED_WORKOUTS[type].map((workout) => (
+                              <div
+                                key={workout}
+                                className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-cream/60 uppercase tracking-tighter rounded-sm"
+                              >
+                                {workout.replace("_", " ")}
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex flex-wrap gap-1">
-                          {FACILITY_ENABLED_WORKOUTS[type].map((workout) => (
-                            <div key={workout} className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-cream/60 uppercase tracking-tighter rounded-sm">
-                              {workout.replace("_", " ")}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                      )}
 
                     <div className="pt-2">
                       {maxLevel ? (
                         <div className="flex items-center justify-center gap-2 p-2 bg-success/5 border border-success/20">
                           <Check className="h-3 w-3 text-success" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-success">Optimal Performance</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-success">
+                            Optimal Performance
+                          </span>
                         </div>
                       ) : (
                         <div className="space-y-2">
-                           <Button
+                          <Button
                             onClick={() => handleUpgrade(type)}
                             disabled={!canAfford}
                             variant={canAfford ? "default" : "outline"}
                             className={cn(
-                               "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
-                               canAfford 
-                                ? "bg-gold hover:bg-gold-bright text-slate-950 shadow-lg" 
-                                : "border-white/5 text-cream/20 bg-transparent"
+                              "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
+                              canAfford
+                                ? "bg-gold hover:bg-gold-bright text-slate-950 shadow-lg"
+                                : "border-white/5 text-cream/20 bg-transparent",
                             )}
                           >
                             <ArrowUp className="h-3 w-3 mr-2" />
                             Provision Level_{rankVal + 1}
                           </Button>
                           {!canAfford && (
-                            <p className="text-center text-[8px] font-black uppercase text-destructive/40 tracking-tighter animate-pulse">Insufficient Capital Reserves</p>
+                            <p className="text-center text-[8px] font-black uppercase text-destructive/40 tracking-tighter animate-pulse">
+                              Insufficient Capital Reserves
+                            </p>
                           )}
                         </div>
                       )}
