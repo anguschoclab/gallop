@@ -59,7 +59,7 @@ export const Route = createFileRoute("/stable/$horseId")({
         to="/stable"
         className="text-gold uppercase font-mono text-xs tracking-widest hover:underline"
       >
-        Return to Registry
+        Back to Stable
       </Link>
     </div>
   ),
@@ -165,7 +165,7 @@ function HorseDetail() {
             onClick={() => router.navigate({ to: "/stable" })}
             className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cream/30 hover:text-gold transition-colors mb-8"
           >
-            <ArrowLeft className="h-3 w-3" /> Back to Registry
+            <ArrowLeft className="h-3 w-3" /> Back to Stable
           </button>
 
           <nav className="space-y-1">
@@ -667,7 +667,7 @@ function HorseDetail() {
                     onValueChange={(v) => setRaceHistoryLimit(Number(v))}
                   >
                     <SelectTrigger className="w-[100px] h-7 text-[9px] font-black uppercase bg-slate-950/50 border-white/10 rounded-none tracking-widest">
-                      <SelectValue placeholder="LIMIT" />
+                      <SelectValue placeholder="Limit" />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-950 border-white/10">
                       <SelectItem value="10">SAMPLE_10</SelectItem>
