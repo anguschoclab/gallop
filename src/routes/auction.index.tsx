@@ -134,9 +134,9 @@ function AuctionPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Pillar: Deployment & Archives */}
+        {/* Left Pillar: Consignment & Archives */}
         <aside className="lg:col-span-4 space-y-8 lg:sticky lg:top-6">
-          {/* Deployment Dock */}
+          {/* Consign to Sale */}
           <section className="space-y-4">
             <div className="flex items-center gap-2 mb-2 px-1">
               <Package className="h-3.5 w-3.5 text-gold/60" />
