@@ -53,7 +53,7 @@ function MarketPage() {
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>
-              Market Class: <span className="text-success-dark">DIRECT_ACQUISITION</span>
+              Market Class: <span className="text-success-dark">Private Sale</span>
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>

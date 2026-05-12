@@ -158,7 +158,7 @@ function RacesPage() {
                   </label>
                   <Select value={grade} onValueChange={(v) => updateFilter("grade", v)}>
                     <SelectTrigger className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest">
-                      <SelectValue placeholder="ALL_GRADES" />
+                      <SelectValue placeholder="All Grades" />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-950 border-white/10">
                       <SelectItem value="all">All Grades</SelectItem>
@@ -177,7 +177,7 @@ function RacesPage() {
                   </label>
                   <Select value={country} onValueChange={(v) => updateFilter("country", v)}>
                     <SelectTrigger className="h-9 bg-slate-950/60 border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest">
-                      <SelectValue placeholder="ALL_REGIONS" />
+                      <SelectValue placeholder="All Regions" />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-950 border-white/10">
                       <SelectItem value="all">All Regions</SelectItem>

@@ -238,7 +238,7 @@ function AuctionPage() {
                         </div>
                         {topLot && (
                           <div className="flex justify-between items-center text-[9px] font-mono text-cream/40">
-                            <span>TOP_LOT</span>
+                            <span>Top Lot</span>
                             <span className="text-success">
                               {formatCurrency(topLot.hammerPrice!)}
                             </span>
