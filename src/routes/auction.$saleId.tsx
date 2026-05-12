@@ -132,7 +132,7 @@ function AuctionSalePage() {
     return (
       <div className="p-12 text-center space-y-4">
         <h1 className="text-4xl font-black font-[family-name:var(--font-display)] text-cream">
-          SALE_NOT_FOUND
+          Sale not found
         </h1>
         <Button
           variant="ghost"
@@ -411,12 +411,12 @@ function AuctionSalePage() {
                           variant="secondary"
                           className="rounded-none font-black text-[10px] tracking-widest h-8 px-4 bg-destructive/10 text-destructive border-destructive/20 uppercase"
                         >
-                          PASSED_RESERVE
+                          Reserve not met
                         </Badge>
                       )}
                       {!currentLot.passed && !isResolved && isPlayerLeading && (
                         <Badge className="bg-success text-slate-950 rounded-none font-black text-[10px] tracking-widest h-8 px-4 animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.3)]">
-                          LEADING_BIDER
+                          Leading Bidder
                         </Badge>
                       )}
                       {!currentLot.passed && currentLot.soldToStableId && isResolved && (
@@ -598,7 +598,7 @@ function AuctionSalePage() {
                                     disabled={cash < nextBid}
                                   >
                                     <Gavel className="h-4 w-4 mr-3 group-hover:rotate-12 transition-transform" />
-                                    SUBMIT_BID_{formatCurrency(nextBid)}
+                                    Bid {formatCurrency(nextBid)}
                                   </Button>
                                   {currentLot.buyNowPrice !== undefined && !isPlayerConsigned && (
                                     <BuyNowDialog
@@ -628,13 +628,13 @@ function AuctionSalePage() {
                                         className="h-10 px-4 border-white/10 text-cream/60 uppercase text-[9px] font-black tracking-widest rounded-none hover:bg-white/5"
                                         onClick={() => bid(Number(bidInput.replace(/,/g, "")))}
                                       >
-                                        B_EXEC
+                                        Bid
                                       </Button>
                                     </div>
                                   </div>
                                   <div className="space-y-1.5">
                                     <label className="text-[8px] uppercase font-black text-cream/20 tracking-widest px-1">
-                                      Auto_Cap_Limit
+                                      Auto Bid Limit
                                     </label>
                                     <div className="flex gap-2">
                                       <Input
@@ -648,7 +648,7 @@ function AuctionSalePage() {
                                         className="h-10 px-4 border-white/10 text-gold/60 uppercase text-[9px] font-black tracking-widest rounded-none hover:bg-gold/5"
                                         onClick={handleMaxBid}
                                       >
-                                        S_MAX
+                                        Set Max
                                       </Button>
                                     </div>
                                   </div>
@@ -741,7 +741,7 @@ function AuctionSalePage() {
                                   if (!result.ok) setMessage(result.reason);
                                 }}
                               >
-                                EXEC_WITHDRAWAL
+                                Confirm
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -752,7 +752,7 @@ function AuctionSalePage() {
                           variant="destructive"
                           className="h-10 px-6 font-black uppercase text-[10px] tracking-widest rounded-none opacity-20"
                         >
-                          WITHDRAWAL_WINDOW_CLOSED
+                          Withdrawal closed
                         </Button>
                       )}
                     </CardContent>

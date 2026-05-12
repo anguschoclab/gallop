@@ -148,7 +148,7 @@ function MarketPage() {
                       </div>
                       <div className="text-right">
                         <div className="text-[8px] font-black uppercase text-success/40 tracking-widest leading-none mb-1">
-                          UNIT_COST
+                          Price
                         </div>
                         <div
                           className={cn(

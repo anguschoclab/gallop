@@ -71,7 +71,7 @@ function NpcStableDetailPage() {
     return (
       <div className="p-12 text-center space-y-4">
         <h1 className="text-4xl font-black font-[family-name:var(--font-display)] text-cream">
-          ENTITY_NOT_FOUND
+          Stable not found
         </h1>
         <Link
           to="/stable"

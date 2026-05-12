@@ -300,7 +300,7 @@ function AuctionPage() {
                           className="w-full h-14 px-8 bg-success hover:bg-success/90 text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-xs shadow-[0_0_30px_rgba(34,197,94,0.2)]"
                         >
                           <Gavel className="h-4 w-4 mr-3" />
-                          ENTER_THE_RING
+                          Enter Sale
                         </Button>
                       </Link>
                     </CardContent>
@@ -370,11 +370,11 @@ function AuctionPage() {
                             </span>
                           ) : daysAway === 0 ? (
                             <span className="text-[9px] font-black uppercase text-success tracking-widest animate-pulse">
-                              ACTIVE_RING
+                              Live Now
                             </span>
                           ) : (
                             <span className="text-[9px] font-black uppercase text-gold/40 tracking-widest text-center">
-                              CATALOG_OPEN
+                              Accepting lots
                             </span>
                           )}
                         </td>

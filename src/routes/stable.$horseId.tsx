@@ -53,7 +53,7 @@ export const Route = createFileRoute("/stable/$horseId")({
   notFoundComponent: () => (
     <div className="p-12 text-center space-y-4">
       <h1 className="text-4xl font-black font-[family-name:var(--font-display)] text-cream">
-        ASSET_NOT_FOUND
+        Horse not found
       </h1>
       <Link
         to="/stable"
@@ -150,10 +150,10 @@ function HorseDetail() {
   const sections = [
     { id: "stats", label: "Inventory", icon: FileText },
     { id: "health", label: "Condition", icon: Activity },
-    { id: "training", label: "Optimization", icon: Zap },
+    { id: "training", label: "Training", icon: Zap },
     { id: "beyer", label: "Analytics", icon: TrendingUp },
     { id: "lineage", label: "Heritage", icon: GitBranch },
-    { id: "history", label: "Service Log", icon: History },
+    { id: "history", label: "Race History", icon: History },
   ];
 
   return (
@@ -190,7 +190,7 @@ function HorseDetail() {
 
           <div className="pt-6 border-t border-white/5 space-y-4">
             <div className="text-[9px] font-black uppercase tracking-tighter text-gold/40 px-3">
-              System Access
+              Actions
             </div>
             <div className="px-3 space-y-2">
               {isG1Winner && horse.stud?.atStud && !isSyndicated && (
@@ -252,7 +252,7 @@ function HorseDetail() {
                     variant="destructive"
                     className="font-black text-[9px] uppercase tracking-widest h-5 rounded-none animate-pulse"
                   >
-                    CRITICAL_CONDITION
+                    Critical
                   </Badge>
                 )}
               </div>
@@ -346,7 +346,7 @@ function HorseDetail() {
 
                     <div className="pt-4 border-t border-white/5 space-y-3">
                       <div className="text-[10px] font-black uppercase text-gold/40 tracking-widest px-1">
-                        Optimization Bias
+                        Training Bias
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <Badge
@@ -393,10 +393,10 @@ function HorseDetail() {
                       <div className="absolute top-0 left-0 w-1 h-full bg-destructive" />
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-[10px] font-black uppercase text-destructive tracking-widest flex items-center gap-2">
-                          <AlertCircle className="h-3 w-3" /> CRITICAL_FAILURE
+                          <AlertCircle className="h-3 w-3" /> Injury
                         </span>
                         <span className="font-mono text-[10px] text-destructive/60">
-                          EST_{horse.activeInjury.recoveryDays}D_REMAIN
+                          Est. {horse.activeInjury.recoveryDays}d remaining
                         </span>
                       </div>
                       <div className="text-sm font-bold text-cream uppercase tracking-tight">
@@ -569,7 +569,7 @@ function HorseDetail() {
               <div className="flex items-center gap-2 mb-2">
                 <Zap className="h-4 w-4 text-gold" />
                 <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
-                  Optimization Center
+                  Training
                 </h2>
               </div>
               <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
@@ -611,7 +611,7 @@ function HorseDetail() {
                         Velocity Trend
                       </div>
                       <div className="text-xs font-mono text-cream/60 uppercase tracking-tighter">
-                        L10_RACE_SAMPLES
+                        Last 10 races
                       </div>
                     </div>
                     <div className="text-right">

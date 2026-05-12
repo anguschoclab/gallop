@@ -131,7 +131,7 @@ export function FinancialReport() {
                 value="allTime"
                 className="uppercase text-[9px] font-black tracking-widest data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-4"
               >
-                ALL_TIME
+                All Time
               </TabsTrigger>
             </TabsList>
           </div>
