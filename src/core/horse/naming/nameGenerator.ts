@@ -43,6 +43,40 @@ export interface NamingOptions {
 }
 
 /**
+ * Type for naming strategy function.
+ */
+type NamingStrategyFunction = (context: NamingContext, rng: Rng) => string | undefined;
+
+/**
+ * Strategy record for name generation based on naming strategy.
+ */
+const NAMING_STRATEGIES: Record<"pedigree" | "thematic" | "ancestor" | "regional", NamingStrategyFunction> = {
+  pedigree: (context, rng) => {
+    if (context.sireName && context.damName) {
+      return rng.next() < 0.5
+        ? generatePortmanteau(context.sireName, context.damName, rng)
+        : extractAndCombine(context.sireName, context.damName, rng);
+    } else if (context.sireName || context.damName) {
+      return generateSoundAlike(context.sireName || context.damName!, rng);
+    }
+    return undefined;
+  },
+  ancestor: (context, rng) => generateAncestorHomage(context.sireName, context.damName, rng),
+  thematic: (context, rng) => {
+    if (context.namingTheme) {
+      return generateThematicName(context.namingTheme, rng);
+    }
+    return undefined;
+  },
+  regional: (context, rng) => {
+    if (context.region) {
+      return generateRegionalName(context.region, rng);
+    }
+    return undefined;
+  },
+};
+
+/**
  * Generate a procedural horse name based on the provided context and strategy.
  *
  * This is the main entry point for horse name generation. It supports multiple strategies:
@@ -79,33 +113,9 @@ export function generateProceduralHorseName(
 
     const currentStrategy = strategy === "hybrid" ? pickStrategy(context, rng) : strategy;
 
-    switch (currentStrategy) {
-      case "pedigree":
-        if (context.sireName && context.damName) {
-          candidate =
-            rng.next() < 0.5
-              ? generatePortmanteau(context.sireName, context.damName, rng)
-              : extractAndCombine(context.sireName, context.damName, rng);
-        } else if (context.sireName || context.damName) {
-          candidate = generateSoundAlike(context.sireName || context.damName!, rng);
-        }
-        break;
-
-      case "ancestor":
-        candidate = generateAncestorHomage(context.sireName, context.damName, rng);
-        break;
-
-      case "thematic":
-        if (context.namingTheme) {
-          candidate = generateThematicName(context.namingTheme, rng);
-        }
-        break;
-
-      case "regional":
-        if (context.region) {
-          candidate = generateRegionalName(context.region, rng);
-        }
-        break;
+    // Use strategy record to generate name (skip hybrid as it's handled by pickStrategy)
+    if (currentStrategy && currentStrategy !== "hybrid" && currentStrategy in NAMING_STRATEGIES) {
+      candidate = NAMING_STRATEGIES[currentStrategy as keyof typeof NAMING_STRATEGIES](context, rng);
     }
 
     // Fallback if strategy failed to produce a name

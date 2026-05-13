@@ -15,6 +15,150 @@ import type { AnyImpact } from "../impacts";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { ImpactHandler } from "./types";
 
+type ImpactHandlerFunction = (
+  draft: WritableDraft<GameState>,
+  impact: AnyImpact,
+  horse: WritableDraft<any> | undefined,
+  lookupMaps?: {
+    horseMap: Map<string, WritableDraft<any>>;
+    stableMap: Map<string, WritableDraft<any>>;
+    campaignMap: Map<string, WritableDraft<any>>;
+  },
+) => void;
+
+const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
+  horse_creation: (draft, impact, horse, lookupMaps) => {
+    const impactAny = impact as any;
+    const { horse: horseData } = impactAny;
+    if (horseData) {
+      draft.horses.push(horseData);
+      if (lookupMaps) lookupMaps.horseMap.set(horseData.id, horseData);
+    }
+  },
+  horse_stat_change: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { stat, delta } = impactAny;
+    if (horse) {
+      horse.stats[stat] = Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta));
+    }
+  },
+  energy_change: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { delta } = impactAny;
+    if (horse) {
+      horse.energy = Math.min(100, Math.max(0, horse.energy + delta));
+    }
+  },
+  form_change: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { delta } = impactAny;
+    if (horse) {
+      horse.form = Math.min(10, Math.max(-10, horse.form + delta));
+    }
+  },
+  fame_change: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { delta } = impactAny;
+    if (horse) {
+      horse.fame = Math.min(100, Math.max(0, horse.fame + delta));
+    }
+  },
+  gelding: (draft, impact, horse) => {
+    if (horse && isMaleHorse(horse.gender)) {
+      horse.gender = "gelding";
+    }
+  },
+  rename: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { newName } = impactAny;
+    if (horse) {
+      horse.name = newName;
+    }
+  },
+  aging: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { newAge } = impactAny;
+    if (horse) {
+      horse.age = newAge;
+    }
+  },
+  health_status_change: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { status } = impactAny;
+    if (horse) {
+      horse.healthStatus = status;
+      horse.healthStatusDay = impact.day;
+    }
+  },
+  pasture_retirement: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { retiredOnDay } = impactAny;
+    if (horse) {
+      horse.lifecycleStatus = "retired";
+      horse.retiredOnDay = retiredOnDay;
+    }
+  },
+  horse_death: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { cause, deceasedOnDay } = impactAny;
+    if (horse) {
+      horse.lifecycleStatus = "deceased";
+      horse.deceasedOnDay = deceasedOnDay;
+      horse.causeOfDeath = cause;
+    }
+  },
+  injury: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { severity, injuryType, recoveryDays } = impactAny;
+    if (horse) {
+      horse.healthStatus = severity === "career-ending" ? "other_illness" : "recovering";
+      horse.healthStatusDay = impact.day;
+      horse.activeInjury = {
+        type: injuryType,
+        severity,
+        recoveryDays,
+        onsetDay: impact.day,
+      };
+    }
+  },
+  recovery_change: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { delta } = impactAny;
+    if (horse) {
+      horse.recoveryPoints = Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta));
+    }
+  },
+  fitness_change: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { delta } = impactAny;
+    if (horse) {
+      horse.fitness = Math.max(0, (horse.fitness ?? 0) + delta);
+    }
+  },
+  fatigue_change: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { delta } = impactAny;
+    if (horse) {
+      horse.fatigue = Math.max(0, (horse.fatigue ?? 0) + delta);
+    }
+  },
+  peaking_index_update: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { value } = impactAny;
+    if (horse) {
+      horse.peakingIndex = value;
+    }
+  },
+  beyer_update: (draft, impact, horse) => {
+    const impactAny = impact as any;
+    const { beyer, raceDay } = impactAny;
+    if (horse) {
+      horse.lastBeyer = beyer;
+      horse.lastRaceDay = raceDay;
+    }
+  },
+};
+
 export class HorseHandler implements ImpactHandler {
   canHandle(type: string): boolean {
     return [
@@ -51,153 +195,9 @@ export class HorseHandler implements ImpactHandler {
     const horseId = impactAny.horseId || impactAny.entityId;
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
 
-    switch (impact.type) {
-      case "horse_creation": {
-        const { horse } = impactAny;
-        if (horse) {
-          draft.horses.push(horse);
-          if (lookupMaps) lookupMaps.horseMap.set(horse.id, horse);
-        }
-        break;
-      }
-      case "horse_stat_change": {
-        const { stat, delta } = impactAny;
-        if (horse) {
-          horse.stats[stat] = Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta));
-        }
-        break;
-      }
-
-      case "energy_change": {
-        const { delta } = impactAny;
-        if (horse) {
-          horse.energy = Math.min(100, Math.max(0, horse.energy + delta));
-        }
-        break;
-      }
-
-      case "form_change": {
-        const { delta } = impactAny;
-        if (horse) {
-          horse.form = Math.min(10, Math.max(-10, horse.form + delta));
-        }
-        break;
-      }
-
-      case "fame_change": {
-        const { delta } = impactAny;
-        if (horse) {
-          horse.fame = Math.min(100, Math.max(0, horse.fame + delta));
-        }
-        break;
-      }
-
-      case "gelding": {
-        if (horse && isMaleHorse(horse.gender)) {
-          horse.gender = "gelding";
-        }
-        break;
-      }
-
-      case "rename": {
-        const { newName } = impactAny;
-        if (horse) {
-          horse.name = newName;
-        }
-        break;
-      }
-
-      case "aging": {
-        const { newAge } = impactAny;
-        if (horse) {
-          horse.age = newAge;
-        }
-        break;
-      }
-
-      case "health_status_change": {
-        const { status } = impactAny;
-        if (horse) {
-          horse.healthStatus = status;
-          horse.healthStatusDay = impact.day;
-        }
-        break;
-      }
-
-      case "pasture_retirement": {
-        const { retiredOnDay } = impactAny;
-        if (horse) {
-          horse.lifecycleStatus = "retired";
-          horse.retiredOnDay = retiredOnDay;
-        }
-        break;
-      }
-
-      case "horse_death": {
-        const { cause, deceasedOnDay } = impactAny;
-        if (horse) {
-          horse.lifecycleStatus = "deceased";
-          horse.deceasedOnDay = deceasedOnDay;
-          horse.causeOfDeath = cause;
-        }
-        break;
-      }
-
-      case "injury": {
-        const { severity, injuryType, recoveryDays } = impactAny;
-        if (horse) {
-          horse.healthStatus = severity === "career-ending" ? "other_illness" : "recovering";
-          horse.healthStatusDay = impact.day;
-          horse.activeInjury = {
-            type: injuryType,
-            severity,
-            recoveryDays,
-            onsetDay: impact.day,
-          };
-        }
-        break;
-      }
-
-      case "recovery_change": {
-        const { delta } = impactAny;
-        if (horse) {
-          horse.recoveryPoints = Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta));
-        }
-        break;
-      }
-
-      case "fitness_change": {
-        const { delta } = impactAny;
-        if (horse) {
-          horse.fitness = Math.max(0, (horse.fitness ?? 0) + delta);
-        }
-        break;
-      }
-
-      case "fatigue_change": {
-        const { delta } = impactAny;
-        if (horse) {
-          horse.fatigue = Math.max(0, (horse.fatigue ?? 0) + delta);
-        }
-        break;
-      }
-
-      case "peaking_index_update": {
-        const { value } = impactAny;
-        if (horse) {
-          horse.peakingIndex = value;
-        }
-        break;
-      }
-
-      case "beyer_update": {
-        const { beyer, raceDay } = impactAny;
-        if (horse) {
-          horse.lastBeyer = beyer;
-          horse.lastRaceDay = raceDay;
-        }
-        break;
-      }
+    const handler = IMPACT_HANDLERS[impact.type];
+    if (handler) {
+      handler(draft, impact, horse, lookupMaps);
     }
   }
 }

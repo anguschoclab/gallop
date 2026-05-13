@@ -95,6 +95,20 @@ export function getEntryFrequencyModifier(personality: StablePersonality): numbe
 }
 
 /**
+ * Strategy record for claiming race preference based on personality.
+ */
+const CLAIMING_PREFERENCE_STRATEGIES: Record<StablePersonality, number> = {
+  trader: 1.3,
+  conservative: 0.7,
+  prestige: 0.5,
+  aggressive: 1.0,
+  "win-now": 1.0,
+  developer: 1.0,
+  specialist: 1.0,
+  breeder: 1.0,
+};
+
+/**
  * Get claiming race preference based on personality.
  *
  * Traders love claiming races, while prestige stables avoid them.
@@ -104,10 +118,7 @@ export function getEntryFrequencyModifier(personality: StablePersonality): numbe
  * @returns Claiming race preference multiplier
  */
 export function getClaimingPreference(personality: StablePersonality): number {
-  if (personality === "trader") return 1.3;
-  if (personality === "conservative") return 0.7;
-  if (personality === "prestige") return 0.5;
-  return 1.0;
+  return CLAIMING_PREFERENCE_STRATEGIES[personality] || 1.0;
 }
 
 /**

@@ -68,6 +68,61 @@ export interface CampaignDecision {
 }
 
 /**
+ * Prep race strategy configuration.
+ */
+interface PrepRaceStrategy {
+  prepRaceDaysBefore: number;
+  prepRaceGrade: string;
+  numberOfPreps: number;
+}
+
+/**
+ * Strategy record for prep race configuration based on personality.
+ */
+const PREP_RACE_STRATEGIES: Record<Stable["personality"], PrepRaceStrategy> = {
+  aggressive: {
+    prepRaceDaysBefore: 21,
+    prepRaceGrade: "G3",
+    numberOfPreps: 3,
+  },
+  conservative: {
+    prepRaceDaysBefore: 45,
+    prepRaceGrade: "G2",
+    numberOfPreps: 1,
+  },
+  "win-now": {
+    prepRaceDaysBefore: 28,
+    prepRaceGrade: "G2",
+    numberOfPreps: 2,
+  },
+  developer: {
+    prepRaceDaysBefore: 30,
+    prepRaceGrade: "G3",
+    numberOfPreps: 2,
+  },
+  prestige: {
+    prepRaceDaysBefore: 30,
+    prepRaceGrade: "G3",
+    numberOfPreps: 2,
+  },
+  trader: {
+    prepRaceDaysBefore: 30,
+    prepRaceGrade: "G3",
+    numberOfPreps: 2,
+  },
+  specialist: {
+    prepRaceDaysBefore: 30,
+    prepRaceGrade: "G3",
+    numberOfPreps: 2,
+  },
+  breeder: {
+    prepRaceDaysBefore: 30,
+    prepRaceGrade: "G3",
+    numberOfPreps: 2,
+  },
+};
+
+/**
  * Create AI state for campaign decisions.
  *
  * Initializes the AI state with personality state, learning state,
@@ -509,18 +564,12 @@ export function getPrepRaceStrategy(
   let prepRaceGrade = "G3";
   let numberOfPreps = 2;
 
-  // Personality-based adjustments
-  if (config.personality === "aggressive") {
-    prepRaceDaysBefore = 21;
-    numberOfPreps = 3;
-  } else if (config.personality === "conservative") {
-    prepRaceDaysBefore = 45;
-    numberOfPreps = 1;
-    prepRaceGrade = "G2";
-  } else if (config.personality === "win-now") {
-    prepRaceDaysBefore = 28;
-    numberOfPreps = 2;
-    prepRaceGrade = "G2";
+  // Personality-based adjustments using strategy record
+  const prepStrategy = PREP_RACE_STRATEGIES[config.personality];
+  if (prepStrategy) {
+    prepRaceDaysBefore = prepStrategy.prepRaceDaysBefore;
+    prepRaceGrade = prepStrategy.prepRaceGrade;
+    numberOfPreps = prepStrategy.numberOfPreps;
   }
 
   // Series-specific prep strategies based on actual day gaps
