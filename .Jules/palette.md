@@ -1,3 +1,7 @@
 ## 2023-10-27 - Add ARIA Labels to Stable Action Buttons
 **Learning:** In list and table views (like the Stable Index `ledger` view), action buttons (e.g., "Filter roster", "Open training room", "Open mission plan") often use icon-only elements such as `<Button size="icon">` or `p-0` with an icon component inside. Including only a `title` attribute for these buttons results in poor accessibility for screen readers. A descriptive `aria-label` attribute (e.g., context-aware labels using the horse name) should always be provided to describe the intent.
 **Action:** Always add `aria-label` attributes to custom icon-only `<Button>` elements.
+
+## 2024-05-13 - Add Keyboard Accessibility to Clickable Cards
+**Learning:** Custom UI components like `<Card>` are often used as interactive selection elements (e.g., in the New Game Wizard's Backstory step) by simply attaching an `onClick` handler. This makes them completely inaccessible to keyboard users and screen readers. To properly convert a `div`-based component into an accessible button, it requires `role="button"`, `tabIndex={0}`, an `onKeyDown` handler (listening for `Enter` and `Space`), `aria-pressed` or `aria-checked` for state indication, and visible focus styles (e.g., `focus-visible:ring-2`).
+**Action:** When using non-semantic elements for interaction, always implement the full suite of ARIA roles, keyboard event handlers, tab indexing, and focus-visible styling.
