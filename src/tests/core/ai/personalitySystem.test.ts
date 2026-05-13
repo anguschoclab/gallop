@@ -41,7 +41,7 @@ describe("getPersonalityAIState", () => {
       expect(state.learningState.successRates).toBeInstanceOf(Object);
       expect(state.currentStrategy).toBe("default");
       expect(state.strategyConfidence).toBe(0.5);
-      expect(state.lastStrategyChange).toBe(0);
+      expect(state.lastStrategyChangeDay).toBe(0);
     }
   });
 
@@ -180,7 +180,7 @@ describe("calculateUtilityScore", () => {
 describe("recordOutcome", () => {
   it("should record outcome to history", () => {
     const state = getPersonalityAIState("aggressive");
-    const timestamp = Date.now();
+    const day = Date.now();
 
     const updatedState = recordOutcome(
       state,
@@ -188,19 +188,19 @@ describe("recordOutcome", () => {
       { race_class: "G1" },
       true,
       1000,
-      timestamp,
+      day,
     );
 
     expect(updatedState.learningState.outcomes).toHaveLength(1);
     expect(updatedState.learningState.outcomes[0].decisionType).toBe("race_entry");
     expect(updatedState.learningState.outcomes[0].success).toBe(true);
     expect(updatedState.learningState.outcomes[0].value).toBe(1000);
-    expect(updatedState.learningState.outcomes[0].timestamp).toBe(timestamp);
+    expect(updatedState.learningState.outcomes[0].day).toBe(day);
   });
 
   it("should trim history to memory depth", () => {
     const state = getPersonalityAIState("conservative");
-    const timestamp = Date.now();
+    const day = Date.now();
 
     // Conservative has memoryDepth of 90, but let's test with a smaller effective depth
     state.memoryDepth = 5;
@@ -213,7 +213,7 @@ describe("recordOutcome", () => {
         { iteration: i },
         true,
         i * 100,
-        timestamp + i,
+        day + i,
       );
     }
 
@@ -222,7 +222,7 @@ describe("recordOutcome", () => {
 
   it("should update success rates", () => {
     const state = getPersonalityAIState("aggressive");
-    const timestamp = Date.now();
+    const day = Date.now();
 
     let updatedState = state;
     // Record 3 successes and 2 failures
@@ -233,7 +233,7 @@ describe("recordOutcome", () => {
         { context: "test" },
         i < 3,
         100,
-        timestamp + i,
+        day + i,
       );
     }
 
@@ -244,7 +244,7 @@ describe("recordOutcome", () => {
   it("should adapt strategy when success rate is low", () => {
     const state = getPersonalityAIState("aggressive");
     state.memoryDepth = 10;
-    const timestamp = Date.now();
+    const day = Date.now();
 
     let updatedState = state;
     // Record enough failures to trigger adaptation
@@ -255,13 +255,14 @@ describe("recordOutcome", () => {
         { context: "test" },
         false,
         0,
-        timestamp + i,
+        day + i,
       );
     }
 
     // Strategy should change after enough failures (resets to 0.6 when switching)
     expect(updatedState.currentStrategy).not.toBe("default");
-    expect(updatedState.lastStrategyChange).toBeGreaterThan(0);
+    expect(updatedState.lastStrategyChangeDay).toBeGreaterThan(0);
+
   });
 });
 

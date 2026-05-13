@@ -12,6 +12,8 @@ import type {
   StudCareer,
 } from "@/game/types";
 import { createTestGenotype } from "./createTestGenotype";
+import { createTestAppearance } from "./createTestAppearance";
+
 
 /**
  * Creates valid test horse stats.
