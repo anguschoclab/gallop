@@ -8,14 +8,17 @@ import { toast } from "sonner";
 
 export function SyndicateMarket() {
   const syndicates = useGameWithShallow((s: StoreType) => s.syndicates || {});
-  const horses = useGameWithShallow((s: StoreType) => s.horses);
+  const horseMap = useGameWithShallow((s: StoreType) => s.horseMap);
   const purchaseShares = useGame((s: StoreType) => s.purchaseShares);
   const sellShares = useGame((s: StoreType) => s.sellShares);
   const cash = useGame((s: StoreType) => s.cash);
 
+  // ⚡ Bolt Optimization:
+  // Used O(1) horseMap lookup instead of O(N) horses.find() inside the map loop.
+  // Impact: Reduces rendering complexity of the syndicate list from O(N^2) to O(N).
   const syndicateList = useMemo(() => {
     return Object.entries(syndicates).map(([stallionId, syndicate]) => {
-      const stallion = horses.find((h) => h.id === stallionId);
+      const stallion = horseMap.get(stallionId);
       return {
         syndicate,
         stallion,
@@ -23,7 +26,7 @@ export function SyndicateMarket() {
         ownershipPercent: ((syndicate.shareHolders["player"] || 0) / syndicate.totalShares) * 100,
       };
     });
-  }, [syndicates, horses]);
+  }, [syndicates, horseMap]);
 
   const handlePurchase = (syndicateId: string, sharePrice: number) => {
     const shares = 1;
