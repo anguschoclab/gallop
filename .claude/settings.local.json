@@ -68,7 +68,10 @@
       "Bash(echo \"\")",
       "Bash(cat)",
       "Bash(git merge *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(Select-Object -ExpandProperty Name)",
+      "Bash(ConvertFrom-Json)",
+      "Bash(Get-Member)"
     ]
   },
   "hooks": {
