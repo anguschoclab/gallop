@@ -294,15 +294,24 @@ export function buildRunner(
     }
   }
 
-  // Course familiarity multiplier (0.5% bonus per visit, max 5%)
+  // Course familiarity modifier based on spec:
+  // 0 visits: 0.985
+  // 1 visit:  0.995
+  // 2 visits: 1.000
+  // 3 visits: 1.005
+  // 4 visits: 1.008
+  // 5+ visits: 1.010
   let courseFamiliarityMultiplier = 1.0;
   if (race) {
     const trackId = race.trackId || race.graded?.trackId;
-    if (trackId && h.courseVisits) {
-      const visits = h.courseVisits[trackId] || 0;
-      const bonus = Math.min(visits * 0.005, 0.05); // 0.5% per visit, max 5%
-      courseFamiliarityMultiplier = 1.0 + bonus;
-    }
+    const visits = trackId && h.courseVisits ? h.courseVisits[trackId] || 0 : 0;
+    
+    if (visits === 0) courseFamiliarityMultiplier = 0.985;
+    else if (visits === 1) courseFamiliarityMultiplier = 0.995;
+    else if (visits === 2) courseFamiliarityMultiplier = 1.000;
+    else if (visits === 3) courseFamiliarityMultiplier = 1.005;
+    else if (visits === 4) courseFamiliarityMultiplier = 1.008;
+    else courseFamiliarityMultiplier = 1.010;
   }
 
   const rawTopSpeed =

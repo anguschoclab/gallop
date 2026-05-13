@@ -232,6 +232,7 @@ export function createHorseFromDNA(
     careerWins: 0,
     healthStatus: resolveHealthStatus(genotype.health),
     lifecycleStatus: "active",
+    courseVisits: {},
     ...dnaTraits,
     recoveryPoints: 100, // Dynamic Form: Initialize at full recovery
     createdAtDay: opts.createdAtDay,

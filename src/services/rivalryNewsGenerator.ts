@@ -120,6 +120,7 @@ export function generateGrudgeMatchNews(
       { type: "horse", id: winner.id, name: winner.name },
       { type: "horse", id: loser.id, name: loser.name },
       { type: "race", id: race.id, name: race.name },
+      { type: "stable", id: rivalStable.id, name: rivalStable.name },
     ],
   });
 }
@@ -158,7 +159,9 @@ export function generateRegionLostNews(
     importance: "high" as NewsImportance,
     headline,
     body,
-    entityLinks: [{ type: "stable", id: rivalStable.id, name: rivalStable.name }],
+    entityLinks: [
+      { type: "stable", id: rivalStable.id, name: rivalStable.name },
+    ],
   });
 }
 
