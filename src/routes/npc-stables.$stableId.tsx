@@ -156,7 +156,10 @@ function NpcStableDetailPage() {
   // Get grudge match news items
   const grudgeMatches = news
     ? news
-        .filter((n) => n.category === "racing" && n.headline.toLowerCase().includes("grudge"))
+        .filter((n) => 
+          n.category === "racing" && 
+          n.entityLinks?.some(link => link.type === "stable" && link.id === stableId)
+        )
         .slice(0, 5)
     : [];
 

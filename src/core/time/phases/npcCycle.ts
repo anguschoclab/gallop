@@ -11,6 +11,7 @@
 import type { PipelineContext } from "../pipeline";
 import { runNpcCycle } from "@/core/npc/npcCycle";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { getReputationTier } from "@/core/reputation";
 import { PHASE_ORDER_NPC_CYCLE } from "@/game/constants/gameConstants";
 
 /**
@@ -44,6 +45,7 @@ export const npcCyclePhase = {
       jockeys,
       aiManager: updatedAiManager,
       newsItems,
+      reputationEvents,
     } = runNpcCycle(
       state.npcStables,
       state.horses,
@@ -61,6 +63,18 @@ export const npcCyclePhase = {
       ? [...(newsItems || []), ...(state.news || [])].slice(0, 500)
       : state.news;
 
+    // Apply reputation events
+    let updatedReputation = (state as any).reputation;
+    if (reputationEvents && reputationEvents.length > 0 && updatedReputation) {
+      const newScore = Math.max(0, Math.min(1000, updatedReputation.score + reputationEvents.reduce((acc, e) => acc + e.amount, 0)));
+      updatedReputation = {
+        ...updatedReputation,
+        score: newScore,
+        tier: getReputationTier(newScore),
+        events: [...reputationEvents, ...updatedReputation.events].slice(0, 100),
+      };
+    }
+
     return {
       ...context,
       state: {
@@ -70,6 +84,7 @@ export const npcCyclePhase = {
         jockeys,
         npcAIManager: updatedAiManager,
         news: updatedNews,
+        reputation: updatedReputation,
       },
     };
   },
