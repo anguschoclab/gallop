@@ -24,3 +24,6 @@
   - Added a hydration hook in `src/game/store/index.ts` to rebuild the `Map` from the persisted `horses` array (since `Map` is not JSON-serializable).
   - Updated genetic/pedigree functions to prioritize `horseMap` lookups.
 - **Impact:** Benchmarks showed a ~420x speedup for 10k iterations on a 10k horse population. This significantly reduces CPU overhead during breeding and foaling cycles.
+## 2024-05-10 - [Use O(1) Map Lookups Provided by Zustand Store]
+**Learning:** For rendering complex UI lists across categories, rather than recalculating a hash map with `useMemo` in every component, we can directly retrieve `horseMap` from the Zustand store. The Zustand store now maintains an optimized `horseMap` to perform O(1) lookups during simulation tasks. Leveraging this existing mapped state avoids duplicate calculations and eliminates the overhead of `.find()` inside rendering `.map()` loops.
+**Action:** When working with large datasets, always check if an optimized data structure (like `horseMap`) already exists in the global store before calculating it locally or relying on O(N) array search methods. Replace `.find()` with `.get()` using the store's Map.
