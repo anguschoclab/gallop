@@ -18,7 +18,7 @@ import {
   Activity,
   Briefcase,
 } from "lucide-react";
-import { useHorses, useDay, useCash } from "@/game/hooks/useCoreState";
+import { useHorses, useDay, useCash, useRaces } from "@/game/hooks/useCoreState";
 import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
@@ -57,9 +57,11 @@ function NpcStableDetailPage() {
   const router = useRouter();
   const npcStables = useNpcStables();
   const horses = useHorses();
+  const races = useRaces();
   const day = useDay();
   const cash = useCash();
   const awards = useAwards();
+  const news = useGame((s) => s.news ?? []);
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
   const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)((s) => s.privateSaleOffers ?? [], shallow);
@@ -97,6 +99,68 @@ function NpcStableDetailPage() {
 
   const stableAI = npcAIManager?.stableStates?.[stable.id];
   const friction = stableAI?.friction ?? 0;
+
+  // Helper functions for rivalry display
+  const getRivalryStatusLabel = (friction: number) => {
+    if (friction >= 80) return "Heated Rival";
+    if (friction >= 60) return "Rival";
+    if (friction >= 40) return "Competitive";
+    if (friction >= 30) return "Tense";
+    if (friction < -50) return "ALLY";
+    return "NEUTRAL";
+  };
+
+  const getRivalryBadgeColor = (friction: number) => {
+    if (friction >= 80) return "bg-destructive text-slate-950";
+    if (friction >= 60) return "bg-orange-500 text-slate-950";
+    if (friction >= 40) return "bg-yellow-500 text-slate-950";
+    if (friction >= 30) return "bg-slate-600 text-cream";
+    if (friction < -50) return "bg-success text-slate-950";
+    return "bg-slate-700 text-cream";
+  };
+
+  // Calculate head-to-head record by scanning race history
+  const calculateHeadToHead = () => {
+    const ownedHorses = horses.filter((h) => h.owned);
+    const thirtyDaysAgo = day - 30;
+    let wins = 0;
+    let losses = 0;
+
+    // Scan player-owned horses' race history
+    ownedHorses.forEach((horse) => {
+      horse.raceHistory
+        .filter((r) => r.day >= thirtyDaysAgo)
+        .forEach((raceResult) => {
+          // Find the race to check if rival had entries
+          const race = races.find((r) => r.id === raceResult.raceId);
+          if (race) {
+            // Check if rival stable had entries in this race
+            const hadRivalEntry = race.entries.some(
+              (e) => e.stableId === stable.id,
+            );
+            if (hadRivalEntry) {
+              // Player horse vs rival horse
+              if (raceResult.position === 1) {
+                wins++;
+              } else {
+                losses++;
+              }
+            }
+          }
+        });
+    });
+
+    return { wins, losses };
+  };
+
+  // Get grudge match news items
+  const grudgeMatches = news
+    ? news
+        .filter((n) => n.category === "racing" && n.headline.toLowerCase().includes("grudge"))
+        .slice(0, 5)
+    : [];
+
+  const headToHead = calculateHeadToHead();
 
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
@@ -245,6 +309,66 @@ function NpcStableDetailPage() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Rivalry Status Section */}
+              {friction >= 40 && (
+                <Card className="bg-slate-950/50 border border-white/5 rounded-none shadow-xl">
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-bold uppercase tracking-widest text-destructive">
+                        Rivalry Status
+                      </h3>
+                      <Badge className={getRivalryBadgeColor(friction)}>
+                        {getRivalryStatusLabel(friction)}
+                      </Badge>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-cream/60">Friction Level</span>
+                        <span className="font-mono text-destructive">{friction}/100</span>
+                      </div>
+                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-destructive/60 transition-all"
+                          style={{ width: `${(friction / 100) * 100}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs pt-2">
+                        <span className="text-cream/60">Head-to-Head Record</span>
+                        <span className="font-mono text-cream">
+                          {headToHead.wins}-{headToHead.losses}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Grudge Match History */}
+              {grudgeMatches.length > 0 && (
+                <Card className="bg-slate-900/40 border border-white/5 rounded-none shadow-xl">
+                  <CardContent className="p-4 space-y-2">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-gold-muted/60">
+                      Grudge Match History
+                    </h3>
+                    <div className="space-y-2">
+                      {grudgeMatches.map((match) => (
+                        <div key={match.id} className="bg-slate-950/30 border border-white/5 rounded p-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="text-xs font-bold text-cream/80">{match.headline}</div>
+                              <div className="text-[10px] text-cream/40">Day {match.day}</div>
+                            </div>
+                            <Badge className="bg-destructive text-slate-950">
+                              Grudge
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               <TrophyCase
                 awards={awards?.filter((a) => a.stableId === stableId) ?? []}

@@ -39,6 +39,7 @@ import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { useLiveRaceSimulation } from "@/hooks/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { SilkDot } from "@/components/SilkDot";
+import { SectionalTimingTable } from "@/components/SectionalTimingTable";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/race/$raceId")({
@@ -331,6 +332,23 @@ function LiveRace() {
             />
           )}
           <BroadcastCommentary commentary={commentary} />
+          {race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0 && (
+            <div className="mt-4 border border-white/10 bg-black/20 p-4">
+              <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">
+                Sectional Splits
+              </h3>
+              <SectionalTimingTable
+                splits={race.sectionalSplits}
+                runners={runners.map((r) => ({
+                  horseId: r.horseId,
+                  name: r.name,
+                  silk: r.silk,
+                  owned: r.owned,
+                }))}
+                distance={race.distance}
+              />
+            </div>
+          )}
         </div>
         <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
           <div>

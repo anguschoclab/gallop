@@ -5,13 +5,13 @@
  * race results, race history, jockey contracts, jockey assignments, jockey silks,
  * jockey stats, claiming, triple crown progress, and tactics.
  *
- * Dependencies: ./base (Impact), @/core/race/engine/raceSnapshotTypes (RaceSnapshot), @/game/types (RaceClass)
+ * Dependencies: ./base (Impact), @/core/race/engine/raceSnapshotTypes (RaceSnapshot), @/core/race/sharedTypes (RaceClass)
  * Related files: ../handlers/RacingHandler.ts (handles impacts), ./index.ts (exports types)
  */
 
 import type { Impact } from "./base";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
-import type { RaceClass } from "@/game/types";
+import type { RaceClass } from "@/core/race/sharedTypes";
 
 // Race entry impact
 export interface RaceEntryImpact extends Impact {
@@ -62,6 +62,8 @@ export interface RaceHistoryImpact extends Impact {
     barrier?: number;
     lane?: number;
     winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
+    pacePositions?: number[]; // Position at each quarter (1-indexed)
+    courseVisitCount?: number; // Visit count at time of race
   };
   reason: string;
 }

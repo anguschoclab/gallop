@@ -1,4 +1,4 @@
-import type { RaceSnapshot } from "@/core/race/types";
+import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type {
   AnyImpact,
@@ -21,6 +21,7 @@ import type {
   RecoveryImpact,
   BeyerImpact,
 } from "@/core/resolver/impacts/index";
+import { computeSectionalSplits, computeSectionalEntries, extractPacePositions } from "@/core/race/sectionalAnalysis";
 import { generateRaceNews } from "@/services/newsGenerator";
 import { rollForInjury } from "@/core/health/healthSystem";
 import type { StaffMember } from "@/core/staff/staffTypes";
@@ -619,6 +620,14 @@ export function generateRaceImpacts({
       reason: "Race resolved",
     } as RaceResultImpact);
 
+    // Compute sectional splits if snapshots are available
+    let sectionalEntries: Record<string, { horseId: string; splits: Array<{ quarter: number; time: number; position: number }> }> = {};
+    if (snapshots && snapshots.length > 0) {
+      const sectionalSplits = computeSectionalSplits(snapshots, race.distance);
+      race.sectionalSplits = sectionalSplits;
+      sectionalEntries = computeSectionalEntries(sectionalSplits);
+    }
+
     // 2. Process per-horse consequences
     for (const r of result) {
       const horse = horseMap.get(r.horseId);
@@ -659,6 +668,10 @@ export function generateRaceImpacts({
       impacts.push(beyerImpact, recoveryImpact);
 
       // Race history impact
+      const pacePositions = extractPacePositions(sectionalEntries, horse.id);
+      const trackId = race.trackId || race.graded?.trackId;
+      const courseVisitCount = trackId && horse.courseVisits ? (horse.courseVisits[trackId] || 0) + 1 : undefined;
+
       const historyImpact = generateRaceHistoryImpact(
         horse,
         r.position,
@@ -669,6 +682,8 @@ export function generateRaceImpacts({
         runner,
       );
       historyImpact.raceHistoryEntry.fieldSize = result.length;
+      historyImpact.raceHistoryEntry.pacePositions = pacePositions;
+      historyImpact.raceHistoryEntry.courseVisitCount = courseVisitCount;
       impacts.push(historyImpact);
 
       // Triple Crown progress

@@ -25,6 +25,13 @@ import {
 import { upgradeFacility } from "@/core/facilities";
 import type { Facility } from "@/core/facilities/facilityTypes";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
+import type { NewsItem } from "@/core/narrative/newsTypes";
+import {
+  generateRivalryEmergenceNews,
+  generateGrudgeMatchNews,
+  generateRegionLostNews,
+  generateRivalryEscalationNews,
+} from "@/services/rivalryNewsGenerator";
 import {
   FAME_GAIN_G1_WIN,
   FAME_GAIN_G2_WIN,
@@ -119,12 +126,13 @@ function applyFameGainsToHorses(horses: Horse[], fameGains: Map<string, number>)
 /**
  * Process regional dominance updates based on race winners.
  * Updates the AI manager with new regional kings and friction values.
+ * Also detects rivalry milestones and generates news items.
  * @param races
  * @param horses
  * @param npcStables
  * @param aiManager
  * @param currentDay
- * @returns Updated AI manager with new regional kings and friction values.
+ * @returns Updated AI manager with new regional kings and friction values, plus generated news items.
  */
 function processRegionalDominance(
   races: Race[],
@@ -132,9 +140,10 @@ function processRegionalDominance(
   npcStables: Stable[],
   aiManager: NpcAIManager,
   currentDay: number,
-): NpcAIManager {
+): { aiManager: NpcAIManager; newsItems: NewsItem[] } {
   try {
-    const updatedAiManager = { ...aiManager };
+    const updatedAiManager = { ...aiManager, stableStates: { ...aiManager.stableStates } };
+    const newsItems: NewsItem[] = [];
 
     for (const race of races) {
       if (!race.result || race.result.length === 0) continue;
@@ -155,36 +164,103 @@ function processRegionalDominance(
         if (winningStableId === "player") {
           if (currentKingId && currentKingId !== "player") {
             const kingAI = updatedAiManager.stableStates[currentKingId];
-            if (kingAI)
+            if (kingAI) {
+              const oldFriction = kingAI.friction;
               kingAI.friction = Math.min(
                 100,
                 kingAI.friction + RIVALRY_CONSTANTS.FRICTION.WIN_GRADED_RACE_OVER_NPC,
               );
+
+              // Check for rivalry emergence (friction crosses 60)
+              if (oldFriction < 60 && kingAI.friction >= 60 && !kingAI.rivalryAnnouncedDay) {
+                const stable = npcStables.find((s) => s.id === currentKingId);
+                if (stable) {
+                  const news = generateRivalryEmergenceNews(stable, kingAI.friction, currentDay);
+                  if (news) {
+                    newsItems.push(news);
+                    kingAI.rivalryAnnouncedDay = currentDay;
+                  }
+                }
+              }
+
+              // Check for rivalry escalation (friction crosses 80)
+              if (oldFriction < 80 && kingAI.friction >= 80) {
+                const stable = npcStables.find((s) => s.id === currentKingId);
+                if (stable) {
+                  const news = generateRivalryEscalationNews(stable, oldFriction, kingAI.friction, currentDay);
+                  if (news) newsItems.push(news);
+                }
+              }
+            }
           }
         } else {
           const stable = npcStables.find((s) => s.id === winningStableId);
           if (stable) {
             const stableAI = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
+            const oldFriction = stableAI.friction;
+            
             if (currentKingId === "player") {
               stableAI.winsAgainstPlayer++;
               if (stableAI.winsAgainstPlayer >= RIVALRY_CONSTANTS.DOMINANCE.UNSEAT_WIN_STREAK) {
                 updatedAiManager.regionalKings[region] = winningStableId;
                 stableAI.winsAgainstPlayer = 0;
+                
+                // Generate region lost news
+                const news = generateRegionLostNews(region, stable, currentDay);
+                if (news) newsItems.push(news);
               }
             } else {
               updatedAiManager.regionalKings[region] = winningStableId;
             }
             stableAI.regionalPrestige[region] = (stableAI.regionalPrestige[region] || 0) + 1;
             updatedAiManager.stableStates[stable.id] = stableAI;
+
+            // Check for rivalry emergence (friction crosses 60)
+            if (oldFriction < 60 && stableAI.friction >= 60 && !stableAI.rivalryAnnouncedDay) {
+              const news = generateRivalryEmergenceNews(stable, stableAI.friction, currentDay);
+              if (news) {
+                newsItems.push(news);
+                stableAI.rivalryAnnouncedDay = currentDay;
+              }
+            }
+
+            // Check for rivalry escalation (friction crosses 80)
+            if (oldFriction < 80 && stableAI.friction >= 80) {
+              const news = generateRivalryEscalationNews(stable, oldFriction, stableAI.friction, currentDay);
+              if (news) newsItems.push(news);
+            }
+          }
+        }
+      }
+
+      // Check for grudge match (G1/G2/G3 race with both player and rival entries, friction >= 50)
+      if (race.graded && (race.graded.grade === "G1" || race.graded.grade === "G2" || race.graded.grade === "G3")) {
+        const hasPlayerEntry = race.entries.some((e) => e.owned);
+        const rivalEntries = race.entries.filter((e) => e.stableId && e.stableId !== "player");
+        
+        if (hasPlayerEntry && rivalEntries.length > 0) {
+          for (const rivalEntry of rivalEntries) {
+            const rivalAI = updatedAiManager.stableStates[rivalEntry.stableId!];
+            if (rivalAI && rivalAI.friction >= 50) {
+              // This is a grudge match
+              const playerHorse = horses.find((h) => h.id === race.entries.find((e) => e.owned)!.horseId);
+              const rivalHorse = horses.find((h) => h.id === rivalEntry.horseId);
+              
+              if (playerHorse && rivalHorse) {
+                const playerWon = winner.horseId === playerHorse.id;
+                const news = generateGrudgeMatchNews(race, playerHorse, rivalHorse, playerWon, currentDay);
+                if (news) newsItems.push(news);
+              }
+            }
           }
         }
       }
     }
 
-    return updatedAiManager;
+    return { aiManager: updatedAiManager, newsItems };
   } catch (error) {
     console.error("Error processing regional dominance:", error);
-    return aiManager;
+    return { aiManager, newsItems: [] };
   }
 }
 
@@ -217,6 +293,7 @@ export interface NpcCycleResult {
   jockeys: Jockey[];
   aiManager: NpcAIManager;
   npcFacilities?: Record<string, Record<string, Facility>>;
+  newsItems?: NewsItem[];
 }
 
 /**
@@ -280,13 +357,15 @@ export function runNpcCycle(
     };
 
     // Regional dominance & friction decay
-    updatedAiManager = processRegionalDominance(
+    const dominanceResult = processRegionalDominance(
       yesterdayRaces,
       horses,
       npcStables,
       updatedAiManager,
       currentDay,
     );
+    updatedAiManager = dominanceResult.aiManager;
+    const newsItems = dominanceResult.newsItems;
     updatedAiManager = applyFrictionDecay(updatedAiManager);
 
     // Check horses entered in claiming races and decide whether to withdraw
@@ -353,11 +432,12 @@ export function runNpcCycle(
       jockeys,
       aiManager: updatedAiManager,
       npcFacilities,
+      newsItems,
     };
   } catch (error) {
     console.error("Error in runNpcCycle:", error);
     // Return original state on error to prevent corruption
-    return { horses, races, jockeys, aiManager, npcFacilities };
+    return { horses, races, jockeys, aiManager, npcFacilities, newsItems: [] };
   }
 }
 

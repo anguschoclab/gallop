@@ -91,6 +91,20 @@ export type Race = {
   weather?: Weather;
   trackCondition?: TrackCondition;
   claiming?: { price: number };
+  sectionalSplits?: SectionalSplit[]; // Computed quarter-mile splits from snapshots
+};
+
+// Sectional timing types
+export type SectionalSplit = {
+  quarter: number; // 1, 2, 3, 4 (quarter-mile markers)
+  time: number; // Cumulative time at this quarter (seconds)
+  leader: string; // horseId of leader at this quarter
+  positions: Array<{ horseId: string; position: number }>; // All positions at this quarter
+};
+
+export type SectionalEntry = {
+  horseId: string;
+  splits: Array<{ quarter: number; time: number; position: number }>; // Per-horse splits
 };
 
 export type RegionalSystem = "north_america" | "europe" | "australia" | "asia" | "south_america";

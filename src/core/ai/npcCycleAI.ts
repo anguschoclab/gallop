@@ -44,6 +44,7 @@ export interface StableAIState {
   friction: number; // -100 to 100 relationship with player
   winsAgainstPlayer: number; // Streak tracking for unseating
   regionalPrestige: Record<string, number>; // Prestige per region
+  rivalryAnnouncedDay?: number; // Day rivalry was announced (prevents duplicate news)
 
   // Subsystem-specific AI states
   trainingAI?: TrainingAIState;

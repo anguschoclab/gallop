@@ -242,6 +242,21 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                                 Qualified
                               </Badge>
                             )}
+                            {(() => {
+                              const trackId = race.trackId || race.graded?.trackId;
+                              if (trackId && horse.courseVisits) {
+                                const visits = horse.courseVisits[trackId] || 0;
+                                if (visits > 0) {
+                                  const bonus = Math.min(visits * 0.5, 5); // Display as percentage
+                                  return (
+                                    <Badge className="bg-blue-500 text-white text-[10px]" title={`${visits} visits at this track`}>
+                                      Track Familiarity +{bonus.toFixed(1)}%
+                                    </Badge>
+                                  );
+                                }
+                              }
+                              return null;
+                            })()}
                           </div>
                           <div className="text-[10px] uppercase text-muted-foreground">
                             Rating {calculateOverallRating(horse)} · Energy {horse.energy}%

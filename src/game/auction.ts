@@ -383,8 +383,9 @@ export function calculateNpcBid(
       const shouldBid = shouldBidOnHorse(aiState.auctionAI, horse, tempLot, stable, currentDay);
       if (!shouldBid) return null;
 
-      // Calculate max bid using AI
-      const maxBid = calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay);
+      // Calculate max bid using AI with friction consideration
+      const friction = aiState.friction ?? 0;
+      const maxBid = calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction);
 
       const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
       if (nextBid > maxBid) return null;

@@ -37,6 +37,7 @@ import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import {
   createClaimingAIState,
   shouldClaimHorse,
+  recordClaimingDecision,
   recordClaimingOutcome,
 } from "@/core/ai/claimingAI";
 import {
@@ -382,7 +383,8 @@ function generateNpcClaimingIntents(
       if (horse.stableId === stable.id) continue; // Don't claim own horses
 
       // Use AI to determine if should claim
-      if (shouldClaimHorse(claimingAI, horse, race, stable, day)) {
+      const friction = stableAI?.friction ?? 0;
+      if (shouldClaimHorse(claimingAI, horse, race, stable, day, friction)) {
         // Check horse eligibility
         if (!isHorseEligibleForClaimingPrice(horse, race.claimingPrice, state.horses)) continue;
 

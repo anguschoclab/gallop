@@ -34,6 +34,7 @@ export const npcCyclePhase = {
     const aiManager: NpcAIManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager || {
       stableStates: {},
       globalDay: newDay,
+      regionalKings: {},
     };
 
     // Run the complete NPC cycle
@@ -42,6 +43,7 @@ export const npcCyclePhase = {
       races,
       jockeys,
       aiManager: updatedAiManager,
+      newsItems,
     } = runNpcCycle(
       state.npcStables,
       state.horses,
@@ -54,6 +56,11 @@ export const npcCyclePhase = {
       aiManager,
     );
 
+    // Apply news items to state
+    const updatedNews = newsItems
+      ? [...(newsItems || []), ...(state.news || [])].slice(0, 500)
+      : state.news;
+
     return {
       ...context,
       state: {
@@ -62,6 +69,7 @@ export const npcCyclePhase = {
         races,
         jockeys,
         npcAIManager: updatedAiManager,
+        news: updatedNews,
       },
     };
   },

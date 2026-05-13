@@ -152,14 +152,15 @@ export function calculateClaimingRisk(aiState: ClaimingAIState, horse: Horse, ra
 /**
  * Determine if stable should claim a horse.
  *
- * Evaluates value and risk, applies adaptive threshold based on
- * personality and learning, and makes claiming decision.
+ * Checks basic constraints, calculates value and risk scores,
+ * and uses adaptive threshold for decision making.
  *
  * @param aiState - Current claiming AI state
- * @param horse - The horse to claim
+ * @param horse - The horse to potentially claim
  * @param race - The race with claiming price
  * @param stable - The stable making the decision
  * @param currentDay - Current game day
+ * @param friction - Friction value with player (optional, for rivalry behavior)
  * @returns True if stable should claim the horse
  */
 export function shouldClaimHorse(
@@ -168,14 +169,21 @@ export function shouldClaimHorse(
   race: Race,
   stable: Stable,
   currentDay: number,
+  friction?: number,
 ): boolean {
   // Basic checks
   if (!race.claimingPrice) return false;
   if (stable.cash < race.claimingPrice * 1.1) return false;
 
   // Calculate value and risk
-  const valueScore = calculateClaimingValue(aiState, horse, race, stable);
+  let valueScore = calculateClaimingValue(aiState, horse, race, stable);
   const riskScore = calculateClaimingRisk(aiState, horse, race);
+
+  // Apply friction multiplier if targeting player-owned horse with high friction
+  if (horse.owned && friction && friction >= 50) {
+    const frictionMultiplier = 1 + (friction - 50) / 100; // max +0.5x at friction=100
+    valueScore *= frictionMultiplier;
+  }
 
   // Get adaptive threshold based on personality and learning
   const contextKey = `${horse.age}:${race.claimingPrice}`;
