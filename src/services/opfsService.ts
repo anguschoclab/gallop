@@ -8,9 +8,12 @@ let isOPFSAvailable: boolean = false;
 let initPromise: Promise<void> | null = null;
 
 /**
- * Initialize OPFS directory.
+ * Initialize the OPFS root directory.
  *
- * @returns Promise resolving when OPFS is initialized
+ * This function checks for browser support and retrieves the root directory handle.
+ * It uses a promise-locking mechanism to ensure initialization only happens once.
+ *
+ * @returns {Promise<void>} A promise that resolves when OPFS is ready for use.
  */
 export async function initOPFS(): Promise<void> {
   if (initPromise) {
@@ -45,9 +48,9 @@ export async function initOPFS(): Promise<void> {
 }
 
 /**
- * Check if OPFS is available.
+ * Check if OPFS is currently available and initialized.
  *
- * @returns Promise resolving to availability status
+ * @returns {Promise<boolean>} True if OPFS is supported and root is accessible.
  */
 export async function checkOPFSAvailable(): Promise<boolean> {
   await initOPFS();
@@ -55,11 +58,12 @@ export async function checkOPFSAvailable(): Promise<boolean> {
 }
 
 /**
- * Write JSON data to OPFS file.
+ * Write JSON-serializable data to a specific file in OPFS.
  *
- * @param filename - Destination filename
- * @param data - Serialized JSON data
- * @returns Promise resolving when write is complete
+ * @param {string} filename - The name of the file to write to.
+ * @param {unknown} data - The data to be serialized and stored.
+ * @throws {Error} If OPFS is not available or if the storage quota is exceeded.
+ * @returns {Promise<void>} A promise that resolves when the write operation completes.
  */
 export async function writeFile(filename: string, data: unknown): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -81,10 +85,11 @@ export async function writeFile(filename: string, data: unknown): Promise<void> 
 }
 
 /**
- * Read JSON data from OPFS file.
+ * Read and parse JSON data from a specific file in OPFS.
  *
- * @param filename - Target filename
- * @returns Promise resolving to deserialized data or null if not found
+ * @template T
+ * @param {string} filename - The name of the file to read.
+ * @returns {Promise<T | null>} The parsed data, or null if the file is missing or OPFS is unavailable.
  */
 export async function readFile<T>(filename: string): Promise<T | null> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -106,7 +111,10 @@ export async function readFile<T>(filename: string): Promise<T | null> {
 }
 
 /**
- * Delete file from OPFS
+ * Permanently delete a file from the OPFS root.
+ *
+ * @param {string} filename - The name of the file to remove.
+ * @returns {Promise<void>} A promise that resolves when the file is removed or verified missing.
  */
 export async function deleteFile(filename: string): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -125,9 +133,9 @@ export async function deleteFile(filename: string): Promise<void> {
 }
 
 /**
- * List all files in OPFS directory.
+ * List all filenames currently stored in the OPFS root directory.
  *
- * @returns Promise resolving to array of filenames
+ * @returns {Promise<string[]>} An array of filenames. Returns empty array if OPFS is unavailable.
  */
 export async function listFiles(): Promise<string[]> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -150,9 +158,11 @@ export async function listFiles(): Promise<string[]> {
 }
 
 /**
- * Clear all OPFS data.
+ * Clear all files from the OPFS root directory.
  *
- * @returns Promise resolving when all files are cleared
+ * Iterates through all entries and removes them individually.
+ *
+ * @returns {Promise<void>} A promise that resolves when the directory is empty.
  */
 export async function clearAll(): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {
@@ -177,7 +187,11 @@ export async function clearAll(): Promise<void> {
 }
 
 /**
- * FOR TESTING ONLY: Reset module state
+ * Reset the internal module state.
+ *
+ * Internal helper intended for use in test suites to ensure a clean state between tests.
+ *
+ * @returns {void}
  */
 export function _resetForTest(): void {
   opfsRoot = null;
