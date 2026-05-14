@@ -87,7 +87,7 @@ export function JockeyCard({
                   }}
                   className="absolute -top-1 -right-1 bg-slate-950 border border-white/10 text-cream rounded-full p-1 shadow-xl hover:text-gold transition-colors z-20"
                   title="Reroll Silks"
-                  aria-label="Reroll Silks"
+                  aria-label={`Reroll Silks for ${jockey.name}`}
                 >
                   <RefreshCw size={10} />
                 </button>
