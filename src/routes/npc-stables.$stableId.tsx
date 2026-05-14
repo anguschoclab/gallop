@@ -64,7 +64,10 @@ function NpcStableDetailPage() {
   const news = useGame((s) => s.news ?? []);
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
-  const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)((s) => s.privateSaleOffers ?? [], shallow);
+  const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)(
+    (s) => s.privateSaleOffers ?? [],
+    shallow,
+  );
   const npcAIManager = useGame((s) => (s as any).npcAIManager);
 
   const [offerHorse, setOfferHorse] = useState<Horse | null>(null);
@@ -104,8 +107,7 @@ function NpcStableDetailPage() {
   const getRivalryStatusLabel = (friction: number) => {
     if (friction >= 80) return "Heated Rival";
     if (friction >= 60) return "Rival";
-    if (friction >= 40) return "Competitive";
-    if (friction >= 30) return "Tense";
+    if (friction >= 30) return "Competitive";
     if (friction < -50) return "ALLY";
     return "NEUTRAL";
   };
@@ -113,8 +115,7 @@ function NpcStableDetailPage() {
   const getRivalryBadgeColor = (friction: number) => {
     if (friction >= 80) return "bg-destructive text-slate-950";
     if (friction >= 60) return "bg-orange-500 text-slate-950";
-    if (friction >= 40) return "bg-yellow-500 text-slate-950";
-    if (friction >= 30) return "bg-slate-600 text-cream";
+    if (friction >= 30) return "bg-yellow-500 text-slate-950";
     if (friction < -50) return "bg-success text-slate-950";
     return "bg-slate-700 text-cream";
   };
@@ -131,13 +132,11 @@ function NpcStableDetailPage() {
       horse.raceHistory
         .filter((r) => r.day >= thirtyDaysAgo)
         .forEach((raceResult) => {
-          // Find the race to check if rival had entries
+          // Find the race to check if rival had entries (graded races only)
           const race = races.find((r) => r.id === raceResult.raceId);
-          if (race) {
+          if (race && race.graded) {
             // Check if rival stable had entries in this race
-            const hadRivalEntry = race.entries.some(
-              (e) => e.stableId === stable.id,
-            );
+            const hadRivalEntry = race.entries.some((e) => e.stableId === stable.id);
             if (hadRivalEntry) {
               // Player horse vs rival horse
               if (raceResult.position === 1) {
@@ -156,11 +155,12 @@ function NpcStableDetailPage() {
   // Get grudge match news items
   const grudgeMatches = news
     ? news
-        .filter((n) => 
-          n.category === "racing" && 
-          n.entityLinks?.some(link => link.type === "stable" && link.id === stableId)
+        .filter(
+          (n) =>
+            n.category === "racing" &&
+            n.entityLinks?.some((link) => link.type === "stable" && link.id === stableId),
         )
-        .slice(0, 5)
+        .slice(0, 3)
     : [];
 
   const headToHead = calculateHeadToHead();
@@ -356,15 +356,18 @@ function NpcStableDetailPage() {
                     </h3>
                     <div className="space-y-2">
                       {grudgeMatches.map((match) => (
-                        <div key={match.id} className="bg-slate-950/30 border border-white/5 rounded p-3">
+                        <div
+                          key={match.id}
+                          className="bg-slate-950/30 border border-white/5 rounded p-3"
+                        >
                           <div className="flex justify-between items-start">
                             <div>
-                              <div className="text-xs font-bold text-cream/80">{match.headline}</div>
+                              <div className="text-xs font-bold text-cream/80">
+                                {match.headline}
+                              </div>
                               <div className="text-[10px] text-cream/40">Day {match.day}</div>
                             </div>
-                            <Badge className="bg-destructive text-slate-950">
-                              Grudge
-                            </Badge>
+                            <Badge className="bg-destructive text-slate-950">Grudge</Badge>
                           </div>
                         </div>
                       ))}

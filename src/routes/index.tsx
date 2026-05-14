@@ -79,7 +79,7 @@ function Dashboard() {
 
   // Helper functions for rivalry display
   const getRivalryStatusLabel = (friction: number) => {
-    if (friction >= 80) return "Heated Rival";
+    if (friction >= 80) return "Hostile";
     if (friction >= 60) return "Rival";
     if (friction >= 40) return "Competitive";
     return "Neutral";
@@ -107,9 +107,7 @@ function Dashboard() {
           const race = races.find((r) => r.id === raceResult.raceId);
           if (race) {
             // Check if rival stable had entries in this race
-            const hadRivalEntry = race.entries.some(
-              (e) => e.stableId === stableId,
-            );
+            const hadRivalEntry = race.entries.some((e) => e.stableId === stableId);
             if (hadRivalEntry) {
               // Player horse vs rival horse
               if (raceResult.position === 1) {
@@ -372,7 +370,9 @@ function Dashboard() {
                         />
                       </div>
                       <div className="flex justify-between text-[10px] text-cream/40">
-                        <span>Head-to-Head: {headToHead.wins}-{headToHead.losses}</span>
+                        <span>
+                          Head-to-Head: {headToHead.wins}-{headToHead.losses}
+                        </span>
                       </div>
                     </div>
                   );
@@ -380,7 +380,7 @@ function Dashboard() {
               </div>
             ) : (
               <div className="text-center py-4 text-xs text-cream/30 italic">
-                No active rivalries
+                No bitter rivals yet — keep winning.
               </div>
             )}
           </CardContent>

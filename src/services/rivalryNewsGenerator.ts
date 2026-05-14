@@ -59,14 +59,17 @@ export function generateRivalryEmergenceNews(
   const headline = rng.pick(headlines);
   const body = rng.pick(bodies);
 
-  return createNewsItem({
-    day: currentDay,
-    category: "stable" as NewsCategory,
-    importance: "high" as NewsImportance,
-    headline,
-    body,
-    entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
-  }, rng);
+  return createNewsItem(
+    {
+      day: currentDay,
+      category: "stable" as NewsCategory,
+      importance: "medium" as NewsImportance,
+      headline,
+      body,
+      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+    },
+    rng,
+  );
 }
 
 /**
@@ -120,19 +123,22 @@ export function generateGrudgeMatchNews(
   const headline = rng.pick(headlines);
   const body = rng.pick(bodies);
 
-  return createNewsItem({
-    day: currentDay,
-    category: "racing" as NewsCategory,
-    importance: "high" as NewsImportance,
-    headline,
-    body,
-    entityLinks: [
-      { type: "horse", id: winner.id, name: winner.name },
-      { type: "horse", id: loser.id, name: loser.name },
-      { type: "race", id: race.id, name: race.name },
-      { type: "stable", id: rivalStable.id, name: rivalStable.name },
-    ],
-  }, rng);
+  return createNewsItem(
+    {
+      day: currentDay,
+      category: "racing" as NewsCategory,
+      importance: "high" as NewsImportance,
+      headline,
+      body,
+      entityLinks: [
+        { type: "horse", id: winner.id, name: winner.name },
+        { type: "horse", id: loser.id, name: loser.name },
+        { type: "race", id: race.id, name: race.name },
+        { type: "stable", id: rivalStable.id, name: rivalStable.name },
+      ],
+    },
+    rng,
+  );
 }
 
 /**
@@ -165,16 +171,17 @@ export function generateRegionLostNews(
   const headline = rng.pick(headlines);
   const body = rng.pick(bodies);
 
-  return createNewsItem({
-    day: currentDay,
-    category: "stable" as NewsCategory,
-    importance: "high" as NewsImportance,
-    headline,
-    body,
-    entityLinks: [
-      { type: "stable", id: rivalStable.id, name: rivalStable.name },
-    ],
-  }, rng);
+  return createNewsItem(
+    {
+      day: currentDay,
+      category: "stable" as NewsCategory,
+      importance: "high" as NewsImportance,
+      headline,
+      body,
+      entityLinks: [{ type: "stable", id: rivalStable.id, name: rivalStable.name }],
+    },
+    rng,
+  );
 }
 
 /**
@@ -211,13 +218,15 @@ export function generateRivalryEscalationNews(
   const headline = rng.pick(headlines);
   const body = rng.pick(bodies);
 
-  return createNewsItem({
-    day: currentDay,
-    category: "stable" as NewsCategory,
-    importance: "high" as NewsImportance,
-    headline,
-    body,
-    entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
-  }, rng);
+  return createNewsItem(
+    {
+      day: currentDay,
+      category: "stable" as NewsCategory,
+      importance: "high" as NewsImportance,
+      headline,
+      body,
+      entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
+    },
+    rng,
+  );
 }
-
