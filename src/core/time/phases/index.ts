@@ -44,6 +44,7 @@ import { raceResolutionPhase } from "./raceResolution";
 import { claimResolutionPhase } from "./claimResolution";
 import { archivingPhase } from "./archivingPhase";
 import { impactApplicationPhase } from "./impactApplication";
+import { weatherPhase } from "./weatherPhase";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
