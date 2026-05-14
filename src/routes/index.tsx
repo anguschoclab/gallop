@@ -48,6 +48,8 @@ function Dashboard() {
     auctions,
     hiredStaff,
     syndicates,
+    npcStables,
+    npcAIManager,
   } = useGame();
 
   const ownedHorses = horses.filter((h) => h.owned);
@@ -64,6 +66,64 @@ function Dashboard() {
   const playerAwards = awards?.filter((a) => !a.stableId) ?? [];
 
   const recentReputationEvents = reputation?.events?.slice(-3).reverse() ?? [];
+
+  // Calculate top rivals for Key Rivals widget
+  const topRivals = npcStables
+    .map((stable) => ({
+      stable,
+      friction: npcAIManager?.stableStates?.[stable.id]?.friction ?? 0,
+    }))
+    .filter((r) => r.friction >= 40)
+    .sort((a, b) => b.friction - a.friction)
+    .slice(0, 3);
+
+  // Helper functions for rivalry display
+  const getRivalryStatusLabel = (friction: number) => {
+    if (friction >= 80) return "Heated Rival";
+    if (friction >= 60) return "Rival";
+    if (friction >= 40) return "Competitive";
+    return "Neutral";
+  };
+
+  const getRivalryBadgeColor = (friction: number) => {
+    if (friction >= 80) return "bg-destructive text-slate-950";
+    if (friction >= 60) return "bg-orange-500 text-slate-950";
+    if (friction >= 40) return "bg-yellow-500 text-slate-950";
+    return "bg-slate-700 text-cream";
+  };
+
+  // Calculate head-to-head record by scanning race history
+  const calculateHeadToHead = (stableId: string) => {
+    const thirtyDaysAgo = day - 30;
+    let wins = 0;
+    let losses = 0;
+
+    // Scan player-owned horses' race history
+    ownedHorses.forEach((horse) => {
+      horse.raceHistory
+        .filter((r) => r.day >= thirtyDaysAgo)
+        .forEach((raceResult) => {
+          // Find the race to check if rival had entries
+          const race = races.find((r) => r.id === raceResult.raceId);
+          if (race) {
+            // Check if rival stable had entries in this race
+            const hadRivalEntry = race.entries.some(
+              (e) => e.stableId === stableId,
+            );
+            if (hadRivalEntry) {
+              // Player horse vs rival horse
+              if (raceResult.position === 1) {
+                wins++;
+              } else {
+                losses++;
+              }
+            }
+          }
+        });
+    });
+
+    return { wins, losses };
+  };
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
@@ -280,6 +340,52 @@ function Dashboard() {
 
       {/* --- MAIN PILLARS GRID --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* KEY RIVALS WIDGET */}
+        <Card className="border-gold-muted flex flex-col bg-slate-900/20 group hover:border-gold/40 transition-all duration-300">
+          <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.02]">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded bg-destructive/10 flex items-center justify-center border border-destructive/20 group-hover:bg-destructive/20 transition-colors">
+                <Zap className="h-4 w-4 text-destructive" />
+              </div>
+              <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-cream tracking-tight">
+                Key Rivals
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-4 flex-1">
+            {topRivals.length > 0 ? (
+              <div className="space-y-3">
+                {topRivals.map((rival) => {
+                  const headToHead = calculateHeadToHead(rival.stable.id);
+                  return (
+                    <div key={rival.stable.id} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-cream/80">{rival.stable.name}</span>
+                        <Badge className={getRivalryBadgeColor(rival.friction)}>
+                          {getRivalryStatusLabel(rival.friction)}
+                        </Badge>
+                      </div>
+                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-destructive/60 transition-all"
+                          style={{ width: `${(rival.friction / 100) * 100}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[10px] text-cream/40">
+                        <span>Head-to-Head: {headToHead.wins}-{headToHead.losses}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-4 text-xs text-cream/30 italic">
+                No active rivalries
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* PILLAR 1: HEADQUARTERS */}
         <Card className="border-gold-muted flex flex-col bg-slate-900/20 group hover:border-gold/40 transition-all duration-300">
           <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.02]">

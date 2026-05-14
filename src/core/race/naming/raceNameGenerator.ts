@@ -286,94 +286,112 @@ const RACE_SUFFIXES = [
   "Invitational",
 ];
 
+/**
+ * Type for pattern generator function.
+ */
+type PatternGenerator = (params: RaceNameParams, region: RegionalSystem) => string;
+
+/**
+ * Strategy record for race name generation based on naming pattern.
+ */
+const PATTERN_GENERATORS: Record<NamingPattern, PatternGenerator> = {
+  price_based: (params, region) => {
+    const { claimingPrice, raceClass, rng } = params;
+    if (!claimingPrice) {
+      // Fallback if no claiming price
+      return PATTERN_GENERATORS.simple_type(params, region);
+    }
+    const priceStr = formatClaimingPrice(claimingPrice);
+    if (raceClass === "MaidenClaiming") {
+      return `${priceStr} Maiden Claiming`;
+    }
+    if (raceClass === "MaidenOptionalClaiming") {
+      return `${priceStr} Maiden Optional Claiming`;
+    }
+    if (raceClass === "OptionalClaiming") {
+      return `${priceStr} Optional Claiming`;
+    }
+    return `${priceStr} Claiming`;
+  },
+
+  condition_based: (params, region) => {
+    const { winCondition, rng } = params;
+    const conditionStr = formatWinCondition(winCondition || "none");
+    if (conditionStr) {
+      return `${conditionStr} Allowance`;
+    }
+    return `${getRandomSponsor(region, rng)} Allowance`;
+  },
+
+  sponsor_type: (params, region) => {
+    const { rng } = params;
+    const sponsor = getRandomSponsor(region, rng);
+    const eventType = getRandomEvent(region, rng);
+    return `${sponsor} ${eventType}`;
+  },
+
+  location_type: (params, region) => {
+    const { rng } = params;
+    const location = getRandomLocation(region, rng);
+    const event = getRandomEvent(region, rng);
+    return `${location} ${event}`;
+  },
+
+  class_location: (params, region) => {
+    const { raceClass, rng } = params;
+    // For European/Australian class-based naming
+    const classNum = Math.floor((rng ? rng.next() : Math.random()) * 6) + 1; // Class 1-6
+    const loc = getRandomLocation(region, rng);
+    if (raceClass === "Handicap") {
+      return `Class ${classNum} ${loc} Handicap`;
+    }
+    return `Class ${classNum} ${loc}`;
+  },
+
+  traditional: (params, region) => {
+    const { raceClass, rng } = params;
+    // South American traditional naming
+    const adj = getRandomAdjective(region, rng);
+    const tradEvent = getRandomEvent(region, rng);
+    if (raceClass === "Stakes" || raceClass === "Listed") {
+      return `Gran Premio ${adj} ${tradEvent}`;
+    }
+    return `${adj} ${tradEvent}`;
+  },
+
+  adjective_type: (params, region) => {
+    const { rng } = params;
+    const adjective = getRandomAdjective(region, rng);
+    const evt = getRandomEvent(region, rng);
+    return `${adjective} ${evt}`;
+  },
+
+  track_type: (params, region) => {
+    const { track, raceClass } = params;
+    return `${track.name} ${raceClass}`;
+  },
+
+  simple_type: (params, region) => {
+    const { raceClass } = params;
+    return raceClass;
+  },
+
+  legacy: (params, region) => {
+    const { rng } = params;
+    const a = rng ? rng.pick(RACE_PREFIXES) : RACE_PREFIXES[0];
+    const b = rng ? rng.pick(RACE_SUFFIXES) : RACE_SUFFIXES[0];
+    return `${a} ${b}`;
+  },
+};
+
 // Generate name based on pattern
 function generateNameByPattern(
   pattern: NamingPattern,
   params: RaceNameParams,
   region: RegionalSystem,
 ): string {
-  const { track, raceClass, claimingPrice, winCondition, rng } = params;
-
-  switch (pattern) {
-    case "price_based": {
-      if (!claimingPrice) {
-        // Fallback if no claiming price
-        return generateNameByPattern("simple_type", params, region);
-      }
-      const priceStr = formatClaimingPrice(claimingPrice);
-      if (raceClass === "MaidenClaiming") {
-        return `${priceStr} Maiden Claiming`;
-      }
-      if (raceClass === "MaidenOptionalClaiming") {
-        return `${priceStr} Maiden Optional Claiming`;
-      }
-      if (raceClass === "OptionalClaiming") {
-        return `${priceStr} Optional Claiming`;
-      }
-      return `${priceStr} Claiming`;
-    }
-
-    case "condition_based": {
-      const conditionStr = formatWinCondition(winCondition || "none");
-      if (conditionStr) {
-        return `${conditionStr} Allowance`;
-      }
-      return `${getRandomSponsor(region, rng)} Allowance`;
-    }
-
-    case "sponsor_type": {
-      const sponsor = getRandomSponsor(region, rng);
-      const eventType = getRandomEvent(region, rng);
-      return `${sponsor} ${eventType}`;
-    }
-
-    case "location_type": {
-      const location = getRandomLocation(region, rng);
-      const event = getRandomEvent(region, rng);
-      return `${location} ${event}`;
-    }
-
-    case "class_location": {
-      // For European/Australian class-based naming
-      const classNum = Math.floor((rng ? rng.next() : Math.random()) * 6) + 1; // Class 1-6
-      const loc = getRandomLocation(region, rng);
-      if (raceClass === "Handicap") {
-        return `Class ${classNum} ${loc} Handicap`;
-      }
-      return `Class ${classNum} ${loc}`;
-    }
-
-    case "traditional": {
-      // South American traditional naming
-      const adj = getRandomAdjective(region, rng);
-      const tradEvent = getRandomEvent(region, rng);
-      if (raceClass === "Stakes" || raceClass === "Listed") {
-        return `Gran Premio ${adj} ${tradEvent}`;
-      }
-      return `${adj} ${tradEvent}`;
-    }
-
-    case "adjective_type": {
-      const adjective = getRandomAdjective(region, rng);
-      const evt = getRandomEvent(region, rng);
-      return `${adjective} ${evt}`;
-    }
-
-    case "track_type":
-      return `${track.name} ${raceClass}`;
-
-    case "simple_type":
-      return raceClass;
-
-    case "legacy": {
-      const a = rng ? rng.pick(RACE_PREFIXES) : RACE_PREFIXES[0];
-      const b = rng ? rng.pick(RACE_SUFFIXES) : RACE_SUFFIXES[0];
-      return `${a} ${b}`;
-    }
-
-    default:
-      return `${getRandomSponsor(region, rng)} Stakes`;
-  }
+  const generator = PATTERN_GENERATORS[pattern];
+  return generator(params, region);
 }
 
 // Ensure uniqueness by adding numeric suffix if needed

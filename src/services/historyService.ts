@@ -3,6 +3,7 @@ import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/core/history/
 import { generateUUID } from "@/core/uuid";
 import { getCareerStats } from "@/core/horse/stats";
 import { DAYS_PER_YEAR } from "@/game/constants/gameConstants";
+import type { Rng } from "@/game/rng";
 
 /**
  * Record a race result in the seasonal history.
@@ -13,6 +14,7 @@ import { DAYS_PER_YEAR } from "@/game/constants/gameConstants";
  * @param runners - Runner objects for the race
  * @param horses - Global horse collection for metadata lookup
  * @param day - Current game day
+ * @param rng - Optional RNG for deterministic ID
  * @returns SeasonRecord object if recorded, otherwise null
  */
 export function recordRaceHistory(
@@ -21,6 +23,7 @@ export function recordRaceHistory(
   runners: any[],
   horses: Horse[] | Map<string, Horse>,
   day: number,
+  rng?: Rng,
 ): SeasonRecord | null {
   // Only record G1 races in season history
   if (!race.graded || race.graded.grade !== "G1") return null;
@@ -35,7 +38,7 @@ export function recordRaceHistory(
   const runner = runners.find((r) => r.horseId === winner.horseId);
 
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     year: Math.floor((day - 1) / DAYS_PER_YEAR) + 1,
     day,
     raceId: race.id,

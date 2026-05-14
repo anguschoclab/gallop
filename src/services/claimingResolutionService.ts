@@ -66,7 +66,7 @@ export function processClaimingResolution({
   for (const withdrawnClaim of withdrawnClaims) {
     if (withdrawnClaim.claimantStableId) {
       impacts.push({
-        id: generateUUID(),
+        id: generateUUID(rng),
         intentId: withdrawnClaim.id,
         day: newDay,
         phase: "raceResolution",
@@ -78,7 +78,7 @@ export function processClaimingResolution({
       } as CashImpact);
     } else {
       impacts.push({
-        id: generateUUID(),
+        id: generateUUID(rng),
         intentId: withdrawnClaim.id,
         day: newDay,
         phase: "raceResolution",
@@ -91,7 +91,7 @@ export function processClaimingResolution({
     }
 
     impacts.push({
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: withdrawnClaim.id,
       day: newDay,
       phase: "raceResolution",
@@ -121,7 +121,7 @@ export function processClaimingResolution({
     for (const transfer of transfers) {
       // ClaimingImpact for horse transfer
       impacts.push({
-        id: generateUUID(),
+        id: generateUUID(rng),
         intentId: intentMap.get(transfer.horseId)?.id || "",
         day: newDay,
         phase: "raceResolution",
@@ -138,7 +138,7 @@ export function processClaimingResolution({
       // CashImpact for claimant (negative)
       if (transfer.toStableId) {
         impacts.push({
-          id: generateUUID(),
+          id: generateUUID(rng),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -150,7 +150,7 @@ export function processClaimingResolution({
         } as CashImpact);
       } else {
         impacts.push({
-          id: generateUUID(),
+          id: generateUUID(rng),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -165,7 +165,7 @@ export function processClaimingResolution({
       // CashImpact for original owner (positive)
       if (transfer.fromStableId) {
         impacts.push({
-          id: generateUUID(),
+          id: generateUUID(rng),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -177,7 +177,7 @@ export function processClaimingResolution({
         } as CashImpact);
       } else {
         impacts.push({
-          id: generateUUID(),
+          id: generateUUID(rng),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -193,7 +193,7 @@ export function processClaimingResolution({
     // Generate log impacts for claim results
     for (const log of claimLogs) {
       impacts.push({
-        id: generateUUID(),
+        id: generateUUID(rng),
         intentId: "",
         day: newDay,
         phase: "raceResolution",
@@ -210,7 +210,7 @@ export function processClaimingResolution({
     for (const losingClaim of losingClaims) {
       if (losingClaim.claimantStableId) {
         impacts.push({
-          id: generateUUID(),
+          id: generateUUID(rng),
           intentId: losingClaim.id,
           day: newDay,
           phase: "raceResolution",
@@ -222,7 +222,7 @@ export function processClaimingResolution({
         } as CashImpact);
       } else {
         impacts.push({
-          id: generateUUID(),
+          id: generateUUID(rng),
           intentId: losingClaim.id,
           day: newDay,
           phase: "raceResolution",

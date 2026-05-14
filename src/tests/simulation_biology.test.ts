@@ -68,6 +68,8 @@ describe("Biological Simulation Bridge - Stress Test", () => {
     poorConf.runningStyle = "P";
     goodConf.temperament = "fair";
     poorConf.temperament = "fair";
+    goodConf.heartScore = 1.0;
+    poorConf.heartScore = 1.0;
 
     const goodRunner = buildRunner(
       goodConf,

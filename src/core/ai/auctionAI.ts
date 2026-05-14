@@ -181,7 +181,7 @@ function evaluateStrategicBiddingValue(
 }
 
 /**
- * Calculate maximum bid for a horse.
+ * Calculate the maximum bid an NPC stable will place on a horse.
  *
  * Determines the maximum bid based on estimated value, personality risk
  * tolerance, budget constraints, and learning-based adjustments.
@@ -191,6 +191,7 @@ function evaluateStrategicBiddingValue(
  * @param lot - The auction lot
  * @param stable - The stable making the bid
  * @param currentDay - Current game day
+ * @param friction - Friction value with player (optional, for rivalry behavior)
  * @returns Maximum bid amount
  */
 export function calculateMaxBid(
@@ -199,6 +200,7 @@ export function calculateMaxBid(
   lot: AuctionLot,
   stable: Stable,
   currentDay: number,
+  friction?: number,
 ): number {
   const horseRating = calculateOverallRating(horse);
   const estimatedValue = horseRating * 1000;
@@ -219,6 +221,12 @@ export function calculateMaxBid(
   const successRate = getSuccessRate(aiState.learningState, "bidding", contextKey);
   if (successRate < 0.4) {
     maxBid *= 0.8; // Reduce bid if success rate is low
+  }
+
+  // Apply friction multiplier if bidding on player-owned horse with high friction
+  if (horse.owned && friction && friction >= 50) {
+    const frictionMultiplier = 1 + (friction - 50) / 200; // max +0.25x at friction=100
+    maxBid *= frictionMultiplier;
   }
 
   return Math.floor(maxBid);

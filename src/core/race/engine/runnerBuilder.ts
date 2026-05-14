@@ -55,6 +55,7 @@ export type Runner = {
   jockey?: JockeyT;
   weight: number;
   tactics: string;
+  courseFamiliarityMultiplier?: number; // Multiplier based on course visits (1.0 = no bonus)
 };
 
 export type ConditionsModifier = {
@@ -293,6 +294,26 @@ export function buildRunner(
     }
   }
 
+  // Course familiarity modifier based on spec:
+  // 0 visits: 0.985
+  // 1 visit:  0.995
+  // 2 visits: 1.000
+  // 3 visits: 1.005
+  // 4 visits: 1.008
+  // 5+ visits: 1.010
+  let courseFamiliarityMultiplier = 1.0;
+  if (race) {
+    const trackId = race.trackId || race.graded?.trackId;
+    const visits = trackId && h.courseVisits ? h.courseVisits[trackId] || 0 : 0;
+    
+    if (visits === 0) courseFamiliarityMultiplier = 0.985;
+    else if (visits === 1) courseFamiliarityMultiplier = 0.995;
+    else if (visits === 2) courseFamiliarityMultiplier = 1.000;
+    else if (visits === 3) courseFamiliarityMultiplier = 1.005;
+    else if (visits === 4) courseFamiliarityMultiplier = 1.008;
+    else courseFamiliarityMultiplier = 1.010;
+  }
+
   const rawTopSpeed =
     (12 + (h.stats.speed / 100) * 10) *
     formEnergy *
@@ -305,7 +326,8 @@ export function buildRunner(
     handednessMod *
     dosageDistanceMod *
     fatigueMod *
-    bouncePenalty;
+    bouncePenalty *
+    courseFamiliarityMultiplier;
   const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
   const accel = 1.5 + (h.stats.acceleration / 100) * 3.5;
   const strideMod =
@@ -417,5 +439,6 @@ export function buildRunner(
     jockey,
     weight: assignedWeight,
     tactics: entry?.tactics || "default",
+    courseFamiliarityMultiplier,
   };
 }

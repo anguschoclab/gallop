@@ -1,4 +1,5 @@
 // Stewards Inquiry Types - Race day inquiries and disqualifications
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Inquiry type categories
@@ -74,7 +75,7 @@ export function createStewardsInquiry(
   } = {},
 ): StewardsInquiry {
   return {
-    id: crypto.randomUUID(),
+    id: generateUUID(),
     raceId,
     day,
     type,

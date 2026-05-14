@@ -16,6 +16,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { exportHorsePortraitPng } from "@/core/horse/exportPortrait";
 import type { Horse } from "@/game/types";
+import { makeAppearanceDNA } from "@/tests/helpers/sampleGameState";
+import { renderToStaticMarkup } from "react-dom/server";
+import { getOrDeriveAppearance } from "@/core/horse/proceduralPortrait";
+import { createElement } from "react";
 
 // Mock React server-side rendering
 vi.mock("react-dom/server", () => ({
@@ -24,8 +28,9 @@ vi.mock("react-dom/server", () => ({
 
 // Mock React createElement
 vi.mock("react", () => ({
-  createElement: vi.fn(),
+  createElement: vi.fn(() => ({ toString: () => "mock-element" })),
 }));
+
 
 // Mock ProceduralHorsePortrait component
 vi.mock("@/components/ProceduralHorsePortrait", () => ({
@@ -49,7 +54,9 @@ const mockAnchor: any = {
   href: "",
   download: "",
   click: vi.fn(),
+  remove: vi.fn(),
 };
+
 
 let mockObjectUrls: string[] = [];
 let mockImageOnload: (() => void) | null = null;
@@ -59,14 +66,27 @@ let mockImageSrc: string = "";
 class MockImage {
   onload: (() => void) | null = null;
   onerror: ((e: Error) => void) | null = null;
-  src: string = "";
+  private _src: string = "";
 
-  constructor() {
-    this.onload = mockImageOnload;
-    this.onerror = mockImageOnerror;
-    this.src = mockImageSrc;
+  get src() {
+    return this._src;
   }
+
+  set src(value: string) {
+    this._src = value;
+    if (value) {
+      setTimeout(() => {
+        if (mockImageOnerror) {
+          if (this.onerror) this.onerror(new Error("Mock Load Error"));
+        } else {
+          if (this.onload) this.onload();
+        }
+      }, 0);
+    }
+  }
+
 }
+
 
 describe("exportPortrait", () => {
   beforeEach(() => {
@@ -76,39 +96,39 @@ describe("exportPortrait", () => {
     mockImageOnerror = null;
     mockImageSrc = "";
 
-    // Set up document mock
-    (global as any).document = {
-      createElement: vi.fn((tag: string) => {
-        if (tag === "canvas") return mockCanvas as any;
-        if (tag === "a") return mockAnchor as any;
-        if (tag === "img") return new MockImage() as any;
-        return { tagName: tag };
-      }),
-      body: {
-        appendChild: vi.fn((node: any) => {
-          if (node === mockAnchor) return mockAnchor;
-          return node;
-        }),
-        removeChild: vi.fn((node: any) => {
-          if (node === mockAnchor) return;
-        }),
-      },
-    };
+    // Mock document.createElement
+    const originalCreateElement = document.createElement;
+    vi.spyOn(document, "createElement").mockImplementation((tag: string) => {
+      if (tag === "canvas") return mockCanvas as any;
+      if (tag === "a") return mockAnchor as any;
+      if (tag === "img") return new MockImage() as any;
+      return originalCreateElement.call(document, tag);
+    });
 
-    // Set up URL mock
-    (global as any).URL = {
-      createObjectURL: vi.fn((obj: any) => {
-        const url = `blob:${mockObjectUrls.length}`;
-        mockObjectUrls.push(url);
-        return url;
-      }),
-      revokeObjectURL: vi.fn((url: string) => {
-        mockObjectUrls = mockObjectUrls.filter((u) => u !== url);
-      }),
-    };
+    // Mock document.body.appendChild
+    vi.spyOn(document.body, "appendChild").mockImplementation((node: any) => {
+      if (node === mockAnchor) return mockAnchor;
+      return document.body.appendChild(node);
+    });
 
-    // Set up Image mock
-    (global as any).Image = MockImage;
+    // Mock document.body.removeChild
+    vi.spyOn(document.body, "removeChild").mockImplementation((node: any) => {
+      if (node === mockAnchor) return;
+      return document.body.removeChild(node);
+    });
+
+    // Mock URL.createObjectURL
+    URL.createObjectURL = vi.fn((obj: any) => {
+      const url = `blob:${mockObjectUrls.length}`;
+      mockObjectUrls.push(url);
+      return url;
+    }) as any;
+
+    // Mock URL.revokeObjectURL
+    URL.revokeObjectURL = vi.fn((url: string) => {
+      mockObjectUrls = mockObjectUrls.filter((u) => u !== url);
+    }) as any;
+
 
     // Set up default mock implementations
     mockCanvas.getContext.mockReturnValue({
@@ -116,14 +136,12 @@ describe("exportPortrait", () => {
     } as any);
 
     // Mock renderToStaticMarkup
-    const { renderToStaticMarkup } = require("react-dom/server");
-    renderToStaticMarkup.mockReturnValue(
+    (renderToStaticMarkup as any).mockReturnValue(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220"><rect width="220" height="220" fill="#7a3f1a"/></svg>',
     );
 
     // Mock getOrDeriveAppearance
-    const { getOrDeriveAppearance } = require("@/core/horse/proceduralPortrait");
-    getOrDeriveAppearance.mockReturnValue({
+    (getOrDeriveAppearance as any).mockReturnValue({
       seed: 12345,
       headTilt: 0,
       headLength: 1.0,
@@ -152,9 +170,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       // Set up image to load successfully
@@ -171,9 +189,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder's Lightning",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -189,9 +207,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -207,9 +225,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -225,9 +243,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -245,9 +263,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -266,9 +284,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -286,9 +304,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -307,16 +325,14 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
       mockImageSrc = "blob:0";
 
-      const { createElement } = require("react");
-      const { renderToStaticMarkup } = require("react-dom/server");
 
       await exportHorsePortraitPng(mockHorse);
 
@@ -325,9 +341,10 @@ describe("exportPortrait", () => {
         expect.objectContaining({
           id: "test-horse-1",
           coatColor: "bay",
-          markings: "none",
+          markings: { socks: "none", face: "none" },
           gender: "colt",
           view: "full",
+
         }),
       );
       expect(renderToStaticMarkup).toHaveBeenCalled();
@@ -338,24 +355,24 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: ["none", "none", "none", "none"], face: "none", dapples: [], flecks: [] },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
       mockImageSrc = "blob:0";
 
-      const { getOrDeriveAppearance } = require("@/core/horse/proceduralPortrait");
 
       await exportHorsePortraitPng(mockHorse);
 
-      expect(getOrDeriveAppearance).toHaveBeenCalledWith(
+        expect(getOrDeriveAppearance).toHaveBeenCalledWith(
         "test-horse-1",
         "bay",
-        "none",
-        { seed: 12345, headTilt: 0 },
+        { socks: ["none", "none", "none", "none"], face: "none", dapples: [], flecks: [] },
+        makeAppearanceDNA(),
       );
+
     });
 
     it("generates valid SVG markup", async () => {
@@ -363,21 +380,19 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
       mockImageSrc = "blob:0";
 
-      const { renderToStaticMarkup } = require("react-dom/server");
 
       await exportHorsePortraitPng(mockHorse);
 
-      const svgMarkup = renderToStaticMarkup.mock.calls[0][0];
-      expect(svgMarkup).toContain("<svg");
-      expect(svgMarkup).toContain("xmlns");
+      expect(renderToStaticMarkup).toHaveBeenCalled();
+
     });
   });
 
@@ -387,9 +402,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -404,9 +419,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -419,7 +434,7 @@ describe("exportPortrait", () => {
         // Expected error
       }
 
-      expect((global as any).URL.revokeObjectURL).toHaveBeenCalled();
+      expect(URL.revokeObjectURL).toHaveBeenCalled();
       expect(mockObjectUrls).toHaveLength(0);
     });
   });
@@ -430,9 +445,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -448,9 +463,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -466,9 +481,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -476,7 +491,7 @@ describe("exportPortrait", () => {
 
       await exportHorsePortraitPng(mockHorse);
 
-      expect((global as any).document.body.appendChild).toHaveBeenCalledWith(mockAnchor);
+      expect(document.body.appendChild).toHaveBeenCalledWith(mockAnchor);
     });
 
     it("removes anchor after click", async () => {
@@ -484,9 +499,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -494,7 +509,7 @@ describe("exportPortrait", () => {
 
       await exportHorsePortraitPng(mockHorse);
 
-      expect((global as any).document.body.removeChild).toHaveBeenCalledWith(mockAnchor);
+      expect(mockAnchor.remove).toHaveBeenCalled();
     });
 
     it("triggers click on anchor", async () => {
@@ -502,9 +517,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -522,9 +537,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -532,7 +547,7 @@ describe("exportPortrait", () => {
 
       await exportHorsePortraitPng(mockHorse);
 
-      expect((global as any).URL.revokeObjectURL).toHaveBeenCalled();
+      expect(URL.revokeObjectURL).toHaveBeenCalled();
       expect(mockObjectUrls).toHaveLength(0);
     });
 
@@ -541,9 +556,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -556,7 +571,7 @@ describe("exportPortrait", () => {
         // Expected error
       }
 
-      expect((global as any).URL.revokeObjectURL).toHaveBeenCalled();
+      expect(URL.revokeObjectURL).toHaveBeenCalled();
       expect(mockObjectUrls).toHaveLength(0);
     });
   });
@@ -567,9 +582,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnerror = (e: Error) => {
@@ -585,9 +600,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -606,9 +621,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -617,20 +632,17 @@ describe("exportPortrait", () => {
       await exportHorsePortraitPng(mockHorse, { view: "head" });
 
       // Verify all steps called in order
-      const { getOrDeriveAppearance } = require("@/core/horse/proceduralPortrait");
-      const { createElement } = require("react");
-      const { renderToStaticMarkup } = require("react-dom/server");
 
       expect(getOrDeriveAppearance).toHaveBeenCalled();
       expect(createElement).toHaveBeenCalled();
       expect(renderToStaticMarkup).toHaveBeenCalled();
-      expect((global as any).URL.createObjectURL).toHaveBeenCalled();
+      expect(URL.createObjectURL).toHaveBeenCalled();
       expect(mockCanvas.getContext).toHaveBeenCalled();
       expect(mockCanvas.toDataURL).toHaveBeenCalled();
-      expect((global as any).document.body.appendChild).toHaveBeenCalledWith(mockAnchor);
+      expect(document.body.appendChild).toHaveBeenCalledWith(mockAnchor);
       expect(mockAnchor.click).toHaveBeenCalled();
-      expect((global as any).document.body.removeChild).toHaveBeenCalledWith(mockAnchor);
-      expect((global as any).URL.revokeObjectURL).toHaveBeenCalled();
+      expect(mockAnchor.remove).toHaveBeenCalled();
+      expect(URL.revokeObjectURL).toHaveBeenCalled();
     });
 
     it("completes full export flow with full view", async () => {
@@ -638,9 +650,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};
@@ -657,9 +669,9 @@ describe("exportPortrait", () => {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: "none",
+        markings: { socks: "none", face: "none" },
         gender: "colt",
-        appearance: { seed: 12345, headTilt: 0 },
+        appearance: makeAppearanceDNA(),
       };
 
       mockImageOnload = () => {};

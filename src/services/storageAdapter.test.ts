@@ -26,7 +26,7 @@ function resetOPFSMocks() {
     return mockOPFSData.get(filename) ?? null;
   });
   vi.mocked(opfsService.writeFile).mockImplementation(async (filename: string, data: any) => {
-    mockOPFSData.set(filename, data);
+    mockOPFSData.set(filename, JSON.parse(JSON.stringify(data)));
   });
   vi.mocked(opfsService.deleteFile).mockImplementation(async (filename: string) => {
     mockOPFSData.delete(filename);
@@ -95,7 +95,7 @@ describe("storageAdapter", () => {
         // Then load it
         const loaded = await storageAdapter.loadGameState();
 
-        expect(loaded).toEqual(mockState);
+        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
       });
 
       describe("when OPFS is unavailable (fallback)", () => {
@@ -109,7 +109,7 @@ describe("storageAdapter", () => {
           localStorage.setItem("gallop_game_state_fallback", JSON.stringify(mockState));
 
           const loaded = await storageAdapter.loadGameState();
-          expect(loaded).toEqual(mockState);
+          expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
           expect(storageAdapter.useLocalStorageFallback).toBe(true);
         });
 
@@ -142,7 +142,7 @@ describe("storageAdapter", () => {
         await storageAdapter.saveGameState(mockState);
 
         const loaded = await storageAdapter.loadGameState();
-        expect(loaded).toEqual(mockState);
+        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
       });
 
       describe("when OPFS is unavailable (fallback)", () => {
@@ -470,7 +470,7 @@ describe("storageAdapter", () => {
 
         const loaded = freshStorage.loadWizardState();
 
-        expect(loaded).toEqual(mockState);
+        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
       });
 
       it("returns null when key doesn't exist", () => {
@@ -651,7 +651,7 @@ describe("storageAdapter", () => {
         await storageAdapter.saveGameState(mockState);
         const loaded = await storageAdapter.loadGameState();
 
-        expect(loaded).toEqual(mockState);
+        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
       });
 
       it("wizard state round-trip returns identical data", () => {
@@ -661,7 +661,7 @@ describe("storageAdapter", () => {
         storageAdapter.saveWizardState(mockState);
         const loaded = storageAdapter.loadWizardState();
 
-        expect(loaded).toEqual(mockState);
+        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
       });
     });
   });

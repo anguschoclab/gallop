@@ -242,6 +242,32 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                                 Qualified
                               </Badge>
                             )}
+                            {(() => {
+                              const trackId = race.trackId || race.graded?.trackId;
+                              if (trackId && horse.courseVisits) {
+                                const visits = horse.courseVisits[trackId] || 0;
+                                if (visits === 0) {
+                                  return (
+                                    <Badge className="bg-slate-500 text-white text-[10px]" title="First time at this track">
+                                      Debut at Track
+                                    </Badge>
+                                  );
+                                } else if (visits < 5) {
+                                  return (
+                                    <Badge className="bg-yellow-600 text-white text-[10px]" title={`${visits} previous runs here`}>
+                                      Track Experience: {visits} runs
+                                    </Badge>
+                                  );
+                                } else {
+                                  return (
+                                    <Badge className="bg-emerald-600 text-white text-[10px]" title={`${visits} previous runs here`}>
+                                      Track Master: {visits} runs ★
+                                    </Badge>
+                                  );
+                                }
+                              }
+                              return null;
+                            })()}
                           </div>
                           <div className="text-[10px] uppercase text-muted-foreground">
                             Rating {calculateOverallRating(horse)} · Energy {horse.energy}%

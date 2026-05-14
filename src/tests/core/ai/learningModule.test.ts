@@ -21,14 +21,13 @@ describe("createLearningState", () => {
     expect(state.outcomes).toEqual([]);
     expect(state.successRates).toBeInstanceOf(Object);
     expect(state.patterns).toBeInstanceOf(Object);
-    expect(state.lastUpdate).toBe(0);
+    expect(state.lastUpdateDay).toBe(0);
   });
 });
 
 describe("recordOutcome", () => {
   it("should record outcome to history", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
     const day = 100;
 
     const updatedState = recordOutcome(
@@ -37,7 +36,6 @@ describe("recordOutcome", () => {
       "context_key",
       true,
       100,
-      timestamp,
       day,
       10,
     );
@@ -47,13 +45,11 @@ describe("recordOutcome", () => {
     expect(updatedState.outcomes[0].contextKey).toBe("context_key");
     expect(updatedState.outcomes[0].success).toBe(true);
     expect(updatedState.outcomes[0].value).toBe(100);
-    expect(updatedState.outcomes[0].timestamp).toBe(timestamp);
     expect(updatedState.outcomes[0].day).toBe(day);
   });
 
   it("should trim history to memory depth", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     for (let i = 0; i < 15; i++) {
@@ -63,7 +59,6 @@ describe("recordOutcome", () => {
         "context",
         true,
         i * 10,
-        timestamp + i,
         i,
         10,
       );
@@ -74,7 +69,6 @@ describe("recordOutcome", () => {
 
   it("should update success rates", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record 3 successes and 2 failures
@@ -85,7 +79,6 @@ describe("recordOutcome", () => {
         "test_context",
         i < 3,
         100,
-        timestamp + i,
         i,
         10,
       );
@@ -99,7 +92,6 @@ describe("recordOutcome", () => {
 
   it("should update patterns", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record multiple outcomes with same context dimension
@@ -110,7 +102,6 @@ describe("recordOutcome", () => {
         "context:value",
         i < 3,
         100,
-        timestamp + i,
         i,
         10,
       );
@@ -125,7 +116,7 @@ describe("recordOutcome", () => {
     const state = createLearningState();
     const originalOutcomesLength = state.outcomes.length;
 
-    recordOutcome(state, "decision", "context", true, 100, Date.now(), 1, 10);
+    recordOutcome(state, "decision", "context", true, 100, 1, 10);
 
     expect(state.outcomes).toHaveLength(originalOutcomesLength);
   });
@@ -140,7 +131,6 @@ describe("getSuccessRate", () => {
 
   it("should return recorded success rate", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record 7 successes and 3 failures
@@ -151,7 +141,6 @@ describe("getSuccessRate", () => {
         "test",
         i < 7,
         100,
-        timestamp + i,
         i,
         10,
       );
@@ -163,7 +152,6 @@ describe("getSuccessRate", () => {
 
   it("should return 1.0 for all successes", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     for (let i = 0; i < 5; i++) {
@@ -173,7 +161,6 @@ describe("getSuccessRate", () => {
         "context",
         true,
         100,
-        timestamp + i,
         i,
         10,
       );
@@ -185,7 +172,6 @@ describe("getSuccessRate", () => {
 
   it("should return 0.0 for all failures", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     for (let i = 0; i < 5; i++) {
@@ -195,7 +181,6 @@ describe("getSuccessRate", () => {
         "context",
         false,
         0,
-        timestamp + i,
         i,
         10,
       );
@@ -215,7 +200,6 @@ describe("getPatternScore", () => {
 
   it("should return recorded pattern score", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record successes to increase pattern score
@@ -226,20 +210,17 @@ describe("getPatternScore", () => {
         "context:value1",
         true,
         100,
-        timestamp + i,
         i,
         10,
       );
     }
 
     const patternScore = getPatternScore(updatedState, "decision", "context:value1");
-    // Pattern score increases with successes, may not exceed 0.5 if starting from 0.5
     expect(patternScore).toBeGreaterThanOrEqual(0.5);
   });
 
   it("should decrease pattern score on failures", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record failures to decrease pattern score
@@ -250,14 +231,12 @@ describe("getPatternScore", () => {
         "context:value1",
         false,
         0,
-        timestamp + i,
         i,
         10,
       );
     }
 
     const patternScore = getPatternScore(updatedState, "decision", "context:value1");
-    // Pattern score decreases with failures
     expect(patternScore).toBeLessThanOrEqual(0.5);
   });
 });
@@ -271,7 +250,6 @@ describe("getAdaptiveThreshold", () => {
 
   it("should lower threshold when success rate is high", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record high success rate
@@ -282,7 +260,6 @@ describe("getAdaptiveThreshold", () => {
         "context",
         true,
         100,
-        timestamp + i,
         i,
         10,
       );
@@ -294,7 +271,6 @@ describe("getAdaptiveThreshold", () => {
 
   it("should raise threshold when success rate is low", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record low success rate
@@ -305,7 +281,6 @@ describe("getAdaptiveThreshold", () => {
         "context",
         false,
         0,
-        timestamp + i,
         i,
         10,
       );
@@ -317,7 +292,6 @@ describe("getAdaptiveThreshold", () => {
 
   it("should respect adaptation speed", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     for (let i = 0; i < 10; i++) {
@@ -327,7 +301,6 @@ describe("getAdaptiveThreshold", () => {
         "context",
         true,
         100,
-        timestamp + i,
         i,
         10,
       );
@@ -341,7 +314,6 @@ describe("getAdaptiveThreshold", () => {
 
   it("should not go below 0", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record very high success rate
@@ -352,7 +324,6 @@ describe("getAdaptiveThreshold", () => {
         "context",
         true,
         100,
-        timestamp + i,
         i,
         10,
       );
@@ -366,7 +337,6 @@ describe("getAdaptiveThreshold", () => {
 describe("pruneOldOutcomes", () => {
   it("should remove outcomes older than cutoff day", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     for (let i = 0; i < 10; i++) {
@@ -376,7 +346,6 @@ describe("pruneOldOutcomes", () => {
         "context",
         true,
         100,
-        timestamp + i,
         i,
         10,
       );
@@ -391,7 +360,6 @@ describe("pruneOldOutcomes", () => {
 
   it("should recalculate success rates after pruning", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record 5 successes then 5 failures
@@ -402,7 +370,6 @@ describe("pruneOldOutcomes", () => {
         "context",
         true,
         100,
-        timestamp + i,
         i,
         10,
       );
@@ -414,7 +381,6 @@ describe("pruneOldOutcomes", () => {
         "context",
         false,
         0,
-        timestamp + i,
         i,
         10,
       );
@@ -447,7 +413,6 @@ describe("getLearningInsights", () => {
 
   it("should return insights for decision type", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record mixed outcomes
@@ -458,7 +423,6 @@ describe("getLearningInsights", () => {
         `context:${i % 3}`,
         i < 7,
         i * 100,
-        timestamp + i,
         i,
         10,
       );
@@ -474,7 +438,6 @@ describe("getLearningInsights", () => {
 
   it("should calculate average value correctly", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     const values = [100, 200, 300];
@@ -485,7 +448,6 @@ describe("getLearningInsights", () => {
         "context",
         true,
         values[i],
-        timestamp + i,
         i,
         10,
       );
@@ -497,7 +459,6 @@ describe("getLearningInsights", () => {
 
   it("should extract pattern keys correctly", () => {
     const state = createLearningState();
-    const timestamp = Date.now();
 
     let updatedState = state;
     // Record outcomes with different context dimensions
@@ -507,7 +468,6 @@ describe("getLearningInsights", () => {
       "type1:value",
       true,
       100,
-      timestamp,
       1,
       10,
     );
@@ -517,7 +477,6 @@ describe("getLearningInsights", () => {
       "type2:value",
       true,
       100,
-      timestamp + 1,
       2,
       10,
     );

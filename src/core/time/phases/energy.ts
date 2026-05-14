@@ -80,7 +80,7 @@ export const energyPhase = {
         const minDuration = ILLNESS_DURATION_MIN * (1 - vetBonus);
         const maxDuration = ILLNESS_DURATION_MAX * (1 - vetBonus);
         if (daysSinceOnset >= minDuration && daysSinceOnset <= maxDuration) {
-          if (Math.random() < 0.3 + vetBonus) {
+          if (context.dailyRng.next() < 0.3 + vetBonus) {
             newHealthStatus = "recovering";
           }
         } else if (daysSinceOnset > maxDuration) {
@@ -109,7 +109,7 @@ export const energyPhase = {
           poor: 0.01, // 1.0%
         };
 
-        if (Math.random() < illnessChance[effectiveImmunityTier]) {
+        if (context.dailyRng.next() < illnessChance[effectiveImmunityTier]) {
           newHealthStatus = "other_illness";
           // healthStatusDay will be set below
         }

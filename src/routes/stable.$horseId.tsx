@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { Lineage } from "@/components/Lineage";
 import { BeyerChart } from "@/components/BeyerChart";
+import { PaceProfileSummary } from "@/components/PaceProfileSummary";
 import { HorseAwardsPanel } from "@/components/awards";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
 import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
@@ -628,6 +629,14 @@ function HorseDetail() {
                     </div>
                   </div>
                   <BeyerChart history={horse.raceHistory} />
+                  {horse.raceHistory.some((h: any) => h.pacePositions && h.pacePositions.length > 0) && (
+                    <div className="bg-black/20 border border-white/5 p-4 mt-4">
+                      <h3 className="text-[10px] font-black uppercase tracking-widest text-cream/20 mb-4">
+                        Pace Profile
+                      </h3>
+                      <PaceProfileSummary horse={horse} />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </section>

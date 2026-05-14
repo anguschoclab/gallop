@@ -31,7 +31,8 @@ export async function exportHorsePortraitPng(
   const view = options.view ?? "full";
   const size = options.size ?? 1024;
   const filename =
-    options.filename ?? `${(horse.name ?? "horse").replace(/[^a-z0-9]+/gi, "_")}_${view}.png`;
+    options.filename ?? `${(horse.name || "horse").replace(/[^a-z0-9]+/gi, "_")}_${view}.png`;
+
 
   // Render the SVG off-DOM by mounting a temporary container.
   const { renderToStaticMarkup } = await import("react-dom/server");

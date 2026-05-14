@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import {
   buildRaceField,
@@ -39,6 +40,7 @@ import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { useLiveRaceSimulation } from "@/hooks/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { SilkDot } from "@/components/SilkDot";
+import { SectionalTimingTable } from "@/components/SectionalTimingTable";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/race/$raceId")({
@@ -306,31 +308,67 @@ function LiveRace() {
 
       <div className="relative z-10 p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
         <div>
-          {hasReplay ? (
-            <RaceVisualizer
-              snapshots={race.snapshots!}
-              distance={race.distance}
-              runners={runners.map((r) => ({
-                horseId: r.horseId,
-                name: r.name,
-                silk: r.silk,
-                owned: r.owned,
-              }))}
-              trackType={race.surface}
-            />
-          ) : (
-            <Track
-              runners={runners}
-              distance={race.distance}
-              tick={tick}
-              surface={race.graded?.surface}
-              weather={race.weather}
-              followTarget={followTarget}
-              paused={paused}
-              subjectHorseId={subjectHorseId}
-            />
-          )}
-          <BroadcastCommentary commentary={commentary} />
+          <Tabs defaultValue="visualizer" className="w-full">
+            <TabsList className="bg-broadcast-marquee border border-white/10 p-1 mb-4">
+              <TabsTrigger value="visualizer" className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black">
+                Replay
+              </TabsTrigger>
+              {race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0 && (
+                <TabsTrigger value="sectionals" className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black">
+                  Sectionals
+                </TabsTrigger>
+              )}
+            </TabsList>
+
+            <TabsContent value="visualizer" className="mt-0 focus-visible:outline-none">
+              {hasReplay ? (
+                <RaceVisualizer
+                  snapshots={race.snapshots!}
+                  distance={race.distance}
+                  runners={runners.map((r) => ({
+                    horseId: r.horseId,
+                    name: r.name,
+                    silk: r.silk,
+                    owned: r.owned,
+                  }))}
+                  trackType={race.surface}
+                />
+              ) : (
+                <Track
+                  runners={runners}
+                  distance={race.distance}
+                  tick={tick}
+                  surface={race.graded?.surface}
+                  weather={race.weather}
+                  followTarget={followTarget}
+                  paused={paused}
+                  subjectHorseId={subjectHorseId}
+                />
+              )}
+              <BroadcastCommentary commentary={commentary} />
+            </TabsContent>
+
+            {race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0 && (
+              <TabsContent value="sectionals" className="mt-0 focus-visible:outline-none">
+                <div className="border border-white/10 bg-black/20 p-6 rounded-lg">
+                  <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-3">
+                    <span className="h-1 w-12 bg-broadcast-accent" />
+                    Sectional Analysis
+                  </h3>
+                  <SectionalTimingTable
+                    splits={race.sectionalSplits}
+                    runners={runners.map((r) => ({
+                      horseId: r.horseId,
+                      name: r.name,
+                      silk: r.silk,
+                      owned: r.owned,
+                    }))}
+                    distance={race.distance}
+                  />
+                </div>
+              </TabsContent>
+            )}
+          </Tabs>
         </div>
         <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
           <div>

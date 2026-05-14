@@ -48,7 +48,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "jockey_contract": {
           const typedIntent = intent as JockeyContractIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -62,7 +62,7 @@ export const managementResolutionPhase: PipelinePhase = {
 
           if (typedIntent.bonus && typedIntent.bonus > 0) {
             impacts.push({
-              id: generateUUID(),
+              id: generateUUID(context.dailyRng),
               intentId: intent.id,
               day: newDay,
               phase: "managementResolution",
@@ -79,7 +79,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "jockey_assignment": {
           const typedIntent = intent as JockeyAssignmentIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -96,7 +96,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "facility_upgrade": {
           const typedIntent = intent as FacilityUpgradeIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -110,7 +110,7 @@ export const managementResolutionPhase: PipelinePhase = {
 
           if (typedIntent.cost && typedIntent.cost > 0) {
             impacts.push({
-              id: generateUUID(),
+              id: generateUUID(context.dailyRng),
               intentId: intent.id,
               day: newDay,
               phase: "managementResolution",
@@ -127,7 +127,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "update_stud_fee": {
           const typedIntent = intent as UpdateStudFeeIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -143,7 +143,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "gelding": {
           const typedIntent = intent as GeldingIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -157,12 +157,12 @@ export const managementResolutionPhase: PipelinePhase = {
 
         case "reroll_silk": {
           const typedIntent = intent as RerollSilkIntent;
-          const newSilk = `#${Math.floor(Math.random() * 16777215)
+          const newSilk = `#${Math.floor(context.dailyRng.next() * 16777215)
             .toString(16)
             .padStart(6, "0")}`;
 
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -173,7 +173,7 @@ export const managementResolutionPhase: PipelinePhase = {
           } as any);
 
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -185,7 +185,7 @@ export const managementResolutionPhase: PipelinePhase = {
           } as any);
 
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -201,7 +201,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "rename": {
           const typedIntent = intent as RenameIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -217,7 +217,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "tactics": {
           const typedIntent = intent as TacticsIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -234,7 +234,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "stud_retirement": {
           const typedIntent = intent as StudRetirementIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -264,7 +264,7 @@ export const managementResolutionPhase: PipelinePhase = {
 
             if (result.success && result.report) {
               impacts.push({
-                id: generateUUID(),
+                id: generateUUID(context.dailyRng),
                 intentId: intent.id,
                 day: newDay,
                 phase: "managementResolution",
@@ -275,7 +275,7 @@ export const managementResolutionPhase: PipelinePhase = {
               } as any);
 
               impacts.push({
-                id: generateUUID(),
+                id: generateUUID(context.dailyRng),
                 intentId: intent.id,
                 day: newDay,
                 phase: "managementResolution",
@@ -293,7 +293,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "campaign_slot": {
           const typedIntent = intent as CampaignSlotIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -310,7 +310,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "campaign_flag_dismissal": {
           const typedIntent = intent as CampaignFlagDismissalIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -326,7 +326,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "campaign_creation": {
           const typedIntent = intent as CampaignCreationIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",
@@ -341,7 +341,7 @@ export const managementResolutionPhase: PipelinePhase = {
         case "campaign_deletion": {
           const typedIntent = intent as CampaignDeletionIntent;
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(context.dailyRng),
             intentId: intent.id,
             day: newDay,
             phase: "managementResolution",

@@ -64,10 +64,19 @@ export function StepBackstory({ backstoryId, onChange, onNext, onBack }: StepBac
             <Tooltip>
               <TooltipTrigger asChild>
                 <Card
-                  className={`cursor-pointer transition-all hover:border-gold ${
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={backstoryId === backstory.id}
+                  className={`cursor-pointer transition-all hover:border-gold focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none ${
                     backstoryId === backstory.id ? "border-gold bg-gold/10" : "border-gold-muted"
                   }`}
                   onClick={() => onChange(backstory.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onChange(backstory.id);
+                    }
+                  }}
                 >
                   <CardHeader>
                     <CardTitle className="text-gold">{backstory.label}</CardTitle>

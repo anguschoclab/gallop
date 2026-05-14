@@ -114,38 +114,48 @@ export function calculateOptimalTactics(
     return "save"; // Default to save for bounce risk
   }
 
-  // Strategy: Try to race to strength
-  if (horse.runningStyle === "E") {
+  // Use strategy record to determine tactics based on running style
+  const tacticsCalculator = TACTICS_STRATEGIES[horse.runningStyle];
+  return tacticsCalculator(horse, race, jockey, personality, isSkilled);
+}
+
+/**
+ * Type for tactics calculation function.
+ */
+type TacticsCalculator = (
+  horse: Horse,
+  race: Race,
+  jockey: Jockey,
+  personality: Stable["personality"],
+  isSkilled: boolean,
+) => string;
+
+/**
+ * Strategy record for tactics calculation based on running style.
+ */
+const TACTICS_STRATEGIES: Record<RunningStyle, TacticsCalculator> = {
+  E: (horse, race, jockey, personality, isSkilled) => {
     // Front runners want to lead or be on the rail
     if (personality === "aggressive" || (isSkilled && horse.energy > 80)) return "lead";
     return "rail";
-  }
-
-  if (horse.runningStyle === "S") {
+  },
+  S: (horse, race, jockey, personality, isSkilled) => {
     // Closers want to save ground or have a late kick
     if (race.distance >= 2000 || isSkilled) return "late_kick";
     return "save";
-  }
-
-  if (horse.runningStyle === "EP") {
+  },
+  EP: (horse, race, jockey, personality, isSkilled) => {
     // Early pressers want the rail to stay close to the lead efficiently
     if (personality === "conservative") return "save";
     return "rail";
-  }
-
-  if (horse.runningStyle === "P") {
+  },
+  P: (horse, race, jockey, personality, isSkilled) => {
     // Pressers are versatile; outside often helps avoid traffic if skilled
     if (isSkilled && personality !== "conservative") return "outside";
     if (personality === "conservative") return "save";
     return "default";
-  }
-
-  // Fallback to personality-driven logic if style is unclear
-  if (personality === "aggressive") return "lead";
-  if (personality === "conservative") return "save";
-
-  return "default";
-}
+  },
+};
 
 /**
  * Calculate optimal running style for a horse in a race.

@@ -22,7 +22,9 @@ export type ReputationSource =
   | "stallion_quality"
   | "horse_quality"
   | "longevity"
-  | "consistency";
+  | "consistency"
+  | "rivalry_win"
+  | "rivalry_loss";
 
 /**
  * Individual reputation change event

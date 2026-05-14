@@ -532,7 +532,7 @@ describe("recordCampaignOutcome", () => {
       currentDay,
     );
 
-    expect(updatedState.learningState.outcomes).toHaveLength(1);
+    expect(updatedState.personalityState.learningState.outcomes).toHaveLength(1);
   });
 
   it("should mark top 3 as success", () => {

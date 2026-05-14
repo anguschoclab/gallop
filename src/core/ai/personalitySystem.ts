@@ -40,6 +40,17 @@ export interface PersonalityAIState {
 }
 
 /**
+ * Strategy alternatives mapping for strategy switching logic.
+ */
+const STRATEGY_ALTERNATIVES: Record<string, string> = {
+  default: "aggressive",
+  aggressive: "conservative",
+  conservative: "balanced",
+  balanced: "innovative",
+  innovative: "default",
+};
+
+/**
  * Get AI state for a personality.
  *
  * Initializes the personality AI state with learning rate, memory depth,
@@ -176,18 +187,11 @@ export function recordOutcome(
     const confidenceChange = (1 - successRate) * config.adaptationSpeed;
     const newConfidence = Math.max(0.1, newState.strategyConfidence - confidenceChange);
     const shouldSwitch = newConfidence < 0.3;
-    const strategyAlternatives: Record<string, string> = {
-      default: "aggressive",
-      aggressive: "conservative",
-      conservative: "balanced",
-      balanced: "innovative",
-      innovative: "default",
-    };
     newState = {
       ...newState,
       strategyConfidence: shouldSwitch ? 0.6 : newConfidence,
       currentStrategy: shouldSwitch
-        ? strategyAlternatives[newState.currentStrategy] || "default"
+        ? STRATEGY_ALTERNATIVES[newState.currentStrategy] || "default"
         : newState.currentStrategy,
       lastStrategyChangeDay: shouldSwitch ? day : newState.lastStrategyChangeDay,
     };

@@ -129,6 +129,8 @@ export type Horse = {
     barrier?: number;
     lane?: number;
     winAndYouInQualified?: { year: number; raceId: string; raceKey: string };
+    pacePositions?: number[]; // Position at each quarter (1-indexed)
+    courseVisitCount?: number; // Visit count at time of race
   }[];
   fame: number;
   owned: boolean;
@@ -190,4 +192,5 @@ export type Horse = {
 
   appearance?: AppearanceDNA;
   activeInjury?: ActiveInjury;
+  courseVisits: Record<string, number>; // trackId -> visit count
 };
