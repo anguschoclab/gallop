@@ -27,6 +27,7 @@ import type { BreedingProgramSlice } from "./slices/breedingProgramSlice";
 import type { HorseAdminSlice } from "./slices/horseAdminSlice";
 import type { AwardSlice } from "./slices/awardSlice";
 import type { UtilitySlice } from "./slices/utilitySlice";
+import type { WeatherSlice } from "./slices/weatherSlice";
 
 /**
  * Standard action result type for store actions
