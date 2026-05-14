@@ -23,8 +23,10 @@ const METADATA_FILENAME = "savesMetadata.json";
 const METADATA_STORAGE_KEY = "gallop_saves_metadata";
 
 /**
- * Get all available save slots and their metadata.
- * @returns Array of save slot metadata objects
+ * Retrieves all available save slots and their associated metadata.
+ * Defaults to localStorage if the Origin Private File System (OPFS) is unavailable.
+ * 
+ * @returns {Promise<SaveSlotMetadata[]>} A promise resolving to an array of save slot metadata.
  */
 export async function getSaveSlots(): Promise<SaveSlotMetadata[]> {
   const opfsAvailable = await checkOPFSAvailable();
@@ -49,12 +51,14 @@ export async function getSaveSlots(): Promise<SaveSlotMetadata[]> {
 }
 
 /**
- * Save the provided state to a specific slot.
- * @param slotId - The slot ID to save to
- * @param name - The name for the save slot
- * @param state - The game state to save
- * @param isAutoSave - Whether this is an auto-save (default false)
- * @returns Promise that resolves when save is complete
+ * Persists the current game state to a specific save slot.
+ * Updates both the state file and the global save metadata list.
+ * 
+ * @param {string} slotId - The unique identifier for the save slot.
+ * @param {string} name - The human-readable name for the save.
+ * @param {GameState} state - The game state object to persist.
+ * @param {boolean} [isAutoSave=false] - Whether this save is an automated checkpoint.
+ * @returns {Promise<void>} A promise that resolves when the save operation is complete.
  */
 export async function saveToSlot(
   slotId: string,
@@ -112,9 +116,11 @@ export async function saveToSlot(
 }
 
 /**
- * Load state from a specific slot and overwrite the working state.
- * @param slotId - The slot ID to load from
- * @returns Promise that resolves when load is complete
+ * Loads a game state from a specific slot and overwrites the active working state.
+ * Triggers a full application reload to rehydrate the state from storage.
+ * 
+ * @param {string} slotId - The unique identifier of the slot to load from.
+ * @returns {Promise<void>} A promise that resolves when the state has been successfully swapped.
  */
 export async function loadFromSlot(slotId: string): Promise<void> {
   const opfsAvailable = await checkOPFSAvailable();
@@ -152,9 +158,10 @@ export async function loadFromSlot(slotId: string): Promise<void> {
 }
 
 /**
- * Delete a save slot and its metadata.
- * @param slotId - The slot ID to delete
- * @returns Promise that resolves when deletion is complete
+ * Deletes a save slot, its associated state file, and its entry in the metadata list.
+ * 
+ * @param {string} slotId - The unique identifier of the slot to delete.
+ * @returns {Promise<void>} A promise that resolves when deletion is complete.
  */
 export async function deleteSaveSlot(slotId: string): Promise<void> {
   const opfsAvailable = await checkOPFSAvailable();

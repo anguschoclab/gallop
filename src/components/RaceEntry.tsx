@@ -39,6 +39,13 @@ interface RaceEntryProps {
   onClose: () => void;
 }
 
+/**
+ * A multi-step dialog component for entering a horse into a race.
+ * Handles horse selection, jockey assignment, tactical instructions, and financial review.
+ * 
+ * @param {RaceEntryProps} props - The component properties.
+ * @returns {JSX.Element} The rendered race entry dialog.
+ */
 export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [selectedHorseId, setSelectedHorseId] = useState<string | null>(null);

@@ -4,11 +4,11 @@ import type { Race, Horse } from "@/game/types";
 import type { Rng } from "@/game/rng";
 
 /**
- * Create a new NewsItem with a unique identifier.
- *
- * @param params - News item properties (excluding ID)
- * @param rng - Optional random number generator for deterministic ID
- * @returns Fully hydrated NewsItem object
+ * Creates a new news item with a unique identifier.
+ * 
+ * @param {Omit<NewsItem, "id">} params - The properties of the news item.
+ * @param {Rng} [rng] - Optional seeded random number generator for deterministic ID creation.
+ * @returns {NewsItem} A fully hydrated NewsItem object.
  */
 export function createNewsItem(params: Omit<NewsItem, "id">, rng?: Rng): NewsItem {
   return {
@@ -18,16 +18,15 @@ export function createNewsItem(params: Omit<NewsItem, "id">, rng?: Rng): NewsIte
 }
 
 /**
- * Generate a news item summarizing a significant race result.
- *
- * Only generates news for high-stakes or graded races.
- *
- * @param race - The race that was run
- * @param result - Summary of the race result positions
- * @param horses - All horses in the race for name lookup
- * @param day - Current game day
- * @param rng - Seeded RNG for headline/body selection and ID
- * @returns NewsItem if significant, otherwise null
+ * Generates a news item summarizing a significant race result.
+ * Significant news is typically reserved for graded or high-stakes races.
+ * 
+ * @param {Race} race - The race that was completed.
+ * @param {Array<{horseId: string, position: number}>} result - Summary of the race finishing positions.
+ * @param {Horse[] | Map<string, Horse>} horses - Collection of horses for looking up winner details.
+ * @param {number} day - The current simulation day.
+ * @param {Rng} rng - Seeded random number generator for headline/body randomization.
+ * @returns {NewsItem | null} A news item if the race is deemed significant, otherwise null.
  */
 export function generateRaceNews(
   race: Race,
@@ -85,13 +84,13 @@ export function generateRaceNews(
 }
 
 /**
- * Generate a news item for a high-value market transaction.
- *
- * @param horse - The horse that was sold
- * @param price - The final sale price
- * @param day - Current game day
- * @param rng - Seeded RNG for deterministic ID
- * @returns NewsItem summarizing the sale
+ * Generates a news item for a high-value horse transaction in the market.
+ * 
+ * @param {Horse} horse - The horse that was sold.
+ * @param {number} price - The final sale price.
+ * @param {number} day - The current simulation day.
+ * @param {Rng} rng - Seeded random number generator.
+ * @returns {NewsItem} A news item summarizing the market transaction.
  */
 export function generateMarketNews(horse: Horse, price: number, day: number, rng: Rng): NewsItem {
   return createNewsItem({
@@ -105,11 +104,11 @@ export function generateMarketNews(horse: Horse, price: number, day: number, rng
 }
 
 /**
- * Generate a random flavor news item for general atmosphere.
- *
- * @param day - Current game day
- * @param rng - Seeded RNG for story selection and ID
- * @returns Randomly selected flavor NewsItem
+ * Generates a random flavor news item to enhance the game world's atmosphere.
+ * 
+ * @param {number} day - The current simulation day.
+ * @param {Rng} rng - Seeded random number generator for story selection.
+ * @returns {NewsItem} A randomly selected flavor news item.
  */
 export function generateFlavorNews(day: number, rng: Rng): NewsItem {
   const flavorStories = [

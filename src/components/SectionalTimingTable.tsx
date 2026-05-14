@@ -8,6 +8,13 @@ interface SectionalTimingTableProps {
   distance: number;
 }
 
+/**
+ * Displays a tabular breakdown of sectional splits for a completed race.
+ * Visualizes the running order and leader times at each quarter-mile marker.
+ * 
+ * @param {SectionalTimingTableProps} props - The component properties.
+ * @returns {JSX.Element} The rendered timing table.
+ */
 export function SectionalTimingTable({ splits, runners, distance }: SectionalTimingTableProps) {
   const quarterMile = 402.336;
 

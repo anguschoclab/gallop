@@ -6,16 +6,16 @@ import { DAYS_PER_YEAR } from "@/game/constants/gameConstants";
 import type { Rng } from "@/game/rng";
 
 /**
- * Record a race result in the seasonal history.
- * Only records Grade 1 races for historical tracking.
- *
- * @param race - The race that was run
- * @param result - Position and time data for all finishers
- * @param runners - Runner objects for the race
- * @param horses - Global horse collection for metadata lookup
- * @param day - Current game day
- * @param rng - Optional RNG for deterministic ID
- * @returns SeasonRecord object if recorded, otherwise null
+ * Records a race result in the seasonal history.
+ * Only Grade 1 races are preserved in historical tracking.
+ * 
+ * @param {Race} race - The race being recorded.
+ * @param {Array<{horseId: string, position: number, time: number}>} result - Final positions and times for all finishers.
+ * @param {any[]} runners - Runner objects containing detailed race data.
+ * @param {Horse[] | Map<string, Horse>} horses - The global horse collection for metadata lookup.
+ * @param {number} day - The current simulation day.
+ * @param {Rng} [rng] - Optional random number generator for deterministic ID generation.
+ * @returns {SeasonRecord | null} A season record if the race is Grade 1, otherwise null.
  */
 export function recordRaceHistory(
   race: Race,
@@ -55,11 +55,12 @@ export function recordRaceHistory(
 }
 
 /**
- * Check if a horse qualifies for the Hall of Fame based on its career stats.
- *
- * @param horse - The horse to evaluate
- * @param day - Current game day
- * @returns HallOfFameEntry if inducted, otherwise null
+ * Evaluates whether a horse qualifies for induction into the Hall of Fame based on its career achievements.
+ * Induction typically requires multiple Grade 1 wins or significant lifetime earnings.
+ * 
+ * @param {Horse} horse - The horse to evaluate.
+ * @param {number} day - The current simulation day.
+ * @returns {HallOfFameEntry | null} A hall of fame entry if inducted, otherwise null.
  */
 export function checkHallOfFameInduction(horse: Horse, day: number): HallOfFameEntry | null {
   // Induction criteria:
@@ -97,15 +98,15 @@ export function checkHallOfFameInduction(horse: Horse, day: number): HallOfFameE
 }
 
 /**
- * Check if a race result sets a new track record for its distance and surface.
- *
- * @param race - The race that was run
- * @param winnerId - ID of the winning horse
- * @param winnerName - Name of the winning horse
- * @param time - Final winning time
- * @param day - Current game day
- * @param existingRecords - Current global track record collection
- * @returns New TrackRecord if a record was set, otherwise null
+ * Determines if a race result sets a new track record for the specific distance and surface combination.
+ * 
+ * @param {Race} race - The race being evaluated.
+ * @param {string} winnerId - Unique ID of the winning horse.
+ * @param {string} winnerName - Name of the winning horse.
+ * @param {number} time - Final winning time in seconds.
+ * @param {number} day - The current simulation day.
+ * @param {Record<string, TrackRecord>} [existingRecords={}] - The current map of track records.
+ * @returns {TrackRecord | null} A new track record object if the time is a record, otherwise null.
  */
 export function checkTrackRecord(
   race: Race,

@@ -2,20 +2,31 @@ import type { CoatColor, HorseMarkings, HorseGender, AppearanceDNA } from "@/gam
 import { ProceduralHorsePortrait } from "@/components/ProceduralHorsePortrait";
 import { cn } from "@/lib/utils";
 
+/**
+ * Properties for the HorsePortrait component.
+ */
 interface HorsePortraitProps {
-  /** Horse id — drives deterministic procedural variation when no DNA given. */
+  /** Unique identifier for the horse; used for deterministic variation if DNA is not provided. */
   id?: string;
+  /** The base coat color of the horse. */
   coatColor?: CoatColor;
+  /** Unique markings applied over the base coat. */
   markings?: HorseMarkings;
+  /** Biological gender of the horse. */
   gender?: HorseGender;
+  /** The complete appearance DNA object for precise rendering. */
   appearance?: AppearanceDNA;
-  /** "head" (default) or "full"-body view. */
+  /** The camera view: 'head' for profile shot or 'full' for body view. */
   view?: "head" | "full";
+  /** Preset size scales for the portrait. */
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
+  /** Additional CSS classes for styling. */
   className?: string;
+  /** Accessible alternative text. */
   alt?: string;
-  /** Legacy / no-op props kept for back-compat. */
+  /** Legacy: Fallback to showing stable silks (preserved for compatibility). */
   fallbackToSilk?: boolean;
+  /** Legacy: Specific silk color (preserved for compatibility). */
   silkColor?: string;
 }
 
@@ -27,6 +38,12 @@ const SIZE_MAP = {
   "2xl": "w-80 h-80",
 };
 
+/**
+ * Renders a procedural equine portrait based on genetic and appearance data.
+ * 
+ * @param {HorsePortraitProps} props - The component properties.
+ * @returns {JSX.Element} The rendered portrait.
+ */
 export function HorsePortrait({
   id,
   coatColor,
@@ -73,6 +90,12 @@ interface HorsePortraitBadgeProps {
 
 const BADGE_SIZE = { sm: "w-12 h-12", md: "w-20 h-20", lg: "w-40 h-40" };
 
+/**
+ * A circular badge variant of the horse portrait, commonly used in lists and headers.
+ * 
+ * @param {HorsePortraitBadgeProps} props - The component properties.
+ * @returns {JSX.Element} The rendered portrait badge.
+ */
 export function HorsePortraitBadge({
   id,
   coatColor,

@@ -39,10 +39,10 @@ export interface SimulationResult {
 
 // Seed any race simulation off the race id so reruns are reproducible.
 /**
- * Generate a deterministic RNG for a specific race based on its ID.
- *
- * @param race - The race object (requires id)
- * @returns Rng instance seeded with the race ID
+ * Generates a deterministic random number generator for a specific race, seeded by the race's unique ID.
+ * 
+ * @param {Pick<Race, "id">} race - The race object (requires a valid `id`).
+ * @returns {Rng} A seeded RNG instance.
  */
 export function rngForRace(race: Pick<Race, "id">): Rng {
   return createRng(hashStr(race.id));
@@ -56,16 +56,12 @@ export interface RaceFieldResult {
 }
 
 /**
- * Build the full field of runners for a race.
- * Owner entries first, then AI fillers up to fieldSize. Conditions
- * (weather + track surface) bake into runner stats here so the per-step
- * loop doesn't need to know about them.
- *
- * Returns both the Runner array and any generated filler Horse objects so
- * callers can persist them into game state (avoids ghost IDs in results).
- *
- * @param dependencies - Objects required for simulation (race, horses, jockeys, etc.)
- * @returns Object containing the runner field and generated filler horses
+ * Builds the full field of runners for a race simulation.
+ * Includes user entries and generates AI filler horses to meet the required field size.
+ * Conditions like track surface and weather are factored into the runner statistics at this stage.
+ * 
+ * @param {RaceSimulationDependencies} dependencies - The objects required for building the field (race, horses, jockeys, etc.).
+ * @returns {RaceFieldResult} An object containing the final list of runners and any generated filler horses.
  */
 export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFieldResult {
   const { race, horses, npcStables, npcAIManager, currentDay, hiredStaff = [] } = dependencies;
@@ -178,15 +174,16 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
 }
 
 /**
- * Simulate a single time step for all runners.
- *
- * @param runners - All runners currently in the race
- * @param dt - Time delta for the step in seconds
- * @param simTime - Total elapsed simulation time
- * @param distance - Total race distance
- * @param rng - Random number generator for stochastic movement
- * @param course - Optional course specification for turn/track logic
- * @returns Object indicating if the race is still running and the finish order
+ * Simulates a single time step for all runners in the field.
+ * Updates runner positions, detects finishers, and maintains the current pace context.
+ * 
+ * @param {Runner[]} runners - All runners currently participating in the race.
+ * @param {number} dt - The time delta for the step in seconds.
+ * @param {number} simTime - Total elapsed simulation time in seconds.
+ * @param {number} distance - The total race distance in meters.
+ * @param {Rng} rng - Seeded random number generator.
+ * @param {CourseSpecification} [course] - Optional track geometry and turn specifications.
+ * @returns {Object} Status indicating if the race is still running and the latest finish order.
  */
 export function simulateStep(
   runners: Runner[],
@@ -249,10 +246,10 @@ function getTierForRaceClass(raceClass: Race["raceClass"]): string {
 }
 
 /**
- * Calculate the class-based performance bonus for a race.
- *
- * @param race - The race to calculate bonus for
- * @returns Numeric bonus value
+ * Calculates any class-based performance bonuses applicable to the race.
+ * 
+ * @param {Race} race - The race object.
+ * @returns {number} The calculated class bonus value.
  */
 export function getRaceClassBonus(race: Race): number {
   return calculateClassBonus(race.graded?.grade, race.raceClass);
