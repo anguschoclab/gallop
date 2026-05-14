@@ -127,9 +127,9 @@ export interface GenerateRaceImpactsProps {
  * @param newDay
  * @returns The energy impact object.
  */
-function generateEnergyImpact(horseId: string, newDay: number): EnergyImpact {
+function generateEnergyImpact(horseId: string, newDay: number, rng?: Rng): EnergyImpact {
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -154,6 +154,7 @@ function generateFormImpact(
   position: number,
   newDay: number,
   hiredStaff: any[],
+  rng?: Rng,
 ): FormImpact {
   const stableId = horse.stableId || "";
   const groom = hiredStaff.find((s) => s.role === "groom" && s.stableId === stableId);
@@ -164,7 +165,7 @@ function generateFormImpact(
   const formDelta = baseFormDelta < 0 && groom ? 0 : baseFormDelta;
 
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -183,11 +184,11 @@ function generateFormImpact(
  * @param newDay
  * @returns The fame impact object, or null if no fame change.
  */
-function generateFameImpact(horse: Horse, position: number, newDay: number): FameImpact | null {
+function generateFameImpact(horse: Horse, position: number, newDay: number, rng?: Rng): FameImpact | null {
   const fameDelta = position === 1 ? 2 : position <= 3 ? 0.5 : 0;
   if (fameDelta > 0) {
     return {
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -220,6 +221,7 @@ function generateBeyerAndRecoveryImpacts(
   classBonus: number,
   calibratedPars: any,
   newDay: number,
+  rng?: Rng,
 ): { beyerImpact: BeyerImpact; recoveryImpact: RecoveryImpact } {
   const beyer = beyerFigure({
     distance: race.distance,
@@ -240,7 +242,7 @@ function generateBeyerAndRecoveryImpacts(
 
   return {
     beyerImpact: {
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -252,7 +254,7 @@ function generateBeyerAndRecoveryImpacts(
       reason: "Race performance",
     } as BeyerImpact,
     recoveryImpact: {
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -287,6 +289,7 @@ function generateRaceHistoryImpact(
   adjustedBeyer: number,
   newDay: number,
   runner?: { horseId: string; barrier?: number; lane?: number },
+  rng?: Rng,
 ): RaceHistoryImpact {
   // Eligibility: Check for "Win and You're In" qualifications for year-end championships
   let winAndYouInQualified = undefined;
@@ -300,7 +303,7 @@ function generateRaceHistoryImpact(
   }
 
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -340,6 +343,7 @@ function generateTripleCrownProgressImpact(
   position: number,
   race: Race,
   newDay: number,
+  rng?: Rng,
 ): TripleCrownProgressImpact | null {
   if (position === 1 && race.graded?.triplecrownKey) {
     const currentYear = getCurrentYear(newDay);
@@ -373,7 +377,7 @@ function generateTripleCrownProgressImpact(
     const won = legs.every((leg) => leg.position === 1);
 
     return {
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -405,6 +409,7 @@ function generatePrizeMoneyImpacts(
   position: number,
   race: Race,
   newDay: number,
+  rng?: Rng,
 ): {
   cashImpact: CashImpact;
   transactionImpact?: TransactionImpact;
@@ -417,7 +422,7 @@ function generatePrizeMoneyImpacts(
   if (prize <= 0) return null;
 
   const cashImpact: CashImpact = {
-    id: generateUUID(),
+    id: generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -434,7 +439,7 @@ function generatePrizeMoneyImpacts(
   // Player-specific impacts
   if (!horse.stableId) {
     transactionImpact = {
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -450,7 +455,7 @@ function generatePrizeMoneyImpacts(
     if (position === 1) {
       const repGain = calculateRaceWinReputation(race.graded?.grade, race.purse);
       reputationImpact = {
-        id: generateUUID(),
+        id: generateUUID(rng),
         intentId: "",
         day: newDay,
         phase: "raceResolution",
@@ -482,11 +487,12 @@ function generateJockeyFeeImpacts(
   newDay: number,
   horseId: string,
   raceId: string,
+  rng?: Rng,
 ): { cashImpact: CashImpact; transactionImpact?: TransactionImpact } {
   const ridingFee = jockey.ridingFee || BASE_JOCKEY_RIDING_FEE;
 
   const cashImpact: CashImpact = {
-    id: generateUUID(),
+    id: generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -502,7 +508,7 @@ function generateJockeyFeeImpacts(
   // Player-specific transaction
   if (!horse.stableId) {
     transactionImpact = {
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -533,12 +539,13 @@ function generatePercentageJockeyFeeImpacts(
   newDay: number,
   owned: boolean,
   stableId?: string,
+  rng?: Rng,
 ): CashImpact | null {
   const jockeyFee = Math.round(winAmount * JOCKEY_FEE_PERCENTAGE); // Jockeys take 10% of purse earnings
   if (jockeyFee <= 0) return null;
 
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     intentId: "",
     day: newDay,
     phase: "raceResolution",
@@ -608,7 +615,7 @@ export function generateRaceImpacts({
 
     // 1. Record the overall race result
     impacts.push({
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -636,7 +643,7 @@ export function generateRaceImpacts({
       const runner = runnersMap.get(r.horseId);
 
       // Energy expenditure
-      impacts.push(generateEnergyImpact(horse.id, newDay));
+      impacts.push(generateEnergyImpact(horse.id, newDay, rng));
 
       // Health: Roll for potential injuries
       if (rng) {
@@ -647,10 +654,10 @@ export function generateRaceImpacts({
       }
 
       // Form change
-      impacts.push(generateFormImpact(horse, r.position, newDay, hiredStaff));
+      impacts.push(generateFormImpact(horse, r.position, newDay, hiredStaff, rng));
 
       // Fame change
-      const fameImpact = generateFameImpact(horse, r.position, newDay);
+      const fameImpact = generateFameImpact(horse, r.position, newDay, rng);
       if (fameImpact) {
         impacts.push(fameImpact);
       }
@@ -664,6 +671,7 @@ export function generateRaceImpacts({
         classBonus,
         calibratedPars,
         newDay,
+        rng,
       );
       impacts.push(beyerImpact, recoveryImpact);
 
@@ -680,6 +688,7 @@ export function generateRaceImpacts({
         beyerImpact.beyer,
         newDay,
         runner,
+        rng,
       );
       historyImpact.raceHistoryEntry.fieldSize = result.length;
       historyImpact.raceHistoryEntry.pacePositions = pacePositions;
@@ -687,13 +696,13 @@ export function generateRaceImpacts({
       impacts.push(historyImpact);
 
       // Triple Crown progress
-      const tcImpact = generateTripleCrownProgressImpact(horse, r.position, race, newDay);
+      const tcImpact = generateTripleCrownProgressImpact(horse, r.position, race, newDay, rng);
       if (tcImpact) {
         impacts.push(tcImpact);
       }
 
       // Prize money distribution
-      const prizeImpacts = generatePrizeMoneyImpacts(horse, r.position, race, newDay);
+      const prizeImpacts = generatePrizeMoneyImpacts(horse, r.position, race, newDay, rng);
       if (prizeImpacts) {
         impacts.push(prizeImpacts.cashImpact);
         if (prizeImpacts.transactionImpact) impacts.push(prizeImpacts.transactionImpact);
@@ -705,7 +714,7 @@ export function generateRaceImpacts({
       if (entry?.jockeyId) {
         const jockey = jockeyMap.get(entry.jockeyId);
         if (jockey) {
-          const jockeyFeeImpacts = generateJockeyFeeImpacts(horse, jockey, newDay, horse.id, race.id);
+          const jockeyFeeImpacts = generateJockeyFeeImpacts(horse, jockey, newDay, horse.id, race.id, rng);
           impacts.push(jockeyFeeImpacts.cashImpact);
           if (jockeyFeeImpacts.transactionImpact) impacts.push(jockeyFeeImpacts.transactionImpact);
 
@@ -714,7 +723,7 @@ export function generateRaceImpacts({
             AFFINITY_CONSTANTS.XP_PER_RACE +
             (r.position === 1 ? AFFINITY_CONSTANTS.XP_PER_WIN_BONUS : 0);
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(rng),
             intentId: "",
             day: newDay,
             phase: "raceResolution",
@@ -738,7 +747,7 @@ export function generateRaceImpacts({
 
         if (dam) {
           impacts.push({
-            id: generateUUID(),
+            id: generateUUID(rng),
             intentId: "",
             day: newDay,
             phase: "raceResolution",
@@ -785,7 +794,7 @@ export function generateRaceImpacts({
           : sire.stud.standingFee;
 
         impacts.push({
-          id: generateUUID(),
+          id: generateUUID(rng),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -814,7 +823,7 @@ export function generateRaceImpacts({
         const winAmount = prizeSplit[r.position - 1] * race.purse;
 
         impacts.push({
-          id: generateUUID(),
+          id: generateUUID(rng),
           intentId: "",
           day: newDay,
           phase: "raceResolution",
@@ -833,6 +842,7 @@ export function generateRaceImpacts({
           newDay,
           raceEntry.owned || false,
           raceEntry.stableId,
+          rng,
         );
         if (percentageFeeImpact) {
           impacts.push(percentageFeeImpact);
@@ -845,7 +855,7 @@ export function generateRaceImpacts({
   if (result.length > 0) {
     const winner = result[0];
     impacts.push({
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -878,7 +888,7 @@ export function generateRaceImpacts({
       return sum;
     }, 0);
     impacts.push({
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",
@@ -890,10 +900,10 @@ export function generateRaceImpacts({
   }
 
   // 10. Narrative: Dynamic news generation for major races
-  const newsItem = generateRaceNews(race, result, Array.from(horseMap.values()), newDay);
+  const newsItem = generateRaceNews(race, result, Array.from(horseMap.values()), newDay, rng!);
   if (newsItem) {
     impacts.push({
-      id: generateUUID(),
+      id: generateUUID(rng),
       intentId: "",
       day: newDay,
       phase: "raceResolution",

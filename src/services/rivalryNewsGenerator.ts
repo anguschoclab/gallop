@@ -1,24 +1,28 @@
 /**
- * rivalryNewsGenerator.ts - Rivalry news generation
+ * rivalryNewsGenerator.ts - Deterministic news generation for stable rivalries.
  *
- * This file provides functions to generate news items for rivalry milestones
- * including rivalry emergence, grudge matches, regional dominance changes,
- * and rivalry escalation events.
+ * This service provides functions for generating news items related to
+ * rivalry milestones, including emergence, escalation, grudge matches,
+ * and regional dominance changes. All generation is seeded to ensure
+ * simulation reproducibility.
  *
- * Dependencies: @/core/narrative/newsTypes (NewsItem), @/core/narrative/newsTypes (createNewsItem), @/game/types (Horse, Race, Stable)
- * Related files: npc/npcCycle.ts (uses generator), SystemHandler.ts (applies news impacts)
+ * Dependencies: @/core/uuid, @/core/narrative/newsTypes, @/game/types, @/game/rng
  */
-
 import { generateUUID } from "@/core/uuid";
 import type { NewsItem, NewsCategory, NewsImportance } from "@/core/narrative/newsTypes";
 import type { Horse, Race, Stable } from "@/game/types";
+import type { Rng } from "@/game/rng";
 
 /**
  * Create a news item with a unique identifier.
+ *
+ * @param params - The news item parameters excluding the ID
+ * @param rng - Optional seeded RNG for deterministic ID generation
+ * @returns A complete NewsItem with a unique ID
  */
-function createNewsItem(params: Omit<NewsItem, "id">): NewsItem {
+function createNewsItem(params: Omit<NewsItem, "id">, rng?: Rng): NewsItem {
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     ...params,
   };
 }
@@ -26,15 +30,17 @@ function createNewsItem(params: Omit<NewsItem, "id">): NewsItem {
 /**
  * Generate news when a rivalry emerges (friction crosses 60 threshold).
  *
- * @param stable - The rival stable
- * @param friction - Current friction value
- * @param currentDay - Current game day
- * @returns NewsItem if rivalry emerges, otherwise null
+ * @param stable - The rival stable that is emerging
+ * @param friction - The current friction value being evaluated
+ * @param currentDay - The current game day for the news timestamp
+ * @param rng - Seeded RNG for deterministic flavor text selection and ID generation
+ * @returns A NewsItem if the rivalry meets the threshold, otherwise null
  */
 export function generateRivalryEmergenceNews(
   stable: Stable,
   friction: number,
   currentDay: number,
+  rng: Rng,
 ): NewsItem | null {
   if (friction < 60) return null;
 
@@ -50,8 +56,8 @@ export function generateRivalryEmergenceNews(
     `Tensions are running high as ${stable.name} steps up to challenge for dominance. This rivalry is one to watch.`,
   ];
 
-  const headline = headlines[Math.floor(Math.random() * headlines.length)];
-  const body = bodies[Math.floor(Math.random() * bodies.length)];
+  const headline = rng.pick(headlines);
+  const body = rng.pick(bodies);
 
   return createNewsItem({
     day: currentDay,
@@ -60,18 +66,20 @@ export function generateRivalryEmergenceNews(
     headline,
     body,
     entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
-  });
+  }, rng);
 }
 
 /**
- * Generate news for a grudge match result.
+ * Generate news for a grudge match result between the player and a rival.
  *
- * @param race - The race that was run
- * @param playerHorse - The player's horse in the race
- * @param rivalHorse - The rival's horse in the race
- * @param playerWon - Whether the player won
- * @param currentDay - Current game day
- * @returns NewsItem summarizing the grudge match
+ * @param race - The race where the grudge match took place
+ * @param playerHorse - The player's horse participating in the match
+ * @param rivalHorse - The rival stable's horse participating in the match
+ * @param playerWon - True if the player's horse finished ahead of the rival's horse
+ * @param currentDay - The current game day for the news timestamp
+ * @param rng - Seeded RNG for deterministic flavor text selection and ID generation
+ * @param rivalStable - The rival stable involved in the confrontation
+ * @returns A NewsItem summarizing the grudge match outcome, or null if generation fails
  */
 export function generateGrudgeMatchNews(
   race: Race,
@@ -79,6 +87,8 @@ export function generateGrudgeMatchNews(
   rivalHorse: Horse,
   playerWon: boolean,
   currentDay: number,
+  rng: Rng,
+  rivalStable: Stable,
 ): NewsItem | null {
   const winner = playerWon ? playerHorse : rivalHorse;
   const loser = playerWon ? rivalHorse : playerHorse;
@@ -107,8 +117,8 @@ export function generateGrudgeMatchNews(
         `A bitter defeat for ${playerHorse.name} as ${rivalHorse.name} takes the grudge match. This rivalry is far from over.`,
       ];
 
-  const headline = headlines[Math.floor(Math.random() * headlines.length)];
-  const body = bodies[Math.floor(Math.random() * bodies.length)];
+  const headline = rng.pick(headlines);
+  const body = rng.pick(bodies);
 
   return createNewsItem({
     day: currentDay,
@@ -122,21 +132,23 @@ export function generateGrudgeMatchNews(
       { type: "race", id: race.id, name: race.name },
       { type: "stable", id: rivalStable.id, name: rivalStable.name },
     ],
-  });
+  }, rng);
 }
 
 /**
- * Generate news when the player loses regional dominance to a rival.
+ * Generate news when the player loses regional dominance to a rival stable.
  *
- * @param region - The region being lost
- * @param rivalStable - The rival stable taking over
- * @param currentDay - Current game day
- * @returns NewsItem about the regional dominance change
+ * @param region - The name of the region where power has shifted
+ * @param rivalStable - The rival stable that has seized the regional crown
+ * @param currentDay - The current game day for the news timestamp
+ * @param rng - Seeded RNG for deterministic flavor text selection and ID generation
+ * @returns A NewsItem detailing the shift in regional power
  */
 export function generateRegionLostNews(
   region: string,
   rivalStable: Stable,
   currentDay: number,
+  rng: Rng,
 ): NewsItem | null {
   const headlines = [
     `Regional King Dethroned in ${region}`,
@@ -150,8 +162,8 @@ export function generateRegionLostNews(
     `The racing landscape in ${region} has changed as ${rivalStable.name} takes control as the new regional king. Competition in the region is about to intensify.`,
   ];
 
-  const headline = headlines[Math.floor(Math.random() * headlines.length)];
-  const body = bodies[Math.floor(Math.random() * bodies.length)];
+  const headline = rng.pick(headlines);
+  const body = rng.pick(bodies);
 
   return createNewsItem({
     day: currentDay,
@@ -162,23 +174,25 @@ export function generateRegionLostNews(
     entityLinks: [
       { type: "stable", id: rivalStable.id, name: rivalStable.name },
     ],
-  });
+  }, rng);
 }
 
 /**
- * Generate news when rivalry escalates to heated status (friction crosses 80).
+ * Generate news when rivalry escalates to heated status (friction crosses 80 threshold).
  *
- * @param stable - The rival stable
- * @param oldFriction - Previous friction value
- * @param newFriction - New friction value
- * @param currentDay - Current game day
- * @returns NewsItem about rivalry escalation
+ * @param stable - The rival stable involved in the escalation
+ * @param oldFriction - The friction value prior to the latest increase
+ * @param newFriction - The newly updated friction value
+ * @param currentDay - The current game day for the news timestamp
+ * @param rng - Seeded RNG for deterministic flavor text selection and ID generation
+ * @returns A NewsItem if the escalation meets the threshold, otherwise null
  */
 export function generateRivalryEscalationNews(
   stable: Stable,
   oldFriction: number,
   newFriction: number,
   currentDay: number,
+  rng: Rng,
 ): NewsItem | null {
   if (newFriction < 80 || oldFriction >= 80) return null;
 
@@ -194,8 +208,8 @@ export function generateRivalryEscalationNews(
     `The situation with ${stable.name} has deteriorated. This is no longer friendly competition - this is a heated rivalry with real consequences.`,
   ];
 
-  const headline = headlines[Math.floor(Math.random() * headlines.length)];
-  const body = bodies[Math.floor(Math.random() * bodies.length)];
+  const headline = rng.pick(headlines);
+  const body = rng.pick(bodies);
 
   return createNewsItem({
     day: currentDay,
@@ -204,5 +218,6 @@ export function generateRivalryEscalationNews(
     headline,
     body,
     entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
-  });
+  }, rng);
 }
+

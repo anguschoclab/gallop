@@ -1,17 +1,18 @@
 import { generateUUID } from "@/core/uuid";
 import type { NewsItem, NewsCategory, NewsImportance } from "@/core/narrative/newsTypes";
-import type { Race, Horse, Jockey } from "@/game/types";
-import { getOrdinalSuffix } from "@/core/common/ordinal";
+import type { Race, Horse } from "@/game/types";
+import type { Rng } from "@/game/rng";
 
 /**
  * Create a new NewsItem with a unique identifier.
  *
  * @param params - News item properties (excluding ID)
+ * @param rng - Optional random number generator for deterministic ID
  * @returns Fully hydrated NewsItem object
  */
-export function createNewsItem(params: Omit<NewsItem, "id">): NewsItem {
+export function createNewsItem(params: Omit<NewsItem, "id">, rng?: Rng): NewsItem {
   return {
-    id: generateUUID(),
+    id: generateUUID(rng),
     ...params,
   };
 }
@@ -25,6 +26,7 @@ export function createNewsItem(params: Omit<NewsItem, "id">): NewsItem {
  * @param result - Summary of the race result positions
  * @param horses - All horses in the race for name lookup
  * @param day - Current game day
+ * @param rng - Seeded RNG for headline/body selection and ID
  * @returns NewsItem if significant, otherwise null
  */
 export function generateRaceNews(
@@ -32,6 +34,7 @@ export function generateRaceNews(
   result: { horseId: string; position: number }[],
   horses: Horse[] | Map<string, Horse>,
   day: number,
+  rng: Rng,
 ): NewsItem | null {
   const winnerEntry = result.find((r) => r.position === 1);
   if (!winnerEntry) return null;
@@ -65,8 +68,8 @@ export function generateRaceNews(
     `The ${race.name} provided the perfect stage for ${winner.name} to shine, crossing the finish line comfortably ahead of the field.`,
   ];
 
-  const headline = headlines[Math.floor(Math.random() * headlines.length)];
-  const body = bodies[Math.floor(Math.random() * bodies.length)];
+  const headline = rng.pick(headlines);
+  const body = rng.pick(bodies);
 
   return createNewsItem({
     day,
@@ -78,7 +81,7 @@ export function generateRaceNews(
       { type: "horse", id: winner.id, name: winner.name },
       { type: "race", id: race.id, name: race.name },
     ],
-  });
+  }, rng);
 }
 
 /**
@@ -87,9 +90,10 @@ export function generateRaceNews(
  * @param horse - The horse that was sold
  * @param price - The final sale price
  * @param day - Current game day
+ * @param rng - Seeded RNG for deterministic ID
  * @returns NewsItem summarizing the sale
  */
-export function generateMarketNews(horse: Horse, price: number, day: number): NewsItem {
+export function generateMarketNews(horse: Horse, price: number, day: number, rng: Rng): NewsItem {
   return createNewsItem({
     day,
     category: "market",
@@ -97,16 +101,17 @@ export function generateMarketNews(horse: Horse, price: number, day: number): Ne
     headline: `Record Sale: ${horse.name} Sold for $${price.toLocaleString()}!`,
     body: `The market was electric today as ${horse.name} changed hands for a staggering sum. Analysts suggest this could be a turning point for the buyer's stable.`,
     entityLinks: [{ type: "horse", id: horse.id, name: horse.name }],
-  });
+  }, rng);
 }
 
 /**
  * Generate a random flavor news item for general atmosphere.
  *
  * @param day - Current game day
+ * @param rng - Seeded RNG for story selection and ID
  * @returns Randomly selected flavor NewsItem
  */
-export function generateFlavorNews(day: number): NewsItem {
+export function generateFlavorNews(day: number, rng: Rng): NewsItem {
   const flavorStories = [
     {
       headline: "Local Track Upgrades Completed",
@@ -125,11 +130,12 @@ export function generateFlavorNews(day: number): NewsItem {
     },
   ];
 
-  const story = flavorStories[Math.floor(Math.random() * flavorStories.length)];
+  const story = rng.pick(flavorStories);
 
   return createNewsItem({
     day,
     importance: "low",
     ...story,
-  });
+  }, rng);
 }
+

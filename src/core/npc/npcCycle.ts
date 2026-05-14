@@ -133,6 +133,7 @@ function applyFameGainsToHorses(horses: Horse[], fameGains: Map<string, number>)
  * @param npcStables
  * @param aiManager
  * @param currentDay
+ * @param rng
  * @returns Updated AI manager with new regional kings and friction values, plus generated news items.
  */
 function processRegionalDominance(
@@ -141,6 +142,7 @@ function processRegionalDominance(
   npcStables: Stable[],
   aiManager: NpcAIManager,
   currentDay: number,
+  rng: Rng,
 ): { aiManager: NpcAIManager; newsItems: NewsItem[]; reputationEvents: ReputationEvent[] } {
   try {
     const updatedAiManager = { ...aiManager, stableStates: { ...aiManager.stableStates } };
@@ -207,7 +209,7 @@ function processRegionalDominance(
                 stableAI.winsAgainstPlayer = 0;
                 
                 // Generate region lost news
-                const news = generateRegionLostNews(region, stable, currentDay);
+                const news = generateRegionLostNews(region, stable, currentDay, rng);
                 if (news) newsItems.push(news);
               }
             } else {
@@ -219,7 +221,7 @@ function processRegionalDominance(
 
             // Check for rivalry emergence (friction crosses 60)
             if (oldFriction < 60 && stableAI.friction >= 60 && !stableAI.rivalryAnnouncedDay) {
-              const news = generateRivalryEmergenceNews(stable, stableAI.friction, currentDay);
+              const news = generateRivalryEmergenceNews(stable, stableAI.friction, currentDay, rng);
               if (news) {
                 newsItems.push(news);
                 stableAI.rivalryAnnouncedDay = currentDay;
@@ -257,20 +259,28 @@ function processRegionalDominance(
                 
                 if (playerHorse && rivalHorse) {
                   const playerWon = playerBestPos < rivalBestPos;
-                  const news = generateGrudgeMatchNews(race, playerHorse, rivalHorse, playerWon, currentDay);
+                  const news = generateGrudgeMatchNews(
+                    race,
+                    playerHorse,
+                    rivalHorse,
+                    playerWon,
+                    currentDay,
+                    rng,
+                    rivalStable,
+                  );
                   if (news) newsItems.push(news);
 
                   // Add Reputation Event
                   reputationEvents.push({
-                    id: generateUUID(),
+                    id: generateUUID(rng),
                     day: currentDay,
                     source: playerWon ? "rivalry_win" : "rivalry_loss",
                     amount: playerWon ? 15 : -10,
-                    description: playerWon 
+                    description: playerWon
                       ? `Defeated rival ${rivalStable.name} in a ${race.graded.grade} grudge match!`
                       : `Lost to rival ${rivalStable.name} in a ${race.graded.grade} grudge match.`,
                     horseId: playerHorse.id,
-                    raceId: race.id
+                    raceId: race.id,
                   });
                 }
               }
@@ -387,6 +397,7 @@ export function runNpcCycle(
       npcStables,
       updatedAiManager,
       currentDay,
+      rng,
     );
     updatedAiManager = dominanceResult.aiManager;
     const newsItems = dominanceResult.newsItems;

@@ -208,16 +208,16 @@ export const upkeepPhase = {
       },
       impacts: [
         ...(context.impacts || []),
-        ...(Math.random() < 0.1
+        ...(context.dailyRng.next() < 0.1
           ? [
               {
-                id: generateUUID(),
+                id: generateUUID(context.dailyRng),
                 intentId: "",
                 day: newDay,
                 phase: "upkeep",
                 logLevel: "always",
                 type: "news_item",
-                newsItem: generateFlavorNews(newDay),
+                newsItem: generateFlavorNews(newDay, context.dailyRng),
               } as AnyImpact,
             ]
           : []),
