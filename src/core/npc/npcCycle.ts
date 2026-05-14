@@ -24,6 +24,7 @@ import {
 } from "@/core/ai/facilityAI";
 import { upgradeFacility } from "@/core/facilities";
 import type { Facility } from "@/core/facilities/facilityTypes";
+import { generateUUID } from "@/core/uuid";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
 import type { NewsItem } from "@/core/narrative/newsTypes";
 import {
@@ -261,7 +262,7 @@ function processRegionalDominance(
 
                   // Add Reputation Event
                   reputationEvents.push({
-                    id: Math.random().toString(36).substring(7),
+                    id: generateUUID(),
                     day: currentDay,
                     source: playerWon ? "rivalry_win" : "rivalry_loss",
                     amount: playerWon ? 15 : -10,
