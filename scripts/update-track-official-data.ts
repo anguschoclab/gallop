@@ -846,8 +846,7 @@ function run() {
 
   if (results.notFound.length > 0) {
     console.log("\n=== Tracks Needing Manual Research ===");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    results.notFound.forEach((t: any) => {
+    results.notFound.forEach((t: UpdateResult) => {
       console.log(`  - ${t.name} (${t.country})`);
     });
   }

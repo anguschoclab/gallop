@@ -33,6 +33,7 @@ import { getCurrentYear } from "@/game/raceSchedule";
 import { getTrackById } from "@/game/tracks";
 import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
+import { JargonTooltip } from "@/components/ui/JargonTooltip";
 
 interface RaceEntryProps {
   race: Race;
@@ -417,9 +418,9 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 flex gap-3 text-warning">
                   <AlertTriangle size={18} className="shrink-0 mt-0.5" />
                   <p className="text-xs font-bold">
-                    Claiming Race: Any stable may purchase {selectedHorse.name} for{" "}
-                    {formatCurrency(claimingPrice)} after the race. The transfer is automatic. You
-                    may withdraw up to 1 day before the race.
+                    <JargonTooltip term="Claiming">Claiming Race</JargonTooltip>: Any stable may
+                    purchase {selectedHorse.name} for {formatCurrency(claimingPrice)} after the
+                    race. The transfer is automatic. You may withdraw up to 1 day before the race.
                   </p>
                 </div>
               )}

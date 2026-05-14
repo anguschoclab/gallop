@@ -8,6 +8,7 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { BreedingIntent } from "@/core/resolver/intents";
+import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 
 describe("breedingResolutionPhase", () => {
   const createTestState = (): GameState => ({
@@ -33,17 +34,7 @@ describe("breedingResolutionPhase", () => {
   const createTestContext = (
     state: GameState,
     intents: BreedingIntent[] = [],
-  ): PipelineContext => ({
-    previousDay: 0,
-    newDay: 1,
-    state,
-    logs: [],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dailyRng: {} as any,
-    intents,
-    impacts: [],
-    impactLog: [],
-  });
+  ): PipelineContext => createMockPipelineContext({ state, intents });
 
   it("should process breeding intent and generate pregnancy creation impact", () => {
     const sire = createTestHorse({

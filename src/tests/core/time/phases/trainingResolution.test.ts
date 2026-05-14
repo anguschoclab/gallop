@@ -9,6 +9,7 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { TrainingIntent } from "@/core/resolver/intents";
+import { isEnergyImpact } from "@/core/resolver/impacts/horseImpacts";
 
 describe("trainingResolutionPhase", () => {
   const createTestState = (): GameState => ({
@@ -116,8 +117,9 @@ describe("trainingResolutionPhase", () => {
 
     const energyImpact = result.impacts.find((i) => i.type === "energy_change");
     expect(energyImpact).toBeDefined();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect((energyImpact as any).delta).toBeLessThan(0);
+    if (energyImpact && isEnergyImpact(energyImpact)) {
+      expect(energyImpact.delta).toBeLessThan(0);
+    }
   });
 
   it("should handle rest training type", () => {
@@ -148,8 +150,9 @@ describe("trainingResolutionPhase", () => {
 
     const energyImpact = result.impacts.find((i) => i.type === "energy_change");
     expect(energyImpact).toBeDefined();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect((energyImpact as any).delta).toBeGreaterThan(0);
+    if (energyImpact && isEnergyImpact(energyImpact)) {
+      expect(energyImpact.delta).toBeGreaterThan(0);
+    }
   });
 
   it("should skip non-training intents", () => {
@@ -159,8 +162,7 @@ describe("trainingResolutionPhase", () => {
       horses: [horse],
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const context = createTestContext(state, [] as any);
+    const context = createTestContext(state, []);
     const result = trainingResolutionPhase.execute(context);
 
     expect(result.impacts).toHaveLength(0);

@@ -31,7 +31,7 @@ import {
   AlertCircle,
   Gavel,
 } from "lucide-react";
-import { Lineage } from "@/components/Lineage";
+import { PedigreeTree } from "@/components/breeding/PedigreeTree";
 import { BeyerChart } from "@/components/BeyerChart";
 import { PaceProfileSummary } from "@/components/PaceProfileSummary";
 import { HorseAwardsPanel } from "@/components/awards";
@@ -94,14 +94,19 @@ function HorseDetail() {
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
   const syndicates = (useGame as any)((s: any) => s.syndicates || {}, shallow);
   const races = (useGame as any)((s: any) => s.races, shallow);
-  const currentRace = races?.find((r: any) => r.entries.some((e: any) => e.horseId === horseId && !r.resolved));
+  const currentRace = races?.find((r: any) =>
+    r.entries.some((e: any) => e.horseId === horseId && !r.resolved),
+  );
   const assignedJockeyId = currentRace?.entries.find((e: any) => e.horseId === horseId)?.jockeyId;
   const jockeys = (useGame as any)((s: any) => s.jockeys, shallow);
   const assignedJockey = jockeys?.find((j: any) => j.id === assignedJockeyId);
 
-  const handleTrain = useCallback((horseId: string, type: any) => {
-    trainHorse(horseId, type);
-  }, [trainHorse]);
+  const handleTrain = useCallback(
+    (horseId: string, type: any) => {
+      trainHorse(horseId, type);
+    },
+    [trainHorse],
+  );
 
   // Memoize scroll handlers for navigation buttons
   const handleScrollToSection = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -362,7 +367,9 @@ function HorseDetail() {
                   {/* <div className="bg-black/40 p-2 rounded-lg border border-white/5">
                     <HorseStatsRadar horse={horse} />
                   </div> */}
-                  <div className="text-[9px] text-cream/50">HorseStatsRadar temporarily disabled</div>
+                  <div className="text-[9px] text-cream/50">
+                    HorseStatsRadar temporarily disabled
+                  </div>
 
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -403,7 +410,9 @@ function HorseDetail() {
                           PHASE: {peakingStatus.toUpperCase()}
                         </Badge>
                       </div> */}
-                      <div className="text-[9px] text-cream/50">Training Bias badges temporarily disabled</div>
+                      <div className="text-[9px] text-cream/50">
+                        Training Bias badges temporarily disabled
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -629,7 +638,9 @@ function HorseDetail() {
                     </div>
                   </div>
                   <BeyerChart history={horse.raceHistory} />
-                  {horse.raceHistory.some((h: any) => h.pacePositions && h.pacePositions.length > 0) && (
+                  {horse.raceHistory.some(
+                    (h: any) => h.pacePositions && h.pacePositions.length > 0,
+                  ) && (
                     <div className="bg-black/20 border border-white/5 p-4 mt-4">
                       <h3 className="text-[10px] font-black uppercase tracking-widest text-cream/20 mb-4">
                         Pace Profile
@@ -648,19 +659,7 @@ function HorseDetail() {
                   Heritage & Ancestry
                 </h2>
               </div>
-              <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-pink-500">
-                <CardContent className="p-6 overflow-x-auto custom-scrollbar">
-                  <div className="min-w-[600px]">
-                    <Lineage
-                      horseId={horse.id}
-                      horseName={horse.name}
-                      sireName={horse.sireName}
-                      damName={horse.damName}
-                      generations={4}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+              <PedigreeTree horseId={horse.id} generations={4} />
             </section>
 
             <section id="history" className="space-y-4 pt-4">

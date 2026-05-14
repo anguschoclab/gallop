@@ -508,6 +508,17 @@ function generateRaceImpacts(_a) {
             if (race.graded) {
                 var _0 = (0, beyer_1.detectPatternJump)(horse, beyerImpact.beyer), jumped = _0.jumped, margin = _0.margin;
                 if (jumped) {
+                    var isAdverseWeather = race.weather === "storm" ||
+                        race.weather === "rainy" ||
+                        race.trackCondition === "heavy" ||
+                        race.trackCondition === "soft" ||
+                        race.trackCondition === "yielding";
+                    var title = isAdverseWeather
+                        ? "Storm Performance: ".concat(horse.name)
+                        : "Performance Spike: ".concat(horse.name);
+                    var weatherNote = isAdverseWeather
+                        ? " Despite the ".concat(race.weather, " weather and ").concat(race.trackCondition, " track, this horse thrived in the adverse conditions.")
+                        : " This horse is on a sharp upward trajectory.";
                     impacts.push({
                         id: (0, uuid_1.generateUUID)(rng),
                         intentId: "",
@@ -519,8 +530,8 @@ function generateRaceImpacts(_a) {
                             day: newDay,
                             category: "race",
                             priority: "info",
-                            title: "Performance Spike: ".concat(horse.name),
-                            body: "".concat(horse.name, " produced a massive performance jump in the ").concat(race.name, ", earning a ").concat(beyerImpact.beyer, " Beyer figure (+").concat(Math.round(margin), " improvement). This horse is on a sharp upward trajectory."),
+                            title: title,
+                            body: "".concat(horse.name, " produced a massive performance jump in the ").concat(race.name, ", earning a ").concat(beyerImpact.beyer, " Beyer figure (+").concat(Math.round(margin), " improvement).").concat(weatherNote),
                             cta: {
                                 label: "View Horse",
                                 route: "stable.$horseId",

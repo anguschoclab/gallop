@@ -1,5 +1,7 @@
 import fs from "fs";
 import path from "path";
+import https from "https";
+import type { OverpassElement, OverpassWay, OverpassNode } from "./types/overpass";
 
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
@@ -84,15 +86,12 @@ async function getTrackGeometry(name: string, country: string) {
     try {
       const data = await queryOverpass(query);
       if (data.elements && data.elements.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const way = data.elements.find((e: any) => e.type === "way");
+        const way = data.elements.find((e: OverpassElement): e is OverpassWay => e.type === "way");
         if (way) {
           const nodeMap = new Map<number, GeometryNode>();
           data.elements
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .filter((e: any) => e.type === "node")
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .forEach((n: any) => nodeMap.set(n.id, n));
+            .filter((e: OverpassElement): e is OverpassNode => e.type === "node")
+            .forEach((n: OverpassNode) => nodeMap.set(n.id, { id: n.id, lat: n.lat, lon: n.lon }));
           const nodes = way.nodes
             .map((id: number) => nodeMap.get(id))
             .filter(Boolean) as GeometryNode[];

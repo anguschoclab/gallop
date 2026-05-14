@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import type { OverpassElement, OverpassWay } from "./types/overpass";
 
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
 const existingTracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
@@ -120,8 +121,9 @@ async function discoverCountry(countryName: string) {
 
   try {
     const data = await queryOverpass(query);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ways = data.elements.filter((e: any) => e.type === "way" && e.geometry);
+    const ways = data.elements.filter(
+      (e: OverpassElement): e is OverpassWay => e.type === "way" && !!e.geometry,
+    );
     let added = 0;
     for (const way of ways) {
       const name = way.tags.name || way.tags["name:en"] || `Track ${way.id}`;

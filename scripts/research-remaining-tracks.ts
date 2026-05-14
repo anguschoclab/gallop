@@ -454,12 +454,9 @@ function run() {
   console.log(`Backup created: ${backupPath}\n`);
 
   const results = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    updated: [] as any[],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    notFound: [] as any[],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    skipped: [] as any[],
+    updated: [] as ResearchResult[],
+    notFound: [] as ResearchResult[],
+    skipped: [] as ResearchResult[],
   };
 
   for (const track of tracks) {
@@ -467,8 +464,7 @@ function run() {
 
     if (researchData) {
       // Check if already has sections
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const hasExistingData = track.courses.some((c: any) => c.sections && c.sections.length > 0);
+      const hasExistingData = track.courses.some((c: Course) => c.sections && c.sections.length > 0);
       if (hasExistingData) {
         console.log(`⏭️  ${track.name} - skipped (already has data)`);
         results.skipped.push({ id: track.id, name: track.name });

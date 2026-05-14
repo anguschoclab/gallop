@@ -61,7 +61,9 @@ export function HorseCard({
 }: HorseCardProps) {
   const scoutReports = (useGame as any)((s) => s.scoutReports, shallow);
   const day = useGame((s) => s.day);
+  const simpleHorseCards = useGame((s) => s.userSettings?.display?.simpleHorseCards ?? true);
   const ovr = calculateOverallRating(horse);
+  const [isAdvanced, setIsAdvanced] = useState(!simpleHorseCards);
 
   const scoutStatus =
     showScoutInfo && horse.stableId ? getScoutStatus(horse, scoutReports, day) : null;
@@ -74,6 +76,16 @@ export function HorseCard({
       : isMaleHorse(horse.gender)
         ? "text-blue-400"
         : "text-pink-400";
+
+  const gradeColor = (score: number) => {
+    const g = abilityGrade(score);
+    if (g === "S") return "text-purple-400";
+    if (g === "A") return "text-success";
+    if (g === "B") return "text-gold";
+    if (g === "D") return "text-warning";
+    if (g === "F") return "text-destructive";
+    return "text-cream/60";
+  };
 
   // Velocity Sparkline Data
   const sparklineData =
@@ -345,12 +357,41 @@ export function HorseCard({
               <div className="text-[8px] font-black uppercase text-cream/20 tracking-widest flex items-center gap-1">
                 <ShieldCheck className="h-3 w-3" /> Core_Specs
               </div>
-              <div className="space-y-2">
-                <StatBar label="SPD" value={horse.stats.speed} />
-                <StatBar label="STA" value={horse.stats.stamina} />
-                <StatBar label="ACC" value={horse.stats.acceleration} />
-                <StatBar label="CON" value={horse.stats.consistency} />
-              </div>
+              {isAdvanced ? (
+                <div className="space-y-2">
+                  <StatBar label="SPD" value={horse.stats.speed} />
+                  <StatBar label="STA" value={horse.stats.stamina} />
+                  <StatBar label="ACC" value={horse.stats.acceleration} />
+                  <StatBar label="CON" value={horse.stats.consistency} />
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-xs font-mono">
+                  <span className="text-cream/40 uppercase tracking-wide">
+                    SPD{" "}
+                    <span className={cn("font-black", gradeColor(horse.stats.speed))}>
+                      {abilityGrade(horse.stats.speed)}
+                    </span>
+                  </span>
+                  <span className="text-cream/40 uppercase tracking-wide">
+                    STA{" "}
+                    <span className={cn("font-black", gradeColor(horse.stats.stamina))}>
+                      {abilityGrade(horse.stats.stamina)}
+                    </span>
+                  </span>
+                  <span className="text-cream/40 uppercase tracking-wide">
+                    ACC{" "}
+                    <span className={cn("font-black", gradeColor(horse.stats.acceleration))}>
+                      {abilityGrade(horse.stats.acceleration)}
+                    </span>
+                  </span>
+                  <span className="text-cream/40 uppercase tracking-wide">
+                    CON{" "}
+                    <span className={cn("font-black", gradeColor(horse.stats.consistency))}>
+                      {abilityGrade(horse.stats.consistency)}
+                    </span>
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Data Viz Block: Velocity Sparkline or Pot/Form */}
@@ -375,7 +416,7 @@ export function HorseCard({
                     </LineChart>
                   </ResponsiveContainer>
                   <div className="absolute top-1 left-1.5 text-[8px] font-mono text-gold/40">
-                    BEYER
+                    <JargonTooltip term="Beyer">BEYER</JargonTooltip>
                   </div>
                   <div className="absolute bottom-1 right-1.5 text-[9px] font-mono font-black text-gold">
                     {sparklineData[sparklineData.length - 1].beyer}
@@ -418,9 +459,16 @@ export function HorseCard({
           <div className="flex items-center justify-between bg-black/40 p-2 rounded-sm border border-white/5">
             <div className="flex items-center gap-2">
               <span className="text-[8px] font-black uppercase text-cream/30 tracking-widest">
-                OVR Rating
+                <JargonTooltip term="OVR">OVR</JargonTooltip> Rating
               </span>
-              <span className="text-lg font-mono font-black text-cream">{ovr}</span>
+              <span
+                className={cn(
+                  "font-mono font-black text-cream",
+                  isAdvanced ? "text-lg" : "text-xl",
+                )}
+              >
+                {isAdvanced ? ovr : abilityGrade(ovr)}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[8px] font-black uppercase text-cream/30 tracking-widest">
@@ -465,6 +513,14 @@ export function HorseCard({
               </div>
             </div>
           )}
+          <div className="flex justify-end">
+            <button
+              onClick={() => setIsAdvanced((v) => !v)}
+              className="text-[9px] font-mono uppercase tracking-widest text-cream/20 hover:text-cream/60 transition-colors"
+            >
+              {isAdvanced ? "Simple view" : "Advanced metrics"}
+            </button>
+          </div>
         </div>
 
         {/* Action Footer */}

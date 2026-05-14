@@ -96,7 +96,10 @@
       "Bash(/Users/amauricia/Library/Caches/electron-builder/dmg-builder@1.2.0/dmgbuild-bundle-arm64-75c8a6c-uwh7j/python/bin/python3.14 *)",
       "Bash(python3 *)",
       "Bash(open *)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(npm cache *)",
+      "Bash(bun add *)",
+      "Bash(node *)"
     ]
   },
   "hooks": {

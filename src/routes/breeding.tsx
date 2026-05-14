@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +30,8 @@ import { FoalNamingDialog } from "@/components/FoalNamingDialog";
 import { BreedingProgramPanel } from "@/components/BreedingProgramPanel";
 import { useBreedingCompatibility } from "@/hooks/useBreedingCompatibility";
 import { BreedingCompatibilityCard } from "@/components/breeding/BreedingCompatibilityCard";
+import { PedigreeTree } from "@/components/breeding/PedigreeTree";
+import { getAncestorIds } from "@/lib/pedigreeGraph";
 
 export const Route = createFileRoute("/breeding")({
   component: BreedingPage,
@@ -48,6 +50,17 @@ function BreedingPage() {
   const [namingFoalId, setNamingFoalId] = useState<string | null>(null);
 
   const { sire, dam, compatibility } = useBreedingCompatibility(sireId, damId);
+
+  const sharedAncestorIds = useMemo(() => {
+    if (!sireId || !damId) return undefined;
+    const sireAncestors = getAncestorIds(sireId, horses, 3);
+    const damAncestors = getAncestorIds(damId, horses, 3);
+    const shared = new Set<string>();
+    for (const id of sireAncestors) {
+      if (damAncestors.has(id)) shared.add(id);
+    }
+    return shared.size > 0 ? shared : undefined;
+  }, [sireId, damId, horses]);
 
   const adults = horses.filter((h) => h.age >= 3);
   const breedLogs = log.filter((l) => /Mated|Foal/.test(l.text));
@@ -244,6 +257,36 @@ function BreedingPage() {
               </p>
 
               {compatibility && <BreedingCompatibilityCard compatibility={compatibility} />}
+
+              {sire && dam && (
+                <div className="space-y-3 pt-4 border-t border-white/5">
+                  <div className="text-[9px] font-black uppercase tracking-widest text-cream/30">
+                    Ancestry Comparison
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-[10px] text-cream/40 mb-2 font-mono uppercase tracking-widest">
+                        {sire.name} · Sire
+                      </div>
+                      <PedigreeTree
+                        horseId={sireId}
+                        generations={3}
+                        sharedAncestorIds={sharedAncestorIds}
+                      />
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-cream/40 mb-2 font-mono uppercase tracking-widest">
+                        {dam.name} · Dam
+                      </div>
+                      <PedigreeTree
+                        horseId={damId}
+                        generations={3}
+                        sharedAncestorIds={sharedAncestorIds}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -499,15 +499,14 @@ describe("validateIntent", () => {
     const intent: AnyIntent = {
       id: "intent-1",
       day: 1,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      type: "rename" as any,
+      // @ts-expect-error - testing invalid intent type
+      type: "invalid_intent_type",
       entityId: "horse-1",
       priority: 100,
       source: "player",
       horseId: "horse-1",
       newName: "New Name",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any;
+    };
 
     const result = validateIntent(intent, state);
     expect(result.valid).toBe(true);

@@ -9,8 +9,8 @@
  *   4. For races scheduled today, calls `calculateConditionChange` and writes
  *      `race.trackCondition` + `race.weather` so downstream race resolution
  *      sees the updated track surface.
- *   5. Pushes a drama log entry when a Group/Graded race day sees a
- *      pattern severity jump ≥2 vs the prior day (Phase 2 inbox hookup TODO).
+ *   5. Pushes an actionable inbox notification when a Group/Graded race day sees a
+ *      pattern severity jump ≥2 vs the prior day.
  */
 
 import type { PipelineContext } from "../pipeline";
@@ -29,6 +29,7 @@ import {
   WEATHER_FORECAST_DAYS,
 } from "@/game/store/slices/weatherSlice";
 import { calculateConditionChange } from "@/core/trackConditions";
+import { generateUUID } from "@/core/uuid";
 
 /** Map a Race trackId; falls back to graded.trackId or graded.track. */
 function raceTrackId(race: Race): string | undefined {
@@ -73,6 +74,7 @@ export const weatherPhase = {
     const newByTrack: Record<string, WeatherState[]> = { ...existing };
     const newForecast: Record<string, WeatherState[]> = {};
     const newLogs: { day: number; text: string }[] = [];
+    const newImpacts: any[] = [];
 
     for (const trackId of trackIds) {
       const climate = getTrackClimate(trackId);
@@ -110,9 +112,32 @@ export const weatherPhase = {
               raceTrackId(r) === trackId,
           );
           if (dramaRace) {
+            const dramaText = `${today.pattern === "storm" ? "Storm" : "Heavy weather"} forecast at ${dramaRace.graded?.track ?? trackId} — track downgraded ahead of the ${dramaRace.name}.`;
             newLogs.push({
               day: newDay,
-              text: `${today.pattern === "storm" ? "Storm" : "Heavy weather"} forecast at ${dramaRace.graded?.track ?? trackId} — track downgraded ahead of the ${dramaRace.name}.`,
+              text: dramaText,
+            });
+
+            // Push to Inbox
+            newImpacts.push({
+              id: generateUUID(),
+              intentId: "",
+              day: newDay,
+              phase: "weather",
+              logLevel: "always",
+              type: "inbox_message",
+              message: {
+                day: newDay,
+                category: "system",
+                priority: "action",
+                title: "Weather Alert",
+                body: dramaText,
+                cta: {
+                  label: "View Race",
+                  route: "race.$raceId",
+                  params: { raceId: dramaRace.id },
+                },
+              },
             });
           }
         }
@@ -156,6 +181,7 @@ export const weatherPhase = {
           ? [...newLogs, ...state.log].slice(0, 200)
           : state.log,
       },
+      impacts: [...context.impacts, ...newImpacts],
     };
   },
 };

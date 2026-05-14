@@ -20,6 +20,7 @@ import type {
   NewsImpact,
   RecoveryImpact,
   BeyerImpact,
+  InboxImpact,
 } from "@/core/resolver/impacts/index";
 import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
 import { generateRaceNews } from "@/services/newsGenerator";
@@ -685,6 +686,21 @@ export function generateRaceImpacts({
       if (race.graded) {
         const { jumped, margin } = detectPatternJump(horse, beyerImpact.beyer);
         if (jumped) {
+          const isAdverseWeather =
+            race.weather === "storm" ||
+            race.weather === "rainy" ||
+            race.trackCondition === "heavy" ||
+            race.trackCondition === "soft" ||
+            race.trackCondition === "yielding";
+
+          const title = isAdverseWeather
+            ? `Storm Performance: ${horse.name}`
+            : `Performance Spike: ${horse.name}`;
+
+          const weatherNote = isAdverseWeather
+            ? ` Despite the ${race.weather} weather and ${race.trackCondition} track, this horse thrived in the adverse conditions.`
+            : " This horse is on a sharp upward trajectory.";
+
           impacts.push({
             id: generateUUID(rng),
             intentId: "",
@@ -696,12 +712,12 @@ export function generateRaceImpacts({
               day: newDay,
               category: "race",
               priority: "info",
-              title: `Performance Spike: ${horse.name}`,
+              title,
               body: `${horse.name} produced a massive performance jump in the ${
                 race.name
               }, earning a ${beyerImpact.beyer} Beyer figure (+${Math.round(
                 margin,
-              )} improvement). This horse is on a sharp upward trajectory.`,
+              )} improvement).${weatherNote}`,
               cta: {
                 label: "View Horse",
                 route: "stable.$horseId",

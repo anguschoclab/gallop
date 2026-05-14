@@ -8,6 +8,7 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { PurchaseIntent } from "@/core/resolver/intents";
+import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 
 describe("purchaseResolutionPhase", () => {
   const createTestState = (): GameState => ({
@@ -33,17 +34,7 @@ describe("purchaseResolutionPhase", () => {
   const createTestContext = (
     state: GameState,
     intents: PurchaseIntent[] = [],
-  ): PipelineContext => ({
-    previousDay: 0,
-    newDay: 1,
-    state,
-    logs: [],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dailyRng: {} as any,
-    intents,
-    impacts: [],
-    impactLog: [],
-  });
+  ): PipelineContext => createMockPipelineContext({ state, intents });
 
   it("should process purchase intent and generate horse transfer impact", () => {
     const horse = createTestHorse({ id: "horse-1" });

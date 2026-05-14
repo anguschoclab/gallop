@@ -4,17 +4,15 @@
 
 import { describe, it, expect } from "vitest";
 import { runNpcCycle } from "@/core/npc/npcCycle";
-import type { Horse, Race, Stable } from "@/game/types";
+import type { Horse, Race, Stable, Jockey } from "@/game/types";
 
 describe("runNpcCycle", () => {
   it("should return unchanged horses and races when no NPC stables", () => {
     const horses: Horse[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const jockeys: any[] = [];
+    const jockeys: Jockey[] = [];
     const races: Race[] = [];
     const npcStables: Stable[] = [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any);
     expect(result.horses).toEqual([]);
     expect(result.races).toEqual([]);
@@ -38,11 +36,9 @@ describe("runNpcCycle", () => {
     ];
 
     const horses: Horse[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const jockeys: any[] = [];
+    const jockeys: Jockey[] = [];
     const races: Race[] = [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any);
     // Just verify it doesn't crash and returns expected structure
     expect(result.horses).toBeDefined();
@@ -67,8 +63,7 @@ describe("runNpcCycle", () => {
     ];
 
     const horses: Horse[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const jockeys: any[] = [];
+    const jockeys: Jockey[] = [];
     const races: Race[] = [];
 
     const result = runNpcCycle(
@@ -77,7 +72,6 @@ describe("runNpcCycle", () => {
       jockeys,
       races,
       10,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       { next: () => 0.5 } as any,
       5,
     );
@@ -103,11 +97,9 @@ describe("runNpcCycle", () => {
     ];
 
     const horses: Horse[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const jockeys: any[] = [];
+    const jockeys: Jockey[] = [];
     const races: Race[] = [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any);
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();
@@ -162,7 +154,6 @@ describe("runNpcCycle", () => {
       result: [{ horseId: "horse-1", position: 1, time: 120 }],
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = runNpcCycle(npcStables, [horse], [], [race], 10, { next: () => 0.5 } as any);
     expect(result.horses).toBeDefined();
     expect(result.races).toBeDefined();
@@ -171,11 +162,9 @@ describe("runNpcCycle", () => {
   it("should return NpcCycleResult with correct structure", () => {
     const npcStables: Stable[] = [];
     const horses: Horse[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const jockeys: any[] = [];
+    const jockeys: Jockey[] = [];
     const races: Race[] = [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = runNpcCycle(npcStables, horses, jockeys, races, 10, { next: () => 0.5 } as any);
     expect(result).toHaveProperty("horses");
     expect(result).toHaveProperty("races");

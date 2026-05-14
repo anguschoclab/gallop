@@ -199,6 +199,23 @@ export interface BeyerImpact extends Impact {
   reason: string;
 }
 
+// Type guards for discriminating impact types
+export function isHorseStatImpact(impact: Impact): impact is HorseStatImpact {
+  return impact.type === "horse_stat_change";
+}
+
+export function isEnergyImpact(impact: Impact): impact is EnergyImpact {
+  return impact.type === "energy_change";
+}
+
+export function isFormImpact(impact: Impact): impact is FormImpact {
+  return impact.type === "form_change";
+}
+
+export function isFameImpact(impact: Impact): impact is FameImpact {
+  return impact.type === "fame_change";
+}
+
 export type HorseImpact =
   | HorseStatImpact
   | EnergyImpact
