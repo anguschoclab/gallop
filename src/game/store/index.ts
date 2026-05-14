@@ -33,6 +33,7 @@ import { createBreedingProgramSlice } from "./slices/breedingProgramSlice";
 import { createHorseAdminSlice } from "./slices/horseAdminSlice";
 import { createAwardSlice } from "./slices/awardSlice";
 import { createUtilitySlice } from "./slices/utilitySlice";
+import { createWeatherSlice } from "./slices/weatherSlice";
 import { createOpfsStorage, hydrationComplete, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/state/coreState";
