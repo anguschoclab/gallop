@@ -65,6 +65,8 @@ export const GAME_PIPELINE_PHASES = [
   npcBreedingPhase,
   energyPhase,
   marketPhase,
+  // Dynamic weather sim — runs after market (50), before races (60)
+  weatherPhase,
   racesPhase,
   beyerRecalibrationPhase,
   jockeyPhase,
