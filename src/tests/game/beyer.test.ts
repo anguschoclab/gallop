@@ -16,7 +16,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     gender: "horse",
     hemisphere: "Northern",
     silk: "#aabbcc",
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
     energy: 100,
     form: 0,
     potential: 80,
@@ -91,8 +91,8 @@ describe("expectedBeyer", () => {
   });
 
   it("higher speed → higher expected Beyer (other factors equal)", () => {
-    const fastH = mkHorse({ stats: { speed: 90, stamina: 70, acceleration: 70, consistency: 70 } });
-    const slowH = mkHorse({ stats: { speed: 40, stamina: 70, acceleration: 70, consistency: 70 } });
+    const fastH = mkHorse({ stats: { speed: 90, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 } });
+    const slowH = mkHorse({ stats: { speed: 40, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 } });
     expect(expectedBeyer(fastH, 1600)).toBeGreaterThan(expectedBeyer(slowH, 1600));
   });
 

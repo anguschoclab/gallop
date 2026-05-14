@@ -17,6 +17,8 @@ export interface DisplaySettings {
   detailedTooltips: boolean;
   /** Highlight horses with pending actions */
   highlightPendingActions: boolean;
+  /** Show letter grades instead of raw numerics on HorseCard (default true) */
+  simpleHorseCards: boolean;
 }
 
 /**
@@ -96,6 +98,7 @@ export function createDefaultUserSettings(currentDay: number = 1): UserSettings 
       pageSize: 25,
       detailedTooltips: true,
       highlightPendingActions: true,
+      simpleHorseCards: true,
     },
     gameplay: {
       autoSimEnabled: true,

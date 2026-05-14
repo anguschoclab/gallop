@@ -48,7 +48,7 @@ describe("trainingResolutionPhase", () => {
   it("should process training intent and generate stat change impact", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40 },
+      stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40, temperament: 50, conformation: 50 },
       energy: 80,
       potential: 90,
       age: 4,
@@ -91,7 +91,7 @@ describe("trainingResolutionPhase", () => {
   it("should generate energy change impact for training", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       energy: 80,
     });
     const state: GameState = {
@@ -123,7 +123,7 @@ describe("trainingResolutionPhase", () => {
   it("should handle rest training type", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       energy: 50,
     });
     const state: GameState = {
@@ -169,7 +169,7 @@ describe("trainingResolutionPhase", () => {
   it("should update trainingUsed tracking", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       energy: 80,
     });
     const state: GameState = {

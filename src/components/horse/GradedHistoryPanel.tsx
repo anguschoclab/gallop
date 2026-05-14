@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Badge } from "@/components/ui/badge";
 import { getGradeColorClass } from "@/core/race/grading";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
@@ -34,8 +35,12 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
   return (
     <Card className="border-gold-muted">
       <CardHeader>
-        <CardTitle>Graded race history</CardTitle>
-        <p className="text-xs text-cream-muted">G1/G2/G3 finishes with Beyer figures earned</p>
+        <CardTitle>
+          <JargonTooltip term="Graded race">Graded race</JargonTooltip> history
+        </CardTitle>
+        <p className="text-xs text-cream-muted">
+          G1/G2/G3 finishes with <JargonTooltip term="Beyer">Beyer</JargonTooltip> figures earned
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         {graded.length > 0 && (
@@ -81,7 +86,7 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
                 <span className="text-cream-muted"> placed</span>
               </div>
               <div className="text-xs text-cream-muted mt-1">
-                Best Beyer:{" "}
+                <JargonTooltip term="Beyer">Best Beyer</JargonTooltip>:{" "}
                 <span className="font-medium text-cream">{bestBeyer(byGrade[g]) || "—"}</span>
               </div>
             </div>
@@ -115,7 +120,9 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
                 <div className="flex items-center gap-3 shrink-0">
                   {typeof r.beyer === "number" && (
                     <span className="text-xs">
-                      <span className="text-cream-muted">Beyer </span>
+                      <span className="text-cream-muted">
+                        <JargonTooltip term="Beyer">Beyer</JargonTooltip>{" "}
+                      </span>
                       <span className="font-semibold">{r.beyer}</span>
                     </span>
                   )}

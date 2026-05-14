@@ -12,7 +12,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     gender: "horse",
     hemisphere: "Northern",
     silk: "#abcdef",
-    stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+    stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
     energy: 100,
     form: 0,
     potential: 90,
@@ -44,14 +44,14 @@ const sire = mkHorse({
   id: "sire",
   name: "Sire",
   gender: "horse",
-  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 },
+  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95, temperament: 50, conformation: 50 },
   potential: 100,
 });
 const dam = mkHorse({
   id: "dam",
   name: "Dam",
   gender: "mare",
-  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95 },
+  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95, temperament: 50, conformation: 50 },
   potential: 100,
 });
 

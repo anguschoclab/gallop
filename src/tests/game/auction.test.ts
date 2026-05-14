@@ -16,7 +16,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     gender: "colt",
     hemisphere: "Northern",
     silk: "#aabbcc",
-    stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
+    stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 },
     energy: 100,
     form: 0,
     potential: 70,
@@ -98,7 +98,7 @@ describe("calculateLotValuation", () => {
   it("prestige + cheap horse (base < 5000) → 0", () => {
     // A horse with very low stats will have a small base value
     const cheapHorse = mkHorse({
-      stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1 },
+      stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1, temperament: 50, conformation: 50 },
       age: 7,
     });
     const prestige = mkStable("prestige");
@@ -146,7 +146,7 @@ describe("calculateNpcBid", () => {
 
   it("returns null when ceiling is 0 (prestige + cheap horse)", () => {
     const cheapHorse = mkHorse({
-      stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1 },
+      stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1, temperament: 50, conformation: 50 },
       age: 7,
     });
     const prestige = mkStable("prestige", "mid", { cash: 1000000 });

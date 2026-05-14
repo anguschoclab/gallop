@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Globe, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { getGradeColorClass } from "@/core/race/grading";
 import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
 import { useGame, useGameWithShallow } from "@/game/store";
@@ -79,7 +80,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
                     variant="outline"
                     className={cn("h-5 px-1 text-[10px] font-bold", gradeColor)}
                   >
-                    {gradeLabel}
+                    <JargonTooltip term={gradeLabel}>{gradeLabel}</JargonTooltip>
                   </Badge>
                 )}
                 <h3 className="font-bold text-base leading-tight truncate max-w-[180px] font-[family-name:var(--font-display)]">
@@ -89,7 +90,8 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
                 {isClaiming && claimingPrice !== undefined && (
                   <Badge className="h-4 px-1.5 text-[9px] font-bold bg-warning/20 text-warning border border-warning/40 flex items-center gap-0.5">
                     <AlertTriangle className="h-2.5 w-2.5" />
-                    Claiming {formatCurrency(claimingPrice)}
+                    <JargonTooltip term="Claiming">Claiming</JargonTooltip>{" "}
+                    {formatCurrency(claimingPrice)}
                   </Badge>
                 )}
               </div>
@@ -104,7 +106,9 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
             <div className="text-sm font-bold tabular-nums font-[family-name:var(--font-mono)]">
               {formatCurrency(race.purse)}
             </div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Purse</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
+              <JargonTooltip term="Purse">Purse</JargonTooltip>
+            </div>
             {ownedCount === 0 && (
               <Button
                 size="sm"
@@ -122,9 +126,11 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
           <div className="flex items-center justify-between pt-2 border-t border-gold-muted text-[11px]">
             <div className="flex gap-3 text-muted-foreground tabular-nums">
               <span>{race.distance}m</span>
-              <span>{race.surface}</span>
+              <JargonTooltip term={race.surface}>{race.surface}</JargonTooltip>
               <span>{race.raceClass}</span>
-              <span className="font-bold text-cream">ML: {favoriteOdds}</span>
+              <span className="font-bold text-cream">
+                <JargonTooltip term="ML">ML</JargonTooltip>: {favoriteOdds}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground tabular-nums font-[family-name:var(--font-mono)]">
