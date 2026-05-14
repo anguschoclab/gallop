@@ -10,7 +10,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     gender: "horse",
     hemisphere: "Northern",
     silk: "#aabbcc",
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
     energy: 80,
     form: 0,
     potential: 80,
@@ -73,13 +73,13 @@ describe("isHorseEligibleForRace", () => {
   });
 
   it("rejects if overall rating < race.minStat", () => {
-    const h = mkHorse({ stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30 } });
+    const h = mkHorse({ stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 } });
     const r = mkRace({ minStat: 70 });
     expect(isHorseEligibleForRace(h, r, new Set())).toBe(false);
   });
 
   it("accepts if overall rating exactly meets minStat", () => {
-    const h = mkHorse({ stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 } });
+    const h = mkHorse({ stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 } });
     const r = mkRace({ minStat: 70 });
     expect(isHorseEligibleForRace(h, r, new Set())).toBe(true);
   });

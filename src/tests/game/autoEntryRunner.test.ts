@@ -17,7 +17,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     hemisphere: "Northern",
     silk: "red",
     energy: 80,
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
     genotype: {
       color: { extension: [3, 3], agouti: [3, 3], gray: [1, 1], cream: [1, 1] },
       stats: { speed: [[3, 3]], stamina: [[3, 3]], acceleration: [[3, 3]], consistency: [[3, 3]] },

@@ -12,7 +12,7 @@ describe("auctionTheater integration", () => {
       gender: "colt",
       hemisphere: "Northern",
       silk: "#aabbcc",
-      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
+      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 },
       genotype: {
         color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
         stats: {
@@ -179,7 +179,7 @@ describe("auctionTheater integration", () => {
   });
 
   it("attended vs offline parity: same outcomes", () => {
-    const horse = mkHorse({ stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 } });
+    const horse = mkHorse({ stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 } });
     const bidder = mkStable({ id: "bidder", cash: 5000000 });
     const consignor = mkStable({ id: "consignor" });
     const lot = mkLot({ horseId: horse.id, consignorStableId: consignor.id });
@@ -210,7 +210,7 @@ describe("auctionTheater integration", () => {
 
   it("player bid integration: bid is accepted when valid", () => {
     const horse = mkHorse({
-      stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40 },
+      stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40, temperament: 50, conformation: 50 },
       potential: 50,
     });
     const bidder = mkStable({ id: "bidder" });

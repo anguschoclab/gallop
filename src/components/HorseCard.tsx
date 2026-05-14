@@ -1,10 +1,12 @@
+import { useState } from "react";
 import type { Horse } from "@/game/types";
 import { Link } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating, abilityGrade } from "@/core/horse/stats";
+import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
 import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
 import { getCoatColor, getInjuryColor, getInjuryLabel } from "@/core/horse/uiHelpers";
@@ -46,7 +48,7 @@ interface HorseCardProps {
 /**
  * A versatile card component for displaying horse information across various UI contexts.
  * Supports multiple variants ranging from compact list items to full diagnostic profiles.
- * 
+ *
  * @param {HorseCardProps} props - The component properties.
  * @returns {JSX.Element} The rendered horse card.
  */
