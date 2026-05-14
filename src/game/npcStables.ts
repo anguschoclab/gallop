@@ -22,15 +22,13 @@ import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/core/breeding/ar
 import { ELITE_POOL, MID_POOL, BUDGET_POOL } from "@/core/stable/stablePoolData";
 
 /**
- * Generate all NPC stables (named + filler).
- *
- * Named stables are randomly selected from pools based on config counts.
- * Assigns breeding archetypes based on tier and personality.
- *
- * @param day - Current game day
- * @param rng - Random number generator
- * @param config - Stable configuration (defaults to STABLE_CONFIG)
- * @returns Array of generated stable objects
+ * Generates all NPC stables for the game world, including both named template-based stables and procedural filler stables.
+ * Assigns breeding archetypes based on stable tier and personality.
+ * 
+ * @param {number} day - The current simulation day.
+ * @param {Rng} rng - Seeded random number generator.
+ * @param {Object} [config=STABLE_CONFIG] - Configuration determining the number and quality of stables to generate.
+ * @returns {Stable[]} An array of fully generated Stable objects.
  */
 export function generateAllStables(day: number, rng: Rng, config = STABLE_CONFIG): Stable[] {
   const stables: Stable[] = [];
