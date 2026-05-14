@@ -286,7 +286,7 @@ describe("resolveAuctionSale", () => {
   it("sold lot has hammerPrice >= reservePrice and soldToStableId set", () => {
     const horse = mkHorse({
       id: "h1",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
     });
     const bidder = mkStable("aggressive", "elite", { id: "bidder", cash: 5000000 });
     const lot = {
