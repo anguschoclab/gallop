@@ -184,7 +184,7 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
     paceSamples: {},
     calibratedPars: {},
     lastCalibrationDay: 0,
-    npcAIManager: { stableStates: {}, globalDay: 1 },
+    npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
     campaigns: [],
     expenses: [],
     transactions: [],

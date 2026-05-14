@@ -25,6 +25,12 @@ import type {
   SyndicateCreationIntent,
   SharePurchaseIntent,
   ShareSaleIntent,
+  RerollSilkIntent,
+  ScoutIntent,
+  CampaignSlotIntent,
+  CampaignFlagDismissalIntent,
+  CampaignCreationIntent,
+  CampaignDeletionIntent,
 } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
@@ -317,7 +323,7 @@ export const managementResolutionPhase: PipelinePhase = {
             logLevel: "always",
             type: "campaign_flag_dismissal",
             horseId: typedIntent.horseId,
-            flag: typedIntent.flag,
+            flagIndex: typedIntent.flagIndex,
             reason: "Campaign flag dismissed",
           } as any);
           break;
@@ -332,7 +338,9 @@ export const managementResolutionPhase: PipelinePhase = {
             phase: "managementResolution",
             logLevel: "always",
             type: "campaign_creation",
-            campaign: typedIntent.campaign,
+            horseId: typedIntent.horseId,
+            goalType: typedIntent.goalType,
+            targetRaceKey: typedIntent.targetRaceKey,
             reason: "Campaign created",
           } as any);
           break;

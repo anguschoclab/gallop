@@ -91,6 +91,12 @@ export type AuctionRunner = {
   finalImpacts(args: { day: number; phase: string }): AnyImpact[];
   /** Set or clear the player's proxy max bid cap for automatic re-raises. */
   setPlayerMaxBid(cap: number | undefined): void;
+  /** Skip the current lot (pass on bidding). */
+  skipLot(): void;
+  /** Finish the sale early and mark as done. */
+  finishSale(): void;
+  /** Get the final state for commit. */
+  getFinalState(): AuctionTickEvent[];
 };
 
 /**
@@ -517,6 +523,31 @@ export function createAuctionRunner(
     finalImpacts,
     setPlayerMaxBid: (cap: number | undefined) => {
       playerMaxBid = cap;
+    },
+    skipLot: () => {
+      // Mark current lot as passed and move to next
+      const state = lots[lotIndex];
+      if (state) {
+        state.lot.passed = true;
+        state.lot.hammerPrice = undefined;
+        state.lot.soldToStableId = undefined;
+        log.push(`Lot ${lotIndex + 1} (${state.lot.horseId}) passed`);
+        lotIndex++;
+      }
+    },
+    finishSale: () => {
+      // Mark remaining lots as passed and complete the sale
+      for (let i = lotIndex; i < lots.length; i++) {
+        lots[i].lot.passed = true;
+        lots[i].lot.hammerPrice = undefined;
+        lots[i].lot.soldToStableId = undefined;
+        log.push(`Lot ${i + 1} (${lots[i].lot.horseId}) passed (sale finished early)`);
+      }
+      lotIndex = lots.length;
+    },
+    getFinalState: () => {
+      // Return all events that would be emitted by finalImpacts
+      return runToCompletion();
     },
   };
 }

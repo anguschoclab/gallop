@@ -8,8 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import type { PipelineContext } from "../pipeline";
-import { resolveRaces } from "@/core/race/raceResolution";
+import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { PHASE_ORDER_RACE_RESOLUTION } from "@/game/constants/gameConstants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/raceSimulationService";
@@ -211,8 +210,8 @@ export const raceResolutionPhase: PipelinePhase = {
           const prizeMoney = race.purse * 0.6;
           const tempHorse = {
             ...winner,
-            lifetimeEarnings: winner.lifetimeEarnings + prizeMoney,
-            careerWins: winner.careerWins + 1,
+            lifetimeEarnings: (winner.lifetimeEarnings ?? 0) + prizeMoney,
+            careerWins: (winner.careerWins ?? 0) + 1,
             raceHistory: [...winner.raceHistory, { grade: "G1", position: 1, day: newDay } as any],
           };
 

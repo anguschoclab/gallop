@@ -54,6 +54,7 @@ export type Runner = {
   draftingHorseId: string | null;
   horse: HorseT;
   jockey?: JockeyT;
+  jockeyName?: string; // Computed from jockey?.name for convenience
   weight: number;
   tactics: string;
   courseFamiliarityMultiplier?: number; // Multiplier based on course visits (1.0 = no bonus)
@@ -233,7 +234,7 @@ export function buildRunner(
   const surfaceMod = surface ? (h.surfaceAptitude[surface] ?? 0.95) * (1 + farrierBonus) : 1.0;
 
   const fiberMods = h.fiberBias
-    ? fiberDistanceModifier(h.fiberBias, raceDistance)
+    ? fiberDistanceModifier(h.fiberBias as "balanced" | "sprinter" | "stayer", raceDistance)
     : { speedMul: 1, staminaMul: 1 };
 
   const conditionsHarsh = conditions.speedMul < 0.97;
@@ -390,7 +391,7 @@ export function buildRunner(
   }
 
   const assignedWeight = weight ?? 126;
-  const sizeCapacity = (h.weight - 500) / 10;
+  const sizeCapacity = ((h.weight ?? 500) - 500) / 10;
   const standardWeightThreshold = 126 + sizeCapacity;
 
   const weightPenalty = Math.max(0, (assignedWeight - standardWeightThreshold) * 0.0015);

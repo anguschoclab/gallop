@@ -36,6 +36,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
   const cash = useGame((s) => s.cash);
   const scoutReports = useGame((s) => s.scoutReports);
   const stables = useGame((s) => s.npcStables);
+  const horses = useGame((s) => s.horses);
 
   const {
     sale,
@@ -83,7 +84,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
         handleBid();
       }
       if (e.key.toLowerCase() === "p") {
-        setPaused((v) => !v);
+        setPaused(!paused);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -124,7 +125,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
           <p className="text-muted-foreground text-lg">All lots have been hammered down.</p>
         </div>
         <Button
-          size="xl"
+          size="lg"
           className="h-20 px-12 text-2xl font-black rounded-2xl shadow-2xl animate-bounce"
           onClick={handleCommit}
         >
@@ -176,7 +177,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
                 chant={lotState?.chant}
                 lotIndex={lotIndex}
                 totalLots={totalLots}
-                scoutOverall={scouted?.overallEstimate}
+                scoutOverall={scouted?.overallEstimate?.toString()}
               />
             </CardContent>
 
@@ -206,7 +207,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
             currentBid={currentBid}
             playerIsLeading={playerIsLeading}
             paused={paused}
-            onTogglePause={() => setPaused((v) => !v)}
+            onTogglePause={() => setPaused(!paused)}
             onBid={handleBid}
             onPass={handlePass}
             onSkip={handleSkip}
@@ -269,10 +270,8 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
 
       {/* Overlays */}
       <BidHistoryPanel
-        open={historyOpen}
-        onClose={() => setHistoryOpen(false)}
-        bids={bidHistory}
-        horses={horses}
+        bidHistory={bidHistory}
+        stables={stables}
       />
 
       {winOverlay && (

@@ -39,8 +39,8 @@ const COAT_COLORS = [
 ] as const;
 
 function HorseGalleryPage() {
-  const allHorses = (useGame as any)((s) => s.horses, shallow);
-  const horses = useMemo(() => allHorses.filter((h) => h.owned), [allHorses]);
+  const allHorses = (useGame as any)((s: any) => s.horses, shallow);
+  const horses = useMemo(() => allHorses.filter((h: any) => h.owned), [allHorses]);
   const [coatFilter, setCoatFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"ovr" | "age" | "name">("ovr");
 
@@ -66,7 +66,7 @@ function HorseGalleryPage() {
 
   const coatCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    horses.forEach((h) => {
+    horses.forEach((h: any) => {
       if (h.coatColor) {
         counts[h.coatColor] = (counts[h.coatColor] || 0) + 1;
       }
@@ -155,7 +155,7 @@ function HorseGalleryPage() {
                       markings={horse.markings}
                       gender={horse.gender}
                       appearance={horse.appearance}
-                      size="xl"
+                      size="lg"
                       className="group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>

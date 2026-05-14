@@ -9,6 +9,7 @@
  */
 
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
+import type { ReputationEvent } from "@/core/reputation/reputationTypes";
 import { createRng, hashStr, type Rng } from "@/game/rng";
 import {
   NpcAIManager,

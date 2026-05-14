@@ -9,11 +9,12 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import type { PipelineContext, PipelinePhase } from "../pipeline";
+
 // Pasture Retirement Phase
 // Automatically retires NPC horses to pasture based on age and inactivity
 // Also deletes dead/retired horses with no wins to prevent array accumulation
 
-import type { PipelineContext } from "../pipeline";
 import { createRng, hashStr } from "@/game/rng";
 import { AGE_RETIREMENT_THRESHOLD, FAME_LOW_THRESHOLD, INACTIVITY_RETIREMENT_DAYS } from "@/game/constants/gameConstants";
 import type {

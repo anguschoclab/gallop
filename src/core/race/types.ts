@@ -9,6 +9,7 @@
  */
 
 import { RaceClass } from "./sharedTypes";
+import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
 
 export type ClaimingPrice =
   | 5000
@@ -29,8 +30,6 @@ export type WinCondition = "none" | "N1X" | "N2X" | "N3L" | "NW1" | "NW2" | "NW3
 export type Weather = "sunny" | "cloudy" | "rainy" | "sunset" | "night";
 
 export type TrackCondition = "fast" | "good" | "soft" | "heavy" | "yielding";
-
-import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
 
 /**
  * Main Race type definition.

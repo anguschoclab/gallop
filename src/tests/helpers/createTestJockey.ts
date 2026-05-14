@@ -47,6 +47,7 @@ function createTestJockeySilk(overrides?: Partial<JockeySilk>): JockeySilk {
  * @returns Complete Jockey object
  */
 export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
+  const silk = createTestJockeySilk();
   return {
     id: "test-jockey-1",
     name: "Test Jockey",
@@ -54,11 +55,15 @@ export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
     archetype: "versatile" as JockeyArchetype,
     stats: createTestJockeyStats(),
     traits: [] as JockeyTrait[],
-    silk: createTestJockeySilk(),
+    silk: overrides?.silk ?? silk,
     careerStarts: 100,
     careerWins: 20,
     fame: 50,
     ridingFee: 100,
+    affinityMap: {},
+    stableAffinity: 50,
+    isApprentice: false,
+    loyalty: 50,
     ...overrides,
   };
 }

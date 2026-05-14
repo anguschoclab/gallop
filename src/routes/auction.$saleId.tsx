@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
+import type { Horse } from "@/game/types";
 import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -81,7 +82,7 @@ function AuctionSalePage() {
   useEffect(() => {
     const id = setTimeout(() => {
       navigate({
-        search: (prev) => ({ ...prev, q: searchDraft.trim() || undefined }),
+        search: (prev: any) => ({ ...prev, q: searchDraft.trim() || undefined }),
       });
     }, 200);
     return () => clearTimeout(id);
@@ -122,7 +123,7 @@ function AuctionSalePage() {
     update: Partial<AuctionBrowseSearch> | ((prev: AuctionBrowseSearch) => AuctionBrowseSearch),
   ) => {
     navigate({
-      search: (prev) => (typeof update === "function" ? update(prev) : { ...prev, ...update }),
+      search: (prev: any) => (typeof update === "function" ? update(prev) : { ...prev, ...update }),
     });
   };
 
@@ -552,7 +553,7 @@ function AuctionSalePage() {
                                       {key}
                                     </span>
                                     <span className="text-xs font-mono font-black text-cream/60 tabular-nums">
-                                      {val as string}
+                                      {String(val)}
                                     </span>
                                   </div>
                                 ))}
@@ -761,7 +762,7 @@ function AuctionSalePage() {
               </div>
             ) : displayLots.length > 0 && currentLot && !horse ? (
               <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
-                <hardDrive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
+                <HardDrive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
                 <p className="font-bold text-cream/40 uppercase tracking-[0.3em] font-[family-name:var(--font-display)]">
                   Data Unavailable
                 </p>

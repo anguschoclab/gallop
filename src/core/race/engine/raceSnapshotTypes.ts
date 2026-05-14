@@ -37,3 +37,16 @@ export interface RaceReplay {
   trackType?: "Turf" | "Dirt" | "Synthetic";
   trackHandedness?: "left" | "right" | "straight";
 }
+
+/**
+ * Sectional split data.
+ */
+export type SectionalSplit = {
+  label: string; // "¼", "½", "¾", "Fin"
+  distanceMeters: number; // absolute meters from start
+  // Computed properties for UI convenience
+  leader?: string; // horseId of the leader at this split
+  quarter?: number; // quarter index (1, 2, 3, 4)
+  time?: number; // leader's time at this split
+  positions?: Array<{ horseId: string; position: number }>; // running order
+};

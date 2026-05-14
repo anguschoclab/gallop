@@ -27,7 +27,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     hemisphere: "Northern",
     silk: "red",
     energy: 80,
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
     genotype: {
       color: { extension: [3, 3], agouti: [3, 3], gray: [1, 1], cream: [1, 1] },
       stats: { speed: [[3, 3]], stamina: [[3, 3]], acceleration: [[3, 3]], consistency: [[3, 3]] },
@@ -190,7 +190,7 @@ describe("detectContender", () => {
   it("should detect contender based on horse stats", () => {
     const state = createCampaignAIState(createMockStable());
     const horse = createMockHorse({
-      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85, temperament: 50, conformation: 50 },
     });
     const currentDay = 100;
 
@@ -204,7 +204,7 @@ describe("detectContender", () => {
   it("should not detect contender for low-quality horses", () => {
     const state = createCampaignAIState(createMockStable());
     const horse = createMockHorse({
-      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
+      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 },
     });
     const currentDay = 100;
 
@@ -234,11 +234,11 @@ describe("detectContender", () => {
     const state = createCampaignAIState(createMockStable());
     const threeYearOld = createMockHorse({
       age: 3,
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
     });
     const fourYearOld = createMockHorse({
       age: 4,
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
     });
     const currentDay = 100;
 
@@ -258,7 +258,7 @@ describe("getOptimalMajorRaceTarget", () => {
   it("should return null for non-contenders", () => {
     const state = createCampaignAIState(createMockStable());
     const horse = createMockHorse({
-      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
+      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 },
     });
     const stable = createMockStable();
     const currentDay = 100;
@@ -270,7 +270,7 @@ describe("getOptimalMajorRaceTarget", () => {
   it("should return optimal target for contenders", () => {
     const state = createCampaignAIState(createMockStable());
     const horse = createMockHorse({
-      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85, temperament: 50, conformation: 50 },
       distanceAptitude: 2000,
     });
     const stable = createMockStable();
@@ -289,7 +289,7 @@ describe("shouldTargetMajorRace", () => {
   it("should return false for non-contenders", () => {
     const state = createCampaignAIState(createMockStable());
     const horse = createMockHorse({
-      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
+      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 },
     });
     const targetRace = createMockGradedRace({ grade: "G1", distance: 2000 });
     const stable = createMockStable();
@@ -302,7 +302,7 @@ describe("shouldTargetMajorRace", () => {
   it("should return true for high-quality contenders", () => {
     const state = createCampaignAIState(createMockStable());
     const horse = createMockHorse({
-      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85, temperament: 50, conformation: 50 },
       distanceAptitude: 2000,
     });
     const targetRace = createMockGradedRace({ grade: "G1", distance: 2000 });
@@ -320,7 +320,7 @@ describe("shouldTargetMajorRace", () => {
       createMockStable({ personality: "conservative" }),
     );
     const horse = createMockHorse({
-      stats: { speed: 75, stamina: 75, acceleration: 75, consistency: 75 },
+      stats: { speed: 75, stamina: 75, acceleration: 75, consistency: 75, temperament: 50, conformation: 50 },
       distanceAptitude: 2000,
     });
     const targetRace = createMockGradedRace({ grade: "G1", distance: 2000 });
@@ -698,11 +698,11 @@ describe("getCampaignInsights", () => {
     const state = createCampaignAIState(createMockStable());
     const horse1 = createMockHorse({
       id: "horse-1",
-      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85, temperament: 50, conformation: 50 },
     });
     const horse2 = createMockHorse({
       id: "horse-2",
-      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85 },
+      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85, temperament: 50, conformation: 50 },
     });
     const currentDay = 100;
 

@@ -32,6 +32,15 @@ export type CoatColor =
 
 export type SockHeight = "none" | "sock" | "stocking";
 export type FaceWhite = "none" | "star" | "blaze" | "bald";
+
+export interface BlueHenStatus {
+  isBlueHen: boolean;
+  stakesWinnersProduced: number;
+  group1WinnersProduced: number;
+  blueHenScore: number;
+  foalsProduced: number;
+}
+
 export type HealthStatus = "healthy" | "covering_sickness" | "recovering" | "other_illness";
 export type HorseGender = "colt" | "filly" | "horse" | "mare" | "gelding";
 
@@ -96,7 +105,7 @@ export type Horse = {
   damId?: string;
   sireName: string;
   damName: string;
-  pedigree: { sireId?: string; damId?: string };
+  pedigree: { sireId?: string; damId?: string; sireName?: string; damName?: string };
   birthDay: number;
   age: number;
   gender: HorseGender;
@@ -114,6 +123,15 @@ export type Horse = {
   recoveryPoints: number; // Dynamic form: 0-100, represents horse's physical condition
   lastBeyer?: number; // Track last race performance for bounce calculation
   lastRaceDay?: number; // Track when horse last raced for recovery calculation
+  bruceLoweFamily?: number;
+  lastFoaledDay?: number;
+  lifetimeEarnings?: number;
+  careerWins?: number;
+  ancestralHistoryCoefficient?: number;
+  progenyCount?: number;
+  geneticMarkers?: GeneticMarkers;
+  fertility?: number;
+  coefficientOfInbreeding?: number;
   raceHistory: {
     raceId: string;
     raceName: string;

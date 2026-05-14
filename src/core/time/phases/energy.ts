@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import type { PipelineContext } from "../pipeline";
+import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { getFacilityBonus } from "@/core/facilities";
 import { resolveEpmRisk } from "@/core/genetics/phenotype";
 import { BANISTER_CONSTANTS, decayValue, calculatePeakingIndex } from "@/core/health/banister";
@@ -43,7 +43,7 @@ export const energyPhase = {
         if (!staffByStable.has(stableId)) {
           staffByStable.set(stableId, []);
         }
-        staffByStable.get(staff.stableId)!.push(staff);
+        staffByStable.get(staff.stableId ?? "")!.push(staff);
       }
     }
 
@@ -138,7 +138,7 @@ export const energyPhase = {
 
       // --- ACCLIMATIZATION DECAY ---
       if (h.outpostId) {
-        const stable = npcStables.find((s) => s.id === stableId);
+        const stable = state.npcStables?.find((s) => s.id === stableId);
         if (stable && (stable as any).outposts) {
           const outpost = (stable as any).outposts.find((o: any) => o.id === h.outpostId);
           if (outpost && outpost.acclimatizationDays?.[h.id] > 0) {

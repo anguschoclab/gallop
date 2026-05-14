@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
+import type { Syndicate } from "@/core/breeding/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +18,7 @@ export function SyndicateMarket() {
   // Used O(1) horseMap lookup instead of O(N) horses.find() inside the map loop.
   // Impact: Reduces rendering complexity of the syndicate list from O(N^2) to O(N).
   const syndicateList = useMemo(() => {
-    return Object.entries(syndicates).map(([stallionId, syndicate]) => {
+    return Object.entries(syndicates).map(([stallionId, syndicate]: [string, Syndicate]) => {
       const stallion = horseMap.get(stallionId);
       return {
         syndicate,

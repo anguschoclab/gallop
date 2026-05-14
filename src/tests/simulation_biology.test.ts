@@ -14,8 +14,8 @@ describe("Biological Simulation Bridge - Stress Test", () => {
     smallHorse.weight = 440; // Pony
 
     // Reset stats to identical for fair comparison
-    largeHorse.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80 };
-    smallHorse.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80 };
+    largeHorse.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    smallHorse.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
 
     const topWeight = 132; // Heavy lead
 
@@ -47,13 +47,13 @@ describe("Biological Simulation Bridge - Stress Test", () => {
 
   it("should apply conformation-based stamina efficiency", () => {
     const goodConf = generateHorse({ tier: "mid" });
-    goodConf.conformation = "excellent";
+    goodConf.conformation = 90;
 
     const poorConf = generateHorse({ tier: "mid" });
-    poorConf.conformation = "poor";
+    poorConf.conformation = 30;
 
-    goodConf.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80 };
-    poorConf.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80 };
+    goodConf.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    poorConf.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
 
     // Normalize other factors that could affect staminaFactor
     goodConf.energy = 100;
@@ -66,8 +66,8 @@ describe("Biological Simulation Bridge - Stress Test", () => {
     poorConf.surfaceAptitude = { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 };
     goodConf.runningStyle = "P";
     poorConf.runningStyle = "P";
-    goodConf.temperament = "fair";
-    poorConf.temperament = "fair";
+    goodConf.temperament = 50;
+    poorConf.temperament = 50;
     goodConf.heartScore = 1.0;
     poorConf.heartScore = 1.0;
 

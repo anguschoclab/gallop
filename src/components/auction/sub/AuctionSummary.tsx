@@ -5,8 +5,7 @@
  * after an auction concludes.
  */
 
-import { Button } from "@/components/ui/card"; // Wait, Button is usually from @/components/ui/button
-import { Button as UIButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
@@ -79,13 +78,12 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
           )}
         </div>
 
-        <UIButton
-          size="xl"
+        <Button
+          size="lg"
           className="w-full h-16 text-lg font-black rounded-2xl shadow-xl"
-          onClick={onClose}
         >
           Return to Sales
-        </UIButton>
+        </Button>
       </CardContent>
     </Card>
   );

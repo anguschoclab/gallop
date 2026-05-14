@@ -27,6 +27,8 @@ function createTestHorseStats(overrides?: Partial<HorseStats>): HorseStats {
     stamina: 70,
     acceleration: 70,
     consistency: 70,
+    temperament: 50,
+    conformation: 50,
     ...overrides,
   };
 }
@@ -73,8 +75,8 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     // Optional basic properties
     sireName: "Test Sire",
     damName: "Test Dam",
-    conformation: "good",
-    temperament: "good",
+    conformation: 70,
+    temperament: 70,
     healthStatus: "healthy" as HealthStatus,
     coatColor: "bay" as CoatColor,
     runningStyle: "P" as RunningStyle,
@@ -88,7 +90,7 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     blueHenStatus: undefined,
     foalsProduced: undefined,
     lastFoaledDay: undefined,
-    pedigree: undefined,
+    pedigree: { sireName: "Test Sire", damName: "Test Dam" },
     stud: undefined,
     bruceLoweFamily: undefined,
 
@@ -111,8 +113,8 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
 
     // REQUIRED DNA traits (Tier 1+2)
     heartScore: 1.0, // Late-race stamina multiplier (0.85-1.15)
-    fiberBias: "balanced", // Sprint vs stayer preference
-    strideType: "balanced", // Short vs long stride
+    fiberBias: "average", // Sprint vs stayer preference
+    strideType: "average", // Short vs long stride
     trackPreference: "balanced", // Track handedness preference
     mudAptitude: 1.0, // Soft ground performance (0.85-1.15)
 

@@ -43,9 +43,11 @@ import { wrap, expose, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
-import type { StoreType, ActionResult } from "./types";
+import type { StoreType, ActionResult, GameStateCreator } from "./types";
 import type { NewGameOptions } from "@/game/state";
 import type { AnyIntent } from "@/core/resolver/intents";
+
+export type { StoreType, GameStateCreator } from "./types";
 
 // List of state keys that should be persisted to storage.
 // Any new game state fields should be added here to ensure they survive a refresh.
@@ -234,10 +236,7 @@ export const useGame = create<StoreType>()(
     usedJockeyNames: [],
     staffPool: [],
     hiredStaff: [],
-    npcAIManager: {
-      stableStates: {},
-      globalDay: 1,
-    },
+    npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
 
     // Core slice
     ...createCoreSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),

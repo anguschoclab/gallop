@@ -34,6 +34,7 @@ export type AuctioneerContext = {
 export type AuctioneerLine = {
   text: string;
   isHighImpact: boolean;
+  type?: "hammer" | "chant" | "other";
 };
 
 /**
@@ -180,8 +181,8 @@ function substitute(template: string, ctx: RenderCtx, rng: Rng): string {
           : horse.gender
       : undefined,
     age: horse ? `${horse.age}YO` : undefined,
-    conformation: horse?.conformation,
-    temperament: horse?.temperament,
+    conformation: horse?.conformation?.toString(),
+    temperament: horse?.temperament?.toString(),
     runningStyle: runningStyleLabel(horse?.runningStyle),
     fameBucket: horse ? fameBucket(horse.fame) : undefined,
     potentialBucket: potentialHintFromOverall(ctx.scoutedOverall) ?? undefined,

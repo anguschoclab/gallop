@@ -72,7 +72,7 @@ export function AuctionControls({
       {/* Main Action Bar */}
       <div className="grid grid-cols-4 gap-3">
         <Button
-          size="xl"
+          size="lg"
           className={cn(
             "col-span-2 h-20 text-xl font-black rounded-2xl transition-all shadow-xl active:scale-95",
             playerIsLeading
@@ -88,7 +88,7 @@ export function AuctionControls({
 
         <Button
           variant="outline"
-          size="xl"
+          size="lg"
           className="h-20 flex-col gap-1 rounded-2xl border-2 hover:bg-muted"
           onClick={onTogglePause}
         >
@@ -107,7 +107,7 @@ export function AuctionControls({
 
         <Button
           variant="outline"
-          size="xl"
+          size="lg"
           className="h-20 flex-col gap-1 rounded-2xl border-2 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30"
           onClick={onPass}
         >
@@ -162,7 +162,7 @@ export function AuctionControls({
                 onKeyDown={(e) => e.key === "Enter" && handleMaxBid()}
               />
               <Button
-                variant={playerMaxBid ? "primary" : "secondary"}
+                variant={playerMaxBid ? "default" : "secondary"}
                 className="h-12 px-4 rounded-xl font-bold"
                 onClick={handleMaxBid}
               >

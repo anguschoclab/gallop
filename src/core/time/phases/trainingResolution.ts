@@ -11,8 +11,8 @@
 // Training Resolution Phase
 // Converts TrainingIntents into impacts (stat changes, energy changes, cash changes)
 
-import type { PipelineContext } from "../pipeline";
-import { resolveTraining } from "@/core/training/trainingResolution";
+import type { PipelineContext, PipelinePhase } from "../pipeline";
+import type { TrainingIntent } from "@/core/resolver/intents";
 import { PHASE_ORDER_TRAINING_RESOLUTION } from "@/game/constants/gameConstants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";

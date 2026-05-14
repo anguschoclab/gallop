@@ -25,11 +25,29 @@ export type { BreedingCompatibilityResult } from "./breedingCompatibility";
 export type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 
 // Type aliases for horse properties (preferring core definitions)
-export type { CoatColor, HorseGender, HealthStatus, SockHeight, FaceWhite, HorseMarkings } from "@/core/horse/types";
+export type { CoatColor, HorseGender, HealthStatus, SockHeight, FaceWhite, HorseMarkings, BlueHenStatus } from "@/core/horse/types";
 
 // Financial types
 export type { Transaction, TransactionType, TransactionSubcategory } from "@/core/transactions";
 export type { Expense, ExpenseCategory } from "@/core/expenses";
+
+// Additional re-exports for commonly used types
+export type { RaceClass } from "@/core/race/sharedTypes";
+export type { PedigreeNode as Pedigree } from "@/core/breeding/types";
+export type { Track } from "@/game/tracks";
+
+// Stud career type (matches structure used in StudCareerImpact)
+export type StudCareer = {
+  atStud: boolean;
+  standingFee: number;
+  previousStandingFee?: number;
+  bookSize: number;
+  seasonBookings: number;
+  lifetimeFoals: number;
+  lifetimeStakesFoals: number;
+  lifetimeG1Foals: number;
+  retiredOnDay: number;
+};
 
 // Type alias for facilities
 export type FacilityState = Record<string, any>;

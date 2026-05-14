@@ -47,7 +47,7 @@ describe("Intent/Resolution Pipeline Integration", () => {
   it("should execute full pipeline with training intent", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30 },
+      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
       energy: 80,
       age: 2, // Younger horse has more room to grow
       peakAge: 4,
@@ -82,14 +82,14 @@ describe("Intent/Resolution Pipeline Integration", () => {
   it("should handle multiple intents in single day", () => {
     const horse1 = createTestHorse({
       id: "horse-1",
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30 },
+      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
       energy: 80,
       age: 2,
       peakAge: 4,
     });
     const horse2 = createTestHorse({
       id: "horse-2",
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30 },
+      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
       energy: 80,
       age: 2,
       peakAge: 4,
@@ -136,7 +136,7 @@ describe("Intent/Resolution Pipeline Integration", () => {
   it("should produce deterministic results with same RNG seed", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30 },
+      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
       energy: 80,
       age: 2,
       peakAge: 4,
@@ -174,7 +174,7 @@ describe("Intent/Resolution Pipeline Integration", () => {
   it("should clear pendingIntents after processing", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30 },
+      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
       energy: 80,
       age: 2,
       peakAge: 4,
@@ -206,7 +206,7 @@ describe("Intent/Resolution Pipeline Integration", () => {
   it("should preserve immutability of original state", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30 },
+      stats: { speed: 30, stamina: 30, acceleration: 30, consistency: 30, temperament: 50, conformation: 50 },
       energy: 80,
       age: 2,
       peakAge: 4,

@@ -17,7 +17,7 @@ import type { SeasonRecord, HallOfFameEntry } from "../../history/historyTypes";
 export interface HorseStatImpact extends Impact {
   type: "horse_stat_change";
   horseId: string;
-  stat: "speed" | "stamina" | "acceleration" | "consistency";
+  stat: "speed" | "stamina" | "acceleration" | "consistency" | "temperament" | "conformation";
   delta: number;
   reason: string;
 }

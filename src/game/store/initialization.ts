@@ -148,7 +148,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     log: [{ day: 1, text: welcomeText }],
     pregnancies: [],
     npcStables: updatedStables,
-    npcAIManager: { stableStates: {}, globalDay: 1 },
+    npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
     scoutReports: [],
     auctions: [],
     jockeys,
@@ -177,7 +177,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
       news: [],
     },
     horseMap: new Map([...horses, ...npcHorses].map((h) => [h.id, h])),
-    activeBreedingProgram: undefined,
+    activeBreedingProgram: null,
     paceSamples: {},
     calibratedPars: {},
     lastCalibrationDay: 0,
@@ -194,7 +194,5 @@ export function createInitialState(options?: NewGameOptions): GameState {
     breedingPrograms: [],
     privateSaleOffers: [],
     claims: [],
-    breedingProgramProgress: {},
-    awardsHistory: {},
   };
 }

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { SILK_PALETTE, SILK_PATTERNS, generateSilk } from "@/game/jockeyGen";
+import { SILK_PALETTE, SILK_PATTERNS } from "@/game/jockeyData";
+import { generateSilk } from "@/game/jockeyGen";
 import { createRng, hashStr } from "@/game/rng";
 import { SilkPreview } from "./SilkPreview";
 import type { JockeySilk } from "@/game/types";
