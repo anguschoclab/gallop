@@ -95,16 +95,18 @@ export type Race = {
 };
 
 // Sectional timing types
-export type SectionalSplit = {
-  quarter: number; // 1, 2, 3, 4 (quarter-mile markers)
-  time: number; // Cumulative time at this quarter (seconds)
-  leader: string; // horseId of leader at this quarter
-  positions: Array<{ horseId: string; position: number }>; // All positions at this quarter
-};
-
 export type SectionalEntry = {
   horseId: string;
-  splits: Array<{ quarter: number; time: number; position: number }>; // Per-horse splits
+  splitTime: number; // seconds to run this segment (not cumulative)
+  cumulativeTime: number; // seconds from gate to this marker
+  rank: number; // field position at this marker (1 = leading)
+  velocityMs: number; // average m/s during this segment
+};
+
+export type SectionalSplit = {
+  label: string; // "¼", "½", "¾", "Fin"
+  distanceMeters: number; // absolute meters from start
+  entries: SectionalEntry[];
 };
 
 export type RegionalSystem = "north_america" | "europe" | "australia" | "asia" | "south_america";

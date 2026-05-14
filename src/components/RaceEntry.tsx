@@ -30,6 +30,7 @@ import { JockeyCard } from "./JockeyCard";
 import { JockeyAvatar } from "./JockeyAvatar";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
 import { getCurrentYear } from "@/game/raceSchedule";
+import { getTrackById } from "@/game/tracks";
 import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 
@@ -42,7 +43,7 @@ interface RaceEntryProps {
 /**
  * A multi-step dialog component for entering a horse into a race.
  * Handles horse selection, jockey assignment, tactical instructions, and financial review.
- * 
+ *
  * @param {RaceEntryProps} props - The component properties.
  * @returns {JSX.Element} The rendered race entry dialog.
  */
@@ -251,24 +252,35 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                             )}
                             {(() => {
                               const trackId = race.trackId || race.graded?.trackId;
-                              if (trackId && horse.courseVisits) {
-                                const visits = horse.courseVisits[trackId] || 0;
+                              if (trackId) {
+                                const trackName =
+                                  race.graded?.track ?? getTrackById(trackId)?.name ?? trackId;
+                                const visits = horse.courseVisits?.[trackId] ?? 0;
                                 if (visits === 0) {
                                   return (
-                                    <Badge className="bg-slate-500 text-white text-[10px]" title="First time at this track">
-                                      Debut at Track
+                                    <Badge
+                                      className="bg-slate-500 text-white text-[10px]"
+                                      title="First time at this track"
+                                    >
+                                      Debut at {trackName}
                                     </Badge>
                                   );
                                 } else if (visits < 5) {
                                   return (
-                                    <Badge className="bg-yellow-600 text-white text-[10px]" title={`${visits} previous runs here`}>
-                                      Track Experience: {visits} runs
+                                    <Badge
+                                      className="bg-yellow-600 text-white text-[10px]"
+                                      title={`${visits} previous run(s) here`}
+                                    >
+                                      {trackName}: {visits} run{visits === 1 ? "" : "s"}
                                     </Badge>
                                   );
                                 } else {
                                   return (
-                                    <Badge className="bg-emerald-600 text-white text-[10px]" title={`${visits} previous runs here`}>
-                                      Track Master: {visits} runs ★
+                                    <Badge
+                                      className="bg-emerald-600 text-white text-[10px]"
+                                      title={`${visits} previous runs here`}
+                                    >
+                                      {trackName}: {visits} runs ★
                                     </Badge>
                                   );
                                 }

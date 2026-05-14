@@ -31,8 +31,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const impactAny = impact as any;
     const { raceId, horseId, jockeyId, weight, tactics } = impactAny;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
-    const horse =
-      lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (race && horse) {
       race.entries.push({
         horseId,
@@ -71,8 +70,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   jockey_contract: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
-    const { jockeyId, stableId, contractUntil, stableAffinity, isApprentice, loyalty } =
-      impactAny;
+    const { jockeyId, stableId, contractUntil, stableAffinity, isApprentice, loyalty } = impactAny;
     const jockey =
       lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
     if (jockey) {
@@ -121,18 +119,19 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_history: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, raceHistoryEntry } = impactAny;
-    const horse =
-      lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.raceHistory.push(raceHistoryEntry);
 
       // Update courseVisits if trackId available
-      const race = lookupMaps?.raceMap.get(raceHistoryEntry.raceId) || draft.races.find((r) => r.id === raceHistoryEntry.raceId);
+      const race =
+        lookupMaps?.raceMap.get(raceHistoryEntry.raceId) ||
+        draft.races.find((r) => r.id === raceHistoryEntry.raceId);
       if (race) {
         const trackId = race.trackId || race.graded?.trackId;
         if (trackId && raceHistoryEntry.courseVisitCount !== undefined) {
           if (!horse.courseVisits) horse.courseVisits = {};
-          horse.courseVisits[trackId] = raceHistoryEntry.courseVisitCount;
+          horse.courseVisits[trackId] = raceHistoryEntry.courseVisitCount + 1;
         }
       }
     }
@@ -141,8 +140,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   claiming: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, toStableId } = impactAny;
-    const horse =
-      lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.stableId = toStableId;
       horse.owned = !toStableId;

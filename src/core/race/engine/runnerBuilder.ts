@@ -23,6 +23,7 @@ import { calculateDosageMetrics } from "@/game/dosage";
 import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { calculateTheHandBonus } from "@/core/jockey/affinity";
+import { getCourseMultiplier } from "@/core/race/sectionalAnalysis";
 
 export type RunnerBonuses = {
   farrier?: number;
@@ -294,24 +295,11 @@ export function buildRunner(
     }
   }
 
-  // Course familiarity modifier based on spec:
-  // 0 visits: 0.985
-  // 1 visit:  0.995
-  // 2 visits: 1.000
-  // 3 visits: 1.005
-  // 4 visits: 1.008
-  // 5+ visits: 1.010
   let courseFamiliarityMultiplier = 1.0;
   if (race) {
     const trackId = race.trackId || race.graded?.trackId;
     const visits = trackId && h.courseVisits ? h.courseVisits[trackId] || 0 : 0;
-    
-    if (visits === 0) courseFamiliarityMultiplier = 0.985;
-    else if (visits === 1) courseFamiliarityMultiplier = 0.995;
-    else if (visits === 2) courseFamiliarityMultiplier = 1.000;
-    else if (visits === 3) courseFamiliarityMultiplier = 1.005;
-    else if (visits === 4) courseFamiliarityMultiplier = 1.008;
-    else courseFamiliarityMultiplier = 1.010;
+    courseFamiliarityMultiplier = getCourseMultiplier(visits);
   }
 
   const rawTopSpeed =

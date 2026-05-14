@@ -23,7 +23,7 @@ import type {
   LogImpact,
   TripleCrownProgressImpact,
 } from "@/core/resolver/impacts/index";
-import { computeSectionalSplits, computeSectionalEntries, extractPacePositions } from "@/core/race/sectionalAnalysis";
+import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
 import type { Race, Horse, Jockey, Stable, GameState } from "./types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { calculateClassBonus } from "@/core/common/classBonus";
@@ -87,11 +87,8 @@ export function resolveLiveRaceWithImpacts(
   race.result = result.map(({ horseId, position, time }) => ({ horseId, position, time }));
 
   // Compute sectional splits if snapshots are available
-  let sectionalEntries: Record<string, { horseId: string; splits: Array<{ quarter: number; time: number; position: number }> }> = {};
   if (race.snapshots && race.snapshots.length > 0) {
-    const sectionalSplits = computeSectionalSplits(race.snapshots, race.distance);
-    race.sectionalSplits = sectionalSplits;
-    sectionalEntries = computeSectionalEntries(sectionalSplits);
+    race.sectionalSplits = computeSectionalSplits(race.snapshots, race.distance);
   }
 
   // Generate per-horse impacts
@@ -170,9 +167,13 @@ export function resolveLiveRaceWithImpacts(
     }
 
     // Race history impact
-    const pacePositions = extractPacePositions(sectionalEntries, horse.id);
     const trackId = race.trackId || race.graded?.trackId;
-    const courseVisitCount = trackId && horse.courseVisits ? (horse.courseVisits[trackId] || 0) + 1 : undefined;
+    const pacePositions = race.sectionalSplits?.map((split) => {
+      const entry = split.entries.find((e) => e.horseId === horse.id);
+      return entry?.rank ?? 0;
+    });
+    // Store visits BEFORE this race; handler increments by 1 when applying
+    const courseVisitCount = trackId ? (horse.courseVisits?.[trackId] ?? 0) : undefined;
 
     impacts.push({
       id: generateUUID(),

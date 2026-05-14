@@ -71,7 +71,21 @@
       "Bash(git commit *)",
       "Bash(Select-Object -ExpandProperty Name)",
       "Bash(ConvertFrom-Json)",
-      "Bash(Get-Member)"
+      "Bash(Get-Member)",
+      "Bash(xargs ls *)",
+      "Read(//Users/amauricia/.claude/**)",
+      "Read(//Users/amauricia/.claude/plugins/**)",
+      "Bash(python3 -m json.tool)",
+      "Bash(mkdir -p /Users/amauricia/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/skills/verify-spec/evals)",
+      "Bash(mkdir -p /Users/amauricia/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/verify-spec-workspace/iteration-1)",
+      "Bash(mkdir -p /tmp/verify-spec-test/eval-2/src)",
+      "Bash(mkdir -p /Users/amauricia/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/verify-spec-workspace/iteration-1/eval-1-partial-auth/with_skill/outputs)",
+      "Bash(mkdir -p /Users/amauricia/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/verify-spec-workspace/iteration-1/eval-1-partial-auth/without_skill/outputs)",
+      "Bash(mkdir -p /Users/amauricia/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/verify-spec-workspace/iteration-1/eval-2-complete-crud/with_skill/outputs)",
+      "Bash(mkdir -p /Users/amauricia/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/verify-spec-workspace/iteration-1/eval-2-complete-crud/without_skill/outputs)",
+      "Bash(mkdir -p /Users/amauricia/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/verify-spec-workspace/iteration-1/eval-3-inline-search/with_skill/outputs)",
+      "Bash(python -m scripts.aggregate_benchmark /Users/amauricia/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/verify-spec-workspace/iteration-1 --skill-name verify-spec)",
+      "Bash(python3 -m scripts.aggregate_benchmark /Users/amauricia/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/verify-spec-workspace/iteration-1 --skill-name verify-spec)"
     ]
   },
   "hooks": {

@@ -1,155 +1,158 @@
-/**
- * sectionalAnalysis.ts - Sectional timing computation
- *
- * This file provides pure functions for computing quarter-mile sectional splits
- * from race snapshots, including leader identification, position tracking, and
- * per-horse pace extraction. It uses linear interpolation for precision between ticks.
- *
- * Dependencies: ./engine/raceSnapshotTypes (RaceSnapshot), ./types (SectionalSplit, SectionalEntry)
- */
-
 import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
 import type { SectionalSplit, SectionalEntry } from "./types";
 
+const SPLIT_LABELS = ["¼", "½", "¾", "Fin"];
+
 /**
- * Linearly interpolates the exact time a horse crossed a specific distance marker.
- * Used for precise sectional timing between simulation ticks.
- * 
- * @param {RaceSnapshot} before - The snapshot before crossing the marker.
- * @param {RaceSnapshot} after - The snapshot after crossing the marker.
- * @param {string} horseId - The unique ID of the horse.
- * @param {number} distance - The distance marker in meters.
- * @returns {number} The interpolated time in seconds.
+ * Find the simulation time when a horse crossed a given distance marker.
+ * Linearly interpolates between the two nearest snapshots.
+ * Returns null if the horse never reached that distance (DNF).
  */
-function interpolateTimeAtDistance(
-  before: RaceSnapshot,
-  after: RaceSnapshot,
+export function interpolateTimeAtDistance(
+  snapshots: RaceSnapshot[],
   horseId: string,
-  distance: number,
-): number {
-  const hBefore = before.horses.find((h) => h.horseId === horseId);
-  const hAfter = after.horses.find((h) => h.horseId === horseId);
-
-  if (!hBefore || !hAfter) return after.t;
-
-  const d1 = hBefore.position;
-  const d2 = hAfter.position;
-  const t1 = before.t;
-  const t2 = after.t;
-
-  if (d2 === d1) return t2;
-
-  return t1 + ((distance - d1) * (t2 - t1)) / (d2 - d1);
+  targetDistanceMeters: number,
+): number | null {
+  for (let i = 1; i < snapshots.length; i++) {
+    const before = snapshots[i - 1];
+    const after = snapshots[i];
+    const hBefore = before.horses.find((h) => h.horseId === horseId);
+    const hAfter = after.horses.find((h) => h.horseId === horseId);
+    if (!hBefore || !hAfter) continue;
+    if (hAfter.position >= targetDistanceMeters && hBefore.position < targetDistanceMeters) {
+      const d1 = hBefore.position;
+      const d2 = hAfter.position;
+      const t1 = before.t;
+      const t2 = after.t;
+      if (d2 === d1) return t2;
+      return t1 + ((targetDistanceMeters - d1) * (t2 - t1)) / (d2 - d1);
+    }
+  }
+  return null;
 }
 
 /**
- * Computes quarter-mile sectional splits for a race based on simulation snapshots.
- * 
- * @param {RaceSnapshot[]} snapshots - Array of race snapshots recorded during the simulation.
- * @param {number} distance - Total race distance in meters.
- * @returns {SectionalSplit[]} An array of computed sectional splits for each quarter-mile marker.
+ * Compute quarter-point sectional splits for all horses in a race.
+ * splitMarkers defaults to [0.25, 0.5, 0.75, 1.0] * raceDistanceMeters.
+ * Returns [] if snapshots is empty or undefined.
  */
-export function computeSectionalSplits(
+export function calculateSectionalSplits(
   snapshots: RaceSnapshot[],
-  distance: number
+  raceDistanceMeters: number,
+  horseIds: string[],
+  splitMarkers?: number[],
 ): SectionalSplit[] {
-  const quarterMile = 402.336; // meters
+  if (!snapshots || snapshots.length === 0) return [];
+
+  const markers = splitMarkers ?? [0.25, 0.5, 0.75, 1.0].map((f) => f * raceDistanceMeters);
+
   const splits: SectionalSplit[] = [];
-  const numQuarters = Math.floor(distance / quarterMile);
 
-  for (let q = 1; q <= numQuarters; q++) {
-    const marker = q * quarterMile;
-    
-    // Find index of snapshot where leader crosses marker
-    const snapIndex = snapshots.findIndex(s =>
-      s.horses.some(h => h.position >= marker)
-    );
+  // Pre-compute cumulative times per horse per marker
+  const cumulativeTimes: (number | null)[][] = markers.map((marker) =>
+    horseIds.map((id) => interpolateTimeAtDistance(snapshots, id, marker)),
+  );
 
-    if (snapIndex > 0) {
-      const snapAfter = snapshots[snapIndex];
-      const snapBefore = snapshots[snapIndex - 1];
+  for (let mi = 0; mi < markers.length; mi++) {
+    const distanceMeters = markers[mi];
+    const label = SPLIT_LABELS[mi] ?? `${Math.round((mi + 1) * 25)}%`;
 
-      const sortedHorses = [...snapAfter.horses]
-        .sort((a, b) => b.position - a.position);
-      
-      const leaderId = sortedHorses[0].horseId;
-      const exactTime = interpolateTimeAtDistance(snapBefore, snapAfter, leaderId, marker);
+    const entriesRaw: {
+      horseId: string;
+      cumulativeTime: number;
+      splitTime: number;
+      velocityMs: number;
+    }[] = [];
 
-      splits.push({
-        quarter: q,
-        time: exactTime,
-        leader: leaderId,
-        positions: sortedHorses.map(h => ({
-          horseId: h.horseId,
-          position: sortedHorses.findIndex(sh => sh.horseId === h.horseId) + 1
-        }))
-      });
+    for (let hi = 0; hi < horseIds.length; hi++) {
+      const cumTime = cumulativeTimes[mi][hi];
+      if (cumTime === null) continue;
+
+      const prevCumTime = mi === 0 ? 0 : cumulativeTimes[mi - 1][hi];
+      if (prevCumTime === null) continue;
+
+      const prevDistance = mi === 0 ? 0 : markers[mi - 1];
+      const segmentDistance = distanceMeters - prevDistance;
+      const splitTime = cumTime - prevCumTime;
+      const velocityMs = splitTime > 0 ? segmentDistance / splitTime : 0;
+
+      entriesRaw.push({ horseId: horseIds[hi], cumulativeTime: cumTime, splitTime, velocityMs });
     }
+
+    // Sort by cumulativeTime ascending to assign rank
+    entriesRaw.sort((a, b) => a.cumulativeTime - b.cumulativeTime);
+
+    const entries: SectionalEntry[] = entriesRaw.map((e, idx) => ({
+      horseId: e.horseId,
+      splitTime: e.splitTime,
+      cumulativeTime: e.cumulativeTime,
+      rank: idx + 1,
+      velocityMs: e.velocityMs,
+    }));
+
+    splits.push({ label, distanceMeters, entries });
   }
 
   return splits;
 }
 
-/**
- * Computes per-horse sectional entries from a list of race sectional splits.
- * Organizes the split data by horse ID for easier retrieval.
- * 
- * @param {SectionalSplit[]} splits - The array of sectional splits.
- * @returns {Record<string, SectionalEntry>} A map of horse IDs to their sectional entries.
- */
-export function computeSectionalEntries(
-  splits: SectionalSplit[]
-): Record<string, SectionalEntry> {
-  const entries: Record<string, SectionalEntry> = {};
-
-  for (const split of splits) {
-    for (const pos of split.positions) {
-      if (!entries[pos.horseId]) {
-        entries[pos.horseId] = { horseId: pos.horseId, splits: [] };
-      }
-      entries[pos.horseId].splits.push({
-        quarter: split.quarter,
-        time: split.time,
-        position: pos.position
-      });
-    }
+/** Alias for backward compatibility */
+export function computeSectionalSplits(
+  snapshots: RaceSnapshot[],
+  distance: number,
+): SectionalSplit[] {
+  const allHorseIds = new Set<string>();
+  for (const snap of snapshots) {
+    for (const h of snap.horses) allHorseIds.add(h.horseId);
   }
-
-  return entries;
+  return calculateSectionalSplits(snapshots, distance, Array.from(allHorseIds));
 }
 
 /**
- * Extracts the sequence of positions at each quarter-mile marker for a specific horse.
- * 
- * @param {Record<string, SectionalEntry>} entries - The map of sectional entries.
- * @param {string} horseId - The unique ID of the horse.
- * @returns {number[] | undefined} An array of positions (1-indexed), or undefined if the horse is not found.
+ * Produce a short pace position string: "3-2-2-1" (rank at each split marker).
  */
-export function extractPacePositions(
-  entries: Record<string, SectionalEntry>,
-  horseId: string
-): number[] | undefined {
-  const entry = entries[horseId];
-  if (!entry) return undefined;
-  return entry.splits.map(s => s.position);
+export function buildPacePositionString(splits: SectionalSplit[], horseId: string): string {
+  return splits
+    .map((split) => {
+      const entry = split.entries.find((e) => e.horseId === horseId);
+      return entry?.rank ?? 0;
+    })
+    .join("-");
 }
 
 /**
- * Derives a human-readable pace style label (e.g., "Front-runner", "Closer") based on a horse's average positions during the race.
- * 
- * @param {number[]} pacePositions - The array of positions at each quarter-mile marker.
- * @returns {string} The derived pace style label.
+ * Derive a human-readable running style label from pace positions.
  */
-export function derivePaceStyleLabel(pacePositions: number[]): string {
+export function derivePaceStyleLabel(pacePositions: number[], fieldSize?: number): string {
   if (pacePositions.length === 0) return "Unknown";
 
   const firstCall = pacePositions[0];
   const lastCall = pacePositions[pacePositions.length - 1];
+  const threshold = fieldSize ? fieldSize * 0.3 : 3;
 
-  if (firstCall <= 1.5) return "Front-runner";
-  if (firstCall <= 3) return "Stalker";
-  if (lastCall < firstCall - 3) return "Closer";
-  if (firstCall > 6) return "Deep Closer";
+  if (firstCall <= 1.5) return "Wire-to-wire";
+  if (firstCall <= threshold) return "Presser";
+  if (lastCall < firstCall - threshold) return "Deep Closer";
+  if (lastCall < firstCall - 1) return "Closer";
+  if (firstCall <= threshold * 2) return "Stalker";
+  return "Deep Closer";
+}
 
-  return "Mid-pack";
+/**
+ * Course familiarity multiplier applied to maxVelocity at simulation start.
+ *
+ * | Prior visits | Multiplier |
+ * |---|---|
+ * | 0 (debut)  | 0.985 |
+ * | 1–2        | 0.995 |
+ * | 3–4        | 1.000 |
+ * | 5–9        | 1.005 |
+ * | 10+        | 1.010 |
+ */
+export function getCourseMultiplier(visits: number): number {
+  if (visits === 0) return 0.985;
+  if (visits <= 2) return 0.995;
+  if (visits <= 4) return 1.0;
+  if (visits <= 9) return 1.005;
+  return 1.01;
 }
