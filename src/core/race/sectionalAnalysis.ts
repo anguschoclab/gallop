@@ -12,7 +12,14 @@ import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
 import type { SectionalSplit, SectionalEntry } from "./types";
 
 /**
- * Linearly interpolates the time a horse crossed a specific distance marker.
+ * Linearly interpolates the exact time a horse crossed a specific distance marker.
+ * Used for precise sectional timing between simulation ticks.
+ * 
+ * @param {RaceSnapshot} before - The snapshot before crossing the marker.
+ * @param {RaceSnapshot} after - The snapshot after crossing the marker.
+ * @param {string} horseId - The unique ID of the horse.
+ * @param {number} distance - The distance marker in meters.
+ * @returns {number} The interpolated time in seconds.
  */
 function interpolateTimeAtDistance(
   before: RaceSnapshot,
@@ -36,10 +43,11 @@ function interpolateTimeAtDistance(
 }
 
 /**
- * Compute quarter-mile sectional splits from race snapshots.
- * @param snapshots - Race snapshots recorded at 0.1s intervals
- * @param distance - Total race distance in meters
- * @returns Array of sectional splits for each quarter-mile marker
+ * Computes quarter-mile sectional splits for a race based on simulation snapshots.
+ * 
+ * @param {RaceSnapshot[]} snapshots - Array of race snapshots recorded during the simulation.
+ * @param {number} distance - Total race distance in meters.
+ * @returns {SectionalSplit[]} An array of computed sectional splits for each quarter-mile marker.
  */
 export function computeSectionalSplits(
   snapshots: RaceSnapshot[],
@@ -83,9 +91,11 @@ export function computeSectionalSplits(
 }
 
 /**
- * Compute per-horse sectional entries from splits.
- * @param splits - Sectional splits array
- * @returns Map of horseId to sectional entries
+ * Computes per-horse sectional entries from a list of race sectional splits.
+ * Organizes the split data by horse ID for easier retrieval.
+ * 
+ * @param {SectionalSplit[]} splits - The array of sectional splits.
+ * @returns {Record<string, SectionalEntry>} A map of horse IDs to their sectional entries.
  */
 export function computeSectionalEntries(
   splits: SectionalSplit[]
@@ -109,10 +119,11 @@ export function computeSectionalEntries(
 }
 
 /**
- * Extract pace positions from sectional entries.
- * @param entries - Sectional entries
- * @param horseId - Horse to extract positions for
- * @returns Array of positions at each quarter (1-indexed)
+ * Extracts the sequence of positions at each quarter-mile marker for a specific horse.
+ * 
+ * @param {Record<string, SectionalEntry>} entries - The map of sectional entries.
+ * @param {string} horseId - The unique ID of the horse.
+ * @returns {number[] | undefined} An array of positions (1-indexed), or undefined if the horse is not found.
  */
 export function extractPacePositions(
   entries: Record<string, SectionalEntry>,
@@ -124,7 +135,10 @@ export function extractPacePositions(
 }
 
 /**
- * Derives a human-readable pace style label based on a horse's average positions.
+ * Derives a human-readable pace style label (e.g., "Front-runner", "Closer") based on a horse's average positions during the race.
+ * 
+ * @param {number[]} pacePositions - The array of positions at each quarter-mile marker.
+ * @returns {string} The derived pace style label.
  */
 export function derivePaceStyleLabel(pacePositions: number[]): string {
   if (pacePositions.length === 0) return "Unknown";

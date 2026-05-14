@@ -21,17 +21,12 @@ import { type Runner, type PaceContext, paceShapeMul } from "./runnerBuilder";
 import type { Race as RaceT } from "@/game/types";
 
 /**
- * Compute pace context from current runner positions.
- *
- * Calculates leader position, velocity, lead group count, pace pressure,
- * race progress, lane density, and pace rating for tactical decisions.
- *
- * @param runners - All runners in the race
- * @param distance - Race distance in meters
- * @returns Pace context object
- *
- * @example
- * const pace = computePaceContext(runners, 1600);
+ * Computes the pace context for the race based on the current positions and velocities of all runners.
+ * Identifies the leader, lead group size, pace pressure, and overall race progress.
+ * 
+ * @param {Runner[]} runners - All runners currently in the race.
+ * @param {number} distance - Total race distance in meters.
+ * @returns {PaceContext} The computed pace context.
  */
 export function computePaceContext(runners: Runner[], distance: number): PaceContext {
   let leaderPos = 0;
@@ -163,12 +158,13 @@ const GATE_SKILL_VELOCITY_BONUS = 0.005; // 0.5/100
 const GATE_SKILL_PROGRESS_THRESHOLD = 0.05;
 
 /**
- * Calculate target lane based on running style, tactics, and race conditions.
- * @param r
- * @param progress
- * @param sortedField
- * @param pace
- * @returns The target lane position for the runner.
+ * Calculates the target lane for a runner based on their running style, chosen tactics, and current race congestion.
+ * 
+ * @param {Runner} r - The runner to calculate the target lane for.
+ * @param {number} progress - The current progress of the race (0 to 1).
+ * @param {Runner[]} [sortedField] - The list of all runners sorted by position (for spatial awareness).
+ * @param {PaceContext} [pace] - The current pace context of the race.
+ * @returns {number} The calculated target lane index.
  */
 function calculateTargetLane(
   r: Runner,
@@ -212,11 +208,12 @@ function calculateTargetLane(
 }
 
 /**
- * Update lane position towards target lane.
- * @param r
- * @param targetLane
- * @param dt
- * @returns void
+ * Updates the runner's lane position incrementally towards their target lane.
+ * Respects maximum lateral speed and time delta for smooth transitions.
+ * 
+ * @param {Runner} r - The runner whose lane position is being updated.
+ * @param {number} targetLane - The target lane index.
+ * @param {number} dt - The time delta in seconds.
  */
 function updateLanePosition(r: Runner, targetLane: number, dt: number): void {
   const targetPos = targetLane * LANE_WIDTH;
@@ -229,12 +226,14 @@ function updateLanePosition(r: Runner, targetLane: number, dt: number): void {
 }
 
 /**
- * Calculate track geometry modifiers (gradient and turn effects).
- * @param r
- * @param position
- * @param distance
- * @param course
- * @returns Track geometry modifiers including speed multipliers, stamina multiplier, arc factor, and turn radius.
+ * Calculates track geometry modifiers including gradient effects and turn physics.
+ * Turn effects consider centrifugal pressure, horse agility, and jockey skill.
+ * 
+ * @param {Runner} r - The runner to calculate modifiers for.
+ * @param {number} position - The current position of the runner on the track.
+ * @param {number} distance - The total race distance.
+ * @param {CourseSpecification} [course] - The track course specification.
+ * @returns {Object} Modifiers for speed, stamina, and track arc factors.
  */
 function calculateTrackGeometryModifiers(
   r: Runner,
@@ -285,14 +284,15 @@ function calculateTrackGeometryModifiers(
 }
 
 /**
- * Calculate stamina multiplier based on progress, drafting, pace pressure, and health risks.
- * @param r
- * @param progress
- * @param distance
- * @param pace
- * @param rng
- * @param dt
- * @returns The stamina multiplier to apply to the runner.
+ * Calculates the stamina multiplier based on race progress, drafting benefits, pace pressure, and horse-specific health risks (bleeder/roarer).
+ * 
+ * @param {Runner} r - The runner to calculate the stamina multiplier for.
+ * @param {number} progress - The current race progress (0 to 1).
+ * @param {number} distance - The total race distance.
+ * @param {PaceContext} [pace] - The current pace context.
+ * @param {{ next: () => number } | Rng} [rng] - Random number generator for risk checks.
+ * @param {number} [dt] - Time delta in seconds.
+ * @returns {number} The calculated stamina multiplier.
  */
 function calculateStaminaMultiplier(
   r: Runner,
@@ -356,12 +356,14 @@ function calculateStaminaMultiplier(
 }
 
 /**
- * Calculate style multiplier based on running style, progress, track straight, and jockey bonuses.
- * @param r
- * @param progress
- * @param pace
- * @param course
- * @returns The style multiplier to apply to the runner.
+ * Calculates the running style multiplier based on the runner's preferred style and the track's layout (e.g., straight length).
+ * Jockeys may provide additional style-specific bonuses or penalties.
+ * 
+ * @param {Runner} r - The runner to calculate the style multiplier for.
+ * @param {number} progress - The current race progress (0 to 1).
+ * @param {PaceContext} [pace] - The current pace context.
+ * @param {CourseSpecification} [course] - The track course specification.
+ * @returns {number} The calculated style multiplier.
  */
 function calculateStyleMultiplier(
   r: Runner,
@@ -419,10 +421,11 @@ function calculateStyleMultiplier(
 }
 
 /**
- * Calculate draft multiplier based on drafting status and tactics.
- * @param r
- * @param progress
- * @returns The draft multiplier to apply to the runner.
+ * Calculates the draft multiplier for a runner if they are currently drafting behind another horse.
+ * 
+ * @param {Runner} r - The runner to calculate the draft multiplier for.
+ * @param {number} progress - The current race progress (0 to 1).
+ * @returns {number} The draft multiplier.
  */
 function calculateDraftMultiplier(r: Runner, progress: number): number {
   let draftMul = 1;
@@ -435,14 +438,16 @@ function calculateDraftMultiplier(r: Runner, progress: number): number {
 }
 
 /**
- * Apply jockey-specific effects to velocity and stamina.
- * @param r
- * @param progress
- * @param radius
- * @param arcFactor
- * @param dt
- * @param staminaMul
- * @returns The final distance step and updated stamina multiplier.
+ * Applies jockey-specific effects to a runner's velocity and stamina.
+ * Considers archetype matching, specific traits, and physical performance bonuses (e.g., gate skill, vigor).
+ * 
+ * @param {Runner} r - The runner to apply jockey effects to.
+ * @param {number} progress - The current race progress (0 to 1).
+ * @param {number} radius - The turn radius at the current position.
+ * @param {number} arcFactor - The track arc factor.
+ * @param {number} dt - The time delta in seconds.
+ * @param {number} staminaMul - The current stamina multiplier.
+ * @returns {Object} Final distance step and updated stamina multiplier.
  */
 function applyJockeyEffects(
   r: Runner,
@@ -507,10 +512,10 @@ function applyJockeyEffects(
 }
 
 /**
- * Find blocking horse and apply velocity penalty if blocked.
- * @param r
- * @param sortedField
- * @returns void
+ * Applies a velocity penalty if the runner is currently being blocked by another horse directly in front of them.
+ * 
+ * @param {Runner} r - The runner being checked for blocking.
+ * @param {Runner[]} [sortedField] - The list of runners sorted by position.
  */
 function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
   const blockingHorse = (sortedField || []).find(
@@ -527,10 +532,11 @@ function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
 }
 
 /**
- * Find the horse that this runner is drafting behind.
- * @param r
- * @param sortedField
- * @returns The ID of the horse being drafted, or null if not drafting.
+ * Identifies the horse that the current runner is drafting behind, if any.
+ * 
+ * @param {Runner} r - The runner checking for drafting opportunities.
+ * @param {Runner[]} sortedField - The list of runners sorted by position.
+ * @returns {string | null} The ID of the drafted horse, or null if not drafting.
  */
 function getDraftingHorseId(r: Runner, sortedField: Runner[]): string | null {
   for (const other of sortedField) {
@@ -546,11 +552,12 @@ function getDraftingHorseId(r: Runner, sortedField: Runner[]): string | null {
 }
 
 /**
- * Get the track section at a specific position.
- * @param pos
- * @param distance
- * @param course
- * @returns The track section at the given position, or null if not found.
+ * Retrieves the track section data for a given position on the course.
+ * 
+ * @param {number} pos - The position on the track.
+ * @param {number} distance - The total race distance.
+ * @param {CourseSpecification} [course] - The track course specification.
+ * @returns {TrackSection | null} The track section at the given position.
  */
 function getTrackSection(
   pos: number,
@@ -574,19 +581,17 @@ function getTrackSection(
 }
 
 /**
- * Step a single runner forward in time by dt.
- *
- * Updates runner position, velocity, lane, and energy based on physics,
- * drafting, track geometry, and tactical AI. Returns early if runner has finished.
- *
- * @param r - Runner to step
- * @param dt - Time delta in seconds
- * @param t - Current simulation time
- * @param distance - Race distance in meters
- * @param rng - Random number generator
- * @param sortedField - Runners in the race sorted by position descending (for spatial lookups)
- * @param pace - Current pace context (for tactical decisions)
- * @param course - Track course specification (for geometry effects)
+ * Simulates a single time step for a runner, updating their physical and tactical state.
+ * Handles position updates, velocity adjustments towards target speed, lane changes, and finish line detection.
+ * 
+ * @param {Runner} r - The runner to update.
+ * @param {number} dt - The time step in seconds.
+ * @param {number} t - The current simulation time in seconds.
+ * @param {number} distance - The total race distance.
+ * @param {{ next: () => number } | Rng} rng - Random number generator for variance.
+ * @param {Runner[]} [sortedField] - The list of all runners sorted by position.
+ * @param {PaceContext} [pace] - The current pace context.
+ * @param {CourseSpecification} [course] - The track course specification.
  */
 export function stepRunner(
   r: Runner,
@@ -672,38 +677,17 @@ export function stepRunner(
 }
 
 /**
- * Run race to completion.
- *
- * Simulates a full race from start to finish, stepping all runners forward
- * until all finish or max time is reached. Returns final results and optional
- * replay snapshots.
- *
- * @param runners - All runners in the race
- * @param distance - Race distance in meters
- * @param rng - Random number generator
- * @param dt - Time delta per step in seconds
- * @param maxTime - Maximum simulation time in seconds
- * @param course - Optional track course specification
- * @param recordSnapshots - Whether to record replay snapshots
- * @returns Race result and optional snapshots
- *
- * @example
- * const { result, snapshots } = runRaceToCompletion(runners, 1600, rng, 0.1, 600, course, true);
- */
-/**
- * Run a race to completion and return results.
- *
- * Simulates all runners stepping forward until all finish or maxTime is reached.
- * Optionally records snapshots for replay visualization.
- *
- * @param runners - All runners in the race
- * @param distance - Race distance in meters
- * @param rng - Random number generator
- * @param dt - Time step in seconds (default 0.1)
- * @param maxTime - Maximum simulation time in seconds (default 600)
- * @param course - Track course specification for geometry effects
- * @param recordSnapshots - Whether to record snapshots for replay (default false)
- * @returns Race result with positions, times, and optional snapshots
+ * Runs a full race simulation until all runners have finished or the maximum time is reached.
+ * Returns final rankings, finish times, and optional replay snapshots.
+ * 
+ * @param {Runner[]} runners - All runners participating in the race.
+ * @param {number} distance - Total race distance in meters.
+ * @param {Rng} rng - Seeded random number generator for simulation variance.
+ * @param {number} [dt=0.1] - Time step per simulation tick in seconds.
+ * @param {number} [maxTime=600] - Maximum simulation duration in seconds.
+ * @param {CourseSpecification} [course] - Track geometry and surface specifications.
+ * @param {boolean} [recordSnapshots=false] - Whether to record per-tick snapshots for replay visualization.
+ * @returns {Object} Final race results and optional snapshots.
  */
 export function runRaceToCompletion(
   runners: Runner[],

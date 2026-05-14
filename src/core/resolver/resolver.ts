@@ -40,11 +40,12 @@ export interface ResolverContext {
 }
 
 /**
- * Apply a single impact to the state using Immer for immutability.
- *
- * @param state - Current game state
- * @param impact - Impact to apply
- * @returns Updated game state
+ * Applies a single state impact to the game state using Immer for immutability.
+ * Iterates through all registered handlers to find the appropriate one for the impact type.
+ * 
+ * @param {GameState} state - The current game state.
+ * @param {AnyImpact} impact - The impact to apply.
+ * @returns {GameState} The updated game state.
  */
 function applyImpact(state: GameState, impact: AnyImpact): GameState {
   return produce(state, (draft) => {
@@ -65,13 +66,11 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
 }
 
 /**
- * Apply all impacts to the state in order.
- *
- * Processes all impacts in the context, applying them to the game state using Immer
- * for immutability. Creates pre-indexed maps for O(1) lookups during impact resolution.
- *
- * @param context - Resolver context containing state, intents, impacts, and impact log
- * @returns Updated resolver context with new state and impact log
+ * Applies a collection of impacts to the state in sequential order.
+ * Processes all impacts within the resolver context and creates pre-indexed maps for efficient entity lookups during resolution.
+ * 
+ * @param {ResolverContext} context - The context containing current state and impacts to apply.
+ * @returns {ResolverContext} The updated resolver context with the new state and extended impact log.
  */
 export function applyImpacts(context: ResolverContext): ResolverContext {
   const impactLog: ImpactLogEntry[] = [];
@@ -178,16 +177,13 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
 }
 
 /**
- * Validate an intent before resolution.
- *
- * Finds and runs the appropriate validator for the intent type. Returns validation
- * result with validity flag and optional reason if invalid. Defaults to valid if no
- * specific validator found.
- *
- * @param intent - Intent to validate
- * @param state - Current game state
- * @param cache - Optional validation cache for performance
- * @returns Validation result with valid flag and optional reason
+ * Validates a game intent before it is processed by the resolver.
+ * Searches for a registered validator capable of handling the specific intent type.
+ * 
+ * @param {AnyIntent} intent - The intent to validate.
+ * @param {GameState} state - The current game state.
+ * @param {ValidationCache} [cache] - Optional cache to store and reuse validation results for performance.
+ * @returns {Object} Validation result containing a `valid` boolean and an optional `reason` for failure.
  */
 export function validateIntent(
   intent: AnyIntent,
@@ -206,27 +202,22 @@ export function validateIntent(
 }
 
 /**
- * Sort intents by priority (higher priority first).
- *
- * Sorts intents by their priority field. Player intents have priority 100, NPC intents
- * have priority 50, System intents have priority 10.
- *
- * @param intents - Intents to sort
- * @returns Sorted intents array with highest priority first
+ * Sorts an array of intents by their numerical priority field in descending order.
+ * 
+ * @param {AnyIntent[]} intents - The array of intents to sort.
+ * @returns {AnyIntent[]} A new array containing the sorted intents.
  */
 export function sortIntents(intents: AnyIntent[]): AnyIntent[] {
   return [...intents].sort((a, b) => b.priority - a.priority);
 }
 
 /**
- * Resolve conflicts between intents.
- *
- * Groups intents by entity and type, keeping only the highest-priority intent for each.
- * Lower-priority intents are logged as conflicts. Uses priority-based resolution.
- *
- * @param intents - Intents to resolve conflicts for
- * @param state - Current game state
- * @returns Resolved intents array and conflicts log
+ * Resolves potential conflicts between multiple intents targeting the same entity and type.
+ * Groups intents and retains only the one with the highest priority for each group, logging the others as conflicts.
+ * 
+ * @param {AnyIntent[]} intents - The collection of intents to resolve.
+ * @param {GameState} state - The current game state.
+ * @returns {Object} An object containing the list of `resolved` intents and an array of `conflicts`.
  */
 export function resolveIntentConflicts(
   intents: AnyIntent[],
