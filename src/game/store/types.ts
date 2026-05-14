@@ -53,7 +53,8 @@ export type StoreType = CoreState &
   BreedingProgramSlice &
   HorseAdminSlice &
   AwardSlice &
-  UtilitySlice & {
+  UtilitySlice &
+  WeatherSlice & {
     startNewGame: (options: NewGameOptions) => Promise<void>;
   };
 
