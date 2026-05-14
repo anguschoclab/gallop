@@ -10,6 +10,7 @@ import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@
 import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import { formatCurrency } from "@/lib/formatting";
+import { WeatherForecastStrip } from "./WeatherForecastStrip";
 import type { Race } from "@/game/types";
 
 interface RaceCardProps {
