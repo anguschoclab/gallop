@@ -98,6 +98,8 @@ const PERSISTED_KEYS: (keyof GameState)[] = [
   "syndicates",
   "staffPool",
   "hiredStaff",
+  // Phase 3 — dynamic weather sim per track
+  "weather" as keyof GameState,
 ];
 
 /**
