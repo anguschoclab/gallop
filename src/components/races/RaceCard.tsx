@@ -101,6 +101,10 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
                   <MapPin className="h-3 w-3" /> {race.graded?.track || "Local Track"}
                 </span>
               </div>
+              <WeatherForecastStrip
+                trackId={race.trackId ?? race.graded?.trackId ?? race.graded?.track}
+                trackCondition={race.trackCondition}
+              />
             </div>
           </div>
           <div className="text-right flex flex-col items-end">
@@ -127,7 +131,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
           <div className="flex items-center justify-between pt-2 border-t border-gold-muted text-[11px]">
             <div className="flex gap-3 text-muted-foreground tabular-nums">
               <span>{race.distance}m</span>
-              <JargonTooltip term={race.surface}>{race.surface}</JargonTooltip>
+              <JargonTooltip term={race.surface || "Turf"}>{race.surface || "Turf"}</JargonTooltip>
               <span>{race.raceClass}</span>
               <span className="font-bold text-cream">
                 <JargonTooltip term="ML">ML</JargonTooltip>: {favoriteOdds}

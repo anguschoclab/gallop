@@ -149,7 +149,7 @@ describe("Day Advancement Pipeline Integration", () => {
           age: 3,
           gender: "colt",
           hemisphere: "Northern",
-          stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+          stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
           potential: 75,
           energy: 100,
           form: 0,

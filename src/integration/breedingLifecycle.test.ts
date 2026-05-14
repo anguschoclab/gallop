@@ -13,7 +13,7 @@ function mockHorse(
   id: string,
   name: string,
   gender: HorseGender,
-  stats: { speed: number; stamina: number; acceleration: number; consistency: number },
+  stats: { speed: number; stamina: number; acceleration: number; consistency: number; temperament: number; conformation: number },
   overrides?: Partial<Horse>,
 ): Horse {
   return {
@@ -112,7 +112,7 @@ describe("Breeding Lifecycle Integration", () => {
       "stallion-1",
       "Test Stallion",
       "horse",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
       {
         age: 6,
         stableId: "stable-1",
@@ -136,7 +136,7 @@ describe("Breeding Lifecycle Integration", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       {
         stableId: "stable-1",
         silk: "blue",
@@ -190,7 +190,7 @@ describe("Breeding Lifecycle Integration", () => {
       "stallion-1",
       "Test Stallion",
       "horse",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
       {
         age: 6,
         stableId: "stable-1",

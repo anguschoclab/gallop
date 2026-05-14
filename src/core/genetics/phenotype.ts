@@ -104,6 +104,8 @@ export function resolveStats(stats: StatGenotype): HorseStats {
     stamina: sumLoci(stats.stamina),
     acceleration: sumLoci(stats.acceleration),
     consistency: sumLoci(stats.consistency),
+    temperament: 50,
+    conformation: 50,
   };
 }
 
