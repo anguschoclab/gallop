@@ -167,3 +167,38 @@ export function calculateBeyerForResult(
 ): number {
   return beyerFigure({ distance, finishTime, classBonus, calibratedPars });
 }
+
+/**
+ * Detect a "pattern jump" or "storm" event — a significant performance improvement.
+ *
+ * Criteria for a jump:
+ * 1. New Beyer is 15+ points above the horse's historical average.
+ * 2. OR New Beyer is 10+ points above career best (requires at least 2 previous starts).
+ *
+ * @param horse - Horse to check
+ * @param newBeyer - Beyer figure from the most recent race
+ * @returns Result with jumped flag and improvement margin
+ */
+export function detectPatternJump(
+  horse: Horse,
+  newBeyer: number,
+): { jumped: boolean; margin: number } {
+  const beyerHistory = horse.raceHistory
+    .filter((r) => r.beyer !== undefined)
+    .map((r) => r.beyer!);
+
+  if (beyerHistory.length === 0) return { jumped: false, margin: 0 };
+
+  const avgBeyer = beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length;
+  const careerBest = Math.max(...beyerHistory);
+
+  const jumpOverAvg = newBeyer - avgBeyer;
+  const jumpOverBest = newBeyer - careerBest;
+
+  // Pattern Jump logic: 15+ over average OR 10+ over career high (if established)
+  if (jumpOverAvg >= 15 || (beyerHistory.length >= 2 && jumpOverBest >= 10)) {
+    return { jumped: true, margin: Math.max(jumpOverAvg, jumpOverBest) };
+  }
+
+  return { jumped: false, margin: 0 };
+}

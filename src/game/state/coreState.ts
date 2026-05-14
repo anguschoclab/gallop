@@ -15,6 +15,7 @@
 import type { Horse, Race, Transaction, Expense } from "../types";
 import type { NewsItem } from "@/core/narrative/newsTypes";
 import type { HallOfFameEntry, SeasonRecord } from "@/core/history/historyTypes";
+import type { InboxMessage } from "@/core/inbox/inboxTypes";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/game/rng";
 import { generateHorse } from "@/core/horse/horseFactory";
@@ -39,6 +40,8 @@ export interface CoreState {
   log: { day: number; text: string }[];
   /** Structured news items for the Gallop Gazette */
   news: NewsItem[];
+  /** Player's central inbox for critical notifications */
+  inbox: InboxMessage[];
   /** Historical records of major race winners */
   seasonRecords: SeasonRecord[];
   /** Legendary horses preserved for history */
@@ -103,6 +106,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
           body: `The local racing community is abuzz as ${profile.ownerName} officially registers ${profile.stableName}. "We're here to make history," the new owner stated at the morning trials.`,
         },
       ],
+      inbox: [],
       seasonRecords: [],
       hallOfFame: [],
       archive: {
@@ -134,6 +138,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
         body: "Your stable is now open for business. Good luck on the road to the Triple Crown!",
       },
     ],
+    inbox: [],
     seasonRecords: [],
     hallOfFame: [],
     archive: {

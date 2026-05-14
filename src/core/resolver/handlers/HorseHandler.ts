@@ -14,6 +14,7 @@ import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { ImpactHandler } from "./types";
+import { generateUUID } from "@/core/uuid";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -119,6 +120,24 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         recoveryDays,
         onsetDay: impact.day,
       };
+
+      // Push to Inbox if player-owned
+      if (!horse.stableId) {
+        if (!draft.inbox) draft.inbox = [];
+        draft.inbox.push({
+          id: generateUUID(),
+          day: impact.day,
+          category: "injury",
+          priority: "urgent",
+          title: `Injury: ${horse.name}`,
+          body: `${horse.name} sustained a ${severity} ${injuryType} injury. Estimated recovery: ${recoveryDays} days.`,
+          cta: {
+            label: "View Horse",
+            route: "stable.$horseId",
+            params: { horseId: horse.id },
+          },
+        });
+      }
     }
   },
   recovery_change: (draft, impact, horse) => {

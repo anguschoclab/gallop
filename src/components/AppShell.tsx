@@ -28,6 +28,7 @@ import {
   Clock,
   LayoutGrid,
   Star,
+  Bell,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ const navSections = [
     label: "Headquarters",
     items: [
       { to: "/", label: "Dashboard", icon: Home, exact: true },
+      { to: "/inbox", label: "Inbox", icon: Bell, exact: false },
       { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
     ],
@@ -110,6 +112,9 @@ export function AppShell() {
   const [autoSimOpen, setAutoSimOpen] = useState(false);
   const [newGameDialogOpen, setNewGameDialogOpen] = useState(false);
 
+  const inbox = useGame((s: StoreType) => s.inbox);
+  const unreadCount = inbox?.filter((m) => !m.readAt).length ?? 0;
+
   const awards = useAwards();
   const pendingCeremonies = useGameWithShallow((s: StoreType) => s.pendingAwardCeremonies);
   const [showCeremony, setShowCeremony] = useState(false);
@@ -157,13 +162,18 @@ export function AppShell() {
                   <Link
                     key={item.to}
                     to={item.to}
-                    className="flex items-center gap-2 text-sm text-cream-muted hover:text-gold transition-colors"
+                    className="flex items-center gap-2 text-sm text-cream-muted hover:text-gold transition-colors group"
                     activeProps={{
                       className: "text-gold font-medium",
                     }}
                   >
                     <item.icon className="h-4 w-4" />
-                    {item.label}
+                    <span className="flex-1">{item.label}</span>
+                    {item.label === "Inbox" && unreadCount > 0 && (
+                      <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white group-hover:bg-red-500">
+                        {unreadCount}
+                      </span>
+                    )}
                   </Link>
                 ))}
               </div>

@@ -12,6 +12,7 @@ import type { PipelineContext } from "../pipeline";
 import type { Horse, Pregnancy } from "@/game/types";
 import { getFoalsBy } from "@/core/breeding/lineage";
 import { resolvePregnancies } from "@/game/store/helpers/pregnancy";
+import { generateUUID } from "@/core/uuid";
 import {
   createReputationEvent,
   calculateBreedingReputation,
@@ -73,12 +74,14 @@ export const pregnancyPhase = {
 
     // Add reputation events for player-owned foals born
     const newReputationEvents = state.reputation?.events ?? [];
+    const newInboxMessages = [...(state.inbox ?? [])];
+
     for (const foal of foals) {
       // Find the pregnancy that produced this foal
       const pregnancy = pregnancies.find((p) => p.foalId === foal.id);
       if (pregnancy) {
         const dam = state.horses.find((h) => h.id === pregnancy.damId);
-        // Only add reputation for player-owned dams
+        // Only add reputation/inbox for player-owned dams
         if (dam && !dam.stableId) {
           const foalQuality = foal.potential;
           const reputationAmount = calculateBreedingReputation(foalQuality);
@@ -90,6 +93,25 @@ export const pregnancyPhase = {
             { horseId: foal.id },
           );
           newReputationEvents.push(reputationEvent);
+
+          // Push to Inbox
+          newInboxMessages.push({
+            id: generateUUID(),
+            day: newDay,
+            category: "foaling",
+            priority: "info",
+            title: `New Arrival: ${foal.name}`,
+            body: `A healthy ${
+              foal.gender === "filly" ? "filly" : "colt"
+            } by ${
+              state.horses.find((h) => h.id === pregnancy.sireId)?.name || "Unknown"
+            } out of ${dam.name} was born today.`,
+            cta: {
+              label: "View Foal",
+              route: "stable.$horseId",
+              params: { horseId: foal.id },
+            },
+          });
         }
       }
     }
@@ -102,6 +124,7 @@ export const pregnancyPhase = {
         pregnancies,
         cash: state.cash + cashAdjustment,
         usedHorseNames: Array.from(usedNamesSet),
+        inbox: newInboxMessages,
         reputation: state.reputation
           ? {
               ...state.reputation,

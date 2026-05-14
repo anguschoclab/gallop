@@ -15,6 +15,7 @@ import type { JockeyImpact } from "./jockeyImpacts";
 import type { BreedingImpact } from "./breedingImpacts";
 import type { CampaignImpact } from "./campaignImpacts";
 import type { MiscImpact } from "./miscImpacts";
+import type { InboxImpact } from "./inboxImpacts";
 
 export * from "./base";
 export * from "./financialImpacts";
@@ -24,6 +25,7 @@ export * from "./jockeyImpacts";
 export * from "./breedingImpacts";
 export * from "./campaignImpacts";
 export * from "./miscImpacts";
+export * from "./inboxImpacts";
 
 export type AnyImpact =
   | FinancialImpact
@@ -32,4 +34,5 @@ export type AnyImpact =
   | JockeyImpact
   | BreedingImpact
   | CampaignImpact
-  | MiscImpact;
+  | MiscImpact
+  | InboxImpact;

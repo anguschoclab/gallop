@@ -28,6 +28,7 @@ import type { HorseAdminSlice } from "./slices/horseAdminSlice";
 import type { AwardSlice } from "./slices/awardSlice";
 import type { UtilitySlice } from "./slices/utilitySlice";
 import type { WeatherSlice } from "./slices/weatherSlice";
+import type { InboxSlice } from "./slices/inboxSlice";
 
 /**
  * Standard action result type for store actions
@@ -54,7 +55,8 @@ export type StoreType = CoreState &
   HorseAdminSlice &
   AwardSlice &
   UtilitySlice &
-  WeatherSlice & {
+  WeatherSlice &
+  InboxSlice & {
     startNewGame: (options: NewGameOptions) => Promise<void>;
   };
 

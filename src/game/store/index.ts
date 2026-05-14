@@ -293,6 +293,9 @@ export const useGame = create<StoreType>()(
     // Weather slice (per-track Markov sim, populated by weatherPhase)
     ...createWeatherSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
+    // Inbox slice (Message Center)
+    ...createInboxSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
     // Start new game action
     startNewGame: async (options: NewGameOptions) => {
       // Initialize workers if not already initialized

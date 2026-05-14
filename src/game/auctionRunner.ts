@@ -447,7 +447,34 @@ export function createAuctionRunner(
       // Debit the buyer if the player won. The live Theater debits cash
       // atomically on each player bid (so the player can't double-spend
       // mid-sale), so in liveMode we skip emitting this final debit.
+      // Push to Inbox for winner.
       if (!winnerStableId && !liveMode) {
+        const horse = horses.find((h) => h.id === lot.horseId);
+        const horseName = horse?.name || "Unknown Horse";
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day,
+          phase,
+          logLevel: "always",
+          type: "inbox_message",
+          message: {
+            day,
+            category: "auction",
+            priority: "info",
+            title: `Auction Won: ${horseName}`,
+            body: `Congratulations! You purchased ${horseName} for $${lot.hammerPrice.toLocaleString()} at ${
+              sale.name
+            }.`,
+            cta: {
+              label: "View Horse",
+              route: "stable.$horseId",
+              params: { horseId: lot.horseId },
+            },
+          },
+        });
+
         impacts.push({
           id: generateUUID(),
           intentId: "",
@@ -477,6 +504,32 @@ export function createAuctionRunner(
         });
       } else {
         // Player consignor.
+        const horse = horses.find((h) => h.id === lot.horseId);
+        const horseName = horse?.name || "Unknown Horse";
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day,
+          phase,
+          logLevel: "always",
+          type: "inbox_message",
+          message: {
+            day,
+            category: "auction",
+            priority: "info",
+            title: `Horse Sold: ${horseName}`,
+            body: `${horseName} was sold for $${lot.hammerPrice.toLocaleString()} at ${
+              sale.name
+            }. Your net proceeds: $${proceeds.toLocaleString()}.`,
+            cta: {
+              label: "View Sale",
+              route: "auction.$saleId",
+              params: { saleId: sale.id },
+            },
+          },
+        });
+
         impacts.push({
           id: generateUUID(),
           intentId: "",
@@ -505,6 +558,38 @@ export function createAuctionRunner(
         reason: "auction_transfer",
       });
     }
+
+    // Handle passed lots for player consignor.
+    const resolvedLots = lots.map((l) => l.lot);
+    for (const lot of resolvedLots.filter((l) => l.passed)) {
+      if (lot.consignorStableId === "") {
+        // Player's horse passed.
+        const horse = horses.find((h) => h.id === lot.horseId);
+        const horseName = horse?.name || "Unknown Horse";
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day,
+          phase,
+          logLevel: "always",
+          type: "inbox_message",
+          message: {
+            day,
+            category: "auction",
+            priority: "info",
+            title: `Horse Passed: ${horseName}`,
+            body: `${horseName} failed to meet its reserve price at ${sale.name} and has returned to your stable.`,
+            cta: {
+              label: "View Horse",
+              route: "stable.$horseId",
+              params: { horseId: lot.horseId },
+            },
+          },
+        });
+      }
+    }
+
     return impacts;
   }
 

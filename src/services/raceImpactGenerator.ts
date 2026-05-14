@@ -29,7 +29,7 @@ import type { Rng } from "@/game/rng";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/core/uuid";
 import { formatCurrency } from "@/lib/formatting";
-import { beyerFigure } from "@/game/beyer";
+import { beyerFigure, detectPatternJump } from "@/game/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { recalcStandingFee } from "@/core/breeding/stallions";
 import {
@@ -679,6 +679,38 @@ export function generateRaceImpacts({
         rng,
       );
       impacts.push(beyerImpact, recoveryImpact);
+
+      // --- PATTERN JUMP DETECTION ---
+      // Only push notifications for Graded races (G1, G2, G3)
+      if (race.graded) {
+        const { jumped, margin } = detectPatternJump(horse, beyerImpact.beyer);
+        if (jumped) {
+          impacts.push({
+            id: generateUUID(rng),
+            intentId: "",
+            day: newDay,
+            phase: "raceResolution",
+            logLevel: "always",
+            type: "inbox_message",
+            message: {
+              day: newDay,
+              category: "race",
+              priority: "info",
+              title: `Performance Spike: ${horse.name}`,
+              body: `${horse.name} produced a massive performance jump in the ${
+                race.name
+              }, earning a ${beyerImpact.beyer} Beyer figure (+${Math.round(
+                margin,
+              )} improvement). This horse is on a sharp upward trajectory.`,
+              cta: {
+                label: "View Horse",
+                route: "stable.$horseId",
+                params: { horseId: horse.id },
+              },
+            },
+          });
+        }
+      }
 
       // Race history impact
       const trackId = race.trackId || race.graded?.trackId;

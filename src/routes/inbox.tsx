@@ -1,0 +1,217 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useGame, type StoreType } from "@/game/store";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  Bell, 
+  Check, 
+  CheckCheck, 
+  Trash2, 
+  Pin, 
+  AlertCircle, 
+  Info, 
+  Gavel, 
+  Baby, 
+  Activity, 
+  Calendar,
+  ExternalLink
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { InboxCategory, InboxPriority, InboxMessage } from "@/core/inbox/inboxTypes";
+
+export const Route = createFileRoute("/inbox")({
+  component: InboxPage,
+});
+
+function InboxPage() {
+  const navigate = useNavigate();
+  const day = useGame((s: StoreType) => s.day);
+  const inbox = useGame((s: StoreType) => s.inbox) || [];
+  const markRead = useGame((s: StoreType) => s.markMessageRead);
+  const markAllRead = useGame((s: StoreType) => s.markAllMessagesRead);
+  const dismiss = useGame((s: StoreType) => s.dismissMessage);
+  const pinUntil = useGame((s: StoreType) => s.pinMessageUntil);
+
+  const [filter, setFilter] = useState<"all" | "unread" | "action">("all");
+
+  const filteredMessages = inbox
+    .filter((m) => {
+      if (filter === "unread") return !m.readAt;
+      if (filter === "action") return m.priority !== "info";
+      return true;
+    })
+    .sort((a, b) => {
+      // Sort pinned first
+      const aPinned = a.pinnedUntil && a.pinnedUntil >= day;
+      const bPinned = b.pinnedUntil && b.pinnedUntil >= day;
+      if (aPinned && !bPinned) return -1;
+      if (!aPinned && bPinned) return 1;
+      // Then sort by day descending
+      return b.day - a.day;
+    });
+
+  const getCategoryIcon = (category: InboxCategory) => {
+    switch (category) {
+      case "foaling": return <Baby className="h-4 w-4" />;
+      case "injury": return <Activity className="h-4 w-4" />;
+      case "auction": return <Gavel className="h-4 w-4" />;
+      case "deadline": return <Calendar className="h-4 w-4" />;
+      case "offer": return <Gavel className="h-4 w-4" />;
+      case "race": return <Calendar className="h-4 w-4" />;
+      default: return <Bell className="h-4 w-4" />;
+    }
+  };
+
+  const getPriorityColor = (priority: InboxPriority) => {
+    switch (priority) {
+      case "urgent": return "bg-red-500/10 border-red-500 text-red-500";
+      case "action": return "bg-gold/10 border-gold text-gold";
+      default: return "bg-blue-500/10 border-blue-500 text-blue-500";
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-6 max-w-4xl animate-in fade-in slide-in-from-bottom-4">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-cream font-[family-name:var(--font-display)]">Message Center</h1>
+          <p className="text-cream-muted text-sm mt-1">Your hub for critical stable updates and decisions.</p>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => markAllRead()}
+            disabled={inbox.every(m => m.readAt)}
+          >
+            <CheckCheck className="mr-2 h-4 w-4" />
+            Mark all read
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex gap-2 mb-6">
+        <Button 
+          variant={filter === "all" ? "default" : "outline"} 
+          size="sm" 
+          onClick={() => setFilter("all")}
+        >
+          All Messages
+        </Button>
+        <Button 
+          variant={filter === "unread" ? "default" : "outline"} 
+          size="sm" 
+          onClick={() => setFilter("unread")}
+        >
+          Unread
+          {inbox.some(m => !m.readAt) && (
+            <Badge variant="destructive" className="ml-2 px-1.5 h-4 min-w-[16px]">
+              {inbox.filter(m => !m.readAt).length}
+            </Badge>
+          )}
+        </Button>
+        <Button 
+          variant={filter === "action" ? "default" : "outline"} 
+          size="sm" 
+          onClick={() => setFilter("action")}
+        >
+          Action Required
+        </Button>
+      </div>
+
+      <div className="space-y-4">
+        {filteredMessages.length === 0 ? (
+          <Card className="bg-t800 border-gold-muted/30 py-12">
+            <CardContent className="flex flex-col items-center justify-center text-cream-muted">
+              <Bell className="h-12 w-12 mb-4 opacity-20" />
+              <p>No messages to display.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          filteredMessages.map((msg) => (
+            <Card 
+              key={msg.id} 
+              className={cn(
+                "bg-t800 border-gold-muted/30 transition-all hover:border-gold/50 relative overflow-hidden",
+                !msg.readAt && "border-l-4 border-l-gold shadow-lg shadow-gold/5",
+                msg.priority === "urgent" && "border-l-4 border-l-red-500"
+              )}
+            >
+              <CardHeader className="pb-2">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={cn(
+                      "p-2 rounded-full",
+                      getPriorityColor(msg.priority)
+                    )}>
+                      {getCategoryIcon(msg.category)}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-lg text-cream">{msg.title}</CardTitle>
+                        {!msg.readAt && (
+                          <span className="h-2 w-2 rounded-full bg-gold animate-pulse" />
+                        )}
+                        {msg.pinnedUntil && msg.pinnedUntil >= day && (
+                          <Pin className="h-3 w-3 text-gold fill-gold" />
+                        )}
+                      </div>
+                      <p className="text-xs text-cream-muted font-mono">
+                        Day {msg.day} • {msg.category.toUpperCase()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1">
+                    {!msg.readAt && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        title="Mark as read"
+                        onClick={() => markRead(msg.id)}
+                      >
+                        <Check className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      title="Dismiss"
+                      onClick={() => dismiss(msg.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-cream-muted text-sm mb-4 leading-relaxed">
+                  {msg.body}
+                </p>
+                {msg.cta && (
+                  <Button 
+                    variant={msg.priority === "urgent" ? "destructive" : "default"}
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => {
+                      markRead(msg.id);
+                      if (msg.cta) {
+                        // Handle parameterized routes
+                        const routePath = msg.cta.route.replace(/\$(\w+)/g, (_, key) => msg.cta?.params?.[key] || "");
+                        navigate({ to: routePath as any });
+                      }
+                    }}
+                  >
+                    {msg.cta.label}
+                    <ExternalLink className="h-3 w-3" />
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}

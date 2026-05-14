@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +24,8 @@ import {
   LayoutGrid,
   Zap,
   Store,
+  Bell,
+  ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ReputationBadge } from "@/components/ReputationBadge";
@@ -33,6 +35,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
+  const navigate = useNavigate();
   const {
     day,
     cash,
@@ -50,6 +53,8 @@ function Dashboard() {
     syndicates,
     npcStables,
     npcAIManager,
+    inbox,
+    markMessageRead,
   } = useGame();
 
   const ownedHorses = horses.filter((h) => h.owned);
@@ -66,6 +71,11 @@ function Dashboard() {
   const playerAwards = awards?.filter((a) => !a.stableId) ?? [];
 
   const recentReputationEvents = reputation?.events?.slice(-3).reverse() ?? [];
+
+  const urgentMessages = (inbox || [])
+    .filter((m) => !m.readAt && m.priority !== "info")
+    .sort((a, b) => b.day - a.day)
+    .slice(0, 3);
 
   // Calculate top rivals for Key Rivals widget
   const topRivals = npcStables
@@ -168,6 +178,53 @@ function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* --- QUICK ACTION CENTER --- */}
+      {urgentMessages.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {urgentMessages.map((msg) => (
+            <Card
+              key={msg.id}
+              className={cn(
+                "bg-t800 border-l-4 transition-all hover:bg-t750 cursor-pointer group",
+                msg.priority === "urgent" ? "border-l-red-500" : "border-l-gold"
+              )}
+              onClick={() => {
+                if (msg.cta) {
+                  const routePath = msg.cta.route.replace(
+                    /\$(\w+)/g,
+                    (_, key) => msg.cta?.params?.[key] || ""
+                  );
+                  navigate({ to: routePath as any });
+                  markMessageRead(msg.id);
+                } else {
+                  navigate({ to: "/inbox" });
+                }
+              }}
+            >
+              <CardContent className="p-4 flex items-start gap-3">
+                <div
+                  className={cn(
+                    "p-2 rounded-full shrink-0",
+                    msg.priority === "urgent" ? "bg-red-500/10 text-red-500" : "bg-gold/10 text-gold"
+                  )}
+                >
+                  {msg.priority === "urgent" ? (
+                    <AlertCircle className="h-4 w-4" />
+                  ) : (
+                    <Bell className="h-4 w-4" />
+                  )}
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <h3 className="text-sm font-bold text-cream truncate">{msg.title}</h3>
+                  <p className="text-xs text-cream-muted line-clamp-2">{msg.body}</p>
+                </div>
+                <ChevronRight className="h-4 w-4 text-cream-muted ml-auto shrink-0 group-hover:text-gold transition-colors" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* --- TOP ROW: SITUATION REPORT --- */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
