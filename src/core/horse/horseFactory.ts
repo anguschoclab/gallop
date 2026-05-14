@@ -144,28 +144,22 @@ function resolveDnaTraits(genotype: Genotype) {
 
 // --- Public Factory API ---
 
+
 /**
- * Low-level builder: DNA -> Fully hydrated Horse object
- *
- * This function takes a genotype and resolves all phenotype traits (stats, coat color,
- * running style, aptitudes, health risks, etc.) to create a complete Horse object.
- * It's the core horse creation primitive used by all other generation functions.
- *
- * @param genotype - The genetic blueprint containing all DNA information
- * @param rng - Random number generator for deterministic variation
- * @param opts - Configuration options for the horse
- * @param opts.name - Optional horse name (defaults to "Unnamed")
- * @param opts.age - Optional horse age in years (defaults to 2)
- * @param opts.gender - Optional horse gender (defaults to "colt")
- * @param opts.hemisphere - Optional racing hemisphere (defaults to "Northern")
- * @param opts.owned - Optional ownership flag (defaults to false)
- * @param opts.stableId - Optional stable ID assignment
- * @param opts.createdAtDay - Optional game day when horse was created
- * @returns Fully hydrated Horse object with all phenotype traits resolved
- *
- * @example
- * const genotype = generateGenotype(rng, "elite");
- * const horse = createHorseFromDNA(genotype, rng, { name: "Thunder", age: 3 });
+ * Hydrates a complete Horse object from a given genotype by resolving all phenotype traits.
+ * This is the core builder for all horse creation, handling stats, aptitudes, health risks, and appearance.
+ * 
+ * @param {Genotype} genotype - The genetic blueprint for the horse.
+ * @param {Rng} rng - Seeded random number generator.
+ * @param {Object} [opts={}] - Configuration options.
+ * @param {string} [opts.name] - The horse's name.
+ * @param {number} [opts.age] - Current age in years.
+ * @param {HorseGender} [opts.gender] - Biological gender.
+ * @param {Hemisphere} [opts.hemisphere] - Racing hemisphere.
+ * @param {boolean} [opts.owned] - Player ownership status.
+ * @param {string} [opts.stableId] - ID of the assigned stable.
+ * @param {number} [opts.createdAtDay] - Simulation day of creation.
+ * @returns {Horse} A fully populated Horse object.
  */
 export function createHorseFromDNA(
   genotype: Genotype,
@@ -247,25 +241,18 @@ export function createHorseFromDNA(
 }
 
 /**
- * Procedural generation for market/starter horses
- *
- * Generates a complete horse with genotype, phenotype, and name. This is the primary
- * function for creating horses for the market, starter stables, or other procedural
- * generation needs. It uses tier-based generation to control quality distribution.
- *
- * @param opts - Generation options
- * @param opts.tier - Quality tier affecting stat ranges (defaults to "budget")
- * @param opts.owned - Whether the horse is player-owned (defaults to false)
- * @param opts.hemisphere - Racing hemisphere (defaults to random)
- * @param opts.age - Horse age in years (defaults to 2-5 random)
- * @param opts.gender - Horse gender (defaults to age-appropriate random)
- * @param rng - Random number generator (defaults to nondeterministic)
- * @param namingContext - Context for name generation (region, theme, existing names)
- * @returns Fully generated Horse object with name, stats, and appearance
- *
- * @example
- * const horse = generateHorse({ tier: "elite", owned: true });
- * const budgetHorse = generateHorse({ tier: "budget" });
+ * Generates a procedural horse, typically for use in market listings or starter rosters.
+ * Handles genotype generation based on tier, age rolling, and procedural naming.
+ * 
+ * @param {Object} [opts={}] - Generation options.
+ * @param {"starter" | "budget" | "mid" | "elite"} [opts.tier] - Quality tier for genotype generation.
+ * @param {boolean} [opts.owned] - Player ownership status.
+ * @param {Hemisphere} [opts.hemisphere] - Racing hemisphere.
+ * @param {number} [opts.age] - Horse age in years.
+ * @param {HorseGender} [opts.gender] - Biological gender.
+ * @param {Rng} [rng=nondeterministicRng()] - Random number generator.
+ * @param {Partial<NamingContext>} [namingContext] - Context for name generation.
+ * @returns {Horse} A procedurally generated Horse object.
  */
 export function generateHorse(
   opts: {
@@ -307,26 +294,19 @@ export function generateHorse(
 }
 
 /**
- * Personality-driven generation for NPC stables
- *
- * Generates a horse tailored to an NPC stable's personality and tier. The stable's
- * personality influences naming themes and quality preferences. This function is used
- * during world generation and daily NPC horse production.
- *
- * @param stable - The NPC stable generating the horse (provides tier, personality, country)
- * @param rng - Random number generator for deterministic variation
- * @param npcAIManager - Optional AI manager for advanced decision-making
- * @param currentDay - Optional current game day for age calculations
- * @param opts - Generation overrides
- * @param opts.tier - Override stable tier for generation (defaults to stable.tier)
- * @param opts.forcedAge - Force specific age instead of random
- * @param opts.forcedGender - Force specific gender instead of random
- * @param opts.forcedName - Force specific name instead of procedural generation
- * @param opts.hemisphere - Override hemisphere (defaults to "Northern")
- * @returns Generated Horse object assigned to the stable
- *
- * @example
- * const horse = generateNpcHorse(stable, rng, aiManager, currentDay, { forcedAge: 3 });
+ * Generates a horse specifically for an NPC stable, incorporating stable personality and tier preferences.
+ * 
+ * @param {Stable} stable - The stable that will own the horse.
+ * @param {Rng} rng - Seeded random number generator.
+ * @param {NpcAIManager} [npcAIManager] - AI manager for advanced logic.
+ * @param {number} [currentDay] - Current simulation day.
+ * @param {Object} [opts={}] - Generation overrides.
+ * @param {StableTier} [opts.tier] - Override quality tier.
+ * @param {number} [opts.forcedAge] - Fixed age for the horse.
+ * @param {Horse["gender"]} [opts.forcedGender] - Fixed gender for the horse.
+ * @param {string} [opts.forcedName] - Fixed name for the horse.
+ * @param {Hemisphere} [opts.hemisphere] - Racing hemisphere.
+ * @returns {Horse} An NPC-owned Horse object.
  */
 export function generateNpcHorse(
   stable: Stable,
