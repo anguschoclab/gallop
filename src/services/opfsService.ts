@@ -63,8 +63,7 @@ export async function checkOPFSAvailable(): Promise<boolean> {
  */
 export async function writeFile(filename: string, data: unknown): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {
-    // Silent no-op in headless/SSR environments
-    return;
+    throw new Error("OPFS not available");
   }
 
   try {
@@ -107,22 +106,21 @@ export async function readFile<T>(filename: string): Promise<T | null> {
 }
 
 /**
- * Delete file from OPFS.
- *
- * @param filename - Target filename
- * @returns Promise resolving to success status
+ * Delete file from OPFS
  */
-export async function deleteFile(filename: string): Promise<boolean> {
+export async function deleteFile(filename: string): Promise<void> {
   if (!isOPFSAvailable || !opfsRoot) {
-    return false;
+    return;
   }
 
   try {
     await opfsRoot.removeEntry(filename);
-    return true;
   } catch (error) {
-    console.warn(`Could not delete ${filename} from OPFS:`, error);
-    return false;
+    if (error instanceof DOMException && error.name === "NotFoundError") {
+      // File doesn't exist, that's fine
+      return;
+    }
+    console.error(`Failed to delete file ${filename}:`, error);
   }
 }
 
@@ -139,7 +137,7 @@ export async function listFiles(): Promise<string[]> {
   try {
     const files: string[] = [];
     // Iterate through directory entries
-    for await (const entry of opfsRoot) {
+    for await (const entry of opfsRoot as unknown as AsyncIterable<FileSystemHandle>) {
       if (entry.kind === "file") {
         files.push(entry.name);
       }
@@ -164,7 +162,7 @@ export async function clearAll(): Promise<void> {
   try {
     // Collect all file names first
     const fileNames: string[] = [];
-    for await (const entry of opfsRoot) {
+    for await (const entry of opfsRoot as unknown as AsyncIterable<FileSystemHandle>) {
       if (entry.kind === "file") {
         fileNames.push(entry.name);
       }
@@ -176,4 +174,13 @@ export async function clearAll(): Promise<void> {
   } catch (error) {
     console.error("Failed to clear OPFS:", error);
   }
+}
+
+/**
+ * FOR TESTING ONLY: Reset module state
+ */
+export function _resetForTest(): void {
+  opfsRoot = null;
+  isOPFSAvailable = false;
+  initPromise = null;
 }

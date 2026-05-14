@@ -18,16 +18,13 @@ describe("opfsService", () => {
   });
 
   afterEach(() => {
-    global.navigator = originalNavigator;
+    vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
   describe("initOPFS", () => {
     it("should warn and return false if navigator.storage is not available", async () => {
-      Object.defineProperty(global, "navigator", {
-        value: {},
-        configurable: true,
-      });
+      vi.stubGlobal("navigator", {});
 
       const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
@@ -39,10 +36,7 @@ describe("opfsService", () => {
     });
 
     it("should warn and return false if navigator.storage.getDirectory is not available", async () => {
-      Object.defineProperty(global, "navigator", {
-        value: { storage: {} },
-        configurable: true,
-      });
+      vi.stubGlobal("navigator", { storage: {} });
 
       const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
@@ -55,13 +49,10 @@ describe("opfsService", () => {
 
     it("should initialize successfully if OPFS is available", async () => {
       const mockGetDirectory = vi.fn().mockResolvedValue({});
-      Object.defineProperty(global, "navigator", {
-        value: {
-          storage: {
-            getDirectory: mockGetDirectory,
-          },
+      vi.stubGlobal("navigator", {
+        storage: {
+          getDirectory: mockGetDirectory,
         },
-        configurable: true,
       });
 
       await initOPFS();
@@ -73,13 +64,10 @@ describe("opfsService", () => {
 
     it("should handle errors during getDirectory gracefully", async () => {
       const mockGetDirectory = vi.fn().mockRejectedValue(new Error("Storage error"));
-      Object.defineProperty(global, "navigator", {
-        value: {
-          storage: {
-            getDirectory: mockGetDirectory,
-          },
+      vi.stubGlobal("navigator", {
+        storage: {
+          getDirectory: mockGetDirectory,
         },
-        configurable: true,
       });
 
       const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -95,13 +83,10 @@ describe("opfsService", () => {
 
   describe("checkOPFSAvailable", () => {
     it("should return the correct availability after initialization", async () => {
-      Object.defineProperty(global, "navigator", {
-        value: {
-          storage: {
-            getDirectory: vi.fn().mockResolvedValue({}),
-          },
+      vi.stubGlobal("navigator", {
+        storage: {
+          getDirectory: vi.fn().mockResolvedValue({}),
         },
-        configurable: true,
       });
 
       const isAvailable = await checkOPFSAvailable();
@@ -124,13 +109,10 @@ describe("opfsService", () => {
 
       mockRoot[Symbol.asyncIterator] = vi.fn();
 
-      Object.defineProperty(global, "navigator", {
-        value: {
-          storage: {
-            getDirectory: vi.fn().mockResolvedValue(mockRoot),
-          },
+      vi.stubGlobal("navigator", {
+        storage: {
+          getDirectory: vi.fn().mockResolvedValue(mockRoot),
         },
-        configurable: true,
       });
 
       await initOPFS();
