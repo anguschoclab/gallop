@@ -16,7 +16,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     gender: "horse",
     hemisphere: "Northern",
     silk: "#aabbcc",
-    stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+    stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
     energy: 100,
     form: 0,
     potential: 90,

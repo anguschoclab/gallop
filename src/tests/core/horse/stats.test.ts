@@ -16,7 +16,7 @@ function mkHorse(
     gender: "horse",
     hemisphere: "Northern",
     silk: "#aabbcc",
-    stats: { speed, stamina, acceleration, consistency },
+    stats: { speed, stamina, acceleration, consistency, temperament: 50, conformation: 50 },
     energy: 100,
     form: 0,
     potential,

@@ -10,7 +10,7 @@ function mkHorse(id: string, speed = 70, stamina = 70, acceleration = 70, consis
     gender: "horse",
     hemisphere: "Northern",
     silk: "#aabbcc",
-    stats: { speed, stamina, acceleration, consistency },
+    stats: { speed, stamina, acceleration, consistency, temperament: 50, conformation: 50 },
     energy: 100,
     form: 0,
     potential: 80,

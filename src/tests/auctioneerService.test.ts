@@ -14,7 +14,7 @@ describe("auctioneerService", () => {
     gender: "colt",
     hemisphere: "Northern",
     silk: "blue",
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },
+    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
     genotype: {
       color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
       stats: {
