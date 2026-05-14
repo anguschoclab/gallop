@@ -54,4 +54,21 @@ export const JARGON_DEFINITIONS: Record<string, string> = {
   Inbreeding:
     "The measure of shared ancestors in a horse's pedigree, calculated to 8 generations with weighted contribution (near generations have stronger impact).",
   Stud: "A retired male horse (stallion) available for breeding.",
+
+  // Track conditions (dynamic weather)
+  fast: "Dry, firm dirt — quickest possible times.",
+  good: "Slightly less than ideal — a touch of give in the surface.",
+  soft: "Wet turf with noticeable give underfoot — slower, harder on stamina.",
+  yielding: "Wetter than soft turf — labour-intensive surface.",
+  heavy: "Saturated turf — exhausting; favours mudders.",
+  sloppy: "Standing water on dirt — splash-and-dash; speed bias intact but tiring.",
+  muddy: "Dirt soaked through with no standing water — heavy and tiring.",
+
+  // Weather sim patterns
+  clear: "Sunny, no precipitation — ideal racing weather.",
+  overcast: "Cloud cover, dry — minimal track impact.",
+  shower: "Brief light rain — track condition softens by one tier.",
+  rain: "Sustained rainfall — turf yields, dirt turns muddy.",
+  storm: "Heavy rain and wind — surface degrades sharply; expect a downgrade.",
 };
+
