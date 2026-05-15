@@ -11,6 +11,8 @@
 
 // Expense Types - Categorized expense tracking for stable operations
 
+import { generateUUID } from "@/core/uuid";
+
 /**
  * Expense category types
  */
@@ -204,7 +206,7 @@ export function createExpense(
   } = {},
 ): Expense {
   return {
-    id: crypto.randomUUID(),
+    id: generateUUID(),
     day,
     category,
     amount,
