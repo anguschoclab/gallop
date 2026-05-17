@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +27,12 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
   const claimingPrice: number | undefined = race.claiming?.price;
 
   const horses = useGameWithShallow((s) => s.horses);
+
+  // ⚡ Bolt Optimization:
+  // Create a local map for O(1) lookups instead of running O(N) .find() inside the loop.
+  // Impact: Reduces complexity from O(E*N) to O(N + E), significantly improving performance when rendering many RaceCards.
+  const localHorseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
+
   const classBonus = useGame((s) => {
     // Calculate class bonus for odds
     if (race.graded?.grade) {
@@ -44,7 +51,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
     let bestProbability = 0;
 
     for (const entry of race.entries) {
-      const horse = horses.find((h) => h.id === entry.horseId);
+      const horse = localHorseMap.get(entry.horseId);
       if (horse) {
         const probability = calculateWinProbability(
           horse.stats.speed,

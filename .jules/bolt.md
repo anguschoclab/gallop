@@ -1,0 +1,4 @@
+
+## $(date +%Y-%m-%d) - Component State Map Assumptions vs. Zustand Store
+**Learning:** Zustand stores often use plain JavaScript objects (e.g. arrays or records) for serialization compatibility. Attempting to directly destructure non-serializable objects (like `Map`) from the store in a UI component, or assuming they will consistently be populated upon hydration, can lead to undefined properties or unexpected `TypeError`s at runtime (e.g. `TypeError: s.horseMap is undefined` or `s.horseMap.get is not a function`).
+**Action:** When implementing O(1) optimizations in React components that iterate over global arrays, ALWAYS construct the `Map` locally using `useMemo` (e.g., `useMemo(() => new Map(horses.map(h => [h.id, h])), [horses])`) instead of relying on non-persisted mapping properties from the Zustand store. This guarantees type safety, avoids crashes if the store's hydration is incomplete, and keeps components modular and safe.
