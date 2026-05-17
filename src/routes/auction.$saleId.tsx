@@ -63,6 +63,7 @@ function AuctionSalePage() {
   const { sex, ageBand, reserveBand, sort, q } = filters;
   const auctions = useGameWithShallow((s) => s.auctions ?? []);
   const horses = useGame((s) => s.horses);
+  const horseMap = useGameWithShallow((s) => s.horseMap ?? new Map());
   const cash = useGame((s) => s.cash);
   const stables = useGame((s) => s.npcStables);
   const scoutReports = useGame((s) => s.scoutReports);
@@ -151,7 +152,7 @@ function AuctionSalePage() {
   const displayLots = isResolved ? activeLots : filteredLots;
 
   const currentLot: AuctionLot | undefined = displayLots[lotIndex];
-  const horse = currentLot ? horses.find((h) => h.id === currentLot.horseId) : undefined;
+  const horse = currentLot ? horseMap.get(currentLot.horseId) : undefined;
   const consignor = currentLot?.consignorStableId
     ? stables.find((s: { id: string }) => s.id === currentLot.consignorStableId)
     : undefined;
@@ -309,7 +310,7 @@ function AuctionSalePage() {
               <div className="border border-white/5 bg-slate-900/40 shadow-xl max-h-[600px] overflow-y-auto custom-scrollbar">
                 <div className="divide-y divide-white/5">
                   {displayLots.map((lot, idx) => {
-                    const lotHorse = horses.find((h) => h.id === lot.horseId);
+                    const lotHorse = horseMap.get(lot.horseId);
                     const isActive = idx === lotIndex;
                     return (
                       <div
@@ -811,7 +812,7 @@ function AuctionSalePage() {
                         .filter((l) => l.hammerPrice && !l.passed)
                         .sort((a, b) => (b.hammerPrice ?? 0) - (a.hammerPrice ?? 0))[0];
                       if (!top) return null;
-                      const topHorse = horses.find((h) => h.id === top.horseId);
+                      const topHorse = horseMap.get(top.horseId);
                       return (
                         <div className="space-y-1">
                           <div className="text-[9px] font-black uppercase text-gold/40 tracking-widest">
