@@ -179,7 +179,7 @@ function InboxPage() {
                       variant="ghost" 
                       size="icon" 
                       title="Dismiss"
-                      aria-label="Dismiss message"
+                      aria-label={"Dismiss message '" + msg.title + "'"}
                       onClick={() => dismiss(msg.id)}
                     >
                       <Trash2 className="h-4 w-4" />
