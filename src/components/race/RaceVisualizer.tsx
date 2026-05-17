@@ -74,6 +74,12 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
   const duration = useMemo(() => getReplayDuration(snapshots), [snapshots]);
   const playerHorseId = useMemo(() => runners.find((r) => r.owned)?.horseId, [runners]);
 
+  // ⚡ Bolt Optimization:
+  // Pre-calculate a hash map for O(1) lookups during the 60fps render loop
+  // instead of running O(N) .find() inside requestAnimationFrame.
+  // Impact: Reduces render loop complexity from O(N^2) to O(N), ensuring smoother animation.
+  const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
+
   // Animation Frame
   useEffect(() => {
     let lastTime = performance.now();
@@ -166,7 +172,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
 
     // Draw Horses
     currentHorses.forEach((h) => {
-      const runner = runners.find((r) => r.horseId === h.horseId);
+      const runner = runnerMap.get(h.horseId);
       const x = h.position * VISUALIZER_CONSTANTS.PIXELS_PER_METER + offsetX;
       const y = VISUALIZER_CONSTANTS.Y_OFFSET + (h.lane + 0.5) * VISUALIZER_CONSTANTS.LANE_HEIGHT;
 
