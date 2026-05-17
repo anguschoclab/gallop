@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "check:no-stray-js": "bash scripts/check-no-stray-js.sh"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
