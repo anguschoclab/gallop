@@ -1,5 +1,5 @@
 // Manager Reputation Types - Stable prestige and reputation tracking
-import { generateUUID } from "../uuid";
+import { generateUUIDWithValidation } from "../uuid";
 
 /**
  * Reputation level tiers
