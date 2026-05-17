@@ -1,5 +1,5 @@
 // Race Replay Types - Store and replay race simulations
-import { generateUUID } from "../uuid";
+import { generateUUIDWithValidation } from "../uuid";
 
 /**
  * Position checkpoint for a horse during a race
