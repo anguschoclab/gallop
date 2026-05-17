@@ -50,7 +50,7 @@ export function createRaceReplay(
   distance: number,
 ): RaceReplay {
   return {
-    id: generateUUID(),
+    id: generateUUIDWithValidation("replay"),
     raceId,
     day,
     checkpoints,
