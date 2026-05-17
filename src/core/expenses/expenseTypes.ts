@@ -8,6 +8,7 @@
  * Dependencies: None (self-contained types and functions)
  * Related files: index.ts (re-exports types and functions)
  */
+import { generateUUIDWithValidation } from "../uuid";
 
 // Expense Types - Categorized expense tracking for stable operations
 
@@ -204,7 +205,7 @@ export function createExpense(
   } = {},
 ): Expense {
   return {
-    id: crypto.randomUUID(),
+    id: generateUUIDWithValidation("expense"),
     day,
     category,
     amount,
