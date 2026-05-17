@@ -84,7 +84,7 @@ export function createTransaction(
   } = {},
 ): Transaction {
   return {
-    id: generateUUID(),
+    id: generateUUIDWithValidation("transaction"),
     day,
     type,
     subcategory,
