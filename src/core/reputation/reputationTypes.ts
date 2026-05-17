@@ -99,7 +99,7 @@ export function createReputationEvent(
   } = {},
 ): ReputationEvent {
   return {
-    id: generateUUID(),
+    id: generateUUIDWithValidation("reputation_event"),
     day,
     source,
     amount,
