@@ -62,7 +62,8 @@ function AuctionSalePage() {
   const filters = Route.useSearch();
   const { sex, ageBand, reserveBand, sort, q } = filters;
   const auctions = useGameWithShallow((s) => s.auctions ?? []);
-  const horseMap = useGameWithShallow((s) => s.horseMap);
+  const horses = useGame((s) => s.horses);
+  const horseMap = useGameWithShallow((s) => s.horseMap ?? new Map());
   const cash = useGame((s) => s.cash);
   const stables = useGame((s) => s.npcStables);
   const scoutReports = useGame((s) => s.scoutReports);
