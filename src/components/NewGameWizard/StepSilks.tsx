@@ -68,6 +68,7 @@ export function StepSilks({ silk, onChange, onNext, onBack }: StepSilksProps) {
                             : "border-white/20 hover:border-white/40"
                         }`}
                         style={{ backgroundColor: color }}
+                        aria-label={`Select primary color ${color}`}
                       />
                     </TooltipTrigger>
                     <TooltipContent>
@@ -95,6 +96,7 @@ export function StepSilks({ silk, onChange, onNext, onBack }: StepSilksProps) {
                             : "border-white/20 hover:border-white/40"
                         }`}
                         style={{ backgroundColor: color }}
+                        aria-label={`Select secondary color ${color}`}
                       />
                     </TooltipTrigger>
                     <TooltipContent>
@@ -122,6 +124,7 @@ export function StepSilks({ silk, onChange, onNext, onBack }: StepSilksProps) {
                             : "border-white/20 hover:border-white/40"
                         }`}
                         style={{ backgroundColor: color }}
+                        aria-label={`Select cap color ${color}`}
                       />
                     </TooltipTrigger>
                     <TooltipContent>
