@@ -1,4 +1,5 @@
 // Transaction Types - Cash flow tracking for stable operations
+import { generateUUIDWithValidation } from "../uuid";
 
 /**
  * Transaction type categories
@@ -83,7 +84,7 @@ export function createTransaction(
   } = {},
 ): Transaction {
   return {
-    id: crypto.randomUUID(),
+    id: generateUUIDWithValidation("transaction"),
     day,
     type,
     subcategory,

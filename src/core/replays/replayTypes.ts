@@ -1,4 +1,5 @@
 // Race Replay Types - Store and replay race simulations
+import { generateUUIDWithValidation } from "../uuid";
 
 /**
  * Position checkpoint for a horse during a race
@@ -49,7 +50,7 @@ export function createRaceReplay(
   distance: number,
 ): RaceReplay {
   return {
-    id: crypto.randomUUID(),
+    id: generateUUIDWithValidation("replay"),
     raceId,
     day,
     checkpoints,

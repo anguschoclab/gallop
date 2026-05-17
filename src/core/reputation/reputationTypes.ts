@@ -1,4 +1,5 @@
 // Manager Reputation Types - Stable prestige and reputation tracking
+import { generateUUIDWithValidation } from "../uuid";
 
 /**
  * Reputation level tiers
@@ -98,7 +99,7 @@ export function createReputationEvent(
   } = {},
 ): ReputationEvent {
   return {
-    id: crypto.randomUUID(),
+    id: generateUUIDWithValidation("reputation_event"),
     day,
     source,
     amount,

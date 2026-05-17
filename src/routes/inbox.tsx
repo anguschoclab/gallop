@@ -169,6 +169,7 @@ function InboxPage() {
                         variant="ghost" 
                         size="icon" 
                         title="Mark as read"
+                        aria-label={"Mark '" + msg.title + "' as read"}
                         onClick={() => markRead(msg.id)}
                       >
                         <Check className="h-4 w-4" />
@@ -178,6 +179,7 @@ function InboxPage() {
                       variant="ghost" 
                       size="icon" 
                       title="Dismiss"
+                      aria-label={"Dismiss message '" + msg.title + "'"}
                       onClick={() => dismiss(msg.id)}
                     >
                       <Trash2 className="h-4 w-4" />

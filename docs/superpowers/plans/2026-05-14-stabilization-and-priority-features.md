@@ -25,6 +25,24 @@ Clusters to fix in order (each is mostly mechanical):
 
 Estimate: ~2–3 hours of mechanical work, no product decisions needed.
 
+### Phase 0 hygiene — no stray compiled JS in `src/` ✅
+
+Symptom encountered: 58 compiled `.js` files (e.g. `inboxSlice.js`, `weatherPhase.js`,
+`pipeline.js`) ended up beside their `.ts` siblings under `src/`, shadowing the
+TypeScript sources under Vite's resolution and reintroducing stale logic.
+
+Hardening applied:
+
+- **`tsconfig.json`** already sets `"noEmit": true` — `tsc` will not emit `.js`.
+- **`.gitignore`** now excludes `src/**/*.js` while allow-listing `src/assets/**/*.js`
+  (legitimate vendor scripts), so stray artifacts cannot be committed.
+- **`scripts/check-no-stray-js.sh`** fails if any `.js` appears under `src/`
+  outside `src/assets/`. Exposed as `bun run check:no-stray-js` in `package.json`;
+  run it in CI / pre-commit.
+
+Rule: source modules under `src/` are authored as `.ts`/`.tsx`. The only `.js`
+files permitted in the tree live in `src/assets/` (vendored libraries).
+
 ---
 
 ## Phase 1 — Jargon Tooltips + Progressive Disclosure
