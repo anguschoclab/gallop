@@ -1,5 +1,5 @@
 // Transportation Types - Travel costs and logistics for horse transport
-import { generateUUID } from "../uuid";
+import { generateUUIDWithValidation } from "../uuid";
 
 /**
  * Transport mode types
