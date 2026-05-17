@@ -1,5 +1,5 @@
 // Transaction Types - Cash flow tracking for stable operations
-import { generateUUID } from "../uuid";
+import { generateUUIDWithValidation } from "../uuid";
 
 /**
  * Transaction type categories
