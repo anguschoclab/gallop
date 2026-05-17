@@ -24,8 +24,12 @@ export function interpolateSnapshots(
   const next = snapshots[nextIndex];
   const alpha = (currentTime - prev.t) / (next.t - prev.t);
 
+  // ⚡ Optimization: Pre-compute lookup map for O(1) access
+  // Reduces complexity from O(N²) to O(N) by eliminating nested .find()
+  const nextHorseMap = new Map(next.horses.map((h) => [h.horseId, h]));
+
   return prev.horses.map((prevHorse) => {
-    const nextHorse = next.horses.find((h) => h.horseId === prevHorse.horseId);
+    const nextHorse = nextHorseMap.get(prevHorse.horseId);
     if (!nextHorse) return prevHorse;
 
     return {

@@ -77,7 +77,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
   // ⚡ Bolt Optimization:
   // Pre-calculate a hash map for O(1) lookups during the 60fps render loop
   // instead of running O(N) .find() inside requestAnimationFrame.
-  // Impact: Reduces render loop complexity from O(N^2) to O(N), ensuring smoother animation.
+  // Combined with interpolateSnapshots optimization, achieves true O(N) performance.
   const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
 
   // Animation Frame
@@ -105,7 +105,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
 
     frameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frameId);
-  }, [isPlaying, playbackSpeed, duration, snapshots, cameraMode]);
+  }, [isPlaying, playbackSpeed, duration, snapshots, cameraMode, runnerMap, playerHorseId, distance, trackType]);
 
   const render = () => {
     const canvas = canvasRef.current;
