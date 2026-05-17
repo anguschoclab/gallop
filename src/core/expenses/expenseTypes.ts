@@ -8,7 +8,7 @@
  * Dependencies: None (self-contained types and functions)
  * Related files: index.ts (re-exports types and functions)
  */
-import { generateUUID } from "../uuid";
+import { generateUUIDWithValidation } from "../uuid";
 
 // Expense Types - Categorized expense tracking for stable operations
 
