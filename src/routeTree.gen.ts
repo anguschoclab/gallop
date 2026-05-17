@@ -25,6 +25,7 @@ import { Route as NpcStablesRouteImport } from './routes/npc-stables'
 import { Route as NewGameRouteImport } from './routes/new-game'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as JockeysRouteImport } from './routes/jockeys'
+import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as HorseGalleryRouteImport } from './routes/horse-gallery'
 import { Route as HallOfFameRouteImport } from './routes/hall-of-fame'
 import { Route as GazetteRouteImport } from './routes/gazette'
@@ -127,6 +128,11 @@ const MarketRoute = MarketRouteImport.update({
 const JockeysRoute = JockeysRouteImport.update({
   id: '/jockeys',
   path: '/jockeys',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InboxRoute = InboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HorseGalleryRoute = HorseGalleryRouteImport.update({
@@ -257,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/gazette': typeof GazetteRoute
   '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
+  '/inbox': typeof InboxRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
   '/new-game': typeof NewGameRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByTo {
   '/gazette': typeof GazetteRoute
   '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
+  '/inbox': typeof InboxRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
   '/new-game': typeof NewGameRoute
@@ -335,6 +343,7 @@ export interface FileRoutesById {
   '/gazette': typeof GazetteRoute
   '/hall-of-fame': typeof HallOfFameRoute
   '/horse-gallery': typeof HorseGalleryRoute
+  '/inbox': typeof InboxRoute
   '/jockeys': typeof JockeysRoute
   '/market': typeof MarketRoute
   '/new-game': typeof NewGameRoute
@@ -378,6 +387,7 @@ export interface FileRouteTypes {
     | '/gazette'
     | '/hall-of-fame'
     | '/horse-gallery'
+    | '/inbox'
     | '/jockeys'
     | '/market'
     | '/new-game'
@@ -417,6 +427,7 @@ export interface FileRouteTypes {
     | '/gazette'
     | '/hall-of-fame'
     | '/horse-gallery'
+    | '/inbox'
     | '/jockeys'
     | '/market'
     | '/new-game'
@@ -455,6 +466,7 @@ export interface FileRouteTypes {
     | '/gazette'
     | '/hall-of-fame'
     | '/horse-gallery'
+    | '/inbox'
     | '/jockeys'
     | '/market'
     | '/new-game'
@@ -497,6 +509,7 @@ export interface RootRouteChildren {
   GazetteRoute: typeof GazetteRoute
   HallOfFameRoute: typeof HallOfFameRoute
   HorseGalleryRoute: typeof HorseGalleryRoute
+  InboxRoute: typeof InboxRoute
   JockeysRoute: typeof JockeysRoute
   MarketRoute: typeof MarketRoute
   NewGameRoute: typeof NewGameRoute
@@ -629,6 +642,13 @@ declare module '@tanstack/react-router' {
       path: '/jockeys'
       fullPath: '/jockeys'
       preLoaderRoute: typeof JockeysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inbox': {
+      id: '/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof InboxRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/horse-gallery': {
@@ -875,6 +895,7 @@ const rootRouteChildren: RootRouteChildren = {
   GazetteRoute: GazetteRoute,
   HallOfFameRoute: HallOfFameRoute,
   HorseGalleryRoute: HorseGalleryRoute,
+  InboxRoute: InboxRoute,
   JockeysRoute: JockeysRoute,
   MarketRoute: MarketRoute,
   NewGameRoute: NewGameRoute,
@@ -897,3 +918,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
