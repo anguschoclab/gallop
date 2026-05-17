@@ -205,7 +205,7 @@ export function createExpense(
   } = {},
 ): Expense {
   return {
-    id: generateUUID(),
+    id: generateUUIDWithValidation("expense"),
     day,
     category,
     amount,
