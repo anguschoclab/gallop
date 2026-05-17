@@ -137,7 +137,7 @@ export function createTransportRequest(
   const duration = calculateTransportDuration(distance, transportMode);
 
   return {
-    id: generateUUID(),
+    id: generateUUIDWithValidation("transport_request"),
     horseId,
     fromLocation,
     toLocation,
