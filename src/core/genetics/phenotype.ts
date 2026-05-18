@@ -93,19 +93,25 @@ function sumLoci(loci: Locus[]): number {
  * Sums the loci for each stat and clamps to 1-100 range.
  *
  * @param stats - Stat genotype
+ * @param conformation - Optional resolved conformation score
+ * @param temperament - Optional resolved temperament score
  * @returns Horse stats
  *
  * @example
- * const stats = resolveStats(genotype.stats);
+ * const stats = resolveStats(genotype.stats, 75, 80);
  */
-export function resolveStats(stats: StatGenotype): HorseStats {
+export function resolveStats(
+  stats: StatGenotype,
+  conformation: number = 50,
+  temperament: number = 50,
+): HorseStats {
   return {
     speed: sumLoci(stats.speed),
     stamina: sumLoci(stats.stamina),
     acceleration: sumLoci(stats.acceleration),
     consistency: sumLoci(stats.consistency),
-    temperament: 50,
-    conformation: 50,
+    temperament,
+    conformation,
   };
 }
 

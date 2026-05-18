@@ -95,7 +95,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <p className="text-muted-foreground animate-pulse font-bold">Sale not found...</p>
-        <Button onClick={() => navigate({ to: "/auctions" })}>Back to Sales</Button>
+        <Button onClick={() => navigate({ to: "/auction" })}>Back to Sales</Button>
       </div>
     );
   }
@@ -107,7 +107,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
         <AuctionSummary
           sale={sale}
           scoreboard={scoreboard}
-          onClose={() => navigate({ to: "/auctions" })}
+          onClose={() => navigate({ to: "/auction" })}
         />
       </div>
     );

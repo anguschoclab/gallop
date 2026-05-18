@@ -11,6 +11,7 @@
 
 import type { Genotype, AppearanceDNA } from "@/core/genetics/types";
 import type { InsurancePolicy } from "../insurance/insuranceTypes";
+import type { PedigreeNode } from "../breeding/types";
 
 export type Hemisphere = "Northern" | "Southern";
 
@@ -105,7 +106,7 @@ export type Horse = {
   damId?: string;
   sireName: string;
   damName: string;
-  pedigree: { sireId?: string; damId?: string; sireName?: string; damName?: string };
+  pedigree: PedigreeNode;
   birthDay: number;
   age: number;
   gender: HorseGender;
@@ -125,8 +126,9 @@ export type Horse = {
   lastRaceDay?: number; // Track when horse last raced for recovery calculation
   bruceLoweFamily?: number;
   lastFoaledDay?: number;
-  lifetimeEarnings?: number;
-  careerWins?: number;
+  lifetimeEarnings: number;
+  careerStarts: number;
+  careerWins: number;
   ancestralHistoryCoefficient?: number;
   progenyCount?: number;
   geneticMarkers?: GeneticMarkers;
@@ -142,6 +144,7 @@ export type Horse = {
     distance?: number;
     surface?: string;
     purse?: number;
+    purseEarned?: number;
     fieldSize?: number;
     raceClass?: string;
     barrier?: number;
@@ -168,6 +171,8 @@ export type Horse = {
   distanceAptitude: number;
   surfaceAptitude: Record<"Turf" | "Dirt" | "Synthetic", number>;
   mudAptitude: number;
+  corneringAptitude: number;
+  climbingAptitude: number;
   peakAge: number;
   strideType: "long" | "short" | "average";
   trackPreference: "left" | "right" | "balanced";

@@ -83,6 +83,14 @@ export function generateFillerStable(day: number, rng: Rng): Stable {
     country,
     personality,
     ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
+    staff: {
+      trainer: null,
+      groom: null,
+      nutritionist: null,
+      farrier: null,
+      veterinarian: null,
+    },
+    outposts: [],
   };
 }
 
@@ -138,5 +146,13 @@ export function generateStableFromTemplate(
     horses: [],
     personality,
     ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
+    staff: {
+      trainer: null,
+      groom: null,
+      nutritionist: null,
+      farrier: null,
+      veterinarian: null,
+    },
+    outposts: [],
   };
 }

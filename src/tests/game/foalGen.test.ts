@@ -3,9 +3,10 @@ import { resolveFoaling } from "@/game/foalGen";
 import { createTestGenotype } from "@/tests/helpers/createTestGenotype";
 import { resolveGeneticMarkers } from "@/core/genetics/phenotype";
 import type { Horse, Pregnancy } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
+  return createTestHorse({
     id: overrides.id ?? "x",
     name: overrides.name ?? "Test",
     age: 5,
@@ -23,7 +24,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     fame: 0,
     lifecycleStatus: "active" as const,
     ...overrides,
-  };
+  });
 }
 
 function mkPregnancy(id: string): Pregnancy {
@@ -129,28 +130,28 @@ describe("resolveFoaling", () => {
       ...sire,
       geneticMarkers: {
         ...sire.geneticMarkers!,
-        lethalCarriers: { csnb: true, hypp: false, olws: false },
+        lethalCarriers: { csnb: true, hypp: false, olws: false, ffs1: false },
       },
     };
     const carrierDam = {
       ...dam,
       geneticMarkers: {
         ...dam.geneticMarkers!,
-        lethalCarriers: { csnb: true, hypp: false, olws: false },
+        lethalCarriers: { csnb: true, hypp: false, olws: false, ffs1: false },
       },
     };
     const cleanSire = {
       ...sire,
       geneticMarkers: {
         ...sire.geneticMarkers!,
-        lethalCarriers: { csnb: false, hypp: false, olws: false },
+        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
       },
     };
     const cleanDam = {
       ...dam,
       geneticMarkers: {
         ...dam.geneticMarkers!,
-        lethalCarriers: { csnb: false, hypp: false, olws: false },
+        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
       },
     };
     let bothFails = 0,

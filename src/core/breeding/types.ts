@@ -40,6 +40,12 @@ export type PedigreeNode = {
   name: string;
   generation: number;
   aptitudinalGroup?: string;
+  sireId?: string;
+  damId?: string;
+  sireName?: string;
+  damName?: string;
+  sirePedigree?: PedigreeNode;
+  damPedigree?: PedigreeNode;
 };
 
 export interface ShareTransaction {

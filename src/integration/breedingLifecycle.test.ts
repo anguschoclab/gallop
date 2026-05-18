@@ -6,7 +6,8 @@
 import { describe, it, expect } from "vitest";
 import { runNpcBreeding } from "@/game/npcBreeding";
 import { createRng } from "@/game/rng";
-import type { GameState, Horse, HorseGender } from "@/game/types";
+import { createDefaultGameState } from "@/game/state";
+import type { GameState, Horse, HorseGender, Stable } from "@/game/types";
 
 // Helper to create minimal valid Horse objects for testing
 function mockHorse(
@@ -66,7 +67,7 @@ function mockHorse(
         sabino: [1, 1],
         splashWhite: [1, 1],
       },
-      health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
+      health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1], pssm: [1, 1], rer: [1, 1], epm: [1, 1] },
     },
     // Aptitude fields
     distanceAptitude: 1600,
@@ -79,11 +80,14 @@ function mockHorse(
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
+    purseEarned: 0,
+    courseVisits: {},
+    pedigree: { id, name },
     // Resolved DNA traits
     heartScore: 1.0,
-    fiberBias: "balanced",
-    strideType: "balanced",
-    trackPreference: "balanced",
+    fiberBias: "average",
+    strideType: "average",
+    trackPreference: "average",
     mudAptitude: 1.0,
     trainability: 1.0,
     peakAge: 4,
@@ -101,7 +105,7 @@ function mockHorse(
     roarerRisk: 0,
     ocdRisk: 0,
     racingViable: true,
-    lifecycleStatus: "active",
+    lifecycleStatus: "active" as const,
     ...overrides,
   };
 }
@@ -144,6 +148,7 @@ describe("Breeding Lifecycle Integration", () => {
     );
 
     const state: GameState = {
+      ...createDefaultGameState(),
       day: 1,
       cash: 10000,
       horses: [stallion, mare],
@@ -160,20 +165,19 @@ describe("Breeding Lifecycle Integration", () => {
           horses: [],
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
+          staff: {
+            trainer: null,
+            jockey: null,
+            stablehand: null,
+            vet: null,
+            farrier: null,
+            manager: null,
+            breeder: null,
+          },
+          outposts: [],
         },
       ],
       pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
     };
 
     const result = runNpcBreeding(state, 1, createRng(1));
@@ -211,6 +215,7 @@ describe("Breeding Lifecycle Integration", () => {
     );
 
     const state: GameState = {
+      ...createDefaultGameState(),
       day: 1,
       cash: 10000,
       horses: [stallion],
@@ -227,20 +232,19 @@ describe("Breeding Lifecycle Integration", () => {
           horses: [],
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
+          staff: {
+            trainer: null,
+            jockey: null,
+            stablehand: null,
+            vet: null,
+            farrier: null,
+            manager: null,
+            breeder: null,
+          },
+          outposts: [],
         },
       ],
       pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
     };
 
     const result = runNpcBreeding(state, 1, createRng(1));
@@ -252,22 +256,12 @@ describe("Breeding Lifecycle Integration", () => {
 
   it("should handle empty state gracefully", () => {
     const state: GameState = {
+      ...createDefaultGameState(),
       day: 10,
       cash: 10000,
       horses: [],
       npcStables: [],
       pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
     };
 
     const result = runNpcBreeding(state, 10, createRng(1));
@@ -279,6 +273,7 @@ describe("Breeding Lifecycle Integration", () => {
 
   it("should deduct breeding fee from stable cash", () => {
     const state: GameState = {
+      ...createDefaultGameState(),
       day: 1,
       cash: 10000,
       horses: [],
@@ -295,20 +290,19 @@ describe("Breeding Lifecycle Integration", () => {
           horses: [],
           isMajor: false,
           colors: { primary: "#FF0000", secondary: "#FFFFFF" },
+          staff: {
+            trainer: null,
+            jockey: null,
+            stablehand: null,
+            vet: null,
+            farrier: null,
+            manager: null,
+            breeder: null,
+          },
+          outposts: [],
         },
       ],
       pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
     };
 
     const result = runNpcBreeding(state, 1, createRng(1));
@@ -317,3 +311,4 @@ describe("Breeding Lifecycle Integration", () => {
     expect(result.npcStables).toBeDefined();
   });
 });
+

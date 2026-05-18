@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { NumericValue } from "@/components/HorseBits";
 
 export function JockeyRoster() {
+  const navigate = useNavigate();
   const jockeys = (useGame as any)((s: any) => s.jockeys, shallow);
   const hireJockey = useGame((s) => s.hireJockey);
   const releaseJockey = useGame((s) => s.releaseJockey);

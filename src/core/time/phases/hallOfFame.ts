@@ -66,11 +66,26 @@ export const hallOfFamePhase: PipelinePhase = {
       if (!hasAchievement) continue;
 
       // Eligible for Hall of Fame - emit induction impact
-      const careerHighlights = {
-        g1Wins,
-        gradedWins,
+      const entry: HallOfFameEntry = {
+        horseId: horse.id,
+        name: horse.name,
+        inductionDay: newDay,
+        inductionYear: Math.floor(newDay / 365) + 1,
+        achievements: [
+          g1Wins > 0 ? `${g1Wins} G1 Wins` : "",
+          gradedWins > g1Wins ? `${gradedWins - g1Wins} Graded Wins` : "",
+          horseOfTheYearAwards > 0 ? `${horseOfTheYearAwards} HOTY Awards` : "",
+        ].filter(Boolean),
         lifetimeEarnings: horse.lifetimeEarnings,
-        horseOfTheYearAwards,
+        lifetimeStarts: horse.careerStarts,
+        lifetimeWins: horse.careerWins,
+        g1Wins,
+        bestBeyer: horse.stats.speed, // Approximation
+        silk: horse.silk,
+        pedigree: {
+          sireName: horse.sireName,
+          damName: horse.damName,
+        },
       };
 
       impacts.push({
@@ -80,10 +95,7 @@ export const hallOfFamePhase: PipelinePhase = {
         phase: "hallOfFame",
         logLevel: "always",
         type: "hall_of_fame_induction",
-        horseId: horse.id,
-        horseName: horse.name,
-        inductedOnDay: newDay,
-        careerHighlights,
+        entry,
         reason: `${horse.name} inducted into Hall of Fame`,
       } as HallOfFameInductionImpact);
 

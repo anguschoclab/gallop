@@ -49,6 +49,7 @@ import {
   resolveSurfaceAptitude,
   resolveAptitudeMultiplier,
   resolveTrait,
+  TRAIT_VALUES,
   resolveInjuryProneness,
   resolveSize,
   resolveGeneticMarkers,
@@ -174,11 +175,14 @@ export function createHorseFromDNA(
     createdAtDay?: number;
   } = {},
 ): Horse {
-  const stats = resolveStats(genotype.stats);
+  const confTrait = resolveTrait(genotype.physical);
+  const tempTrait = resolveTrait(genotype.mental);
+  const conformation = TRAIT_VALUES[confTrait] * 25;
+  const temperament = TRAIT_VALUES[tempTrait] * 25;
+
+  const stats = resolveStats(genotype.stats, conformation, temperament);
   const coatColor = resolveCoatColor(genotype.color);
   const runningStyle = resolveRunningStyle(genotype.style);
-  const conformation = resolveTrait(genotype.physical);
-  const temperament = resolveTrait(genotype.mental);
 
   const distanceAptitude = resolveDistanceAptitude(genotype.preferences.distance);
   const surfaceAptitude = resolveSurfaceAptitude(genotype.preferences.surface);
@@ -441,10 +445,15 @@ export function resolveFoaling(
 
   // Set pedigree
   foal.pedigree = {
+    horseId: foal.id,
+    name: "Foal",
+    generation: 0,
     sireId: sire.id,
     damId: dam.id,
     sireName: sire.name,
     damName: dam.name,
+    sirePedigree: sire.pedigree,
+    damPedigree: dam.pedigree,
   };
 
   // Resolve Bruce Lowe family from dam line
@@ -466,6 +475,8 @@ export function resolveFoaling(
     rng,
     { strategy: "hybrid" },
   );
+
+  foal.pedigree.name = foal.name;
 
   return { kind: "live", foal };
 }

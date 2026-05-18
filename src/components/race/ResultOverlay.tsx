@@ -108,7 +108,7 @@ export function ResultOverlay({ race, runners, onClose }: ResultOverlayProps) {
                       </Link>
                       <Link
                         to="/jockey/$jockeyId"
-                        params={{ jockeyId: r.jockeyId }}
+                        params={{ jockeyId: r.jockey?.id || "" }}
                         className="text-[9px] font-mono text-cream/40 uppercase tracking-tighter hover:text-blue-400 transition-colors flex items-center gap-1"
                       >
                         Rider: {r.jockeyName} <ChevronRight className="h-2 w-2" />

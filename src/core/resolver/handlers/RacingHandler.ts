@@ -50,7 +50,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { raceId, horseId } = impactAny;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     if (race) {
-      const index = race.entries.findIndex((e) => e.horseId === horseId);
+      const index = race.entries.findIndex((e: any) => e.horseId === horseId);
       if (index !== -1) {
         race.entries.splice(index, 1);
       }

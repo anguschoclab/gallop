@@ -9,9 +9,11 @@ import {
   getIntelSummary,
 } from "@/game/scouting";
 import type { Horse, Stable, ScoutReport } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { createTestStable } from "@/tests/helpers/createTestStable";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
+  return createTestHorse({
     id: "abcdef",
     name: "Test Horse",
     age: 4,
@@ -26,11 +28,11 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     owned: false,
     fame: 0,
     ...overrides,
-  };
+  });
 }
 
 function mkStable(reputation = 75): Stable {
-  return {
+  return createTestStable({
     id: "s1",
     name: "Test Stable",
     owner: "Owner",
@@ -43,7 +45,7 @@ function mkStable(reputation = 75): Stable {
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality: "conservative",
-  };
+  });
 }
 
 describe("calculateScoutCost", () => {

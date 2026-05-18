@@ -75,7 +75,7 @@ export const intentCollectionPhase: PipelinePhase = {
                   // Log the auto-entry
                   context.logs.push({
                     day: newDay,
-                    text: `Auto-campaign: ${horse.name} entered in ${race.name || "race"} at ${race.track || "track"}.`,
+                    text: `Auto-campaign: ${horse.name} entered in ${race.name || "race"} at ${race.graded?.track || race.trackId || "track"}.`,
                   });
                 }
               }

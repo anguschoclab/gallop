@@ -3,9 +3,10 @@ import { rollForInjury } from "@/core/health/healthSystem";
 import { createRng } from "@/game/rng";
 import type { Horse } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("Health System - Injury Rolls", () => {
-  const mockHorse: Partial<Horse> = {
+  const mockHorse = createTestHorse({
     id: "test-horse",
     energy: 100,
     genotype: {
@@ -16,7 +17,7 @@ describe("Health System - Injury Rolls", () => {
     } as any,
     ocdRisk: 0,
     stableId: "",
-  };
+  });
 
   it("should rarely trigger injury for healthy horses", () => {
     const rng = createRng(123);

@@ -90,7 +90,7 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     blueHenStatus: undefined,
     foalsProduced: undefined,
     lastFoaledDay: undefined,
-    pedigree: { sireName: "Test Sire", damName: "Test Dam" },
+    pedigree: { name: overrides?.name ?? "Test Horse", generation: 0, sireName: "Test Sire", damName: "Test Dam" },
     stud: undefined,
     bruceLoweFamily: undefined,
 
@@ -154,6 +154,7 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     peakingIndex: 50,
     recoveryPoints: 100,
     birthDay: 1,
+    courseVisits: {},
 
     // Apply any overrides
     ...overrides,

@@ -16,6 +16,7 @@ import { describe, it, expect } from "vitest";
 import { runNpcBreeding } from "./npcBreeding";
 import { createRng } from "@/game/rng";
 import type { Horse, Stable, GameState, Pregnancy, HorseGender } from "./types";
+import { createTestStable } from "@/tests/helpers/createTestStable";
 
 // Helper to create minimal valid Horse objects for testing
 function mockHorse(
@@ -39,6 +40,11 @@ function mockHorse(
     raceHistory: [],
     owned: false,
     fame: 50,
+    careerStarts: 0,
+    careerWins: 0,
+    purseEarned: 0,
+    courseVisits: {},
+    pedigree: { name: id, generation: 0 },
     // DNA/genotype fields (minimal defaults)
     genotype: {
       color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
@@ -75,7 +81,7 @@ function mockHorse(
         sabino: [1, 1],
         splashWhite: [1, 1],
       },
-      health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1] },
+      health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1], pssm: [1, 1], rer: [1, 1], epm: [1, 1] },
     },
     // Aptitude fields
     distanceAptitude: 1600,
@@ -85,33 +91,31 @@ function mockHorse(
     injuryProneness: 0,
     height: 16,
     weight: 500,
-    lifetimeEarnings: 0,
-    careerStarts: 0,
-    careerWins: 0,
     // Resolved DNA traits
     heartScore: 1.0,
-    fiberBias: "balanced",
-    strideType: "balanced",
+    fiberBias: "average",
+    strideType: "average",
     trackPreference: "balanced",
     mudAptitude: 1.0,
     trainability: 1.0,
-    peakAge: 4,
+    peakAge: 5,
     recoveryRate: 1.0,
-    fertility: 0.85,
-    foalingEase: 0.85,
-    markings: {
-      socks: "none",
-      face: "none",
-      silverDapple: false,
-      sabino: false,
-      splashWhite: false,
-    },
-    bleederRisk: 0,
-    roarerRisk: 0,
-    ocdRisk: 0,
+    fertility: 0.9,
+    foalingEase: 0.9,
+    bleederRisk: 0.01,
+    roarerRisk: 0.01,
+    ocdRisk: 0.01,
+    bloodline: "Northern Dancer",
+    isBlueHen: false,
+    gelded: false,
     lifecycleStatus: "active",
-    racingViable: true,
-    lifecycleStatus: "active" as const,
+    healthStatus: "healthy",
+    healthStatusDay: 0,
+    birthDay: 0,
+    fitness: 50,
+    fatigue: 0,
+    peakingIndex: 50,
+    recoveryPoints: 100,
     ...overrides,
   };
 }
@@ -125,7 +129,7 @@ describe("runNpcBreeding", () => {
       day: 50, // Not breeding season start
     };
 
-    const result = runNpcBreeding(state, 50, createRng(1));
+    const result = runNpcBreeding(state as any, 50, createRng(1));
     expect(result.horses).toEqual([]);
     expect(result.npcStables).toEqual([]);
     expect(result.newPregnancies).toEqual([]);
@@ -133,19 +137,12 @@ describe("runNpcBreeding", () => {
   });
 
   it("should skip stables without breeding personality", () => {
-    const stable: Stable = {
+    const stable = createTestStable({
       id: "stable-1",
       name: "Aggressive Stable",
       cash: 100000,
       personality: "aggressive",
-      reputation: 50,
-      tier: "mid",
-      owner: "Owner 1",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-    };
+    });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
       horses: [],
@@ -154,7 +151,7 @@ describe("runNpcBreeding", () => {
       day: 1, // Breeding season start
     };
 
-    const result = runNpcBreeding(state, 1, createRng(1));
+    const result = runNpcBreeding(state as any, 1, createRng(1));
     expect(result.newPregnancies).toEqual([]);
     expect(result.logs).toEqual([]);
   });
@@ -194,33 +191,23 @@ describe("runNpcBreeding", () => {
       },
     );
 
-    const breederStable: Stable = {
+    const breederStable = createTestStable({
       id: "stable-1",
       name: "Breeder Stable",
       cash: 20000,
       personality: "breeder",
       reputation: 70,
       tier: "elite",
-      owner: "Owner 1",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-    };
+    });
 
-    const sireStable: Stable = {
+    const sireStable = createTestStable({
       id: "stable-2",
       name: "Sire Stable",
       cash: 0,
       personality: "breeder",
       reputation: 60,
       tier: "mid",
-      owner: "Owner 2",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#0000FF", secondary: "#FFFFFF" },
-    };
+    });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
       horses: [mare, stallion],
@@ -229,7 +216,7 @@ describe("runNpcBreeding", () => {
       day: 1, // Breeding season start
     };
 
-    const result = runNpcBreeding(state, 1, createRng(1));
+    const result = runNpcBreeding(state as any, 1, createRng(1));
     // May or may not breed depending on breeding season calendar
     // Just verify it doesn't crash and returns expected structure
     expect(result.horses).toBeDefined();
@@ -286,33 +273,23 @@ describe("runNpcBreeding", () => {
       },
     );
 
-    const stable: Stable = {
+    const stable = createTestStable({
       id: "stable-1",
       name: "Breeder Stable",
       cash: 20000,
       personality: "breeder",
       reputation: 70,
       tier: "elite",
-      owner: "Owner 1",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-    };
+    });
 
-    const sireStable: Stable = {
+    const sireStable = createTestStable({
       id: "stable-2",
       name: "Sire Stable",
       cash: 0,
       personality: "breeder",
       reputation: 60,
       tier: "mid",
-      owner: "Owner 2",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#0000FF", secondary: "#FFFFFF" },
-    };
+    });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
       horses: [youngMare, oldMare, stallion],
@@ -321,7 +298,7 @@ describe("runNpcBreeding", () => {
       day: 1,
     };
 
-    const result = runNpcBreeding(state, 1, createRng(1));
+    const result = runNpcBreeding(state as any, 1, createRng(1));
     expect(result.newPregnancies).toEqual([]);
   });
 
@@ -374,33 +351,23 @@ describe("runNpcBreeding", () => {
       },
     );
 
-    const stable: Stable = {
+    const stable = createTestStable({
       id: "stable-1",
       name: "Breeder Stable",
       cash: 20000,
       personality: "breeder",
       reputation: 70,
       tier: "elite",
-      owner: "Owner 1",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-    };
+    });
 
-    const sireStable: Stable = {
+    const sireStable = createTestStable({
       id: "stable-2",
       name: "Sire Stable",
       cash: 0,
       personality: "breeder",
       reputation: 60,
       tier: "mid",
-      owner: "Owner 2",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#0000FF", secondary: "#FFFFFF" },
-    };
+    });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
       horses: [mare, stallion],
@@ -409,7 +376,7 @@ describe("runNpcBreeding", () => {
       day: 1,
     };
 
-    const result = runNpcBreeding(state, 1, createRng(1));
+    const result = runNpcBreeding(state as any, 1, createRng(1));
     expect(result.newPregnancies).toEqual([]);
   });
 
@@ -448,33 +415,23 @@ describe("runNpcBreeding", () => {
       },
     );
 
-    const breederStable: Stable = {
+    const breederStable = createTestStable({
       id: "stable-1",
       name: "Breeder Stable",
       cash: 10000,
       personality: "breeder",
       reputation: 70,
       tier: "elite",
-      owner: "Owner 1",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-    };
+    });
 
-    const sireStable: Stable = {
+    const sireStable = createTestStable({
       id: "stable-2",
       name: "Sire Stable",
       cash: 0,
       personality: "breeder",
       reputation: 60,
       tier: "mid",
-      owner: "Owner 2",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#0000FF", secondary: "#FFFFFF" },
-    };
+    });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
       horses: [mare, stallion],
@@ -483,7 +440,7 @@ describe("runNpcBreeding", () => {
       day: 1,
     };
 
-    const result = runNpcBreeding(state, 1, createRng(1));
+    const result = runNpcBreeding(state as any, 1, createRng(1));
 
     // Only check cash changes if breeding actually occurred
     if (result.newPregnancies.length > 0) {
@@ -535,33 +492,23 @@ describe("runNpcBreeding", () => {
       },
     );
 
-    const stable: Stable = {
+    const stable = createTestStable({
       id: "stable-1",
       name: "Breeder Stable",
       cash: 20000,
       personality: "breeder",
       reputation: 70,
       tier: "elite",
-      owner: "Owner 1",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-    };
+    });
 
-    const sireStable: Stable = {
+    const sireStable = createTestStable({
       id: "stable-2",
       name: "Sire Stable",
       cash: 0,
       personality: "breeder",
       reputation: 60,
       tier: "mid",
-      owner: "Owner 2",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#0000FF", secondary: "#FFFFFF" },
-    };
+    });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
       horses: [mare, stallion],
@@ -570,7 +517,7 @@ describe("runNpcBreeding", () => {
       day: 1,
     };
 
-    const result = runNpcBreeding(state, 1, createRng(1));
+    const result = runNpcBreeding(state as any, 1, createRng(1));
 
     // Only check booking increment if breeding actually occurred
     if (result.newPregnancies.length > 0) {
@@ -618,33 +565,23 @@ describe("runNpcBreeding", () => {
       },
     );
 
-    const stable: Stable = {
+    const stable = createTestStable({
       id: "stable-1",
       name: "Breeder Stable",
       cash: 20000,
       personality: "breeder",
       reputation: 70,
       tier: "elite",
-      owner: "Owner 1",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-    };
+    });
 
-    const sireStable: Stable = {
+    const sireStable = createTestStable({
       id: "stable-2",
       name: "Sire Stable",
       cash: 0,
       personality: "breeder",
       reputation: 60,
       tier: "mid",
-      owner: "Owner 2",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#0000FF", secondary: "#FFFFFF" },
-    };
+    });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
       horses: [mare, stallion],
@@ -653,7 +590,7 @@ describe("runNpcBreeding", () => {
       day: 10,
     };
 
-    const result = runNpcBreeding(state, 10, createRng(1));
+    const result = runNpcBreeding(state as any, 10, createRng(1));
 
     if (result.newPregnancies.length > 0) {
       expect(result.newPregnancies[0].dueDay).toBe(40); // 10 + 30 (GESTATION_DAYS)
@@ -695,33 +632,23 @@ describe("runNpcBreeding", () => {
       },
     );
 
-    const stable: Stable = {
+    const stable = createTestStable({
       id: "stable-1",
       name: "Breeder Stable",
       cash: 20000,
       personality: "breeder",
       reputation: 70,
       tier: "elite",
-      owner: "Owner 1",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-    };
+    });
 
-    const sireStable: Stable = {
+    const sireStable = createTestStable({
       id: "stable-2",
       name: "Sire Stable",
       cash: 0,
       personality: "breeder",
       reputation: 60,
       tier: "mid",
-      owner: "Owner 2",
-      founded: 1,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "#0000FF", secondary: "#FFFFFF" },
-    };
+    });
 
     const state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day"> = {
       horses: [mare, stallion],
@@ -730,7 +657,7 @@ describe("runNpcBreeding", () => {
       day: 10,
     };
 
-    const result = runNpcBreeding(state, 10, createRng(1));
+    const result = runNpcBreeding(state as any, 10, createRng(1));
 
     if (result.newPregnancies.length > 0) {
       expect(result.logs.length).toBeGreaterThan(0);

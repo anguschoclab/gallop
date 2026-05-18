@@ -120,7 +120,7 @@ export const jockeyPhase = {
         if (poachable.length > 0) {
           const target = dailyRng.pick(poachable);
           // Loyalty check: Fame vs Player Reputation vs Loyalty
-          const playerRep = state.reputation?.total || 50;
+          const playerRep = state.reputation?.score || 50;
           const poachSuccessChance = (target.fame - playerRep) / 100 + (1 - target.loyalty / 100);
 
           if (dailyRng.next() < poachSuccessChance) {

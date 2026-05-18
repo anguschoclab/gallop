@@ -46,7 +46,7 @@ export type StudCareer = {
   lifetimeFoals: number;
   lifetimeStakesFoals: number;
   lifetimeG1Foals: number;
-  retiredOnDay: number;
+  retiredOnDay?: number;
 };
 
 // Type alias for facilities

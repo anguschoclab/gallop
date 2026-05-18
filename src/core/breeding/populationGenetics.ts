@@ -329,12 +329,12 @@ export function computeAhc(
   // (career wins as a proxy for "this lineage produced sound runners").
   const parentAhc =
     ((sire.ancestralHistoryCoefficient ?? 0) + (dam.ancestralHistoryCoefficient ?? 0)) / 2;
-  const winBonus = Math.min(0.05, (sire.careerWins + dam.careerWins) / 200);
+  const winBonus = Math.min(0.05, ((sire.careerWins ?? 0) + (dam.careerWins ?? 0)) / 200);
   // If parents themselves were inbred and successful, the lineage is "proven".
   const provenSireBonus =
-    (sire.coefficientOfInbreeding ?? 0) > 0.05 && sire.careerWins >= 3 ? 0.05 : 0;
+    (sire.coefficientOfInbreeding ?? 0) > 0.05 && (sire.careerWins ?? 0) >= 3 ? 0.05 : 0;
   const provenDamBonus =
-    (dam.coefficientOfInbreeding ?? 0) > 0.05 && dam.careerWins >= 3 ? 0.03 : 0;
+    (dam.coefficientOfInbreeding ?? 0) > 0.05 && (dam.careerWins ?? 0) >= 3 ? 0.03 : 0;
   return Math.min(1, parentAhc * 0.9 + winBonus + provenSireBonus + provenDamBonus);
 }
 

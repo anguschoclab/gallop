@@ -6,6 +6,7 @@ import { describe, it, expect } from "vitest";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { GameState } from "@/game/types";
+import { createDefaultGameState } from "@/game/state";
 import { createRng } from "@/game/rng";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
@@ -14,23 +15,9 @@ import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
 
 describe("Intent/Resolution Pipeline Integration", () => {
   const createTestState = (): GameState => ({
+    ...createDefaultGameState(),
     day: 1,
     cash: 10000,
-    horses: [],
-    npcStables: [],
-    pregnancies: [],
-    races: [],
-    awards: [],
-    market: [],
-    auctions: [],
-    lastCalibrationDay: 0,
-    calibratedPars: {},
-    paceSamples: {},
-    pendingAwardCeremonies: [],
-    trainingUsed: {},
-    log: [],
-    scoutReports: [],
-    pendingIntents: [],
   });
 
   const createTestContext = (state: GameState): PipelineContext => ({

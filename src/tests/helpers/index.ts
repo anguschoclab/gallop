@@ -3,6 +3,7 @@ export { createTestRng } from "./createTestRng";
 export { createTestGenotype } from "./createTestGenotype";
 export { createTestAppearance } from "./createTestAppearance";
 export { createTestJockey, createTestJockeys } from "./createTestJockey";
+export { createTestStable } from "./createTestStable";
 export {
   createTestHorse,
   createTestColt,

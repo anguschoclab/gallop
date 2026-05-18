@@ -13,6 +13,7 @@ import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
 import { generateUUID } from "@/core/uuid";
+import type { AuctionLot } from "@/core/market/types";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -69,7 +70,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const auction =
       lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
     if (auction) {
-      const index = auction.lots.findIndex((l) => l.horseId === horseId);
+      const index = auction.lots.findIndex((l: AuctionLot) => l.horseId === horseId);
       if (index !== -1) {
         auction.lots.splice(index, 1);
       }
@@ -90,7 +91,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const auction =
       lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
     if (auction) {
-      const lot = auction.lots.find((l) => l.id === lotId);
+      const lot = auction.lots.find((l: AuctionLot) => l.id === lotId);
       if (lot) {
         lot.hammerPrice = hammerPrice;
         lot.soldToStableId = soldToStableId;

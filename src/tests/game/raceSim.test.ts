@@ -8,9 +8,10 @@ import {
 } from "@/game/raceSim";
 import { createRng } from "@/game/rng";
 import type { Horse } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
+  return createTestHorse({
     id: overrides.id ?? "h1",
     name: overrides.name ?? "Test",
     age: 4,
@@ -32,7 +33,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     careerStarts: 0,
     careerWins: 0,
     ...overrides,
-  };
+  });
 }
 
 function mkField(): Horse[] {

@@ -5,7 +5,8 @@ import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { calculateOverallRating, abilityGrade } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/core/horse/stats";
+import { scoutGrade, gradeColorClass } from "@/core/horse/grading";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
 import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
@@ -78,13 +79,7 @@ export function HorseCard({
         : "text-pink-400";
 
   const gradeColor = (score: number) => {
-    const g = abilityGrade(score);
-    if (g === "S") return "text-purple-400";
-    if (g === "A") return "text-success";
-    if (g === "B") return "text-gold";
-    if (g === "D") return "text-warning";
-    if (g === "F") return "text-destructive";
-    return "text-cream/60";
+    return gradeColorClass(scoutGrade(score));
   };
 
   // Velocity Sparkline Data
@@ -124,7 +119,7 @@ export function HorseCard({
                 <span className={genderColor}>{genderSymbol(horse.gender)}</span>
                 <span>Age: {Math.floor(horse.age)}</span>
                 <span className="w-1 h-1 bg-white/20 rounded-full" />
-                <span>OVR: {ovr}</span>
+                <span>OVR: {isAdvanced ? ovr : scoutGrade(ovr)}</span>
               </div>
             </div>
           </div>
@@ -208,7 +203,7 @@ export function HorseCard({
                   <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-cream/40 mb-1">
                     <span>{stat.substring(0, 3)}</span>
                     <span className="font-mono text-cream/80">
-                      {isUnknown ? "---" : Math.round(value)}
+                      {isUnknown ? "---" : isAdvanced ? Math.round(value) : scoutGrade(value)}
                     </span>
                   </div>
                   <div className="h-1 bg-white/5 rounded-full overflow-hidden">
@@ -228,7 +223,7 @@ export function HorseCard({
               </div>
               <div className="text-sm font-black font-mono text-cream">
                 {hasAllStats
-                  ? ovr
+                  ? isAdvanced ? ovr : scoutGrade(ovr)
                   : displayStats?.overallEstimate
                     ? `~${displayStats.overallEstimate}`
                     : "LOCKED"}
@@ -339,7 +334,7 @@ export function HorseCard({
               <Ruler className="h-3 w-3 text-gold/40" /> {horse.height?.toFixed(1)}HH
             </span>
             <span className="flex items-center gap-1">
-              <Weight className="h-3 w-3 text-gold/40" /> {Math.round(horse.weight)}KG
+              <Weight className="h-3 w-3 text-gold/40" /> {Math.round(horse.weight ?? 0)}KG
             </span>
           </div>
           <div className="flex items-center gap-1">
@@ -369,25 +364,25 @@ export function HorseCard({
                   <span className="text-cream/40 uppercase tracking-wide">
                     SPD{" "}
                     <span className={cn("font-black", gradeColor(horse.stats.speed))}>
-                      {abilityGrade(horse.stats.speed)}
+                      {scoutGrade(horse.stats.speed)}
                     </span>
                   </span>
                   <span className="text-cream/40 uppercase tracking-wide">
                     STA{" "}
                     <span className={cn("font-black", gradeColor(horse.stats.stamina))}>
-                      {abilityGrade(horse.stats.stamina)}
+                      {scoutGrade(horse.stats.stamina)}
                     </span>
                   </span>
                   <span className="text-cream/40 uppercase tracking-wide">
                     ACC{" "}
                     <span className={cn("font-black", gradeColor(horse.stats.acceleration))}>
-                      {abilityGrade(horse.stats.acceleration)}
+                      {scoutGrade(horse.stats.acceleration)}
                     </span>
                   </span>
                   <span className="text-cream/40 uppercase tracking-wide">
                     CON{" "}
                     <span className={cn("font-black", gradeColor(horse.stats.consistency))}>
-                      {abilityGrade(horse.stats.consistency)}
+                      {scoutGrade(horse.stats.consistency)}
                     </span>
                   </span>
                 </div>
@@ -467,7 +462,7 @@ export function HorseCard({
                   isAdvanced ? "text-lg" : "text-xl",
                 )}
               >
-                {isAdvanced ? ovr : abilityGrade(ovr)}
+                {isAdvanced ? ovr : scoutGrade(ovr)}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -495,7 +490,7 @@ export function HorseCard({
                   variant="outline"
                   className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter"
                 >
-                  CNF: {horse.conformation}
+                  CNF: {isAdvanced ? horse.conformation : scoutGrade(horse.conformation)}
                 </Badge>
               )}
             </div>

@@ -47,7 +47,8 @@ export const stallionRetirementPhase: PipelinePhase = {
       const inactive = newDay - lastRaceDay > 60;
 
       if ((isLegend && inactive) || isOld) {
-        const fee = calculateRecommendedStudFee(horse, state);
+        const stable = state.npcStables.find((s) => s.id === horse.stableId);
+        const fee = calculateRecommendedStudFee(horse, stable?.tier || "mid");
 
         impacts.push({
           id: generateUUID(),

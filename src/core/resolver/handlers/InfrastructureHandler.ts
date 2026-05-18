@@ -12,6 +12,7 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
+import type { FacilityType } from "@/core/facilities";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -34,7 +35,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { facilityId, nextLevel } = impactAny;
     const facility =
       lookupMaps?.facilityMap.get(facilityId) ||
-      draft.facilities.find((f) => f.id === facilityId);
+      (draft.facilities ? draft.facilities[facilityId as FacilityType] : undefined);
     if (facility) {
       facility.level = nextLevel;
     }
