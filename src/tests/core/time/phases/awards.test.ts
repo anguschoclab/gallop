@@ -1,80 +1,49 @@
-/**
- * Tests for awards phase
- */
-
 import { describe, it, expect } from "vitest";
 import { awardsPhase } from "@/core/time/phases/awards";
 import { createRng } from "@/game/rng";
+import { createTestHorse } from "@/tests/helpers";
 import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Horse, Race } from "@/game/types";
+import type { GameState } from "@/game/types";
+import { createDefaultGameState } from "@/game/state";
 
 describe("awardsPhase", () => {
+  const createTestState = (): GameState => ({
+    ...createDefaultGameState(),
+    day: 1,
+    cash: 10000,
+  });
+
+  const createTestContext = (state: GameState, previousDay = 0, newDay = 1): PipelineContext => ({
+    previousDay,
+    newDay,
+    state,
+    logs: [],
+    intents: [],
+    impacts: [],
+    impactLog: [],
+    dailyRng: createRng(1),
+  });
+
   it("should return unchanged context when no ceremony scheduled", () => {
-    const state: GameState = {
-      day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
-
-    const context: PipelineContext = {
-      previousDay: 9,
-      newDay: 10,
-      state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
-
+    const state = createTestState();
+    state.day = 10;
+    
+    const context = createTestContext(state, 9, 10);
     const result = awardsPhase.execute(context);
     expect(result).toEqual(context);
   });
 
   it("should skip if already processed this year for region", () => {
-    const state: GameState = {
-      day: 365, // Year end
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      lastAwardYear: {
-        north_america: 1,
-        europe: 1,
-        asia_pacific: 1,
-        south_america: 1,
-      },
+    const state = createTestState();
+    state.day = 365; // Year end
+    state.lastAwardYear = {
+      north_america: 1,
+      europe: 1,
+      asia_pacific: 1,
+      south_america: 1,
     };
 
-    const context: PipelineContext = {
-      previousDay: 364,
-      newDay: 365,
-      state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
-
+    const context = createTestContext(state, 364, 365);
     const result = awardsPhase.execute(context);
     expect(result.state.awards).toEqual([]);
   });
@@ -88,112 +57,36 @@ describe("awardsPhase", () => {
   });
 
   it("should preserve state when no winners determined", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
-      name: "Test Horse",
       age: 3,
-      gender: "horse",
-      hemisphere: "Northern",
-      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
-      potential: 75,
-      energy: 100,
-      form: 0,
-      silk: "blue",
-      owned: true,
-      fame: 50,
-      raceHistory: [],
-    };
+    });
 
-    const state: GameState = {
-      day: 365,
-      cash: 10000,
-      horses: [horse],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    const state = createTestState();
+    state.day = 365;
+    state.horses = [horse];
 
-    const context: PipelineContext = {
-      previousDay: 364,
-      newDay: 365,
-      state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
-
+    const context = createTestContext(state, 364, 365);
     const result = awardsPhase.execute(context);
     expect(result.state.horses).toEqual([horse]);
     expect(result.state.awards).toEqual([]);
   });
 
   it("should update lastAwardYear even with no winners", () => {
-    const state: GameState = {
-      day: 365,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    const state = createTestState();
+    state.day = 365;
 
-    const context: PipelineContext = {
-      previousDay: 364,
-      newDay: 365,
-      state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
-
+    const context = createTestContext(state, 364, 365);
     const result = awardsPhase.execute(context);
     expect(result.state.lastAwardYear?.north_america).toBe(1);
   });
 
   it("should preserve existing logs", () => {
-    const state: GameState = {
-      day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
-
-    const context: PipelineContext = {
-      previousDay: 9,
-      newDay: 10,
-      state,
-      logs: [{ day: 9, text: "Existing log" }],
-    };
+    const state = createTestState();
+    state.day = 10;
+    
+    const context = createTestContext(state, 9, 10);
+    context.logs = [{ day: 9, text: "Existing log" }];
 
     const result = awardsPhase.execute(context);
     expect(result.logs).toEqual([{ day: 9, text: "Existing log" }]);
