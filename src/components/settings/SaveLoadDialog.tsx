@@ -313,6 +313,8 @@ function LedgerEntry({
           <button
             className="text-slate-600 hover:text-destructive transition-colors p-1"
             onClick={onDelete}
+            aria-label="Delete save"
+            title="Delete save"
           >
             <Trash2 className="h-4 w-4" />
           </button>
