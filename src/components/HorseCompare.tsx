@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,8 +31,10 @@ export function HorseCompare({ horses }: HorseCompareProps) {
   const [horse1Id, setHorse1Id] = useState<string | undefined>();
   const [horse2Id, setHorse2Id] = useState<string | undefined>();
 
-  const horse1 = horses.find((h) => h.id === horse1Id);
-  const horse2 = horses.find((h) => h.id === horse2Id);
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the component render.
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
+  const horse1 = horse1Id ? horseMap.get(horse1Id) : undefined;
+  const horse2 = horse2Id ? horseMap.get(horse2Id) : undefined;
 
   const canCompare = horse1 && horse2 && horse1.id !== horse2.id;
 

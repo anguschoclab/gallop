@@ -20,10 +20,12 @@ export function useScoreboard(saleId: string) {
     let netReceived = 0;
     let topAcquisition: { name: string; price: number } | null = null;
     let topSale: { name: string; price: number } | null = null;
+    // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
+    const horseMap = new Map(horses.map((h) => [h.id, h]));
     for (const lot of sale.lots) {
       if (lot.passed || lot.withdrawn) continue;
       if (!lot.hammerPrice) continue;
-      const horse = horses.find((h) => h.id === lot.horseId);
+      const horse = horseMap.get(lot.horseId);
       const isPlayerWin = lot.consignorStableId !== undefined && lot.soldToStableId === undefined;
       const isPlayerSale = lot.consignorStableId === undefined;
       if (isPlayerWin) {

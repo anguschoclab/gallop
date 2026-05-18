@@ -12,7 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import type { Race, Horse, Claim } from "@/game/types";
 
@@ -49,8 +49,11 @@ export function ClaimingRacePanel({
   if (!race.claiming) return null;
 
   const price = race.claiming.price;
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
+
   const pendingHorse = pendingClaimHorseId
-    ? horses.find((h) => h.id === pendingClaimHorseId)
+    ? horseMap.get(pendingClaimHorseId)
     : null;
 
   return (
@@ -62,7 +65,7 @@ export function ClaimingRacePanel({
         </p>
         <div className="space-y-1">
           {race.entries.map((entry) => {
-            const entryHorse = horses.find((h) => h.id === entry.horseId);
+            const entryHorse = horseMap.get(entry.horseId);
             const isOwned = !!entry.owned;
             const playerClaimFiled = claims.some(
               (c) =>

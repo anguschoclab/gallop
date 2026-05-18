@@ -1,6 +1,7 @@
 import type { SectionalSplit } from "@/core/race/types";
 import { SilkDot } from "./SilkDot";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 
 interface SectionalTimingTableProps {
   splits: SectionalSplit[];
@@ -11,12 +12,15 @@ interface SectionalTimingTableProps {
 /**
  * Displays a tabular breakdown of sectional splits for a completed race.
  * Visualizes the running order and leader times at each quarter-mile marker.
- * 
+ *
  * @param {SectionalTimingTableProps} props - The component properties.
  * @returns {JSX.Element} The rendered timing table.
  */
 export function SectionalTimingTable({ splits, runners, distance }: SectionalTimingTableProps) {
   const quarterMile = 402.336;
+
+  // Pre-calculate hash map for O(1) runner lookups instead of running O(N) .find() inside the map loops.
+  const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
 
   return (
     <div className="overflow-x-auto custom-scrollbar">
@@ -39,7 +43,7 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
         </thead>
         <tbody className="divide-y divide-white/5">
           {splits.map((split) => {
-            const leader = runners.find((r) => r.horseId === split.leader);
+            const leader = runnerMap.get(split.leader);
             return (
               <tr key={split.quarter} className="hover:bg-white/[0.02] transition-colors group">
                 <td className="py-4 px-4 font-mono font-bold text-cream/80">
@@ -54,10 +58,12 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
                 <td className="py-4 px-4">
                   <div className="flex items-center gap-2">
                     {leader && <SilkDot color={leader.silk} size="sm" />}
-                    <span className={cn(
-                      "font-bold truncate max-w-[120px]",
-                      leader?.owned ? "text-broadcast-accent" : "text-cream/90"
-                    )}>
+                    <span
+                      className={cn(
+                        "font-bold truncate max-w-[120px]",
+                        leader?.owned ? "text-broadcast-accent" : "text-cream/90",
+                      )}
+                    >
                       {leader?.name || "Unknown"}
                     </span>
                   </div>
@@ -65,7 +71,7 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
                 <td className="py-4 px-4">
                   <div className="flex flex-wrap gap-1.5">
                     {split.positions.slice(0, 12).map((pos, idx) => {
-                      const runner = runners.find((r) => r.horseId === pos.horseId);
+                      const runner = runnerMap.get(pos.horseId);
                       return (
                         <div
                           key={pos.horseId}
@@ -73,7 +79,7 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
                             "h-5 w-5 rounded-full flex items-center justify-center text-[8px] font-black border transition-all shadow-sm",
                             runner?.owned
                               ? "border-broadcast-accent bg-broadcast-accent/20 text-broadcast-accent scale-110 z-10"
-                              : "border-white/10 bg-white/5 text-muted-foreground group-hover:border-white/20"
+                              : "border-white/10 bg-white/5 text-muted-foreground group-hover:border-white/20",
                           )}
                           title={`${runner?.name || "Unknown"} (Pos: ${pos.position})`}
                         >
