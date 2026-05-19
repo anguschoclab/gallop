@@ -24,6 +24,7 @@ export function scoutGrade(stat: number): LetterGrade {
 
 /**
  * Get CSS color class for a letter grade.
+ * @param grade
  */
 export function gradeColorClass(grade: LetterGrade): string {
   switch (grade) {

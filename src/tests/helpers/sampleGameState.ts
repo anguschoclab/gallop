@@ -12,7 +12,10 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import { createBreedingProgram } from "@/core/breeding/programs";
 import { createRng } from "@/game/rng";
 
-/** Default appearance DNA used by portrait/export tests. */
+/**
+ * Default appearance DNA used by portrait/export tests.
+ * @param overrides
+ */
 export function makeAppearanceDNA(overrides: any = {}): any {
   return {
     seed: 12345,
@@ -34,7 +37,10 @@ export function makeAppearanceDNA(overrides: any = {}): any {
   };
 }
 
-/** Build a sample BreedingProgram for slice/flow tests. */
+/**
+ * Build a sample BreedingProgram for slice/flow tests.
+ * @param overrides
+ */
 export function makeBreedingProgram(overrides: Partial<BreedingProgram> = {}): BreedingProgram {
   const base = createBreedingProgram(
     overrides.stableId ?? "stable-test",
@@ -48,6 +54,9 @@ export function makeBreedingProgram(overrides: Partial<BreedingProgram> = {}): B
  * Minimal slice of game state covering the breeding-program flow.
  * Tests can pass this into a Zustand `create()(...)` factory or use it as
  * the initial argument to a slice creator.
+ * @param overrides
+ * @param overrides.activeBreedingProgram
+ * @param overrides.breedingPrograms
  */
 export function makeBreedingProgramState(
   overrides: {
@@ -67,6 +76,7 @@ export function makeBreedingProgramState(
 /**
  * Create a minimal GameState for testing.
  * Tests can extend this with additional properties as needed.
+ * @param overrides
  */
 export function makeGameState(overrides: Partial<GameState> = {}): Partial<GameState> {
   return {
@@ -111,6 +121,7 @@ export function makeGameState(overrides: Partial<GameState> = {}): Partial<GameS
 /**
  * Create a minimal PipelineContext for testing.
  * Tests can extend this with additional properties as needed.
+ * @param overrides
  */
 export function makePipelineContext(
   overrides: Partial<PipelineContext> = {},

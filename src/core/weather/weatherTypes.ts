@@ -38,7 +38,10 @@ export interface WeatherState {
   humidity: number;
 }
 
-/** Map sim pattern → existing track-condition WeatherPattern. */
+/**
+ * Map sim pattern → existing track-condition WeatherPattern.
+ * @param pattern
+ */
 export function toTrackWeatherPattern(pattern: SimWeatherPattern): TrackWeatherPattern {
   switch (pattern) {
     case "clear":

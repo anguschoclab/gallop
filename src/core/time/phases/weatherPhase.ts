@@ -28,12 +28,18 @@ import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS } from "@/game/store/slices
 import { calculateConditionChange } from "@/core/trackConditions";
 import { generateUUID } from "@/core/uuid";
 
-/** Map a Race trackId; falls back to graded.trackId or graded.track. */
+/**
+ * Map a Race trackId; falls back to graded.trackId or graded.track.
+ * @param race
+ */
 function raceTrackId(race: Race): string | undefined {
   return race.trackId ?? race.graded?.trackId ?? race.graded?.track;
 }
 
-/** Map sim pattern → legacy `Weather` enum used on Race.weather. */
+/**
+ * Map sim pattern → legacy `Weather` enum used on Race.weather.
+ * @param pattern
+ */
 function toRaceWeather(pattern: WeatherState["pattern"]): Weather {
   switch (pattern) {
     case "clear":

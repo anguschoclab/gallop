@@ -93,7 +93,12 @@ const CLIMATE_HUMIDITY_BIAS: Record<ClimateZone, number> = {
   warm: 0.45,
 };
 
-/** Seeded sample from a row of the transition matrix. */
+/**
+ * Seeded sample from a row of the transition matrix.
+ * @param row
+ * @param rng
+ * @param rng.next
+ */
 function samplePattern(row: number[], rng: { next: () => number }): SimWeatherPattern {
   const r = rng.next();
   let acc = 0;
@@ -107,6 +112,10 @@ function samplePattern(row: number[], rng: { next: () => number }): SimWeatherPa
 /**
  * Step one day forward from the previous WeatherState.
  * If `prev` is undefined, seeds with a climate-biased starting pattern.
+ * @param prev
+ * @param trackId
+ * @param day
+ * @param climate
  */
 export function stepWeather(
   prev: WeatherState | undefined,
@@ -138,6 +147,11 @@ export function stepWeather(
 /**
  * Generate a forecast of `days` days starting at `startDay`, deterministic
  * given the seed previous state. Does NOT mutate input.
+ * @param prev
+ * @param trackId
+ * @param startDay
+ * @param days
+ * @param climate
  */
 export function generateForecast(
   prev: WeatherState | undefined,

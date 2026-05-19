@@ -23,6 +23,8 @@ export type InboxSlice = {
 
 /**
  * Create the inbox state slice with read/write actions for the player's inbox.
+ * @param set
+ * @param get
  */
 export const createInboxSlice: GameStateCreator<InboxSlice> = (set, get) => ({
   markMessageRead: (id) => {

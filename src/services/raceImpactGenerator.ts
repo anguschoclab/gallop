@@ -126,6 +126,7 @@ export interface GenerateRaceImpactsProps {
  * Generate energy expenditure impact for a horse.
  * @param horseId
  * @param newDay
+ * @param rng
  * @returns The energy impact object.
  */
 function generateEnergyImpact(horseId: string, newDay: number, rng?: Rng): EnergyImpact {
@@ -148,6 +149,7 @@ function generateEnergyImpact(horseId: string, newDay: number, rng?: Rng): Energ
  * @param position
  * @param newDay
  * @param hiredStaff
+ * @param rng
  * @returns The form impact object.
  */
 function generateFormImpact(
@@ -183,6 +185,7 @@ function generateFormImpact(
  * @param horse
  * @param position
  * @param newDay
+ * @param rng
  * @returns The fame impact object, or null if no fame change.
  */
 function generateFameImpact(
@@ -217,6 +220,7 @@ function generateFameImpact(
  * @param classBonus
  * @param calibratedPars
  * @param newDay
+ * @param rng
  * @returns Object containing the Beyer impact and recovery impact.
  */
 function generateBeyerAndRecoveryImpacts(
@@ -286,6 +290,7 @@ function generateBeyerAndRecoveryImpacts(
  * @param runner.horseId
  * @param runner.barrier
  * @param runner.lane
+ * @param rng
  * @returns The race history impact object.
  */
 function generateRaceHistoryImpact(
@@ -343,6 +348,7 @@ function generateRaceHistoryImpact(
  * @param position
  * @param race
  * @param newDay
+ * @param rng
  * @returns The Triple Crown progress impact object, or null if not applicable.
  */
 function generateTripleCrownProgressImpact(
@@ -409,6 +415,7 @@ function generateTripleCrownProgressImpact(
  * @param position - Finishing position (1-based)
  * @param race - The race data
  * @param newDay - Current game day
+ * @param rng
  * @returns Object containing the cash impact and optional transaction and reputation impacts, or null if no prize.
  */
 function generatePrizeMoneyImpacts(
@@ -486,6 +493,7 @@ function generatePrizeMoneyImpacts(
  * @param newDay - Current game day
  * @param horseId - The horse ID (for stable identification)
  * @param raceId - The race ID
+ * @param rng
  * @returns Object containing the cash impact and optional transaction impact.
  */
 function generateJockeyFeeImpacts(
@@ -538,6 +546,7 @@ function generateJockeyFeeImpacts(
  * @param newDay
  * @param owned
  * @param stableId
+ * @param rng
  * @returns The cash impact object, or null if no fee applies.
  */
 function generatePercentageJockeyFeeImpacts(

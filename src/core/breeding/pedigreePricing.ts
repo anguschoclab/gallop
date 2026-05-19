@@ -25,6 +25,7 @@ import type { Horse, GameState } from "@/game/types";
  *
  * @param horse - The horse to evaluate
  * @param state - Game state containing the horses array
+ * @param state.horses
  * @param horseMap - Optional pre-built horse map for faster lookups
  * @returns Multiplier value (1+ when pedigree exists)
  *

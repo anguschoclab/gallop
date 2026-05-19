@@ -7,6 +7,9 @@ const SPLIT_LABELS = ["¼", "½", "¾", "Fin"];
  * Find the simulation time when a horse crossed a given distance marker.
  * Linearly interpolates between the two nearest snapshots.
  * Returns null if the horse never reached that distance (DNF).
+ * @param snapshots
+ * @param horseId
+ * @param targetDistanceMeters
  */
 export function interpolateTimeAtDistance(
   snapshots: RaceSnapshot[],
@@ -35,6 +38,10 @@ export function interpolateTimeAtDistance(
  * Compute quarter-point sectional splits for all horses in a race.
  * splitMarkers defaults to [0.25, 0.5, 0.75, 1.0] * raceDistanceMeters.
  * Returns [] if snapshots is empty or undefined.
+ * @param snapshots
+ * @param raceDistanceMeters
+ * @param horseIds
+ * @param splitMarkers
  */
 export function calculateSectionalSplits(
   snapshots: RaceSnapshot[],
@@ -96,7 +103,11 @@ export function calculateSectionalSplits(
   return splits;
 }
 
-/** Alias for backward compatibility */
+/**
+ * Alias for backward compatibility
+ * @param snapshots
+ * @param distance
+ */
 export function computeSectionalSplits(
   snapshots: RaceSnapshot[],
   distance: number,
@@ -110,6 +121,8 @@ export function computeSectionalSplits(
 
 /**
  * Produce a short pace position string: "3-2-2-1" (rank at each split marker).
+ * @param splits
+ * @param horseId
  */
 export function buildPacePositionString(splits: SectionalSplit[], horseId: string): string {
   return splits
@@ -122,6 +135,8 @@ export function buildPacePositionString(splits: SectionalSplit[], horseId: strin
 
 /**
  * Derive a human-readable running style label from pace positions.
+ * @param pacePositions
+ * @param fieldSize
  */
 export function derivePaceStyleLabel(pacePositions: number[], fieldSize?: number): string {
   if (pacePositions.length === 0) return "Unknown";
@@ -148,6 +163,7 @@ export function derivePaceStyleLabel(pacePositions: number[], fieldSize?: number
  * | 3–4        | 1.000 |
  * | 5–9        | 1.005 |
  * | 10+        | 1.010 |
+ * @param visits
  */
 export function getCourseMultiplier(visits: number): number {
   if (visits === 0) return 0.985;
