@@ -7,8 +7,10 @@ import {
   stepRunner,
 } from "@/game/raceSim";
 import { createRng } from "@/game/rng";
-import type { Horse } from "@/game/types";
+import type { Horse, Jockey, JockeySilk } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+
+const mockRng = createRng(1);
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -97,8 +99,8 @@ describe("raceSim determinism", () => {
 describe("raceSim conditions", () => {
   it("storm + heavy track produces slower winning time than fair conditions", () => {
     const horses = mkField();
-    const fair = getConditionsModifier({ weather: "sunny", trackCondition: "fast" });
-    const foul = getConditionsModifier({ weather: "rainy", trackCondition: "heavy" });
+    const fair = getConditionsModifier({ weather: "sunny" as any, trackCondition: "fast" as any });
+    const foul = getConditionsModifier({ weather: "rainy" as any, trackCondition: "heavy" as any });
     const fairResult = runRaceToCompletion(
       horses.map((h) => buildRunner(h, true, 1600, "Turf", fair)),
       1600,
@@ -200,7 +202,7 @@ describe("stepRunner", () => {
 
   it("already finished runner is not modified by stepRunner", () => {
     const conditions = getConditionsModifier({});
-    const runner = buildRunner(mkHorse(), true, conditions);
+    const runner = buildRunner(mkHorse(), true, 1600, "Turf", conditions);
     runner.finishTime = 90;
     runner.position = 1600;
     runner.velocity = 15;
@@ -212,7 +214,7 @@ describe("stepRunner", () => {
 
   it("position increases monotonically across steps", () => {
     const conditions = getConditionsModifier({});
-    const runner = buildRunner(mkHorse(), true, conditions);
+    const runner = buildRunner(mkHorse(), true, 1600, "Turf", conditions);
     runner.velocity = 10;
     const rng = createRng(2);
     let last = runner.position;

@@ -283,7 +283,14 @@ export const TRACK_BASE_CHARACTERISTICS: Record<string, TrackBaseCharacteristics
 // =============================================================================
 
 /** Climate zones affecting track behavior */
-export type ClimateZone = "arid" | "temperate" | "humid" | "tropical" | "continental";
+export type ClimateZone =
+  | "arid"
+  | "temperate"
+  | "humid"
+  | "tropical"
+  | "continental"
+  | "cool"
+  | "warm";
 
 /** Base probability distribution for track conditions by climate */
 export const CLIMATE_CONDITION_BIAS: Record<ClimateZone, Record<TrackCondition, number>> = {
@@ -327,6 +334,22 @@ export const CLIMATE_CONDITION_BIAS: Record<ClimateZone, Record<TrackCondition, 
     heavy: 0.04,
     yielding: 0.01,
   },
+  cool: {
+    // Cooler/damper climates (e.g. Northern Europe)
+    fast: 0.3,
+    good: 0.4,
+    soft: 0.2,
+    heavy: 0.08,
+    yielding: 0.02,
+  },
+  warm: {
+    // Warmer/subtropical climates
+    fast: 0.5,
+    good: 0.3,
+    soft: 0.1,
+    heavy: 0.08,
+    yielding: 0.02,
+  },
 };
 
 /** Drying rates by climate zone (multiplier to base recovery) */
@@ -336,4 +359,6 @@ export const CLIMATE_DRYING_RATES: Record<ClimateZone, number> = {
   humid: 0.7, // Slow drying
   tropical: 0.5, // Very slow drying
   continental: 1.2, // Seasonal swings
+  cool: 0.8, // Slow drying
+  warm: 1.5, // Fast drying
 };

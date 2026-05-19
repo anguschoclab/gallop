@@ -57,6 +57,20 @@ const TRANSITIONS: Record<ClimateZone, number[][]> = {
     [0.12, 0.22, 0.25, 0.3, 0.11],
     [0.08, 0.18, 0.22, 0.3, 0.22],
   ],
+  cool: [
+    [0.45, 0.3, 0.15, 0.08, 0.02],
+    [0.25, 0.35, 0.2, 0.15, 0.05],
+    [0.15, 0.25, 0.3, 0.22, 0.08],
+    [0.1, 0.2, 0.25, 0.3, 0.15],
+    [0.05, 0.15, 0.2, 0.3, 0.3],
+  ],
+  warm: [
+    [0.6, 0.25, 0.1, 0.04, 0.01],
+    [0.4, 0.35, 0.15, 0.08, 0.02],
+    [0.25, 0.3, 0.25, 0.15, 0.05],
+    [0.15, 0.25, 0.25, 0.25, 0.1],
+    [0.1, 0.2, 0.2, 0.3, 0.2],
+  ],
 };
 
 const CLIMATE_TEMP: Record<ClimateZone, [number, number]> = {
@@ -65,6 +79,8 @@ const CLIMATE_TEMP: Record<ClimateZone, [number, number]> = {
   humid: [16, 30],
   tropical: [22, 33],
   continental: [-2, 28],
+  cool: [5, 18],
+  warm: [18, 32],
 };
 
 const CLIMATE_HUMIDITY_BIAS: Record<ClimateZone, number> = {
@@ -73,6 +89,8 @@ const CLIMATE_HUMIDITY_BIAS: Record<ClimateZone, number> = {
   humid: 0.75,
   tropical: 0.85,
   continental: 0.5,
+  cool: 0.7,
+  warm: 0.45,
 };
 
 /** Seeded sample from a row of the transition matrix. */

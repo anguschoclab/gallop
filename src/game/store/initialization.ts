@@ -170,6 +170,7 @@ export function createInitialState(options?: NewGameOptions): GameState {
     transactions: [],
     expenses: [],
     news: [],
+    inbox: [],
     archive: {
       horses: [],
       races: [],

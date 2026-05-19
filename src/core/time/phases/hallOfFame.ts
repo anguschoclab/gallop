@@ -19,6 +19,7 @@ import type {
   LogImpact,
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
+import type { HallOfFameEntry } from "@/core/history/historyTypes";
 
 /**
  * Phase: Hall of Fame Induction

@@ -1,29 +1,20 @@
 import { describe, it, expect } from "vitest";
 import { getMinimumAgeForHemisphere, isHorseEligibleForRace } from "@/core/race/eligibility";
 import type { Horse, Race } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
-    id: overrides.id ?? "h1",
+  return createTestHorse({
+    id: "h1",
     name: "Test",
     age: 4,
     gender: "horse",
-    hemisphere: "Northern",
-    silk: "#aabbcc",
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
-    energy: 80,
-    form: 0,
-    potential: 80,
-    raceHistory: [],
-    owned: true,
-    fame: 0,
-    lifecycleStatus: "active" as const,
     ...overrides,
-  };
+  });
 }
 
 function mkRace(overrides: Partial<Race> = {}): Race {
-  return {
+  const base: Race = {
     id: "r1",
     name: "Test Race",
     day: 10,
@@ -34,9 +25,8 @@ function mkRace(overrides: Partial<Race> = {}): Race {
     fieldSize: 8,
     entries: [],
     resolved: false,
-    lifecycleStatus: "active" as const,
-    ...overrides,
   };
+  return { ...base, ...overrides };
 }
 
 describe("getMinimumAgeForHemisphere", () => {

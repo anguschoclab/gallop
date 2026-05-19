@@ -52,8 +52,8 @@ export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
       owned: false,
     });
 
-    horse.sireName = data.sire;
-    horse.damName = data.dam;
+    horse.sireName = data.sire || "Unknown";
+    horse.damName = data.dam || "Unknown";
     horse.stableId = stable.id;
     horse.bloodline = resolveBloodline(horse, new Map());
     horse.bruceLoweFamily = data.bruceLoweFamily ?? rollProceduralFamily(rng);

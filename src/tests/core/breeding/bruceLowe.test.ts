@@ -7,25 +7,16 @@ import {
   rollProceduralFamily,
 } from "@/core/breeding/bruceLowe";
 import type { Horse } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(over: Partial<Horse> = {}): Horse {
-  return {
-    id: over.id ?? "h",
-    name: over.name ?? "H",
+  return createTestHorse({
+    id: "h",
+    name: "H",
     age: 4,
     gender: "mare",
-    hemisphere: "Northern",
-    silk: "#000",
-    stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 },
-    energy: 100,
-    form: 0,
-    potential: 80,
-    raceHistory: [],
-    owned: true,
-    fame: 0,
-    lifecycleStatus: "active" as const,
     ...over,
-  };
+  });
 }
 
 describe("familyRole", () => {
@@ -56,18 +47,18 @@ describe("familyRole", () => {
 describe("resolveBruceLoweFamily", () => {
   it("returns the cached value when set on the horse", () => {
     const h = mkHorse({ bruceLoweFamily: 7 });
-    expect(resolveBruceLoweFamily(h, { horses: [h] })).toBe(7);
+    expect(resolveBruceLoweFamily(h, { horses: [h] } as any)).toBe(7);
   });
 
   it("walks up to the dam to find the family", () => {
     const dam = mkHorse({ id: "dam", bruceLoweFamily: 12 });
-    const foal = mkHorse({ id: "foal", pedigree: { damId: "dam" } });
-    expect(resolveBruceLoweFamily(foal, { horses: [dam, foal] })).toBe(12);
+    const foal = mkHorse({ id: "foal", pedigree: { name: "Foal", generation: 0, damId: "dam" } });
+    expect(resolveBruceLoweFamily(foal, { horses: [dam, foal] } as any)).toBe(12);
   });
 
   it("undefined when no chain hits a known family", () => {
     const foal = mkHorse({ id: "x" });
-    expect(resolveBruceLoweFamily(foal, { horses: [foal] })).toBeUndefined();
+    expect(resolveBruceLoweFamily(foal, { horses: [foal] } as any)).toBeUndefined();
   });
 });
 

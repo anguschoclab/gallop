@@ -65,6 +65,7 @@ describe("Health System - Injury Rolls", () => {
       bonusValue: 0.5, // 50% reduction
       traits: [],
       stableId: "",
+      fame: 0,
     };
 
     let withoutVet = 0;

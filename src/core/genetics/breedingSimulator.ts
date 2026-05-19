@@ -42,7 +42,7 @@ export type SimulationResult = {
   };
   traits: {
     fiberBias: Record<"sprinter" | "balanced" | "stayer", number>;
-    strideType: Record<"short" | "balanced" | "long", number>;
+    strideType: Record<"short" | "average" | "long", number>;
     runningStyle: Record<RunningStyle, number>;
     trainability: { mean: number; tier: Record<"excellent" | "good" | "fair" | "poor", number> };
     distanceAptitude: { mean: number; range: [number, number] };
@@ -123,7 +123,7 @@ export function runBreedingSimulation(
   const consistencyValues: number[] = [];
 
   const fiberBiasValues: ("sprinter" | "balanced" | "stayer")[] = [];
-  const strideTypeValues: ("short" | "balanced" | "long")[] = [];
+  const strideTypeValues: ("short" | "average" | "long")[] = [];
   const runningStyleValues: RunningStyle[] = [];
   const trainabilityValues: number[] = [];
   const distanceAptitudeValues: number[] = [];
@@ -262,7 +262,7 @@ export function runBreedingSimulation(
       },
       strideType: {
         short: strideTypeValues.filter((v) => v === "short").length / SIMULATION_ITERATIONS,
-        balanced: strideTypeValues.filter((v) => v === "balanced").length / SIMULATION_ITERATIONS,
+        average: strideTypeValues.filter((v) => v === "average").length / SIMULATION_ITERATIONS,
         long: strideTypeValues.filter((v) => v === "long").length / SIMULATION_ITERATIONS,
       },
       runningStyle: {

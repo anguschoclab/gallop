@@ -199,6 +199,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       npcAIManager: {
         stableStates: {},
         globalDay: 1,
+        regionalKings: {},
       },
       breedingPrograms: [],
       jockeys: [],
@@ -240,6 +241,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     npcAIManager: {
       stableStates: {},
       globalDay: 1,
+      regionalKings: {},
     },
     breedingPrograms: [],
     jockeys: [],

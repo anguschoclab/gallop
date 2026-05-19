@@ -16,142 +16,31 @@ import {
 } from "@/core/ai/jockeyAI";
 import type { Jockey, Horse, Stable } from "@/game/types";
 import type { JockeyStats } from "@/core/jockey/types";
+import { createTestHorse, createTestStable, createTestJockey } from "@/tests/helpers";
 
 // Mock data setup
 function createMockJockey(overrides: Partial<Jockey> = {}): Jockey {
-  return {
+  return createTestJockey({
     id: "jockey-1",
     name: "Test Jockey",
-    age: 30,
-    archetype: "versatile",
-    stats: { pacing: 75, positioning: 75, vigor: 75, gateSkill: 75, temperament: 75 },
-    traits: [],
-    silk: { pattern: "solid", primary: "red", secondary: "white", cap: "white" },
-    careerStarts: 100,
-    careerWins: 30,
-    fame: 50,
-    ridingFee: 1000,
-    affinityMap: {},
-    stableAffinity: 50,
-    loyalty: 50,
-    isApprentice: false,
     ...overrides,
-  };
+  });
 }
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
+  return createTestHorse({
     id: "horse-1",
     name: "Test Horse",
-    sireId: "sire-1",
-    damId: "dam-1",
-    sireName: "Test Sire",
-    damName: "Test Dam",
-    pedigree: { sireId: "sire-1", damId: "dam-1" },
-    birthDay: 1,
-    age: 3,
-    gender: "colt",
-    hemisphere: "Northern",
-    silk: "red",
-    energy: 80,
-    fitness: 50,
-    fatigue: 20,
-    peakingIndex: 30,
-    form: 0.8,
-    recoveryPoints: 50,
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 70, conformation: 70 },
-    genotype: {
-      color: { extension: [3, 3], agouti: [3, 3], gray: [1, 1], cream: [1, 1] },
-      stats: { speed: [[3, 3]], stamina: [[3, 3]], acceleration: [[3, 3]], consistency: [[3, 3]] },
-      preferences: { distance: [3, 3], surface: [3, 3], climbing: [3, 3], cornering: [3, 3] },
-      style: [3, 3],
-      mental: [3, 3],
-      physical: [3, 3],
-      durability: [3, 3],
-      size: [3, 3],
-      markers: {
-        leopardComplex: "recessive",
-        csnbRisk: "low",
-        sensoryPerception: "good",
-        signalTransduction: "good",
-        immunity: "good",
-        geneticDiversity: 0.5,
-        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
-      },
-      heart: [[3, 3]],
-      fiberType: [3, 3],
-      stride: [3, 3],
-      trackBias: [3, 3],
-      mudAptitude: [3, 3],
-      trainability: [3, 3],
-      peakAge: [3, 3],
-      recovery: [3, 3],
-      fertility: [3, 3],
-      foalingEase: [3, 3],
-      markings: {
-        socks: [3, 3],
-        face: [3, 3],
-        silverDapple: [3, 3],
-        sabino: [3, 3],
-        splashWhite: [3, 3],
-      },
-      health: {
-        bleeder: [3, 3],
-        roarer: [3, 3],
-        ocd: [3, 3],
-        efna5: [3, 3],
-        pssm: [3, 3],
-        rer: [3, 3],
-        epm: [3, 3],
-      },
-    },
-    potential: 80,
-    fame: 0,
-    distanceAptitude: 1600,
-    surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
-    mudAptitude: 0.7,
-    peakAge: 4,
-    strideType: "average",
-    trackPreference: "left",
-    bleederRisk: 0.1,
-    roarerRisk: 0.1,
-    ocdRisk: 0.1,
-    recoveryRate: 0.7,
-    trainability: 0.7,
-    heartScore: 70,
-    bloodline: "standard",
-    fiberBias: "balanced",
-    healthStatus: "healthy",
-    healthStatusDay: 1,
-    isBlueHen: false,
-    gelded: false,
-    lifecycleStatus: "active",
-    raceHistory: [],
-    owned: true,
-    runningStyle: "E",
-    coatColor: "bay",
-    markings: "none",
     ...overrides,
-  };
+  });
 }
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
-  return {
+  return createTestStable({
     id: "stable-1",
     name: "Test Stable",
-    cash: 100000,
-    personality: "aggressive",
-    owner: "Test Owner",
-    tier: "mid",
-    reputation: 70,
-    founded: 1,
-    horses: [],
-    isMajor: false,
-    colors: { primary: "red", secondary: "blue" },
-    staff: { trainer: null, groom: null, farrier: null, nutritionist: null, veterinarian: null },
-    outposts: [],
     ...overrides,
-  };
+  });
 }
 
 describe("createJockeyAIState", () => {

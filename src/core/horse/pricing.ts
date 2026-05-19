@@ -95,13 +95,14 @@ export function horsePrice(h: Horse): number {
   const potMod = 0.5 + h.potential / 100;
 
   let bioMod = 1.0;
-  if (h.conformation === "excellent") bioMod += 0.05;
-  if (h.temperament === "excellent") bioMod += 0.05;
-  if (h.conformation === "poor") bioMod -= 0.1;
-  if (h.temperament === "poor") bioMod -= 0.1;
+  if ((h.conformation ?? 50) >= 90) bioMod += 0.05;
+  if ((h.temperament ?? 50) >= 90) bioMod += 0.05;
+  if ((h.conformation ?? 50) <= 30) bioMod -= 0.1;
+  if ((h.temperament ?? 50) <= 30) bioMod -= 0.1;
 
-  if (h.injuryProneness < INJURY_PRONENESS_LOW_THRESHOLD) bioMod += 0.15;
-  if (h.injuryProneness > INJURY_PRONENESS_HIGH_THRESHOLD) bioMod -= 0.2;
+  const proneness = h.injuryProneness ?? 0.05;
+  if (proneness < INJURY_PRONENESS_LOW_THRESHOLD) bioMod += 0.15;
+  if (proneness > INJURY_PRONENESS_HIGH_THRESHOLD) bioMod -= 0.2;
 
   return Math.round((overall * 80 * ageMod * potMod * bioMod) / 50) * 50;
 }

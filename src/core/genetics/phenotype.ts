@@ -317,11 +317,11 @@ export function resolveFiberBias(locus: Locus): "sprinter" | "balanced" | "staye
  * @example
  * const stride = resolveStrideType(genotype.stride);
  */
-export function resolveStrideType(locus: Locus): "short" | "balanced" | "long" {
+export function resolveStrideType(locus: Locus): "short" | "average" | "long" {
   const sum = locus[0] + locus[1];
   if (sum <= 4) return "short";
   if (sum >= 8) return "long";
-  return "balanced";
+  return "average";
 }
 
 /**

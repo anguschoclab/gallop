@@ -7,13 +7,13 @@ import { buildPedigreeGraph, NODE_WIDTH, NODE_HEIGHT } from "@/lib/pedigreeGraph
 import { classifyCoi } from "@/core/breeding/populationGenetics";
 import { PedigreeNodeCard } from "./PedigreeNodeCard";
 import { cn } from "@/lib/utils";
-import type { PedigreeNode, PedigreeEdge } from "@/lib/pedigreeGraph";
+import type { PedigreeFlowNode, PedigreeEdge } from "@/lib/pedigreeGraph";
 
 const nodeTypes: NodeTypes = {
   horse: PedigreeNodeCard as any,
 };
 
-function applyDagreLayout(nodes: PedigreeNode[], edges: PedigreeEdge[]): PedigreeNode[] {
+function applyDagreLayout(nodes: PedigreeFlowNode[], edges: PedigreeEdge[]): PedigreeFlowNode[] {
   const g = new dagre.graphlib.Graph();
   g.setDefaultEdgeLabel(() => ({}));
   g.setGraph({ rankdir: "RL", ranksep: 100, nodesep: 40 });
@@ -22,9 +22,7 @@ function applyDagreLayout(nodes: PedigreeNode[], edges: PedigreeEdge[]): Pedigre
     g.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT });
   }
   for (const edge of edges) {
-    if (!edge.style?.strokeDasharray) {
-      g.setEdge(edge.source, edge.target);
-    }
+    g.setEdge(edge.source, edge.target);
   }
 
   dagre.layout(g);
@@ -56,14 +54,15 @@ export function PedigreeTree({
   className,
 }: PedigreeTreeProps) {
   const [generations, setGenerations] = useState<3 | 4 | 5>(initialGens);
-  const horses = useGame((s) => s.horses);
+  const horseMap = useGame((s) => s.horseMap);
 
   const { rawNodes, rawEdges, coi, coiLabel } = useMemo(() => {
-    const graph = buildPedigreeGraph(horseId, horses, generations);
+    const graph = buildPedigreeGraph(horseId, horseMap, generations);
     // Apply shared ancestor highlighting from breeding view
     const nodes = sharedAncestorIds
-      ? graph.nodes.map((n) =>
-          sharedAncestorIds.has(n.id)
+      ? graph.nodes.map((n) => {
+          const actualHorseId = n.id.split(":")[0];
+          return sharedAncestorIds.has(actualHorseId)
             ? {
                 ...n,
                 data: {
@@ -72,19 +71,22 @@ export function PedigreeTree({
                   ringColor: "ring-blue-400",
                 },
               }
-            : n,
-        )
+            : n;
+        })
       : graph.nodes;
     return { rawNodes: nodes, rawEdges: graph.edges, coi: graph.coi, coiLabel: graph.coiLabel };
-  }, [horseId, horses, generations, sharedAncestorIds]);
+  }, [horseId, horseMap, generations, sharedAncestorIds]);
 
   const layoutNodes = useMemo(() => applyDagreLayout(rawNodes, rawEdges), [rawNodes, rawEdges]);
 
-  const [nodes, , onNodesChange] = useNodesState(layoutNodes);
-  const [edges, , onEdgesChange] = useEdgesState(rawEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(layoutNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(rawEdges);
 
-  // Sync layout when layoutNodes change
-  const syncedNodes = useMemo(() => layoutNodes, [layoutNodes]);
+  // Sync state when layoutNodes or rawEdges change
+  useMemo(() => {
+    setNodes(layoutNodes);
+    setEdges(rawEdges);
+  }, [layoutNodes, rawEdges, setNodes, setEdges]);
 
   const coiColor = coi > 0.05 ? "text-destructive" : coi > 0.02 ? "text-warning" : "text-cream/40";
 
@@ -117,7 +119,7 @@ export function PedigreeTree({
 
       <div className="h-[500px] rounded-sm border border-white/5 overflow-hidden bg-slate-950/60">
         <ReactFlow
-          nodes={syncedNodes}
+          nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -139,3 +141,4 @@ export function PedigreeTree({
     </div>
   );
 }
+

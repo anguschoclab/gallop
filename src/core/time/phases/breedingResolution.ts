@@ -106,6 +106,7 @@ export const breedingResolutionPhase: PipelinePhase = {
           studCareer: {
             ...sire.stud,
             seasonBookings: sire.stud.seasonBookings + 1,
+            retiredOnDay: sire.stud.retiredOnDay,
           },
           reason: "Breeding booking",
         });

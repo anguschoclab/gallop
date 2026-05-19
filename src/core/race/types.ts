@@ -12,9 +12,15 @@ import { RaceClass } from "./sharedTypes";
 import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
 
 export type ClaimingPrice =
+  | 2000
+  | 4000
   | 5000
+  | 6000
+  | 8000
   | 10000
+  | 12000
   | 12500
+  | 15000
   | 16000
   | 20000
   | 25000
@@ -82,7 +88,18 @@ export type Race = {
   restrictions?: {
     minAge?: number;
     maxAge?: number;
-    gender?: "colt" | "filly" | "gelding" | "mare" | "stallion";
+    gender?:
+      | "colt"
+      | "filly"
+      | "mare"
+      | "gelding"
+      | "stallion"
+      | "horse"
+      | "mares"
+      | "fillies-and-mares"
+      | "colts-and-fillies"
+      | "colts"
+      | "fillies";
     minAgeNorthern?: number;
     minAgeSouthern?: number;
     nonWinnersOf?: number;

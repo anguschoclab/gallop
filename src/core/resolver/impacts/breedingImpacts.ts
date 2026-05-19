@@ -9,7 +9,7 @@
  */
 
 import type { Impact } from "./base";
-import type { Pregnancy } from "@/game/types";
+import type { Pregnancy, StudCareer } from "@/game/types";
 
 // Pregnancy creation impact
 export interface PregnancyCreationImpact extends Impact {
@@ -37,17 +37,7 @@ export interface PregnancyDeletionImpact extends Impact {
 export interface StudCareerImpact extends Impact {
   type: "stud_career";
   horseId: string;
-  studCareer: {
-    atStud: boolean;
-    standingFee: number;
-    previousStandingFee?: number;
-    bookSize: number;
-    seasonBookings: number;
-    lifetimeFoals: number;
-    lifetimeStakesFoals: number;
-    lifetimeG1Foals: number;
-    retiredOnDay: number;
-  };
+  studCareer: StudCareer;
   reason: string;
 }
 

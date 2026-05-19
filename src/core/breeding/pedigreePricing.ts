@@ -33,7 +33,7 @@ import type { Horse, GameState } from "@/game/types";
  */
 export function pedigreeMultiplier(
   horse: Horse,
-  state: Pick<GameState, "horses">,
+  state: { horses: readonly Horse[] },
   horseMap?: Map<string, Horse>,
 ): number {
   if (!horse.pedigree) return 1;

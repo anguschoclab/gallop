@@ -55,7 +55,8 @@ export function rollForInjury(
   else if (horse.energy < 50) baseChance *= 1.5;
 
   // Factor in genetics
-  const bleederRisk = horse.genotype?.health?.bleeder || 0;
+  const bleederLocus = horse.genotype?.health?.bleeder || [0, 0];
+  const bleederRisk = (bleederLocus[0] + bleederLocus[1]) / 2;
   const ocdRisk = horse.ocdRisk || 0;
   baseChance += (bleederRisk + ocdRisk) * 0.01;
 

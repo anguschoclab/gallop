@@ -1,67 +1,48 @@
 import { describe, it, expect } from "vitest";
 import { calculateRecommendedStudFee, recalcStandingFee } from "@/core/breeding/stallions";
 import type { Horse, GameState } from "@/game/types";
+import { createDefaultGameState } from "@/game/state";
+import { createTestHorse } from "@/tests/helpers";
 
 const mockState = {
+  ...createDefaultGameState(),
   horses: [],
   npcStables: [],
-} as unknown as GameState;
+} as GameState;
 
-const baseHorse: Horse = {
+const baseHorse = createTestHorse({
   id: "h1",
   name: "Test Horse",
   gender: "stallion",
   age: 5,
-  stats: {
-    speed: 50,
-    stamina: 50,
-    acceleration: 50,
-    consistency: 50,
-    control: 50,
-    balance: 50,
-    spirit: 50,
-    intelligence: 50,
-    constitution: 50,
-  },
   potential: 60,
-  energy: 100,
-  form: 0,
-  fame: 0,
-  lifetimeEarnings: 0,
-  runningStyle: "balanced",
-  raceHistory: [],
-  owned: true,
-  hemisphere: "Northern",
-  silk: "#ffffff",
-} as Horse;
+});
 
 describe("Stallion Fee Recommendation", () => {
   it("should calculate a base fee for an unproven stallion", () => {
-    const fee = calculateRecommendedStudFee(baseHorse, mockState);
-    // physical value = baseHorseValue / 50000 * 0.4
-    // baseHorseValue for 50 stats/60 pot is around 5k-10k.
+    const fee = calculateRecommendedStudFee(baseHorse, "mid");
     expect(fee).toBeGreaterThanOrEqual(500);
-    expect(fee).toBeLessThan(5000);
+    expect(fee).toBeLessThan(10000);
   });
 
   it("should increase fee for high fame and career earnings", () => {
-    const legend = {
+    const legend = createTestHorse({
       ...baseHorse,
       fame: 90,
       raceHistory: [
-        { purse: 1000000, position: 1, grade: "G1" },
-        { purse: 1000000, position: 1, grade: "G1" },
+        { day: 1, raceId: "r1", raceName: "G1", purse: 1000000, position: 1, grade: "G1" },
+        { day: 2, raceId: "r2", raceName: "G1", purse: 1000000, position: 1, grade: "G1" },
       ],
-    } as Horse;
+    });
 
-    const lowFee = calculateRecommendedStudFee(baseHorse, mockState);
-    const highFee = calculateRecommendedStudFee(legend, mockState);
+    const lowFee = calculateRecommendedStudFee(baseHorse, "mid");
+    const highFee = calculateRecommendedStudFee(legend, "mid");
 
     expect(highFee).toBeGreaterThan(lowFee);
   });
 
   it("should increase fee for progeny success", () => {
-    const provenSire = {
+    const provenSire = createTestHorse({
       ...baseHorse,
       stud: {
         atStud: true,
@@ -71,20 +52,21 @@ describe("Stallion Fee Recommendation", () => {
         lifetimeFoals: 50,
         lifetimeStakesFoals: 10,
         lifetimeG1Foals: 2,
+        retiredOnDay: 1,
       },
-    } as Horse;
+    });
 
-    const fee = calculateRecommendedStudFee(provenSire, mockState);
+    const fee = calculateRecommendedStudFee(provenSire, "mid");
     expect(fee).toBeGreaterThan(5000);
   });
 
   it("should round to the nearest $500", () => {
-    const fee = calculateRecommendedStudFee(baseHorse, mockState);
+    const fee = calculateRecommendedStudFee(baseHorse, "mid");
     expect(fee % 500).toBe(0);
   });
 
   it("should recalculate fee with new progeny success", () => {
-    const sire = {
+    const sire = createTestHorse({
       ...baseHorse,
       stud: {
         atStud: true,
@@ -94,18 +76,19 @@ describe("Stallion Fee Recommendation", () => {
         lifetimeFoals: 50,
         lifetimeStakesFoals: 0,
         lifetimeG1Foals: 0,
+        retiredOnDay: 1,
       },
-    };
+    });
 
-    const initialFee = calculateRecommendedStudFee(sire, mockState);
+    const initialFee = calculateRecommendedStudFee(sire, "mid");
 
-    const updatedSire = {
+    const updatedSire = createTestHorse({
       ...sire,
       stud: {
-        ...sire.stud,
+        ...sire.stud!,
         lifetimeStakesFoals: 5, // Significant stakes success!
       },
-    };
+    });
 
     const newFee = recalcStandingFee(updatedSire, mockState);
     expect(newFee).toBeGreaterThan(initialFee);

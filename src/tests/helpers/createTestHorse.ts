@@ -149,6 +149,8 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     appearance: createTestAppearance(),
     healthStatusDay: 1,
     gelded: false,
+    isBlueHen: false,
+    foalsProduced: [],
     fitness: 50,
     fatigue: 0,
     peakingIndex: 50,

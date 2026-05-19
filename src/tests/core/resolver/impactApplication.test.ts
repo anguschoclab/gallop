@@ -4,7 +4,9 @@
 
 import { describe, it, expect } from "vitest";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
-import type { GameState, Stable } from "@/game/types";
+import type { GameState } from "@/game/types";
+import { createDefaultGameState } from "@/game/state";
+import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type {
   AnyImpact,
   CashImpact,
@@ -13,26 +15,12 @@ import type {
   HorseCreationImpact,
   HorseTransferImpact,
 } from "@/core/resolver/impacts/index";
-import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("applyImpacts", () => {
   const createTestState = (): GameState => ({
+    ...createDefaultGameState(),
     day: 1,
     cash: 10000,
-    horses: [],
-    npcStables: [],
-    pregnancies: [],
-    races: [],
-    awards: [],
-    market: [],
-    auctions: [],
-    lastCalibrationDay: 0,
-    calibratedPars: {},
-    paceSamples: {},
-    pendingAwardCeremonies: [],
-    trainingUsed: {},
-    log: [],
-    scoutReports: [],
   });
 
   it("should apply cash change impact to player", () => {
@@ -64,7 +52,7 @@ describe("applyImpacts", () => {
   });
 
   it("should apply cash change impact to NPC stable", () => {
-    const npcStable: Stable = {
+    const npcStable = createTestStable({
       id: "npc-1",
       name: "Test Stable",
       owner: "Test Owner",
@@ -72,11 +60,8 @@ describe("applyImpacts", () => {
       reputation: 50,
       founded: 1,
       cash: 5000,
-      horses: [],
-      isMajor: false,
-      colors: { primary: "red", secondary: "blue" },
       personality: "conservative",
-    };
+    });
 
     const state: GameState = {
       ...createTestState(),
@@ -342,6 +327,7 @@ describe("applyImpacts", () => {
       stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65, temperament: 50, conformation: 50 },
       potential: 90,
       stableId: undefined,
+      owned: true,
     });
 
     const state: GameState = {

@@ -85,7 +85,6 @@ describe("processClaims", () => {
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
       stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
       potential: 90,
       energy: 100,
@@ -136,7 +135,6 @@ describe("processClaims", () => {
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
       stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
       potential: 90,
       energy: 100,
@@ -201,12 +199,11 @@ describe("processClaims", () => {
 
 describe("isHorseEligibleForClaimingPrice", () => {
   it("should return true for horse with appropriate stats", () => {
-    const horse: Horse = {
+    const horse: Horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
       stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       potential: 75,
       energy: 100,
@@ -215,19 +212,18 @@ describe("isHorseEligibleForClaimingPrice", () => {
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const eligible = isHorseEligibleForClaimingPrice(horse, 50000, [horse]);
     expect(eligible).toBe(true);
   });
 
   it("should return false for horse worth significantly more than claiming price", () => {
-    const horse: Horse = {
+    const horse: Horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
       stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95, temperament: 50, conformation: 50 },
       potential: 98,
       energy: 100,
@@ -236,19 +232,18 @@ describe("isHorseEligibleForClaimingPrice", () => {
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const eligible = isHorseEligibleForClaimingPrice(horse, 10000, [horse]);
     expect(eligible).toBe(false);
   });
 
   it("should return false for horse with graded stakes wins", () => {
-    const horse: Horse = {
+    const horse: Horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
       stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       potential: 75,
       energy: 100,
@@ -269,19 +264,18 @@ describe("isHorseEligibleForClaimingPrice", () => {
           fieldSize: 8,
         },
       ],
-    };
+    });
 
     const eligible = isHorseEligibleForClaimingPrice(horse, 50000, [horse]);
     expect(eligible).toBe(false);
   });
 
   it("should return true for horse with only allowance wins", () => {
-    const horse: Horse = {
+    const horse: Horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
       stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       potential: 75,
       energy: 100,
@@ -301,7 +295,7 @@ describe("isHorseEligibleForClaimingPrice", () => {
           fieldSize: 8,
         },
       ],
-    };
+    });
 
     const eligible = isHorseEligibleForClaimingPrice(horse, 50000, [horse]);
     expect(eligible).toBe(true);
@@ -310,12 +304,11 @@ describe("isHorseEligibleForClaimingPrice", () => {
 
 describe("getSuggestedClaimingPriceRange", () => {
   it("should return price range for average horse", () => {
-    const horse: Horse = {
+    const horse: Horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
       stats: { speed: 75, stamina: 75, acceleration: 75, consistency: 75, temperament: 50, conformation: 50 },
       potential: 80,
       energy: 100,
@@ -324,7 +317,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const [min, max] = getSuggestedClaimingPriceRange(horse);
     expect(min).toBeGreaterThan(0);
@@ -332,12 +325,11 @@ describe("getSuggestedClaimingPriceRange", () => {
   });
 
   it("should return higher range for elite horse", () => {
-    const horse: Horse = {
+    const horse: Horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
       stats: { speed: 90, stamina: 90, acceleration: 90, consistency: 90, temperament: 50, conformation: 50 },
       potential: 95,
       energy: 100,
@@ -346,7 +338,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const [min, max] = getSuggestedClaimingPriceRange(horse);
     expect(min).toBeGreaterThan(50000);
@@ -354,12 +346,11 @@ describe("getSuggestedClaimingPriceRange", () => {
   });
 
   it("should return lower range for low-tier horse", () => {
-    const horse: Horse = {
+    const horse: Horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
       stats: { speed: 50, stamina: 50, acceleration: 50, consistency: 50, temperament: 50, conformation: 50 },
       potential: 55,
       energy: 100,
@@ -368,7 +359,7 @@ describe("getSuggestedClaimingPriceRange", () => {
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const [min, max] = getSuggestedClaimingPriceRange(horse);
     expect(min).toBe(40000); // Closest to 50,000 estimated value

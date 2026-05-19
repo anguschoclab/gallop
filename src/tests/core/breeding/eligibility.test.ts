@@ -1,25 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { canBreed, MARE_RECOVERY_DAYS } from "@/core/breeding/eligibility";
 import type { Horse, Pregnancy } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
-    id: overrides.id ?? "x",
-    name: overrides.name ?? "Test",
+  return createTestHorse({
+    id: "x",
+    name: "Test",
     age: 4,
     gender: "horse",
-    hemisphere: "Northern",
-    silk: "#abcdef",
-    stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 },
-    energy: 100,
-    form: 0,
-    potential: 80,
-    raceHistory: [],
-    owned: true,
-    fame: 0,
-    lifecycleStatus: "active" as const,
     ...overrides,
-  };
+  });
 }
 
 const sire = mkHorse({ id: "sire", name: "Sire", gender: "horse", age: 5 });
@@ -65,6 +56,9 @@ describe("canBreed", () => {
       conceivedDay: 50,
       dueDay: 80,
       resolved: false,
+      liveFoalGuarantee: false,
+      reBreedingAttempts: 0,
+      refunded: false,
     };
     const r = canBreed(sire, dam, 100, [preg]);
     expect(r.ok).toBe(false);

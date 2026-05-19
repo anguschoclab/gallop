@@ -36,18 +36,5 @@ export type { RaceClass } from "@/core/race/sharedTypes";
 export type { PedigreeNode as Pedigree } from "@/core/breeding/types";
 export type { Track } from "@/game/tracks";
 
-// Stud career type (matches structure used in StudCareerImpact)
-export type StudCareer = {
-  atStud: boolean;
-  standingFee: number;
-  previousStandingFee?: number;
-  bookSize: number;
-  seasonBookings: number;
-  lifetimeFoals: number;
-  lifetimeStakesFoals: number;
-  lifetimeG1Foals: number;
-  retiredOnDay?: number;
-};
-
 // Type alias for facilities
 export type FacilityState = Record<string, any>;

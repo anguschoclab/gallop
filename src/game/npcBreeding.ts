@@ -65,8 +65,6 @@ export function runAutonomousBreeding(
   if (!northernSeason && !southernSeason) return updatedState;
 
   for (const stable of stables) {
-    if (stable.owned) continue; // Skip player stable
-
     if (!BREEDING_PERSONALITIES.includes(stable.personality)) continue;
 
     // Try to breed if in season
@@ -145,7 +143,7 @@ export function runAutonomousBreeding(
           sireId: sire.id,
           damName: mare.name,
           sireName: sire.name,
-          startDay: day,
+          conceivedDay: day,
           dueDay: day + GESTATION_DAYS,
           resolved: false,
           stableId: stable.id,
@@ -157,8 +155,19 @@ export function runAutonomousBreeding(
 
         // Record decision in AI state if possible
         if (npcAIManager) {
-          const aiState = createBreedingAIState(stable);
-          recordBreedingDecision(aiState, mare, sire, true, day);
+          let aiState = createBreedingAIState(stable);
+          aiState = recordBreedingDecision(
+            aiState,
+            sire.id,
+            mare.id,
+            sire.name,
+            mare.name,
+            stable.id,
+            stable.personality,
+            day,
+            bestScore,
+          );
+          // Note: In a real system we'd persist this back to state.npcAIManager
         }
       }
     }

@@ -7,41 +7,31 @@ import {
   shouldRetireAtStartup,
 } from "@/core/breeding/stallions";
 import type { Horse, Stable } from "@/game/types";
+import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
-    id: overrides.id ?? "stallion",
-    name: overrides.name ?? "Test",
+  return createTestHorse({
+    id: "stallion",
+    name: "Test",
     age: 5,
     gender: "horse",
-    hemisphere: "Northern",
-    silk: "#aabbcc",
-    stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
-    energy: 100,
-    form: 0,
-    potential: 90,
-    raceHistory: [],
-    owned: false,
-    fame: 50,
     ...overrides,
-  };
+  });
 }
 
 function mkStable(overrides: Partial<Stable> = {}): Stable {
-  return {
-    id: overrides.id ?? "s1",
-    name: overrides.name ?? "Test Farm",
+  return createTestStable({
+    id: "s1",
+    name: "Test Farm",
     owner: "Test",
     tier: "mid",
     reputation: 60,
     founded: 1,
     cash: 100000,
-    horses: [],
     isMajor: true,
-    colors: { primary: "#000", secondary: "#fff" },
     personality: "breeder",
     ...overrides,
-  };
+  });
 }
 
 describe("defaultStudParams", () => {
@@ -64,7 +54,7 @@ describe("initialStandingFee", () => {
     expect(midFee).toBeGreaterThan(budgetFee);
   });
 
-  it("rounds to nearest $500", () => {
+  it("rounds to nearest $100", () => {
     const h = mkHorse();
     const fee = initialStandingFee(h, "mid");
     expect(fee % 100).toBe(0);
@@ -87,7 +77,7 @@ describe("recalcStandingFee", () => {
       raceHistory: [],
     });
     const state = { horses: [horse], npcStables: [] };
-    const base = recalcStandingFee(horse, state);
+    const base = recalcStandingFee(horse, state as any);
 
     // Add a stakes win
     horse.raceHistory.push({
@@ -97,7 +87,7 @@ describe("recalcStandingFee", () => {
       day: 1,
       raceClass: "Stakes",
     });
-    const stakesFee = recalcStandingFee(horse, state);
+    const stakesFee = recalcStandingFee(horse, state as any);
     expect(stakesFee).toBeGreaterThan(base);
 
     // Add a G1 win
@@ -108,7 +98,7 @@ describe("recalcStandingFee", () => {
       day: 2,
       grade: "G1",
     });
-    const g1Fee = recalcStandingFee(horse, state);
+    const g1Fee = recalcStandingFee(horse, state as any);
     expect(g1Fee).toBeGreaterThan(stakesFee);
   });
 });
@@ -133,7 +123,7 @@ describe("shouldRetireAtStartup", () => {
 });
 
 describe("isStallionAvailable", () => {
-  function studHorse(over: Partial<Horse["stud"]> = {}, h: Partial<Horse> = {}): Horse {
+  function studHorse(over: Partial<NonNullable<Horse["stud"]>> = {}, h: Partial<Horse> = {}): Horse {
     return mkHorse({
       ...h,
       stud: {
@@ -145,7 +135,6 @@ describe("isStallionAvailable", () => {
         lifetimeStakesFoals: 0,
         lifetimeG1Foals: 0,
         retiredOnDay: 1,
-        lifecycleStatus: "active" as const,
         ...over,
       },
     });

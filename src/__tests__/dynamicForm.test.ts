@@ -28,7 +28,7 @@ describe("Dynamic Form & Bounce Mechanic", () => {
         weight: 1000,
         heartScore: 100,
         fiberBias: "balanced",
-        strideType: "balanced",
+        strideType: "average",
         trackPreference: "balanced",
         mudAptitude: 0.5,
         trainability: 0.5,

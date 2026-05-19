@@ -70,6 +70,18 @@ export type ActiveInjury = {
   onsetDay: number;
 };
 
+export type StudCareer = {
+  atStud: boolean;
+  standingFee: number;
+  previousStandingFee?: number;
+  lifetimeStakesFoals: number;
+  lifetimeG1Foals: number;
+  bookSize: number;
+  seasonBookings: number;
+  lifetimeFoals: number;
+  retiredOnDay?: number;
+};
+
 // AppearanceDNA is now imported from genetics/types
 
 
@@ -129,6 +141,12 @@ export type Horse = {
   lifetimeEarnings: number;
   careerStarts: number;
   careerWins: number;
+  healthStatusDay: number; // Day current health status was set
+  isBlueHen: boolean;
+  gelded: boolean;
+  foalingEase: number;
+  heterozygosity: number;
+  foalsProduced?: string[]; // IDs of foals produced by this mare
   ancestralHistoryCoefficient?: number;
   progenyCount?: number;
   geneticMarkers?: GeneticMarkers;
@@ -157,17 +175,7 @@ export type Horse = {
   owned: boolean;
   stableId?: string;
   consignedSaleId?: string;
-  stud?: {
-    atStud: boolean;
-    standingFee: number;
-    previousStandingFee?: number;
-    lifetimeStakesFoals: number;
-    lifetimeG1Foals: number;
-    bookSize: number;
-    seasonBookings: number;
-    lifetimeFoals: number;
-    retiredOnDay?: number;
-  };
+  stud?: StudCareer;
   distanceAptitude: number;
   surfaceAptitude: Record<"Turf" | "Dirt" | "Synthetic", number>;
   mudAptitude: number;
@@ -195,8 +203,6 @@ export type Horse = {
   conformation?: number;
   temperament?: number;
   healthStatus: HealthStatus;
-  healthStatusDay: number;
-  isBlueHen: boolean;
   blueHenStatus?: {
     isBlueHen: boolean;
     stakesWinnersProduced: number;
@@ -204,7 +210,7 @@ export type Horse = {
     blueHenScore: number;
     foalsProduced: number;
   };
-  gelded: boolean;
+  racingViable: boolean;
   lifecycleStatus: "active" | "retired" | "deceased";
   retiredOnDay?: number;
   deceasedOnDay?: number;

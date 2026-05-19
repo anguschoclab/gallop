@@ -53,7 +53,7 @@ export function rollForInjury(
   if (horse.healthStatus !== "healthy") return null;
 
   // Base chance is the horse's genetic proneness
-  let chance = horse.injuryProneness;
+  let chance = horse.injuryProneness ?? 0.01;
 
   // Event multipliers
   if (eventType === "race") chance *= EVENT_INJURY_MULTIPLIER_RACE;

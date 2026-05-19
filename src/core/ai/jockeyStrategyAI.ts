@@ -76,7 +76,7 @@ export function calculateOptimalTactics(
   race: Race,
   jockey: Jockey,
   stable: Stable,
-): string {
+): "lead" | "rail" | "outside" | "save" | "late_kick" | "default" {
   const personality = aiState.personalityState.personality;
 
   // Jockey competency check - more skilled jockeys are better at riding to strength
@@ -128,7 +128,7 @@ type TacticsCalculator = (
   jockey: Jockey,
   personality: Stable["personality"],
   isSkilled: boolean,
-) => string;
+) => "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
 
 /**
  * Strategy record for tactics calculation based on running style.

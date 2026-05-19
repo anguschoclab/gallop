@@ -25,6 +25,8 @@ export type Pregnancy = {
   liveFoalGuarantee?: boolean;
   reBreedingAttempts?: number;
   refunded?: boolean;
+  stableId?: string;
+  isPlayerOwned: boolean;
 };
 
 export type DosageProfile = {

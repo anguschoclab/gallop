@@ -1,31 +1,22 @@
 import { describe, it, expect } from "vitest";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import type { Horse } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(over: Partial<Horse> = {}): Horse {
-  return {
-    id: over.id ?? "h",
-    name: over.name ?? "H",
-    age: over.age ?? 1,
+  return createTestHorse({
+    id: "h",
+    name: "H",
+    age: 1,
     gender: "colt",
-    hemisphere: "Northern",
-    silk: "#000",
-    stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 },
-    energy: 100,
-    form: 0,
-    potential: 80,
-    raceHistory: [],
-    owned: true,
-    fame: 0,
-    lifecycleStatus: "active" as const,
     ...over,
-  };
+  });
 }
 
 describe("pedigreeMultiplier", () => {
   it("returns 1 when no pedigree", () => {
     const horse = mkHorse();
-    expect(pedigreeMultiplier(horse, { horses: [horse] })).toBe(1);
+    expect(pedigreeMultiplier(horse, { horses: [horse] } as any)).toBe(1);
   });
 
   it("yearling by elite stallion + blue-hen dam → multiplier > 1.2", () => {
@@ -53,14 +44,15 @@ describe("pedigreeMultiplier", () => {
         stakesWinnersProduced: 3,
         group1WinnersProduced: 1,
         blueHenScore: 80,
+        foalsProduced: 5,
       },
     });
     const yearling = mkHorse({
       id: "y",
       age: 1,
-      pedigree: { sireId: "sire", damId: "dam", sireName: "Sire", damName: "Dam" },
+      pedigree: { name: "Yearling", generation: 0, sireId: "sire", damId: "dam", sireName: "Sire", damName: "Dam" },
     });
-    const mul = pedigreeMultiplier(yearling, { horses: [sire, dam, yearling] });
+    const mul = pedigreeMultiplier(yearling, { horses: [sire, dam, yearling] } as any);
     expect(mul).toBeGreaterThan(1.2);
   });
 
@@ -80,11 +72,11 @@ describe("pedigreeMultiplier", () => {
       },
     });
     const dam = mkHorse({ id: "dam", name: "Dam", gender: "mare" });
-    const yearling = mkHorse({ id: "y", age: 1, pedigree: { sireId: "sire", damId: "dam" } });
-    const veteran = mkHorse({ id: "v", age: 5, pedigree: { sireId: "sire", damId: "dam" } });
+    const yearling = mkHorse({ id: "y", age: 1, pedigree: { name: "Y", generation: 0, sireId: "sire", damId: "dam" } });
+    const veteran = mkHorse({ id: "v", age: 5, pedigree: { name: "V", generation: 0, sireId: "sire", damId: "dam" } });
     const horses = [sire, dam, yearling, veteran];
-    expect(pedigreeMultiplier(yearling, { horses })).toBeGreaterThan(
-      pedigreeMultiplier(veteran, { horses }),
+    expect(pedigreeMultiplier(yearling, { horses } as any)).toBeGreaterThan(
+      pedigreeMultiplier(veteran, { horses } as any),
     );
   });
 });

@@ -1,35 +1,18 @@
-/**
- * Tests for training resolution phase
- */
-
 import { describe, it, expect } from "vitest";
 import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
 import { createRng } from "@/game/rng";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
+import { createDefaultGameState } from "@/game/state";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { isEnergyImpact } from "@/core/resolver/impacts/horseImpacts";
 
 describe("trainingResolutionPhase", () => {
   const createTestState = (): GameState => ({
+    ...createDefaultGameState(),
     day: 1,
     cash: 10000,
-    horses: [],
-    npcStables: [],
-    pregnancies: [],
-    races: [],
-    awards: [],
-    market: [],
-    auctions: [],
-    lastCalibrationDay: 0,
-    calibratedPars: {},
-    paceSamples: {},
-    pendingAwardCeremonies: [],
-    trainingUsed: {},
-    log: [],
-    scoutReports: [],
-    pendingIntents: [],
   });
 
   const createTestContext = (
@@ -56,11 +39,8 @@ describe("trainingResolutionPhase", () => {
       peakAge: 4,
       trainability: 1.0,
     });
-    const state: GameState = {
-      ...createTestState(),
-      horses: [horse],
-      trainingUsed: {},
-    };
+    const state = createTestState();
+    state.horses = [horse];
 
     const intent: TrainingIntent = {
       id: "intent-1",
@@ -74,11 +54,6 @@ describe("trainingResolutionPhase", () => {
     };
 
     const context = createTestContext(state, [intent]);
-
-    // We can mock createRng / hashStr or just loop until we get a test that works
-    // but the simplest is to mock the random number generator itself.
-    // However since the test environment imports createRng directly from rng.ts and doesn't
-    // allow vi.mock properly, let's just make the trainability high.
     horse.trainability = 100.0; // Extreme value to force probability > 1
 
     const result = trainingResolutionPhase.execute(context);
@@ -92,14 +67,10 @@ describe("trainingResolutionPhase", () => {
   it("should generate energy change impact for training", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       energy: 80,
     });
-    const state: GameState = {
-      ...createTestState(),
-      horses: [horse],
-      trainingUsed: {},
-    };
+    const state = createTestState();
+    state.horses = [horse];
 
     const intent: TrainingIntent = {
       id: "intent-1",
@@ -125,14 +96,10 @@ describe("trainingResolutionPhase", () => {
   it("should handle rest training type", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       energy: 50,
     });
-    const state: GameState = {
-      ...createTestState(),
-      horses: [horse],
-      trainingUsed: {},
-    };
+    const state = createTestState();
+    state.horses = [horse];
 
     const intent: TrainingIntent = {
       id: "intent-1",
@@ -157,10 +124,8 @@ describe("trainingResolutionPhase", () => {
 
   it("should skip non-training intents", () => {
     const horse = createTestHorse({ id: "horse-1" });
-    const state: GameState = {
-      ...createTestState(),
-      horses: [horse],
-    };
+    const state = createTestState();
+    state.horses = [horse];
 
     const context = createTestContext(state, []);
     const result = trainingResolutionPhase.execute(context);
@@ -171,14 +136,10 @@ describe("trainingResolutionPhase", () => {
   it("should update trainingUsed tracking", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
       energy: 80,
     });
-    const state: GameState = {
-      ...createTestState(),
-      horses: [horse],
-      trainingUsed: {},
-    };
+    const state = createTestState();
+    state.horses = [horse];
 
     const intent: TrainingIntent = {
       id: "intent-1",

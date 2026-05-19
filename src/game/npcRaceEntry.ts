@@ -179,7 +179,7 @@ export function runNpcRaceEntry(
         const assignedWeight = calculateAssignedWeight(horse, race);
 
         // Calculate tactics for NPC entry
-        let tactics = "default";
+        let tactics: "lead" | "rail" | "outside" | "save" | "late_kick" | "default" = "default";
 
         // Imperial Expansion: Spoiler Tactic
         if (isRival && horse.stats.speed > 70 && horse.stats.stamina < 50) {
