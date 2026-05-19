@@ -5,3 +5,7 @@
 ## 2026-05-15 - Adding aria-labels to icon-only buttons
 **Learning:** Shadcn UI Button components with `size="icon"` and `title` tags often lack explicit `aria-label`s for screen reader accessibility in this application.
 **Action:** Always ensure that any icon-only Button explicitly declares an `aria-label` along with the title.
+
+## 2026-05-19 - Accessible Delete Button in LedgerEntry
+**Learning:** The Delete button in `LedgerEntry` within `src/components/settings/SaveLoadDialog.tsx` was an icon-only button lacking an accessible name.
+**Action:** Always add an `aria-label` and a `title` to icon-only action buttons (e.g., Delete, Edit) to ensure screen readers can announce their purpose, using context when available (e.g., `Delete save ${save.name}`).
