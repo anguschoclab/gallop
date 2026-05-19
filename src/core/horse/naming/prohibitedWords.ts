@@ -14,39 +14,45 @@
  */
 
 export const OFFENSIVE_WORDS = [
-  // Common profanity (mild to moderate)
-  "damn",
-  "hell",
-  "ass",
-  "bastard",
-  "bitch",
+  // Offensive terms
   "shit",
-  "crap",
-  "piss",
-  "offensive",
-  // Slurs and hate speech (blocked)
-  "nigger",
-  "nigga",
-  "faggot",
-  "fag",
-  "retard",
-  "retarded",
-  // Sexual content (blocked)
   "fuck",
-  "sex",
-  "porn",
-  // Violence and hate (blocked)
+  "damn",
+  "ass",
+  "bitch",
+  "bastard",
+  // Slurs
+  "nigger",
+  "chink",
+  "spic",
+  "kike",
+  "faggot",
+  "dyke",
+  // Drug references
+  "heroin",
+  "cocaine",
+  "meth",
+  "crack",
+  "weed",
+  "marijuana",
+  // Violence
   "kill",
   "murder",
-  "death",
-  "die",
-  // Drugs (blocked)
-  "drug",
-  "cocaine",
-  "heroin",
-  "meth",
-  // Additional filters can be added as needed
-  // This list is intentionally conservative for a general audience
+  "rape",
+  "torture",
+  // Sexual content
+  "porn",
+  "sex",
+  "nude",
+  "naked",
+  // Hate symbols
+  "swastika",
+  "kkk",
+  "nazi",
+  // Political/religious sensitivity
+  "hitler",
+  "satan",
+  "antichrist",
 ];
 
 export const TRADE_NAMES = [
