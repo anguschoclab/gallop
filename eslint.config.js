@@ -49,15 +49,17 @@ export default tseslint.config(
       "jsdoc/require-jsdoc": "off",
       "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   // Exclude test files
   {
-    files: ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts"],
+    files: ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/__tests__/**/*.ts", "**/__tests__/**/*.tsx"],
     rules: {
       "jsdoc/require-jsdoc": "off",
       "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   // Exclude generated files
@@ -85,6 +87,7 @@ export default tseslint.config(
       "jsdoc/require-jsdoc": "off",
       "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   // Exclude config files
