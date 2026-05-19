@@ -52,24 +52,24 @@ describe("getRaceClassAbbreviation", () => {
 
 describe("getRegionalSystem", () => {
   it("maps countries to correct regional systems", () => {
-    const canadaTrack: Track = { id: "1", name: "Woodbine", country: "Canada", surfaces: ["Turf"] };
+    const canadaTrack: Track = { id: "1", name: "Woodbine", country: "Canada", courses: [] };
     expect(getRegionalSystem(canadaTrack)).toBe("north_america");
 
-    const uaeTrack: Track = { id: "2", name: "Meydan", country: "UAE", surfaces: ["Dirt"] };
+    const uaeTrack: Track = { id: "2", name: "Meydan", country: "UAE", courses: [] };
     expect(getRegionalSystem(uaeTrack)).toBe("asia");
 
     const argentinaTrack: Track = {
       id: "3",
       name: "Palermo",
       country: "Argentina",
-      surfaces: ["Dirt"],
+      courses: [],
     };
     expect(getRegionalSystem(argentinaTrack)).toBe("south_america");
 
-    const gbTrack: Track = { id: "4", name: "Ascot", country: "Great Britain", surfaces: ["Turf"] };
+    const gbTrack: Track = { id: "4", name: "Ascot", country: "Great Britain", courses: [] };
     expect(getRegionalSystem(gbTrack)).toBe("europe");
 
-    const japanTrack: Track = { id: "5", name: "Tokyo", country: "Japan", surfaces: ["Dirt"] };
+    const japanTrack: Track = { id: "5", name: "Tokyo", country: "Japan", courses: [] };
     expect(getRegionalSystem(japanTrack)).toBe("asia");
   });
 
@@ -78,7 +78,7 @@ describe("getRegionalSystem", () => {
       id: "6",
       name: "Unknown",
       country: "Unknown",
-      surfaces: ["Turf"],
+      courses: [],
     };
     expect(getRegionalSystem(unknownTrack)).toBe("north_america");
   });
@@ -89,7 +89,7 @@ describe("generateRaceName", () => {
     id: "test-track-1",
     name: "Woodbine",
     country: "Canada",
-    surfaces: ["Turf", "Synthetic"],
+    courses: [],
   };
 
   it("generates a race name for basic parameters", () => {
@@ -220,7 +220,7 @@ describe("generateRaceCardNames", () => {
     id: "test-track-2",
     name: "Woodbine",
     country: "Canada",
-    surfaces: ["Turf", "Synthetic"],
+    courses: [],
   };
 
   it("generates unique names for a race card", () => {

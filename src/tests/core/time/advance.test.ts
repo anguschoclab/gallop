@@ -6,6 +6,7 @@ import { describe, it, expect, vi } from "vitest";
 import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
 import { getCurrentYear } from "@/game/raceSchedule";
 import type { GameState, Race, Horse } from "@/game/types";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
 
 describe("computePlayerRaceDays", () => {
   it("should return empty set when no races have player entries", () => {
@@ -160,30 +161,11 @@ describe("computePlayerRaceDays", () => {
 
 describe("advanceMultipleDaysWithRaceDetection", () => {
   it("should advance all days when no player races encountered", () => {
-    const state: GameState = {
+    const state = makeGameState({
       day: 1,
       cash: 5000,
-      horses: [],
       races: [],
-      pregnancies: [],
-      npcStables: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      privateSaleOffers: [],
-      claims: [],
-      activeBreedingProgram: null,
-      breedingPrograms: [],
-      usedHorseNames: [],
-      usedJockeyNames: [],
-    };
+    }) as GameState;
 
     const advanceDayFn = vi.fn();
     const result = advanceMultipleDaysWithRaceDetection(state, 5, advanceDayFn);
@@ -194,10 +176,9 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
   });
 
   it("should stop at player race when not in headless mode", () => {
-    const state: GameState = {
+    const state = makeGameState({
       day: 1,
       cash: 5000,
-      horses: [],
       races: [
         {
           id: "race-1",
@@ -213,25 +194,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
           resolved: false,
         },
       ],
-      pregnancies: [],
-      npcStables: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      privateSaleOffers: [],
-      claims: [],
-      activeBreedingProgram: null,
-      breedingPrograms: [],
-      usedHorseNames: [],
-      usedJockeyNames: [],
-    };
+    }) as GameState;
 
     const advanceDayFn = vi.fn();
     const result = advanceMultipleDaysWithRaceDetection(state, 5, advanceDayFn, false);
@@ -243,10 +206,9 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
   });
 
   it("should skip player race in headless mode", () => {
-    const state: GameState = {
+    const state = makeGameState({
       day: 1,
       cash: 5000,
-      horses: [],
       races: [
         {
           id: "race-1",
@@ -262,25 +224,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
           resolved: false,
         },
       ],
-      pregnancies: [],
-      npcStables: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      privateSaleOffers: [],
-      claims: [],
-      activeBreedingProgram: null,
-      breedingPrograms: [],
-      usedHorseNames: [],
-      usedJockeyNames: [],
-    };
+    }) as GameState;
 
     const advanceDayFn = vi.fn();
     const result = advanceMultipleDaysWithRaceDetection(state, 5, advanceDayFn, true);
@@ -291,10 +235,9 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
   });
 
   it("should ignore resolved races", () => {
-    const state: GameState = {
+    const state = makeGameState({
       day: 1,
       cash: 5000,
-      horses: [],
       races: [
         {
           id: "race-1",
@@ -310,25 +253,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
           resolved: true,
         },
       ],
-      pregnancies: [],
-      npcStables: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      privateSaleOffers: [],
-      claims: [],
-      activeBreedingProgram: null,
-      breedingPrograms: [],
-      usedHorseNames: [],
-      usedJockeyNames: [],
-    };
+    }) as GameState;
 
     const advanceDayFn = vi.fn();
     const result = advanceMultipleDaysWithRaceDetection(state, 5, advanceDayFn, false);
@@ -339,10 +264,9 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
   });
 
   it("should ignore races without player entries", () => {
-    const state: GameState = {
+    const state = makeGameState({
       day: 1,
       cash: 5000,
-      horses: [],
       races: [
         {
           id: "race-1",
@@ -358,25 +282,7 @@ describe("advanceMultipleDaysWithRaceDetection", () => {
           resolved: false,
         },
       ],
-      pregnancies: [],
-      npcStables: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      privateSaleOffers: [],
-      claims: [],
-      activeBreedingProgram: null,
-      breedingPrograms: [],
-      usedHorseNames: [],
-      usedJockeyNames: [],
-    };
+    }) as GameState;
 
     const advanceDayFn = vi.fn();
     const result = advanceMultipleDaysWithRaceDetection(state, 5, advanceDayFn, false);
@@ -397,30 +303,11 @@ describe("Year Advance Integration", () => {
   });
 
   it("should advance full year in headless mode", () => {
-    const state: GameState = {
+    const state = makeGameState({
       day: 1,
       cash: 5000,
-      horses: [],
       races: [],
-      pregnancies: [],
-      npcStables: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      privateSaleOffers: [],
-      claims: [],
-      activeBreedingProgram: null,
-      breedingPrograms: [],
-      usedHorseNames: [],
-      usedJockeyNames: [],
-    };
+    }) as GameState;
 
     const advanceDayFn = vi.fn();
     const result = advanceMultipleDaysWithRaceDetection(state, 365, advanceDayFn, true);
@@ -431,10 +318,9 @@ describe("Year Advance Integration", () => {
   });
 
   it("should handle year boundary with player races", () => {
-    const state: GameState = {
+    const state = makeGameState({
       day: 360, // Near end of year 1
       cash: 5000,
-      horses: [],
       races: [
         {
           id: "race-1",
@@ -450,25 +336,7 @@ describe("Year Advance Integration", () => {
           resolved: false,
         },
       ],
-      pregnancies: [],
-      npcStables: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      privateSaleOffers: [],
-      claims: [],
-      activeBreedingProgram: null,
-      breedingPrograms: [],
-      usedHorseNames: [],
-      usedJockeyNames: [],
-    };
+    }) as GameState;
 
     const advanceDayFn = vi.fn(() => {
       state.day++;
@@ -482,10 +350,9 @@ describe("Year Advance Integration", () => {
   });
 
   it("should skip player races across year boundary in headless mode", () => {
-    const state: GameState = {
+    const state = makeGameState({
       day: 360, // Near end of year 1
       cash: 5000,
-      horses: [],
       races: [
         {
           id: "race-1",
@@ -501,25 +368,7 @@ describe("Year Advance Integration", () => {
           resolved: false,
         },
       ],
-      pregnancies: [],
-      npcStables: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      privateSaleOffers: [],
-      claims: [],
-      activeBreedingProgram: null,
-      breedingPrograms: [],
-      usedHorseNames: [],
-      usedJockeyNames: [],
-    };
+    }) as GameState;
 
     const advanceDayFn = vi.fn();
     const result = advanceMultipleDaysWithRaceDetection(state, 50, advanceDayFn, true);

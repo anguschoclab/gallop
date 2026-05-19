@@ -5,36 +5,22 @@
 import { describe, it, expect } from "vitest";
 import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { RaceEntryIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 
 describe("raceEntryResolutionPhase", () => {
-  const createTestState = (): GameState => ({
-    day: 1,
-    cash: 10000,
-    horses: [],
-    npcStables: [],
-    pregnancies: [],
-    races: [],
-    awards: [],
-    market: [],
-    auctions: [],
-    lastCalibrationDay: 0,
-    calibratedPars: {},
-    paceSamples: {},
-    pendingAwardCeremonies: [],
-    trainingUsed: {},
-    log: [],
-    scoutReports: [],
-    pendingIntents: [],
-  });
+  const createTestState = (): GameState =>
+    makeGameState({
+      day: 1,
+      cash: 10000,
+      pendingIntents: [],
+    }) as GameState;
 
-  const createTestContext = (
-    state: GameState,
-    intents: RaceEntryIntent[] = [],
-  ): PipelineContext => createMockPipelineContext({ state, intents });
+  const createTestContext = (state: GameState, intents: RaceEntryIntent[] = []): PipelineContext =>
+    createMockPipelineContext({ state, intents });
 
   it("should process race entry intent and generate race entry impact", () => {
     const horse = createTestHorse({ id: "horse-1" });

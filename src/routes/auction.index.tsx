@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import { useAuctions } from "@/game/hooks/useMarketState";
+import type { GameState } from "@/game/types";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -47,8 +48,8 @@ export const Route = createFileRoute("/auction/")({
 
 function AuctionPage() {
   const auctions = useAuctions() as AuctionSale[];
-  const horses = (useGame as any)((s) => s.horses, shallow);
-  const day = useGame((s) => s.day);
+  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
+  const day = useGame((s: GameState) => s.day);
 
   const [consignOpen, setConsignOpen] = useState(false);
   const [consignTarget, setConsignTarget] = useState<{ horse: Horse; sale: AuctionSale } | null>(
@@ -82,15 +83,15 @@ function AuctionPage() {
     .sort((a, b) => b.day - a.day)
     .slice(0, 10);
 
-  const playerHorses = horses.filter((h) => h.owned && !h.consignedSaleId);
+  const playerHorses = horses.filter((h: Horse) => h.owned && !h.consignedSaleId);
 
   function findEligibleSale(horse: Horse): AuctionSale | undefined {
     return activeUpcoming.find((sale) => isLotEligible(horse, sale.kind));
   }
 
   const consignablePairs = playerHorses
-    .map((h) => ({ horse: h, sale: findEligibleSale(h) }))
-    .filter((p): p is { horse: Horse; sale: AuctionSale } => p.sale !== undefined);
+    .map((h: Horse) => ({ horse: h, sale: findEligibleSale(h) }))
+    .filter((p: any): p is { horse: Horse; sale: AuctionSale } => p.sale !== undefined);
 
   function openConsign(horse: Horse, sale: AuctionSale) {
     setConsignTarget({ horse, sale });
@@ -158,40 +159,42 @@ function AuctionPage() {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto custom-scrollbar">
-                  {consignablePairs.map(({ horse, sale }, i) => (
-                    <div
-                      key={horse.id}
-                      className="p-4 hover:bg-white/[0.02] transition-colors group"
-                    >
-                      <div className="flex items-center justify-between gap-3 mb-2">
-                        <div className="flex items-center gap-2">
-                          <SilkDot color={horse.silk} size="sm" />
-                          <span className="font-bold text-cream uppercase tracking-tight text-xs group-hover:text-gold transition-colors">
-                            {horse.name}
-                          </span>
+                  {consignablePairs.map(
+                    ({ horse, sale }: { horse: Horse; sale: AuctionSale }, i: number) => (
+                      <div
+                        key={horse.id}
+                        className="p-4 hover:bg-white/[0.02] transition-colors group"
+                      >
+                        <div className="flex items-center justify-between gap-3 mb-2">
+                          <div className="flex items-center gap-2">
+                            <SilkDot color={horse.silk} size="sm" />
+                            <span className="font-bold text-cream uppercase tracking-tight text-xs group-hover:text-gold transition-colors">
+                              {horse.name}
+                            </span>
+                          </div>
+                          <Badge
+                            variant="outline"
+                            className="h-4 text-[8px] border-white/10 text-cream/40 font-mono"
+                          >
+                            D{sale.day}
+                          </Badge>
                         </div>
-                        <Badge
-                          variant="outline"
-                          className="h-4 text-[8px] border-white/10 text-cream/40 font-mono"
-                        >
-                          D{sale.day}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="text-[9px] font-mono text-cream/20 uppercase tracking-tighter">
-                          {ageLabel(horse)} · {horse.gender}
+                        <div className="flex items-center justify-between">
+                          <div className="text-[9px] font-mono text-cream/20 uppercase tracking-tighter">
+                            {ageLabel(horse)} · {horse.gender}
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 px-2 text-[9px] font-black uppercase border border-gold/20 hover:bg-gold/10 text-gold"
+                            onClick={() => openConsign(horse, sale)}
+                          >
+                            CONSIGN
+                          </Button>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 px-2 text-[9px] font-black uppercase border border-gold/20 hover:bg-gold/10 text-gold"
-                          onClick={() => openConsign(horse, sale)}
-                        >
-                          CONSIGN
-                        </Button>
                       </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                   {consignablePairs.length === 0 && (
                     <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
                       No assets ready for deployment

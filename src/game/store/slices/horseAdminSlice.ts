@@ -50,9 +50,9 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
     const horse = requireHorse(s.horses, horseId);
     const ownershipGuard = requireOwned(horse);
     if (ownershipGuard) return ownershipGuard;
-    if (horse.gender !== "horse" && horse.gender !== "colt")
+    if (horse!.gender !== "horse" && horse!.gender !== "colt")
       return { ok: false, reason: "Only male horses can stand at stud." };
-    if (horse.age < 4)
+    if (horse!.age < 4)
       return { ok: false, reason: "Horse must be at least 4 years old to stand at stud." };
 
     get().enqueueIntent({
@@ -75,7 +75,7 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
     const horse = requireHorse(s.horses, horseId);
     const ownershipGuard = requireOwned(horse);
     if (ownershipGuard) return ownershipGuard;
-    if (horse.gender === "horse" || horse.gender === "gelding")
+    if (horse!.gender === "horse" || horse!.gender === "gelding")
       return { ok: false, reason: "Horse is already male." };
 
     get().enqueueIntent({
@@ -98,7 +98,7 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
     if (ownershipGuard) return ownershipGuard;
 
     const lowerNewName = newName.toLowerCase();
-    if (s.usedHorseNames.includes(lowerNewName) && lowerNewName !== horse.name.toLowerCase()) {
+    if (s.usedHorseNames.includes(lowerNewName) && lowerNewName !== horse!.name.toLowerCase()) {
       return { ok: false, reason: "Name is already in use." };
     }
 

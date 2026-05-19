@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from "vitest";
 import { pregnancyPhase } from "@/core/time/phases/pregnancy";
-import { createRng } from "@/game/rng";
+import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Pregnancy } from "@/game/types";
 
@@ -22,34 +22,19 @@ describe("pregnancyPhase", () => {
       liveFoalGuarantee: false,
       reBreedingAttempts: 0,
       refunded: false,
+      isPlayerOwned: true,
     };
 
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 31,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
       pregnancies: [pregnancy],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 30,
       newDay: 31,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = pregnancyPhase.execute(context);
     // Phase wraps resolvePregnancies from store
@@ -73,34 +58,19 @@ describe("pregnancyPhase", () => {
       liveFoalGuarantee: false,
       reBreedingAttempts: 0,
       refunded: false,
+      isPlayerOwned: true,
     };
 
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 31,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
       pregnancies: [pregnancy],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 30,
       newDay: 31,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = pregnancyPhase.execute(context);
     // Foals may or may not be generated depending on resolvePregnancies logic
@@ -108,32 +78,15 @@ describe("pregnancyPhase", () => {
   });
 
   it("should adjust cash for refunds if applicable", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 31,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 30,
       newDay: 31,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = pregnancyPhase.execute(context);
     // Cash may be adjusted for refunds
@@ -141,32 +94,16 @@ describe("pregnancyPhase", () => {
   });
 
   it("should append logs from pregnancy resolution", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 31,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 30,
       newDay: 31,
       state,
       logs: [{ day: 30, text: "Existing log" }],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = pregnancyPhase.execute(context);
     // Should preserve existing logs

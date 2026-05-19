@@ -45,12 +45,20 @@ export function simulateRace(
   currentDay?: number,
   recordSnapshots?: boolean,
 ): RaceSimulationResult {
+  const horsesArray = Array.isArray(horses) ? horses : Array.from(horses.values());
+  const jockeysArray = Array.isArray(jockeys) ? jockeys : Array.from(jockeys.values());
+  const npcStablesArray = npcStables
+    ? Array.isArray(npcStables)
+      ? npcStables
+      : Array.from(npcStables.values())
+    : undefined;
+
   const { runners, fillerHorses } = buildRaceField({
     race,
-    horses,
-    jockeys,
+    horses: horsesArray,
+    jockeys: jockeysArray,
     hiredStaff,
-    npcStables,
+    npcStables: npcStablesArray,
     npcAIManager,
     currentDay,
   });

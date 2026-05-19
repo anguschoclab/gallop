@@ -687,8 +687,7 @@ export function generateRaceImpacts({
         const { jumped, margin } = detectPatternJump(horse, beyerImpact.beyer);
         if (jumped) {
           const isAdverseWeather =
-            race.weather === "storm" ||
-            race.weather === "rainy" ||
+            (race.weather && (race.weather === "rainy" || race.weather === "cloudy")) ||
             race.trackCondition === "heavy" ||
             race.trackCondition === "soft" ||
             race.trackCondition === "yielding";
@@ -853,7 +852,7 @@ export function generateRaceImpacts({
                     lifetimeG1Foals: newG1Foals,
                   },
                 },
-                { horses: Array.from(horseMap.values()), npcStables: [] },
+                newDay,
               )
             : sire.stud.standingFee;
 

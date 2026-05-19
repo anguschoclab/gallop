@@ -1,19 +1,18 @@
 import { describe, it, expect } from "vitest";
 import { calculateRecommendedStudFee, recalcStandingFee } from "@/core/breeding/stallions";
 import type { Horse, GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/state";
 import { createTestHorse } from "@/tests/helpers";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
 
-const mockState = {
-  ...createDefaultGameState(),
+const mockState = makeGameState({
   horses: [],
   npcStables: [],
-} as GameState;
+}) as GameState;
 
 const baseHorse = createTestHorse({
   id: "h1",
   name: "Test Horse",
-  gender: "stallion",
+  gender: "colt",
   age: 5,
   potential: 60,
 });
@@ -90,7 +89,7 @@ describe("Stallion Fee Recommendation", () => {
       },
     });
 
-    const newFee = recalcStandingFee(updatedSire, mockState);
+    const newFee = recalcStandingFee(updatedSire, mockState.day);
     expect(newFee).toBeGreaterThan(initialFee);
   });
 });

@@ -10,12 +10,7 @@ import { describe, it, expect } from "vitest";
 import { produce } from "immer";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
-import {
-  stepWeather,
-  PATTERN_SEVERITY,
-  type WeatherState,
-  getTrackClimate,
-} from "@/core/weather";
+import { stepWeather, PATTERN_SEVERITY, type WeatherState, getTrackClimate } from "@/core/weather";
 import { createRng } from "@/game/rng";
 
 const TRACK_ID = "churchill-downs";
@@ -100,7 +95,7 @@ describe("Inbox drama-alert flow — weatherPhase → InboxHandler → /inbox st
     const handler = new InboxHandler();
     const finalState = produce(out.state as any, (draft: any) => {
       for (const impact of inboxImpacts) handler.handle(draft, impact);
-    });
+    }) as any;
 
     // Unread badge count (logic mirrors AppShell):
     const unread = finalState.inbox.filter((m: any) => !m.readAt).length;

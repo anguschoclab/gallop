@@ -68,7 +68,7 @@ export function AuctionRing({
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 p-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-xl">
           {PHASES.map((p, idx) => (
             <div
-              key={p.id}
+              key={p.key}
               className={cn(
                 "h-2 w-10 rounded-full transition-all duration-500",
                 idx < currentPhaseIndex

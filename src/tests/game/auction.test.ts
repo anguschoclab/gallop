@@ -7,25 +7,17 @@ import {
 } from "@/game/auction";
 import { createRng } from "@/game/rng";
 import type { Horse, Stable, AuctionSale } from "@/game/types";
+import type { StaffRole } from "@/core/staff/staffTypes";
+import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
+  return createTestHorse({
     id: "h1",
     name: "Test Horse",
     age: 1,
     gender: "colt",
-    hemisphere: "Northern",
-    silk: "#aabbcc",
-    stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 50, conformation: 50 },
-    energy: 100,
-    form: 0,
-    potential: 70,
-    raceHistory: [],
-    owned: false,
-    fame: 0,
-    lifecycleStatus: "active" as const,
     ...overrides,
-  };
+  });
 }
 
 function mkStable(
@@ -33,6 +25,11 @@ function mkStable(
   tier: Stable["tier"] = "mid",
   overrides: Partial<Stable> = {},
 ): Stable {
+  const staffRoles: StaffRole[] = ["veterinarian", "farrier", "nutritionist", "groom", "trainer"];
+  const staff: Record<StaffRole, string | null> = staffRoles.reduce(
+    (acc, role) => ({ ...acc, [role]: null }),
+    {} as Record<StaffRole, string | null>,
+  );
   return {
     id: "s1",
     name: "Test Stable",
@@ -46,7 +43,8 @@ function mkStable(
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality,
-    lifecycleStatus: "active" as const,
+    staff,
+    outposts: [],
     ...overrides,
   };
 }
@@ -98,7 +96,14 @@ describe("calculateLotValuation", () => {
   it("prestige + cheap horse (base < 5000) → 0", () => {
     // A horse with very low stats will have a small base value
     const cheapHorse = mkHorse({
-      stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 1,
+        stamina: 1,
+        acceleration: 1,
+        consistency: 1,
+        temperament: 50,
+        conformation: 50,
+      },
       age: 7,
     });
     const prestige = mkStable("prestige");
@@ -106,8 +111,26 @@ describe("calculateLotValuation", () => {
   });
 
   it("conformation excellent → multiplies valuation up", () => {
-    const plain = mkHorse({ conformation: "fair" });
-    const excellent = mkHorse({ conformation: "excellent" });
+    const plain = mkHorse({
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        consistency: 60,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const excellent = mkHorse({
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        consistency: 60,
+        temperament: 50,
+        conformation: 90,
+      },
+    });
     const stable = mkStable("trader");
     expect(calculateLotValuation(excellent, stable, "yearling")).toBeGreaterThan(
       calculateLotValuation(plain, stable, "yearling"),
@@ -115,8 +138,26 @@ describe("calculateLotValuation", () => {
   });
 
   it("temperament excellent → multiplies valuation up", () => {
-    const plain = mkHorse({ temperament: "fair" });
-    const excellent = mkHorse({ temperament: "excellent" });
+    const plain = mkHorse({
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        consistency: 60,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const excellent = mkHorse({
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        consistency: 60,
+        temperament: 90,
+        conformation: 50,
+      },
+    });
     const stable = mkStable("trader");
     expect(calculateLotValuation(excellent, stable, "yearling")).toBeGreaterThan(
       calculateLotValuation(plain, stable, "yearling"),
@@ -146,7 +187,14 @@ describe("calculateNpcBid", () => {
 
   it("returns null when ceiling is 0 (prestige + cheap horse)", () => {
     const cheapHorse = mkHorse({
-      stats: { speed: 1, stamina: 1, acceleration: 1, consistency: 1, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 1,
+        stamina: 1,
+        acceleration: 1,
+        consistency: 1,
+        temperament: 50,
+        conformation: 50,
+      },
       age: 7,
     });
     const prestige = mkStable("prestige", "mid", { cash: 1000000 });
@@ -286,7 +334,14 @@ describe("resolveAuctionSale", () => {
   it("sold lot has hammerPrice >= reservePrice and soldToStableId set", () => {
     const horse = mkHorse({
       id: "h1",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
     });
     const bidder = mkStable("aggressive", "elite", { id: "bidder", cash: 5000000 });
     const lot = {

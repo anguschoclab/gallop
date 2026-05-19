@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from "vitest";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import { createRng } from "@/game/rng";
+import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Race } from "@/game/types";
 
@@ -38,42 +38,24 @@ describe("raceResolutionPhase", () => {
       resolved: false,
     };
 
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
       races: [race1, race2],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      transactions: [],
       reputation: {
         score: 50,
-        tier: "Local",
+        tier: "local",
         events: [],
         totalWins: 0,
+        gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+        yearsActive: 1,
       },
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-      intents: [],
-      impacts: [],
-      impactLog: [],
-    };
+    }) as PipelineContext;
 
     const result = raceResolutionPhase.execute(context);
     expect(result.state.races[0].resolved).toBe(true);
@@ -109,42 +91,24 @@ describe("raceResolutionPhase", () => {
       resolved: false,
     };
 
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
       races: [race1, race2],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      transactions: [],
       reputation: {
         score: 50,
-        tier: "Local",
+        tier: "local",
         events: [],
         totalWins: 0,
+        gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+        yearsActive: 1,
       },
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-      intents: [],
-      impacts: [],
-      impactLog: [],
-    };
+    }) as PipelineContext;
 
     const result = raceResolutionPhase.execute(context);
     expect(result.state.races[1].resolved).toBe(true);
@@ -166,42 +130,24 @@ describe("raceResolutionPhase", () => {
       resolved: false,
     };
 
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
       races: [race],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      transactions: [],
       reputation: {
         score: 50,
-        tier: "Local",
+        tier: "local",
         events: [],
         totalWins: 0,
+        gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+        yearsActive: 1,
       },
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-      intents: [],
-      impacts: [],
-      impactLog: [],
-    };
+    }) as PipelineContext;
 
     const result = raceResolutionPhase.execute(context);
     expect(result.state.races[0].resolved).toBe(false);
@@ -222,86 +168,49 @@ describe("raceResolutionPhase", () => {
       resolved: false,
     };
 
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
       races: [race],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      transactions: [],
       reputation: {
         score: 50,
-        tier: "Local",
+        tier: "local",
         events: [],
         totalWins: 0,
+        gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+        yearsActive: 1,
       },
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
-      logs: [],
       skipRaceResolution: true,
-      dailyRng: createRng(12345),
-      intents: [],
-      impacts: [],
-      impactLog: [],
-    };
+    }) as PipelineContext;
 
     const shouldSkip = raceResolutionPhase.skipIf?.(context);
     expect(shouldSkip).toBe(true);
   });
 
   it("should not skip when skipRaceResolution is false or undefined", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-      transactions: [],
       reputation: {
         score: 50,
-        tier: "Local",
+        tier: "local",
         events: [],
         totalWins: 0,
+        gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+        yearsActive: 1,
       },
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
-      logs: [],
       skipRaceResolution: false,
-      dailyRng: createRng(12345),
-      intents: [],
-      impacts: [],
-      impactLog: [],
-    };
+    }) as PipelineContext;
 
     const shouldSkip = raceResolutionPhase.skipIf?.(context);
     expect(shouldSkip).toBe(false);

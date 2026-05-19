@@ -5,7 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Settings, Volume2, Monitor, Database, Bell, Gamepad2, RotateCcw, Save, FolderOpen } from "lucide-react";
+import {
+  Settings,
+  Volume2,
+  Monitor,
+  Database,
+  Bell,
+  Gamepad2,
+  RotateCcw,
+  Save,
+  FolderOpen,
+} from "lucide-react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useUserSettings, useSettingsActions } from "@/game/hooks/useSystemsState";
 import { shallow } from "zustand/shallow";
@@ -302,8 +312,8 @@ function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="flex-1 gap-2 border-gold-muted text-gold hover:bg-gold/10 font-bold"
                 onClick={() => {
                   setSaveDialogTab("save");
@@ -313,8 +323,8 @@ function SettingsPage() {
                 <Save className="h-4 w-4" />
                 Manual Save
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="flex-1 gap-2 border-blue-500/50 text-blue-400 hover:bg-blue-500/10 font-bold"
                 onClick={() => {
                   setSaveDialogTab("load");
@@ -342,16 +352,16 @@ function SettingsPage() {
 
             <div className="text-xs text-cream-muted bg-slate-800/30 p-3 rounded border border-slate-700/50">
               <p>Settings last modified: Day {userSettings?.lastModified ?? 1}</p>
-              <p className="mt-1">Settings version: {userSettings?.version ?? 1}</p>
+              <p className="mt-1">Settings version: {(userSettings as any)?.version ?? 1}</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <SaveLoadDialog 
-        open={saveDialogOpen} 
-        onOpenChange={setSaveDialogOpen} 
-        initialTab={saveDialogTab} 
+      <SaveLoadDialog
+        open={saveDialogOpen}
+        onOpenChange={setSaveDialogOpen}
+        initialTab={saveDialogTab}
       />
     </div>
   );

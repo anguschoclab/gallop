@@ -7,27 +7,11 @@ import { describe, it, expect } from "vitest";
 import { generateTrackSchedule } from "@/game/raceSchedule";
 import { createRng } from "@/game/rng";
 import type { GameState, Race, Horse } from "@/game/types";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
 
 describe("Race Lifecycle Integration", () => {
   it("should generate races for a track", () => {
-    const state: GameState = {
-      day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
 
     const result = generateTrackSchedule(10, state.races, [], createRng("test"));
 
@@ -39,36 +23,25 @@ describe("Race Lifecycle Integration", () => {
   it("should preserve existing races when generating schedule", () => {
     const existingRace: Race = {
       id: "race-1",
-      name: "Existing Race",
-      day: 10,
-      distance: 2000,
-      raceClass: "Maiden",
-      entryFee: 500,
+      name: "Test Race",
+      day: 5,
+      trackId: "track-1",
+      graded: { key: "race-1", grade: "G3", track: "track-1", trackId: "track-1", surface: "Dirt" },
+      distance: 1200,
+      surface: "Dirt",
       purse: 10000,
-      minStat: 70,
-      fieldSize: 8,
       entries: [],
+      raceClass: "Stakes",
+      entryFee: 500,
+      fieldSize: 12,
       resolved: false,
     };
 
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
       cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
       races: [existingRace],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
     const result = generateTrackSchedule(10, state.races, [], createRng("test"));
 
@@ -77,24 +50,7 @@ describe("Race Lifecycle Integration", () => {
   });
 
   it("should handle empty state gracefully", () => {
-    const state: GameState = {
-      day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
 
     const result = generateTrackSchedule(10, state.races, [], createRng("test"));
 
@@ -103,24 +59,7 @@ describe("Race Lifecycle Integration", () => {
   });
 
   it("should generate races with valid structure", () => {
-    const state: GameState = {
-      day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
 
     const result = generateTrackSchedule(10, state.races, [], createRng("test"));
 

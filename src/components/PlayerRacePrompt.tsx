@@ -77,7 +77,7 @@ export function PlayerRacePrompt() {
       600,
       course,
     );
-    resolveRaceWithImpacts(race!.id, result);
+    resolveRaceWithImpacts(race!.id, result.result);
     clearPending();
   }
 

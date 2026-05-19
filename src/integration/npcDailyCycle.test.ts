@@ -23,6 +23,14 @@ describe("NPC Daily Cycle Integration", () => {
         horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
+        staff: {
+          trainer: null,
+          groom: null,
+          nutritionist: null,
+          farrier: null,
+          veterinarian: null,
+        },
+        outposts: [],
       },
     ];
 
@@ -40,7 +48,30 @@ describe("NPC Daily Cycle Integration", () => {
   });
 
   it("should skip when no NPC stables", () => {
-    const npcStables: Stable[] = [];
+    const npcStables: Stable[] = [
+      {
+        id: "stable-1",
+        name: "NPC Stable",
+        cash: 5000,
+        personality: "breeder" as const,
+        reputation: 70,
+        tier: "elite" as const,
+        owner: "Owner 1",
+        founded: 1,
+        horses: [],
+        isMajor: false,
+        colors: { primary: "#FF0000", secondary: "#FFFFFF" },
+        staff: {
+          trainer: null,
+          groom: null,
+          nutritionist: null,
+          farrier: null,
+          veterinarian: null,
+        },
+        outposts: [],
+      },
+    ];
+
     const horses: Horse[] = [];
     const jockeys: Jockey[] = [];
     const races: Race[] = [];
@@ -66,6 +97,14 @@ describe("NPC Daily Cycle Integration", () => {
         horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
+        staff: {
+          trainer: null,
+          groom: null,
+          nutritionist: null,
+          farrier: null,
+          veterinarian: null,
+        },
+        outposts: [],
       },
     ];
 
@@ -94,6 +133,14 @@ describe("NPC Daily Cycle Integration", () => {
         horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
+        staff: {
+          trainer: null,
+          groom: null,
+          nutritionist: null,
+          farrier: null,
+          veterinarian: null,
+        },
+        outposts: [],
       },
     ];
 

@@ -8,7 +8,7 @@ import type { Rng } from "@/game/rng";
 /**
  * Records a race result in the seasonal history.
  * Only Grade 1 races are preserved in historical tracking.
- * 
+ *
  * @param {Race} race - The race being recorded.
  * @param {Array<{horseId: string, position: number, time: number}>} result - Final positions and times for all finishers.
  * @param {any[]} runners - Runner objects containing detailed race data.
@@ -57,7 +57,7 @@ export function recordRaceHistory(
 /**
  * Evaluates whether a horse qualifies for induction into the Hall of Fame based on its career achievements.
  * Induction typically requires multiple Grade 1 wins or significant lifetime earnings.
- * 
+ *
  * @param {Horse} horse - The horse to evaluate.
  * @param {number} day - The current simulation day.
  * @returns {HallOfFameEntry | null} A hall of fame entry if inducted, otherwise null.
@@ -99,7 +99,7 @@ export function checkHallOfFameInduction(horse: Horse, day: number): HallOfFameE
 
 /**
  * Determines if a race result sets a new track record for the specific distance and surface combination.
- * 
+ *
  * @param {Race} race - The race being evaluated.
  * @param {string} winnerId - Unique ID of the winning horse.
  * @param {string} winnerName - Name of the winning horse.
@@ -128,7 +128,7 @@ export function checkTrackRecord(
   if (!existing || time < existing.time) {
     return {
       trackId,
-      trackName: race.trackName || race.graded?.trackName || "Unknown Track",
+      trackName: race.graded?.track || "Unknown Track",
       surface,
       distance,
       time,

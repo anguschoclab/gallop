@@ -53,14 +53,14 @@ function NpcStablesPage() {
   const fillerCount = npcStables.filter((s) => !s.isMajor).length;
 
   const updateFilter = (key: keyof NpcStablesSearch, value: string) => {
-    navigate({
-      search: (prev) => ({ ...prev, [key]: value }),
+    (navigate as any)({
+      search: (prev: any) => ({ ...prev, [key]: value }),
     });
   };
 
   const clearFilters = () => {
-    navigate({
-      search: { q: "", tier: "all" },
+    (navigate as any)({
+      search: (prev: any) => ({ q: "", tier: "all" }),
     });
   };
 

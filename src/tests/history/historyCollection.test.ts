@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { PipelineContext } from "@/core/time/pipeline";
 import { Race, Horse } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers";
 
 // Mock simulateRace to return a G1 win
 vi.mock("@/services/raceSimulationExecutor", () => ({
@@ -28,19 +29,17 @@ describe("Race Resolution History Collection", () => {
       name: "Kentucky Derby",
       day: 100,
       resolved: false,
-      graded: { grade: "G1", classification: "Stakes" },
-      runners: ["winner-1"],
-      entries: [{ horseId: "winner-1", jockeyId: "j-1", entryFee: 0 }],
+      graded: {
+        key: "ky-derby",
+        grade: "G1",
+        track: "Churchill Downs",
+        trackId: "churchill-downs",
+        surface: "Dirt",
+      },
+      entries: [{ horseId: "winner-1", jockeyId: "j-1", owned: true }],
     };
 
-    const horse: Partial<Horse> = {
-      id: "winner-1",
-      name: "Champ",
-      owned: true,
-      raceHistory: [],
-      lifetimeEarnings: 0,
-      careerWins: 0,
-    };
+    const horse = createTestHorse({ id: "winner-1", name: "Champ", owned: true });
 
     const context: Partial<PipelineContext> = {
       newDay: 100,
@@ -68,23 +67,22 @@ describe("Race Resolution History Collection", () => {
       name: "The Big One",
       day: 100,
       resolved: false,
-      graded: { grade: "G1", classification: "Stakes" },
+      graded: {
+        key: "big-one",
+        grade: "G1",
+        track: "Churchill Downs",
+        trackId: "churchill-downs",
+        surface: "Dirt",
+      },
       purse: 2000000, // Winner gets 1.2M
-      runners: ["winner-1"],
-      entries: [{ horseId: "winner-1", jockeyId: "j-1", entryFee: 0 }],
+      entries: [{ horseId: "winner-1", jockeyId: "j-1", owned: true }],
     };
 
-    const horse: Partial<Horse> = {
-      id: "winner-1",
-      name: "Champ",
-      owned: true,
-      raceHistory: [
-        { grade: "G1", position: 1, day: 10 },
-        { grade: "G1", position: 1, day: 20 },
-      ],
-      lifetimeEarnings: 0,
-      careerWins: 2,
-    };
+    const horse = createTestHorse({ id: "winner-1", name: "Champ", owned: true, careerWins: 2 });
+    horse.raceHistory = [
+      { raceId: "race-1", raceName: "G1 Race 1", grade: "G1", position: 1, day: 10 },
+      { raceId: "race-2", raceName: "G1 Race 2", grade: "G1", position: 1, day: 20 },
+    ];
 
     const context: Partial<PipelineContext> = {
       newDay: 100,

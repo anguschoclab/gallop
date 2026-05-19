@@ -98,7 +98,6 @@ describe("opfsService", () => {
     let mockRoot: {
       getFileHandle: ReturnType<typeof vi.fn>;
       removeEntry: ReturnType<typeof vi.fn>;
-      [Symbol.asyncIterator]: () => AsyncGenerator<unknown, void, unknown>;
     };
 
     beforeEach(async () => {
@@ -107,7 +106,7 @@ describe("opfsService", () => {
         removeEntry: vi.fn(),
       };
 
-      mockRoot[Symbol.asyncIterator] = vi.fn();
+      (mockRoot as any)[Symbol.asyncIterator] = vi.fn();
 
       vi.stubGlobal("navigator", {
         storage: {
@@ -272,7 +271,7 @@ describe("opfsService", () => {
           { kind: "file", name: "test2.json" },
         ];
 
-        mockRoot[Symbol.asyncIterator] = async function* () {
+        (mockRoot as any)[Symbol.asyncIterator] = async function* () {
           yield* [];
           for (const entry of mockEntries) {
             yield entry;
@@ -286,7 +285,7 @@ describe("opfsService", () => {
       it("should return empty array and log error if iteration fails", async () => {
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-        mockRoot[Symbol.asyncIterator] = async function* () {
+        (mockRoot as any)[Symbol.asyncIterator] = async function* () {
           yield* [];
           throw new Error("Iterator error");
         };
@@ -311,7 +310,7 @@ describe("opfsService", () => {
           { kind: "file", name: "test2.json" },
         ];
 
-        mockRoot[Symbol.asyncIterator] = async function* () {
+        (mockRoot as any)[Symbol.asyncIterator] = async function* () {
           yield* [];
           for (const entry of mockEntries) {
             yield entry;
@@ -330,7 +329,7 @@ describe("opfsService", () => {
       it("should log error if deletion fails", async () => {
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-        mockRoot[Symbol.asyncIterator] = async function* () {
+        (mockRoot as any)[Symbol.asyncIterator] = async function* () {
           yield* [];
           yield { kind: "file", name: "test1.json" };
         };

@@ -4,38 +4,21 @@
 
 import { describe, it, expect } from "vitest";
 import { racesPhase } from "@/core/time/phases/races";
-import { createRng } from "@/game/rng";
+import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 
 describe("racesPhase", () => {
   it("should call generateUpcomingRaces and pruneOldRaces", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = racesPhase.execute(context);
     // Phase wraps generateUpcomingRaces and pruneOldRaces from store
@@ -45,32 +28,16 @@ describe("racesPhase", () => {
   });
 
   it("should preserve other state properties", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
       cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = racesPhase.execute(context);
     expect(result.state.cash).toBe(10000);
@@ -86,32 +53,16 @@ describe("racesPhase", () => {
   });
 
   it("should preserve logs", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
       logs: [{ day: 9, text: "Existing log" }],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = racesPhase.execute(context);
     expect(result.logs).toEqual([{ day: 9, text: "Existing log" }]);

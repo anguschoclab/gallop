@@ -8,12 +8,12 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     id: "x",
     name: "Test",
     age: 4,
-    gender: "horse",
+    gender: "colt",
     ...overrides,
   });
 }
 
-const sire = mkHorse({ id: "sire", name: "Sire", gender: "horse", age: 5 });
+const sire = mkHorse({ id: "sire", name: "Sire", gender: "colt", age: 5 });
 const dam = mkHorse({ id: "dam", name: "Dam", gender: "mare", age: 5 });
 
 describe("canBreed", () => {
@@ -58,6 +58,7 @@ describe("canBreed", () => {
       resolved: false,
       liveFoalGuarantee: false,
       reBreedingAttempts: 0,
+      isPlayerOwned: false,
       refunded: false,
     };
     const r = canBreed(sire, dam, 100, [preg]);

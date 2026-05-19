@@ -187,13 +187,13 @@ function Dashboard() {
               key={msg.id}
               className={cn(
                 "bg-t800 border-l-4 transition-all hover:bg-t750 cursor-pointer group",
-                msg.priority === "urgent" ? "border-l-red-500" : "border-l-gold"
+                msg.priority === "urgent" ? "border-l-red-500" : "border-l-gold",
               )}
               onClick={() => {
                 if (msg.cta) {
                   const routePath = msg.cta.route.replace(
                     /\$(\w+)/g,
-                    (_, key) => msg.cta?.params?.[key] || ""
+                    (_, key) => msg.cta?.params?.[key] || "",
                   );
                   navigate({ to: routePath as any });
                   markMessageRead(msg.id);
@@ -206,7 +206,9 @@ function Dashboard() {
                 <div
                   className={cn(
                     "p-2 rounded-full shrink-0",
-                    msg.priority === "urgent" ? "bg-red-500/10 text-red-500" : "bg-gold/10 text-gold"
+                    msg.priority === "urgent"
+                      ? "bg-red-500/10 text-red-500"
+                      : "bg-gold/10 text-gold",
                   )}
                 >
                   {msg.priority === "urgent" ? (
@@ -375,14 +377,16 @@ function Dashboard() {
                       Syndicates
                     </span>
                     <span className="text-cream font-bold tabular-nums">
-                      {syndicates?.filter((s) => s.ownerId === "player").length ?? 0}
+                      {Array.isArray(syndicates)
+                        ? syndicates.filter((s: any) => s.ownerId === "player").length
+                        : 0}
                     </span>
                   </div>
                   <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-success/50 transition-all duration-1000"
                       style={{
-                        width: `${Math.min(100, (syndicates?.filter((s) => s.ownerId === "player").length ?? 0) * 20)}%`,
+                        width: `${Math.min(100, (Array.isArray(syndicates) ? syndicates.filter((s: any) => s.ownerId === "player").length : 0) * 20)}%`,
                       }}
                     />
                   </div>
@@ -475,7 +479,7 @@ function Dashboard() {
                 {facilities &&
                   Object.entries(facilities)
                     .slice(0, 3)
-                    .map(([key, f]) => (
+                    .map(([key, f]: [string, any]) => (
                       <div
                         key={key}
                         className="flex items-center justify-between text-xs bg-black/20 p-2 border border-white/5 rounded hover:bg-black/40 transition-colors"
@@ -484,7 +488,7 @@ function Dashboard() {
                           {key.replace(/([A-Z])/g, " $1")}
                         </span>
                         <Badge className="bg-gold-subtle text-gold text-[10px] h-4 font-bold border border-gold/20">
-                          LVL {f.rank}
+                          LVL {f?.rank ?? 1}
                         </Badge>
                       </div>
                     ))}
@@ -653,7 +657,17 @@ function Dashboard() {
                 The Circuit
               </CardTitle>
             </div>
-            <Link to="/races">
+            <Link
+              to="/races"
+              search={{
+                grade: "all",
+                country: "all",
+                surface: "all",
+                track: "all",
+                owned: "all",
+                q: "",
+              }}
+            >
               <Button
                 aria-label="Go to The Circuit races"
                 size="icon"
@@ -812,7 +826,7 @@ function Dashboard() {
                     G1 Victories
                   </div>
                   <div className="text-3xl font-bold text-fame font-mono leading-none tracking-tighter group-hover:scale-110 transition-transform">
-                    {awards?.filter((a) => a.grade === "G1").length ?? 0}
+                    {awards?.filter((a: any) => (a as any).grade === "G1").length ?? 0}
                   </div>
                 </div>
                 <div className="h-10 w-[1px] bg-white/10" />

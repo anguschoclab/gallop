@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
+import type { GameState } from "@/game/types";
 import { useRaces, useHorses } from "@/game/hooks/useCoreState";
 import { formatCurrency } from "@/core/financial";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,8 +61,8 @@ function RacesPage() {
   const navigate = Route.useNavigate();
   const races = useRaces();
   const horses = useHorses();
-  const claims: Claim[] = (useGame as any)((s) => s.claims ?? [], shallow);
-  const day = useGame((s) => s.day);
+  const claims: Claim[] = (useGame as any)((s: GameState) => s.claims ?? [], shallow);
+  const day = useGame((s: GameState) => s.day);
   const cash = useGame((s) => s.cash);
   const fileClaim = useGame((s) => s.fileClaim);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
@@ -361,7 +362,7 @@ function RacesPage() {
                           <td className="px-4 py-4">
                             <div className="flex items-center gap-1.5 text-xs text-cream/60">
                               <MapPin className="h-3 w-3 opacity-40" />
-                              <span>{r.track}</span>
+                              <span>{r.trackId}</span>
                             </div>
                           </td>
                           <td className="px-4 py-4 text-right font-mono text-xs text-cream/60">

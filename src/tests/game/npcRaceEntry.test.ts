@@ -5,23 +5,16 @@ import { updateHorseFame } from "@/game/npcPostRace";
 import { createRng } from "@/game/rng";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { StaffRole } from "@/core/staff/staffTypes";
+import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  // Create a minimal valid genotype - Locus is [Allele, Allele] where Allele = number
-  const createLocus = (): [number, number] => [5, 5];
-  const createLocusArray = (): [number, number][] => Array.from({ length: 10 }, createLocus);
-
-  return {
+  return createTestHorse({
     id: overrides.id ?? "h1",
     name: "Test Horse",
     sireName: "Test Sire",
     damName: "Test Dam",
-    pedigree: {},
-    birthDay: 1,
     age: 4,
-    gender: "horse",
-    hemisphere: "Northern",
-    silk: "#aabbcc",
+    gender: "colt",
     stats: {
       speed: 65,
       stamina: 65,
@@ -29,101 +22,9 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
       consistency: 65,
       temperament: 65,
       conformation: 65,
-      ...overrides.stats,
     },
-    genotype: {
-      color: {
-        extension: createLocus(),
-        agouti: createLocus(),
-        gray: createLocus(),
-        cream: createLocus(),
-      },
-      stats: {
-        speed: createLocusArray(),
-        stamina: createLocusArray(),
-        acceleration: createLocusArray(),
-        consistency: createLocusArray(),
-      },
-      preferences: {
-        distance: createLocus(),
-        surface: createLocus(),
-        climbing: createLocus(),
-        cornering: createLocus(),
-      },
-      style: createLocus(),
-      mental: createLocus(),
-      physical: createLocus(),
-      durability: createLocus(),
-      size: createLocus(),
-      markers: {
-        leopardComplex: "recessive",
-        csnbRisk: "low",
-        sensoryPerception: "good",
-        signalTransduction: "good",
-        immunity: "good",
-        geneticDiversity: 0.5,
-        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
-      },
-      heart: createLocusArray(),
-      fiberType: createLocus(),
-      stride: createLocus(),
-      trackBias: createLocus(),
-      mudAptitude: createLocus(),
-      trainability: createLocus(),
-      peakAge: createLocus(),
-      recovery: createLocus(),
-      fertility: createLocus(),
-      foalingEase: createLocus(),
-      markings: {
-        socks: createLocus(),
-        face: createLocus(),
-        silverDapple: createLocus(),
-        sabino: createLocus(),
-        splashWhite: createLocus(),
-      },
-      health: {
-        bleeder: createLocus(),
-        roarer: createLocus(),
-        ocd: createLocus(),
-        efna5: createLocus(),
-        pssm: createLocus(),
-        rer: createLocus(),
-        epm: createLocus(),
-      },
-    },
-    energy: 80,
-    fitness: 50,
-    fatigue: 30,
-    peakingIndex: 20,
-    form: 0,
-    potential: 80,
-    recoveryPoints: 100,
-    raceHistory: [],
-    owned: false,
-    fame: 20,
-    stableId: overrides.stableId ?? "s1",
-    distanceAptitude: 50,
-    surfaceAptitude: { Turf: 50, Dirt: 50, Synthetic: 50 },
-    mudAptitude: 50,
-    peakAge: 4,
-    strideType: "average",
-    trackPreference: "balanced",
-    runningStyle: "P",
-    bleederRisk: 0,
-    roarerRisk: 0,
-    ocdRisk: 0,
-    recoveryRate: 50,
-    trainability: 50,
-    heartScore: 50,
-    bloodline: "test",
-    fiberBias: "balanced",
-    healthStatus: "healthy",
-    healthStatusDay: 1,
-    isBlueHen: false,
-    gelded: false,
-    lifecycleStatus: "active",
     ...overrides,
-  };
+  });
 }
 
 function mkStable(overrides: Partial<Stable> = {}): Stable {
@@ -219,19 +120,40 @@ describe("selectHorsesForRaceEntry", () => {
       id: "h1",
       stableId: "s1",
       energy: 80,
-      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85, temperament: 85, conformation: 85 },
+      stats: {
+        speed: 85,
+        stamina: 85,
+        acceleration: 85,
+        consistency: 85,
+        temperament: 85,
+        conformation: 85,
+      },
     });
     const midStatHorse = mkHorse({
       id: "h2",
       stableId: "s1",
       energy: 80,
-      stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 70, conformation: 70 },
+      stats: {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 70,
+        conformation: 70,
+      },
     });
     const lowStatHorse = mkHorse({
       id: "h3",
       stableId: "s1",
       energy: 80,
-      stats: { speed: 55, stamina: 55, acceleration: 55, consistency: 55, temperament: 55, conformation: 55 },
+      stats: {
+        speed: 55,
+        stamina: 55,
+        acceleration: 55,
+        consistency: 55,
+        temperament: 55,
+        conformation: 55,
+      },
     });
 
     const horseMap = new Map([

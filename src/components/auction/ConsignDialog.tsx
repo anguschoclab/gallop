@@ -35,7 +35,7 @@ type Props = {
 };
 
 export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
-  const horses = (useGame as any)((s) => s.horses, shallow);
+  const horses = (useGame as any)((s: any) => s.horses, shallow);
   const consignHorse = useGame((s) => s.consignHorse);
 
   const baseValue = useMemo(() => horsePriceWithPedigree(horse, horses), [horse, horses]);

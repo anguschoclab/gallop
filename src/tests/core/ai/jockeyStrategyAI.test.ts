@@ -63,7 +63,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     damId: "dam-1",
     sireName: "Test Sire",
     damName: "Test Dam",
-    pedigree: { sireId: "sire-1", damId: "dam-1" },
+    pedigree: { sireId: "sire-1", damId: "dam-1", name: "Test Horse", generation: 0 },
     birthDay: 1,
     age: 3,
     gender: "colt",
@@ -75,7 +75,14 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     peakingIndex: 30,
     form: 0.8,
     recoveryPoints: 50,
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 70, conformation: 70 },
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      consistency: 70,
+      temperament: 70,
+      conformation: 70,
+    },
     genotype: {
       color: { extension: [3, 3], agouti: [3, 3], gray: [1, 1], cream: [1, 1] },
       stats: { speed: [[3, 3]], stamina: [[3, 3]], acceleration: [[3, 3]], consistency: [[3, 3]] },
@@ -146,9 +153,9 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
     owned: true,
     runningStyle: "E",
     coatColor: "bay",
-    markings: "none",
+    markings: { socks: ["none", "none", "none", "none"] as any, face: "none" },
     ...overrides,
-  };
+  } as Horse;
 }
 
 function createMockRace(overrides: Partial<Race> = {}): Race {
@@ -320,10 +327,24 @@ describe("calculateJockeyAggressiveness", () => {
     const state = createJockeyStrategyAIState(createMockStable());
     const jockey = createMockJockey();
     const highQualityHorse = createMockHorse({
-      stats: { speed: 85, stamina: 85, acceleration: 85, consistency: 85, temperament: 85, conformation: 85 },
+      stats: {
+        speed: 85,
+        stamina: 85,
+        acceleration: 85,
+        consistency: 85,
+        temperament: 85,
+        conformation: 85,
+      },
     });
     const lowQualityHorse = createMockHorse({
-      stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60, temperament: 60, conformation: 60 },
+      stats: {
+        speed: 60,
+        stamina: 60,
+        acceleration: 60,
+        consistency: 60,
+        temperament: 60,
+        conformation: 60,
+      },
     });
     const race = createMockRace();
     const stable = createMockStable();

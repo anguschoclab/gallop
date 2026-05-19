@@ -18,18 +18,35 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {
     id: "h1",
     name: "Test",
+    sireName: "Sire",
+    damName: "Dam",
+    pedigree: { sireId: "s1", damId: "d1", name: "Pedigree", generation: 1 },
+    birthDay: 1,
     age: 5,
     gender: "horse",
     hemisphere: "Northern",
     silk: "#aabbcc",
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      consistency: 70,
+      temperament: 50,
+      conformation: 50,
+    },
     energy: 100,
+    fitness: 100,
+    fatigue: 0,
+    peakingIndex: 0,
+    recoveryPoints: 0,
     form: 0,
     potential: 80,
     raceHistory: [],
     owned: false,
     fame: 0,
     lifecycleStatus: "active" as const,
+    healthStatus: "healthy",
+    healthStatusDay: 1,
     genotype: generateDeterministicGenotype("Test", "budget"),
     distanceAptitude: 1200,
     surfaceAptitude: { Turf: 1.0, Dirt: 0.9, Synthetic: 0.95 },
@@ -56,7 +73,7 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     },
     heartScore: 1.0,
     fiberBias: "balanced",
-    strideType: "balanced",
+    strideType: "average",
     trackPreference: "balanced",
     mudAptitude: 1.0,
     trainability: 0.7,
@@ -76,7 +93,10 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     ocdRisk: 0,
     racingViable: true,
     heterozygosity: 0.5,
-    healthStatus: "healthy",
+    isBlueHen: false,
+    gelded: false,
+    bloodline: "standard",
+    courseVisits: {},
     ...overrides,
   };
 }
@@ -89,34 +109,46 @@ describe("calculateGeneticCompatibility", () => {
   it("excellent+excellent markers → higher score than poor+poor", () => {
     const sire = mkHorse({
       geneticMarkers: {
+        leopardComplex: "recessive",
+        csnbRisk: "low",
         sensoryPerception: "excellent",
         signalTransduction: "excellent",
         immunity: "excellent",
         geneticDiversity: 0.9,
+        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
       },
     });
     const dam = mkMare({
       geneticMarkers: {
+        leopardComplex: "recessive",
+        csnbRisk: "low",
         sensoryPerception: "excellent",
         signalTransduction: "excellent",
         immunity: "excellent",
         geneticDiversity: 0.9,
+        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
       },
     });
     const poorSire = mkHorse({
       geneticMarkers: {
+        leopardComplex: "recessive",
+        csnbRisk: "low",
         sensoryPerception: "poor",
         signalTransduction: "poor",
         immunity: "poor",
         geneticDiversity: 0.1,
+        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
       },
     });
     const poorDam = mkMare({
       geneticMarkers: {
+        leopardComplex: "recessive",
+        csnbRisk: "low",
         sensoryPerception: "poor",
         signalTransduction: "poor",
         immunity: "poor",
         geneticDiversity: 0.1,
+        lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
       },
     });
     const excellent = calculateGeneticCompatibility(sire, dam);
@@ -170,6 +202,7 @@ describe("calculateBlueHenContribution", () => {
         stakesWinnersProduced: 3,
         group1WinnersProduced: 2,
         blueHenScore: 80,
+        foalsProduced: 10,
       },
     });
     const result = calculateBlueHenContribution(dam);
@@ -184,6 +217,7 @@ describe("calculateBlueHenContribution", () => {
         stakesWinnersProduced: 100,
         group1WinnersProduced: 100,
         blueHenScore: 100,
+        foalsProduced: 100,
       },
     });
     expect(calculateBlueHenContribution(dam).score).toBeLessThanOrEqual(1.0);
@@ -192,20 +226,20 @@ describe("calculateBlueHenContribution", () => {
 
 describe("calculateConformationCompatibility", () => {
   it("both excellent → score = 1.0", () => {
-    const sire = mkHorse({ conformation: "excellent" });
-    const dam = mkMare({ conformation: "excellent" });
+    const sire = mkHorse({ conformation: 1.0 });
+    const dam = mkMare({ conformation: 1.0 });
     expect(calculateConformationCompatibility(sire, dam).score).toBe(1.0);
   });
 
   it("both poor → score = 0.25", () => {
-    const sire = mkHorse({ conformation: "poor" });
-    const dam = mkMare({ conformation: "poor" });
+    const sire = mkHorse({ conformation: 0.25 });
+    const dam = mkMare({ conformation: 0.25 });
     expect(calculateConformationCompatibility(sire, dam).score).toBe(0.25);
   });
 
   it("mixed → average of both values", () => {
-    const sire = mkHorse({ conformation: "excellent" }); // 1.0
-    const dam = mkMare({ conformation: "poor" }); // 0.25
+    const sire = mkHorse({ conformation: 1.0 });
+    const dam = mkMare({ conformation: 0.25 });
     const { score } = calculateConformationCompatibility(sire, dam);
     expect(score).toBeCloseTo(0.625, 3);
   });
@@ -218,14 +252,14 @@ describe("calculateConformationCompatibility", () => {
 
 describe("calculateTemperamentCompatibility", () => {
   it("both excellent → score = 1.0", () => {
-    const sire = mkHorse({ temperament: "excellent" });
-    const dam = mkMare({ temperament: "excellent" });
+    const sire = mkHorse({ temperament: 1.0 });
+    const dam = mkMare({ temperament: 1.0 });
     expect(calculateTemperamentCompatibility(sire, dam).score).toBe(1.0);
   });
 
   it("both poor → score = 0.25", () => {
-    const sire = mkHorse({ temperament: "poor" });
-    const dam = mkMare({ temperament: "poor" });
+    const sire = mkHorse({ temperament: 0.25 });
+    const dam = mkMare({ temperament: 0.25 });
     expect(calculateTemperamentCompatibility(sire, dam).score).toBe(0.25);
   });
 });
@@ -336,16 +370,16 @@ describe("calculateBreedingCompatibility", () => {
 
   it("better-matched pair produces higher score", () => {
     const excellentSire = mkHorse({
-      conformation: "excellent",
-      temperament: "excellent",
+      conformation: 1.0,
+      temperament: 1.0,
       raceHistory: [{ raceId: "r1", raceName: "G1 Race", position: 1, day: 1, grade: "G1" }],
     });
     const excellentDam = mkMare({
-      conformation: "excellent",
-      temperament: "excellent",
+      conformation: 1.0,
+      temperament: 1.0,
     });
-    const poorSire = mkHorse({ conformation: "poor", temperament: "poor", raceHistory: [] });
-    const poorDam = mkMare({ conformation: "poor", temperament: "poor" });
+    const poorSire = mkHorse({ conformation: 0.25, temperament: 0.25, raceHistory: [] });
+    const poorDam = mkMare({ conformation: 0.25, temperament: 0.25 });
     const goodScore = calculateBreedingCompatibility(excellentSire, excellentDam).overallScore;
     const badScore = calculateBreedingCompatibility(poorSire, poorDam).overallScore;
     expect(goodScore).toBeGreaterThan(badScore);

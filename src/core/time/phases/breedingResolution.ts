@@ -126,6 +126,7 @@ export const breedingResolutionPhase: PipelinePhase = {
         liveFoalGuarantee: intent.liveFoalGuarantee,
         reBreedingAttempts: 0,
         refunded: false,
+        isPlayerOwned: true,
       };
 
       impacts.push({

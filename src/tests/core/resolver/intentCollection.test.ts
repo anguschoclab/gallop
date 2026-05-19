@@ -9,27 +9,14 @@ import type { GameState, Horse } from "@/game/types";
 import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createRng } from "@/game/rng";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
 
 describe("intentCollectionPhase", () => {
-  const createTestState = (): GameState => ({
-    day: 1,
-    cash: 10000,
-    horses: [],
-    npcStables: [],
-    pregnancies: [],
-    races: [],
-    awards: [],
-    market: [],
-    auctions: [],
-    lastCalibrationDay: 0,
-    calibratedPars: {},
-    paceSamples: {},
-    pendingAwardCeremonies: [],
-    trainingUsed: {},
-    log: [],
-    scoutReports: [],
-    pendingIntents: [],
-  });
+  const createTestState = (): GameState =>
+    makeGameState({
+      day: 1,
+      cash: 10000,
+    }) as GameState;
 
   const createTestContext = (state: GameState): PipelineContext => ({
     previousDay: 0,

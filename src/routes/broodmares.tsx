@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
+import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,28 +13,28 @@ export const Route = createFileRoute("/broodmares")({
 });
 
 function BroodmaresPage() {
-  const horses = (useGame as any)((s) => s.horses, shallow);
-  const horseMap = (useGame as any)((s) => s.horseMap, shallow);
-  const pregnancies = (useGame as any)((s) => s.pregnancies, shallow);
-  const day = useGame((s) => s.day);
-  const log = (useGame as any)((s) => s.log, shallow);
+  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
+  const horseMap = (useGame as any)((s: GameState) => s.horseMap, shallow);
+  const pregnancies = (useGame as any)((s: GameState) => s.pregnancies, shallow);
+  const day = useGame((s: GameState) => s.day);
+  const log = (useGame as any)((s: GameState) => s.log, shallow);
 
   // Get all active pregnancies (unresolved)
-  const activePregnancies = pregnancies.filter((p) => !p.resolved);
+  const activePregnancies = pregnancies.filter((p: any) => !p.resolved);
 
   // ⚡ Bolt Optimization:
   // Used O(1) horseMap lookups instead of O(N) horses.find() inside the map loop.
   // Impact: Reduces rendering complexity of the broodmares list from O(N^2) to O(N).
   // Group pregnancies by dam to show each broodmare once
   const broodmareData = activePregnancies
-    .map((pregnancy) => {
+    .map((pregnancy: any) => {
       const dam = horseMap.get(pregnancy.damId);
       const sire = horseMap.get(pregnancy.sireId);
       const daysRemaining = pregnancy.dueDay - day;
 
       // Get maternity log entries for this dam
       const maternityLog = log.filter(
-        (l) =>
+        (l: any) =>
           l.text.includes(pregnancy.damName) &&
           (l.text.includes("Mated") || l.text.includes("Foal")),
       );
@@ -46,10 +47,12 @@ function BroodmaresPage() {
         maternityLog,
       };
     })
-    .filter((data) => data.dam); // Only include if dam still exists
+    .filter((data: any) => data.dam); // Only include if dam still exists
 
   // Sort by days remaining (soonest due first)
-  const sortedBroodmares = broodmareData.sort((a, b) => a.daysRemaining - b.daysRemaining);
+  const sortedBroodmares = broodmareData.sort(
+    (a: any, b: any) => a.daysRemaining - b.daysRemaining,
+  );
 
   return (
     <div className="space-y-6">
@@ -77,7 +80,7 @@ function BroodmaresPage() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {sortedBroodmares.map(({ pregnancy, dam, sire, daysRemaining, maternityLog }) => (
+          {sortedBroodmares.map(({ pregnancy, dam, sire, daysRemaining, maternityLog }: any) => (
             <Card key={pregnancy.id} className="border-l-4 border-l-gold border-gold-muted">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -173,7 +176,7 @@ function BroodmaresPage() {
                       Recent maternity activity:
                     </p>
                     <div className="space-y-1">
-                      {maternityLog.slice(0, 3).map((entry, idx) => (
+                      {maternityLog.slice(0, 3).map((entry: any, idx: number) => (
                         <div
                           key={idx}
                           className="text-xs py-1 border-b border-gold-muted last:border-0 flex gap-2"

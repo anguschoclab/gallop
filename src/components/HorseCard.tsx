@@ -60,7 +60,7 @@ export function HorseCard({
   onClick,
   className = "",
 }: HorseCardProps) {
-  const scoutReports = (useGame as any)((s) => s.scoutReports, shallow);
+  const scoutReports = (useGame as any)((s: any) => s.scoutReports, shallow);
   const day = useGame((s) => s.day);
   const simpleHorseCards = useGame((s) => s.userSettings?.display?.simpleHorseCards ?? true);
   const ovr = calculateOverallRating(horse);
@@ -223,7 +223,9 @@ export function HorseCard({
               </div>
               <div className="text-sm font-black font-mono text-cream">
                 {hasAllStats
-                  ? isAdvanced ? ovr : scoutGrade(ovr)
+                  ? isAdvanced
+                    ? ovr
+                    : scoutGrade(ovr)
                   : displayStats?.overallEstimate
                     ? `~${displayStats.overallEstimate}`
                     : "LOCKED"}

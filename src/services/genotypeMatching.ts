@@ -1,4 +1,4 @@
-import type { Horse } from "@/game/types";
+import type { Horse, GeneticMarkers } from "@/game/types";
 import { TRAIT_SCORE } from "@/core/genetics/phenotype";
 import {
   GENETIC_TRAIT_WEIGHT,
@@ -25,8 +25,24 @@ export function calculateGeneticCompatibility(
   sire: Horse,
   dam: Horse,
 ): { score: number; description: string; warning?: string } {
-  const sireGenetics = sire.geneticMarkers || {};
-  const damGenetics = dam.geneticMarkers || {};
+  const sireGenetics: GeneticMarkers = sire.geneticMarkers || {
+    leopardComplex: "recessive",
+    csnbRisk: "low",
+    sensoryPerception: "good",
+    signalTransduction: "good",
+    immunity: "good",
+    geneticDiversity: DEFAULT_GENETIC_DIVERSITY,
+    lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
+  };
+  const damGenetics: GeneticMarkers = dam.geneticMarkers || {
+    leopardComplex: "recessive",
+    csnbRisk: "low",
+    sensoryPerception: "good",
+    signalTransduction: "good",
+    immunity: "good",
+    geneticDiversity: DEFAULT_GENETIC_DIVERSITY,
+    lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
+  };
 
   let score = 0;
   const warnings: string[] = [];
@@ -69,9 +85,12 @@ export function calculateGeneticCompatibility(
   }
 
   let description = "Moderate genetic compatibility";
-  if (score >= GENETIC_COMPATIBILITY_EXCELLENT_THRESHOLD) description = "Excellent genetic compatibility";
-  else if (score >= GENETIC_COMPATIBILITY_GOOD_THRESHOLD) description = "Good genetic compatibility";
-  else if (score >= GENETIC_COMPATIBILITY_MODERATE_THRESHOLD) description = "Moderate genetic compatibility";
+  if (score >= GENETIC_COMPATIBILITY_EXCELLENT_THRESHOLD)
+    description = "Excellent genetic compatibility";
+  else if (score >= GENETIC_COMPATIBILITY_GOOD_THRESHOLD)
+    description = "Good genetic compatibility";
+  else if (score >= GENETIC_COMPATIBILITY_MODERATE_THRESHOLD)
+    description = "Moderate genetic compatibility";
   else description = "Poor genetic compatibility";
 
   return {

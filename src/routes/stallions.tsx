@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isStallionAvailable } from "@/core/breeding/stallions";
-import type { Horse, Hemisphere } from "@/game/types";
+import type { Horse, Hemisphere, GameState } from "@/game/types";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -24,38 +24,38 @@ export const Route = createFileRoute("/stallions")({
 });
 
 function StallionsPage() {
-  const horses = (useGame as any)((s) => s.horses, shallow);
-  const npcStables = (useGame as any)((s) => s.npcStables, shallow);
-  const day = useGame((s) => s.day);
-  const cash = useGame((s) => s.cash);
+  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
+  const npcStables = (useGame as any)((s: GameState) => s.npcStables, shallow);
+  const day = useGame((s: GameState) => s.day);
+  const cash = useGame((s: GameState) => s.cash);
   const breed = useGame((s) => s.breed);
   const updateStudFee = useGame((s) => s.updateStudFee);
-  const pregnancies = (useGame as any)((s) => s.pregnancies, shallow);
+  const pregnancies = (useGame as any)((s: GameState) => s.pregnancies, shallow);
 
   const [hemisphere, setHemisphere] = useState<Hemisphere | "all">("all");
   const [selectedMareId, setSelectedMareId] = useState<string>("");
 
-  const stallions = horses.filter((h) => h.stud?.atStud);
-  const myStallions = stallions.filter((h) => h.owned);
-  const rosterStallions = stallions.filter((h) => !h.owned || h.stableId === undefined); // Show all public ones
+  const stallions = horses.filter((h: Horse) => h.stud?.atStud);
+  const myStallions = stallions.filter((h: Horse) => h.owned);
+  const rosterStallions = stallions.filter((h: Horse) => !h.owned || h.stableId === undefined); // Show all public ones
 
   const filtered = stallions
-    .filter((h) => hemisphere === "all" || h.hemisphere === hemisphere)
-    .sort((a, b) => a.stud!.standingFee - b.stud!.standingFee);
+    .filter((h: Horse) => hemisphere === "all" || h.hemisphere === hemisphere)
+    .sort((a: Horse, b: Horse) => a.stud!.standingFee - b.stud!.standingFee);
 
   // Player mares of breeding age, not currently pregnant
   const eligibleMares = horses.filter(
-    (h) =>
+    (h: Horse) =>
       h.owned &&
       (h.gender === "mare" || h.gender === "filly") &&
       h.age >= 3 &&
-      !pregnancies.some((p) => !p.resolved && p.damId === h.id),
+      !pregnancies.some((p: any) => !p.resolved && p.damId === h.id),
   );
-  const selectedMare = eligibleMares.find((h) => h.id === selectedMareId);
+  const selectedMare = eligibleMares.find((h: Horse) => h.id === selectedMareId);
 
   const stableNameFor = (stableId?: string): string => {
     if (!stableId) return "Owned";
-    return npcStables.find((s) => s.id === stableId)?.name ?? "Unknown stable";
+    return npcStables.find((s: any) => s.id === stableId)?.name ?? "Unknown stable";
   };
 
   return (
@@ -106,7 +106,7 @@ function StallionsPage() {
                     <SelectValue placeholder="Select a mare to book…" />
                   </SelectTrigger>
                   <SelectContent>
-                    {eligibleMares.map((m) => (
+                    {eligibleMares.map((m: Horse) => (
                       <SelectItem key={m.id} value={m.id}>
                         {m.name} (age {m.age}, {m.hemisphere})
                       </SelectItem>
@@ -117,8 +117,8 @@ function StallionsPage() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((stallion) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filtered.map((stallion: Horse) => (
               <StallionCard
                 key={stallion.id}
                 stallion={stallion}
@@ -143,12 +143,15 @@ function StallionsPage() {
 
         <TabsContent value="manage" className="space-y-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {myStallions.map((stallion) => (
+            {myStallions.map((stallion: Horse) => (
               <MyStallionCard
                 key={stallion.id}
                 stallion={stallion}
                 day={day}
-                recommendedFee={calculateRecommendedStudFee(stallion, { horses, npcStables })}
+                recommendedFee={calculateRecommendedStudFee(stallion, {
+                  horses,
+                  npcStables,
+                } as any)}
                 onUpdateFee={(fee) => {
                   const result = updateStudFee(stallion.id, fee);
                   if (!result.ok) alert(result.reason);

@@ -13,15 +13,15 @@ interface NewsContentProps {
 }
 
 /**
- * NewsContent - A component that renders news text (headline or body) 
+ * NewsContent - A component that renders news text (headline or body)
  * and automatically wraps recognized entity names in clickable Links.
  */
-export const NewsContent: React.FC<NewsContentProps> = ({ 
-  text, 
-  links: explicitLinks, 
+export const NewsContent: React.FC<NewsContentProps> = ({
+  text,
+  links: explicitLinks,
   className,
   linkClassName,
-  autoDetect = true
+  autoDetect = true,
 }) => {
   const { horses, jockeys, npcStables } = useGame();
 
@@ -31,27 +31,27 @@ export const NewsContent: React.FC<NewsContentProps> = ({
     if (autoDetect) {
       // Build potential links from active game state
       // Use regex with word boundaries to find exact name matches
-      
+
       // Add all horses
-      horses.forEach(h => {
-        const regex = new RegExp(`\\b${escapeRegExp(h.name)}\\b`, 'g');
-        if (regex.test(text) && !combined.some(l => l.name === h.name)) {
+      horses.forEach((h) => {
+        const regex = new RegExp(`\\b${escapeRegExp(h.name)}\\b`, "g");
+        if (regex.test(text) && !combined.some((l) => l.name === h.name)) {
           combined.push({ type: "horse", id: h.id, name: h.name });
         }
       });
 
       // Add all jockeys
-      jockeys.forEach(j => {
-        const regex = new RegExp(`\\b${escapeRegExp(j.name)}\\b`, 'g');
-        if (regex.test(text) && !combined.some(l => l.name === j.name)) {
+      jockeys?.forEach((j) => {
+        const regex = new RegExp(`\\b${escapeRegExp(j.name)}\\b`, "g");
+        if (regex.test(text) && !combined.some((l) => l.name === j.name)) {
           combined.push({ type: "jockey", id: j.id, name: j.name });
         }
       });
 
       // Add all NPC stables
-      npcStables.forEach(s => {
-        const regex = new RegExp(`\\b${escapeRegExp(s.name)}\\b`, 'g');
-        if (regex.test(text) && !combined.some(l => l.name === s.name)) {
+      npcStables.forEach((s) => {
+        const regex = new RegExp(`\\b${escapeRegExp(s.name)}\\b`, "g");
+        if (regex.test(text) && !combined.some((l) => l.name === s.name)) {
           combined.push({ type: "stable", id: s.id, name: s.name });
         }
       });
@@ -69,7 +69,7 @@ export const NewsContent: React.FC<NewsContentProps> = ({
 
   finalLinks.forEach((link) => {
     const newParts: (string | React.ReactNode)[] = [];
-    
+
     parts.forEach((part) => {
       if (typeof part !== "string") {
         newParts.push(part);
@@ -78,44 +78,44 @@ export const NewsContent: React.FC<NewsContentProps> = ({
 
       // Split the string by the entity name using regex for word boundaries
       // Wrap in capturing group so the separator is kept in the result array
-      const regex = new RegExp(`(\\b${escapeRegExp(link.name)}\\b)`, 'g');
+      const regex = new RegExp(`(\\b${escapeRegExp(link.name)}\\b)`, "g");
       const segments = part.split(regex);
-      
+
       segments.forEach((seg, i) => {
         if (seg === link.name) {
           newParts.push(
-            <EntityLinkComponent 
-              key={`${link.type}-${link.id}-${i}-${link.name}`} 
-              link={link} 
+            <EntityLinkComponent
+              key={`${link.type}-${link.id}-${i}-${link.name}`}
+              link={link}
               className={linkClassName}
-            />
+            />,
           );
         } else if (seg) {
           newParts.push(seg);
         }
       });
     });
-    
+
     parts = newParts;
   });
 
   return <span className={className}>{parts}</span>;
 };
 
-const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = ({ 
-  link, 
-  className 
+const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = ({
+  link,
+  className,
 }) => {
   const commonClasses = cn(
     "font-bold hover:underline transition-all decoration-dotted underline-offset-2 cursor-pointer relative z-10",
-    className
+    className,
   );
 
   switch (link.type) {
     case "horse":
       return (
-        <Link 
-          to="/stable/$horseId" 
+        <Link
+          to="/stable/$horseId"
           params={{ horseId: link.id }}
           className={cn(commonClasses, "text-gold hover:text-gold-bright")}
         >
@@ -124,8 +124,8 @@ const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = 
       );
     case "jockey":
       return (
-        <Link 
-          to="/jockey/$jockeyId" 
+        <Link
+          to="/jockey/$jockeyId"
           params={{ jockeyId: link.id }}
           className={cn(commonClasses, "text-blue-400 hover:text-blue-300")}
         >
@@ -134,8 +134,8 @@ const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = 
       );
     case "stable":
       return (
-        <Link 
-          to="/npc-stables/$stableId" 
+        <Link
+          to="/npc-stables/$stableId"
           params={{ stableId: link.id }}
           className={cn(commonClasses, "text-success hover:text-success-dark")}
         >
@@ -144,8 +144,8 @@ const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = 
       );
     case "race":
       return (
-        <Link 
-          to="/race/$raceId" 
+        <Link
+          to="/race/$raceId"
           params={{ raceId: link.id }}
           className={cn(commonClasses, "text-cream hover:text-white")}
         >
@@ -158,5 +158,5 @@ const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = 
 };
 
 function escapeRegExp(string: string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

@@ -10,6 +10,7 @@ import { agingPhase } from "@/core/time/phases/aging";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { createRng } from "@/game/rng";
 import { createTestHorse } from "@/tests/helpers";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 
@@ -17,24 +18,7 @@ describe("Day Advancement Pipeline Integration", () => {
   it("should execute phases in correct order", () => {
     const phases = [upkeepPhase, agingPhase, raceResolutionPhase];
 
-    const state: GameState = {
-      day: 1,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    const state: GameState = makeGameState({ day: 1, cash: 10000 }) as GameState;
 
     const context: PipelineContext = {
       previousDay: 0,
@@ -61,24 +45,7 @@ describe("Day Advancement Pipeline Integration", () => {
   it("should handle phase skip conditions", () => {
     const phases = [upkeepPhase];
 
-    const state: GameState = {
-      day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
 
     const context: PipelineContext = {
       previousDay: 9,
@@ -100,24 +67,7 @@ describe("Day Advancement Pipeline Integration", () => {
   it("should aggregate logs across phases", () => {
     const phases = [upkeepPhase, agingPhase];
 
-    const state: GameState = {
-      day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
 
     const context: PipelineContext = {
       previousDay: 9,
@@ -139,40 +89,14 @@ describe("Day Advancement Pipeline Integration", () => {
   it("should apply state mutations from all phases", () => {
     const phases = [upkeepPhase];
 
-    const state: GameState = {
-      day: 10,
-      cash: 10000,
-      horses: [
-        createTestHorse({
-          id: "horse-1",
-          name: "Horse 1",
-          age: 3,
-          gender: "colt",
-          hemisphere: "Northern",
-          stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
-          potential: 75,
-          energy: 100,
-          form: 0,
-          silk: "blue",
-          owned: true,
-          fame: 50,
-          raceHistory: [],
-        }),
-      ],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    const horse = createTestHorse({
+      id: "horse-1",
+      name: "Horse 1",
+      age: 3,
+      gender: "colt",
+    });
+
+    const state: GameState = makeGameState({ day: 10, cash: 10000, horses: [horse] }) as GameState;
 
     const context: PipelineContext = {
       previousDay: 9,

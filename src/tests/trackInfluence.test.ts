@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildRunner, runRaceToCompletion } from "@/game/raceSim";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { CourseSpecification } from "@/game/tracks";
 import type { Horse, Rng, Jockey, JockeySilk, Genotype, HealthStatus } from "@/game/types";
 
@@ -22,7 +23,15 @@ const minimalGenotype: Genotype = {
   physical: [0, 0],
   durability: [0, 0],
   size: [0, 0],
-  markers: { leopardComplex: "recessive", csnbRisk: "low", sensoryPerception: "good", signalTransduction: "good", immunity: "good", geneticDiversity: 0.5, lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false } },
+  markers: {
+    leopardComplex: "recessive",
+    csnbRisk: "low",
+    sensoryPerception: "good",
+    signalTransduction: "good",
+    immunity: "good",
+    geneticDiversity: 0.5,
+    lethalCarriers: { csnb: false, hypp: false, olws: false, ffs1: false },
+  },
   heart: [[0, 0]],
   fiberType: [0, 0],
   stride: [0, 0],
@@ -33,8 +42,22 @@ const minimalGenotype: Genotype = {
   recovery: [0, 0],
   fertility: [0, 0],
   foalingEase: [0, 0],
-  markings: { socks: [0, 0], face: [0, 0], silverDapple: [0, 0], sabino: [0, 0], splashWhite: [0, 0] },
-  health: { bleeder: [0, 0], roarer: [0, 0], ocd: [0, 0], efna5: [0, 0], pssm: [0, 0], rer: [0, 0], epm: [0, 0] },
+  markings: {
+    socks: [0, 0],
+    face: [0, 0],
+    silverDapple: [0, 0],
+    sabino: [0, 0],
+    splashWhite: [0, 0],
+  },
+  health: {
+    bleeder: [0, 0],
+    roarer: [0, 0],
+    ocd: [0, 0],
+    efna5: [0, 0],
+    pssm: [0, 0],
+    rer: [0, 0],
+    epm: [0, 0],
+  },
 };
 
 function createHorse(
@@ -44,61 +67,33 @@ function createHorse(
   accel: number = 50,
   overrides: Partial<Horse> = {},
 ): Horse {
-  return {
+  return createTestHorse({
     id,
     name: `${style}_Horse_${id}`,
     age: 3,
     gender: "colt",
-    hemisphere: "Northern",
-    sireName: "TestSire",
-    damName: "TestDam",
-    pedigree: { name: overrides.name ?? "Test", generation: 0, sireName: "TestSire", damName: "TestDam" },
-    birthDay: 100,
-    genotype: minimalGenotype,
-    fitness: 100,
-    fatigue: 0,
-    peakingIndex: 50,
-    recoveryPoints: 100,
-    silk: "#ff0000",
-    stats: { speed, stamina: 80, acceleration: accel, consistency: 100, temperament: 50, conformation: 50 },
-    energy: 100,
-    form: 0,
-    potential: 100,
-    raceHistory: [],
-    owned: true,
     runningStyle: style,
-    distanceAptitude: 1600,
-    surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
-    mudAptitude: 1.0,
-    peakAge: 5,
-    strideType: "average",
-    trackPreference: "balanced",
-    bleederRisk: 0,
-    roarerRisk: 0,
-    ocdRisk: 0,
-    recoveryRate: 1.0,
-    trainability: 50,
-    heartScore: 50,
-    bloodline: "NorthernDancer",
-    fiberBias: "balanced",
-    healthStatus: "healthy" as HealthStatus,
-    healthStatusDay: 0,
-    isBlueHen: false,
-    gelded: false,
-    foalingEase: 50,
-    heterozygosity: 0.5,
-    lifecycleStatus: "active",
-    courseVisits: {},
-    lifetimeEarnings: 0,
-    careerStarts: 0,
-    careerWins: 0,
-    fame: 0,
+    stats: {
+      speed,
+      stamina: 80,
+      acceleration: accel,
+      consistency: 100,
+      temperament: 50,
+      conformation: 50,
+    },
+    corneringAptitude: 1.0,
+    climbingAptitude: 1.0,
     ...overrides,
-  };
+  });
 }
 
 function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
-  const silk: JockeySilk = { pattern: "solid", primary: "#ff0000", secondary: "#000000", cap: "solid" };
+  const silk: JockeySilk = {
+    pattern: "solid",
+    primary: "#ff0000",
+    secondary: "#000000",
+    cap: "solid",
+  };
   return {
     id: overrides.id ?? "j1",
     name: overrides.name ?? "Test J",

@@ -7,25 +7,31 @@ import {
   calculateBeyerForResult,
 } from "@/game/beyer";
 import type { Horse } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
+  return createTestHorse({
     id: "h1",
     name: "Test",
     age: 4,
-    gender: "horse",
-    hemisphere: "Northern",
-    silk: "#aabbcc",
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+    gender: "colt",
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      consistency: 70,
+      temperament: 50,
+      conformation: 50,
+    },
     energy: 100,
     form: 0,
     potential: 80,
     raceHistory: [],
-    owned: true,
+    owned: false,
     fame: 0,
     lifecycleStatus: "active" as const,
     ...overrides,
-  };
+  });
 }
 
 describe("beyerFigure", () => {
@@ -91,8 +97,26 @@ describe("expectedBeyer", () => {
   });
 
   it("higher speed → higher expected Beyer (other factors equal)", () => {
-    const fastH = mkHorse({ stats: { speed: 90, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 } });
-    const slowH = mkHorse({ stats: { speed: 40, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 } });
+    const fastH = mkHorse({
+      stats: {
+        speed: 90,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const slowH = mkHorse({
+      stats: {
+        speed: 40,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
     expect(expectedBeyer(fastH, 1600)).toBeGreaterThan(expectedBeyer(slowH, 1600));
   });
 

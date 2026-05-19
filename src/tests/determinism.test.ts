@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { runNpcCycle } from "@/core/npc/npcCycle";
 import { createRng } from "@/game/rng";
+import { createTestStable, createTestHorse } from "@/tests/helpers";
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 
 describe("Simulation Determinism", () => {
@@ -9,18 +10,17 @@ describe("Simulation Determinism", () => {
     const currentDay = 100;
 
     const mockStables: Stable[] = [
-      {
+      createTestStable({
         id: "stable-1",
         name: "Rival Stable",
-        region: "Kentucky",
         reputation: 600,
         cash: 100000,
         personality: "aggressive",
-      } as Stable,
+      }),
     ];
 
     const mockHorses: Horse[] = [
-      { id: "horse-1", name: "Star Runner", fame: 50, stableId: "stable-1" } as Horse,
+      createTestHorse({ id: "horse-1", name: "Star Runner", fame: 50, stableId: "stable-1" }),
     ];
 
     const mockRaces: Race[] = [
@@ -38,14 +38,7 @@ describe("Simulation Determinism", () => {
 
     const runSim = () => {
       const rng = createRng(seed);
-      return runNpcCycle(
-        mockStables,
-        [...mockHorses],
-        [],
-        [...mockRaces],
-        currentDay,
-        rng,
-      );
+      return runNpcCycle(mockStables, [...mockHorses], [], [...mockRaces], currentDay, rng);
     };
 
     const result1 = runSim();
@@ -55,7 +48,9 @@ describe("Simulation Determinism", () => {
     expect(result1.reputationEvents).toHaveLength(result2.reputationEvents!.length);
     if (result1.reputationEvents && result1.reputationEvents.length > 0) {
       expect(result1.reputationEvents[0].id).toBe(result2.reputationEvents![0].id);
-      expect(result1.reputationEvents[0].description).toBe(result2.reputationEvents![0].description);
+      expect(result1.reputationEvents[0].description).toBe(
+        result2.reputationEvents![0].description,
+      );
     }
 
     // Check news items

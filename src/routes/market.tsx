@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
+import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,8 +33,8 @@ export const Route = createFileRoute("/market")({
 
 function MarketPage() {
   const [activeTab, setActiveTab] = useState<"bloodstock" | "syndicate">("bloodstock");
-  const market = (useGame as any)((s) => s.market, shallow);
-  const cash = useGame((s) => s.cash);
+  const market = (useGame as any)((s: GameState) => s.market, shallow);
+  const cash = useGame((s: GameState) => s.cash);
   const buyHorse = useGame((s) => s.buyHorse);
 
   return (
@@ -97,7 +98,7 @@ function MarketPage() {
           value="bloodstock"
           className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-8 focus-visible:outline-none"
         >
-          <Link to="/npc-stables" className="block group">
+          <Link to="/npc-stables" search={{ q: "", tier: "all" }} className="block group">
             <Card className="bg-slate-900/40 border-white/5 rounded-none hover:border-success/40 transition-all duration-300 relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-1 h-full bg-success/20 group-hover:bg-success transition-colors" />
               <CardContent className="p-6 flex items-center justify-between">
@@ -120,7 +121,7 @@ function MarketPage() {
           </Link>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {market.map((h) => {
+            {market.map((h: Horse) => {
               const price = horsePrice(h);
               const ovr = overall(h);
               const canAfford = cash >= price;

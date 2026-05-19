@@ -35,8 +35,8 @@ export const createBreedingProgramSlice: GameStateCreator<BreedingProgramSlice> 
     if (state.activeBreedingProgram) {
       return { ok: false, reason: "A breeding program is already active. Cancel it first." };
     }
-    const stableId = state.stable?.id ?? "player";
-    const day = state.currentDay ?? 0;
+    const stableId = "player";
+    const day = state.day;
     const program = buildBreedingProgram(stableId, archetypeId, day);
     set((s: any) => ({
       activeBreedingProgram: program,

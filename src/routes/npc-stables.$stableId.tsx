@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import type { GameState } from "@/game/types";
 import {
   ArrowLeft,
   Eye,
@@ -65,7 +66,7 @@ function NpcStableDetailPage() {
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
   const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)(
-    (s) => s.privateSaleOffers ?? [],
+    (s: GameState) => s.privateSaleOffers ?? [],
     shallow,
   );
   const npcAIManager = useGame((s) => (s as any).npcAIManager);
@@ -655,7 +656,15 @@ function NpcStableDetailPage() {
                 </button>
                 <Link
                   to="/races"
-                  search={{ stableId }}
+                  search={{
+                    grade: "all",
+                    country: "all",
+                    surface: "all",
+                    track: "all",
+                    owned: "all",
+                    q: "",
+                    stableId,
+                  }}
                   className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group"
                 >
                   <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cream/40 group-hover:text-gold">

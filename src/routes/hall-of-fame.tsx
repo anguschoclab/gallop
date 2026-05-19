@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
+import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Medal, DollarSign, Calendar } from "lucide-react";
@@ -12,13 +13,13 @@ export const Route = createFileRoute("/hall-of-fame")({
 });
 
 function HallOfFame() {
-  const hallOfFame = (useGame as any)((s) => s.hallOfFame || [], shallow);
-  const horses = useGame((s) => s.horses);
+  const hallOfFame = (useGame as any)((s: GameState) => s.hallOfFame || [], shallow);
+  const horses = useGame((s: GameState) => s.horses);
 
   // ⚡ Bolt: Cache horses in an O(1) map to replace the previous O(N^2) `.find` inside the loop below.
   // Impact: Prevents N * M iterations where N is hallOfFame length and M is horses length.
   const horsesMap = useMemo(() => {
-    return new Map(horses.map((h) => [h.id, h]));
+    return new Map(horses.map((h: Horse) => [h.id, h]));
   }, [horses]);
 
   return (
@@ -44,8 +45,8 @@ function HallOfFame() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {hallOfFame
-            .sort((a, b) => b.inductedOnDay - a.inductedOnDay)
-            .map((inductee) => {
+            .sort((a: any, b: any) => b.inductedOnDay - a.inductedOnDay)
+            .map((inductee: any) => {
               const horse = horsesMap.get(inductee.horseId);
               return (
                 <Card key={inductee.horseId} className="border-gold-muted bg-gold/5">

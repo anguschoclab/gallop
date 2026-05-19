@@ -10,7 +10,7 @@ interface FounderLegacyProps {
 }
 
 export function FounderLegacy({ horseId }: FounderLegacyProps) {
-  const founders = (useGame as any)((s) => s.founders || {}, shallow);
+  const founders = (useGame as any)((s: any) => s.founders || {}, shallow);
   const founder = founders[horseId];
 
   if (!founder) return null;

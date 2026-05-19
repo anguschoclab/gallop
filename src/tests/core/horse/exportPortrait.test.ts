@@ -31,7 +31,6 @@ vi.mock("react", () => ({
   createElement: vi.fn(() => ({ toString: () => "mock-element" })),
 }));
 
-
 // Mock ProceduralHorsePortrait component
 vi.mock("@/components/ProceduralHorsePortrait", () => ({
   ProceduralHorsePortrait: () => null,
@@ -56,7 +55,6 @@ const mockAnchor: any = {
   click: vi.fn(),
   remove: vi.fn(),
 };
-
 
 let mockObjectUrls: string[] = [];
 let mockImageOnload: (() => void) | null = null;
@@ -84,9 +82,7 @@ class MockImage {
       }, 0);
     }
   }
-
 }
-
 
 describe("exportPortrait", () => {
   beforeEach(() => {
@@ -129,7 +125,6 @@ describe("exportPortrait", () => {
       mockObjectUrls = mockObjectUrls.filter((u) => u !== url);
     }) as any;
 
-
     // Set up default mock implementations
     mockCanvas.getContext.mockReturnValue({
       drawImage: vi.fn(),
@@ -166,7 +161,10 @@ describe("exportPortrait", () => {
 
   describe("filename generation", () => {
     it("uses default pattern when no filename provided", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -185,7 +183,10 @@ describe("exportPortrait", () => {
     });
 
     it("sanitizes horse name", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder's Lightning",
         coatColor: "bay",
@@ -203,7 +204,10 @@ describe("exportPortrait", () => {
     });
 
     it("uses custom filename when provided", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -221,7 +225,10 @@ describe("exportPortrait", () => {
     });
 
     it("handles missing horse name", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "",
         coatColor: "bay",
@@ -239,7 +246,10 @@ describe("exportPortrait", () => {
     });
 
     it("includes view type in filename", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -259,7 +269,10 @@ describe("exportPortrait", () => {
 
   describe("aspect ratio calculation", () => {
     it("calculates full view dimensions correctly", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -280,7 +293,10 @@ describe("exportPortrait", () => {
     });
 
     it("calculates head view dimensions correctly", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -300,7 +316,10 @@ describe("exportPortrait", () => {
     });
 
     it("applies custom size correctly", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -321,7 +340,10 @@ describe("exportPortrait", () => {
 
   describe("SVG rendering", () => {
     it("renders ProceduralHorsePortrait with correct props", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -332,7 +354,6 @@ describe("exportPortrait", () => {
 
       mockImageOnload = () => {};
       mockImageSrc = "blob:0";
-
 
       await exportHorsePortraitPng(mockHorse);
 
@@ -344,18 +365,20 @@ describe("exportPortrait", () => {
           markings: { socks: "none", face: "none" },
           gender: "colt",
           view: "full",
-
         }),
       );
       expect(renderToStaticMarkup).toHaveBeenCalled();
     });
 
     it("uses resolved appearance DNA", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
-        markings: { socks: ["none", "none", "none", "none"], face: "none", dapples: [], flecks: [] },
+        markings: { socks: ["none", "none", "none", "none"] as any, face: "none" },
         gender: "colt",
         appearance: makeAppearanceDNA(),
       };
@@ -363,20 +386,21 @@ describe("exportPortrait", () => {
       mockImageOnload = () => {};
       mockImageSrc = "blob:0";
 
-
       await exportHorsePortraitPng(mockHorse);
 
-        expect(getOrDeriveAppearance).toHaveBeenCalledWith(
+      expect(getOrDeriveAppearance).toHaveBeenCalledWith(
         "test-horse-1",
         "bay",
         { socks: ["none", "none", "none", "none"], face: "none", dapples: [], flecks: [] },
         makeAppearanceDNA(),
       );
-
     });
 
     it("generates valid SVG markup", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -388,17 +412,18 @@ describe("exportPortrait", () => {
       mockImageOnload = () => {};
       mockImageSrc = "blob:0";
 
-
       await exportHorsePortraitPng(mockHorse);
 
       expect(renderToStaticMarkup).toHaveBeenCalled();
-
     });
   });
 
   describe("canvas context error handling", () => {
     it("throws error when canvas context unavailable", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -415,7 +440,10 @@ describe("exportPortrait", () => {
     });
 
     it("revokes object URL even on error", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -441,7 +469,10 @@ describe("exportPortrait", () => {
 
   describe("download trigger", () => {
     it("creates anchor with correct href", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -459,7 +490,10 @@ describe("exportPortrait", () => {
     });
 
     it("creates anchor with correct download attribute", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -477,7 +511,10 @@ describe("exportPortrait", () => {
     });
 
     it("appends anchor to body before click", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -495,7 +532,10 @@ describe("exportPortrait", () => {
     });
 
     it("removes anchor after click", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -513,7 +553,10 @@ describe("exportPortrait", () => {
     });
 
     it("triggers click on anchor", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -533,7 +576,10 @@ describe("exportPortrait", () => {
 
   describe("object URL cleanup", () => {
     it("revokes object URL after successful export", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -552,7 +598,10 @@ describe("exportPortrait", () => {
     });
 
     it("revokes object URL on error", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -578,7 +627,10 @@ describe("exportPortrait", () => {
 
   describe("error paths", () => {
     it("handles image load failure", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -596,7 +648,10 @@ describe("exportPortrait", () => {
     });
 
     it("handles toDataURL failure", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -617,7 +672,10 @@ describe("exportPortrait", () => {
 
   describe("integration tests (happy path)", () => {
     it("completes full export flow with head view", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -646,7 +704,10 @@ describe("exportPortrait", () => {
     });
 
     it("completes full export flow with full view", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",
@@ -665,7 +726,10 @@ describe("exportPortrait", () => {
     });
 
     it("completes full export flow with custom options", async () => {
-      const mockHorse: Pick<Horse, "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"> = {
+      const mockHorse: Pick<
+        Horse,
+        "id" | "name" | "coatColor" | "markings" | "gender" | "appearance"
+      > = {
         id: "test-horse-1",
         name: "Thunder",
         coatColor: "bay",

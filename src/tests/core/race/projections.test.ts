@@ -1,23 +1,20 @@
 import { describe, it, expect } from "vitest";
 import { calculateBeyerProjections, formatProjectionMessage } from "@/core/race/projections";
 import type { Horse, Race } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(id: string, speed = 70, stamina = 70, acceleration = 70, consistency = 70): Horse {
-  return {
+  return createTestHorse({
     id,
     name: `Horse ${id}`,
     age: 4,
-    gender: "horse",
-    hemisphere: "Northern",
-    silk: "#aabbcc",
     stats: { speed, stamina, acceleration, consistency, temperament: 50, conformation: 50 },
     energy: 100,
     form: 0,
     potential: 80,
-    raceHistory: [],
     owned: false,
     fame: 0,
-  };
+  });
 }
 
 function mkRace(overrides: Partial<Race> = {}): Race {

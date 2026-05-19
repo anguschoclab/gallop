@@ -8,7 +8,7 @@ export {
   createTestHorse,
   createTestColt,
   createTestFilly,
-  createTestAdultHorse,
+  createTestStallion,
   createTestMare,
   createTestGelding,
   createTestHorses,

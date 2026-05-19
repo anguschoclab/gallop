@@ -4,38 +4,23 @@
 
 import { describe, it, expect } from "vitest";
 import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
-import { createRng } from "@/game/rng";
+import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 
 describe("beyerRecalibrationPhase", () => {
   it("should call maybeRecalibratePars and update state", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 30,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
       lastCalibrationDay: 0,
       calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 29,
       newDay: 30,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = beyerRecalibrationPhase.execute(context);
     // Phase wraps maybeRecalibratePars from store
@@ -46,32 +31,16 @@ describe("beyerRecalibrationPhase", () => {
   });
 
   it("should preserve existing logs", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 30,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 29,
       newDay: 30,
       state,
       logs: [{ day: 29, text: "Existing log" }],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = beyerRecalibrationPhase.execute(context);
     expect(result.logs).toContainEqual({ day: 29, text: "Existing log" });
@@ -86,31 +55,15 @@ describe("beyerRecalibrationPhase", () => {
   });
 
   it("should handle undefined lastCalibrationDay", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 30,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 29,
       newDay: 30,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = beyerRecalibrationPhase.execute(context);
     expect(result.state.lastCalibrationDay).toBeDefined();

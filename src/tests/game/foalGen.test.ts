@@ -10,10 +10,15 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     id: overrides.id ?? "x",
     name: overrides.name ?? "Test",
     age: 5,
-    gender: "horse",
-    hemisphere: "Northern",
-    silk: "#abcdef",
-    stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+    gender: "colt",
+    stats: {
+      speed: 80,
+      stamina: 80,
+      acceleration: 80,
+      consistency: 80,
+      temperament: 50,
+      conformation: 50,
+    },
     energy: 100,
     form: 0,
     potential: 90,
@@ -38,6 +43,8 @@ function mkPregnancy(id: string): Pregnancy {
     dueDay: 31,
     resolved: false,
     reBreedingAttempts: 0,
+    isPlayerOwned: false,
+    refunded: false,
   };
 }
 
@@ -45,14 +52,28 @@ const sire = mkHorse({
   id: "sire",
   name: "Sire",
   gender: "horse",
-  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95, temperament: 50, conformation: 50 },
+  stats: {
+    speed: 95,
+    stamina: 95,
+    acceleration: 95,
+    consistency: 95,
+    temperament: 50,
+    conformation: 50,
+  },
   potential: 100,
 });
 const dam = mkHorse({
   id: "dam",
   name: "Dam",
   gender: "mare",
-  stats: { speed: 95, stamina: 95, acceleration: 95, consistency: 95, temperament: 50, conformation: 50 },
+  stats: {
+    speed: 95,
+    stamina: 95,
+    acceleration: 95,
+    consistency: 95,
+    temperament: 50,
+    conformation: 50,
+  },
   potential: 100,
 });
 

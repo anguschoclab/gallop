@@ -8,30 +8,26 @@
 import { describe, it, expect } from "vitest";
 import { generateAuctioneerLine } from "@/services/auctioneerService";
 import { createRng } from "@/game/rng";
+import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { Horse, Stable } from "@/game/types";
 import type { AuctionTickEvent } from "@/game/auctionRunner";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
-  return {
+  return createTestHorse({
     id: "h1",
     name: "Test Horse",
     age: 1,
     gender: "colt",
-    hemisphere: "Northern",
-    silk: "#000",
     sireName: "Bold Ruler",
     damName: "Somethingroyal",
     fame: 25,
-    coatColor: "bay",
-    conformation: "good",
-    temperament: "good",
     runningStyle: "EP",
-    ...(overrides as Partial<Horse>),
-  } as Horse;
+    ...overrides,
+  });
 }
 
 function mkStable(name: string): Stable {
-  return {
+  return createTestStable({
     id: "s1",
     name,
     owner: "Owner",
@@ -39,11 +35,9 @@ function mkStable(name: string): Stable {
     reputation: 50,
     founded: 0,
     cash: 100000,
-    horses: [],
     isMajor: true,
-    colors: { primary: "#f00", secondary: "#00f" },
     personality: "developer",
-  };
+  });
 }
 
 describe("auctioneerService", () => {

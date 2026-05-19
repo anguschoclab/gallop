@@ -8,22 +8,28 @@ import {
   determineRegionalWinners,
   determineAllRegionalWinners,
 } from "@/game/awards/scoring";
-import type { Horse, Race } from "../types";
+import type { Horse, Race } from "@/game/types";
 import type { AwardRegion, RegionalAwardCategory } from "@/game/awards/types";
+import { createTestHorse } from "@/tests/helpers";
 
 describe("calculateAwardPoints", () => {
   it("should return 0 for races outside the award year", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 100,
       form: 0,
-      silk: "blue",
       owned: true,
       fame: 50,
       raceHistory: [
@@ -40,7 +46,7 @@ describe("calculateAwardPoints", () => {
           fieldSize: 8,
         },
       ],
-    };
+    });
 
     const races: Race[] = [
       {
@@ -70,17 +76,22 @@ describe("calculateAwardPoints", () => {
   });
 
   it("should return 0 for races outside the region", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 100,
       form: 0,
-      silk: "blue",
       owned: true,
       fame: 50,
       raceHistory: [
@@ -97,7 +108,7 @@ describe("calculateAwardPoints", () => {
           fieldSize: 8,
         },
       ],
-    };
+    });
 
     const races: Race[] = [
       {
@@ -127,17 +138,22 @@ describe("calculateAwardPoints", () => {
   });
 
   it("should return 0 for races outside the region", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 100,
       form: 0,
-      silk: "blue",
       owned: true,
       fame: 50,
       raceHistory: [
@@ -154,7 +170,7 @@ describe("calculateAwardPoints", () => {
           fieldSize: 8,
         },
       ],
-    };
+    });
 
     const races: Race[] = [
       {
@@ -184,13 +200,20 @@ describe("calculateAwardPoints", () => {
   });
 
   it("should filter by category eligibility", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
       hemisphere: "Northern",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 100,
       form: 0,
@@ -211,7 +234,7 @@ describe("calculateAwardPoints", () => {
           fieldSize: 8,
         },
       ],
-    };
+    });
 
     const races: Race[] = [
       {
@@ -242,21 +265,26 @@ describe("calculateAwardPoints", () => {
   });
 
   it("should handle empty race history", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 100,
       form: 0,
-      silk: "blue",
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const points = calculateAwardPoints(horse, [], 1, "north_america", "horse_of_the_year");
     expect(points).toBe(0);
@@ -265,21 +293,26 @@ describe("calculateAwardPoints", () => {
 
 describe("determineRegionalWinners", () => {
   it("should skip merit and international categories", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 100,
       form: 0,
-      silk: "blue",
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const winners = determineRegionalWinners([horse], [], 1, "north_america");
     expect(winners.every((w) => w.category !== "award_of_merit")).toBe(true);
@@ -288,21 +321,26 @@ describe("determineRegionalWinners", () => {
   });
 
   it("should return empty array when no horses have points", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 100,
       form: 0,
-      silk: "blue",
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const winners = determineRegionalWinners([horse], [], 1, "north_america");
     expect(winners).toEqual([]);
@@ -311,42 +349,52 @@ describe("determineRegionalWinners", () => {
 
 describe("determineAllRegionalWinners", () => {
   it("should determine winners for all regions", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 100,
       form: 0,
-      silk: "blue",
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const winners = determineAllRegionalWinners([horse], [], 1);
     expect(winners.length).toBeGreaterThanOrEqual(0);
   });
 
   it("should aggregate winners from all regions", () => {
-    const horse: Horse = {
+    const horse = createTestHorse({
       id: "horse-1",
       name: "Test Horse",
       age: 3,
       gender: "colt",
-      hemisphere: "Northern",
-      stats: { speed: 80, stamina: 80, acceleration: 80, consistency: 80 },
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 100,
       form: 0,
-      silk: "blue",
       owned: true,
       fame: 50,
       raceHistory: [],
-    };
+    });
 
     const winners = determineAllRegionalWinners([horse], [], 1);
     const regions = new Set(winners.map((w) => w.region));

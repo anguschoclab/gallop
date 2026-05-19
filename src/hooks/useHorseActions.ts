@@ -11,11 +11,11 @@ import { useMemo } from "react";
  * @returns An object containing the horse data, consignment status, retirement eligibility, and relevant sale data.
  */
 export function useHorseActions(horseId: string) {
-  const horses = (useGame as any)((s) => s.horses, shallow);
-  const auctions = useGameWithShallow((s) => s.auctions ?? []);
-  const day = useGame((s) => s.day);
+  const horses = (useGame as any)((s: any) => s.horses, shallow);
+  const auctions = useGameWithShallow((s: any) => s.auctions ?? []);
+  const day = useGame((s: any) => s.day);
 
-  const horse = useMemo(() => horses.find((h) => h.id === horseId), [horses, horseId]);
+  const horse = useMemo(() => horses.find((h: any) => h.id === horseId), [horses, horseId]);
 
   if (!horse) {
     return {

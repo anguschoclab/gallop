@@ -190,9 +190,8 @@ describe("saveManager", () => {
     it("loads from localStorage and reloads page", async () => {
       vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
       localStorage.setItem("gallop_save_slot1", JSON.stringify(mockGameState));
-            const reloadSpy = vi.fn();
+      const reloadSpy = vi.fn();
       vi.stubGlobal("location", { reload: reloadSpy });
-
 
       await saveManager.loadFromSlot("slot1");
 
@@ -206,9 +205,8 @@ describe("saveManager", () => {
       vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
       vi.spyOn(opfsService, "readFile").mockResolvedValue(mockGameState);
       const writeFileSpy = vi.spyOn(opfsService, "writeFile").mockResolvedValue();
-            const reloadSpy = vi.fn();
+      const reloadSpy = vi.fn();
       vi.stubGlobal("location", { reload: reloadSpy });
-
 
       await saveManager.loadFromSlot("slot1");
 
@@ -261,7 +259,7 @@ describe("saveManager", () => {
     it("deletes from OPFS when available", async () => {
       vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(true);
       vi.spyOn(opfsService, "readFile").mockResolvedValue([mockMetadata]);
-      const deleteFileSpy = vi.spyOn(opfsService, "deleteFile").mockResolvedValue(true);
+      const deleteFileSpy = vi.spyOn(opfsService, "deleteFile").mockResolvedValue();
       const writeFileSpy = vi.spyOn(opfsService, "writeFile").mockResolvedValue();
 
       await saveManager.deleteSaveSlot("slot1");

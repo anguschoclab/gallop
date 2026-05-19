@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useJockeys } from "@/game/hooks/useSystemsState";
 import { shallow } from "zustand/shallow";
+import type { GameState, Horse } from "@/game/types";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -62,10 +63,13 @@ export const Route = createFileRoute("/race/$raceId")({
 function LiveRace() {
   const { raceId } = Route.useParams();
   const navigate = useNavigate();
-  const race = (useGame as any)((s) => s.races.find((r) => r.id === raceId), shallow);
-  const horses = (useGame as any)((s) => s.horses, shallow);
-  const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
-  const stables = (useGame as any)((s) => s.npcStables, shallow);
+  const race = (useGame as any)(
+    (s: GameState) => s.races.find((r: any) => r.id === raceId),
+    shallow,
+  );
+  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
+  const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
+  const stables = (useGame as any)((s: GameState) => s.npcStables, shallow);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
 
   const [runners] = useState<Runner[]>(() => {
@@ -97,7 +101,7 @@ function LiveRace() {
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
   const [minBeyer, setMinBeyer] = useState(0);
 
-  const ownedRunnersTotal = runners.filter((r) => r.owned);
+  const ownedRunnersTotal = runners.filter((r: any) => r.owned);
   const defaultFollowTarget = ownedRunnersTotal.length > 0 ? ownedRunnersTotal[0].horseId : null;
   const [followTarget, setFollowTarget] = useState<string | null>(defaultFollowTarget);
 
@@ -135,7 +139,7 @@ function LiveRace() {
   const runnerOdds = useMemo(() => {
     const oddsMap = new Map<string, string>();
     for (const runner of runners) {
-      const horse = horses.find((h) => h.id === runner.horseId);
+      const horse = horses.find((h: Horse) => h.id === runner.horseId);
       if (horse) {
         const probability = calculateWinProbability(
           horse.stats.speed,
@@ -169,7 +173,7 @@ function LiveRace() {
   // If the race is resolved and has snapshots, we can show the replay
   const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
 
-  const calibratedPars = (useGame as any)((s) => s.calibratedPars, shallow);
+  const calibratedPars = (useGame as any)((s: GameState) => s.calibratedPars, shallow);
 
   const rows = runners.map((r) => ({
     r,
@@ -310,11 +314,17 @@ function LiveRace() {
         <div>
           <Tabs defaultValue="visualizer" className="w-full">
             <TabsList className="bg-broadcast-marquee border border-white/10 p-1 mb-4">
-              <TabsTrigger value="visualizer" className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black">
+              <TabsTrigger
+                value="visualizer"
+                className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black"
+              >
                 Replay
               </TabsTrigger>
               {race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0 && (
-                <TabsTrigger value="sectionals" className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black">
+                <TabsTrigger
+                  value="sectionals"
+                  className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black"
+                >
                   Sectionals
                 </TabsTrigger>
               )}
@@ -493,7 +503,7 @@ function Track({
   distance: number;
   tick: number;
   surface?: string;
-  weather?: Weather;
+  weather?: any;
   followTarget?: string | null;
   paused?: boolean;
   subjectHorseId?: string | null;

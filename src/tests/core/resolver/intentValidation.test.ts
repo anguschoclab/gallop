@@ -13,26 +13,14 @@ import type {
   PurchaseIntent,
 } from "@/core/resolver/intents";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
 
 describe("validateIntent", () => {
-  const createTestState = (): GameState => ({
-    day: 1,
-    cash: 10000,
-    horses: [],
-    npcStables: [],
-    pregnancies: [],
-    races: [],
-    awards: [],
-    market: [],
-    auctions: [],
-    lastCalibrationDay: 0,
-    calibratedPars: {},
-    paceSamples: {},
-    pendingAwardCeremonies: [],
-    trainingUsed: {},
-    log: [],
-    scoutReports: [],
-  });
+  const createTestState = (): GameState =>
+    makeGameState({
+      day: 1,
+      cash: 10000,
+    }) as GameState;
 
   it("should validate valid training intent", () => {
     const horse = createTestHorse({ id: "horse-1", energy: 80 });

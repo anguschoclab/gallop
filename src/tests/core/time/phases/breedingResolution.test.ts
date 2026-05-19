@@ -4,37 +4,23 @@
 
 import { describe, it, expect } from "vitest";
 import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
-import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { BreedingIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 
 describe("breedingResolutionPhase", () => {
-  const createTestState = (): GameState => ({
-    day: 1,
-    cash: 10000,
-    horses: [],
-    npcStables: [],
-    pregnancies: [],
-    races: [],
-    awards: [],
-    market: [],
-    auctions: [],
-    lastCalibrationDay: 0,
-    calibratedPars: {},
-    paceSamples: {},
-    pendingAwardCeremonies: [],
-    trainingUsed: {},
-    log: [],
-    scoutReports: [],
-    pendingIntents: [],
-  });
+  const createTestState = (): GameState =>
+    makeGameState({
+      day: 1,
+      cash: 10000,
+      pendingIntents: [],
+    }) as GameState;
 
-  const createTestContext = (
-    state: GameState,
-    intents: BreedingIntent[] = [],
-  ): PipelineContext => createMockPipelineContext({ state, intents });
+  const createTestContext = (state: GameState, intents: BreedingIntent[] = []): PipelineContext =>
+    createMockPipelineContext({ state, intents });
 
   it("should process breeding intent and generate pregnancy creation impact", () => {
     const sire = createTestHorse({
@@ -47,7 +33,10 @@ describe("breedingResolutionPhase", () => {
         standingFee: 1000,
         seasonBookings: 0,
         bookSize: 40,
-        retired: false,
+        lifetimeStakesFoals: 0,
+        lifetimeG1Foals: 0,
+        lifetimeFoals: 0,
+        retiredOnDay: 0,
       },
     });
     const dam = createTestHorse({ id: "dam-1", gender: "mare", age: 5 });
@@ -56,7 +45,7 @@ describe("breedingResolutionPhase", () => {
       cash: 5000,
       horses: [sire, dam],
       npcStables: [
-        {
+        createTestStable({
           id: "npc-stable-1",
           name: "Test Stable",
           owner: "Test Owner",
@@ -64,11 +53,8 @@ describe("breedingResolutionPhase", () => {
           reputation: 50,
           founded: 1,
           cash: 10000,
-          horses: ["sire-1"],
-          isMajor: false,
-          colors: { primary: "red", secondary: "blue" },
           personality: "conservative",
-        },
+        }),
       ],
     };
 
@@ -103,7 +89,10 @@ describe("breedingResolutionPhase", () => {
         standingFee: 1000,
         seasonBookings: 0,
         bookSize: 40,
-        retired: false,
+        lifetimeStakesFoals: 0,
+        lifetimeG1Foals: 0,
+        lifetimeFoals: 0,
+        retiredOnDay: 0,
       },
     });
     const dam = createTestHorse({ id: "dam-1", gender: "mare", age: 5 });
@@ -112,7 +101,7 @@ describe("breedingResolutionPhase", () => {
       cash: 5000,
       horses: [sire, dam],
       npcStables: [
-        {
+        createTestStable({
           id: "npc-stable-1",
           name: "Test Stable",
           owner: "Test Owner",
@@ -120,11 +109,8 @@ describe("breedingResolutionPhase", () => {
           reputation: 50,
           founded: 1,
           cash: 10000,
-          horses: ["sire-1"],
-          isMajor: false,
-          colors: { primary: "red", secondary: "blue" },
           personality: "conservative",
-        },
+        }),
       ],
     };
 

@@ -16,7 +16,7 @@ function RecordsDashboard() {
   const horseLeaderboards = useGameWithShallow((s) => s.horseLeaderboards || EMPTY_OBJECT) as any;
   const trackRecords = useGameWithShallow((s) => s.trackRecords || EMPTY_OBJECT) as any;
 
-  const trackRecordsList = Object.values(trackRecords).sort((a, b) => {
+  const trackRecordsList = Object.values(trackRecords).sort((a: any, b: any) => {
     if (a.trackName !== b.trackName) return a.trackName.localeCompare(b.trackName);
     if (a.surface !== b.surface) return a.surface.localeCompare(b.surface);
     return a.distance - b.distance;
@@ -56,7 +56,7 @@ function RecordsDashboard() {
           <LeaderboardTable
             leaderboard={horseLeaderboards.earnings}
             icon={<DollarSign className="text-gold" />}
-            valueFormatter={(val) => formatCurrency(val)}
+            valueFormatter={(val: any) => formatCurrency(val)}
           />
         </TabsContent>
 
@@ -64,7 +64,7 @@ function RecordsDashboard() {
           <LeaderboardTable
             leaderboard={horseLeaderboards.beyer}
             icon={<Zap className="text-primary" />}
-            valueFormatter={(val) => val.toString()}
+            valueFormatter={(val: any) => val.toString()}
           />
         </TabsContent>
 
@@ -177,7 +177,7 @@ function TrackRecordsTable({ records }: { records: any[] }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {records.map((record) => (
+              {records.map((record: any) => (
                 <tr
                   key={`${record.trackId}_${record.surface}_${record.distance}`}
                   className="hover:bg-primary/5 transition-colors group"

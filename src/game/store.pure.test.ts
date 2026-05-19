@@ -132,6 +132,7 @@ describe("resolvePregnancies", () => {
       liveFoalGuarantee: false,
       reBreedingAttempts: 0,
       refunded: false,
+      isPlayerOwned: true,
     };
 
     const horses = [sire, dam];
@@ -172,6 +173,7 @@ describe("resolvePregnancies", () => {
       liveFoalGuarantee: false,
       reBreedingAttempts: 0,
       refunded: false,
+      isPlayerOwned: true,
     };
 
     const horses = [sire, dam];
@@ -204,6 +206,7 @@ describe("resolvePregnancies", () => {
       liveFoalGuarantee: false,
       reBreedingAttempts: 0,
       refunded: false,
+      isPlayerOwned: true,
     };
 
     const horses = [sire, dam];
@@ -235,6 +238,7 @@ describe("resolvePregnancies", () => {
       liveFoalGuarantee: true,
       reBreedingAttempts: 0,
       refunded: false,
+      isPlayerOwned: true,
     };
 
     const horses = [sire, dam];

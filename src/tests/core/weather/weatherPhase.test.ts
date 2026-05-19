@@ -9,12 +9,7 @@
  */
 import { describe, it, expect } from "vitest";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
-import {
-  stepWeather,
-  PATTERN_SEVERITY,
-  type WeatherState,
-  getTrackClimate,
-} from "@/core/weather";
+import { stepWeather, PATTERN_SEVERITY, type WeatherState, getTrackClimate } from "@/core/weather";
 import type { Race } from "@/core/race/types";
 import { createRng } from "@/game/rng";
 
@@ -86,12 +81,10 @@ describe("weatherPhase — drama alert end-to-end", () => {
 
     const out = weatherPhase.execute(ctx);
 
-    const inboxImpacts = out.impacts.filter(
-      (i: any) => i.type === "inbox_message",
-    );
+    const inboxImpacts = out.impacts.filter((i: any) => i.type === "inbox_message");
     expect(inboxImpacts.length).toBe(1);
 
-    const msg = inboxImpacts[0].message;
+    const msg = (inboxImpacts[0] as any).message;
     expect(msg.category).toBe("system");
     expect(msg.priority).toBe("action");
     expect(msg.title).toMatch(/Weather Alert/);
@@ -109,7 +102,7 @@ describe("weatherPhase — drama alert end-to-end", () => {
     expect(race).toBeDefined();
     // Drama jump → wet weather → fast track should degrade off "fast"
     const tiers = ["fast", "good", "soft", "heavy", "yielding"];
-    expect(tiers.indexOf(race!.trackCondition)).toBeGreaterThan(0);
+    expect(tiers.indexOf(race!.trackCondition!)).toBeGreaterThan(0);
   });
 
   it("populates the weather buffer and a 7-day forecast on state", () => {

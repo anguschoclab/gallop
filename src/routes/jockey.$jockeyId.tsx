@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
+import type { GameState } from "@/game/types";
 import { JockeyCard } from "@/components/JockeyCard";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -19,11 +20,11 @@ export const Route = createFileRoute("/jockey/$jockeyId")({
 
 function JockeyPage() {
   const { jockeyId } = Route.useParams();
-  const jockeys = (useGame as any)((s) => s.jockeys, shallow);
+  const jockeys = (useGame as any)((s: GameState) => s.jockeys, shallow);
   const hireJockey = useGame((s) => s.hireJockey);
   const releaseJockey = useGame((s) => s.releaseJockey);
 
-  const jockey = jockeys?.find((j) => j.id === jockeyId);
+  const jockey = jockeys?.find((j: any) => j.id === jockeyId);
 
   if (!jockey) {
     throw notFound();

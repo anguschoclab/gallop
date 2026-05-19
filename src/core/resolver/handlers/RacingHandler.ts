@@ -87,7 +87,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { raceId, horseId, jockeyId } = impactAny;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     if (race) {
-      const entry = race.entries.find((e) => e.horseId === horseId);
+      const entry = race.entries.find((e: any) => e.horseId === horseId);
       if (entry) {
         entry.jockeyId = jockeyId;
       }
@@ -167,7 +167,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { raceId, horseId, tactics } = impactAny;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     if (race) {
-      const entry = race.entries.find((e) => e.horseId === horseId);
+      const entry = race.entries.find((e: any) => e.horseId === horseId);
       if (entry) {
         entry.tactics = tactics;
       }

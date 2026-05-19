@@ -13,9 +13,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { runNpcBreeding } from "./npcBreeding";
+import { runNpcBreeding } from "@/game/npcBreeding";
 import { createRng } from "@/game/rng";
-import type { Horse, Stable, GameState, Pregnancy, HorseGender } from "./types";
+import type { GameState, Horse, HorseGender, Pregnancy } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 
 // Helper to create minimal valid Horse objects for testing
@@ -23,7 +24,14 @@ function mockHorse(
   id: string,
   name: string,
   gender: HorseGender,
-  stats: { speed: number; stamina: number; acceleration: number; consistency: number; temperament: number; conformation: number },
+  stats: {
+    speed: number;
+    stamina: number;
+    acceleration: number;
+    consistency: number;
+    temperament: number;
+    conformation: number;
+  },
   overrides?: Partial<Horse>,
 ): Horse {
   return {
@@ -42,6 +50,7 @@ function mockHorse(
     fame: 50,
     careerStarts: 0,
     careerWins: 0,
+    lifetimeEarnings: 0,
     healthStatusDay: 1,
     isBlueHen: false,
     gelded: false,
@@ -57,6 +66,8 @@ function mockHorse(
     peakingIndex: 50,
     bloodline: "Standard",
     recoveryPoints: 100,
+    heterozygosity: 0.5,
+    runningStyle: "E",
     // DNA/genotype fields (minimal defaults)
     genotype: {
       color: { extension: [1, 1], agouti: [1, 1], gray: [1, 1], cream: [1, 1] },
@@ -93,7 +104,15 @@ function mockHorse(
         sabino: [1, 1],
         splashWhite: [1, 1],
       },
-      health: { bleeder: [1, 1], roarer: [1, 1], ocd: [1, 1], efna5: [1, 1], pssm: [1, 1], rer: [1, 1], epm: [1, 1] },
+      health: {
+        bleeder: [1, 1],
+        roarer: [1, 1],
+        ocd: [1, 1],
+        efna5: [1, 1],
+        pssm: [1, 1],
+        rer: [1, 1],
+        epm: [1, 1],
+      },
     },
     // Aptitude fields
     distanceAptitude: 1600,
@@ -117,7 +136,6 @@ function mockHorse(
     bleederRisk: 0.01,
     roarerRisk: 0.01,
     ocdRisk: 0.01,
-    bloodline: "Northern Dancer",
     healthStatus: "healthy",
     ...overrides,
   };
@@ -164,7 +182,14 @@ describe("runNpcBreeding", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-1",
         silk: "blue",
@@ -175,7 +200,14 @@ describe("runNpcBreeding", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -231,7 +263,14 @@ describe("runNpcBreeding", () => {
       "mare-1",
       "Young Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         age: 2,
         stableId: "stable-1",
@@ -243,7 +282,14 @@ describe("runNpcBreeding", () => {
       "mare-2",
       "Old Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         age: 21,
         stableId: "stable-1",
@@ -255,7 +301,14 @@ describe("runNpcBreeding", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -308,7 +361,14 @@ describe("runNpcBreeding", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-1",
         silk: "blue",
@@ -327,13 +387,21 @@ describe("runNpcBreeding", () => {
       liveFoalGuarantee: false,
       reBreedingAttempts: 0,
       refunded: false,
+      isPlayerOwned: false,
     };
 
     const stallion = mockHorse(
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -386,7 +454,14 @@ describe("runNpcBreeding", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-1",
         silk: "blue",
@@ -397,7 +472,14 @@ describe("runNpcBreeding", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -456,7 +538,14 @@ describe("runNpcBreeding", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-1",
         silk: "blue",
@@ -467,7 +556,14 @@ describe("runNpcBreeding", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -524,7 +620,14 @@ describe("runNpcBreeding", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-1",
         silk: "blue",
@@ -535,7 +638,14 @@ describe("runNpcBreeding", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",
@@ -591,7 +701,14 @@ describe("runNpcBreeding", () => {
       "mare-1",
       "Test Mare",
       "mare",
-      { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+      {
+        speed: 70,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-1",
         silk: "blue",
@@ -602,7 +719,14 @@ describe("runNpcBreeding", () => {
       "stallion-1",
       "Test Stallion",
       "colt",
-      { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 },
+      {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
       {
         stableId: "stable-2",
         silk: "red",

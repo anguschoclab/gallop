@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
+import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ const GOAL_LABELS: Record<CampaignGoalType, string> = {
   chase_g1: "Chase G1",
   chase_g2: "Chase G2",
   chase_g3: "Chase G3",
+  chase_major_race: "Chase Major Race",
   maximize_earnings: "Maximize Earnings",
   develop_maiden: "Develop Maiden",
   free_run: "Free Run",
@@ -49,10 +51,10 @@ function SlotStatusBadge({ status }: { status: string }) {
 }
 
 function SchedulerPage() {
-  const day = useGame((s) => s.day);
-  const horses = (useGame as any)((s) => s.horses, shallow);
-  const races = (useGame as any)((s) => s.races, shallow);
-  const campaigns = useGameWithShallow((s) => s.campaigns ?? []);
+  const day = useGame((s: GameState) => s.day);
+  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
+  const races = (useGame as any)((s: GameState) => s.races, shallow);
+  const campaigns = useGameWithShallow((s: GameState) => s.campaigns ?? []);
   const setCampaign = useGame((s) => s.setCampaign);
   const deleteCampaign = useGame((s) => s.deleteCampaign);
   const generateAutoCampaign = useGame((s) => s.generateAutoCampaign);
@@ -61,13 +63,13 @@ function SchedulerPage() {
   const [addingHorseId, setAddingHorseId] = useState<string | null>(null);
   const [selectedGoal, setSelectedGoal] = useState<CampaignGoalType>("chase_g1");
 
-  const ownedHorses = horses.filter((h) => h.owned);
+  const ownedHorses = horses.filter((h: Horse) => h.owned);
   const horsesWithoutCampaign = ownedHorses.filter(
-    (h) => !campaigns.some((c) => c.horseId === h.id),
+    (h: Horse) => !campaigns.some((c: any) => c.horseId === h.id),
   );
 
-  const getRace = (raceId: string) => races.find((r) => r.id === raceId);
-  const getHorse = (horseId: string) => horses.find((h) => h.id === horseId);
+  const getRace = (raceId: string) => races.find((r: any) => r.id === raceId);
+  const getHorse = (horseId: string) => horses.find((h: Horse) => h.id === horseId);
 
   const totalActiveFlags = campaigns.reduce(
     (acc, c) => acc + c.flags.filter((f) => !f.dismissed).length,
@@ -113,7 +115,7 @@ function SchedulerPage() {
                     <SelectValue placeholder="Select horse" />
                   </SelectTrigger>
                   <SelectContent>
-                    {horsesWithoutCampaign.map((h) => (
+                    {horsesWithoutCampaign.map((h: Horse) => (
                       <SelectItem key={h.id} value={h.id}>
                         {h.name}
                       </SelectItem>

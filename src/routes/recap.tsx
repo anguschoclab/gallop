@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
+import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BeyerBadge } from "@/components/BeyerBadge";
@@ -17,16 +18,16 @@ export const Route = createFileRoute("/recap")({
 });
 
 function RecapPage() {
-  const races = (useGame as any)((s) => s.races, shallow);
-  const horses = (useGame as any)((s) => s.horses, shallow);
-  const calibratedPars = (useGame as any)((s) => s.calibratedPars, shallow);
-  const day = useGame((s) => s.day);
+  const races = (useGame as any)((s: GameState) => s.races, shallow);
+  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
+  const calibratedPars = (useGame as any)((s: GameState) => s.calibratedPars, shallow);
+  const day = useGame((s: GameState) => s.day);
 
   // Get resolved graded races from the past 7 days
   const weekAgo = day - 7;
   const recentGradedRaces = races
     .filter(
-      (r) =>
+      (r: any) =>
         r.resolved &&
         r.graded &&
         r.result &&
@@ -34,9 +35,9 @@ function RecapPage() {
         r.day >= weekAgo &&
         r.day <= day,
     )
-    .sort((a, b) => {
+    .sort((a: any, b: any) => {
       // Sort by grade first (G1 > G2 > G3), then by day (most recent first)
-      const gradeOrder = { G1: 3, G2: 2, G3: 1 };
+      const gradeOrder: any = { G1: 3, G2: 2, G3: 1 };
       const gradeDiff = gradeOrder[b.graded!.grade] - gradeOrder[a.graded!.grade];
       if (gradeDiff !== 0) return gradeDiff;
       return b.day - a.day;
@@ -63,14 +64,14 @@ function RecapPage() {
         </Card>
       ) : (
         <div className="grid gap-4">
-          {recentGradedRaces.map((race) => {
+          {recentGradedRaces.map((race: any) => {
             const gradeColor = getGradeColorClass(race.graded!.grade);
 
             // Get top 3 finishers with their Beyer figures
             const topFinishers = race
               .result!.slice(0, 3)
-              .map((result) => {
-                const horse = horses.find((h) => h.id === result.horseId);
+              .map((result: any) => {
+                const horse = horses.find((h: Horse) => h.id === result.horseId);
                 if (!horse) return null;
                 const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
                 const beyer = calculateBeyerForResult(
@@ -81,7 +82,7 @@ function RecapPage() {
                 );
                 return { horse, result, beyer };
               })
-              .filter((f): f is NonNullable<typeof f> => f !== null);
+              .filter((f: any): f is NonNullable<typeof f> => f !== null);
 
             return (
               <Card key={race.id} className="border-l-4 border-l-gold border-gold-muted">
@@ -113,7 +114,7 @@ function RecapPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {topFinishers.map((finisher, index) => {
+                  {topFinishers.map((finisher: any, index: number) => {
                     const positionIcon =
                       index === 0 ? (
                         <Trophy className="h-4 w-4 text-fame" />

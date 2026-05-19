@@ -278,10 +278,9 @@ export function useAuctionTheater(saleId: string) {
 
   const handleCommit = useCallback(() => {
     if (!runnerRef.current || theaterState.committed) return;
-    const finalState = runnerRef.current.getFinalState();
-    commitAuctionResult(finalState);
+    commitAuctionResult(saleId, sale?.lots ?? [], []);
     setTheaterState((prev) => ({ ...prev, committed: true }));
-  }, [commitAuctionResult, theaterState.committed]);
+  }, [commitAuctionResult, theaterState.committed, saleId, sale?.lots]);
 
   return {
     sale,

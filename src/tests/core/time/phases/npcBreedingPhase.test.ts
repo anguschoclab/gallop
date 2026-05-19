@@ -4,38 +4,21 @@
 
 import { describe, it, expect } from "vitest";
 import { npcBreedingPhase } from "@/core/time/phases/npcBreedingPhase";
-import { createRng } from "@/game/rng";
+import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 
 describe("npcBreedingPhase", () => {
   it("should call runNpcBreeding and update state", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 1,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 0,
       newDay: 1,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = npcBreedingPhase.execute(context);
     // Phase wraps runNpcBreeding from game/npcBreeding
@@ -47,32 +30,15 @@ describe("npcBreedingPhase", () => {
   });
 
   it("should return unchanged context when no breeding occurs", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
-      logs: [],
-      dailyRng: createRng(12345),
-    };
+    }) as PipelineContext;
 
     const result = npcBreedingPhase.execute(context);
     // When no breeding occurs, should return unchanged context
@@ -88,31 +54,16 @@ describe("npcBreedingPhase", () => {
   });
 
   it("should preserve existing logs", () => {
-    const state: GameState = {
+    const state: GameState = makeGameState({
       day: 10,
-      cash: 10000,
-      horses: [],
-      npcStables: [],
-      pregnancies: [],
-      races: [],
-      awards: [],
-      market: [],
-      auctions: [],
-      lastCalibrationDay: 0,
-      calibratedPars: {},
-      paceSamples: {},
-      pendingAwardCeremonies: [],
-      trainingUsed: {},
-      log: [],
-      scoutReports: [],
-    };
+    }) as GameState;
 
-    const context: PipelineContext = {
+    const context: PipelineContext = makePipelineContext({
       previousDay: 9,
       newDay: 10,
       state,
       logs: [{ day: 9, text: "Existing log" }],
-    };
+    }) as PipelineContext;
 
     const result = npcBreedingPhase.execute(context);
     expect(result.logs).toContainEqual({ day: 9, text: "Existing log" });

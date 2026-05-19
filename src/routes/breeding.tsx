@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
+import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,11 +39,11 @@ export const Route = createFileRoute("/breeding")({
 });
 
 function BreedingPage() {
-  const horses = (useGame as any)((s) => s.horses || [], shallow);
-  const pregnancies = (useGame as any)((s) => s.pregnancies || [], shallow);
-  const log = (useGame as any)((s) => s.log || [], shallow);
-  const day = useGame((s) => s.day);
-  const cash = useGame((s) => s.cash);
+  const horses = (useGame as any)((s: GameState) => s.horses || [], shallow);
+  const pregnancies = (useGame as any)((s: GameState) => s.pregnancies || [], shallow);
+  const log = (useGame as any)((s: GameState) => s.log || [], shallow);
+  const day = useGame((s: GameState) => s.day);
+  const cash = useGame((s: GameState) => s.cash);
   const breed = useGame((s) => s.breed);
   const [sireId, setSireId] = useState<string>("");
   const [damId, setDamId] = useState<string>("");
@@ -62,8 +63,8 @@ function BreedingPage() {
     return shared.size > 0 ? shared : undefined;
   }, [sireId, damId, horses]);
 
-  const adults = horses.filter((h) => h.age >= 3);
-  const breedLogs = log.filter((l) => /Mated|Foal/.test(l.text));
+  const adults = horses.filter((h: Horse) => h.age >= 3);
+  const breedLogs = log.filter((l: any) => /Mated|Foal/.test(l.text));
 
   // Get available stallions for Northern hemisphere (default for player breeding)
   // FIX: getAvailableStallions expects (horses: Horse[], mare: Horse)
@@ -86,7 +87,7 @@ function BreedingPage() {
     setLiveFoalGuarantee(false);
   };
 
-  const activePregnancies = pregnancies.filter((p) => !p.resolved);
+  const activePregnancies = pregnancies.filter((p: any) => !p.resolved);
   const activePregnanciesCount = activePregnancies.length;
 
   // Determine breeding season status for Northern hemisphere (default)
@@ -216,8 +217,8 @@ function BreedingPage() {
                   >
                     <option value="">Select dam…</option>
                     {adults
-                      .filter((h) => isFemaleHorse(h.gender) && h.id !== sireId)
-                      .map((h) => (
+                      .filter((h: Horse) => isFemaleHorse(h.gender) && h.id !== sireId)
+                      .map((h: Horse) => (
                         <option key={h.id} value={h.id}>
                           {h.name} (age {Math.floor(h.age)})
                           {h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""}
@@ -304,9 +305,9 @@ function BreedingPage() {
             </Card>
           ) : (
             <div className="grid gap-4">
-              {activePregnancies.map((p) => {
+              {activePregnancies.map((p: any) => {
                 const daysRemaining = p.dueDay - day;
-                const dam = horses.find((h) => h.id === p.damId);
+                const dam = horses.find((h: Horse) => h.id === p.damId);
                 return (
                   <Card key={p.id} className="border-l-4 border-l-gold border-gold-muted">
                     <CardHeader className="pb-3">
@@ -359,7 +360,7 @@ function BreedingPage() {
                           )}
                           {(() => {
                             const maternityLog = log.filter(
-                              (l) =>
+                              (l: any) =>
                                 l.text.includes(p.damName) &&
                                 (l.text.includes("Mated") || l.text.includes("Foal")),
                             );
@@ -390,14 +391,14 @@ function BreedingPage() {
               <CardTitle className="font-[family-name:var(--font-display)]">Past Foals</CardTitle>
             </CardHeader>
             <CardContent>
-              {pregnancies.filter((p) => p.resolved).length === 0 ? (
+              {pregnancies.filter((p: any) => p.resolved).length === 0 ? (
                 <p className="text-sm text-cream-muted">No foals born yet.</p>
               ) : (
                 <div className="space-y-2">
                   {pregnancies
-                    .filter((p) => p.resolved)
-                    .map((p) => {
-                      const foal = horses.find((h) => h.id === p.foalId);
+                    .filter((p: any) => p.resolved)
+                    .map((p: any) => {
+                      const foal = horses.find((h: Horse) => h.id === p.foalId);
                       return (
                         <div
                           key={p.id}
@@ -441,7 +442,7 @@ function BreedingPage() {
                 <p className="text-sm text-cream-muted">No breeding events yet.</p>
               ) : (
                 <div className="space-y-1">
-                  {breedLogs.map((l, i) => (
+                  {breedLogs.map((l: any, i: number) => (
                     <div
                       key={i}
                       className="text-sm py-1 border-b border-gold-muted last:border-0 flex gap-3"

@@ -14,7 +14,6 @@ import type {
 import { createTestGenotype } from "./createTestGenotype";
 import { createTestAppearance } from "./createTestAppearance";
 
-
 /**
  * Creates valid test horse stats.
  *
@@ -82,7 +81,6 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     runningStyle: "P" as RunningStyle,
 
     // NPC system properties
-    scoutedStats: undefined,
     lastScoutedDay: undefined,
     consignedSaleId: undefined,
 
@@ -90,7 +88,12 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     blueHenStatus: undefined,
     foalsProduced: undefined,
     lastFoaledDay: undefined,
-    pedigree: { name: overrides?.name ?? "Test Horse", generation: 0, sireName: "Test Sire", damName: "Test Dam" },
+    pedigree: {
+      name: overrides?.name ?? "Test Horse",
+      generation: 0,
+      sireName: "Test Sire",
+      damName: "Test Dam",
+    },
     stud: undefined,
     bruceLoweFamily: undefined,
 
@@ -140,8 +143,6 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     heterozygosity: 0.8,
     coefficientOfInbreeding: 0.0,
     ancestralHistoryCoefficient: 0.5,
-    inbreedingTier: "outcross",
-    prepotency: 0.5,
 
     // REQUIRED racing viability
     racingViable: true,
@@ -150,7 +151,6 @@ export function createTestHorse(overrides?: Partial<Horse>): Horse {
     healthStatusDay: 1,
     gelded: false,
     isBlueHen: false,
-    foalsProduced: [],
     fitness: 50,
     fatigue: 0,
     peakingIndex: 50,

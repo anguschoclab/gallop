@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
 import type { Horse } from "@/game/types";
+import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(
   speed: number,
@@ -9,21 +10,18 @@ function mkHorse(
   consistency: number,
   potential = 80,
 ): Horse {
-  return {
+  return createTestHorse({
     id: "h",
     name: "Test",
     age: 4,
-    gender: "horse",
-    hemisphere: "Northern",
-    silk: "#aabbcc",
     stats: { speed, stamina, acceleration, consistency, temperament: 50, conformation: 50 },
     energy: 100,
     form: 0,
     potential,
     raceHistory: [],
-    owned: true,
+    owned: false,
     fame: 0,
-  };
+  });
 }
 
 describe("calculateOverallRating", () => {
