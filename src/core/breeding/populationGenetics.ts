@@ -316,10 +316,7 @@ export function detectInbreedingPattern(
  * @example
  * const ahc = computeAhc(horse.pedigree, horseMap);
  */
-export function computeAhc(
-  pedigree: Pedigree | undefined,
-  horseMap: Map<string, Horse>,
-): number {
+export function computeAhc(pedigree: Pedigree | undefined, horseMap: Map<string, Horse>): number {
   if (!pedigree) return 0;
   const sire = pedigree.sireId ? horseMap.get(pedigree.sireId) : undefined;
   const dam = pedigree.damId ? horseMap.get(pedigree.damId) : undefined;

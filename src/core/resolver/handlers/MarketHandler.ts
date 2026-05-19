@@ -38,8 +38,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   consignment: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, saleId, reservePrice, consignorStableId, breezeSeconds } = impactAny;
-    const horse =
-      lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.consignedSaleId = saleId;
     }
@@ -62,8 +61,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   consignment_withdrawal: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, saleId } = impactAny;
-    const horse =
-      lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.consignedSaleId = undefined;
     }
@@ -79,15 +77,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   auction_resolution: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
-    const {
-      saleId,
-      lotId,
-      hammerPrice,
-      soldToStableId,
-      passed,
-      bidHistory,
-      wasPlayerConsignment,
-    } = impactAny;
+    const { saleId, lotId, hammerPrice, soldToStableId, passed, bidHistory, wasPlayerConsignment } =
+      impactAny;
     const auction =
       lookupMaps?.auctionMap.get(saleId) || draft.auctions?.find((a) => a.id === saleId);
     if (auction) {
@@ -99,8 +90,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         if (bidHistory) lot.bidHistory = bidHistory;
         if (wasPlayerConsignment) {
           const horse =
-            lookupMaps?.horseMap.get(lot.horseId) ||
-            draft.horses.find((h) => h.id === lot.horseId);
+            lookupMaps?.horseMap.get(lot.horseId) || draft.horses.find((h) => h.id === lot.horseId);
           if (horse) horse.consignedSaleId = undefined;
         }
       }

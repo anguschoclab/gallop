@@ -210,7 +210,10 @@ export function recalcStandingFee(horse: Horse, currentDay: number): number {
   if (horse.age > AGE_STUD_SEVERE_DECLINE) multiplier -= 0.15;
 
   // Round to nearest $100
-  return Math.max(STUD_FEE_MIN, Math.round((currentFee * multiplier) / STUD_FEE_ROUNDING) * STUD_FEE_ROUNDING);
+  return Math.max(
+    STUD_FEE_MIN,
+    Math.round((currentFee * multiplier) / STUD_FEE_ROUNDING) * STUD_FEE_ROUNDING,
+  );
 }
 
 /**

@@ -74,19 +74,71 @@ import {
  * and northAmerica.ts. Replaces the identical classConfig in horseGen.ts and
  * NA_CLASS_CONFIG in northAmerica.ts.
  */
-export const CLASS_CONFIG: Record<RaceClass, { entry: number; purse: number; minStat?: number; dist: [number, number] }> = {
+export const CLASS_CONFIG: Record<
+  RaceClass,
+  { entry: number; purse: number; minStat?: number; dist: [number, number] }
+> = {
   Maiden: { entry: ENTRY_MAIDEN, purse: PURSE_MAIDEN, dist: [1000, 1400] },
-  MaidenSpecialWeight: { entry: ENTRY_MAIDEN_SPECIAL_WEIGHT, purse: PURSE_MAIDEN_SPECIAL_WEIGHT, minStat: MINSTAT_MAIDEN_SPECIAL_WEIGHT, dist: [1000, 1600] },
-  MaidenClaiming: { entry: ENTRY_MAIDEN_CLAIMING, purse: PURSE_MAIDEN_CLAIMING, dist: [1000, 1400] },
-  MaidenOptionalClaiming: { entry: ENTRY_MAIDEN_OPTIONAL_CLAIMING, purse: PURSE_MAIDEN_OPTIONAL_CLAIMING, minStat: MINSTAT_MAIDEN_OPTIONAL_CLAIMING, dist: [1000, 1400] },
-  MaidenStakes: { entry: ENTRY_MAIDEN_STAKES, purse: PURSE_MAIDEN_STAKES, minStat: MINSTAT_MAIDEN_STAKES, dist: [1200, 1800] },
-  Allowance: { entry: ENTRY_ALLOWANCE, purse: PURSE_ALLOWANCE, minStat: MINSTAT_ALLOWANCE, dist: [1200, 1800] },
-  OptionalClaiming: { entry: ENTRY_OPTIONAL_CLAIMING, purse: PURSE_OPTIONAL_CLAIMING, minStat: MINSTAT_OPTIONAL_CLAIMING, dist: [1200, 1800] },
-  StarterAllowance: { entry: ENTRY_STARTER_ALLOWANCE, purse: PURSE_STARTER_ALLOWANCE, minStat: MINSTAT_STARTER_ALLOWANCE, dist: [1200, 1800] },
-  StarterHandicap: { entry: ENTRY_STARTER_HANDICAP, purse: PURSE_STARTER_HANDICAP, minStat: MINSTAT_STARTER_HANDICAP, dist: [1200, 2000] },
+  MaidenSpecialWeight: {
+    entry: ENTRY_MAIDEN_SPECIAL_WEIGHT,
+    purse: PURSE_MAIDEN_SPECIAL_WEIGHT,
+    minStat: MINSTAT_MAIDEN_SPECIAL_WEIGHT,
+    dist: [1000, 1600],
+  },
+  MaidenClaiming: {
+    entry: ENTRY_MAIDEN_CLAIMING,
+    purse: PURSE_MAIDEN_CLAIMING,
+    dist: [1000, 1400],
+  },
+  MaidenOptionalClaiming: {
+    entry: ENTRY_MAIDEN_OPTIONAL_CLAIMING,
+    purse: PURSE_MAIDEN_OPTIONAL_CLAIMING,
+    minStat: MINSTAT_MAIDEN_OPTIONAL_CLAIMING,
+    dist: [1000, 1400],
+  },
+  MaidenStakes: {
+    entry: ENTRY_MAIDEN_STAKES,
+    purse: PURSE_MAIDEN_STAKES,
+    minStat: MINSTAT_MAIDEN_STAKES,
+    dist: [1200, 1800],
+  },
+  Allowance: {
+    entry: ENTRY_ALLOWANCE,
+    purse: PURSE_ALLOWANCE,
+    minStat: MINSTAT_ALLOWANCE,
+    dist: [1200, 1800],
+  },
+  OptionalClaiming: {
+    entry: ENTRY_OPTIONAL_CLAIMING,
+    purse: PURSE_OPTIONAL_CLAIMING,
+    minStat: MINSTAT_OPTIONAL_CLAIMING,
+    dist: [1200, 1800],
+  },
+  StarterAllowance: {
+    entry: ENTRY_STARTER_ALLOWANCE,
+    purse: PURSE_STARTER_ALLOWANCE,
+    minStat: MINSTAT_STARTER_ALLOWANCE,
+    dist: [1200, 1800],
+  },
+  StarterHandicap: {
+    entry: ENTRY_STARTER_HANDICAP,
+    purse: PURSE_STARTER_HANDICAP,
+    minStat: MINSTAT_STARTER_HANDICAP,
+    dist: [1200, 2000],
+  },
   Stakes: { entry: ENTRY_STAKES, purse: PURSE_STAKES, minStat: MINSTAT_STAKES, dist: [1400, 2200] },
-  Claiming: { entry: ENTRY_CLAIMING, purse: PURSE_CLAIMING, minStat: MINSTAT_CLAIMING, dist: [1000, 1800] },
-  Handicap: { entry: ENTRY_HANDICAP, purse: PURSE_HANDICAP, minStat: MINSTAT_HANDICAP, dist: [1200, 2400] },
+  Claiming: {
+    entry: ENTRY_CLAIMING,
+    purse: PURSE_CLAIMING,
+    minStat: MINSTAT_CLAIMING,
+    dist: [1000, 1800],
+  },
+  Handicap: {
+    entry: ENTRY_HANDICAP,
+    purse: PURSE_HANDICAP,
+    minStat: MINSTAT_HANDICAP,
+    dist: [1200, 2400],
+  },
   Listed: { entry: ENTRY_LISTED, purse: PURSE_LISTED, minStat: MINSTAT_LISTED, dist: [1400, 2400] },
   Group: { entry: ENTRY_GROUP, purse: PURSE_GROUP, minStat: MINSTAT_GROUP, dist: [1600, 2400] },
   Graded: { entry: 0, purse: 0, dist: [1200, 2400] },
@@ -109,7 +161,8 @@ export function makeGradedRace(
   rng: Rng = nondeterministicRng(),
 ): Race {
   const entryFee = g.grade === "G1" ? 2500 : g.grade === "G2" ? 1500 : 1000;
-  const minStat = g.grade === "G1" ? GRADE_G1_MIN_STAT : g.grade === "G2" ? GRADE_G2_MIN_STAT : GRADE_G3_MIN_STAT;
+  const minStat =
+    g.grade === "G1" ? GRADE_G1_MIN_STAT : g.grade === "G2" ? GRADE_G2_MIN_STAT : GRADE_G3_MIN_STAT;
   return {
     id: generateUUID(rng),
     name: g.name,

@@ -17,16 +17,28 @@ import type { Rng } from "@/game/rng";
 import namePoolsData from "@/assets/data/namePools.json";
 
 // Sponsor names for race naming
-export const SPONSORS: Record<RegionalSystem, string[]> = namePoolsData.SPONSORS as Record<RegionalSystem, string[]>;
+export const SPONSORS: Record<RegionalSystem, string[]> = namePoolsData.SPONSORS as Record<
+  RegionalSystem,
+  string[]
+>;
 
 // Geographic/Location names for race naming
-export const LOCATIONS: Record<RegionalSystem, string[]> = namePoolsData.LOCATIONS as Record<RegionalSystem, string[]>;
+export const LOCATIONS: Record<RegionalSystem, string[]> = namePoolsData.LOCATIONS as Record<
+  RegionalSystem,
+  string[]
+>;
 
 // Event/race type suffixes
-export const EVENTS: Record<RegionalSystem, string[]> = namePoolsData.EVENTS as Record<RegionalSystem, string[]>;
+export const EVENTS: Record<RegionalSystem, string[]> = namePoolsData.EVENTS as Record<
+  RegionalSystem,
+  string[]
+>;
 
 // Adjectives for descriptive naming
-export const ADJECTIVES: Record<RegionalSystem, string[]> = namePoolsData.ADJECTIVES as Record<RegionalSystem, string[]>;
+export const ADJECTIVES: Record<RegionalSystem, string[]> = namePoolsData.ADJECTIVES as Record<
+  RegionalSystem,
+  string[]
+>;
 
 /**
  * Get a random element from an array.

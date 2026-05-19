@@ -64,14 +64,7 @@ export const HotyIcon = ({ width, height, className }: SvgProps) => {
 
       {/* Year banner */}
       <rect x="19" y="36" width="10" height="4" rx="1" fill="#1E3A5F" />
-      <text
-        x="24"
-        y="39"
-        fontSize="3"
-        fill="#C9A227"
-        textAnchor="middle"
-        fontWeight="bold"
-      >
+      <text x="24" y="39" fontSize="3" fill="#C9A227" textAnchor="middle" fontWeight="bold">
         HOTY
       </text>
 

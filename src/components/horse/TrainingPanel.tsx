@@ -68,7 +68,7 @@ export function TrainingPanelComponent({
   const basicTrainingTypes = ["speed", "stamina", "acceleration"] as const;
 
   const handleBasicTrain = useCallback(
-    (k: typeof basicTrainingTypes[number]) => {
+    (k: (typeof basicTrainingTypes)[number]) => {
       onTrain(horse.id, k);
     },
     [horse.id, onTrain],

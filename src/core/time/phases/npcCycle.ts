@@ -66,7 +66,13 @@ export const npcCyclePhase = {
     // Apply reputation events
     let updatedReputation = (state as any).reputation;
     if (reputationEvents && reputationEvents.length > 0 && updatedReputation) {
-      const newScore = Math.max(0, Math.min(1000, updatedReputation.score + reputationEvents.reduce((acc, e) => acc + e.amount, 0)));
+      const newScore = Math.max(
+        0,
+        Math.min(
+          1000,
+          updatedReputation.score + reputationEvents.reduce((acc, e) => acc + e.amount, 0),
+        ),
+      );
       updatedReputation = {
         ...updatedReputation,
         score: newScore,

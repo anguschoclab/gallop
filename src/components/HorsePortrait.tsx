@@ -40,7 +40,7 @@ const SIZE_MAP = {
 
 /**
  * Renders a procedural equine portrait based on genetic and appearance data.
- * 
+ *
  * @param {HorsePortraitProps} props - The component properties.
  * @returns {JSX.Element} The rendered portrait.
  */
@@ -92,7 +92,7 @@ const BADGE_SIZE = { sm: "w-12 h-12", md: "w-20 h-20", lg: "w-40 h-40" };
 
 /**
  * A circular badge variant of the horse portrait, commonly used in lists and headers.
- * 
+ *
  * @param {HorsePortraitBadgeProps} props - The component properties.
  * @returns {JSX.Element} The rendered portrait badge.
  */

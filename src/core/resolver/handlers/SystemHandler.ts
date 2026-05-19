@@ -66,9 +66,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   campaign_slot: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, slotIndex, slot } = impactAny;
-    const campaignMap = lookupMaps?.campaignMap || new Map(
-      draft.campaigns?.map((c) => [c.horseId, c]) || []
-    );
+    const campaignMap =
+      lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
     const campaign = campaignMap.get(horseId);
     if (campaign) {
       campaign.slots[slotIndex] = { ...campaign.slots[slotIndex], ...slot };
@@ -78,9 +77,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   campaign_flag: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, flag } = impactAny;
-    const campaignMap = lookupMaps?.campaignMap || new Map(
-      draft.campaigns?.map((c) => [c.horseId, c]) || []
-    );
+    const campaignMap =
+      lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
     const campaign = campaignMap.get(horseId);
     if (campaign) {
       campaign.flags.push(flag);
@@ -90,9 +88,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   campaign_flag_dismissal: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, flag } = impactAny;
-    const campaignMap = lookupMaps?.campaignMap || new Map(
-      draft.campaigns?.map((c) => [c.horseId, c]) || []
-    );
+    const campaignMap =
+      lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
     const campaign = campaignMap.get(horseId);
     if (campaign) {
       campaign.flags = campaign.flags.filter(
@@ -107,9 +104,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const { campaign } = impactAny;
     if (!draft.campaigns) draft.campaigns = [];
     draft.campaigns.push(campaign);
-    const campaignMap = lookupMaps?.campaignMap || new Map(
-      draft.campaigns?.map((c) => [c.horseId, c]) || []
-    );
+    const campaignMap =
+      lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
     campaignMap.set(campaign.horseId, campaign);
     if (lookupMaps) lookupMaps.campaignMap.set(campaign.horseId, campaign);
   },
@@ -121,9 +117,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       const index = draft.campaigns.findIndex((c) => c.horseId === horseId);
       if (index !== -1) {
         draft.campaigns.splice(index, 1);
-        const campaignMap = lookupMaps?.campaignMap || new Map(
-          draft.campaigns?.map((c) => [c.horseId, c]) || []
-        );
+        const campaignMap =
+          lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
         campaignMap.delete(horseId);
         if (lookupMaps) lookupMaps.campaignMap.delete(horseId);
       }
@@ -133,9 +128,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   auto_manage_toggle: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, autoManaged } = impactAny;
-    const campaignMap = lookupMaps?.campaignMap || new Map(
-      draft.campaigns?.map((c) => [c.horseId, c]) || []
-    );
+    const campaignMap =
+      lookupMaps?.campaignMap || new Map(draft.campaigns?.map((c) => [c.horseId, c]) || []);
     const campaign = campaignMap.get(horseId);
     if (campaign) {
       campaign.autoManaged = autoManaged;
@@ -146,13 +140,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const impactAny = impact as any;
     const { delta, reason, source, metadata } = impactAny;
     if (draft.reputation) {
-      const newEvent = createReputationEvent(
-        source as any,
-        delta,
-        reason,
-        impact.day,
-        metadata,
-      );
+      const newEvent = createReputationEvent(source as any, delta, reason, impact.day, metadata);
       draft.reputation.events.push(newEvent);
       draft.reputation.score += delta;
       draft.reputation.tier = getReputationTier(draft.reputation.score);
@@ -193,8 +181,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
         if (stableId !== "") {
           const stable =
-            lookupMaps?.stableMap.get(stableId) ||
-            draft.npcStables.find((s) => s.id === stableId);
+            lookupMaps?.stableMap.get(stableId) || draft.npcStables.find((s) => s.id === stableId);
           if (stable) {
             stable.staff[role] = staffId;
           }
@@ -207,8 +194,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
         if (stableId !== "") {
           const stable =
-            lookupMaps?.stableMap.get(stableId) ||
-            draft.npcStables.find((s) => s.id === stableId);
+            lookupMaps?.stableMap.get(stableId) || draft.npcStables.find((s) => s.id === stableId);
           if (stable) {
             stable.staff[role] = null;
           }

@@ -27,7 +27,7 @@ describe("awardsPhase", () => {
   it("should return unchanged context when no ceremony scheduled", () => {
     const state = createTestState();
     state.day = 10;
-    
+
     const context = createTestContext(state, 9, 10);
     const result = awardsPhase.execute(context);
     expect(result).toEqual(context);
@@ -84,7 +84,7 @@ describe("awardsPhase", () => {
   it("should preserve existing logs", () => {
     const state = createTestState();
     state.day = 10;
-    
+
     const context = createTestContext(state, 9, 10);
     context.logs = [{ day: 9, text: "Existing log" }];
 

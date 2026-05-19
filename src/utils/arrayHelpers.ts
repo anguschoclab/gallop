@@ -68,9 +68,9 @@ export function min(arr: number[]): number {
  * const leader = maxBy(runners, 'position');
  */
 export function maxBy<T>(arr: T[], prop: keyof T): T {
-  return arr.reduce((max, current) => 
-    (current[prop] as number) > (max[prop] as number) ? current : max, 
-    arr[0]
+  return arr.reduce(
+    (max, current) => ((current[prop] as number) > (max[prop] as number) ? current : max),
+    arr[0],
   );
 }
 
@@ -86,16 +86,19 @@ export function maxBy<T>(arr: T[], prop: keyof T): T {
  */
 export function groupBy<T, K extends string | number>(
   arr: T[],
-  keyFn: (item: T) => K
+  keyFn: (item: T) => K,
 ): Record<K, T[]> {
-  return arr.reduce((acc, item) => {
-    const key = keyFn(item);
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-    acc[key].push(item);
-    return acc;
-  }, {} as Record<K, T[]>);
+  return arr.reduce(
+    (acc, item) => {
+      const key = keyFn(item);
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(item);
+      return acc;
+    },
+    {} as Record<K, T[]>,
+  );
 }
 
 /**
@@ -107,11 +110,12 @@ export function groupBy<T, K extends string | number>(
  * @example
  * const counts = countBy(['a', 'b', 'a']); // { a: 2, b: 1 }
  */
-export function countBy<T extends string | number>(
-  arr: T[]
-): Record<T, number> {
-  return arr.reduce((acc, item) => {
-    acc[item] = (acc[item] || 0) + 1;
-    return acc;
-  }, {} as Record<T, number>);
+export function countBy<T extends string | number>(arr: T[]): Record<T, number> {
+  return arr.reduce(
+    (acc, item) => {
+      acc[item] = (acc[item] || 0) + 1;
+      return acc;
+    },
+    {} as Record<T, number>,
+  );
 }

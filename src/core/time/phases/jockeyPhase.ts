@@ -98,7 +98,12 @@ export const jockeyPhase = {
               stable.cash -= signOnBonus;
               jockeys = jockeys.map((j) =>
                 j.id === chosen.id
-                  ? { ...j, stableId: stable.id, contractUntil: newDay + JOCKEY_CONTRACT_DAYS, stableAffinity: 30 }
+                  ? {
+                      ...j,
+                      stableId: stable.id,
+                      contractUntil: newDay + JOCKEY_CONTRACT_DAYS,
+                      stableAffinity: 30,
+                    }
                   : j,
               );
             }

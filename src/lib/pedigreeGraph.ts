@@ -76,7 +76,7 @@ function walk(
     inbreedCount: 0,
   };
 
-  // Create a unique instance ID for the node in the graph, 
+  // Create a unique instance ID for the node in the graph,
   // but track occurrences by the actual horseId (nodeId).
   const instanceId = `${nodeId}:${path}`;
   rawNodes.push({ id: instanceId, data, parentId });
@@ -95,7 +95,7 @@ function walk(
     // Sire side
     const sireName = horse.sireName || horse.pedigree.sireName;
     const sireId = horse.sireId || horse.pedigree.sireId;
-    
+
     if (sireId) {
       walk(
         sireId,
@@ -262,9 +262,9 @@ export function buildPedigreeGraph(
     const sortedGens = [...gens].sort((a, b) => a - b);
     const closestGap = sortedGens[1] - sortedGens[0];
     const color = ringColor(closestGap);
-    
+
     // Mark all instances of this horse in the graph
-    rawNodes.forEach(n => {
+    rawNodes.forEach((n) => {
       if (n.id.startsWith(`${id}:`)) {
         n.data.inbreedCount = gens.length;
         n.data.ringColor = color;
@@ -302,8 +302,11 @@ export function getAncestorIds(
   maxGenerations: number,
 ): Set<string> {
   const { nodes } = buildPedigreeGraph(horseId, horseMap, maxGenerations);
-  return new Set(nodes.filter((n) => n.data.isReal && !n.id.startsWith(`${horseId}:`)).map((n) => n.id.split(":")[0]));
+  return new Set(
+    nodes
+      .filter((n) => n.data.isReal && !n.id.startsWith(`${horseId}:`))
+      .map((n) => n.id.split(":")[0]),
+  );
 }
 
 export { NODE_WIDTH, NODE_HEIGHT };
-

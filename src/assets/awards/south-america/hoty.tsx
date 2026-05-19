@@ -34,21 +34,8 @@ export const HotyIcon = ({ width, height, className }: SvgProps) => {
       />
 
       {/* Laurel wreath top */}
-      <ellipse
-        cx="24"
-        cy="10"
-        rx="10"
-        ry="4"
-        fill="none"
-        stroke="#FFD700"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M16 10 Q20 6 24 10 Q28 6 32 10"
-        stroke="#FFD700"
-        strokeWidth="1"
-        fill="none"
-      />
+      <ellipse cx="24" cy="10" rx="10" ry="4" fill="none" stroke="#FFD700" strokeWidth="1.5" />
+      <path d="M16 10 Q20 6 24 10 Q28 6 32 10" stroke="#FFD700" strokeWidth="1" fill="none" />
 
       {/* Ornate chalice trophy */}
       <path
@@ -66,18 +53,8 @@ export const HotyIcon = ({ width, height, className }: SvgProps) => {
       />
 
       {/* Ornate handles */}
-      <path
-        d="M16 18 C10 20 10 26 16 24"
-        stroke="#FFD700"
-        strokeWidth="2"
-        fill="none"
-      />
-      <path
-        d="M32 18 C38 20 38 26 32 24"
-        stroke="#FFD700"
-        strokeWidth="2"
-        fill="none"
-      />
+      <path d="M16 18 C10 20 10 26 16 24" stroke="#FFD700" strokeWidth="2" fill="none" />
+      <path d="M32 18 C38 20 38 26 32 24" stroke="#FFD700" strokeWidth="2" fill="none" />
 
       {/* Ornate base */}
       <path d="M20 28 L18 36 L30 36 L28 28 Z" fill="#FFD700" />
@@ -85,14 +62,7 @@ export const HotyIcon = ({ width, height, className }: SvgProps) => {
 
       {/* Year banner */}
       <rect x="19" y="39" width="10" height="4" rx="1" fill="#8B0000" />
-      <text
-        x="24"
-        y="42"
-        fontSize="3"
-        fill="#FFD700"
-        textAnchor="middle"
-        fontWeight="bold"
-      >
+      <text x="24" y="42" fontSize="3" fill="#FFD700" textAnchor="middle" fontWeight="bold">
         HOTY
       </text>
 

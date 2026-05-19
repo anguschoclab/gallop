@@ -40,8 +40,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   horse_transfer: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, toStableId } = impactAny;
-    const horse =
-      lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.stableId = toStableId;
       horse.owned = !toStableId;

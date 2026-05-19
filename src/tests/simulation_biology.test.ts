@@ -14,8 +14,22 @@ describe("Biological Simulation Bridge - Stress Test", () => {
     smallHorse.weight = 440; // Pony
 
     // Reset stats to identical for fair comparison
-    largeHorse.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
-    smallHorse.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    largeHorse.stats = {
+      speed: 80,
+      stamina: 80,
+      acceleration: 80,
+      consistency: 80,
+      temperament: 50,
+      conformation: 50,
+    };
+    smallHorse.stats = {
+      speed: 80,
+      stamina: 80,
+      acceleration: 80,
+      consistency: 80,
+      temperament: 50,
+      conformation: 50,
+    };
 
     const topWeight = 132; // Heavy lead
 
@@ -52,8 +66,22 @@ describe("Biological Simulation Bridge - Stress Test", () => {
     const poorConf = generateHorse({ tier: "mid" });
     poorConf.conformation = 30;
 
-    goodConf.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
-    poorConf.stats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    goodConf.stats = {
+      speed: 80,
+      stamina: 80,
+      acceleration: 80,
+      consistency: 80,
+      temperament: 50,
+      conformation: 50,
+    };
+    poorConf.stats = {
+      speed: 80,
+      stamina: 80,
+      acceleration: 80,
+      consistency: 80,
+      temperament: 50,
+      conformation: 50,
+    };
 
     // Normalize other factors that could affect staminaFactor
     goodConf.energy = 100;

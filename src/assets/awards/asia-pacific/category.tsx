@@ -43,18 +43,8 @@ export const CategoryIcon = ({ width, height, className }: SvgProps) => {
       <path d="M13 16 L35 16" stroke="#FFD700" strokeWidth="1.5" />
 
       {/* Angular handles */}
-      <path
-        d="M15 18 L11 22 L15 26"
-        stroke="#FFD700"
-        strokeWidth="1.5"
-        fill="none"
-      />
-      <path
-        d="M33 18 L37 22 L33 26"
-        stroke="#FFD700"
-        strokeWidth="1.5"
-        fill="none"
-      />
+      <path d="M15 18 L11 22 L15 26" stroke="#FFD700" strokeWidth="1.5" fill="none" />
+      <path d="M33 18 L37 22 L33 26" stroke="#FFD700" strokeWidth="1.5" fill="none" />
 
       {/* Base */}
       <path d="M20 31 L18 37 L30 37 L28 31 Z" fill="#FFD700" opacity="0.8" />

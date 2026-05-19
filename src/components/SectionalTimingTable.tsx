@@ -11,7 +11,7 @@ interface SectionalTimingTableProps {
 /**
  * Displays a tabular breakdown of sectional splits for a completed race.
  * Visualizes the running order and leader times at each quarter-mile marker.
- * 
+ *
  * @param {SectionalTimingTableProps} props - The component properties.
  * @returns {JSX.Element} The rendered timing table.
  */
@@ -57,10 +57,12 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
                 <td className="py-4 px-4">
                   <div className="flex items-center gap-2">
                     {leader && <SilkDot color={leader.silk} size="sm" />}
-                    <span className={cn(
-                      "font-bold truncate max-w-[120px]",
-                      leader?.owned ? "text-broadcast-accent" : "text-cream/90"
-                    )}>
+                    <span
+                      className={cn(
+                        "font-bold truncate max-w-[120px]",
+                        leader?.owned ? "text-broadcast-accent" : "text-cream/90",
+                      )}
+                    >
                       {leader?.name || "Unknown"}
                     </span>
                   </div>
@@ -76,7 +78,7 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
                             "h-5 w-5 rounded-full flex items-center justify-center text-[8px] font-black border transition-all shadow-sm",
                             runner?.owned
                               ? "border-broadcast-accent bg-broadcast-accent/20 text-broadcast-accent scale-110 z-10"
-                              : "border-white/10 bg-white/5 text-muted-foreground group-hover:border-white/20"
+                              : "border-white/10 bg-white/5 text-muted-foreground group-hover:border-white/20",
                           )}
                           title={`${runner?.name || "Unknown"} (Pos: ${entry.rank})`}
                         >

@@ -109,18 +109,22 @@ export function generateUUIDWithValidation(entityType: string, rng?: Rng): strin
   const maxAttempts = 10;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const uuid = generateUUID(rng);
-    
+
     if (!isRegistered(uuid)) {
       register(uuid, entityType);
       return uuid;
     }
-    
+
     // Collision detected - regenerate
     // In deterministic mode, this could indicate a serious issue
     if (rng) {
-      console.warn(`UUID collision detected for ${entityType} in deterministic mode. This may indicate a problem with the RNG seed.`);
+      console.warn(
+        `UUID collision detected for ${entityType} in deterministic mode. This may indicate a problem with the RNG seed.`,
+      );
     }
   }
 
-  throw new Error(`Failed to generate unique UUID for ${entityType} after ${maxAttempts} attempts. Registry may be exhausted.`);
+  throw new Error(
+    `Failed to generate unique UUID for ${entityType} after ${maxAttempts} attempts. Registry may be exhausted.`,
+  );
 }

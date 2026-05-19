@@ -85,8 +85,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   transport_horse: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { horseId, toOutpostId, fatigueSpike, acclimatizationDays } = impactAny;
-    const horse =
-      lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (horse) {
       horse.outpostId = toOutpostId;
       horse.fatigue = (horse.fatigue ?? 0) + fatigueSpike;
@@ -108,8 +107,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   outpost_action: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
     const { stableId, action, outpostId, metadata } = impactAny;
-    const stable =
-      stableId === "player" ? draft : draft.npcStables.find((s) => s.id === stableId);
+    const stable = stableId === "player" ? draft : draft.npcStables.find((s) => s.id === stableId);
     if (stable && (stable as any).outposts) {
       const outposts = (stable as any)
         .outposts as import("@/core/facilities/outpostTypes").Outpost[];

@@ -123,7 +123,10 @@ describe("shouldRetireAtStartup", () => {
 });
 
 describe("isStallionAvailable", () => {
-  function studHorse(over: Partial<NonNullable<Horse["stud"]>> = {}, h: Partial<Horse> = {}): Horse {
+  function studHorse(
+    over: Partial<NonNullable<Horse["stud"]>> = {},
+    h: Partial<Horse> = {},
+  ): Horse {
     return mkHorse({
       ...h,
       stud: {

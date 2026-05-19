@@ -232,97 +232,97 @@ export function getInitializationWorker(): Remote<InitializationWorkerApi> {
 export const useGame = create<StoreType>()(
   persist(
     (set, get) => ({
-    // Systems state properties (required fields from SystemsState)
-    npcStables: [],
-    breedingPrograms: [],
-    awards: [],
-    usedHorseNames: [],
-    usedJockeyNames: [],
-    staffPool: [],
-    hiredStaff: [],
-    npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
+      // Systems state properties (required fields from SystemsState)
+      npcStables: [],
+      breedingPrograms: [],
+      awards: [],
+      usedHorseNames: [],
+      usedJockeyNames: [],
+      staffPool: [],
+      hiredStaff: [],
+      npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
 
-    // Core slice
-    ...createCoreSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Core slice
+      ...createCoreSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Racing slice
-    ...createRacingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Racing slice
+      ...createRacingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Market slice
-    ...createMarketSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Market slice
+      ...createMarketSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Scouting slice
-    ...createScoutingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Scouting slice
+      ...createScoutingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Auction slice
-    ...createAuctionSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Auction slice
+      ...createAuctionSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Private sale slice
-    ...createPrivateSaleSlice(set as any, get, (intent: AnyIntent) =>
-      get().enqueueIntent(intent),
-    ),
+      // Private sale slice
+      ...createPrivateSaleSlice(set as any, get, (intent: AnyIntent) =>
+        get().enqueueIntent(intent),
+      ),
 
-    // Breeding slice
-    ...createBreedingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Breeding slice
+      ...createBreedingSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Campaign slice
-    ...createCampaignSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Campaign slice
+      ...createCampaignSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Jockey slice
-    ...createJockeySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Jockey slice
+      ...createJockeySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Facility slice
-    ...createFacilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Facility slice
+      ...createFacilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Settings slice
-    ...createSettingsSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Settings slice
+      ...createSettingsSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Breeding program slice
-    ...createBreedingProgramSlice(set as any, get, (intent: AnyIntent) =>
-      get().enqueueIntent(intent),
-    ),
+      // Breeding program slice
+      ...createBreedingProgramSlice(set as any, get, (intent: AnyIntent) =>
+        get().enqueueIntent(intent),
+      ),
 
-    // Horse admin slice
-    ...createHorseAdminSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Horse admin slice
+      ...createHorseAdminSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Award slice
-    ...createAwardSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Award slice
+      ...createAwardSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Utility slice
-    ...createUtilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Utility slice
+      ...createUtilitySlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Weather slice (per-track Markov sim, populated by weatherPhase)
-    ...createWeatherSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Weather slice (per-track Markov sim, populated by weatherPhase)
+      ...createWeatherSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Inbox slice (Message Center)
-    ...createInboxSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+      // Inbox slice (Message Center)
+      ...createInboxSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
-    // Start new game action
-    startNewGame: async (options: NewGameOptions) => {
-      // Initialize workers if not already initialized
-      await initEngineWorker();
-      await initStorageWorker();
-      await initInitializationWorker();
+      // Start new game action
+      startNewGame: async (options: NewGameOptions) => {
+        // Initialize workers if not already initialized
+        await initEngineWorker();
+        await initStorageWorker();
+        await initInitializationWorker();
 
-      // Clear OPFS storage when starting a new game
-      await (await import("@/services/storageAdapter")).clearGameState();
-      set({ ...createInitialState(options) } as any);
+        // Clear OPFS storage when starting a new game
+        await (await import("@/services/storageAdapter")).clearGameState();
+        set({ ...createInitialState(options) } as any);
+      },
+    }),
+    {
+      name: "gallop-game-state",
+      storage: createOpfsStorage(),
+      onRehydrateStorage: () => (state) => {
+        hydrationComplete.value = true;
+      },
+      partialize: (state) => {
+        const partial: any = {};
+        PERSISTED_KEYS.forEach((key) => {
+          partial[key] = state[key];
+        });
+        return partial;
+      },
     },
-  }),
-  {
-    name: "gallop-game-state",
-    storage: createOpfsStorage(),
-    onRehydrateStorage: () => (state) => {
-      hydrationComplete.value = true;
-    },
-    partialize: (state) => {
-      const partial: any = {};
-      PERSISTED_KEYS.forEach((key) => {
-        partial[key] = state[key];
-      });
-      return partial;
-    },
-  },
   ),
 );
 

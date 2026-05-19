@@ -26,7 +26,7 @@ describe("auctionsPhase", () => {
   it("should not generate sales when no trigger day matches", () => {
     const state = createTestState();
     state.day = 10;
-    
+
     const context = createTestContext(state, 9, 10);
     const result = auctionsPhase.execute(context);
     expect(result.state.auctions).toEqual([]);
@@ -92,7 +92,7 @@ describe("auctionsPhase", () => {
   it("should preserve existing logs", () => {
     const state = createTestState();
     state.day = 10;
-    
+
     const context = createTestContext(state, 9, 10);
     context.logs = [{ day: 9, text: "Existing log" }];
 

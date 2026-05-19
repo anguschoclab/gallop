@@ -39,7 +39,7 @@ export interface Injury {
 /**
  * Rolls for a potential injury during high-stress events like races or heavy training.
  * The chance of injury is calculated based on genetic proneness, event intensity, fatigue level, and current energy.
- * 
+ *
  * @param {Horse} horse - The horse subject to the injury roll.
  * @param {"race" | "training"} eventType - The type of event being simulated.
  * @param {Rng} rng - Seeded random number generator.
@@ -82,11 +82,15 @@ export function rollForInjury(
       type = "Fractured Sesamoidean";
     } else if (severityRoll > INJURY_SEVERITY_MAJOR_THRESHOLD) {
       severity = "major";
-      recoveryDays = INJURY_RECOVERY_MAJOR_MIN + rng.int(0, INJURY_RECOVERY_MAJOR_MAX - INJURY_RECOVERY_MAJOR_MIN);
+      recoveryDays =
+        INJURY_RECOVERY_MAJOR_MIN +
+        rng.int(0, INJURY_RECOVERY_MAJOR_MAX - INJURY_RECOVERY_MAJOR_MIN);
       type = "Tendon Tear";
     } else if (severityRoll > INJURY_SEVERITY_MODERATE_THRESHOLD) {
       severity = "moderate";
-      recoveryDays = INJURY_RECOVERY_MODERATE_MIN + rng.int(0, INJURY_RECOVERY_MODERATE_MAX - INJURY_RECOVERY_MODERATE_MIN);
+      recoveryDays =
+        INJURY_RECOVERY_MODERATE_MIN +
+        rng.int(0, INJURY_RECOVERY_MODERATE_MAX - INJURY_RECOVERY_MODERATE_MIN);
       type = "Shin Splints";
     }
 

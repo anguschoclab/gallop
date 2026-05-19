@@ -10,7 +10,12 @@
 
 import type { Horse } from "@/game/types";
 import { getCareerStats } from "@/core/horse/stats";
-import { getSireAnalytics, getSireSurfaceBias, getSireDistancePreference, type SireAnalytics } from "./sireAnalytics";
+import {
+  getSireAnalytics,
+  getSireSurfaceBias,
+  getSireDistancePreference,
+  type SireAnalytics,
+} from "./sireAnalytics";
 import { getRunnersBy, getStakesFoalsBy, getG1FoalsBy, getFoalsBy } from "./lineage";
 import type { Leaderboard, LeaderboardType, SireRanking, SireTrendData } from "./leaderboardTypes";
 

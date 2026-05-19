@@ -6,7 +6,9 @@ interface PaceProfileSummaryProps {
 }
 
 export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
-  const racesWithPace = horse.raceHistory.filter((h) => h.pacePositions && h.pacePositions.length > 0);
+  const racesWithPace = horse.raceHistory.filter(
+    (h) => h.pacePositions && h.pacePositions.length > 0,
+  );
 
   if (racesWithPace.length === 0) {
     return (

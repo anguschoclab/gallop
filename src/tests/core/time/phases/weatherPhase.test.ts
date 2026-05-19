@@ -26,26 +26,27 @@ describe("weatherPhase", () => {
     ...overrides,
   });
 
-  const createMockState = (overrides: Partial<GameState> = {}): GameState => ({
-    day: 10,
-    cash: 10000,
-    horses: [],
-    horseMap: new Map(),
-    npcStables: [],
-    pregnancies: [],
-    races: [],
-    awards: [],
-    market: [],
-    auctions: [],
-    lastCalibrationDay: 0,
-    calibratedPars: {},
-    paceSamples: {},
-    pendingAwardCeremonies: [],
-    trainingUsed: {},
-    log: [],
-    scoutReports: [],
-    ...overrides,
-  } as GameState);
+  const createMockState = (overrides: Partial<GameState> = {}): GameState =>
+    ({
+      day: 10,
+      cash: 10000,
+      horses: [],
+      horseMap: new Map(),
+      npcStables: [],
+      pregnancies: [],
+      races: [],
+      awards: [],
+      market: [],
+      auctions: [],
+      lastCalibrationDay: 0,
+      calibratedPars: {},
+      paceSamples: {},
+      pendingAwardCeremonies: [],
+      trainingUsed: {},
+      log: [],
+      scoutReports: [],
+      ...overrides,
+    }) as GameState;
 
   const createMockContext = (state: GameState, newDay: number): PipelineContext => ({
     previousDay: newDay - 1,

@@ -25,7 +25,15 @@ export type { BreedingCompatibilityResult } from "./breedingCompatibility";
 export type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 
 // Type aliases for horse properties (preferring core definitions)
-export type { CoatColor, HorseGender, HealthStatus, SockHeight, FaceWhite, HorseMarkings, BlueHenStatus } from "@/core/horse/types";
+export type {
+  CoatColor,
+  HorseGender,
+  HealthStatus,
+  SockHeight,
+  FaceWhite,
+  HorseMarkings,
+  BlueHenStatus,
+} from "@/core/horse/types";
 
 // Financial types
 export type { Transaction, TransactionType, TransactionSubcategory } from "@/core/transactions";

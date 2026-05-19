@@ -2,7 +2,7 @@ import type { AppearanceDNA } from "@/core/genetics/types";
 
 /**
  * Creates valid test appearance DNA.
- * 
+ *
  * @param overrides - Optional appearance properties to override defaults
  * @returns Complete AppearanceDNA object
  */

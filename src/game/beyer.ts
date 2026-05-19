@@ -183,9 +183,7 @@ export function detectPatternJump(
   horse: Horse,
   newBeyer: number,
 ): { jumped: boolean; margin: number } {
-  const beyerHistory = horse.raceHistory
-    .filter((r) => r.beyer !== undefined)
-    .map((r) => r.beyer!);
+  const beyerHistory = horse.raceHistory.filter((r) => r.beyer !== undefined).map((r) => r.beyer!);
 
   if (beyerHistory.length === 0) return { jumped: false, margin: 0 };
 

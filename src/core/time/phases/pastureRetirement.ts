@@ -16,7 +16,11 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 // Also deletes dead/retired horses with no wins to prevent array accumulation
 
 import { createRng, hashStr } from "@/game/rng";
-import { AGE_RETIREMENT_THRESHOLD, FAME_LOW_THRESHOLD, INACTIVITY_RETIREMENT_DAYS } from "@/game/constants/gameConstants";
+import {
+  AGE_RETIREMENT_THRESHOLD,
+  FAME_LOW_THRESHOLD,
+  INACTIVITY_RETIREMENT_DAYS,
+} from "@/game/constants/gameConstants";
 import type {
   AnyImpact,
   PastureRetirementImpact,
@@ -88,7 +92,8 @@ export const pastureRetirementPhase: PipelinePhase = {
 
       // Determine retirement eligibility
       const isOld = horse.age >= 8;
-      const isOldAndInactive = horse.age >= AGE_RETIREMENT_THRESHOLD && inactiveDays > INACTIVITY_RETIREMENT_DAYS;
+      const isOldAndInactive =
+        horse.age >= AGE_RETIREMENT_THRESHOLD && inactiveDays > INACTIVITY_RETIREMENT_DAYS;
       const isLowAchiever = horse.age >= 5 && horse.fame < 20 && gradedWins === 0;
 
       if (isOld || isOldAndInactive || isLowAchiever) {

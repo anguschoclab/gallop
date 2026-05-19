@@ -78,10 +78,7 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
           )}
         </div>
 
-        <Button
-          size="lg"
-          className="w-full h-16 text-lg font-black rounded-2xl shadow-xl"
-        >
+        <Button size="lg" className="w-full h-16 text-lg font-black rounded-2xl shadow-xl">
           Return to Sales
         </Button>
       </CardContent>

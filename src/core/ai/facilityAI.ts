@@ -20,7 +20,13 @@ import type {
 } from "@/core/facilities/facilityTypes";
 import type { Stable } from "@/game/types";
 import { getPersonalityAIState, recordOutcome, calculateUtilityScore } from "./personalitySystem";
-import { createLearningState, recordOutcome as recordLearningOutcome, getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
+import {
+  createLearningState,
+  recordOutcome as recordLearningOutcome,
+  getSuccessRate,
+  getAdaptiveThreshold,
+  type LearningState,
+} from "./learningModule";
 import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
 
 export interface FacilityAIState {

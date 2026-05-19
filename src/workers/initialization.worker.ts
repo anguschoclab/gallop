@@ -64,7 +64,8 @@ async function createInitialState(input: InitializeInput): Promise<InitializeOut
 
   const market: Horse[] = Array.from({ length: 5 }, () => {
     const r = setupRng.next();
-    const tier: "starter" | "budget" | "mid" | "elite" = r < INITIALIZATION_BUDGET_TIER_THRESHOLD ? "budget" : "mid";
+    const tier: "starter" | "budget" | "mid" | "elite" =
+      r < INITIALIZATION_BUDGET_TIER_THRESHOLD ? "budget" : "mid";
     return generateHorse({ tier }, setupRng);
   });
 

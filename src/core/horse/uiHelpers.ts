@@ -1,6 +1,6 @@
 /**
  * Horse UI Helper Functions
- * 
+ *
  * Utility functions for displaying horse-related UI elements.
  * These functions are extracted from HorseCard.tsx for potential reuse.
  */

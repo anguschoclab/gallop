@@ -101,9 +101,7 @@ export const pregnancyPhase = {
             category: "foaling",
             priority: "info",
             title: `New Arrival: ${foal.name}`,
-            body: `A healthy ${
-              foal.gender === "filly" ? "filly" : "colt"
-            } by ${
+            body: `A healthy ${foal.gender === "filly" ? "filly" : "colt"} by ${
               state.horses.find((h) => h.id === pregnancy.sireId)?.name || "Unknown"
             } out of ${dam.name} was born today.`,
             cta: {

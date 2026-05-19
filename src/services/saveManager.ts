@@ -25,7 +25,7 @@ const METADATA_STORAGE_KEY = "gallop_saves_metadata";
 /**
  * Retrieves all available save slots and their associated metadata.
  * Defaults to localStorage if the Origin Private File System (OPFS) is unavailable.
- * 
+ *
  * @returns {Promise<SaveSlotMetadata[]>} A promise resolving to an array of save slot metadata.
  */
 export async function getSaveSlots(): Promise<SaveSlotMetadata[]> {
@@ -53,7 +53,7 @@ export async function getSaveSlots(): Promise<SaveSlotMetadata[]> {
 /**
  * Persists the current game state to a specific save slot.
  * Updates both the state file and the global save metadata list.
- * 
+ *
  * @param {string} slotId - The unique identifier for the save slot.
  * @param {string} name - The human-readable name for the save.
  * @param {GameState} state - The game state object to persist.
@@ -118,7 +118,7 @@ export async function saveToSlot(
 /**
  * Loads a game state from a specific slot and overwrites the active working state.
  * Triggers a full application reload to rehydrate the state from storage.
- * 
+ *
  * @param {string} slotId - The unique identifier of the slot to load from.
  * @returns {Promise<void>} A promise that resolves when the state has been successfully swapped.
  */
@@ -159,7 +159,7 @@ export async function loadFromSlot(slotId: string): Promise<void> {
 
 /**
  * Deletes a save slot, its associated state file, and its entry in the metadata list.
- * 
+ *
  * @param {string} slotId - The unique identifier of the slot to delete.
  * @returns {Promise<void>} A promise that resolves when deletion is complete.
  */

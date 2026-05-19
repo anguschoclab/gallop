@@ -32,7 +32,14 @@ describe("trainingResolutionPhase", () => {
   it("should process training intent and generate stat change impact", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 40, stamina: 40, acceleration: 40, consistency: 40, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 40,
+        stamina: 40,
+        acceleration: 40,
+        consistency: 40,
+        temperament: 50,
+        conformation: 50,
+      },
       energy: 80,
       potential: 90,
       age: 4,

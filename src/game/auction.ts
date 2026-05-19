@@ -163,11 +163,7 @@ function developerValuation(ctx: ValuationContext): number {
  * @returns Valuation multiplier
  */
 function winNowValuation(ctx: ValuationContext): number {
-  let mod = ctx.isWeanling
-    ? 1.0 - AUCTION_WEANLING_DISCOUNT
-    : ctx.isYearling
-      ? 0.9
-      : 1.0;
+  let mod = ctx.isWeanling ? 1.0 - AUCTION_WEANLING_DISCOUNT : ctx.isYearling ? 0.9 : 1.0;
   if (ctx.is2yoTraining) mod *= 1.0 + AUCTION_2YO_TRAINING_PREMIUM;
   if (ctx.isBroodmare) mod *= 1.0 - AUCTION_BROODMARE_DISCOUNT;
   if (ctx.isRacingAge) mod *= 1.0 + AUCTION_RACING_AGE_PREMIUM;
@@ -385,7 +381,14 @@ export function calculateNpcBid(
 
       // Calculate max bid using AI with friction consideration
       const friction = aiState.friction ?? 0;
-      const maxBid = calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction);
+      const maxBid = calculateMaxBid(
+        aiState.auctionAI,
+        horse,
+        tempLot,
+        stable,
+        currentDay,
+        friction,
+      );
 
       const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
       if (nextBid > maxBid) return null;
@@ -408,8 +411,11 @@ export function calculateNpcBid(
   // Aggressive/prestige personalities bid near ceiling immediately
   if (stable.personality === "aggressive" || stable.personality === "prestige") {
     const aggressiveBid = Math.min(
-      Math.round(ceiling * (AUCTION_AGGRESSIVE_BID_MIN_PERCENT + rng.range(0, AUCTION_AGGRESSIVE_BID_VARIANCE))),
-      maxBid
+      Math.round(
+        ceiling *
+          (AUCTION_AGGRESSIVE_BID_MIN_PERCENT + rng.range(0, AUCTION_AGGRESSIVE_BID_VARIANCE)),
+      ),
+      maxBid,
     );
     return aggressiveBid > currentBid ? Math.ceil(aggressiveBid / 100) * 100 : nextBid;
   }

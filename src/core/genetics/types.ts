@@ -137,4 +137,3 @@ export interface AppearanceDNA {
   // Forward-compat: allow extra fields without losing checking on the rest.
   [key: string]: unknown;
 }
-

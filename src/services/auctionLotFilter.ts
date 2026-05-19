@@ -65,10 +65,15 @@ export function filterAndSortLots(
   // Reserve band filter
   if (options.reserveBand) {
     result = result.filter((l) => {
-      if (options.reserveBand === "under10k") return l.reservePrice < FILTER_CONSTANTS.RESERVE_UNDER_10K;
+      if (options.reserveBand === "under10k")
+        return l.reservePrice < FILTER_CONSTANTS.RESERVE_UNDER_10K;
       if (options.reserveBand === "10k-50k")
-        return l.reservePrice >= FILTER_CONSTANTS.RESERVE_10K_TO_50K_MIN && l.reservePrice <= FILTER_CONSTANTS.RESERVE_10K_TO_50K_MAX;
-      if (options.reserveBand === "over50k") return l.reservePrice > FILTER_CONSTANTS.RESERVE_OVER_50K;
+        return (
+          l.reservePrice >= FILTER_CONSTANTS.RESERVE_10K_TO_50K_MIN &&
+          l.reservePrice <= FILTER_CONSTANTS.RESERVE_10K_TO_50K_MAX
+        );
+      if (options.reserveBand === "over50k")
+        return l.reservePrice > FILTER_CONSTANTS.RESERVE_OVER_50K;
       return true;
     });
   }

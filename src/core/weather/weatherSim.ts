@@ -127,7 +127,10 @@ export function stepWeather(
 
   const baseHumidity = CLIMATE_HUMIDITY_BIAS[climate];
   const humidityBoost = PATTERN_SEVERITY[pattern] * 0.07;
-  const humidity = Math.min(1, Math.max(0, baseHumidity + humidityBoost + (rng.next() - 0.5) * 0.1));
+  const humidity = Math.min(
+    1,
+    Math.max(0, baseHumidity + humidityBoost + (rng.next() - 0.5) * 0.1),
+  );
 
   return { trackId, day, pattern, tempC, humidity };
 }

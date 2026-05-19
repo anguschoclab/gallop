@@ -181,13 +181,28 @@ export class NarrativeGenerator {
     }
 
     // 6. Stable Watch
-    if (simTime > NARRATIVE_THRESHOLDS.STABLE_WATCH_START_TIME && simTime < NARRATIVE_THRESHOLDS.STABLE_WATCH_END_TIME) {
+    if (
+      simTime > NARRATIVE_THRESHOLDS.STABLE_WATCH_START_TIME &&
+      simTime < NARRATIVE_THRESHOLDS.STABLE_WATCH_END_TIME
+    ) {
       for (const r of runners) {
         const horse = this.getHorse(r.horseId);
         if (horse?.stableId && this.isMajorStable(horse.stableId)) {
-          if (this.canAnnounce("STABLE_WATCH", r.horseId, simTime, NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN)) {
+          if (
+            this.canAnnounce(
+              "STABLE_WATCH",
+              r.horseId,
+              simTime,
+              NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN,
+            )
+          ) {
             newLines.push(this.createLine("STABLE_WATCH", simTime, r));
-            this.setCooldown("STABLE_WATCH", r.horseId, simTime, NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN);
+            this.setCooldown(
+              "STABLE_WATCH",
+              r.horseId,
+              simTime,
+              NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN,
+            );
             break;
           }
         }
@@ -205,7 +220,12 @@ export class NarrativeGenerator {
           const line = this.createLine("LEAD_CHANGE", simTime, currentLeader);
           line.isHighImpact = true;
           newLines.push(line);
-          this.setCooldown("LEAD_CHANGE", currentLeader.horseId, simTime, NARRATIVE_THRESHOLDS.LEAD_CHANGE_COOLDOWN);
+          this.setCooldown(
+            "LEAD_CHANGE",
+            currentLeader.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.LEAD_CHANGE_COOLDOWN,
+          );
         }
       }
       this.lastLeaderId = currentLeader.horseId;
@@ -238,15 +258,29 @@ export class NarrativeGenerator {
         const currentRank = ranks.get(r.horseId)!;
 
         if (lastRank !== undefined && lastRank !== currentRank) {
-          if (lastRank - currentRank >= NARRATIVE_THRESHOLDS.SURGE_RANK_DIFF || (currentRank <= NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF && lastRank > NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF)) {
+          if (
+            lastRank - currentRank >= NARRATIVE_THRESHOLDS.SURGE_RANK_DIFF ||
+            (currentRank <= NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF &&
+              lastRank > NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF)
+          ) {
             if (this.canAnnounce("SURGE", r.horseId, simTime)) {
               newLines.push(this.createLine("SURGE", simTime, r));
-              this.setCooldown("SURGE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
+              this.setCooldown(
+                "SURGE",
+                r.horseId,
+                simTime,
+                NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN,
+              );
             }
           } else if (currentRank - lastRank >= NARRATIVE_THRESHOLDS.FADE_RANK_DIFF) {
             if (this.canAnnounce("FADE", r.horseId, simTime)) {
               newLines.push(this.createLine("FADE", simTime, r));
-              this.setCooldown("FADE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
+              this.setCooldown(
+                "FADE",
+                r.horseId,
+                simTime,
+                NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN,
+              );
             }
           }
         }
@@ -256,7 +290,10 @@ export class NarrativeGenerator {
 
     // 11. Drafting
     for (const r of runners) {
-      if (r.draftingHorseId && this.canAnnounce("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN)) {
+      if (
+        r.draftingHorseId &&
+        this.canAnnounce("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN)
+      ) {
         const other = runnersMap.get(r.draftingHorseId);
         if (other) {
           const line = this.createLine("DRAFTING", simTime, r);
@@ -274,10 +311,20 @@ export class NarrativeGenerator {
         if (
           r.lane >= NARRATIVE_THRESHOLDS.LANE_THRESHOLD &&
           this.isInTurn(r.position) &&
-          this.canAnnounce("LANE_WATCH", r.horseId, simTime, NARRATIVE_THRESHOLDS.LANE_WATCH_COOLDOWN)
+          this.canAnnounce(
+            "LANE_WATCH",
+            r.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.LANE_WATCH_COOLDOWN,
+          )
         ) {
           newLines.push(this.createLine("LANE_WATCH", simTime, r));
-          this.setCooldown("LANE_WATCH", r.horseId, simTime, NARRATIVE_THRESHOLDS.LANE_WATCH_COOLDOWN);
+          this.setCooldown(
+            "LANE_WATCH",
+            r.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.LANE_WATCH_COOLDOWN,
+          );
         }
       }
     }
@@ -297,7 +344,11 @@ export class NarrativeGenerator {
     // Basic oval assumption: 400m home straight, 400m turn, 400m back straight, 400m turn
     const distFromFinish = this.race.distance - pos;
     const trackPos = distFromFinish % NARRATIVE_THRESHOLDS.TURN_SEGMENT_LENGTH;
-    return (trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_START && trackPos <= NARRATIVE_THRESHOLDS.TURN_SEGMENT_END) || trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_FINAL_START;
+    return (
+      (trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_START &&
+        trackPos <= NARRATIVE_THRESHOLDS.TURN_SEGMENT_END) ||
+      trackPos > NARRATIVE_THRESHOLDS.TURN_SEGMENT_FINAL_START
+    );
   }
 
   /**

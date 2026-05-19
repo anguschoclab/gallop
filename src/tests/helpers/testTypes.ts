@@ -29,9 +29,11 @@ export interface TestBreedingState {
 }
 
 // Helper function to create mock PipelineContext
-export function createMockPipelineContext(overrides: Partial<PipelineContext> = {}): PipelineContext {
+export function createMockPipelineContext(
+  overrides: Partial<PipelineContext> = {},
+): PipelineContext {
   const { createRng } = require("@/game/rng");
-  
+
   return {
     previousDay: 0,
     newDay: 1,

@@ -43,10 +43,11 @@ export const racesPhase = {
       for (const campaign of state.campaigns) {
         for (const slot of campaign.slots) {
           if (slot.status !== "planned") continue;
-          
-          const race = pruned.find((r) => 
-            (slot.raceKey && r.graded?.key === slot.raceKey) || 
-            (slot.raceId && r.id === slot.raceId)
+
+          const race = pruned.find(
+            (r) =>
+              (slot.raceKey && r.graded?.key === slot.raceKey) ||
+              (slot.raceId && r.id === slot.raceId),
           );
 
           if (race && race.day === newDay + 7) {

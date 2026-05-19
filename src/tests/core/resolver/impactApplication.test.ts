@@ -121,7 +121,14 @@ describe("applyImpacts", () => {
   it("should apply horse stat change impact", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 75,
+        acceleration: 70,
+        consistency: 65,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
     });
 
@@ -158,7 +165,14 @@ describe("applyImpacts", () => {
   it("should clamp horse stat to potential", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 85, stamina: 75, acceleration: 70, consistency: 65, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 85,
+        stamina: 75,
+        acceleration: 70,
+        consistency: 65,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
     });
 
@@ -195,7 +209,14 @@ describe("applyImpacts", () => {
   it("should apply energy change impact", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 75,
+        acceleration: 70,
+        consistency: 65,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 80,
     });
@@ -232,7 +253,14 @@ describe("applyImpacts", () => {
   it("should clamp energy between 0 and 100", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 75,
+        acceleration: 70,
+        consistency: 65,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       energy: 50,
     });
@@ -293,7 +321,14 @@ describe("applyImpacts", () => {
     const state = createTestState();
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 75,
+        acceleration: 70,
+        consistency: 65,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
     });
 
@@ -324,7 +359,14 @@ describe("applyImpacts", () => {
   it("should apply horse transfer impact", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 75,
+        acceleration: 70,
+        consistency: 65,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
       stableId: undefined,
       owned: true,
@@ -365,7 +407,14 @@ describe("applyImpacts", () => {
   it("should apply multiple impacts in order", () => {
     const horse = createTestHorse({
       id: "horse-1",
-      stats: { speed: 80, stamina: 75, acceleration: 70, consistency: 65, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 75,
+        acceleration: 70,
+        consistency: 65,
+        temperament: 50,
+        conformation: 50,
+      },
       potential: 90,
     });
 

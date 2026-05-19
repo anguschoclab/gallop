@@ -49,7 +49,7 @@ export function processClaimingResolution({
   }
 
   // Optimize: Create a Map for entry lookups to avoid repeated find operations
-  const entryMap = new Map(race.entries.map(e => [e.horseId, e]));
+  const entryMap = new Map(race.entries.map((e) => [e.horseId, e]));
 
   // Filter out horses withdrawn from claiming
   const eligibleClaims = claimIntents.filter((claim) => {
@@ -112,7 +112,7 @@ export function processClaimingResolution({
     }));
 
     // Optimize: Create a Map for intent lookups
-    const intentMap = new Map(eligibleClaims.map(i => [i.horseId, i]));
+    const intentMap = new Map(eligibleClaims.map((i) => [i.horseId, i]));
 
     // Process claims using existing function
     const { transfers, logs: claimLogs } = processClaims(race, claimAttempts, horses, newDay, rng);

@@ -15,7 +15,12 @@
 
 import type { Stable, Horse } from "@/game/types";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
-import { createLearningState, recordOutcome as recordLearningOutcome, getSuccessRate, type LearningState } from "./learningModule";
+import {
+  createLearningState,
+  recordOutcome as recordLearningOutcome,
+  getSuccessRate,
+  type LearningState,
+} from "./learningModule";
 
 export interface UpkeepAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

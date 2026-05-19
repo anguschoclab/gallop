@@ -27,14 +27,20 @@ export function scoutGrade(stat: number): LetterGrade {
  */
 export function gradeColorClass(grade: LetterGrade): string {
   switch (grade) {
-    case "S": return "text-fame font-black animate-pulse";
+    case "S":
+      return "text-fame font-black animate-pulse";
     case "A+":
-    case "A": return "text-gold font-bold";
+    case "A":
+      return "text-gold font-bold";
     case "B+":
-    case "B": return "text-success font-medium";
+    case "B":
+      return "text-success font-medium";
     case "C+":
-    case "C": return "text-warning";
-    case "D": return "text-destructive/80";
-    default: return "text-cream/20 italic";
+    case "C":
+      return "text-warning";
+    case "D":
+      return "text-destructive/80";
+    default:
+      return "text-cream/20 italic";
   }
 }

@@ -141,133 +141,132 @@ export function AppShell() {
         Skip to content
       </a>
       {showSidebar && (
-      <aside className="w-[248px] shrink-0 border-r border-gold-muted bg-t950 flex flex-col">
-        <div className="p-5 border-b border-gold-muted">
-          {/* Design Bible: Brand title uses display font */}
-          <h1 className="text-[21px] font-bold text-gold font-[family-name:var(--font-display)] tracking-[0.04em] leading-none">
-            Gallop
-          </h1>
-          <p className="text-[9px] tracking-[0.14em] uppercase text-cream-muted font-[family-name:var(--font-mono)] tabular-nums mt-1 block">
-            {gameCalendarDate(day)}
-          </p>
-        </div>
-        <div className="p-3 border-t border-gold-muted space-y-4">
-          {navSections.map((section) => (
-            <div key={section.label}>
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-cream-muted font-[family-name:var(--font-mono)] mb-2">
-                {section.label}
-              </p>
-              <div className="space-y-1">
-                {section.items.map((item) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className="flex items-center gap-2 text-sm text-cream-muted hover:text-gold transition-colors group"
-                    activeProps={{
-                      className: "text-gold font-medium",
-                    }}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span className="flex-1">{item.label}</span>
-                    {item.label === "Inbox" && unreadCount > 0 && (
-                      <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white group-hover:bg-red-500">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="p-3 border-t border-gold-muted space-y-2">
-          <div className="px-3 py-2 rounded-md bg-t800 border border-gold-muted">
-            <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Cash</p>
-            {/* Design Bible: Numbers use IBM Plex Mono with tabular-nums */}
-            <p className="text-[22px] font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">
-              ${cash.toLocaleString()}
+        <aside className="w-[248px] shrink-0 border-r border-gold-muted bg-t950 flex flex-col">
+          <div className="p-5 border-b border-gold-muted">
+            {/* Design Bible: Brand title uses display font */}
+            <h1 className="text-[21px] font-bold text-gold font-[family-name:var(--font-display)] tracking-[0.04em] leading-none">
+              Gallop
+            </h1>
+            <p className="text-[9px] tracking-[0.14em] uppercase text-cream-muted font-[family-name:var(--font-mono)] tabular-nums mt-1 block">
+              {gameCalendarDate(day)}
             </p>
-            <p className="text-[10px] text-cream-muted/60 mt-1">
-              {horses.length} horses
-            </p>
-            <div className="grid grid-cols-4 gap-1">
-              <Button
-                onClick={() => advanceDay()}
-                className="col-span-1"
-                size="sm"
-                variant="outline"
-                aria-label="Advance 1 day"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-              <Button
-                onClick={() => {
-                  // Use setTimeout to ensure the click completes before starting the async operation
-                  setTimeout(() => advanceMultipleDays(DAYS_PER_WEEK), 0);
-                }}
-                className="col-span-1"
-                size="sm"
-                variant="outline"
-                title="Advance 1 week"
-              >
-                7d
-              </Button>
-              <Button
-                onClick={() => {
-                  // Use setTimeout to ensure the click completes before starting the async operation
-                  setTimeout(() => advanceMultipleDays(DAYS_PER_MONTH), 0);
-                }}
-                className="col-span-1"
-                size="sm"
-                variant="outline"
-                title="Advance 1 month"
-              >
-                30d
-              </Button>
-              <Button
-                onClick={() => setAutoSimOpen(true)}
-                className="col-span-1"
-                size="sm"
-                variant="outline"
-                aria-label="AutoSim settings"
-              >
-                <Settings className="h-3 w-3" />
-              </Button>
-            </div>
           </div>
-          <Button
-            onClick={() => setNewGameDialogOpen(true)}
-            className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
-            size="sm"
-            variant="ghost"
-          >
-            Start new game
-          </Button>
-          <Dialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Start New Game</DialogTitle>
-                <DialogDescription>
-                  This will delete your current game progress and start a new one. This action cannot be undone.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button variant="ghost" onClick={() => setNewGameDialogOpen(false)}>
-                  Cancel
+          <div className="p-3 border-t border-gold-muted space-y-4">
+            {navSections.map((section) => (
+              <div key={section.label}>
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-cream-muted font-[family-name:var(--font-mono)] mb-2">
+                  {section.label}
+                </p>
+                <div className="space-y-1">
+                  {section.items.map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="flex items-center gap-2 text-sm text-cream-muted hover:text-gold transition-colors group"
+                      activeProps={{
+                        className: "text-gold font-medium",
+                      }}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span className="flex-1">{item.label}</span>
+                      {item.label === "Inbox" && unreadCount > 0 && (
+                        <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white group-hover:bg-red-500">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 border-t border-gold-muted space-y-2">
+            <div className="px-3 py-2 rounded-md bg-t800 border border-gold-muted">
+              <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Cash</p>
+              {/* Design Bible: Numbers use IBM Plex Mono with tabular-nums */}
+              <p className="text-[22px] font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">
+                ${cash.toLocaleString()}
+              </p>
+              <p className="text-[10px] text-cream-muted/60 mt-1">{horses.length} horses</p>
+              <div className="grid grid-cols-4 gap-1">
+                <Button
+                  onClick={() => advanceDay()}
+                  className="col-span-1"
+                  size="sm"
+                  variant="outline"
+                  aria-label="Advance 1 day"
+                >
+                  <Plus className="h-3 w-3" />
                 </Button>
                 <Button
-                  variant="destructive"
                   onClick={() => {
-                    window.location.href = "/new-game";
+                    // Use setTimeout to ensure the click completes before starting the async operation
+                    setTimeout(() => advanceMultipleDays(DAYS_PER_WEEK), 0);
                   }}
+                  className="col-span-1"
+                  size="sm"
+                  variant="outline"
+                  title="Advance 1 week"
                 >
-                  Start new game
+                  7d
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </aside>
+                <Button
+                  onClick={() => {
+                    // Use setTimeout to ensure the click completes before starting the async operation
+                    setTimeout(() => advanceMultipleDays(DAYS_PER_MONTH), 0);
+                  }}
+                  className="col-span-1"
+                  size="sm"
+                  variant="outline"
+                  title="Advance 1 month"
+                >
+                  30d
+                </Button>
+                <Button
+                  onClick={() => setAutoSimOpen(true)}
+                  className="col-span-1"
+                  size="sm"
+                  variant="outline"
+                  aria-label="AutoSim settings"
+                >
+                  <Settings className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
+            <Button
+              onClick={() => setNewGameDialogOpen(true)}
+              className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
+              size="sm"
+              variant="ghost"
+            >
+              Start new game
+            </Button>
+            <Dialog open={newGameDialogOpen} onOpenChange={setNewGameDialogOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Start New Game</DialogTitle>
+                  <DialogDescription>
+                    This will delete your current game progress and start a new one. This action
+                    cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button variant="ghost" onClick={() => setNewGameDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      window.location.href = "/new-game";
+                    }}
+                  >
+                    Start new game
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </aside>
       )}
       <main id="main-content" className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto p-6">

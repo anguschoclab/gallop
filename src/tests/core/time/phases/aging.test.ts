@@ -30,7 +30,7 @@ describe("agingPhase", () => {
       age: 2,
       hemisphere: "Northern",
     });
-    
+
     const state = createTestState();
     state.day = 10;
     state.horses = [horse];
@@ -53,7 +53,7 @@ describe("agingPhase", () => {
       hemisphere: "Southern",
       gender: "filly",
     });
-    
+
     const state = createTestState();
     state.day = 1;
     state.horses = [h1, h2];
@@ -75,7 +75,7 @@ describe("agingPhase", () => {
       age: 3,
       hemisphere: "Southern",
     });
-    
+
     const state = createTestState();
     state.day = 213;
     state.horses = [h1, h2];
@@ -93,7 +93,7 @@ describe("agingPhase", () => {
       gender: "colt",
       hemisphere: "Northern",
     });
-    
+
     const state = createTestState();
     state.day = 1;
     state.horses = [horse];
@@ -111,7 +111,7 @@ describe("agingPhase", () => {
       gender: "filly",
       hemisphere: "Northern",
     });
-    
+
     const state = createTestState();
     state.day = 1;
     state.horses = [horse];
@@ -129,7 +129,7 @@ describe("agingPhase", () => {
       gender: "horse",
       hemisphere: "Northern",
     });
-    
+
     const state = createTestState();
     state.day = 1;
     state.horses = [horse];
@@ -143,7 +143,7 @@ describe("agingPhase", () => {
   it("should preserve other context properties", () => {
     const state = createTestState();
     state.day = 10;
-    
+
     const context = createTestContext(state, 9, 10);
     context.logs = [{ day: 9, text: "Existing log" }];
 

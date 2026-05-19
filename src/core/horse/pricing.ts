@@ -31,7 +31,8 @@ import {
  */
 export function calculateBaseHorseValue(horse: Horse, tier: StableTier): number {
   const overall = calculateOverallRating(horse);
-  const ageMod = horse.age <= AGE_YOUNG_THRESHOLD ? 1.3 : horse.age >= AGE_OLD_THRESHOLD ? 0.5 : 0.9;
+  const ageMod =
+    horse.age <= AGE_YOUNG_THRESHOLD ? 1.3 : horse.age >= AGE_OLD_THRESHOLD ? 0.5 : 0.9;
   const fameMod = 1 + horse.fame / 200;
   const tierMod = tier === "elite" ? 1.5 : tier === "mid" ? 1.2 : 1.0;
   return Math.round((overall * 100 * ageMod * fameMod * tierMod) / 100) * 100;

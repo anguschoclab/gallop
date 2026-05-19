@@ -7,7 +7,9 @@ import { cn } from "@/lib/utils";
 import { genderSymbol } from "@/core/horse/gender";
 import type { PedigreeFlowNode } from "@/lib/pedigreeGraph";
 
-export const PedigreeNodeCard = memo(function PedigreeNodeCard({ data }: NodeProps<PedigreeFlowNode>) {
+export const PedigreeNodeCard = memo(function PedigreeNodeCard({
+  data,
+}: NodeProps<PedigreeFlowNode>) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -78,4 +80,3 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({ data }: NodePro
     </>
   );
 });
-

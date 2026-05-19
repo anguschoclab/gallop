@@ -40,7 +40,7 @@ export interface SimulationResult {
 // Seed any race simulation off the race id so reruns are reproducible.
 /**
  * Generates a deterministic random number generator for a specific race, seeded by the race's unique ID.
- * 
+ *
  * @param {Pick<Race, "id">} race - The race object (requires a valid `id`).
  * @returns {Rng} A seeded RNG instance.
  */
@@ -59,7 +59,7 @@ export interface RaceFieldResult {
  * Builds the full field of runners for a race simulation.
  * Includes user entries and generates AI filler horses to meet the required field size.
  * Conditions like track surface and weather are factored into the runner statistics at this stage.
- * 
+ *
  * @param {RaceSimulationDependencies} dependencies - The objects required for building the field (race, horses, jockeys, etc.).
  * @returns {RaceFieldResult} An object containing the final list of runners and any generated filler horses.
  */
@@ -139,7 +139,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
       // Get staff for this stable - optimize with Map for role lookup
       const stableId = horse.stableId ?? "";
       const staffForStable = hiredStaff.filter((s) => s.stableId === stableId);
-      const staffRoleMap = new Map(staffForStable.map(s => [s.role, s]));
+      const staffRoleMap = new Map(staffForStable.map((s) => [s.role, s]));
 
       const farrier = staffRoleMap.get("farrier");
       const groom = staffRoleMap.get("groom");
@@ -176,7 +176,7 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
 /**
  * Simulates a single time step for all runners in the field.
  * Updates runner positions, detects finishers, and maintains the current pace context.
- * 
+ *
  * @param {Runner[]} runners - All runners currently participating in the race.
  * @param {number} dt - The time delta for the step in seconds.
  * @param {number} simTime - Total elapsed simulation time in seconds.
@@ -247,7 +247,7 @@ function getTierForRaceClass(raceClass: Race["raceClass"]): string {
 
 /**
  * Calculates any class-based performance bonuses applicable to the race.
- * 
+ *
  * @param {Race} race - The race object.
  * @returns {number} The calculated class bonus value.
  */

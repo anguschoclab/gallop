@@ -50,7 +50,14 @@ describe("pedigreeMultiplier", () => {
     const yearling = mkHorse({
       id: "y",
       age: 1,
-      pedigree: { name: "Yearling", generation: 0, sireId: "sire", damId: "dam", sireName: "Sire", damName: "Dam" },
+      pedigree: {
+        name: "Yearling",
+        generation: 0,
+        sireId: "sire",
+        damId: "dam",
+        sireName: "Sire",
+        damName: "Dam",
+      },
     });
     const mul = pedigreeMultiplier(yearling, { horses: [sire, dam, yearling] } as any);
     expect(mul).toBeGreaterThan(1.2);
@@ -72,8 +79,16 @@ describe("pedigreeMultiplier", () => {
       },
     });
     const dam = mkHorse({ id: "dam", name: "Dam", gender: "mare" });
-    const yearling = mkHorse({ id: "y", age: 1, pedigree: { name: "Y", generation: 0, sireId: "sire", damId: "dam" } });
-    const veteran = mkHorse({ id: "v", age: 5, pedigree: { name: "V", generation: 0, sireId: "sire", damId: "dam" } });
+    const yearling = mkHorse({
+      id: "y",
+      age: 1,
+      pedigree: { name: "Y", generation: 0, sireId: "sire", damId: "dam" },
+    });
+    const veteran = mkHorse({
+      id: "v",
+      age: 5,
+      pedigree: { name: "V", generation: 0, sireId: "sire", damId: "dam" },
+    });
     const horses = [sire, dam, yearling, veteran];
     expect(pedigreeMultiplier(yearling, { horses } as any)).toBeGreaterThan(
       pedigreeMultiplier(veteran, { horses } as any),

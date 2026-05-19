@@ -49,7 +49,8 @@ export const useExpenses = () => useGameWithShallow((s: GameState) => s.expenses
 /**
  * @returns Array of financial transactions
  */
-export const useTransactions = () => useGameWithShallow((s: GameState) => s.transactions ?? EMPTY_ARRAY);
+export const useTransactions = () =>
+  useGameWithShallow((s: GameState) => s.transactions ?? EMPTY_ARRAY);
 
 /**
  * Multiple core state values with shallow comparison.

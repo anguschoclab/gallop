@@ -15,7 +15,13 @@
 
 import type { Horse, Race, Stable } from "@/game/types";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
-import { createLearningState, recordOutcome as recordLearningOutcome, getSuccessRate, getAdaptiveThreshold, type LearningState } from "./learningModule";
+import {
+  createLearningState,
+  recordOutcome as recordLearningOutcome,
+  getSuccessRate,
+  getAdaptiveThreshold,
+  type LearningState,
+} from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export interface HorseGenAIState {

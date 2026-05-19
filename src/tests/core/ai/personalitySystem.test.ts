@@ -182,14 +182,7 @@ describe("recordOutcome", () => {
     const state = getPersonalityAIState("aggressive");
     const day = Date.now();
 
-    const updatedState = recordOutcome(
-      state,
-      "race_entry",
-      { race_class: "G1" },
-      true,
-      1000,
-      day,
-    );
+    const updatedState = recordOutcome(state, "race_entry", { race_class: "G1" }, true, 1000, day);
 
     expect(updatedState.learningState.outcomes).toHaveLength(1);
     expect(updatedState.learningState.outcomes[0].decisionType).toBe("race_entry");
@@ -262,7 +255,6 @@ describe("recordOutcome", () => {
     // Strategy should change after enough failures (resets to 0.6 when switching)
     expect(updatedState.currentStrategy).not.toBe("default");
     expect(updatedState.lastStrategyChangeDay).toBeGreaterThan(0);
-
   });
 });
 

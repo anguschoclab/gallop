@@ -49,32 +49,15 @@ export const HotyIcon = ({ width, height, className }: SvgProps) => {
       <path d="M14 16 L34 16" stroke="#C0C0C0" strokeWidth="2" />
 
       {/* Handles - more elegant */}
-      <path
-        d="M16 18 C11 18 11 26 16 26"
-        stroke="#C0C0C0"
-        strokeWidth="1.5"
-        fill="none"
-      />
-      <path
-        d="M32 18 C37 18 37 26 32 26"
-        stroke="#C0C0C0"
-        strokeWidth="1.5"
-        fill="none"
-      />
+      <path d="M16 18 C11 18 11 26 16 26" stroke="#C0C0C0" strokeWidth="1.5" fill="none" />
+      <path d="M32 18 C37 18 37 26 32 26" stroke="#C0C0C0" strokeWidth="1.5" fill="none" />
 
       {/* Base - crystal style */}
       <path d="M20 32 L18 38 L30 38 L28 32 Z" fill="#C0C0C0" opacity="0.8" />
 
       {/* Year banner */}
       <rect x="19" y="39" width="10" height="4" rx="1" fill="#4B0082" />
-      <text
-        x="24"
-        y="42"
-        fontSize="3"
-        fill="#C0C0C0"
-        textAnchor="middle"
-        fontWeight="bold"
-      >
+      <text x="24" y="42" fontSize="3" fill="#C0C0C0" textAnchor="middle" fontWeight="bold">
         HOTY
       </text>
 

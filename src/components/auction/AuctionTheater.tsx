@@ -269,10 +269,7 @@ export function AuctionTheater({ saleId }: AuctionTheaterProps) {
       </div>
 
       {/* Overlays */}
-      <BidHistoryPanel
-        bidHistory={bidHistory}
-        stables={stables}
-      />
+      <BidHistoryPanel bidHistory={bidHistory} stables={stables} />
 
       {winOverlay && (
         <WinOverlay horseName={winOverlay.horseName} hammerPrice={winOverlay.hammerPrice} />

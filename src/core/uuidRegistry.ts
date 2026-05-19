@@ -30,7 +30,7 @@ class UUIDRegistry {
     if (this.uuids.has(uuid)) {
       const existingType = this.uuids.get(uuid);
       throw new Error(
-        `UUID collision detected: ${uuid} is already registered as type '${existingType}'. Attempted to register as '${entityType}'.`
+        `UUID collision detected: ${uuid} is already registered as type '${existingType}'. Attempted to register as '${entityType}'.`,
       );
     }
 

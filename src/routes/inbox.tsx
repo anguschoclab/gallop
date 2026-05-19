@@ -4,19 +4,19 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Bell, 
-  Check, 
-  CheckCheck, 
-  Trash2, 
-  Pin, 
-  AlertCircle, 
-  Info, 
-  Gavel, 
-  Baby, 
-  Activity, 
+import {
+  Bell,
+  Check,
+  CheckCheck,
+  Trash2,
+  Pin,
+  AlertCircle,
+  Info,
+  Gavel,
+  Baby,
+  Activity,
   Calendar,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { InboxCategory, InboxPriority, InboxMessage } from "@/core/inbox/inboxTypes";
@@ -54,21 +54,31 @@ function InboxPage() {
 
   const getCategoryIcon = (category: InboxCategory) => {
     switch (category) {
-      case "foaling": return <Baby className="h-4 w-4" />;
-      case "injury": return <Activity className="h-4 w-4" />;
-      case "auction": return <Gavel className="h-4 w-4" />;
-      case "deadline": return <Calendar className="h-4 w-4" />;
-      case "offer": return <Gavel className="h-4 w-4" />;
-      case "race": return <Calendar className="h-4 w-4" />;
-      default: return <Bell className="h-4 w-4" />;
+      case "foaling":
+        return <Baby className="h-4 w-4" />;
+      case "injury":
+        return <Activity className="h-4 w-4" />;
+      case "auction":
+        return <Gavel className="h-4 w-4" />;
+      case "deadline":
+        return <Calendar className="h-4 w-4" />;
+      case "offer":
+        return <Gavel className="h-4 w-4" />;
+      case "race":
+        return <Calendar className="h-4 w-4" />;
+      default:
+        return <Bell className="h-4 w-4" />;
     }
   };
 
   const getPriorityColor = (priority: InboxPriority) => {
     switch (priority) {
-      case "urgent": return "bg-red-500/10 border-red-500 text-red-500";
-      case "action": return "bg-gold/10 border-gold text-gold";
-      default: return "bg-blue-500/10 border-blue-500 text-blue-500";
+      case "urgent":
+        return "bg-red-500/10 border-red-500 text-red-500";
+      case "action":
+        return "bg-gold/10 border-gold text-gold";
+      default:
+        return "bg-blue-500/10 border-blue-500 text-blue-500";
     }
   };
 
@@ -76,15 +86,19 @@ function InboxPage() {
     <div className="container mx-auto p-6 max-w-4xl animate-in fade-in slide-in-from-bottom-4">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-cream font-[family-name:var(--font-display)]">Message Center</h1>
-          <p className="text-cream-muted text-sm mt-1">Your hub for critical stable updates and decisions.</p>
+          <h1 className="text-3xl font-bold text-cream font-[family-name:var(--font-display)]">
+            Message Center
+          </h1>
+          <p className="text-cream-muted text-sm mt-1">
+            Your hub for critical stable updates and decisions.
+          </p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => markAllRead()}
-            disabled={inbox.every(m => m.readAt)}
+            disabled={inbox.every((m) => m.readAt)}
           >
             <CheckCheck className="mr-2 h-4 w-4" />
             Mark all read
@@ -93,28 +107,28 @@ function InboxPage() {
       </div>
 
       <div className="flex gap-2 mb-6">
-        <Button 
-          variant={filter === "all" ? "default" : "outline"} 
-          size="sm" 
+        <Button
+          variant={filter === "all" ? "default" : "outline"}
+          size="sm"
           onClick={() => setFilter("all")}
         >
           All Messages
         </Button>
-        <Button 
-          variant={filter === "unread" ? "default" : "outline"} 
-          size="sm" 
+        <Button
+          variant={filter === "unread" ? "default" : "outline"}
+          size="sm"
           onClick={() => setFilter("unread")}
         >
           Unread
-          {inbox.some(m => !m.readAt) && (
+          {inbox.some((m) => !m.readAt) && (
             <Badge variant="destructive" className="ml-2 px-1.5 h-4 min-w-[16px]">
-              {inbox.filter(m => !m.readAt).length}
+              {inbox.filter((m) => !m.readAt).length}
             </Badge>
           )}
         </Button>
-        <Button 
-          variant={filter === "action" ? "default" : "outline"} 
-          size="sm" 
+        <Button
+          variant={filter === "action" ? "default" : "outline"}
+          size="sm"
           onClick={() => setFilter("action")}
         >
           Action Required
@@ -131,21 +145,18 @@ function InboxPage() {
           </Card>
         ) : (
           filteredMessages.map((msg) => (
-            <Card 
-              key={msg.id} 
+            <Card
+              key={msg.id}
               className={cn(
                 "bg-t800 border-gold-muted/30 transition-all hover:border-gold/50 relative overflow-hidden",
                 !msg.readAt && "border-l-4 border-l-gold shadow-lg shadow-gold/5",
-                msg.priority === "urgent" && "border-l-4 border-l-red-500"
+                msg.priority === "urgent" && "border-l-4 border-l-red-500",
               )}
             >
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "p-2 rounded-full",
-                      getPriorityColor(msg.priority)
-                    )}>
+                    <div className={cn("p-2 rounded-full", getPriorityColor(msg.priority))}>
                       {getCategoryIcon(msg.category)}
                     </div>
                     <div>
@@ -165,9 +176,9 @@ function InboxPage() {
                   </div>
                   <div className="flex gap-1">
                     {!msg.readAt && (
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         title="Mark as read"
                         aria-label={"Mark '" + msg.title + "' as read"}
                         onClick={() => markRead(msg.id)}
@@ -175,9 +186,9 @@ function InboxPage() {
                         <Check className="h-4 w-4" />
                       </Button>
                     )}
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       title="Dismiss"
                       aria-label={"Dismiss message '" + msg.title + "'"}
                       onClick={() => dismiss(msg.id)}
@@ -188,11 +199,9 @@ function InboxPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-cream-muted text-sm mb-4 leading-relaxed">
-                  {msg.body}
-                </p>
+                <p className="text-cream-muted text-sm mb-4 leading-relaxed">{msg.body}</p>
                 {msg.cta && (
-                  <Button 
+                  <Button
                     variant={msg.priority === "urgent" ? "destructive" : "default"}
                     size="sm"
                     className="gap-2"
@@ -200,7 +209,10 @@ function InboxPage() {
                       markRead(msg.id);
                       if (msg.cta) {
                         // Handle parameterized routes
-                        const routePath = msg.cta.route.replace(/\$(\w+)/g, (_, key) => msg.cta?.params?.[key] || "");
+                        const routePath = msg.cta.route.replace(
+                          /\$(\w+)/g,
+                          (_, key) => msg.cta?.params?.[key] || "",
+                        );
                         navigate({ to: routePath as any });
                       }
                     }}

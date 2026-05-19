@@ -84,8 +84,4 @@ export type SliceCreator<TSlice> = (
  * Generic slice creator alias used by individual slice files.
  * Loosely typed to avoid forcing every slice to spell out the full StoreType.
  */
-export type GameStateCreator<TSlice> = (
-  set: StoreSet,
-  get: StoreGet,
-  api?: unknown,
-) => TSlice;
+export type GameStateCreator<TSlice> = (set: StoreSet, get: StoreGet, api?: unknown) => TSlice;

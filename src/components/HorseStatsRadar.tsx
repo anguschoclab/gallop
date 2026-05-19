@@ -22,29 +22,20 @@ export function HorseStatsRadar({ horse }: HorseStatsRadarProps) {
 
   return (
     <div className="h-[250px] w-full relative">
-       <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%">
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
-          <PolarGrid 
-            stroke="rgba(212,175,55,0.2)" 
-            gridType="polygon" 
-            radialLines={true}
-          />
+          <PolarGrid stroke="rgba(212,175,55,0.2)" gridType="polygon" radialLines={true} />
           <PolarAngleAxis
             dataKey="stat"
-            tick={{ 
-              fill: "rgba(245,245,220,0.6)", 
-              fontSize: 10, 
-              fontFamily: 'monospace',
-              fontWeight: 'bold',
-              letterSpacing: '0.1em'
+            tick={{
+              fill: "rgba(245,245,220,0.6)",
+              fontSize: 10,
+              fontFamily: "monospace",
+              fontWeight: "bold",
+              letterSpacing: "0.1em",
             }}
           />
-          <PolarRadiusAxis
-            angle={90}
-            domain={[0, 100]}
-            tick={false}
-            axisLine={false}
-          />
+          <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
           <Radar
             name="OPERATIONAL_SPEC"
             dataKey="value"
@@ -56,7 +47,7 @@ export function HorseStatsRadar({ horse }: HorseStatsRadarProps) {
           />
         </RadarChart>
       </ResponsiveContainer>
-      
+
       {/* Decorative center point */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-gold rounded-full shadow-[0_0_8px_rgba(212,175,55,0.8)]" />
     </div>

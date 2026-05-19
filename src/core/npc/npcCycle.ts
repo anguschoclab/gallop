@@ -186,15 +186,15 @@ function processRegionalDominance(
               // But winsAgainstPlayer in StableAIState is "wins of NPC against player"
               // So we don't have "player wins against NPC king" easily without a new map
             }
-            
+
             // Simpler unseating logic: Player takes the crown if they win a G1 in the region
             if (race.graded && race.graded.grade === "G1") {
               updatedAiManager.regionalKings[region] = "player";
               // Generate news? (Optional, maybe later)
             }
           } else if (!currentKingId) {
-             // Vacant crown
-             updatedAiManager.regionalKings[region] = "player";
+            // Vacant crown
+            updatedAiManager.regionalKings[region] = "player";
           }
         } else {
           // NPC won
@@ -202,13 +202,13 @@ function processRegionalDominance(
           if (stable) {
             const stableAI = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
             const oldFriction = stableAI.friction;
-            
+
             if (currentKingId === "player") {
               stableAI.winsAgainstPlayer++;
               if (stableAI.winsAgainstPlayer >= RIVALRY_CONSTANTS.DOMINANCE.UNSEAT_WIN_STREAK) {
                 updatedAiManager.regionalKings[region] = winningStableId;
                 stableAI.winsAgainstPlayer = 0;
-                
+
                 // Generate region lost news
                 const news = generateRegionLostNews(region, stable, currentDay, rng);
                 if (news) newsItems.push(news);
@@ -233,31 +233,51 @@ function processRegionalDominance(
       }
 
       // Grudge Match Logic (Deduplicated per stable)
-      if (race.graded && (race.graded.grade === "G1" || race.graded.grade === "G2" || race.graded.grade === "G3")) {
+      if (
+        race.graded &&
+        (race.graded.grade === "G1" || race.graded.grade === "G2" || race.graded.grade === "G3")
+      ) {
         const hasPlayerEntry = race.entries.some((e) => e.owned);
         if (hasPlayerEntry) {
-          const rivalStablesInRace = new Set(race.entries.map(e => e.stableId).filter(id => id && id !== "player"));
-          
+          const rivalStablesInRace = new Set(
+            race.entries.map((e) => e.stableId).filter((id) => id && id !== "player"),
+          );
+
           for (const rivalStableId of rivalStablesInRace) {
             const rivalAI = updatedAiManager.stableStates[rivalStableId!];
             if (rivalAI && rivalAI.friction >= 50) {
-              const rivalStable = npcStables.find(s => s.id === rivalStableId);
+              const rivalStable = npcStables.find((s) => s.id === rivalStableId);
               if (!rivalStable) continue;
 
               // Find best horses for headline
-              const playerEntries = race.entries.filter(e => e.owned);
-              const rivalEntries = race.entries.filter(e => e.stableId === rivalStableId);
-              
-              const playerBestPos = Math.min(...race.result!.filter(r => playerEntries.some(e => e.horseId === r.horseId)).map(r => r.position));
-              const rivalBestPos = Math.min(...race.result!.filter(r => rivalEntries.some(e => e.horseId === r.horseId)).map(r => r.position));
-              
-              const playerHorseId = race.result!.find(r => r.position === playerBestPos && playerEntries.some(e => e.horseId === r.horseId))?.horseId;
-              const rivalHorseId = race.result!.find(r => r.position === rivalBestPos && rivalEntries.some(e => e.horseId === r.horseId))?.horseId;
-              
+              const playerEntries = race.entries.filter((e) => e.owned);
+              const rivalEntries = race.entries.filter((e) => e.stableId === rivalStableId);
+
+              const playerBestPos = Math.min(
+                ...race
+                  .result!.filter((r) => playerEntries.some((e) => e.horseId === r.horseId))
+                  .map((r) => r.position),
+              );
+              const rivalBestPos = Math.min(
+                ...race
+                  .result!.filter((r) => rivalEntries.some((e) => e.horseId === r.horseId))
+                  .map((r) => r.position),
+              );
+
+              const playerHorseId = race.result!.find(
+                (r) =>
+                  r.position === playerBestPos &&
+                  playerEntries.some((e) => e.horseId === r.horseId),
+              )?.horseId;
+              const rivalHorseId = race.result!.find(
+                (r) =>
+                  r.position === rivalBestPos && rivalEntries.some((e) => e.horseId === r.horseId),
+              )?.horseId;
+
               if (playerHorseId && rivalHorseId) {
-                const playerHorse = horses.find(h => h.id === playerHorseId);
-                const rivalHorse = horses.find(h => h.id === rivalHorseId);
-                
+                const playerHorse = horses.find((h) => h.id === playerHorseId);
+                const rivalHorse = horses.find((h) => h.id === rivalHorseId);
+
                 if (playerHorse && rivalHorse) {
                   const playerWon = playerBestPos < rivalBestPos;
                   const news = generateGrudgeMatchNews(
@@ -422,7 +442,11 @@ export function runNpcCycle(
         // AI-driven facility upgrades
         if (npcFacilities && npcFacilities[stable.id]) {
           const facilities = npcFacilities[stable.id];
-          const facilityBudget = calculateFacilityBudget(stableAIState.facilityAI, stable, currentDay);
+          const facilityBudget = calculateFacilityBudget(
+            stableAIState.facilityAI,
+            stable,
+            currentDay,
+          );
 
           if (facilityBudget.upgradeBudget > 0 && stable.cash >= facilityBudget.upgradeBudget) {
             const facilityToUpgrade = selectFacilityToUpgrade(

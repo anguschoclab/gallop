@@ -45,10 +45,7 @@ export function AwardIcon({
       style={{ color }}
       title={showTooltip ? getTooltipText(region, category, year) : undefined}
     >
-      <Icon
-        width={config.width}
-        height={config.height}
-      />
+      <Icon width={config.width} height={config.height} />
     </div>
   );
 }

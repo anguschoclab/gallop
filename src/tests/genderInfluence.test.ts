@@ -9,7 +9,14 @@ import type { Locus } from "@/core/common/types";
 function mockHorse(
   id: string,
   gender: HorseGender,
-  stats: { speed: number; stamina: number; acceleration: number; consistency: number; temperament: number; conformation: number },
+  stats: {
+    speed: number;
+    stamina: number;
+    acceleration: number;
+    consistency: number;
+    temperament: number;
+    conformation: number;
+  },
 ): Partial<Horse> {
   return {
     id,
@@ -57,8 +64,22 @@ function mockHorse(
       recovery: [5, 5],
       fertility: [5, 5],
       foalingEase: [5, 5],
-      markings: { socks: [5, 5], face: [5, 5], silverDapple: [5, 5], sabino: [5, 5], splashWhite: [5, 5] },
-      health: { bleeder: [5, 5], roarer: [5, 5], ocd: [5, 5], efna5: [5, 5], pssm: [5, 5], rer: [5, 5], epm: [5, 5] },
+      markings: {
+        socks: [5, 5],
+        face: [5, 5],
+        silverDapple: [5, 5],
+        sabino: [5, 5],
+        splashWhite: [5, 5],
+      },
+      health: {
+        bleeder: [5, 5],
+        roarer: [5, 5],
+        ocd: [5, 5],
+        efna5: [5, 5],
+        pssm: [5, 5],
+        rer: [5, 5],
+        epm: [5, 5],
+      },
     } satisfies Genotype,
   };
 }
@@ -104,7 +125,14 @@ describe("Gender and Weight Influence", () => {
   });
 
   it("should give stallions higher peak power but higher noise than geldings", () => {
-    const baseStats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    const baseStats = {
+      speed: 80,
+      stamina: 80,
+      acceleration: 80,
+      consistency: 80,
+      temperament: 50,
+      conformation: 50,
+    };
     const stallionHorse = mockHorse("stallion", "horse", baseStats) as Horse;
     const geldingHorse = mockHorse("gelding", "gelding", baseStats) as Horse;
 
@@ -140,7 +168,14 @@ describe("Gender and Weight Influence", () => {
   });
 
   it("should show that fillies are slower than stallions but get weight allowance", () => {
-    const baseStats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    const baseStats = {
+      speed: 80,
+      stamina: 80,
+      acceleration: 80,
+      consistency: 80,
+      temperament: 50,
+      conformation: 50,
+    };
     const stallionHorse = mockHorse("stallion", "horse", baseStats) as Horse;
     const fillyHorse = mockHorse("filly", "filly", baseStats) as Horse;
 
@@ -180,7 +215,14 @@ describe("Gender and Weight Influence", () => {
   });
 
   it("should demonstrate gelding consistency in multi-race simulation", () => {
-    const baseStats = { speed: 80, stamina: 80, acceleration: 80, consistency: 80, temperament: 50, conformation: 50 };
+    const baseStats = {
+      speed: 80,
+      stamina: 80,
+      acceleration: 80,
+      consistency: 80,
+      temperament: 50,
+      conformation: 50,
+    };
     const stallionHorse = mockHorse("stallion", "horse", baseStats) as Horse;
     const geldingHorse = mockHorse("gelding", "gelding", baseStats) as Horse;
 

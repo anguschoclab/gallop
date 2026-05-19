@@ -145,11 +145,10 @@ function resolveDnaTraits(genotype: Genotype) {
 
 // --- Public Factory API ---
 
-
 /**
  * Hydrates a complete Horse object from a given genotype by resolving all phenotype traits.
  * This is the core builder for all horse creation, handling stats, aptitudes, health risks, and appearance.
- * 
+ *
  * @param {Genotype} genotype - The genetic blueprint for the horse.
  * @param {Rng} rng - Seeded random number generator.
  * @param {Object} [opts={}] - Configuration options.
@@ -192,8 +191,10 @@ export function createHorseFromDNA(
   const { height, weight } = resolveSize(genotype.size);
 
   const sizeSum = genotype.size[0] + genotype.size[1];
-  if (sizeSum >= CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD) corneringAptitude -= CORNERING_APTITUDE_LARGE_PENALTY;
-  if (sizeSum <= CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD) corneringAptitude += CORNERING_APTITUDE_SMALL_BONUS;
+  if (sizeSum >= CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD)
+    corneringAptitude -= CORNERING_APTITUDE_LARGE_PENALTY;
+  if (sizeSum <= CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD)
+    corneringAptitude += CORNERING_APTITUDE_SMALL_BONUS;
 
   const dnaTraits = resolveDnaTraits(genotype);
 
@@ -259,7 +260,7 @@ export function createHorseFromDNA(
 /**
  * Generates a procedural horse, typically for use in market listings or starter rosters.
  * Handles genotype generation based on tier, age rolling, and procedural naming.
- * 
+ *
  * @param {Object} [opts={}] - Generation options.
  * @param {"starter" | "budget" | "mid" | "elite"} [opts.tier] - Quality tier for genotype generation.
  * @param {boolean} [opts.owned] - Player ownership status.
@@ -311,7 +312,7 @@ export function generateHorse(
 
 /**
  * Generates a horse specifically for an NPC stable, incorporating stable personality and tier preferences.
- * 
+ *
  * @param {Stable} stable - The stable that will own the horse.
  * @param {Rng} rng - Seeded random number generator.
  * @param {NpcAIManager} [npcAIManager] - AI manager for advanced logic.

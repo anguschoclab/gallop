@@ -42,7 +42,7 @@ export interface ResolverContext {
 /**
  * Applies a single state impact to the game state using Immer for immutability.
  * Iterates through all registered handlers to find the appropriate one for the impact type.
- * 
+ *
  * @param {GameState} state - The current game state.
  * @param {AnyImpact} impact - The impact to apply.
  * @returns {GameState} The updated game state.
@@ -68,7 +68,7 @@ function applyImpact(state: GameState, impact: AnyImpact): GameState {
 /**
  * Applies a collection of impacts to the state in sequential order.
  * Processes all impacts within the resolver context and creates pre-indexed maps for efficient entity lookups during resolution.
- * 
+ *
  * @param {ResolverContext} context - The context containing current state and impacts to apply.
  * @returns {ResolverContext} The updated resolver context with the new state and extended impact log.
  */
@@ -179,7 +179,7 @@ export function applyImpacts(context: ResolverContext): ResolverContext {
 /**
  * Validates a game intent before it is processed by the resolver.
  * Searches for a registered validator capable of handling the specific intent type.
- * 
+ *
  * @param {AnyIntent} intent - The intent to validate.
  * @param {GameState} state - The current game state.
  * @param {ValidationCache} [cache] - Optional cache to store and reuse validation results for performance.
@@ -203,7 +203,7 @@ export function validateIntent(
 
 /**
  * Sorts an array of intents by their numerical priority field in descending order.
- * 
+ *
  * @param {AnyIntent[]} intents - The array of intents to sort.
  * @returns {AnyIntent[]} A new array containing the sorted intents.
  */
@@ -214,7 +214,7 @@ export function sortIntents(intents: AnyIntent[]): AnyIntent[] {
 /**
  * Resolves potential conflicts between multiple intents targeting the same entity and type.
  * Groups intents and retains only the one with the highest priority for each group, logging the others as conflicts.
- * 
+ *
  * @param {AnyIntent[]} intents - The collection of intents to resolve.
  * @param {GameState} state - The current game state.
  * @returns {Object} An object containing the list of `resolved` intents and an array of `conflicts`.

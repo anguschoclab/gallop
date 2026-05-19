@@ -71,4 +71,3 @@ export const JARGON_DEFINITIONS: Record<string, string> = {
   rain: "Sustained rainfall — turf yields, dirt turns muddy.",
   storm: "Heavy rain and wind — surface degrades sharply; expect a downgrade.",
 };
-

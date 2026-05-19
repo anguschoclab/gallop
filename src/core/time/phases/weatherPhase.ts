@@ -24,10 +24,7 @@ import {
   PATTERN_SEVERITY,
   getTrackClimate,
 } from "@/core/weather";
-import {
-  WEATHER_HISTORY_DAYS,
-  WEATHER_FORECAST_DAYS,
-} from "@/game/store/slices/weatherSlice";
+import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS } from "@/game/store/slices/weatherSlice";
 import { calculateConditionChange } from "@/core/trackConditions";
 import { generateUUID } from "@/core/uuid";
 
@@ -105,11 +102,7 @@ export const weatherPhase = {
         const jump = PATTERN_SEVERITY[today.pattern] - PATTERN_SEVERITY[lastState.pattern];
         if (jump >= 2) {
           const dramaRace = state.races.find(
-            (r) =>
-              !r.resolved &&
-              r.day === newDay &&
-              r.graded?.grade &&
-              raceTrackId(r) === trackId,
+            (r) => !r.resolved && r.day === newDay && r.graded?.grade && raceTrackId(r) === trackId,
           );
           if (dramaRace) {
             const dramaText = `${today.pattern === "storm" ? "Storm" : "Heavy weather"} forecast at ${dramaRace.graded?.track ?? trackId} — track downgraded ahead of the ${dramaRace.name}.`;
@@ -177,9 +170,7 @@ export const weatherPhase = {
         ...({
           weather: { byTrack: newByTrack, forecast: newForecast },
         } as any),
-        log: newLogs.length
-          ? [...newLogs, ...state.log].slice(0, 200)
-          : state.log,
+        log: newLogs.length ? [...newLogs, ...state.log].slice(0, 200) : state.log,
       },
       impacts: [...context.impacts, ...newImpacts],
     };

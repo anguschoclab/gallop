@@ -50,7 +50,10 @@ type NamingStrategyFunction = (context: NamingContext, rng: Rng) => string | und
 /**
  * Strategy record for name generation based on naming strategy.
  */
-const NAMING_STRATEGIES: Record<"pedigree" | "thematic" | "ancestor" | "regional", NamingStrategyFunction> = {
+const NAMING_STRATEGIES: Record<
+  "pedigree" | "thematic" | "ancestor" | "regional",
+  NamingStrategyFunction
+> = {
   pedigree: (context, rng) => {
     if (context.sireName && context.damName) {
       return rng.next() < 0.5
@@ -115,7 +118,10 @@ export function generateProceduralHorseName(
 
     // Use strategy record to generate name (skip hybrid as it's handled by pickStrategy)
     if (currentStrategy && currentStrategy !== "hybrid" && currentStrategy in NAMING_STRATEGIES) {
-      candidate = NAMING_STRATEGIES[currentStrategy as keyof typeof NAMING_STRATEGIES](context, rng);
+      candidate = NAMING_STRATEGIES[currentStrategy as keyof typeof NAMING_STRATEGIES](
+        context,
+        rng,
+      );
     }
 
     // Fallback if strategy failed to produce a name

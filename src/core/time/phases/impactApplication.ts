@@ -51,8 +51,13 @@ export const impactApplicationPhase: PipelinePhase = {
     if (cleanedState.scoutReports && cleanedState.scoutReports.length > SCOUT_REPORTS_MAX_SIZE) {
       cleanedState.scoutReports = cleanedState.scoutReports.slice(-SCOUT_REPORTS_MAX_SIZE);
     }
-    if (cleanedState.triplecrownHistory && cleanedState.triplecrownHistory.length > TRIPLE_CROWN_HISTORY_MAX_SIZE) {
-      cleanedState.triplecrownHistory = cleanedState.triplecrownHistory.slice(-TRIPLE_CROWN_HISTORY_MAX_SIZE);
+    if (
+      cleanedState.triplecrownHistory &&
+      cleanedState.triplecrownHistory.length > TRIPLE_CROWN_HISTORY_MAX_SIZE
+    ) {
+      cleanedState.triplecrownHistory = cleanedState.triplecrownHistory.slice(
+        -TRIPLE_CROWN_HISTORY_MAX_SIZE,
+      );
     }
     if (cleanedState.paceSamples) {
       // Pace samples is an object with arrays, clean each bucket

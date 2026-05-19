@@ -28,7 +28,7 @@
 
 /* Decorative corner brackets for high-importance news */
 .news-importance-high::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 10px;
   right: 10px;
@@ -47,6 +47,6 @@
 
 /* Stamped effect for news categories */
 .news-category-stamped {
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-  text-shadow: 1px 1px 0px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
 }

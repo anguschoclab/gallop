@@ -37,7 +37,10 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
     if (!jockey) return { ok: false, reason: "Jockey not found." };
     if (jockey.stableId) return { ok: false, reason: "Jockey is already under contract." };
 
-    const bonusMultiplier = contractType === "retainer" ? JOCKEY_RETAINER_BONUS_MULTIPLIER : JOCKEY_PER_RACE_BONUS_MULTIPLIER;
+    const bonusMultiplier =
+      contractType === "retainer"
+        ? JOCKEY_RETAINER_BONUS_MULTIPLIER
+        : JOCKEY_PER_RACE_BONUS_MULTIPLIER;
     const bonus = jockey.ridingFee * bonusMultiplier;
 
     if (s.cash < bonus)
@@ -55,7 +58,8 @@ export const createJockeySlice: SliceCreator<JockeySlice> = (set, get) => ({
       type: "jockey_contract",
       jockeyId,
       stableId: "player",
-      contractUntil: s.day + (contractType === "retainer" ? JOCKEY_RETAINER_DAYS : JOCKEY_CONTRACT_DAYS),
+      contractUntil:
+        s.day + (contractType === "retainer" ? JOCKEY_RETAINER_DAYS : JOCKEY_CONTRACT_DAYS),
       bonus,
       stableAffinity: contractType === "retainer" ? 50 : 0, // Retainers start with 50 stable affinity
     } as any);

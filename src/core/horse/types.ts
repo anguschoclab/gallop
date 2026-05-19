@@ -84,7 +84,6 @@ export type StudCareer = {
 
 // AppearanceDNA is now imported from genetics/types
 
-
 // Horse Type Definitions
 
 /**

@@ -106,7 +106,10 @@ export function detectPositionChange(
  * @param runnersMap - Map of horse ID to runner for O(1) lookup
  * @returns DetectedEvent if drafting, otherwise null
  */
-export function detectDrafting(runner: Runner, runnersMap: Map<string, Runner>): DetectedEvent | null {
+export function detectDrafting(
+  runner: Runner,
+  runnersMap: Map<string, Runner>,
+): DetectedEvent | null {
   if (!runner.draftingHorseId) return null;
 
   const other = runnersMap.get(runner.draftingHorseId);

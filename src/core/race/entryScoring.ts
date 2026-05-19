@@ -142,17 +142,22 @@ export function calculateRaceSuitability(horse: Horse, race: Race, stable: Stabl
 
   // Distance fit - use horse's personal aptitude
   const distDiff = Math.abs(race.distance - horse.distanceAptitude);
-  if (distDiff <= SCORING_CONSTANTS.DIST_PERFECT_THRESHOLD) score += SCORING_CONSTANTS.DIST_PERFECT_BONUS;
-  else if (distDiff <= SCORING_CONSTANTS.DIST_GOOD_THRESHOLD) score += SCORING_CONSTANTS.DIST_GOOD_BONUS;
-  else if (distDiff <= SCORING_CONSTANTS.DIST_OK_THRESHOLD) score += SCORING_CONSTANTS.DIST_OK_BONUS;
+  if (distDiff <= SCORING_CONSTANTS.DIST_PERFECT_THRESHOLD)
+    score += SCORING_CONSTANTS.DIST_PERFECT_BONUS;
+  else if (distDiff <= SCORING_CONSTANTS.DIST_GOOD_THRESHOLD)
+    score += SCORING_CONSTANTS.DIST_GOOD_BONUS;
+  else if (distDiff <= SCORING_CONSTANTS.DIST_OK_THRESHOLD)
+    score += SCORING_CONSTANTS.DIST_OK_BONUS;
   else score += SCORING_CONSTANTS.DIST_BAD_PENALTY;
 
   // Surface fit - use horse's personal aptitude
   const surface = race.surface || race.graded?.surface;
   if (surface) {
     const apt = horse.surfaceAptitude[surface] ?? SCORING_CONSTANTS.SURFACE_GOOD_THRESHOLD;
-    if (apt >= SCORING_CONSTANTS.SURFACE_EXCELLENT_THRESHOLD) score += SCORING_CONSTANTS.SURFACE_EXCELLENT_BONUS;
-    else if (apt >= SCORING_CONSTANTS.SURFACE_GOOD_THRESHOLD) score += SCORING_CONSTANTS.SURFACE_GOOD_BONUS;
+    if (apt >= SCORING_CONSTANTS.SURFACE_EXCELLENT_THRESHOLD)
+      score += SCORING_CONSTANTS.SURFACE_EXCELLENT_BONUS;
+    else if (apt >= SCORING_CONSTANTS.SURFACE_GOOD_THRESHOLD)
+      score += SCORING_CONSTANTS.SURFACE_GOOD_BONUS;
     else score += SCORING_CONSTANTS.SURFACE_BAD_PENALTY;
   }
 
@@ -174,9 +179,15 @@ export function calculateRaceSuitability(horse: Horse, race: Race, stable: Stabl
   }
 
   // Youth preference - developers like young horses, win-now likes proven
-  if (horse.age <= SCORING_CONSTANTS.YOUNG_HORSE_AGE && personality.youthPreference > SCORING_CONSTANTS.YOUTH_PREFERENCE_HIGH) {
+  if (
+    horse.age <= SCORING_CONSTANTS.YOUNG_HORSE_AGE &&
+    personality.youthPreference > SCORING_CONSTANTS.YOUTH_PREFERENCE_HIGH
+  ) {
     score += SCORING_CONSTANTS.YOUTH_BONUS; // Bonus for young horses with developer personality
-  } else if (horse.age >= SCORING_CONSTANTS.PROVEN_HORSE_AGE && personality.youthPreference < SCORING_CONSTANTS.YOUTH_PREFERENCE_LOW) {
+  } else if (
+    horse.age >= SCORING_CONSTANTS.PROVEN_HORSE_AGE &&
+    personality.youthPreference < SCORING_CONSTANTS.YOUTH_PREFERENCE_LOW
+  ) {
     score += SCORING_CONSTANTS.YOUTH_BONUS; // Bonus for proven horses with win-now personality
   }
 
@@ -184,7 +195,9 @@ export function calculateRaceSuitability(horse: Horse, race: Race, stable: Stabl
   if (horse.form > SCORING_CONSTANTS.FORM_GOOD_THRESHOLD) {
     score += SCORING_CONSTANTS.FORM_GOOD_BONUS;
   } else if (horse.form < SCORING_CONSTANTS.FORM_BAD_THRESHOLD) {
-    score -= SCORING_CONSTANTS.FORM_BAD_PENALTY_BASE * (SCORING_CONSTANTS.FORM_TOLERANCE_BASE - personality.riskTolerance); // Conservative stables penalize bad form more
+    score -=
+      SCORING_CONSTANTS.FORM_BAD_PENALTY_BASE *
+      (SCORING_CONSTANTS.FORM_TOLERANCE_BASE - personality.riskTolerance); // Conservative stables penalize bad form more
   }
 
   // Energy bonus/penalty
@@ -195,17 +208,28 @@ export function calculateRaceSuitability(horse: Horse, race: Race, stable: Stabl
   }
 
   // Fame bonus for big races
-  if (horse.fame > SCORING_CONSTANTS.FAME_HIGH_THRESHOLD && race.purse > SCORING_CONSTANTS.FAME_PURSE_THRESHOLD) {
-    score += SCORING_CONSTANTS.FAME_PURSE_BONUS * (personality.gradedRaceBonus / SCORING_CONSTANTS.G1_BONUS_BASE);
+  if (
+    horse.fame > SCORING_CONSTANTS.FAME_HIGH_THRESHOLD &&
+    race.purse > SCORING_CONSTANTS.FAME_PURSE_THRESHOLD
+  ) {
+    score +=
+      SCORING_CONSTANTS.FAME_PURSE_BONUS *
+      (personality.gradedRaceBonus / SCORING_CONSTANTS.G1_BONUS_BASE);
   }
 
   // Graded race bonus - heavily modified by personality
   if (race.graded?.grade === "G1") {
-    score += SCORING_CONSTANTS.G1_BONUS_BASE + personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
+    score +=
+      SCORING_CONSTANTS.G1_BONUS_BASE +
+      personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
   } else if (race.graded?.grade === "G2") {
-    score += SCORING_CONSTANTS.G2_BONUS_BASE + personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
+    score +=
+      SCORING_CONSTANTS.G2_BONUS_BASE +
+      personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
   } else if (race.graded?.grade === "G3") {
-    score += SCORING_CONSTANTS.G3_BONUS_BASE + personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
+    score +=
+      SCORING_CONSTANTS.G3_BONUS_BASE +
+      personality.gradedRaceBonus * SCORING_CONSTANTS.GRADED_BONUS_MULTIPLIER;
   }
 
   // Claiming race logic - trader personality loves claiming races
@@ -232,7 +256,9 @@ export function calculateRaceSuitability(horse: Horse, race: Race, stable: Stabl
 
   // Bonus for horses trying to move up from claiming company
   if (race.graded || race.raceClass === "Stakes") {
-    const hasClaimingHistory = horse.raceHistory.some((r) => r.purse && r.purse < SCORING_CONSTANTS.CLAIMING_HISTORY_THRESHOLD);
+    const hasClaimingHistory = horse.raceHistory.some(
+      (r) => r.purse && r.purse < SCORING_CONSTANTS.CLAIMING_HISTORY_THRESHOLD,
+    );
     if (hasClaimingHistory) {
       score += SCORING_CONSTANTS.CLAIMING_HISTORY_BONUS; // Bonus for horses trying to move up from claiming company
     }
@@ -272,7 +298,8 @@ export function calculateAssignedWeight(horse: Horse, race: Race): number {
   // Weight-for-Age: 3yos carry less than older horses in open races
   if (
     horse.age === SCORING_CONSTANTS.YOUNG_HORSE_AGE &&
-    (race.restrictions?.minAge === undefined || race.restrictions.minAge < SCORING_CONSTANTS.YOUNG_HORSE_AGE)
+    (race.restrictions?.minAge === undefined ||
+      race.restrictions.minAge < SCORING_CONSTANTS.YOUNG_HORSE_AGE)
   ) {
     weight -= SCORING_CONSTANTS.AGE_ALLOWANCE_LBS; // 2 lb age allowance
   }

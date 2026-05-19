@@ -20,7 +20,14 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
     gender: "horse",
     hemisphere: "Northern",
     silk: "#abcdef",
-    stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70, temperament: 50, conformation: 50 },
+    stats: {
+      speed: 70,
+      stamina: 70,
+      acceleration: 70,
+      consistency: 70,
+      temperament: 50,
+      conformation: 50,
+    },
     energy: 90,
     form: 0,
     potential: 90,
@@ -43,22 +50,50 @@ function mkField(): Horse[] {
     mkHorse({
       id: "a",
       name: "Alpha",
-      stats: { speed: 80, stamina: 70, acceleration: 75, consistency: 70, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 80,
+        stamina: 70,
+        acceleration: 75,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
     }),
     mkHorse({
       id: "b",
       name: "Bravo",
-      stats: { speed: 65, stamina: 85, acceleration: 60, consistency: 80, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 65,
+        stamina: 85,
+        acceleration: 60,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
     }),
     mkHorse({
       id: "c",
       name: "Charlie",
-      stats: { speed: 75, stamina: 65, acceleration: 80, consistency: 60, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 75,
+        stamina: 65,
+        acceleration: 80,
+        consistency: 60,
+        temperament: 50,
+        conformation: 50,
+      },
     }),
     mkHorse({
       id: "d",
       name: "Delta",
-      stats: { speed: 60, stamina: 80, acceleration: 65, consistency: 90, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 60,
+        stamina: 80,
+        acceleration: 65,
+        consistency: 90,
+        temperament: 50,
+        conformation: 50,
+      },
     }),
   ];
 }
@@ -120,7 +155,14 @@ describe("raceSim conditions", () => {
 describe("raceSim caps", () => {
   it("buildRunner clamps topSpeed even for max stat / max form / max energy", () => {
     const max = mkHorse({
-      stats: { speed: 100, stamina: 100, acceleration: 100, consistency: 100, temperament: 50, conformation: 50 },
+      stats: {
+        speed: 100,
+        stamina: 100,
+        acceleration: 100,
+        consistency: 100,
+        temperament: 50,
+        conformation: 50,
+      },
       form: 10,
       energy: 100,
       potential: 100,

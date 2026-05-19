@@ -30,14 +30,8 @@ type ImpactHandlerFunction = (
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   syndicate_creation: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
-    const {
-      syndicateId,
-      stallionId,
-      stallionName,
-      totalShares,
-      sharePrice,
-      initialShareholders,
-    } = impactAny;
+    const { syndicateId, stallionId, stallionName, totalShares, sharePrice, initialShareholders } =
+      impactAny;
 
     // Validate stallion exists and is a G1 winner
     const stallion =
@@ -46,8 +40,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
     // Check if stallion is a G1 winner
     const g1Wins =
-      stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length ||
-      0;
+      stallion.raceHistory?.filter((r: any) => r.grade === "G1" && r.position === 1).length || 0;
     if (g1Wins === 0) return; // Only G1 winners can be syndicated
 
     // Check if syndicate already exists
