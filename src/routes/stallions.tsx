@@ -274,8 +274,13 @@ function StallionCard({
   const canAfford = cash >= totalFee;
   const canBook = available && !!mare && mare.hemisphere === stallion.hemisphere && canAfford;
 
+  const navigate = useNavigate();
+
   return (
-    <Card className="border-gold-muted">
+    <Card
+      className="border-gold-muted cursor-pointer hover:border-gold transition-colors"
+      onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: stallion.id } })}
+    >
       <CardHeader>
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg text-cream font-[family-name:var(--font-display)]">
@@ -318,7 +323,15 @@ function StallionCard({
         {stud.seasonBookings >= stud.bookSize && (
           <p className="text-xs text-warning">Book is full this season.</p>
         )}
-        <Button size="sm" className="w-full mt-2" disabled={!canBook} onClick={onBook}>
+        <Button
+          size="sm"
+          className="w-full mt-2"
+          disabled={!canBook}
+          onClick={(e) => {
+            e.stopPropagation();
+            onBook();
+          }}
+        >
           {!mare
             ? "Select a mare first"
             : mare.hemisphere !== stallion.hemisphere
