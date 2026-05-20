@@ -214,7 +214,7 @@ function StablePage() {
                 [
                   {
                     key: "active",
-                    label: "Operational",
+                    label: "Active",
                     count: counts.active,
                     icon: Activity,
                     color: "text-success",
