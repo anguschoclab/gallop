@@ -130,7 +130,8 @@ function MarketPage() {
               return (
                 <Card
                   key={h.id}
-                  className="bg-slate-900/40 border-white/5 rounded-none relative overflow-hidden group hover:border-white/20 transition-all duration-300 shadow-xl"
+                  className="bg-slate-900/40 border-white/5 rounded-none relative overflow-hidden group hover:border-white/20 transition-all duration-300 shadow-xl cursor-pointer"
+                  onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: h.id } })}
                 >
                   <div className="absolute top-0 left-0 w-full h-0.5 bg-white/5 group-hover:bg-success/40 transition-colors" />
 
