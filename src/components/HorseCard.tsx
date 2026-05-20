@@ -13,6 +13,7 @@ import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
 import { getCoatColor, getInjuryColor, getInjuryLabel } from "@/core/horse/uiHelpers";
 import { useGame } from "@/game/store";
 import { SilkDot } from "./SilkDot";
+import { HorsePortraitBadge } from "./HorsePortrait";
 import { NumericValue, StatBar } from "./HorseBits";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import {
@@ -101,6 +102,14 @@ export function HorseCard({
         <div className="absolute top-0 left-0 w-1 h-full bg-gold/10 group-hover:bg-gold transition-colors z-10" />
         <CardContent className="p-3 pl-4 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
+            <HorsePortraitBadge
+              id={horse.id}
+              coatColor={horse.coatColor}
+              markings={horse.markings}
+              gender={horse.gender}
+              appearance={horse.appearance}
+              size="sm"
+            />
             <SilkDot color={getCoatColor(horse.coatColor)} size="sm" />
             <div className="flex-1 min-w-0 space-y-0.5">
               <div className="flex items-center gap-2">
@@ -163,6 +172,14 @@ export function HorseCard({
         <CardHeader className="pb-3 border-b border-white/5 bg-black/20">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
+              <HorsePortraitBadge
+                id={horse.id}
+                coatColor={horse.coatColor}
+                markings={horse.markings}
+                gender={horse.gender}
+                appearance={horse.appearance}
+                size="md"
+              />
               <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
@@ -270,6 +287,14 @@ export function HorseCard({
       <CardHeader className="p-5 border-b border-white/5 bg-black/40">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
+            <HorsePortraitBadge
+              id={horse.id}
+              coatColor={horse.coatColor}
+              markings={horse.markings}
+              gender={horse.gender}
+              appearance={horse.appearance}
+              size="md"
+            />
             <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
             <div className="space-y-0.5 min-w-0">
               <div className="flex items-center gap-2">
