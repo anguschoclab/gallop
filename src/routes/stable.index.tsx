@@ -153,7 +153,7 @@ function StablePage() {
       <Tabs
         value={tab}
         onValueChange={(v) =>
-          navigate({ search: (prev) => ({ ...prev, tab: v as "roster" | "rivals" }) })
+          navigate({ search: (prev: any) => ({ ...prev, tab: v as "roster" | "rivals" }) })
         }
         className="space-y-4"
       >
@@ -182,7 +182,7 @@ function StablePage() {
                   "h-7 w-7 p-0 rounded",
                   view === "ledger" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
-                onClick={() => navigate({ search: (prev) => ({ ...prev, view: "ledger" }) })}
+                onClick={() => navigate({ search: (prev: any) => ({ ...prev, view: "ledger" }) })}
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -193,7 +193,7 @@ function StablePage() {
                   "h-7 w-7 p-0 rounded",
                   view === "gallery" ? "bg-white/10 text-gold" : "text-cream/40",
                 )}
-                onClick={() => navigate({ search: (prev) => ({ ...prev, view: "gallery" }) })}
+                onClick={() => navigate({ search: (prev: any) => ({ ...prev, view: "gallery" }) })}
               >
                 <LayoutGrid className="h-4 w-4" />
               </Button>
@@ -244,7 +244,7 @@ function StablePage() {
               ).map(({ key, label, count, icon: Icon, color }) => (
                 <button
                   key={key}
-                  onClick={() => navigate({ search: (prev) => ({ ...prev, status: key }) })}
+                  onClick={() => navigate({ search: (prev: any) => ({ ...prev, status: key }) })}
                   className={cn(
                     "px-4 py-2 flex items-center gap-3 border font-mono text-[10px] uppercase font-bold tracking-widest transition-all",
                     status === key
@@ -451,12 +451,12 @@ function StablePage() {
                 placeholder="Identify Rival Entity..."
                 className="pl-9 h-10 bg-slate-950/50 border-white/10 text-sm font-mono uppercase tracking-tight focus-visible:ring-blue-500/30"
                 value={rivalQ}
-                onChange={(e) => navigate({ search: (p) => ({ ...p, rivalQ: e.target.value }) })}
+                onChange={(e) => navigate({ search: (p: any) => ({ ...p, rivalQ: e.target.value }) })}
               />
             </div>
             <Select
               value={rivalTier}
-              onValueChange={(v) => navigate({ search: (p) => ({ ...p, rivalTier: v }) })}
+              onValueChange={(v) => navigate({ search: (p: any) => ({ ...p, rivalTier: v }) })}
             >
               <SelectTrigger className="h-10 w-40 bg-slate-950/50 border-white/10 text-xs font-bold uppercase tracking-widest">
                 <SelectValue placeholder="Entity Tier" />
@@ -473,7 +473,7 @@ function StablePage() {
                 variant="ghost"
                 size="sm"
                 onClick={() =>
-                  navigate({ search: (p) => ({ ...p, rivalQ: "", rivalTier: "all" }) })
+                  navigate({ search: (p: any) => ({ ...p, rivalQ: "", rivalTier: "all" }) })
                 }
                 className="h-10 gap-2 text-cream/40 hover:text-cream uppercase text-[10px] font-black tracking-widest"
               >

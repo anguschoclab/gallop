@@ -61,7 +61,7 @@ function RegionalCalendarPage() {
   // Update URL when filters change
   const updateFilter = (key: keyof CalendarSearch, value: string) => {
     navigate({
-      search: (prev) => ({ ...prev, [key]: value }),
+      search: (prev: CalendarSearch) => ({ ...prev, [key]: value }),
     });
   };
 

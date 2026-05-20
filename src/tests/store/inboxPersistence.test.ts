@@ -161,7 +161,7 @@ describe("Inbox persistence across reload — weather drama alerts", () => {
 
     // 3. Mark the drama alert as read (simulating user opening the inbox).
     const alertId = stateAfterAlert.inbox.find((m: any) => m.priority === "action")!.id;
-    const stateWithRead = produce(stateAfterAlert, (draft: any) => {
+    const stateWithRead: any = produce(stateAfterAlert as any, (draft: any) => {
       const msg = draft.inbox.find((m: any) => m.id === alertId);
       if (msg) msg.readAt = dayToday;
     });

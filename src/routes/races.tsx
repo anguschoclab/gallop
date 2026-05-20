@@ -72,7 +72,7 @@ function RacesPage() {
 
   const updateFilter = (key: keyof RaceFilters, value: string) => {
     navigate({
-      search: (prev) => ({ ...prev, [key]: value }),
+      search: (prev: RaceFilters) => ({ ...prev, [key]: value }),
     });
   };
 
