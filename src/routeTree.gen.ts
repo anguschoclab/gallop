@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestJockeyAvatarRouteImport } from './routes/test-jockey-avatar'
+import { Route as StartRouteImport } from './routes/start'
 import { Route as StallionsRouteImport } from './routes/stallions'
 import { Route as StaffRouteImport } from './routes/staff'
 import { Route as StableRouteImport } from './routes/stable'
@@ -53,6 +54,11 @@ import { Route as AuctionSaleIdRouteImport } from './routes/auction.$saleId'
 const TestJockeyAvatarRoute = TestJockeyAvatarRouteImport.update({
   id: '/test-jockey-avatar',
   path: '/test-jockey-avatar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StartRoute = StartRouteImport.update({
+  id: '/start',
+  path: '/start',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StallionsRoute = StallionsRouteImport.update({
@@ -279,6 +285,7 @@ export interface FileRoutesByFullPath {
   '/stable': typeof StableRouteWithChildren
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
+  '/start': typeof StartRoute
   '/test-jockey-avatar': typeof TestJockeyAvatarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/sire-leaderboards': typeof SireLeaderboardsRoute
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
+  '/start': typeof StartRoute
   '/test-jockey-avatar': typeof TestJockeyAvatarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
@@ -359,6 +367,7 @@ export interface FileRoutesById {
   '/stable': typeof StableRouteWithChildren
   '/staff': typeof StaffRoute
   '/stallions': typeof StallionsRoute
+  '/start': typeof StartRoute
   '/test-jockey-avatar': typeof TestJockeyAvatarRoute
   '/auction/$saleId': typeof AuctionSaleIdRoute
   '/calendar/$regionId': typeof CalendarRegionIdRoute
@@ -403,6 +412,7 @@ export interface FileRouteTypes {
     | '/stable'
     | '/staff'
     | '/stallions'
+    | '/start'
     | '/test-jockey-avatar'
     | '/auction/$saleId'
     | '/calendar/$regionId'
@@ -440,6 +450,7 @@ export interface FileRouteTypes {
     | '/sire-leaderboards'
     | '/staff'
     | '/stallions'
+    | '/start'
     | '/test-jockey-avatar'
     | '/auction/$saleId'
     | '/calendar/$regionId'
@@ -482,6 +493,7 @@ export interface FileRouteTypes {
     | '/stable'
     | '/staff'
     | '/stallions'
+    | '/start'
     | '/test-jockey-avatar'
     | '/auction/$saleId'
     | '/calendar/$regionId'
@@ -525,6 +537,7 @@ export interface RootRouteChildren {
   StableRoute: typeof StableRouteWithChildren
   StaffRoute: typeof StaffRoute
   StallionsRoute: typeof StallionsRoute
+  StartRoute: typeof StartRoute
   TestJockeyAvatarRoute: typeof TestJockeyAvatarRoute
   JockeyJockeyIdRoute: typeof JockeyJockeyIdRoute
   RaceRaceIdRoute: typeof RaceRaceIdRoute
@@ -537,6 +550,13 @@ declare module '@tanstack/react-router' {
       path: '/test-jockey-avatar'
       fullPath: '/test-jockey-avatar'
       preLoaderRoute: typeof TestJockeyAvatarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/start': {
+      id: '/start'
+      path: '/start'
+      fullPath: '/start'
+      preLoaderRoute: typeof StartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stallions': {
@@ -911,6 +931,7 @@ const rootRouteChildren: RootRouteChildren = {
   StableRoute: StableRouteWithChildren,
   StaffRoute: StaffRoute,
   StallionsRoute: StallionsRoute,
+  StartRoute: StartRoute,
   TestJockeyAvatarRoute: TestJockeyAvatarRoute,
   JockeyJockeyIdRoute: JockeyJockeyIdRoute,
   RaceRaceIdRoute: RaceRaceIdRoute,

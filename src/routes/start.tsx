@@ -87,41 +87,31 @@ function StartScreen() {
         <div className="flex flex-col sm:flex-row gap-3 max-w-md animate-fade-in">
           {hasSave ? (
             <>
-              <Button
-                asChild
-                size="lg"
-                className="h-14 bg-gold hover:bg-gold/90 text-slate-950 font-black uppercase tracking-[0.18em] text-sm rounded-none shadow-[0_8px_30px_rgba(212,175,55,0.25)] group"
+              <Link
+                to="/"
+                className="h-14 inline-flex items-center justify-center px-8 bg-gold hover:bg-gold/90 text-slate-950 font-black uppercase tracking-[0.18em] text-sm shadow-[0_8px_30px_rgba(212,175,55,0.25)] group transition-colors"
               >
-                <Link to="/">
-                  <Play className="w-4 h-4 mr-2 fill-current" />
-                  Continue
-                  <ChevronRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="h-14 bg-transparent border-cream/20 hover:bg-cream/5 hover:border-cream/40 text-cream font-bold uppercase tracking-[0.18em] text-xs rounded-none"
+                <Play className="w-4 h-4 mr-2 fill-current" />
+                Continue
+                <ChevronRight className="w-4 h-4 ml-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Link>
+              <Link
+                to="/new-game"
+                className="h-14 inline-flex items-center justify-center px-8 bg-transparent border border-cream/20 hover:bg-cream/5 hover:border-cream/40 text-cream font-bold uppercase tracking-[0.18em] text-xs transition-colors"
               >
-                <Link to="/new-game">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  New Game
-                </Link>
-              </Button>
+                <Sparkles className="w-4 h-4 mr-2" />
+                New Game
+              </Link>
             </>
           ) : (
-            <Button
-              asChild
-              size="lg"
-              className="h-14 bg-gold hover:bg-gold/90 text-slate-950 font-black uppercase tracking-[0.18em] text-sm rounded-none shadow-[0_8px_30px_rgba(212,175,55,0.25)] group px-8"
+            <Link
+              to="/new-game"
+              className="h-14 inline-flex items-center justify-center px-8 bg-gold hover:bg-gold/90 text-slate-950 font-black uppercase tracking-[0.18em] text-sm shadow-[0_8px_30px_rgba(212,175,55,0.25)] group transition-colors"
             >
-              <Link to="/new-game">
-                <Sparkles className="w-4 h-4 mr-2" />
-                Begin Your Stable
-                <ChevronRight className="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
+              <Sparkles className="w-4 h-4 mr-2" />
+              Begin Your Stable
+              <ChevronRight className="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform" />
+            </Link>
           )}
         </div>
 
