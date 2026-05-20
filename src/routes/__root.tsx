@@ -116,10 +116,9 @@ function RootComponent() {
   }, []);
 
   useEffect(() => {
-    // Redirect to wizard if no player profile exists (fresh install)
+    // Redirect to start screen on fresh load when no profile exists
     if (isHydrated && !playerProfile) {
-      // Navigate to wizard - TanStack Router will handle route type after regeneration
-      navigate({ to: "/new-game" }).catch((error) => {
+      navigate({ to: "/start" }).catch((error) => {
         console.error("Navigation error:", error);
       });
     }

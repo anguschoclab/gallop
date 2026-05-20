@@ -127,7 +127,8 @@ export function AppShell() {
   }, [pendingCeremonies]);
 
   const isRace = location.pathname.startsWith("/race/");
-  if (isRace) return <Outlet />;
+  const isStart = location.pathname === "/start";
+  if (isRace || isStart) return <Outlet />;
 
   const showSidebar = !!playerProfile;
 
