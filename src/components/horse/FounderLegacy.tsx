@@ -1,5 +1,4 @@
 import { useGame } from "@/game/store";
-import { shallow } from "zustand/shallow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Users, TrendingUp, DollarSign } from "lucide-react";
@@ -10,8 +9,7 @@ interface FounderLegacyProps {
 }
 
 export function FounderLegacy({ horseId }: FounderLegacyProps) {
-  const founders = (useGame as any)((s: any) => s.founders || {}, shallow);
-  const founder = founders[horseId];
+  const founder = (useGame as any)((s: any) => s.founders?.[horseId]);
 
   if (!founder) return null;
 
