@@ -136,9 +136,11 @@ export function useAuctionTheater(saleId: string) {
       let flashStable: string | null = null;
       let sawHammer = false;
 
+      // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the event loop.
+      const horseMap = new Map(horses.map((h) => [h.id, h]));
       for (const event of result.events) {
         const lot = sale?.lots.find((l) => l.id === event.lotId);
-        const horse = lot ? horses.find((h) => h.id === lot.horseId) : undefined;
+        const horse = lot ? horseMap.get(lot.horseId) : undefined;
         const consignor = lot?.consignorStableId
           ? stables.find((s) => s.id === lot.consignorStableId)
           : undefined;
@@ -170,7 +172,7 @@ export function useAuctionTheater(saleId: string) {
         if (event.type === "SOLD" || event.type === "PASSED") sawHammer = true;
 
         if (event.type === "SOLD" && event.toStableId === undefined) {
-          const winHorse = horses.find((h) => h.id === lot?.horseId);
+          const winHorse = lot ? horseMap.get(lot.horseId) : undefined;
           setUiState((prev) => ({
             ...prev,
             winOverlay: {

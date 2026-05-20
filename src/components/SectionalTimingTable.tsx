@@ -1,6 +1,7 @@
 import type { SectionalSplit } from "@/core/race/types";
 import { SilkDot } from "./SilkDot";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 
 interface SectionalTimingTableProps {
   splits: SectionalSplit[];
@@ -17,6 +18,9 @@ interface SectionalTimingTableProps {
  */
 export function SectionalTimingTable({ splits, runners, distance }: SectionalTimingTableProps) {
   const quarterMile = 402.336;
+
+  // Pre-calculate hash map for O(1) runner lookups instead of running O(N) .find() inside the map loops.
+  const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
 
   return (
     <div className="overflow-x-auto custom-scrollbar">
@@ -40,7 +44,7 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
         <tbody className="divide-y divide-white/5">
           {splits.map((split) => {
             const leaderEntry = split.entries.find((e) => e.rank === 1);
-            const leader = runners.find((r) => r.horseId === leaderEntry?.horseId);
+            const leader = leaderEntry ? runnerMap.get(leaderEntry.horseId) : undefined;
             const sortedEntries = [...split.entries].sort((a, b) => a.rank - b.rank);
 
             return (
@@ -70,7 +74,7 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
                 <td className="py-4 px-4">
                   <div className="flex flex-wrap gap-1.5">
                     {sortedEntries.slice(0, 12).map((entry) => {
-                      const runner = runners.find((r) => r.horseId === entry.horseId);
+                      const runner = runnerMap.get(entry.horseId);
                       return (
                         <div
                           key={entry.horseId}
