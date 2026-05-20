@@ -13,6 +13,7 @@ import { genderSymbol, isMaleHorse } from "@/core/horse/gender";
 import { getCoatColor, getInjuryColor, getInjuryLabel } from "@/core/horse/uiHelpers";
 import { useGame } from "@/game/store";
 import { SilkDot } from "./SilkDot";
+import { HorsePortraitBadge } from "./HorsePortrait";
 import { NumericValue, StatBar } from "./HorseBits";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import {
