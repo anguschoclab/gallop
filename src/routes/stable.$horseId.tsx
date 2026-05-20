@@ -305,7 +305,7 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
         ) : (
           <div className="space-y-6 pt-4">
             <div className="grid grid-cols-2 gap-4">
-              {runnerStats.map((stat, idx) => (
+              {runnerStats.map((stat: any, idx: number) => (
                 <div key={idx} className={cn("p-4 border", stat.isPlayer ? "border-gold/30 bg-gold/5" : "border-white/5 bg-black/20")}>
                   <div className="text-[10px] font-black uppercase tracking-widest text-cream/40 leading-none mb-1">
                     Finish Position: {stat.position}

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import * as weatherSim from "@/core/weather";
-import type { PipelineContext } from "../pipeline";
+import type { PipelineContext } from "@/core/time/pipeline";
 
 // Mock the weather sim functions to control outcomes
 vi.mock("@/core/weather", async () => {
