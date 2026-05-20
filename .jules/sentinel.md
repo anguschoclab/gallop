@@ -1,4 +1,4 @@
-## 2024-05-16 - [crypto.randomUUID Insecure Environment Failure Risk]
-**Vulnerability:** Native `crypto.randomUUID()` was used directly in several core type definition files (e.g., `replayTypes.ts`, `expenseTypes.ts`).
-**Learning:** In non-secure contexts (e.g. non-HTTPS, certain local environments or older browsers), `crypto.randomUUID` is undefined, leading to crashes. A centralized `generateUUID()` function exists in `src/core/uuid.ts` with proper fallbacks.
-**Prevention:** Always use the centralized `generateUUID()` from `@/core/uuid` (or relative paths) instead of directly calling `crypto.randomUUID()` to ensure UUID generation works consistently across all environments.
+## 2025-05-15 - Unsafe Native Crypto UUID Generation
+**Vulnerability:** Multiple files (`src/core/replays/replayTypes.ts`, `src/core/expenses/expenseTypes.ts`, etc.) were directly calling `crypto.randomUUID()`.
+**Learning:** Native `crypto.randomUUID()` is only available in secure contexts (HTTPS or localhost). In non-secure contexts, this throws an undefined error and crashes the application, resulting in a denial-of-service/availability issue. Additionally, bypassing the centralized `generateUUID` wrapper prevents deterministic UUID generation needed for gameplay testing and replays.
+**Prevention:** Always use the centralized `generateUUID()` function from `@/core/uuid` to ensure fallback mechanisms (using `crypto.getRandomValues`) correctly handle non-secure contexts and respect deterministic seeds.

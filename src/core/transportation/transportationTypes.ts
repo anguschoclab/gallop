@@ -1,5 +1,6 @@
 // Transportation Types - Travel costs and logistics for horse transport
-import { generateUUIDWithValidation } from "../uuid";
+
+import { generateUUID } from "@/core/uuid";
 
 /**
  * Transport mode types
@@ -137,7 +138,7 @@ export function createTransportRequest(
   const duration = calculateTransportDuration(distance, transportMode);
 
   return {
-    id: generateUUIDWithValidation("transport_request"),
+    id: generateUUID(),
     horseId,
     fromLocation,
     toLocation,
