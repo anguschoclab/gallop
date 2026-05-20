@@ -32,6 +32,7 @@ export const Route = createFileRoute("/market")({
 });
 
 function MarketPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"bloodstock" | "syndicate">("bloodstock");
   const market = (useGame as any)((s: GameState) => s.market, shallow);
   const cash = useGame((s: GameState) => s.cash);
