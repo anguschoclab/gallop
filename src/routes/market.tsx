@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
@@ -32,6 +32,7 @@ export const Route = createFileRoute("/market")({
 });
 
 function MarketPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"bloodstock" | "syndicate">("bloodstock");
   const market = (useGame as any)((s: GameState) => s.market, shallow);
   const cash = useGame((s: GameState) => s.cash);
@@ -129,7 +130,8 @@ function MarketPage() {
               return (
                 <Card
                   key={h.id}
-                  className="bg-slate-900/40 border-white/5 rounded-none relative overflow-hidden group hover:border-white/20 transition-all duration-300 shadow-xl"
+                  className="bg-slate-900/40 border-white/5 rounded-none relative overflow-hidden group hover:border-white/20 transition-all duration-300 shadow-xl cursor-pointer"
+                  onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: h.id } })}
                 >
                   <div className="absolute top-0 left-0 w-full h-0.5 bg-white/5 group-hover:bg-success/40 transition-colors" />
 
@@ -168,7 +170,10 @@ function MarketPage() {
                     </div>
 
                     <Button
-                      onClick={() => buyHorse(h.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        buyHorse(h.id);
+                      }}
                       disabled={!canAfford}
                       className={cn(
                         "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
