@@ -101,6 +101,8 @@ const PERSISTED_KEYS: (keyof GameState)[] = [
   "hiredStaff",
   // Phase 3 — dynamic weather sim per track
   "weather" as keyof GameState,
+  // Inbox / Message Centre — must persist so unread counts survive reloads
+  "inbox" as keyof GameState,
 ];
 
 /**
