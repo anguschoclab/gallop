@@ -53,6 +53,14 @@ export function JockeyCard({
     { stat: "TEMP", value: jockey.stats.temperament },
   ];
 
+  let claim = 0;
+  if ((jockey as any).isApprentice) {
+    const wins = jockey.careerWins ?? 0;
+    if (wins < 5) claim = 7;
+    else if (wins < 15) claim = 5;
+    else if (wins < 30) claim = 3;
+  }
+
   const archetypeColors: Record<string, string> = {
     front_runner: "border-chart-1 text-chart-1 bg-chart-1/5",
     closer: "border-chart-3 text-chart-3 bg-chart-3/5",
@@ -107,6 +115,11 @@ export function JockeyCard({
                 >
                   {jockey.archetype.replace("_", " ")}
                 </Badge>
+                {(jockey as any).isApprentice && (
+                  <Badge className="bg-amber-600 text-cream text-[9px] font-black uppercase tracking-widest h-4 px-1.5 rounded-none border-none">
+                    Apprentice {claim > 0 ? `(-${claim} lbs)` : ""}
+                  </Badge>
+                )}
                 {isRetained && (
                   <Badge className="bg-blue-500 text-slate-950 text-[9px] font-black uppercase tracking-widest h-4 px-1.5 rounded-none">
                     Signed
@@ -203,8 +216,11 @@ export function JockeyCard({
               <span className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
                 Licensed
               </span>
-              <span className="text-[9px] font-mono font-bold text-success/60 tracking-widest uppercase flex items-center gap-1.5">
-                <ShieldCheck className="h-2.5 w-2.5" /> ACTIVE_PRO
+              <span className={cn(
+                "text-[9px] font-mono font-bold tracking-widest uppercase flex items-center gap-1.5",
+                (jockey as any).isApprentice ? "text-amber-500/60" : "text-success/60"
+              )}>
+                <ShieldCheck className="h-2.5 w-2.5" /> {(jockey as any).isApprentice ? "ACTIVE_ACADEMY" : "ACTIVE_PRO"}
               </span>
             </div>
             <Link

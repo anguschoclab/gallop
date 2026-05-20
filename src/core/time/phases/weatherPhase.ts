@@ -143,29 +143,46 @@ export const weatherPhase = {
       }
     }
 
-    // Update race conditions for races scheduled today using the new weather.
-    const updatedRaces: Race[] = state.races.map((race) => {
-      if (race.resolved || race.day !== newDay) return race;
+    // Track conditions progress race-by-race sequentially
+    const trackCurrentCondition: Record<string, TrackCondition> = {};
+    const updatedRaces: Race[] = [];
+
+    for (const race of state.races) {
+      if (race.resolved || race.day !== newDay) {
+        updatedRaces.push(race);
+        continue;
+      }
       const tid = raceTrackId(race);
-      if (!tid) return race;
+      if (!tid) {
+        updatedRaces.push(race);
+        continue;
+      }
       const todays = newByTrack[tid]?.slice(-1)[0];
-      if (!todays) return race;
-      const racesAtTrackToday = state.races.filter(
-        (r) => r.day === newDay && raceTrackId(r) === tid,
-      ).length;
-      const prevCondition: TrackCondition = race.trackCondition ?? "good";
+      if (!todays) {
+        updatedRaces.push(race);
+        continue;
+      }
+
+      if (trackCurrentCondition[tid] === undefined) {
+        trackCurrentCondition[tid] = race.trackCondition ?? "good";
+      }
+
+      const currentCondition = trackCurrentCondition[tid];
+
+      updatedRaces.push({
+        ...race,
+        trackCondition: currentCondition,
+        weather: race.weather ?? toRaceWeather(todays.pattern),
+      });
+
       const nextCondition = calculateConditionChange(
-        prevCondition,
+        currentCondition,
         toTrackWeatherPattern(todays.pattern),
-        Math.max(1, racesAtTrackToday),
+        1,
         0.5,
       );
-      return {
-        ...race,
-        trackCondition: nextCondition,
-        weather: race.weather ?? toRaceWeather(todays.pattern),
-      };
-    });
+      trackCurrentCondition[tid] = nextCondition;
+    }
 
     return {
       ...context,

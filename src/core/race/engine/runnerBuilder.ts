@@ -222,6 +222,36 @@ export function buildRunner(
   race?: RaceT,
   bonuses?: RunnerBonuses,
 ): Runner {
+  let claim = 0;
+  let finalAssignedWeight = weight ?? 126;
+  if (jockey && (jockey as any).isApprentice) {
+    const wins = (jockey as any).careerWins ?? 0;
+    if (wins < 5) {
+      claim = 7;
+    } else if (wins < 15) {
+      claim = 5;
+    } else if (wins < 30) {
+      claim = 3;
+    }
+    finalAssignedWeight = Math.max(100, finalAssignedWeight - claim);
+  }
+
+  let jockeyName = jockey?.name;
+  if (jockey && (jockey as any).isApprentice && claim > 0) {
+    jockeyName = `${jockey.name} (a${claim})`;
+  }
+
+  let acclimatizationPenalty = 1.0;
+  if (stable && (stable as any).outposts && h.outpostId) {
+    const outpost = (stable as any).outposts.find((o: any) => o.id === h.outpostId);
+    if (outpost) {
+      const daysLeft = outpost.acclimatizationDays?.[h.id] || 0;
+      if (daysLeft > 0) {
+        acclimatizationPenalty = 1 - (daysLeft / 7) * 0.05; // Up to 5% penalty
+      }
+    }
+  }
+
   const farrierBonus = bonuses?.farrier ?? 0;
   const groomBonus = bonuses?.groom ?? 0;
 
@@ -316,9 +346,10 @@ export function buildRunner(
     dosageDistanceMod *
     fatigueMod *
     bouncePenalty *
-    courseFamiliarityMultiplier;
+    courseFamiliarityMultiplier *
+    acclimatizationPenalty;
   const topSpeed = clamp(rawTopSpeed, 5, TOP_SPEED_CEILING);
-  const accel = 1.5 + (h.stats.acceleration / 100) * 3.5;
+  const accel = (1.5 + (h.stats.acceleration / 100) * 3.5) * acclimatizationPenalty;
   const strideMod =
     h.strideType === "long"
       ? raceDistance >= 1800
@@ -390,7 +421,7 @@ export function buildRunner(
       break;
   }
 
-  const assignedWeight = weight ?? 126;
+  const assignedWeight = finalAssignedWeight;
   const sizeCapacity = ((h.weight ?? 500) - 500) / 10;
   const standardWeightThreshold = 126 + sizeCapacity;
 
@@ -426,6 +457,7 @@ export function buildRunner(
     draftingHorseId: null,
     horse: h,
     jockey,
+    jockeyName,
     weight: assignedWeight,
     tactics: entry?.tactics || "default",
     courseFamiliarityMultiplier,

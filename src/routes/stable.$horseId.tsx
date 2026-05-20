@@ -49,6 +49,24 @@ import { useHorseActions } from "@/hooks/useHorseActions";
 import { getAffinityLevel, calculateTheHandBonus } from "@/core/jockey/affinity";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip as ChartTooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,
@@ -66,6 +84,320 @@ export const Route = createFileRoute("/stable/$horseId")({
     </div>
   ),
 });
+
+const generateRiderFeedback = (horse: any, distance: number, surface: string) => {
+  const preferredDistance = horse.distanceAptitude;
+  const preferredSurfaceAptitude = horse.surfaceAptitude[surface] ?? 0.95;
+
+  let feedback = "";
+  if (preferredSurfaceAptitude < 0.95) {
+    feedback += `"${horse.name} struggled to get proper traction on the ${surface} surface, feeling a bit green. `;
+  } else {
+    feedback += `"${horse.name} moved smoothly over the ${surface} surface. `;
+  }
+
+  const distDiff = Math.abs(preferredDistance - distance);
+  if (distDiff > 400) {
+    if (distance > preferredDistance) {
+      feedback += `She ran out of steam in the final furlongs; this distance (${distance}m) is too long for her current stamina. `;
+    } else {
+      feedback += `She finished with plenty of energy but lacked the early speed; this sprint distance is too sharp for her. `;
+    }
+  } else {
+    feedback += `She settled into a nice rhythm and handled the ${distance}m distance comfortably. `;
+  }
+
+  if (horse.stats.acceleration > 75) {
+    feedback += `Showed an explosive turn of foot when asked to accelerate."`;
+  } else {
+    feedback += `Finished with a steady, grinding run."`;
+  }
+  return feedback;
+};
+
+export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses: any[]; cash: number }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [distance, setDistance] = useState<number>(1200);
+  const [surface, setSurface] = useState<"Turf" | "Dirt" | "Synthetic">("Turf");
+  const [opponentId, setOpponentId] = useState<string>("pacemaker");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [trialResult, setTrialResult] = useState<any>(null);
+
+  const runPrivateTrial = useGame((s: any) => s.runPrivateTrial);
+
+  const eligibleOpponents = useMemo(() => {
+    return horses.filter((h) => h.owned && h.energy >= 15 && h.id !== horse.id);
+  }, [horses, horse.id]);
+
+  const handleStartTrial = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = runPrivateTrial(horse.id, opponentId, distance, surface);
+      if (res.ok) {
+        setTrialResult(res.result);
+      } else {
+        setError(res.reason || "Failed to start trial.");
+      }
+    } catch (e: any) {
+      setError(e.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    setTrialResult(null);
+    setError(null);
+  };
+
+  const chartData = useMemo(() => {
+    if (!trialResult || !trialResult.snapshots) return [];
+    
+    let oppName = "Pacemaker";
+    if (opponentId !== "pacemaker") {
+      const oppHorse = eligibleOpponents.find(h => h.id === opponentId);
+      if (oppHorse) oppName = oppHorse.name;
+    }
+
+    return trialResult.snapshots.map((snap: any) => {
+      const dataPoint: any = { t: Number(snap.t.toFixed(1)) };
+      snap.horses.forEach((hSnap: any) => {
+        const name = hSnap.horseId === horse.id ? horse.name : oppName;
+        dataPoint[name] = Number((hSnap.velocity * 3.6).toFixed(1));
+      });
+      return dataPoint;
+    });
+  }, [trialResult, horse.name, opponentId, eligibleOpponents]);
+
+  const runnerStats = useMemo(() => {
+    if (!trialResult || !trialResult.result) return [];
+    
+    let oppName = "Pacemaker";
+    if (opponentId !== "pacemaker") {
+      const oppHorse = eligibleOpponents.find(h => h.id === opponentId);
+      if (oppHorse) oppName = oppHorse.name;
+    }
+
+    return trialResult.result.map((res: any) => {
+      const isPlayer = res.horseId === horse.id;
+      return {
+        name: isPlayer ? horse.name : oppName,
+        isPlayer,
+        position: res.position,
+        time: res.time,
+      };
+    }).sort((a: any, b: any) => a.position - b.position);
+  }, [trialResult, horse.name, opponentId, eligibleOpponents]);
+
+  const feedback = useMemo(() => {
+    if (!trialResult) return "";
+    return generateRiderFeedback(horse, distance, surface);
+  }, [trialResult, horse, distance, surface]);
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      setIsOpen(open);
+      if (!open) handleReset();
+    }}>
+      <DialogTrigger asChild>
+        <Button
+          disabled={horse.energy < 20 || cash < 250}
+          className="w-full bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-widest text-xs h-10 rounded-none shadow-lg mt-2"
+        >
+          Run Private Trial ($250 / -20 Energy)
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl bg-slate-950 border border-gold-muted/40 rounded-none text-cream shadow-2xl overflow-y-auto max-h-[90vh]">
+        <DialogHeader className="border-b border-white/5 pb-4">
+          <DialogTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+            Private Trial Simulator
+          </DialogTitle>
+          <DialogDescription className="text-xs text-cream-muted uppercase font-mono tracking-wider">
+            Test {horse.name}'s performance under controlled conditions.
+          </DialogDescription>
+        </DialogHeader>
+
+        {error && (
+          <div className="bg-destructive/10 border border-destructive/20 text-destructive text-xs p-3 font-mono uppercase tracking-wider mb-4">
+            Error: {error}
+          </div>
+        )}
+
+        {!trialResult ? (
+          <div className="space-y-6 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">Distance</Label>
+                <Select value={String(distance)} onValueChange={(v) => setDistance(Number(v))}>
+                  <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-white/5 text-cream rounded-none uppercase font-mono">
+                    <SelectItem value="1000">1000m (5F)</SelectItem>
+                    <SelectItem value="1200">1200m (6F)</SelectItem>
+                    <SelectItem value="1400">1400m (7F)</SelectItem>
+                    <SelectItem value="1600">1600m (1M)</SelectItem>
+                    <SelectItem value="1800">1800m (9F)</SelectItem>
+                    <SelectItem value="2000">2000m (10F)</SelectItem>
+                    <SelectItem value="2400">2400m (12F)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">Surface</Label>
+                <Select value={surface} onValueChange={(v: any) => setSurface(v)}>
+                  <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-white/5 text-cream rounded-none uppercase font-mono">
+                    <SelectItem value="Turf">Turf</SelectItem>
+                    <SelectItem value="Dirt">Dirt</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">Opponent</Label>
+                <Select value={opponentId} onValueChange={setOpponentId}>
+                  <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-white/5 text-cream rounded-none uppercase font-mono">
+                    <SelectItem value="pacemaker">Pacemaker (AI)</SelectItem>
+                    {eligibleOpponents.map((opp) => (
+                      <SelectItem key={opp.id} value={opp.id}>
+                        {opp.name} ({opp.energy} energy)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="bg-white/[0.02] border border-white/5 p-4 space-y-2 text-xs font-mono uppercase tracking-wider text-cream-muted">
+              <div className="flex justify-between">
+                <span>Cost:</span>
+                <span className="text-gold font-bold">$250</span>
+              </div>
+              <div className="flex justify-between">
+                <span>{horse.name} energy requirement:</span>
+                <span className="text-warning font-bold">-20 energy</span>
+              </div>
+              {opponentId !== "pacemaker" && (
+                <div className="flex justify-between">
+                  <span>Opponent energy requirement:</span>
+                  <span className="text-warning font-bold">-15 energy</span>
+                </div>
+              )}
+            </div>
+
+            <Button
+              onClick={handleStartTrial}
+              disabled={loading}
+              className="w-full bg-blue-500 hover:bg-blue-400 text-slate-950 font-black uppercase tracking-widest text-xs h-10 rounded-none shadow-lg"
+            >
+              {loading ? "Simulating Trial..." : "Simulate Trial"}
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6 pt-4">
+            <div className="grid grid-cols-2 gap-4">
+              {runnerStats.map((stat, idx) => (
+                <div key={idx} className={cn("p-4 border", stat.isPlayer ? "border-gold/30 bg-gold/5" : "border-white/5 bg-black/20")}>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-cream/40 leading-none mb-1">
+                    Finish Position: {stat.position}
+                  </div>
+                  <div className="text-sm font-black uppercase text-cream truncate">
+                    {stat.name}
+                  </div>
+                  <div className="text-lg font-mono font-black text-gold mt-2">
+                    {stat.time.toFixed(2)}s
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Velocity Trajectory Chart */}
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">Velocity Profile (km/h)</Label>
+              <div className="h-56 w-full bg-black/40 border border-white/5 p-4 relative">
+                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-gold/40" />
+                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-gold/40" />
+                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-gold/40" />
+                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-gold/40" />
+
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData} margin={{ top: 8, right: 12, left: -20, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                    <XAxis
+                      dataKey="t"
+                      tick={{ fontSize: 9, fontFamily: "monospace", fill: "rgba(245,245,220,0.4)" }}
+                      axisLine={false}
+                      tickLine={false}
+                      tickFormatter={(v) => `${v}s`}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 9, fontFamily: "monospace", fill: "rgba(245,245,220,0.4)" }}
+                      axisLine={false}
+                      tickLine={false}
+                      width={40}
+                    />
+                    <ChartTooltip
+                      contentStyle={{
+                        background: "#020617",
+                        border: "1px solid rgba(212,175,55,0.3)",
+                        borderRadius: 0,
+                        padding: "8px 12px",
+                        boxShadow: "0 0 20px rgba(0,0,0,0.5)",
+                      }}
+                      itemStyle={{ fontFamily: "monospace", fontSize: 11, fontWeight: "bold" }}
+                      labelStyle={{
+                        fontFamily: "monospace",
+                        fontSize: 9,
+                        color: "rgba(245,245,220,0.6)",
+                        marginBottom: 4,
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey={horse.name}
+                      stroke="#d4af37" // Gold
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey={opponentId === "pacemaker" ? "Pacemaker" : eligibleOpponents.find(h => h.id === opponentId)?.name || "Opponent"}
+                      stroke="#60a5fa" // Blue
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Rider feedback */}
+            <div className="bg-black/20 border border-white/5 p-4 rounded-none">
+              <div className="text-[10px] font-black uppercase tracking-widest text-gold mb-2">Rider Feedback</div>
+              <p className="text-xs font-mono italic text-cream/90">{feedback}</p>
+            </div>
+
+            <Button
+              onClick={handleReset}
+              className="w-full bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-widest text-xs h-10 rounded-none shadow-lg"
+            >
+              Configure New Trial
+            </Button>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function HorseDetail() {
   const { horseId } = Route.useParams();
@@ -85,6 +417,7 @@ function HorseDetail() {
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
   const trainingUsed = (useGame as any)((s: any) => s.trainingUsed[horseId] ?? 0, shallow);
   const cash = useGame((s: any) => s.cash);
+  const horses = useGame((s: any) => s.horses);
   const retireToStud = useGame((s: any) => s.retireToStud);
   const retireToPasture = useGame((s: any) => s.retireToPasture);
   const facilities = (useGame as any)((s: any) => s.facilities, shallow);
@@ -578,6 +911,9 @@ function HorseDetail() {
                     facilities={facilities}
                     onTrain={handleTrain}
                   />
+                  <div className="mt-4 pt-4 border-t border-white/5">
+                    <PrivateTrialDialog horse={horse} horses={horses} cash={cash} />
+                  </div>
                 </CardContent>
               </Card>
             </section>
