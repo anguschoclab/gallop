@@ -15,6 +15,11 @@ vi.mock("@/core/weather", async () => {
 
 describe("Weather Phase - Storm Jump Logic", () => {
   const mockContext = (overrides = {}): PipelineContext => ({
+    previousDay: 9,
+    logs: [],
+    dailyRng: (() => Math.random()) as any,
+    intents: [],
+    impactLog: [],
     newDay: 10,
     state: {
       day: 9,
