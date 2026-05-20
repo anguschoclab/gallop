@@ -138,8 +138,11 @@ function LiveRace() {
   // Calculate odds for each runner
   const runnerOdds = useMemo(() => {
     const oddsMap = new Map<string, string>();
+    // ⚡ Bolt: Cache horses in an O(1) map to replace the previous O(N) `.find` inside the loop.
+    const horsesMap = new Map(horses.map((h: Horse) => [h.id, h]));
+
     for (const runner of runners) {
-      const horse = horses.find((h: Horse) => h.id === runner.horseId);
+      const horse = horsesMap.get(runner.horseId);
       if (horse) {
         const probability = calculateWinProbability(
           horse.stats.speed,
