@@ -170,7 +170,10 @@ function MarketPage() {
                     </div>
 
                     <Button
-                      onClick={() => buyHorse(h.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        buyHorse(h.id);
+                      }}
                       disabled={!canAfford}
                       className={cn(
                         "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
