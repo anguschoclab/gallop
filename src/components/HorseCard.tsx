@@ -172,6 +172,14 @@ export function HorseCard({
         <CardHeader className="pb-3 border-b border-white/5 bg-black/20">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
+              <HorsePortraitBadge
+                id={horse.id}
+                coatColor={horse.coatColor}
+                markings={horse.markings}
+                gender={horse.gender}
+                appearance={horse.appearance}
+                size="md"
+              />
               <SilkDot color={getCoatColor(horse.coatColor)} size="md" />
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
