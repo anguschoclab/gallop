@@ -184,9 +184,13 @@ function MyStallionCard({
 }) {
   const [feeInput, setFeeInput] = useState(stallion.stud!.standingFee.toString());
   const stud = stallion.stud!;
+  const navigate = useNavigate();
 
   return (
-    <Card className="border-gold">
+    <Card
+      className="border-gold cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: stallion.id } })}
+    >
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
@@ -219,7 +223,8 @@ function MyStallionCard({
             <label className="text-xs text-cream-muted">Standing Fee</label>
             <button
               className="text-[10px] text-gold hover:underline"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setFeeInput(recommendedFee.toString());
                 onUpdateFee(recommendedFee);
               }}
@@ -234,13 +239,17 @@ function MyStallionCard({
                 className="pl-6 bg-t900/50 border-gold-muted text-cream"
                 type="number"
                 value={feeInput}
+                onClick={(e) => e.stopPropagation()}
                 onChange={(e) => setFeeInput(e.target.value)}
               />
             </div>
             <Button
               variant="outline"
               className="border-gold text-gold hover:bg-gold hover:text-t900"
-              onClick={() => onUpdateFee(parseInt(feeInput) || 0)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onUpdateFee(parseInt(feeInput) || 0);
+              }}
             >
               Update
             </Button>
