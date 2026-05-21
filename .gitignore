@@ -30,7 +30,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.claude/worktrees/dreamy-shtern-169f2d/
+
 
 # Stray compiled JS in src/ — source is authored in .ts/.tsx, and tsconfig has
 # noEmit: true. Vendor scripts that legitimately ship as .js live in src/assets/.
