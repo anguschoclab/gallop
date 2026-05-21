@@ -73,9 +73,17 @@ export function JockeyCard({
 
   return (
     <Card
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={(e) => {
+        if (onClick && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          onClick(e as any);
+        }
+      }}
       className={cn(
         "bg-slate-900/60 border-white/5 rounded-none shadow-2xl relative overflow-hidden group flex flex-col h-full transition-all duration-300",
-        onClick && "cursor-pointer hover:border-blue-400/40",
+        onClick && "cursor-pointer hover:border-blue-400/40 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none",
         className,
       )}
       onClick={onClick}
