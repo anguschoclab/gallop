@@ -105,6 +105,8 @@ export interface GenerateRaceImpactsProps {
   snapshots?: RaceSnapshot[];
   /** Speed pars for Beyer speed figure calculation, indexed by distance */
   calibratedPars: Record<number, number>;
+  /** Optional current weather state for the race's track (for injury risk). */
+  raceWeatherState?: import("@/core/weather/weatherTypes").WeatherState;
 }
 
 /**
@@ -613,10 +615,19 @@ export function generateRaceImpacts({
   rng,
   snapshots = [],
   calibratedPars,
+  raceWeatherState,
 }: GenerateRaceImpactsProps): AnyImpact[] {
   try {
     const impacts: AnyImpact[] = [];
     const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
+
+    // Build the weather context for injury rolls (passed to rollForInjury).
+    const injuryWeatherCtx = {
+      weather: race.weather,
+      trackCondition: race.trackCondition,
+      pattern: raceWeatherState?.pattern,
+      tempC: raceWeatherState?.tempC,
+    };
 
     // Normalize collections to Maps for O(1) lookups
     const horseMap =
@@ -662,7 +673,7 @@ export function generateRaceImpacts({
 
       // Health: Roll for potential injuries
       if (rng) {
-        const injury = rollForInjury(rng, horse, newDay, hiredStaff);
+        const injury = rollForInjury(rng, horse, newDay, hiredStaff, injuryWeatherCtx);
         if (injury) {
           impacts.push(injury);
         }
