@@ -1,7 +1,7 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import { Play, Pause, RotateCcw, Camera, SkipForward } from "lucide-react";
 import { interpolateSnapshots, getReplayDuration } from "@/services/racePlaybackService";
-import type { RaceSnapshot, HorseSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import "./RaceVisualizer.css";
 
 interface RunnerInfo {
@@ -19,43 +19,26 @@ interface RaceVisualizerProps {
   trackType?: "Turf" | "Dirt" | "Synthetic";
 }
 
-// Visualizer constants
-const VISUALIZER_CONSTANTS = {
-  // Canvas dimensions
+const C = {
   CANVAS_WIDTH: 1000,
   CANVAS_HEIGHT: 500,
-  // Scale constants
   PIXELS_PER_METER: 20,
   LANE_HEIGHT: 40,
   HORSE_RADIUS: 12,
-  // Layout constants
   MAX_LANES: 8,
   Y_OFFSET: 100,
-  // Track colors
   TRACK_COLOR_TURF: "#2d5a27",
   TRACK_COLOR_DIRT: "#8b4513",
   LANE_COLOR: "rgba(255, 255, 255, 0.3)",
   LANE_WIDTH: 2,
   FINISH_LINE_WIDTH: 5,
-  FINISH_LINE_DASH: [10, 10],
   MARKER_COLOR: "rgba(255, 255, 255, 0.5)",
   MARKER_INTERVAL: 200,
-  MARKER_TEXT_OFFSET_X: 5,
-  MARKER_TEXT_OFFSET_Y: 95,
-  MARKER_LINE_START_Y: 90,
-  // Animation constants
   DEFAULT_PLAYBACK_SPEED: 1,
   FAST_PLAYBACK_SPEED: 2,
-  MS_PER_SECOND: 1000,
-  SNAPSHOT_OFFSET: 0.1,
-  DECIMAL_PRECISION_TIME: 2,
-  DECIMAL_PRECISION_POSITION: 0,
-  // Horse rendering
   HORSE_OUTLINE_WIDTH: 3,
   NAME_TEXT_OFFSET_Y: 5,
-  // Progress bar
-  PROGRESS_BAR_MIN: 0,
-  PROGRESS_BAR_MAX: 100,
+  STATS_UPDATE_MS: 100, // throttle React state updates for stats overlay (~10Hz)
 } as const;
 
 export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
@@ -66,173 +49,213 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
   trackType = "Turf",
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const bgCanvasRef = useRef<HTMLCanvasElement | null>(null); // static lane/track background
+  const timeRef = useRef(0);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const timeLabelRef = useRef<HTMLSpanElement>(null);
+  const leaderLabelRef = useRef<HTMLSpanElement>(null);
+
   const [isPlaying, setIsPlaying] = useState(true);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(
-    VISUALIZER_CONSTANTS.DEFAULT_PLAYBACK_SPEED,
-  );
+  const [playbackSpeed, setPlaybackSpeed] = useState<number>(C.DEFAULT_PLAYBACK_SPEED);
   const [cameraMode, setCameraMode] = useState<"leader" | "player" | "free">("leader");
 
   const duration = useMemo(() => getReplayDuration(snapshots), [snapshots]);
   const playerHorseId = useMemo(() => runners.find((r) => r.owned)?.horseId, [runners]);
-
-  // ⚡ Bolt Optimization:
-  // Pre-calculate a hash map for O(1) lookups during the 60fps render loop
-  // instead of running O(N) .find() inside requestAnimationFrame.
-  // Combined with interpolateSnapshots optimization, achieves true O(N) performance.
   const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
 
-  // Animation Frame
+  // Build the static background (track, lanes, furlong markers without offset) once per
+  // size/track/distance change. The dynamic offset is only applied to the finish line and
+  // marker labels in the main render — cheap operations.
+  const ensureBackground = useCallback(() => {
+    if (bgCanvasRef.current) return bgCanvasRef.current;
+    const bg = document.createElement("canvas");
+    bg.width = C.CANVAS_WIDTH;
+    bg.height = C.CANVAS_HEIGHT;
+    const ctx = bg.getContext("2d");
+    if (!ctx) return bg;
+    // Track
+    ctx.fillStyle = trackType === "Turf" ? C.TRACK_COLOR_TURF : C.TRACK_COLOR_DIRT;
+    ctx.fillRect(0, 0, bg.width, bg.height);
+    // Lane stripes (stationary on screen, so safe to bake)
+    ctx.strokeStyle = C.LANE_COLOR;
+    ctx.lineWidth = C.LANE_WIDTH;
+    for (let i = 0; i <= C.MAX_LANES; i++) {
+      const y = C.Y_OFFSET + i * C.LANE_HEIGHT;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(bg.width, y);
+      ctx.stroke();
+    }
+    bgCanvasRef.current = bg;
+    return bg;
+  }, [trackType]);
+
+  // Invalidate baked background when track type changes.
   useEffect(() => {
-    let lastTime = performance.now();
-    let frameId: number;
+    bgCanvasRef.current = null;
+  }, [trackType]);
 
-    const animate = (now: number) => {
-      if (isPlaying) {
-        const dt = (now - lastTime) / VISUALIZER_CONSTANTS.MS_PER_SECOND;
-        setCurrentTime((t) => {
-          const nextT = t + dt * playbackSpeed;
-          if (nextT >= duration) {
-            setIsPlaying(false);
-            if (onComplete) onComplete();
-            return duration;
-          }
-          return nextT;
-        });
-      }
-      lastTime = now;
-      render();
-      frameId = requestAnimationFrame(animate);
-    };
-
-    frameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frameId);
-  }, [
-    isPlaying,
-    playbackSpeed,
-    duration,
-    snapshots,
-    cameraMode,
-    runnerMap,
-    playerHorseId,
-    distance,
-    trackType,
-  ]);
-
-  const render = () => {
+  // Stable render fn (reads timeRef + state captured via closures rebuilt in effect)
+  const renderFrame = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const currentTime = timeRef.current;
     const currentHorses = interpolateSnapshots(snapshots, currentTime);
 
-    // Determine Camera X
+    // Single-pass max position (avoid Math.max(...arr.map(...)) allocations)
+    let maxPos = 0;
+    for (let i = 0; i < currentHorses.length; i++) {
+      const p = currentHorses[i].position;
+      if (p > maxPos) maxPos = p;
+    }
+
+    // Camera focus
     let focusX = 0;
     if (cameraMode === "leader") {
-      focusX =
-        Math.max(0, ...currentHorses.map((h) => h.position)) *
-        VISUALIZER_CONSTANTS.PIXELS_PER_METER;
+      focusX = maxPos * C.PIXELS_PER_METER;
     } else if (cameraMode === "player" && playerHorseId) {
-      const player = currentHorses.find((h) => h.horseId === playerHorseId);
-      focusX = (player?.position ?? 0) * VISUALIZER_CONSTANTS.PIXELS_PER_METER;
+      // Linear scan (small N) — avoids Map miss / allocation
+      for (let i = 0; i < currentHorses.length; i++) {
+        if (currentHorses[i].horseId === playerHorseId) {
+          focusX = currentHorses[i].position * C.PIXELS_PER_METER;
+          break;
+        }
+      }
     }
 
     const viewportWidth = canvas.width;
     const offsetX = viewportWidth / 2 - focusX;
 
-    // Clear
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Blit the baked background (clears canvas in one op)
+    const bg = ensureBackground();
+    ctx.drawImage(bg, 0, 0);
 
-    // Draw Track Background
-    const trackColor = trackType === "Turf" ? "#2d5a27" : "#8b4513";
-    ctx.fillStyle = trackColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw Lanes & Rails
-    ctx.strokeStyle = VISUALIZER_CONSTANTS.LANE_COLOR;
-    ctx.lineWidth = VISUALIZER_CONSTANTS.LANE_WIDTH;
-    const numLanes = Math.max(...runners.map((_, i) => i)) + 2; // Approximate
-    for (let i = 0; i <= VISUALIZER_CONSTANTS.MAX_LANES; i++) {
-      const y = VISUALIZER_CONSTANTS.Y_OFFSET + i * VISUALIZER_CONSTANTS.LANE_HEIGHT;
+    // Dynamic finish line (moves with camera)
+    const finishX = distance * C.PIXELS_PER_METER + offsetX;
+    if (finishX > -10 && finishX < viewportWidth + 10) {
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = C.FINISH_LINE_WIDTH;
+      ctx.setLineDash([10, 10]);
       ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(canvas.width, y);
+      ctx.moveTo(finishX, C.Y_OFFSET);
+      ctx.lineTo(finishX, C.Y_OFFSET + C.MAX_LANES * C.LANE_HEIGHT);
       ctx.stroke();
+      ctx.setLineDash([]);
     }
 
-    // Draw Finish Line
-    const finishX = distance * VISUALIZER_CONSTANTS.PIXELS_PER_METER + offsetX;
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = VISUALIZER_CONSTANTS.FINISH_LINE_WIDTH;
-    ctx.setLineDash(VISUALIZER_CONSTANTS.FINISH_LINE_DASH);
-    ctx.beginPath();
-    ctx.moveTo(finishX, VISUALIZER_CONSTANTS.Y_OFFSET);
-    ctx.lineTo(
-      finishX,
-      VISUALIZER_CONSTANTS.Y_OFFSET +
-        VISUALIZER_CONSTANTS.MAX_LANES * VISUALIZER_CONSTANTS.LANE_HEIGHT,
-    );
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Draw Furlong Markers
-    ctx.fillStyle = VISUALIZER_CONSTANTS.MARKER_COLOR;
+    // Furlong markers — only those visible on screen
+    ctx.fillStyle = C.MARKER_COLOR;
     ctx.font = "10px Inter";
-    for (let m = 0; m <= distance; m += VISUALIZER_CONSTANTS.MARKER_INTERVAL) {
-      const x = m * VISUALIZER_CONSTANTS.PIXELS_PER_METER + offsetX;
-      ctx.fillText(
-        `${m}m`,
-        x + VISUALIZER_CONSTANTS.MARKER_TEXT_OFFSET_X,
-        VISUALIZER_CONSTANTS.MARKER_TEXT_OFFSET_Y,
-      );
+    ctx.strokeStyle = C.MARKER_COLOR;
+    ctx.lineWidth = 1;
+    const firstM = Math.max(0, Math.floor(-offsetX / C.PIXELS_PER_METER / C.MARKER_INTERVAL) * C.MARKER_INTERVAL);
+    const lastM = Math.min(distance, Math.ceil((viewportWidth - offsetX) / C.PIXELS_PER_METER));
+    for (let m = firstM; m <= lastM; m += C.MARKER_INTERVAL) {
+      const x = m * C.PIXELS_PER_METER + offsetX;
+      ctx.fillText(`${m}m`, x + 5, 95);
       ctx.beginPath();
-      ctx.moveTo(x, VISUALIZER_CONSTANTS.MARKER_LINE_START_Y);
-      ctx.lineTo(
-        x,
-        VISUALIZER_CONSTANTS.Y_OFFSET +
-          VISUALIZER_CONSTANTS.MAX_LANES * VISUALIZER_CONSTANTS.LANE_HEIGHT,
-      );
+      ctx.moveTo(x, 90);
+      ctx.lineTo(x, C.Y_OFFSET + C.MAX_LANES * C.LANE_HEIGHT);
       ctx.stroke();
     }
 
-    // Draw Horses
-    currentHorses.forEach((h) => {
+    // Horses
+    ctx.textAlign = "center";
+    for (let i = 0; i < currentHorses.length; i++) {
+      const h = currentHorses[i];
+      const x = h.position * C.PIXELS_PER_METER + offsetX;
+      // Cull off-screen horses
+      if (x < -C.HORSE_RADIUS * 2 || x > viewportWidth + C.HORSE_RADIUS * 2) continue;
+      const y = C.Y_OFFSET + (h.lane + 0.5) * C.LANE_HEIGHT;
       const runner = runnerMap.get(h.horseId);
-      const x = h.position * VISUALIZER_CONSTANTS.PIXELS_PER_METER + offsetX;
-      const y = VISUALIZER_CONSTANTS.Y_OFFSET + (h.lane + 0.5) * VISUALIZER_CONSTANTS.LANE_HEIGHT;
-
-      // Body
       ctx.fillStyle = runner?.silk || "#666";
       ctx.beginPath();
-      ctx.arc(x, y, VISUALIZER_CONSTANTS.HORSE_RADIUS, 0, Math.PI * 2);
+      ctx.arc(x, y, C.HORSE_RADIUS, 0, Math.PI * 2);
       ctx.fill();
-
-      // Outline for player horse
       if (runner?.owned) {
         ctx.strokeStyle = "#facc15";
-        ctx.lineWidth = VISUALIZER_CONSTANTS.HORSE_OUTLINE_WIDTH;
+        ctx.lineWidth = C.HORSE_OUTLINE_WIDTH;
         ctx.stroke();
       }
-
-      // Name Label
       ctx.fillStyle = "#fff";
       ctx.font = "bold 10px Inter";
-      ctx.textAlign = "center";
-      ctx.fillText(
-        runner?.name || "Unknown",
-        x,
-        y - VISUALIZER_CONSTANTS.HORSE_RADIUS - VISUALIZER_CONSTANTS.NAME_TEXT_OFFSET_Y,
-      );
-    });
-  };
+      ctx.fillText(runner?.name || "Unknown", x, y - C.HORSE_RADIUS - C.NAME_TEXT_OFFSET_Y);
+    }
+
+    return maxPos;
+  }, [snapshots, distance, cameraMode, playerHorseId, runnerMap, ensureBackground]);
+
+  // Animation loop. We intentionally do NOT setState every frame; React rerenders are
+  // expensive and were dominating CPU. Stats/progress are updated via refs at ~10Hz.
+  useEffect(() => {
+    let lastTime = performance.now();
+    let lastStatsAt = 0;
+    let frameId = 0;
+    let stopped = false;
+
+    const tick = (now: number) => {
+      if (stopped) return;
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      if (isPlaying) {
+        const next = timeRef.current + dt * playbackSpeed;
+        if (next >= duration) {
+          timeRef.current = duration;
+          // Render final frame, fire onComplete once, stop playing.
+          const maxPos = renderFrame();
+          updateStats(maxPos);
+          setIsPlaying(false);
+          onComplete?.();
+          return;
+        }
+        timeRef.current = next;
+      }
+
+      const maxPos = renderFrame();
+      if (now - lastStatsAt >= C.STATS_UPDATE_MS) {
+        lastStatsAt = now;
+        updateStats(maxPos);
+      }
+      frameId = requestAnimationFrame(tick);
+    };
+
+    const updateStats = (maxPos: number | undefined) => {
+      const t = timeRef.current;
+      if (timeLabelRef.current) timeLabelRef.current.textContent = t.toFixed(2);
+      if (leaderLabelRef.current && maxPos !== undefined) {
+        leaderLabelRef.current.textContent = maxPos.toFixed(0);
+      }
+      if (progressBarRef.current && duration > 0) {
+        progressBarRef.current.style.width = `${(t / duration) * 100}%`;
+      }
+    };
+
+    // Initial paint so static frame is correct even when paused.
+    renderFrame();
+    frameId = requestAnimationFrame(tick);
+    return () => {
+      stopped = true;
+      cancelAnimationFrame(frameId);
+    };
+  }, [isPlaying, playbackSpeed, duration, renderFrame, onComplete]);
+
+  const restart = useCallback(() => {
+    timeRef.current = 0;
+    if (progressBarRef.current) progressBarRef.current.style.width = "0%";
+    if (timeLabelRef.current) timeLabelRef.current.textContent = "0.00";
+    setIsPlaying(true);
+  }, []);
 
   return (
     <div className="race-visualizer-container">
       <canvas
         ref={canvasRef}
-        width={VISUALIZER_CONSTANTS.CANVAS_WIDTH}
-        height={VISUALIZER_CONSTANTS.CANVAS_HEIGHT}
+        width={C.CANVAS_WIDTH}
+        height={C.CANVAS_HEIGHT}
         className="race-visualizer-canvas"
         role="img"
         aria-label="Race track visualization"
@@ -240,37 +263,28 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
 
       <div className="race-overlay">
         <div className="race-stats tabular-nums">
-          <span>Time: {currentTime.toFixed(VISUALIZER_CONSTANTS.DECIMAL_PRECISION_TIME)}s</span>
           <span>
-            Leader:{" "}
-            {Math.max(
-              ...(snapshots
-                .find(
-                  (s) =>
-                    s.t > currentTime - VISUALIZER_CONSTANTS.SNAPSHOT_OFFSET && s.t <= currentTime,
-                )
-                ?.horses.map((h) => h.position) || [0]),
-            ).toFixed(VISUALIZER_CONSTANTS.DECIMAL_PRECISION_POSITION)}
-            m / {distance}m
+            Time: <span ref={timeLabelRef}>0.00</span>s
+          </span>
+          <span>
+            Leader: <span ref={leaderLabelRef}>0</span>m / {distance}m
           </span>
         </div>
       </div>
 
       <div
+        ref={progressBarRef}
         className="race-progress-bar"
         role="progressbar"
-        aria-valuemin={VISUALIZER_CONSTANTS.PROGRESS_BAR_MIN}
-        aria-valuemax={VISUALIZER_CONSTANTS.PROGRESS_BAR_MAX}
-        aria-valuenow={currentTime}
-        style={{
-          width: `${duration > 0 ? (currentTime / duration) * VISUALIZER_CONSTANTS.PROGRESS_BAR_MAX : 0}%`,
-        }}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        style={{ width: "0%" }}
       />
 
       <div className="race-controls">
         <button
           className="race-control-btn"
-          onClick={() => setIsPlaying(!isPlaying)}
+          onClick={() => setIsPlaying((p) => !p)}
           aria-label={isPlaying ? "Pause race" : "Play race"}
           title={isPlaying ? "Pause" : "Play"}
         >
@@ -278,7 +292,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         </button>
         <button
           className="race-control-btn"
-          onClick={() => setCurrentTime(0)}
+          onClick={restart}
           aria-label="Restart race"
           title="Restart"
         >
@@ -295,10 +309,8 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         <button
           className="race-control-btn"
           onClick={() =>
-            setPlaybackSpeed(
-              playbackSpeed === VISUALIZER_CONSTANTS.DEFAULT_PLAYBACK_SPEED
-                ? VISUALIZER_CONSTANTS.FAST_PLAYBACK_SPEED
-                : VISUALIZER_CONSTANTS.DEFAULT_PLAYBACK_SPEED,
+            setPlaybackSpeed((s) =>
+              s === C.DEFAULT_PLAYBACK_SPEED ? C.FAST_PLAYBACK_SPEED : C.DEFAULT_PLAYBACK_SPEED,
             )
           }
           aria-label={`Toggle playback speed: currently ${playbackSpeed}x`}
