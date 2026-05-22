@@ -17,6 +17,7 @@ import {
   BarChart2,
   Trophy,
   GitBranch,
+} from "lucide-react";
 import { toast } from "sonner";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
