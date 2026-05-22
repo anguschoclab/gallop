@@ -212,6 +212,9 @@ function StablePage() {
           className="mt-0 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300"
         >
           {playerAwards.length > 0 && <TrophyCase awards={playerAwards} variant="compact" />}
+          {stableG1Wins.length > 0 && (
+            <G1TrophyList wins={stableG1Wins} title="Stable Graded Wins" />
+          )}
 
           {/* Filters */}
           <div className="flex flex-wrap items-center justify-between gap-4 bg-black/20 p-4 border border-white/5">
