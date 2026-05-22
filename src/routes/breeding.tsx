@@ -265,30 +265,27 @@ function BreedingPage() {
               {compatibility && <BreedingCompatibilityCard compatibility={compatibility} />}
 
               {sire && dam && (
-                <div className="space-y-3 pt-4 border-t border-white/5">
-                  <div className="text-[9px] font-black uppercase tracking-widest text-cream/30">
-                    Ancestry Comparison
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <div className="text-[10px] text-cream/40 mb-2 font-mono uppercase tracking-widest">
-                        {sire.name} · Sire
-                      </div>
-                      <PedigreeTree
-                        horseId={sireId}
-                        generations={3}
-                        sharedAncestorIds={sharedAncestorIds}
-                      />
+                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
+                  <div className="bg-black/20 border border-white/5 p-3">
+                    <div className="text-[9px] font-black uppercase tracking-widest text-cream/30 mb-1">
+                      {sire.name} · Sire
                     </div>
-                    <div>
-                      <div className="text-[10px] text-cream/40 mb-2 font-mono uppercase tracking-widest">
-                        {dam.name} · Dam
-                      </div>
-                      <PedigreeTree
-                        horseId={damId}
-                        generations={3}
-                        sharedAncestorIds={sharedAncestorIds}
-                      />
+                    <div className="text-[10px] text-cream-muted font-mono">
+                      Preferred Distance:{" "}
+                      <span className="text-cream tabular-nums">
+                        {sire.distanceAptitude ? `${Math.round(sire.distanceAptitude)}m` : "—"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="bg-black/20 border border-white/5 p-3">
+                    <div className="text-[9px] font-black uppercase tracking-widest text-cream/30 mb-1">
+                      {dam.name} · Dam
+                    </div>
+                    <div className="text-[10px] text-cream-muted font-mono">
+                      Preferred Distance:{" "}
+                      <span className="text-cream tabular-nums">
+                        {dam.distanceAptitude ? `${Math.round(dam.distanceAptitude)}m` : "—"}
+                      </span>
                     </div>
                   </div>
                 </div>
