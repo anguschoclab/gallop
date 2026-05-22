@@ -3,8 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, CloudSun } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
+import { getWeatherDisplay } from "./raceVisualHelpers";
 import type { Race } from "@/game/types";
 
 interface RaceRowProps {
@@ -67,6 +68,12 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
           <span>{race.distance}m</span>
           <span>{race.surface}</span>
           <span className="truncate">{race.raceClass}</span>
+          {race.weather && (
+            <span className="flex items-center gap-1 text-cream/40">
+              <CloudSun className="h-3 w-3" />
+              {getWeatherDisplay(race.weather)}
+            </span>
+          )}
         </div>
       </div>
 

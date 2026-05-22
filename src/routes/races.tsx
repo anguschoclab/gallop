@@ -29,6 +29,7 @@ import {
   Clock,
   ExternalLink,
   Target,
+  CloudSun,
 } from "lucide-react";
 import { useState } from "react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
@@ -41,6 +42,7 @@ import { NumericValue } from "@/components/HorseBits";
 import { useRaceFilters, type RaceFilters } from "@/hooks/useRaceFilters";
 import { ClaimingRacePanel } from "@/components/races/ClaimingRacePanel";
 import { cn } from "@/lib/utils";
+import { getWeatherDisplay } from "@/components/races/raceVisualHelpers";
 
 export const Route = createFileRoute("/races")({
   validateSearch: (search: Record<string, unknown>): RaceFilters => ({
@@ -314,6 +316,7 @@ function RacesPage() {
                     <th className="px-4 py-3 font-black">Race</th>
                     <th className="px-4 py-3 font-black">Track</th>
                     <th className="px-4 py-3 font-black text-right">Distance</th>
+                    <th className="px-4 py-3 font-black text-right">Weather</th>
                     <th className="px-4 py-3 font-black text-right">Purse</th>
                     <th className="px-6 py-3 font-black text-right">Enter</th>
                   </tr>
@@ -369,6 +372,12 @@ function RacesPage() {
                             {r.distance}M
                           </td>
                           <td className="px-4 py-4 text-right">
+                            <div className="flex items-center justify-end gap-1.5 text-xs text-cream/60">
+                              <CloudSun className="h-3 w-3 opacity-40" />
+                              <span>{getWeatherDisplay(r.weather) || "—"}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-right">
                             <span className="font-mono font-bold text-success text-sm tracking-tighter tabular-nums">
                               {formatCurrency(r.purse)}
                             </span>
@@ -392,7 +401,7 @@ function RacesPage() {
                         </tr>
                         {isClaiming && isEntered && (
                           <tr>
-                            <td colSpan={6} className="bg-success/[0.01] p-0 border-none">
+                            <td colSpan={7} className="bg-success/[0.01] p-0 border-none">
                               <ClaimingRacePanel
                                 race={r as Race}
                                 horses={horses}
