@@ -29,9 +29,11 @@ export const Route = createFileRoute("/staff")({
 });
 
 function StaffManagement() {
-  const { hiredStaff, staffPool, enqueueIntent, day, horses, races } = useGame() as any;
+  const { hiredStaff, staffPool, enqueueIntent, day } = useGame();
+  const horses = (useGame as any)((s: any) => s.horses);
+  const races = (useGame as any)((s: any) => s.races);
 
-  const myStaff = hiredStaff?.filter((s: any) => s.stableId === "") ?? [];
+  const myStaff = hiredStaff?.filter((s) => s.stableId === "") ?? [];
 
   // Stable-wide graded wins are attributed to each retained connection
   // (head trainer, trainers, caretakers/grooms) since they support every runner.
@@ -40,8 +42,7 @@ function StaffManagement() {
     [horses, races],
   );
   const honorCounts = useMemo(() => countByGrade(stableG1Wins), [stableG1Wins]);
-  const showHonors = (role: string) =>
-    role === "trainer" || role === "groom";
+  const showHonors = (role: string) => role === "trainer" || role === "groom";
 
   const handleHire = (staffId: string) => {
     enqueueIntent({
