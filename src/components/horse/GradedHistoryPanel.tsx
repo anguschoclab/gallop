@@ -7,6 +7,7 @@ import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
 import { GRADED_RACES, getRaceCountry } from "@/core/data/gradedRaces";
 import { getCountryFlag } from "@/lib/countryFlag";
+import { VisualTrophy, TrophyShelf } from "@/components/awards/VisualTrophy";
 
 interface GradedHistoryEntry {
   raceId?: string;
