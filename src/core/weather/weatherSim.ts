@@ -159,17 +159,25 @@ export function stepWeather(
   trackId: string,
   day: number,
   climate: ClimateZone,
+  hemisphere: Hemisphere = "Northern",
 ): WeatherState {
   const rng = createRng(hashStr(`${trackId}:${day}`));
   const matrix = TRANSITIONS[climate];
   const fromIdx = prev ? SIM_WEATHER_PATTERNS.indexOf(prev.pattern) : 0;
-  const row = matrix[Math.max(0, fromIdx)];
+  const baseRow = matrix[Math.max(0, fromIdx)];
+  const row = seasonalRowBias(baseRow, hemisphere, day);
   const pattern = samplePattern(row, rng);
 
   const [tMin, tMax] = CLIMATE_TEMP[climate];
+  // Seasonal swing scales with the climate's annual temp spread (half-range).
+  const seasonalAmp = (tMax - tMin) * 0.45;
+  const seasonal = seasonalTempOffset(day, hemisphere, seasonalAmp);
   // Patterns nudge temp down; storm cools more than clear.
   const cool = PATTERN_SEVERITY[pattern] * 1.2;
-  const tempC = Math.round((tMin + rng.next() * (tMax - tMin) - cool) * 10) / 10;
+  const mid = (tMin + tMax) / 2;
+  // Daily noise ±25% of the climate spread around the seasonal midpoint.
+  const noise = (rng.next() - 0.5) * (tMax - tMin) * 0.5;
+  const tempC = Math.round((mid + seasonal + noise - cool) * 10) / 10;
 
   const baseHumidity = CLIMATE_HUMIDITY_BIAS[climate];
   const humidityBoost = PATTERN_SEVERITY[pattern] * 0.07;
@@ -184,11 +192,6 @@ export function stepWeather(
 /**
  * Generate a forecast of `days` days starting at `startDay`, deterministic
  * given the seed previous state. Does NOT mutate input.
- * @param prev
- * @param trackId
- * @param startDay
- * @param days
- * @param climate
  */
 export function generateForecast(
   prev: WeatherState | undefined,
@@ -196,11 +199,12 @@ export function generateForecast(
   startDay: number,
   days: number,
   climate: ClimateZone,
+  hemisphere: Hemisphere = "Northern",
 ): WeatherState[] {
   const out: WeatherState[] = [];
   let last = prev;
   for (let i = 0; i < days; i++) {
-    last = stepWeather(last, trackId, startDay + i, climate);
+    last = stepWeather(last, trackId, startDay + i, climate, hemisphere);
     out.push(last);
   }
   return out;
