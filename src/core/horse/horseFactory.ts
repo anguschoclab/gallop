@@ -200,11 +200,7 @@ export function resolvePhenotype(horse: Horse): Horse {
     geneticMarkers: resolveGeneticMarkers(genotype),
     healthStatus: resolveHealthStatus(genotype.health),
     ...dnaTraits,
-    appearance: generateAppearanceDNA(
-      hashStr(horse.id),
-      undefined,
-      getPalette(coatColor),
-    ),
+    appearance: generateAppearanceDNA(hashStr(horse.id), undefined, getPalette(coatColor)),
     phenotypeResolved: true,
   };
 }
@@ -269,7 +265,14 @@ export function createHorseFromDNA(
     gender: opts.gender ?? "colt",
     hemisphere: opts.hemisphere ?? "Northern",
     silk,
-    stats: { speed: 0, stamina: 0, acceleration: 0, consistency: 0, temperament: 0, conformation: 0 },
+    stats: {
+      speed: 0,
+      stamina: 0,
+      acceleration: 0,
+      consistency: 0,
+      temperament: 0,
+      conformation: 0,
+    },
     genotype,
     energy: 100,
     form: 50,
@@ -479,6 +482,11 @@ export function resolveFoaling(
   state?: Pick<GameState, "horses">,
 ): { kind: "live"; foal: Horse; transmission?: boolean } | { kind: "complication"; type: string } {
   const rng = createRng(hashStr(pregnancy.id));
+
+  // Ensure both parents have resolved phenotypes so lethal-recessive and other
+  // trait checks operate on real data, not zeroed defaults.
+  sire = ensurePhenotypeResolved(sire);
+  dam = ensurePhenotypeResolved(dam);
 
   // Genetic crossover
   if (!sire.genotype || !dam.genotype) {

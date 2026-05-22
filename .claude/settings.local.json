@@ -100,7 +100,9 @@
       "Bash(npm cache *)",
       "Bash(bun add *)",
       "Bash(node *)",
-      "Skill(superpowers:brainstorming)"
+      "Skill(superpowers:brainstorming)",
+      "Skill(verify-spec)",
+      "Bash(grep -E \"\\\\.ts$|\\\\.tsx$\")"
     ]
   },
   "hooks": {
