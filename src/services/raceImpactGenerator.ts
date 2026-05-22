@@ -615,10 +615,19 @@ export function generateRaceImpacts({
   rng,
   snapshots = [],
   calibratedPars,
+  raceWeatherState,
 }: GenerateRaceImpactsProps): AnyImpact[] {
   try {
     const impacts: AnyImpact[] = [];
     const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
+
+    // Build the weather context for injury rolls (passed to rollForInjury).
+    const injuryWeatherCtx = {
+      weather: race.weather,
+      trackCondition: race.trackCondition,
+      pattern: raceWeatherState?.pattern,
+      tempC: raceWeatherState?.tempC,
+    };
 
     // Normalize collections to Maps for O(1) lookups
     const horseMap =
