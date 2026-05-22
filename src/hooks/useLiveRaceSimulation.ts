@@ -39,6 +39,8 @@ export function useLiveRaceSimulation({
   const finishOrderRef = useRef<{ horseId: string; position: number; time: number }[]>([]);
   const speedRef = useRef(speed);
   const pausedRef = useRef(paused);
+  // splitCrossings[horseId] = [t_at_25%, t_at_50%, t_at_75%, t_at_finish]
+  const splitCrossingsRef = useRef<Map<string, number[]>>(new Map());
 
   // Sync refs with state
   useEffect(() => {
@@ -88,8 +90,11 @@ export function useLiveRaceSimulation({
           }
         }
 
+        const splitMarkers = [0.25, 0.5, 0.75, 1.0].map((f) => f * race.distance);
+
         for (const r of runners) {
           if (r.finishTime === null) {
+            const posBefore = r.position;
             stepRunner(
               r,
               FIXED_DT,
@@ -99,6 +104,21 @@ export function useLiveRaceSimulation({
               runners,
               pace,
             );
+            // Track quarter-marker crossings with linear interpolation
+            if (!splitCrossingsRef.current.has(r.horseId)) {
+              splitCrossingsRef.current.set(r.horseId, []);
+            }
+            const crossings = splitCrossingsRef.current.get(r.horseId)!;
+            const nextMarkerIdx = crossings.length;
+            if (nextMarkerIdx < splitMarkers.length) {
+              const marker = splitMarkers[nextMarkerIdx];
+              if (r.position >= marker && posBefore < marker) {
+                // Linear interpolation for precise crossing time
+                const tBefore = simTimeRef.current - FIXED_DT;
+                const frac = (marker - posBefore) / (r.position - posBefore);
+                crossings.push(tBefore + frac * FIXED_DT);
+              }
+            }
             if (r.finishTime !== null) {
               finishOrderRef.current.push({
                 horseId: r.horseId,
@@ -134,5 +154,6 @@ export function useLiveRaceSimulation({
     paused,
     setPaused,
     simTime: simTimeRef.current,
+    liveSplits: splitCrossingsRef.current,
   };
 }

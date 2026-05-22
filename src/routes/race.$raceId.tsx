@@ -43,6 +43,30 @@ import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { SilkDot } from "@/components/SilkDot";
 import { SectionalTimingTable } from "@/components/SectionalTimingTable";
 import { cn } from "@/lib/utils";
+import { parTime } from "@/game/beyer";
+import { BEYER_BASE } from "@/game/constants/gameConstants";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { HorseCard } from "@/components/HorseCard";
+
+const SPLIT_LABELS = ["¼", "½", "¾", "Fin"] as const;
+
+function formatSplitTime(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return m > 0 ? `${m}:${s.toFixed(1).padStart(4, "0")}` : `${s.toFixed(1)}s`;
+}
+
+function getTargetSplitTime(horse: Horse, distance: number, markerFraction: number): number | null {
+  const qualifying = (horse.raceHistory ?? []).filter(
+    (h) => h.beyer != null && h.distance != null && Math.abs(h.distance - distance) <= 200,
+  );
+  if (qualifying.length < 2) return null;
+  const avgBeyer = qualifying.reduce((sum, h) => sum + h.beyer!, 0) / qualifying.length;
+  const par = parTime(distance);
+  // Inverse of beyerFigure: finishTime = par * (1 - (beyer - BEYER_BASE) / 500)
+  const expectedFinish = par * (1 - (avgBeyer - BEYER_BASE) / 500);
+  return expectedFinish * markerFraction;
+}
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -88,14 +112,15 @@ function LiveRace() {
     narrativeRef.current = new NarrativeGenerator(race, horses, stables, rngRef.current!);
   }
 
-  const { tick, speed, setSpeed, finished, paused, setPaused, simTime } = useLiveRaceSimulation({
-    race,
-    runners,
-    resolveRaceWithImpacts,
-    narrativeRef,
-    messageQueue,
-    rngRef,
-  });
+  const { tick, speed, setSpeed, finished, paused, setPaused, simTime, liveSplits } =
+    useLiveRaceSimulation({
+      race,
+      runners,
+      resolveRaceWithImpacts,
+      narrativeRef,
+      messageQueue,
+      rngRef,
+    });
 
   const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
   const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
@@ -108,6 +133,8 @@ function LiveRace() {
   const [announcement, setAnnouncement] = useState<string>("");
   const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
   const [subjectHorseId, setSubjectHorseId] = useState<string | null>(null);
+  const [hideUntilAllFinished, setHideUntilAllFinished] = useState(false);
+  const [showAllCards, setShowAllCards] = useState(false);
 
   // Paced message delivery effect
   useEffect(() => {
@@ -162,16 +189,23 @@ function LiveRace() {
         e.preventDefault();
         setPaused((p) => !p);
       }
+      if (!finished && !paused) {
+        if (e.key === "1") setSpeed(1);
+        if (e.key === "2") setSpeed(2);
+        if (e.key === "4") setSpeed(4);
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [finished, setPaused]);
+  }, [finished, paused, setPaused, setSpeed]);
 
   // Early return checks after all hooks
   if (!race) throw notFound();
 
   // If the race is resolved and has snapshots, we can show the replay
   const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
+  const allFinished = runners.every((r) => r.finishTime !== null);
+  const anyFinished = runners.some((r) => r.finishTime !== null);
 
   const calibratedPars = (useGame as any)((s: GameState) => s.calibratedPars, shallow);
 
@@ -267,6 +301,7 @@ function LiveRace() {
                 size="sm"
                 variant={speed === 1 ? "secondary" : "ghost"}
                 onClick={() => setSpeed(1)}
+                title="Press 1"
               >
                 1x
               </Button>
@@ -274,6 +309,7 @@ function LiveRace() {
                 size="sm"
                 variant={speed === 2 ? "secondary" : "ghost"}
                 onClick={() => setSpeed(2)}
+                title="Press 2"
               >
                 2x
               </Button>
@@ -281,10 +317,22 @@ function LiveRace() {
                 size="sm"
                 variant={speed === 4 ? "secondary" : "ghost"}
                 onClick={() => setSpeed(4)}
+                title="Press 4"
               >
                 4x
               </Button>
             </>
+          )}
+
+          {anyFinished && !allFinished && (
+            <Button
+              size="sm"
+              variant={hideUntilAllFinished ? "secondary" : "ghost"}
+              onClick={() => setHideUntilAllFinished((v) => !v)}
+              title="Hide results until all horses finish"
+            >
+              {hideUntilAllFinished ? "Revealing…" : "Hide Results"}
+            </Button>
           )}
 
           {finished && (
@@ -319,6 +367,12 @@ function LiveRace() {
                 className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black"
               >
                 Replay
+              </TabsTrigger>
+              <TabsTrigger
+                value="splits"
+                className="text-[10px] font-black uppercase tracking-widest px-4 h-8 data-[state=active]:bg-broadcast-accent data-[state=active]:text-black"
+              >
+                Splits
               </TabsTrigger>
               {race.resolved && race.sectionalSplits && race.sectionalSplits.length > 0 && (
                 <TabsTrigger
@@ -378,6 +432,76 @@ function LiveRace() {
                 </div>
               </TabsContent>
             )}
+
+            <TabsContent value="splits" className="mt-0 focus-visible:outline-none">
+              <div className="border border-white/10 bg-black/20 p-4 rounded-lg overflow-x-auto">
+                <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
+                  <span className="h-1 w-12 bg-broadcast-accent" />
+                  Live Splits
+                </h3>
+                <table className="w-full text-xs font-mono">
+                  <thead>
+                    <tr className="border-b border-white/10 text-cream/30 uppercase tracking-widest text-[9px]">
+                      <th className="text-left pb-2 pr-3">Horse</th>
+                      {SPLIT_LABELS.map((label) => (
+                        <th key={label} className="text-right pb-2 px-2">
+                          {label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {runners.map((r) => {
+                      const horse = horses.find((h: Horse) => h.id === r.horseId);
+                      const crossings = liveSplits.get(r.horseId) ?? [];
+                      const markerFractions = [0.25, 0.5, 0.75, 1.0];
+                      return (
+                        <tr key={r.horseId} className="hover:bg-white/[0.02]">
+                          <td
+                            className={cn(
+                              "py-2 pr-3 font-bold truncate max-w-[120px]",
+                              r.owned ? "text-success" : "text-cream/80",
+                            )}
+                          >
+                            {r.name}
+                          </td>
+                          {markerFractions.map((frac, mi) => {
+                            const elapsed = crossings[mi];
+                            const target = horse
+                              ? getTargetSplitTime(horse, race.distance, frac)
+                              : null;
+                            if (elapsed == null) {
+                              return (
+                                <td key={mi} className="text-right px-2 py-2 text-cream/20">
+                                  —
+                                </td>
+                              );
+                            }
+                            const delta = target != null ? elapsed - target : null;
+                            return (
+                              <td key={mi} className="text-right px-2 py-2 tabular-nums">
+                                <div className="text-cream/80">{formatSplitTime(elapsed)}</div>
+                                {delta != null && (
+                                  <div
+                                    className={cn(
+                                      "text-[9px]",
+                                      delta < 0 ? "text-green-400" : "text-red-400",
+                                    )}
+                                  >
+                                    {delta < 0 ? "" : "+"}
+                                    {delta.toFixed(2)}s
+                                  </div>
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
         <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
@@ -470,6 +594,7 @@ function LiveRace() {
         <ResultOverlay
           race={race}
           runners={runners}
+          hideResults={hideUntilAllFinished}
           onClose={() =>
             navigate({
               to: "/races",

@@ -157,6 +157,12 @@ const LATE_KICK_VIGOR_MULTIPLIER = 1.5;
 const GATE_SKILL_VELOCITY_BONUS = 0.005; // 0.5/100
 const GATE_SKILL_PROGRESS_THRESHOLD = 0.05;
 
+// Deceleration / stamina constants
+const DECEL_FACTOR = 0.35; // deceleration is 35% as fast as acceleration
+const LATE_KICK_TOP_SPEED_MULTIPLIER = 1.04; // late kick can briefly exceed base topSpeed
+const MIN_BLOCK_GAP = 0.8; // min position gap (m) before blocking penalty applies
+const INSIDE_OVERTAKE_DENSITY_ADVANTAGE = 1; // prefer inside lane when it has this many fewer runners
+
 /**
  * Calculates the target lane for a runner based on their running style, chosen tactics, and current race congestion.
  *
@@ -198,8 +204,15 @@ function calculateTargetLane(
       if (gap >= POSITION_GAP_THRESHOLD) continue;
 
       const laneGap = Math.abs(other.lane - r.lane);
-      if (laneGap < LANE_GAP_THRESHOLD) {
-        targetLane = Math.min(10, laneIdx + 1);
+      if (laneGap < LANE_GAP_THRESHOLD && gap >= MIN_BLOCK_GAP) {
+        // Prefer inside line when it is less congested (A1)
+        const insideDensity = laneIdx > 0 ? (pace.laneDensity[laneIdx - 1] ?? 0) : Infinity;
+        const outsideDensity = pace.laneDensity[laneIdx + 1] ?? 0;
+        if (laneIdx > 0 && insideDensity + INSIDE_OVERTAKE_DENSITY_ADVANTAGE <= outsideDensity) {
+          targetLane = laneIdx - 1;
+        } else {
+          targetLane = Math.min(10, laneIdx + 1);
+        }
         break;
       }
     }
@@ -304,7 +317,8 @@ function calculateStaminaMultiplier(
 ): number {
   let staminaMul = 1;
   if (progress > STAMINA_FADE_START) {
-    const fade = (progress - STAMINA_FADE_START) / STAMINA_FADE_DURATION;
+    const linearFade = (progress - STAMINA_FADE_START) / STAMINA_FADE_DURATION;
+    const fade = linearFade * linearFade * (3 - 2 * linearFade);
     let effectiveStamina = r.staminaFactor;
     if (r.draftingHorseId) {
       effectiveStamina = effectiveStamina + (1 - effectiveStamina) * DRAFT_STAMINA_PRESERVE;
@@ -502,7 +516,9 @@ function applyJockeyEffects(
       if (r.tactics === "late_kick" && progress > LATE_KICK_BOOST_THRESHOLD) {
         vigorBoost *= LATE_KICK_VIGOR_MULTIPLIER;
       }
-      r.velocity += vigorBoost * dt;
+      const speedCap =
+        r.tactics === "late_kick" ? r.topSpeed * LATE_KICK_TOP_SPEED_MULTIPLIER : r.topSpeed;
+      r.velocity = Math.min(r.velocity + vigorBoost * dt, speedCap);
     }
   } else {
     finalDs = (r.velocity * dt) / arcFactor;
@@ -522,7 +538,7 @@ function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
     (other) =>
       other.horseId !== r.horseId &&
       other.finishTime === null &&
-      other.position > r.position &&
+      other.position - r.position >= MIN_BLOCK_GAP &&
       other.position - r.position < 1.5 &&
       Math.abs(other.lane - r.lane) < 0.4,
   );
@@ -639,9 +655,10 @@ export function stepRunner(
     gradientSpeedMul *
     (1 + (rng.next() - 0.5) * 0.08 * r.noise);
 
-  // Update velocity towards target
+  // Update velocity towards target (deceleration is slower than acceleration)
   const diff = targetSpeed - r.velocity;
-  r.velocity += Math.sign(diff) * Math.min(Math.abs(diff), r.accel * dt);
+  const rateLimit = diff < 0 ? r.accel * DECEL_FACTOR * dt : r.accel * dt;
+  r.velocity += Math.sign(diff) * Math.min(Math.abs(diff), rateLimit);
 
   // Apply jockey effects and get final distance step
   const { finalDs, staminaMul: updatedStaminaMul } = applyJockeyEffects(
