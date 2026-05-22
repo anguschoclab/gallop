@@ -22,7 +22,7 @@ import {
   rngForRace,
   type RaceSimulationDependencies,
 } from "@/services/raceSimulationService";
-import { Pause, Play, Camera } from "lucide-react";
+import { Pause, Play, Camera, Thermometer } from "lucide-react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { NarrativeGenerator } from "@/services/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
@@ -98,6 +98,17 @@ function LiveRace() {
   const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
   const stables = (useGame as any)((s: GameState) => s.npcStables, shallow);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
+  const raceWeather = (useGame as any)(
+    (s: any) => {
+      if (!race) return undefined;
+      const trackId = race.graded?.trackId ?? race.trackId;
+      if (!trackId) return undefined;
+      const buf = s.weather?.byTrack?.[trackId];
+      if (!buf || !buf.length) return undefined;
+      return buf.find((w: any) => w.day === race.day) ?? buf[buf.length - 1];
+    },
+    shallow,
+  );
 
   const [runners] = useState<Runner[]>(() => {
     if (!race) return [];
@@ -261,6 +272,12 @@ function LiveRace() {
             {race.distance}m · {race.raceClass} · Purse ${race.purse.toLocaleString()}
             {race.weather && ` · ${getWeatherDisplay(race.weather)}`}
             {race.trackCondition && ` · Track: ${race.trackCondition}`}
+            {raceWeather && (
+              <span className="inline-flex items-center gap-0.5">
+                <Thermometer className="h-3 w-3" />
+                {Math.round(raceWeather.tempC)}°C
+              </span>
+            )}
           </p>
         </div>
         <div className="flex items-center gap-2">

@@ -3,9 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
-import { AlertTriangle, CloudSun } from "lucide-react";
+import { AlertTriangle, CloudSun, Thermometer } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { getWeatherDisplay } from "./raceVisualHelpers";
+import { useGame } from "@/game/store";
 import type { Race } from "@/game/types";
 
 interface RaceRowProps {
@@ -19,6 +20,13 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
   const gradeColor = gradeLabel ? getGradeColorClass(gradeLabel) : "";
   const isClaiming = !!race.claiming;
   const claimingPrice: number | undefined = race.claiming?.price;
+  const raceWeather = useGame((s) => {
+    const trackId = race.trackId ?? race.graded?.trackId;
+    if (!trackId) return undefined;
+    const buf = s.weather?.byTrack?.[trackId];
+    if (!buf || !buf.length) return undefined;
+    return buf.find((w: any) => w.day === race.day) ?? buf[buf.length - 1];
+  });
 
   return (
     <Link
@@ -72,6 +80,12 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
             <span className="flex items-center gap-1 text-cream/40">
               <CloudSun className="h-3 w-3" />
               {getWeatherDisplay(race.weather)}
+            </span>
+          )}
+          {raceWeather && (
+            <span className="flex items-center gap-1 text-cream/40">
+              <Thermometer className="h-3 w-3" />
+              {Math.round(raceWeather.tempC)}°C
             </span>
           )}
         </div>
