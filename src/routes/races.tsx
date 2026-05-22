@@ -42,6 +42,7 @@ import { NumericValue } from "@/components/HorseBits";
 import { useRaceFilters, type RaceFilters } from "@/hooks/useRaceFilters";
 import { ClaimingRacePanel } from "@/components/races/ClaimingRacePanel";
 import { cn } from "@/lib/utils";
+import { getWeatherDisplay } from "@/components/races/raceVisualHelpers";
 
 export const Route = createFileRoute("/races")({
   validateSearch: (search: Record<string, unknown>): RaceFilters => ({
