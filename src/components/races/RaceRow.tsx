@@ -68,6 +68,12 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
           <span>{race.distance}m</span>
           <span>{race.surface}</span>
           <span className="truncate">{race.raceClass}</span>
+          {race.weather && (
+            <span className="flex items-center gap-1 text-cream/40">
+              <CloudSun className="h-3 w-3" />
+              {getWeatherDisplay(race.weather)}
+            </span>
+          )}
         </div>
       </div>
 
