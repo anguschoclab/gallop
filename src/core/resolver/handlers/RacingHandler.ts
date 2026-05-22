@@ -133,6 +133,32 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
           if (!horse.courseVisits) horse.courseVisits = {};
           horse.courseVisits[trackId] = raceHistoryEntry.courseVisitCount + 1;
         }
+
+        // Surface preference drift: racing on a surface nudges that aptitude up,
+        // and the other surfaces drift slightly down. Bigger boost on strong finishes.
+        const surface = (race.surface || raceHistoryEntry.surface) as
+          | "Turf"
+          | "Dirt"
+          | "Synthetic"
+          | undefined;
+        if (surface && horse.surfaceAptitude && horse.surfaceAptitude[surface] !== undefined) {
+          const pos = raceHistoryEntry.position ?? 99;
+          const performanceBoost = pos === 1 ? 0.012 : pos <= 3 ? 0.008 : pos <= 6 ? 0.005 : 0.003;
+          const decay = 0.0015;
+          const APT_MAX = 1.1;
+          const APT_MIN = 0.75;
+          for (const s of ["Turf", "Dirt", "Synthetic"] as const) {
+            if (horse.surfaceAptitude[s] === undefined) continue;
+            if (s === surface) {
+              horse.surfaceAptitude[s] = Math.min(
+                APT_MAX,
+                horse.surfaceAptitude[s] + performanceBoost,
+              );
+            } else {
+              horse.surfaceAptitude[s] = Math.max(APT_MIN, horse.surfaceAptitude[s] - decay);
+            }
+          }
+        }
       }
     }
   },
