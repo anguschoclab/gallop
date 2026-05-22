@@ -3,8 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getGradeColorClass } from "@/core/race/grading";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, CloudSun } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
+import { getWeatherDisplay } from "./raceVisualHelpers";
 import type { Race } from "@/game/types";
 
 interface RaceRowProps {
