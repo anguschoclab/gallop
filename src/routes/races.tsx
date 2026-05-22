@@ -372,6 +372,12 @@ function RacesPage() {
                             {r.distance}M
                           </td>
                           <td className="px-4 py-4 text-right">
+                            <div className="flex items-center justify-end gap-1.5 text-xs text-cream/60">
+                              <CloudSun className="h-3 w-3 opacity-40" />
+                              <span>{getWeatherDisplay(r.weather) || "—"}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-right">
                             <span className="font-mono font-bold text-success text-sm tracking-tighter tabular-nums">
                               {formatCurrency(r.purse)}
                             </span>
