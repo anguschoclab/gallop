@@ -149,8 +149,37 @@ export function runNpcRaceEntry(
 
       // Add entries
       for (const horse of horsesToEnter) {
-        // Double-check there's still room
-        if (race.entries.length >= race.fieldSize) break;
+        // If race is full, attempt to bump the lowest-rated NPC entry whose
+        // horse is meaningfully weaker than this challenger. Player entries
+        // are never bumped to preserve the player's planned campaign.
+        if (race.entries.length >= race.fieldSize) {
+          const challengerRating = calculateOverallRating(horse);
+          let weakestIdx = -1;
+          let weakestRating = Infinity;
+          for (let i = 0; i < race.entries.length; i++) {
+            const entry = race.entries[i];
+            if (entry.owned) continue; // never bump player
+            const existing = horseMap.get(entry.horseId);
+            if (!existing) continue;
+            const r = calculateOverallRating(existing);
+            if (r < weakestRating) {
+              weakestRating = r;
+              weakestIdx = i;
+            }
+          }
+          if (weakestIdx === -1 || challengerRating <= weakestRating + BUMP_RATING_MARGIN) {
+            break; // can't bump anyone meaningfully — stop trying for this stable
+          }
+          const bumped = race.entries[weakestIdx];
+          // Refund entry fee to bumped stable
+          if (bumped.stableId) {
+            const bumpedStable = stables.find((s) => s.id === bumped.stableId);
+            if (bumpedStable) {
+              bumpedStable.cash = bumpedStable.cash + race.entryFee;
+            }
+          }
+          race.entries.splice(weakestIdx, 1);
+        }
 
         // Find a jockey for the NPC entry
         const retainedJockey = stableJockeyMap.get(stable.id);
