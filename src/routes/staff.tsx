@@ -17,9 +17,12 @@ import {
   ArrowRight,
   HardDrive,
   Info,
+  Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NumericValue } from "@/components/HorseBits";
+import { useMemo } from "react";
+import { getG1WinsForStable, countByGrade } from "@/lib/connectionTrophies";
 
 export const Route = createFileRoute("/staff")({
   component: StaffManagement,
