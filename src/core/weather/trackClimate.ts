@@ -49,3 +49,48 @@ export function getTrackClimate(trackId: string | undefined): ClimateZone {
   }
   return "temperate";
 }
+
+export type Hemisphere = "Northern" | "Southern";
+
+// Substrings that indicate a Southern-hemisphere track.
+const SOUTHERN_TOKENS = [
+  "australia",
+  "sydney",
+  "melbourne",
+  "flemington",
+  "randwick",
+  "caulfield",
+  "rosehill",
+  "brisbane",
+  "perth",
+  "new-zealand",
+  "newzealand",
+  "ellerslie",
+  "trentham",
+  "brazil",
+  "saopaulo",
+  "sao-paulo",
+  "rio",
+  "argentina",
+  "buenos-aires",
+  "san-isidro",
+  "palermo",
+  "chile",
+  "santiago",
+  "peru",
+  "uruguay",
+  "south-africa",
+  "southafrica",
+  "kenilworth",
+  "turffontein",
+  "greyville",
+];
+
+export function getTrackHemisphere(trackId: string | undefined): Hemisphere {
+  if (!trackId) return "Northern";
+  const lower = trackId.toLowerCase();
+  for (const t of SOUTHERN_TOKENS) {
+    if (lower.includes(t)) return "Southern";
+  }
+  return "Northern";
+}
