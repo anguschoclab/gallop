@@ -198,6 +198,11 @@ export function createHorseFromDNA(
 
   const dnaTraits = resolveDnaTraits(genotype);
 
+  // Weather preference: 40% dry, 25% wet, 35% all (unaffected)
+  const wpRoll = rng.next();
+  const weatherPreference: "dry" | "wet" | "all" =
+    wpRoll < 0.4 ? "dry" : wpRoll < 0.65 ? "wet" : "all";
+
   const horse: Horse = {
     id: generateUUID(rng),
     name: opts.name ?? "Unnamed",
@@ -245,6 +250,7 @@ export function createHorseFromDNA(
     peakingIndex: 50,
     bloodline: "Standard",
     ...dnaTraits,
+    weatherPreference,
     recoveryPoints: 100, // Dynamic Form: Initialize at full recovery
     createdAtDay: opts.createdAtDay,
     appearance: generateAppearanceDNA(

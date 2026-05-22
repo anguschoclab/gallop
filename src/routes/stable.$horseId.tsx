@@ -716,6 +716,12 @@ function HorseDetail() {
                           {horse.form}
                         </Badge>
                         <Badge
+                          variant="outline"
+                          className="font-mono text-[10px] uppercase border-white/10 text-cream/60"
+                        >
+                          WEATHER: {(horse.weatherPreference ?? "all").toUpperCase()}
+                        </Badge>
+                        <Badge
                           className={cn(
                             "font-mono text-[10px] uppercase",
                             peakingStatus === "Peak"
