@@ -16,7 +16,7 @@ import {
   Users,
   BarChart2,
   Trophy,
-} from "lucide-react";
+  GitBranch,
 import { toast } from "sonner";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
