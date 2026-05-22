@@ -633,7 +633,7 @@ function HorseDetail() {
                 </div>
                 <div className="space-y-0.5">
                   <span className="block text-[9px] uppercase font-black tracking-widest text-cream/20 leading-none">
-                    Operational Status
+                    Active Status
                   </span>
                   <span
                     className={cn(
