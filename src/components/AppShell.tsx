@@ -273,6 +273,7 @@ export function AppShell() {
                   <Trophy className="h-3 w-3 mr-1" /> Next Race
                 </Button>
               </div>
+            </div>
             <Button
               onClick={() => setNewGameDialogOpen(true)}
               className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
