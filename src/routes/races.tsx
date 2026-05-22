@@ -29,6 +29,7 @@ import {
   Clock,
   ExternalLink,
   Target,
+  CloudSun,
 } from "lucide-react";
 import { useState } from "react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
