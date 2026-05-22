@@ -77,27 +77,67 @@ export function TrophyCase({
               No awards yet. Win graded stakes to earn awards!
             </p>
           ) : (
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {sortedAwards.slice(0, 10).map((award) => (
-                <div
-                  key={award.id}
-                  className="flex-shrink-0"
-                  title={`${CATEGORY_DISPLAY_NAMES[award.category]} (${award.year})`}
-                >
-                  <AwardIconWithYear
-                    region={award.region}
-                    category={award.category}
-                    year={award.year}
-                    size="small"
-                  />
+            (() => {
+              // Collapse any category with > COMPACT_THRESHOLD years into a single ×N chip
+              const buckets = new Map<string, RegionalAward[]>();
+              for (const a of sortedAwards) {
+                const list = buckets.get(a.category) ?? [];
+                list.push(a);
+                buckets.set(a.category, list);
+              }
+              const items: Array<
+                | { kind: "single"; award: RegionalAward }
+                | { kind: "count"; category: string; sample: RegionalAward; count: number }
+              > = [];
+              for (const [category, list] of buckets) {
+                if (list.length > COMPACT_THRESHOLD) {
+                  items.push({ kind: "count", category, sample: list[0], count: list.length });
+                } else {
+                  for (const a of list) items.push({ kind: "single", award: a });
+                }
+              }
+              const display = items.slice(0, 10);
+              const overflow = items.length - display.length;
+              return (
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {display.map((item) =>
+                    item.kind === "single" ? (
+                      <div
+                        key={item.award.id}
+                        className="flex-shrink-0"
+                        title={`${CATEGORY_DISPLAY_NAMES[item.award.category]} (${item.award.year}) · ${getRegionCountryLabel(item.award.region)}`}
+                      >
+                        <AwardIconWithYear
+                          region={item.award.region}
+                          category={item.award.category}
+                          year={item.award.year}
+                          size="small"
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        key={item.category}
+                        className="flex-shrink-0 flex items-center gap-1 px-2 h-8 rounded-full border border-gold/30 bg-gold/5"
+                        title={`${CATEGORY_DISPLAY_NAMES[item.sample.category]} · ${item.count} years`}
+                      >
+                        <AwardIconWithYear
+                          region={item.sample.region}
+                          category={item.sample.category}
+                          year={item.sample.year}
+                          size="small"
+                        />
+                        <span className="text-xs font-mono tabular-nums">×{item.count}</span>
+                      </div>
+                    ),
+                  )}
+                  {overflow > 0 && (
+                    <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-muted">
+                      <span className="text-xs text-muted-foreground">+{overflow}</span>
+                    </div>
+                  )}
                 </div>
-              ))}
-              {totalAwards > 10 && (
-                <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-muted">
-                  <span className="text-xs text-muted-foreground">+{totalAwards - 10}</span>
-                </div>
-              )}
-            </div>
+              );
+            })()
           )}
         </CardContent>
       </Card>
