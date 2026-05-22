@@ -401,7 +401,7 @@ function RacesPage() {
                         </tr>
                         {isClaiming && isEntered && (
                           <tr>
-                            <td colSpan={6} className="bg-success/[0.01] p-0 border-none">
+                            <td colSpan={7} className="bg-success/[0.01] p-0 border-none">
                               <ClaimingRacePanel
                                 race={r as Race}
                                 horses={horses}
