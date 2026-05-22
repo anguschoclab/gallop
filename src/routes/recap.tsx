@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
@@ -22,6 +23,8 @@ function RecapPage() {
   const horses = (useGame as any)((s: GameState) => s.horses, shallow);
   const calibratedPars = (useGame as any)((s: GameState) => s.calibratedPars, shallow);
   const day = useGame((s: GameState) => s.day);
+
+  const localHorseMap = useMemo(() => new Map(horses.map((h: Horse) => [h.id, h])), [horses]);
 
   // Get resolved graded races from the past 7 days
   const weekAgo = day - 7;
@@ -71,7 +74,7 @@ function RecapPage() {
             const topFinishers = race
               .result!.slice(0, 3)
               .map((result: any) => {
-                const horse = horses.find((h: Horse) => h.id === result.horseId);
+                const horse = localHorseMap.get(result.horseId);
                 if (!horse) return null;
                 const classBonus = calculateClassBonus(race.graded?.grade, race.raceClass);
                 const beyer = calculateBeyerForResult(

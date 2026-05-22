@@ -167,11 +167,14 @@ function LiveRace() {
 
   const classBonus = race ? calculateClassBonus(race.graded?.grade, race.raceClass) : 0;
 
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside loops.
+  const localHorseMap = useMemo(() => new Map(horses.map((h: Horse) => [h.id, h])), [horses]);
+
   // Calculate odds for each runner
   const runnerOdds = useMemo(() => {
     const oddsMap = new Map<string, string>();
     for (const runner of runners) {
-      const horse = horses.find((h: Horse) => h.id === runner.horseId);
+      const horse = localHorseMap.get(runner.horseId);
       if (horse) {
         const probability = calculateWinProbability(
           horse.stats.speed,
@@ -185,7 +188,7 @@ function LiveRace() {
       }
     }
     return oddsMap;
-  }, [runners, horses, classBonus]);
+  }, [runners, localHorseMap, classBonus]);
 
   // Keyboard controls effect
   useEffect(() => {
@@ -466,7 +469,7 @@ function LiveRace() {
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {runners.map((r) => {
-                      const horse = horses.find((h: Horse) => h.id === r.horseId);
+                      const horse = localHorseMap.get(r.horseId);
                       const crossings = liveSplits.get(r.horseId) ?? [];
                       const markerFractions = [0.25, 0.5, 0.75, 1.0];
                       return (
@@ -634,7 +637,7 @@ function LiveRace() {
           </DialogHeader>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
             {runners.map((r) => {
-              const horse = horses.find((h: Horse) => h.id === r.horseId);
+              const horse = localHorseMap.get(r.horseId);
               if (!horse) return null;
               return <HorseCard key={r.horseId} horse={horse} variant="compact" />;
             })}

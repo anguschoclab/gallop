@@ -51,6 +51,8 @@ function BreedingPage() {
   const [liveFoalGuarantee, setLiveFoalGuarantee] = useState(false);
   const [namingFoalId, setNamingFoalId] = useState<string | null>(null);
 
+  const localHorseMap = useMemo(() => new Map(horses.map((h: Horse) => [h.id, h])), [horses]);
+
   const { sire, dam, compatibility } = useBreedingCompatibility(sireId, damId);
 
   const sharedAncestorIds = useMemo(() => {
@@ -270,8 +272,9 @@ function BreedingPage() {
                     { h: sire, role: "Sire" },
                     { h: dam, role: "Dam" },
                   ].map(({ h, role }) => {
-                    const bestSurface = (Object.entries(h.surfaceAptitude || {}) as [string, number][])
-                      .sort((a, b) => b[1] - a[1])[0];
+                    const bestSurface = (
+                      Object.entries(h.surfaceAptitude || {}) as [string, number][]
+                    ).sort((a, b) => b[1] - a[1])[0];
                     const runStyleLabel: Record<string, string> = {
                       E: "Early (Front)",
                       EP: "Early/Presser",
@@ -302,12 +305,26 @@ function BreedingPage() {
                                 : "—"
                             }
                           />
-                          <Row label="Running Style" value={runStyleLabel[h.runningStyle] || h.runningStyle || "—"} />
+                          <Row
+                            label="Running Style"
+                            value={runStyleLabel[h.runningStyle] || h.runningStyle || "—"}
+                          />
                           <Row label="Stride" value={h.strideType || "—"} />
                           <Row label="Peak Age" value={h.peakAge ?? "—"} />
-                          <Row label="Heart" value={h.heartScore != null ? Math.round(h.heartScore) : "—"} />
-                          <Row label="Trainability" value={h.trainability != null ? Math.round(h.trainability) : "—"} />
-                          <Row label="Temperament" value={h.stats?.temperament != null ? Math.round(h.stats.temperament) : "—"} />
+                          <Row
+                            label="Heart"
+                            value={h.heartScore != null ? Math.round(h.heartScore) : "—"}
+                          />
+                          <Row
+                            label="Trainability"
+                            value={h.trainability != null ? Math.round(h.trainability) : "—"}
+                          />
+                          <Row
+                            label="Temperament"
+                            value={
+                              h.stats?.temperament != null ? Math.round(h.stats.temperament) : "—"
+                            }
+                          />
                           <Row
                             label="Spd / Sta / Acc"
                             value={
@@ -344,7 +361,7 @@ function BreedingPage() {
             <div className="grid gap-4">
               {activePregnancies.map((p: any) => {
                 const daysRemaining = p.dueDay - day - 1;
-                const dam = horses.find((h: Horse) => h.id === p.damId);
+                const dam = localHorseMap.get(p.damId);
                 return (
                   <Card key={p.id} className="border-l-4 border-l-gold border-gold-muted">
                     <CardHeader className="pb-3">
@@ -435,7 +452,7 @@ function BreedingPage() {
                   {pregnancies
                     .filter((p: any) => p.resolved)
                     .map((p: any) => {
-                      const foal = horses.find((h: Horse) => h.id === p.foalId);
+                      const foal = localHorseMap.get(p.foalId);
                       return (
                         <div
                           key={p.id}
@@ -493,7 +510,6 @@ function BreedingPage() {
             </CardContent>
           </Card>
         </TabsContent>
-
 
         <TabsContent value="pedigree" className="space-y-4">
           <Card className="border-gold-muted">
