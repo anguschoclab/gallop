@@ -175,6 +175,10 @@ function BreedingPage() {
             <FileText className="h-4 w-4" />
             History
           </TabsTrigger>
+          <TabsTrigger value="pedigree" className="gap-2">
+            <GitBranch className="h-4 w-4" />
+            Pedigree
+          </TabsTrigger>
           <TabsTrigger value="programs" className="gap-2">
             <Target className="h-4 w-4" />
             Programs
