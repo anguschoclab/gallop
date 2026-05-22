@@ -5,6 +5,9 @@ import type { GameState } from "@/game/types";
 import { JockeyCard } from "@/components/JockeyCard";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import { G1TrophyList } from "@/components/awards";
+import { getG1WinsForJockey } from "@/lib/connectionTrophies";
+import { useMemo } from "react";
 
 export const Route = createFileRoute("/jockey/$jockeyId")({
   component: JockeyPage,
@@ -23,8 +26,15 @@ function JockeyPage() {
   const jockeys = (useGame as any)((s: GameState) => s.jockeys, shallow);
   const hireJockey = useGame((s) => s.hireJockey);
   const releaseJockey = useGame((s) => s.releaseJockey);
+  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
+  const races = (useGame as any)((s: GameState) => s.races, shallow);
 
   const jockey = jockeys?.find((j: any) => j.id === jockeyId);
+
+  const gradedWins = useMemo(
+    () => getG1WinsForJockey({ horses, races } as any, jockeyId),
+    [horses, races, jockeyId],
+  );
 
   if (!jockey) {
     throw notFound();
@@ -51,6 +61,12 @@ function JockeyPage() {
           />
         </div>
       </div>
+
+      <G1TrophyList
+        wins={gradedWins}
+        title={`${jockey.name} · Graded Wins`}
+        emptyHint="No graded race wins recorded for this rider yet."
+      />
     </div>
   );
 }
