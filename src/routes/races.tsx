@@ -316,6 +316,7 @@ function RacesPage() {
                     <th className="px-4 py-3 font-black">Race</th>
                     <th className="px-4 py-3 font-black">Track</th>
                     <th className="px-4 py-3 font-black text-right">Distance</th>
+                    <th className="px-4 py-3 font-black text-right">Weather</th>
                     <th className="px-4 py-3 font-black text-right">Purse</th>
                     <th className="px-6 py-3 font-black text-right">Enter</th>
                   </tr>
