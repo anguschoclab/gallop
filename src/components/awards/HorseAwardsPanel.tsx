@@ -9,6 +9,7 @@ import type { RegionalAward, RegionalAwardCategory } from "@/game/awards/types";
 import { CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
 import { getRegionFlag, getRegionCountryLabel } from "@/lib/countryFlag";
 import { Trophy, Award, Star } from "lucide-react";
+import { VisualTrophy, TrophyShelf } from "./VisualTrophy";
 
 interface HorseAwardsPanelProps {
   horse: Horse;
