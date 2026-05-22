@@ -14,45 +14,8 @@ import {
   PATTERN_SEVERITY,
   toTrackWeatherPattern,
 } from "./weatherTypes";
-import type { Hemisphere } from "./trackClimate";
 
 export { toTrackWeatherPattern };
-
-/**
- * Seasonal temperature offset (°C) from the climate's annual midpoint.
- * Peaks at +amp around day-of-year 200 in the Northern hemisphere,
- * shifted by 6 months for the Southern hemisphere.
- */
-function seasonalTempOffset(day: number, hemisphere: Hemisphere, amp: number): number {
-  const doy = ((day - 1) % 365) + 1;
-  // Northern summer peaks ~ day 200, winter low ~ day 17.
-  // sin( 2π * (doy - 110) / 365 ) puts peak at doy=200.
-  const phase = (2 * Math.PI * (doy - 110)) / 365;
-  const sign = hemisphere === "Southern" ? -1 : 1;
-  return sign * amp * Math.sin(phase);
-}
-
-/**
- * Bias the daily transition matrix toward wetter/cooler patterns in winter
- * and toward clearer patterns in summer (climate-dependent).
- */
-function seasonalRowBias(row: number[], hemisphere: Hemisphere, day: number): number[] {
-  const doy = ((day - 1) % 365) + 1;
-  const phase = (2 * Math.PI * (doy - 110)) / 365;
-  const sign = hemisphere === "Southern" ? -1 : 1;
-  // s in [-1,1]: +1 = peak summer, -1 = mid winter.
-  const s = sign * Math.sin(phase);
-  // Shift up to ±15% of mass between [clear/overcast] and [rain/storm].
-  const shift = 0.15 * s;
-  const out = [...row];
-  // Boost clear+overcast in summer, rain+storm in winter.
-  out[0] = Math.max(0, out[0] + shift * 0.5);
-  out[1] = Math.max(0, out[1] + shift * 0.5);
-  out[3] = Math.max(0, out[3] - shift * 0.5);
-  out[4] = Math.max(0, out[4] - shift * 0.5);
-  const sum = out.reduce((a, b) => a + b, 0);
-  return sum > 0 ? out.map((v) => v / sum) : row;
-}
 
 /**
  * Row-stochastic transition matrices: rows = today, cols = tomorrow.
@@ -159,25 +122,17 @@ export function stepWeather(
   trackId: string,
   day: number,
   climate: ClimateZone,
-  hemisphere: Hemisphere = "Northern",
 ): WeatherState {
   const rng = createRng(hashStr(`${trackId}:${day}`));
   const matrix = TRANSITIONS[climate];
   const fromIdx = prev ? SIM_WEATHER_PATTERNS.indexOf(prev.pattern) : 0;
-  const baseRow = matrix[Math.max(0, fromIdx)];
-  const row = seasonalRowBias(baseRow, hemisphere, day);
+  const row = matrix[Math.max(0, fromIdx)];
   const pattern = samplePattern(row, rng);
 
   const [tMin, tMax] = CLIMATE_TEMP[climate];
-  // Seasonal swing scales with the climate's annual temp spread (half-range).
-  const seasonalAmp = (tMax - tMin) * 0.45;
-  const seasonal = seasonalTempOffset(day, hemisphere, seasonalAmp);
   // Patterns nudge temp down; storm cools more than clear.
   const cool = PATTERN_SEVERITY[pattern] * 1.2;
-  const mid = (tMin + tMax) / 2;
-  // Daily noise ±25% of the climate spread around the seasonal midpoint.
-  const noise = (rng.next() - 0.5) * (tMax - tMin) * 0.5;
-  const tempC = Math.round((mid + seasonal + noise - cool) * 10) / 10;
+  const tempC = Math.round((tMin + rng.next() * (tMax - tMin) - cool) * 10) / 10;
 
   const baseHumidity = CLIMATE_HUMIDITY_BIAS[climate];
   const humidityBoost = PATTERN_SEVERITY[pattern] * 0.07;
@@ -192,6 +147,11 @@ export function stepWeather(
 /**
  * Generate a forecast of `days` days starting at `startDay`, deterministic
  * given the seed previous state. Does NOT mutate input.
+ * @param prev
+ * @param trackId
+ * @param startDay
+ * @param days
+ * @param climate
  */
 export function generateForecast(
   prev: WeatherState | undefined,
@@ -199,12 +159,11 @@ export function generateForecast(
   startDay: number,
   days: number,
   climate: ClimateZone,
-  hemisphere: Hemisphere = "Northern",
 ): WeatherState[] {
   const out: WeatherState[] = [];
   let last = prev;
   for (let i = 0; i < days; i++) {
-    last = stepWeather(last, trackId, startDay + i, climate, hemisphere);
+    last = stepWeather(last, trackId, startDay + i, climate);
     out.push(last);
   }
   return out;

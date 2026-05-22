@@ -17,12 +17,9 @@ import {
   ArrowRight,
   HardDrive,
   Info,
-  Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NumericValue } from "@/components/HorseBits";
-import { useMemo } from "react";
-import { getG1WinsForStable, countByGrade } from "@/lib/connectionTrophies";
 
 export const Route = createFileRoute("/staff")({
   component: StaffManagement,
@@ -30,19 +27,8 @@ export const Route = createFileRoute("/staff")({
 
 function StaffManagement() {
   const { hiredStaff, staffPool, enqueueIntent, day } = useGame();
-  const horses = (useGame as any)((s: any) => s.horses);
-  const races = (useGame as any)((s: any) => s.races);
 
   const myStaff = hiredStaff?.filter((s) => s.stableId === "") ?? [];
-
-  // Stable-wide graded wins are attributed to each retained connection
-  // (head trainer, trainers, caretakers/grooms) since they support every runner.
-  const stableG1Wins = useMemo(
-    () => getG1WinsForStable({ horses, races } as any, undefined),
-    [horses, races],
-  );
-  const honorCounts = useMemo(() => countByGrade(stableG1Wins), [stableG1Wins]);
-  const showHonors = (role: string) => role === "trainer" || role === "groom";
 
   const handleHire = (staffId: string) => {
     enqueueIntent({
@@ -201,35 +187,6 @@ function StaffManagement() {
                             ))}
                           </div>
                         )}
-
-                        {showHonors(staff.role) && stableG1Wins.length > 0 && (
-                          <div className="flex items-center gap-2 pt-2 border-t border-white/5">
-                            <Trophy className="h-3 w-3 text-gold" />
-                            <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">
-                              Honors
-                            </span>
-                            <div className="flex items-center gap-1.5 font-mono text-[9px] tabular-nums">
-                              {(["G1", "G2", "G3"] as const).map((g) => (
-                                <span
-                                  key={g}
-                                  className={cn(
-                                    "px-1.5 py-0.5 border rounded-sm",
-                                    honorCounts[g] > 0
-                                      ? g === "G1"
-                                        ? "bg-gold/15 text-gold border-gold/30"
-                                        : g === "G2"
-                                          ? "bg-purple-500/15 text-purple-300 border-purple-500/30"
-                                          : "bg-blue-500/15 text-blue-300 border-blue-500/30"
-                                      : "border-white/5 text-cream/20",
-                                  )}
-                                >
-                                  {g} ×{honorCounts[g]}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
 
                         <div className="flex justify-end pt-2">
                           <Button

@@ -30,7 +30,6 @@ import {
   ChevronRight,
   AlertCircle,
   Gavel,
-  FastForward,
 } from "lucide-react";
 import { PedigreeTree } from "@/components/breeding/PedigreeTree";
 import { BeyerChart } from "@/components/BeyerChart";
@@ -421,41 +420,19 @@ function HorseDetail() {
   const horses = useGame((s: any) => s.horses);
   const retireToStud = useGame((s: any) => s.retireToStud);
   const retireToPasture = useGame((s: any) => s.retireToPasture);
-  const advanceDay = useGame((s: any) => s.advanceDay);
   const facilities = (useGame as any)((s: any) => s.facilities, shallow);
   const pregnancies = (useGame as any)((s: any) => s.pregnancies, shallow);
   const pregnancy = pregnancies?.find((p: any) => !p.resolved && p.damId === horseId);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
-  const [simulatingToRace, setSimulatingToRace] = useState(false);
   const syndicates = (useGame as any)((s: any) => s.syndicates || {}, shallow);
   const races = (useGame as any)((s: any) => s.races, shallow);
-  const upcomingRaces = (races || [])
-    .filter((r: any) => !r.resolved && r.entries.some((e: any) => e.horseId === horseId))
-    .sort((a: any, b: any) => a.day - b.day);
-  const currentRace = upcomingRaces[0];
+  const currentRace = races?.find((r: any) =>
+    r.entries.some((e: any) => e.horseId === horseId && !r.resolved),
+  );
   const assignedJockeyId = currentRace?.entries.find((e: any) => e.horseId === horseId)?.jockeyId;
   const jockeys = (useGame as any)((s: any) => s.jockeys, shallow);
   const assignedJockey = jockeys?.find((j: any) => j.id === assignedJockeyId);
-
-  const simToNextRace = useCallback(async () => {
-    if (!currentRace || simulatingToRace) return;
-    setSimulatingToRace(true);
-    try {
-      // Stop one day BEFORE race day so the user can watch the race live.
-      const targetDay = currentRace.day - 1;
-      // Cap total iterations defensively to avoid runaway loops.
-      let safety = 0;
-      while (true) {
-        const currentDay = (useGame as any).getState().day;
-        if (currentDay >= targetDay) break;
-        if (++safety > 400) break;
-        await advanceDay();
-      }
-    } finally {
-      setSimulatingToRace(false);
-    }
-  }, [currentRace, simulatingToRace, advanceDay]);
 
   const handleTrain = useCallback(
     (horseId: string, type: any) => {
@@ -572,21 +549,6 @@ function HorseDetail() {
               Actions
             </div>
             <div className="px-3 space-y-2">
-              {currentRace && currentRace.day > day && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={simulatingToRace}
-                  className="w-full h-8 text-[9px] font-black uppercase border-gold/30 hover:bg-gold/10 text-gold gap-1.5"
-                  onClick={simToNextRace}
-                  title={`Advance to day ${currentRace.day - 1} (eve of ${currentRace.name})`}
-                >
-                  <FastForward className="h-3 w-3" />
-                  {simulatingToRace
-                    ? `Simming… D${day}`
-                    : `Sim to Race (D${currentRace.day})`}
-                </Button>
-              )}
               {isG1Winner && horse.stud?.atStud && !isSyndicated && (
                 <Button
                   variant="outline"
