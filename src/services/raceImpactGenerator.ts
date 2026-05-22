@@ -673,7 +673,7 @@ export function generateRaceImpacts({
 
       // Health: Roll for potential injuries
       if (rng) {
-        const injury = rollForInjury(rng, horse, newDay, hiredStaff);
+        const injury = rollForInjury(rng, horse, newDay, hiredStaff, injuryWeatherCtx);
         if (injury) {
           impacts.push(injury);
         }
