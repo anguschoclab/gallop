@@ -12,7 +12,10 @@ import {
   CATEGORY_DISPLAY_NAMES,
 } from "@/game/awards/types";
 import { REGION_COLOR_CLASSES } from "@/assets/awards";
+import { getRegionFlag, getRegionCountryLabel } from "@/lib/countryFlag";
 import { Trophy, Medal, Star } from "lucide-react";
+
+const COMPACT_THRESHOLD = 5;
 
 interface TrophyCaseProps {
   awards: RegionalAward[];
