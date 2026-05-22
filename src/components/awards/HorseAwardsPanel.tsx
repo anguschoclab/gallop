@@ -5,12 +5,17 @@ import { AwardIcon } from "./AwardIcon";
 import { AwardBadge } from "./AwardBadge";
 import { cn } from "@/lib/utils";
 import type { Horse } from "@/game/types";
+import type { RegionalAward, RegionalAwardCategory } from "@/game/awards/types";
+import { CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
+import { getRegionFlag, getRegionCountryLabel } from "@/lib/countryFlag";
 import { Trophy, Award, Star } from "lucide-react";
 
 interface HorseAwardsPanelProps {
   horse: Horse;
   className?: string;
 }
+
+const COMPACT_THRESHOLD = 5;
 
 export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
   const awards = useGame((s) => s.awards);
@@ -47,6 +52,14 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
   const hotyAwards = sortedAwards.filter((a) => a.category === "horse_of_the_year");
   const categoryAwards = sortedAwards.filter((a) => a.category !== "horse_of_the_year");
 
+  // Group category awards by category name; collapse to ×N when years > threshold
+  const byCategory = new Map<RegionalAwardCategory, RegionalAward[]>();
+  for (const a of categoryAwards) {
+    const list = byCategory.get(a.category) ?? [];
+    list.push(a);
+    byCategory.set(a.category, list);
+  }
+
   return (
     <Card className={className}>
       <CardHeader className="pb-3">
@@ -79,8 +92,15 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
                     animated
                   />
                   <div className="text-sm">
-                    <div className="font-medium">{award.year}</div>
-                    <div className="text-xs text-muted-foreground">{award.points} points</div>
+                    <div className="font-medium flex items-center gap-1.5">
+                      <span>Y{award.year}</span>
+                      <span title={getRegionCountryLabel(award.region)}>
+                        {getRegionFlag(award.region)}
+                      </span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {getRegionCountryLabel(award.region)} · {award.points} pts
+                    </div>
                   </div>
                 </div>
               ))}
@@ -88,7 +108,7 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
           </div>
         )}
 
-        {/* Category Awards */}
+        {/* Category Awards — compact when a category exceeds COMPACT_THRESHOLD years */}
         {categoryAwards.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1">
@@ -96,14 +116,58 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
               Championships
             </h4>
             <div className="grid gap-2">
-              {categoryAwards.slice(0, 6).map((award) => (
-                <AwardBadge key={award.id} award={award} variant="inline" showYear />
-              ))}
-              {categoryAwards.length > 6 && (
-                <p className="text-xs text-muted-foreground text-center">
-                  +{categoryAwards.length - 6} more awards
-                </p>
-              )}
+              {Array.from(byCategory.entries()).map(([category, list]) => {
+                const sorted = [...list].sort((a, b) => b.year - a.year);
+                if (sorted.length > COMPACT_THRESHOLD) {
+                  const first = sorted[sorted.length - 1].year;
+                  const last = sorted[0].year;
+                  return (
+                    <div
+                      key={category}
+                      className="flex items-center justify-between gap-2 p-2 rounded-md border border-gold/20 bg-card"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <AwardIcon
+                          region={sorted[0].region}
+                          category={category}
+                          size="tiny"
+                        />
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium truncate">
+                            {CATEGORY_DISPLAY_NAMES[category]}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                            <span title={getRegionCountryLabel(sorted[0].region)}>
+                              {getRegionFlag(sorted[0].region)}
+                            </span>
+                            <span>Y{first}–Y{last}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <Badge variant="secondary" className="font-mono tabular-nums shrink-0">
+                        ×{sorted.length}
+                      </Badge>
+                    </div>
+                  );
+                }
+                return sorted.map((award) => (
+                  <div
+                    key={award.id}
+                    className="flex items-center justify-between gap-2"
+                  >
+                    <AwardBadge award={award} variant="inline" showYear />
+                    <span
+                      className="text-xs text-muted-foreground flex items-center gap-1 shrink-0"
+                      title={getRegionCountryLabel(award.region)}
+                    >
+                      <span>{getRegionFlag(award.region)}</span>
+                      <span className="hidden sm:inline">
+                        {getRegionCountryLabel(award.region)}
+                      </span>
+                    </span>
+                  </div>
+                ));
+              })}
             </div>
           </div>
         )}
@@ -133,3 +197,6 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
     </Card>
   );
 }
+
+// Re-export so callers can keep cn in tree-shake graph if needed
+export { cn };
