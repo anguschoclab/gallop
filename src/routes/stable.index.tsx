@@ -64,6 +64,11 @@ function StablePage() {
 
   const myHorses = useMemo(() => horses.filter((h) => h.owned), [horses]);
   const playerAwards = useMemo(() => awards.filter((a) => !a.stableId), [awards]);
+  const races = useGame((s: any) => s.races);
+  const stableG1Wins = useMemo(
+    () => getG1WinsForStable({ horses, races } as any, undefined),
+    [horses, races],
+  );
 
   const counts = useMemo(() => {
     const active = myHorses.filter(
