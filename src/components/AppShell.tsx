@@ -253,7 +253,26 @@ export function AppShell() {
                   <Settings className="h-3 w-3" />
                 </Button>
               </div>
-            </div>
+              <div className="grid grid-cols-2 gap-1 mt-1">
+                <Button
+                  onClick={() => skipToNext("auction")}
+                  size="sm"
+                  variant="outline"
+                  title="Skip to next auction"
+                  className="text-[10px]"
+                >
+                  <Gavel className="h-3 w-3 mr-1" /> Next Auction
+                </Button>
+                <Button
+                  onClick={() => skipToNext("race")}
+                  size="sm"
+                  variant="outline"
+                  title="Skip to next race"
+                  className="text-[10px]"
+                >
+                  <Trophy className="h-3 w-3 mr-1" /> Next Race
+                </Button>
+              </div>
             <Button
               onClick={() => setNewGameDialogOpen(true)}
               className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
