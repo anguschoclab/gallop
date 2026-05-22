@@ -202,6 +202,35 @@ function StaffManagement() {
                           </div>
                         )}
 
+                        {showHonors(staff.role) && stableG1Wins.length > 0 && (
+                          <div className="flex items-center gap-2 pt-2 border-t border-white/5">
+                            <Trophy className="h-3 w-3 text-gold" />
+                            <span className="text-[9px] font-black uppercase tracking-widest text-cream/40">
+                              Honors
+                            </span>
+                            <div className="flex items-center gap-1.5 font-mono text-[9px] tabular-nums">
+                              {(["G1", "G2", "G3"] as const).map((g) => (
+                                <span
+                                  key={g}
+                                  className={cn(
+                                    "px-1.5 py-0.5 border rounded-sm",
+                                    honorCounts[g] > 0
+                                      ? g === "G1"
+                                        ? "bg-gold/15 text-gold border-gold/30"
+                                        : g === "G2"
+                                          ? "bg-purple-500/15 text-purple-300 border-purple-500/30"
+                                          : "bg-blue-500/15 text-blue-300 border-blue-500/30"
+                                      : "border-white/5 text-cream/20",
+                                  )}
+                                >
+                                  {g} ×{honorCounts[g]}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+
                         <div className="flex justify-end pt-2">
                           <Button
                             variant="ghost"
