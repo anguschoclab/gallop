@@ -250,6 +250,7 @@ export function createHorseFromDNA(
     peakingIndex: 50,
     bloodline: "Standard",
     ...dnaTraits,
+    weatherPreference,
     recoveryPoints: 100, // Dynamic Form: Initialize at full recovery
     createdAtDay: opts.createdAtDay,
     appearance: generateAppearanceDNA(
