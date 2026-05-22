@@ -5,7 +5,6 @@ import { useAwards, useNpcStables } from "@/game/hooks/useSystemsState";
 import { HorseCard } from "@/components/HorseCard";
 import { TrophyCase, G1TrophyList } from "@/components/awards";
 import { getG1WinsForStable } from "@/lib/connectionTrophies";
-import { useGame } from "@/game/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
