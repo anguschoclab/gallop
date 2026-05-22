@@ -105,6 +105,8 @@ export interface GenerateRaceImpactsProps {
   snapshots?: RaceSnapshot[];
   /** Speed pars for Beyer speed figure calculation, indexed by distance */
   calibratedPars: Record<number, number>;
+  /** Optional current weather state for the race's track (for injury risk). */
+  raceWeatherState?: import("@/core/weather/weatherTypes").WeatherState;
 }
 
 /**
