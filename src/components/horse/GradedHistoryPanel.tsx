@@ -1,11 +1,15 @@
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Badge } from "@/components/ui/badge";
 import { getGradeColorClass } from "@/core/race/grading";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { GradedStatsChart } from "@/components/GradedStatsChart";
+import { GRADED_RACES, getRaceCountry } from "@/core/data/gradedRaces";
+import { getCountryFlag } from "@/lib/countryFlag";
 
 interface GradedHistoryEntry {
+  raceId?: string;
   raceName: string;
   position: number;
   day: number;
@@ -31,6 +35,26 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
   const places = (rs: typeof graded) => rs.filter((r) => r.position <= 3).length;
   const bestBeyer = (rs: typeof graded) =>
     rs.reduce((m, r) => (typeof r.beyer === "number" && r.beyer > m ? r.beyer : m), 0);
+
+  // Lookup race country by raceId (uuid) or by exact name match.
+  const raceCountryByKey = useMemo(() => {
+    const byId = new Map<string, string>();
+    const byName = new Map<string, string>();
+    for (const race of GRADED_RACES) {
+      const country = getRaceCountry(race);
+      if (race.uuid) byId.set(race.uuid, country);
+      if (race.name) byName.set(race.name, country);
+    }
+    return { byId, byName };
+  }, []);
+
+  const countryFor = (r: GradedHistoryEntry): string | undefined => {
+    if (r.raceId && raceCountryByKey.byId.has(r.raceId))
+      return raceCountryByKey.byId.get(r.raceId);
+    return raceCountryByKey.byName.get(r.raceName);
+  };
+
+  const yearFor = (day: number) => Math.floor((day - 1) / 365) + 1;
 
   return (
     <Card className="border-gold-muted">
@@ -97,46 +121,62 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
           <p className="text-sm text-cream-muted">No graded stakes appearances yet.</p>
         ) : (
           <div className="space-y-1">
-            {graded.map((r, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between gap-2 text-sm py-2 border-b last:border-0"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  {r.grade && (
-                    <Badge variant="outline" className={getGradeColorClass(r.grade)}>
-                      {r.grade}
-                    </Badge>
-                  )}
-                  <div className="min-w-0">
-                    <div className="truncate">{r.raceName}</div>
-                    <div className="text-xs text-cream-muted">
-                      {r.distance ? `${r.distance}m` : ""}
-                      {r.surface ? ` · ${r.surface}` : ""}
-                      {r.fieldSize ? ` · field of ${r.fieldSize}` : ""} · D{r.day}
+            {graded.map((r, i) => {
+              const country = countryFor(r);
+              const flag = r.grade === "G1" ? getCountryFlag(country) : null;
+              return (
+                <div
+                  key={i}
+                  className="flex items-center justify-between gap-2 text-sm py-2 border-b last:border-0"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    {r.grade && (
+                      <Badge variant="outline" className={getGradeColorClass(r.grade)}>
+                        {r.grade}
+                      </Badge>
+                    )}
+                    <div className="min-w-0">
+                      <div className="truncate">{r.raceName}</div>
+                      <div className="text-xs text-cream-muted flex items-center gap-1.5">
+                        {flag && (
+                          <span
+                            title={country ?? "Unknown country"}
+                            className="text-sm leading-none"
+                          >
+                            {flag}
+                          </span>
+                        )}
+                        {r.grade === "G1" && (
+                          <span className="tabular-nums">Y{yearFor(r.day)}</span>
+                        )}
+                        {r.distance ? <span>· {r.distance}m</span> : null}
+                        {r.surface ? <span>· {r.surface}</span> : null}
+                        {r.fieldSize ? <span>· field of {r.fieldSize}</span> : null}
+                        <span>· D{r.day}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  {typeof r.beyer === "number" && (
-                    <span className="text-xs">
-                      <span className="text-cream-muted">
-                        <JargonTooltip term="Beyer">Beyer</JargonTooltip>{" "}
+                  <div className="flex items-center gap-3 shrink-0">
+                    {typeof r.beyer === "number" && (
+                      <span className="text-xs">
+                        <span className="text-cream-muted">
+                          <JargonTooltip term="Beyer">Beyer</JargonTooltip>{" "}
+                        </span>
+                        <span className="font-semibold">{r.beyer}</span>
                       </span>
-                      <span className="font-semibold">{r.beyer}</span>
-                    </span>
-                  )}
-                  <Badge
-                    variant={
-                      r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"
-                    }
-                  >
-                    {r.position}
-                    {getOrdinalSuffix(r.position)}
-                  </Badge>
+                    )}
+                    <Badge
+                      variant={
+                        r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"
+                      }
+                    >
+                      {r.position}
+                      {getOrdinalSuffix(r.position)}
+                    </Badge>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </CardContent>
