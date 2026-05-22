@@ -14,8 +14,45 @@ import {
   PATTERN_SEVERITY,
   toTrackWeatherPattern,
 } from "./weatherTypes";
+import type { Hemisphere } from "./trackClimate";
 
 export { toTrackWeatherPattern };
+
+/**
+ * Seasonal temperature offset (°C) from the climate's annual midpoint.
+ * Peaks at +amp around day-of-year 200 in the Northern hemisphere,
+ * shifted by 6 months for the Southern hemisphere.
+ */
+function seasonalTempOffset(day: number, hemisphere: Hemisphere, amp: number): number {
+  const doy = ((day - 1) % 365) + 1;
+  // Northern summer peaks ~ day 200, winter low ~ day 17.
+  // sin( 2π * (doy - 110) / 365 ) puts peak at doy=200.
+  const phase = (2 * Math.PI * (doy - 110)) / 365;
+  const sign = hemisphere === "Southern" ? -1 : 1;
+  return sign * amp * Math.sin(phase);
+}
+
+/**
+ * Bias the daily transition matrix toward wetter/cooler patterns in winter
+ * and toward clearer patterns in summer (climate-dependent).
+ */
+function seasonalRowBias(row: number[], hemisphere: Hemisphere, day: number): number[] {
+  const doy = ((day - 1) % 365) + 1;
+  const phase = (2 * Math.PI * (doy - 110)) / 365;
+  const sign = hemisphere === "Southern" ? -1 : 1;
+  // s in [-1,1]: +1 = peak summer, -1 = mid winter.
+  const s = sign * Math.sin(phase);
+  // Shift up to ±15% of mass between [clear/overcast] and [rain/storm].
+  const shift = 0.15 * s;
+  const out = [...row];
+  // Boost clear+overcast in summer, rain+storm in winter.
+  out[0] = Math.max(0, out[0] + shift * 0.5);
+  out[1] = Math.max(0, out[1] + shift * 0.5);
+  out[3] = Math.max(0, out[3] - shift * 0.5);
+  out[4] = Math.max(0, out[4] - shift * 0.5);
+  const sum = out.reduce((a, b) => a + b, 0);
+  return sum > 0 ? out.map((v) => v / sum) : row;
+}
 
 /**
  * Row-stochastic transition matrices: rows = today, cols = tomorrow.
