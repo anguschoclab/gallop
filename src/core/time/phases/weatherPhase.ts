@@ -23,6 +23,7 @@ import {
   toTrackWeatherPattern,
   PATTERN_SEVERITY,
   getTrackClimate,
+  getTrackHemisphere,
 } from "@/core/weather";
 import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS } from "@/game/store/slices/weatherSlice";
 import { calculateConditionChange } from "@/core/trackConditions";
