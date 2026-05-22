@@ -30,6 +30,7 @@ import {
   ChevronRight,
   AlertCircle,
   Gavel,
+  FastForward,
 } from "lucide-react";
 import { PedigreeTree } from "@/components/breeding/PedigreeTree";
 import { BeyerChart } from "@/components/BeyerChart";
