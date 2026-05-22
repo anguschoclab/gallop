@@ -99,7 +99,7 @@ function LiveRace() {
   const stables = (useGame as any)((s: GameState) => s.npcStables, shallow);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
   const raceWeather = (useGame as any)(
-    (s: GameState) => {
+    (s: any) => {
       if (!race) return undefined;
       const trackId = race.graded?.trackId ?? race.trackId;
       if (!trackId) return undefined;
