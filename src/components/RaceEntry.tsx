@@ -34,6 +34,8 @@ import { getTrackById } from "@/game/tracks";
 import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import { getWeatherDisplay } from "@/components/races/raceVisualHelpers";
+import { WeatherForecastStrip } from "@/components/races/WeatherForecastStrip";
 
 interface RaceEntryProps {
   race: Race;
