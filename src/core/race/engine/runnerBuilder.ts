@@ -18,6 +18,7 @@ import type {
 } from "@/game/types";
 import { TRAIT_VALUES, fiberDistanceModifier } from "@/core/genetics/phenotype";
 import { clamp } from "@/game/math";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
 import { calculateDosageMetrics } from "@/game/dosage";
 import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStrategyAI";
@@ -222,6 +223,7 @@ export function buildRunner(
   race?: RaceT,
   bonuses?: RunnerBonuses,
 ): Runner {
+  h = ensurePhenotypeResolved(h);
   let claim = 0;
   let finalAssignedWeight = weight ?? 126;
   if (jockey && (jockey as any).isApprentice) {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateHorse } from "@/game/horseGen";
+import { generateHorse, ensurePhenotypeResolved } from "@/game/horseGen";
 import { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
 import { makeGradedRace, generateRace } from "@/game/raceGeneration/raceGen";
 import type { GradedRace } from "@/game/gradedRaces";
@@ -16,7 +16,7 @@ describe("generateHorse", () => {
     it(`${tier}: stats within tier range [${STAT_RANGES[tier]}]`, () => {
       const [lo, hi] = STAT_RANGES[tier];
       for (let i = 0; i < 10; i++) {
-        const h = generateHorse({ tier });
+        const h = ensurePhenotypeResolved(generateHorse({ tier }));
         expect(h.stats.speed).toBeGreaterThanOrEqual(lo);
         expect(h.stats.speed).toBeLessThanOrEqual(hi);
         expect(h.stats.stamina).toBeGreaterThanOrEqual(lo);
@@ -71,14 +71,14 @@ describe("horsePrice", () => {
   });
 
   it("young horse (age <= 3, ageMod=1.2) costs more than old horse (age >= 6, ageMod=0.7) with same stats", () => {
-    const h = generateHorse({ tier: "mid" });
+    const h = ensurePhenotypeResolved(generateHorse({ tier: "mid" }));
     const youngH = { ...h, age: 3 };
     const oldH = { ...h, age: 6 };
     expect(horsePrice(youngH)).toBeGreaterThan(horsePrice(oldH));
   });
 
   it("price is always positive", () => {
-    const h = generateHorse({ tier: "budget" });
+    const h = ensurePhenotypeResolved(generateHorse({ tier: "budget" }));
     expect(horsePrice(h)).toBeGreaterThan(0);
   });
 });

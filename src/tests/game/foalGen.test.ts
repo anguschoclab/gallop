@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { resolveFoaling } from "@/game/foalGen";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { createTestGenotype } from "@/tests/helpers/createTestGenotype";
 import { resolveGeneticMarkers } from "@/core/genetics/phenotype";
 import type { Horse, Pregnancy } from "@/game/types";
@@ -83,7 +84,8 @@ describe("resolveFoaling", () => {
     for (let i = 0; i < 200; i++) {
       const outcome = resolveFoaling(mkPregnancy(`preg-${i}`), sire, dam);
       if (outcome.kind === "live") {
-        const { stats, potential } = outcome.foal;
+        const resolved = ensurePhenotypeResolved(outcome.foal);
+        const { stats, potential } = resolved;
         for (const v of [
           stats.speed,
           stats.stamina,
@@ -104,11 +106,13 @@ describe("resolveFoaling", () => {
     const b = resolveFoaling(mkPregnancy("preg-stable"), sire, dam);
     expect(a.kind).toBe(b.kind);
     if (a.kind === "live" && b.kind === "live") {
-      expect(a.foal.stats).toEqual(b.foal.stats);
-      expect(a.foal.potential).toBe(b.foal.potential);
-      expect(a.foal.conformation).toBe(b.foal.conformation);
-      expect(a.foal.temperament).toBe(b.foal.temperament);
-      expect(a.foal.runningStyle).toBe(b.foal.runningStyle);
+      const ra = ensurePhenotypeResolved(a.foal);
+      const rb = ensurePhenotypeResolved(b.foal);
+      expect(ra.stats).toEqual(rb.stats);
+      expect(ra.potential).toBe(rb.potential);
+      expect(ra.conformation).toBe(rb.conformation);
+      expect(ra.temperament).toBe(rb.temperament);
+      expect(ra.runningStyle).toBe(rb.runningStyle);
     }
   });
 

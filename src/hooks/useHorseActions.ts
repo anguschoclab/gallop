@@ -2,7 +2,7 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { Horse, AuctionSale } from "@/game/types";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 
 /**
  * Hook to manage horse-specific management actions and eligibility.
@@ -16,6 +16,13 @@ export function useHorseActions(horseId: string) {
   const day = useGame((s: any) => s.day);
 
   const horse = useMemo(() => horses.find((h: any) => h.id === horseId), [horses, horseId]);
+  const resolveHorsePhenotype = useGame((s: any) => s.resolveHorsePhenotype);
+
+  useEffect(() => {
+    if (horse && horse.phenotypeResolved === false) {
+      resolveHorsePhenotype(horseId);
+    }
+  }, [horse, horseId, resolveHorsePhenotype]);
 
   if (!horse) {
     return {

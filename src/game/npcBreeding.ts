@@ -11,6 +11,7 @@
  */
 
 import type { Horse, Pregnancy, Stable, GameState } from "./types";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { generateUUID } from "@/core/uuid";
 import { canBreed } from "@/core/breeding/eligibility";
 import { getAvailableStallions } from "@/core/breeding/stallions";
@@ -84,7 +85,7 @@ export function runAutonomousBreeding(
           (h.hemisphere === "Southern" && southernSeason)) &&
         !state.pregnancies.some((p) => !p.resolved && p.damId === h.id) &&
         calculateOverallRating(h) >= minMareQuality,
-    );
+    ).map(ensurePhenotypeResolved);
 
     // Best mares first — the stable's best cash on its best mares.
     candidateMares.sort((a, b) => calculateOverallRating(b) - calculateOverallRating(a));
@@ -98,7 +99,9 @@ export function runAutonomousBreeding(
       // Identify candidate stallions within budget
       const maxFeePerMare = stableCash * (SINGLE_FEE_CAP_FRACTION[stable.personality] || 0.1);
       const stallions = getAvailableStallions(state.horses, mare).filter(
-        (s) => s.stud!.standingFee <= maxFeePerMare && s.stableId !== stable.id,
+        (s) => s.stableId !== stable.id,
+      ).map(ensurePhenotypeResolved).filter(
+        (s) => s.stud!.standingFee <= maxFeePerMare,
       );
 
       if (stallions.length === 0) continue;

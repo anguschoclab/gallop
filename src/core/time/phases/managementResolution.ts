@@ -36,6 +36,7 @@ import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/game/rng";
 import { scoutHorse } from "@/game/scouting";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 
 /**
@@ -265,8 +266,9 @@ export const managementResolutionPhase: PipelinePhase = {
           const stable = state.npcStables.find((s) => s.id === typedIntent.stableId);
 
           if (horse && stable) {
+            const resolvedHorse = ensurePhenotypeResolved(horse);
             const scoutRng = createRng(hashStr(`scout_${typedIntent.horseId}_${newDay}`));
-            const result = scoutHorse(horse, stable, newDay, state.cash, scoutRng);
+            const result = scoutHorse(resolvedHorse, stable, newDay, state.cash, scoutRng);
 
             if (result.success && result.report) {
               impacts.push({

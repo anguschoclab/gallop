@@ -143,37 +143,22 @@ function resolveDnaTraits(genotype: Genotype) {
   };
 }
 
-// --- Public Factory API ---
+// --- Lazy Phenotype Resolution ---
 
 /**
- * Hydrates a complete Horse object from a given genotype by resolving all phenotype traits.
- * This is the core builder for all horse creation, handling stats, aptitudes, health risks, and appearance.
+ * Resolve all phenotype traits for a horse from its stored genotype.
  *
- * @param {Genotype} genotype - The genetic blueprint for the horse.
- * @param {Rng} rng - Seeded random number generator.
- * @param {Object} [opts={}] - Configuration options.
- * @param {string} [opts.name] - The horse's name.
- * @param {number} [opts.age] - Current age in years.
- * @param {HorseGender} [opts.gender] - Biological gender.
- * @param {Hemisphere} [opts.hemisphere] - Racing hemisphere.
- * @param {boolean} [opts.owned] - Player ownership status.
- * @param {string} [opts.stableId] - ID of the assigned stable.
- * @param {number} [opts.createdAtDay] - Simulation day of creation.
- * @returns {Horse} A fully populated Horse object.
+ * This is a **pure function** — no store access. Uses a deterministic RNG seeded
+ * from the horse's ID so the same horse always resolves to the same phenotype
+ * regardless of when or how many times it is called.
+ *
+ * @param horse - A horse with `phenotypeResolved` falsy and a valid `genotype`.
+ * @returns A new Horse object with all phenotype fields populated and `phenotypeResolved: true`.
  */
-export function createHorseFromDNA(
-  genotype: Genotype,
-  rng: Rng,
-  opts: {
-    name?: string;
-    age?: number;
-    gender?: HorseGender;
-    hemisphere?: Hemisphere;
-    owned?: boolean;
-    stableId?: string;
-    createdAtDay?: number;
-  } = {},
-): Horse {
+export function resolvePhenotype(horse: Horse): Horse {
+  if (horse.phenotypeResolved !== false) return horse;
+  const genotype = horse.genotype;
+
   const confTrait = resolveTrait(genotype.physical);
   const tempTrait = resolveTrait(genotype.mental);
   const conformation = TRAIT_VALUES[confTrait] * 25;
@@ -198,25 +183,11 @@ export function createHorseFromDNA(
 
   const dnaTraits = resolveDnaTraits(genotype);
 
-  const horse: Horse = {
-    id: generateUUID(rng),
-    name: opts.name ?? "Unnamed",
-    age: opts.age ?? 2,
-    gender: opts.gender ?? "colt",
-    hemisphere: opts.hemisphere ?? "Northern",
-    silk: randomSilk(rng),
-    stats,
-    genotype,
-    energy: 100,
-    form: 50,
-    potential: POTENTIAL_MIN + Math.floor(rng.next() * (POTENTIAL_MAX - POTENTIAL_MIN)), // 50-90 base
-    fame: 0,
-    raceHistory: [],
-    owned: opts.owned ?? false,
-    stableId: opts.stableId,
+  return {
+    ...horse,
     conformation,
     temperament,
-    geneticMarkers: resolveGeneticMarkers(genotype),
+    stats,
     coatColor,
     runningStyle,
     distanceAptitude,
@@ -226,10 +197,102 @@ export function createHorseFromDNA(
     injuryProneness,
     height,
     weight,
+    geneticMarkers: resolveGeneticMarkers(genotype),
+    healthStatus: resolveHealthStatus(genotype.health),
+    ...dnaTraits,
+    appearance: generateAppearanceDNA(
+      hashStr(horse.id),
+      undefined,
+      getPalette(coatColor),
+    ),
+    phenotypeResolved: true,
+  };
+}
+
+/**
+ * Return the horse with its phenotype resolved. No-op if already resolved.
+ *
+ * @param horse - Any horse, possibly unresolved.
+ * @returns The same horse if already resolved, or a new object with phenotype populated.
+ */
+export function ensurePhenotypeResolved(horse: Horse): Horse {
+  return horse.phenotypeResolved !== false ? horse : resolvePhenotype(horse);
+}
+
+// --- Public Factory API ---
+
+/**
+ * Creates a Horse skeleton from a genotype with phenotype resolution **deferred**.
+ *
+ * Identity, structure, and RNG-consuming fields (id, silk, potential) are set here
+ * so the caller's RNG sequence is preserved. Phenotype fields (stats, aptitudes,
+ * coat, etc.) are left at safe zero/default values and `phenotypeResolved` is `false`.
+ * Call `resolvePhenotype(horse)` or `ensurePhenotypeResolved(horse)` when the
+ * phenotype is actually needed.
+ *
+ * @param {Genotype} genotype - The genetic blueprint for the horse.
+ * @param {Rng} rng - Seeded random number generator.
+ * @param {Object} [opts={}] - Configuration options.
+ * @param {string} [opts.name] - The horse's name.
+ * @param {number} [opts.age] - Current age in years.
+ * @param {HorseGender} [opts.gender] - Biological gender.
+ * @param {Hemisphere} [opts.hemisphere] - Racing hemisphere.
+ * @param {boolean} [opts.owned] - Player ownership status.
+ * @param {string} [opts.stableId] - ID of the assigned stable.
+ * @param {number} [opts.createdAtDay] - Simulation day of creation.
+ * @returns {Horse} A Horse object with phenotypeResolved=false.
+ */
+export function createHorseFromDNA(
+  genotype: Genotype,
+  rng: Rng,
+  opts: {
+    name?: string;
+    age?: number;
+    gender?: HorseGender;
+    hemisphere?: Hemisphere;
+    owned?: boolean;
+    stableId?: string;
+    createdAtDay?: number;
+  } = {},
+): Horse {
+  // Consume rng slots for identity fields to preserve caller's RNG sequence
+  const id = generateUUID(rng);
+  const silk = randomSilk(rng);
+  const potential = POTENTIAL_MIN + Math.floor(rng.next() * (POTENTIAL_MAX - POTENTIAL_MIN));
+  // Consume the appearance-seed slot so downstream rng calls stay aligned
+  rng.next();
+
+  const horse: Horse = {
+    id,
+    name: opts.name ?? "Unnamed",
+    age: opts.age ?? 2,
+    gender: opts.gender ?? "colt",
+    hemisphere: opts.hemisphere ?? "Northern",
+    silk,
+    stats: { speed: 0, stamina: 0, acceleration: 0, consistency: 0, temperament: 0, conformation: 0 },
+    genotype,
+    energy: 100,
+    form: 50,
+    potential,
+    fame: 0,
+    raceHistory: [],
+    owned: opts.owned ?? false,
+    stableId: opts.stableId,
+    conformation: 0,
+    temperament: 0,
+    coatColor: undefined,
+    runningStyle: "P",
+    distanceAptitude: 0,
+    surfaceAptitude: { Turf: 0.95, Dirt: 0.95, Synthetic: 0.95 },
+    climbingAptitude: 1,
+    corneringAptitude: 1,
+    injuryProneness: 0,
+    height: 0,
+    weight: 0,
     lifetimeEarnings: 0,
     careerStarts: 0,
     careerWins: 0,
-    healthStatus: resolveHealthStatus(genotype.health),
+    healthStatus: "healthy",
     healthStatusDay: 1,
     isBlueHen: false,
     gelded: false,
@@ -244,14 +307,23 @@ export function createHorseFromDNA(
     fatigue: 0,
     peakingIndex: 50,
     bloodline: "Standard",
-    ...dnaTraits,
-    recoveryPoints: 100, // Dynamic Form: Initialize at full recovery
+    heartScore: 0,
+    fiberBias: "balanced",
+    strideType: "average",
+    trackPreference: "balanced",
+    mudAptitude: 1,
+    trainability: 0.5,
+    peakAge: 4,
+    recoveryRate: 0.7,
+    foalingEase: 1,
+    bleederRisk: 0,
+    roarerRisk: 0,
+    ocdRisk: 0,
+    racingViable: true,
+    heterozygosity: 0,
+    recoveryPoints: 100,
     createdAtDay: opts.createdAtDay,
-    appearance: generateAppearanceDNA(
-      Math.floor(rng.next() * 2147483647),
-      undefined,
-      getPalette(coatColor),
-    ),
+    phenotypeResolved: false,
   };
 
   return horse as Horse;

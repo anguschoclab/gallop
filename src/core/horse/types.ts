@@ -221,4 +221,5 @@ export type Horse = {
   appearance?: AppearanceDNA;
   activeInjury?: ActiveInjury;
   courseVisits: Record<string, number>; // trackId -> visit count
+  phenotypeResolved?: boolean;
 };

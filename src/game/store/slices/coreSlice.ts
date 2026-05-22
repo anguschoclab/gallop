@@ -34,6 +34,7 @@ import {
 import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";
 import { generateUUID } from "@/core/uuid";
+import { resolvePhenotype } from "@/core/horse/horseFactory";
 import type { StoreSet, StoreGet } from "../types";
 
 export type CoreSlice = CoreState & {
@@ -66,6 +67,7 @@ export type CoreSlice = CoreState & {
   setLog: (log: { day: number; text: string }[]) => void;
   setPlayerProfile: (profile: PlayerProfile) => void;
   addLogEntry: (entry: { day: number; text: string }) => void;
+  resolveHorsePhenotype: (horseId: string) => void;
 };
 
 /**
@@ -408,6 +410,18 @@ export function createCoreSlice(
       set((state) => ({
         log: [entry, ...state.log].slice(0, 500),
       }));
+    },
+
+    resolveHorsePhenotype: (horseId) => {
+      const s = get();
+      const idx = s.horses.findIndex((h: Horse) => h.id === horseId);
+      if (idx === -1) return;
+      const horse = s.horses[idx];
+      if (horse.phenotypeResolved !== false) return;
+      const resolved = resolvePhenotype(horse);
+      const horses = [...s.horses];
+      horses[idx] = resolved;
+      set({ horses });
     },
   };
 }

@@ -30,7 +30,7 @@ function BroodmaresPage() {
     .map((pregnancy: any) => {
       const dam = horseMap.get(pregnancy.damId);
       const sire = horseMap.get(pregnancy.sireId);
-      const daysRemaining = pregnancy.dueDay - day;
+      const daysRemaining = pregnancy.dueDay - day - 1;
 
       // Get maternity log entries for this dam
       const maternityLog = log.filter(

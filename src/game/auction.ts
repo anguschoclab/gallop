@@ -10,7 +10,7 @@
 
 import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import type { Horse, Pregnancy, Stable, AuctionLot, AuctionSale, AuctionSaleKind } from "./types";
-import { generateNpcHorse } from "@/core/horse/horseFactory";
+import { generateNpcHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { calculateNpcHorseValue } from "@/core/horse/pricing";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { createRng, hashStr, type Rng } from "@/game/rng";
@@ -649,7 +649,7 @@ export function personalityConsignmentPolicy(
   allHorses: readonly Horse[],
   rng: Rng,
 ): { consign: Horse[]; freshCount: number; reserveMultiplier: number } {
-  const owned = allHorses.filter((h) => h.stableId === stable.id && isLotEligible(h, kind));
+  const owned = allHorses.filter((h) => h.stableId === stable.id && isLotEligible(h, kind)).map(ensurePhenotypeResolved);
   const p = stable.personality;
 
   // Helper picks
@@ -721,7 +721,8 @@ export function generateAuctionLots(
   for (const stable of consignors) {
     const policy = personalityConsignmentPolicy(stable, kind, allHorses, rng);
 
-    for (const horse of policy.consign) {
+    for (let horse of policy.consign) {
+      horse = ensurePhenotypeResolved(horse);
       const pedigreeMul = pedigreeMultiplier(horse, { horses: allHorses });
       const baseValue = calculateNpcHorseValue(horse, stable.tier) * pedigreeMul;
       const breezeSeconds = kind === "2yo_training" ? generateBreezeSeconds(horse, rng) : undefined;
@@ -746,14 +747,15 @@ export function generateAuctionLots(
       });
       // Re-check eligibility after generation (e.g. broodmare wants only mares).
       if (!isLotEligible(freshHorse, kind)) continue;
-      allHorses.push(freshHorse);
-      const pedigreeMul = pedigreeMultiplier(freshHorse, { horses: allHorses });
-      const baseValue = calculateNpcHorseValue(freshHorse, stable.tier) * pedigreeMul;
+      const resolvedFresh = ensurePhenotypeResolved(freshHorse);
+      allHorses.push(resolvedFresh);
+      const pedigreeMul = pedigreeMultiplier(resolvedFresh, { horses: allHorses });
+      const baseValue = calculateNpcHorseValue(resolvedFresh, stable.tier) * pedigreeMul;
       const breezeSeconds =
-        kind === "2yo_training" ? generateBreezeSeconds(freshHorse, rng) : undefined;
+        kind === "2yo_training" ? generateBreezeSeconds(resolvedFresh, rng) : undefined;
       lots.push({
         id: generateUUID(rng),
-        horseId: freshHorse.id,
+        horseId: resolvedFresh.id,
         consignorStableId: stable.id,
         saleId,
         reservePrice: Math.round(baseValue * policy.reserveMultiplier),
@@ -812,11 +814,12 @@ export function resolveAuctionSale(
       continue;
     }
 
-    const horse = horseMap.get(lot.horseId);
+    let horse = horseMap.get(lot.horseId);
     if (!horse) {
       updatedLots.push({ ...lot, passed: true });
       continue;
     }
+    horse = ensurePhenotypeResolved(horse);
 
     if (horse.lifecycleStatus === "deceased") {
       updatedLots.push({ ...lot, withdrawn: true });

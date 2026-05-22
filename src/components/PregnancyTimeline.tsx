@@ -18,7 +18,7 @@ export function PregnancyTimeline({
 }: PregnancyTimelineProps) {
   const totalDays = dueDay - conceivedDay;
   const daysElapsed = currentDay - conceivedDay;
-  const daysRemaining = dueDay - currentDay;
+  const daysRemaining = dueDay - currentDay - 1;
   const progress = Math.min(100, Math.max(0, (daysElapsed / totalDays) * 100));
 
   // Generate day markers for the timeline

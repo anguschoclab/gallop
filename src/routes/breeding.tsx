@@ -343,7 +343,7 @@ function BreedingPage() {
           ) : (
             <div className="grid gap-4">
               {activePregnancies.map((p: any) => {
-                const daysRemaining = p.dueDay - day;
+                const daysRemaining = p.dueDay - day - 1;
                 const dam = horses.find((h: Horse) => h.id === p.damId);
                 return (
                   <Card key={p.id} className="border-l-4 border-l-gold border-gold-muted">

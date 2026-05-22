@@ -9,6 +9,7 @@
  */
 
 import type { Horse, Race, Stable } from "./types";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import {
   calculateRaceSuitability,
@@ -39,6 +40,7 @@ export function shouldEnterHorse(
   pregnantIds: Set<string>,
   stable: Stable,
 ): { shouldEnter: boolean; score: number } {
+  horse = ensurePhenotypeResolved(horse);
   // Basic eligibility check
   if (!isHorseEligibleForRace(horse, race, pregnantIds)) {
     return { shouldEnter: false, score: 0 };
