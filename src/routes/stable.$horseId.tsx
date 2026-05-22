@@ -421,19 +421,42 @@ function HorseDetail() {
   const horses = useGame((s: any) => s.horses);
   const retireToStud = useGame((s: any) => s.retireToStud);
   const retireToPasture = useGame((s: any) => s.retireToPasture);
+  const advanceDay = useGame((s: any) => s.advanceDay);
+  const day = useGame((s: any) => s.day);
   const facilities = (useGame as any)((s: any) => s.facilities, shallow);
   const pregnancies = (useGame as any)((s: any) => s.pregnancies, shallow);
   const pregnancy = pregnancies?.find((p: any) => !p.resolved && p.damId === horseId);
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
+  const [simulatingToRace, setSimulatingToRace] = useState(false);
   const syndicates = (useGame as any)((s: any) => s.syndicates || {}, shallow);
   const races = (useGame as any)((s: any) => s.races, shallow);
-  const currentRace = races?.find((r: any) =>
-    r.entries.some((e: any) => e.horseId === horseId && !r.resolved),
-  );
+  const upcomingRaces = (races || [])
+    .filter((r: any) => !r.resolved && r.entries.some((e: any) => e.horseId === horseId))
+    .sort((a: any, b: any) => a.day - b.day);
+  const currentRace = upcomingRaces[0];
   const assignedJockeyId = currentRace?.entries.find((e: any) => e.horseId === horseId)?.jockeyId;
   const jockeys = (useGame as any)((s: any) => s.jockeys, shallow);
   const assignedJockey = jockeys?.find((j: any) => j.id === assignedJockeyId);
+
+  const simToNextRace = useCallback(async () => {
+    if (!currentRace || simulatingToRace) return;
+    setSimulatingToRace(true);
+    try {
+      // Stop one day BEFORE race day so the user can watch the race live.
+      const targetDay = currentRace.day - 1;
+      // Cap total iterations defensively to avoid runaway loops.
+      let safety = 0;
+      while (true) {
+        const currentDay = (useGame as any).getState().day;
+        if (currentDay >= targetDay) break;
+        if (++safety > 400) break;
+        await advanceDay();
+      }
+    } finally {
+      setSimulatingToRace(false);
+    }
+  }, [currentRace, simulatingToRace, advanceDay]);
 
   const handleTrain = useCallback(
     (horseId: string, type: any) => {
