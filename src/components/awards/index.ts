@@ -4,3 +4,5 @@ export { AwardBadge, AwardBadgeWithRunnerUp, AwardListItem } from "./AwardBadge"
 export { TrophyCase, TrophyStats } from "./TrophyCase";
 export { AwardCeremony, useAwardCeremony } from "./AwardCeremony";
 export { HorseAwardsPanel } from "./HorseAwardsPanel";
+export { VisualTrophy, TrophyShelf } from "./VisualTrophy";
+export type { TrophyTone } from "./VisualTrophy";
