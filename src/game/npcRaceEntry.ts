@@ -130,8 +130,9 @@ export function runNpcRaceEntry(
   freeAgents.sort((a, b) => b.fame - a.fame);
 
   for (const race of workingUpcoming) {
-    // Skip if race is full
-    if (race.entries.length >= race.fieldSize) continue;
+    // Note: even if race is full, NPC stables may try to bump weaker entries below.
+
+
 
     // Imperial Expansion: Check if player has an entry to trigger rivalry tactics
     const playerEntry = race.entries.find((e) => e.owned);
