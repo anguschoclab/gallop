@@ -422,7 +422,6 @@ function HorseDetail() {
   const retireToStud = useGame((s: any) => s.retireToStud);
   const retireToPasture = useGame((s: any) => s.retireToPasture);
   const advanceDay = useGame((s: any) => s.advanceDay);
-  const day = useGame((s: any) => s.day);
   const facilities = (useGame as any)((s: any) => s.facilities, shallow);
   const pregnancies = (useGame as any)((s: any) => s.pregnancies, shallow);
   const pregnancy = pregnancies?.find((p: any) => !p.resolved && p.damId === horseId);
