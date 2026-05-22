@@ -45,6 +45,8 @@ import { SectionalTimingTable } from "@/components/SectionalTimingTable";
 import { cn } from "@/lib/utils";
 import { parTime } from "@/game/beyer";
 import { BEYER_BASE } from "@/game/constants/gameConstants";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { HorseCard } from "@/components/HorseCard";
 
 const SPLIT_LABELS = ["¼", "½", "¾", "Fin"] as const;
 
@@ -137,6 +139,7 @@ function LiveRace() {
   const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
   const [subjectHorseId, setSubjectHorseId] = useState<string | null>(null);
   const [hideUntilAllFinished, setHideUntilAllFinished] = useState(false);
+  const [showAllCards, setShowAllCards] = useState(false);
 
   // Paced message delivery effect
   useEffect(() => {
@@ -284,6 +287,15 @@ function LiveRace() {
               </SelectContent>
             </Select>
           )}
+
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setShowAllCards(true)}
+            title="Show all horse stat cards"
+          >
+            Cards
+          </Button>
 
           {!finished && (
             <Button
@@ -612,6 +624,23 @@ function LiveRace() {
           }
         />
       )}
+
+      <Dialog open={showAllCards} onOpenChange={setShowAllCards}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-slate-900 border-white/10">
+          <DialogHeader>
+            <DialogTitle className="text-cream font-black uppercase tracking-widest text-sm">
+              Field — {race.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
+            {runners.map((r) => {
+              const horse = horses.find((h: Horse) => h.id === r.horseId);
+              if (!horse) return null;
+              return <HorseCard key={r.horseId} horse={horse} variant="compact" />;
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

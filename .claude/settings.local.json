@@ -99,7 +99,8 @@
       "Bash(git *)",
       "Bash(npm cache *)",
       "Bash(bun add *)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Skill(superpowers:brainstorming)"
     ]
   },
   "hooks": {
