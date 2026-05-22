@@ -572,6 +572,21 @@ function HorseDetail() {
               Actions
             </div>
             <div className="px-3 space-y-2">
+              {currentRace && currentRace.day > day && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={simulatingToRace}
+                  className="w-full h-8 text-[9px] font-black uppercase border-gold/30 hover:bg-gold/10 text-gold gap-1.5"
+                  onClick={simToNextRace}
+                  title={`Advance to day ${currentRace.day - 1} (eve of ${currentRace.name})`}
+                >
+                  <FastForward className="h-3 w-3" />
+                  {simulatingToRace
+                    ? `Simming… D${day}`
+                    : `Sim to Race (D${currentRace.day})`}
+                </Button>
+              )}
               {isG1Winner && horse.stud?.atStud && !isSyndicated && (
                 <Button
                   variant="outline"
