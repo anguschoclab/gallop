@@ -183,6 +183,8 @@ export type Horse = {
   peakAge: number;
   strideType: "long" | "short" | "average";
   trackPreference: "left" | "right" | "balanced";
+  /** Climate/weather preference: dry, wet, or unaffected ("all"). */
+  weatherPreference?: "dry" | "wet" | "all";
   runningStyle: RunningStyle;
   winAndYouInQualified?: { year: number; raceId: string; raceKey: string }[];
   bleederRisk: number;
