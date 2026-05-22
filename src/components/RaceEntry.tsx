@@ -25,7 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Horse, Race, Jockey } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import { Check, ChevronRight, User, Info, AlertTriangle, Truck } from "lucide-react";
+import { Check, ChevronRight, User, Info, AlertTriangle, Truck, MapPin, CloudSun, Clock } from "lucide-react";
 import { JockeyCard } from "./JockeyCard";
 import { JockeyAvatar } from "./JockeyAvatar";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
