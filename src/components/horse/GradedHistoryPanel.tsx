@@ -93,6 +93,36 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
           />
         )}
 
+        {/* Visual G1 trophy shelf — one cup per G1 victory */}
+        {(() => {
+          const g1Wins = byGrade.G1.filter((r) => r.position === 1);
+          if (g1Wins.length === 0) return null;
+          return (
+            <div className="space-y-1.5">
+              <div className="text-xs font-semibold uppercase tracking-wide text-cream-muted">
+                G1 Trophy Shelf · {g1Wins.length}
+              </div>
+              <TrophyShelf count={g1Wins.length}>
+                {g1Wins.map((r, i) => {
+                  const country = countryFor(r);
+                  return (
+                    <VisualTrophy
+                      key={`g1-trophy-${i}`}
+                      tone="gold"
+                      size={64}
+                      label="G1"
+                      sublabel={`Y${yearFor(r.day)}`}
+                      flag={getCountryFlag(country)}
+                      title={`${r.raceName} — ${country ?? "Unknown"} · Y${yearFor(r.day)}`}
+                    />
+                  );
+                })}
+              </TrophyShelf>
+            </div>
+          );
+        })()}
+
+
         <div className="grid grid-cols-3 gap-2">
           {(["G1", "G2", "G3"] as const).map((g) => (
             <div key={g} className="rounded-md border p-3">
