@@ -59,6 +59,7 @@ export function useLiveRaceSimulation({
     const FIXED_DT = 0.05;
     let accumulator = 0;
     const MAX_STEPS_PER_FRAME = 64;
+    const splitMarkers = [0.25, 0.5, 0.75, 1.0].map((f) => f * race.distance);
 
     const loop = (now: number) => {
       const real = (now - last) / 1000;
@@ -89,8 +90,6 @@ export function useLiveRaceSimulation({
             messageQueue.current.push(...newCommentary);
           }
         }
-
-        const splitMarkers = [0.25, 0.5, 0.75, 1.0].map((f) => f * race.distance);
 
         for (const r of runners) {
           if (r.finishTime === null) {

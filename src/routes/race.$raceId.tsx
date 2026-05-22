@@ -45,8 +45,6 @@ import { SectionalTimingTable } from "@/components/SectionalTimingTable";
 import { cn } from "@/lib/utils";
 import { parTime } from "@/game/beyer";
 import { BEYER_BASE } from "@/game/constants/gameConstants";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { HorseCard } from "@/components/HorseCard";
 
 const SPLIT_LABELS = ["¼", "½", "¾", "Fin"] as const;
 
@@ -56,13 +54,18 @@ function formatSplitTime(seconds: number): string {
   return m > 0 ? `${m}:${s.toFixed(1).padStart(4, "0")}` : `${s.toFixed(1)}s`;
 }
 
-function getTargetSplitTime(horse: Horse, distance: number, markerFraction: number): number | null {
+function getTargetSplitTime(
+  horse: Horse,
+  distance: number,
+  markerFraction: number,
+  calibratedPars: Record<number, number>,
+): number | null {
   const qualifying = (horse.raceHistory ?? []).filter(
     (h) => h.beyer != null && h.distance != null && Math.abs(h.distance - distance) <= 200,
   );
   if (qualifying.length < 2) return null;
   const avgBeyer = qualifying.reduce((sum, h) => sum + h.beyer!, 0) / qualifying.length;
-  const par = parTime(distance);
+  const par = parTime(distance, calibratedPars);
   // Inverse of beyerFigure: finishTime = par * (1 - (beyer - BEYER_BASE) / 500)
   const expectedFinish = par * (1 - (avgBeyer - BEYER_BASE) / 500);
   return expectedFinish * markerFraction;
@@ -134,7 +137,6 @@ function LiveRace() {
   const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
   const [subjectHorseId, setSubjectHorseId] = useState<string | null>(null);
   const [hideUntilAllFinished, setHideUntilAllFinished] = useState(false);
-  const [showAllCards, setShowAllCards] = useState(false);
 
   // Paced message delivery effect
   useEffect(() => {
@@ -468,7 +470,7 @@ function LiveRace() {
                           {markerFractions.map((frac, mi) => {
                             const elapsed = crossings[mi];
                             const target = horse
-                              ? getTargetSplitTime(horse, race.distance, frac)
+                              ? getTargetSplitTime(horse, race.distance, frac, calibratedPars ?? {})
                               : null;
                             if (elapsed == null) {
                               return (
