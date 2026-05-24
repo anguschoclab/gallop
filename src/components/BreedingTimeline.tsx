@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,9 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
   const horses = useGame((s) => s.horses);
   const pregnancies = useGame((s) => s.pregnancies);
   const day = useGame((s) => s.day);
+
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside loops.
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
   // Find all pregnancies where this horse is either sire or dam
   const relatedPregnancies = pregnancies.filter((p) => p.sireId === horseId || p.damId === horseId);
@@ -42,7 +46,7 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
   relatedPregnancies.forEach((p) => {
     const isSire = p.sireId === horseId;
     const partnerName = isSire ? p.damName : p.sireName;
-    const partnerHorse = horses.find((h) => h.id === (isSire ? p.damId : p.sireId));
+    const partnerHorse = horseMap.get(isSire ? p.damId : p.sireId);
 
     events.push({
       type: "conception",
@@ -54,7 +58,7 @@ export function BreedingTimeline({ horseId }: BreedingTimelineProps) {
 
     // Add foal birth event if pregnancy is resolved
     if (p.resolved && p.foalId) {
-      const foal = horses.find((h) => h.id === p.foalId);
+      const foal = horseMap.get(p.foalId);
       if (foal) {
         events.push({
           type: "foal_birth",
