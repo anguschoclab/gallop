@@ -9,3 +9,6 @@
 ## 2026-05-19 - Accessible Delete Button in LedgerEntry
 **Learning:** The Delete button in `LedgerEntry` within `src/components/settings/SaveLoadDialog.tsx` was an icon-only button lacking an accessible name.
 **Action:** Always add an `aria-label` and a `title` to icon-only action buttons (e.g., Delete, Edit) to ensure screen readers can announce their purpose, using context when available (e.g., `Delete save ${save.name}`).
+## 2024-05-19 - Fixed dead-end button in AuctionSummary
+**Learning:** Found a "Return to Sales" `<Button>` that had no `onClick` handler, despite the parent `AuctionSummary` component correctly taking an `onClose` prop and defining a routing navigation fallback (`navigate({ to: "/auction" })`) in its parent container (`AuctionTheater.tsx`). This resulted in a dead-end UI for users.
+**Action:** Always verify that main structural flow buttons map their defined callback props (like `onClose` or `onSubmit`) instead of being purely decorative.
