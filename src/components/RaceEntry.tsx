@@ -25,7 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Horse, Race, Jockey } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import { Check, ChevronRight, User, Info, AlertTriangle, Truck } from "lucide-react";
+import { Check, ChevronRight, User, Info, AlertTriangle, Truck, MapPin, CloudSun, Clock, Thermometer } from "lucide-react";
 import { JockeyCard } from "./JockeyCard";
 import { JockeyAvatar } from "./JockeyAvatar";
 import { HorsePortrait, HorsePortraitBadge } from "./HorsePortrait";
@@ -34,6 +34,8 @@ import { getTrackById } from "@/game/tracks";
 import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
+import { getWeatherDisplay } from "@/components/races/raceVisualHelpers";
+import { WeatherForecastStrip } from "@/components/races/WeatherForecastStrip";
 
 interface RaceEntryProps {
   race: Race;
@@ -70,6 +72,13 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const withdrawRace = useGame((s) => s.withdrawRace);
   const cash = useGame((s) => s.cash);
   const day = useGame((s) => s.day);
+  const raceWeather = useGame((s) => {
+    const trackId = race.trackId ?? race.graded?.trackId;
+    if (!trackId) return undefined;
+    const buf = s.weather?.byTrack?.[trackId];
+    if (!buf || !buf.length) return undefined;
+    return buf.find((w: any) => w.day === race.day) ?? buf[buf.length - 1];
+  });
   // D3: determine if this is a new-spec claiming race
   const isNewClaimingRace = !!race.claiming;
   const claimingPrice = race.claiming?.price ?? race.claimingPrice;
@@ -204,6 +213,41 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 className={`h-1 flex-1 rounded-full ${step >= s ? "bg-primary" : "bg-muted"}`}
               />
             ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-3 mt-3 text-[11px] text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              {race.graded?.track || race.trackId || "Local Track"}
+            </span>
+            <span>· {race.distance}m</span>
+            <span>· {race.surface || race.graded?.surface || "Turf"}</span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              Day {race.day}
+            </span>
+            {race.weather && (
+              <span className="flex items-center gap-1">
+                <CloudSun className="h-3 w-3" />
+                {getWeatherDisplay(race.weather)}
+              </span>
+            )}
+            {raceWeather && (
+              <span className="flex items-center gap-1">
+                <Thermometer className="h-3 w-3" />
+                {Math.round(raceWeather.tempC)}°C
+              </span>
+            )}
+            {race.trackCondition && (
+              <Badge variant="outline" className="h-4 px-1.5 text-[9px] capitalize">
+                {race.trackCondition}
+              </Badge>
+            )}
+            <div className="ml-auto">
+              <WeatherForecastStrip
+                trackId={race.trackId ?? race.graded?.trackId ?? race.graded?.track}
+                trackCondition={race.trackCondition}
+              />
+            </div>
           </div>
         </DialogHeader>
 

@@ -3,8 +3,7 @@ import { useMemo, useState } from "react";
 import { useHorses } from "@/game/hooks/useCoreState";
 import { useAwards, useNpcStables } from "@/game/hooks/useSystemsState";
 import { HorseCard } from "@/components/HorseCard";
-import { TrophyCase, G1TrophyList } from "@/components/awards";
-import { getG1WinsForStable } from "@/lib/connectionTrophies";
+import { TrophyCase } from "@/components/awards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -64,11 +63,6 @@ function StablePage() {
 
   const myHorses = useMemo(() => horses.filter((h) => h.owned), [horses]);
   const playerAwards = useMemo(() => awards.filter((a) => !a.stableId), [awards]);
-  const races = useGame((s: any) => s.races);
-  const stableG1Wins = useMemo(
-    () => getG1WinsForStable({ horses, races } as any, undefined),
-    [horses, races],
-  );
 
   const counts = useMemo(() => {
     const active = myHorses.filter(
@@ -212,9 +206,6 @@ function StablePage() {
           className="mt-0 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300"
         >
           {playerAwards.length > 0 && <TrophyCase awards={playerAwards} variant="compact" />}
-          {stableG1Wins.length > 0 && (
-            <G1TrophyList wins={stableG1Wins} title="Stable Graded Wins" />
-          )}
 
           {/* Filters */}
           <div className="flex flex-wrap items-center justify-between gap-4 bg-black/20 p-4 border border-white/5">

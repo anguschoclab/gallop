@@ -9,6 +9,7 @@ import type { RegionalAward, RegionalAwardCategory } from "@/game/awards/types";
 import { CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
 import { getRegionFlag, getRegionCountryLabel } from "@/lib/countryFlag";
 import { Trophy, Award, Star } from "lucide-react";
+import { VisualTrophy, TrophyShelf } from "./VisualTrophy";
 
 interface HorseAwardsPanelProps {
   horse: Horse;
@@ -79,34 +80,22 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
               <Star className="w-3 h-3" />
               Horse of the Year
             </h4>
-            <div className="flex flex-wrap gap-2">
+            <TrophyShelf count={hotyAwards.length}>
               {hotyAwards.map((award) => (
-                <div
+                <VisualTrophy
                   key={award.id}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-fame/10 border border-fame/30"
-                >
-                  <AwardIcon
-                    region={award.region}
-                    category={award.category}
-                    size="small"
-                    animated
-                  />
-                  <div className="text-sm">
-                    <div className="font-medium flex items-center gap-1.5">
-                      <span>Y{award.year}</span>
-                      <span title={getRegionCountryLabel(award.region)}>
-                        {getRegionFlag(award.region)}
-                      </span>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {getRegionCountryLabel(award.region)} · {award.points} pts
-                    </div>
-                  </div>
-                </div>
+                  tone="platinum"
+                  size={72}
+                  label="HOTY"
+                  sublabel={`Y${award.year}`}
+                  flag={getRegionFlag(award.region)}
+                  title={`Horse of the Year · ${getRegionCountryLabel(award.region)} · Y${award.year}`}
+                />
               ))}
-            </div>
+            </TrophyShelf>
           </div>
         )}
+
 
         {/* Category Awards — compact when a category exceeds COMPACT_THRESHOLD years */}
         {categoryAwards.length > 0 && (
