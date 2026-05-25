@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/formatting";
 import type { AuctionBidRecord, Stable } from "@/game/types";
@@ -8,6 +9,12 @@ interface BidHistoryPanelProps {
 }
 
 export function BidHistoryPanel({ bidHistory, stables }: BidHistoryPanelProps) {
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) lookups instead of running O(N) .find() inside the .map() loop.
+  // Impact: Reduces rendering complexity of bid history from O(N*M) to O(N+M),
+  // preventing performance degradation as the bid history grows long.
+  const stableMap = useMemo(() => new Map(stables.map((s) => [s.id, s])), [stables]);
+
   return (
     <div
       id="bid-history-panel"
@@ -20,7 +27,7 @@ export function BidHistoryPanel({ bidHistory, stables }: BidHistoryPanelProps) {
           const label =
             record.stableId === undefined
               ? "YOU"
-              : (stables.find((s) => s.id === record.stableId)?.name ?? record.stableId);
+              : (stableMap.get(record.stableId)?.name ?? record.stableId);
           return (
             <div key={idx} className="flex items-baseline justify-between text-xs gap-3">
               <span
