@@ -184,6 +184,18 @@ function SettingsPage() {
                 onCheckedChange={(checked) => updateGameplaySettings({ pauseOnEvents: checked })}
               />
             </div>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="parent-name-blending">Parent Name Blending</Label>
+                <p className="text-xs text-cream-muted">Blend parent names for foals when breeding</p>
+              </div>
+              <Switch
+                id="parent-name-blending"
+                checked={gameplay?.parentNameBlendingEnabled ?? true}
+                onCheckedChange={(checked) => updateGameplaySettings({ parentNameBlendingEnabled: checked })}
+              />
+            </div>
           </CardContent>
         </Card>
 

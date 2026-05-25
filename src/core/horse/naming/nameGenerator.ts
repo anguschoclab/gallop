@@ -32,6 +32,7 @@ export interface NamingContext {
   region?: RegionalSystem;
   existingNames: Set<string>;
   deceasedNames?: Set<string>;
+  parentNameBlendingEnabled?: boolean;
 }
 
 /**
@@ -56,6 +57,9 @@ const NAMING_STRATEGIES: Record<
 > = {
   pedigree: (context, rng) => {
     if (context.sireName && context.damName) {
+      if (context.parentNameBlendingEnabled === false) {
+        return undefined;
+      }
       return rng.next() < 0.5
         ? generatePortmanteau(context.sireName, context.damName, rng)
         : extractAndCombine(context.sireName, context.damName, rng);
@@ -150,7 +154,7 @@ export function generateProceduralHorseName(
  */
 function pickStrategy(context: NamingContext, rng: Rng): NamingOptions["strategy"] {
   const r = rng.next();
-  if (context.sireName && context.damName && r < 0.4) return "pedigree";
+  if (context.sireName && context.damName && context.parentNameBlendingEnabled !== false && r < 0.4) return "pedigree";
   if ((context.sireName || context.damName) && r < 0.6) return "ancestor";
   if (context.namingTheme && r < 0.85) return "thematic";
   if (context.region) return "regional";

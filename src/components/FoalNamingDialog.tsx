@@ -26,6 +26,7 @@ interface FoalNamingDialogProps {
 export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOpen, onClose }) => {
   const horses = useGallopStore((s) => s.horses);
   const renameHorse = useGallopStore((s) => s.renameHorse);
+  const userSettings = useGallopStore((s) => s.userSettings);
   const foal = useMemo(() => horses.find((h) => h.id === foalId), [horses, foalId]);
 
   const [name, setName] = useState("");
@@ -33,6 +34,8 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
     valid: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const parentNameBlendingEnabled = userSettings?.gameplay?.parentNameBlendingEnabled ?? true;
 
   // Initialize with current name or a suggestion
   useEffect(() => {
@@ -50,13 +53,13 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
     const rng = createRng(`foal-name-${foal.id}-${Date.now()}`);
     const existingNames = new Set(horses.map((h) => h.name));
     const suggestion = generateProceduralHorseName(
-      { sireName: foal.sireName, damName: foal.damName, existingNames },
+      { sireName: foal.sireName, damName: foal.damName, existingNames, parentNameBlendingEnabled },
       rng,
     );
     setName(suggestion);
     const validation = validateHorseName(suggestion, existingNames);
     setValidation({ valid: validation.isValid, reason: validation.reason });
-  }, [foal, horses]);
+  }, [foal, horses, parentNameBlendingEnabled]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;

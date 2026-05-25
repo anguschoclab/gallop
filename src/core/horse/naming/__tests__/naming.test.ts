@@ -61,14 +61,28 @@ describe("Horse Naming System", () => {
       expect(name.length).toBeLessThanOrEqual(18);
     });
 
-    it("should respect pedigree strategy", () => {
+    it("should respect pedigree strategy when parent name blending is enabled", () => {
       const pedigreeContext = {
         ...context,
         sireName: "Seattle Slew",
         damName: "Gold Digger",
+        parentNameBlendingEnabled: true,
       };
       const name = generateProceduralHorseName(pedigreeContext, rng, { strategy: "pedigree" });
       expect(name.toLowerCase()).toMatch(/slew|gold|digger/);
+    });
+
+    it("should fallback and NOT blend parent names when parent name blending is disabled", () => {
+      const pedigreeContext = {
+        ...context,
+        sireName: "Seattle Slew",
+        damName: "Gold Digger",
+        parentNameBlendingEnabled: false,
+      };
+      const name = generateProceduralHorseName(pedigreeContext, rng, { strategy: "pedigree" });
+      // Since blending is disabled, it should fallback to generic/thematic and not contain parents' name parts
+      expect(name.toLowerCase()).not.toMatch(/slew/);
+      expect(name.toLowerCase()).not.toMatch(/digger/);
     });
 
     it("should respect thematic strategy", () => {

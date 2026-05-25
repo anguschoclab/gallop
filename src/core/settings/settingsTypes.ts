@@ -37,6 +37,8 @@ export interface GameplaySettings {
   showDailyEarnings: boolean;
   /** Pause on significant events (awards, Triple Crown races) */
   pauseOnEvents: boolean;
+  /** Produce foals with blended names from both parents when breeding */
+  parentNameBlendingEnabled: boolean;
 }
 
 /**
@@ -107,6 +109,7 @@ export function createDefaultUserSettings(currentDay: number = 1): UserSettings 
       suggestRaceEntries: true,
       showDailyEarnings: true,
       pauseOnEvents: true,
+      parentNameBlendingEnabled: true,
     },
     notifications: {
       raceResults: true,

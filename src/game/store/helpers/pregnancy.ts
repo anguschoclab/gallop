@@ -62,13 +62,15 @@ export function resolvePregnancies(
   stables: Stable[],
   usedNames: Set<string>,
   newDay: number,
-  state?: Pick<GameState, "horses">,
+  state?: Pick<GameState, "horses" | "userSettings">,
 ): PregnancyResult {
   const newLogs: { day: number; text: string }[] = [];
   const pregnancies = currentPregnancies.map((p) => ({ ...p }));
   const damsById = new Map(horses.map((h) => [h.id, h]));
   const foals: Horse[] = [];
   let cashAdjustment = 0;
+
+  const parentNameBlendingEnabled = state?.userSettings?.gameplay?.parentNameBlendingEnabled ?? true;
 
   for (const p of pregnancies) {
     if (p.resolved) continue;
@@ -84,17 +86,18 @@ export function resolvePregnancies(
       continue;
     }
 
-    // Prepare naming context for NPC foals
-    let namingContext = undefined;
+    // Prepare naming context
+    const namingContext: any = {
+      existingNames: usedNames,
+      parentNameBlendingEnabled,
+    };
+
     if (dam?.stableId) {
       const stable = stables.find((s) => s.id === dam.stableId);
       if (stable) {
         const regionalSystem = getRegionalSystemFromCountry(stable.country || "USA");
-        namingContext = {
-          region: regionalSystem,
-          namingTheme: PERSONALITY_CONFIG[stable.personality]?.namingTheme,
-          existingNames: usedNames,
-        };
+        namingContext.region = regionalSystem;
+        namingContext.namingTheme = PERSONALITY_CONFIG[stable.personality]?.namingTheme;
       }
     }
 
