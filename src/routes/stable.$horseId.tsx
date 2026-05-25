@@ -115,7 +115,15 @@ const generateRiderFeedback = (horse: any, distance: number, surface: string) =>
   return feedback;
 };
 
-export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses: any[]; cash: number }) {
+export function PrivateTrialDialog({
+  horse,
+  horses,
+  cash,
+}: {
+  horse: any;
+  horses: any[];
+  cash: number;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [distance, setDistance] = useState<number>(1200);
   const [surface, setSurface] = useState<"Turf" | "Dirt" | "Synthetic">("Turf");
@@ -154,10 +162,10 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
 
   const chartData = useMemo(() => {
     if (!trialResult || !trialResult.snapshots) return [];
-    
+
     let oppName = "Pacemaker";
     if (opponentId !== "pacemaker") {
-      const oppHorse = eligibleOpponents.find(h => h.id === opponentId);
+      const oppHorse = eligibleOpponents.find((h) => h.id === opponentId);
       if (oppHorse) oppName = oppHorse.name;
     }
 
@@ -173,22 +181,24 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
 
   const runnerStats = useMemo(() => {
     if (!trialResult || !trialResult.result) return [];
-    
+
     let oppName = "Pacemaker";
     if (opponentId !== "pacemaker") {
-      const oppHorse = eligibleOpponents.find(h => h.id === opponentId);
+      const oppHorse = eligibleOpponents.find((h) => h.id === opponentId);
       if (oppHorse) oppName = oppHorse.name;
     }
 
-    return trialResult.result.map((res: any) => {
-      const isPlayer = res.horseId === horse.id;
-      return {
-        name: isPlayer ? horse.name : oppName,
-        isPlayer,
-        position: res.position,
-        time: res.time,
-      };
-    }).sort((a: any, b: any) => a.position - b.position);
+    return trialResult.result
+      .map((res: any) => {
+        const isPlayer = res.horseId === horse.id;
+        return {
+          name: isPlayer ? horse.name : oppName,
+          isPlayer,
+          position: res.position,
+          time: res.time,
+        };
+      })
+      .sort((a: any, b: any) => a.position - b.position);
   }, [trialResult, horse.name, opponentId, eligibleOpponents]);
 
   const feedback = useMemo(() => {
@@ -197,10 +207,13 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
   }, [trialResult, horse, distance, surface]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      setIsOpen(open);
-      if (!open) handleReset();
-    }}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) handleReset();
+      }}
+    >
       <DialogTrigger asChild>
         <Button
           disabled={horse.energy < 20 || cash < 250}
@@ -229,7 +242,9 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
           <div className="space-y-6 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">Distance</Label>
+                <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">
+                  Distance
+                </Label>
                 <Select value={String(distance)} onValueChange={(v) => setDistance(Number(v))}>
                   <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
                     <SelectValue />
@@ -247,7 +262,9 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">Surface</Label>
+                <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">
+                  Surface
+                </Label>
                 <Select value={surface} onValueChange={(v: any) => setSurface(v)}>
                   <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
                     <SelectValue />
@@ -260,7 +277,9 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">Opponent</Label>
+                <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">
+                  Opponent
+                </Label>
                 <Select value={opponentId} onValueChange={setOpponentId}>
                   <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
                     <SelectValue />
@@ -306,7 +325,13 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
           <div className="space-y-6 pt-4">
             <div className="grid grid-cols-2 gap-4">
               {runnerStats.map((stat: any, idx: number) => (
-                <div key={idx} className={cn("p-4 border", stat.isPlayer ? "border-gold/30 bg-gold/5" : "border-white/5 bg-black/20")}>
+                <div
+                  key={idx}
+                  className={cn(
+                    "p-4 border",
+                    stat.isPlayer ? "border-gold/30 bg-gold/5" : "border-white/5 bg-black/20",
+                  )}
+                >
                   <div className="text-[10px] font-black uppercase tracking-widest text-cream/40 leading-none mb-1">
                     Finish Position: {stat.position}
                   </div>
@@ -322,7 +347,9 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
 
             {/* Velocity Trajectory Chart */}
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">Velocity Profile (km/h)</Label>
+              <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">
+                Velocity Profile (km/h)
+              </Label>
               <div className="h-56 w-full bg-black/40 border border-white/5 p-4 relative">
                 <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-gold/40" />
                 <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-gold/40" />
@@ -331,7 +358,11 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
 
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={chartData} margin={{ top: 8, right: 12, left: -20, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                    <CartesianGrid
+                      strokeDasharray="2 2"
+                      stroke="rgba(255,255,255,0.05)"
+                      vertical={false}
+                    />
                     <XAxis
                       dataKey="t"
                       tick={{ fontSize: 9, fontFamily: "monospace", fill: "rgba(245,245,220,0.4)" }}
@@ -370,7 +401,11 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
                     />
                     <Line
                       type="monotone"
-                      dataKey={opponentId === "pacemaker" ? "Pacemaker" : eligibleOpponents.find(h => h.id === opponentId)?.name || "Opponent"}
+                      dataKey={
+                        opponentId === "pacemaker"
+                          ? "Pacemaker"
+                          : eligibleOpponents.find((h) => h.id === opponentId)?.name || "Opponent"
+                      }
                       stroke="#60a5fa" // Blue
                       strokeWidth={2}
                       dot={false}
@@ -382,7 +417,9 @@ export function PrivateTrialDialog({ horse, horses, cash }: { horse: any; horses
 
             {/* Rider feedback */}
             <div className="bg-black/20 border border-white/5 p-4 rounded-none">
-              <div className="text-[10px] font-black uppercase tracking-widest text-gold mb-2">Rider Feedback</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-gold mb-2">
+                Rider Feedback
+              </div>
               <p className="text-xs font-mono italic text-cream/90">{feedback}</p>
             </div>
 

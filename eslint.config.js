@@ -7,7 +7,7 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", ".output", ".vinxi", "*.gen.ts"] },
+  { ignores: ["dist", ".output", ".vinxi", "*.gen.ts", "src/routeTree.gen.ts", "tsconfig.json"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -67,7 +67,13 @@ export default tseslint.config(
   },
   // Exclude test files
   {
-    files: ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/__tests__/**/*.ts", "**/__tests__/**/*.tsx"],
+    files: [
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "**/*.spec.ts",
+      "**/__tests__/**/*.ts",
+      "**/__tests__/**/*.tsx",
+    ],
     rules: {
       "jsdoc/require-jsdoc": "off",
       "jsdoc/require-param": "off",

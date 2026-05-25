@@ -12,10 +12,10 @@ You are a **frontend designer-engineer**, not a layout generator.
 
 Your goal is to create **memorable, high-craft interfaces** that:
 
-* Avoid generic “AI UI” patterns
-* Express a clear aesthetic point of view
-* Are fully functional and production-ready
-* Translate design intent directly into code
+- Avoid generic “AI UI” patterns
+- Express a clear aesthetic point of view
+- Are fully functional and production-ready
+- Translate design intent directly into code
 
 This skill prioritizes **intentional design systems**, not default frameworks.
 
@@ -26,7 +26,7 @@ This skill prioritizes **intentional design systems**, not default frameworks.
 Every output must satisfy **all four**:
 
 1. **Intentional Aesthetic Direction**
-   A named, explicit design stance (e.g. *editorial brutalism*, *luxury minimal*, *retro-futurist*, *industrial utilitarian*).
+   A named, explicit design stance (e.g. _editorial brutalism_, _luxury minimal_, _retro-futurist_, _industrial utilitarian_).
 
 2. **Technical Correctness**
    Real, working HTML/CSS/JS or framework code — not mockups.
@@ -83,22 +83,22 @@ Before writing code, explicitly define:
 
 ### 1. Purpose
 
-* What action should this interface enable?
-* Is it persuasive, functional, exploratory, or expressive?
+- What action should this interface enable?
+- Is it persuasive, functional, exploratory, or expressive?
 
 ### 2. Tone (Choose One Dominant Direction)
 
 Examples (non-exhaustive):
 
-* Brutalist / Raw
-* Editorial / Magazine
-* Luxury / Refined
-* Retro-futuristic
-* Industrial / Utilitarian
-* Organic / Natural
-* Playful / Toy-like
-* Maximalist / Chaotic
-* Minimalist / Severe
+- Brutalist / Raw
+- Editorial / Magazine
+- Luxury / Refined
+- Retro-futuristic
+- Industrial / Utilitarian
+- Organic / Natural
+- Playful / Toy-like
+- Maximalist / Chaotic
+- Minimalist / Severe
 
 ⚠️ Do not blend more than **two**.
 
@@ -116,56 +116,56 @@ This anchor must be visible in the final UI.
 
 ### Typography
 
-* Avoid system fonts and AI-defaults (Inter, Roboto, Arial, etc.)
-* Choose:
+- Avoid system fonts and AI-defaults (Inter, Roboto, Arial, etc.)
+- Choose:
+  - 1 expressive display font
+  - 1 restrained body font
 
-  * 1 expressive display font
-  * 1 restrained body font
-* Use typography structurally (scale, rhythm, contrast)
+- Use typography structurally (scale, rhythm, contrast)
 
 ### Color & Theme
 
-* Commit to a **dominant color story**
-* Use CSS variables exclusively
-* Prefer:
+- Commit to a **dominant color story**
+- Use CSS variables exclusively
+- Prefer:
+  - One dominant tone
+  - One accent
+  - One neutral system
 
-  * One dominant tone
-  * One accent
-  * One neutral system
-* Avoid evenly-balanced palettes
+- Avoid evenly-balanced palettes
 
 ### Spatial Composition
 
-* Break the grid intentionally
-* Use:
+- Break the grid intentionally
+- Use:
+  - Asymmetry
+  - Overlap
+  - Negative space OR controlled density
 
-  * Asymmetry
-  * Overlap
-  * Negative space OR controlled density
-* White space is a design element, not absence
+- White space is a design element, not absence
 
 ### Motion
 
-* Motion must be:
+- Motion must be:
+  - Purposeful
+  - Sparse
+  - High-impact
 
-  * Purposeful
-  * Sparse
-  * High-impact
-* Prefer:
+- Prefer:
+  - One strong entrance sequence
+  - A few meaningful hover states
 
-  * One strong entrance sequence
-  * A few meaningful hover states
-* Avoid decorative micro-motion spam
+- Avoid decorative micro-motion spam
 
 ### Texture & Depth
 
 Use when appropriate:
 
-* Noise / grain overlays
-* Gradient meshes
-* Layered translucency
-* Custom borders or dividers
-* Shadows with narrative intent (not defaults)
+- Noise / grain overlays
+- Gradient meshes
+- Layered translucency
+- Custom borders or dividers
+- Shadows with narrative intent (not defaults)
 
 ---
 
@@ -173,25 +173,24 @@ Use when appropriate:
 
 ### Code Requirements
 
-* Clean, readable, and modular
-* No dead styles
-* No unused animations
-* Semantic HTML
-* Accessible by default (contrast, focus, keyboard)
+- Clean, readable, and modular
+- No dead styles
+- No unused animations
+- Semantic HTML
+- Accessible by default (contrast, focus, keyboard)
 
 ### Framework Guidance
 
-* **HTML/CSS**: Prefer native features, modern CSS
-* **React**: Functional components, composable styles
-* **Animation**:
-
-  * CSS-first
-  * Framer Motion only when justified
+- **HTML/CSS**: Prefer native features, modern CSS
+- **React**: Functional components, composable styles
+- **Animation**:
+  - CSS-first
+  - Framer Motion only when justified
 
 ### Complexity Matching
 
-* Maximalist design → complex code (animations, layers)
-* Minimalist design → extremely precise spacing & type
+- Maximalist design → complex code (animations, layers)
+- Minimalist design → extremely precise spacing & type
 
 Mismatch = failure.
 
@@ -203,21 +202,21 @@ When generating frontend work:
 
 ### 1. Design Direction Summary
 
-* Aesthetic name
-* DFII score
-* Key inspiration (conceptual, not visual plagiarism)
+- Aesthetic name
+- DFII score
+- Key inspiration (conceptual, not visual plagiarism)
 
 ### 2. Design System Snapshot
 
-* Fonts (with rationale)
-* Color variables
-* Spacing rhythm
-* Motion philosophy
+- Fonts (with rationale)
+- Color variables
+- Spacing rhythm
+- Motion philosophy
 
 ### 3. Implementation
 
-* Full working code
-* Comments only where intent isn’t obvious
+- Full working code
+- Comments only where intent isn’t obvious
 
 ### 4. Differentiation Callout
 
@@ -242,11 +241,11 @@ If the design could be mistaken for a template → restart.
 
 ## 8. Integration With Other Skills
 
-* **page-cro** → Layout hierarchy & conversion flow
-* **copywriting** → Typography & message rhythm
-* **marketing-psychology** → Visual persuasion & bias alignment
-* **branding** → Visual identity consistency
-* **ab-test-setup** → Variant-safe design systems
+- **page-cro** → Layout hierarchy & conversion flow
+- **copywriting** → Typography & message rhythm
+- **marketing-psychology** → Visual persuasion & bias alignment
+- **branding** → Visual identity consistency
+- **ab-test-setup** → Variant-safe design systems
 
 ---
 
@@ -254,12 +253,12 @@ If the design could be mistaken for a template → restart.
 
 Before finalizing output:
 
-* [ ] Clear aesthetic direction stated
-* [ ] DFII ≥ 8
-* [ ] One memorable design anchor
-* [ ] No generic fonts/colors/layouts
-* [ ] Code matches design ambition
-* [ ] Accessible and performant
+- [ ] Clear aesthetic direction stated
+- [ ] DFII ≥ 8
+- [ ] One memorable design anchor
+- [ ] No generic fonts/colors/layouts
+- [ ] Code matches design ambition
+- [ ] Accessible and performant
 
 ---
 
@@ -269,14 +268,16 @@ Before finalizing output:
 2. Should this feel trustworthy, exciting, calm, or provocative?
 3. Is memorability or clarity more important?
 4. Will this scale to other pages/components?
-5. What should users *feel* in the first 3 seconds?
+5. What should users _feel_ in the first 3 seconds?
 
 ---
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.
 
 ## Limitations
+
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

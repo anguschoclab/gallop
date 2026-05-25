@@ -103,7 +103,8 @@ export function HorseCard({
         }}
         className={cn(
           "bg-slate-900/40 border-white/5 rounded-none hover:border-gold/40 transition-all duration-300 relative overflow-hidden group shadow-xl",
-          onClick && "cursor-pointer focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
+          onClick &&
+            "cursor-pointer focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
           className,
         )}
         onClick={onClick}
@@ -294,7 +295,8 @@ export function HorseCard({
       }}
       className={cn(
         "bg-slate-900/60 border-white/5 rounded-none shadow-2xl relative overflow-hidden group flex flex-col h-full",
-        onClick && "cursor-pointer hover:border-gold/40 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
+        onClick &&
+          "cursor-pointer hover:border-gold/40 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
         className,
       )}
       onClick={onClick}

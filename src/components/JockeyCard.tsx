@@ -83,7 +83,8 @@ export function JockeyCard({
       }}
       className={cn(
         "bg-slate-900/60 border-white/5 rounded-none shadow-2xl relative overflow-hidden group flex flex-col h-full transition-all duration-300",
-        onClick && "cursor-pointer hover:border-blue-400/40 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none",
+        onClick &&
+          "cursor-pointer hover:border-blue-400/40 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none",
         className,
       )}
       onClick={onClick}
@@ -224,11 +225,14 @@ export function JockeyCard({
               <span className="text-[8px] font-black uppercase text-cream/20 tracking-widest">
                 Licensed
               </span>
-              <span className={cn(
-                "text-[9px] font-mono font-bold tracking-widest uppercase flex items-center gap-1.5",
-                (jockey as any).isApprentice ? "text-amber-500/60" : "text-success/60"
-              )}>
-                <ShieldCheck className="h-2.5 w-2.5" /> {(jockey as any).isApprentice ? "ACTIVE_ACADEMY" : "ACTIVE_PRO"}
+              <span
+                className={cn(
+                  "text-[9px] font-mono font-bold tracking-widest uppercase flex items-center gap-1.5",
+                  (jockey as any).isApprentice ? "text-amber-500/60" : "text-success/60",
+                )}
+              >
+                <ShieldCheck className="h-2.5 w-2.5" />{" "}
+                {(jockey as any).isApprentice ? "ACTIVE_ACADEMY" : "ACTIVE_PRO"}
               </span>
             </div>
             <Link

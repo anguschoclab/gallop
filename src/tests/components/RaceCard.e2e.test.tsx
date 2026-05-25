@@ -37,7 +37,10 @@ vi.mock("@/game/store", () => ({
     return selector({ horses: _mockHorses });
   },
   useGallopStore: (selector: (s: any) => any) => {
-    return selector({ weather: { byTrack: _mockWeatherByTrack, forecast: _mockForecast }, horses: _mockHorses });
+    return selector({
+      weather: { byTrack: _mockWeatherByTrack, forecast: _mockForecast },
+      horses: _mockHorses,
+    });
   },
   shallow: (a: any, b: any) => a === b,
 }));
@@ -110,7 +113,9 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
   it("renders the storm WeatherForecastStrip when the store has a storm pattern forecast", () => {
     _mockForecast = { [STORM_TRACK_ID]: makeStormForecast(STORM_TRACK_ID, 7) };
     _mockWeatherByTrack = {
-      [STORM_TRACK_ID]: [{ trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95 }],
+      [STORM_TRACK_ID]: [
+        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95 },
+      ],
     };
 
     const html = render(makeRace());
@@ -129,7 +134,9 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
   it("shows the 'heavy' condition label badge when trackCondition is heavy", () => {
     _mockForecast = { [STORM_TRACK_ID]: makeStormForecast(STORM_TRACK_ID, 7) };
     _mockWeatherByTrack = {
-      [STORM_TRACK_ID]: [{ trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95 }],
+      [STORM_TRACK_ID]: [
+        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95 },
+      ],
     };
 
     const html = render(makeRace({ trackCondition: "heavy" }));
@@ -145,7 +152,7 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
 
     expect(html).toContain("Belmont Stakes");
     expect(html).toContain("2400"); // distance
-    expect(html).toContain("Dirt");  // surface
+    expect(html).toContain("Dirt"); // surface
     // Purse — formatted as currency
     expect(html).toContain("1,500,000");
   });
@@ -195,12 +202,14 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
   // ── owned horses ──────────────────────────────────────────────────────────
   it("shows 'Entered' badge when the race has owned entries", () => {
     _mockForecast = { [STORM_TRACK_ID]: makeStormForecast(STORM_TRACK_ID, 7) };
-    _mockHorses = [{
-      id: "horse-1",
-      name: "Thunder Run",
-      stats: { speed: 75, stamina: 70, acceleration: 72, grit: 68, temperament: 65 },
-      form: 0,
-    }];
+    _mockHorses = [
+      {
+        id: "horse-1",
+        name: "Thunder Run",
+        stats: { speed: 75, stamina: 70, acceleration: 72, grit: 68, temperament: 65 },
+        form: 0,
+      },
+    ];
 
     const raceWithOwned = makeRace({
       entries: [{ horseId: "horse-1", owned: true, jockeyId: null }] as any,

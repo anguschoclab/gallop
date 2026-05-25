@@ -28,12 +28,13 @@ Never optimize without measuring:
 
 ```javascript
 // Measure execution time
-console.time('operation');
+console.time("operation");
 await slowOperation();
-console.timeEnd('operation'); // operation: 2341ms
+console.timeEnd("operation"); // operation: 2341ms
 ```
 
 **What to measure:**
+
 - Page load time
 - API response time
 - Database query time
@@ -46,18 +47,21 @@ console.timeEnd('operation'); // operation: 2341ms
 Use profiling tools to find the slow parts:
 
 **Browser:**
+
 ```
 DevTools → Performance tab → Record → Stop
 Look for long tasks (red bars)
 ```
 
 **Node.js:**
+
 ```bash
 node --prof app.js
 node --prof-process isolate-*.log > profile.txt
 ```
 
 **Database:**
+
 ```sql
 EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'test@example.com';
 ```
@@ -71,6 +75,7 @@ Fix the slowest thing first (biggest impact).
 ### Database Queries
 
 **Problem: N+1 Queries**
+
 ```javascript
 // Bad: N+1 queries
 const users = await db.users.find();
@@ -79,11 +84,11 @@ for (const user of users) {
 }
 
 // Good: Single query with JOIN
-const users = await db.users.find()
-  .populate('posts'); // 1 query
+const users = await db.users.find().populate("posts"); // 1 query
 ```
 
 **Problem: Missing Index**
+
 ```sql
 -- Check slow query
 EXPLAIN SELECT * FROM users WHERE email = 'test@example.com';
@@ -97,22 +102,25 @@ EXPLAIN SELECT * FROM users WHERE email = 'test@example.com';
 -- Shows: Index Scan (good)
 ```
 
-**Problem: SELECT ***
+**Problem: SELECT \***
+
 ```javascript
 // Bad: Fetches all columns
-const users = await db.query('SELECT * FROM users');
+const users = await db.query("SELECT * FROM users");
 
 // Good: Only needed columns
-const users = await db.query('SELECT id, name, email FROM users');
+const users = await db.query("SELECT id, name, email FROM users");
 ```
 
 **Problem: No Pagination**
+
 ```javascript
 // Bad: Returns all records
 const users = await db.users.find();
 
 // Good: Paginated
-const users = await db.users.find()
+const users = await db.users
+  .find()
   .limit(20)
   .skip((page - 1) * 20);
 ```
@@ -120,28 +128,30 @@ const users = await db.users.find()
 ### API Performance
 
 **Problem: No Caching**
+
 ```javascript
 // Bad: Hits database every time
-app.get('/api/stats', async (req, res) => {
+app.get("/api/stats", async (req, res) => {
   const stats = await db.stats.calculate(); // Slow
   res.json(stats);
 });
 
 // Good: Cache for 5 minutes
 const cache = new Map();
-app.get('/api/stats', async (req, res) => {
-  const cached = cache.get('stats');
+app.get("/api/stats", async (req, res) => {
+  const cached = cache.get("stats");
   if (cached && Date.now() - cached.time < 300000) {
     return res.json(cached.data);
   }
-  
+
   const stats = await db.stats.calculate();
-  cache.set('stats', { data: stats, time: Date.now() });
+  cache.set("stats", { data: stats, time: Date.now() });
   res.json(stats);
 });
 ```
 
 **Problem: Sequential Operations**
+
 ```javascript
 // Bad: Sequential (slow)
 const user = await getUser(id);
@@ -150,34 +160,34 @@ const comments = await getComments(id);
 // Total: 300ms + 200ms + 150ms = 650ms
 
 // Good: Parallel (fast)
-const [user, posts, comments] = await Promise.all([
-  getUser(id),
-  getPosts(id),
-  getComments(id)
-]);
+const [user, posts, comments] = await Promise.all([getUser(id), getPosts(id), getComments(id)]);
 // Total: max(300ms, 200ms, 150ms) = 300ms
 ```
 
 **Problem: Large Payloads**
+
 ```javascript
 // Bad: Returns everything
 res.json(users); // 5MB response
 
 // Good: Only needed fields
-res.json(users.map(u => ({
-  id: u.id,
-  name: u.name,
-  email: u.email
-}))); // 500KB response
+res.json(
+  users.map((u) => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+  })),
+); // 500KB response
 ```
 
 ### Frontend Performance
 
 **Problem: Unnecessary Re-renders**
+
 ```javascript
 // Bad: Re-renders on every parent update
 function UserList({ users }) {
-  return users.map(user => <UserCard user={user} />);
+  return users.map((user) => <UserCard user={user} />);
 }
 
 // Good: Memoized
@@ -187,41 +197,47 @@ const UserCard = React.memo(({ user }) => {
 ```
 
 **Problem: Large Bundle**
+
 ```javascript
 // Bad: Imports entire library
-import _ from 'lodash'; // 70KB
+import _ from "lodash"; // 70KB
 
 // Good: Import only what you need
-import debounce from 'lodash/debounce'; // 2KB
+import debounce from "lodash/debounce"; // 2KB
 ```
 
 **Problem: No Code Splitting**
+
 ```javascript
 // Bad: Everything in one bundle
-import HeavyComponent from './HeavyComponent';
+import HeavyComponent from "./HeavyComponent";
 
 // Good: Lazy load
-const HeavyComponent = React.lazy(() => import('./HeavyComponent'));
+const HeavyComponent = React.lazy(() => import("./HeavyComponent"));
 ```
 
 **Problem: Unoptimized Images**
+
 ```html
 <!-- Bad: Large image -->
-<img src="photo.jpg" /> <!-- 5MB -->
+<img src="photo.jpg" />
+<!-- 5MB -->
 
 <!-- Good: Optimized and responsive -->
-<img 
-  src="photo-small.webp" 
+<img
+  src="photo-small.webp"
   srcset="photo-small.webp 400w, photo-large.webp 800w"
   loading="lazy"
   width="400"
   height="300"
-/> <!-- 50KB -->
+/>
+<!-- 50KB -->
 ```
 
 ### Algorithm Optimization
 
 **Problem: Inefficient Algorithm**
+
 ```javascript
 // Bad: O(n²) - nested loops
 function findDuplicates(arr) {
@@ -247,6 +263,7 @@ function findDuplicates(arr) {
 ```
 
 **Problem: Repeated Calculations**
+
 ```javascript
 // Bad: Calculates every time
 function getTotal(items) {
@@ -263,28 +280,30 @@ const getTotal = useMemo(() => {
 ### Memory Optimization
 
 **Problem: Memory Leak**
+
 ```javascript
 // Bad: Event listener not cleaned up
 useEffect(() => {
-  window.addEventListener('scroll', handleScroll);
+  window.addEventListener("scroll", handleScroll);
   // Memory leak!
 }, []);
 
 // Good: Cleanup
 useEffect(() => {
-  window.addEventListener('scroll', handleScroll);
-  return () => window.removeEventListener('scroll', handleScroll);
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
 }, []);
 ```
 
 **Problem: Large Data in Memory**
+
 ```javascript
 // Bad: Loads entire file into memory
-const data = fs.readFileSync('huge-file.txt'); // 1GB
+const data = fs.readFileSync("huge-file.txt"); // 1GB
 
 // Good: Stream it
-const stream = fs.createReadStream('huge-file.txt');
-stream.on('data', chunk => process(chunk));
+const stream = fs.createReadStream("huge-file.txt");
+stream.on("data", (chunk) => process(chunk));
 ```
 
 ## Measuring Impact
@@ -293,15 +312,15 @@ Always measure before and after:
 
 ```javascript
 // Before optimization
-console.time('query');
+console.time("query");
 const users = await db.users.find();
-console.timeEnd('query');
+console.timeEnd("query");
 // query: 2341ms
 
 // After optimization (added index)
-console.time('query');
+console.time("query");
 const users = await db.users.find();
-console.timeEnd('query');
+console.timeEnd("query");
 // query: 23ms
 
 // Improvement: 100x faster!
@@ -322,21 +341,25 @@ Time to Interactive: < 3 seconds
 ## Tools
 
 **Browser:**
+
 - Chrome DevTools Performance tab
 - Lighthouse (audit)
 - Network tab (waterfall)
 
 **Node.js:**
+
 - `node --prof` (profiling)
 - `clinic` (diagnostics)
 - `autocannon` (load testing)
 
 **Database:**
+
 - `EXPLAIN ANALYZE` (query plans)
 - Slow query log
 - Database profiler
 
 **Monitoring:**
+
 - New Relic
 - Datadog
 - Sentry Performance
@@ -389,6 +412,7 @@ Easy optimizations with big impact:
 - `@bug-hunter` - Debugging
 
 ## Limitations
+
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

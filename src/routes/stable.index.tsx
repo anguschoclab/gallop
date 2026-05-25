@@ -451,7 +451,9 @@ function StablePage() {
                 placeholder="Identify Rival Entity..."
                 className="pl-9 h-10 bg-slate-950/50 border-white/10 text-sm font-mono uppercase tracking-tight focus-visible:ring-blue-500/30"
                 value={rivalQ}
-                onChange={(e) => navigate({ search: (p: any) => ({ ...p, rivalQ: e.target.value }) })}
+                onChange={(e) =>
+                  navigate({ search: (p: any) => ({ ...p, rivalQ: e.target.value }) })
+                }
               />
             </div>
             <Select

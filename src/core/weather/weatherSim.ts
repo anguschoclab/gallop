@@ -22,6 +22,9 @@ export { toTrackWeatherPattern };
  * Seasonal temperature offset based on day of year and hemisphere.
  * Peaks at +amp around day-of-year 200 in the Northern hemisphere,
  * shifted by 6 months for the Southern hemisphere.
+ * @param day
+ * @param hemisphere
+ * @param amp
  */
 function seasonalTempOffset(day: number, hemisphere: Hemisphere, amp: number): number {
   const dayOfYear = ((day - 1) % 365) + 1;
@@ -33,6 +36,9 @@ function seasonalTempOffset(day: number, hemisphere: Hemisphere, amp: number): n
 /**
  * Seasonal row bias for transition matrices based on hemisphere.
  * Southern hemisphere gets wetter summers (mirrored pattern).
+ * @param row
+ * @param hemisphere
+ * @param day
  */
 function seasonalRowBias(row: number[], hemisphere: Hemisphere, day: number): number[] {
   const dayOfYear = ((day - 1) % 365) + 1;

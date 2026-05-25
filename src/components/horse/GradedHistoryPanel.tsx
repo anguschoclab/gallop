@@ -50,8 +50,7 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
   }, []);
 
   const countryFor = (r: GradedHistoryEntry): string | undefined => {
-    if (r.raceId && raceCountryByKey.byId.has(r.raceId))
-      return raceCountryByKey.byId.get(r.raceId);
+    if (r.raceId && raceCountryByKey.byId.has(r.raceId)) return raceCountryByKey.byId.get(r.raceId);
     return raceCountryByKey.byName.get(r.raceName);
   };
 
@@ -121,7 +120,6 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
             </div>
           );
         })()}
-
 
         <div className="grid grid-cols-3 gap-2">
           {(["G1", "G2", "G3"] as const).map((g) => (

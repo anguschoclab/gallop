@@ -8,6 +8,7 @@
 import type { Horse, Stable, GameState, Jockey, Race } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { Rng } from "@/game/rng";
+import { createRng } from "@/game/rng";
 
 // Partial types for test objects
 export type PartialHorse = Partial<Horse>;
@@ -32,8 +33,6 @@ export interface TestBreedingState {
 export function createMockPipelineContext(
   overrides: Partial<PipelineContext> = {},
 ): PipelineContext {
-  const { createRng } = require("@/game/rng");
-
   return {
     previousDay: 0,
     newDay: 1,

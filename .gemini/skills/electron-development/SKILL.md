@@ -45,6 +45,7 @@ You are a senior Electron engineer specializing in secure, production-grade desk
 ### 1. Project Structure & Architecture
 
 **Recommended project layout:**
+
 ```
 my-electron-app/
 ├── package.json
@@ -76,6 +77,7 @@ my-electron-app/
 ```
 
 **Key architectural principles:**
+
 - **Separate entry points**: Main, preload, and renderer each have their own build configuration.
 - **Shared types, not shared modules**: The `shared/` directory contains only types, constants, and enums — never executable code imported across process boundaries.
 - **Keep main process lean**: Main should orchestrate windows, handle IPC, and manage app lifecycle. Business logic belongs in the renderer or dedicated worker processes.
@@ -86,17 +88,18 @@ my-electron-app/
 
 Electron runs **multiple processes** that are isolated by design:
 
-| Process | Role | Node.js Access | DOM Access |
-|---------|------|----------------|------------|
-| **Main** | App lifecycle, windows, native APIs, IPC hub | ✅ Full | ❌ None |
-| **Renderer** | UI rendering, user interaction | ❌ None (by default) | ✅ Full |
-| **Preload** | Secure bridge between main and renderer | ✅ Limited (via contextBridge) | ✅ Before page loads |
-| **Utility** | CPU-intensive tasks, background work | ✅ Full | ❌ None |
+| Process      | Role                                         | Node.js Access                 | DOM Access           |
+| ------------ | -------------------------------------------- | ------------------------------ | -------------------- |
+| **Main**     | App lifecycle, windows, native APIs, IPC hub | ✅ Full                        | ❌ None              |
+| **Renderer** | UI rendering, user interaction               | ❌ None (by default)           | ✅ Full              |
+| **Preload**  | Secure bridge between main and renderer      | ✅ Limited (via contextBridge) | ✅ Before page loads |
+| **Utility**  | CPU-intensive tasks, background work         | ✅ Full                        | ❌ None              |
 
 **BrowserWindow with security defaults (MANDATORY):**
+
 ```typescript
-import { BrowserWindow } from 'electron';
-import path from 'node:path';
+import { BrowserWindow } from "electron";
+import path from "node:path";
 
 function createMainWindow(): BrowserWindow {
   const win = new BrowserWindow({
@@ -104,15 +107,15 @@ function createMainWindow(): BrowserWindow {
     height: 800,
     webPreferences: {
       // ── SECURITY DEFAULTS (NEVER CHANGE THESE) ──
-      contextIsolation: true,     // Isolates preload from renderer context
-      nodeIntegration: false,     // Prevents require() in renderer
-      sandbox: true,              // OS-level process sandboxing
-      
+      contextIsolation: true, // Isolates preload from renderer context
+      nodeIntegration: false, // Prevents require() in renderer
+      sandbox: true, // OS-level process sandboxing
+
       // ── PRELOAD SCRIPT ──
-      preload: path.join(__dirname, '../preload/preload.js'),
-      
+      preload: path.join(__dirname, "../preload/preload.js"),
+
       // ── ADDITIONAL HARDENING ──
-      webSecurity: true,          // Enforce same-origin policy
+      webSecurity: true, // Enforce same-origin policy
       allowRunningInsecureContent: false,
       experimentalFeatures: false,
     },
@@ -123,8 +126,8 @@ function createMainWindow(): BrowserWindow {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': [
-          "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;"
+        "Content-Security-Policy": [
+          "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;",
         ],
       },
     });
@@ -143,32 +146,33 @@ function createMainWindow(): BrowserWindow {
 IPC is the **only** safe channel for communication between main and renderer processes. All IPC must flow through the preload script.
 
 **Preload script (contextBridge + explicit whitelisting):**
+
 ```typescript
 // src/preload/preload.ts
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer } from "electron";
 
 // ── WHITELIST: Only expose specific channels ──
 const ALLOWED_SEND_CHANNELS = [
-  'file:save',
-  'file:open',
-  'app:get-version',
-  'dialog:show-open',
+  "file:save",
+  "file:open",
+  "app:get-version",
+  "dialog:show-open",
 ] as const;
 
 const ALLOWED_RECEIVE_CHANNELS = [
-  'file:saved',
-  'file:opened',
-  'app:version',
-  'update:available',
-  'update:progress',
-  'update:downloaded',
-  'update:error',
+  "file:saved",
+  "file:opened",
+  "app:version",
+  "update:available",
+  "update:progress",
+  "update:downloaded",
+  "update:error",
 ] as const;
 
-type SendChannel = typeof ALLOWED_SEND_CHANNELS[number];
-type ReceiveChannel = typeof ALLOWED_RECEIVE_CHANNELS[number];
+type SendChannel = (typeof ALLOWED_SEND_CHANNELS)[number];
+type ReceiveChannel = (typeof ALLOWED_RECEIVE_CHANNELS)[number];
 
-contextBridge.exposeInMainWorld('electronAPI', {
+contextBridge.exposeInMainWorld("electronAPI", {
   // One-way: renderer → main
   send: (channel: SendChannel, ...args: unknown[]) => {
     if (ALLOWED_SEND_CHANNELS.includes(channel)) {
@@ -197,41 +201,43 @@ contextBridge.exposeInMainWorld('electronAPI', {
 ```
 
 **Main process IPC handlers:**
+
 ```typescript
 // src/main/ipc-handlers.ts
-import { ipcMain, dialog, BrowserWindow } from 'electron';
-import { readFile, writeFile } from 'node:fs/promises';
+import { ipcMain, dialog, BrowserWindow } from "electron";
+import { readFile, writeFile } from "node:fs/promises";
 
 export function registerIpcHandlers(): void {
   // invoke() pattern: returns a value to the renderer
-  ipcMain.handle('file:open', async () => {
+  ipcMain.handle("file:open", async () => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
-      properties: ['openFile'],
-      filters: [{ name: 'Text Files', extensions: ['txt', 'md'] }],
+      properties: ["openFile"],
+      filters: [{ name: "Text Files", extensions: ["txt", "md"] }],
     });
-    
+
     if (canceled || filePaths.length === 0) return null;
-    
-    const content = await readFile(filePaths[0], 'utf-8');
+
+    const content = await readFile(filePaths[0], "utf-8");
     return { path: filePaths[0], content };
   });
 
-  ipcMain.handle('file:save', async (_event, filePath: string, content: string) => {
+  ipcMain.handle("file:save", async (_event, filePath: string, content: string) => {
     // VALIDATE INPUTS — never trust renderer data blindly
-    if (typeof filePath !== 'string' || typeof content !== 'string') {
-      throw new Error('Invalid arguments');
+    if (typeof filePath !== "string" || typeof content !== "string") {
+      throw new Error("Invalid arguments");
     }
-    await writeFile(filePath, content, 'utf-8');
+    await writeFile(filePath, content, "utf-8");
     return { success: true };
   });
 
-  ipcMain.handle('app:get-version', () => {
+  ipcMain.handle("app:get-version", () => {
     return process.versions.electron;
   });
 }
 ```
 
 **Renderer usage (type-safe):**
+
 ```typescript
 // src/renderer/App.tsx — or any renderer code
 // The electronAPI is globally available via contextBridge
@@ -248,15 +254,15 @@ declare global {
 
 // Open a file via IPC
 async function openFile() {
-  const result = await window.electronAPI.invoke('file:open');
+  const result = await window.electronAPI.invoke("file:open");
   if (result) {
-    console.log('File content:', result.content);
+    console.log("File content:", result.content);
   }
 }
 
 // Subscribe to updates from main process
-const unsubscribe = window.electronAPI.on('update:available', (version) => {
-  console.log('Update available:', version);
+const unsubscribe = window.electronAPI.on("update:available", (version) => {
+  console.log("Update available:", version);
 });
 
 // Cleanup on unmount
@@ -265,11 +271,11 @@ const unsubscribe = window.electronAPI.on('update:available', (version) => {
 
 **IPC Pattern Summary:**
 
-| Pattern | Method | Use Case |
-|---------|--------|----------|
-| **Fire-and-forget** | `ipcRenderer.send()` → `ipcMain.on()` | Logging, telemetry, non-critical notifications |
-| **Request/Response** | `ipcRenderer.invoke()` → `ipcMain.handle()` | File operations, dialogs, data queries |
-| **Push to renderer** | `webContents.send()` → `ipcRenderer.on()` | Progress updates, download status, auto-update |
+| Pattern              | Method                                      | Use Case                                       |
+| -------------------- | ------------------------------------------- | ---------------------------------------------- |
+| **Fire-and-forget**  | `ipcRenderer.send()` → `ipcMain.on()`       | Logging, telemetry, non-critical notifications |
+| **Request/Response** | `ipcRenderer.invoke()` → `ipcMain.handle()` | File operations, dialogs, data queries         |
+| **Push to renderer** | `webContents.send()` → `ipcRenderer.on()`   | Progress updates, download status, auto-update |
 
 > ⚠️ **Never** use `ipcRenderer.sendSync()` in production — it blocks the renderer's event loop and freezes the UI.
 
@@ -312,12 +318,14 @@ const unsubscribe = window.electronAPI.on('update:available', (version) => {
 ```
 
 **Preventing Navigation Hijacking:**
+
 ```typescript
 // In main process, after creating a BrowserWindow
-win.webContents.on('will-navigate', (event, url) => {
+win.webContents.on("will-navigate", (event, url) => {
   const parsedUrl = new URL(url);
   // Only allow navigation within your app
-  if (parsedUrl.origin !== 'http://localhost:5173') { // dev server
+  if (parsedUrl.origin !== "http://localhost:5173") {
+    // dev server
     event.preventDefault();
     console.warn(`Blocked navigation to: ${url}`);
   }
@@ -327,12 +335,12 @@ win.webContents.on('will-navigate', (event, url) => {
 win.webContents.setWindowOpenHandler(({ url }) => {
   try {
     const externalUrl = new URL(url);
-    const allowedHosts = new Set(['example.com', 'docs.example.com']);
+    const allowedHosts = new Set(["example.com", "docs.example.com"]);
 
     // Never forward raw renderer-controlled URLs to the OS.
     // Unvalidated links can enable phishing or abuse platform URL handlers.
-    if (externalUrl.protocol === 'https:' && allowedHosts.has(externalUrl.hostname)) {
-      require('electron').shell.openExternal(externalUrl.toString());
+    if (externalUrl.protocol === "https:" && allowedHosts.has(externalUrl.hostname)) {
+      require("electron").shell.openExternal(externalUrl.toString());
     } else {
       console.warn(`Blocked external URL: ${url}`);
     }
@@ -340,32 +348,33 @@ win.webContents.setWindowOpenHandler(({ url }) => {
     console.warn(`Rejected invalid external URL: ${url}`);
   }
 
-  return { action: 'deny' }; // Block all new Electron windows
+  return { action: "deny" }; // Block all new Electron windows
 });
 ```
 
 **Custom Protocol Registration (secure):**
+
 ```typescript
-import { protocol } from 'electron';
-import path from 'node:path';
-import { readFile } from 'node:fs/promises';
-import { URL } from 'node:url';
+import { protocol } from "electron";
+import path from "node:path";
+import { readFile } from "node:fs/promises";
+import { URL } from "node:url";
 
 // Register a custom protocol for loading local assets securely
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true } },
+  { scheme: "app", privileges: { standard: true, secure: true, supportFetchAPI: true } },
 ]);
 
 app.whenReady().then(() => {
-  protocol.handle('app', async (request) => {
+  protocol.handle("app", async (request) => {
     const url = new URL(request.url);
-    const baseDir = path.resolve(__dirname, '../renderer');
+    const baseDir = path.resolve(__dirname, "../renderer");
     // Strip the leading slash so path.resolve keeps baseDir as the root.
-    const relativePath = path.normalize(decodeURIComponent(url.pathname).replace(/^[/\\]+/, ''));
+    const relativePath = path.normalize(decodeURIComponent(url.pathname).replace(/^[/\\]+/, ""));
     const filePath = path.resolve(baseDir, relativePath);
 
     if (!filePath.startsWith(baseDir)) {
-      return new Response('Forbidden', { status: 403 });
+      return new Response("Forbidden", { status: 403 });
     }
 
     const data = await readFile(filePath);
@@ -379,20 +388,21 @@ app.whenReady().then(() => {
 ### 5. State Management Across Processes
 
 **Strategy 1: Main process as single source of truth (recommended for most apps)**
+
 ```typescript
 // src/main/store.ts
-import { app } from 'electron';
-import { readFileSync, writeFileSync } from 'node:fs';
-import path from 'node:path';
+import { app } from "electron";
+import { readFileSync, writeFileSync } from "node:fs";
+import path from "node:path";
 
 interface AppState {
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   recentFiles: string[];
   windowBounds: { x: number; y: number; width: number; height: number };
 }
 
 const DEFAULTS: AppState = {
-  theme: 'light',
+  theme: "light",
   recentFiles: [],
   windowBounds: { x: 0, y: 0, width: 1200, height: 800 },
 };
@@ -402,13 +412,13 @@ class Store {
   private filePath: string;
 
   constructor() {
-    this.filePath = path.join(app.getPath('userData'), 'settings.json');
+    this.filePath = path.join(app.getPath("userData"), "settings.json");
     this.data = this.load();
   }
 
   private load(): AppState {
     try {
-      const raw = readFileSync(this.filePath, 'utf-8');
+      const raw = readFileSync(this.filePath, "utf-8");
       return { ...DEFAULTS, ...JSON.parse(raw) };
     } catch {
       return { ...DEFAULTS };
@@ -429,31 +439,33 @@ export const store = new Store();
 ```
 
 **Strategy 2: electron-store (lightweight persistent storage)**
+
 ```typescript
-import Store from 'electron-store';
+import Store from "electron-store";
 
 const store = new Store({
   schema: {
-    theme: { type: 'string', enum: ['light', 'dark'], default: 'light' },
+    theme: { type: "string", enum: ["light", "dark"], default: "light" },
     windowBounds: {
-      type: 'object',
+      type: "object",
       properties: {
-        width: { type: 'number', default: 1200 },
-        height: { type: 'number', default: 800 },
+        width: { type: "number", default: 1200 },
+        height: { type: "number", default: 800 },
       },
     },
   },
 });
 
 // Usage
-store.set('theme', 'dark');
-console.log(store.get('theme')); // 'dark'
+store.set("theme", "dark");
+console.log(store.get("theme")); // 'dark'
 ```
 
 **Multi-window state synchronization:**
+
 ```typescript
 // Main process: broadcast state changes to all windows
-import { BrowserWindow } from 'electron';
+import { BrowserWindow } from "electron";
 
 function broadcastToAllWindows(channel: string, data: unknown): void {
   for (const win of BrowserWindow.getAllWindows()) {
@@ -464,9 +476,9 @@ function broadcastToAllWindows(channel: string, data: unknown): void {
 }
 
 // When theme changes:
-ipcMain.handle('settings:set-theme', (_event, theme: 'light' | 'dark') => {
-  store.set('theme', theme);
-  broadcastToAllWindows('settings:theme-changed', theme);
+ipcMain.handle("settings:set-theme", (_event, theme: "light" | "dark") => {
+  store.set("theme", theme);
+  broadcastToAllWindows("settings:theme-changed", theme);
 });
 ```
 
@@ -485,8 +497,8 @@ directories:
   buildResources: resources
 
 files:
-  - "out/**/*"       # compiled main + preload
-  - "renderer/**/*"  # built renderer assets
+  - "out/**/*" # compiled main + preload
+  - "renderer/**/*" # built renderer assets
   - "package.json"
 
 asar: true
@@ -553,36 +565,36 @@ npx electron-builder --mac --win --publish never
 
 ```typescript
 // src/main/updater.ts
-import { autoUpdater } from 'electron-updater';
-import { BrowserWindow } from 'electron';
-import log from 'electron-log';
+import { autoUpdater } from "electron-updater";
+import { BrowserWindow } from "electron";
+import log from "electron-log";
 
 export function setupAutoUpdater(mainWindow: BrowserWindow): void {
   autoUpdater.logger = log;
   autoUpdater.autoDownload = false; // Let user decide
   autoUpdater.autoInstallOnAppQuit = true;
 
-  autoUpdater.on('update-available', (info) => {
-    mainWindow.webContents.send('update:available', {
+  autoUpdater.on("update-available", (info) => {
+    mainWindow.webContents.send("update:available", {
       version: info.version,
       releaseNotes: info.releaseNotes,
     });
   });
 
-  autoUpdater.on('download-progress', (progress) => {
-    mainWindow.webContents.send('update:progress', {
+  autoUpdater.on("download-progress", (progress) => {
+    mainWindow.webContents.send("update:progress", {
       percent: Math.round(progress.percent),
       bytesPerSecond: progress.bytesPerSecond,
     });
   });
 
-  autoUpdater.on('update-downloaded', () => {
-    mainWindow.webContents.send('update:downloaded');
+  autoUpdater.on("update-downloaded", () => {
+    mainWindow.webContents.send("update:downloaded");
   });
 
-  autoUpdater.on('error', (err) => {
-    log.error('Update error:', err);
-    mainWindow.webContents.send('update:error', err.message);
+  autoUpdater.on("error", (err) => {
+    log.error("Update error:", err);
+    mainWindow.webContents.send("update:error", err.message);
   });
 
   // Check for updates every 4 hours
@@ -591,8 +603,8 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
 }
 
 // Expose to renderer via IPC
-ipcMain.handle('update:download', () => autoUpdater.downloadUpdate());
-ipcMain.handle('update:install', () => autoUpdater.quitAndInstall());
+ipcMain.handle("update:download", () => autoUpdater.downloadUpdate());
+ipcMain.handle("update:install", () => autoUpdater.quitAndInstall());
 ```
 
 #### Bundle Size Optimization
@@ -625,6 +637,7 @@ ipcMain.handle('update:install', () => autoUpdater.quitAndInstall());
 ```
 
 **Recommended toolchain:**
+
 - **electron-vite** or **electron-forge with Vite plugin** — modern, fast HMR for renderer
 - **tsx** or **ts-node** — for running TypeScript in main process during development
 - **concurrently** — run renderer dev server + Electron simultaneously
@@ -654,10 +667,11 @@ ipcMain.handle('update:install', () => autoUpdater.quitAndInstall());
 ```
 
 **Other debugging techniques:**
+
 ```typescript
 // Enable DevTools only in development
-if (process.env.NODE_ENV === 'development') {
-  win.webContents.openDevTools({ mode: 'detach' });
+if (process.env.NODE_ENV === "development") {
+  win.webContents.openDevTools({ mode: "detach" });
 }
 
 // Inspect specific renderer processes from command line:
@@ -667,50 +681,52 @@ if (process.env.NODE_ENV === 'development') {
 #### Testing Strategy
 
 **Unit testing (Vitest / Jest):**
+
 ```typescript
 // tests/unit/store.test.ts
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi } from "vitest";
 
 // Mock Electron modules for unit tests
-vi.mock('electron', () => ({
-  app: { getPath: () => '/tmp/test' },
+vi.mock("electron", () => ({
+  app: { getPath: () => "/tmp/test" },
 }));
 
-describe('Store', () => {
-  it('returns default values for missing keys', () => {
+describe("Store", () => {
+  it("returns default values for missing keys", () => {
     // Test store logic without Electron runtime
   });
 });
 ```
 
 **E2E testing (Playwright + Electron):**
+
 ```typescript
 // tests/e2e/app.spec.ts
-import { test, expect, _electron as electron } from '@playwright/test';
+import { test, expect, _electron as electron } from "@playwright/test";
 
-test('app launches and shows main window', async () => {
-  const app = await electron.launch({ args: ['.'] });
+test("app launches and shows main window", async () => {
+  const app = await electron.launch({ args: ["."] });
   const window = await app.firstWindow();
 
   // Wait for the app to fully load
-  await window.waitForLoadState('domcontentloaded');
+  await window.waitForLoadState("domcontentloaded");
 
   const title = await window.title();
-  expect(title).toBe('My App');
+  expect(title).toBe("My App");
 
   // Take a screenshot for visual regression
-  await window.screenshot({ path: 'tests/screenshots/main-window.png' });
+  await window.screenshot({ path: "tests/screenshots/main-window.png" });
 
   await app.close();
 });
 
-test('file open dialog works via IPC', async () => {
-  const app = await electron.launch({ args: ['.'] });
+test("file open dialog works via IPC", async () => {
+  const app = await electron.launch({ args: ["."] });
   const window = await app.firstWindow();
 
   // Test IPC by evaluating in the renderer context
   const version = await window.evaluate(async () => {
-    return window.electronAPI.invoke('app:get-version');
+    return window.electronAPI.invoke("app:get-version");
   });
 
   expect(version).toBeTruthy();
@@ -719,17 +735,18 @@ test('file open dialog works via IPC', async () => {
 ```
 
 **Playwright config for Electron:**
+
 ```typescript
 // playwright.config.ts
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: "./tests/e2e",
   timeout: 30_000,
   retries: 1,
   use: {
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
   },
 });
 ```
@@ -740,10 +757,10 @@ export default defineConfig({
 
 ```typescript
 // src/main/main.ts
-import { app, BrowserWindow } from 'electron';
-import { registerIpcHandlers } from './ipc-handlers';
-import { setupAutoUpdater } from './updater';
-import { store } from './store';
+import { app, BrowserWindow } from "electron";
+import { registerIpcHandlers } from "./ipc-handlers";
+import { setupAutoUpdater } from "./updater";
+import { store } from "./store";
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -752,12 +769,12 @@ app.whenReady().then(() => {
   mainWindow = createMainWindow();
 
   // Restore window bounds
-  const bounds = store.get('windowBounds');
+  const bounds = store.get("windowBounds");
   if (bounds) mainWindow.setBounds(bounds);
 
   // Save window bounds on close
-  mainWindow.on('close', () => {
-    if (mainWindow) store.set('windowBounds', mainWindow.getBounds());
+  mainWindow.on("close", () => {
+    if (mainWindow) store.set("windowBounds", mainWindow.getBounds());
   });
 
   // Auto-update (only in production)
@@ -766,7 +783,7 @@ app.whenReady().then(() => {
   }
 
   // macOS: re-create window when dock icon is clicked
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       mainWindow = createMainWindow();
     }
@@ -774,15 +791,15 @@ app.whenReady().then(() => {
 });
 
 // Quit when all windows are closed (except on macOS)
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
 // Security: prevent additional renderers from being created
-app.on('web-contents-created', (_event, contents) => {
-  contents.on('will-attach-webview', (event) => {
+app.on("web-contents-created", (_event, contents) => {
+  contents.on("will-attach-webview", (event) => {
     event.preventDefault(); // Block <webview> tags
   });
 });
@@ -793,26 +810,31 @@ app.on('web-contents-created', (_event, contents) => {
 ## Common Issue Diagnostics
 
 ### White Screen on Launch
+
 **Symptoms**: App starts but renderer shows a blank/white page
 **Root causes**: Incorrect `loadFile`/`loadURL` path, build output missing, CSP blocking scripts
 **Solutions**: Verify the path passed to `win.loadFile()` or `win.loadURL()` exists relative to the packaged app. Check DevTools console for CSP violations. In development, ensure the Vite/webpack dev server is running before Electron starts.
 
 ### IPC Messages Not Received
+
 **Symptoms**: `invoke()` hangs or `send()` has no effect
 **Root causes**: Channel name mismatch, preload not loaded, contextBridge not exposing the channel
 **Solutions**: Verify channel names match exactly between preload, main, and renderer. Confirm `preload` path is correct in `webPreferences`. Check that the channel is in the whitelist array.
 
 ### Native Module Crashes
+
 **Symptoms**: App crashes on startup with `MODULE_NOT_FOUND` or `invalid ELF header`
 **Root causes**: Native module compiled for wrong Electron/Node ABI version
 **Solutions**: Run `npx @electron/rebuild` after installing native modules. Ensure `electron-builder` is configured with the correct Electron version for rebuilding.
 
 ### App Not Updating
+
 **Symptoms**: `autoUpdater.checkForUpdates()` returns nothing or errors
 **Root causes**: Missing `publish` config, unsigned app (macOS), incorrect GitHub release assets
 **Solutions**: Verify `publish` section in `electron-builder.yml`. On macOS, app must be code-signed and notarized. Ensure the GitHub release contains the `-mac.zip` and `latest-mac.yml` (or equivalent Windows files).
 
 ### Large Bundle Size (>200MB)
+
 **Symptoms**: Built application is excessively large
 **Root causes**: Dev dependencies bundled, no tree-shaking, duplicate Electron binaries
 **Solutions**: Audit `files` patterns in `electron-builder.yml`. Use a bundler (Vite/esbuild) for the renderer. Check that `devDependencies` are not in `dependencies`. Use `compression: maximum`.

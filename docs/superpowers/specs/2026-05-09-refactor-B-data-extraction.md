@@ -79,6 +79,7 @@ src/game/
 ### Problem
 
 `src/game/breedingCompatibility.ts` is 449 lines. It mixes:
+
 - Factor-scoring logic functions
 - The orchestrating `calculateBreedingCompatibility` function
 - Static lookup tables: `NICKING_AFFINITIES` (~lines 143–156) and `CROSS_FAMILY_AFFINITIES` (~lines 320–330)
@@ -117,9 +118,9 @@ src/game/
 `src/game/store/slices/coreSlice.ts` uses raw numbers in `advanceWeek`, `advanceMonth`, `advanceYear`:
 
 ```ts
-advanceWeek:  () => advanceMultipleDays(7, headless)
-advanceMonth: () => advanceMultipleDays(30, headless)
-advanceYear:  () => advanceMultipleDays(365, headless)
+advanceWeek: () => advanceMultipleDays(7, headless);
+advanceMonth: () => advanceMultipleDays(30, headless);
+advanceYear: () => advanceMultipleDays(365, headless);
 ```
 
 `7`, `30`, and `365` appear in multiple files without being defined as named constants in `gameConstants.ts`.

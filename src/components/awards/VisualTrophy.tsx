@@ -14,19 +14,19 @@ import { cn } from "@/lib/utils";
 export type TrophyTone = "gold" | "silver" | "bronze" | "platinum";
 
 const TONE_STOPS: Record<TrophyTone, { top: string; mid: string; low: string; rim: string }> = {
-  gold:     { top: "#fff3b0", mid: "#f5c542", low: "#a37418", rim: "#7a4f0c" },
-  silver:   { top: "#f5f7fa", mid: "#c8cdd4", low: "#6b7280", rim: "#3f4753" },
-  bronze:   { top: "#f1c79a", mid: "#c97a3a", low: "#7a3f15", rim: "#4a230a" },
+  gold: { top: "#fff3b0", mid: "#f5c542", low: "#a37418", rim: "#7a4f0c" },
+  silver: { top: "#f5f7fa", mid: "#c8cdd4", low: "#6b7280", rim: "#3f4753" },
+  bronze: { top: "#f1c79a", mid: "#c97a3a", low: "#7a3f15", rim: "#4a230a" },
   platinum: { top: "#ffffff", mid: "#d6e6f5", low: "#7a93ab", rim: "#3a4a5a" },
 };
 
 interface VisualTrophyProps {
   tone?: TrophyTone;
   size?: number;
-  label?: string;       // small text on the plaque (e.g. "G1", "HOTY")
-  sublabel?: string;    // smaller (e.g. year "Y12")
-  flag?: string;        // optional emoji flag rendered next to label
-  shine?: boolean;      // animated shimmer
+  label?: string; // small text on the plaque (e.g. "G1", "HOTY")
+  sublabel?: string; // smaller (e.g. year "Y12")
+  flag?: string; // optional emoji flag rendered next to label
+  shine?: boolean; // animated shimmer
   className?: string;
   title?: string;
 }
@@ -153,7 +153,9 @@ export function TrophyShelf({ children, className, empty, count }: TrophyShelfPr
   return (
     <div className={cn("relative", className)}>
       <div className="flex items-end gap-3 overflow-x-auto pb-1 px-2 pt-2 min-h-[88px]">
-        {hasChildren ? children : (
+        {hasChildren ? (
+          children
+        ) : (
           <div className="text-xs text-muted-foreground italic px-2 py-4">
             {empty ?? "No trophies yet."}
           </div>

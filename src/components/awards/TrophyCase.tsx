@@ -293,22 +293,19 @@ function AwardsGrid({ awards }: { awards: RegionalAward[] }) {
                     {getRegionFlag(sample.region)}
                   </span>
                   <span>{getRegionCountryLabel(sample.region)}</span>
-                  <span className="tabular-nums">· Y{first}–Y{last}</span>
+                  <span className="tabular-nums">
+                    · Y{first}–Y{last}
+                  </span>
                 </div>
               </div>
             </div>,
           ];
         }
         return sorted.map((award) => (
-          <div
-            key={award.id}
-            className="space-y-1"
-          >
+          <div key={award.id} className="space-y-1">
             <AwardBadge award={award} variant="card" showRegion />
             <div className="text-[10px] text-muted-foreground flex items-center gap-1 pl-3">
-              <span title={getRegionCountryLabel(award.region)}>
-                {getRegionFlag(award.region)}
-              </span>
+              <span title={getRegionCountryLabel(award.region)}>{getRegionFlag(award.region)}</span>
               <span>{getRegionCountryLabel(award.region)}</span>
               <span className="tabular-nums">· Y{award.year}</span>
             </div>

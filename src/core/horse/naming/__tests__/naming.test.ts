@@ -28,7 +28,7 @@ describe("Horse Naming System", () => {
     });
 
     it("should reject offensive words", () => {
-      expect(validateHorseName("Offensive Name", existing).isValid).toBe(false);
+      expect(validateHorseName("Shit Name", existing).isValid).toBe(false);
     });
 
     it("should reject trade names", () => {

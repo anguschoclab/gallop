@@ -2,22 +2,22 @@
 
 /**
  * regenerate-graded-race-uuids.mjs
- * 
+ *
  * This script regenerates all UUIDs in gradedRaces.ts using cryptographically secure methods.
  * It replaces the insecure Math.random() based generator with imports from the new centralized utility.
  */
 
-import fs from 'fs';
-import crypto from 'crypto';
+import fs from "fs";
+import crypto from "crypto";
 
 // Read the gradedRaces.ts file
-const filePath = './src/core/data/gradedRaces.ts';
-let content = fs.readFileSync(filePath, 'utf8');
+const filePath = "./src/core/data/gradedRaces.ts";
+let content = fs.readFileSync(filePath, "utf8");
 
 // Replace the insecure generateUUID function with an import
 content = content.replace(
   /\/\/ UUID v4 generator for race UUIDs\nconst generateUUID = \(\) => \{\n  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"\.replace\/\[xy\]\/g, \(c\) => \{\n    const r = \(Math\.random\(\) \* 16\) \| 0;\n    const v = c === "x" \? r : \(r & 0x3\) \| 0x8;\n    return v\.toString\(16\);\n  \}\);\};\n\n/,
-  `import { generateUUID } from "@/core/uuid";\n\n`
+  `import { generateUUID } from "@/core/uuid";\n\n`,
 );
 
 // Function to generate a cryptographically secure UUID
@@ -26,7 +26,8 @@ function generateSecureUUID() {
 }
 
 // Replace all existing UUIDs with new secure ones
-const uuidRegex = /uuid:\s*"([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})"/gi;
+const uuidRegex =
+  /uuid:\s*"([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})"/gi;
 let match;
 const replacedUUIDs = new Map();
 let replacementCount = 0;
@@ -52,7 +53,7 @@ content = content.replace(uuidRegex, (match) => {
 console.log(`Replaced ${replacementCount} UUIDs with cryptographically secure versions`);
 
 // Write the updated content back to the file
-fs.writeFileSync(filePath, content, 'utf8');
+fs.writeFileSync(filePath, content, "utf8");
 
-console.log('Successfully updated gradedRaces.ts with secure UUIDs');
-console.log('Updated import statement to use centralized UUID utility');
+console.log("Successfully updated gradedRaces.ts with secure UUIDs");
+console.log("Updated import statement to use centralized UUID utility");

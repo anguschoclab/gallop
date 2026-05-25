@@ -19,12 +19,12 @@ After A and B, the pool data and shared utilities are in clean locations. Now th
 
 `src/game/npcRaceEntry.ts` is 384 lines and mixes four distinct concerns that have no logical dependency on each other:
 
-| Lines | Concern |
-|---|---|
-| 1–214 | NPC race entry AI — evaluates upcoming races, assigns jockeys, files entry intents |
-| 215–249 | `fillRaceWithFillerHorses` — populates sparse race fields with anonymous horses |
-| 255–329 | `runNpcTraining` — NPC horse training simulation (completely separate domain) |
-| 330–383 | `updateHorseFame` — post-race fame mutation (post-race lifecycle, not entry) |
+| Lines   | Concern                                                                            |
+| ------- | ---------------------------------------------------------------------------------- |
+| 1–214   | NPC race entry AI — evaluates upcoming races, assigns jockeys, files entry intents |
+| 215–249 | `fillRaceWithFillerHorses` — populates sparse race fields with anonymous horses    |
+| 255–329 | `runNpcTraining` — NPC horse training simulation (completely separate domain)      |
+| 330–383 | `updateHorseFame` — post-race fame mutation (post-race lifecycle, not entry)       |
 
 `runNpcTraining` has no relationship to race entry. `updateHorseFame` fires after race results, not before. `fillRaceWithFillerHorses` is race administration, not NPC stable strategy.
 
@@ -33,14 +33,17 @@ After A and B, the pool data and shared utilities are in clean locations. Now th
 Extract into three new files:
 
 **`src/game/npcTraining.ts`** — receives `runNpcTraining`
+
 - Contains training evaluation, training intent generation
 - Depends on: horse stats, stable personality config
 
 **`src/game/npcPostRace.ts`** — receives `updateHorseFame`
+
 - Contains post-race horse stat mutations (fame, form, energy recovery)
 - Depends on: race results, horse data
 
 **`src/game/raceFieldManager.ts`** — receives `fillRaceWithFillerHorses`
+
 - Contains race field population with anonymous filler entries
 - Depends on: race data, RNG
 
@@ -49,6 +52,7 @@ Extract into three new files:
 ### Callers to update
 
 After extraction, find and update all call sites:
+
 - `runNpcTraining` — called from `src/core/time/phases/training.ts` or similar; update import
 - `updateHorseFame` — called from race resolution phase; update import
 - `fillRaceWithFillerHorses` — called from race generation; update import
@@ -79,10 +83,12 @@ Run `grep -rn "runNpcTraining\|updateHorseFame\|fillRaceWithFillerHorses" src` t
 ### Fix
 
 **Create `src/game/famousStallions.ts`** — receives `generateFamousStallions`
+
 - Imports: `activeStallions2020s`, `createHorseFromDNA`, `generateResearchBasedGenotype`, `mapStallionToStable`, `resolveBloodline`, `rollProceduralFamily`
 - Single export: `generateFamousStallions(stables, rng)`
 
 **In `npcHorseGen.ts`:**
+
 - Delete `generateFamousStallions` (moved to `famousStallions.ts`)
 - Delete `calculateNpcHorseValue`, `getStudFee`, `getBroodmareFee` — after A1 is done, these are imported from `@/core/horse/pricing`
 - Update `src/game/store/initialization.ts` to import `generateFamousStallions` from `@/game/famousStallions`
@@ -102,6 +108,7 @@ Run `grep -rn "runNpcTraining\|updateHorseFame\|fillRaceWithFillerHorses" src` t
 ### Problem
 
 `src/core/ai/personalitySystem.ts` (~277 lines) and `src/core/ai/learningModule.ts` both maintain:
+
 - An `outcomes[]` array
 - Success rate calculation
 - Memory depth trimming
@@ -146,6 +153,7 @@ After B1 (pool data extracted) and B2 (farm mapping extracted), `npcStables.ts` 
 ### Fix (after B1 and B2 are complete)
 
 Verify `npcStables.ts` after B1 and B2 contains only:
+
 - `generateAllStables` — the factory function
 - Utility helpers: `getStableById`, `getMajorStables`, `getStablesByTier`, `getStartingCashForTier`, `getTargetHorseCountForTier`, `mapStallionToStable`
 

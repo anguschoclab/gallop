@@ -74,18 +74,20 @@ export function runAutonomousBreeding(
     const minMareQuality = MIN_MARE_OVERALL[stable.personality] || 50;
     const maxCoi = MAX_COI[stable.personality] || 0.1;
 
-    const candidateMares = state.horses.filter(
-      (h) =>
-        h.stableId === stable.id &&
-        (!h.lifecycleStatus || h.lifecycleStatus === "active") &&
-        (h.gender === "mare" || h.gender === "filly") &&
-        h.age >= 3 &&
-        h.age <= 20 &&
-        ((h.hemisphere === "Northern" && northernSeason) ||
-          (h.hemisphere === "Southern" && southernSeason)) &&
-        !state.pregnancies.some((p) => !p.resolved && p.damId === h.id) &&
-        calculateOverallRating(h) >= minMareQuality,
-    ).map(ensurePhenotypeResolved);
+    const candidateMares = state.horses
+      .filter(
+        (h) =>
+          h.stableId === stable.id &&
+          (!h.lifecycleStatus || h.lifecycleStatus === "active") &&
+          (h.gender === "mare" || h.gender === "filly") &&
+          h.age >= 3 &&
+          h.age <= 20 &&
+          ((h.hemisphere === "Northern" && northernSeason) ||
+            (h.hemisphere === "Southern" && southernSeason)) &&
+          !state.pregnancies.some((p) => !p.resolved && p.damId === h.id) &&
+          calculateOverallRating(h) >= minMareQuality,
+      )
+      .map(ensurePhenotypeResolved);
 
     // Best mares first — the stable's best cash on its best mares.
     candidateMares.sort((a, b) => calculateOverallRating(b) - calculateOverallRating(a));
@@ -98,11 +100,10 @@ export function runAutonomousBreeding(
 
       // Identify candidate stallions within budget
       const maxFeePerMare = stableCash * (SINGLE_FEE_CAP_FRACTION[stable.personality] || 0.1);
-      const stallions = getAvailableStallions(state.horses, mare).filter(
-        (s) => s.stableId !== stable.id,
-      ).map(ensurePhenotypeResolved).filter(
-        (s) => s.stud!.standingFee <= maxFeePerMare,
-      );
+      const stallions = getAvailableStallions(state.horses, mare)
+        .filter((s) => s.stableId !== stable.id)
+        .map(ensurePhenotypeResolved)
+        .filter((s) => s.stud!.standingFee <= maxFeePerMare);
 
       if (stallions.length === 0) continue;
 

@@ -15,25 +15,25 @@ The `StableAIState.friction` system, regional king tracking, and rivalry helpers
 3. A "Key Rivals" dashboard widget
 4. Enhanced NPC stable detail page with head-to-head records
 
-No new rivalry *state* needs to be invented — the work is wiring what exists to news, AI weights, and UI.
+No new rivalry _state_ needs to be invented — the work is wiring what exists to news, AI weights, and UI.
 
 ---
 
 ## Existing Infrastructure
 
-| What | Location |
-|---|---|
-| `StableAIState.friction` (-100→100) | `src/core/ai/npcCycleAI.ts` |
-| `StableAIState.winsAgainstPlayer` | `src/core/ai/npcCycleAI.ts` |
-| `StableAIState.regionalPrestige` | `src/core/ai/npcCycleAI.ts` |
-| `isHatedRival(friction)` helper | `src/core/stable/rivalry.ts` |
-| `isFriendlyCompetitor(friction)` | `src/core/stable/rivalry.ts` |
-| Friction decay + update logic | `src/core/npc/npcCycle.ts` → `processRegionalDominance()` |
-| `NpcAIManager.regionalKings` | `src/game/state/systemsState.ts` |
-| `NewsItem` type | `src/core/narrative/newsTypes.ts` |
-| `generateRaceNews()` | `src/services/newsGenerator.ts` |
-| Claiming AI | `src/core/ai/claimingAI.ts` → `shouldClaimHorse()` |
-| Auction AI | `src/core/ai/auctionAI.ts` → `calculateMaxBid()` |
+| What                                | Location                                                  |
+| ----------------------------------- | --------------------------------------------------------- |
+| `StableAIState.friction` (-100→100) | `src/core/ai/npcCycleAI.ts`                               |
+| `StableAIState.winsAgainstPlayer`   | `src/core/ai/npcCycleAI.ts`                               |
+| `StableAIState.regionalPrestige`    | `src/core/ai/npcCycleAI.ts`                               |
+| `isHatedRival(friction)` helper     | `src/core/stable/rivalry.ts`                              |
+| `isFriendlyCompetitor(friction)`    | `src/core/stable/rivalry.ts`                              |
+| Friction decay + update logic       | `src/core/npc/npcCycle.ts` → `processRegionalDominance()` |
+| `NpcAIManager.regionalKings`        | `src/game/state/systemsState.ts`                          |
+| `NewsItem` type                     | `src/core/narrative/newsTypes.ts`                         |
+| `generateRaceNews()`                | `src/services/newsGenerator.ts`                           |
+| Claiming AI                         | `src/core/ai/claimingAI.ts` → `shouldClaimHorse()`        |
+| Auction AI                          | `src/core/ai/auctionAI.ts` → `calculateMaxBid()`          |
 
 ---
 
@@ -51,10 +51,7 @@ import type { Stable } from "@/core/stable/types";
 // --- Milestone: A rivalry becomes heated ---
 // Call when friction crosses 60 for the first time.
 // Check StableAIState for a "rivalryAnnouncedDay" flag to avoid re-firing.
-export function generateRivalEmergesNews(
-  npcStable: Stable,
-  day: number
-): NewsItem
+export function generateRivalEmergesNews(npcStable: Stable, day: number): NewsItem;
 
 // --- Milestone: Grudge match result ---
 // Call after any G1/G2/G3 race resolution where:
@@ -67,26 +64,26 @@ export function generateGrudgeMatchNews(
   rivalHorse: Horse,
   npcStable: Stable,
   playerWon: boolean,
-  day: number
-): NewsItem
+  day: number,
+): NewsItem;
 
 // --- Milestone: Regional king dethroned ---
 // Call when winsAgainstPlayer >= 3 triggers a region transfer.
 export function generateRegionLostNews(
   npcStable: Stable,
   regionName: string,
-  day: number
-): NewsItem
+  day: number,
+): NewsItem;
 ```
 
 **NewsItem shapes to produce:**
 
-| Trigger | category | importance | headline example |
-|---|---|---|---|
-| Rival emerges | `"stable"` | `"medium"` | `"Thornfield Racing has become a fierce rival."` |
-| Grudge match (player won) | `"racing"` | `"high"` | `"Player defeats Thornfield Racing in the King's Plate."` |
-| Grudge match (rival won) | `"racing"` | `"high"` | `"Thornfield Racing edges out player in a thrilling King's Plate."` |
-| Region lost | `"stable"` | `"high"` | `"Thornfield Racing claims dominance of North America East."` |
+| Trigger                   | category   | importance | headline example                                                    |
+| ------------------------- | ---------- | ---------- | ------------------------------------------------------------------- |
+| Rival emerges             | `"stable"` | `"medium"` | `"Thornfield Racing has become a fierce rival."`                    |
+| Grudge match (player won) | `"racing"` | `"high"`   | `"Player defeats Thornfield Racing in the King's Plate."`           |
+| Grudge match (rival won)  | `"racing"` | `"high"`   | `"Thornfield Racing edges out player in a thrilling King's Plate."` |
+| Region lost               | `"stable"` | `"high"`   | `"Thornfield Racing claims dominance of North America East."`       |
 
 Each `NewsItem` should include `entityLinks` pointing to the NPC stable (`type: "stable"`) and any named horses.
 
@@ -154,6 +151,7 @@ Smaller multiplier than claiming — auction overbidding is financially self-pun
 Add a **"Key Rivals"** card in the right-hand column (below the news feed, above stable overview or wherever space permits).
 
 **Data to display per rival (top 3 by friction, minimum friction 40):**
+
 - Stable name + tier badge
 - Friction bar: red fill proportional to `friction / 100`, label "Hostile" / "Rival" / "Competitive"
 - Head-to-head line: derives from scanning `state.horses[].raceHistory` for races where both stables had entries (expensive — memoize or limit to last 30 days)
@@ -172,12 +170,12 @@ In the existing rivalry/relationship section (where `friction` is already read f
 
 ## Friction Threshold Reference
 
-| Friction | Label | NPC Behaviour |
-|---|---|---|
-| < 30 | Neutral | Default AI weights |
-| 30–59 | Competitive | Mild claim/auction preference against player |
-| 60–79 | Rival | Rival Emerges news fires; moderate targeting |
-| 80–100 | Heated Rival | `isHatedRival()` = true; full targeting multipliers |
+| Friction | Label        | NPC Behaviour                                       |
+| -------- | ------------ | --------------------------------------------------- |
+| < 30     | Neutral      | Default AI weights                                  |
+| 30–59    | Competitive  | Mild claim/auction preference against player        |
+| 60–79    | Rival        | Rival Emerges news fires; moderate targeting        |
+| 80–100   | Heated Rival | `isHatedRival()` = true; full targeting multipliers |
 
 ---
 

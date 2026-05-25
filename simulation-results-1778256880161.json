@@ -3,36 +3,8 @@
   "finalYear": 1,
   "finalPopulation": 2796,
   "g1WinnersCount": 258,
-  "economicTrend": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-  ],
-  "populationTrend": [
-    2753,
-    2245,
-    2270,
-    2492,
-    2514,
-    2577,
-    2578,
-    2595,
-    2652,
-    2680,
-    2748,
-    2775,
-    2792
-  ],
+  "economicTrend": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  "populationTrend": [2753, 2245, 2270, 2492, 2514, 2577, 2578, 2595, 2652, 2680, 2748, 2775, 2792],
   "npcCashHistory": [
     {
       "day": 30,
@@ -179,20 +151,7 @@
       "totalNPCs": 128
     }
   ],
-  "bankruptcyHistory": [
-    8,
-    15,
-    9,
-    9,
-    5,
-    3,
-    2,
-    2,
-    2,
-    1,
-    1,
-    2
-  ],
+  "bankruptcyHistory": [8, 15, 9, 9, 5, 3, 2, 2, 2, 1, 1, 2],
   "auctionMetrics": [
     {
       "day": 90,

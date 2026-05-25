@@ -96,7 +96,6 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
           </div>
         )}
 
-
         {/* Category Awards — compact when a category exceeds COMPACT_THRESHOLD years */}
         {categoryAwards.length > 0 && (
           <div className="space-y-2">
@@ -116,11 +115,7 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
                       className="flex items-center justify-between gap-2 p-2 rounded-md border border-gold/20 bg-card"
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        <AwardIcon
-                          region={sorted[0].region}
-                          category={category}
-                          size="tiny"
-                        />
+                        <AwardIcon region={sorted[0].region} category={category} size="tiny" />
                         <div className="min-w-0">
                           <div className="text-sm font-medium truncate">
                             {CATEGORY_DISPLAY_NAMES[category]}
@@ -129,7 +124,9 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
                             <span title={getRegionCountryLabel(sorted[0].region)}>
                               {getRegionFlag(sorted[0].region)}
                             </span>
-                            <span>Y{first}–Y{last}</span>
+                            <span>
+                              Y{first}–Y{last}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -140,10 +137,7 @@ export function HorseAwardsPanel({ horse, className }: HorseAwardsPanelProps) {
                   );
                 }
                 return sorted.map((award) => (
-                  <div
-                    key={award.id}
-                    className="flex items-center justify-between gap-2"
-                  >
+                  <div key={award.id} className="flex items-center justify-between gap-2">
                     <AwardBadge award={award} variant="inline" showYear />
                     <span
                       className="text-xs text-muted-foreground flex items-center gap-1 shrink-0"

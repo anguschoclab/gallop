@@ -1,5 +1,6 @@
 import { createInitialState } from "../src/game/store/initialization";
 import { executePipeline } from "../src/core/time/pipeline";
+import fs from "fs";
 import { intentCollectionPhase } from "../src/core/time/phases/intentCollection";
 import { intentValidationPhase } from "../src/core/time/phases/intentValidation";
 import { upkeepPhase } from "../src/core/time/phases/upkeep";
@@ -421,7 +422,6 @@ async function runHighPerfAnalysis(years: number = 30) {
   }
 
   // Write full results to file
-  const fs = require("fs");
   fs.writeFileSync(`simulation-results-${Date.now()}.json`, JSON.stringify(summary, null, 2));
   console.log(`\nFull results saved to simulation-results-${Date.now()}.json`);
 }

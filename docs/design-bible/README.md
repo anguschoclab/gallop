@@ -21,7 +21,7 @@ The bible is layered: each layer depends only on the ones above it.
 | 4     | [04-patterns](04-patterns/)           | _How do those parts come together?_                          |
 | 5     | [05-screens](05-screens/)             | _What does each screen owe the user?_                        |
 | 6     | [06-flows](06-flows/)                 | _How do screens chain into a play loop?_                     |
-| 7     | [07-quality](07-quality/)             | _How do we know we got it right?_                           |
+| 7     | [07-quality](07-quality/)             | _How do we know we got it right?_                            |
 | 8     | [08-extending](08-extending/)         | _How do I add the next thing without breaking the system?_   |
 
 ---
@@ -33,7 +33,6 @@ Read in order: [Product vision](00-foundations/01-product-vision.md) → [Design
 
 **I'm an engineer about to implement a new screen.**
 [How to add a screen](08-extending/03-how-to-add-a-screen.md) → [Screen template](05-screens/00-screen-template.md) → [Layout & navigation](04-patterns/01-layout-and-navigation.md) → [Primitives index](03-components/01-primitives.md) → [Design handoff](07-quality/03-design-handoff.md) → [Troubleshooting](07-quality/04-troubleshooting.md).
-
 
 **I'm reviewing a PR and want to spot regressions.**
 [Critique heuristics](07-quality/02-critique-heuristics.md) → [Accessibility](07-quality/01-accessibility.md) → [Voice & tone](02-voice/01-voice-and-tone.md).

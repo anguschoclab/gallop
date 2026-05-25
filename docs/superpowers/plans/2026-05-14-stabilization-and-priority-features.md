@@ -50,11 +50,13 @@ files permitted in the tree live in `src/assets/` (vendored libraries).
 Smallest, highest-leverage UX win. Pure presentation layer.
 
 **Tooltips** (`JargonTooltip.tsx` already exists)
+
 - Create `src/lib/jargon.ts` — dictionary keyed by term: `{ furlong, beyer, claiming, allowance, dosage, dirt, turf, synthetic, blueHen, ... }` → `{ short, long }`.
 - Build `<Jargon term="beyer">Beyer</Jargon>` wrapper that renders dashed-underline + tooltip from the dictionary.
 - Sweep ~15 high-traffic components (RaceCard, HorseCard, RaceEntry, BreedingPanel, AuctionLot) and wrap matching terms.
 
 **Progressive Disclosure on HorseCard**
+
 - Add `scoutGrade(stat: number) → "S"|"A+"|...|"D"` helper in `src/core/horse/grading.ts`.
 - HorseCard default view: letter grades + silk + name + age.
 - "Advanced metrics" toggle (per-card, persisted in zustand UI slice) reveals raw numerics, genotype, chromosomes.
@@ -67,18 +69,25 @@ Smallest, highest-leverage UX win. Pure presentation layer.
 The new game-loop hub. Replaces "hunt through menus".
 
 **Data model** (`src/game/store/slices/inboxSlice.ts`)
+
 ```ts
 type InboxMessage = {
-  id: string; day: number; readAt?: number; pinnedUntil?: number;
+  id: string;
+  day: number;
+  readAt?: number;
+  pinnedUntil?: number;
   category: "foaling" | "offer" | "race" | "deadline" | "injury" | "staff" | "auction" | "system";
   priority: "info" | "action" | "urgent";
-  title: string; body: string;
+  title: string;
+  body: string;
   cta?: { label: string; route: string; params?: Record<string, string> };
 };
 ```
+
 Actions: `pushMessage`, `markRead`, `markAllRead`, `dismiss`, `pinUntil`.
 
 **Producers** — wire existing pipeline events to push messages:
+
 - Foaling tick → `foaling`
 - Auction bid received / lot won-lost → `offer` / `auction`
 - Race entry deadline within N days → `deadline`
@@ -86,6 +95,7 @@ Actions: `pushMessage`, `markRead`, `markAllRead`, `dismiss`, `pinUntil`.
 - Staff contract expiring → `staff`
 
 **UI**
+
 - Header bell icon with unread count badge.
 - `/inbox` route: filter chips (All / Action Required / Today), grouped by day, CTA buttons jump to relevant route.
 - Dashboard widget: top 3 unread "action" messages.
@@ -97,15 +107,18 @@ Actions: `pushMessage`, `markRead`, `markAllRead`, `dismiss`, `pinUntil`.
 `trackConditions.ts` already has the math; this phase adds a stateful weather sim feeding it.
 
 **New: `src/core/weather/`**
+
 - `weatherTypes.ts` — `WeatherState { trackId, day, pattern: "clear"|"overcast"|"shower"|"rain"|"storm", tempC, humidity }`.
 - `weatherSim.ts` — Markov chain per-track keyed by climate zone (already in `trackConditions`). Daily transition seeded by `(day, trackId)` for determinism.
 - `weatherSlice.ts` — `Map<trackId, WeatherState[]>` rolling 14-day buffer + 7-day forecast.
 
 **Pipeline integration**
+
 - Add a `weatherStep` to the daily `pipeline.ts` between `marketStep` and `racingStep`. Outputs go into the slice.
 - `racingStep` reads today's weather → calls `calculateConditionChange(prev, weather, racesRun, maintenance)` → updates per-track condition.
 
 **Drama hooks**
+
 - If a Group/Graded race day gets a `pattern` jump of ≥2 (clear → storm) within 24h of post time → push **inbox message** (Phase 2 dependency): "Storm forecast at Churchill Downs — track downgraded to Sloppy ahead of the Derby".
 - Race card UI: 7-day forecast strip (sun/cloud/rain icons) + current condition chip with `<Jargon term="sloppy">` tooltip.
 
@@ -118,6 +131,7 @@ Replace text lineage view with a visual graph.
 **Library**: `@xyflow/react` (React Flow v12). Lightweight, handles 4-gen trees fine.
 
 **New: `src/components/breeding/PedigreeTree.tsx`**
+
 - Input: `horseId`, `generations: 3|4|5`.
 - Build node/edge graph by walking `horse.pedigree.sireId/damId` recursively (existing data).
 - Layout: dagre (right-to-left, sires top, dams bottom) — `@dagrejs/dagre` peer.
@@ -131,13 +145,13 @@ Replace text lineage view with a visual graph.
 
 ## Sequencing & estimates
 
-| Phase | Scope | Est. |
-|---|---|---|
-| 0 | Build stabilization | 2–3h |
-| 1 | Tooltips + Progressive Disclosure | 2–3h |
-| 2 | Inbox (slice + producers + UI) | 4–6h |
-| 3 | Weather sim + integration | 4–5h |
-| 4 | Pedigree Tree (React Flow + inbreeding) | 4–6h |
+| Phase | Scope                                   | Est. |
+| ----- | --------------------------------------- | ---- |
+| 0     | Build stabilization                     | 2–3h |
+| 1     | Tooltips + Progressive Disclosure       | 2–3h |
+| 2     | Inbox (slice + producers + UI)          | 4–6h |
+| 3     | Weather sim + integration               | 4–5h |
+| 4     | Pedigree Tree (React Flow + inbreeding) | 4–6h |
 
 Total: **~16–23 hours** of focused work. I'd ship one phase per turn so you can review and steer between phases.
 

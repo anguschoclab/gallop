@@ -8,19 +8,19 @@ Universal deferred phenotype resolution for all horses created via `createHorseF
 
 ### What the spec proposes (approved/disproved)
 
-| Spec claim | Verdict | Evidence |
-|---|---|---|
-| Add `phenotypeResolved?: boolean` to `Horse` | **Approved** | Clean addition to `src/core/horse/types.ts:113-224`. No backward-compat needed per user. |
-| `resolveDnaTraits()` is the expensive call to defer | **Approved** | `horseFactory.ts:125-143` — 16 resolve calls. But see below: the "cheap" path in `createHorseFromDNA` (lines 177-198) also calls `resolveStats`, `resolveCoatColor`, `resolveRunningStyle`, 4 aptitude resolvers, `resolveInjuryProneness`, `resolveSize`, `resolveGeneticMarkers`, `resolveHealthStatus`, and `generateAppearanceDNA`. **All phenotype resolution must be deferred, not just `resolveDnaTraits`.** |
-| Split `resolveFoaling()` into cheap/expensive stages | **Approved, but scope is wider** | Since we're doing universal lazy resolution, the split happens inside `createHorseFromDNA` itself, not just in `resolveFoaling`. |
-| `resolvePhenotype(horse)` is a pure function | **Approved** | Seeded RNG via `createRng(hashStr(horse.id))` guarantees determinism. All resolve functions in `phenotype.ts` are pure. |
-| `resolveHorsePhenotype(horseId)` store action | **Approved** | Fits Zustand pattern in `store/index.ts:234-329`. Add to utility or core slice. |
-| `phenotype.ts` refactor into 6 modules | **Approved with revision** | Current consumers: `horseFactory.ts` (21 imports), `runnerBuilder.ts` (`TRAIT_VALUES`, `fiberDistanceModifier`), `energy.ts` (`resolveEpmRisk`), `scouting.ts` (`resolveCoatColor`), `breedingSimulator.ts` (12 imports), `breedingCompatibility.ts` / `genotypeMatching.ts` / `traitCompatibility.ts` (`TRAIT_SCORE`). Barrel `index.ts` re-export keeps all external imports stable. |
-| Trigger: horse detail page | **Approved** | `stable.$horseId.tsx:403-414` — `useHorseActions` returns the horse. Resolve before render. |
-| Trigger: race entry | **Approved** | `npcRaceEntryHelpers.ts:43` calls `isHorseEligibleForRace` → `calculateOverallRating` → reads `horse.stats.*`. `runnerBuilder.ts:209-380` reads every phenotype field. Must resolve before both. |
-| Trigger: auction listing | **Approved** | `auction.ts:646-689` — `personalityConsignmentPolicy` reads `h.peakAge`, `h.fame`, `h.potential`, `h.careerStarts`. `calculateNpcHorseValue` → `calculateOverallRating` → `horse.stats.*`. `generateBreezeSeconds` reads `horse.stats.speed/acceleration`. Must resolve before scoring. |
-| Trigger: breeding | **Approved** | `strategy.ts:181` reads `stallion.fertility`. `canBreed` in `eligibility.ts` doesn't read phenotype fields directly (only gender, age, health status), but `breedingResolution.ts:60-61` reads `sire.stud?.atStud` which depends on setup-time data, not phenotype. The spec's concern is valid for NPC breeding in `npcBreeding.ts:86` where `calculateOverallRating(h)` is called on candidate mares. |
-| Backward compat (saves) | **Not needed** — user confirmed no save compat required. |
+| Spec claim                                           | Verdict                                                  | Evidence                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Add `phenotypeResolved?: boolean` to `Horse`         | **Approved**                                             | Clean addition to `src/core/horse/types.ts:113-224`. No backward-compat needed per user.                                                                                                                                                                                                                                                                                                                            |
+| `resolveDnaTraits()` is the expensive call to defer  | **Approved**                                             | `horseFactory.ts:125-143` — 16 resolve calls. But see below: the "cheap" path in `createHorseFromDNA` (lines 177-198) also calls `resolveStats`, `resolveCoatColor`, `resolveRunningStyle`, 4 aptitude resolvers, `resolveInjuryProneness`, `resolveSize`, `resolveGeneticMarkers`, `resolveHealthStatus`, and `generateAppearanceDNA`. **All phenotype resolution must be deferred, not just `resolveDnaTraits`.** |
+| Split `resolveFoaling()` into cheap/expensive stages | **Approved, but scope is wider**                         | Since we're doing universal lazy resolution, the split happens inside `createHorseFromDNA` itself, not just in `resolveFoaling`.                                                                                                                                                                                                                                                                                    |
+| `resolvePhenotype(horse)` is a pure function         | **Approved**                                             | Seeded RNG via `createRng(hashStr(horse.id))` guarantees determinism. All resolve functions in `phenotype.ts` are pure.                                                                                                                                                                                                                                                                                             |
+| `resolveHorsePhenotype(horseId)` store action        | **Approved**                                             | Fits Zustand pattern in `store/index.ts:234-329`. Add to utility or core slice.                                                                                                                                                                                                                                                                                                                                     |
+| `phenotype.ts` refactor into 6 modules               | **Approved with revision**                               | Current consumers: `horseFactory.ts` (21 imports), `runnerBuilder.ts` (`TRAIT_VALUES`, `fiberDistanceModifier`), `energy.ts` (`resolveEpmRisk`), `scouting.ts` (`resolveCoatColor`), `breedingSimulator.ts` (12 imports), `breedingCompatibility.ts` / `genotypeMatching.ts` / `traitCompatibility.ts` (`TRAIT_SCORE`). Barrel `index.ts` re-export keeps all external imports stable.                              |
+| Trigger: horse detail page                           | **Approved**                                             | `stable.$horseId.tsx:403-414` — `useHorseActions` returns the horse. Resolve before render.                                                                                                                                                                                                                                                                                                                         |
+| Trigger: race entry                                  | **Approved**                                             | `npcRaceEntryHelpers.ts:43` calls `isHorseEligibleForRace` → `calculateOverallRating` → reads `horse.stats.*`. `runnerBuilder.ts:209-380` reads every phenotype field. Must resolve before both.                                                                                                                                                                                                                    |
+| Trigger: auction listing                             | **Approved**                                             | `auction.ts:646-689` — `personalityConsignmentPolicy` reads `h.peakAge`, `h.fame`, `h.potential`, `h.careerStarts`. `calculateNpcHorseValue` → `calculateOverallRating` → `horse.stats.*`. `generateBreezeSeconds` reads `horse.stats.speed/acceleration`. Must resolve before scoring.                                                                                                                             |
+| Trigger: breeding                                    | **Approved**                                             | `strategy.ts:181` reads `stallion.fertility`. `canBreed` in `eligibility.ts` doesn't read phenotype fields directly (only gender, age, health status), but `breedingResolution.ts:60-61` reads `sire.stud?.atStud` which depends on setup-time data, not phenotype. The spec's concern is valid for NPC breeding in `npcBreeding.ts:86` where `calculateOverallRating(h)` is called on candidate mares.             |
+| Backward compat (saves)                              | **Not needed** — user confirmed no save compat required. |
 
 ### Critical discovery: "cheap" vs "expensive" in `createHorseFromDNA`
 
@@ -59,7 +59,6 @@ The spec frames `resolveDnaTraits` (16 fields) as the expensive part, but `creat
    ```
    finds horse → calls resolvePhenotype → patches horse in state.horses
    ```
-   
 5. **`src/game/store/index.ts`** — Wire the new action into the store type and composition. No need to add to `PERSISTED_KEYS` since `phenotypeResolved` is part of the `Horse` objects which are already in `horses`.
 
 ### Phase 3: Trigger points (NPC/pipeline side — pure function calls)
@@ -94,14 +93,14 @@ The spec frames `resolveDnaTraits` (16 fields) as the expensive part, but `creat
 
 18. Create `src/core/genetics/phenotype/` directory with six modules:
 
-| File | Functions moved from `phenotype.ts` |
-|---|---|
-| `color.ts` | `resolveCoatColor` + internal color helpers (lines 49-96) |
-| `stats.ts` | `resolveStats` (lines 103-120) |
-| `aptitude.ts` | `resolveDistanceAptitude`, `resolveSurfaceAptitude`, `resolveAptitudeMultiplier`, `resolveRunningStyle`, `fiberDistanceModifier` |
-| `health.ts` | `resolveGeneticMarkers`, `resolveHealthStatus`, `resolveBleederRisk`, `resolveRoarerRisk`, `resolvePssmRisk`, `resolveRerRisk`, `resolveEpmRisk`, `resolveRacingViable`, `computeHeterozygosity` |
-| `traits.ts` | `resolveHeartScore`, `resolveFiberBias`, `resolveStrideType`, `resolveTrackPreference`, `resolveMudAptitude`, `resolveTrainability`, `resolvePeakAge`, `resolveRecoveryRate`, `resolveFertility`, `resolveFoalingEase`, `resolveMarkings`, `resolveInjuryProneness`, `resolveSize`, `resolveTrait` |
-| `index.ts` | Re-exports everything. `TRAIT_VALUES`, `TRAIT_SCORE` constants live here. |
+| File          | Functions moved from `phenotype.ts`                                                                                                                                                                                                                                                                |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `color.ts`    | `resolveCoatColor` + internal color helpers (lines 49-96)                                                                                                                                                                                                                                          |
+| `stats.ts`    | `resolveStats` (lines 103-120)                                                                                                                                                                                                                                                                     |
+| `aptitude.ts` | `resolveDistanceAptitude`, `resolveSurfaceAptitude`, `resolveAptitudeMultiplier`, `resolveRunningStyle`, `fiberDistanceModifier`                                                                                                                                                                   |
+| `health.ts`   | `resolveGeneticMarkers`, `resolveHealthStatus`, `resolveBleederRisk`, `resolveRoarerRisk`, `resolvePssmRisk`, `resolveRerRisk`, `resolveEpmRisk`, `resolveRacingViable`, `computeHeterozygosity`                                                                                                   |
+| `traits.ts`   | `resolveHeartScore`, `resolveFiberBias`, `resolveStrideType`, `resolveTrackPreference`, `resolveMudAptitude`, `resolveTrainability`, `resolvePeakAge`, `resolveRecoveryRate`, `resolveFertility`, `resolveFoalingEase`, `resolveMarkings`, `resolveInjuryProneness`, `resolveSize`, `resolveTrait` |
+| `index.ts`    | Re-exports everything. `TRAIT_VALUES`, `TRAIT_SCORE` constants live here.                                                                                                                                                                                                                          |
 
 19. Delete original `phenotype.ts` after moving all content.
 
@@ -123,41 +122,41 @@ The spec frames `resolveDnaTraits` (16 fields) as the expensive part, but `creat
 
 ## Files Modified (exhaustive)
 
-| File | Change |
-|---|---|
-| `src/core/horse/types.ts` | Add `phenotypeResolved?: boolean` |
-| `src/core/horse/horseFactory.ts` | Extract `resolvePhenotype()`, `ensurePhenotypeResolved()`. Gut phenotype calls from `createHorseFromDNA`. |
-| `src/game/store/slices/coreSlice.ts` | Add `resolveHorsePhenotype` action |
-| `src/game/store/index.ts` | Wire action into store type |
-| `src/game/npcRaceEntry.ts` | Resolve horses before race entry |
-| `src/game/npcRaceEntryHelpers.ts` | Resolve horse before eligibility check |
-| `src/game/auction.ts` | Resolve in `personalityConsignmentPolicy`, `generateAuctionLots`, `resolveAuctionSale` |
-| `src/game/npcBreeding.ts` | Resolve mares + stallions before scoring |
-| `src/core/race/engine/runnerBuilder.ts` | Safety-net resolve in `buildRunner` |
-| `src/core/time/phases/managementResolution.ts` | Resolve before `scoutHorse` |
-| `src/hooks/useHorseActions.ts` | Auto-resolve on access |
-| `src/routes/stable.$horseId.tsx` | Guard for unresolved horse |
-| `src/core/genetics/phenotype.ts` | Delete (replaced by directory) |
-| `src/core/genetics/phenotype/color.ts` | New |
-| `src/core/genetics/phenotype/stats.ts` | New |
-| `src/core/genetics/phenotype/aptitude.ts` | New |
-| `src/core/genetics/phenotype/health.ts` | New |
-| `src/core/genetics/phenotype/traits.ts` | New |
-| `src/core/genetics/phenotype/index.ts` | New barrel + `resolveDnaTraits` |
+| File                                           | Change                                                                                                    |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `src/core/horse/types.ts`                      | Add `phenotypeResolved?: boolean`                                                                         |
+| `src/core/horse/horseFactory.ts`               | Extract `resolvePhenotype()`, `ensurePhenotypeResolved()`. Gut phenotype calls from `createHorseFromDNA`. |
+| `src/game/store/slices/coreSlice.ts`           | Add `resolveHorsePhenotype` action                                                                        |
+| `src/game/store/index.ts`                      | Wire action into store type                                                                               |
+| `src/game/npcRaceEntry.ts`                     | Resolve horses before race entry                                                                          |
+| `src/game/npcRaceEntryHelpers.ts`              | Resolve horse before eligibility check                                                                    |
+| `src/game/auction.ts`                          | Resolve in `personalityConsignmentPolicy`, `generateAuctionLots`, `resolveAuctionSale`                    |
+| `src/game/npcBreeding.ts`                      | Resolve mares + stallions before scoring                                                                  |
+| `src/core/race/engine/runnerBuilder.ts`        | Safety-net resolve in `buildRunner`                                                                       |
+| `src/core/time/phases/managementResolution.ts` | Resolve before `scoutHorse`                                                                               |
+| `src/hooks/useHorseActions.ts`                 | Auto-resolve on access                                                                                    |
+| `src/routes/stable.$horseId.tsx`               | Guard for unresolved horse                                                                                |
+| `src/core/genetics/phenotype.ts`               | Delete (replaced by directory)                                                                            |
+| `src/core/genetics/phenotype/color.ts`         | New                                                                                                       |
+| `src/core/genetics/phenotype/stats.ts`         | New                                                                                                       |
+| `src/core/genetics/phenotype/aptitude.ts`      | New                                                                                                       |
+| `src/core/genetics/phenotype/health.ts`        | New                                                                                                       |
+| `src/core/genetics/phenotype/traits.ts`        | New                                                                                                       |
+| `src/core/genetics/phenotype/index.ts`         | New barrel + `resolveDnaTraits`                                                                           |
 
 ## Files NOT modified (and why)
 
-| File | Reason |
-|---|---|
-| `src/core/time/phases/pregnancy.ts` | Calls `resolvePregnancies` which calls `resolveFoaling` → `createHorseFromDNA`. Foals are created unresolved automatically. No change needed. |
-| `src/game/store/helpers/pregnancy.ts` | Same — `resolveFoaling` returns unresolved foal, pushed to state. No change needed. |
-| `src/core/time/phases/energy.ts` | Reads `genotype.health.epm` directly, not a phenotype field. No change needed. |
-| `src/core/breeding/eligibility.ts` | `canBreed` only checks gender, age, health status, pregnancy — no phenotype fields. No change needed. |
-| `src/core/resolver/validators/BreedingValidator.ts` | Only checks existence, gender, cash. No phenotype access. No change needed. |
-| `src/core/time/phases/breedingResolution.ts` | Reads `sire.stud?.atStud`, `sire.hemisphere` — structural fields. No change needed. |
-| `src/core/ai/auctionAI.ts` | Callers resolve before passing horse. No internal change needed. |
-| `src/core/breeding/strategy.ts` | Callers resolve before passing stallion. No internal change needed. |
-| `src/game/famousStallions.ts` | Calls `createHorseFromDNA` — horses are created unresolved. Famous stallions used at init time may need resolution, but the startup path already loops horses. Resolution happens on demand. |
+| File                                                | Reason                                                                                                                                                                                       |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/core/time/phases/pregnancy.ts`                 | Calls `resolvePregnancies` which calls `resolveFoaling` → `createHorseFromDNA`. Foals are created unresolved automatically. No change needed.                                                |
+| `src/game/store/helpers/pregnancy.ts`               | Same — `resolveFoaling` returns unresolved foal, pushed to state. No change needed.                                                                                                          |
+| `src/core/time/phases/energy.ts`                    | Reads `genotype.health.epm` directly, not a phenotype field. No change needed.                                                                                                               |
+| `src/core/breeding/eligibility.ts`                  | `canBreed` only checks gender, age, health status, pregnancy — no phenotype fields. No change needed.                                                                                        |
+| `src/core/resolver/validators/BreedingValidator.ts` | Only checks existence, gender, cash. No phenotype access. No change needed.                                                                                                                  |
+| `src/core/time/phases/breedingResolution.ts`        | Reads `sire.stud?.atStud`, `sire.hemisphere` — structural fields. No change needed.                                                                                                          |
+| `src/core/ai/auctionAI.ts`                          | Callers resolve before passing horse. No internal change needed.                                                                                                                             |
+| `src/core/breeding/strategy.ts`                     | Callers resolve before passing stallion. No internal change needed.                                                                                                                          |
+| `src/game/famousStallions.ts`                       | Calls `createHorseFromDNA` — horses are created unresolved. Famous stallions used at init time may need resolution, but the startup path already loops horses. Resolution happens on demand. |
 
 ---
 

@@ -151,7 +151,10 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     ctx.font = "10px Inter";
     ctx.strokeStyle = C.MARKER_COLOR;
     ctx.lineWidth = 1;
-    const firstM = Math.max(0, Math.floor(-offsetX / C.PIXELS_PER_METER / C.MARKER_INTERVAL) * C.MARKER_INTERVAL);
+    const firstM = Math.max(
+      0,
+      Math.floor(-offsetX / C.PIXELS_PER_METER / C.MARKER_INTERVAL) * C.MARKER_INTERVAL,
+    );
     const lastM = Math.min(distance, Math.ceil((viewportWidth - offsetX) / C.PIXELS_PER_METER));
     for (let m = firstM; m <= lastM; m += C.MARKER_INTERVAL) {
       const x = m * C.PIXELS_PER_METER + offsetX;

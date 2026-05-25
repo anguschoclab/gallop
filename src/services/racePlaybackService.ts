@@ -78,6 +78,8 @@ export function interpolateSnapshots(
 
 /**
  * Calculates the total duration of the race replay.
+ * @param snapshots - Array of race snapshots
+ * @returns Total duration in seconds
  */
 export function getReplayDuration(snapshots: RaceSnapshot[]): number {
   if (snapshots.length === 0) return 0;

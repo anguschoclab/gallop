@@ -52,9 +52,7 @@ export function ClaimingRacePanel({
   // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
   const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
-  const pendingHorse = pendingClaimHorseId
-    ? horseMap.get(pendingClaimHorseId)
-    : null;
+  const pendingHorse = pendingClaimHorseId ? horseMap.get(pendingClaimHorseId) : null;
 
   return (
     <>

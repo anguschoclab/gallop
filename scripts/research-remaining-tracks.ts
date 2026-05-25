@@ -464,7 +464,9 @@ function run() {
 
     if (researchData) {
       // Check if already has sections
-      const hasExistingData = track.courses.some((c: Course) => c.sections && c.sections.length > 0);
+      const hasExistingData = track.courses.some(
+        (c: Course) => c.sections && c.sections.length > 0,
+      );
       if (hasExistingData) {
         console.log(`⏭️  ${track.name} - skipped (already has data)`);
         results.skipped.push({ id: track.id, name: track.name });

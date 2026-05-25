@@ -144,24 +144,33 @@ export function createRacingSlice(
       }
 
       if (horse.energy < 20) {
-        return { ok: false, reason: "Horse is too fatigued to run a trial (needs at least 20 energy)." };
+        return {
+          ok: false,
+          reason: "Horse is too fatigued to run a trial (needs at least 20 energy).",
+        };
       }
 
       let opponent: Horse;
       let stablemate: Horse | undefined = undefined;
       if (opponentId === "pacemaker") {
         const rng = createRng(hashStr(`pacemaker_${horseId}_${s.day}`));
-        opponent = generateHorse({
-          tier: horse.potential > 80 ? "elite" : horse.potential > 65 ? "mid" : "budget",
-          owned: false,
-        }, rng);
+        opponent = generateHorse(
+          {
+            tier: horse.potential > 80 ? "elite" : horse.potential > 65 ? "mid" : "budget",
+            owned: false,
+          },
+          rng,
+        );
         opponent.name = "Pacemaker";
         opponent.id = "pacemaker_" + generateUUID();
       } else {
         stablemate = s.horses.find((h: Horse) => h.id === opponentId);
         if (!stablemate) return { ok: false, reason: "Stablemate not found." };
         if (stablemate.energy < 15) {
-          return { ok: false, reason: "Stablemate is too fatigued to run a trial (needs at least 15 energy)." };
+          return {
+            ok: false,
+            reason: "Stablemate is too fatigued to run a trial (needs at least 15 energy).",
+          };
         }
         opponent = stablemate;
       }

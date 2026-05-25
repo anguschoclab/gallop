@@ -19,6 +19,7 @@ Route and component cleanup is lowest risk to game correctness but depends on A 
 
 **Sub-problem 1: Business logic in render**
 Lines 69–97 compute eligibility inline in the component body:
+
 - `canRetireToStud` — inlines checks for gender, age, stud career status, auction status
 - `canRetireToPasture` — inlines age and ownership checks
 - Auction lookup (`const activeLot = auctionLots.find(...)`) inside the render function
@@ -27,9 +28,11 @@ These checks replicate logic that already exists (or should exist after Refactor
 
 **Sub-problem 2: Duplicated training button disabled logic**
 The training panel (lines 404–537) has 7 training-type buttons, each with an inline `disabled` expression:
+
 ```ts
 disabled={isPregnant || slotsLeft <= 0 || horse.energy < threshold || !facilityUnlocked}
 ```
+
 The `facilityUnlocked` check references facility data inline rather than through a computed value. The `disabled` logic is repeated 7 times with slight variations.
 
 ### Fix
@@ -98,12 +101,12 @@ Create `src/hooks/useBreedingCompatibility.ts`:
 
 ```ts
 export function useBreedingCompatibility(sireId: string, damId: string) {
-  const horses = useGame(s => s.horses);
-  const sire = horses.find(h => h.id === sireId);
-  const dam = horses.find(h => h.id === damId);
+  const horses = useGame((s) => s.horses);
+  const sire = horses.find((h) => h.id === sireId);
+  const dam = horses.find((h) => h.id === damId);
   const compatibility = useMemo(
-    () => sire && dam ? calculateBreedingCompatibility(sire, dam) : null,
-    [sire?.id, dam?.id]
+    () => (sire && dam ? calculateBreedingCompatibility(sire, dam) : null),
+    [sire?.id, dam?.id],
   );
   return { sire, dam, compatibility };
 }

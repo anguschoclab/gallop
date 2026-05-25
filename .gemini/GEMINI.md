@@ -38,26 +38,33 @@ Gallop is a high-fidelity, data-driven horse racing management simulation. The p
 ## Development Conventions
 
 ### State Management (Zustand)
+
 To prevent infinite re-render loops and ensure performance, follow these rules (see `docs/zustand-best-practices.md`):
+
 - **NEVER** use object selectors like `useGame(s => ({ a: s.a, b: s.b }))`.
 - **PREFER** domain-specific hooks from `@/game/hooks/` (e.g., `useHorses`, `useDay`).
 - Use `useGameWithShallow` for selecting multiple stable references.
 
 ### UI/UX Philosophy
+
 - **Numbers over noise:** Focus on scannable data and tabular figures (`tabular-nums`).
 - **Authentic Racing:** Use real terms (Beyer, Furlong, Dosage). Provide tooltips for newcomers.
 - **Race Day Atmosphere:** Subtle cues (silk colors, track surfaces) should be consistent across management screens.
 
 ### Testing
+
 - Tests are located in `src/**/*.test.ts`.
 - Vitest is configured with a custom `testSourceRedirectPlugin`. This allows tests in `src/tests/path/to/module.test.ts` to import from `./module` and correctly resolve to `src/path/to/module.ts`.
 
 ### Styling
+
 - Use Tailwind CSS v4 utility classes.
 - Follow the design tokens and patterns defined in `docs/design-bible/01-design-system/`.
 
 ## Domain Knowledge
+
 Consult the `docs/design-bible/README.md` for a glossary of racing terms and the project's vision. Key concepts include:
+
 - **Beyer Speed Figure:** Standardized performance metric.
 - **Dosage:** Genetic profile for speed/stamina.
 - **Graded Races:** Top-tier competition (G1, G2, G3).

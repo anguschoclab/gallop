@@ -41,7 +41,7 @@ describe("Weather Phase - Storm Jump Logic", () => {
           graded: { grade: "G2", track: "Track 2" },
           entries: [],
           resolved: false,
-        }
+        },
       ],
       weather: {
         byTrack: {
@@ -59,21 +59,23 @@ describe("Weather Phase - Storm Jump Logic", () => {
 
   it("generates multiple inbox messages when multiple tracks have storm jumps", () => {
     // Force a jump from clear (0) to storm (4) for both tracks
-    (weatherSim.stepWeather as any).mockImplementation((last: any, trackId: string, day: number) => ({
-      trackId,
-      day,
-      pattern: "storm",
-      tempC: 15,
-      humidity: 0.9,
-    }));
+    (weatherSim.stepWeather as any).mockImplementation(
+      (last: any, trackId: string, day: number) => ({
+        trackId,
+        day,
+        pattern: "storm",
+        tempC: 15,
+        humidity: 0.9,
+      }),
+    );
 
     const result = weatherPhase.execute(mockContext());
 
-    const messages = result.impacts.filter(i => i.type === "inbox_message");
+    const messages = result.impacts.filter((i) => i.type === "inbox_message");
     expect(messages.length).toBe(2);
-    
+
     // Verify aggregation properties (priority and category)
-    messages.forEach(m => {
+    messages.forEach((m) => {
       expect(m.message.priority).toBe("action");
       expect(m.message.category).toBe("system");
       expect(m.message.title).toBe("Weather Alert");
@@ -87,27 +89,31 @@ describe("Weather Phase - Storm Jump Logic", () => {
 
   it("does NOT generate alert if the jump is < 2", () => {
     // Jump from clear (0) to overcast (1)
-    (weatherSim.stepWeather as any).mockImplementation((last: any, trackId: string, day: number) => ({
-      trackId,
-      day,
-      pattern: "overcast",
-      tempC: 18,
-      humidity: 0.6,
-    }));
+    (weatherSim.stepWeather as any).mockImplementation(
+      (last: any, trackId: string, day: number) => ({
+        trackId,
+        day,
+        pattern: "overcast",
+        tempC: 18,
+        humidity: 0.6,
+      }),
+    );
 
     const result = weatherPhase.execute(mockContext());
-    const messages = result.impacts.filter(i => i.type === "inbox_message");
+    const messages = result.impacts.filter((i) => i.type === "inbox_message");
     expect(messages.length).toBe(0);
   });
 
   it("does NOT generate alert for non-graded races", () => {
-    (weatherSim.stepWeather as any).mockImplementation((last: any, trackId: string, day: number) => ({
-      trackId,
-      day,
-      pattern: "storm",
-      tempC: 15,
-      humidity: 0.9,
-    }));
+    (weatherSim.stepWeather as any).mockImplementation(
+      (last: any, trackId: string, day: number) => ({
+        trackId,
+        day,
+        pattern: "storm",
+        tempC: 15,
+        humidity: 0.9,
+      }),
+    );
 
     const context = mockContext();
     // Remove grading from race 1
@@ -116,7 +122,7 @@ describe("Weather Phase - Storm Jump Logic", () => {
     context.state.races = [context.state.races[0]];
 
     const result = weatherPhase.execute(context);
-    const messages = result.impacts.filter(i => i.type === "inbox_message");
+    const messages = result.impacts.filter((i) => i.type === "inbox_message");
     expect(messages.length).toBe(0);
   });
 });

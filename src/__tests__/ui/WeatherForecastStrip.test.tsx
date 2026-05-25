@@ -12,8 +12,10 @@ vi.mock("@/game/store", () => ({
 
 describe("WeatherForecastStrip Snapshot Tests", () => {
   const mockTrackId = "test-track";
-  
-  const createMockForecast = (patterns: ("clear" | "overcast" | "shower" | "rain" | "storm")[]): WeatherState[] => {
+
+  const createMockForecast = (
+    patterns: ("clear" | "overcast" | "shower" | "rain" | "storm")[],
+  ): WeatherState[] => {
     return patterns.map((pattern, i) => ({
       trackId: mockTrackId,
       day: i + 1,
@@ -24,9 +26,17 @@ describe("WeatherForecastStrip Snapshot Tests", () => {
   };
 
   it("renders correctly for clear weather", () => {
-    const forecast = createMockForecast(["clear", "clear", "clear", "clear", "clear", "clear", "clear"]);
+    const forecast = createMockForecast([
+      "clear",
+      "clear",
+      "clear",
+      "clear",
+      "clear",
+      "clear",
+      "clear",
+    ]);
     const current = forecast[0];
-    
+
     (useGame as any).mockImplementation((selector: any) => {
       const state = {
         weather: {
@@ -37,14 +47,24 @@ describe("WeatherForecastStrip Snapshot Tests", () => {
       return selector(state);
     });
 
-    const { asFragment } = render(<WeatherForecastStrip trackId={mockTrackId} trackCondition="fast" />);
+    const { asFragment } = render(
+      <WeatherForecastStrip trackId={mockTrackId} trackCondition="fast" />,
+    );
     expect(asFragment()).toMatchSnapshot();
   });
 
   it("renders correctly for overcast weather", () => {
-    const forecast = createMockForecast(["overcast", "overcast", "overcast", "overcast", "overcast", "overcast", "overcast"]);
+    const forecast = createMockForecast([
+      "overcast",
+      "overcast",
+      "overcast",
+      "overcast",
+      "overcast",
+      "overcast",
+      "overcast",
+    ]);
     const current = forecast[0];
-    
+
     (useGame as any).mockImplementation((selector: any) => {
       const state = {
         weather: {
@@ -55,14 +75,24 @@ describe("WeatherForecastStrip Snapshot Tests", () => {
       return selector(state);
     });
 
-    const { asFragment } = render(<WeatherForecastStrip trackId={mockTrackId} trackCondition="good" />);
+    const { asFragment } = render(
+      <WeatherForecastStrip trackId={mockTrackId} trackCondition="good" />,
+    );
     expect(asFragment()).toMatchSnapshot();
   });
 
   it("renders correctly for shower weather", () => {
-    const forecast = createMockForecast(["shower", "shower", "shower", "shower", "shower", "shower", "shower"]);
+    const forecast = createMockForecast([
+      "shower",
+      "shower",
+      "shower",
+      "shower",
+      "shower",
+      "shower",
+      "shower",
+    ]);
     const current = forecast[0];
-    
+
     (useGame as any).mockImplementation((selector: any) => {
       const state = {
         weather: {
@@ -73,14 +103,16 @@ describe("WeatherForecastStrip Snapshot Tests", () => {
       return selector(state);
     });
 
-    const { asFragment } = render(<WeatherForecastStrip trackId={mockTrackId} trackCondition="soft" />);
+    const { asFragment } = render(
+      <WeatherForecastStrip trackId={mockTrackId} trackCondition="soft" />,
+    );
     expect(asFragment()).toMatchSnapshot();
   });
 
   it("renders correctly for rain weather", () => {
     const forecast = createMockForecast(["rain", "rain", "rain", "rain", "rain", "rain", "rain"]);
     const current = forecast[0];
-    
+
     (useGame as any).mockImplementation((selector: any) => {
       const state = {
         weather: {
@@ -91,14 +123,24 @@ describe("WeatherForecastStrip Snapshot Tests", () => {
       return selector(state);
     });
 
-    const { asFragment } = render(<WeatherForecastStrip trackId={mockTrackId} trackCondition="heavy" />);
+    const { asFragment } = render(
+      <WeatherForecastStrip trackId={mockTrackId} trackCondition="heavy" />,
+    );
     expect(asFragment()).toMatchSnapshot();
   });
 
   it("renders correctly for storm weather", () => {
-    const forecast = createMockForecast(["storm", "storm", "storm", "storm", "storm", "storm", "storm"]);
+    const forecast = createMockForecast([
+      "storm",
+      "storm",
+      "storm",
+      "storm",
+      "storm",
+      "storm",
+      "storm",
+    ]);
     const current = forecast[0];
-    
+
     (useGame as any).mockImplementation((selector: any) => {
       const state = {
         weather: {
@@ -109,14 +151,24 @@ describe("WeatherForecastStrip Snapshot Tests", () => {
       return selector(state);
     });
 
-    const { asFragment } = render(<WeatherForecastStrip trackId={mockTrackId} trackCondition="heavy" />);
+    const { asFragment } = render(
+      <WeatherForecastStrip trackId={mockTrackId} trackCondition="heavy" />,
+    );
     expect(asFragment()).toMatchSnapshot();
   });
 
   it("renders a mix of patterns correctly", () => {
-    const forecast = createMockForecast(["clear", "overcast", "shower", "rain", "storm", "clear", "overcast"]);
+    const forecast = createMockForecast([
+      "clear",
+      "overcast",
+      "shower",
+      "rain",
+      "storm",
+      "clear",
+      "overcast",
+    ]);
     const current = forecast[0];
-    
+
     (useGame as any).mockImplementation((selector: any) => {
       const state = {
         weather: {
@@ -127,7 +179,9 @@ describe("WeatherForecastStrip Snapshot Tests", () => {
       return selector(state);
     });
 
-    const { asFragment } = render(<WeatherForecastStrip trackId={mockTrackId} trackCondition="good" />);
+    const { asFragment } = render(
+      <WeatherForecastStrip trackId={mockTrackId} trackCondition="good" />,
+    );
     expect(asFragment()).toMatchSnapshot();
   });
 });

@@ -41,7 +41,7 @@ describe("upkeepPhase", () => {
     }) as PipelineContext;
 
     const result = upkeepPhase.execute(context);
-    expect(result.state.cash).toBe(9950); // 100000 - (2 * 50)
+    expect(result.state.cash).toBe(9900); // 10000 - (2 * 50)
   });
 
   it("should not deduct for horses with stableId (NPC horses)", () => {

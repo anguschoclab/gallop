@@ -112,9 +112,9 @@ describe("Multiple storm jumps on the same day — unread badge + Action Require
    * by manually forcing the "yesterday" entry for the appropriate gameDay.
    */
   const TRACKS = [
-    { trackId: "churchill-downs", raceId: "race-derby",    raceName: "Kentucky Derby" },
-    { trackId: "belmont-park",    raceId: "race-belmont",  raceName: "Belmont Stakes" },
-    { trackId: "santa-anita",     raceId: "race-sa-derby", raceName: "Santa Anita Derby" },
+    { trackId: "churchill-downs", raceId: "race-derby", raceName: "Kentucky Derby" },
+    { trackId: "belmont-park", raceId: "race-belmont", raceName: "Belmont Stakes" },
+    { trackId: "santa-anita", raceId: "race-sa-derby", raceName: "Santa Anita Derby" },
   ];
 
   it("three simultaneous storm jumps each produce an independent inbox_message impact", () => {
@@ -255,7 +255,10 @@ describe("Multiple storm jumps on the same day — unread badge + Action Require
           },
         ],
         log: [],
-        weather: { byTrack: { "churchill-downs": [{ ...yesterday, day: dayToday - 1 }] }, forecast: {} },
+        weather: {
+          byTrack: { "churchill-downs": [{ ...yesterday, day: dayToday - 1 }] },
+          forecast: {},
+        },
       } as any,
       logs: [],
       dailyRng: createRng(99),

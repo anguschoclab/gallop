@@ -132,8 +132,6 @@ export function runNpcRaceEntry(
   for (const race of workingUpcoming) {
     // Note: even if race is full, NPC stables may try to bump weaker entries below.
 
-
-
     // Imperial Expansion: Check if player has an entry to trigger rivalry tactics
     const playerEntry = race.entries.find((e) => e.owned);
 

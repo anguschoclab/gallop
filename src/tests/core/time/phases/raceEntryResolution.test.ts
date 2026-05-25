@@ -70,7 +70,6 @@ describe("raceEntryResolutionPhase", () => {
       horses: [horse],
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const context = createTestContext(state, [] as any);
     const result = raceEntryResolutionPhase.execute(context);
 

@@ -19,23 +19,23 @@ Every other refactor cluster (B–E) imports or inlines logic that belongs in sh
 
 The canonical four-stat average `(speed + stamina + acceleration + consistency) / 4` already exists as `calculateOverallRating` in `src/core/horse/stats.ts:14`. It is independently re-implemented in:
 
-| File | Location | Name | Notes |
-|---|---|---|---|
-| `src/core/breeding/strategy.ts` | line 70 | `overallRating` | Direct copy |
-| `src/core/horse/pricing.ts` | line 10 | inlined | Inside `calculateBaseHorseValue` |
-| `src/core/horse/pricing.ts` | line 31 | inlined | Inside `horsePrice`, again |
-| `src/game/npcHorseGen.ts` | line 234 | inlined | Inside `calculateNpcHorseValue` |
+| File                            | Location | Name            | Notes                            |
+| ------------------------------- | -------- | --------------- | -------------------------------- |
+| `src/core/breeding/strategy.ts` | line 70  | `overallRating` | Direct copy                      |
+| `src/core/horse/pricing.ts`     | line 10  | inlined         | Inside `calculateBaseHorseValue` |
+| `src/core/horse/pricing.ts`     | line 31  | inlined         | Inside `horsePrice`, again       |
+| `src/game/npcHorseGen.ts`       | line 234 | inlined         | Inside `calculateNpcHorseValue`  |
 
 A three-stat variant `(speed + stamina + acceleration) / 3` (missing `consistency`) appears in:
 
-| File | Line |
-|---|---|
-| `src/core/ai/trainingAI.ts` | ~63 |
-| `src/core/ai/jockeyStrategyAI.ts` | ~207 |
-| `src/core/ai/jockeyAI.ts` | ~139 |
-| `src/core/ai/campaignAI.ts` | ~68 |
-| `src/core/stable/personalityModifiers.ts` | ~19 |
-| `src/core/time/phases/market.ts` | ~38 |
+| File                                      | Line |
+| ----------------------------------------- | ---- |
+| `src/core/ai/trainingAI.ts`               | ~63  |
+| `src/core/ai/jockeyStrategyAI.ts`         | ~207 |
+| `src/core/ai/jockeyAI.ts`                 | ~139 |
+| `src/core/ai/campaignAI.ts`               | ~68  |
+| `src/core/stable/personalityModifiers.ts` | ~19  |
+| `src/core/time/phases/market.ts`          | ~38  |
 
 ### Fix
 
@@ -119,12 +119,12 @@ Store slices must not import React component files. This blocks tree-shaking in 
 Add to `src/core/horse/gender.ts`:
 
 ```ts
-export function isMaleHorse(gender: HorseGender): boolean
-export function isFemaleHorse(gender: HorseGender): boolean
-export function genderLabel(gender: HorseGender): string   // "Colt" | "Filly" | "Horse" | "Mare" | "Gelding"
-export function genderSymbol(gender: HorseGender): string  // "♂" | "♀" | "⚧"
-export const SIRE_GENDERS: HorseGender[]  // move from eligibility.ts
-export const DAM_GENDERS: HorseGender[]   // move from eligibility.ts
+export function isMaleHorse(gender: HorseGender): boolean;
+export function isFemaleHorse(gender: HorseGender): boolean;
+export function genderLabel(gender: HorseGender): string; // "Colt" | "Filly" | "Horse" | "Mare" | "Gelding"
+export function genderSymbol(gender: HorseGender): string; // "♂" | "♀" | "⚧"
+export const SIRE_GENDERS: HorseGender[]; // move from eligibility.ts
+export const DAM_GENDERS: HorseGender[]; // move from eligibility.ts
 ```
 
 Delete inline implementations across all files. Update `eligibility.ts` to import from `gender.ts`.
@@ -159,8 +159,8 @@ Add to `src/core/horse/stats.ts`:
 export interface CareerStats {
   starts: number;
   wins: number;
-  places: number;   // finished exactly 2nd
-  shows: number;    // finished exactly 3rd
+  places: number; // finished exactly 2nd
+  shows: number; // finished exactly 3rd
   gradedWins: number;
   g1Wins: number;
   g2Wins: number;
@@ -168,7 +168,7 @@ export interface CareerStats {
   earnings: number;
 }
 
-export function getCareerStats(horse: Horse): CareerStats
+export function getCareerStats(horse: Horse): CareerStats;
 ```
 
 Replace all inline `raceHistory.filter(r => r.position === 1)` chains with `getCareerStats(horse)` property access. Use the existing `raceHistory` array and race grade lookup for graded classification.
@@ -204,7 +204,7 @@ export function requireOwned(horse: Horse | undefined): { ok: false; reason: str
 }
 
 export function requireHorse(horses: Horse[], id: string): Horse | undefined {
-  return horses.find(h => h.id === id);
+  return horses.find((h) => h.id === id);
 }
 ```
 
@@ -221,7 +221,7 @@ Replace all inline ownership guards across all slices. The guard strings must be
 
 ### Problem
 
-When code needs to estimate COI for a *prospective* mating (before a foal exists), it manually constructs a snapshot pedigree object:
+When code needs to estimate COI for a _prospective_ mating (before a foal exists), it manually constructs a snapshot pedigree object:
 
 ```ts
 const prospectivePedigree = {
@@ -240,7 +240,7 @@ This pattern appears in `npcBreeding.ts` and `breedingCompatibility.ts`. The `as
 Add to `src/core/breeding/populationGenetics.ts`:
 
 ```ts
-export function computeProspectiveCoi(sire: Horse, dam: Horse): number
+export function computeProspectiveCoi(sire: Horse, dam: Horse): number;
 ```
 
 This wraps the snapshot construction internally. Delete all inline constructions and replace with the wrapper.

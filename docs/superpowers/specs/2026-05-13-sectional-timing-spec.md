@@ -20,17 +20,17 @@ The race simulation runs at 0.1s time steps and already stores position/velocity
 
 ## Existing Infrastructure
 
-| What | Location |
-|---|---|
-| `RaceSnapshot[]` — `{ t, horses: [{ horseId, position, velocity, lane }] }` | `src/core/race/types.ts` |
-| Simulation loop, `dt = 0.1s` | `src/core/race/engine/simulation.ts` |
-| `runRaceToCompletion()` | `src/core/race/engine/simulation.ts` |
-| `Horse.raceHistory[]` | `src/core/horse/types.ts` |
-| `Race.result[]` | `src/core/race/types.ts` |
-| Post-race impact generation | `src/game/liveRaceResolution.ts` |
-| Race viewer (live + replay tabs) | `src/routes/race.$raceId.tsx` |
-| Horse detail Analytics section | `src/routes/stable.$horseId.tsx` |
-| Track geometry, `trackId` on Race | `src/game/tracks.ts` + `src/game/data/tracks.json` |
+| What                                                                        | Location                                           |
+| --------------------------------------------------------------------------- | -------------------------------------------------- |
+| `RaceSnapshot[]` — `{ t, horses: [{ horseId, position, velocity, lane }] }` | `src/core/race/types.ts`                           |
+| Simulation loop, `dt = 0.1s`                                                | `src/core/race/engine/simulation.ts`               |
+| `runRaceToCompletion()`                                                     | `src/core/race/engine/simulation.ts`               |
+| `Horse.raceHistory[]`                                                       | `src/core/horse/types.ts`                          |
+| `Race.result[]`                                                             | `src/core/race/types.ts`                           |
+| Post-race impact generation                                                 | `src/game/liveRaceResolution.ts`                   |
+| Race viewer (live + replay tabs)                                            | `src/routes/race.$raceId.tsx`                      |
+| Horse detail Analytics section                                              | `src/routes/stable.$horseId.tsx`                   |
+| Track geometry, `trackId` on Race                                           | `src/game/tracks.ts` + `src/game/data/tracks.json` |
 
 ---
 
@@ -43,15 +43,15 @@ Add new type:
 ```typescript
 type SectionalEntry = {
   horseId: string;
-  splitTime: number;      // seconds to run this segment (not cumulative)
+  splitTime: number; // seconds to run this segment (not cumulative)
   cumulativeTime: number; // seconds from gate to this marker
-  rank: number;           // field position at this marker (1 = leading)
-  velocityMs: number;     // average m/s during this segment
+  rank: number; // field position at this marker (1 = leading)
+  velocityMs: number; // average m/s during this segment
 };
 
 type SectionalSplit = {
-  label: string;           // "¼", "½", "¾", "Fin"
-  distanceMeters: number;  // absolute meters from start
+  label: string; // "¼", "½", "¾", "Fin"
+  distanceMeters: number; // absolute meters from start
   entries: SectionalEntry[];
 };
 ```
@@ -104,8 +104,8 @@ import type { RaceSnapshot, SectionalSplit } from "@/core/race/types";
 export function interpolateTimeAtDistance(
   snapshots: RaceSnapshot[],
   horseId: string,
-  targetDistanceMeters: number
-): number | null
+  targetDistanceMeters: number,
+): number | null;
 
 /**
  * Compute quarter-point sectional splits for all horses in a race.
@@ -116,32 +116,31 @@ export function calculateSectionalSplits(
   snapshots: RaceSnapshot[],
   raceDistanceMeters: number,
   horseIds: string[],
-  splitMarkers?: number[]
-): SectionalSplit[]
+  splitMarkers?: number[],
+): SectionalSplit[];
 
 /**
  * Produce a short pace position string: "3-2-2-1" (rank at each split marker).
  * Used for storage in raceHistory and display in analytics.
  */
-export function buildPacePositionString(
-  splits: SectionalSplit[],
-  horseId: string
-): string
+export function buildPacePositionString(splits: SectionalSplit[], horseId: string): string;
 
 /**
  * Derive a human-readable running style label from pace positions.
  * e.g. [1,1,1,1] -> "Wire-to-wire", [5,5,3,1] -> "Deep closer"
  */
-export function derivePaceStyleLabel(pacePositions: number[], fieldSize: number): string
+export function derivePaceStyleLabel(pacePositions: number[], fieldSize: number): string;
 ```
 
 **`interpolateTimeAtDistance` implementation notes:**
+
 - Walk `snapshots` in order
 - For each snapshot, find the horse entry by `horseId`
 - When `horse.position >= targetDistanceMeters` for the first time, interpolate with the previous snapshot
 - If horse never crosses the marker (e.g. DNF), return `null`
 
 **`calculateSectionalSplits` implementation notes:**
+
 - Generate split markers from `[0.25, 0.5, 0.75, 1.0].map(f => f * raceDistanceMeters)`
 - For each marker: call `interpolateTimeAtDistance` for every horse
 - Compute `splitTime` = `cumulativeTime[i] - cumulativeTime[i-1]` (first segment's cumulativeTime = splitTime)
@@ -158,12 +157,8 @@ After the race is fully resolved (results assigned, Beyers calculated), add the 
 
 ```typescript
 if (race.snapshots && race.snapshots.length > 0) {
-  const horseIds = race.entries.map(e => e.horseId);
-  race.sectionalSplits = calculateSectionalSplits(
-    race.snapshots,
-    race.distance,
-    horseIds
-  );
+  const horseIds = race.entries.map((e) => e.horseId);
+  race.sectionalSplits = calculateSectionalSplits(race.snapshots, race.distance, horseIds);
 }
 ```
 
@@ -172,10 +167,11 @@ if (race.snapshots && race.snapshots.length > 0) {
 For each entry in `race.entries` that is player-owned:
 
 ```typescript
-const pacePositions = race.sectionalSplits?.map(split => {
-  const entry = split.entries.find(e => e.horseId === horse.id);
-  return entry?.rank ?? 0;
-}) ?? [];
+const pacePositions =
+  race.sectionalSplits?.map((split) => {
+    const entry = split.entries.find((e) => e.horseId === horse.id);
+    return entry?.rank ?? 0;
+  }) ?? [];
 
 // Find and update the matching raceHistory entry (added this race)
 const historyEntry = horse.raceHistory.at(-1);
@@ -211,13 +207,13 @@ courseFamiliarityMultiplier?: number; // applied to maxVelocity at sim start
 
 **Modifier table:**
 
-| Prior visits to track | Multiplier |
-|---|---|
-| 0 (debut) | 0.985 |
-| 1–2 | 0.995 |
-| 3–4 | 1.000 (baseline) |
-| 5–9 | 1.005 |
-| 10+ | 1.010 |
+| Prior visits to track | Multiplier       |
+| --------------------- | ---------------- |
+| 0 (debut)             | 0.985            |
+| 1–2                   | 0.995            |
+| 3–4                   | 1.000 (baseline) |
+| 5–9                   | 1.005            |
+| 10+                   | 1.010            |
 
 **Where to compute the multiplier:** In `liveRaceResolution.ts` (or wherever runners are assembled before calling `runRaceToCompletion()`), read `horse.courseVisits[trackId]` **before** incrementing it (Step 3 above must happen **after** the simulation runs):
 
@@ -262,8 +258,8 @@ Renders only when `race.sectionalSplits && race.sectionalSplits.length > 0`.
 
 **Table structure:**
 
-| Horse | ¼ | ½ | ¾ | Fin | Style |
-|---|---|---|---|---|---|
+| Horse      | ¼          | ½          | ¾            | Fin          | Style   |
+| ---------- | ---------- | ---------- | ------------ | ------------ | ------- |
 | Horse Name | 24.1 (3rd) | 48.8 (2nd) | 1:13.2 (2nd) | 1:37.4 (1st) | Stalker |
 
 - Split cell format: `{segmentSeconds} ({rank}{ordinal})`

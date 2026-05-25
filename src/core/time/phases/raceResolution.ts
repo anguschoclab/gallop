@@ -144,11 +144,9 @@ export const raceResolutionPhase: PipelinePhase = {
       // Look up current weather for this race's track (if available) so that
       // storms, freezing/scorching temps, etc. can amplify injury risk.
       const raceTrackId = race.graded?.trackId ?? race.trackId;
-      const weatherBuf = raceTrackId
-        ? (state as any).weather?.byTrack?.[raceTrackId]
-        : undefined;
+      const weatherBuf = raceTrackId ? (state as any).weather?.byTrack?.[raceTrackId] : undefined;
       const raceWeatherState = Array.isArray(weatherBuf)
-        ? weatherBuf.find((w: any) => w.day === newDay) ?? weatherBuf[weatherBuf.length - 1]
+        ? (weatherBuf.find((w: any) => w.day === newDay) ?? weatherBuf[weatherBuf.length - 1])
         : undefined;
 
       // Generate race impacts using service

@@ -649,7 +649,9 @@ export function personalityConsignmentPolicy(
   allHorses: readonly Horse[],
   rng: Rng,
 ): { consign: Horse[]; freshCount: number; reserveMultiplier: number } {
-  const owned = allHorses.filter((h) => h.stableId === stable.id && isLotEligible(h, kind)).map(ensurePhenotypeResolved);
+  const owned = allHorses
+    .filter((h) => h.stableId === stable.id && isLotEligible(h, kind))
+    .map(ensurePhenotypeResolved);
   const p = stable.personality;
 
   // Helper picks

@@ -62,12 +62,12 @@ Both the worker path and synchronous fallback call `applyDayResult(set, finalSta
 
 `src/game/store/slices/marketSlice.ts` is 459 lines containing four independent trading systems:
 
-| Lines | System | Description |
-|---|---|---|
-| 83–99 | Open market purchase | Buy horse directly from the NPC market listing |
-| 102–142 | Scouting | Hire a scout to evaluate a horse |
-| 144–232 | Auction consignment + resolution | Consign to sale, resolve hammer prices |
-| 285–436 | Private sale + claiming | Propose sale, respond, file claiming race entries |
+| Lines   | System                           | Description                                       |
+| ------- | -------------------------------- | ------------------------------------------------- |
+| 83–99   | Open market purchase             | Buy horse directly from the NPC market listing    |
+| 102–142 | Scouting                         | Hire a scout to evaluate a horse                  |
+| 144–232 | Auction consignment + resolution | Consign to sale, resolve hammer prices            |
+| 285–436 | Private sale + claiming          | Propose sale, respond, file claiming race entries |
 
 These four systems have no shared state or logic. They happen to all involve "buying or selling horses" but the mechanics are completely independent.
 
@@ -76,18 +76,22 @@ These four systems have no shared state or logic. They happen to all involve "bu
 Split into four slices:
 
 **`src/game/store/slices/marketSlice.ts`** (keep, trimmed)
+
 - Retains only: open market `buyFromMarket`, `refreshMarketListings`, market state
 - ≤100 lines
 
 **`src/game/store/slices/scoutingSlice.ts`** (new)
+
 - `scoutHorse`, `dismissScoutReport`, scout report state
 - Imports `ScoutReport` type, scouting cost constants
 
 **`src/game/store/slices/auctionSlice.ts`** (new)
+
 - `consignToAuction`, `withdrawConsignment`, `resolveAuction`
 - Auction state (`auctionLots`, `activeSaleId`, etc.)
 
 **`src/game/store/slices/privateSaleSlice.ts`** (new)
+
 - `proposeSale`, `acceptSale`, `declineSale`, `fileClaim`, `withdrawClaim`
 - Private sale state, claiming race entries
 
@@ -114,12 +118,12 @@ Any types currently defined inline in `marketSlice.ts` (e.g., `MarketSlice`, `Au
 
 `src/game/store/slices/systemsSlice.ts` (~400+ lines) mixes four independent domains:
 
-| Domain | Actions |
-|---|---|
-| Jockey management | `hireJockey`, `fireJockey`, `assignJockey`, `rerollJockeySkill` |
-| Facility management | `upgradeFacility`, `downgradeFacility` |
-| Horse management | `retireToStud`, `setStudFee`, `updateStudFee`, `geldHorse`, `renameHorse`, `retireToPasture` |
-| Campaign/settings/misc | `setCampaign`, `setSettings`, `updateBreedingProgram`, leaderboard setters, `enqueueIntent` |
+| Domain                 | Actions                                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| Jockey management      | `hireJockey`, `fireJockey`, `assignJockey`, `rerollJockeySkill`                              |
+| Facility management    | `upgradeFacility`, `downgradeFacility`                                                       |
+| Horse management       | `retireToStud`, `setStudFee`, `updateStudFee`, `geldHorse`, `renameHorse`, `retireToPasture` |
+| Campaign/settings/misc | `setCampaign`, `setSettings`, `updateBreedingProgram`, leaderboard setters, `enqueueIntent`  |
 
 The `enqueueIntent` function is shared infrastructure that should live on `CoreSlice`, not `SystemsSlice`.
 
@@ -128,19 +132,23 @@ The `enqueueIntent` function is shared infrastructure that should live on `CoreS
 Split into four slices:
 
 **`src/game/store/slices/jockeySlice.ts`** (new)
+
 - `hireJockey`, `fireJockey`, `assignJockey`, `rerollJockeySkill`, `setJockeySilk`
 - Jockey state from `jockeyState.ts`
 
 **`src/game/store/slices/facilitySlice.ts`** (new)
+
 - `upgradeFacility`, `downgradeFacility`
 - Facility state from `facilityState.ts`
 - The facility cost formula `5000 * 1.5^(level-1)` must be extracted to `src/core/facilities/index.ts` as a named function (it is currently inlined)
 
 **`src/game/store/slices/horseManagementSlice.ts`** (new)
+
 - `retireToStud`, `setStudFee`, `updateStudFee`, `geldHorse`, `renameHorse`, `retireToPasture`
 - No new top-level state keys — these actions mutate the existing `horses` array (adding/removing `stud` field on individual horse records)
 
 **`systemsSlice.ts`** (keep, greatly trimmed)
+
 - Campaign/settings/leaderboard/misc setters only
 - `enqueueIntent` moved to `coreSlice.ts`
 - ≤100 lines
@@ -170,8 +178,8 @@ Split into four slices:
 Add to `src/core/facilities/index.ts` (or create if not present):
 
 ```ts
-export function facilityUpgradeCost(currentLevel: FacilityLevel): number
-export function facilityMaxLevel(): FacilityLevel
+export function facilityUpgradeCost(currentLevel: FacilityLevel): number;
+export function facilityMaxLevel(): FacilityLevel;
 ```
 
 Use in `facilitySlice.ts` and in any UI component that needs to display upgrade costs.

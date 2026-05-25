@@ -13,6 +13,7 @@ Use this skill to turn a complex objective into a guided sequence of skill invoc
 ## When to Use This Skill
 
 Use this skill when:
+
 - The user wants to combine several skills without manually selecting each one.
 - The goal is multi-phase (for example: plan, build, test, ship).
 - The user asks for best-practice execution for common scenarios like:
@@ -24,6 +25,7 @@ Use this skill when:
 ## Workflow Source of Truth
 
 Read workflows in this order:
+
 1. `docs/WORKFLOWS.md` for human-readable playbooks.
 2. `data/workflows.json` for machine-readable workflow metadata.
 

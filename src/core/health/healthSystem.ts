@@ -46,6 +46,7 @@ export interface InjuryWeatherContext {
  * Compute a multiplier on base injury chance from weather/track conditions.
  *
  * Returns 1.0 when the environment is benign.
+ * @param ctx
  */
 export function computeWeatherInjuryMultiplier(ctx: InjuryWeatherContext | undefined): number {
   if (!ctx) return 1;
@@ -88,9 +89,12 @@ export function computeWeatherInjuryMultiplier(ctx: InjuryWeatherContext | undef
 
   // Temperature extremes
   if (typeof ctx.tempC === "number") {
-    if (ctx.tempC <= 0) mult *= 1.6; // freezing / snow-likely
-    else if (ctx.tempC <= 5) mult *= 1.25; // very cold
-    else if (ctx.tempC >= 35) mult *= 1.5; // scorching
+    if (ctx.tempC <= 0)
+      mult *= 1.6; // freezing / snow-likely
+    else if (ctx.tempC <= 5)
+      mult *= 1.25; // very cold
+    else if (ctx.tempC >= 35)
+      mult *= 1.5; // scorching
     else if (ctx.tempC >= 30) mult *= 1.2; // hot
   }
 

@@ -132,7 +132,9 @@ describe("Inbox persistence across reload — weather drama alerts", () => {
     // Build a state that contains an inbox message.
     const testState = {
       day: 5,
-      inbox: [{ id: "test-msg", day: 5, category: "system", priority: "action", title: "T", body: "B" }],
+      inbox: [
+        { id: "test-msg", day: 5, category: "system", priority: "action", title: "T", body: "B" },
+      ],
       cash: 1000,
     };
 
@@ -187,14 +189,16 @@ describe("Inbox persistence across reload — weather drama alerts", () => {
     const preExistingRead = {
       id: "old-read-msg",
       day: dayToday - 10,
-      readAt: dayToday - 9,   // already read before today
+      readAt: dayToday - 9, // already read before today
       category: "system",
       priority: "info",
       title: "Old News",
       body: "Nothing to worry about.",
     };
 
-    const ctx = buildContext(dayToday, yesterday, TRACK_ID, "race-derby", "Kentucky Derby", [preExistingRead]);
+    const ctx = buildContext(dayToday, yesterday, TRACK_ID, "race-derby", "Kentucky Derby", [
+      preExistingRead,
+    ]);
     const phaseOut = weatherPhase.execute(ctx);
     const stateAfterAlert = applyInboxImpacts(phaseOut);
 

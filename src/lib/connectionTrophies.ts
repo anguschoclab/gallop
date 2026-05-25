@@ -30,6 +30,8 @@ const isWinningG1 = (r: any) =>
 /**
  * Returns all graded (G1/G2/G3) wins for horses ridden by `jockeyId`,
  * attributed via the saved race entry.
+ * @param state
+ * @param jockeyId
  */
 export function getG1WinsForJockey(state: GameState, jockeyId: string): G1WinEntry[] {
   if (!jockeyId) return [];
@@ -62,11 +64,10 @@ export function getG1WinsForJockey(state: GameState, jockeyId: string): G1WinEnt
 /**
  * Returns all graded wins by horses currently in the given stable.
  * Pass `undefined` / "" for the player's stable.
+ * @param state
+ * @param stableId
  */
-export function getG1WinsForStable(
-  state: GameState,
-  stableId: string | undefined,
-): G1WinEntry[] {
+export function getG1WinsForStable(state: GameState, stableId: string | undefined): G1WinEntry[] {
   const out: G1WinEntry[] = [];
   const wantPlayer = !stableId;
   for (const horse of state.horses || []) {

@@ -80,8 +80,8 @@ function StartScreen() {
           Gallop
         </h1>
         <p className="text-lg md:text-xl text-cream-muted leading-relaxed max-w-xl mb-10 animate-fade-in">
-          Build a dynasty across decades. Breed champions, train through the seasons,
-          and chase the classics from the local stakes to the Grand Prix.
+          Build a dynasty across decades. Breed champions, train through the seasons, and chase the
+          classics from the local stakes to the Grand Prix.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 max-w-md animate-fade-in">
