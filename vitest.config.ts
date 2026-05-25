@@ -53,8 +53,10 @@ export default defineConfig({
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html"],
+      reporter: ["text", "json", "html", "lcov"],
       exclude: ["node_modules/", "src/**/*.test.ts", "src/**/*.test.tsx"],
+      all: true,
+      reportOnFailure: true,
     },
   },
 });
