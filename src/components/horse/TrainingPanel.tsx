@@ -111,6 +111,9 @@ function getStatValue(stats: Horse["stats"], key: string): number {
   return 50;
 }
 
+const ADVANCED_WORKOUTS_LABEL = "Advanced Workouts";
+const REST_LABEL = "Rest (+30 energy)";
+
 export function TrainingPanelComponent({
   horse,
   isPregnant,
@@ -201,7 +204,7 @@ export function TrainingPanelComponent({
 
       {/* Advanced workout types */}
       <div className="pt-2 border-t border-gold-muted/30">
-        <p className="text-xs text-cream-muted mb-2">Advanced Workouts</p>
+        <p className="text-xs text-cream-muted mb-2">{ADVANCED_WORKOUTS_LABEL}</p>
         <div className="grid grid-cols-2 gap-2">
           {advancedWorkoutButtons.map((btn) => (
             <Button
@@ -227,7 +230,7 @@ export function TrainingPanelComponent({
         className="w-full"
         variant="secondary"
       >
-        Rest (+30 energy)
+        {REST_LABEL}
       </Button>
     </div>
   );
