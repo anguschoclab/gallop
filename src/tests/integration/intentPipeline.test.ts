@@ -53,9 +53,9 @@ describe("Intent/Resolution Pipeline Integration", () => {
     const originalEnergy = horse.energy;
 
     const phases = [intentCollectionPhase, trainingResolutionPhase, impactApplicationPhase];
-    executePipeline(phases, context);
+    const result = executePipeline(phases, context);
 
-    expect(state.cash).toBeLessThan(originalCash);
-    expect(state.horses[0].energy).toBeLessThan(originalEnergy);
+    expect(result.state.cash).toBeLessThan(originalCash);
+    expect(result.state.horses[0].energy).toBeLessThan(originalEnergy);
   });
 });

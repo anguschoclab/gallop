@@ -168,13 +168,6 @@ export const weatherPhase = {
       }
 
       const currentCondition = trackCurrentCondition[tid];
-
-      updatedRaces.push({
-        ...race,
-        trackCondition: currentCondition,
-        weather: race.weather ?? toRaceWeather(todays.pattern),
-      });
-
       const nextCondition = calculateConditionChange(
         currentCondition,
         toTrackWeatherPattern(todays.pattern),
@@ -182,6 +175,12 @@ export const weatherPhase = {
         0.5,
       );
       trackCurrentCondition[tid] = nextCondition;
+
+      updatedRaces.push({
+        ...race,
+        trackCondition: nextCondition,
+        weather: race.weather ?? toRaceWeather(todays.pattern),
+      });
     }
 
     return {

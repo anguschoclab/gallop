@@ -57,6 +57,59 @@ const TrainingButton = memo(
  *
  * EXTRACTED FROM: src/routes/stable.$horseId.tsx
  */
+const basicTrainingTypes = ["speed", "stamina", "acceleration"] as const;
+
+type AdvancedWorkout = {
+  key: string;
+  label: string;
+  cost: number;
+  energy: number;
+  stat?: string;
+};
+
+const advancedWorkouts: AdvancedWorkout[] = [
+  {
+    key: "bullet",
+    label: "Bullet",
+    cost: TRAINING_COST_MAP.bullet,
+    energy: Math.abs(TRAINING_ENERGY_MAP.bullet),
+    stat: "speed",
+  },
+  {
+    key: "breeze",
+    label: "Breeze",
+    cost: TRAINING_COST_MAP.breeze,
+    energy: Math.abs(TRAINING_ENERGY_MAP.breeze),
+    stat: "stamina",
+  },
+  {
+    key: "gate_work",
+    label: "Gate Work",
+    cost: TRAINING_COST_MAP.gate_work,
+    energy: Math.abs(TRAINING_ENERGY_MAP.gate_work),
+    stat: "acceleration",
+  },
+  {
+    key: "swimming",
+    label: "Swimming",
+    cost: TRAINING_COST_MAP.swimming,
+    energy: Math.abs(TRAINING_ENERGY_MAP.swimming),
+  },
+  {
+    key: "gallop",
+    label: "Gallop",
+    cost: TRAINING_COST_MAP.gallop,
+    energy: Math.abs(TRAINING_ENERGY_MAP.gallop),
+  },
+];
+
+function getStatValue(stats: Horse["stats"], key: string): number {
+  if (key === "speed" || key === "stamina" || key === "acceleration" || key === "consistency") {
+    return stats[key];
+  }
+  return 50;
+}
+
 export function TrainingPanelComponent({
   horse,
   isPregnant,
@@ -65,22 +118,6 @@ export function TrainingPanelComponent({
   facilities,
   onTrain,
 }: TrainingPanelProps) {
-  const basicTrainingTypes = ["speed", "stamina", "acceleration"] as const;
-
-  const handleBasicTrain = useCallback(
-    (k: (typeof basicTrainingTypes)[number]) => {
-      onTrain(horse.id, k);
-    },
-    [horse.id, onTrain],
-  );
-
-  const handleAdvancedTrain = useCallback(
-    (key: string) => {
-      onTrain(horse.id, key);
-    },
-    [horse.id, onTrain],
-  );
-
   const handleRest = useCallback(() => {
     onTrain(horse.id, "rest");
   }, [horse.id, onTrain]);
@@ -93,40 +130,27 @@ export function TrainingPanelComponent({
     [horse.id, onTrain],
   );
 
-  type AdvancedWorkout = {
-    key: string;
-    label: string;
-    cost: number;
-    energy: number;
-    stat?: string;
-  };
-
-  const advancedWorkouts: AdvancedWorkout[] = [
-    { key: "bullet", label: "Bullet", cost: TRAINING_COST_MAP.bullet, energy: Math.abs(TRAINING_ENERGY_MAP.bullet), stat: "speed" },
-    { key: "breeze", label: "Breeze", cost: TRAINING_COST_MAP.breeze, energy: Math.abs(TRAINING_ENERGY_MAP.breeze), stat: "stamina" },
-    { key: "gate_work", label: "Gate Work", cost: TRAINING_COST_MAP.gate_work, energy: Math.abs(TRAINING_ENERGY_MAP.gate_work), stat: "acceleration" },
-    { key: "swimming", label: "Swimming", cost: TRAINING_COST_MAP.swimming, energy: Math.abs(TRAINING_ENERGY_MAP.swimming) },
-    { key: "gallop", label: "Gallop", cost: TRAINING_COST_MAP.gallop, energy: Math.abs(TRAINING_ENERGY_MAP.gallop) },
-  ];
-
   // Memoize the training types arrays to prevent recreation
   const basicTrainingButtons = useMemo(
     () =>
-      basicTrainingTypes.map((k) => ({
-        key: k,
-        type: k,
-        disabled:
-          isPregnant ||
-          slotsLeft <= 0 ||
-          cash < TRAINING_COST ||
-          horse.energy < 15 ||
-          horse.stats[k] >= horse.potential,
-        label: k,
-        nextValue: Math.min(horse.potential, horse.stats[k] + 1),
-        currentValue: horse.stats[k],
-        onClick: () => handleTrainingClick(k),
-      })),
-    [basicTrainingTypes, isPregnant, slotsLeft, cash, horse, handleTrainingClick],
+      basicTrainingTypes.map((k) => {
+        const val = getStatValue(horse.stats, k);
+        return {
+          key: k,
+          type: k,
+          disabled:
+            isPregnant ||
+            slotsLeft <= 0 ||
+            cash < TRAINING_COST ||
+            horse.energy < 15 ||
+            val >= horse.potential,
+          label: k,
+          nextValue: Math.min(horse.potential, val + 1),
+          currentValue: val,
+          onClick: () => handleTrainingClick(k),
+        };
+      }),
+    [isPregnant, slotsLeft, cash, horse, handleTrainingClick],
   );
 
   // Memoize advanced workouts array to prevent recreation
@@ -136,7 +160,7 @@ export function TrainingPanelComponent({
         const isEnabled = facilities && isWorkoutEnabled(facilities, workout.key as any);
         const isStatCapped =
           workout.stat !== undefined &&
-          horse.stats[workout.stat as keyof typeof horse.stats] >= horse.potential;
+          getStatValue(horse.stats, workout.stat) >= horse.potential;
 
         return {
           key: workout.key,
@@ -154,7 +178,7 @@ export function TrainingPanelComponent({
           onClick: () => handleTrainingClick(workout.key),
         };
       }),
-    [advancedWorkouts, facilities, horse, isPregnant, slotsLeft, cash, handleTrainingClick],
+    [facilities, horse, isPregnant, slotsLeft, cash, handleTrainingClick],
   );
 
   return (

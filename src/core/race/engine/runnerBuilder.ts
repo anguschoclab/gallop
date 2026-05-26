@@ -460,7 +460,7 @@ export function buildRunner(
     targetLane: 0,
     laneVelocity: 0,
     barrier,
-    topSpeed: topSpeed * genderSpeedMul * weightMod * strideMod,
+    topSpeed: clamp(topSpeed * genderSpeedMul * weightMod * strideMod, 5, TOP_SPEED_CEILING),
     accel: accel * weightMod,
     staminaFactor: clamp(staminaFactor + ((h.heartScore ?? 1.0) - 1.0) * 0.5, 0.2, 1),
     noise: reducedNoise,

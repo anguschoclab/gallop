@@ -356,7 +356,7 @@ describe("validateIntent", () => {
 
     const result = validateIntent(intent, state);
     expect(result.valid).toBe(false);
-    expect(result.reason).toBe("Invalid sire gender");
+    expect(result.reason).toBe("Invalid sire gender (must be stallion or colt)");
   });
 
   it("should reject breeding intent for invalid dam gender", () => {
@@ -382,7 +382,7 @@ describe("validateIntent", () => {
 
     const result = validateIntent(intent, state);
     expect(result.valid).toBe(false);
-    expect(result.reason).toBe("Invalid dam gender");
+    expect(result.reason).toBe("Invalid dam gender (must be mare or filly)");
   });
 
   it("should reject breeding intent for insufficient funds", () => {

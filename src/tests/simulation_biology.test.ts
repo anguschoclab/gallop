@@ -9,9 +9,11 @@ describe("Biological Simulation Bridge - Stress Test", () => {
   it("should apply size-based weight capacity bonuses", () => {
     const largeHorse = generateHorse({ tier: "mid" });
     largeHorse.weight = 600; // Giant
+    largeHorse.phenotypeResolved = true;
 
     const smallHorse = generateHorse({ tier: "mid" });
     smallHorse.weight = 440; // Pony
+    smallHorse.phenotypeResolved = true;
 
     // Reset stats to identical for fair comparison
     largeHorse.stats = {
@@ -62,9 +64,11 @@ describe("Biological Simulation Bridge - Stress Test", () => {
   it("should apply conformation-based stamina efficiency", () => {
     const goodConf = generateHorse({ tier: "mid" });
     goodConf.conformation = 90;
+    goodConf.phenotypeResolved = true;
 
     const poorConf = generateHorse({ tier: "mid" });
     poorConf.conformation = 30;
+    poorConf.phenotypeResolved = true;
 
     goodConf.stats = {
       speed: 80,
@@ -125,6 +129,7 @@ describe("Biological Simulation Bridge - Stress Test", () => {
     const horse = generateHorse({ tier: "mid" });
     horse.gender = "horse";
     horse.stats.consistency = 80;
+    horse.phenotypeResolved = true;
 
     const gelding = { ...horse, gender: "gelding" as const };
 

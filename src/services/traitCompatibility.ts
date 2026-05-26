@@ -13,11 +13,11 @@ export function calculateConformationCompatibility(
   sire: Horse,
   dam: Horse,
 ): { score: number; description: string } {
-  const sireConf = sire.conformation || "fair";
-  const damConf = dam.conformation || "fair";
+  let sireRaw = typeof sire.conformation === "number" ? sire.conformation : TRAIT_SCORE[sire.conformation || "fair"];
+  let damRaw = typeof dam.conformation === "number" ? dam.conformation : TRAIT_SCORE[dam.conformation || "fair"];
 
-  const sireValue = TRAIT_SCORE[sireConf];
-  const damValue = TRAIT_SCORE[damConf];
+  const sireValue = sireRaw > 1 ? sireRaw / 100 : sireRaw;
+  const damValue = damRaw > 1 ? damRaw / 100 : damRaw;
 
   // Both parents should have good conformation
   const avgValue = (sireValue + damValue) / 2;
@@ -43,11 +43,11 @@ export function calculateTemperamentCompatibility(
   sire: Horse,
   dam: Horse,
 ): { score: number; description: string } {
-  const sireTemp = sire.temperament || "fair";
-  const damTemp = dam.temperament || "fair";
+  let sireRaw = typeof sire.temperament === "number" ? sire.temperament : TRAIT_SCORE[sire.temperament || "fair"];
+  let damRaw = typeof dam.temperament === "number" ? dam.temperament : TRAIT_SCORE[dam.temperament || "fair"];
 
-  const sireValue = TRAIT_SCORE[sireTemp];
-  const damValue = TRAIT_SCORE[damTemp];
+  const sireValue = sireRaw > 1 ? sireRaw / 100 : sireRaw;
+  const damValue = damRaw > 1 ? damRaw / 100 : damRaw;
 
   const avgValue = (sireValue + damValue) / 2;
 

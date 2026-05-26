@@ -96,10 +96,12 @@ export function horsePrice(h: Horse): number {
   const potMod = 0.5 + h.potential / 100;
 
   let bioMod = 1.0;
-  if ((h.conformation ?? 50) >= 90) bioMod += 0.05;
-  if ((h.temperament ?? 50) >= 90) bioMod += 0.05;
-  if ((h.conformation ?? 50) <= 30) bioMod -= 0.1;
-  if ((h.temperament ?? 50) <= 30) bioMod -= 0.1;
+  const conformationVal = h.stats?.conformation ?? h.conformation ?? 50;
+  const temperamentVal = h.stats?.temperament ?? h.temperament ?? 50;
+  if (conformationVal >= 90) bioMod += 0.05;
+  if (temperamentVal >= 90) bioMod += 0.05;
+  if (conformationVal <= 30) bioMod -= 0.1;
+  if (temperamentVal <= 30) bioMod -= 0.1;
 
   const proneness = h.injuryProneness ?? 0.05;
   if (proneness < INJURY_PRONENESS_LOW_THRESHOLD) bioMod += 0.15;

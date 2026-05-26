@@ -287,8 +287,10 @@ export function calculateLotValuation(
   let mod = strategy(ctx);
 
   // Common premiums applied to all personalities
-  if ((horse.conformation ?? 50) >= 90) mod *= 1.1;
-  if ((horse.temperament ?? 50) >= 90) mod *= 1.05;
+  const conformationVal = horse.stats?.conformation ?? horse.conformation ?? 50;
+  const temperamentVal = horse.stats?.temperament ?? horse.temperament ?? 50;
+  if (conformationVal >= 90) mod *= 1.1;
+  if (temperamentVal >= 90) mod *= 1.05;
 
   // Youth preference from cfg modulates the yearling/weanling bonus
   if ((isYearling || isWeanling) && cfg.youthPreference > 0.5) {

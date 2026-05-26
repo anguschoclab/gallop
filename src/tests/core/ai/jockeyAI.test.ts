@@ -275,7 +275,7 @@ describe("calculateMaxJockeyFee", () => {
     const jockey = createMockJockey();
     const horse = createMockHorse();
     const richStable = createMockStable({ cash: 500000 });
-    const poorStable = createMockStable({ cash: 10000 });
+    const poorStable = createMockStable({ cash: 1000 });
 
     const richMaxFee = calculateMaxJockeyFee(state, jockey, horse, richStable);
     const poorMaxFee = calculateMaxJockeyFee(state, jockey, horse, poorStable);

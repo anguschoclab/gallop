@@ -57,7 +57,7 @@ export function generateRaceNews(
   const headlines = [
     `${winner.name} Dominates in ${race.name}!`,
     `Victory for ${winner.name} at ${race.name}.`,
-    `${winner.name} Claims ${grade || race.raceClass} Glory.`,
+    `${winner.name} Claims ${grade || race.raceClass} Glory in ${race.name}.`,
     `A Masterclass from ${winner.name} in the ${race.name}.`,
   ];
 

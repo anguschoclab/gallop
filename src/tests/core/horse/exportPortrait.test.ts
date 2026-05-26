@@ -391,7 +391,7 @@ describe("exportPortrait", () => {
       expect(getOrDeriveAppearance).toHaveBeenCalledWith(
         "test-horse-1",
         "bay",
-        { socks: ["none", "none", "none", "none"], face: "none", dapples: [], flecks: [] },
+        { socks: ["none", "none", "none", "none"], face: "none" },
         makeAppearanceDNA(),
       );
     });

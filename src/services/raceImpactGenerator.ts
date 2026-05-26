@@ -987,17 +987,19 @@ export function generateRaceImpacts({
     }
 
     // 10. Narrative: Dynamic news generation for major races
-    const newsItem = generateRaceNews(race, result, Array.from(horseMap.values()), newDay, rng!);
-    if (newsItem) {
-      impacts.push({
-        id: generateUUID(rng),
-        intentId: "",
-        day: newDay,
-        phase: "raceResolution",
-        logLevel: "always",
-        type: "news_item",
-        newsItem,
-      } as NewsImpact);
+    if (rng) {
+      const newsItem = generateRaceNews(race, result, Array.from(horseMap.values()), newDay, rng);
+      if (newsItem) {
+        impacts.push({
+          id: generateUUID(rng),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "always",
+          type: "news_item",
+          newsItem,
+        } as NewsImpact);
+      }
     }
 
     return impacts;

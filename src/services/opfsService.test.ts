@@ -28,14 +28,14 @@ describe("opfsService deleteFile error path", () => {
     const freshOpfsService = await import("./opfsService");
     await freshOpfsService.initOPFS();
 
-    const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     const result = await freshOpfsService.deleteFile("test.json");
 
-    expect(result).toBe(false);
+    expect(result).toBeUndefined();
     expect(mockRemoveEntry).toHaveBeenCalledWith("test.json");
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      "Could not delete test.json from OPFS:",
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Failed to delete file test.json:",
       expect.any(Error),
     );
   });
