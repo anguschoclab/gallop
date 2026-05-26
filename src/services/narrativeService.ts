@@ -31,11 +31,12 @@ import {
   GAP_THRESHOLD_LENGTHS,
   STRETCH_THRESHOLD_PERCENT,
   TURN_SEGMENT_LENGTH,
-} from "@/game/constants/gameConstants";
+  METERS_PER_LENGTH,
+} from "@/game/constants";
 
 // Milestone configuration
 export const NARRATIVE_THRESHOLDS = {
-  METERS_PER_LENGTH: 2.4,
+  METERS_PER_LENGTH,
   MILESTONE_FINAL_400M,
   MILESTONE_FINAL_200M,
   MILESTONE_FINAL_100M,

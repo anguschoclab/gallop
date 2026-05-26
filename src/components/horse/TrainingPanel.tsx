@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
-import { TRAINING_COST } from "@/game/constants/gameConstants";
+import { TRAINING_COST, TRAINING_COST_MAP, TRAINING_ENERGY_MAP } from "@/game/constants";
 import { isWorkoutEnabled } from "@/core/facilities";
 import type { Horse, PlayerFacilities } from "@/game/types";
 import { useCallback, memo, useMemo } from "react";
@@ -102,11 +102,11 @@ export function TrainingPanelComponent({
   };
 
   const advancedWorkouts: AdvancedWorkout[] = [
-    { key: "bullet", label: "Bullet", cost: 100, energy: 25, stat: "speed" },
-    { key: "furlong", label: "Furlong", cost: 90, energy: 20, stat: "stamina" },
-    { key: "gate", label: "Gate Work", cost: 85, energy: 18, stat: "acceleration" },
-    { key: "swimming", label: "Swimming", cost: 80, energy: 15 },
-    { key: "gallop", label: "Gallop", cost: 70, energy: 16 },
+    { key: "bullet", label: "Bullet", cost: TRAINING_COST_MAP.bullet, energy: Math.abs(TRAINING_ENERGY_MAP.bullet), stat: "speed" },
+    { key: "breeze", label: "Breeze", cost: TRAINING_COST_MAP.breeze, energy: Math.abs(TRAINING_ENERGY_MAP.breeze), stat: "stamina" },
+    { key: "gate_work", label: "Gate Work", cost: TRAINING_COST_MAP.gate_work, energy: Math.abs(TRAINING_ENERGY_MAP.gate_work), stat: "acceleration" },
+    { key: "swimming", label: "Swimming", cost: TRAINING_COST_MAP.swimming, energy: Math.abs(TRAINING_ENERGY_MAP.swimming) },
+    { key: "gallop", label: "Gallop", cost: TRAINING_COST_MAP.gallop, energy: Math.abs(TRAINING_ENERGY_MAP.gallop) },
   ];
 
   // Memoize the training types arrays to prevent recreation

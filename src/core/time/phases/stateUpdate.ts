@@ -8,6 +8,7 @@
  * Related files: ../pipeline.ts (uses phase), ../advance.ts (uses phase)
  */
 
+import { PHASE_ORDER_STATE_UPDATE } from "@/game/constants";
 import type { PipelineContext } from "../pipeline";
 
 /**
@@ -17,7 +18,7 @@ import type { PipelineContext } from "../pipeline";
  */
 export const stateUpdatePhase = {
   name: "stateUpdate",
-  order: 100,
+  order: PHASE_ORDER_STATE_UPDATE,
   execute: (context: PipelineContext): PipelineContext => {
     // This phase is a placeholder - the actual state update happens in store.ts
     // The pipeline phases modify the context, and the final set() call in advanceDay

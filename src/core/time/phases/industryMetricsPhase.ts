@@ -8,6 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import { PHASE_ORDER_INDUSTRY_METRICS } from "@/game/constants";
 import type { PipelineContext } from "../pipeline";
 import { computeIndustryMeanEarnings } from "@/core/breeding/industryMetrics";
 import type { Horse } from "@/game/types";
@@ -20,7 +21,7 @@ import { formatCurrency } from "@/lib/formatting";
  */
 export const industryMetricsPhase = {
   name: "industryMetrics",
-  order: 45, // After breedingSeason (35), before npcBreeding (38)
+  order: PHASE_ORDER_INDUSTRY_METRICS, // After breedingSeason (35), before npcBreeding (38)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 

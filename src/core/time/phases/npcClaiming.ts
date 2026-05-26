@@ -8,6 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import { PHASE_ORDER_NPC_CLAIMING } from "@/game/constants";
 import type { PipelineContext } from "../pipeline";
 import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { calculateLotValuation } from "@/game/auction";
@@ -22,7 +23,7 @@ import { generateUUID } from "@/core/uuid";
  */
 export const npcClaimingPhase = {
   name: "npcClaiming",
-  order: 62, // Just before raceResolution (order ~65)
+  order: PHASE_ORDER_NPC_CLAIMING, // Just before raceResolution (order ~65)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const claimingRaces: Race[] = state.races.filter(

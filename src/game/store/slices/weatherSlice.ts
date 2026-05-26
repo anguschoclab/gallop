@@ -12,9 +12,7 @@
 
 import type { GameStateCreator } from "../types";
 import type { WeatherState } from "@/core/weather";
-
-export const WEATHER_HISTORY_DAYS = 14;
-export const WEATHER_FORECAST_DAYS = 7;
+import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS } from "@/game/constants";
 
 export interface WeatherStoreState {
   weather?: {

@@ -11,6 +11,7 @@
 // Management Resolution Phase
 // Processes player intents for infrastructure, jockeys, and horse management
 
+import { PHASE_ORDER_MANAGEMENT_RESOLUTION } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type {
   AnyIntent,
@@ -45,7 +46,7 @@ import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateRes
  */
 export const managementResolutionPhase: PipelinePhase = {
   name: "managementResolution",
-  order: 10,
+  order: PHASE_ORDER_MANAGEMENT_RESOLUTION,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];

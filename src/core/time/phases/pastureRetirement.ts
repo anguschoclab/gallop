@@ -16,11 +16,7 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 // Also deletes dead/retired horses with no wins to prevent array accumulation
 
 import { createRng, hashStr } from "@/game/rng";
-import {
-  AGE_RETIREMENT_THRESHOLD,
-  FAME_LOW_THRESHOLD,
-  INACTIVITY_RETIREMENT_DAYS,
-} from "@/game/constants/gameConstants";
+import { AGE_RETIREMENT_THRESHOLD, FAME_LOW_THRESHOLD, INACTIVITY_RETIREMENT_DAYS, , PHASE_ORDER_PASTURE_RETIREMENT } from "@/game/constants";
 import type {
   AnyImpact,
   PastureRetirementImpact,
@@ -38,7 +34,7 @@ import { generateUUID } from "@/core/uuid";
  */
 export const pastureRetirementPhase: PipelinePhase = {
   name: "pastureRetirement",
-  order: 150, // After stallion retirement (145)
+  order: PHASE_ORDER_PASTURE_RETIREMENT, // After stallion retirement (145)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, intents } = context;
     const impacts: AnyImpact[] = [];

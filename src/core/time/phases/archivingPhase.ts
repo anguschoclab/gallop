@@ -8,6 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import { PHASE_ORDER_ARCHIVING } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { Horse, Race, Pregnancy } from "@/game/types";
 
@@ -18,7 +19,7 @@ import type { Horse, Race, Pregnancy } from "@/game/types";
  */
 export const archivingPhase: PipelinePhase = {
   name: "archiving",
-  order: 190, // Run near the end, before impact application
+  order: PHASE_ORDER_ARCHIVING, // Run near the end, before impact application
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 

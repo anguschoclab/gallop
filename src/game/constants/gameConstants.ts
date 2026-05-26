@@ -1,16 +1,8 @@
 /**
- * gameConstants.ts - Centralized game constants
+ * gameConstants.ts - Centralized core game constants
  *
- * This file provides a single source of truth for all game balance constants
- * including prize splits, upkeep costs, training costs, starting cash, and calendar constants.
- *
- * Dependencies: None (self-contained constants)
- * Related files: Used throughout the game for balance calculations
- */
-
-/**
- * Centralized game constants
- * Single source of truth for all game balance constants
+ * This file provides a single source of truth for core game balance constants
+ * including prize splits, upkeep costs, starting cash, and calendar constants.
  */
 
 // ============================================================================
@@ -30,16 +22,6 @@ export const PRIZE_SPLIT = [0.6, 0.25, 0.1, 0.05];
 export const GRADED_PRIZE_SPLIT = [0.7, 0.2, 0.075, 0.025];
 
 /**
- * Jockey fee percentage of winnings
- */
-export const JOCKEY_FEE_PERCENTAGE = 0.1;
-
-/**
- * Base jockey riding fee when not specified
- */
-export const BASE_JOCKEY_RIDING_FEE = 100;
-
-/**
  * Consignment commission percentage for auctions
  */
 export const CONSIGNMENT_COMMISSION = 0.06;
@@ -50,63 +32,9 @@ export const CONSIGNMENT_COMMISSION = 0.06;
 export const UPKEEP_PER_HORSE = 50;
 
 /**
- * Cost per training session
- */
-export const TRAINING_COST = 75;
-
-/**
  * Starting cash for new games (default, can be overridden by backstory)
  */
 export const STARTING_CASH = 5000;
-
-/**
- * Base breeding fee
- */
-export const BREEDING_FEE = 2000;
-
-// ============================================================================
-// GENETIC & BREEDING
-// ============================================================================
-
-/**
- * Weight for each genetic trait in compatibility scoring
- */
-export const GENETIC_TRAIT_WEIGHT = 0.25;
-
-/**
- * Genetic compatibility score thresholds
- */
-export const GENETIC_COMPATIBILITY_EXCELLENT_THRESHOLD = 0.8;
-export const GENETIC_COMPATIBILITY_GOOD_THRESHOLD = 0.6;
-export const GENETIC_COMPATIBILITY_MODERATE_THRESHOLD = 0.4;
-
-/**
- * Default genetic diversity value when not specified
- */
-export const DEFAULT_GENETIC_DIVERSITY = 0.5;
-
-/**
- * Default trait score when not specified
- */
-export const DEFAULT_TRAIT_SCORE = 0.5;
-
-/**
- * Inbreeding diversity ratio thresholds
- */
-export const INBREEDING_DIVERSITY_HIGH = 0.8;
-export const INBREEDING_DIVERSITY_MODERATE = 0.6;
-export const INBREEDING_DIVERSITY_LOW = 0.4;
-export const INBREEDING_DIVERSITY_VERY_LOW = 0.2;
-
-/**
- * Expected maximum number of ancestors for inbreeding calculation
- */
-export const INBREEDING_EXPECTED_MAX_ANCESTORS = 30;
-
-/**
- * Bonus added to inbreeding score when diversity is high
- */
-export const INBREEDING_SCORE_BONUS = 0.2;
 
 // ============================================================================
 // FACILITY & UPGRADE
@@ -121,6 +49,25 @@ export const FACILITY_UPGRADE_BASE_COST = 5000;
  * Multiplier for each rank level in facility upgrade costs
  */
 export const FACILITY_UPGRADE_MULTIPLIER = 1.5;
+
+// ============================================================================
+// OUTPOSTS & SPECIALIZATION (Imperial Expansion)
+// ============================================================================
+
+/**
+ * Base slot capacity for newly constructed outposts
+ */
+export const OUTPOST_BASE_SLOTS = 12;
+
+/**
+ * Transport fatigue increase when shipping horses between outposts
+ */
+export const TRANSPORT_FATIGUE_SPIKE = 40;
+
+/**
+ * Number of days required for transport fatigue to decay fully
+ */
+export const ACCLIMATIZATION_PERIOD = 7;
 
 // ============================================================================
 // RACING & SIMULATION
@@ -151,6 +98,18 @@ export const BEYER_MAX = 125;
  * Base Beyer figure for calculations
  */
 export const BEYER_BASE = 80;
+
+/**
+ * Scale divisor factor for translation from par delta to Beyer points
+ */
+export const BEYER_FORMULA_SCALE = 500;
+
+/**
+ * Pattern jump thresholds (Beyer improvement markers)
+ */
+export const PATTERN_JUMP_AVG_THRESHOLD = 15;
+export const PATTERN_JUMP_BEST_THRESHOLD = 10;
+export const PATTERN_JUMP_MIN_HISTORY = 2;
 
 /**
  * Stamina drain formula divisors
@@ -237,6 +196,11 @@ export const GAP_THRESHOLD_LENGTHS = 2.0;
  * Stretch threshold percentage of race distance
  */
 export const STRETCH_THRESHOLD_PERCENT = 0.85;
+
+/**
+ * Length conversion scale (meters per length) for commentary
+ */
+export const METERS_PER_LENGTH = 2.4;
 
 // ============================================================================
 // ENERGY & RECOVERY
@@ -440,92 +404,6 @@ export const INJURY_PRONENESS_HIGH_THRESHOLD = 0.08;
 export const AGE_YOUNG_THRESHOLD = 3;
 export const AGE_OLD_THRESHOLD = 7;
 export const AGE_RETIREMENT_THRESHOLD = 6;
-export const AGE_BREEDING_MAX = 21;
-
-/**
- * Peak age range for horses
- */
-export const PEAK_AGE_MIN = 3;
-export const PEAK_AGE_MAX = 7;
-
-// ============================================================================
-// JOCKEY
-// ============================================================================
-
-/**
- * Jockey salary ranges by tier
- */
-export const JOCKEY_SALARY_ELITE_MIN = 75;
-export const JOCKEY_SALARY_ELITE_MAX = 98;
-export const JOCKEY_SALARY_MID_MIN = 55;
-export const JOCKEY_SALARY_MID_MAX = 80;
-export const JOCKEY_SALARY_BUDGET_MIN = 35;
-export const JOCKEY_SALARY_BUDGET_MAX = 60;
-
-/**
- * Jockey age range for generation
- */
-export const JOCKEY_AGE_MIN = 18;
-export const JOCKEY_AGE_MAX = 53;
-
-/**
- * Jockey contract duration in days
- */
-export const JOCKEY_CONTRACT_DAYS = 90;
-
-/**
- * Jockey retainer contract duration in days
- */
-export const JOCKEY_RETAINER_DAYS = 180;
-
-/**
- * Jockey bonus multipliers by contract type
- */
-export const JOCKEY_RETAINER_BONUS_MULTIPLIER = 100;
-export const JOCKEY_PER_RACE_BONUS_MULTIPLIER = 30;
-
-/**
- * Jockey fame thresholds for reputation tiers
- */
-export const JOCKEY_FAME_TALKED_ABOUT = 35;
-export const JOCKEY_FAME_WORKMANLIKE = 45;
-export const JOCKEY_FAME_HOUSEHOLD_NAME = 60;
-
-// ============================================================================
-// STUD & BREEDING
-// ============================================================================
-
-/**
- * Mid-tier stud fee and book size
- */
-export const STUD_FEE_MID = 12000;
-export const STUD_BOOK_SIZE_MID = 120;
-
-/**
- * Stud fee rounding value
- */
-export const STUD_FEE_ROUNDING = 100;
-
-/**
- * Minimum stud fee
- */
-export const STUD_FEE_MIN = 500;
-
-/**
- * Blue hen score calculation multipliers
- */
-export const BLUE_HEN_STAKES_WINNER_MULTIPLIER = 15;
-export const BLUE_HEN_STAKES_WINNER_CAP = 60;
-export const BLUE_HEN_G1_WINNER_MULTIPLIER = 20;
-
-/**
- * Foaling complications and risks
- */
-export const FOALING_AGE_RISK_THRESHOLD = 10;
-export const FOALING_AGE_RISK_MULTIPLIER = 0.02;
-export const FOALING_BASE_COMPLICATION_RATE = 0.01;
-export const LETHAL_RECESSIVE_CHANCE = 0.25;
-export const TWIN_REDUCTION_CHANCE = 0.005;
 
 // ============================================================================
 // AUCTION
@@ -561,6 +439,9 @@ export const AUCTION_RESERVE_ELITE = 0.85;
  */
 export const AUCTION_AGGRESSIVE_BID_MIN_PERCENT = 0.88;
 export const AUCTION_AGGRESSIVE_BID_VARIANCE = 0.07;
+
+/** Default reserve as a fraction of base value when the player consigns. */
+export const DEFAULT_PLAYER_RESERVE_RATIO = 0.7;
 
 // ============================================================================
 // RACE CLASSIFICATION
@@ -662,16 +543,6 @@ export const DAYS_PER_MONTH = 30;
 export const DAYS_PER_WEEK = 7;
 
 /**
- * Additional fee for live foal guarantee
- */
-export const LIVE_FOAL_GUARANTEE_FEE = 1000;
-
-/**
- * Gestation period in days
- */
-export const GESTATION_DAYS = 30;
-
-/**
  * Number of days in a season (for recalibration intervals)
  */
 export const SEASON_DAYS = 30;
@@ -707,50 +578,6 @@ export const MAX_SAMPLES_PER_BUCKET = 60;
  * Base race weight in pounds for major races
  */
 export const BASE_RACE_WEIGHT_LBS = 126;
-
-// ============================================================================
-// PHASE ORDER
-// ============================================================================
-
-/**
- * Phase order constants for game simulation pipeline
- */
-export const PHASE_ORDER_INTENT_COLLECTION = 5;
-export const PHASE_ORDER_PRIVATE_SALE_EXPIRY = 3;
-export const PHASE_ORDER_INTENT_VALIDATION = 10;
-export const PHASE_ORDER_MANAGEMENT_RESOLUTION = 10;
-export const PHASE_ORDER_RACE_ENTRY_RESOLUTION = 15;
-export const PHASE_ORDER_CONSIGNMENT_RESOLUTION = 16;
-export const PHASE_ORDER_UPKEEP = 20;
-export const PHASE_ORDER_BREEDING_RESOLUTION = 25;
-export const PHASE_ORDER_PURCHASE_RESOLUTION = 35;
-export const PHASE_ORDER_BREEDING_SEASON = 35;
-export const PHASE_ORDER_NPC_BREEDING = 38;
-export const PHASE_ORDER_AGING = 30;
-export const PHASE_ORDER_ENERGY = 40;
-export const PHASE_ORDER_TRAINING_RESOLUTION = 45;
-export const PHASE_ORDER_JOCKEY_PHASE = 45;
-export const PHASE_ORDER_INDUSTRY_METRICS = 45;
-export const PHASE_ORDER_MARKET = 50;
-export const PHASE_ORDER_RACES = 60;
-export const PHASE_ORDER_NPC_CLAIMING = 62;
-export const PHASE_ORDER_CLAIMING_WITHDRAWAL = 67;
-export const PHASE_ORDER_BEYER_RECALIBRATION = 65;
-export const PHASE_ORDER_RACE_RESOLUTION = 70;
-export const PHASE_ORDER_PREGNANCY = 70;
-export const PHASE_ORDER_LEADERBOARD = 72;
-export const PHASE_ORDER_CLAIM_RESOLUTION = 75;
-export const PHASE_ORDER_NPC_CYCLE = 80;
-export const PHASE_ORDER_SCHEDULER = 85;
-export const PHASE_ORDER_AUCTIONS = 90;
-export const PHASE_ORDER_AWARDS = 95;
-export const PHASE_ORDER_STATE_UPDATE = 100;
-export const PHASE_ORDER_STALLION_RETIREMENT = 145;
-export const PHASE_ORDER_PASTURE_RETIREMENT = 150;
-export const PHASE_ORDER_HALL_OF_FAME = 155;
-export const PHASE_ORDER_HORSE_DEATH = 160;
-export const PHASE_ORDER_ARCHIVING = 190;
-export const PHASE_ORDER_IMPACT_APPLICATION = 200;
 
 // ============================================================================
 // AI & DECISION THRESHOLDS

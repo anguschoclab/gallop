@@ -46,14 +46,12 @@ import {
   AUCTION_RESERVE_ELITE,
   AUCTION_AGGRESSIVE_BID_MIN_PERCENT,
   AUCTION_AGGRESSIVE_BID_VARIANCE,
-} from "@/game/constants/gameConstants";
+  DEFAULT_PLAYER_RESERVE_RATIO,
+} from "@/game/constants";
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-
-/** Default reserve as a fraction of base value when the player consigns. */
-export const DEFAULT_PLAYER_RESERVE_RATIO = 0.7;
 
 /** Compute net proceeds the player receives after commission. */
 /**

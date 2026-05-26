@@ -26,10 +26,16 @@ export interface Outpost {
   acclimatizationDays: Record<string, number>; // horseId -> days remaining
 }
 
+import {
+  OUTPOST_BASE_SLOTS,
+  TRANSPORT_FATIGUE_SPIKE,
+  ACCLIMATIZATION_PERIOD,
+} from "@/game/constants";
+
 export const OUTPOST_CONSTANTS = {
-  BASE_SLOTS: 12,
-  TRANSPORT_FATIGUE_SPIKE: 40, // Spike in fatigue when shipping
-  ACCLIMATIZATION_PERIOD: 7, // Days until transport fatigue decays fully
+  BASE_SLOTS: OUTPOST_BASE_SLOTS,
+  TRANSPORT_FATIGUE_SPIKE,
+  ACCLIMATIZATION_PERIOD,
 
   BRANCH_REQUIREMENTS: {
     TIER_GATE: "premium" as FacilityLevel,

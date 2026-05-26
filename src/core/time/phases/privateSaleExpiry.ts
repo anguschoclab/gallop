@@ -9,6 +9,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import { PHASE_ORDER_PRIVATE_SALE_EXPIRY } from "@/game/constants";
 import type { PipelineContext } from "../pipeline";
 import type { PrivateSaleOffer } from "@/game/types";
 
@@ -20,7 +21,7 @@ import type { PrivateSaleOffer } from "@/game/types";
  */
 export const privateSaleExpiryPhase = {
   name: "privateSaleExpiry",
-  order: 3, // Very early in the pipeline, before most other phases
+  order: PHASE_ORDER_PRIVATE_SALE_EXPIRY, // Very early in the pipeline, before most other phases
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, logs } = context;
     const offers: PrivateSaleOffer[] = state.privateSaleOffers ?? [];

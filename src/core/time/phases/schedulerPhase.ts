@@ -12,6 +12,7 @@
 // Runs campaign planner and auto-entry runner for all auto-managed campaigns.
 // Order 85 — after races are generated (60) but before state serialization (100).
 
+import { PHASE_ORDER_SCHEDULER } from "@/game/constants";
 import type { PipelineContext } from "../pipeline";
 import type { HorseCampaign } from "@/game/types";
 import {
@@ -23,7 +24,7 @@ import { runAutoEntries, reconcileSlotStatuses } from "@/game/autoEntryRunner";
 
 export const schedulerPhase = {
   name: "scheduler",
-  order: 85,
+  order: PHASE_ORDER_SCHEDULER,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 

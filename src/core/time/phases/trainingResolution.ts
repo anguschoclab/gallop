@@ -13,7 +13,14 @@
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { TrainingIntent } from "@/core/resolver/intents";
-import { PHASE_ORDER_TRAINING_RESOLUTION } from "@/game/constants/gameConstants";
+import {
+  PHASE_ORDER_TRAINING_RESOLUTION,
+  TRAINING_COST,
+  TRAINING_COST_MAP,
+  TRAINING_ENERGY_MAP,
+  TRAINING_ENERGY_REST,
+  TRAINING_MIN_ENERGY_THRESHOLD,
+} from "@/game/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";
 import { getFacilityBonus } from "@/core/facilities";
@@ -66,7 +73,7 @@ export const trainingResolutionPhase: PipelinePhase = {
       if (horse.lifecycleStatus === "retired" || horse.lifecycleStatus === "deceased") continue;
 
       // Check if horse is eligible for training (energy, health)
-      if (horse.energy < 15) continue;
+      if (horse.energy < TRAINING_MIN_ENERGY_THRESHOLD) continue;
       if (
         horse.healthStatus === "covering_sickness" ||
         horse.healthStatus === "recovering" ||
@@ -119,17 +126,7 @@ export const trainingResolutionPhase: PipelinePhase = {
       // Record training expense (only for actual training, not rest)
       if (intent.trainingType !== "rest") {
         // Different workout types have different costs
-        const costMap: Record<string, number> = {
-          speed: 75,
-          stamina: 75,
-          acceleration: 75,
-          bullet: 100, // High intensity
-          breeze: 85, // Moderate intensity
-          gate_work: 90, // Requires gate equipment
-          swimming: 80, // Pool maintenance
-          gallop: 70, // Standard work
-        };
-        const cost = costMap[intent.trainingType] ?? 75;
+        const cost = TRAINING_COST_MAP[intent.trainingType] ?? TRAINING_COST;
 
         newExpenses.push(
           createExpense(
@@ -171,17 +168,7 @@ export const trainingResolutionPhase: PipelinePhase = {
       // Deduct energy (only for actual training, not rest)
       if (intent.trainingType !== "rest") {
         // Different workout types have different energy costs
-        const energyCostMap: Record<string, number> = {
-          speed: -18,
-          stamina: -18,
-          acceleration: -18,
-          bullet: -25, // High intensity
-          breeze: -20, // Moderate intensity
-          gate_work: -22, // Requires more effort
-          swimming: -15, // Low impact
-          gallop: -16, // Standard work
-        };
-        const energyDelta = (energyCostMap[intent.trainingType] ?? -18) * (1 - nutritionistBonus);
+        const energyDelta = (TRAINING_ENERGY_MAP[intent.trainingType] ?? -18) * (1 - nutritionistBonus);
 
         impacts.push({
           id: generateUUID(),
@@ -204,7 +191,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           logLevel: "conditional",
           type: "energy_change",
           horseId: intent.horseId,
-          delta: 30,
+          delta: TRAINING_ENERGY_REST,
           reason: "Rest",
         });
       }

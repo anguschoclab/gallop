@@ -8,6 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import { PHASE_ORDER_RACES } from "@/game/constants";
 import type { PipelineContext } from "../pipeline";
 import { generateUpcomingRaces, pruneOldRaces } from "@/game/store/helpers/market";
 import { generateAnnualCalendar, getCurrentYear } from "@/game/raceSchedule";
@@ -20,7 +21,7 @@ import { generateUUID } from "@/core/uuid";
  */
 export const racesPhase = {
   name: "races",
-  order: 60,
+  order: PHASE_ORDER_RACES,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, previousDay, newDay, dailyRng } = context;
 

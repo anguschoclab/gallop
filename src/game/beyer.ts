@@ -15,7 +15,15 @@
 // Output is clamped 30..125 (Beyer "Big Figs" rarely exceed 120).
 import type { Horse } from "@/core/horse/types";
 import type { CourseSpecification } from "@/game/tracks";
-import { BEYER_MIN, BEYER_MAX, BEYER_BASE } from "@/game/constants/gameConstants";
+import {
+  BEYER_MIN,
+  BEYER_MAX,
+  BEYER_BASE,
+  BEYER_FORMULA_SCALE,
+  PATTERN_JUMP_AVG_THRESHOLD,
+  PATTERN_JUMP_BEST_THRESHOLD,
+  PATTERN_JUMP_MIN_HISTORY,
+} from "@/game/constants";
 
 export type BeyerInput = {
   distance: number; // meters
@@ -88,7 +96,7 @@ export function beyerFigure({
   const par = parTime(distance, calibratedPars);
   // Each ~1% faster than par = ~5 Beyer points.
   const delta = (par - finishTime) / par;
-  const fig = BEYER_BASE + delta * 500 + classBonus;
+  const fig = BEYER_BASE + delta * BEYER_FORMULA_SCALE + classBonus;
   return Math.max(BEYER_MIN, Math.min(BEYER_MAX, Math.round(fig)));
 }
 
@@ -194,7 +202,10 @@ export function detectPatternJump(
   const jumpOverBest = newBeyer - careerBest;
 
   // Pattern Jump logic: 15+ over average OR 10+ over career high (if established)
-  if (jumpOverAvg >= 15 || (beyerHistory.length >= 2 && jumpOverBest >= 10)) {
+  if (
+    jumpOverAvg >= PATTERN_JUMP_AVG_THRESHOLD ||
+    (beyerHistory.length >= PATTERN_JUMP_MIN_HISTORY && jumpOverBest >= PATTERN_JUMP_BEST_THRESHOLD)
+  ) {
     return { jumped: true, margin: Math.max(jumpOverAvg, jumpOverBest) };
   }
 

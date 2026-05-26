@@ -1,5 +1,6 @@
 import type { Runner } from "@/game/raceSim";
 import type { Race } from "@/game/types";
+import { METERS_PER_LENGTH } from "@/game/constants";
 
 /**
  * Event Detection System
@@ -169,7 +170,7 @@ export function detectGapAnnouncement(
 
   const sorted = [...runners].sort((a, b) => b.position - a.position);
   const gapMeters = sorted[0].position - sorted[1].position;
-  const lengths = (gapMeters / 2.4).toFixed(1); // METERS_PER_LENGTH = 2.4
+  const lengths = (gapMeters / METERS_PER_LENGTH).toFixed(1);
 
   if (parseFloat(lengths) >= 2.0) {
     return {

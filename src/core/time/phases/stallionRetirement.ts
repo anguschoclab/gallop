@@ -8,6 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import { PHASE_ORDER_STALLION_RETIREMENT } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { generateUUID } from "@/core/uuid";
 import type { StudCareerImpact, LogImpact } from "@/core/resolver/impacts/index";
@@ -20,7 +21,7 @@ import { formatCurrency } from "@/lib/formatting";
  */
 export const stallionRetirementPhase: PipelinePhase = {
   name: "stallionRetirement",
-  order: 145,
+  order: PHASE_ORDER_STALLION_RETIREMENT,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const impacts = [...context.impacts];

@@ -9,7 +9,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { PHASE_ORDER_RACE_RESOLUTION } from "@/game/constants/gameConstants";
+import { PHASE_ORDER_RACE_RESOLUTION } from "@/game/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/raceSimulationService";
 import type { Race } from "@/game/types";
@@ -27,7 +27,7 @@ import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAI";
 import { recordJockeyOutcome } from "@/core/ai/jockeyAI";
 import { recordCampaignOutcome } from "@/core/ai/campaignAI";
-import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
+import { PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/game/constants";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -35,7 +35,7 @@ import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
  */
 export const raceResolutionPhase: PipelinePhase = {
   name: "raceResolution",
-  order: 70,
+  order: PHASE_ORDER_RACE_RESOLUTION,
   skipIf: (context) => !!context.skipRaceResolution,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;

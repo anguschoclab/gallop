@@ -11,6 +11,7 @@
 // Horse Death Phase
 // Handles death from old age, catastrophic injury, and illness complications
 
+import { PHASE_ORDER_HORSE_DEATH } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact, HorseDeathImpact, LogImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";
@@ -25,7 +26,7 @@ import { generateUUID } from "@/core/uuid";
  */
 export const horseDeathPhase: PipelinePhase = {
   name: "horseDeath",
-  order: 160, // After pasture retirement (150)
+  order: PHASE_ORDER_HORSE_DEATH, // After pasture retirement (150)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const impacts: AnyImpact[] = [];

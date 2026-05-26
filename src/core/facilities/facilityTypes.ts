@@ -120,12 +120,12 @@ export const FACILITY_DESCRIPTIONS: Record<FacilityType, string> = {
  */
 export const FACILITY_ENABLED_WORKOUTS: Record<FacilityType, string[]> = {
   main_track: [
-    "speed_work",
-    "stamina_work",
-    "acceleration_work",
-    "bullet_work",
+    "speed",
+    "stamina",
+    "acceleration",
+    "bullet",
     "breeze",
-    "long_gallop",
+    "gallop",
   ],
   barn: [], // Passive effect only
   exercise_pool: ["swimming"],

@@ -8,26 +8,22 @@
  * Form = Fitness - Fatigue
  */
 
+import {
+  BANISTER_FITNESS_TAU,
+  BANISTER_FATIGUE_TAU,
+  BANISTER_FITNESS_K,
+  BANISTER_FATIGUE_K,
+  WORKOUT_INTENSITIES,
+} from "@/game/constants";
+
 export const BANISTER_CONSTANTS = {
-  // Decay constants (tau) in days
-  FITNESS_TAU: 45,
-  FATIGUE_TAU: 15,
+  FITNESS_TAU: BANISTER_FITNESS_TAU,
+  FATIGUE_TAU: BANISTER_FATIGUE_TAU,
 
-  // Gain constants (k)
-  FITNESS_K: 1.0,
-  FATIGUE_K: 2.0, // Fatigue builds faster than fitness
+  FITNESS_K: BANISTER_FITNESS_K,
+  FATIGUE_K: BANISTER_FATIGUE_K,
 
-  // Base intensity values for different workout types
-  WORKOUT_INTENSITY: {
-    rest: 0,
-    gallop: 5,
-    breeze: 10,
-    speed: 12,
-    stamina: 12,
-    acceleration: 12,
-    gate_work: 15,
-    bullet: 20, // High intensity
-  } as Record<string, number>,
+  WORKOUT_INTENSITY: WORKOUT_INTENSITIES,
 };
 
 /**

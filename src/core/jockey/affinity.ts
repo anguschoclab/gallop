@@ -6,27 +6,37 @@
  */
 
 import type { Jockey } from "./types";
+import {
+  AFFINITY_LEVEL_FAMILIAR,
+  AFFINITY_LEVEL_TRUSTED,
+  AFFINITY_LEVEL_BONDED,
+  AFFINITY_LEVEL_SOULMATES,
+  AFFINITY_XP_PER_RACE,
+  AFFINITY_XP_PER_WORKOUT,
+  AFFINITY_XP_PER_WIN_BONUS,
+  AFFINITY_BONUS_FAMILIAR,
+  AFFINITY_BONUS_TRUSTED,
+  AFFINITY_BONUS_BONDED,
+  AFFINITY_BONUS_SOULMATES,
+} from "@/game/constants";
 
 export const AFFINITY_CONSTANTS = {
-  // XP thresholds for "The Hand" levels
   LEVELS: {
-    familiar: 50, // ~2-3 races or 5 workouts
-    trusted: 150, // ~8 races or 15 workouts
-    bonded: 400, // ~20 races or 40 workouts
-    soulmates: 1000, // Legendary partnership
+    familiar: AFFINITY_LEVEL_FAMILIAR,
+    trusted: AFFINITY_LEVEL_TRUSTED,
+    bonded: AFFINITY_LEVEL_BONDED,
+    soulmates: AFFINITY_LEVEL_SOULMATES,
   },
 
-  // XP gains
-  XP_PER_RACE: 20,
-  XP_PER_WORKOUT: 10,
-  XP_PER_WIN_BONUS: 10,
+  XP_PER_RACE: AFFINITY_XP_PER_RACE,
+  XP_PER_WORKOUT: AFFINITY_XP_PER_WORKOUT,
+  XP_PER_WIN_BONUS: AFFINITY_XP_PER_WIN_BONUS,
 
-  // Bonus values (percentage buffer against simulation noise/interference)
   BONUS: {
-    familiar: 0.02, // 2%
-    trusted: 0.05, // 5%
-    bonded: 0.1, // 10%
-    soulmates: 0.15, // 15%
+    familiar: AFFINITY_BONUS_FAMILIAR,
+    trusted: AFFINITY_BONUS_TRUSTED,
+    bonded: AFFINITY_BONUS_BONDED,
+    soulmates: AFFINITY_BONUS_SOULMATES,
   },
 };
 

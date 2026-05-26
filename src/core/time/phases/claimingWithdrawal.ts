@@ -11,6 +11,7 @@
 // Claiming Withdrawal Phase
 // Processes WithdrawFromClaimingIntents to mark horses as withdrawn from claiming
 
+import { PHASE_ORDER_CLAIMING_WITHDRAWAL } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
 import type { AnyImpact, LogImpact } from "@/core/resolver/impacts/index";
@@ -23,7 +24,7 @@ import { generateUUID } from "@/core/uuid";
  */
 export const claimingWithdrawalPhase: PipelinePhase = {
   name: "claimingWithdrawal",
-  order: 67,
+  order: PHASE_ORDER_CLAIMING_WITHDRAWAL,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, intents, newDay } = context;
     const impacts: AnyImpact[] = [];

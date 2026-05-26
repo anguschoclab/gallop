@@ -44,7 +44,7 @@ import { SilkDot } from "@/components/SilkDot";
 import { SectionalTimingTable } from "@/components/SectionalTimingTable";
 import { cn } from "@/lib/utils";
 import { parTime } from "@/game/beyer";
-import { BEYER_BASE } from "@/game/constants/gameConstants";
+import { BEYER_BASE, BEYER_FORMULA_SCALE } from "@/game/constants";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { HorseCard } from "@/components/HorseCard";
 
@@ -68,8 +68,8 @@ function getTargetSplitTime(
   if (qualifying.length < 2) return null;
   const avgBeyer = qualifying.reduce((sum, h) => sum + h.beyer!, 0) / qualifying.length;
   const par = parTime(distance, calibratedPars);
-  // Inverse of beyerFigure: finishTime = par * (1 - (beyer - BEYER_BASE) / 500)
-  const expectedFinish = par * (1 - (avgBeyer - BEYER_BASE) / 500);
+  // Inverse of beyerFigure: finishTime = par * (1 - (beyer - BEYER_BASE) / BEYER_FORMULA_SCALE)
+  const expectedFinish = par * (1 - (avgBeyer - BEYER_BASE) / BEYER_FORMULA_SCALE);
   return expectedFinish * markerFraction;
 }
 

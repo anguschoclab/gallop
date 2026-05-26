@@ -23,7 +23,7 @@ import {
   updateReserveState,
 } from "@/core/ai/upkeepAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { UPKEEP_PER_HORSE } from "@/game/constants/gameConstants";
+import { UPKEEP_PER_HORSE, PHASE_ORDER_UPKEEP } from "@/game/constants";
 
 /**
  * Phase: Upkeep
@@ -34,7 +34,7 @@ import { UPKEEP_PER_HORSE } from "@/game/constants/gameConstants";
  */
 export const upkeepPhase = {
   name: "upkeep",
-  order: 20,
+  order: PHASE_ORDER_UPKEEP,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const playerHorses = state.horses.filter(

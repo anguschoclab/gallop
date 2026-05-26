@@ -11,6 +11,7 @@
 // Hall of Fame Phase
 // Inducts legendary horses into the Hall of Fame based on career achievements
 
+import { PHASE_ORDER_HALL_OF_FAME } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { getCareerStats } from "@/core/horse/stats";
 import type {
@@ -31,7 +32,7 @@ import type { HallOfFameEntry } from "@/core/history/historyTypes";
  */
 export const hallOfFamePhase: PipelinePhase = {
   name: "hallOfFame",
-  order: 155, // After pasture retirement (150), before horse death (160)
+  order: PHASE_ORDER_HALL_OF_FAME, // After pasture retirement (150), before horse death (160)
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const impacts: AnyImpact[] = [];

@@ -8,6 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import { PHASE_ORDER_ENERGY } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { getFacilityBonus } from "@/core/facilities";
 import { resolveEpmRisk } from "@/core/genetics/phenotype";
@@ -26,7 +27,7 @@ const ILLNESS_DURATION_MAX = 30;
  */
 export const energyPhase = {
   name: "energy",
-  order: 40,
+  order: PHASE_ORDER_ENERGY,
   /**
    * Execute the energy restoration phase
    * @param context - The pipeline context containing state and current day

@@ -15,19 +15,13 @@ import { isFemaleHorse } from "@/core/horse/gender";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { isHorseEligibleForClaimingPrice, getSuggestedClaimingPriceRange } from "@/game/claiming";
 import { calculateTrackGeometryScore, calculateGradientScore } from "./trackGeometry";
-import { BASE_RACE_WEIGHT_LBS } from "@/game/constants/gameConstants";
-
-// Entry limits per stable per race
-export const MAX_HORSES_PER_STABLE_PER_RACE = 2;
-
-// Energy threshold for entering races
-export const MIN_ENERGY_TO_ENTER = 50;
-
-// Form consideration - prefer positive form
-export const MIN_FORM_TO_ENTER = -3;
-
-// Distance preference - horses prefer races within this range of their "best" distance
-export const PREFERRED_DISTANCE_RANGE = 300; // ±300m from ideal
+import {
+  BASE_RACE_WEIGHT_LBS,
+  MAX_HORSES_PER_STABLE_PER_RACE,
+  MIN_ENERGY_TO_ENTER,
+  MIN_FORM_TO_ENTER,
+  PREFERRED_DISTANCE_RANGE,
+} from "@/game/constants";
 
 // Base purse appeal thresholds by tier (modified by personality)
 export const BASE_PURSE_APPEAL: Record<StableTier, number> = {

@@ -11,6 +11,7 @@
 // Intent Validation Phase
 // Validates all intents and rejects invalid ones
 
+import { PHASE_ORDER_INTENT_VALIDATION } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { validateIntent } from "@/core/resolver/resolver";
 
@@ -23,7 +24,7 @@ import { validateIntent } from "@/core/resolver/resolver";
  */
 export const intentValidationPhase: PipelinePhase = {
   name: "intentValidation",
-  order: 10,
+  order: PHASE_ORDER_INTENT_VALIDATION,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state } = context;
     const horseMap = new Map(state.horses.map((h) => [h.id, h]));

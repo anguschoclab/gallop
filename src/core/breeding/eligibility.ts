@@ -12,17 +12,12 @@
 import type { Horse, Pregnancy } from "@/game/types";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { dayOfYear, formatDate } from "@/core/calendar/dateFormatting";
+import { MARE_RECOVERY_DAYS, MIN_BREEDING_AGE, MAX_DAM_AGE } from "@/game/constants";
 
 /**
  * Result of breeding eligibility check with optional reason for failure.
  */
 export type BreedResult = { ok: true } | { ok: false; reason: string };
-
-// Mares need rest after foaling — gameplay isn't a real reproductive cycle,
-// but breeding back-to-back every 30 days felt exploitable.
-export const MARE_RECOVERY_DAYS = 60;
-export const MIN_BREEDING_AGE = 3;
-export const MAX_DAM_AGE = 20;
 
 const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
 const DAM_GENDERS: Horse["gender"][] = ["filly", "mare"];

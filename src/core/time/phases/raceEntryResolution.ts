@@ -11,6 +11,7 @@
 // Race Entry Resolution Phase
 // Converts RaceEntryIntents into impacts (race entry, cash changes)
 
+import { PHASE_ORDER_RACE_ENTRY_RESOLUTION } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, RaceEntryIntent } from "@/core/resolver/intents";
 import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/impacts/index";
@@ -29,7 +30,7 @@ import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
  */
 export const raceEntryResolutionPhase: PipelinePhase = {
   name: "raceEntryResolution",
-  order: 15,
+  order: PHASE_ORDER_RACE_ENTRY_RESOLUTION,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];

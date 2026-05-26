@@ -8,6 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import { PHASE_ORDER_MARKET } from "@/game/constants";
 import type { PipelineContext } from "../pipeline";
 import { refreshMarket } from "@/game/store/helpers/market";
 import { calculateRaceRating } from "@/core/horse/stats";
@@ -27,7 +28,7 @@ import { generateStaffPool } from "@/core/staff/staffGenerator";
  */
 export const marketPhase = {
   name: "market",
-  order: 50,
+  order: PHASE_ORDER_MARKET,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, dailyRng, newDay } = context;
     let market = refreshMarket(state.market, dailyRng);

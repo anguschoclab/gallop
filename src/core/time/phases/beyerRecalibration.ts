@@ -10,7 +10,7 @@
 
 import type { PipelineContext } from "../pipeline";
 import { maybeRecalibratePars } from "@/game/store/helpers/beyer";
-import { SEASON_DAYS } from "@/game/constants/gameConstants";
+import { SEASON_DAYS, PHASE_ORDER_BEYER_RECALIBRATION } from "@/game/constants";
 
 /**
  * Phase: Beyer Par Recalibration
@@ -18,7 +18,7 @@ import { SEASON_DAYS } from "@/game/constants/gameConstants";
  */
 export const beyerRecalibrationPhase = {
   name: "beyerRecalibration",
-  order: 65,
+  order: PHASE_ORDER_BEYER_RECALIBRATION,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const parResult = maybeRecalibratePars(

@@ -11,6 +11,7 @@
 // Purchase Resolution Phase
 // Converts PurchaseIntents into impacts (horse transfer from market to player)
 
+import { PHASE_ORDER_PURCHASE_RESOLUTION } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, PurchaseIntent } from "@/core/resolver/intents";
 import type { AnyImpact, HorseTransferImpact } from "@/core/resolver/impacts/index";
@@ -24,7 +25,7 @@ import { generateUUID } from "@/core/uuid";
  */
 export const purchaseResolutionPhase: PipelinePhase = {
   name: "purchaseResolution",
-  order: 35,
+  order: PHASE_ORDER_PURCHASE_RESOLUTION,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];

@@ -25,7 +25,7 @@ import type {
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import type { Pregnancy } from "@/game/types";
-import { GESTATION_DAYS } from "@/game/constants/gameConstants";
+import { GESTATION_DAYS, PHASE_ORDER_BREEDING_RESOLUTION } from "@/game/constants";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 
 /**
@@ -37,7 +37,7 @@ import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateRes
  */
 export const breedingResolutionPhase: PipelinePhase = {
   name: "breedingResolution",
-  order: 25,
+  order: PHASE_ORDER_BREEDING_RESOLUTION,
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];

@@ -18,7 +18,7 @@ import {
   recordJockeyAssignment,
 } from "@/core/ai/jockeyAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS } from "@/game/constants/gameConstants";
+import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/game/constants";
 
 /**
  * Phase: Jockey Management
@@ -27,7 +27,7 @@ import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS } from "@/game/constants/gam
  */
 export const jockeyPhase = {
   name: "jockey",
-  order: 45, // After upkeep, before NPC cycle
+  order: PHASE_ORDER_JOCKEY_PHASE, // After upkeep, before NPC cycle
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const dailyRng = (context as any).dailyRng || createRng(hashStr(`jockey_phase_${newDay}`));

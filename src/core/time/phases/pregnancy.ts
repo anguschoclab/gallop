@@ -8,6 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
+import { PHASE_ORDER_PREGNANCY } from "@/game/constants";
 import type { PipelineContext } from "../pipeline";
 import type { Horse, Pregnancy } from "@/game/types";
 import { getFoalsBy } from "@/core/breeding/lineage";
@@ -28,7 +29,7 @@ import { calculateOverallRating } from "@/core/horse/stats";
  */
 export const pregnancyPhase = {
   name: "pregnancy",
-  order: 70,
+  order: PHASE_ORDER_PREGNANCY,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const usedNamesSet = new Set(state.usedHorseNames);

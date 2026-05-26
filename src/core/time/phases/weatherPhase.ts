@@ -24,7 +24,7 @@ import {
   PATTERN_SEVERITY,
   getTrackClimate,
 } from "@/core/weather";
-import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS } from "@/game/store/slices/weatherSlice";
+import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS, PHASE_ORDER_WEATHER } from "@/game/constants";
 import { calculateConditionChange } from "@/core/trackConditions";
 import { generateUUID } from "@/core/uuid";
 
@@ -56,7 +56,7 @@ function toRaceWeather(pattern: WeatherState["pattern"]): Weather {
 
 export const weatherPhase = {
   name: "weather",
-  order: 55, // Between market (50) and races (60)
+  order: PHASE_ORDER_WEATHER,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 
