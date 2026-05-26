@@ -49,7 +49,7 @@ import {
   STAMINA_DRAIN_MAX,
   RACE_ENERGY_IMPACT,
   MAX_FAME,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 import { GRADED_RACES } from "@/core/data/gradedRaces";
 import { createReputationEvent, calculateRaceWinReputation } from "@/core/reputation";
 import type { ManagerReputation } from "@/core/reputation";

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { canBreed, MARE_RECOVERY_DAYS } from "@/core/breeding/eligibility";
+import { canBreed } from "@/core/breeding/eligibility";
+import { MARE_RECOVERY_DAYS } from "@/game/constants";
 import type { Horse, Pregnancy } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 

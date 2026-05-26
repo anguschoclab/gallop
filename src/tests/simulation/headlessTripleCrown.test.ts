@@ -33,7 +33,7 @@ import { createDefaultGameState } from "@/game/state";
 import { useGame } from "@/game/store";
 import type { Horse } from "@/game/types";
 import * as opfsService from "@/services/opfsService";
-import { DAYS_PER_MONTH } from "@/game/constants/gameConstants";
+import { DAYS_PER_MONTH } from "@/game/constants";
 
 // Mock helpers
 let mockOPFSData: Map<string, any> = new Map();

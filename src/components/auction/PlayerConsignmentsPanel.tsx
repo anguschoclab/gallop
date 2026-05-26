@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { HorsePortrait } from "@/components/HorsePortrait";
 import { formatCurrency } from "@/lib/formatting";
 import { netProceeds, commissionAmount } from "@/game/auction";
-import { CONSIGNMENT_COMMISSION } from "@/game/constants/gameConstants";
+import { CONSIGNMENT_COMMISSION } from "@/game/constants";
 import type { AuctionLot, Horse, Stable } from "@/game/types";
 
 /**

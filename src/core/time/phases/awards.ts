@@ -19,7 +19,7 @@ import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/core/uuid";
 import type { AwardRegion, RegionalAward } from "@/game/awards/types";
 import { AWARD_CEREMONY_SCHEDULE } from "@/game/awards/types";
-import { PHASE_ORDER_AWARDS } from "@/game/constants/gameConstants";
+import { PHASE_ORDER_AWARDS } from "@/game/constants";
 
 export const awardsPhase = {
   name: "awards",

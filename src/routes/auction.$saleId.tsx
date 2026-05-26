@@ -21,7 +21,7 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { getDisplayableStats } from "@/game/scouting";
 import { KIND_LABELS } from "@/game/auctionData";
 import { netProceeds } from "@/game/auction";
-import { CONSIGNMENT_COMMISSION } from "@/game/constants/gameConstants";
+import { CONSIGNMENT_COMMISSION } from "@/game/constants";
 import {
   Gavel,
   ChevronLeft,

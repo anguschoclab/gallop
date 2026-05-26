@@ -9,7 +9,7 @@
  */
 
 import type { Rng } from "@/game/rng";
-import { PARENT_NAME_MAX_LENGTH } from "@/game/constants/gameConstants";
+import { PARENT_NAME_MAX_LENGTH } from "@/game/constants";
 
 /**
  * Generate a portmanteau from sire and dam names.

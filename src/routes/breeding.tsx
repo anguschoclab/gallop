@@ -51,7 +51,7 @@ function BreedingPage() {
   const [liveFoalGuarantee, setLiveFoalGuarantee] = useState(false);
   const [namingFoalId, setNamingFoalId] = useState<string | null>(null);
 
-  const localHorseMap = useMemo(() => new Map(horses.map((h: Horse) => [h.id, h])), [horses]);
+  const localHorseMap = useMemo(() => new Map<string, Horse>(horses.map((h: Horse) => [h.id, h])), [horses]);
 
   const { sire, dam, compatibility } = useBreedingCompatibility(sireId, damId);
 

@@ -10,7 +10,7 @@
 
 import type { Horse, Race, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { RECENT_RACES_MAX_COUNT } from "@/game/constants/gameConstants";
+import { RECENT_RACES_MAX_COUNT } from "@/game/constants";
 import { getPersonalityAIState, recordOutcome } from "./personalitySystem";
 import { createLearningState, getSuccessRate, type LearningState } from "./learningModule";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";

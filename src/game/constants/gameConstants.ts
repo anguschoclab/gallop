@@ -616,3 +616,28 @@ export const NPC_HORSE_COUNT_MID_MIN = 20;
 export const NPC_HORSE_COUNT_MID_MAX = 30;
 export const NPC_HORSE_COUNT_BUDGET_MIN = 15;
 export const NPC_HORSE_COUNT_BUDGET_MAX = 25;
+
+// ============================================================================
+// ENTRY SCORING & RACING THRESHOLDS
+// ============================================================================
+
+/**
+ * Entry limits per stable per race
+ */
+export const MAX_HORSES_PER_STABLE_PER_RACE = 2;
+
+/**
+ * Energy threshold for entering races
+ */
+export const MIN_ENERGY_TO_ENTER = 50;
+
+/**
+ * Form consideration - prefer positive form
+ */
+export const MIN_FORM_TO_ENTER = -3;
+
+/**
+ * Distance preference - horses prefer races within this range of their "best" distance
+ */
+export const PREFERRED_DISTANCE_RANGE = 300; // ±300m from ideal
+

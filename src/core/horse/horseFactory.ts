@@ -4,7 +4,7 @@
  * This file provides functions for creating horses from genetics, resolving
  * phenotypes, and handling pregnancy outcomes including live foals and complications.
  *
- * Dependencies: @/game/types (Horse, Genotype, HorseGender, Hemisphere, Pregnancy, Pedigree, HorseStats, CoatColor, RunningStyle, Stable, StableTier), @/core/common/types (Rng), @/game/rng (createRng, hashStr, nondeterministicRng), @/core/common/uuid (generateUUID), ./proceduralPortrait (generateAppearanceDNA, getPalette), @/core/genetics/generation (generateGenotype, generateDeterministicGenotype, generateResearchBasedGenotype), @/core/genetics/phenotype (various resolve functions), @/core/breeding/bruceLowe (resolveBruceLoweFamily), @/core/breeding/populationGenetics (resolveBloodline, getGenomeModifiers), @/core/breeding/eligibility (canBreed), @/game/constants/gameConstants (various constants)
+ * Dependencies: @/game/types (Horse, Genotype, HorseGender, Hemisphere, Pregnancy, Pedigree, HorseStats, CoatColor, RunningStyle, Stable, StableTier), @/core/common/types (Rng), @/game/rng (createRng, hashStr, nondeterministicRng), @/core/common/uuid (generateUUID), ./proceduralPortrait (generateAppearanceDNA, getPalette), @/core/genetics/generation (generateGenotype, generateDeterministicGenotype, generateResearchBasedGenotype), @/core/genetics/phenotype (various resolve functions), @/core/breeding/bruceLowe (resolveBruceLoweFamily), @/core/breeding/populationGenetics (resolveBloodline, getGenomeModifiers), @/core/breeding/eligibility (canBreed), @/game/constants (various constants)
  * Related files: Used throughout game initialization and breeding systems
  */
 
@@ -112,7 +112,7 @@ import {
   FOALING_BASE_COMPLICATION_RATE,
   LETHAL_RECESSIVE_CHANCE,
   TWIN_REDUCTION_CHANCE,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 // --- Internal Helpers ---
 

@@ -4,7 +4,7 @@
  * This file provides game state initialization logic for creating the initial
  * game state for new games, including horses, races, jockeys, stables, and facilities.
  *
- * Dependencies: @/game/types (GameState, Horse, Race), @/game/state (NewGameOptions), @/game/horseGen (generateHorse), @/game/raceGeneration/raceGen (generateRace, makeGradedRace), @/game/jockeyGen (generateInitialJockeys), @/game/npcStables (generateAllStables), @/game/npcHorseGen (generateAllNpcHorses), @/game/famousStallions (generateFamousStallions), @/game/npcRaceEntry (runNpcRaceEntry), @/game/rng (createRng, hashStr, Rng), @/game/gradedRaces (GRADED_RACES), @/core/facilities (createDefaultPlayerFacilities, createFacility, FacilityLevel), @/game/constants/gameConstants (STARTING_CASH)
+ * Dependencies: @/game/types (GameState, Horse, Race), @/game/state (NewGameOptions), @/game/horseGen (generateHorse), @/game/raceGeneration/raceGen (generateRace, makeGradedRace), @/game/jockeyGen (generateInitialJockeys), @/game/npcStables (generateAllStables), @/game/npcHorseGen (generateAllNpcHorses), @/game/famousStallions (generateFamousStallions), @/game/npcRaceEntry (runNpcRaceEntry), @/game/rng (createRng, hashStr, Rng), @/game/gradedRaces (GRADED_RACES), @/core/facilities (createDefaultPlayerFacilities, createFacility, FacilityLevel), @/game/constants (STARTING_CASH)
  * Related files: store/index.ts (uses initialization), types.ts (state types)
  */
 
@@ -26,7 +26,7 @@ import { createRng, hashStr, type Rng } from "@/game/rng";
 import { GRADED_RACES } from "@/game/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
 import type { FacilityLevel } from "@/core/facilities";
-import { STARTING_CASH } from "@/game/constants/gameConstants";
+import { STARTING_CASH } from "@/game/constants";
 
 /**
  * Creates the initial game state for a new game.

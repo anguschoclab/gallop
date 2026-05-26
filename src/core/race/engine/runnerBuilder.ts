@@ -363,7 +363,8 @@ export function buildRunner(
           : 0.99
         : 1;
   const baseStamina = (0.4 + (h.stats.stamina / 100) * 0.6) * fiberMods.staminaMul;
-  const rawTemperamentMod = 1 + (TRAIT_VALUES[h.temperament || "fair"] - 2) * -0.1;
+  const tempVal = typeof h.temperament === "number" ? Math.round(h.temperament / 25) : TRAIT_VALUES[h.temperament || "fair"];
+  const rawTemperamentMod = 1 + (tempVal - 2) * -0.1;
   // Weather preference vs current race weather. Mismatch unsettles the horse
   // (worsens temperament multiplier); match steadies them slightly.
   let weatherPrefMod = 1;
@@ -373,7 +374,8 @@ export function buildRunner(
     weatherPrefMod = matches ? 0.97 : 1.05;
   }
   const temperamentMod = Math.max(1.0, rawTemperamentMod * weatherPrefMod + groomBonus);
-  const conformationMod = 1 + (TRAIT_VALUES[h.conformation || "fair"] - 2) * -0.03;
+  const confVal = typeof h.conformation === "number" ? Math.round(h.conformation / 25) : TRAIT_VALUES[h.conformation || "fair"];
+  const conformationMod = 1 + (confVal - 2) * -0.03;
 
   const conditionStamina = clamp(
     1 - (1 - baseStamina) * conditions.staminaDrainMul * conformationMod,

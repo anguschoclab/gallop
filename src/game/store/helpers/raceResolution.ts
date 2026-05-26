@@ -4,7 +4,7 @@
  * This file provides pure business logic for race result processing, including
  * prize money payout splits, result sanitization, and ranking with tie-breaking.
  *
- * Dependencies: @/game/rng (createRng, hashStr, Rng), @/game/constants/gameConstants (PRIZE_SPLIT)
+ * Dependencies: @/game/rng (createRng, hashStr, Rng), @/game/constants (PRIZE_SPLIT)
  * Related files: store/slices/coreSlice.ts (uses race resolution helpers), @/game/raceSim.ts (race simulation)
  */
 
@@ -14,7 +14,7 @@
  */
 
 import { createRng, hashStr, type Rng } from "@/game/rng";
-import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
+import { PRIZE_SPLIT } from "@/game/constants";
 
 export type RankedResult = { horseId: string; position: number; time: number; dnf: boolean };
 

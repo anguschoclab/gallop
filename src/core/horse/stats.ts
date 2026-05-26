@@ -18,7 +18,7 @@ import {
   GRADE_D_THRESHOLD,
   GRADE_E_THRESHOLD,
   GRADE_EP_THRESHOLD,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 /**
  * Pure functions for horse stat calculations

@@ -25,7 +25,7 @@ import {
   INJURY_RECOVERY_MODERATE_MIN,
   INJURY_RECOVERY_MODERATE_MAX,
   INJURY_RECOVERY_MINOR,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 export type InjurySeverity = "minor" | "moderate" | "major" | "career-ending";
 

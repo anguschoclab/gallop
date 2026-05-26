@@ -7,7 +7,7 @@ import {
   INBREEDING_DIVERSITY_LOW,
   INBREEDING_DIVERSITY_VERY_LOW,
   INBREEDING_SCORE_BONUS,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 /**
  * Calculate founder effect score.

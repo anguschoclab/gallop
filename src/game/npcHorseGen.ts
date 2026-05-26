@@ -31,7 +31,7 @@ import {
   NPC_HORSE_COUNT_MID_MAX,
   NPC_HORSE_COUNT_BUDGET_MIN,
   NPC_HORSE_COUNT_BUDGET_MAX,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 // ─── Stable horse generation ──────────────────────────────────────────────────
 

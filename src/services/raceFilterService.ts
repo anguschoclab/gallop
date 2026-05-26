@@ -6,7 +6,7 @@ import {
   type RaceFilters,
 } from "@/core/race/filtering";
 import { MONTH_NAMES_FULL } from "@/core/calendar/dateFormatting";
-import { DAYS_PER_MONTH } from "@/game/constants/gameConstants";
+import { DAYS_PER_MONTH } from "@/game/constants";
 
 /**
  * Race filtering orchestration with dependency injection

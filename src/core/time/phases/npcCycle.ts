@@ -12,7 +12,7 @@ import type { PipelineContext } from "../pipeline";
 import { runNpcCycle } from "@/core/npc/npcCycle";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { getReputationTier } from "@/core/reputation";
-import { PHASE_ORDER_NPC_CYCLE } from "@/game/constants/gameConstants";
+import { PHASE_ORDER_NPC_CYCLE } from "@/game/constants";
 
 /**
  * Phase: NPC Cycle

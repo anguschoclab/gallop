@@ -49,7 +49,7 @@ import {
   LARGE_PURSE_THRESHOLD,
   MEDIUM_PURSE_THRESHOLD,
   MAX_FAME,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 /**
  * Calculate fame gains for horses based on race results.

@@ -98,7 +98,7 @@ export function HorseCard({
         onKeyDown={(e) => {
           if (onClick && (e.key === "Enter" || e.key === " ")) {
             e.preventDefault();
-            onClick(e as any);
+            onClick();
           }
         }}
         className={cn(
@@ -290,7 +290,7 @@ export function HorseCard({
       onKeyDown={(e) => {
         if (onClick && (e.key === "Enter" || e.key === " ")) {
           e.preventDefault();
-          onClick(e as any);
+          onClick();
         }
       }}
       className={cn(

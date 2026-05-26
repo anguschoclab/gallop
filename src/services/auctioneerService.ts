@@ -15,7 +15,7 @@ import type { Rng } from "@/game/rng";
 import {
   JOCKEY_FAME_HOUSEHOLD_NAME,
   JOCKEY_FAME_TALKED_ABOUT,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 // ---------------------------------------------------------------------------
 // Public API

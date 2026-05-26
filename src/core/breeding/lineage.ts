@@ -5,12 +5,12 @@
  * checking stakes/G1 winner status, calculating earnings, and identifying runners.
  * Used for stallion analytics and breeding evaluation.
  *
- * Dependencies: @/game/types (Horse, GameState), @/game/constants/gameConstants (PRIZE_SPLIT)
+ * Dependencies: @/game/types (Horse, GameState), @/game/constants (PRIZE_SPLIT)
  * Related files: sireAnalytics.ts (uses these functions for stallion evaluation), stallions.ts (uses for stud value calculation)
  */
 
 import type { Horse, GameState } from "@/game/types";
-import { PRIZE_SPLIT } from "@/game/constants/gameConstants";
+import { PRIZE_SPLIT } from "@/game/constants";
 import { getCareerStats } from "@/core/horse/stats";
 
 // Memoization cache for lineage lookups

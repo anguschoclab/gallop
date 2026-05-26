@@ -10,7 +10,7 @@ import {
   netProceeds,
   personalityConsignmentPolicy,
 } from "@/game/auction";
-import { CONSIGNMENT_COMMISSION } from "@/game/constants/gameConstants";
+import { CONSIGNMENT_COMMISSION } from "@/game/constants";
 import { createRng } from "@/game/rng";
 import { createAuctionRunner } from "@/game/auctionRunner";
 import type { GameState, Horse, Stable } from "@/game/types";

@@ -40,7 +40,7 @@ import { PlayerRacePrompt } from "./PlayerRacePrompt";
 import { AutoSimPanel } from "./AutoSimPanel";
 import { AwardCeremony } from "./awards";
 import { useState, useEffect } from "react";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/game/constants/gameConstants";
+import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/game/constants";
 import { shallow } from "zustand/shallow";
 
 const navSections = [

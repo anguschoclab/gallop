@@ -5,7 +5,7 @@
  * analytics, including horse training, pace samples, calibrated pars, and training
  * usage tracking.
  *
- * Dependencies: @/game/types (Horse), @/game/state/racingState (RacingState, createDefaultRacingState), @/core/resolver/intents (TrainingIntent, AnyIntent), @/game/uuid (generateUUID), @/game/constants/gameConstants (TRAINING_COST), ../types (StoreSet, StoreGet)
+ * Dependencies: @/game/types (Horse), @/game/state/racingState (RacingState, createDefaultRacingState), @/core/resolver/intents (TrainingIntent, AnyIntent), @/game/uuid (generateUUID), @/game/constants (TRAINING_COST), ../types (StoreSet, StoreGet)
  * Related files: store/index.ts (uses this slice), @/game/beyer.ts (Beyer calculation)
  */
 
@@ -19,7 +19,7 @@ import type { RacingState } from "@/game/state/racingState";
 import { createDefaultRacingState } from "@/game/state/racingState";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
-import { TRAINING_COST } from "@/game/constants/gameConstants";
+import { TRAINING_COST } from "@/game/constants";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/raceSimulationExecutor";

@@ -13,7 +13,7 @@
 
 import type { Horse, HorseStats, ScoutReport, Stable, Rng } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { FAME_LOW_THRESHOLD } from "@/game/constants/gameConstants";
+import { FAME_LOW_THRESHOLD } from "@/game/constants";
 import { resolveCoatColor } from "@/core/genetics/phenotype";
 
 // Scouting costs

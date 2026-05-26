@@ -4,7 +4,7 @@
  * This file provides pure business logic for Beyer par recalibration, including
  * periodic recalibration based on pace samples and recompute functions.
  *
- * Dependencies: @/game/constants/gameConstants (SEASON_DAYS)
+ * Dependencies: @/game/constants (SEASON_DAYS)
  * Related files: @/game/beyer.ts (Beyer calculation logic), store/slices/racingSlice.ts (uses these helpers)
  */
 
@@ -13,7 +13,7 @@
  * Pure business logic for Beyer par recalibration
  */
 
-import { SEASON_DAYS } from "@/game/constants/gameConstants";
+import { SEASON_DAYS } from "@/game/constants";
 
 export type RecalibrationResult = {
   calibratedPars: Record<number, number> | undefined;

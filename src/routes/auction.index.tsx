@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { gameCalendarDate, dayOfYear } from "@/core/calendar/dateFormatting";
 import { KIND_LABELS, SALE_TRIGGERS } from "@/game/auctionData";
 import { isLotEligible } from "@/game/auction";
-import { CONSIGNMENT_COMMISSION } from "@/game/constants/gameConstants";
+import { CONSIGNMENT_COMMISSION } from "@/game/constants";
 import {
   Gavel,
   Clock,

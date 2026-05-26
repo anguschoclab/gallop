@@ -70,8 +70,6 @@ export function shouldGeldHorse(
     potentialThreshold = 78;
   } else if (personality === "conservative") {
     potentialThreshold = 75;
-  } else if (personality === "budget") {
-    potentialThreshold = 74;
   }
 
   // Horse potential must be below threshold (not an elite breeding prospect)

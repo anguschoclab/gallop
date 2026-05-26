@@ -4,7 +4,7 @@
  * This file provides the breeding resolution phase that converts BreedingIntents
  * into impacts (pregnancy creation, stud fee transfers).
  *
- * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, BreedingIntent), @/core/resolver/impacts/index (AnyImpact, PregnancyCreationImpact, CashImpact, StudCareerImpact), @/game/uuid (generateUUID), @/game/types (Pregnancy), @/game/constants/gameConstants (GESTATION_DAYS)
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, BreedingIntent), @/core/resolver/impacts/index (AnyImpact, PregnancyCreationImpact, CashImpact, StudCareerImpact), @/game/uuid (generateUUID), @/game/types (Pregnancy), @/game/constants (GESTATION_DAYS)
  * Related files: ../pipeline.ts (uses phase)
  */
 

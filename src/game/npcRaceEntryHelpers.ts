@@ -11,11 +11,8 @@
 import type { Horse, Race, Stable } from "./types";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import {
-  calculateRaceSuitability,
-  MAX_HORSES_PER_STABLE_PER_RACE,
-  MIN_ENERGY_TO_ENTER,
-} from "@/core/race/entryScoring";
+import { calculateRaceSuitability } from "@/core/race/entryScoring";
+import { MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/game/constants";
 import { getFormTolerance } from "@/core/stable/personalityModifiers";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 

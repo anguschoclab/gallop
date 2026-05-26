@@ -10,12 +10,12 @@
 
 import type { PipelineContext } from "../pipeline";
 import { computeAllLeaderboards } from "@/core/breeding/leaderboardService";
-import { PHASE_ORDER_LEADERBOARD } from "@/game/constants/gameConstants";
+import { PHASE_ORDER_LEADERBOARD } from "@/game/constants";
 import { computeProgenyLeaderboards } from "@/core/breeding/progenyLeaderboards";
 import { identifyFounders, computeFounderInfluence } from "@/core/history/lineageCrawler";
 import type { SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { FounderRecord } from "@/core/history/historyTypes";
-import { SEASON_DAYS } from "@/game/constants/gameConstants";
+import { SEASON_DAYS } from "@/game/constants";
 
 /**
  * Phase: Leaderboard Update

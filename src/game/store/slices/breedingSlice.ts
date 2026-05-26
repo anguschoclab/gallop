@@ -5,7 +5,7 @@
  * tracking, including breeding, retirement, pregnancy management, and breeding
  * program management.
  *
- * Dependencies: @/game/types (Pregnancy, TripleCrownProgress, Horse), @/game/state/breedingState (BreedingState, createDefaultBreedingState), @/core/breeding/programs (createBreedingProgram, updateProgramProgress, BreedingProgram), @/core/breeding/archetypes (getArchetypeById), @/core/breeding/eligibility (canBreed, BreedResult), @/game/uuid (generateUUID), @/core/resolver/intents (BreedingIntent), @/game/constants/gameConstants (BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE), @/lib/formatting (formatCurrency), ../guards (requireOwned, requireHorse), ../types (StoreSet, StoreGet)
+ * Dependencies: @/game/types (Pregnancy, TripleCrownProgress, Horse), @/game/state/breedingState (BreedingState, createDefaultBreedingState), @/core/breeding/programs (createBreedingProgram, updateProgramProgress, BreedingProgram), @/core/breeding/archetypes (getArchetypeById), @/core/breeding/eligibility (canBreed, BreedResult), @/game/uuid (generateUUID), @/core/resolver/intents (BreedingIntent), @/game/constants (BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE), @/lib/formatting (formatCurrency), ../guards (requireOwned, requireHorse), ../types (StoreSet, StoreGet)
  * Related files: store/index.ts (uses this slice), @/core/breeding/programs.ts (breeding programs)
  */
 
@@ -29,7 +29,7 @@ import type {
   ShareSaleIntent,
   SyndicateFeeDistributionIntent,
 } from "@/core/resolver/intents";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants/gameConstants";
+import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants";
 import { formatCurrency } from "@/lib/formatting";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";

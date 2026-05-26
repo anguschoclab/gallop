@@ -10,7 +10,7 @@
  */
 
 import type { Rng } from "@/game/rng";
-import { NAME_MIN_WORD_LENGTH } from "@/game/constants/gameConstants";
+import { NAME_MIN_WORD_LENGTH } from "@/game/constants";
 import { findHorseByName } from "@/core/data/pedigreeData";
 import { ABSTRACT_TERMS, RACING_SPIRIT_NOUNS, RACING_SPIRIT_ADJECTIVES } from "./nameDatabase";
 

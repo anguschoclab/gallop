@@ -26,7 +26,7 @@ import {
   AI_RISK_TOLERANCE_CONSERVATIVE,
   AI_RISK_TOLERANCE_AGGRESSIVE,
   AI_RISK_TOLERANCE_WIN_NOW,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 export interface WithdrawalAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

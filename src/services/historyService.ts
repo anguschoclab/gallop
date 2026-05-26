@@ -2,7 +2,7 @@ import type { Race, Horse } from "@/game/types";
 import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/core/history/historyTypes";
 import { generateUUID } from "@/core/uuid";
 import { getCareerStats } from "@/core/horse/stats";
-import { DAYS_PER_YEAR } from "@/game/constants/gameConstants";
+import { DAYS_PER_YEAR } from "@/game/constants";
 import type { Rng } from "@/game/rng";
 
 /**

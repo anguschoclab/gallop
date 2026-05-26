@@ -176,7 +176,7 @@ function LiveRace() {
   const classBonus = race ? calculateClassBonus(race.graded?.grade, race.raceClass) : 0;
 
   // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside loops.
-  const localHorseMap = useMemo(() => new Map(horses.map((h: Horse) => [h.id, h])), [horses]);
+  const localHorseMap = useMemo(() => new Map<string, Horse>(horses.map((h: Horse) => [h.id, h])), [horses]);
 
   // Calculate odds for each runner
   const runnerOdds = useMemo(() => {

@@ -19,7 +19,7 @@ import {
 import {
   FACILITY_UPGRADE_BASE_COST,
   FACILITY_UPGRADE_MULTIPLIER,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 /**
  * Create a default facility at a given level.

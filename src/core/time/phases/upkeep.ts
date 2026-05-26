@@ -4,7 +4,7 @@
  * This file provides the upkeep phase where player pays $50/horse/day and NPC stables
  * pay the same on their own roster to close asymmetric drain.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/expenses (createExpense), @/core/transactions (createTransaction), @/core/facilities (calculateTotalMaintenance), @/services/newsGenerator (generateFlavorNews), @/game/uuid (generateUUID), @/core/resolver/impacts/index (AnyImpact), @/core/ai/upkeepAI (calculateMonthlyExpenseBudget, shouldConserveCash, createUpkeepAIState, recordBudgetDecision, updateReserveState), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/game/constants/gameConstants (UPKEEP_PER_HORSE)
+ * Dependencies: ../pipeline (PipelineContext), @/core/expenses (createExpense), @/core/transactions (createTransaction), @/core/facilities (calculateTotalMaintenance), @/services/newsGenerator (generateFlavorNews), @/game/uuid (generateUUID), @/core/resolver/impacts/index (AnyImpact), @/core/ai/upkeepAI (calculateMonthlyExpenseBudget, shouldConserveCash, createUpkeepAIState, recordBudgetDecision, updateReserveState), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/game/constants (UPKEEP_PER_HORSE)
  * Related files: ../pipeline.ts (uses phase)
  */
 

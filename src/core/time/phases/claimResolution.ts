@@ -13,7 +13,7 @@ import type { Race, Claim, Horse, Stable } from "@/game/types";
 import { netProceeds } from "@/game/auction";
 import { hashStr } from "@/game/rng";
 import { generateUUID } from "@/core/uuid";
-import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/game/constants/gameConstants";
+import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/game/constants";
 import { formatCurrency } from "@/lib/formatting";
 
 /**

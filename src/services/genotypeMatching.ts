@@ -7,7 +7,7 @@ import {
   GENETIC_COMPATIBILITY_GOOD_THRESHOLD,
   GENETIC_COMPATIBILITY_MODERATE_THRESHOLD,
   DEFAULT_TRAIT_SCORE,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 /**
  * Calculate genetic compatibility based on horse genome research.

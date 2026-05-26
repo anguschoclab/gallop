@@ -10,7 +10,7 @@
 
 import type { PipelineContext } from "../pipeline";
 import { isBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
-import { PHASE_ORDER_BREEDING_SEASON } from "@/game/constants/gameConstants";
+import { PHASE_ORDER_BREEDING_SEASON } from "@/game/constants";
 
 /**
  * Phase: Breeding Season Reset

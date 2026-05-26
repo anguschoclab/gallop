@@ -4,7 +4,7 @@
  * This file provides pure business logic for resolving pregnancies and foaling,
  * including live foals, stillbirths, live foal guarantee retries, and cash adjustments.
  *
- * Dependencies: @/game/types (Horse, Pregnancy, Stable), @/core/horse/horseFactory (resolveFoaling), @/core/race/naming/raceNameGenerator (getRegionalSystem), @/core/stable/stableConfig (PERSONALITY_CONFIG), @/core/breeding/lineage (getFoalsBy), @/lib/formatting (formatCurrency), @/game/constants/gameConstants (BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE)
+ * Dependencies: @/game/types (Horse, Pregnancy, Stable), @/core/horse/horseFactory (resolveFoaling), @/core/race/naming/raceNameGenerator (getRegionalSystem), @/core/stable/stableConfig (PERSONALITY_CONFIG), @/core/breeding/lineage (getFoalsBy), @/lib/formatting (formatCurrency), @/game/constants (BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE)
  * Related files: store/slices/breedingSlice.ts (uses pregnancy helpers)
  */
 
@@ -24,7 +24,7 @@ import {
   BREEDING_FEE,
   GESTATION_DAYS,
   LIVE_FOAL_GUARANTEE_FEE,
-} from "@/game/constants/gameConstants";
+} from "@/game/constants";
 
 /**
  * Helper function to get regional system from country string.

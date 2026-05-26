@@ -78,7 +78,7 @@ export function JockeyCard({
       onKeyDown={(e) => {
         if (onClick && (e.key === "Enter" || e.key === " ")) {
           e.preventDefault();
-          onClick(e as any);
+          onClick();
         }
       }}
       className={cn(
