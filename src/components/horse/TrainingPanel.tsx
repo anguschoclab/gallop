@@ -104,9 +104,10 @@ const advancedWorkouts: AdvancedWorkout[] = [
 ];
 
 function getStatValue(stats: Horse["stats"], key: string): number {
-  if (key === "speed" || key === "stamina" || key === "acceleration" || key === "consistency") {
-    return stats[key];
-  }
+  if (key === "speed") return stats.speed;
+  if (key === "stamina") return stats.stamina;
+  if (key === "acceleration") return stats.acceleration;
+  if (key === "consistency") return stats.consistency;
   return 50;
 }
 
@@ -159,8 +160,7 @@ export function TrainingPanelComponent({
       advancedWorkouts.map((workout) => {
         const isEnabled = facilities && isWorkoutEnabled(facilities, workout.key as any);
         const isStatCapped =
-          workout.stat !== undefined &&
-          getStatValue(horse.stats, workout.stat) >= horse.potential;
+          workout.stat !== undefined && getStatValue(horse.stats, workout.stat) >= horse.potential;
 
         return {
           key: workout.key,
