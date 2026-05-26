@@ -19,6 +19,7 @@ import type {
   BreedingIntent,
   ClaimingIntent,
   WithdrawFromClaimingIntent,
+  GeldingIntent,
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable, Jockey } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
@@ -45,6 +46,10 @@ import {
   shouldWithdrawHorse,
   recordWithdrawalDecision,
 } from "@/core/ai/withdrawalAI";
+import {
+  createGeldingAIState,
+  shouldGeldHorse,
+} from "@/core/ai/geldingAI";
 import {
   getOrCreateStableAIState,
   updateStableAIState,
@@ -165,6 +170,15 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
         ownedHorses,
         relevantRaces,
         horseMap,
+      ),
+    );
+    intents.push(
+      ...generateNpcGeldingIntents(
+        state,
+        stable,
+        stableAI,
+        day,
+        ownedHorses,
       ),
     );
 
@@ -484,6 +498,50 @@ function generateNpcWithdrawalIntents(
           horseId: horse.id,
         });
       }
+    }
+  }
+
+  return intents;
+}
+
+/**
+ * Generate gelding intents for an NPC stable
+ *
+ * @param state - Current game state
+ * @param stable - The stable to generate intents for
+ * @param stableAI - Current AI state for the stable
+ * @param day - Current game day
+ * @param ownedHorses - Horses owned by the stable
+ * @returns Array of gelding intents
+ */
+function generateNpcGeldingIntents(
+  state: GameState,
+  stable: Stable,
+  stableAI: StableAIState | undefined,
+  day: number,
+  ownedHorses: Horse[],
+): GeldingIntent[] {
+  const intents: GeldingIntent[] = [];
+
+  // Use persisted AI state if available, otherwise fallback to temporary state
+  const geldingAI =
+    stableAI?.geldingAI ||
+    (stableAI
+      ? (stableAI.geldingAI = createGeldingAIState(stable))
+      : createGeldingAIState(stable));
+
+  for (const horse of ownedHorses) {
+    if (shouldGeldHorse(geldingAI, horse, day)) {
+      intents.push({
+        id: generateUUID(),
+        entityId: horse.id,
+        source: "npc",
+        sourceId: stable.id,
+        day,
+        priority: 50,
+        type: "gelding",
+        horseId: horse.id,
+      });
     }
   }
 

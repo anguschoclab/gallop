@@ -194,5 +194,6 @@ export function geldHorse(h: Horse): Horse {
   return {
     ...h,
     gender: "gelding",
+    gelded: true,
   };
 }

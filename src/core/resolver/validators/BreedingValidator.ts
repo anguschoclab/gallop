@@ -29,9 +29,10 @@ export class BreedingValidator implements IntentValidator {
 
     if (!sire) return { valid: false, reason: "Sire not found" };
     if (!dam) return { valid: false, reason: "Dam not found" };
-    if (sire.gender !== "horse" && sire.gender !== "gelding")
-      return { valid: false, reason: "Invalid sire gender" };
-    if (dam.gender !== "mare") return { valid: false, reason: "Invalid dam gender" };
+    if (sire.gender !== "horse" && sire.gender !== "colt")
+      return { valid: false, reason: "Invalid sire gender (must be stallion or colt)" };
+    if (dam.gender !== "mare" && dam.gender !== "filly")
+      return { valid: false, reason: "Invalid dam gender (must be mare or filly)" };
     if (state.cash < 2000) return { valid: false, reason: "Insufficient funds for breeding" };
     return { valid: true };
   }

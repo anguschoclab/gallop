@@ -67,6 +67,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   gelding: (draft, impact, horse) => {
     if (horse && isMaleHorse(horse.gender)) {
       horse.gender = "gelding";
+      horse.gelded = true;
     }
   },
   rename: (draft, impact, horse) => {

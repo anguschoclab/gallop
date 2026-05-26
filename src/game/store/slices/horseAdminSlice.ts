@@ -75,8 +75,8 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
     const horse = requireHorse(s.horses, horseId);
     const ownershipGuard = requireOwned(horse);
     if (ownershipGuard) return ownershipGuard;
-    if (horse!.gender === "horse" || horse!.gender === "gelding")
-      return { ok: false, reason: "Horse is already male." };
+    if (horse!.gender !== "colt" && horse!.gender !== "horse")
+      return { ok: false, reason: "Only colts and stallions can be gelded." };
 
     get().enqueueIntent({
       id: generateUUID(),

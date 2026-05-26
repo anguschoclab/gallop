@@ -30,6 +30,7 @@ import type { WithdrawalAIState } from "./withdrawalAI";
 import type { HorseGenAIState } from "./horseGenAI";
 import type { RaceEntryAIState } from "./raceEntryAI";
 import type { BreedingAIState } from "./breedingAI";
+import type { GeldingAIState } from "./geldingAI";
 
 /**
  * Per-stable AI state that persists across all NPC decision-making
@@ -60,6 +61,7 @@ export interface StableAIState {
   horseGenAI?: HorseGenAIState;
   raceEntryAI?: RaceEntryAIState;
   breedingAI?: BreedingAIState;
+  geldingAI?: GeldingAIState;
 }
 
 /**
