@@ -113,6 +113,7 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
                 maxLength={18}
               />
               <button
+                type="button"
                 onClick={generateSuggestion}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-amber-500 transition-colors"
                 title="Generate random name"
