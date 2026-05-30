@@ -35,7 +35,7 @@ import { TrophyCase } from "@/components/awards";
 import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import { NumericValue, overall } from "@/components/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { Horse, PrivateSaleOffer } from "@/game/types";
 import { PrivateSaleOfferDialog } from "@/components/auction/PrivateSaleOfferDialog";
 import { PrivateSaleCounterCard } from "@/components/auction/PrivateSaleCounterCard";
@@ -121,6 +121,11 @@ function NpcStableDetailPage() {
     return "bg-slate-700 text-cream";
   };
 
+  // ⚡ Bolt Optimization: Pre-calculate race map to eliminate O(N) array lookups
+  // Impact: Reduces complexity from O(H * R * N) to O(H * R) in the nested loop,
+  // making the head-to-head calculations significantly faster for late-game saves.
+  const raceMap = useMemo(() => new Map(races.map((r) => [r.id, r])), [races]);
+
   // Calculate head-to-head record by scanning race history
   const calculateHeadToHead = () => {
     const ownedHorses = horses.filter((h) => h.owned);
@@ -133,8 +138,8 @@ function NpcStableDetailPage() {
       horse.raceHistory
         .filter((r) => r.day >= thirtyDaysAgo)
         .forEach((raceResult) => {
-          // Find the race to check if rival had entries (graded races only)
-          const race = races.find((r) => r.id === raceResult.raceId);
+          // Find the race to check if rival had entries (graded races only) using O(1) lookup
+          const race = raceMap.get(raceResult.raceId);
           if (race && race.graded) {
             // Check if rival stable had entries in this race
             const hadRivalEntry = race.entries.some((e) => e.stableId === stable.id);

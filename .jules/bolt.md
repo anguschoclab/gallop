@@ -7,3 +7,7 @@
 
 **Learning:** Found multiple instances where `.find()` on an array is used inside a `.map()` loop during React component renders (e.g., `BidHistoryPanel`, `PlayerConsignmentsPanel`). This can cause performance degradation, especially with potentially large datasets like `bidHistory`.
 **Action:** Always pre-calculate a hash map (using `Map` and `useMemo`) for O(1) lookups before the mapping phase to change complexity from O(N\*M) to O(N+M). This pattern is particularly useful in this specific project since it utilizes multiple global context arrays (like `stables`, `horses`) that need to be correlated in UI components.
+
+## 2026-05-30 - [O(N^2) Loop Lookups inside Head to Head calculations]
+**Learning:** React render logic sometimes has deeply nested iteration, such as iterating over players' horses, then over each horse's race history, and using `.find()` on the global `races` array to cross-reference data. In `calculateHeadToHead`, this resulted in O(Stables * Horses * Race History * Total Races) complexity, causing significant UI jank when opening the dashboard in late-game saves.
+**Action:** Replace nested array lookups with pre-calculated hash maps using `useMemo` at the top level of the component. In `index.tsx` and `npc-stables.$stableId.tsx`, pre-calculating `raceMap` completely eliminated the O(N) race lookups, collapsing the complexity.

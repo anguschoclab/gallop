@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
@@ -102,6 +103,11 @@ function Dashboard() {
     return "bg-slate-700 text-cream";
   };
 
+  // ⚡ Bolt Optimization: Pre-calculate race map to eliminate O(N) array lookups
+  // Impact: Reduces complexity from O(H * R * N) to O(H * R) in the nested loop,
+  // making the head-to-head calculations significantly faster for late-game saves.
+  const raceMap = useMemo(() => new Map(races.map((r) => [r.id, r])), [races]);
+
   // Calculate head-to-head record by scanning race history
   const calculateHeadToHead = (stableId: string) => {
     const thirtyDaysAgo = day - 30;
@@ -113,8 +119,8 @@ function Dashboard() {
       horse.raceHistory
         .filter((r) => r.day >= thirtyDaysAgo)
         .forEach((raceResult) => {
-          // Find the race to check if rival had entries
-          const race = races.find((r) => r.id === raceResult.raceId);
+          // Find the race to check if rival had entries using O(1) lookup
+          const race = raceMap.get(raceResult.raceId);
           if (race) {
             // Check if rival stable had entries in this race
             const hadRivalEntry = race.entries.some((e) => e.stableId === stableId);
