@@ -51,6 +51,8 @@ export type GradedRace = {
   triplecrownKey?: string; // e.g. "usa-tc", "uk-tc" — groups Triple Crown legs
   bcKey?: string; // e.g. "breeders-cup" — groups BC championship races
   winAndYouInTarget?: string; // e.g. "bc-classic" - target race for automatic qualification (Win and You're In)
+  requiresInvitation?: boolean; // true for invite-only races (e.g. Breeders' Cup, invitational stakes)
+  inviteDaysAhead?: number; // how many days before race day to send invites (default: 30)
   dayOfYearVariance?: number; // max ±days to shift from base dayOfYear each year (default: 3)
   purseGrowthRate?: number; // annual % purse growth (default: 0.02)
   fieldSize?: number; // Real-life field size for this race (defaults to 12 if not specified)
@@ -11971,6 +11973,7 @@ const GRADED_RACES_BASE: GradedRace[] = [
     restrictions: { minAge: 4 },
     dayOfYearVariance: 7,
     winAndYouInTarget: "bc-classic",
+    requiresInvitation: true,
   },
 
   // ============= USA — Breeders' Cup (full 14-race card, Keeneland Nov) =============

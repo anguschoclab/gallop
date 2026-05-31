@@ -57,6 +57,19 @@ export const raceEntryResolutionPhase: PipelinePhase = {
       if (race.resolved) continue;
       if (race.entries.some((e) => e.horseId === intent.horseId)) continue;
 
+      // Safety net: skip invite-only races for uninvited horses
+      if (race.graded?.requiresInvitation) {
+        const invitedIds = race.invitedHorseIds ?? race.graded.invitedHorseIds ?? [];
+        const isInvited = invitedIds.includes(intent.horseId);
+        const currentYear = Math.floor((newDay - 1) / 365) + 1;
+        const isWinAndYouIn =
+          race.graded.key &&
+          horse.winAndYouInQualified?.some(
+            (q) => q.raceKey === race.graded!.key && q.year === currentYear,
+          );
+        if (!isInvited && !isWinAndYouIn) continue;
+      }
+
       // Handle full races: attempt bump for NPC intents; passthrough for player intents
       // that already carry a bumpEntryHorseId (validated in enterRace store action).
       let bumpEntryHorseId: string | undefined;

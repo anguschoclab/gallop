@@ -131,6 +131,14 @@ export function generateJockey({
     stats[k as keyof JockeyStats] = Math.min(100, Math.max(10, stats[k as keyof JockeyStats]));
   });
 
+  const currentAbility =
+    (stats.pacing + stats.positioning + stats.vigor + stats.gateSkill + stats.temperament) / 5;
+
+  const basePotential =
+    tier === "elite" ? 78 + rng.range(0, 20) : tier === "mid" ? 60 + rng.range(0, 20) : 40 + rng.range(0, 25);
+
+  const potential = Math.max(currentAbility, basePotential);
+
   // Career history: older jockeys have more starts
   const age = JOCKEY_AGE_MIN + Math.floor(rng.next() * (JOCKEY_AGE_MAX - JOCKEY_AGE_MIN));
   const yearsActive = age - 18;
@@ -147,6 +155,7 @@ export function generateJockey({
     age,
     archetype,
     stats,
+    potential,
     traits,
     silk: generateSilk(rng),
     careerStarts,

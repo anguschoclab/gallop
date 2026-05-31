@@ -91,7 +91,7 @@ export function runAutoEntries(ctx: AutoEntryContext): AutoEntryResult {
       return slot;
     }
 
-    const eligible = isHorseEligibleForRace(horse, race, new Set());
+    const eligible = isHorseEligibleForRace(horse, race, new Set(), currentDay);
     if (!eligible) {
       skipped.push({ slotIndex: idx, reason: "Not eligible for this race" });
       return slot;

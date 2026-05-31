@@ -153,6 +153,22 @@ export function createCoreSlice(
       if (race.entries.some((e) => e.horseId === horseId))
         return { ok: false, reason: "Horse already entered." };
 
+      // Block entry into invite-only races for uninvited horses
+      if (race.graded?.requiresInvitation) {
+        const invitedIds = race.invitedHorseIds ?? race.graded.invitedHorseIds ?? [];
+        const isInvited = invitedIds.includes(horseId);
+        const isWinAndYouIn =
+          race.graded.key &&
+          horse!.winAndYouInQualified?.some(
+            (q) =>
+              q.raceKey === race.graded!.key &&
+              q.year === Math.floor((s.day - 1) / 365) + 1,
+          );
+        if (!isInvited && !isWinAndYouIn) {
+          return { ok: false, reason: "Invitation required for this race." };
+        }
+      }
+
       let bumpEntryHorseId: string | undefined;
       if (race.entries.length >= race.fieldSize) {
         const playerRating = calculateOverallRating(horse!);

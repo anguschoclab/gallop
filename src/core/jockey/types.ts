@@ -48,6 +48,7 @@ export type Jockey = {
   age: number;
   archetype: JockeyArchetype;
   stats: JockeyStats;
+  potential: number;
   traits: JockeyTrait[];
   silk: JockeySilk;
   stableId?: string;

@@ -54,6 +54,7 @@ export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
     age: 25,
     archetype: "versatile" as JockeyArchetype,
     stats: createTestJockeyStats(),
+    potential: 75,
     traits: [] as JockeyTrait[],
     silk: overrides?.silk ?? silk,
     careerStarts: 100,

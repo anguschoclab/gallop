@@ -107,6 +107,7 @@ function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
       gateSkill: 70,
       temperament: 70,
     },
+    potential: 75,
     traits: overrides.traits ?? [],
     silk: overrides.silk ?? silk,
     careerStarts: 0,

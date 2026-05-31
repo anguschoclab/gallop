@@ -115,9 +115,9 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const eligibleHorses = useMemo(() => {
     return horses.map((h: Horse) => ({
       horse: h,
-      eligible: isHorseEligibleForRace(h, race, new Set()),
+      eligible: isHorseEligibleForRace(h, race, new Set(), day),
     }));
-  }, [horses, race]);
+  }, [horses, race, day]);
 
   const marketJockeys = useMemo(() => {
     // Retained jockeys + freelance pool
@@ -266,6 +266,11 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 {race.trackCondition}
               </Badge>
             )}
+            {race.graded?.requiresInvitation && (
+              <Badge className="bg-amber-600 text-white text-[10px] h-4 px-1.5">
+                Invitation Only
+              </Badge>
+            )}
             <div className="ml-auto">
               <WeatherForecastStrip
                 trackId={race.trackId ?? race.graded?.trackId ?? race.graded?.track}
@@ -319,6 +324,18 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                                 Qualified
                               </Badge>
                             )}
+                            {(() => {
+                              const invitedIds =
+                                race.invitedHorseIds ?? race.graded?.invitedHorseIds ?? [];
+                              if (invitedIds.includes(horse.id)) {
+                                return (
+                                  <Badge className="bg-emerald-600 text-white text-[10px]">
+                                    Invited
+                                  </Badge>
+                                );
+                              }
+                              return null;
+                            })()}
                             {(() => {
                               const trackId = race.trackId || race.graded?.trackId;
                               if (trackId) {

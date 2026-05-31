@@ -46,6 +46,7 @@ import { claimResolutionPhase } from "./claimResolution";
 import { archivingPhase } from "./archivingPhase";
 import { impactApplicationPhase } from "./impactApplication";
 import { weatherPhase } from "./weatherPhase";
+import { raceInvitationsPhase } from "./raceInvitations";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
@@ -68,6 +69,7 @@ export const GAME_PIPELINE_PHASES = [
   marketPhase,
   // Dynamic weather sim — runs after market (50), before races (60)
   weatherPhase,
+  raceInvitationsPhase,
   racesPhase,
   beyerRecalibrationPhase,
   jockeyPhase,

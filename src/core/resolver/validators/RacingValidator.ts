@@ -38,6 +38,21 @@ export class RacingValidator implements IntentValidator {
         if (!race) return { valid: false, reason: "Race not found" };
         if (race.resolved) return { valid: false, reason: "Race already resolved" };
         if (horse.energy < 40) return { valid: false, reason: "Insufficient energy" };
+
+        // Validate invitation requirement for invite-only races
+        if (race.graded?.requiresInvitation) {
+          const invitedIds = race.invitedHorseIds ?? race.graded.invitedHorseIds ?? [];
+          const isInvited = invitedIds.includes(raceIntent.horseId);
+          const currentYear = Math.floor((state.day - 1) / 365) + 1;
+          const isWinAndYouIn =
+            race.graded.key &&
+            horse.winAndYouInQualified?.some(
+              (q) => q.raceKey === race.graded!.key && q.year === currentYear,
+            );
+          if (!isInvited && !isWinAndYouIn) {
+            return { valid: false, reason: "Invitation required for this race" };
+          }
+        }
         break;
       }
 

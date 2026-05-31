@@ -12,6 +12,7 @@ import type { Horse, Race } from "@/game/types";
 import type { Hemisphere } from "@/game/types";
 import { isGenderEligible as checkGenderEligibility } from "@/core/horse/gender";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { getCurrentYear } from "@/game/raceSchedule";
 
 /**
  * Pure race eligibility checking logic
@@ -51,6 +52,36 @@ export function getMinimumAgeForHemisphere(
 }
 
 /**
+ * Check if a horse is invited to an invitation-only race.
+ *
+ * Horses are invited if they appear in race.invitedHorseIds or have a
+ * matching Win-and-You're-In qualification for the current year.
+ */
+export function isHorseInvitedToRace(horse: Horse, race: Race, currentDay: number): boolean {
+  // Not an invite-only race → always "invited"
+  if (!race.graded?.requiresInvitation) return true;
+
+  // Direct invitation
+  const invitedIds = race.invitedHorseIds ?? race.graded?.invitedHorseIds ?? [];
+  if (invitedIds.includes(horse.id)) return true;
+
+  // Win-and-You're-In automatic qualification
+  const raceKey = race.graded?.key;
+  if (raceKey && horse.winAndYouInQualified) {
+    const currentYear = getCurrentYear(currentDay);
+    if (
+      horse.winAndYouInQualified.some(
+        (q) => q.raceKey === raceKey && q.year === currentYear,
+      )
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * Check if a horse is eligible to enter a race.
  *
  * Considers age, gender restrictions, energy, pregnancy status, maiden status,
@@ -68,6 +99,7 @@ export function isHorseEligibleForRace(
   horse: Horse,
   race: Race,
   pregnantHorseIds: Set<string>,
+  currentDay?: number,
 ): boolean {
   // Check minimum stat requirement
   if (race.minStat && calculateOverallRating(horse) < race.minStat) {
@@ -134,6 +166,11 @@ export function isHorseEligibleForRace(
 
   // Check if horse already entered
   if (race.entries.some((entry) => entry.horseId === horse.id)) {
+    return false;
+  }
+
+  // Check invitation requirement for invite-only races
+  if (currentDay !== undefined && !isHorseInvitedToRace(horse, race, currentDay)) {
     return false;
   }
 

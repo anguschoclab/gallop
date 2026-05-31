@@ -41,6 +41,7 @@ import {
   generateDeterministicGenotype,
   generateResearchBasedGenotype,
 } from "@/core/genetics/generation";
+import { calculateOverallRating } from "@/core/horse/stats";
 import {
   resolveCoatColor,
   resolveStats,
@@ -167,6 +168,8 @@ export function resolvePhenotype(horse: Horse): Horse {
   const temperament = TRAIT_VALUES[tempTrait] * 25;
 
   const stats = resolveStats(genotype.stats, conformation, temperament);
+  const currentAbility = calculateOverallRating({ ...horse, stats } as Horse);
+  const potential = Math.max(horse.potential, currentAbility);
   const coatColor = resolveCoatColor(genotype.color);
   const runningStyle = resolveRunningStyle(genotype.style);
 
@@ -190,6 +193,7 @@ export function resolvePhenotype(horse: Horse): Horse {
     conformation,
     temperament,
     stats,
+    potential,
     coatColor,
     runningStyle,
     distanceAptitude,
@@ -578,5 +582,7 @@ export function resolveFoaling(
 
   foal.pedigree.name = foal.name;
 
-  return { kind: "live", foal };
+  const resolvedFoal = resolvePhenotype(foal);
+
+  return { kind: "live", foal: resolvedFoal };
 }

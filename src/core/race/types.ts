@@ -76,7 +76,11 @@ export type Race = {
     country?: string;
     winAndYouInTarget?: string;
     triplecrownKey?: string; // e.g. "usa-tc", "canada-tc", "uk-classics" — groups Triple Crown legs
+    requiresInvitation?: boolean;
+    inviteDaysAhead?: number;
+    invitedHorseIds?: string[];
   };
+  invitedHorseIds?: string[];
   claimingPrice?: ClaimingPrice;
   winCondition?: WinCondition;
   stateBred?: string;

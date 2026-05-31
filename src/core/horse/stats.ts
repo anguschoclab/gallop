@@ -200,7 +200,7 @@ export function getAbility(horse: Horse): { current: number; potential: number }
   // potential field caps every stat individually, so a horse can only
   // approach (potential, potential, potential, potential) at best — its
   // potential ability equals horse.potential.
-  return { current, potential: horse.potential };
+  return { current, potential: Math.max(horse.potential, current) };
 }
 
 /**

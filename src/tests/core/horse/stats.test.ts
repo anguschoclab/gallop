@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { calculateOverallRating, getAbility, abilityGrade } from "@/core/horse/stats";
+import { resolvePhenotype } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 
@@ -44,6 +45,38 @@ describe("getAbility", () => {
   it("current updates with stats", () => {
     const h = mkHorse(50, 50, 50, 50, 70);
     expect(getAbility(h).current).toBe(50);
+  });
+
+  it("never returns potential < current", () => {
+    const h = mkHorse(80, 80, 80, 80, 50);
+    const { current, potential } = getAbility(h);
+    expect(current).toBe(80);
+    expect(potential).toBe(80);
+  });
+});
+
+describe("resolvePhenotype potential", () => {
+  it("bumps potential when resolved stats exceed the rolled potential", () => {
+    const h = createTestHorse({
+      potential: 50,
+      stats: { speed: 0, stamina: 0, acceleration: 0, consistency: 0, temperament: 50, conformation: 50 },
+      phenotypeResolved: false,
+    });
+    const resolved = resolvePhenotype(h);
+    const ovr = calculateOverallRating(resolved);
+    expect(resolved.potential).toBeGreaterThanOrEqual(ovr);
+  });
+
+  it("keeps potential unchanged when it already exceeds current ability", () => {
+    const h = createTestHorse({
+      potential: 90,
+      phenotypeResolved: false,
+    });
+    const resolved = resolvePhenotype(h);
+    const ovr = calculateOverallRating(resolved);
+    // Potential should remain at least 90 (it may be bumped if genotype resolves higher)
+    expect(resolved.potential).toBeGreaterThanOrEqual(90);
+    expect(resolved.potential).toBeGreaterThanOrEqual(ovr);
   });
 });
 

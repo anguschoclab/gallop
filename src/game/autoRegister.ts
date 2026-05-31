@@ -208,7 +208,7 @@ export function calculateAutoRegisterEntries(
 
     for (const race of upcomingRaces) {
       // Check eligibility (age, gender, energy, pregnancy, win conditions, etc.)
-      if (!isHorseEligibleForRace(horse, race, new Set())) {
+      if (!isHorseEligibleForRace(horse, race, new Set(), day)) {
         continue;
       }
 

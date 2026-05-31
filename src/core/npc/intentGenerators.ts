@@ -298,6 +298,19 @@ function generateNpcRaceEntryIntents(
       // Skip if already entered
       if (entrySet && entrySet.has(horse.id)) continue;
 
+      // Skip invite-only races for uninvited horses (unless Win-and-You're-In)
+      if (race.graded?.requiresInvitation) {
+        const invitedIds = race.invitedHorseIds ?? race.graded.invitedHorseIds ?? [];
+        const isInvited = invitedIds.includes(horse.id);
+        const currentYear = Math.floor((day - 1) / 365) + 1;
+        const isWinAndYouIn =
+          race.graded.key &&
+          horse.winAndYouInQualified?.some(
+            (q) => q.raceKey === race.graded!.key && q.year === currentYear,
+          );
+        if (!isInvited && !isWinAndYouIn) continue;
+      }
+
       // Use AI to determine suitability
       const suitability = calculateStrategicEntryScore(raceEntryAI, horse, race, stable, day);
 

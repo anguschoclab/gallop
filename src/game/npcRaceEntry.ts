@@ -128,6 +128,9 @@ export function runNpcRaceEntry(
   freeAgents.sort((a, b) => b.fame - a.fame);
 
   for (const race of workingUpcoming) {
+    // Skip invitation-only races during initialization (invites haven't gone out yet)
+    if (race.graded?.requiresInvitation) continue;
+
     // Note: even if race is full, NPC stables may try to bump weaker entries below.
 
     // Imperial Expansion: Check if player has an entry to trigger rivalry tactics
