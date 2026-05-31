@@ -29,7 +29,6 @@ import {
   Clock,
   ExternalLink,
   Target,
-  CloudSun,
 } from "lucide-react";
 import { useState } from "react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
@@ -38,11 +37,11 @@ import { Race, Claim } from "@/game/types";
 import { GradeBreakdown } from "@/components/races/GradeBreakdown";
 import { RaceCard } from "@/components/races/RaceCard";
 import { RaceRow } from "@/components/races/RaceRow";
+import { WeatherForecastStrip } from "@/components/races/WeatherForecastStrip";
 import { NumericValue } from "@/components/HorseBits";
 import { useRaceFilters, type RaceFilters } from "@/hooks/useRaceFilters";
 import { ClaimingRacePanel } from "@/components/races/ClaimingRacePanel";
 import { cn } from "@/lib/utils";
-import { getWeatherDisplay } from "@/components/races/raceVisualHelpers";
 
 export const Route = createFileRoute("/races")({
   validateSearch: (search: Record<string, unknown>): RaceFilters => ({
@@ -372,9 +371,11 @@ function RacesPage() {
                             {r.distance}M
                           </td>
                           <td className="px-4 py-4 text-right">
-                            <div className="flex items-center justify-end gap-1.5 text-xs text-cream/60">
-                              <CloudSun className="h-3 w-3 opacity-40" />
-                              <span>{getWeatherDisplay(r.weather) || "—"}</span>
+                            <div className="flex justify-end">
+                              <WeatherForecastStrip
+                                trackId={r.trackId ?? r.graded?.trackId ?? r.graded?.track}
+                                trackCondition={r.trackCondition}
+                              />
                             </div>
                           </td>
                           <td className="px-4 py-4 text-right">

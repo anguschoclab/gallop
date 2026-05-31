@@ -8,6 +8,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Thermometer, Wind } from "lucide-react";
+import { WeatherForecastStrip } from "@/components/races/WeatherForecastStrip";
 import {
   Select,
   SelectContent,
@@ -46,6 +48,13 @@ export function PlayerRacePrompt() {
   >("default");
 
   const race = races.find((r) => r.id === pendingRaceId);
+  const raceWeather = useGame((s) => {
+    const trackId = race?.graded?.trackId ?? race?.trackId;
+    if (!trackId) return undefined;
+    const buf = s.weather?.byTrack?.[trackId];
+    if (!buf || !buf.length) return undefined;
+    return buf.find((w: any) => w.day === race?.day) ?? buf[buf.length - 1];
+  });
   if (!race) return null;
 
   const enteredHorse = horses.find(
@@ -97,6 +106,24 @@ export function PlayerRacePrompt() {
           <p className="text-sm text-muted-foreground">
             {race.distance}m · {race.raceClass} · Purse {formatCurrency(race.purse)}
           </p>
+          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+            {raceWeather && (
+              <span className="flex items-center gap-1">
+                <Thermometer className="h-3 w-3" />
+                {Math.round(raceWeather.tempC)}°C
+              </span>
+            )}
+            {raceWeather && (
+              <span className="flex items-center gap-1">
+                <Wind className="h-3 w-3" />
+                {Math.round(raceWeather.windKph)} km/h
+              </span>
+            )}
+            <WeatherForecastStrip
+              trackId={race.graded?.trackId ?? race.trackId}
+              trackCondition={race.trackCondition}
+            />
+          </div>
           {enteredHorse && (
             <p className="text-sm">
               <span className="font-medium">{enteredHorse.name}</span> is entered in this race.

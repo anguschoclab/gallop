@@ -10,6 +10,7 @@ import { getGradeColorClass } from "@/core/race/grading";
 import { getMonthName, formatDate } from "@/core/calendar/dateFormatting";
 import { getRegion, isValidRegion, REGION_LIST, type RegionConfig } from "@/core/calendar/regions";
 import { ChevronLeft, Globe } from "lucide-react";
+import { WeatherForecastStrip } from "@/components/races/WeatherForecastStrip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RegionSwitcher } from "@/components/RegionSwitcher";
 
@@ -279,6 +280,12 @@ function MonthView({
                           </span>
                         )}
                       </div>
+                      <div className="mt-2">
+                        <WeatherForecastStrip
+                          trackId={race.graded?.trackId ?? race.trackId}
+                          trackCondition={race.trackCondition}
+                        />
+                      </div>
                     </div>
                     <div className="text-right text-sm">
                       <div className="font-medium">Day {race.day}</div>
@@ -377,6 +384,12 @@ function TrackView({
                           {race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only
                         </span>
                       )}
+                    </div>
+                    <div className="mt-2">
+                      <WeatherForecastStrip
+                        trackId={race.graded?.trackId ?? race.trackId}
+                        trackCondition={race.trackCondition}
+                      />
                     </div>
                   </div>
                   <div className="text-right text-sm">

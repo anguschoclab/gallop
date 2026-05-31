@@ -11,6 +11,7 @@ import {
 import { useGame } from "@/game/store";
 import { type Grade } from "@/game/gradedRaces";
 import { getCountry } from "@/game/gradedRaces";
+import { WeatherForecastStrip } from "@/components/races/WeatherForecastStrip";
 import { getGradeColorClass } from "@/core/race/grading";
 import { useState, useMemo } from "react";
 
@@ -233,6 +234,12 @@ function RaceBrowser() {
                             ${race.purse.toLocaleString()}
                           </span>
                         </span>
+                      </div>
+                      <div className="mt-2">
+                        <WeatherForecastStrip
+                          trackId={race.graded?.trackId ?? race.trackId}
+                          trackCondition={race.trackCondition}
+                        />
                       </div>
                       {race.restrictions && (
                         <div className="flex flex-wrap gap-1.5 mt-2">

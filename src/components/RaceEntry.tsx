@@ -36,6 +36,7 @@ import {
   CloudSun,
   Clock,
   Thermometer,
+  Wind,
 } from "lucide-react";
 import { JockeyCard } from "./JockeyCard";
 import { JockeyAvatar } from "./JockeyAvatar";
@@ -246,6 +247,12 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               <span className="flex items-center gap-1">
                 <Thermometer className="h-3 w-3" />
                 {Math.round(raceWeather.tempC)}°C
+              </span>
+            )}
+            {raceWeather && (
+              <span className="flex items-center gap-1">
+                <Wind className="h-3 w-3" />
+                {Math.round(raceWeather.windKph)} km/h
               </span>
             )}
             {race.trackCondition && (

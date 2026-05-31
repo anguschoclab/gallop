@@ -78,6 +78,7 @@ export const weatherPhase = {
     const newForecast: Record<string, WeatherState[]> = {};
     const newLogs: { day: number; text: string }[] = [];
     const newImpacts: any[] = [];
+    const dramaTrackIds = new Set<string>(); // Track IDs with severe weather drama
 
     for (const trackId of trackIds) {
       const climate = getTrackClimate(trackId);
@@ -111,6 +112,8 @@ export const weatherPhase = {
             (r) => !r.resolved && r.day === newDay && r.graded?.grade && raceTrackId(r) === trackId,
           );
           if (dramaRace) {
+            // All drama jumps (≥2 severity) guarantee track degradation
+            dramaTrackIds.add(trackId);
             const dramaText = `${today.pattern === "storm" ? "Storm" : "Heavy weather"} forecast at ${dramaRace.graded?.track ?? trackId} — track downgraded ahead of the ${dramaRace.name}.`;
             newLogs.push({
               day: newDay,
@@ -168,12 +171,22 @@ export const weatherPhase = {
       }
 
       const currentCondition = trackCurrentCondition[tid];
-      const nextCondition = calculateConditionChange(
+      let nextCondition = calculateConditionChange(
         currentCondition,
         toTrackWeatherPattern(todays.pattern),
         1,
-        0.5,
+        dramaTrackIds.has(tid) ? 0 : 0.5, // No maintenance protection during severe weather drama
       );
+      // Guarantee at least 1 tier degradation for severe weather drama
+      if (dramaTrackIds.has(tid)) {
+        const tiers = ["fast", "good", "soft", "heavy", "yielding"];
+        const currentIdx = tiers.indexOf(currentCondition);
+        const nextIdx = tiers.indexOf(nextCondition);
+        if (nextIdx <= currentIdx) {
+          // Force at least one tier worse
+          nextCondition = tiers[Math.min(tiers.length - 1, currentIdx + 1)] as TrackCondition;
+        }
+      }
       trackCurrentCondition[tid] = nextCondition;
 
       updatedRaces.push({

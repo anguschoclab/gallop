@@ -4,6 +4,7 @@ import { useHorses } from "@/game/hooks/useCoreState";
 import { useAwards, useNpcStables } from "@/game/hooks/useSystemsState";
 import { HorseCard } from "@/components/HorseCard";
 import { TrophyCase } from "@/components/awards";
+import { AutoRegisterButton } from "@/components/stable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -127,6 +128,7 @@ function StablePage() {
         </div>
 
         <div className="flex gap-2">
+          <AutoRegisterButton />
           <Link to="/scheduler">
             <Button
               variant="outline"

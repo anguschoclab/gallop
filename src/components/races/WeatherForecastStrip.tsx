@@ -5,7 +5,7 @@
  * `weatherPhase`). Falls back to a single condition chip if no forecast exists.
  */
 
-import { Sun, Cloud, CloudDrizzle, CloudRain, CloudLightning, Snowflake } from "lucide-react";
+import { Sun, Cloud, CloudDrizzle, CloudRain, CloudLightning, Snowflake, Wind } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { useGame } from "@/game/store";
@@ -44,8 +44,10 @@ export function WeatherForecastStrip({ trackId, trackCondition }: Props) {
         </Badge>
       )}
       {current && (
-        <span className="text-muted-foreground tabular-nums">
+        <span className="flex items-center gap-1 text-muted-foreground tabular-nums">
           {Math.round(current.tempC)}°C · {Math.round(current.humidity * 100)}%
+          <Wind className="h-3 w-3" />
+          {Math.round(current.windKph)} km/h
         </span>
       )}
       {forecast.length > 0 && (

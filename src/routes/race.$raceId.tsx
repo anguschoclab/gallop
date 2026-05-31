@@ -22,7 +22,7 @@ import {
   rngForRace,
   type RaceSimulationDependencies,
 } from "@/services/raceSimulationService";
-import { Pause, Play, Camera, Thermometer } from "lucide-react";
+import { Pause, Play, Camera, Thermometer, Wind } from "lucide-react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { NarrativeGenerator } from "@/services/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
@@ -279,6 +279,8 @@ function LiveRace() {
               <span className="inline-flex items-center gap-0.5">
                 <Thermometer className="h-3 w-3" />
                 {Math.round(raceWeather.tempC)}°C
+                <Wind className="h-3 w-3 ml-1" />
+                {Math.round(raceWeather.windKph)} km/h
               </span>
             )}
           </p>
