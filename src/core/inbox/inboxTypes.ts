@@ -12,7 +12,9 @@ export type InboxCategory =
   | "deadline"
   | "injury"
   | "auction"
-  | "system";
+  | "system"
+  | "retirement"
+  | "hall_of_fame";
 
 export type InboxPriority = "info" | "action" | "urgent";
 

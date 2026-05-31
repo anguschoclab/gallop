@@ -526,6 +526,25 @@ function AuctionSalePage() {
                                 </div>
                               </div>
                             ))}
+                            <div className="bg-black/20 p-3 border border-white/5">
+                              <div className="text-[8px] font-black uppercase text-cream/20 tracking-tighter mb-1 leading-none">
+                                PREF_DISTANCE
+                              </div>
+                              <div className="text-xs font-mono font-bold text-cream/80 uppercase">
+                                {Math.round(horse.distanceAptitude)}m
+                              </div>
+                            </div>
+                            <div className="bg-black/20 p-3 border border-white/5">
+                              <div className="text-[8px] font-black uppercase text-cream/20 tracking-tighter mb-1 leading-none">
+                                BEST_SURFACE
+                              </div>
+                              <div className="text-xs font-mono font-bold text-cream/80 uppercase">
+                                {(() => {
+                                  const best = Object.entries(horse.surfaceAptitude || {} as Record<string, number>).sort((a, b) => b[1] - a[1])[0];
+                                  return best ? `${best[0]} (${Math.round(best[1])})` : "—";
+                                })()}
+                              </div>
+                            </div>
                           </div>
 
                           {/* Scouting Report */}

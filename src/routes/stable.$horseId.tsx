@@ -749,6 +749,22 @@ function HorseDetail() {
                           variant="outline"
                           className="font-mono text-[10px] uppercase border-white/10 text-cream/60"
                         >
+                          DIST: {Math.round(horse.distanceAptitude)}m
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="font-mono text-[10px] uppercase border-white/10 text-cream/60"
+                        >
+                          SURF: {(() => {
+                            const entries: [string, number][] = Object.entries(horse.surfaceAptitude || {});
+                            const best = entries.sort((a, b) => b[1] - a[1])[0];
+                            return best ? `${best[0]} (${Math.round(best[1])})` : "—";
+                          })()}
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="font-mono text-[10px] uppercase border-white/10 text-cream/60"
+                        >
                           FORM: {horse.form > 0 ? "+" : ""}
                           {horse.form}
                         </Badge>

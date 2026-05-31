@@ -244,7 +244,10 @@ function ActiveProgramView() {
                     {mare.name}
                   </p>
                   <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
-                    Age {mare.age}
+                    Age {mare.age} · {Math.round(mare.distanceAptitude)}m · {(() => {
+                      const best = Object.entries(mare.surfaceAptitude || {} as Record<string, number>).sort((a, b) => b[1] - a[1])[0];
+                      return best ? `${best[0]} (${Math.round(best[1])})` : "—";
+                    })()}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -277,9 +280,17 @@ function ActiveProgramView() {
                       onClick={() => handleEnroll(mare.id)}
                       className="w-full flex items-center justify-between gap-2 px-2 py-1 rounded hover:bg-t700 text-left transition-colors"
                     >
-                      <span className="text-sm text-cream font-[family-name:var(--font-display)]">
-                        {mare.name}
-                      </span>
+                      <div>
+                        <span className="text-sm text-cream font-[family-name:var(--font-display)]">
+                          {mare.name}
+                        </span>
+                        <p className="text-[10px] text-cream-muted font-[family-name:var(--font-body)]">
+                          {Math.round(mare.distanceAptitude)}m · {(() => {
+                            const best = Object.entries(mare.surfaceAptitude || {} as Record<string, number>).sort((a, b) => b[1] - a[1])[0];
+                            return best ? `${best[0]} (${Math.round(best[1])})` : "—";
+                          })()}
+                        </p>
+                      </div>
                       <div className="flex items-center gap-2">
                         <DistanceBadge distance={dist} />
                         <Plus className="h-3.5 w-3.5 text-cream-muted" />

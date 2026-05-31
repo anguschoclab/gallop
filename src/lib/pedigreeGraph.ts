@@ -10,6 +10,7 @@ export type PedigreeFlowNodeData = {
   gender?: string;
   isReal: boolean;
   bestBeyer?: number;
+  distanceAptitude?: number;
   coatColor?: CoatColor;
   generation: number;
   isSire: boolean;
@@ -68,6 +69,7 @@ function walk(
     gender: horse?.gender,
     isReal,
     bestBeyer: horse ? bestBeyer(horse) : undefined,
+    distanceAptitude: horse ? Math.round(horse.distanceAptitude) : undefined,
     coatColor: horse?.coatColor,
     generation,
     isSire,

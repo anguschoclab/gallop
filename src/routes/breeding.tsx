@@ -207,7 +207,7 @@ function BreedingPage() {
                     {availableStallions.map((h) => (
                       <option key={h.id} value={h.id}>
                         {h.name} (age {Math.floor(h.age)})
-                        {h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""} • $
+                        {h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""} • {Math.round(h.distanceAptitude)}m • $
                         {formatCurrency(h.stud?.standingFee || 0)}
                       </option>
                     ))}
@@ -228,7 +228,7 @@ function BreedingPage() {
                       .map((h: Horse) => (
                         <option key={h.id} value={h.id}>
                           {h.name} (age {Math.floor(h.age)})
-                          {h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""}
+                          {h.bruceLoweFamily ? ` • BL${h.bruceLoweFamily}` : ""} • {Math.round(h.distanceAptitude)}m
                         </option>
                       ))}
                   </select>

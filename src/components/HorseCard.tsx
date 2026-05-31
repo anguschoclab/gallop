@@ -521,7 +521,7 @@ export function HorseCard({
             </div>
           </div>
 
-          {(horse.runningStyle || horse.conformation) && (
+          {(horse.runningStyle || horse.conformation || horse.distanceAptitude) && (
             <div className="flex flex-wrap gap-1.5">
               {horse.runningStyle && (
                 <Badge
@@ -529,6 +529,25 @@ export function HorseCard({
                   className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter"
                 >
                   STY: {horse.runningStyle.replace("-", " ")}
+                </Badge>
+              )}
+              {horse.distanceAptitude != null && (
+                <Badge
+                  variant="outline"
+                  className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter"
+                >
+                  DIST: {Math.round(horse.distanceAptitude)}m
+                </Badge>
+              )}
+              {horse.surfaceAptitude && (
+                <Badge
+                  variant="outline"
+                  className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter"
+                >
+                  SURF: {(() => {
+                    const best = Object.entries(horse.surfaceAptitude).sort((a, b) => b[1] - a[1])[0];
+                    return best ? `${best[0]} (${Math.round(best[1])})` : "—";
+                  })()}
                 </Badge>
               )}
               {horse.conformation && (

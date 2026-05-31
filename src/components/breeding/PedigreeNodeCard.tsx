@@ -75,6 +75,11 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
               {data.bestBeyer}
             </span>
           )}
+          {data.distanceAptitude !== undefined && (
+            <span className="text-[8px] font-mono font-black text-cream/60 bg-white/5 px-1 rounded-sm">
+              {Math.round(data.distanceAptitude)}m
+            </span>
+          )}
         </div>
       </div>
     </>

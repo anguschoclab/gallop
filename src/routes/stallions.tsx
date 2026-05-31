@@ -108,7 +108,7 @@ function StallionsPage() {
                   <SelectContent>
                     {eligibleMares.map((m: Horse) => (
                       <SelectItem key={m.id} value={m.id}>
-                        {m.name} (age {m.age}, {m.hemisphere})
+                        {m.name} (age {m.age}, {m.hemisphere}, {Math.round(m.distanceAptitude)}m)
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -214,6 +214,19 @@ function MyStallionCard({
             <span className="text-cream-muted text-xs">Stakes / G1 Foals</span>
             <span className="text-cream font-mono">
               {stud.lifetimeStakesFoals} / {stud.lifetimeG1Foals}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-cream-muted text-xs">Pref. Distance</span>
+            <span className="text-cream font-mono">{Math.round(stallion.distanceAptitude)}m</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-cream-muted text-xs">Best Surface</span>
+            <span className="text-cream font-mono">
+              {(() => {
+                const best = Object.entries(stallion.surfaceAptitude || {}).sort((a, b) => b[1] - a[1])[0];
+                return best ? `${best[0]} (${Math.round(best[1])})` : "—";
+              })()}
             </span>
           </div>
         </div>
@@ -324,6 +337,19 @@ function StallionCard({
           <span className="text-cream-muted">Age · Fame</span>
           <span className="text-cream">
             {stallion.age} · {stallion.fame}
+          </span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-cream-muted">Pref. Distance</span>
+          <span className="text-cream">{Math.round(stallion.distanceAptitude)}m</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-cream-muted">Best Surface</span>
+          <span className="text-cream">
+            {(() => {
+              const best = Object.entries(stallion.surfaceAptitude || {}).sort((a, b) => b[1] - a[1])[0];
+              return best ? `${best[0]} (${Math.round(best[1])})` : "—";
+            })()}
           </span>
         </div>
         {!inSeason && (
