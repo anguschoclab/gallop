@@ -35,6 +35,7 @@ import { createAwardSlice } from "./slices/awardSlice";
 import { createUtilitySlice } from "./slices/utilitySlice";
 import { createWeatherSlice } from "./slices/weatherSlice";
 import { createInboxSlice } from "./slices/inboxSlice";
+import { createStaffSlice } from "./slices/staffSlice";
 import { createOpfsStorage, hydrationComplete, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/state/coreState";
@@ -300,6 +301,9 @@ export const useGame = create<StoreType>()(
 
       // Inbox slice (Message Center)
       ...createInboxSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Staff negotiation slice
+      ...createStaffSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Start new game action
       startNewGame: async (options: NewGameOptions) => {

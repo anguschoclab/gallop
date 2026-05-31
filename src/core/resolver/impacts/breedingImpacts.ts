@@ -72,6 +72,15 @@ export interface SyndicateFeeDistributionImpact extends Impact {
   reason: string;
 }
 
+// Syndicate shareholder satisfaction impact (Phase 5)
+export interface SyndicateSatisfactionImpact extends Impact {
+  type: "syndicate_satisfaction";
+  syndicateId: string;
+  stableId: string;
+  satisfactionDelta: number; // Can be positive or negative
+  reason: string;
+}
+
 export type BreedingImpact =
   | PregnancyCreationImpact
   | PregnancyUpdateImpact
@@ -79,4 +88,5 @@ export type BreedingImpact =
   | StudCareerImpact
   | SyndicateCreationImpact
   | ShareTransactionImpact
-  | SyndicateFeeDistributionImpact;
+  | SyndicateFeeDistributionImpact
+  | SyndicateSatisfactionImpact;

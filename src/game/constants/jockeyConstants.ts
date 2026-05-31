@@ -40,6 +40,7 @@ export const AFFINITY_LEVEL_SOULMATES = 1000;
 export const AFFINITY_XP_PER_RACE = 20;
 export const AFFINITY_XP_PER_WORKOUT = 10;
 export const AFFINITY_XP_PER_WIN_BONUS = 10;
+export const AFFINITY_XP_POOR_RACE_PENALTY = -10; // Penalty for finishing outside top 10
 
 // Affinity bonus values
 export const AFFINITY_BONUS_FAMILIAR = 0.02;

@@ -133,6 +133,46 @@ export function calculateRaceWinReputation(grade: string | undefined, purse: num
 }
 
 /**
+ * Calculate reputation loss for poor race performance.
+ *
+ * @param grade - Race grade (G1, G2, etc.)
+ * @param position - Finishing position
+ * @param fieldSize - Total number of runners
+ * @param consecutiveLosses - Number of consecutive losses for this horse
+ * @returns Reputation points lost (negative number)
+ */
+export function calculateRaceLossReputation(
+  grade: string | undefined,
+  position: number,
+  fieldSize: number,
+  consecutiveLosses: number,
+): number {
+  let loss = 0;
+
+  // Last place in graded race is embarrassing
+  if (grade && position === fieldSize) {
+    if (grade === "G1") loss = -15;
+    else if (grade === "G2") loss = -12;
+    else if (grade === "G3") loss = -10;
+    else if (grade === "Listed") loss = -8;
+  }
+
+  // Poor finish (outside top half) in graded race
+  if (grade && position > fieldSize / 2) {
+    if (grade === "G1") loss = Math.min(loss, -10);
+    else if (grade === "G2") loss = Math.min(loss, -8);
+    else if (grade === "G3") loss = Math.min(loss, -6);
+  }
+
+  // Slump penalty for consecutive losses
+  if (consecutiveLosses >= 3) {
+    loss -= 5; // Additional -5 for being on a losing streak
+  }
+
+  return loss;
+}
+
+/**
  * Calculate reputation gain for breeding success.
  *
  * @param foalQuality - Calculated quality score of the foal (0-100)

@@ -265,11 +265,11 @@ export interface TacticsIntent extends Intent {
 export interface StaffIntent extends Intent {
   type: "staff";
   action: "hire" | "fire";
-  staffType: "trainer" | "vet" | "farrier" | "groom";
-  staffId?: string;
+  staffId: string;
+  role: import("@/core/staff/staffTypes").StaffRole;
+  tier: import("@/core/staff/staffTypes").StaffTier;
   salary: number;
-  specialty?: string;
-  skill: number;
+  stableId: string;
 }
 
 // Facility upgrade intent

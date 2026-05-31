@@ -55,6 +55,21 @@ export interface StaffImpact extends Impact {
   reason: string;
 }
 
+// Trainer stats impact - updates trainer race records and fame (Phase 4)
+export interface TrainerStatsImpact extends Impact {
+  type: "trainer_stats";
+  staffId: string;
+  raceRecord: {
+    wins: number;
+    places: number;
+    shows: number;
+    starts: number;
+  };
+  fameDelta: number;
+  specialty?: string; // e.g., "sprinter", "router", "turf", "dirt"
+  reason: string;
+}
+
 // Facility upgrade impact
 export interface FacilityUpgradeImpact extends Impact {
   type: "facility_upgrade";
@@ -137,6 +152,7 @@ export type MiscImpact =
   | LogImpact
   | ReputationImpact
   | StaffImpact
+  | TrainerStatsImpact
   | FacilityUpgradeImpact
   | ScoutReportImpact
   | ConsignmentImpact

@@ -168,42 +168,6 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     draft.transactions.push(newTransaction);
   },
 
-  staff: (draft, impact, lookupMaps) => {
-    const impactAny = impact as any;
-    const { action, stableId, staffId, role } = impactAny;
-
-    if (action === "hire") {
-      const staffIndex = draft.staffPool.findIndex((s) => s.id === staffId);
-      if (staffIndex !== -1) {
-        const staff = draft.staffPool[staffIndex];
-        staff.stableId = stableId;
-        draft.hiredStaff.push(staff);
-        draft.staffPool.splice(staffIndex, 1);
-
-        if (stableId !== "") {
-          const stable =
-            lookupMaps?.stableMap.get(stableId) || draft.npcStables.find((s) => s.id === stableId);
-          if (stable) {
-            stable.staff[role] = staffId;
-          }
-        }
-      }
-    } else if (action === "fire") {
-      const staffIndex = draft.hiredStaff.findIndex((s) => s.id === staffId);
-      if (staffIndex !== -1) {
-        draft.hiredStaff.splice(staffIndex, 1);
-
-        if (stableId !== "") {
-          const stable =
-            lookupMaps?.stableMap.get(stableId) || draft.npcStables.find((s) => s.id === stableId);
-          if (stable) {
-            stable.staff[role] = null;
-          }
-        }
-      }
-    }
-  },
-
   news_item: (draft, impact) => {
     const impactAny = impact as any;
     const { newsItem } = impactAny;
@@ -250,6 +214,45 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const lower = name.toLowerCase();
     draft.usedHorseNames = draft.usedHorseNames.filter((n) => n !== lower);
   },
+
+  trainer_stats: (draft, impact) => {
+    const impactAny = impact as any;
+    const { staffId, raceRecord, fameDelta, specialty } = impactAny;
+
+    // Find the staff member in hiredStaff
+    const staffIndex = draft.hiredStaff?.findIndex((s) => s.id === staffId);
+    if (staffIndex !== undefined && staffIndex >= 0) {
+      const staff = draft.hiredStaff![staffIndex];
+
+      // Initialize race record if not exists
+      if (!staff.raceRecord) {
+        staff.raceRecord = { wins: 0, places: 0, shows: 0, starts: 0 };
+      }
+
+      // Update race record
+      staff.raceRecord.wins += raceRecord.wins;
+      staff.raceRecord.places += raceRecord.places;
+      staff.raceRecord.shows += raceRecord.shows;
+      staff.raceRecord.starts += raceRecord.starts;
+
+      // Update fame (cap at 0-100)
+      staff.fame = Math.max(0, Math.min(100, (staff.fame || 0) + fameDelta));
+
+      // Track specialty wins if applicable
+      if (specialty && raceRecord.wins > 0) {
+        if (!staff.specialties) staff.specialties = [];
+        if (!staff.specialtyWins) staff.specialtyWins = {};
+
+        // Add specialty if not already present
+        if (!staff.specialties.includes(specialty)) {
+          staff.specialties.push(specialty);
+        }
+
+        // Increment specialty win count
+        staff.specialtyWins[specialty] = (staff.specialtyWins[specialty] || 0) + raceRecord.wins;
+      }
+    }
+  },
 };
 
 export class SystemHandler implements ImpactHandler {
@@ -273,6 +276,7 @@ export class SystemHandler implements ImpactHandler {
       "season_history_record",
       "track_record",
       "name_reservation",
+      "trainer_stats",
     ].includes(type);
   }
 

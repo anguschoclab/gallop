@@ -142,11 +142,30 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       }
     }
   },
+
+  syndicate_satisfaction: (draft, impact) => {
+    const impactAny = impact as any;
+    const { syndicateId, stableId, satisfactionDelta } = impactAny;
+
+    const syndicate = draft.syndicates?.[syndicateId];
+    if (!syndicate) return;
+
+    // Initialize satisfaction tracking if not exists
+    if (!syndicate.shareholderSatisfaction) {
+      syndicate.shareholderSatisfaction = {};
+    }
+
+    // Update satisfaction (cap at 0-100)
+    const currentSatisfaction = syndicate.shareholderSatisfaction[stableId] || 50; // Start at neutral 50
+    const newSatisfaction = Math.max(0, Math.min(100, currentSatisfaction + satisfactionDelta));
+    syndicate.shareholderSatisfaction[stableId] = newSatisfaction;
+    syndicate.lastSatisfactionUpdate = impact.day;
+  },
 };
 
 export class SyndicationHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return ["syndicate_creation", "share_transaction", "syndicate_fee_distribution"].includes(type);
+    return ["syndicate_creation", "share_transaction", "syndicate_fee_distribution", "syndicate_satisfaction"].includes(type);
   }
 
   handle(

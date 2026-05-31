@@ -2,11 +2,15 @@ import { describe, it, expect } from "vitest";
 import { validateHorseName } from "../jockeyClubRules";
 import { generateProceduralHorseName } from "../nameGenerator";
 import { createRng } from "@/game/rng";
+import type { ReservedNameEntry } from "../reservedNames";
 
 describe("Horse Naming System", () => {
   describe("Jockey Club Rules", () => {
     const existing = new Set(["seattle slew", "affirmed"]);
-    const deceased = new Set(["man o' war"]);
+    const reservedNames: ReservedNameEntry[] = [
+      { name: "man o' war", deceasedOnDay: 1, releasedOnDay: 9126 }, // Reserved until day 9126
+      { name: "secretariat", deceasedOnDay: 1000, releasedOnDay: 10125 }, // Reserved until day 10125
+    ];
 
     it("should reject empty names", () => {
       expect(validateHorseName("", existing).isValid).toBe(false);
@@ -23,8 +27,30 @@ describe("Horse Naming System", () => {
       expect(validateHorseName("Seattle Slew", existing).isValid).toBe(false);
     });
 
-    it("should allow reusing deceased names", () => {
-      expect(validateHorseName("Man o' War", existing, deceased).isValid).toBe(true);
+    it("should reject reserved names (deceased within 25 years)", () => {
+      // Try to use a reserved name on day 100 (within reservation period)
+      const result = validateHorseName("Man o' War", existing, reservedNames, 100);
+      expect(result.isValid).toBe(false);
+      expect(result.reason).toContain("reserved for 25 years");
+    });
+
+    it("should allow reserved names after 25-year period ends", () => {
+      // Try to use a reserved name on day 10000 (after reservation period ended)
+      const result = validateHorseName("Man o' War", existing, reservedNames, 10000);
+      expect(result.isValid).toBe(true);
+    });
+
+    it("should reject recently deceased names (25-year reservation)", () => {
+      // Secretariat died on day 1000, try on day 5000 (still reserved)
+      const result = validateHorseName("Secretariat", existing, reservedNames, 5000);
+      expect(result.isValid).toBe(false);
+      expect(result.reason).toContain("reserved for 25 years");
+    });
+
+    it("should allow deceased names after 25 years", () => {
+      // Secretariat died on day 1000, try on day 11000 (after 25 years)
+      const result = validateHorseName("Secretariat", existing, reservedNames, 11000);
+      expect(result.isValid).toBe(true);
     });
 
     it("should reject offensive words", () => {

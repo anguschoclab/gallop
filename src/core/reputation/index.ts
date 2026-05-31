@@ -20,6 +20,7 @@ export {
   getReputationTier,
   createReputationEvent,
   calculateRaceWinReputation,
+  calculateRaceLossReputation,
   calculateBreedingReputation,
   formatReputationTier,
 } from "./reputationTypes";

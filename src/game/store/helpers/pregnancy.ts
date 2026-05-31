@@ -62,7 +62,7 @@ export function resolvePregnancies(
   stables: Stable[],
   usedNames: Set<string>,
   newDay: number,
-  state?: Pick<GameState, "horses" | "userSettings">,
+  state?: Pick<GameState, "horses" | "userSettings" | "reservedHorseNames">,
 ): PregnancyResult {
   const newLogs: { day: number; text: string }[] = [];
   const pregnancies = currentPregnancies.map((p) => ({ ...p }));
@@ -89,6 +89,8 @@ export function resolvePregnancies(
     // Prepare naming context
     const namingContext: any = {
       existingNames: usedNames,
+      reservedNames: state?.reservedHorseNames,
+      currentDay: newDay,
       parentNameBlendingEnabled,
     };
 

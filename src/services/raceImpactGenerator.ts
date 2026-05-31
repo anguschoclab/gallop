@@ -51,7 +51,7 @@ import {
   MAX_FAME,
 } from "@/game/constants";
 import { GRADED_RACES } from "@/core/data/gradedRaces";
-import { createReputationEvent, calculateRaceWinReputation } from "@/core/reputation";
+import { createReputationEvent, calculateRaceWinReputation, calculateRaceLossReputation } from "@/core/reputation";
 import type { ManagerReputation } from "@/core/reputation";
 import { createTransaction } from "@/core/transactions";
 import type { Transaction } from "@/core/transactions";
@@ -107,6 +107,8 @@ export interface GenerateRaceImpactsProps {
   calibratedPars: Record<number, number>;
   /** Optional current weather state for the race's track (for injury risk). */
   raceWeatherState?: import("@/core/weather/weatherTypes").WeatherState;
+  /** Active syndicates for shareholder satisfaction tracking (Phase 5) */
+  syndicates?: Record<string, import("@/core/breeding/types").Syndicate>;
 }
 
 /**
@@ -482,6 +484,40 @@ function generatePrizeMoneyImpacts(
         reason: `Win in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
         metadata: { horseId: horse.id, raceId: race.id },
       } as ReputationImpact;
+    } else {
+      // Reputation loss for poor performance in graded races
+      const fieldSize = race.entries?.length || position;
+      // Calculate consecutive losses from race history
+      const consecutiveLosses = horse.raceHistory
+        ? horse.raceHistory
+            .slice()
+            .reverse()
+            .filter((h) => h.raceId !== race.id)
+            .findIndex((h) => h.position === 1)
+        : 0;
+      const effectiveConsecutiveLosses = consecutiveLosses === -1 ? 99 : consecutiveLosses;
+
+      const repLoss = calculateRaceLossReputation(
+        race.graded?.grade,
+        position,
+        fieldSize,
+        effectiveConsecutiveLosses,
+      );
+
+      if (repLoss < 0) {
+        reputationImpact = {
+          id: generateUUID(rng),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "always",
+          type: "reputation_change",
+          delta: repLoss,
+          source: "race_loss",
+          reason: `Poor finish (${position}${getOrdinalSuffix(position)} of ${fieldSize}) in ${race.name}${race.graded ? ` (${race.graded.grade})` : ""}`,
+          metadata: { horseId: horse.id, raceId: race.id },
+        } as ReputationImpact;
+      }
     }
   }
 
@@ -617,6 +653,7 @@ export function generateRaceImpacts({
   snapshots = [],
   calibratedPars,
   raceWeatherState,
+  syndicates,
 }: GenerateRaceImpactsProps): AnyImpact[] {
   try {
     const impacts: AnyImpact[] = [];
@@ -704,6 +741,9 @@ export function generateRaceImpacts({
       );
       impacts.push(beyerImpact, recoveryImpact);
 
+      // Store beyer for later use in affinity calculations
+      const beyerValue = beyerImpact.beyer;
+
       // --- PATTERN JUMP DETECTION ---
       // Only push notifications for Graded races (G1, G2, G3)
       if (race.graded) {
@@ -780,6 +820,59 @@ export function generateRaceImpacts({
         impacts.push(tcImpact);
       }
 
+      // Trainer stats update (Phase 4: Relationship Enhancement)
+      // Find if there's a trainer assigned to this horse's stable
+      const horseStableId = horse.stableId || (horse.owned ? "" : undefined);
+      const assignedTrainer = hiredStaff?.find(
+        (s) => s.role === "trainer" && (horse.owned ? !s.stableId : s.stableId === horseStableId),
+      );
+
+      if (assignedTrainer) {
+        const isWin = r.position === 1;
+        const isPlace = r.position === 2;
+        const isShow = r.position === 3;
+
+        // Calculate fame change
+        let fameDelta = 0;
+        if (isWin) {
+          fameDelta = race.graded?.grade === "G1" ? 10 : race.graded ? 5 : 2;
+        } else if (isPlace || isShow) {
+          fameDelta = 1;
+        } else if (r.position > 10) {
+          fameDelta = -1; // Small fame loss for poor performance
+        }
+
+        // Determine specialty based on race
+        let specialty: string | undefined;
+        if (race.distance && race.distance <= 1400) {
+          specialty = "sprinter";
+        } else if (race.distance && race.distance >= 2000) {
+          specialty = "router";
+        }
+        if (race.surface) {
+          specialty = race.surface.toLowerCase() as string;
+        }
+
+        impacts.push({
+          id: generateUUID(rng),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "conditional",
+          type: "trainer_stats",
+          staffId: assignedTrainer.id,
+          raceRecord: {
+            wins: isWin ? 1 : 0,
+            places: isPlace ? 1 : 0,
+            shows: isShow ? 1 : 0,
+            starts: 1,
+          },
+          fameDelta,
+          specialty,
+          reason: `${assignedTrainer.name} trained ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
+        } as any);
+      }
+
       // Prize money distribution
       const prizeImpacts = generatePrizeMoneyImpacts(horse, r.position, race, newDay, rng);
       if (prizeImpacts) {
@@ -804,10 +897,26 @@ export function generateRaceImpacts({
           impacts.push(jockeyFeeImpacts.cashImpact);
           if (jockeyFeeImpacts.transactionImpact) impacts.push(jockeyFeeImpacts.transactionImpact);
 
-          // --- AFFINITY XP GAIN ---
-          const xpGain =
-            AFFINITY_CONSTANTS.XP_PER_RACE +
-            (r.position === 1 ? AFFINITY_CONSTANTS.XP_PER_WIN_BONUS : 0);
+          // --- AFFINITY XP GAIN / PENALTY ---
+          // Base XP for racing
+          let xpGain = AFFINITY_CONSTANTS.XP_PER_RACE;
+
+          // Win bonus
+          if (r.position === 1) {
+            xpGain += AFFINITY_CONSTANTS.XP_PER_WIN_BONUS;
+          }
+
+          // Penalty for poor performance (outside top 10)
+          const fieldSize = race.entries?.length || r.position;
+          if (r.position > 10 && r.position > fieldSize / 2) {
+            xpGain += AFFINITY_CONSTANTS.XP_POOR_RACE_PENALTY; // -10 XP
+          }
+
+          // Performance bonus for exceptional Beyer figures
+          if (r.position <= 3 && beyerValue > 100) {
+            xpGain += 5; // Bonus for quality performance
+          }
+
           impacts.push({
             id: generateUUID(rng),
             intentId: "",
@@ -818,9 +927,9 @@ export function generateRaceImpacts({
             jockeyId: jockey.id,
             horseId: horse.id,
             xp: xpGain,
-            reason: `Raced ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,
+            reason: `Raced ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}${xpGain < 0 ? " (poor performance penalty)" : ""}`,
           } as any);
-          // --- END AFFINITY XP GAIN ---
+          // --- END AFFINITY XP GAIN / PENALTY ---
         }
       }
 
@@ -896,6 +1005,29 @@ export function generateRaceImpacts({
             },
             reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee: $${formatCurrency(previousFee)} → $${formatCurrency(newFee)}.` : ""}`,
           } as StudCareerImpact);
+
+          // Phase 5: Syndicate shareholder satisfaction update
+          // Check if sire is part of a syndicate
+          const syndicate = Object.values(syndicates || {}).find(
+            (s) => s.stallionId === sire.id,
+          );
+          if (syndicate) {
+            const satisfactionDelta = race.graded?.grade === "G1" ? 15 : race.graded ? 8 : 5;
+            for (const stableId of Object.keys(syndicate.shareHolders)) {
+              impacts.push({
+                id: generateUUID(rng),
+                intentId: "",
+                day: newDay,
+                phase: "raceResolution",
+                logLevel: "conditional",
+                type: "syndicate_satisfaction",
+                syndicateId: syndicate.id,
+                stableId,
+                satisfactionDelta,
+                reason: `Syndicated stallion ${sire.name}'s foal ${horse.name} won ${race.name}`,
+              } as any);
+            }
+          }
         }
       }
 

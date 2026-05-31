@@ -303,6 +303,17 @@ function processRegionalDominance(
                     horseId: playerHorse.id,
                     raceId: race.id,
                   });
+
+                  // Update friction based on grudge match outcome (Humiliation Path)
+                  if (playerWon) {
+                    // Beating a hated rival makes them angrier (humiliation)
+                    rivalAI.friction = Math.min(100, rivalAI.friction + 10);
+                  } else {
+                    // Rival victory - they taunt you, friction increases
+                    rivalAI.friction = Math.min(100, rivalAI.friction + 15);
+                  }
+                  // Update the aiManager state with new friction value
+                  updatedAiManager.stableStates[rivalStableId!] = { ...rivalAI };
                 }
               }
             }

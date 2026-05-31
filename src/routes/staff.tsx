@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatting";
@@ -10,19 +10,17 @@ import {
   Briefcase,
   Zap,
   UserPlus,
-  X,
-  DollarSign,
   ShieldCheck,
   Activity,
-  ArrowRight,
-  HardDrive,
   Info,
   Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NumericValue } from "@/components/HorseBits";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { getG1WinsForStable, countByGrade } from "@/lib/connectionTrophies";
+import { StaffNegotiationDialog } from "@/components/StaffNegotiationDialog";
+import { isOffended, offendedDaysRemaining } from "@/core/staff/staffNegotiation";
 
 export const Route = createFileRoute("/staff")({
   component: StaffManagement,
@@ -32,6 +30,7 @@ function StaffManagement() {
   const { hiredStaff, staffPool, enqueueIntent, day } = useGame();
   const horses = (useGame as any)((s: any) => s.horses);
   const races = (useGame as any)((s: any) => s.races);
+  const [negotiatingId, setNegotiatingId] = useState<string | null>(null);
 
   const myStaff = hiredStaff?.filter((s) => s.stableId === "") ?? [];
 
@@ -43,18 +42,6 @@ function StaffManagement() {
   );
   const honorCounts = useMemo(() => countByGrade(stableG1Wins), [stableG1Wins]);
   const showHonors = (role: string) => role === "trainer" || role === "groom";
-
-  const handleHire = (staffId: string) => {
-    enqueueIntent({
-      type: "staff",
-      action: "hire",
-      stableId: "",
-      staffId,
-      role: staffPool.find((s) => s.id === staffId)!.role,
-      tier: staffPool.find((s) => s.id === staffId)!.tier,
-      salary: staffPool.find((s) => s.id === staffId)!.salary,
-    } as any);
-  };
 
   const handleFire = (staff: any) => {
     enqueueIntent({
@@ -312,13 +299,22 @@ function StaffManagement() {
                     </div>
                   </div>
 
-                  <Button
-                    size="sm"
-                    className="w-full h-10 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-[10px] shadow-lg"
-                    onClick={() => handleHire(staff.id)}
-                  >
-                    Hire
-                  </Button>
+                  {isOffended(staff, day) ? (
+                    <div
+                      className="w-full h-10 flex items-center justify-center gap-2 border border-destructive/20 bg-destructive/5 text-destructive/60 text-[9px] font-mono uppercase tracking-widest"
+                      title={`Offended — willing to talk again in ${offendedDaysRemaining(staff, day)} day(s)`}
+                    >
+                      Not interested · {offendedDaysRemaining(staff, day)}d
+                    </div>
+                  ) : (
+                    <Button
+                      size="sm"
+                      className="w-full h-10 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-[0.2em] rounded-none text-[10px] shadow-lg"
+                      onClick={() => setNegotiatingId(staff.id)}
+                    >
+                      Negotiate
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -346,6 +342,17 @@ function StaffManagement() {
           </div>
         </section>
       </div>
+
+      {negotiatingId && (() => {
+        const staff = staffPool.find((s) => s.id === negotiatingId);
+        return staff ? (
+          <StaffNegotiationDialog
+            staff={staff}
+            isOpen={true}
+            onClose={() => setNegotiatingId(null)}
+          />
+        ) : null;
+      })()}
     </div>
   );
 }

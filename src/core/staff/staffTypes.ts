@@ -34,6 +34,19 @@ export interface StaffMember {
   fame: number; // 0-100 reputation of the staff member
   contractUntil?: number; // Optional day when contract expires
   stableId?: string; // ID of the stable they are currently hired by
+  offended?: boolean; // True if player low-balled them and they walked away
+  offendedUntil?: number; // Game day after which they are willing to talk again
+  negotiationRounds?: number; // Number of insult rounds used in current negotiation
+
+  // Race record tracking for trainers (Phase 4: Relationship Enhancement)
+  raceRecord?: {
+    wins: number;
+    places: number; // 2nd place
+    shows: number; // 3rd place
+    starts: number; // Total races
+  };
+  specialties?: string[]; // "sprinter", "router", "turf", "dirt"
+  specialtyWins?: Record<string, number>; // Track wins per specialty
 }
 
 /**

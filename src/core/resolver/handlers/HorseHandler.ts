@@ -87,7 +87,10 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   health_status_change: (draft, impact, horse) => {
     const impactAny = impact as any;
     const { status } = impactAny;
-    if (horse) {
+    // Defense-in-depth: only apply health status change if horse is currently healthy
+    // Upstream guards (energy phase, training resolution) should prevent this,
+    // but this ensures we never overwrite an existing sickness
+    if (horse && horse.healthStatus === "healthy") {
       horse.healthStatus = status;
       horse.healthStatusDay = impact.day;
     }
@@ -112,7 +115,10 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   injury: (draft, impact, horse) => {
     const impactAny = impact as any;
     const { severity, injuryType, recoveryDays } = impactAny;
-    if (horse) {
+    // Defense-in-depth: only apply injury if horse is currently healthy
+    // Upstream guards (race entry checks, training phase) should prevent injuries to sick horses,
+    // but this ensures we never overwrite an existing sickness
+    if (horse && horse.healthStatus === "healthy") {
       horse.healthStatus = severity === "career-ending" ? "other_illness" : "recovering";
       horse.healthStatusDay = impact.day;
       horse.activeInjury = {

@@ -69,4 +69,7 @@ export interface Syndicate {
   studFee: number;
   isPublic: boolean;
   lifetimeEarnings: number; // accumulated stud fees
+  // Shareholder satisfaction tracking (Phase 5)
+  shareholderSatisfaction?: Record<string, number>; // stableId -> satisfaction (0-100)
+  lastSatisfactionUpdate?: number; // day of last update
 }
