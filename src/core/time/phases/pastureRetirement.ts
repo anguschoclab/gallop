@@ -24,6 +24,11 @@ import type {
   HorseDeletionImpact,
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
+import {
+  isTopHorse,
+  isHallOfFameEligible,
+  buildRetirementBody,
+} from "@/core/inbox/retirementMessages";
 
 /**
  * Phase: Pasture Retirement
@@ -66,6 +71,30 @@ export const pastureRetirementPhase: PipelinePhase = {
           text: `${horse.name} has been retired to pasture.`,
           reason: "Player pasture retirement",
         } as LogImpact);
+
+        if (!horse.stableId && isTopHorse(horse)) {
+          const hofEligible = isHallOfFameEligible(horse);
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "pastureRetirement",
+            logLevel: "always",
+            type: "inbox_message",
+            message: {
+              day: newDay,
+              category: "retirement",
+              priority: hofEligible ? "action" : "info",
+              title: `${horse.name} Retired to Pasture`,
+              body: buildRetirementBody(horse, "pasture"),
+              cta: {
+                label: "View Horse",
+                route: "stable.$horseId",
+                params: { horseId: horse.id },
+              },
+            },
+          } as any);
+        }
       }
     }
 

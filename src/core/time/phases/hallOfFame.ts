@@ -21,6 +21,7 @@ import type {
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import type { HallOfFameEntry } from "@/core/history/historyTypes";
+import { buildHallOfFameBody } from "@/core/inbox/retirementMessages";
 
 /**
  * Phase: Hall of Fame Induction
@@ -112,6 +113,30 @@ export const hallOfFamePhase: PipelinePhase = {
         text: `🏆 ${horse.name} has been inducted into the Hall of Fame!`,
         reason: "Hall of Fame induction",
       } as LogImpact);
+
+      // Emit inbox message for player-owned horses
+      if (!horse.stableId) {
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "hallOfFame",
+          logLevel: "always",
+          type: "inbox_message",
+          message: {
+            day: newDay,
+            category: "hall_of_fame",
+            priority: "action",
+            title: `${horse.name} — Hall of Fame Inductee`,
+            body: buildHallOfFameBody(horse, entry.achievements),
+            cta: {
+              label: "View Horse",
+              route: "stable.$horseId",
+              params: { horseId: horse.id },
+            },
+          },
+        } as any);
+      }
     }
 
     return {

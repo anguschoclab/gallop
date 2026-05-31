@@ -17,6 +17,8 @@ import {
   Activity,
   Calendar,
   ExternalLink,
+  Award,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { InboxCategory, InboxPriority, InboxMessage } from "@/core/inbox/inboxTypes";
@@ -66,6 +68,10 @@ function InboxPage() {
         return <Gavel className="h-4 w-4" />;
       case "race":
         return <Calendar className="h-4 w-4" />;
+      case "retirement":
+        return <LogOut className="h-4 w-4" />;
+      case "hall_of_fame":
+        return <Award className="h-4 w-4" />;
       default:
         return <Bell className="h-4 w-4" />;
     }

@@ -39,6 +39,11 @@ import { createRng, hashStr } from "@/game/rng";
 import { scoutHorse } from "@/game/scouting";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
+import {
+  isTopHorse,
+  isHallOfFameEligible,
+  buildRetirementBody,
+} from "@/core/inbox/retirementMessages";
 
 /**
  * Management Resolution Phase (Order 10)
@@ -258,6 +263,31 @@ export const managementResolutionPhase: PipelinePhase = {
             },
             reason: "Retired to stud",
           } as any);
+
+          const horse = state.horses.find((h) => h.id === typedIntent.horseId);
+          if (horse && !horse.stableId && isTopHorse(horse)) {
+            const hofEligible = isHallOfFameEligible(horse);
+            impacts.push({
+              id: generateUUID(context.dailyRng),
+              intentId: intent.id,
+              day: newDay,
+              phase: "managementResolution",
+              logLevel: "always",
+              type: "inbox_message",
+              message: {
+                day: newDay,
+                category: "retirement",
+                priority: hofEligible ? "action" : "info",
+                title: `${horse.name} Retired to Stud`,
+                body: buildRetirementBody(horse, "stud", typedIntent.standingFee),
+                cta: {
+                  label: "View Horse",
+                  route: "stable.$horseId",
+                  params: { horseId: horse.id },
+                },
+              },
+            } as any);
+          }
           break;
         }
 
