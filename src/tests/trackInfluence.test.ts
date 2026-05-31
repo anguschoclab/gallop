@@ -37,6 +37,7 @@ const minimalGenotype: Genotype = {
   stride: [0, 0],
   trackBias: [0, 0],
   mudAptitude: [0, 0],
+  weatherAptitude: [0, 0],
   trainability: [0, 0],
   peakAge: [0, 0],
   recovery: [0, 0],

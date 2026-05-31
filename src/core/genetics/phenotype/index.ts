@@ -27,6 +27,7 @@ export {
   resolveSurfaceAptitude,
   resolveAptitudeMultiplier,
   resolveMudAptitude,
+  resolveWeatherPreference,
   fiberDistanceModifier,
 } from "./aptitude";
 

@@ -95,6 +95,24 @@ export function resolveMudAptitude(locus: Locus): number {
 }
 
 /**
+ * Resolve weather preference from locus.
+ *
+ * Maps locus value to weather preference: dry (low sum), wet (high sum), or all (middle).
+ *
+ * @param locus - Weather aptitude locus
+ * @returns Weather preference: "dry", "wet", or "all"
+ *
+ * @example
+ * const preference = resolveWeatherPreference(genotype.weatherAptitude);
+ */
+export function resolveWeatherPreference(locus: Locus): "dry" | "wet" | "all" {
+  const sum = locus[0] + locus[1];
+  if (sum <= 4) return "dry";
+  if (sum >= 8) return "wet";
+  return "all";
+}
+
+/**
  * Calculate distance modifier based on fiber bias and race distance.
  *
  * Returns speed and stamina multipliers based on whether the horse is a

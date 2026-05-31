@@ -159,6 +159,7 @@ export function createTestGenotype(overrides?: Partial<Genotype>): Genotype {
     stride: createLocus(5, 5), // Balanced stride
     trackBias: createLocus(5, 5), // Balanced track preference
     mudAptitude: createLocus(5, 5), // Average mud aptitude
+    weatherAptitude: createLocus(5, 5), // Balanced weather preference
     trainability: createLocus(5, 5), // Good trainability
     peakAge: createLocus(5, 5), // Average peak age
     recovery: createLocus(5, 5), // Good recovery

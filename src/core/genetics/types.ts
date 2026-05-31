@@ -103,6 +103,7 @@ export type Genotype = {
   stride: Locus;
   trackBias: Locus;
   mudAptitude: Locus;
+  weatherAptitude: Locus;
   trainability: Locus;
   peakAge: Locus;
   recovery: Locus;

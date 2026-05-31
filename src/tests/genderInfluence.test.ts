@@ -59,6 +59,7 @@ function mockHorse(
       stride: [5, 5],
       trackBias: [5, 5],
       mudAptitude: [5, 5],
+      weatherAptitude: [5, 5],
       trainability: [5, 5],
       peakAge: [5, 5],
       recovery: [5, 5],

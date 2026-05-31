@@ -187,6 +187,7 @@ export function generateGenotype(
     stride: rollLocus(),
     trackBias: rollLocus(),
     mudAptitude: rollLocus(),
+    weatherAptitude: rollLocus(),
     trainability: rollLocus(),
     peakAge: rollLocus(),
     recovery: rollLocus(),

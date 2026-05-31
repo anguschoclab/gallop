@@ -35,7 +35,7 @@ export const LINKAGE_MAP: Record<string, LocusCoord> = {
   fiberType: { chromosome: "ATHLETIC", position: 0.7 },
   stride: { chromosome: "ATHLETIC", position: 0.85 },
 
-  // CHR_ENDURANCE: stamina[0-9] at 0.05-0.55, distance at 0.70, mudAptitude at 0.85
+  // CHR_ENDURANCE: stamina[0-9] at 0.05-0.55, distance at 0.70, mudAptitude at 0.85, weatherAptitude at 0.95
   "stamina.0": { chromosome: "ENDURANCE", position: 0.05 },
   "stamina.1": { chromosome: "ENDURANCE", position: 0.1 },
   "stamina.2": { chromosome: "ENDURANCE", position: 0.15 },
@@ -48,6 +48,7 @@ export const LINKAGE_MAP: Record<string, LocusCoord> = {
   "stamina.9": { chromosome: "ENDURANCE", position: 0.5 },
   distance: { chromosome: "ENDURANCE", position: 0.7 },
   mudAptitude: { chromosome: "ENDURANCE", position: 0.85 },
+  weatherAptitude: { chromosome: "ENDURANCE", position: 0.95 },
 
   // CHR_PERFORMANCE: acceleration[0-9] at 0.05-0.55, heart[0-4] at 0.62-0.78, style at 0.90
   "acceleration.0": { chromosome: "PERFORMANCE", position: 0.05 },
