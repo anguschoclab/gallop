@@ -11,7 +11,7 @@
 // Race Entry Resolution Phase
 // Converts RaceEntryIntents into impacts (race entry, cash changes)
 
-import { PHASE_ORDER_RACE_ENTRY_RESOLUTION } from "@/game/constants";
+import { PHASE_ORDER_RACE_ENTRY_RESOLUTION, BUMP_RATING_MARGIN } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, RaceEntryIntent } from "@/core/resolver/intents";
 import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/impacts/index";
@@ -20,6 +20,7 @@ import { createTransaction } from "@/core/transactions";
 import { generateUUID } from "@/core/uuid";
 import { selectBestJockey, createJockeyAIState } from "@/core/ai/jockeyAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { calculateOverallRating } from "@/core/horse/stats";
 
 /**
  * Race Entry Resolution Phase (Order 15)
@@ -55,7 +56,40 @@ export const raceEntryResolutionPhase: PipelinePhase = {
       if (!race || !horse) continue;
       if (race.resolved) continue;
       if (race.entries.some((e) => e.horseId === intent.horseId)) continue;
-      if (race.entries.length >= race.fieldSize) continue;
+
+      // Handle full races: attempt bump for NPC intents; passthrough for player intents
+      // that already carry a bumpEntryHorseId (validated in enterRace store action).
+      let bumpEntryHorseId: string | undefined;
+      if (race.entries.length >= race.fieldSize) {
+        if (intent.source === "player" && intent.bumpEntryHorseId) {
+          // Player bump pre-validated in enterRace; just carry the target through
+          bumpEntryHorseId = intent.bumpEntryHorseId;
+        } else if (intent.source === "npc") {
+          // CPU bump: find weakest non-player NPC entry
+          const challengerRating = calculateOverallRating(horse);
+          let weakestIdx = -1;
+          let weakestRating = Infinity;
+          for (let i = 0; i < race.entries.length; i++) {
+            const entry = race.entries[i];
+            if (entry.owned) continue; // never bump player
+            const existing = horseMap.get(entry.horseId);
+            if (!existing) continue;
+            const r = calculateOverallRating(existing);
+            if (r < weakestRating) {
+              weakestRating = r;
+              weakestIdx = i;
+            }
+          }
+          if (weakestIdx === -1 || challengerRating <= weakestRating + BUMP_RATING_MARGIN) {
+            continue; // can't bump anyone meaningfully
+          }
+          bumpEntryHorseId = race.entries[weakestIdx].horseId;
+          // Update the local race snapshot so subsequent intents see the eviction
+          race.entries.splice(weakestIdx, 1);
+        } else {
+          continue; // full race, no bump applicable
+        }
+      }
 
       let jockeyId = intent.jockeyId;
 
@@ -99,8 +133,9 @@ export const raceEntryResolutionPhase: PipelinePhase = {
         horseId: intent.horseId,
         jockeyId,
         entryFee: race.entryFee,
-        reason: "Race entry",
-      });
+        bumpEntryHorseId,
+        reason: bumpEntryHorseId ? "Race entry (bump)" : "Race entry",
+      } as RaceEntryImpact);
 
       // Add transport cost for player-owned horses (simplified: fixed cost based on race grade)
       if (!horse.stableId) {

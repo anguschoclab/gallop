@@ -15,6 +15,7 @@ import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
 import { getReputationTier, createReputationEvent } from "@/core/reputation";
 import { createTransaction } from "@/core/transactions";
+import { addReservedName } from "@/core/horse/naming/reservedNames";
 
 type ImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
@@ -235,6 +236,20 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const key = `${record.trackId}_${record.surface}_${record.distance}`;
     draft.trackRecords[key] = record;
   },
+
+  name_reservation: (draft, impact) => {
+    const impactAny = impact as any;
+    const { name, deceasedOnDay } = impactAny;
+    // Add to reserved names list (25-year reservation)
+    draft.reservedHorseNames = addReservedName(
+      name,
+      deceasedOnDay,
+      draft.reservedHorseNames || [],
+    );
+    // Remove from active used names
+    const lower = name.toLowerCase();
+    draft.usedHorseNames = draft.usedHorseNames.filter((n) => n !== lower);
+  },
 };
 
 export class SystemHandler implements ImpactHandler {
@@ -257,6 +272,7 @@ export class SystemHandler implements ImpactHandler {
       "hall_of_fame_induction",
       "season_history_record",
       "track_record",
+      "name_reservation",
     ].includes(type);
   }
 

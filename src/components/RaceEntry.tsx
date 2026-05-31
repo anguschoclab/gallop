@@ -126,6 +126,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
 
   const handleConfirm = () => {
     if (selectedHorseId && selectedJockeyId) {
+      const wasFull = race.entries.length >= race.fieldSize;
       // D3: use enterClaimingRace for new claiming races
       const res = isNewClaimingRace
         ? enterClaimingRace(race.id, selectedHorseId)
@@ -147,6 +148,11 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
           const horse = horses.find((h: Horse) => h.id === selectedHorseId);
           toast.info(
             `${horse?.name ?? "Horse"} entered in claiming race at ${formatCurrency(claimingPrice!)}.`,
+          );
+        } else if (wasFull) {
+          const horse = horses.find((h: Horse) => h.id === selectedHorseId);
+          toast.info(
+            `${horse?.name ?? "Horse"} bumped a weaker entry to join ${race.name}.`,
           );
         }
 

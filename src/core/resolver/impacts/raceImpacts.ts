@@ -22,6 +22,7 @@ export interface RaceEntryImpact extends Impact {
   weight?: number;
   entryFee: number;
   ridingFee?: number;
+  bumpEntryHorseId?: string; // horseId to splice out before adding new entry
   reason: string;
 }
 

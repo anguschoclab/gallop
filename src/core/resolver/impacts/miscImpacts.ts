@@ -123,6 +123,14 @@ export interface OutpostImpact extends Impact {
   reason: string;
 }
 
+// Name reservation impact - reserves horse name for 25 years after death
+export interface NameReservationImpact extends Impact {
+  type: "name_reservation";
+  name: string;
+  deceasedOnDay: number;
+  reason: string;
+}
+
 export type MiscImpact =
   | NewsImpact
   | TrackRecordImpact
@@ -135,4 +143,5 @@ export type MiscImpact =
   | ConsignmentWithdrawalImpact
   | AuctionResolutionImpact
   | TransportImpact
-  | OutpostImpact;
+  | OutpostImpact
+  | NameReservationImpact;

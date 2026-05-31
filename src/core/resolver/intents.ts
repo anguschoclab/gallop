@@ -46,6 +46,7 @@ export interface RaceEntryIntent extends Intent {
   horseId: string;
   jockeyId?: string;
   tactics?: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+  bumpEntryHorseId?: string; // horseId to evict if race is full
 }
 
 // Race withdrawal intent

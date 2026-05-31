@@ -632,6 +632,11 @@ export const MAX_HORSES_PER_STABLE_PER_RACE = 2;
 export const MIN_ENERGY_TO_ENTER = 50;
 
 /**
+ * Rating margin a challenger must exceed the weakest entry by to bump it
+ */
+export const BUMP_RATING_MARGIN = 3;
+
+/**
  * Form consideration - prefer positive form
  */
 export const MIN_FORM_TO_ENTER = -3;

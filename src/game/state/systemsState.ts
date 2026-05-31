@@ -42,6 +42,7 @@ import type { TransportRequest } from "@/core/transportation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { HallOfFameEntry, TrackRecord, FounderRecord } from "@/core/history/historyTypes";
+import type { ReservedNameEntry } from "@/core/horse/naming/reservedNames";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -165,6 +166,8 @@ export interface SystemsState {
   usedHorseNames: string[];
   /** Set of all jockey names currently in use to ensure uniqueness */
   usedJockeyNames: string[];
+  /** Names reserved due to deceased horses (25-year reservation) */
+  reservedHorseNames: ReservedNameEntry[];
 
   // Staff system
   /** Pool of staff available for hire */
@@ -230,6 +233,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       shareTransactions: [],
       usedHorseNames: [],
       usedJockeyNames: [],
+      reservedHorseNames: [],
       staffPool: [],
       hiredStaff: [],
     };
@@ -271,7 +275,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     shareTransactions: [],
     usedHorseNames: [],
     usedJockeyNames: [],
-
+    reservedHorseNames: [],
     staffPool: [],
     hiredStaff: [],
   };

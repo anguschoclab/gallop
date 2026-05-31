@@ -15,6 +15,8 @@ import {
   RESERVED_NAMES,
   PROHIBITED_PATTERNS,
 } from "./prohibitedWords";
+import type { ReservedNameEntry } from "./reservedNames";
+import { isNameReserved } from "./reservedNames";
 
 /**
  * Result of name validation with optional reason for failure.
@@ -29,20 +31,22 @@ export interface NameValidation {
  *
  * Performs the following checks:
  * 1. Length: max 18 characters
- * 2. Uniqueness: not used by active horses (deceased names can be reused)
- * 3. Offensive language: no offensive words
- * 4. Trade names: no commercial trade names
- * 5. Reserved names: no reserved/historical names
- * 6. Prohibited patterns: no numbers or special characters
- * 7. Character set: only letters, spaces, hyphens, and apostrophes
+ * 2. Uniqueness: not used by active horses
+ * 3. Reserved names: not reserved due to recent horse death (25-year reservation)
+ * 4. Offensive language: no offensive words
+ * 5. Trade names: no commercial trade names
+ * 6. Historical reserved names: no reserved/historical names
+ * 7. Prohibited patterns: no numbers or special characters
+ * 8. Character set: only letters, spaces, hyphens, and apostrophes
  *
  * @param name - The name to validate
  * @param existingNames - Set of active horse names in the current game
- * @param deceasedNames - Set of names in the Hall of Fame (can be reused)
+ * @param reservedNames - Array of reserved name entries from deceased horses
+ * @param currentDay - Current game day for checking reservation expiry
  * @returns Validation result with isValid flag and optional reason
  *
  * @example
- * const validation = validateHorseName("Thunder", existingNames, deceasedNames);
+ * const validation = validateHorseName("Thunder", existingNames, reservedNames, currentDay);
  * if (validation.isValid) {
  *   console.log("Name is valid");
  * } else {
@@ -52,7 +56,8 @@ export interface NameValidation {
 export function validateHorseName(
   name: string,
   existingNames: Set<string>,
-  deceasedNames?: Set<string>,
+  reservedNames?: ReservedNameEntry[],
+  currentDay?: number,
 ): { isValid: boolean; reason?: string } {
   const trimmed = name.trim();
   const lowerName = trimmed.toLowerCase();
@@ -66,13 +71,15 @@ export function validateHorseName(
     return { isValid: false, reason: "Name cannot exceed 18 characters." };
   }
 
-  // 2. Uniqueness check (allow reuse of deceased names)
+  // 2. Uniqueness check - name must not be in use by active horse
   if (existingNames.has(lowerName)) {
-    // Check if it's a deceased name that can be reused
-    if (deceasedNames && deceasedNames.has(lowerName)) {
-      // Allow reuse of deceased names
-    } else {
-      return { isValid: false, reason: "Name is already in use by an active horse." };
+    return { isValid: false, reason: "Name is already in use by an active horse." };
+  }
+
+  // 3. Reserved name check - name must not be within 25-year reservation period
+  if (reservedNames && currentDay !== undefined) {
+    if (isNameReserved(name, reservedNames, currentDay)) {
+      return { isValid: false, reason: "Name is reserved for 25 years after the horse's death." };
     }
   }
 

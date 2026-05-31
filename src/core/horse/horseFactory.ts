@@ -415,6 +415,7 @@ export function generateNpcHorse(
     forcedName?: string;
     hemisphere?: Hemisphere;
   } = {},
+  namingContext?: Partial<NamingContext>,
 ): Horse {
   const tier = opts.tier ?? stable.tier;
   const genTier = tier === "elite" ? "elite" : tier === "mid" ? "mid" : "budget";
@@ -437,10 +438,13 @@ export function generateNpcHorse(
     hemisphere: opts.hemisphere ?? "Northern",
   });
 
+  const existingNames = namingContext?.existingNames ?? new Set<string>();
+  const reservedNames = namingContext?.reservedNames;
+
   horse.name =
     opts.forcedName ??
     generateProceduralHorseName(
-      { region, namingTheme: config.namingTheme, existingNames: new Set() },
+      { region, namingTheme: config.namingTheme, existingNames, reservedNames, currentDay },
       rng,
       { strategy: "regional" },
     );

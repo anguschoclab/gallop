@@ -98,8 +98,19 @@ export const createHorseAdminSlice: GameStateCreator<HorseAdminSlice> = (set, ge
     if (ownershipGuard) return ownershipGuard;
 
     const lowerNewName = newName.toLowerCase();
+
+    // Check against active horses
     if (s.usedHorseNames.includes(lowerNewName) && lowerNewName !== horse!.name.toLowerCase()) {
       return { ok: false, reason: "Name is already in use." };
+    }
+
+    // Check against reserved names (deceased horses within 25 years)
+    if (
+      s.reservedHorseNames?.some(
+        (r) => r.name === lowerNewName && s.day < r.releasedOnDay,
+      )
+    ) {
+      return { ok: false, reason: "Name is reserved for 25 years after the horse's death." };
     }
 
     get().enqueueIntent({

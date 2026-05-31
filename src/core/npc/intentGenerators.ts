@@ -302,31 +302,29 @@ function generateNpcRaceEntryIntents(
       const suitability = calculateStrategicEntryScore(raceEntryAI, horse, race, stable, day);
 
       if (suitability > 60) {
-        if (race.entries.length < race.fieldSize) {
-          // Calculate optimal tactics for this horse in this race
-          const jockey = (state.jockeys || [])[0]; // Use first jockey for tactics calculation
-          if (!jockey) continue;
-          const tactics = calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable) as
-            | "lead"
-            | "rail"
-            | "outside"
-            | "save"
-            | "late_kick"
-            | "default";
+        // Calculate optimal tactics for this horse in this race
+        const jockey = (state.jockeys || [])[0]; // Use first jockey for tactics calculation
+        if (!jockey) continue;
+        const tactics = calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable) as
+          | "lead"
+          | "rail"
+          | "outside"
+          | "save"
+          | "late_kick"
+          | "default";
 
-          intents.push({
-            id: generateUUID(),
-            entityId: race.id,
-            source: "npc",
-            sourceId: stable.id,
-            day,
-            priority: 50,
-            type: "race_entry",
-            raceId: race.id,
-            horseId: horse.id,
-            tactics,
-          });
-        }
+        intents.push({
+          id: generateUUID(),
+          entityId: race.id,
+          source: "npc",
+          sourceId: stable.id,
+          day,
+          priority: 50,
+          type: "race_entry",
+          raceId: race.id,
+          horseId: horse.id,
+          tactics,
+        });
       }
     }
   }

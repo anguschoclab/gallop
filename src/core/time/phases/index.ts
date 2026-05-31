@@ -28,6 +28,7 @@ import { stallionRetirementPhase } from "./stallionRetirement";
 import { pastureRetirementPhase } from "./pastureRetirement";
 import { hallOfFamePhase } from "./hallOfFame";
 import { horseDeathPhase } from "./horseDeath";
+import { nameReservationPhase } from "./nameReservation";
 import { auctionsPhase } from "./auctions";
 import { leaderboardPhase } from "./leaderboardPhase";
 import { awardsPhase } from "./awards";
@@ -76,6 +77,7 @@ export const GAME_PIPELINE_PHASES = [
   pastureRetirementPhase,
   hallOfFamePhase,
   horseDeathPhase,
+  nameReservationPhase,
   auctionsPhase,
   leaderboardPhase,
   awardsPhase,

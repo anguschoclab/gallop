@@ -21,6 +21,7 @@ import { generateAncestorHomage } from "./ancestorHomage.ts";
 import { generateThematicName, type NamingTheme } from "./thematicNaming.ts";
 import { generateRegionalName } from "./regionalConventions.ts";
 import { validateHorseName } from "./jockeyClubRules.ts";
+import type { ReservedNameEntry } from "./reservedNames";
 
 /**
  * Context for name generation, providing pedigree and naming preferences.
@@ -31,7 +32,8 @@ export interface NamingContext {
   namingTheme?: NamingTheme;
   region?: RegionalSystem;
   existingNames: Set<string>;
-  deceasedNames?: Set<string>;
+  reservedNames?: ReservedNameEntry[];
+  currentDay?: number;
   parentNameBlendingEnabled?: boolean;
 }
 
@@ -113,7 +115,7 @@ export function generateProceduralHorseName(
   options: NamingOptions = {},
 ): string {
   const { strategy = "hybrid", maxAttempts = 20 } = options;
-  const { existingNames, deceasedNames } = context;
+  const { existingNames, reservedNames, currentDay } = context;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     let candidate: string | undefined;
@@ -133,8 +135,8 @@ export function generateProceduralHorseName(
       candidate = generateThematicName("generic", rng);
     }
 
-    // Validate name
-    const validation = validateHorseName(candidate, existingNames, deceasedNames);
+    // Validate name with reserved names check
+    const validation = validateHorseName(candidate, existingNames, reservedNames, currentDay);
     if (validation.isValid) {
       return candidate;
     }

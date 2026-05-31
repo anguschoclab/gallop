@@ -29,10 +29,24 @@ type ImpactHandlerFunction = (
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
-    const { raceId, horseId, jockeyId, weight, tactics } = impactAny;
+    const { raceId, horseId, jockeyId, weight, tactics, bumpEntryHorseId } = impactAny;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (race && horse) {
+      // Evict the bumped entry and refund its stable before adding the challenger
+      if (bumpEntryHorseId) {
+        const bumpIdx = race.entries.findIndex((e: any) => e.horseId === bumpEntryHorseId);
+        if (bumpIdx !== -1) {
+          const bumped = race.entries[bumpIdx];
+          if (bumped.stableId) {
+            const bumpedStable = draft.npcStables.find((s: any) => s.id === bumped.stableId);
+            if (bumpedStable) {
+              bumpedStable.cash = bumpedStable.cash + race.entryFee;
+            }
+          }
+          race.entries.splice(bumpIdx, 1);
+        }
+      }
       race.entries.push({
         horseId,
         owned: !horse.stableId,

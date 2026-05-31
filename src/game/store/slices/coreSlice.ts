@@ -30,7 +30,9 @@ import {
   DAYS_PER_YEAR,
   DAYS_PER_MONTH,
   DAYS_PER_WEEK,
+  BUMP_RATING_MARGIN,
 } from "@/game/constants";
+import { calculateOverallRating } from "@/core/horse/stats";
 import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";
 import { generateUUID } from "@/core/uuid";
@@ -151,6 +153,27 @@ export function createCoreSlice(
       if (race.entries.some((e) => e.horseId === horseId))
         return { ok: false, reason: "Horse already entered." };
 
+      let bumpEntryHorseId: string | undefined;
+      if (race.entries.length >= race.fieldSize) {
+        const playerRating = calculateOverallRating(horse!);
+        let weakestHorseId: string | undefined;
+        let weakestRating = Infinity;
+        for (const entry of race.entries) {
+          if (entry.owned) continue; // never bump player's own entries
+          const entryHorse = s.horses.find((h: Horse) => h.id === entry.horseId);
+          if (!entryHorse) continue;
+          const r = calculateOverallRating(entryHorse);
+          if (r < weakestRating) {
+            weakestRating = r;
+            weakestHorseId = entry.horseId;
+          }
+        }
+        if (!weakestHorseId || playerRating <= weakestRating + BUMP_RATING_MARGIN) {
+          return { ok: false, reason: "Race is full — your horse isn't rated high enough to bump an entry." };
+        }
+        bumpEntryHorseId = weakestHorseId;
+      }
+
       enqueueIntent({
         id: generateUUID(),
         entityId: horseId,
@@ -160,6 +183,7 @@ export function createCoreSlice(
         type: "race_entry",
         raceId,
         horseId,
+        bumpEntryHorseId,
       });
 
       return { ok: true };

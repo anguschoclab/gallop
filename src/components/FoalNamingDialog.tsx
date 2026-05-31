@@ -27,6 +27,8 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
   const horses = useGallopStore((s) => s.horses);
   const renameHorse = useGallopStore((s) => s.renameHorse);
   const userSettings = useGallopStore((s) => s.userSettings);
+  const reservedNames = useGallopStore((s) => s.reservedHorseNames);
+  const day = useGallopStore((s) => s.day);
   const foal = useMemo(() => horses.find((h) => h.id === foalId), [horses, foalId]);
 
   const [name, setName] = useState("");
@@ -51,21 +53,25 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
   const generateSuggestion = useCallback(() => {
     if (!foal) return;
     const rng = createRng(`foal-name-${foal.id}-${Date.now()}`);
-    const existingNames = new Set(horses.map((h) => h.name));
+    // Only check against active (non-deceased) horses
+    const activeHorses = horses.filter((h) => h.lifecycleStatus !== "deceased");
+    const existingNames = new Set(activeHorses.map((h) => h.name));
     const suggestion = generateProceduralHorseName(
-      { sireName: foal.sireName, damName: foal.damName, existingNames, parentNameBlendingEnabled },
+      { sireName: foal.sireName, damName: foal.damName, existingNames, reservedNames, currentDay: day, parentNameBlendingEnabled },
       rng,
     );
     setName(suggestion);
-    const validation = validateHorseName(suggestion, existingNames);
+    const validation = validateHorseName(suggestion, existingNames, reservedNames, day);
     setValidation({ valid: validation.isValid, reason: validation.reason });
-  }, [foal, horses, parentNameBlendingEnabled]);
+  }, [foal, horses, reservedNames, day, parentNameBlendingEnabled]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
     setName(newName);
-    const existingNames = new Set(horses.map((h) => h.name));
-    const validation = validateHorseName(newName, existingNames);
+    // Only check against active (non-deceased) horses
+    const activeHorses = horses.filter((h) => h.lifecycleStatus !== "deceased");
+    const existingNames = new Set(activeHorses.map((h) => h.name));
+    const validation = validateHorseName(newName, existingNames, reservedNames, day);
     setValidation({ valid: validation.isValid, reason: validation.reason });
   };
 

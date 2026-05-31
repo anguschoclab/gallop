@@ -13,7 +13,7 @@
 
 import { PHASE_ORDER_HORSE_DEATH } from "@/game/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyImpact, HorseDeathImpact, LogImpact } from "@/core/resolver/impacts/index";
+import type { AnyImpact, HorseDeathImpact, LogImpact, NameReservationImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/game/rng";
 import { generateUUID } from "@/core/uuid";
 
@@ -74,6 +74,20 @@ export const horseDeathPhase: PipelinePhase = {
             reason: "Horse death notification",
           } as LogImpact);
         }
+
+        // Reserve the name for 25 years
+        impacts.push({
+          id: generateUUID(),
+          intentId: "",
+          day: newDay,
+          phase: "horseDeath",
+          logLevel: "never",
+          type: "name_reservation",
+          name: horse.name,
+          deceasedOnDay: newDay,
+          reason: `Name ${horse.name} reserved for 25 years after death from ${cause}.`,
+        } as NameReservationImpact);
+
         continue; // Skip other death checks for this horse
       }
 
@@ -107,6 +121,19 @@ export const horseDeathPhase: PipelinePhase = {
               reason: "Horse death notification",
             } as LogImpact);
           }
+
+          // Reserve the name for 25 years
+          impacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "horseDeath",
+            logLevel: "never",
+            type: "name_reservation",
+            name: horse.name,
+            deceasedOnDay: newDay,
+            reason: `Name ${horse.name} reserved for 25 years after death from ${cause}.`,
+          } as NameReservationImpact);
         }
       }
     }

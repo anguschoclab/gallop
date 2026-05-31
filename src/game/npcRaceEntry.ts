@@ -15,15 +15,12 @@
 import type { Horse, Race, Stable, Jockey } from "./types";
 import type { Rng } from "@/game/rng";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
-import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/game/constants";
+import { MAX_HORSES_PER_STABLE_PER_RACE, BUMP_RATING_MARGIN } from "@/game/constants";
 import { calculateOptimalTactics } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { shouldEnterHorse } from "./npcRaceEntryHelpers";
 import { isHatedRival } from "@/core/stable/rivalry";
 import { calculateOverallRating } from "@/core/horse/stats";
-
-/** Rating margin a challenger must exceed the weakest entry by to bump it. */
-const BUMP_RATING_MARGIN = 3;
 
 /**
  * AI decision: Enter horses from a stable into a specific race.
