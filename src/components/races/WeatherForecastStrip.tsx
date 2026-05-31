@@ -5,7 +5,7 @@
  * `weatherPhase`). Falls back to a single condition chip if no forecast exists.
  */
 
-import { Sun, Cloud, CloudDrizzle, CloudRain, CloudLightning } from "lucide-react";
+import { Sun, Cloud, CloudDrizzle, CloudRain, CloudLightning, Snowflake } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { useGame } from "@/game/store";
@@ -17,6 +17,7 @@ const ICONS: Record<SimWeatherPattern, typeof Sun> = {
   overcast: Cloud,
   shower: CloudDrizzle,
   rain: CloudRain,
+  snow: Snowflake,
   storm: CloudLightning,
 };
 

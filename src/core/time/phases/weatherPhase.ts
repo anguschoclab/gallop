@@ -48,7 +48,7 @@ function toRaceWeather(pattern: WeatherState["pattern"]): Weather {
       return "cloudy";
     case "shower":
     case "rain":
-      return "rainy";
+    case "snow":
     case "storm":
       return "rainy";
   }

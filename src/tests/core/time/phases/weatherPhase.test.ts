@@ -221,6 +221,7 @@ describe("weatherPhase", () => {
             pattern: "clear",
             tempC: 20,
             humidity: 0.5,
+            windKph: 12,
           },
         ],
       },

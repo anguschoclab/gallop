@@ -51,57 +51,64 @@ function seasonalRowBias(row: number[], hemisphere: Hemisphere, day: number): nu
 
 /**
  * Row-stochastic transition matrices: rows = today, cols = tomorrow.
- * Order matches SIM_WEATHER_PATTERNS: clear, overcast, shower, rain, storm.
+ * Order matches SIM_WEATHER_PATTERNS: clear, overcast, shower, rain, snow, storm.
  */
 const TRANSITIONS: Record<ClimateZone, number[][]> = {
   arid: [
-    [0.78, 0.16, 0.04, 0.015, 0.005],
-    [0.55, 0.32, 0.1, 0.025, 0.005],
-    [0.4, 0.35, 0.18, 0.06, 0.01],
-    [0.3, 0.35, 0.2, 0.13, 0.02],
-    [0.2, 0.35, 0.25, 0.15, 0.05],
+    [0.78, 0.16, 0.04, 0.012, 0.003, 0.005],
+    [0.55, 0.32, 0.1, 0.022, 0.003, 0.005],
+    [0.4, 0.35, 0.18, 0.055, 0.005, 0.01],
+    [0.3, 0.35, 0.2, 0.12, 0.01, 0.02],
+    [0.25, 0.35, 0.2, 0.12, 0.05, 0.05],
+    [0.2, 0.35, 0.22, 0.13, 0.05, 0.05],
   ],
   temperate: [
-    [0.55, 0.25, 0.12, 0.06, 0.02],
-    [0.3, 0.4, 0.18, 0.1, 0.02],
-    [0.18, 0.32, 0.28, 0.18, 0.04],
-    [0.12, 0.25, 0.25, 0.3, 0.08],
-    [0.08, 0.2, 0.22, 0.3, 0.2],
+    [0.55, 0.25, 0.12, 0.05, 0.01, 0.02],
+    [0.3, 0.4, 0.18, 0.09, 0.01, 0.02],
+    [0.18, 0.32, 0.28, 0.16, 0.02, 0.04],
+    [0.12, 0.25, 0.25, 0.26, 0.04, 0.08],
+    [0.1, 0.22, 0.24, 0.26, 0.08, 0.1],
+    [0.08, 0.2, 0.22, 0.28, 0.02, 0.2],
   ],
   humid: [
-    [0.4, 0.3, 0.18, 0.1, 0.02],
-    [0.22, 0.35, 0.25, 0.14, 0.04],
-    [0.12, 0.25, 0.32, 0.24, 0.07],
-    [0.08, 0.18, 0.28, 0.34, 0.12],
-    [0.05, 0.15, 0.22, 0.33, 0.25],
+    [0.4, 0.3, 0.18, 0.09, 0.01, 0.02],
+    [0.22, 0.35, 0.25, 0.13, 0.01, 0.04],
+    [0.12, 0.25, 0.32, 0.22, 0.02, 0.07],
+    [0.08, 0.18, 0.28, 0.3, 0.04, 0.12],
+    [0.06, 0.15, 0.24, 0.3, 0.08, 0.17],
+    [0.05, 0.15, 0.22, 0.3, 0.03, 0.25],
   ],
   tropical: [
-    [0.3, 0.28, 0.22, 0.15, 0.05],
-    [0.18, 0.3, 0.28, 0.18, 0.06],
-    [0.1, 0.22, 0.32, 0.27, 0.09],
-    [0.06, 0.15, 0.27, 0.36, 0.16],
-    [0.04, 0.1, 0.2, 0.36, 0.3],
+    [0.3, 0.28, 0.22, 0.14, 0.01, 0.05],
+    [0.18, 0.3, 0.28, 0.17, 0.01, 0.06],
+    [0.1, 0.22, 0.32, 0.26, 0.01, 0.09],
+    [0.06, 0.15, 0.27, 0.34, 0.02, 0.16],
+    [0.05, 0.12, 0.22, 0.35, 0.02, 0.24],
+    [0.04, 0.1, 0.2, 0.35, 0.01, 0.3],
   ],
   continental: [
-    [0.6, 0.22, 0.1, 0.06, 0.02],
-    [0.32, 0.38, 0.16, 0.1, 0.04],
-    [0.2, 0.3, 0.25, 0.18, 0.07],
-    [0.12, 0.22, 0.25, 0.3, 0.11],
-    [0.08, 0.18, 0.22, 0.3, 0.22],
+    [0.6, 0.22, 0.1, 0.05, 0.01, 0.02],
+    [0.32, 0.38, 0.16, 0.09, 0.01, 0.04],
+    [0.2, 0.3, 0.25, 0.17, 0.01, 0.07],
+    [0.12, 0.22, 0.25, 0.28, 0.02, 0.11],
+    [0.1, 0.2, 0.22, 0.28, 0.05, 0.15],
+    [0.08, 0.18, 0.22, 0.28, 0.02, 0.22],
   ],
   cool: [
-    [0.45, 0.3, 0.15, 0.08, 0.02],
-    [0.25, 0.35, 0.2, 0.15, 0.05],
-    [0.15, 0.25, 0.3, 0.22, 0.08],
-    [0.1, 0.2, 0.25, 0.3, 0.15],
-    [0.05, 0.15, 0.2, 0.3, 0.3],
+    [0.45, 0.3, 0.15, 0.06, 0.02, 0.02],
+    [0.25, 0.35, 0.2, 0.13, 0.02, 0.05],
+    [0.15, 0.25, 0.3, 0.2, 0.02, 0.08],
+    [0.1, 0.2, 0.25, 0.28, 0.02, 0.15],
+    [0.08, 0.18, 0.22, 0.28, 0.05, 0.19],
+    [0.05, 0.15, 0.2, 0.28, 0.02, 0.3],
   ],
   warm: [
-    [0.6, 0.25, 0.1, 0.04, 0.01],
-    [0.4, 0.35, 0.15, 0.08, 0.02],
-    [0.25, 0.3, 0.25, 0.15, 0.05],
-    [0.15, 0.25, 0.25, 0.25, 0.1],
-    [0.1, 0.2, 0.2, 0.3, 0.2],
+    [0.6, 0.25, 0.1, 0.035, 0.005, 0.01],
+    [0.4, 0.35, 0.15, 0.075, 0.005, 0.02],
+    [0.25, 0.3, 0.25, 0.145, 0.005, 0.05],
+    [0.15, 0.25, 0.25, 0.235, 0.015, 0.1],
+    [0.12, 0.2, 0.2, 0.24, 0.03, 0.21],
+    [0.1, 0.2, 0.2, 0.25, 0.05, 0.2],
   ],
 };
 
@@ -123,6 +130,19 @@ const CLIMATE_HUMIDITY_BIAS: Record<ClimateZone, number> = {
   continental: 0.5,
   cool: 0.7,
   warm: 0.45,
+};
+
+/**
+ * Wind speed ranges by pattern (min, max) in km/h.
+ * Storms have higher wind; snow often calmer than rain.
+ */
+const WIND_RANGES: Record<SimWeatherPattern, [number, number]> = {
+  clear: [5, 20],
+  overcast: [10, 25],
+  shower: [15, 35],
+  rain: [25, 50],
+  snow: [20, 40],
+  storm: [40, 80],
 };
 
 /**
@@ -161,24 +181,58 @@ export function stepWeather(
   const matrix = TRANSITIONS[climate];
   const fromIdx = prev ? SIM_WEATHER_PATTERNS.indexOf(prev.pattern) : 0;
   const baseRow = matrix[Math.max(0, fromIdx)];
-  const row = seasonalRowBias(baseRow, hemisphere, day);
-  const pattern = samplePattern(row, rng);
 
+  // Pre-calculate temperature to adjust transition row for snow/rain coupling
   const [tMin, tMax] = CLIMATE_TEMP[climate];
   const seasonalAmp = (tMax - tMin) * 0.3;
   const seasonal = seasonalTempOffset(day, hemisphere, seasonalAmp);
+  const baseTemp = tMin + rng.next() * (tMax - tMin) + seasonal;
+
+  // Adjust transition row based on temperature for snow/rain coupling
+  // Snow index = 4, Rain index = 3
+  const adjustedRow = [...seasonalRowBias(baseRow, hemisphere, day)];
+  if (baseTemp <= 0) {
+    // Freezing: boost snow probability at expense of rain
+    const snowBoost = adjustedRow[3] * 0.3; // 30% of rain probability moves to snow
+    adjustedRow[4] += snowBoost;
+    adjustedRow[3] -= snowBoost;
+  } else if (baseTemp > 2) {
+    // Above freezing: snow unlikely, transfer to rain
+    const snowToRain = adjustedRow[4] * 0.8; // 80% of snow probability moves to rain
+    adjustedRow[3] += snowToRain;
+    adjustedRow[4] -= snowToRain;
+  }
+  // Normalize row to ensure it sums to 1
+  const rowSum = adjustedRow.reduce((a, b) => a + b, 0);
+  const row = adjustedRow.map((v) => v / rowSum);
+
+  const pattern = samplePattern(row, rng);
+
   // Patterns nudge temp down; storm cools more than clear.
   const cool = PATTERN_SEVERITY[pattern] * 1.2;
-  const tempC = Math.round((tMin + rng.next() * (tMax - tMin) - cool + seasonal) * 10) / 10;
+  const tempC = Math.round((baseTemp - cool) * 10) / 10;
+
+  // Temperature-snow consistency: if above freezing, downgrade snow to rain
+  let finalPattern = pattern;
+  if (pattern === "snow" && tempC > 2) {
+    finalPattern = "rain";
+  } else if (pattern === "rain" && tempC <= 0 && rng.next() < 0.3) {
+    // Freezing rain has 30% chance to become snow
+    finalPattern = "snow";
+  }
 
   const baseHumidity = CLIMATE_HUMIDITY_BIAS[climate];
-  const humidityBoost = PATTERN_SEVERITY[pattern] * 0.07;
+  const humidityBoost = PATTERN_SEVERITY[finalPattern] * 0.07;
   const humidity = Math.min(
     1,
     Math.max(0, baseHumidity + humidityBoost + (rng.next() - 0.5) * 0.1),
   );
 
-  return { trackId, day, pattern, tempC, humidity };
+  // Generate wind based on pattern severity
+  const [wMin, wMax] = WIND_RANGES[finalPattern];
+  const windKph = Math.round(wMin + rng.next() * (wMax - wMin));
+
+  return { trackId, day, pattern: finalPattern, tempC, humidity, windKph };
 }
 
 /**

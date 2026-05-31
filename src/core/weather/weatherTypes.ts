@@ -9,13 +9,14 @@
 import type { WeatherPattern as TrackWeatherPattern } from "@/core/track/trackConditionData";
 
 /** Sim-level weather pattern (player-facing vocabulary). */
-export type SimWeatherPattern = "clear" | "overcast" | "shower" | "rain" | "storm";
+export type SimWeatherPattern = "clear" | "overcast" | "shower" | "rain" | "snow" | "storm";
 
 export const SIM_WEATHER_PATTERNS: SimWeatherPattern[] = [
   "clear",
   "overcast",
   "shower",
   "rain",
+  "snow",
   "storm",
 ];
 
@@ -25,6 +26,7 @@ export const PATTERN_SEVERITY: Record<SimWeatherPattern, number> = {
   overcast: 1,
   shower: 2,
   rain: 3,
+  snow: 3,
   storm: 4,
 };
 
@@ -36,6 +38,8 @@ export interface WeatherState {
   tempC: number;
   /** Relative humidity 0–1. */
   humidity: number;
+  /** Sustained wind speed in km/h. */
+  windKph: number;
 }
 
 /**
@@ -50,6 +54,7 @@ export function toTrackWeatherPattern(pattern: SimWeatherPattern): TrackWeatherP
     case "shower":
       return "light_rain";
     case "rain":
+    case "snow":
     case "storm":
       return "heavy_rain";
   }

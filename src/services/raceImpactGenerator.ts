@@ -628,6 +628,8 @@ export function generateRaceImpacts({
       trackCondition: race.trackCondition,
       pattern: raceWeatherState?.pattern,
       tempC: raceWeatherState?.tempC,
+      windKph: raceWeatherState?.windKph,
+      snow: raceWeatherState?.pattern === "snow",
     };
 
     // Normalize collections to Maps for O(1) lookups

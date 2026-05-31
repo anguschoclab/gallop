@@ -63,7 +63,7 @@ import type { TrackCondition } from "@/game/types";
 const TRACK_ID = "test-track";
 
 function makeWeatherState(pattern: SimWeatherPattern, day = 1) {
-  return { trackId: TRACK_ID, day, pattern, tempC: 20, humidity: 0.65 };
+  return { trackId: TRACK_ID, day, pattern, tempC: 20, humidity: 0.65, windKph: 15 };
 }
 
 function makeForecast(pattern: SimWeatherPattern, length = 7): any[] {
@@ -98,7 +98,7 @@ describe("WeatherForecastStrip — snapshot tests", () => {
 
   // ── per-pattern snapshot tests ─────────────────────────────────────────────
 
-  const PATTERNS: SimWeatherPattern[] = ["clear", "overcast", "shower", "rain", "storm"];
+  const PATTERNS: SimWeatherPattern[] = ["clear", "overcast", "shower", "rain", "snow", "storm"];
 
   for (const pattern of PATTERNS) {
     it(`renders a 7-icon forecast strip for pattern: ${pattern}`, () => {

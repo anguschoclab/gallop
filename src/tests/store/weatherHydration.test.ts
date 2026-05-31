@@ -45,6 +45,7 @@ describe("Weather Slice Hydration", () => {
             pattern: "clear",
             tempC: 20,
             humidity: 0.5,
+            windKph: 10,
           },
           {
             trackId: "track-1",
@@ -52,6 +53,7 @@ describe("Weather Slice Hydration", () => {
             pattern: "overcast",
             tempC: 18,
             humidity: 0.6,
+            windKph: 15,
           },
         ],
         "track-2": [
@@ -61,6 +63,7 @@ describe("Weather Slice Hydration", () => {
             pattern: "rain",
             tempC: 15,
             humidity: 0.8,
+            windKph: 35,
           },
         ],
       },
@@ -72,6 +75,7 @@ describe("Weather Slice Hydration", () => {
             pattern: "shower",
             tempC: 17,
             humidity: 0.7,
+            windKph: 25,
           },
         ],
       },
@@ -105,6 +109,7 @@ describe("Weather Slice Hydration", () => {
       pattern: "storm",
       tempC: 25,
       humidity: 0.9,
+      windKph: 60,
     };
 
     const serialized = JSON.stringify(weatherState);
@@ -115,6 +120,7 @@ describe("Weather Slice Hydration", () => {
     expect(deserialized.pattern).toBe(weatherState.pattern);
     expect(deserialized.tempC).toBe(weatherState.tempC);
     expect(deserialized.humidity).toBe(weatherState.humidity);
+    expect(deserialized.windKph).toBe(weatherState.windKph);
   });
 
   it("should handle large weather buffers (14-day history)", () => {
@@ -126,6 +132,7 @@ describe("Weather Slice Hydration", () => {
         pattern: "clear",
         tempC: 20,
         humidity: 0.5,
+        windKph: 10,
       });
     }
 
@@ -153,6 +160,7 @@ describe("Weather Slice Hydration", () => {
         pattern: "overcast",
         tempC: 18,
         humidity: 0.6,
+        windKph: 15,
       });
     }
 
@@ -181,6 +189,7 @@ describe("Weather Slice Hydration", () => {
             pattern: "clear",
             tempC: 20,
             humidity: 0.5,
+            windKph: 12,
           },
         ],
         "track-b": [
@@ -190,6 +199,7 @@ describe("Weather Slice Hydration", () => {
             pattern: "rain",
             tempC: 15,
             humidity: 0.8,
+            windKph: 30,
           },
         ],
         "track-c": [
@@ -199,6 +209,7 @@ describe("Weather Slice Hydration", () => {
             pattern: "overcast",
             tempC: 18,
             humidity: 0.6,
+            windKph: 18,
           },
         ],
       },
@@ -215,7 +226,7 @@ describe("Weather Slice Hydration", () => {
   });
 
   it("should handle all weather patterns", () => {
-    const patterns = ["clear", "overcast", "shower", "rain", "storm"] as const;
+    const patterns = ["clear", "overcast", "shower", "rain", "snow", "storm"] as const;
 
     patterns.forEach((pattern) => {
       const weatherState: WeatherState = {
@@ -224,6 +235,7 @@ describe("Weather Slice Hydration", () => {
         pattern,
         tempC: 20,
         humidity: 0.5,
+        windKph: 20,
       };
 
       const serialized = JSON.stringify(weatherState);
@@ -240,6 +252,7 @@ describe("Weather Slice Hydration", () => {
       pattern: "clear",
       tempC: -10,
       humidity: 0,
+      windKph: 25,
     };
 
     const serialized = JSON.stringify(weatherState);
@@ -253,9 +266,9 @@ describe("Weather Slice Hydration", () => {
 
   it("should handle realistic temperature ranges", () => {
     const weatherStates: WeatherState[] = [
-      { trackId: "track-1", day: 1, pattern: "clear", tempC: 35, humidity: 0.3 }, // Hot, dry
-      { trackId: "track-2", day: 1, pattern: "rain", tempC: 10, humidity: 0.9 }, // Cold, wet
-      { trackId: "track-3", day: 1, pattern: "overcast", tempC: 22, humidity: 0.6 }, // Moderate
+      { trackId: "track-1", day: 1, pattern: "clear", tempC: 35, humidity: 0.3, windKph: 15 }, // Hot, dry
+      { trackId: "track-2", day: 1, pattern: "rain", tempC: 10, humidity: 0.9, windKph: 40 }, // Cold, wet
+      { trackId: "track-3", day: 1, pattern: "overcast", tempC: 22, humidity: 0.6, windKph: 18 }, // Moderate
     ];
 
     const weatherState = {

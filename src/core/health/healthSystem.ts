@@ -52,10 +52,13 @@ export function computeWeatherInjuryMultiplier(ctx: InjuryWeatherContext | undef
   if (!ctx) return 1;
   let mult = 1;
 
-  // Pattern (storm > rain > shower > overcast)
+  // Pattern (storm > snow > rain > shower > overcast)
   switch (ctx.pattern) {
     case "storm":
       mult *= 2.0;
+      break;
+    case "snow":
+      mult *= 1.8;
       break;
     case "rain":
       mult *= 1.5;
@@ -167,7 +170,7 @@ export function rollForInjury(
     // weather, so a small fraction of injuries that would have been "major"
     // now turn career-ending.
     const severityShift = Math.max(0, (weatherMult - 1) * 0.04);
-    const catastrophicThreshold = 0.96 - severityShift;
+    const catastrophicThreshold = 0.94 - severityShift;
     const majorThreshold = 0.88 - severityShift * 0.5;
     const moderateThreshold = 0.68 - severityShift * 0.25;
 

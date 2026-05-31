@@ -25,6 +25,7 @@ function findDramaDay(): { yesterday: WeatherState; dayToday: number } {
       pattern: "clear",
       tempC: 18,
       humidity: 0.6,
+      windKph: 12,
     };
     const today = stepWeather(yesterday, TRACK_ID, day, CLIMATE);
     if (PATTERN_SEVERITY[today.pattern] - PATTERN_SEVERITY[yesterday.pattern] >= 2) {
@@ -124,6 +125,7 @@ describe("weatherPhase — drama alert end-to-end", () => {
       pattern: "clear",
       tempC: 20,
       humidity: 0.5,
+      windKph: 10,
     };
     const today = stepWeather(calm, TRACK_ID, 100, CLIMATE);
     if (PATTERN_SEVERITY[today.pattern] - PATTERN_SEVERITY[calm.pattern] >= 2) {

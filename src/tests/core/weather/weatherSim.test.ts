@@ -43,6 +43,7 @@ describe("weatherSim — determinism", () => {
       pattern: "clear",
       tempC: 20,
       humidity: 0.6,
+      windKph: 12,
     };
     const f1 = generateForecast(seed, "tokyo", 11, 7, "humid");
     const f2 = generateForecast(seed, "tokyo", 11, 7, "humid");

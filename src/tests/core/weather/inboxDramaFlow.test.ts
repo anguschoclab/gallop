@@ -24,6 +24,7 @@ function findDramaDay() {
       pattern: "clear",
       tempC: 18,
       humidity: 0.6,
+      windKph: 12,
     };
     const today = stepWeather(yesterday, TRACK_ID, day, climate);
     if (PATTERN_SEVERITY[today.pattern] - PATTERN_SEVERITY[yesterday.pattern] >= 2) {

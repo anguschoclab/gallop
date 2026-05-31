@@ -14,7 +14,7 @@ describe("WeatherForecastStrip Snapshot Tests", () => {
   const mockTrackId = "test-track";
 
   const createMockForecast = (
-    patterns: ("clear" | "overcast" | "shower" | "rain" | "storm")[],
+    patterns: ("clear" | "overcast" | "shower" | "rain" | "snow" | "storm")[],
   ): WeatherState[] => {
     return patterns.map((pattern, i) => ({
       trackId: mockTrackId,
@@ -22,6 +22,7 @@ describe("WeatherForecastStrip Snapshot Tests", () => {
       pattern,
       tempC: 20 + i,
       humidity: 0.5 + i * 0.1,
+      windKph: 10 + i * 5,
     }));
   };
 

@@ -67,6 +67,7 @@ function makeStormForecast(trackId: string, length = 7) {
     pattern: "storm",
     tempC: 12,
     humidity: 0.95,
+    windKph: 55,
   }));
 }
 
@@ -114,7 +115,7 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
     _mockForecast = { [STORM_TRACK_ID]: makeStormForecast(STORM_TRACK_ID, 7) };
     _mockWeatherByTrack = {
       [STORM_TRACK_ID]: [
-        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95 },
+        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95, windKph: 55 },
       ],
     };
 
@@ -135,7 +136,7 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
     _mockForecast = { [STORM_TRACK_ID]: makeStormForecast(STORM_TRACK_ID, 7) };
     _mockWeatherByTrack = {
       [STORM_TRACK_ID]: [
-        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95 },
+        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95, windKph: 55 },
       ],
     };
 
@@ -169,8 +170,8 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
     // Simulate: byTrack has yesterday=clear, today=storm (pattern jump occurred)
     _mockWeatherByTrack = {
       [STORM_TRACK_ID]: [
-        { trackId: STORM_TRACK_ID, day: 49, pattern: "clear", tempC: 20, humidity: 0.5 },
-        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95 },
+        { trackId: STORM_TRACK_ID, day: 49, pattern: "clear", tempC: 20, humidity: 0.5, windKph: 12 },
+        { trackId: STORM_TRACK_ID, day: 50, pattern: "storm", tempC: 12, humidity: 0.95, windKph: 55 },
       ],
     };
     _mockForecast = { [STORM_TRACK_ID]: makeStormForecast(STORM_TRACK_ID, 7) };
@@ -220,7 +221,7 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
   });
 
   // ── different patterns ────────────────────────────────────────────────────
-  const PATTERNS = ["clear", "overcast", "shower", "rain", "storm"] as const;
+  const PATTERNS = ["clear", "overcast", "shower", "rain", "snow", "storm"] as const;
 
   for (const pattern of PATTERNS) {
     it(`WeatherForecastStrip renders the correct icon for the ${pattern} pattern`, () => {
@@ -231,10 +232,11 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
           pattern,
           tempC: 18,
           humidity: 0.6,
+          windKph: 20,
         })),
       };
       _mockWeatherByTrack = {
-        [STORM_TRACK_ID]: [{ trackId: STORM_TRACK_ID, day: 50, pattern, tempC: 18, humidity: 0.6 }],
+        [STORM_TRACK_ID]: [{ trackId: STORM_TRACK_ID, day: 50, pattern, tempC: 18, humidity: 0.6, windKph: 20 }],
       };
 
       const html = render(makeRace());
