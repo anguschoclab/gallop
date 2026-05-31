@@ -13,7 +13,7 @@ import { describe, it, expect } from "vitest";
 import { produce } from "immer";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
-import { stepWeather, PATTERN_SEVERITY, type WeatherState, getTrackClimate } from "@/core/weather";
+import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
 import { createRng } from "@/game/rng";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -26,7 +26,6 @@ function findDramaDayForTrack(
   trackId: string,
   searchFrom = 2,
 ): { yesterday: WeatherState; dayToday: number } {
-  const climate = getTrackClimate(trackId);
   for (let day = searchFrom; day < 10_000; day++) {
     const yesterday: WeatherState = {
       trackId,
@@ -36,7 +35,7 @@ function findDramaDayForTrack(
       humidity: 0.6,
       windKph: 12,
     };
-    const today = stepWeather(yesterday, trackId, day, climate);
+    const today = stepWeather(yesterday, trackId, day);
     if (PATTERN_SEVERITY[today.pattern] - PATTERN_SEVERITY[yesterday.pattern] >= 2) {
       return { yesterday, dayToday: day };
     }

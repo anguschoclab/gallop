@@ -1,13 +1,17 @@
 /**
  * weatherSim.ts — Per-track Markov-chain weather simulator.
  *
- * Deterministic: seed = hash(`${trackId}:${day}`). Transition matrices are
- * indexed by ClimateZone (re-used from `trackConditionData`).
+ * Uses scientifically accurate Koppen climate classification with monthly
+ * transition matrices and regional seasonal pattern modifiers.
+ *
+ * Deterministic: seed = hash(`${trackId}:${day}`)
  */
 
 import { createRng, hashStr } from "@/game/rng";
-import type { ClimateZone } from "@/core/track/trackConditionData";
-import type { Hemisphere } from "./trackClimate";
+import type { KoppenCode } from "./koppenTypes";
+import { KOPPEN_PROFILES } from "./koppenProfiles";
+import { getTrackKoppen } from "./trackKoppenMappings";
+import { getTrackHemisphere } from "./trackClimate";
 import {
   type SimWeatherPattern,
   SIM_WEATHER_PATTERNS,
@@ -19,122 +23,74 @@ import {
 export { toTrackWeatherPattern };
 
 /**
- * Seasonal temperature offset based on day of year and hemisphere.
- * Peaks at +amp around day-of-year 200 in the Northern hemisphere,
- * shifted by 6 months for the Southern hemisphere.
- * @param day
- * @param hemisphere
- * @param amp
+ * Get month (1-12) from day of year, accounting for hemisphere.
+ * Southern hemisphere has inverted seasons (day 1 = July 1).
  */
-function seasonalTempOffset(day: number, hemisphere: Hemisphere, amp: number): number {
+function getMonthFromDay(day: number, hemisphere: "Northern" | "Southern"): number {
   const dayOfYear = ((day - 1) % 365) + 1;
-  const phase = hemisphere === "Southern" ? dayOfYear + 182 : dayOfYear;
-  const normalizedPhase = ((phase - 1) % 365) + 1;
-  return amp * Math.sin((2 * Math.PI * (normalizedPhase - 80)) / 365);
+  
+  // For southern hemisphere, shift by 6 months (182 days)
+  const effectiveDay = hemisphere === "Southern" 
+    ? ((dayOfYear + 182 - 1) % 365) + 1 
+    : dayOfYear;
+  
+  // Approximate month from day of year
+  const monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let dayCount = 0;
+  
+  for (let month = 0; month < 12; month++) {
+    dayCount += monthLengths[month];
+    if (effectiveDay <= dayCount) {
+      return month + 1;
+    }
+  }
+  
+  return 12;
 }
 
 /**
- * Seasonal row bias for transition matrices based on hemisphere.
- * Southern hemisphere gets wetter summers (mirrored pattern).
- * @param row
- * @param hemisphere
- * @param day
+ * Generate monthly transition probabilities based on Koppen climate data.
+ * Uses historical precipitation days to derive daily rain probability.
  */
-function seasonalRowBias(row: number[], hemisphere: Hemisphere, day: number): number[] {
-  const dayOfYear = ((day - 1) % 365) + 1;
-  const phase = hemisphere === "Southern" ? dayOfYear + 182 : dayOfYear;
-  const normalizedPhase = ((phase - 1) % 365) + 1;
-  const sign = hemisphere === "Southern" ? -1 : 1;
-  const bias = sign * 0.05 * Math.sin((2 * Math.PI * (normalizedPhase - 80)) / 365);
-  return row.map((v) => Math.max(0, v + bias));
+function generateMonthlyTransitions(koppen: KoppenCode, month: number): number[] {
+  const profile = KOPPEN_PROFILES[koppen];
+  const monthly = profile.monthly[month];
+  
+  if (!monthly) {
+    // Fallback: moderate probabilities
+    return [0.35, 0.30, 0.15, 0.12, 0.04, 0.04];
+  }
+  
+  // Calculate rain probability from precipDays
+  // Average 30-day month, precipDays / 30 = daily rain probability
+  const rainProb = Math.min(0.8, monthly.precipDays / 30);
+  const clearProb = Math.max(0.1, 1 - rainProb - 0.1); // Reserve 10% for other
+  
+  // Distribute rain probability across shower/rain/storm based on intensity
+  const stormProb = monthly.thunderstormDays ? monthly.thunderstormDays / 30 : rainProb * 0.1;
+  const snowProb = monthly.snowfallDays ? monthly.snowfallDays / 30 : 0;
+  const regularRain = Math.max(0, rainProb - stormProb - snowProb);
+  
+  // Split regular rain between shower and rain
+  const showerProb = regularRain * 0.4;
+  const heavyRainProb = regularRain * 0.6;
+  
+  // Overcast is higher in humid climates, lower in dry
+  const overcastProb = monthly.humidity > 0.7 ? 0.35 : monthly.humidity > 0.5 ? 0.25 : 0.15;
+  
+  // Adjust clear to ensure sum = 1
+  const adjustedClear = Math.max(0.05, 1 - overcastProb - showerProb - heavyRainProb - snowProb - stormProb);
+  
+  // Normalize to ensure sum = 1
+  const raw = [adjustedClear, overcastProb, showerProb, heavyRainProb, snowProb, stormProb];
+  const sum = raw.reduce((a, b) => a + b, 0);
+  
+  return raw.map(v => v / sum);
 }
-
-/**
- * Row-stochastic transition matrices: rows = today, cols = tomorrow.
- * Order matches SIM_WEATHER_PATTERNS: clear, overcast, shower, rain, snow, storm.
- */
-const TRANSITIONS: Record<ClimateZone, number[][]> = {
-  arid: [
-    [0.78, 0.16, 0.04, 0.012, 0.003, 0.005],
-    [0.55, 0.32, 0.1, 0.022, 0.003, 0.005],
-    [0.4, 0.35, 0.18, 0.055, 0.005, 0.01],
-    [0.3, 0.35, 0.2, 0.12, 0.01, 0.02],
-    [0.25, 0.35, 0.2, 0.12, 0.05, 0.05],
-    [0.2, 0.35, 0.22, 0.13, 0.05, 0.05],
-  ],
-  temperate: [
-    [0.55, 0.25, 0.12, 0.05, 0.01, 0.02],
-    [0.3, 0.4, 0.18, 0.09, 0.01, 0.02],
-    [0.18, 0.32, 0.28, 0.16, 0.02, 0.04],
-    [0.12, 0.25, 0.25, 0.26, 0.04, 0.08],
-    [0.1, 0.22, 0.24, 0.26, 0.08, 0.1],
-    [0.08, 0.2, 0.22, 0.28, 0.02, 0.2],
-  ],
-  humid: [
-    [0.4, 0.3, 0.18, 0.09, 0.01, 0.02],
-    [0.22, 0.35, 0.25, 0.13, 0.01, 0.04],
-    [0.12, 0.25, 0.32, 0.22, 0.02, 0.07],
-    [0.08, 0.18, 0.28, 0.3, 0.04, 0.12],
-    [0.06, 0.15, 0.24, 0.3, 0.08, 0.17],
-    [0.05, 0.15, 0.22, 0.3, 0.03, 0.25],
-  ],
-  tropical: [
-    [0.3, 0.28, 0.22, 0.14, 0.01, 0.05],
-    [0.18, 0.3, 0.28, 0.17, 0.01, 0.06],
-    [0.1, 0.22, 0.32, 0.26, 0.01, 0.09],
-    [0.06, 0.15, 0.27, 0.34, 0.02, 0.16],
-    [0.05, 0.12, 0.22, 0.35, 0.02, 0.24],
-    [0.04, 0.1, 0.2, 0.35, 0.01, 0.3],
-  ],
-  continental: [
-    [0.6, 0.22, 0.1, 0.05, 0.01, 0.02],
-    [0.32, 0.38, 0.16, 0.09, 0.01, 0.04],
-    [0.2, 0.3, 0.25, 0.17, 0.01, 0.07],
-    [0.12, 0.22, 0.25, 0.28, 0.02, 0.11],
-    [0.1, 0.2, 0.22, 0.28, 0.05, 0.15],
-    [0.08, 0.18, 0.22, 0.28, 0.02, 0.22],
-  ],
-  cool: [
-    [0.45, 0.3, 0.15, 0.06, 0.02, 0.02],
-    [0.25, 0.35, 0.2, 0.13, 0.02, 0.05],
-    [0.15, 0.25, 0.3, 0.2, 0.02, 0.08],
-    [0.1, 0.2, 0.25, 0.28, 0.02, 0.15],
-    [0.08, 0.18, 0.22, 0.28, 0.05, 0.19],
-    [0.05, 0.15, 0.2, 0.28, 0.02, 0.3],
-  ],
-  warm: [
-    [0.6, 0.25, 0.1, 0.035, 0.005, 0.01],
-    [0.4, 0.35, 0.15, 0.075, 0.005, 0.02],
-    [0.25, 0.3, 0.25, 0.145, 0.005, 0.05],
-    [0.15, 0.25, 0.25, 0.235, 0.015, 0.1],
-    [0.12, 0.2, 0.2, 0.24, 0.03, 0.21],
-    [0.1, 0.2, 0.2, 0.25, 0.05, 0.2],
-  ],
-};
-
-const CLIMATE_TEMP: Record<ClimateZone, [number, number]> = {
-  arid: [22, 38],
-  temperate: [10, 24],
-  humid: [16, 30],
-  tropical: [22, 33],
-  continental: [-2, 28],
-  cool: [5, 18],
-  warm: [18, 32],
-};
-
-const CLIMATE_HUMIDITY_BIAS: Record<ClimateZone, number> = {
-  arid: 0.2,
-  temperate: 0.55,
-  humid: 0.75,
-  tropical: 0.85,
-  continental: 0.5,
-  cool: 0.7,
-  warm: 0.45,
-};
 
 /**
  * Wind speed ranges by pattern (min, max) in km/h.
- * Storms have higher wind; snow often calmer than rain.
+ * Enhanced with regional wind characteristics.
  */
 const WIND_RANGES: Record<SimWeatherPattern, [number, number]> = {
   clear: [5, 20],
@@ -146,117 +102,189 @@ const WIND_RANGES: Record<SimWeatherPattern, [number, number]> = {
 };
 
 /**
- * Seeded sample from a row of the transition matrix.
- * @param row
- * @param rng
- * @param rng.next
+ * Apply regional wind modifiers based on Koppen code.
  */
-function samplePattern(row: number[], rng: { next: () => number }): SimWeatherPattern {
+function getRegionalWindRange(koppen: KoppenCode, baseRange: [number, number]): [number, number] {
+  const [min, max] = baseRange;
+  
+  switch (koppen) {
+    case "Cfb": // Oceanic - stronger westerlies
+    case "Dfb":
+      return [min * 1.2, max * 1.1];
+    case "Cfa": // Monsoon influence
+    case "Aw":
+      return [min * 1.1, max * 1.3]; // Higher max for monsoon surges
+    case "BWh": // Desert - thermal winds
+      return [min * 0.8, max * 0.9];
+    case "Csb": // Mediterranean
+      return [min, max * 1.1];
+    default:
+      return [min, max];
+  }
+}
+
+/**
+ * Seeded sample from a transition probability distribution.
+ */
+function samplePattern(probs: number[], rng: { next: () => number }): SimWeatherPattern {
   const r = rng.next();
   let acc = 0;
-  for (let i = 0; i < row.length; i++) {
-    acc += row[i];
+  for (let i = 0; i < probs.length; i++) {
+    acc += probs[i];
     if (r <= acc) return SIM_WEATHER_PATTERNS[i];
   }
   return SIM_WEATHER_PATTERNS[SIM_WEATHER_PATTERNS.length - 1];
 }
 
 /**
+ * Generate temperature from historical normals with daily variance.
+ */
+function generateTemperature(
+  koppen: KoppenCode, 
+  month: number, 
+  pattern: SimWeatherPattern,
+  rng: { next: () => number }
+): number {
+  const profile = KOPPEN_PROFILES[koppen].monthly[month];
+  const { avgHigh, avgLow } = profile;
+  
+  // Daily variance: ±3°C
+  const variance = (rng.next() - 0.5) * 6;
+  
+  // Pattern affects temperature: storms/rain cooler, clear warmer
+  const patternMod = {
+    clear: 2,
+    overcast: 0,
+    shower: -1,
+    rain: -2,
+    snow: -5,
+    storm: -3,
+  }[pattern];
+  
+  // Use avgHigh as base, add variance and pattern modifier
+  return Math.round((avgHigh + variance + patternMod) * 10) / 10;
+}
+
+/**
+ * Generate humidity from historical normals with pattern-based adjustments.
+ */
+function generateHumidity(
+  koppen: KoppenCode,
+  month: number,
+  pattern: SimWeatherPattern,
+  rng: { next: () => number }
+): number {
+  const profile = KOPPEN_PROFILES[koppen].monthly[month];
+  const baseHumidity = profile.humidity;
+  
+  // Pattern-based adjustments
+  const patternMod = {
+    clear: -0.05,
+    overcast: 0,
+    shower: 0.05,
+    rain: 0.10,
+    snow: 0.08,
+    storm: 0.15,
+  }[pattern];
+  
+  // Daily variance: ±5%
+  const variance = (rng.next() - 0.5) * 0.1;
+  
+  return Math.min(1, Math.max(0, baseHumidity + patternMod + variance));
+}
+
+/**
+ * Generate wind speed with regional and pattern-based adjustments.
+ */
+function generateWind(
+  koppen: KoppenCode,
+  pattern: SimWeatherPattern,
+  rng: { next: () => number }
+): number {
+  const baseRange = WIND_RANGES[pattern];
+  const [min, max] = getRegionalWindRange(koppen, baseRange);
+  
+  return Math.round(min + rng.next() * (max - min));
+}
+
+/**
  * Step one day forward from the previous WeatherState.
- * If `prev` is undefined, seeds with a climate-biased starting pattern.
+ * Uses Koppen-based monthly climate data and seasonal patterns.
  * @param prev
  * @param trackId
  * @param day
- * @param climate
- * @param hemisphere
  */
 export function stepWeather(
   prev: WeatherState | undefined,
   trackId: string,
   day: number,
-  climate: ClimateZone,
-  hemisphere: Hemisphere = "Northern",
 ): WeatherState {
+  const koppen = getTrackKoppen(trackId);
+  const hemisphere = getTrackHemisphere(trackId);
+  const month = getMonthFromDay(day, hemisphere);
+  
   const rng = createRng(hashStr(`${trackId}:${day}`));
-  const matrix = TRANSITIONS[climate];
+  
+  // Get base monthly transition probabilities
+  const transitions = generateMonthlyTransitions(koppen, month);
+  
+  // Adjust based on previous pattern (Markov property)
   const fromIdx = prev ? SIM_WEATHER_PATTERNS.indexOf(prev.pattern) : 0;
-  const baseRow = matrix[Math.max(0, fromIdx)];
-
-  // Pre-calculate temperature to adjust transition row for snow/rain coupling
-  const [tMin, tMax] = CLIMATE_TEMP[climate];
-  const seasonalAmp = (tMax - tMin) * 0.3;
-  const seasonal = seasonalTempOffset(day, hemisphere, seasonalAmp);
-  const baseTemp = tMin + rng.next() * (tMax - tMin) + seasonal;
-
-  // Adjust transition row based on temperature for snow/rain coupling
-  // Snow index = 4, Rain index = 3
-  const adjustedRow = [...seasonalRowBias(baseRow, hemisphere, day)];
-  if (baseTemp <= 0) {
-    // Freezing: boost snow probability at expense of rain
-    const snowBoost = adjustedRow[3] * 0.3; // 30% of rain probability moves to snow
-    adjustedRow[4] += snowBoost;
-    adjustedRow[3] -= snowBoost;
-  } else if (baseTemp > 2) {
-    // Above freezing: snow unlikely, transfer to rain
-    const snowToRain = adjustedRow[4] * 0.8; // 80% of snow probability moves to rain
-    adjustedRow[3] += snowToRain;
-    adjustedRow[4] -= snowToRain;
-  }
-  // Normalize row to ensure it sums to 1
-  const rowSum = adjustedRow.reduce((a, b) => a + b, 0);
-  const row = adjustedRow.map((v) => v / rowSum);
-
-  const pattern = samplePattern(row, rng);
-
-  // Patterns nudge temp down; storm cools more than clear.
-  const cool = PATTERN_SEVERITY[pattern] * 1.2;
-  const tempC = Math.round((baseTemp - cool) * 10) / 10;
-
-  // Temperature-snow consistency: if above freezing, downgrade snow to rain
+  
+  // Weight transitions based on previous state
+  // Higher probability of staying in same weather or transitioning logically
+  const adjustedTransitions = transitions.map((prob, idx) => {
+    if (idx === fromIdx) return prob * 1.3; // Slight persistence bias
+    return prob;
+  });
+  
+  // Normalize
+  const sum = adjustedTransitions.reduce((a, b) => a + b, 0);
+  const normalizedTransitions = adjustedTransitions.map(p => p / sum);
+  
+  const pattern = samplePattern(normalizedTransitions, rng);
+  
+  // Generate weather values from historical climate data
+  const tempC = generateTemperature(koppen, month, pattern, rng);
+  const humidity = generateHumidity(koppen, month, pattern, rng);
+  const windKph = generateWind(koppen, pattern, rng);
+  
+  // Temperature-snow consistency check
   let finalPattern = pattern;
   if (pattern === "snow" && tempC > 2) {
     finalPattern = "rain";
   } else if (pattern === "rain" && tempC <= 0 && rng.next() < 0.3) {
-    // Freezing rain has 30% chance to become snow
     finalPattern = "snow";
   }
 
-  const baseHumidity = CLIMATE_HUMIDITY_BIAS[climate];
-  const humidityBoost = PATTERN_SEVERITY[finalPattern] * 0.07;
-  const humidity = Math.min(
-    1,
-    Math.max(0, baseHumidity + humidityBoost + (rng.next() - 0.5) * 0.1),
-  );
-
-  // Generate wind based on pattern severity
-  const [wMin, wMax] = WIND_RANGES[finalPattern];
-  const windKph = Math.round(wMin + rng.next() * (wMax - wMin));
-
-  return { trackId, day, pattern: finalPattern, tempC, humidity, windKph };
+  return { 
+    trackId, 
+    day, 
+    pattern: finalPattern, 
+    tempC, 
+    humidity, 
+    windKph,
+  };
 }
 
 /**
- * Generate a forecast of `days` days starting at `startDay`, deterministic
- * given the seed previous state. Does NOT mutate input.
+ * Generate a forecast of `days` days starting at `startDay`.
+ * Deterministic given the seed and previous state.
  * @param prev
  * @param trackId
  * @param startDay
  * @param days
- * @param climate
- * @param hemisphere
  */
 export function generateForecast(
   prev: WeatherState | undefined,
   trackId: string,
   startDay: number,
   days: number,
-  climate: ClimateZone,
-  hemisphere: Hemisphere = "Northern",
 ): WeatherState[] {
   const out: WeatherState[] = [];
   let last = prev;
   for (let i = 0; i < days; i++) {
-    last = stepWeather(last, trackId, startDay + i, climate, hemisphere);
+    last = stepWeather(last, trackId, startDay + i);
     out.push(last);
   }
   return out;

@@ -9,12 +9,11 @@
  */
 import { describe, it, expect } from "vitest";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
-import { stepWeather, PATTERN_SEVERITY, type WeatherState, getTrackClimate } from "@/core/weather";
+import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
 import type { Race } from "@/core/race/types";
 import { createRng } from "@/game/rng";
 
-const TRACK_ID = "churchill-downs";
-const CLIMATE = getTrackClimate(TRACK_ID);
+const TRACK_ID = "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"; // Churchill Downs
 
 /** Find a day where stepping from a "clear" yesterday lands a ≥2-pattern jump. */
 function findDramaDay(): { yesterday: WeatherState; dayToday: number } {
@@ -27,7 +26,7 @@ function findDramaDay(): { yesterday: WeatherState; dayToday: number } {
       humidity: 0.6,
       windKph: 12,
     };
-    const today = stepWeather(yesterday, TRACK_ID, day, CLIMATE);
+    const today = stepWeather(yesterday, TRACK_ID, day);
     if (PATTERN_SEVERITY[today.pattern] - PATTERN_SEVERITY[yesterday.pattern] >= 2) {
       return { yesterday, dayToday: day };
     }
@@ -127,7 +126,7 @@ describe("weatherPhase — drama alert end-to-end", () => {
       humidity: 0.5,
       windKph: 10,
     };
-    const today = stepWeather(calm, TRACK_ID, 100, CLIMATE);
+    const today = stepWeather(calm, TRACK_ID, 100);
     if (PATTERN_SEVERITY[today.pattern] - PATTERN_SEVERITY[calm.pattern] >= 2) {
       // Day 100 happened to be dramatic — skip this assertion for that seed.
       return;

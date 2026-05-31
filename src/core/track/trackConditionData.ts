@@ -10,6 +10,7 @@
  */
 
 import type { TrackCondition } from "@/game/types";
+import type { KoppenCode } from "@/core/weather/koppenTypes";
 
 // =============================================================================
 // 1. REGIONAL TERMINOLOGY MAPPINGS
@@ -361,4 +362,115 @@ export const CLIMATE_DRYING_RATES: Record<ClimateZone, number> = {
   continental: 1.2, // Seasonal swings
   cool: 0.8, // Slow drying
   warm: 1.5, // Fast drying
+};
+
+// =============================================================================
+// 8. KOPPEN CLIMATE PROFILES (NEW - Real World Climate Data)
+// =============================================================================
+
+/** Track condition bias by Koppen climate code - scientifically accurate */
+export const KOPPEN_CONDITION_BIAS: Record<KoppenCode, Record<TrackCondition, number>> = {
+  Cfb: {
+    // Temperate Oceanic (UK, Ireland, France) - frequent rain, moderate conditions
+    fast: 0.20,
+    good: 0.45,
+    soft: 0.25,
+    heavy: 0.08,
+    yielding: 0.02,
+  },
+  Cfa: {
+    // Humid Subtropical (Japan, eastern US) - summer rain peak
+    fast: 0.30,
+    good: 0.35,
+    soft: 0.22,
+    heavy: 0.10,
+    yielding: 0.03,
+  },
+  Csa: {
+    // Mediterranean (Spain, Italy, SoCal) - dry summers, wet winters
+    fast: 0.60,
+    good: 0.30,
+    soft: 0.08,
+    heavy: 0.02,
+    yielding: 0,
+  },
+  Csb: {
+    // Warm-Summer Mediterranean (Chile, Pacific NW) - milder summers
+    fast: 0.50,
+    good: 0.35,
+    soft: 0.12,
+    heavy: 0.03,
+    yielding: 0,
+  },
+  BWh: {
+    // Hot Desert (UAE, Saudi Arabia) - minimal precipitation
+    fast: 0.75,
+    good: 0.20,
+    soft: 0.04,
+    heavy: 0.01,
+    yielding: 0,
+  },
+  Dfb: {
+    // Humid Continental (Germany, Austria, Eastern Europe) - snowy winters
+    fast: 0.25,
+    good: 0.40,
+    soft: 0.22,
+    heavy: 0.10,
+    yielding: 0.03,
+  },
+  Dfa: {
+    // Hot-Summer Humid Continental (Central US, Canada) - extreme seasons
+    fast: 0.35,
+    good: 0.35,
+    soft: 0.18,
+    heavy: 0.09,
+    yielding: 0.03,
+  },
+  Aw: {
+    // Tropical Savanna (Florida, Hong Kong, Singapore) - wet summers
+    fast: 0.20,
+    good: 0.30,
+    soft: 0.30,
+    heavy: 0.15,
+    yielding: 0.05,
+  },
+  Af: {
+    // Tropical Rainforest (Singapore, Brazil) - constant rain
+    fast: 0.15,
+    good: 0.25,
+    soft: 0.35,
+    heavy: 0.20,
+    yielding: 0.05,
+  },
+  BSk: {
+    // Cold Semi-Arid (Interior Spain, Turkey) - low precipitation
+    fast: 0.55,
+    good: 0.30,
+    soft: 0.10,
+    heavy: 0.04,
+    yielding: 0.01,
+  },
+  ET: {
+    // Tundra - minimal precipitation, very cold
+    fast: 0.40,
+    good: 0.35,
+    soft: 0.18,
+    heavy: 0.06,
+    yielding: 0.01,
+  },
+};
+
+/** Drying rates by Koppen code - scientifically based on precipitation and temperature */
+export const KOPPEN_DRYING_RATES: Record<KoppenCode, number> = {
+  Cfb: 0.9,  // Oceanic - moderate, frequent light rain
+  Cfa: 1.0,  // Subtropical - moderate
+  Csa: 1.6,  // Mediterranean - hot dry summers dry quickly
+  Csb: 1.3,  // Warm Mediterranean - moderate drying
+  BWh: 2.5,  // Desert - extremely fast drying
+  Dfb: 0.8,  // Humid Continental - cold/snowy slows drying
+  Dfa: 1.1,  // Hot Continental - warm summers help drying
+  Aw: 0.6,   // Tropical Savanna - high humidity slows drying
+  Af: 0.4,   // Rainforest - constant humidity, very slow drying
+  BSk: 1.8,  // Cold Semi-Arid - low humidity, fast drying
+  ET: 0.5,   // Tundra - cold temperatures, very slow drying
 };

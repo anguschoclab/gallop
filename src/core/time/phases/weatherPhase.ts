@@ -22,7 +22,6 @@ import {
   stepWeather,
   toTrackWeatherPattern,
   PATTERN_SEVERITY,
-  getTrackClimate,
 } from "@/core/weather";
 import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS, PHASE_ORDER_WEATHER } from "@/game/constants";
 import { calculateConditionChange } from "@/core/trackConditions";
@@ -81,14 +80,13 @@ export const weatherPhase = {
     const dramaTrackIds = new Set<string>(); // Track IDs with severe weather drama
 
     for (const trackId of trackIds) {
-      const climate = getTrackClimate(trackId);
       const buf = newByTrack[trackId] ?? [];
       const lastState = buf[buf.length - 1];
 
       // Step today's weather (skip if already recorded — idempotent).
       let today = lastState && lastState.day === newDay ? lastState : undefined;
       if (!today) {
-        today = stepWeather(lastState, trackId, newDay, climate);
+        today = stepWeather(lastState, trackId, newDay);
         const nextBuf = [...buf, today].slice(-WEATHER_HISTORY_DAYS);
         newByTrack[trackId] = nextBuf;
       } else {
@@ -101,7 +99,6 @@ export const weatherPhase = {
         trackId,
         newDay + 1,
         WEATHER_FORECAST_DAYS,
-        climate,
       );
 
       // Drama: pattern severity jump ≥2 vs prior day on a Group/Graded race day.
