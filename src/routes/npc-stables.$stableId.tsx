@@ -122,7 +122,10 @@ function NpcStableDetailPage() {
   };
 
   // Calculate head-to-head record by scanning race history
-  const calculateHeadToHead = () => {
+  // ⚡ Bolt Optimization: Pre-calculate race map for O(1) lookups
+  const raceMap = React.useMemo(() => new Map(races.map((r: any) => [r.id, r])), [races]);
+
+  const calculateHeadToHead = React.useCallback(() => {
     const ownedHorses = horses.filter((h) => h.owned);
     const thirtyDaysAgo = day - 30;
     let wins = 0;
@@ -134,7 +137,7 @@ function NpcStableDetailPage() {
         .filter((r) => r.day >= thirtyDaysAgo)
         .forEach((raceResult) => {
           // Find the race to check if rival had entries (graded races only)
-          const race = races.find((r) => r.id === raceResult.raceId);
+          const race = raceMap.get(raceResult.raceId);
           if (race && race.graded) {
             // Check if rival stable had entries in this race
             const hadRivalEntry = race.entries.some((e) => e.stableId === stable.id);
@@ -151,7 +154,7 @@ function NpcStableDetailPage() {
     });
 
     return { wins, losses };
-  };
+  }, [day, horses, raceMap, stable]);
 
   // Get grudge match news items
   const grudgeMatches = news
