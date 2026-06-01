@@ -460,6 +460,21 @@ function HorseDetail() {
   const facilities = (useGame as any)((s: any) => s.facilities, shallow);
   const pregnancies = (useGame as any)((s: any) => s.pregnancies, shallow);
   const pregnancy = pregnancies?.find((p: any) => !p.resolved && p.damId === horseId);
+
+  // Filter pregnancies for progeny table (horse as sire or dam)
+  const progenyPregnancies = useMemo(() => {
+    if (!pregnancies) return [];
+    return pregnancies.filter((p: any) => p.sireId === horseId || p.damId === horseId);
+  }, [pregnancies, horseId]);
+
+  // Filter pregnancies for re-breeding history table (mare with LFG or retry attempts)
+  const reBreedingPregnancies = useMemo(() => {
+    if (!pregnancies) return [];
+    return pregnancies.filter(
+      (p: any) => p.damId === horseId && (p.liveFoalGuarantee || (p.reBreedingAttempts || 0) > 0),
+    );
+  }, [pregnancies, horseId]);
+
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
   const syndicates = (useGame as any)((s: any) => s.syndicates || {}, shallow);
@@ -1027,6 +1042,114 @@ function HorseDetail() {
                 </h2>
               </div>
               <PedigreeTree horseId={horse.id} generations={4} />
+
+              {/* Progeny Table */}
+              <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl overflow-hidden">
+                <CardHeader className="bg-black/40 py-3 border-b border-white/5">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40">
+                    Progeny
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {progenyPregnancies.length === 0 ? (
+                    <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-widest italic">
+                      No recorded progeny
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-black/40 border-b border-white/5">
+                          <tr className="text-[10px] uppercase tracking-widest text-cream/40 font-black">
+                            <th className="px-4 py-2 text-left">Role</th>
+                            <th className="px-4 py-2 text-left">Partner</th>
+                            <th className="px-4 py-2 text-left">Conceived</th>
+                            <th className="px-4 py-2 text-left">Due/Delivered</th>
+                            <th className="px-4 py-2 text-left">Status</th>
+                            <th className="px-4 py-2 text-left">Foal</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {progenyPregnancies.map((p: any) => {
+                            const role = p.sireId === horseId ? "Sire" : "Dam";
+                            const partnerName = p.sireId === horseId ? p.damName : p.sireName;
+                            const foal = horses?.find((h: any) => h.id === p.foalId);
+                            const status = p.resolved
+                              ? foal
+                                ? "Live"
+                                : "Failed"
+                              : "Pending";
+                            return (
+                              <tr key={p.id} className="hover:bg-white/[0.02]">
+                                <td className="px-4 py-2 tabular-nums text-cream-muted">{role}</td>
+                                <td className="px-4 py-2 text-cream">{partnerName}</td>
+                                <td className="px-4 py-2 tabular-nums text-cream-muted">{p.conceivedDay}</td>
+                                <td className="px-4 py-2 tabular-nums text-cream-muted">{p.dueDay}</td>
+                                <td className="px-4 py-2 text-cream">{status}</td>
+                                <td className="px-4 py-2">
+                                  {foal ? (
+                                    <Link
+                                      to="/stable/$horseId"
+                                      params={{ horseId: foal.id }}
+                                      className="text-info hover:text-white underline"
+                                    >
+                                      {foal.name}
+                                    </Link>
+                                  ) : (
+                                    <span className="text-cream-muted">—</span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Re-Breeding History Table */}
+              {reBreedingPregnancies.length > 0 && (
+                <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl overflow-hidden">
+                  <CardHeader className="bg-black/40 py-3 border-b border-white/5">
+                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-cream/40">
+                      Re-Breeding History
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-black/40 border-b border-white/5">
+                          <tr className="text-[10px] uppercase tracking-widest text-cream/40 font-black">
+                            <th className="px-4 py-2 text-left">Sire</th>
+                            <th className="px-4 py-2 text-left">Conceived</th>
+                            <th className="px-4 py-2 text-left">Attempt</th>
+                            <th className="px-4 py-2 text-left">Refunded</th>
+                            <th className="px-4 py-2 text-left">Current Due</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {reBreedingPregnancies.map((p: any) => (
+                            <tr key={p.id} className="hover:bg-white/[0.02]">
+                              <td className="px-4 py-2 text-cream">{p.sireName}</td>
+                              <td className="px-4 py-2 tabular-nums text-cream-muted">{p.conceivedDay}</td>
+                              <td className="px-4 py-2 tabular-nums text-cream-muted">
+                                {p.reBreedingAttempts || 0}/3
+                              </td>
+                              <td className="px-4 py-2 text-cream">
+                                {p.refunded ? "Yes" : "No"}
+                              </td>
+                              <td className="px-4 py-2 tabular-nums text-cream-muted">
+                                {p.resolved ? "—" : p.dueDay}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </section>
 
             <section id="history" className="space-y-4 pt-4">
