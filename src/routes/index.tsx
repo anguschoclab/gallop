@@ -1,3 +1,4 @@
+import React from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
@@ -103,35 +104,41 @@ function Dashboard() {
   };
 
   // Calculate head-to-head record by scanning race history
-  const calculateHeadToHead = (stableId: string) => {
-    const thirtyDaysAgo = day - 30;
-    let wins = 0;
-    let losses = 0;
+  // ⚡ Bolt Optimization: Pre-calculate race map for O(1) lookups
+  const raceMap = React.useMemo(() => new Map(races.map((r: any) => [r.id, r])), [races]);
 
-    // Scan player-owned horses' race history
-    ownedHorses.forEach((horse) => {
-      horse.raceHistory
-        .filter((r) => r.day >= thirtyDaysAgo)
-        .forEach((raceResult) => {
-          // Find the race to check if rival had entries
-          const race = races.find((r) => r.id === raceResult.raceId);
-          if (race) {
-            // Check if rival stable had entries in this race
-            const hadRivalEntry = race.entries.some((e) => e.stableId === stableId);
-            if (hadRivalEntry) {
-              // Player horse vs rival horse
-              if (raceResult.position === 1) {
-                wins++;
-              } else {
-                losses++;
+  const calculateHeadToHead = React.useCallback(
+    (stableId: string) => {
+      const thirtyDaysAgo = day - 30;
+      let wins = 0;
+      let losses = 0;
+
+      // Scan player-owned horses' race history
+      ownedHorses.forEach((horse) => {
+        horse.raceHistory
+          .filter((r) => r.day >= thirtyDaysAgo)
+          .forEach((raceResult) => {
+            // Find the race to check if rival had entries
+            const race = raceMap.get(raceResult.raceId);
+            if (race) {
+              // Check if rival stable had entries in this race
+              const hadRivalEntry = race.entries.some((e) => e.stableId === stableId);
+              if (hadRivalEntry) {
+                // Player horse vs rival horse
+                if (raceResult.position === 1) {
+                  wins++;
+                } else {
+                  losses++;
+                }
               }
             }
-          }
-        });
-    });
+          });
+      });
 
-    return { wins, losses };
-  };
+      return { wins, losses };
+    },
+    [day, ownedHorses, raceMap],
+  );
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
