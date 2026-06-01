@@ -50,7 +50,7 @@ export const LINKAGE_MAP: Record<string, LocusCoord> = {
   mudAptitude: { chromosome: "ENDURANCE", position: 0.85 },
   weatherAptitude: { chromosome: "ENDURANCE", position: 0.95 },
 
-  // CHR_PERFORMANCE: acceleration[0-9] at 0.05-0.55, heart[0-4] at 0.62-0.78, style at 0.90
+  // CHR_PERFORMANCE: acceleration[0-9] at 0.05-0.50, style at 0.55, heart[0-4] at 0.62-0.78
   "acceleration.0": { chromosome: "PERFORMANCE", position: 0.05 },
   "acceleration.1": { chromosome: "PERFORMANCE", position: 0.1 },
   "acceleration.2": { chromosome: "PERFORMANCE", position: 0.15 },
@@ -61,12 +61,12 @@ export const LINKAGE_MAP: Record<string, LocusCoord> = {
   "acceleration.7": { chromosome: "PERFORMANCE", position: 0.4 },
   "acceleration.8": { chromosome: "PERFORMANCE", position: 0.45 },
   "acceleration.9": { chromosome: "PERFORMANCE", position: 0.5 },
+  style: { chromosome: "PERFORMANCE", position: 0.55 },
   "heart.0": { chromosome: "PERFORMANCE", position: 0.62 },
   "heart.1": { chromosome: "PERFORMANCE", position: 0.68 },
   "heart.2": { chromosome: "PERFORMANCE", position: 0.72 },
   "heart.3": { chromosome: "PERFORMANCE", position: 0.74 },
   "heart.4": { chromosome: "PERFORMANCE", position: 0.78 },
-  style: { chromosome: "PERFORMANCE", position: 0.9 },
 
   // CHR_BEHAVIORAL: consistency[0-9] at 0.05-0.55, mental at 0.65, trainability at 0.75, recovery at 0.88
   "consistency.0": { chromosome: "BEHAVIORAL", position: 0.05 },

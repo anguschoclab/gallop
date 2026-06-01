@@ -43,9 +43,9 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
         </thead>
         <tbody className="divide-y divide-white/5">
           {splits.map((split) => {
-            const leaderEntry = split.entries.find((e) => e.rank === 1);
-            const leader = leaderEntry ? runnerMap.get(leaderEntry.horseId) : undefined;
             const sortedEntries = [...split.entries].sort((a, b) => a.rank - b.rank);
+            const leaderEntry = sortedEntries[0];
+            const leader = leaderEntry ? runnerMap.get(leaderEntry.horseId) : undefined;
 
             return (
               <tr key={split.label} className="hover:bg-white/[0.02] transition-colors group">

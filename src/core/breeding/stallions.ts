@@ -247,13 +247,13 @@ export function valueOf(horse: Horse, stable: Stable): number {
  * Considers gender, stud status, and basic eligibility criteria.
  *
  * @param horses - All horses in the game state
- * @param mare - The mare to breed with
+ * @param mare - Optional mare to breed with
  * @returns Array of available stallions
  *
  * @example
  * const stallions = getAvailableStallions(state.horses, mare);
  */
-export function getAvailableStallions(horses: Horse[], mare: Horse): Horse[] {
+export function getAvailableStallions(horses: Horse[], mare?: Horse): Horse[] {
   return horses.filter((horse) => {
     // Must be a male horse
     if (!SIRE_GENDERS.includes(horse.gender)) return false;
@@ -268,7 +268,7 @@ export function getAvailableStallions(horses: Horse[], mare: Horse): Horse[] {
     if (horse.age < 3) return false;
 
     // Cannot breed with itself
-    if (horse.id === mare.id) return false;
+    if (mare && horse.id === mare.id) return false;
 
     // Basic health check
     if (horse.healthStatus === "covering_sickness") return false;

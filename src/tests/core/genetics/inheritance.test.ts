@@ -103,29 +103,49 @@ describe("breedingSimulator — RNG diversity", () => {
 // ─── Bug 3: style locus links to PERFORMANCE chromosome ──────────────────────
 
 describe("inheritDNA — style locus chromosome linkage", () => {
-  it("style co-inherits with acceleration more than 50% when both parents share acceleration bias", () => {
+  it("style co-inherits with acceleration more than 50% when sire has coupled traits", () => {
     const rng = createRng(55);
     const base = generateGenotype(rng, "mid");
 
-    // Both parents: high acceleration loci, early-foot style (low style value = E/EP)
-    const highAccel: typeof base.stats.acceleration = Array.from(
-      { length: 10 },
-      () => [5, 5] as [number, number],
-    );
-    const earlyStyle: [number, number] = [1, 1]; // resolves to "E"
+    // Sire: Heterozygous/coupled
+    // Strand 0: acceleration = 5, style = 1 (Early)
+    // Strand 1: acceleration = 1, style = 5 (Sustain)
+    const sire = { ...base };
+    sire.stats = {
+      ...base.stats,
+      acceleration: Array.from({ length: 10 }, () => [5, 1] as [number, number]),
+    };
+    sire.style = [1, 5];
 
-    const sire = { ...base, stats: { ...base.stats, acceleration: highAccel }, style: earlyStyle };
-    const dam = { ...base, stats: { ...base.stats, acceleration: highAccel }, style: earlyStyle };
+    // Dam: Homozygous recessive/tester
+    // Strand 0 & 1: acceleration = 1, style = 5
+    const dam = { ...base };
+    dam.stats = {
+      ...base.stats,
+      acceleration: Array.from({ length: 10 }, () => [1, 1] as [number, number]),
+    };
+    dam.style = [5, 5];
 
-    let earlyStyleCount = 0;
-    for (let i = 0; i < 100; i++) {
+    let coupledCount = 0;
+    const SAMPLES = 500;
+
+    for (let i = 0; i < SAMPLES; i++) {
       const foal = inheritDNA(sire, dam, createRng(i));
-      const style = resolveRunningStyle(foal.style);
-      if (style === "E" || style === "EP") earlyStyleCount++;
+
+      // Foal inherits one allele from sire (index 0) and one from dam (index 1).
+      // Since dam is homozygous [1, 5] for accel/style, the foal's allele at index 0 comes from sire.
+      // We check if the sire's inherited acceleration alleles are coupled with the sire's style allele.
+      const sireAccelsFromStrand0 = foal.stats.acceleration.filter((locus) => locus[0] === 5).length;
+      const inheritedStrand0Accel = sireAccelsFromStrand0 >= 5; // Major portion inherited from Strand 0
+      const inheritedStrand0Style = foal.style[0] === 1;       // Inherited early style from Strand 0
+
+      if (inheritedStrand0Accel === inheritedStrand0Style) {
+        coupledCount++;
+      }
     }
 
-    // With both parents having identical early-style loci, virtually all foals should be E/EP
-    expect(earlyStyleCount).toBeGreaterThan(90);
+    const coupledRatio = coupledCount / SAMPLES;
+    expect(coupledRatio).toBeGreaterThan(0.50);
   });
 
   it("style locus is present on offspring genotype", () => {

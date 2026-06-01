@@ -70,9 +70,8 @@ function BreedingPage() {
   const breedLogs = log.filter((l: any) => /Mated|Foal/.test(l.text));
 
   // Get available stallions for Northern hemisphere (default for player breeding)
-  // FIX: getAvailableStallions expects (horses: Horse[], mare: Horse)
-  const dummyMare = { id: damId } as any;
-  const availableStallions = getAvailableStallions(horses, dummyMare);
+  const selectedMare = localHorseMap.get(damId);
+  const availableStallions = getAvailableStallions(horses, selectedMare);
 
   const onBreed = () => {
     if (!sireId || !damId) return;
