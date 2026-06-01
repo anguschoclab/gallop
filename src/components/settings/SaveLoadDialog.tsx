@@ -311,6 +311,7 @@ function LedgerEntry({
 
         <div className="flex items-center gap-4 ml-6 pl-6 border-l border-white/5">
           <button
+            type="button"
             className="text-slate-600 hover:text-destructive transition-colors p-1"
             onClick={onDelete}
             title="Delete save"
