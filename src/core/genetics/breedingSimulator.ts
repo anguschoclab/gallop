@@ -138,13 +138,13 @@ export function runBreedingSimulation(
 
   const coatColorValues: CoatColor[] = [];
 
+  // Draw a base seed from the passed RNG and create a single generator for the simulation
+  const seed = Math.floor(rng.next() * 2 ** 31);
+  const simulationRng = createRng(seed);
+
   // Run 250 simulations
   for (let i = 0; i < SIMULATION_ITERATIONS; i++) {
-    // Each iteration gets a fresh deterministic RNG seeded from the outer rng
-    const iterationSeed = Math.floor(rng.next() * 2 ** 31);
-    const simulationRng = createRng(iterationSeed);
-
-    // Inherit DNA
+    // Inherit DNA using the single simulationRng sequence
     const offspringGenotype = inheritDNA(sire.genotype, dam.genotype, simulationRng);
 
     // Resolve to phenotype

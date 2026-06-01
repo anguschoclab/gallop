@@ -253,6 +253,8 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
   // Helper to reconstruct loci arrays from offspring map
   const reconstructLoci = (chromosomeId: ChromosomeId, locusKeys: string[]): Locus[] => {
     const offspringAlleles = offspringMap.get(chromosomeId);
+    const chromosomeKeys = getLociByChromosome(chromosomeId);
+
     if (!offspringAlleles) {
       // Fallback to independent crossover if chromosome not in map
       return locusKeys.map((key) => {
@@ -266,7 +268,18 @@ export function inheritDNA(sire: Genotype, dam: Genotype, rng: Rng): Genotype {
       });
     }
 
-    return offspringAlleles;
+    return locusKeys.map((key) => {
+      const idx = chromosomeKeys.indexOf(key);
+      if (idx >= 0 && idx < offspringAlleles.length) {
+        return offspringAlleles[idx];
+      }
+      const sireAllele = getLocusByKey(sire, key);
+      const damAllele = getLocusByKey(dam, key);
+      if (sireAllele && damAllele) {
+        return crossover(sireAllele, damAllele, rng);
+      }
+      return [3, 3];
+    });
   };
 
   // Extract individual loci from offspring map

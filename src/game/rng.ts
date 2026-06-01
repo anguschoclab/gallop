@@ -25,6 +25,24 @@ export type Rng = {
 };
 
 /**
+ * Hash a 32-bit integer using MurmurHash3's 32-bit finalizer.
+ *
+ * Provides high-entropy mixing for numeric seeds.
+ *
+ * @param key - Integer to hash
+ * @returns 32-bit hashed integer
+ */
+export function hashNum(key: number): number {
+  let h = key | 0;
+  h ^= h >>> 16;
+  h = Math.imul(h, 0x85ebca6b);
+  h ^= h >>> 13;
+  h = Math.imul(h, 0xc2b2ae35);
+  h ^= h >>> 16;
+  return h >>> 0;
+}
+
+/**
  * Create a seeded random number generator.
  *
  * Uses the mulberry32 algorithm for deterministic random number generation.
@@ -34,8 +52,12 @@ export type Rng = {
  * @returns RNG interface with next, int, range, pick, and gauss methods
  */
 export function createRng(seed: number | string): Rng {
-  const seedNum = typeof seed === "string" ? hashStr(seed) : seed;
-  let state = seedNum | 0 || 1;
+  let state: number;
+  if (typeof seed === "string") {
+    state = hashStr(seed) | 0 || 1;
+  } else {
+    state = hashNum(seed) || 1;
+  }
   const next = () => {
     state = (state + 0x6d2b79f5) | 0;
     let t = state;

@@ -37,9 +37,7 @@ describe("inheritTrait — order independence", () => {
       if (f2.markers.sensoryPerception === "excellent") excellentFromDamFirst++;
     }
 
-    // Both should produce ~70% excellent. Allow ±12% tolerance for randomness.
-    const diffPercent = Math.abs(excellentFromSireFirst - excellentFromDamFirst) / SAMPLES;
-    expect(diffPercent).toBeLessThan(0.12);
+    expect(excellentFromSireFirst).toBe(excellentFromDamFirst);
   });
 
   it("excellent × poor never produces excellent offspring", () => {
@@ -79,8 +77,8 @@ describe("breedingSimulator — RNG diversity", () => {
     const dam = generateGenotype(rng, "starter");
 
     // Force contrasting speed loci so crossover produces a spread
-    sire.stats.speed = Array.from({ length: 10 }, () => [5, 5] as [number, number]);
-    dam.stats.speed = Array.from({ length: 10 }, () => [1, 1] as [number, number]);
+    sire.stats.speed = Array.from({ length: 10 }, () => [5, 1] as [number, number]);
+    dam.stats.speed = Array.from({ length: 10 }, () => [5, 1] as [number, number]);
 
     // Force contrasting fiber types so both values appear in offspring
     sire.fiberType = [5, 1]; // heterozygous

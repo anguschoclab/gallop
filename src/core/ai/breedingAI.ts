@@ -19,7 +19,7 @@ import { cachedSimulation } from "@/core/genetics/genotypeCache";
 import { getArchetypeById, getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
 import { calculateGeneticDistance } from "@/core/breeding/programs";
 import type { BreedingProgram } from "@/core/breeding/programs";
-import type { Rng } from "@/game/rng";
+import { createRng, hashStr, type Rng } from "@/game/rng";
 
 /**
  * Breeding AI System
@@ -465,9 +465,10 @@ export function selectSireForDam(
 
     for (const sire of candidateSires) {
       // Run a quick sim to get a representative foal, then measure archetype distance
-      const simulation = cachedSimulation(sire.id, dam.id, () =>
-        runBreedingSimulation(sire, dam, gameState, rng),
-      );
+      const simulation = cachedSimulation(sire.id, dam.id, () => {
+        const simRng = createRng(hashStr(`breeding-sim:${sire.id}:${dam.id}`));
+        return runBreedingSimulation(sire, dam, gameState, simRng);
+      });
       // Build a synthetic horse from the simulation median stats to measure distance
       const syntheticFoal = {
         stats: {
