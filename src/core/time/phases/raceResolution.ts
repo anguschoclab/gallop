@@ -42,10 +42,6 @@ export const raceResolutionPhase: PipelinePhase = {
     const updatedRaces: typeof state.races = [...state.races];
     const overdueRaces = state.races.filter((r) => !r.resolved && r.day <= newDay);
 
-    if (overdueRaces.length > 0) {
-      console.log(`      - Resolving ${overdueRaces.length} races...`);
-    }
-
     // PRE-INDEX: Create maps for O(1) lookups during resolution
     const horseMap = new Map(state.horses.map((h) => [h.id, h]));
     const npcStableMap = new Map((state.npcStables || []).map((s) => [s.id, s]));
