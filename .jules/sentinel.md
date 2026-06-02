@@ -10,8 +10,8 @@
 **Learning:** While `Math.random()` might seem sufficient for casual uniqueness, it is highly predictable and unsuitable for tasks expecting cryptographic entropy. Replacing it with `generateUUID()` (which falls back to `crypto.getRandomValues`) ensures proper security and determinism constraints are respected across the application's core gameplay initialization.
 **Prevention:** Avoid `Math.random()` for anything that requires collision resistance or unpredictability, even for offline seeding logic. Use the project's standard `generateUUID` to enforce proper entropy.
 
-## 2025-05-17 - Missing Content Security Policy
+## 2025-05-17 - eval() Usage in tablesort.js
 
-**Vulnerability:** The application was missing a Content-Security-Policy (CSP) header/meta tag.
-**Learning:** Without a CSP, the application lacked a defense-in-depth layer against Cross-Site Scripting (XSS) and potential data exfiltration. By defining a strict CSP in `src/routes/__root.tsx` (using `http-equiv="Content-Security-Policy"`), the browser is instructed to only load and execute resources from approved origins (e.g., `'self'`, specific font and image domains), effectively neutralizing unauthorized external scripts or malicious asset injections.
-**Prevention:** Always include a `Content-Security-Policy` to enforce resource restrictions. For React/TanStack Router applications, this can be efficiently managed via the root component's `<meta>` tags.
+**Vulnerability:** The dynamic sorting logic in `src/assets/tablesort.js` previously used `eval()` to execute sorting rules based on className strings, creating a Cross-Site Scripting (XSS) vulnerability.
+**Learning:** Using `eval()` to parse and execute code from DOM attributes (like `className`) allows an attacker to inject arbitrary JavaScript if they can control or manipulate those attributes. The fix replaced `eval()` with a safe array of sorting rules resolved iteratively without executing strings as code.
+**Prevention:** Never use `eval()`, `new Function()`, `setTimeout(string)`, or `setInterval(string)` to parse or execute logic derived from DOM attributes, user input, or URL parameters. Instead, resolve references to existing functions safely, for example by referencing specific known functions (e.g., `window[functionName]`) with strict validation, or by mapping predefined strings to function objects.
