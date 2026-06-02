@@ -184,9 +184,6 @@ export const upkeepPhase = {
         const daysSinceInjection = newDay - lastInjectionDay;
 
         if (daysSinceInjection >= BANKRUPTCY_COOLDOWN_DAYS) {
-          console.log(
-            `[BANKRUPTCY PROTECTION] Injecting $${BANKRUPTCY_INJECTION} into stable ${stable.name} (cash: $${stable.cash})`,
-          );
           return {
             ...stable,
             cash: stable.cash + BANKRUPTCY_INJECTION,
