@@ -526,29 +526,3 @@ export function getOrDeriveAppearance(
 export function isFeminine(gender?: HorseGender): boolean {
   return gender === "filly" || gender === "mare";
 }
-
-// Legacy named export — kept so older code paths keep working.
-export type PortraitVariation = AppearanceDNA;
-
-/**
- * Legacy function: build variation from ID.
- *
- * Kept for backward compatibility with older code paths.
- * New code should use generateAppearanceDNA or getOrDeriveAppearance.
- *
- * @param id - Horse ID for seed generation
- * @param markings - Optional horse markings
- * @param _gender - Unused (kept for signature compatibility)
- * @param palette - Optional color palette
- * @returns AppearanceDNA for the horse
- * @deprecated Use generateAppearanceDNA or getOrDeriveAppearance instead
- */
-export function buildVariation(
-  id: string | undefined,
-  markings?: HorseMarkings,
-  _gender?: HorseGender,
-  palette?: PortraitPalette,
-): AppearanceDNA {
-  const seed = hashSeed(id ?? "anon");
-  return generateAppearanceDNA(seed, markings, palette ?? getPalette());
-}
