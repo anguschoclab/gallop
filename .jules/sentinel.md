@@ -9,3 +9,9 @@
 **Vulnerability:** The seed generation function `makeWizardRng` in `src/components/NewGameWizard/steps/helpers.tsx` used `Math.random()` to generate a unique string.
 **Learning:** While `Math.random()` might seem sufficient for casual uniqueness, it is highly predictable and unsuitable for tasks expecting cryptographic entropy. Replacing it with `generateUUID()` (which falls back to `crypto.getRandomValues`) ensures proper security and determinism constraints are respected across the application's core gameplay initialization.
 **Prevention:** Avoid `Math.random()` for anything that requires collision resistance or unpredictability, even for offline seeding logic. Use the project's standard `generateUUID` to enforce proper entropy.
+
+## 2025-05-17 - eval() Usage in tablesort.js
+
+**Vulnerability:** The dynamic sorting logic in `src/assets/tablesort.js` previously used `eval()` to execute sorting rules based on className strings, creating a Cross-Site Scripting (XSS) vulnerability.
+**Learning:** Using `eval()` to parse and execute code from DOM attributes (like `className`) allows an attacker to inject arbitrary JavaScript if they can control or manipulate those attributes. The fix replaced `eval()` with a safe array of sorting rules resolved iteratively without executing strings as code.
+**Prevention:** Never use `eval()`, `new Function()`, `setTimeout(string)`, or `setInterval(string)` to parse or execute logic derived from DOM attributes, user input, or URL parameters. Instead, resolve references to existing functions safely, for example by referencing specific known functions (e.g., `window[functionName]`) with strict validation, or by mapping predefined strings to function objects.
