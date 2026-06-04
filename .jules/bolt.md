@@ -7,3 +7,6 @@
 
 **Learning:** Found multiple instances where `.find()` on an array is used inside a `.map()` loop during React component renders (e.g., `BidHistoryPanel`, `PlayerConsignmentsPanel`). This can cause performance degradation, especially with potentially large datasets like `bidHistory`.
 **Action:** Always pre-calculate a hash map (using `Map` and `useMemo`) for O(1) lookups before the mapping phase to change complexity from O(N\*M) to O(N+M). This pattern is particularly useful in this specific project since it utilizes multiple global context arrays (like `stables`, `horses`) that need to be correlated in UI components.
+## 2025-02-12 - Optimize O(N^2) render loop in Progeny Table
+**Learning:** O(N) global arrays like `horses` evaluated inside `.map()` loops directly in React component rendering trees (e.g., `horses.find(h => h.id === p.foalId)`) can rapidly degrade performance.
+**Action:** When rendering elements mapping over arrays that cross-reference global state, pre-calculate a hash map locally using `useMemo` (e.g. `new Map(horses.map(...))`) instead of `.find()` to reduce component rendering complexity from O(N^2) to O(N). Avoid depending on global, non-persisted store maps like `horseMap` if they are susceptible to hydration issues, to guarantee stability.
