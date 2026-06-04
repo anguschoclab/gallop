@@ -289,7 +289,7 @@ function CRaceTimer() {
 
   methods.StartTiming = function () {
     methods.bIsRunning = true;
-    methods.timerRef = setInterval("TimerCallback()", 1000 * methods.fUpdateInterval);
+    methods.timerRef = setInterval(TimerCallback, 1000 * methods.fUpdateInterval);
   };
   methods.StopTiming = function () {
     clearInterval(methods.timerRef);

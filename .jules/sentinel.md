@@ -15,3 +15,8 @@
 **Vulnerability:** The dynamic sorting logic in `src/assets/tablesort.js` previously used `eval()` to execute sorting rules based on className strings, creating a Cross-Site Scripting (XSS) vulnerability.
 **Learning:** Using `eval()` to parse and execute code from DOM attributes (like `className`) allows an attacker to inject arbitrary JavaScript if they can control or manipulate those attributes. The fix replaced `eval()` with a safe array of sorting rules resolved iteratively without executing strings as code.
 **Prevention:** Never use `eval()`, `new Function()`, `setTimeout(string)`, or `setInterval(string)` to parse or execute logic derived from DOM attributes, user input, or URL parameters. Instead, resolve references to existing functions safely, for example by referencing specific known functions (e.g., `window[functionName]`) with strict validation, or by mapping predefined strings to function objects.
+
+## 2026-06-03 - setInterval(string) Vulnerability
+**Vulnerability:** In `src/assets/horseRaceScript.js`, `setInterval()` was called with a string argument (`"TimerCallback()"`), acting as an implied eval.
+**Learning:** Passing a string to `setTimeout` or `setInterval` causes the JS engine to evaluate the string as code. This is an unsafe practice equivalent to `eval()`, posing a security risk (XSS) if any part of the string ever incorporates user input, and it violates modern Content Security Policies (CSP) like `unsafe-eval`.
+**Prevention:** Never pass strings to `setInterval` or `setTimeout`. Always pass direct function references or anonymous functions instead.
