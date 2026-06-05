@@ -7,3 +7,7 @@
 
 **Learning:** Found multiple instances where `.find()` on an array is used inside a `.map()` loop during React component renders (e.g., `BidHistoryPanel`, `PlayerConsignmentsPanel`). This can cause performance degradation, especially with potentially large datasets like `bidHistory`.
 **Action:** Always pre-calculate a hash map (using `Map` and `useMemo`) for O(1) lookups before the mapping phase to change complexity from O(N\*M) to O(N+M). This pattern is particularly useful in this specific project since it utilizes multiple global context arrays (like `stables`, `horses`) that need to be correlated in UI components.
+
+## 2024-05-19 - [Optimizing O(N) Array Lookups in Game Event Loops]
+**Learning:** React hooks that process batches of game events (e.g., `useAuctionTheater.ts` processing `result.events` arrays generated from game simulation steps) can suffer from significant performance degradation if they use `.find()` and `.findIndex()` on global arrays (like `stables`) inside the loop, especially as the number of events scales up.
+**Action:** In game engine event loops or hooks that process batches of events, pre-calculate local hash maps (`stableMap`, `stableIndexMap`) using `new Map()` immediately before the event loop starts. This turns O(N*M) processing into O(N+M) and prevents the simulation/UI pipeline from stuttering during heavy game logic.

@@ -138,21 +138,27 @@ export function useAuctionTheater(saleId: string) {
 
       // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the event loop.
       const horseMap = new Map(horses.map((h) => [h.id, h]));
+      // Pre-calculate hash maps for O(1) stable lookups instead of O(N) .find() and .findIndex().
+      const stableMap = new Map(stables.map((s) => [s.id, s]));
+      const stableIndexMap = new Map(stables.map((s, idx) => [s.id, idx]));
+
       for (const event of result.events) {
         const lot = sale?.lots.find((l) => l.id === event.lotId);
         const horse = lot ? horseMap.get(lot.horseId) : undefined;
         const consignor = lot?.consignorStableId
-          ? stables.find((s) => s.id === lot.consignorStableId)
+          ? stableMap.get(lot.consignorStableId)
           : undefined;
         const winner =
           event.type === "SOLD" && event.toStableId
-            ? stables.find((s) => s.id === event.toStableId)
+            ? stableMap.get(event.toStableId)
             : undefined;
         const scouted = horse ? getDisplayableStats(horse, scoutReports, day) : null;
-        const paddleNumber =
-          event.type === "BID_RECEIVED" && event.stableId
-            ? Math.max(1, stables.findIndex((s) => s.id === event.stableId) + 1)
-            : undefined;
+
+        let paddleNumber: number | undefined = undefined;
+        if (event.type === "BID_RECEIVED" && event.stableId) {
+          const idx = stableIndexMap.get(event.stableId);
+          paddleNumber = idx !== undefined ? Math.max(1, idx + 1) : undefined;
+        }
 
         const line = generateAuctioneerLine(
           event,
