@@ -7,3 +7,8 @@
 
 **Learning:** Found multiple instances where `.find()` on an array is used inside a `.map()` loop during React component renders (e.g., `BidHistoryPanel`, `PlayerConsignmentsPanel`). This can cause performance degradation, especially with potentially large datasets like `bidHistory`.
 **Action:** Always pre-calculate a hash map (using `Map` and `useMemo`) for O(1) lookups before the mapping phase to change complexity from O(N\*M) to O(N+M). This pattern is particularly useful in this specific project since it utilizes multiple global context arrays (like `stables`, `horses`) that need to be correlated in UI components.
+
+## 2024-05-19 - O(N) lookup inside progeny list render
+
+**Learning:** Found an O(N) array lookup (`horses.find()`) inside a loop mapping over progeny pregnancies in `src/routes/stable.$horseId.tsx`. While the number of progenies might not be huge, the number of horses can grow large, and performing `.find` on each render loop item degrades performance.
+**Action:** Replaced `.find()` with a local `useMemo`-backed hash map lookup (`localHorseMap.get()`) to reduce complexity from O(M*N) to O(M+N).
