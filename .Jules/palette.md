@@ -17,3 +17,8 @@
 
 **Learning:** Found a "Return to Sales" `<Button>` that had no `onClick` handler, despite the parent `AuctionSummary` component correctly taking an `onClose` prop and defining a routing navigation fallback (`navigate({ to: "/auction" })`) in its parent container (`AuctionTheater.tsx`). This resulted in a dead-end UI for users.
 **Action:** Always verify that main structural flow buttons map their defined callback props (like `onClose` or `onSubmit`) instead of being purely decorative.
+
+## 2024-05-19 - Accessible Time Skip Buttons in AppShell
+
+**Learning:** Discovered that the time advancement buttons in `AppShell` (like "7d" and "30d") only utilized `title` attributes for tooltips, lacking explicit `aria-label`s, which meant screen readers might read the brief text ("7 d", "30 d") rather than the descriptive action.
+**Action:** Ensure that buttons with abbreviated or abstract text content have explicit `aria-label` attributes to provide clear, descriptive context to assistive technologies.
