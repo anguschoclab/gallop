@@ -51,8 +51,11 @@ export function useAuctionEventProcessor(options: UseAuctionEventProcessorOption
   const prevLotIndexRef = useRef(0);
   const [, forceTick] = useReducer((x: number) => x + 1, 0);
 
-  // Pre-calculate horse map for O(1) lookups
+  // Pre-calculate maps for O(1) lookups instead of O(N) .find()/.findIndex() inside the event loop
   const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
+  const stableMap = useMemo(() => new Map(stables.map((s) => [s.id, s])), [stables]);
+  const stableIndexMap = useMemo(() => new Map(stables.map((s, idx) => [s.id, idx])), [stables]);
+  const lotMap = useMemo(() => new Map(sale?.lots.map((l) => [l.id, l]) ?? []), [sale?.lots]);
 
   const stepAndRender = useCallback(
     (playerBid?: number) => {
@@ -75,20 +78,21 @@ export function useAuctionEventProcessor(options: UseAuctionEventProcessorOption
       let sawHammer = false;
 
       for (const event of result.events) {
-        const lot = sale?.lots.find((l) => l.id === event.lotId);
+        const lot = lotMap.get(event.lotId);
         const horse = lot ? horseMap.get(lot.horseId) : undefined;
         const consignor = lot?.consignorStableId
-          ? stables.find((s) => s.id === lot.consignorStableId)
+          ? stableMap.get(lot.consignorStableId)
           : undefined;
         const winner =
           event.type === "SOLD" && event.toStableId
-            ? stables.find((s) => s.id === event.toStableId)
+            ? stableMap.get(event.toStableId)
             : undefined;
         const scouted = horse ? getDisplayableStats(horse, scoutReports, day) : null;
-        const paddleNumber =
-          event.type === "BID_RECEIVED" && event.stableId
-            ? Math.max(1, stables.findIndex((s) => s.id === event.stableId) + 1)
-            : undefined;
+        let paddleNumber: number | undefined = undefined;
+        if (event.type === "BID_RECEIVED" && event.stableId) {
+          const idx = stableIndexMap.get(event.stableId);
+          paddleNumber = idx !== undefined ? Math.max(1, idx + 1) : undefined;
+        }
 
         const line = generateAuctioneerLine(
           event,
@@ -148,6 +152,9 @@ export function useAuctionEventProcessor(options: UseAuctionEventProcessorOption
       sale,
       stables,
       horseMap,
+      stableMap,
+      stableIndexMap,
+      lotMap,
       scoutReports,
       day,
       setChantLines,
