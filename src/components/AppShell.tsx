@@ -228,6 +228,7 @@ export function AppShell() {
                   size="sm"
                   variant="outline"
                   title="Advance 1 week"
+                  aria-label="Advance 1 week"
                 >
                   7d
                 </Button>
@@ -240,6 +241,7 @@ export function AppShell() {
                   size="sm"
                   variant="outline"
                   title="Advance 1 month"
+                  aria-label="Advance 1 month"
                 >
                   30d
                 </Button>
