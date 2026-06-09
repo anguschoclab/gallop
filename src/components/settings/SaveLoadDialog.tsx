@@ -27,6 +27,7 @@ import {
 import { getSaveSlots, deleteSaveSlot, type SaveSlotMetadata } from "@/services/saveManager";
 import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface SaveLoadDialogProps {
   open: boolean;
@@ -65,8 +66,10 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
       await manualSave(id, name);
       setNewSaveName("");
       await refreshSaves();
+      toast.success("Game saved!");
     } catch (error) {
       console.error("Ledger write failed:", error);
+      toast.error("Failed to save game");
     } finally {
       setIsSaving(false);
     }
