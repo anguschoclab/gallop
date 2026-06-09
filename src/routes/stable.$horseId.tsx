@@ -460,7 +460,7 @@ function HorseDetail() {
   // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
   // Impact: Reduces rendering complexity of progeny table from O(N^2) to O(N).
   const localHorseMap = useMemo(
-    () => new Map((horses ?? []).map((h: any) => [h.id as string, h])),
+    () => new Map<string, any>((horses ?? []).map((h: any) => [h.id, h])),
     [horses],
   );
 
