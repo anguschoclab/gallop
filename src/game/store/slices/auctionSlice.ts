@@ -167,7 +167,57 @@ export function createAuctionSlice(
       const sale = (s.auctions ?? []).find((a: AuctionSale) => a.id === saleId);
       if (!sale) return { ok: false, reason: "Sale not found." };
 
+      // Apply auction impacts directly (live Theater path, outside pipeline)
+      let newCash = s.cash;
+      let newNpcStables = [...s.npcStables];
+      let newHorses = [...s.horses];
+      let newInbox = [...(s.inbox ?? [])];
+
+      for (const impact of impacts ?? []) {
+        const anyImpact = impact as any;
+
+        switch (anyImpact.type) {
+          case "cash_change": {
+            const { entityId, amount } = anyImpact;
+            if (entityId) {
+              // NPC stable cash change
+              newNpcStables = newNpcStables.map((stable) =>
+                stable.id === entityId
+                  ? { ...stable, cash: Math.max(0, stable.cash + amount) }
+                  : stable,
+              );
+            } else {
+              // Player cash change (offline path only; live path debits via debitForLiveBid)
+              newCash = Math.max(0, newCash + amount);
+            }
+            break;
+          }
+
+          case "horse_transfer": {
+            const { horseId, toStableId } = anyImpact;
+            newHorses = newHorses.map((horse) =>
+              horse.id === horseId
+                ? { ...horse, stableId: toStableId, owned: !toStableId }
+                : horse,
+            );
+            break;
+          }
+
+          case "inbox_message": {
+            const { message } = anyImpact;
+            if (message) {
+              newInbox = [message, ...newInbox].slice(0, 100);
+            }
+            break;
+          }
+        }
+      }
+
       set({
+        cash: newCash,
+        npcStables: newNpcStables,
+        horses: newHorses,
+        inbox: newInbox,
         auctions: (s.auctions ?? []).map((a: AuctionSale) =>
           a.id === saleId
             ? {
