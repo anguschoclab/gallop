@@ -40,38 +40,13 @@ import { BroadcastCommentary } from "@/components/races/BroadcastCommentary";
 import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { useLiveRaceSimulation } from "@/hooks/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
-import { SilkDot } from "@/components/SilkDot";
 import { SectionalTimingTable } from "@/components/SectionalTimingTable";
-import { cn } from "@/lib/utils";
-import { parTime } from "@/game/beyer";
-import { BEYER_BASE, BEYER_FORMULA_SCALE } from "@/game/constants";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { HorseCard } from "@/components/HorseCard";
-
-const SPLIT_LABELS = ["¼", "½", "¾", "Fin"] as const;
-
-function formatSplitTime(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return m > 0 ? `${m}:${s.toFixed(1).padStart(4, "0")}` : `${s.toFixed(1)}s`;
-}
-
-function getTargetSplitTime(
-  horse: Horse,
-  distance: number,
-  markerFraction: number,
-  calibratedPars: Record<number, number>,
-): number | null {
-  const qualifying = (horse.raceHistory ?? []).filter(
-    (h) => h.beyer != null && h.distance != null && Math.abs(h.distance - distance) <= 200,
-  );
-  if (qualifying.length < 2) return null;
-  const avgBeyer = qualifying.reduce((sum, h) => sum + h.beyer!, 0) / qualifying.length;
-  const par = parTime(distance, calibratedPars);
-  // Inverse of beyerFigure: finishTime = par * (1 - (beyer - BEYER_BASE) / BEYER_FORMULA_SCALE)
-  const expectedFinish = par * (1 - (avgBeyer - BEYER_BASE) / BEYER_FORMULA_SCALE);
-  return expectedFinish * markerFraction;
-}
+import { RaceControlBar } from "@/components/race/RaceControlBar";
+import { Track } from "@/components/race/Track";
+import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
+import { Leaderboard } from "@/components/race/Leaderboard";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -268,135 +243,36 @@ function LiveRace() {
         {announcement}
       </div>
 
-      <div className="relative z-10 p-4 flex items-center justify-between border-b border-white/10 bg-broadcast-marquee backdrop-blur-sm">
-        <div>
-          <h1 className="text-xl font-bold text-cream flex items-center gap-2">
-            {race.name}
-            {race.graded?.requiresInvitation && (
-              <span className="inline-block bg-amber-600 text-white text-[10px] font-bold uppercase px-1.5 py-0.5 rounded">
-                Invitation Only
-              </span>
-            )}
-          </h1>
-          <p className="text-xs text-muted-foreground tabular-nums">
-            {race.distance}m · {race.raceClass} · Purse ${race.purse.toLocaleString()}
-            {race.weather && ` · ${getWeatherDisplay(race.weather)}`}
-            {race.trackCondition && ` · Track: ${race.trackCondition}`}
-            {raceWeather && (
-              <span className="inline-flex items-center gap-0.5">
-                <Thermometer className="h-3 w-3" />
-                {Math.round(raceWeather.tempC)}°C
-                <Wind className="h-3 w-3 ml-1" />
-                {Math.round(raceWeather.windKph)} km/h
-              </span>
-            )}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {!finished && (
-            <Select
-              value={followTarget || "leader"}
-              onValueChange={(v) => setFollowTarget(v === "leader" ? null : v)}
-            >
-              <SelectTrigger className="h-8 w-40 text-xs bg-muted border-border text-foreground">
-                <Camera className="h-3 w-3 mr-1" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="leader">Follow Leader</SelectItem>
-                {runners.map((r, i) => (
-                  <SelectItem key={r.horseId} value={r.horseId}>
-                    {r.owned ? "⭐ " : ""}
-                    {i + 1}. {r.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setShowAllCards(true)}
-            title="Show all horse stat cards"
-          >
-            Cards
-          </Button>
-
-          {!finished && (
-            <Button
-              size="sm"
-              variant={paused ? "secondary" : "ghost"}
-              onClick={() => setPaused(!paused)}
-              className="px-2"
-              title="Spacebar to toggle"
-            >
-              {paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-            </Button>
-          )}
-
-          {!finished && !paused && (
-            <>
-              <Button
-                size="sm"
-                variant={speed === 1 ? "secondary" : "ghost"}
-                onClick={() => setSpeed(1)}
-                title="Press 1"
-              >
-                1x
-              </Button>
-              <Button
-                size="sm"
-                variant={speed === 2 ? "secondary" : "ghost"}
-                onClick={() => setSpeed(2)}
-                title="Press 2"
-              >
-                2x
-              </Button>
-              <Button
-                size="sm"
-                variant={speed === 4 ? "secondary" : "ghost"}
-                onClick={() => setSpeed(4)}
-                title="Press 4"
-              >
-                4x
-              </Button>
-            </>
-          )}
-
-          {anyFinished && !allFinished && (
-            <Button
-              size="sm"
-              variant={hideUntilAllFinished ? "secondary" : "ghost"}
-              onClick={() => setHideUntilAllFinished((v) => !v)}
-              title="Hide results until all horses finish"
-            >
-              {hideUntilAllFinished ? "Revealing…" : "Hide Results"}
-            </Button>
-          )}
-
-          {finished && (
-            <Button
-              size="sm"
-              onClick={() =>
-                navigate({
-                  to: "/races",
-                  search: {
-                    grade: "all",
-                    country: "all",
-                    surface: "all",
-                    track: "all",
-                    owned: "all",
-                    q: "",
-                  },
-                })
-              }
-            >
-              Back to races
-            </Button>
-          )}
-        </div>
-      </div>
+      <RaceControlBar
+        race={race}
+        runners={runners}
+        finished={finished}
+        paused={paused}
+        speed={speed}
+        followTarget={followTarget}
+        anyFinished={anyFinished}
+        allFinished={allFinished}
+        hideUntilAllFinished={hideUntilAllFinished}
+        raceWeather={raceWeather}
+        onNavigateBack={() =>
+          navigate({
+            to: "/races",
+            search: {
+              grade: "all",
+              country: "all",
+              surface: "all",
+              track: "all",
+              owned: "all",
+              q: "",
+            },
+          })
+        }
+        onTogglePause={() => setPaused((p) => !p)}
+        onSetSpeed={setSpeed}
+        onSetFollowTarget={setFollowTarget}
+        onToggleHideResults={() => setHideUntilAllFinished((v) => !v)}
+        onShowAllCards={() => setShowAllCards(true)}
+      />
 
       <div className="relative z-10 p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
         <div>
@@ -474,160 +350,27 @@ function LiveRace() {
             )}
 
             <TabsContent value="splits" className="mt-0 focus-visible:outline-none">
-              <div className="border border-white/10 bg-black/20 p-4 rounded-lg overflow-x-auto">
-                <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-3">
-                  <span className="h-1 w-12 bg-broadcast-accent" />
-                  Live Splits
-                </h3>
-                <table className="w-full text-xs font-mono">
-                  <thead>
-                    <tr className="border-b border-white/10 text-cream/30 uppercase tracking-widest text-[9px]">
-                      <th className="text-left pb-2 pr-3">Horse</th>
-                      {SPLIT_LABELS.map((label) => (
-                        <th key={label} className="text-right pb-2 px-2">
-                          {label}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5">
-                    {runners.map((r) => {
-                      const horse = localHorseMap.get(r.horseId);
-                      const crossings = liveSplits.get(r.horseId) ?? [];
-                      const markerFractions = [0.25, 0.5, 0.75, 1.0];
-                      return (
-                        <tr key={r.horseId} className="hover:bg-white/[0.02]">
-                          <td
-                            className={cn(
-                              "py-2 pr-3 font-bold truncate max-w-[120px]",
-                              r.owned ? "text-success" : "text-cream/80",
-                            )}
-                          >
-                            {r.name}
-                          </td>
-                          {markerFractions.map((frac, mi) => {
-                            const elapsed = crossings[mi];
-                            const target = horse
-                              ? getTargetSplitTime(horse, race.distance, frac, calibratedPars ?? {})
-                              : null;
-                            if (elapsed == null) {
-                              return (
-                                <td key={mi} className="text-right px-2 py-2 text-cream/20">
-                                  —
-                                </td>
-                              );
-                            }
-                            const delta = target != null ? elapsed - target : null;
-                            return (
-                              <td key={mi} className="text-right px-2 py-2 tabular-nums">
-                                <div className="text-cream/80">{formatSplitTime(elapsed)}</div>
-                                {delta != null && (
-                                  <div
-                                    className={cn(
-                                      "text-[9px]",
-                                      delta < 0 ? "text-green-400" : "text-red-400",
-                                    )}
-                                  >
-                                    {delta < 0 ? "" : "+"}
-                                    {delta.toFixed(2)}s
-                                  </div>
-                                )}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              <LiveSplitsTable
+                runners={runners}
+                distance={race.distance}
+                liveSplits={liveSplits}
+                localHorseMap={localHorseMap}
+                calibratedPars={calibratedPars}
+              />
             </TabsContent>
           </Tabs>
         </div>
-        <div className="bg-broadcast-marquee rounded-lg p-3 space-y-3 backdrop-blur-md border border-white/5">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Live order</p>
-            <div className="grid grid-cols-2 gap-2">
-              <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-                <SelectTrigger className="h-8 text-xs bg-muted border-border text-foreground">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="position">Position</SelectItem>
-                  <SelectItem value="beyer">Proj. Beyer</SelectItem>
-                  <SelectItem value="velocity">Velocity</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
-                <SelectTrigger className="h-8 text-xs bg-muted border-border text-foreground">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All runners</SelectItem>
-                  <SelectItem value="owned">My horses</SelectItem>
-                  <SelectItem value="top5">Top 5</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="mt-2">
-              <label className="text-[10px] uppercase tracking-wide text-muted-foreground flex justify-between items-center mb-1">
-                <span>
-                  Min <JargonTooltip term="Beyer">Beyer</JargonTooltip>
-                </span>
-                <span className="tabular-nums font-bold text-broadcast-accent">{minBeyer}</span>
-              </label>
-              <Slider
-                min={0}
-                max={120}
-                step={5}
-                value={[minBeyer]}
-                onValueChange={(vals) => setMinBeyer(vals[0])}
-                className="py-2"
-              />
-            </div>
-          </div>
-          <div className="space-y-1">
-            {sorted.map(({ r, beyer }) => (
-              <div
-                key={r.horseId}
-                className="flex items-center gap-2 text-sm py-1 border-b border-white/5 last:border-0"
-              >
-                <span className="w-5 text-muted-foreground tabular-nums">
-                  {positionRank.get(r.horseId)}
-                </span>
-                <div
-                  className="h-4 w-4 rounded-full border border-white/40 shadow-sm"
-                  style={{ backgroundColor: r.silk }}
-                />
-                <Link
-                  to="/stable/$horseId"
-                  params={{ horseId: r.horseId }}
-                  className={`flex-1 truncate hover:underline ${r.owned ? "font-bold text-broadcast-accent" : ""}`}
-                >
-                  {r.name}
-                </Link>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-foreground tabular-nums font-bold">
-                  {runnerOdds.get(r.horseId) ?? "N/A"}
-                </span>
-                {beyer !== null && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-broadcast-accent/20 text-broadcast-accent tabular-nums font-bold">
-                    {beyer}
-                  </span>
-                )}
-                {r.finishTime !== null && (
-                  <span className="text-xs text-muted-foreground tabular-nums">
-                    {r.finishTime.toFixed(1)}s
-                  </span>
-                )}
-              </div>
-            ))}
-            {sorted.length === 0 && (
-              <p className="text-xs text-muted-foreground italic py-2">
-                No runners match the current filters.
-              </p>
-            )}
-          </div>
-        </div>
+        <Leaderboard
+          sorted={sorted}
+          positionRank={positionRank}
+          runnerOdds={runnerOdds}
+          filter={filter}
+          sortBy={sortBy}
+          minBeyer={minBeyer}
+          onFilterChange={setFilter}
+          onSortByChange={setSortBy}
+          onMinBeyerChange={setMinBeyer}
+        />
       </div>
 
       {finished && (
@@ -671,239 +414,3 @@ function LiveRace() {
   );
 }
 
-function Track({
-  runners,
-  distance,
-  tick,
-  surface,
-  weather,
-  followTarget,
-  paused,
-  subjectHorseId,
-}: {
-  runners: Runner[];
-  distance: number;
-  tick: number;
-  surface?: string;
-  weather?: any;
-  followTarget?: string | null;
-  paused?: boolean;
-  subjectHorseId?: string | null;
-}) {
-  const laneHeight = 36;
-  const trackHeight = runners.length * laneHeight + 20;
-  const trackBg = getTrackBackground(surface);
-  const viewportWidth = distance * 0.6;
-
-  const cameraPos = (() => {
-    if (followTarget) {
-      const target = runners.find((r) => r.horseId === followTarget);
-      if (target) {
-        return Math.max(0, Math.min(distance - viewportWidth, target.position - viewportWidth / 2));
-      }
-    }
-    const leader = runners.reduce((max, r) => (r.position > max.position ? r : max), runners[0]);
-    return Math.max(0, Math.min(distance - viewportWidth, leader.position - viewportWidth / 2));
-  })();
-
-  const leaderPos = runners.reduce((max, r) => Math.max(max, r.position), 0);
-  const finishActive = leaderPos > distance - 100 && leaderPos < distance;
-  const trackOffset = -(cameraPos % 512);
-
-  return (
-    <div
-      className="relative rounded-lg overflow-hidden border border-white/10 shadow-2xl"
-      style={{
-        height: trackHeight,
-        backgroundColor: "var(--broadcast-track)",
-      }}
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: trackBg,
-          backgroundSize: "auto 100%",
-          backgroundRepeat: "repeat-x",
-          backgroundPosition: `${trackOffset}px 0`,
-          willChange: "background-position",
-        }}
-      />
-
-      {runners.map((_, i) => (
-        <div
-          key={i}
-          className="absolute left-0 right-0 border-b border-white/5"
-          style={{ top: 10 + i * laneHeight + laneHeight }}
-        />
-      ))}
-
-      {Array.from({ length: Math.ceil(distance / 200) }, (_, i) => {
-        const markerPos = i * 200;
-        const relativePos = markerPos - cameraPos;
-        const screenPct = (relativePos / viewportWidth) * 100;
-        if (screenPct < -10 || screenPct > 110) return null;
-        return (
-          <div
-            key={i}
-            className="absolute top-0 bottom-0 w-px bg-border"
-            style={{ left: `${screenPct}%` }}
-          >
-            <span className="absolute -top-4 left-1 text-[10px] text-muted-foreground tabular-nums">
-              {markerPos}m
-            </span>
-          </div>
-        );
-      })}
-
-      <div
-        className={`absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_10px_white] ${finishActive ? "finish-line-active" : ""}`}
-        style={{
-          left: `${((distance - cameraPos) / viewportWidth) * 100}%`,
-        }}
-      />
-
-      {runners.map((r, i) => {
-        const relativePos = r.position - cameraPos;
-        const screenPct = (relativePos / viewportWidth) * 100;
-        if (screenPct < -10 || screenPct > 110) return null;
-
-        const isRunning = tick > 0 && !paused && r.finishTime === null;
-        const isSubject = r.horseId === subjectHorseId;
-
-        return (
-          <div
-            key={r.horseId}
-            className="absolute transition-none"
-            style={{
-              left: `${screenPct}%`,
-              top: 10 + i * laneHeight,
-              zIndex: Math.round(r.position),
-            }}
-          >
-            <div className="relative">
-              {isSubject && (
-                <div className="absolute inset-0 -m-4 rounded-full bg-broadcast-accent/30 animate-ping pointer-events-none" />
-              )}
-              {isSubject && (
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-broadcast-accent text-black text-[10px] font-black uppercase rounded shadow-lg animate-in zoom-in-50 fade-in duration-300">
-                  Subject
-                </div>
-              )}
-
-              {/* Tactical Indicators */}
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-1 items-center">
-                {r.tactics === "rail" && r.lane === 0 && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-cyan-500/80 text-[8px] font-black text-white flex items-center gap-1">
-                    RAIL
-                  </div>
-                )}
-                {r.tactics === "outside" && r.lane > 1 && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-orange-500/80 text-[8px] font-black text-white flex items-center gap-1">
-                    OUTSIDE
-                  </div>
-                )}
-                {r.tactics === "save" && r.draftingHorseId && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-emerald-500/80 text-[8px] font-black text-white flex items-center gap-1">
-                    SAVING
-                  </div>
-                )}
-                {r.tactics === "lead" && r.position >= leaderPos - 2 && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-gold/80 text-[8px] font-black text-t950 flex items-center gap-1">
-                    LEADING
-                  </div>
-                )}
-                {r.tactics === "late_kick" && r.position / distance > 0.85 && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-red-600 text-[8px] font-black text-white flex items-center gap-1 animate-pulse">
-                    KICKING
-                  </div>
-                )}
-                {r.draftingHorseId && !r.tactics && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-muted text-[8px] font-bold text-foreground flex items-center gap-1 animate-pulse">
-                    <span className="h-1 w-1 rounded-full bg-foreground" />
-                    Drafting
-                  </div>
-                )}
-                {r.velocity > 18.5 && (
-                  <div className="px-1.5 py-0.5 rounded-full bg-warning/80 text-[8px] font-bold text-warning-foreground flex items-center gap-1 animate-bounce">
-                    <span className="h-1 w-1 rounded-full bg-warning-foreground" />
-                    Flying
-                  </div>
-                )}
-              </div>
-
-              <HorseSprite
-                runner={r}
-                isRunning={isRunning}
-                spriteUrl={getSpriteUrl(r.coatColor)}
-                isAnimated={isAnimatedSprite(r.coatColor)}
-              />
-
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center">
-                <span
-                  className={`text-[10px] whitespace-nowrap drop-shadow-md tabular-nums ${r.owned ? "font-bold text-broadcast-accent" : "text-foreground"}`}
-                >
-                  {r.name}
-                </span>
-                {r.owned && (
-                  <div className="text-[8px] font-black text-broadcast-accent uppercase tracking-tighter">
-                    Owner
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function HorseSprite({
-  runner,
-  isRunning,
-  spriteUrl,
-  isAnimated,
-}: {
-  runner: Runner;
-  isRunning: boolean;
-  spriteUrl?: string;
-  isAnimated: boolean;
-}) {
-  const prefersReducedMotion =
-    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const animationDuration = getAnimationDuration(runner.velocity);
-
-  if (isAnimated && spriteUrl) {
-    return (
-      <div
-        className={`horse-sprite ${isRunning && !prefersReducedMotion ? "horse-sprite-animated" : ""}`}
-        style={{
-          backgroundImage: `url(${spriteUrl})`,
-          animationDuration: isRunning ? animationDuration : "0.6s",
-        }}
-      />
-    );
-  }
-
-  if (spriteUrl) {
-    return (
-      <div
-        className={`horse-sprite horse-sprite-static ${isRunning && !prefersReducedMotion ? "horse-sprite-bob" : ""}`}
-        style={{
-          backgroundImage: `url(${spriteUrl})`,
-        }}
-      />
-    );
-  }
-
-  return (
-    <div
-      className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow"
-      style={{
-        backgroundColor: runner.silk,
-        animation:
-          isRunning && !prefersReducedMotion ? "pulse 0.5s ease-in-out infinite" : undefined,
-      }}
-    />
-  );
-}

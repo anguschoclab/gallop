@@ -38,7 +38,7 @@ export function useRaceFilters(races: Race[], day: number, filters: RaceFilters)
         return true;
       })
       .filter((r: Race) =>
-        country === "all" ? true : getCountry(r.graded?.trackId ?? "") === country,
+        country === "all" ? true : getCountry(r.graded?.track ?? "") === country,
       )
       .filter((r: Race) => (surface === "all" ? true : r.surface === surface))
       .filter((r: Race) => (track === "all" ? true : r.graded?.track === track))
@@ -57,7 +57,7 @@ export function useRaceFilters(races: Race[], day: number, filters: RaceFilters)
   const filterOptions = useMemo(() => {
     const gradedRaces = races.filter((r: Race) => r.graded);
     const uniqueCountries = Array.from(
-      new Set(gradedRaces.map((r: Race) => getCountry(r.graded!.trackId))),
+      new Set(gradedRaces.map((r: Race) => getCountry(r.graded!.track))),
     )
       .filter(Boolean)
       .sort() as string[];
