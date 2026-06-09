@@ -43,6 +43,10 @@ export type { Expense, ExpenseCategory } from "@/core/expenses";
 export type { RaceClass } from "@/core/race/sharedTypes";
 export type { PedigreeNode as Pedigree } from "@/core/breeding/types";
 export type { Track } from "@/data/tracks";
+export type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+export type { ApprenticeProgression } from "@/core/apprentice/apprenticeTypes";
+export type { StewardsInquiry, InquiryType, InquiryOutcome } from "@/core/stewards/stewardTypes";
+export type { InsurancePolicy, InsurancePolicyType } from "@/core/insurance/insuranceTypes";
 
 // Type alias for facilities
 export type FacilityState = Record<string, any>;

@@ -105,6 +105,8 @@ const PERSISTED_KEYS: (keyof GameState)[] = [
   "weather" as keyof GameState,
   // Inbox / Message Centre — must persist so unread counts survive reloads
   "inbox" as keyof GameState,
+  // Stewards inquiry system
+  "stewardsInquiries" as keyof GameState,
 ];
 
 /**
@@ -243,6 +245,7 @@ export const useGame = create<StoreType>()(
       usedHorseNames: [],
       usedJockeyNames: [],
       reservedHorseNames: [],
+      stewardsInquiries: [],
       staffPool: [],
       hiredStaff: [],
       npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },

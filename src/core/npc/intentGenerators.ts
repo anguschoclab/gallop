@@ -110,7 +110,7 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
   // Pre-index entries for faster lookup in loops
   const raceEntrySets = new Map<string, Set<string>>();
   for (const race of upcomingRaces) {
-    raceEntrySets.set(race.id, new Set(race.entries.map((e) => e.horseId)));
+    raceEntrySets.set(race.id, new Set(race.entries.map((e: { horseId: string }) => e.horseId)));
   }
 
   // Generate intents for each NPC stable
@@ -315,16 +315,10 @@ function generateNpcRaceEntryIntents(
       const suitability = calculateStrategicEntryScore(raceEntryAI, horse, race, stable, day);
 
       if (suitability > 60) {
-        // Calculate optimal tactics for this horse in this race
-        const jockey = (state.jockeys || [])[0]; // Use first jockey for tactics calculation
+        // Calculate optimal jockey instructions for this horse in this race
+        const jockey = (state.jockeys || [])[0]; // Use first jockey for instructions calculation
         if (!jockey) continue;
-        const tactics = calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable) as
-          | "lead"
-          | "rail"
-          | "outside"
-          | "save"
-          | "late_kick"
-          | "default";
+        const jockeyInstructions = calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable);
 
         intents.push({
           id: generateUUID(),
@@ -336,7 +330,7 @@ function generateNpcRaceEntryIntents(
           type: "race_entry",
           raceId: race.id,
           horseId: horse.id,
-          tactics,
+          jockeyInstructions,
         });
       }
     }

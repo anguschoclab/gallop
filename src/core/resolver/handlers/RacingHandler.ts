@@ -29,7 +29,7 @@ type ImpactHandlerFunction = (
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
-    const { raceId, horseId, jockeyId, weight, tactics, bumpEntryHorseId } = impactAny;
+    const { raceId, horseId, jockeyId, weight, jockeyInstructions, bumpEntryHorseId } = impactAny;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
     if (race && horse) {
@@ -54,7 +54,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         npc: !!horse.stableId,
         jockeyId,
         weight,
-        tactics,
+        jockeyInstructions,
       });
     }
   },
@@ -93,6 +93,16 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       if (stableAffinity !== undefined) jockey.stableAffinity = stableAffinity;
       if (isApprentice !== undefined) jockey.isApprentice = isApprentice;
       if (loyalty !== undefined) jockey.loyalty = loyalty;
+      // Ensure apprentice progression is initialized for apprentices
+      if (jockey.isApprentice && !jockey.apprenticeProgression) {
+        jockey.apprenticeProgression = {
+          jockeyId: jockey.id,
+          status: "apprentice",
+          careerWins: jockey.careerWins,
+          apprenticeWins: 0,
+          startDate: draft.day,
+        };
+      }
     }
   },
 
@@ -120,13 +130,21 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   jockey_stats: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
-    const { jockeyId, careerStarts, careerWins, fame } = impactAny;
+    const { jockeyId, careerStarts, careerWins, fame, apprenticeProgression } = impactAny;
     const jockey =
       lookupMaps?.jockeyMap.get(jockeyId) || draft.jockeys?.find((j) => j.id === jockeyId);
     if (jockey) {
       jockey.careerStarts = careerStarts;
       jockey.careerWins = careerWins;
       jockey.fame = fame;
+      // Update apprentice progression if provided
+      if (apprenticeProgression !== undefined) {
+        jockey.apprenticeProgression = apprenticeProgression;
+        // Graduate apprentice if threshold reached
+        if (apprenticeProgression.status !== "apprentice") {
+          jockey.isApprentice = false;
+        }
+      }
     }
   },
 
@@ -204,13 +222,30 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
   tactics: (draft, impact, lookupMaps) => {
     const impactAny = impact as any;
-    const { raceId, horseId, tactics } = impactAny;
+    const { raceId, horseId, jockeyInstructions } = impactAny;
     const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
     if (race) {
       const entry = race.entries.find((e: any) => e.horseId === horseId);
       if (entry) {
-        entry.tactics = tactics;
+        entry.jockeyInstructions = jockeyInstructions;
       }
+    }
+  },
+
+  race_result_adjustment: (draft, impact, lookupMaps) => {
+    const impactAny = impact as any;
+    const { raceId, adjustedResults } = impactAny;
+    const race = lookupMaps?.raceMap.get(raceId) || draft.races.find((r) => r.id === raceId);
+    if (race && race.result) {
+      // Apply adjusted results after stewards DQ
+      for (const adj of adjustedResults) {
+        const resultEntry = race.result.find((r: any) => r.horseId === adj.horseId);
+        if (resultEntry) {
+          resultEntry.position = adj.position;
+        }
+      }
+      // Re-sort results by position
+      race.result.sort((a: any, b: any) => a.position - b.position);
     }
   },
 
@@ -240,6 +275,7 @@ export class RacingHandler implements ImpactHandler {
       "claiming",
       "triple_crown_progress",
       "tactics",
+      "race_result_adjustment",
       "jockey_affinity_gain",
     ].includes(type);
   }

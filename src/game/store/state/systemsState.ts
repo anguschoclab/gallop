@@ -13,14 +13,10 @@
 // Systems State - Optional subsystems and advanced features
 // Includes NPC stables, jockeys, awards, campaigns, leaderboards, facilities, and pending intents
 
-import type {
-  Stable,
-  ScoutReport,
-  Jockey,
-  HorseCampaign,
-  TripleCrownProgress,
-  PlayerProfile,
-} from "../types";
+import type { Stable, PlayerProfile } from "@/core/stable/types";
+import type { ScoutReport } from "@/core/market/types";
+import type { Jockey } from "@/core/jockey/types";
+import type { HorseCampaign, TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { RegionalAward, AwardRegion } from "@/game/awards/types";
 import type {
@@ -43,6 +39,7 @@ import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { HallOfFameEntry, TrackRecord, FounderRecord } from "@/core/history/historyTypes";
 import type { ReservedNameEntry } from "@/core/horse/naming/reservedNames";
+import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import { createFacility, createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 import { getReputationTier } from "@/core/reputation";
@@ -169,6 +166,10 @@ export interface SystemsState {
   /** Names reserved due to deceased horses (25-year reservation) */
   reservedHorseNames: ReservedNameEntry[];
 
+  // Stewards inquiry system
+  /** Active and resolved stewards inquiries */
+  stewardsInquiries: StewardsInquiry[];
+
   // Staff system
   /** Pool of staff available for hire */
   staffPool: StaffMember[];
@@ -234,6 +235,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
       usedHorseNames: [],
       usedJockeyNames: [],
       reservedHorseNames: [],
+      stewardsInquiries: [],
       staffPool: [],
       hiredStaff: [],
     };
@@ -276,6 +278,7 @@ export function createDefaultSystemsState(options?: NewGameOptions): SystemsStat
     usedHorseNames: [],
     usedJockeyNames: [],
     reservedHorseNames: [],
+    stewardsInquiries: [],
     staffPool: [],
     hiredStaff: [],
   };

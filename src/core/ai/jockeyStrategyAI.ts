@@ -14,6 +14,7 @@
  */
 
 import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import { getPersonalityAIState, recordOutcome, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,
@@ -58,9 +59,9 @@ export function createJockeyStrategyAIState(stable: Stable): JockeyStrategyAISta
 }
 
 /**
- * Calculate optimal tactics for a horse in a race.
+ * Calculate optimal jockey instructions for a horse in a race.
  *
- * Determines the optimal racing tactics based on horse running style,
+ * Determines the optimal racing strategy based on horse running style,
  * personality, jockey skill, and energy.
  *
  * @param aiState - Current jockey strategy AI state
@@ -68,7 +69,7 @@ export function createJockeyStrategyAIState(stable: Stable): JockeyStrategyAISta
  * @param race - The race being run
  * @param jockey - The jockey riding the horse
  * @param stable - The stable making the decision
- * @returns Optimal tactics string (lead, rail, save, late_kick, outside, default)
+ * @returns Optimal JockeyInstructions object
  */
 export function calculateOptimalTactics(
   aiState: JockeyStrategyAIState,
@@ -76,17 +77,27 @@ export function calculateOptimalTactics(
   race: Race,
   jockey: Jockey,
   stable: Stable,
-): "lead" | "rail" | "outside" | "save" | "late_kick" | "default" {
+): JockeyInstructions {
   const personality = aiState.personalityState.personality;
 
   // Jockey competency check - more skilled jockeys are better at riding to strength
   const isSkilled = (jockey.stats.positioning + jockey.stats.pacing) / 2 > 70;
 
+  // Calculate aggressiveness
+  const aggressiveness = Math.round(calculateJockeyAggressiveness(aiState, horse, race, jockey, stable) * 100);
+
   // Dynamic Form: Check recoveryPoints - adjust tactics for fatigued horses
   const recoveryPoints = horse.recoveryPoints ?? 100;
   if (recoveryPoints < 50) {
     // Horse is fatigued - use conservative tactics to preserve energy
-    return "save";
+    return {
+      horseId: horse.id,
+      raceId: race.id,
+      ridingStyle: "closer",
+      earlyPosition: "drop_back",
+      moveTiming: "late",
+      aggressiveness: Math.max(20, aggressiveness - 20),
+    };
   }
 
   // Dynamic Form: Assess bounce risk and adjust tactics
@@ -109,51 +120,122 @@ export function calculateOptimalTactics(
 
   // If bounce risk is detected, use more conservative tactics
   if (bounceRisk) {
-    if (horse.runningStyle === "E") return "rail"; // Still try to lead but more conservatively
-    if (horse.runningStyle === "S") return "save"; // Save more for late kick
-    return "save"; // Default to save for bounce risk
+    if (horse.runningStyle === "E") {
+      return {
+        horseId: horse.id,
+        raceId: race.id,
+        ridingStyle: "front_runner",
+        earlyPosition: "press",
+        moveTiming: "mid",
+        aggressiveness: Math.max(30, aggressiveness - 15),
+      };
+    }
+    return {
+      horseId: horse.id,
+      raceId: race.id,
+      ridingStyle: "closer",
+      earlyPosition: "midpack",
+      moveTiming: "late",
+      aggressiveness: Math.max(20, aggressiveness - 20),
+    };
   }
 
   // Use strategy record to determine tactics based on running style
-  const tacticsCalculator = TACTICS_STRATEGIES[horse.runningStyle];
-  return tacticsCalculator(horse, race, jockey, personality, isSkilled);
+  const instructionsCalculator = TACTICS_STRATEGIES[horse.runningStyle];
+  return instructionsCalculator(horse, race, jockey, personality, isSkilled, aggressiveness);
 }
 
 /**
- * Type for tactics calculation function.
+ * Type for jockey instructions calculation function.
  */
-type TacticsCalculator = (
+type InstructionsCalculator = (
   horse: Horse,
   race: Race,
   jockey: Jockey,
   personality: Stable["personality"],
   isSkilled: boolean,
-) => "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+  aggressiveness: number,
+) => JockeyInstructions;
 
 /**
- * Strategy record for tactics calculation based on running style.
+ * Strategy record for jockey instructions calculation based on running style.
  */
-const TACTICS_STRATEGIES: Record<RunningStyle, TacticsCalculator> = {
-  E: (horse, race, jockey, personality, isSkilled) => {
-    // Front runners want to lead or be on the rail
-    if (personality === "aggressive" || (isSkilled && horse.energy > 80)) return "lead";
-    return "rail";
+const TACTICS_STRATEGIES: Record<RunningStyle, InstructionsCalculator> = {
+  E: (horse, race, jockey, personality, isSkilled, aggressiveness) => {
+    // Front runners want to lead or press
+    const shouldLead = personality === "aggressive" || (isSkilled && horse.energy > 80);
+    return {
+      horseId: horse.id,
+      raceId: race.id,
+      ridingStyle: "front_runner",
+      earlyPosition: shouldLead ? "lead" : "press",
+      moveTiming: "early",
+      aggressiveness: shouldLead ? Math.min(100, aggressiveness + 15) : aggressiveness,
+    };
   },
-  S: (horse, race, jockey, personality, isSkilled) => {
-    // Closers want to save ground or have a late kick
-    if (race.distance >= 2000 || isSkilled) return "late_kick";
-    return "save";
+  S: (horse, race, jockey, personality, isSkilled, aggressiveness) => {
+    // Closers want to drop back and make a late move
+    const isLateKick = race.distance >= 2000 || isSkilled;
+    return {
+      horseId: horse.id,
+      raceId: race.id,
+      ridingStyle: "closer",
+      earlyPosition: "drop_back",
+      moveTiming: isLateKick ? "late" : "mid",
+      aggressiveness: isLateKick ? Math.min(100, aggressiveness + 10) : aggressiveness,
+    };
   },
-  EP: (horse, race, jockey, personality, isSkilled) => {
-    // Early pressers want the rail to stay close to the lead efficiently
-    if (personality === "conservative") return "save";
-    return "rail";
+  EP: (horse, race, jockey, personality, isSkilled, aggressiveness) => {
+    // Early pressers want to stay close to the lead
+    if (personality === "conservative") {
+      return {
+        horseId: horse.id,
+        raceId: race.id,
+        ridingStyle: "stalker",
+        earlyPosition: "midpack",
+        moveTiming: "mid",
+        aggressiveness: Math.max(20, aggressiveness - 15),
+      };
+    }
+    return {
+      horseId: horse.id,
+      raceId: race.id,
+      ridingStyle: "stalker",
+      earlyPosition: "press",
+      moveTiming: "early",
+      aggressiveness,
+    };
   },
-  P: (horse, race, jockey, personality, isSkilled) => {
-    // Pressers are versatile; outside often helps avoid traffic if skilled
-    if (isSkilled && personality !== "conservative") return "outside";
-    if (personality === "conservative") return "save";
-    return "default";
+  P: (horse, race, jockey, personality, isSkilled, aggressiveness) => {
+    // Pressers are versatile; stalkers often helps avoid traffic if skilled
+    if (isSkilled && personality !== "conservative") {
+      return {
+        horseId: horse.id,
+        raceId: race.id,
+        ridingStyle: "stalker",
+        earlyPosition: "midpack",
+        moveTiming: "mid",
+        aggressiveness: Math.min(100, aggressiveness + 10),
+      };
+    }
+    if (personality === "conservative") {
+      return {
+        horseId: horse.id,
+        raceId: race.id,
+        ridingStyle: "tactical",
+        earlyPosition: "midpack",
+        moveTiming: "mid",
+        aggressiveness: Math.max(20, aggressiveness - 15),
+      };
+    }
+    return {
+      horseId: horse.id,
+      raceId: race.id,
+      ridingStyle: "tactical",
+      earlyPosition: "press",
+      moveTiming: "mid",
+      aggressiveness,
+    };
   },
 };
 

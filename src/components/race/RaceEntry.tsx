@@ -22,6 +22,8 @@ import { TacticsSelectionStep } from "./TacticsSelectionStep";
 import { ReviewStep } from "./ReviewStep";
 import { ClaimingStep } from "./ClaimingStep";
 import { RaceEntryHeader } from "./RaceEntryHeader";
+import { buildInstructions, type PresetId } from "./TacticOptions";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 
 interface RaceEntryProps {
   race: Race;
@@ -40,9 +42,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [selectedHorseId, setSelectedHorseId] = useState<string | null>(null);
   const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
-  const [selectedTactics, setSelectedTactics] = useState<
-    "lead" | "rail" | "outside" | "save" | "late_kick" | "default"
-  >("default");
+  const [selectedPreset, setSelectedPreset] = useState<PresetId>("default");
   const [wantToClaim, setWantToClaim] = useState(false);
 
   const allHorses = useGameWithShallow((s) => s.horses);
@@ -107,7 +107,12 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
         : enterRace(race.id, selectedHorseId);
       if (res.ok) {
         assignJockey(race.id, selectedHorseId, selectedJockeyId);
-        setRaceTactics(race.id, selectedHorseId, selectedTactics);
+        const instructions = buildInstructions(
+          { id: selectedPreset, name: "", desc: "", instructions: { horseId: selectedHorseId, raceId: race.id, ridingStyle: "tactical", earlyPosition: "midpack", moveTiming: "mid", aggressiveness: 50 } },
+          selectedHorseId,
+          race.id,
+        );
+        setRaceTactics(race.id, selectedHorseId, instructions);
 
         // Submit claim if selected (old-style claimingPrice)
         if (wantToClaim && race.claimingPrice && !isNewClaimingRace) {
@@ -187,8 +192,8 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
 
           {step === 3 && selectedHorse && (
             <TacticsSelectionStep
-              selectedTactics={selectedTactics}
-              onSelect={setSelectedTactics}
+              selectedPreset={selectedPreset}
+              onSelect={setSelectedPreset}
             />
           )}
 
@@ -197,7 +202,11 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               race={race}
               selectedHorse={selectedHorse}
               selectedJockey={selectedJockey}
-              selectedTactics={selectedTactics}
+              selectedInstructions={buildInstructions(
+                { id: selectedPreset, name: "", desc: "", instructions: { horseId: selectedHorse.id, raceId: race.id, ridingStyle: "tactical", earlyPosition: "midpack", moveTiming: "mid", aggressiveness: 50 } },
+                selectedHorse.id,
+                race.id,
+              )}
               isHorseQualifiedForRace={isHorseQualifiedForRace}
               isNewClaimingRace={isNewClaimingRace}
               claimingPrice={claimingPrice}

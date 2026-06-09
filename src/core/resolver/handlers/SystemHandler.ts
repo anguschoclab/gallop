@@ -253,6 +253,64 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
       }
     }
   },
+
+  insurance_purchase: (draft, impact, lookupMaps) => {
+    const impactAny = impact as any;
+    const { horseId, policy } = impactAny;
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    if (horse) {
+      horse.insurancePolicy = policy;
+    }
+  },
+
+  insurance_cancel: (draft, impact, lookupMaps) => {
+    const impactAny = impact as any;
+    const { horseId } = impactAny;
+    const horse = lookupMaps?.horseMap.get(horseId) || draft.horses.find((h) => h.id === horseId);
+    if (horse) {
+      delete (horse as any).insurancePolicy;
+    }
+  },
+
+  insurance_payout: (draft, impact) => {
+    const impactAny = impact as any;
+    const { amount } = impactAny;
+    draft.cash += amount;
+  },
+
+  stewards_inquiry: (draft, impact) => {
+    const impactAny = impact as any;
+    const { inquiry } = impactAny;
+    if (!draft.stewardsInquiries) draft.stewardsInquiries = [];
+    draft.stewardsInquiries.push(inquiry);
+    // Also attach to the race
+    const race = draft.races.find((r) => r.id === inquiry.raceId);
+    if (race) {
+      if (!race.inquiries) race.inquiries = [];
+      race.inquiries.push(inquiry);
+    }
+  },
+
+  stewards_resolution: (draft, impact, lookupMaps) => {
+    const impactAny = impact as any;
+    const { inquiryId, outcome, fineAmount, suspensionDays } = impactAny;
+    const inquiry = draft.stewardsInquiries?.find((i) => i.id === inquiryId);
+    if (inquiry) {
+      inquiry.status = "resolved";
+      inquiry.outcome = outcome;
+      inquiry.fineAmount = fineAmount;
+      inquiry.suspensionDays = suspensionDays;
+      inquiry.resolvedDay = draft.day;
+
+      // Apply jockey suspension if any
+      if (suspensionDays && inquiry.accusedJockeyId) {
+        const jockey = draft.jockeys?.find((j) => j.id === inquiry.accusedJockeyId);
+        if (jockey) {
+          jockey.suspendedUntil = draft.day + suspensionDays;
+        }
+      }
+    }
+  },
 };
 
 export class SystemHandler implements ImpactHandler {
@@ -277,6 +335,11 @@ export class SystemHandler implements ImpactHandler {
       "track_record",
       "name_reservation",
       "trainer_stats",
+      "insurance_purchase",
+      "insurance_cancel",
+      "insurance_payout",
+      "stewards_inquiry",
+      "stewards_resolution",
     ].includes(type);
   }
 

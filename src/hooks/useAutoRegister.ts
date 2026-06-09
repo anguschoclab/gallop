@@ -4,6 +4,7 @@ import { calculateAutoRegisterEntries } from "@/game/campaign/autoRegister";
 import { useHorses, useCash, useDay, useRaces } from "@/hooks/game/useCoreState";
 import { useJockeys } from "@/hooks/game/useSystemsState";
 import { toast } from "sonner";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 
 export function useAutoRegister() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -56,7 +57,15 @@ export function useAutoRegister() {
         }
       }
 
-      setRaceTactics(entry.raceId, entry.horseId, "default");
+      const defaultInstructions: JockeyInstructions = {
+        horseId: entry.horseId,
+        raceId: entry.raceId,
+        ridingStyle: "tactical",
+        earlyPosition: "midpack",
+        moveTiming: "mid",
+        aggressiveness: 50,
+      };
+      setRaceTactics(entry.raceId, entry.horseId, defaultInstructions);
       successful.push(entry.horseName);
     }
 

@@ -10,6 +10,8 @@
 
 import { RaceClass } from "./sharedTypes";
 import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 
 export type ClaimingPrice =
   | 2000
@@ -62,8 +64,9 @@ export type Race = {
     jockeyId?: string;
     weight?: number;
     withdrawnFromClaiming?: boolean;
-    tactics?: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+    jockeyInstructions?: JockeyInstructions;
   }[];
+  inquiries?: StewardsInquiry[];
   resolved: boolean;
   result?: { horseId: string; position: number; time: number }[];
   snapshots?: RaceSnapshot[];

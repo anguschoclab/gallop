@@ -12,6 +12,9 @@
 import type { Impact } from "./base";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 import type { RaceClass } from "@/core/race/sharedTypes";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import type { InsurancePolicy } from "@/core/insurance/insuranceTypes";
+import type { StewardsInquiry, InquiryOutcome } from "@/core/stewards/stewardTypes";
 
 // Race entry impact
 export interface RaceEntryImpact extends Impact {
@@ -23,6 +26,7 @@ export interface RaceEntryImpact extends Impact {
   entryFee: number;
   ridingFee?: number;
   bumpEntryHorseId?: string; // horseId to splice out before adding new entry
+  jockeyInstructions?: JockeyInstructions;
   reason: string;
 }
 
@@ -94,7 +98,56 @@ export interface TacticsImpact extends Impact {
   type: "tactics";
   raceId: string;
   horseId: string;
-  tactics: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+  jockeyInstructions: JockeyInstructions;
+  reason: string;
+}
+
+// Insurance purchase impact
+export interface InsurancePurchaseImpact extends Impact {
+  type: "insurance_purchase";
+  horseId: string;
+  policy: InsurancePolicy;
+  reason: string;
+}
+
+// Insurance cancel impact
+export interface InsuranceCancelImpact extends Impact {
+  type: "insurance_cancel";
+  horseId: string;
+  reason: string;
+}
+
+// Insurance payout impact
+export interface InsurancePayoutImpact extends Impact {
+  type: "insurance_payout";
+  horseId: string;
+  amount: number;
+  reason: string;
+}
+
+// Stewards inquiry impact
+export interface StewardsInquiryImpact extends Impact {
+  type: "stewards_inquiry";
+  inquiry: StewardsInquiry;
+  reason: string;
+}
+
+// Stewards resolution impact
+export interface StewardsResolutionImpact extends Impact {
+  type: "stewards_resolution";
+  inquiryId: string;
+  outcome: InquiryOutcome;
+  fineAmount?: number;
+  suspensionDays?: number;
+  reason: string;
+}
+
+// Race result adjustment impact (post-DQ re-ranking)
+export interface RaceResultAdjustmentImpact extends Impact {
+  type: "race_result_adjustment";
+  raceId: string;
+  originalResults: { horseId: string; position: number; time: number }[];
+  adjustedResults: { horseId: string; position: number; time: number }[];
   reason: string;
 }
 
@@ -125,4 +178,10 @@ export type RaceImpact =
   | ClaimResolutionImpact
   | TacticsImpact
   | PaceSampleImpact
-  | JockeyFeedbackImpact;
+  | JockeyFeedbackImpact
+  | InsurancePurchaseImpact
+  | InsuranceCancelImpact
+  | InsurancePayoutImpact
+  | StewardsInquiryImpact
+  | StewardsResolutionImpact
+  | RaceResultAdjustmentImpact;

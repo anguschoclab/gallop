@@ -13,6 +13,7 @@ import { formatCurrency } from "@/lib/formatting";
 import { generateUUID } from "@/core/uuid";
 import type { ActionResult, SliceCreator } from "../types";
 import { requireOwned, requireHorse } from "../guards";
+import { createApprenticeProgression } from "@/core/apprentice/apprenticeTypes";
 import {
   JOCKEY_CONTRACT_DAYS,
   JOCKEY_RETAINER_DAYS,

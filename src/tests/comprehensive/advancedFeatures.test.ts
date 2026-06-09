@@ -105,33 +105,47 @@ describe("Advanced Features Integration", () => {
   });
 
   describe("Jockey Tactical UI Expansion", () => {
-    it("should enqueue race tactics as intents", () => {
+    it("should enqueue race instructions as intents", () => {
       const raceId = "race-1";
       const horseId = "horse-1";
-      const tactics = "lead";
+      const instructions = {
+        horseId,
+        raceId,
+        ridingStyle: "front_runner" as const,
+        earlyPosition: "lead" as const,
+        moveTiming: "early" as const,
+        aggressiveness: 75,
+      };
 
-      useGame.getState().setRaceTactics(raceId, horseId, tactics);
+      useGame.getState().setRaceTactics(raceId, horseId, instructions);
 
       const pendingIntents = useGame.getState().pendingIntents;
       const tacticsIntent = pendingIntents?.find(
         (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
       );
-      expect((tacticsIntent as any)?.tactics).toBe(tactics);
+      expect((tacticsIntent as any)?.jockeyInstructions?.ridingStyle).toBe("front_runner");
     });
 
-    it("should support all tactic types", () => {
+    it("should support all riding styles", () => {
       const raceId = "race-1";
       const horseId = "horse-1";
-      const tactics = ["default", "lead", "rail", "outside", "save", "late_kick"] as const;
+      const styles = ["front_runner", "stalker", "closer", "tactical"] as const;
 
-      tactics.forEach((tactic) => {
-        useGame.getState().setRaceTactics(raceId, horseId, tactic);
+      styles.forEach((style) => {
+        useGame.getState().setRaceTactics(raceId, horseId, {
+          horseId,
+          raceId,
+          ridingStyle: style,
+          earlyPosition: "midpack" as const,
+          moveTiming: "mid" as const,
+          aggressiveness: 50,
+        });
         const pendingIntents = useGame.getState().pendingIntents;
         const tacticsIntents = pendingIntents?.filter(
           (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
         );
-        const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
-        expect((latestTactics as any)?.tactics).toBe(tactic);
+        const latest = tacticsIntents?.[tacticsIntents.length - 1];
+        expect((latest as any)?.jockeyInstructions?.ridingStyle).toBe(style);
       });
     });
   });
@@ -183,13 +197,22 @@ describe("Advanced Features Integration", () => {
         lastBeyer: 85,
       };
 
-      useGame.getState().setRaceTactics(raceId, horseId, tactics);
+      const instructions = {
+        horseId,
+        raceId,
+        ridingStyle: "closer" as const,
+        earlyPosition: "drop_back" as const,
+        moveTiming: "late" as const,
+        aggressiveness: 40,
+      };
+
+      useGame.getState().setRaceTactics(raceId, horseId, instructions);
 
       const pendingIntents = useGame.getState().pendingIntents;
       const tacticsIntent = pendingIntents?.find(
         (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
       );
-      expect((tacticsIntent as any)?.tactics).toBe(tactics);
+      expect((tacticsIntent as any)?.jockeyInstructions?.ridingStyle).toBe("closer");
       expect(horse.recoveryPoints).toBe(75);
     });
   });
@@ -210,12 +233,20 @@ describe("Advanced Features Integration", () => {
 
       const raceId = "race-1";
       const horseId = "horse-1";
-      const tactics = "rail";
 
       const horse = {
         id: horseId,
         recoveryPoints: 90,
         lastBeyer: 88,
+      };
+
+      const instructions = {
+        horseId,
+        raceId,
+        ridingStyle: "front_runner" as const,
+        earlyPosition: "press" as const,
+        moveTiming: "early" as const,
+        aggressiveness: 80,
       };
 
       useGame.setState({
@@ -224,7 +255,7 @@ describe("Advanced Features Integration", () => {
         },
       });
 
-      useGame.getState().setRaceTactics(raceId, horseId, tactics);
+      useGame.getState().setRaceTactics(raceId, horseId, instructions);
 
       const syndicates = useGame.getState().syndicates;
       const pendingIntents = useGame.getState().pendingIntents;
@@ -235,7 +266,7 @@ describe("Advanced Features Integration", () => {
       if (syndicates) {
         expect(syndicates[stallionId]).toEqual(syndicateData);
       }
-      expect((tacticsIntent as any)?.tactics).toBe(tactics);
+      expect((tacticsIntent as any)?.jockeyInstructions?.ridingStyle).toBe("front_runner");
       expect(horse.recoveryPoints).toBe(90);
     });
   });

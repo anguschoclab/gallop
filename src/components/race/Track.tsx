@@ -124,32 +124,32 @@ export function Track({
 
               {/* Tactical Indicators */}
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-1 items-center">
-                {r.tactics === "rail" && r.lane === 0 && (
+                {r.jockeyInstructions?.ridingStyle === "front_runner" && r.lane === 0 && (
                   <div className="px-1.5 py-0.5 rounded-full bg-cyan-500/80 text-[8px] font-black text-white flex items-center gap-1">
                     RAIL
                   </div>
                 )}
-                {r.tactics === "outside" && r.lane > 1 && (
+                {r.jockeyInstructions?.ridingStyle === "closer" && r.lane > 1 && (
                   <div className="px-1.5 py-0.5 rounded-full bg-orange-500/80 text-[8px] font-black text-white flex items-center gap-1">
                     OUTSIDE
                   </div>
                 )}
-                {r.tactics === "save" && r.draftingHorseId && (
+                {r.jockeyInstructions?.ridingStyle === "closer" && r.jockeyInstructions?.moveTiming === "late" && r.draftingHorseId && (
                   <div className="px-1.5 py-0.5 rounded-full bg-emerald-500/80 text-[8px] font-black text-white flex items-center gap-1">
                     SAVING
                   </div>
                 )}
-                {r.tactics === "lead" && r.position >= leaderPos - 2 && (
+                {r.jockeyInstructions?.earlyPosition === "lead" && r.position >= leaderPos - 2 && (
                   <div className="px-1.5 py-0.5 rounded-full bg-gold/80 text-[8px] font-black text-t950 flex items-center gap-1">
                     LEADING
                   </div>
                 )}
-                {r.tactics === "late_kick" && r.position / distance > 0.85 && (
+                {r.jockeyInstructions?.moveTiming === "late" && r.position / distance > 0.85 && (
                   <div className="px-1.5 py-0.5 rounded-full bg-red-600 text-[8px] font-black text-white flex items-center gap-1 animate-pulse">
                     KICKING
                   </div>
                 )}
-                {r.draftingHorseId && !r.tactics && (
+                {r.draftingHorseId && !r.jockeyInstructions && (
                   <div className="px-1.5 py-0.5 rounded-full bg-muted text-[8px] font-bold text-foreground flex items-center gap-1 animate-pulse">
                     <span className="h-1 w-1 rounded-full bg-foreground" />
                     Drafting

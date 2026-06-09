@@ -36,3 +36,13 @@ export type AnyImpact =
   | CampaignImpact
   | MiscImpact
   | InboxImpact;
+
+// Re-export new insurance and stewards impact types for convenience
+export type {
+  InsurancePurchaseImpact,
+  InsuranceCancelImpact,
+  InsurancePayoutImpact,
+  StewardsInquiryImpact,
+  StewardsResolutionImpact,
+  RaceResultAdjustmentImpact,
+} from "./raceImpacts";

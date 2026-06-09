@@ -12,6 +12,9 @@
 // All player and NPC actions generate intents instead of mutating state directly
 
 import type { Horse, Race, Jockey } from "@/game/types";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import type { InsurancePolicyType } from "@/core/insurance/insuranceTypes";
+import type { InquiryType } from "@/core/stewards/stewardTypes";
 
 // Base intent type
 export interface Intent {
@@ -45,7 +48,7 @@ export interface RaceEntryIntent extends Intent {
   raceId: string;
   horseId: string;
   jockeyId?: string;
-  tactics?: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+  jockeyInstructions?: JockeyInstructions;
   bumpEntryHorseId?: string; // horseId to evict if race is full
 }
 
@@ -258,7 +261,7 @@ export interface TacticsIntent extends Intent {
   type: "tactics";
   raceId: string;
   horseId: string;
-  tactics: "lead" | "rail" | "outside" | "save" | "late_kick" | "default";
+  jockeyInstructions: JockeyInstructions;
 }
 
 // Staff intent
@@ -328,6 +331,29 @@ export interface SyndicateFeeDistributionIntent extends Intent {
   breedingDay: number;
 }
 
+// Insurance purchase intent
+export interface InsurancePurchaseIntent extends Intent {
+  type: "insurance_purchase";
+  horseId: string;
+  policyType: InsurancePolicyType;
+}
+
+// Insurance cancel intent
+export interface InsuranceCancelIntent extends Intent {
+  type: "insurance_cancel";
+  horseId: string;
+}
+
+// Stewards inquiry intent
+export interface StewardsInquiryIntent extends Intent {
+  type: "stewards_inquiry";
+  raceId: string;
+  accusedHorseId: string;
+  inquiryType: InquiryType;
+  description: string;
+  reportingHorseId?: string;
+}
+
 // Union type for all intents
 export type AnyIntent =
   | TrainingIntent
@@ -365,4 +391,7 @@ export type AnyIntent =
   | SyndicateCreationIntent
   | SharePurchaseIntent
   | ShareSaleIntent
-  | SyndicateFeeDistributionIntent;
+  | SyndicateFeeDistributionIntent
+  | InsurancePurchaseIntent
+  | InsuranceCancelIntent
+  | StewardsInquiryIntent;

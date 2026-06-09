@@ -113,7 +113,14 @@ describe("Advanced AI Tactics", () => {
       horse: mockHorse("H1", "S") as Horse,
       jockey: mockJockey(100), // Skilled jockey
       weight: 126,
-      tactics: "hold",
+      jockeyInstructions: {
+        horseId: "H1",
+        raceId: "R1",
+        ridingStyle: "closer",
+        earlyPosition: "drop_back",
+        moveTiming: "late",
+        aggressiveness: 30,
+      },
     };
 
     const result = calculateTacticalAdjustment(runner, pace, []);

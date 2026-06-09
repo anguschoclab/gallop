@@ -73,14 +73,14 @@ export function calculateTacticalAdjustment(
     }
   }
 
-  // 3. Tactic Specifics
-  if (runner.tactics === "save") {
-    // Prioritize drafting and staying on rail
+  // 3. Jockey Instruction Specifics
+  if (runner.jockeyInstructions?.ridingStyle === "closer" && runner.jockeyInstructions?.moveTiming === "late") {
+    // Prioritize drafting and staying on rail (save energy)
     velocityMod *= 0.995;
     targetLane = 0;
   }
 
-  if (runner.tactics === "lead" && pace.leaderPos - runner.position < 1) {
+  if (runner.jockeyInstructions?.earlyPosition === "lead" && pace.leaderPos - runner.position < 1) {
     // Fight for the lead
     velocityMod += 0.01 * skill;
   }

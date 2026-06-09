@@ -38,6 +38,7 @@ import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
 import { scoutHorse } from "@/core/npc/scouting";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { calculateDailyPremium } from "@/core/insurance/insuranceTypes";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 import {
   isTopHorse,
@@ -55,6 +56,25 @@ export const managementResolutionPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
+
+    // Insurance premium deduction - all insured horses pay daily premium
+    for (const horse of state.horses) {
+      if (horse.insurancePolicy) {
+        const premium = calculateDailyPremium(horse.insurancePolicy.type, horse.value);
+        if (premium > 0) {
+          impacts.push({
+            id: generateUUID(context.dailyRng),
+            day: newDay,
+            phase: "managementResolution",
+            logLevel: "always",
+            type: "cash_change",
+            entityId: horse.stableId || "player",
+            amount: -premium,
+            reason: `Insurance premium for ${horse.name}`,
+          } as any);
+        }
+      }
+    }
 
     for (const intent of intents) {
       switch (intent.type) {
@@ -238,7 +258,7 @@ export const managementResolutionPhase: PipelinePhase = {
             type: "tactics",
             raceId: typedIntent.raceId,
             horseId: typedIntent.horseId,
-            tactics: typedIntent.tactics,
+            jockeyInstructions: typedIntent.jockeyInstructions,
             reason: "Tactics updated",
           } as any);
           break;

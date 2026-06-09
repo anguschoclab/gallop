@@ -16,6 +16,8 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact, HorseDeathImpact, LogImpact, NameReservationImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
+import { INSURANCE_CONFIG } from "@/core/insurance/insuranceTypes";
+import { calculateBaseHorseValue } from "@/core/horse/pricing";
 
 /**
  * Phase: Horse Death
@@ -75,6 +77,27 @@ export const horseDeathPhase: PipelinePhase = {
           } as LogImpact);
         }
 
+        // Insurance payout for mortality
+        const policy = (horse as any).insurancePolicy;
+        if (policy && (policy.type === "mortality_only" || policy.type === "comprehensive")) {
+          const coveragePercent = INSURANCE_CONFIG.COVERAGE[policy.type as keyof typeof INSURANCE_CONFIG.COVERAGE];
+          const horseValue = calculateBaseHorseValue(horse, "mid");
+          const payout = Math.round(horseValue * coveragePercent);
+          if (payout > 0) {
+            impacts.push({
+              id: generateUUID(),
+              intentId: "",
+              day: newDay,
+              phase: "horseDeath",
+              logLevel: "always",
+              type: "insurance_payout",
+              horseId: horse.id,
+              amount: payout,
+              reason: `Insurance payout for ${horse.name} (${policy.type})`,
+            } as any);
+          }
+        }
+
         // Reserve the name for 25 years
         impacts.push({
           id: generateUUID(),
@@ -120,6 +143,27 @@ export const horseDeathPhase: PipelinePhase = {
               text: `💔 ${horse.name} has succumbed to ${cause}.`,
               reason: "Horse death notification",
             } as LogImpact);
+          }
+
+          // Insurance payout for mortality
+          const illnessPolicy = (horse as any).insurancePolicy;
+          if (illnessPolicy && (illnessPolicy.type === "mortality_only" || illnessPolicy.type === "comprehensive")) {
+            const coveragePercent = INSURANCE_CONFIG.COVERAGE[illnessPolicy.type as keyof typeof INSURANCE_CONFIG.COVERAGE];
+            const horseValue = calculateBaseHorseValue(horse, "mid");
+            const payout = Math.round(horseValue * coveragePercent);
+            if (payout > 0) {
+              impacts.push({
+                id: generateUUID(),
+                intentId: "",
+                day: newDay,
+                phase: "horseDeath",
+                logLevel: "always",
+                type: "insurance_payout",
+                horseId: horse.id,
+                amount: payout,
+                reason: `Insurance payout for ${horse.name} (${illnessPolicy.type})`,
+              } as any);
+            }
           }
 
           // Reserve the name for 25 years

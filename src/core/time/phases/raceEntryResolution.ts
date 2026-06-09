@@ -55,7 +55,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
 
       if (!race || !horse) continue;
       if (race.resolved) continue;
-      if (race.entries.some((e) => e.horseId === intent.horseId)) continue;
+      if (race.entries.some((e: { horseId: string }) => e.horseId === intent.horseId)) continue;
 
       // Safety net: skip invite-only races for uninvited horses
       if (race.graded?.requiresInvitation) {
@@ -65,7 +65,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
         const isWinAndYouIn =
           race.graded.key &&
           horse.winAndYouInQualified?.some(
-            (q) => q.raceKey === race.graded!.key && q.year === currentYear,
+            (q: { raceKey: string; year: number }) => q.raceKey === race.graded!.key && q.year === currentYear,
           );
         if (!isInvited && !isWinAndYouIn) continue;
       }
@@ -147,6 +147,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
         jockeyId,
         entryFee: race.entryFee,
         bumpEntryHorseId,
+        jockeyInstructions: intent.jockeyInstructions,
         reason: bumpEntryHorseId ? "Race entry (bump)" : "Race entry",
       } as RaceEntryImpact);
 

@@ -24,6 +24,8 @@ import { calculateDosageMetrics } from "@/core/race/dosage";
 import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { calculateTheHandBonus } from "@/core/jockey/affinity";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import { getClaimAllowance } from "@/core/apprentice/apprenticeTypes";
 import { getCourseMultiplier } from "@/core/race/sectionalAnalysis";
 
 export type RunnerBonuses = {
@@ -57,7 +59,7 @@ export type Runner = {
   jockey?: JockeyT;
   jockeyName?: string; // Computed from jockey?.name for convenience
   weight: number;
-  tactics: string;
+  jockeyInstructions?: JockeyInstructions;
   courseFamiliarityMultiplier?: number; // Multiplier based on course visits (1.0 = no bonus)
 };
 
@@ -226,16 +228,12 @@ export function buildRunner(
   h = ensurePhenotypeResolved(h);
   let claim = 0;
   let finalAssignedWeight = weight ?? 126;
-  if (jockey && (jockey as any).isApprentice) {
-    const wins = (jockey as any).careerWins ?? 0;
-    if (wins < 5) {
-      claim = 7;
-    } else if (wins < 15) {
-      claim = 5;
-    } else if (wins < 30) {
-      claim = 3;
+  if (jockey?.isApprentice) {
+    const apprenticeWins = jockey.apprenticeProgression?.apprenticeWins ?? 0;
+    claim = getClaimAllowance(apprenticeWins);
+    if (claim > 0) {
+      finalAssignedWeight = Math.max(100, finalAssignedWeight - claim);
     }
-    finalAssignedWeight = Math.max(100, finalAssignedWeight - claim);
   }
 
   let jockeyName = jockey?.name;
@@ -385,17 +383,16 @@ export function buildRunner(
 
   let runningStyle: RunningStyleT = h.runningStyle ?? "P";
 
-  // Use tactics from race entry if available (for both player and NPC)
+  // Use jockey instructions from race entry if available (for both player and NPC)
   const entry = race?.entries.find((e) => e.horseId === h.id);
-  if (entry?.tactics && entry.tactics !== "default") {
-    const tacticsMap: Record<string, RunningStyleT> = {
-      lead: "E",
-      rail: "EP",
-      outside: "P",
-      save: "P",
-      late_kick: "S",
+  if (entry?.jockeyInstructions) {
+    const styleMap: Record<string, RunningStyleT> = {
+      front_runner: "E",
+      stalker: "S",
+      closer: "S",
+      tactical: "P",
     };
-    runningStyle = tacticsMap[entry.tactics] || runningStyle;
+    runningStyle = styleMap[entry.jockeyInstructions.ridingStyle] || runningStyle;
   } else if (npcAIManager && currentDay && stable && jockey && race && !owned) {
     const aiState = npcAIManager.stableStates[stable.id];
     if (aiState?.jockeyStrategyAI) {
@@ -471,7 +468,7 @@ export function buildRunner(
     jockey,
     jockeyName,
     weight: assignedWeight,
-    tactics: entry?.tactics || "default",
+    jockeyInstructions: entry?.jockeyInstructions,
     courseFamiliarityMultiplier,
   };
 }

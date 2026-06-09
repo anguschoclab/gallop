@@ -181,10 +181,10 @@ function calculateTargetLane(
   let targetLane = 0;
   if (r.runningStyle === "S" && progress < STALKER_PROGRESS_THRESHOLD) targetLane = 1;
 
-  // Tactics-based lane bias
-  if (r.tactics === "rail") targetLane = 0;
-  if (r.tactics === "outside" && progress < OUTSIDE_PROGRESS_THRESHOLD) targetLane = 2;
-  if (r.tactics === "lead" && progress < LEAD_PROGRESS_THRESHOLD) targetLane = 0;
+  // Jockey instructions-based lane bias
+  if (r.jockeyInstructions?.ridingStyle === "front_runner") targetLane = 0;
+  if (r.jockeyInstructions?.ridingStyle === "closer" && progress < OUTSIDE_PROGRESS_THRESHOLD) targetLane = 2;
+  if (r.jockeyInstructions?.earlyPosition === "lead" && progress < LEAD_PROGRESS_THRESHOLD) targetLane = 0;
 
   if (sortedField && pace) {
     const laneIdx = Math.floor(r.lane / LANE_WIDTH);
@@ -349,8 +349,8 @@ function calculateStaminaMultiplier(
       }
     }
 
-    // "Save" tactics preservation
-    if (r.tactics === "save" && progress < SAVE_TACTICS_PROGRESS_THRESHOLD) {
+    // "Save" tactics preservation (closer with late move timing)
+    if (r.jockeyInstructions?.ridingStyle === "closer" && r.jockeyInstructions?.moveTiming === "late" && progress < SAVE_TACTICS_PROGRESS_THRESHOLD) {
       effectiveStamina = clamp(effectiveStamina + SAVE_TACTICS_STAMINA_BONUS, 0, 1.1);
     }
 
@@ -414,7 +414,7 @@ function calculateStyleMultiplier(
   }
 
   // "Late Kick" velocity boost
-  if (r.tactics === "late_kick" && progress > LATE_KICK_PROGRESS_THRESHOLD) {
+  if (r.jockeyInstructions?.moveTiming === "late" && progress > LATE_KICK_PROGRESS_THRESHOLD) {
     styleMul *= LATE_KICK_MULTIPLIER + (r.jockey?.stats.vigor ?? 50) * VIGOR_BONUS_FACTOR;
   }
 
@@ -445,8 +445,8 @@ function calculateDraftMultiplier(r: Runner, progress: number): number {
   let draftMul = 1;
   if (r.draftingHorseId && progress < LATE_KICK_PROGRESS_THRESHOLD) {
     draftMul = DRAFT_SPEED_BONUS;
-    // "Rail" tactics bonus for drafting
-    if (r.tactics === "rail") draftMul *= 1.005;
+    // "Rail" tactics bonus for drafting (front runners hug rail)
+    if (r.jockeyInstructions?.ridingStyle === "front_runner") draftMul *= 1.005;
   }
   return draftMul;
 }
@@ -513,11 +513,11 @@ function applyJockeyEffects(
     if (progress > VIGOR_PROGRESS_THRESHOLD) {
       let vigorBoost = (stats.vigor / 100) * VIGOR_BOOST_FACTOR * 100;
       // "Late Kick" tactic bonus
-      if (r.tactics === "late_kick" && progress > LATE_KICK_BOOST_THRESHOLD) {
+      if (r.jockeyInstructions?.moveTiming === "late" && progress > LATE_KICK_BOOST_THRESHOLD) {
         vigorBoost *= LATE_KICK_VIGOR_MULTIPLIER;
       }
       const speedCap =
-        r.tactics === "late_kick" ? r.topSpeed * LATE_KICK_TOP_SPEED_MULTIPLIER : r.topSpeed;
+        r.jockeyInstructions?.moveTiming === "late" ? r.topSpeed * LATE_KICK_TOP_SPEED_MULTIPLIER : r.topSpeed;
       r.velocity = Math.min(r.velocity + vigorBoost * dt, speedCap);
     }
   } else {

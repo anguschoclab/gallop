@@ -1,18 +1,30 @@
 /**
- * tacticsSelector.test.ts - Tests for PlayerRacePrompt tactics selector
+ * tacticsSelector.test.ts - Tests for PlayerRacePrompt instructions selector
  *
- * Tests the tactics dropdown in PlayerRacePrompt to verify:
- * - Tactics are enqueued as intents before auto-resolve
- * - All 6 tactic options are available
- * - Selected tactics are passed to the race entry
+ * Tests the instructions dropdown in PlayerRacePrompt to verify:
+ * - Instructions are enqueued as intents before auto-resolve
+ * - All instruction presets are available
+ * - Selected instructions are passed to the race entry
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { useGame } from "@/game/store";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 
-describe("Tactics Selector", () => {
+function makeInstructions(raceId: string, horseId: string, overrides: Partial<JockeyInstructions> = {}): JockeyInstructions {
+  return {
+    horseId,
+    raceId,
+    ridingStyle: "front_runner",
+    earlyPosition: "lead",
+    moveTiming: "early",
+    aggressiveness: 70,
+    ...overrides,
+  };
+}
+
+describe("Instructions Selector", () => {
   beforeEach(() => {
-    // Reset store before each test
     useGame.setState({
       pendingPlayerRaceId: undefined,
       pendingIntents: [],
@@ -23,57 +35,55 @@ describe("Tactics Selector", () => {
     });
   });
 
-  it("should enqueue tactics intent when setRaceTactics is called", () => {
+  it("should enqueue instructions intent when setRaceTactics is called", () => {
     const raceId = "race-1";
     const horseId = "horse-1";
-    const tactics = "lead";
+    const instructions = makeInstructions(raceId, horseId);
 
-    useGame.getState().setRaceTactics(raceId, horseId, tactics);
+    useGame.getState().setRaceTactics(raceId, horseId, instructions);
 
-    // Verify the intent was enqueued (check pendingIntents)
     const pendingIntents = useGame.getState().pendingIntents;
     const tacticsIntent = pendingIntents?.find(
       (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
     );
 
     expect(tacticsIntent).toBeDefined();
-    expect((tacticsIntent as any)?.tactics).toBe(tactics);
+    expect((tacticsIntent as any)?.jockeyInstructions?.ridingStyle).toBe("front_runner");
   });
 
-  it("should support all 6 tactic options", () => {
+  it("should support all 4 riding styles", () => {
     const raceId = "race-1";
     const horseId = "horse-1";
-    const tacticsOptions = ["default", "lead", "rail", "outside", "save", "late_kick"] as const;
+    const styleOptions = ["front_runner", "stalker", "closer", "tactical"] as const;
 
-    tacticsOptions.forEach((tactics) => {
-      useGame.getState().setRaceTactics(raceId, horseId, tactics);
+    styleOptions.forEach((style) => {
+      useGame.getState().setRaceTactics(raceId, horseId, makeInstructions(raceId, horseId, { ridingStyle: style }));
 
       const pendingIntents = useGame.getState().pendingIntents;
       const tacticsIntents = pendingIntents?.filter(
         (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
       );
-      const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
+      const latest = tacticsIntents?.[tacticsIntents.length - 1];
 
-      expect((latestTactics as any)?.tactics).toBe(tactics);
+      expect((latest as any)?.jockeyInstructions?.ridingStyle).toBe(style);
     });
   });
 
-  it("should allow updating tactics for the same horse", () => {
+  it("should allow updating instructions for the same horse", () => {
     const raceId = "race-1";
     const horseId = "horse-1";
 
-    useGame.getState().setRaceTactics(raceId, horseId, "lead");
-    useGame.getState().setRaceTactics(raceId, horseId, "rail");
+    useGame.getState().setRaceTactics(raceId, horseId, makeInstructions(raceId, horseId, { ridingStyle: "front_runner" }));
+    useGame.getState().setRaceTactics(raceId, horseId, makeInstructions(raceId, horseId, { ridingStyle: "closer" }));
 
     const pendingIntents = useGame.getState().pendingIntents;
     const tacticsIntents = pendingIntents?.filter(
       (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horseId,
     );
 
-    // Should have 2 intents (the latest one should be "rail")
     expect(tacticsIntents?.length).toBeGreaterThanOrEqual(1);
-    const latestTactics = tacticsIntents?.[tacticsIntents.length - 1];
-    expect((latestTactics as any)?.tactics).toBe("rail");
+    const latest = tacticsIntents?.[tacticsIntents.length - 1];
+    expect((latest as any)?.jockeyInstructions?.ridingStyle).toBe("closer");
   });
 
   it("should handle multiple horses in the same race", () => {
@@ -81,8 +91,8 @@ describe("Tactics Selector", () => {
     const horse1Id = "horse-1";
     const horse2Id = "horse-2";
 
-    useGame.getState().setRaceTactics(raceId, horse1Id, "lead");
-    useGame.getState().setRaceTactics(raceId, horse2Id, "save");
+    useGame.getState().setRaceTactics(raceId, horse1Id, makeInstructions(raceId, horse1Id, { ridingStyle: "front_runner" }));
+    useGame.getState().setRaceTactics(raceId, horse2Id, makeInstructions(raceId, horse2Id, { ridingStyle: "closer" }));
 
     const pendingIntents = useGame.getState().pendingIntents;
     const tactics1 = pendingIntents?.find(
@@ -92,17 +102,17 @@ describe("Tactics Selector", () => {
       (i: any) => i.type === "tactics" && i.raceId === raceId && i.horseId === horse2Id,
     );
 
-    expect((tactics1 as any)?.tactics).toBe("lead");
-    expect((tactics2 as any)?.tactics).toBe("save");
+    expect((tactics1 as any)?.jockeyInstructions?.ridingStyle).toBe("front_runner");
+    expect((tactics2 as any)?.jockeyInstructions?.ridingStyle).toBe("closer");
   });
 
-  it("should handle tactics for different races independently", () => {
+  it("should handle instructions for different races independently", () => {
     const race1Id = "race-1";
     const race2Id = "race-2";
     const horseId = "horse-1";
 
-    useGame.getState().setRaceTactics(race1Id, horseId, "lead");
-    useGame.getState().setRaceTactics(race2Id, horseId, "outside");
+    useGame.getState().setRaceTactics(race1Id, horseId, makeInstructions(race1Id, horseId, { ridingStyle: "front_runner" }));
+    useGame.getState().setRaceTactics(race2Id, horseId, makeInstructions(race2Id, horseId, { ridingStyle: "closer" }));
 
     const pendingIntents = useGame.getState().pendingIntents;
     const tactics1 = pendingIntents?.find(
@@ -112,7 +122,7 @@ describe("Tactics Selector", () => {
       (i: any) => i.type === "tactics" && i.raceId === race2Id && i.horseId === horseId,
     );
 
-    expect((tactics1 as any)?.tactics).toBe("lead");
-    expect((tactics2 as any)?.tactics).toBe("outside");
+    expect((tactics1 as any)?.jockeyInstructions?.ridingStyle).toBe("front_runner");
+    expect((tactics2 as any)?.jockeyInstructions?.ridingStyle).toBe("closer");
   });
 });

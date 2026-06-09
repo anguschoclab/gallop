@@ -211,16 +211,23 @@ export function runNpcRaceEntry(
         const ridingFee = jockey?.ridingFee ?? 100;
         const assignedWeight = calculateAssignedWeight(horse, race);
 
-        // Calculate tactics for NPC entry
-        let tactics: "lead" | "rail" | "outside" | "save" | "late_kick" | "default" = "default";
+        // Calculate jockey instructions for NPC entry
+        let jockeyInstructions;
 
         // Imperial Expansion: Spoiler Tactic
         if (isRival && horse.stats.speed > 70 && horse.stats.stamina < 50) {
-          tactics = "lead"; // Force a blistering pace to ruin the player's peaking horse
+          jockeyInstructions = {
+            horseId: horse.id,
+            raceId: race.id,
+            ridingStyle: "front_runner" as const,
+            earlyPosition: "lead" as const,
+            moveTiming: "early" as const,
+            aggressiveness: 90,
+          };
         } else if (aiManager && jockey) {
           const stableState = aiManager.stableStates[stable.id];
           if (stableState?.jockeyStrategyAI) {
-            tactics = calculateOptimalTactics(
+            jockeyInstructions = calculateOptimalTactics(
               stableState.jockeyStrategyAI,
               horse,
               race,
@@ -237,7 +244,7 @@ export function runNpcRaceEntry(
           npc: true,
           jockeyId,
           weight: assignedWeight,
-          tactics,
+          jockeyInstructions,
         });
 
         // Deduct entry fee AND riding fee from stable

@@ -6,13 +6,13 @@ import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { getTransportCostForRace } from "@/core/race/transportCost";
 import type { Horse, Jockey, Race } from "@/game/types";
 import { formatCurrency } from "@/lib/formatting";
-import { TACTIC_OPTIONS, type TacticId } from "./TacticOptions";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 
 interface Props {
   race: Race;
   selectedHorse: Horse;
   selectedJockey: Jockey;
-  selectedTactics: TacticId;
+  selectedInstructions: JockeyInstructions;
   isHorseQualifiedForRace: (horse: Horse, race: Race) => boolean;
   isNewClaimingRace: boolean;
   claimingPrice: number | undefined;
@@ -24,7 +24,7 @@ export function ReviewStep({
   race,
   selectedHorse,
   selectedJockey,
-  selectedTactics,
+  selectedInstructions,
   isHorseQualifiedForRace,
   isNewClaimingRace,
   claimingPrice,
@@ -96,9 +96,9 @@ export function ReviewStep({
 
       <div className="space-y-2 px-4">
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Tactics</span>
+          <span className="text-muted-foreground">Instructions</span>
           <span className="font-bold uppercase text-primary">
-            {TACTIC_OPTIONS.find((t) => t.id === selectedTactics)?.name}
+            {selectedInstructions.ridingStyle.replace("_", " ")} / {selectedInstructions.moveTiming}
           </span>
         </div>
         <div className="flex justify-between text-sm">

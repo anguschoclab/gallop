@@ -13,6 +13,7 @@ import type { Rng } from "@/core/common/rng";
 import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "./types";
 import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
 import type { RegionalSystem } from "@/core/race/types";
+import { createApprenticeProgression } from "@/core/apprentice/apprenticeTypes";
 import {
   JOCKEY_SALARY_ELITE_MIN,
   JOCKEY_SALARY_ELITE_MAX,
@@ -192,6 +193,7 @@ export function generateApprentice({
     ridingFee: 50,
     isApprentice: true,
     loyalty: 100,
+    apprenticeProgression: createApprenticeProgression(jockey.id, 0),
   };
 }
 

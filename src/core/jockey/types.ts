@@ -64,4 +64,9 @@ export type Jockey = {
   stableAffinity: number; // 0-100, baseline bonus for any horse in the same stable (Retainers)
   isApprentice: boolean; // Academy talent
   loyalty: number; // 0-100, resistance to poaching
+
+  // Apprentice progression tracking
+  apprenticeProgression?: import("@/core/apprentice/apprenticeTypes").ApprenticeProgression;
+  // Jockey suspension (stewards inquiry outcome)
+  suspendedUntil?: number;
 };

@@ -24,15 +24,8 @@ import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { getCourseForRace } from "@/data/tracks";
 import { formatCurrency } from "@/lib/formatting";
 import { useState } from "react";
-
-const TACTIC_OPTIONS = [
-  { id: "default", name: "Default", desc: "Jockey's best judgment" },
-  { id: "lead", name: "Lead", desc: "Aggressive front-running" },
-  { id: "rail", name: "Rail", desc: "Hug the inside" },
-  { id: "outside", name: "Outside", desc: "Stay wide to avoid traffic" },
-  { id: "save", name: "Save", desc: "Draft behind others" },
-  { id: "late_kick", name: "Late Kick", desc: "Conserve for final stretch" },
-] as const;
+import { INSTRUCTION_PRESETS, buildInstructions, type PresetId } from "./TacticOptions";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
@@ -43,9 +36,7 @@ export function PlayerRacePrompt() {
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
   const setRaceTactics = useGame((s) => s.setRaceTactics);
   const navigate = useNavigate();
-  const [selectedTactics, setSelectedTactics] = useState<
-    "default" | "lead" | "rail" | "outside" | "save" | "late_kick"
-  >("default");
+  const [selectedPreset, setSelectedPreset] = useState<PresetId>("default");
 
   const race = races.find((r) => r.id === pendingRaceId);
   const raceWeather = useGame((s) => {
@@ -58,7 +49,7 @@ export function PlayerRacePrompt() {
   if (!race) return null;
 
   const enteredHorse = horses.find(
-    (h) => h.owned && race.entries.some((e) => e.horseId === h.id && e.owned),
+    (h: { owned: boolean; id: string }) => h.owned && race.entries.some((e: { horseId: string; owned: boolean }) => e.horseId === h.id && e.owned),
   );
 
   function clearPending() {
@@ -73,7 +64,12 @@ export function PlayerRacePrompt() {
   function autoResolve() {
     // Set tactics before resolving
     if (enteredHorse) {
-      setRaceTactics(race!.id, enteredHorse.id, selectedTactics);
+      const instructions = buildInstructions(
+        { id: selectedPreset, name: "", desc: "", instructions: { horseId: enteredHorse.id, raceId: race!.id, ridingStyle: "tactical", earlyPosition: "midpack", moveTiming: "mid", aggressiveness: 50 } },
+        enteredHorse.id,
+        race!.id,
+      );
+      setRaceTactics(race!.id, enteredHorse.id, instructions);
     }
 
     const { runners } = buildRaceField({ race: race!, horses, jockeys });
@@ -131,13 +127,13 @@ export function PlayerRacePrompt() {
           )}
           {enteredHorse && (
             <div className="space-y-2">
-              <label className="text-sm font-medium">Tactics</label>
-              <Select value={selectedTactics} onValueChange={(v: any) => setSelectedTactics(v)}>
+              <label className="text-sm font-medium">Instructions</label>
+              <Select value={selectedPreset} onValueChange={(v: any) => setSelectedPreset(v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {TACTIC_OPTIONS.map((opt) => (
+                  {INSTRUCTION_PRESETS.map((opt) => (
                     <SelectItem key={opt.id} value={opt.id}>
                       {opt.name} - {opt.desc}
                     </SelectItem>

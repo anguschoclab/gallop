@@ -20,6 +20,7 @@ import { createDefaultCoreState } from "@/game/store/state/coreState";
 import type { Horse, Race, PlayerProfile } from "@/game/types";
 import type { ActionResult } from "@/game/store";
 import type { AnyIntent } from "@/core/resolver/intents";
+import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { createRng, hashStr } from "@/core/common/rng";
@@ -46,7 +47,7 @@ export type CoreSlice = CoreState & {
   setRaceTactics: (
     raceId: string,
     horseId: string,
-    tactics: import("@/core/resolver/intents").TacticsIntent["tactics"],
+    jockeyInstructions: JockeyInstructions,
   ) => void;
   resolveRaceWithImpacts: (
     raceId: string,
@@ -55,6 +56,8 @@ export type CoreSlice = CoreState & {
   ) => void;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
+  purchaseInsurance: (horseId: string, policyType: "injury_only" | "mortality_only" | "comprehensive") => ActionResult;
+  cancelInsurance: (horseId: string) => ActionResult;
   advanceDay: (
     progressCallback?: (stage: number, total: number, name: string) => void,
   ) => Promise<void>;
@@ -150,7 +153,7 @@ export function createCoreSlice(
       if (ownershipGuard) return ownershipGuard;
 
       if (horse!.energy < 50) return { ok: false, reason: "Horse lacks sufficient energy." };
-      if (race.entries.some((e) => e.horseId === horseId))
+      if (race.entries.some((e: { horseId: string }) => e.horseId === horseId))
         return { ok: false, reason: "Horse already entered." };
 
       // Block entry into invite-only races for uninvited horses
@@ -205,7 +208,7 @@ export function createCoreSlice(
       return { ok: true };
     },
 
-    setRaceTactics: (raceId: string, horseId: string, tactics: any) => {
+    setRaceTactics: (raceId: string, horseId: string, jockeyInstructions: JockeyInstructions) => {
       const s = get();
       enqueueIntent({
         id: generateUUID(),
@@ -216,7 +219,7 @@ export function createCoreSlice(
         type: "tactics",
         raceId,
         horseId,
-        tactics,
+        jockeyInstructions,
       });
     },
 
@@ -224,7 +227,7 @@ export function createCoreSlice(
       const s = get();
       const race = s.races.find((r: Race) => r.id === raceId);
       if (!race) return { ok: false, reason: "Race not found." };
-      const entry = race.entries.find((e) => e.horseId === horseId);
+      const entry = race.entries.find((e: { horseId: string }) => e.horseId === horseId);
       if (!entry) return { ok: false, reason: "Horse not entered in this race." };
 
       enqueueIntent({
@@ -235,6 +238,46 @@ export function createCoreSlice(
         priority: 100,
         type: "race_withdrawal",
         raceId,
+        horseId,
+      });
+
+      return { ok: true };
+    },
+
+    purchaseInsurance: (horseId: string, policyType: "injury_only" | "mortality_only" | "comprehensive") => {
+      const s = get();
+      const horse = s.horses?.find((h: Horse) => h.id === horseId);
+      if (!horse) return { ok: false, reason: "Horse not found." };
+      if (!horse.owned) return { ok: false, reason: "Horse not owned." };
+      if (horse.insurancePolicy) return { ok: false, reason: "Horse already has insurance." };
+
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "insurance_purchase",
+        horseId,
+        policyType,
+      });
+
+      return { ok: true };
+    },
+
+    cancelInsurance: (horseId: string) => {
+      const s = get();
+      const horse = s.horses?.find((h: Horse) => h.id === horseId);
+      if (!horse) return { ok: false, reason: "Horse not found." };
+      if (!horse.insurancePolicy) return { ok: false, reason: "Horse has no insurance to cancel." };
+
+      enqueueIntent({
+        id: generateUUID(),
+        entityId: horseId,
+        source: "player",
+        day: s.day,
+        priority: 100,
+        type: "insurance_cancel",
         horseId,
       });
 

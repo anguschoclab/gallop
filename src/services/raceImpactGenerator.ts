@@ -27,6 +27,9 @@ import type {
 import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
 import { generateRaceNews } from "@/services/newsGenerator";
 import { rollForInjury } from "@/core/health/healthSystem";
+import { updateApprenticeProgression } from "@/core/apprentice/apprenticeTypes";
+import { calculateDailyPremium, INSURANCE_CONFIG } from "@/core/insurance/insuranceTypes";
+import { calculateBaseHorseValue } from "@/core/horse/pricing";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { Rng } from "@/core/common/rng";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
@@ -1034,6 +1037,27 @@ export function generateRaceImpacts({
         const injury = rollForInjury(rng, horse, newDay, hiredStaff, injuryWeatherCtx);
         if (injury) {
           impacts.push(injury);
+          // Insurance payout for career-ending injuries
+          if (injury.severity === "career-ending" && horse.insurancePolicy) {
+            const coveragePercent = INSURANCE_CONFIG.COVERAGE[horse.insurancePolicy.type];
+            if (coveragePercent > 0) {
+              const horseValue = calculateBaseHorseValue(horse, "mid");
+              const payout = Math.round(horseValue * coveragePercent);
+              if (payout > 0) {
+                impacts.push({
+                  id: generateUUID(rng),
+                  intentId: "",
+                  day: newDay,
+                  phase: "raceResolution",
+                  logLevel: "always",
+                  type: "insurance_payout",
+                  horseId: horse.id,
+                  amount: payout,
+                  reason: `Insurance payout for ${horse.name} (${horse.insurancePolicy.type})`,
+                } as any);
+              }
+            }
+          }
         }
       }
 
@@ -1147,6 +1171,12 @@ export function generateRaceImpacts({
         if (jockey) {
           const winAmount = prizeSplit[r.position - 1] * race.purse;
 
+          // Update apprentice progression if applicable
+          let apprenticeProgression = jockey.apprenticeProgression;
+          if (jockey.isApprentice && apprenticeProgression && r.position === 1) {
+            apprenticeProgression = updateApprenticeProgression(apprenticeProgression, false);
+          }
+
           impacts.push({
             id: generateUUID(rng),
             intentId: "",
@@ -1161,6 +1191,7 @@ export function generateRaceImpacts({
               MAX_FAME,
               jockey.fame + (r.position === 1 ? 2 : r.position <= 3 ? 0.5 : 0),
             ),
+            apprenticeProgression,
             reason: `Rode ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}`,
           } as JockeyStatsImpact);
 

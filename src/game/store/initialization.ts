@@ -196,5 +196,6 @@ export function createInitialState(options?: NewGameOptions): GameState {
     breedingPrograms: [],
     privateSaleOffers: [],
     claims: [],
+    stewardsInquiries: [],
   };
 }
