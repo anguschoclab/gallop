@@ -105,9 +105,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     draft.shareTransactions.push(transaction);
   },
 
-  syndicate_fee_distribution: (draft, impact, lookupMaps) => {
+  syndicate_fee_distribution: (draft, impact) => {
     const impactAny = impact as any;
-    const { syndicateId, totalFee, breedingDay } = impactAny;
+    const { syndicateId, totalFee } = impactAny;
 
     const syndicate = draft.syndicates?.[syndicateId];
     if (!syndicate) return;
@@ -123,6 +123,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (shareCount === 0) return;
 
     const feePerShare = totalFee / shareCount;
+    const stableMap = new Map((draft.npcStables ?? []).map((s: any) => [s.id, s]));
 
     // Distribute to each shareholder
     for (const [shareholderStableId, shares] of Object.entries(syndicate.shareHolders)) {
@@ -133,9 +134,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         draft.cash += distribution;
       } else {
         // For NPC stables, add to stable's cash
-        const stable =
-          lookupMaps?.stableMap.get(shareholderStableId) ||
-          draft.npcStables?.find((s: any) => s.id === shareholderStableId);
+        const stable = stableMap.get(shareholderStableId);
         if (stable) {
           stable.cash = (stable.cash || 0) + distribution;
         }

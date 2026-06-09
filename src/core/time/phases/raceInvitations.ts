@@ -61,6 +61,8 @@ export const raceInvitationsPhase: PipelinePhase = {
       }
     }
 
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+
     // Find all unresolved invite-only races that are upcoming
     const inviteRaces = state.races.filter(
       (r) => !r.resolved && (r.graded?.requiresInvitation || false) && r.day > newDay,
@@ -141,7 +143,7 @@ export const raceInvitationsPhase: PipelinePhase = {
 
       // Send inbox messages for player-owned newly invited horses
       for (const horseId of newlyInvited) {
-        const horse = state.horses.find((h) => h.id === horseId);
+        const horse = horseMap.get(horseId);
         if (!horse || !horse.owned) continue;
 
         // Avoid duplicate inbox messages for the same horse/race pair

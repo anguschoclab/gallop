@@ -48,6 +48,13 @@ export const energyPhase = {
       }
     }
 
+    const outpostMap = new Map<string, any>();
+    for (const s of (state.npcStables ?? [])) {
+      for (const o of ((s as any).outposts ?? [])) {
+        outpostMap.set(o.id, o);
+      }
+    }
+
     const horses = state.horses.map((h) => {
       // Skip energy restoration for deceased horses
       if (h.lifecycleStatus === "deceased") return h;
@@ -139,12 +146,9 @@ export const energyPhase = {
 
       // --- ACCLIMATIZATION DECAY ---
       if (h.outpostId) {
-        const stable = state.npcStables?.find((s) => s.id === stableId);
-        if (stable && (stable as any).outposts) {
-          const outpost = (stable as any).outposts.find((o: any) => o.id === h.outpostId);
-          if (outpost && outpost.acclimatizationDays?.[h.id] > 0) {
-            outpost.acclimatizationDays[h.id]--;
-          }
+        const outpost = outpostMap.get(h.outpostId);
+        if (outpost && outpost.acclimatizationDays?.[h.id] > 0) {
+          outpost.acclimatizationDays[h.id]--;
         }
       }
       // --- END ACCLIMATIZATION ---

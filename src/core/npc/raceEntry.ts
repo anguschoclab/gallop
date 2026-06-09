@@ -102,6 +102,7 @@ export function runNpcRaceEntry(
 
   const horseMap = new Map(horses.map((h) => [h.id, h]));
   const jockeyMap = new Map(jockeys.map((j) => [j.id, j]));
+  const stableMap = new Map(stables.map((s) => [s.id, s]));
   const stableJockeyMap = new Map(jockeys.filter((j) => j.stableId).map((j) => [j.stableId!, j]));
 
   // Look at races in the next daysAhead days
@@ -173,7 +174,7 @@ export function runNpcRaceEntry(
           const bumped = race.entries[weakestIdx];
           // Refund entry fee to bumped stable
           if (bumped.stableId) {
-            const bumpedStable = stables.find((s) => s.id === bumped.stableId);
+            const bumpedStable = stableMap.get(bumped.stableId);
             if (bumpedStable) {
               bumpedStable.cash = bumpedStable.cash + race.entryFee;
             }

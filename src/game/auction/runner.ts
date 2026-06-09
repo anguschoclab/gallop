@@ -449,7 +449,7 @@ export function createAuctionRunner(
       // mid-sale), so in liveMode we skip emitting this final debit.
       // Push to Inbox for winner.
       if (!winnerStableId && !liveMode) {
-        const horse = horses.find((h) => h.id === lot.horseId);
+        const horse = horseMap.get(lot.horseId);
         const horseName = horse?.name || "Unknown Horse";
 
         impacts.push({
@@ -504,7 +504,7 @@ export function createAuctionRunner(
         });
       } else {
         // Player consignor.
-        const horse = horses.find((h) => h.id === lot.horseId);
+        const horse = horseMap.get(lot.horseId);
         const horseName = horse?.name || "Unknown Horse";
 
         impacts.push({
@@ -564,7 +564,7 @@ export function createAuctionRunner(
     for (const lot of resolvedLots.filter((l) => l.passed)) {
       if (lot.consignorStableId === "") {
         // Player's horse passed.
-        const horse = horses.find((h) => h.id === lot.horseId);
+        const horse = horseMap.get(lot.horseId);
         const horseName = horse?.name || "Unknown Horse";
 
         impacts.push({

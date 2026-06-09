@@ -43,15 +43,19 @@ export const pregnancyPhase = {
     );
     const { pregnancies, foals, cashAdjustment } = pregResult;
 
+    const pregnancyByFoalId = new Map(pregnancies.map((p) => [p.foalId, p]));
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const stableMap = new Map((state.npcStables ?? []).map((s) => [s.id, s]));
+
     // Record breeding outcomes for NPC AI
     if (state.npcAIManager) {
       for (const foal of foals) {
-        const pregnancy = pregnancies.find((p) => p.foalId === foal.id);
+        const pregnancy = pregnancyByFoalId.get(foal.id);
         if (pregnancy) {
           // If sire is NPC-owned, record outcome for that stable's AI
-          const sire = state.horses.find((h) => h.id === pregnancy.sireId);
+          const sire = horseMap.get(pregnancy.sireId);
           if (sire && sire.stableId) {
-            const stable = state.npcStables.find((s) => s.id === sire.stableId);
+            const stable = stableMap.get(sire.stableId);
             if (stable) {
               const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
               if (stableAI.breedingAI) {
@@ -79,9 +83,9 @@ export const pregnancyPhase = {
 
     for (const foal of foals) {
       // Find the pregnancy that produced this foal
-      const pregnancy = pregnancies.find((p) => p.foalId === foal.id);
+      const pregnancy = pregnancyByFoalId.get(foal.id);
       if (pregnancy) {
-        const dam = state.horses.find((h) => h.id === pregnancy.damId);
+        const dam = horseMap.get(pregnancy.damId);
         // Only add reputation/inbox for player-owned dams
         if (dam && !dam.stableId) {
           const foalQuality = foal.potential;
@@ -103,7 +107,7 @@ export const pregnancyPhase = {
             priority: "info",
             title: `New Arrival: ${foal.name}`,
             body: `A healthy ${foal.gender === "filly" ? "filly" : "colt"} by ${
-              state.horses.find((h) => h.id === pregnancy.sireId)?.name || "Unknown"
+              horseMap.get(pregnancy.sireId)?.name || "Unknown"
             } out of ${dam.name} was born today.`,
             cta: {
               label: "View Foal",

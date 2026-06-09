@@ -3,6 +3,14 @@ import type { SectionalSplit, SectionalEntry } from "./types";
 
 const SPLIT_LABELS = ["¼", "½", "¾", "Fin"];
 
+type SnapshotHorseMap = Map<string, { position: number }>;
+
+function buildSnapshotHorseMaps(snapshots: RaceSnapshot[]): SnapshotHorseMap[] {
+  return snapshots.map((snap) =>
+    new Map(snap.horses.map((h) => [h.horseId, { position: h.position }])),
+  );
+}
+
 /**
  * Find the simulation time when a horse crossed a given distance marker.
  * Linearly interpolates between the two nearest snapshots.
@@ -10,17 +18,20 @@ const SPLIT_LABELS = ["¼", "½", "¾", "Fin"];
  * @param snapshots
  * @param horseId
  * @param targetDistanceMeters
+ * @param snapshotMaps - Optional pre-built maps for O(1) horse lookup (recommended for repeated calls)
  */
 export function interpolateTimeAtDistance(
   snapshots: RaceSnapshot[],
   horseId: string,
   targetDistanceMeters: number,
+  snapshotMaps?: SnapshotHorseMap[],
 ): number | null {
-  for (let i = 1; i < snapshots.length; i++) {
+  const maps = snapshotMaps ?? buildSnapshotHorseMaps(snapshots);
+  for (let i = 1; i < maps.length; i++) {
     const before = snapshots[i - 1];
     const after = snapshots[i];
-    const hBefore = before.horses.find((h) => h.horseId === horseId);
-    const hAfter = after.horses.find((h) => h.horseId === horseId);
+    const hBefore = maps[i - 1].get(horseId);
+    const hAfter = maps[i].get(horseId);
     if (!hBefore || !hAfter) continue;
     if (hAfter.position >= targetDistanceMeters && hBefore.position < targetDistanceMeters) {
       const d1 = hBefore.position;
@@ -56,8 +67,9 @@ export function calculateSectionalSplits(
   const splits: SectionalSplit[] = [];
 
   // Pre-compute cumulative times per horse per marker
+  const snapshotMaps = buildSnapshotHorseMaps(snapshots);
   const cumulativeTimes: (number | null)[][] = markers.map((marker) =>
-    horseIds.map((id) => interpolateTimeAtDistance(snapshots, id, marker)),
+    horseIds.map((id) => interpolateTimeAtDistance(snapshots, id, marker, snapshotMaps)),
   );
 
   for (let mi = 0; mi < markers.length; mi++) {

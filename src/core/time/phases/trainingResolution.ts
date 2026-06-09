@@ -56,6 +56,15 @@ export const trainingResolutionPhase: PipelinePhase = {
     const trainingIntents = intents.filter((i): i is TrainingIntent => i.type === "training");
 
     const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const stableMap = new Map((state.npcStables ?? []).map((s) => [s.id, s]));
+    const outpostMap = new Map<string, any>();
+    for (const s of (state.npcStables ?? [])) {
+      for (const o of ((s as any).outposts ?? [])) {
+        outpostMap.set(o.id, o);
+      }
+    }
+    const playerOutpostMap = new Map<string, any>(((state as any).outposts ?? []).map((o: any) => [o.id, o]));
+
     const hiredStaffByStable = new Map<string, typeof state.hiredStaff>();
     if (state.hiredStaff) {
       for (const staff of state.hiredStaff) {
@@ -266,26 +275,12 @@ export const trainingResolutionPhase: PipelinePhase = {
         // --- OUTPOST SPECIALIZATION (Imperial Expansion) ---
         let branchMod = null;
         if (horse.outpostId) {
-          // Check if horse belongs to NPC stable
-          if (horse.stableId && state.npcStables) {
-            const npcStable = state.npcStables.find((s) => s.id === horse.stableId);
-            if (npcStable && (npcStable as any).outposts) {
-              const outpost = (npcStable as any).outposts.find(
-                (o: any) => o.id === horse.outpostId,
-              );
-              if (outpost) {
-                const specialty = getOutpostSpecialty(outpost);
-                branchMod = getBranchModifiers(specialty);
-              }
-            }
-          }
-          // Check if horse belongs to player (player may have outposts in future)
-          else if (!horse.stableId && (state as any).outposts) {
-            const outpost = (state as any).outposts.find((o: any) => o.id === horse.outpostId);
-            if (outpost) {
-              const specialty = getOutpostSpecialty(outpost);
-              branchMod = getBranchModifiers(specialty);
-            }
+          const outpost = horse.stableId
+            ? outpostMap.get(horse.outpostId)
+            : playerOutpostMap.get(horse.outpostId);
+          if (outpost) {
+            const specialty = getOutpostSpecialty(outpost);
+            branchMod = getBranchModifiers(specialty);
           }
         }
         // --- END SPECIALIZATION ---
@@ -372,7 +367,7 @@ export const trainingResolutionPhase: PipelinePhase = {
 
       // Record training outcome for NPC AI
       if (state.npcAIManager && horse.stableId) {
-        const stable = state.npcStables.find((s) => s.id === horse.stableId);
+        const stable = stableMap.get(horse.stableId);
         if (stable) {
           const stableAI = getOrCreateStableAIState(state.npcAIManager, stable, newDay);
           if (stableAI.trainingAI) {

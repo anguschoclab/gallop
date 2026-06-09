@@ -1022,6 +1022,10 @@ export function generateRaceImpacts({
       race.sectionalSplits = computeSectionalSplits(snapshots, race.distance);
     }
 
+    const splitEntryMaps = race.sectionalSplits?.map((split) =>
+      new Map(split.entries.map((e) => [e.horseId, e])),
+    ) ?? [];
+
     // 2. Process per-horse consequences
     for (const r of result) {
       const horse = horseMap.get(r.horseId);
@@ -1094,8 +1098,8 @@ export function generateRaceImpacts({
 
       // Race history impact
       const trackId = race.trackId || race.graded?.trackId;
-      const pacePositions = race.sectionalSplits?.map((split) => {
-        const entry = split.entries.find((e) => e.horseId === horse.id);
+      const pacePositions = race.sectionalSplits?.map((split, i) => {
+        const entry = splitEntryMaps[i]?.get(horse.id);
         return entry?.rank ?? 0;
       });
       // Store visits BEFORE this race; handler increments by 1 when applying

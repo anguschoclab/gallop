@@ -150,13 +150,16 @@ function processRegionalDominance(
     const newsItems: NewsItem[] = [];
     const reputationEvents: ReputationEvent[] = [];
 
+    const horseMap = new Map(horses.map((h) => [h.id, h]));
+    const stableMap = new Map(npcStables.map((s) => [s.id, s]));
+
     for (const race of races) {
       if (!race.result || race.result.length === 0) continue;
       const winner = race.result[0];
       const region = (race as any).country || "North America (East)";
       const currentKingId = updatedAiManager.regionalKings[region];
 
-      const winningHorse = horses.find((h) => h.id === winner.horseId);
+      const winningHorse = horseMap.get(winner.horseId);
       if (!winningHorse) continue;
       const winningStableId = winningHorse.stableId || "player";
 
@@ -198,7 +201,7 @@ function processRegionalDominance(
           }
         } else {
           // NPC won
-          const stable = npcStables.find((s) => s.id === winningStableId);
+          const stable = stableMap.get(winningStableId);
           if (stable) {
             const stableAI = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
             const oldFriction = stableAI.friction;
@@ -244,9 +247,10 @@ function processRegionalDominance(
           );
 
           for (const rivalStableId of rivalStablesInRace) {
-            const rivalAI = updatedAiManager.stableStates[rivalStableId!];
+            if (!rivalStableId) continue;
+            const rivalAI = updatedAiManager.stableStates[rivalStableId];
             if (rivalAI && rivalAI.friction >= 50) {
-              const rivalStable = npcStables.find((s) => s.id === rivalStableId);
+              const rivalStable = stableMap.get(rivalStableId);
               if (!rivalStable) continue;
 
               // Find best horses for headline
@@ -275,8 +279,8 @@ function processRegionalDominance(
               )?.horseId;
 
               if (playerHorseId && rivalHorseId) {
-                const playerHorse = horses.find((h) => h.id === playerHorseId);
-                const rivalHorse = horses.find((h) => h.id === rivalHorseId);
+                const playerHorse = horseMap.get(playerHorseId);
+                const rivalHorse = horseMap.get(rivalHorseId);
 
                 if (playerHorse && rivalHorse) {
                   const playerWon = playerBestPos < rivalBestPos;
@@ -513,13 +517,3 @@ export function runNpcCycle(
   }
 }
 
-// Helper for Record-based lookup
-class RecordMap<V> {
-  private record: Record<string, V> = {};
-  constructor(entries: [string, V][]) {
-    for (const [k, v] of entries) this.record[k] = v;
-  }
-  get(key: string): V | undefined {
-    return this.record[key];
-  }
-}

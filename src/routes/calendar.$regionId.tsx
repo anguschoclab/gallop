@@ -1,18 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { useGame } from "@/game/store";
 import { type Grade } from "@/data/gradedRaces";
-import type { Race } from "@/game/types";
-import { getGradeColorClass } from "@/core/race/grading";
-import { getMonthName, formatDate } from "@/core/calendar/dateFormatting";
-import { getRegion, isValidRegion, REGION_LIST, type RegionConfig } from "@/core/calendar/regions";
-import { ChevronLeft, Globe } from "lucide-react";
-import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getRegion, isValidRegion } from "@/core/calendar/regions";
+import { MonthView } from "@/components/calendar/MonthView";
+import { TrackView } from "@/components/calendar/TrackView";
 import { RegionSwitcher } from "@/components/RegionSwitcher";
+import { ChevronLeft, Globe } from "lucide-react";
 
 interface CalendarSearch {
   grade?: Grade | "all";
@@ -43,12 +38,10 @@ function RegionalCalendarPage() {
   const races = useGame((s) => s.races);
   const currentDay = useGame((s) => s.day);
 
-  // Filter races by region tracks
   const regionRaces = races.filter(
     (race) => race.graded && region.tracks.includes(race.graded.track),
   );
 
-  // Apply filters
   const filteredRaces = regionRaces.filter((race) => {
     if (grade !== "all" && race.graded?.grade !== grade) return false;
     if (special !== "all" && region.specialRaceKeys) {
@@ -59,7 +52,6 @@ function RegionalCalendarPage() {
     return true;
   });
 
-  // Update URL when filters change
   const updateFilter = (key: keyof CalendarSearch, value: string) => {
     navigate({
       search: (prev: CalendarSearch) => ({ ...prev, [key]: value }),
@@ -98,8 +90,6 @@ function RegionalCalendarPage() {
           </h1>
           <p className="text-cream-muted font-[family-name:var(--font-body)]">{region.subtitle}</p>
         </div>
-
-        {/* Region Switcher */}
         <RegionSwitcher currentRegion={region} />
       </div>
 
@@ -107,7 +97,6 @@ function RegionalCalendarPage() {
       <Card className="border-gold-muted">
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-4 items-center">
-            {/* Grade Filter */}
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-cream">Grade:</span>
               <div className="flex gap-1">
@@ -124,7 +113,6 @@ function RegionalCalendarPage() {
               </div>
             </div>
 
-            {/* Special Filter (Triple Crown/Classics) */}
             {region.specialRaceKeys && (
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">{region.specialFilterName}:</span>
@@ -143,7 +131,6 @@ function RegionalCalendarPage() {
               </div>
             )}
 
-            {/* View Toggle */}
             <div className="flex items-center gap-2 ml-auto">
               <span className="text-sm font-medium">View:</span>
               <div className="flex gap-1">
@@ -171,7 +158,6 @@ function RegionalCalendarPage() {
         </CardContent>
       </Card>
 
-      {/* Calendar View */}
       {view === "month" ? (
         <MonthView races={filteredRaces} region={region} currentDay={currentDay} />
       ) : (
@@ -186,221 +172,5 @@ function RegionalCalendarPage() {
         </Card>
       )}
     </div>
-  );
-}
-
-/** Month-based calendar view */
-function MonthView({
-  races,
-  region,
-  currentDay,
-}: {
-  races: Race[];
-  region: RegionConfig;
-  currentDay: number;
-}) {
-  // Group races by month
-  const racesByMonth = races.reduce(
-    (acc, race) => {
-      const dayOfYear = ((race.day - 1) % 365) + 1;
-      const monthName = getMonthName(dayOfYear);
-      if (!acc[monthName]) acc[monthName] = [];
-      acc[monthName].push(race);
-      return acc;
-    },
-    {} as Record<string, Race[]>,
-  );
-
-  return (
-    <>
-      {Object.entries(racesByMonth).map(([month, monthRaces]) => (
-        <Card key={month}>
-          <CardHeader>
-            <CardTitle className="text-xl">{month}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {monthRaces
-              .sort((a: Race, b: Race) => a.day - b.day)
-              .map((race: Race) => {
-                const isSpecial = region.specialRaceKeys?.has(race.graded?.key ?? "");
-                const hasOwnedEntry = race.entries.some((e) => e.owned);
-                return (
-                  <div
-                    key={race.id}
-                    className={`flex items-start justify-between gap-4 p-3 rounded-lg border ${
-                      isSpecial
-                        ? "border-l-4 border-l-fame bg-fame/10"
-                        : hasOwnedEntry
-                          ? "border-l-4 border-l-success bg-success/10"
-                          : ""
-                    }`}
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <h3 className="font-semibold">{race.name}</h3>
-                        {race.graded?.grade && (
-                          <Badge
-                            variant="outline"
-                            className={getGradeColorClass(race.graded.grade)}
-                          >
-                            {race.graded.grade}
-                          </Badge>
-                        )}
-                        {isSpecial && region.specialFilterName && (
-                          <Badge className="bg-fame/20 text-fame border-fame/40">
-                            {region.specialFilterName}
-                          </Badge>
-                        )}
-                        {hasOwnedEntry && (
-                          <Badge className="bg-success text-success-foreground">Entered</Badge>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted">
-                        <span>{race.graded?.track}</span>
-                        <span>{race.distance}m</span>
-                        <span>{race.graded?.surface}</span>
-                        <span>
-                          Purse{" "}
-                          <span className="font-medium text-cream">
-                            ${race.purse.toLocaleString()}
-                          </span>
-                        </span>
-                        {race.restrictions?.minAge !== undefined && (
-                          <span>
-                            {race.restrictions.minAge === race.restrictions.maxAge
-                              ? `${race.restrictions.minAge}YO only`
-                              : race.restrictions.maxAge
-                                ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
-                                : `${race.restrictions.minAge}+ YO`}
-                          </span>
-                        )}
-                        {race.restrictions?.gender && (
-                          <span>
-                            {race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only
-                          </span>
-                        )}
-                      </div>
-                      <div className="mt-2">
-                        <WeatherForecastStrip
-                          trackId={race.graded?.trackId ?? race.trackId}
-                          trackCondition={race.trackCondition}
-                        />
-                      </div>
-                    </div>
-                    <div className="text-right text-sm">
-                      <div className="font-medium">Day {race.day}</div>
-                    </div>
-                  </div>
-                );
-              })}
-          </CardContent>
-        </Card>
-      ))}
-    </>
-  );
-}
-
-/** Track-based calendar view */
-function TrackView({
-  races,
-  region,
-  currentDay,
-}: {
-  races: Race[];
-  region: RegionConfig;
-  currentDay: number;
-}) {
-  // Group races by track
-  const racesByTrack = region.tracks.reduce(
-    (acc, track) => {
-      const trackRaces = races.filter((r) => r.graded?.track === track);
-      if (trackRaces.length > 0) {
-        acc[track] = trackRaces.sort((a: Race, b: Race) => a.day - b.day);
-      }
-      return acc;
-    },
-    {} as Record<string, Race[]>,
-  );
-
-  return (
-    <>
-      {Object.entries(racesByTrack).map(([track, trackRaces]) => (
-        <Card key={track}>
-          <CardHeader>
-            <CardTitle className="text-xl">{track}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {trackRaces.map((race: Race) => {
-              const isSpecial = region.specialRaceKeys?.has(race.graded?.key ?? "");
-              const hasOwnedEntry = race.entries.some((e) => e.owned);
-              return (
-                <div
-                  key={race.id}
-                  className={`flex items-start justify-between gap-4 p-3 rounded-lg border ${
-                    isSpecial
-                      ? "border-l-4 border-l-fame bg-fame/10"
-                      : hasOwnedEntry
-                        ? "border-l-4 border-l-success bg-success/10"
-                        : ""
-                  }`}
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <h3 className="font-semibold">{race.name}</h3>
-                      {race.graded?.grade && (
-                        <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
-                          {race.graded.grade}
-                        </Badge>
-                      )}
-                      {isSpecial && region.specialFilterName && (
-                        <Badge className="bg-fame/20 text-fame border-fame/40">
-                          {region.specialFilterName}
-                        </Badge>
-                      )}
-                      {hasOwnedEntry && (
-                        <Badge className="bg-success text-success-foreground">Entered</Badge>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                      <span>{race.distance}m</span>
-                      <span>{race.graded?.surface}</span>
-                      <span>
-                        Purse{" "}
-                        <span className="font-medium text-cream">
-                          ${race.purse.toLocaleString()}
-                        </span>
-                      </span>
-                      {race.restrictions?.minAge !== undefined && (
-                        <span>
-                          {race.restrictions.minAge === race.restrictions.maxAge
-                            ? `${race.restrictions.minAge}YO only`
-                            : race.restrictions.maxAge
-                              ? `${race.restrictions.minAge}-${race.restrictions.maxAge}YO`
-                              : `${race.restrictions.minAge}+ YO`}
-                        </span>
-                      )}
-                      {race.restrictions?.gender && (
-                        <span>
-                          {race.restrictions.gender === "filly" ? "Fillies" : "Colts"} only
-                        </span>
-                      )}
-                    </div>
-                    <div className="mt-2">
-                      <WeatherForecastStrip
-                        trackId={race.graded?.trackId ?? race.trackId}
-                        trackCondition={race.trackCondition}
-                      />
-                    </div>
-                  </div>
-                  <div className="text-right text-sm">
-                    <div className="font-medium">Day {race.day}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
-      ))}
-    </>
   );
 }

@@ -46,10 +46,12 @@ export const intentCollectionPhase: PipelinePhase = {
 
     // Collect system intents: auto-managed campaign race entries
     if (state.campaigns) {
+      const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+      const raceMap = new Map(state.races.map((r) => [r.id, r]));
       for (const campaign of state.campaigns) {
         if (!campaign.autoManaged) continue;
 
-        const horse = state.horses.find((h) => h.id === campaign.horseId);
+        const horse = horseMap.get(campaign.horseId);
         if (!horse || !horse.owned) continue;
 
         // Check for planned slots that are coming up (today or tomorrow)
@@ -57,7 +59,7 @@ export const intentCollectionPhase: PipelinePhase = {
           if (slot.status === "planned" && slot.raceId) {
             // If race is today or tomorrow
             if (slot.dayTarget >= newDay && slot.dayTarget <= newDay + 1) {
-              const race = state.races.find((r) => r.id === slot.raceId);
+              const race = raceMap.get(slot.raceId);
               if (race && !race.resolved) {
                 // Check if horse is already entered
                 const alreadyEntered = race.entries.some((e) => e.horseId === horse.id);

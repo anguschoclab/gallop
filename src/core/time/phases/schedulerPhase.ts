@@ -44,10 +44,10 @@ export const schedulerPhase = {
       let updated: HorseCampaign = { ...campaign, slots: reconciledSlots };
 
       // Update aptitudes from newly resolved races
+      const slotByRaceId = new Map(campaign.slots.map((s) => [s.raceId, s]));
       for (const slot of reconciledSlots) {
         if (slot.status !== "completed" || !slot.raceId) continue;
-        const wasJustCompleted =
-          campaign.slots.find((s) => s.raceId === slot.raceId)?.status === "entered";
+        const wasJustCompleted = slotByRaceId.get(slot.raceId)?.status === "entered";
         if (!wasJustCompleted) continue;
 
         const race = raceMap.get(slot.raceId);
@@ -106,7 +106,7 @@ export const schedulerPhase = {
         currentDay: newDay,
         cash: state.cash + cashDelta,
         enterRaceFn: (raceId, horseId) => {
-          const race = mutatedRaces.find((r) => r.id === raceId);
+          const race = raceMap.get(raceId);
           if (!race) return { ok: false, reason: "Race not found" };
           if (race.entries.some((e) => e.horseId === horseId))
             return { ok: false, reason: "Already entered" };

@@ -36,8 +36,12 @@ export const claimResolutionPhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, logs } = context;
     const allClaims: Claim[] = state.claims ?? [];
+    const raceMap = new Map(state.races.map((r: Race) => [r.id, r]));
+    const horseMap = new Map(state.horses.map((h: Horse) => [h.id, h]));
+    const stableMap = new Map((state.npcStables ?? []).map((s: Stable) => [s.id, s]));
+
     const claimsToday = allClaims.filter((c: Claim) => {
-      const race = state.races.find((r: Race) => r.id === c.raceId);
+      const race = raceMap.get(c.raceId);
       return race?.resolved && race.day === newDay && race.claiming;
     });
 
@@ -67,10 +71,10 @@ export const claimResolutionPhase = {
       const winnerIdx = seed % horseClaims.length;
       const winnerClaim = horseClaims[winnerIdx];
 
-      const horse = horses.find((h: Horse) => h.id === horseId);
+      const horse = horseMap.get(horseId);
       if (!horse) continue;
 
-      const race = state.races.find((r: Race) => r.id === raceId);
+      const race = raceMap.get(raceId);
       if (!race) continue;
 
       const price = winnerClaim.price;
@@ -106,7 +110,7 @@ export const claimResolutionPhase = {
         playerCash += proceeds;
         newLogs.push({
           day: newDay,
-          text: `${horse.name} was claimed by ${winnerClaim.claimantStableId ? (npcStables.find((s) => s.id === winnerClaim.claimantStableId)?.name ?? "an NPC") : "your stable"} for ${formatCurrency(price)} after ${race.name}. Net proceeds: ${formatCurrency(proceeds)}.`,
+          text: `${horse.name} was claimed by ${winnerClaim.claimantStableId ? (stableMap.get(winnerClaim.claimantStableId)?.name ?? "an NPC") : "your stable"} for ${formatCurrency(price)} after ${race.name}. Net proceeds: ${formatCurrency(proceeds)}.`,
         });
       } else {
         // Credit NPC consignor

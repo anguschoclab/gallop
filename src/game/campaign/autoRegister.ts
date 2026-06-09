@@ -65,8 +65,8 @@ export type AutoRegisterResult = {
 /**
  * Check if a horse is already entered in any race
  */
-function isHorseAlreadyEnteredInAnyRace(horse: Horse, races: Race[]): boolean {
-  return races.some((race) => race.entries.some((entry) => entry.horseId === horse.id));
+function isHorseAlreadyEnteredInAnyRace(horse: Horse, enteredHorseIds: Set<string>): boolean {
+  return enteredHorseIds.has(horse.id);
 }
 
 /**
@@ -129,6 +129,18 @@ export function calculateAutoRegisterEntries(
   const entries: AutoRegisterEntry[] = [];
   const skipped: { horseId: string; horseName: string; reason: string }[] = [];
 
+  // Pre-build O(1) lookups from race entries
+  const enteredHorseIds = new Set<string>();
+  const playerEntryCountByRace = new Map<string, number>();
+  for (const race of races) {
+    let playerCount = 0;
+    for (const entry of race.entries) {
+      enteredHorseIds.add(entry.horseId);
+      if (entry.owned) playerCount++;
+    }
+    if (playerCount > 0) playerEntryCountByRace.set(race.id, playerCount);
+  }
+
   // Filter eligible player horses
   const eligibleHorses = horses.filter((h) => {
     // Must be player owned
@@ -157,7 +169,7 @@ export function calculateAutoRegisterEntries(
     }
 
     // Must not already be entered in any race
-    if (isHorseAlreadyEnteredInAnyRace(h, races)) {
+    if (isHorseAlreadyEnteredInAnyRace(h, enteredHorseIds)) {
       return false;
     }
 
@@ -203,13 +215,8 @@ export function calculateAutoRegisterEntries(
       }
 
       // Check stable entry limit (max 2 per race)
-      const stableEntries = race.entries.filter((e) => e.owned).length;
+      const stableEntries = playerEntryCountByRace.get(race.id) ?? 0;
       if (stableEntries >= MAX_HORSES_PER_STABLE_PER_RACE) {
-        continue;
-      }
-
-      // Check if horse already entered in this race
-      if (race.entries.some((e) => e.horseId === horse.id)) {
         continue;
       }
 

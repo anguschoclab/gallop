@@ -91,12 +91,21 @@ export function resolveLiveRaceWithImpacts(
     race.sectionalSplits = computeSectionalSplits(race.snapshots, race.distance);
   }
 
+  // Pre-build lookup maps for O(1) access
+  const horseMap = new Map(horses.map((h) => [h.id, h]));
+  const runnerMap = new Map(runners.map((run) => [run.horseId, run]));
+  const jockeyMap = new Map((jockeys || []).map((j) => [j.id, j]));
+  const raceEntryMap = new Map(race.entries.map((e) => [e.horseId, e]));
+  const splitEntryMaps = race.sectionalSplits?.map((split) =>
+    new Map(split.entries.map((e) => [e.horseId, e])),
+  ) ?? [];
+
   // Generate per-horse impacts
   for (const r of result) {
-    const horse = horses.find((h) => h.id === r.horseId);
+    const horse = horseMap.get(r.horseId);
     if (!horse) continue;
 
-    const runner = runners.find((run) => run.horseId === r.horseId);
+    const runner = runnerMap.get(r.horseId);
 
     // Energy impact (-25)
     impacts.push({
@@ -168,8 +177,8 @@ export function resolveLiveRaceWithImpacts(
 
     // Race history impact
     const trackId = race.trackId || race.graded?.trackId;
-    const pacePositions = race.sectionalSplits?.map((split) => {
-      const entry = split.entries.find((e) => e.horseId === horse.id);
+    const pacePositions = race.sectionalSplits?.map((split, i) => {
+      const entry = splitEntryMaps[i]?.get(horse.id);
       return entry?.rank ?? 0;
     });
     // Store visits BEFORE this race; handler increments by 1 when applying
@@ -223,9 +232,12 @@ export function resolveLiveRaceWithImpacts(
           };
         }
         // Otherwise check race history
-        const historyEntry = horse.raceHistory.find(
-          (rh) => rh.raceId === tcRace.key || rh.raceName === tcRace.name,
+        const raceHistoryMap = new Map(
+          (horse.raceHistory as Array<{ raceId: string; raceName: string; position: number; day: number }>).map((rh) => [rh.raceId, rh]),
         );
+        const historyEntry =
+          raceHistoryMap.get(tcRace.key) ||
+          (horse.raceHistory as Array<{ raceId: string; raceName: string; position: number; day: number }>).find((rh) => rh.raceName === tcRace.name);
         return {
           raceKey: tcRace.key,
           position: historyEntry?.position ?? 999,
@@ -293,7 +305,7 @@ export function resolveLiveRaceWithImpacts(
       r.position === 1 &&
       (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")
     ) {
-      const dam = horses.find((h) => h.id === horse.pedigree?.damId);
+      const dam = horseMap.get(horse.pedigree?.damId || "");
       if (dam) {
         impacts.push({
           id: generateUUID(),
@@ -318,7 +330,7 @@ export function resolveLiveRaceWithImpacts(
       }
 
       // Stud career impact for sire
-      const sire = horses.find((h) => h.id === horse.pedigree?.sireId);
+      const sire = horseMap.get(horse.pedigree?.sireId || "");
       if (sire && sire.stud?.atStud) {
         const newStakesFoals = (sire.stud.lifetimeStakesFoals ?? 0) + 1;
         const newG1Foals =
@@ -363,9 +375,9 @@ export function resolveLiveRaceWithImpacts(
     }
 
     // Jockey stats impact
-    const raceEntry = race.entries.find((e) => e.horseId === horse.id);
+    const raceEntry = raceEntryMap.get(horse.id);
     if (raceEntry?.jockeyId && r.position - 1 < PRIZE_SPLIT.length) {
-      const jockey = jockeys?.find((j) => j.id === raceEntry.jockeyId);
+      const jockey = jockeyMap.get(raceEntry.jockeyId);
       if (jockey) {
         const winAmount = PRIZE_SPLIT[r.position - 1] * race.purse;
         const jockeyFee = Math.round(winAmount * 0.1);
@@ -434,13 +446,13 @@ export function resolveLiveRaceWithImpacts(
 
   // Log impact for race summary
   const ownedHorses = result.filter((r) => {
-    const horse = horses.find((h) => h.id === r.horseId);
+    const horse = horseMap.get(r.horseId);
     return horse && !horse.stableId;
   });
   if (ownedHorses.length > 0) {
     const summary = ownedHorses
       .map((r) => {
-        const horse = horses.find((h) => h.id === r.horseId);
+        const horse = horseMap.get(r.horseId);
         return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
       })
       .join(", ");

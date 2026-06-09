@@ -33,9 +33,12 @@ export const consignmentResolutionPhase: PipelinePhase = {
       (i): i is ConsignmentWithdrawalIntent => i.type === "consignment_withdrawal",
     );
 
+    const horseMap = new Map(state.horses.map((h) => [h.id, h]));
+    const auctionMap = new Map((state.auctions ?? []).map((a) => [a.id, a]));
+
     for (const intent of consignmentIntents) {
-      const horse = state.horses.find((h) => h.id === intent.horseId);
-      const auction = state.auctions?.find((a) => a.id === intent.saleId);
+      const horse = horseMap.get(intent.horseId);
+      const auction = auctionMap.get(intent.saleId);
 
       if (!horse || !auction) continue;
       if (auction.resolved) continue;
@@ -56,8 +59,8 @@ export const consignmentResolutionPhase: PipelinePhase = {
     }
 
     for (const intent of withdrawalIntents) {
-      const horse = state.horses.find((h) => h.id === intent.horseId);
-      const auction = state.auctions?.find((a) => a.id === intent.saleId);
+      const horse = horseMap.get(intent.horseId);
+      const auction = auctionMap.get(intent.saleId);
 
       if (!horse || !auction) continue;
       if (auction.resolved) continue;
