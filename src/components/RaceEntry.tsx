@@ -9,21 +9,19 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Horse, Race, Jockey } from "@/game/types";
-import { ChevronRight, MapPin, CloudSun, Clock, Thermometer, Wind } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { getCurrentYear } from "@/game/raceSchedule";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
-import { getWeatherDisplay } from "@/components/races/raceVisualHelpers";
-import { WeatherForecastStrip } from "@/components/races/WeatherForecastStrip";
 import { getTransportCostForRace } from "@/core/race/transportCost";
 import { HorseSelectionStep } from "./raceEntry/HorseSelectionStep";
 import { JockeySelectionStep } from "./raceEntry/JockeySelectionStep";
 import { TacticsSelectionStep } from "./raceEntry/TacticsSelectionStep";
 import { ReviewStep } from "./raceEntry/ReviewStep";
 import { ClaimingStep } from "./raceEntry/ClaimingStep";
+import { RaceEntryHeader } from "./raceEntry/RaceEntryHeader";
 
 interface RaceEntryProps {
   race: Race;
@@ -159,52 +157,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               />
             ))}
           </div>
-          <div className="flex flex-wrap items-center gap-3 mt-3 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {race.graded?.track || race.trackId || "Local Track"}
-            </span>
-            <span>· {race.distance}m</span>
-            <span>· {race.surface || race.graded?.surface || "Turf"}</span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              Day {race.day}
-            </span>
-            {race.weather && (
-              <span className="flex items-center gap-1">
-                <CloudSun className="h-3 w-3" />
-                {getWeatherDisplay(race.weather)}
-              </span>
-            )}
-            {raceWeather && (
-              <span className="flex items-center gap-1">
-                <Thermometer className="h-3 w-3" />
-                {Math.round(raceWeather.tempC)}°C
-              </span>
-            )}
-            {raceWeather && (
-              <span className="flex items-center gap-1">
-                <Wind className="h-3 w-3" />
-                {Math.round(raceWeather.windKph)} km/h
-              </span>
-            )}
-            {race.trackCondition && (
-              <Badge variant="outline" className="h-4 px-1.5 text-[9px] capitalize">
-                {race.trackCondition}
-              </Badge>
-            )}
-            {race.graded?.requiresInvitation && (
-              <Badge className="bg-amber-600 text-white text-[10px] h-4 px-1.5">
-                Invitation Only
-              </Badge>
-            )}
-            <div className="ml-auto">
-              <WeatherForecastStrip
-                trackId={race.trackId ?? race.graded?.trackId ?? race.graded?.track}
-                trackCondition={race.trackCondition}
-              />
-            </div>
-          </div>
+          <RaceEntryHeader race={race} raceWeather={raceWeather} />
         </DialogHeader>
 
         <div className="py-4 min-h-[400px]">
