@@ -122,7 +122,7 @@ function Dashboard() {
             const race = raceMap.get(raceResult.raceId);
             if (race) {
               // Check if rival stable had entries in this race
-              const hadRivalEntry = race.entries.some((e) => e.stableId === stableId);
+              const hadRivalEntry = race.entries.some((e: any) => e.stableId === stableId);
               if (hadRivalEntry) {
                 // Player horse vs rival horse
                 if (raceResult.position === 1) {
