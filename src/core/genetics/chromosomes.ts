@@ -13,7 +13,7 @@
  * Implements chromosome-based crossover with linkage groups
  */
 
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import type { Locus } from "./types";
 
 /**

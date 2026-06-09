@@ -9,8 +9,8 @@ import { produceWithPatches, enablePatches, type Patch } from "immer";
 import type { GameState } from "@/game/types";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
-import { createRng, hashStr } from "@/game/rng";
-import { getCurrentYear } from "@/game/raceSchedule";
+import { createRng, hashStr } from "@/core/common/rng";
+import { getCurrentYear } from "@/core/race/schedule";
 
 enablePatches();
 

@@ -4,8 +4,8 @@ import {
   calculateNpcBid,
   generateAuctionLots,
   resolveAuctionSale,
-} from "@/game/auction";
-import { createRng } from "@/game/rng";
+} from "@/game/auction/engine";
+import { createRng } from "@/core/common/rng";
 import type { Horse, Stable, AuctionSale } from "@/game/types";
 import type { StaffRole } from "@/core/staff/staffTypes";
 import { createTestHorse } from "@/tests/helpers";

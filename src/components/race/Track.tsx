@@ -1,5 +1,5 @@
-import { getTrackBackground, getSpriteUrl, isAnimatedSprite } from "@/components/races/raceVisualHelpers";
-import type { Runner } from "@/game/raceSim";
+import { getTrackBackground, getSpriteUrl, isAnimatedSprite } from "@/components/race/raceVisualHelpers";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { HorseSprite } from "./HorseSprite";
 
 interface TrackProps {

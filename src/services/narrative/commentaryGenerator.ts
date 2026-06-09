@@ -1,6 +1,6 @@
-import type { Runner } from "@/game/raceSim";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse, Race, Stable } from "@/game/types";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import {
   BIOGRAPHICAL_TEMPLATES,
   FRAGMENTS,

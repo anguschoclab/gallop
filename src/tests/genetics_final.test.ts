@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import { generateGenotype, generateDeterministicGenotype } from "@/core/genetics/generation";
 import {
   resolveStats,

@@ -4,8 +4,8 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateTrackSchedule } from "@/game/raceSchedule";
-import { createRng } from "@/game/rng";
+import { generateTrackSchedule } from "@/core/race/schedule";
+import { createRng } from "@/core/common/rng";
 import type { GameState, Race, Horse } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 

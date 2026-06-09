@@ -9,8 +9,8 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import { createRng, hashStr } from "@/game/rng";
-import { generateJockey } from "@/game/jockeyGen";
+import { createRng, hashStr } from "@/core/common/rng";
+import { generateJockey } from "@/core/jockey/generator";
 import {
   selectBestJockey,
   shouldRetainJockey,
@@ -18,7 +18,7 @@ import {
   recordJockeyAssignment,
 } from "@/core/ai/jockeyAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/game/constants";
+import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/constants/game";
 
 /**
  * Phase: Jockey Management

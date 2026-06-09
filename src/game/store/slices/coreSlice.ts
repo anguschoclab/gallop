@@ -15,15 +15,15 @@
  */
 
 import { applyPatches } from "immer";
-import type { CoreState } from "@/game/state/coreState";
-import { createDefaultCoreState } from "@/game/state/coreState";
+import type { CoreState } from "@/game/store/state/coreState";
+import { createDefaultCoreState } from "@/game/store/state/coreState";
 import type { Horse, Race, PlayerProfile } from "@/game/types";
 import type { ActionResult } from "@/game/store";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
-import { createRng, hashStr } from "@/game/rng";
-import { getCurrentYear } from "@/game/raceSchedule";
+import { createRng, hashStr } from "@/core/common/rng";
+import { getCurrentYear } from "@/core/race/schedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
 import {
   UPKEEP_PER_HORSE,
@@ -31,7 +31,7 @@ import {
   DAYS_PER_MONTH,
   DAYS_PER_WEEK,
   BUMP_RATING_MARGIN,
-} from "@/game/constants";
+} from "@/constants/game";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";

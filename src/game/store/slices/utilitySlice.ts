@@ -10,7 +10,7 @@
 
 import type { Stable, PlayerProfile, GameState } from "@/game/types";
 import type { ManagerReputation } from "@/core/reputation";
-import type { SystemsState } from "@/game/state/systemsState";
+import type { SystemsState } from "@/game/store/state/systemsState";
 import type { UserSettings } from "@/core/settings/settingsTypes";
 import type { GameStateCreator } from "../types";
 import { saveToSlot, loadFromSlot } from "@/services/saveManager";

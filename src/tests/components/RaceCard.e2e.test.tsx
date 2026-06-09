@@ -53,7 +53,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 // ── Import after mocks ─────────────────────────────────────────────────────────
-import { RaceCard } from "@/components/races/RaceCard";
+import { RaceCard } from "@/components/race/RaceCard";
 import type { Race } from "@/game/types";
 
 // ── helpers ────────────────────────────────────────────────────────────────────

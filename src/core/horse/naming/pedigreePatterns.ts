@@ -8,8 +8,8 @@
  * Related files: nameGenerator.ts (uses these patterns for pedigree strategy)
  */
 
-import type { Rng } from "@/game/rng";
-import { PARENT_NAME_MAX_LENGTH } from "@/game/constants";
+import type { Rng } from "@/core/common/rng";
+import { PARENT_NAME_MAX_LENGTH } from "@/constants/game";
 
 /**
  * Generate a portmanteau from sire and dam names.

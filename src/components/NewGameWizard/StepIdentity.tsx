@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FILLER_PREFIXES, FILLER_SUFFIXES } from "@/core/stable/stablePoolData";
-import { OWNER_NAMES } from "@/core/newGame/backstories";
-import { createRng, hashStr } from "@/game/rng";
+import { OWNER_NAMES } from "@/core/common/backstories";
+import { createRng, hashStr } from "@/core/common/rng";
 
 interface StepIdentityProps {
   stableName: string;

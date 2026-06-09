@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { runNpcCycle } from "@/core/npc/npcCycle";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 

@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase), ../advance.ts (uses phase)
  */
 
-import { PHASE_ORDER_STATE_UPDATE } from "@/game/constants";
+import { PHASE_ORDER_STATE_UPDATE } from "@/constants/game";
 import type { PipelineContext } from "../pipeline";
 
 /**

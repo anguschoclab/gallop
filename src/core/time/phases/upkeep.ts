@@ -23,7 +23,7 @@ import {
   updateReserveState,
 } from "@/core/ai/upkeepAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { UPKEEP_PER_HORSE, PHASE_ORDER_UPKEEP } from "@/game/constants";
+import { UPKEEP_PER_HORSE, PHASE_ORDER_UPKEEP } from "@/constants/game";
 
 /**
  * Phase: Upkeep

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import type { Horse } from "@/game/types";
 import { computeAllLeaderboards } from "@/core/breeding/leaderboardService";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 
 describe("leaderboardService", () => {
   let horses: Horse[];

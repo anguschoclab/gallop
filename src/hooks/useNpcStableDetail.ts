@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
-import { useHorses, useDay, useCash, useRaces } from "@/game/hooks/useCoreState";
-import { useNpcStables, useAwards } from "@/game/hooks/useSystemsState";
+import { useHorses, useDay, useCash, useRaces } from "@/hooks/game/useCoreState";
+import { useNpcStables, useAwards } from "@/hooks/game/useSystemsState";
 import { getStableById } from "@/core/stable/stableQueries";
 import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import type { GameState, Horse, PrivateSaleOffer } from "@/game/types";

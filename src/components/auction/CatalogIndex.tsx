@@ -12,7 +12,7 @@ import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
 import { AuctionFilterBar } from "./AuctionFilterBar";
 import type { AuctionLot, Horse } from "@/game/types";
-import type { AuctionBrowseSearch } from "@/lib/auctionSearchSchema";
+import type { AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
 
 interface CatalogIndexProps {
   displayLots: AuctionLot[];

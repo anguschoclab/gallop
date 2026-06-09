@@ -11,8 +11,8 @@
  */
 
 import type { Horse, GameState } from "@/game/types";
-import type { Rng } from "@/game/rng";
-import { findHorseByName } from "@/core/data/pedigreeData";
+import type { Rng } from "@/core/common/rng";
+import { findHorseByName } from "@/data/pedigreeData";
 
 // Bruce Lowe's "Figure System": every thoroughbred traces tail-female to one
 // of ~43 root mares, each numbered by historical wins in the English Classics.

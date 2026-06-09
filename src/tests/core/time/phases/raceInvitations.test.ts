@@ -6,10 +6,10 @@ import { describe, it, expect } from "vitest";
 import { raceInvitationsPhase } from "@/core/time/phases/raceInvitations";
 import { isHorseEligibleForRace, isHorseInvitedToRace } from "@/core/race/eligibility";
 import { RacingValidator } from "@/core/resolver/validators/RacingValidator";
-import { makeGradedRace } from "@/game/raceGeneration/raceGen";
+import { makeGradedRace } from "@/core/race/generation/raceGen";
 import type { Horse, Race, GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
-import type { GradedRace } from "@/core/data/gradedRaces";
+import type { GradedRace } from "@/data/gradedRaces";
 
 function makeHorse(overrides: Partial<Horse> = {}): Horse {
   return {

@@ -4,7 +4,7 @@ import {
   Globe,
   Briefcase,
 } from "lucide-react";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

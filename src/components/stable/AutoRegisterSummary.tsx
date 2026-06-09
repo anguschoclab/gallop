@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatting";
-import type { AutoRegisterResult } from "@/game/autoRegister";
+import type { AutoRegisterResult } from "@/game/campaign/autoRegister";
 
 interface Props {
   result: AutoRegisterResult;

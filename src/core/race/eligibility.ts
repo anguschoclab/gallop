@@ -12,7 +12,7 @@ import type { Horse, Race } from "@/game/types";
 import type { Hemisphere } from "@/game/types";
 import { isGenderEligible as checkGenderEligibility } from "@/core/horse/gender";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { getCurrentYear } from "@/game/raceSchedule";
+import { getCurrentYear } from "@/core/race/schedule";
 
 /**
  * Pure race eligibility checking logic

@@ -13,7 +13,7 @@
 // Provides authentic naming patterns based on real-world racing conventions
 
 import type { RegionalSystem } from "@/game/types";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import namePoolsData from "@/assets/data/namePools.json";
 
 // Sponsor names for race naming

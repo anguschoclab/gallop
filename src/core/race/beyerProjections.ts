@@ -8,9 +8,9 @@
  * Related files: projections.ts (uses for batch projections), races.tsx (uses for race display)
  */
 
-import { expectedBeyer } from "@/game/beyer";
+import { expectedBeyer } from "@/core/race/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
-import { getCourseForRace } from "@/game/tracks";
+import { getCourseForRace } from "@/data/tracks";
 import type { Horse, Race } from "@/game/types";
 
 /**

@@ -5,7 +5,7 @@
 import { describe, it, expect } from "vitest";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/state";
+import { createDefaultGameState } from "@/game/store/state";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type {
   AnyImpact,

@@ -6,7 +6,7 @@
  * boundary (see `weatherSim.toTrackWeatherPattern`).
  */
 
-import type { WeatherPattern as TrackWeatherPattern } from "@/core/track/trackConditionData";
+import type { WeatherPattern as TrackWeatherPattern } from "@/core/race/trackConditionData";
 
 /** Sim-level weather pattern (player-facing vocabulary). */
 export type SimWeatherPattern = "clear" | "overcast" | "shower" | "rain" | "snow" | "storm";

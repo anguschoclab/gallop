@@ -24,7 +24,7 @@ import type {
 import type { GameState, Horse, Race, Stable, Jockey } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
-import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
+import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
 import { calculateOverallRating } from "@/core/horse/stats";
 import {
   createTrainingAIState,

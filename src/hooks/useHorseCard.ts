@@ -2,7 +2,7 @@ import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { scoutGrade, gradeColorClass } from "@/core/horse/grading";
-import { getDisplayableStats, getScoutStatus } from "@/game/scouting";
+import { getDisplayableStats, getScoutStatus } from "@/core/npc/scouting";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { Horse } from "@/game/types";
 

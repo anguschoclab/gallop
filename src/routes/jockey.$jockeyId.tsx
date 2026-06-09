@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import type { GameState } from "@/game/types";
-import { JockeyCard } from "@/components/JockeyCard";
+import { JockeyCard } from "@/components/jockey/JockeyCard";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 

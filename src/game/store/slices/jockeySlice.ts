@@ -19,7 +19,7 @@ import {
   JOCKEY_RETAINER_BONUS_MULTIPLIER,
   JOCKEY_PER_RACE_BONUS_MULTIPLIER,
   DAYS_PER_YEAR,
-} from "@/game/constants";
+} from "@/constants/game";
 
 export type JockeySlice = {
   hireJockey: (jockeyId: string, contractType: "standard" | "retainer") => ActionResult;

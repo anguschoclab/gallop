@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { NarrativeGenerator } from "@/services/narrativeService";
 import type { Race, Horse, Stable } from "@/game/types";
-import type { Runner } from "@/game/raceSim";
-import { createRng, hashStr } from "@/game/rng";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { createRng, hashStr } from "@/core/common/rng";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

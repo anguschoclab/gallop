@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_PREGNANCY } from "@/game/constants";
+import { PHASE_ORDER_PREGNANCY } from "@/constants/game";
 import type { PipelineContext } from "../pipeline";
 import type { Horse, Pregnancy } from "@/game/types";
 import { getFoalsBy } from "@/core/breeding/lineage";

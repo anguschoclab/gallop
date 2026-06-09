@@ -8,7 +8,7 @@ import type { PipelineContext, PipelinePhase } from "@/core/time/pipeline";
 import type { GameState, Horse } from "@/game/types";
 import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 
 describe("intentCollectionPhase", () => {

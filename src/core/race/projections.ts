@@ -9,7 +9,7 @@
  */
 
 import type { Horse, Race } from "@/game/types";
-import type { Grade } from "@/game/gradedRaces";
+import type { Grade } from "@/data/gradedRaces";
 import { calculateProjectedBeyer } from "./beyerProjections";
 
 /**

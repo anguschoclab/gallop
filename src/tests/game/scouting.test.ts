@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import {
   calculateScoutCost,
   getVisibleStats,
@@ -7,7 +7,7 @@ import {
   getDisplayableStats,
   getScoutStatus,
   getIntelSummary,
-} from "@/game/scouting";
+} from "@/core/npc/scouting";
 import type { Horse, Stable, ScoutReport } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";

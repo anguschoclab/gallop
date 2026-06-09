@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useNpcStables } from "@/game/hooks/useSystemsState";
+import { useNpcStables } from "@/hooks/game/useSystemsState";
 import { getMajorStables, getStablesByTier } from "@/core/stable/stableQueries";
 import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
 import { useMemo } from "react";

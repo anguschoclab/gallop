@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { rollForInjury } from "@/core/health/healthSystem";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import type { Horse } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";

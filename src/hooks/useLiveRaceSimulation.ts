@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { computePaceContext, stepRunner, type Runner } from "@/game/raceSim";
+import { computePaceContext, stepRunner } from "@/core/race/engine/simulation";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { NarrativeGenerator } from "@/services/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 

@@ -6,7 +6,7 @@ import {
   SIZE_MAP,
   JOCKEY_AVATAR_ASPECT,
   type JockeyAvatarSize,
-} from "@/components/JockeyAvatar";
+} from "@/components/jockey/JockeyAvatar";
 import type { Jockey } from "@/game/types";
 
 const stubJockey: Pick<Jockey, "id" | "silk" | "age" | "archetype"> = {

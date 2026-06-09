@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { createAuctionRunner, nextBidAmount } from "@/game/auctionRunner";
-import { createRng } from "@/game/rng";
+import { createAuctionRunner, nextBidAmount } from "@/game/auction/runner";
+import { createRng } from "@/core/common/rng";
 import type { AuctionSale, AuctionLot, Horse, Stable } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 

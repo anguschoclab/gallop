@@ -14,7 +14,7 @@
  */
 
 import type { Horse, Pregnancy, Stable, RegionalSystem, GameState } from "@/game/types";
-import type { Track } from "@/game/tracks";
+import type { Track } from "@/data/tracks";
 import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
@@ -24,7 +24,7 @@ import {
   BREEDING_FEE,
   GESTATION_DAYS,
   LIVE_FOAL_GUARANTEE_FEE,
-} from "@/game/constants";
+} from "@/constants/game";
 
 /**
  * Helper function to get regional system from country string.

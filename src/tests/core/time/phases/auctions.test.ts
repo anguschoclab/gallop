@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { auctionsPhase } from "@/core/time/phases/auctions";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/state";
+import { createDefaultGameState } from "@/game/store/state";
 
 describe("auctionsPhase", () => {
   const createTestState = (): GameState => ({

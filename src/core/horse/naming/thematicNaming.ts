@@ -9,7 +9,7 @@
  * Related files: nameGenerator.ts (uses this for thematic strategy), stableConfig.ts (personality definitions)
  */
 
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import {
   CLASSICAL_NAMES,
   CELESTIAL_TERMS,

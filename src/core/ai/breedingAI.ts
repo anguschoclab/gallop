@@ -19,7 +19,7 @@ import { cachedSimulation } from "@/core/genetics/genotypeCache";
 import { getArchetypeById, getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
 import { calculateGeneticDistance } from "@/core/breeding/programs";
 import type { BreedingProgram } from "@/core/breeding/programs";
-import { createRng, hashStr, type Rng } from "@/game/rng";
+import { createRng, hashStr, type Rng } from "@/core/common/rng";
 
 /**
  * Breeding AI System

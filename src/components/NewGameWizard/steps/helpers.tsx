@@ -1,5 +1,5 @@
-import { createRng, hashStr } from "@/game/rng";
-import type { Backstory } from "@/core/newGame/backstories";
+import { createRng, hashStr } from "@/core/common/rng";
+import type { Backstory } from "@/core/common/backstories";
 import { generateUUID } from "@/core/uuid";
 
 export function makeWizardRng(seed: string) {

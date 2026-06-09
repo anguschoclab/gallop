@@ -1,8 +1,8 @@
 import { useState, useMemo, useCallback } from "react";
 import { useGame } from "@/game/store";
-import { calculateAutoRegisterEntries } from "@/game/autoRegister";
-import { useHorses, useCash, useDay, useRaces } from "@/game/hooks/useCoreState";
-import { useJockeys } from "@/game/hooks/useSystemsState";
+import { calculateAutoRegisterEntries } from "@/game/campaign/autoRegister";
+import { useHorses, useCash, useDay, useRaces } from "@/hooks/game/useCoreState";
+import { useJockeys } from "@/hooks/game/useSystemsState";
 import { toast } from "sonner";
 
 export function useAutoRegister() {

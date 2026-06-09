@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { HorsePortrait } from "@/components/HorsePortrait";
+import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { Zap, TrendingUp, Filter } from "lucide-react";
 import { useState, useMemo } from "react";

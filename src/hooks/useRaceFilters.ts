@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { Race } from "@/game/types";
-import { getCountry } from "@/game/gradedRaces";
+import { getCountry } from "@/data/gradedRaces";
 
 /**
  * Filter state for races.

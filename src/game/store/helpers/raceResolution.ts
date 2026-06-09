@@ -13,8 +13,8 @@
  * Pure business logic for race result processing
  */
 
-import { createRng, hashStr, type Rng } from "@/game/rng";
-import { PRIZE_SPLIT } from "@/game/constants";
+import { createRng, hashStr, type Rng } from "@/core/common/rng";
+import { PRIZE_SPLIT } from "@/constants/game";
 
 export type RankedResult = { horseId: string; position: number; time: number; dnf: boolean };
 

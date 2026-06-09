@@ -6,7 +6,7 @@ import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Medal, DollarSign, Calendar } from "lucide-react";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue } from "@/components/horse/HorseBits";
 
 export const Route = createFileRoute("/hall-of-fame")({
   component: HallOfFame,

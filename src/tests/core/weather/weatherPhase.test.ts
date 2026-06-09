@@ -11,7 +11,7 @@ import { describe, it, expect } from "vitest";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
 import type { Race } from "@/core/race/types";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 
 const TRACK_ID = "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"; // Churchill Downs
 

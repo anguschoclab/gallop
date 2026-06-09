@@ -17,7 +17,7 @@ import {
   FolderOpen,
 } from "lucide-react";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { useUserSettings, useSettingsActions } from "@/game/hooks/useSystemsState";
+import { useUserSettings, useSettingsActions } from "@/hooks/game/useSystemsState";
 import { shallow } from "zustand/shallow";
 import { useState } from "react";
 import { SaveLoadDialog } from "@/components/settings/SaveLoadDialog";

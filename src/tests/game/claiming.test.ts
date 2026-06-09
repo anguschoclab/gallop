@@ -9,8 +9,8 @@ import {
   getSuggestedClaimingPriceRange,
   validateClaimingRace,
   type ClaimAttempt,
-} from "@/game/claiming";
-import { createRng } from "@/game/rng";
+} from "@/core/market/claiming";
+import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers";
 import type { Horse, Race } from "@/game/types";
 

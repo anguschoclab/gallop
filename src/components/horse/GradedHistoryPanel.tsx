@@ -4,8 +4,8 @@ import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Badge } from "@/components/ui/badge";
 import { getGradeColorClass } from "@/core/race/grading";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { GradedStatsChart } from "@/components/GradedStatsChart";
-import { GRADED_RACES, getRaceCountry } from "@/core/data/gradedRaces";
+import { GradedStatsChart } from "@/components/race/GradedStatsChart";
+import { GRADED_RACES, getRaceCountry } from "@/data/gradedRaces";
 import { getCountryFlag } from "@/lib/countryFlag";
 import { VisualTrophy, TrophyShelf } from "@/components/awards/VisualTrophy";
 

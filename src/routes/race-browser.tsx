@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGame } from "@/game/store";
 import { useRaceBrowserFilters } from "@/hooks/useRaceBrowserFilters";
-import { RaceBrowserFilterBar } from "@/components/races/RaceBrowserFilterBar";
-import { RaceBrowserCard } from "@/components/races/RaceBrowserCard";
+import { RaceBrowserFilterBar } from "@/components/race/RaceBrowserFilterBar";
+import { RaceBrowserCard } from "@/components/race/RaceBrowserCard";
 
 export const Route = createFileRoute("/race-browser")({
   component: RaceBrowser,

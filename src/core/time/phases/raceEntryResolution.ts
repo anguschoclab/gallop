@@ -11,7 +11,7 @@
 // Race Entry Resolution Phase
 // Converts RaceEntryIntents into impacts (race entry, cash changes)
 
-import { PHASE_ORDER_RACE_ENTRY_RESOLUTION, BUMP_RATING_MARGIN } from "@/game/constants";
+import { PHASE_ORDER_RACE_ENTRY_RESOLUTION, BUMP_RATING_MARGIN } from "@/constants/game";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, RaceEntryIntent } from "@/core/resolver/intents";
 import type { AnyImpact, RaceEntryImpact, CashImpact } from "@/core/resolver/impacts/index";

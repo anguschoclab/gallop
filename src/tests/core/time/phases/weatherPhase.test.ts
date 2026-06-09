@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from "vitest";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Race } from "@/game/types";
 

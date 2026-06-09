@@ -3,8 +3,8 @@ import { rand, rollRunningStyle, randomWeather, randomSilk } from "@/core/common
 import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
 import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
-import { createRng, nondeterministicRng } from "@/game/rng";
-import type { Track } from "@/game/tracks";
+import { createRng, nondeterministicRng } from "@/core/common/rng";
+import type { Track } from "@/data/tracks";
 
 describe("rand", () => {
   it("returns integer within range", () => {

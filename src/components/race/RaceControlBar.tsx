@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Camera, Pause, Play, Thermometer, Wind } from "lucide-react";
-import type { Runner } from "@/game/raceSim";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/game/types";
-import { getWeatherDisplay } from "@/components/races/raceVisualHelpers";
+import { getWeatherDisplay } from "@/components/race/raceVisualHelpers";
 
 interface RaceControlBarProps {
   race: Race;

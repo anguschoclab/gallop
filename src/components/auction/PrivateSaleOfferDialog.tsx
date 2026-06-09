@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/formatting";
-import { calculateLotValuation } from "@/game/auction";
+import { calculateLotValuation } from "@/game/auction/engine";
 import type { Horse, Stable } from "@/game/types";
 
 /**

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { BACKSTORIES } from "@/core/newGame/backstories";
+import { BACKSTORIES } from "@/core/common/backstories";
 import type { BackstoryId } from "@/game/types";
 import { formatCurrency } from "@/lib/formatting";
 

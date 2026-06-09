@@ -1,5 +1,5 @@
-import { getAnimationDuration } from "@/components/races/raceVisualHelpers";
-import type { Runner } from "@/game/raceSim";
+import { getAnimationDuration } from "@/components/race/raceVisualHelpers";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 
 interface HorseSpriteProps {
   runner: Runner;

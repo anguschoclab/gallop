@@ -11,7 +11,7 @@
 import type { PipelineContext } from "../pipeline";
 import type { Horse } from "@/game/types";
 import { isUniversalBirthday } from "@/core/calendar/breedingCalendar";
-import { PHASE_ORDER_AGING } from "@/game/constants";
+import { PHASE_ORDER_AGING } from "@/constants/game";
 
 /**
  * Phase: Aging

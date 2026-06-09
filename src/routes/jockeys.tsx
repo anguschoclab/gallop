@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { JockeyRoster } from "@/components/JockeyRoster";
+import { JockeyRoster } from "@/components/jockey/JockeyRoster";
 
 export const Route = createFileRoute("/jockeys")({
   component: JockeysPage,

@@ -11,7 +11,7 @@
 
 import type { Horse, Stable } from "@/game/types";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
-import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
+import { calculateBreedingCompatibility } from "@/core/breeding/compatibility";
 
 // How much program archetype fit contributes to stallion score per personality.
 const PROGRAM_WEIGHT: Partial<Record<Stable["personality"], number>> = {

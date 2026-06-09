@@ -1,4 +1,4 @@
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import type { StaffMember, StaffRole, StaffTier } from "./staffTypes";
 import { STAFF_CONFIG } from "./staffConfig";

@@ -9,7 +9,7 @@
  */
 
 import type { Horse, HorseGender } from "@/game/types";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 
 /**
  * Pure gender restriction checking

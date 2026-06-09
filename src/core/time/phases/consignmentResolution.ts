@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_CONSIGNMENT_RESOLUTION } from "@/game/constants";
+import { PHASE_ORDER_CONSIGNMENT_RESOLUTION } from "@/constants/game";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";

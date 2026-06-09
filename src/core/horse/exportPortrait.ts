@@ -35,7 +35,7 @@ export async function exportHorsePortraitPng(
 
   // Render the SVG off-DOM by mounting a temporary container.
   const { renderToStaticMarkup } = await import("react-dom/server");
-  const { ProceduralHorsePortrait } = await import("@/components/ProceduralHorsePortrait");
+  const { ProceduralHorsePortrait } = await import("@/components/horse/ProceduralHorsePortrait");
   const { createElement } = await import("react");
 
   // Ensure DNA is resolved so the same look is exported.

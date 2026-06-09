@@ -33,14 +33,14 @@ import {
 import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import { useDay, useCash, useHorses } from "@/game/hooks/useCoreState";
-import { useAwards } from "@/game/hooks/useSystemsState";
-import { useAutoSave } from "@/game/hooks/useAutoSave";
-import { PlayerRacePrompt } from "./PlayerRacePrompt";
-import { AutoSimPanel } from "./AutoSimPanel";
+import { useDay, useCash, useHorses } from "@/hooks/game/useCoreState";
+import { useAwards } from "@/hooks/game/useSystemsState";
+import { useAutoSave } from "@/hooks/game/useAutoSave";
+import { PlayerRacePrompt } from "@/components/race/PlayerRacePrompt";
+import { AutoSimPanel } from "@/components/race/AutoSimPanel";
 import { AwardCeremony } from "./awards";
 import { useState, useEffect } from "react";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/game/constants";
+import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants/game";
 import { shallow } from "zustand/shallow";
 
 const navSections = [

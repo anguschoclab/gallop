@@ -1,13 +1,14 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
-import { useJockeys } from "@/game/hooks/useSystemsState";
+import { useJockeys } from "@/hooks/game/useSystemsState";
 import { shallow } from "zustand/shallow";
 import type { GameState, Horse } from "@/game/types";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { stepRunner, computePaceContext, type Runner } from "@/game/raceSim";
+import { stepRunner, computePaceContext } from "@/core/race/engine/simulation";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import {
   Select,
   SelectContent,
@@ -35,14 +36,14 @@ import {
   isAnimatedSprite,
   getAnimationDuration,
   projectedBeyer,
-} from "@/components/races/raceVisualHelpers";
-import { BroadcastCommentary } from "@/components/races/BroadcastCommentary";
+} from "@/components/race/raceVisualHelpers";
+import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
 import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { useLiveRaceSimulation } from "@/hooks/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
-import { SectionalTimingTable } from "@/components/SectionalTimingTable";
+import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { HorseCard } from "@/components/HorseCard";
+import { HorseCard } from "@/components/horse/HorseCard";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
 import { Track } from "@/components/race/Track";
 import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";

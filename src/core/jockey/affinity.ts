@@ -19,7 +19,7 @@ import {
   AFFINITY_BONUS_TRUSTED,
   AFFINITY_BONUS_BONDED,
   AFFINITY_BONUS_SOULMATES,
-} from "@/game/constants";
+} from "@/constants/game";
 
 export const AFFINITY_CONSTANTS = {
   LEVELS: {

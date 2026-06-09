@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { HorsePortrait } from "@/components/HorsePortrait";
+import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { formatCurrency } from "@/lib/formatting";
-import { netProceeds, commissionAmount } from "@/game/auction";
-import { CONSIGNMENT_COMMISSION } from "@/game/constants";
+import { netProceeds, commissionAmount } from "@/game/auction/engine";
+import { CONSIGNMENT_COMMISSION } from "@/constants/game";
 import type { AuctionLot, Horse, Stable } from "@/game/types";
 
 /**

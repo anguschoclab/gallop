@@ -9,7 +9,7 @@
  * Related files: Used throughout UI components for displaying grade badges
  */
 
-import type { Grade } from "@/game/gradedRaces";
+import type { Grade } from "@/data/gradedRaces";
 
 /**
  * Pure grade color calculation.

@@ -13,7 +13,7 @@ import type { Horse, Race, Stable, StableTier } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { isFemaleHorse } from "@/core/horse/gender";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
-import { isHorseEligibleForClaimingPrice, getSuggestedClaimingPriceRange } from "@/game/claiming";
+import { isHorseEligibleForClaimingPrice, getSuggestedClaimingPriceRange } from "@/core/market/claiming";
 import { calculateTrackGeometryScore, calculateGradientScore } from "./trackGeometry";
 import {
   BASE_RACE_WEIGHT_LBS,
@@ -21,7 +21,7 @@ import {
   MIN_ENERGY_TO_ENTER,
   MIN_FORM_TO_ENTER,
   PREFERRED_DISTANCE_RANGE,
-} from "@/game/constants";
+} from "@/constants/game";
 
 // Base purse appeal thresholds by tier (modified by personality)
 export const BASE_PURSE_APPEAL: Record<StableTier, number> = {

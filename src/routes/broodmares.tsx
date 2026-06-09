@@ -5,7 +5,7 @@ import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PregnancyTimeline } from "@/components/PregnancyTimeline";
+import { PregnancyTimeline } from "@/components/breeding/PregnancyTimeline";
 import { FileText, Heart } from "lucide-react";
 
 export const Route = createFileRoute("/broodmares")({

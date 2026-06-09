@@ -9,7 +9,7 @@
  */
 
 import type { Race } from "@/game/types";
-import { GRADED_RACES } from "@/game/gradedRaces";
+import { GRADED_RACES } from "@/data/gradedRaces";
 
 /**
  * Pure race filtering logic

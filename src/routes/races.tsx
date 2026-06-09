@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import type { GameState } from "@/game/types";
-import { useRaces, useHorses } from "@/game/hooks/useCoreState";
+import { useRaces, useHorses } from "@/hooks/game/useCoreState";
 import { formatCurrency } from "@/core/financial";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -32,15 +32,15 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { RaceEntry } from "@/components/RaceEntry";
+import { RaceEntry } from "@/components/race/RaceEntry";
 import { Race, Claim } from "@/game/types";
-import { GradeBreakdown } from "@/components/races/GradeBreakdown";
-import { RaceCard } from "@/components/races/RaceCard";
-import { RaceRow } from "@/components/races/RaceRow";
-import { WeatherForecastStrip } from "@/components/races/WeatherForecastStrip";
-import { NumericValue } from "@/components/HorseBits";
+import { GradeBreakdown } from "@/components/race/GradeBreakdown";
+import { RaceCard } from "@/components/race/RaceCard";
+import { RaceRow } from "@/components/race/RaceRow";
+import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { useRaceFilters, type RaceFilters } from "@/hooks/useRaceFilters";
-import { ClaimingRacePanel } from "@/components/races/ClaimingRacePanel";
+import { ClaimingRacePanel } from "@/components/race/ClaimingRacePanel";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/races")({

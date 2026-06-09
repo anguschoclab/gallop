@@ -14,19 +14,19 @@
  */
 
 import type { GameState, Horse, Race } from "@/game/types";
-import type { NewGameOptions } from "@/game/state";
-import { generateHorse } from "@/game/horseGen";
-import { generateRace, makeGradedRace } from "@/game/raceGeneration/raceGen";
-import { generateInitialJockeys } from "@/game/jockeyGen";
-import { generateAllStables } from "@/game/npcStables";
-import { generateAllNpcHorses } from "@/game/npcHorseGen";
-import { generateFamousStallions } from "@/game/famousStallions";
-import { runNpcRaceEntry } from "@/game/npcRaceEntry";
-import { createRng, hashStr, type Rng } from "@/game/rng";
-import { GRADED_RACES } from "@/game/gradedRaces";
+import type { NewGameOptions } from "@/game/store/state";
+import { generateHorse } from "@/core/horse/horseFactory";
+import { generateRace, makeGradedRace } from "@/core/race/generation/raceGen";
+import { generateInitialJockeys } from "@/core/jockey/generator";
+import { generateAllStables } from "@/core/npc/stables";
+import { generateAllNpcHorses } from "@/core/npc/horseGenerator";
+import { generateFamousStallions } from "@/data/famousStallions";
+import { runNpcRaceEntry } from "@/core/npc/raceEntry";
+import { createRng, hashStr, type Rng } from "@/core/common/rng";
+import { GRADED_RACES } from "@/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
 import type { FacilityLevel } from "@/core/facilities";
-import { STARTING_CASH } from "@/game/constants";
+import { STARTING_CASH } from "@/constants/game";
 
 /**
  * Creates the initial game state for a new game.

@@ -1,6 +1,6 @@
 import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
-import { runRaceToCompletion } from "@/game/raceSim";
-import { getCourseForRace } from "@/game/tracks";
+import { runRaceToCompletion } from "@/core/race/engine/simulation";
+import { getCourseForRace } from "@/data/tracks";
 import type { Race, Horse, Jockey, Stable } from "@/game/types";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";

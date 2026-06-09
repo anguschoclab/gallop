@@ -10,7 +10,7 @@
 
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import type { ReputationEvent } from "@/core/reputation/reputationTypes";
-import { createRng, hashStr, type Rng } from "@/game/rng";
+import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import {
   NpcAIManager,
   getOrCreateStableAIState,
@@ -49,7 +49,7 @@ import {
   LARGE_PURSE_THRESHOLD,
   MEDIUM_PURSE_THRESHOLD,
   MAX_FAME,
-} from "@/game/constants";
+} from "@/constants/game";
 
 /**
  * Calculate fame gains for horses based on race results.

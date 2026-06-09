@@ -22,7 +22,7 @@ import {
   STUD_FEE_MIN,
   AGE_STUD_DECLINE,
   AGE_STUD_SEVERE_DECLINE,
-} from "@/game/constants";
+} from "@/constants/game";
 
 const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
 

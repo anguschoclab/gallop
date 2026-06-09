@@ -1,4 +1,4 @@
-import { createRng, type Rng } from "@/game/rng";
+import { createRng, type Rng } from "@/core/common/rng";
 
 /**
  * Creates a consistent test RNG instance with a default seed.

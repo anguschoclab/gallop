@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import { createGeldingAIState, shouldGeldHorse } from "@/core/ai/geldingAI";
 import { generateNpcIntents } from "@/core/npc/intentGenerators";
 import { BreedingValidator } from "@/core/resolver/validators/BreedingValidator";

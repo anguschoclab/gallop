@@ -1,12 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
-  buildRunner,
-  getConditionsModifier,
   runRaceToCompletion,
   computePaceContext,
   stepRunner,
-} from "@/game/raceSim";
-import { createRng } from "@/game/rng";
+} from "@/core/race/engine/simulation";
+import { buildRunner, getConditionsModifier } from "@/core/race/engine/runnerBuilder";
+import { createRng } from "@/core/common/rng";
 import type { Horse, Jockey, JockeySilk } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 

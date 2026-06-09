@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import { generateGenotype } from "@/core/genetics/generation";
 import { inheritDNA } from "@/core/genetics/inheritance";
 import { resolveRunningStyle, resolveFiberBias } from "@/core/genetics/phenotype";

@@ -17,10 +17,10 @@ import type {
   RunningStyle as RunningStyleT,
 } from "@/game/types";
 import { TRAIT_VALUES, fiberDistanceModifier } from "@/core/genetics/phenotype";
-import { clamp } from "@/game/math";
+import { clamp } from "@/lib/math";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { REGIONAL_LINE_BIAS, type Bloodline } from "@/core/breeding/populationGenetics";
-import { calculateDosageMetrics } from "@/game/dosage";
+import { calculateDosageMetrics } from "@/core/race/dosage";
 import { calculateOptimalRunningStyle } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { calculateTheHandBonus } from "@/core/jockey/affinity";

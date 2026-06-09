@@ -8,7 +8,7 @@
  */
 
 import type { Impact } from "./base";
-import type { SystemsState } from "@/game/state/systemsState";
+import type { SystemsState } from "@/game/store/state/systemsState";
 
 // Cash impact
 export interface CashImpact extends Impact {

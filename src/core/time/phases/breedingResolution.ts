@@ -25,7 +25,7 @@ import type {
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import type { Pregnancy } from "@/game/types";
-import { GESTATION_DAYS, PHASE_ORDER_BREEDING_RESOLUTION } from "@/game/constants";
+import { GESTATION_DAYS, PHASE_ORDER_BREEDING_RESOLUTION } from "@/constants/game";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 
 /**

@@ -8,7 +8,7 @@
  * Related files: types.ts (provides jockey types)
  */
 
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import type { RegionalSystem } from "@/game/types";
 
 export interface JockeyNamePool {

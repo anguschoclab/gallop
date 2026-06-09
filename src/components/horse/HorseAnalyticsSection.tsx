@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Activity } from "lucide-react";
-import { BeyerChart } from "@/components/BeyerChart";
-import { PaceProfileSummary } from "@/components/PaceProfileSummary";
+import { BeyerChart } from "@/components/race/BeyerChart";
+import { PaceProfileSummary } from "@/components/race/PaceProfileSummary";
 
 interface HorseAnalyticsSectionProps {
   horse: any;

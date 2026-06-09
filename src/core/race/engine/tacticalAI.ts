@@ -1,4 +1,4 @@
-import { clamp } from "@/game/math";
+import { clamp } from "@/lib/math";
 import type { Runner, PaceContext } from "./runnerBuilder";
 
 /**

@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_STALLION_RETIREMENT } from "@/game/constants";
+import { PHASE_ORDER_STALLION_RETIREMENT } from "@/constants/game";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { generateUUID } from "@/core/uuid";
 import type { StudCareerImpact, LogImpact } from "@/core/resolver/impacts/index";

@@ -38,7 +38,7 @@ import { createInboxSlice } from "./slices/inboxSlice";
 import { createStaffSlice } from "./slices/staffSlice";
 import { createOpfsStorage, hydrationComplete, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
-import type { CoreState } from "@/game/state/coreState";
+import type { CoreState } from "@/game/store/state/coreState";
 
 import { shallow } from "zustand/shallow";
 import { useShallow } from "zustand/react/shallow";
@@ -47,7 +47,7 @@ import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { StorageWorkerApi } from "@/workers/storage.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
 import type { StoreType, ActionResult, GameStateCreator } from "./types";
-import type { NewGameOptions } from "@/game/state";
+import type { NewGameOptions } from "@/game/store/state";
 import type { AnyIntent } from "@/core/resolver/intents";
 
 export type { StoreType, GameStateCreator } from "./types";

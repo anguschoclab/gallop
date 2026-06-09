@@ -7,7 +7,7 @@
  * Deterministic: seed = hash(`${trackId}:${day}`)
  */
 
-import { createRng, hashStr } from "@/game/rng";
+import { createRng, hashStr } from "@/core/common/rng";
 import type { KoppenCode } from "./koppenTypes";
 import { KOPPEN_PROFILES } from "./koppenProfiles";
 import { getTrackKoppen } from "./trackKoppenMappings";

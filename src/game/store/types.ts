@@ -9,9 +9,9 @@
  */
 
 import type { StateCreator } from "zustand";
-import type { CoreState } from "@/game/state/coreState";
-import type { SystemsState } from "@/game/state/systemsState";
-import type { NewGameOptions } from "@/game/state";
+import type { CoreState } from "@/game/store/state/coreState";
+import type { SystemsState } from "@/game/store/state/systemsState";
+import type { NewGameOptions } from "@/game/store/state";
 import type { RacingSlice } from "./slices/racingSlice";
 import type { MarketSlice } from "./slices/marketSlice";
 import type { ScoutingSlice } from "./slices/scoutingSlice";

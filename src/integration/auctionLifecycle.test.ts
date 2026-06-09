@@ -9,10 +9,10 @@ import {
   resolveAuctionSale,
   netProceeds,
   personalityConsignmentPolicy,
-} from "@/game/auction";
-import { CONSIGNMENT_COMMISSION } from "@/game/constants";
-import { createRng } from "@/game/rng";
-import { createAuctionRunner } from "@/game/auctionRunner";
+} from "@/game/auction/engine";
+import { CONSIGNMENT_COMMISSION } from "@/constants/game";
+import { createRng } from "@/core/common/rng";
+import { createAuctionRunner } from "@/game/auction/runner";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 

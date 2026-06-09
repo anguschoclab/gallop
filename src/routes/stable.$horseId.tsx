@@ -6,7 +6,7 @@ import { HorseAwardsPanel } from "@/components/awards";
 import { FounderLegacy } from "@/components/horse/FounderLegacy";
 import { TrainingPanel } from "@/components/horse/TrainingPanel";
 import { PrivateTrialDialog } from "@/components/horse/PrivateTrialDialog";
-import { SyndicateDialog } from "@/components/SyndicateDialog";
+import { SyndicateDialog } from "@/components/market/SyndicateDialog";
 import { HorseDetailHeader } from "@/components/horse/HorseDetailHeader";
 import { HorseIdentitySection } from "@/components/horse/HorseIdentitySection";
 import { HorseConditionSection } from "@/components/horse/HorseConditionSection";

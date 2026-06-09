@@ -10,7 +10,7 @@ import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
   calculateBreedingCompatibility,
-} from "@/game/breedingCompatibility";
+} from "@/core/breeding/compatibility";
 import type { Horse } from "@/game/types";
 import { generateDeterministicGenotype } from "@/core/genetics/generation";
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { JARGON_DEFINITIONS } from "@/lib/jargon";
+import { JARGON_DEFINITIONS } from "@/constants/jargon";
 
 interface JargonTooltipProps {
   term: keyof typeof JARGON_DEFINITIONS | string;

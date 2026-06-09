@@ -9,7 +9,7 @@
  */
 
 import type { Horse, RunningStyle } from "@/game/types";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import {
   GRADE_S_THRESHOLD,
   GRADE_A_THRESHOLD,
@@ -18,7 +18,7 @@ import {
   GRADE_D_THRESHOLD,
   GRADE_E_THRESHOLD,
   GRADE_EP_THRESHOLD,
-} from "@/game/constants";
+} from "@/constants/game";
 
 /**
  * Pure functions for horse stat calculations

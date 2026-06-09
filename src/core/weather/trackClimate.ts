@@ -6,7 +6,7 @@
  * trackIds across the codebase.
  */
 
-import type { ClimateZone } from "@/core/track/trackConditionData";
+import type { ClimateZone } from "@/core/race/trackConditionData";
 
 const SUBSTRING_RULES: Array<{ match: string; climate: ClimateZone }> = [
   { match: "dubai", climate: "arid" },

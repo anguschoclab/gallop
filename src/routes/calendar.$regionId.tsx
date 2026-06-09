@@ -4,13 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useGame } from "@/game/store";
-import { type Grade } from "@/game/gradedRaces";
+import { type Grade } from "@/data/gradedRaces";
 import type { Race } from "@/game/types";
 import { getGradeColorClass } from "@/core/race/grading";
 import { getMonthName, formatDate } from "@/core/calendar/dateFormatting";
 import { getRegion, isValidRegion, REGION_LIST, type RegionConfig } from "@/core/calendar/regions";
 import { ChevronLeft, Globe } from "lucide-react";
-import { WeatherForecastStrip } from "@/components/races/WeatherForecastStrip";
+import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RegionSwitcher } from "@/components/RegionSwitcher";
 

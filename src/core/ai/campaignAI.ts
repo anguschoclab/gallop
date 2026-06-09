@@ -16,8 +16,8 @@
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import type { GradedRace } from "@/game/gradedRaces";
-import type { TripleCrownProgress } from "@/core/campaign/types";
+import type { GradedRace } from "@/data/gradedRaces";
+import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import { getPersonalityAIState, calculateUtilityScore, recordOutcome } from "./personalitySystem";
 import {
   createLearningState,
@@ -26,7 +26,7 @@ import {
   getAdaptiveThreshold,
   type LearningState,
 } from "./learningModule";
-import { GRADED_RACES } from "@/game/gradedRaces";
+import { GRADED_RACES } from "@/data/gradedRaces";
 import { calculateOverallRating, calculateRaceRating } from "@/core/horse/stats";
 import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
 

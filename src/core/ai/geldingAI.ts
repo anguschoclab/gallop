@@ -8,7 +8,7 @@
 
 import type { Horse, Stable } from "@/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
-import { hashStr } from "@/game/rng";
+import { hashStr } from "@/core/common/rng";
 
 export interface GeldingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

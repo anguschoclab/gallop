@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import type { Runner } from "@/game/raceSim";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 
 interface LeaderboardProps {
   sorted: Array<{ r: Runner; beyer: number | null }>;

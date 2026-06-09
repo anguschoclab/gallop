@@ -20,9 +20,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { netProceeds } from "@/game/auction";
-import { CONSIGNMENT_COMMISSION, DEFAULT_PLAYER_RESERVE_RATIO } from "@/game/constants";
-import { KIND_LABELS } from "@/game/auctionData";
+import { netProceeds } from "@/game/auction/engine";
+import { CONSIGNMENT_COMMISSION, DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants/game";
+import { KIND_LABELS } from "@/game/auction/data";
 import { formatCurrency } from "@/lib/formatting";
 import { horsePriceWithPedigree } from "@/core/horse/pricing";
 import type { Horse, AuctionSale } from "@/game/types";

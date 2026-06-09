@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { type G1WinEntry, countByGrade } from "@/lib/connectionTrophies";
+import { type G1WinEntry, countByGrade } from "@/constants/connectionTrophies";
 import { cn } from "@/lib/utils";
 
 interface G1TrophyListProps {

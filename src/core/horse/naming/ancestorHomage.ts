@@ -9,9 +9,9 @@
  * Related files: nameGenerator.ts (uses this for ancestor strategy), pedigreeData.ts (ancestor data)
  */
 
-import type { Rng } from "@/game/rng";
-import { NAME_MIN_WORD_LENGTH } from "@/game/constants";
-import { findHorseByName } from "@/core/data/pedigreeData";
+import type { Rng } from "@/core/common/rng";
+import { NAME_MIN_WORD_LENGTH } from "@/constants/game";
+import { findHorseByName } from "@/data/pedigreeData";
 import { ABSTRACT_TERMS, RACING_SPIRIT_NOUNS, RACING_SPIRIT_ADJECTIVES } from "./nameDatabase";
 
 /**

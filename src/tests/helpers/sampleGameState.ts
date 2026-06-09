@@ -10,7 +10,7 @@ import type { BreedingProgram } from "@/core/breeding/programs";
 import type { GameState, Horse } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import { createBreedingProgram } from "@/core/breeding/programs";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 
 /**
  * Default appearance DNA used by portrait/export tests.

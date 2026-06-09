@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import type { Horse, Stable, GameState } from "@/game/types";
-import { runNpcBreeding } from "@/game/npcBreeding";
-import { createRng } from "@/game/rng";
+import { runNpcBreeding } from "@/core/npc/breeding";
+import { createRng } from "@/core/common/rng";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 
 describe("leaderboardNpcBreeding integration", () => {

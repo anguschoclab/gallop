@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildRunner, runRaceToCompletion } from "@/game/raceSim";
+import { runRaceToCompletion } from "@/core/race/engine/simulation";
+import { buildRunner } from "@/core/race/engine/runnerBuilder";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { CourseSpecification } from "@/game/tracks";
+import type { CourseSpecification } from "@/data/tracks";
 import type { Horse, Rng, Jockey, JockeySilk, Genotype, HealthStatus } from "@/game/types";
 
 // Simple deterministic RNG for testing

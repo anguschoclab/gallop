@@ -5,7 +5,7 @@ import {
   parTime,
   expectedBeyer,
   calculateBeyerForResult,
-} from "@/game/beyer";
+} from "@/core/race/beyer";
 import type { Horse } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 

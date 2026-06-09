@@ -6,8 +6,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   generateNorthAmericanRace,
   generateNorthAmericanRaceCard,
-} from "@/game/raceGeneration/northAmerica";
-import { createRng } from "@/game/rng";
+} from "@/core/race/generation/northAmerica";
+import { createRng } from "@/core/common/rng";
 import type { Track } from "@/game/types";
 
 describe("generateNorthAmericanRace", () => {

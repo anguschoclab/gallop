@@ -8,7 +8,7 @@
  * Related files: None
  */
 
-import type { Grade } from "@/game/gradedRaces";
+import type { Grade } from "@/data/gradedRaces";
 import type { RaceClass } from "@/game/types";
 
 /**

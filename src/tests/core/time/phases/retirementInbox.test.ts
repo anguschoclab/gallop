@@ -9,7 +9,7 @@ import { managementResolutionPhase } from "@/core/time/phases/managementResoluti
 import { hallOfFamePhase } from "@/core/time/phases/hallOfFame";
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { makePipelineContext } from "@/tests/helpers/sampleGameState";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
 
 const G1_RACE = {

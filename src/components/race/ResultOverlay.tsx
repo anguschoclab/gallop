@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import type { Runner } from "@/game/raceSim";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { formatCurrency } from "@/lib/formatting";
 import { Trophy, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";

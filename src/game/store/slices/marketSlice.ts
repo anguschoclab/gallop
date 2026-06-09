@@ -9,8 +9,8 @@
  */
 
 import type { Horse } from "@/game/types";
-import type { MarketState } from "@/game/state/marketState";
-import { createDefaultMarketState } from "@/game/state/marketState";
+import type { MarketState } from "@/game/store/state/marketState";
+import { createDefaultMarketState } from "@/game/store/state/marketState";
 import { horsePrice } from "@/core/horse/pricing";
 import { generateUUID } from "@/core/uuid";
 import type { StoreGet } from "../types";

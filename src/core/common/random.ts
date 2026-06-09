@@ -8,7 +8,7 @@
  * Related files: horse/visuals.ts, race/environment.ts, horse/stats.ts
  */
 
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 
 /**
  * Generate random integer in range [min, max] (inclusive).

@@ -11,7 +11,7 @@
 import { generateUUID } from "@/core/uuid";
 import type { NewsItem, NewsCategory, NewsImportance } from "@/core/narrative/newsTypes";
 import type { Horse, Race, Stable } from "@/game/types";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 
 /**
  * Create a news item with a unique identifier.

@@ -1,4 +1,4 @@
-import { findHorseByName, type PedigreeHorse } from "@/core/data/pedigreeData";
+import { findHorseByName, type PedigreeHorse } from "@/data/pedigreeData";
 import {
   DEFAULT_GENETIC_DIVERSITY,
   INBREEDING_EXPECTED_MAX_ANCESTORS,
@@ -7,7 +7,7 @@ import {
   INBREEDING_DIVERSITY_LOW,
   INBREEDING_DIVERSITY_VERY_LOW,
   INBREEDING_SCORE_BONUS,
-} from "@/game/constants";
+} from "@/constants/game";
 
 /**
  * Calculate founder effect score.

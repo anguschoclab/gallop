@@ -28,11 +28,11 @@ import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
 import { generateRaceNews } from "@/services/newsGenerator";
 import { rollForInjury } from "@/core/health/healthSystem";
 import type { StaffMember } from "@/core/staff/staffTypes";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/core/uuid";
 import { formatCurrency } from "@/lib/formatting";
-import { beyerFigure, detectPatternJump } from "@/game/beyer";
+import { beyerFigure, detectPatternJump } from "@/core/race/beyer";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { recalcStandingFee } from "@/core/breeding/stallions";
 import {
@@ -40,7 +40,7 @@ import {
   inbreedingPerformanceDampener,
 } from "@/core/breeding/populationGenetics";
 import type { Race, Horse, Jockey } from "@/game/types";
-import { getCurrentYear } from "@/game/raceSchedule";
+import { getCurrentYear } from "@/core/race/schedule";
 import {
   PRIZE_SPLIT,
   GRADED_PRIZE_SPLIT,
@@ -51,8 +51,8 @@ import {
   STAMINA_DRAIN_MAX,
   RACE_ENERGY_IMPACT,
   MAX_FAME,
-} from "@/game/constants";
-import { GRADED_RACES } from "@/core/data/gradedRaces";
+} from "@/constants/game";
+import { GRADED_RACES } from "@/data/gradedRaces";
 import { calculateRaceWinReputation, calculateRaceLossReputation } from "@/core/reputation";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";
 import { AFFINITY_CONSTANTS } from "@/core/jockey/affinity";

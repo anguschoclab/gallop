@@ -29,11 +29,11 @@ vi.mock("comlink", () => ({
   expose: vi.fn(),
 }));
 
-import { createDefaultGameState } from "@/game/state";
+import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 import type { Horse } from "@/game/types";
 import * as opfsService from "@/services/opfsService";
-import { DAYS_PER_MONTH } from "@/game/constants";
+import { DAYS_PER_MONTH } from "@/constants/game";
 
 // Mock helpers
 let mockOPFSData: Map<string, any> = new Map();

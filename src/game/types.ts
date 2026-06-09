@@ -16,12 +16,12 @@ export * from "@/core/race/types";
 export * from "@/core/stable/types";
 export * from "@/core/market/types";
 export * from "@/core/breeding/types";
-export * from "@/core/campaign/types";
+export * from "@/core/calendar/campaignTypes";
 
 // Re-export specific external dependencies
-export type { GameState } from "./state";
+export type { GameState } from "./store/state";
 export type { RegionalAward, AwardRegion } from "./awards/types";
-export type { BreedingCompatibilityResult } from "./breedingCompatibility";
+export type { BreedingCompatibilityResult } from "@/core/breeding/compatibility";
 export type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 
 // Type aliases for horse properties (preferring core definitions)
@@ -42,7 +42,7 @@ export type { Expense, ExpenseCategory } from "@/core/expenses";
 // Additional re-exports for commonly used types
 export type { RaceClass } from "@/core/race/sharedTypes";
 export type { PedigreeNode as Pedigree } from "@/core/breeding/types";
-export type { Track } from "@/game/tracks";
+export type { Track } from "@/data/tracks";
 
 // Type alias for facilities
 export type FacilityState = Record<string, any>;

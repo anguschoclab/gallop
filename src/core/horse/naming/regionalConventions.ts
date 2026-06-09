@@ -8,7 +8,7 @@
  * Related files: nameGenerator.ts (uses this for regional strategy), namePools.ts (regional word data)
  */
 
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import type { RegionalSystem } from "@/game/types";
 import { LOCATIONS, SPONSORS } from "@/core/race/naming/namePools";
 

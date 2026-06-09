@@ -6,21 +6,21 @@
 
 import { expose } from "comlink";
 import type { GameState, Horse, Race } from "@/game/types";
-import type { NewGameOptions } from "@/game/state";
-import { generateHorse } from "@/game/horseGen";
-import { generateRace, makeGradedRace } from "@/game/raceGeneration/raceGen";
-import { generateInitialJockeys } from "@/game/jockeyGen";
-import { generateAllStables } from "@/game/npcStables";
-import { generateAllNpcHorses } from "@/game/npcHorseGen";
-import { runNpcRaceEntry } from "@/game/npcRaceEntry";
-import { createRng, hashStr, type Rng } from "@/game/rng";
-import { GRADED_RACES } from "@/game/gradedRaces";
+import type { NewGameOptions } from "@/game/store/state";
+import { generateHorse } from "@/core/horse/horseFactory";
+import { generateRace, makeGradedRace } from "@/core/race/generation/raceGen";
+import { generateInitialJockeys } from "@/core/jockey/generator";
+import { generateAllStables } from "@/core/npc/stables";
+import { generateAllNpcHorses } from "@/core/npc/horseGenerator";
+import { runNpcRaceEntry } from "@/core/npc/raceEntry";
+import { createRng, hashStr, type Rng } from "@/core/common/rng";
+import { GRADED_RACES } from "@/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
 import {
   STARTING_CASH,
   INITIALIZATION_BUDGET_TIER_THRESHOLD,
   INITIALIZATION_HORSE_COUNT_THRESHOLD,
-} from "@/game/constants";
+} from "@/constants/game";
 
 export type InitializeInput = {
   options?: NewGameOptions;

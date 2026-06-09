@@ -11,11 +11,11 @@ import {
   generateTrackSchedule,
   generateUpcomingRaces,
   generateAnnualCalendar,
-} from "@/game/raceSchedule";
+} from "@/core/race/schedule";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import type { Race } from "@/game/types";
-import type { Track, TrackSchedule } from "@/game/tracks";
+import type { Track, TrackSchedule } from "@/data/tracks";
 
 describe("getCurrentYear", () => {
   it("should return year 1 for days 1-365", () => {

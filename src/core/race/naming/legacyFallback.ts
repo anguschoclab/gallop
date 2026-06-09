@@ -8,7 +8,7 @@
  * Related files: raceNameGenerator.ts (uses as fallback pattern)
  */
 
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 
 const RACE_PREFIXES = [
   "Ascot",

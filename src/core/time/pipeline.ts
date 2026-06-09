@@ -9,7 +9,7 @@
  */
 
 import type { GameState } from "@/game/types";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { ImpactLogEntry } from "@/core/resolver/resolver";

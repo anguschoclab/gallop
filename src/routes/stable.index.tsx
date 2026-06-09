@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useHorses } from "@/game/hooks/useCoreState";
-import { useAwards, useNpcStables } from "@/game/hooks/useSystemsState";
-import { HorseCard } from "@/components/HorseCard";
+import { useHorses } from "@/hooks/game/useCoreState";
+import { useAwards, useNpcStables } from "@/hooks/game/useSystemsState";
+import { HorseCard } from "@/components/horse/HorseCard";
 import { TrophyCase } from "@/components/awards";
 import { AutoRegisterButton } from "@/components/stable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { NumericValue, overall, HorseBit } from "@/components/HorseBits";
+import { NumericValue, overall, HorseBit } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
 import {
   Building2,

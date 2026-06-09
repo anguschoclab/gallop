@@ -9,7 +9,7 @@
  */
 
 import type { StableTier, StablePersonality } from "@/game/types";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import { PERSONALITY_WEIGHTS } from "./stableConfig";
 
 /**

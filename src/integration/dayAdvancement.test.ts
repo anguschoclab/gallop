@@ -8,7 +8,7 @@ import { executePipeline } from "@/core/time/pipeline";
 import { upkeepPhase } from "@/core/time/phases/upkeep";
 import { agingPhase } from "@/core/time/phases/aging";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";

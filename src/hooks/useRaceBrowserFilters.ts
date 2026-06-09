@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { Race } from "@/game/types";
-import type { Grade } from "@/game/gradedRaces";
-import { getCountry } from "@/game/gradedRaces";
+import type { Grade } from "@/data/gradedRaces";
+import { getCountry } from "@/data/gradedRaces";
 
 export type GradeFilter = "all" | Grade;
 export type CountryFilter = "all" | string;

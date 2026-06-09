@@ -33,7 +33,7 @@ import type { Rng } from "@/core/common/types";
 export type FoalOutcome =
   | { kind: "live"; foal: Horse; transmission: boolean }
   | { kind: "complication"; type: "stillborn" | "twins" | "injury"; foal?: Horse };
-import { createRng, hashStr, nondeterministicRng } from "@/game/rng";
+import { createRng, hashStr, nondeterministicRng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { generateAppearanceDNA, getPalette } from "@/core/horse/proceduralPortrait";
 import {
@@ -100,8 +100,8 @@ import {
   recordHorseGeneration,
 } from "@/core/ai/horseGenAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { activeStallions2020s, type PedigreeHorse } from "@/core/data/pedigreeData";
-import { clamp } from "@/game/math";
+import { activeStallions2020s, type PedigreeHorse } from "@/data/pedigreeData";
+import { clamp } from "@/lib/math";
 import {
   POTENTIAL_MIN,
   POTENTIAL_MAX,
@@ -114,7 +114,7 @@ import {
   FOALING_BASE_COMPLICATION_RATE,
   LETHAL_RECESSIVE_CHANCE,
   TWIN_REDUCTION_CHANCE,
-} from "@/game/constants";
+} from "@/constants/game";
 
 // --- Internal Helpers ---
 

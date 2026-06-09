@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FacilitiesPanel } from "@/components/FacilitiesPanel";
-import { ImperialOutpostManager } from "@/components/ImperialOutpostManager";
+import { FacilitiesPanel } from "@/components/facilities/FacilitiesPanel";
+import { ImperialOutpostManager } from "@/components/facilities/ImperialOutpostManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Hammer, Map, Building2, Globe } from "lucide-react";
 import { useGame } from "@/game/store";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/facilities")({

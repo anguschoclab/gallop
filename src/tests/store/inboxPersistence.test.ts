@@ -15,7 +15,7 @@ import { produce } from "immer";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
 import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 

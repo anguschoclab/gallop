@@ -11,9 +11,9 @@
 import type { Genotype, MarkerGenotype } from "./types";
 import type { Locus } from "@/core/common/types";
 import type { Rng } from "@/core/common/types";
-import { createRng, hashStr } from "@/game/rng";
-import type { AptitudinalGroup } from "@/core/data/pedigreeData";
-import { getStallionResearchData, hasCompleteData } from "@/core/data/stallionDNAData";
+import { createRng, hashStr } from "@/core/common/rng";
+import type { AptitudinalGroup } from "@/data/pedigreeData";
+import { getStallionResearchData, hasCompleteData } from "@/data/stallionDNAData";
 import { mapResearchDataToGenotype } from "./mapper";
 
 const DOSAGE_BIASES: Record<

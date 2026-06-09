@@ -9,8 +9,8 @@
  */
 
 import type { Stable, StableTier } from "@/game/types";
-import type { PedigreeHorse } from "@/core/data/pedigreeData";
-import type { Rng } from "@/game/rng";
+import type { PedigreeHorse } from "@/data/pedigreeData";
+import type { Rng } from "@/core/common/rng";
 import { STALLION_FARM_MAPPING } from "@/core/stable/stallionFarmMapping";
 
 /**

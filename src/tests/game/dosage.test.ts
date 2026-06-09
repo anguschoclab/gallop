@@ -6,7 +6,7 @@ import {
   generatePedigree,
   calculateDosageMetrics,
   interpretDosageIndex,
-} from "@/game/dosage";
+} from "@/core/race/dosage";
 import type { DosageProfile } from "@/game/types";
 
 function emptyProfile(): DosageProfile {

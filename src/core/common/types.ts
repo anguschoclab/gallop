@@ -8,7 +8,7 @@
  * Related files: Used throughout the codebase, especially in genetics and horse modules
  */
 
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 
 export type { Rng };
 

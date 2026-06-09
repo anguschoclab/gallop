@@ -15,16 +15,16 @@
  */
 
 import type { Horse, Race } from "@/game/types";
-import type { RacingState } from "@/game/state/racingState";
-import { createDefaultRacingState } from "@/game/state/racingState";
+import type { RacingState } from "@/game/store/state/racingState";
+import { createDefaultRacingState } from "@/game/store/state/racingState";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
-import { TRAINING_COST } from "@/game/constants";
+import { TRAINING_COST } from "@/constants/game";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { simulateRace } from "@/services/raceSimulationExecutor";
-import { generateHorse } from "@/game/horseGen";
-import { createRng, hashStr } from "@/game/rng";
+import { generateHorse } from "@/core/horse/horseFactory";
+import { createRng, hashStr } from "@/core/common/rng";
 
 const TRAINING_SLOTS_PER_DAY = 2;
 

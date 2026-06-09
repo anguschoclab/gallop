@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import type { AuctionBrowseSearch } from "@/lib/auctionSearchSchema";
+import type { AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
 
 /**
  * Props for the AuctionFilterBar component.

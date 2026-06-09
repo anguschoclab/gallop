@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Trophy } from "lucide-react";
 import { TrophyCase } from "@/components/awards";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { cn } from "@/lib/utils";
 import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/hooks/useNpcStableDetail";

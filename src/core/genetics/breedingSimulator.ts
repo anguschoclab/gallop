@@ -12,7 +12,7 @@
 import type { Horse } from "@/game/types";
 import type { GameState } from "@/game/types";
 import type { Rng } from "@/core/common/types";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import { inheritDNA } from "./inheritance";
 import {
   resolveStats,
@@ -31,7 +31,7 @@ import {
 } from "./phenotype";
 import type { RunningStyle, CoatColor } from "@/core/horse/types";
 import { computeProspectiveCoi } from "@/core/breeding/populationGenetics";
-import { calculateGeneticCompatibility } from "@/game/breedingCompatibility";
+import { calculateGeneticCompatibility } from "@/core/breeding/compatibility";
 
 export type SimulationResult = {
   stats: {

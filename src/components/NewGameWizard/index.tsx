@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useGame } from "@/game/store";
-import type { NewGameOptions } from "@/game/state";
-import { generateSilk } from "@/game/jockeyGen";
-import { SILK_PATTERNS } from "@/game/jockeyData";
+import type { NewGameOptions } from "@/game/store/state";
+import { generateSilk } from "@/core/jockey/generator";
+import { SILK_PATTERNS } from "@/data/jockeys";
 import { randomStableName, randomOwnerName } from "@/core/stable/stableGeneration";
-import { BACKSTORIES } from "@/core/newGame/backstories";
+import { BACKSTORIES } from "@/core/common/backstories";
 import type { JockeySilk, BackstoryId } from "@/game/types";
 import {
   loadWizardState,

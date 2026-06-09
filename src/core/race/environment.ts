@@ -7,7 +7,7 @@
  * Related files: raceSim.ts (uses weather for race simulation)
  */
 
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import type { Weather } from "@/game/types";
 
 /**

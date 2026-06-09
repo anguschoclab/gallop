@@ -11,7 +11,7 @@
 // Management Resolution Phase
 // Processes player intents for infrastructure, jockeys, and horse management
 
-import { PHASE_ORDER_MANAGEMENT_RESOLUTION } from "@/game/constants";
+import { PHASE_ORDER_MANAGEMENT_RESOLUTION } from "@/constants/game";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type {
   AnyIntent,
@@ -35,8 +35,8 @@ import type {
 } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
-import { createRng, hashStr } from "@/game/rng";
-import { scoutHorse } from "@/game/scouting";
+import { createRng, hashStr } from "@/core/common/rng";
+import { scoutHorse } from "@/core/npc/scouting";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 import {

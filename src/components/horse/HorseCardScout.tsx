@@ -7,7 +7,7 @@ import { scoutGrade } from "@/core/horse/grading";
 import { genderSymbol } from "@/core/horse/gender";
 import { getCoatColor } from "@/core/horse/uiHelpers";
 import { SilkDot } from "@/components/SilkDot";
-import { HorsePortraitBadge } from "@/components/HorsePortrait";
+import { HorsePortraitBadge } from "@/components/horse/HorsePortrait";
 import { cn } from "@/lib/utils";
 import type { useHorseCard } from "@/hooks/useHorseCard";
 

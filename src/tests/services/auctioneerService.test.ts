@@ -7,10 +7,10 @@
 
 import { describe, it, expect } from "vitest";
 import { generateAuctioneerLine } from "@/services/auctioneerService";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { Horse, Stable } from "@/game/types";
-import type { AuctionTickEvent } from "@/game/auctionRunner";
+import type { AuctionTickEvent } from "@/game/auction/runner";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

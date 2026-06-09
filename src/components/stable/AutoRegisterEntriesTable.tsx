@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/formatting";
-import type { AutoRegisterEntry } from "@/game/autoRegister";
+import type { AutoRegisterEntry } from "@/game/campaign/autoRegister";
 
 interface Props {
   entries: AutoRegisterEntry[];

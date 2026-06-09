@@ -1,5 +1,5 @@
 import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
-import { createRng, hashStr } from "@/game/rng";
+import { createRng, hashStr } from "@/core/common/rng";
 import { computeCoiFromSnapshot, classifyCoi } from "@/core/breeding/populationGenetics";
 import type { Horse } from "@/core/horse/types";
 import type { CoatColor } from "@/core/horse/types";

@@ -1,7 +1,7 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/lib/formatting";
 import type { JockeySilk } from "@/game/types";
-import type { Backstory } from "@/core/newGame/backstories";
+import type { Backstory } from "@/core/common/backstories";
 import { SilkPreview } from "../SilkPreview";
 
 interface StepReviewProps {

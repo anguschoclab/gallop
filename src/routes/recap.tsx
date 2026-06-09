@@ -5,12 +5,12 @@ import { useGame } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BeyerBadge } from "@/components/BeyerBadge";
-import { calculateBeyerForResult } from "@/game/beyer";
+import { BeyerBadge } from "@/components/race/BeyerBadge";
+import { calculateBeyerForResult } from "@/core/race/beyer";
 import { getGradeColorClass } from "@/core/race/grading";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { Trophy, Medal, Award } from "lucide-react";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/utils";
 

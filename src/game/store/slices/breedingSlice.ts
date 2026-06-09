@@ -15,8 +15,8 @@
  */
 
 import type { Pregnancy, TripleCrownProgress, Horse } from "@/game/types";
-import type { BreedingState } from "@/game/state/breedingState";
-import { createDefaultBreedingState } from "@/game/state/breedingState";
+import type { BreedingState } from "@/game/store/state/breedingState";
+import { createDefaultBreedingState } from "@/game/store/state/breedingState";
 import { createBreedingProgram, updateProgramProgress } from "@/core/breeding/programs";
 import { getArchetypeById } from "@/core/breeding/archetypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
@@ -29,7 +29,7 @@ import type {
   ShareSaleIntent,
   SyndicateFeeDistributionIntent,
 } from "@/core/resolver/intents";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/game/constants";
+import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/constants/game";
 import { formatCurrency } from "@/lib/formatting";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";

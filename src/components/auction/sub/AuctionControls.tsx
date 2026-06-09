@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/formatting";
 import { Gavel, Pause, Play, FastForward, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { nextBidAmount } from "@/game/auctionRunner";
+import { nextBidAmount } from "@/game/auction/runner";
 
 interface AuctionControlsProps {
   currentBid: number;

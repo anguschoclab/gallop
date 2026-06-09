@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { getBackstory } from "@/core/newGame/backstories";
+import { getBackstory } from "@/core/common/backstories";
 import { SilkPreview } from "./SilkPreview";
 import type { PlayerProfile, BackstoryId } from "@/game/types";
 import { formatCurrency } from "@/lib/formatting";

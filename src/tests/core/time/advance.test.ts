@@ -4,7 +4,7 @@
 
 import { describe, it, expect, vi } from "vitest";
 import { computePlayerRaceDays, advanceMultipleDaysWithRaceDetection } from "@/core/time/advance";
-import { getCurrentYear } from "@/game/raceSchedule";
+import { getCurrentYear } from "@/core/race/schedule";
 import type { GameState, Race, Horse } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 

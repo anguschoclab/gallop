@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
-import { FoalNamingDialog } from "@/components/FoalNamingDialog";
+import { FoalNamingDialog } from "@/components/breeding/FoalNamingDialog";
 import type { useBreedingPage } from "@/hooks/useBreedingPage";
 
 interface BreedingHistoryTabProps {

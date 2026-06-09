@@ -6,13 +6,13 @@ import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HorseStats, overall, NumericValue } from "@/components/HorseBits";
+import { HorseStats, overall, NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
 import { horsePrice } from "@/core/horse/pricing";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/utils";
-import { SyndicateMarket } from "@/components/SyndicateMarket";
+import { SyndicateMarket } from "@/components/market/SyndicateMarket";
 import {
   Store,
   ShieldCheck,

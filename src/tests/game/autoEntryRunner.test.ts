@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
-import { runAutoEntries, reconcileSlotStatuses } from "@/game/autoEntryRunner";
+import { runAutoEntries, reconcileSlotStatuses } from "@/game/campaign/autoEntry";
 import type { Horse, Race, HorseCampaign } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 

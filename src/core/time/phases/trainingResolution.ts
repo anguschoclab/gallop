@@ -20,9 +20,9 @@ import {
   TRAINING_ENERGY_MAP,
   TRAINING_ENERGY_REST,
   TRAINING_MIN_ENERGY_THRESHOLD,
-} from "@/game/constants";
+} from "@/constants/game";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import { createRng, hashStr } from "@/game/rng";
+import { createRng, hashStr } from "@/core/common/rng";
 import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";
 import { generateUUID } from "@/core/uuid";

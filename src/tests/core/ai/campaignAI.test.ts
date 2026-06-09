@@ -15,7 +15,7 @@ import {
   getCampaignInsights,
 } from "@/core/ai/campaignAI";
 import type { Horse, Race, Stable } from "@/game/types";
-import type { GradedRace } from "@/game/gradedRaces";
+import type { GradedRace } from "@/data/gradedRaces";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 // Mock data setup

@@ -11,7 +11,7 @@
 // Purchase Resolution Phase
 // Converts PurchaseIntents into impacts (horse transfer from market to player)
 
-import { PHASE_ORDER_PURCHASE_RESOLUTION } from "@/game/constants";
+import { PHASE_ORDER_PURCHASE_RESOLUTION } from "@/constants/game";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent, PurchaseIntent } from "@/core/resolver/intents";
 import type { AnyImpact, HorseTransferImpact } from "@/core/resolver/impacts/index";

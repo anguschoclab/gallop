@@ -11,7 +11,7 @@ import { produce } from "immer";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
 import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 
 const TRACK_ID = "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"; // Churchill Downs
 

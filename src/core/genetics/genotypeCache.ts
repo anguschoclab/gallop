@@ -15,7 +15,7 @@
 
 import type { SimulationResult } from "./breedingSimulator";
 import type { Bloodline } from "@/core/breeding/populationGenetics";
-import type { BreedingCompatibilityResult } from "@/game/breedingCompatibility";
+import type { BreedingCompatibilityResult } from "@/core/breeding/compatibility";
 
 // Simulator cache: key format "simulator:${sireId}:${damId}"
 const simulatorCache = new Map<string, SimulationResult>();

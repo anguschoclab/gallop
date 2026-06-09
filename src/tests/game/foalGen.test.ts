@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolveFoaling } from "@/game/foalGen";
+import { resolveFoaling } from "@/core/horse/horseFactory";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { createTestGenotype } from "@/tests/helpers/createTestGenotype";
 import { resolveGeneticMarkers } from "@/core/genetics/phenotype";

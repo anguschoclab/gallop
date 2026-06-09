@@ -8,7 +8,7 @@ import {
   getRandomAdjective,
   randomFromArray,
 } from "@/core/race/naming/namePools";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import type { RegionalSystem } from "@/game/types";
 
 describe("randomFromArray", () => {

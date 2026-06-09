@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
-import { calculateBreedingCompatibility } from "@/game/breedingCompatibility";
+import { calculateBreedingCompatibility } from "@/core/breeding/compatibility";
 import type { Horse } from "@/game/types";
 
 /**

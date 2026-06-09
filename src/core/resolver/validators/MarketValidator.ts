@@ -11,7 +11,7 @@
 import type { GameState } from "@/game/types";
 import type { AnyIntent, PurchaseIntent, ClaimingIntent } from "../intents";
 import type { IntentValidator, ValidationCache } from "./types";
-import { isHorseEligibleForClaimingPrice } from "@/game/claiming";
+import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
 
 export class MarketValidator implements IntentValidator {
   canValidate(type: AnyIntent["type"]): boolean {

@@ -9,8 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
-import { KIND_LABELS } from "@/game/auctionData";
-import { NumericValue } from "@/components/HorseBits";
+import { KIND_LABELS } from "@/game/auction/data";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/utils";
 import type { AuctionSale } from "@/game/types";
 

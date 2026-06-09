@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Info } from "lucide-react";
-import { BreedingRadarChart } from "@/components/BreedingRadarChart";
+import { BreedingRadarChart } from "@/components/breeding/BreedingRadarChart";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import type { BreedingCompatibilityResult } from "@/game/types";
 

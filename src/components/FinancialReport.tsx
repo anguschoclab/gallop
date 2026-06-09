@@ -17,13 +17,13 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useGame } from "@/game/store";
-import { useTransactions } from "@/game/hooks/useCoreState";
+import { useTransactions } from "@/hooks/game/useCoreState";
 import { formatCurrency, formatProfitLoss } from "@/core/financial";
 import { buildProfitLossReport } from "@/core/financial/reportBuilder";
 import { formatTransactionSubcategory } from "@/core/transactions/transactionTypes";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { FinancialChart } from "@/components/FinancialChart";
 
 type PeriodKey = "week" | "month" | "year" | "allTime";

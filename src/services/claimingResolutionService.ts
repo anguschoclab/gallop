@@ -7,8 +7,8 @@ import type {
 import { generateUUID } from "@/core/uuid";
 import { formatCurrency } from "@/lib/formatting";
 import type { ClaimingIntent } from "@/core/resolver/intents";
-import { processClaims, type ClaimAttempt } from "@/game/claiming";
-import type { Rng } from "@/game/rng";
+import { processClaims, type ClaimAttempt } from "@/core/market/claiming";
+import type { Rng } from "@/core/common/rng";
 import type { Race, Horse } from "@/game/types";
 
 export interface ProcessClaimingProps {

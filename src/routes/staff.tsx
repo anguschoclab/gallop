@@ -16,10 +16,10 @@ import {
   Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { useMemo, useState } from "react";
-import { getG1WinsForStable, countByGrade } from "@/lib/connectionTrophies";
-import { StaffNegotiationDialog } from "@/components/StaffNegotiationDialog";
+import { getG1WinsForStable, countByGrade } from "@/constants/connectionTrophies";
+import { StaffNegotiationDialog } from "@/components/staff/StaffNegotiationDialog";
 import { isOffended, offendedDaysRemaining } from "@/core/staff/staffNegotiation";
 
 export const Route = createFileRoute("/staff")({

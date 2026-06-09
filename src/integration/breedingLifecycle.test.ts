@@ -4,9 +4,9 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { runNpcBreeding } from "@/game/npcBreeding";
-import { createRng } from "@/game/rng";
-import { createDefaultGameState } from "@/game/state";
+import { runNpcBreeding } from "@/core/npc/breeding";
+import { createRng } from "@/core/common/rng";
+import { createDefaultGameState } from "@/game/store/state";
 import type { GameState, Horse, HorseGender, Stable } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 

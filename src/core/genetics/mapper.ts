@@ -9,7 +9,7 @@
  */
 
 import type { Genotype, Locus, MarkerGenotype } from "@/core/genetics/types";
-import type { StallionResearchData } from "@/core/data/stallionDNAData";
+import type { StallionResearchData } from "@/data/stallionDNAData";
 import { generateDeterministicGenotype } from "@/core/genetics/generation";
 
 /**

@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { selectHorsesForRaceEntry, runNpcRaceEntry } from "@/game/npcRaceEntry";
-import { fillRaceWithFillerHorses } from "@/game/raceFieldManager";
-import { updateHorseFame } from "@/game/npcPostRace";
-import { createRng } from "@/game/rng";
+import { selectHorsesForRaceEntry, runNpcRaceEntry } from "@/core/npc/raceEntry";
+import { fillRaceWithFillerHorses } from "@/core/race/fieldManager";
+import { updateHorseFame } from "@/core/npc/postRace";
+import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { StaffRole } from "@/core/staff/staffTypes";
 import { createTestHorse } from "@/tests/helpers";

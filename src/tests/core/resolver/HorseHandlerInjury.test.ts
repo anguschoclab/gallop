@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
-import type { GameState } from "@/game/state";
+import type { GameState } from "@/game/store/state";
 import type { InjuryImpact, HealthStatusImpact } from "@/core/resolver/impacts/index";
 
 describe("HorseHandler - Injury Handling", () => {

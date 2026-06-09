@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { generateAllNpcHorses } from "@/game/npcHorseGen";
-import { generateAllStables } from "@/game/npcStables";
-import { createRng, hashStr } from "@/game/rng";
-import { generateFamousStallions } from "@/game/famousStallions";
+import { generateAllNpcHorses } from "@/core/npc/horseGenerator";
+import { generateAllStables } from "@/core/npc/stables";
+import { createRng, hashStr } from "@/core/common/rng";
+import { generateFamousStallions } from "@/data/famousStallions";
 
 describe("generateAllNpcHorses", () => {
   it("should generate horses with unique IDs", () => {

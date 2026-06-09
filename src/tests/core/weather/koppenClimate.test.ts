@@ -12,7 +12,7 @@ import { describe, it, expect } from "vitest";
 import { TRACK_KOPPEN_MAP, getTrackKoppen } from "@/core/weather/trackKoppenMappings";
 import { KOPPEN_PROFILES } from "@/core/weather/koppenProfiles";
 import { ALL_KOPPEN_CODES, KOPPEN_DESCRIPTIONS } from "@/core/weather/koppenTypes";
-import TRACK_DATA from "@/game/data/tracks.json";
+import TRACK_DATA from "@/data/tracks.json";
 
 describe("Koppen Climate System", () => {
   describe("Track Mappings", () => {

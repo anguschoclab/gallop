@@ -8,7 +8,7 @@
  * Related files: horseFactory.ts (uses randomSilk for horse generation)
  */
 
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 
 /**
  * Generate random silk color (HSL)

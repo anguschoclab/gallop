@@ -5,7 +5,7 @@ import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { overall, NumericValue, HorseBit } from "@/components/HorseBits";
+import { overall, NumericValue, HorseBit } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
 import { NewsContent } from "@/components/narrative/NewsContent";
 import {

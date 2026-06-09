@@ -1,16 +1,18 @@
 import type { Horse, Race, Jockey, Stable } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import {
-  buildRunner,
   stepRunner,
-  getConditionsModifier,
   computePaceContext,
+} from "@/core/race/engine/simulation";
+import {
+  buildRunner,
+  getConditionsModifier,
   type Runner,
-} from "@/game/raceSim";
-import type { CourseSpecification } from "@/game/tracks";
-import { generateHorse } from "@/game/horseGen";
+} from "@/core/race/engine/runnerBuilder";
+import type { CourseSpecification } from "@/data/tracks";
+import { generateHorse } from "@/core/horse/horseFactory";
 import { calculateClassBonus } from "@/core/common/classBonus";
-import { createRng, hashStr, type Rng } from "@/game/rng";
+import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";

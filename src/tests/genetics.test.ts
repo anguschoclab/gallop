@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createRng } from "@/game/rng";
+import { createRng } from "@/core/common/rng";
 import {
   generateGenotype,
   generateDeterministicGenotype,
@@ -17,7 +17,7 @@ import {
   resolveFertility,
 } from "@/core/genetics/phenotype";
 import { inheritDNA } from "@/core/genetics/inheritance";
-import { stallionResearchData } from "@/core/data/stallionDNAData";
+import { stallionResearchData } from "@/data/stallionDNAData";
 
 describe("Universal DNA System", () => {
   const rng = createRng(123);

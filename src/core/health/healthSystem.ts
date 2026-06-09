@@ -10,7 +10,7 @@
  */
 
 import type { Horse } from "@/game/types";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import type { InjuryImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import type { StaffMember } from "@/core/staff/staffTypes";

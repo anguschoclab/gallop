@@ -2,8 +2,8 @@ import type { Race, Horse } from "@/game/types";
 import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/core/history/historyTypes";
 import { generateUUID } from "@/core/uuid";
 import { getCareerStats } from "@/core/horse/stats";
-import { DAYS_PER_YEAR } from "@/game/constants";
-import type { Rng } from "@/game/rng";
+import { DAYS_PER_YEAR } from "@/constants/game";
+import type { Rng } from "@/core/common/rng";
 
 /**
  * Records a race result in the seasonal history.

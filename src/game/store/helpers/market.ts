@@ -14,11 +14,11 @@
  */
 
 import type { Horse, Race } from "@/game/types";
-import { generateHorse } from "@/game/horseGen";
-import { generateUpcomingRaces as generateScheduledRaces } from "@/game/raceSchedule";
-import { TRACK_SCHEDULES } from "@/game/tracks";
+import { generateHorse } from "@/core/horse/horseFactory";
+import { generateUpcomingRaces as generateScheduledRaces } from "@/core/race/schedule";
+import { TRACK_SCHEDULES } from "@/data/tracks";
 import { isUniversalBirthday } from "@/core/calendar/breedingCalendar";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 
 /**
  * Ages horses based on hemisphere-specific universal birthdays

@@ -9,7 +9,7 @@
  * Related files: None
  */
 
-import type { Grade } from "@/game/gradedRaces";
+import type { Grade } from "@/data/gradedRaces";
 
 export type RegionId =
   | "canada"

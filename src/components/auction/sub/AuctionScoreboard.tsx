@@ -5,7 +5,7 @@
  */
 
 import { formatCurrency } from "@/lib/formatting";
-import type { useScoreboard } from "../useScoreboard";
+import type { useScoreboard } from "@/hooks/auction/useScoreboard";
 
 interface AuctionScoreboardProps {
   cash: number;

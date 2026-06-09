@@ -1,16 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
-import { useAuctions } from "@/game/hooks/useMarketState";
+import { useAuctions } from "@/hooks/game/useMarketState";
 import type { GameState } from "@/game/types";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { gameCalendarDate, dayOfYear } from "@/core/calendar/dateFormatting";
-import { KIND_LABELS, SALE_TRIGGERS } from "@/game/auctionData";
-import { isLotEligible } from "@/game/auction";
-import { CONSIGNMENT_COMMISSION } from "@/game/constants";
+import { KIND_LABELS, SALE_TRIGGERS } from "@/game/auction/data";
+import { isLotEligible } from "@/game/auction/engine";
+import { CONSIGNMENT_COMMISSION } from "@/constants/game";
 import {
   Gavel,
   Clock,
@@ -23,7 +23,7 @@ import {
   Package,
   ExternalLink,
 } from "lucide-react";
-import { NumericValue } from "@/components/HorseBits";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/utils";

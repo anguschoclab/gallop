@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { buildRunner, runRaceToCompletion } from "@/game/raceSim";
-import { createRng, hashStr } from "@/game/rng";
+import { runRaceToCompletion } from "@/core/race/engine/simulation";
+import { buildRunner } from "@/core/race/engine/runnerBuilder";
+import { createRng, hashStr } from "@/core/common/rng";
 import type { Horse, HorseGender } from "@/game/types";
 import type { Genotype } from "@/core/genetics/types";
 import type { Locus } from "@/core/common/types";

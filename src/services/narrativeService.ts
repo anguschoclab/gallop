@@ -1,6 +1,6 @@
-import type { Runner } from "@/game/raceSim";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse, Race, Stable } from "@/game/types";
-import type { Rng } from "@/game/rng";
+import type { Rng } from "@/core/common/rng";
 import type { NarrativeEvent, CommentaryLine } from "./narrative/types";
 import { TEMPLATES } from "@/assets/narrative/templates";
 import {
@@ -29,7 +29,7 @@ import {
   STRETCH_THRESHOLD_PERCENT,
   TURN_SEGMENT_LENGTH,
   METERS_PER_LENGTH,
-} from "@/game/constants";
+} from "@/constants/game";
 
 // Milestone configuration
 export const NARRATIVE_THRESHOLDS = {

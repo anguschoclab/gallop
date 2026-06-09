@@ -9,7 +9,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/game/constants";
+import { PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/constants/game";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/services/raceSimulationService";
 import type { Race } from "@/game/types";
