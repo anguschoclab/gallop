@@ -152,13 +152,12 @@ export const raceResolutionPhase: PipelinePhase = {
         horses: horseMap,
         jockeys: jockeyMap,
         newDay,
-        stateCash: state.cash,
-        stateReputation: state.reputation,
         hiredStaff: state.hiredStaff ?? [],
         rng,
         snapshots,
         calibratedPars: state.calibratedPars || {},
         raceWeatherState,
+        syndicates: state.syndicates,
       });
 
       for (const impact of raceImpacts) {

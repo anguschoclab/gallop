@@ -59,7 +59,6 @@ describe("Triple Crown Detection", () => {
       horses,
       jockeys,
       newDay: 100,
-      stateCash: 10000,
       calibratedPars: {},
     });
 
@@ -142,7 +141,6 @@ describe("Triple Crown Detection", () => {
       horses,
       jockeys,
       newDay: 100,
-      stateCash: 10000,
       calibratedPars: {},
     });
 
@@ -191,7 +189,6 @@ describe("Triple Crown Detection", () => {
       horses,
       jockeys,
       newDay: 100,
-      stateCash: 10000,
       calibratedPars: {},
     });
 
@@ -240,7 +237,6 @@ describe("Triple Crown Detection", () => {
       horses,
       jockeys,
       newDay: 100,
-      stateCash: 10000,
       calibratedPars: {},
     });
 

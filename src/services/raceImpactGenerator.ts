@@ -16,11 +16,13 @@ import type {
   TripleCrownProgressImpact,
   ReputationImpact,
   TransactionImpact,
-  InjuryImpact,
   NewsImpact,
   RecoveryImpact,
   BeyerImpact,
   InboxImpact,
+  TrainerStatsImpact,
+  JockeyAffinityImpact,
+  SyndicateSatisfactionImpact,
 } from "@/core/resolver/impacts/index";
 import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
 import { generateRaceNews } from "@/services/newsGenerator";
@@ -51,10 +53,7 @@ import {
   MAX_FAME,
 } from "@/game/constants";
 import { GRADED_RACES } from "@/core/data/gradedRaces";
-import { createReputationEvent, calculateRaceWinReputation, calculateRaceLossReputation } from "@/core/reputation";
-import type { ManagerReputation } from "@/core/reputation";
-import { createTransaction } from "@/core/transactions";
-import type { Transaction } from "@/core/transactions";
+import { calculateRaceWinReputation, calculateRaceLossReputation } from "@/core/reputation";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";
 import { AFFINITY_CONSTANTS } from "@/core/jockey/affinity";
 
@@ -93,10 +92,6 @@ export interface GenerateRaceImpactsProps {
   jockeys: Jockey[] | Map<string, Jockey>;
   /** Game day of the race resolution */
   newDay: number;
-  /** Current player cash balance */
-  stateCash: number;
-  /** Current manager reputation state */
-  stateReputation?: ManagerReputation;
   /** Active staff members with potential bonuses */
   hiredStaff?: StaffMember[];
   /** Optional random number generator for stochastic events (e.g., injuries) */
@@ -111,21 +106,6 @@ export interface GenerateRaceImpactsProps {
   syndicates?: Record<string, import("@/core/breeding/types").Syndicate>;
 }
 
-/**
- * Generate all state impacts resulting from a completed race.
- *
- * This function orchestrates the post-race resolution logic, including:
- * - Result recording and history updates
- * - Energy expenditure and injury rolls
- * - Performance metrics (Beyer Figures) with genetic dampeners
- * - Financial transactions (prize money, jockey fees)
- * - Reputation and fame updates
- * - Career milestones (Triple Crown progress, blue hen status, stud fees)
- * - Narrative and news generation
- *
- * @param props - Impact generation properties
- * @returns Array of impacts to be applied to the game state by the resolver
- */
 /**
  * Generate energy expenditure impact for a horse.
  * @param horseId
@@ -160,7 +140,7 @@ function generateFormImpact(
   horse: Horse,
   position: number,
   newDay: number,
-  hiredStaff: any[],
+  hiredStaff: StaffMember[],
   rng?: Rng,
 ): FormImpact {
   const stableId = horse.stableId || "";
@@ -612,6 +592,348 @@ function generatePercentageJockeyFeeImpacts(
 }
 
 /**
+ * Generate a pattern-jump inbox message for a horse that dramatically improved its Beyer figure.
+ * Only fires for Graded races.
+ * @param horse
+ * @param beyerValue - The adjusted Beyer figure from this race
+ * @param race
+ * @param newDay
+ * @param rng
+ * @returns An InboxImpact if a jump was detected, otherwise null.
+ */
+function generatePatternJumpImpact(
+  horse: Horse,
+  beyerValue: number,
+  race: Race,
+  newDay: number,
+  rng?: Rng,
+): InboxImpact | null {
+  if (!race.graded) return null;
+
+  const { jumped, margin } = detectPatternJump(horse, beyerValue);
+  if (!jumped) return null;
+
+  const isAdverseWeather =
+    (race.weather && (race.weather === "rainy" || race.weather === "cloudy")) ||
+    race.trackCondition === "heavy" ||
+    race.trackCondition === "soft" ||
+    race.trackCondition === "yielding";
+
+  const title = isAdverseWeather
+    ? `Storm Performance: ${horse.name}`
+    : `Performance Spike: ${horse.name}`;
+
+  const weatherNote = isAdverseWeather
+    ? ` Despite the ${race.weather} weather and ${race.trackCondition} track, this horse thrived in the adverse conditions.`
+    : " This horse is on a sharp upward trajectory.";
+
+  return {
+    id: generateUUID(rng),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "always",
+    type: "inbox_message",
+    message: {
+      day: newDay,
+      category: "race",
+      priority: "info",
+      title,
+      body: `${horse.name} produced a massive performance jump in the ${
+        race.name
+      }, earning a ${beyerValue} Beyer figure (+${Math.round(margin)} improvement).${weatherNote}`,
+      cta: {
+        label: "View Horse",
+        route: "stable.$horseId",
+        params: { horseId: horse.id },
+      },
+    },
+  } as InboxImpact;
+}
+
+/**
+ * Generate a trainer stats update impact for a horse's assigned trainer.
+ * @param horse
+ * @param position - Finishing position (1-based)
+ * @param race
+ * @param hiredStaff
+ * @param newDay
+ * @param rng
+ * @returns A TrainerStatsImpact if a trainer is assigned, otherwise null.
+ */
+function generateTrainerStatsImpact(
+  horse: Horse,
+  position: number,
+  race: Race,
+  hiredStaff: StaffMember[],
+  newDay: number,
+  rng?: Rng,
+): TrainerStatsImpact | null {
+  const horseStableId = horse.stableId || (horse.owned ? "" : undefined);
+  const assignedTrainer = hiredStaff.find(
+    (s) => s.role === "trainer" && (horse.owned ? !s.stableId : s.stableId === horseStableId),
+  );
+  if (!assignedTrainer) return null;
+
+  const isWin = position === 1;
+  const isPlace = position === 2;
+  const isShow = position === 3;
+
+  let fameDelta = 0;
+  if (isWin) {
+    fameDelta = race.graded?.grade === "G1" ? 10 : race.graded ? 5 : 2;
+  } else if (isPlace || isShow) {
+    fameDelta = 1;
+  } else if (position > 10) {
+    fameDelta = -1;
+  }
+
+  let specialty: string | undefined;
+  if (race.distance && race.distance <= 1400) {
+    specialty = "sprinter";
+  } else if (race.distance && race.distance >= 2000) {
+    specialty = "router";
+  }
+  if (race.surface) {
+    specialty = race.surface.toLowerCase();
+  }
+
+  return {
+    id: generateUUID(rng),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "conditional",
+    type: "trainer_stats",
+    staffId: assignedTrainer.id,
+    raceRecord: {
+      wins: isWin ? 1 : 0,
+      places: isPlace ? 1 : 0,
+      shows: isShow ? 1 : 0,
+      starts: 1,
+    },
+    fameDelta,
+    specialty,
+    reason: `${assignedTrainer.name} trained ${horse.name} to ${position}${getOrdinalSuffix(position)} in ${race.name}`,
+  } as TrainerStatsImpact;
+}
+
+/**
+ * Generate a jockey affinity XP gain (or penalty) impact.
+ * @param horse
+ * @param jockey
+ * @param position - Finishing position (1-based)
+ * @param race
+ * @param beyerValue - The adjusted Beyer figure from this race
+ * @param newDay
+ * @param rng
+ * @returns A JockeyAffinityImpact.
+ */
+function generateJockeyAffinityImpact(
+  horse: Horse,
+  jockey: Jockey,
+  position: number,
+  race: Race,
+  beyerValue: number,
+  newDay: number,
+  rng?: Rng,
+): JockeyAffinityImpact {
+  let xpGain = AFFINITY_CONSTANTS.XP_PER_RACE;
+
+  if (position === 1) {
+    xpGain += AFFINITY_CONSTANTS.XP_PER_WIN_BONUS;
+  }
+
+  const fieldSize = race.entries?.length || position;
+  if (position > 10 && position > fieldSize / 2) {
+    xpGain += AFFINITY_CONSTANTS.XP_POOR_RACE_PENALTY;
+  }
+
+  if (position <= 3 && beyerValue > 100) {
+    xpGain += 5;
+  }
+
+  return {
+    id: generateUUID(rng),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "conditional",
+    type: "jockey_affinity_gain",
+    jockeyId: jockey.id,
+    horseId: horse.id,
+    xp: xpGain,
+    reason: `Raced ${horse.name} to ${position}${getOrdinalSuffix(position)}${xpGain < 0 ? " (poor performance penalty)" : ""}`,
+  } as JockeyAffinityImpact;
+}
+
+/**
+ * Generate breeding-related impacts for a stakes winner:
+ * - Blue hen status update for the dam
+ * - Stud career and standing fee recalibration for the sire
+ * - Syndicate shareholder satisfaction updates
+ *
+ * Only fires when the horse finished 1st in a graded or stakes race.
+ * @param horse
+ * @param position - Finishing position (1-based)
+ * @param race
+ * @param horseMap
+ * @param syndicates
+ * @param newDay
+ * @param rng
+ * @returns Array of impacts (may be empty).
+ */
+function generateBreedingImpacts(
+  horse: Horse,
+  position: number,
+  race: Race,
+  horseMap: Map<string, Horse>,
+  syndicates: Record<string, import("@/core/breeding/types").Syndicate> | undefined,
+  newDay: number,
+  rng?: Rng,
+): AnyImpact[] {
+  if (position !== 1) return [];
+  if (!race.graded && race.raceClass !== "Stakes" && race.raceClass !== "Group") return [];
+
+  const impacts: AnyImpact[] = [];
+
+  // Blue hen status for the dam
+  const dam = horse.pedigree?.damId ? horseMap.get(horse.pedigree.damId) : undefined;
+  if (dam) {
+    impacts.push({
+      id: generateUUID(rng),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "blue hen_status",
+      horseId: dam.id,
+      blueHenStatus: {
+        isBlueHen: dam.blueHenStatus?.isBlueHen || false,
+        stakesWinnersProduced: (dam.blueHenStatus?.stakesWinnersProduced ?? 0) + 1,
+        group1WinnersProduced:
+          race.graded?.grade === "G1"
+            ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1
+            : dam.blueHenStatus?.group1WinnersProduced,
+        blueHenScore: dam.blueHenStatus?.blueHenScore || 0,
+        foalsProduced: dam.blueHenStatus?.foalsProduced || 0,
+      },
+      reason: `Stakes win by ${horse.name}`,
+    } as BlueHenImpact);
+  }
+
+  // Stud career and fee recalibration for the sire
+  const sire = horse.pedigree?.sireId ? horseMap.get(horse.pedigree.sireId) : undefined;
+  if (sire && sire.stud?.atStud) {
+    const newStakesFoals = (sire.stud.lifetimeStakesFoals ?? 0) + 1;
+    const newG1Foals =
+      race.graded?.grade === "G1"
+        ? (sire.stud.lifetimeG1Foals ?? 0) + 1
+        : sire.stud.lifetimeG1Foals;
+
+    const previousFee = sire.stud.standingFee;
+    const newFee = sire.stableId
+      ? recalcStandingFee(
+          {
+            ...sire,
+            stud: {
+              ...sire.stud,
+              lifetimeStakesFoals: newStakesFoals,
+              lifetimeG1Foals: newG1Foals,
+            },
+          },
+          newDay,
+        )
+      : sire.stud.standingFee;
+
+    impacts.push({
+      id: generateUUID(rng),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "stud_career",
+      horseId: sire.id,
+      studCareer: {
+        ...sire.stud,
+        standingFee: newFee,
+        previousStandingFee: previousFee,
+        lifetimeStakesFoals: newStakesFoals,
+        lifetimeG1Foals: newG1Foals,
+      },
+      reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee: $${formatCurrency(previousFee)} → $${formatCurrency(newFee)}.` : ""}`,
+    } as StudCareerImpact);
+
+    // Syndicate shareholder satisfaction
+    const syndicate = Object.values(syndicates || {}).find((s) => s.stallionId === sire.id);
+    if (syndicate) {
+      const satisfactionDelta = race.graded?.grade === "G1" ? 15 : race.graded ? 8 : 5;
+      for (const stableId of Object.keys(syndicate.shareHolders)) {
+        impacts.push({
+          id: generateUUID(rng),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "conditional",
+          type: "syndicate_satisfaction",
+          syndicateId: syndicate.id,
+          stableId,
+          satisfactionDelta,
+          reason: `Syndicated stallion ${sire.name}'s foal ${horse.name} won ${race.name}`,
+        } as SyndicateSatisfactionImpact);
+      }
+    }
+  }
+
+  return impacts;
+}
+
+/**
+ * Generate a race summary log impact for the player's owned horses.
+ * @param ownedResults - Results for player-owned horses only
+ * @param race
+ * @param horseMap
+ * @param newDay
+ * @param rng
+ * @returns A LogImpact summarising results and prize earnings, or null if no owned horses.
+ */
+function generateRaceSummaryLog(
+  ownedResults: Array<{ horseId: string; position: number; time: number }>,
+  race: Race,
+  horseMap: Map<string, Horse>,
+  newDay: number,
+  rng?: Rng,
+): import("@/core/resolver/impacts/index").LogImpact | null {
+  if (ownedResults.length === 0) return null;
+
+  const summary = ownedResults
+    .map((r) => {
+      const horse = horseMap.get(r.horseId);
+      return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
+    })
+    .join(", ");
+
+  const prize = ownedResults.reduce((sum, r) => {
+    const prizeSplit = getPrizeSplitForRace(race);
+    if (r.position - 1 < prizeSplit.length) {
+      return sum + Math.round(race.purse * prizeSplit[r.position - 1]);
+    }
+    return sum;
+  }, 0);
+
+  return {
+    id: generateUUID(rng),
+    intentId: "",
+    day: newDay,
+    phase: "raceResolution",
+    logLevel: "always",
+    type: "log",
+    text: `${race.name} — ${summary}${prize > 0 ? ` (won ${formatCurrency(prize)})` : ""}`,
+    reason: "Race summary",
+  } as import("@/core/resolver/impacts/index").LogImpact;
+}
+
+/**
  * Generate all state impacts resulting from a completed race.
  *
  * This function orchestrates the post-race resolution logic, including:
@@ -630,8 +952,6 @@ function generatePercentageJockeyFeeImpacts(
  * @param props.horses - Current horse population (can be an array or a pre-indexed Map)
  * @param props.jockeys - Current jockey population (can be an array or a pre-indexed Map)
  * @param props.newDay - Game day of the race resolution
- * @param props.stateCash - Current player cash balance
- * @param props.stateReputation - Current manager reputation state
  * @param props.hiredStaff - Active staff members with potential bonuses
  * @param props.rng - Optional random number generator for stochastic events (e.g., injuries)
  * @param props.snapshots - Optional detailed race snapshots for replay/summary purposes
@@ -646,8 +966,6 @@ export function generateRaceImpacts({
   horses,
   jockeys,
   newDay,
-  stateCash,
-  stateReputation,
   hiredStaff = [],
   rng,
   snapshots = [],
@@ -744,50 +1062,10 @@ export function generateRaceImpacts({
       // Store beyer for later use in affinity calculations
       const beyerValue = beyerImpact.beyer;
 
-      // --- PATTERN JUMP DETECTION ---
-      // Only push notifications for Graded races (G1, G2, G3)
-      if (race.graded) {
-        const { jumped, margin } = detectPatternJump(horse, beyerImpact.beyer);
-        if (jumped) {
-          const isAdverseWeather =
-            (race.weather && (race.weather === "rainy" || race.weather === "cloudy")) ||
-            race.trackCondition === "heavy" ||
-            race.trackCondition === "soft" ||
-            race.trackCondition === "yielding";
-
-          const title = isAdverseWeather
-            ? `Storm Performance: ${horse.name}`
-            : `Performance Spike: ${horse.name}`;
-
-          const weatherNote = isAdverseWeather
-            ? ` Despite the ${race.weather} weather and ${race.trackCondition} track, this horse thrived in the adverse conditions.`
-            : " This horse is on a sharp upward trajectory.";
-
-          impacts.push({
-            id: generateUUID(rng),
-            intentId: "",
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "always",
-            type: "inbox_message",
-            message: {
-              day: newDay,
-              category: "race",
-              priority: "info",
-              title,
-              body: `${horse.name} produced a massive performance jump in the ${
-                race.name
-              }, earning a ${beyerImpact.beyer} Beyer figure (+${Math.round(
-                margin,
-              )} improvement).${weatherNote}`,
-              cta: {
-                label: "View Horse",
-                route: "stable.$horseId",
-                params: { horseId: horse.id },
-              },
-            },
-          });
-        }
+      // Pattern jump detection — inbox notification for Graded races
+      const patternJumpImpact = generatePatternJumpImpact(horse, beyerValue, race, newDay, rng);
+      if (patternJumpImpact) {
+        impacts.push(patternJumpImpact);
       }
 
       // Race history impact
@@ -821,56 +1099,9 @@ export function generateRaceImpacts({
       }
 
       // Trainer stats update (Phase 4: Relationship Enhancement)
-      // Find if there's a trainer assigned to this horse's stable
-      const horseStableId = horse.stableId || (horse.owned ? "" : undefined);
-      const assignedTrainer = hiredStaff?.find(
-        (s) => s.role === "trainer" && (horse.owned ? !s.stableId : s.stableId === horseStableId),
-      );
-
-      if (assignedTrainer) {
-        const isWin = r.position === 1;
-        const isPlace = r.position === 2;
-        const isShow = r.position === 3;
-
-        // Calculate fame change
-        let fameDelta = 0;
-        if (isWin) {
-          fameDelta = race.graded?.grade === "G1" ? 10 : race.graded ? 5 : 2;
-        } else if (isPlace || isShow) {
-          fameDelta = 1;
-        } else if (r.position > 10) {
-          fameDelta = -1; // Small fame loss for poor performance
-        }
-
-        // Determine specialty based on race
-        let specialty: string | undefined;
-        if (race.distance && race.distance <= 1400) {
-          specialty = "sprinter";
-        } else if (race.distance && race.distance >= 2000) {
-          specialty = "router";
-        }
-        if (race.surface) {
-          specialty = race.surface.toLowerCase() as string;
-        }
-
-        impacts.push({
-          id: generateUUID(rng),
-          intentId: "",
-          day: newDay,
-          phase: "raceResolution",
-          logLevel: "conditional",
-          type: "trainer_stats",
-          staffId: assignedTrainer.id,
-          raceRecord: {
-            wins: isWin ? 1 : 0,
-            places: isPlace ? 1 : 0,
-            shows: isShow ? 1 : 0,
-            starts: 1,
-          },
-          fameDelta,
-          specialty,
-          reason: `${assignedTrainer.name} trained ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)} in ${race.name}`,
-        } as any);
+      const trainerImpact = generateTrainerStatsImpact(horse, r.position, race, hiredStaff, newDay, rng);
+      if (trainerImpact) {
+        impacts.push(trainerImpact);
       }
 
       // Prize money distribution
@@ -897,138 +1128,14 @@ export function generateRaceImpacts({
           impacts.push(jockeyFeeImpacts.cashImpact);
           if (jockeyFeeImpacts.transactionImpact) impacts.push(jockeyFeeImpacts.transactionImpact);
 
-          // --- AFFINITY XP GAIN / PENALTY ---
-          // Base XP for racing
-          let xpGain = AFFINITY_CONSTANTS.XP_PER_RACE;
-
-          // Win bonus
-          if (r.position === 1) {
-            xpGain += AFFINITY_CONSTANTS.XP_PER_WIN_BONUS;
-          }
-
-          // Penalty for poor performance (outside top 10)
-          const fieldSize = race.entries?.length || r.position;
-          if (r.position > 10 && r.position > fieldSize / 2) {
-            xpGain += AFFINITY_CONSTANTS.XP_POOR_RACE_PENALTY; // -10 XP
-          }
-
-          // Performance bonus for exceptional Beyer figures
-          if (r.position <= 3 && beyerValue > 100) {
-            xpGain += 5; // Bonus for quality performance
-          }
-
-          impacts.push({
-            id: generateUUID(rng),
-            intentId: "",
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "conditional",
-            type: "jockey_affinity_gain",
-            jockeyId: jockey.id,
-            horseId: horse.id,
-            xp: xpGain,
-            reason: `Raced ${horse.name} to ${r.position}${getOrdinalSuffix(r.position)}${xpGain < 0 ? " (poor performance penalty)" : ""}`,
-          } as any);
-          // --- END AFFINITY XP GAIN / PENALTY ---
+          // Affinity XP gain / penalty
+          impacts.push(generateJockeyAffinityImpact(horse, jockey, r.position, race, beyerValue, newDay, rng));
         }
       }
 
-      // 5. Breeding: "Blue Hen" status tracking for high-performing mares
-      if (
-        r.position === 1 &&
-        (race.graded || race.raceClass === "Stakes" || race.raceClass === "Group")
-      ) {
-        const dam = horse.pedigree?.damId ? horseMap.get(horse.pedigree.damId) : undefined;
-
-        if (dam) {
-          impacts.push({
-            id: generateUUID(rng),
-            intentId: "",
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "conditional",
-            type: "blue hen_status",
-            horseId: dam.id,
-            blueHenStatus: {
-              isBlueHen: dam.blueHenStatus?.isBlueHen || false,
-              stakesWinnersProduced: (dam.blueHenStatus?.stakesWinnersProduced ?? 0) + 1,
-              group1WinnersProduced:
-                race.graded?.grade === "G1"
-                  ? (dam.blueHenStatus?.group1WinnersProduced ?? 0) + 1
-                  : dam.blueHenStatus?.group1WinnersProduced,
-              blueHenScore: dam.blueHenStatus?.blueHenScore || 0,
-              foalsProduced: dam.blueHenStatus?.foalsProduced || 0,
-            },
-            reason: `Stakes win by ${horse.name}`,
-          } as BlueHenImpact);
-        }
-
-        // 6. Breeding: Stallion stud career and fee recalibration
-        const sire = horse.pedigree?.sireId ? horseMap.get(horse.pedigree.sireId) : undefined;
-
-        if (sire && sire.stud?.atStud) {
-          const newStakesFoals = (sire.stud.lifetimeStakesFoals ?? 0) + 1;
-          const newG1Foals =
-            race.graded?.grade === "G1"
-              ? (sire.stud.lifetimeG1Foals ?? 0) + 1
-              : sire.stud.lifetimeG1Foals;
-
-          const previousFee = sire.stud.standingFee;
-          const newFee = sire.stableId
-            ? recalcStandingFee(
-                {
-                  ...sire,
-                  stud: {
-                    ...sire.stud,
-                    lifetimeStakesFoals: newStakesFoals,
-                    lifetimeG1Foals: newG1Foals,
-                  },
-                },
-                newDay,
-              )
-            : sire.stud.standingFee;
-
-          impacts.push({
-            id: generateUUID(rng),
-            intentId: "",
-            day: newDay,
-            phase: "raceResolution",
-            logLevel: "conditional",
-            type: "stud_career",
-            horseId: sire.id,
-            studCareer: {
-              ...sire.stud,
-              standingFee: newFee,
-              previousStandingFee: previousFee,
-              lifetimeStakesFoals: newStakesFoals,
-              lifetimeG1Foals: newG1Foals,
-            },
-            reason: `Stakes win by ${horse.name}${sire.stableId ? `. Fee: $${formatCurrency(previousFee)} → $${formatCurrency(newFee)}.` : ""}`,
-          } as StudCareerImpact);
-
-          // Phase 5: Syndicate shareholder satisfaction update
-          // Check if sire is part of a syndicate
-          const syndicate = Object.values(syndicates || {}).find(
-            (s) => s.stallionId === sire.id,
-          );
-          if (syndicate) {
-            const satisfactionDelta = race.graded?.grade === "G1" ? 15 : race.graded ? 8 : 5;
-            for (const stableId of Object.keys(syndicate.shareHolders)) {
-              impacts.push({
-                id: generateUUID(rng),
-                intentId: "",
-                day: newDay,
-                phase: "raceResolution",
-                logLevel: "conditional",
-                type: "syndicate_satisfaction",
-                syndicateId: syndicate.id,
-                stableId,
-                satisfactionDelta,
-                reason: `Syndicated stallion ${sire.name}'s foal ${horse.name} won ${race.name}`,
-              } as any);
-            }
-          }
-        }
+      // 5+6. Breeding: blue hen, stud career, syndicate satisfaction
+      for (const bi of generateBreedingImpacts(horse, r.position, race, horseMap, syndicates, newDay, rng)) {
+        impacts.push(bi);
       }
 
       // 7. Jockey performance and stats tracking
@@ -1090,34 +1197,12 @@ export function generateRaceImpacts({
 
     // 9. Narrative: Generate race summary logs for the player
     const ownedHorses = result.filter((r) => {
-      const horse = horseMap.get(r.horseId);
-      return horse && !horse.stableId;
+      const h = horseMap.get(r.horseId);
+      return h && !h.stableId;
     });
-    if (ownedHorses.length > 0) {
-      const summary = ownedHorses
-        .map((r) => {
-          const horse = horseMap.get(r.horseId);
-          return `${horse?.name} ${r.position}${getOrdinalSuffix(r.position)}`;
-        })
-        .join(", ");
-
-      const prize = ownedHorses.reduce((sum, r) => {
-        const prizeSplit = getPrizeSplitForRace(race);
-        if (r.position - 1 < prizeSplit.length) {
-          return sum + Math.round(race.purse * prizeSplit[r.position - 1]);
-        }
-        return sum;
-      }, 0);
-      impacts.push({
-        id: generateUUID(rng),
-        intentId: "",
-        day: newDay,
-        phase: "raceResolution",
-        logLevel: "always",
-        type: "log",
-        text: `${race.name} — ${summary}${prize > 0 ? ` (won ${formatCurrency(prize)})` : ""}`,
-        reason: "Race summary",
-      } as LogImpact);
+    const summaryLog = generateRaceSummaryLog(ownedHorses, race, horseMap, newDay, rng);
+    if (summaryLog) {
+      impacts.push(summaryLog);
     }
 
     // 10. Narrative: Dynamic news generation for major races
