@@ -1,0 +1,3 @@
+## 2026-06-09 - Missing ARIA Labels on Dismiss/Close Controls
+**Learning:** Icon-only close or remove buttons (often rendering an `<X>` icon) nested within complex list items or side panels frequently lack `aria-label` attributes in this app's components. This breaks accessibility for screen reader users, leaving them with an unlabelled interactable button that does not convey its destructive or dismissive action.
+**Action:** When implementing or reviewing list items or panels containing inline dismiss, remove, or close actions, explicitly ensure an `aria-label` is applied to any button that relies solely on an icon to convey its purpose.
