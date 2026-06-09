@@ -14,17 +14,14 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { SaveTab } from "./SaveTab";
+import { LoadTab } from "./LoadTab";
 import {
-  FileText,
-  Archive,
-  Trash2,
   Database,
-  Clock,
-  CircleDollarSign,
   ShieldCheck,
   ChevronRight,
+  Trash2,
+  Clock,
   HardDrive,
 } from "lucide-react";
 import { getSaveSlots, deleteSaveSlot, type SaveSlotMetadata } from "@/services/saveManager";
@@ -104,7 +101,6 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl bg-slate-950 border-gold/30 p-0 overflow-hidden rounded-none shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-        {/* Grain Overlay */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
         <div className="relative border-b border-gold/20 bg-slate-900/50 p-6">
@@ -145,74 +141,27 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
           </div>
 
           <div className="p-6 max-h-[450px] overflow-y-auto custom-scrollbar bg-black/20">
-            <TabsContent value="save" className="mt-0 space-y-6">
-              {/* New Entry Input - Stamped Look */}
-              <div className="p-4 bg-slate-900/40 border border-gold/20 flex gap-4 items-center">
-                <div className="h-10 w-10 shrink-0 bg-gold/10 flex items-center justify-center border border-gold/30">
-                  <FileText className="h-5 w-5 text-gold" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <label className="text-[10px] uppercase font-mono text-gold/60 tracking-tighter">
-                    Entry Label
-                  </label>
-                  <Input
-                    placeholder="Save name..."
-                    value={newSaveName}
-                    onChange={(e) => setNewSaveName(e.target.value.toUpperCase())}
-                    className="bg-transparent border-none p-0 h-auto text-cream font-mono placeholder:text-slate-700 focus-visible:ring-0 text-lg uppercase"
-                  />
-                </div>
-                <Button
-                  onClick={() => handleManualSave()}
-                  disabled={isSaving}
-                  className="bg-gold hover:bg-gold-bright text-slate-950 font-bold uppercase tracking-tighter h-12 rounded-none px-6"
-                >
-                  Create Snapshot
-                </Button>
-              </div>
-
-              <div className="space-y-4">
-                <div className="text-[10px] uppercase font-mono text-gold/40 border-b border-gold/10 pb-1">
-                  Previous Snapshots
-                </div>
-                {saves
-                  .filter((s) => !s.isAutoSave)
-                  .map((save) => (
-                    <LedgerEntry
-                      key={save.id}
-                      save={save}
-                      onAction={() => handleManualSave(save.id, save.name)}
-                      onDelete={(e) => handleDelete(save.id, e)}
-                      actionLabel="Save"
-                    />
-                  ))}
-              </div>
+            <TabsContent value="save" className="mt-0">
+              <SaveTab
+                newSaveName={newSaveName}
+                onNameChange={setNewSaveName}
+                onCreate={() => handleManualSave()}
+                isSaving={isSaving}
+                saves={saves}
+                onOverwrite={(id, name) => handleManualSave(id, name)}
+                onDelete={handleDelete}
+                LedgerEntryComponent={LedgerEntry}
+              />
             </TabsContent>
 
-            <TabsContent value="load" className="mt-0 space-y-4">
-              <div className="text-[10px] uppercase font-mono text-gold/40 border-b border-gold/10 pb-1 flex justify-between">
-                <span>Archived Ledgers</span>
-                <span>Sorted by Recency</span>
-              </div>
-              {saves.map((save) => (
-                <LedgerEntry
-                  key={save.id}
-                  save={save}
-                  onAction={() => handleLoad(save.id)}
-                  onDelete={(e) => handleDelete(save.id, e)}
-                  actionLabel="Load"
-                  isLoading={isLoading}
-                />
-              ))}
-
-              {saves.length === 0 && (
-                <div className="text-center py-12 border-2 border-dashed border-slate-800">
-                  <Archive className="h-12 w-12 text-slate-800 mx-auto mb-4" />
-                  <p className="text-cream-muted font-mono uppercase text-xs tracking-widest">
-                    No entries detected in archive
-                  </p>
-                </div>
-              )}
+            <TabsContent value="load" className="mt-0">
+              <LoadTab
+                saves={saves}
+                onLoad={handleLoad}
+                onDelete={handleDelete}
+                isLoading={isLoading}
+                LedgerEntryComponent={LedgerEntry}
+              />
             </TabsContent>
           </div>
         </Tabs>
@@ -260,7 +209,6 @@ function LedgerEntry({
       )}
       onClick={onAction}
     >
-      {/* Selection Indicator Strip */}
       <div
         className={cn(
           "absolute left-0 top-0 bottom-0 w-1",
