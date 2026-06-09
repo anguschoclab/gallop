@@ -1,35 +1,12 @@
 import type { Runner } from "@/game/raceSim";
 import type { Race } from "@/game/types";
 import { METERS_PER_LENGTH } from "@/game/constants";
+import type { NarrativeEvent, DetectedEvent } from "./types";
 
 /**
  * Event Detection System
  * Detects race events for narrative commentary generation
  */
-
-export type NarrativeEvent =
-  | "START"
-  | "LEAD_CHANGE"
-  | "SURGE"
-  | "FADE"
-  | "STRETCH"
-  | "FINISH"
-  | "POSITION_CHECK"
-  | "DRAFTING"
-  | "HOT_PACE"
-  | "WEATHER_COMMENT"
-  | "STABLE_WATCH"
-  | "MILESTONE"
-  | "EXPERT_INSIGHT"
-  | "GAP_ANNOUNCEMENT"
-  | "ATMOSPHERE"
-  | "LANE_WATCH";
-
-export interface DetectedEvent {
-  type: NarrativeEvent;
-  horseId?: string;
-  data?: Record<string, unknown>;
-}
 
 /**
  * Detect lead change event.

@@ -7,38 +7,13 @@ import {
   EXPERT_INSIGHT_TEMPLATES,
   TEMPLATES,
 } from "@/assets/narrative/templates";
+import type { NarrativeEvent, CommentaryLine } from "./types";
+export type { NarrativeEvent, CommentaryLine } from "./types";
 
 /**
  * Commentary Generation System
  * Generates narrative commentary lines from templates and context
  */
-
-export type NarrativeEvent =
-  | "START"
-  | "LEAD_CHANGE"
-  | "SURGE"
-  | "FADE"
-  | "STRETCH"
-  | "FINISH"
-  | "POSITION_CHECK"
-  | "DRAFTING"
-  | "HOT_PACE"
-  | "WEATHER_COMMENT"
-  | "STABLE_WATCH"
-  | "MILESTONE"
-  | "EXPERT_INSIGHT"
-  | "GAP_ANNOUNCEMENT"
-  | "ATMOSPHERE"
-  | "LANE_WATCH";
-
-export interface CommentaryLine {
-  id: string;
-  text: string;
-  timestamp: number;
-  type: NarrativeEvent;
-  horseId?: string;
-  isHighImpact?: boolean;
-}
 
 /**
  * Generate a commentary line from a template.
@@ -92,7 +67,7 @@ export function generateCommentaryLine(
   text = text.replace("{trackName}", context.race.graded?.track || "the track");
   text = text.replace("{weather}", context.race.weather || "clear");
   text = text.replace("{trackCondition}", context.race.trackCondition || "good");
-  text.replace("{remaining}", (context.race.distance - (context.runner?.position || 0)).toFixed(0));
+  text = text.replace("{remaining}", (context.race.distance - (context.runner?.position || 0)).toFixed(0));
 
   if (context.lengths) {
     text = text.replace("{lengths}", context.lengths);
@@ -120,8 +95,8 @@ export function generateCommentaryLine(
     text = text.replace("{gender}", context.horse.gender || "runner");
     text = text.replace("{sire}", context.horse.sireName || "Unknown Sire");
     text = text.replace("{dam}", context.horse.damName || "Unknown Dam");
-    text.replace("{stable}", stable?.name || "Independent");
-    text.replace("{family}", context.horse.bruceLoweFamily?.toString() || "Unknown");
+    text = text.replace("{stable}", stable?.name || "Independent");
+    text = text.replace("{family}", context.horse.bruceLoweFamily?.toString() || "Unknown");
 
     // Replace rank placeholder
     if (context.lastRanks) {

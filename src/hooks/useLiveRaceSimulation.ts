@@ -84,7 +84,6 @@ export function useLiveRaceSimulation({
           const newCommentary = narrativeRef.current.update(
             runners,
             simTimeRef.current,
-            pace.pacePressure,
           );
           if (newCommentary.length > 0) {
             messageQueue.current.push(...newCommentary);

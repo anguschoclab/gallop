@@ -77,7 +77,6 @@ export function useRaceSimulation({
           const newCommentary = narrativeGenerator.update(
             runners,
             simTimeRef.current,
-            pace.pacePressure,
           );
           if (newCommentary.length > 0) {
             messageQueue.current.push(...newCommentary);

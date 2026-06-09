@@ -1,13 +1,11 @@
 import type { Runner } from "@/game/raceSim";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { Rng } from "@/game/rng";
-import type { NarrativeEvent } from "./narrative/commentaryGenerator";
-import type { CommentaryLine } from "./narrative/commentaryGenerator";
+import type { NarrativeEvent, CommentaryLine } from "./narrative/types";
 import { TEMPLATES } from "@/assets/narrative/templates";
 import {
   generateCommentaryLine,
   generateExpertInsight,
-  getOrdinal,
 } from "./narrative/commentaryGenerator";
 import {
   detectLeadChange,
@@ -17,7 +15,6 @@ import {
   detectGapAnnouncement,
   detectStretch,
   detectFinish,
-  detectMilestones,
   detectStableWatch,
   detectAtmosphere,
 } from "./narrative/eventDetector";
@@ -118,200 +115,213 @@ export class NarrativeGenerator {
    *
    * @param runners - Current state of all runners
    * @param simTime - Current elapsed simulation time in seconds
-   * @param pacePressure - Current pace pressure metric for the race
    * @returns Array of new commentary lines generated in this step
    */
-  public update(runners: Runner[], simTime: number, pacePressure: number): CommentaryLine[] {
+  public update(runners: Runner[], simTime: number): CommentaryLine[] {
     const newLines: CommentaryLine[] = [];
-
-    // Create Map for O(1) runner lookups
     const runnersMap = new Map(runners.map((r) => [r.horseId, r]));
-
-    // 1. Race Start & Weather & Initial Insights
-    if (simTime > 0 && !this.hasAnnouncedStart) {
-      newLines.push(this.createLine("START", simTime));
-      if (this.race.weather || this.race.trackCondition) {
-        newLines.push(this.createLine("WEATHER_COMMENT", simTime));
-      }
-
-      const spotlightRunner = runners[Math.floor(this.rng.next() * runners.length)];
-      const insight = this.generateExpertInsight(spotlightRunner);
-      if (insight) {
-        newLines.push({
-          id: `insight-${this.lineCounter++}`,
-          text: insight,
-          timestamp: simTime,
-          type: "EXPERT_INSIGHT",
-          horseId: spotlightRunner.horseId,
-        });
-      }
-
-      this.hasAnnouncedStart = true;
-    }
-
-    // 2. Sort runners by position to get ranks
     const sorted = [...runners].sort((a, b) => b.position - a.position);
     const ranks = new Map(sorted.map((r, i) => [r.horseId, i + 1]));
     const currentLeader = sorted[0];
 
-    // 3. Milestones
+    // Event priority order is significant; do not reorder.
+    this.checkRaceStart(runners, simTime, newLines);
     this.checkMilestones(newLines, currentLeader.position, simTime);
+    this.checkAtmosphere(simTime, newLines);
+    this.checkGapAnnouncement(sorted, simTime, newLines);
+    this.checkStableWatch(runners, simTime, newLines);
+    this.checkLeadChange(runners, simTime, newLines);
+    this.checkStretchRun(currentLeader, simTime, newLines);
+    this.checkFinish(currentLeader, simTime, newLines);
+    this.checkIndividualEvents(runners, ranks, simTime, newLines);
+    this.checkDrafting(runners, runnersMap, simTime, newLines);
+    this.checkLaneWatch(runners, simTime, newLines);
 
-    // 4. Atmosphere
+    this.commentary.push(...newLines);
+    return newLines;
+  }
+
+  private checkRaceStart(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+    if (simTime <= 0 || this.hasAnnouncedStart) return;
+    newLines.push(this.createLine("START", simTime));
+    if (this.race.weather || this.race.trackCondition) {
+      newLines.push(this.createLine("WEATHER_COMMENT", simTime));
+    }
+    const spotlightRunner = runners[Math.floor(this.rng.next() * runners.length)];
+    const insight = this.generateExpertInsight(spotlightRunner);
+    if (insight) {
+      newLines.push({
+        id: `insight-${this.lineCounter++}`,
+        text: insight,
+        timestamp: simTime,
+        type: "EXPERT_INSIGHT",
+        horseId: spotlightRunner.horseId,
+      });
+    }
+    this.hasAnnouncedStart = true;
+  }
+
+  private checkAtmosphere(simTime: number, newLines: CommentaryLine[]) {
+    const event = detectAtmosphere(simTime, this.hasAnnouncedStart, this.hasAnnouncedFinish);
     if (
-      this.hasAnnouncedStart &&
-      !this.hasAnnouncedFinish &&
+      event &&
       this.rng.next() < NARRATIVE_THRESHOLDS.ATMOSPHERE_PROBABILITY &&
       this.canAnnounce("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN)
     ) {
       newLines.push(this.createLine("ATMOSPHERE", simTime));
       this.setCooldown("ATMOSPHERE", "global", simTime, NARRATIVE_THRESHOLDS.ATMOSPHERE_COOLDOWN);
     }
+  }
 
-    // 5. Gap Announcements
-    if (this.hasAnnouncedStart && !this.hasAnnouncedFinish && sorted.length > 1) {
-      const gapMeters = sorted[0].position - sorted[1].position;
-      const lengths = (gapMeters / NARRATIVE_THRESHOLDS.METERS_PER_LENGTH).toFixed(1);
+  private checkGapAnnouncement(
+    sorted: Runner[],
+    simTime: number,
+    newLines: CommentaryLine[],
+  ) {
+    const event = detectGapAnnouncement(sorted, this.hasAnnouncedStart, this.hasAnnouncedFinish);
+    if (event && event.data?.lengths) {
       if (
-        parseFloat(lengths) >= NARRATIVE_THRESHOLDS.GAP_THRESHOLD_LENGTHS &&
         this.canAnnounce("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN)
       ) {
-        newLines.push(this.createLine("GAP_ANNOUNCEMENT", simTime, sorted[0], lengths));
+        const leader = sorted[0];
+        newLines.push(
+          this.createLine("GAP_ANNOUNCEMENT", simTime, leader, event.data.lengths as string),
+        );
         this.setCooldown("GAP_ANNOUNCEMENT", "leader", simTime, NARRATIVE_THRESHOLDS.GAP_COOLDOWN);
       }
     }
+  }
 
-    // 6. Stable Watch
-    if (
-      simTime > NARRATIVE_THRESHOLDS.STABLE_WATCH_START_TIME &&
-      simTime < NARRATIVE_THRESHOLDS.STABLE_WATCH_END_TIME
-    ) {
-      for (const r of runners) {
-        const horse = this.getHorse(r.horseId);
-        if (horse?.stableId && this.isMajorStable(horse.stableId)) {
-          if (
-            this.canAnnounce(
-              "STABLE_WATCH",
-              r.horseId,
-              simTime,
-              NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN,
-            )
-          ) {
-            newLines.push(this.createLine("STABLE_WATCH", simTime, r));
-            this.setCooldown(
-              "STABLE_WATCH",
-              r.horseId,
-              simTime,
-              NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN,
-            );
-            break;
-          }
+  private checkStableWatch(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+    for (const r of runners) {
+      const event = detectStableWatch(r, this.horsesMap, this.stablesMap, simTime);
+      if (event) {
+        if (
+          this.canAnnounce(
+            "STABLE_WATCH",
+            r.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN,
+          )
+        ) {
+          newLines.push(this.createLine("STABLE_WATCH", simTime, r));
+          this.setCooldown(
+            "STABLE_WATCH",
+            r.horseId,
+            simTime,
+            NARRATIVE_THRESHOLDS.STABLE_WATCH_COOLDOWN,
+          );
+          break;
         }
       }
     }
+  }
 
-    // 7. Lead Change
-    if (this.hasAnnouncedStart && !this.hasAnnouncedFinish) {
-      if (
-        this.lastLeaderId &&
-        currentLeader.horseId !== this.lastLeaderId &&
-        currentLeader.position > NARRATIVE_THRESHOLDS.LEAD_CHANGE_THRESHOLD
-      ) {
-        if (this.canAnnounce("LEAD_CHANGE", currentLeader.horseId, simTime)) {
-          const line = this.createLine("LEAD_CHANGE", simTime, currentLeader);
+  private checkLeadChange(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+    const event = detectLeadChange(runners, this.lastLeaderId, this.hasAnnouncedStart, this.hasAnnouncedFinish);
+    if (event) {
+      if (this.canAnnounce("LEAD_CHANGE", event.horseId!, simTime)) {
+        const runner = runners.find((r) => r.horseId === event.horseId);
+        if (runner) {
+          const line = this.createLine("LEAD_CHANGE", simTime, runner);
           line.isHighImpact = true;
           newLines.push(line);
           this.setCooldown(
             "LEAD_CHANGE",
-            currentLeader.horseId,
+            event.horseId!,
             simTime,
             NARRATIVE_THRESHOLDS.LEAD_CHANGE_COOLDOWN,
           );
         }
       }
-      this.lastLeaderId = currentLeader.horseId;
     }
+    const sorted = [...runners].sort((a, b) => b.position - a.position);
+    this.lastLeaderId = sorted[0]?.horseId ?? null;
+  }
 
-    // 8. Stretch Run
-    if (
-      currentLeader.position > this.race.distance * NARRATIVE_THRESHOLDS.STRETCH_THRESHOLD &&
-      !this.hasAnnouncedStretch &&
-      !this.hasAnnouncedFinish
-    ) {
+  private checkStretchRun(currentLeader: Runner, simTime: number, newLines: CommentaryLine[]) {
+    const event = detectStretch(
+      currentLeader.position,
+      this.race,
+      this.hasAnnouncedStretch,
+      this.hasAnnouncedFinish,
+    );
+    if (event) {
       const line = this.createLine("STRETCH", simTime);
       line.isHighImpact = true;
       newLines.push(line);
       this.hasAnnouncedStretch = true;
     }
+  }
 
-    // 9. Finish
-    if (currentLeader.finishTime !== null && !this.hasAnnouncedFinish) {
+  private checkFinish(currentLeader: Runner, simTime: number, newLines: CommentaryLine[]) {
+    const event = detectFinish(currentLeader.finishTime, this.hasAnnouncedFinish);
+    if (event) {
       const line = this.createLine("FINISH", simTime, currentLeader);
       line.isHighImpact = true;
       newLines.push(line);
       this.hasAnnouncedFinish = true;
     }
+  }
 
-    // 10. Individual Horse Events
-    if (this.hasAnnouncedStart && !this.hasAnnouncedFinish) {
-      for (const r of runners) {
-        const lastRank = this.lastRanks.get(r.horseId);
-        const currentRank = ranks.get(r.horseId)!;
-
-        if (lastRank !== undefined && lastRank !== currentRank) {
-          if (
-            lastRank - currentRank >= NARRATIVE_THRESHOLDS.SURGE_RANK_DIFF ||
-            (currentRank <= NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF &&
-              lastRank > NARRATIVE_THRESHOLDS.SURGE_TOP3_RANK_DIFF)
-          ) {
-            if (this.canAnnounce("SURGE", r.horseId, simTime)) {
-              newLines.push(this.createLine("SURGE", simTime, r));
-              this.setCooldown(
-                "SURGE",
-                r.horseId,
-                simTime,
-                NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN,
-              );
-            }
-          } else if (currentRank - lastRank >= NARRATIVE_THRESHOLDS.FADE_RANK_DIFF) {
-            if (this.canAnnounce("FADE", r.horseId, simTime)) {
-              newLines.push(this.createLine("FADE", simTime, r));
-              this.setCooldown(
-                "FADE",
-                r.horseId,
-                simTime,
-                NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN,
-              );
-            }
-          }
-        }
-        this.lastRanks.set(r.horseId, currentRank);
-      }
-    }
-
-    // 11. Drafting
+  private checkIndividualEvents(
+    runners: Runner[],
+    ranks: Map<string, number>,
+    simTime: number,
+    newLines: CommentaryLine[],
+  ) {
+    if (!this.hasAnnouncedStart || this.hasAnnouncedFinish) return;
     for (const r of runners) {
-      if (
-        r.draftingHorseId &&
-        this.canAnnounce("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN)
-      ) {
-        const other = runnersMap.get(r.draftingHorseId);
-        if (other) {
+      const lastRank = this.lastRanks.get(r.horseId);
+      const currentRank = ranks.get(r.horseId)!;
+      const event = detectPositionChange(
+        r,
+        lastRank,
+        currentRank,
+        simTime,
+        this.hasAnnouncedStart,
+        this.hasAnnouncedFinish,
+      );
+      if (event) {
+        if (event.type === "SURGE" && this.canAnnounce("SURGE", r.horseId, simTime)) {
+          newLines.push(this.createLine("SURGE", simTime, r));
+          this.setCooldown("SURGE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
+        } else if (event.type === "FADE" && this.canAnnounce("FADE", r.horseId, simTime)) {
+          newLines.push(this.createLine("FADE", simTime, r));
+          this.setCooldown("FADE", r.horseId, simTime, NARRATIVE_THRESHOLDS.SURGE_FADE_COOLDOWN);
+        }
+      }
+      this.lastRanks.set(r.horseId, currentRank);
+    }
+  }
+
+  private checkDrafting(
+    runners: Runner[],
+    runnersMap: Map<string, Runner>,
+    simTime: number,
+    newLines: CommentaryLine[],
+  ) {
+    for (const r of runners) {
+      const event = detectDrafting(r, runnersMap);
+      if (event && event.data?.otherName) {
+        if (
+          this.canAnnounce("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN)
+        ) {
           const line = this.createLine("DRAFTING", simTime, r);
-          line.text = line.text.replace("{other}", other.name);
+          line.text = line.text.replace("{other}", event.data.otherName as string);
           newLines.push(line);
           this.setCooldown("DRAFTING", r.horseId, simTime, NARRATIVE_THRESHOLDS.DRAFTING_COOLDOWN);
         }
       }
     }
+  }
 
-    // 12. Lane Watch (trapped wide on turn)
-    if (this.hasAnnouncedStart && !this.hasAnnouncedFinish) {
-      for (const r of runners) {
-        // If they are in Lane 3+ (3.6m+) and likely in a turn
+  private checkLaneWatch(runners: Runner[], simTime: number, newLines: CommentaryLine[]) {
+    if (!this.hasAnnouncedStart || this.hasAnnouncedFinish) return;
+    for (const r of runners) {
+      const event = detectLaneWatch(r, this.race, this.hasAnnouncedStart, this.hasAnnouncedFinish);
+      if (event) {
         if (
-          r.lane >= NARRATIVE_THRESHOLDS.LANE_THRESHOLD &&
-          this.isInTurn(r.position) &&
           this.canAnnounce(
             "LANE_WATCH",
             r.horseId,
@@ -329,10 +339,6 @@ export class NarrativeGenerator {
         }
       }
     }
-
-    // Update history
-    this.commentary.push(...newLines);
-    return newLines;
   }
 
   /**

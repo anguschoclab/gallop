@@ -17,6 +17,7 @@
 import type { Horse, Race, Jockey, Stable } from "./types";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
+import { getTransportCostForRace } from "@/core/race/transportCost";
 import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/game/constants";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 
@@ -69,22 +70,11 @@ function isHorseAlreadyEnteredInAnyRace(horse: Horse, races: Race[]): boolean {
 }
 
 /**
- * Calculate transport cost for a race based on grade
- * From src/core/time/phases/raceEntryResolution.ts:106-116
+ * Calculate transport cost for a race based on grade.
+ * Thin re-export of the canonical utility in @/core/race/transportCost.
  */
 export function calculateTransportCostForRace(race: Race): number {
-  if (!race.graded) return 150;
-
-  switch (race.graded.grade) {
-    case "G1":
-      return 500;
-    case "G2":
-      return 400;
-    case "G3":
-      return 300;
-    default:
-      return 200;
-  }
+  return getTransportCostForRace(race);
 }
 
 /**
