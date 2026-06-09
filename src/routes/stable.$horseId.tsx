@@ -459,7 +459,10 @@ function HorseDetail() {
   // ⚡ Bolt Optimization:
   // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
   // Impact: Reduces rendering complexity of progeny table from O(N^2) to O(N).
-  const horseMap = useMemo(() => new Map(horses?.map((h: any) => [h.id, h]) || []), [horses]);
+  const localHorseMap = useMemo(
+    () => new Map((horses ?? []).map((h: any) => [h.id as string, h])),
+    [horses],
+  );
 
   const retireToStud = useGame((s: any) => s.retireToStud);
   const retireToPasture = useGame((s: any) => s.retireToPasture);
@@ -776,8 +779,11 @@ function HorseDetail() {
                           variant="outline"
                           className="font-mono text-[10px] uppercase border-white/10 text-cream/60"
                         >
-                          SURF: {(() => {
-                            const entries: [string, number][] = Object.entries(horse.surfaceAptitude || {});
+                          SURF:{" "}
+                          {(() => {
+                            const entries: [string, number][] = Object.entries(
+                              horse.surfaceAptitude || {},
+                            );
                             const best = entries.sort((a, b) => b[1] - a[1])[0];
                             return best ? `${best[0]} (${Math.round(best[1])})` : "—";
                           })()}
@@ -1078,18 +1084,18 @@ function HorseDetail() {
                           {progenyPregnancies.map((p: any) => {
                             const role = p.sireId === horseId ? "Sire" : "Dam";
                             const partnerName = p.sireId === horseId ? p.damName : p.sireName;
-                            const foal = horseMap.get(p.foalId);
-                            const status = p.resolved
-                              ? foal
-                                ? "Live"
-                                : "Failed"
-                              : "Pending";
+                            const foal = localHorseMap.get(p.foalId);
+                            const status = p.resolved ? (foal ? "Live" : "Failed") : "Pending";
                             return (
                               <tr key={p.id} className="hover:bg-white/[0.02]">
                                 <td className="px-4 py-2 tabular-nums text-cream-muted">{role}</td>
                                 <td className="px-4 py-2 text-cream">{partnerName}</td>
-                                <td className="px-4 py-2 tabular-nums text-cream-muted">{p.conceivedDay}</td>
-                                <td className="px-4 py-2 tabular-nums text-cream-muted">{p.dueDay}</td>
+                                <td className="px-4 py-2 tabular-nums text-cream-muted">
+                                  {p.conceivedDay}
+                                </td>
+                                <td className="px-4 py-2 tabular-nums text-cream-muted">
+                                  {p.dueDay}
+                                </td>
                                 <td className="px-4 py-2 text-cream">{status}</td>
                                 <td className="px-4 py-2">
                                   {foal ? (
@@ -1138,13 +1144,13 @@ function HorseDetail() {
                           {reBreedingPregnancies.map((p: any) => (
                             <tr key={p.id} className="hover:bg-white/[0.02]">
                               <td className="px-4 py-2 text-cream">{p.sireName}</td>
-                              <td className="px-4 py-2 tabular-nums text-cream-muted">{p.conceivedDay}</td>
+                              <td className="px-4 py-2 tabular-nums text-cream-muted">
+                                {p.conceivedDay}
+                              </td>
                               <td className="px-4 py-2 tabular-nums text-cream-muted">
                                 {p.reBreedingAttempts || 0}/3
                               </td>
-                              <td className="px-4 py-2 text-cream">
-                                {p.refunded ? "Yes" : "No"}
-                              </td>
+                              <td className="px-4 py-2 text-cream">{p.refunded ? "Yes" : "No"}</td>
                               <td className="px-4 py-2 tabular-nums text-cream-muted">
                                 {p.resolved ? "—" : p.dueDay}
                               </td>

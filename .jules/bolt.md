@@ -10,3 +10,8 @@
 ## 2025-02-12 - Optimize O(N^2) render loop in Progeny Table
 **Learning:** O(N) global arrays like `horses` evaluated inside `.map()` loops directly in React component rendering trees (e.g., `horses.find(h => h.id === p.foalId)`) can rapidly degrade performance.
 **Action:** When rendering elements mapping over arrays that cross-reference global state, pre-calculate a hash map locally using `useMemo` (e.g. `new Map(horses.map(...))`) instead of `.find()` to reduce component rendering complexity from O(N^2) to O(N). Avoid depending on global, non-persisted store maps like `horseMap` if they are susceptible to hydration issues, to guarantee stability.
+
+## 2024-05-19 - O(N) lookup inside progeny list render
+
+**Learning:** Found an O(N) array lookup (`horses.find()`) inside a loop mapping over progeny pregnancies in `src/routes/stable.$horseId.tsx`. While the number of progenies might not be huge, the number of horses can grow large, and performing `.find` on each render loop item degrades performance.
+**Action:** Replaced `.find()` with a local `useMemo`-backed hash map lookup (`localHorseMap.get()`) to reduce complexity from O(M*N) to O(M+N).
