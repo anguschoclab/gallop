@@ -455,6 +455,12 @@ function HorseDetail() {
   const trainingUsed = (useGame as any)((s: any) => s.trainingUsed[horseId] ?? 0, shallow);
   const cash = useGame((s: any) => s.cash);
   const horses = useGame((s: any) => s.horses);
+
+  // ⚡ Bolt Optimization:
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
+  // Impact: Reduces rendering complexity of progeny table from O(N^2) to O(N).
+  const horseMap = useMemo(() => new Map(horses?.map((h: any) => [h.id, h]) || []), [horses]);
+
   const retireToStud = useGame((s: any) => s.retireToStud);
   const retireToPasture = useGame((s: any) => s.retireToPasture);
   const facilities = (useGame as any)((s: any) => s.facilities, shallow);
@@ -1072,7 +1078,7 @@ function HorseDetail() {
                           {progenyPregnancies.map((p: any) => {
                             const role = p.sireId === horseId ? "Sire" : "Dam";
                             const partnerName = p.sireId === horseId ? p.damName : p.sireName;
-                            const foal = horses?.find((h: any) => h.id === p.foalId);
+                            const foal = horseMap.get(p.foalId);
                             const status = p.resolved
                               ? foal
                                 ? "Live"
