@@ -4,6 +4,7 @@ import {
   calculateImpulse,
   calculatePeakingIndex,
   getPeakingBeyerMultiplier,
+  BANISTER_CONSTANTS,
 } from "@/core/health/banister";
 
 describe("banister health model", () => {
@@ -18,7 +19,7 @@ describe("banister health model", () => {
       expect(result).toBeCloseTo(60.653, 3);
     });
 
-    it("should return 0 when currentValue is 0", () => {
+    it("should return 0 when initialValue is 0", () => {
       expect(decayValue(0, 1, 10)).toBe(0);
     });
 
@@ -28,12 +29,12 @@ describe("banister health model", () => {
       expect(result).toBeCloseTo(90.4837, 4);
     });
 
-    it("should handle large tau (decay approaches 0)", () => {
+    it("should handle large tau (minimal decay)", () => {
       const result = decayValue(100, 1, 10000);
       expect(result).toBeCloseTo(99.99, 2);
     });
 
-    it("should return currentValue when tau is Infinity", () => {
+    it("should return initialValue when tau is Infinity", () => {
       expect(decayValue(100, 1, Infinity)).toBe(100);
     });
 
@@ -45,41 +46,58 @@ describe("banister health model", () => {
   });
 
   describe("calculateImpulse", () => {
-    it("should multiply intensity by k", () => {
-      expect(calculateImpulse(5, 10)).toBe(50);
-      expect(calculateImpulse(0, 10)).toBe(0);
+    it("calculates the correct impulse given intensity and k", () => {
+      expect(calculateImpulse(10, 0.5)).toBe(5);
+      expect(calculateImpulse(0, 0.5)).toBe(0);
+      expect(calculateImpulse(10, 0)).toBe(0);
+      expect(calculateImpulse(100, 1.2)).toBe(120);
     });
   });
 
   describe("calculatePeakingIndex", () => {
-    it("should return fitness minus fatigue", () => {
-      expect(calculatePeakingIndex(100, 20)).toBe(80);
-      expect(calculatePeakingIndex(50, 70)).toBe(-20);
+    it("calculates form using weighted fitness and fatigue constants", () => {
+      const { FITNESS_K, FATIGUE_K } = BANISTER_CONSTANTS;
+
+      // Basic calculation
+      expect(calculatePeakingIndex(100, 50)).toBeCloseTo(100 * FITNESS_K - 50 * FATIGUE_K);
+      // Reverse calculation
+      expect(calculatePeakingIndex(50, 100)).toBeCloseTo(50 * FITNESS_K - 100 * FATIGUE_K);
+      // Equal values
+      expect(calculatePeakingIndex(50, 50)).toBeCloseTo(50 * FITNESS_K - 50 * FATIGUE_K);
+      // Zero values
+      expect(calculatePeakingIndex(0, 0)).toBe(0);
+      // Decimal values
+      expect(calculatePeakingIndex(10.5, 5.2)).toBeCloseTo(10.5 * FITNESS_K - 5.2 * FATIGUE_K);
+    });
+
+    it("results in a negative index when fatigue outweighs fitness", () => {
+      expect(calculatePeakingIndex(20, 50)).toBeLessThan(0);
+    });
+
+    it("results in a positive index when fitness outweighs fatigue", () => {
+      expect(calculatePeakingIndex(80, 20)).toBeGreaterThan(0);
     });
   });
 
   describe("getPeakingBeyerMultiplier", () => {
-    it("should return 1.05 for peakingIndex > 20", () => {
+    it("returns correct multipliers based on peaking index thresholds", () => {
+      // > 20
       expect(getPeakingBeyerMultiplier(21)).toBe(1.05);
       expect(getPeakingBeyerMultiplier(100)).toBe(1.05);
-    });
 
-    it("should return 1.02 for peakingIndex > 0 and <= 20", () => {
+      // > 0 and <= 20
       expect(getPeakingBeyerMultiplier(20)).toBe(1.02);
       expect(getPeakingBeyerMultiplier(1)).toBe(1.02);
-    });
 
-    it("should return 1.0 for peakingIndex > -10 and <= 0", () => {
+      // > -10 and <= 0
       expect(getPeakingBeyerMultiplier(0)).toBe(1.0);
       expect(getPeakingBeyerMultiplier(-9)).toBe(1.0);
-    });
 
-    it("should return 0.95 for peakingIndex > -30 and <= -10", () => {
+      // > -30 and <= -10
       expect(getPeakingBeyerMultiplier(-10)).toBe(0.95);
       expect(getPeakingBeyerMultiplier(-29)).toBe(0.95);
-    });
 
-    it("should return 0.9 for peakingIndex <= -30", () => {
+      // <= -30
       expect(getPeakingBeyerMultiplier(-30)).toBe(0.9);
       expect(getPeakingBeyerMultiplier(-50)).toBe(0.9);
     });
