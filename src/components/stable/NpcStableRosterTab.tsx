@@ -1,4 +1,4 @@
-import { type MouseEvent } from "react";
+import { type MouseEvent, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Eye, HandCoins } from "lucide-react";
@@ -29,6 +29,21 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
 
   if (!stable) return null;
 
+  // Pre-calculate hash map for O(1) active offer lookups instead of running O(N) .find() inside the map loop.
+  // Reduces time complexity from O(Horses * Offers) to O(Horses + Offers).
+  const activeOffersMap = useMemo(() => {
+    const map = new Map<string, PrivateSaleOffer>();
+    privateSaleOffers.forEach((o: PrivateSaleOffer) => {
+      if (
+        o.fromStableId === undefined &&
+        (o.status === "pending" || o.status === "countered")
+      ) {
+        map.set(o.horseId, o);
+      }
+    });
+    return map;
+  }, [privateSaleOffers]);
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -38,12 +53,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
             const scoutCost = calculateScoutCost(horse, stable);
             const canScout = !horse.lastScoutedDay || day - horse.lastScoutedDay > 0;
 
-            const activeOffer = privateSaleOffers.find(
-              (o: PrivateSaleOffer) =>
-                o.horseId === horse.id &&
-                o.fromStableId === undefined &&
-                (o.status === "pending" || o.status === "countered"),
-            );
+            const activeOffer = activeOffersMap.get(horse.id);
             const hasInAuction = !!horse.consignedSaleId;
 
             const handleScout = (e: MouseEvent) => {
