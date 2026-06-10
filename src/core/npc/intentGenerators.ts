@@ -46,10 +46,7 @@ import {
   shouldWithdrawHorse,
   recordWithdrawalDecision,
 } from "@/core/ai/withdrawalAI";
-import {
-  createGeldingAIState,
-  shouldGeldHorse,
-} from "@/core/ai/geldingAI";
+import { createGeldingAIState, shouldGeldHorse } from "@/core/ai/geldingAI";
 import {
   getOrCreateStableAIState,
   updateStableAIState,
@@ -115,83 +112,80 @@ export function generateNpcIntents(state: GameState, day: number): AnyIntent[] {
 
   // Generate intents for each NPC stable
   for (const stable of state.npcStables) {
-    const ownedHorses = horsesByStable.get(stable.id) || [];
+    try {
+      const ownedHorses = horsesByStable.get(stable.id) || [];
 
-    // Get or create AI state for this stable
-    const stableAI = aiManager ? getOrCreateStableAIState(aiManager, stable, day) : undefined;
+      // Get or create AI state for this stable
+      const stableAI = aiManager ? getOrCreateStableAIState(aiManager, stable, day) : undefined;
 
-    // Only check races in the stable's country, plus any Graded races (which are "global")
-    const stableRegion = stable.country || "Other";
-    const relevantRaces = [
-      ...(racesByRegion.get(stableRegion) || []),
-      ...globalGradedRaces.filter((r) => r.graded?.country !== stableRegion),
-    ];
+      // Only check races in the stable's country, plus any Graded races (which are "global")
+      const stableRegion = stable.country || "Other";
+      const relevantRaces = [
+        ...(racesByRegion.get(stableRegion) || []),
+        ...globalGradedRaces.filter((r) => r.graded?.country !== stableRegion),
+      ];
 
-    intents.push(
-      ...generateNpcTrainingIntents(
-        state,
-        stable,
-        stableAI,
-        day,
-        ownedHorses,
-        activePregnanciesByDam,
-      ),
-    );
-    intents.push(
-      ...generateNpcRaceEntryIntents(
-        state,
-        stable,
-        stableAI,
-        day,
-        ownedHorses,
-        relevantRaces,
-        raceEntrySets,
-      ),
-    );
-    intents.push(
-      ...generateNpcBreedingIntents(
-        state,
-        stable,
-        stableAI,
-        day,
-        ownedHorses,
-        activePregnanciesByDam,
-      ),
-    );
-    intents.push(
-      ...generateNpcClaimingIntents(state, stable, stableAI, day, relevantRaces, horseMap),
-    );
-    intents.push(
-      ...generateNpcWithdrawalIntents(
-        state,
-        stable,
-        stableAI,
-        day,
-        ownedHorses,
-        relevantRaces,
-        horseMap,
-      ),
-    );
-    intents.push(
-      ...generateNpcGeldingIntents(
-        state,
-        stable,
-        stableAI,
-        day,
-        ownedHorses,
-      ),
-    );
+      intents.push(
+        ...generateNpcTrainingIntents(
+          state,
+          stable,
+          stableAI,
+          day,
+          ownedHorses,
+          activePregnanciesByDam,
+        ),
+      );
+      intents.push(
+        ...generateNpcRaceEntryIntents(
+          state,
+          stable,
+          stableAI,
+          day,
+          ownedHorses,
+          relevantRaces,
+          raceEntrySets,
+        ),
+      );
+      intents.push(
+        ...generateNpcBreedingIntents(
+          state,
+          stable,
+          stableAI,
+          day,
+          ownedHorses,
+          activePregnanciesByDam,
+        ),
+      );
+      intents.push(
+        ...generateNpcClaimingIntents(state, stable, stableAI, day, relevantRaces, horseMap),
+      );
+      intents.push(
+        ...generateNpcWithdrawalIntents(
+          state,
+          stable,
+          stableAI,
+          day,
+          ownedHorses,
+          relevantRaces,
+          horseMap,
+        ),
+      );
+      intents.push(...generateNpcGeldingIntents(state, stable, stableAI, day, ownedHorses));
 
-    // Update stable AI state in the manager
-    if (aiManager && stableAI) {
-      const updatedState = updateStableAIState(stableAI, day);
-      // Use a safer way to update the state that handles potential readonly issues
-      try {
-        aiManager.stableStates[stable.id] = updatedState;
-      } catch (e) {
-        // Fallback for readonly state (e.g. during development/tests)
-        // Note: This won't persist if the manager isn't updated in the state
+      // Update stable AI state in the manager
+      if (aiManager && stableAI) {
+        const updatedState = updateStableAIState(stableAI, day);
+        // Use a safer way to update the state that handles potential readonly issues
+        try {
+          aiManager.stableStates[stable.id] = updatedState;
+        } catch (e) {
+          // Fallback for readonly state (e.g. during development/tests)
+          // Note: This won't persist if the manager isn't updated in the state
+        }
       }
+    } catch (err) {
+      console.warn("Failed to generate intents for NPC", stable.id, err);
+      continue;
     }
   }
 
@@ -318,7 +312,13 @@ function generateNpcRaceEntryIntents(
         // Calculate optimal jockey instructions for this horse in this race
         const jockey = (state.jockeys || [])[0]; // Use first jockey for instructions calculation
         if (!jockey) continue;
-        const jockeyInstructions = calculateOptimalTactics(jockeyStrategyAI, horse, race, jockey, stable);
+        const jockeyInstructions = calculateOptimalTactics(
+          jockeyStrategyAI,
+          horse,
+          race,
+          jockey,
+          stable,
+        );
 
         intents.push({
           id: generateUUID(),
@@ -531,9 +531,7 @@ function generateNpcGeldingIntents(
   // Use persisted AI state if available, otherwise fallback to temporary state
   const geldingAI =
     stableAI?.geldingAI ||
-    (stableAI
-      ? (stableAI.geldingAI = createGeldingAIState(stable))
-      : createGeldingAIState(stable));
+    (stableAI ? (stableAI.geldingAI = createGeldingAIState(stable)) : createGeldingAIState(stable));
 
   for (const horse of ownedHorses) {
     if (shouldGeldHorse(geldingAI, horse, day)) {
