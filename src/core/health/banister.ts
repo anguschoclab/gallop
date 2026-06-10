@@ -56,7 +56,7 @@ export function calculateImpulse(intensity: number, k: number): number {
  * @returns The peaking index (form)
  */
 export function calculatePeakingIndex(fitness: number, fatigue: number): number {
-  return fitness - fatigue;
+  return (fitness * BANISTER_CONSTANTS.FITNESS_K) - (fatigue * BANISTER_CONSTANTS.FATIGUE_K);
 }
 
 /**
