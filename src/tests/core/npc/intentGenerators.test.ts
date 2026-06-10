@@ -7,19 +7,15 @@ import { createTestStable } from "@/tests/helpers/createTestStable";
 let shouldThrowForStable1 = false;
 
 // Mock the AI module so we can control when it throws
-vi.mock("@/core/ai/npcCycleAI", async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...(actual as any),
-    getOrCreateStableAIState: vi.fn((manager: any, stable: Stable, day: number) => {
-      if (stable.id === "stable1" && shouldThrowForStable1) {
-        throw new Error("Simulated AI error for stable 1");
-      }
-      return { id: stable.id }; // Return a dummy AI state
-    }),
-    updateStableAIState: vi.fn((state: any) => ({ ...state, updated: true })),
-  };
-});
+vi.mock("@/core/ai/npcCycleAI", () => ({
+  getOrCreateStableAIState: vi.fn((manager: any, stable: Stable, day: number) => {
+    if (stable.id === "stable1" && shouldThrowForStable1) {
+      throw new Error("Simulated AI error for stable 1");
+    }
+    return { id: stable.id }; // Return a dummy AI state
+  }),
+  updateStableAIState: vi.fn((state: any) => ({ ...state, updated: true })),
+}));
 
 describe("generateNpcIntents error handling", () => {
   beforeEach(() => {
@@ -41,7 +37,7 @@ describe("generateNpcIntents error handling", () => {
       races: [],
       npcStables: [
         createTestStable({ id: "stable1", country: "USA", personality: "aggressive" }),
-        createTestStable({ id: "stable2", country: "USA", personality: "balanced" }),
+        createTestStable({ id: "stable2", country: "USA", personality: "conservative" }),
       ],
       npcAIManager: {
         stableStates: {},
@@ -62,8 +58,8 @@ describe("generateNpcIntents error handling", () => {
     );
 
     // Wait, the error is an instance of Error with the message "Simulated AI error for stable 1"
-    const warnCallArgs = vi.mocked(console.warn).mock.calls.find((call) => call[1] === "stable1");
+    const warnCallArgs = (console.warn as any).mock.calls.find((call: any) => call[1] === "stable1");
     expect(warnCallArgs).toBeDefined();
-    expect(warnCallArgs![2].message).toBe("Simulated AI error for stable 1");
+    expect(warnCallArgs[2].message).toBe("Simulated AI error for stable 1");
   });
 });
