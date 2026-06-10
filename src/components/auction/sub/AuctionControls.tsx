@@ -4,13 +4,13 @@
  * Handles player bidding actions, custom bid input, and max bid (proxy) state.
  */
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/formatting";
 import { Gavel, Pause, Play, FastForward, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { nextBidAmount } from "@/game/auction/runner";
+import { BidInputPanel } from "./BidInputPanel";
+import { MaxBidPanel } from "./MaxBidPanel";
 
 interface AuctionControlsProps {
   currentBid: number;
@@ -39,26 +39,7 @@ export function AuctionControls({
   error,
   isPlayerConsignment,
 }: AuctionControlsProps) {
-  const [customBid, setCustomBid] = useState("");
-  const [maxBidInput, setMaxBidInput] = useState("");
   const nextMin = nextBidAmount(currentBid);
-
-  const handleCustomBid = () => {
-    const val = parseInt(customBid);
-    if (isNaN(val) || val <= currentBid) return;
-    onBid(val);
-    setCustomBid("");
-  };
-
-  const handleMaxBid = () => {
-    const val = parseInt(maxBidInput);
-    if (isNaN(val) || val <= currentBid) {
-      onSetMaxBid(undefined);
-    } else {
-      onSetMaxBid(val);
-    }
-    setMaxBidInput("");
-  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -119,57 +100,8 @@ export function AuctionControls({
       {/* Advanced Bidding */}
       {!isPlayerConsignment && (
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <div className="text-[10px] uppercase font-bold text-muted-foreground ml-1">
-              Custom Bid
-            </div>
-            <div className="flex gap-2">
-              <Input
-                placeholder={`min ${formatCurrency(nextMin)}`}
-                className="rounded-xl h-12 bg-muted/30 border-muted"
-                value={customBid}
-                onChange={(e) => setCustomBid(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleCustomBid()}
-              />
-              <Button
-                variant="secondary"
-                className="h-12 px-4 rounded-xl font-bold"
-                onClick={handleCustomBid}
-              >
-                GO
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="text-[10px] uppercase font-bold text-muted-foreground ml-1 flex justify-between">
-              <span>Max Bid (Auto)</span>
-              {playerMaxBid && (
-                <span className="text-primary animate-pulse">
-                  SET: {formatCurrency(playerMaxBid)}
-                </span>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Ceiling amount"
-                className={cn(
-                  "rounded-xl h-12 bg-muted/30 border-muted",
-                  playerMaxBid && "border-primary/50 text-primary font-bold",
-                )}
-                value={maxBidInput}
-                onChange={(e) => setMaxBidInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleMaxBid()}
-              />
-              <Button
-                variant={playerMaxBid ? "default" : "secondary"}
-                className="h-12 px-4 rounded-xl font-bold"
-                onClick={handleMaxBid}
-              >
-                {playerMaxBid ? "RESET" : "SET"}
-              </Button>
-            </div>
-          </div>
+          <BidInputPanel currentBid={currentBid} nextMin={nextMin} onBid={onBid} />
+          <MaxBidPanel currentBid={currentBid} playerMaxBid={playerMaxBid} onSetMaxBid={onSetMaxBid} />
         </div>
       )}
 

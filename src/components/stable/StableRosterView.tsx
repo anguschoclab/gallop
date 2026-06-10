@@ -4,23 +4,11 @@ import { HorseCard } from "@/components/horse/HorseCard";
 import { HorseBit, overall } from "@/components/horse/HorseBits";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { RosterFilterBar } from "./RosterFilterBar";
 import { cn } from "@/lib/utils";
 import type { Horse } from "@/game/types";
 import type { RegionalAward } from "@/game/awards/types";
-import {
-  Search,
-  Filter,
-  List,
-  LayoutGrid,
-  ChevronRight,
-  Zap,
-  Clock,
-  Activity,
-  Heart,
-  Tag,
-  Users,
-} from "lucide-react";
+import { ChevronRight, Zap, Clock, Search } from "lucide-react";
 
 interface StableRosterViewProps {
   horses: Horse[];
@@ -49,52 +37,11 @@ export function StableRosterView({
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       {playerAwards.length > 0 && <TrophyCase awards={playerAwards} variant="compact" />}
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-black/20 p-4 border border-white/5">
-        <div className="flex flex-wrap gap-2">
-          {(
-            [
-              { key: "active", label: "Active", count: counts.active, icon: Activity, color: "text-success" },
-              { key: "retired", label: "Retired", count: counts.retired, icon: Heart, color: "text-pink-400" },
-              { key: "auctioned", label: "Archived", count: counts.auctioned, icon: Tag, color: "text-warning" },
-              { key: "all", label: "Global", count: counts.all, icon: Users, color: "text-cream" },
-            ] as const
-          ).map(({ key, label, count, icon: Icon, color }) => (
-            <button
-              key={key}
-              onClick={() => navigate({ search: (prev: any) => ({ ...prev, status: key }) })}
-              className={cn(
-                "px-4 py-2 flex items-center gap-3 border font-mono text-[10px] uppercase font-bold tracking-widest transition-all",
-                status === key
-                  ? "bg-white/5 border-gold text-gold shadow-[0_0_15px_rgba(212,175,55,0.1)]"
-                  : "border-white/5 text-cream/40 hover:text-cream hover:bg-white/[0.02]",
-              )}
-            >
-              <Icon className={cn("h-3.5 w-3.5", status === key ? color : "opacity-40")} />
-              {label}
-              <span className="opacity-40 ml-1">[{String(count).padStart(2, "0")}]</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
-            <Input
-              placeholder="Search horses..."
-              className="h-8 bg-slate-950/50 border-white/5 text-[10px] font-mono pl-8 w-48 focus-visible:ring-gold/30 uppercase"
-            />
-          </div>
-          <Button
-            aria-label="Filter roster"
-            variant="outline"
-            size="sm"
-            className="h-8 w-8 p-0 border-white/5 text-cream/20 hover:text-cream"
-          >
-            <Filter className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      </div>
+      <RosterFilterBar
+        status={status}
+        counts={counts}
+        onStatusChange={(key) => navigate({ search: (prev: any) => ({ ...prev, status: key }) })}
+      />
 
       {view === "ledger" ? (
         <div className="border border-white/5 bg-slate-900/20 overflow-hidden shadow-2xl">
