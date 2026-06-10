@@ -160,7 +160,7 @@ export function detectContender(
   stable?: Stable,
 ): CampaignAIState {
   const horseRating = calculateOverallRating(horse);
-  const avgStat = (horse.stats.speed + horse.stats.stamina + horse.stats.acceleration) / 3;
+  const avgStat = calculateRaceRating(horse);
 
   let isContender = false;
   let confidence = 0;

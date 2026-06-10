@@ -7,11 +7,11 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Gavel, Activity, Zap } from "lucide-react";
+import { Gavel, Activity } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { BuyNowDialog } from "./BuyNowDialog";
+import { BidInput } from "./BidInput";
+import { MaxBidInput } from "./MaxBidInput";
 import { cn } from "@/lib/utils";
 import type { AuctionLot } from "@/game/types";
 
@@ -124,44 +124,31 @@ export function BiddingPanel({
               <label className="text-[8px] uppercase font-black text-cream/20 tracking-widest px-1">
                 Manual_Offer
               </label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Amount..."
-                  value={bidInput}
-                  onChange={(e) => setBidInput(e.target.value)}
-                  className="h-10 bg-slate-950 border-white/5 text-xs font-mono uppercase tracking-tighter focus-visible:ring-success/30 rounded-none"
-                />
-                <Button
-                  variant="outline"
-                  className="h-10 px-4 border-white/10 text-cream/60 uppercase text-[9px] font-black tracking-widest rounded-none hover:bg-white/5"
-                  onClick={handleCustomBid}
-                >
-                  Bid
-                </Button>
-              </div>
+              <BidInput
+                value={bidInput}
+                onChange={setBidInput}
+                onSubmit={handleCustomBid}
+                placeholder="Amount..."
+                buttonLabel="Bid"
+                inputClassName="h-10 bg-slate-950 border-white/5 text-xs font-mono uppercase tracking-tighter focus-visible:ring-success/30 rounded-none"
+                buttonClassName="border-white/10 text-cream/60 rounded-none hover:bg-white/5"
+              />
             </div>
             <div className="space-y-1.5">
               <label className="text-[8px] uppercase font-black text-cream/20 tracking-widest px-1">
                 Auto Bid Limit
               </label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Limit..."
-                  value={maxBidInput}
-                  onChange={(e) => setMaxBidInput(e.target.value)}
-                  className={cn(
-                    "h-10 bg-slate-950 border-white/5 text-xs font-mono uppercase tracking-tighter focus-visible:ring-gold/30 rounded-none",
-                    currentMaxBid && "border-gold/50 text-gold"
-                  )}
-                />
-                <Button
-                  variant={currentMaxBid ? "default" : "outline"}
-                  className="h-10 px-4 border-white/10 text-gold/60 uppercase text-[9px] font-black tracking-widest rounded-none hover:bg-gold/5"
-                  onClick={handleSetMaxBid}
-                >
-                  {currentMaxBid ? "Reset" : "Set Max"}
-                </Button>
-              </div>
+              <MaxBidInput
+                value={maxBidInput}
+                onChange={setMaxBidInput}
+                onSubmit={handleSetMaxBid}
+                isSet={!!currentMaxBid}
+                setLabel="Set Max"
+                resetLabel="Reset"
+                placeholder="Limit..."
+                inputClassName="focus-visible:ring-gold/30"
+                buttonClassName="text-gold/60 border-white/10"
+              />
             </div>
           </div>
         </div>

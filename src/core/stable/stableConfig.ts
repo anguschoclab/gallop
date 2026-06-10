@@ -4,11 +4,11 @@
  * This file provides personality configurations affecting AI behavior,
  * enhanced with AI traits for learning, adaptation, and strategic planning.
  *
- * Dependencies: @/game/types (StablePersonality, StableTier)
+ * Dependencies: @/game/types (StablePersonality)
  * Related files: personalityModifiers.ts (uses config), ../ai/personalitySystem.ts (uses config)
  */
 
-import type { StablePersonality, StableTier } from "@/game/types";
+import type { StablePersonality } from "@/game/types";
 
 /**
  * Personality configurations affecting AI behavior
@@ -191,42 +191,6 @@ export const PERSONALITY_CONFIG: Record<
     conservatism: 0.7,
     innovation: 0.5,
     namingTheme: "prestige",
-  },
-};
-
-/**
- * Tier-based personality weights (higher = more likely)
- */
-export const PERSONALITY_WEIGHTS: Record<StableTier, Partial<Record<StablePersonality, number>>> = {
-  elite: {
-    prestige: 3,
-    aggressive: 2,
-    "win-now": 2,
-    specialist: 1,
-    conservative: 1,
-    developer: 1,
-    breeder: 2,
-    trader: 0.5,
-  },
-  mid: {
-    aggressive: 2,
-    "win-now": 2,
-    specialist: 2,
-    conservative: 2,
-    developer: 1.5,
-    trader: 1.5,
-    prestige: 1,
-    breeder: 1,
-  },
-  budget: {
-    conservative: 3,
-    developer: 2,
-    trader: 2,
-    specialist: 1.5,
-    aggressive: 0.5,
-    prestige: 0.5,
-    "win-now": 1,
-    breeder: 0.5,
   },
 };
 

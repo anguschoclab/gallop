@@ -1,0 +1,34 @@
+import { cn } from "@/lib/utils";
+
+interface FilterOption {
+  value: string;
+  label: string;
+}
+
+interface FilterSelectProps {
+  label: string;
+  value: string;
+  options: FilterOption[];
+  onChange: (value: string) => void;
+}
+
+export function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">
+        {label}
+      </label>
+      <select
+        className="w-full h-9 bg-slate-950/60 border border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest text-cream px-2"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}

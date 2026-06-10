@@ -1,7 +1,7 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Link } from "@tanstack/react-router";
 import type { EntityLink } from "@/core/narrative/newsTypes";
-import { useGame } from "@/game/store";
+import { useEntityLinks } from "@/hooks/useEntityLinks";
 import { cn } from "@/lib/utils";
 
 interface NewsContentProps {
@@ -23,43 +23,7 @@ export const NewsContent: React.FC<NewsContentProps> = ({
   linkClassName,
   autoDetect = true,
 }) => {
-  const { horses, jockeys, npcStables } = useGame();
-
-  const finalLinks = useMemo(() => {
-    const combined: EntityLink[] = [...(explicitLinks || [])];
-
-    if (autoDetect) {
-      // Build potential links from active game state
-      // Use regex with word boundaries to find exact name matches
-
-      // Add all horses
-      horses.forEach((h) => {
-        const regex = new RegExp(`\\b${escapeRegExp(h.name)}\\b`, "g");
-        if (regex.test(text) && !combined.some((l) => l.name === h.name)) {
-          combined.push({ type: "horse", id: h.id, name: h.name });
-        }
-      });
-
-      // Add all jockeys
-      jockeys?.forEach((j) => {
-        const regex = new RegExp(`\\b${escapeRegExp(j.name)}\\b`, "g");
-        if (regex.test(text) && !combined.some((l) => l.name === j.name)) {
-          combined.push({ type: "jockey", id: j.id, name: j.name });
-        }
-      });
-
-      // Add all NPC stables
-      npcStables.forEach((s) => {
-        const regex = new RegExp(`\\b${escapeRegExp(s.name)}\\b`, "g");
-        if (regex.test(text) && !combined.some((l) => l.name === s.name)) {
-          combined.push({ type: "stable", id: s.id, name: s.name });
-        }
-      });
-    }
-
-    // Sort by name length descending to avoid partial matches on shorter names
-    return combined.sort((a, b) => b.name.length - a.name.length);
-  }, [text, explicitLinks, autoDetect, horses, jockeys, npcStables]);
+  const finalLinks = useEntityLinks(text, explicitLinks, autoDetect);
 
   if (finalLinks.length === 0) {
     return <span className={className}>{text}</span>;
@@ -160,3 +124,4 @@ const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = 
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
+

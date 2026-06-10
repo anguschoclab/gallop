@@ -4,28 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import {
   FACILITY_ENABLED_WORKOUTS,
   type FacilityType,
-  type FacilityLevel,
 } from "@/core/facilities";
 import { ArrowUp, Check, HardDrive } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
-
-const FACILITY_LEVELS: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
-
-function getRankValue(level: string) {
-  switch (level) {
-    case "basic":
-      return 1;
-    case "standard":
-      return 2;
-    case "premium":
-      return 3;
-    case "elite":
-      return 4;
-    default:
-      return 0;
-  }
-}
+import { useFacilityTiers } from "@/hooks/useFacilityTiers";
 
 interface FacilityCategoryProps {
   category: string;
@@ -60,11 +43,7 @@ export function FacilityCategory({
           const facility = facilities[type];
           if (!facility) return null;
 
-          const currentLevelIndex = FACILITY_LEVELS.indexOf(facility.level);
-          const maxLevel = currentLevelIndex >= FACILITY_LEVELS.length - 1;
-          const upgradeCost = facility.upgradeCost;
-          const canAfford = cash >= upgradeCost;
-          const rankVal = getRankValue(facility.level);
+          const { maxLevel, canAfford, rankVal } = useFacilityTiers(facility, cash);
 
           return (
             <Card
@@ -129,7 +108,7 @@ export function FacilityCategory({
                           canAfford ? "text-success" : "text-destructive/60",
                         )}
                       >
-                        {formatCurrency(upgradeCost)}
+                        {formatCurrency(facility.upgradeCost)}
                       </div>
                     </div>
                   )}

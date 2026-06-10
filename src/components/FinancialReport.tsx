@@ -1,9 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useGame } from "@/game/store";
-import { useTransactions } from "@/hooks/game/useCoreState";
-import { buildProfitLossReport } from "@/core/financial/reportBuilder";
-import { useMemo, useState } from "react";
+import { useLedgerTransactions, type PeriodKey } from "@/hooks/useLedgerTransactions";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { FinancialChart } from "@/components/FinancialChart";
 import { FinancialSummaryCards } from "@/components/financial/FinancialSummaryCards";
@@ -12,62 +9,18 @@ import { OperatingCostsPanel } from "@/components/financial/OperatingCostsPanel"
 import { TransactionLedger } from "@/components/financial/TransactionLedger";
 import { BarChart3 } from "lucide-react";
 
-type PeriodKey = "week" | "month" | "year" | "allTime";
-
 export function FinancialReport() {
-  const transactions = useTransactions();
-  const cash = useGame((s) => s.cash);
-  const day = useGame((s) => s.day);
-  const [selectedPeriod, setSelectedPeriod] = useState<PeriodKey>("month");
-
-  const report = useMemo(() => buildProfitLossReport(transactions, day), [transactions, day]);
-
-  const activePeriodData = useMemo(() => {
-    switch (selectedPeriod) {
-      case "week":
-        return report.currentWeek;
-      case "year":
-        return report.currentYear;
-      case "allTime":
-        return report.allTime;
-      default:
-        return report.currentMonth;
-    }
-  }, [report, selectedPeriod]);
-
-  const incomeBreakdown = useMemo(
-    () =>
-      [
-        { label: "Prize Money", amount: activePeriodData.income.prizeMoney },
-        { label: "Auction Sales", amount: activePeriodData.income.auctionSales },
-        { label: "Private Sales", amount: activePeriodData.income.privateSales },
-        { label: "Stud Fees", amount: activePeriodData.income.studFees },
-        { label: "Claiming Sales", amount: activePeriodData.income.claimingSales },
-      ].filter((i) => i.amount > 0),
-    [activePeriodData],
-  );
-
-  const expenseBreakdown = useMemo(
-    () =>
-      [
-        { label: "Daily Upkeep", amount: activePeriodData.expenses.upkeep },
-        { label: "Training", amount: activePeriodData.expenses.training },
-        { label: "Race Entry Fees", amount: activePeriodData.expenses.entryFees },
-        { label: "Jockey Fees", amount: activePeriodData.expenses.jockeyFees },
-        { label: "Facility Maintenance", amount: activePeriodData.expenses.facilityMaintenance },
-        { label: "Purchases", amount: activePeriodData.expenses.horsePurchases },
-        { label: "Veterinary", amount: activePeriodData.expenses.veterinary },
-        { label: "Breeding Fees", amount: activePeriodData.expenses.breedingFees },
-        { label: "Transport", amount: activePeriodData.expenses.transport },
-        { label: "Insurance", amount: activePeriodData.expenses.insurance },
-      ].filter((e) => e.amount > 0),
-    [activePeriodData],
-  );
-
-  const recentTransactions = useMemo(
-    () => [...transactions].reverse().slice(0, 50),
-    [transactions],
-  );
+  const {
+    transactions,
+    cash,
+    day,
+    selectedPeriod,
+    setSelectedPeriod,
+    incomeBreakdown,
+    expenseBreakdown,
+    recentTransactions,
+    activePeriodData,
+  } = useLedgerTransactions();
 
   return (
     <div className="space-y-6 pb-10 animate-fade-in">

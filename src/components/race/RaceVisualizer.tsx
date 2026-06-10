@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useMemo, useCallback } from "react"
 import { Play, Pause, RotateCcw, Camera, SkipForward } from "lucide-react";
 import { interpolateSnapshots, getReplayDuration } from "@/services/racePlaybackService";
 import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import { useRaceReplay } from "@/hooks/useRaceReplay";
 import "./RaceVisualizer.css";
 
 interface RunnerInfo {
@@ -50,16 +51,23 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement | null>(null); // static lane/track background
-  const timeRef = useRef(0);
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const timeLabelRef = useRef<HTMLSpanElement>(null);
-  const leaderLabelRef = useRef<HTMLSpanElement>(null);
-
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(C.DEFAULT_PLAYBACK_SPEED);
-  const [cameraMode, setCameraMode] = useState<"leader" | "player" | "free">("leader");
 
   const duration = useMemo(() => getReplayDuration(snapshots), [snapshots]);
+
+  const {
+    timeRef,
+    progressBarRef,
+    timeLabelRef,
+    leaderLabelRef,
+    isPlaying,
+    setIsPlaying,
+    playbackSpeed,
+    cameraMode,
+    setCameraMode,
+    restart,
+    toggleSpeed,
+    toggleCamera,
+  } = useRaceReplay(duration, onComplete);
   const playerHorseId = useMemo(() => runners.find((r) => r.owned)?.horseId, [runners]);
   const runnerMap = useMemo(() => new Map(runners.map((r) => [r.horseId, r])), [runners]);
 
@@ -246,12 +254,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     };
   }, [isPlaying, playbackSpeed, duration, renderFrame, onComplete]);
 
-  const restart = useCallback(() => {
-    timeRef.current = 0;
-    if (progressBarRef.current) progressBarRef.current.style.width = "0%";
-    if (timeLabelRef.current) timeLabelRef.current.textContent = "0.00";
-    setIsPlaying(true);
-  }, []);
 
   return (
     <div className="race-visualizer-container">
@@ -303,7 +305,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         </button>
         <button
           className="race-control-btn"
-          onClick={() => setCameraMode(cameraMode === "leader" ? "player" : "leader")}
+          onClick={toggleCamera}
           aria-label={`Toggle camera focus: currently following ${cameraMode}`}
           title="Toggle Camera Focus"
         >
@@ -311,11 +313,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         </button>
         <button
           className="race-control-btn"
-          onClick={() =>
-            setPlaybackSpeed((s) =>
-              s === C.DEFAULT_PLAYBACK_SPEED ? C.FAST_PLAYBACK_SPEED : C.DEFAULT_PLAYBACK_SPEED,
-            )
-          }
+          onClick={toggleSpeed}
           aria-label={`Toggle playback speed: currently ${playbackSpeed}x`}
           title={`Speed: ${playbackSpeed}x`}
         >

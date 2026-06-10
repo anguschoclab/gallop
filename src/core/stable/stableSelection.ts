@@ -4,13 +4,13 @@
  * This file provides functions for selecting personalities based on tier weights,
  * shuffling and picking arrays, and getting specialist preferences.
  *
- * Dependencies: @/game/types (StableTier, StablePersonality), @/game/rng (Rng), ./stableConfig (PERSONALITY_WEIGHTS)
+ * Dependencies: @/game/types (StableTier, StablePersonality), @/game/rng (Rng), @/data/personalityTraits (PERSONALITY_WEIGHTS)
  * Related files: stableGeneration.ts (uses selection logic), stableConfig.ts (provides weights)
  */
 
 import type { StableTier, StablePersonality } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
-import { PERSONALITY_WEIGHTS } from "./stableConfig";
+import { PERSONALITY_WEIGHTS } from "@/data/personalityTraits";
 
 /**
  * Shuffle array and return a random subset.

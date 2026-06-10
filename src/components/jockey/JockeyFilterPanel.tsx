@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { JockeyArchetype, JockeySilkPattern } from "@/game/types";
+import { FilterSelect } from "./FilterSelect";
 import { Search, Filter } from "lucide-react";
 
 interface JockeyFilterPanelProps {
@@ -16,36 +17,38 @@ interface JockeyFilterPanelProps {
   onReset: () => void;
 }
 
-const archetypes: JockeyArchetype[] = [
-  "front_runner",
-  "closer",
-  "clinical",
-  "finisher",
-  "versatile",
+const archetypeOptions = [
+  { value: "all", label: "All Styles" },
+  { value: "front_runner", label: "FRONT RUNNER" },
+  { value: "closer", label: "CLOSER" },
+  { value: "clinical", label: "CLINICAL" },
+  { value: "finisher", label: "FINISHER" },
+  { value: "versatile", label: "VERSATILE" },
 ];
 
-const patterns: JockeySilkPattern[] = [
-  "solid",
-  "stripes",
-  "halves",
-  "quarters",
-  "chevron",
-  "diamond",
-  "star",
-  "sash",
-  "hoops",
+const patternOptions = [
+  { value: "all", label: "All Patterns" },
+  { value: "solid", label: "SOLID" },
+  { value: "stripes", label: "STRIPES" },
+  { value: "halves", label: "HALVES" },
+  { value: "quarters", label: "QUARTERS" },
+  { value: "chevron", label: "CHEVRON" },
+  { value: "diamond", label: "DIAMOND" },
+  { value: "star", label: "STAR" },
+  { value: "sash", label: "SASH" },
+  { value: "hoops", label: "HOOPS" },
 ];
 
-const commonColors = [
-  { value: "all", label: "All Colours", hex: "#ffffff" },
-  { value: "#ff0000", label: "Red", hex: "#ff0000" },
-  { value: "#0000ff", label: "Blue", hex: "#0000ff" },
-  { value: "#00ff00", label: "Green", hex: "#00ff00" },
-  { value: "#ffff00", label: "Yellow", hex: "#ffff00" },
-  { value: "#ffffff", label: "White", hex: "#ffffff" },
-  { value: "#000000", label: "Black", hex: "#000000" },
-  { value: "#ff8000", label: "Orange", hex: "#ff8000" },
-  { value: "#800080", label: "Purple", hex: "#800080" },
+const colorOptions = [
+  { value: "all", label: "All Colours" },
+  { value: "#ff0000", label: "Red" },
+  { value: "#0000ff", label: "Blue" },
+  { value: "#00ff00", label: "Green" },
+  { value: "#ffff00", label: "Yellow" },
+  { value: "#ffffff", label: "White" },
+  { value: "#000000", label: "Black" },
+  { value: "#ff8000", label: "Orange" },
+  { value: "#800080", label: "Purple" },
 ];
 
 export function JockeyFilterPanel({
@@ -85,58 +88,26 @@ export function JockeyFilterPanel({
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">
-                Riding Style
-              </label>
-              <select
-                className="w-full h-9 bg-slate-950/60 border border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest text-cream px-2"
-                value={archetypeFilter}
-                onChange={(e) => onArchetypeChange(e.target.value as JockeyArchetype | "all")}
-              >
-                <option value="all">All Styles</option>
-                {archetypes.map((a) => (
-                  <option key={a} value={a}>
-                    {a.replace("_", " ").toUpperCase()}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <FilterSelect
+              label="Riding Style"
+              value={archetypeFilter}
+              options={archetypeOptions}
+              onChange={(v) => onArchetypeChange(v as JockeyArchetype | "all")}
+            />
 
-            <div className="space-y-1.5">
-              <label className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">
-                Silk Pattern
-              </label>
-              <select
-                className="w-full h-9 bg-slate-950/60 border border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest text-cream px-2"
-                value={patternFilter}
-                onChange={(e) => onPatternChange(e.target.value as JockeySilkPattern | "all")}
-              >
-                <option value="all">All Patterns</option>
-                {patterns.map((p) => (
-                  <option key={p} value={p}>
-                    {p.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <FilterSelect
+              label="Silk Pattern"
+              value={patternFilter}
+              options={patternOptions}
+              onChange={(v) => onPatternChange(v as JockeySilkPattern | "all")}
+            />
 
-            <div className="space-y-1.5">
-              <label className="text-[9px] uppercase font-black text-blue-400/40 tracking-widest px-1">
-                Silk Colour
-              </label>
-              <select
-                className="w-full h-9 bg-slate-950/60 border border-white/5 text-[10px] font-bold uppercase rounded-none tracking-widest text-cream px-2"
-                value={colorFilter}
-                onChange={(e) => onColorChange(e.target.value)}
-              >
-                {commonColors.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <FilterSelect
+              label="Silk Colour"
+              value={colorFilter}
+              options={colorOptions}
+              onChange={onColorChange}
+            />
 
             <Button
               variant="ghost"

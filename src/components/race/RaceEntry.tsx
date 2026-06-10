@@ -1,6 +1,3 @@
-import { useState, useMemo } from "react";
-import { useGame, useGameWithShallow } from "@/game/store";
-import { shallow } from "zustand/shallow";
 import {
   Dialog,
   DialogContent,
@@ -9,12 +6,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Horse, Race, Jockey } from "@/game/types";
+import type { Race } from "@/game/types";
 import { ChevronRight } from "lucide-react";
-import { getCurrentYear } from "@/core/race/schedule";
-import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import { formatCurrency } from "@/lib/formatting";
-import { toast } from "sonner";
 import { getTransportCostForRace } from "@/core/race/transportCost";
 import { HorseSelectionStep } from "./HorseSelectionStep";
 import { JockeySelectionStep } from "./JockeySelectionStep";
@@ -22,8 +15,8 @@ import { TacticsSelectionStep } from "./TacticsSelectionStep";
 import { ReviewStep } from "./ReviewStep";
 import { ClaimingStep } from "./ClaimingStep";
 import { RaceEntryHeader } from "./RaceEntryHeader";
-import { buildInstructions, type PresetId } from "./TacticOptions";
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import { buildInstructions } from "./TacticOptions";
+import { useRaceEntry } from "@/hooks/useRaceEntry";
 
 interface RaceEntryProps {
   race: Race;
@@ -31,116 +24,36 @@ interface RaceEntryProps {
   onClose: () => void;
 }
 
-/**
- * A multi-step dialog component for entering a horse into a race.
- * Handles horse selection, jockey assignment, tactical instructions, and financial review.
- *
- * @param {RaceEntryProps} props - The component properties.
- * @returns {JSX.Element} The rendered race entry dialog.
- */
 export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
-  const [selectedHorseId, setSelectedHorseId] = useState<string | null>(null);
-  const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
-  const [selectedPreset, setSelectedPreset] = useState<PresetId>("default");
-  const [wantToClaim, setWantToClaim] = useState(false);
+  const {
+    step,
+    setStep,
+    selectedHorseId,
+    setSelectedHorseId,
+    selectedJockeyId,
+    setSelectedJockeyId,
+    selectedPreset,
+    setSelectedPreset,
+    wantToClaim,
+    setWantToClaim,
+    horses,
+    cash,
+    day,
+    raceWeather,
+    isNewClaimingRace,
+    claimingPrice,
+    selectedHorse,
+    selectedJockey,
+    isHorseQualifiedForRace,
+    eligibleHorses,
+    marketJockeys,
+    handleConfirm,
+    withdrawFromClaimingRace,
+    withdrawRace,
+    withdrawClaim,
+  } = useRaceEntry(race);
 
-  const allHorses = useGameWithShallow((s) => s.horses);
-  const horses = useMemo(() => allHorses.filter((h: Horse) => h.owned), [allHorses]);
-  const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
-  const enterRace = useGame((s) => s.enterRace);
-  const enterClaimingRace = useGame((s) => s.enterClaimingRace);
-  const withdrawFromClaimingRace = useGame((s) => s.withdrawFromClaimingRace);
-  const assignJockey = useGame((s) => s.assignJockey);
-  const setRaceTactics = useGame((s) => s.setRaceTactics);
-  const submitClaim = useGame((s) => s.submitClaim);
-  const withdrawClaim = useGame((s) => s.withdrawClaim);
-  const withdrawRace = useGame((s) => s.withdrawRace);
-  const cash = useGame((s) => s.cash);
-  const day = useGame((s) => s.day);
-  const raceWeather = useGame((s) => {
-    const trackId = race.trackId ?? race.graded?.trackId;
-    if (!trackId) return undefined;
-    const buf = s.weather?.byTrack?.[trackId];
-    if (!buf || !buf.length) return undefined;
-    return buf.find((w: any) => w.day === race.day) ?? buf[buf.length - 1];
-  });
-  // D3: determine if this is a new-spec claiming race
-  const isNewClaimingRace = !!race.claiming;
-  const claimingPrice = race.claiming?.price ?? race.claimingPrice;
-
-  const selectedHorse = useMemo(
-    () => horses.find((h: Horse) => h.id === selectedHorseId),
-    [horses, selectedHorseId],
-  );
-  const selectedJockey = useMemo(
-    () => jockeys.find((j: Jockey) => j.id === selectedJockeyId),
-    [jockeys, selectedJockeyId],
-  );
-
-  const isHorseQualifiedForRace = (horse: Horse, race: Race): boolean => {
-    if (!race.graded?.key || !horse.winAndYouInQualified) return false;
-    const currentYear = getCurrentYear(day);
-    return horse.winAndYouInQualified.some(
-      (q) => q.raceKey === race.graded!.key && q.year === currentYear,
-    );
-  };
-
-  const eligibleHorses = useMemo(() => {
-    return horses.map((h: Horse) => ({
-      horse: h,
-      eligible: isHorseEligibleForRace(h, race, new Set(), day),
-    }));
-  }, [horses, race, day]);
-
-  const marketJockeys = useMemo(() => {
-    // Retained jockeys + freelance pool
-    return jockeys.filter((j: Jockey) => !j.stableId || j.contractUntil); // Simple filter for now
-  }, [jockeys]);
-
-  const handleConfirm = () => {
-    if (selectedHorseId && selectedJockeyId) {
-      const wasFull = race.entries.length >= race.fieldSize;
-      // D3: use enterClaimingRace for new claiming races
-      const res = isNewClaimingRace
-        ? enterClaimingRace(race.id, selectedHorseId)
-        : enterRace(race.id, selectedHorseId);
-      if (res.ok) {
-        assignJockey(race.id, selectedHorseId, selectedJockeyId);
-        const instructions = buildInstructions(
-          { id: selectedPreset, name: "", desc: "", instructions: { horseId: selectedHorseId, raceId: race.id, ridingStyle: "tactical", earlyPosition: "midpack", moveTiming: "mid", aggressiveness: 50 } },
-          selectedHorseId,
-          race.id,
-        );
-        setRaceTactics(race.id, selectedHorseId, instructions);
-
-        // Submit claim if selected (old-style claimingPrice)
-        if (wantToClaim && race.claimingPrice && !isNewClaimingRace) {
-          const claimRes = submitClaim(race.id, selectedHorseId);
-          if (!claimRes.ok) {
-            alert(`Claim failed: ${claimRes.reason}`);
-            return;
-          }
-        }
-
-        if (isNewClaimingRace) {
-          const horse = horses.find((h: Horse) => h.id === selectedHorseId);
-          toast.info(
-            `${horse?.name ?? "Horse"} entered in claiming race at ${formatCurrency(claimingPrice!)}.`,
-          );
-        } else if (wasFull) {
-          const horse = horses.find((h: Horse) => h.id === selectedHorseId);
-          toast.info(
-            `${horse?.name ?? "Horse"} bumped a weaker entry to join ${race.name}.`,
-          );
-        }
-
-        onClose();
-      } else {
-        alert(res.reason);
-      }
-    }
-  };
+  const onConfirm = () => handleConfirm(onClose);
 
   return (
     <Dialog
@@ -244,7 +157,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                 if (step === 4 && race.claimingPrice) {
                   setStep(5);
                 } else if (step === 4 && !race.claimingPrice) {
-                  handleConfirm();
+                  onConfirm();
                 } else {
                   setStep((s) => Math.min(s + 1, 5) as 1 | 2 | 3 | 4 | 5);
                 }
@@ -256,7 +169,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
             </Button>
           ) : (
             <Button
-              onClick={handleConfirm}
+              onClick={onConfirm}
               disabled={
                 selectedHorse && selectedJockey
                   ? cash <

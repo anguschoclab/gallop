@@ -1,107 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
-import { TRAINING_COST, TRAINING_COST_MAP, TRAINING_ENERGY_MAP } from "@/constants/game";
+import { TRAINING_COST } from "@/constants/game";
+import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/constants/trainingTypes";
 import { isWorkoutEnabled } from "@/core/facilities";
 import type { Horse, PlayerFacilities } from "@/game/types";
 import { useCallback, memo, useMemo } from "react";
 
-/**
- * Props for the TrainingPanel component.
- */
 interface TrainingPanelProps {
-  /** The horse to be trained. */
   horse: Horse;
-  /** Whether the horse is currently pregnant. */
   isPregnant: boolean;
-  /** Number of training slots left for today. */
   slotsLeft: number;
-  /** Current cash available. */
   cash: number;
-  /** Available facilities for advanced workouts. */
   facilities: PlayerFacilities | null;
-  /** Callback function to trigger a training session. */
   onTrain: (horseId: string, type: any) => void;
 }
-
-/**
- * Memoized button component for training types to prevent re-creation
- */
-const TrainingButton = memo(
-  ({
-    type,
-    label,
-    disabled,
-    onClick,
-    children,
-  }: {
-    type: string;
-    label: string;
-    disabled: boolean;
-    onClick: () => void;
-    children: React.ReactNode;
-  }) => (
-    <Button
-      key={type}
-      onClick={onClick}
-      disabled={disabled}
-      className="w-full justify-between"
-      variant="outline"
-    >
-      {children}
-    </Button>
-  ),
-);
-
-/**
- * Component to render the horse training management interface.
- *
- * EXTRACTED FROM: src/routes/stable.$horseId.tsx
- */
-const basicTrainingTypes = ["speed", "stamina", "acceleration"] as const;
-
-type AdvancedWorkout = {
-  key: string;
-  label: string;
-  cost: number;
-  energy: number;
-  stat?: string;
-};
-
-const advancedWorkouts: AdvancedWorkout[] = [
-  {
-    key: "bullet",
-    label: "Bullet",
-    cost: TRAINING_COST_MAP.bullet,
-    energy: Math.abs(TRAINING_ENERGY_MAP.bullet),
-    stat: "speed",
-  },
-  {
-    key: "breeze",
-    label: "Breeze",
-    cost: TRAINING_COST_MAP.breeze,
-    energy: Math.abs(TRAINING_ENERGY_MAP.breeze),
-    stat: "stamina",
-  },
-  {
-    key: "gate_work",
-    label: "Gate Work",
-    cost: TRAINING_COST_MAP.gate_work,
-    energy: Math.abs(TRAINING_ENERGY_MAP.gate_work),
-    stat: "acceleration",
-  },
-  {
-    key: "swimming",
-    label: "Swimming",
-    cost: TRAINING_COST_MAP.swimming,
-    energy: Math.abs(TRAINING_ENERGY_MAP.swimming),
-  },
-  {
-    key: "gallop",
-    label: "Gallop",
-    cost: TRAINING_COST_MAP.gallop,
-    energy: Math.abs(TRAINING_ENERGY_MAP.gallop),
-  },
-];
 
 function getStatValue(stats: Horse["stats"], key: string): number {
   if (key === "speed") return stats.speed;
@@ -137,7 +49,7 @@ export function TrainingPanelComponent({
   // Memoize the training types arrays to prevent recreation
   const basicTrainingButtons = useMemo(
     () =>
-      basicTrainingTypes.map((k) => {
+      BASIC_TRAINING_TYPES.map((k) => {
         const val = getStatValue(horse.stats, k);
         return {
           key: k,
@@ -160,7 +72,7 @@ export function TrainingPanelComponent({
   // Memoize advanced workouts array to prevent recreation
   const advancedWorkoutButtons = useMemo(
     () =>
-      advancedWorkouts.map((workout) => {
+      ADVANCED_WORKOUTS.map((workout) => {
         const isEnabled = facilities && isWorkoutEnabled(facilities, workout.key as any);
         const isStatCapped =
           workout.stat !== undefined && getStatValue(horse.stats, workout.stat) >= horse.potential;

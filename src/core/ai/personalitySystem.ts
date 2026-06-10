@@ -10,6 +10,7 @@
 
 import type { StablePersonality } from "@/game/types";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import { STRATEGY_ALTERNATIVES } from "@/data/personalityTraits";
 import {
   createLearningState,
   recordOutcome as recordLearningOutcome,
@@ -38,17 +39,6 @@ export interface PersonalityAIState {
   strategyConfidence: number;
   lastStrategyChangeDay: number;
 }
-
-/**
- * Strategy alternatives mapping for strategy switching logic.
- */
-const STRATEGY_ALTERNATIVES: Record<string, string> = {
-  default: "aggressive",
-  aggressive: "conservative",
-  conservative: "balanced",
-  balanced: "innovative",
-  innovative: "default",
-};
 
 /**
  * Get AI state for a personality.
