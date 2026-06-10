@@ -1,15 +1,12 @@
-import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, AlertTriangle } from "lucide-react";
+import { MapPin, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { getGradeColorClass } from "@/core/race/grading";
-import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
-import { useGame, useGameWithShallow } from "@/game/store";
-import { shallow } from "zustand/shallow";
+import { useRaceCardOdds } from "@/hooks/useRaceCardOdds";
 import { formatCurrency } from "@/lib/formatting";
 import { WeatherForecastStrip } from "./WeatherForecastStrip";
 import type { Race } from "@/game/types";
@@ -26,50 +23,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
   const isClaiming = !!race.claiming;
   const claimingPrice: number | undefined = race.claiming?.price;
 
-  const horses = useGameWithShallow((s) => s.horses);
-
-  // ⚡ Bolt Optimization:
-  // Create a local map for O(1) lookups instead of running O(N) .find() inside the loop.
-  // Impact: Reduces complexity from O(E*N) to O(N + E), significantly improving performance when rendering many RaceCards.
-  const localHorseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
-
-  const classBonus = useGame((s) => {
-    // Calculate class bonus for odds
-    if (race.graded?.grade) {
-      const grade = race.graded.grade;
-      if (grade === "G1") return 15;
-      if (grade === "G2") return 10;
-      if (grade === "G3") return 5;
-      if (grade === "Listed") return 3;
-    }
-    return 0;
-  });
-
-  // Calculate odds for favorite horse (highest probability)
-  const favoriteOdds = (() => {
-    let bestOdds = "N/A";
-    let bestProbability = 0;
-
-    for (const entry of race.entries) {
-      const horse = localHorseMap.get(entry.horseId);
-      if (horse) {
-        const probability = calculateWinProbability(
-          horse.stats.speed,
-          horse.stats.stamina,
-          horse.stats.acceleration,
-          horse.form,
-          classBonus,
-        );
-        if (probability > bestProbability) {
-          bestProbability = probability;
-          const morningLine = probabilityToMorningLine(probability);
-          bestOdds = formatOdds(morningLine);
-        }
-      }
-    }
-
-    return bestOdds;
-  })();
+  const favoriteOdds = useRaceCardOdds(race);
 
   return (
     <Card

@@ -1,5 +1,4 @@
-import { useState, useRef } from "react";
-import { useGame } from "@/game/store";
+import { useAutoSim } from "@/hooks/useAutoSim";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -13,78 +12,20 @@ interface Props {
 }
 
 export function AutoSimPanel({ open, onClose }: Props) {
-  const [days, setDays] = useState(30);
-  const [headless, setHeadless] = useState(false);
-  const [useWorker, setUseWorker] = useState(true);
-  const [running, setRunning] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [log, setLog] = useState<string[]>([]);
-  const advanceMultipleDays = useGame((s) => s.advanceMultipleDays);
-  const day = useGame((s) => s.day);
-  const rafRef = useRef<number>(0);
-  const stoppedRef = useRef(false);
-
-  function stop() {
-    stoppedRef.current = true;
-    cancelAnimationFrame(rafRef.current);
-    setRunning(false);
-  }
-
-  async function run() {
-    if (days <= 0) return;
-    stoppedRef.current = false;
-    setRunning(true);
-    setProgress(0);
-    setLog([]);
-
-    let done = 0;
-    const total = days;
-    const startDay = day;
-
-    async function tick() {
-      if (stoppedRef.current) return;
-      if (done >= total) {
-        setRunning(false);
-        setLog((l) => [`AutoSim complete — ${total} days simulated.`, ...l]);
-        return;
-      }
-
-      const batchSize = Math.min(5, total - done);
-      const beforeDay = useGame.getState().day;
-      await advanceMultipleDays(batchSize, headless);
-      const afterDay = useGame.getState().day;
-
-      // If pendingPlayerRaceId was set, we paused — stop autosim
-      if (useGame.getState().pendingPlayerRaceId) {
-        setRunning(false);
-        setLog((l) => [
-          `Paused — player race detected on ${gameCalendarDate(afterDay + 1)}.`,
-          ...l,
-        ]);
-        return;
-      }
-
-      done += afterDay - beforeDay;
-      setProgress(Math.round((done / total) * 100));
-
-      // Collect notable log events
-      const recentLog = useGame.getState().log.slice(0, batchSize * 3);
-      const notable = recentLog.filter(
-        (e) =>
-          e.text.includes("Foal born") ||
-          e.text.includes("hammer price") ||
-          e.text.includes("recalibrated") ||
-          (e.day >= startDay && e.day <= afterDay),
-      );
-      if (notable.length > 0) {
-        setLog((l) => [...notable.map((e) => `Day ${e.day}: ${e.text}`), ...l].slice(0, 50));
-      }
-
-      rafRef.current = requestAnimationFrame(tick);
-    }
-
-    rafRef.current = requestAnimationFrame(tick);
-  }
+  const {
+    days,
+    setDays,
+    headless,
+    setHeadless,
+    useWorker,
+    setUseWorker,
+    running,
+    progress,
+    log,
+    run,
+    stop,
+    day,
+  } = useAutoSim();
 
   function handleOpenChange(o: boolean) {
     if (!o) {

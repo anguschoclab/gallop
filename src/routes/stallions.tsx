@@ -1,10 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { createFileRoute } from "@tanstack/react-router";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -12,11 +7,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isStallionAvailable } from "@/core/breeding/stallions";
-import type { Horse, Hemisphere, GameState } from "@/game/types";
-import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
+import { useStallionFilters } from "@/hooks/useStallionFilters";
+import { MyStallionCard } from "@/components/breeding/MyStallionCard";
+import { StallionCard } from "@/components/breeding/StallionCard";
 import { calculateRecommendedStudFee } from "@/core/breeding/stallions";
 
 export const Route = createFileRoute("/stallions")({
@@ -24,39 +18,23 @@ export const Route = createFileRoute("/stallions")({
 });
 
 function StallionsPage() {
-  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
-  const npcStables = (useGame as any)((s: GameState) => s.npcStables, shallow);
-  const day = useGame((s: GameState) => s.day);
-  const cash = useGame((s: GameState) => s.cash);
-  const breed = useGame((s) => s.breed);
-  const updateStudFee = useGame((s) => s.updateStudFee);
-  const pregnancies = (useGame as any)((s: GameState) => s.pregnancies, shallow);
-
-  const [hemisphere, setHemisphere] = useState<Hemisphere | "all">("all");
-  const [selectedMareId, setSelectedMareId] = useState<string>("");
-
-  const stallions = horses.filter((h: Horse) => h.stud?.atStud);
-  const myStallions = stallions.filter((h: Horse) => h.owned);
-  const rosterStallions = stallions.filter((h: Horse) => !h.owned || h.stableId === undefined); // Show all public ones
-
-  const filtered = stallions
-    .filter((h: Horse) => hemisphere === "all" || h.hemisphere === hemisphere)
-    .sort((a: Horse, b: Horse) => a.stud!.standingFee - b.stud!.standingFee);
-
-  // Player mares of breeding age, not currently pregnant
-  const eligibleMares = horses.filter(
-    (h: Horse) =>
-      h.owned &&
-      (h.gender === "mare" || h.gender === "filly") &&
-      h.age >= 3 &&
-      !pregnancies.some((p: any) => !p.resolved && p.damId === h.id),
-  );
-  const selectedMare = eligibleMares.find((h: Horse) => h.id === selectedMareId);
-
-  const stableNameFor = (stableId?: string): string => {
-    if (!stableId) return "Owned";
-    return npcStables.find((s: any) => s.id === stableId)?.name ?? "Unknown stable";
-  };
+  const {
+    day,
+    cash,
+    breed,
+    updateStudFee,
+    horses,
+    npcStables,
+    myStallions,
+    filtered,
+    eligibleMares,
+    selectedMare,
+    selectedMareId,
+    setSelectedMareId,
+    hemisphere,
+    setHemisphere,
+    stableNameFor,
+  } = useStallionFilters();
 
   return (
     <div className="space-y-6">
@@ -87,7 +65,7 @@ function StallionsPage() {
                 <label className="text-xs text-cream-muted">Hemisphere</label>
                 <Select
                   value={hemisphere}
-                  onValueChange={(v) => setHemisphere(v as Hemisphere | "all")}
+                  onValueChange={(v) => setHemisphere(v as any)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -106,7 +84,7 @@ function StallionsPage() {
                     <SelectValue placeholder="Select a mare to book…" />
                   </SelectTrigger>
                   <SelectContent>
-                    {eligibleMares.map((m: Horse) => (
+                    {eligibleMares.map((m: any) => (
                       <SelectItem key={m.id} value={m.id}>
                         {m.name} (age {m.age}, {m.hemisphere}, {Math.round(m.distanceAptitude)}m)
                       </SelectItem>
@@ -118,7 +96,7 @@ function StallionsPage() {
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filtered.map((stallion: Horse) => (
+            {filtered.map((stallion: any) => (
               <StallionCard
                 key={stallion.id}
                 stallion={stallion}
@@ -143,7 +121,7 @@ function StallionsPage() {
 
         <TabsContent value="manage" className="space-y-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {myStallions.map((stallion: Horse) => (
+            {myStallions.map((stallion: any) => (
               <MyStallionCard
                 key={stallion.id}
                 stallion={stallion}
@@ -168,216 +146,5 @@ function StallionsPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
-}
-
-function MyStallionCard({
-  stallion,
-  day,
-  recommendedFee,
-  onUpdateFee,
-}: {
-  stallion: Horse;
-  day: number;
-  recommendedFee: number;
-  onUpdateFee: (fee: number) => void;
-}) {
-  const [feeInput, setFeeInput] = useState(stallion.stud!.standingFee.toString());
-  const stud = stallion.stud!;
-  const navigate = useNavigate();
-
-  return (
-    <Card
-      className="border-gold cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: stallion.id } })}
-    >
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-lg text-cream font-[family-name:var(--font-display)]">
-              {stallion.name}
-            </CardTitle>
-            <p className="text-xs text-gold">Player Owned</p>
-          </div>
-          <Badge className="bg-t700 text-cream">{stallion.hemisphere}</Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="flex flex-col">
-            <span className="text-cream-muted text-xs">Season Bookings</span>
-            <span className="text-cream font-mono">
-              {stud.seasonBookings} / {stud.bookSize}
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-cream-muted text-xs">Stakes / G1 Foals</span>
-            <span className="text-cream font-mono">
-              {stud.lifetimeStakesFoals} / {stud.lifetimeG1Foals}
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-cream-muted text-xs">Pref. Distance</span>
-            <span className="text-cream font-mono">{Math.round(stallion.distanceAptitude)}m</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-cream-muted text-xs">Best Surface</span>
-            <span className="text-cream font-mono">
-              {(() => {
-                const best = Object.entries(stallion.surfaceAptitude || {}).sort((a, b) => b[1] - a[1])[0];
-                return best ? `${best[0]} (${Math.round(best[1])})` : "—";
-              })()}
-            </span>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex justify-between items-end">
-            <label className="text-xs text-cream-muted">Standing Fee</label>
-            <button
-              className="text-[10px] text-gold hover:underline"
-              onClick={(e) => {
-                e.stopPropagation();
-                setFeeInput(recommendedFee.toString());
-                onUpdateFee(recommendedFee);
-              }}
-            >
-              Apply Recommended: ${recommendedFee.toLocaleString()}
-            </button>
-          </div>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cream-muted">$</span>
-              <Input
-                className="pl-6 bg-t900/50 border-gold-muted text-cream"
-                type="number"
-                value={feeInput}
-                onClick={(e) => e.stopPropagation()}
-                onChange={(e) => setFeeInput(e.target.value)}
-              />
-            </div>
-            <Button
-              variant="outline"
-              className="border-gold text-gold hover:bg-gold hover:text-t900"
-              onClick={(e) => {
-                e.stopPropagation();
-                onUpdateFee(parseInt(feeInput) || 0);
-              }}
-            >
-              Update
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function StallionCard({
-  stallion,
-  stableName,
-  day,
-  mare,
-  cash,
-  onBook,
-}: {
-  stallion: Horse;
-  stableName: string;
-  day: number;
-  mare: Horse | undefined;
-  cash: number;
-  onBook: () => void;
-}) {
-  const stud = stallion.stud!;
-  const available = isStallionAvailable(stallion, day);
-  const inSeason = inBreedingSeason(day, stallion.hemisphere);
-  const baseBookFee = 2000;
-  const totalFee = baseBookFee + stud.standingFee;
-  const canAfford = cash >= totalFee;
-  const canBook = available && !!mare && mare.hemisphere === stallion.hemisphere && canAfford;
-
-  const navigate = useNavigate();
-
-  return (
-    <Card
-      className="border-gold-muted cursor-pointer hover:border-gold transition-colors"
-      onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: stallion.id } })}
-    >
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-lg text-cream font-[family-name:var(--font-display)]">
-            {stallion.name}
-          </CardTitle>
-          <Badge className="bg-t700 text-cream">{stallion.hemisphere}</Badge>
-        </div>
-        <p className="text-xs text-cream-muted">{stableName}</p>
-      </CardHeader>
-      <CardContent className="space-y-2 text-sm">
-        <div className="flex justify-between">
-          <span className="text-cream-muted">Standing fee</span>
-          <span className="font-mono font-semibold tabular-nums text-cream">
-            ${stud.standingFee.toLocaleString()}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-cream-muted">Book</span>
-          <span className="text-cream">
-            {stud.seasonBookings} / {stud.bookSize}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-cream-muted">Stakes foals</span>
-          <span className="text-cream">{stud.lifetimeStakesFoals}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-cream-muted">G1 foals</span>
-          <span className="text-cream">{stud.lifetimeG1Foals}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-cream-muted">Age · Fame</span>
-          <span className="text-cream">
-            {stallion.age} · {stallion.fame}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-cream-muted">Pref. Distance</span>
-          <span className="text-cream">{Math.round(stallion.distanceAptitude)}m</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-cream-muted">Best Surface</span>
-          <span className="text-cream">
-            {(() => {
-              const best = Object.entries(stallion.surfaceAptitude || {}).sort((a, b) => b[1] - a[1])[0];
-              return best ? `${best[0]} (${Math.round(best[1])})` : "—";
-            })()}
-          </span>
-        </div>
-        {!inSeason && (
-          <p className="text-xs text-warning">Out of breeding season for {stallion.hemisphere}.</p>
-        )}
-        {stud.seasonBookings >= stud.bookSize && (
-          <p className="text-xs text-warning">Book is full this season.</p>
-        )}
-        <Button
-          size="sm"
-          className="w-full mt-2"
-          disabled={!canBook}
-          onClick={(e) => {
-            e.stopPropagation();
-            onBook();
-          }}
-        >
-          {!mare
-            ? "Select a mare first"
-            : mare.hemisphere !== stallion.hemisphere
-              ? "Hemisphere mismatch"
-              : !canAfford
-                ? `Need $${totalFee.toLocaleString()}`
-                : !available
-                  ? "Unavailable"
-                  : `Book — $${totalFee.toLocaleString()}`}
-        </Button>
-      </CardContent>
-    </Card>
   );
 }

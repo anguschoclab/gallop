@@ -1,8 +1,5 @@
-import { useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
-import type { GameState, Horse } from "@/game/types";
+import { useRecapData } from "@/hooks/useRecapData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BeyerBadge } from "@/components/race/BeyerBadge";
@@ -19,33 +16,7 @@ export const Route = createFileRoute("/recap")({
 });
 
 function RecapPage() {
-  const races = (useGame as any)((s: GameState) => s.races, shallow);
-  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
-  const calibratedPars = (useGame as any)((s: GameState) => s.calibratedPars, shallow);
-  const day = useGame((s: GameState) => s.day);
-
-  const localHorseMap = useMemo(() => new Map(horses.map((h: Horse) => [h.id, h])), [horses]);
-
-  // Get resolved graded races from the past 7 days
-  const weekAgo = day - 7;
-  const recentGradedRaces = races
-    .filter(
-      (r: any) =>
-        r.resolved &&
-        r.graded &&
-        r.result &&
-        r.result.length > 0 &&
-        r.day >= weekAgo &&
-        r.day <= day,
-    )
-    .sort((a: any, b: any) => {
-      // Sort by grade first (G1 > G2 > G3), then by day (most recent first)
-      const gradeOrder: any = { G1: 3, G2: 2, G3: 1 };
-      const gradeDiff = gradeOrder[b.graded!.grade] - gradeOrder[a.graded!.grade];
-      if (gradeDiff !== 0) return gradeDiff;
-      return b.day - a.day;
-    })
-    .slice(0, 12); // Show top 12 most important races
+  const { day, localHorseMap, recentGradedRaces, calibratedPars } = useRecapData();
 
   return (
     <div className="space-y-6">

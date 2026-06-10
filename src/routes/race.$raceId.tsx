@@ -1,53 +1,20 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useGame, useGameWithShallow } from "@/game/store";
-import { useJockeys } from "@/hooks/game/useSystemsState";
-import { shallow } from "zustand/shallow";
-import type { GameState, Horse } from "@/game/types";
-import { useEffect, useRef, useState, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
-import { stepRunner, computePaceContext } from "@/core/race/engine/simulation";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useGame } from "@/game/store";
+import { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { calculateClassBonus } from "@/core/common/classBonus";
-import {
-  buildRaceField,
-  rngForRace,
-  type RaceSimulationDependencies,
-} from "@/services/raceSimulationService";
-import { Pause, Play, Camera, Thermometer, Wind } from "lucide-react";
-import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { NarrativeGenerator } from "@/services/narrativeService";
-import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
-import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/core/odds";
-import {
-  getTrackBackground,
-  getSkyBackground,
-  getWeatherDisplay,
-  getSpriteUrl,
-  isAnimatedSprite,
-  getAnimationDuration,
-  projectedBeyer,
-} from "@/components/race/raceVisualHelpers";
+import { getSkyBackground } from "@/components/race/raceVisualHelpers";
 import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
 import { RaceVisualizer } from "@/components/race/RaceVisualizer";
 import { useLiveRaceSimulation } from "@/hooks/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { HorseCard } from "@/components/horse/HorseCard";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
 import { Track } from "@/components/race/Track";
 import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
 import { Leaderboard } from "@/components/race/Leaderboard";
+import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
+import { useRacePageData } from "@/hooks/useRacePageData";
+import { useRaceUIState } from "@/hooks/useRaceUIState";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,
@@ -68,38 +35,20 @@ export const Route = createFileRoute("/race/$raceId")({
 function LiveRace() {
   const { raceId } = Route.useParams();
   const navigate = useNavigate();
-  const race = (useGame as any)(
-    (s: GameState) => s.races.find((r: any) => r.id === raceId),
-    shallow,
-  );
-  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
-  const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
-  const stables = (useGame as any)((s: GameState) => s.npcStables, shallow);
-  const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
-  const raceWeather = (useGame as any)((s: any) => {
-    if (!race) return undefined;
-    const trackId = race.graded?.trackId ?? race.trackId;
-    if (!trackId) return undefined;
-    const buf = s.weather?.byTrack?.[trackId];
-    if (!buf || !buf.length) return undefined;
-    return buf.find((w: any) => w.day === race.day) ?? buf[buf.length - 1];
-  }, shallow);
 
-  const [runners] = useState<Runner[]>(() => {
-    if (!race) return [];
-    const deps: RaceSimulationDependencies = { race, horses, jockeys };
-    const { runners: built } = buildRaceField(deps);
-    return built;
-  });
-  const rngRef = useRef(race ? rngForRace(race) : null);
-
-  const narrativeRef = useRef<NarrativeGenerator | null>(null);
-  const messageQueue = useRef<CommentaryLine[]>([]);
-  const lastMessageTime = useRef<number>(0);
-
-  if (!narrativeRef.current && race) {
-    narrativeRef.current = new NarrativeGenerator(race, horses, stables, rngRef.current!);
-  }
+  const {
+    race,
+    runners,
+    raceWeather,
+    resolveRaceWithImpacts,
+    narrativeRef,
+    messageQueue,
+    localHorseMap,
+    runnerOdds,
+    classBonus,
+    calibratedPars,
+    rngRef,
+  } = useRacePageData(raceId);
 
   const { tick, speed, setSpeed, finished, paused, setPaused, simTime, liveSplits } =
     useLiveRaceSimulation({
@@ -111,75 +60,35 @@ function LiveRace() {
       rngRef,
     });
 
-  const [sortBy, setSortBy] = useState<"position" | "beyer" | "velocity">("position");
-  const [filter, setFilter] = useState<"all" | "owned" | "top5">("all");
-  const [minBeyer, setMinBeyer] = useState(0);
+  const {
+    announcement,
+    commentary,
+    subjectHorseId,
+    followTarget,
+    setFollowTarget,
+    hideUntilAllFinished,
+    setHideUntilAllFinished,
+    showAllCards,
+    setShowAllCards,
+    sorted,
+    positionRank,
+    filter,
+    sortBy,
+    minBeyer,
+    setFilter,
+    setSortBy,
+    setMinBeyer,
+  } = useRaceUIState(runners, race, messageQueue, finished, classBonus, calibratedPars);
 
-  const ownedRunnersTotal = runners.filter((r: any) => r.owned);
-  const defaultFollowTarget = ownedRunnersTotal.length > 0 ? ownedRunnersTotal[0].horseId : null;
-  const [followTarget, setFollowTarget] = useState<string | null>(defaultFollowTarget);
-
-  const [announcement, setAnnouncement] = useState<string>("");
-  const [commentary, setCommentary] = useState<CommentaryLine[]>([]);
-  const [subjectHorseId, setSubjectHorseId] = useState<string | null>(null);
-  const [hideUntilAllFinished, setHideUntilAllFinished] = useState(false);
-  const [showAllCards, setShowAllCards] = useState(false);
-
-  // Paced message delivery effect
-  useEffect(() => {
-    if (finished) return;
-    const interval = setInterval(() => {
-      const now = Date.now();
-      if (messageQueue.current.length > 0 && now - lastMessageTime.current > 1500) {
-        const next = messageQueue.current.shift()!;
-        setCommentary((prev) => [...prev, next].slice(-50));
-        setAnnouncement(next.text);
-        setSubjectHorseId(next.horseId || null);
-        lastMessageTime.current = now;
-
-        // Clear subject highlight after a few seconds
-        setTimeout(() => {
-          setSubjectHorseId((current) => (current === next.horseId ? null : current));
-        }, 3000);
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }, [finished]);
-
-  const lastAnnouncedPosition = useRef<Map<string, number>>(new Map());
-  const lastAnnouncementTime = useRef<number>(0);
-
-  const classBonus = race ? calculateClassBonus(race.graded?.grade, race.raceClass) : 0;
-
-  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside loops.
-  const localHorseMap = useMemo(() => new Map<string, Horse>(horses.map((h: Horse) => [h.id, h])), [horses]);
-
-  // Calculate odds for each runner
-  const runnerOdds = useMemo(() => {
-    const oddsMap = new Map<string, string>();
-    for (const runner of runners) {
-      const horse = localHorseMap.get(runner.horseId);
-      if (horse) {
-        const probability = calculateWinProbability(
-          horse.stats.speed,
-          horse.stats.stamina,
-          horse.stats.acceleration,
-          horse.form,
-          classBonus,
-        );
-        const morningLine = probabilityToMorningLine(probability);
-        oddsMap.set(runner.horseId, formatOdds(morningLine));
-      }
-    }
-    return oddsMap;
-  }, [runners, localHorseMap, classBonus]);
+  const allFinished = runners.every((r) => r.finishTime !== null);
+  const anyFinished = runners.some((r) => r.finishTime !== null);
 
   // Keyboard controls effect
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === "Space" && !finished) {
         e.preventDefault();
-        setPaused((p) => !p);
+        setPaused((p: boolean) => !p);
       }
       if (!finished && !paused) {
         if (e.key === "1") setSpeed(1);
@@ -191,37 +100,9 @@ function LiveRace() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [finished, paused, setPaused, setSpeed]);
 
-  // Early return checks after all hooks
   if (!race) throw notFound();
 
-  // If the race is resolved and has snapshots, we can show the replay
   const hasReplay = race.resolved && race.snapshots && race.snapshots.length > 0;
-  const allFinished = runners.every((r) => r.finishTime !== null);
-  const anyFinished = runners.some((r) => r.finishTime !== null);
-
-  const calibratedPars = (useGame as any)((s: GameState) => s.calibratedPars, shallow);
-
-  const rows = runners.map((r) => ({
-    r,
-    beyer: projectedBeyer(r, race.distance, simTime, classBonus, calibratedPars),
-  }));
-
-  const positionRank = new Map(
-    [...rows].sort((a, b) => b.r.position - a.r.position).map((row, i) => [row.r.horseId, i + 1]),
-  );
-
-  const filtered = rows.filter(({ r, beyer }) => {
-    if (filter === "owned" && !r.owned) return false;
-    if (filter === "top5" && (positionRank.get(r.horseId) ?? 99) > 5) return false;
-    if (minBeyer > 0 && (beyer ?? 0) < minBeyer) return false;
-    return true;
-  });
-
-  const sorted = [...filtered].sort((a, b) => {
-    if (sortBy === "beyer") return (b.beyer ?? -1) - (a.beyer ?? -1);
-    if (sortBy === "velocity") return b.r.velocity - a.r.velocity;
-    return b.r.position - a.r.position;
-  });
 
   const skyBg = getSkyBackground(race.weather);
 
@@ -271,7 +152,7 @@ function LiveRace() {
         onTogglePause={() => setPaused((p) => !p)}
         onSetSpeed={setSpeed}
         onSetFollowTarget={setFollowTarget}
-        onToggleHideResults={() => setHideUntilAllFinished((v) => !v)}
+        onToggleHideResults={() => setHideUntilAllFinished((v: boolean) => !v)}
         onShowAllCards={() => setShowAllCards(true)}
       />
 
@@ -395,22 +276,13 @@ function LiveRace() {
         />
       )}
 
-      <Dialog open={showAllCards} onOpenChange={setShowAllCards}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-slate-900 border-white/10">
-          <DialogHeader>
-            <DialogTitle className="text-cream font-black uppercase tracking-widest text-sm">
-              Field — {race.name}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
-            {runners.map((r) => {
-              const horse = localHorseMap.get(r.horseId);
-              if (!horse) return null;
-              return <HorseCard key={r.horseId} horse={horse} variant="compact" />;
-            })}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <RaceFieldDialog
+        open={showAllCards}
+        onOpenChange={setShowAllCards}
+        raceName={race.name}
+        runners={runners}
+        localHorseMap={localHorseMap}
+      />
     </div>
   );
 }

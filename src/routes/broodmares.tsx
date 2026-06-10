@@ -1,11 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
-import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PregnancyTimeline } from "@/components/breeding/PregnancyTimeline";
+import { useBroodmareData } from "@/hooks/useBroodmareData";
 import { FileText, Heart } from "lucide-react";
 
 export const Route = createFileRoute("/broodmares")({
@@ -13,46 +11,7 @@ export const Route = createFileRoute("/broodmares")({
 });
 
 function BroodmaresPage() {
-  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
-  const horseMap = (useGame as any)((s: GameState) => s.horseMap, shallow);
-  const pregnancies = (useGame as any)((s: GameState) => s.pregnancies, shallow);
-  const day = useGame((s: GameState) => s.day);
-  const log = (useGame as any)((s: GameState) => s.log, shallow);
-
-  // Get all active pregnancies (unresolved)
-  const activePregnancies = pregnancies.filter((p: any) => !p.resolved);
-
-  // ⚡ Bolt Optimization:
-  // Used O(1) horseMap lookups instead of O(N) horses.find() inside the map loop.
-  // Impact: Reduces rendering complexity of the broodmares list from O(N^2) to O(N).
-  // Group pregnancies by dam to show each broodmare once
-  const broodmareData = activePregnancies
-    .map((pregnancy: any) => {
-      const dam = horseMap.get(pregnancy.damId);
-      const sire = horseMap.get(pregnancy.sireId);
-      const daysRemaining = pregnancy.dueDay - day - 1;
-
-      // Get maternity log entries for this dam
-      const maternityLog = log.filter(
-        (l: any) =>
-          l.text.includes(pregnancy.damName) &&
-          (l.text.includes("Mated") || l.text.includes("Foal")),
-      );
-
-      return {
-        pregnancy,
-        dam,
-        sire,
-        daysRemaining,
-        maternityLog,
-      };
-    })
-    .filter((data: any) => data.dam); // Only include if dam still exists
-
-  // Sort by days remaining (soonest due first)
-  const sortedBroodmares = broodmareData.sort(
-    (a: any, b: any) => a.daysRemaining - b.daysRemaining,
-  );
+  const { day, sortedBroodmares } = useBroodmareData();
 
   return (
     <div className="space-y-6">

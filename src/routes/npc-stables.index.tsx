@@ -1,5 +1,5 @@
 // NPC Stables Directory - Browse rival stables and their horses
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Trophy, TrendingUp, Users, Building2, Search, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,10 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useNpcStables } from "@/hooks/game/useSystemsState";
-import { getMajorStables, getStablesByTier } from "@/core/stable/stableQueries";
+import { useNpcStablesFilters } from "@/hooks/useNpcStablesFilters";
 import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
-import { useMemo } from "react";
 
 type NpcStablesSearch = {
   q: string;
@@ -31,38 +29,17 @@ export const Route = createFileRoute("/npc-stables/")({
 });
 
 function NpcStablesPage() {
-  const { q, tier } = Route.useSearch();
-  const navigate = useNavigate();
-  const npcStables = useNpcStables();
-
-  const majorStables = useMemo(() => getMajorStables(npcStables), [npcStables]);
-
-  const filteredStables = useMemo(() => {
-    return majorStables.filter((s) => {
-      const matchesSearch =
-        s.name.toLowerCase().includes(q.toLowerCase()) ||
-        s.owner.toLowerCase().includes(q.toLowerCase());
-      const matchesTier = tier === "all" || s.tier === tier;
-      return matchesSearch && matchesTier;
-    });
-  }, [majorStables, q, tier]);
-
-  const eliteStables = getStablesByTier(filteredStables, "elite");
-  const midStables = getStablesByTier(filteredStables, "mid");
-  const budgetStables = getStablesByTier(filteredStables, "budget");
-  const fillerCount = npcStables.filter((s) => !s.isMajor).length;
-
-  const updateFilter = (key: keyof NpcStablesSearch, value: string) => {
-    (navigate as any)({
-      search: (prev: any) => ({ ...prev, [key]: value }),
-    });
-  };
-
-  const clearFilters = () => {
-    (navigate as any)({
-      search: (prev: any) => ({ q: "", tier: "all" }),
-    });
-  };
+  const search = Route.useSearch();
+  const {
+    npcStables,
+    filteredStables,
+    eliteStables,
+    midStables,
+    budgetStables,
+    fillerCount,
+    updateFilter,
+    clearFilters,
+  } = useNpcStablesFilters(search);
 
   return (
     <div className="space-y-8">
@@ -83,11 +60,11 @@ function NpcStablesPage() {
             <Input
               placeholder="Search stables..."
               className="pl-8 h-9 text-sm"
-              value={q}
+              value={search.q}
               onChange={(e) => updateFilter("q", e.target.value)}
             />
           </div>
-          <Select value={tier} onValueChange={(v) => updateFilter("tier", v)}>
+          <Select value={search.tier} onValueChange={(v) => updateFilter("tier", v)}>
             <SelectTrigger className="h-9 w-32 text-sm">
               <SelectValue placeholder="All Tiers" />
             </SelectTrigger>
@@ -98,7 +75,7 @@ function NpcStablesPage() {
               <SelectItem value="budget">Budget</SelectItem>
             </SelectContent>
           </Select>
-          {(q || tier !== "all") && (
+          {(search.q || search.tier !== "all") && (
             <Button
               variant="ghost"
               size="sm"
@@ -207,7 +184,7 @@ function NpcStablesPage() {
   );
 }
 
-function StableCard({ stable }: { stable: ReturnType<typeof getMajorStables>[number] }) {
+function StableCard({ stable }: { stable: any }) {
   return (
     <Link to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-gold-muted">

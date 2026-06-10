@@ -1,27 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useGame, type StoreType } from "@/game/store";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Bell,
-  Check,
-  CheckCheck,
-  Trash2,
-  Pin,
-  AlertCircle,
-  Info,
-  Gavel,
-  Baby,
-  Activity,
-  Calendar,
-  ExternalLink,
-  Award,
-  LogOut,
-} from "lucide-react";
+import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { InboxCategory, InboxPriority, InboxMessage } from "@/core/inbox/inboxTypes";
+import { useInbox } from "@/hooks/useInbox";
 
 export const Route = createFileRoute("/inbox")({
   component: InboxPage,
@@ -29,64 +12,18 @@ export const Route = createFileRoute("/inbox")({
 
 function InboxPage() {
   const navigate = useNavigate();
-  const day = useGame((s: StoreType) => s.day);
-  const inbox = useGame((s: StoreType) => s.inbox) || [];
-  const markRead = useGame((s: StoreType) => s.markMessageRead);
-  const markAllRead = useGame((s: StoreType) => s.markAllMessagesRead);
-  const dismiss = useGame((s: StoreType) => s.dismissMessage);
-  const pinUntil = useGame((s: StoreType) => s.pinMessageUntil);
-
-  const [filter, setFilter] = useState<"all" | "unread" | "action">("all");
-
-  const filteredMessages = inbox
-    .filter((m) => {
-      if (filter === "unread") return !m.readAt;
-      if (filter === "action") return m.priority !== "info";
-      return true;
-    })
-    .sort((a, b) => {
-      // Sort pinned first
-      const aPinned = a.pinnedUntil && a.pinnedUntil >= day;
-      const bPinned = b.pinnedUntil && b.pinnedUntil >= day;
-      if (aPinned && !bPinned) return -1;
-      if (!aPinned && bPinned) return 1;
-      // Then sort by day descending
-      return b.day - a.day;
-    });
-
-  const getCategoryIcon = (category: InboxCategory) => {
-    switch (category) {
-      case "foaling":
-        return <Baby className="h-4 w-4" />;
-      case "injury":
-        return <Activity className="h-4 w-4" />;
-      case "auction":
-        return <Gavel className="h-4 w-4" />;
-      case "deadline":
-        return <Calendar className="h-4 w-4" />;
-      case "offer":
-        return <Gavel className="h-4 w-4" />;
-      case "race":
-        return <Calendar className="h-4 w-4" />;
-      case "retirement":
-        return <LogOut className="h-4 w-4" />;
-      case "hall_of_fame":
-        return <Award className="h-4 w-4" />;
-      default:
-        return <Bell className="h-4 w-4" />;
-    }
-  };
-
-  const getPriorityColor = (priority: InboxPriority) => {
-    switch (priority) {
-      case "urgent":
-        return "bg-red-500/10 border-red-500 text-red-500";
-      case "action":
-        return "bg-gold/10 border-gold text-gold";
-      default:
-        return "bg-blue-500/10 border-blue-500 text-blue-500";
-    }
-  };
+  const {
+    day,
+    inbox,
+    filter,
+    setFilter,
+    filteredMessages,
+    markRead,
+    markAllRead,
+    dismiss,
+    getCategoryIcon,
+    getPriorityColor,
+  } = useInbox();
 
   return (
     <div className="container mx-auto p-6 max-w-4xl animate-in fade-in slide-in-from-bottom-4">

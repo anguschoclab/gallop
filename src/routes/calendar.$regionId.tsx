@@ -1,12 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useGame } from "@/game/store";
 import { type Grade } from "@/data/gradedRaces";
 import { getRegion, isValidRegion } from "@/core/calendar/regions";
 import { MonthView } from "@/components/calendar/MonthView";
 import { TrackView } from "@/components/calendar/TrackView";
 import { RegionSwitcher } from "@/components/RegionSwitcher";
+import { useCalendarFilters } from "@/hooks/useCalendarFilters";
 import { ChevronLeft, Globe } from "lucide-react";
 
 interface CalendarSearch {
@@ -31,26 +31,9 @@ export const Route = createFileRoute("/calendar/$regionId")({
 
 function RegionalCalendarPage() {
   const { regionId } = Route.useParams();
-  const { grade, special, view } = Route.useSearch();
+  const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const region = getRegion(regionId)!;
-
-  const races = useGame((s) => s.races);
-  const currentDay = useGame((s) => s.day);
-
-  const regionRaces = races.filter(
-    (race) => race.graded && region.tracks.includes(race.graded.track),
-  );
-
-  const filteredRaces = regionRaces.filter((race) => {
-    if (grade !== "all" && race.graded?.grade !== grade) return false;
-    if (special !== "all" && region.specialRaceKeys) {
-      const isSpecial = region.specialRaceKeys.has(race.graded?.key ?? "");
-      if (special === "only" && !isSpecial) return false;
-      if (special === "exclude" && isSpecial) return false;
-    }
-    return true;
-  });
+  const { region, currentDay, regionRaces, filteredRaces } = useCalendarFilters(regionId, search);
 
   const updateFilter = (key: keyof CalendarSearch, value: string) => {
     navigate({
@@ -104,7 +87,7 @@ function RegionalCalendarPage() {
                   <Button
                     key={g}
                     size="sm"
-                    variant={grade === g ? "default" : "outline"}
+                    variant={search.grade === g ? "default" : "outline"}
                     onClick={() => updateFilter("grade", g)}
                   >
                     {g === "all" ? "All" : g}
@@ -121,7 +104,7 @@ function RegionalCalendarPage() {
                     <Button
                       key={s}
                       size="sm"
-                      variant={special === s ? "default" : "outline"}
+                      variant={search.special === s ? "default" : "outline"}
                       onClick={() => updateFilter("special", s)}
                     >
                       {s === "all" ? "All" : s === "only" ? "Only" : "Exclude"}
@@ -136,14 +119,14 @@ function RegionalCalendarPage() {
               <div className="flex gap-1">
                 <Button
                   size="sm"
-                  variant={view === "month" ? "default" : "outline"}
+                  variant={search.view === "month" ? "default" : "outline"}
                   onClick={() => updateFilter("view", "month")}
                 >
                   By Month
                 </Button>
                 <Button
                   size="sm"
-                  variant={view === "track" ? "default" : "outline"}
+                  variant={search.view === "track" ? "default" : "outline"}
                   onClick={() => updateFilter("view", "track")}
                 >
                   By Track
@@ -158,7 +141,7 @@ function RegionalCalendarPage() {
         </CardContent>
       </Card>
 
-      {view === "month" ? (
+      {search.view === "month" ? (
         <MonthView races={filteredRaces} region={region} currentDay={currentDay} />
       ) : (
         <TrackView races={filteredRaces} region={region} currentDay={currentDay} />

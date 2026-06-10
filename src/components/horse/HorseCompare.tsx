@@ -17,7 +17,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { HorseStats, StatBar } from "@/components/horse/HorseBits";
+import { HorseStats } from "@/components/horse/HorseBits";
+import { ComparisonStatRow } from "./ComparisonStatRow";
 import { SilkDot } from "@/components/SilkDot";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { X, GitCompare } from "lucide-react";
@@ -159,37 +160,16 @@ export function HorseCompare({ horses }: HorseCompareProps) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {(["speed", "stamina", "acceleration", "consistency"] as const).map((stat) => {
-                    const v1 = horse1.stats[stat];
-                    const v2 = horse2.stats[stat];
-                    const diff = v1 - v2;
-                    const winner = diff > 0 ? horse1.name : diff < 0 ? horse2.name : "Tie";
-                    return (
-                      <div key={stat} className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="font-medium capitalize">{stat}</span>
-                          <span className="text-muted-foreground">
-                            {diff !== 0 && (
-                              <span className={diff > 0 ? "text-success" : "text-destructive"}>
-                                {diff > 0 ? "+" : ""}
-                                {diff}
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className={diff > 0 ? "bg-success/10 rounded p-2" : ""}>
-                            <div className="text-xs text-muted-foreground mb-1">{horse1.name}</div>
-                            <StatBar label="" value={v1} />
-                          </div>
-                          <div className={diff < 0 ? "bg-success/10 rounded p-2" : ""}>
-                            <div className="text-xs text-muted-foreground mb-1">{horse2.name}</div>
-                            <StatBar label="" value={v2} />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {(["speed", "stamina", "acceleration", "consistency"] as const).map((stat) => (
+                    <ComparisonStatRow
+                      key={stat}
+                      stat={stat}
+                      v1={horse1.stats[stat]}
+                      v2={horse2.stats[stat]}
+                      name1={horse1.name}
+                      name2={horse2.name}
+                    />
+                  ))}
                 </div>
               </CardContent>
             </Card>

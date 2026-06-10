@@ -1,6 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,65 +12,22 @@ import {
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { Zap, TrendingUp, Filter } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useGalleryFilters, COAT_COLORS } from "@/hooks/useGalleryFilters";
 
 export const Route = createFileRoute("/horse-gallery")({
   component: HorseGalleryPage,
 });
 
-const COAT_COLORS = [
-  { value: "all", label: "All Coats" },
-  { value: "bay", label: "Bay" },
-  { value: "black", label: "Black" },
-  { value: "chestnut", label: "Chestnut" },
-  { value: "dark-bay", label: "Dark Bay" },
-  { value: "gray", label: "Gray" },
-  { value: "roan", label: "Roan" },
-  { value: "palomino", label: "Palomino" },
-  { value: "white", label: "White" },
-  { value: "buckskin", label: "Buckskin" },
-  { value: "seal-brown", label: "Seal Brown" },
-  { value: "liver-chestnut", label: "Liver Chestnut" },
-  { value: "dun", label: "Dun" },
-  { value: "grulla", label: "Grulla" },
-  { value: "champagne", label: "Champagne" },
-] as const;
-
 function HorseGalleryPage() {
-  const allHorses = (useGame as any)((s: any) => s.horses, shallow);
-  const horses = useMemo(() => allHorses.filter((h: any) => h.owned), [allHorses]);
-  const [coatFilter, setCoatFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"ovr" | "age" | "name">("ovr");
-
-  const filteredHorses = useMemo(() => {
-    let result = [...horses];
-
-    if (coatFilter !== "all") {
-      result = result.filter((h) => h.coatColor === coatFilter);
-    }
-
-    result.sort((a, b) => {
-      if (sortBy === "ovr") {
-        return calculateOverallRating(b) - calculateOverallRating(a);
-      }
-      if (sortBy === "age") {
-        return a.age - b.age;
-      }
-      return a.name.localeCompare(b.name);
-    });
-
-    return result;
-  }, [horses, coatFilter, sortBy]);
-
-  const coatCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    horses.forEach((h: any) => {
-      if (h.coatColor) {
-        counts[h.coatColor] = (counts[h.coatColor] || 0) + 1;
-      }
-    });
-    return counts;
-  }, [horses]);
+  const {
+    horses,
+    coatFilter,
+    setCoatFilter,
+    sortBy,
+    setSortBy,
+    filteredHorses,
+    coatCounts,
+  } = useGalleryFilters();
 
   return (
     <div className="space-y-6">

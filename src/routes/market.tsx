@@ -1,28 +1,17 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
 import { useGame } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { HorseStats, overall, NumericValue } from "@/components/horse/HorseBits";
+import { Card, CardContent } from "@/components/ui/card";
+import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/lib/formatting";
-import { horsePrice } from "@/core/horse/pricing";
-import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { SilkDot } from "@/components/SilkDot";
-import { cn } from "@/lib/utils";
 import { SyndicateMarket } from "@/components/market/SyndicateMarket";
+import { BloodstockGrid } from "@/components/market/BloodstockGrid";
 import {
   Store,
-  ShieldCheck,
   ChevronRight,
-  Search,
-  Briefcase,
-  Users,
   TrendingUp,
-  Activity,
-  HardDrive,
   Zap,
   Target,
 } from "lucide-react";
@@ -32,7 +21,6 @@ export const Route = createFileRoute("/market")({
 });
 
 function MarketPage() {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"bloodstock" | "syndicate">("bloodstock");
   const market = (useGame as any)((s: GameState) => s.market, shallow);
   const cash = useGame((s: GameState) => s.cash);
@@ -121,86 +109,7 @@ function MarketPage() {
             </Card>
           </Link>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {market.map((h: Horse) => {
-              const price = horsePrice(h);
-              const ovr = overall(h);
-              const canAfford = cash >= price;
-
-              return (
-                <Card
-                  key={h.id}
-                  className="bg-slate-900/40 border-white/5 rounded-none relative overflow-hidden group hover:border-white/20 transition-all duration-300 shadow-xl cursor-pointer"
-                  onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: h.id } })}
-                >
-                  <div className="absolute top-0 left-0 w-full h-0.5 bg-white/5 group-hover:bg-success/40 transition-colors" />
-
-                  <CardContent className="p-6 space-y-5">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-3 flex-1">
-                        <SilkDot color={h.silk} size="md" />
-                        <div className="space-y-0.5 min-w-0">
-                          <h3 className="text-xl font-black text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-success transition-colors truncate">
-                            {h.name}
-                          </h3>
-                          <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-widest text-cream/30">
-                            <span>Age: {Math.floor(h.age)}</span>
-                            <span className="w-1 h-1 rounded-full bg-white/10" />
-                            <span>OVR: {ovr}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-[8px] font-black uppercase text-success/40 tracking-widest leading-none mb-1">
-                          Price
-                        </div>
-                        <div
-                          className={cn(
-                            "text-xl font-black font-mono tracking-tighter tabular-nums",
-                            canAfford ? "text-success" : "text-destructive/60",
-                          )}
-                        >
-                          {formatCurrency(price)}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-black/40 p-3 rounded border border-white/5">
-                      <HorseStats horse={h} />
-                    </div>
-
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        buyHorse(h.id);
-                      }}
-                      disabled={!canAfford}
-                      className={cn(
-                        "w-full h-10 uppercase text-[10px] font-black tracking-[0.2em] rounded-none transition-all",
-                        canAfford
-                          ? "bg-success hover:bg-success-dark text-slate-950 shadow-lg"
-                          : "border-white/5 text-cream/20 bg-transparent",
-                      )}
-                    >
-                      {canAfford ? "Buy" : "Can't afford"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-
-            {market.length === 0 && (
-              <div className="col-span-full p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
-                <HardDrive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-                <p className="font-bold text-cream/40 uppercase tracking-[0.3em] font-[family-name:var(--font-display)]">
-                  Market Transmission Offline
-                </p>
-                <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
-                  Zero units detected in bloodstock exchange. Check next cycle.
-                </p>
-              </div>
-            )}
-          </div>
+          <BloodstockGrid market={market} cash={cash} buyHorse={buyHorse} />
         </TabsContent>
 
         <TabsContent

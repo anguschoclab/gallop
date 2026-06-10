@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Badge } from "@/components/ui/badge";
 import { getGradeColorClass } from "@/core/race/grading";
-import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { GradedStatsChart } from "@/components/race/GradedStatsChart";
 import { GRADED_RACES, getRaceCountry } from "@/data/gradedRaces";
 import { getCountryFlag } from "@/lib/countryFlag";
 import { VisualTrophy, TrophyShelf } from "@/components/awards/VisualTrophy";
+import { RaceHistoryGroup } from "./RaceHistoryGroup";
 
 interface GradedHistoryEntry {
   raceId?: string;
@@ -149,64 +149,7 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
         {graded.length === 0 ? (
           <p className="text-sm text-cream-muted">No graded stakes appearances yet.</p>
         ) : (
-          <div className="space-y-1">
-            {graded.map((r, i) => {
-              const country = countryFor(r);
-              const flag = r.grade === "G1" ? getCountryFlag(country) : null;
-              return (
-                <div
-                  key={i}
-                  className="flex items-center justify-between gap-2 text-sm py-2 border-b last:border-0"
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    {r.grade && (
-                      <Badge variant="outline" className={getGradeColorClass(r.grade)}>
-                        {r.grade}
-                      </Badge>
-                    )}
-                    <div className="min-w-0">
-                      <div className="truncate">{r.raceName}</div>
-                      <div className="text-xs text-cream-muted flex items-center gap-1.5">
-                        {flag && (
-                          <span
-                            title={country ?? "Unknown country"}
-                            className="text-sm leading-none"
-                          >
-                            {flag}
-                          </span>
-                        )}
-                        {r.grade === "G1" && (
-                          <span className="tabular-nums">Y{yearFor(r.day)}</span>
-                        )}
-                        {r.distance ? <span>· {r.distance}m</span> : null}
-                        {r.surface ? <span>· {r.surface}</span> : null}
-                        {r.fieldSize ? <span>· field of {r.fieldSize}</span> : null}
-                        <span>· D{r.day}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    {typeof r.beyer === "number" && (
-                      <span className="text-xs">
-                        <span className="text-cream-muted">
-                          <JargonTooltip term="Beyer">Beyer</JargonTooltip>{" "}
-                        </span>
-                        <span className="font-semibold">{r.beyer}</span>
-                      </span>
-                    )}
-                    <Badge
-                      variant={
-                        r.position === 1 ? "default" : r.position <= 3 ? "secondary" : "outline"
-                      }
-                    >
-                      {r.position}
-                      {getOrdinalSuffix(r.position)}
-                    </Badge>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <RaceHistoryGroup entries={graded} countryFor={countryFor} yearFor={yearFor} />
         )}
       </CardContent>
     </Card>

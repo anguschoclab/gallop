@@ -1,23 +1,14 @@
-import React from "react";
-import { useGame as useGameStore } from "@/game/store";
-import type { NewsItem } from "@/core/narrative/newsTypes";
+import { useGazetteData } from "@/hooks/useGazetteData";
+import { NewsArticle } from "./NewsArticle";
 import { NewsContent } from "./NewsContent";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Newspaper, ChevronRight, Archive, ShieldCheck } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Newspaper, Archive, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import "./Gazette.css";
 
 export const Gazette: React.FC = () => {
-  const { news, day } = useGameStore();
-
-  const highImportance = news.filter((n) => n.importance === "high");
-  const mediumImportance = news.filter((n) => n.importance === "medium");
-  const lowImportance = news.filter((n) => n.importance === "low");
-
-  const mainNews = [...highImportance, ...mediumImportance].slice(0, 8);
-  const sideNews = lowImportance.slice(0, 12);
+  const { day, mainNews, sideNews } = useGazetteData();
 
   return (
     <div className="space-y-8 pb-20 animate-fade-in">
@@ -58,7 +49,9 @@ export const Gazette: React.FC = () => {
         {/* Main Column - Primary News */}
         <main className="lg:col-span-8 space-y-6">
           {mainNews.length > 0 ? (
-            mainNews.map((item, index) => <NewsArticle key={`${item.id}-${index}`} item={item} />)
+            mainNews.map((item, index) => (
+              <NewsArticle key={`${item.id}-${index}`} item={item} />
+            ))
           ) : (
             <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
               <Archive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
@@ -148,62 +141,3 @@ export const Gazette: React.FC = () => {
   );
 };
 
-const NewsArticle: React.FC<{ item: NewsItem }> = ({ item }) => {
-  const isHigh = item.importance === "high";
-
-  return (
-    <Card
-      className={cn(
-        "border-white/5 rounded-none shadow-2xl relative overflow-hidden group",
-        isHigh
-          ? "bg-slate-900/60 border-l-4 border-l-gold"
-          : "bg-slate-900/20 border-l-4 border-l-slate-700",
-      )}
-    >
-      <CardHeader className="pb-3 border-b border-white/5 flex flex-row items-center justify-between bg-black/20">
-        <Badge
-          className={cn(
-            "rounded-none font-black text-[9px] tracking-widest uppercase h-5 px-2",
-            isHigh ? "bg-gold text-slate-950" : "bg-slate-800 text-cream/60",
-          )}
-        >
-          {item.category}
-        </Badge>
-        <span className="text-[10px] font-mono text-cream/20">
-          D{String(item.day).padStart(3, "0")}
-        </span>
-      </CardHeader>
-      <CardContent className={cn("p-8", isHigh ? "space-y-4" : "space-y-3")}>
-        <h2
-          className={cn(
-            "font-black tracking-tighter text-cream font-[family-name:var(--font-display)] uppercase group-hover:text-gold transition-colors",
-            isHigh ? "text-3xl" : "text-xl",
-          )}
-        >
-          <NewsContent text={item.headline} links={item.entityLinks} />
-        </h2>
-        <div
-          className={cn(
-            "text-cream/60 font-serif leading-relaxed italic",
-            isHigh ? "text-base" : "text-sm",
-          )}
-        >
-          <NewsContent text={item.body} links={item.entityLinks} />
-        </div>
-
-        <div className="pt-4 flex justify-between items-center border-t border-white/5">
-          <div className="text-[9px] font-black uppercase text-cream/20 tracking-widest">
-            Source: Internal Frequency 1.09
-          </div>
-          <Link
-            to="/gazette"
-            className="text-[10px] font-black text-gold/40 hover:text-gold transition-colors uppercase tracking-widest flex items-center gap-1 group/link"
-          >
-            Latest News{" "}
-            <ChevronRight className="h-3 w-3 group-hover/link:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};

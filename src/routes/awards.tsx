@@ -1,14 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrophyCase, TrophyStats } from "@/components/awards";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import {
-  REGION_AWARD_NAMES,
-  REGION_DISPLAY_NAMES,
-  CATEGORY_DISPLAY_NAMES,
-} from "@/game/awards/types";
+import { useAwardsData } from "@/hooks/useAwardsData";
+import { REGION_AWARD_NAMES } from "@/game/awards/types";
 import { REGION_COLOR_CLASSES } from "@/assets/awards";
 import { Trophy, Calendar, Star } from "lucide-react";
 
@@ -17,29 +12,14 @@ export const Route = createFileRoute("/awards")({
 });
 
 function AwardsPage() {
-  const awards = useGame((s) => s.awards);
-  const day = useGame((s) => s.day);
-  const year = Math.floor((day - 1) / 365) + 1;
-
-  // Get player awards only
-  const playerAwards = awards.filter((a) => !a.stableId);
-
-  // Group by region
-  const awardsByRegion: Record<string, typeof awards> = {
-    north_america: [],
-    europe: [],
-    asia_pacific: [],
-    south_america: [],
-  };
-
-  for (const award of playerAwards) {
-    awardsByRegion[award.region].push(award);
-  }
-
-  // Stats
-  const totalAwards = playerAwards.length;
-  const hotyCount = playerAwards.filter((a) => a.category === "horse_of_the_year").length;
-  const currentYearAwards = playerAwards.filter((a) => a.year === year).length;
+  const {
+    year,
+    playerAwards,
+    awardsByRegion,
+    totalAwards,
+    hotyCount,
+    currentYearAwards,
+  } = useAwardsData();
 
   return (
     <div className="space-y-6">

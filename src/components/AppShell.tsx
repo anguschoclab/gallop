@@ -7,7 +7,9 @@ import { PlayerRacePrompt } from "@/components/race/PlayerRacePrompt";
 import { AutoSimPanel } from "@/components/race/AutoSimPanel";
 import { AwardCeremony } from "./awards";
 import { SidebarNav } from "./SidebarNav";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useSkipToNext } from "@/hooks/useSkipToNext";
+import { useAwardCeremony } from "@/hooks/useAwardCeremony";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants/game";
 
 export function AppShell() {
@@ -18,26 +20,7 @@ export function AppShell() {
   const playerProfile = useGame((s: StoreType) => s.playerProfile);
   const advanceDay = useGame((s: StoreType) => s.advanceDay);
   const advanceMultipleDays = useGame((s: StoreType) => s.advanceMultipleDays);
-
-  const skipToNext = (kind: "auction" | "race") => {
-    const state = useGame.getState();
-    const currentDay = state.day;
-    let nextDay: number | undefined;
-    if (kind === "auction") {
-      const days = (state.auctions ?? [])
-        .filter((a) => !a.resolved && a.day > currentDay)
-        .map((a) => a.day);
-      nextDay = days.length ? Math.min(...days) : undefined;
-    } else {
-      const days = (state.races ?? [])
-        .filter((r: any) => r.day > currentDay)
-        .map((r: any) => r.day);
-      nextDay = days.length ? Math.min(...days) : undefined;
-    }
-    if (!nextDay) return;
-    const delta = nextDay - currentDay;
-    if (delta > 0) setTimeout(() => advanceMultipleDays(delta), 0);
-  };
+  const skipToNext = useSkipToNext();
 
   const location = useLocation();
   const [autoSimOpen, setAutoSimOpen] = useState(false);
@@ -46,15 +29,12 @@ export function AppShell() {
   const unreadCount = inbox?.filter((m) => !m.readAt).length ?? 0;
 
   const awards = useAwards();
-  const pendingCeremonies = useGameWithShallow((s: StoreType) => s.pendingAwardCeremonies);
-  const [showCeremony, setShowCeremony] = useState(false);
-  const clearPendingCeremonies = useGame((s: StoreType) => s.clearPendingCeremonies);
-
-  useEffect(() => {
-    if (pendingCeremonies && pendingCeremonies.length > 0) {
-      setShowCeremony(true);
-    }
-  }, [pendingCeremonies]);
+  const {
+    showCeremony,
+    setShowCeremony,
+    pendingCeremonies,
+    clearPendingCeremonies,
+  } = useAwardCeremony();
 
   const isRace = location.pathname.startsWith("/race/");
   const isStart = location.pathname === "/start";
