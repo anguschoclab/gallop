@@ -139,8 +139,8 @@ export const energyPhase = {
       const currentFitness = h.fitness ?? 0;
       const currentFatigue = h.fatigue ?? 0;
 
-      const newFitness = decayValue(currentFitness, BANISTER_CONSTANTS.FITNESS_TAU);
-      const newFatigue = decayValue(currentFatigue, BANISTER_CONSTANTS.FATIGUE_TAU);
+      const newFitness = decayValue(currentFitness, 1, BANISTER_CONSTANTS.FITNESS_TAU);
+      const newFatigue = decayValue(currentFatigue, 1, BANISTER_CONSTANTS.FATIGUE_TAU);
       const newPeakingIndex = calculatePeakingIndex(newFitness, newFatigue);
       // --- END BANISTER DECAY ---
 

@@ -27,14 +27,12 @@ export const BANISTER_CONSTANTS = {
 };
 
 /**
- * Calculate the new value after 1 day of decay.
- * Formula: V_new = V_old * exp(-1 / tau)
- * @param currentValue - The current value to decay
- * @param tau - The decay time constant in days
- * @returns The decayed value after 1 day
+ * Calculate the decayed value of a metric over time
+ * Formula: value * e^(-days / timeConstant)
  */
-export function decayValue(currentValue: number, tau: number): number {
-  return currentValue * Math.exp(-1 / tau);
+export function decayValue(initialValue: number, daysPassed: number, timeConstant: number): number {
+  if (daysPassed === 0) return initialValue;
+  return initialValue * Math.exp(-daysPassed / timeConstant);
 }
 
 /**
