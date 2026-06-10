@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGame } from "@/game/store";
 import { getSaveSlots, deleteSaveSlot, type SaveSlotMetadata } from "@/services/saveManager";
+import { toast } from "sonner";
 
 export function useSaveSlots(initialTab: "save" | "load") {
   const [activeTab, setActiveTab] = useState<"save" | "load">(initialTab);
@@ -31,8 +32,10 @@ export function useSaveSlots(initialTab: "save" | "load") {
         await manualSave(id, name);
         setNewSaveName("");
         await refreshSaves();
+        toast.success("Game saved!");
       } catch (error) {
         console.error("Ledger write failed:", error);
+        toast.error("Failed to save game");
       } finally {
         setIsSaving(false);
       }

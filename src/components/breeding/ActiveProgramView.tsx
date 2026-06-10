@@ -72,6 +72,7 @@ export function ActiveProgramView() {
                 variant="ghost"
                 className="h-7 w-7 p-0 text-cream-muted hover:text-red-400"
                 onClick={handleCancel}
+                aria-label="Cancel breeding program"
               >
                 <X className="h-3.5 w-3.5" />
               </Button>
@@ -162,6 +163,7 @@ export function ActiveProgramView() {
                     variant="ghost"
                     className="h-6 w-6 p-0 text-cream-muted hover:text-red-400"
                     onClick={() => unenrollDamFromProgram(mare.id)}
+                    aria-label={`Remove ${mare.name} from program`}
                   >
                     <X className="h-3 w-3" />
                   </Button>
