@@ -14,7 +14,7 @@
 
 import type { RegionalSystem } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
-import namePoolsData from "@/assets/data/namePools.json";
+import namePoolsData from "@/data/namePools.json";
 
 // Sponsor names for race naming
 export const SPONSORS: Record<RegionalSystem, string[]> = namePoolsData.SPONSORS as Record<

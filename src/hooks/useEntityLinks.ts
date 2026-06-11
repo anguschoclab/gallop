@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
-import type { EntityLink } from "@/core/narrative/newsTypes";
+import type { EntityLink } from "@/services/narrative/newsTypes";
 
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

@@ -11,7 +11,7 @@
 
 import type { Impact } from "./base";
 import type { ScoutReport } from "@/game/types";
-import type { NewsItem } from "../../narrative/newsTypes";
+import type { NewsItem } from "@/services/narrative/newsTypes";
 import type { TrackRecord } from "../../history/historyTypes";
 
 // News impact

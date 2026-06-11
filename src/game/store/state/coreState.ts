@@ -16,7 +16,7 @@ import type { Horse } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
 import type { Transaction } from "@/core/transactions/transactionTypes";
 import type { Expense } from "@/core/expenses/expenseTypes";
-import type { NewsItem } from "@/core/narrative/newsTypes";
+import type { NewsItem } from "@/services/narrative/newsTypes";
 import type { HallOfFameEntry, SeasonRecord } from "@/core/history/historyTypes";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
 import { generateUUID } from "@/core/uuid";

@@ -4,7 +4,7 @@ import { NewsContent } from "./NewsContent";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { NewsItem } from "@/core/narrative/newsTypes";
+import type { NewsItem } from "@/services/narrative/newsTypes";
 
 interface NewsArticleProps {
   item: NewsItem;

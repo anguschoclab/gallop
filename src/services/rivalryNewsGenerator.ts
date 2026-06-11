@@ -9,7 +9,7 @@
  * Dependencies: @/core/uuid, @/core/narrative/newsTypes, @/game/types, @/game/rng
  */
 import { generateUUID } from "@/core/uuid";
-import type { NewsItem, NewsCategory, NewsImportance } from "@/core/narrative/newsTypes";
+import type { NewsItem, NewsCategory, NewsImportance } from "@/services/narrative/newsTypes";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 

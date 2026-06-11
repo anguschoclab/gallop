@@ -27,7 +27,7 @@ import { upgradeFacility } from "@/core/facilities";
 import type { Facility } from "@/core/facilities/facilityTypes";
 import { generateUUID } from "@/core/uuid";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
-import type { NewsItem } from "@/core/narrative/newsTypes";
+import type { NewsItem } from "@/services/narrative/newsTypes";
 import {
   generateRivalryEmergenceNews,
   generateGrudgeMatchNews,

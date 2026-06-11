@@ -1,5 +1,5 @@
 import { generateUUID } from "@/core/uuid";
-import type { NewsItem, NewsCategory, NewsImportance } from "@/core/narrative/newsTypes";
+import type { NewsItem, NewsCategory, NewsImportance } from "@/services/narrative/newsTypes";
 import type { Race, Horse } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 
