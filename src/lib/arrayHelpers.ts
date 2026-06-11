@@ -67,7 +67,8 @@ export function min(arr: number[]): number {
  * @example
  * const leader = maxBy(runners, 'position');
  */
-export function maxBy<T>(arr: T[], prop: keyof T): T {
+export function maxBy<T>(arr: T[], prop: keyof T): T | undefined {
+  if (arr.length === 0) return undefined;
   return arr.reduce(
     (max, current) => ((current[prop] as number) > (max[prop] as number) ? current : max),
     arr[0],
