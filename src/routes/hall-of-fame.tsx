@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/hall-of-fame")({
 });
 
 function HallOfFame() {
-  const hallOfFame = (useGame as any)((s: GameState) => s.hallOfFame || [], shallow);
+  const hallOfFame = useGameWithShallow((s: GameState) => s.hallOfFame || []);
   const horses = useGame((s: GameState) => s.horses);
 
   // ⚡ Bolt: Cache horses in an O(1) map to replace the previous O(N^2) `.find` inside the loop below.

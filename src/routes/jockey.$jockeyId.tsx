@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import { JockeyCard } from "@/components/jockey/JockeyCard";
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,9 @@ export const Route = createFileRoute("/jockey/$jockeyId")({
 
 function JockeyPage() {
   const { jockeyId } = Route.useParams();
-  const jockeys = (useGame as any)((s: GameState) => s.jockeys, shallow);
+  const jockeys = useGameWithShallow((s: GameState) => s.jockeys);
   const hireJockey = useGame((s) => s.hireJockey);
+  const hireApprentice = useGame((s) => s.hireApprentice);
   const releaseJockey = useGame((s) => s.releaseJockey);
 
   const jockey = jockeys?.find((j: any) => j.id === jockeyId);
@@ -31,6 +32,7 @@ function JockeyPage() {
   }
 
   const isRetained = !!jockey.contractUntil;
+  const isApprentice = (jockey as any).isApprentice;
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">
@@ -46,8 +48,8 @@ function JockeyPage() {
           <JockeyCard
             jockey={jockey}
             isRetained={isRetained}
-            actionLabel={isRetained ? "Release Jockey" : "Sign Retainer"}
-            onAction={isRetained ? (j) => releaseJockey(j.id) : (j) => hireJockey(j.id, "retainer")}
+            actionLabel={isRetained ? "Release Jockey" : isApprentice ? "Hire Apprentice" : "Sign Retainer"}
+            onAction={isRetained ? (j) => releaseJockey(j.id) : isApprentice ? (j) => hireApprentice(j.id) : (j) => hireJockey(j.id, "retainer")}
           />
         </div>
       </div>

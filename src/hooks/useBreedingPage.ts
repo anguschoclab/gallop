@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { isFemaleHorse } from "@/core/horse/gender";
@@ -9,9 +9,9 @@ import { useBreedingCompatibility } from "@/hooks/useBreedingCompatibility";
 import { getAncestorIds } from "@/lib/pedigreeGraph";
 
 export function useBreedingPage() {
-  const horses = (useGame as any)((s: GameState) => s.horses || [], shallow);
-  const pregnancies = (useGame as any)((s: GameState) => s.pregnancies || [], shallow);
-  const log = (useGame as any)((s: GameState) => s.log || [], shallow);
+  const horses = useGameWithShallow((s: GameState) => s.horses || []);
+  const pregnancies = useGameWithShallow((s: GameState) => s.pregnancies || []);
+  const log = useGameWithShallow((s: GameState) => s.log || []);
   const day = useGame((s: GameState) => s.day);
   const cash = useGame((s: GameState) => s.cash);
   const breed = useGame((s) => s.breed);
@@ -30,14 +30,14 @@ export function useBreedingPage() {
 
   const sharedAncestorIds = useMemo(() => {
     if (!sireId || !damId) return undefined;
-    const sireAncestors = getAncestorIds(sireId, horses, 3);
-    const damAncestors = getAncestorIds(damId, horses, 3);
+    const sireAncestors = getAncestorIds(sireId, localHorseMap, 3);
+    const damAncestors = getAncestorIds(damId, localHorseMap, 3);
     const shared = new Set<string>();
     for (const id of sireAncestors) {
       if (damAncestors.has(id)) shared.add(id);
     }
     return shared.size > 0 ? shared : undefined;
-  }, [sireId, damId, horses]);
+  }, [sireId, damId, localHorseMap]);
 
   const adults = horses.filter((h: Horse) => h.age >= 3);
   const breedLogs = log.filter((l: any) => /Mated|Foal/.test(l.text));

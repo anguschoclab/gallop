@@ -14,6 +14,8 @@ import { HorseAnalyticsSection } from "@/components/horse/HorseAnalyticsSection"
 import { HorseManagementSection } from "@/components/horse/HorseManagementSection";
 import { HorseLineageSection } from "@/components/horse/HorseLineageSection";
 import { HorseRaceHistorySection } from "@/components/horse/HorseRaceHistorySection";
+import { InsurancePanel } from "@/components/insurance/InsurancePanel";
+import { StewardsPanel } from "@/components/stewards/StewardsPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { useHorseActions } from "@/hooks/useHorseActions";
 import { useHorseDetail } from "@/hooks/useHorseDetail";
@@ -159,6 +161,8 @@ function HorseDetail() {
               eligibleSale={eligibleSale}
               day={day}
             />
+            <InsurancePanel horseId={horse.id} />
+            <StewardsPanel horseId={horse.id} />
           </div>
 
           {/* RIGHT PILLAR */}

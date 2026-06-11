@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, type MouseEvent } from "react";
-import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/services/storageAdapter";
 import { getAffinityLevel, calculateTheHandBonus } from "@/core/jockey/affinity";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";
@@ -9,19 +8,19 @@ export function useHorseDetail(horseId: string) {
   const trainHorse = useGame((s) => s.trainHorse);
   const consignHorse = useGame((s) => s.consignHorse);
   const withdrawConsignment = useGame((s) => s.withdrawConsignment);
-  const trainingUsed = (useGame as any)((s: any) => s.trainingUsed[horseId] ?? 0, shallow);
-  const cash = useGame((s: any) => s.cash);
-  const horses = useGame((s: any) => s.horses);
+  const trainingUsed = useGameWithShallow((s) => s.trainingUsed[horseId] ?? 0);
+  const cash = useGame((s) => s.cash);
+  const horses = useGame((s) => s.horses);
 
   const localHorseMap = useMemo(
     () => new Map<string, any>((horses ?? []).map((h: any) => [h.id, h])),
     [horses],
   );
 
-  const retireToStud = useGame((s: any) => s.retireToStud);
-  const retireToPasture = useGame((s: any) => s.retireToPasture);
-  const facilities = (useGame as any)((s: any) => s.facilities, shallow);
-  const pregnancies = (useGame as any)((s: any) => s.pregnancies, shallow);
+  const retireToStud = useGame((s) => s.retireToStud);
+  const retireToPasture = useGame((s) => s.retireToPasture);
+  const facilities = useGameWithShallow((s) => s.facilities);
+  const pregnancies = useGameWithShallow((s) => s.pregnancies);
   const pregnancy = pregnancies?.find((p: any) => !p.resolved && p.damId === horseId);
 
   const progenyPregnancies = useMemo(() => {
@@ -38,13 +37,13 @@ export function useHorseDetail(horseId: string) {
 
   const [raceHistoryLimit, setRaceHistoryLimit] = useState<number>(() => loadRaceHistoryLimit());
   const [syndicateDialogOpen, setSyndicateDialogOpen] = useState(false);
-  const syndicates = (useGame as any)((s: any) => s.syndicates || {}, shallow);
-  const races = (useGame as any)((s: any) => s.races, shallow);
+  const syndicates = useGameWithShallow((s) => s.syndicates || {});
+  const races = useGameWithShallow((s) => s.races);
   const currentRace = races?.find((r: any) =>
     r.entries.some((e: any) => e.horseId === horseId && !r.resolved),
   );
   const assignedJockeyId = currentRace?.entries.find((e: any) => e.horseId === horseId)?.jockeyId;
-  const jockeys = (useGame as any)((s: any) => s.jockeys, shallow);
+  const jockeys = useGameWithShallow((s) => s.jockeys);
   const assignedJockey = jockeys?.find((j: any) => j.id === assignedJockeyId);
 
   const handleTrain = useCallback(

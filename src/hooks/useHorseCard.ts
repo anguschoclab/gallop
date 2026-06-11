@@ -1,15 +1,15 @@
-import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGameSelector } from "@/hooks/useGameSelector";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { scoutGrade, gradeColorClass } from "@/core/horse/grading";
+import { scoutGrade } from "@/core/horse/grading";
+import { statGradeColor } from "@/lib/uiTokens";
 import { getDisplayableStats, getScoutStatus } from "@/core/npc/scouting";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { Horse } from "@/game/types";
 
 export function useHorseCard(horse: Horse, showScoutInfo = false) {
-  const scoutReports = (useGame as any)((s: any) => s.scoutReports, shallow);
-  const day = useGame((s) => s.day);
-  const simpleHorseCards = useGame((s) => s.userSettings?.display?.simpleHorseCards ?? true);
+  const scoutReports = useGameSelector((s) => s.scoutReports);
+  const day = useGameSelector((s) => s.day);
+  const simpleHorseCards = useGameSelector((s) => s.userSettings?.display?.simpleHorseCards ?? true);
 
   const ovr = calculateOverallRating(horse);
 
@@ -25,7 +25,7 @@ export function useHorseCard(horse: Horse, showScoutInfo = false) {
         ? "text-blue-400"
         : "text-pink-400";
 
-  const gradeColor = (score: number) => gradeColorClass(scoutGrade(score));
+  const gradeColor = (score: number) => statGradeColor(scoutGrade(score));
 
   const sparklineData =
     horse.raceHistory

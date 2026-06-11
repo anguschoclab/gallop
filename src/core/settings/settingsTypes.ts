@@ -19,6 +19,8 @@ export interface DisplaySettings {
   highlightPendingActions: boolean;
   /** Show letter grades instead of raw numerics on HorseCard (default true) */
   simpleHorseCards: boolean;
+  /** Show advanced metrics: raw numerics, genotype string, chromosome breakdown */
+  advancedMetrics: boolean;
 }
 
 /**
@@ -101,6 +103,7 @@ export function createDefaultUserSettings(currentDay: number = 1): UserSettings 
       detailedTooltips: true,
       highlightPendingActions: true,
       simpleHorseCards: true,
+      advancedMetrics: false,
     },
     gameplay: {
       autoSimEnabled: true,

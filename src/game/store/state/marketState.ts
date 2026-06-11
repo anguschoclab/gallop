@@ -12,7 +12,8 @@
 // Market State - Trading and acquisition systems
 // Includes market horses, auctions, and scouting reports
 
-import type { Horse, AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "../types";
+import type { Horse } from "@/core/horse/types";
+import type { AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "@/core/market/types";
 
 /**
  * Market-related state for trading, auctions, and scouting.

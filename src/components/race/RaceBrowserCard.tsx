@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
-import { getGradeColorClass } from "@/core/race/grading";
+import { gradeColor } from "@/lib/uiTokens";
 import { getCountry } from "@/data/gradedRaces";
 import type { Race } from "@/game/types";
 
@@ -24,7 +24,7 @@ export function RaceBrowserCard({ race }: Props) {
                 {race.name}
               </h3>
               {race.graded?.grade && (
-                <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
+                <Badge variant="outline" className={gradeColor(race.graded.grade)}>
                   {race.graded.grade}
                 </Badge>
               )}

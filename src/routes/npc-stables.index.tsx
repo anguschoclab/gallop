@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useNpcStablesFilters } from "@/hooks/useNpcStablesFilters";
-import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
+import { getReputationStars } from "@/core/stable/uiHelpers";
+import { stableTierColor } from "@/lib/uiTokens";
 
 type NpcStablesSearch = {
   q: string;
@@ -205,7 +206,7 @@ function StableCard({ stable }: { stable: any }) {
                 <p className="text-sm text-cream-muted">{stable.country}</p>
               </div>
             </div>
-            <Badge className={getTierColor(stable.tier)}>{stable.tier}</Badge>
+            <Badge className={stableTierColor(stable.tier)}>{stable.tier}</Badge>
           </div>
         </CardHeader>
         <CardContent>

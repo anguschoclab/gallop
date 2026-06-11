@@ -344,6 +344,13 @@ export interface InsuranceCancelIntent extends Intent {
   horseId: string;
 }
 
+// Insurance claim intent
+export interface InsuranceClaimIntent extends Intent {
+  type: "insurance_claim";
+  horseId: string;
+  payout: number;
+}
+
 // Stewards inquiry intent
 export interface StewardsInquiryIntent extends Intent {
   type: "stewards_inquiry";
@@ -394,4 +401,5 @@ export type AnyIntent =
   | SyndicateFeeDistributionIntent
   | InsurancePurchaseIntent
   | InsuranceCancelIntent
+  | InsuranceClaimIntent
   | StewardsInquiryIntent;

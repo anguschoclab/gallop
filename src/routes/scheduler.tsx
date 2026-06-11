@@ -8,6 +8,7 @@ import { CalendarClock, Flag } from "lucide-react";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { CampaignAddPanel } from "@/components/scheduler/CampaignAddPanel";
 import { CampaignCard } from "@/components/scheduler/CampaignCard";
+import { TacticsAnalyzer } from "@/components/tactics/TacticsAnalyzer";
 
 export const Route = createFileRoute("/scheduler")({
   component: SchedulerPage,
@@ -15,8 +16,8 @@ export const Route = createFileRoute("/scheduler")({
 
 function SchedulerPage() {
   const day = useGame((s: GameState) => s.day);
-  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
-  const races = (useGame as any)((s: GameState) => s.races, shallow);
+  const horses = useGameWithShallow((s: GameState) => s.horses);
+  const races = useGameWithShallow((s: GameState) => s.races);
   const campaigns = useGameWithShallow((s: GameState) => s.campaigns ?? []);
   const generateAutoCampaign = useGame((s) => s.generateAutoCampaign);
   const deleteCampaign = useGame((s) => s.deleteCampaign);

@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
 
 export function useRecapData() {
-  const races = (useGame as any)((s: GameState) => s.races, shallow);
-  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
-  const calibratedPars = (useGame as any)((s: GameState) => s.calibratedPars, shallow);
+  const races = useGameWithShallow((s: GameState) => s.races);
+  const horses = useGameWithShallow((s: GameState) => s.horses);
+  const calibratedPars = useGameWithShallow((s: GameState) => s.calibratedPars);
   const day = useGame((s: GameState) => s.day);
 
   const localHorseMap = useMemo(() => new Map(horses.map((h: Horse) => [h.id, h])), [horses]);

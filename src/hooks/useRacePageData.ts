@@ -14,22 +14,19 @@ import { NarrativeGenerator } from "@/services/narrativeService";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 
 export function useRacePageData(raceId: string) {
-  const race = (useGame as any)(
-    (s: GameState) => s.races.find((r: any) => r.id === raceId),
-    shallow,
-  );
-  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
+  const race = useGameWithShallow((s: GameState) => s.races.find((r: any) => r.id === raceId));
+  const horses = useGameWithShallow((s: GameState) => s.horses);
   const jockeys = useGameWithShallow((s: GameState) => s.jockeys ?? []);
-  const stables = (useGame as any)((s: GameState) => s.npcStables, shallow);
+  const stables = useGameWithShallow((s: GameState) => s.npcStables);
   const resolveRaceWithImpacts = useGame((s) => s.resolveRaceWithImpacts);
-  const raceWeather = (useGame as any)((s: any) => {
+  const raceWeather = useGameWithShallow((s: any) => {
     if (!race) return undefined;
     const trackId = race.graded?.trackId ?? race.trackId;
     if (!trackId) return undefined;
     const buf = s.weather?.byTrack?.[trackId];
     if (!buf || !buf.length) return undefined;
     return buf.find((w: any) => w.day === race.day) ?? buf[buf.length - 1];
-  }, shallow);
+  });
 
   const [runners] = useState<Runner[]>(() => {
     if (!race) return [];
@@ -76,7 +73,7 @@ export function useRacePageData(raceId: string) {
     return oddsMap;
   }, [runners, localHorseMap, classBonus]);
 
-  const calibratedPars = (useGame as any)((s: GameState) => s.calibratedPars, shallow);
+  const calibratedPars = useGameWithShallow((s: GameState) => s.calibratedPars);
 
   return {
     race,

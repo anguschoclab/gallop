@@ -18,6 +18,15 @@ export * from "@/core/market/types";
 export * from "@/core/breeding/types";
 export * from "@/core/calendar/campaignTypes";
 
+// Re-export from core modules that are already exported via wildcard above
+// These are explicitly listed for clarity and to ensure they're available
+export type { Pregnancy } from "@/core/breeding/types";
+export type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
+export type { Horse } from "@/core/horse/types";
+export type { Race } from "@/core/race/types";
+export type { AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "@/core/market/types";
+export type { PlayerProfile } from "@/core/stable/types";
+
 // Re-export specific external dependencies
 export type { GameState } from "./store/state";
 export type { RegionalAward, AwardRegion } from "./awards/types";

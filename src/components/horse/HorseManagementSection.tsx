@@ -1,8 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Gavel, Tag } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Gavel, Tag, Scissors, Edit, DollarSign } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { AuctionSale } from "@/game/types";
+import { useGame } from "@/game/store";
+import { toast } from "sonner";
 
 interface HorseManagementSectionProps {
   horse: any;
@@ -19,7 +22,46 @@ export function HorseManagementSection({
   eligibleSale,
   day,
 }: HorseManagementSectionProps) {
+  const geldingHorse = useGame((s) => s.geldingHorse);
+  const renameHorse = useGame((s) => s.renameHorse);
+  const updateStudFee = useGame((s) => s.updateStudFee);
+
   if (!horse.owned) return null;
+
+  const handleGelding = () => {
+    if (confirm(`Geld ${horse.name}? This cannot be undone.`)) {
+      const result = geldingHorse(horse.id);
+      if (result.ok) {
+        toast.success("Horse gelded successfully", { duration: 3000 });
+      } else {
+        toast.error(result.reason, { duration: 3000 });
+      }
+    }
+  };
+
+  const handleRename = () => {
+    const newName = prompt(`Enter new name for ${horse.name}:`);
+    if (newName && newName.trim()) {
+      const result = renameHorse(horse.id, newName.trim());
+      if (result.ok) {
+        toast.success("Horse renamed successfully", { duration: 3000 });
+      } else {
+        toast.error(result.reason, { duration: 3000 });
+      }
+    }
+  };
+
+  const handleUpdateStudFee = () => {
+    const newFee = prompt(`Enter new stud fee for ${horse.name} (current: $${horse.stud?.fee || 0}):`);
+    if (newFee && !isNaN(Number(newFee))) {
+      const result = updateStudFee(horse.id, Number(newFee));
+      if (result.ok) {
+        toast.success("Stud fee updated successfully", { duration: 3000 });
+      } else {
+        toast.error(result.reason, { duration: 3000 });
+      }
+    }
+  };
 
   return (
     <section id="management" className="space-y-4 pt-4">
@@ -98,6 +140,43 @@ export function HorseManagementSection({
               <span className="font-mono text-success">
                 ${(horse.earnings ?? 0).toLocaleString()}
               </span>
+            </div>
+          </div>
+
+          {/* Management Actions */}
+          <div className="pt-4 border-t border-white/5 space-y-2">
+            <div className="text-[9px] font-black uppercase tracking-widest text-cream/40 mb-2">
+              Management Actions
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                onClick={handleRename}
+                variant="outline"
+                size="sm"
+                className="h-8 text-[9px] font-black uppercase border-white/10 hover:bg-white/5 text-cream"
+              >
+                <Edit className="h-3 w-3 mr-1" /> Rename
+              </Button>
+              {horse.sex === "colt" && !horse.isGelded && (
+                <Button
+                  onClick={handleGelding}
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-[9px] font-black uppercase border-red-400/30 hover:bg-red-400/10 text-red-400"
+                >
+                  <Scissors className="h-3 w-3 mr-1" /> Geld
+                </Button>
+              )}
+              {horse.stud?.atStud && (
+                <Button
+                  onClick={handleUpdateStudFee}
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-[9px] font-black uppercase border-gold/30 hover:bg-gold/10 text-gold"
+                >
+                  <DollarSign className="h-3 w-3 mr-1" /> Update Fee
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>

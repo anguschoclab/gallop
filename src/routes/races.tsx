@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import type { GameState } from "@/game/types";
 import { useRaces, useHorses } from "@/hooks/game/useCoreState";
@@ -33,7 +33,7 @@ function RacesPage() {
   const navigate = Route.useNavigate();
   const races = useRaces();
   const horses = useHorses();
-  const claims = (useGame as any)((s: GameState) => s.claims ?? [], shallow);
+  const claims = useGameWithShallow((s: GameState) => s.claims ?? []);
   const day = useGame((s: GameState) => s.day);
   const cash = useGame((s) => s.cash);
   const fileClaim = useGame((s) => s.fileClaim);

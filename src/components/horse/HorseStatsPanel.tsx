@@ -1,8 +1,8 @@
 import { StatBar } from "@/components/horse/HorseBits";
+import { BeyerSparkline } from "@/components/horse/BeyerSparkline";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { scoutGrade } from "@/core/horse/grading";
 import { cn } from "@/lib/utils";
-import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import type { Horse } from "@/game/types";
 import { ShieldCheck, Activity } from "lucide-react";
 
@@ -65,27 +65,7 @@ export function HorseStatsPanel({ horse, ovr, gradeColor, sparklineData, isAdvan
           </div>
 
           {sparklineData.length > 2 ? (
-            <div className="flex-1 min-h-[60px] relative mt-1 bg-black/20 border border-white/5 rounded-sm p-1">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={sparklineData}>
-                  <YAxis domain={["dataMin - 5", "dataMax + 5"]} hide />
-                  <Line
-                    type="step"
-                    dataKey="beyer"
-                    stroke="#d4af37"
-                    strokeWidth={1.5}
-                    dot={{ r: 1.5, fill: "#020617", stroke: "#d4af37" }}
-                    isAnimationActive={false}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-              <div className="absolute top-1 left-1.5 text-[8px] font-mono text-gold/40">
-                <JargonTooltip term="Beyer">BEYER</JargonTooltip>
-              </div>
-              <div className="absolute bottom-1 right-1.5 text-[9px] font-mono font-black text-gold">
-                {sparklineData[sparklineData.length - 1].beyer}
-              </div>
-            </div>
+            <BeyerSparkline data={sparklineData} />
           ) : (
             <div className="flex-1 flex flex-col justify-center space-y-3 bg-black/20 border border-white/5 rounded-sm p-3">
               <div className="flex justify-between items-end border-b border-white/5 pb-1">

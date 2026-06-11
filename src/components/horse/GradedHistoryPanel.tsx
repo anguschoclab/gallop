@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Badge } from "@/components/ui/badge";
-import { getGradeColorClass } from "@/core/race/grading";
+import { gradeColor } from "@/lib/uiTokens";
 import { GradedStatsChart } from "@/components/race/GradedStatsChart";
 import { GRADED_RACES, getRaceCountry } from "@/data/gradedRaces";
 import { getCountryFlag } from "@/lib/countryFlag";
@@ -125,7 +125,7 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
           {(["G1", "G2", "G3"] as const).map((g) => (
             <div key={g} className="rounded-md border p-3">
               <div className="flex items-center justify-between mb-1">
-                <Badge variant="outline" className={getGradeColorClass(g)}>
+                <Badge variant="outline" className={gradeColor(g)}>
                   {g}
                 </Badge>
                 <span className="text-xs text-cream-muted">

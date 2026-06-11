@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { NumericValue } from "@/components/horse/HorseBits";
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/market")({
 
 function MarketPage() {
   const [activeTab, setActiveTab] = useState<"bloodstock" | "syndicate">("bloodstock");
-  const market = (useGame as any)((s: GameState) => s.market, shallow);
+  const market = useGameWithShallow((s: GameState) => s.market);
   const cash = useGame((s: GameState) => s.cash);
   const buyHorse = useGame((s) => s.buyHorse);
 

@@ -12,7 +12,7 @@ import { type AuctioneerLine } from "@/services/auctioneerService";
 import { useAuctionTimers } from "./useAuctionTimers";
 import { useAuctionEventProcessor } from "./useAuctionEventProcessor";
 import { usePlayerBidding } from "./usePlayerBidding";
-import type { AuctionBidRecord } from "@/game/types";
+import type { AuctionBidRecord, AuctionLot } from "@/game/types";
 
 const TICK_MS = 1500;
 
@@ -143,7 +143,7 @@ export function useAuctionTheater(saleId: string) {
   const currentHorse = lotState?.horse;
   const currentBid = lotState?.currentBid ?? 0;
   const leadingBidder = lotState?.leadingBidder;
-  const totalLots = sale?.lots.filter((l) => !l.withdrawn).length ?? 0;
+  const totalLots = sale?.lots.filter((l: AuctionLot) => !l.withdrawn).length ?? 0;
   const lotIndex = runnerRef.current?.currentLotIndex() ?? 0;
   const playerIsLeading =
     !theaterState.done &&

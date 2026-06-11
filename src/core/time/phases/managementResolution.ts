@@ -32,6 +32,7 @@ import type {
   CampaignFlagDismissalIntent,
   CampaignCreationIntent,
   CampaignDeletionIntent,
+  InsuranceClaimIntent,
 } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
@@ -39,6 +40,7 @@ import { createRng, hashStr } from "@/core/common/rng";
 import { scoutHorse } from "@/core/npc/scouting";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { calculateDailyPremium } from "@/core/insurance/insuranceTypes";
+import { calculateBaseHorseValue } from "@/core/horse/pricing";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 import {
   isTopHorse,
@@ -60,7 +62,8 @@ export const managementResolutionPhase: PipelinePhase = {
     // Insurance premium deduction - all insured horses pay daily premium
     for (const horse of state.horses) {
       if (horse.insurancePolicy) {
-        const premium = calculateDailyPremium(horse.insurancePolicy.type, horse.value);
+        const horseValue = calculateBaseHorseValue(horse, "mid");
+        const premium = calculateDailyPremium(horse.insurancePolicy.type, horseValue);
         if (premium > 0) {
           impacts.push({
             id: generateUUID(context.dailyRng),
@@ -411,6 +414,25 @@ export const managementResolutionPhase: PipelinePhase = {
             horseId: typedIntent.horseId,
             reason: "Campaign deleted",
           } as any);
+          break;
+        }
+
+        case "insurance_claim": {
+          const typedIntent = intent as InsuranceClaimIntent;
+          const horse = state.horses.find((h) => h.id === typedIntent.horseId);
+          if (horse && horse.insurancePolicy && horse.insurancePolicy.type !== "none") {
+            impacts.push({
+              id: generateUUID(context.dailyRng),
+              intentId: intent.id,
+              day: newDay,
+              phase: "managementResolution",
+              logLevel: "always",
+              type: "insurance_payout",
+              horseId: typedIntent.horseId,
+              amount: typedIntent.payout,
+              reason: `Insurance claim payout for ${horse.name}`,
+            } as any);
+          }
           break;
         }
 

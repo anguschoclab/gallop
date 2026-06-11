@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getGradeColorClass } from "@/core/race/grading";
+import { gradeColor } from "@/lib/uiTokens";
 import { AlertTriangle } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { WeatherForecastStrip } from "./WeatherForecastStrip";
@@ -16,7 +16,7 @@ interface RaceRowProps {
 export function RaceRow({ race, onEnter }: RaceRowProps) {
   const ownedCount = race.entries.filter((e) => e.owned).length;
   const gradeLabel = race.graded?.grade;
-  const gradeColor = gradeLabel ? getGradeColorClass(gradeLabel) : "";
+  const gradeColorClass = gradeLabel ? gradeColor(gradeLabel) : "";
   const isClaiming = !!race.claiming;
   const claimingPrice: number | undefined = race.claiming?.price;
 
@@ -41,7 +41,7 @@ export function RaceRow({ race, onEnter }: RaceRowProps) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           {gradeLabel && (
-            <Badge variant="outline" className={cn("h-4 px-1 text-[9px] font-bold", gradeColor)}>
+            <Badge variant="outline" className={cn("h-4 px-1 text-[9px] font-bold", gradeColorClass)}>
               {gradeLabel}
             </Badge>
           )}

@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { getGradeColorClass } from "@/core/race/grading";
+import { gradeColor } from "@/lib/uiTokens";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { getCountryFlag } from "@/lib/countryFlag";
@@ -35,7 +35,7 @@ export function RaceHistoryGroup({ entries, countryFor, yearFor }: RaceHistoryGr
           >
             <div className="flex items-center gap-2 min-w-0">
               {r.grade && (
-                <Badge variant="outline" className={getGradeColorClass(r.grade)}>
+                <Badge variant="outline" className={gradeColor(r.grade)}>
                   {r.grade}
                 </Badge>
               )}

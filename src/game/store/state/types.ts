@@ -5,7 +5,7 @@
  * helping to resolve circular dependencies between state modules.
  */
 
-import type { PlayerProfile } from "../types";
+import type { PlayerProfile } from "@/core/stable/types";
 import type { Backstory } from "@/core/common/backstories";
 
 /**

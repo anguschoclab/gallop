@@ -13,6 +13,9 @@ import type { RaceSnapshot } from "./engine/raceSnapshotTypes";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 
+// Re-export RaceClass for use in race generation modules
+export { RaceClass };
+
 export type ClaimingPrice =
   | 2000
   | 4000

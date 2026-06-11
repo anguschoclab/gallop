@@ -12,7 +12,10 @@
 // Core State - Essential game loop properties
 // These fields are always present and the game cannot run without them
 
-import type { Horse, Race, Transaction, Expense } from "../types";
+import type { Horse } from "@/core/horse/types";
+import type { Race } from "@/core/race/types";
+import type { Transaction } from "@/core/transactions/transactionTypes";
+import type { Expense } from "@/core/expenses/expenseTypes";
 import type { NewsItem } from "@/core/narrative/newsTypes";
 import type { HallOfFameEntry, SeasonRecord } from "@/core/history/historyTypes";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";

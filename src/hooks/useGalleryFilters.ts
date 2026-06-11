@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { calculateOverallRating } from "@/core/horse/stats";
 
 export const COAT_COLORS = [
@@ -22,7 +22,7 @@ export const COAT_COLORS = [
 ] as const;
 
 export function useGalleryFilters() {
-  const allHorses = (useGame as any)((s: any) => s.horses, shallow);
+  const allHorses = useGameWithShallow((s) => s.horses);
   const horses = useMemo(() => allHorses.filter((h: any) => h.owned), [allHorses]);
   const [coatFilter, setCoatFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"ovr" | "age" | "name">("ovr");

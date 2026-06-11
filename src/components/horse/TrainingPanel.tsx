@@ -11,7 +11,7 @@ interface TrainingPanelProps {
   isPregnant: boolean;
   slotsLeft: number;
   cash: number;
-  facilities: PlayerFacilities | null;
+  facilities: PlayerFacilities | null | undefined;
   onTrain: (horseId: string, type: any) => void;
 }
 

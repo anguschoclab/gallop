@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
-import { getGradeColorClass } from "@/core/race/grading";
+import { gradeColor } from "@/lib/uiTokens";
 import type { Race } from "@/game/types";
 import type { RegionConfig } from "@/core/calendar/regions";
 
@@ -27,7 +27,7 @@ export function CalendarRaceItem({ race, region }: CalendarRaceItemProps) {
         <div className="flex items-center gap-2 mb-1 flex-wrap">
           <h3 className="font-semibold">{race.name}</h3>
           {race.graded?.grade && (
-            <Badge variant="outline" className={getGradeColorClass(race.graded.grade)}>
+            <Badge variant="outline" className={gradeColor(race.graded.grade)}>
               {race.graded.grade}
             </Badge>
           )}

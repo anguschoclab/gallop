@@ -36,6 +36,8 @@ import { createUtilitySlice } from "./slices/utilitySlice";
 import { createWeatherSlice } from "./slices/weatherSlice";
 import { createInboxSlice } from "./slices/inboxSlice";
 import { createStaffSlice } from "./slices/staffSlice";
+import { createInsuranceSlice } from "./slices/insuranceSlice";
+import { createTransportSlice, type TransportSlice } from "./slices/transportSlice";
 import { createOpfsStorage, hydrationComplete, createRehydrateStore } from "./storage";
 import { createInitialState } from "./initialization";
 import type { CoreState } from "@/game/store/state/coreState";
@@ -307,6 +309,12 @@ export const useGame = create<StoreType>()(
 
       // Staff negotiation slice
       ...createStaffSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Insurance slice
+      ...createInsuranceSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
+
+      // Transport slice
+      ...createTransportSlice(set as any, get, (intent: AnyIntent) => get().enqueueIntent(intent)),
 
       // Start new game action
       startNewGame: async (options: NewGameOptions) => {

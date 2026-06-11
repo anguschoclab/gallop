@@ -25,6 +25,8 @@ const navSections = [
       { to: "/inbox", label: "Inbox", icon: Bell, exact: false },
       { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
+      { to: "/gazette", label: "Gazette", icon: Star, exact: false },
+      { to: "/recap", label: "Recap", icon: Trophy, exact: false },
     ],
   },
   {
@@ -46,6 +48,7 @@ const navSections = [
         ],
       },
       { to: "/records", label: "Hall of Records", icon: Award, exact: false },
+      { to: "/awards", label: "Awards", icon: Award, exact: false },
     ],
   },
   {
@@ -56,7 +59,10 @@ const navSections = [
         label: "Racing Calendar",
         icon: Calendar,
         exact: false,
-        subItems: [{ to: "/calendar", label: "Calendar", icon: Calendar, exact: false }],
+        subItems: [
+          { to: "/calendar", label: "Calendar", icon: Calendar, exact: false },
+          { to: "/race-browser", label: "Race Browser", icon: LayoutGrid, exact: false },
+        ],
       },
       { to: "/market", label: "Horse Market", icon: Store, exact: false },
       { to: "/auction", label: "Auctions", icon: Gavel, exact: false },

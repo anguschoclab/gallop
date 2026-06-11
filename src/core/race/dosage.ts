@@ -8,7 +8,7 @@
  * Related files: breedingCompatibility.ts (uses dosage metrics), pedigreeData.ts (provides chef-de-race data)
  */
 
-import type { DosageProfile, PedigreeNode } from "./types";
+import type { DosageProfile, PedigreeNode } from "@/core/breeding/types";
 import type { AptitudinalGroup, PedigreeHorse } from "@/data/pedigreeData";
 import { findHorseByName } from "@/data/pedigreeData";
 

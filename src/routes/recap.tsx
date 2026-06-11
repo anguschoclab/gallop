@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BeyerBadge } from "@/components/race/BeyerBadge";
 import { calculateBeyerForResult } from "@/core/race/beyer";
-import { getGradeColorClass } from "@/core/race/grading";
+import { gradeColor } from "@/lib/uiTokens";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { Trophy, Medal, Award } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
@@ -39,7 +39,7 @@ function RecapPage() {
       ) : (
         <div className="grid gap-4">
           {recentGradedRaces.map((race: any) => {
-            const gradeColor = getGradeColorClass(race.graded!.grade);
+            const gradeColorClass = gradeColor(race.graded!.grade);
 
             // Get top 3 finishers with their Beyer figures
             const topFinishers = race

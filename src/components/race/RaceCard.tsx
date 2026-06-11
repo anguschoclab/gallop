@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { getGradeColorClass } from "@/core/race/grading";
+import { gradeColor } from "@/lib/uiTokens";
 import { useRaceCardOdds } from "@/hooks/useRaceCardOdds";
 import { formatCurrency } from "@/lib/formatting";
 import { WeatherForecastStrip } from "./WeatherForecastStrip";
@@ -19,7 +19,7 @@ interface RaceCardProps {
 export function RaceCard({ race, onEnter }: RaceCardProps) {
   const ownedCount = race.entries.filter((e) => e.owned).length;
   const gradeLabel = race.graded?.grade;
-  const gradeColor = gradeLabel ? getGradeColorClass(gradeLabel) : "bg-muted text-muted-foreground";
+  const gradeColorClass = gradeLabel ? gradeColor(gradeLabel) : "bg-muted text-muted-foreground";
   const isClaiming = !!race.claiming;
   const claimingPrice: number | undefined = race.claiming?.price;
 
@@ -40,7 +40,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
                 {gradeLabel && (
                   <Badge
                     variant="outline"
-                    className={cn("h-5 px-1 text-[10px] font-bold", gradeColor)}
+                    className={cn("h-5 px-1 text-[10px] font-bold", gradeColorClass)}
                   >
                     <JargonTooltip term={gradeLabel}>{gradeLabel}</JargonTooltip>
                   </Badge>

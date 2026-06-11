@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
@@ -17,8 +17,8 @@ export const Route = createFileRoute("/staff")({
 
 function StaffManagement() {
   const { hiredStaff, staffPool, enqueueIntent, day } = useGame();
-  const horses = (useGame as any)((s: any) => s.horses);
-  const races = (useGame as any)((s: any) => s.races);
+  const horses = useGameWithShallow((s) => s.horses);
+  const races = useGameWithShallow((s) => s.races);
   const [negotiatingId, setNegotiatingId] = useState<string | null>(null);
 
   const myStaff = hiredStaff?.filter((s) => s.stableId === "") ?? [];

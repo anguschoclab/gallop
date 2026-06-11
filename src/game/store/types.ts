@@ -29,6 +29,9 @@ import type { AwardSlice } from "./slices/awardSlice";
 import type { UtilitySlice } from "./slices/utilitySlice";
 import type { WeatherSlice } from "./slices/weatherSlice";
 import type { InboxSlice } from "./slices/inboxSlice";
+import type { StaffSlice } from "./slices/staffSlice";
+import type { InsuranceSlice } from "./slices/insuranceSlice";
+import type { TransportSlice } from "./slices/transportSlice";
 
 /**
  * Standard action result type for store actions
@@ -56,7 +59,10 @@ export type StoreType = CoreState &
   AwardSlice &
   UtilitySlice &
   WeatherSlice &
-  InboxSlice & {
+  InboxSlice &
+  StaffSlice &
+  InsuranceSlice &
+  TransportSlice & {
     startNewGame: (options: NewGameOptions) => Promise<void>;
   };
 

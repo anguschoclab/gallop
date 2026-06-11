@@ -11,7 +11,8 @@
 // Breeding State - Reproduction and lineage tracking
 // Includes pregnancies, stud careers, and breeding history
 
-import type { Pregnancy, TripleCrownProgress } from "../types";
+import type { Pregnancy } from "@/core/breeding/types";
+import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { Syndicate } from "@/core/breeding/types";
 

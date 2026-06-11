@@ -24,7 +24,11 @@ import type {
   TripleCrownProgressImpact,
 } from "@/core/resolver/impacts/index";
 import { computeSectionalSplits } from "@/core/race/sectionalAnalysis";
-import type { Race, Horse, Jockey, Stable, GameState } from "./types";
+import type { Race } from "./types";
+import type { Horse } from "@/core/horse/types";
+import type { Jockey } from "@/game/types";
+import type { Stable } from "@/core/stable/types";
+import type { GameState } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { beyerFigure } from "./beyer";

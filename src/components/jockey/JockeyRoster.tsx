@@ -1,4 +1,4 @@
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { shallow } from "zustand/shallow";
 import { JockeyFilterPanel } from "./JockeyFilterPanel";
 import { JockeyRosterTabs } from "./JockeyRosterTabs";
@@ -9,7 +9,7 @@ import { NumericValue } from "@/components/horse/HorseBits";
 import { Briefcase } from "lucide-react";
 
 export function JockeyRoster() {
-  const jockeys = (useGame as any)((s: any) => s.jockeys, shallow);
+  const jockeys = useGameWithShallow((s) => s.jockeys);
   const hireJockey = useGame((s) => s.hireJockey);
   const releaseJockey = useGame((s) => s.releaseJockey);
   const [search, setSearch] = useState("");

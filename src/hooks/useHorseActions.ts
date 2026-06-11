@@ -1,5 +1,4 @@
 import { useGame, useGameWithShallow } from "@/game/store";
-import { shallow } from "zustand/shallow";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { Horse, AuctionSale } from "@/game/types";
 import { useMemo, useEffect } from "react";
@@ -11,9 +10,9 @@ import { useMemo, useEffect } from "react";
  * @returns An object containing the horse data, consignment status, retirement eligibility, and relevant sale data.
  */
 export function useHorseActions(horseId: string) {
-  const horses = (useGame as any)((s: any) => s.horses, shallow);
-  const auctions = useGameWithShallow((s: any) => s.auctions ?? []);
-  const day = useGame((s: any) => s.day);
+  const horses = useGameWithShallow((s) => s.horses);
+  const auctions = useGameWithShallow((s) => s.auctions ?? []);
+  const day = useGame((s) => s.day);
 
   const horse = useMemo(() => horses.find((h: any) => h.id === horseId), [horses, horseId]);
   const resolveHorsePhenotype = useGame((s: any) => s.resolveHorsePhenotype);

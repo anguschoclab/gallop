@@ -1,16 +1,17 @@
 import { useState, useMemo } from "react";
 import { shallow } from "zustand/shallow";
+import { useGameSelector } from "@/hooks/useGameSelector";
 import { useGame } from "@/game/store";
 import type { Horse, Hemisphere, GameState } from "@/game/types";
 
 export function useStallionFilters() {
-  const horses = (useGame as any)((s: GameState) => s.horses, shallow);
-  const npcStables = (useGame as any)((s: GameState) => s.npcStables, shallow);
+  const horses = useGameSelector((s: GameState) => s.horses);
+  const npcStables = useGameSelector((s: GameState) => s.npcStables);
   const day = useGame((s: GameState) => s.day);
   const cash = useGame((s: GameState) => s.cash);
   const breed = useGame((s) => s.breed);
   const updateStudFee = useGame((s) => s.updateStudFee);
-  const pregnancies = (useGame as any)((s: GameState) => s.pregnancies, shallow);
+  const pregnancies = useGameSelector((s: GameState) => s.pregnancies);
 
   const [hemisphere, setHemisphere] = useState<Hemisphere | "all">("all");
   const [selectedMareId, setSelectedMareId] = useState<string>("");

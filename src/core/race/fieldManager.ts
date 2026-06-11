@@ -8,7 +8,9 @@
  * Related files: raceSchedule.ts (uses field management), npcRaceEntry.ts (provides entries)
  */
 
-import type { Race, Stable, Horse } from "./types";
+import type { Race } from "./types";
+import type { Stable } from "@/core/stable/types";
+import type { Horse } from "@/core/horse/types";
 
 /**
  * Fill remaining race spots with filler horses.

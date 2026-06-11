@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { shallow } from "zustand/shallow";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
 import { useHorses, useDay, useCash, useRaces } from "@/hooks/game/useCoreState";
 import { useNpcStables, useAwards } from "@/hooks/game/useSystemsState";
 import { getStableById } from "@/core/stable/stableQueries";
@@ -33,10 +33,7 @@ export function useNpcStableDetail(stableId: string) {
   const news = useGame((s) => s.news ?? []);
   const scoutHorse = useGame((s) => s.scoutHorse);
   const respondToPrivateSale = useGame((s) => s.respondToPrivateSale);
-  const privateSaleOffers: PrivateSaleOffer[] = (useGame as any)(
-    (s: GameState) => s.privateSaleOffers ?? [],
-    shallow,
-  );
+  const privateSaleOffers = useGameWithShallow((s: GameState) => s.privateSaleOffers ?? []);
   const npcAIManager = useGame((s) => (s as any).npcAIManager);
 
   const [offerHorse, setOfferHorse] = useState<Horse | null>(null);
@@ -62,8 +59,8 @@ export function useNpcStableDetail(stableId: string) {
     let losses = 0;
     ownedHorses.forEach((horse) => {
       horse.raceHistory
-        .filter((r) => r.day >= thirtyDaysAgo)
-        .forEach((raceResult) => {
+        .filter((r: { day: number }) => r.day >= thirtyDaysAgo)
+        .forEach((raceResult: { raceId: string; position: number }) => {
           const race = raceMap.get(raceResult.raceId);
           if (race && race.graded) {
             const hadRivalEntry = race.entries.some((e: any) => e.stableId === stableId);

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { getGradeColorClass } from "@/core/race/grading";
+import { gradeColor } from "@/lib/uiTokens";
 import type { Race, Horse } from "@/game/types";
 
 interface GradeBreakdownProps {
@@ -66,7 +66,7 @@ export function GradeBreakdown({ races, horses, day }: GradeBreakdownProps) {
           {gradeData.map(({ grade, total, ownedCount, topOwned }) => (
             <div key={grade} className="space-y-2">
               <div
-                className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold ${getGradeColorClass(grade)}`}
+                className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold ${gradeColor(grade)}`}
               >
                 {grade}
               </div>

@@ -2,17 +2,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatProfitLoss } from "@/core/financial";
 import { formatTransactionSubcategory } from "@/core/transactions/transactionTypes";
+import type { Transaction } from "@/core/transactions/transactionTypes";
 import { cn } from "@/lib/utils";
 import { ReceiptText, ArrowUpRight, ArrowDownLeft } from "lucide-react";
-
-interface Transaction {
-  id?: string;
-  day: number;
-  type: "income" | "expense";
-  amount: number;
-  subcategory: string;
-  description: string;
-}
 
 interface TransactionLedgerProps {
   transactions: Transaction[];
