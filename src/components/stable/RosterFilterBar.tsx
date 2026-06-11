@@ -34,6 +34,8 @@ export function RosterFilterBar({ status, counts, onStatusChange }: RosterFilter
         {STATUS_FILTERS.map(({ key, label, countKey, icon: Icon, color }) => (
           <button
             key={key}
+            type="button"
+            aria-pressed={status === key}
             onClick={() => onStatusChange(key)}
             className={cn(
               "px-4 py-2 flex items-center gap-3 border font-mono text-[10px] uppercase font-bold tracking-widest transition-all",
