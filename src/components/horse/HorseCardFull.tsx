@@ -1,5 +1,4 @@
 import type { Horse } from "@/game/types";
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { HorseCardHeader } from "./HorseCardHeader";
 import { HorseStatsPanel } from "./HorseStatsPanel";
@@ -8,6 +7,7 @@ import { HorseActionFooter } from "./HorseActionFooter";
 import { getInjuryColor, getInjuryLabel } from "@/core/horse/uiHelpers";
 import { cn } from "@/lib/utils";
 import type { useHorseCard } from "@/hooks/useHorseCard";
+import { useGame } from "@/game/store";
 import { Ruler, Weight, HeartPulse } from "lucide-react";
 
 interface HorseCardFullProps {
@@ -19,7 +19,12 @@ interface HorseCardFullProps {
 
 export function HorseCardFull({ horse, hookData, onClick, className = "" }: HorseCardFullProps) {
   const { ovr, genderColor, gradeColor, sparklineData, simpleHorseCards } = hookData;
-  const [isAdvanced, setIsAdvanced] = useState(!simpleHorseCards);
+  const advancedMetrics = useGame((s) => s.userSettings?.display?.advancedMetrics ?? false);
+  const updateDisplaySettings = useGame((s) => s.updateDisplaySettings);
+
+  const toggleAdvanced = () => {
+    updateDisplaySettings({ advancedMetrics: !advancedMetrics });
+  };
 
   return (
     <Card
@@ -67,13 +72,13 @@ export function HorseCardFull({ horse, hookData, onClick, className = "" }: Hors
           ovr={ovr}
           gradeColor={gradeColor}
           sparklineData={sparklineData}
-          isAdvanced={isAdvanced}
+          isAdvanced={advancedMetrics}
         />
 
         <HorseMetaPanel
           horse={horse}
-          isAdvanced={isAdvanced}
-          onToggleView={() => setIsAdvanced((v) => !v)}
+          isAdvanced={advancedMetrics}
+          onToggleView={toggleAdvanced}
         />
 
         <HorseActionFooter horse={horse} />

@@ -3,10 +3,11 @@ import { useRecapData } from "@/hooks/useRecapData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BeyerBadge } from "@/components/race/BeyerBadge";
+import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
 import { calculateBeyerForResult } from "@/core/race/beyer";
 import { gradeColor } from "@/lib/uiTokens";
 import { calculateClassBonus } from "@/core/common/classBonus";
-import { Trophy, Medal, Award } from "lucide-react";
+import { Trophy, Medal, Award, Clock } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/utils";
@@ -138,6 +139,31 @@ function RecapPage() {
                       </div>
                     );
                   })}
+
+                  {/* Sectional Timing */}
+                  {race.sectionalSplits && race.sectionalSplits.length > 0 && (
+                    <div className="pt-3 border-t border-white/10">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="h-3 w-3 text-gold/60" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-cream/40">
+                          Sectional Splits
+                        </span>
+                      </div>
+                      <SectionalTimingTable
+                        splits={race.sectionalSplits}
+                        runners={race.result!.map((r: any) => {
+                          const horse = localHorseMap.get(r.horseId);
+                          return {
+                            horseId: r.horseId,
+                            name: horse?.name || "Unknown",
+                            silk: horse?.silk || "#000000",
+                            owned: horse?.owned || false,
+                          };
+                        })}
+                        distance={race.distance}
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             );

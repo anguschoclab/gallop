@@ -48,6 +48,7 @@ const navSections = [
         ],
       },
       { to: "/records", label: "Hall of Records", icon: Award, exact: false },
+      { to: "/hall-of-fame", label: "Hall of Fame", icon: Trophy, exact: false },
       { to: "/awards", label: "Awards", icon: Award, exact: false },
     ],
   },

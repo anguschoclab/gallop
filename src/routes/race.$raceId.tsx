@@ -13,6 +13,7 @@ import { Track } from "@/components/race/Track";
 import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
 import { Leaderboard } from "@/components/race/Leaderboard";
 import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
+import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { useRacePageData } from "@/hooks/useRacePageData";
 import { useRaceUIState } from "@/hooks/useRaceUIState";
 
@@ -155,6 +156,11 @@ function LiveRace() {
         onToggleHideResults={() => setHideUntilAllFinished((v: boolean) => !v)}
         onShowAllCards={() => setShowAllCards(true)}
       />
+
+      {/* Weather Forecast Strip */}
+      <div className="relative z-10 px-4">
+        <WeatherForecastStrip trackId={race.trackId} trackCondition={race.trackCondition} />
+      </div>
 
       <div className="relative z-10 p-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
         <div>

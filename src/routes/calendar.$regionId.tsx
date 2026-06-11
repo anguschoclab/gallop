@@ -6,6 +6,7 @@ import { getRegion, isValidRegion } from "@/core/calendar/regions";
 import { MonthView } from "@/components/calendar/MonthView";
 import { TrackView } from "@/components/calendar/TrackView";
 import { RegionSwitcher } from "@/components/RegionSwitcher";
+import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { useCalendarFilters } from "@/hooks/useCalendarFilters";
 import { ChevronLeft, Globe } from "lucide-react";
 
@@ -79,60 +80,67 @@ function RegionalCalendarPage() {
       {/* Filters */}
       <Card className="border-gold-muted">
         <CardContent className="p-4">
-          <div className="flex flex-wrap gap-4 items-center">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-cream">Grade:</span>
-              <div className="flex gap-1">
-                {(["all", "G1", "G2", "G3"] as const).map((g) => (
-                  <Button
-                    key={g}
-                    size="sm"
-                    variant={search.grade === g ? "default" : "outline"}
-                    onClick={() => updateFilter("grade", g)}
-                  >
-                    {g === "all" ? "All" : g}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {region.specialRaceKeys && (
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">{region.specialFilterName}:</span>
+                <span className="text-sm font-medium text-cream">Grade:</span>
                 <div className="flex gap-1">
-                  {(["all", "only", "exclude"] as const).map((s) => (
+                  {(["all", "G1", "G2", "G3"] as const).map((g) => (
                     <Button
-                      key={s}
+                      key={g}
                       size="sm"
-                      variant={search.special === s ? "default" : "outline"}
-                      onClick={() => updateFilter("special", s)}
+                      variant={search.grade === g ? "default" : "outline"}
+                      onClick={() => updateFilter("grade", g)}
                     >
-                      {s === "all" ? "All" : s === "only" ? "Only" : "Exclude"}
+                      {g === "all" ? "All" : g}
                     </Button>
                   ))}
                 </div>
               </div>
-            )}
 
-            <div className="flex items-center gap-2 ml-auto">
-              <span className="text-sm font-medium">View:</span>
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant={search.view === "month" ? "default" : "outline"}
-                  onClick={() => updateFilter("view", "month")}
-                >
-                  By Month
-                </Button>
-                <Button
-                  size="sm"
-                  variant={search.view === "track" ? "default" : "outline"}
-                  onClick={() => updateFilter("view", "track")}
-                >
-                  By Track
-                </Button>
+              {region.specialRaceKeys && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">{region.specialFilterName}:</span>
+                  <div className="flex gap-1">
+                    {(["all", "only", "exclude"] as const).map((s) => (
+                      <Button
+                        key={s}
+                        size="sm"
+                        variant={search.special === s ? "default" : "outline"}
+                        onClick={() => updateFilter("special", s)}
+                      >
+                        {s === "all" ? "All" : s === "only" ? "Only" : "Exclude"}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">View:</span>
+                <div className="flex gap-1">
+                  <Button
+                    size="sm"
+                    variant={search.view === "month" ? "default" : "outline"}
+                    onClick={() => updateFilter("view", "month")}
+                  >
+                    By Month
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={search.view === "track" ? "default" : "outline"}
+                    onClick={() => updateFilter("view", "track")}
+                  >
+                    By Track
+                  </Button>
+                </div>
               </div>
             </div>
+
+            {/* Weather Forecast for first track in region */}
+            {filteredRaces.length > 0 && (
+              <WeatherForecastStrip trackId={filteredRaces[0].trackId} />
+            )}
           </div>
 
           <div className="mt-3 text-sm text-cream-muted">
