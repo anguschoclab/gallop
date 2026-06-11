@@ -27,7 +27,23 @@ describe("saveManager", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    vi.unstubAllGlobals();
+    // Restore a working localStorage mock for bun compatibility
+    const store = new Map<string, string>();
+    Object.defineProperty(globalThis, "localStorage", {
+      value: {
+        getItem: (key: string) => store.get(key) ?? null,
+        setItem: (key: string, value: string) => store.set(key, value),
+        removeItem: (key: string) => store.delete(key),
+        clear: () => store.clear(),
+      },
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(globalThis, "location", {
+      value: undefined,
+      writable: true,
+      configurable: true,
+    });
   });
 
   describe("getSaveSlots", () => {
@@ -156,7 +172,11 @@ describe("saveManager", () => {
       const setItemSpy = vi.fn().mockImplementation(() => {
         throw new Error("Storage quota exceeded");
       });
-      vi.stubGlobal("localStorage", { ...window.localStorage, setItem: setItemSpy });
+      Object.defineProperty(globalThis, "localStorage", {
+        value: { ...window.localStorage, setItem: setItemSpy },
+        writable: true,
+        configurable: true,
+      });
 
       await expect(saveManager.saveToSlot("slot1", "Test Save", mockGameState)).rejects.toThrow(
         "Storage quota exceeded",
@@ -191,7 +211,11 @@ describe("saveManager", () => {
       vi.spyOn(opfsService, "checkOPFSAvailable").mockResolvedValue(false);
       localStorage.setItem("gallop_save_slot1", JSON.stringify(mockGameState));
       const reloadSpy = vi.fn();
-      vi.stubGlobal("location", { reload: reloadSpy });
+      Object.defineProperty(globalThis, "location", {
+        value: { reload: reloadSpy },
+        writable: true,
+        configurable: true,
+      });
 
       await saveManager.loadFromSlot("slot1");
 
@@ -206,7 +230,11 @@ describe("saveManager", () => {
       vi.spyOn(opfsService, "readFile").mockResolvedValue(mockGameState);
       const writeFileSpy = vi.spyOn(opfsService, "writeFile").mockResolvedValue();
       const reloadSpy = vi.fn();
-      vi.stubGlobal("location", { reload: reloadSpy });
+      Object.defineProperty(globalThis, "location", {
+        value: { reload: reloadSpy },
+        writable: true,
+        configurable: true,
+      });
 
       await saveManager.loadFromSlot("slot1");
 

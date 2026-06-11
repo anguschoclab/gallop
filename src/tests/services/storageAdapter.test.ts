@@ -18,36 +18,40 @@ import { createDefaultGameState } from "@/game/store/state";
 let mockOPFSData: Map<string, any> = new Map();
 
 function resetOPFSMocks() {
-  vi.mocked(checkOPFSAvailable).mockResolvedValue(true);
+  (checkOPFSAvailable as any).mockResolvedValue(true);
   mockOPFSData = new Map();
 
-  vi.mocked(opfsService.initOPFS).mockResolvedValue(undefined);
-  vi.mocked(opfsService.readFile).mockImplementation(async (filename: string) => {
+  (opfsService.initOPFS as any).mockResolvedValue(undefined);
+  (opfsService.readFile as any).mockImplementation(async (filename: string) => {
     return mockOPFSData.get(filename) ?? null;
   });
-  vi.mocked(opfsService.writeFile).mockImplementation(async (filename: string, data: any) => {
+  (opfsService.writeFile as any).mockImplementation(async (filename: string, data: any) => {
     mockOPFSData.set(filename, JSON.parse(JSON.stringify(data)));
   });
-  vi.mocked(opfsService.deleteFile).mockImplementation(async (filename: string) => {
+  (opfsService.deleteFile as any).mockImplementation(async (filename: string) => {
     mockOPFSData.delete(filename);
   });
-  vi.mocked(checkOPFSAvailable).mockResolvedValue(true);
+  (checkOPFSAvailable as any).mockResolvedValue(true);
 }
 
 function mockLocalStorage() {
   const store = new Map<string, string>();
-  (global as any).localStorage = {
-    getItem: (key: string) => store.get(key) ?? null,
-    setItem: (key: string, value: string) => {
-      store.set(key, value);
+  Object.defineProperty(globalThis, "localStorage", {
+    value: {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        store.set(key, value);
+      },
+      removeItem: (key: string) => {
+        store.delete(key);
+      },
+      clear: () => {
+        store.clear();
+      },
     },
-    removeItem: (key: string) => {
-      store.delete(key);
-    },
-    clear: () => {
-      store.clear();
-    },
-  };
+    writable: true,
+    configurable: true,
+  });
   return store;
 }
 
@@ -70,8 +74,6 @@ function createMockWizardState(): storageAdapter.WizardState {
   };
 }
 
-const originalLocalStorage = (global as any).localStorage;
-
 describe("storageAdapter", () => {
   beforeEach(() => {
     resetOPFSMocks();
@@ -80,7 +82,18 @@ describe("storageAdapter", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    (global as any).localStorage = originalLocalStorage;
+    // Restore a working localStorage mock for bun compatibility
+    const store = new Map<string, string>();
+    Object.defineProperty(globalThis, "localStorage", {
+      value: {
+        getItem: (key: string) => store.get(key) ?? null,
+        setItem: (key: string, value: string) => store.set(key, value),
+        removeItem: (key: string) => store.delete(key),
+        clear: () => store.clear(),
+      },
+      writable: true,
+      configurable: true,
+    });
   });
 
   // Test Suite 1: OPFS Game State Functions
@@ -101,7 +114,7 @@ describe("storageAdapter", () => {
       describe("when OPFS is unavailable (fallback)", () => {
         beforeEach(() => {
           mockLocalStorage();
-          vi.mocked(checkOPFSAvailable).mockResolvedValue(false);
+          (checkOPFSAvailable as any).mockResolvedValue(false);
         });
 
         it("loads game state from localStorage fallback", async () => {
@@ -148,7 +161,7 @@ describe("storageAdapter", () => {
       describe("when OPFS is unavailable (fallback)", () => {
         beforeEach(() => {
           mockLocalStorage();
-          vi.mocked(checkOPFSAvailable).mockResolvedValue(false);
+          (checkOPFSAvailable as any).mockResolvedValue(false);
         });
 
         it("saves game state to localStorage fallback", async () => {
@@ -208,7 +221,7 @@ describe("storageAdapter", () => {
       describe("when OPFS is unavailable (fallback)", () => {
         beforeEach(() => {
           mockLocalStorage();
-          vi.mocked(checkOPFSAvailable).mockResolvedValue(false);
+          (checkOPFSAvailable as any).mockResolvedValue(false);
         });
 
         it("clears game state from localStorage fallback", async () => {

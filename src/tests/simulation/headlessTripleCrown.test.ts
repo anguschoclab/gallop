@@ -56,22 +56,24 @@ function resetOPFSMocks() {
 
 function mockLocalStorage() {
   const store = new Map<string, string>();
-  (global as any).localStorage = {
-    getItem: (key: string) => store.get(key) ?? null,
-    setItem: (key: string, value: string) => {
-      store.set(key, value);
+  Object.defineProperty(globalThis, "localStorage", {
+    value: {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        store.set(key, value);
+      },
+      removeItem: (key: string) => {
+        store.delete(key);
+      },
+      clear: () => {
+        store.clear();
+      },
     },
-    removeItem: (key: string) => {
-      store.delete(key);
-    },
-    clear: () => {
-      store.clear();
-    },
-  };
+    writable: true,
+    configurable: true,
+  });
   return store;
 }
-
-const originalLocalStorage = (global as any).localStorage;
 
 describe("Headless Triple Crown Simulation", () => {
   beforeEach(() => {
@@ -86,7 +88,18 @@ describe("Headless Triple Crown Simulation", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    (global as any).localStorage = originalLocalStorage;
+    // Restore a working localStorage mock for bun compatibility
+    const store = new Map<string, string>();
+    Object.defineProperty(globalThis, "localStorage", {
+      value: {
+        getItem: (key: string) => store.get(key) ?? null,
+        setItem: (key: string, value: string) => store.set(key, value),
+        removeItem: (key: string) => store.delete(key),
+        clear: () => store.clear(),
+      },
+      writable: true,
+      configurable: true,
+    });
   });
 
   it("should manually create triple crown scenario and report results", () => {

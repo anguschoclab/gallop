@@ -1,19 +1,27 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import * as weatherSim from "@/core/weather";
 import type { PipelineContext } from "@/core/time/pipeline";
 
-// Mock the weather sim functions to control outcomes
-vi.mock("@/core/weather", async () => {
-  const actual = await vi.importActual("@/core/weather");
-  return {
-    ...actual,
-    stepWeather: vi.fn(),
-    getTrackClimate: vi.fn(() => "temperate"),
-  };
-});
-
 describe("Weather Phase - Storm Jump Logic", () => {
+  let stepWeatherSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    stepWeatherSpy = (vi.spyOn(weatherSim, "stepWeather" as any) as any).mockImplementation(
+      (_last: any, trackId: string, day: number) => ({
+        trackId,
+        day,
+        pattern: "storm",
+        tempC: 15,
+        humidity: 0.9,
+      }),
+    );
+  });
+
+  afterEach(() => {
+    stepWeatherSpy.mockRestore();
+  });
+
   const mockContext = (overrides = {}): PipelineContext => ({
     previousDay: 9,
     logs: [],
@@ -59,15 +67,7 @@ describe("Weather Phase - Storm Jump Logic", () => {
 
   it("generates multiple inbox messages when multiple tracks have storm jumps", () => {
     // Force a jump from clear (0) to storm (4) for both tracks
-    (weatherSim.stepWeather as any).mockImplementation(
-      (last: any, trackId: string, day: number) => ({
-        trackId,
-        day,
-        pattern: "storm",
-        tempC: 15,
-        humidity: 0.9,
-      }),
-    );
+    // Already set to storm in beforeEach
 
     const result = weatherPhase.execute(mockContext());
 
@@ -89,8 +89,8 @@ describe("Weather Phase - Storm Jump Logic", () => {
 
   it("does NOT generate alert if the jump is < 2", () => {
     // Jump from clear (0) to overcast (1)
-    (weatherSim.stepWeather as any).mockImplementation(
-      (last: any, trackId: string, day: number) => ({
+    (stepWeatherSpy as any).mockImplementation(
+      (_last: any, trackId: string, day: number) => ({
         trackId,
         day,
         pattern: "overcast",
@@ -105,15 +105,8 @@ describe("Weather Phase - Storm Jump Logic", () => {
   });
 
   it("does NOT generate alert for non-graded races", () => {
-    (weatherSim.stepWeather as any).mockImplementation(
-      (last: any, trackId: string, day: number) => ({
-        trackId,
-        day,
-        pattern: "storm",
-        tempC: 15,
-        humidity: 0.9,
-      }),
-    );
+    // Already set to storm in beforeEach
+
 
     const context = mockContext();
     // Remove grading from race 1

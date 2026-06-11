@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import * as opfsService from "@/services/opfsService";
 
 describe("opfsService deleteFile error path", () => {
-  const originalNavigator = global.navigator;
-
   beforeEach(() => {
     // vi.resetModules() was removed in Vitest v2
     // Dynamic import on line 27 handles module reloading
@@ -11,21 +9,30 @@ describe("opfsService deleteFile error path", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    vi.stubGlobal("navigator", originalNavigator);
+    Object.defineProperty(globalThis, "navigator", {
+      value: undefined,
+      writable: true,
+      configurable: true,
+    });
   });
 
   it("handles removeEntry throwing a generic error", async () => {
     const mockRemoveEntry = vi.fn().mockRejectedValue(new Error("Generic disk error"));
 
-    vi.stubGlobal("navigator", {
-      storage: {
-        getDirectory: vi.fn().mockResolvedValue({
-          removeEntry: mockRemoveEntry,
-        }),
+    Object.defineProperty(globalThis, "navigator", {
+      value: {
+        storage: {
+          getDirectory: vi.fn().mockResolvedValue({
+            removeEntry: mockRemoveEntry,
+          }),
+        },
       },
+      writable: true,
+      configurable: true,
     });
 
-    const freshOpfsService = await import("@/services/opfsService");
+    // Use cache-busting query to get a fresh module instance (bun shares module cache across test files)
+    const freshOpfsService = await import("@/services/opfsService?bust=" + Date.now());
     await freshOpfsService.initOPFS();
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
