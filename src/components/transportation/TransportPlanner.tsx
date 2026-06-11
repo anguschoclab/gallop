@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useMemo } from "react";
 import { Truck, Plane, Train, X, CheckCircle, Clock } from "lucide-react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { formatTransportMode, type TransportRequest } from "@/core/transportation/transportationTypes";
@@ -82,6 +83,9 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
     }
   };
 
+  // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loop.
+  const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
+
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-purple-400">
       <CardHeader>
@@ -96,7 +100,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         {filteredTransports.map((transport) => {
-          const horse = horses.find((h) => h.id === transport.horseId);
+          const horse = horseMap.get(transport.horseId);
           const daysUntilArrival = transport.arrivalDay - day;
           const isPastDue = daysUntilArrival < 0;
 

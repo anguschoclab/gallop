@@ -23,3 +23,6 @@
 
 **Learning:** When searching for an item within an array in a render loop with multiple conditions (like `fromStableId === undefined && status === 'pending'`), using `array.find()` inside `.map()` is O(N^2).
 **Action:** Instead of just `new Map(arr.map(x => [x.id, x]))`, you can iterate the array once inside `useMemo` and conditionally `map.set()` the matched items by their target key (e.g., `horseId`). This allows O(1) conditional lookup inside the render loop without modifying global state or storing unneeded entries in the map.
+## 2024-05-18 - Optimized O(N) lookup in TransportPlanner
+**Learning:** Found multiple instances where UI render loops perform `array.find()` on large global state arrays like `horses`. In React, especially inside `.map()` rendering lists, this creates an O(N*M) complexity which scales poorly as the game progresses and global state grows.
+**Action:** When a UI component needs to look up items from a large global array inside a list render loop, use `useMemo` to pre-calculate a hash map (e.g. `Map<id, item>`) for O(1) lookups before the map loop.
