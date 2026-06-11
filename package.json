@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:bun-native": "bun test --preload ./src/test-utils/setup-happy-dom.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "check:no-stray-js": "bash scripts/check-no-stray-js.sh"
@@ -81,6 +82,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
+    "@happy-dom/global-registrator": "^20.10.2",
     "@lovable.dev/vite-tanstack-config": "^1.7.0",
     "@storybook/addon-essentials": "^8.6.14",
     "@storybook/addon-interactions": "^8.6.14",

@@ -26,13 +26,14 @@ vi.mock("react-dom/server", () => ({
   renderToStaticMarkup: vi.fn(),
 }));
 
-// Mock React createElement
+// Mock React createElement and forwardRef
 vi.mock("react", () => ({
   createElement: vi.fn(() => ({ toString: () => "mock-element" })),
+  forwardRef: vi.fn((render) => render),
 }));
 
 // Mock ProceduralHorsePortrait component
-vi.mock("@/components/ProceduralHorsePortrait", () => ({
+vi.mock("@/components/horse/ProceduralHorsePortrait", () => ({
   ProceduralHorsePortrait: () => null,
 }));
 

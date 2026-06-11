@@ -55,29 +55,29 @@ describe("Universal DNA System - Final Validation", () => {
 
 describe("Deterministic DNA Bias Validation", () => {
   it("should validate Brilliant dosage bias toward speed", () => {
-    const brilliantDNA = generateDeterministicGenotype("BrilliantTest", "elite", ["Brilliant"]);
-    const classicDNA = generateDeterministicGenotype("ClassicTest", "elite", ["Classic"]);
+    const baseDNA = generateDeterministicGenotype("BiasTest", "elite");
+    const brilliantDNA = generateDeterministicGenotype("BiasTest", "elite", ["Brilliant"]);
 
+    const baseStats = resolveStats(baseDNA.stats);
     const brilliantStats = resolveStats(brilliantDNA.stats);
-    const classicStats = resolveStats(classicDNA.stats);
 
-    // Brilliant should have higher speed than Classic
-    expect(brilliantStats.speed).toBeGreaterThan(classicStats.speed);
+    // Brilliant should have higher speed than the same base without bias
+    expect(brilliantStats.speed).toBeGreaterThan(baseStats.speed);
   });
 
   it("should validate Solid dosage bias toward stamina and durability", () => {
-    const solidDNA = generateDeterministicGenotype("SolidTest", "elite", ["Solid"]);
-    const classicDNA = generateDeterministicGenotype("ClassicTest", "elite", ["Classic"]);
+    const baseDNA = generateDeterministicGenotype("BiasTest", "elite");
+    const solidDNA = generateDeterministicGenotype("BiasTest", "elite", ["Solid"]);
 
+    const baseStats = resolveStats(baseDNA.stats);
     const solidStats = resolveStats(solidDNA.stats);
-    const classicStats = resolveStats(classicDNA.stats);
 
-    // Solid should have higher stamina than Classic
-    expect(solidStats.stamina).toBeGreaterThan(classicStats.stamina);
+    // Solid should have higher stamina than the same base without bias
+    expect(solidStats.stamina).toBeGreaterThan(baseStats.stamina);
 
-    // Solid should have higher durability
+    // Solid should have higher durability than the same base without bias
     expect(solidDNA.durability[0] + solidDNA.durability[1]).toBeGreaterThan(
-      classicDNA.durability[0] + classicDNA.durability[1],
+      baseDNA.durability[0] + baseDNA.durability[1],
     );
   });
 });
