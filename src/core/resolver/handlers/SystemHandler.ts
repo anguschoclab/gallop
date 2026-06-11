@@ -13,6 +13,7 @@ import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler } from "./types";
+import { distanceBucket } from "@/core/race/beyer";
 import { getReputationTier, createReputationEvent } from "@/core/reputation";
 import { createTransaction } from "@/core/transactions";
 import { addReservedName } from "@/core/horse/naming/reservedNames";
@@ -57,7 +58,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     if (!draft.paceSamples) {
       draft.paceSamples = {};
     }
-    const bucket = Math.floor(distance / 100);
+    const bucket = distanceBucket(distance);
     if (!draft.paceSamples[bucket]) {
       draft.paceSamples[bucket] = [];
     }
