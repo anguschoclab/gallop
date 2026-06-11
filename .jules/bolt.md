@@ -19,3 +19,7 @@
 ## 2024-05-19 - [Optimizing O(N) Array Lookups in Game Event Loops]
 **Learning:** React hooks that process batches of game events (e.g., `useAuctionEventProcessor.ts` processing `result.events` arrays generated from game simulation steps) can suffer from significant performance degradation if they use `.find()` and `.findIndex()` on global arrays (like `stables`) inside the loop, especially as the number of events scales up.
 **Action:** In game engine event loops or hooks that process batches of events, pre-calculate local hash maps (`stableMap`, `stableIndexMap`, `lotMap`) using `useMemo()` immediately before the event loop starts. This turns O(N*M) processing into O(N+M) and prevents the simulation/UI pipeline from stuttering during heavy game logic.
+## 2026-06-10 - Pre-calculating maps for cross-referencing multiple conditional matches in arrays
+
+**Learning:** When searching for an item within an array in a render loop with multiple conditions (like `fromStableId === undefined && status === 'pending'`), using `array.find()` inside `.map()` is O(N^2).
+**Action:** Instead of just `new Map(arr.map(x => [x.id, x]))`, you can iterate the array once inside `useMemo` and conditionally `map.set()` the matched items by their target key (e.g., `horseId`). This allows O(1) conditional lookup inside the render loop without modifying global state or storing unneeded entries in the map.
