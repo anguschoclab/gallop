@@ -10,6 +10,12 @@
 import type { Horse } from "@/game/types";
 import { getCareerStats } from "@/core/horse/stats";
 import type { FounderRecord } from "./historyTypes";
+import type { PedigreeNode } from "@/core/breeding/types";
+
+export interface PedigreeFounderInfluence {
+  name: string;
+  influence: number;
+}
 
 /**
  * Calculate the multi-generational influence of a founder horse.
@@ -118,4 +124,57 @@ export function identifyFounders(horses: Horse[]): Horse[] {
     const isBlueHen = h.blueHenStatus?.isBlueHen;
     return isEliteSire || isBlueHen;
   });
+}
+
+/**
+ * Traverses a pedigree tree to compute the relative influence of founder horses
+ * (horses with no recorded parents in the tree).
+ *
+ * Influence is defined recursively: a horse passes 50% of its influence to its offspring.
+ * So parents are 50%, grandparents 25%, great-grandparents 12.5%, etc.
+ * @param tree
+ */
+export function computePedigreeFounderInfluence(
+  tree: PedigreeNode,
+): Map<string, PedigreeFounderInfluence> {
+  const influenceMap = new Map<string, PedigreeFounderInfluence>();
+
+  function traverse(node: PedigreeNode, currentWeight: number) {
+    const hasSire = !!node.sirePedigree || !!node.sireName;
+    const hasDam = !!node.damPedigree || !!node.damName;
+
+    if (!hasSire && !hasDam) {
+      // This is a founder (no recorded parents)
+      if (node.name) {
+        const existing = influenceMap.get(node.name) || { name: node.name, influence: 0 };
+        existing.influence += currentWeight;
+        influenceMap.set(node.name, existing);
+      }
+      return;
+    }
+
+    if (node.sirePedigree) {
+      traverse(node.sirePedigree, currentWeight * 0.5);
+    } else if (node.sireName) {
+      // Missing pedigree object but has a name string
+      const existing = influenceMap.get(node.sireName) || { name: node.sireName, influence: 0 };
+      existing.influence += currentWeight * 0.5;
+      influenceMap.set(node.sireName, existing);
+    }
+
+    if (node.damPedigree) {
+      traverse(node.damPedigree, currentWeight * 0.5);
+    } else if (node.damName) {
+      // Missing pedigree object but has a name string
+      const existing = influenceMap.get(node.damName) || { name: node.damName, influence: 0 };
+      existing.influence += currentWeight * 0.5;
+      influenceMap.set(node.damName, existing);
+    }
+  }
+
+  // The root node itself is never a founder unless it has no parents.
+  // We start traversal at the root.
+  traverse(tree, 1.0);
+
+  return influenceMap;
 }
