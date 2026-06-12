@@ -4,8 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { AwardsGrid } from "./AwardsGrid";
 import { groupByRegion } from "./awardUtils";
-import type { AwardRegion, RegionalAward } from "@/game/awards/types";
-import { REGION_AWARD_NAMES, REGION_DISPLAY_NAMES } from "@/game/awards/types";
+import type { AwardRegion, RegionalAward } from "@/core/awards/types";
+import { REGION_AWARD_NAMES, REGION_DISPLAY_NAMES } from "@/core/awards/types";
 import { Trophy, Medal, Star } from "lucide-react";
 
 interface TrophyFullViewProps {

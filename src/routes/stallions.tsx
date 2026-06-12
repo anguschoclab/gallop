@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useStallionFilters } from "@/hooks/useStallionFilters";
+import { useStallionFilters } from "@/hooks/stable/useStallionFilters";
 import { MyStallionCard } from "@/components/breeding/MyStallionCard";
 import { StallionCard } from "@/components/breeding/StallionCard";
 import { calculateRecommendedStudFee } from "@/core/breeding/stallions";

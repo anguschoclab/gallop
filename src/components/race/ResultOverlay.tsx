@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { generateJockeyFeedback } from "@/core/race/jockeyFeedback";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { Trophy, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 /**
  * Props for the ResultOverlay component.

@@ -19,10 +19,10 @@ import type { RacingState } from "@/game/store/state/racingState";
 import { createDefaultRacingState } from "@/game/store/state/racingState";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
-import { TRAINING_COST } from "@/constants/game";
+import { TRAINING_COST } from "@/constants";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
-import { simulateRace } from "@/services/raceSimulationExecutor";
+import { simulateRace } from "@/services/race/raceSimulationExecutor";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
 

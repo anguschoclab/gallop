@@ -12,9 +12,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useNpcStablesFilters } from "@/hooks/useNpcStablesFilters";
+import { useNpcStablesFilters } from "@/hooks/stable/useNpcStablesFilters";
 import { getReputationStars } from "@/core/stable/uiHelpers";
-import { stableTierColor } from "@/lib/uiTokens";
+import { stableTierColor } from "@/core/common/uiTokens";
 
 type NpcStablesSearch = {
   q: string;

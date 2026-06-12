@@ -10,7 +10,7 @@
  */
 
 import type { Horse, GameState } from "@/game/types";
-import { PRIZE_SPLIT } from "@/constants/game";
+import { PRIZE_SPLIT } from "@/constants";
 import { getCareerStats } from "@/core/horse/stats";
 
 // Memoization cache for lineage lookups

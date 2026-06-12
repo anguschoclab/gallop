@@ -6,10 +6,10 @@ import { HorseCard } from "@/components/horse/HorseCard";
 import { PrivateSaleCounterCard } from "@/components/auction/PrivateSaleCounterCard";
 import { overall } from "@/components/horse/HorseBits";
 import { calculateScoutCost } from "@/core/npc/scouting";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { toast } from "sonner";
 import type { Horse, PrivateSaleOffer } from "@/game/types";
-import type { useNpcStableDetail } from "@/hooks/useNpcStableDetail";
+import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 
 interface NpcStableRosterTabProps {
   pageData: ReturnType<typeof useNpcStableDetail>;

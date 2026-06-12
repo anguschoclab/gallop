@@ -6,7 +6,7 @@ import {
   formatAgeRestrictions,
   formatAllRestrictions,
 } from "@/core/race/restrictions";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 
 interface RaceDetailPanelProps {
   race: {

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
-import { netProceeds } from "@/game/auction/engine";
+import { netProceeds } from "@/core/auction/engine";
 
 /**
  * Pure-derived scoreboard — what the player has done so far in this sale.

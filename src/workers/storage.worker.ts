@@ -6,7 +6,7 @@
 
 import { expose } from "comlink";
 import type { GameState } from "@/game/types";
-import { initOPFS, writeFile, readFile, deleteFile } from "@/services/opfsService";
+import { initOPFS, writeFile, readFile, deleteFile } from "@/services/storage/opfsService";
 
 const GAME_STATE_FILENAME = "gameState.json";
 

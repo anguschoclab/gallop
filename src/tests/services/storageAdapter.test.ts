@@ -1,16 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-import * as opfsService from "@/services/opfsService";
-import { checkOPFSAvailable } from "@/services/opfsService";
+import * as opfsService from "@/services/storage/opfsService";
+import { checkOPFSAvailable } from "@/services/storage/opfsService";
 
-vi.mock("@/services/opfsService", () => ({
+vi.mock("@/services/storage/opfsService", () => ({
   initOPFS: vi.fn(),
   writeFile: vi.fn(),
   readFile: vi.fn(),
   deleteFile: vi.fn(),
   checkOPFSAvailable: vi.fn(),
 }));
-import * as storageAdapter from "@/services/storageAdapter";
+import * as storageAdapter from "@/services/storage/storageAdapter";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 

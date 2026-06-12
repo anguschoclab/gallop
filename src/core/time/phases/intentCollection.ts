@@ -11,7 +11,7 @@
 // Intent Collection Phase
 // Collects all intents for the current day from player, NPCs, and system
 
-import { PHASE_ORDER_INTENT_COLLECTION } from "@/constants/game";
+import { PHASE_ORDER_INTENT_COLLECTION } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { generateNpcIntents } from "@/core/npc/intentGenerators";

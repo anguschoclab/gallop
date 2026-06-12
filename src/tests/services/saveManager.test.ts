@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import * as saveManager from "@/services/saveManager";
-import * as opfsService from "@/services/opfsService";
+import * as saveManager from "@/services/storage/saveManager";
+import * as opfsService from "@/services/storage/opfsService";
 import type { GameState } from "@/game/types";
 
 describe("saveManager", () => {

@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import { gradeColor } from "@/lib/uiTokens";
-import { cn } from "@/lib/utils";
+import { gradeColor } from "@/core/common/uiTokens";
+import { cn } from "@/lib/cn";
 
 interface GradeBadgeProps {
   grade: string;

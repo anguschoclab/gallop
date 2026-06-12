@@ -1,6 +1,6 @@
 import type { Horse } from "@/game/types";
 import { parTime } from "@/core/race/beyer";
-import { BEYER_BASE, BEYER_FORMULA_SCALE } from "@/constants/game";
+import { BEYER_BASE, BEYER_FORMULA_SCALE } from "@/constants";
 
 /**
  * Format a time in seconds as a human-readable split string.

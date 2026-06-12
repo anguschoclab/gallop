@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { HardDrive } from "lucide-react";
 import type { AuctionSale } from "@/game/types";
 

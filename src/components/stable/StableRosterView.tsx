@@ -5,9 +5,9 @@ import { HorseBit, overall } from "@/components/horse/HorseBits";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RosterFilterBar } from "./RosterFilterBar";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
-import type { RegionalAward } from "@/game/awards/types";
+import type { RegionalAward } from "@/core/awards/types";
 import { ChevronRight, Zap, Clock, Search } from "lucide-react";
 
 interface StableRosterViewProps {

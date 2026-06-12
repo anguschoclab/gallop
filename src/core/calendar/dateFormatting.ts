@@ -201,3 +201,24 @@ export function parseDayInput(input: string, currentGameDay: number): number | n
 export function isValidDayOfYear(day: number): boolean {
   return day >= 1 && day <= 365;
 }
+
+/**
+ * Format a relative day label (e.g., "3 days ago", "in 2 days")
+ */
+export function relativeDayLabel(targetDay: number, referenceDay: number): string {
+  const diff = targetDay - referenceDay;
+  if (diff === 0) return "Today";
+  if (diff === 1) return "Tomorrow";
+  if (diff === -1) return "Yesterday";
+  if (diff > 0) return `in ${diff} days`;
+  return `${Math.abs(diff)} days ago`;
+}
+
+/**
+ * Format a day as a short date string (e.g., "D145 Y2")
+ */
+export function shortDayLabel(day: number): string {
+  const year = gameYearNumber(day);
+  const dayOfYearValue = dayOfYear(day);
+  return `D${dayOfYearValue} Y${year}`;
+}

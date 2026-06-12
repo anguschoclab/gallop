@@ -5,7 +5,7 @@ import { JockeyAvatar } from "@/components/jockey/JockeyAvatar";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { getTransportCostForRace } from "@/core/race/transportCost";
 import type { Horse, Jockey, Race } from "@/game/types";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 
 interface Props {

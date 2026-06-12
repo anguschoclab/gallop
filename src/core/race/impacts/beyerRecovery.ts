@@ -13,7 +13,7 @@ import {
   STAMINA_DRAIN_DISTANCE_DIVISOR,
   STAMINA_DRAIN_BEYER_DIVISOR,
   STAMINA_DRAIN_MAX,
-} from "@/constants/game";
+} from "@/constants";
 import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,

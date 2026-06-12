@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AwardIconWithYear } from "./AwardIcon";
-import { CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
-import { getRegionCountryLabel } from "@/lib/countryFlag";
+import { CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
+import { getRegionCountryLabel } from "@/core/common/countryFlag";
 import { Trophy } from "lucide-react";
-import type { RegionalAward } from "@/game/awards/types";
+import type { RegionalAward } from "@/core/awards/types";
 
 const COMPACT_THRESHOLD = 5;
 

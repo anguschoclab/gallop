@@ -5,7 +5,7 @@ import { Truck, Plane, Train, X, CheckCircle, Clock } from "lucide-react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { formatTransportMode, type TransportRequest } from "@/core/transportation/transportationTypes";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat("en-US", {

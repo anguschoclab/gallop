@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, ListChecks, Users, History, CalendarDays } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
-import { cn } from "@/lib/utils";
-import type { useNpcStableDetail } from "@/hooks/useNpcStableDetail";
+import { formatCurrency } from "@/core/common/formatting";
+import { cn } from "@/lib/cn";
+import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 
 interface NpcStableInfoSidebarProps {
   stableId: string;

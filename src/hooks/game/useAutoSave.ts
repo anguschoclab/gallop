@@ -4,7 +4,7 @@
 
 import { useEffect, useRef } from "react";
 import { useGame } from "@/game/store";
-import { saveToSlot } from "@/services/saveManager";
+import { saveToSlot } from "@/services/storage/saveManager";
 import type { GameState } from "@/game/types";
 
 /**

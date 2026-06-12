@@ -2,8 +2,8 @@ import { TrophyCompactView } from "./TrophyCompactView";
 import { TrophyWallView } from "./TrophyWallView";
 import { TrophyFullView } from "./TrophyFullView";
 import { groupByRegion } from "./awardUtils";
-import { cn } from "@/lib/utils";
-import type { AwardRegion, RegionalAward } from "@/game/awards/types";
+import { cn } from "@/lib/cn";
+import type { AwardRegion, RegionalAward } from "@/core/awards/types";
 
 interface TrophyCaseProps {
   awards: RegionalAward[];

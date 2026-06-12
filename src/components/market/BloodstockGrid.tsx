@@ -3,10 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HorseStats, overall, NumericValue } from "@/components/horse/HorseBits";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { horsePrice } from "@/core/horse/pricing";
 import { SilkDot } from "@/components/SilkDot";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { Horse, GameState } from "@/game/types";
 import { HardDrive } from "lucide-react";
 

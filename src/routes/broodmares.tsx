@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PregnancyTimeline } from "@/components/breeding/PregnancyTimeline";
-import { useBroodmareData } from "@/hooks/useBroodmareData";
+import { useBroodmareData } from "@/hooks/breeding/useBroodmareData";
 import { FileText, Heart } from "lucide-react";
 
 export const Route = createFileRoute("/broodmares")({

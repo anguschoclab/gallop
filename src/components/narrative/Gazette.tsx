@@ -1,10 +1,10 @@
-import { useGazetteData } from "@/hooks/useGazetteData";
+import { useGazetteData } from "@/hooks/dashboard/useGazetteData";
 import { NewsArticle } from "./NewsArticle";
 import { NewsContent } from "./NewsContent";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Newspaper, Archive, ShieldCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import "./Gazette.css";
 
 export const Gazette: React.FC = () => {

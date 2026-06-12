@@ -7,7 +7,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { usePrivateTrial } from "@/hooks/usePrivateTrial";
+import { usePrivateTrial } from "@/hooks/race/usePrivateTrial";
 import { PrivateTrialForm } from "./PrivateTrialForm";
 import { PrivateTrialResults } from "./PrivateTrialResults";
 import type { Horse } from "@/game/types";

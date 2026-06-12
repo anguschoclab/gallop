@@ -11,7 +11,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 (global as any).Worker = undefined;
 
 // Mock opfsService module before importing storage-dependent code
-vi.mock("@/services/opfsService", () => ({
+vi.mock("@/services/storage/opfsService", () => ({
   initOPFS: vi.fn(),
   writeFile: vi.fn(),
   readFile: vi.fn(),
@@ -32,8 +32,8 @@ vi.mock("comlink", () => ({
 import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 import type { Horse } from "@/game/types";
-import * as opfsService from "@/services/opfsService";
-import { DAYS_PER_MONTH } from "@/constants/game";
+import * as opfsService from "@/services/storage/opfsService";
+import { DAYS_PER_MONTH } from "@/constants";
 
 // Mock helpers
 let mockOPFSData: Map<string, any> = new Map();

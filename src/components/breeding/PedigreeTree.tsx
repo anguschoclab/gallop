@@ -3,11 +3,11 @@ import { ReactFlow, Background, useNodesState, useEdgesState, type NodeTypes } f
 import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
 import { useGame } from "@/game/store";
-import { buildPedigreeGraph, NODE_WIDTH, NODE_HEIGHT } from "@/lib/pedigreeGraph";
+import { buildPedigreeGraph, NODE_WIDTH, NODE_HEIGHT } from "@/core/breeding/pedigreeGraph";
 import { classifyCoi } from "@/core/breeding/populationGenetics";
 import { PedigreeNodeCard } from "./PedigreeNodeCard";
-import { cn } from "@/lib/utils";
-import type { PedigreeFlowNode, PedigreeEdge } from "@/lib/pedigreeGraph";
+import { cn } from "@/lib/cn";
+import type { PedigreeFlowNode, PedigreeEdge } from "@/core/breeding/pedigreeGraph";
 
 const nodeTypes: NodeTypes = {
   horse: PedigreeNodeCard as any,

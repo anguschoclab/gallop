@@ -19,12 +19,12 @@ import { resolveFoaling } from "@/core/horse/horseFactory";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getFoalsBy } from "@/core/breeding/lineage";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import {
   BREEDING_FEE,
   GESTATION_DAYS,
   LIVE_FOAL_GUARANTEE_FEE,
-} from "@/constants/game";
+} from "@/constants";
 
 /**
  * Helper function to get regional system from country string.

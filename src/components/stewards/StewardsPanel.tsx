@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle, XCircle, DollarSign, Clock } from "lucide-react";
 import { useGame } from "@/game/store";
 import { formatInquiryType, formatInquiryOutcome, type StewardsInquiry } from "@/core/stewards/stewardTypes";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 interface StewardsPanelProps {
   horseId: string;

@@ -5,13 +5,13 @@ import {
   Briefcase,
 } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PrivateSaleOfferDialog } from "@/components/auction/PrivateSaleOfferDialog";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { useNpcStableDetail } from "@/hooks/useNpcStableDetail";
+import { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 import { NpcStableOverviewTab } from "@/components/stable/NpcStableOverviewTab";
 import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
 import { NpcStableInfoSidebar } from "@/components/stable/NpcStableInfoSidebar";

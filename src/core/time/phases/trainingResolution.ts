@@ -20,7 +20,7 @@ import {
   TRAINING_ENERGY_MAP,
   TRAINING_ENERGY_REST,
   TRAINING_MIN_ENERGY_THRESHOLD,
-} from "@/constants/game";
+} from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/core/common/rng";
 import { getFacilityBonus } from "@/core/facilities";

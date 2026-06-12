@@ -14,7 +14,7 @@ import {
   BANISTER_FITNESS_K,
   BANISTER_FATIGUE_K,
   WORKOUT_INTENSITIES,
-} from "@/constants/game";
+} from "@/constants";
 
 export const BANISTER_CONSTANTS = {
   FITNESS_TAU: BANISTER_FITNESS_TAU,

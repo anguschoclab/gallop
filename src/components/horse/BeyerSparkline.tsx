@@ -1,5 +1,5 @@
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 interface BeyerSparklineProps {

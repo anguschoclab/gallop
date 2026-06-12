@@ -4,7 +4,7 @@ import { HorsePortraitBadge } from "@/components/horse/HorsePortrait";
 import { SilkDot } from "@/components/SilkDot";
 import { getCoatColor } from "@/core/horse/uiHelpers";
 import { genderSymbol } from "@/core/horse/gender";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
 import { Trophy, Calendar } from "lucide-react";
 

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { Globe, ChevronRight, Store, Gavel } from "lucide-react";
 
 export function CircuitWidget() {

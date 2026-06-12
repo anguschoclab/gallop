@@ -11,8 +11,8 @@
 import type { Horse, AuctionSale, AuctionLot } from "@/game/types";
 import { horsePriceWithPedigree } from "@/core/horse/pricing";
 import { generateUUID } from "@/core/uuid";
-import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants/game";
-import { formatCurrency } from "@/lib/formatting";
+import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
+import { formatCurrency } from "@/core/common/formatting";
 import type { StoreGet } from "../types";
 import { requireHorse, requireOwned } from "../guards";
 

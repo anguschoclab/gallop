@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
-import { gradeColor } from "@/lib/uiTokens";
+import { gradeColor } from "@/core/common/uiTokens";
 import { getCountry } from "@/data/gradedRaces";
 import type { Race } from "@/game/types";
 

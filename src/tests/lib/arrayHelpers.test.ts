@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sum, average, max, min, maxBy, groupBy, countBy } from "@/lib/arrayHelpers";
+import { sum, average, max, min, maxBy, groupBy, countBy } from "@/core/common/arrayHelpers";
 
 describe("arrayHelpers", () => {
   describe("sum", () => {

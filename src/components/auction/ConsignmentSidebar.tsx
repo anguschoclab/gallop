@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SilkDot } from "@/components/SilkDot";
-import { CONSIGNMENT_COMMISSION } from "@/constants/game";
+import { CONSIGNMENT_COMMISSION } from "@/constants";
 import { Package } from "lucide-react";
 import type { Horse, AuctionSale } from "@/game/types";
 

@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useGame } from "@/game/store";

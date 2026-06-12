@@ -1,4 +1,4 @@
-import { TRAINING_COST_MAP, TRAINING_ENERGY_MAP } from "@/constants/game";
+import { TRAINING_COST_MAP, TRAINING_ENERGY_MAP } from "@/constants";
 
 export const BASIC_TRAINING_TYPES = ["speed", "stamina", "acceleration"] as const;
 

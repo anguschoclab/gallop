@@ -9,7 +9,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { PHASE_ORDER_STEWARDS } from "@/constants/game";
+import { PHASE_ORDER_STEWARDS } from "@/constants";
 import {
   generateRandomInquiry,
   resolveInquiry,

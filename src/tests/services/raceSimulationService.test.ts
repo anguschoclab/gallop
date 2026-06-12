@@ -4,7 +4,7 @@ import {
   buildRaceField,
   simulateStep,
   getRaceClassBonus,
-} from "@/services/raceSimulationService";
+} from "@/services/race/raceSimulationService";
 import type { Horse, Race } from "@/game/types";
 import { createTestHorse, createTestJockeys } from "@/tests/helpers";
 

@@ -9,7 +9,7 @@
 import { useEffect, useState } from "react";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { useScoreboard } from "@/hooks/auction/useScoreboard";
 import { BidHistoryPanel } from "./BidHistoryPanel";
 import { WinOverlay } from "./WinOverlay";
@@ -23,7 +23,7 @@ import { AuctionSummary } from "./sub/AuctionSummary";
 import { getDisplayableStats } from "@/core/npc/scouting";
 import { Sparkles, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { useNavigate } from "@tanstack/react-router";
 
 interface AuctionTheaterProps {

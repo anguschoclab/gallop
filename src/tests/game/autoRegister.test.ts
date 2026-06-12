@@ -8,7 +8,7 @@ import { describe, it, expect } from "vitest";
 import {
   calculateAutoRegisterEntries,
   calculateTransportCostForRace,
-} from "@/game/campaign/autoRegister";
+} from "@/core/campaign/autoRegister";
 import type { Horse, Race, Jockey } from "@/game/types";
 
 // Helper to create a minimal mock horse

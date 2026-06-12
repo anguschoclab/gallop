@@ -9,8 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/lib/formatting";
+import { cn } from "@/lib/cn";
+import { formatCurrency } from "@/core/common/formatting";
 import type { Stable } from "@/game/types";
 import { Search, X, ExternalLink, Flame } from "lucide-react";
 

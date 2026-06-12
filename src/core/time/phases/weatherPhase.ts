@@ -23,7 +23,7 @@ import {
   toTrackWeatherPattern,
   PATTERN_SEVERITY,
 } from "@/core/weather";
-import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS, PHASE_ORDER_WEATHER } from "@/constants/game";
+import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS, PHASE_ORDER_WEATHER } from "@/constants";
 import { calculateConditionChange } from "@/core/race/trackConditions";
 import { generateUUID } from "@/core/uuid";
 

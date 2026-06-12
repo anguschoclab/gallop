@@ -5,7 +5,7 @@
  */
 
 import { useState } from "react";
-import { useAutoRegister } from "@/hooks/useAutoRegister";
+import { useAutoRegister } from "@/hooks/horse/useAutoRegister";
 import { useCash } from "@/hooks/game/useCoreState";
 import { Button } from "@/components/ui/button";
 import {

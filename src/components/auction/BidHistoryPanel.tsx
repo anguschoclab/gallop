@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/lib/formatting";
+import { cn } from "@/lib/cn";
+import { formatCurrency } from "@/core/common/formatting";
 import type { AuctionBidRecord, Stable } from "@/game/types";
 
 interface BidHistoryPanelProps {

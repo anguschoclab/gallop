@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
-import { formatCurrency } from "@/lib/formatting";
-import { netProceeds, commissionAmount } from "@/game/auction/engine";
-import { CONSIGNMENT_COMMISSION } from "@/constants/game";
+import { formatCurrency } from "@/core/common/formatting";
+import { netProceeds, commissionAmount } from "@/core/auction/engine";
+import { CONSIGNMENT_COMMISSION } from "@/constants";
 import type { AuctionLot, Horse, Stable } from "@/game/types";
 
 /**

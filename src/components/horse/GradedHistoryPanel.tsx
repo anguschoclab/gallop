@@ -2,10 +2,10 @@ import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { Badge } from "@/components/ui/badge";
-import { gradeColor } from "@/lib/uiTokens";
+import { gradeColor } from "@/core/common/uiTokens";
 import { GradedStatsChart } from "@/components/race/GradedStatsChart";
 import { GRADED_RACES, getRaceCountry } from "@/data/gradedRaces";
-import { getCountryFlag } from "@/lib/countryFlag";
+import { getCountryFlag } from "@/core/common/countryFlag";
 import { VisualTrophy, TrophyShelf } from "@/components/awards/VisualTrophy";
 import { RaceHistoryGroup } from "./RaceHistoryGroup";
 

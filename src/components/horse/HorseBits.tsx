@@ -2,7 +2,7 @@ import type { Horse } from "@/game/types";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { SilkDot } from "@/components/SilkDot";
 
 /**
@@ -89,7 +89,7 @@ export function overall(h: Horse) {
   return calculateOverallRating(h);
 }
 
-import { formatCurrency, formatTime } from "@/lib/formatting";
+import { formatCurrency, formatTime } from "@/core/common/formatting";
 
 export { formatCurrency, formatTime };
 

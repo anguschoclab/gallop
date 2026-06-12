@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_RACES } from "@/constants/game";
+import { PHASE_ORDER_RACES } from "@/constants";
 import type { PipelineContext } from "../pipeline";
 import { generateUpcomingRaces, pruneOldRaces } from "@/game/store/helpers/market";
 import { generateAnnualCalendar, getCurrentYear } from "@/core/race/schedule";

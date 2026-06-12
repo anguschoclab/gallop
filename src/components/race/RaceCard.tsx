@@ -3,11 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, AlertTriangle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { gradeColor } from "@/lib/uiTokens";
-import { useRaceCardOdds } from "@/hooks/useRaceCardOdds";
-import { formatCurrency } from "@/lib/formatting";
+import { gradeColor } from "@/core/common/uiTokens";
+import { useRaceCardOdds } from "@/hooks/race/useRaceCardOdds";
+import { formatCurrency } from "@/core/common/formatting";
 import { WeatherForecastStrip } from "./WeatherForecastStrip";
 import type { Race } from "@/game/types";
 

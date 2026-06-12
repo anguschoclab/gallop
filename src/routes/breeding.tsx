@@ -14,10 +14,10 @@ import {
   GitBranch,
 } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BreedingProgramPanel } from "@/components/breeding/BreedingProgramPanel";
-import { useBreedingPage } from "@/hooks/useBreedingPage";
+import { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
 import { BreedingShedTab } from "@/components/breeding/BreedingShedTab";
 import { BroodmaresTab } from "@/components/breeding/BroodmaresTab";
 import { BreedingHistoryTab } from "@/components/breeding/BreedingHistoryTab";

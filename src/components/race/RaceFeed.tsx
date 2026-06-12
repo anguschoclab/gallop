@@ -7,7 +7,7 @@ import { ClaimingRacePanel } from "@/components/race/ClaimingRacePanel";
 import { RaceCard } from "@/components/race/RaceCard";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/core/financial";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { Race, Claim } from "@/game/types";
 import { List, LayoutGrid, Target, MapPin, Globe } from "lucide-react";
 

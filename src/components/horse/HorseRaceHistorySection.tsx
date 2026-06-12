@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 interface HorseRaceHistorySectionProps {
   horse: any;

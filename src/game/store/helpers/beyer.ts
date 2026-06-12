@@ -13,7 +13,7 @@
  * Pure business logic for Beyer par recalibration
  */
 
-import { SEASON_DAYS } from "@/constants/game";
+import { SEASON_DAYS } from "@/constants";
 
 export type RecalibrationResult = {
   calibratedPars: Record<number, number> | undefined;

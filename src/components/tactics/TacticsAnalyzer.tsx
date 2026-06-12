@@ -15,7 +15,7 @@ import {
   type EarlyPosition,
   type MoveTiming,
 } from "@/core/tactics/tacticsTypes";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { useState } from "react";
 
 interface TacticsAnalyzerProps {

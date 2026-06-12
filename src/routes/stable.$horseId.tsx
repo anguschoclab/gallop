@@ -17,8 +17,8 @@ import { HorseRaceHistorySection } from "@/components/horse/HorseRaceHistorySect
 import { InsurancePanel } from "@/components/insurance/InsurancePanel";
 import { StewardsPanel } from "@/components/stewards/StewardsPanel";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { useHorseActions } from "@/hooks/useHorseActions";
-import { useHorseDetail } from "@/hooks/useHorseDetail";
+import { useHorseActions } from "@/hooks/horse/useHorseActions";
+import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
 import {
   ArrowLeft,
   Zap,
@@ -28,7 +28,7 @@ import {
   GitBranch,
   History,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: HorseDetail,

@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useInbox } from "@/hooks/useInbox";
+import { cn } from "@/lib/cn";
+import { useInbox } from "@/hooks/inbox/useInbox";
 
 export const Route = createFileRoute("/inbox")({
   component: InboxPage,

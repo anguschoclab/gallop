@@ -32,7 +32,7 @@ import {
   createBreedingAIState,
   recordBreedingDecision,
 } from "@/core/ai/breedingAI";
-import { BREEDING_FEE, GESTATION_DAYS } from "@/constants/game";
+import { BREEDING_FEE, GESTATION_DAYS } from "@/constants";
 
 /**
  * Run autonomous NPC breeding for the current day.

@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getSkyBackground } from "@/components/race/raceVisualHelpers";
 import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
 import { RaceVisualizer } from "@/components/race/RaceVisualizer";
-import { useLiveRaceSimulation } from "@/hooks/useLiveRaceSimulation";
+import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
 import { ResultOverlay } from "@/components/race/ResultOverlay";
 import { SectionalTimingTable } from "@/components/race/SectionalTimingTable";
 import { RaceControlBar } from "@/components/race/RaceControlBar";
@@ -14,8 +14,8 @@ import { LiveSplitsTable } from "@/components/race/LiveSplitsTable";
 import { Leaderboard } from "@/components/race/Leaderboard";
 import { RaceFieldDialog } from "@/components/race/RaceFieldDialog";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
-import { useRacePageData } from "@/hooks/useRacePageData";
-import { useRaceUIState } from "@/hooks/useRaceUIState";
+import { useRacePageData } from "@/hooks/race/useRacePageData";
+import { useRaceUIState } from "@/hooks/race/useRaceUIState";
 
 export const Route = createFileRoute("/race/$raceId")({
   component: LiveRace,

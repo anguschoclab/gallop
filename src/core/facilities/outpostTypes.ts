@@ -30,7 +30,7 @@ import {
   OUTPOST_BASE_SLOTS,
   TRANSPORT_FATIGUE_SPIKE,
   ACCLIMATIZATION_PERIOD,
-} from "@/constants/game";
+} from "@/constants";
 
 export const OUTPOST_CONSTANTS = {
   BASE_SLOTS: OUTPOST_BASE_SLOTS,

@@ -11,7 +11,7 @@
 // Horse Death Phase
 // Handles death from old age, catastrophic injury, and illness complications
 
-import { PHASE_ORDER_HORSE_DEATH } from "@/constants/game";
+import { PHASE_ORDER_HORSE_DEATH } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact, HorseDeathImpact, LogImpact, NameReservationImpact } from "@/core/resolver/impacts/index";
 import { createRng, hashStr } from "@/core/common/rng";

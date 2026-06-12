@@ -1,9 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { Briefcase, ShieldCheck, Trophy } from "lucide-react";
 
 interface StaffMember {

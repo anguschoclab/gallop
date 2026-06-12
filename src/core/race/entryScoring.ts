@@ -21,7 +21,7 @@ import {
   MIN_ENERGY_TO_ENTER,
   MIN_FORM_TO_ENTER,
   PREFERRED_DISTANCE_RANGE,
-} from "@/constants/game";
+} from "@/constants";
 
 // Base purse appeal thresholds by tier (modified by personality)
 export const BASE_PURSE_APPEAL: Record<StableTier, number> = {

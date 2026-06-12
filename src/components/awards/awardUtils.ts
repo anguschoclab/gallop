@@ -1,4 +1,4 @@
-import type { AwardRegion, RegionalAward } from "@/game/awards/types";
+import type { AwardRegion, RegionalAward } from "@/core/awards/types";
 
 export function groupByRegion(awards: RegionalAward[]): Record<AwardRegion, RegionalAward[]> {
   const grouped: Record<AwardRegion, RegionalAward[]> = {

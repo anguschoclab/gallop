@@ -1,6 +1,6 @@
 import type { SectionalSplit } from "@/core/race/types";
 import { SilkDot } from "@/components/SilkDot";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { useMemo } from "react";
 
 interface SectionalTimingTableProps {

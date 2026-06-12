@@ -7,7 +7,7 @@
 
 import type { Horse } from "@/game/types";
 import { getCareerStats } from "@/core/horse/stats";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 
 /**
  * Returns true if a horse is considered "top" and deserves a commemorative inbox message on retirement.

@@ -1,9 +1,9 @@
 import { AwardIcon } from "./AwardIcon";
 import { REGION_COLOR_CLASSES } from "@/assets/awards";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { Trophy, Star } from "lucide-react";
-import type { RegionalAward } from "@/game/awards/types";
-import { CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
+import type { RegionalAward } from "@/core/awards/types";
+import { CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
 
 interface TrophyWallViewProps {
   awards: RegionalAward[];

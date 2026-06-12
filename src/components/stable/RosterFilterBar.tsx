@@ -6,7 +6,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { Search, Filter, Activity, Heart, Tag, Users } from "lucide-react";
 
 interface RosterFilterBarProps {

@@ -4,9 +4,9 @@ import { Brain, Trophy } from "lucide-react";
 import { TrophyCase } from "@/components/awards";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
-import { cn } from "@/lib/utils";
-import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/hooks/useNpcStableDetail";
-import type { useNpcStableDetail } from "@/hooks/useNpcStableDetail";
+import { cn } from "@/lib/cn";
+import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/hooks/stable/useNpcStableDetail";
+import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
 
 interface NpcStableOverviewTabProps {
   stableId: string;

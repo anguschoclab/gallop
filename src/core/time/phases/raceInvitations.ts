@@ -15,7 +15,7 @@ import {
   DISTANCE_INVITE_THRESHOLD,
   DEFAULT_INVITE_DAYS_AHEAD,
   INVITE_AT_LARGE_MULTIPLIER,
-} from "@/constants/game";
+} from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyImpact, InboxImpact } from "@/core/resolver/impacts/index";
 import { isHorseEligibleForRace } from "@/core/race/eligibility";

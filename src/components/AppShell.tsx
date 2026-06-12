@@ -8,9 +8,9 @@ import { AutoSimPanel } from "@/components/race/AutoSimPanel";
 import { AwardCeremony } from "./awards";
 import { SidebarNav } from "./SidebarNav";
 import { useState } from "react";
-import { useSkipToNext } from "@/hooks/useSkipToNext";
-import { useAwardCeremony } from "@/hooks/useAwardCeremony";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants/game";
+import { useSkipToNext } from "@/hooks/shared/useSkipToNext";
+import { useAwardCeremony } from "@/hooks/awards/useAwardCeremony";
+import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants";
 
 export function AppShell() {
   useAutoSave();

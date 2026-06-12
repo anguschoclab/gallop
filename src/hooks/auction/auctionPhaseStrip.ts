@@ -1,4 +1,4 @@
-import type { ChantPhase } from "@/game/auction/runner";
+import type { ChantPhase } from "@/core/auction/runner";
 
 export const PHASES: { key: ChantPhase | "sold_passed"; label: string }[] = [
   { key: "open", label: "Open" },

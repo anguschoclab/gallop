@@ -5,7 +5,7 @@ import {
   isFeminine,
   hashSeed,
 } from "@/core/horse/proceduralPortrait";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { useMemo, forwardRef } from "react";
 
 interface Props {

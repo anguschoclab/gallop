@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { ALL_ARCHETYPES, type Archetype } from "@/core/breeding/archetypes";
 import { archetypeMeta } from "./ArchetypeMeta";
 import { ChevronRight } from "lucide-react";

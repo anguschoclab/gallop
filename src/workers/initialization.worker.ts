@@ -20,7 +20,7 @@ import {
   STARTING_CASH,
   INITIALIZATION_BUDGET_TIER_THRESHOLD,
   INITIALIZATION_HORSE_COUNT_THRESHOLD,
-} from "@/constants/game";
+} from "@/constants";
 
 export type InitializeInput = {
   options?: NewGameOptions;

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useNewGameWizard, type Step } from "@/hooks/useNewGameWizard";
+import { useNewGameWizard, type Step } from "@/hooks/shared/useNewGameWizard";
 import { StepIdentity } from "./steps/StepIdentity";
 import { StepSilks } from "./steps/StepSilks";
 import { StepBackstory } from "./steps/StepBackstory";

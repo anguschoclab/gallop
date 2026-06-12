@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { checkHallOfFameInduction } from "@/services/historyService";
+import { checkHallOfFameInduction } from "@/services/history/historyService";
 import { Horse } from "@/game/types";
 
 describe("Hall of Fame Induction", () => {

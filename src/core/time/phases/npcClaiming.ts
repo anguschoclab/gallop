@@ -8,10 +8,10 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_NPC_CLAIMING } from "@/constants/game";
+import { PHASE_ORDER_NPC_CLAIMING } from "@/constants";
 import type { PipelineContext } from "../pipeline";
 import type { Race, Claim, Horse, Stable } from "@/game/types";
-import { calculateLotValuation } from "@/game/auction/engine";
+import { calculateLotValuation } from "@/core/auction/engine";
 import { generateUUID } from "@/core/uuid";
 
 /**

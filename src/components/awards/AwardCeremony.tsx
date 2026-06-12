@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AwardIcon } from "./AwardIcon";
 import { AwardBadge } from "./AwardBadge";
-import { cn } from "@/lib/utils";
-import type { AwardRegion, RegionalAward } from "@/game/awards/types";
+import { cn } from "@/lib/cn";
+import type { AwardRegion, RegionalAward } from "@/core/awards/types";
 import {
   REGION_AWARD_NAMES,
   REGION_DISPLAY_NAMES,
   CATEGORY_DISPLAY_NAMES,
-} from "@/game/awards/types";
+} from "@/core/awards/types";
 import { REGION_COLORS } from "@/assets/awards";
 import { Trophy, ChevronRight, Star, Sparkles } from "lucide-react";
 

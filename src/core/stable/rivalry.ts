@@ -15,7 +15,7 @@ import {
   RIVALRY_TAUNT_IN_GAZETTE,
   RIVALRY_UNSEAT_WIN_STREAK,
   RIVALRY_HOME_FIELD_BONUS,
-} from "@/constants/game";
+} from "@/constants";
 
 export const RIVALRY_CONSTANTS = {
   FRICTION: {

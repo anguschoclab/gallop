@@ -13,7 +13,7 @@ import type { ManagerReputation } from "@/core/reputation";
 import type { SystemsState } from "@/game/store/state/systemsState";
 import type { UserSettings } from "@/core/settings/settingsTypes";
 import type { GameStateCreator } from "../types";
-import { saveToSlot, loadFromSlot } from "@/services/saveManager";
+import { saveToSlot, loadFromSlot } from "@/services/storage/saveManager";
 
 export type UtilitySlice = {
   /** Sets the collection of NPC stables */

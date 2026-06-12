@@ -19,10 +19,10 @@ import {
 } from "@/components/ui/select";
 import { useNavigate } from "@tanstack/react-router";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import { buildRaceField, rngForRace } from "@/services/raceSimulationService";
+import { buildRaceField, rngForRace } from "@/services/race/raceSimulationService";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
 import { getCourseForRace } from "@/data/tracks";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { useState } from "react";
 import { INSTRUCTION_PRESETS, buildInstructions, type PresetId } from "./TacticOptions";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";

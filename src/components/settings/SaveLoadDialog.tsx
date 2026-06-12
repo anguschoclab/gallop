@@ -3,7 +3,7 @@
  * Redesigned for thematic depth and high-craft utility.
  */
 
-import { useSaveSlots } from "@/hooks/useSaveSlots";
+import { useSaveSlots } from "@/hooks/shared/useSaveSlots";
 import { LedgerEntry } from "./LedgerEntry";
 import {
   Dialog,

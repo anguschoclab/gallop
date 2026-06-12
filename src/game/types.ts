@@ -29,7 +29,7 @@ export type { PlayerProfile } from "@/core/stable/types";
 
 // Re-export specific external dependencies
 export type { GameState } from "./store/state";
-export type { RegionalAward, AwardRegion } from "./awards/types";
+export type { RegionalAward, AwardRegion } from "@/core/awards/types";
 export type { BreedingCompatibilityResult } from "@/core/breeding/compatibility";
 export type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 

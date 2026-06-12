@@ -10,8 +10,8 @@ import {
 } from "@/core/facilities/outpostTypes";
 import { FACILITY_NAMES, type FacilityType } from "@/core/facilities/facilityTypes";
 import { MapPin, Users, Globe, Hammer, Zap, Heart, TrendingUp, ArrowRightLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/lib/formatting";
+import { cn } from "@/lib/cn";
+import { formatCurrency } from "@/core/common/formatting";
 
 export function ImperialOutpostManager() {
   const [selectedOutpostId, setSelectedOutpostId] = useState<string | null>(null);

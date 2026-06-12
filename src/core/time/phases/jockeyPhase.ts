@@ -18,7 +18,7 @@ import {
   recordJockeyAssignment,
 } from "@/core/ai/jockeyAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/constants/game";
+import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/constants";
 
 /**
  * Phase: Jockey Management

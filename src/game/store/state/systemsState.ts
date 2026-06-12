@@ -18,7 +18,7 @@ import type { ScoutReport } from "@/core/market/types";
 import type { Jockey } from "@/core/jockey/types";
 import type { HorseCampaign, TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
-import type { RegionalAward, AwardRegion } from "@/game/awards/types";
+import type { RegionalAward, AwardRegion } from "@/core/awards/types";
 import type {
   Leaderboard,
   SireTrendData,

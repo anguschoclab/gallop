@@ -6,9 +6,9 @@ import {
   type FacilityType,
 } from "@/core/facilities";
 import { ArrowUp, Check, HardDrive } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
-import { cn } from "@/lib/utils";
-import { useFacilityTiers } from "@/hooks/useFacilityTiers";
+import { formatCurrency } from "@/core/common/formatting";
+import { cn } from "@/lib/cn";
+import { useFacilityTiers } from "@/hooks/facilities/useFacilityTiers";
 
 interface FacilityCategoryProps {
   category: string;

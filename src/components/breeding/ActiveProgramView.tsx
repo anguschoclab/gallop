@@ -2,7 +2,7 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { ALL_ARCHETYPES } from "@/core/breeding/archetypes";
 import { calculateGeneticDistance } from "@/core/breeding/programs";
 import { toast } from "sonner";

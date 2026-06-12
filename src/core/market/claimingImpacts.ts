@@ -11,7 +11,7 @@ import type {
   LogImpact,
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import type { Rng } from "@/core/common/rng";
 import type { Race } from "@/game/types";

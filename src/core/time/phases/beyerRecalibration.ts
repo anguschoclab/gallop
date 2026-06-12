@@ -10,7 +10,7 @@
 
 import type { PipelineContext } from "../pipeline";
 import { maybeRecalibratePars } from "@/game/store/helpers/beyer";
-import { SEASON_DAYS, PHASE_ORDER_BEYER_RECALIBRATION } from "@/constants/game";
+import { SEASON_DAYS, PHASE_ORDER_BEYER_RECALIBRATION } from "@/constants";
 
 /**
  * Phase: Beyer Par Recalibration

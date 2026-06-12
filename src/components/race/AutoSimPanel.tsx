@@ -1,4 +1,4 @@
-import { useAutoSim } from "@/hooks/useAutoSim";
+import { useAutoSim } from "@/hooks/race/useAutoSim";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";

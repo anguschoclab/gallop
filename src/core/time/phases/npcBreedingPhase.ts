@@ -10,7 +10,7 @@
 
 import type { PipelineContext } from "../pipeline";
 import { runAutonomousBreeding } from "@/core/npc/breeding";
-import { PHASE_ORDER_NPC_BREEDING } from "@/constants/game";
+import { PHASE_ORDER_NPC_BREEDING } from "@/constants";
 
 /**
  * Phase: NPC Autonomous Breeding

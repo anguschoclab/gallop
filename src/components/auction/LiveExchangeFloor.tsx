@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { KIND_LABELS } from "@/game/auction/data";
+import { KIND_LABELS } from "@/core/auction/data";
 import { Gavel } from "lucide-react";
 import type { AuctionSale } from "@/game/types";
 

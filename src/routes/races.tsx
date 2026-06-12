@@ -9,7 +9,7 @@ import { RaceEntry } from "@/components/race/RaceEntry";
 import { RaceFilterPanel } from "@/components/race/RaceFilterPanel";
 import { RaceFeed } from "@/components/race/RaceFeed";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { useRaceFilters, type RaceFilters } from "@/hooks/useRaceFilters";
+import { useRaceFilters, type RaceFilters } from "@/hooks/race/useRaceFilters";
 import { useState } from "react";
 import { Race } from "@/game/types";
 import { Calendar, History, Globe } from "lucide-react";

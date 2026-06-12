@@ -17,7 +17,7 @@ import {
   AGE_RETIREMENT_THRESHOLD,
   INJURY_PRONENESS_LOW_THRESHOLD,
   INJURY_PRONENESS_HIGH_THRESHOLD,
-} from "@/constants/game";
+} from "@/constants";
 
 /**
  * Canonical base valuation formula shared by horsePrice() and stallions.valueOf().

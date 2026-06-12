@@ -12,7 +12,7 @@ import type { PipelineContext } from "../pipeline";
 import { createExpense } from "@/core/expenses";
 import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
-import { generateFlavorNews } from "@/services/newsGenerator";
+import { generateFlavorNews } from "@/services/narrative/newsGenerator";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import {
@@ -23,7 +23,7 @@ import {
   updateReserveState,
 } from "@/core/ai/upkeepAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { UPKEEP_PER_HORSE, PHASE_ORDER_UPKEEP } from "@/constants/game";
+import { UPKEEP_PER_HORSE, PHASE_ORDER_UPKEEP } from "@/constants";
 
 /**
  * Phase: Upkeep

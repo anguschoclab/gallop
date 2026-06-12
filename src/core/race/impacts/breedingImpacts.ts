@@ -7,7 +7,7 @@
 import type { AnyImpact, BlueHenImpact, StudCareerImpact, SyndicateSatisfactionImpact } from "@/core/resolver/impacts/index";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { recalcStandingFee } from "@/core/breeding/stallions";
 import type { Syndicate } from "@/core/breeding/types";
 import type { Race, Horse } from "@/game/types";

@@ -1,9 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { AwardBadge } from "./AwardBadge";
 import { Trophy } from "lucide-react";
-import type { RegionalAward } from "@/game/awards/types";
-import { CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
-import { getRegionFlag, getRegionCountryLabel } from "@/lib/countryFlag";
+import type { RegionalAward } from "@/core/awards/types";
+import { CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
+import { getRegionFlag, getRegionCountryLabel } from "@/core/common/countryFlag";
 
 const COMPACT_THRESHOLD = 5;
 

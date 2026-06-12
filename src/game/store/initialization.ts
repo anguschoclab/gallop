@@ -26,7 +26,7 @@ import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { GRADED_RACES } from "@/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
 import type { FacilityLevel } from "@/core/facilities";
-import { STARTING_CASH } from "@/constants/game";
+import { STARTING_CASH } from "@/constants";
 
 /**
  * Creates the initial game state for a new game.

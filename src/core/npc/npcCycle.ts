@@ -33,7 +33,7 @@ import {
   generateGrudgeMatchNews,
   generateRegionLostNews,
   generateRivalryEscalationNews,
-} from "@/services/rivalryNewsGenerator";
+} from "@/services/narrative/rivalryNewsGenerator";
 import {
   FAME_GAIN_G1_WIN,
   FAME_GAIN_G2_WIN,
@@ -49,7 +49,7 @@ import {
   LARGE_PURSE_THRESHOLD,
   MEDIUM_PURSE_THRESHOLD,
   MAX_FAME,
-} from "@/constants/game";
+} from "@/constants";
 
 /**
  * Calculate fame gains for horses based on race results.

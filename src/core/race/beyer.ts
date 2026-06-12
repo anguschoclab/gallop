@@ -23,7 +23,7 @@ import {
   PATTERN_JUMP_AVG_THRESHOLD,
   PATTERN_JUMP_BEST_THRESHOLD,
   PATTERN_JUMP_MIN_HISTORY,
-} from "@/constants/game";
+} from "@/constants";
 
 export type BeyerInput = {
   distance: number; // meters

@@ -6,7 +6,7 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import type { AuctionLot, Horse } from "@/game/types";
 
 interface ResolvedSaleSummaryProps {

@@ -12,7 +12,7 @@
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import type { CourseSpecification, TrackSection } from "@/data/tracks";
 import type { Rng } from "@/core/common/types";
-import { clamp } from "@/lib/math";
+import { clamp } from "@/core/common/math";
 import type { RaceSnapshot } from "./raceSnapshotTypes";
 import { calculateTacticalAdjustment } from "./tacticalAI";
 import { type Runner, type PaceContext, paceShapeMul } from "./runnerBuilder";

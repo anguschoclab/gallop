@@ -8,8 +8,8 @@ import type { LogImpact } from "@/core/resolver/impacts/index";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { formatCurrency } from "@/lib/formatting";
-import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants/game";
+import { formatCurrency } from "@/core/common/formatting";
+import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
 import type { Race, Horse } from "@/game/types";
 
 function getPrizeSplitForRace(race: Race): number[] {

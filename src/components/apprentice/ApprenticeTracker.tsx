@@ -9,7 +9,7 @@ import {
   formatWeightAllowance,
   type ApprenticeStatus,
 } from "@/core/apprentice/apprenticeTypes";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 export function ApprenticeTracker() {
   const jockeys = useGame((s) => s.jockeys);

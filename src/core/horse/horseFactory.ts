@@ -101,7 +101,7 @@ import {
 } from "@/core/ai/horseGenAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { activeStallions2020s, type PedigreeHorse } from "@/data/pedigreeData";
-import { clamp } from "@/lib/math";
+import { clamp } from "@/core/common/math";
 import {
   POTENTIAL_MIN,
   POTENTIAL_MAX,
@@ -114,7 +114,7 @@ import {
   FOALING_BASE_COMPLICATION_RATE,
   LETHAL_RECESSIVE_CHANCE,
   TWIN_REDUCTION_CHANCE,
-} from "@/constants/game";
+} from "@/constants";
 
 // --- Internal Helpers ---
 

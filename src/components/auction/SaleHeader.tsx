@@ -8,10 +8,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
-import { KIND_LABELS } from "@/game/auction/data";
+import { formatCurrency } from "@/core/common/formatting";
+import { KIND_LABELS } from "@/core/auction/data";
 import { NumericValue } from "@/components/horse/HorseBits";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { AuctionSale } from "@/game/types";
 
 interface SaleHeaderProps {

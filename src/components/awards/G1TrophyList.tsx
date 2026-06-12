@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { type G1WinEntry, countByGrade } from "@/constants/connectionTrophies";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 interface G1TrophyListProps {
   wins: G1WinEntry[];

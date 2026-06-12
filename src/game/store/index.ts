@@ -324,7 +324,7 @@ export const useGame = create<StoreType>()(
         await initInitializationWorker();
 
         // Clear OPFS storage when starting a new game
-        await (await import("@/services/storageAdapter")).clearGameState();
+        await (await import("@/services/storage/storageAdapter")).clearGameState();
         set({ ...createInitialState(options) } as any);
       },
     }),

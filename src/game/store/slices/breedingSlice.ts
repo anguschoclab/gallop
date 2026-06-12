@@ -29,8 +29,8 @@ import type {
   ShareSaleIntent,
   SyndicateFeeDistributionIntent,
 } from "@/core/resolver/intents";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/constants/game";
-import { formatCurrency } from "@/lib/formatting";
+import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/constants";
+import { formatCurrency } from "@/core/common/formatting";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 

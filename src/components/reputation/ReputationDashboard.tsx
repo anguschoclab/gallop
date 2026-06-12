@@ -7,8 +7,8 @@ import {
   formatReputationTier,
   type ManagerReputation,
 } from "@/core/reputation/reputationTypes";
-import { reputationColor } from "@/lib/uiTokens";
-import { cn } from "@/lib/utils";
+import { reputationColor } from "@/core/common/uiTokens";
+import { cn } from "@/lib/cn";
 
 export function ReputationDashboard() {
   const reputation = useGame((s) => s.reputation);

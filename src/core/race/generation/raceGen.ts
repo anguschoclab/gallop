@@ -67,7 +67,7 @@ import {
   RACE_CLASS_STARTER_ALLOWANCE_PROB,
   RACE_CLASS_STARTER_HANDICAP_PROB,
   RACE_CLASS_MAIDEN_STAKES_PROB,
-} from "@/constants/game";
+} from "@/constants";
 
 /**
  * Single authoritative class config shared by the generic fallback generator

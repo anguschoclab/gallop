@@ -8,8 +8,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
-import { commissionAmount } from "@/game/auction/engine";
+import { formatCurrency } from "@/core/common/formatting";
+import { commissionAmount } from "@/core/auction/engine";
 import type { useScoreboard } from "@/hooks/auction/useScoreboard";
 import type { AuctionSale } from "@/game/types";
 

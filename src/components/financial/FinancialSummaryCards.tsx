@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatProfitLoss } from "@/core/financial";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { Wallet, TrendingUp, TrendingDown, Activity } from "lucide-react";
 
 interface PeriodData {

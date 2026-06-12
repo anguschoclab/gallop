@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { HardDrive } from "lucide-react";
 import type { AuctionLot } from "@/game/types";
 import { auctionBrowseSearchSchema, type AuctionBrowseSearch } from "@/constants/auctionSearchSchema";
-import { filterAndSortLots } from "@/services/auctionLotFilter";
+import { filterAndSortLots } from "@/services/auction/auctionLotFilter";
 import { getDisplayableStats } from "@/core/npc/scouting";
 import { AuctionTheater } from "@/components/auction/AuctionTheater";
 import { PlayerConsignmentsPanel } from "@/components/auction/PlayerConsignmentsPanel";

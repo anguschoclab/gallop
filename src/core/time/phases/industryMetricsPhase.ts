@@ -8,11 +8,11 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_INDUSTRY_METRICS } from "@/constants/game";
+import { PHASE_ORDER_INDUSTRY_METRICS } from "@/constants";
 import type { PipelineContext } from "../pipeline";
 import { computeIndustryMeanEarnings } from "@/core/breeding/industryMetrics";
 import type { Horse } from "@/game/types";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 
 /**
  * Phase: Industry Metrics

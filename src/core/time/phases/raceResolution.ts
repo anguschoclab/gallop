@@ -9,19 +9,19 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/constants/game";
+import { PRIZE_SPLIT, PHASE_ORDER_RACE_RESOLUTION } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import { rngForRace } from "@/services/raceSimulationService";
+import { rngForRace } from "@/services/race/raceSimulationService";
 import type { Race } from "@/game/types";
 import type { ClaimingIntent } from "@/core/resolver/intents";
-import { simulateRace } from "@/services/raceSimulationExecutor";
-import { generateRaceImpacts } from "@/services/raceImpactGenerator";
-import { processClaimingResolution } from "@/services/claimingResolutionService";
+import { simulateRace } from "@/services/race/raceSimulationExecutor";
+import { generateRaceImpacts } from "@/services/race/raceImpactGenerator";
+import { processClaimingResolution } from "@/services/auction/claimingResolutionService";
 import {
   recordRaceHistory,
   checkHallOfFameInduction,
   checkTrackRecord,
-} from "@/services/historyService";
+} from "@/services/history/historyService";
 import { generateUUID } from "@/core/uuid";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordRaceEntryOutcome } from "@/core/ai/raceEntryAI";

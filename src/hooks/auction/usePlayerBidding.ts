@@ -6,7 +6,7 @@
 
 import { useCallback, useState } from "react";
 import type { MutableRefObject } from "react";
-import { nextBidAmount, type AuctionRunner } from "@/game/auction/runner";
+import { nextBidAmount, type AuctionRunner } from "@/core/auction/runner";
 
 export function usePlayerBidding(
   runnerRef: MutableRefObject<AuctionRunner | null>,

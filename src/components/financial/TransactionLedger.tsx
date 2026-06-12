@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatProfitLoss } from "@/core/financial";
 import { formatTransactionSubcategory } from "@/core/transactions/transactionTypes";
 import type { Transaction } from "@/core/transactions/transactionTypes";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { ReceiptText, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 
 interface TransactionLedgerProps {

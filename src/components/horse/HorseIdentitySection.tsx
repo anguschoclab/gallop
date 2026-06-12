@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { FileText } from "lucide-react";
 import { HorseStats } from "@/components/horse/HorseBits";
 import { HorseStatsRadar } from "@/components/horse/HorseStatsRadar";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 interface HorseIdentitySectionProps {
   horse: any;

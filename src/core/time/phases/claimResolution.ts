@@ -10,11 +10,11 @@
 
 import type { PipelineContext } from "../pipeline";
 import type { Race, Claim, Horse, Stable } from "@/game/types";
-import { netProceeds } from "@/game/auction/engine";
+import { netProceeds } from "@/core/auction/engine";
 import { hashStr } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
-import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/constants/game";
-import { formatCurrency } from "@/lib/formatting";
+import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/constants";
+import { formatCurrency } from "@/core/common/formatting";
 
 /**
  * Phase: Claim Resolution

@@ -15,7 +15,7 @@
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
-import { MAX_HORSES_PER_STABLE_PER_RACE, BUMP_RATING_MARGIN } from "@/constants/game";
+import { MAX_HORSES_PER_STABLE_PER_RACE, BUMP_RATING_MARGIN } from "@/constants";
 import { calculateOptimalTactics } from "@/core/ai/jockeyStrategyAI";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { shouldEnterHorse } from "./raceEntryHelpers";

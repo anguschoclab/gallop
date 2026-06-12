@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_ENERGY } from "@/constants/game";
+import { PHASE_ORDER_ENERGY } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { getFacilityBonus } from "@/core/facilities";
 import { resolveEpmRisk } from "@/core/genetics/phenotype";

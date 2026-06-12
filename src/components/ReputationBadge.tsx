@@ -1,9 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { useGame } from "@/game/store";
 import { formatReputationTier } from "@/core/reputation";
-import { reputationColor } from "@/lib/uiTokens";
+import { reputationColor } from "@/core/common/uiTokens";
 import { Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 /**
  * Reputation Badge Component

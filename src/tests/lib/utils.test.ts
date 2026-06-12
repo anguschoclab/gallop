@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { cn, groupRacesByDate } from "@/lib/utils";
+import { cn } from "@/lib/cn";
+import { groupRacesByDate } from "@/core/race/groupRacesByDate";
 
 describe("utils", () => {
   describe("cn", () => {

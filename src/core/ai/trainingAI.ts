@@ -14,7 +14,7 @@
  */
 
 import type { Horse, Stable } from "@/game/types";
-import { TRAINING_HISTORY_MAX_SIZE } from "@/constants/game";
+import { TRAINING_HISTORY_MAX_SIZE } from "@/constants";
 import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
 import {
   createLearningState,

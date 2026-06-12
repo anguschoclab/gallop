@@ -1,6 +1,6 @@
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Race } from "@/game/types";
-import { METERS_PER_LENGTH } from "@/constants/game";
+import { METERS_PER_LENGTH } from "@/constants";
 import type { NarrativeEvent, DetectedEvent } from "./types";
 
 /**

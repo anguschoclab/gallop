@@ -14,12 +14,12 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import { determineAllRegionalWinners, determineRegionalWinners } from "@/game/awards/scoring";
+import { determineAllRegionalWinners, determineRegionalWinners } from "@/core/awards/scoring";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/core/uuid";
-import type { AwardRegion, RegionalAward } from "@/game/awards/types";
-import { AWARD_CEREMONY_SCHEDULE } from "@/game/awards/types";
-import { PHASE_ORDER_AWARDS } from "@/constants/game";
+import type { AwardRegion, RegionalAward } from "@/core/awards/types";
+import { AWARD_CEREMONY_SCHEDULE } from "@/core/awards/types";
+import { PHASE_ORDER_AWARDS } from "@/constants";
 
 export const awardsPhase = {
   name: "awards",

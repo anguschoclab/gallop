@@ -14,7 +14,7 @@
  */
 
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
-import { PRIZE_SPLIT } from "@/constants/game";
+import { PRIZE_SPLIT } from "@/constants";
 
 export type RankedResult = { horseId: string; position: number; time: number; dnf: boolean };
 

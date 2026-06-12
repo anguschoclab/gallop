@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
-} from "@/services/traitCompatibility";
+} from "@/services/breeding/traitCompatibility";
 import type { Horse } from "@/game/types";
 
 describe("traitCompatibility", () => {

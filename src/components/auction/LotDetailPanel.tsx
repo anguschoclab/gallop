@@ -10,8 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { FileText, TrendingUp, ShieldCheck } from "lucide-react";
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { genderSymbol } from "@/core/horse/gender";
-import { formatCurrency } from "@/lib/formatting";
-import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/core/common/formatting";
+import { cn } from "@/lib/cn";
 import type { AuctionLot, Horse, Stable } from "@/game/types";
 
 interface LotDetailPanelProps {

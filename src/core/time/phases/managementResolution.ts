@@ -11,7 +11,7 @@
 // Management Resolution Phase
 // Processes player intents for infrastructure, jockeys, and horse management
 
-import { PHASE_ORDER_MANAGEMENT_RESOLUTION } from "@/constants/game";
+import { PHASE_ORDER_MANAGEMENT_RESOLUTION } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type {
   AnyIntent,

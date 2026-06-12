@@ -1,7 +1,7 @@
 // Award SVG Assets Index
 // Central export for all regional award icons
 
-import type { AwardRegion, RegionalAwardCategory } from "@/game/awards/types";
+import type { AwardRegion, RegionalAwardCategory } from "@/core/awards/types";
 
 // North America
 import * as naHoty from "./north-america/hoty";

@@ -3,7 +3,7 @@
  * Used for consistent navigation affordance whenever a horse name appears in text.
  */
 import { Link } from "@tanstack/react-router";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { ReactNode } from "react";
 
 interface HorseNameLinkProps {

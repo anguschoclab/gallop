@@ -1,6 +1,6 @@
 import type { Jockey } from "@/game/types";
 import { JockeyPortrait } from "./JockeyPortrait";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 export type JockeyAvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 

@@ -1,6 +1,6 @@
 import type { CoatColor, HorseMarkings, HorseGender, AppearanceDNA } from "@/game/types";
 import { ProceduralHorsePortrait } from "@/components/horse/ProceduralHorsePortrait";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 /**
  * Properties for the HorsePortrait component.

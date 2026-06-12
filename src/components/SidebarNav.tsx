@@ -11,9 +11,9 @@ import {
   Home, Trophy, Store, Calendar, Plus, Heart, Gavel, Settings, User, Baby,
   DollarSign, Building2, Award, Users, Map, Clock, LayoutGrid, Star, Bell,
 } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants/game";
+import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants";
 import { NavSection } from "./NavSection";
 import { useState } from "react";
 

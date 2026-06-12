@@ -9,7 +9,7 @@
  */
 
 import type { PlayerFacilities } from "@/core/facilities";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { generateUUID } from "@/core/uuid";
 import { facilityUpgradeCost } from "@/core/facilities";
 import type { ActionResult } from "../types";

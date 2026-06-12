@@ -11,12 +11,12 @@
 
 import type { PipelineContext } from "../pipeline";
 import type { AuctionSale } from "@/game/types";
-import { generateAuctionLots } from "@/game/auction/engine";
-import { SALE_TRIGGERS } from "@/game/auction/data";
-import { createAuctionRunner } from "@/game/auction/runner";
+import { generateAuctionLots } from "@/core/auction/engine";
+import { SALE_TRIGGERS } from "@/core/auction/data";
+import { createAuctionRunner } from "@/core/auction/runner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/core/uuid";
-import { PHASE_ORDER_AUCTIONS, AUCTION_RETENTION_DAYS } from "@/constants/game";
+import { PHASE_ORDER_AUCTIONS, AUCTION_RETENTION_DAYS } from "@/constants";
 
 /**
  * Phase: Auctions (order 90).

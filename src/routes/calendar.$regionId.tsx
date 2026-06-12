@@ -7,7 +7,7 @@ import { MonthView } from "@/components/calendar/MonthView";
 import { TrackView } from "@/components/calendar/TrackView";
 import { RegionSwitcher } from "@/components/RegionSwitcher";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
-import { useCalendarFilters } from "@/hooks/useCalendarFilters";
+import { useCalendarFilters } from "@/hooks/calendar/useCalendarFilters";
 import { ChevronLeft, Globe } from "lucide-react";
 
 interface CalendarSearch {

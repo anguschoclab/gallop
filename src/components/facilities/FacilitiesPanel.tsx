@@ -1,7 +1,7 @@
 import { useGame, useGameWithShallow } from "@/game/store";
 import { FacilityCategory } from "./FacilityCategory";
 import { Dumbbell, ShieldCheck, Activity, Package } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 
 /**
  * Facilities Panel Component

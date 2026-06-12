@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import type { Horse, Race } from "@/game/types";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 
 interface Props {
   race: Race;

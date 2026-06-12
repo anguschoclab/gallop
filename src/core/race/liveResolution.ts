@@ -32,7 +32,7 @@ import type { GameState } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import { calculateClassBonus } from "@/core/common/classBonus";
 import { beyerFigure } from "./beyer";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,
@@ -43,7 +43,7 @@ import { GRADED_RACES } from "@/data/gradedRaces";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
 import { generateUUID } from "@/core/uuid";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
-import { PRIZE_SPLIT } from "@/constants/game/gameConstants";
+import { PRIZE_SPLIT } from "@/constants/gameConstants";
 import { getPeakingBeyerMultiplier } from "@/core/health/banister";
 
 /**

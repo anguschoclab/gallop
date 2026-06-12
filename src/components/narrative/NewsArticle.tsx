@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { NewsContent } from "./NewsContent";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { NewsItem } from "@/services/narrative/newsTypes";
 
 interface NewsArticleProps {

@@ -12,7 +12,7 @@ import {
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { Zap, TrendingUp, Filter } from "lucide-react";
-import { useGalleryFilters, COAT_COLORS } from "@/hooks/useGalleryFilters";
+import { useGalleryFilters, COAT_COLORS } from "@/hooks/horse/useGalleryFilters";
 
 export const Route = createFileRoute("/horse-gallery")({
   component: HorseGalleryPage,

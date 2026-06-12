@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrophyCase, TrophyStats } from "@/components/awards";
 import { Badge } from "@/components/ui/badge";
-import { useAwardsData } from "@/hooks/useAwardsData";
-import { REGION_AWARD_NAMES } from "@/game/awards/types";
+import { useAwardsData } from "@/hooks/awards/useAwardsData";
+import { REGION_AWARD_NAMES } from "@/core/awards/types";
 import { REGION_COLOR_CLASSES } from "@/assets/awards";
 import { Trophy, Calendar, Star } from "lucide-react";
 

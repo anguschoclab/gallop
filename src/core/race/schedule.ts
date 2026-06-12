@@ -42,7 +42,7 @@ function getBreedersCupTrack(year: number): { trackId: string; name: string } {
   return BREEDERS_CUP_TRACKS[index];
 }
 
-import { DAYS_PER_YEAR } from "@/constants/game";
+import { DAYS_PER_YEAR } from "@/constants";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 
 /**

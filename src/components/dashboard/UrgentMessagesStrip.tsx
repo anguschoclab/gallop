@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { AlertCircle, Bell, ChevronRight } from "lucide-react";
 
 interface UrgentMessagesStripProps {

@@ -11,7 +11,7 @@ import {
   DISTANCE_OPTIONS,
   type GradeFilter,
   type DistanceFilter,
-} from "@/hooks/useRaceBrowserFilters";
+} from "@/hooks/race/useRaceBrowserFilters";
 
 interface Props {
   gradeFilter: GradeFilter;

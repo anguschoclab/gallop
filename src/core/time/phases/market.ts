@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_MARKET } from "@/constants/game";
+import { PHASE_ORDER_MARKET } from "@/constants";
 import type { PipelineContext } from "../pipeline";
 import { refreshMarket } from "@/game/store/helpers/market";
 import { calculateRaceRating } from "@/core/horse/stats";

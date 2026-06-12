@@ -8,7 +8,7 @@ import type { CashImpact, TransactionImpact, ReputationImpact } from "@/core/res
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { getOrdinalSuffix } from "@/core/common/ordinal";
-import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants/game";
+import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
 import { calculateRaceWinReputation, calculateRaceLossReputation } from "@/core/reputation";
 import type { Race, Horse } from "@/game/types";
 

@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Activity, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 interface HorseConditionSectionProps {
   horse: any;

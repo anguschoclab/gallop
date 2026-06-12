@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { gradeColor } from "@/lib/uiTokens";
+import { cn } from "@/lib/cn";
+import { gradeColor } from "@/core/common/uiTokens";
 import { AlertTriangle } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { WeatherForecastStrip } from "./WeatherForecastStrip";
 import type { Race } from "@/game/types";
 

@@ -14,7 +14,7 @@
  */
 
 import type { GameState } from "@/game/types";
-import { loadGameState, saveGameState } from "@/services/storageAdapter";
+import { loadGameState, saveGameState } from "@/services/storage/storageAdapter";
 
 /**
  * Creates the OPFS storage adapter for Zustand persist.
@@ -39,7 +39,7 @@ export function createOpfsStorage() {
       }
     },
     removeItem: async (_name: string): Promise<void> => {
-      await (await import("@/services/storageAdapter")).clearGameState();
+      await (await import("@/services/storage/storageAdapter")).clearGameState();
     },
   };
 }

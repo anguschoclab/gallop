@@ -7,11 +7,11 @@
 import { HorsePortrait } from "@/components/horse/HorsePortrait";
 import { Badge } from "@/components/ui/badge";
 import { genderSymbol } from "@/core/horse/gender";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { PHASES, chantToPhaseIndex } from "@/hooks/auction/auctionPhaseStrip";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { Horse, AuctionLot } from "@/game/types";
-import type { ChantPhase } from "@/game/auction/runner";
+import type { ChantPhase } from "@/core/auction/runner";
 
 interface AuctionRingProps {
   horse: Horse | undefined;

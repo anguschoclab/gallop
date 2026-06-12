@@ -7,7 +7,7 @@
 import type { CashImpact, TransactionImpact } from "@/core/resolver/impacts/index";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
-import { JOCKEY_FEE_PERCENTAGE, BASE_JOCKEY_RIDING_FEE } from "@/constants/game";
+import { JOCKEY_FEE_PERCENTAGE, BASE_JOCKEY_RIDING_FEE } from "@/constants";
 import type { Horse, Jockey } from "@/game/types";
 
 export function generateJockeyFeeImpacts(

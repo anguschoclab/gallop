@@ -3,9 +3,9 @@ import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { useNavigate } from "@tanstack/react-router";
 import { SilkDot } from "@/components/SilkDot";
 import { getCoatColor } from "@/core/horse/uiHelpers";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { genderSymbol } from "@/core/horse/gender";
-import type { PedigreeFlowNode } from "@/lib/pedigreeGraph";
+import type { PedigreeFlowNode } from "@/core/breeding/pedigreeGraph";
 
 export const PedigreeNodeCard = memo(function PedigreeNodeCard({
   data,

@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AwardIcon } from "./AwardIcon";
 import { AwardBadge } from "./AwardBadge";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";
-import type { RegionalAward, RegionalAwardCategory } from "@/game/awards/types";
-import { CATEGORY_DISPLAY_NAMES } from "@/game/awards/types";
-import { getRegionFlag, getRegionCountryLabel } from "@/lib/countryFlag";
+import type { RegionalAward, RegionalAwardCategory } from "@/core/awards/types";
+import { CATEGORY_DISPLAY_NAMES } from "@/core/awards/types";
+import { getRegionFlag, getRegionCountryLabel } from "@/core/common/countryFlag";
 import { Trophy, Award, Star } from "lucide-react";
 import { VisualTrophy, TrophyShelf } from "./VisualTrophy";
 

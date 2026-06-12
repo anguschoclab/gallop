@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "@tanstack/react-router";
 import type { EntityLink } from "@/services/narrative/newsTypes";
-import { useEntityLinks } from "@/hooks/useEntityLinks";
-import { cn } from "@/lib/utils";
+import { useEntityLinks } from "@/hooks/shared/useEntityLinks";
+import { cn } from "@/lib/cn";
 
 interface NewsContentProps {
   text: string;

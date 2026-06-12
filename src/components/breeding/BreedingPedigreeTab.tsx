@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PedigreeTree } from "@/components/breeding/PedigreeTree";
-import type { useBreedingPage } from "@/hooks/useBreedingPage";
+import type { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
 
 interface BreedingPedigreeTabProps {
   pageData: ReturnType<typeof useBreedingPage>;

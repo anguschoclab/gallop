@@ -32,7 +32,7 @@ import {
   DAYS_PER_MONTH,
   DAYS_PER_WEEK,
   BUMP_RATING_MARGIN,
-} from "@/constants/game";
+} from "@/constants";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { requireOwned, requireHorse } from "../guards";
 import { getEngineWorker } from "@/game/store";

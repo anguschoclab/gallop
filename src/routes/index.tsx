@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { useDashboardData } from "@/hooks/dashboard/useDashboardData";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
 import { Badge } from "@/components/ui/badge";
 import { ReputationBadge } from "@/components/ReputationBadge";

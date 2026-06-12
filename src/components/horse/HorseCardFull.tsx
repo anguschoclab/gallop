@@ -5,8 +5,8 @@ import { HorseStatsPanel } from "./HorseStatsPanel";
 import { HorseMetaPanel } from "./HorseMetaPanel";
 import { HorseActionFooter } from "./HorseActionFooter";
 import { getInjuryColor, getInjuryLabel } from "@/core/horse/uiHelpers";
-import { cn } from "@/lib/utils";
-import type { useHorseCard } from "@/hooks/useHorseCard";
+import { cn } from "@/lib/cn";
+import type { useHorseCard } from "@/hooks/horse/useHorseCard";
 import { useGame } from "@/game/store";
 import { Ruler, Weight, HeartPulse } from "lucide-react";
 

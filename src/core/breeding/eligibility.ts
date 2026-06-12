@@ -12,7 +12,7 @@
 import type { Horse, Pregnancy } from "@/game/types";
 import { inBreedingSeason, nextBreedingSeasonStart } from "@/core/calendar/breedingCalendar";
 import { dayOfYear, formatDate } from "@/core/calendar/dateFormatting";
-import { MARE_RECOVERY_DAYS, MIN_BREEDING_AGE, MAX_DAM_AGE } from "@/constants/game";
+import { MARE_RECOVERY_DAYS, MIN_BREEDING_AGE, MAX_DAM_AGE } from "@/constants";
 
 /**
  * Result of breeding eligibility check with optional reason for failure.

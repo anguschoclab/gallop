@@ -23,7 +23,7 @@ import {
   JOCKEY_SALARY_BUDGET_MAX,
   JOCKEY_AGE_MIN,
   JOCKEY_AGE_MAX,
-} from "@/constants/game";
+} from "@/constants";
 import { ARCHETYPES, SILK_PALETTE, SILK_PATTERNS } from "@/data/jockeys";
 export { ARCHETYPES, SILK_PALETTE, SILK_PATTERNS };
 

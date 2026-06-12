@@ -10,7 +10,7 @@
 import type { Horse, ScoutReport, Stable } from "@/game/types";
 import { calculateScoutCost } from "@/core/npc/scouting";
 import { generateUUID } from "@/core/uuid";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import type { StoreGet } from "../types";
 
 export type ScoutingSlice = {

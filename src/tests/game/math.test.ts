@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { clamp, clampStat, clampPotential } from "@/lib/math";
+import { clamp, clampStat, clampPotential } from "@/core/common/math";
 
 describe("math", () => {
   it("clamp restricts to [min, max]", () => {

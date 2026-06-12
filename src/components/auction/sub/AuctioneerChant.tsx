@@ -6,8 +6,8 @@
  */
 
 import { useEffect, useRef } from "react";
-import { cn } from "@/lib/utils";
-import type { AuctioneerLine } from "@/services/auctioneerService";
+import { cn } from "@/lib/cn";
+import type { AuctioneerLine } from "@/services/auction/auctioneerService";
 
 interface AuctioneerChantProps {
   lines: AuctioneerLine[];

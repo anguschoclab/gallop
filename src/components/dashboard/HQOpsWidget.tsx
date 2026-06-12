@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import { Building2, ChevronRight } from "lucide-react";
 
 interface ReputationEvent {

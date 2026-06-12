@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateRaceImpacts } from "@/services/raceImpactGenerator";
+import { generateRaceImpacts } from "@/services/race/raceImpactGenerator";
 import { GRADED_RACES } from "@/data/gradedRaces";
 import type { Race, Jockey } from "@/game/types";
 import { createTestColt } from "@/tests/helpers/createTestHorse";

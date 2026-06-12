@@ -7,8 +7,8 @@
 
 import { useEffect, useReducer, useRef, useState, useCallback } from "react";
 import { useGame } from "@/game/store";
-import { createAuctionRunner, type AuctionRunner } from "@/game/auction/runner";
-import { type AuctioneerLine } from "@/services/auctioneerService";
+import { createAuctionRunner, type AuctionRunner } from "@/core/auction/runner";
+import { type AuctioneerLine } from "@/services/auction/auctioneerService";
 import { useAuctionTimers } from "./useAuctionTimers";
 import { useAuctionEventProcessor } from "./useAuctionEventProcessor";
 import { usePlayerBidding } from "./usePlayerBidding";

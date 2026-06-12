@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { formatCurrency, formatTime } from "@/lib/formatting";
+import { formatCurrency, formatTime } from "@/core/common/formatting";
 
 describe("formatCurrency", () => {
   it("should format zero as $0", () => {

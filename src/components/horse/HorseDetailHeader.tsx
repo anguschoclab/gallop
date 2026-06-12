@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { SilkDot } from "@/components/SilkDot";
 import { ShieldCheck, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 interface HorseDetailHeaderProps {
   horse: any;

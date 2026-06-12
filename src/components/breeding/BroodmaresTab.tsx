@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Baby, FileText } from "lucide-react";
 import { PregnancyTimeline } from "@/components/breeding/PregnancyTimeline";
-import type { useBreedingPage } from "@/hooks/useBreedingPage";
+import type { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
 
 interface BroodmaresTabProps {
   pageData: ReturnType<typeof useBreedingPage>;

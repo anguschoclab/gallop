@@ -7,9 +7,9 @@ import {
   calculateAwardPoints,
   determineRegionalWinners,
   determineAllRegionalWinners,
-} from "@/game/awards/scoring";
+} from "@/core/awards/scoring";
 import type { Horse, Race } from "@/game/types";
-import type { AwardRegion, RegionalAwardCategory } from "@/game/awards/types";
+import type { AwardRegion, RegionalAwardCategory } from "@/core/awards/types";
 import { createTestHorse } from "@/tests/helpers";
 
 describe("calculateAwardPoints", () => {

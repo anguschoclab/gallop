@@ -4,7 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { getBackstory } from "@/core/common/backstories";
 import { SilkPreview } from "./SilkPreview";
 import type { PlayerProfile, BackstoryId } from "@/game/types";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 
 interface StepReviewProps {
   profile: PlayerProfile;

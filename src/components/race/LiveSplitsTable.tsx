@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse } from "@/game/types";
 import { formatSplitTime, getTargetSplitTime } from "./raceUtils";

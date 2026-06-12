@@ -13,12 +13,12 @@ import type { Horse } from "@/core/horse/types";
 import { calculateDosageMetrics, interpretDosageIndex } from "@/core/race/dosage";
 import { findHorseByName, type PedigreeHorse } from "@/data/pedigreeData";
 import { TRAIT_SCORE } from "@/core/genetics/phenotype";
-import { calculateGeneticCompatibility } from "@/services/genotypeMatching";
-import { calculateFounderEffect } from "@/services/inbreedingCalculator";
+import { calculateGeneticCompatibility } from "@/services/breeding/genotypeMatching";
+import { calculateFounderEffect } from "@/services/breeding/inbreedingCalculator";
 import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
-} from "@/services/traitCompatibility";
+} from "@/services/breeding/traitCompatibility";
 import { computeCoiFromSnapshot, computeProspectiveCoi } from "@/core/breeding/populationGenetics";
 import {
   NICKING_AFFINITIES,

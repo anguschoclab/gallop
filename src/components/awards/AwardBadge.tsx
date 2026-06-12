@@ -1,9 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { AwardIcon } from "./AwardIcon";
-import { cn } from "@/lib/utils";
-import type { AwardRegion, RegionalAwardCategory, RegionalAward } from "@/game/awards/types";
+import { cn } from "@/lib/cn";
+import type { AwardRegion, RegionalAwardCategory, RegionalAward } from "@/core/awards/types";
 import { REGION_COLOR_CLASSES, getRegionColor } from "@/assets/awards";
-import { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } from "@/game/awards/types";
+import { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } from "@/core/awards/types";
 
 interface AwardBadgeProps {
   award: RegionalAward;

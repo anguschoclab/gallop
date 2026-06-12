@@ -8,7 +8,7 @@ import type { EnergyImpact, FormImpact, FameImpact } from "@/core/resolver/impac
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
-import { RACE_ENERGY_IMPACT } from "@/constants/game";
+import { RACE_ENERGY_IMPACT } from "@/constants";
 import type { Horse } from "@/game/types";
 
 export function generateEnergyImpact(horseId: string, newDay: number, rng?: Rng): EnergyImpact {

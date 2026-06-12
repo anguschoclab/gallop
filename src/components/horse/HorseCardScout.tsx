@@ -8,8 +8,8 @@ import { genderSymbol } from "@/core/horse/gender";
 import { getCoatColor } from "@/core/horse/uiHelpers";
 import { SilkDot } from "@/components/SilkDot";
 import { HorsePortraitBadge } from "@/components/horse/HorsePortrait";
-import { cn } from "@/lib/utils";
-import type { useHorseCard } from "@/hooks/useHorseCard";
+import { cn } from "@/lib/cn";
+import type { useHorseCard } from "@/hooks/horse/useHorseCard";
 
 interface HorseCardScoutProps {
   horse: Horse;

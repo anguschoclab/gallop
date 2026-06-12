@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import * as opfsService from "@/services/opfsService";
+import * as opfsService from "@/services/storage/opfsService";
 
 describe("opfsService deleteFile error path", () => {
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe("opfsService deleteFile error path", () => {
     });
 
     // Use cache-busting query to get a fresh module instance (bun shares module cache across test files)
-    const freshOpfsService = await import("@/services/opfsService?bust=" + Date.now());
+    const freshOpfsService = await import("@/services/storage/opfsService?bust=" + Date.now());
     await freshOpfsService.initOPFS();
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});

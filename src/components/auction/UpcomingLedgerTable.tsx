@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import { KIND_LABELS } from "@/game/auction/data";
-import { cn } from "@/lib/utils";
+import { KIND_LABELS } from "@/core/auction/data";
+import { cn } from "@/lib/cn";
 import { CalendarIcon } from "lucide-react";
 
 interface UpcomingSale {

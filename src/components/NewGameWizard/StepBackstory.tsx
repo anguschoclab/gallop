@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { BACKSTORIES } from "@/core/common/backstories";
 import type { BackstoryId } from "@/game/types";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 
 interface StepBackstoryProps {
   backstoryId: BackstoryId;

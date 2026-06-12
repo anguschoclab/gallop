@@ -19,7 +19,7 @@ import {
   TRIPLE_CROWN_HISTORY_MAX_SIZE,
   PACE_SAMPLES_MAX_SIZE,
   PHASE_ORDER_IMPACT_APPLICATION,
-} from "@/constants/game";
+} from "@/constants";
 import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 
 /**

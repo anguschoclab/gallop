@@ -15,9 +15,9 @@ import {
 import { JockeyAvatar } from "./JockeyAvatar";
 import { JockeyStatsGrid } from "./JockeyStatsGrid";
 import { useGame } from "@/game/store";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { Link } from "@tanstack/react-router";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 interface JockeyCardProps {
   jockey: Jockey;

@@ -16,7 +16,7 @@ import { ReviewStep } from "./ReviewStep";
 import { ClaimingStep } from "./ClaimingStep";
 import { RaceEntryHeader } from "./RaceEntryHeader";
 import { buildInstructions } from "./TacticOptions";
-import { useRaceEntry } from "@/hooks/useRaceEntry";
+import { useRaceEntry } from "@/hooks/race/useRaceEntry";
 
 interface RaceEntryProps {
   race: Race;

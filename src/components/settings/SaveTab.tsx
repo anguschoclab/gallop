@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileText } from "lucide-react";
-import type { SaveSlotMetadata } from "@/services/saveManager";
+import type { SaveSlotMetadata } from "@/services/storage/saveManager";
 
 interface SaveTabProps {
   newSaveName: string;

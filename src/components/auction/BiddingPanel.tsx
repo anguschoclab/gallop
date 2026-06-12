@@ -8,11 +8,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Gavel, Activity } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { BuyNowDialog } from "./BuyNowDialog";
 import { BidInput } from "./BidInput";
 import { MaxBidInput } from "./MaxBidInput";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 import type { AuctionLot } from "@/game/types";
 
 interface BiddingPanelProps {

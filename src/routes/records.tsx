@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeaderboardTable } from "@/components/history/LeaderboardTable";
 import { TrackRecordsTable } from "@/components/history/TrackRecordsTable";
 import { DollarSign, Zap, Timer } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 
 const EMPTY_OBJECT = {};
 

@@ -36,3 +36,4 @@ dist-ssr
 # noEmit: true. Vendor scripts that legitimately ship as .js live in src/assets/.
 src/**/*.js
 !src/assets/**/*.js
+coverage/

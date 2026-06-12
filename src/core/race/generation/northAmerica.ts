@@ -20,7 +20,7 @@ import { randomWeather, rand } from "@/core/common/random";
 import { randomTrackConditionWithClimateBias } from "@/core/race/trackConditions";
 import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "./raceGen";
-import { NA_CLAIMING_RACE_PERCENTAGE } from "@/constants/game";
+import { NA_CLAIMING_RACE_PERCENTAGE } from "@/constants";
 
 // Configuration for North American race distribution
 // Matches NA_CLAIMING_RACE_PERCENTAGE (70%) as per real-world statistics

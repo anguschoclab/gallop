@@ -1,5 +1,5 @@
 import { Archive } from "lucide-react";
-import type { SaveSlotMetadata } from "@/services/saveManager";
+import type { SaveSlotMetadata } from "@/services/storage/saveManager";
 
 interface LoadTabProps {
   saves: SaveSlotMetadata[];

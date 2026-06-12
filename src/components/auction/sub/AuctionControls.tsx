@@ -5,10 +5,10 @@
  */
 
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { Gavel, Pause, Play, FastForward, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { nextBidAmount } from "@/game/auction/runner";
+import { cn } from "@/lib/cn";
+import { nextBidAmount } from "@/core/auction/runner";
 import { BidInputPanel } from "./BidInputPanel";
 import { MaxBidPanel } from "./MaxBidPanel";
 

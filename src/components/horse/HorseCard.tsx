@@ -1,5 +1,5 @@
 import type { Horse } from "@/game/types";
-import { useHorseCard } from "@/hooks/useHorseCard";
+import { useHorseCard } from "@/hooks/horse/useHorseCard";
 import { HorseCardCompact } from "@/components/horse/HorseCardCompact";
 import { HorseCardScout } from "@/components/horse/HorseCardScout";
 import { HorseCardFull } from "@/components/horse/HorseCardFull";

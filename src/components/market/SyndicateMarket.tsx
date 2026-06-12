@@ -4,7 +4,7 @@ import type { Syndicate } from "@/core/breeding/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { toast } from "sonner";
 
 export function SyndicateMarket() {

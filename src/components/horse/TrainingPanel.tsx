@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
-import { TRAINING_COST } from "@/constants/game";
+import { TRAINING_COST } from "@/constants";
 import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/constants/trainingTypes";
 import { isWorkoutEnabled } from "@/core/facilities";
 import type { Horse, PlayerFacilities } from "@/game/types";

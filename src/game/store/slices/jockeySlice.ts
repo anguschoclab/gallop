@@ -9,7 +9,7 @@
  */
 
 import type { Jockey } from "@/game/types";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { generateUUID } from "@/core/uuid";
 import type { ActionResult, SliceCreator } from "../types";
 import { requireOwned, requireHorse } from "../guards";
@@ -20,7 +20,7 @@ import {
   JOCKEY_RETAINER_BONUS_MULTIPLIER,
   JOCKEY_PER_RACE_BONUS_MULTIPLIER,
   DAYS_PER_YEAR,
-} from "@/constants/game";
+} from "@/constants";
 
 export type JockeySlice = {
   hireJockey: (jockeyId: string, contractType: "standard" | "retainer") => ActionResult;

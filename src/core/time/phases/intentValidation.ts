@@ -11,7 +11,7 @@
 // Intent Validation Phase
 // Validates all intents and rejects invalid ones
 
-import { PHASE_ORDER_INTENT_VALIDATION } from "@/constants/game";
+import { PHASE_ORDER_INTENT_VALIDATION } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { validateIntent } from "@/core/resolver/resolver";
 

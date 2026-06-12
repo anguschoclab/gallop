@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency } from "@/core/common/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/core/staff/staffConfig";
 import { Users } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";

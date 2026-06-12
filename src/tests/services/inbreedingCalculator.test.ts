@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateFounderEffect } from "@/services/inbreedingCalculator";
+import { calculateFounderEffect } from "@/services/breeding/inbreedingCalculator";
 
 describe("inbreedingCalculator", () => {
   describe("calculateFounderEffect", () => {

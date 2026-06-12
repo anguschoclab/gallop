@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Timer } from "lucide-react";
-import { formatTime } from "@/lib/formatting";
+import { formatTime } from "@/core/common/formatting";
 
 export function TrackRecordsTable({ records }: { records: any[] }) {
   if (records.length === 0) {

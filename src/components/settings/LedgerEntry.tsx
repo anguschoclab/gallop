@@ -1,7 +1,7 @@
 import { Trash2, Clock, ChevronRight } from "lucide-react";
-import { formatCurrency } from "@/lib/formatting";
-import { cn } from "@/lib/utils";
-import type { SaveSlotMetadata } from "@/services/saveManager";
+import { formatCurrency } from "@/core/common/formatting";
+import { cn } from "@/lib/cn";
+import type { SaveSlotMetadata } from "@/services/storage/saveManager";
 
 interface LedgerEntryProps {
   save: SaveSlotMetadata;
